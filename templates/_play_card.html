@@ -5,7 +5,9 @@
     <span class="play-odds">{{ fmt_odds(p.cuota) }}</span>
   </div>
   <h3 class="play-pick">{{ p.pick }}</h3>
+  {% if p.comprobante %}
   <button type="button" class="link-ticket" data-ticket="ticket-{{ p.id }}">Ver el ticket →</button>
+  {% endif %}
   <div class="play-bet">
     <span class="bet-label">Bet</span>
     <b class="bet-amount">${{ '%.0f' % p.stake_monto }}</b>
@@ -29,19 +31,11 @@
   </div>
 </article>
 
+{% if p.comprobante %}
 <div class="modal" id="ticket-{{ p.id }}" hidden>
-  <div class="modal-card ticket">
+  <div class="modal-card ticket-photo">
     <button type="button" class="modal-close" data-close>✕</button>
-    <p class="ticket-brand">THE LINE BREAKER · TICKET</p>
-    <p class="ticket-pick">{{ p.pick }}</p>
-    <div class="ticket-rows">
-      <div><span>Nivel</span><b>{{ '★' if p.nivel == 'PLATINUM' else '●' }} {{ p.nivel }}</b></div>
-      <div><span>Cuota</span><b>{{ fmt_odds(p.cuota) }}</b></div>
-      <div><span>Stake</span><b>{{ p.stake_unidades }}u · ${{ '%.0f' % p.stake_monto }}</b></div>
-      <div><span>Edge</span><b class="pos">+{{ p.edge }}%</b></div>
-      {% if p.casa %}<div><span>Casa</span><b>{{ p.casa }}</b></div>{% endif %}
-      <div><span>Fecha</span><b>{{ p.fecha }}</b></div>
-    </div>
-    <p class="ticket-note">Ticket informativo del programa · Juega responsablemente · 21+</p>
+    <img src="{{ url_for('static', filename=p.comprobante) }}" alt="Ticket original de {{ p.pick }}">
   </div>
 </div>
+{% endif %}
