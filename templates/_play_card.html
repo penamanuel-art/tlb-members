@@ -5,7 +5,7 @@
     <span class="play-odds">{{ fmt_odds(p.cuota) }}</span>
   </div>
   <h3 class="play-pick">{{ p.pick }}</h3>
-  <button type="button" class="link-ticket" data-ticket="ticket-{{ p.id }}">See the ticket →</button>
+  <button type="button" class="link-ticket" data-ticket="ticket-{{ p.id }}">Ver el ticket →</button>
   <div class="play-bet">
     <span class="bet-label">Bet</span>
     <b class="bet-amount">${{ '%.0f' % p.stake_monto }}</b>
@@ -17,10 +17,10 @@
   {% endif %}
   <div class="play-actions">
     {% if p.casa_url %}
-    <a class="btn btn-place" href="{{ p.casa_url }}" target="_blank" rel="noopener">Place at {{ p.casa or 'tu casa' }} →</a>
+    <a class="btn btn-place" href="{{ p.casa_url }}" target="_blank" rel="noopener">Colocar en {{ p.casa or 'tu casa' }} →</a>
     {% endif %}
     {% if p.id in tracked_ids %}
-      <span class="btn btn-tracked">✓ Tracked</span>
+      <span class="btn btn-tracked">✓ Trackeada</span>
     {% else %}
       <form method="post" action="{{ url_for('track', play_id=p.id) }}">
         <button class="btn btn-track" type="submit">+ Track</button>
