@@ -37,7 +37,7 @@ USE_PG = bool(DATABASE_URL)
 # Link de pago de Stripe para desbloquear Platinum ($1 primera semana, luego $23/semana).
 # Se cambia sin tocar código con la env var STRIPE_PLATINUM_URL en Render.
 STRIPE_PLATINUM_URL = os.environ.get(
-    "STRIPE_PLATINUM_URL", "https://buy.stripe.com/test_7sY3cobUk2VH0DO4SrcjS00"
+    "STRIPE_PLATINUM_URL", "https://buy.stripe.com/28E14p64MfDeeiybEQefC00"
 )
 
 try:
