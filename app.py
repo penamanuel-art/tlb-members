@@ -72,6 +72,8 @@ app.config["SECRET_KEY"] = _secret
 
 DB_PATH = os.path.join(INSTANCE_DIR, "members.db")
 PLAYS_PATH = os.path.join(BASE_DIR, "data", "plays.json")
+MASTERCLASS_PATH = os.path.join(BASE_DIR, "data", "masterclass.json")
+RESULTS_PATH = os.path.join(BASE_DIR, "data", "results.json")
 
 
 # ---------------------------------------------------------------- DB ----
@@ -315,6 +317,23 @@ def load_plays():
 
 def load_program():
     return load_data()[0]
+
+
+def load_json_file(path):
+    """Lee un JSON de datos; {} si no existe o está corrupto."""
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except (OSError, json.JSONDecodeError):
+        return {}
+
+
+def load_masterclass():
+    return load_json_file(MASTERCLASS_PATH)
+
+
+def load_results():
+    return load_json_file(RESULTS_PATH)
 
 
 def american_profit_ratio(odds) -> float:
@@ -647,6 +666,22 @@ def untrack(tracked_id):
     db.commit()
     flash("Jugada eliminada de tu tracker.", "ok")
     return back("tracker")
+
+
+@app.route("/masterclass")
+@login_required
+def masterclass():
+    db = get_db()
+    record_checkin(db, session["user_id"])
+    return render_template("masterclass.html", leccion=load_masterclass())
+
+
+@app.route("/resultados")
+@login_required
+def resultados():
+    db = get_db()
+    record_checkin(db, session["user_id"])
+    return render_template("resultados.html", res=load_results())
 
 
 if __name__ == "__main__":
