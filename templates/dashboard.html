@@ -46,7 +46,11 @@
 {% if plays %}
 <div class="plays">
   {% for p in plays %}
-    {% include "_play_card.html" %}
+    {% if p.nivel == 'PLATINUM' and not platinum_unlocked %}
+      {% include "_play_locked.html" %}
+    {% else %}
+      {% include "_play_card.html" %}
+    {% endif %}
   {% endfor %}
 </div>
 {% else %}
