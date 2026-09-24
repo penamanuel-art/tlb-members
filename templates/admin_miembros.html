@@ -24,6 +24,12 @@
       {{ 'Quitar Platinum' if m.platinum_unlocked else 'Activar Platinum' }}
     </button>
   </form>
+  {% if not m.is_admin %}
+  <form method="post" action="{{ url_for('admin_eliminar_miembro') }}" onsubmit="return confirm('¿Eliminar esta cuenta?');">
+    <input type="hidden" name="user_id" value="{{ m.id }}">
+    <button class="btn btn-sm btn-ghost" type="submit">Eliminar</button>
+  </form>
+  {% endif %}
 </article>
 {% else %}
 <p class="muted">No hay miembros registrados.</p>
