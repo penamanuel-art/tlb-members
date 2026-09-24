@@ -17,4 +17,24 @@
 {% else %}
 <p class="muted">La lección de hoy aún no está publicada.</p>
 {% endif %}
+
+<div class="section-head">
+  <h2 class="section-title">ARCHIVO · 30 DÍAS</h2>
+</div>
+<p class="muted">El curso completo, una lección por día.</p>
+<div class="accordion">
+{% for l in archivo %}
+  <details class="acc-item"{% if l.dia == leccion.get('dia') %} open{% endif %}>
+    <summary class="acc-head">
+      <span class="acc-dia">Día {{ l.dia }}</span>
+      <span class="acc-titulo">{{ l.titulo }}</span>
+    </summary>
+    <div class="acc-body">
+      <p class="acc-fase">{{ l.fase }}</p>
+      <p>{{ l.resumen }}</p>
+      <div class="lesson-clave"><strong>La idea clave:</strong> {{ l.clave }}</div>
+    </div>
+  </details>
+{% endfor %}
+</div>
 {% endblock %}
