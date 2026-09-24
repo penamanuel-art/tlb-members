@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}Archivo — The Line Breaker{% endblock %}
+{% block content %}
+
+<section class="tracker-head">
+  <div>
+    <p class="kicker">ARCHIVO DEL BOARD</p>
+    <h2>Jugadas publicadas.</h2>
+  </div>
+</section>
+
+{% for d in dias %}
+<section class="archive-day">
+  <div class="day-head">
+    <h3 class="day-title">{{ d.titulo }}</h3>
+    <span class="day-badge">{{ d.estado }}</span>
+  </div>
+  <div class="plays">
+  {% for j in d.jugadas %}
+    {% if j.bloqueada %}
+      {% include "_play_locked.html" %}
+    {% else %}
+    <article class="play-card level-{{ j.nivel|lower }}">
+      <div class="play-top">
+        <span class="badge badge-{{ j.nivel|lower }}">{{ '★' if j.nivel == 'PLATINUM' else '●' }} {{ j.nivel }}</span>
+        <span class="play-odds">{{ fmt_odds(j.cuota) }}</span>
+      </div>
+      <h3 class="play-pick">{{ j.pick }}</h3>
+      {% if j.comprobante %}
+      <button type="button" class="link-ticket" data-ticket="foto-{{ d.fecha }}-{{ loop.index }}">Ver el ticket →</button>
+      <div class="modal" id="foto-{{ d.fecha }}-{{ loop.index }}" hidden>
+        <div class="modal-card ticket-photo-card">
+          <button type="button" class="modal-close" data-close>✕</button>
+          <img class="ticket-photo" src="{{ url_for('static', filename=j.comprobante) }}" alt="Comprobante {{ j.pick }}">
+        </div>
+      </div>
+      {% endif %}
+      <div class="play-bet">
+        <span class="bet-label">{{ 'Cuota' if j.cuota_texto else 'Cuota' }}</span>
+        <b class="bet-amount">{{ j.cuota_texto if j.cuota_texto else fmt_odds(j.cuota) }}</b>
+        <span class="muted">({{ j.stake_unidades }}u · ${{ '%.0f' % j.stake_monto }})</span>
+        {% if j.edge %}<span class="bet-edge">Edge <b class="pos">+{{ j.edge }}%</b></span>{% endif %}
+      </div>
+      <p class="muted">
+        {% if j.resultado %}<b class="{{ 'pos' if j.resultado == 'GANADA' else 'neg' }}">{{ j.resultado }}</b>{% if j.profit is not none %} {{ '+$%.2f' % j.profit }}{% endif %} · {% endif %}
+        {% if j.verificada %}📸 Verificada · {% endif %}
+        {{ j.estado if j.estado else '' }}
+        {% if j.hora %}{{ j.hora }}{% endif %}
+      </p>
+    </article>
+    {% endif %}
+  {% endfor %}
+  </div>
+</section>
+{% else %}
+<p class="muted">Aún no hay jugadas publicadas.</p>
+{% endfor %}
+
+<div class="section-head">
+  <h2 class="section-title">EL RÉCORD NO SE ESCONDE.</h2>
+</div>
+<section class="history-box">
+  <p><b>Historial verificado</b> — solo cuentan las jugadas respaldadas por su comprobante.</p>
+  <p class="history-line">
+    <b class="pos">{{ res.get('ganadas', 0) }} GANADAS</b> · <b class="neg">{{ res.get('perdidas', 0) }} PERDIDAS</b>
+  </p>
+  <p class="history-line">
+    Ganancia total <b class="pos">{% if res.get('profit_all_time') is not none %}{{ '+$%.2f' % res.get('profit_all_time') }}{% else %}—{% endif %}</b>
+    · ROI <b class="pos">{% if res.get('roi') is not none %}{{ '%+.1f' % res.get('roi') }}%{% else %}—{% endif %}</b>
+  </p>
+</section>
+
+<div class="section-head">
+  <h2 class="section-title">HABLANDO CLARO.</h2>
+</div>
+<p class="muted">Preguntas frecuentes</p>
+<div class="accordion">
+  <details class="acc-item">
+    <summary class="acc-head"><span class="acc-titulo">¿Una jugada Platinum está garantizada?</span></summary>
+    <div class="acc-body"><p>No. Ninguna apuesta está garantizada. Platinum identifica la jugada con mayor valor estimado del día, no una certeza.</p></div>
+  </details>
+  <details class="acc-item">
+    <summary class="acc-head"><span class="acc-titulo">¿Qué incluye mi membresía?</span></summary>
+    <div class="acc-body"><p>Acceso a las jugadas Gold, el historial verificado y el contenido educativo. La jugada principal Platinum se desbloquea con el plan semanal.</p></div>
+  </details>
+  <details class="acc-item">
+    <summary class="acc-head"><span class="acc-titulo">¿Por qué puede haber un día sin jugadas?</span></summary>
+    <div class="acc-body"><p>Porque forzar volumen destruye el edge. Si el mercado no ofrece valor suficiente, la decisión profesional es no apostar.</p></div>
+  </details>
+  <details class="acc-item">
+    <summary class="acc-head"><span class="acc-titulo">¿Cómo desbloqueo la jugada Platinum?</span></summary>
+    <div class="acc-body"><p>Usa el botón «Desbloquear» en la tarjeta Platinum para activar tu acceso semanal.</p></div>
+  </details>
+</div>
+
+{% endblock %}
