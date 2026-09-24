@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}The Line Breaker — Jugadas con valor real{% endblock %}
+{% block content %}
+<section class="hero">
+  <h1>ROMPE LA LÍNEA.<br><span class="accent">TRACKEA TODO.</span></h1>
+  <p class="hero-sub">
+    Jugadas diarias con edge medido contra el mercado.
+    Trackea cada jugada, marca tus resultados y ve tu récord real:
+    unidades netas, ROI y racha.
+  </p>
+  <div class="hero-cta">
+    <a class="btn btn-primary btn-lg" href="{{ url_for('register') }}">Crear cuenta gratis →</a>
+    <a class="btn btn-ghost btn-lg" href="{{ url_for('login') }}">Ya tengo cuenta</a>
+  </div>
+</section>
+
+<section class="features">
+  <div class="feature">
+    <div class="feature-icon">🎯</div>
+    <h3>Jugadas del día</h3>
+    <p>Solo jugadas con edge mínimo de 3 puntos sobre la probabilidad implícita. Sin relleno.</p>
+  </div>
+  <div class="feature">
+    <div class="feature-icon">✅</div>
+    <h3>Track con un toque</h3>
+    <p>Marca cada jugada como trackeada y registra si ganó o perdió. Tu historial, sin hojas de cálculo.</p>
+  </div>
+  <div class="feature">
+    <div class="feature-icon">📊</div>
+    <h3>Métricas reales</h3>
+    <p>Récord, unidades netas, ROI y racha actual. La verdad de tus números, siempre visible.</p>
+  </div>
+</section>
+{% endblock %}

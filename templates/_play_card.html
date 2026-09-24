@@ -1,0 +1,47 @@
+{# Tarjeta de jugada estilo WGT. Requiere: p (jugada), tracked_ids #}
+<article class="play-card level-{{ p.nivel|lower }}">
+  <div class="play-top">
+    <span class="badge badge-{{ p.nivel|lower }}">{{ '★' if p.nivel == 'PLATINUM' else '●' }} {{ p.nivel }}</span>
+    <span class="play-odds">{{ fmt_odds(p.cuota) }}</span>
+  </div>
+  <h3 class="play-pick">{{ p.pick }}</h3>
+  <button type="button" class="link-ticket" data-ticket="ticket-{{ p.id }}">See the ticket →</button>
+  <div class="play-bet">
+    <span class="bet-label">Bet</span>
+    <b class="bet-amount">${{ '%.0f' % p.stake_monto }}</b>
+    <span class="muted">({{ p.stake_unidades }}u)</span>
+    <span class="bet-edge">Edge <b class="pos">+{{ p.edge }}%</b></span>
+  </div>
+  {% if bankroll and p.nivel != 'PLATINUM' %}
+  <p class="my-bet">💰 Tu apuesta: <b>Bet ${{ '%.2f' % (bankroll * p.stake_unidades / 100) }} ({{ p.stake_unidades }}u)</b></p>
+  {% endif %}
+  <div class="play-actions">
+    {% if p.casa_url %}
+    <a class="btn btn-place" href="{{ p.casa_url }}" target="_blank" rel="noopener">Place at {{ p.casa or 'tu casa' }} →</a>
+    {% endif %}
+    {% if p.id in tracked_ids %}
+      <span class="btn btn-tracked">✓ Tracked</span>
+    {% else %}
+      <form method="post" action="{{ url_for('track', play_id=p.id) }}">
+        <button class="btn btn-track" type="submit">+ Track</button>
+      </form>
+    {% endif %}
+  </div>
+</article>
+
+<div class="modal" id="ticket-{{ p.id }}" hidden>
+  <div class="modal-card ticket">
+    <button type="button" class="modal-close" data-close>✕</button>
+    <p class="ticket-brand">THE LINE BREAKER · TICKET</p>
+    <p class="ticket-pick">{{ p.pick }}</p>
+    <div class="ticket-rows">
+      <div><span>Nivel</span><b>{{ '★' if p.nivel == 'PLATINUM' else '●' }} {{ p.nivel }}</b></div>
+      <div><span>Cuota</span><b>{{ fmt_odds(p.cuota) }}</b></div>
+      <div><span>Stake</span><b>{{ p.stake_unidades }}u · ${{ '%.0f' % p.stake_monto }}</b></div>
+      <div><span>Edge</span><b class="pos">+{{ p.edge }}%</b></div>
+      {% if p.casa %}<div><span>Casa</span><b>{{ p.casa }}</b></div>{% endif %}
+      <div><span>Fecha</span><b>{{ p.fecha }}</b></div>
+    </div>
+    <p class="ticket-note">Ticket informativo del programa · Juega responsablemente · 21+</p>
+  </div>
+</div>

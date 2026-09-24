@@ -1,0 +1,20 @@
+# The Line Breaker — blueprint de Render (fase 2, cuentas de miembro)
+# En el dashboard de Render: New + → Blueprint → conectar el repo con este archivo.
+services:
+  - type: web
+    name: the-line-breaker-members
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: tlb-members-db
+          property: connectionString
+
+databases:
+  - name: tlb-members-db
+    plan: free

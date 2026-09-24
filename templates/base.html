@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}The Line Breaker{% endblock %}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-left">
+    <a class="brand" href="{{ url_for('home') if session.get('user_id') else url_for('index') }}">
+      <img src="{{ url_for('static', filename='img/logo.png') }}" alt="The Line Breaker" class="brand-logo">
+    </a>
+    {% if session.get('user_id') %}
+    <div class="menu-wrap">
+      <button class="icon-btn" id="menuBtn" aria-label="Menú">☰</button>
+      <div class="menu-drop" id="menuDrop" hidden>
+        <a href="{{ url_for('home') }}">Hoy</a>
+        <a href="{{ url_for('tracker') }}">Mi Tracker</a>
+        <a href="{{ url_for('cuenta') }}">💰 Mi cuenta</a>
+        <a href="{{ url_for('logout') }}">Cerrar sesión</a>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+  {% if session.get('user_id') %}
+  <nav class="tabs">
+    <a href="{{ url_for('home') }}" class="tab{% if request.endpoint == 'home' %} active{% endif %}">Hoy</a>
+    <a href="{{ url_for('tracker') }}" class="tab{% if request.endpoint == 'tracker' %} active{% endif %}">Tracker</a>
+  </nav>
+  <div class="avatar" title="{{ nombre_corto }}">{{ inicial }}</div>
+  {% else %}
+  <nav class="nav">
+    <a class="nav-link" href="{{ url_for('login') }}">Entrar</a>
+    <a class="btn btn-primary btn-sm" href="{{ url_for('register') }}">Crear cuenta</a>
+  </nav>
+  {% endif %}
+</header>
+
+<main class="container">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flashes">
+        {% for cat, msg in messages %}
+          <div class="flash flash-{{ cat }}">{{ msg }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+  {% block content %}{% endblock %}
+</main>
+
+<footer class="footer">
+  <p>THE LINE BREAKER · Juega responsablemente · 21+</p>
+</footer>
+
+<script>
+(function () {
+  var btn = document.getElementById('menuBtn');
+  var drop = document.getElementById('menuDrop');
+  if (btn && drop) {
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      drop.hidden = !drop.hidden;
+    });
+    document.addEventListener('click', function () { drop.hidden = true; });
+  }
+  document.querySelectorAll('[data-ticket]').forEach(function (el) {
+    el.addEventListener('click', function () {
+      var m = document.getElementById(el.getAttribute('data-ticket'));
+      if (m) m.hidden = false;
+    });
+  });
+  document.querySelectorAll('.modal').forEach(function (m) {
+    m.addEventListener('click', function (e) {
+      if (e.target === m || e.target.hasAttribute('data-close')) m.hidden = true;
+    });
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') document.querySelectorAll('.modal').forEach(function (m) { m.hidden = true; });
+  });
+})();
+</script>
+</body>
+</html>

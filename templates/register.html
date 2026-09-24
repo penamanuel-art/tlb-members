@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Crear cuenta — The Line Breaker{% endblock %}
+{% block content %}
+<section class="auth-card">
+  <h2>Crear cuenta <span class="accent">gratis</span></h2>
+  <p class="muted">Sin tarjeta, sin pagos. Solo tu tracker.</p>
+  <form method="post" action="{{ url_for('register') }}">
+    <label>Nombre
+      <input type="text" name="nombre" required autocomplete="name" placeholder="Tu nombre">
+    </label>
+    <label>Email
+      <input type="email" name="email" required autocomplete="email" placeholder="tu@email.com">
+    </label>
+    <label>Contraseña
+      <input type="password" name="password" required minlength="6" autocomplete="new-password" placeholder="Mínimo 6 caracteres">
+    </label>
+    <button class="btn btn-primary btn-block" type="submit">Crear mi cuenta →</button>
+  </form>
+  <p class="muted center">¿Ya tienes cuenta? <a href="{{ url_for('login') }}">Entra aquí</a></p>
+</section>
+{% endblock %}

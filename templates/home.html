@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Hoy — The Line Breaker{% endblock %}
+{% block content %}
+
+<section class="greet">
+  <p class="greet-date"><span class="dot"></span>{{ fecha }}</p>
+  <h1 class="greet-title">{{ nombre_corto }},<br><span class="greet-accent">esto es hoy.</span></h1>
+  <p class="greet-sub">{{ plays|length }} jugada{{ 's' if plays|length != 1 }} en tu tarjeta. Coloca cada una en tu casa y pulsa <b>+ Track</b> para marcarla.</p>
+  <p class="bankroll-pill">
+    {% if bankroll %}
+    💰 Bankroll: <b>${{ '%.2f' % bankroll }}</b> · <a href="{{ url_for('cuenta') }}">cambiar</a>
+    {% else %}
+    💰 Bankroll: <span class="muted">sin configurar</span> · <a href="{{ url_for('cuenta') }}">configurar</a>
+    {% endif %}
+  </p>
+</section>
+
+<section class="profit-card">
+  <p class="profit-kicker">THE LINE BREAKER PROFIT · ALL-TIME</p>
+  <p class="profit-value {{ 'pos' if program.get('profit_all_time', 0) >= 0 else 'neg' }}">{{ fmt_money(program.get('profit_all_time', 0)) }}</p>
+  <p class="profit-note">{{ program.get('profit_note', '') }}</p>
+  <div class="streak-chip">🔥 <b>{{ racha }}</b> <span>RACHA DE CHECK-IN</span></div>
+</section>
+
+<div class="section-head">
+  <h2 class="section-title">TUS JUGADAS · ESTA NOCHE</h2>
+  <a class="link-more" href="{{ url_for('tracker') }}">View in My Bets →</a>
+</div>
+
+{% if plays %}
+<div class="plays">
+  {% for p in plays %}
+    {% include "_play_card.html" %}
+  {% endfor %}
+</div>
+{% else %}
+<p class="muted">Hoy no hay jugadas con valor.</p>
+{% endif %}
+
+{% endblock %}
