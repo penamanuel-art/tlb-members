@@ -896,6 +896,33 @@ def admin_toggle_platinum():
     return redirect(url_for("admin_miembros"))
 
 
+@app.route("/admin/miembros/eliminar", methods=["POST"])
+@login_required
+def admin_eliminar_miembro():
+    """Elimina una cuenta de miembro (solo admin). No permite borrarse a sí mismo ni a otro admin."""
+    me = current_user()
+    if not is_admin_for(me):
+        flash("No tienes permiso.", "error")
+        return redirect(url_for("home"))
+    user_id = request.form.get("user_id", type=int)
+    if not user_id or (me and user_id == me["id"]):
+        flash("No puedes eliminar esa cuenta.", "error")
+        return redirect(url_for("admin_miembros"))
+    db = get_db()
+    target = db.execute("SELECT * FROM users WHERE id = ?", (user_id,)).fetchone()
+    if not target:
+        flash("Esa cuenta ya no existe.", "error")
+        return redirect(url_for("admin_miembros"))
+    if is_admin_for(target):
+        flash("No puedes eliminar a otro administrador.", "error")
+        return redirect(url_for("admin_miembros"))
+    db.execute("DELETE FROM tracked_plays WHERE user_id = ?", (user_id,))
+    db.execute("DELETE FROM users WHERE id = ?", (user_id,))
+    db.commit()
+    flash(f"Cuenta {target['email']} eliminada.", "ok")
+    return redirect(url_for("admin_miembros"))
+
+
 @app.route("/admin/miembros")
 @login_required
 def admin_miembros():
