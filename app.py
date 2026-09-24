@@ -34,6 +34,12 @@ os.makedirs(INSTANCE_DIR, exist_ok=True)
 DATABASE_URL = os.environ.get("DATABASE_URL")
 USE_PG = bool(DATABASE_URL)
 
+# Link de pago de Stripe para desbloquear Platinum ($1 primera semana, luego $23/semana).
+# Se cambia sin tocar código con la env var STRIPE_PLATINUM_URL en Render.
+STRIPE_PLATINUM_URL = os.environ.get(
+    "STRIPE_PLATINUM_URL", "https://buy.stripe.com/test_7sY3cobUk2VH0DO4SrcjS00"
+)
+
 try:
     import psycopg
     from psycopg.rows import dict_row
@@ -851,7 +857,35 @@ def desbloquear_platinum():
     return render_template(
         "desbloquear.html",
         ya_desbloqueada=platinum_unlocked_for(user),
+        stripe_url=STRIPE_PLATINUM_URL,
     )
+
+
+@app.route("/admin/miembros/platinum", methods=["POST"])
+@login_required
+def admin_toggle_platinum():
+    """Activa o quita el acceso Platinum de un miembro (solo Alex).
+
+    Stripe (payment link) no avisa solo a la app, así que cuando llega
+    la notificación de pago Alex activa el acceso aquí con un toque.
+    """
+    db = get_db()
+    if not is_admin_for(current_user()):
+        flash("No tienes permiso.", "error")
+        return redirect(url_for("home"))
+    user_id = request.form.get("user_id")
+    row = db.execute("SELECT platinum_unlocked FROM users WHERE id = ?", (user_id,)).fetchone()
+    if not row:
+        flash("Miembro no encontrado.", "error")
+    else:
+        nuevo = 0 if row["platinum_unlocked"] else 1
+        db.execute("UPDATE users SET platinum_unlocked = ? WHERE id = ?", (nuevo, user_id))
+        db.commit()
+        flash(
+            "Acceso Platinum activado." if nuevo else "Acceso Platinum desactivado.",
+            "ok",
+        )
+    return redirect(url_for("admin_miembros"))
 
 
 @app.route("/admin/miembros")
@@ -864,7 +898,7 @@ def admin_miembros():
         flash("No tienes permiso para ver esta página.", "error")
         return redirect(url_for("home"))
     miembros = db.execute(
-        "SELECT nombre, email, created_at, platinum_unlocked, is_admin "
+        "SELECT id, nombre, email, created_at, platinum_unlocked, is_admin "
         "FROM users ORDER BY created_at DESC"
     ).fetchall()
     return render_template("admin_miembros.html", miembros=[dict(m) for m in miembros])
