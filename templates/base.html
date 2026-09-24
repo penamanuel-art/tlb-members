@@ -18,6 +18,8 @@
       <div class="menu-drop" id="menuDrop" hidden>
         <a href="{{ url_for('home') }}">Hoy</a>
         <a href="{{ url_for('tracker') }}">Mi Tracker</a>
+        <a href="{{ url_for('masterclass') }}">🎓 Masterclass</a>
+        <a href="{{ url_for('resultados') }}">📊 Resultados</a>
         <a href="{{ url_for('cuenta') }}">💰 Mi cuenta</a>
         <a href="{{ url_for('logout') }}">Cerrar sesión</a>
       </div>
@@ -28,6 +30,8 @@
   <nav class="tabs">
     <a href="{{ url_for('home') }}" class="tab{% if request.endpoint == 'home' %} active{% endif %}">Hoy</a>
     <a href="{{ url_for('tracker') }}" class="tab{% if request.endpoint == 'tracker' %} active{% endif %}">Tracker</a>
+    <a href="{{ url_for('masterclass') }}" class="tab{% if request.endpoint == 'masterclass' %} active{% endif %}">Masterclass</a>
+    <a href="{{ url_for('resultados') }}" class="tab{% if request.endpoint == 'resultados' %} active{% endif %}">Resultados</a>
   </nav>
   <div class="avatar" title="{{ nombre_corto }}">{{ inicial }}</div>
   {% else %}
