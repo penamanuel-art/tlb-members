@@ -133,6 +133,7 @@ CREATE TABLE IF NOT EXISTS users (
     password_hash TEXT NOT NULL,
     bankroll REAL,               -- bankroll del miembro (NULL = sin configurar)
     platinum_unlocked INTEGER NOT NULL DEFAULT 0,  -- 1 = Platinum desbloqueada
+    is_admin INTEGER NOT NULL DEFAULT 0,           -- 1 = administrador
     created_at TEXT NOT NULL
 );
 CREATE TABLE IF NOT EXISTS tracked_plays (
@@ -166,6 +167,7 @@ CREATE TABLE IF NOT EXISTS users (
     password_hash TEXT NOT NULL,
     bankroll DOUBLE PRECISION,   -- bankroll del miembro (NULL = sin configurar)
     platinum_unlocked INTEGER NOT NULL DEFAULT 0,  -- 1 = Platinum desbloqueada
+    is_admin INTEGER NOT NULL DEFAULT 0,           -- 1 = administrador
     created_at TEXT NOT NULL
 );
 CREATE TABLE IF NOT EXISTS tracked_plays (
@@ -305,6 +307,59 @@ def platinum_unlocked_for(user) -> bool:
         return False
 
 
+def is_admin_for(user) -> bool:
+    """True si el usuario es administrador."""
+    try:
+        return bool(user and user["is_admin"])
+    except (KeyError, IndexError, TypeError):
+        return False
+
+
+def admin_email() -> str:
+    """Email del administrador (env ADMIN_EMAIL), en minúsculas."""
+    return (os.environ.get("ADMIN_EMAIL") or "").strip().lower()
+
+
+def notify_new_member(nombre: str, email: str):
+    """Avisa a Alex por email cuando alguien se registra.
+
+    SMTP Gmail con EMAIL_USER / EMAIL_PASS / ADMIN_EMAIL.
+    Si las variables no están configuradas o el envío falla, no hace
+    nada: el registro sigue funcionando sin errores para el usuario.
+    Se ejecuta en un hilo aparte para no retrasar la respuesta.
+    """
+    user = (os.environ.get("EMAIL_USER") or "").strip()
+    pwd = os.environ.get("EMAIL_PASS") or ""
+    dest = admin_email()
+    if not (user and pwd and dest):
+        return
+
+    def _send():
+        try:
+            import smtplib
+            from email.message import EmailMessage
+
+            msg = EmailMessage()
+            msg["Subject"] = f"The Line Breaker: nuevo miembro — {nombre}"
+            msg["From"] = user
+            msg["To"] = dest
+            msg.set_content(
+                f"Se registró un nuevo miembro:\n\n"
+                f"Nombre: {nombre}\n"
+                f"Email: {email}\n"
+                f"Fecha: {datetime.now(TZ).strftime('%Y-%m-%d %H:%M %Z')}\n"
+            )
+            with smtplib.SMTP("smtp.gmail.com", 587, timeout=20) as s:
+                s.starttls()
+                s.login(user, pwd)
+                s.send_message(msg)
+        except Exception:
+            pass  # silencioso: nunca rompe el registro
+
+    import threading
+    threading.Thread(target=_send, daemon=True).start()
+
+
 # ------------------------------------------------------------- Plays ----
 def load_data():
     """Devuelve (program, plays). Soporta plays.json como lista (viejo) o dict (nuevo)."""
@@ -441,7 +496,11 @@ app.jinja_env.globals.update(fmt_money=fmt_money, fmt_units=fmt_units, fmt_odds=
 def inject_user():
     nombre = session.get("nombre", "")
     corto = primer_nombre(nombre)
-    return {"nombre_corto": corto, "inicial": corto[:1].upper()}
+    return {
+        "nombre_corto": corto,
+        "inicial": corto[:1].upper(),
+        "es_admin": bool(session.get("is_admin")),
+    }
 
 
 def back(fallback="home"):
@@ -473,6 +532,8 @@ def migrate_db():
             pending.append(f"ALTER TABLE users ADD COLUMN bankroll {coltype}")
         if "platinum_unlocked" not in cols:
             pending.append("ALTER TABLE users ADD COLUMN platinum_unlocked INTEGER NOT NULL DEFAULT 0")
+        if "is_admin" not in cols:
+            pending.append("ALTER TABLE users ADD COLUMN is_admin INTEGER NOT NULL DEFAULT 0")
         for stmt in pending:
             conn.execute(stmt)
         if pending:
@@ -540,8 +601,15 @@ def register():
             (nombre, email, hash_password(password), now_iso()),
         )
         db.commit()
+        # El email del admin (ADMIN_EMAIL) queda marcado automáticamente.
+        es_admin = bool(admin_email()) and email == admin_email()
+        if es_admin:
+            db.execute("UPDATE users SET is_admin = 1 WHERE id = ?", (new_id,))
+            db.commit()
         session["user_id"] = new_id
         session["nombre"] = nombre
+        session["is_admin"] = es_admin
+        notify_new_member(nombre, email)
         flash(f"¡Bienvenido, {nombre}! Tu cuenta está lista.", "ok")
         return redirect(url_for("home"))
     return render_template("register.html")
@@ -559,8 +627,16 @@ def login():
         if not user or not check_password(password, user["password_hash"]):
             flash("Email o contraseña incorrectos.", "error")
             return render_template("login.html"), 401
+        # Marca admin automáticamente si el email coincide con ADMIN_EMAIL
+        # (cubre cuentas creadas antes de configurar la variable).
+        es_admin = is_admin_for(user)
+        if not es_admin and admin_email() and email == admin_email():
+            db.execute("UPDATE users SET is_admin = 1 WHERE id = ?", (user["id"],))
+            db.commit()
+            es_admin = True
         session["user_id"] = user["id"]
         session["nombre"] = user["nombre"]
+        session["is_admin"] = es_admin
         flash(f"¡Hola de nuevo, {user['nombre']}!", "ok")
         next_url = request.args.get("next") or url_for("home")
         return redirect(next_url)
@@ -744,6 +820,22 @@ def desbloquear_platinum():
         "desbloquear.html",
         ya_desbloqueada=platinum_unlocked_for(user),
     )
+
+
+@app.route("/admin/miembros")
+@login_required
+def admin_miembros():
+    """Lista privada de miembros — solo para Alex (is_admin=1)."""
+    db = get_db()
+    user = current_user()
+    if not is_admin_for(user):
+        flash("No tienes permiso para ver esta página.", "error")
+        return redirect(url_for("home"))
+    miembros = db.execute(
+        "SELECT nombre, email, created_at, platinum_unlocked, is_admin "
+        "FROM users ORDER BY created_at DESC"
+    ).fetchall()
+    return render_template("admin_miembros.html", miembros=[dict(m) for m in miembros])
 
 
 @app.route("/resultados")
