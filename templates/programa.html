@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}El Programa — The Line Breaker{% endblock %}
+{% block content %}
+
+<section class="tracker-head">
+  <div>
+    <p class="kicker">EL PROGRAMA</p>
+    <h2>Antes de apostar, edúcate.</h2>
+  </div>
+</section>
+
+<blockquote class="credo">
+  <p>Solo jugamos dos jugadas al día, no más. Mismo monto, mismas jugadas. No perseguimos pérdidas ni ganancias. La disciplina es la base del éxito y de ser rentables.</p>
+  <footer>— El credo de The Line Breaker</footer>
+</blockquote>
+
+<div class="section-head">
+  <h2 class="section-title">LOS FUNDAMENTOS</h2>
+</div>
+<div class="fund-grid">
+  <article class="fund-card"><span class="fund-num">01</span><h4>DISCIPLINA TOTAL</h4><p>El plan manda. La emoción nunca cambia una decisión.</p></article>
+  <article class="fund-card"><span class="fund-num">02</span><h4>GESTIÓN DE CAPITAL</h4><p>El stake se protege y se respeta en cada jugada.</p></article>
+  <article class="fund-card"><span class="fund-num">03</span><h4>SOLO NÚMEROS</h4><p>Sin sentimientos ni fanaticada: decide el valor.</p></article>
+  <article class="fund-card"><span class="fund-num">04</span><h4>VALOR EN LA LÍNEA</h4><p>El precio correcto importa tanto como el pick.</p></article>
+  <article class="fund-card"><span class="fund-num">05</span><h4>CONSISTENCIA DIARIA</h4><p>Mismo proceso, mismas reglas, todos los días.</p></article>
+</div>
+
+<div class="section-head">
+  <h2 class="section-title">EL MÉTODO</h2>
+</div>
+<p class="muted">Un sistema. Tres filtros.</p>
+<div class="method-steps">
+  <article class="method-step"><span class="step-num">01 / MODELO</span><h3>LÍNEA JUSTA</h3><p>La probabilidad estimada se calcula antes de evaluar si el precio disponible merece una apuesta.</p></article>
+  <article class="method-step"><span class="step-num">02 / MERCADO</span><h3>EDGE REAL</h3><p>Se compara la línea justa con las mejores cuotas. La investigación puede vetar; nunca inventar valor.</p></article>
+  <article class="method-step"><span class="step-num">03 / DISCIPLINA</span><h3>STAKE FIJO</h3><p>El stake se mantiene disciplinado. Ni las pérdidas ni las rachas cambian el monto.</p></article>
+</div>
+
+<section class="princ-strip">
+  <div class="princ"><b>Edge primero</b><span>Sin ventaja medible, no hay jugada</span></div>
+  <div class="princ"><b>Máximo 2</b><span>Calidad sobre volumen cada día</span></div>
+  <div class="princ"><b>Récord público</b><span>Cada resultado queda visible</span></div>
+</section>
+
+<p class="center"><a class="btn btn-place" href="{{ url_for('masterclass') }}">Entrar a la Masterclass →</a></p>
+
+{% endblock %}
