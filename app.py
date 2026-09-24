@@ -74,6 +74,8 @@ DB_PATH = os.path.join(INSTANCE_DIR, "members.db")
 PLAYS_PATH = os.path.join(BASE_DIR, "data", "plays.json")
 MASTERCLASS_PATH = os.path.join(BASE_DIR, "data", "masterclass.json")
 RESULTS_PATH = os.path.join(BASE_DIR, "data", "results.json")
+ARCHIVE_PATH = os.path.join(BASE_DIR, "data", "archive.json")
+MASTERCLASS_ARCHIVO_PATH = os.path.join(BASE_DIR, "data", "masterclass-archivo.json")
 
 
 # ---------------------------------------------------------------- DB ----
@@ -130,6 +132,7 @@ CREATE TABLE IF NOT EXISTS users (
     email TEXT NOT NULL UNIQUE,
     password_hash TEXT NOT NULL,
     bankroll REAL,               -- bankroll del miembro (NULL = sin configurar)
+    platinum_unlocked INTEGER NOT NULL DEFAULT 0,  -- 1 = Platinum desbloqueada
     created_at TEXT NOT NULL
 );
 CREATE TABLE IF NOT EXISTS tracked_plays (
@@ -162,6 +165,7 @@ CREATE TABLE IF NOT EXISTS users (
     email TEXT NOT NULL UNIQUE,
     password_hash TEXT NOT NULL,
     bankroll DOUBLE PRECISION,   -- bankroll del miembro (NULL = sin configurar)
+    platinum_unlocked INTEGER NOT NULL DEFAULT 0,  -- 1 = Platinum desbloqueada
     created_at TEXT NOT NULL
 );
 CREATE TABLE IF NOT EXISTS tracked_plays (
@@ -293,6 +297,14 @@ def current_user():
     return db.execute("SELECT * FROM users WHERE id = ?", (session["user_id"],)).fetchone()
 
 
+def platinum_unlocked_for(user) -> bool:
+    """True si el miembro desbloqueó la jugada Platinum (default: bloqueada)."""
+    try:
+        return bool(user and user["platinum_unlocked"])
+    except (KeyError, IndexError, TypeError):
+        return False
+
+
 # ------------------------------------------------------------- Plays ----
 def load_data():
     """Devuelve (program, plays). Soporta plays.json como lista (viejo) o dict (nuevo)."""
@@ -332,8 +344,18 @@ def load_masterclass():
     return load_json_file(MASTERCLASS_PATH)
 
 
+def load_masterclass_archivo():
+    """Las 30 lecciones del curso (archivo estático)."""
+    return load_json_file(MASTERCLASS_ARCHIVO_PATH).get("lecciones", [])
+
+
 def load_results():
     return load_json_file(RESULTS_PATH)
+
+
+def load_archive():
+    """Archivo de jugadas publicadas por fecha."""
+    return load_json_file(ARCHIVE_PATH).get("dias", [])
 
 
 def american_profit_ratio(odds) -> float:
@@ -433,7 +455,7 @@ init_db()  # idempotente: crea las tablas si no existen
 
 
 def migrate_db():
-    """Migración segura: agrega la columna bankroll si falta (sin borrar datos)."""
+    """Migración segura: agrega columnas si faltan (sin borrar datos)."""
     conn = _raw_connect()
     try:
         if USE_PG:
@@ -446,8 +468,14 @@ def migrate_db():
         else:
             cols = {r[1] for r in conn.execute("PRAGMA table_info(users)").fetchall()}
             coltype = "REAL"
+        pending = []
         if "bankroll" not in cols:
-            conn.execute(f"ALTER TABLE users ADD COLUMN bankroll {coltype}")
+            pending.append(f"ALTER TABLE users ADD COLUMN bankroll {coltype}")
+        if "platinum_unlocked" not in cols:
+            pending.append("ALTER TABLE users ADD COLUMN platinum_unlocked INTEGER NOT NULL DEFAULT 0")
+        for stmt in pending:
+            conn.execute(stmt)
+        if pending:
             conn.commit()
     finally:
         conn.close()
@@ -486,6 +514,7 @@ def home():
         fecha=fecha_larga(),
         racha=checkin_streak(db, session["user_id"]),
         bankroll=user["bankroll"] if user else None,
+        platinum_unlocked=platinum_unlocked_for(user),
     )
 
 
@@ -600,6 +629,7 @@ def tracker():
         stats=stats,
         nombre=session.get("nombre", ""),
         bankroll=user["bankroll"] if user else None,
+        platinum_unlocked=platinum_unlocked_for(user),
     )
 
 
@@ -610,6 +640,10 @@ def track(play_id):
     if not play:
         flash("Jugada no encontrada.", "error")
         return redirect(url_for("home"))
+    # La Platinum bloqueada no se puede trackear: no revela nada.
+    if play.get("nivel") == "PLATINUM" and not platinum_unlocked_for(current_user()):
+        flash("La jugada Platinum está bloqueada. Desbloquéala para trackearla.", "warn")
+        return redirect(url_for("desbloquear_platinum"))
     db = get_db()
     try:
         db.execute(
@@ -673,7 +707,43 @@ def untrack(tracked_id):
 def masterclass():
     db = get_db()
     record_checkin(db, session["user_id"])
-    return render_template("masterclass.html", leccion=load_masterclass())
+    return render_template(
+        "masterclass.html",
+        leccion=load_masterclass(),
+        archivo=load_masterclass_archivo(),
+    )
+
+
+@app.route("/programa")
+@login_required
+def programa():
+    db = get_db()
+    record_checkin(db, session["user_id"])
+    return render_template("programa.html")
+
+
+@app.route("/archivo")
+@login_required
+def archivo():
+    db = get_db()
+    record_checkin(db, session["user_id"])
+    return render_template(
+        "archivo.html",
+        dias=load_archive(),
+        res=load_results(),
+    )
+
+
+@app.route("/desbloquear-platinum")
+@login_required
+def desbloquear_platinum():
+    db = get_db()
+    record_checkin(db, session["user_id"])
+    user = current_user()
+    return render_template(
+        "desbloquear.html",
+        ya_desbloqueada=platinum_unlocked_for(user),
+    )
 
 
 @app.route("/resultados")
