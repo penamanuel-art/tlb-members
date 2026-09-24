@@ -1,0 +1,13 @@
+{# Tarjeta de jugada PLATINUM bloqueada. No revela nada: ni pick, ni cuota, ni stake, ni edge. #}
+<article class="play-card play-locked">
+  <div class="play-top">
+    <span class="badge badge-platinum">★ PLATINUM</span>
+  </div>
+  <div class="locked-body">
+    <div class="locked-icon">🔒</div>
+    <h3 class="locked-title">Jugada Platinum reservada</h3>
+    <p class="locked-text">La jugada principal del día — la de mayor valor estimado — está reservada para miembros Platinum.</p>
+    <p class="locked-price"><b>$1</b> la primera semana, luego <b>$23/semana</b> · cancela cuando quieras</p>
+    <a class="btn btn-place" href="{{ url_for('desbloquear_platinum') }}">Desbloquear →</a>
+  </div>
+</article>
