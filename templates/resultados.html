@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Resultados — The Line Breaker{% endblock %}
+{% block content %}
+<section class="tracker-head">
+  <div>
+    <p class="kicker">RESULTADOS DEL PROGRAMA</p>
+    <h2>Cada jugada pública, ganada o perdida</h2>
+  </div>
+</section>
+{% set profit = res.get('profit_all_time') %}
+{% set roi = res.get('roi') %}
+<section class="stats-grid">
+  <div class="stat">
+    <span class="stat-label">PROFIT TOTAL</span>
+    <span class="stat-value {{ 'pos' if profit is not none and profit > 0 else ('neg' if profit is not none and profit < 0 else '') }}">{% if profit is not none %}{{ '+$%.2f' % profit }}{% else %}—{% endif %}</span>
+    <span class="stat-sub">real del sistema</span>
+  </div>
+  <div class="stat">
+    <span class="stat-label">RÉCORD</span>
+    <span class="stat-value">{{ res.get('ganadas', 0) }}–{{ res.get('perdidas', 0) }}</span>
+    <span class="stat-sub">jugadas liquidadas</span>
+  </div>
+  <div class="stat">
+    <span class="stat-label">ROI</span>
+    <span class="stat-value {{ 'pos' if roi is not none and roi > 0 else ('neg' if roi is not none and roi < 0 else '') }}">{% if roi is not none %}{{ '%+.1f' % roi }}%{% else %}—{% endif %}</span>
+    <span class="stat-sub">sobre lo arriesgado</span>
+  </div>
+  <div class="stat">
+    <span class="stat-label">WIN RATE</span>
+    <span class="stat-value">{% if res.get('win_rate') is not none %}{{ '%.1f' % res.get('win_rate') }}%{% else %}—{% endif %}</span>
+    <span class="stat-sub">ganadas / liquidadas</span>
+  </div>
+</section>
+{% if res.get('nota') %}<p class="muted center">{{ res.get('nota') }}</p>{% endif %}
+{% endblock %}
