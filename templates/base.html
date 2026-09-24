@@ -35,8 +35,6 @@
     <a href="{{ url_for('tracker') }}" class="tab{% if request.endpoint == 'tracker' %} active{% endif %}">Tracker</a>
     <a href="{{ url_for('masterclass') }}" class="tab{% if request.endpoint == 'masterclass' %} active{% endif %}">Masterclass</a>
     <a href="{{ url_for('resultados') }}" class="tab{% if request.endpoint == 'resultados' %} active{% endif %}">Resultados</a>
-    <a href="{{ url_for('programa') }}" class="tab{% if request.endpoint == 'programa' %} active{% endif %}">Programa</a>
-    <a href="{{ url_for('archivo') }}" class="tab{% if request.endpoint == 'archivo' %} active{% endif %}">Archivo</a>
   </nav>
   <div class="avatar" title="{{ nombre_corto }}">{{ inicial }}</div>
   {% else %}
