@@ -18,14 +18,12 @@
     {% if m.platinum_unlocked %}<span class="m-pill on">★ Platinum</span>{% endif %}
     {% if m.is_admin %}<span class="m-pill on">Admin</span>{% endif %}
   </div>
-  {% if not m.is_admin %}
   <form method="post" action="{{ url_for('admin_toggle_platinum') }}">
     <input type="hidden" name="user_id" value="{{ m.id }}">
     <button class="btn btn-sm {{ 'btn-ghost' if m.platinum_unlocked else 'btn-place' }}" type="submit">
       {{ 'Quitar Platinum' if m.platinum_unlocked else 'Activar Platinum' }}
     </button>
   </form>
-  {% endif %}
 </article>
 {% else %}
 <p class="muted">No hay miembros registrados.</p>
