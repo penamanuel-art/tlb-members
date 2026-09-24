@@ -242,6 +242,16 @@ def primer_nombre(nombre: str) -> str:
     return (nombre or "").strip().split(" ")[0] if nombre else ""
 
 
+def saludo_hoy() -> str:
+    """Saludo según la hora en America/New_York."""
+    h = datetime.now(TZ).hour
+    if 5 <= h < 12:
+        return "Buenos días"
+    if 12 <= h < 19:
+        return "Buenas tardes"
+    return "Buenas noches"
+
+
 def record_checkin(db, user_id: int):
     if db.use_pg:
         db.execute(
@@ -560,22 +570,44 @@ def home():
     record_checkin(db, session["user_id"])
     program, plays = load_data()
     user = current_user()
-    tracked_ids = {
-        r["play_id"]
-        for r in db.execute(
-            "SELECT play_id FROM tracked_plays WHERE user_id = ?",
-            (session["user_id"],),
-        ).fetchall()
-    }
+    tracked_rows = db.execute(
+        "SELECT * FROM tracked_plays WHERE user_id = ?",
+        (session["user_id"],),
+    ).fetchall()
+    tracked_ids = {r["play_id"] for r in tracked_rows}
+    tstats = compute_stats([dict(r) for r in tracked_rows])
+    # Resultados recientes: jugadas liquidadas del archivo (sin bloqueadas).
+    recientes = []
+    for d in load_archive():
+        for j in d.get("jugadas", []) or []:
+            if (
+                j.get("resultado") in ("GANADA", "PERDIDA")
+                and not j.get("bloqueada")
+                and j.get("pick")
+            ):
+                recientes.append({
+                    "fecha": d.get("titulo") or d.get("fecha", ""),
+                    "nivel": j.get("nivel", ""),
+                    "pick": j.get("pick", ""),
+                    "cuota": j.get("cuota"),
+                    "resultado": j.get("resultado"),
+                    "profit": j.get("profit") if j.get("profit") is not None else 0.0,
+                })
+    recientes = recientes[:6]
     return render_template(
         "home.html",
         plays=plays,
         tracked_ids=tracked_ids,
         program=program,
         fecha=fecha_larga(),
+        saludo=saludo_hoy(),
         racha=checkin_streak(db, session["user_id"]),
         bankroll=user["bankroll"] if user else None,
         platinum_unlocked=platinum_unlocked_for(user),
+        res=load_results(),
+        leccion=load_masterclass(),
+        tstats=tstats,
+        recientes=recientes,
     )
 
 
