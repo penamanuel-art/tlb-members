@@ -22,8 +22,8 @@
     <li>La de mayor valor estimado del día</li>
     <li>Todo lo demás sigue igual: Gold, tracker, Masterclass y resultados</li>
   </ul>
-  <button class="btn btn-place" type="button" disabled title="Disponible próximamente">El pago en línea se está configurando</button>
-  <p class="muted center">Estamos conectando el pago con tarjeta. Te avisaremos en cuanto esté listo para activar tu acceso.</p>
+  <a class="btn btn-place btn-block" href="{{ stripe_url }}" target="_blank" rel="noopener">Pagar $1 y desbloquear →</a>
+  <p class="muted center">Pago seguro con Stripe. $1 la primera semana, luego $23/semana · cancela cuando quieras. Después de pagar, activamos tu acceso Platinum.</p>
 </article>
 {% endif %}
 
