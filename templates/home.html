@@ -16,7 +16,7 @@
 </section>
 
 <section class="profit-card">
-  <p class="profit-kicker">THE LINE BREAKER PROFIT · ALL-TIME</p>
+  <p class="profit-kicker">PROFIT HISTÓRICO</p>
   <p class="profit-value {{ 'pos' if program.get('profit_all_time', 0) >= 0 else 'neg' }}">{{ fmt_money(program.get('profit_all_time', 0)) }}</p>
   <p class="profit-note">{{ program.get('profit_note', '') }}</p>
   <div class="streak-chip">🔥 <b>{{ racha }}</b> <span>RACHA DE CHECK-IN</span></div>
@@ -24,7 +24,7 @@
 
 <div class="section-head">
   <h2 class="section-title">TUS JUGADAS · ESTA NOCHE</h2>
-  <a class="link-more" href="{{ url_for('tracker') }}">View in My Bets →</a>
+  <a class="link-more" href="{{ url_for('tracker') }}">Ver mis jugadas →</a>
 </div>
 
 {% if plays %}
