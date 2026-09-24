@@ -674,7 +674,8 @@ def login():
             es_admin = True
         # Arranque: si todavía no existe ningún admin, el primero en entrar lo es.
         if not es_admin:
-            n_admin = db.execute("SELECT COUNT(*) FROM users WHERE is_admin = 1").fetchone()[0]
+            fila = db.execute("SELECT COUNT(*) AS n FROM users WHERE is_admin = 1").fetchone()
+            n_admin = fila["n"] if isinstance(fila, dict) else fila[0]
             if n_admin == 0:
                 db.execute("UPDATE users SET is_admin = 1 WHERE id = ?", (user["id"],))
                 db.commit()
