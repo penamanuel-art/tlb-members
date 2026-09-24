@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Miembros — Admin{% endblock %}
+{% block content %}
+
+<section class="tracker-head">
+  <div>
+    <p class="kicker">ADMIN</p>
+    <h2>{{ miembros|length }} miembro{{ 's' if miembros|length != 1 }}</h2>
+  </div>
+</section>
+
+{% for m in miembros %}
+<article class="member-row">
+  <div class="m-name">{{ m.nombre }}</div>
+  <div class="m-email">{{ m.email }}</div>
+  <div class="m-meta">
+    <span class="m-pill">Registro: {{ m.created_at[:10] if m.created_at else '—' }}</span>
+    {% if m.platinum_unlocked %}<span class="m-pill on">★ Platinum</span>{% endif %}
+    {% if m.is_admin %}<span class="m-pill on">Admin</span>{% endif %}
+  </div>
+</article>
+{% else %}
+<p class="muted">No hay miembros registrados.</p>
+{% endfor %}
+
+{% endblock %}
