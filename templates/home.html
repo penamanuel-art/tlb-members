@@ -2,43 +2,196 @@
 {% block title %}Hoy — The Line Breaker{% endblock %}
 {% block content %}
 
+<!-- 01 · HERO -->
 <section class="greet">
-  <p class="greet-date"><span class="dot"></span>{{ fecha }}</p>
-  <h1 class="greet-title">{{ nombre_corto }},<br><span class="greet-accent">esto es hoy.</span></h1>
-  <p class="greet-sub">{{ plays|length }} jugada{{ 's' if plays|length != 1 }} en tu tarjeta. Coloca cada una en tu casa y pulsa <b>+ Track</b> para marcarla.</p>
-  <p class="bankroll-pill">
-    {% if bankroll %}
-    💰 Bankroll: <b>${{ '%.2f' % bankroll }}</b> · <a href="{{ url_for('cuenta') }}">cambiar</a>
-    {% else %}
-    💰 Bankroll: <span class="muted">sin configurar</span> · <a href="{{ url_for('cuenta') }}">configurar</a>
-    {% endif %}
-  </p>
+  <p class="greet-date"><span class="dot"></span>{{ saludo }} · {{ fecha }}</p>
+  <h1 class="greet-title">{{ saludo }},<br><span class="greet-accent">{{ nombre_corto }}.</span></h1>
+  <p class="greet-sub">La tarjeta de hoy está lista. Coloca cada jugada en tu casa y pulsa <b>+ Track</b> para marcarla.</p>
 </section>
 
 <section class="profit-card">
-  <p class="profit-kicker">PROFIT HISTÓRICO</p>
-  <p class="profit-value {{ 'pos' if program.get('profit_all_time', 0) >= 0 else 'neg' }}">{{ fmt_money(program.get('profit_all_time', 0)) }}</p>
-  <p class="profit-note">{{ program.get('profit_note', '') }}</p>
-  <div class="streak-chip">🔥 <b>{{ racha }}</b> <span>RACHA DE CHECK-IN</span></div>
+  <p class="profit-kicker">PROFIT DOCUMENTADO DEL PROGRAMA</p>
+  <p class="profit-value {{ 'pos' if res.get('profit_all_time', 0) >= 0 else 'neg' }}">{% if res.get('profit_all_time') is not none %}{{ '+$%.2f' % res.get('profit_all_time') }}{% else %}—{% endif %}</p>
+  <p class="profit-note">{{ res.get('ganadas', 0) }}–{{ res.get('perdidas', 0) }}{% if res.get('roi') is not none %} · ROI {{ '%+.1f' % res.get('roi') }}%{% endif %} · cada jugada pública, ganada o perdida</p>
 </section>
 
+<!-- 02 · LA JUGADA DEL DÍA (banner) -->
+{% set plat = plays | selectattr('nivel', 'equalto', 'PLATINUM') | list %}
+{% if plat %}
 <div class="section-head">
-  <h2 class="section-title">TUS JUGADAS · ESTA NOCHE</h2>
-  <a class="link-more" href="{{ url_for('tracker') }}">Ver mis jugadas →</a>
+  <h2 class="section-title">LA JUGADA DEL DÍA</h2>
 </div>
-
-{% if plays %}
 <div class="plays">
-  {% for p in plays %}
-    {% if p.nivel == 'PLATINUM' and not platinum_unlocked %}
-      {% include "_play_locked.html" %}
-    {% else %}
+  {% for p in plat %}
+    {% if platinum_unlocked %}
       {% include "_play_card.html" %}
+    {% else %}
+      {% include "_play_locked.html" %}
     {% endif %}
+  {% endfor %}
+</div>
+{% endif %}
+
+<!-- 03 · JUGADAS DE HOY -->
+<div class="section-head">
+  <h2 class="section-title">JUGADAS DE HOY</h2>
+  <a class="link-more" href="{{ url_for('tracker') }}">Ver mi tracker →</a>
+</div>
+<p class="bankroll-pill">
+  {% if bankroll %}
+  💰 Bankroll: <b>${{ '%.2f' % bankroll }}</b> · <a href="{{ url_for('cuenta') }}">cambiar</a>
+  {% else %}
+  💰 Bankroll: <span class="muted">sin configurar</span> · <a href="{{ url_for('cuenta') }}">configurar</a>
+  {% endif %}
+</p>
+{% set golds = plays | rejectattr('nivel', 'equalto', 'PLATINUM') | list %}
+{% if golds %}
+<div class="plays" style="margin-top:12px">
+  {% for p in golds %}
+    {% include "_play_card.html" %}
   {% endfor %}
 </div>
 {% else %}
 <p class="muted">Hoy no hay jugadas con valor.</p>
 {% endif %}
+
+<!-- 04 · TU RITMO -->
+<div class="section-head">
+  <h2 class="section-title">TU RITMO</h2>
+</div>
+<section class="stats-grid">
+  <div class="stat">
+    <span class="stat-label">RACHA DE CHECK-IN</span>
+    <span class="stat-value">🔥 {{ racha }}</span>
+    <span class="stat-sub">días seguidos</span>
+  </div>
+  <div class="stat">
+    <span class="stat-label">TRACKEADAS</span>
+    <span class="stat-value">{{ tstats.tracked }}</span>
+    <span class="stat-sub">{{ tstats.pending }} pendiente{{ 's' if tstats.pending != 1 }}</span>
+  </div>
+  <div class="stat">
+    <span class="stat-label">JUGADAS DE HOY</span>
+    <span class="stat-value">{{ plays|length }}</span>
+    <span class="stat-sub">en tu tarjeta</span>
+  </div>
+  <div class="stat">
+    <span class="stat-label">BANKROLL</span>
+    <span class="stat-value">{% if bankroll %}${{ '%.0f' % bankroll }}{% else %}—{% endif %}</span>
+    <span class="stat-sub">{% if bankroll %}configurado{% else %}sin configurar{% endif %}</span>
+  </div>
+</section>
+
+<!-- 05 · LECCIÓN DEL DÍA -->
+<div class="section-head">
+  <h2 class="section-title">LECCIÓN DEL DÍA</h2>
+  <a class="link-more" href="{{ url_for('masterclass') }}">Masterclass completa →</a>
+</div>
+{% if leccion.get('titulo') %}
+<article class="lesson-card">
+  <p class="lesson-day">DÍA {{ leccion.get('dia') }} DE 30 · {{ leccion.get('fase', '')|upper }}</p>
+  <h3 class="lesson-title">{{ leccion.get('titulo') }}</h3>
+  <p class="lesson-body">{{ leccion.get('resumen') }}</p>
+</article>
+{% else %}
+<p class="muted">La lección de hoy aún no está publicada.</p>
+{% endif %}
+
+<!-- 06 · TU HISTORIAL -->
+<div class="section-head">
+  <h2 class="section-title">TU HISTORIAL</h2>
+  <a class="link-more" href="{{ url_for('tracker') }}">Abrir mi tracker →</a>
+</div>
+<section class="stats-grid">
+  <div class="stat">
+    <span class="stat-label">RÉCORD</span>
+    <span class="stat-value">{{ tstats.record }}</span>
+    <span class="stat-sub">tu tracker</span>
+  </div>
+  <div class="stat">
+    <span class="stat-label">UNIDADES NETAS</span>
+    <span class="stat-value {{ 'pos' if tstats.net_units > 0 else ('neg' if tstats.net_units < 0 else '') }}">{{ fmt_units(tstats.net_units) }}</span>
+    <span class="stat-sub">edge realizado</span>
+  </div>
+  <div class="stat">
+    <span class="stat-label">NETO</span>
+    <span class="stat-value {{ 'pos' if tstats.net_dollars > 0 else ('neg' if tstats.net_dollars < 0 else '') }}">{{ fmt_money(tstats.net_dollars) }}</span>
+    <span class="stat-sub">en tu tracker</span>
+  </div>
+  <div class="stat">
+    <span class="stat-label">ROI</span>
+    <span class="stat-value {{ 'pos' if tstats.roi > 0 else ('neg' if tstats.roi < 0 else '') }}">{{ '%+.1f' % tstats.roi }}%</span>
+    <span class="stat-sub">sobre lo arriesgado</span>
+  </div>
+</section>
+
+<!-- 07 · RESULTADOS RECIENTES -->
+<div class="section-head">
+  <h2 class="section-title">RESULTADOS RECIENTES</h2>
+  <a class="link-more" href="{{ url_for('resultados') }}">Ver todos →</a>
+</div>
+{% if recientes %}
+<div class="tracked-list">
+  {% for r in recientes %}
+  <article class="tracked-row">
+    <div class="tracked-info">
+      <span class="badge badge-{{ r.nivel|lower }} badge-sm">{{ r.nivel }}</span>
+      <div>
+        <div class="tracked-pick">{{ r.pick }} <span class="muted">{{ fmt_odds(r.cuota) }}</span></div>
+        <div class="tracked-sub">{{ r.fecha }}</div>
+      </div>
+    </div>
+    <div class="tracked-result">
+      {% if r.resultado == 'GANADA' %}
+        <span class="result-badge win">✓ {{ fmt_money(r.profit) }}</span>
+      {% else %}
+        <span class="result-badge loss">✕ {{ fmt_money(r.profit) }}</span>
+      {% endif %}
+    </div>
+  </article>
+  {% endfor %}
+</div>
+{% else %}
+<p class="muted">Aún no hay resultados publicados.</p>
+{% endif %}
+
+<!-- 08 · HERRAMIENTAS Y MEMBRESÍA -->
+<div class="section-head">
+  <h2 class="section-title">HERRAMIENTAS Y MEMBRESÍA</h2>
+</div>
+<div class="tool-list">
+  <a class="tool-row" href="{{ url_for('tracker') }}">
+    <span class="tool-icon">📊</span>
+    <span class="tool-text"><b>Mi Tracker</b><span>Registra y califica tus jugadas</span></span>
+    <span class="tool-go">Abrir →</span>
+  </a>
+  <a class="tool-row" href="{{ url_for('masterclass') }}">
+    <span class="tool-icon">🎓</span>
+    <span class="tool-text"><b>Masterclass</b><span>El curso de 30 días</span></span>
+    <span class="tool-go">Abrir →</span>
+  </a>
+  <a class="tool-row" href="{{ url_for('archivo') }}">
+    <span class="tool-icon">🗂️</span>
+    <span class="tool-text"><b>Archivo</b><span>Todas las jugadas publicadas</span></span>
+    <span class="tool-go">Abrir →</span>
+  </a>
+  <a class="tool-row" href="{{ url_for('programa') }}">
+    <span class="tool-icon">📘</span>
+    <span class="tool-text"><b>El programa</b><span>Credo, método y fundamentos</span></span>
+    <span class="tool-go">Abrir →</span>
+  </a>
+  {% if not platinum_unlocked %}
+  <a class="tool-row tool-gold" href="{{ url_for('desbloquear_platinum') }}">
+    <span class="tool-icon">🔓</span>
+    <span class="tool-text"><b>Desbloquear Platinum</b><span>$1 la primera semana, luego $23/semana</span></span>
+    <span class="tool-go">Ver →</span>
+  </a>
+  {% endif %}
+  <a class="tool-row" href="{{ url_for('cuenta') }}">
+    <span class="tool-icon">💰</span>
+    <span class="tool-text"><b>Mi cuenta</b><span>Tu bankroll y tu perfil</span></span>
+    <span class="tool-go">Abrir →</span>
+  </a>
+</div>
 
 {% endblock %}
