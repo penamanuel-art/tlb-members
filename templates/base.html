@@ -22,6 +22,7 @@
         <a href="{{ url_for('resultados') }}">📊 Resultados</a>
         <a href="{{ url_for('programa') }}">📘 Programa</a>
         <a href="{{ url_for('archivo') }}">🗂️ Archivo</a>
+        {% if es_admin %}<a href="{{ url_for('admin_miembros') }}">👥 Miembros</a>{% endif %}
         <a href="{{ url_for('cuenta') }}">💰 Mi cuenta</a>
         <a href="{{ url_for('logout') }}">Cerrar sesión</a>
       </div>
