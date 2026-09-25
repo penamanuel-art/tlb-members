@@ -89,7 +89,11 @@
 <section class="greet">
   <p class="greet-date"><span class="dot"></span>{{ saludo }} · {{ fecha }}</p>
   <h1 class="greet-title">{{ saludo }},<br><span class="greet-accent">{{ nombre_corto }}.</span></h1>
+  {% if card_pendiente %}
+  <p class="greet-sub">Today's card hasn't been published yet — check back after 11:00 AM ET.</p>
+  {% else %}
   <p class="greet-sub">Today's card is ready. Place each play at your book and tap <b>+ Track</b> to log it.</p>
+  {% endif %}
 </section>
 
 <section class="profit-card">
@@ -128,7 +132,9 @@
   {% endif %}
 </p>
 {% set golds = plays | rejectattr('nivel', 'equalto', 'PLATINUM') | list %}
-{% if golds %}
+{% if card_pendiente %}
+<p class="muted">Today's card hasn't been published yet.</p>
+{% elif golds %}
 <div class="plays" style="margin-top:12px">
   {% for p in golds %}
     {% include "_play_card.html" %}
