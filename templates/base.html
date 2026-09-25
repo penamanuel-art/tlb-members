@@ -8,6 +8,10 @@
 <style>
 .plat-cta{background:linear-gradient(135deg,#d4af37,#b8860b);color:#191919!important;border-radius:999px;padding:8px 14px;font-size:12px;font-weight:800;text-decoration:none;white-space:nowrap;box-shadow:0 2px 8px rgba(212,175,55,.35)}
 .plat-badge{color:#d4af37;font-weight:800;font-size:12px;letter-spacing:1px;white-space:nowrap;border:1px solid #d4af37;border-radius:999px;padding:7px 12px}
+{% if es_admin %}
+.lang-btn{background:rgba(212,175,55,.12);border:1px solid #d4af37;color:#d4af37;border-radius:999px;padding:6px 12px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap}
+.lang-btn:hover{background:rgba(212,175,55,.25)}
+{% endif %}
 </style>
 </head>
 <body>
@@ -40,10 +44,12 @@
   {% else %}
   <a href="{{ url_for('desbloquear_platinum') }}" class="plat-cta">🔓 Unlock Platinum</a>
   {% endif %}
+  {% if es_admin %}<button id="langToggle" class="lang-btn notranslate" title="Ver en español">🇺🇸 EN</button>{% endif %}
   <div class="avatar" title="{{ nombre_corto }}">{{ inicial }}</div>
   {% else %}
   <nav class="nav">
-      <a class="nav-link" href="{{ url_for('login') }}">Log in</a>
+    {% if es_admin %}<button id="langToggle" class="lang-btn notranslate" title="Ver en español">🇺🇸 EN</button>{% endif %}
+    <a class="nav-link" href="{{ url_for('login') }}">Log in</a>
     <a class="btn btn-primary btn-sm" href="{{ url_for('register') }}">Sign up</a>
   </nav>
   {% endif %}
@@ -94,5 +100,25 @@
   });
 })();
 </script>
+{% if es_admin %}
+<!-- Admin-only translator EN→ES (Alex): Google Translate gated to admin sessions -->
+<div id="google_translate_element" style="display:none!important"></div>
+<script>
+function googleTranslateElementInit(){new google.translate.TranslateElement({pageLanguage:'en',includedLanguages:'es',autoDisplay:false},'google_translate_element');}
+(function(){
+  var btn=document.getElementById('langToggle');
+  if(!btn)return;
+  function isES(){return document.cookie.split(';').some(function(c){return c.trim().indexOf('googtrans=/en/es')===0;});}
+  function paint(){var es=isES();btn.textContent=es?'🇪🇸 ES':'🇺🇸 EN';btn.title=es?'View in English':'Ver en español';}
+  btn.addEventListener('click',function(){
+    if(isES()){document.cookie='googtrans=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';}
+    else{document.cookie='googtrans=/en/es; path=/';}
+    location.reload();
+  });
+  paint();
+})();
+</script>
+<script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+{% endif %}
 </body>
 </html>
