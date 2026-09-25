@@ -8,6 +8,8 @@
 <style>
 .lang-btn{background:rgba(212,175,55,.12);border:1px solid #d4af37;color:#d4af37;border-radius:999px;padding:6px 12px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap}
 .lang-btn:hover{background:rgba(212,175,55,.25)}
+.plat-cta{background:linear-gradient(135deg,#d4af37,#b8860b);color:#191919!important;border-radius:999px;padding:8px 14px;font-size:12px;font-weight:800;text-decoration:none;white-space:nowrap;box-shadow:0 2px 8px rgba(212,175,55,.35)}
+.plat-badge{color:#d4af37;font-weight:800;font-size:12px;letter-spacing:1px;white-space:nowrap;border:1px solid #d4af37;border-radius:999px;padding:7px 12px}
 </style>
 </head>
 <body>
@@ -24,6 +26,7 @@
         <a href="{{ url_for('tracker') }}">Mi Tracker</a>
         <a href="{{ url_for('masterclass') }}">🎓 Masterclass</a>
         <a href="{{ url_for('resultados') }}">📊 Resultados</a>
+        {% if not miembro_platinum %}<a href="{{ url_for('desbloquear_platinum') }}">🔓 Desbloquear Platinum</a>{% endif %}
         <a href="{{ url_for('programa') }}">📘 Programa</a>
         <a href="{{ url_for('archivo') }}">🗂️ Archivo</a>
         {% if es_admin %}<a href="{{ url_for('admin_miembros') }}">👥 Miembros</a>{% endif %}
@@ -34,12 +37,11 @@
     {% endif %}
   </div>
   {% if session.get('user_id') %}
-  <nav class="tabs">
-    <a href="{{ url_for('home') }}" class="tab{% if request.endpoint == 'home' %} active{% endif %}">Hoy</a>
-    <a href="{{ url_for('tracker') }}" class="tab{% if request.endpoint == 'tracker' %} active{% endif %}">Tracker</a>
-    <a href="{{ url_for('masterclass') }}" class="tab{% if request.endpoint == 'masterclass' %} active{% endif %}">Masterclass</a>
-    <a href="{{ url_for('resultados') }}" class="tab{% if request.endpoint == 'resultados' %} active{% endif %}">Resultados</a>
-  </nav>
+  {% if miembro_platinum %}
+  <span class="plat-badge">★ PLATINUM</span>
+  {% else %}
+  <a href="{{ url_for('desbloquear_platinum') }}" class="plat-cta">🔓 Desbloquear Platinum</a>
+  {% endif %}
   <button id="langToggle" class="lang-btn" title="Translate to English">🇺🇸 EN</button>
   <div class="avatar" title="{{ nombre_corto }}">{{ inicial }}</div>
   {% else %}
@@ -104,7 +106,7 @@ function googleTranslateElementInit(){new google.translate.TranslateElement({pag
   var btn=document.getElementById('langToggle');
   if(!btn)return;
   function isEN(){return document.cookie.split(';').some(function(c){return c.trim().indexOf('googtrans=/es/en')===0;});}
-  function paint(){var en=isEN();btn.textContent=en?'🇪🇸 ES':'🇺🇸 EN';btn.title=en?'Volver al espa\u00f1ol':'Translate to English';}
+  function paint(){var en=isEN();btn.textContent=en?'🇺🇸 EN':'🇪🇸 ES';btn.title=en?'Switch to Spanish':'Cambiar a ingl\u00e9s';}
   btn.addEventListener('click',function(){
     if(isEN()){document.cookie='googtrans=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';}
     else{document.cookie='googtrans=/es/en; path=/';}
