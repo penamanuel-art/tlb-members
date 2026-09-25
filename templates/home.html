@@ -102,11 +102,11 @@
   <p class="profit-note">{{ res.get('ganadas', 0) }}–{{ res.get('perdidas', 0) }}{% if res.get('roi') is not none %} · ROI {{ '%+.1f' % res.get('roi') }}%{% endif %} · every public play, won or lost</p>
 </section>
 
-<!-- 02 · PLAY OF THE DAY (banner) -->
+<!-- 02 · PLATINUM SELECTION (banner) -->
 {% set plat = plays | selectattr('nivel', 'equalto', 'PLATINUM') | list %}
 {% if plat %}
 <div class="section-head">
-  <h2 class="section-title">PLAY OF THE DAY</h2>
+  <h2 class="section-title">Platinum Selection</h2>
 </div>
 <div class="plays">
   {% for p in plat %}
@@ -139,6 +139,9 @@
   <p style="margin:0;color:#94a3b8;font-size:.95rem;">Made a bet on your own? <a href="{{ url_for('tracker') }}" style="color:#4ade80;font-weight:700;text-decoration:none;">Log it in your tracker →</a></p>
 </div>
 {% elif golds %}
+<div class="section-head">
+  <h2 class="section-title">Today's Gold Selection</h2>
+</div>
 <div class="plays" style="margin-top:12px">
   {% for p in golds %}
     {% include "_play_card.html" %}
