@@ -1212,7 +1212,7 @@ def admin_miembros():
 def resultados():
     db = get_db()
     record_checkin(db, session["user_id"])
-    return render_template("resultados.html", res=load_results())
+    return render_template("resultados.html", res=load_results(), dias=load_archive())
 
 
 @app.route("/ev-board")
