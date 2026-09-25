@@ -14,9 +14,6 @@
     <span class="muted">({{ p.stake_unidades }}u)</span>
     <span class="bet-edge">Edge <b class="pos">+{{ p.edge }}%</b></span>
   </div>
-  {% if bankroll and p.nivel != 'PLATINUM' %}
-  <p class="my-bet">💰 Your bet: <b>Bet ${{ '%.2f' % (bankroll * p.stake_unidades / 100) }} ({{ p.stake_unidades }}u)</b></p>
-  {% endif %}
   <div class="play-actions">
     {% if p.casa_url %}
     <a class="btn btn-place" href="{{ p.casa_url }}" target="_blank" rel="noopener">Place at {{ p.casa or 'your book' }} →</a>
