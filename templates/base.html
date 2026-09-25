@@ -5,6 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{% block title %}The Line Breaker{% endblock %}</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/static/img/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="The Line Breaker">
+<meta name="theme-color" content="#1a1a2e">
 <style>
 .plat-cta{background:linear-gradient(135deg,#d4af37,#b8860b);color:#191919!important;border-radius:999px;padding:8px 14px;font-size:12px;font-weight:800;text-decoration:none;white-space:nowrap;box-shadow:0 2px 8px rgba(212,175,55,.35)}
 .plat-badge{color:#d4af37;font-weight:800;font-size:12px;letter-spacing:1px;white-space:nowrap;border:1px solid #d4af37;border-radius:999px;padding:7px 12px}
@@ -121,5 +127,6 @@ function googleTranslateElementInit(){new google.translate.TranslateElement({pag
 </script>
 <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 {% endif %}
+<script src="/static/js/push.js"></script>
 </body>
 </html>
