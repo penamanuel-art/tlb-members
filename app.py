@@ -16,7 +16,7 @@ import json
 import os
 import secrets
 import sqlite3
-from datetime import datetime, timezone
+from datetime import timedelta, datetime, timezone
 from functools import wraps
 
 import bcrypt
@@ -936,7 +936,19 @@ def admin_miembros():
         "SELECT id, nombre, email, created_at, platinum_unlocked, is_admin "
         "FROM users ORDER BY created_at DESC"
     ).fetchall()
-    return render_template("admin_miembros.html", miembros=[dict(m) for m in miembros])
+    ahora = datetime.now(timezone.utc)
+    lista = []
+    for m in miembros:
+        d = dict(m)
+        try:
+            creado = datetime.fromisoformat(d["created_at"])
+            if creado.tzinfo is None:
+                creado = creado.replace(tzinfo=timezone.utc)
+            d["es_nuevo"] = (ahora - creado) < timedelta(hours=48)
+        except Exception:
+            d["es_nuevo"] = False
+        lista.append(d)
+    return render_template("admin_miembros.html", miembros=lista)
 
 
 @app.route("/resultados")
