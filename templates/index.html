@@ -1,34 +1,34 @@
 {% extends "base.html" %}
-{% block title %}The Line Breaker — Jugadas con valor real{% endblock %}
+{% block title %}The Line Breaker — Plays with real value{% endblock %}
 {% block content %}
 <section class="hero">
-  <h1>ROMPE LA LÍNEA.<br><span class="accent">TRACKEA TODO.</span></h1>
+  <h1>BREAK THE LINE.<br><span class="accent">TRACK EVERYTHING.</span></h1>
   <p class="hero-sub">
-    Jugadas diarias con edge medido contra el mercado.
-    Trackea cada jugada, marca tus resultados y ve tu récord real:
-    unidades netas, ROI y racha.
+    Daily plays with edge measured against the market.
+    Track every play, mark your results, and see your real record:
+    net units, ROI and streak.
   </p>
   <div class="hero-cta">
-    <a class="btn btn-primary btn-lg" href="{{ url_for('register') }}">Crear cuenta gratis →</a>
-    <a class="btn btn-ghost btn-lg" href="{{ url_for('login') }}">Ya tengo cuenta</a>
+    <a class="btn btn-primary btn-lg" href="{{ url_for('register') }}">Create a free account →</a>
+    <a class="btn btn-ghost btn-lg" href="{{ url_for('login') }}">I already have an account</a>
   </div>
 </section>
 
 <section class="features">
   <div class="feature">
     <div class="feature-icon">🎯</div>
-    <h3>Jugadas del día</h3>
-    <p>Solo jugadas con edge mínimo de 3 puntos sobre la probabilidad implícita. Sin relleno.</p>
+    <h3>Plays of the day</h3>
+    <p>Only plays with a minimum 3-point edge over implied probability. No filler.</p>
   </div>
   <div class="feature">
     <div class="feature-icon">✅</div>
-    <h3>Track con un toque</h3>
-    <p>Marca cada jugada como trackeada y registra si ganó o perdió. Tu historial, sin hojas de cálculo.</p>
+    <h3>One-tap tracking</h3>
+    <p>Mark each play as tracked and log whether it won or lost. Your history, no spreadsheets.</p>
   </div>
   <div class="feature">
     <div class="feature-icon">📊</div>
-    <h3>Métricas reales</h3>
-    <p>Récord, unidades netas, ROI y racha actual. La verdad de tus números, siempre visible.</p>
+    <h3>Real metrics</h3>
+    <p>Record, net units, ROI and current streak. The truth of your numbers, always visible.</p>
   </div>
 </section>
 {% endblock %}

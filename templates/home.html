@@ -1,12 +1,12 @@
 {% extends "base.html" %}
-{% block title %}Hoy — The Line Breaker
-<!-- LLUVIA DE DINERO (pedido por Alex 2026-09-24): billetes estilo dólar real ~4s, una sola vez por sesión -->
+{% block title %}Today — The Line Breaker
+<!-- MONEY RAIN (requested by Alex 2026-09-24): realistic dollar-style bills ~4s, once per session -->
 <canvas id="lluvia-dinero" style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9999;"></canvas>
 <script>
 (function(){
   var canvas = document.getElementById('lluvia-dinero');
   function quitar(){ if (canvas) canvas.remove(); }
-  // Una sola vez por sesión: si ya cayó al entrar, no repetir al navegar por el menú
+  // Once per session: if it already rained on entry, don't repeat when navigating the menu
   try {
     if (sessionStorage.getItem('lb_lluvia') === '1') { quitar(); return; }
     sessionStorage.setItem('lb_lluvia', '1');
@@ -28,35 +28,35 @@
   function draw(b){
     var w = b.w, h = b.h, k;
     ctx.save(); ctx.translate(b.x, b.y); ctx.rotate(b.rot); ctx.globalAlpha = b.alpha;
-    // papel verde del billete
+    // green bill paper
     var g = ctx.createLinearGradient(0, -h/2, 0, h/2);
     g.addColorStop(0, '#7ba889'); g.addColorStop(0.5, '#5e8f6b'); g.addColorStop(1, '#477a56');
     ctx.fillStyle = g; ctx.strokeStyle = '#1e4d2b'; ctx.lineWidth = 1.5;
     ctx.beginPath();
     if (ctx.roundRect) ctx.roundRect(-w/2, -h/2, w, h, 2); else ctx.rect(-w/2, -h/2, w, h);
     ctx.fill(); ctx.stroke();
-    // marco interior
+    // inner frame
     ctx.strokeStyle = 'rgba(30,77,43,.7)'; ctx.lineWidth = 1;
     var m = 3.5;
     ctx.strokeRect(-w/2 + m, -h/2 + m, w - 2*m, h - 2*m);
-    // medallón central con retrato
+    // central medallion with portrait
     var ow = w*0.30, oh = h*0.72;
     ctx.fillStyle = '#dfe9d8';
     ctx.beginPath(); ctx.ellipse(0, 0, ow/2, oh/2, 0, 0, 6.2832); ctx.fill();
     ctx.strokeStyle = '#1e4d2b'; ctx.lineWidth = 1; ctx.stroke();
-    // silueta del retrato
+    // portrait silhouette
     ctx.fillStyle = '#3a6b4a';
     var hr = oh*0.20;
     ctx.beginPath(); ctx.arc(0, -oh*0.08, hr, 0, 6.2832); ctx.fill();
     ctx.beginPath(); ctx.arc(0, oh*0.34, hr*1.45, Math.PI, 0); ctx.fill();
-    // denominación en las esquinas
+    // denomination in the corners
     ctx.fillStyle = '#1e4d2b';
     ctx.font = 'bold ' + Math.max(7, Math.round(h*0.30)) + 'px system-ui, sans-serif';
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     var cx = w/2 - h*0.30, cy = h/2 - h*0.30;
     ctx.fillText('100', -cx, -cy); ctx.fillText('100', cx, -cy);
     ctx.fillText('100', -cx, cy); ctx.fillText('100', cx, cy);
-    // grabado decorativo a los lados
+    // decorative engraving on the sides
     ctx.strokeStyle = 'rgba(30,77,43,.45)'; ctx.lineWidth = 1;
     ctx.beginPath();
     var lx = ow/2 + 5;
@@ -89,20 +89,20 @@
 <section class="greet">
   <p class="greet-date"><span class="dot"></span>{{ saludo }} · {{ fecha }}</p>
   <h1 class="greet-title">{{ saludo }},<br><span class="greet-accent">{{ nombre_corto }}.</span></h1>
-  <p class="greet-sub">La tarjeta de hoy está lista. Coloca cada jugada en tu casa y pulsa <b>+ Track</b> para marcarla.</p>
+  <p class="greet-sub">Today's card is ready. Place each play at your book and tap <b>+ Track</b> to log it.</p>
 </section>
 
 <section class="profit-card">
-  <p class="profit-kicker">PROFIT DOCUMENTADO DEL PROGRAMA</p>
+  <p class="profit-kicker">DOCUMENTED PROGRAM PROFIT</p>
   <p class="profit-value {{ 'pos' if res.get('profit_all_time', 0) >= 0 else 'neg' }}">{% if res.get('profit_all_time') is not none %}{{ '+$%.2f' % res.get('profit_all_time') }}{% else %}—{% endif %}</p>
-  <p class="profit-note">{{ res.get('ganadas', 0) }}–{{ res.get('perdidas', 0) }}{% if res.get('roi') is not none %} · ROI {{ '%+.1f' % res.get('roi') }}%{% endif %} · cada jugada pública, ganada o perdida</p>
+  <p class="profit-note">{{ res.get('ganadas', 0) }}–{{ res.get('perdidas', 0) }}{% if res.get('roi') is not none %} · ROI {{ '%+.1f' % res.get('roi') }}%{% endif %} · every public play, won or lost</p>
 </section>
 
-<!-- 02 · LA JUGADA DEL DÍA (banner) -->
+<!-- 02 · PLAY OF THE DAY (banner) -->
 {% set plat = plays | selectattr('nivel', 'equalto', 'PLATINUM') | list %}
 {% if plat %}
 <div class="section-head">
-  <h2 class="section-title">LA JUGADA DEL DÍA</h2>
+  <h2 class="section-title">PLAY OF THE DAY</h2>
 </div>
 <div class="plays">
   {% for p in plat %}
@@ -115,16 +115,16 @@
 </div>
 {% endif %}
 
-<!-- 03 · JUGADAS DE HOY -->
+<!-- 03 · TODAY'S PLAYS -->
 <div class="section-head">
-  <h2 class="section-title">JUGADAS DE HOY</h2>
-  <a class="link-more" href="{{ url_for('tracker') }}">Ver mi tracker →</a>
+  <h2 class="section-title">TODAY'S PLAYS</h2>
+  <a class="link-more" href="{{ url_for('tracker') }}">View my tracker →</a>
 </div>
 <p class="bankroll-pill">
   {% if bankroll %}
-  💰 Bankroll: <b>${{ '%.2f' % bankroll }}</b> · <a href="{{ url_for('cuenta') }}">cambiar</a>
+  💰 Bankroll: <b>${{ '%.2f' % bankroll }}</b> · <a href="{{ url_for('cuenta') }}">change</a>
   {% else %}
-  💰 Bankroll: <span class="muted">sin configurar</span> · <a href="{{ url_for('cuenta') }}">configurar</a>
+  💰 Bankroll: <span class="muted">not set</span> · <a href="{{ url_for('cuenta') }}">set up</a>
   {% endif %}
 </p>
 {% set golds = plays | rejectattr('nivel', 'equalto', 'PLATINUM') | list %}
@@ -135,83 +135,83 @@
   {% endfor %}
 </div>
 {% else %}
-<p class="muted">Hoy no hay jugadas con valor.</p>
+<p class="muted">No value plays today.</p>
 {% endif %}
 
-<!-- 04 · TU RITMO -->
+<!-- 04 · YOUR PACE -->
 <div class="section-head">
-  <h2 class="section-title">TU RITMO</h2>
+  <h2 class="section-title">YOUR PACE</h2>
 </div>
 <section class="stats-grid">
   <div class="stat">
-    <span class="stat-label">RACHA DE CHECK-IN</span>
+    <span class="stat-label">CHECK-IN STREAK</span>
     <span class="stat-value">🔥 {{ racha }}</span>
-    <span class="stat-sub">días seguidos</span>
+    <span class="stat-sub">days in a row</span>
   </div>
   <div class="stat">
-    <span class="stat-label">TRACKEADAS</span>
+    <span class="stat-label">TRACKED</span>
     <span class="stat-value">{{ tstats.tracked }}</span>
-    <span class="stat-sub">{{ tstats.pending }} pendiente{{ 's' if tstats.pending != 1 }}</span>
+    <span class="stat-sub">{{ tstats.pending }} pending</span>
   </div>
   <div class="stat">
-    <span class="stat-label">JUGADAS DE HOY</span>
+    <span class="stat-label">TODAY'S PLAYS</span>
     <span class="stat-value">{{ plays|length }}</span>
-    <span class="stat-sub">en tu tarjeta</span>
+    <span class="stat-sub">on your card</span>
   </div>
   <div class="stat">
     <span class="stat-label">BANKROLL</span>
     <span class="stat-value">{% if bankroll %}${{ '%.0f' % bankroll }}{% else %}—{% endif %}</span>
-    <span class="stat-sub">{% if bankroll %}configurado{% else %}sin configurar{% endif %}</span>
+    <span class="stat-sub">{% if bankroll %}set{% else %}not set{% endif %}</span>
   </div>
 </section>
 
-<!-- 05 · LECCIÓN DEL DÍA -->
+<!-- 05 · LESSON OF THE DAY -->
 <div class="section-head">
-  <h2 class="section-title">LECCIÓN DEL DÍA</h2>
-  <a class="link-more" href="{{ url_for('masterclass') }}">Masterclass completa →</a>
+  <h2 class="section-title">LESSON OF THE DAY</h2>
+  <a class="link-more" href="{{ url_for('masterclass') }}">Full masterclass →</a>
 </div>
 {% if leccion.get('titulo') %}
 <article class="lesson-card">
-  <p class="lesson-day">DÍA {{ leccion.get('dia') }} DE 30 · {{ leccion.get('fase', '')|upper }}</p>
+  <p class="lesson-day">DAY {{ leccion.get('dia') }} OF 30 · {{ leccion.get('fase', '')|upper }}</p>
   <h3 class="lesson-title">{{ leccion.get('titulo') }}</h3>
   <p class="lesson-body">{{ leccion.get('resumen') }}</p>
 </article>
 {% else %}
-<p class="muted">La lección de hoy aún no está publicada.</p>
+<p class="muted">Today's lesson isn't published yet.</p>
 {% endif %}
 
-<!-- 06 · TU HISTORIAL -->
+<!-- 06 · YOUR HISTORY -->
 <div class="section-head">
-  <h2 class="section-title">TU HISTORIAL</h2>
-  <a class="link-more" href="{{ url_for('tracker') }}">Abrir mi tracker →</a>
+  <h2 class="section-title">YOUR HISTORY</h2>
+  <a class="link-more" href="{{ url_for('tracker') }}">Open my tracker →</a>
 </div>
 <section class="stats-grid">
   <div class="stat">
-    <span class="stat-label">RÉCORD</span>
+    <span class="stat-label">RECORD</span>
     <span class="stat-value">{{ tstats.record }}</span>
-    <span class="stat-sub">tu tracker</span>
+    <span class="stat-sub">your tracker</span>
   </div>
   <div class="stat">
-    <span class="stat-label">UNIDADES NETAS</span>
+    <span class="stat-label">NET UNITS</span>
     <span class="stat-value {{ 'pos' if tstats.net_units > 0 else ('neg' if tstats.net_units < 0 else '') }}">{{ fmt_units(tstats.net_units) }}</span>
-    <span class="stat-sub">edge realizado</span>
+    <span class="stat-sub">realized edge</span>
   </div>
   <div class="stat">
-    <span class="stat-label">NETO</span>
+    <span class="stat-label">NET</span>
     <span class="stat-value {{ 'pos' if tstats.net_dollars > 0 else ('neg' if tstats.net_dollars < 0 else '') }}">{{ fmt_money(tstats.net_dollars) }}</span>
-    <span class="stat-sub">en tu tracker</span>
+    <span class="stat-sub">in your tracker</span>
   </div>
   <div class="stat">
     <span class="stat-label">ROI</span>
     <span class="stat-value {{ 'pos' if tstats.roi > 0 else ('neg' if tstats.roi < 0 else '') }}">{{ '%+.1f' % tstats.roi }}%</span>
-    <span class="stat-sub">sobre lo arriesgado</span>
+    <span class="stat-sub">on amount risked</span>
   </div>
 </section>
 
-<!-- 07 · RESULTADOS RECIENTES -->
+<!-- 07 · RECENT RESULTS -->
 <div class="section-head">
-  <h2 class="section-title">RESULTADOS RECIENTES</h2>
-  <a class="link-more" href="{{ url_for('resultados') }}">Ver todos →</a>
+  <h2 class="section-title">RECENT RESULTS</h2>
+  <a class="link-more" href="{{ url_for('resultados') }}">View all →</a>
 </div>
 {% if recientes %}
 <div class="tracked-list">
@@ -225,7 +225,7 @@
       </div>
     </div>
     <div class="tracked-result">
-      {% if r.resultado == 'GANADA' %}
+      {% if r.resultado == 'WON' %}
         <span class="result-badge win">✓ {{ fmt_money(r.profit) }}</span>
       {% else %}
         <span class="result-badge loss">✕ {{ fmt_money(r.profit) }}</span>
@@ -235,56 +235,56 @@
   {% endfor %}
 </div>
 {% else %}
-<p class="muted">Aún no hay resultados publicados.</p>
+<p class="muted">No results published yet.</p>
 {% endif %}
 
-<!-- 08 · HERRAMIENTAS Y MEMBRESÍA -->
+<!-- 08 · TOOLS & MEMBERSHIP -->
 <div class="section-head">
-  <h2 class="section-title">HERRAMIENTAS Y MEMBRESÍA</h2>
+  <h2 class="section-title">TOOLS & MEMBERSHIP</h2>
 </div>
 <div class="tool-list">
   <a class="tool-row" href="{{ url_for('tracker') }}">
     <span class="tool-icon">📊</span>
-    <span class="tool-text"><b>Mi Tracker</b><span>Registra y califica tus jugadas</span></span>
-    <span class="tool-go">Abrir →</span>
+    <span class="tool-text"><b>My Tracker</b><span>Log and grade your plays</span></span>
+    <span class="tool-go">Open →</span>
   </a>
   <a class="tool-row" href="{{ url_for('masterclass') }}">
     <span class="tool-icon">🎓</span>
-    <span class="tool-text"><b>Masterclass</b><span>El curso de 30 días</span></span>
-    <span class="tool-go">Abrir →</span>
+    <span class="tool-text"><b>Masterclass</b><span>The 30-day course</span></span>
+    <span class="tool-go">Open →</span>
   </a>
   <a class="tool-row" href="{{ url_for('archivo') }}">
     <span class="tool-icon">🗂️</span>
-    <span class="tool-text"><b>Archivo</b><span>Todas las jugadas publicadas</span></span>
-    <span class="tool-go">Abrir →</span>
+    <span class="tool-text"><b>Archive</b><span>Every published play</span></span>
+    <span class="tool-go">Open →</span>
   </a>
   <a class="tool-row" href="{{ url_for('programa') }}">
     <span class="tool-icon">📘</span>
-    <span class="tool-text"><b>El programa</b><span>Credo, método y fundamentos</span></span>
-    <span class="tool-go">Abrir →</span>
+    <span class="tool-text"><b>The program</b><span>Creed, method and fundamentals</span></span>
+    <span class="tool-go">Open →</span>
   </a>
   {% if not platinum_unlocked %}
   <a class="tool-row tool-gold" href="{{ url_for('desbloquear_platinum') }}">
     <span class="tool-icon">🔓</span>
-    <span class="tool-text"><b>Desbloquear Platinum</b><span>$1 la primera semana, luego $23/semana</span></span>
-    <span class="tool-go">Ver →</span>
+    <span class="tool-text"><b>Unlock Platinum</b><span>$1 the first week, then $23/week</span></span>
+    <span class="tool-go">View →</span>
   </a>
   {% endif %}
   <a class="tool-row" href="{{ url_for('cuenta') }}">
     <span class="tool-icon">💰</span>
-    <span class="tool-text"><b>Mi cuenta</b><span>Tu bankroll y tu perfil</span></span>
-    <span class="tool-go">Abrir →</span>
+    <span class="tool-text"><b>My account</b><span>Your bankroll and profile</span></span>
+    <span class="tool-go">Open →</span>
   </a>
 </div>
 
 
-<!-- LLUVIA DE DINERO (pedido por Alex 2026-09-24): billetes estilo dólar real ~4s, una sola vez por sesión -->
+<!-- MONEY RAIN (requested by Alex 2026-09-24): realistic dollar-style bills ~4s, once per session -->
 <canvas id="lluvia-dinero" style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9999;"></canvas>
 <script>
 (function(){
   var canvas = document.getElementById('lluvia-dinero');
   function quitar(){ if (canvas) canvas.remove(); }
-  // Una sola vez por sesión: si ya cayó al entrar, no repetir al navegar por el menú
+  // Once per session: if it already rained on entry, don't repeat when navigating the menu
   try {
     if (sessionStorage.getItem('lb_lluvia') === '1') { quitar(); return; }
     sessionStorage.setItem('lb_lluvia', '1');
@@ -306,35 +306,35 @@
   function draw(b){
     var w = b.w, h = b.h, k;
     ctx.save(); ctx.translate(b.x, b.y); ctx.rotate(b.rot); ctx.globalAlpha = b.alpha;
-    // papel verde del billete
+    // green bill paper
     var g = ctx.createLinearGradient(0, -h/2, 0, h/2);
     g.addColorStop(0, '#7ba889'); g.addColorStop(0.5, '#5e8f6b'); g.addColorStop(1, '#477a56');
     ctx.fillStyle = g; ctx.strokeStyle = '#1e4d2b'; ctx.lineWidth = 1.5;
     ctx.beginPath();
     if (ctx.roundRect) ctx.roundRect(-w/2, -h/2, w, h, 2); else ctx.rect(-w/2, -h/2, w, h);
     ctx.fill(); ctx.stroke();
-    // marco interior
+    // inner frame
     ctx.strokeStyle = 'rgba(30,77,43,.7)'; ctx.lineWidth = 1;
     var m = 3.5;
     ctx.strokeRect(-w/2 + m, -h/2 + m, w - 2*m, h - 2*m);
-    // medallón central con retrato
+    // central medallion with portrait
     var ow = w*0.30, oh = h*0.72;
     ctx.fillStyle = '#dfe9d8';
     ctx.beginPath(); ctx.ellipse(0, 0, ow/2, oh/2, 0, 0, 6.2832); ctx.fill();
     ctx.strokeStyle = '#1e4d2b'; ctx.lineWidth = 1; ctx.stroke();
-    // silueta del retrato
+    // portrait silhouette
     ctx.fillStyle = '#3a6b4a';
     var hr = oh*0.20;
     ctx.beginPath(); ctx.arc(0, -oh*0.08, hr, 0, 6.2832); ctx.fill();
     ctx.beginPath(); ctx.arc(0, oh*0.34, hr*1.45, Math.PI, 0); ctx.fill();
-    // denominación en las esquinas
+    // denomination in the corners
     ctx.fillStyle = '#1e4d2b';
     ctx.font = 'bold ' + Math.max(7, Math.round(h*0.30)) + 'px system-ui, sans-serif';
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     var cx = w/2 - h*0.30, cy = h/2 - h*0.30;
     ctx.fillText('100', -cx, -cy); ctx.fillText('100', cx, -cy);
     ctx.fillText('100', -cx, cy); ctx.fillText('100', cx, cy);
-    // grabado decorativo a los lados
+    // decorative engraving on the sides
     ctx.strokeStyle = 'rgba(30,77,43,.45)'; ctx.lineWidth = 1;
     ctx.beginPath();
     var lx = ow/2 + 5;

@@ -1,29 +1,29 @@
 {% extends "base.html" %}
-{% block title %}Desbloquear Platinum — The Line Breaker{% endblock %}
+{% block title %}Unlock Platinum — The Line Breaker{% endblock %}
 {% block content %}
 
 <section class="tracker-head">
   <div>
-    <p class="kicker">MIEMBROS PLATINUM</p>
-    <h2>Desbloquea la jugada Platinum.</h2>
+    <p class="kicker">PLATINUM MEMBERS</p>
+    <h2>Unlock the Platinum play.</h2>
   </div>
 </section>
 
 {% if ya_desbloqueada %}
-<div class="flash flash-ok">Tu acceso Platinum ya está activo. La jugada principal del día aparece desbloqueada en tu tarjeta.</div>
-<p class="center"><a class="btn btn-place" href="{{ url_for('home') }}">Ver mis jugadas →</a></p>
+<div class="flash flash-ok">Your Platinum access is already active. The day's top play appears unlocked on your card.</div>
+<p class="center"><a class="btn btn-place" href="{{ url_for('home') }}">View my plays →</a></p>
 {% else %}
 <article class="price-box">
-  <p class="price-kicker">★ PLATINUM SEMANAL</p>
-  <p class="price-value"><b>$1</b> <span>la primera semana</span></p>
-  <p class="price-then">luego <b>$23/semana</b> · cancela cuando quieras</p>
+  <p class="price-kicker">★ WEEKLY PLATINUM</p>
+  <p class="price-value"><b>$1</b> <span>the first week</span></p>
+  <p class="price-then">then <b>$23/week</b> · cancel anytime</p>
   <ul class="price-list">
-    <li>La jugada principal de cada día, completa: pick, cuota, stake y edge</li>
-    <li>La de mayor valor estimado del día</li>
-    <li>Todo lo demás sigue igual: Gold, tracker, Masterclass y resultados</li>
+    <li>The top play of each day, complete: pick, odds, stake and edge</li>
+    <li>The highest estimated value of the day</li>
+    <li>Everything else stays the same: Gold, tracker, Masterclass and results</li>
   </ul>
-  <a class="btn btn-place btn-block" href="{{ stripe_url }}" target="_blank" rel="noopener">Pagar $1 y desbloquear →</a>
-  <p class="muted center">Pago seguro con Stripe. $1 la primera semana, luego $23/semana · cancela cuando quieras. Después de pagar, activamos tu acceso Platinum.</p>
+  <a class="btn btn-place btn-block" href="{{ stripe_url }}" target="_blank" rel="noopener">Pay $1 and unlock →</a>
+  <p class="muted center">Secure payment with Stripe. $1 the first week, then $23/week · cancel anytime. After paying, we activate your Platinum access.</p>
 </article>
 {% endif %}
 

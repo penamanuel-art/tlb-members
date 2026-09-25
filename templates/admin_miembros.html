@@ -1,11 +1,11 @@
 {% extends "base.html" %}
-{% block title %}Miembros — Admin{% endblock %}
+{% block title %}Members — Admin{% endblock %}
 {% block content %}
 
 <section class="tracker-head">
   <div>
     <p class="kicker">ADMIN</p>
-    <h2>{{ miembros|length }} miembro{{ 's' if miembros|length != 1 }}</h2>
+    <h2>{{ miembros|length }} member{{ 's' if miembros|length != 1 }}</h2>
   </div>
 </section>
 
@@ -14,26 +14,26 @@
   <div class="m-name">{{ m.nombre }}</div>
   <div class="m-email">{{ m.email }}</div>
   <div class="m-meta">
-    <span class="m-pill">Registro: {{ m.created_at[:10] if m.created_at else '—' }}</span>
-    {% if m.es_nuevo %}<span class="m-pill on">NUEVO</span>{% endif %}
+    <span class="m-pill">Joined: {{ m.created_at[:10] if m.created_at else '—' }}</span>
+    {% if m.es_nuevo %}<span class="m-pill on">NEW</span>{% endif %}
     {% if m.platinum_unlocked %}<span class="m-pill on">★ Platinum</span>{% endif %}
     {% if m.is_admin %}<span class="m-pill on">Admin</span>{% endif %}
   </div>
   <form method="post" action="{{ url_for('admin_toggle_platinum') }}">
     <input type="hidden" name="user_id" value="{{ m.id }}">
     <button class="btn btn-sm {{ 'btn-ghost' if m.platinum_unlocked else 'btn-place' }}" type="submit">
-      {{ 'Quitar Platinum' if m.platinum_unlocked else 'Activar Platinum' }}
+      {{ 'Remove Platinum' if m.platinum_unlocked else 'Activate Platinum' }}
     </button>
   </form>
   {% if not m.is_admin %}
-  <form method="post" action="{{ url_for('admin_eliminar_miembro') }}" onsubmit="return confirm('¿Eliminar esta cuenta?');">
+  <form method="post" action="{{ url_for('admin_eliminar_miembro') }}" onsubmit="return confirm('Delete this account?');">
     <input type="hidden" name="user_id" value="{{ m.id }}">
-    <button class="btn btn-sm btn-ghost" type="submit">Eliminar</button>
+    <button class="btn btn-sm btn-ghost" type="submit">Delete</button>
   </form>
   {% endif %}
 </article>
 {% else %}
-<p class="muted">No hay miembros registrados.</p>
+<p class="muted">No registered members.</p>
 {% endfor %}
 
 {% endblock %}

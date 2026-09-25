@@ -1,34 +1,34 @@
 {% extends "base.html" %}
-{% block title %}Bienvenido — The Line Breaker{% endblock %}
+{% block title %}Welcome — The Line Breaker{% endblock %}
 {% block content %}
 <section class="auth-card">
-  <h2>Bienvenido, <span class="accent">{{ nombre }}</span></h2>
-  <p class="muted">Tu cuenta está lista. Esto es un programa de apuestas deportivas construido sobre números, disciplina y valor. Nada de corazonadas.</p>
+  <h2>Welcome, <span class="accent">{{ nombre }}</span></h2>
+  <p class="muted">Your account is ready. This is a sports betting program built on numbers, discipline and value. No hunches.</p>
 
-  <h3>Tu panel de miembro</h3>
-  <p>Cada mañana verás aquí las jugadas del día (~11:00 AM, hora de Nueva York).</p>
-  <a class="btn btn-primary btn-block" href="{{ url_for('home') }}">Ir a mi panel →</a>
+  <h3>Your member dashboard</h3>
+  <p>Every morning you'll see the day's plays here (~11:00 AM, New York time).</p>
+  <a class="btn btn-primary btn-block" href="{{ url_for('home') }}">Go to my dashboard →</a>
 
-  <h3>Cómo funciona</h3>
+  <h3>How it works</h3>
   <ul>
-    <li>Publicamos un máximo de 3 jugadas por día, y solo cuando el modelo detecta valor real. Si no hay valor, no hay jugada: la disciplina también es no apostar.</li>
-    <li>Cada jugada indica su nivel: <strong>PLATINUM</strong>, la principal del día (edge mayor al 5%), o <strong>GOLD</strong> (edge entre 3% y 5%), siempre con su cuota, stake y explicación.</li>
+    <li>We publish a maximum of 3 plays per day, and only when the model detects real value. If there's no value, there's no play: discipline also means not betting.</li>
+    <li>Each play shows its level: <strong>PLATINUM</strong>, the day's top play (edge over 5%), or <strong>GOLD</strong> (edge between 3% and 5%), always with its odds, stake and explanation.</li>
   </ul>
 
   <h3>Platinum</h3>
   <ul>
-    <li>La jugada Platinum es exclusiva para miembros Platinum.</li>
-    <li>Cuesta <strong>$1 la primera semana</strong>, luego <strong>$23 por semana</strong>. Actívala desde tu panel, en "Desbloquear Platinum".</li>
+    <li>The Platinum play is exclusive to Platinum members.</li>
+    <li>It costs <strong>$1 the first week</strong>, then <strong>$23 per week</strong>. Activate it from your dashboard, under "Unlock Platinum".</li>
   </ul>
 
-  <h3>Reglas de oro</h3>
+  <h3>Golden rules</h3>
   <ol>
-    <li>Apuesta exactamente el monto indicado: ni más, ni menos.</li>
-    <li>Nunca persigas pérdidas ni ganancias.</li>
-    <li>Solo números y valor. Nada de favoritismo por equipos.</li>
+    <li>Bet exactly the indicated amount: no more, no less.</li>
+    <li>Never chase losses or wins.</li>
+    <li>Only numbers and value. No team favoritism.</li>
   </ol>
 
-  <p class="muted">Nos vemos mañana a las 11:00 AM con las primeras jugadas.</p>
-  <p class="muted" style="margin-top:1rem;font-size:.85rem">Juega responsablemente · 21+ · ¿Problemas con el juego? Llama al 1-800-GAMBLER (1-800-426-2537): ayuda gratuita y confidencial, 24/7.</p>
+  <p class="muted">See you tomorrow at 11:00 AM with the first plays.</p>
+  <p class="muted" style="margin-top:1rem;font-size:.85rem">Play responsibly · 21+ · Gambling problem? Call 1-800-GAMBLER (1-800-426-2537): free and confidential help, 24/7.</p>
 </section>
 {% endblock %}

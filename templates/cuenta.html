@@ -1,24 +1,24 @@
 {% extends "base.html" %}
-{% block title %}Mi cuenta — The Line Breaker{% endblock %}
+{% block title %}My account — The Line Breaker{% endblock %}
 {% block content %}
 <section class="auth-card">
-  <h2>💰 Mi bankroll</h2>
-  <p class="muted">El total con el que juegas. 1 unidad = 1% de tu bankroll, y cada
-  tamaño recomendado se basa en eso. Se guarda en tu cuenta: sigue ahí aunque
-  cierres y vuelvas a entrar.</p>
+  <h2>💰 My bankroll</h2>
+  <p class="muted">The total you play with. 1 unit = 1% of your bankroll, and every
+  recommended size is based on that. It's saved to your account: still there
+  even if you log out and back in.</p>
   {% if bankroll %}
-  <p class="bankroll-current">Actual: <b>${{ '%.2f' % bankroll }}</b>
+  <p class="bankroll-current">Current: <b>${{ '%.2f' % bankroll }}</b>
     <span class="muted">(1u = ${{ '%.2f' % (bankroll / 100) }})</span></p>
   {% else %}
-  <p class="bankroll-current muted">Aún no lo configuras.</p>
+  <p class="bankroll-current muted">You haven't set it up yet.</p>
   {% endif %}
   <form method="post" action="{{ url_for('cuenta') }}">
-    <label>{{ 'Actualizar' if bankroll else 'Configurar' }} bankroll
+    <label>{{ 'Update' if bankroll else 'Set up' }} bankroll
       <input type="text" name="bankroll" inputmode="decimal" autocomplete="off"
-             placeholder="Ej. 10000" value="{{ ('%.2f' % bankroll) if bankroll else '' }}">
+             placeholder="E.g. 10000" value="{{ ('%.2f' % bankroll) if bankroll else '' }}">
     </label>
-    <button class="btn btn-primary btn-block" type="submit">Guardar</button>
+    <button class="btn btn-primary btn-block" type="submit">Save</button>
   </form>
-  <p class="muted center"><a href="{{ url_for('home') }}">← Volver a hoy</a></p>
+  <p class="muted center"><a href="{{ url_for('home') }}">← Back to today</a></p>
 </section>
 {% endblock %}

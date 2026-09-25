@@ -1,14 +1,11 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="google" content="notranslate">
 <title>{% block title %}The Line Breaker{% endblock %}</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 <style>
-.lang-btn{background:rgba(212,175,55,.12);border:1px solid #d4af37;color:#d4af37;border-radius:999px;padding:6px 12px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap}
-.lang-btn:hover{background:rgba(212,175,55,.25)}
 .plat-cta{background:linear-gradient(135deg,#d4af37,#b8860b);color:#191919!important;border-radius:999px;padding:8px 14px;font-size:12px;font-weight:800;text-decoration:none;white-space:nowrap;box-shadow:0 2px 8px rgba(212,175,55,.35)}
 .plat-badge{color:#d4af37;font-weight:800;font-size:12px;letter-spacing:1px;white-space:nowrap;border:1px solid #d4af37;border-radius:999px;padding:7px 12px}
 </style>
@@ -21,18 +18,18 @@
     </a>
     {% if session.get('user_id') %}
     <div class="menu-wrap">
-      <button class="icon-btn" id="menuBtn" aria-label="Menú">☰</button>
+      <button class="icon-btn" id="menuBtn" aria-label="Menu">☰</button>
       <div class="menu-drop" id="menuDrop" hidden>
-        <a href="{{ url_for('home') }}">Hoy</a>
-        <a href="{{ url_for('tracker') }}">Mi Tracker</a>
+        <a href="{{ url_for('home') }}">Today</a>
+        <a href="{{ url_for('tracker') }}">My Tracker</a>
         <a href="{{ url_for('masterclass') }}">🎓 Masterclass</a>
-        <a href="{{ url_for('resultados') }}">📊 Resultados</a>
-        {% if not miembro_platinum %}<a href="{{ url_for('desbloquear_platinum') }}">🔓 Desbloquear Platinum</a>{% endif %}
-        <a href="{{ url_for('programa') }}">📘 Programa</a>
-        <a href="{{ url_for('archivo') }}">🗂️ Archivo</a>
-        {% if es_admin %}<a href="{{ url_for('admin_miembros') }}">👥 Miembros</a>{% endif %}
-        <a href="{{ url_for('cuenta') }}">💰 Mi cuenta</a>
-        <a href="{{ url_for('logout') }}">Cerrar sesión</a>
+        <a href="{{ url_for('resultados') }}">📊 Results</a>
+        {% if not miembro_platinum %}<a href="{{ url_for('desbloquear_platinum') }}">🔓 Unlock Platinum</a>{% endif %}
+        <a href="{{ url_for('programa') }}">📘 Program</a>
+        <a href="{{ url_for('archivo') }}">🗂️ Archive</a>
+        {% if es_admin %}<a href="{{ url_for('admin_miembros') }}">👥 Members</a>{% endif %}
+        <a href="{{ url_for('cuenta') }}">💰 My account</a>
+        <a href="{{ url_for('logout') }}">Log out</a>
       </div>
     </div>
     {% endif %}
@@ -41,15 +38,13 @@
   {% if miembro_platinum %}
   <span class="plat-badge">★ PLATINUM</span>
   {% else %}
-  <a href="{{ url_for('desbloquear_platinum') }}" class="plat-cta">🔓 Desbloquear Platinum</a>
+  <a href="{{ url_for('desbloquear_platinum') }}" class="plat-cta">🔓 Unlock Platinum</a>
   {% endif %}
-  <button id="langToggle" class="lang-btn notranslate" title="Translate to English">🇺🇸 EN</button>
   <div class="avatar" title="{{ nombre_corto }}">{{ inicial }}</div>
   {% else %}
   <nav class="nav">
-    <button id="langToggle" class="lang-btn notranslate" title="Translate to English">🇺🇸 EN</button>
-    <a class="nav-link" href="{{ url_for('login') }}">Entrar</a>
-    <a class="btn btn-primary btn-sm" href="{{ url_for('register') }}">Crear cuenta</a>
+      <a class="nav-link" href="{{ url_for('login') }}">Log in</a>
+    <a class="btn btn-primary btn-sm" href="{{ url_for('register') }}">Sign up</a>
   </nav>
   {% endif %}
 </header>
@@ -68,8 +63,8 @@
 </main>
 
 <footer class="footer">
-  <p><b>THE LINE BREAKER</b> · Valor medible. Disciplina total.</p>
-  <p class="footer-note">Juega responsablemente · 21+ · Si tú o alguien que conoces tiene un problema con el juego, llama al <a href="tel:1800426537">1-800-GAMBLER</a> (1-800-426-2537), ayuda gratuita y confidencial, 24/7.</p>
+  <p><b>THE LINE BREAKER</b> · Measurable value. Total discipline.</p>
+  <p class="footer-note">Play responsibly · 21+ · If you or someone you know has a gambling problem, call <a href="tel:1800426537">1-800-GAMBLER</a> (1-800-426-2537), free and confidential help, 24/7.</p>
 </footer>
 
 <script>
@@ -99,23 +94,5 @@
   });
 })();
 </script>
-<!-- Traductor EN/ES (pedido por Alex 2026-09-24): traduce toda la página al inglés -->
-<div id="google_translate_element" style="display:none!important"></div>
-<script>
-function googleTranslateElementInit(){new google.translate.TranslateElement({pageLanguage:'es',includedLanguages:'en',autoDisplay:false},'google_translate_element');}
-(function(){
-  var btn=document.getElementById('langToggle');
-  if(!btn)return;
-  function isEN(){return document.cookie.split(';').some(function(c){return c.trim().indexOf('googtrans=/es/en')===0;});}
-  function paint(){var en=isEN();btn.textContent=en?'🇺🇸 EN':'🇪🇸 ES';btn.title=en?'Switch to Spanish':'Cambiar a ingl\u00e9s';}
-  btn.addEventListener('click',function(){
-    if(isEN()){document.cookie='googtrans=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';}
-    else{document.cookie='googtrans=/es/en; path=/';}
-    location.reload();
-  });
-  paint();
-})();
-</script>
-<script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 </html>

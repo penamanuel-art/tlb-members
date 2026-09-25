@@ -6,7 +6,7 @@
   </div>
   <h3 class="play-pick">{{ p.pick }}</h3>
   {% if p.comprobante %}
-  <button type="button" class="link-ticket" data-ticket="ticket-{{ p.id }}">Ver el ticket →</button>
+  <button type="button" class="link-ticket" data-ticket="ticket-{{ p.id }}">View ticket →</button>
   {% endif %}
   <div class="play-bet">
     <span class="bet-label">Bet</span>
@@ -15,14 +15,14 @@
     <span class="bet-edge">Edge <b class="pos">+{{ p.edge }}%</b></span>
   </div>
   {% if bankroll %}
-  <p class="my-bet">💰 Tu apuesta: <b>Bet ${{ '%.2f' % (bankroll * p.stake_unidades / 100) }} ({{ p.stake_unidades }}u)</b></p>
+  <p class="my-bet">💰 Your bet: <b>Bet ${{ '%.2f' % (bankroll * p.stake_unidades / 100) }} ({{ p.stake_unidades }}u)</b></p>
   {% endif %}
   <div class="play-actions">
     {% if p.casa_url %}
-    <a class="btn btn-place" href="{{ p.casa_url }}" target="_blank" rel="noopener">Colocar en {{ p.casa or 'tu casa' }} →</a>
+    <a class="btn btn-place" href="{{ p.casa_url }}" target="_blank" rel="noopener">Place at {{ p.casa or 'your book' }} →</a>
     {% endif %}
     {% if p.id in tracked_ids %}
-      <span class="btn btn-tracked">✓ Trackeada</span>
+      <span class="btn btn-tracked">✓ Tracked</span>
     {% else %}
       <form method="post" action="{{ url_for('track', play_id=p.id) }}">
         <button class="btn btn-track" type="submit">+ Track</button>
@@ -35,7 +35,7 @@
 <div class="modal" id="ticket-{{ p.id }}" hidden>
   <div class="modal-card ticket-photo">
     <button type="button" class="modal-close" data-close>✕</button>
-    <img src="{{ url_for('static', filename=p.comprobante) }}" alt="Ticket original de {{ p.pick }}">
+    <img src="{{ url_for('static', filename=p.comprobante) }}" alt="Original ticket for {{ p.pick }}">
   </div>
 </div>
 {% endif %}

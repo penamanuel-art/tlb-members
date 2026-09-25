@@ -3,8 +3,8 @@
 {% block content %}
 <section class="tracker-head">
   <div>
-    <p class="kicker">MASTERCLASS WISE GUY TEAM · CURSO DE 30 DÍAS</p>
-    <h2>{% if leccion.get('dia') %}Día {{ leccion.get('dia') }} de 30{% else %}Masterclass{% endif %}</h2>
+    <p class="kicker">WISE GUY TEAM MASTERCLASS · 30-DAY COURSE</p>
+    <h2>{% if leccion.get('dia') %}Day {{ leccion.get('dia') }} of 30{% else %}Masterclass{% endif %}</h2>
     {% if leccion.get('fase') %}<p class="muted">{{ leccion.get('fase') }}</p>{% endif %}
   </div>
 </section>
@@ -12,27 +12,27 @@
 <article class="lesson-card">
   <h3 class="lesson-title">{{ leccion.get('titulo') }}</h3>
   <p class="lesson-body">{{ leccion.get('resumen') }}</p>
-  <div class="lesson-clave"><strong>La idea clave:</strong> {{ leccion.get('clave') }}</div>
+  <div class="lesson-clave"><strong>Key idea:</strong> {{ leccion.get('clave') }}</div>
 </article>
 {% else %}
-<p class="muted">La lección de hoy aún no está publicada.</p>
+<p class="muted">Today's lesson isn't published yet.</p>
 {% endif %}
 
 <div class="section-head">
-  <h2 class="section-title">ARCHIVO · 30 DÍAS</h2>
+  <h2 class="section-title">ARCHIVE · 30 DAYS</h2>
 </div>
-<p class="muted">El curso completo, una lección por día.</p>
+<p class="muted">The complete course, one lesson per day.</p>
 <div class="accordion">
 {% for l in archivo %}
   <details class="acc-item"{% if l.dia == leccion.get('dia') %} open{% endif %}>
     <summary class="acc-head">
-      <span class="acc-dia">Día {{ l.dia }}</span>
+      <span class="acc-dia">Day {{ l.dia }}</span>
       <span class="acc-titulo">{{ l.titulo }}</span>
     </summary>
     <div class="acc-body">
       <p class="acc-fase">{{ l.fase }}</p>
       <p>{{ l.resumen }}</p>
-      <div class="lesson-clave"><strong>La idea clave:</strong> {{ l.clave }}</div>
+      <div class="lesson-clave"><strong>Key idea:</strong> {{ l.clave }}</div>
     </div>
   </details>
 {% endfor %}

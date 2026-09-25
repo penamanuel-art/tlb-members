@@ -1,21 +1,21 @@
 {% extends "base.html" %}
-{% block title %}Crear cuenta — The Line Breaker{% endblock %}
+{% block title %}Create account — The Line Breaker{% endblock %}
 {% block content %}
 <section class="auth-card">
-  <h2>Crear cuenta <span class="accent">gratis</span></h2>
-  <p class="muted">Sin tarjeta, sin pagos. Solo tu tracker.</p>
+  <h2>Create your <span class="accent">free</span> account</h2>
+  <p class="muted">No card, no payments. Just your tracker.</p>
   <form method="post" action="{{ url_for('register') }}">
-    <label>Nombre
-      <input type="text" name="nombre" required autocomplete="name" placeholder="Tu nombre">
+    <label>Name
+      <input type="text" name="nombre" required autocomplete="name" placeholder="Your name">
     </label>
     <label>Email
-      <input type="email" name="email" required autocomplete="email" placeholder="tu@email.com">
+      <input type="email" name="email" required autocomplete="email" placeholder="you@email.com">
     </label>
-    <label>Contraseña
-      <input type="password" name="password" required minlength="6" autocomplete="new-password" placeholder="Mínimo 6 caracteres">
+    <label>Password
+      <input type="password" name="password" required minlength="6" autocomplete="new-password" placeholder="Minimum 6 characters">
     </label>
-    <button class="btn btn-primary btn-block" type="submit">Crear mi cuenta →</button>
+    <button class="btn btn-primary btn-block" type="submit">Create my account →</button>
   </form>
-  <p class="muted center">¿Ya tienes cuenta? <a href="{{ url_for('login') }}">Entra aquí</a></p>
+  <p class="muted center">Already have an account? <a href="{{ url_for('login') }}">Log in here</a></p>
 </section>
 {% endblock %}

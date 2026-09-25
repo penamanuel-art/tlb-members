@@ -52,7 +52,7 @@ except ImportError:  # pragma: no cover - entorno local sin psycopg
 
 if USE_PG and not HAVE_PSYCOPG:
     raise RuntimeError(
-        "DATABASE_URL está definida pero psycopg no está instalado. "
+        "DATABASE_URL is set but psycopg is not installed. "
         "Agrega psycopg[binary] a requirements.txt"
     )
 
@@ -67,7 +67,7 @@ _secret = os.environ.get("SECRET_KEY")
 if not _secret:
     if USE_PG:
         raise RuntimeError(
-            "SECRET_KEY es obligatoria en producción: define la env var "
+            "SECRET_KEY is required in production: set the env var "
             "SECRET_KEY en el Web Service de Render antes de desplegar."
         )
     _secret = secrets.token_hex(32)  # solo desarrollo local
@@ -234,14 +234,14 @@ def today_iso() -> str:
     return datetime.now(TZ).date().isoformat()
 
 
-DIAS_ES = ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"]
-MESES_ES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio",
-            "agosto", "septiembre", "octubre", "noviembre", "diciembre"]
+DAYS_EN = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+MONTHS_EN = ["January", "February", "March", "April", "May", "June", "July",
+              "August", "September", "October", "November", "December"]
 
 
 def fecha_larga() -> str:
     d = datetime.now(TZ).date()
-    return f"{DIAS_ES[d.weekday()]}, {d.day} de {MESES_ES[d.month - 1]} de {d.year}"
+    return f"{DAYS_EN[d.weekday()]}, {MONTHS_EN[d.month - 1]} {d.day}, {d.year}"
 
 
 def primer_nombre(nombre: str) -> str:
@@ -252,10 +252,10 @@ def saludo_hoy() -> str:
     """Saludo según la hora en America/New_York."""
     h = datetime.now(TZ).hour
     if 5 <= h < 12:
-        return "Buenos días"
+        return "Good morning"
     if 12 <= h < 19:
-        return "Buenas tardes"
-    return "Buenas noches"
+        return "Good afternoon"
+    return "Good evening"
 
 
 def record_checkin(db, user_id: int):
@@ -302,7 +302,7 @@ def login_required(view):
     @wraps(view)
     def wrapper(*args, **kwargs):
         if "user_id" not in session:
-            flash("Inicia sesión para continuar.", "warn")
+            flash("Log in to continue.", "warn")
             return redirect(url_for("login", next=request.path))
         return view(*args, **kwargs)
     return wrapper
@@ -356,14 +356,14 @@ def notify_new_member(nombre: str, email: str):
             from email.message import EmailMessage
 
             msg = EmailMessage()
-            msg["Subject"] = f"The Line Breaker: nuevo miembro — {nombre}"
+            msg["Subject"] = f"The Line Breaker: new member — {nombre}"
             msg["From"] = user
             msg["To"] = dest
             msg.set_content(
-                f"Se registró un nuevo miembro:\n\n"
-                f"Nombre: {nombre}\n"
+                f"A new member registered:\n\n"
+                f"Name: {nombre}\n"
                 f"Email: {email}\n"
-                f"Fecha: {datetime.now(TZ).strftime('%Y-%m-%d %H:%M %Z')}\n"
+                f"Date: {datetime.now(TZ).strftime('%Y-%m-%d %H:%M %Z')}\n"
             )
             with smtplib.SMTP("smtp.gmail.com", 587, timeout=20) as s:
                 s.starttls()
@@ -702,7 +702,7 @@ def home():
     for d in load_archive():
         for j in d.get("jugadas", []) or []:
             if (
-                j.get("resultado") in ("GANADA", "PERDIDA")
+                j.get("resultado") in ("WON", "LOST")
                 and not j.get("bloqueada")
                 and j.get("pick")
             ):
@@ -741,12 +741,12 @@ def register():
         email = request.form.get("email", "").strip().lower()
         password = request.form.get("password", "")
         if not nombre or not email or len(password) < 6:
-            flash("Completa nombre, email válido y una contraseña de al menos 6 caracteres.", "error")
+            flash("Enter your name, a valid email and a password of at least 6 characters.", "error")
             return render_template("register.html"), 400
         db = get_db()
         exists = db.execute("SELECT id FROM users WHERE email = ?", (email,)).fetchone()
         if exists:
-            flash("Ese email ya está registrado. Inicia sesión.", "error")
+            flash("That email is already registered. Log in.", "error")
             return render_template("register.html"), 400
         new_id = insert_returning_id(
             db,
@@ -785,7 +785,7 @@ def login():
         db = get_db()
         user = db.execute("SELECT * FROM users WHERE email = ?", (email,)).fetchone()
         if not user or not check_password(password, user["password_hash"]):
-            flash("Email o contraseña incorrectos.", "error")
+            flash("Incorrect email or password.", "error")
             return render_template("login.html"), 401
         # Marca admin automáticamente si el email coincide con ADMIN_EMAIL
         # (cubre cuentas creadas antes de configurar la variable).
@@ -805,7 +805,7 @@ def login():
         session["user_id"] = user["id"]
         session["nombre"] = user["nombre"]
         session["is_admin"] = es_admin
-        flash(f"¡Hola de nuevo, {user['nombre']}!", "ok")
+        flash(f"Welcome back, {user['nombre']}!", "ok")
         next_url = request.args.get("next") or url_for("home")
         return redirect(next_url)
     return render_template("login.html")
@@ -814,7 +814,7 @@ def login():
 @app.route("/logout")
 def logout():
     session.clear()
-    flash("Sesión cerrada.", "ok")
+    flash("Logged out.", "ok")
     return redirect(url_for("index"))
 
 
@@ -833,11 +833,11 @@ def cuenta():
         except (ValueError, TypeError):
             val = 0.0
         if val <= 0:
-            flash("Ingresa un bankroll válido mayor que cero.", "error")
+            flash("Enter a valid bankroll greater than zero.", "error")
             return render_template("cuenta.html", bankroll=user["bankroll"] if user else None), 400
         db.execute("UPDATE users SET bankroll = ? WHERE id = ?", (val, session["user_id"]))
         db.commit()
-        flash(f"Bankroll guardado: ${val:,.2f}.", "ok")
+        flash(f"Bankroll saved: ${val:,.2f}.", "ok")
         return redirect(url_for("cuenta"))
     return render_template("cuenta.html", bankroll=user["bankroll"] if user else None)
 
@@ -882,11 +882,11 @@ def tracker():
 def track(play_id):
     play = next((p for p in load_plays() if p.get("id") == play_id), None)
     if not play:
-        flash("Jugada no encontrada.", "error")
+        flash("Play not found.", "error")
         return redirect(url_for("home"))
     # La Platinum bloqueada no se puede trackear: no revela nada.
     if play.get("nivel") == "PLATINUM" and not platinum_unlocked_for(current_user()):
-        flash("La jugada Platinum está bloqueada. Desbloquéala para trackearla.", "warn")
+        flash("The Platinum play is locked. Unlock it to track it.", "warn")
         return redirect(url_for("desbloquear_platinum"))
     db = get_db()
     try:
@@ -903,9 +903,9 @@ def track(play_id):
             ),
         )
         db.commit()
-        flash("Jugada agregada a tu tracker.", "ok")
+        flash("Play added to your tracker.", "ok")
     except INTEGRITY_ERRORS:
-        flash("Esa jugada ya está en tu tracker.", "warn")
+        flash("That play is already in your tracker.", "warn")
     return back("home")
 
 
@@ -914,7 +914,7 @@ def track(play_id):
 def set_result(tracked_id):
     resultado = request.form.get("resultado")
     if resultado not in ("W", "L", ""):
-        flash("Resultado inválido.", "error")
+        flash("Invalid result.", "error")
         return redirect(url_for("home"))
     db = get_db()
     row = db.execute(
@@ -922,14 +922,14 @@ def set_result(tracked_id):
         (tracked_id, session["user_id"]),
     ).fetchone()
     if not row:
-        flash("Jugada no encontrada.", "error")
+        flash("Play not found.", "error")
         return redirect(url_for("home"))
     db.execute(
         "UPDATE tracked_plays SET resultado = ? WHERE id = ?",
         (resultado if resultado else None, tracked_id),
     )
     db.commit()
-    flash("Resultado actualizado.", "ok")
+    flash("Result updated.", "ok")
     return back("tracker")
 
 
@@ -942,7 +942,7 @@ def untrack(tracked_id):
         (tracked_id, session["user_id"]),
     )
     db.commit()
-    flash("Jugada eliminada de tu tracker.", "ok")
+    flash("Play removed from your tracker.", "ok")
     return back("tracker")
 
 
@@ -1001,18 +1001,18 @@ def admin_toggle_platinum():
     """
     db = get_db()
     if not is_admin_for(current_user()):
-        flash("No tienes permiso.", "error")
+        flash("You don't have permission.", "error")
         return redirect(url_for("home"))
     user_id = request.form.get("user_id")
     row = db.execute("SELECT platinum_unlocked FROM users WHERE id = ?", (user_id,)).fetchone()
     if not row:
-        flash("Miembro no encontrado.", "error")
+        flash("Member not found.", "error")
     else:
         nuevo = 0 if row["platinum_unlocked"] else 1
         db.execute("UPDATE users SET platinum_unlocked = ? WHERE id = ?", (nuevo, user_id))
         db.commit()
         flash(
-            "Acceso Platinum activado." if nuevo else "Acceso Platinum desactivado.",
+            "Platinum access activated." if nuevo else "Platinum access deactivated.",
             "ok",
         )
     return redirect(url_for("admin_miembros"))
@@ -1024,24 +1024,24 @@ def admin_eliminar_miembro():
     """Elimina una cuenta de miembro (solo admin). No permite borrarse a sí mismo ni a otro admin."""
     me = current_user()
     if not is_admin_for(me):
-        flash("No tienes permiso.", "error")
+        flash("You don't have permission.", "error")
         return redirect(url_for("home"))
     user_id = request.form.get("user_id", type=int)
     if not user_id or (me and user_id == me["id"]):
-        flash("No puedes eliminar esa cuenta.", "error")
+        flash("You can't delete that account.", "error")
         return redirect(url_for("admin_miembros"))
     db = get_db()
     target = db.execute("SELECT * FROM users WHERE id = ?", (user_id,)).fetchone()
     if not target:
-        flash("Esa cuenta ya no existe.", "error")
+        flash("That account no longer exists.", "error")
         return redirect(url_for("admin_miembros"))
     if is_admin_for(target):
-        flash("No puedes eliminar a otro administrador.", "error")
+        flash("You can't delete another administrator.", "error")
         return redirect(url_for("admin_miembros"))
     db.execute("DELETE FROM tracked_plays WHERE user_id = ?", (user_id,))
     db.execute("DELETE FROM users WHERE id = ?", (user_id,))
     db.commit()
-    flash(f"Cuenta {target['email']} eliminada.", "ok")
+    flash(f"Account {target['email']} deleted.", "ok")
     return redirect(url_for("admin_miembros"))
 
 
@@ -1052,7 +1052,7 @@ def admin_miembros():
     db = get_db()
     user = current_user()
     if not is_admin_for(user):
-        flash("No tienes permiso para ver esta página.", "error")
+        flash("You don't have permission to view this page.", "error")
         return redirect(url_for("home"))
     miembros = db.execute(
         "SELECT id, nombre, email, created_at, platinum_unlocked, is_admin "

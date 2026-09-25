@@ -1,11 +1,11 @@
 {% extends "base.html" %}
-{% block title %}Archivo — The Line Breaker{% endblock %}
+{% block title %}Archive — The Line Breaker{% endblock %}
 {% block content %}
 
 <section class="tracker-head">
   <div>
-    <p class="kicker">ARCHIVO DEL BOARD</p>
-    <h2>Jugadas publicadas.</h2>
+    <p class="kicker">ARCHIVE BOARD</p>
+    <h2>Published plays.</h2>
   </div>
 </section>
 
@@ -27,23 +27,23 @@
       </div>
       <h3 class="play-pick">{{ j.pick }}</h3>
       {% if j.comprobante %}
-      <button type="button" class="link-ticket" data-ticket="foto-{{ d.fecha }}-{{ loop.index }}">Ver el ticket →</button>
+      <button type="button" class="link-ticket" data-ticket="foto-{{ d.fecha }}-{{ loop.index }}">View ticket →</button>
       <div class="modal" id="foto-{{ d.fecha }}-{{ loop.index }}" hidden>
         <div class="modal-card ticket-photo-card">
           <button type="button" class="modal-close" data-close>✕</button>
-          <img class="ticket-photo" src="{{ url_for('static', filename=j.comprobante) }}" alt="Comprobante {{ j.pick }}">
+          <img class="ticket-photo" src="{{ url_for('static', filename=j.comprobante) }}" alt="Receipt for {{ j.pick }}">
         </div>
       </div>
       {% endif %}
       <div class="play-bet">
-        <span class="bet-label">{{ 'Cuota' if j.cuota_texto else 'Cuota' }}</span>
+        <span class="bet-label">{{ 'Odds' if j.cuota_texto else 'Odds' }}</span>
         <b class="bet-amount">{{ j.cuota_texto if j.cuota_texto else fmt_odds(j.cuota) }}</b>
         <span class="muted">({{ j.stake_unidades }}u · ${{ '%.0f' % j.stake_monto }})</span>
         {% if j.edge %}<span class="bet-edge">Edge <b class="pos">+{{ j.edge }}%</b></span>{% endif %}
       </div>
       <p class="muted">
-        {% if j.resultado %}<b class="{{ 'pos' if j.resultado == 'GANADA' else 'neg' }}">{{ j.resultado }}</b>{% if j.profit is not none %} {{ '+$%.2f' % j.profit }}{% endif %} · {% endif %}
-        {% if j.verificada %}📸 Verificada · {% endif %}
+        {% if j.resultado %}<b class="{{ 'pos' if j.resultado == 'WON' else 'neg' }}">{{ j.resultado }}</b>{% if j.profit is not none %} {{ '+$%.2f' % j.profit }}{% endif %} · {% endif %}
+        {% if j.verificada %}📸 Verified · {% endif %}
         {{ j.estado if j.estado else '' }}
         {% if j.hora %}{{ j.hora }}{% endif %}
       </p>
@@ -53,43 +53,43 @@
   </div>
 </section>
 {% else %}
-<p class="muted">Aún no hay jugadas publicadas.</p>
+<p class="muted">No published plays yet.</p>
 {% endfor %}
 
 <div class="section-head">
-  <h2 class="section-title">EL RÉCORD NO SE ESCONDE.</h2>
+  <h2 class="section-title">THE RECORD DOESN'T HIDE.</h2>
 </div>
 <section class="history-box">
-  <p><b>Historial verificado</b> — solo cuentan las jugadas respaldadas por su comprobante.</p>
+  <p><b>Verified history</b> — only plays backed by their receipt count.</p>
   <p class="history-line">
-    <b class="pos">{{ res.get('ganadas', 0) }} GANADAS</b> · <b class="neg">{{ res.get('perdidas', 0) }} PERDIDAS</b>
+    <b class="pos">{{ res.get('ganadas', 0) }} WON</b> · <b class="neg">{{ res.get('perdidas', 0) }} LOST</b>
   </p>
   <p class="history-line">
-    Ganancia total <b class="pos">{% if res.get('profit_all_time') is not none %}{{ '+$%.2f' % res.get('profit_all_time') }}{% else %}—{% endif %}</b>
+    Total profit <b class="pos">{% if res.get('profit_all_time') is not none %}{{ '+$%.2f' % res.get('profit_all_time') }}{% else %}—{% endif %}</b>
     · ROI <b class="pos">{% if res.get('roi') is not none %}{{ '%+.1f' % res.get('roi') }}%{% else %}—{% endif %}</b>
   </p>
 </section>
 
 <div class="section-head">
-  <h2 class="section-title">HABLANDO CLARO.</h2>
+  <h2 class="section-title">STRAIGHT TALK.</h2>
 </div>
-<p class="muted">Preguntas frecuentes</p>
+<p class="muted">Frequently asked questions</p>
 <div class="accordion">
   <details class="acc-item">
-    <summary class="acc-head"><span class="acc-titulo">¿Una jugada Platinum está garantizada?</span></summary>
-    <div class="acc-body"><p>No. Ninguna apuesta está garantizada. Platinum identifica la jugada con mayor valor estimado del día, no una certeza.</p></div>
+    <summary class="acc-head"><span class="acc-titulo">Is a Platinum play guaranteed?</span></summary>
+    <div class="acc-body"><p>No. No bet is guaranteed. Platinum identifies the day's highest estimated value play, not a sure thing.</p></div>
   </details>
   <details class="acc-item">
-    <summary class="acc-head"><span class="acc-titulo">¿Qué incluye mi membresía?</span></summary>
-    <div class="acc-body"><p>Acceso a las jugadas Gold, el historial verificado y el contenido educativo. La jugada principal Platinum se desbloquea con el plan semanal.</p></div>
+    <summary class="acc-head"><span class="acc-titulo">What does my membership include?</span></summary>
+    <div class="acc-body"><p>Access to Gold plays, verified history and educational content. The top Platinum play unlocks with the weekly plan.</p></div>
   </details>
   <details class="acc-item">
-    <summary class="acc-head"><span class="acc-titulo">¿Por qué puede haber un día sin jugadas?</span></summary>
-    <div class="acc-body"><p>Porque forzar volumen destruye el edge. Si el mercado no ofrece valor suficiente, la decisión profesional es no apostar.</p></div>
+    <summary class="acc-head"><span class="acc-titulo">Why might there be a day with no plays?</span></summary>
+    <div class="acc-body"><p>Because forcing volume destroys edge. If the market doesn't offer enough value, the professional decision is not to bet.</p></div>
   </details>
   <details class="acc-item">
-    <summary class="acc-head"><span class="acc-titulo">¿Cómo desbloqueo la jugada Platinum?</span></summary>
-    <div class="acc-body"><p>Usa el botón «Desbloquear» en la tarjeta Platinum para activar tu acceso semanal.</p></div>
+    <summary class="acc-head"><span class="acc-titulo">How do I unlock the Platinum play?</span></summary>
+    <div class="acc-body"><p>Use the "Unlock" button on the Platinum card to activate your weekly access.</p></div>
   </details>
 </div>
 

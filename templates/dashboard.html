@@ -1,48 +1,48 @@
 {% extends "base.html" %}
-{% block title %}Mi Tracker — The Line Breaker{% endblock %}
+{% block title %}My Tracker — The Line Breaker{% endblock %}
 {% block content %}
 
 <section class="tracker-head">
   <div>
-    <p class="kicker">MI TRACKER</p>
-    <h2>{{ stats.tracked }} jugada{{ 's' if stats.tracked != 1 }} trackeada{{ 's' if stats.tracked != 1 }}</h2>
+    <p class="kicker">MY TRACKER</p>
+    <h2>{{ stats.tracked }} play{{ 's' if stats.tracked != 1 }} tracked</h2>
   </div>
 </section>
 
 <section class="stats-grid">
   <div class="stat">
-    <span class="stat-label">RÉCORD</span>
+    <span class="stat-label">RECORD</span>
     <span class="stat-value">{{ stats.record }}</span>
-    <span class="stat-sub">{{ stats.pending }} pendiente{{ 's' if stats.pending != 1 }}</span>
+    <span class="stat-sub">{{ stats.pending }} pending</span>
   </div>
   <div class="stat">
-    <span class="stat-label">UNIDADES NETAS</span>
+    <span class="stat-label">NET UNITS</span>
     <span class="stat-value {{ 'pos' if stats.net_units > 0 else ('neg' if stats.net_units < 0 else '') }}">{{ fmt_units(stats.net_units) }}</span>
-    <span class="stat-sub">edge realizado</span>
+    <span class="stat-sub">realized edge</span>
   </div>
   <div class="stat">
-    <span class="stat-label">NETO</span>
+    <span class="stat-label">NET</span>
     <span class="stat-value {{ 'pos' if stats.net_dollars > 0 else ('neg' if stats.net_dollars < 0 else '') }}">{{ fmt_money(stats.net_dollars) }}</span>
-    <span class="stat-sub">{{ stats.tracked }} jugadas</span>
+    <span class="stat-sub">{{ stats.tracked }} plays</span>
   </div>
   <div class="stat">
     <span class="stat-label">ROI</span>
     <span class="stat-value {{ 'pos' if stats.roi > 0 else ('neg' if stats.roi < 0 else '') }}">{{ '%+.1f' % stats.roi }}%</span>
-    <span class="stat-sub">sobre lo arriesgado</span>
+    <span class="stat-sub">on amount risked</span>
   </div>
   <div class="stat">
-    <span class="stat-label">CLV PROMEDIO</span>
+    <span class="stat-label">AVG CLV</span>
     <span class="stat-value {{ 'pos' if stats.clv_avg is not none and stats.clv_avg > 0 else ('neg' if stats.clv_avg is not none and stats.clv_avg < 0 else '') }}">{{ ('%+.1f' % stats.clv_avg) if stats.clv_avg is not none else '—' }}</span>
-    <span class="stat-sub">línea de cierre</span>
+    <span class="stat-sub">closing line</span>
   </div>
   <div class="stat">
-    <span class="stat-label">RACHA</span>
+    <span class="stat-label">STREAK</span>
     <span class="stat-value {{ 'pos' if stats.streak.startswith('W') else ('neg' if stats.streak.startswith('L') else '') }}">{{ stats.streak }}</span>
-    <span class="stat-sub">actual</span>
+    <span class="stat-sub">current</span>
   </div>
 </section>
 
-<h3 class="section-title">JUGADAS DE HOY</h3>
+<h3 class="section-title">TODAY'S PLAYS</h3>
 {% if plays %}
 <div class="plays">
   {% for p in plays %}
@@ -54,10 +54,10 @@
   {% endfor %}
 </div>
 {% else %}
-<p class="muted">Hoy no hay jugadas con valor.</p>
+<p class="muted">No value plays today.</p>
 {% endif %}
 
-<h3 class="section-title">MIS JUGADAS</h3>
+<h3 class="section-title">MY PLAYS</h3>
 {% if tracked %}
 <div class="tracked-list">
   {% for t in tracked %}
@@ -71,35 +71,35 @@
     </div>
     <div class="tracked-result">
       {% if t.resultado == 'W' %}
-        <span class="result-badge win">✓ Ganada</span>
+        <span class="result-badge win">✓ Won</span>
       {% elif t.resultado == 'L' %}
-        <span class="result-badge loss">✕ Perdida</span>
+        <span class="result-badge loss">✕ Lost</span>
       {% else %}
-        <span class="result-badge pending">Pendiente</span>
+        <span class="result-badge pending">Pending</span>
       {% endif %}
     </div>
     <div class="tracked-actions">
       <form method="post" action="{{ url_for('set_result', tracked_id=t.id) }}">
         <input type="hidden" name="resultado" value="W">
-        <button class="btn btn-sm btn-win" type="submit" title="Marcar ganada">✓</button>
+        <button class="btn btn-sm btn-win" type="submit" title="Mark as won">✓</button>
       </form>
       <form method="post" action="{{ url_for('set_result', tracked_id=t.id) }}">
         <input type="hidden" name="resultado" value="L">
-        <button class="btn btn-sm btn-loss" type="submit" title="Marcar perdida">✕</button>
+        <button class="btn btn-sm btn-loss" type="submit" title="Mark as lost">✕</button>
       </form>
       <form method="post" action="{{ url_for('set_result', tracked_id=t.id) }}">
         <input type="hidden" name="resultado" value="">
-        <button class="btn btn-sm btn-ghost" type="submit" title="Volver a pendiente">↺</button>
+        <button class="btn btn-sm btn-ghost" type="submit" title="Back to pending">↺</button>
       </form>
-      <form method="post" action="{{ url_for('untrack', tracked_id=t.id) }}" onsubmit="return confirm('¿Quitar esta jugada de tu tracker?');">
-        <button class="btn btn-sm btn-ghost" type="submit" title="Quitar">🗑</button>
+      <form method="post" action="{{ url_for('untrack', tracked_id=t.id) }}" onsubmit="return confirm('Remove this play from your tracker?');">
+        <button class="btn btn-sm btn-ghost" type="submit" title="Remove">🗑</button>
       </form>
     </div>
   </article>
   {% endfor %}
 </div>
 {% else %}
-<p class="muted">Aún no trackeas ninguna jugada. Usa el botón <b>Track jugada</b> en las jugadas de hoy.</p>
+<p class="muted">You haven't tracked any plays yet. Use the <b>Track play</b> button on today's plays.</p>
 {% endif %}
 
 {% endblock %}
