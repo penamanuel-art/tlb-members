@@ -516,6 +516,28 @@ def load_program():
     return load_data()[0]
 
 
+def card_publicada_hoy() -> bool:
+    """True si data/plays.json trae la card de hoy (America/New_York).
+
+    Antes de la publicación diaria (11:05 AM ET) el archivo aún tiene la
+    card de ayer: en ese caso el dashboard muestra 0 jugadas y el aviso
+    de 'aún no publicada', nunca las jugadas de ayer.
+    """
+    hoy = datetime.now(TZ).strftime("%Y-%m-%d")
+    data = load_json_file(PLAYS_PATH)
+    if isinstance(data, dict):
+        fecha = data.get("fecha")
+        if fecha:
+            return fecha == hoy
+        plays = data.get("plays") or []
+    elif isinstance(data, list):
+        plays = data
+    else:
+        return False
+    plays = [p for p in plays if isinstance(p, dict) and p.get("id")]
+    return bool(plays) and all(p.get("fecha") == hoy for p in plays)
+
+
 def load_json_file(path):
     """Lee un JSON de datos; {} si no existe o está corrupto."""
     try:
@@ -690,6 +712,9 @@ def home():
     db = get_db()
     record_checkin(db, session["user_id"])
     program, plays = load_data()
+    card_pendiente = not card_publicada_hoy()
+    if card_pendiente:
+        plays = []  # las de ayer no se muestran: la card de hoy aún no sale
     user = current_user()
     tracked_rows = db.execute(
         "SELECT * FROM tracked_plays WHERE user_id = ?",
@@ -718,6 +743,7 @@ def home():
     return render_template(
         "home.html",
         plays=plays,
+        card_pendiente=card_pendiente,
         tracked_ids=tracked_ids,
         program=program,
         fecha=fecha_larga(),
@@ -865,9 +891,11 @@ def tracker():
     ]
     stats["clv_avg"] = (sum(clvs) / len(clvs)) if clvs else None
     user = current_user()
+    card_pendiente = not card_publicada_hoy()
     return render_template(
         "dashboard.html",
-        plays=load_plays(),
+        plays=[] if card_pendiente else load_plays(),
+        card_pendiente=card_pendiente,
         tracked=tracked,
         tracked_ids=tracked_ids,
         stats=stats,
