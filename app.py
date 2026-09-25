@@ -804,6 +804,7 @@ def home():
                     "cuota": j.get("cuota"),
                     "resultado": j.get("resultado"),
                     "profit": j.get("profit") if j.get("profit") is not None else 0.0,
+                    "comprobante": j.get("comprobante"),
                 })
     recientes = recientes[:6]
     return render_template(
