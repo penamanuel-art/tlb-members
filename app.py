@@ -630,6 +630,7 @@ def inject_user():
         "nombre_corto": corto,
         "inicial": corto[:1].upper(),
         "es_admin": bool(session.get("is_admin")),
+        "miembro_platinum": platinum_unlocked_for(current_user()),
     }
 
 
