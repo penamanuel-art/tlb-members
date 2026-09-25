@@ -22,7 +22,8 @@ from functools import wraps
 
 import bcrypt
 from flask import (
-    Flask, flash, g, redirect, render_template, request, session, url_for,
+    Flask, Response, flash, g, jsonify, redirect, render_template, request,
+    session, url_for,
 )
 from zoneinfo import ZoneInfo
 
@@ -40,6 +41,25 @@ USE_PG = bool(DATABASE_URL)
 STRIPE_PLATINUM_URL = os.environ.get(
     "STRIPE_PLATINUM_URL", "https://buy.stripe.com/28E14p64MfDeeiybEQefC00"
 )
+
+# Web Push (notificaciones del +EV Board en el iPhone, estilo WGT).
+# Claves VAPID como env vars en Render: VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY,
+# VAPID_CLAIM_EMAIL y PUSH_TRIGGER_KEY
+# (ver goals/programa-de-apuestas-deportivas/hidden_files/push-keys.env).
+VAPID_PUBLIC_KEY = os.environ.get("VAPID_PUBLIC_KEY", "")
+VAPID_PRIVATE_KEY = os.environ.get("VAPID_PRIVATE_KEY", "")
+VAPID_CLAIM_EMAIL = os.environ.get(
+    "VAPID_CLAIM_EMAIL", "mailto:thelinebreaker680@gmail.com"
+)
+PUSH_TRIGGER_KEY = os.environ.get("PUSH_TRIGGER_KEY", "")
+
+try:
+    from pywebpush import webpush, WebPushException
+    HAVE_WEBPUSH = True
+except ImportError:  # pragma: no cover - sin pywebpush instalado
+    webpush = None
+    WebPushException = Exception
+    HAVE_WEBPUSH = False
 
 try:
     import psycopg
@@ -164,6 +184,15 @@ CREATE TABLE IF NOT EXISTS checkins (
     fecha TEXT NOT NULL,
     PRIMARY KEY (user_id, fecha)
 );
+CREATE TABLE IF NOT EXISTS push_subscriptions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    member_id INTEGER NOT NULL REFERENCES users(id),
+    endpoint TEXT NOT NULL UNIQUE,
+    p256dh TEXT NOT NULL,
+    auth TEXT NOT NULL,
+    created_at TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_push_member ON push_subscriptions(member_id);
 """
 
 DDL_PG = """
@@ -198,6 +227,15 @@ CREATE TABLE IF NOT EXISTS checkins (
     fecha TEXT NOT NULL,
     PRIMARY KEY (user_id, fecha)
 );
+CREATE TABLE IF NOT EXISTS push_subscriptions (
+    id SERIAL PRIMARY KEY,
+    member_id INTEGER NOT NULL REFERENCES users(id),
+    endpoint TEXT NOT NULL UNIQUE,
+    p256dh TEXT NOT NULL,
+    auth TEXT NOT NULL,
+    created_at TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_push_member ON push_subscriptions(member_id);
 """
 
 
@@ -1183,6 +1221,124 @@ def ev_board():
     db = get_db()
     record_checkin(db, session["user_id"])
     return render_template("ev_board.html", board=load_ev_board())
+
+
+# ------------------------------------------------------- Web Push ----
+@app.route("/push/vapid-public-key")
+def push_vapid_public_key():
+    """Clave pública VAPID (pública, sin login): la usa el navegador para suscribirse."""
+    return jsonify({"publicKey": VAPID_PUBLIC_KEY})
+
+
+@app.route("/push/subscribe", methods=["POST"])
+@login_required
+def push_subscribe():
+    """Guarda la suscripción push del navegador del miembro."""
+    data = request.get_json(force=True, silent=True) or {}
+    endpoint = (data.get("endpoint") or "").strip()
+    keys = data.get("keys") or {}
+    p256dh = keys.get("p256dh", "")
+    auth = keys.get("auth", "")
+    if not endpoint or not p256dh or not auth:
+        return jsonify({"ok": False, "error": "bad subscription"}), 400
+    db = get_db()
+    existing = db.execute(
+        "SELECT id FROM push_subscriptions WHERE endpoint = ?", (endpoint,)
+    ).fetchone()
+    if existing:
+        db.execute(
+            "UPDATE push_subscriptions SET member_id = ?, p256dh = ?, auth = ? WHERE endpoint = ?",
+            (session["user_id"], p256dh, auth, endpoint),
+        )
+    else:
+        db.execute(
+            "INSERT INTO push_subscriptions (member_id, endpoint, p256dh, auth, created_at)"
+            " VALUES (?, ?, ?, ?, ?)",
+            (session["user_id"], endpoint, p256dh, auth, now_iso()),
+        )
+    db.commit()
+    return jsonify({"ok": True})
+
+
+@app.route("/push/unsubscribe", methods=["POST"])
+@login_required
+def push_unsubscribe():
+    data = request.get_json(force=True, silent=True) or {}
+    endpoint = (data.get("endpoint") or "").strip()
+    if endpoint:
+        db = get_db()
+        db.execute(
+            "DELETE FROM push_subscriptions WHERE endpoint = ? AND member_id = ?",
+            (endpoint, session["user_id"]),
+        )
+        db.commit()
+    return jsonify({"ok": True})
+
+
+@app.route("/sw.js")
+def service_worker():
+    """Service Worker en la raíz (scope /): requerido para Web Push."""
+    path = os.path.join(app.static_folder, "sw.js")
+    with open(path, "rb") as f:
+        body = f.read()
+    return Response(body, mimetype="application/javascript")
+
+
+@app.route("/manifest.json")
+def manifest():
+    path = os.path.join(app.static_folder, "manifest.json")
+    with open(path, "rb") as f:
+        body = f.read()
+    return Response(body, mimetype="application/manifest+json")
+
+
+@app.route("/api/push-edge", methods=["POST"])
+def api_push_edge():
+    """Envía un push a todos los miembros suscritos.
+
+    Lo llama el cron de actualización del +EV Board cuando aparece un edge
+    nuevo. Protegido con header X-Push-Key == PUSH_TRIGGER_KEY.
+    JSON: {"title": "...", "body": "...", "url": "/ev-board"}.
+    """
+    if not PUSH_TRIGGER_KEY or not secrets.compare_digest(
+        request.headers.get("X-Push-Key", ""), PUSH_TRIGGER_KEY
+    ):
+        return jsonify({"error": "forbidden"}), 403
+    if not HAVE_WEBPUSH or not VAPID_PRIVATE_KEY or not VAPID_PUBLIC_KEY:
+        return jsonify({"error": "push not configured"}), 503
+    data = request.get_json(force=True, silent=True) or {}
+    title = data.get("title") or "The Line Breaker"
+    body = data.get("body") or "New +EV edge on the board."
+    url = data.get("url") or "/ev-board"
+    payload = json.dumps({"title": title, "body": body, "url": url})
+    db = get_db()
+    subs = db.execute(
+        "SELECT id, endpoint, p256dh, auth FROM push_subscriptions"
+    ).fetchall()
+    sent, failed = 0, 0
+    for s in subs:
+        try:
+            webpush(
+                subscription_info={
+                    "endpoint": s["endpoint"],
+                    "keys": {"p256dh": s["p256dh"], "auth": s["auth"]},
+                },
+                data=payload,
+                vapid_private_key=VAPID_PRIVATE_KEY,
+                vapid_claims={"sub": VAPID_CLAIM_EMAIL},
+            )
+            sent += 1
+        except WebPushException as ex:
+            code = getattr(getattr(ex, "response", None), "status_code", None)
+            if code in (404, 410):
+                db.execute(
+                    "DELETE FROM push_subscriptions WHERE id = ?", (s["id"],)
+                )
+            failed += 1
+        except Exception:
+            failed += 1
+    db.commit()
+    return jsonify({"sent": sent, "failed": failed})
 
 
 if __name__ == "__main__":
