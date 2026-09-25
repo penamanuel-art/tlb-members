@@ -15,6 +15,7 @@
   <div class="m-email">{{ m.email }}</div>
   <div class="m-meta">
     <span class="m-pill">Registro: {{ m.created_at[:10] if m.created_at else '—' }}</span>
+    {% if m.es_nuevo %}<span class="m-pill on">NUEVO</span>{% endif %}
     {% if m.platinum_unlocked %}<span class="m-pill on">★ Platinum</span>{% endif %}
     {% if m.is_admin %}<span class="m-pill on">Admin</span>{% endif %}
   </div>
