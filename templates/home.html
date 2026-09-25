@@ -1,11 +1,17 @@
 {% extends "base.html" %}
 {% block title %}Hoy — The Line Breaker
-<!-- LLUVIA DE DINERO (pedido por Alex 2026-09-24): billetes ~4s al entrar al dashboard -->
+<!-- LLUVIA DE DINERO (pedido por Alex 2026-09-24): billetes ~4s, una sola vez por sesión -->
 <canvas id="lluvia-dinero" style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9999;"></canvas>
 <script>
 (function(){
-  if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) { document.getElementById('lluvia-dinero').remove(); return; }
   var canvas = document.getElementById('lluvia-dinero');
+  function quitar(){ if (canvas) canvas.remove(); }
+  // Una sola vez por sesión: si ya cayó al entrar, no repetir al navegar por el menú
+  try {
+    if (sessionStorage.getItem('lb_lluvia') === '1') { quitar(); return; }
+    sessionStorage.setItem('lb_lluvia', '1');
+  } catch (e) {}
+  if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) { quitar(); return; }
   var ctx = canvas.getContext('2d');
   var W, H, DPR = Math.min(window.devicePixelRatio || 1, 2);
   function size(){ W = innerWidth; H = innerHeight; canvas.width = W*DPR; canvas.height = H*DPR; ctx.setTransform(DPR,0,0,DPR,0,0); }
@@ -243,12 +249,18 @@
 </div>
 
 
-<!-- LLUVIA DE DINERO (pedido por Alex 2026-09-24): billetes ~4s al entrar al dashboard -->
+<!-- LLUVIA DE DINERO (pedido por Alex 2026-09-24): billetes ~4s, una sola vez por sesión -->
 <canvas id="lluvia-dinero" style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9999;"></canvas>
 <script>
 (function(){
-  if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) { document.getElementById('lluvia-dinero').remove(); return; }
   var canvas = document.getElementById('lluvia-dinero');
+  function quitar(){ if (canvas) canvas.remove(); }
+  // Una sola vez por sesión: si ya cayó al entrar, no repetir al navegar por el menú
+  try {
+    if (sessionStorage.getItem('lb_lluvia') === '1') { quitar(); return; }
+    sessionStorage.setItem('lb_lluvia', '1');
+  } catch (e) {}
+  if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) { quitar(); return; }
   var ctx = canvas.getContext('2d');
   var W, H, DPR = Math.min(window.devicePixelRatio || 1, 2);
   function size(){ W = innerWidth; H = innerHeight; canvas.width = W*DPR; canvas.height = H*DPR; ctx.setTransform(DPR,0,0,DPR,0,0); }
