@@ -1,5 +1,53 @@
 {% extends "base.html" %}
-{% block title %}Hoy — The Line Breaker{% endblock %}
+{% block title %}Hoy — The Line Breaker
+<!-- LLUVIA DE DINERO (pedido por Alex 2026-09-24): billetes ~2s al entrar al dashboard -->
+<canvas id="lluvia-dinero" style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9999;"></canvas>
+<script>
+(function(){
+  if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) { document.getElementById('lluvia-dinero').remove(); return; }
+  var canvas = document.getElementById('lluvia-dinero');
+  var ctx = canvas.getContext('2d');
+  var W, H, DPR = Math.min(window.devicePixelRatio || 1, 2);
+  function size(){ W = innerWidth; H = innerHeight; canvas.width = W*DPR; canvas.height = H*DPR; ctx.setTransform(DPR,0,0,DPR,0,0); }
+  size(); addEventListener('resize', size);
+  var N = Math.max(30, Math.min(70, Math.floor(W/14))), bills = [], i;
+  for (i = 0; i < N; i++) bills.push({
+    x: Math.random()*W, y: -40 - Math.random()*H*0.6,
+    w: 34 + Math.random()*24, h: 18 + Math.random()*10,
+    vy: 3.5 + Math.random()*3.5,
+    sway: Math.random()*6.28, swaySpd: 0.02 + Math.random()*0.03,
+    rot: (Math.random()-0.5)*0.9, rotSpd: (Math.random()-0.5)*0.06,
+    alpha: 1
+  });
+  function draw(b){
+    ctx.save(); ctx.translate(b.x, b.y); ctx.rotate(b.rot); ctx.globalAlpha = b.alpha;
+    ctx.fillStyle = '#14532d'; ctx.strokeStyle = '#d4af37'; ctx.lineWidth = 2;
+    var w = b.w, h = b.h;
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(-w/2, -h/2, w, h, 3); else ctx.rect(-w/2, -h/2, w, h);
+    ctx.fill(); ctx.stroke();
+    ctx.fillStyle = '#d4af37';
+    ctx.font = 'bold ' + Math.round(h*0.62) + 'px system-ui, sans-serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('$', 0, 1);
+    ctx.restore();
+  }
+  var t0 = performance.now(), DUR = 2000;
+  function frame(t){
+    var el = t - t0, p = el / DUR;
+    ctx.clearRect(0, 0, W, H);
+    for (i = 0; i < bills.length; i++){ var b = bills[i];
+      b.y += b.vy; b.sway += b.swaySpd; b.x += Math.sin(b.sway)*1.2; b.rot += b.rotSpd;
+      if (p > 0.72) b.alpha = Math.max(0, 1 - (p - 0.72)/0.28);
+      if (b.y < H + 60) draw(b);
+    }
+    if (el < DUR + 300) requestAnimationFrame(frame); else canvas.remove();
+  }
+  requestAnimationFrame(frame);
+})();
+</script>
+
+{% endblock %}
 {% block content %}
 
 <!-- 01 · HERO -->
@@ -193,5 +241,53 @@
     <span class="tool-go">Abrir →</span>
   </a>
 </div>
+
+
+<!-- LLUVIA DE DINERO (pedido por Alex 2026-09-24): billetes ~2s al entrar al dashboard -->
+<canvas id="lluvia-dinero" style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9999;"></canvas>
+<script>
+(function(){
+  if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) { document.getElementById('lluvia-dinero').remove(); return; }
+  var canvas = document.getElementById('lluvia-dinero');
+  var ctx = canvas.getContext('2d');
+  var W, H, DPR = Math.min(window.devicePixelRatio || 1, 2);
+  function size(){ W = innerWidth; H = innerHeight; canvas.width = W*DPR; canvas.height = H*DPR; ctx.setTransform(DPR,0,0,DPR,0,0); }
+  size(); addEventListener('resize', size);
+  var N = Math.max(30, Math.min(70, Math.floor(W/14))), bills = [], i;
+  for (i = 0; i < N; i++) bills.push({
+    x: Math.random()*W, y: -40 - Math.random()*H*0.6,
+    w: 34 + Math.random()*24, h: 18 + Math.random()*10,
+    vy: 3.5 + Math.random()*3.5,
+    sway: Math.random()*6.28, swaySpd: 0.02 + Math.random()*0.03,
+    rot: (Math.random()-0.5)*0.9, rotSpd: (Math.random()-0.5)*0.06,
+    alpha: 1
+  });
+  function draw(b){
+    ctx.save(); ctx.translate(b.x, b.y); ctx.rotate(b.rot); ctx.globalAlpha = b.alpha;
+    ctx.fillStyle = '#14532d'; ctx.strokeStyle = '#d4af37'; ctx.lineWidth = 2;
+    var w = b.w, h = b.h;
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(-w/2, -h/2, w, h, 3); else ctx.rect(-w/2, -h/2, w, h);
+    ctx.fill(); ctx.stroke();
+    ctx.fillStyle = '#d4af37';
+    ctx.font = 'bold ' + Math.round(h*0.62) + 'px system-ui, sans-serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('$', 0, 1);
+    ctx.restore();
+  }
+  var t0 = performance.now(), DUR = 2000;
+  function frame(t){
+    var el = t - t0, p = el / DUR;
+    ctx.clearRect(0, 0, W, H);
+    for (i = 0; i < bills.length; i++){ var b = bills[i];
+      b.y += b.vy; b.sway += b.swaySpd; b.x += Math.sin(b.sway)*1.2; b.rot += b.rotSpd;
+      if (p > 0.72) b.alpha = Math.max(0, 1 - (p - 0.72)/0.28);
+      if (b.y < H + 60) draw(b);
+    }
+    if (el < DUR + 300) requestAnimationFrame(frame); else canvas.remove();
+  }
+  requestAnimationFrame(frame);
+})();
+</script>
 
 {% endblock %}
