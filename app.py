@@ -377,31 +377,36 @@ def notify_new_member(nombre: str, email: str):
 
 
 # ------------------------------------------------------------- Plays ----
-WELCOME_SUBJECT = "Bienvenido a The Line Breaker — así funciona"
+WELCOME_SUBJECT = "Bienvenido a The Line Breaker"
 
 WELCOME_BODY = """Hola {nombre},
 
-Bienvenido a The Line Breaker. Aquí no se apuesta por corazonadas: se apuesta con números, disciplina y valor.
+Tu cuenta está lista. Bienvenido a The Line Breaker: un programa de apuestas deportivas construido sobre números, disciplina y valor. Nada de corazonadas.
+
+TU PANEL DE MIEMBRO
+Entra directamente aquí:
+https://the-line-breaker-members.onrender.com/home
+
+Ahí verás cada mañana las jugadas del día (~11:00 AM, hora de Nueva York).
 
 CÓMO FUNCIONA
-• Cada mañana (~11:00 AM, hora de Nueva York) publicamos las jugadas del día en tu panel de miembro.
-• Máximo 3 jugadas por día, y solo si hay valor real. Si no hay valor, no hay jugada.
-• Cada jugada trae su nivel: PLATINUM (la principal del día) o GOLD, con cuota, stake y edge explicados.
+• Publicamos un máximo de 3 jugadas por día, y solo cuando el modelo detecta valor real. Si no hay valor, no hay jugada: la disciplina también es no apostar.
+• Cada jugada indica su nivel: PLATINUM, la principal del día (edge mayor al 5%), o GOLD (edge entre 3% y 5%), siempre con su cuota, stake y explicación.
 
 PLATINUM
-• La jugada Platinum está reservada para miembros Platinum.
-• Cuesta $1 la primera semana, luego $23 por semana. La desbloqueas desde tu panel, en "Desbloquear Platinum".
+• La jugada Platinum es exclusiva para miembros Platinum.
+• Cuesta $1 la primera semana, luego $23 por semana. Actívala desde tu panel, en "Desbloquear Platinum".
 
 REGLAS DE ORO
-• Apuesta exactamente lo indicado: ni más, ni menos.
-• No persigas pérdidas ni ganancias.
-• Solo números y valor. Nada de favoritismo.
+1. Apuesta exactamente el monto indicado: ni más, ni menos.
+2. Nunca persigas pérdidas ni ganancias.
+3. Solo números y valor. Nada de favoritismo por equipos.
 
-Explora tu panel. Mañana a las 11:00 AM llegan las primeras jugadas.
+Nos vemos mañana a las 11:00 AM con las primeras jugadas.
 
 — The Line Breaker
 
-Juega responsablemente · 21+ · Si tienes un problema con el juego, llama al 1-800-GAMBLER (1-800-426-2537), ayuda gratuita y confidencial, 24/7.
+Juega responsablemente · 21+ · ¿Problemas con el juego? Llama al 1-800-GAMBLER (1-800-426-2537): ayuda gratuita y confidencial, 24/7.
 """
 
 
