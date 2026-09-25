@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Hoy — The Line Breaker
-<!-- LLUVIA DE DINERO (pedido por Alex 2026-09-24): billetes ~4s, una sola vez por sesión -->
+<!-- LLUVIA DE DINERO (pedido por Alex 2026-09-24): billetes estilo dólar real ~4s, una sola vez por sesión -->
 <canvas id="lluvia-dinero" style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9999;"></canvas>
 <script>
 (function(){
@@ -19,23 +19,52 @@
   var N = Math.max(70, Math.min(150, Math.floor(W/6))), bills = [], i;
   for (i = 0; i < N; i++) bills.push({
     x: Math.random()*W, y: -40 - Math.random()*H*0.6,
-    w: 34 + Math.random()*24, h: 18 + Math.random()*10,
+    w: 58 + Math.random()*30, h: 25 + Math.random()*12,
     vy: 3.5 + Math.random()*3.5,
     sway: Math.random()*6.28, swaySpd: 0.02 + Math.random()*0.03,
     rot: (Math.random()-0.5)*0.9, rotSpd: (Math.random()-0.5)*0.06,
     alpha: 1
   });
   function draw(b){
+    var w = b.w, h = b.h, k;
     ctx.save(); ctx.translate(b.x, b.y); ctx.rotate(b.rot); ctx.globalAlpha = b.alpha;
-    ctx.fillStyle = '#14532d'; ctx.strokeStyle = '#d4af37'; ctx.lineWidth = 2;
-    var w = b.w, h = b.h;
+    // papel verde del billete
+    var g = ctx.createLinearGradient(0, -h/2, 0, h/2);
+    g.addColorStop(0, '#7ba889'); g.addColorStop(0.5, '#5e8f6b'); g.addColorStop(1, '#477a56');
+    ctx.fillStyle = g; ctx.strokeStyle = '#1e4d2b'; ctx.lineWidth = 1.5;
     ctx.beginPath();
-    if (ctx.roundRect) ctx.roundRect(-w/2, -h/2, w, h, 3); else ctx.rect(-w/2, -h/2, w, h);
+    if (ctx.roundRect) ctx.roundRect(-w/2, -h/2, w, h, 2); else ctx.rect(-w/2, -h/2, w, h);
     ctx.fill(); ctx.stroke();
-    ctx.fillStyle = '#d4af37';
-    ctx.font = 'bold ' + Math.round(h*0.62) + 'px system-ui, sans-serif';
+    // marco interior
+    ctx.strokeStyle = 'rgba(30,77,43,.7)'; ctx.lineWidth = 1;
+    var m = 3.5;
+    ctx.strokeRect(-w/2 + m, -h/2 + m, w - 2*m, h - 2*m);
+    // medallón central con retrato
+    var ow = w*0.30, oh = h*0.72;
+    ctx.fillStyle = '#dfe9d8';
+    ctx.beginPath(); ctx.ellipse(0, 0, ow/2, oh/2, 0, 0, 6.2832); ctx.fill();
+    ctx.strokeStyle = '#1e4d2b'; ctx.lineWidth = 1; ctx.stroke();
+    // silueta del retrato
+    ctx.fillStyle = '#3a6b4a';
+    var hr = oh*0.20;
+    ctx.beginPath(); ctx.arc(0, -oh*0.08, hr, 0, 6.2832); ctx.fill();
+    ctx.beginPath(); ctx.arc(0, oh*0.34, hr*1.45, Math.PI, 0); ctx.fill();
+    // denominación en las esquinas
+    ctx.fillStyle = '#1e4d2b';
+    ctx.font = 'bold ' + Math.max(7, Math.round(h*0.30)) + 'px system-ui, sans-serif';
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillText('$', 0, 1);
+    var cx = w/2 - h*0.30, cy = h/2 - h*0.30;
+    ctx.fillText('100', -cx, -cy); ctx.fillText('100', cx, -cy);
+    ctx.fillText('100', -cx, cy); ctx.fillText('100', cx, cy);
+    // grabado decorativo a los lados
+    ctx.strokeStyle = 'rgba(30,77,43,.45)'; ctx.lineWidth = 1;
+    ctx.beginPath();
+    var lx = ow/2 + 5;
+    for (k = -1; k <= 1; k++) {
+      ctx.moveTo(-lx - 9, k*3); ctx.lineTo(-lx + 1, k*3);
+      ctx.moveTo(lx - 1, k*3); ctx.lineTo(lx + 9, k*3);
+    }
+    ctx.stroke();
     ctx.restore();
   }
   var t0 = performance.now(), DUR = 4000;
@@ -249,7 +278,7 @@
 </div>
 
 
-<!-- LLUVIA DE DINERO (pedido por Alex 2026-09-24): billetes ~4s, una sola vez por sesión -->
+<!-- LLUVIA DE DINERO (pedido por Alex 2026-09-24): billetes estilo dólar real ~4s, una sola vez por sesión -->
 <canvas id="lluvia-dinero" style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9999;"></canvas>
 <script>
 (function(){
@@ -268,23 +297,52 @@
   var N = Math.max(70, Math.min(150, Math.floor(W/6))), bills = [], i;
   for (i = 0; i < N; i++) bills.push({
     x: Math.random()*W, y: -40 - Math.random()*H*0.6,
-    w: 34 + Math.random()*24, h: 18 + Math.random()*10,
+    w: 58 + Math.random()*30, h: 25 + Math.random()*12,
     vy: 3.5 + Math.random()*3.5,
     sway: Math.random()*6.28, swaySpd: 0.02 + Math.random()*0.03,
     rot: (Math.random()-0.5)*0.9, rotSpd: (Math.random()-0.5)*0.06,
     alpha: 1
   });
   function draw(b){
+    var w = b.w, h = b.h, k;
     ctx.save(); ctx.translate(b.x, b.y); ctx.rotate(b.rot); ctx.globalAlpha = b.alpha;
-    ctx.fillStyle = '#14532d'; ctx.strokeStyle = '#d4af37'; ctx.lineWidth = 2;
-    var w = b.w, h = b.h;
+    // papel verde del billete
+    var g = ctx.createLinearGradient(0, -h/2, 0, h/2);
+    g.addColorStop(0, '#7ba889'); g.addColorStop(0.5, '#5e8f6b'); g.addColorStop(1, '#477a56');
+    ctx.fillStyle = g; ctx.strokeStyle = '#1e4d2b'; ctx.lineWidth = 1.5;
     ctx.beginPath();
-    if (ctx.roundRect) ctx.roundRect(-w/2, -h/2, w, h, 3); else ctx.rect(-w/2, -h/2, w, h);
+    if (ctx.roundRect) ctx.roundRect(-w/2, -h/2, w, h, 2); else ctx.rect(-w/2, -h/2, w, h);
     ctx.fill(); ctx.stroke();
-    ctx.fillStyle = '#d4af37';
-    ctx.font = 'bold ' + Math.round(h*0.62) + 'px system-ui, sans-serif';
+    // marco interior
+    ctx.strokeStyle = 'rgba(30,77,43,.7)'; ctx.lineWidth = 1;
+    var m = 3.5;
+    ctx.strokeRect(-w/2 + m, -h/2 + m, w - 2*m, h - 2*m);
+    // medallón central con retrato
+    var ow = w*0.30, oh = h*0.72;
+    ctx.fillStyle = '#dfe9d8';
+    ctx.beginPath(); ctx.ellipse(0, 0, ow/2, oh/2, 0, 0, 6.2832); ctx.fill();
+    ctx.strokeStyle = '#1e4d2b'; ctx.lineWidth = 1; ctx.stroke();
+    // silueta del retrato
+    ctx.fillStyle = '#3a6b4a';
+    var hr = oh*0.20;
+    ctx.beginPath(); ctx.arc(0, -oh*0.08, hr, 0, 6.2832); ctx.fill();
+    ctx.beginPath(); ctx.arc(0, oh*0.34, hr*1.45, Math.PI, 0); ctx.fill();
+    // denominación en las esquinas
+    ctx.fillStyle = '#1e4d2b';
+    ctx.font = 'bold ' + Math.max(7, Math.round(h*0.30)) + 'px system-ui, sans-serif';
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillText('$', 0, 1);
+    var cx = w/2 - h*0.30, cy = h/2 - h*0.30;
+    ctx.fillText('100', -cx, -cy); ctx.fillText('100', cx, -cy);
+    ctx.fillText('100', -cx, cy); ctx.fillText('100', cx, cy);
+    // grabado decorativo a los lados
+    ctx.strokeStyle = 'rgba(30,77,43,.45)'; ctx.lineWidth = 1;
+    ctx.beginPath();
+    var lx = ow/2 + 5;
+    for (k = -1; k <= 1; k++) {
+      ctx.moveTo(-lx - 9, k*3); ctx.lineTo(-lx + 1, k*3);
+      ctx.moveTo(lx - 1, k*3); ctx.lineTo(lx + 9, k*3);
+    }
+    ctx.stroke();
     ctx.restore();
   }
   var t0 = performance.now(), DUR = 4000;
