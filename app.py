@@ -379,7 +379,7 @@ def notify_new_member(nombre: str, email: str):
 # ------------------------------------------------------------- Plays ----
 WELCOME_SUBJECT = "Bienvenido a The Line Breaker"
 
-WELCOME_BODY = """Hola {nombre},
+WELCOME_TEXT = """Hola {nombre},
 
 Tu cuenta está lista. Bienvenido a The Line Breaker: un programa de apuestas deportivas construido sobre números, disciplina y valor. Nada de corazonadas.
 
@@ -409,9 +409,55 @@ Nos vemos mañana a las 11:00 AM con las primeras jugadas.
 Juega responsablemente · 21+ · ¿Problemas con el juego? Llama al 1-800-GAMBLER (1-800-426-2537): ayuda gratuita y confidencial, 24/7.
 """
 
+WELCOME_HTML = """<div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff;">
+<div style="background: #1a1a2e; padding: 30px 20px; text-align: center; border-radius: 18px 18px 0 0;">
+<img src="https://files.catbox.moe/g1ig30.jpg" alt="The Line Breaker" width="140" style="width: 140px; height: auto; display: block; margin: 0 auto; border: 0;">
+<p style="margin: 12px 0 0; font-size: 16px; font-weight: 800; color: #c9a227; letter-spacing: 5px;">THE LINE BREAKER</p>
+</div>
+<div style="padding: 28px 26px; color: #1a1a2e;">
+<p style="font-size: 20px; font-weight: 800; margin: 0 0 6px;">Hola {nombre},</p>
+<p style="font-size: 15px; line-height: 1.7; margin: 0 0 18px; color: #333333;">Tu cuenta est&aacute; lista. Bienvenido a <strong>The Line Breaker</strong>: un programa de apuestas deportivas construido sobre n&uacute;meros, disciplina y valor. Nada de corazonadas.</p>
+<div style="text-align: center; margin: 22px 0;">
+<a href="https://the-line-breaker-members.onrender.com/home" style="display: inline-block; background: #c9a227; color: #1a1a2e; font-size: 16px; font-weight: 800; padding: 14px 34px; border-radius: 12px; text-decoration: none;">Ir a mi panel &rarr;</a>
+</div>
+<p style="font-size: 14px; color: #666666; text-align: center; margin: 0 0 22px;">Ah&iacute; ver&aacute;s cada ma&ntilde;ana las jugadas del d&iacute;a (~11:00 AM, hora de Nueva York).</p>
+<p style="font-size: 16px; font-weight: 800; margin: 0 0 8px; color: #1a1a2e;">C&Oacute;MO FUNCIONA</p>
+<ul style="font-size: 14px; line-height: 1.8; color: #333333; margin: 0 0 18px; padding-left: 20px;">
+<li>Publicamos un m&aacute;ximo de 3 jugadas por d&iacute;a, y solo cuando el modelo detecta valor real. Si no hay valor, no hay jugada: la disciplina tambi&eacute;n es no apostar.</li>
+<li>Cada jugada indica su nivel: <strong>PLATINUM</strong>, la principal del d&iacute;a (edge mayor al 5%), o <strong>GOLD</strong> (edge entre 3% y 5%), siempre con su cuota, stake y explicaci&oacute;n.</li>
+</ul>
+<p style="font-size: 16px; font-weight: 800; margin: 0 0 8px; color: #1a1a2e;">PLATINUM</p>
+<ul style="font-size: 14px; line-height: 1.8; color: #333333; margin: 0 0 18px; padding-left: 20px;">
+<li>La jugada Platinum es exclusiva para miembros Platinum.</li>
+<li>Cuesta <strong>$1 la primera semana</strong>, luego <strong>$23 por semana</strong>. Act&iacute;vala desde tu panel, en "Desbloquear Platinum".</li>
+</ul>
+<p style="font-size: 16px; font-weight: 800; margin: 0 0 8px; color: #1a1a2e;">REGLAS DE ORO</p>
+<ol style="font-size: 14px; line-height: 1.8; color: #333333; margin: 0 0 18px; padding-left: 20px;">
+<li>Apuesta exactamente el monto indicado: ni m&aacute;s, ni menos.</li>
+<li>Nunca persigas p&eacute;rdidas ni ganancias.</li>
+<li>Solo n&uacute;meros y valor. Nada de favoritismo por equipos.</li>
+</ol>
+<p style="font-size: 14px; color: #333333; line-height: 1.7; margin: 0;">Nos vemos ma&ntilde;ana a las 11:00 AM con las primeras jugadas.</p>
+<p style="font-size: 14px; color: #333333; margin: 12px 0 0;">&mdash; <strong>The Line Breaker</strong></p>
+</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin: 6px 0 0; background: #1a1a2e; border-radius: 0 0 18px 18px; border-top: 3px solid #c9a227;">
+<tr><td style="padding: 22px 20px; text-align: center;">
+<img src="https://files.catbox.moe/g1ig30.jpg" alt="The Line Breaker" width="110" style="width: 110px; height: auto; display: block; margin: 0 auto; border: 0;">
+<p style="margin: 10px 0 4px; font-size: 14px; font-weight: 800; color: #c9a227; letter-spacing: 4px;">THE LINE BREAKER</p>
+<p style="margin: 0; font-size: 12px; color: #dddddd;">250 Park Avenue, Suite 1800, New York, NY 10017</p>
+<p style="margin: 4px 0 0; font-size: 12px; color: #dddddd;">(983) 819-4589</p>
+<div style="width: 60%; height: 1px; background: #33334d; margin: 14px auto;">&nbsp;</div>
+<p style="margin: 0; font-size: 11px; color: #aaaaaa; line-height: 1.6;">Juega responsablemente &middot; 21+<br>Si tienes un problema con el juego, llama al 1-800-GAMBLER (1-800-426-2537), ayuda gratuita y confidencial, 24/7.</p>
+<p style="margin: 10px 0 0; font-size: 10px; color: #888888; line-height: 1.6;">Los pron&oacute;sticos de The Line Breaker tienen fines informativos y de entretenimiento. Ning&uacute;n pron&oacute;stico garantiza ganancias; las apuestas deportivas conllevan riesgo de p&eacute;rdida.</p>
+<p style="margin: 8px 0 0; font-size: 10px; color: #666666;">&copy; 2026 The Line Breaker &middot; Todos los derechos reservados</p>
+</td></tr>
+</table>
+</div>
+"""
+
 
 def send_welcome_email(nombre: str, email: str):
-    """Email de bienvenida al nuevo miembro.
+    """Email de bienvenida al nuevo miembro (HTML profesional + texto plano).
 
     Usa el mismo SMTP Gmail (EMAIL_USER / EMAIL_PASS). Si no está
     configurado o el envío falla, no hace nada: el registro sigue
@@ -432,7 +478,8 @@ def send_welcome_email(nombre: str, email: str):
             msg["Subject"] = WELCOME_SUBJECT
             msg["From"] = f"The Line Breaker <{user}>"
             msg["To"] = email
-            msg.set_content(WELCOME_BODY.format(nombre=nombre))
+            msg.set_content(WELCOME_TEXT.format(nombre=nombre))
+            msg.add_alternative(WELCOME_HTML.format(nombre=nombre), subtype="html")
             with smtplib.SMTP("smtp.gmail.com", 587, timeout=20) as s:
                 s.starttls()
                 s.login(user, pwd)
