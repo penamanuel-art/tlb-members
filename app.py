@@ -377,6 +377,68 @@ def notify_new_member(nombre: str, email: str):
 
 
 # ------------------------------------------------------------- Plays ----
+WELCOME_SUBJECT = "Bienvenido a The Line Breaker — así funciona"
+
+WELCOME_BODY = """Hola {nombre},
+
+Bienvenido a The Line Breaker. Aquí no se apuesta por corazonadas: se apuesta con números, disciplina y valor.
+
+CÓMO FUNCIONA
+• Cada mañana (~11:00 AM, hora de Nueva York) publicamos las jugadas del día en tu panel de miembro.
+• Máximo 3 jugadas por día, y solo si hay valor real. Si no hay valor, no hay jugada.
+• Cada jugada trae su nivel: PLATINUM (la principal del día) o GOLD, con cuota, stake y edge explicados.
+
+PLATINUM
+• La jugada Platinum está reservada para miembros Platinum.
+• Cuesta $1 la primera semana, luego $23 por semana. La desbloqueas desde tu panel, en "Desbloquear Platinum".
+
+REGLAS DE ORO
+• Apuesta exactamente lo indicado: ni más, ni menos.
+• No persigas pérdidas ni ganancias.
+• Solo números y valor. Nada de favoritismo.
+
+Explora tu panel. Mañana a las 11:00 AM llegan las primeras jugadas.
+
+— The Line Breaker
+
+Juega responsablemente · 21+ · Si tienes un problema con el juego, llama al 1-800-GAMBLER (1-800-426-2537), ayuda gratuita y confidencial, 24/7.
+"""
+
+
+def send_welcome_email(nombre: str, email: str):
+    """Email de bienvenida al nuevo miembro.
+
+    Usa el mismo SMTP Gmail (EMAIL_USER / EMAIL_PASS). Si no está
+    configurado o el envío falla, no hace nada: el registro sigue
+    funcionando y el miembro ve la página de bienvenida en pantalla.
+    Se ejecuta en un hilo aparte para no retrasar la respuesta.
+    """
+    user = (os.environ.get("EMAIL_USER") or "").strip()
+    pwd = os.environ.get("EMAIL_PASS") or ""
+    if not (user and pwd):
+        return
+
+    def _send():
+        try:
+            import smtplib
+            from email.message import EmailMessage
+
+            msg = EmailMessage()
+            msg["Subject"] = WELCOME_SUBJECT
+            msg["From"] = f"The Line Breaker <{user}>"
+            msg["To"] = email
+            msg.set_content(WELCOME_BODY.format(nombre=nombre))
+            with smtplib.SMTP("smtp.gmail.com", 587, timeout=20) as s:
+                s.starttls()
+                s.login(user, pwd)
+                s.send_message(msg)
+        except Exception:
+            pass  # silencioso: nunca rompe el registro
+
+    import threading
+    threading.Thread(target=_send, daemon=True).start()
+
+
 def load_data():
     """Devuelve (program, plays). Soporta plays.json como lista (viejo) o dict (nuevo)."""
     try:
@@ -648,9 +710,16 @@ def register():
         session["nombre"] = nombre
         session["is_admin"] = es_admin
         notify_new_member(nombre, email)
-        flash(f"¡Bienvenido, {nombre}! Tu cuenta está lista.", "ok")
-        return redirect(url_for("home"))
+        send_welcome_email(nombre, email)
+        return redirect(url_for("bienvenida"))
     return render_template("register.html")
+
+
+@app.route("/bienvenida")
+@login_required
+def bienvenida():
+    """Página de bienvenida tras el registro: explica el programa."""
+    return render_template("bienvenida.html", nombre=session.get("nombre", ""))
 
 
 @app.route("/login", methods=["GET", "POST"])
