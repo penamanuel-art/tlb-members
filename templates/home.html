@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Hoy — The Line Breaker
-<!-- LLUVIA DE DINERO (pedido por Alex 2026-09-24): billetes ~2s al entrar al dashboard -->
+<!-- LLUVIA DE DINERO (pedido por Alex 2026-09-24): billetes ~4s al entrar al dashboard -->
 <canvas id="lluvia-dinero" style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9999;"></canvas>
 <script>
 (function(){
@@ -10,7 +10,7 @@
   var W, H, DPR = Math.min(window.devicePixelRatio || 1, 2);
   function size(){ W = innerWidth; H = innerHeight; canvas.width = W*DPR; canvas.height = H*DPR; ctx.setTransform(DPR,0,0,DPR,0,0); }
   size(); addEventListener('resize', size);
-  var N = Math.max(30, Math.min(70, Math.floor(W/14))), bills = [], i;
+  var N = Math.max(70, Math.min(150, Math.floor(W/6))), bills = [], i;
   for (i = 0; i < N; i++) bills.push({
     x: Math.random()*W, y: -40 - Math.random()*H*0.6,
     w: 34 + Math.random()*24, h: 18 + Math.random()*10,
@@ -32,13 +32,13 @@
     ctx.fillText('$', 0, 1);
     ctx.restore();
   }
-  var t0 = performance.now(), DUR = 2000;
+  var t0 = performance.now(), DUR = 4000;
   function frame(t){
     var el = t - t0, p = el / DUR;
     ctx.clearRect(0, 0, W, H);
     for (i = 0; i < bills.length; i++){ var b = bills[i];
       b.y += b.vy; b.sway += b.swaySpd; b.x += Math.sin(b.sway)*1.2; b.rot += b.rotSpd;
-      if (p > 0.72) b.alpha = Math.max(0, 1 - (p - 0.72)/0.28);
+      if (p > 0.82) b.alpha = Math.max(0, 1 - (p - 0.82)/0.18);
       if (b.y < H + 60) draw(b);
     }
     if (el < DUR + 300) requestAnimationFrame(frame); else canvas.remove();
@@ -243,7 +243,7 @@
 </div>
 
 
-<!-- LLUVIA DE DINERO (pedido por Alex 2026-09-24): billetes ~2s al entrar al dashboard -->
+<!-- LLUVIA DE DINERO (pedido por Alex 2026-09-24): billetes ~4s al entrar al dashboard -->
 <canvas id="lluvia-dinero" style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9999;"></canvas>
 <script>
 (function(){
@@ -253,7 +253,7 @@
   var W, H, DPR = Math.min(window.devicePixelRatio || 1, 2);
   function size(){ W = innerWidth; H = innerHeight; canvas.width = W*DPR; canvas.height = H*DPR; ctx.setTransform(DPR,0,0,DPR,0,0); }
   size(); addEventListener('resize', size);
-  var N = Math.max(30, Math.min(70, Math.floor(W/14))), bills = [], i;
+  var N = Math.max(70, Math.min(150, Math.floor(W/6))), bills = [], i;
   for (i = 0; i < N; i++) bills.push({
     x: Math.random()*W, y: -40 - Math.random()*H*0.6,
     w: 34 + Math.random()*24, h: 18 + Math.random()*10,
@@ -275,13 +275,13 @@
     ctx.fillText('$', 0, 1);
     ctx.restore();
   }
-  var t0 = performance.now(), DUR = 2000;
+  var t0 = performance.now(), DUR = 4000;
   function frame(t){
     var el = t - t0, p = el / DUR;
     ctx.clearRect(0, 0, W, H);
     for (i = 0; i < bills.length; i++){ var b = bills[i];
       b.y += b.vy; b.sway += b.swaySpd; b.x += Math.sin(b.sway)*1.2; b.rot += b.rotSpd;
-      if (p > 0.72) b.alpha = Math.max(0, 1 - (p - 0.72)/0.28);
+      if (p > 0.82) b.alpha = Math.max(0, 1 - (p - 0.82)/0.18);
       if (b.y < H + 60) draw(b);
     }
     if (el < DUR + 300) requestAnimationFrame(frame); else canvas.remove();
