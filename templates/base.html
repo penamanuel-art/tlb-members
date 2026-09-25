@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{% block title %}The Line Breaker{% endblock %}</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<style>
+.lang-btn{background:rgba(212,175,55,.12);border:1px solid #d4af37;color:#d4af37;border-radius:999px;padding:6px 12px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap}
+.lang-btn:hover{background:rgba(212,175,55,.25)}
+</style>
 </head>
 <body>
 <header class="topbar">
@@ -36,9 +40,11 @@
     <a href="{{ url_for('masterclass') }}" class="tab{% if request.endpoint == 'masterclass' %} active{% endif %}">Masterclass</a>
     <a href="{{ url_for('resultados') }}" class="tab{% if request.endpoint == 'resultados' %} active{% endif %}">Resultados</a>
   </nav>
+  <button id="langToggle" class="lang-btn" title="Translate to English">🇺🇸 EN</button>
   <div class="avatar" title="{{ nombre_corto }}">{{ inicial }}</div>
   {% else %}
   <nav class="nav">
+    <button id="langToggle" class="lang-btn" title="Translate to English">🇺🇸 EN</button>
     <a class="nav-link" href="{{ url_for('login') }}">Entrar</a>
     <a class="btn btn-primary btn-sm" href="{{ url_for('register') }}">Crear cuenta</a>
   </nav>
@@ -90,5 +96,23 @@
   });
 })();
 </script>
+<!-- Traductor EN/ES (pedido por Alex 2026-09-24): traduce toda la página al inglés -->
+<div id="google_translate_element" style="display:none!important"></div>
+<script>
+function googleTranslateElementInit(){new google.translate.TranslateElement({pageLanguage:'es',includedLanguages:'en',autoDisplay:false},'google_translate_element');}
+(function(){
+  var btn=document.getElementById('langToggle');
+  if(!btn)return;
+  function isEN(){return document.cookie.split(';').some(function(c){return c.trim().indexOf('googtrans=/es/en')===0;});}
+  function paint(){var en=isEN();btn.textContent=en?'\U0001F1EA\U0001F1F8 ES':'\U0001F1FA\U0001F1F8 EN';btn.title=en?'Volver al espa\u00f1ol':'Translate to English';}
+  btn.addEventListener('click',function(){
+    if(isEN()){document.cookie='googtrans=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';}
+    else{document.cookie='googtrans=/es/en; path=/';}
+    location.reload();
+  });
+  paint();
+})();
+</script>
+<script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 </html>
