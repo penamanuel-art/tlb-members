@@ -4,20 +4,46 @@
 <section class="tracker-head">
   <div>
     <p class="kicker">PROGRAM RESULTS</p>
-    <h2>Verified results.<br>Every play, win or loss.</h2>
+    <h2>The documented record:<br>every pick, win or loss.</h2>
   </div>
 </section>
 
 <div class="verify-strip">
   <span class="verify-check">✓</span>
-  <p><b>Every settled play is published here — wins <u>and</u> losses.</b><br>
-  <span class="muted">Nothing hidden. Nothing edited after the fact.</span></p>
+  <p><b>Every play posted before the game. Graded against the final score.</b><br>
+  <span class="muted">Wins and losses — nothing hidden, nothing edited after the fact.</span></p>
 </div>
 
 {% set profit = res.get('profit_all_time') %}
 {% set roi = res.get('roi') %}
 {% set g = res.get('ganadas', 0) %}
 {% set p = res.get('perdidas', 0) %}
+
+{# Real numbers accumulated from the settled-play archive (no estimates) #}
+{% set ns = namespace(pw=0, pl=0, pp=0.0, pu=0.0, gw=0, gl=0, gp=0.0, gu=0.0, tu=0.0) %}
+{% for d in dias %}
+  {% for j in d.get('jugadas', []) or [] %}
+    {% if j.get('resultado') in ('WON', 'LOST') and j.get('pick') and not j.get('bloqueada') %}
+      {% set prof = j.profit if j.profit is not none else 0 %}
+      {% set stake_u = j.stake_unidades if j.stake_unidades else 0 %}
+      {% set stake_m = j.stake_monto if j.stake_monto else 0 %}
+      {% set uw = (prof / (stake_m / stake_u)) if stake_u and stake_m else 0 %}
+      {% set ns.tu = ns.tu + uw %}
+      {% if (j.get('nivel') or '') == 'PLATINUM' %}
+        {% set ns.pw = ns.pw + (1 if j.resultado == 'WON' else 0) %}
+        {% set ns.pl = ns.pl + (1 if j.resultado == 'LOST' else 0) %}
+        {% set ns.pp = ns.pp + prof %}
+        {% set ns.pu = ns.pu + uw %}
+      {% else %}
+        {% set ns.gw = ns.gw + (1 if j.resultado == 'WON' else 0) %}
+        {% set ns.gl = ns.gl + (1 if j.resultado == 'LOST' else 0) %}
+        {% set ns.gp = ns.gp + prof %}
+        {% set ns.gu = ns.gu + uw %}
+      {% endif %}
+    {% endif %}
+  {% endfor %}
+{% endfor %}
+
 <section class="stats-grid results-hero">
   <div class="stat">
     <span class="stat-label">TOTAL PROFIT</span>
@@ -30,9 +56,9 @@
     <span class="stat-sub">settled plays</span>
   </div>
   <div class="stat">
-    <span class="stat-label">ROI</span>
-    <span class="stat-value {{ 'pos' if roi is not none and roi > 0 else ('neg' if roi is not none and roi < 0 else '') }}">{% if roi is not none %}{{ '%+.1f' % roi }}%{% else %}—{% endif %}</span>
-    <span class="stat-sub">on amount risked</span>
+    <span class="stat-label">UNITS WON</span>
+    <span class="stat-value {{ 'pos' if ns.tu > 0 else ('neg' if ns.tu < 0 else '') }}">{{ fmt_units(ns.tu) }}</span>
+    <span class="stat-sub">net units</span>
   </div>
   <div class="stat">
     <span class="stat-label">WIN RATE</span>
@@ -40,39 +66,80 @@
     <span class="stat-sub">won / settled</span>
   </div>
 </section>
+<p class="muted center">ROI {% if roi is not none %}{{ '%+.1f' % roi }}%{% else %}—{% endif %} on {{ fmt_money(res.get('total_arriesgado') or 0) }} risked{% if res.get('updated') %} · updated {{ res.get('updated') }}{% endif %}</p>
 
 <div class="section-head">
-  <h2 class="section-title">Verified history</h2>
-  <span class="muted">{{ g + p }} settled · {{ g }} won · {{ p }} lost</span>
+  <h2 class="section-title">Breakdown by level</h2>
+</div>
+<section class="stats-grid">
+  <div class="stat">
+    <span class="badge badge-platinum">★ PLATINUM</span>
+    <span class="stat-value">{{ ns.pw }}–{{ ns.pl }}</span>
+    <span class="stat-sub {{ 'pos' if ns.pp > 0 else ('neg' if ns.pp < 0 else '') }}">{{ fmt_money(ns.pp) }} · {{ fmt_units(ns.pu) }}</span>
+  </div>
+  <div class="stat">
+    <span class="badge badge-gold">● GOLD</span>
+    <span class="stat-value">{{ ns.gw }}–{{ ns.gl }}</span>
+    <span class="stat-sub {{ 'pos' if ns.gp > 0 else ('neg' if ns.gp < 0 else '') }}">{{ fmt_money(ns.gp) }} · {{ fmt_units(ns.gu) }}</span>
+  </div>
+</section>
+
+<div class="section-head">
+  <div>
+    <h2 class="section-title">Recent graded tickets</h2>
+    <p class="muted section-sub">Every play posted before the game — wins and losses. Tap a ticket to see the original receipt.</p>
+  </div>
+  <span class="muted">{{ g + p }} settled</span>
 </div>
 
-{% set ns = namespace(n=0) %}
-<div class="tracked-list">
+{% set ti = namespace(i=0) %}
+<div class="ticket-grid">
 {% for d in dias %}
   {% for j in d.get('jugadas', []) or [] %}
     {% if j.get('resultado') in ('WON', 'LOST') and j.get('pick') and not j.get('bloqueada') %}
-    {% set ns.n = ns.n + 1 %}
-    <article class="tracked-row">
-      <div class="tracked-info">
-        <span class="badge badge-{{ (j.get('nivel') or '')|lower }} badge-sm">{{ j.get('nivel', '') }}</span>
-        <div>
-          <div class="tracked-pick">{{ j.pick }} <span class="muted">{{ fmt_odds(j.cuota) }}</span></div>
-          <div class="tracked-sub">{{ d.get('titulo') or d.get('fecha', '') }}{% if j.stake_monto is not none %} · Stake ${{ '%.0f' % j.stake_monto }}{% endif %}</div>
-        </div>
-      </div>
-      <div class="tracked-result">
-        {% if j.resultado == 'WON' %}
-          <span class="result-badge win">✓ WON · {{ fmt_money(j.profit if j.profit is not none else 0) }}</span>
+    {% set ti.i = ti.i + 1 %}
+    {% set won = j.resultado == 'WON' %}
+    {% set prof = j.profit if j.profit is not none else 0 %}
+    <button type="button" class="ticket-card" data-ticket="rt-{{ ti.i }}" aria-label="View receipt for {{ j.pick }}">
+      <span class="ticket-img">
+        {% if j.comprobante %}
+        <img src="{{ url_for('static', filename=j.comprobante) }}" alt="Original receipt: {{ j.pick }}" loading="lazy">
         {% else %}
-          <span class="result-badge loss">✕ LOST · {{ fmt_money(j.profit if j.profit is not none else 0) }}</span>
+        <span class="ticket-fallback">
+          <span class="ticket-brand">THE LINE BREAKER</span>
+          <span class="ticket-fallback-pick">{{ j.pick }}</span>
+          <span class="ticket-fallback-odds">{{ fmt_odds(j.cuota) }} · {{ j.get('nivel', '') }}</span>
+          <span class="ticket-fallback-result {{ 'win' if won else 'loss' }}">{{ '✓ WON' if won else '✕ LOST' }}</span>
+        </span>
+        {% endif %}
+        <span class="ticket-pill {{ 'win' if won else 'loss' }}">{{ '✓' if won else '✕' }} {{ fmt_money(prof) }}</span>
+      </span>
+      <span class="ticket-title">{{ j.pick }} <span class="muted">{{ fmt_odds(j.cuota) }}</span></span>
+      <span class="ticket-sub">{{ d.get('titulo') or d.get('fecha', '') }} · {{ j.get('nivel', '') }}</span>
+    </button>
+    <div class="modal" id="rt-{{ ti.i }}" hidden>
+      <div class="modal-card ticket-photo-card">
+        <button type="button" class="modal-close" data-close>✕</button>
+        {% if j.comprobante %}
+        <img class="ticket-photo" src="{{ url_for('static', filename=j.comprobante) }}" alt="Original receipt: {{ j.pick }}">
+        {% else %}
+        <p class="ticket-brand">THE LINE BREAKER</p>
+        <p class="ticket-pick">{{ j.pick }} {{ fmt_odds(j.cuota) }}</p>
+        <div class="ticket-rows">
+          <div><span>Date</span><b>{{ d.get('titulo') or d.get('fecha', '') }}</b></div>
+          <div><span>Level</span><b>{{ j.get('nivel', '') }}</b></div>
+          <div><span>Stake</span><b>{% if j.stake_monto is not none %}${{ '%.0f' % j.stake_monto }}{% else %}—{% endif %}</b></div>
+          <div><span>Result</span><b class="{{ 'pos' if won else 'neg' }}">{{ 'WON' if won else 'LOST' }} · {{ fmt_money(prof) }}</b></div>
+        </div>
+        <p class="ticket-note">Original receipt not uploaded for this play.</p>
         {% endif %}
       </div>
-    </article>
+    </div>
     {% endif %}
   {% endfor %}
 {% endfor %}
 </div>
-{% if ns.n == 0 %}
-<p class="muted">No settled plays yet — results appear here as soon as the first plays are graded.</p>
+{% if ti.i == 0 %}
+<p class="muted">No settled plays yet — tickets appear here as soon as the first plays are graded.</p>
 {% endif %}
 {% endblock %}
