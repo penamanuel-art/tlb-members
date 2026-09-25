@@ -14,7 +14,7 @@
     <span class="muted">({{ p.stake_unidades }}u)</span>
     <span class="bet-edge">Edge <b class="pos">+{{ p.edge }}%</b></span>
   </div>
-  {% if bankroll %}
+  {% if bankroll and p.nivel != 'PLATINUM' %}
   <p class="my-bet">💰 Your bet: <b>Bet ${{ '%.2f' % (bankroll * p.stake_unidades / 100) }} ({{ p.stake_unidades }}u)</b></p>
   {% endif %}
   <div class="play-actions">
