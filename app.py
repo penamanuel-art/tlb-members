@@ -1045,6 +1045,46 @@ def admin_eliminar_miembro():
     return redirect(url_for("admin_miembros"))
 
 
+@app.route("/admin/seed-tracker")
+@login_required
+def admin_seed_tracker():
+    """Importa una sola vez las jugadas liquidadas del programa al tracker personal del admin."""
+    db = get_db()
+    user = current_user()
+    if not is_admin_for(user):
+        flash("You don't have permission to view this page.", "error")
+        return redirect(url_for("home"))
+    added = 0
+    for d in load_archive():
+        fecha = d.get("fecha", "")
+        for j in d.get("jugadas", []) or []:
+            if j.get("resultado") not in ("WON", "LOST") or not j.get("pick"):
+                continue
+            slug = "".join(c if c.isalnum() else "-" for c in j["pick"].lower())
+            slug = "-".join(s for s in slug.split("-") if s)
+            play_id = f"hist-{fecha}-{slug}"
+            try:
+                db.execute(
+                    """INSERT INTO tracked_plays
+                       (user_id, play_id, fecha, nivel, pick, cuota, stake_unidades,
+                        stake_monto, edge, resultado, created_at)
+                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                    (
+                        session["user_id"], play_id, fecha,
+                        j.get("nivel", ""), j.get("pick", ""), int(j.get("cuota", 0)),
+                        float(j.get("stake_unidades", 0)), float(j.get("stake_monto", 0)),
+                        j.get("edge"), "W" if j.get("resultado") == "WON" else "L",
+                        now_iso(),
+                    ),
+                )
+                added += 1
+            except INTEGRITY_ERRORS:
+                pass
+    db.commit()
+    flash(f"Tracker seeded: {added} settled plays imported.", "ok")
+    return redirect(url_for("tracker"))
+
+
 @app.route("/admin/miembros")
 @login_required
 def admin_miembros():
