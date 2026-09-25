@@ -104,7 +104,7 @@ function googleTranslateElementInit(){new google.translate.TranslateElement({pag
   var btn=document.getElementById('langToggle');
   if(!btn)return;
   function isEN(){return document.cookie.split(';').some(function(c){return c.trim().indexOf('googtrans=/es/en')===0;});}
-  function paint(){var en=isEN();btn.textContent=en?'\U0001F1EA\U0001F1F8 ES':'\U0001F1FA\U0001F1F8 EN';btn.title=en?'Volver al espa\u00f1ol':'Translate to English';}
+  function paint(){var en=isEN();btn.textContent=en?'🇪🇸 ES':'🇺🇸 EN';btn.title=en?'Volver al espa\u00f1ol':'Translate to English';}
   btn.addEventListener('click',function(){
     if(isEN()){document.cookie='googtrans=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';}
     else{document.cookie='googtrans=/es/en; path=/';}
