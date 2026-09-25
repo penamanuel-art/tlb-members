@@ -175,19 +175,95 @@
   </div>
 </section>
 
-<!-- 05 · LESSON OF THE DAY -->
+<!-- 05 · DOCUMENTED RECORD -->
 <div class="section-head">
-  <h2 class="section-title">LESSON OF THE DAY</h2>
-  <a class="link-more" href="{{ url_for('masterclass') }}">Full masterclass →</a>
+  <h2 class="section-title">DOCUMENTED RECORD</h2>
+  <a class="link-more" href="{{ url_for('resultados') }}">Full results →</a>
 </div>
-{% if leccion.get('titulo') %}
-<article class="lesson-card">
-  <p class="lesson-day">DAY {{ leccion.get('dia') }} OF 30 · {{ leccion.get('fase', '')|upper }}</p>
-  <h3 class="lesson-title">{{ leccion.get('titulo') }}</h3>
-  <p class="lesson-body">{{ leccion.get('resumen') }}</p>
-</article>
-{% else %}
-<p class="muted">Today's lesson isn't published yet.</p>
+<section class="tracker-head record-home">
+  <div>
+    <p class="kicker">VERIFIED PROGRAM RESULTS</p>
+    <h2>The documented record:<br>every pick, win or loss.</h2>
+  </div>
+</section>
+<div class="verify-strip verify-prominent">
+  <span class="verify-check">✓</span>
+  <p><b>Every play posted <span class="before-hl">BEFORE</span> the game — graded against the final score.</b><br>
+  <span class="muted">Wins and losses — nothing hidden, nothing edited after the fact.</span></p>
+</div>
+
+<section class="stats-grid results-hero">
+  <div class="stat">
+    <span class="stat-label">TOTAL PROFIT</span>
+    <span class="stat-value {{ 'pos' if res.get('profit_all_time') is not none and res.get('profit_all_time') > 0 else ('neg' if res.get('profit_all_time') is not none and res.get('profit_all_time') < 0 else '') }}">{% if res.get('profit_all_time') is not none %}{{ '+$%.2f' % res.get('profit_all_time') }}{% else %}—{% endif %}</span>
+    <span class="stat-sub">actual system profit</span>
+  </div>
+  <div class="stat">
+    <span class="stat-label">RECORD</span>
+    <span class="stat-value">{{ res.get('ganadas', 0) }}–{{ res.get('perdidas', 0) }}</span>
+    <span class="stat-sub">settled plays</span>
+  </div>
+  <div class="stat">
+    <span class="stat-label">WIN RATE</span>
+    <span class="stat-value">{% if res.get('win_rate') is not none %}{{ '%.1f' % res.get('win_rate') }}%{% else %}—{% endif %}</span>
+    <span class="stat-sub">won / settled</span>
+  </div>
+  <div class="stat">
+    <span class="stat-label">ROI</span>
+    <span class="stat-value">{% if res.get('roi') is not none %}{{ '%+.1f' % res.get('roi') }}%{% else %}—{% endif %}</span>
+    <span class="stat-sub">on amount risked</span>
+  </div>
+</section>
+
+<div class="section-head">
+  <div>
+    <h2 class="section-title">Recent graded tickets</h2>
+    <p class="muted section-sub">Every play posted before the game — wins and losses. Tap a ticket to see the original receipt.</p>
+  </div>
+  <a class="link-more" href="{{ url_for('resultados') }}">View all →</a>
+</div>
+
+<div class="ticket-grid">
+{% for r in recientes %}
+  {% set won = r.resultado == 'WON' %}
+  <button type="button" class="ticket-card" data-ticket="ht-{{ loop.index }}" aria-label="View receipt for {{ r.pick }}">
+    <span class="ticket-img">
+      {% if r.comprobante %}
+      <img src="{{ url_for('static', filename=r.comprobante) }}" alt="Original receipt: {{ r.pick }}" loading="lazy">
+      {% else %}
+      <span class="ticket-fallback">
+        <span class="ticket-brand">THE LINE BREAKER</span>
+        <span class="ticket-fallback-pick">{{ r.pick }}</span>
+        <span class="ticket-fallback-odds">{{ fmt_odds(r.cuota) }} · {{ r.nivel }}</span>
+        <span class="ticket-fallback-result {{ 'win' if won else 'loss' }}">{{ '✓ WON' if won else '✕ LOST' }}</span>
+      </span>
+      {% endif %}
+      <span class="ticket-pill {{ 'win' if won else 'loss' }}">{{ '✓' if won else '✕' }} {{ fmt_money(r.profit) }}</span>
+    </span>
+    <span class="ticket-title">{{ r.pick }} <span class="muted">{{ fmt_odds(r.cuota) }}</span></span>
+    <span class="ticket-sub">{{ r.fecha }} · {{ r.nivel }}</span>
+  </button>
+  <div class="modal" id="ht-{{ loop.index }}" hidden>
+    <div class="modal-card ticket-photo-card">
+      <button type="button" class="modal-close" data-close>✕</button>
+      {% if r.comprobante %}
+      <img class="ticket-photo" src="{{ url_for('static', filename=r.comprobante) }}" alt="Original receipt: {{ r.pick }}">
+      {% else %}
+      <p class="ticket-brand">THE LINE BREAKER</p>
+      <p class="ticket-pick">{{ r.pick }} {{ fmt_odds(r.cuota) }}</p>
+      <div class="ticket-rows">
+        <div><span>Date</span><b>{{ r.fecha }}</b></div>
+        <div><span>Level</span><b>{{ r.nivel }}</b></div>
+        <div><span>Result</span><b class="{{ 'pos' if won else 'neg' }}">{{ 'WON' if won else 'LOST' }} · {{ fmt_money(r.profit) }}</b></div>
+      </div>
+      <p class="ticket-note">Original receipt not uploaded for this play.</p>
+      {% endif %}
+    </div>
+  </div>
+{% endfor %}
+</div>
+{% if not recientes %}
+<p class="muted">No settled plays yet — tickets appear here as soon as the first plays are graded.</p>
 {% endif %}
 
 <!-- 06 · YOUR HISTORY -->
