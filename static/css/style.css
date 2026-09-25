@@ -375,3 +375,23 @@ a { color: var(--blue); text-decoration: none; }
 /* ---------- Ticket original (foto del comprobante) ---------- */
 .ticket-photo { padding: 12px; max-width: 480px; }
 .ticket-photo img { width: 100%; height: auto; display: block; border-radius: 12px; }
+
+/* ---- Verified results page (rediseño 2026-09-25) ---- */
+.verify-strip {
+  display: flex; gap: 12px; align-items: center;
+  background: rgba(251,191,36,.07);
+  border: 1px solid rgba(251,191,36,.35);
+  border-radius: 14px; padding: 12px 16px; margin: 0 0 16px;
+}
+.verify-strip p { margin: 0; font-size: 14px; line-height: 1.45; }
+.verify-check {
+  flex: none; width: 36px; height: 36px; border-radius: 50%;
+  background: var(--gold); color: #1a1a1a;
+  font-weight: 900; font-size: 18px;
+  display: flex; align-items: center; justify-content: center;
+}
+.results-hero .stat { padding: 18px 14px; }
+.results-hero .stat-value { font-size: 2rem; }
+@media (max-width: 420px) {
+  .results-hero .stat-value { font-size: 1.7rem; }
+}
