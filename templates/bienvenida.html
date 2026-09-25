@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Bienvenido — The Line Breaker{% endblock %}
+{% block content %}
+<section class="auth-card">
+  <h2>Bienvenido, <span class="accent">{{ nombre }}</span></h2>
+  <p class="muted">Aquí no se apuesta por corazonadas: se apuesta con números, disciplina y valor.</p>
+
+  <h3>Cómo funciona</h3>
+  <ul>
+    <li>Cada mañana (~11:00 AM, hora de Nueva York) publicamos las jugadas del día en tu panel.</li>
+    <li>Máximo 3 jugadas por día, y solo si hay valor real. Si no hay valor, no hay jugada.</li>
+    <li>Cada jugada trae su nivel: <strong>PLATINUM</strong> (la principal del día) o <strong>GOLD</strong>, con cuota, stake y edge explicados.</li>
+  </ul>
+
+  <h3>Platinum</h3>
+  <ul>
+    <li>La jugada Platinum está reservada para miembros Platinum.</li>
+    <li>Cuesta <strong>$1 la primera semana</strong>, luego <strong>$23 por semana</strong>. La desbloqueas desde tu panel, en "Desbloquear Platinum".</li>
+  </ul>
+
+  <h3>Reglas de oro</h3>
+  <ul>
+    <li>Apuesta exactamente lo indicado: ni más, ni menos.</li>
+    <li>No persigas pérdidas ni ganancias.</li>
+    <li>Solo números y valor. Nada de favoritismo.</li>
+  </ul>
+
+  <p class="muted">Explora tu panel. Mañana a las 11:00 AM llegan las primeras jugadas.</p>
+  <a class="btn btn-primary btn-block" href="{{ url_for('home') }}">Ir a mi panel →</a>
+  <p class="muted" style="margin-top:1rem;font-size:.85rem">Juega responsablemente · 21+ · Si tienes un problema con el juego, llama al 1-800-GAMBLER (1-800-426-2537), ayuda gratuita y confidencial, 24/7.</p>
+</section>
+{% endblock %}
