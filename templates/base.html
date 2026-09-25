@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="google" content="notranslate">
 <title>{% block title %}The Line Breaker{% endblock %}</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 <style>
@@ -42,11 +43,11 @@
   {% else %}
   <a href="{{ url_for('desbloquear_platinum') }}" class="plat-cta">🔓 Desbloquear Platinum</a>
   {% endif %}
-  <button id="langToggle" class="lang-btn" title="Translate to English">🇺🇸 EN</button>
+  <button id="langToggle" class="lang-btn notranslate" title="Translate to English">🇺🇸 EN</button>
   <div class="avatar" title="{{ nombre_corto }}">{{ inicial }}</div>
   {% else %}
   <nav class="nav">
-    <button id="langToggle" class="lang-btn" title="Translate to English">🇺🇸 EN</button>
+    <button id="langToggle" class="lang-btn notranslate" title="Translate to English">🇺🇸 EN</button>
     <a class="nav-link" href="{{ url_for('login') }}">Entrar</a>
     <a class="btn btn-primary btn-sm" href="{{ url_for('register') }}">Crear cuenta</a>
   </nav>
