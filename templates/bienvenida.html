@@ -3,30 +3,32 @@
 {% block content %}
 <section class="auth-card">
   <h2>Bienvenido, <span class="accent">{{ nombre }}</span></h2>
-  <p class="muted">Aquí no se apuesta por corazonadas: se apuesta con números, disciplina y valor.</p>
+  <p class="muted">Tu cuenta está lista. Esto es un programa de apuestas deportivas construido sobre números, disciplina y valor. Nada de corazonadas.</p>
+
+  <h3>Tu panel de miembro</h3>
+  <p>Cada mañana verás aquí las jugadas del día (~11:00 AM, hora de Nueva York).</p>
+  <a class="btn btn-primary btn-block" href="{{ url_for('home') }}">Ir a mi panel →</a>
 
   <h3>Cómo funciona</h3>
   <ul>
-    <li>Cada mañana (~11:00 AM, hora de Nueva York) publicamos las jugadas del día en tu panel.</li>
-    <li>Máximo 3 jugadas por día, y solo si hay valor real. Si no hay valor, no hay jugada.</li>
-    <li>Cada jugada trae su nivel: <strong>PLATINUM</strong> (la principal del día) o <strong>GOLD</strong>, con cuota, stake y edge explicados.</li>
+    <li>Publicamos un máximo de 3 jugadas por día, y solo cuando el modelo detecta valor real. Si no hay valor, no hay jugada: la disciplina también es no apostar.</li>
+    <li>Cada jugada indica su nivel: <strong>PLATINUM</strong>, la principal del día (edge mayor al 5%), o <strong>GOLD</strong> (edge entre 3% y 5%), siempre con su cuota, stake y explicación.</li>
   </ul>
 
   <h3>Platinum</h3>
   <ul>
-    <li>La jugada Platinum está reservada para miembros Platinum.</li>
-    <li>Cuesta <strong>$1 la primera semana</strong>, luego <strong>$23 por semana</strong>. La desbloqueas desde tu panel, en "Desbloquear Platinum".</li>
+    <li>La jugada Platinum es exclusiva para miembros Platinum.</li>
+    <li>Cuesta <strong>$1 la primera semana</strong>, luego <strong>$23 por semana</strong>. Actívala desde tu panel, en "Desbloquear Platinum".</li>
   </ul>
 
   <h3>Reglas de oro</h3>
-  <ul>
-    <li>Apuesta exactamente lo indicado: ni más, ni menos.</li>
-    <li>No persigas pérdidas ni ganancias.</li>
-    <li>Solo números y valor. Nada de favoritismo.</li>
-  </ul>
+  <ol>
+    <li>Apuesta exactamente el monto indicado: ni más, ni menos.</li>
+    <li>Nunca persigas pérdidas ni ganancias.</li>
+    <li>Solo números y valor. Nada de favoritismo por equipos.</li>
+  </ol>
 
-  <p class="muted">Explora tu panel. Mañana a las 11:00 AM llegan las primeras jugadas.</p>
-  <a class="btn btn-primary btn-block" href="{{ url_for('home') }}">Ir a mi panel →</a>
-  <p class="muted" style="margin-top:1rem;font-size:.85rem">Juega responsablemente · 21+ · Si tienes un problema con el juego, llama al 1-800-GAMBLER (1-800-426-2537), ayuda gratuita y confidencial, 24/7.</p>
+  <p class="muted">Nos vemos mañana a las 11:00 AM con las primeras jugadas.</p>
+  <p class="muted" style="margin-top:1rem;font-size:.85rem">Juega responsablemente · 21+ · ¿Problemas con el juego? Llama al 1-800-GAMBLER (1-800-426-2537): ayuda gratuita y confidencial, 24/7.</p>
 </section>
 {% endblock %}
