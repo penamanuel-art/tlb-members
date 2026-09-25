@@ -43,7 +43,9 @@
 </section>
 
 <h3 class="section-title">TODAY'S PLAYS</h3>
-{% if plays %}
+{% if card_pendiente %}
+<p class="muted">Today's card hasn't been published yet.</p>
+{% elif plays %}
 <div class="plays">
   {% for p in plays %}
     {% if p.nivel == 'PLATINUM' and not platinum_unlocked %}
