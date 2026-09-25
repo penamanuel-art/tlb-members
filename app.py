@@ -377,36 +377,36 @@ def notify_new_member(nombre: str, email: str):
 
 
 # ------------------------------------------------------------- Plays ----
-WELCOME_SUBJECT = "Bienvenido a The Line Breaker"
+WELCOME_SUBJECT = "Welcome to The Line Breaker"
 
-WELCOME_TEXT = """Hola {nombre},
+WELCOME_TEXT = """Hi {nombre},
 
-Tu cuenta está lista. Bienvenido a The Line Breaker: un programa de apuestas deportivas construido sobre números, disciplina y valor. Nada de corazonadas.
+Your account is ready. Welcome to The Line Breaker: a sports betting program built on numbers, discipline, and value. No hunches.
 
-TU PANEL DE MIEMBRO
-Entra directamente aquí:
+YOUR MEMBER DASHBOARD
+Go straight here:
 https://the-line-breaker-members.onrender.com/home
 
-Ahí verás cada mañana las jugadas del día (~11:00 AM, hora de Nueva York).
+You'll see each morning's plays there (~11:00 AM, New York time).
 
-CÓMO FUNCIONA
-• Publicamos un máximo de 3 jugadas por día, y solo cuando el modelo detecta valor real. Si no hay valor, no hay jugada: la disciplina también es no apostar.
-• Cada jugada indica su nivel: PLATINUM, la principal del día (edge mayor al 5%), o GOLD (edge entre 3% y 5%), siempre con su cuota, stake y explicación.
+HOW IT WORKS
+- We publish a maximum of 3 plays per day, and only when the model detects real value. If there's no value, there's no play: discipline also means not betting.
+- Each play shows its level: PLATINUM, the top play of the day (edge over 5%), or GOLD (edge between 3% and 5%), always with its odds, stake, and explanation.
 
 PLATINUM
-• La jugada Platinum es exclusiva para miembros Platinum.
-• Cuesta $1 la primera semana, luego $23 por semana. Actívala desde tu panel, en "Desbloquear Platinum".
+- The Platinum play is exclusive to Platinum members.
+- It costs $1 the first week, then $23 per week. Activate it from your dashboard, under "Unlock Platinum".
 
-REGLAS DE ORO
-1. Apuesta exactamente el monto indicado: ni más, ni menos.
-2. Nunca persigas pérdidas ni ganancias.
-3. Solo números y valor. Nada de favoritismo por equipos.
+GOLDEN RULES
+1. Bet exactly the amount indicated: no more, no less.
+2. Never chase losses or wins.
+3. Numbers and value only. No team favoritism.
 
-Nos vemos mañana a las 11:00 AM con las primeras jugadas.
+See you tomorrow at 11:00 AM with the first plays.
 
-— The Line Breaker
+- The Line Breaker
 
-Juega responsablemente · 21+ · ¿Problemas con el juego? Llama al 1-800-GAMBLER (1-800-426-2537): ayuda gratuita y confidencial, 24/7.
+Bet responsibly - 21+ - Gambling problem? Call 1-800-GAMBLER (1-800-426-2537): free and confidential help, 24/7.
 """
 
 WELCOME_HTML = """<div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff;">
@@ -415,29 +415,29 @@ WELCOME_HTML = """<div style="font-family: -apple-system, BlinkMacSystemFont, 'S
 <p style="margin: 12px 0 0; font-size: 16px; font-weight: 800; color: #c9a227; letter-spacing: 5px;">THE LINE BREAKER</p>
 </div>
 <div style="padding: 28px 26px; color: #1a1a2e;">
-<p style="font-size: 20px; font-weight: 800; margin: 0 0 6px;">Hola {nombre},</p>
-<p style="font-size: 15px; line-height: 1.7; margin: 0 0 18px; color: #333333;">Tu cuenta est&aacute; lista. Bienvenido a <strong>The Line Breaker</strong>: un programa de apuestas deportivas construido sobre n&uacute;meros, disciplina y valor. Nada de corazonadas.</p>
+<p style="font-size: 20px; font-weight: 800; margin: 0 0 6px;">Hi {nombre},</p>
+<p style="font-size: 15px; line-height: 1.7; margin: 0 0 18px; color: #333333;">Your account is ready. Welcome to <strong>The Line Breaker</strong>: a sports betting program built on numbers, discipline, and value. No hunches.</p>
 <div style="text-align: center; margin: 22px 0;">
-<a href="https://the-line-breaker-members.onrender.com/home" style="display: inline-block; background: #c9a227; color: #1a1a2e; font-size: 16px; font-weight: 800; padding: 14px 34px; border-radius: 12px; text-decoration: none;">Ir a mi panel &rarr;</a>
+<a href="https://the-line-breaker-members.onrender.com/home" style="display: inline-block; background: #c9a227; color: #1a1a2e; font-size: 16px; font-weight: 800; padding: 14px 34px; border-radius: 12px; text-decoration: none;">Go to my dashboard &rarr;</a>
 </div>
-<p style="font-size: 14px; color: #666666; text-align: center; margin: 0 0 22px;">Ah&iacute; ver&aacute;s cada ma&ntilde;ana las jugadas del d&iacute;a (~11:00 AM, hora de Nueva York).</p>
-<p style="font-size: 16px; font-weight: 800; margin: 0 0 8px; color: #1a1a2e;">C&Oacute;MO FUNCIONA</p>
+<p style="font-size: 14px; color: #666666; text-align: center; margin: 0 0 22px;">You&apos;ll see each morning&apos;s plays there (~11:00 AM, New York time).</p>
+<p style="font-size: 16px; font-weight: 800; margin: 0 0 8px; color: #1a1a2e;">HOW IT WORKS</p>
 <ul style="font-size: 14px; line-height: 1.8; color: #333333; margin: 0 0 18px; padding-left: 20px;">
-<li>Publicamos un m&aacute;ximo de 3 jugadas por d&iacute;a, y solo cuando el modelo detecta valor real. Si no hay valor, no hay jugada: la disciplina tambi&eacute;n es no apostar.</li>
-<li>Cada jugada indica su nivel: <strong>PLATINUM</strong>, la principal del d&iacute;a (edge mayor al 5%), o <strong>GOLD</strong> (edge entre 3% y 5%), siempre con su cuota, stake y explicaci&oacute;n.</li>
+<li>We publish a maximum of 3 plays per day, and only when the model detects real value. If there&apos;s no value, there&apos;s no play: discipline also means not betting.</li>
+<li>Each play shows its level: <strong>PLATINUM</strong>, the top play of the day (edge over 5%), or <strong>GOLD</strong> (edge between 3% and 5%), always with its odds, stake, and explanation.</li>
 </ul>
 <p style="font-size: 16px; font-weight: 800; margin: 0 0 8px; color: #1a1a2e;">PLATINUM</p>
 <ul style="font-size: 14px; line-height: 1.8; color: #333333; margin: 0 0 18px; padding-left: 20px;">
-<li>La jugada Platinum es exclusiva para miembros Platinum.</li>
-<li>Cuesta <strong>$1 la primera semana</strong>, luego <strong>$23 por semana</strong>. Act&iacute;vala desde tu panel, en "Desbloquear Platinum".</li>
+<li>The Platinum play is exclusive to Platinum members.</li>
+<li>It costs <strong>$1 the first week</strong>, then <strong>$23 per week</strong>. Activate it from your dashboard, under &quot;Unlock Platinum&quot;.</li>
 </ul>
-<p style="font-size: 16px; font-weight: 800; margin: 0 0 8px; color: #1a1a2e;">REGLAS DE ORO</p>
+<p style="font-size: 16px; font-weight: 800; margin: 0 0 8px; color: #1a1a2e;">GOLDEN RULES</p>
 <ol style="font-size: 14px; line-height: 1.8; color: #333333; margin: 0 0 18px; padding-left: 20px;">
-<li>Apuesta exactamente el monto indicado: ni m&aacute;s, ni menos.</li>
-<li>Nunca persigas p&eacute;rdidas ni ganancias.</li>
-<li>Solo n&uacute;meros y valor. Nada de favoritismo por equipos.</li>
+<li>Bet exactly the amount indicated: no more, no less.</li>
+<li>Never chase losses or wins.</li>
+<li>Numbers and value only. No team favoritism.</li>
 </ol>
-<p style="font-size: 14px; color: #333333; line-height: 1.7; margin: 0;">Nos vemos ma&ntilde;ana a las 11:00 AM con las primeras jugadas.</p>
+<p style="font-size: 14px; color: #333333; line-height: 1.7; margin: 0;">See you tomorrow at 11:00 AM with the first plays.</p>
 <p style="font-size: 14px; color: #333333; margin: 12px 0 0;">&mdash; <strong>The Line Breaker</strong></p>
 </div>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin: 6px 0 0; background: #1a1a2e; border-radius: 0 0 18px 18px; border-top: 3px solid #c9a227;">
@@ -447,9 +447,9 @@ WELCOME_HTML = """<div style="font-family: -apple-system, BlinkMacSystemFont, 'S
 <p style="margin: 0; font-size: 12px; color: #dddddd;">250 Park Avenue, Suite 1800, New York, NY 10017</p>
 <p style="margin: 4px 0 0; font-size: 12px; color: #dddddd;">(983) 819-4589</p>
 <div style="width: 60%; height: 1px; background: #33334d; margin: 14px auto;">&nbsp;</div>
-<p style="margin: 0; font-size: 11px; color: #aaaaaa; line-height: 1.6;">Juega responsablemente &middot; 21+<br>Si tienes un problema con el juego, llama al 1-800-GAMBLER (1-800-426-2537), ayuda gratuita y confidencial, 24/7.</p>
-<p style="margin: 10px 0 0; font-size: 10px; color: #888888; line-height: 1.6;">Los pron&oacute;sticos de The Line Breaker tienen fines informativos y de entretenimiento. Ning&uacute;n pron&oacute;stico garantiza ganancias; las apuestas deportivas conllevan riesgo de p&eacute;rdida.</p>
-<p style="margin: 8px 0 0; font-size: 10px; color: #666666;">&copy; 2026 The Line Breaker &middot; Todos los derechos reservados</p>
+<p style="margin: 0; font-size: 11px; color: #aaaaaa; line-height: 1.6;">Bet responsibly &middot; 21+<br>Gambling problem? Call 1-800-GAMBLER (1-800-426-2537), free and confidential help, 24/7.</p>
+<p style="margin: 10px 0 0; font-size: 10px; color: #888888; line-height: 1.6;">The Line Breaker picks are for informational and entertainment purposes. No pick guarantees winnings; sports betting involves risk of loss.</p>
+<p style="margin: 8px 0 0; font-size: 10px; color: #666666;">&copy; 2026 The Line Breaker &middot; All rights reserved</p>
 </td></tr>
 </table>
 </div>
