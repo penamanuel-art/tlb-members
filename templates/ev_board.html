@@ -29,6 +29,43 @@
 </section>
 
 {% set edges = board.get('edges', []) %}
+<div class="push-cta">
+  <button id="pushBtn" class="ev-pill push-btn" type="button">🔔 Enable alerts</button>
+  <p id="pushHint" class="push-hint">Get a phone push when a new edge hits the board.</p>
+</div>
+<style>
+.push-cta{margin:4px 0 6px}
+.push-btn{cursor:pointer;background:#1c1c34;color:#fff;font-weight:700;font-size:13px;padding:8px 16px}
+.push-btn:disabled{opacity:.6;cursor:default}
+.push-hint{color:#9a9ab5;font-size:12px;margin:6px 0 0}
+</style>
+<script>
+(function () {
+  var btn = document.getElementById('pushBtn');
+  var hint = document.getElementById('pushHint');
+  if (!btn || !window.TLB_push) return;
+  function paint(st) {
+    if (st === 'granted') { btn.textContent = '🔔 Alerts on'; hint.textContent = "You'll get a phone push when a new edge hits the board."; }
+    else if (st === 'denied') { btn.textContent = '🔔 Blocked'; hint.textContent = 'Notifications are blocked — allow them in your browser settings, then try again.'; }
+    else if (st === 'unsupported') { btn.textContent = '🔔 Not supported'; hint.textContent = "This browser doesn't support push notifications."; }
+  }
+  window.TLB_push.status().then(paint);
+  btn.addEventListener('click', async function () {
+    btn.disabled = true;
+    btn.textContent = '⏳ Enabling…';
+    try {
+      var st = await window.TLB_push.enable();
+      if (st === 'granted') paint('granted');
+      else if (st === 'denied') paint('denied');
+      else if (st === 'unsupported') paint('unsupported');
+      else { btn.textContent = '🔔 Enable alerts'; btn.disabled = false; hint.textContent = 'Something went wrong — try again.'; }
+    } catch (e) {
+      btn.textContent = '🔔 Enable alerts';
+      btn.disabled = false;
+    }
+  });
+})();
+</script>
 {% if edges %}
   {% for e in edges %}
   <article class="ev-card">
