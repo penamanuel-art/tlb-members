@@ -16,6 +16,7 @@ import json
 import os
 import secrets
 import sqlite3
+import urllib.request
 from datetime import timedelta, datetime, timezone
 from functools import wraps
 
@@ -563,6 +564,33 @@ def load_results():
 def load_archive():
     """Archivo de jugadas publicadas por fecha."""
     return load_json_file(ARCHIVE_PATH).get("dias", [])
+
+
+# +EV Board (versión filtrada): el JSON vive en la rama `data-board`
+# (rama de datos: actualizarla NO redespliega Render). La app lo lee en
+# vivo con caché corto en memoria.
+EV_BOARD_URL = (
+    "https://raw.githubusercontent.com/penamanuel-art/tlb-members"
+    "/data-board/data/ev_board.json"
+)
+_ev_board_cache = {"at": 0.0, "data": {}}
+
+
+def load_ev_board():
+    import time
+    now = time.time()
+    if now - _ev_board_cache["at"] < 300 and _ev_board_cache["data"]:
+        return _ev_board_cache["data"]
+    data = {}
+    try:
+        req = urllib.request.Request(EV_BOARD_URL, headers={"User-Agent": "tlb-members"})
+        with urllib.request.urlopen(req, timeout=10) as r:
+            data = json.load(r)
+    except Exception:
+        data = _ev_board_cache["data"] or {}
+    _ev_board_cache["at"] = now
+    _ev_board_cache["data"] = data
+    return data
 
 
 def american_profit_ratio(odds) -> float:
@@ -1147,6 +1175,14 @@ def resultados():
     db = get_db()
     record_checkin(db, session["user_id"])
     return render_template("resultados.html", res=load_results())
+
+
+@app.route("/ev-board")
+@login_required
+def ev_board():
+    db = get_db()
+    record_checkin(db, session["user_id"])
+    return render_template("ev_board.html", board=load_ev_board())
 
 
 if __name__ == "__main__":
