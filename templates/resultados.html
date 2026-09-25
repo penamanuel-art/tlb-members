@@ -4,12 +4,21 @@
 <section class="tracker-head">
   <div>
     <p class="kicker">PROGRAM RESULTS</p>
-    <h2>Every public play, won or lost</h2>
+    <h2>Verified results.<br>Every play, win or loss.</h2>
   </div>
 </section>
+
+<div class="verify-strip">
+  <span class="verify-check">✓</span>
+  <p><b>Every settled play is published here — wins <u>and</u> losses.</b><br>
+  <span class="muted">Nothing hidden. Nothing edited after the fact.</span></p>
+</div>
+
 {% set profit = res.get('profit_all_time') %}
 {% set roi = res.get('roi') %}
-<section class="stats-grid">
+{% set g = res.get('ganadas', 0) %}
+{% set p = res.get('perdidas', 0) %}
+<section class="stats-grid results-hero">
   <div class="stat">
     <span class="stat-label">TOTAL PROFIT</span>
     <span class="stat-value {{ 'pos' if profit is not none and profit > 0 else ('neg' if profit is not none and profit < 0 else '') }}">{% if profit is not none %}{{ '+$%.2f' % profit }}{% else %}—{% endif %}</span>
@@ -17,7 +26,7 @@
   </div>
   <div class="stat">
     <span class="stat-label">RECORD</span>
-    <span class="stat-value">{{ res.get('ganadas', 0) }}–{{ res.get('perdidas', 0) }}</span>
+    <span class="stat-value">{{ g }}–{{ p }}</span>
     <span class="stat-sub">settled plays</span>
   </div>
   <div class="stat">
@@ -31,5 +40,39 @@
     <span class="stat-sub">won / settled</span>
   </div>
 </section>
-{% if res.get('nota') %}<p class="muted center">{{ res.get('nota') }}</p>{% endif %}
+
+<div class="section-head">
+  <h2 class="section-title">Verified history</h2>
+  <span class="muted">{{ g + p }} settled · {{ g }} won · {{ p }} lost</span>
+</div>
+
+{% set ns = namespace(n=0) %}
+<div class="tracked-list">
+{% for d in dias %}
+  {% for j in d.get('jugadas', []) or [] %}
+    {% if j.get('resultado') in ('WON', 'LOST') and j.get('pick') and not j.get('bloqueada') %}
+    {% set ns.n = ns.n + 1 %}
+    <article class="tracked-row">
+      <div class="tracked-info">
+        <span class="badge badge-{{ (j.get('nivel') or '')|lower }} badge-sm">{{ j.get('nivel', '') }}</span>
+        <div>
+          <div class="tracked-pick">{{ j.pick }} <span class="muted">{{ fmt_odds(j.cuota) }}</span></div>
+          <div class="tracked-sub">{{ d.get('titulo') or d.get('fecha', '') }}{% if j.stake_monto is not none %} · Stake ${{ '%.0f' % j.stake_monto }}{% endif %}</div>
+        </div>
+      </div>
+      <div class="tracked-result">
+        {% if j.resultado == 'WON' %}
+          <span class="result-badge win">✓ WON · {{ fmt_money(j.profit if j.profit is not none else 0) }}</span>
+        {% else %}
+          <span class="result-badge loss">✕ LOST · {{ fmt_money(j.profit if j.profit is not none else 0) }}</span>
+        {% endif %}
+      </div>
+    </article>
+    {% endif %}
+  {% endfor %}
+{% endfor %}
+</div>
+{% if ns.n == 0 %}
+<p class="muted">No settled plays yet — results appear here as soon as the first plays are graded.</p>
+{% endif %}
 {% endblock %}
