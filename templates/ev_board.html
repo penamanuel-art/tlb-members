@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}+EV Board — The Line Breaker{% endblock %}
+{% block content %}
+<style>
+.ev-card{background:#141428;border:1px solid #2a2a4a;border-radius:18px;padding:16px;margin:12px 0}
+.ev-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.ev-ev{background:#14532d;color:#bbf7d0;font-weight:800;border-radius:999px;padding:6px 12px;font-size:14px;white-space:nowrap}
+.ev-team{font-size:20px;font-weight:800;margin:10px 0 2px;color:#fff}
+.ev-line{color:#c9c9e0;font-size:14px;margin:0 0 8px}
+.ev-book{color:#d4af37;font-weight:700}
+.ev-meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;font-size:12px;color:#9a9ab5}
+.ev-pill{border:1px solid #3a3a5c;border-radius:999px;padding:4px 10px;white-space:nowrap}
+.ev-pill.sharp{border-color:#d4af37;color:#d4af37;font-weight:700}
+.ev-empty{border:2px dashed #3a3a5c;border-radius:18px;padding:28px 20px;text-align:center;margin:16px 0}
+.ev-empty h3{color:#fff;margin:0 0 8px}
+.ev-empty p{color:#9a9ab5;margin:0;font-size:14px}
+.ev-note{color:#9a9ab5;font-size:12px;text-align:center;margin-top:18px;line-height:1.5}
+.sport-tag{font-size:11px;font-weight:800;letter-spacing:1px;color:#8f8fb0}
+</style>
+
+<section class="tracker-head">
+  <div>
+    <p class="kicker">+EV BOARD · FILTERED</p>
+    <h2>Best value right now</h2>
+    {% if board.get('updated_at') %}
+    <p class="muted">Updated {{ board.updated_at }} ET · refreshes every ~15 min</p>
+    {% endif %}
+  </div>
+</section>
+
+{% set edges = board.get('edges', []) %}
+{% if edges %}
+  {% for e in edges %}
+  <article class="ev-card">
+    <div class="ev-top">
+      <span class="sport-tag">{{ e.sport }} · {{ e.game }}</span>
+      <span class="ev-ev">+{{ e.ev_pct }}% EV</span>
+    </div>
+    <h3 class="ev-team">{{ e.team }} <span class="ev-book">{{ '%+d' % e.price }}</span></h3>
+    <p class="ev-line">Best price at <b class="ev-book">{{ e.book }}</b> · fair {{ e.fair_prob_pct }}% (Pinnacle no-vig)</p>
+    <div class="ev-meta">
+      <span class="ev-pill">📚 {{ e.books_count }} books agree</span>
+      {% if e.sharp %}<span class="ev-pill sharp">⚡ sharp-confirmed</span>{% endif %}
+      {% if e.also_at %}<span class="ev-pill">also: {{ e.also_at | join(', ') }}</span>{% endif %}
+    </div>
+  </article>
+  {% endfor %}
+{% else %}
+  <div class="ev-empty">
+    <h3>No +EV edges right now</h3>
+    <p>The filters are strict on purpose — only edges of 3%+ confirmed at 2 or more books make the cut. When one clears them, it shows up here.</p>
+  </div>
+{% endif %}
+
+<p class="ev-note">Fair odds = Pinnacle no-vig. Filters: EV ≥ 3% · odds −200…+250 · 2+ books · max 10 edges.<br>Lines move fast — always verify the price at your book before you bet. This board is informational, not a pick.</p>
+{% endblock %}
