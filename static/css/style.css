@@ -354,6 +354,11 @@ a { color: var(--blue); text-decoration: none; }
 .price-box .btn { width: 100%; margin-bottom: 10px; }
 .btn[disabled] { opacity: .65; cursor: not-allowed; }
 
+/* ---------- Admin: fixed stakes form ---------- */
+.m-stake-form { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.m-stake-form label { font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 4px; }
+.m-stake-form input[type=number] { width: 76px; background: var(--card); border: 1px solid var(--line); border-radius: 8px; color: var(--text); padding: 6px 8px; font-size: 13px; }
+
 .member-row { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; margin-bottom: 10px; }
 .member-row .m-name { font-weight: 800; }
 .member-row .m-email { color: var(--muted); font-size: .88rem; word-break: break-all; }
