@@ -10,6 +10,7 @@
 .badge.verified{background:#1d3a2a;color:#4ade80}
 .badge.sharp{background:#2f6fed;color:#fff}
 .badge.moved{background:#3a2f10;color:#fbbf24}
+.badge.sim{background:#3a1a3a;color:#e879f9}
 .ev-card.stale{opacity:.88}
 .ev-stale-note{color:#fbbf24;font-size:13px;margin:0 0 10px}
 .ev-sub{font-size:15px;font-weight:700;color:#e8e8f2;margin:0 0 4px}
@@ -96,6 +97,7 @@
     <div class="ev-badges">
       <span class="badge verified">Verified</span>
       {% if e.stale %}<span class="badge moved">⚠️ LINE MOVED</span>{% endif %}
+      {% if e.simulated %}<span class="badge sim">🧪 SIMULACIÓN</span>{% endif %}
       {% if e.sharp %}<span class="badge sharp">🔪 SHARP</span>{% endif %}
     </div>
     <p class="ev-sub">{{ e.edge_label | default('Value edge') }} · {{ e.books_count }} books agree{% if e.sharp %} · sharp money this side{% endif %}</p>
