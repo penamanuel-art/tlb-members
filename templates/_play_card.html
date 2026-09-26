@@ -4,7 +4,9 @@
     <span class="badge badge-{{ p.nivel|lower }}">{{ '👑' if p.nivel in ['PLATINUM', 'ELITE'] else '🟡' }} {{ p.nivel }}</span>
     <span class="play-odds">{{ fmt_odds(p.cuota) }}</span>
   </div>
-  <h3 class="play-pick">{{ p.pick }}</h3>
+  {# Solo el equipo elegido, sin el rival (pedido por Alex 2026-09-26) #}
+  {% set pick_corto = p.pick.split(' @ ')[0].split(' vs ')[0] %}
+  <h3 class="play-pick">{{ pick_corto }}</h3>
   {% if p.comprobante %}
   <button type="button" class="link-ticket" data-ticket="ticket-{{ p.id }}">See the ticket →</button>
   {% endif %}
