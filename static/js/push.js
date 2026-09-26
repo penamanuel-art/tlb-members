@@ -1,4 +1,4 @@
-/* The Line Breaker — Web Push client.
+/* The Sharp Team — Web Push client.
  * Usage: await window.TLB_push.enable() -> 'granted' | 'denied' | 'unsupported' | 'error'
  *        await window.TLB_push.status() -> Notification.permission or 'unsupported'
  */
