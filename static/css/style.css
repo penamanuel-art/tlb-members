@@ -266,3 +266,186 @@ a { color: var(--blue); text-decoration: none; }
 
 /* Fix movil: ninguna imagen puede romper el layout */
 img { max-width: 100%; height: auto; }
+/* ---- Restaurado 2026-09-26: bloque borrado por accidente en 380c91f ---- */
+
+/* ---------- Masterclass ---------- */
+.lesson-card {
+  background: linear-gradient(160deg, rgba(251,191,36,.10), var(--card) 55%);
+  border: 1px solid rgba(251,191,36,.30);
+  border-left: 4px solid var(--gold);
+  border-radius: var(--radius); padding: 20px; margin: 14px 0;
+}
+.lesson-day { color: var(--gold); font-size: 12px; font-weight: 800; letter-spacing: 2px; margin: 0 0 6px; }
+.lesson-title { color: var(--text); font-size: 1.35rem; font-weight: 800; margin: 0 0 10px; }
+.lesson-body { line-height: 1.7; color: var(--text); margin: 0 0 14px; white-space: pre-wrap; }
+.lesson-clave {
+  background: rgba(251,191,36,.08); border: 1px solid rgba(251,191,36,.35);
+  border-radius: 12px; padding: 12px 14px; color: var(--gold); line-height: 1.6;
+}
+
+/* ---------- Fixes móvil (2026-09-24) ---------- */
+.tabs { overflow-x: auto; max-width: 100%; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.tabs::-webkit-scrollbar { display: none; }
+.tab { white-space: nowrap; flex-shrink: 0; padding: 8px 14px; }
+@media (max-width: 560px) {
+  .section-head { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .section-title { font-size: 1.6rem; }
+}
+
+/* ---------- Secciones nuevas (2026-09-24, mobile-first) ---------- */
+.play-locked { border-color: rgba(251,191,36,.45); background: linear-gradient(160deg, rgba(251,191,36,.10), var(--card) 60%); }
+.locked-body { text-align: center; padding: 8px 4px 4px; }
+.locked-icon { font-size: 2.2rem; }
+.locked-title { margin: 8px 0 6px; font-size: 1.15rem; }
+.locked-text { color: var(--muted); font-size: .92rem; margin: 0 0 10px; }
+.locked-price { font-size: .92rem; margin: 0 0 14px; }
+.locked-body .btn { width: 100%; }
+
+.accordion { display: grid; gap: 10px; }
+.acc-item { background: var(--card); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+.acc-head { list-style: none; cursor: pointer; padding: 14px 16px; display: flex; gap: 10px; align-items: baseline; font-weight: 700; }
+.acc-head::-webkit-details-marker { display: none; }
+.acc-dia { color: var(--gold); font-size: .8rem; font-weight: 800; white-space: nowrap; }
+.acc-titulo { flex: 1; }
+.acc-fase { color: var(--muted); font-size: .8rem; font-weight: 400; }
+.acc-body { padding: 0 16px 16px; }
+.acc-body p { margin: 0 0 10px; }
+
+.credo { margin: 18px 0; padding: 26px 22px; background: #0b0f1a; border-top: 6px solid var(--green); border-radius: 0 0 16px 16px; }
+.credo p { margin: 0; font-size: 1.25rem; font-weight: 800; line-height: 1.25; text-transform: uppercase; }
+.credo footer { margin-top: 14px; padding: 0; background: transparent; color: var(--green-bright); font-size: .72rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+
+.fund-grid { display: grid; gap: 12px; grid-template-columns: 1fr; }
+@media (min-width: 720px) { .fund-grid { grid-template-columns: repeat(3, 1fr); } }
+.fund-card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px; }
+.fund-num { font-size: .75rem; font-weight: 800; color: var(--gold); letter-spacing: .08em; }
+.fund-card h4 { margin: 6px 0; font-size: 1rem; }
+.fund-card p { margin: 0; color: var(--muted); font-size: .9rem; }
+
+.method-steps { display: grid; gap: 12px; grid-template-columns: 1fr; }
+@media (min-width: 720px) { .method-steps { grid-template-columns: repeat(3, 1fr); } }
+.method-step { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px; }
+.step-num { font-size: .72rem; font-weight: 800; letter-spacing: .08em; color: var(--muted); }
+.method-step h3 { margin: 6px 0; }
+.method-step p { margin: 0; color: var(--muted); font-size: .9rem; }
+
+.princ-strip { display: grid; gap: 10px; grid-template-columns: 1fr; margin: 22px 0; padding: 18px; background: rgba(34,197,94,.08); border: 1px solid rgba(34,197,94,.3); border-radius: 16px; }
+@media (min-width: 720px) { .princ-strip { grid-template-columns: repeat(3, 1fr); } }
+.princ b { display: block; font-size: 1rem; }
+.princ span { color: var(--muted); font-size: .88rem; }
+
+.archive-day { margin-bottom: 26px; }
+.day-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.day-title { margin: 0; font-size: 1.15rem; }
+.day-badge { font-size: .75rem; font-weight: 800; padding: 4px 12px; border-radius: 999px; background: var(--card-2); border: 1px solid var(--line); color: var(--muted); }
+.history-box { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 18px; }
+.history-line { font-size: 1.05rem; margin: 8px 0; }
+.ticket-photo-card { max-width: 520px; }
+.ticket-photo { width: 100%; height: auto; border-radius: 10px; display: block; }
+
+.price-box { background: var(--card); border: 1px solid rgba(251,191,36,.45); border-radius: 18px; padding: 24px 20px; text-align: center; }
+.price-kicker { font-size: .75rem; font-weight: 800; letter-spacing: .1em; color: var(--gold); margin: 0 0 8px; }
+.price-value { font-size: 2.2rem; margin: 0; }
+.price-value span { font-size: 1rem; color: var(--muted); font-weight: 400; }
+.price-then { color: var(--muted); margin: 4px 0 16px; }
+.price-list { text-align: left; margin: 0 auto 18px; padding-left: 20px; display: inline-block; }
+.price-list li { margin-bottom: 8px; }
+.price-box .btn { width: 100%; margin-bottom: 10px; }
+.btn[disabled] { opacity: .65; cursor: not-allowed; }
+
+/* ---------- Admin: fixed stakes form ---------- */
+.m-stake-form { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.m-stake-form label { font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 4px; }
+.m-stake-form input[type=number] { width: 76px; background: var(--card); border: 1px solid var(--line); border-radius: 8px; color: var(--text); padding: 6px 8px; font-size: 13px; }
+
+.member-row { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; margin-bottom: 10px; }
+.member-row .m-name { font-weight: 800; }
+.member-row .m-email { color: var(--muted); font-size: .88rem; word-break: break-all; }
+.member-row .m-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; font-size: .78rem; }
+.m-pill { padding: 3px 10px; border-radius: 999px; background: var(--card-2); border: 1px solid var(--line); color: var(--muted); }
+.m-pill.on { color: var(--gold); border-color: rgba(251,191,36,.5); }
+
+.footer-note { font-size: .78rem; color: var(--muted); margin: 6px 0 0; }
+.footer-note a { color: inherit; }
+
+/* ---------- Dashboard largo (2026-09-24): herramientas y membresía ---------- */
+.tool-list { display: grid; gap: 10px; }
+.tool-row {
+  display: flex; align-items: center; gap: 12px;
+  background: var(--card); border: 1px solid var(--line);
+  border-radius: 14px; padding: 14px 16px; color: var(--text);
+}
+.tool-icon { font-size: 1.4rem; }
+.tool-text { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.tool-text span { color: var(--muted); font-size: .85rem; }
+.tool-go { color: var(--green-bright); font-weight: 700; font-size: .9rem; white-space: nowrap; }
+.tool-gold { border-color: rgba(251,191,36,.45); }
+
+/* ---------- Ticket original (foto del comprobante) ---------- */
+.ticket-photo { padding: 12px; max-width: 480px; }
+.ticket-photo img { width: 100%; height: auto; display: block; border-radius: 12px; }
+
+/* ---- Verified results page (rediseño 2026-09-25) ---- */
+.verify-strip {
+  display: flex; gap: 12px; align-items: center;
+  background: rgba(251,191,36,.07);
+  border: 1px solid rgba(251,191,36,.35);
+  border-radius: 14px; padding: 12px 16px; margin: 0 0 16px;
+}
+.verify-strip p { margin: 0; font-size: 14px; line-height: 1.45; }
+
+/* ---- Home: documented record up front (2026-09-25) ---- */
+.record-home { margin-bottom: 12px; }
+.verify-prominent { border-width: 2px; padding: 14px 16px; }
+.verify-prominent p { font-size: 15px; }
+.before-hl {
+  color: var(--gold); font-weight: 900; letter-spacing: 1px;
+  background: rgba(251,191,36,.14); border: 1px solid rgba(251,191,36,.55);
+  padding: 1px 8px; border-radius: 6px; white-space: nowrap;
+}
+.verify-check {
+  flex: none; width: 36px; height: 36px; border-radius: 50%;
+  background: var(--gold); color: #1a1a1a;
+  font-weight: 900; font-size: 18px;
+  display: flex; align-items: center; justify-content: center;
+}
+.results-hero .stat { padding: 18px 14px; }
+.results-hero .stat-value { font-size: 2rem; }
+@media (max-width: 420px) {
+  .results-hero .stat-value { font-size: 1.7rem; }
+}
+
+/* ---- Ticket grid: Recent graded tickets (2026-09-25) ---- */
+.section-sub { font-size: 13px; margin: 4px 0 0; }
+.ticket-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.ticket-card {
+  display: block; width: 100%; text-align: left; font: inherit; color: var(--text);
+  background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+  padding: 0; overflow: hidden; cursor: pointer;
+}
+.ticket-img { position: relative; display: block; aspect-ratio: 4/5; background: #0b0e17; overflow: hidden; }
+.ticket-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.ticket-pill {
+  position: absolute; top: 8px; left: 8px;
+  font-size: 13px; font-weight: 800; padding: 6px 12px; border-radius: 999px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.45);
+}
+.ticket-pill.win { color: #052e16; background: #4ade80; }
+.ticket-pill.loss { color: #fff; background: #ef4444; }
+.ticket-title { display: block; font-weight: 700; font-size: 14px; padding: 10px 12px 0; }
+.ticket-sub { display: block; color: var(--muted); font-size: 12px; padding: 2px 12px 12px; }
+.ticket-fallback {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 8px; height: 100%; padding: 20px; text-align: center;
+  background: linear-gradient(160deg, #16213a 0%, #0b0e17 70%);
+}
+.ticket-brand { color: var(--gold); font-size: 11px; letter-spacing: 2px; font-weight: 800; }
+.ticket-fallback-pick { font-size: 1.1rem; font-weight: 800; }
+.ticket-fallback-odds { color: var(--muted); font-size: 14px; font-weight: 700; }
+.ticket-fallback-result { font-size: 15px; font-weight: 800; padding: 6px 14px; border-radius: 999px; }
+.ticket-fallback-result.win { color: #4ade80; background: rgba(74,222,128,.12); }
+.ticket-fallback-result.loss { color: #f87171; background: rgba(248,113,113,.12); }
+@media (max-width: 380px) {
+  .ticket-grid { gap: 8px; }
+  .ticket-title { font-size: 13px; }
+}
