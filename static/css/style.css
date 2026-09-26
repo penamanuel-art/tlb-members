@@ -82,19 +82,20 @@ a { color: var(--blue); text-decoration: none; }
 .btn-lg { padding: 14px 24px; font-size: 16px; }
 .btn-block { width: 100%; }
 .btn-place { background: var(--green); color: #04120a; flex: 1; }
-.btn-novig { background: #179BE7; color: #ffffff; flex: 1; }
+.btn-novig { background: var(--green); color: #04120a; flex: 1; padding: 14px 18px; border-radius: 16px; font-size: 16px; }
 .btn-track {
-  background: transparent; color: var(--green-bright);
-  border: 1.5px solid var(--green); flex: 1;
+  background: #141d30; color: #fff;
+  border: 1px solid #2b3c5c; padding: 14px 18px; border-radius: 16px;
 }
 .btn-tracked {
-  background: var(--green-dim); color: var(--green-bright);
-  border: 1.5px solid var(--green); flex: 1; cursor: default;
+  background: #141d30; color: var(--green-bright);
+  border: 1px solid #2b3c5c; padding: 14px 18px; border-radius: 16px; cursor: default;
 }
 .btn-win { background: var(--green-dim); color: var(--green-bright); border: 1px solid var(--green); }
 .btn-loss { background: rgba(248,113,113,.12); color: var(--danger); border: 1px solid var(--danger); }
-.play-actions { display: flex; gap: 10px; margin-top: 14px; }
-.play-actions form { flex: 1; display: flex; }
+.play-actions { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+.play-actions form { flex: 0 1 36%; display: flex; }
+.play-actions form:only-child { flex: 1; }
 .play-actions form .btn { flex: 1; }
 
 /* ---------- Flashes ---------- */
@@ -135,23 +136,25 @@ a { color: var(--blue); text-decoration: none; }
 .link-more { font-size: 14px; font-weight: 600; }
 .plays { display: grid; gap: 14px; }
 .play-card {
-  background: linear-gradient(160deg, rgba(34,197,94,.10), var(--card) 55%);
-  border: 1px solid rgba(34,197,94,.30);
-  border-left: 4px solid var(--green);
-  border-radius: var(--radius); padding: 18px;
+  background: #0c1322;
+  border: 1px solid #1d2a45;
+  border-radius: 20px; padding: 22px;
 }
+.play-card .badge { background: none; border: none; padding: 0; font-size: 13px; }
+.play-card .badge-elite, .play-card .badge-gold { color: var(--gold); }
 .play-top { display: flex; justify-content: space-between; align-items: center; }
 .badge { font-size: 12px; font-weight: 800; letter-spacing: 1.5px; padding: 6px 10px; border-radius: 999px; }
 .badge-platinum { color: var(--gold); background: rgba(251,191,36,.12); border: 1px solid rgba(251,191,36,.4); }
 .badge-elite { color: var(--gold); background: rgba(251,191,36,.12); border: 1px solid rgba(251,191,36,.4); }
 .badge-gold { color: var(--green-bright); background: var(--green-dim); border: 1px solid rgba(34,197,94,.4); }
 .badge-sm { font-size: 10px; padding: 4px 8px; }
-.play-odds { color: var(--green-bright); font-weight: 800; font-size: 1.3rem; }
-.play-pick { font-size: 1.7rem; margin: 10px 0 4px; font-weight: 800; letter-spacing: -0.5px; }
+.play-odds { color: var(--green-bright); font-weight: 800; font-size: 1.6rem; }
+.play-pick { font-size: 2rem; margin: 12px 0 6px; font-weight: 800; letter-spacing: -0.5px; color: #fff; }
 .link-ticket { background: none; border: none; color: var(--blue); font-size: 15px; font-weight: 600; cursor: pointer; padding: 0; }
-.play-bet { margin-top: 12px; font-size: 1.05rem; display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.play-divider { border: none; border-top: 1px solid var(--line); margin: 14px 0; }
+.play-bet { font-size: 1.05rem; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
 .bet-label { color: var(--green-bright); font-weight: 700; }
-.bet-amount { color: var(--green-bright); font-size: 1.5rem; font-weight: 800; }
+.bet-amount { color: var(--green-bright); font-size: 1.75rem; font-weight: 800; }
 .bet-edge { margin-left: auto; font-size: .95rem; color: var(--muted); }
 
 /* ---------- Ticket modal ---------- */
