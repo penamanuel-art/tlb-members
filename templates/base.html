@@ -25,7 +25,7 @@
 <header class="topbar">
   <div class="topbar-left">
     <a class="brand" href="{{ url_for('home') if session.get('user_id') else url_for('index') }}">
-      <img src="{{ url_for('static', filename='img/logo.png') }}" alt="The Sharp Team" class="brand-logo">
+      <img src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team" class="brand-logo">
     </a>
     {% if session.get('user_id') %}
     <div class="menu-wrap">
