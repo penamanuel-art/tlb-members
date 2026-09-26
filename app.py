@@ -1476,5 +1476,38 @@ def api_push_edge():
     return jsonify({"sent": sent, "failed": failed})
 
 
+@app.route("/api/untracked")
+def api_untracked():
+    """Jugadas de hoy que el admin (Alex) aún no trackeó.
+
+    Protegido igual que /api/push-edge: header X-Push-Key == PUSH_TRIGGER_KEY
+    (o ?key= como alternativa para GET simples). Lo usa el cron
+    recordatorio-track: si Alex olvidó darle Track a alguna jugada, le avisa
+    en el chat de notificaciones. (Pedido por Alex 2026-09-26.)
+    """
+    key = request.headers.get("X-Push-Key", "") or request.args.get("key", "")
+    if not PUSH_TRIGGER_KEY or not secrets.compare_digest(key, PUSH_TRIGGER_KEY):
+        return jsonify({"error": "forbidden"}), 403
+    hoy = datetime.now(TZ).strftime("%Y-%m-%d")
+    plays = [p for p in load_plays() if p.get("fecha") == hoy]
+    db = get_db()
+    admin = db.execute(
+        "SELECT id FROM users WHERE is_admin = 1 LIMIT 1"
+    ).fetchone()
+    tracked = set()
+    if admin:
+        rows = db.execute(
+            "SELECT play_id FROM tracked_plays WHERE user_id = ? AND fecha = ?",
+            (admin["id"], hoy),
+        ).fetchall()
+        tracked = {r["play_id"] for r in rows}
+    faltan = [
+        {"id": p.get("id"), "nivel": p.get("nivel"), "pick": p.get("pick")}
+        for p in plays
+        if p.get("id") not in tracked
+    ]
+    return jsonify({"fecha": hoy, "total": len(plays), "faltan": faltan})
+
+
 if __name__ == "__main__":
     app.run(host="127.0.0.1", port=5000, debug=False)
