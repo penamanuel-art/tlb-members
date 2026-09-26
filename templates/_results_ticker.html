@@ -1,0 +1,24 @@
+{# Results ticker (requested by Alex 2026-09-26): scrolling marquee with the
+   last settled days — day label, W-L record, day profit and ROI.
+   Fed by `ticker_days` from the home() route (computed live from
+   data/archive.json, so it updates as plays settle). Styles are scoped here
+   so no change to static/css/style.css is needed. #}
+{% if ticker_days %}
+<style>
+.ticker-wrap{overflow:hidden;border:1px solid var(--line);border-radius:12px;background:var(--card);margin:0 0 18px;}
+.ticker-kicker{padding:8px 14px 0;font-size:11px;letter-spacing:1.5px;color:var(--muted);font-weight:700;}
+.ticker-track{display:flex;width:max-content;animation:tlb-ticker 32s linear infinite;padding:8px 0 12px;}
+.ticker-wrap:hover .ticker-track{animation-play-state:paused;}
+@keyframes tlb-ticker{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+.ticker-item{display:inline-flex;align-items:center;gap:10px;padding:0 24px;white-space:nowrap;color:var(--text);font-size:14px;font-weight:600;border-right:1px solid var(--line);}
+.ticker-item .tk-day{color:var(--gold);letter-spacing:.6px;}
+.ticker-item .tk-roi{color:var(--muted);font-weight:500;}
+@media (prefers-reduced-motion: reduce){.ticker-track{animation:none;flex-wrap:wrap;width:auto;}}
+</style>
+<div class="ticker-wrap" role="marquee" aria-label="Recent daily results">
+  <div class="ticker-kicker">RECENT DAILY RESULTS</div>
+  <div class="ticker-track">
+    {% for _rep in [1, 2] %}{% for t in ticker_days %}<span class="ticker-item"><span class="tk-day">{{ t.etiqueta }}</span><span>{{ t.record }}</span><span class="{{ 'pos' if t.profit >= 0 else 'neg' }}">{{ '+$%.2f' % t.profit }}</span><span class="tk-roi">ROI {{ '%+.1f' % t.roi }}%</span></span>{% endfor %}{% endfor %}
+  </div>
+</div>
+{% endif %}
