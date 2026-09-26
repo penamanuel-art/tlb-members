@@ -22,7 +22,7 @@
     {% else %}
     <article class="play-card level-{{ j.nivel|lower }}">
       <div class="play-top">
-        <span class="badge badge-{{ j.nivel|lower }}">{{ '★' if j.nivel == 'PLATINUM' else '●' }} {{ j.nivel }}</span>
+        <span class="badge badge-{{ j.nivel|lower }}">{{ '★' if j.nivel in ['PLATINUM', 'ELITE'] else '●' }} {{ j.nivel }}</span>
         <span class="play-odds">{{ fmt_odds(j.cuota) }}</span>
       </div>
       <h3 class="play-pick">{{ j.pick }}</h3>
@@ -76,20 +76,20 @@
 <p class="muted">Frequently asked questions</p>
 <div class="accordion">
   <details class="acc-item">
-    <summary class="acc-head"><span class="acc-titulo">Is a Platinum play guaranteed?</span></summary>
-    <div class="acc-body"><p>No. No bet is guaranteed. Platinum identifies the day's highest estimated value play, not a sure thing.</p></div>
+    <summary class="acc-head"><span class="acc-titulo">Is an Elite play guaranteed?</span></summary>
+    <div class="acc-body"><p>No. No bet is guaranteed. Elite identifies the day's highest estimated value play, not a sure thing.</p></div>
   </details>
   <details class="acc-item">
     <summary class="acc-head"><span class="acc-titulo">What does my membership include?</span></summary>
-    <div class="acc-body"><p>Access to Gold plays, verified history and educational content. The top Platinum play unlocks with the weekly plan.</p></div>
+    <div class="acc-body"><p>Access to Gold plays, verified history and educational content. The top Elite play unlocks with the weekly plan.</p></div>
   </details>
   <details class="acc-item">
     <summary class="acc-head"><span class="acc-titulo">Why might there be a day with no plays?</span></summary>
     <div class="acc-body"><p>Because forcing volume destroys edge. If the market doesn't offer enough value, the professional decision is not to bet.</p></div>
   </details>
   <details class="acc-item">
-    <summary class="acc-head"><span class="acc-titulo">How do I unlock the Platinum play?</span></summary>
-    <div class="acc-body"><p>Use the "Unlock" button on the Platinum card to activate your weekly access.</p></div>
+    <summary class="acc-head"><span class="acc-titulo">How do I unlock the Elite play?</span></summary>
+    <div class="acc-body"><p>Use the "Unlock" button on the Elite card to activate your weekly access.</p></div>
   </details>
 </div>
 

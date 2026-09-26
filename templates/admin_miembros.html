@@ -16,13 +16,13 @@
   <div class="m-meta">
     <span class="m-pill">Joined: {{ m.created_at[:10] if m.created_at else '—' }}</span>
     {% if m.es_nuevo %}<span class="m-pill on">NEW</span>{% endif %}
-    {% if m.platinum_unlocked %}<span class="m-pill on">★ Platinum</span>{% endif %}
+    {% if m.platinum_unlocked %}<span class="m-pill on">★ Elite</span>{% endif %}
     {% if m.is_admin %}<span class="m-pill on">Admin</span>{% endif %}
   </div>
   <form method="post" action="{{ url_for('admin_toggle_platinum') }}">
     <input type="hidden" name="user_id" value="{{ m.id }}">
     <button class="btn btn-sm {{ 'btn-ghost' if m.platinum_unlocked else 'btn-place' }}" type="submit">
-      {{ 'Remove Platinum' if m.platinum_unlocked else 'Activate Platinum' }}
+      {{ 'Remove Elite' if m.platinum_unlocked else 'Activate Elite' }}
     </button>
   </form>
   {% if not m.is_admin %}

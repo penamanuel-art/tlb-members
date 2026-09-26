@@ -36,7 +36,7 @@ os.makedirs(INSTANCE_DIR, exist_ok=True)
 DATABASE_URL = os.environ.get("DATABASE_URL")
 USE_PG = bool(DATABASE_URL)
 
-# Link de pago de Stripe para desbloquear Platinum ($1 primera semana, luego $23/semana).
+# Link de pago de Stripe para desbloquear Elite ($1 primera semana, luego $23/semana).
 # Se cambia sin tocar código con la env var STRIPE_PLATINUM_URL en Render.
 STRIPE_PLATINUM_URL = os.environ.get(
     "STRIPE_PLATINUM_URL", "https://buy.stripe.com/28E14p64MfDeeiybEQefC00"
@@ -163,7 +163,7 @@ CREATE TABLE IF NOT EXISTS users (
     email TEXT NOT NULL UNIQUE,
     password_hash TEXT NOT NULL,
     bankroll REAL,               -- bankroll del miembro (NULL = sin configurar)
-    platinum_unlocked INTEGER NOT NULL DEFAULT 0,  -- 1 = Platinum desbloqueada
+    platinum_unlocked INTEGER NOT NULL DEFAULT 0,  -- 1 = Elite desbloqueada
     is_admin INTEGER NOT NULL DEFAULT 0,           -- 1 = administrador
     created_at TEXT NOT NULL
 );
@@ -206,7 +206,7 @@ CREATE TABLE IF NOT EXISTS users (
     email TEXT NOT NULL UNIQUE,
     password_hash TEXT NOT NULL,
     bankroll DOUBLE PRECISION,   -- bankroll del miembro (NULL = sin configurar)
-    platinum_unlocked INTEGER NOT NULL DEFAULT 0,  -- 1 = Platinum desbloqueada
+    platinum_unlocked INTEGER NOT NULL DEFAULT 0,  -- 1 = Elite desbloqueada
     is_admin INTEGER NOT NULL DEFAULT 0,           -- 1 = administrador
     created_at TEXT NOT NULL
 );
@@ -359,7 +359,7 @@ def current_user():
 
 
 def platinum_unlocked_for(user) -> bool:
-    """True si el miembro desbloqueó la jugada Platinum (default: bloqueada)."""
+    """True si el miembro desbloqueó la jugada Elite (default: bloqueada)."""
     try:
         return bool(user and user["platinum_unlocked"])
     except (KeyError, IndexError, TypeError):
@@ -434,11 +434,11 @@ You'll see each morning's plays there (~11:00 AM, New York time).
 
 HOW IT WORKS
 - We publish a maximum of 3 plays per day, and only when the model detects real value. If there's no value, there's no play: discipline also means not betting.
-- Each play shows its level: PLATINUM, the top play of the day (edge over 5%), or GOLD (edge between 3% and 5%), always with its odds, stake, and explanation.
+- Each play shows its level: ELITE, the top play of the day (edge over 5%), or GOLD (edge between 3% and 5%), always with its odds, stake, and explanation.
 
-PLATINUM
-- The Platinum play is exclusive to Platinum members.
-- It costs $1 the first week, then $23 per week. Activate it from your dashboard, under "Unlock Platinum".
+ELITE
+- The Elite play is exclusive to Elite members.
+- It costs $1 the first week, then $23 per week. Activate it from your dashboard, under "Unlock Elite".
 
 GOLDEN RULES
 1. Bet exactly the amount indicated: no more, no less.
@@ -467,12 +467,12 @@ WELCOME_HTML = """<div style="font-family: -apple-system, BlinkMacSystemFont, 'S
 <p style="font-size: 16px; font-weight: 800; margin: 0 0 8px; color: #1a1a2e;">HOW IT WORKS</p>
 <ul style="font-size: 14px; line-height: 1.8; color: #333333; margin: 0 0 18px; padding-left: 20px;">
 <li>We publish a maximum of 3 plays per day, and only when the model detects real value. If there&apos;s no value, there&apos;s no play: discipline also means not betting.</li>
-<li>Each play shows its level: <strong>PLATINUM</strong>, the top play of the day (edge over 5%), or <strong>GOLD</strong> (edge between 3% and 5%), always with its odds, stake, and explanation.</li>
+<li>Each play shows its level: <strong>ELITE</strong>, the top play of the day (edge over 5%), or <strong>GOLD</strong> (edge between 3% and 5%), always with its odds, stake, and explanation.</li>
 </ul>
-<p style="font-size: 16px; font-weight: 800; margin: 0 0 8px; color: #1a1a2e;">PLATINUM</p>
+<p style="font-size: 16px; font-weight: 800; margin: 0 0 8px; color: #1a1a2e;">ELITE</p>
 <ul style="font-size: 14px; line-height: 1.8; color: #333333; margin: 0 0 18px; padding-left: 20px;">
-<li>The Platinum play is exclusive to Platinum members.</li>
-<li>It costs <strong>$1 the first week</strong>, then <strong>$23 per week</strong>. Activate it from your dashboard, under &quot;Unlock Platinum&quot;.</li>
+<li>The Elite play is exclusive to Elite members.</li>
+<li>It costs <strong>$1 the first week</strong>, then <strong>$23 per week</strong>. Activate it from your dashboard, under &quot;Unlock Elite&quot;.</li>
 </ul>
 <p style="font-size: 16px; font-weight: 800; margin: 0 0 8px; color: #1a1a2e;">GOLDEN RULES</p>
 <ol style="font-size: 14px; line-height: 1.8; color: #333333; margin: 0 0 18px; padding-left: 20px;">
@@ -560,7 +560,7 @@ def stake_personalizado(play, bankroll):
 
     Pedido por Alex 2026-09-26 (como la app de WGT): cada miembro ve en su
     dashboard su monto personal = 1% de SU bankroll x las unidades de la
-    jugada (1u -> 1%, 0.6u -> 0.6%). Si no tiene bankroll configurado,
+    jugada (1u -> 1%, 0.75u -> 0.75%, 0.5u -> 0.5%). Si no tiene bankroll configurado,
     se usa el stake oficial del programa (stake_monto de plays.json).
     """
     try:
@@ -1052,9 +1052,10 @@ def track(play_id):
     if not play:
         flash("Play not found.", "error")
         return redirect(url_for("home"))
-    # La Platinum bloqueada no se puede trackear: no revela nada.
-    if play.get("nivel") == "PLATINUM" and not platinum_unlocked_for(current_user()):
-        flash("The Platinum play is locked. Unlock it to track it.", "warn")
+    # La Elite bloqueada no se puede trackear: no revela nada.
+    _cu = current_user()
+    if play.get("nivel") in ("PLATINUM", "ELITE") and not platinum_unlocked_for(_cu):
+        flash("The Elite play is locked. Unlock it to track it.", "warn")
         return redirect(url_for("desbloquear_platinum"))
     db = get_db()
     try:
@@ -1067,7 +1068,7 @@ def track(play_id):
                 session["user_id"], play["id"], play.get("fecha", ""),
                 play.get("nivel", ""), play.get("pick", ""), int(play.get("cuota", 0)),
                 float(play.get("stake_unidades", 0)),
-                float(stake_personalizado(play, (current_user() or {}).get("bankroll"))),
+                float(stake_personalizado(play, _cu["bankroll"] if _cu else None)),
                 play.get("edge"), now_iso(),
             ),
         )
@@ -1163,7 +1164,7 @@ def desbloquear_platinum():
 @app.route("/admin/miembros/platinum", methods=["POST"])
 @login_required
 def admin_toggle_platinum():
-    """Activa o quita el acceso Platinum de un miembro (solo Alex).
+    """Activa o quita el acceso Elite de un miembro (solo Alex).
 
     Stripe (payment link) no avisa solo a la app, así que cuando llega
     la notificación de pago Alex activa el acceso aquí con un toque.
@@ -1181,7 +1182,7 @@ def admin_toggle_platinum():
         db.execute("UPDATE users SET platinum_unlocked = ? WHERE id = ?", (nuevo, user_id))
         db.commit()
         flash(
-            "Platinum access activated." if nuevo else "Platinum access deactivated.",
+            "Elite access activated." if nuevo else "Elite access deactivated.",
             "ok",
         )
     return redirect(url_for("admin_miembros"))

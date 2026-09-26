@@ -29,7 +29,7 @@
       {% set stake_m = j.stake_monto if j.stake_monto else 0 %}
       {% set uw = (prof / (stake_m / stake_u)) if stake_u and stake_m else 0 %}
       {% set ns.tu = ns.tu + uw %}
-      {% if (j.get('nivel') or '') == 'PLATINUM' %}
+      {% if (j.get('nivel') or '') in ('PLATINUM', 'ELITE') %}
         {% set ns.pw = ns.pw + (1 if j.resultado == 'WON' else 0) %}
         {% set ns.pl = ns.pl + (1 if j.resultado == 'LOST' else 0) %}
         {% set ns.pp = ns.pp + prof %}
@@ -73,7 +73,7 @@
 </div>
 <section class="stats-grid">
   <div class="stat">
-    <span class="badge badge-platinum">★ PLATINUM</span>
+    <span class="badge badge-elite">★ ELITE</span>
     <span class="stat-value">{{ ns.pw }}–{{ ns.pl }}</span>
     <span class="stat-sub {{ 'pos' if ns.pp > 0 else ('neg' if ns.pp < 0 else '') }}">{{ fmt_money(ns.pp) }} · {{ fmt_units(ns.pu) }}</span>
   </div>

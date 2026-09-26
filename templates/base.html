@@ -36,7 +36,7 @@
         <a href="{{ url_for('masterclass') }}">🎓 Masterclass</a>
         <a href="{{ url_for('resultados') }}">📊 Results</a>
         <a href="{{ url_for('ev_board') }}">⚡ +EV Board</a>
-        {% if not miembro_platinum %}<a href="{{ url_for('desbloquear_platinum') }}">🔓 Unlock Platinum</a>{% endif %}
+        {% if not miembro_platinum %}<a href="{{ url_for('desbloquear_platinum') }}">🔓 Unlock Elite</a>{% endif %}
         <a href="{{ url_for('programa') }}">📘 Program</a>
         <a href="{{ url_for('archivo') }}">🗂️ Archive</a>
         {% if es_admin %}<a href="{{ url_for('admin_miembros') }}">👥 Members</a>{% endif %}
@@ -48,9 +48,9 @@
   </div>
   {% if session.get('user_id') %}
   {% if miembro_platinum %}
-  <span class="plat-badge">★ PLATINUM</span>
+  <span class="plat-badge">★ ELITE</span>
   {% else %}
-  <a href="{{ url_for('desbloquear_platinum') }}" class="plat-cta">🔓 Unlock Platinum</a>
+  <a href="{{ url_for('desbloquear_platinum') }}" class="plat-cta">🔓 Unlock Elite</a>
   {% endif %}
   {% if es_admin %}<button id="langToggle" class="lang-btn notranslate" title="Ver en español">🇺🇸 EN</button>{% endif %}
   <div class="avatar" title="{{ nombre_corto }}">{{ inicial }}</div>

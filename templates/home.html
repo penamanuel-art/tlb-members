@@ -104,11 +104,11 @@
 
 <!-- 01b · RESULTS TICKER (requested by Alex 2026-09-26) -->
 
-<!-- 02 · PLATINUM SELECTION (banner) -->
-{% set plat = plays | selectattr('nivel', 'equalto', 'PLATINUM') | list %}
+<!-- 02 · ELITE SELECTION (banner) -->
+{% set plat = plays | selectattr('nivel', 'equalto', 'ELITE') | list %}
 {% if plat %}
 <div class="section-head">
-  <h2 class="section-title">Today's Platinum Selection</h2>
+  <h2 class="section-title">Today's Elite Selection</h2>
 </div>
 <div class="plays">
   {% for p in plat %}
@@ -133,7 +133,7 @@
   💰 Bankroll: <span class="muted">not set</span> · <a href="{{ url_for('cuenta') }}">set up</a>
   {% endif %}
 </p>
-{% set golds = plays | rejectattr('nivel', 'equalto', 'PLATINUM') | list %}
+{% set golds = plays | rejectattr('nivel', 'equalto', 'ELITE') | list %}
 {% if card_pendiente %}
 <div style="border:2px dashed rgba(255,255,255,.18);border-radius:20px;background:rgba(255,255,255,.03);padding:28px 22px;text-align:center;margin-top:12px;">
   <p style="color:#fff;font-weight:800;font-size:1.25rem;margin:0 0 10px;">No plays posted yet today</p>
@@ -354,7 +354,7 @@
   {% if not platinum_unlocked %}
   <a class="tool-row tool-gold" href="{{ url_for('desbloquear_platinum') }}">
     <span class="tool-icon">🔓</span>
-    <span class="tool-text"><b>Unlock Platinum</b><span>$1 the first week, then $23/week</span></span>
+    <span class="tool-text"><b>Unlock Elite</b><span>$1 the first week, then $23/week</span></span>
     <span class="tool-go">View →</span>
   </a>
   {% endif %}
