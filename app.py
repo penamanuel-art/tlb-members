@@ -811,10 +811,11 @@ def home():
                     "comprobante": j.get("comprobante"),
                 })
     recientes = recientes[:6]
-    # Ticker de resultados por día (pedido por Alex 2026-09-26): últimos días
-    # con jugadas liquidadas. Se calcula en vivo desde data/archive.json, así
-    # que se actualiza solo a medida que se liquidan jugadas. Sin inventos:
-    # solo días con jugadas WON/LOST reales.
+    # Ticker de resultados (pedido por Alex 2026-09-26, refinado el mismo día):
+    # muestra UN solo día: el último día con jugadas liquidadas (el día
+    # anterior). Se calcula en vivo desde data/archive.json, así que se
+    # actualiza solo a medida que se liquidan jugadas. Sin inventos: solo
+    # jugadas WON/LOST reales.
     ticker_days = []
     for d in load_archive():
         fecha = d.get("fecha", "")
@@ -839,7 +840,7 @@ def home():
             "profit": profit,
             "roi": roi,
         })
-        if len(ticker_days) >= 7:
+        if len(ticker_days) >= 1:
             break
     return render_template(
         "home.html",
