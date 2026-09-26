@@ -14,7 +14,7 @@
 .ticker-dock-bottom{position:fixed;bottom:0;left:0;right:0;z-index:1000;border-top:1px solid var(--line);}
 {% if dock == 'bottom' %}body{padding-bottom:74px;}{% endif %}
 .ticker-kicker{padding:8px 14px 0;font-size:11px;letter-spacing:1.5px;color:var(--muted);font-weight:700;}
-.ticker-track{display:flex;width:max-content;animation:tlb-ticker 20s linear infinite;padding:8px 0 12px;}
+.ticker-track{display:flex;width:max-content;animation:tlb-ticker 12s linear infinite;padding:8px 0 12px;}
 .ticker-wrap:hover .ticker-track{animation-play-state:paused;}
 @keyframes tlb-ticker{from{transform:translateX(0);}to{transform:translateX(-50%);}}
 .ticker-item{display:inline-flex;align-items:center;gap:10px;padding:0 24px;white-space:nowrap;color:var(--text);font-size:14px;font-weight:600;border-right:1px solid var(--line);}
