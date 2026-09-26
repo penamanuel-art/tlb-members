@@ -1,4 +1,4 @@
-/* The Line Breaker — Service Worker (Web Push).
+/* The Sharp Team — Service Worker (Web Push).
  * Scope: / (served from /sw.js). Shows a branded notification when the
  * +EV Board finds a new edge, and opens the board on tap.
  */
@@ -10,7 +10,7 @@ self.addEventListener("push", (event) => {
     /* plain-text payload fallback */
     data = { body: event.data ? event.data.text() : "" };
   }
-  const title = data.title || "The Line Breaker";
+  const title = data.title || "The Sharp Team";
   const options = {
     body: data.body || "New +EV edge on the board.",
     icon: "/static/img/apple-touch-icon.png",
