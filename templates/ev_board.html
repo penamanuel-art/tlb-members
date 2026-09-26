@@ -32,6 +32,7 @@
 .book-chip small{color:#9a9ab5}
 .book-chip.best{border-color:#d4af37;color:#fff}
 .book-chip.best small{color:#d4af37;font-weight:800}
+a.book-chip{text-decoration:none;display:inline-block}
 .ev-track{width:100%;background:transparent;border:1.5px solid #3a3a4a;color:#e8e8f2;font-weight:700;font-size:15px;border-radius:12px;padding:10px;cursor:pointer}
 .ev-track.tracked{border-color:#4ade80;color:#4ade80}
 .ev-empty{border:2px dashed #3a3a4a;border-radius:18px;padding:28px 20px;text-align:center;margin:16px 0}
@@ -121,7 +122,7 @@
     <button class="ev-books-toggle" type="button" data-books-toggle>📚 {{ e.books_count }} books ▾</button>
     <div class="ev-books-list" data-books-list hidden>
       {% for b in e.books %}
-      <span class="book-chip{% if loop.first %} best{% endif %}">{{ b.book }} <small>{% if b.price > 0 %}+{% endif %}{{ b.price }}</small></span>
+      {% if b.url %}<a class="book-chip{% if loop.first %} best{% endif %}" href="{{ b.url }}" target="_blank" rel="noopener">{{ b.book }} <small>{% if b.price > 0 %}+{% endif %}{{ b.price }}</small></a>{% else %}<span class="book-chip{% if loop.first %} best{% endif %}">{{ b.book }} <small>{% if b.price > 0 %}+{% endif %}{{ b.price }}</small></span>{% endif %}
       {% endfor %}
     </div>
     {% endif %}
