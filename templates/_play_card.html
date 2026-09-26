@@ -1,18 +1,18 @@
-{# Tarjeta de jugada estilo WGT. Requiere: p (jugada), tracked_ids #}
+{# Tarjeta de jugada estilo WGT (rediseño 2026-09-26 aprobado por Alex con captura). Requiere: p (jugada), tracked_ids #}
 <article class="play-card level-{{ p.nivel|lower }}">
   <div class="play-top">
-    <span class="badge badge-{{ p.nivel|lower }}">{{ '★' if p.nivel in ['PLATINUM', 'ELITE'] else '●' }} {{ p.nivel }}</span>
+    <span class="badge badge-{{ p.nivel|lower }}">{{ '👑' if p.nivel in ['PLATINUM', 'ELITE'] else '🟡' }} {{ p.nivel }}</span>
     <span class="play-odds">{{ fmt_odds(p.cuota) }}</span>
   </div>
   <h3 class="play-pick">{{ p.pick }}</h3>
   {% if p.comprobante %}
-  <button type="button" class="link-ticket" data-ticket="ticket-{{ p.id }}">View ticket →</button>
+  <button type="button" class="link-ticket" data-ticket="ticket-{{ p.id }}">See the ticket →</button>
   {% endif %}
+  <hr class="play-divider">
   <div class="play-bet">
     <span class="bet-label">Bet</span>
     <b class="bet-amount">${{ '%.0f' % p.stake_monto }}</b>
     <span class="muted">({{ p.stake_unidades }}u)</span>
-    <span class="bet-edge">Edge <b class="pos">+{{ p.edge }}%</b></span>
   </div>
   <div class="play-actions">
     {% if p.casa_url %}
