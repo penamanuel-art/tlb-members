@@ -9,6 +9,9 @@
 .badge{display:inline-flex;align-items:center;border-radius:10px;padding:5px 12px;font-size:13px;font-weight:800}
 .badge.verified{background:#1d3a2a;color:#4ade80}
 .badge.sharp{background:#2f6fed;color:#fff}
+.badge.moved{background:#3a2f10;color:#fbbf24}
+.ev-card.stale{opacity:.88}
+.ev-stale-note{color:#fbbf24;font-size:13px;margin:0 0 10px}
 .ev-sub{font-size:15px;font-weight:700;color:#e8e8f2;margin:0 0 4px}
 .ev-game{color:#9a9ab5;font-size:14px;margin:0 0 4px}
 .fair-pill{display:inline-block;border:1.5px solid #d4af37;color:#d4af37;border-radius:10px;padding:2px 10px;font-weight:800;font-size:13px;letter-spacing:.5px}
@@ -85,16 +88,18 @@
 {% set edges = board.get('edges', []) %}
 {% if edges %}
   {% for e in edges %}
-  <article class="ev-card">
+  <article class="ev-card{% if e.stale %} stale{% endif %}">
     <div class="ev-top" style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px">
       <span class="sport-tag">{{ e.sport }}</span>
     </div>
     <h3 class="ev-title">{{ e.team }} <span class="ev-ml">({{ e.market | default('Moneyline') }})</span></h3>
     <div class="ev-badges">
       <span class="badge verified">Verified</span>
+      {% if e.stale %}<span class="badge moved">⚠️ LINE MOVED</span>{% endif %}
       {% if e.sharp %}<span class="badge sharp">🔪 SHARP</span>{% endif %}
     </div>
     <p class="ev-sub">{{ e.edge_label | default('Value edge') }} · {{ e.books_count }} books agree{% if e.sharp %} · sharp money this side{% endif %}</p>
+    {% if e.stale %}<p class="ev-stale-note">Price moved since posted{% if e.stale_reason %} ({{ e.stale_reason }}){% endif %} — verify at your book.</p>{% endif %}
     <p class="ev-game">{{ e.game }} · {{ e.market | default('Moneyline') }}{% if e.fair_american is defined %} · <span class="fair-pill">FAIR {% if e.fair_american > 0 %}+{% endif %}{{ e.fair_american }}</span>{% endif %} · {{ e.books_count }} books</p>
     {% if e.game_time %}<p class="ev-time">{{ e.game_time }}</p>{% endif %}
     {% if e.rec_units is defined %}
