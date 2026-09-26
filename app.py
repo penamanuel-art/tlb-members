@@ -811,6 +811,36 @@ def home():
                     "comprobante": j.get("comprobante"),
                 })
     recientes = recientes[:6]
+    # Ticker de resultados por día (pedido por Alex 2026-09-26): últimos días
+    # con jugadas liquidadas. Se calcula en vivo desde data/archive.json, así
+    # que se actualiza solo a medida que se liquidan jugadas. Sin inventos:
+    # solo días con jugadas WON/LOST reales.
+    ticker_days = []
+    for d in load_archive():
+        fecha = d.get("fecha", "")
+        jugadas = [
+            j for j in (d.get("jugadas", []) or [])
+            if j.get("resultado") in ("WON", "LOST") and not j.get("bloqueada")
+        ]
+        if not jugadas:
+            continue
+        wins = sum(1 for j in jugadas if j.get("resultado") == "WON")
+        losses = len(jugadas) - wins
+        profit = sum(float(j.get("profit") or 0.0) for j in jugadas)
+        risked = sum(float(j.get("stake_monto") or 0.0) for j in jugadas)
+        roi = (profit / risked * 100.0) if risked else 0.0
+        try:
+            etiqueta = datetime.strptime(fecha, "%Y-%m-%d").strftime("%a %b %d").upper()
+        except (ValueError, TypeError):
+            etiqueta = (d.get("titulo") or fecha).upper()
+        ticker_days.append({
+            "etiqueta": etiqueta,
+            "record": f"{wins}-{losses}",
+            "profit": profit,
+            "roi": roi,
+        })
+        if len(ticker_days) >= 7:
+            break
     return render_template(
         "home.html",
         plays=plays,
@@ -826,6 +856,7 @@ def home():
         leccion=load_masterclass(),
         tstats=tstats,
         recientes=recientes,
+        ticker_days=ticker_days,
     )
 
 
