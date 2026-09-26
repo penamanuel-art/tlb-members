@@ -82,7 +82,7 @@ a { color: var(--blue); text-decoration: none; }
 .btn-lg { padding: 14px 24px; font-size: 16px; }
 .btn-block { width: 100%; }
 .btn-place { background: var(--green); color: #04120a; flex: 1; }
-.btn-novig { background: var(--green); color: #04120a; flex: 1; padding: 14px 18px; border-radius: 16px; font-size: 16px; }
+.btn-novig { background: var(--green); color: #04120a; flex: 1; padding: 14px 18px; border-radius: 16px; font-size: 16px; box-shadow: 0 0 24px rgba(34,197,94,.35); }
 .btn-track {
   background: #141d30; color: #fff;
   border: 1px solid #2b3c5c; padding: 14px 18px; border-radius: 16px;
@@ -141,10 +141,12 @@ a { color: var(--blue); text-decoration: none; }
 .section-title { color: var(--text); font-size: clamp(1.9rem, 5.5vw, 2.7rem); font-weight: 800; letter-spacing: -0.5px; margin: 0; }
 .link-more { font-size: 14px; font-weight: 600; }
 .plays { display: grid; gap: 14px; }
+/* ---------- Tarjeta estilo WGT: superficie neutra que se distingue del fondo (pedido por Alex 2026-09-26) ---------- */
 .play-card {
-  background: #1b2a45;
-  border: 1px solid rgba(34,197,94,.35);
-  border-radius: 20px; padding: 22px;
+  background: #121826;
+  border: 1px solid rgba(148,163,184,.16);
+  border-radius: 24px; padding: 22px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.35);
 }
 .play-card .badge { background: none; border: none; padding: 0; font-size: 13px; }
 .play-card .badge-elite, .play-card .badge-gold { color: var(--gold); }
