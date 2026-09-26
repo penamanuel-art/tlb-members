@@ -1,5 +1,5 @@
-{# Results ticker (requested by Alex 2026-09-26): scrolling marquee with the
-   last settled days — day label, W-L record, day profit and ROI.
+{# Results ticker (requested by Alex 2026-09-26): scrolling marquee showing
+   ONLY the last settled day (Alex 2026-09-26: un solo día, el anterior) — day label, W-L record, day profit and ROI.
    Fed by `ticker_days` from the home() route (computed live from
    data/archive.json, so it updates as plays settle). Styles are scoped here
    so no change to static/css/style.css is needed. #}
@@ -15,8 +15,8 @@
 .ticker-item .tk-roi{color:var(--muted);font-weight:500;}
 @media (prefers-reduced-motion: reduce){.ticker-track{animation:none;flex-wrap:wrap;width:auto;}}
 </style>
-<div class="ticker-wrap" role="marquee" aria-label="Recent daily results">
-  <div class="ticker-kicker">RECENT DAILY RESULTS</div>
+<div class="ticker-wrap" role="marquee" aria-label="Yesterday's results">
+  <div class="ticker-kicker">YESTERDAY'S RESULTS</div>
   <div class="ticker-track">
     {% for _rep in [1, 2] %}{% for t in ticker_days %}<span class="ticker-item"><span class="tk-day">{{ t.etiqueta }}</span><span>{{ t.record }}</span><span class="{{ 'pos' if t.profit >= 0 else 'neg' }}">{{ '+$%.2f' % t.profit }}</span><span class="tk-roi">ROI {{ '%+.1f' % t.roi }}%</span></span>{% endfor %}{% endfor %}
   </div>
