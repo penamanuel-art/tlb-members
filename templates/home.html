@@ -102,6 +102,9 @@
   <p class="profit-note">{{ res.get('ganadas', 0) }}–{{ res.get('perdidas', 0) }}{% if res.get('roi') is not none %} · ROI {{ '%+.1f' % res.get('roi') }}%{% endif %} · every public play, won or lost</p>
 </section>
 
+<!-- 01b · RESULTS TICKER (requested by Alex 2026-09-26) -->
+{% include "_results_ticker.html" %}
+
 <!-- 02 · PLATINUM SELECTION (banner) -->
 {% set plat = plays | selectattr('nivel', 'equalto', 'PLATINUM') | list %}
 {% if plat %}
