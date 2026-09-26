@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Results — The Line Breaker{% endblock %}
+{% block title %}Results — The Sharp Team{% endblock %}
 {% block content %}
 <section class="tracker-head">
   <div>
@@ -106,7 +106,7 @@
         <img src="{{ url_for('static', filename=j.comprobante) }}" alt="Original receipt: {{ j.pick }}" loading="lazy">
         {% else %}
         <span class="ticket-fallback">
-          <span class="ticket-brand">THE LINE BREAKER</span>
+          <span class="ticket-brand">THE SHARP TEAM</span>
           <span class="ticket-fallback-pick">{{ j.pick }}</span>
           <span class="ticket-fallback-odds">{{ fmt_odds(j.cuota) }} · {{ j.get('nivel', '') }}</span>
           <span class="ticket-fallback-result {{ 'win' if won else 'loss' }}">{{ '✓ WON' if won else '✕ LOST' }}</span>
@@ -123,7 +123,7 @@
         {% if j.comprobante %}
         <img class="ticket-photo" src="{{ url_for('static', filename=j.comprobante) }}" alt="Original receipt: {{ j.pick }}">
         {% else %}
-        <p class="ticket-brand">THE LINE BREAKER</p>
+        <p class="ticket-brand">THE SHARP TEAM</p>
         <p class="ticket-pick">{{ j.pick }} {{ fmt_odds(j.cuota) }}</p>
         <div class="ticket-rows">
           <div><span>Date</span><b>{{ d.get('titulo') or d.get('fecha', '') }}</b></div>
