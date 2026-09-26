@@ -19,6 +19,12 @@
     {% if m.platinum_unlocked %}<span class="m-pill on">★ Elite</span>{% endif %}
     {% if m.is_admin %}<span class="m-pill on">Admin</span>{% endif %}
   </div>
+  <form method="post" action="{{ url_for('admin_stake_fijo') }}" class="m-stake-form">
+    <input type="hidden" name="user_id" value="{{ m.id }}">
+    <label>Elite $<input type="number" name="stake_elite" min="0" step="0.01" placeholder="auto" value="{{ m.stake_fijo_elite if m.stake_fijo_elite else '' }}"></label>
+    <label>Gold $<input type="number" name="stake_gold" min="0" step="0.01" placeholder="auto" value="{{ m.stake_fijo_gold if m.stake_fijo_gold else '' }}"></label>
+    <button class="btn btn-sm btn-ghost" type="submit">Save stakes</button>
+  </form>
   <form method="post" action="{{ url_for('admin_toggle_platinum') }}">
     <input type="hidden" name="user_id" value="{{ m.id }}">
     <button class="btn btn-sm {{ 'btn-ghost' if m.platinum_unlocked else 'btn-place' }}" type="submit">
