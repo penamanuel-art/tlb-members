@@ -18,6 +18,9 @@
     {% if p.casa_url %}
     <a class="btn btn-place" href="{{ p.casa_url }}" target="_blank" rel="noopener">Place at {{ p.casa or 'your book' }} →</a>
     {% endif %}
+    {% if p.novig_url %}
+    <a class="btn btn-novig" href="{{ p.novig_url }}" target="_blank" rel="noopener">Place at Novig →</a>
+    {% endif %}
     {% if p.id in tracked_ids %}
       <span class="btn btn-tracked">✓ Tracked</span>
     {% else %}
