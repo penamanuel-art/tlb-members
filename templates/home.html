@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Today — The Line Breaker
+{% block title %}Today — The Sharp Team
 <!-- MONEY RAIN (requested by Alex 2026-09-24): realistic dollar-style bills ~4s, once per session -->
 <canvas id="lluvia-dinero" style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9999;"></canvas>
 <script>
@@ -137,7 +137,7 @@
 {% if card_pendiente %}
 <div style="border:2px dashed rgba(255,255,255,.18);border-radius:20px;background:rgba(255,255,255,.03);padding:28px 22px;text-align:center;margin-top:12px;">
   <p style="color:#fff;font-weight:800;font-size:1.25rem;margin:0 0 10px;">No plays posted yet today</p>
-  <p style="color:#94a3b8;font-size:.95rem;line-height:1.55;margin:0 0 14px;">The Line Breaker posts today's card by 11:05 AM ET. Check back then — every play public, win or loss.</p>
+  <p style="color:#94a3b8;font-size:.95rem;line-height:1.55;margin:0 0 14px;">The Sharp Team posts today's card by 11:05 AM ET. Check back then — every play public, win or loss.</p>
   <p style="margin:0;color:#94a3b8;font-size:.95rem;">Made a bet on your own? <a href="{{ url_for('tracker') }}" style="color:#4ade80;font-weight:700;text-decoration:none;">Log it in your tracker →</a></p>
 </div>
 {% elif golds %}
@@ -234,7 +234,7 @@
       <img src="{{ url_for('static', filename=r.comprobante) }}" alt="Original receipt: {{ r.pick }}" loading="lazy">
       {% else %}
       <span class="ticket-fallback">
-        <span class="ticket-brand">THE LINE BREAKER</span>
+        <span class="ticket-brand">THE SHARP TEAM</span>
         <span class="ticket-fallback-pick">{{ r.pick }}</span>
         <span class="ticket-fallback-odds">{{ fmt_odds(r.cuota) }} · {{ r.nivel }}</span>
         <span class="ticket-fallback-result {{ 'win' if won else 'loss' }}">{{ '✓ WON' if won else '✕ LOST' }}</span>
@@ -251,7 +251,7 @@
       {% if r.comprobante %}
       <img class="ticket-photo" src="{{ url_for('static', filename=r.comprobante) }}" alt="Original receipt: {{ r.pick }}">
       {% else %}
-      <p class="ticket-brand">THE LINE BREAKER</p>
+      <p class="ticket-brand">THE SHARP TEAM</p>
       <p class="ticket-pick">{{ r.pick }} {{ fmt_odds(r.cuota) }}</p>
       <div class="ticket-rows">
         <div><span>Date</span><b>{{ r.fecha }}</b></div>
