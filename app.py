@@ -1,5 +1,5 @@
 """
-The Line Breaker — Plataforma de miembros (v1).
+The Sharp Team — Plataforma de miembros (v1).
 
 Cuentas gratuitas, sin pagos. Flask + SQLite en local / PostgreSQL en Render
 (cuando existe la env var DATABASE_URL), hashing bcrypt, sesiones firmadas
@@ -403,7 +403,7 @@ def notify_new_member(nombre: str, email: str):
             from email.message import EmailMessage
 
             msg = EmailMessage()
-            msg["Subject"] = f"The Line Breaker: new member — {nombre}"
+            msg["Subject"] = f"The Sharp Team: new member — {nombre}"
             msg["From"] = user
             msg["To"] = dest
             msg.set_content(
@@ -424,11 +424,11 @@ def notify_new_member(nombre: str, email: str):
 
 
 # ------------------------------------------------------------- Plays ----
-WELCOME_SUBJECT = "Welcome to The Line Breaker"
+WELCOME_SUBJECT = "Welcome to The Sharp Team"
 
 WELCOME_TEXT = """Hi {nombre},
 
-Your account is ready. Welcome to The Line Breaker: a sports betting program built on numbers, discipline, and value. No hunches.
+Your account is ready. Welcome to The Sharp Team: a sports betting program built on numbers, discipline, and value. No hunches.
 
 YOUR MEMBER DASHBOARD
 Go straight here:
@@ -451,19 +451,19 @@ GOLDEN RULES
 
 See you tomorrow at 11:00 AM with the first plays.
 
-- The Line Breaker
+- The Sharp Team
 
 Bet responsibly - 21+ - Gambling problem? Call 1-800-GAMBLER (1-800-426-2537): free and confidential help, 24/7.
 """
 
 WELCOME_HTML = """<div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff;">
 <div style="background: #1a1a2e; padding: 30px 20px; text-align: center; border-radius: 18px 18px 0 0;">
-<img src="https://files.catbox.moe/g1ig30.jpg" alt="The Line Breaker" width="140" style="width: 140px; height: auto; display: block; margin: 0 auto; border: 0;">
-<p style="margin: 12px 0 0; font-size: 16px; font-weight: 800; color: #c9a227; letter-spacing: 5px;">THE LINE BREAKER</p>
+<img src="https://files.catbox.moe/g1ig30.jpg" alt="The Sharp Team" width="140" style="width: 140px; height: auto; display: block; margin: 0 auto; border: 0;">
+<p style="margin: 12px 0 0; font-size: 16px; font-weight: 800; color: #c9a227; letter-spacing: 5px;">THE SHARP TEAM</p>
 </div>
 <div style="padding: 28px 26px; color: #1a1a2e;">
 <p style="font-size: 20px; font-weight: 800; margin: 0 0 6px;">Hi {nombre},</p>
-<p style="font-size: 15px; line-height: 1.7; margin: 0 0 18px; color: #333333;">Your account is ready. Welcome to <strong>The Line Breaker</strong>: a sports betting program built on numbers, discipline, and value. No hunches.</p>
+<p style="font-size: 15px; line-height: 1.7; margin: 0 0 18px; color: #333333;">Your account is ready. Welcome to <strong>The Sharp Team</strong>: a sports betting program built on numbers, discipline, and value. No hunches.</p>
 <div style="text-align: center; margin: 22px 0;">
 <a href="https://the-line-breaker-members.onrender.com/home" style="display: inline-block; background: #c9a227; color: #1a1a2e; font-size: 16px; font-weight: 800; padding: 14px 34px; border-radius: 12px; text-decoration: none;">Go to my dashboard &rarr;</a>
 </div>
@@ -485,18 +485,18 @@ WELCOME_HTML = """<div style="font-family: -apple-system, BlinkMacSystemFont, 'S
 <li>Numbers and value only. No team favoritism.</li>
 </ol>
 <p style="font-size: 14px; color: #333333; line-height: 1.7; margin: 0;">See you tomorrow at 11:00 AM with the first plays.</p>
-<p style="font-size: 14px; color: #333333; margin: 12px 0 0;">&mdash; <strong>The Line Breaker</strong></p>
+<p style="font-size: 14px; color: #333333; margin: 12px 0 0;">&mdash; <strong>The Sharp Team</strong></p>
 </div>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin: 6px 0 0; background: #1a1a2e; border-radius: 0 0 18px 18px; border-top: 3px solid #c9a227;">
 <tr><td style="padding: 22px 20px; text-align: center;">
-<img src="https://files.catbox.moe/g1ig30.jpg" alt="The Line Breaker" width="110" style="width: 110px; height: auto; display: block; margin: 0 auto; border: 0;">
-<p style="margin: 10px 0 4px; font-size: 14px; font-weight: 800; color: #c9a227; letter-spacing: 4px;">THE LINE BREAKER</p>
+<img src="https://files.catbox.moe/g1ig30.jpg" alt="The Sharp Team" width="110" style="width: 110px; height: auto; display: block; margin: 0 auto; border: 0;">
+<p style="margin: 10px 0 4px; font-size: 14px; font-weight: 800; color: #c9a227; letter-spacing: 4px;">THE SHARP TEAM</p>
 <p style="margin: 0; font-size: 12px; color: #dddddd;">250 Park Avenue, Suite 1800, New York, NY 10017</p>
 <p style="margin: 4px 0 0; font-size: 12px; color: #dddddd;">(983) 819-4589</p>
 <div style="width: 60%; height: 1px; background: #33334d; margin: 14px auto;">&nbsp;</div>
 <p style="margin: 0; font-size: 11px; color: #aaaaaa; line-height: 1.6;">Bet responsibly &middot; 21+<br>Gambling problem? Call 1-800-GAMBLER (1-800-426-2537), free and confidential help, 24/7.</p>
-<p style="margin: 10px 0 0; font-size: 10px; color: #888888; line-height: 1.6;">The Line Breaker picks are for informational and entertainment purposes. No pick guarantees winnings; sports betting involves risk of loss.</p>
-<p style="margin: 8px 0 0; font-size: 10px; color: #666666;">&copy; 2026 The Line Breaker &middot; All rights reserved</p>
+<p style="margin: 10px 0 0; font-size: 10px; color: #888888; line-height: 1.6;">The Sharp Team picks are for informational and entertainment purposes. No pick guarantees winnings; sports betting involves risk of loss.</p>
+<p style="margin: 8px 0 0; font-size: 10px; color: #666666;">&copy; 2026 The Sharp Team &middot; All rights reserved</p>
 </td></tr>
 </table>
 </div>
@@ -523,7 +523,7 @@ def send_welcome_email(nombre: str, email: str):
 
             msg = EmailMessage()
             msg["Subject"] = WELCOME_SUBJECT
-            msg["From"] = f"The Line Breaker <{user}>"
+            msg["From"] = f"The Sharp Team <{user}>"
             msg["To"] = email
             msg.set_content(WELCOME_TEXT.format(nombre=nombre))
             msg.add_alternative(WELCOME_HTML.format(nombre=nombre), subtype="html")
@@ -1442,7 +1442,7 @@ def api_push_edge():
     if not HAVE_WEBPUSH or not VAPID_PRIVATE_KEY or not VAPID_PUBLIC_KEY:
         return jsonify({"error": "push not configured"}), 503
     data = request.get_json(force=True, silent=True) or {}
-    title = data.get("title") or "The Line Breaker"
+    title = data.get("title") or "The Sharp Team"
     body = data.get("body") or "New +EV edge on the board."
     url = data.get("url") or "/ev-board"
     payload = json.dumps({"title": title, "body": body, "url": url})
