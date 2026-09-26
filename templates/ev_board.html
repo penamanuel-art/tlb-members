@@ -2,20 +2,42 @@
 {% block title %}+EV Board — The Line Breaker{% endblock %}
 {% block content %}
 <style>
-.ev-card{background:#141428;border:1px solid #2a2a4a;border-radius:18px;padding:16px;margin:12px 0}
-.ev-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
-.ev-ev{background:#14532d;color:#bbf7d0;font-weight:800;border-radius:999px;padding:6px 12px;font-size:14px;white-space:nowrap}
-.ev-team{font-size:20px;font-weight:800;margin:10px 0 2px;color:#fff}
-.ev-line{color:#c9c9e0;font-size:14px;margin:0 0 8px}
-.ev-book{color:#d4af37;font-weight:700}
-.ev-meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;font-size:12px;color:#9a9ab5}
-.ev-pill{border:1px solid #3a3a5c;border-radius:999px;padding:4px 10px;white-space:nowrap}
-.ev-pill.sharp{border-color:#d4af37;color:#d4af37;font-weight:700}
-.ev-empty{border:2px dashed #3a3a5c;border-radius:18px;padding:28px 20px;text-align:center;margin:16px 0}
+.ev-card{background:#17171f;border:1px solid #26262f;border-radius:18px;padding:18px;margin:14px 0;color:#fff}
+.ev-title{font-size:22px;font-weight:800;margin:0 0 8px;color:#fff}
+.ev-title .ev-ml{color:#c9c9e0;font-weight:600;font-size:18px}
+.ev-badges{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.badge{display:inline-flex;align-items:center;border-radius:10px;padding:5px 12px;font-size:13px;font-weight:800}
+.badge.verified{background:#1d3a2a;color:#4ade80}
+.badge.sharp{background:#2f6fed;color:#fff}
+.ev-sub{font-size:15px;font-weight:700;color:#e8e8f2;margin:0 0 4px}
+.ev-game{color:#9a9ab5;font-size:14px;margin:0 0 4px}
+.fair-pill{display:inline-block;border:1.5px solid #d4af37;color:#d4af37;border-radius:10px;padding:2px 10px;font-weight:800;font-size:13px;letter-spacing:.5px}
+.ev-time{color:#9a9ab5;font-size:14px;margin:0 0 10px}
+.ev-rec{color:#d4af37;font-size:19px;font-weight:800;margin:0 0 12px}
+.ev-best{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:12px}
+.ev-price{font-size:34px;font-weight:800;color:#fff;line-height:1}
+.ev-bookname{color:#9a9ab5;font-size:14px;margin-top:2px}
+.ev-edgepct{color:#4ade80;font-weight:800;font-size:20px;text-align:center;line-height:1.15}
+.ev-edgepct small{display:block;font-size:11px;letter-spacing:1px;font-weight:800}
+.ev-betbtn{margin-left:auto;background:#3ddc84;color:#0b2417;font-weight:800;font-size:17px;border-radius:14px;padding:14px 26px;text-decoration:none;white-space:nowrap}
+.ev-betbtn:active{transform:scale(.98)}
+.ev-books-toggle{width:100%;background:#1c1c28;border:1px solid #2f6fed;color:#5b8cff;font-weight:700;font-size:15px;border-radius:12px;padding:10px;cursor:pointer;margin-bottom:10px}
+.ev-books-list{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.book-chip{border:1px solid #3a3a4a;border-radius:10px;padding:6px 12px;font-size:13px;color:#c9c9e0;background:#1c1c28}
+.book-chip small{color:#9a9ab5}
+.book-chip.best{border-color:#d4af37;color:#fff}
+.book-chip.best small{color:#d4af37;font-weight:800}
+.ev-track{width:100%;background:transparent;border:1.5px solid #3a3a4a;color:#e8e8f2;font-weight:700;font-size:15px;border-radius:12px;padding:10px;cursor:pointer}
+.ev-track.tracked{border-color:#4ade80;color:#4ade80}
+.ev-empty{border:2px dashed #3a3a4a;border-radius:18px;padding:28px 20px;text-align:center;margin:16px 0}
 .ev-empty h3{color:#fff;margin:0 0 8px}
 .ev-empty p{color:#9a9ab5;margin:0;font-size:14px}
 .ev-note{color:#9a9ab5;font-size:12px;text-align:center;margin-top:18px;line-height:1.5}
 .sport-tag{font-size:11px;font-weight:800;letter-spacing:1px;color:#8f8fb0}
+.push-cta{margin:4px 0 6px}
+.push-btn{cursor:pointer;background:#1c1c34;color:#fff;font-weight:700;font-size:13px;padding:8px 16px;border:1px solid #3a3a5c;border-radius:999px}
+.push-btn:disabled{opacity:.6;cursor:default}
+.push-hint{color:#9a9ab5;font-size:12px;margin:6px 0 0}
 </style>
 
 <section class="tracker-head">
@@ -28,17 +50,10 @@
   </div>
 </section>
 
-{% set edges = board.get('edges', []) %}
 <div class="push-cta">
-  <button id="pushBtn" class="ev-pill push-btn" type="button">🔔 Enable alerts</button>
+  <button id="pushBtn" class="push-btn" type="button">🔔 Enable alerts</button>
   <p id="pushHint" class="push-hint">Get a phone push when a new edge hits the board.</p>
 </div>
-<style>
-.push-cta{margin:4px 0 6px}
-.push-btn{cursor:pointer;background:#1c1c34;color:#fff;font-weight:700;font-size:13px;padding:8px 16px}
-.push-btn:disabled{opacity:.6;cursor:default}
-.push-hint{color:#9a9ab5;font-size:12px;margin:6px 0 0}
-</style>
 <script>
 (function () {
   var btn = document.getElementById('pushBtn');
@@ -66,20 +81,42 @@
   });
 })();
 </script>
+
+{% set edges = board.get('edges', []) %}
 {% if edges %}
   {% for e in edges %}
   <article class="ev-card">
-    <div class="ev-top">
-      <span class="sport-tag">{{ e.sport }} · {{ e.game }}</span>
-      <span class="ev-ev">+{{ e.ev_pct }}% EV</span>
+    <div class="ev-top" style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px">
+      <span class="sport-tag">{{ e.sport }}</span>
     </div>
-    <h3 class="ev-team">{{ e.team }} <span class="ev-book">{{ '%+d' % e.price }}</span></h3>
-    <p class="ev-line">Best price at <b class="ev-book">{{ e.book }}</b> · fair {{ e.fair_prob_pct }}% (Pinnacle no-vig)</p>
-    <div class="ev-meta">
-      <span class="ev-pill">📚 {{ e.books_count }} books agree</span>
-      {% if e.sharp %}<span class="ev-pill sharp">⚡ sharp-confirmed</span>{% endif %}
-      {% if e.also_at %}<span class="ev-pill">also: {{ e.also_at | join(', ') }}</span>{% endif %}
+    <h3 class="ev-title">{{ e.team }} <span class="ev-ml">({{ e.market | default('Moneyline') }})</span></h3>
+    <div class="ev-badges">
+      <span class="badge verified">Verified</span>
+      {% if e.sharp %}<span class="badge sharp">🔪 SHARP</span>{% endif %}
     </div>
+    <p class="ev-sub">{{ e.edge_label | default('Value edge') }} · {{ e.books_count }} books agree{% if e.sharp %} · sharp money this side{% endif %}</p>
+    <p class="ev-game">{{ e.game }} · {{ e.market | default('Moneyline') }}{% if e.fair_american is defined %} · <span class="fair-pill">FAIR {% if e.fair_american > 0 %}+{% endif %}{{ e.fair_american }}</span>{% endif %} · {{ e.books_count }} books</p>
+    {% if e.game_time %}<p class="ev-time">{{ e.game_time }}</p>{% endif %}
+    {% if e.rec_units is defined %}
+    <p class="ev-rec">🎯 Rec {{ "%g"|format(e.rec_units) }}u (${{ e.rec_stake }})</p>
+    {% endif %}
+    <div class="ev-best">
+      <div>
+        <div class="ev-price">{% if e.price > 0 %}+{% endif %}{{ e.price }}</div>
+        <div class="ev-bookname">{{ e.book }}</div>
+      </div>
+      <div class="ev-edgepct">+{{ e.ev_pct }}%<small>YOUR EDGE</small></div>
+      <a class="ev-betbtn" href="{{ e.bet_url | default('https://novig.com') }}" target="_blank" rel="noopener">Bet Novig →</a>
+    </div>
+    {% if e.books %}
+    <button class="ev-books-toggle" type="button" data-books-toggle>📚 {{ e.books_count }} books ▾</button>
+    <div class="ev-books-list" data-books-list hidden>
+      {% for b in e.books %}
+      <span class="book-chip{% if loop.first %} best{% endif %}">{{ b.book }} <small>{% if b.price > 0 %}+{% endif %}{{ b.price }}</small></span>
+      {% endfor %}
+    </div>
+    {% endif %}
+    <button class="ev-track" type="button" data-track="{{ e.id }}">+ Track this bet</button>
   </article>
   {% endfor %}
 {% else %}
@@ -90,4 +127,40 @@
 {% endif %}
 
 <p class="ev-note">Fair odds = Pinnacle no-vig. Filters: EV ≥ 3% · odds −200…+250 · 2+ books · max 10 edges.<br>Lines move fast — always verify the price at your book before you bet. This board is informational, not a pick.</p>
+
+<script>
+(function () {
+  // Desplegable "N books": muestra todas las casas con su precio
+  document.querySelectorAll('[data-books-toggle]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var list = btn.parentElement.querySelector('[data-books-list]');
+      if (!list) return;
+      var open = list.hidden;
+      list.hidden = !open;
+      btn.innerHTML = open ? btn.innerHTML.replace('▾', '▴') : btn.innerHTML.replace('▴', '▾');
+    });
+  });
+  // Track this bet: se guarda en el teléfono (localStorage), sin cuenta
+  var KEY = 'tlb_tracked_bets';
+  function getTracked() {
+    try { return JSON.parse(localStorage.getItem(KEY) || '[]'); }
+    catch (e) { return []; }
+  }
+  function paintTrack(btn, tracked) {
+    btn.classList.toggle('tracked', tracked);
+    btn.textContent = tracked ? '✓ Tracked' : '+ Track this bet';
+  }
+  document.querySelectorAll('[data-track]').forEach(function (btn) {
+    var id = btn.getAttribute('data-track');
+    paintTrack(btn, getTracked().indexOf(id) !== -1);
+    btn.addEventListener('click', function () {
+      var t = getTracked();
+      var i = t.indexOf(id);
+      if (i === -1) t.push(id); else t.splice(i, 1);
+      try { localStorage.setItem(KEY, JSON.stringify(t)); } catch (e) {}
+      paintTrack(btn, i === -1);
+    });
+  });
+})();
+</script>
 {% endblock %}
