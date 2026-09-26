@@ -555,6 +555,38 @@ def load_plays():
     return load_data()[1]
 
 
+def stake_personalizado(play, bankroll):
+    """Monto a mostrar/trackear: 1% del capital del miembro por unidad.
+
+    Pedido por Alex 2026-09-26 (como la app de WGT): cada miembro ve en su
+    dashboard su monto personal = 1% de SU bankroll x las unidades de la
+    jugada (1u -> 1%, 0.6u -> 0.6%). Si no tiene bankroll configurado,
+    se usa el stake oficial del programa (stake_monto de plays.json).
+    """
+    try:
+        units = float(play.get("stake_unidades") or 0)
+    except (TypeError, ValueError):
+        units = 0
+    try:
+        br = float(bankroll or 0)
+    except (TypeError, ValueError):
+        br = 0
+    if br > 0 and units > 0:
+        return round(br * 0.01 * units, 2)
+    return play.get("stake_monto")
+
+
+def personalizar_plays(plays, bankroll):
+    """Devuelve copias de las jugadas con stake_monto personalizado al 1%."""
+    out = []
+    for p in plays:
+        p = dict(p)
+        p["stake_monto"] = stake_personalizado(p, bankroll)
+        out.append(p)
+    return out
+
+
+
 def load_program():
     return load_data()[0]
 
@@ -821,6 +853,7 @@ def home():
     if card_pendiente:
         plays = []  # las de ayer no se muestran: la card de hoy aún no sale
     user = current_user()
+    plays = personalizar_plays(plays, user["bankroll"] if user else None)
     tracked_rows = db.execute(
         "SELECT * FROM tracked_plays WHERE user_id = ?",
         (session["user_id"],),
@@ -1033,7 +1066,8 @@ def track(play_id):
             (
                 session["user_id"], play["id"], play.get("fecha", ""),
                 play.get("nivel", ""), play.get("pick", ""), int(play.get("cuota", 0)),
-                float(play.get("stake_unidades", 0)), float(play.get("stake_monto", 0)),
+                float(play.get("stake_unidades", 0)),
+                float(stake_personalizado(play, (current_user() or {}).get("bankroll"))),
                 play.get("edge"), now_iso(),
             ),
         )
