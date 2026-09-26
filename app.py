@@ -163,6 +163,8 @@ CREATE TABLE IF NOT EXISTS users (
     email TEXT NOT NULL UNIQUE,
     password_hash TEXT NOT NULL,
     bankroll REAL,               -- bankroll del miembro (NULL = sin configurar)
+    stake_fijo_elite REAL,       -- monto fijo personal ELITE (NULL = fórmula 1%)
+    stake_fijo_gold REAL,        -- monto fijo personal GOLD (NULL = fórmula 1%)
     platinum_unlocked INTEGER NOT NULL DEFAULT 0,  -- 1 = Elite desbloqueada
     is_admin INTEGER NOT NULL DEFAULT 0,           -- 1 = administrador
     created_at TEXT NOT NULL
@@ -206,6 +208,8 @@ CREATE TABLE IF NOT EXISTS users (
     email TEXT NOT NULL UNIQUE,
     password_hash TEXT NOT NULL,
     bankroll DOUBLE PRECISION,   -- bankroll del miembro (NULL = sin configurar)
+    stake_fijo_elite DOUBLE PRECISION, -- monto fijo personal ELITE (NULL = fórmula 1%)
+    stake_fijo_gold DOUBLE PRECISION,  -- monto fijo personal GOLD (NULL = fórmula 1%)
     platinum_unlocked INTEGER NOT NULL DEFAULT 0,  -- 1 = Elite desbloqueada
     is_admin INTEGER NOT NULL DEFAULT 0,           -- 1 = administrador
     created_at TEXT NOT NULL
@@ -555,20 +559,33 @@ def load_plays():
     return load_data()[1]
 
 
-def stake_personalizado(play, bankroll):
-    """Monto a mostrar/trackear: 1% del capital del miembro por unidad.
+def stake_personalizado(play, user):
+    """Monto a mostrar/trackear.
 
     Pedido por Alex 2026-09-26 (como la app de WGT): cada miembro ve en su
     dashboard su monto personal = 1% de SU bankroll x las unidades de la
     jugada (1u -> 1%, 0.75u -> 0.75%, 0.5u -> 0.5%). Si no tiene bankroll configurado,
     se usa el stake oficial del programa (stake_monto de plays.json).
+
+    Montos fijos por nivel (pedido por Alex 2026-09-26): si el miembro tiene
+    stake_fijo_elite / stake_fijo_gold configurado, ese monto fijo reemplaza
+    la fórmula para ese nivel. Solo afecta a su dashboard, no al público.
     """
+    nivel = (play.get("nivel") or "").upper()
+    if user:
+        try:
+            if nivel == "ELITE" and user.get("stake_fijo_elite"):
+                return round(float(user["stake_fijo_elite"]), 2)
+            if nivel == "GOLD" and user.get("stake_fijo_gold"):
+                return round(float(user["stake_fijo_gold"]), 2)
+        except (TypeError, ValueError):
+            pass
     try:
         units = float(play.get("stake_unidades") or 0)
     except (TypeError, ValueError):
         units = 0
     try:
-        br = float(bankroll or 0)
+        br = float((user or {}).get("bankroll") or 0)
     except (TypeError, ValueError):
         br = 0
     if br > 0 and units > 0:
@@ -576,12 +593,12 @@ def stake_personalizado(play, bankroll):
     return play.get("stake_monto")
 
 
-def personalizar_plays(plays, bankroll):
-    """Devuelve copias de las jugadas con stake_monto personalizado al 1%."""
+def personalizar_plays(plays, user):
+    """Devuelve copias de las jugadas con stake_monto personalizado."""
     out = []
     for p in plays:
         p = dict(p)
-        p["stake_monto"] = stake_personalizado(p, bankroll)
+        p["stake_monto"] = stake_personalizado(p, user)
         out.append(p)
     return out
 
@@ -786,6 +803,10 @@ def migrate_db():
         pending = []
         if "bankroll" not in cols:
             pending.append(f"ALTER TABLE users ADD COLUMN bankroll {coltype}")
+        if "stake_fijo_elite" not in cols:
+            pending.append(f"ALTER TABLE users ADD COLUMN stake_fijo_elite {coltype}")
+        if "stake_fijo_gold" not in cols:
+            pending.append(f"ALTER TABLE users ADD COLUMN stake_fijo_gold {coltype}")
         if "platinum_unlocked" not in cols:
             pending.append("ALTER TABLE users ADD COLUMN platinum_unlocked INTEGER NOT NULL DEFAULT 0")
         if "is_admin" not in cols:
@@ -853,7 +874,7 @@ def home():
     if card_pendiente:
         plays = []  # las de ayer no se muestran: la card de hoy aún no sale
     user = current_user()
-    plays = personalizar_plays(plays, user["bankroll"] if user else None)
+    plays = personalizar_plays(plays, user)
     tracked_rows = db.execute(
         "SELECT * FROM tracked_plays WHERE user_id = ?",
         (session["user_id"],),
@@ -1068,7 +1089,7 @@ def track(play_id):
                 session["user_id"], play["id"], play.get("fecha", ""),
                 play.get("nivel", ""), play.get("pick", ""), int(play.get("cuota", 0)),
                 float(play.get("stake_unidades", 0)),
-                float(stake_personalizado(play, _cu["bankroll"] if _cu else None)),
+                float(stake_personalizado(play, _cu)),
                 play.get("edge"), now_iso(),
             ),
         )
@@ -1215,6 +1236,43 @@ def admin_eliminar_miembro():
     return redirect(url_for("admin_miembros"))
 
 
+@app.route("/admin/miembros/stake-fijo", methods=["POST"])
+@login_required
+def admin_stake_fijo():
+    """Monto fijo personal por nivel para un miembro (solo Alex).
+
+    Pedido por Alex 2026-09-26: p.ej. su cuenta con Elite $25 / Gold $15.
+    Solo afecta al dashboard de ese miembro; el resto sigue con la fórmula 1%.
+    Vacío = volver a la fórmula.
+    """
+    db = get_db()
+    user = current_user()
+    if not is_admin_for(user):
+        flash("You don't have permission.", "error")
+        return redirect(url_for("home"))
+    uid = request.form.get("user_id")
+
+    def parse(v):
+        v = (v or "").strip()
+        return float(v) if v else None
+
+    try:
+        elite = parse(request.form.get("stake_elite"))
+        gold = parse(request.form.get("stake_gold"))
+        if (elite is not None and elite <= 0) or (gold is not None and gold <= 0):
+            raise ValueError
+    except (TypeError, ValueError):
+        flash("Enter valid amounts greater than zero (or leave empty).", "error")
+        return redirect(url_for("admin_miembros"))
+    db.execute(
+        "UPDATE users SET stake_fijo_elite = ?, stake_fijo_gold = ? WHERE id = ?",
+        (elite, gold, uid),
+    )
+    db.commit()
+    flash("Fixed stakes saved.", "ok")
+    return redirect(url_for("admin_miembros"))
+
+
 @app.route("/admin/seed-tracker")
 @login_required
 def admin_seed_tracker():
@@ -1265,7 +1323,8 @@ def admin_miembros():
         flash("You don't have permission to view this page.", "error")
         return redirect(url_for("home"))
     miembros = db.execute(
-        "SELECT id, nombre, email, created_at, platinum_unlocked, is_admin "
+        "SELECT id, nombre, email, created_at, platinum_unlocked, is_admin, "
+        "stake_fijo_elite, stake_fijo_gold "
         "FROM users ORDER BY created_at DESC"
     ).fetchall()
     ahora = datetime.now(timezone.utc)
