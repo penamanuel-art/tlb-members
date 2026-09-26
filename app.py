@@ -96,6 +96,10 @@ app.config["SECRET_KEY"] = _secret
 # Sesiones firmadas por cookie (Flask por defecto). Flask-Session con
 # filesystem no sirve en Render (disco efímero). Solo guardamos user_id y
 # nombre en la sesión, caben sin problema en la cookie.
+# Sesión persistente (2026-09-25): sin esto la cookie de sesión de Flask es
+# temporal y iOS la borra al liberar memoria de Safari → logout constante.
+# Con permanent=True en login(), la cookie dura 30 días.
+app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(days=30)
 
 DB_PATH = os.path.join(INSTANCE_DIR, "members.db")
 PLAYS_PATH = os.path.join(BASE_DIR, "data", "plays.json")
@@ -898,6 +902,7 @@ def login():
         session["user_id"] = user["id"]
         session["nombre"] = user["nombre"]
         session["is_admin"] = es_admin
+        session.permanent = True  # 2026-09-25: cookie persistente 30 días (antes iOS la borraba → logout)
         flash(f"Welcome back, {user['nombre']}!", "ok")
         next_url = request.args.get("next") or url_for("home")
         return redirect(next_url)
