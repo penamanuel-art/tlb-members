@@ -1,5 +1,5 @@
 {# Tarjeta de jugada estilo WGT (rediseño 2026-09-26 aprobado por Alex con captura). Requiere: p (jugada), tracked_ids #}
-<article class="play-card level-{{ p.nivel|lower }}">
+<article class="play-card level-{{ p.nivel|lower }}{% if p.id in tracked_ids %} is-tracked{% endif %}">
   <div class="play-top">
     <span class="badge badge-{{ p.nivel|lower }}">{{ '👑' if p.nivel in ['PLATINUM', 'ELITE'] else '🟡' }} {{ p.nivel }}</span>
     <span class="play-odds">{{ fmt_odds(p.cuota) }}</span>
