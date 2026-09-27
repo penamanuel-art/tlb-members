@@ -798,16 +798,21 @@ def compute_stats(tracked):
 
 
 
-def auto_grado_tracked(db, user_id):
+def auto_grado_tracked(db, user):
     """Liquida automáticamente las jugadas trackeadas pendientes usando los
     resultados oficiales del programa (data/archive.json).
 
-    Se ejecuta en cada vista del tracker y del home, así ningún miembro
-    tiene que marcar resultados a mano: en cuanto la liquidación nocturna
-    publica el resultado oficial, la próxima visita lo refleja.
-    Solo toca jugadas con resultado pendiente (NULL); nunca reescribe
-    un resultado ya marcado.
+    SOLO para el administrador (Alex): su tracker se actualiza solo en
+    cuanto la liquidación nocturna publica el resultado oficial. Los
+    miembros marcan sus resultados a mano, según sus propias jugadas.
+
+    Se ejecuta en cada vista del tracker y del home. Solo toca jugadas
+    con resultado pendiente (NULL); nunca reescribe un resultado ya
+    marcado.
     """
+    if not is_admin_for(user):
+        return 0
+    user_id = user["id"]
     pendientes = db.execute(
         "SELECT id, fecha, pick FROM tracked_plays "
         "WHERE user_id = ? AND resultado IS NULL",
@@ -961,7 +966,7 @@ def compute_ticker_days():
 def home():
     db = get_db()
     record_checkin(db, session["user_id"])
-    auto_grado_tracked(db, session["user_id"])
+    auto_grado_tracked(db, current_user())
     program, plays = load_data()
     card_pendiente = not card_publicada_hoy()
     if card_pendiente:
@@ -1127,7 +1132,7 @@ def cuenta():
 def tracker():
     db = get_db()
     record_checkin(db, session["user_id"])
-    auto_grado_tracked(db, session["user_id"])
+    auto_grado_tracked(db, current_user())
     tracked = db.execute(
         "SELECT * FROM tracked_plays WHERE user_id = ? ORDER BY fecha DESC, id DESC",
         (session["user_id"],),
