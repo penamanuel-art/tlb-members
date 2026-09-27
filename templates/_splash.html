@@ -1,0 +1,30 @@
+<!-- SPLASH DE ENTRADA (pedido por Alex 2026-09-27): pre-pantalla con logo,
+     eslogan de disciplina y nombre de la empresa antes de entrar al Dashboard.
+     Una vez por sesión; tap o auto (3.5s) para entrar. -->
+<div id="tst-splash" style="position:fixed;inset:0;z-index:10000;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:radial-gradient(ellipse at 50% 30%, #1c2536 0%, #0b0f19 60%, #060810 100%);font-family:-apple-system,system-ui,'Segoe UI',sans-serif;cursor:pointer;opacity:1;transition:opacity .6s ease;">
+  <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#fbbf24,#f59e0b,#fbbf24);"></div>
+  <img src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team" style="width:120px;height:120px;object-fit:contain;margin-bottom:22px;filter:drop-shadow(0 0 24px rgba(251,191,36,.25));" onerror="this.style.display='none'">
+  <div style="color:#fbbf24;font-size:13px;font-weight:800;letter-spacing:6px;margin-bottom:14px;">THE SHARP TEAM</div>
+  <div style="color:#ffffff;font-size:30px;font-weight:800;line-height:1.25;letter-spacing:1px;margin:0 24px 12px;max-width:420px;">DISCIPLINE<br>BEATS LUCK.</div>
+  <div style="color:#8b95a9;font-size:14px;line-height:1.6;margin:0 32px 34px;max-width:380px;">We don't chase. We don't guess.<br>We follow the numbers.</div>
+  <div id="tst-splash-enter" style="color:#fbbf24;font-size:12px;font-weight:800;letter-spacing:4px;animation:tstPulse 1.6s ease-in-out infinite;">TAP TO ENTER</div>
+  <style>@keyframes tstPulse{0%,100%{opacity:.45}50%{opacity:1}}</style>
+</div>
+<script>
+(function(){
+  var splash = document.getElementById('tst-splash');
+  if (!splash) return;
+  function dismiss(){
+    if (!splash || splash.dataset.done) return;
+    splash.dataset.done = '1';
+    try { sessionStorage.setItem('tst_splash', '1'); } catch (e) {}
+    splash.style.opacity = '0';
+    setTimeout(function(){ if (splash.parentNode) splash.parentNode.removeChild(splash); }, 650);
+  }
+  try {
+    if (sessionStorage.getItem('tst_splash') === '1') { dismiss(); return; }
+  } catch (e) {}
+  splash.addEventListener('click', dismiss);
+  setTimeout(dismiss, 3500);
+})();
+</script>
