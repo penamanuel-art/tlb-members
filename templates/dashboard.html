@@ -46,6 +46,9 @@
   .wgt-stake { color:var(--muted); font-size:.82rem; margin:0; }
   .wgt-ticket-link { background:none; border:none; padding:0; margin:4px 0 0; color:#5b9dff;
     font-size:.82rem; font-weight:700; cursor:pointer; }
+  .wgt-thumb { border:1px solid var(--line); border-radius:10px; overflow:hidden; padding:0;
+    cursor:pointer; width:84px; margin-top:6px; background:#0b0e17; }
+  .wgt-thumb img { width:100%; height:auto; display:block; }
   .wgt-side { text-align:right; flex:none; display:flex; flex-direction:column; gap:6px; align-items:flex-end; }
   .wgt-result { font-weight:800; font-size:1rem; }
   .wgt-result.win { color:#4ade80; } .wgt-result.loss { color:#f87171; } .wgt-result.pending { color:var(--muted); font-size:.85rem; }
@@ -127,7 +130,9 @@
         {% if r.marcador %}<p class="wgt-score">{{ r.marcador }}</p>{% endif %}
         <p class="wgt-stake">Stake ${{ '%.0f' % r.stake_monto }} ({{ r.stake_unidades }}u)</p>
         {% if r.comprobante %}
-        <button type="button" class="wgt-ticket-link" data-ticket="wt-{{ r.id }}" aria-label="View original ticket for {{ r.pick }}">View ticket →</button>
+        <button type="button" class="wgt-thumb" data-ticket="wt-{{ r.id }}" aria-label="View original ticket for {{ r.pick }}">
+          <img src="{{ url_for('static', filename=r.comprobante) }}" alt="Ticket: {{ r.pick }}" loading="lazy">
+        </button>
         <div class="modal" id="wt-{{ r.id }}" hidden>
           <div class="modal-card ticket-photo-card">
             <button type="button" class="modal-close" data-close>✕</button>
