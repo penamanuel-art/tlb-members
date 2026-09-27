@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+{% block title %}Parlay Calculator — The Sharp Team{% endblock %}
+{% block content %}
+<style>
+.pc-wrap{max-width:640px;margin:0 auto;color:#fff}
+.pc-wrap .kicker{font-size:11px;font-weight:800;letter-spacing:2px;color:#8f8fb0;margin:6px 0 4px}
+.pc-wrap h2{font-size:26px;font-weight:800;margin:0 0 6px}
+.pc-wrap .muted{color:#9a9ab5;font-size:14px;margin:0 0 18px;line-height:1.5}
+.pc-leg{background:#17171f;border:1px solid #26262f;border-radius:14px;padding:14px;margin:0 0 10px}
+.pc-leg-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.pc-leg-title{font-weight:800;font-size:15px}
+.pc-remove{background:transparent;border:1px solid #3a3a4a;color:#9a9ab5;border-radius:10px;padding:6px 12px;font-size:13px;font-weight:700;cursor:pointer}
+.pc-remove:disabled{opacity:.35;cursor:default}
+.pc-odds{width:100%;background:#0f0f16;border:1px solid #3a3a4a;color:#fff;border-radius:10px;padding:12px;font-size:18px;font-weight:700;box-sizing:border-box}
+.pc-odds:focus{outline:none;border-color:#d4af37}
+.pc-odds.bad{border-color:#f87171}
+.pc-row{display:flex;gap:10px;margin:14px 0}
+.pc-add{flex:1;background:#1c1c28;border:1.5px dashed #3a3a4a;color:#e8e8f2;font-weight:800;font-size:15px;border-radius:12px;padding:12px;cursor:pointer}
+.pc-add:disabled{opacity:.35;cursor:default}
+.pc-stake-row{display:flex;align-items:center;gap:10px;background:#17171f;border:1px solid #26262f;border-radius:14px;padding:14px;margin:0 0 14px}
+.pc-stake-row label{font-weight:800;font-size:15px}
+.pc-stake-row input{flex:1;background:#0f0f16;border:1px solid #3a3a4a;color:#fff;border-radius:10px;padding:12px;font-size:18px;font-weight:700;box-sizing:border-box}
+.pc-results{background:#17171f;border:1px solid #d4af37;border-radius:16px;padding:18px;margin:0 0 14px}
+.pc-results.hidden{display:none}
+.pc-big{font-size:34px;font-weight:800;color:#fff;line-height:1.1}
+.pc-big small{font-size:13px;color:#9a9ab5;font-weight:600;display:block;margin-top:4px}
+.pc-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.pc-stat{background:#0f0f16;border:1px solid #26262f;border-radius:12px;padding:12px}
+.pc-stat .v{font-size:20px;font-weight:800;color:#4ade80}
+.pc-stat .l{font-size:12px;color:#9a9ab5;margin-top:2px}
+.pc-err{color:#f87171;font-size:13px;font-weight:700;margin:0 0 10px}
+.pc-note{color:#9a9ab5;font-size:12px;text-align:center;line-height:1.6;margin:14px 0 0}
+</style>
+
+<div class="pc-wrap">
+  <p class="kicker">FREE TOOL</p>
+  <h2>Parlay Calculator</h2>
+  <p class="muted">Add 2 to 10 legs with American odds. See the combined odds, implied probability and payout for your stake.</p>
+
+  <div id="legs"></div>
+
+  <div class="pc-row">
+    <button id="addLeg" class="pc-add" type="button">+ Add leg</button>
+  </div>
+
+  <div class="pc-stake-row">
+    <label for="stake">Stake</label>
+    <input id="stake" type="number" min="0" step="any" value="10" inputmode="decimal" aria-label="Stake in dollars">
+  </div>
+
+  <p id="err" class="pc-err" hidden></p>
+
+  <div id="results" class="pc-results hidden">
+    <div class="pc-big"><span id="resOdds">—</span><small>COMBINED ODDS</small></div>
+    <div class="pc-grid">
+      <div class="pc-stat"><div class="v" id="resProb">—</div><div class="l">Implied probability</div></div>
+      <div class="pc-stat"><div class="v" id="resPayout">—</div><div class="l">Total payout</div></div>
+      <div class="pc-stat"><div class="v" id="resProfit">—</div><div class="l">Profit</div></div>
+      <div class="pc-stat"><div class="v" id="resLegs">—</div><div class="l">Legs</div></div>
+    </div>
+  </div>
+
+  <p class="pc-note">For education only. Always verify the final odds at your sportsbook before placing a bet.<br>Play responsibly · 21+ · 1-800-GAMBLER</p>
+</div>
+
+<script>
+(function(){
+  var legsEl = document.getElementById('legs');
+  var addBtn = document.getElementById('addLeg');
+  var stakeEl = document.getElementById('stake');
+  var errEl = document.getElementById('err');
+  var resBox = document.getElementById('results');
+  var MAX_LEGS = 10, MIN_LEGS = 2;
+
+  function toDecimal(odds){
+    odds = parseFloat(String(odds).trim().replace('+',''));
+    if(!isFinite(odds) || odds === 0 || (odds > -100 && odds < 100)) return NaN;
+    return odds > 0 ? 1 + odds/100 : 1 + 100/Math.abs(odds);
+  }
+  function toAmerican(dec){
+    if(dec >= 2) return '+' + Math.round((dec - 1) * 100);
+    return '-' + Math.round(100 / (dec - 1));
+  }
+  function fmtMoney(x){
+    return '$' + x.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+  }
+
+  function legCount(){ return legsEl.querySelectorAll('.pc-leg').length; }
+
+  function addLeg(value){
+    if(legCount() >= MAX_LEGS) return;
+    var n = legCount() + 1;
+    var div = document.createElement('div');
+    div.className = 'pc-leg';
+    div.innerHTML =
+      '<div class="pc-leg-head"><span class="pc-leg-title">Leg ' + n + '</span>' +
+      '<button class="pc-remove" type="button">Remove</button></div>' +
+      '<input class="pc-odds" type="text" inputmode="numeric" placeholder="American odds, e.g. +150 or -110" value="' + (value||'') + '" aria-label="Leg ' + n + ' odds">';
+    div.querySelector('.pc-remove').addEventListener('click', function(){
+      if(legCount() > MIN_LEGS){ div.remove(); renumber(); calc(); }
+    });
+    div.querySelector('.pc-odds').addEventListener('input', calc);
+    legsEl.appendChild(div);
+    renumber(); calc();
+  }
+
+  function renumber(){
+    var rows = legsEl.querySelectorAll('.pc-leg');
+    rows.forEach(function(r, i){
+      r.querySelector('.pc-leg-title').textContent = 'Leg ' + (i+1);
+      r.querySelector('.pc-odds').setAttribute('aria-label', 'Leg ' + (i+1) + ' odds');
+      r.querySelector('.pc-remove').disabled = rows.length <= MIN_LEGS;
+    });
+    addBtn.disabled = rows.length >= MAX_LEGS;
+  }
+
+  function calc(){
+    var inputs = legsEl.querySelectorAll('.pc-odds');
+    var dec = 1, ok = true;
+    inputs.forEach(function(inp){
+      var d = toDecimal(inp.value);
+      if(!isFinite(d)){ ok = false; inp.classList.add('bad'); }
+      else { inp.classList.remove('bad'); dec *= d; }
+    });
+    var stake = parseFloat(stakeEl.value);
+    if(!isFinite(stake) || stake <= 0){ ok = false; }
+    if(!ok){
+      resBox.classList.add('hidden');
+      var bad = false;
+      inputs.forEach(function(inp){ if(inp.classList.contains('bad')) bad = true; });
+      errEl.hidden = false;
+      errEl.textContent = bad
+        ? 'Check the highlighted odds — use American format like +150 or -110.'
+        : 'Enter a stake greater than 0.';
+      return;
+    }
+    errEl.hidden = true;
+    resBox.classList.remove('hidden');
+    document.getElementById('resOdds').textContent = toAmerican(dec);
+    document.getElementById('resProb').textContent = (100/dec).toFixed(1) + '%';
+    document.getElementById('resPayout').textContent = fmtMoney(stake * dec);
+    document.getElementById('resProfit').textContent = fmtMoney(stake * dec - stake);
+    document.getElementById('resLegs').textContent = inputs.length;
+  }
+
+  stakeEl.addEventListener('input', calc);
+  addBtn.addEventListener('click', function(){ addLeg(''); });
+  addLeg('-110'); addLeg('-110');
+})();
+</script>
+{% endblock %}

@@ -801,6 +801,33 @@ def load_props_board():
     return data
 
 
+# Public free tools: Sharp Line Moves — el JSON vive en la rama `data-board`
+# (igual que el +EV Board: actualizar datos NO redespliega Render).
+# La página /tools/line-moves es pública (sin login) y lo lee en vivo.
+LINE_MOVES_URL = (
+    "https://raw.githubusercontent.com/penamanuel-art/tlb-members"
+    "/data-board/data/line_moves.json"
+)
+_line_moves_cache = {"at": 0.0, "data": {}}
+
+
+def load_line_moves():
+    import time
+    now = time.time()
+    if now - _line_moves_cache["at"] < 300 and _line_moves_cache["data"]:
+        return _line_moves_cache["data"]
+    data = {}
+    try:
+        req = urllib.request.Request(LINE_MOVES_URL, headers={"User-Agent": "tlb-members"})
+        with urllib.request.urlopen(req, timeout=10) as r:
+            data = json.load(r)
+    except Exception:
+        data = _line_moves_cache["data"] or {}
+    _line_moves_cache["at"] = now
+    _line_moves_cache["data"] = data
+    return data
+
+
 def american_profit_ratio(odds) -> float:
     """Cuánto se gana por cada 1 apostado en cuota americana."""
     o = int(odds)
@@ -1742,6 +1769,22 @@ def props():
     db = get_db()
     record_checkin(db, session["user_id"])
     return render_template("props.html", board=load_props_board())
+
+
+# ----------------------------- Free public tools (no login) ----------------
+@app.route("/tools/parlay-calculator")
+def tools_parlay_calculator():
+    """Calculadora de parlays 100% del lado del cliente. Pública, sin login."""
+    return render_template("tools_parlay_calculator.html")
+
+
+@app.route("/tools/line-moves")
+def tools_line_moves():
+    """Movimientos sharp recientes. Pública, sin login; datos de la rama data-board."""
+    board = load_line_moves()
+    return render_template("tools_line_moves.html",
+                           moves=board.get("moves", []),
+                           updated_at=board.get("updated_at", ""))
 
 
 # ------------------------------------------------------- Web Push ----

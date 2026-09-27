@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Sharp Line Moves — The Sharp Team{% endblock %}
+{% block content %}
+<style>
+.lm-wrap{max-width:720px;margin:0 auto;color:#fff}
+.lm-wrap .kicker{font-size:11px;font-weight:800;letter-spacing:2px;color:#8f8fb0;margin:6px 0 4px}
+.lm-wrap h2{font-size:26px;font-weight:800;margin:0 0 6px}
+.lm-wrap .muted{color:#9a9ab5;font-size:14px;margin:0 0 6px;line-height:1.5}
+.lm-updated{color:#9a9ab5;font-size:12px;margin:0 0 18px}
+.lm-card{background:#17171f;border:1px solid #26262f;border-radius:16px;padding:16px;margin:0 0 12px}
+.lm-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+.lm-league{font-size:11px;font-weight:800;letter-spacing:1.5px;color:#8f8fb0}
+.lm-books{font-size:12px;color:#9a9ab5;font-weight:700}
+.lm-team{font-size:20px;font-weight:800;margin:0 0 2px}
+.lm-team .lm-ml{color:#9a9ab5;font-weight:600;font-size:14px}
+.lm-game{color:#9a9ab5;font-size:14px;margin:0 0 10px}
+.lm-move{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+.lm-odds{font-size:15px;font-weight:800}
+.lm-odds.open{color:#9a9ab5}
+.lm-arrow{color:#fbbf24;font-weight:800}
+.lm-odds.now{color:#4ade80}
+.lm-time{color:#9a9ab5;font-size:13px;margin:0}
+.lm-empty{border:2px dashed #3a3a4a;border-radius:18px;padding:28px 20px;text-align:center;margin:16px 0}
+.lm-empty h3{color:#fff;margin:0 0 8px}
+.lm-empty p{color:#9a9ab5;margin:0;font-size:14px}
+.lm-note{color:#9a9ab5;font-size:12px;text-align:center;margin-top:18px;line-height:1.6}
+</style>
+
+<div class="lm-wrap">
+  <p class="kicker">FREE TOOL · SHARP MONEY</p>
+  <h2>Sharp Line Moves</h2>
+  <p class="muted">Real moneyline movement across US sportsbooks — where the respected money is going. Not picks: information.</p>
+  {% if updated_at %}<p class="lm-updated">Updated {{ updated_at }} · refreshes about every 30 min</p>{% endif %}
+
+  {% if moves %}
+    {% for m in moves %}
+    <div class="lm-card">
+      <div class="lm-top">
+        <span class="lm-league">{{ m.league or '—' }}</span>
+        <span class="lm-books">{{ m.books }} books</span>
+      </div>
+      <p class="lm-team">{{ m.team }} <span class="lm-ml">(Moneyline)</span></p>
+      <p class="lm-game">{{ m.game }}</p>
+      <div class="lm-move">
+        <span class="lm-odds open">{{ m.open }}</span>
+        <span class="lm-arrow">→</span>
+        <span class="lm-odds now">{{ m.current }}</span>
+      </div>
+      <p class="lm-time">{{ m.kickoff_et }}</p>
+    </div>
+    {% endfor %}
+  {% else %}
+    <div class="lm-empty">
+      <h3>No sharp moves right now</h3>
+      <p>Check back soon — the board updates about every 30 minutes.</p>
+    </div>
+  {% endif %}
+
+  <p class="lm-note">Line movement is informational, not betting advice.<br>Play responsibly · 21+ · 1-800-GAMBLER</p>
+</div>
+{% endblock %}
