@@ -1876,11 +1876,13 @@ def api_push_status():
     ):
         return jsonify({"error": "forbidden"}), 403
     db = get_db()
-    total = db.execute("SELECT COUNT(*) FROM push_subscriptions").fetchone()[0]
+    total = db.execute("SELECT COUNT(*) AS n FROM push_subscriptions").fetchone()
+    total = total["n"] if isinstance(total, dict) else total[0]
     admin_subs = db.execute(
-        "SELECT COUNT(*) FROM push_subscriptions WHERE member_id IN"
+        "SELECT COUNT(*) AS n FROM push_subscriptions WHERE member_id IN"
         " (SELECT id FROM users WHERE is_admin = 1)"
-    ).fetchone()[0]
+    ).fetchone()
+    admin_subs = admin_subs["n"] if isinstance(admin_subs, dict) else admin_subs[0]
     return jsonify(
         {"total": total, "admin_subscriptions": admin_subs, "admin_active": admin_subs > 0}
     )
