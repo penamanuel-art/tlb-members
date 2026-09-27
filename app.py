@@ -356,6 +356,18 @@ def login_required(view):
     return wrapper
 
 
+def admin_required(view):
+    """Solo administradores: requiere login + flag de admin."""
+    @wraps(view)
+    @login_required
+    def wrapper(*args, **kwargs):
+        if not is_admin_for(current_user()):
+            flash("Admin access required.", "error")
+            return redirect(url_for("home"))
+        return view(*args, **kwargs)
+    return wrapper
+
+
 def current_user():
     if "user_id" not in session:
         return None
@@ -793,6 +805,41 @@ def play_profit_dollars(tp) -> float:
     return 0.0
 
 
+_EQUIPO_LOGO = {
+    # nombre en el pick -> (liga ESPN, abreviatura ESPN en minusculas)
+    "Braves": ("mlb", "atl"),
+    "Marlins": ("mlb", "mia"),
+    "Brewers": ("mlb", "mil"),
+    "Phillies": ("mlb", "phi"),
+    "Nationals": ("mlb", "wsh"),
+    "Mets": ("mlb", "nym"),
+    "Padres": ("mlb", "sd"),
+    "Diamondbacks": ("mlb", "ari"),
+    "Rays": ("mlb", "tb"),
+    "Yankees": ("mlb", "nyy"),
+    "Dodgers": ("mlb", "lad"),
+    "Falcons": ("nfl", "atl"),
+    "Packers": ("nfl", "gb"),
+}
+
+
+def equipo_logo_info(pick):
+    """(ABBR, logo_url) del equipo elegido en el pick.
+
+    El pick tiene forma '<Equipo> ML @/vs <rival>'. Si el equipo no esta
+    en el mapa, devuelve ('', '') y la plantilla muestra el texto sin logo
+    (nunca se inventa una abreviatura).
+    """
+    nombre = (pick or "").split(" ML ")[0].strip()
+    info = _EQUIPO_LOGO.get(nombre)
+    if not info:
+        return "", ""
+    liga, abbr = info
+    return abbr.upper(), (
+        f"https://a.espncdn.com/i/teamlogos/{liga}/500/{abbr}.png"
+    )
+
+
 def compute_stats(tracked):
     graded = [t for t in tracked if t["resultado"] in ("W", "L")]
     wins = sum(1 for t in graded if t["resultado"] == "W")
@@ -820,6 +867,7 @@ def compute_stats(tracked):
         "pending": len(tracked) - len(graded),
         "wins": wins,
         "losses": losses,
+        "risked": risked,
         "record": f"{wins}-{losses}",
         "net_units": net_units,
         "net_dollars": net_dollars,
@@ -1201,11 +1249,48 @@ def tracker():
     stats["clv_avg"] = (sum(clvs) / len(clvs)) if clvs else None
     user = current_user()
     card_pendiente = not card_publicada_hoy()
+    # Filas enriquecidas para el tracker unico estilo WGT: marcador y casa
+    # desde el archivo oficial (match por fecha+pick), logo ESPN del equipo.
+    # Solo informativo: el resultado de cada fila lo decide el auto-grado
+    # (admin) o el marcado manual del miembro; nunca se reescribe aqui.
+    oficiales = {}
+    for d in load_archive():
+        fecha = (d.get("fecha") or "").strip()
+        for j in d.get("jugadas", []) or []:
+            pk = (j.get("pick") or "").strip().lower()
+            if fecha and pk:
+                oficiales[(fecha, pk)] = j
+    rows = []
+    for t in tracked:
+        f = (t["fecha"] or "").strip()
+        off = oficiales.get((f, (t["pick"] or "").strip().lower()), {})
+        abbr, logo = equipo_logo_info(t["pick"])
+        try:
+            fecha_corta = datetime.strptime(f, "%Y-%m-%d").strftime("%d %b %Y").upper()
+        except (ValueError, TypeError):
+            fecha_corta = f
+        rows.append({
+            "id": t["id"],
+            "fecha": f,
+            "fecha_corta": fecha_corta,
+            "pick": t["pick"],
+            "cuota": t["cuota"],
+            "cuota_txt": fmt_odds(t["cuota"]),
+            "nivel": t["nivel"],
+            "stake_unidades": t["stake_unidades"],
+            "stake_monto": t["stake_monto"],
+            "resultado": t["resultado"] or "",
+            "profit": play_profit_dollars(t),
+            "casa": (off.get("casa") or "Novig"),
+            "marcador": (off.get("marcador") or ""),
+            "abbr": abbr,
+            "logo": logo,
+        })
     return render_template(
         "dashboard.html",
         plays=[] if card_pendiente else load_plays(),
         card_pendiente=card_pendiente,
-        tracked=tracked,
+        rows=rows,
         tracked_ids=tracked_ids,
         stats=stats,
         nombre=session.get("nombre", ""),
