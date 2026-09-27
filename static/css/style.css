@@ -88,7 +88,13 @@ a { color: var(--blue); text-decoration: none; }
   width: 42px; height: 42px; border-radius: 50%;
   background: var(--card-2); border: 1px solid var(--line);
   display: flex; align-items: center; justify-content: center;
-  font-weight: 800; font-size: 18px;
+  font-weight: 800; font-size: 18px; flex-shrink: 0;
+  color: var(--text); text-decoration: none;
+}
+@media (max-width: 560px) {
+  .topbar-right .nav-link { display: none; }
+  .cta-green { padding: 8px 12px; font-size: 12px; }
+  .topnav > a, .topnav-link { font-size: 13px; padding: 8px 8px; }
 }
 .nav { display: flex; align-items: center; gap: 12px; }
 .nav-link { color: var(--text); font-weight: 600; }
