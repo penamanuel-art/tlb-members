@@ -684,6 +684,32 @@ def load_ev_board():
     return data
 
 
+# Sharp Money board: el JSON vive en la rama `data-board`
+# (igual que el +EV Board: actualizar datos NO redespliega Render).
+SHARP_BOARD_URL = (
+    "https://raw.githubusercontent.com/penamanuel-art/tlb-members"
+    "/data-board/data/sharp_board.json"
+)
+_sharp_board_cache = {"at": 0.0, "data": {}}
+
+
+def load_sharp_board():
+    import time
+    now = time.time()
+    if now - _sharp_board_cache["at"] < 300 and _sharp_board_cache["data"]:
+        return _sharp_board_cache["data"]
+    data = {}
+    try:
+        req = urllib.request.Request(SHARP_BOARD_URL, headers={"User-Agent": "tlb-members"})
+        with urllib.request.urlopen(req, timeout=10) as r:
+            data = json.load(r)
+    except Exception:
+        data = _sharp_board_cache["data"] or {}
+    _sharp_board_cache["at"] = now
+    _sharp_board_cache["data"] = data
+    return data
+
+
 def american_profit_ratio(odds) -> float:
     """Cuánto se gana por cada 1 apostado en cuota americana."""
     o = int(odds)
@@ -1356,6 +1382,14 @@ def ev_board():
     db = get_db()
     record_checkin(db, session["user_id"])
     return render_template("ev_board.html", board=load_ev_board())
+
+
+@app.route("/sharp")
+@login_required
+def sharp():
+    db = get_db()
+    record_checkin(db, session["user_id"])
+    return render_template("sharp.html", board=load_sharp_board())
 
 
 # ------------------------------------------------------- Web Push ----
