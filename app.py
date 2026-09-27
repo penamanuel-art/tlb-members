@@ -14,6 +14,7 @@ En Render (ver render.yaml):
 """
 import json
 import os
+import re
 import secrets
 import sqlite3
 import urllib.request
@@ -798,6 +799,20 @@ def compute_stats(tracked):
 
 
 
+_RE_FECHA_PLAYID = re.compile(r"^(?:play|hist)-(\d{4}-\d{2}-\d{2})-")
+
+
+def fecha_de_play(play):
+    """Fecha de una jugada: campo fecha, o extraída del play_id.
+    plays.json no trae fecha por jugada (solo raíz), así que el play_id
+    es la fuente confiable: play-YYYY-MM-DD-<slug>."""
+    f = (play.get("fecha") or "").strip()
+    if f:
+        return f
+    m = _RE_FECHA_PLAYID.match(play.get("id") or "")
+    return m.group(1) if m else ""
+
+
 def auto_grado_tracked(db, user):
     """Liquida automáticamente las jugadas trackeadas pendientes usando los
     resultados oficiales del programa (data/archive.json).
@@ -814,7 +829,7 @@ def auto_grado_tracked(db, user):
         return 0
     user_id = user["id"]
     pendientes = db.execute(
-        "SELECT id, fecha, pick FROM tracked_plays "
+        "SELECT id, play_id, fecha, pick FROM tracked_plays "
         "WHERE user_id = ? AND resultado IS NULL",
         (user_id,),
     ).fetchall()
@@ -830,7 +845,11 @@ def auto_grado_tracked(db, user):
                 oficiales[(fecha, pick)] = "W" if r == "WON" else "L"
     n = 0
     for t in pendientes:
-        key = ((t["fecha"] or "").strip(), (t["pick"] or "").strip().lower())
+        f = (t["fecha"] or "").strip() or (
+            _RE_FECHA_PLAYID.match(t["play_id"] or "").group(1)
+            if _RE_FECHA_PLAYID.match(t["play_id"] or "") else ""
+        )
+        key = (f, (t["pick"] or "").strip().lower())
         res = oficiales.get(key)
         if res:
             db.execute(
@@ -1185,7 +1204,7 @@ def track(play_id):
                 stake_monto, edge, resultado, created_at)
                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, ?)""",
             (
-                session["user_id"], play["id"], play.get("fecha", ""),
+                session["user_id"], play["id"], fecha_de_play(play),
                 play.get("nivel", ""), play.get("pick", ""), int(play.get("cuota", 0)),
                 float(play.get("stake_unidades", 0)),
                 float(stake_personalizado(play, _cu)),
@@ -1371,6 +1390,22 @@ def admin_stake_fijo():
     flash("Fixed stakes saved.", "ok")
     return redirect(url_for("admin_miembros"))
 
+
+
+@app.route("/admin/diag-tracker")
+@admin_required
+def diag_tracker():
+    """Diagnóstico: muestra las jugadas trackeadas del admin en JSON plano."""
+    from flask import Response
+    db = get_db()
+    rows = db.execute(
+        "SELECT id, play_id, fecha, pick, cuota, resultado, created_at "
+        "FROM tracked_plays WHERE user_id = ? ORDER BY id",
+        (session["user_id"],),
+    ).fetchall()
+    data = [dict(r) for r in rows]
+    return Response(json.dumps(data, indent=1, ensure_ascii=False),
+                    mimetype="application/json")
 
 @app.route("/admin/seed-tracker")
 @login_required
