@@ -1231,6 +1231,41 @@ def cuenta():
     return render_template("cuenta.html", bankroll=user["bankroll"] if user else None)
 
 
+def resumen_rangos(tracked):
+    """Resumen por rangos estilo app de referencia (pedido por Alex 2026-09-27):
+    Today / Yesterday / This Week / This Month / This Year / All Time,
+    cada uno con record W-L y profit — siempre con los numeros reales
+    del miembro (o del admin) que esta viendo la pagina."""
+    hoy = datetime.now(TZ).date()
+    ayer = hoy - timedelta(days=1)
+    inicio_semana = hoy - timedelta(days=(hoy.weekday() + 1) % 7)  # semana empieza domingo
+    inicio_mes = date(hoy.year, hoy.month, 1)
+    inicio_ano = date(hoy.year, 1, 1)
+
+    def fecha_de(t):
+        try:
+            return date.fromisoformat((t["fecha"] or "").strip())
+        except (ValueError, AttributeError):
+            return None
+
+    def agg(items):
+        g = [t for t in items if t["resultado"] in ("W", "L")]
+        w = sum(1 for t in g if t["resultado"] == "W")
+        return {"record": f"{w}-{len(g) - w}-0",
+                "profit": sum(play_profit_dollars(t) for t in g)}
+
+    con_fecha = [(t, fecha_de(t)) for t in tracked]
+    en = lambda d, ini: d is None or d >= ini  # sin fecha: cuenta como en rango (igual que las pildoras)
+    return [
+        ("Today", agg([t for t, d in con_fecha if d == hoy])),
+        ("Yesterday", agg([t for t, d in con_fecha if d == ayer])),
+        ("This Week", agg([t for t, d in con_fecha if en(d, inicio_semana)])),
+        ("This Month", agg([t for t, d in con_fecha if en(d, inicio_mes)])),
+        ("This Year", agg([t for t, d in con_fecha if en(d, inicio_ano)])),
+        ("All Time", agg(tracked)),
+    ]
+
+
 @app.route("/tracker")
 @login_required
 def tracker():
@@ -1301,6 +1336,7 @@ def tracker():
         rows=rows,
         tracked_ids=tracked_ids,
         stats=stats,
+        rangos=resumen_rangos(tracked),
         nombre=session.get("nombre", ""),
         bankroll=user["bankroll"] if user else None,
         platinum_unlocked=platinum_unlocked_for(user),
