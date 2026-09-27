@@ -16,22 +16,12 @@
   .wgt-pill { border:1px solid var(--line); background:var(--card); color:var(--muted); border-radius:999px;
     padding:8px 16px; font-weight:800; font-size:.85rem; cursor:pointer; white-space:nowrap; }
   .wgt-pill.active { background:#fbbf24; border-color:#fbbf24; color:#111; }
-  .wgt-hero { text-align:center; margin:6px 0 14px; }
-  .wgt-profit { font-size:clamp(2.6rem,11vw,3.6rem); font-weight:900; margin:0; letter-spacing:-.02em; }
-  .wgt-profit.pos { color:#4ade80; } .wgt-profit.neg { color:#f87171; }
-  .wgt-profit-sub { color:var(--muted); margin:6px 0 0; font-size:.95rem; }
   .wgt-card { background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:16px; margin-bottom:14px; }
   .wgt-risked-row { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px; }
   .wgt-label { color:var(--muted); font-size:.78rem; font-weight:800; letter-spacing:.12em; }
   .wgt-risked-val { color:#fff; font-weight:800; font-size:1.1rem; }
   #wgtCurve { width:100%; height:120px; display:block; }
   .wgt-curve-empty { text-align:center; color:var(--muted); font-size:.85rem; padding:38px 0; }
-  .wgt-mini-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:16px; }
-  .wgt-mini { background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
-    padding:12px 8px; text-align:center; }
-  .wgt-mini span { display:block; color:var(--muted); font-size:.72rem; font-weight:800; letter-spacing:.12em; margin-bottom:4px; }
-  .wgt-mini b { color:#fff; font-size:1.15rem; font-weight:800; }
-  .wgt-mini b.pos { color:#4ade80; } .wgt-mini b.neg { color:#f87171; }
   .wgt-list { display:grid; gap:10px; }
   .wgt-row { background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:12px; }
   .wgt-row-top { display:flex; gap:12px; align-items:flex-start; }
@@ -69,7 +59,7 @@
   <div class="wgt-avatar">{{ (nombre or 'M')[:1]|upper }}</div>
   <div>
     <p class="kicker">MY TRACKER · THESHARPTEAM</p>
-    <h2 class="wgt-name">{{ nombre or 'My Tracker' }}</h2>
+    <h2 class="wgt-name">Your tracker</h2>
   </div>
   {% if stats.streak and stats.streak != '—' %}
   <span class="wgt-streak-pill">🔥 {{ stats.streak }}</span>
@@ -84,9 +74,29 @@
   <button type="button" class="wgt-pill" data-range="all">Todo</button>
 </div>
 
-<section class="wgt-hero">
-  <p class="wgt-profit {{ 'pos' if stats.net_dollars > 0 else ('neg' if stats.net_dollars < 0 else '') }}" id="wgtProfit">{{ fmt_money(stats.net_dollars) }}</p>
-  <p class="wgt-profit-sub"><b id="wgtRecord">{{ stats.record }}</b> · <span id="wgtPending">{{ stats.pending }} pending</span></p>
+{% set _settled = stats.wins + stats.losses %}
+{% set _wr = (stats.wins / _settled * 100) if _settled else 0 %}
+<section class="stats-grid results-hero">
+  <div class="stat">
+    <span class="stat-label">TOTAL PROFIT</span>
+    <span class="stat-value {{ 'pos' if stats.net_dollars > 0 else ('neg' if stats.net_dollars < 0 else '') }}" id="wgtProfit">{{ fmt_money(stats.net_dollars) }}</span>
+    <span class="stat-sub">your tracked profit</span>
+  </div>
+  <div class="stat">
+    <span class="stat-label">WIN RATE</span>
+    <span class="stat-value" id="wgtWinRate">{{ '%.1f' % _wr }}%</span>
+    <span class="stat-sub">won / settled</span>
+  </div>
+  <div class="stat">
+    <span class="stat-label">RECORD</span>
+    <span class="stat-value" id="wgtRecord">{{ stats.wins }}–{{ stats.losses }}</span>
+    <span class="stat-sub">settled plays</span>
+  </div>
+  <div class="stat">
+    <span class="stat-label">ROI</span>
+    <span class="stat-value {{ 'pos' if stats.roi > 0 else ('neg' if stats.roi < 0 else '') }}" id="wgtRoi">{{ '%+.1f' % stats.roi }}%</span>
+    <span class="stat-sub">on amount risked</span>
+  </div>
 </section>
 
 <section class="wgt-card">
@@ -96,21 +106,6 @@
   </div>
   <svg id="wgtCurve" viewBox="0 0 300 120" preserveAspectRatio="none" aria-hidden="true"></svg>
   <div class="wgt-curve-empty" id="wgtCurveEmpty" hidden>No graded plays in this range yet.</div>
-</section>
-
-<section class="wgt-mini-grid">
-  <div class="wgt-mini">
-    <span>ROI</span>
-    <b id="wgtRoi" class="{{ 'pos' if stats.roi > 0 else ('neg' if stats.roi < 0 else '') }}">{{ '%+.1f' % stats.roi }}%</b>
-  </div>
-  <div class="wgt-mini">
-    <span>RECORD</span>
-    <b id="wgtRecord2">{{ stats.record }}</b>
-  </div>
-  <div class="wgt-mini">
-    <span>WINS</span>
-    <b id="wgtWins">{{ stats.wins }}</b>
-  </div>
 </section>
 
 {% if rows %}
@@ -235,7 +230,7 @@
     svg.appendChild(dot);
   }
   function apply(range){
-    var profit = 0, risked = 0, w = 0, l = 0, pend = 0, visible = 0;
+    var profit = 0, risked = 0, w = 0, l = 0, visible = 0;
     var pts = [];
     rows.forEach(function(r){
       var show = inRange(r.getAttribute('data-fecha'), range);
@@ -248,21 +243,20 @@
         profit += p; risked += parseFloat(r.getAttribute('data-stake')) || 0;
         if (res === 'W') w++; else l++;
         pts.push({ fecha: r.getAttribute('data-fecha'), profit: p });
-      } else { pend++; }
+      }
     });
     var el = function(id){ return document.getElementById(id); };
     var pe = el('wgtProfit');
     pe.textContent = fmtMoney(profit);
-    pe.className = 'wgt-profit ' + (profit > 0 ? 'pos' : (profit < 0 ? 'neg' : ''));
-    el('wgtRecord').textContent = w + '-' + l;
-    el('wgtRecord2').textContent = w + '-' + l;
-    el('wgtPending').textContent = pend + ' pending';
+    pe.className = 'stat-value ' + (profit > 0 ? 'pos' : (profit < 0 ? 'neg' : ''));
+    var settled = w + l;
+    el('wgtWinRate').textContent = (settled ? (w / settled * 100).toFixed(1) : '0.0') + '%';
+    el('wgtRecord').textContent = w + '–' + l;
     el('wgtRisked').textContent = '$' + risked.toFixed(2);
     var roi = risked ? (profit / risked * 100) : 0;
     var re = el('wgtRoi');
     re.textContent = (roi > 0 ? '+' : '') + roi.toFixed(1) + '%';
-    re.className = roi > 0 ? 'pos' : (roi < 0 ? 'neg' : '');
-    el('wgtWins').textContent = w;
+    re.className = 'stat-value ' + (roi > 0 ? 'pos' : (roi < 0 ? 'neg' : ''));
     var emptyMsg = el('wgtEmpty');
     if (emptyMsg) emptyMsg.hidden = visible > 0;
     drawCurve(pts);
