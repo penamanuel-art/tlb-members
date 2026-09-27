@@ -363,6 +363,42 @@
 <p class="muted">No results published yet.</p>
 {% endif %}
 
+<!-- 09 · THE PROCESS (requested by Alex 2026-09-26: same section as the public page) -->
+<style>
+  .tst-process { margin-top: 34px; }
+  .tst-process .process-eyebrow { color: #bef264; font-size: .8rem; font-weight: 800; letter-spacing: .18em; margin: 0 0 12px; }
+  .tst-process .process-title { color: #fff; font-weight: 900; font-size: clamp(2rem, 9vw, 3rem); line-height: 1.02; letter-spacing: -.01em; margin: 0 0 12px; font-stretch: condensed; }
+  .tst-process .process-sub { color: #cbd5e1; font-size: 1.02rem; line-height: 1.55; margin: 0 0 22px; max-width: 34rem; }
+  .tst-process .process-cards { border: 1px solid rgba(255,255,255,.14); border-radius: 6px; overflow: hidden; }
+  .tst-process .process-card { padding: 34px 24px; border-bottom: 1px solid rgba(255,255,255,.12); }
+  .tst-process .process-card:last-child { border-bottom: none; }
+  .tst-process .process-step { color: #bef264; font-weight: 800; font-size: .85rem; letter-spacing: .06em; margin: 0 0 64px; }
+  .tst-process .process-card h3 { color: #fff; font-weight: 900; font-size: 1.7rem; margin: 0 0 10px; font-stretch: condensed; letter-spacing: .01em; }
+  .tst-process .process-card p { color: #cbd5e1; font-size: .98rem; line-height: 1.6; margin: 0; max-width: 32rem; }
+</style>
+<section class="tst-process">
+  <p class="process-eyebrow">THE PROCESS</p>
+  <h2 class="process-title">ONE SYSTEM.<br>THREE FILTERS.</h2>
+  <p class="process-sub">Every published pick must pass the model, the market, and the staking rules.</p>
+  <div class="process-cards">
+    <div class="process-card">
+      <p class="process-step">01 / MODEL</p>
+      <h3>FAIR LINE</h3>
+      <p>Estimated probability is calculated before deciding whether the available price is worth a bet.</p>
+    </div>
+    <div class="process-card">
+      <p class="process-step">02 / MARKET</p>
+      <h3>REAL EDGE</h3>
+      <p>The fair line is compared with the best odds. Research can veto a pick; it never invents value.</p>
+    </div>
+    <div class="process-card">
+      <p class="process-step">03 / DISCIPLINE</p>
+      <h3>FIXED STAKE</h3>
+      <p>The stake stays disciplined. Neither losses nor streaks change the amount.</p>
+    </div>
+  </div>
+</section>
+
 <!-- MONEY RAIN (requested by Alex 2026-09-24): realistic dollar-style bills ~4s, once per session -->
 <canvas id="lluvia-dinero" style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9999;"></canvas>
 <script>
