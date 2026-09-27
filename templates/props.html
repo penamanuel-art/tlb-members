@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+{% block title %}Player Props — The Sharp Team{% endblock %}
+{% block content %}
+<style>
+.pp-card{background:#17171f;border:1px solid #26262f;border-radius:18px;padding:18px;margin:14px 0;color:#fff}
+.pp-title{font-size:20px;font-weight:800;margin:0 0 4px;color:#fff}
+.pp-sub{font-size:15px;font-weight:700;color:#e8e8f2;margin:0 0 4px}
+.pp-game{color:#9a9ab5;font-size:14px;margin:0 0 4px}
+.pp-time{color:#9a9ab5;font-size:14px;margin:0 0 10px}
+.true-pill{display:inline-block;border:1.5px solid #d4af37;color:#d4af37;border-radius:10px;padding:2px 10px;font-weight:800;font-size:13px;letter-spacing:.5px}
+.pp-best{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:12px}
+.pp-price{font-size:34px;font-weight:800;color:#fff;line-height:1}
+.pp-bookname{color:#9a9ab5;font-size:14px;margin-top:2px}
+.pp-edgepct{color:#4ade80;font-weight:800;font-size:20px;text-align:center;line-height:1.15}
+.pp-edgepct small{display:block;font-size:11px;letter-spacing:1px;font-weight:800}
+.pp-betbtn{margin-left:auto;background:#3ddc84;color:#0b2417;font-weight:800;font-size:17px;border-radius:14px;padding:14px 26px;text-decoration:none;white-space:nowrap}
+.pp-betbtn:active{transform:scale(.98)}
+.pp-books-toggle{width:100%;background:#1c1c28;border:1px solid #2f6fed;color:#5b8cff;font-weight:700;font-size:15px;border-radius:12px;padding:10px;cursor:pointer;margin-bottom:10px}
+.pp-books-list{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.book-chip{border:1px solid #3a3a4a;border-radius:10px;padding:6px 12px;font-size:13px;color:#c9c9e0;background:#1c1c28}
+.book-chip small{color:#9a9ab5}
+.book-chip.best{border-color:#d4af37;color:#fff}
+.book-chip.best small{color:#d4af37;font-weight:800}
+a.book-chip{text-decoration:none;display:inline-block}
+.pp-empty{border:2px dashed #3a3a4a;border-radius:18px;padding:28px 20px;text-align:center;margin:16px 0}
+.pp-empty h3{color:#fff;margin:0 0 8px}
+.pp-empty p{color:#9a9ab5;margin:0;font-size:14px}
+.pp-note{color:#9a9ab5;font-size:12px;text-align:center;margin-top:18px;line-height:1.5}
+.pp-info{color:#9a9ab5;font-size:13px;margin:6px 0 0}
+.sport-tag{font-size:11px;font-weight:800;letter-spacing:1px;color:#8f8fb0}
+.pills{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 4px}
+.pill{background:#1c1c28;border:1.5px solid #3a3a4a;color:#c9c9e0;font-weight:800;font-size:14px;border-radius:999px;padding:8px 18px;cursor:pointer}
+.pill.active{border-color:#2f6fed;color:#fff;background:#1c2a4a}
+.pp-search{width:100%;box-sizing:border-box;background:#1c1c28;border:1.5px solid #3a3a4a;color:#fff;font-size:15px;border-radius:12px;padding:10px 14px;margin:8px 0 4px}
+.pp-search::placeholder{color:#8f8fb0}
+.pp-kicker{color:#8f8fb0;font-size:12px;font-weight:800;letter-spacing:1px}
+</style>
+
+<section class="tracker-head">
+  <div>
+    <p class="kicker">PLAYER PROPS · BEST PRICE + EDGE</p>
+    <h2>Every prop, best price + edge</h2>
+    {% if board.get('updated_at') %}
+    <p class="muted">Updated {{ board.updated_at }} ET · refreshes every ~60 min</p>
+    {% endif %}
+    <p class="pp-info">ⓘ Info only — not an official play. The program is moneyline-only.</p>
+  </div>
+</section>
+
+<div class="pills" id="sportPills">
+  <button class="pill active" data-sport="ALL" type="button">All</button>
+  <button class="pill" data-sport="NFL" type="button">🏈 NFL</button>
+  <button class="pill" data-sport="NCAAF" type="button">🏈 CFB</button>
+  <button class="pill" data-sport="MLB" type="button">⚾ MLB</button>
+</div>
+
+<div class="pills" id="marketPills">
+  <button class="pill active" data-market="ALL" type="button">All markets</button>
+  {% for m in board.get('props', []) | map(attribute='market_label') | unique | sort %}
+  <button class="pill" data-market="{{ m }}" type="button">{{ m }}</button>
+  {% endfor %}
+</div>
+
+<div class="pills" id="edgePills">
+  <button class="pill active" data-minedge="0" type="button">All edges</button>
+  <button class="pill" data-minedge="2" type="button">2%+</button>
+  <button class="pill" data-minedge="4" type="button">4%+</button>
+</div>
+
+<input class="pp-search" id="playerSearch" type="search" placeholder="🔍 Search player…" autocomplete="off">
+
+{% set props = board.get('props', []) %}
+<div id="propsList">
+{% if props %}
+  {% for p in props %}
+  <article class="pp-card" data-sport="{{ p.sport }}" data-market="{{ p.market_label }}" data-ev="{{ p.ev_pct }}" data-player="{{ p.player | lower }}">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px">
+      <span class="sport-tag">{{ p.sport }} · {{ p.market_label }}</span>
+    </div>
+    <h3 class="pp-title">{{ p.player }}</h3>
+    <p class="pp-sub">{{ p.prop_label }}</p>
+    <p class="pp-game">{{ p.game }} · <span class="true-pill">TRUE {{ p.true_line }}</span> · {{ p.books_count }} books</p>
+    {% if p.game_time %}<p class="pp-time">{{ p.game_time }}</p>{% endif %}
+    <div class="pp-best">
+      <div>
+        <div class="pp-price">{{ p.price_fmt }}</div>
+        <div class="pp-bookname">{{ p.book }}</div>
+      </div>
+      <div class="pp-edgepct">+{{ p.ev_pct }}%<small>YOUR EDGE</small></div>
+      <a class="pp-betbtn" href="{{ p.bet_url | default('https://novig.com') }}" target="_blank" rel="noopener">Bet {{ p.book }} →</a>
+    </div>
+    {% if p.books %}
+    <button class="pp-books-toggle" type="button" data-books-toggle>📚 {{ p.books_count }} books ▾</button>
+    <div class="pp-books-list" data-books-list hidden>
+      {% for b in p.books %}
+      {% if b.url %}<a class="book-chip{% if loop.first %} best{% endif %}" href="{{ b.url }}" target="_blank" rel="noopener">{{ b.book }} <small>{{ b.line }} · {{ b.price }}</small></a>{% else %}<span class="book-chip{% if loop.first %} best{% endif %}">{{ b.book }} <small>{{ b.line }} · {{ b.price }}</small></span>{% endif %}
+      {% endfor %}
+    </div>
+    {% endif %}
+  </article>
+  {% endfor %}
+{% else %}
+  <div class="pp-empty" id="ppEmptyDefault">
+    <h3>No +EV props right now</h3>
+    <p>Only props beating the true no-vig line by 3%+ make the cut. When books disagree on a line, it shows up here.</p>
+  </div>
+{% endif %}
+</div>
+<div class="pp-empty" id="ppEmptyFilter" hidden>
+  <h3>No props match your filters</h3>
+  <p>Try widening the sport, market or edge filter.</p>
+</div>
+
+<p class="pp-note">True line = no-vig consensus (median of book-implied lines, 2+ books). Filters: EV ≥ 3% · odds −300…+300 · max 25 props.<br>Lines move fast — always verify the price at your book before you bet. This board is informational, not a pick.</p>
+
+<script>
+(function () {
+  var sport = 'ALL', market = 'ALL', minEdge = 0, query = '';
+  var cards = Array.prototype.slice.call(document.querySelectorAll('#propsList .pp-card'));
+  var emptyFilter = document.getElementById('ppEmptyFilter');
+
+  function pillGroup(id, attr, cb) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('click', function (e) {
+      var btn = e.target.closest('[data-' + attr + ']');
+      if (!btn) return;
+      el.querySelectorAll('.pill').forEach(function (b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      cb(btn.getAttribute('data-' + attr));
+    });
+  }
+  pillGroup('sportPills', 'sport', function (v) { sport = v; apply(); });
+  pillGroup('marketPills', 'market', function (v) { market = v; apply(); });
+  pillGroup('edgePills', 'minedge', function (v) { minEdge = parseFloat(v); apply(); });
+
+  var search = document.getElementById('playerSearch');
+  if (search) search.addEventListener('input', function () {
+    query = search.value.trim().toLowerCase();
+    apply();
+  });
+
+  function apply() {
+    var shown = 0;
+    cards.forEach(function (c) {
+      var ok = (sport === 'ALL' || c.getAttribute('data-sport') === sport)
+        && (market === 'ALL' || c.getAttribute('data-market') === market)
+        && (parseFloat(c.getAttribute('data-ev')) >= minEdge)
+        && (!query || c.getAttribute('data-player').indexOf(query) !== -1);
+      c.hidden = !ok;
+      if (ok) shown++;
+    });
+    if (emptyFilter) emptyFilter.hidden = shown !== 0;
+  }
+
+  document.querySelectorAll('[data-books-toggle]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var list = btn.parentElement.querySelector('[data-books-list]');
+      if (!list) return;
+      var open = list.hidden;
+      list.hidden = !open;
+      btn.innerHTML = open ? btn.innerHTML.replace('▾', '▴') : btn.innerHTML.replace('▴', '▾');
+    });
+  });
+})();
+</script>
+{% endblock %}
