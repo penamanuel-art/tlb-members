@@ -76,7 +76,7 @@
 <section class="profit-card">
   <p class="profit-kicker">DOCUMENTED PROGRAM PROFIT</p>
   <p class="profit-value {{ 'pos' if res.get('profit_all_time', 0) >= 0 else 'neg' }}">{% if res.get('profit_all_time') is not none %}{{ '+$%.2f' % res.get('profit_all_time') }}{% else %}—{% endif %}</p>
-  <p class="profit-note">{{ res.get('ganadas', 0) }}–{{ res.get('perdidas', 0) }}{% if res.get('roi') is not none %} · ROI {{ '%+.1f' % res.get('roi') }}%{% endif %} · every public play, won or lost</p>
+  <p class="profit-note">{{ '+$%.2f' % res.get('profit_all_time') }}{% if res.get('win_rate') is not none %} · {{ '%.1f' % res.get('win_rate') }}% win rate{% endif %} · every public play, won or lost</p>
 </section>
 
 <!-- 01b · RESULTS TICKER (requested by Alex 2026-09-26) -->
@@ -167,9 +167,10 @@
   </a>
 </div>
 
-<!-- 05 · YOUR PACE -->
+<!-- 05 · YOUR PACE (compacto: el tracker único vive en /tracker) -->
 <div class="section-head">
   <h2 class="section-title">YOUR PACE</h2>
+  <a class="link-more" href="{{ url_for('tracker') }}">Open my tracker →</a>
 </div>
 <section class="stats-grid">
   <div class="stat">
@@ -181,11 +182,6 @@
     <span class="stat-label">TRACKED</span>
     <span class="stat-value">{{ tstats.tracked }}</span>
     <span class="stat-sub">{{ tstats.pending }} pending</span>
-  </div>
-  <div class="stat">
-    <span class="stat-label">TODAY'S PLAYS</span>
-    <span class="stat-value">{{ plays|length }}</span>
-    <span class="stat-sub">on your card</span>
   </div>
   <div class="stat">
     <span class="stat-label">BANKROLL</span>
@@ -215,14 +211,14 @@
     <span class="stat-sub">actual system profit</span>
   </div>
   <div class="stat">
-    <span class="stat-label">RECORD</span>
-    <span class="stat-value">{{ res.get('ganadas', 0) }}–{{ res.get('perdidas', 0) }}</span>
-    <span class="stat-sub">settled plays</span>
-  </div>
-  <div class="stat">
     <span class="stat-label">WIN RATE</span>
     <span class="stat-value">{% if res.get('win_rate') is not none %}{{ '%.1f' % res.get('win_rate') }}%{% else %}—{% endif %}</span>
     <span class="stat-sub">won / settled</span>
+  </div>
+  <div class="stat">
+    <span class="stat-label">RECORD</span>
+    <span class="stat-value">{{ res.get('ganadas', 0) }}–{{ res.get('perdidas', 0) }}</span>
+    <span class="stat-sub">settled plays</span>
   </div>
   <div class="stat">
     <span class="stat-label">ROI</span>
@@ -281,34 +277,6 @@
 {% if not recientes %}
 <p class="muted">No settled plays yet — tickets appear here as soon as the first plays are graded.</p>
 {% endif %}
-
-<!-- 07 · YOUR HISTORY -->
-<div class="section-head">
-  <h2 class="section-title">YOUR HISTORY</h2>
-  <a class="link-more" href="{{ url_for('tracker') }}">Open my tracker →</a>
-</div>
-<section class="stats-grid">
-  <div class="stat">
-    <span class="stat-label">RECORD</span>
-    <span class="stat-value">{{ tstats.record }}</span>
-    <span class="stat-sub">your tracker</span>
-  </div>
-  <div class="stat">
-    <span class="stat-label">NET UNITS</span>
-    <span class="stat-value {{ 'pos' if tstats.net_units > 0 else ('neg' if tstats.net_units < 0 else '') }}">{{ fmt_units(tstats.net_units) }}</span>
-    <span class="stat-sub">realized edge</span>
-  </div>
-  <div class="stat">
-    <span class="stat-label">NET</span>
-    <span class="stat-value {{ 'pos' if tstats.net_dollars > 0 else ('neg' if tstats.net_dollars < 0 else '') }}">{{ fmt_money(tstats.net_dollars) }}</span>
-    <span class="stat-sub">in your tracker</span>
-  </div>
-  <div class="stat">
-    <span class="stat-label">ROI</span>
-    <span class="stat-value {{ 'pos' if tstats.roi > 0 else ('neg' if tstats.roi < 0 else '') }}">{{ '%+.1f' % tstats.roi }}%</span>
-    <span class="stat-sub">on amount risked</span>
-  </div>
-</section>
 
 <!-- 08 · RECENT RESULTS -->
 <div class="section-head">
