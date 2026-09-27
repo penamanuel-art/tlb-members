@@ -171,8 +171,13 @@
 <div class="tracker-box">
 <div class="section-head">
   <div>
+    {% if es_admin %}
+    <h2 class="section-title">Owner's tracker results</h2>
+    <p class="section-sub">Every official play, auto-graded from the final score.</p>
+    {% else %}
     <h2 class="section-title">Your tracker</h2>
     <p class="section-sub">Your records live here. Every time you make a play, make sure to hit <b>Track</b>.</p>
+    {% endif %}
   </div>
   <a class="link-more" href="{{ url_for('tracker') }}">Open my tracker →</a>
 </div>
