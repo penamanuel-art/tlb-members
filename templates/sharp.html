@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block title %}Sharp Money — The Sharp Team{% endblock %}
+{% block content %}
+<style>
+.sh-card{background:#17171f;border:1px solid #26262f;border-radius:18px;padding:18px;margin:14px 0;color:#fff}
+.sh-title{font-size:20px;font-weight:800;margin:0 0 4px;color:#fff}
+.sh-kick{color:#9a9ab5;font-size:14px;margin:0 0 12px}
+.sh-rows{width:100%;border-collapse:collapse;margin-bottom:12px}
+.sh-rows td{padding:9px 4px;border-top:1px solid #26262f;font-size:15px;vertical-align:middle}
+.sh-team{font-weight:700;color:#fff}
+.sh-move{color:#c9c9e0;white-space:nowrap}
+.sh-pp{font-weight:800;white-space:nowrap;text-align:right}
+.sh-pp.up{color:#4ade80}
+.sh-pp.down{color:#f87171}
+.sh-pp.flat{color:#9a9ab5}
+.badge{display:inline-flex;align-items:center;border-radius:10px;padding:4px 10px;font-size:12px;font-weight:800;margin-left:8px}
+.badge.sharp{background:#2f6fed;color:#fff}
+.badge.sig{background:#1d3a2a;color:#4ade80}
+.sh-cons{color:#9a9ab5;font-size:13px;margin:0 0 12px}
+.sh-cons b{color:#e8e8f2}
+.sh-betbtn{display:inline-block;background:#179BE7;color:#fff;font-weight:800;font-size:16px;border-radius:14px;padding:13px 24px;text-decoration:none}
+.sh-betbtn:active{transform:scale(.98)}
+.sh-sig{color:#4ade80;font-size:13px;margin:0 0 10px}
+.sh-empty{border:2px dashed #3a3a4a;border-radius:18px;padding:28px 20px;text-align:center;margin:16px 0}
+.sh-empty h3{color:#fff;margin:0 0 8px}
+.sh-empty p{color:#9a9ab5;margin:0;font-size:14px}
+.sh-note{color:#9a9ab5;font-size:12px;text-align:center;margin-top:18px;line-height:1.5}
+.sport-pills{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 4px}
+.sport-pill{background:#1c1c28;border:1.5px solid #3a3a4a;color:#c9c9e0;font-weight:800;font-size:14px;border-radius:999px;padding:8px 18px;cursor:pointer}
+.sport-pill.active{border-color:#2f6fed;color:#fff;background:#1c2a4a}
+.sh-kicker{color:#8f8fb0;font-size:12px;font-weight:800;letter-spacing:1px}
+</style>
+
+<section class="tracker-head">
+  <div>
+    <p class="kicker">SHARP MONEY · LINE MOVEMENT</p>
+    <h2>Where the pros are betting</h2>
+    {% if board.get('updated_at') %}
+    <p class="muted">Updated {{ board.updated_at }} ET · refreshes every ~30 min</p>
+    {% endif %}
+  </div>
+</section>
+
+<div class="sport-pills" id="sportPills">
+  <button class="sport-pill active" data-sport="ALL" type="button">All</button>
+  <button class="sport-pill" data-sport="NFL" type="button">🏈 NFL</button>
+  <button class="sport-pill" data-sport="NCAAF" type="button">🏈 CFB</button>
+  <button class="sport-pill" data-sport="MLB" type="button">⚾ MLB</button>
+</div>
+
+{% set games = board.get('games', []) %}
+{% if games %}
+  {% for g in games %}
+  <article class="sh-card" data-sport="{{ g.sport }}">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px">
+      <span class="sh-kicker">{{ g.sport }}</span>
+      {% if g.alerted %}<span class="badge sig">✓ SIGNAL</span>{% endif %}
+    </div>
+    <h3 class="sh-title">{{ g.game }}</h3>
+    <p class="sh-kick">{{ g.kickoff_et }} ET · Moneyline</p>
+    {% if g.signal_move %}<p class="sh-sig">🔪 {{ g.signal_move }}</p>{% endif %}
+    <table class="sh-rows">
+      {% for slot in ['away','home'] %}
+      {% set side = g.line[slot] %}
+      {% set team = g.away if slot == 'away' else g.home %}
+      <tr>
+        <td class="sh-team">{{ team }}{% if g.sharp_slot == slot %}<span class="badge sharp">🔪 SHARP</span>{% endif %}</td>
+        <td class="sh-move">{% if side.first > 0 %}+{% endif %}{{ side.first|int }} → {% if side.now > 0 %}+{% endif %}{{ side.now|int }}</td>
+        <td class="sh-pp {% if side.pp > 0 %}up{% elif side.pp < 0 %}down{% else %}flat{% endif %}">{% if side.pp > 0 %}+{% endif %}{{ side.pp }}pp</td>
+      </tr>
+      {% endfor %}
+    </table>
+    <p class="sh-cons">Consensus <b>{% if g.line.away.now > 0 %}+{% endif %}{{ g.line.away.now|int }} / {% if g.line.home.now > 0 %}+{% endif %}{{ g.line.home.now|int }}</b> · {{ g.books }} books</p>
+    {% if g.novig_url %}
+    <a class="sh-betbtn" href="{{ g.novig_url }}" target="_blank" rel="noopener">Bet at Novig →</a>
+    {% endif %}
+  </article>
+  {% endfor %}
+{% else %}
+  <div class="sh-empty">
+    <h3>No line movement today</h3>
+    <p>Sharp signals show up here as the lines move. Check back soon.</p>
+  </div>
+{% endif %}
+
+<p class="sh-note">Movement vs first seen today · multi-book consensus (median).<br>The 🔪 badge only shows when a side's implied probability rose 1+ points (juice-filtered).<br>This board is informational, not a pick — always verify the price at your book.</p>
+
+<script>
+(function () {
+  var pills = document.querySelectorAll('#sportPills .sport-pill');
+  pills.forEach(function (p) {
+    p.addEventListener('click', function () {
+      pills.forEach(function (q) { q.classList.remove('active'); });
+      p.classList.add('active');
+      var s = p.getAttribute('data-sport');
+      document.querySelectorAll('.sh-card').forEach(function (c) {
+        c.style.display = (s === 'ALL' || c.getAttribute('data-sport') === s) ? '' : 'none';
+      });
+    });
+  });
+})();
+</script>
+{% endblock %}
