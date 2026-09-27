@@ -435,8 +435,11 @@ img { max-width: 100%; height: auto; }
 }
 .results-hero .stat { padding: 18px 14px; }
 .results-hero .stat-value { font-size: 2rem; }
-/* ---- Tracker del miembro: bordes verdes (2026-09-27) ---- */
-.member-cards .stat { border: 2px solid #22c55e; }
+/* ---- Tracker del miembro: color verde como la tarjeta de profit (2026-09-27) ---- */
+.member-cards .stat {
+  background: linear-gradient(135deg, rgba(34,197,94,.14), rgba(34,197,94,.04));
+  border: 1px solid rgba(34,197,94,.45);
+}
 @media (max-width: 420px) {
   .results-hero .stat-value { font-size: 1.7rem; }
 }
