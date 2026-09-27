@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 {% block title %}Today — The Sharp Team
-<!-- LINE RAIN (updated 2026-09-26 per Alex: betting lines & codes instead of money): ticket-style chips ~4s, once per session -->
-<canvas id="lluvia-lineas" style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9999;"></canvas>
+<!-- MONEY RAIN (updated 2026-09-26 per Alex: money bags emoji instead of line chips): ~4s, once per session -->
+<canvas id="lluvia-dinero" style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9999;"></canvas>
 <script>
 (function(){
-  var canvas = document.getElementById('lluvia-lineas');
+  var canvas = document.getElementById('lluvia-dinero');
   function quitar(){ if (canvas) canvas.remove(); }
   // Once per session: if it already rained on entry, don't repeat when navigating the menu
   try {
@@ -16,45 +16,31 @@
   var W, H, DPR = Math.min(window.devicePixelRatio || 1, 2);
   function size(){ W = innerWidth; H = innerHeight; canvas.width = W*DPR; canvas.height = H*DPR; ctx.setTransform(DPR,0,0,DPR,0,0); }
   size(); addEventListener('resize', size);
-  // Betting lines + short codes. fg = text color, ac = border accent (brand green/gold).
-  var POOL = [
-    {t:'-110', fg:'#ffffff', ac:'#22c55e'}, {t:'+130', fg:'#ffffff', ac:'#22c55e'},
-    {t:'-105', fg:'#ffffff', ac:'#22c55e'}, {t:'+150', fg:'#ffffff', ac:'#22c55e'},
-    {t:'-120', fg:'#ffffff', ac:'#22c55e'}, {t:'+200', fg:'#ffffff', ac:'#22c55e'},
-    {t:'-115', fg:'#ffffff', ac:'#22c55e'}, {t:'+105', fg:'#ffffff', ac:'#22c55e'},
-    {t:'-108', fg:'#ffffff', ac:'#22c55e'}, {t:'+118', fg:'#ffffff', ac:'#22c55e'},
-    {t:'-122', fg:'#ffffff', ac:'#22c55e'}, {t:'+140', fg:'#ffffff', ac:'#22c55e'},
-    {t:'-112', fg:'#ffffff', ac:'#22c55e'}, {t:'+125', fg:'#ffffff', ac:'#22c55e'},
-    {t:'+100', fg:'#ffffff', ac:'#22c55e'}, {t:'-101', fg:'#ffffff', ac:'#22c55e'},
-    {t:'EV+3.2%', fg:'#4ade80', ac:'#22c55e'}, {t:'+5.1%', fg:'#4ade80', ac:'#22c55e'},
-    {t:'CLV+', fg:'#4ade80', ac:'#22c55e'}, {t:'NO-VIG', fg:'#4ade80', ac:'#22c55e'},
-    {t:'NFL', fg:'#fbbf24', ac:'#fbbf24'}, {t:'MLB', fg:'#fbbf24', ac:'#fbbf24'},
-    {t:'NCAAF', fg:'#fbbf24', ac:'#fbbf24'}, {t:'\u2605 ELITE', fg:'#fbbf24', ac:'#fbbf24'},
-    {t:'GOLD', fg:'#4ade80', ac:'#22c55e'}, {t:'-130', fg:'#ffffff', ac:'#22c55e'},
-    {t:'+250', fg:'#ffffff', ac:'#22c55e'}
-  ];
+  // Money rain: money bags, dollar bills and gold $ — reads as "money" instantly.
+  var POOL = ['\uD83D\uDCB0','\uD83D\uDCB0','\uD83D\uDCB0','\uD83D\uDCB0','\uD83D\uDCB0',
+              '\uD83D\uDCB5','\uD83D\uDCB5','$','$'];
   var N = Math.max(70, Math.min(150, Math.floor(W/6))), chips = [], i;
-  for (i = 0; i < N; i++) { var p = POOL[Math.floor(Math.random()*POOL.length)];
+  for (i = 0; i < N; i++) { var e = POOL[Math.floor(Math.random()*POOL.length)];
     chips.push({
-      x: Math.random()*W, y: -40 - Math.random()*H*0.6,
-      vy: 3.5 + Math.random()*3.5,
+      x: Math.random()*W, y: -50 - Math.random()*H*0.6,
+      vy: 3.2 + Math.random()*3.2,
       sway: Math.random()*6.28, swaySpd: 0.02 + Math.random()*0.03,
       rot: (Math.random()-0.5)*0.9, rotSpd: (Math.random()-0.5)*0.06,
-      txt: p.t, fg: p.fg, ac: p.ac, alpha: 1
+      e: e, size: e === '$' ? 22 + Math.random()*10 : 30 + Math.random()*18, alpha: 1
     });
   }
   function draw(c){
     ctx.save(); ctx.translate(c.x, c.y); ctx.rotate(c.rot); ctx.globalAlpha = c.alpha;
-    ctx.font = 'bold 13px system-ui, sans-serif';
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    var w = ctx.measureText(c.txt).width + 22, h = 28;
-    ctx.fillStyle = 'rgba(14,23,38,.93)';
-    ctx.strokeStyle = c.ac; ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    if (ctx.roundRect) ctx.roundRect(-w/2, -h/2, w, h, 8); else ctx.rect(-w/2, -h/2, w, h);
-    ctx.fill(); ctx.stroke();
-    ctx.fillStyle = c.fg;
-    ctx.fillText(c.txt, 0, 1);
+    if (c.e === '$') {
+      ctx.font = 'bold ' + Math.round(c.size) + 'px system-ui, sans-serif';
+      ctx.fillStyle = '#fbbf24';
+      ctx.strokeStyle = 'rgba(0,0,0,.35)'; ctx.lineWidth = 3;
+      ctx.strokeText('$', 0, 0); ctx.fillText('$', 0, 0);
+    } else {
+      ctx.font = Math.round(c.size) + 'px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",serif';
+      ctx.fillText(c.e, 0, 0);
+    }
     ctx.restore();
   }
   var t0 = performance.now(), DUR = 4000;
@@ -390,11 +376,11 @@
   </div>
 </section>
 
-<!-- LINE RAIN (updated 2026-09-26 per Alex: betting lines & codes instead of money): ticket-style chips ~4s, once per session -->
-<canvas id="lluvia-lineas" style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9999;"></canvas>
+<!-- MONEY RAIN (updated 2026-09-26 per Alex: money bags emoji instead of line chips): ~4s, once per session -->
+<canvas id="lluvia-dinero" style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9999;"></canvas>
 <script>
 (function(){
-  var canvas = document.getElementById('lluvia-lineas');
+  var canvas = document.getElementById('lluvia-dinero');
   function quitar(){ if (canvas) canvas.remove(); }
   // Once per session: if it already rained on entry, don't repeat when navigating the menu
   try {
@@ -406,45 +392,31 @@
   var W, H, DPR = Math.min(window.devicePixelRatio || 1, 2);
   function size(){ W = innerWidth; H = innerHeight; canvas.width = W*DPR; canvas.height = H*DPR; ctx.setTransform(DPR,0,0,DPR,0,0); }
   size(); addEventListener('resize', size);
-  // Betting lines + short codes. fg = text color, ac = border accent (brand green/gold).
-  var POOL = [
-    {t:'-110', fg:'#ffffff', ac:'#22c55e'}, {t:'+130', fg:'#ffffff', ac:'#22c55e'},
-    {t:'-105', fg:'#ffffff', ac:'#22c55e'}, {t:'+150', fg:'#ffffff', ac:'#22c55e'},
-    {t:'-120', fg:'#ffffff', ac:'#22c55e'}, {t:'+200', fg:'#ffffff', ac:'#22c55e'},
-    {t:'-115', fg:'#ffffff', ac:'#22c55e'}, {t:'+105', fg:'#ffffff', ac:'#22c55e'},
-    {t:'-108', fg:'#ffffff', ac:'#22c55e'}, {t:'+118', fg:'#ffffff', ac:'#22c55e'},
-    {t:'-122', fg:'#ffffff', ac:'#22c55e'}, {t:'+140', fg:'#ffffff', ac:'#22c55e'},
-    {t:'-112', fg:'#ffffff', ac:'#22c55e'}, {t:'+125', fg:'#ffffff', ac:'#22c55e'},
-    {t:'+100', fg:'#ffffff', ac:'#22c55e'}, {t:'-101', fg:'#ffffff', ac:'#22c55e'},
-    {t:'EV+3.2%', fg:'#4ade80', ac:'#22c55e'}, {t:'+5.1%', fg:'#4ade80', ac:'#22c55e'},
-    {t:'CLV+', fg:'#4ade80', ac:'#22c55e'}, {t:'NO-VIG', fg:'#4ade80', ac:'#22c55e'},
-    {t:'NFL', fg:'#fbbf24', ac:'#fbbf24'}, {t:'MLB', fg:'#fbbf24', ac:'#fbbf24'},
-    {t:'NCAAF', fg:'#fbbf24', ac:'#fbbf24'}, {t:'\u2605 ELITE', fg:'#fbbf24', ac:'#fbbf24'},
-    {t:'GOLD', fg:'#4ade80', ac:'#22c55e'}, {t:'-130', fg:'#ffffff', ac:'#22c55e'},
-    {t:'+250', fg:'#ffffff', ac:'#22c55e'}
-  ];
+  // Money rain: money bags, dollar bills and gold $ — reads as "money" instantly.
+  var POOL = ['\uD83D\uDCB0','\uD83D\uDCB0','\uD83D\uDCB0','\uD83D\uDCB0','\uD83D\uDCB0',
+              '\uD83D\uDCB5','\uD83D\uDCB5','$','$'];
   var N = Math.max(70, Math.min(150, Math.floor(W/6))), chips = [], i;
-  for (i = 0; i < N; i++) { var p = POOL[Math.floor(Math.random()*POOL.length)];
+  for (i = 0; i < N; i++) { var e = POOL[Math.floor(Math.random()*POOL.length)];
     chips.push({
-      x: Math.random()*W, y: -40 - Math.random()*H*0.6,
-      vy: 3.5 + Math.random()*3.5,
+      x: Math.random()*W, y: -50 - Math.random()*H*0.6,
+      vy: 3.2 + Math.random()*3.2,
       sway: Math.random()*6.28, swaySpd: 0.02 + Math.random()*0.03,
       rot: (Math.random()-0.5)*0.9, rotSpd: (Math.random()-0.5)*0.06,
-      txt: p.t, fg: p.fg, ac: p.ac, alpha: 1
+      e: e, size: e === '$' ? 22 + Math.random()*10 : 30 + Math.random()*18, alpha: 1
     });
   }
   function draw(c){
     ctx.save(); ctx.translate(c.x, c.y); ctx.rotate(c.rot); ctx.globalAlpha = c.alpha;
-    ctx.font = 'bold 13px system-ui, sans-serif';
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    var w = ctx.measureText(c.txt).width + 22, h = 28;
-    ctx.fillStyle = 'rgba(14,23,38,.93)';
-    ctx.strokeStyle = c.ac; ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    if (ctx.roundRect) ctx.roundRect(-w/2, -h/2, w, h, 8); else ctx.rect(-w/2, -h/2, w, h);
-    ctx.fill(); ctx.stroke();
-    ctx.fillStyle = c.fg;
-    ctx.fillText(c.txt, 0, 1);
+    if (c.e === '$') {
+      ctx.font = 'bold ' + Math.round(c.size) + 'px system-ui, sans-serif';
+      ctx.fillStyle = '#fbbf24';
+      ctx.strokeStyle = 'rgba(0,0,0,.35)'; ctx.lineWidth = 3;
+      ctx.strokeText('$', 0, 0); ctx.fillText('$', 0, 0);
+    } else {
+      ctx.font = Math.round(c.size) + 'px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",serif';
+      ctx.fillText(c.e, 0, 0);
+    }
     ctx.restore();
   }
   var t0 = performance.now(), DUR = 4000;
