@@ -1863,6 +1863,29 @@ def api_push_edge():
     return jsonify({"sent": sent, "failed": failed})
 
 
+@app.route("/api/push-status")
+def api_push_status():
+    """Estado de suscripciones push. Protegido con X-Push-Key.
+
+    Devuelve el total de suscripciones y si el admin (Alex) tiene al
+    menos una suscripción activa, para verificar antes de cada envío
+    que él también recibe las pushes de miembro.
+    """
+    if not PUSH_TRIGGER_KEY or not secrets.compare_digest(
+        request.headers.get("X-Push-Key", ""), PUSH_TRIGGER_KEY
+    ):
+        return jsonify({"error": "forbidden"}), 403
+    db = get_db()
+    total = db.execute("SELECT COUNT(*) FROM push_subscriptions").fetchone()[0]
+    admin_subs = db.execute(
+        "SELECT COUNT(*) FROM push_subscriptions WHERE member_id IN"
+        " (SELECT id FROM users WHERE is_admin = 1)"
+    ).fetchone()[0]
+    return jsonify(
+        {"total": total, "admin_subscriptions": admin_subs, "admin_active": admin_subs > 0}
+    )
+
+
 @app.route("/api/untracked")
 def api_untracked():
     """Jugadas de hoy que el admin (Alex) aún no trackeó.
