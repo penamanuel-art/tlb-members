@@ -59,9 +59,15 @@
 <section class="wgt-head">
   <div class="wgt-avatar">{{ (nombre or 'M')[:1]|upper }}</div>
   <div>
+    {% if es_admin %}
+    <p class="kicker">OWNER'S TRACKER · THESHARPTEAM</p>
+    <h2 class="wgt-name">Owner's tracker results</h2>
+    <p class="wgt-sub">Every official play, auto-graded from the final score.</p>
+    {% else %}
     <p class="kicker">MY TRACKER · THESHARPTEAM</p>
     <h2 class="wgt-name">Your tracker</h2>
     <p class="wgt-sub">Your records live here. Every time you make a play, make sure to hit <b>Track</b>.</p>
+    {% endif %}
   </div>
   {% if stats.streak and stats.streak != '—' %}
   <span class="wgt-streak-pill">🔥 {{ stats.streak }}</span>
