@@ -167,26 +167,33 @@
   </a>
 </div>
 
-<!-- 05 · YOUR PACE (compacto: el tracker único vive en /tracker) -->
+<!-- 05 · YOUR TRACKER (personal: mismo diseño de 4 tarjetas que el tracker oficial) -->
 <div class="section-head">
-  <h2 class="section-title">YOUR PACE</h2>
+  <h2 class="section-title">Your tracker</h2>
   <a class="link-more" href="{{ url_for('tracker') }}">Open my tracker →</a>
 </div>
-<section class="stats-grid">
+{% set _settled = tstats.wins + tstats.losses %}
+{% set _wr = (tstats.wins / _settled * 100) if _settled else 0 %}
+<section class="stats-grid results-hero">
   <div class="stat">
-    <span class="stat-label">CHECK-IN STREAK</span>
-    <span class="stat-value">🔥 {{ racha }}</span>
-    <span class="stat-sub">days in a row</span>
+    <span class="stat-label">TOTAL PROFIT</span>
+    <span class="stat-value {{ 'pos' if tstats.net_dollars > 0 else ('neg' if tstats.net_dollars < 0 else '') }}">{% if tstats.net_dollars > 0 %}{{ '+$%.2f' % tstats.net_dollars }}{% elif tstats.net_dollars < 0 %}{{ '-$%.2f' % -tstats.net_dollars }}{% else %}$0.00{% endif %}</span>
+    <span class="stat-sub">your tracked profit</span>
   </div>
   <div class="stat">
-    <span class="stat-label">TRACKED</span>
-    <span class="stat-value">{{ tstats.tracked }}</span>
-    <span class="stat-sub">{{ tstats.pending }} pending</span>
+    <span class="stat-label">WIN RATE</span>
+    <span class="stat-value">{{ '%.1f' % _wr }}%</span>
+    <span class="stat-sub">won / settled</span>
   </div>
   <div class="stat">
-    <span class="stat-label">BANKROLL</span>
-    <span class="stat-value">{% if bankroll %}${{ '%.0f' % bankroll }}{% else %}—{% endif %}</span>
-    <span class="stat-sub">{% if bankroll %}set{% else %}not set{% endif %}</span>
+    <span class="stat-label">RECORD</span>
+    <span class="stat-value">{{ tstats.wins }}–{{ tstats.losses }}</span>
+    <span class="stat-sub">settled plays</span>
+  </div>
+  <div class="stat">
+    <span class="stat-label">ROI</span>
+    <span class="stat-value {{ 'pos' if tstats.roi > 0 else ('neg' if tstats.roi < 0 else '') }}">{{ '%+.1f' % tstats.roi }}%</span>
+    <span class="stat-sub">on amount risked</span>
   </div>
 </section>
 
