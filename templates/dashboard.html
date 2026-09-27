@@ -16,15 +16,11 @@
   .wgt-pill { border:1px solid var(--line); background:var(--card); color:var(--muted); border-radius:999px;
     padding:8px 16px; font-weight:800; font-size:.85rem; cursor:pointer; white-space:nowrap; }
   .wgt-pill.active { background:#fbbf24; border-color:#fbbf24; color:#111; }
-  .wgt-ranges { padding: 4px 0; }
-  .wgt-range-row { display:flex; justify-content:space-between; align-items:center;
-    padding:14px 18px; border-bottom:1px solid var(--line); }
-  .wgt-range-row:last-child { border-bottom:none; }
-  .wgt-range-left b { display:block; color:var(--text); font-size:1.05rem; font-weight:800; }
-  .wgt-range-left span { color:var(--muted); font-size:.9rem; }
-  .wgt-range-profit { font-size:1.05rem; font-weight:800; }
-  .wgt-range-profit.pos { color:#4ade80; }
-  .wgt-range-profit.neg { color:#f87171; }
+  .wgt-range-btns { display:grid; gap:10px; margin: 4px 0 22px; }
+  .wgt-range-btns button { display:block; width:100%; text-align:left;
+    background:var(--card); border:1px solid var(--line); border-radius:14px;
+    color:var(--text); font-weight:800; font-size:1rem; padding:15px 18px; cursor:pointer; }
+  .wgt-range-btns button.active { border-color:#fbbf24; background:rgba(251,191,36,.10); }
   .wgt-export { margin: 0 0 14px; }
   .wgt-export-btn { border:1px solid var(--line); background:var(--card); color:var(--text); border-radius:999px;
     padding:8px 16px; font-weight:800; font-size:.85rem; cursor:pointer; }
@@ -76,7 +72,7 @@
   .wgt-empty { text-align:center; color:var(--muted); padding:28px 12px; }
 </style>
 
-<div class="tracker-box">
+<div class="tracker-box" id="wgtTrackerTop">
 <section class="wgt-head">
   <div class="wgt-avatar">{{ (nombre or 'M')[:1]|upper }}</div>
   <div>
@@ -143,15 +139,6 @@
     <span class="stat-value {{ 'pos' if stats.roi > 0 else ('neg' if stats.roi < 0 else '') }}" id="wgtRoi">{{ '%+.1f' % stats.roi }}%</span>
     <span class="stat-sub">on amount risked</span>
   </div>
-</section>
-
-<section class="wgt-card wgt-ranges">
-  {% for nombre_r, r in rangos %}
-  <div class="wgt-range-row">
-    <div class="wgt-range-left"><b>{{ nombre_r }}</b><span>{{ r.record }}</span></div>
-    <b class="wgt-range-profit {{ 'pos' if r.profit > 0 else ('neg' if r.profit < 0 else '') }}">{{ fmt_money(r.profit) }}</b>
-  </div>
-  {% endfor %}
 </section>
 
 <section class="wgt-card">
@@ -226,6 +213,17 @@
 {% else %}
 <p class="wgt-empty">You haven't tracked any plays yet. Tap <b>+ Track</b> on today's plays to log them here.</p>
 {% endif %}
+</div>
+
+<!-- RANGOS DE FECHA (pedido por Alex 2026-09-27): botones verticales debajo del tracker;
+     cada uno filtra el tracker con los resultados del rango elegido -->
+<div class="wgt-range-btns">
+  <button type="button" data-br="today">Today</button>
+  <button type="button" data-br="yesterday">Yesterday</button>
+  <button type="button" data-br="week">This Week</button>
+  <button type="button" data-br="month">This Month</button>
+  <button type="button" data-br="year">This Year</button>
+  <button type="button" data-br="all">All Time</button>
 </div>
 
 <!-- OFICIAL · PRUEBA DE VERACIDAD (las jugadas del dueño, con tickets originales) -->
@@ -333,7 +331,11 @@
     if (isNaN(d.getTime())) return true;
     var now = new Date();
     var day = function(x){ return new Date(x.getFullYear(), x.getMonth(), x.getDate()).getTime(); };
-    if (range === 'mtd') return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+    if (range === 'mtd' || range === 'month') return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+    if (range === 'today') return day(d) === day(now);
+    if (range === 'yesterday') { var y = new Date(now); y.setDate(y.getDate() - 1); return day(d) === day(y); }
+    if (range === 'week') { var s = new Date(now); s.setDate(s.getDate() - s.getDay()); return day(d) >= day(s) && day(d) <= day(now); }
+    if (range === 'year') return d.getFullYear() === now.getFullYear();
     var days = parseInt(range, 10);
     var cutoff = new Date(now); cutoff.setDate(cutoff.getDate() - (days - 1));
     var t = day(d);
@@ -414,6 +416,17 @@
     });
   });
   apply('7');
+  var brBtns = document.querySelectorAll('[data-br]');
+  brBtns.forEach(function(b){
+    b.addEventListener('click', function(){
+      brBtns.forEach(function(x){ x.classList.remove('active'); });
+      b.classList.add('active');
+      pills.forEach(function(x){ x.classList.remove('active'); });
+      apply(b.getAttribute('data-br'));
+      var top = document.getElementById('wgtTrackerTop');
+      if (top && top.scrollIntoView) top.scrollIntoView({behavior:'smooth'});
+    });
+  });
   var expToggle = document.getElementById('wgtExportToggle');
   var expPanel = document.getElementById('wgtExportPanel');
   if (expToggle && expPanel) {
