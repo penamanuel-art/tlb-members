@@ -326,42 +326,47 @@
 <p class="muted">No results published yet.</p>
 {% endif %}
 
-<!-- 08 · TOOLS & MEMBERSHIP -->
+<!-- 08 · YOUR TOOLS (2026-09-26): horizontal scroll-snap carousel, EV Board first -->
 <div class="section-head">
-  <h2 class="section-title">TOOLS & MEMBERSHIP</h2>
+  <h2 class="section-title">YOUR TOOLS</h2>
 </div>
-<div class="tool-list">
-  <a class="tool-row" href="{{ url_for('tracker') }}">
-    <span class="tool-icon">📊</span>
-    <span class="tool-text"><b>My Tracker</b><span>Log and grade your plays</span></span>
-    <span class="tool-go">Open →</span>
+<div class="tool-carousel">
+  <a class="tool-card" href="{{ url_for('ev_board') }}">
+    <span class="tool-emoji">⚡</span>
+    <b>EV Board</b>
+    <span class="tool-sub">Live +EV edges</span>
   </a>
-  <a class="tool-row" href="{{ url_for('masterclass') }}">
-    <span class="tool-icon">🎓</span>
-    <span class="tool-text"><b>Masterclass</b><span>The 30-day course</span></span>
-    <span class="tool-go">Open →</span>
+  <a class="tool-card" href="{{ url_for('tracker') }}">
+    <span class="tool-emoji">📊</span>
+    <b>My Tracker</b>
+    <span class="tool-sub">Log and grade your plays</span>
   </a>
-  <a class="tool-row" href="{{ url_for('archivo') }}">
-    <span class="tool-icon">🗂️</span>
-    <span class="tool-text"><b>Archive</b><span>Every published play</span></span>
-    <span class="tool-go">Open →</span>
+  <a class="tool-card" href="{{ url_for('masterclass') }}">
+    <span class="tool-emoji">🎓</span>
+    <b>Masterclass</b>
+    <span class="tool-sub">The 30-day course</span>
   </a>
-  <a class="tool-row" href="{{ url_for('programa') }}">
-    <span class="tool-icon">📘</span>
-    <span class="tool-text"><b>The program</b><span>Creed, method and fundamentals</span></span>
-    <span class="tool-go">Open →</span>
+  <a class="tool-card" href="{{ url_for('archivo') }}">
+    <span class="tool-emoji">🗂️</span>
+    <b>Archive</b>
+    <span class="tool-sub">Every published play</span>
+  </a>
+  <a class="tool-card" href="{{ url_for('programa') }}">
+    <span class="tool-emoji">📘</span>
+    <b>The program</b>
+    <span class="tool-sub">Creed, method and fundamentals</span>
   </a>
   {% if not platinum_unlocked %}
-  <a class="tool-row tool-gold" href="{{ url_for('desbloquear_platinum') }}">
-    <span class="tool-icon">🔓</span>
-    <span class="tool-text"><b>Unlock Elite</b><span>$1 the first week, then $23/week</span></span>
-    <span class="tool-go">View →</span>
+  <a class="tool-card tool-gold" href="{{ url_for('desbloquear_platinum') }}">
+    <span class="tool-emoji">🔓</span>
+    <b>Unlock Elite</b>
+    <span class="tool-sub">$1 the first week, then $23/week</span>
   </a>
   {% endif %}
-  <a class="tool-row" href="{{ url_for('cuenta') }}">
-    <span class="tool-icon">💰</span>
-    <span class="tool-text"><b>My account</b><span>Your bankroll and profile</span></span>
-    <span class="tool-go">Open →</span>
+  <a class="tool-card" href="{{ url_for('cuenta') }}">
+    <span class="tool-emoji">💰</span>
+    <b>My account</b>
+    <span class="tool-sub">Your bankroll and profile</span>
   </a>
 </div>
 
