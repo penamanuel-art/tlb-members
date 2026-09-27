@@ -1113,6 +1113,7 @@ def home():
         platinum_unlocked=platinum_unlocked_for(user),
         res=program_stats(),
         leccion=load_masterclass(),
+        archivo_mc=load_masterclass_archivo(),
         tstats=tstats,
         recientes=recientes,
         es_admin=is_admin_for(user),
