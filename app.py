@@ -1115,6 +1115,7 @@ def home():
         leccion=load_masterclass(),
         tstats=tstats,
         recientes=recientes,
+        es_admin=is_admin_for(user),
     )
 
 
@@ -1304,6 +1305,7 @@ def tracker():
         platinum_unlocked=platinum_unlocked_for(user),
         res=program_stats(),
         recientes=recientes_oficiales(),
+        es_admin=is_admin_for(user),
     )
 
 
