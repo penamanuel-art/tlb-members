@@ -174,7 +174,7 @@
 </div>
 {% set _settled = tstats.wins + tstats.losses %}
 {% set _wr = (tstats.wins / _settled * 100) if _settled else 0 %}
-<section class="stats-grid results-hero">
+<section class="stats-grid results-hero member-cards">
   <div class="stat">
     <span class="stat-label">TOTAL PROFIT</span>
     <span class="stat-value {{ 'pos' if tstats.net_dollars > 0 else ('neg' if tstats.net_dollars < 0 else '') }}">{% if tstats.net_dollars > 0 %}{{ '+$%.2f' % tstats.net_dollars }}{% elif tstats.net_dollars < 0 %}{{ '-$%.2f' % -tstats.net_dollars }}{% else %}$0.00{% endif %}</span>
