@@ -797,6 +797,46 @@ def compute_stats(tracked):
     }
 
 
+
+def auto_grado_tracked(db, user_id):
+    """Liquida automáticamente las jugadas trackeadas pendientes usando los
+    resultados oficiales del programa (data/archive.json).
+
+    Se ejecuta en cada vista del tracker y del home, así ningún miembro
+    tiene que marcar resultados a mano: en cuanto la liquidación nocturna
+    publica el resultado oficial, la próxima visita lo refleja.
+    Solo toca jugadas con resultado pendiente (NULL); nunca reescribe
+    un resultado ya marcado.
+    """
+    pendientes = db.execute(
+        "SELECT id, fecha, pick FROM tracked_plays "
+        "WHERE user_id = ? AND resultado IS NULL",
+        (user_id,),
+    ).fetchall()
+    if not pendientes:
+        return 0
+    oficiales = {}
+    for d in load_archive():
+        fecha = (d.get("fecha") or "").strip()
+        for j in d.get("jugadas", []) or []:
+            r = j.get("resultado")
+            pick = (j.get("pick") or "").strip().lower()
+            if r in ("WON", "LOST") and pick:
+                oficiales[(fecha, pick)] = "W" if r == "WON" else "L"
+    n = 0
+    for t in pendientes:
+        key = ((t["fecha"] or "").strip(), (t["pick"] or "").strip().lower())
+        res = oficiales.get(key)
+        if res:
+            db.execute(
+                "UPDATE tracked_plays SET resultado = ? WHERE id = ?",
+                (res, t["id"]),
+            )
+            n += 1
+    if n:
+        db.commit()
+    return n
+
 def fmt_money(v: float) -> str:
     sign = "+" if v > 0 else ("-" if v < 0 else "")
     return f"{sign}${abs(v):,.2f}"
@@ -921,6 +961,7 @@ def compute_ticker_days():
 def home():
     db = get_db()
     record_checkin(db, session["user_id"])
+    auto_grado_tracked(db, session["user_id"])
     program, plays = load_data()
     card_pendiente = not card_publicada_hoy()
     if card_pendiente:
@@ -1086,6 +1127,7 @@ def cuenta():
 def tracker():
     db = get_db()
     record_checkin(db, session["user_id"])
+    auto_grado_tracked(db, session["user_id"])
     tracked = db.execute(
         "SELECT * FROM tracked_plays WHERE user_id = ? ORDER BY fecha DESC, id DESC",
         (session["user_id"],),
