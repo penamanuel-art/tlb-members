@@ -1283,6 +1283,7 @@ def tracker():
             "profit": play_profit_dollars(t),
             "casa": (off.get("casa") or "Novig"),
             "marcador": (off.get("marcador") or ""),
+            "comprobante": (off.get("comprobante") or ""),
             "abbr": abbr,
             "logo": logo,
         })
