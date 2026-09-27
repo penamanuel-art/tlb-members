@@ -1831,7 +1831,8 @@ def api_push_edge():
     title = data.get("title") or "The Sharp Team"
     body = data.get("body") or "New +EV edge on the board."
     url = data.get("url") or "/ev-board"
-    payload = json.dumps({"title": title, "body": body, "url": url})
+    image = data.get("image") or ""
+    payload = json.dumps({"title": title, "body": body, "url": url, "image": image})
     db = get_db()
     subs = db.execute(
         "SELECT id, endpoint, p256dh, auth FROM push_subscriptions"

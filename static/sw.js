@@ -17,6 +17,7 @@ self.addEventListener("push", (event) => {
     badge: "/static/img/apple-touch-icon.png",
     data: { url: data.url || "/ev-board" },
   };
+  if (data.image) options.image = data.image;
   event.waitUntil(self.registration.showNotification(title, options));
 });
 
