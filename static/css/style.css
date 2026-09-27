@@ -476,6 +476,15 @@ img { max-width: 100%; height: auto; }
 }
 .tracker-box .wgt-head { margin-top: 0; }
 .tracker-box .section-head { margin-top: 0; }
+/* ---- Divisor dorado entre secciones principales (2026-09-27, pedido por Alex:
+   separa el tracker del dueño de los resultados oficiales del programa) ---- */
+.section-divider {
+  border: 0;
+  border-top: 2px solid var(--gold);
+  width: 92%;
+  margin: 32px auto;
+  opacity: .85;
+}
 /* ---- Subtitulo del tracker del miembro (2026-09-27) ---- */
 .wgt-sub, .section-sub { color: var(--muted); font-size: 16px; margin: 4px 0 0; }
 .section-sub { margin-top: 0; }
