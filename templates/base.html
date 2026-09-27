@@ -50,7 +50,7 @@
     <a href="{{ url_for('home') }}" class="cta-green">View card →</a>
     {% if es_admin %}<button id="langToggle" class="lang-btn notranslate" title="Ver en español">🇺🇸 EN</button>{% endif %}
     <a class="nav-link" href="{{ url_for('cuenta') }}">Account</a>
-    <div class="avatar" title="{{ nombre_corto }}">{{ inicial }}</div>
+    <a class="avatar" href="{{ url_for('cuenta') }}" title="{{ nombre_corto }}">{{ inicial }}</a>
   </div>
   {% else %}
   <nav class="nav">
