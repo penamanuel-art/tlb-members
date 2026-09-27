@@ -170,7 +170,10 @@
 <!-- 05 · YOUR TRACKER (personal: mismo diseño de 4 tarjetas que el tracker oficial) -->
 <div class="tracker-box">
 <div class="section-head">
-  <h2 class="section-title">Your tracker</h2>
+  <div>
+    <h2 class="section-title">Your tracker</h2>
+    <p class="section-sub">Your records live here. Every time you make a play, make sure to hit <b>Track</b>.</p>
+  </div>
   <a class="link-more" href="{{ url_for('tracker') }}">Open my tracker →</a>
 </div>
 {% set _settled = tstats.wins + tstats.losses %}
