@@ -76,7 +76,7 @@
 
 {% set _settled = stats.wins + stats.losses %}
 {% set _wr = (stats.wins / _settled * 100) if _settled else 0 %}
-<section class="stats-grid results-hero">
+<section class="stats-grid results-hero member-cards">
   <div class="stat">
     <span class="stat-label">TOTAL PROFIT</span>
     <span class="stat-value {{ 'pos' if stats.net_dollars > 0 else ('neg' if stats.net_dollars < 0 else '') }}" id="wgtProfit">{{ fmt_money(stats.net_dollars) }}</span>
