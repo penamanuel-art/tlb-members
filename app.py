@@ -18,7 +18,7 @@ import re
 import secrets
 import sqlite3
 import urllib.request
-from datetime import timedelta, datetime, timezone
+from datetime import date, timedelta, datetime, timezone
 from functools import wraps
 
 import bcrypt
@@ -1307,6 +1307,116 @@ def tracker():
         recientes=recientes_oficiales(),
         es_admin=is_admin_for(user),
     )
+
+
+@app.route("/tracker/export")
+def tracker_export():
+    """Descarga CSV del tracker: semana / mes / año / rango de fechas a elegir.
+
+    Params: range=7|30|365|mtd|all  o  from=YYYY-MM-DD&to=YYYY-MM-DD.
+    Columnas: fecha, jugada, cuota, nivel, monto apostado, resultado,
+    profit, marcador, casa + resumen (récord, win rate, ROI...).
+    """
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+    rng = (request.args.get("range") or "").strip().lower()
+    f_from = (request.args.get("from") or "").strip()
+    f_to = (request.args.get("to") or "").strip()
+    hoy = datetime.now(TZ).date()
+
+    desde, hasta, nombre_rango = None, None, ""
+    if f_from or f_to:
+        try:
+            desde = date.fromisoformat(f_from) if f_from else date(2020, 1, 1)
+            hasta = date.fromisoformat(f_to) if f_to else hoy
+        except ValueError:
+            desde, hasta = None, None
+        if desde and hasta and desde <= hasta:
+            nombre_rango = f"{desde.isoformat()} to {hasta.isoformat()}"
+    if not nombre_rango:
+        if rng not in ("7", "30", "365", "mtd", "all"):
+            rng = "7"
+        nombre_rango = {"7": "Last 7 days", "30": "Last 30 days",
+                        "365": "Last 12 months", "mtd": "Month to date",
+                        "all": "All time"}[rng]
+        if rng == "mtd":
+            desde = date(hoy.year, hoy.month, 1)
+            hasta = hoy
+        elif rng != "all":
+            desde = hoy - timedelta(days=int(rng) - 1)
+            hasta = hoy
+
+    def en_rango(fecha):
+        if desde is None:
+            return True
+        f = (fecha or "").strip()
+        if not f:
+            return True
+        try:
+            d = date.fromisoformat(f)
+        except ValueError:
+            return True
+        return desde <= d <= hasta
+
+    db = get_db()
+    tracked = db.execute(
+        "SELECT * FROM tracked_plays WHERE user_id = ? ORDER BY fecha DESC, id DESC",
+        (session["user_id"],),
+    ).fetchall()
+    tracked = [dict(t) for t in tracked]
+    filtradas = [t for t in tracked if en_rango(t["fecha"])]
+    stats = compute_stats(filtradas)
+
+    oficiales = {}
+    for d in load_archive():
+        fecha = (d.get("fecha") or "").strip()
+        for j in d.get("jugadas", []) or []:
+            pk = (j.get("pick") or "").strip().lower()
+            if fecha and pk:
+                oficiales[(fecha, pk)] = j
+
+    import csv
+    import io
+    buf = io.StringIO()
+    w = csv.writer(buf)
+    w.writerow(["THE SHARP TEAM — Tracker export"])
+    w.writerow(["Range", nombre_rango])
+    w.writerow(["Generated", datetime.now(TZ).strftime("%Y-%m-%d %H:%M ET")])
+    w.writerow([])
+    w.writerow(["SUMMARY"])
+    liquidadas = stats["wins"] + stats["losses"]
+    w.writerow(["Settled plays", liquidadas])
+    w.writerow(["Won", stats["wins"]])
+    w.writerow(["Lost", stats["losses"]])
+    wr = (stats["wins"] / liquidadas * 100) if liquidadas else 0
+    w.writerow(["Win rate", f"{wr:.1f}%"])
+    w.writerow(["Total staked", f"${stats['risked']:.2f}"])
+    w.writerow(["Total profit", f"${stats['net_dollars']:.2f}"])
+    w.writerow(["ROI", f"{stats['roi']:+.1f}%"])
+    w.writerow([])
+    w.writerow(["PLAYS"])
+    w.writerow(["Date", "Pick", "Odds", "Level", "Staked", "Result",
+                "Profit", "Score", "Book"])
+    for t in filtradas:
+        f = (t["fecha"] or "").strip()
+        off = oficiales.get((f, (t["pick"] or "").strip().lower()), {})
+        res = t["resultado"] or ""
+        w.writerow([
+            f or "—",
+            t["pick"] or "",
+            fmt_odds(t["cuota"]),
+            t["nivel"] or "",
+            f"${t['stake_monto']:.2f}",
+            {"W": "Won", "L": "Lost"}.get(res, "Pending"),
+            f"${play_profit_dollars(t):+.2f}" if res in ("W", "L") else "—",
+            off.get("marcador") or "",
+            off.get("casa") or "Novig",
+        ])
+    etiqueta = {"7": "7d", "30": "30d", "365": "12m", "mtd": "mtd", "all": "all"}.get(
+        rng, f"{desde.isoformat()}_{hasta.isoformat()}" if desde else "all")
+    fname = f"tracker-{etiqueta}-{hoy.isoformat()}.csv"
+    return Response(buf.getvalue(), mimetype="text/csv",
+                    headers={"Content-Disposition": f"attachment; filename={fname}"})
 
 
 @app.route("/track/<play_id>", methods=["POST"])
