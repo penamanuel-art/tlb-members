@@ -24,7 +24,7 @@
 <p class="muted">The complete course, one lesson per day.</p>
 <div class="accordion">
 {% for l in archivo %}
-  <details class="acc-item"{% if l.dia == leccion.get('dia') %} open{% endif %}>
+  <details class="acc-item" id="day-{{ l.dia }}"{% if l.dia == leccion.get('dia') %} open{% endif %}>
     <summary class="acc-head">
       <span class="acc-dia">Day {{ l.dia }}</span>
       <span class="acc-titulo">{{ l.titulo }}</span>
