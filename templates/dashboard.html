@@ -55,6 +55,7 @@
   .wgt-empty { text-align:center; color:var(--muted); padding:28px 12px; }
 </style>
 
+<div class="tracker-box">
 <section class="wgt-head">
   <div class="wgt-avatar">{{ (nombre or 'M')[:1]|upper }}</div>
   <div>
@@ -171,6 +172,7 @@
 {% else %}
 <p class="wgt-empty">You haven't tracked any plays yet. Tap <b>+ Track</b> on today's plays to log them here.</p>
 {% endif %}
+</div>
 
 <!-- OFICIAL · PRUEBA DE VERACIDAD (las jugadas del dueño, con tickets originales) -->
 <section class="tracker-head record-home">
