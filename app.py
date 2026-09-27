@@ -670,6 +670,28 @@ def load_archive():
     return load_json_file(ARCHIVE_PATH).get("dias", [])
 
 
+def recientes_oficiales(n=6):
+    """Jugadas liquidadas del archivo oficial (sin bloqueadas), más recientes primero."""
+    recientes = []
+    for d in load_archive():
+        for j in d.get("jugadas", []) or []:
+            if (
+                j.get("resultado") in ("WON", "LOST")
+                and not j.get("bloqueada")
+                and j.get("pick")
+            ):
+                recientes.append({
+                    "fecha": d.get("titulo") or d.get("fecha", ""),
+                    "nivel": j.get("nivel", ""),
+                    "pick": j.get("pick", ""),
+                    "cuota": j.get("cuota"),
+                    "resultado": j.get("resultado"),
+                    "profit": j.get("profit") if j.get("profit") is not None else 0.0,
+                    "comprobante": j.get("comprobante"),
+                })
+    return recientes[:n]
+
+
 def program_stats():
     """Stats del programa calculadas EN VIVO desde data/archive.json.
 
@@ -1077,24 +1099,7 @@ def home():
     tracked_ids = {r["play_id"] for r in tracked_rows}
     tstats = compute_stats([dict(r) for r in tracked_rows])
     # Resultados recientes: jugadas liquidadas del archivo (sin bloqueadas).
-    recientes = []
-    for d in load_archive():
-        for j in d.get("jugadas", []) or []:
-            if (
-                j.get("resultado") in ("WON", "LOST")
-                and not j.get("bloqueada")
-                and j.get("pick")
-            ):
-                recientes.append({
-                    "fecha": d.get("titulo") or d.get("fecha", ""),
-                    "nivel": j.get("nivel", ""),
-                    "pick": j.get("pick", ""),
-                    "cuota": j.get("cuota"),
-                    "resultado": j.get("resultado"),
-                    "profit": j.get("profit") if j.get("profit") is not None else 0.0,
-                    "comprobante": j.get("comprobante"),
-                })
-    recientes = recientes[:6]
+    recientes = recientes_oficiales(6)
     return render_template(
         "home.html",
         plays=plays,
@@ -1297,6 +1302,8 @@ def tracker():
         nombre=session.get("nombre", ""),
         bankroll=user["bankroll"] if user else None,
         platinum_unlocked=platinum_unlocked_for(user),
+        res=program_stats(),
+        recientes=recientes_oficiales(),
     )
 
 
