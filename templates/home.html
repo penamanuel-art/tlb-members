@@ -168,6 +168,43 @@
   </a>
 </div>
 
+<!-- GET ALERTS (pedido por Alex 2026-09-27: botones estilo WGT) -->
+<div class="section-head">
+  <div>
+    <h2 class="section-title">GET ALERTS</h2>
+    <p class="section-sub">Never miss a play.</p>
+  </div>
+</div>
+<div class="alert-btns">
+  <button id="alertsPushBtn" class="alert-btn alert-push" type="button">🔔 Push Notifications</button>
+  <a class="alert-btn alert-tg" href="https://t.me/thesharpteam" target="_blank" rel="noopener">✈️ Join Telegram</a>
+</div>
+<style>
+.alert-btns{display:flex;flex-direction:column;gap:12px;margin:4px 0 26px}
+.alert-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:18px;border:none;border-radius:18px;font-size:19px;font-weight:800;color:#fff;text-decoration:none;cursor:pointer;font-family:inherit;box-sizing:border-box}
+.alert-push{background:linear-gradient(135deg,#22c55e,#16a34a)}
+.alert-tg{background:linear-gradient(135deg,#38bdf8,#0ea5e9)}
+.alert-btn:disabled{opacity:.55;cursor:default}
+</style>
+<script>
+(function(){
+  var btn = document.getElementById('alertsPushBtn');
+  if (!btn || !window.TLB_push) return;
+  function paint(st){
+    if (st === 'granted') { btn.textContent = '🔔 Push Notifications On'; btn.disabled = true; }
+    else if (st === 'denied') { btn.textContent = '🔕 Push Blocked'; btn.disabled = true; }
+    else if (st === 'unsupported') { btn.textContent = '🔔 Not supported'; btn.disabled = true; }
+  }
+  window.TLB_push.status().then(paint);
+  btn.addEventListener('click', async function(){
+    btn.disabled = true;
+    var st = await window.TLB_push.enable();
+    paint(st);
+    if (st !== 'granted') btn.disabled = false;
+  });
+})();
+</script>
+
 <!-- 05 · YOUR TRACKER (personal: mismo diseño de 4 tarjetas que el tracker oficial) -->
 <div class="tracker-box">
 <div class="section-head">
