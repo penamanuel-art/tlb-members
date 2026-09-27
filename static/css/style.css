@@ -381,6 +381,30 @@ img { max-width: 100%; height: auto; }
 .tool-go { color: var(--green-bright); font-weight: 700; font-size: .9rem; white-space: nowrap; }
 .tool-gold { border-color: rgba(251,191,36,.45); }
 
+/* ---------- YOUR TOOLS carousel (2026-09-26, pedido por Alex): horizontal scroll-snap, EV Board first ---------- */
+.tool-carousel {
+  display: flex; gap: 12px;
+  overflow-x: auto; overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  padding: 4px 2px 14px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.tool-carousel::-webkit-scrollbar { display: none; }
+.tool-card {
+  flex: 0 0 auto; width: 170px;
+  scroll-snap-align: start;
+  display: flex; flex-direction: column; gap: 8px;
+  background: var(--card); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 18px 16px 20px;
+  color: var(--text);
+}
+.tool-card .tool-emoji { font-size: 2.1rem; line-height: 1; }
+.tool-card b { font-size: 1.08rem; font-weight: 700; }
+.tool-card .tool-sub { color: var(--muted); font-size: .85rem; line-height: 1.4; }
+.tool-card.tool-gold { border-color: rgba(251,191,36,.45); }
+
 /* ---------- Ticket original (foto del comprobante) ---------- */
 .ticket-photo { padding: 12px; max-width: 480px; }
 .ticket-photo img { width: 100%; height: auto; display: block; border-radius: 12px; }
