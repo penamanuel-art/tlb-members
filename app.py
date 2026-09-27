@@ -658,6 +658,36 @@ def load_archive():
     return load_json_file(ARCHIVE_PATH).get("dias", [])
 
 
+def program_stats():
+    """Stats del programa calculadas EN VIVO desde data/archive.json.
+
+    Reemplaza a data/results.json (quedó obsoleto el 2026-09-27): el
+    dashboard debe reflejar los resultados oficiales inmediatamente
+    después de cada liquidación, sin archivos intermedios.
+    """
+    ganadas = perdidas = 0
+    profit = risked = 0.0
+    for d in load_archive():
+        for j in d.get("jugadas", []) or []:
+            if j.get("resultado") not in ("WON", "LOST") or j.get("bloqueada"):
+                continue
+            if j["resultado"] == "WON":
+                ganadas += 1
+            else:
+                perdidas += 1
+            profit += float(j.get("profit") or 0.0)
+            risked += float(j.get("stake_monto") or 0.0)
+    settled = ganadas + perdidas
+    return {
+        "profit_all_time": round(profit, 2),
+        "ganadas": ganadas,
+        "perdidas": perdidas,
+        "win_rate": round(ganadas / settled * 100, 1) if settled else 0.0,
+        "total_arriesgado": round(risked, 2),
+        "roi": round(profit / risked * 100, 1) if risked else 0.0,
+    }
+
+
 # +EV Board (versión filtrada): el JSON vive en la rama `data-board`
 # (rama de datos: actualizarla NO redespliega Render). La app lo lee en
 # vivo con caché corto en memoria.
@@ -1028,7 +1058,7 @@ def home():
         racha=checkin_streak(db, session["user_id"]),
         bankroll=user["bankroll"] if user else None,
         platinum_unlocked=platinum_unlocked_for(user),
-        res=load_results(),
+        res=program_stats(),
         leccion=load_masterclass(),
         tstats=tstats,
         recientes=recientes,
@@ -1283,7 +1313,7 @@ def archivo():
     return render_template(
         "archivo.html",
         dias=load_archive(),
-        res=load_results(),
+        res=program_stats(),
     )
 
 
@@ -1481,7 +1511,7 @@ def admin_miembros():
 def resultados():
     db = get_db()
     record_checkin(db, session["user_id"])
-    return render_template("resultados.html", res=load_results(), dias=load_archive())
+    return render_template("resultados.html", res=program_stats(), dias=load_archive())
 
 
 @app.route("/ev-board")
