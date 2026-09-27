@@ -254,6 +254,7 @@
     </span>
     <span class="ticket-title">{{ r.pick }} <span class="muted">{{ fmt_odds(r.cuota) }}</span></span>
     <span class="ticket-sub">{{ r.fecha }} · {{ r.nivel }}</span>
+    {% if r.comprobante %}<span class="ticket-view-link">View ticket →</span>{% endif %}
   </button>
   <div class="modal" id="ht-{{ loop.index }}" hidden>
     <div class="modal-card ticket-photo-card">
