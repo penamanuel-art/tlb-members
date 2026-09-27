@@ -39,11 +39,31 @@ a { color: var(--blue); text-decoration: none; }
   position: sticky; top: 0; z-index: 50;
   display: flex; align-items: center; justify-content: space-between;
   gap: 10px; padding: 10px 14px;
-  background: rgba(10, 15, 28, 0.92);
-  backdrop-filter: blur(10px);
+  background: #000;
   border-bottom: 1px solid var(--line);
 }
-.topbar-left { display: flex; align-items: center; gap: 8px; }
+.topbar-left { display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1; }
+.topbar-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.topnav {
+  display: flex; align-items: center; gap: 2px;
+  overflow-x: auto; white-space: nowrap; min-width: 0;
+  scrollbar-width: none;
+}
+.topnav::-webkit-scrollbar { display: none; }
+.topnav > a, .topnav-link {
+  color: #fff; font-weight: 700; font-size: 14px;
+  padding: 8px 10px; border-radius: 10px; text-decoration: none;
+  background: none; border: none; cursor: pointer; white-space: nowrap;
+  font-family: inherit;
+}
+.topnav > a:hover, .topnav-link:hover { background: rgba(255,255,255,.08); }
+.topnav a.accent { color: #d4af37; }
+.cta-green {
+  background: #22c55e; color: #fff !important; font-weight: 800; font-size: 13px;
+  padding: 9px 14px; border-radius: 999px; white-space: nowrap; text-decoration: none;
+  box-shadow: 0 2px 8px rgba(34,197,94,.35);
+}
+.cta-green:hover { background: #16a34a; }
 .brand-logo { height: 34px; width: auto; display: block; }
 .icon-btn {
   background: var(--card-2); color: var(--text);
