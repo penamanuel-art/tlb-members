@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 {% block title %}Today — The Sharp Team
-<!-- MONEY RAIN (requested by Alex 2026-09-24): realistic dollar-style bills ~4s, once per session -->
-<canvas id="lluvia-dinero" style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9999;"></canvas>
+<!-- LINE RAIN (updated 2026-09-26 per Alex: betting lines & codes instead of money): ticket-style chips ~4s, once per session -->
+<canvas id="lluvia-lineas" style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9999;"></canvas>
 <script>
 (function(){
-  var canvas = document.getElementById('lluvia-dinero');
+  var canvas = document.getElementById('lluvia-lineas');
   function quitar(){ if (canvas) canvas.remove(); }
   // Once per session: if it already rained on entry, don't repeat when navigating the menu
   try {
@@ -16,71 +16,62 @@
   var W, H, DPR = Math.min(window.devicePixelRatio || 1, 2);
   function size(){ W = innerWidth; H = innerHeight; canvas.width = W*DPR; canvas.height = H*DPR; ctx.setTransform(DPR,0,0,DPR,0,0); }
   size(); addEventListener('resize', size);
-  var N = Math.max(70, Math.min(150, Math.floor(W/6))), bills = [], i;
-  for (i = 0; i < N; i++) bills.push({
-    x: Math.random()*W, y: -40 - Math.random()*H*0.6,
-    w: 58 + Math.random()*30, h: 25 + Math.random()*12,
-    vy: 3.5 + Math.random()*3.5,
-    sway: Math.random()*6.28, swaySpd: 0.02 + Math.random()*0.03,
-    rot: (Math.random()-0.5)*0.9, rotSpd: (Math.random()-0.5)*0.06,
-    alpha: 1
-  });
-  function draw(b){
-    var w = b.w, h = b.h, k;
-    ctx.save(); ctx.translate(b.x, b.y); ctx.rotate(b.rot); ctx.globalAlpha = b.alpha;
-    // green bill paper
-    var g = ctx.createLinearGradient(0, -h/2, 0, h/2);
-    g.addColorStop(0, '#7ba889'); g.addColorStop(0.5, '#5e8f6b'); g.addColorStop(1, '#477a56');
-    ctx.fillStyle = g; ctx.strokeStyle = '#1e4d2b'; ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    if (ctx.roundRect) ctx.roundRect(-w/2, -h/2, w, h, 2); else ctx.rect(-w/2, -h/2, w, h);
-    ctx.fill(); ctx.stroke();
-    // inner frame
-    ctx.strokeStyle = 'rgba(30,77,43,.7)'; ctx.lineWidth = 1;
-    var m = 3.5;
-    ctx.strokeRect(-w/2 + m, -h/2 + m, w - 2*m, h - 2*m);
-    // central medallion with portrait
-    var ow = w*0.30, oh = h*0.72;
-    ctx.fillStyle = '#dfe9d8';
-    ctx.beginPath(); ctx.ellipse(0, 0, ow/2, oh/2, 0, 0, 6.2832); ctx.fill();
-    ctx.strokeStyle = '#1e4d2b'; ctx.lineWidth = 1; ctx.stroke();
-    // portrait silhouette
-    ctx.fillStyle = '#3a6b4a';
-    var hr = oh*0.20;
-    ctx.beginPath(); ctx.arc(0, -oh*0.08, hr, 0, 6.2832); ctx.fill();
-    ctx.beginPath(); ctx.arc(0, oh*0.34, hr*1.45, Math.PI, 0); ctx.fill();
-    // denomination in the corners
-    ctx.fillStyle = '#1e4d2b';
-    ctx.font = 'bold ' + Math.max(7, Math.round(h*0.30)) + 'px system-ui, sans-serif';
+  // Betting lines + short codes. fg = text color, ac = border accent (brand green/gold).
+  var POOL = [
+    {t:'-110', fg:'#ffffff', ac:'#22c55e'}, {t:'+130', fg:'#ffffff', ac:'#22c55e'},
+    {t:'-105', fg:'#ffffff', ac:'#22c55e'}, {t:'+150', fg:'#ffffff', ac:'#22c55e'},
+    {t:'-120', fg:'#ffffff', ac:'#22c55e'}, {t:'+200', fg:'#ffffff', ac:'#22c55e'},
+    {t:'-115', fg:'#ffffff', ac:'#22c55e'}, {t:'+105', fg:'#ffffff', ac:'#22c55e'},
+    {t:'-108', fg:'#ffffff', ac:'#22c55e'}, {t:'+118', fg:'#ffffff', ac:'#22c55e'},
+    {t:'-122', fg:'#ffffff', ac:'#22c55e'}, {t:'+140', fg:'#ffffff', ac:'#22c55e'},
+    {t:'-112', fg:'#ffffff', ac:'#22c55e'}, {t:'+125', fg:'#ffffff', ac:'#22c55e'},
+    {t:'+100', fg:'#ffffff', ac:'#22c55e'}, {t:'-101', fg:'#ffffff', ac:'#22c55e'},
+    {t:'EV+3.2%', fg:'#4ade80', ac:'#22c55e'}, {t:'+5.1%', fg:'#4ade80', ac:'#22c55e'},
+    {t:'CLV+', fg:'#4ade80', ac:'#22c55e'}, {t:'NO-VIG', fg:'#4ade80', ac:'#22c55e'},
+    {t:'NFL', fg:'#fbbf24', ac:'#fbbf24'}, {t:'MLB', fg:'#fbbf24', ac:'#fbbf24'},
+    {t:'NCAAF', fg:'#fbbf24', ac:'#fbbf24'}, {t:'\u2605 ELITE', fg:'#fbbf24', ac:'#fbbf24'},
+    {t:'GOLD', fg:'#4ade80', ac:'#22c55e'}, {t:'-130', fg:'#ffffff', ac:'#22c55e'},
+    {t:'+250', fg:'#ffffff', ac:'#22c55e'}
+  ];
+  var N = Math.max(70, Math.min(150, Math.floor(W/6))), chips = [], i;
+  for (i = 0; i < N; i++) { var p = POOL[Math.floor(Math.random()*POOL.length)];
+    chips.push({
+      x: Math.random()*W, y: -40 - Math.random()*H*0.6,
+      vy: 3.5 + Math.random()*3.5,
+      sway: Math.random()*6.28, swaySpd: 0.02 + Math.random()*0.03,
+      rot: (Math.random()-0.5)*0.9, rotSpd: (Math.random()-0.5)*0.06,
+      txt: p.t, fg: p.fg, ac: p.ac, alpha: 1
+    });
+  }
+  function draw(c){
+    ctx.save(); ctx.translate(c.x, c.y); ctx.rotate(c.rot); ctx.globalAlpha = c.alpha;
+    ctx.font = 'bold 13px system-ui, sans-serif';
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    var cx = w/2 - h*0.30, cy = h/2 - h*0.30;
-    ctx.fillText('100', -cx, -cy); ctx.fillText('100', cx, -cy);
-    ctx.fillText('100', -cx, cy); ctx.fillText('100', cx, cy);
-    // decorative engraving on the sides
-    ctx.strokeStyle = 'rgba(30,77,43,.45)'; ctx.lineWidth = 1;
+    var w = ctx.measureText(c.txt).width + 22, h = 28;
+    ctx.fillStyle = 'rgba(14,23,38,.93)';
+    ctx.strokeStyle = c.ac; ctx.lineWidth = 1.5;
     ctx.beginPath();
-    var lx = ow/2 + 5;
-    for (k = -1; k <= 1; k++) {
-      ctx.moveTo(-lx - 9, k*3); ctx.lineTo(-lx + 1, k*3);
-      ctx.moveTo(lx - 1, k*3); ctx.lineTo(lx + 9, k*3);
-    }
-    ctx.stroke();
+    if (ctx.roundRect) ctx.roundRect(-w/2, -h/2, w, h, 8); else ctx.rect(-w/2, -h/2, w, h);
+    ctx.fill(); ctx.stroke();
+    ctx.fillStyle = c.fg;
+    ctx.fillText(c.txt, 0, 1);
     ctx.restore();
   }
   var t0 = performance.now(), DUR = 4000;
   function frame(t){
     var el = t - t0, p = el / DUR;
     ctx.clearRect(0, 0, W, H);
-    for (i = 0; i < bills.length; i++){ var b = bills[i];
-      b.y += b.vy; b.sway += b.swaySpd; b.x += Math.sin(b.sway)*1.2; b.rot += b.rotSpd;
-      if (p > 0.82) b.alpha = Math.max(0, 1 - (p - 0.82)/0.18);
-      if (b.y < H + 60) draw(b);
+    for (i = 0; i < chips.length; i++){ var c = chips[i];
+      c.y += c.vy; c.sway += c.swaySpd; c.x += Math.sin(c.sway)*1.2; c.rot += c.rotSpd;
+      if (p > 0.82) c.alpha = Math.max(0, 1 - (p - 0.82)/0.18);
+      if (c.y < H + 60) draw(c);
     }
     if (el < DUR + 300) requestAnimationFrame(frame); else canvas.remove();
   }
   requestAnimationFrame(frame);
 })();
 </script>
+
 
 {% endblock %}
 {% block content %}
@@ -399,11 +390,11 @@
   </div>
 </section>
 
-<!-- MONEY RAIN (requested by Alex 2026-09-24): realistic dollar-style bills ~4s, once per session -->
-<canvas id="lluvia-dinero" style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9999;"></canvas>
+<!-- LINE RAIN (updated 2026-09-26 per Alex: betting lines & codes instead of money): ticket-style chips ~4s, once per session -->
+<canvas id="lluvia-lineas" style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9999;"></canvas>
 <script>
 (function(){
-  var canvas = document.getElementById('lluvia-dinero');
+  var canvas = document.getElementById('lluvia-lineas');
   function quitar(){ if (canvas) canvas.remove(); }
   // Once per session: if it already rained on entry, don't repeat when navigating the menu
   try {
@@ -415,70 +406,61 @@
   var W, H, DPR = Math.min(window.devicePixelRatio || 1, 2);
   function size(){ W = innerWidth; H = innerHeight; canvas.width = W*DPR; canvas.height = H*DPR; ctx.setTransform(DPR,0,0,DPR,0,0); }
   size(); addEventListener('resize', size);
-  var N = Math.max(70, Math.min(150, Math.floor(W/6))), bills = [], i;
-  for (i = 0; i < N; i++) bills.push({
-    x: Math.random()*W, y: -40 - Math.random()*H*0.6,
-    w: 58 + Math.random()*30, h: 25 + Math.random()*12,
-    vy: 3.5 + Math.random()*3.5,
-    sway: Math.random()*6.28, swaySpd: 0.02 + Math.random()*0.03,
-    rot: (Math.random()-0.5)*0.9, rotSpd: (Math.random()-0.5)*0.06,
-    alpha: 1
-  });
-  function draw(b){
-    var w = b.w, h = b.h, k;
-    ctx.save(); ctx.translate(b.x, b.y); ctx.rotate(b.rot); ctx.globalAlpha = b.alpha;
-    // green bill paper
-    var g = ctx.createLinearGradient(0, -h/2, 0, h/2);
-    g.addColorStop(0, '#7ba889'); g.addColorStop(0.5, '#5e8f6b'); g.addColorStop(1, '#477a56');
-    ctx.fillStyle = g; ctx.strokeStyle = '#1e4d2b'; ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    if (ctx.roundRect) ctx.roundRect(-w/2, -h/2, w, h, 2); else ctx.rect(-w/2, -h/2, w, h);
-    ctx.fill(); ctx.stroke();
-    // inner frame
-    ctx.strokeStyle = 'rgba(30,77,43,.7)'; ctx.lineWidth = 1;
-    var m = 3.5;
-    ctx.strokeRect(-w/2 + m, -h/2 + m, w - 2*m, h - 2*m);
-    // central medallion with portrait
-    var ow = w*0.30, oh = h*0.72;
-    ctx.fillStyle = '#dfe9d8';
-    ctx.beginPath(); ctx.ellipse(0, 0, ow/2, oh/2, 0, 0, 6.2832); ctx.fill();
-    ctx.strokeStyle = '#1e4d2b'; ctx.lineWidth = 1; ctx.stroke();
-    // portrait silhouette
-    ctx.fillStyle = '#3a6b4a';
-    var hr = oh*0.20;
-    ctx.beginPath(); ctx.arc(0, -oh*0.08, hr, 0, 6.2832); ctx.fill();
-    ctx.beginPath(); ctx.arc(0, oh*0.34, hr*1.45, Math.PI, 0); ctx.fill();
-    // denomination in the corners
-    ctx.fillStyle = '#1e4d2b';
-    ctx.font = 'bold ' + Math.max(7, Math.round(h*0.30)) + 'px system-ui, sans-serif';
+  // Betting lines + short codes. fg = text color, ac = border accent (brand green/gold).
+  var POOL = [
+    {t:'-110', fg:'#ffffff', ac:'#22c55e'}, {t:'+130', fg:'#ffffff', ac:'#22c55e'},
+    {t:'-105', fg:'#ffffff', ac:'#22c55e'}, {t:'+150', fg:'#ffffff', ac:'#22c55e'},
+    {t:'-120', fg:'#ffffff', ac:'#22c55e'}, {t:'+200', fg:'#ffffff', ac:'#22c55e'},
+    {t:'-115', fg:'#ffffff', ac:'#22c55e'}, {t:'+105', fg:'#ffffff', ac:'#22c55e'},
+    {t:'-108', fg:'#ffffff', ac:'#22c55e'}, {t:'+118', fg:'#ffffff', ac:'#22c55e'},
+    {t:'-122', fg:'#ffffff', ac:'#22c55e'}, {t:'+140', fg:'#ffffff', ac:'#22c55e'},
+    {t:'-112', fg:'#ffffff', ac:'#22c55e'}, {t:'+125', fg:'#ffffff', ac:'#22c55e'},
+    {t:'+100', fg:'#ffffff', ac:'#22c55e'}, {t:'-101', fg:'#ffffff', ac:'#22c55e'},
+    {t:'EV+3.2%', fg:'#4ade80', ac:'#22c55e'}, {t:'+5.1%', fg:'#4ade80', ac:'#22c55e'},
+    {t:'CLV+', fg:'#4ade80', ac:'#22c55e'}, {t:'NO-VIG', fg:'#4ade80', ac:'#22c55e'},
+    {t:'NFL', fg:'#fbbf24', ac:'#fbbf24'}, {t:'MLB', fg:'#fbbf24', ac:'#fbbf24'},
+    {t:'NCAAF', fg:'#fbbf24', ac:'#fbbf24'}, {t:'\u2605 ELITE', fg:'#fbbf24', ac:'#fbbf24'},
+    {t:'GOLD', fg:'#4ade80', ac:'#22c55e'}, {t:'-130', fg:'#ffffff', ac:'#22c55e'},
+    {t:'+250', fg:'#ffffff', ac:'#22c55e'}
+  ];
+  var N = Math.max(70, Math.min(150, Math.floor(W/6))), chips = [], i;
+  for (i = 0; i < N; i++) { var p = POOL[Math.floor(Math.random()*POOL.length)];
+    chips.push({
+      x: Math.random()*W, y: -40 - Math.random()*H*0.6,
+      vy: 3.5 + Math.random()*3.5,
+      sway: Math.random()*6.28, swaySpd: 0.02 + Math.random()*0.03,
+      rot: (Math.random()-0.5)*0.9, rotSpd: (Math.random()-0.5)*0.06,
+      txt: p.t, fg: p.fg, ac: p.ac, alpha: 1
+    });
+  }
+  function draw(c){
+    ctx.save(); ctx.translate(c.x, c.y); ctx.rotate(c.rot); ctx.globalAlpha = c.alpha;
+    ctx.font = 'bold 13px system-ui, sans-serif';
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    var cx = w/2 - h*0.30, cy = h/2 - h*0.30;
-    ctx.fillText('100', -cx, -cy); ctx.fillText('100', cx, -cy);
-    ctx.fillText('100', -cx, cy); ctx.fillText('100', cx, cy);
-    // decorative engraving on the sides
-    ctx.strokeStyle = 'rgba(30,77,43,.45)'; ctx.lineWidth = 1;
+    var w = ctx.measureText(c.txt).width + 22, h = 28;
+    ctx.fillStyle = 'rgba(14,23,38,.93)';
+    ctx.strokeStyle = c.ac; ctx.lineWidth = 1.5;
     ctx.beginPath();
-    var lx = ow/2 + 5;
-    for (k = -1; k <= 1; k++) {
-      ctx.moveTo(-lx - 9, k*3); ctx.lineTo(-lx + 1, k*3);
-      ctx.moveTo(lx - 1, k*3); ctx.lineTo(lx + 9, k*3);
-    }
-    ctx.stroke();
+    if (ctx.roundRect) ctx.roundRect(-w/2, -h/2, w, h, 8); else ctx.rect(-w/2, -h/2, w, h);
+    ctx.fill(); ctx.stroke();
+    ctx.fillStyle = c.fg;
+    ctx.fillText(c.txt, 0, 1);
     ctx.restore();
   }
   var t0 = performance.now(), DUR = 4000;
   function frame(t){
     var el = t - t0, p = el / DUR;
     ctx.clearRect(0, 0, W, H);
-    for (i = 0; i < bills.length; i++){ var b = bills[i];
-      b.y += b.vy; b.sway += b.swaySpd; b.x += Math.sin(b.sway)*1.2; b.rot += b.rotSpd;
-      if (p > 0.82) b.alpha = Math.max(0, 1 - (p - 0.82)/0.18);
-      if (b.y < H + 60) draw(b);
+    for (i = 0; i < chips.length; i++){ var c = chips[i];
+      c.y += c.vy; c.sway += c.swaySpd; c.x += Math.sin(c.sway)*1.2; c.rot += c.rotSpd;
+      if (p > 0.82) c.alpha = Math.max(0, 1 - (p - 0.82)/0.18);
+      if (c.y < H + 60) draw(c);
     }
     if (el < DUR + 300) requestAnimationFrame(frame); else canvas.remove();
   }
   requestAnimationFrame(frame);
 })();
 </script>
+
 
 {% endblock %}
