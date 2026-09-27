@@ -710,6 +710,32 @@ def load_sharp_board():
     return data
 
 
+# Player Props board: el JSON vive en la rama `data-board`
+# (igual que el +EV Board: actualizar datos NO redespliega Render).
+PROPS_BOARD_URL = (
+    "https://raw.githubusercontent.com/penamanuel-art/tlb-members"
+    "/data-board/data/props_board.json"
+)
+_props_board_cache = {"at": 0.0, "data": {}}
+
+
+def load_props_board():
+    import time
+    now = time.time()
+    if now - _props_board_cache["at"] < 300 and _props_board_cache["data"]:
+        return _props_board_cache["data"]
+    data = {}
+    try:
+        req = urllib.request.Request(PROPS_BOARD_URL, headers={"User-Agent": "tlb-members"})
+        with urllib.request.urlopen(req, timeout=10) as r:
+            data = json.load(r)
+    except Exception:
+        data = _props_board_cache["data"] or {}
+    _props_board_cache["at"] = now
+    _props_board_cache["data"] = data
+    return data
+
+
 def american_profit_ratio(odds) -> float:
     """Cuánto se gana por cada 1 apostado en cuota americana."""
     o = int(odds)
@@ -1390,6 +1416,14 @@ def sharp():
     db = get_db()
     record_checkin(db, session["user_id"])
     return render_template("sharp.html", board=load_sharp_board())
+
+
+@app.route("/props")
+@login_required
+def props():
+    db = get_db()
+    record_checkin(db, session["user_id"])
+    return render_template("props.html", board=load_props_board())
 
 
 # ------------------------------------------------------- Web Push ----
