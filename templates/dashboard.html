@@ -1,110 +1,264 @@
 {% extends "base.html" %}
 {% block title %}My Tracker — The Sharp Team{% endblock %}
 {% block content %}
+{# Tracker único por miembro, estilo Wise Guy Team (2026-09-27, pedido por Alex):
+   un solo tracker personal. Header con perfil, píldoras 7D/30D/3M/MTD/Todo
+   que filtran por fecha y recalculan profit/ROI/récord/curva/filas en vivo. #}
+<style>
+  .wgt-head { display:flex; align-items:center; gap:14px; margin:6px 0 16px; }
+  .wgt-avatar { width:52px; height:52px; border-radius:50%; background:linear-gradient(135deg,#d4af37,#8a6d1c);
+    color:#111; font-weight:900; font-size:1.4rem; display:flex; align-items:center; justify-content:center; flex:none; }
+  .wgt-head .kicker { margin:0; }
+  .wgt-name { margin:2px 0 0; color:#fff; font-size:1.35rem; font-weight:800; }
+  .wgt-streak-pill { margin-left:auto; background:rgba(251,191,36,.12); border:1px solid rgba(251,191,36,.5);
+    color:#fbbf24; border-radius:999px; padding:6px 12px; font-weight:800; font-size:.85rem; white-space:nowrap; }
+  .wgt-pills { display:flex; gap:8px; margin:0 0 14px; overflow-x:auto; padding-bottom:2px; }
+  .wgt-pill { border:1px solid var(--line); background:var(--card); color:var(--muted); border-radius:999px;
+    padding:8px 16px; font-weight:800; font-size:.85rem; cursor:pointer; white-space:nowrap; }
+  .wgt-pill.active { background:#fbbf24; border-color:#fbbf24; color:#111; }
+  .wgt-hero { text-align:center; margin:6px 0 14px; }
+  .wgt-profit { font-size:clamp(2.6rem,11vw,3.6rem); font-weight:900; margin:0; letter-spacing:-.02em; }
+  .wgt-profit.pos { color:#4ade80; } .wgt-profit.neg { color:#f87171; }
+  .wgt-profit-sub { color:var(--muted); margin:6px 0 0; font-size:.95rem; }
+  .wgt-card { background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:16px; margin-bottom:14px; }
+  .wgt-risked-row { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px; }
+  .wgt-label { color:var(--muted); font-size:.78rem; font-weight:800; letter-spacing:.12em; }
+  .wgt-risked-val { color:#fff; font-weight:800; font-size:1.1rem; }
+  #wgtCurve { width:100%; height:120px; display:block; }
+  .wgt-curve-empty { text-align:center; color:var(--muted); font-size:.85rem; padding:38px 0; }
+  .wgt-mini-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:16px; }
+  .wgt-mini { background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+    padding:12px 8px; text-align:center; }
+  .wgt-mini span { display:block; color:var(--muted); font-size:.72rem; font-weight:800; letter-spacing:.12em; margin-bottom:4px; }
+  .wgt-mini b { color:#fff; font-size:1.15rem; font-weight:800; }
+  .wgt-mini b.pos { color:#4ade80; } .wgt-mini b.neg { color:#f87171; }
+  .wgt-list { display:grid; gap:10px; }
+  .wgt-row { background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:12px; }
+  .wgt-row-top { display:flex; gap:12px; align-items:flex-start; }
+  .wgt-logo { width:46px; height:46px; border-radius:50%; background:#fff; object-fit:contain; padding:4px; flex:none; }
+  .wgt-logo-fallback { width:46px; height:46px; border-radius:50%; background:var(--card-2); color:var(--muted);
+    display:flex; align-items:center; justify-content:center; font-weight:800; flex:none; border:1px solid var(--line); }
+  .wgt-row-main { flex:1; min-width:0; }
+  .wgt-pick { color:#fff; font-weight:800; font-size:1rem; margin:0 0 2px; }
+  .wgt-meta { color:var(--muted); font-size:.82rem; margin:0 0 2px; }
+  .wgt-meta b { color:#cbd5e1; }
+  .wgt-score { color:var(--muted); font-size:.82rem; margin:0 0 2px; }
+  .wgt-stake { color:var(--muted); font-size:.82rem; margin:0; }
+  .wgt-side { text-align:right; flex:none; display:flex; flex-direction:column; gap:6px; align-items:flex-end; }
+  .wgt-result { font-weight:800; font-size:1rem; }
+  .wgt-result.win { color:#4ade80; } .wgt-result.loss { color:#f87171; } .wgt-result.pending { color:var(--muted); font-size:.85rem; }
+  .wgt-casa { font-size:.72rem; font-weight:800; color:#7dd3fc; background:rgba(125,211,252,.12);
+    border:1px solid rgba(125,211,252,.35); border-radius:999px; padding:3px 10px; }
+  .wgt-nivel { font-size:.7rem; font-weight:800; letter-spacing:.08em; border-radius:6px; padding:3px 8px; }
+  .wgt-nivel.gold { color:#4ade80; background:rgba(74,222,128,.12); border:1px solid rgba(74,222,128,.4); }
+  .wgt-nivel.elite, .wgt-nivel.platinum { color:#fbbf24; background:rgba(251,191,36,.12); border:1px solid rgba(251,191,36,.4); }
+  .wgt-actions { display:flex; gap:6px; margin-top:10px; padding-top:10px; border-top:1px solid var(--line); }
+  .wgt-actions form { margin:0; }
+  .wgt-btn { border:1px solid var(--line); background:var(--card-2); color:var(--text); border-radius:10px;
+    width:38px; height:32px; font-size:1rem; cursor:pointer; }
+  .wgt-btn.win { color:#4ade80; } .wgt-btn.loss { color:#f87171; }
+  .wgt-empty { text-align:center; color:var(--muted); padding:28px 12px; }
+</style>
 
-<section class="tracker-head">
+<section class="wgt-head">
+  <div class="wgt-avatar">{{ (nombre or 'M')[:1]|upper }}</div>
   <div>
-    <p class="kicker">MY TRACKER</p>
-    <h2>{{ stats.tracked }} play{{ 's' if stats.tracked != 1 }} tracked</h2>
+    <p class="kicker">MY TRACKER · THESHARPTEAM</p>
+    <h2 class="wgt-name">{{ nombre or 'My Tracker' }}</h2>
+  </div>
+  {% if stats.streak and stats.streak != '—' %}
+  <span class="wgt-streak-pill">🔥 {{ stats.streak }}</span>
+  {% endif %}
+</section>
+
+<div class="wgt-pills" id="wgtPills">
+  <button type="button" class="wgt-pill active" data-range="7">7D</button>
+  <button type="button" class="wgt-pill" data-range="30">30D</button>
+  <button type="button" class="wgt-pill" data-range="90">3M</button>
+  <button type="button" class="wgt-pill" data-range="mtd">MTD</button>
+  <button type="button" class="wgt-pill" data-range="all">Todo</button>
+</div>
+
+<section class="wgt-hero">
+  <p class="wgt-profit {{ 'pos' if stats.net_dollars > 0 else ('neg' if stats.net_dollars < 0 else '') }}" id="wgtProfit">{{ fmt_money(stats.net_dollars) }}</p>
+  <p class="wgt-profit-sub"><b id="wgtRecord">{{ stats.record }}</b> · <span id="wgtPending">{{ stats.pending }} pending</span></p>
+</section>
+
+<section class="wgt-card">
+  <div class="wgt-risked-row">
+    <span class="wgt-label">TOTAL RISKED</span>
+    <span class="wgt-risked-val" id="wgtRisked">{{ fmt_money(stats.risked) }}</span>
+  </div>
+  <svg id="wgtCurve" viewBox="0 0 300 120" preserveAspectRatio="none" aria-hidden="true"></svg>
+  <div class="wgt-curve-empty" id="wgtCurveEmpty" hidden>No graded plays in this range yet.</div>
+</section>
+
+<section class="wgt-mini-grid">
+  <div class="wgt-mini">
+    <span>ROI</span>
+    <b id="wgtRoi" class="{{ 'pos' if stats.roi > 0 else ('neg' if stats.roi < 0 else '') }}">{{ '%+.1f' % stats.roi }}%</b>
+  </div>
+  <div class="wgt-mini">
+    <span>RECORD</span>
+    <b id="wgtRecord2">{{ stats.record }}</b>
+  </div>
+  <div class="wgt-mini">
+    <span>WINS</span>
+    <b id="wgtWins">{{ stats.wins }}</b>
   </div>
 </section>
 
-<section class="stats-grid">
-  <div class="stat">
-    <span class="stat-label">RECORD</span>
-    <span class="stat-value">{{ stats.record }}</span>
-    <span class="stat-sub">{{ stats.pending }} pending</span>
-  </div>
-  <div class="stat">
-    <span class="stat-label">NET UNITS</span>
-    <span class="stat-value {{ 'pos' if stats.net_units > 0 else ('neg' if stats.net_units < 0 else '') }}">{{ fmt_units(stats.net_units) }}</span>
-    <span class="stat-sub">realized edge</span>
-  </div>
-  <div class="stat">
-    <span class="stat-label">NET</span>
-    <span class="stat-value {{ 'pos' if stats.net_dollars > 0 else ('neg' if stats.net_dollars < 0 else '') }}">{{ fmt_money(stats.net_dollars) }}</span>
-    <span class="stat-sub">{{ stats.tracked }} plays</span>
-  </div>
-  <div class="stat">
-    <span class="stat-label">ROI</span>
-    <span class="stat-value {{ 'pos' if stats.roi > 0 else ('neg' if stats.roi < 0 else '') }}">{{ '%+.1f' % stats.roi }}%</span>
-    <span class="stat-sub">on amount risked</span>
-  </div>
-  <div class="stat">
-    <span class="stat-label">AVG CLV</span>
-    <span class="stat-value {{ 'pos' if stats.clv_avg is not none and stats.clv_avg > 0 else ('neg' if stats.clv_avg is not none and stats.clv_avg < 0 else '') }}">{{ ('%+.1f' % stats.clv_avg) if stats.clv_avg is not none else '—' }}</span>
-    <span class="stat-sub">closing line</span>
-  </div>
-  <div class="stat">
-    <span class="stat-label">STREAK</span>
-    <span class="stat-value {{ 'pos' if stats.streak.startswith('W') else ('neg' if stats.streak.startswith('L') else '') }}">{{ stats.streak }}</span>
-    <span class="stat-sub">current</span>
-  </div>
-</section>
-
-<h3 class="section-title">TODAY'S PLAYS</h3>
-{% if card_pendiente %}
-<div style="border:2px dashed rgba(255,255,255,.18);border-radius:20px;background:rgba(255,255,255,.03);padding:28px 22px;text-align:center;margin-top:12px;">
-  <p style="color:#fff;font-weight:800;font-size:1.25rem;margin:0 0 10px;">No plays posted yet today</p>
-  <p style="color:#94a3b8;font-size:.95rem;line-height:1.55;margin:0;">The Sharp Team posts today's card by 11:05 AM ET. Check back then — every play public, win or loss.</p>
-</div>
-{% elif plays %}
-<div class="plays">
-  {% for p in plays %}
-    {% if p.nivel in ['PLATINUM', 'ELITE'] and not platinum_unlocked %}
-      {% include "_play_locked.html" %}
-    {% else %}
-      {% include "_play_card.html" %}
-    {% endif %}
-  {% endfor %}
-</div>
-{% else %}
-<p class="muted">No value plays today.</p>
-{% endif %}
-
-<h3 class="section-title">MY PLAYS</h3>
-{% if tracked %}
-<div class="tracked-list">
-  {% for t in tracked %}
-  <article class="tracked-row">
-    <div class="tracked-info">
-      <span class="badge badge-{{ t.nivel|lower }} badge-sm">{{ t.nivel }}</span>
-      <div>
-        <div class="tracked-pick">{{ t.pick }} <span class="muted">{{ fmt_odds(t.cuota) }}</span></div>
-        <div class="tracked-sub">{{ t.fecha }} · {{ t.stake_unidades }}u (${{ '%.0f' % t.stake_monto }})</div>
+{% if rows %}
+<div class="wgt-list" id="wgtList">
+  {% for r in rows %}
+  <article class="wgt-row" data-fecha="{{ r.fecha }}" data-profit="{{ '%.2f' % r.profit }}"
+           data-stake="{{ '%.2f' % r.stake_monto }}" data-result="{{ r.resultado }}">
+    <div class="wgt-row-top">
+      {% if r.logo %}
+      <img class="wgt-logo" src="{{ r.logo }}" alt="{{ r.abbr }}" loading="lazy">
+      {% else %}
+      <div class="wgt-logo-fallback">🏈</div>
+      {% endif %}
+      <div class="wgt-row-main">
+        <p class="wgt-pick">{{ r.pick }}</p>
+        <p class="wgt-meta">{% if r.abbr %}<b>{{ r.abbr }}</b> {% endif %}{{ r.cuota_txt }} · {{ r.fecha_corta }} · <span class="wgt-nivel {{ r.nivel|lower }}">{{ r.nivel }}</span></p>
+        {% if r.marcador %}<p class="wgt-score">{{ r.marcador }}</p>{% endif %}
+        <p class="wgt-stake">Stake ${{ '%.0f' % r.stake_monto }} ({{ r.stake_unidades }}u)</p>
+      </div>
+      <div class="wgt-side">
+        {% if r.resultado == 'W' %}
+        <span class="wgt-result win">✓ {{ fmt_money(r.profit) }}</span>
+        {% elif r.resultado == 'L' %}
+        <span class="wgt-result loss">✕ {{ fmt_money(r.profit) }}</span>
+        {% else %}
+        <span class="wgt-result pending">Pending</span>
+        {% endif %}
+        <span class="wgt-casa">{{ r.casa }}</span>
       </div>
     </div>
-    <div class="tracked-result">
-      {% if t.resultado == 'W' %}
-        <span class="result-badge win">✓ Won</span>
-      {% elif t.resultado == 'L' %}
-        <span class="result-badge loss">✕ Lost</span>
-      {% else %}
-        <span class="result-badge pending">Pending</span>
-      {% endif %}
-    </div>
-    <div class="tracked-actions">
-      <form method="post" action="{{ url_for('set_result', tracked_id=t.id) }}">
+    <div class="wgt-actions">
+      <form method="post" action="{{ url_for('set_result', tracked_id=r.id) }}">
         <input type="hidden" name="resultado" value="W">
-        <button class="btn btn-sm btn-win" type="submit" title="Mark as won">✓</button>
+        <button class="wgt-btn win" type="submit" title="Mark as won">✓</button>
       </form>
-      <form method="post" action="{{ url_for('set_result', tracked_id=t.id) }}">
+      <form method="post" action="{{ url_for('set_result', tracked_id=r.id) }}">
         <input type="hidden" name="resultado" value="L">
-        <button class="btn btn-sm btn-loss" type="submit" title="Mark as lost">✕</button>
+        <button class="wgt-btn loss" type="submit" title="Mark as lost">✕</button>
       </form>
-      <form method="post" action="{{ url_for('set_result', tracked_id=t.id) }}">
+      <form method="post" action="{{ url_for('set_result', tracked_id=r.id) }}">
         <input type="hidden" name="resultado" value="">
-        <button class="btn btn-sm btn-ghost" type="submit" title="Back to pending">↺</button>
+        <button class="wgt-btn" type="submit" title="Back to pending">↺</button>
       </form>
-      <form method="post" action="{{ url_for('untrack', tracked_id=t.id) }}" onsubmit="return confirm('Remove this play from your tracker?');">
-        <button class="btn btn-sm btn-ghost" type="submit" title="Remove">🗑</button>
+      <form method="post" action="{{ url_for('untrack', tracked_id=r.id) }}" onsubmit="return confirm('Remove this play from your tracker?');">
+        <button class="wgt-btn" type="submit" title="Remove">🗑</button>
       </form>
     </div>
   </article>
   {% endfor %}
 </div>
+<p class="wgt-empty" id="wgtEmpty" hidden>No plays in this range.</p>
 {% else %}
-<p class="muted">You haven't tracked any plays yet. Use the <b>Track play</b> button on today's plays.</p>
+<p class="wgt-empty">You haven't tracked any plays yet. Tap <b>+ Track</b> on today's plays to log them here.</p>
 {% endif %}
 
+<script>
+(function(){
+  var pills = document.querySelectorAll('#wgtPills .wgt-pill');
+  var rows = Array.prototype.slice.call(document.querySelectorAll('.wgt-row'));
+  var svg = document.getElementById('wgtCurve');
+  var NS = 'http://www.w3.org/2000/svg';
+  function fmtMoney(v){
+    var s = v > 0 ? '+' : (v < 0 ? '-' : '');
+    return s + '$' + Math.abs(v).toFixed(2);
+  }
+  function inRange(fecha, range){
+    if (range === 'all' || !fecha) return true;
+    var d = new Date(fecha + 'T12:00:00');
+    if (isNaN(d.getTime())) return true;
+    var now = new Date();
+    var day = function(x){ return new Date(x.getFullYear(), x.getMonth(), x.getDate()).getTime(); };
+    if (range === 'mtd') return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+    var days = parseInt(range, 10);
+    var cutoff = new Date(now); cutoff.setDate(cutoff.getDate() - (days - 1));
+    var t = day(d);
+    return t >= day(cutoff) && t <= day(now);
+  }
+  function drawCurve(pts){
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+    var empty = document.getElementById('wgtCurveEmpty');
+    if (!pts.length) { svg.style.display = 'none'; if (empty) empty.hidden = false; return; }
+    svg.style.display = ''; if (empty) empty.hidden = true;
+    var byDay = {};
+    pts.forEach(function(p){ byDay[p.fecha] = (byDay[p.fecha] || 0) + p.profit; });
+    var days = Object.keys(byDay).sort();
+    var cum = 0, vals = days.map(function(d){ cum += byDay[d]; return cum; });
+    var W = 300, H = 120, pad = 8;
+    var min = Math.min.apply(null, vals.concat([0])), max = Math.max.apply(null, vals.concat([0]));
+    if (max === min) { max += 1; min -= 1; }
+    var X = function(i){ return days.length === 1 ? W/2 : pad + i * (W - 2*pad) / (days.length - 1); };
+    var Y = function(v){ return H - pad - (v - min) / (max - min) * (H - 2*pad); };
+    var defs = document.createElementNS(NS, 'defs');
+    var grad = document.createElementNS(NS, 'linearGradient');
+    grad.setAttribute('id', 'wgtg'); grad.setAttribute('x1','0'); grad.setAttribute('y1','0');
+    grad.setAttribute('x2','0'); grad.setAttribute('y2','1');
+    var s1 = document.createElementNS(NS, 'stop'); s1.setAttribute('offset','0'); s1.setAttribute('stop-color','#22c55e'); s1.setAttribute('stop-opacity','.45');
+    var s2 = document.createElementNS(NS, 'stop'); s2.setAttribute('offset','1'); s2.setAttribute('stop-color','#22c55e'); s2.setAttribute('stop-opacity','0');
+    grad.appendChild(s1); grad.appendChild(s2); defs.appendChild(grad); svg.appendChild(defs);
+    var line = days.map(function(d,i){ return (i?'L':'M') + X(i).toFixed(1) + ' ' + Y(vals[i]).toFixed(1); }).join(' ');
+    var area = document.createElementNS(NS, 'path');
+    area.setAttribute('d', line + ' L' + X(days.length-1).toFixed(1) + ' ' + (H-pad) + ' L' + X(0).toFixed(1) + ' ' + (H-pad) + ' Z');
+    area.setAttribute('fill', 'url(#wgtg)');
+    var stroke = document.createElementNS(NS, 'path');
+    stroke.setAttribute('d', line); stroke.setAttribute('fill','none');
+    stroke.setAttribute('stroke', vals[vals.length-1] >= 0 ? '#22c55e' : '#f87171');
+    stroke.setAttribute('stroke-width','2.5'); stroke.setAttribute('stroke-linejoin','round'); stroke.setAttribute('stroke-linecap','round');
+    svg.appendChild(area); svg.appendChild(stroke);
+    var dot = document.createElementNS(NS, 'circle');
+    dot.setAttribute('cx', X(days.length-1)); dot.setAttribute('cy', Y(vals[vals.length-1]));
+    dot.setAttribute('r','4'); dot.setAttribute('fill', vals[vals.length-1] >= 0 ? '#4ade80' : '#f87171');
+    svg.appendChild(dot);
+  }
+  function apply(range){
+    var profit = 0, risked = 0, w = 0, l = 0, pend = 0, visible = 0;
+    var pts = [];
+    rows.forEach(function(r){
+      var show = inRange(r.getAttribute('data-fecha'), range);
+      r.style.display = show ? '' : 'none';
+      if (!show) return;
+      visible++;
+      var res = r.getAttribute('data-result');
+      var p = parseFloat(r.getAttribute('data-profit')) || 0;
+      if (res === 'W' || res === 'L') {
+        profit += p; risked += parseFloat(r.getAttribute('data-stake')) || 0;
+        if (res === 'W') w++; else l++;
+        pts.push({ fecha: r.getAttribute('data-fecha'), profit: p });
+      } else { pend++; }
+    });
+    var el = function(id){ return document.getElementById(id); };
+    var pe = el('wgtProfit');
+    pe.textContent = fmtMoney(profit);
+    pe.className = 'wgt-profit ' + (profit > 0 ? 'pos' : (profit < 0 ? 'neg' : ''));
+    el('wgtRecord').textContent = w + '-' + l;
+    el('wgtRecord2').textContent = w + '-' + l;
+    el('wgtPending').textContent = pend + ' pending';
+    el('wgtRisked').textContent = '$' + risked.toFixed(2);
+    var roi = risked ? (profit / risked * 100) : 0;
+    var re = el('wgtRoi');
+    re.textContent = (roi > 0 ? '+' : '') + roi.toFixed(1) + '%';
+    re.className = roi > 0 ? 'pos' : (roi < 0 ? 'neg' : '');
+    el('wgtWins').textContent = w;
+    var emptyMsg = el('wgtEmpty');
+    if (emptyMsg) emptyMsg.hidden = visible > 0;
+    drawCurve(pts);
+  }
+  pills.forEach(function(b){
+    b.addEventListener('click', function(){
+      pills.forEach(function(x){ x.classList.remove('active'); });
+      b.classList.add('active');
+      apply(b.getAttribute('data-range'));
+    });
+  });
+  apply('7');
+})();
+</script>
 {% endblock %}
