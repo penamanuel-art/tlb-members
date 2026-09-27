@@ -1,18 +1,33 @@
 <!-- SPLASH DE ENTRADA (pedido por Alex 2026-09-27): pre-pantalla con logo,
-     mensaje de motivación de la Masterclass del día y nombre de la empresa.
+     nombre de la empresa y un mensaje destacado de la Masterclass que CAMBIA
+     en cada entrada (rotación aleatoria de las líneas más fuertes de disciplina).
      Sale CADA VEZ que se entra al Dashboard. Para entrar: SWIPE UP en la
      flecha (gesto). El tap queda como respaldo silencioso. -->
+{% set tst_quotes = [
+  {"dia": 4, "titulo": "Variance never lies", "clave": "A bad streak isn't a broken system. Variance is the toll you pay for edge."},
+  {"dia": 27, "titulo": "What to do during a losing streak", "clave": "Change nothing. Bad streaks are the cost of edge."},
+  {"dia": 7, "titulo": "The psychology of losing", "clave": "Losing a week won't break you; the bad decisions that follow will."},
+  {"dia": 9, "titulo": "Why discipline IS the edge", "clave": "Edge is worthless if execution is undisciplined."},
+  {"dia": 6, "titulo": "Emotional control", "clave": "The system exists so your emotions never touch your money."},
+  {"dia": 25, "titulo": "Never chase or hedge", "clave": "Chasing blows up bankrolls; hedging pays double vig. Walk away and reset."},
+  {"dia": 26, "titulo": "Stay consistent when the public panics", "clave": "Consistency in chaos is the edge."},
+  {"dia": 30, "titulo": "Trust the process, bet the system", "clave": "Run the system to the letter and the results take care of themselves."},
+  {"dia": 5, "titulo": "Reasonable expectations", "clave": "You don't need 60%. With 55% and discipline, volume does the work."},
+  {"dia": 13, "titulo": "Avoiding bankroll death", "clave": "Bankrolls die from bad management, not bad plays."},
+  {"dia": 16, "titulo": "Every bet must fit the system", "clave": "Zero freelance plays. Every bet meets the criteria or it doesn't get made."},
+  {"dia": 24, "titulo": "The 5 deadly mental traps", "clave": "Every trap is an emotion disguised as a decision."},
+  {"dia": 28, "titulo": "What to do during a winning streak", "clave": "Euphoria bankrupts as many bankrolls as desperation."},
+  {"dia": 29, "titulo": "Why this system will outlive you", "clave": "The process, not luck, is the asset."},
+  {"dia": 3, "titulo": "Why the majority loses", "clave": "Sustained 55% is elite. The public loses because it bets with no system and no control."},
+  {"dia": 21, "titulo": "Bet with the books, not the public", "clave": "The house's side is the winning side long-term."}
+] %}
+{% set q = tst_quotes|random %}
 <div id="tst-splash" style="position:fixed;inset:0;width:100vw;height:100dvh;z-index:10000;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:radial-gradient(ellipse at 50% 30%, #1c2536 0%, #0b0f19 60%, #060810 100%);font-family:-apple-system,system-ui,'Segoe UI',sans-serif;cursor:pointer;opacity:1;transition:opacity .6s ease,transform .6s ease;padding:24px;box-sizing:border-box;touch-action:pan-y;">
   <div style="position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#fbbf24,#f59e0b,#fbbf24);"></div>
   <img src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team" style="width:170px;height:170px;object-fit:contain;margin-bottom:28px;filter:drop-shadow(0 0 28px rgba(251,191,36,.3));" onerror="this.style.display='none'">
   <div style="color:#fbbf24;font-size:19px;font-weight:800;letter-spacing:8px;margin-bottom:22px;">THE SHARP TEAM</div>
-  {% if leccion and leccion.clave %}
-  <div style="color:#8b95a9;font-size:15px;font-weight:700;letter-spacing:4px;margin-bottom:18px;">MASTERCLASS · DAY {{ leccion.dia or '' }}{% if leccion.titulo %} · {{ leccion.titulo|upper }}{% endif %}</div>
-  <div style="color:#ffffff;font-size:36px;font-weight:800;line-height:1.45;margin:0 0 44px;max-width:560px;">&ldquo;{{ leccion.clave }}&rdquo;</div>
-  {% else %}
-  <div style="color:#ffffff;font-size:44px;font-weight:800;line-height:1.3;letter-spacing:1px;margin:0 0 20px;max-width:560px;">DISCIPLINE<br>BEATS LUCK.</div>
-  <div style="color:#8b95a9;font-size:19px;line-height:1.7;margin:0 0 44px;max-width:480px;">We don't chase. We don't guess.<br>We follow the numbers.</div>
-  {% endif %}
+  <div style="color:#8b95a9;font-size:15px;font-weight:700;letter-spacing:4px;margin-bottom:18px;">MASTERCLASS · DAY {{ q.dia }} · {{ q.titulo|upper }}</div>
+  <div style="color:#ffffff;font-size:36px;font-weight:800;line-height:1.45;margin:0 0 44px;max-width:560px;">&ldquo;{{ q.clave }}&rdquo;</div>
   <div style="display:flex;flex-direction:column;align-items:center;gap:12px;">
     <svg width="56" height="56" viewBox="0 0 24 24" fill="none" style="animation:tstArrow 1.8s ease-in-out infinite;">
       <path d="M12 19V5M5 12l7-7 7 7" stroke="#fbbf24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
