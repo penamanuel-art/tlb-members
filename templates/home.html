@@ -153,7 +153,51 @@
 <p class="muted">No value plays today.</p>
 {% endif %}
 
-<!-- 04 · YOUR PACE -->
+<!-- 04 · YOUR TOOLS (2026-09-26): horizontal scroll-snap carousel, EV Board first -->
+<div class="section-head">
+  <h2 class="section-title">YOUR TOOLS</h2>
+</div>
+<div class="tool-carousel">
+  <a class="tool-card" href="{{ url_for('ev_board') }}">
+    <span class="tool-emoji">⚡</span>
+    <b>EV Board</b>
+    <span class="tool-sub">Live +EV edges</span>
+  </a>
+  <a class="tool-card" href="{{ url_for('tracker') }}">
+    <span class="tool-emoji">📊</span>
+    <b>My Tracker</b>
+    <span class="tool-sub">Log and grade your plays</span>
+  </a>
+  <a class="tool-card" href="{{ url_for('masterclass') }}">
+    <span class="tool-emoji">🎓</span>
+    <b>Masterclass</b>
+    <span class="tool-sub">The 30-day course</span>
+  </a>
+  <a class="tool-card" href="{{ url_for('archivo') }}">
+    <span class="tool-emoji">🗂️</span>
+    <b>Archive</b>
+    <span class="tool-sub">Every published play</span>
+  </a>
+  <a class="tool-card" href="{{ url_for('programa') }}">
+    <span class="tool-emoji">📘</span>
+    <b>The program</b>
+    <span class="tool-sub">Creed, method and fundamentals</span>
+  </a>
+  {% if not platinum_unlocked %}
+  <a class="tool-card tool-gold" href="{{ url_for('desbloquear_platinum') }}">
+    <span class="tool-emoji">🔓</span>
+    <b>Unlock Elite</b>
+    <span class="tool-sub">$1 the first week, then $23/week</span>
+  </a>
+  {% endif %}
+  <a class="tool-card" href="{{ url_for('cuenta') }}">
+    <span class="tool-emoji">💰</span>
+    <b>My account</b>
+    <span class="tool-sub">Your bankroll and profile</span>
+  </a>
+</div>
+
+<!-- 05 · YOUR PACE -->
 <div class="section-head">
   <h2 class="section-title">YOUR PACE</h2>
 </div>
@@ -180,7 +224,7 @@
   </div>
 </section>
 
-<!-- 05 · DOCUMENTED RECORD -->
+<!-- 06 · DOCUMENTED RECORD -->
 <section class="tracker-head record-home">
   <div>
     <p class="kicker">VERIFIED PROGRAM RESULTS</p>
@@ -268,7 +312,7 @@
 <p class="muted">No settled plays yet — tickets appear here as soon as the first plays are graded.</p>
 {% endif %}
 
-<!-- 06 · YOUR HISTORY -->
+<!-- 07 · YOUR HISTORY -->
 <div class="section-head">
   <h2 class="section-title">YOUR HISTORY</h2>
   <a class="link-more" href="{{ url_for('tracker') }}">Open my tracker →</a>
@@ -296,7 +340,7 @@
   </div>
 </section>
 
-<!-- 07 · RECENT RESULTS -->
+<!-- 08 · RECENT RESULTS -->
 <div class="section-head">
   <h2 class="section-title">RECENT RESULTS</h2>
   <a class="link-more" href="{{ url_for('resultados') }}">View all →</a>
@@ -325,51 +369,6 @@
 {% else %}
 <p class="muted">No results published yet.</p>
 {% endif %}
-
-<!-- 08 · YOUR TOOLS (2026-09-26): horizontal scroll-snap carousel, EV Board first -->
-<div class="section-head">
-  <h2 class="section-title">YOUR TOOLS</h2>
-</div>
-<div class="tool-carousel">
-  <a class="tool-card" href="{{ url_for('ev_board') }}">
-    <span class="tool-emoji">⚡</span>
-    <b>EV Board</b>
-    <span class="tool-sub">Live +EV edges</span>
-  </a>
-  <a class="tool-card" href="{{ url_for('tracker') }}">
-    <span class="tool-emoji">📊</span>
-    <b>My Tracker</b>
-    <span class="tool-sub">Log and grade your plays</span>
-  </a>
-  <a class="tool-card" href="{{ url_for('masterclass') }}">
-    <span class="tool-emoji">🎓</span>
-    <b>Masterclass</b>
-    <span class="tool-sub">The 30-day course</span>
-  </a>
-  <a class="tool-card" href="{{ url_for('archivo') }}">
-    <span class="tool-emoji">🗂️</span>
-    <b>Archive</b>
-    <span class="tool-sub">Every published play</span>
-  </a>
-  <a class="tool-card" href="{{ url_for('programa') }}">
-    <span class="tool-emoji">📘</span>
-    <b>The program</b>
-    <span class="tool-sub">Creed, method and fundamentals</span>
-  </a>
-  {% if not platinum_unlocked %}
-  <a class="tool-card tool-gold" href="{{ url_for('desbloquear_platinum') }}">
-    <span class="tool-emoji">🔓</span>
-    <b>Unlock Elite</b>
-    <span class="tool-sub">$1 the first week, then $23/week</span>
-  </a>
-  {% endif %}
-  <a class="tool-card" href="{{ url_for('cuenta') }}">
-    <span class="tool-emoji">💰</span>
-    <b>My account</b>
-    <span class="tool-sub">Your bankroll and profile</span>
-  </a>
-</div>
-
 
 <!-- MONEY RAIN (requested by Alex 2026-09-24): realistic dollar-style bills ~4s, once per session -->
 <canvas id="lluvia-dinero" style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9999;"></canvas>
