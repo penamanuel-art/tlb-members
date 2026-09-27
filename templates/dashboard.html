@@ -16,6 +16,18 @@
   .wgt-pill { border:1px solid var(--line); background:var(--card); color:var(--muted); border-radius:999px;
     padding:8px 16px; font-weight:800; font-size:.85rem; cursor:pointer; white-space:nowrap; }
   .wgt-pill.active { background:#fbbf24; border-color:#fbbf24; color:#111; }
+  .wgt-export { margin: 0 0 14px; }
+  .wgt-export-btn { border:1px solid var(--line); background:var(--card); color:var(--text); border-radius:999px;
+    padding:8px 16px; font-weight:800; font-size:.85rem; cursor:pointer; }
+  .wgt-export-panel { margin-top:10px; background:var(--card); border:1px solid var(--line);
+    border-radius:14px; padding:12px; display:grid; gap:10px; }
+  .wgt-export-row { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+  .wgt-export-row button[data-exp], .wgt-exp-go { border:1px solid var(--line); background:var(--card-2);
+    color:var(--text); border-radius:999px; padding:8px 14px; font-weight:800; font-size:.82rem; cursor:pointer; }
+  .wgt-exp-go { background:#22c55e; border-color:#22c55e; color:#06210f; }
+  .wgt-export-row label { color:var(--muted); font-size:.82rem; font-weight:700; display:flex; gap:6px; align-items:center; }
+  .wgt-export-row input[type=date] { background:var(--bg-soft); color:var(--text); border:1px solid var(--line);
+    border-radius:10px; padding:7px 10px; font-size:.85rem; color-scheme: dark; }
   .wgt-card { background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:16px; margin-bottom:14px; }
   .wgt-risked-row { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px; }
   .wgt-label { color:var(--muted); font-size:.78rem; font-weight:800; letter-spacing:.12em; }
@@ -80,6 +92,23 @@
   <button type="button" class="wgt-pill" data-range="90">3M</button>
   <button type="button" class="wgt-pill" data-range="mtd">MTD</button>
   <button type="button" class="wgt-pill" data-range="all">Todo</button>
+</div>
+
+<div class="wgt-export">
+  <button type="button" class="wgt-export-btn" id="wgtExportToggle">⬇ Export results</button>
+  <div class="wgt-export-panel" id="wgtExportPanel" hidden>
+    <div class="wgt-export-row">
+      <button type="button" data-exp="7">Week</button>
+      <button type="button" data-exp="30">Month</button>
+      <button type="button" data-exp="365">Year</button>
+      <button type="button" data-exp="all">All time</button>
+    </div>
+    <div class="wgt-export-row">
+      <label>From <input type="date" id="wgtExpFrom"></label>
+      <label>To <input type="date" id="wgtExpTo"></label>
+      <button type="button" class="wgt-exp-go" id="wgtExpGo">Download</button>
+    </div>
+  </div>
 </div>
 
 {% set _settled = stats.wins + stats.losses %}
@@ -367,6 +396,23 @@
     });
   });
   apply('7');
+  var expToggle = document.getElementById('wgtExportToggle');
+  var expPanel = document.getElementById('wgtExportPanel');
+  if (expToggle && expPanel) {
+    expToggle.addEventListener('click', function(){ expPanel.hidden = !expPanel.hidden; });
+    document.querySelectorAll('[data-exp]').forEach(function(b){
+      b.addEventListener('click', function(){
+        window.location.href = '/tracker/export?range=' + b.getAttribute('data-exp');
+      });
+    });
+    document.getElementById('wgtExpGo').addEventListener('click', function(){
+      var f = document.getElementById('wgtExpFrom').value;
+      var t = document.getElementById('wgtExpTo').value;
+      if (!f || !t) { alert('Pick both dates first.'); return; }
+      if (f > t) { alert('The start date must be before the end date.'); return; }
+      window.location.href = '/tracker/export?from=' + encodeURIComponent(f) + '&to=' + encodeURIComponent(t);
+    });
+  }
 })();
 </script>
 {% endblock %}
