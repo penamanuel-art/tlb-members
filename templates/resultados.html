@@ -116,6 +116,7 @@
       </span>
       <span class="ticket-title">{{ j.pick }} <span class="muted">{{ fmt_odds(j.cuota) }}</span></span>
       <span class="ticket-sub">{{ d.get('titulo') or d.get('fecha', '') }} · {{ j.get('nivel', '') }}</span>
+      {% if j.comprobante %}<span class="ticket-view-link">View ticket →</span>{% endif %}
     </button>
     <div class="modal" id="rt-{{ ti.i }}" hidden>
       <div class="modal-card ticket-photo-card">
