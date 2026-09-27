@@ -16,6 +16,15 @@
   .wgt-pill { border:1px solid var(--line); background:var(--card); color:var(--muted); border-radius:999px;
     padding:8px 16px; font-weight:800; font-size:.85rem; cursor:pointer; white-space:nowrap; }
   .wgt-pill.active { background:#fbbf24; border-color:#fbbf24; color:#111; }
+  .wgt-ranges { padding: 4px 0; }
+  .wgt-range-row { display:flex; justify-content:space-between; align-items:center;
+    padding:14px 18px; border-bottom:1px solid var(--line); }
+  .wgt-range-row:last-child { border-bottom:none; }
+  .wgt-range-left b { display:block; color:var(--text); font-size:1.05rem; font-weight:800; }
+  .wgt-range-left span { color:var(--muted); font-size:.9rem; }
+  .wgt-range-profit { font-size:1.05rem; font-weight:800; }
+  .wgt-range-profit.pos { color:#4ade80; }
+  .wgt-range-profit.neg { color:#f87171; }
   .wgt-export { margin: 0 0 14px; }
   .wgt-export-btn { border:1px solid var(--line); background:var(--card); color:var(--text); border-radius:999px;
     padding:8px 16px; font-weight:800; font-size:.85rem; cursor:pointer; }
@@ -134,6 +143,15 @@
     <span class="stat-value {{ 'pos' if stats.roi > 0 else ('neg' if stats.roi < 0 else '') }}" id="wgtRoi">{{ '%+.1f' % stats.roi }}%</span>
     <span class="stat-sub">on amount risked</span>
   </div>
+</section>
+
+<section class="wgt-card wgt-ranges">
+  {% for nombre_r, r in rangos %}
+  <div class="wgt-range-row">
+    <div class="wgt-range-left"><b>{{ nombre_r }}</b><span>{{ r.record }}</span></div>
+    <b class="wgt-range-profit {{ 'pos' if r.profit > 0 else ('neg' if r.profit < 0 else '') }}">{{ fmt_money(r.profit) }}</b>
+  </div>
+  {% endfor %}
 </section>
 
 <section class="wgt-card">
