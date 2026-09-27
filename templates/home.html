@@ -167,29 +167,6 @@
   </a>
 </div>
 
-<!-- 04b · MASTERCLASS (pedido por Alex 2026-09-27: educarse antes de apostar) -->
-<section class="mc-home">
-  <p class="kicker">🎓 THE SHARP TEAM MASTERCLASS</p>
-  <h2 class="mc-home-title">Before betting or starting the program, educate yourself</h2>
-  <p class="mc-home-sub">30 lessons on discipline and value — one per day.</p>
-  {% if leccion.get('titulo') %}
-  <article class="mc-today">
-    <p class="mc-today-tag">TODAY'S LESSON · DAY {{ leccion.get('dia') }}</p>
-    <h3>{{ leccion.get('titulo') }}</h3>
-    <p>{{ leccion.get('resumen') }}</p>
-    <a href="{{ url_for('masterclass') }}">Read the full lesson →</a>
-  </article>
-  {% endif %}
-  <div class="mc-grid">
-  {% for l in archivo_mc %}
-    <a class="mc-card" href="{{ url_for('masterclass') }}#day-{{ l.dia }}">
-      <span class="mc-day">Day {{ l.dia }}</span>
-      <b>{{ l.titulo }}</b>
-    </a>
-  {% endfor %}
-  </div>
-</section>
-
 <!-- 05 · YOUR TRACKER (personal: mismo diseño de 4 tarjetas que el tracker oficial) -->
 <div class="tracker-box">
 <div class="section-head">
@@ -397,6 +374,29 @@
       <h3>FIXED STAKE</h3>
       <p>The stake stays disciplined. Neither losses nor streaks change the amount.</p>
     </div>
+  </div>
+</section>
+
+<!-- 10 · MASTERCLASS (pedido por Alex 2026-09-27: ultima seccion del home) -->
+<section class="mc-home">
+  <p class="kicker">🎓 THE SHARP TEAM MASTERCLASS</p>
+  <h2 class="mc-home-title">Before betting or starting the program, educate yourself</h2>
+  <p class="mc-home-sub">30 lessons on discipline and value — one per day.</p>
+  {% if leccion.get('titulo') %}
+  <article class="mc-today">
+    <p class="mc-today-tag">TODAY'S LESSON · DAY {{ leccion.get('dia') }}</p>
+    <h3>{{ leccion.get('titulo') }}</h3>
+    <p>{{ leccion.get('resumen') }}</p>
+    <a href="{{ url_for('masterclass') }}">Read the full lesson →</a>
+  </article>
+  {% endif %}
+  <div class="mc-grid">
+  {% for l in archivo_mc %}
+    <a class="mc-card" href="{{ url_for('masterclass') }}#day-{{ l.dia }}">
+      <span class="mc-day">Day {{ l.dia }}</span>
+      <b>{{ l.titulo }}</b>
+    </a>
+  {% endfor %}
   </div>
 </section>
 
