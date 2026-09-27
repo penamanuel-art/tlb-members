@@ -167,33 +167,6 @@
   </a>
 </div>
 
-<!-- 05 · YOUR PACE -->
-<div class="section-head">
-  <h2 class="section-title">YOUR PACE</h2>
-</div>
-<section class="stats-grid">
-  <div class="stat">
-    <span class="stat-label">CHECK-IN STREAK</span>
-    <span class="stat-value">🔥 {{ racha }}</span>
-    <span class="stat-sub">days in a row</span>
-  </div>
-  <div class="stat">
-    <span class="stat-label">TRACKED</span>
-    <span class="stat-value">{{ tstats.tracked }}</span>
-    <span class="stat-sub">{{ tstats.pending }} pending</span>
-  </div>
-  <div class="stat">
-    <span class="stat-label">TODAY'S PLAYS</span>
-    <span class="stat-value">{{ plays|length }}</span>
-    <span class="stat-sub">on your card</span>
-  </div>
-  <div class="stat">
-    <span class="stat-label">BANKROLL</span>
-    <span class="stat-value">{% if bankroll %}${{ '%.0f' % bankroll }}{% else %}—{% endif %}</span>
-    <span class="stat-sub">{% if bankroll %}set{% else %}not set{% endif %}</span>
-  </div>
-</section>
-
 <!-- 06 · DOCUMENTED RECORD -->
 <section class="tracker-head record-home">
   <div>
