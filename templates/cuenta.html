@@ -21,4 +21,19 @@
   </form>
   <p class="muted center"><a href="{{ url_for('home') }}">← Back to today</a></p>
 </section>
+
+<section class="auth-card">
+  <h2>👤 Membership</h2>
+  <p class="muted">The Sharp Team — $1 for your first week, then $23/week. Cancel anytime, no questions asked.</p>
+  {% if cancel_at %}
+  <p class="bankroll-current">Status: <b class="cancel-text">Cancelled</b></p>
+  <p class="muted">You keep full access until the end of your current billing period. You won't be charged again.</p>
+  <form method="post" action="{{ url_for('cuenta_reactivar') }}">
+    <button class="btn btn-primary btn-block" type="submit">Keep my membership</button>
+  </form>
+  {% else %}
+  <p class="bankroll-current">Status: <b class="ok-text">Active</b></p>
+  <p class="muted"><a href="{{ url_for('cuenta_cancelar') }}" class="danger-link">Cancel my membership</a></p>
+  {% endif %}
+</section>
 {% endblock %}
