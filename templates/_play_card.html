@@ -23,7 +23,7 @@
 .k-stake-sub{font-size:13px;font-weight:700;color:#9aa3b2;margin-top:2px}
 .k-foot{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
 .k-foot span{font-family:ui-monospace,Menlo,monospace;font-size:11px;letter-spacing:1.5px;color:#6b7280}
-.k-ticket{background:none;border:none;color:#5b8cff;font-size:14px;font-weight:600;cursor:pointer;padding:0;margin:0 0 8px}
+.k-ticket{background:none;border:none;color:#5b8cff;font-size:18px;font-weight:700;cursor:pointer;padding:0;margin:0 0 8px}
 .k-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:9999;align-items:center;justify-content:center;padding:20px}
 .k-modal img{max-width:100%;max-height:100%;border-radius:12px}
 .k-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
@@ -58,7 +58,7 @@
     <span>{{ 'ELITE PLAY' if p.nivel in ['PLATINUM', 'ELITE'] else 'GOLD PLAY' }}</span>
   </div>
   {% if p.comprobante %}
-  <button class="k-ticket" onclick="document.getElementById('ticket-modal-{{ p.id }}').style.display='flex'">See the ticket &rarr;</button>
+  <button class="k-ticket" onclick="document.getElementById('ticket-modal-{{ p.id }}').style.display='flex'">🎫 View ticket proof &rarr;</button>
   <div id="ticket-modal-{{ p.id }}" class="k-modal" onclick="this.style.display='none'"><img src="{{ url_for('static', filename=p.comprobante) }}" alt="Ticket original"></div>
   {% endif %}
   <div class="k-actions">
