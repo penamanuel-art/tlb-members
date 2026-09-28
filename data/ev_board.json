@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-28T15:22:56-04:00",
+  "updated_at": "2026-09-28T15:37:57-04:00",
   "refresh_minutes": 15,
   "fair_source": "Pinnacle no-vig",
   "filters": {
@@ -25,17 +25,23 @@
       "market": "Spread",
       "point": "-1.5",
       "book": "theScore Bet",
-      "price": 105,
+      "price": 110,
       "fair_prob_pct": 54.4,
       "fair_american": -119,
-      "ev_pct": 11.5,
-      "books_count": 2,
+      "ev_pct": 14.2,
+      "books_count": 3,
       "books": [
         {
           "book": "theScore Bet",
-          "price": 105,
-          "ev_pct": 11.5,
+          "price": 110,
+          "ev_pct": 14.2,
           "url": null
+        },
+        {
+          "book": "Novig",
+          "price": 100,
+          "ev_pct": 8.7,
+          "url": "https://novig.com"
         },
         {
           "book": "DraftKings",
@@ -45,7 +51,8 @@
         }
       ],
       "also_at": [
-        "DraftKings"
+        "DraftKings",
+        "Novig"
       ],
       "sharp": false,
       "verified": true,
@@ -59,50 +66,6 @@
       "novig_deep": false,
       "stale": false,
       "first_seen": "2026-09-28T05:37:57.017347+00:00"
-    },
-    {
-      "id": "94769faaa7a5aba0474291fc9c2d3d6d-h2h-None-UConn Huskies",
-      "skey": "94769faaa7a5aba0474291fc9c2d3d6d|h2h|None|UConn Huskies",
-      "sport": "NCAAF",
-      "game": "Syracuse Orange @ UConn Huskies",
-      "team": "UConn Huskies",
-      "market": "Moneyline",
-      "point": "",
-      "book": "theScore Bet",
-      "price": 210,
-      "fair_prob_pct": 33.4,
-      "fair_american": 199,
-      "ev_pct": 3.5,
-      "books_count": 2,
-      "books": [
-        {
-          "book": "theScore Bet",
-          "price": 210,
-          "ev_pct": 3.5,
-          "url": null
-        },
-        {
-          "book": "BetUS",
-          "price": 210,
-          "ev_pct": 3.5,
-          "url": null
-        }
-      ],
-      "also_at": [
-        "BetUS"
-      ],
-      "sharp": false,
-      "verified": true,
-      "edge_label": "Value edge",
-      "rec_units": 0.6,
-      "rec_stake": 15,
-      "live": false,
-      "game_time": "Sat, Oct 03 \u00b7 12:00 PM ET",
-      "commence_time": "2026-10-03T16:00:00Z",
-      "bet_url": "https://novig.onelink.me/JHQQ?af_xp=custom&pid=novig_app_share&c=Novig%20App%20Order%20Share&deep_link_value=%2Fevent-markets%2F01a0d950-20dc-7b21-8173-dc88d8851a90",
-      "novig_deep": true,
-      "stale": false,
-      "first_seen": "2026-09-28T14:52:57.653936+00:00"
     },
     {
       "id": "47dc7baa254659f3beb2ed2b38c207b6-Chicago Bears",
@@ -340,6 +303,51 @@
       "stale": true,
       "first_seen": "2026-09-27T21:37:57.294499+00:00",
       "stale_reason": "line moved below 3%"
+    },
+    {
+      "id": "94769faaa7a5aba0474291fc9c2d3d6d-h2h-None-UConn Huskies",
+      "skey": "94769faaa7a5aba0474291fc9c2d3d6d|h2h|None|UConn Huskies",
+      "sport": "NCAAF",
+      "game": "Syracuse Orange @ UConn Huskies",
+      "team": "UConn Huskies",
+      "market": "Moneyline",
+      "point": "",
+      "book": "theScore Bet",
+      "price": 210,
+      "fair_prob_pct": 33.4,
+      "fair_american": 199,
+      "ev_pct": 3.5,
+      "books_count": 2,
+      "books": [
+        {
+          "book": "theScore Bet",
+          "price": 210,
+          "ev_pct": 3.5,
+          "url": null
+        },
+        {
+          "book": "BetUS",
+          "price": 210,
+          "ev_pct": 3.5,
+          "url": null
+        }
+      ],
+      "also_at": [
+        "BetUS"
+      ],
+      "sharp": false,
+      "verified": true,
+      "edge_label": "Value edge",
+      "rec_units": 0.6,
+      "rec_stake": 15,
+      "live": false,
+      "game_time": "Sat, Oct 03 \u00b7 12:00 PM ET",
+      "commence_time": "2026-10-03T16:00:00Z",
+      "bet_url": "https://novig.onelink.me/JHQQ?af_xp=custom&pid=novig_app_share&c=Novig%20App%20Order%20Share&deep_link_value=%2Fevent-markets%2F01a0d950-20dc-7b21-8173-dc88d8851a90",
+      "novig_deep": true,
+      "stale": true,
+      "first_seen": "2026-09-28T14:52:57.653936+00:00",
+      "stale_reason": "only 1 book \u22653% now"
     }
   ]
 }
