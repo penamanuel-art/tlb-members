@@ -43,6 +43,20 @@ STRIPE_PLATINUM_URL = os.environ.get(
     "STRIPE_PLATINUM_URL", "https://buy.stripe.com/28E14p64MfDeeiybEQefC00"
 )
 
+# Stripe API (automatización total): con STRIPE_SECRET_KEY + STRIPE_WEBHOOK_SECRET
+# como env vars en Render, los webhooks de Stripe activan/desactivan Elite solos:
+#  - checkout.session.completed  -> activa Elite al miembro (match por email)
+#  - customer.subscription.deleted -> desactiva Elite
+#  - invoice.payment_failed       -> queda en auditoría para que Alex lo vea
+# Sin estas env vars, el endpoint /stripe/webhook responde 400 y nada cambia
+# (el flujo manual de Alex sigue funcionando igual).
+STRIPE_SECRET_KEY = os.environ.get("STRIPE_SECRET_KEY", "")
+STRIPE_WEBHOOK_SECRET = os.environ.get("STRIPE_WEBHOOK_SECRET", "")
+
+
+def stripe_configurado():
+    return bool(STRIPE_SECRET_KEY and STRIPE_WEBHOOK_SECRET)
+
 # Web Push (notificaciones del +EV Board en el iPhone, estilo WGT).
 # Claves VAPID como env vars en Render: VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY,
 # VAPID_CLAIM_EMAIL y PUSH_TRIGGER_KEY
@@ -169,6 +183,8 @@ CREATE TABLE IF NOT EXISTS users (
     platinum_unlocked INTEGER NOT NULL DEFAULT 0,  -- 1 = Elite desbloqueada
     is_admin INTEGER NOT NULL DEFAULT 0,           -- 1 = administrador
     cancel_requested_at TEXT,                      -- fecha ISO en que pidió cancelar (NULL = activa)
+    stripe_customer_id TEXT,                     -- cliente de Stripe (NULL = sin vincular)
+    stripe_subscription_id TEXT,                  -- suscripción activa de Stripe
     created_at TEXT NOT NULL
 );
 CREATE TABLE IF NOT EXISTS tracked_plays (
@@ -201,6 +217,14 @@ CREATE TABLE IF NOT EXISTS push_subscriptions (
     created_at TEXT NOT NULL
 );
 CREATE INDEX IF NOT EXISTS idx_push_member ON push_subscriptions(member_id);
+CREATE TABLE IF NOT EXISTS stripe_events (   -- auditoría de webhooks de Stripe (deduplicada por event_id)
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    event_id TEXT NOT NULL UNIQUE,
+    tipo TEXT NOT NULL,
+    email TEXT,
+    detalle TEXT,
+    created_at TEXT NOT NULL
+);
 """
 
 DDL_PG = """
@@ -215,6 +239,8 @@ CREATE TABLE IF NOT EXISTS users (
     platinum_unlocked INTEGER NOT NULL DEFAULT 0,  -- 1 = Elite desbloqueada
     is_admin INTEGER NOT NULL DEFAULT 0,           -- 1 = administrador
     cancel_requested_at TEXT,                      -- fecha ISO en que pidió cancelar (NULL = activa)
+    stripe_customer_id TEXT,                     -- cliente de Stripe (NULL = sin vincular)
+    stripe_subscription_id TEXT,                  -- suscripción activa de Stripe
     created_at TEXT NOT NULL
 );
 CREATE TABLE IF NOT EXISTS tracked_plays (
@@ -247,6 +273,14 @@ CREATE TABLE IF NOT EXISTS push_subscriptions (
     created_at TEXT NOT NULL
 );
 CREATE INDEX IF NOT EXISTS idx_push_member ON push_subscriptions(member_id);
+CREATE TABLE IF NOT EXISTS stripe_events (   -- auditoría de webhooks de Stripe (deduplicada por event_id)
+    id SERIAL PRIMARY KEY,
+    event_id TEXT NOT NULL UNIQUE,
+    tipo TEXT NOT NULL,
+    email TEXT,
+    detalle TEXT,
+    created_at TEXT NOT NULL
+);
 """
 
 
@@ -1065,6 +1099,10 @@ def migrate_db():
             pending.append("ALTER TABLE users ADD COLUMN is_admin INTEGER NOT NULL DEFAULT 0")
         if "cancel_requested_at" not in cols:
             pending.append("ALTER TABLE users ADD COLUMN cancel_requested_at TEXT")
+        if "stripe_customer_id" not in cols:
+            pending.append("ALTER TABLE users ADD COLUMN stripe_customer_id TEXT")
+        if "stripe_subscription_id" not in cols:
+            pending.append("ALTER TABLE users ADD COLUMN stripe_subscription_id TEXT")
         for stmt in pending:
             conn.execute(stmt)
         if pending:
@@ -1763,7 +1801,7 @@ def admin_miembros():
         return redirect(url_for("home"))
     miembros = db.execute(
         "SELECT id, nombre, email, created_at, platinum_unlocked, is_admin, "
-        "stake_fijo_elite, stake_fijo_gold, cancel_requested_at "
+        "stake_fijo_elite, stake_fijo_gold, cancel_requested_at, stripe_customer_id "
         "FROM users ORDER BY created_at DESC"
     ).fetchall()
     ahora = datetime.now(timezone.utc)
@@ -1971,6 +2009,117 @@ def api_push_status():
     return jsonify(
         {"total": total, "admin_subscriptions": admin_subs, "admin_active": admin_subs > 0}
     )
+
+
+@app.route("/stripe/webhook", methods=["POST"])
+def stripe_webhook():
+    """Webhook de Stripe: automatiza la membresía sin que Alex mueva un dedo.
+
+    Eventos que procesa (configurar en el Dashboard de Stripe):
+      - checkout.session.completed   -> activa Elite al miembro (match por email)
+      - customer.subscription.updated -> actualiza estado / detecta cancelación al fin del período
+      - customer.subscription.deleted -> desactiva Elite
+      - invoice.payment_failed        -> queda en auditoría para que Alex lo vea
+
+    Seguridad: verifica la firma con STRIPE_WEBHOOK_SECRET. Deduplica por
+    event_id (Stripe reintenta eventos). Nunca devuelve 500: ante cualquier
+    error interno responde 200 tras registrar, para no provocar reintentos
+    infinitos; el detalle queda en stripe_events.
+    """
+    if not stripe_configurado():
+        return jsonify({"error": "stripe webhook not configured"}), 400
+    import stripe
+    payload = request.get_data()
+    sig = request.headers.get("Stripe-Signature", "")
+    try:
+        event = stripe.Webhook.construct_event(payload, sig, STRIPE_WEBHOOK_SECRET)
+    except Exception:
+        return jsonify({"error": "invalid signature"}), 400
+
+    db = get_db()
+    eid = event.get("id", "")
+    etype = event.get("type", "")
+    try:
+        db.execute(
+            "INSERT INTO stripe_events (event_id, tipo, created_at) VALUES (?, ?, ?)",
+            (eid, etype, now_iso()),
+        )
+        db.commit()
+    except INTEGRITY_ERRORS:
+        return jsonify({"ok": True, "deduped": True}), 200
+
+    data = (event.get("data") or {}).get("object") or {}
+
+    def _auditar(email="", detalle=""):
+        try:
+            db.execute(
+                "UPDATE stripe_events SET email = ?, detalle = ? WHERE event_id = ?",
+                (email or None, detalle or None, eid),
+            )
+            db.commit()
+        except Exception:
+            pass
+
+    try:
+        if etype == "checkout.session.completed":
+            # Pago completado: activar Elite al miembro con ese email.
+            email = ((data.get("customer_details") or {}).get("email") or "").strip().lower()
+            customer_id = data.get("customer") or ""
+            sub_id = data.get("subscription") or ""
+            if email:
+                row = db.execute("SELECT id FROM users WHERE email = ?",
+                                 (email,)).fetchone()
+                if row:
+                    db.execute(
+                        "UPDATE users SET platinum_unlocked = 1, stripe_customer_id = ?, "
+                        "stripe_subscription_id = ?, cancel_requested_at = NULL WHERE id = ?",
+                        (customer_id or None, sub_id or None, row["id"]),
+                    )
+                    db.commit()
+                    _auditar(email, f"Elite activada (sub {sub_id[:20] if sub_id else 'n/a'})")
+                else:
+                    _auditar(email, "pago sin cuenta registrada: activar manual")
+            else:
+                _auditar("", "checkout sin email")
+        elif etype in ("customer.subscription.updated", "customer.subscription.deleted"):
+            # Cancelación o cambio de estado: localizar por suscripción o cliente.
+            sub_id = data.get("id") or ""
+            customer_id = data.get("customer") or ""
+            status = data.get("status") or ""
+            cancel_at_end = bool(data.get("cancel_at_period_end"))
+            row = None
+            if sub_id:
+                row = db.execute("SELECT id, email FROM users WHERE stripe_subscription_id = ?",
+                                 (sub_id,)).fetchone()
+            if row is None and customer_id:
+                row = db.execute("SELECT id, email FROM users WHERE stripe_customer_id = ?",
+                                 (customer_id,)).fetchone()
+            if row:
+                email = row["email"]
+                if etype == "customer.subscription.deleted" or status in (
+                        "canceled", "unpaid", "incomplete_expired"):
+                    db.execute(
+                        "UPDATE users SET platinum_unlocked = 0, stripe_subscription_id = NULL, "
+                        "cancel_requested_at = ? WHERE id = ?", (now_iso(), row["id"]))
+                    db.commit()
+                    _auditar(email, f"Elite desactivada ({etype}, status={status})")
+                else:
+                    db.execute(
+                        "UPDATE users SET stripe_subscription_id = ? WHERE id = ?",
+                        (sub_id or None, row["id"]))
+                    db.commit()
+                    nota = "cancelación al fin del período" if cancel_at_end else f"status={status}"
+                    _auditar(email, f"suscripción actualizada: {nota}")
+            else:
+                _auditar("", f"{etype} sin miembro vinculado (sub {sub_id[:20] if sub_id else 'n/a'})")
+        elif etype == "invoice.payment_failed":
+            email = (data.get("customer_email") or "").strip().lower()
+            _auditar(email, "pago fallido: revisar con el miembro")
+        else:
+            _auditar("", f"evento no procesado: {etype}")
+    except Exception as exc:  # nunca 500: Stripe reintentaría sin parar
+        _auditar("", f"error interno: {type(exc).__name__}")
+    return jsonify({"ok": True}), 200
 
 
 @app.route("/api/untracked")
