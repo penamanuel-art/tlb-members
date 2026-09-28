@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Cancel membership — The Sharp Team{% endblock %}
+{% block content %}
+<section class="auth-card">
+  <h2>Cancel your membership?</h2>
+  <p class="muted">Here's what happens:</p>
+  <ul class="cancel-list">
+    <li>You keep <b>full access</b> until the end of your current billing period.</li>
+    <li><b>No further charges</b> — your subscription ends, no questions asked.</li>
+    <li>You can rejoin anytime.</li>
+  </ul>
+  <form method="post" action="{{ url_for('cuenta_cancelar') }}">
+    <button class="btn btn-danger btn-block" type="submit">Yes, cancel my membership</button>
+  </form>
+  <p class="muted center" style="margin-top:12px;"><a href="{{ url_for('cuenta') }}">← Keep my membership</a></p>
+</section>
+{% endblock %}
