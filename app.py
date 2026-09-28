@@ -168,6 +168,7 @@ CREATE TABLE IF NOT EXISTS users (
     stake_fijo_gold REAL,        -- monto fijo personal GOLD (NULL = fórmula 1%)
     platinum_unlocked INTEGER NOT NULL DEFAULT 0,  -- 1 = Elite desbloqueada
     is_admin INTEGER NOT NULL DEFAULT 0,           -- 1 = administrador
+    cancel_requested_at TEXT,                      -- fecha ISO en que pidió cancelar (NULL = activa)
     created_at TEXT NOT NULL
 );
 CREATE TABLE IF NOT EXISTS tracked_plays (
@@ -213,6 +214,7 @@ CREATE TABLE IF NOT EXISTS users (
     stake_fijo_gold DOUBLE PRECISION,  -- monto fijo personal GOLD (NULL = fórmula 1%)
     platinum_unlocked INTEGER NOT NULL DEFAULT 0,  -- 1 = Elite desbloqueada
     is_admin INTEGER NOT NULL DEFAULT 0,           -- 1 = administrador
+    cancel_requested_at TEXT,                      -- fecha ISO en que pidió cancelar (NULL = activa)
     created_at TEXT NOT NULL
 );
 CREATE TABLE IF NOT EXISTS tracked_plays (
@@ -1054,6 +1056,8 @@ def migrate_db():
             pending.append("ALTER TABLE users ADD COLUMN platinum_unlocked INTEGER NOT NULL DEFAULT 0")
         if "is_admin" not in cols:
             pending.append("ALTER TABLE users ADD COLUMN is_admin INTEGER NOT NULL DEFAULT 0")
+        if "cancel_requested_at" not in cols:
+            pending.append("ALTER TABLE users ADD COLUMN cancel_requested_at TEXT")
         for stmt in pending:
             conn.execute(stmt)
         if pending:
@@ -1250,12 +1254,43 @@ def cuenta():
             val = 0.0
         if val <= 0:
             flash("Enter a valid bankroll greater than zero.", "error")
-            return render_template("cuenta.html", bankroll=user["bankroll"] if user else None), 400
+            return render_template("cuenta.html", bankroll=user["bankroll"] if user else None,
+                                   cancel_at=user["cancel_requested_at"] if user else None), 400
         db.execute("UPDATE users SET bankroll = ? WHERE id = ?", (val, session["user_id"]))
         db.commit()
         flash(f"Bankroll saved: ${val:,.2f}.", "ok")
         return redirect(url_for("cuenta"))
-    return render_template("cuenta.html", bankroll=user["bankroll"] if user else None)
+    return render_template("cuenta.html", bankroll=user["bankroll"] if user else None,
+                           cancel_at=user["cancel_requested_at"] if user else None)
+
+
+@app.route("/cuenta/cancelar", methods=["GET", "POST"])
+@login_required
+def cuenta_cancelar():
+    """Cancelación de membresía en dos pasos: GET muestra la confirmación, POST la ejecuta."""
+    db = get_db()
+    user = current_user()
+    if request.method == "POST":
+        if user and not user["cancel_requested_at"]:
+            db.execute("UPDATE users SET cancel_requested_at = ? WHERE id = ?",
+                       (now_iso(), session["user_id"]))
+            db.commit()
+            flash("Your membership has been cancelled. No further charges.", "ok")
+        return redirect(url_for("cuenta"))
+    if user and user["cancel_requested_at"]:
+        return redirect(url_for("cuenta"))
+    return render_template("cancelar.html")
+
+
+@app.route("/cuenta/reactivar", methods=["POST"])
+@login_required
+def cuenta_reactivar():
+    """Deshace una cancelación solicitada por el propio miembro."""
+    db = get_db()
+    db.execute("UPDATE users SET cancel_requested_at = NULL WHERE id = ?", (session["user_id"],))
+    db.commit()
+    flash("Welcome back — your membership is active again.", "ok")
+    return redirect(url_for("cuenta"))
 
 
 @app.route("/tracker")
@@ -1721,7 +1756,7 @@ def admin_miembros():
         return redirect(url_for("home"))
     miembros = db.execute(
         "SELECT id, nombre, email, created_at, platinum_unlocked, is_admin, "
-        "stake_fijo_elite, stake_fijo_gold "
+        "stake_fijo_elite, stake_fijo_gold, cancel_requested_at "
         "FROM users ORDER BY created_at DESC"
     ).fetchall()
     ahora = datetime.now(timezone.utc)
