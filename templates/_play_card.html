@@ -1,74 +1,77 @@
-{# Tarjeta de jugada estilo WGT (diseno aprobado por Alex 2026-09-26 con captura; restaurado 2026-09-28 a pedido de Alex "asi mismo como la de ellos").
-   Fondo oscuro plano, badge dorado/verde sin pildora, cuota verde grande arriba-derecha,
-   pick grande blanco, "See the ticket ->", divisor, "Bet $X (Yu)",
-   boton verde "Place at Novig ->" SIEMPRE + boton oscuro "+ Track".
-   Requiere: p (jugada), tracked_ids #}
 <style>
-.play-card{position:relative;background:linear-gradient(160deg,rgba(34,197,94,.10),#14161b 55%);border:2px solid #22c55e;border-radius:14px;padding:18px;margin:18px 0;color:#f3f4f6}
-.play-card.level-elite{border:2px solid #fbbf24}
-.play-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
-.badge{font-size:12px;font-weight:800;letter-spacing:1.5px;padding:6px 10px;border-radius:999px}
-.badge-elite,.badge-platinum{color:#fbbf24;background:rgba(251,191,36,.12);border:1px solid rgba(251,191,36,.4)}
-.badge-gold{color:#4ade80;background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.4)}
-.play-odds{color:#4ade80;font-weight:800;font-size:1.3rem}
-.play-pick{font-size:1.7rem;margin:10px 0 4px;font-weight:800;letter-spacing:-.5px;color:#fff}
-.play-game{color:#9ca3af;font-size:14px;margin:0 0 4px}
-.link-ticket{background:none;border:none;color:#5b8cff;font-size:15px;font-weight:600;cursor:pointer;padding:0;margin:2px 0 0}
-.play-divider{border:none;border-top:1px solid #2a2e37;margin:12px 0}
-.play-bet{display:flex;align-items:baseline;gap:8px;font-size:1.05rem;margin-bottom:12px}
-.play-bet .bet-label{color:#9ca3af}
-.play-bet .bet-amount{color:#fff;font-size:1.35rem;font-weight:800}
-.play-bet .muted{color:#9ca3af;font-size:.9rem}
-.play-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-.btn{font-weight:800;border-radius:12px;padding:12px 20px;text-decoration:none;display:inline-block;cursor:pointer;font-size:15px;border:none}
+.kalshi-card{position:relative;background:#0b0c10;border:1px solid rgba(255,255,255,.14);border-radius:24px;overflow:hidden;padding:10px 14px;color:#f3f4f6;font-family:-apple-system,system-ui,sans-serif;box-shadow:0 8px 30px rgba(0,0,0,.55)}
+.kalshi-card.level-elite{border:2px solid #fbbf24}
+.k-head{display:flex;justify-content:space-between;align-items:center}
+.k-league{font-size:11px;font-weight:800;letter-spacing:2.5px;color:#fff}
+.k-brand{font-size:16px;font-weight:800;color:#4ade80;letter-spacing:-.3px}
+.k-dash{border-top:2px dashed rgba(255,255,255,.18);margin:8px 0}
+.k-matchup{font-size:18px;font-weight:800;color:#fff;margin:0 0 8px;letter-spacing:-.3px}
+.k-team{display:flex;align-items:center;gap:10px;margin-bottom:2px}
+.k-logo{width:44px;height:44px;object-fit:contain;flex:none}
+.k-teamname{font-size:22px;font-weight:800;color:#fff;letter-spacing:-.5px;line-height:1.1}
+.k-sub{font-size:13px;margin-top:2px}
+.k-sub .k-line{color:#9aa3b2;font-weight:700}
+.k-sub .k-chance{color:#fff;font-weight:800}
+.k-ticker{background:rgba(34,197,94,.14);margin:8px -14px 10px;padding:5px 0;overflow:hidden;white-space:nowrap}
+.k-ticker span{font-family:ui-monospace,Menlo,monospace;font-size:11px;font-weight:700;letter-spacing:3px;color:#4ade80;padding:0 18px}
+.k-nums{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:8px;gap:8px}
+.k-lbl{font-size:11px;font-weight:800;letter-spacing:2px;color:#9aa3b2;margin-bottom:2px}
+.k-lbl.green{color:#4ade80}
+.k-cost{font-size:26px;font-weight:800;color:#fff;letter-spacing:-.5px}
+.k-payout{font-size:26px;font-weight:800;color:#4ade80;letter-spacing:-.5px}
+.k-col-r{text-align:right}
+.k-stake-sub{font-size:13px;font-weight:700;color:#9aa3b2;margin-top:2px}
+.k-foot{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.k-foot span{font-family:ui-monospace,Menlo,monospace;font-size:11px;letter-spacing:1.5px;color:#6b7280}
+.k-ticket{background:none;border:none;color:#5b8cff;font-size:14px;font-weight:600;cursor:pointer;padding:0;margin:0 0 8px}
+.k-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:9999;align-items:center;justify-content:center;padding:20px}
+.k-modal img{max-width:100%;max-height:100%;border-radius:12px}
+.k-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.btn{font-weight:800;border-radius:12px;padding:11px 18px;text-decoration:none;display:inline-block;cursor:pointer;font-size:14px;border:none}
 .btn-novig{background:#22c55e;color:#052e16}
-.btn-place{background:#22c55e;color:#052e16}
 .btn-track{background:transparent;color:#4ade80;border:1.5px solid #22c55e;flex:1}
 .btn-tracked{background:rgba(34,197,94,.12);color:#4ade80;border:1.5px solid #22c55e;flex:1;cursor:default}
 </style>
-<article class="play-card level-{{ p.nivel|lower }}{% if p.id in tracked_ids %} is-tracked{% endif %}">
-  <div class="play-top">
-    <span class="badge badge-{{ p.nivel|lower }}">{{ '&#x1F451;' if p.nivel in ['PLATINUM', 'ELITE'] else '&#x1F7E1;' }} {{ p.nivel }}</span>
-    <span class="play-odds">{{ fmt_odds(p.cuota) }}</span>
+{# Card estilo Kalshi — aprobada por Alex 2026-09-28. Info del ticket: stake (monto grande, unidad pequeña) + precio. Sin payout ni profit. #}
+<div class="kalshi-card level-{{ p.nivel|lower }}">
+  <div class="k-head">
+    {% if p.liga %}<div class="k-league">{{ p.liga }}</div>{% else %}<div></div>{% endif %}
+    <div class="k-brand">The Sharp Team</div>
   </div>
-  {# Solo el equipo elegido, sin el rival (pedido por Alex 2026-09-26) #}
-  {% set pick_corto = p.pick.split(' @ ')[0].split(' vs ')[0] %}
-  <h3 class="play-pick">{{ pick_corto }}</h3>
-  <p class="play-game">{{ p.game }}{% if p.game_time_et %} &middot; {{ p.game_time_et }} ET{% endif %}</p>
+  <div class="k-dash"></div>
+  <div class="k-matchup">{{ p.game }}{% if p.game_time_et %} · {{ p.game_time_et }}{% endif %}</div>
+  <div class="k-team">
+    {% if p.logo %}<img class="k-logo" src="{{ url_for('static', filename=p.logo) }}" alt="">{% endif %}
+    <div>
+      <div class="k-teamname">{{ p.equipo or p.pick }}</div>
+      {% set prob = (p.cuota|abs / (p.cuota|abs + 100) * 100) if p.cuota < 0 else (100 / (p.cuota + 100) * 100) %}
+      <div class="k-sub">{% if p.linea %}<span class="k-line">{{ p.linea }}</span> &middot; {% endif %}<span class="k-chance">{{ '%.1f' % prob }}% chance</span></div>
+    </div>
+  </div>
+  <div class="k-ticker" aria-hidden="true"><span>THE SHARP TEAM &bull; THE SHARP TEAM &bull; THE SHARP TEAM &bull; THE SHARP TEAM &bull;&nbsp;</span></div>
+  <div class="k-nums">
+    <div><div class="k-lbl">STAKE</div><div class="k-cost">${{ '%.2f' % p.stake_monto }}</div><div class="k-stake-sub">{{ p.stake_unidades }}u</div></div>
+    <div class="k-col-r"><div class="k-lbl green">PRICE</div><div class="k-payout">{{ fmt_odds(p.cuota) }}</div></div>
+  </div>
+  <div class="k-foot">
+    <span>{% if p.ticket_hora %}{{ p.ticket_hora }}{% endif %}</span>
+    <span>{{ 'ELITE PLAY' if p.nivel in ['PLATINUM', 'ELITE'] else 'GOLD PLAY' }}</span>
+  </div>
   {% if p.comprobante %}
-  <button type="button" class="link-ticket" data-ticket="ticket-{{ p.id }}">See the ticket &rarr;</button>
+  <button class="k-ticket" onclick="document.getElementById('ticket-modal-{{ p.id }}').style.display='flex'">See the ticket &rarr;</button>
+  <div id="ticket-modal-{{ p.id }}" class="k-modal" onclick="this.style.display='none'"><img src="{{ url_for('static', filename=p.comprobante) }}" alt="Ticket original"></div>
   {% endif %}
-  <hr class="play-divider">
-  <div class="play-bet">
-    <span class="bet-label">Bet</span>
-    <b class="bet-amount">${{ '%.0f' % p.stake_monto }}</b>
-    <span class="muted">({{ p.stake_unidades }}u)</span>
-  </div>
-  <div class="play-actions">
-    {% if p.casa_url %}
-    <a class="btn btn-place" href="{{ p.casa_url }}" target="_blank" rel="noopener">Place at {{ p.casa or 'your book' }} &rarr;</a>
-    {% endif %}
+  <div class="k-actions">
     {# Boton de Novig SIEMPRE (regla de Alex 2026-09-28): OneLink oficial verificado tal cual; sin link verificado -> https://novig.com. Nunca inventar UUIDs. #}
     {% if p.novig_url and '%2Fevent-markets%2F' in p.novig_url %}
-    <a class="btn btn-novig" href="{{ p.novig_url }}" target="_blank" rel="noopener">Place at Novig &rarr;</a>
+      <a class="btn btn-novig" href="{{ p.novig_url }}" target="_blank" rel="noopener">Place at Novig &rarr;</a>
     {% else %}
-    <a class="btn btn-novig" href="https://novig.com" target="_blank" rel="noopener">Place at Novig &rarr;</a>
+      <a class="btn btn-novig" href="https://novig.com" target="_blank" rel="noopener">Place at Novig &rarr;</a>
     {% endif %}
     {% if p.id in tracked_ids %}
-      <span class="btn btn-tracked">&#x2713; Tracked</span>
+      <span class="btn btn-tracked">&check; Tracked</span>
     {% else %}
-      <form method="post" action="{{ url_for('track', play_id=p.id) }}">
-        <button class="btn btn-track" type="submit">+ Track</button>
-      </form>
+      <a class="btn btn-track" href="{{ url_for('track', play_id=p.id) }}">+ Track</a>
     {% endif %}
   </div>
-</article>
-
-{% if p.comprobante %}
-<div class="modal" id="ticket-{{ p.id }}" hidden>
-  <div class="modal-card ticket-photo">
-    <button type="button" class="modal-close" data-close>&#x2715;</button>
-    <img src="{{ url_for('static', filename=p.comprobante) }}" alt="Original ticket for {{ p.pick }}">
-  </div>
 </div>
-{% endif %}
