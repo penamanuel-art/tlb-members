@@ -43,9 +43,9 @@
   <div class="k-team">
     {% if p.logo %}<img class="k-logo" src="{{ url_for('static', filename=p.logo) }}" alt="">{% endif %}
     <div>
-      <div class="k-teamname">{{ p.equipo or p.pick }}</div>
+      <div class="k-teamname">{{ p.equipo or p.pick }}{% if p.linea %} {{ p.linea.split(' (')[0] }}{% endif %}</div>
       {% set prob = (p.cuota|abs / (p.cuota|abs + 100) * 100) if p.cuota < 0 else (100 / (p.cuota + 100) * 100) %}
-      <div class="k-sub">{% if p.linea %}<span class="k-line">{{ p.linea }}</span> &middot; {% endif %}<span class="k-chance">{{ '%.1f' % prob }}% chance</span></div>
+      <div class="k-sub"><span class="k-chance">{{ fmt_odds(p.cuota) }} &middot; {{ '%.1f' % prob }}% chance</span></div>
     </div>
   </div>
   <div class="k-ticker" aria-hidden="true"><span>THE SHARP TEAM &bull; THE SHARP TEAM &bull; THE SHARP TEAM &bull; THE SHARP TEAM &bull;&nbsp;</span></div>
