@@ -19,6 +19,7 @@
     {% if m.platinum_unlocked %}<span class="m-pill on">★ Elite</span>{% endif %}
     {% if m.is_admin %}<span class="m-pill on">Admin</span>{% endif %}
     {% if m.cancel_requested_at %}<span class="m-pill cancel">⚠️ Cancel requested {{ m.cancel_requested_at[:10] }}</span>{% endif %}
+    {% if m.stripe_customer_id %}<span class="m-pill on">💳 Stripe</span>{% endif %}
   </div>
   <form method="post" action="{{ url_for('admin_stake_fijo') }}" class="m-stake-form">
     <input type="hidden" name="user_id" value="{{ m.id }}">
