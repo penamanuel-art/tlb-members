@@ -1,30 +1,30 @@
-{# Tarjeta de jugada estilo WGT (diseno aprobado por Alex 2026-09-26 con captura; restaurado 2026-09-28 a pedido de Alex "asi mismo como la de ellos").
-   Fondo oscuro plano, badge dorado/verde sin pildora, cuota verde grande arriba-derecha,
-   pick grande blanco, "See the ticket ->", divisor, "Bet $X (Yu)",
-   boton verde "Place at Novig ->" SIEMPRE + boton oscuro "+ Track".
+{# Tarjeta de jugada estilo WGT con fondo color cielo (pedido por Alex 2026-09-28: "color cielo azul, no muy candente").
+   Fondo cielo suave, borde verde completo, badge con fondo claro para lectura nitida,
+   cuota verde grande arriba-derecha, pick grande oscuro, "See the ticket ->", divisor,
+   "Bet $X (Yu)", boton verde "Place at Novig ->" SIEMPRE + "+ Track".
    Requiere: p (jugada), tracked_ids #}
 <style>
-.play-card{position:relative;background:linear-gradient(160deg,rgba(34,197,94,.10),#14161b 55%);border:2px solid #22c55e;border-radius:14px;padding:18px;margin:18px 0;color:#f3f4f6}
+.play-card{position:relative;background:linear-gradient(180deg,#d6ecfa 0%,#bcdcf5 55%,#a3cff1 100%);border:2px solid #22c55e;border-radius:14px;padding:18px;margin:18px 0;color:#0e2a3f;box-shadow:0 6px 24px rgba(80,160,210,.35)}
 .play-card.level-elite{border:2px solid #fbbf24}
 .play-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
 .badge{font-size:12px;font-weight:800;letter-spacing:1.5px;padding:6px 10px;border-radius:999px}
-.badge-elite,.badge-platinum{color:#fbbf24;background:rgba(251,191,36,.12);border:1px solid rgba(251,191,36,.4)}
-.badge-gold{color:#4ade80;background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.4)}
-.play-odds{color:#4ade80;font-weight:800;font-size:1.3rem}
-.play-pick{font-size:1.7rem;margin:10px 0 4px;font-weight:800;letter-spacing:-.5px;color:#fff}
-.play-game{color:#9ca3af;font-size:14px;margin:0 0 4px}
-.link-ticket{background:none;border:none;color:#5b8cff;font-size:15px;font-weight:600;cursor:pointer;padding:0;margin:2px 0 0}
-.play-divider{border:none;border-top:1px solid #2a2e37;margin:12px 0}
+.badge-elite,.badge-platinum{color:#92400e;background:rgba(255,255,255,.55);border:1px solid rgba(146,64,14,.5)}
+.badge-gold{color:#166534;background:rgba(255,255,255,.55);border:1px solid rgba(22,101,52,.5)}
+.play-odds{color:#166534;font-weight:800;font-size:1.3rem}
+.play-pick{font-size:1.7rem;margin:10px 0 4px;font-weight:800;letter-spacing:-.5px;color:#0e2a3f}
+.play-game{color:#3d6a8a;font-size:14px;margin:0 0 4px}
+.link-ticket{background:none;border:none;color:#1e40af;font-size:15px;font-weight:600;cursor:pointer;padding:0;margin:2px 0 0}
+.play-divider{border:none;border-top:1px solid #8fc3e8;margin:12px 0}
 .play-bet{display:flex;align-items:baseline;gap:8px;font-size:1.05rem;margin-bottom:12px}
-.play-bet .bet-label{color:#9ca3af}
-.play-bet .bet-amount{color:#fff;font-size:1.35rem;font-weight:800}
-.play-bet .muted{color:#9ca3af;font-size:.9rem}
+.play-bet .bet-label{color:#3d6a8a}
+.play-bet .bet-amount{color:#0e2a3f;font-size:1.35rem;font-weight:800}
+.play-bet .muted{color:#3d6a8a;font-size:.9rem}
 .play-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 .btn{font-weight:800;border-radius:12px;padding:12px 20px;text-decoration:none;display:inline-block;cursor:pointer;font-size:15px;border:none}
 .btn-novig{background:#22c55e;color:#052e16}
 .btn-place{background:#22c55e;color:#052e16}
-.btn-track{background:transparent;color:#4ade80;border:1.5px solid #22c55e;flex:1}
-.btn-tracked{background:rgba(34,197,94,.12);color:#4ade80;border:1.5px solid #22c55e;flex:1;cursor:default}
+.btn-track{background:rgba(255,255,255,.4);color:#166534;border:1.5px solid #166534;flex:1}
+.btn-tracked{background:rgba(22,101,52,.12);color:#166534;border:1.5px solid #166534;flex:1;cursor:default}
 </style>
 <article class="play-card level-{{ p.nivel|lower }}{% if p.id in tracked_ids %} is-tracked{% endif %}">
   <div class="play-top">
