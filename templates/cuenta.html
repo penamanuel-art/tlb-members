@@ -39,9 +39,12 @@
   <form method="post" action="{{ url_for('cuenta_reactivar') }}">
     <button class="btn btn-primary btn-block" type="submit">Keep my membership</button>
   </form>
-  {% else %}
+  {% elif platinum %}
   <p class="bankroll-current">Status: <b class="ok-text">Active</b></p>
   <p class="muted"><a href="{{ url_for('cuenta_cancelar') }}" class="danger-link">Cancel my membership</a></p>
+  {% else %}
+  <p class="bankroll-current">Status: <b class="cancel-text">Inactive</b></p>
+  <p class="muted"><a href="{{ url_for('desbloquear_platinum') }}">Subscribe for $1 and unlock Elite →</a></p>
   {% endif %}
 </section>
 {% endblock %}

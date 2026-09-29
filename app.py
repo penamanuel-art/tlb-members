@@ -1400,6 +1400,7 @@ def cuenta():
             flash("Enter a valid bankroll greater than zero.", "error")
             return render_template("cuenta.html", bankroll=user["bankroll"] if user else None,
                                    cancel_at=user["cancel_requested_at"] if user else None,
+                                   platinum=platinum_unlocked_for(user),
                                    stake_mode=user["stake_mode"] if user else "units"), 400
         db.execute("UPDATE users SET bankroll = ? WHERE id = ?", (val, session["user_id"]))
         db.commit()
@@ -1407,6 +1408,7 @@ def cuenta():
         return redirect(url_for("cuenta"))
     return render_template("cuenta.html", bankroll=user["bankroll"] if user else None,
                            cancel_at=user["cancel_requested_at"] if user else None,
+                           platinum=platinum_unlocked_for(user),
                            stake_mode=user["stake_mode"] if user else "units")
 
 
