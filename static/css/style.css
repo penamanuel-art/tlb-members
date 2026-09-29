@@ -510,6 +510,7 @@ img { max-width: 100%; height: auto; }
 }
 .ticket-pill.win { color: #052e16; background: #4ade80; }
 .ticket-pill.loss { color: #fff; background: #ef4444; }
+.ticket-pill.pending { color: #1d0e00; background: #fbbf24; }
 .ticket-title { display: block; font-weight: 700; font-size: 14px; padding: 10px 12px 0; }
 .ticket-sub { display: block; color: var(--muted); font-size: 12px; padding: 2px 12px 0; }
 .ticket-view-link { display: block; color: #5b9dff; font-size: 13px; font-weight: 700; padding: 4px 12px 12px; }
@@ -524,7 +525,17 @@ img { max-width: 100%; height: auto; }
 .ticket-fallback-result { font-size: 15px; font-weight: 800; padding: 6px 14px; border-radius: 999px; }
 .ticket-fallback-result.win { color: #4ade80; background: rgba(74,222,128,.12); }
 .ticket-fallback-result.loss { color: #f87171; background: rgba(248,113,113,.12); }
+.ticket-fallback-result.pending { color: #fbbf24; background: rgba(251,191,36,.12); }
 @media (max-width: 380px) {
   .ticket-grid { gap: 8px; }
   .ticket-title { font-size: 13px; }
 }
+
+/* ---- Membership / cancelación ---- */
+.btn-danger { background: transparent; color: #f87171; border: 1px solid rgba(248,113,113,.55); flex: 1; }
+.btn-danger:hover { background: rgba(248,113,113,.12); }
+.m-pill.cancel { color: #f87171; border-color: rgba(248,113,113,.55); }
+.danger-link { color: #f87171; }
+.cancel-list { color: var(--muted); line-height: 1.75; padding-left: 20px; margin: 12px 0 4px; }
+.ok-text { color: var(--green-bright); }
+.cancel-text { color: #f87171; }

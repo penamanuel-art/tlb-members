@@ -74,14 +74,6 @@
   {% endif %}
 </section>
 
-<section class="profit-card">
-  <p class="profit-kicker">DOCUMENTED PROGRAM PROFIT</p>
-  <p class="profit-value {{ 'pos' if res.get('profit_all_time', 0) >= 0 else 'neg' }}">{% if res.get('profit_all_time') is not none %}{{ '+$%.2f' % res.get('profit_all_time') }}{% else %}—{% endif %}</p>
-  <p class="profit-note">{{ '+$%.2f' % res.get('profit_all_time') }}{% if res.get('win_rate') is not none %} · {{ '%.1f' % res.get('win_rate') }}% win rate{% endif %} · every public play, won or lost</p>
-</section>
-
-<!-- 01b · RESULTS TICKER (requested by Alex 2026-09-26) -->
-
 <!-- 02 · ELITE SELECTION (banner) -->
 {% set plat = plays | selectattr('nivel', 'equalto', 'ELITE') | list %}
 {% if plat %}
@@ -130,6 +122,15 @@
   💰 Bankroll: <span class="muted">not set</span> · <a href="{{ url_for('cuenta') }}">set up</a>
   {% endif %}
 </p>
+
+<section class="profit-card">
+  <p class="profit-kicker">DOCUMENTED PROGRAM PROFIT</p>
+  <p class="profit-value {{ 'pos' if res.get('profit_all_time', 0) >= 0 else 'neg' }}">{% if res.get('profit_all_time') is not none %}{{ '+$%.2f' % res.get('profit_all_time') }}{% else %}—{% endif %}</p>
+  <p class="profit-note">{{ '+$%.2f' % res.get('profit_all_time') }}{% if res.get('win_rate') is not none %} · {{ '%.1f' % res.get('win_rate') }}% win rate{% endif %} · every public play, won or lost</p>
+</section>
+
+<!-- 01b · RESULTS TICKER (requested by Alex 2026-09-26) -->
+
 
 <!-- 04 · YOUR TOOLS (2026-09-26): horizontal scroll-snap carousel, EV Board first -->
 <div class="section-head">
