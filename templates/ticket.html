@@ -55,6 +55,7 @@ body{background:#0d1626;color:#e8ecf4;font-family:-apple-system,BlinkMacSystemFo
   {% if p.comprobante %}
   <div class="ticket-wrap">
     <img id="ticketImg" src="{{ url_for('static', filename=p.comprobante) }}" alt="Ticket {{ p.abbr }} {{ p.bettype }}">
+    <div style="text-align:center;margin-top:10px"><a href="{{ url_for('static', filename=p.comprobante) }}" target="_blank" rel="noopener" style="color:#4b8bf5;font-size:14px;font-weight:700;text-decoration:none">View original ticket &rarr;</a></div>
   </div>
   {% endif %}
   <div class="stake-row">
