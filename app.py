@@ -1824,7 +1824,25 @@ def admin_miembros():
 def resultados():
     db = get_db()
     record_checkin(db, session["user_id"])
-    return render_template("resultados.html", res=program_stats(), dias=load_archive())
+    # Jugadas pendientes de hoy (pedido Alex 2026-09-28): la card del día vive
+    # en plays.json; el archivo solo tiene liquidadas. Se muestran marcadas
+    # como pendientes, sin tocar las stats (que siguen siendo solo settled).
+    pendientes = []
+    fecha_hoy = ""
+    if card_publicada_hoy():
+        try:
+            with open(PLAYS_PATH, "r", encoding="utf-8") as f:
+                _dj = json.load(f)
+            fecha_hoy = _dj.get("fecha", "") if isinstance(_dj, dict) else ""
+        except (OSError, json.JSONDecodeError):
+            pass
+        pendientes = [
+            p for p in load_plays()
+            if p.get("pick") and not p.get("bloqueada")
+            and p.get("resultado") not in ("WON", "LOST")
+        ]
+    return render_template("resultados.html", res=program_stats(), dias=load_archive(),
+                           pendientes=pendientes, fecha_hoy=fecha_hoy)
 
 
 @app.route("/ev-board")

@@ -84,6 +84,56 @@
   </div>
 </section>
 
+{% if pendientes %}
+<div class="section-head">
+  <div>
+    <h2 class="section-title">Pending plays</h2>
+    <p class="muted section-sub">Today's plays — not graded yet. Results post after the final score.</p>
+  </div>
+  <span class="muted">{{ pendientes|length }} pending</span>
+</div>
+<div class="ticket-grid">
+  {% for j in pendientes %}
+  <button type="button" class="ticket-card" data-ticket="rp-{{ loop.index }}" aria-label="View receipt for {{ j.pick }}">
+    <span class="ticket-img">
+      {% if j.comprobante %}
+      <img src="{{ url_for('static', filename=j.comprobante) }}" alt="Original receipt: {{ j.pick }}" loading="lazy">
+      {% else %}
+      <span class="ticket-fallback">
+        <span class="ticket-brand">THE SHARP TEAM</span>
+        <span class="ticket-fallback-pick">{{ j.pick }}</span>
+        <span class="ticket-fallback-odds">{{ fmt_odds(j.cuota) }} · {{ j.get('nivel', '') }}</span>
+        <span class="ticket-fallback-result pending">PENDING</span>
+      </span>
+      {% endif %}
+      <span class="ticket-pill pending">⏳ PENDING</span>
+    </span>
+    <span class="ticket-title">{{ j.pick }} <span class="muted">{{ fmt_odds(j.cuota) }}</span></span>
+    <span class="ticket-sub">{{ fecha_hoy }} · {{ j.get('nivel', '') }}</span>
+    {% if j.comprobante %}<span class="ticket-view-link">View ticket →</span>{% endif %}
+  </button>
+  <div class="modal" id="rp-{{ loop.index }}" hidden>
+    <div class="modal-card ticket-photo-card">
+      <button type="button" class="modal-close" data-close>✕</button>
+      {% if j.comprobante %}
+      <img class="ticket-photo" src="{{ url_for('static', filename=j.comprobante) }}" alt="Original receipt: {{ j.pick }}">
+      {% else %}
+      <p class="ticket-brand">THE SHARP TEAM</p>
+      <p class="ticket-pick">{{ j.pick }} {{ fmt_odds(j.cuota) }}</p>
+      <div class="ticket-rows">
+        <div><span>Date</span><b>{{ fecha_hoy }}</b></div>
+        <div><span>Level</span><b>{{ j.get('nivel', '') }}</b></div>
+        <div><span>Stake</span><b>{% if j.stake_monto is not none %}${{ '%.0f' % j.stake_monto }}{% else %}—{% endif %}</b></div>
+        <div><span>Result</span><b style="color:#fbbf24">PENDING</b></div>
+      </div>
+      <p class="ticket-note">Original receipt not uploaded for this play.</p>
+      {% endif %}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
 <div class="section-head">
   <div>
     <h2 class="section-title">Recent graded tickets</h2>
