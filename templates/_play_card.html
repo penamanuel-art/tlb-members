@@ -6,7 +6,7 @@
 .tstc-title{font-size:25px;font-weight:800;color:#fff;margin:0 0 14px;letter-spacing:-.3px}
 {# El ticket se ve DE FRENTE: es la imagen del ticket, no una reconstrucción HTML (estilo WGT, pedido por Alex 2026-09-29). #}
 .tstc-face{display:block;width:100%;border-radius:16px;cursor:pointer;border:none;padding:0;background:none;-webkit-tap-highlight-color:transparent}
-.tstc-face img{display:block;width:78%;max-height:360px;height:auto;margin:0 auto;border-radius:16px}
+.tstc-face img{display:block;width:100%;height:auto;border-radius:16px}
 .tstc-bet{font-size:25px;font-weight:800;color:#2fd47e;margin:14px 0 10px}
 .tstc-bet span{color:#8b93a7;font-weight:400;font-size:21px}
 .tstc-bot{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
@@ -22,7 +22,7 @@
 .tstc-modal img{max-width:100%;max-height:92vh;border-radius:12px}
 .tstc-x{position:absolute;top:14px;right:18px;background:none;border:none;color:#fff;font-size:30px;cursor:pointer;line-height:1}
 </style>
-{# Card estilo WGT — aprobada por Alex 2026-09-29 ("Así", con captura): tarjeta oscura con el TICKET DE FRENTE como imagen. Tocar el ticket abre lightbox a pantalla completa. "View ticket →" abre la foto original del comprobante. #}
+{# Card estilo WGT — aprobada por Alex 2026-09-29 ("Así", con captura): tarjeta oscura con el TICKET ORIGINAL DE NOVIG que manda Alex DE FRENTE como imagen. Tocar el ticket abre lightbox a pantalla completa. #}
 {% set is_vip = p.nivel in ['PLATINUM', 'ELITE'] %}
 <div class="tstc">
   <div class="tstc-top">
@@ -30,26 +30,20 @@
     <span class="tstc-odds">{{ fmt_odds(p.cuota) }}</span>
   </div>
   <div class="tstc-title">{{ p.abbr }} {{ p.bettype }} (Winner)</div>
-  {% if p.ticket_img %}
+  {# La cara de la tarjeta es el TICKET ORIGINAL de Novig que envía Alex (p.comprobante), no el ticket simulado (orden de Alex 2026-09-29). #}
+  {% if p.comprobante %}
   <button class="tstc-face" onclick="document.getElementById('tstc-zoom-{{ p.id }}').style.display='flex'" aria-label="Ver ticket en grande">
-    <img src="{{ url_for('static', filename=p.ticket_img) }}" alt="Ticket {{ p.abbr }} {{ p.bettype }}">
+    <img src="{{ url_for('static', filename=p.comprobante) }}" alt="Ticket original {{ p.abbr }} {{ p.bettype }}">
   </button>
   <div id="tstc-zoom-{{ p.id }}" class="tstc-modal" onclick="if(event.target===this)this.style.display='none'">
     <button class="tstc-x" onclick="document.getElementById('tstc-zoom-{{ p.id }}').style.display='none'" aria-label="Cerrar">&times;</button>
-    <img src="{{ url_for('static', filename=p.ticket_img) }}" alt="Ticket {{ p.abbr }} {{ p.bettype }} en grande">
+    <img src="{{ url_for('static', filename=p.comprobante) }}" alt="Ticket original {{ p.abbr }} {{ p.bettype }} en grande">
   </div>
   {% endif %}
   <div class="tstc-bet">Bet &nbsp;{{ '$%g' % p.stake_monto }} <span>({{ p.stake_unidades }}u)</span></div>
   <div class="tstc-bot">
     <span class="tstc-lvl{% if is_vip %} vip{% endif %}">{{ 'VIP' if is_vip else 'GOLD' }}</span>
-    {% if p.comprobante %}<button class="tstc-view" onclick="document.getElementById('tstc-modal-{{ p.id }}').style.display='flex'">View ticket &rarr;</button>{% endif %}
   </div>
-  {% if p.comprobante %}
-  <div id="tstc-modal-{{ p.id }}" class="tstc-modal" onclick="if(event.target===this)this.style.display='none'">
-    <button class="tstc-x" onclick="document.getElementById('tstc-modal-{{ p.id }}').style.display='none'" aria-label="Cerrar">&times;</button>
-    <img src="{{ url_for('static', filename=p.comprobante) }}" alt="Ticket original">
-  </div>
-  {% endif %}
   <div class="tstc-actions">
     {# Botón de Novig SIEMPRE (regla de Alex 2026-09-28): OneLink oficial verificado tal cual; sin link verificado -> https://novig.com. Nunca inventar UUIDs. #}
     {% if p.novig_url and '%2Fevent-markets%2F' in p.novig_url %}
