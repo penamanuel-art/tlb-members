@@ -104,13 +104,6 @@
   <h2 class="section-title">TODAY'S PLAYS</h2>
   <a class="link-more" href="{{ url_for('tracker') }}">View my tracker →</a>
 </div>
-<p class="bankroll-pill">
-  {% if bankroll %}
-  💰 Bankroll: <b>${{ '%.2f' % bankroll }}</b> · <a href="{{ url_for('cuenta') }}">change</a>
-  {% else %}
-  💰 Bankroll: <span class="muted">not set</span> · <a href="{{ url_for('cuenta') }}">set up</a>
-  {% endif %}
-</p>
 {% set golds = plays | rejectattr('nivel', 'equalto', 'ELITE') | list %}
 {% if card_pendiente %}
 <div style="border:2px dashed rgba(255,255,255,.18);border-radius:20px;background:rgba(255,255,255,.03);padding:28px 22px;text-align:center;margin-top:12px;">
@@ -130,6 +123,13 @@
 {% else %}
 <p class="muted">No value plays today.</p>
 {% endif %}
+<p class="bankroll-pill">
+  {% if bankroll %}
+  💰 Bankroll: <b>${{ '%.2f' % bankroll }}</b> · <a href="{{ url_for('cuenta') }}">change</a>
+  {% else %}
+  💰 Bankroll: <span class="muted">not set</span> · <a href="{{ url_for('cuenta') }}">set up</a>
+  {% endif %}
+</p>
 
 <!-- 04 · YOUR TOOLS (2026-09-26): horizontal scroll-snap carousel, EV Board first -->
 <div class="section-head">
