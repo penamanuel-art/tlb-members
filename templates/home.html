@@ -65,10 +65,8 @@
 
 <!-- 01 · HERO -->
 <section class="greet">
-  <div class="greet-top">
-    <p class="greet-date"><span class="dot"></span>{{ saludo }} · {{ fecha }}</p>
-    <img src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team" class="greet-logo">
-  </div>
+  <p class="greet-date"><span class="dot"></span>{{ saludo }} · {{ fecha }}</p>
+  <img src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team" class="greet-logo-fixed">
   <h1 class="greet-title">{{ saludo }},<br><span class="greet-accent">{{ nombre_corto }}.</span></h1>
   {% if card_pendiente %}
   <p class="greet-sub">No plays posted yet — check back after 11:00 AM ET.</p>
