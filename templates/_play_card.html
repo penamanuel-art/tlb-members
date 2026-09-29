@@ -4,82 +4,51 @@
 .tstc-league{background:#1a2233;color:#9aa3b8;font-size:14px;font-weight:700;letter-spacing:1px;padding:7px 18px;border-radius:999px}
 .tstc-odds{color:#2fd47e;font-size:23px;font-weight:800}
 .tstc-title{font-size:25px;font-weight:800;color:#fff;margin:0 0 14px;letter-spacing:-.3px}
-.tstc-ticket{background:#05070a;border:4px solid #2fd47e;border-radius:20px;padding:18px;box-shadow:0 0 16px rgba(47,212,126,.22)}
-.tstc-r1{display:flex;align-items:center;gap:12px}
-.tstc-jersey{width:52px;height:58px;object-fit:contain;flex:none}
-.tstc-pick{font-size:20px;font-weight:800;color:#fff;line-height:1.3}
-.tstc-pick .dt{color:#6b7280;font-weight:400}
-.tstc-pick .pc{color:#3b82f6}
-.tstc-winner{font-size:14px;color:#8b93a7}
-.tstc-matched{margin-left:auto;background:#0e3a23;color:#35d07f;font-size:12px;font-weight:800;letter-spacing:1.5px;padding:7px 14px;border-radius:999px;flex:none}
-.tstc-amt{display:flex;justify-content:space-between;align-items:flex-end;margin:16px 0 14px}
-.tstc-lbl{font-size:13px;color:#8b93a7;margin-bottom:4px}
-.tstc-val{font-size:27px;font-weight:800;color:#fff;letter-spacing:-.5px}
-.tstc-mid{color:#4b5563;font-size:26px;font-weight:800;padding-bottom:4px}
-.tstc-col-r{text-align:right}
-.tstc-mu{display:flex;align-items:center;background:#10151d;border-radius:16px;padding:10px 14px;margin-bottom:12px}
-.tstc-mu .tm{display:flex;align-items:center;gap:10px;font-size:16px;font-weight:800;color:#fff}
-.tstc-mu .tm img{width:44px;height:49px;object-fit:contain}
-.tstc-mu .ct{flex:1;text-align:center}
-.tstc-mu .ct .h{color:#3b82f6;font-weight:800;font-size:16px}
-.tstc-mu .ct .d{color:#c8cdd6;font-size:13px;margin-top:2px}
-.tstc-placed{display:flex;justify-content:space-between;align-items:center}
-.tstc-placed .pl{font-size:12px;color:#6b7280}
-.tstc-tap{background:#141a26;color:#fff;font-size:13px;font-weight:600;padding:7px 14px;border-radius:999px;border:none;cursor:pointer}
+{# El ticket se ve DE FRENTE: es la imagen del ticket, no una reconstrucción HTML (estilo WGT, pedido por Alex 2026-09-29). #}
+.tstc-face{display:block;width:100%;border-radius:16px;cursor:pointer;border:none;padding:0;background:none;-webkit-tap-highlight-color:transparent}
+.tstc-face img{display:block;width:100%;height:auto;border-radius:16px}
 .tstc-bet{font-size:25px;font-weight:800;color:#2fd47e;margin:14px 0 10px}
 .tstc-bet span{color:#8b93a7;font-weight:400;font-size:21px}
 .tstc-bot{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
-.tstc-lvl{background:#16283f;color:#4b8bf5;font-weight:800;font-size:14px;letter-spacing:1px;padding:7px 18px;border-radius:999px}
+.tstc-lvl{background:#2a2113;color:#f5c518;font-weight:800;font-size:14px;letter-spacing:1px;padding:7px 18px;border-radius:999px}
+.tstc-lvl.vip{background:#2a2113;color:#f5c518}
 .tstc-view{background:none;border:none;color:#4b8bf5;font-size:18px;font-weight:700;cursor:pointer;padding:0}
 .tstc-actions{display:flex;gap:10px}
 .tstc-btn{font-weight:800;border-radius:12px;padding:11px 18px;text-decoration:none;display:inline-block;font-size:14px;border:none;cursor:pointer;text-align:center}
 .tstc-novig{background:#22c55e;color:#052e16;flex:1}
 .tstc-track{background:transparent;color:#4ade80;border:1.5px solid #22c55e;flex:1}
 .tstc-tracked{background:rgba(34,197,94,.12);color:#4ade80;border:1.5px solid #22c55e;flex:1;cursor:default}
-.tstc-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:9999;align-items:center;justify-content:center;padding:20px}
-.tstc-modal img{max-width:100%;max-height:100%;border-radius:12px}
+.tstc-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:9999;align-items:center;justify-content:center;padding:16px}
+.tstc-modal img{max-width:100%;max-height:92vh;border-radius:12px}
+.tstc-x{position:absolute;top:14px;right:18px;background:none;border:none;color:#fff;font-size:30px;cursor:pointer;line-height:1}
 </style>
-{# Card estilo ticket Novig modo oscuro — aprobada por Alex 2026-09-29 (sustituye la card Kalshi). Réplica exacta del diseño de referencia: marco grueso VERDE en el ticket (pedido de Alex). #}
-{% set prob = (p.cuota|abs / (p.cuota|abs + 100) * 100) if p.cuota < 0 else (100 / (p.cuota + 100) * 100) %}
-{% set win = p.stake_monto * p.cuota / 100 if p.cuota > 0 else p.stake_monto * 100 / (p.cuota|abs) %}
-{% set to_pay = p.stake_monto + win %}
+{# Card estilo WGT — aprobada por Alex 2026-09-29 ("Así", con captura): tarjeta oscura con el TICKET DE FRENTE como imagen. Tocar el ticket abre lightbox a pantalla completa. "View ticket →" abre la foto original del comprobante. #}
+{% set is_vip = p.nivel in ['PLATINUM', 'ELITE'] %}
 <div class="tstc">
   <div class="tstc-top">
     <span class="tstc-league">{{ p.liga }}</span>
     <span class="tstc-odds">{{ fmt_odds(p.cuota) }}</span>
   </div>
   <div class="tstc-title">{{ p.abbr }} {{ p.bettype }} (Winner)</div>
-  <div class="tstc-ticket">
-    <div class="tstc-r1">
-      <img class="tstc-jersey" src="{{ url_for('static', filename='img/jerseys/' + p.abbr|lower + '.png') }}" alt="">
-      <div>
-        <div class="tstc-pick">{{ p.abbr }} <span class="dt">&middot;</span> <span class="pc">{{ '%.1f' % prob }}%</span></div>
-        <div class="tstc-winner">Winner</div>
-      </div>
-      <span class="tstc-matched">MATCHED</span>
-    </div>
-    <div class="tstc-amt">
-      <div><div class="tstc-lbl">Amount</div><div class="tstc-val">${{ '%.2f' % p.stake_monto }}</div></div>
-      <div class="tstc-mid">&#10095;</div>
-      <div class="tstc-col-r"><div class="tstc-lbl">To Pay</div><div class="tstc-val">${{ '%.2f' % to_pay }}</div></div>
-    </div>
-    <div class="tstc-mu">
-      <div class="tm"><img src="{{ url_for('static', filename='img/jerseys/' + p.abbr|lower + '.png') }}" alt="">{{ p.abbr }}</div>
-      <div class="ct"><div class="h">{{ p.hora }}</div><div class="d">{{ p.dia }}</div></div>
-      <div class="tm">{{ p.opp_abbr }}<img src="{{ url_for('static', filename='img/jerseys/' + p.opp_abbr|lower + '.png') }}" alt=""></div>
-    </div>
-    <div class="tstc-placed">
-      <span class="pl">Placed: {{ p.placed }}</span>
-      {% if p.comprobante %}<button class="tstc-tap" onclick="document.getElementById('tstc-modal-{{ p.id }}').style.display='flex'">&#128269; Tap ticket</button>{% endif %}
-    </div>
+  {% if p.ticket_img %}
+  <button class="tstc-face" onclick="document.getElementById('tstc-zoom-{{ p.id }}').style.display='flex'" aria-label="Ver ticket en grande">
+    <img src="{{ url_for('static', filename=p.ticket_img) }}" alt="Ticket {{ p.abbr }} {{ p.bettype }}">
+  </button>
+  <div id="tstc-zoom-{{ p.id }}" class="tstc-modal" onclick="if(event.target===this)this.style.display='none'">
+    <button class="tstc-x" onclick="document.getElementById('tstc-zoom-{{ p.id }}').style.display='none'" aria-label="Cerrar">&times;</button>
+    <img src="{{ url_for('static', filename=p.ticket_img) }}" alt="Ticket {{ p.abbr }} {{ p.bettype }} en grande">
   </div>
+  {% endif %}
   <div class="tstc-bet">Bet &nbsp;{{ '$%g' % p.stake_monto }} <span>({{ p.stake_unidades }}u)</span></div>
   <div class="tstc-bot">
-    <span class="tstc-lvl">{{ 'VIP' if p.nivel in ['PLATINUM', 'ELITE'] else 'GOLD' }}</span>
+    <span class="tstc-lvl{% if is_vip %} vip{% endif %}">{{ 'VIP' if is_vip else 'GOLD' }}</span>
     {% if p.comprobante %}<button class="tstc-view" onclick="document.getElementById('tstc-modal-{{ p.id }}').style.display='flex'">View ticket &rarr;</button>{% endif %}
   </div>
   {% if p.comprobante %}
-  <div id="tstc-modal-{{ p.id }}" class="tstc-modal" onclick="this.style.display='none'"><img src="{{ url_for('static', filename=p.comprobante) }}" alt="Ticket original"></div>
+  <div id="tstc-modal-{{ p.id }}" class="tstc-modal" onclick="if(event.target===this)this.style.display='none'">
+    <button class="tstc-x" onclick="document.getElementById('tstc-modal-{{ p.id }}').style.display='none'" aria-label="Cerrar">&times;</button>
+    <img src="{{ url_for('static', filename=p.comprobante) }}" alt="Ticket original">
+  </div>
   {% endif %}
   <div class="tstc-actions">
     {# Botón de Novig SIEMPRE (regla de Alex 2026-09-28): OneLink oficial verificado tal cual; sin link verificado -> https://novig.com. Nunca inventar UUIDs. #}
