@@ -1,79 +1,97 @@
 <style>
-.kalshi-card{position:relative;background:#0b0c10;border:2px solid #d4af37;border-radius:24px;overflow:hidden;padding:10px 14px;color:#f3f4f6;font-family:-apple-system,system-ui,sans-serif;box-shadow:0 0 18px rgba(212,175,55,.28),0 8px 30px rgba(0,0,0,.55)}
-.kalshi-card.level-elite{border:2px solid #fbbf24;box-shadow:0 0 24px rgba(251,191,36,.4),0 8px 30px rgba(0,0,0,.55)}
-.k-head{display:flex;justify-content:space-between;align-items:center}
-.k-league{font-size:11px;font-weight:800;letter-spacing:2.5px;color:#fff}
-.k-brand{font-size:16px;font-weight:800;color:#4ade80;letter-spacing:-.3px}
-.k-dash{border-top:2px dashed rgba(255,255,255,.18);margin:8px 0}
-.k-matchup{font-size:18px;font-weight:800;color:#fff;margin:0 0 8px;letter-spacing:-.3px}
-.k-team{display:flex;align-items:center;gap:10px;margin-bottom:2px}
-.k-logo{width:44px;height:44px;object-fit:contain;flex:none}
-.k-teamname{font-size:28px;font-weight:800;color:#fff;letter-spacing:-.5px;line-height:1.15}
-.k-sub{font-size:13px;margin-top:2px}
-.k-sub .k-line{color:#9aa3b2;font-weight:700}
-.k-sub .k-chance{color:#fff;font-weight:800}
-.k-ticker{background:rgba(34,197,94,.14);margin:8px -14px 10px;padding:5px 0;overflow:hidden;white-space:nowrap}
-.k-ticker span{font-family:ui-monospace,Menlo,monospace;font-size:11px;font-weight:700;letter-spacing:3px;color:#4ade80;padding:0 18px}
-.k-nums{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:8px;gap:8px}
-.k-lbl{font-size:11px;font-weight:800;letter-spacing:2px;color:#9aa3b2;margin-bottom:2px}
-.k-lbl.green{color:#4ade80}
-.k-cost{font-size:26px;font-weight:800;color:#fff;letter-spacing:-.5px}
-.k-payout{font-size:26px;font-weight:800;color:#4ade80;letter-spacing:-.5px}
-.k-col-r{text-align:right}
-.k-stake-sub{font-size:13px;font-weight:700;color:#9aa3b2;margin-top:2px}
-.k-foot{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-.k-foot span{font-family:ui-monospace,Menlo,monospace;font-size:11px;letter-spacing:1.5px;color:#6b7280}
-.k-ticket{background:none;border:none;color:#5b8cff;font-size:18px;font-weight:700;cursor:pointer;padding:0;margin:0 0 8px}
-.k-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:9999;align-items:center;justify-content:center;padding:20px}
-.k-modal img{max-width:100%;max-height:100%;border-radius:12px}
-.k-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-.btn{font-weight:800;border-radius:12px;padding:11px 18px;text-decoration:none;display:inline-block;cursor:pointer;font-size:14px;border:none}
-.btn-novig{background:#22c55e;color:#052e16}
-.btn-track{background:transparent;color:#4ade80;border:1.5px solid #22c55e;flex:1}
-.btn-tracked{background:rgba(34,197,94,.12);color:#4ade80;border:1.5px solid #22c55e;flex:1;cursor:default}
+.tstc{position:relative;background:#0d1626;border:2px solid #2b6fd6;border-radius:24px;padding:20px;color:#f3f4f6;font-family:-apple-system,system-ui,"Segoe UI",sans-serif;box-shadow:0 0 20px rgba(43,111,214,.30),0 8px 28px rgba(0,0,0,.5);max-width:560px;margin:0 auto}
+.tstc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.tstc-league{background:#1a2233;color:#9aa3b8;font-size:14px;font-weight:700;letter-spacing:1px;padding:7px 18px;border-radius:999px}
+.tstc-odds{color:#2fd47e;font-size:23px;font-weight:800}
+.tstc-title{font-size:25px;font-weight:800;color:#fff;margin:0 0 14px;letter-spacing:-.3px}
+.tstc-ticket{background:#05070a;border:4px solid #2fd47e;border-radius:20px;padding:18px;box-shadow:0 0 16px rgba(47,212,126,.22)}
+.tstc-r1{display:flex;align-items:center;gap:12px}
+.tstc-jersey{width:52px;height:58px;object-fit:contain;flex:none}
+.tstc-pick{font-size:20px;font-weight:800;color:#fff;line-height:1.3}
+.tstc-pick .dt{color:#6b7280;font-weight:400}
+.tstc-pick .pc{color:#3b82f6}
+.tstc-winner{font-size:14px;color:#8b93a7}
+.tstc-matched{margin-left:auto;background:#0e3a23;color:#35d07f;font-size:12px;font-weight:800;letter-spacing:1.5px;padding:7px 14px;border-radius:999px;flex:none}
+.tstc-amt{display:flex;justify-content:space-between;align-items:flex-end;margin:16px 0 14px}
+.tstc-lbl{font-size:13px;color:#8b93a7;margin-bottom:4px}
+.tstc-val{font-size:27px;font-weight:800;color:#fff;letter-spacing:-.5px}
+.tstc-mid{color:#4b5563;font-size:26px;font-weight:800;padding-bottom:4px}
+.tstc-col-r{text-align:right}
+.tstc-mu{display:flex;align-items:center;background:#10151d;border-radius:16px;padding:10px 14px;margin-bottom:12px}
+.tstc-mu .tm{display:flex;align-items:center;gap:10px;font-size:16px;font-weight:800;color:#fff}
+.tstc-mu .tm img{width:44px;height:49px;object-fit:contain}
+.tstc-mu .ct{flex:1;text-align:center}
+.tstc-mu .ct .h{color:#3b82f6;font-weight:800;font-size:16px}
+.tstc-mu .ct .d{color:#c8cdd6;font-size:13px;margin-top:2px}
+.tstc-placed{display:flex;justify-content:space-between;align-items:center}
+.tstc-placed .pl{font-size:12px;color:#6b7280}
+.tstc-tap{background:#141a26;color:#fff;font-size:13px;font-weight:600;padding:7px 14px;border-radius:999px;border:none;cursor:pointer}
+.tstc-bet{font-size:25px;font-weight:800;color:#2fd47e;margin:14px 0 10px}
+.tstc-bet span{color:#8b93a7;font-weight:400;font-size:21px}
+.tstc-bot{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.tstc-lvl{background:#16283f;color:#4b8bf5;font-weight:800;font-size:14px;letter-spacing:1px;padding:7px 18px;border-radius:999px}
+.tstc-view{background:none;border:none;color:#4b8bf5;font-size:18px;font-weight:700;cursor:pointer;padding:0}
+.tstc-actions{display:flex;gap:10px}
+.tstc-btn{font-weight:800;border-radius:12px;padding:11px 18px;text-decoration:none;display:inline-block;font-size:14px;border:none;cursor:pointer;text-align:center}
+.tstc-novig{background:#22c55e;color:#052e16;flex:1}
+.tstc-track{background:transparent;color:#4ade80;border:1.5px solid #22c55e;flex:1}
+.tstc-tracked{background:rgba(34,197,94,.12);color:#4ade80;border:1.5px solid #22c55e;flex:1;cursor:default}
+.tstc-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:9999;align-items:center;justify-content:center;padding:20px}
+.tstc-modal img{max-width:100%;max-height:100%;border-radius:12px}
 </style>
-{# Card estilo Kalshi — aprobada por Alex 2026-09-28. Info del ticket: stake (monto grande, unidad pequeña) + precio. Sin payout ni profit. #}
-<div class="kalshi-card level-{{ p.nivel|lower }}">
-  <div class="k-head">
-    {% if p.liga %}<div class="k-league">{{ p.liga }}</div>{% else %}<div></div>{% endif %}
-    <div class="k-brand">The Sharp Team</div>
+{# Card estilo ticket Novig modo oscuro — aprobada por Alex 2026-09-29 (sustituye la card Kalshi). Réplica exacta del diseño de referencia: marco grueso VERDE en el ticket (pedido de Alex). #}
+{% set prob = (p.cuota|abs / (p.cuota|abs + 100) * 100) if p.cuota < 0 else (100 / (p.cuota + 100) * 100) %}
+{% set win = p.stake_monto * p.cuota / 100 if p.cuota > 0 else p.stake_monto * 100 / (p.cuota|abs) %}
+{% set to_pay = p.stake_monto + win %}
+<div class="tstc">
+  <div class="tstc-top">
+    <span class="tstc-league">{{ p.liga }}</span>
+    <span class="tstc-odds">{{ fmt_odds(p.cuota) }}</span>
   </div>
-  <div class="k-dash"></div>
-  <div class="k-matchup">{{ p.game }}{% if p.game_time_et %} · {{ p.game_time_et }}{% endif %}</div>
-  <div class="k-team">
-    {% if p.logo %}<img class="k-logo" src="{{ url_for('static', filename=p.logo) }}" alt="">{% endif %}
-    <div>
-      <div class="k-teamname">{{ p.equipo or p.pick }}{% if p.linea %} {{ p.linea.split(' (')[0] }}{% endif %}</div>
-      {% set prob = (p.cuota|abs / (p.cuota|abs + 100) * 100) if p.cuota < 0 else (100 / (p.cuota + 100) * 100) %}
-      <div class="k-sub"><span class="k-chance">{{ fmt_odds(p.cuota) }} &middot; {{ '%.1f' % prob }}% chance</span></div>
+  <div class="tstc-title">{{ p.abbr }} {{ p.bettype }} (Winner)</div>
+  <div class="tstc-ticket">
+    <div class="tstc-r1">
+      <img class="tstc-jersey" src="{{ url_for('static', filename='img/jerseys/' + p.abbr|lower + '.png') }}" alt="">
+      <div>
+        <div class="tstc-pick">{{ p.abbr }} <span class="dt">&middot;</span> <span class="pc">{{ '%.1f' % prob }}%</span></div>
+        <div class="tstc-winner">Winner</div>
+      </div>
+      <span class="tstc-matched">MATCHED</span>
+    </div>
+    <div class="tstc-amt">
+      <div><div class="tstc-lbl">Amount</div><div class="tstc-val">${{ '%.2f' % p.stake_monto }}</div></div>
+      <div class="tstc-mid">&#10095;</div>
+      <div class="tstc-col-r"><div class="tstc-lbl">To Pay</div><div class="tstc-val">${{ '%.2f' % to_pay }}</div></div>
+    </div>
+    <div class="tstc-mu">
+      <div class="tm"><img src="{{ url_for('static', filename='img/jerseys/' + p.abbr|lower + '.png') }}" alt="">{{ p.abbr }}</div>
+      <div class="ct"><div class="h">{{ p.hora }}</div><div class="d">{{ p.dia }}</div></div>
+      <div class="tm">{{ p.opp_abbr }}<img src="{{ url_for('static', filename='img/jerseys/' + p.opp_abbr|lower + '.png') }}" alt=""></div>
+    </div>
+    <div class="tstc-placed">
+      <span class="pl">Placed: {{ p.placed }}</span>
+      {% if p.comprobante %}<button class="tstc-tap" onclick="document.getElementById('tstc-modal-{{ p.id }}').style.display='flex'">&#128269; Tap ticket</button>{% endif %}
     </div>
   </div>
-  <div class="k-ticker" aria-hidden="true"><span>THE SHARP TEAM &bull; THE SHARP TEAM &bull; THE SHARP TEAM &bull; THE SHARP TEAM &bull;&nbsp;</span></div>
-  <div class="k-nums">
-    <div><div class="k-lbl">STAKE</div><div class="k-cost">${{ '%.2f' % p.stake_monto }}</div><div class="k-stake-sub">{{ p.stake_unidades }}u</div></div>
-    <div class="k-col-r"><div class="k-lbl green">PRICE</div><div class="k-payout">{{ fmt_odds(p.cuota) }}</div></div>
-  </div>
-  <div class="k-foot">
-    <span>{% if p.ticket_hora %}{{ p.ticket_hora }}{% endif %}</span>
-    <span>{{ 'ELITE PLAY' if p.nivel in ['PLATINUM', 'ELITE'] else 'GOLD PLAY' }}</span>
+  <div class="tstc-bet">Bet &nbsp;{{ '$%g' % p.stake_monto }} <span>({{ p.stake_unidades }}u)</span></div>
+  <div class="tstc-bot">
+    <span class="tstc-lvl">{{ 'VIP' if p.nivel in ['PLATINUM', 'ELITE'] else 'GOLD' }}</span>
+    {% if p.comprobante %}<button class="tstc-view" onclick="document.getElementById('tstc-modal-{{ p.id }}').style.display='flex'">View ticket &rarr;</button>{% endif %}
   </div>
   {% if p.comprobante %}
-  <button class="k-ticket" onclick="document.getElementById('ticket-modal-{{ p.id }}').style.display='flex'">🎫 View ticket proof &rarr;</button>
-  <div id="ticket-modal-{{ p.id }}" class="k-modal" onclick="this.style.display='none'"><img src="{{ url_for('static', filename=p.comprobante) }}" alt="Ticket original"></div>
+  <div id="tstc-modal-{{ p.id }}" class="tstc-modal" onclick="this.style.display='none'"><img src="{{ url_for('static', filename=p.comprobante) }}" alt="Ticket original"></div>
   {% endif %}
-  <div class="k-actions">
-    {# Boton de Novig SIEMPRE (regla de Alex 2026-09-28): OneLink oficial verificado tal cual; sin link verificado -> https://novig.com. Nunca inventar UUIDs. #}
+  <div class="tstc-actions">
+    {# Botón de Novig SIEMPRE (regla de Alex 2026-09-28): OneLink oficial verificado tal cual; sin link verificado -> https://novig.com. Nunca inventar UUIDs. #}
     {% if p.novig_url and '%2Fevent-markets%2F' in p.novig_url %}
-      <a class="btn btn-novig" href="{{ p.novig_url }}" target="_blank" rel="noopener">Place at Novig &rarr;</a>
+      <a class="tstc-btn tstc-novig" href="{{ p.novig_url }}" target="_blank" rel="noopener">Place at Novig &rarr;</a>
     {% else %}
-      <a class="btn btn-novig" href="https://novig.com" target="_blank" rel="noopener">Place at Novig &rarr;</a>
+      <a class="tstc-btn tstc-novig" href="https://novig.com" target="_blank" rel="noopener">Place at Novig &rarr;</a>
     {% endif %}
     {% if p.id in tracked_ids %}
-      <span class="btn btn-tracked">&check; Tracked</span>
+      <span class="tstc-btn tstc-tracked">&check; Tracked</span>
     {% else %}
-      <form method="post" action="{{ url_for('track', play_id=p.id) }}" style="flex:1;display:flex;margin:0">
-        <button class="btn btn-track" type="submit" style="flex:1;cursor:pointer">+ Track</button>
-      </form>
+      <a class="tstc-btn tstc-track" href="{{ url_for('track', play_id=p.id) }}">+ Track</a>
     {% endif %}
   </div>
 </div>
