@@ -180,6 +180,7 @@ CREATE TABLE IF NOT EXISTS users (
     bankroll REAL,               -- bankroll del miembro (NULL = sin configurar)
     stake_fijo_elite REAL,       -- monto fijo personal ELITE (NULL = fórmula 1%)
     stake_fijo_gold REAL,        -- monto fijo personal GOLD (NULL = fórmula 1%)
+    stake_mode TEXT NOT NULL DEFAULT 'units', -- modo de sizing: units | kelly
     platinum_unlocked INTEGER NOT NULL DEFAULT 0,  -- 1 = Elite desbloqueada
     is_admin INTEGER NOT NULL DEFAULT 0,           -- 1 = administrador
     cancel_requested_at TEXT,                      -- fecha ISO en que pidió cancelar (NULL = activa)
@@ -236,6 +237,7 @@ CREATE TABLE IF NOT EXISTS users (
     bankroll DOUBLE PRECISION,   -- bankroll del miembro (NULL = sin configurar)
     stake_fijo_elite DOUBLE PRECISION, -- monto fijo personal ELITE (NULL = fórmula 1%)
     stake_fijo_gold DOUBLE PRECISION,  -- monto fijo personal GOLD (NULL = fórmula 1%)
+    stake_mode TEXT NOT NULL DEFAULT 'units', -- modo de sizing: units | kelly
     platinum_unlocked INTEGER NOT NULL DEFAULT 0,  -- 1 = Elite desbloqueada
     is_admin INTEGER NOT NULL DEFAULT 0,           -- 1 = administrador
     cancel_requested_at TEXT,                      -- fecha ISO en que pidió cancelar (NULL = activa)
@@ -615,6 +617,49 @@ def load_plays():
     return load_data()[1]
 
 
+def _uget(user, key, default=None):
+    """Lee un campo del usuario sirva dict (Postgres) o sqlite3.Row (dev local)."""
+    if not user:
+        return default
+    try:
+        v = user[key]
+        return default if v is None else v
+    except (KeyError, IndexError, TypeError):
+        return default
+
+
+def stake_kelly(play, bankroll):
+    """Quarter Kelly sobre el edge del modelo (modo Kelly $ del miembro).
+
+    f* = p - (1-p)/b, con b = cuota decimal - 1 y p = prob. implícita + edge.
+    Se apuesta el cuarto de Kelly: 0.25 * f* * bankroll. Si f* <= 0, $0.
+    """
+    try:
+        edge = float(play.get("edge") or 0) / 100.0
+        cuota = str(play.get("cuota") or "").strip().replace("−", "-")
+        if cuota.startswith("+"):
+            v = float(cuota[1:])
+            b = v / 100.0
+            implied = 100.0 / (v + 100.0)
+        elif cuota.startswith("-"):
+            v = float(cuota[1:])
+            if v <= 0:
+                return 0.0
+            b = 100.0 / v
+            implied = v / (v + 100.0)
+        else:
+            return 0.0
+        p = implied + edge
+        if not (0.0 < p < 1.0):
+            return 0.0
+        f = p - (1.0 - p) / b
+        if f <= 0:
+            return 0.0
+        return round(0.25 * f * float(bankroll), 2)
+    except (TypeError, ValueError, ZeroDivisionError):
+        return 0.0
+
+
 def stake_personalizado(play, user):
     """Monto a mostrar/trackear.
 
@@ -626,24 +671,30 @@ def stake_personalizado(play, user):
     Montos fijos por nivel (pedido por Alex 2026-09-26): si el miembro tiene
     stake_fijo_elite / stake_fijo_gold configurado, ese monto fijo reemplaza
     la fórmula para ese nivel. Solo afecta a su dashboard, no al público.
+
+    Modo Kelly $ (pedido por Alex 2026-09-28): si el miembro eligió el modo
+    kelly, el monto es el cuarto de Kelly sobre el edge del modelo
+    (stake_kelly). Los montos fijos siguen teniendo prioridad.
     """
     nivel = (play.get("nivel") or "").upper()
     if user:
         try:
-            if nivel == "ELITE" and user.get("stake_fijo_elite"):
-                return round(float(user["stake_fijo_elite"]), 2)
-            if nivel == "GOLD" and user.get("stake_fijo_gold"):
-                return round(float(user["stake_fijo_gold"]), 2)
+            if nivel == "ELITE" and _uget(user, "stake_fijo_elite"):
+                return round(float(_uget(user, "stake_fijo_elite")), 2)
+            if nivel == "GOLD" and _uget(user, "stake_fijo_gold"):
+                return round(float(_uget(user, "stake_fijo_gold")), 2)
         except (TypeError, ValueError):
             pass
+    try:
+        br = float(_uget(user, "bankroll") or 0)
+    except (TypeError, ValueError):
+        br = 0
+    if br > 0 and (_uget(user, "stake_mode") or "units").lower() == "kelly":
+        return stake_kelly(play, br)
     try:
         units = float(play.get("stake_unidades") or 0)
     except (TypeError, ValueError):
         units = 0
-    try:
-        br = float((user or {}).get("bankroll") or 0)
-    except (TypeError, ValueError):
-        br = 0
     if br > 0 and units > 0:
         return round(br * 0.01 * units, 2)
     return play.get("stake_monto")
@@ -1093,6 +1144,8 @@ def migrate_db():
             pending.append(f"ALTER TABLE users ADD COLUMN stake_fijo_elite {coltype}")
         if "stake_fijo_gold" not in cols:
             pending.append(f"ALTER TABLE users ADD COLUMN stake_fijo_gold {coltype}")
+        if "stake_mode" not in cols:
+            pending.append("ALTER TABLE users ADD COLUMN stake_mode TEXT NOT NULL DEFAULT 'units'")
         if "platinum_unlocked" not in cols:
             pending.append("ALTER TABLE users ADD COLUMN platinum_unlocked INTEGER NOT NULL DEFAULT 0")
         if "is_admin" not in cols:
@@ -1186,6 +1239,7 @@ def home():
         saludo=saludo_hoy(),
         racha=checkin_streak(db, session["user_id"]),
         bankroll=user["bankroll"] if user else None,
+        stake_mode=user["stake_mode"] if user else "units",
         platinum_unlocked=platinum_unlocked_for(user),
         res=program_stats(),
         leccion=load_masterclass(),
@@ -1283,6 +1337,27 @@ def logout():
     return redirect(url_for("index"))
 
 
+@app.route("/cuenta/stake-mode", methods=["POST"])
+@login_required
+def stake_mode():
+    """Cambia el modo de sizing del miembro: units (TST Units) o kelly (Kelly $).
+
+    Pedido por Alex 2026-09-28: tarjeta de bankroll en el Dashboard con los dos
+    modos, como la configuración de WGT pero con diseño propio.
+    """
+    mode = (request.form.get("mode") or "").strip().lower()
+    if mode not in ("units", "kelly"):
+        flash("Invalid sizing mode.", "error")
+        return redirect(url_for("cuenta"))
+    db = get_db()
+    db.execute("UPDATE users SET stake_mode = ? WHERE id = ?", (mode, session["user_id"]))
+    db.commit()
+    nxt = (request.form.get("next") or "").strip()
+    if nxt == "home":
+        return redirect(url_for("home"))
+    return redirect(url_for("cuenta"))
+
+
 @app.route("/cuenta", methods=["GET", "POST"])
 @login_required
 def cuenta():
@@ -1300,13 +1375,15 @@ def cuenta():
         if val <= 0:
             flash("Enter a valid bankroll greater than zero.", "error")
             return render_template("cuenta.html", bankroll=user["bankroll"] if user else None,
-                                   cancel_at=user["cancel_requested_at"] if user else None), 400
+                                   cancel_at=user["cancel_requested_at"] if user else None,
+                                   stake_mode=user["stake_mode"] if user else "units"), 400
         db.execute("UPDATE users SET bankroll = ? WHERE id = ?", (val, session["user_id"]))
         db.commit()
         flash(f"Bankroll saved: ${val:,.2f}.", "ok")
         return redirect(url_for("cuenta"))
     return render_template("cuenta.html", bankroll=user["bankroll"] if user else None,
-                           cancel_at=user["cancel_requested_at"] if user else None)
+                           cancel_at=user["cancel_requested_at"] if user else None,
+                           stake_mode=user["stake_mode"] if user else "units")
 
 
 @app.route("/cuenta/cancelar", methods=["GET", "POST"])
@@ -1410,6 +1487,7 @@ def tracker():
         stats=stats,
         nombre=session.get("nombre", ""),
         bankroll=user["bankroll"] if user else None,
+        stake_mode=user["stake_mode"] if user else "units",
         platinum_unlocked=platinum_unlocked_for(user),
         res=program_stats(),
         recientes=recientes_oficiales(),

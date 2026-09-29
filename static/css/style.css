@@ -281,6 +281,65 @@ a { color: var(--blue); text-decoration: none; }
 .bankroll-current { margin: 14px 0 4px; font-size: 1.1rem; }
 .center { text-align: center; }
 
+/* ---------- Bankroll & Size card (2026-09-28, pedido de Alex) ---------- */
+.br-card {
+  margin-top: 14px;
+  background: #101018;
+  border: 1px solid rgba(212, 175, 55, .35);
+  border-radius: 20px;
+  padding: 16px 18px;
+  box-shadow: 0 0 24px rgba(212, 175, 55, .08);
+}
+.br-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.br-emoji { font-size: 1.3rem; }
+.br-label { color: #94a3b8; font-size: 1.05rem; }
+.br-value { color: var(--green-bright); font-weight: 800; font-size: 1.25rem; }
+.br-edit {
+  background: rgba(255,255,255,.08); color: #fff; font-weight: 700; font-size: .95rem;
+  border: none; border-radius: 12px; padding: 7px 16px; text-decoration: none; cursor: pointer;
+}
+.br-sep { width: 1px; align-self: stretch; background: rgba(255,255,255,.12); margin: 2px 4px; }
+.br-toggle { display: flex; gap: 10px; margin-top: 14px; }
+.br-pill {
+  border: 1px solid rgba(255,255,255,.14); background: transparent; color: #94a3b8;
+  font-weight: 800; font-size: 1rem; border-radius: 14px; padding: 10px 22px; cursor: pointer;
+}
+.br-pill.active {
+  background: linear-gradient(180deg,#ffd257,#e0a92e); color: #0a0a0f; border-color: transparent;
+  box-shadow: 0 2px 14px rgba(255,210,87,.35);
+}
+.br-how {
+  margin-top: 12px; background: none; border: none; padding: 0; cursor: pointer;
+  color: #7d8aa0; font-size: 1rem; text-decoration: underline; text-underline-offset: 3px;
+}
+.br-modal {
+  position: fixed; inset: 0; z-index: 90; display: flex; align-items: flex-end; justify-content: center;
+  background: rgba(0,0,0,.65); padding: 12px;
+}
+.br-modal[hidden] { display: none; }
+.br-modal-card {
+  width: 100%; max-width: 460px; max-height: 88vh; overflow-y: auto;
+  background: #14141c; border: 1px solid rgba(212,175,55,.3); border-radius: 24px;
+  padding: 26px 22px; color: #e8eaf0;
+}
+.br-modal-card h3 { margin: 0 0 8px; font-size: 1.5rem; color: #fff; }
+.br-modal-sub { color: #9aa3b5; margin: 0 0 18px; line-height: 1.5; }
+.br-opt {
+  border: 1px solid rgba(255,255,255,.1); border-left: 5px solid var(--green-bright);
+  border-radius: 16px; padding: 16px 18px; margin-bottom: 14px; background: rgba(255,255,255,.02);
+}
+.br-opt-kelly { border-left-color: #ffd257; }
+.br-opt-title { font-weight: 800; font-size: 1.15rem; margin: 0 0 10px; color: var(--green-bright); }
+.br-opt-kelly .br-opt-title { color: #ffd257; }
+.br-opt p { margin: 0 0 8px; line-height: 1.55; color: #c6cbd8; }
+.br-opt p:last-child { margin-bottom: 0; }
+.br-opt-ex { color: #8b93a7 !important; font-size: .95rem; }
+.br-gotit {
+  display: block; margin: 6px 0 0 auto; border: none; cursor: pointer;
+  background: linear-gradient(180deg,#ffd257,#e0a92e); color: #0a0a0f;
+  font-weight: 800; font-size: 1.05rem; border-radius: 16px; padding: 13px 34px;
+}
+
 /* Fix movil: ninguna imagen puede romper el layout */
 img { max-width: 100%; height: auto; }
 /* ---- Restaurado 2026-09-26: bloque borrado por accidente en 380c91f ---- */

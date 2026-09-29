@@ -115,13 +115,48 @@
 {% else %}
 <p class="muted">No value plays today.</p>
 {% endif %}
-<p class="bankroll-pill">
-  {% if bankroll %}
-  💰 Bankroll: <b>${{ '%.2f' % bankroll }}</b> · <a href="{{ url_for('cuenta') }}">change</a>
-  {% else %}
-  💰 Bankroll: <span class="muted">not set</span> · <a href="{{ url_for('cuenta') }}">set up</a>
-  {% endif %}
-</p>
+<!-- BANKROLL & SIZE CARD (pedido por Alex 2026-09-28: configuración como WGT, diseño propio TST) -->
+<div class="br-card">
+  <div class="br-row">
+    <span class="br-emoji">💰</span>
+    <span class="br-label">Bankroll</span>
+    {% if bankroll %}
+    <span class="br-value">${{ '%.2f' % bankroll }}</span>
+    {% else %}
+    <span class="br-value muted">not set</span>
+    {% endif %}
+    <a class="br-edit" href="{{ url_for('cuenta') }}">Edit</a>
+    <span class="br-sep"></span>
+    <span class="br-label">Size</span>
+  </div>
+  <form method="post" action="{{ url_for('stake_mode') }}" class="br-toggle">
+    <input type="hidden" name="next" value="home">
+    <button type="submit" name="mode" value="units" class="br-pill{% if stake_mode == 'units' %} active{% endif %}">TST Units</button>
+    <button type="submit" name="mode" value="kelly" class="br-pill{% if stake_mode == 'kelly' %} active{% endif %}">Kelly $</button>
+  </form>
+  <button class="br-how" id="br-how-open" type="button">how much should I bet?</button>
+</div>
+<div class="br-modal" id="br-how-modal" hidden>
+  <div class="br-modal-card">
+    <h3>How much should I bet?</h3>
+    <p class="br-modal-sub">Same edge, two ways to size it. Most members start with TST Units. Switch anytime.</p>
+    <div class="br-opt br-opt-units">
+      <p class="br-opt-title">TST Units — the disciplined way</p>
+      <p>Bet in units. <b>1 unit = 1% of your bankroll.</b> We size every play by its badge: ★ ELITE = 1u, GOLD = 0.6u. Small and steady, exactly how The Sharp Team plays it. Less swing, easy to follow.</p>
+      {% if bankroll %}
+      <p class="br-opt-ex">On your ${{ '%.0f' % bankroll }} bankroll, a 1u play is about ${{ '%.0f' % (bankroll / 100) }}.</p>
+      {% endif %}
+    </div>
+    <div class="br-opt br-opt-kelly">
+      <p class="br-opt-title">Kelly $ — the math-optimal way</p>
+      <p>Bet the exact dollars the math says is best. We use <b>quarter Kelly</b>, the model the sharpest bettors use: it stakes more on bigger edges, less on smaller ones. Higher long-run growth, bigger swings.</p>
+    </div>
+    <button class="br-gotit" id="br-how-close" type="button">Got it</button>
+  </div>
+</div>
+<script>
+(function(){var m=document.getElementById('br-how-modal'),o=document.getElementById('br-how-open'),c=document.getElementById('br-how-close');if(o&&m){o.addEventListener('click',function(){m.hidden=false;});}if(c&&m){c.addEventListener('click',function(){m.hidden=true;});}if(m){m.addEventListener('click',function(e){if(e.target===m){m.hidden=true;}});}})();
+</script>
 
 <section class="profit-card">
   <p class="profit-kicker">DOCUMENTED PROGRAM PROFIT</p>

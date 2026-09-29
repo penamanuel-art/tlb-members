@@ -19,6 +19,14 @@
     </label>
     <button class="btn btn-primary btn-block" type="submit">Save</button>
   </form>
+  <h2 style="margin-top:26px;">📐 Bet sizing</h2>
+  <p class="muted">Two ways to size every play. Switch anytime.</p>
+  <form method="post" action="{{ url_for('stake_mode') }}" class="br-toggle">
+    <input type="hidden" name="next" value="cuenta">
+    <button type="submit" name="mode" value="units" class="br-pill{% if stake_mode == 'units' %} active{% endif %}">TST Units</button>
+    <button type="submit" name="mode" value="kelly" class="br-pill{% if stake_mode == 'kelly' %} active{% endif %}">Kelly $</button>
+  </form>
+  <p class="muted" style="margin-top:10px;font-size:.92rem;">TST Units: 1u = 1% of your bankroll · Kelly $: quarter Kelly on the model's edge.</p>
   <p class="muted center"><a href="{{ url_for('home') }}">← Back to today</a></p>
 </section>
 
