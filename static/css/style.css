@@ -122,16 +122,18 @@ a { color: var(--blue); text-decoration: none; }
 
 /* ---------- Home / greeting ---------- */
 .greet-date { color: var(--muted); display: flex; align-items: center; gap: 8px; text-transform: capitalize; }
-/* Logo de la empresa en el encabezado, a la derecha de la fecha (pedido Alex 2026-09-29) */
-.greet-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.greet-top .greet-date { flex: 1 1 auto; min-width: 0; margin: 0; }
-.greet-logo {
-  width: 68px; height: 68px; flex-shrink: 0;
+/* Logo de la empresa FIJO en el encabezado (pedido Alex 2026-09-29): no se mueve al navegar */
+.greet-logo-fixed {
+  position: fixed;
+  top: 100px;
+  right: max(16px, calc((100vw - 720px) / 2 + 16px));
+  width: 68px; height: 68px;
   border-radius: 50%;
   border: 2px solid rgba(212, 175, 55, 0.65);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5), 0 0 12px rgba(212, 175, 55, 0.25);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.55), 0 0 14px rgba(212, 175, 55, 0.28);
   background: #000;
   object-fit: cover;
+  z-index: 40;
 }
 .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--green); display: inline-block; box-shadow: 0 0 8px var(--green); }
 .greet-title { font-size: 2.6rem; line-height: 1.05; margin: 6px 0 10px; font-weight: 800; letter-spacing: -0.5px; }
