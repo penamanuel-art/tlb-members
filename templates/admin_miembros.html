@@ -44,4 +44,24 @@
 <p class="muted">No registered members.</p>
 {% endfor %}
 
+<section class="tracker-head" style="margin-top:2.5rem">
+  <div>
+    <p class="kicker">STRIPE</p>
+    <h2>Recent webhook events</h2>
+  </div>
+</section>
+
+{% for e in eventos %}
+<article class="member-row">
+  <div class="m-name">{{ e.tipo }}</div>
+  <div class="m-email">{{ e.email or '—' }}</div>
+  <div class="m-meta">
+    <span class="m-pill">{{ e.created_at }}</span>
+    {% if e.detalle %}<span class="m-pill">{{ e.detalle }}</span>{% endif %}
+  </div>
+</article>
+{% else %}
+<p class="muted">No webhook events yet.</p>
+{% endfor %}
+
 {% endblock %}

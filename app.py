@@ -1920,7 +1920,15 @@ def admin_miembros():
         except Exception:
             d["es_nuevo"] = False
         lista.append(d)
-    return render_template("admin_miembros.html", miembros=lista)
+    try:
+        eventos = db.execute(
+            "SELECT tipo, email, detalle, created_at FROM stripe_events "
+            "ORDER BY created_at DESC LIMIT 15"
+        ).fetchall()
+    except Exception:
+        eventos = []
+    return render_template("admin_miembros.html", miembros=lista,
+                           eventos=[dict(e) for e in eventos])
 
 
 @app.route("/resultados")
