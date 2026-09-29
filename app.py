@@ -2147,6 +2147,7 @@ def stripe_webhook():
 
     Eventos que procesa (configurar en el Dashboard de Stripe):
       - checkout.session.completed   -> activa Elite al miembro (match por email)
+      - invoice.paid                 -> activa Elite (pago inicial o renovación semanal)
       - customer.subscription.updated -> actualiza estado / detecta cancelación al fin del período
       - customer.subscription.deleted -> desactiva Elite
       - invoice.payment_failed        -> queda en auditoría para que Alex lo vea
@@ -2169,16 +2170,22 @@ def stripe_webhook():
     db = get_db()
     eid = event.get("id", "")
     etype = event.get("type", "")
+    data = (event.get("data") or {}).get("object") or {}
+
+    # La activación es idempotente (UPDATE a platinum_unlocked=1): reprocesar
+    # un evento de activación es seguro aunque Stripe lo reenvíe.
+    es_activacion = etype in ("checkout.session.completed", "invoice.paid")
     try:
         db.execute(
             "INSERT INTO stripe_events (event_id, tipo, created_at) VALUES (?, ?, ?)",
             (eid, etype, now_iso()),
         )
         db.commit()
+        duplicado = False
     except INTEGRITY_ERRORS:
-        return jsonify({"ok": True, "deduped": True}), 200
-
-    data = (event.get("data") or {}).get("object") or {}
+        duplicado = True
+        if not es_activacion:
+            return jsonify({"ok": True, "deduped": True}), 200
 
     def _auditar(email="", detalle=""):
         try:
@@ -2190,27 +2197,43 @@ def stripe_webhook():
         except Exception:
             pass
 
+    def _activar_elite(email, customer_id, sub_id, origen):
+        """Activa Elite al miembro con ese email. Idempotente."""
+        email = (email or "").strip().lower()
+        if not email:
+            _auditar("", f"{origen} sin email")
+            return
+        row = db.execute("SELECT id FROM users WHERE email = ?",
+                         (email,)).fetchone()
+        if row:
+            db.execute(
+                "UPDATE users SET platinum_unlocked = 1, stripe_customer_id = ?, "
+                "stripe_subscription_id = ?, cancel_requested_at = NULL WHERE id = ?",
+                (customer_id or None, sub_id or None, row["id"]),
+            )
+            db.commit()
+            _auditar(email, f"Elite activada ({origen}, sub {(sub_id or 'n/a')[:20]})"
+                     + (" [reproceso]" if duplicado else ""))
+        else:
+            _auditar(email, "pago sin cuenta registrada: activar manual")
+
     try:
         if etype == "checkout.session.completed":
             # Pago completado: activar Elite al miembro con ese email.
-            email = ((data.get("customer_details") or {}).get("email") or "").strip().lower()
-            customer_id = data.get("customer") or ""
-            sub_id = data.get("subscription") or ""
-            if email:
-                row = db.execute("SELECT id FROM users WHERE email = ?",
-                                 (email,)).fetchone()
-                if row:
-                    db.execute(
-                        "UPDATE users SET platinum_unlocked = 1, stripe_customer_id = ?, "
-                        "stripe_subscription_id = ?, cancel_requested_at = NULL WHERE id = ?",
-                        (customer_id or None, sub_id or None, row["id"]),
-                    )
-                    db.commit()
-                    _auditar(email, f"Elite activada (sub {sub_id[:20] if sub_id else 'n/a'})")
-                else:
-                    _auditar(email, "pago sin cuenta registrada: activar manual")
-            else:
-                _auditar("", "checkout sin email")
+            _activar_elite(
+                ((data.get("customer_details") or {}).get("email") or ""),
+                data.get("customer") or "",
+                data.get("subscription") or "",
+                "checkout",
+            )
+        elif etype == "invoice.paid":
+            # Factura de suscripción pagada (inicial o renovación): activar Elite.
+            _activar_elite(
+                data.get("customer_email") or "",
+                data.get("customer") or "",
+                data.get("subscription") or "",
+                "invoice.paid",
+            )
         elif etype in ("customer.subscription.updated", "customer.subscription.deleted"):
             # Cancelación o cambio de estado: localizar por suscripción o cliente.
             sub_id = data.get("id") or ""
