@@ -71,7 +71,9 @@
     {% if p.id in tracked_ids %}
       <span class="btn btn-tracked">&check; Tracked</span>
     {% else %}
-      <a class="btn btn-track" href="{{ url_for('track', play_id=p.id) }}">+ Track</a>
+      <form method="post" action="{{ url_for('track', play_id=p.id) }}" style="flex:1;display:flex;margin:0">
+        <button class="btn btn-track" type="submit" style="flex:1;cursor:pointer">+ Track</button>
+      </form>
     {% endif %}
   </div>
 </div>
