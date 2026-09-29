@@ -1209,6 +1209,30 @@ def compute_ticker_days():
     return ticker_days
 
 
+@app.route("/ticket/<play_id>")
+def ticket_view(play_id):
+    """Visor público del ticket de una jugada — diseño propio de The Sharp Team
+    (2026-09-29, pedido por Alex: 'otro diseño para no copiar el de Wise').
+    Lo abre el botón 🎫 View ticket de Telegram."""
+    play = next((p for p in load_plays() if p.get("id") == play_id), None)
+    if play is None:
+        try:
+            arch = json.load(open(ARCHIVE_PATH, "r", encoding="utf-8"))
+            for dia in (arch.get("dias") or []):
+                play = next(
+                    (j for j in (dia.get("jugadas") or [])
+                     if isinstance(j, dict) and j.get("id") == play_id),
+                    None,
+                )
+                if play:
+                    break
+        except (OSError, json.JSONDecodeError):
+            pass
+    if play is None:
+        return render_template("404.html"), 404
+    return render_template("ticket.html", p=play)
+
+
 @app.route("/home")
 @login_required
 def home():
