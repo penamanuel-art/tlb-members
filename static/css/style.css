@@ -612,10 +612,12 @@ img { max-width: 100%; height: auto; }
 .ok-text { color: var(--green-bright); }
 .cancel-text { color: #f87171; }
 
-/* ===== Program record: diseño premium (member home) ===== */
+/* ===== Program record: diseño premium v2 (member home) ===== */
 .pro-record{
   position:relative;overflow:hidden;text-align:center;
-  background:linear-gradient(160deg,#0e1424 0%,#090d18 60%,#0a0d16 100%);
+  background:
+    radial-gradient(440px 230px at 50% 28%, rgba(74,222,128,.10), transparent 70%),
+    linear-gradient(160deg,#0e1424 0%,#090d18 60%,#0a0d16 100%);
   border:1px solid rgba(212,175,55,.38);
   border-radius:24px;
   padding:36px 28px 30px;
@@ -625,30 +627,44 @@ img { max-width: 100%; height: auto; }
   content:"";position:absolute;top:0;left:12%;right:12%;height:1px;
   background:linear-gradient(90deg,transparent,rgba(212,175,55,.85),transparent);
 }
-.pro-kicker{
-  margin:0 0 14px;color:#d4af37;font-size:.74rem;font-weight:700;letter-spacing:.28em;
+.pro-record::after{
+  content:"";position:absolute;top:0;bottom:0;width:45%;left:-70%;pointer-events:none;
+  background:linear-gradient(105deg,transparent,rgba(255,255,255,.055),transparent);
+  animation:pro-shine 7s ease-in-out infinite;
 }
+@keyframes pro-shine{0%{left:-70%}55%,100%{left:140%}}
+.pro-kicker{margin:0 0 14px;display:flex;align-items:center;justify-content:center;gap:12px}
+.pro-kicker span{color:#d4af37;font-size:.74rem;font-weight:700;letter-spacing:.28em;white-space:nowrap}
+.pro-kicker::before,.pro-kicker::after{
+  content:"";height:1px;width:46px;
+  background:linear-gradient(90deg,transparent,rgba(212,175,55,.7));
+}
+.pro-kicker::after{background:linear-gradient(90deg,rgba(212,175,55,.7),transparent)}
 .pro-profit{
-  margin:0;font-size:clamp(3.6rem,17vw,5.2rem);font-weight:800;line-height:1;letter-spacing:-.02em;
-  text-shadow:0 0 44px rgba(74,222,128,.28);
+  margin:0;font-size:clamp(4rem,19vw,5.6rem);font-weight:800;line-height:1;letter-spacing:-.02em;
+  text-shadow:0 0 44px rgba(74,222,128,.30);
 }
 .pro-sub{margin:14px 0 0;color:#9aa3b8;font-size:1.02rem}
 .pro-sub strong{color:#fff}
 .pro-levels{display:flex;gap:14px;margin-top:28px;text-align:left}
 .pro-level{
-  flex:1;background:rgba(255,255,255,.032);
+  position:relative;flex:1;overflow:hidden;
+  background:rgba(255,255,255,.032);
   border:1px solid rgba(255,255,255,.09);
-  border-radius:18px;padding:18px 20px 20px;
+  border-radius:20px;padding:20px;
 }
-.pro-lvl-head{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+.pro-level::before{content:"";position:absolute;top:0;left:0;right:0;height:3px}
+.lvl-gold::before{background:linear-gradient(90deg,#f6d47c,#b8860b)}
+.lvl-elite::before{background:linear-gradient(90deg,#4ade80,#16a34a)}
+.pro-lvl-head{display:flex;align-items:center;gap:9px}
 .pro-badge{font-size:1.05rem;line-height:1}
-.pro-lvl-name{font-size:.78rem;font-weight:700;letter-spacing:.16em;color:#cbd5e1}
-.pro-lvl-record{margin:0;font-size:2rem;font-weight:800;letter-spacing:-.01em}
-.pro-lvl-row{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-top:5px}
-.pro-lvl-profit{font-size:1.25rem;font-weight:800}
-.pro-lvl-wr{font-size:.78rem;color:#8b93a7;font-weight:600;white-space:nowrap}
-.pro-bar{height:6px;border-radius:99px;background:rgba(255,255,255,.08);margin-top:13px;overflow:hidden}
-.pro-bar-fill{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#16a34a,#4ade80)}
+.pro-lvl-name{font-size:.78rem;font-weight:700;letter-spacing:.14em;color:#cbd5e1}
+.pro-lvl-body{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:10px}
+.pro-lvl-record{margin:0;font-size:2.2rem;font-weight:800;letter-spacing:-.01em}
+.pro-lvl-profit{margin:6px 0 0;font-size:1.35rem;font-weight:800}
+.pro-ring{width:78px;height:78px;flex:none}
+.pro-ring-pct{fill:#fff;font-size:16px;font-weight:800}
+.pro-lvl-foot{margin:12px 0 0;font-size:.74rem;color:#8b93a7;font-weight:600;letter-spacing:.08em;text-transform:uppercase}
 @media (max-width:560px){
   .pro-record{padding:30px 20px 26px}
   .pro-levels{flex-direction:column}
