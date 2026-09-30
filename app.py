@@ -28,6 +28,23 @@ from flask import (
 )
 from zoneinfo import ZoneInfo
 
+def _asset_version():
+    """Short git hash so every deploy busts the static-asset cache."""
+    try:
+        import subprocess
+        out = subprocess.run(
+            ["git", "rev-parse", "--short", "HEAD"],
+            capture_output=True, text=True, timeout=5,
+            cwd=os.path.dirname(os.path.abspath(__file__)),
+        )
+        if out.returncode == 0 and out.stdout.strip():
+            return out.stdout.strip()
+    except Exception:
+        pass
+    return datetime.now(timezone.utc).strftime("%Y%m%d%H%M")
+
+ASSET_V = _asset_version()
+
 TZ = ZoneInfo("America/New_York")
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -1162,6 +1179,7 @@ def inject_user():
         "es_admin": bool(session.get("is_admin")),
         "miembro_platinum": platinum_unlocked_for(current_user()),
         "ticker_days": compute_ticker_days(),
+        "asset_v": ASSET_V,
     }
 
 
