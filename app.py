@@ -2311,7 +2311,18 @@ def admin_toggle_platinum():
         flash("Member not found.", "error")
     else:
         nuevo = 0 if row["platinum_unlocked"] else 1
-        db.execute("UPDATE users SET platinum_unlocked = ? WHERE id = ?", (nuevo, user_id))
+        if nuevo:
+            db.execute(
+                "UPDATE users SET platinum_unlocked = 1, telegram_unban_pending = 1, "
+                "telegram_ban_pending = 0 WHERE id = ?",
+                (user_id,),
+            )
+        else:
+            db.execute(
+                "UPDATE users SET platinum_unlocked = 0, telegram_ban_pending = 1, "
+                "telegram_unban_pending = 0 WHERE id = ?",
+                (user_id,),
+            )
         db.commit()
         flash(
             "Elite access activated." if nuevo else "Elite access deactivated.",
