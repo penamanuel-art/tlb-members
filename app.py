@@ -1222,49 +1222,65 @@ def auto_grado_tracked(db, user):
     return n
 
 
+def _free_play_id(fecha, pick):
+    """ID determinista para jugadas del archivo histórico (sin id propio)."""
+    slug = re.sub(r"[^a-z0-9]+", "-", (pick or "").strip().lower()).strip("-")
+    return f"free-{fecha}-{slug}"
+
+
 def sync_free_plays(db):
     """Registra automáticamente en el tracker "Free Plays" las jugadas de la
-    card publicada (data/plays.json) que aún no estén registradas.
+    card publicada (data/plays.json) y del histórico (data/archive.json)
+    que aún no estén registradas.
 
     Cada jugada entra con el stake fijo FREE_STAKE. Idempotente: las jugadas
     ya registradas (por play_id) se saltan. Se llama al publicar la card y
     al abrir /free-plays.
     """
-    plays = load_plays()
-    if not plays:
-        return 0
     now = datetime.now(timezone.utc).isoformat()
     n = 0
-    for p in plays:
-        pid = p.get("id")
+
+    def _insert(pid, fecha, nivel, pick, cuota, edge):
+        nonlocal n
         if not pid:
-            continue
+            return
         exists = db.execute(
             "SELECT 1 FROM free_plays WHERE play_id = ?", (pid,)
         ).fetchone()
         if exists:
-            continue
-        cuota = p.get("cuota")
+            return
         try:
             cuota = int(cuota)
         except (TypeError, ValueError):
-            continue
+            return
         db.execute(
             "INSERT INTO free_plays "
             "(play_id, fecha, nivel, pick, cuota, stake_monto, edge, resultado, created_at) "
             "VALUES (?, ?, ?, ?, ?, ?, ?, NULL, ?)",
-            (
-                pid,
-                p.get("fecha") or "",
-                p.get("nivel") or "GOLD",
-                p.get("pick") or "",
-                cuota,
-                FREE_STAKE,
-                p.get("edge"),
-                now,
-            ),
+            (pid, fecha or "", nivel or "GOLD", pick or "", cuota,
+             FREE_STAKE, edge, now),
         )
         n += 1
+
+    # 1) Card actual (plays.json)
+    for p in load_plays():
+        _insert(
+            p.get("id"), p.get("fecha"), p.get("nivel"),
+            p.get("pick"), p.get("cuota"), p.get("edge"),
+        )
+
+    # 2) Histórico (archive.json) — backfill de jugadas ya publicadas
+    for d in load_archive():
+        fecha = (d.get("fecha") or "").strip()
+        for j in d.get("jugadas", []) or []:
+            pick = j.get("pick")
+            if not pick:
+                continue
+            _insert(
+                _free_play_id(fecha, pick), fecha, j.get("nivel"),
+                pick, j.get("cuota"), j.get("edge"),
+            )
+
     if n:
         db.commit()
     return n
