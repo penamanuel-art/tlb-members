@@ -628,68 +628,6 @@ def send_welcome_email(nombre: str, email: str):
     threading.Thread(target=_send, daemon=True).start()
 
 
-def send_elite_active_email(nombre: str, email: str):
-    """Email automático cuando se activa Elite (pago inicial o reactivación).
-
-    Pedido Alex 2026-09-30: el cliente recibe con su pago el link directo
-    a las jugadas Elite que ya pagó. Solo se envía en activaciones NUEVAS
-    (no en renovaciones semanales). Usa el mismo SMTP Gmail
-    (EMAIL_USER / EMAIL_PASS); silencioso si falla.
-    """
-    user = (os.environ.get("EMAIL_USER") or "").strip()
-    pwd = os.environ.get("EMAIL_PASS") or ""
-    if not (user and pwd and email):
-        return
-    link = "https://the-line-breaker-members.onrender.com/home"
-    saludo = f"Hi {nombre}," if nombre else "Hi,"
-    subject = "\u2b50 Your Elite is active \u2014 today's plays are inside"
-    text = (
-        f"{saludo}\n\n"
-        "Your Elite membership is now active. Today's Elite play is waiting for you:\n\n"
-        f"{link}\n\n"
-        "Every day you'll find the Elite selection there before game time.\n\n"
-        "The Sharp Team"
-    )
-    html = f"""<div style="max-width:460px;margin:0 auto;background:#0a0f1c;font-family:-apple-system,'Segoe UI',Roboto,sans-serif;border-radius:14px;overflow:hidden;">
-  <div style="background:linear-gradient(135deg,#0e1726,#1a2340);padding:28px 24px;text-align:center;border-bottom:3px solid #fbbf24;">
-    <div style="font-size:44px;">\U0001f988</div>
-    <div style="color:#fbbf24;font-size:13px;font-weight:800;letter-spacing:3px;margin-top:8px;">THE SHARP TEAM</div>
-    <div style="color:#ffffff;font-size:22px;font-weight:800;margin-top:10px;">\u2b50 Your Elite is active</div>
-  </div>
-  <div style="padding:26px 24px;color:#e2e8f0;font-size:15px;line-height:1.6;">
-    <p style="margin:0 0 14px;">{saludo}</p>
-    <p style="margin:0 0 20px;">Your Elite membership is now active. Today's Elite play is waiting for you inside your Dashboard:</p>
-    <div style="text-align:center;margin:24px 0;">
-      <a href="{link}" style="display:inline-block;background:#22c55e;color:#ffffff;font-weight:800;font-size:16px;padding:14px 32px;border-radius:999px;text-decoration:none;">View today's Elite plays \u2192</a>
-    </div>
-    <p style="margin:0;color:#94a3b8;font-size:13px;">Every day you'll find the Elite selection there before game time. Win or loss, every play stays on the record.</p>
-  </div>
-  <div style="padding:16px 24px;text-align:center;color:#64748b;font-size:11px;border-top:1px solid #1e293b;">
-    THE SHARP TEAM \u00b7 Juega responsablemente \u00b7 21+ \u00b7 1-800-GAMBLER
-  </div>
-</div>"""
-
-    def _send():
-        try:
-            import smtplib
-            from email.message import EmailMessage
-
-            msg = EmailMessage()
-            msg["Subject"] = subject
-            msg["From"] = f"The Sharp Team <{user}>"
-            msg["To"] = email
-            msg.set_content(text)
-            msg.add_alternative(html, subtype="html")
-            with smtplib.SMTP("smtp.gmail.com", 587, timeout=20) as s:
-                s.starttls()
-                s.login(user, pwd)
-                s.send_message(msg)
-        except Exception:
-            pass  # silencioso: nunca rompe el webhook
-
-    import threading
-    threading.Thread(target=_send, daemon=True).start()
-
 
 def load_data():
     """Devuelve (program, plays). Soporta plays.json como lista (viejo) o dict (nuevo)."""
@@ -1568,7 +1506,6 @@ def register():
         session["nombre"] = nombre
         session["is_admin"] = es_admin
         notify_new_member(nombre, email)
-        send_welcome_email(nombre, email)
         return redirect(url_for("bienvenida"))
     return render_template("register.html")
 
@@ -2864,11 +2801,12 @@ def stripe_webhook():
             db.commit()
             _auditar(email, f"Elite activada ({origen}, sub {(sub_id or 'n/a')[:20]})"
                      + (" [reproceso]" if duplicado else ""))
-            # Pedido Alex 2026-09-30: con el pago le llega el link directo a
-            # las jugadas Elite. Solo en activaciones nuevas, no renovaciones.
+            # Pedido Alex 2026-09-30: al pagar le llega el email bonito de
+            # bienvenida (WELCOME_HTML: todo lo incluido en la membresía +
+            # botones directos al Dashboard). Solo en activaciones nuevas.
             if era_nuevo:
                 try:
-                    send_elite_active_email(row["nombre"] or "", email)
+                    send_welcome_email(row["nombre"] or "", email)
                 except Exception:
                     pass
         else:
