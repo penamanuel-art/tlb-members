@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Migrate tracking — Admin{% endblock %}
+{% block content %}
+<section class="tracker-head">
+  <div>
+    <p class="kicker">ADMIN</p>
+    <h2>🔀 Migrate tracking</h2>
+    <p class="muted">Moves tracked plays, check-ins and bankroll settings from one account to another. Does not touch admin rights, Elite status or Stripe data.</p>
+  </div>
+</section>
+
+{% for u in resumen %}
+<article class="member-row">
+  <div class="m-name">{{ u.nombre }}</div>
+  <div class="m-email">{{ u.email }}</div>
+  <div class="m-meta">
+    <span class="m-pill">{{ u.tracked }} tracked</span>
+    <span class="m-pill">{{ u.checkins }} check-ins</span>
+    <span class="m-pill">Bankroll: {{ ('$%.2f' % u.bankroll) if u.bankroll is not none else '—' }}</span>
+  </div>
+</article>
+{% endfor %}
+
+<form method="post" onsubmit="return confirm('Move ALL tracking from the source account to the destination?');" style="margin-top:1.5rem">
+  <label>From (source)
+    <select name="origen" required>
+      <option value="">— pick —</option>
+      {% for u in resumen %}
+      <option value="{{ u.id }}">{{ u.email }} ({{ u.tracked }} tracked)</option>
+      {% endfor %}
+    </select>
+  </label>
+  <label>To (destination)
+    <select name="destino" required>
+      <option value="">— pick —</option>
+      {% for u in resumen %}
+      <option value="{{ u.id }}" {% if u.id == sugerido %}selected{% endif %}>{{ u.email }} ({{ u.tracked }} tracked)</option>
+      {% endfor %}
+    </select>
+  </label>
+  <button class="btn btn-place" type="submit">Migrate tracking →</button>
+</form>
+{% endblock %}

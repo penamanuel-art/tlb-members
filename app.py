@@ -1803,6 +1803,78 @@ def admin_eliminar_miembro():
     return redirect(url_for("admin_miembros"))
 
 
+@app.route("/admin/migrar-track", methods=["GET", "POST"])
+@login_required
+def admin_migrar_track():
+    """Migra el historial de trackeo (jugadas + checkins + bankroll) de una
+    cuenta a otra. Solo admin. No toca is_admin, platinum_unlocked ni datos de Stripe."""
+    me = current_user()
+    if not is_admin_for(me):
+        flash("You don't have permission.", "error")
+        return redirect(url_for("home"))
+    db = get_db()
+    if request.method == "POST":
+        src = request.form.get("origen", type=int)
+        dst = request.form.get("destino", type=int)
+        if not src or not dst or src == dst:
+            flash("Pick two different accounts.", "error")
+            return redirect(url_for("admin_migrar_track"))
+        srow = db.execute("SELECT * FROM users WHERE id = ?", (src,)).fetchone()
+        drow = db.execute("SELECT * FROM users WHERE id = ?", (dst,)).fetchone()
+        if not srow or not drow:
+            flash("Account not found.", "error")
+            return redirect(url_for("admin_migrar_track"))
+        movidas, dups = 0, 0
+        for r in db.execute("SELECT * FROM tracked_plays WHERE user_id = ?", (src,)).fetchall():
+            ex = db.execute(
+                "SELECT id, resultado FROM tracked_plays WHERE user_id = ? AND play_id = ?",
+                (dst, r["play_id"])).fetchone()
+            if ex:
+                # conflicto: conservar la fila con resultado; si ninguna, la del destino
+                if r["resultado"] and not ex["resultado"]:
+                    db.execute("DELETE FROM tracked_plays WHERE id = ?", (ex["id"],))
+                    db.execute("UPDATE tracked_plays SET user_id = ? WHERE id = ?", (dst, r["id"]))
+                else:
+                    db.execute("DELETE FROM tracked_plays WHERE id = ?", (r["id"],))
+                dups += 1
+            else:
+                db.execute("UPDATE tracked_plays SET user_id = ? WHERE id = ?", (dst, r["id"]))
+                movidas += 1
+        for r in db.execute("SELECT fecha FROM checkins WHERE user_id = ?", (src,)).fetchall():
+            ex = db.execute("SELECT 1 FROM checkins WHERE user_id = ? AND fecha = ?",
+                            (dst, r["fecha"])).fetchone()
+            if ex:
+                db.execute("DELETE FROM checkins WHERE user_id = ? AND fecha = ?",
+                           (src, r["fecha"]))
+            else:
+                db.execute("UPDATE checkins SET user_id = ? WHERE user_id = ? AND fecha = ?",
+                           (dst, src, r["fecha"]))
+        campos = []
+        for col in ("bankroll", "stake_fijo_elite", "stake_fijo_gold", "stake_mode"):
+            if srow[col] is not None:
+                campos.append(col)
+        if campos:
+            sets = ", ".join(f"{c} = ?" for c in campos)
+            db.execute(f"UPDATE users SET {sets} WHERE id = ?",
+                       tuple(srow[c] for c in campos) + (dst,))
+        db.commit()
+        flash(f"Moved {movidas} tracked plays ({dups} duplicates merged) from "
+              f"{srow['email']} to {drow['email']}.", "ok")
+        return redirect(url_for("admin_migrar_track"))
+    users = db.execute(
+        "SELECT id, nombre, email, bankroll FROM users ORDER BY id").fetchall()
+    resumen = []
+    for u in users:
+        tp = db.execute("SELECT COUNT(*) AS c FROM tracked_plays WHERE user_id = ?",
+                        (u["id"],)).fetchone()["c"]
+        ck = db.execute("SELECT COUNT(*) AS c FROM checkins WHERE user_id = ?",
+                        (u["id"],)).fetchone()["c"]
+        resumen.append({"id": u["id"], "nombre": u["nombre"], "email": u["email"],
+                        "tracked": tp, "checkins": ck, "bankroll": u["bankroll"]})
+    sugerido = next((u["id"] for u in resumen if "pena.manuel" in (u["email"] or "")), None)
+    return render_template("admin_migrar_track.html", resumen=resumen, sugerido=sugerido)
+
+
 @app.route("/admin/miembros/stake-fijo", methods=["POST"])
 @login_required
 def admin_stake_fijo():
