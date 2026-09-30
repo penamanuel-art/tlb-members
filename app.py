@@ -1400,8 +1400,6 @@ def ticket_view(play_id):
     return render_template("ticket.html", p=play)
 
 
-@app.route("/home")
-@login_required
 def last_elite_win():
     """Última jugada ELITE ganada en el archivo (prueba social de la tarjeta bloqueada)."""
     try:
@@ -1416,6 +1414,8 @@ def last_elite_win():
     return None
 
 
+@app.route("/home")
+@login_required
 def home():
     db = get_db()
     record_checkin(db, session["user_id"])
