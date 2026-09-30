@@ -22,10 +22,8 @@
 <body>
 <header class="topbar">
   <div class="topbar-left">
-    <a class="brand" href="{{ url_for('home') if session.get('user_id') else url_for('index') }}">
-      <img src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team" class="brand-logo">
-    </a>
     {% if session.get('user_id') %}
+    <a href="{{ url_for('home') }}" class="qa-btn qa-primary qa-home{% if request.endpoint == 'home' %} active{% endif %}" title="Home Dashboard"><span class="qa-ico">🏠</span><span class="qa-txt">Home Dashboard</span></a>
     <div class="menu-wrap">
       <button class="icon-btn" id="menuBtn" aria-label="Menu">☰</button>
       <div class="menu-drop" id="menuDrop" hidden>
@@ -44,9 +42,12 @@
       </div>
     </div>
     <div class="quick-actions">
-      <a href="{{ url_for('home') }}" class="qa-btn qa-primary qa-home{% if request.endpoint == 'home' %} active{% endif %}" title="Home Dashboard"><span class="qa-ico">🏠</span><span class="qa-txt">Home Dashboard</span></a>
       <a href="{{ url_for('tracker') }}" class="qa-btn{% if request.endpoint == 'tracker' %} active{% endif %}" title="Track a play"><span class="qa-ico">➕</span><span class="qa-txt">Track</span></a>
     </div>
+    {% else %}
+    <a class="brand" href="{{ url_for('index') }}">
+      <img src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team" class="brand-logo">
+    </a>
     {% endif %}
   </div>
   {% if session.get('user_id') %}
