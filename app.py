@@ -1195,10 +1195,18 @@ def inject_user():
         foto = cu["foto"] if cu else None
     except (KeyError, IndexError, TypeError):
         foto = None
+    try:
+        creado = datetime.fromisoformat(cu["created_at"]) if cu else None
+        dias_miembro = max(1, (datetime.now() - creado).days + 1) if creado else 1
+    except (ValueError, TypeError, KeyError, IndexError):
+        dias_miembro = 1
+    etiqueta = "Elite Member" if platinum_unlocked_for(cu) else "Member"
     return {
         "nombre_corto": corto,
         "inicial": corto[:1].upper(),
         "foto_perfil": foto,
+        "dias_miembro": dias_miembro,
+        "etiqueta_miembro": etiqueta,
         "es_admin": bool(session.get("is_admin")),
         "miembro_platinum": platinum_unlocked_for(cu),
         "ticker_days": compute_ticker_days(),

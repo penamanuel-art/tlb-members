@@ -67,7 +67,8 @@
 <section class="greet">
   <p class="greet-date"><span class="dot"></span>{{ saludo }} · {{ fecha }}</p>
   <img src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team" class="greet-logo-fixed">
-  <h1 class="greet-title">{{ saludo }}<br><span class="greet-accent">{{ nombre_corto }}.</span></h1>
+  <h1 class="greet-title">{{ saludo }},<br><span class="greet-accent">{{ nombre_corto }}.</span></h1>
+  <p class="greet-member">Member {{ dias_miembro }} day{{ 's' if dias_miembro != 1 }} <span class="gdot">·</span> {{ etiqueta_miembro }}</p>
   {% if card_pendiente %}
   <p class="greet-sub">No plays posted yet — check back after 11:00 AM ET.</p>
   {% else %}
