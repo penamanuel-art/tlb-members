@@ -7,9 +7,6 @@
 {# El ticket se ve DE FRENTE: es la imagen del ticket, no una reconstrucción HTML (estilo WGT, pedido por Alex 2026-09-29). Casi full-bleed: llena el cuadro (pedido Alex 2026-09-29). #}
 .tstc-face{display:block;width:calc(100% + 28px);margin:0 -14px;border-radius:14px;cursor:pointer;border:none;padding:0;background:none;-webkit-tap-highlight-color:transparent}
 .tstc-face img{display:block;width:100%;height:auto;border-radius:14px}
-{# Cara del ticket cuando aún no llegó la foto: placeholder que conserva el diseño fijo (pedido Alex 2026-09-30: el diseño siempre es el mismo, con link "View ticket", y se llena cuando él manda la foto). #}
-.tstc-face-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;width:calc(100% + 28px);margin:0 -14px;padding:32px 0;border:2px dashed rgba(245,197,24,.35);border-radius:14px;color:#9aa3b8;font-size:13px;font-weight:800;letter-spacing:1.5px;background:rgba(255,255,255,.02)}
-.tstc-face-empty small{font-weight:400;letter-spacing:0;font-size:11px;color:#6b7280}
 .tstc-bet{font-size:20px;font-weight:800;color:#2fd47e;margin:10px 0 8px}
 .tstc-bet span{color:#8b93a7;font-weight:400;font-size:17px}
 .tstc-bot{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
@@ -42,9 +39,6 @@
     <button class="tstc-x" onclick="document.getElementById('tstc-zoom-{{ p.id }}').style.display='none'" aria-label="Cerrar">&times;</button>
     <img src="{{ url_for('static', filename=p.comprobante) }}" alt="Ticket original {{ p.abbr }} {{ p.bettype }} en grande">
   </div>
-  {% else %}
-  {# Diseño fijo aun sin foto: placeholder + link "View ticket" siempre visible (pedido Alex 2026-09-30). Cuando llega el comprobante, la foto llena la cara. #}
-  <div class="tstc-face-empty"><span>🎫 ORIGINAL TICKET</span><small>photo pending — updates automatically</small></div>
   {% endif %}
   <div class="tstc-bet">Bet &nbsp;{{ '$%g' % p.stake_monto }} <span>({{ p.stake_unidades }}u)</span></div>
   <div class="tstc-bot">
