@@ -94,7 +94,7 @@
 
 <!-- 03 · TODAY'S PLAYS -->
 <div class="section-head">
-  <h2 class="section-title">Today's Plays</h2>
+  <h2 class="section-title">{% if card_pendiente %}Not posted yet{% else %}Today's Plays{% endif %}</h2>
   <a class="link-more" href="{{ url_for('tracker') }}">View my tracker →</a>
 </div>
 {% set golds = plays | rejectattr('nivel', 'equalto', 'ELITE') | list %}
