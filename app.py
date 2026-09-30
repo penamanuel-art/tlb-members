@@ -1370,6 +1370,7 @@ def home():
         tcurve=tcurve,
         recientes=recientes,
         es_admin=is_admin_for(user),
+        skip_splash=request.args.get("splash") == "0",
     )
 
 

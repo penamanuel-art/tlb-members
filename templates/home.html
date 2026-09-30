@@ -61,7 +61,7 @@
 
 {% endblock %}
 {% block content %}
-{% include "_splash.html" %}
+{% if not skip_splash %}{% include "_splash.html" %}{% endif %}
 
 <!-- 01 · HERO -->
 <section class="greet">
