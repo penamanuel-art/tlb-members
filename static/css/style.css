@@ -883,3 +883,23 @@ a.avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .greet-member { color: var(--muted); font-size: .95rem; margin: 2px 0 12px; }
 .greet-member .gdot { opacity: .5; margin: 0 6px; }
 .greet-sub { margin-left: 0; margin-right: 0; }
+
+/* FULL TRANSPARENCY — diseño propio The Sharp Team (pasos numerados navy/oro) */
+.tst-steps { display: grid; gap: 12px; grid-template-columns: 1fr; }
+@media (min-width: 720px) { .tst-steps { grid-template-columns: repeat(3, 1fr); } }
+.tst-step {
+  display: flex; gap: 14px; align-items: flex-start;
+  background: linear-gradient(135deg, #0d1b2e 0%, #12263f 100%);
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  border-left: 4px solid var(--gold);
+  border-radius: 14px; padding: 18px 16px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
+}
+.tst-step-num {
+  font-size: 1.6rem; font-weight: 900; line-height: 1;
+  background: linear-gradient(180deg, #f3d27a, #b8860b);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  flex-shrink: 0; padding-top: 2px;
+}
+.tst-step h4 { margin: 0 0 6px; font-size: 1.02rem; color: #fff; letter-spacing: .02em; }
+.tst-step p { margin: 0; color: var(--muted); font-size: 1.02rem; line-height: 1.55; }
