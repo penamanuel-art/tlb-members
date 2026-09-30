@@ -1446,6 +1446,9 @@ def home():
     tcurve = profit_curve_svg(_vals)
     # Resultados recientes: jugadas liquidadas del archivo (sin bloqueadas).
     recientes = recientes_oficiales(6)
+    # Vista previa admin (pedido Alex 2026-09-30): ?preview=locked muestra el
+    # home como lo ve un miembro sin Elite (teaser bloqueado + pancarta $1).
+    preview_locked = is_admin_for(user) and request.args.get("preview") == "locked"
     return render_template(
         "home.html",
         plays=plays,
@@ -1457,7 +1460,7 @@ def home():
         racha=checkin_streak(db, session["user_id"]),
         bankroll=user["bankroll"] if user else None,
         stake_mode=user["stake_mode"] if user else "units",
-        platinum_unlocked=platinum_unlocked_for(user),
+        platinum_unlocked=(platinum_unlocked_for(user) and not preview_locked),
         res=program_stats(),
         leccion=load_masterclass(),
         archivo_mc=load_masterclass_archivo(),
