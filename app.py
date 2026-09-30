@@ -203,6 +203,7 @@ CREATE TABLE IF NOT EXISTS users (
     cancel_requested_at TEXT,                      -- fecha ISO en que pidió cancelar (NULL = activa)
     stripe_customer_id TEXT,                     -- cliente de Stripe (NULL = sin vincular)
     stripe_subscription_id TEXT,                  -- suscripción activa de Stripe
+    foto TEXT,                                     -- foto de perfil (data URI JPEG, NULL = inicial)
     created_at TEXT NOT NULL
 );
 CREATE TABLE IF NOT EXISTS tracked_plays (
@@ -260,6 +261,7 @@ CREATE TABLE IF NOT EXISTS users (
     cancel_requested_at TEXT,                      -- fecha ISO en que pidió cancelar (NULL = activa)
     stripe_customer_id TEXT,                     -- cliente de Stripe (NULL = sin vincular)
     stripe_subscription_id TEXT,                  -- suscripción activa de Stripe
+    foto TEXT,                                     -- foto de perfil (data URI JPEG, NULL = inicial)
     created_at TEXT NOT NULL
 );
 CREATE TABLE IF NOT EXISTS tracked_plays (
@@ -1188,11 +1190,17 @@ app.jinja_env.globals.update(fmt_money=fmt_money, fmt_units=fmt_units, fmt_odds=
 def inject_user():
     nombre = session.get("nombre", "")
     corto = primer_nombre(nombre)
+    cu = current_user()
+    try:
+        foto = cu["foto"] if cu else None
+    except (KeyError, IndexError, TypeError):
+        foto = None
     return {
         "nombre_corto": corto,
         "inicial": corto[:1].upper(),
+        "foto_perfil": foto,
         "es_admin": bool(session.get("is_admin")),
-        "miembro_platinum": platinum_unlocked_for(current_user()),
+        "miembro_platinum": platinum_unlocked_for(cu),
         "ticker_days": compute_ticker_days(),
         "asset_v": ASSET_V,
     }
@@ -1241,6 +1249,8 @@ def migrate_db():
             pending.append("ALTER TABLE users ADD COLUMN stripe_customer_id TEXT")
         if "stripe_subscription_id" not in cols:
             pending.append("ALTER TABLE users ADD COLUMN stripe_subscription_id TEXT")
+        if "foto" not in cols:
+            pending.append("ALTER TABLE users ADD COLUMN foto TEXT")
         for stmt in pending:
             conn.execute(stmt)
         if pending:
@@ -1538,6 +1548,44 @@ def cuenta_reactivar():
     db.execute("UPDATE users SET cancel_requested_at = NULL WHERE id = ?", (session["user_id"],))
     db.commit()
     flash("Welcome back — your membership is active again.", "ok")
+    return redirect(url_for("cuenta"))
+
+
+@app.route("/cuenta/foto", methods=["POST"])
+@login_required
+def cuenta_foto():
+    """Subir o quitar la foto de perfil. Se guarda como data URI JPEG (256px)
+    en la columna users.foto: sobrevive a los redeploys sin disco persistente."""
+    db = get_db()
+    if request.form.get("quitar"):
+        db.execute("UPDATE users SET foto = NULL WHERE id = ?", (session["user_id"],))
+        db.commit()
+        flash("Profile photo removed.", "ok")
+        return redirect(url_for("cuenta"))
+    f = request.files.get("foto")
+    if not f or not f.filename:
+        flash("Choose a photo first.", "error")
+        return redirect(url_for("cuenta"))
+    if request.content_length and request.content_length > 8 * 1024 * 1024:
+        flash("Photo too large (max 8 MB).", "error")
+        return redirect(url_for("cuenta"))
+    try:
+        import base64
+        import io
+        from PIL import Image
+        img = Image.open(io.BytesIO(f.read()))
+        img.load()
+        img = img.convert("RGB")
+        img.thumbnail((256, 256), Image.LANCZOS)
+        buf = io.BytesIO()
+        img.save(buf, "JPEG", quality=70)
+        uri = "data:image/jpeg;base64," + base64.b64encode(buf.getvalue()).decode("ascii")
+    except Exception:
+        flash("That file is not a valid image.", "error")
+        return redirect(url_for("cuenta"))
+    db.execute("UPDATE users SET foto = ? WHERE id = ?", (uri, session["user_id"]))
+    db.commit()
+    flash("Profile photo updated.", "ok")
     return redirect(url_for("cuenta"))
 
 

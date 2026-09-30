@@ -52,7 +52,7 @@
   </div>
   {% if session.get('user_id') %}
   {% if es_admin %}<button id="langToggle" class="lang-btn notranslate" title="Ver en español">🇺🇸 EN</button>{% endif %}
-  <div class="avatar" title="{{ nombre_corto }}">{{ inicial }}</div>
+  <a class="avatar" href="{{ url_for('cuenta') }}" title="{{ nombre_corto }} — My account">{% if foto_perfil %}<img src="{{ foto_perfil }}" alt="{{ nombre_corto }}">{% else %}{{ inicial }}{% endif %}</a>
   {% else %}
   <nav class="nav">
     {% if es_admin %}<button id="langToggle" class="lang-btn notranslate" title="Ver en español">🇺🇸 EN</button>{% endif %}

@@ -839,3 +839,14 @@ img { max-width: 100%; height: auto; }
 @media (max-width: 380px) {
   .qa-btn.qa-home { padding: 8px 10px; font-size: 12px; }
 }
+
+/* ---- Foto de perfil (2026-09-30, pedido por Alex) ---- */
+a.avatar { padding: 0; overflow: hidden; text-decoration: none; color: inherit; }
+a.avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.foto-perfil-wrap { display: flex; justify-content: center; margin: 14px 0 18px; }
+.foto-perfil-big { width: 112px; height: 112px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(251,191,36,.55); box-shadow: 0 0 24px rgba(251,191,36,.18); }
+.foto-placeholder { display: flex; align-items: center; justify-content: center; font-size: 42px; font-weight: 800; background: var(--card-2); }
+.foto-form { display: grid; gap: 12px; }
+.foto-label { font-weight: 700; font-size: 14px; }
+.foto-label input { display: block; margin-top: 8px; font-weight: 400; width: 100%; }
+.foto-remove { background: none; border: none; padding: 0; margin-top: 12px; cursor: pointer; font-size: 14px; }

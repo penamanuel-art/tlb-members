@@ -2,6 +2,29 @@
 {% block title %}My account — The Sharp Team{% endblock %}
 {% block content %}
 <section class="auth-card">
+  <h2>📸 Profile photo</h2>
+  <p class="muted">This photo shows in the top bar instead of your initial. Tap it anytime to come back here and change it.</p>
+  <div class="foto-perfil-wrap">
+    {% if foto_perfil %}
+    <img src="{{ foto_perfil }}" class="foto-perfil-big" alt="Profile photo">
+    {% else %}
+    <div class="foto-perfil-big foto-placeholder">{{ inicial }}</div>
+    {% endif %}
+  </div>
+  <form method="post" action="{{ url_for('cuenta_foto') }}" enctype="multipart/form-data" class="foto-form">
+    <label class="foto-label">Choose a photo
+      <input type="file" name="foto" accept="image/*">
+    </label>
+    <button class="btn btn-primary btn-block" type="submit">Upload photo</button>
+  </form>
+  {% if foto_perfil %}
+  <form method="post" action="{{ url_for('cuenta_foto') }}">
+    <button type="submit" name="quitar" value="1" class="danger-link foto-remove">Remove photo</button>
+  </form>
+  {% endif %}
+</section>
+
+<section class="auth-card">
   <h2>💰 My bankroll</h2>
   <p class="muted">The total you play with. 1 unit = 1% of your bankroll, and every
   recommended size is based on that. It's saved to your account: still there
