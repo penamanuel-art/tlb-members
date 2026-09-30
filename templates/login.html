@@ -2,7 +2,7 @@
 {% block title %}Log in — The Sharp Team{% endblock %}
 {% block content %}
 <section class="auth-card">
-  <h2>Log in to <span class="accent">my tracker</span></h2>
+  <h2>Log in to <span class="accent">my Dashboard</span></h2>
   <form method="post" action="{{ url_for('login') }}{% if request.args.get('next') %}?next={{ request.args.get('next') }}{% endif %}">
     <label>Email
       <input type="email" name="email" required autocomplete="email" placeholder="you@email.com">
