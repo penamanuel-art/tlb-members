@@ -94,15 +94,15 @@
 
 <!-- 03 · TODAY'S PLAYS -->
 <div class="section-head">
-  <h2 class="section-title">TODAY'S PLAYS</h2>
+  <h2 class="section-title">Today's Plays</h2>
   <a class="link-more" href="{{ url_for('tracker') }}">View my tracker →</a>
 </div>
 {% set golds = plays | rejectattr('nivel', 'equalto', 'ELITE') | list %}
 {% if card_pendiente %}
-<div style="border:2px dashed rgba(255,255,255,.18);border-radius:20px;background:rgba(255,255,255,.03);padding:28px 22px;text-align:center;margin-top:12px;">
-  <p style="color:#fff;font-weight:800;font-size:1.25rem;margin:0 0 10px;">No plays posted yet today</p>
-  <p style="color:#94a3b8;font-size:.95rem;line-height:1.55;margin:0 0 14px;">The Sharp Team posts today's card by 11:05 AM ET. Check back then — every play public, win or loss.</p>
-  <p style="margin:0;color:#94a3b8;font-size:.95rem;">Made a bet on your own? <a href="{{ url_for('tracker') }}" style="color:#4ade80;font-weight:700;text-decoration:none;">Log it in your tracker →</a></p>
+<div class="empty-card">
+  <h3>No plays posted yet today</h3>
+  <p>The Sharp Team posts today's card by 11:05 AM ET. Check back then — every play public, win or loss.</p>
+  <p>Made a bet on your own? <a href="{{ url_for('tracker') }}">Log it in your tracker →</a></p>
 </div>
 {% elif golds %}
 <div class="section-head">
@@ -118,6 +118,7 @@
 {% endif %}
 <!-- BANKROLL & SIZE CARD (pedido por Alex 2026-09-28: configuración como WGT, diseño propio TST) -->
 <div class="br-card">
+  <p class="br-kicker">BANKROLL &amp; STAKING</p>
   <div class="br-row">
     <span class="br-emoji">💰</span>
     <span class="br-label">Bankroll</span>
@@ -170,7 +171,7 @@
 
 <!-- 04 · YOUR TOOLS (2026-09-26): horizontal scroll-snap carousel, EV Board first -->
 <div class="section-head">
-  <h2 class="section-title">YOUR TOOLS</h2>
+  <h2 class="section-title">Your Tools</h2>
 </div>
 <div class="tool-carousel">
   <a class="tool-card" href="{{ url_for('ev_board') }}">
@@ -208,7 +209,7 @@
 <!-- GET ALERTS (pedido por Alex 2026-09-27: botones estilo WGT) -->
 <div class="section-head">
   <div>
-    <h2 class="section-title">GET ALERTS</h2>
+    <h2 class="section-title">Get Alerts</h2>
     <p class="section-sub">Never miss a play.</p>
   </div>
 </div>
@@ -216,13 +217,6 @@
   <button id="alertsPushBtn" class="alert-btn alert-push" type="button">🔔 Push Notifications</button>
   <a class="alert-btn alert-tg" href="https://t.me/thesharpteam" target="_blank" rel="noopener">✈️ Join Telegram</a>
 </div>
-<style>
-.alert-btns{display:flex;flex-direction:column;gap:12px;margin:4px 0 26px}
-.alert-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:18px;border:none;border-radius:18px;font-size:19px;font-weight:800;color:#fff;text-decoration:none;cursor:pointer;font-family:inherit;box-sizing:border-box}
-.alert-push{background:linear-gradient(135deg,#22c55e,#16a34a)}
-.alert-tg{background:linear-gradient(135deg,#38bdf8,#0ea5e9)}
-.alert-btn:disabled{opacity:.55;cursor:default}
-</style>
 <script>
 (function(){
   var btn = document.getElementById('alertsPushBtn');
@@ -427,7 +421,7 @@
 
 <div class="section-head">
   <div>
-    <h2 class="section-title">Recent graded tickets</h2>
+    <h2 class="section-title">Recent Graded Tickets</h2>
     <p class="muted section-sub">Every play posted before the game — wins and losses. Tap a ticket to see the original receipt.</p>
   </div>
   <a class="link-more" href="{{ url_for('resultados') }}">View all →</a>
@@ -479,7 +473,7 @@
 
 <!-- 08 · RECENT RESULTS -->
 <div class="section-head">
-  <h2 class="section-title">RECENT RESULTS</h2>
+  <h2 class="section-title">Recent Results</h2>
   <a class="link-more" href="{{ url_for('resultados') }}">View all →</a>
 </div>
 {% if recientes %}
@@ -508,33 +502,6 @@
 {% endif %}
 
 <!-- 09 · THE PROCESS (requested by Alex 2026-09-26: same section as the public page) -->
-<style>
-  .mc-home { margin: 34px 0 6px; }
-  .mc-home-title { color: #fff; font-weight: 900; font-size: clamp(2rem, 9vw, 3rem);
-    line-height: 1.05; letter-spacing: -.01em; margin: 0 0 10px; font-stretch: condensed; }
-  .mc-home-sub { color: #cbd5e1; font-size: 1rem; margin: 0 0 18px; }
-  .mc-today { background: linear-gradient(135deg, rgba(251,191,36,.16), rgba(34,197,94,.10));
-    border: 1px solid rgba(251,191,36,.45); border-radius: 18px; padding: 20px; margin: 0 0 18px; }
-  .mc-today-tag { color: #fbbf24; font-size: .75rem; font-weight: 800; letter-spacing: .14em; margin: 0 0 8px; }
-  .mc-today h3 { color: #fff; font-size: 1.35rem; font-weight: 900; margin: 0 0 8px; }
-  .mc-today p { color: #e2e8f0; font-size: .95rem; line-height: 1.55; margin: 0 0 10px; }
-  .mc-today a { color: #fbbf24; font-weight: 800; text-decoration: none; font-size: .92rem; }
-  .mc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
-  .mc-card { display: block; background: var(--card); border: 1px solid var(--line); border-radius: 14px;
-    padding: 12px 14px; text-decoration: none; }
-  .mc-day { display: block; color: #fbbf24; font-size: .72rem; font-weight: 800; letter-spacing: .1em; margin-bottom: 4px; }
-  .mc-card b { color: var(--text); font-size: .85rem; line-height: 1.35; display: block; }
-  .tst-process { margin-top: 34px; }
-  .tst-process .process-eyebrow { color: #bef264; font-size: .8rem; font-weight: 800; letter-spacing: .18em; margin: 0 0 12px; }
-  .tst-process .process-title { color: #fff; font-weight: 900; font-size: clamp(2rem, 9vw, 3rem); line-height: 1.02; letter-spacing: -.01em; margin: 0 0 12px; font-stretch: condensed; }
-  .tst-process .process-sub { color: #cbd5e1; font-size: 1.02rem; line-height: 1.55; margin: 0 0 22px; max-width: 34rem; }
-  .tst-process .process-cards { border: 1px solid rgba(255,255,255,.14); border-radius: 6px; overflow: hidden; }
-  .tst-process .process-card { padding: 34px 24px; border-bottom: 1px solid rgba(255,255,255,.12); }
-  .tst-process .process-card:last-child { border-bottom: none; }
-  .tst-process .process-step { color: #bef264; font-weight: 800; font-size: .85rem; letter-spacing: .06em; margin: 0 0 64px; }
-  .tst-process .process-card h3 { color: #fff; font-weight: 900; font-size: 1.7rem; margin: 0 0 10px; font-stretch: condensed; letter-spacing: .01em; }
-  .tst-process .process-card p { color: #cbd5e1; font-size: .98rem; line-height: 1.6; margin: 0; max-width: 32rem; }
-</style>
 <section class="tst-process">
   <p class="process-eyebrow">THE PROCESS</p>
   <h2 class="process-title">ONE SYSTEM.<br>THREE FILTERS.</h2>

@@ -698,3 +698,124 @@ img { max-width: 100%; height: auto; }
 .mytrk-chart-label{margin:20px 0 8px;font-size:.66rem;letter-spacing:.22em;color:#8b93a7;font-weight:700}
 .mytrk-chart{width:100%;height:96px;display:block}
 .mytrk-line{filter:drop-shadow(0 0 6px currentColor)}
+
+/* ============ DASHBOARD POLISH (2026-09-30, pedido por Alex: calidad y estética) ============ */
+/* Ritmo vertical coherente entre secciones */
+.section-head { align-items: center; gap: 12px; margin: 32px 0 14px; }
+.section-head:first-of-type { margin-top: 26px; }
+
+/* Link "ver más" como píldora táctil */
+.link-more {
+  display: inline-flex; align-items: center; gap: 4px; white-space: nowrap;
+  font-size: 13px; font-weight: 700; color: #cfe3ff;
+  background: rgba(59,130,246,.12); border: 1px solid rgba(59,130,246,.35);
+  border-radius: 999px; padding: 8px 14px;
+}
+.link-more:active { transform: scale(.97); }
+
+/* Héroe: fecha en píldora, nombre con degradado oro */
+.greet { margin: 6px 0 4px; }
+.greet-date {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: .78rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+  color: #cbd5e1; background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.1); border-radius: 999px; padding: 7px 14px;
+}
+.greet-title { font-size: clamp(2.4rem, 9vw, 3rem); margin: 14px 0 10px; }
+.greet-accent {
+  color: transparent;
+  background: linear-gradient(100deg, #fde68a, #fbbf24 45%, #d97706);
+  -webkit-background-clip: text; background-clip: text;
+}
+.greet-sub { font-size: 1rem; }
+
+/* Divisor: línea fina con degradado oro */
+.section-divider {
+  border: 0; height: 1px; width: 100%; margin: 36px 0; opacity: 1;
+  background: linear-gradient(90deg, transparent, rgba(251,191,36,.55) 20%, rgba(251,191,36,.55) 80%, transparent);
+}
+
+/* Bankroll: jerarquía clara */
+.br-card { padding: 18px; }
+.br-kicker { margin: 0 0 10px; font-size: .68rem; letter-spacing: .22em; color: #8b93a7; font-weight: 700; }
+.br-row { gap: 12px; }
+.br-value { font-size: 1.55rem; letter-spacing: -.5px; }
+.br-edit { margin-left: auto; }
+.br-sep { display: none; }
+.br-toggle { margin-top: 16px; }
+.br-toggle .br-pill { flex: 1; padding: 12px 10px; }
+
+/* Profit card del programa: tira compacta, no compite con los trackers */
+.profit-card { padding: 16px 18px; margin: 20px 0; border-radius: 16px; }
+.profit-value { font-size: 1.7rem; }
+.profit-note { margin: 4px 0 0; font-size: .88rem; }
+
+/* Tool cards: icono en pastilla, elevación al tacto */
+.tool-card { min-height: 148px; transition: transform .15s ease, border-color .15s ease; }
+.tool-card:active { transform: translateY(-2px); border-color: rgba(251,191,36,.5); }
+.tool-card .tool-emoji {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 52px; height: 52px; border-radius: 16px; font-size: 1.7rem; line-height: 1;
+  background: linear-gradient(135deg, rgba(59,130,246,.22), rgba(34,197,94,.16));
+  border: 1px solid rgba(255,255,255,.12);
+}
+.tool-card:first-child .tool-emoji {
+  background: linear-gradient(135deg, rgba(251,191,36,.3), rgba(217,119,6,.18));
+  border-color: rgba(251,191,36,.4);
+}
+.tool-card:first-child { border-color: rgba(251,191,36,.35); }
+
+/* Alertas (estilos movidos del <style> inline de home.html) */
+.alert-btns { display: flex; flex-direction: column; gap: 12px; margin: 4px 0 26px; }
+.alert-btn {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  width: 100%; padding: 16px; border: none; border-radius: 16px;
+  font-size: 17px; font-weight: 800; color: #fff; text-decoration: none;
+  cursor: pointer; font-family: inherit; box-sizing: border-box;
+  box-shadow: 0 6px 20px rgba(0,0,0,.35);
+  transition: transform .12s ease;
+}
+.alert-btn:active { transform: scale(.98); }
+.alert-push { background: linear-gradient(135deg,#22c55e,#15803d); }
+.alert-tg { background: linear-gradient(135deg,#38bdf8,#0284c7); }
+.alert-btn:disabled { opacity: .55; cursor: default; }
+
+/* Estado vacío elegante */
+.empty-card {
+  border: 2px dashed rgba(255,255,255,.16); border-radius: 20px;
+  background: rgba(255,255,255,.03); padding: 30px 22px; text-align: center; margin-top: 12px;
+}
+.empty-card h3 { color: #fff; font-weight: 800; font-size: 1.25rem; margin: 0 0 10px; }
+.empty-card p { color: #94a3b8; font-size: .95rem; line-height: 1.55; margin: 0 0 6px; }
+.empty-card a { color: #4ade80; font-weight: 700; }
+
+/* Ticket cards: elevación sutil al tacto */
+.ticket-card { transition: transform .15s ease, border-color .15s ease; }
+.ticket-card:active { transform: scale(.985); border-color: rgba(251,191,36,.45); }
+
+/* ---- The Process / Masterclass en home (movido del <style> inline) ---- */
+  .mc-home { margin: 34px 0 6px; }
+  .mc-home-title { color: #fff; font-weight: 900; font-size: clamp(2rem, 9vw, 3rem);
+    line-height: 1.05; letter-spacing: -.01em; margin: 0 0 10px; font-stretch: condensed; }
+  .mc-home-sub { color: #cbd5e1; font-size: 1rem; margin: 0 0 18px; }
+  .mc-today { background: linear-gradient(135deg, rgba(251,191,36,.16), rgba(34,197,94,.10));
+    border: 1px solid rgba(251,191,36,.45); border-radius: 18px; padding: 20px; margin: 0 0 18px; }
+  .mc-today-tag { color: #fbbf24; font-size: .75rem; font-weight: 800; letter-spacing: .14em; margin: 0 0 8px; }
+  .mc-today h3 { color: #fff; font-size: 1.35rem; font-weight: 900; margin: 0 0 8px; }
+  .mc-today p { color: #e2e8f0; font-size: .95rem; line-height: 1.55; margin: 0 0 10px; }
+  .mc-today a { color: #fbbf24; font-weight: 800; text-decoration: none; font-size: .92rem; }
+  .mc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+  .mc-card { display: block; background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+    padding: 12px 14px; text-decoration: none; }
+  .mc-day { display: block; color: #fbbf24; font-size: .72rem; font-weight: 800; letter-spacing: .1em; margin-bottom: 4px; }
+  .mc-card b { color: var(--text); font-size: .85rem; line-height: 1.35; display: block; }
+  .tst-process { margin-top: 34px; }
+  .tst-process .process-eyebrow { color: #bef264; font-size: .8rem; font-weight: 800; letter-spacing: .18em; margin: 0 0 12px; }
+  .tst-process .process-title { color: #fff; font-weight: 900; font-size: clamp(2rem, 9vw, 3rem); line-height: 1.02; letter-spacing: -.01em; margin: 0 0 12px; font-stretch: condensed; }
+  .tst-process .process-sub { color: #cbd5e1; font-size: 1.02rem; line-height: 1.55; margin: 0 0 22px; max-width: 34rem; }
+  .tst-process .process-cards { border: 1px solid rgba(255,255,255,.14); border-radius: 6px; overflow: hidden; }
+  .tst-process .process-card { padding: 34px 24px; border-bottom: 1px solid rgba(255,255,255,.12); }
+  .tst-process .process-card:last-child { border-bottom: none; }
+  .tst-process .process-step { color: #bef264; font-weight: 800; font-size: .85rem; letter-spacing: .06em; margin: 0 0 64px; }
+  .tst-process .process-card h3 { color: #fff; font-weight: 900; font-size: 1.7rem; margin: 0 0 10px; font-stretch: condensed; letter-spacing: .01em; }
+  .tst-process .process-card p { color: #cbd5e1; font-size: .98rem; line-height: 1.6; margin: 0; max-width: 32rem; }
