@@ -69,31 +69,6 @@
   <img src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team" class="greet-logo-fixed">
 </section>
 
-<!-- 02 · ELITE SELECTION (banner) -->
-{# Teaser estilo WGT (pedido Alex 2026-09-30): para no-Elite SIEMPRE visible,
-   haya o no jugada Elite hoy — igual que los teasers Bonus/Owner de WGT. #}
-{% set plat = plays | selectattr('nivel', 'equalto', 'ELITE') | list %}
-{% if plat or not platinum_unlocked %}
-<div class="section-head">
-  <h2 class="section-title">Today's Elite Selection</h2>
-</div>
-<div class="plays">
-  {% if plat %}
-    {% for p in plat %}
-      {% if platinum_unlocked %}
-        {% include "_play_card.html" %}
-      {% else %}
-        {% include "_play_locked.html" %}
-      {% endif %}
-    {% endfor %}
-  {% else %}
-    {% set p = {'liga': ''} %}
-    {% include "_play_locked.html" %}
-  {% endif %}
-</div>
-{% endif %}
-
-
 <!-- 03 · TODAY'S PLAYS -->
 <div class="section-head plays-head">
   <div>
@@ -118,6 +93,30 @@
 {% else %}
 <p class="muted">No value plays today.</p>
 {% endif %}
+
+<!-- 02 · ELITE SELECTION (debajo de las Gold, pedido Alex 2026-09-30) -->
+{# Teaser estilo WGT: para no-Elite SIEMPRE visible, haya o no jugada Elite hoy. #}
+{% set plat = plays | selectattr('nivel', 'equalto', 'ELITE') | list %}
+{% if plat or not platinum_unlocked %}
+<div class="section-head">
+  <h2 class="section-title">Today's Elite Selection</h2>
+</div>
+<div class="plays">
+  {% if plat %}
+    {% for p in plat %}
+      {% if platinum_unlocked %}
+        {% include "_play_card.html" %}
+      {% else %}
+        {% include "_play_locked.html" %}
+      {% endif %}
+    {% endfor %}
+  {% else %}
+    {% set p = {'liga': ''} %}
+    {% include "_play_locked.html" %}
+  {% endif %}
+</div>
+{% endif %}
+
 <!-- 02b · ELITE TELEGRAM CTA (movido debajo de las jugadas, pedido Alex 2026-09-30; versión bloqueada visible para no-Elite como teaser, pedido Alex 2026-09-30) -->
 <div class="tg-elite-cta{% if not platinum_unlocked %} locked{% endif %}">
   <div class="tg-elite-cta-inner">
