@@ -25,6 +25,29 @@
 </section>
 
 <section class="auth-card">
+  <h2>✈️ Telegram</h2>
+  {% if tg_linked %}
+  <p class="bankroll-current">Status: <b class="ok-text">Connected</b></p>
+  <p class="muted">Your Telegram is linked to your membership. If you cancel, you'll be removed from the private Elite Plays channel automatically.</p>
+  <form method="post" action="{{ url_for('cuenta_telegram_unlink') }}">
+    <button type="submit" class="danger-link foto-remove">Disconnect Telegram</button>
+  </form>
+  {% elif tg_link %}
+  <p class="bankroll-current">Status: <b class="cancel-text">Almost there</b></p>
+  <p class="muted">Tap the button, then press <b>START</b> in the bot to finish linking. The link expires in 24 hours.</p>
+  <a href="{{ tg_link }}" target="_blank" class="btn btn-primary btn-block" style="text-decoration:none;text-align:center;">Open @thesharpteam_bot →</a>
+  <form method="post" action="{{ url_for('cuenta_telegram_link') }}" style="margin-top:8px;">
+    <button type="submit" class="danger-link foto-remove">Generate a new link</button>
+  </form>
+  {% else %}
+  <p class="muted">Link your Telegram so we can manage your access to the private <b>Elite Plays</b> channel automatically.</p>
+  <form method="post" action="{{ url_for('cuenta_telegram_link') }}">
+    <button class="btn btn-primary btn-block" type="submit">Connect Telegram</button>
+  </form>
+  {% endif %}
+</section>
+
+<section class="auth-card">
   <h2>💰 My bankroll</h2>
   <p class="muted">The total you play with. 1 unit = 1% of your bankroll, and every
   recommended size is based on that. It's saved to your account: still there

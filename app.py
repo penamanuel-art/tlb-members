@@ -86,6 +86,12 @@ VAPID_CLAIM_EMAIL = os.environ.get(
 )
 PUSH_TRIGGER_KEY = os.environ.get("PUSH_TRIGGER_KEY", "")
 
+# Secreto del webhook de Telegram (ruta /telegram/webhook/<secreto>).
+# Sin él, Render no acepta updates del bot. Se configura en Render como
+# env var TELEGRAM_WEBHOOK_SECRET.
+TELEGRAM_WEBHOOK_SECRET = os.environ.get("TELEGRAM_WEBHOOK_SECRET", "")
+TELEGRAM_BOT_USERNAME = os.environ.get("TELEGRAM_BOT_USERNAME", "thesharpteam_bot")
+
 try:
     from pywebpush import webpush, WebPushException
     HAVE_WEBPUSH = True
@@ -205,6 +211,9 @@ CREATE TABLE IF NOT EXISTS users (
     stripe_customer_id TEXT,                     -- cliente de Stripe (NULL = sin vincular)
     stripe_subscription_id TEXT,                  -- suscripción activa de Stripe
     foto TEXT,                                     -- foto de perfil (data URI JPEG, NULL = inicial)
+    telegram_user_id TEXT,                         -- id de Telegram vinculado (NULL = sin vincular)
+    telegram_ban_pending INTEGER NOT NULL DEFAULT 0,   -- 1 = banear de Elite Plays (lo procesa el cron)
+    telegram_unban_pending INTEGER NOT NULL DEFAULT 0, -- 1 = desbanear de Elite Plays (lo procesa el cron)
     created_at TEXT NOT NULL
 );
 CREATE TABLE IF NOT EXISTS tracked_plays (
@@ -263,6 +272,9 @@ CREATE TABLE IF NOT EXISTS users (
     stripe_customer_id TEXT,                     -- cliente de Stripe (NULL = sin vincular)
     stripe_subscription_id TEXT,                  -- suscripción activa de Stripe
     foto TEXT,                                     -- foto de perfil (data URI JPEG, NULL = inicial)
+    telegram_user_id TEXT,                         -- id de Telegram vinculado (NULL = sin vincular)
+    telegram_ban_pending INTEGER NOT NULL DEFAULT 0,   -- 1 = banear de Elite Plays (lo procesa el cron)
+    telegram_unban_pending INTEGER NOT NULL DEFAULT 0, -- 1 = desbanear de Elite Plays (lo procesa el cron)
     created_at TEXT NOT NULL
 );
 CREATE TABLE IF NOT EXISTS tracked_plays (
@@ -1272,10 +1284,25 @@ def migrate_db():
             pending.append("ALTER TABLE users ADD COLUMN stripe_subscription_id TEXT")
         if "foto" not in cols:
             pending.append("ALTER TABLE users ADD COLUMN foto TEXT")
+        if "telegram_user_id" not in cols:
+            pending.append("ALTER TABLE users ADD COLUMN telegram_user_id TEXT")
+        if "telegram_ban_pending" not in cols:
+            pending.append("ALTER TABLE users ADD COLUMN telegram_ban_pending INTEGER NOT NULL DEFAULT 0")
+        if "telegram_unban_pending" not in cols:
+            pending.append("ALTER TABLE users ADD COLUMN telegram_unban_pending INTEGER NOT NULL DEFAULT 0")
         for stmt in pending:
             conn.execute(stmt)
         if pending:
             conn.commit()
+        # Códigos de vinculación Telegram (un solo uso, los crea /cuenta).
+        conn.execute(
+            """CREATE TABLE IF NOT EXISTS telegram_link_codes (
+                code TEXT PRIMARY KEY,
+                user_id INTEGER NOT NULL REFERENCES users(id),
+                created_at TEXT NOT NULL
+            )"""
+        )
+        conn.commit()
     finally:
         conn.close()
 
@@ -1327,9 +1354,14 @@ def compute_ticker_days():
 
 @app.route("/ticket/<play_id>")
 def ticket_view(play_id):
-    """Visor público del ticket de una jugada — diseño propio de The Sharp Team
+    """Visor del ticket de una jugada — diseño propio de The Sharp Team
     (2026-09-29, pedido por Alex: 'otro diseño para no copiar el de Wise').
-    Lo abre el botón 🎫 View ticket de Telegram."""
+    Lo abre el botón 🎫 View ticket de Telegram.
+
+    Sin pago no hay acceso (2026-09-30, pedido por Alex): si la jugada es
+    ELITE, exige sesión y Elite activa; si no, va a la pantalla de
+    desbloqueo. Las GOLD siguen públicas.
+    """
     play = next((p for p in load_plays() if p.get("id") == play_id), None)
     if play is None:
         try:
@@ -1346,6 +1378,13 @@ def ticket_view(play_id):
             pass
     if play is None:
         return render_template("404.html"), 404
+    # Sin pago no hay acceso: la jugada ELITE exige sesión y Elite activa.
+    if str(play.get("nivel") or "").upper() in ("ELITE", "PLATINUM"):
+        cu = current_user()
+        if not platinum_unlocked_for(cu):
+            if cu is None:
+                return redirect(url_for("login", next=url_for("ticket_view", play_id=play_id)))
+            return redirect(url_for("desbloquear_platinum"))
     return render_template("ticket.html", p=play)
 
 
@@ -1519,6 +1558,20 @@ def cuenta():
     """Mi cuenta: configurar/actualizar el bankroll del miembro (persistencia en servidor)."""
     db = get_db()
     user = current_user()
+    uid = session.get("user_id")
+    # Vinculación Telegram: código pendiente (un solo uso) y estado.
+    db.execute(
+        "DELETE FROM telegram_link_codes WHERE created_at < ?",
+        ((datetime.now(timezone.utc) - timedelta(days=1)).isoformat(),),
+    )
+    link_row = db.execute(
+        "SELECT code FROM telegram_link_codes WHERE user_id = ?"
+        " ORDER BY created_at DESC LIMIT 1",
+        (uid,),
+    ).fetchone()
+    link_code = link_row["code"] if isinstance(link_row, dict) else (link_row[0] if link_row else None)
+    tg_link = f"https://t.me/{TELEGRAM_BOT_USERNAME}?start={link_code}" if link_code else None
+    tg_linked = bool(user and user["telegram_user_id"])
     if request.method == "POST":
         raw = request.form.get("bankroll", "").strip()
         # Acepta formatos como "$10,000", "10,000", "10000", "10000.50".
@@ -1532,7 +1585,8 @@ def cuenta():
             return render_template("cuenta.html", bankroll=user["bankroll"] if user else None,
                                    cancel_at=user["cancel_requested_at"] if user else None,
                                    platinum=platinum_unlocked_for(user),
-                                   stake_mode=user["stake_mode"] if user else "units"), 400
+                                   stake_mode=user["stake_mode"] if user else "units",
+                                   tg_link=tg_link, tg_linked=tg_linked), 400
         db.execute("UPDATE users SET bankroll = ? WHERE id = ?", (val, session["user_id"]))
         db.commit()
         flash(f"Bankroll saved: ${val:,.2f}.", "ok")
@@ -1540,7 +1594,42 @@ def cuenta():
     return render_template("cuenta.html", bankroll=user["bankroll"] if user else None,
                            cancel_at=user["cancel_requested_at"] if user else None,
                            platinum=platinum_unlocked_for(user),
-                           stake_mode=user["stake_mode"] if user else "units")
+                           stake_mode=user["stake_mode"] if user else "units",
+                           tg_link=tg_link, tg_linked=tg_linked)
+
+
+@app.route("/cuenta/telegram-link", methods=["POST"])
+@login_required
+def cuenta_telegram_link():
+    """Genera un código de un solo uso para vincular el Telegram del miembro.
+
+    El miembro abre el link, pulsa START en el bot y la app vincula su
+    telegram_user_id. Sirve para sacarlo del canal Elite Plays si cancela.
+    """
+    db = get_db()
+    uid = session.get("user_id")
+    db.execute("DELETE FROM telegram_link_codes WHERE user_id = ?", (uid,))
+    code = secrets.token_urlsafe(16)
+    db.execute(
+        "INSERT INTO telegram_link_codes (code, user_id, created_at) VALUES (?, ?, ?)",
+        (code, uid, datetime.now(timezone.utc).isoformat()),
+    )
+    db.commit()
+    return redirect(url_for("cuenta"))
+
+
+@app.route("/cuenta/telegram-unlink", methods=["POST"])
+@login_required
+def cuenta_telegram_unlink():
+    """Desvincula el Telegram del miembro."""
+    db = get_db()
+    db.execute(
+        "UPDATE users SET telegram_user_id = NULL WHERE id = ?",
+        (session.get("user_id"),),
+    )
+    db.commit()
+    flash("Telegram disconnected.", "ok")
+    return redirect(url_for("cuenta"))
 
 
 @app.route("/cuenta/cancelar", methods=["GET", "POST"])
@@ -2385,6 +2474,95 @@ def api_push_status():
     )
 
 
+@app.route("/telegram/webhook/<secret>", methods=["POST"])
+def telegram_webhook(secret):
+    """Recibe updates del bot @thesharpteam_bot (solo vinculación /start).
+
+    Render no tiene el token del bot, así que la app solo RECIBE updates
+    aquí (nunca llama a la API de Telegram). El baneo/desbaneo del canal
+    Elite Plays lo hace el cron de la VM con el conector de Telegram,
+    leyendo /api/telegram-pending.
+    """
+    if not TELEGRAM_WEBHOOK_SECRET or not secrets.compare_digest(
+        secret, TELEGRAM_WEBHOOK_SECRET
+    ):
+        return jsonify({"error": "forbidden"}), 403
+    update = request.get_json(force=True, silent=True) or {}
+    msg = update.get("message") or {}
+    text = (msg.get("text") or "").strip()
+    frm = msg.get("from") or {}
+    tg_id = frm.get("id")
+    if text.startswith("/start") and tg_id:
+        parts = text.split(None, 1)
+        code = parts[1].strip() if len(parts) > 1 else ""
+        if code:
+            db = get_db()
+            row = db.execute(
+                "SELECT user_id FROM telegram_link_codes WHERE code = ?", (code,)
+            ).fetchone()
+            if row:
+                uid = row["user_id"] if isinstance(row, dict) else row[0]
+                db.execute(
+                    "UPDATE users SET telegram_user_id = ? WHERE id = ?",
+                    (str(tg_id), uid),
+                )
+                db.execute(
+                    "DELETE FROM telegram_link_codes WHERE code = ?", (code,)
+                )
+                db.commit()
+    return jsonify({"ok": True})
+
+
+@app.route("/api/telegram-pending", methods=["GET"])
+def api_telegram_pending():
+    """Baneos/desbaneos pendientes del canal Elite Plays.
+
+    Lo lee el cron de la VM cada 10 min (Render no tiene el token del bot).
+    Protegido con header X-Push-Key == PUSH_TRIGGER_KEY.
+    """
+    if not PUSH_TRIGGER_KEY or not secrets.compare_digest(
+        request.headers.get("X-Push-Key", ""), PUSH_TRIGGER_KEY
+    ):
+        return jsonify({"error": "forbidden"}), 403
+    db = get_db()
+    rows = db.execute(
+        "SELECT id, telegram_user_id, telegram_ban_pending, telegram_unban_pending"
+        " FROM users WHERE telegram_user_id IS NOT NULL"
+        " AND (telegram_ban_pending = 1 OR telegram_unban_pending = 1)"
+    ).fetchall()
+    pending = []
+    for r in rows:
+        d = dict(r) if not isinstance(r, dict) else r
+        action = "ban" if d["telegram_ban_pending"] else "unban"
+        pending.append(
+            {
+                "user_id": d["id"],
+                "telegram_user_id": d["telegram_user_id"],
+                "action": action,
+            }
+        )
+    return jsonify({"pending": pending})
+
+
+@app.route("/api/telegram-pending/ack", methods=["POST"])
+def api_telegram_pending_ack():
+    """Confirma que el cron procesó un baneo/desbaneo. JSON: {user_id, action}."""
+    if not PUSH_TRIGGER_KEY or not secrets.compare_digest(
+        request.headers.get("X-Push-Key", ""), PUSH_TRIGGER_KEY
+    ):
+        return jsonify({"error": "forbidden"}), 403
+    data = request.get_json(force=True, silent=True) or {}
+    uid = data.get("user_id")
+    action = data.get("action")
+    if not uid or action not in ("ban", "unban"):
+        return jsonify({"error": "bad request"}), 400
+    col = "telegram_ban_pending" if action == "ban" else "telegram_unban_pending"
+    db = get_db()
+    db.execute(f"UPDATE users SET {col} = 0 WHERE id = ?", (uid,))
+    db.commit()
+    return jsonify({"ok": True})
+
+
 @app.route("/stripe/webhook", methods=["POST"])
 def stripe_webhook():
     """Webhook de Stripe: automatiza la membresía sin que Alex mueva un dedo.
@@ -2447,14 +2625,24 @@ def stripe_webhook():
         if not email:
             _auditar("", f"{origen} sin email")
             return
-        row = db.execute("SELECT id FROM users WHERE email = ?",
+        row = db.execute("SELECT id, cancel_requested_at, telegram_user_id FROM users WHERE email = ?",
                          (email,)).fetchone()
         if row:
+            uid = row["id"]
+            estaba_cancelado = bool(row["cancel_requested_at"])
+            tiene_tg = bool(row["telegram_user_id"])
             db.execute(
                 "UPDATE users SET platinum_unlocked = 1, stripe_customer_id = ?, "
                 "stripe_subscription_id = ?, cancel_requested_at = NULL WHERE id = ?",
-                (customer_id or None, sub_id or None, row["id"]),
+                (customer_id or None, sub_id or None, uid),
             )
+            # Si vuelve después de cancelar y tiene Telegram vinculado, el cron
+            # lo desbanea del canal Elite Plays para que pueda reingresar.
+            if estaba_cancelado and tiene_tg:
+                db.execute(
+                    "UPDATE users SET telegram_unban_pending = 1, telegram_ban_pending = 0"
+                    " WHERE id = ?", (uid,),
+                )
             db.commit()
             _auditar(email, f"Elite activada ({origen}, sub {(sub_id or 'n/a')[:20]})"
                      + (" [reproceso]" if duplicado else ""))
@@ -2498,6 +2686,11 @@ def stripe_webhook():
                     db.execute(
                         "UPDATE users SET platinum_unlocked = 0, stripe_subscription_id = NULL, "
                         "cancel_requested_at = ? WHERE id = ?", (now_iso(), row["id"]))
+                    # Sin pago no hay acceso: si tiene Telegram vinculado, el cron
+                    # de la VM lo banea del canal privado Elite Plays.
+                    db.execute(
+                        "UPDATE users SET telegram_ban_pending = 1, telegram_unban_pending = 0"
+                        " WHERE id = ? AND telegram_user_id IS NOT NULL", (row["id"],))
                     db.commit()
                     _auditar(email, f"Elite desactivada ({etype}, status={status})")
                 else:
