@@ -1931,6 +1931,387 @@ def admin_miembros():
                            eventos=[dict(e) for e in eventos])
 
 
+# ---------------------------------------------------------------------------
+# ADMIN: herramientas de jugadas (solo Alex)
+# Publicar / eliminar jugadas del Dashboard y enviar notificaciones a Telegram.
+# ---------------------------------------------------------------------------
+TG_CHANNELS = {"GOLD": "-1004308236812", "ELITE": "-1004326061323"}
+SITE_BASE = "https://the-line-breaker-members.onrender.com"
+GH_REPO = "penamanuel-art/tlb-members"
+
+
+def _admin_guard():
+    """Devuelve una redirección si no es admin, o None si puede continuar."""
+    if not is_admin_for(current_user()):
+        flash("You don't have permission to view this page.", "error")
+        return redirect(url_for("home"))
+    return None
+
+
+def github_sync_file(repo_path: str, content: bytes, message: str):
+    """Sube un archivo al repo vía GitHub Contents API.
+
+    Usa la env var GITHUB_TOKEN. Devuelve (ok, detalle). Sin token,
+    devuelve (False, ...) sin romper nada: el cambio local sigue valiendo.
+    """
+    token = (os.environ.get("GITHUB_TOKEN") or "").strip()
+    if not token:
+        return False, "GITHUB_TOKEN no configurado en el servidor"
+    import base64
+    api = f"https://api.github.com/repos/{GH_REPO}/contents/{repo_path}"
+    headers = {"Authorization": f"Bearer {token}",
+               "Accept": "application/vnd.github+json",
+               "User-Agent": "tlb-admin"}
+    sha = None
+    try:
+        req = urllib.request.Request(api + "?ref=master", headers=headers)
+        with urllib.request.urlopen(req, timeout=20) as r:
+            sha = json.load(r).get("sha")
+    except Exception:
+        sha = None
+    payload = {"message": message,
+               "content": base64.b64encode(content).decode("ascii"),
+               "branch": "master"}
+    if sha:
+        payload["sha"] = sha
+    try:
+        req = urllib.request.Request(
+            api, data=json.dumps(payload).encode("utf-8"),
+            headers={**headers, "Content-Type": "application/json"}, method="PUT")
+        with urllib.request.urlopen(req, timeout=30) as r:
+            json.load(r)
+        return True, "sincronizado con GitHub"
+    except Exception as e:
+        return False, f"GitHub: {e}"
+
+
+def _load_plays_raw():
+    """Lee plays.json crudo (dict)."""
+    try:
+        with open(PLAYS_PATH, "r", encoding="utf-8") as f:
+            data = json.load(f)
+    except (OSError, json.JSONDecodeError):
+        data = {}
+    if isinstance(data, list):
+        data = {"plays": data}
+    if not isinstance(data, dict):
+        data = {}
+    data.setdefault("plays", [])
+    return data
+
+
+def persist_plays(data: dict, mensaje: str):
+    """Guarda plays.json en el servidor y lo sincroniza con GitHub.
+
+    El Dashboard refleja el cambio al instante (lee el archivo local);
+    el commit a GitHub lo hace permanente ante reinicios.
+    Devuelve (ok_github, detalle).
+    """
+    with open(PLAYS_PATH, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=1)
+    raw = json.dumps(data, ensure_ascii=False, indent=1).encode("utf-8")
+    return github_sync_file("data/plays.json", raw, mensaje)
+
+
+def telegram_send_play(play: dict):
+    """Envía una jugada a su canal de Telegram (modelo WGT de Alex).
+
+    Foto original del ticket + caption de 4 líneas + 4 botones inline.
+    Usa la env var TELEGRAM_BOT_TOKEN. Devuelve (ok, detalle).
+    """
+    token = (os.environ.get("TELEGRAM_BOT_TOKEN") or "").strip()
+    if not token:
+        return False, "TELEGRAM_BOT_TOKEN no configurado en el servidor"
+    nivel = (play.get("nivel") or "GOLD").upper()
+    es_elite = nivel in ("ELITE", "PLATINUM")
+    chat_id = TG_CHANNELS["ELITE" if es_elite else "GOLD"]
+    lvl = "ELITE" if es_elite else "GOLD"
+    emoji = "⭐" if es_elite else "🟡"
+    cuota = play.get("cuota", "")
+    cuota_s = f"+{cuota}" if isinstance(cuota, (int, float)) and cuota > 0 else str(cuota)
+    caption = (
+        f"{emoji} {lvl} PLAY\n"
+        f"{play.get('abbr', '')} {play.get('bettype', '')} (Winner) ({cuota_s})\n"
+        f"· {play.get('stake_unidades', '')}u\n"
+        f"{play.get('abbr', '')} vs {play.get('opp_abbr', '')} · {play.get('liga', '')}"
+    )
+    novig = play.get("novig_url") or "https://novig.com"
+    buttons = [
+        [{"text": "🎯 Bet on Novig ↗", "url": novig}],
+        [{"text": "+ Track this play ↗", "url": f"{SITE_BASE}/home"}],
+        [{"text": "🔍 Line shop for a better price ↗", "url": f"{SITE_BASE}/ev-board"}],
+        [{"text": "🎫 View ticket ↗", "url": f"{SITE_BASE}/ticket/{play.get('id')}"}],
+    ]
+    import uuid
+    import mimetypes
+    foto_rel = (play.get("comprobante") or "").strip()
+    foto_path = os.path.join(BASE_DIR, "static", foto_rel) if foto_rel else None
+    api = f"https://api.telegram.org/bot{token}"
+    try:
+        if foto_path and os.path.isfile(foto_path):
+            with open(foto_path, "rb") as fh:
+                foto_bytes = fh.read()
+            boundary = uuid.uuid4().hex
+            body = bytearray()
+            for name, value in (("chat_id", chat_id), ("caption", caption),
+                                ("reply_markup", json.dumps({"inline_keyboard": buttons},
+                                                            ensure_ascii=False))):
+                body += f"--{boundary}\r\n".encode("utf-8")
+                body += f'Content-Disposition: form-data; name="{name}"\r\n\r\n'.encode("utf-8")
+                body += f"{value}\r\n".encode("utf-8")
+            body += f"--{boundary}\r\n".encode("utf-8")
+            body += (f'Content-Disposition: form-data; name="photo"; '
+                     f'filename="{os.path.basename(foto_path)}"\r\n'
+                     f'Content-Type: {mimetypes.guess_type(foto_path)[0] or "image/jpeg"}'
+                     f'\r\n\r\n').encode("utf-8")
+            body += foto_bytes + b"\r\n" + f"--{boundary}--\r\n".encode("utf-8")
+            req = urllib.request.Request(
+                api + "/sendPhoto", data=bytes(body),
+                headers={"Content-Type": f"multipart/form-data; boundary={boundary}"},
+                method="POST")
+        else:
+            import urllib.parse
+            data = urllib.parse.urlencode({
+                "chat_id": chat_id, "text": caption,
+                "reply_markup": json.dumps({"inline_keyboard": buttons})}).encode("utf-8")
+            req = urllib.request.Request(api + "/sendMessage", data=data, method="POST")
+        with urllib.request.urlopen(req, timeout=60) as r:
+            res = json.load(r)
+        return (True, "enviado a Telegram") if res.get("ok") else (False, str(res)[:200])
+    except Exception as e:
+        return False, f"Telegram: {e}"
+
+
+def _admin_business_stats(db):
+    """Panel del negocio: Elite activos, altas/bajas 7d, ingreso semanal est."""
+    stats = {"elite": 0, "altas": 0, "bajas": 0, "ingreso": 0}
+    try:
+        rows = db.execute("SELECT platinum_unlocked, created_at FROM users").fetchall()
+    except Exception:
+        rows = []
+    ahora = datetime.now(timezone.utc)
+    for r in rows:
+        d = dict(r)
+        if d.get("platinum_unlocked"):
+            stats["elite"] += 1
+        try:
+            creado = datetime.fromisoformat(d.get("created_at") or "")
+            if creado.tzinfo is None:
+                creado = creado.replace(tzinfo=timezone.utc)
+            if (ahora - creado) < timedelta(days=7):
+                stats["altas"] += 1
+        except Exception:
+            pass
+    try:
+        evs = db.execute("SELECT tipo, created_at FROM stripe_events").fetchall()
+    except Exception:
+        evs = []
+    for e in evs:
+        d = dict(e)
+        if (d.get("tipo") or "") == "customer.subscription.deleted":
+            try:
+                cuando = datetime.fromisoformat(d.get("created_at") or "")
+                if cuando.tzinfo is None:
+                    cuando = cuando.replace(tzinfo=timezone.utc)
+                if (ahora - cuando) < timedelta(days=7):
+                    stats["bajas"] += 1
+            except Exception:
+                pass
+    stats["ingreso"] = stats["elite"] * 23
+    return stats
+
+
+@app.route("/admin/jugadas")
+@login_required
+def admin_jugadas():
+    g = _admin_guard()
+    if g:
+        return g
+    data = _load_plays_raw()
+    plays = [p for p in data.get("plays", []) if isinstance(p, dict)]
+    db = get_db()
+    stats = _admin_business_stats(db)
+    return render_template(
+        "admin_jugadas.html",
+        plays=plays,
+        fecha=data.get("fecha", ""),
+        stats=stats,
+        github_ok=bool((os.environ.get("GITHUB_TOKEN") or "").strip()),
+        telegram_ok=bool((os.environ.get("TELEGRAM_BOT_TOKEN") or "").strip()),
+        hoy=datetime.now(TZ).strftime("%Y-%m-%d"),
+    )
+
+
+@app.route("/admin/jugadas/publicar", methods=["POST"])
+@login_required
+def admin_publicar_jugada():
+    g = _admin_guard()
+    if g:
+        return g
+    f = request.form
+    fecha = (f.get("fecha") or "").strip() or datetime.now(TZ).strftime("%Y-%m-%d")
+    abbr = (f.get("abbr") or "").strip().upper()
+    opp = (f.get("opp_abbr") or "").strip().upper()
+    bettype = (f.get("bettype") or "Moneyline").strip()
+    liga = (f.get("liga") or "").strip().upper()
+    equipo = (f.get("equipo") or "").strip()
+    linea = (f.get("linea") or "").strip()
+    nivel = (f.get("nivel") or "GOLD").strip().upper()
+    if not (abbr and equipo and nivel in ("GOLD", "ELITE")):
+        flash("Completa abreviatura, equipo y nivel.", "error")
+        return redirect(url_for("admin_jugadas"))
+    foto = request.files.get("foto")
+    if not foto or not (foto.filename or "").strip():
+        flash("Sube la foto del ticket de la jugada.", "error")
+        return redirect(url_for("admin_jugadas"))
+    ext = (foto.filename.rsplit(".", 1)[-1] if "." in foto.filename else "jpg").lower()
+    if ext not in ("jpg", "jpeg", "png"):
+        flash("La foto debe ser JPG o PNG.", "error")
+        return redirect(url_for("admin_jugadas"))
+    slug = re.sub(r"[^a-z0-9]+", "-", f"{abbr}-{bettype}".lower()).strip("-")
+    data = _load_plays_raw()
+    if data.get("fecha") != fecha:
+        data["fecha"] = fecha
+        data["plays"] = []
+    ids = {p.get("id") for p in data["plays"] if isinstance(p, dict)}
+    play_id = f"{fecha}-{slug}"
+    n = 2
+    while play_id in ids:
+        play_id = f"{fecha}-{slug}-{n}"
+        n += 1
+    cuota_raw = (f.get("cuota") or "").strip().replace("+", "")
+    try:
+        cuota = int(cuota_raw)
+    except ValueError:
+        cuota = 0
+    try:
+        stake_monto = float((f.get("stake_monto") or "0").strip() or 0)
+    except ValueError:
+        stake_monto = 0
+    stake_u = (f.get("stake_unidades") or "").strip() or ("1" if nivel == "ELITE" else "0.6")
+    game = (f.get("game") or "").strip() or (f"{abbr} vs {opp}" if opp else abbr)
+    game_time = (f.get("game_time_et") or "").strip()
+    ahora = datetime.now(TZ)
+    ticket_hora = f"{ahora.month}.{ahora.day}.{str(ahora.year)[2:]} {ahora.strftime('%I:%M%p').lstrip('0')}"
+    rel = f"img/comprobantes/{play_id}.jpg"
+    dest = os.path.join(BASE_DIR, "static", rel)
+    os.makedirs(os.path.dirname(dest), exist_ok=True)
+    foto.save(dest)
+    with open(dest, "rb") as fh:
+        img_bytes = fh.read()
+    gh_foto_ok, gh_foto_msg = github_sync_file(
+        f"static/{rel}", img_bytes, f"Admin: ticket {play_id}")
+    play = {
+        "id": play_id,
+        "abbr": abbr, "opp_abbr": opp, "bettype": bettype,
+        "liga": liga, "equipo": equipo,
+        "game": game, "game_time_et": game_time,
+        "dia": "Today", "hora": game_time,
+        "cuota": cuota, "linea": linea,
+        "nivel": nivel,
+        "pick": f"{equipo} {linea}".strip(),
+        "stake_monto": stake_monto, "stake_unidades": stake_u,
+        "placed": ahora.strftime("%I:%M%p").lstrip("0"),
+        "ticket_hora": ticket_hora,
+        "comprobante": rel,
+        "novig_url": (f.get("novig_url") or "").strip(),
+    }
+    data["plays"].append(play)
+    gh_ok, gh_msg = persist_plays(data, f"Admin: publicar jugada {play_id}")
+    detalle = []
+    detalle.append("foto en GitHub OK" if gh_foto_ok else f"foto: {gh_foto_msg}")
+    detalle.append("jugada en GitHub OK" if gh_ok else f"jugada: {gh_msg} (visible igual en el Dashboard)")
+    flash(f"Jugada {abbr} {bettype} publicada. " + " · ".join(detalle),
+          "ok" if (gh_ok and gh_foto_ok) else "error")
+    return redirect(url_for("admin_jugadas"))
+
+
+@app.route("/admin/jugadas/eliminar", methods=["POST"])
+@login_required
+def admin_eliminar_jugada():
+    g = _admin_guard()
+    if g:
+        return g
+    play_id = (request.form.get("play_id") or "").strip()
+    data = _load_plays_raw()
+    antes = len(data.get("plays", []))
+    data["plays"] = [p for p in data["plays"]
+                     if not (isinstance(p, dict) and p.get("id") == play_id)]
+    if len(data["plays"]) == antes:
+        flash("Esa jugada ya no estaba en el Dashboard.", "error")
+        return redirect(url_for("admin_jugadas"))
+    gh_ok, gh_msg = persist_plays(data, f"Admin: eliminar jugada {play_id}")
+    flash(f"Jugada eliminada del Dashboard. {gh_msg}.",
+          "ok" if gh_ok else "error")
+    return redirect(url_for("admin_jugadas"))
+
+
+@app.route("/admin/jugadas/telegram", methods=["POST"])
+@login_required
+def admin_telegram_jugada():
+    g = _admin_guard()
+    if g:
+        return g
+    play_id = (request.form.get("play_id") or "").strip()
+    play = next((p for p in _load_plays_raw().get("plays", [])
+                 if isinstance(p, dict) and p.get("id") == play_id), None)
+    if not play:
+        flash("Jugada no encontrada.", "error")
+        return redirect(url_for("admin_jugadas"))
+    ok, msg = telegram_send_play(play)
+    flash(f"{'✅' if ok else '⚠️'} Telegram ({play.get('nivel')}): {msg}",
+          "ok" if ok else "error")
+    return redirect(url_for("admin_jugadas"))
+
+
+@app.route("/admin/jugadas/reenviar-email", methods=["POST"])
+@login_required
+def admin_reenviar_email():
+    g = _admin_guard()
+    if g:
+        return g
+    plays = [p for p in _load_plays_raw().get("plays", []) if isinstance(p, dict)]
+    if not plays:
+        flash("No hay jugadas publicadas hoy.", "error")
+        return redirect(url_for("admin_jugadas"))
+    user = (os.environ.get("EMAIL_USER") or "").strip()
+    pwd = os.environ.get("EMAIL_PASS") or ""
+    dest = admin_email()
+    if not (user and pwd and dest):
+        flash("Email no configurado en el servidor.", "error")
+        return redirect(url_for("admin_jugadas"))
+    filas = "".join(
+        f"<tr><td style='padding:10px;border-bottom:1px solid #eee;'>"
+        f"<b>{p.get('abbr','')} {p.get('bettype','')}</b> ({p.get('nivel','')})<br>"
+        f"<span style='color:#555;'>{p.get('pick','')}</span></td>"
+        f"<td style='padding:10px;border-bottom:1px solid #eee;text-align:right;'>"
+        f"<b>{p.get('cuota','')}</b><br><span style='color:#555;'>${p.get('stake_monto','')}</span>"
+        f"</td></tr>"
+        for p in plays)
+    html = (f"<div style='max-width:480px;margin:0 auto;font-family:sans-serif;'>"
+            f"<h2>The Sharp Team — Today's card</h2>"
+            f"<table width='100%' cellpadding='0' cellspacing='0'>{filas}</table>"
+            f"<p><a href='{SITE_BASE}/home'>Open the Dashboard</a></p></div>")
+    try:
+        import smtplib
+        from email.message import EmailMessage
+        msg = EmailMessage()
+        msg["Subject"] = "The Sharp Team | Today's card (reenvío)"
+        msg["From"] = f"The Sharp Team <{user}>"
+        msg["To"] = dest
+        msg.set_content("Today's card: " + ", ".join(
+            f"{p.get('abbr','')} {p.get('bettype','')} ({p.get('cuota','')})" for p in plays))
+        msg.add_alternative(html, subtype="html")
+        with smtplib.SMTP("smtp.gmail.com", 587, timeout=20) as s:
+            s.starttls()
+            s.login(user, pwd)
+            s.send_message(msg)
+        flash(f"Email reenviado a {dest}.", "ok")
+    except Exception as e:
+        flash(f"No se pudo enviar el email: {e}", "error")
+    return redirect(url_for("admin_jugadas"))
+
+
 @app.route("/resultados")
 @login_required
 def resultados():

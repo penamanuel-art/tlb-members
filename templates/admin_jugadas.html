@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block title %}Plays — Admin{% endblock %}
+{% block content %}
+
+<section class="tracker-head">
+  <div>
+    <p class="kicker">ADMIN · ONLY YOU SEE THIS</p>
+    <h2>Plays</h2>
+  </div>
+</section>
+
+<div class="m-meta" style="margin-bottom:14px;">
+  <span class="m-pill {{ 'on' if github_ok else 'cancel' }}">{{ '✓' if github_ok else '✗' }} GitHub sync</span>
+  <span class="m-pill {{ 'on' if telegram_ok else 'cancel' }}">{{ '✓' if telegram_ok else '✗' }} Telegram</span>
+  {% if not github_ok %}<span class="m-pill">Sin GITHUB_TOKEN los cambios se pierden al reiniciar</span>{% endif %}
+  {% if not telegram_ok %}<span class="m-pill">Sin TELEGRAM_BOT_TOKEN no se puede enviar a Telegram</span>{% endif %}
+</div>
+
+<section class="tracker-head" style="margin-top:1.2rem">
+  <div><p class="kicker">BUSINESS</p><h2 style="font-size:1.4rem;">This week</h2></div>
+</section>
+<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:8px;">
+  <article class="member-row" style="margin:0;"><div class="m-name" style="font-size:1.6rem;">{{ stats.elite }}</div><div class="m-email">Elite activos</div></article>
+  <article class="member-row" style="margin:0;"><div class="m-name" style="font-size:1.6rem;">${{ stats.ingreso }}</div><div class="m-email">Ingreso semanal est.</div></article>
+  <article class="member-row" style="margin:0;"><div class="m-name" style="font-size:1.6rem;">+{{ stats.altas }}</div><div class="m-email">Altas (7 días)</div></article>
+  <article class="member-row" style="margin:0;"><div class="m-name" style="font-size:1.6rem;">−{{ stats.bajas }}</div><div class="m-email">Bajas (7 días)</div></article>
+</div>
+
+<section class="tracker-head" style="margin-top:1.6rem">
+  <div><p class="kicker">PUBLISH</p><h2 style="font-size:1.4rem;">Nueva jugada</h2></div>
+</section>
+<article class="member-row">
+  <form method="post" action="{{ url_for('admin_publicar_jugada') }}" enctype="multipart/form-data">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <label>Fecha<br><input type="date" name="fecha" value="{{ hoy }}" required style="width:100%;"></label>
+      <label>Liga<br><select name="liga" style="width:100%;"><option>NFL</option><option>NCAAF</option><option selected>MLB</option><option>NBA</option><option>NHL</option></select></label>
+      <label>Abrev. equipo (HOU)<br><input name="abbr" maxlength="4" required placeholder="HOU" style="width:100%;"></label>
+      <label>Abrev. rival (CHI)<br><input name="opp_abbr" maxlength="4" placeholder="CHI" style="width:100%;"></label>
+      <label style="grid-column:1/-1;">Equipo<br><input name="equipo" required placeholder="Houston Astros" style="width:100%;"></label>
+      <label>Tipo<br><select name="bettype" style="width:100%;"><option>Moneyline</option><option>Spread</option><option>Total</option></select></label>
+      <label>Línea<br><input name="linea" placeholder="-1.5 (+174)" style="width:100%;"></label>
+      <label>Cuota (con signo)<br><input name="cuota" placeholder="174 o -110" style="width:100%;"></label>
+      <label>Nivel<br><select name="nivel" style="width:100%;"><option>GOLD</option><option>ELITE</option></select></label>
+      <label>Stake $<br><input name="stake_monto" type="number" step="0.01" placeholder="15" style="width:100%;"></label>
+      <label>Unidades<br><input name="stake_unidades" placeholder="0.6" style="width:100%;"></label>
+      <label>Partido<br><input name="game" placeholder="CHI vs HOU" style="width:100%;"></label>
+      <label>Hora ET<br><input name="game_time_et" placeholder="7:05 PM ET" style="width:100%;"></label>
+      <label style="grid-column:1/-1;">Link Novig (opcional)<br><input name="novig_url" placeholder="https://novig.com" style="width:100%;"></label>
+      <label style="grid-column:1/-1;">Foto del ticket<br><input type="file" name="foto" accept="image/jpeg,image/png" required></label>
+    </div>
+    <button class="btn btn-place" type="submit" style="margin-top:12px;">Publicar en el Dashboard</button>
+  </form>
+</article>
+
+<section class="tracker-head" style="margin-top:1.6rem">
+  <div><p class="kicker">LIVE</p><h2 style="font-size:1.4rem;">En el Dashboard ahora ({{ plays|length }})</h2></div>
+</section>
+{% for p in plays %}
+<article class="member-row">
+  <div class="m-name">{{ p.abbr }} {{ p.bettype }} <span class="m-pill {{ 'on' if p.nivel == 'ELITE' else '' }}">{{ p.nivel }}</span></div>
+  <div class="m-email">{{ p.pick }} · {{ p.cuota }} · ${{ p.stake_monto }} ({{ p.stake_unidades }}u) · {{ p.game }}</div>
+  <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
+    <form method="post" action="{{ url_for('admin_telegram_jugada') }}">
+      <input type="hidden" name="play_id" value="{{ p.id }}">
+      <button class="btn btn-sm btn-place" type="submit">📣 Enviar a Telegram</button>
+    </form>
+    <a class="btn btn-sm btn-ghost" href="{{ url_for('ticket_view', play_id=p.id) }}">Ver</a>
+    <form method="post" action="{{ url_for('admin_eliminar_jugada') }}" onsubmit="return confirm('¿Eliminar esta jugada del Dashboard?');">
+      <input type="hidden" name="play_id" value="{{ p.id }}">
+      <button class="btn btn-sm btn-ghost" type="submit">Eliminar</button>
+    </form>
+  </div>
+</article>
+{% else %}
+<p class="muted">No hay jugadas publicadas.</p>
+{% endfor %}
+
+<section class="tracker-head" style="margin-top:1.6rem">
+  <div><p class="kicker">EMAIL</p><h2 style="font-size:1.4rem;">Card del día</h2></div>
+</section>
+<article class="member-row">
+  <div class="m-email">Reenvía la card publicada hoy a tu correo (por si el envío automático falló).</div>
+  <form method="post" action="{{ url_for('admin_reenviar_email') }}" style="margin-top:10px;">
+    <button class="btn btn-sm btn-ghost" type="submit">📧 Reenviar email de la card</button>
+  </form>
+</article>
+
+{% endblock %}
