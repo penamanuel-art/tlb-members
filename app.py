@@ -1019,6 +1019,37 @@ def compute_stats(tracked):
     }
 
 
+def stats_por_nivel(tracked):
+    """Ganadas/perdidas/profit por nivel (GOLD/ELITE) para el bloque estilo WGT."""
+    out = {}
+    for t in tracked:
+        lvl = (t.get("nivel") or "").upper()
+        if lvl not in ("GOLD", "ELITE"):
+            continue
+        s = out.setdefault(lvl, {"wins": 0, "losses": 0, "net": 0.0})
+        if t.get("resultado") == "W":
+            s["wins"] += 1
+            s["net"] += play_profit_dollars(t)
+        elif t.get("resultado") == "L":
+            s["losses"] += 1
+            s["net"] += play_profit_dollars(t)
+    for s in out.values():
+        _n = int(round(s["net"]))
+        s["net_display"] = ("+$" if _n > 0 else ("-$" if _n < 0 else "$")) + f"{abs(_n):,}"
+        s["net_cls"] = "pos" if _n > 0 else ("neg" if _n < 0 else "")
+        s["record"] = f"{s['wins']}–{s['losses']}"
+    for _lvl in ("GOLD", "ELITE"):
+        out.setdefault(_lvl, {"wins": 0, "losses": 0, "net": 0.0,
+                              "net_display": "$0", "net_cls": "", "record": "0–0"})
+    return out
+
+
+def fmt_big_dollars(amount):
+    """+$1,234 estilo WGT (dólares enteros con separador de miles)."""
+    n = int(round(amount or 0))
+    return ("+$" if n > 0 else ("-$" if n < 0 else "$")) + f"{abs(n):,}"
+
+
 
 _RE_FECHA_PLAYID = re.compile(r"^(?:play|hist)-(\d{4}-\d{2}-\d{2})-")
 
@@ -1251,6 +1282,8 @@ def home():
     ).fetchall()
     tracked_ids = {r["play_id"] for r in tracked_rows}
     tstats = compute_stats([dict(r) for r in tracked_rows])
+    tlevels = stats_por_nivel([dict(r) for r in tracked_rows])
+    tstats["net_display"] = fmt_big_dollars(tstats["net_dollars"])
     # Resultados recientes: jugadas liquidadas del archivo (sin bloqueadas).
     recientes = recientes_oficiales(6)
     return render_template(
@@ -1269,6 +1302,7 @@ def home():
         leccion=load_masterclass(),
         archivo_mc=load_masterclass_archivo(),
         tstats=tstats,
+        tlevels=tlevels,
         recientes=recientes,
         es_admin=is_admin_for(user),
     )

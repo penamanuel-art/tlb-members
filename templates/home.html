@@ -242,17 +242,13 @@
 })();
 </script>
 
-<!-- 05 · YOUR TRACKER (personal: mismo diseño de 4 tarjetas que el tracker oficial) -->
+<!-- 05 · TRACKER ÚNICO estilo WGT (un solo tracker: el del miembro) -->
+{% if es_admin %}
 <div class="tracker-box">
 <div class="section-head">
   <div>
-    {% if es_admin %}
     <h2 class="section-title">Alex Owner Results</h2>
     <p class="section-sub">Every official play, auto-graded from the final score.</p>
-    {% else %}
-    <h2 class="section-title">Your tracker</h2>
-    <p class="section-sub">Your records live here. Every time you make a play, make sure to hit <b>Track</b>.</p>
-    {% endif %}
   </div>
   <a class="link-more" href="{{ url_for('tracker') }}">Open my tracker →</a>
 </div>
@@ -284,7 +280,7 @@
 
 <hr class="section-divider">
 
-<!-- 06 · DOCUMENTED RECORD -->
+<!-- 06 · DOCUMENTED RECORD (admin) -->
 <div class="official-box">
 <section class="tracker-head record-home">
   <div>
@@ -322,6 +318,36 @@
   </div>
 </section>
 </div>
+{% else %}
+<div class="tracker-box">
+<div class="section-head">
+  <div>
+    <h2 class="section-title">Your tracker</h2>
+    <p class="section-sub">Every play posted before game time — wins and losses stay on the record.</p>
+  </div>
+  <a class="link-more" href="{{ url_for('tracker') }}">Open my tracker →</a>
+</div>
+<section class="wgt-hero">
+  <div class="wgt-main">
+    <p class="wgt-kicker">THE SHARP TEAM DOCUMENTED PROFIT</p>
+    <p class="wgt-number {{ 'pos' if tstats.net_dollars > 0 else ('neg' if tstats.net_dollars < 0 else '') }}">{{ tstats.net_display }}</p>
+    <p class="wgt-sub">{{ tstats.wins }}–{{ tstats.losses }} &middot; every play public, win or loss</p>
+  </div>
+  <div class="wgt-levels">
+    <div class="wgt-level">
+      <span class="wgt-lvl-name">&#x1f7e1; GOLD</span>
+      <span class="wgt-lvl-record">{{ tlevels['GOLD'].record }}</span>
+      <span class="wgt-lvl-profit {{ tlevels['GOLD'].net_cls }}">{{ tlevels['GOLD'].net_display }}</span>
+    </div>
+    <div class="wgt-level">
+      <span class="wgt-lvl-name">&#x2b50; ELITE</span>
+      <span class="wgt-lvl-record">{{ tlevels['ELITE'].record }}</span>
+      <span class="wgt-lvl-profit {{ tlevels['ELITE'].net_cls }}">{{ tlevels['ELITE'].net_display }}</span>
+    </div>
+  </div>
+</section>
+</div>
+{% endif %}
 
 <div class="section-head">
   <div>
