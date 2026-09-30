@@ -1302,6 +1302,17 @@ def migrate_db():
                 created_at TEXT NOT NULL
             )"""
         )
+        # Pool de links de invitación a Elite Plays (un solo uso, los genera
+        # el cron de la VM con el token del bot; /cuenta los reparte).
+        conn.execute(
+            """CREATE TABLE IF NOT EXISTS telegram_invite_links (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                invite_link TEXT NOT NULL UNIQUE,
+                used INTEGER NOT NULL DEFAULT 0,
+                used_by_user_id INTEGER REFERENCES users(id),
+                created_at TEXT NOT NULL
+            )"""
+        )
         conn.commit()
     finally:
         conn.close()
@@ -2561,6 +2572,80 @@ def api_telegram_pending_ack():
     db.execute(f"UPDATE users SET {col} = 0 WHERE id = ?", (uid,))
     db.commit()
     return jsonify({"ok": True})
+
+
+@app.route("/api/telegram-invite-pool/add", methods=["POST"])
+def api_telegram_invite_pool_add():
+    """El cron de la VM deposita links de invitación a Elite Plays.
+
+    JSON: {links: ["https://t.me/+..."]}. Protegido con X-Push-Key.
+    """
+    if not PUSH_TRIGGER_KEY or not secrets.compare_digest(
+        request.headers.get("X-Push-Key", ""), PUSH_TRIGGER_KEY
+    ):
+        return jsonify({"error": "forbidden"}), 403
+    data = request.get_json(force=True, silent=True) or {}
+    links = data.get("links") or []
+    db = get_db()
+    added = 0
+    for link in links:
+        if not link:
+            continue
+        try:
+            db.execute(
+                "INSERT INTO telegram_invite_links (invite_link, created_at)"
+                " VALUES (?, ?)",
+                (link, now_iso()),
+            )
+            added += 1
+        except INTEGRITY_ERRORS:
+            pass
+    db.commit()
+    return jsonify({"ok": True, "added": added})
+
+
+@app.route("/api/telegram-invite-pool/status", methods=["GET"])
+def api_telegram_invite_pool_status():
+    """Cuántos links sin usar hay en el pool. Lo lee el cron de la VM."""
+    if not PUSH_TRIGGER_KEY or not secrets.compare_digest(
+        request.headers.get("X-Push-Key", ""), PUSH_TRIGGER_KEY
+    ):
+        return jsonify({"error": "forbidden"}), 403
+    db = get_db()
+    row = db.execute(
+        "SELECT COUNT(*) AS n FROM telegram_invite_links WHERE used = 0"
+    ).fetchone()
+    n = row["n"] if row else 0
+    return jsonify({"unused": n})
+
+
+@app.route("/api/telegram-invite", methods=["GET"])
+def api_telegram_invite():
+    """Entrega al miembro Elite un link personal de invitación a Elite Plays.
+
+    Un solo uso por link (member_limit=1 en Telegram). Requiere sesión y
+    Elite activa. Si el pool está vacío, el cron lo rellena en ~10 min.
+    """
+    user = current_user()
+    if user is None:
+        return jsonify({"error": "login_required"}), 401
+    if not platinum_unlocked_for(user):
+        return jsonify({"error": "elite_required"}), 403
+    db = get_db()
+    row = db.execute(
+        "SELECT id, invite_link FROM telegram_invite_links"
+        " WHERE used = 0 ORDER BY id LIMIT 1"
+    ).fetchone()
+    if row is None:
+        return jsonify({"error": "empty_pool", "retry_in": "10 min"}), 503
+    d = dict(row) if not isinstance(row, dict) else row
+    db.execute(
+        "UPDATE telegram_invite_links SET used = 1, used_by_user_id = ?"
+        " WHERE id = ?",
+        (user["id"], d["id"]),
+    )
+    db.commit()
+    return jsonify({"ok": True, "invite_link": d["invite_link"]})
 
 
 @app.route("/stripe/webhook", methods=["POST"])
