@@ -795,6 +795,8 @@ def program_stats():
     """
     ganadas = perdidas = 0
     profit = risked = 0.0
+    niveles = {"GOLD": {"ganadas": 0, "perdidas": 0, "profit": 0.0},
+               "ELITE": {"ganadas": 0, "perdidas": 0, "profit": 0.0}}
     for d in load_archive():
         for j in d.get("jugadas", []) or []:
             if j.get("resultado") not in ("WON", "LOST") or j.get("bloqueada"):
@@ -805,14 +807,31 @@ def program_stats():
                 perdidas += 1
             profit += float(j.get("profit") or 0.0)
             risked += float(j.get("stake_monto") or 0.0)
+            _nv = (j.get("nivel") or "").upper()
+            if _nv in niveles:
+                _s = niveles[_nv]
+                if j["resultado"] == "WON":
+                    _s["ganadas"] += 1
+                else:
+                    _s["perdidas"] += 1
+                _s["profit"] += float(j.get("profit") or 0.0)
     settled = ganadas + perdidas
+    for _s in niveles.values():
+        _n = int(round(_s["profit"]))
+        _s["net_display"] = ("+$" if _n > 0 else ("-$" if _n < 0 else "$")) + f"{abs(_n):,}"
+        _s["net_cls"] = "pos" if _n > 0 else ("neg" if _n < 0 else "")
+        _s["record"] = f"{_s['ganadas']}–{_s['perdidas']}"
+    _pn = int(round(profit))
     return {
         "profit_all_time": round(profit, 2),
+        "profit_display": ("+$" if _pn > 0 else ("-$" if _pn < 0 else "$")) + f"{abs(_pn):,}",
+        "profit_cls": "pos" if _pn > 0 else ("neg" if _pn < 0 else ""),
         "ganadas": ganadas,
         "perdidas": perdidas,
         "win_rate": round(ganadas / settled * 100, 1) if settled else 0.0,
         "total_arriesgado": round(risked, 2),
         "roi": round(profit / risked * 100, 1) if risked else 0.0,
+        "niveles": niveles,
     }
 
 
