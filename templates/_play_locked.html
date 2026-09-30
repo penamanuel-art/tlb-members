@@ -2,7 +2,7 @@
    No revela nada: ni pick, ni cuota, ni stake, ni edge. Solo para no-Elite. #}
 <article class="play-card play-locked">
   <div class="play-top">
-    <span class="tstc-league">{{ p.liga }}</span>
+    {% if p is defined and p and p.liga %}<span class="tstc-league">{{ p.liga }}</span>{% endif %}
     <span class="locked-padlock" aria-hidden="true">&#x1f512;</span>
   </div>
   <div class="locked-blur" aria-hidden="true">

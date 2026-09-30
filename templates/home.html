@@ -70,19 +70,26 @@
 </section>
 
 <!-- 02 · ELITE SELECTION (banner) -->
+{# Teaser estilo WGT (pedido Alex 2026-09-30): para no-Elite SIEMPRE visible,
+   haya o no jugada Elite hoy — igual que los teasers Bonus/Owner de WGT. #}
 {% set plat = plays | selectattr('nivel', 'equalto', 'ELITE') | list %}
-{% if plat %}
+{% if plat or not platinum_unlocked %}
 <div class="section-head">
   <h2 class="section-title">Today's Elite Selection</h2>
 </div>
 <div class="plays">
-  {% for p in plat %}
-    {% if platinum_unlocked %}
-      {% include "_play_card.html" %}
-    {% else %}
-      {% include "_play_locked.html" %}
-    {% endif %}
-  {% endfor %}
+  {% if plat %}
+    {% for p in plat %}
+      {% if platinum_unlocked %}
+        {% include "_play_card.html" %}
+      {% else %}
+        {% include "_play_locked.html" %}
+      {% endif %}
+    {% endfor %}
+  {% else %}
+    {% set p = {'liga': ''} %}
+    {% include "_play_locked.html" %}
+  {% endif %}
 </div>
 {% endif %}
 
