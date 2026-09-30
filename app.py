@@ -2177,7 +2177,7 @@ def tracker_export():
                     headers={"Content-Disposition": f"attachment; filename={fname}"})
 
 
-@app.route("/track/<play_id>", methods=["POST"])
+@app.route("/track/<play_id>", methods=["GET", "POST"])
 @login_required
 def track(play_id):
     play = next((p for p in load_plays() if p.get("id") == play_id), None)
