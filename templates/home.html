@@ -93,6 +93,20 @@
 </div>
 {% endif %}
 
+<!-- 02b · ELITE TELEGRAM CTA -->
+{% if platinum_unlocked %}
+<div class="tg-elite-cta">
+  <div class="tg-elite-cta-inner">
+    <span class="tg-elite-cta-emoji">✈️</span>
+    <div class="tg-elite-cta-text">
+      <b>Get every Elite play on Telegram</b>
+      <span>Instant alerts in the private <b>Elite Plays</b> channel.</span>
+    </div>
+    <a href="{{ url_for('cuenta') }}#telegram" class="btn btn-primary">Join Elite Plays →</a>
+  </div>
+</div>
+{% endif %}
+
 <!-- 03 · TODAY'S PLAYS -->
 <div class="section-head">
   <h2 class="section-title">{% if card_pendiente %}Nothing posted yet{% else %}Today's Plays{% endif %}</h2>
