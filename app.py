@@ -1402,6 +1402,20 @@ def ticket_view(play_id):
 
 @app.route("/home")
 @login_required
+def last_elite_win():
+    """Última jugada ELITE ganada en el archivo (prueba social de la tarjeta bloqueada)."""
+    try:
+        with open(ARCHIVE_PATH, encoding="utf-8") as f:
+            arch = json.load(f)
+    except Exception:
+        return None
+    for d in sorted(arch.get("dias", []), key=lambda x: x.get("fecha", ""), reverse=True):
+        for j in d.get("jugadas", []):
+            if j.get("nivel") == "ELITE" and j.get("resultado") == "WON" and j.get("profit"):
+                return int(round(j["profit"]))
+    return None
+
+
 def home():
     db = get_db()
     record_checkin(db, session["user_id"])
@@ -1451,6 +1465,7 @@ def home():
         tlevels=tlevels,
         tcurve=tcurve,
         recientes=recientes,
+        last_elite_win=last_elite_win(),
         es_admin=is_admin_for(user),
         skip_splash=request.args.get("splash") == "0",
     )

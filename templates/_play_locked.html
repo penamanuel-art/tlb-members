@@ -1,13 +1,16 @@
-{# Tarjeta de jugada ELITE bloqueada. No revela nada: ni pick, ni cuota, ni stake, ni edge. #}
+{# Tarjeta ELITE bloqueada: formato teaser estilo WGT, diseño propio The Sharp Team.
+   No revela nada: ni pick, ni cuota, ni stake, ni edge. Solo para no-Elite. #}
 <article class="play-card play-locked">
   <div class="play-top">
-    <span class="badge badge-elite">★ ELITE</span>
+    <span class="tstc-league">{{ p.liga }}</span>
+    <span class="locked-padlock" aria-hidden="true">&#x1f512;</span>
   </div>
-  <div class="locked-body">
-    <div class="locked-icon">🔒</div>
-    <h3 class="locked-title">Elite play reserved</h3>
-    <p class="locked-text">The day's top play — the highest estimated value — is reserved for Elite members.</p>
-    <p class="locked-price"><b>$1</b> the first week, then <b>$23/week</b> · cancel anytime</p>
-    <a class="btn btn-place" href="{{ url_for('desbloquear_platinum') }}">Unlock →</a>
+  <div class="locked-blur" aria-hidden="true">
+    <span></span><span></span><span></span>
   </div>
+  <h3 class="locked-live"><span aria-hidden="true">⭐</span> Today's Elite play is live</h3>
+  {% if last_elite_win %}
+  <p class="locked-proof">✓ Last Elite win paid +${{ last_elite_win }}</p>
+  {% endif %}
+  <a class="locked-cta" href="{{ url_for('desbloquear_platinum') }}">Unlock Elite &rarr;</a>
 </article>

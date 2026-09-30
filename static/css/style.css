@@ -925,3 +925,27 @@ a.avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
 /* CTA Elite bloqueado (teaser para no-Elite, pedido Alex 2026-09-30) */
 .tg-elite-cta.locked .tg-elite-cta-icon { filter: grayscale(1); opacity: .45; }
 .tg-elite-cta.locked .tg-elite-cta-inner { border-style: dashed; }
+
+/* Tarjeta Elite bloqueada: teaser formato WGT, diseño TST (pedido Alex 2026-09-30) */
+.play-locked { border-color: rgba(251,191,36,.35); background: linear-gradient(160deg, rgba(251,191,36,.08), var(--card) 55%); }
+.locked-padlock { font-size: 1.1rem; opacity: .85; }
+.locked-blur { display: flex; flex-direction: column; gap: 10px; margin: 14px 0 16px; }
+.locked-blur span { display: block; height: 16px; border-radius: 8px; background: rgba(255,255,255,.10); filter: blur(6px); }
+.locked-blur span:nth-child(1) { width: 88%; }
+.locked-blur span:nth-child(2) { width: 64%; }
+.locked-blur span:nth-child(3) { width: 42%; }
+.locked-live { margin: 0 0 8px; font-size: 1.25rem; font-weight: 800; color: #fff; letter-spacing: -.3px; }
+.locked-proof { margin: 0 0 12px; color: #34d399; font-weight: 700; font-size: .95rem; }
+.locked-cta { color: #fbbf24; font-weight: 800; font-size: 1.05rem; text-decoration: none; }
+.locked-cta:hover { text-decoration: underline; }
+
+/* Pancarta fija de Elite para no-Elite (pedido Alex 2026-09-30) */
+.elite-sticky { position: fixed; left: 0; right: 0; bottom: 0; z-index: 60;
+  background: rgba(10,12,20,.96); border-top: 1px solid rgba(251,191,36,.35);
+  padding: 10px 16px calc(10px + env(safe-area-inset-bottom)); backdrop-filter: blur(8px); }
+.elite-sticky-inner { max-width: 560px; margin: 0 auto; }
+.elite-sticky p { margin: 0 0 8px; color: #e8e8e8; font-size: .95rem; }
+.elite-sticky p b { color: #34d399; }
+.elite-sticky a { display: block; text-align: center; background: #10b981; color: #06281c;
+  font-weight: 800; font-size: 1.05rem; padding: 12px; border-radius: 14px; text-decoration: none; }
+.elite-sticky-spacer { height: 96px; }

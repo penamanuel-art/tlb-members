@@ -623,4 +623,15 @@
 </script>
 
 
+<!-- Pancarta fija para no-Elite (formato WGT, pedido Alex 2026-09-30) -->
+{% if not platinum_unlocked %}
+<div class="elite-sticky" role="complementary" aria-label="Unlock Elite">
+  <div class="elite-sticky-inner">
+    <p>Unlock Elite plays for <b>$1</b></p>
+    <a href="{{ url_for('desbloquear_platinum') }}">$1 trial &rarr;</a>
+  </div>
+</div>
+<div class="elite-sticky-spacer" aria-hidden="true"></div>
+{% endif %}
+
 {% endblock %}
