@@ -63,9 +63,10 @@
 {% block content %}
 {% if not skip_splash %}{% include "_splash.html" %}{% endif %}
 
-<!-- 01 · HERO compacto (pedido Alex 2026-09-30: la carta arriba, sin textos grandes antes) -->
-<section class="greet">
+<!-- 01 · HERO estilo WGT (pedido Alex 2026-09-30): saludo + nombre completo del miembro en grande -->
+<section class="greet greet-wgt">
   <p class="greet-date"><span class="dot"></span>{{ saludo }} · {{ fecha }}</p>
+  <h1 class="greet-name">{{ saludo }},<br><span>{{ nombre_completo }}</span>.</h1>
   <img src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team" class="greet-logo-fixed">
 </section>
 

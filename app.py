@@ -1373,6 +1373,7 @@ def inject_user():
     etiqueta = "Elite Member" if platinum_unlocked_for(cu) else "Member"
     return {
         "nombre_corto": corto,
+        "nombre_completo": nombre,
         "inicial": corto[:1].upper(),
         "foto_perfil": foto,
         "dias_miembro": dias_miembro,

@@ -736,6 +736,13 @@ img { max-width: 100%; height: auto; }
   border: 1px solid rgba(255,255,255,.1); border-radius: 999px; padding: 7px 14px;
 }
 .greet-title { font-size: clamp(2.4rem, 9vw, 3rem); margin: 14px 0 10px; }
+/* Saludo estilo WGT: nombre del miembro en grande (pedido Alex 2026-09-30) */
+.greet-wgt .greet-name {
+  font-size: clamp(2.6rem, 10vw, 3.4rem);
+  line-height: 1.05; font-weight: 800; letter-spacing: -0.5px;
+  margin: 10px 0 4px; color: #fff;
+}
+.greet-wgt .greet-name span { color: var(--blue, #3b82f6); }
 .greet-accent {
   color: transparent;
   background: linear-gradient(100deg, #fde68a, #fbbf24 45%, #d97706);
