@@ -669,3 +669,29 @@ img { max-width: 100%; height: auto; }
   .pro-record{padding:30px 20px 26px}
   .pro-levels{flex-direction:column}
 }
+
+/* ===== Personal tracker premium (member home) ===== */
+.mytrk{
+  position:relative;overflow:hidden;border-radius:24px;padding:28px 26px;
+  background:
+    radial-gradient(400px 200px at 18% 0%, rgba(74,222,128,.09), transparent 70%),
+    linear-gradient(160deg,#0d1526 0%,#090d18 100%);
+  border:1px solid rgba(74,222,128,.22);
+  box-shadow:0 18px 44px rgba(0,0,0,.45);
+}
+.mytrk-top{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.mytrk-kicker{margin:0 0 8px;color:#4ade80;font-size:.72rem;font-weight:700;letter-spacing:.24em}
+.mytrk-profit{margin:0;font-size:clamp(2.6rem,11vw,3.6rem);font-weight:800;letter-spacing:-.02em;line-height:1}
+.mytrk-profit.pos{color:#4ade80;text-shadow:0 0 34px rgba(74,222,128,.28)}
+.mytrk-profit.neg{color:#f87171;text-shadow:0 0 34px rgba(248,113,113,.28)}
+.mytrk-sub{margin:10px 0 0;color:#8b93a7;font-size:.9rem}
+.mytrk-ringwrap{text-align:center;flex:none}
+.mytrk-ring{width:88px;height:88px}
+.mytrk-ring-pct{fill:#fff;font-size:17px;font-weight:800}
+.mytrk-ringlab{margin:6px 0 0;font-size:.66rem;letter-spacing:.18em;color:#8b93a7;font-weight:700}
+.mytrk-div{height:1px;margin:22px 0 18px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent)}
+.mytrk-cols{display:flex}
+.mytrk-col{flex:1;text-align:center}
+.mytrk-col+.mytrk-col{border-left:1px solid rgba(255,255,255,.08)}
+.mytrk-val{margin:0;font-size:1.5rem;font-weight:800}
+.mytrk-lab{margin:6px 0 0;font-size:.68rem;letter-spacing:.16em;color:#8b93a7;font-weight:700}
