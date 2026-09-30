@@ -254,54 +254,26 @@
 </div>
 {% set _settled = tstats.wins + tstats.losses %}
 {% set _wr = (tstats.wins / _settled * 100) if _settled else 0 %}
-<section class="mytrk">
-  <div class="mytrk-top">
-    <div>
-      <p class="mytrk-kicker">YOUR PROFIT</p>
-      <p class="mytrk-profit {{ 'pos' if tstats.net_dollars > 0 else ('neg' if tstats.net_dollars < 0 else '') }}">{% if tstats.net_dollars > 0 %}{{ '+$%.2f' % tstats.net_dollars }}{% elif tstats.net_dollars < 0 %}{{ '-$%.2f' % -tstats.net_dollars }}{% else %}$0.00{% endif %}</p>
-      <p class="mytrk-sub">{{ tstats.tracked }} tracked &middot; {{ tstats.pending }} pending</p>
-    </div>
-    <div class="mytrk-ringwrap">
-      <svg class="mytrk-ring" viewBox="0 0 72 72" aria-hidden="true">
-        <defs>
-          <linearGradient id="rg-mytrk" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stop-color="#4ade80"/><stop offset="1" stop-color="#16a34a"/>
-          </linearGradient>
-        </defs>
-        <circle cx="36" cy="36" r="30" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="7"/>
-        <circle cx="36" cy="36" r="30" fill="none" stroke="url(#rg-mytrk)" stroke-width="7" stroke-linecap="round" stroke-dasharray="188.5" stroke-dashoffset="{{ '%.1f' % (188.5 * (1 - _wr/100)) }}" transform="rotate(-90 36 36)"/>
-        <text x="36" y="42" text-anchor="middle" class="mytrk-ring-pct">{{ '%.0f' % _wr }}%</text>
-      </svg>
-      <p class="mytrk-ringlab">WIN RATE</p>
-    </div>
+<section class="stats-grid results-hero member-cards">
+  <div class="stat">
+    <span class="stat-label">TOTAL PROFIT</span>
+    <span class="stat-value {{ 'pos' if tstats.net_dollars > 0 else ('neg' if tstats.net_dollars < 0 else '') }}">{% if tstats.net_dollars > 0 %}{{ '+$%.2f' % tstats.net_dollars }}{% elif tstats.net_dollars < 0 %}{{ '-$%.2f' % -tstats.net_dollars }}{% else %}$0.00{% endif %}</span>
+    <span class="stat-sub">your tracked profit</span>
   </div>
-  {% if tcurve %}
-  <p class="mytrk-chart-label">PROFIT OVER TIME</p>
-  <svg class="mytrk-chart" viewBox="0 0 {{ tcurve.w }} {{ tcurve.h }}" preserveAspectRatio="none" aria-hidden="true">
-    <defs>
-      <linearGradient id="mytrk-fill" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0" stop-color="{{ '#4ade80' if tcurve.up else '#f87171' }}" stop-opacity=".35"/>
-        <stop offset="1" stop-color="{{ '#4ade80' if tcurve.up else '#f87171' }}" stop-opacity="0"/>
-      </linearGradient>
-    </defs>
-    <path d="{{ tcurve.area }}" fill="url(#mytrk-fill)"/>
-    <path d="{{ tcurve.line }}" fill="none" stroke="{{ '#4ade80' if tcurve.up else '#f87171' }}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="mytrk-line" style="color:{{ '#4ade80' if tcurve.up else '#f87171' }}"/>
-  </svg>
-  {% endif %}
-  <div class="mytrk-div"></div>
-  <div class="mytrk-cols">
-    <div class="mytrk-col">
-      <p class="mytrk-val">{{ tstats.wins }}&ndash;{{ tstats.losses }}</p>
-      <p class="mytrk-lab">RECORD</p>
-    </div>
-    <div class="mytrk-col">
-      <p class="mytrk-val {{ 'pos' if tstats.roi > 0 else ('neg' if tstats.roi < 0 else '') }}">{{ '%+.1f' % tstats.roi }}%</p>
-      <p class="mytrk-lab">ROI</p>
-    </div>
-    <div class="mytrk-col">
-      <p class="mytrk-val">{{ tstats.streak }}</p>
-      <p class="mytrk-lab">STREAK</p>
-    </div>
+  <div class="stat">
+    <span class="stat-label">WIN RATE</span>
+    <span class="stat-value">{{ '%.1f' % _wr }}%</span>
+    <span class="stat-sub">won / settled</span>
+  </div>
+  <div class="stat">
+    <span class="stat-label">RECORD</span>
+    <span class="stat-value">{{ tstats.wins }}–{{ tstats.losses }}</span>
+    <span class="stat-sub">settled plays</span>
+  </div>
+  <div class="stat">
+    <span class="stat-label">ROI</span>
+    <span class="stat-value {{ 'pos' if tstats.roi > 0 else ('neg' if tstats.roi < 0 else '') }}">{{ '%+.1f' % tstats.roi }}%</span>
+    <span class="stat-sub">on amount risked</span>
   </div>
 </section>
 </div>
@@ -357,26 +329,54 @@
 </div>
 {% set _settled = tstats.wins + tstats.losses %}
 {% set _wr = (tstats.wins / _settled * 100) if _settled else 0 %}
-<section class="stats-grid results-hero member-cards">
-  <div class="stat">
-    <span class="stat-label">TOTAL PROFIT</span>
-    <span class="stat-value {{ 'pos' if tstats.net_dollars > 0 else ('neg' if tstats.net_dollars < 0 else '') }}">{% if tstats.net_dollars > 0 %}{{ '+$%.2f' % tstats.net_dollars }}{% elif tstats.net_dollars < 0 %}{{ '-$%.2f' % -tstats.net_dollars }}{% else %}$0.00{% endif %}</span>
-    <span class="stat-sub">your tracked profit</span>
+<section class="mytrk">
+  <div class="mytrk-top">
+    <div>
+      <p class="mytrk-kicker">YOUR PROFIT</p>
+      <p class="mytrk-profit {{ 'pos' if tstats.net_dollars > 0 else ('neg' if tstats.net_dollars < 0 else '') }}">{% if tstats.net_dollars > 0 %}{{ '+$%.2f' % tstats.net_dollars }}{% elif tstats.net_dollars < 0 %}{{ '-$%.2f' % -tstats.net_dollars }}{% else %}$0.00{% endif %}</p>
+      <p class="mytrk-sub">{{ tstats.tracked }} tracked &middot; {{ tstats.pending }} pending</p>
+    </div>
+    <div class="mytrk-ringwrap">
+      <svg class="mytrk-ring" viewBox="0 0 72 72" aria-hidden="true">
+        <defs>
+          <linearGradient id="rg-mytrk" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#4ade80"/><stop offset="1" stop-color="#16a34a"/>
+          </linearGradient>
+        </defs>
+        <circle cx="36" cy="36" r="30" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="7"/>
+        <circle cx="36" cy="36" r="30" fill="none" stroke="url(#rg-mytrk)" stroke-width="7" stroke-linecap="round" stroke-dasharray="188.5" stroke-dashoffset="{{ '%.1f' % (188.5 * (1 - _wr/100)) }}" transform="rotate(-90 36 36)"/>
+        <text x="36" y="42" text-anchor="middle" class="mytrk-ring-pct">{{ '%.0f' % _wr }}%</text>
+      </svg>
+      <p class="mytrk-ringlab">WIN RATE</p>
+    </div>
   </div>
-  <div class="stat">
-    <span class="stat-label">WIN RATE</span>
-    <span class="stat-value">{{ '%.1f' % _wr }}%</span>
-    <span class="stat-sub">won / settled</span>
-  </div>
-  <div class="stat">
-    <span class="stat-label">RECORD</span>
-    <span class="stat-value">{{ tstats.wins }}–{{ tstats.losses }}</span>
-    <span class="stat-sub">settled plays</span>
-  </div>
-  <div class="stat">
-    <span class="stat-label">ROI</span>
-    <span class="stat-value {{ 'pos' if tstats.roi > 0 else ('neg' if tstats.roi < 0 else '') }}">{{ '%+.1f' % tstats.roi }}%</span>
-    <span class="stat-sub">on amount risked</span>
+  {% if tcurve %}
+  <p class="mytrk-chart-label">PROFIT OVER TIME</p>
+  <svg class="mytrk-chart" viewBox="0 0 {{ tcurve.w }} {{ tcurve.h }}" preserveAspectRatio="none" aria-hidden="true">
+    <defs>
+      <linearGradient id="mytrk-fill" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="{{ '#4ade80' if tcurve.up else '#f87171' }}" stop-opacity=".35"/>
+        <stop offset="1" stop-color="{{ '#4ade80' if tcurve.up else '#f87171' }}" stop-opacity="0"/>
+      </linearGradient>
+    </defs>
+    <path d="{{ tcurve.area }}" fill="url(#mytrk-fill)"/>
+    <path d="{{ tcurve.line }}" fill="none" stroke="{{ '#4ade80' if tcurve.up else '#f87171' }}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="mytrk-line" style="color:{{ '#4ade80' if tcurve.up else '#f87171' }}"/>
+  </svg>
+  {% endif %}
+  <div class="mytrk-div"></div>
+  <div class="mytrk-cols">
+    <div class="mytrk-col">
+      <p class="mytrk-val">{{ tstats.wins }}&ndash;{{ tstats.losses }}</p>
+      <p class="mytrk-lab">RECORD</p>
+    </div>
+    <div class="mytrk-col">
+      <p class="mytrk-val {{ 'pos' if tstats.roi > 0 else ('neg' if tstats.roi < 0 else '') }}">{{ '%+.1f' % tstats.roi }}%</p>
+      <p class="mytrk-lab">ROI</p>
+    </div>
+    <div class="mytrk-col">
+      <p class="mytrk-val">{{ tstats.streak }}</p>
+      <p class="mytrk-lab">STREAK</p>
+    </div>
   </div>
 </section>
 </div>
