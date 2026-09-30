@@ -1187,12 +1187,10 @@ def fmt_odds(o) -> str:
 app.jinja_env.globals.update(fmt_money=fmt_money, fmt_units=fmt_units, fmt_odds=fmt_odds)
 
 # Marcas de agua rotativas (2026-09-30, pedido por Alex): cada sesión ve una
-# distinta — fútbol americano, béisbol, hockey o básquet — siempre tenue.
+# distinta — fútbol americano o béisbol — siempre tenue.
 WATERMARKS = [
     "img/watermark-football.jpg",
     "img/watermark-baseball.jpg",
-    "img/watermark-hockey.jpg",
-    "img/watermark-basketball.jpg",
 ]
 
 
