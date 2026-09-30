@@ -1572,9 +1572,10 @@ def cuenta_foto():
     try:
         import base64
         import io
-        from PIL import Image
+        from PIL import Image, ImageOps
         img = Image.open(io.BytesIO(f.read()))
         img.load()
+        img = ImageOps.exif_transpose(img)  # enderezar según EXIF (fotos de iPhone)
         img = img.convert("RGB")
         img.thumbnail((256, 256), Image.LANCZOS)
         buf = io.BytesIO()
