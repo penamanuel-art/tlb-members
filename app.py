@@ -250,6 +250,7 @@ CREATE TABLE IF NOT EXISTS free_plays (
     nivel TEXT NOT NULL,
     pick TEXT NOT NULL,
     cuota INTEGER NOT NULL,
+    stake_unidades REAL NOT NULL DEFAULT 1.0,
     stake_monto REAL NOT NULL,
     edge REAL,
     resultado TEXT,          -- NULL = pendiente, 'W' = ganada, 'L' = perdida
@@ -327,6 +328,7 @@ CREATE TABLE IF NOT EXISTS free_plays (
     nivel TEXT NOT NULL,
     pick TEXT NOT NULL,
     cuota INTEGER NOT NULL,
+    stake_unidades DOUBLE PRECISION NOT NULL DEFAULT 1.0,
     stake_monto DOUBLE PRECISION NOT NULL,
     edge DOUBLE PRECISION,
     resultado TEXT,          -- NULL = pendiente, 'W' = ganada, 'L' = perdida
@@ -1255,10 +1257,10 @@ def sync_free_plays(db):
             return
         db.execute(
             "INSERT INTO free_plays "
-            "(play_id, fecha, nivel, pick, cuota, stake_monto, edge, resultado, created_at) "
-            "VALUES (?, ?, ?, ?, ?, ?, ?, NULL, ?)",
+            "(play_id, fecha, nivel, pick, cuota, stake_unidades, stake_monto, edge, resultado, created_at) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, NULL, ?)",
             (pid, fecha or "", nivel or "GOLD", pick or "", cuota,
-             FREE_STAKE, edge, now),
+             1.0, FREE_STAKE, edge, now),
         )
         n += 1
 
@@ -1437,6 +1439,19 @@ def migrate_db():
         for stmt in pending:
             conn.execute(stmt)
         if pending:
+            conn.commit()
+        # Columna stake_unidades en free_plays (la tabla se creó sin ella).
+        if USE_PG:
+            fcols = {r["column_name"] for r in conn.execute(
+                "SELECT column_name FROM information_schema.columns "
+                "WHERE table_name = 'free_plays'"
+            ).fetchall()}
+        else:
+            fcols = {r[1] for r in conn.execute("PRAGMA table_info(free_plays)").fetchall()}
+        if fcols and "stake_unidades" not in fcols:
+            conn.execute(
+                f"ALTER TABLE free_plays ADD COLUMN stake_unidades {coltype} NOT NULL DEFAULT 1.0"
+            )
             conn.commit()
         # Códigos de vinculación Telegram (un solo uso, los crea /cuenta).
         conn.execute(
@@ -2040,10 +2055,10 @@ def api_free_plays_add():
             continue
         db.execute(
             "INSERT INTO free_plays "
-            "(play_id, fecha, nivel, pick, cuota, stake_monto, edge, resultado, created_at) "
-            "VALUES (?, ?, ?, ?, ?, ?, ?, NULL, ?)",
+            "(play_id, fecha, nivel, pick, cuota, stake_unidades, stake_monto, edge, resultado, created_at) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, NULL, ?)",
             (pid, fecha, p.get("nivel") or "GOLD", pick, cuota,
-             FREE_STAKE, p.get("edge"), now),
+             1.0, FREE_STAKE, p.get("edge"), now),
         )
         added += 1
     if added:
