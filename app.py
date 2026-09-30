@@ -2070,6 +2070,31 @@ def admin_test_simulate_cancel():
     return redirect(url_for("admin_miembros"))
 
 
+@app.route("/admin/test-simulate-reactivate", methods=["POST"])
+@login_required
+def admin_test_simulate_reactivate():
+    """TEMPORAL para pruebas de Alex: simula lo que hace el webhook de Stripe
+    al reactivar/pagar (invoice.paid). Solo admin."""
+    me = current_user()
+    if not is_admin_for(me):
+        flash("You don't have permission.", "error")
+        return redirect(url_for("home"))
+    db = get_db()
+    email = request.form.get("email", "").strip().lower()
+    row = db.execute("SELECT id FROM users WHERE email = ?", (email,)).fetchone()
+    if not row:
+        flash("Member not found.", "error")
+    else:
+        db.execute(
+            "UPDATE users SET platinum_unlocked = 1, telegram_unban_pending = 1, "
+            "telegram_ban_pending = 0 WHERE id = ?",
+            (row["id"],),
+        )
+        db.commit()
+        flash(f"Simulated reactivation for {email}: Elite on, unban pending.", "ok")
+    return redirect(url_for("admin_miembros"))
+
+
 @app.route("/admin/miembros/eliminar", methods=["POST"])
 @login_required
 def admin_eliminar_miembro():
