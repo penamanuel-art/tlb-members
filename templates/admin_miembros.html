@@ -33,6 +33,10 @@
       {{ 'Remove Elite' if m.platinum_unlocked else 'Activate Elite' }}
     </button>
   </form>
+  <form method="post" action="{{ url_for('admin_test_simulate_cancel') }}" onsubmit="return confirm('Simulate Stripe cancellation for {{ m.email }}?');">
+    <input type="hidden" name="email" value="{{ m.email }}">
+    <button class="btn btn-sm btn-ghost" type="submit" style="border-color:#c33;color:#c33;">🧪 Test cancel</button>
+  </form>
   {% if not m.is_admin %}
   <form method="post" action="{{ url_for('admin_eliminar_miembro') }}" onsubmit="return confirm('Delete this account?');">
     <input type="hidden" name="user_id" value="{{ m.id }}">
