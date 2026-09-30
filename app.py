@@ -821,6 +821,8 @@ def program_stats():
         _s["net_display"] = ("+$" if _n > 0 else ("-$" if _n < 0 else "$")) + f"{abs(_n):,}"
         _s["net_cls"] = "pos" if _n > 0 else ("neg" if _n < 0 else "")
         _s["record"] = f"{_s['ganadas']}–{_s['perdidas']}"
+        _st = _s["ganadas"] + _s["perdidas"]
+        _s["win_rate"] = round(_s["ganadas"] / _st * 100, 1) if _st else 0.0
     _pn = int(round(profit))
     return {
         "profit_all_time": round(profit, 2),

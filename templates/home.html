@@ -363,22 +363,28 @@
   </div>
   <a class="link-more" href="{{ url_for('resultados') }}">Full results →</a>
 </div>
-<section class="wgt-hero">
-  <div class="wgt-main">
-    <p class="wgt-kicker">THE SHARP TEAM DOCUMENTED PROFIT</p>
-    <p class="wgt-number {{ res.get('profit_cls', '') }}">{{ res.get('profit_display', '$0') }}</p>
-    <p class="wgt-sub">{{ res.get('ganadas', 0) }}–{{ res.get('perdidas', 0) }} &middot; every play public, win or loss</p>
-  </div>
-  <div class="wgt-levels">
-    <div class="wgt-level">
-      <span class="wgt-lvl-name">&#x1f7e1; GOLD</span>
-      <span class="wgt-lvl-record">{{ res['niveles']['GOLD'].record }}</span>
-      <span class="wgt-lvl-profit {{ res['niveles']['GOLD'].net_cls }}">{{ res['niveles']['GOLD'].net_display }}</span>
+<section class="pro-record">
+  <p class="pro-kicker">THE SHARP TEAM &middot; DOCUMENTED PROFIT</p>
+  <p class="pro-profit {{ res.get('profit_cls', '') }}">{{ res.get('profit_display', '$0') }}</p>
+  <p class="pro-sub"><strong>{{ res.get('ganadas', 0) }}–{{ res.get('perdidas', 0) }}</strong> &middot; every play public, win or loss</p>
+  <div class="pro-levels">
+    <div class="pro-level">
+      <div class="pro-lvl-head"><span class="pro-badge">&#x1f7e1;</span><span class="pro-lvl-name">GOLD</span></div>
+      <p class="pro-lvl-record">{{ res['niveles']['GOLD'].record }}</p>
+      <div class="pro-lvl-row">
+        <span class="pro-lvl-profit {{ res['niveles']['GOLD'].net_cls }}">{{ res['niveles']['GOLD'].net_display }}</span>
+        <span class="pro-lvl-wr">{{ '%.1f' % res['niveles']['GOLD'].win_rate }}% win rate</span>
+      </div>
+      <div class="pro-bar"><span class="pro-bar-fill" style="width:{{ res['niveles']['GOLD'].win_rate }}%"></span></div>
     </div>
-    <div class="wgt-level">
-      <span class="wgt-lvl-name">&#x2b50; ELITE</span>
-      <span class="wgt-lvl-record">{{ res['niveles']['ELITE'].record }}</span>
-      <span class="wgt-lvl-profit {{ res['niveles']['ELITE'].net_cls }}">{{ res['niveles']['ELITE'].net_display }}</span>
+    <div class="pro-level">
+      <div class="pro-lvl-head"><span class="pro-badge">&#x2b50;</span><span class="pro-lvl-name">ELITE</span></div>
+      <p class="pro-lvl-record">{{ res['niveles']['ELITE'].record }}</p>
+      <div class="pro-lvl-row">
+        <span class="pro-lvl-profit {{ res['niveles']['ELITE'].net_cls }}">{{ res['niveles']['ELITE'].net_display }}</span>
+        <span class="pro-lvl-wr">{{ '%.1f' % res['niveles']['ELITE'].win_rate }}% win rate</span>
+      </div>
+      <div class="pro-bar"><span class="pro-bar-fill" style="width:{{ res['niveles']['ELITE'].win_rate }}%"></span></div>
     </div>
   </div>
 </section>
