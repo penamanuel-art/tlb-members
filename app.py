@@ -1304,9 +1304,10 @@ def migrate_db():
         )
         # Pool de links de invitación a Elite Plays (un solo uso, los genera
         # el cron de la VM con el token del bot; /cuenta los reparte).
+        _id_col = "id SERIAL PRIMARY KEY" if USE_PG else "id INTEGER PRIMARY KEY AUTOINCREMENT"
         conn.execute(
-            """CREATE TABLE IF NOT EXISTS telegram_invite_links (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
+            f"""CREATE TABLE IF NOT EXISTS telegram_invite_links (
+                {_id_col},
                 invite_link TEXT NOT NULL UNIQUE,
                 used INTEGER NOT NULL DEFAULT 0,
                 used_by_user_id INTEGER REFERENCES users(id),
