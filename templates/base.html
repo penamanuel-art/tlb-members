@@ -44,7 +44,7 @@
       </div>
     </div>
     <div class="quick-actions">
-      <a href="{{ url_for('home') }}" class="qa-btn qa-primary{% if request.endpoint == 'home' %} active{% endif %}" title="Today's plays"><span class="qa-ico">🎯</span><span class="qa-txt">Plays</span></a>
+      <a href="{{ url_for('home') }}" class="qa-btn qa-primary qa-home{% if request.endpoint == 'home' %} active{% endif %}" title="Home Dashboard"><span class="qa-ico">🏠</span><span class="qa-txt">Home Dashboard</span></a>
       <a href="{{ url_for('tracker') }}" class="qa-btn{% if request.endpoint == 'tracker' %} active{% endif %}" title="Track a play"><span class="qa-ico">➕</span><span class="qa-txt">Track</span></a>
     </div>
     {% endif %}

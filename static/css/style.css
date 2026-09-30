@@ -828,3 +828,14 @@ img { max-width: 100%; height: auto; }
 .mytrk-ringlab { font-size: .74rem; }
 .mytrk-lab { font-size: .76rem; }
 .mytrk-chart-label { font-size: .74rem; }
+
+/* ---- Botón Home Dashboard siempre visible en el topbar (2026-09-30, pedido por Alex) ---- */
+.qa-btn.qa-home .qa-txt { display: inline; }
+@media (max-width: 560px) {
+  .qa-btn.qa-home { padding: 9px 12px; font-size: 13px; }
+  .qa-btn.qa-home .qa-txt { display: inline; }
+  .qa-btn.qa-home .qa-ico { font-size: 15px; }
+}
+@media (max-width: 380px) {
+  .qa-btn.qa-home { padding: 8px 10px; font-size: 12px; }
+}
