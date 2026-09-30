@@ -63,17 +63,10 @@
 {% block content %}
 {% if not skip_splash %}{% include "_splash.html" %}{% endif %}
 
-<!-- 01 · HERO -->
+<!-- 01 · HERO compacto (pedido Alex 2026-09-30: la carta arriba, sin textos grandes antes) -->
 <section class="greet">
   <p class="greet-date"><span class="dot"></span>{{ saludo }} · {{ fecha }}</p>
   <img src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team" class="greet-logo-fixed">
-  <h1 class="greet-title">{{ saludo }},<br><span class="greet-accent">{{ nombre_corto }}.</span></h1>
-  <p class="greet-member">Member {{ dias_miembro }} day{{ 's' if dias_miembro != 1 }} <span class="gdot">·</span> {{ etiqueta_miembro }}</p>
-  {% if card_pendiente %}
-  <p class="greet-sub">No plays posted yet — the card goes live at 2:00 PM ET on weekdays, 11:00 AM ET on weekends.</p>
-  {% else %}
-  <p class="greet-sub">Today's card is ready. Place each play at your book and tap <b>+ Track</b> to log it.</p>
-  {% endif %}
 </section>
 
 <!-- 02 · ELITE SELECTION (banner) -->
