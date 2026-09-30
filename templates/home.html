@@ -73,7 +73,8 @@
 <div class="section-head plays-head">
   <div>
     <h2 class="plays-title">{% if card_pendiente %}Nothing posted yet{% else %}Today's <span>plays</span>{% endif %}</h2>
-    {% if not card_pendiente %}<p class="plays-sub">Tap a card for the ticket + write-up</p>{% endif %}
+    {% if not card_pendiente %}<p class="plays-sub">Tap a card for the ticket + write-up</p>
+    <span class="free-badge">FREE with your membership</span>{% endif %}
   </div>
   <a class="link-more" href="{{ url_for('tracker') }}">View my tracker →</a>
 </div>
