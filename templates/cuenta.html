@@ -30,7 +30,12 @@
   <p class="bankroll-current">Status: <b class="ok-text">Connected</b></p>
   <p class="muted">Your Telegram is linked to your membership. If you cancel, you'll be removed from the private Elite Plays channel automatically.</p>
   {% if platinum %}
-  <div id="elite-join-wrap" style="margin-top:12px;">
+  <div style="margin-top:12px;display:grid;gap:12px;">
+    <div>
+      <p class="muted">🟡 <b>Gold Plays channel (free):</b> daily free picks, open to everyone.</p>
+      <a href="https://t.me/thesharpteam" target="_blank" class="btn btn-block" style="text-decoration:none;text-align:center;border:1px solid var(--gold);color:var(--gold);">Join Gold Plays →</a>
+    </div>
+  <div id="elite-join-wrap">
     <p class="muted">⭐ <b>Elite Plays channel:</b> tap to get your personal invite link and join.</p>
     <button id="elite-join-btn" class="btn btn-primary btn-block" type="button">Join Elite Plays →</button>
     <p id="elite-join-msg" class="muted" style="display:none;margin-top:8px;"></p>
@@ -73,6 +78,18 @@
     });
   })();
   </script>
+  </div>
+  {% else %}
+  <div style="margin-top:12px;display:grid;gap:12px;">
+    <div>
+      <p class="muted">🟡 <b>Gold Plays channel (free):</b> daily free picks, open to everyone.</p>
+      <a href="https://t.me/thesharpteam" target="_blank" class="btn btn-block" style="text-decoration:none;text-align:center;border:1px solid var(--gold);color:var(--gold);">Join Gold Plays →</a>
+    </div>
+    <div>
+      <p class="muted">⭐ <b>Elite Plays channel:</b> unlock your Elite membership to get your personal invite.</p>
+      <a href="{{ url_for('desbloquear') }}" class="btn btn-primary btn-block" style="text-decoration:none;text-align:center;">Unlock Elite →</a>
+    </div>
+  </div>
   {% endif %}
   <form method="post" action="{{ url_for('cuenta_telegram_unlink') }}">
     <button type="submit" class="danger-link foto-remove">Disconnect Telegram</button>
