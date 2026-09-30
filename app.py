@@ -1795,6 +1795,8 @@ def admin_eliminar_miembro():
         flash("You can't delete another administrator.", "error")
         return redirect(url_for("admin_miembros"))
     db.execute("DELETE FROM tracked_plays WHERE user_id = ?", (user_id,))
+    db.execute("DELETE FROM checkins WHERE user_id = ?", (user_id,))
+    db.execute("DELETE FROM push_subscriptions WHERE member_id = ?", (user_id,))
     db.execute("DELETE FROM users WHERE id = ?", (user_id,))
     db.commit()
     flash(f"Account {target['email']} deleted.", "ok")
