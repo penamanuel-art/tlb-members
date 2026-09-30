@@ -1057,6 +1057,21 @@ def compute_stats(tracked):
     }
 
 
+def profit_curve_svg(values, w=300, h=84, pad=6):
+    """Paths SVG (línea + área) del profit acumulado del miembro."""
+    if not values:
+        return None
+    n = len(values)
+    xs = [pad + i * (w - 2 * pad) / max(n - 1, 1) for i in range(n)]
+    lo, hi = min(values), max(values)
+    span = (hi - lo) or 1.0
+    ys = [pad + (1 - (v - lo) / span) * (h - 2 * pad) for v in values]
+    line = "M" + " L".join(f"{x:.1f},{y:.1f}" for x, y in zip(xs, ys))
+    area = f"{line} L{xs[-1]:.1f},{h} L{xs[0]:.1f},{h} Z"
+    return {"line": line, "area": area, "w": w, "h": h,
+            "up": values[-1] >= 0}
+
+
 def stats_por_nivel(tracked):
     """Ganadas/perdidas/profit por nivel (GOLD/ELITE) para el bloque estilo WGT."""
     out = {}
@@ -1323,6 +1338,16 @@ def home():
     tstats = compute_stats([dict(r) for r in tracked_rows])
     tlevels = stats_por_nivel([dict(r) for r in tracked_rows])
     tstats["net_display"] = fmt_big_dollars(tstats["net_dollars"])
+    # Curva de profit acumulado para el gráfico del tracker personal.
+    _graded = sorted(
+        (dict(r) for r in tracked_rows if r["resultado"] in ("W", "L")),
+        key=lambda t: (t["fecha"], t["id"]),
+    )
+    _cum, _vals = 0.0, []
+    for _t in _graded:
+        _cum += play_profit_dollars(_t)
+        _vals.append(round(_cum, 2))
+    tcurve = profit_curve_svg(_vals)
     # Resultados recientes: jugadas liquidadas del archivo (sin bloqueadas).
     recientes = recientes_oficiales(6)
     return render_template(
@@ -1342,6 +1367,7 @@ def home():
         archivo_mc=load_masterclass_archivo(),
         tstats=tstats,
         tlevels=tlevels,
+        tcurve=tcurve,
         recientes=recientes,
         es_admin=is_admin_for(user),
     )

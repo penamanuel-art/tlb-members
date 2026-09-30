@@ -275,6 +275,19 @@
       <p class="mytrk-ringlab">WIN RATE</p>
     </div>
   </div>
+  {% if tcurve %}
+  <p class="mytrk-chart-label">PROFIT OVER TIME</p>
+  <svg class="mytrk-chart" viewBox="0 0 {{ tcurve.w }} {{ tcurve.h }}" preserveAspectRatio="none" aria-hidden="true">
+    <defs>
+      <linearGradient id="mytrk-fill" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="{{ '#4ade80' if tcurve.up else '#f87171' }}" stop-opacity=".35"/>
+        <stop offset="1" stop-color="{{ '#4ade80' if tcurve.up else '#f87171' }}" stop-opacity="0"/>
+      </linearGradient>
+    </defs>
+    <path d="{{ tcurve.area }}" fill="url(#mytrk-fill)"/>
+    <path d="{{ tcurve.line }}" fill="none" stroke="{{ '#4ade80' if tcurve.up else '#f87171' }}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="mytrk-line" style="color:{{ '#4ade80' if tcurve.up else '#f87171' }}"/>
+  </svg>
+  {% endif %}
   <div class="mytrk-div"></div>
   <div class="mytrk-cols">
     <div class="mytrk-col">
