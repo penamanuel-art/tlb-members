@@ -70,7 +70,7 @@
   <h1 class="greet-title">{{ saludo }},<br><span class="greet-accent">{{ nombre_corto }}.</span></h1>
   <p class="greet-member">Member {{ dias_miembro }} day{{ 's' if dias_miembro != 1 }} <span class="gdot">·</span> {{ etiqueta_miembro }}</p>
   {% if card_pendiente %}
-  <p class="greet-sub">No plays posted yet — check back after 11:00 AM ET.</p>
+  <p class="greet-sub">No plays posted yet — check back between 2:00 and 3:00 PM ET.</p>
   {% else %}
   <p class="greet-sub">Today's card is ready. Place each play at your book and tap <b>+ Track</b> to log it.</p>
   {% endif %}
@@ -102,7 +102,7 @@
 {% if card_pendiente %}
 <div class="empty-card">
   <h3>No plays posted yet today</h3>
-  <p>The Sharp Team posts today's card by 11:05 AM ET. Check back then — every play public, win or loss.</p>
+  <p>The Sharp Team posts today's card between 2:00 and 3:00 PM ET. Check back then — every play public, win or loss.</p>
   <p>Made a bet on your own? <a href="{{ url_for('tracker') }}">Log it in your tracker →</a></p>
 </div>
 {% elif golds %}
