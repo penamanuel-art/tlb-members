@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}Free Plays — Validation Tracker{% endblock %}
+{% block content %}
+<section class="tracker-head">
+  <div>
+    <p class="kicker" style="color:var(--gold);">🧪 VALIDATION MODE — ADMIN ONLY</p>
+    <h2>Free Plays Tracker</h2>
+    <p class="muted">Paper-trading the system's picks at ${{ '%g' % stats.stake }} each. Goal: {{ stats.goal }} plays, then review and decide.</p>
+  </div>
+</section>
+
+<div class="verify-strip" style="border-color:var(--gold);">
+  <span class="verify-check">🧪</span>
+  <p><b>This tracker is separate from the official record.</b><br>
+  <span class="muted">Auto-filled from each day's card · graded against official results · deleting it never touches the real tracker.</span></p>
+</div>
+
+{# Progress toward the goal #}
+{% set pct = (stats.tracked / stats.goal * 100) if stats.goal else 0 %}
+<div style="margin:18px 0;">
+  <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;">
+    <span class="stat-label">PROGRESS TO {{ stats.goal }} PLAYS</span>
+    <span style="font-weight:700;">{{ stats.tracked }} / {{ stats.goal }}</span>
+  </div>
+  <div style="height:10px;border-radius:6px;background:var(--surface-muted,#1a2332);overflow:hidden;">
+    <div style="height:100%;width:{{ '%.1f' % pct }}%;border-radius:6px;background:linear-gradient(90deg,var(--gold),#f0c75e);"></div>
+  </div>
+</div>
+
+<section class="stats-grid">
+  <div class="stat">
+    <span class="stat-label">NET PROFIT</span>
+    <span class="stat-value {{ 'pos' if stats.net_dollars > 0 else ('neg' if stats.net_dollars < 0 else '') }}">{{ fmt_money(stats.net_dollars) }}</span>
+    <span class="stat-sub">at ${{ '%g' % stats.stake }} / play</span>
+  </div>
+  <div class="stat">
+    <span class="stat-label">RECORD</span>
+    <span class="stat-value">{{ stats.record }}</span>
+    <span class="stat-sub">{{ stats.pending }} pending</span>
+  </div>
+  <div class="stat">
+    <span class="stat-label">ROI</span>
+    <span class="stat-value {{ 'pos' if stats.roi > 0 else ('neg' if stats.roi < 0 else '') }}">{{ '%+.1f' % stats.roi }}%</span>
+    <span class="stat-sub">${{ '%g' % stats.risked }} risked</span>
+  </div>
+  <div class="stat">
+    <span class="stat-label">STREAK</span>
+    <span class="stat-value">{{ stats.streak }}</span>
+    <span class="stat-sub">current</span>
+  </div>
+</section>
+
+{% if plays %}
+<div class="plays-list" style="margin-top:18px;">
+  {% for t in plays %}
+  <div class="play-row" style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--border);">
+    <div>
+      <div style="font-weight:700;">{{ t.pick }} <span class="muted">({{ t.nivel }})</span></div>
+      <div class="muted" style="font-size:.85rem;">{{ t.fecha }} · ${{ '%g' % t.stake_monto }}{% if t.edge is not none %} · {{ '%+.1f' % t.edge }}% edge{% endif %}</div>
+    </div>
+    <div>
+      {% if t.resultado == 'W' %}
+        <span style="background:rgba(46,204,113,.15);color:#2ecc71;font-weight:700;padding:4px 12px;border-radius:20px;">W</span>
+      {% elif t.resultado == 'L' %}
+        <span style="background:rgba(231,76,60,.15);color:#e74c3c;font-weight:700;padding:4px 12px;border-radius:20px;">L</span>
+      {% else %}
+        <span class="muted" style="font-size:.85rem;">pending</span>
+      {% endif %}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="empty-card">
+  <h3>No free plays yet</h3>
+  <p>They register automatically when the day's card is published.</p>
+</div>
+{% endif %}
+
+<div style="margin-top:28px;padding:16px;border:1px dashed var(--border);border-radius:12px;">
+  <p class="muted" style="margin:0 0 12px;font-size:.9rem;">When the validation is done, clear this tracker. The official record is never affected.</p>
+  <form method="post" action="{{ url_for('admin_free_plays_clear') }}" onsubmit="return confirm('¿Borrar TODAS las jugadas del tracker Free Plays? El récord oficial no se toca.');">
+    <button type="submit" class="btn btn-danger">🗑 Clear Free Plays tracker</button>
+  </form>
+</div>
+{% endblock %}

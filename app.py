@@ -61,6 +61,13 @@ STRIPE_PLATINUM_URL = os.environ.get(
     "STRIPE_PLATINUM_URL", "https://buy.stripe.com/28E14p64MfDeeiybEQefC00"
 )
 
+# Tracker "Free Plays" (solo Alex): stake fijo por jugada para validar el
+# sistema en 200 jugadas antes del lanzamiento público. Se cambia con la
+# env var FREE_STAKE en Render (default $50).
+FREE_STAKE = float(os.environ.get("FREE_STAKE", "50"))
+# Meta de jugadas para la validación (default 200).
+FREE_PLAYS_GOAL = int(os.environ.get("FREE_PLAYS_GOAL", "200"))
+
 # Stripe API (automatización total): con STRIPE_SECRET_KEY + STRIPE_WEBHOOK_SECRET
 # como env vars en Render, los webhooks de Stripe activan/desactivan Elite solos:
 #  - checkout.session.completed  -> activa Elite al miembro (match por email)
@@ -232,6 +239,22 @@ CREATE TABLE IF NOT EXISTS tracked_plays (
     UNIQUE(user_id, play_id)
 );
 CREATE INDEX IF NOT EXISTS idx_tracked_user ON tracked_plays(user_id);
+-- Tracker paralelo "Free Plays" (solo Alex): las jugadas recomendadas se
+-- registran automáticamente con su stake configurado para validar el
+-- sistema en 200 jugadas antes del lanzamiento público. Tabla aislada:
+-- se puede borrar sin afectar tracked_plays ni el récord oficial.
+CREATE TABLE IF NOT EXISTS free_plays (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    play_id TEXT NOT NULL UNIQUE,
+    fecha TEXT NOT NULL,
+    nivel TEXT NOT NULL,
+    pick TEXT NOT NULL,
+    cuota INTEGER NOT NULL,
+    stake_monto REAL NOT NULL,
+    edge REAL,
+    resultado TEXT,          -- NULL = pendiente, 'W' = ganada, 'L' = perdida
+    created_at TEXT NOT NULL
+);
 CREATE TABLE IF NOT EXISTS checkins (
     user_id INTEGER NOT NULL REFERENCES users(id),
     fecha TEXT NOT NULL,
@@ -293,6 +316,22 @@ CREATE TABLE IF NOT EXISTS tracked_plays (
     UNIQUE(user_id, play_id)
 );
 CREATE INDEX IF NOT EXISTS idx_tracked_user ON tracked_plays(user_id);
+-- Tracker paralelo "Free Plays" (solo Alex): las jugadas recomendadas se
+-- registran automáticamente con su stake configurado para validar el
+-- sistema en 200 jugadas antes del lanzamiento público. Tabla aislada:
+-- se puede borrar sin afectar tracked_plays ni el récord oficial.
+CREATE TABLE IF NOT EXISTS free_plays (
+    id SERIAL PRIMARY KEY,
+    play_id TEXT NOT NULL UNIQUE,
+    fecha TEXT NOT NULL,
+    nivel TEXT NOT NULL,
+    pick TEXT NOT NULL,
+    cuota INTEGER NOT NULL,
+    stake_monto DOUBLE PRECISION NOT NULL,
+    edge DOUBLE PRECISION,
+    resultado TEXT,          -- NULL = pendiente, 'W' = ganada, 'L' = perdida
+    created_at TEXT NOT NULL
+);
 CREATE TABLE IF NOT EXISTS checkins (
     user_id INTEGER NOT NULL REFERENCES users(id),
     fecha TEXT NOT NULL,
@@ -1182,6 +1221,94 @@ def auto_grado_tracked(db, user):
         db.commit()
     return n
 
+
+def sync_free_plays(db):
+    """Registra automáticamente en el tracker "Free Plays" las jugadas de la
+    card publicada (data/plays.json) que aún no estén registradas.
+
+    Cada jugada entra con el stake fijo FREE_STAKE. Idempotente: las jugadas
+    ya registradas (por play_id) se saltan. Se llama al publicar la card y
+    al abrir /free-plays.
+    """
+    plays = load_plays()
+    if not plays:
+        return 0
+    now = datetime.now(timezone.utc).isoformat()
+    n = 0
+    for p in plays:
+        pid = p.get("id")
+        if not pid:
+            continue
+        exists = db.execute(
+            "SELECT 1 FROM free_plays WHERE play_id = ?", (pid,)
+        ).fetchone()
+        if exists:
+            continue
+        cuota = p.get("cuota")
+        try:
+            cuota = int(cuota)
+        except (TypeError, ValueError):
+            continue
+        db.execute(
+            "INSERT INTO free_plays "
+            "(play_id, fecha, nivel, pick, cuota, stake_monto, edge, resultado, created_at) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?, NULL, ?)",
+            (
+                pid,
+                p.get("fecha") or "",
+                p.get("nivel") or "GOLD",
+                p.get("pick") or "",
+                cuota,
+                FREE_STAKE,
+                p.get("edge"),
+                now,
+            ),
+        )
+        n += 1
+    if n:
+        db.commit()
+    return n
+
+
+def auto_grado_free(db):
+    """Liquida las jugadas pendientes del tracker "Free Plays" usando los
+    resultados oficiales del programa (data/archive.json).
+
+    Misma lógica que auto_grado_tracked pero sobre la tabla free_plays.
+    Solo toca jugadas con resultado pendiente (NULL).
+    """
+    pendientes = db.execute(
+        "SELECT id, play_id, fecha, pick FROM free_plays WHERE resultado IS NULL"
+    ).fetchall()
+    if not pendientes:
+        return 0
+    oficiales = {}
+    for d in load_archive():
+        fecha = (d.get("fecha") or "").strip()
+        for j in d.get("jugadas", []) or []:
+            r = j.get("resultado")
+            pick = (j.get("pick") or "").strip().lower()
+            if r in ("WON", "LOST") and pick:
+                oficiales[(fecha, pick)] = "W" if r == "WON" else "L"
+    n = 0
+    for t in pendientes:
+        f = (t["fecha"] or "").strip() or (
+            _RE_FECHA_PLAYID.match(t["play_id"] or "").group(1)
+            if _RE_FECHA_PLAYID.match(t["play_id"] or "") else ""
+        )
+        key = (f, (t["pick"] or "").strip().lower())
+        res = oficiales.get(key)
+        if res:
+            db.execute(
+                "UPDATE free_plays SET resultado = ? WHERE id = ?",
+                (res, t["id"]),
+            )
+            n += 1
+    if n:
+        db.commit()
+    return n
+
+
 def fmt_money(v: float) -> str:
     sign = "+" if v > 0 else ("-" if v < 0 else "")
     return f"{sign}${abs(v):,.2f}"
@@ -1808,6 +1935,53 @@ def tracker():
         recientes=recientes_oficiales(),
         es_admin=is_admin_for(user),
     )
+
+
+@app.route("/free-plays")
+@login_required
+def free_plays():
+    """Tracker paralelo "Free Plays" — SOLO admin (Alex).
+
+    Las jugadas recomendadas se registran automáticamente con el stake fijo
+    FREE_STAKE para validar el sistema en FREE_PLAYS_GOAL jugadas antes del
+    lanzamiento público. Tabla aislada: no toca tracked_plays ni el récord.
+    """
+    user = current_user()
+    if not is_admin_for(user):
+        return redirect(url_for("home"))
+    db = get_db()
+    record_checkin(db, session["user_id"])
+    sync_free_plays(db)
+    auto_grado_free(db)
+    plays = [
+        dict(t)
+        for t in db.execute(
+            "SELECT * FROM free_plays ORDER BY fecha DESC, id DESC"
+        ).fetchall()
+    ]
+    stats = compute_stats(plays)
+    stats["goal"] = FREE_PLAYS_GOAL
+    stats["stake"] = FREE_STAKE
+    return render_template(
+        "free_plays.html",
+        plays=plays,
+        stats=stats,
+        es_admin=True,
+    )
+
+
+@app.route("/admin/free-plays/clear", methods=["POST"])
+@login_required
+def admin_free_plays_clear():
+    """Borra el tracker "Free Plays" (solo admin). No afecta tracked_plays
+    ni el récord oficial del programa."""
+    user = current_user()
+    if not is_admin_for(user):
+        return redirect(url_for("home"))
+    db = get_db()
+    db.execute("DELETE FROM free_plays")
+    db.commit()
+    return redirect(url_for("free_plays"))
 
 
 @app.route("/tracker/export")
