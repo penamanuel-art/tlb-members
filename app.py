@@ -2000,6 +2000,57 @@ def admin_free_plays_clear():
     return redirect(url_for("free_plays"))
 
 
+@app.route("/api/free-plays/add", methods=["POST"])
+def api_free_plays_add():
+    """Registra jugadas en el tracker "Free Plays". Protegido con header
+    X-Push-Key == PUSH_TRIGGER_KEY (lo usa el asistente al entregar la card).
+
+    JSON: {"plays": [{"pick": "...", "cuota": 128, "nivel": "ELITE",
+           "fecha": "2026-09-30", "edge": 4.9}, ...]}.
+    Cada jugada entra con stake FREE_STAKE, resultado pendiente.
+    """
+    if not PUSH_TRIGGER_KEY or not secrets.compare_digest(
+        request.headers.get("X-Push-Key", ""), PUSH_TRIGGER_KEY
+    ):
+        return jsonify({"error": "forbidden"}), 403
+    data = request.get_json(force=True, silent=True) or {}
+    plays = data.get("plays") or []
+    if not isinstance(plays, list):
+        return jsonify({"error": "plays must be a list"}), 400
+    db = get_db()
+    now = datetime.now(timezone.utc).isoformat()
+    added, skipped = 0, 0
+    for p in plays:
+        pick = (p.get("pick") or "").strip()
+        fecha = (p.get("fecha") or "").strip()
+        if not pick or not fecha:
+            skipped += 1
+            continue
+        pid = _free_play_id(fecha, pick)
+        exists = db.execute(
+            "SELECT 1 FROM free_plays WHERE play_id = ?", (pid,)
+        ).fetchone()
+        if exists:
+            skipped += 1
+            continue
+        try:
+            cuota = int(p.get("cuota"))
+        except (TypeError, ValueError):
+            skipped += 1
+            continue
+        db.execute(
+            "INSERT INTO free_plays "
+            "(play_id, fecha, nivel, pick, cuota, stake_monto, edge, resultado, created_at) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?, NULL, ?)",
+            (pid, fecha, p.get("nivel") or "GOLD", pick, cuota,
+             FREE_STAKE, p.get("edge"), now),
+        )
+        added += 1
+    if added:
+        db.commit()
+    return jsonify({"added": added, "skipped": skipped})
+
+
 @app.route("/tracker/export")
 def tracker_export():
     """Descarga CSV del tracker: semana / mes / año / rango de fechas a elegir.
