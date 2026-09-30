@@ -2129,11 +2129,13 @@ def admin_jugadas():
         return g
     data = _load_plays_raw()
     plays = [p for p in data.get("plays", []) if isinstance(p, dict)]
+    borradores = [p for p in data.get("borradores", []) if isinstance(p, dict)]
     db = get_db()
     stats = _admin_business_stats(db)
     return render_template(
         "admin_jugadas.html",
         plays=plays,
+        borradores=borradores,
         fecha=data.get("fecha", ""),
         stats=stats,
         github_ok=bool((os.environ.get("GITHUB_TOKEN") or "").strip()),
@@ -2142,9 +2144,22 @@ def admin_jugadas():
     )
 
 
-@app.route("/admin/jugadas/publicar", methods=["POST"])
+def _nuevo_play_id(data, fecha, abbr, bettype):
+    slug = re.sub(r"[^a-z0-9]+", "-", f"{abbr}-{bettype}".lower()).strip("-")
+    ids = {p.get("id") for lst in (data.get("plays", []), data.get("borradores", []))
+           for p in lst if isinstance(p, dict)}
+    play_id = f"{fecha}-{slug}"
+    n = 2
+    while play_id in ids:
+        play_id = f"{fecha}-{slug}-{n}"
+        n += 1
+    return play_id
+
+
+@app.route("/admin/jugadas/guardar", methods=["POST"])
 @login_required
-def admin_publicar_jugada():
+def admin_guardar_borrador():
+    """Guarda la jugada como BORRADOR (no sale al Dashboard todavía)."""
     g = _admin_guard()
     if g:
         return g
@@ -2168,17 +2183,9 @@ def admin_publicar_jugada():
     if ext not in ("jpg", "jpeg", "png"):
         flash("La foto debe ser JPG o PNG.", "error")
         return redirect(url_for("admin_jugadas"))
-    slug = re.sub(r"[^a-z0-9]+", "-", f"{abbr}-{bettype}".lower()).strip("-")
     data = _load_plays_raw()
-    if data.get("fecha") != fecha:
-        data["fecha"] = fecha
-        data["plays"] = []
-    ids = {p.get("id") for p in data["plays"] if isinstance(p, dict)}
-    play_id = f"{fecha}-{slug}"
-    n = 2
-    while play_id in ids:
-        play_id = f"{fecha}-{slug}-{n}"
-        n += 1
+    data.setdefault("borradores", [])
+    play_id = _nuevo_play_id(data, fecha, abbr, bettype)
     cuota_raw = (f.get("cuota") or "").strip().replace("+", "")
     try:
         cuota = int(cuota_raw)
@@ -2215,14 +2222,53 @@ def admin_publicar_jugada():
         "ticket_hora": ticket_hora,
         "comprobante": rel,
         "novig_url": (f.get("novig_url") or "").strip(),
+        "telegram_sent_at": "", "email_sent_at": "",
     }
-    data["plays"].append(play)
-    gh_ok, gh_msg = persist_plays(data, f"Admin: publicar jugada {play_id}")
-    detalle = []
-    detalle.append("foto en GitHub OK" if gh_foto_ok else f"foto: {gh_foto_msg}")
-    detalle.append("jugada en GitHub OK" if gh_ok else f"jugada: {gh_msg} (visible igual en el Dashboard)")
-    flash(f"Jugada {abbr} {bettype} publicada. " + " · ".join(detalle),
-          "ok" if (gh_ok and gh_foto_ok) else "error")
+    data["borradores"].append(play)
+    gh_ok, gh_msg = persist_plays(data, f"Admin: borrador {play_id}")
+    flash(f"Borrador guardado ({abbr} {bettype}). Súbelo al Dashboard cuando quieras. "
+          + ("foto en GitHub OK. " if gh_foto_ok else f"foto: {gh_foto_msg}. "),
+          "ok")
+    return redirect(url_for("admin_jugadas"))
+
+
+@app.route("/admin/jugadas/subir", methods=["POST"])
+@login_required
+def admin_subir_dashboard():
+    """Pasa un borrador al Dashboard (publicar)."""
+    g = _admin_guard()
+    if g:
+        return g
+    play_id = (request.form.get("play_id") or "").strip()
+    data = _load_plays_raw()
+    borradores = data.get("borradores", [])
+    play = next((p for p in borradores if isinstance(p, dict) and p.get("id") == play_id), None)
+    if not play:
+        flash("Borrador no encontrado.", "error")
+        return redirect(url_for("admin_jugadas"))
+    data["borradores"] = [p for p in borradores if p.get("id") != play_id]
+    if data.get("fecha") != play_id[:10]:
+        pass  # se conserva la fecha de la card viva
+    data.setdefault("plays", []).append(play)
+    gh_ok, gh_msg = persist_plays(data, f"Admin: subir jugada {play_id} al Dashboard")
+    flash(f"✅ {play.get('abbr')} {play.get('bettype')} ya está en el Dashboard. "
+          f"Verifícala y luego mándala a Telegram/email. {gh_msg}.",
+          "ok" if gh_ok else "error")
+    return redirect(url_for("admin_jugadas"))
+
+
+@app.route("/admin/jugadas/eliminar-borrador", methods=["POST"])
+@login_required
+def admin_eliminar_borrador():
+    g = _admin_guard()
+    if g:
+        return g
+    play_id = (request.form.get("play_id") or "").strip()
+    data = _load_plays_raw()
+    data["borradores"] = [p for p in data.get("borradores", [])
+                          if not (isinstance(p, dict) and p.get("id") == play_id)]
+    persist_plays(data, f"Admin: descartar borrador {play_id}")
+    flash("Borrador descartado.", "ok")
     return redirect(url_for("admin_jugadas"))
 
 
@@ -2235,7 +2281,7 @@ def admin_eliminar_jugada():
     play_id = (request.form.get("play_id") or "").strip()
     data = _load_plays_raw()
     antes = len(data.get("plays", []))
-    data["plays"] = [p for p in data["plays"]
+    data["plays"] = [p for p in data.get("plays", [])
                      if not (isinstance(p, dict) and p.get("id") == play_id)]
     if len(data["plays"]) == antes:
         flash("Esa jugada ya no estaba en el Dashboard.", "error")
@@ -2244,6 +2290,14 @@ def admin_eliminar_jugada():
     flash(f"Jugada eliminada del Dashboard. {gh_msg}.",
           "ok" if gh_ok else "error")
     return redirect(url_for("admin_jugadas"))
+
+
+def _marcar_enviada(play_id, campo):
+    data = _load_plays_raw()
+    for p in data.get("plays", []):
+        if isinstance(p, dict) and p.get("id") == play_id:
+            p[campo] = datetime.now(TZ).strftime("%Y-%m-%d %H:%M")
+    persist_plays(data, f"Admin: marcar {campo} {play_id}")
 
 
 @app.route("/admin/jugadas/telegram", methods=["POST"])
@@ -2256,11 +2310,97 @@ def admin_telegram_jugada():
     play = next((p for p in _load_plays_raw().get("plays", [])
                  if isinstance(p, dict) and p.get("id") == play_id), None)
     if not play:
-        flash("Jugada no encontrada.", "error")
+        flash("Primero súbela al Dashboard con el botón ⬆.", "error")
         return redirect(url_for("admin_jugadas"))
     ok, msg = telegram_send_play(play)
+    if ok:
+        _marcar_enviada(play_id, "telegram_sent_at")
     flash(f"{'✅' if ok else '⚠️'} Telegram ({play.get('nivel')}): {msg}",
           "ok" if ok else "error")
+    return redirect(url_for("admin_jugadas"))
+
+
+def email_send_play(play):
+    """Manda una jugada por email a los miembros (no admins).
+
+    Incluye la foto del ticket adjunta. Usa el SMTP Gmail
+    (EMAIL_USER / EMAIL_PASS). Devuelve (ok, detalle).
+    """
+    user = (os.environ.get("EMAIL_USER") or "").strip()
+    pwd = os.environ.get("EMAIL_PASS") or ""
+    if not (user and pwd):
+        return False, "Email no configurado en el servidor"
+    db = get_db()
+    try:
+        rows = db.execute("SELECT email, is_admin FROM users").fetchall()
+    except Exception:
+        rows = []
+    dests = sorted({str(_uget(r, "email", "")).strip().lower()
+                    for r in rows
+                    if _uget(r, "email") and not _uget(r, "is_admin", 0)})
+    if not dests:
+        return False, "No hay miembros con email registrado"
+    cuota = play.get("cuota", "")
+    cuota_s = f"+{cuota}" if isinstance(cuota, (int, float)) and cuota > 0 else str(cuota)
+    titulo = f"{play.get('abbr', '')} {play.get('bettype', '')} ({cuota_s})"
+    html = (f"<div style='max-width:480px;margin:0 auto;font-family:sans-serif;color:#111;'>"
+            f"<h2 style='margin-bottom:4px;'>The Sharp Team 🦈</h2>"
+            f"<p style='color:#555;'>New {play.get('nivel', '')} play is live on your Dashboard:</p>"
+            f"<div style='border:2px solid #d4af37;border-radius:14px;padding:16px;'>"
+            f"<div style='font-size:20px;font-weight:800;'>{titulo}</div>"
+            f"<div style='color:#555;margin-top:4px;'>{play.get('pick', '')}</div>"
+            f"<div style='margin-top:10px;'>Stake: <b>${play.get('stake_monto', '')} "
+            f"({play.get('stake_unidades', '')}u)</b> · {play.get('game', '')}</div>"
+            f"</div>"
+            f"<p><a href='{SITE_BASE}/home' style='display:inline-block;background:#0d1626;color:#fff;"
+            f"padding:12px 24px;border-radius:10px;text-decoration:none;'>Open My Dashboard</a></p>"
+            f"<p style='color:#888;font-size:12px;'>The ticket is attached. Play responsibly · 21+ · 1-800-GAMBLER</p>"
+            f"</div>")
+    texto = (f"The Sharp Team — new {play.get('nivel', '')} play:\n{titulo}\n"
+             f"{play.get('pick', '')}\nStake ${play.get('stake_monto', '')} "
+             f"({play.get('stake_unidades', '')}u)\n{SITE_BASE}/home")
+    import smtplib
+    from email.message import EmailMessage
+    foto_rel = (play.get("comprobante") or "").strip()
+    foto_path = os.path.join(BASE_DIR, "static", foto_rel) if foto_rel else None
+    try:
+        msg = EmailMessage()
+        msg["Subject"] = f"The Sharp Team | {titulo}"
+        msg["From"] = f"The Sharp Team <{user}>"
+        msg["To"] = ", ".join(dests)
+        msg.set_content(texto)
+        msg.add_alternative(html, subtype="html")
+        if foto_path and os.path.isfile(foto_path):
+            with open(foto_path, "rb") as fh:
+                img = fh.read()
+            sub = "png" if foto_path.lower().endswith(".png") else "jpeg"
+            msg.add_attachment(img, maintype="image", subtype=sub,
+                               filename=f"ticket-{play.get('id')}.{sub}")
+        with smtplib.SMTP("smtp.gmail.com", 587, timeout=30) as s:
+            s.starttls()
+            s.login(user, pwd)
+            s.send_message(msg)
+        return True, f"email enviado a {len(dests)} miembro(s)"
+    except Exception as e:
+        return False, f"Email: {e}"
+
+
+@app.route("/admin/jugadas/email", methods=["POST"])
+@login_required
+def admin_email_jugada():
+    g = _admin_guard()
+    if g:
+        return g
+    play_id = (request.form.get("play_id") or "").strip()
+    play = next((p for p in _load_plays_raw().get("plays", [])
+                 if isinstance(p, dict) and p.get("id") == play_id), None)
+    if not play:
+        flash("Primero súbela al Dashboard con el botón ⬆.", "error")
+        return redirect(url_for("admin_jugadas"))
+    ok, msg = email_send_play(play)
+    if ok:
+        _marcar_enviada(play_id, "email_sent_at")
+    flash(f"{'✅' if ok else '⚠️'} Email: {msg}", "ok" if ok else "error")
     return redirect(url_for("admin_jugadas"))
 
 

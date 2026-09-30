@@ -30,7 +30,7 @@
   <div><p class="kicker">PUBLISH</p><h2 style="font-size:1.4rem;">Nueva jugada</h2></div>
 </section>
 <article class="member-row">
-  <form method="post" action="{{ url_for('admin_publicar_jugada') }}" enctype="multipart/form-data">
+  <form method="post" action="{{ url_for('admin_guardar_borrador') }}" enctype="multipart/form-data">
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
       <label>Fecha<br><input type="date" name="fecha" value="{{ hoy }}" required style="width:100%;"></label>
       <label>Liga<br><select name="liga" style="width:100%;"><option>NFL</option><option>NCAAF</option><option selected>MLB</option><option>NBA</option><option>NHL</option></select></label>
@@ -48,21 +48,61 @@
       <label style="grid-column:1/-1;">Link Novig (opcional)<br><input name="novig_url" placeholder="https://novig.com" style="width:100%;"></label>
       <label style="grid-column:1/-1;">Foto del ticket<br><input type="file" name="foto" accept="image/jpeg,image/png" required></label>
     </div>
-    <button class="btn btn-place" type="submit" style="margin-top:12px;">Publicar en el Dashboard</button>
+    <button class="btn btn-place" type="submit" style="margin-top:12px;">Guardar borrador</button>
   </form>
 </article>
+
+<section class="tracker-head" style="margin-top:1.6rem">
+  <div><p class="kicker">DRAFTS</p><h2 style="font-size:1.4rem;">Borradores ({{ borradores|length }})</h2></div>
+</section>
+{% for p in borradores %}
+<article class="member-row">
+  <div style="display:flex;gap:12px;align-items:center;">
+    {% if p.comprobante %}<img src="{{ url_for('static', filename=p.comprobante) }}" style="width:64px;height:64px;object-fit:cover;border-radius:10px;" alt="ticket">{% endif %}
+    <div>
+      <div class="m-name">{{ p.abbr }} {{ p.bettype }} <span class="m-pill {{ 'on' if p.nivel == 'ELITE' else '' }}">{{ p.nivel }}</span></div>
+      <div class="m-email">{{ p.pick }} · {{ p.cuota }} · ${{ p.stake_monto }} ({{ p.stake_unidades }}u) · {{ p.game }}</div>
+    </div>
+  </div>
+  <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
+    <form method="post" action="{{ url_for('admin_subir_dashboard') }}">
+      <input type="hidden" name="play_id" value="{{ p.id }}">
+      <button class="btn btn-sm btn-place" type="submit">⬆ Subir al Dashboard</button>
+    </form>
+    <form method="post" action="{{ url_for('admin_eliminar_borrador') }}" onsubmit="return confirm('¿Descartar este borrador?');">
+      <input type="hidden" name="play_id" value="{{ p.id }}">
+      <button class="btn btn-sm btn-ghost" type="submit">Descartar</button>
+    </form>
+  </div>
+</article>
+{% else %}
+<p class="muted">No hay borradores.</p>
+{% endfor %}
 
 <section class="tracker-head" style="margin-top:1.6rem">
   <div><p class="kicker">LIVE</p><h2 style="font-size:1.4rem;">En el Dashboard ahora ({{ plays|length }})</h2></div>
 </section>
 {% for p in plays %}
 <article class="member-row">
-  <div class="m-name">{{ p.abbr }} {{ p.bettype }} <span class="m-pill {{ 'on' if p.nivel == 'ELITE' else '' }}">{{ p.nivel }}</span></div>
-  <div class="m-email">{{ p.pick }} · {{ p.cuota }} · ${{ p.stake_monto }} ({{ p.stake_unidades }}u) · {{ p.game }}</div>
+  <div style="display:flex;gap:12px;align-items:center;">
+    {% if p.comprobante %}<img src="{{ url_for('static', filename=p.comprobante) }}" style="width:64px;height:64px;object-fit:cover;border-radius:10px;" alt="ticket">{% endif %}
+    <div>
+      <div class="m-name">{{ p.abbr }} {{ p.bettype }} <span class="m-pill {{ 'on' if p.nivel == 'ELITE' else '' }}">{{ p.nivel }}</span></div>
+      <div class="m-email">{{ p.pick }} · {{ p.cuota }} · ${{ p.stake_monto }} ({{ p.stake_unidades }}u) · {{ p.game }}</div>
+      <div class="m-meta">
+        {% if p.telegram_sent_at %}<span class="m-pill on">✓ Telegram {{ p.telegram_sent_at }}</span>{% endif %}
+        {% if p.email_sent_at %}<span class="m-pill on">✓ Email {{ p.email_sent_at }}</span>{% endif %}
+      </div>
+    </div>
+  </div>
   <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
-    <form method="post" action="{{ url_for('admin_telegram_jugada') }}">
+    <form method="post" action="{{ url_for('admin_telegram_jugada') }}" {% if p.telegram_sent_at %}onsubmit="return confirm('Ya se envió a Telegram. ¿Enviar de nuevo?');"{% endif %}>
       <input type="hidden" name="play_id" value="{{ p.id }}">
       <button class="btn btn-sm btn-place" type="submit">📣 Enviar a Telegram</button>
+    </form>
+    <form method="post" action="{{ url_for('admin_email_jugada') }}" {% if p.email_sent_at %}onsubmit="return confirm('Ya se envió por email. ¿Enviar de nuevo?');"{% endif %}>
+      <input type="hidden" name="play_id" value="{{ p.id }}">
+      <button class="btn btn-sm btn-place" type="submit">📧 Enviar por email</button>
     </form>
     <a class="btn btn-sm btn-ghost" href="{{ url_for('ticket_view', play_id=p.id) }}">Ver</a>
     <form method="post" action="{{ url_for('admin_eliminar_jugada') }}" onsubmit="return confirm('¿Eliminar esta jugada del Dashboard?');">
