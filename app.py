@@ -14,6 +14,7 @@ En Render (ver render.yaml):
 """
 import json
 import os
+import random
 import re
 import secrets
 import sqlite3
@@ -1185,9 +1186,22 @@ def fmt_odds(o) -> str:
 
 app.jinja_env.globals.update(fmt_money=fmt_money, fmt_units=fmt_units, fmt_odds=fmt_odds)
 
+# Marcas de agua rotativas (2026-09-30, pedido por Alex): cada sesión ve una
+# distinta — fútbol americano, béisbol, hockey o básquet — siempre tenue.
+WATERMARKS = [
+    "img/watermark-football.jpg",
+    "img/watermark-baseball.jpg",
+    "img/watermark-hockey.jpg",
+    "img/watermark-basketball.jpg",
+]
+
 
 @app.context_processor
 def inject_user():
+    wm = session.get("watermark")
+    if wm not in WATERMARKS:
+        wm = random.choice(WATERMARKS)
+        session["watermark"] = wm
     nombre = session.get("nombre", "")
     corto = primer_nombre(nombre)
     cu = current_user()
@@ -1211,6 +1225,7 @@ def inject_user():
         "miembro_platinum": platinum_unlocked_for(cu),
         "ticker_days": compute_ticker_days(),
         "asset_v": ASSET_V,
+        "watermark_img": session.get("watermark", WATERMARKS[0]),
     }
 
 

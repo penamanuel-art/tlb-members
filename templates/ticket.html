@@ -31,7 +31,7 @@ h1{width:100%;max-width:520px;font-size:34px;font-weight:800;letter-spacing:-.5p
 .lightbox .x{position:absolute;top:12px;right:18px;font-size:32px;color:#fff;cursor:pointer}
 </style>
 </head>
-<body>
+<body style="--wm-img: url('{{ url_for('static', filename=watermark_img) }}')">
 <div class="brand">
   <img src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team">
   <div class="brand-name">THE SHARP TEAM</div>

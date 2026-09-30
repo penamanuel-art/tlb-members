@@ -19,7 +19,7 @@
 </style>
 <script src="/static/js/push.js?v={{ asset_v }}"></script>
 </head>
-<body>
+<body style="--wm-img: url('{{ url_for('static', filename=watermark_img) }}')">
 <header class="topbar">
   <div class="topbar-left">
     {% if session.get('user_id') %}
