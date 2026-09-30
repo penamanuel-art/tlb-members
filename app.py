@@ -219,8 +219,8 @@ CREATE TABLE IF NOT EXISTS users (
     stripe_subscription_id TEXT,                  -- suscripción activa de Stripe
     foto TEXT,                                     -- foto de perfil (data URI JPEG, NULL = inicial)
     telegram_user_id TEXT,                         -- id de Telegram vinculado (NULL = sin vincular)
-    telegram_ban_pending INTEGER NOT NULL DEFAULT 0,   -- 1 = banear de Elite Plays (lo procesa el cron)
-    telegram_unban_pending INTEGER NOT NULL DEFAULT 0, -- 1 = desbanear de Elite Plays (lo procesa el cron)
+    telegram_ban_pending INTEGER NOT NULL DEFAULT 0,   -- 1 = banear de Sharp Club (lo procesa el cron)
+    telegram_unban_pending INTEGER NOT NULL DEFAULT 0, -- 1 = desbanear de Sharp Club (lo procesa el cron)
     created_at TEXT NOT NULL
 );
 CREATE TABLE IF NOT EXISTS tracked_plays (
@@ -297,8 +297,8 @@ CREATE TABLE IF NOT EXISTS users (
     stripe_subscription_id TEXT,                  -- suscripción activa de Stripe
     foto TEXT,                                     -- foto de perfil (data URI JPEG, NULL = inicial)
     telegram_user_id TEXT,                         -- id de Telegram vinculado (NULL = sin vincular)
-    telegram_ban_pending INTEGER NOT NULL DEFAULT 0,   -- 1 = banear de Elite Plays (lo procesa el cron)
-    telegram_unban_pending INTEGER NOT NULL DEFAULT 0, -- 1 = desbanear de Elite Plays (lo procesa el cron)
+    telegram_ban_pending INTEGER NOT NULL DEFAULT 0,   -- 1 = banear de Sharp Club (lo procesa el cron)
+    telegram_unban_pending INTEGER NOT NULL DEFAULT 0, -- 1 = desbanear de Sharp Club (lo procesa el cron)
     created_at TEXT NOT NULL
 );
 CREATE TABLE IF NOT EXISTS tracked_plays (
@@ -1462,7 +1462,7 @@ def migrate_db():
                 created_at TEXT NOT NULL
             )"""
         )
-        # Pool de links de invitación a Elite Plays (un solo uso, los genera
+        # Pool de links de invitación a Sharp Club (un solo uso, los genera
         # el cron de la VM con el token del bot; /cuenta los reparte).
         _id_col = "id SERIAL PRIMARY KEY" if USE_PG else "id INTEGER PRIMARY KEY AUTOINCREMENT"
         conn.execute(
@@ -1793,7 +1793,7 @@ def cuenta_telegram_link():
     """Genera un código de un solo uso para vincular el Telegram del miembro.
 
     El miembro abre el link, pulsa START en el bot y la app vincula su
-    telegram_user_id. Sirve para sacarlo del canal Elite Plays si cancela.
+    telegram_user_id. Sirve para sacarlo del canal Sharp Club si cancela.
     """
     db = get_db()
     uid = session.get("user_id")
@@ -2828,7 +2828,7 @@ def telegram_webhook(secret):
 
     Render no tiene el token del bot, así que la app solo RECIBE updates
     aquí (nunca llama a la API de Telegram). El baneo/desbaneo del canal
-    Elite Plays lo hace el cron de la VM con el conector de Telegram,
+    Sharp Club lo hace el cron de la VM con el conector de Telegram,
     leyendo /api/telegram-pending.
     """
     if not TELEGRAM_WEBHOOK_SECRET or not secrets.compare_digest(
@@ -2863,7 +2863,7 @@ def telegram_webhook(secret):
 
 @app.route("/api/telegram-pending", methods=["GET"])
 def api_telegram_pending():
-    """Baneos/desbaneos pendientes del canal Elite Plays.
+    """Baneos/desbaneos pendientes del canal Sharp Club.
 
     Lo lee el cron de la VM cada 10 min (Render no tiene el token del bot).
     Protegido con header X-Push-Key == PUSH_TRIGGER_KEY.
@@ -2913,7 +2913,7 @@ def api_telegram_pending_ack():
 
 @app.route("/api/telegram-invite-pool/add", methods=["POST"])
 def api_telegram_invite_pool_add():
-    """El cron de la VM deposita links de invitación a Elite Plays.
+    """El cron de la VM deposita links de invitación a Sharp Club.
 
     JSON: {links: ["https://t.me/+..."]}. Protegido con X-Push-Key.
     """
@@ -2958,7 +2958,7 @@ def api_telegram_invite_pool_status():
 
 @app.route("/api/telegram-invite", methods=["GET"])
 def api_telegram_invite():
-    """Entrega al miembro Elite un link personal de invitación a Elite Plays.
+    """Entrega al miembro Elite un link personal de invitación a Sharp Club.
 
     Un solo uso por link (member_limit=1 en Telegram). Requiere sesión y
     Elite activa. Si el pool está vacío, el cron lo rellena en ~10 min.
@@ -3060,7 +3060,7 @@ def stripe_webhook():
                 (customer_id or None, sub_id or None, uid),
             )
             # Si vuelve después de cancelar y tiene Telegram vinculado, el cron
-            # lo desbanea del canal Elite Plays para que pueda reingresar.
+            # lo desbanea del canal Sharp Club para que pueda reingresar.
             if estaba_cancelado and tiene_tg:
                 db.execute(
                     "UPDATE users SET telegram_unban_pending = 1, telegram_ban_pending = 0"
@@ -3118,7 +3118,7 @@ def stripe_webhook():
                         "UPDATE users SET platinum_unlocked = 0, stripe_subscription_id = NULL, "
                         "cancel_requested_at = ? WHERE id = ?", (now_iso(), row["id"]))
                     # Sin pago no hay acceso: si tiene Telegram vinculado, el cron
-                    # de la VM lo banea del canal privado Elite Plays.
+                    # de la VM lo banea del canal privado Sharp Club.
                     db.execute(
                         "UPDATE users SET telegram_ban_pending = 1, telegram_unban_pending = 0"
                         " WHERE id = ? AND telegram_user_id IS NOT NULL", (row["id"],))

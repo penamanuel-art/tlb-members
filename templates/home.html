@@ -126,14 +126,14 @@
     <div class="tg-elite-cta-text">
       {% if platinum_unlocked %}
       <b>Get every Elite play on Telegram</b>
-      <span>Instant alerts in the private <b>Elite Plays</b> channel.</span>
+      <span>Instant alerts in the private <b>Sharp Club</b> channel.</span>
       {% else %}
-      <b>&#x1f512; Elite Plays on Telegram</b>
+      <b>&#x1f512; Sharp Club on Telegram</b>
       <span>Instant Elite alerts in the private channel — <b>Elite members only</b>.</span>
       {% endif %}
     </div>
     {% if platinum_unlocked %}
-    <a href="{{ url_for('cuenta') }}#telegram" class="btn btn-primary">Join Elite Plays &rarr;</a>
+    <a href="{{ url_for('cuenta') }}#telegram" class="btn btn-primary">Join Sharp Club &rarr;</a>
     {% else %}
     <a href="{{ url_for('desbloquear_platinum') }}" class="btn btn-primary">Unlock Elite &rarr;</a>
     {% endif %}
