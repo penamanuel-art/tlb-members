@@ -88,8 +88,11 @@
 
 
 <!-- 03 · TODAY'S PLAYS -->
-<div class="section-head">
-  <h2 class="section-title">{% if card_pendiente %}Nothing posted yet{% else %}Your Board Is Set{% endif %}</h2>
+<div class="section-head plays-head">
+  <div>
+    <h2 class="plays-title">{% if card_pendiente %}Nothing posted yet{% else %}Today's <span>plays</span>{% endif %}</h2>
+    {% if not card_pendiente %}<p class="plays-sub">Tap a card for the ticket + write-up</p>{% endif %}
+  </div>
   <a class="link-more" href="{{ url_for('tracker') }}">View my tracker →</a>
 </div>
 {% set golds = plays | rejectattr('nivel', 'equalto', 'ELITE') | list %}
