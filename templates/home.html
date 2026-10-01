@@ -87,6 +87,9 @@
   <p>Made a bet on your own? <a href="{{ url_for('tracker') }}">Log it in your tracker →</a></p>
 </div>
 {% elif golds %}
+<div class="section-head">
+  <h2 class="section-title">Today's Free Selections</h2>
+</div>
 <div class="plays" style="margin-top:4px">
   {% for p in golds %}
     {% include "_play_card.html" %}
