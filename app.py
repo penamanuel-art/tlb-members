@@ -1224,10 +1224,59 @@ def auto_grado_tracked(db, user):
     return n
 
 
+def _norm_free_pick(pick):
+    """Normaliza el nombre de la jugada para deduplicar: quita la cuota entre
+    paréntesis y el rival. Así 'White Sox ML (+134)', 'White Sox ML @ Astros'
+    y 'White Sox ML' generan el mismo ID (2026-10-01, pedido por Alex: las
+    repetidas se eliminan, queda una sola fila por juego)."""
+    p = (pick or "").strip()
+    p = re.sub(r"\s*\([+-]?\d+\)\s*", " ", p)  # quita (+134), (-140)
+    p = re.sub(r"\s+(@|vs\.?|at)\s+[A-Za-z0-9 .'\-]+$", "", p, flags=re.IGNORECASE)  # quita @ Astros / vs Cubs
+    return re.sub(r"\s+", " ", p).strip()
+
+
 def _free_play_id(fecha, pick):
     """ID determinista para jugadas del archivo histórico (sin id propio)."""
-    slug = re.sub(r"[^a-z0-9]+", "-", (pick or "").strip().lower()).strip("-")
+    slug = re.sub(r"[^a-z0-9]+", "-", _norm_free_pick(pick).lower()).strip("-")
     return f"free-{fecha}-{slug}"
+
+
+def _dedup_free_plays(db):
+    """Migración única (2026-10-01, pedido por Alex): elimina filas duplicadas
+    del tracker Free Plays — la misma jugada registrada con dos nombres
+    ('White Sox ML (+134)' vs 'White Sox ML @ Astros'). Conserva la fila
+    liquidada (con resultado) o, si ninguna lo está, la más antigua.
+    Idempotente: sin duplicados no hace nada."""
+    rows = db.execute(
+        "SELECT id, fecha, pick, resultado FROM free_plays"
+    ).fetchall()
+
+    def _v(r, key, idx):
+        try:
+            return r[key]
+        except (KeyError, IndexError, TypeError):
+            return r[idx]
+
+    groups = {}
+    for r in rows:
+        rid = _v(r, "id", 0)
+        fecha = _v(r, "fecha", 1) or ""
+        pick = _v(r, "pick", 2) or ""
+        res = _v(r, "resultado", 3)
+        slug = re.sub(r"[^a-z0-9]+", "-", _norm_free_pick(pick).lower()).strip("-")
+        groups.setdefault((fecha, slug), []).append((rid, res))
+    doomed = []
+    for items in groups.values():
+        if len(items) < 2:
+            continue
+        # primero las liquidadas, luego la de id menor (más antigua)
+        items.sort(key=lambda x: (0 if x[1] not in (None, "") else 1, x[0]))
+        doomed.extend(rid for rid, _ in items[1:])
+    for rid in doomed:
+        db.execute("DELETE FROM free_plays WHERE id = ?", (rid,))
+    if doomed:
+        db.commit()
+    return len(doomed)
 
 
 def sync_free_plays(db):
@@ -1239,6 +1288,7 @@ def sync_free_plays(db):
     ya registradas (por play_id) se saltan. Se llama al publicar la card y
     al abrir /free-plays.
     """
+    _dedup_free_plays(db)  # 2026-10-01: limpia duplicados existentes (una fila por juego)
     now = datetime.now(timezone.utc).isoformat()
     n = 0
 
