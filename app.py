@@ -555,11 +555,11 @@ WELCOME_TEXT = """Hi __NOMBRE__,
 Welcome to The Sharp Team! Your dashboard is ready.
 
 EVERYTHING YOUR PLAN UNLOCKS
-1. THE DAILY CARD - Every morning at 11:00 AM ET: the day's official plays (Gold plus the one Elite), each with its original bet ticket. Minimum 3-point edge. No filler, ever.
+1. THE DAILY CARD - Every morning at 11:00 AM ET: the day's official plays (Platinum plus the one Elite), each with its original bet ticket. Minimum 3-point edge. No filler, ever.
 2. YOUR PERSONAL TRACKER - One-tap tracking: mark each play, log won or lost. Verified history, real record, net units, ROI and streak. No spreadsheets.
 3. LIVE +EV BOARD - Value edges updated around the clock, measured against Pinnacle's no-vig fair price, with sharp-confirmed badges.
 4. PUSH ALERTS - Alerts the moment the card drops and when new edges appear. Turn "Alerts on" in your dashboard.
-5. TELEGRAM CHANNELS - Gold plays in the free channel, Elite plays in the private VIP channel, each with the original ticket.
+5. TELEGRAM CHANNELS - Platinum plays in the free channel, Elite plays in the private VIP channel, each with the original ticket.
 6. DAILY MASTERCLASS - One sharp betting lesson every morning: discipline, bankroll management, reading lines and edges.
 
 "Every play is posted before game time - then locked and graded against the final score."
@@ -591,7 +591,7 @@ WELCOME_HTML = """<div style="max-width:460px;margin:0 auto;background:#f2efe7;f
 <div style="height:3px;background:linear-gradient(90deg,#b8912b,#f5e3a8,#b8912b);"></div>
 <table width="100%" cellpadding="0" cellspacing="0"><tr>
 <td width="64" style="vertical-align:top;padding:20px 0 20px 22px;"><div style="font-family:Georgia,'Times New Roman',serif;font-size:36px;color:#d4af37;line-height:1;">01</div><div style="width:28px;height:2px;background:#d4af37;margin-top:8px;"></div></td>
-<td style="vertical-align:top;padding:20px 22px 20px 6px;font-family:-apple-system,'Segoe UI',Roboto,sans-serif;"><div style="font-size:16px;font-weight:800;color:#14141d;letter-spacing:1.5px;margin-bottom:6px;">THE DAILY CARD</div><div style="font-size:15px;color:#5a5a68;line-height:1.65;">Every morning at 11:00 AM ET: the day's official plays &mdash; Gold plus the one &starf; Elite &mdash; each with its <em>original bet ticket</em>. Minimum 3-point edge. No filler, ever.</div></td>
+<td style="vertical-align:top;padding:20px 22px 20px 6px;font-family:-apple-system,'Segoe UI',Roboto,sans-serif;"><div style="font-size:16px;font-weight:800;color:#14141d;letter-spacing:1.5px;margin-bottom:6px;">THE DAILY CARD</div><div style="font-size:15px;color:#5a5a68;line-height:1.65;">Every morning at 11:00 AM ET: the day's official plays &mdash; Platinum plus the one &starf; Elite &mdash; each with its <em>original bet ticket</em>. Minimum 3-point edge. No filler, ever.</div></td>
 </tr></table></div><div style="background:#ffffff;border:1px solid #e8e0cb;border-radius:16px;margin:0 24px 14px;box-shadow:0 2px 10px rgba(20,20,29,0.05);overflow:hidden;">
 <div style="height:3px;background:linear-gradient(90deg,#b8912b,#f5e3a8,#b8912b);"></div>
 <table width="100%" cellpadding="0" cellspacing="0"><tr>
@@ -611,7 +611,7 @@ WELCOME_HTML = """<div style="max-width:460px;margin:0 auto;background:#f2efe7;f
 <div style="height:3px;background:linear-gradient(90deg,#b8912b,#f5e3a8,#b8912b);"></div>
 <table width="100%" cellpadding="0" cellspacing="0"><tr>
 <td width="64" style="vertical-align:top;padding:20px 0 20px 22px;"><div style="font-family:Georgia,'Times New Roman',serif;font-size:36px;color:#d4af37;line-height:1;">05</div><div style="width:28px;height:2px;background:#d4af37;margin-top:8px;"></div></td>
-<td style="vertical-align:top;padding:20px 22px 20px 6px;font-family:-apple-system,'Segoe UI',Roboto,sans-serif;"><div style="font-size:16px;font-weight:800;color:#14141d;letter-spacing:1.5px;margin-bottom:6px;">TELEGRAM CHANNELS</div><div style="font-size:15px;color:#5a5a68;line-height:1.65;">Gold plays in the free channel, Elite plays in the private VIP channel &mdash; each with the original ticket.</div></td>
+<td style="vertical-align:top;padding:20px 22px 20px 6px;font-family:-apple-system,'Segoe UI',Roboto,sans-serif;"><div style="font-size:16px;font-weight:800;color:#14141d;letter-spacing:1.5px;margin-bottom:6px;">TELEGRAM CHANNELS</div><div style="font-size:15px;color:#5a5a68;line-height:1.65;">Platinum plays in the free channel, Elite plays in the private VIP channel &mdash; each with the original ticket.</div></td>
 </tr></table></div>
 <div style="background:#ffffff;border:1px solid #e8e0cb;border-radius:16px;margin:0 24px 14px;box-shadow:0 2px 10px rgba(20,20,29,0.05);overflow:hidden;">
 <div style="height:3px;background:linear-gradient(90deg,#b8912b,#f5e3a8,#b8912b);"></div>

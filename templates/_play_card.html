@@ -42,7 +42,7 @@
   {% endif %}
   <div class="tstc-bet">Bet &nbsp;{{ '$%g' % p.stake_monto }} <span>({{ p.stake_unidades }}u)</span></div>
   <div class="tstc-bot">
-    <span class="tstc-lvl{% if is_vip %} vip{% endif %}">{{ 'VIP' if is_vip else 'GOLD' }}</span>
+    <span class="tstc-lvl{% if is_vip %} vip{% endif %}">{{ 'VIP' if is_vip else 'PLATINUM' }}</span>
     {# Link "View ticket" → página del ticket con diseño propio (pedido Alex 2026-09-29: "Del Dashboard"). #}
     <a class="tstc-view" href="{{ url_for('ticket_view', play_id=p.id) }}">View ticket &rarr;</a>
   </div>

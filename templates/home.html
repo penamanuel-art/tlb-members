@@ -147,7 +147,7 @@
     <p class="br-modal-sub">Same edge, two ways to size it. Most members start with TST Units. Switch anytime.</p>
     <div class="br-opt br-opt-units">
       <p class="br-opt-title">TST Units — the disciplined way</p>
-      <p>Bet in units. <b>1 unit = 1% of your bankroll.</b> We size every play by its badge: ★ ELITE = 1u, GOLD = 0.6u. Small and steady, exactly how The Sharp Team plays it. Less swing, easy to follow.</p>
+      <p>Bet in units. <b>1 unit = 1% of your bankroll.</b> We size every play by its badge: ★ ELITE = 1u, PLATINUM = 0.6u. Small and steady, exactly how The Sharp Team plays it. Less swing, easy to follow.</p>
       {% if bankroll %}
       <p class="br-opt-ex">On your ${{ '%.0f' % bankroll }} bankroll, a 1u play is about ${{ '%.0f' % (bankroll / 100) }}.</p>
       {% endif %}
@@ -393,11 +393,11 @@
   <p class="pro-profit {{ res.get('profit_cls', '') }}">{{ res.get('profit_display', '$0') }}</p>
   <p class="pro-sub"><strong>{{ res.get('ganadas', 0) }}&ndash;{{ res.get('perdidas', 0) }}</strong> &middot; every play public, win or loss</p>
   <div class="pro-levels">
-    {% for lvl_key, lvl_emoji, lvl_class in [('GOLD', '&#x1f7e1;', 'gold'), ('ELITE', '&#x2b50;', 'elite')] %}
+    {% for lvl_key, lvl_name, lvl_emoji, lvl_class in [('GOLD', 'PLATINUM', '&#x26aa;', 'gold'), ('ELITE', 'ELITE', '&#x2b50;', 'elite')] %}
     {% set L = res['niveles'][lvl_key] %}
     {% set wr = L.win_rate %}
     <div class="pro-level lvl-{{ lvl_class }}">
-      <div class="pro-lvl-head"><span class="pro-badge">{{ lvl_emoji|safe }}</span><span class="pro-lvl-name">{{ lvl_key }} PROGRAMA</span></div>
+      <div class="pro-lvl-head"><span class="pro-badge">{{ lvl_emoji|safe }}</span><span class="pro-lvl-name">{{ lvl_name }} PROGRAMA</span></div>
       <div class="pro-lvl-body">
         <div>
           <p class="pro-lvl-record">{{ L.record }}</p>
