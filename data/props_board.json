@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-01T15:57:28-04:00",
+  "updated_at": "2026-10-01T16:27:27-04:00",
   "refresh_minutes": 60,
   "fair_source": "no-vig true line (median of implied, 2+ books)",
   "info_only": true,
@@ -27,14 +27,21 @@
       "game": "Philadelphia Phillies @ Atlanta Braves",
       "game_time": "Thu 8:11 PM ET",
       "commence_time": "2026-10-02T00:11:00Z",
-      "book": "BetOnline.ag",
-      "price": -169,
-      "price_fmt": "-169",
+      "book": "BetMGM",
+      "price": -165,
+      "price_fmt": "-165",
       "fair_prob_pct": 72.9,
       "fair_american": -269,
-      "ev_pct": 16.0,
+      "ev_pct": 17.0,
       "books_count": 6,
       "books": [
+        {
+          "book": "BetMGM",
+          "line": "0.5",
+          "price": "-165",
+          "ev_pct": 17.0,
+          "url": "https://sports.betmgm.com"
+        },
         {
           "book": "BetOnline.ag",
           "line": "0.5",
@@ -48,13 +55,6 @@
           "price": "-171",
           "ev_pct": 15.5,
           "url": null
-        },
-        {
-          "book": "BetMGM",
-          "line": "0.5",
-          "price": "-175",
-          "ev_pct": 14.5,
-          "url": "https://sports.betmgm.com"
         },
         {
           "book": "theScore Bet",
@@ -78,7 +78,7 @@
           "url": "https://sportsbook.draftkings.com"
         }
       ],
-      "bet_url": "https://novig.com",
+      "bet_url": "https://sports.betmgm.com",
       "headshot": "https://a.espn.com/i/headshots/mlb/players/full/33712.png"
     },
     {
@@ -134,8 +134,8 @@
         {
           "book": "BetOnline.ag",
           "line": "75.5",
-          "price": "-111",
-          "ev_pct": -5.4,
+          "price": "-110",
+          "ev_pct": -5.0,
           "url": null
         },
         {
@@ -179,18 +179,18 @@
           "url": null
         },
         {
+          "book": "BetMGM",
+          "line": "1.5",
+          "price": "+155",
+          "ev_pct": -3.0,
+          "url": "https://sports.betmgm.com"
+        },
+        {
           "book": "BetOnline.ag",
           "line": "1.5",
           "price": "+152",
           "ev_pct": -4.1,
           "url": null
-        },
-        {
-          "book": "BetMGM",
-          "line": "1.5",
-          "price": "+150",
-          "ev_pct": -4.9,
-          "url": "https://sports.betmgm.com"
         },
         {
           "book": "DraftKings",
@@ -224,62 +224,62 @@
       "market_label": "Pass Yds",
       "player": "Aaron Rodgers",
       "side": "Under",
-      "line": 245.5,
-      "line_fmt": "245.5",
-      "prop_label": "Under 245.5 Pass Yds",
-      "true_line": 214.5,
+      "line": 246.5,
+      "line_fmt": "246.5",
+      "prop_label": "Under 246.5 Pass Yds",
+      "true_line": 215.64,
       "game": "Pittsburgh Steelers @ Cleveland Browns",
       "game_time": "Thu 8:15 PM ET",
       "commence_time": "2026-10-02T00:15:00Z",
       "book": "Bovada",
       "price": -240,
       "price_fmt": "-240",
-      "fair_prob_pct": 75.5,
-      "fair_american": -307,
-      "ev_pct": 6.9,
+      "fair_prob_pct": 75.4,
+      "fair_american": -306,
+      "ev_pct": 6.8,
       "books_count": 13,
       "books": [
         {
           "book": "Bovada",
-          "line": "245.5",
+          "line": "246.5",
           "price": "-240",
-          "ev_pct": 6.9,
+          "ev_pct": 6.8,
           "url": null
         },
         {
           "book": "Bovada",
-          "line": "235.5",
+          "line": "236.5",
           "price": "-185",
-          "ev_pct": 4.7,
+          "ev_pct": 4.5,
           "url": null
         },
         {
           "book": "Bovada",
-          "line": "225.5",
+          "line": "226.5",
           "price": "-145",
-          "ev_pct": 0.8,
+          "ev_pct": 0.6,
           "url": null
         },
         {
           "book": "DraftKings",
-          "line": "215.5",
+          "line": "216.5",
           "price": "-111",
-          "ev_pct": -3.3,
+          "ev_pct": -3.5,
           "url": "https://sportsbook.draftkings.com"
         },
         {
-          "book": "Bovada",
-          "line": "215.5",
-          "price": "-115",
-          "ev_pct": -4.9,
-          "url": null
+          "book": "FanDuel",
+          "line": "216.5",
+          "price": "-113",
+          "ev_pct": -4.3,
+          "url": "https://sportsbook.fanduel.com"
         },
         {
-          "book": "BetMGM",
-          "line": "215.5",
+          "book": "Bovada",
+          "line": "216.5",
           "price": "-115",
-          "ev_pct": -4.9,
-          "url": "https://sports.betmgm.com"
+          "ev_pct": -5.1,
+          "url": null
         }
       ],
       "bet_url": "https://novig.com",
@@ -326,44 +326,72 @@
       "headshot": null
     },
     {
-      "id": "ncaaf-player-pass-yds-ethan-grunkemeyer-over",
-      "sport": "NCAAF",
-      "market": "player_pass_yds",
-      "market_label": "Pass Yds",
-      "player": "Ethan Grunkemeyer",
+      "id": "nfl-player-rush-yds-jaylen-warren-over",
+      "sport": "NFL",
+      "market": "player_rush_yds",
+      "market_label": "Rush Yds",
+      "player": "Jaylen Warren",
       "side": "Over",
-      "line": 254.5,
-      "line_fmt": "254.5",
-      "prop_label": "Over 254.5 Pass Yds",
-      "true_line": 260.47,
-      "game": "Pittsburgh Panthers @ Virginia Tech Hokies",
-      "game_time": "Fri 7:00 PM ET",
-      "commence_time": "2026-10-02T23:00:00Z",
-      "book": "theScore Bet",
-      "price": -110,
-      "price_fmt": "-110",
-      "fair_prob_pct": 54.8,
-      "fair_american": -121,
-      "ev_pct": 4.5,
-      "books_count": 2,
+      "line": 72.5,
+      "line_fmt": "72.5",
+      "prop_label": "Over 72.5 Rush Yds",
+      "true_line": 75.62,
+      "game": "Pittsburgh Steelers @ Cleveland Browns",
+      "game_time": "Thu 8:15 PM ET",
+      "commence_time": "2026-10-02T00:15:00Z",
+      "book": "BetRivers",
+      "price": -115,
+      "price_fmt": "-115",
+      "fair_prob_pct": 55.6,
+      "fair_american": -125,
+      "ev_pct": 4.0,
+      "books_count": 11,
       "books": [
         {
-          "book": "theScore Bet",
-          "line": "254.5",
-          "price": "-110",
-          "ev_pct": 4.5,
+          "book": "BetRivers",
+          "line": "72.5",
+          "price": "-115",
+          "ev_pct": 4.0,
           "url": null
         },
         {
-          "book": "BetOnline.ag",
-          "line": "261.5",
-          "price": "-110",
-          "ev_pct": -6.1,
+          "book": "Bovada",
+          "line": "56.5",
+          "price": "-360",
+          "ev_pct": 3.2,
+          "url": null
+        },
+        {
+          "book": "Bovada",
+          "line": "66.5",
+          "price": "-190",
+          "ev_pct": 0.9,
+          "url": null
+        },
+        {
+          "book": "BetMGM",
+          "line": "74.5",
+          "price": "-120",
+          "ev_pct": -4.6,
+          "url": "https://sports.betmgm.com"
+        },
+        {
+          "book": "FanDuel",
+          "line": "75.5",
+          "price": "-113",
+          "ev_pct": -5.3,
+          "url": "https://sportsbook.fanduel.com"
+        },
+        {
+          "book": "theScore Bet",
+          "line": "74.5",
+          "price": "-125",
+          "ev_pct": -6.3,
           "url": null
         }
       ],
       "bet_url": "https://novig.com",
-      "headshot": null
+      "headshot": "https://a.espn.com/i/headshots/nfl/players/full/4569987.png"
     },
     {
       "id": "nfl-player-pass-yds-aaron-rodgers-over",
@@ -372,62 +400,62 @@
       "market_label": "Pass Yds",
       "player": "Aaron Rodgers",
       "side": "Over",
-      "line": 185.5,
-      "line_fmt": "185.5",
-      "prop_label": "Over 185.5 Pass Yds",
-      "true_line": 214.5,
+      "line": 186.5,
+      "line_fmt": "186.5",
+      "prop_label": "Over 186.5 Pass Yds",
+      "true_line": 215.64,
       "game": "Pittsburgh Steelers @ Cleveland Browns",
       "game_time": "Thu 8:15 PM ET",
       "commence_time": "2026-10-02T00:15:00Z",
       "book": "Bovada",
       "price": -250,
       "price_fmt": "-250",
-      "fair_prob_pct": 74.0,
-      "fair_american": -285,
-      "ev_pct": 3.6,
+      "fair_prob_pct": 74.1,
+      "fair_american": -287,
+      "ev_pct": 3.8,
       "books_count": 13,
       "books": [
         {
           "book": "Bovada",
-          "line": "185.5",
+          "line": "186.5",
           "price": "-250",
-          "ev_pct": 3.6,
+          "ev_pct": 3.8,
           "url": null
         },
         {
           "book": "BetRivers",
-          "line": "208.5",
-          "price": "-117",
-          "ev_pct": 2.6,
+          "line": "209.5",
+          "price": "-115",
+          "ev_pct": 3.6,
           "url": null
         },
         {
           "book": "Bovada",
-          "line": "195.5",
+          "line": "196.5",
           "price": "-190",
-          "ev_pct": 1.3,
+          "ev_pct": 1.5,
           "url": null
         },
         {
           "book": "Bovada",
-          "line": "205.5",
+          "line": "206.5",
           "price": "-145",
-          "ev_pct": -2.1,
+          "ev_pct": -1.9,
           "url": null
         },
         {
-          "book": "theScore Bet",
+          "book": "BetMGM",
           "line": "214.5",
-          "price": "-110",
-          "ev_pct": -4.5,
-          "url": null
+          "price": "-115",
+          "ev_pct": -4.6,
+          "url": "https://sports.betmgm.com"
         },
         {
-          "book": "FanDuel",
-          "line": "214.5",
-          "price": "-113",
-          "ev_pct": -5.8,
-          "url": "https://sportsbook.fanduel.com"
+          "book": "BetOnline.ag",
+          "line": "215.5",
+          "price": "-114",
+          "ev_pct": -5.9,
+          "url": null
         }
       ],
       "bet_url": "https://novig.com",
@@ -443,58 +471,58 @@
       "line": 0.5,
       "line_fmt": "0.5",
       "prop_label": "Over 0.5 Total Bases",
-      "true_line": 1.09,
+      "true_line": 1.1,
       "game": "Philadelphia Phillies @ Atlanta Braves",
       "game_time": "Thu 8:11 PM ET",
       "commence_time": "2026-10-02T00:11:00Z",
       "book": "theScore Bet",
       "price": -200,
       "price_fmt": "-200",
-      "fair_prob_pct": 68.9,
-      "fair_american": -221,
-      "ev_pct": 3.3,
+      "fair_prob_pct": 69.1,
+      "fair_american": -224,
+      "ev_pct": 3.6,
       "books_count": 6,
       "books": [
         {
           "book": "theScore Bet",
           "line": "0.5",
           "price": "-200",
-          "ev_pct": 3.3,
+          "ev_pct": 3.6,
           "url": null
-        },
-        {
-          "book": "BetOnline.ag",
-          "line": "1.5",
-          "price": "+158",
-          "ev_pct": -5.4,
-          "url": null
-        },
-        {
-          "book": "BetMGM",
-          "line": "1.5",
-          "price": "+155",
-          "ev_pct": -6.5,
-          "url": "https://sports.betmgm.com"
         },
         {
           "book": "Bovada",
           "line": "1.5",
           "price": "+155",
-          "ev_pct": -6.5,
+          "ev_pct": -5.9,
+          "url": null
+        },
+        {
+          "book": "BetOnline.ag",
+          "line": "1.5",
+          "price": "+155",
+          "ev_pct": -5.9,
           "url": null
         },
         {
           "book": "DraftKings",
           "line": "1.5",
           "price": "+155",
-          "ev_pct": -6.5,
+          "ev_pct": -5.9,
           "url": "https://sportsbook.draftkings.com"
+        },
+        {
+          "book": "BetMGM",
+          "line": "1.5",
+          "price": "+150",
+          "ev_pct": -7.8,
+          "url": "https://sports.betmgm.com"
         },
         {
           "book": "MyBookie.ag",
           "line": "1.5",
-          "price": "+147",
-          "ev_pct": -9.4,
+          "price": "+144",
+          "ev_pct": -10.0,
           "url": null
         }
       ],
@@ -540,142 +568,6 @@
       ],
       "bet_url": "https://novig.com",
       "headshot": null
-    },
-    {
-      "id": "nfl-player-rush-yds-jaylen-warren-over",
-      "sport": "NFL",
-      "market": "player_rush_yds",
-      "market_label": "Rush Yds",
-      "player": "Jaylen Warren",
-      "side": "Over",
-      "line": 72.5,
-      "line_fmt": "72.5",
-      "prop_label": "Over 72.5 Rush Yds",
-      "true_line": 75.62,
-      "game": "Pittsburgh Steelers @ Cleveland Browns",
-      "game_time": "Thu 8:15 PM ET",
-      "commence_time": "2026-10-02T00:15:00Z",
-      "book": "BetRivers",
-      "price": -117,
-      "price_fmt": "-117",
-      "fair_prob_pct": 55.6,
-      "fair_american": -125,
-      "ev_pct": 3.2,
-      "books_count": 11,
-      "books": [
-        {
-          "book": "BetRivers",
-          "line": "72.5",
-          "price": "-117",
-          "ev_pct": 3.2,
-          "url": null
-        },
-        {
-          "book": "Bovada",
-          "line": "56.5",
-          "price": "-360",
-          "ev_pct": 3.2,
-          "url": null
-        },
-        {
-          "book": "Bovada",
-          "line": "66.5",
-          "price": "-190",
-          "ev_pct": 0.9,
-          "url": null
-        },
-        {
-          "book": "BetMGM",
-          "line": "73.5",
-          "price": "-115",
-          "ev_pct": 0.7,
-          "url": "https://sports.betmgm.com"
-        },
-        {
-          "book": "FanDuel",
-          "line": "75.5",
-          "price": "-113",
-          "ev_pct": -5.3,
-          "url": "https://sportsbook.fanduel.com"
-        },
-        {
-          "book": "theScore Bet",
-          "line": "74.5",
-          "price": "-125",
-          "ev_pct": -6.3,
-          "url": null
-        }
-      ],
-      "bet_url": "https://novig.com",
-      "headshot": "https://a.espn.com/i/headshots/nfl/players/full/4569987.png"
-    },
-    {
-      "id": "nfl-player-rush-yds-quinshon-judkins-under",
-      "sport": "NFL",
-      "market": "player_rush_yds",
-      "market_label": "Rush Yds",
-      "player": "Quinshon Judkins",
-      "side": "Under",
-      "line": 58.5,
-      "line_fmt": "58.5",
-      "prop_label": "Under 58.5 Rush Yds",
-      "true_line": 55.73,
-      "game": "Pittsburgh Steelers @ Cleveland Browns",
-      "game_time": "Thu 8:15 PM ET",
-      "commence_time": "2026-10-02T00:15:00Z",
-      "book": "BetRivers",
-      "price": -118,
-      "price_fmt": "-118",
-      "fair_prob_pct": 55.0,
-      "fair_american": -122,
-      "ev_pct": 1.6,
-      "books_count": 11,
-      "books": [
-        {
-          "book": "BetRivers",
-          "line": "58.5",
-          "price": "-118",
-          "ev_pct": 1.6,
-          "url": null
-        },
-        {
-          "book": "Bovada",
-          "line": "65.5",
-          "price": "-200",
-          "ev_pct": 0.7,
-          "url": null
-        },
-        {
-          "book": "Bovada",
-          "line": "60.5",
-          "price": "-150",
-          "ev_pct": -2.4,
-          "url": null
-        },
-        {
-          "book": "DraftKings",
-          "line": "55.5",
-          "price": "-110",
-          "ev_pct": -5.3,
-          "url": "https://sportsbook.draftkings.com"
-        },
-        {
-          "book": "BetOnline.ag",
-          "line": "55.5",
-          "price": "-111",
-          "ev_pct": -5.8,
-          "url": null
-        },
-        {
-          "book": "theScore Bet",
-          "line": "56.5",
-          "price": "-120",
-          "ev_pct": -5.8,
-          "url": null
-        }
-      ],
-      "bet_url": "https://novig.com",
-      "headshot": "https://a.espn.com/i/headshots/nfl/players/full/4685702.png"
     }
   ]
 }
