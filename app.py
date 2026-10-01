@@ -507,39 +507,103 @@ def admin_email() -> str:
     return (os.environ.get("ADMIN_EMAIL") or "").strip().lower()
 
 
+def _resend_send(to: str, subject: str, text_body: str, html_body=None) -> tuple:
+    """Envía un email vía Resend HTTP API (HTTPS/443, funciona en Render free
+    donde el SMTP está bloqueado). Devuelve (ok, detalle)."""
+    import urllib.request
+    key = (os.environ.get("RESEND_API_KEY") or "").strip()
+    if not key:
+        return False, "falta RESEND_API_KEY"
+    from_addr = (os.environ.get("RESEND_FROM")
+                 or "The Sharp Team <onboarding@resend.dev>").strip()
+    reply_to = (os.environ.get("EMAIL_USER") or "thesharpteam8@gmail.com").strip()
+    payload = {"from": from_addr, "to": [to], "subject": subject,
+               "reply_to": reply_to, "text": text_body}
+    if html_body:
+        payload["html"] = html_body
+    req = urllib.request.Request(
+        "https://api.resend.com/emails",
+        data=json.dumps(payload).encode("utf-8"),
+        headers={"Authorization": f"Bearer {key}",
+                 "Content-Type": "application/json"},
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=25) as r:
+            body = r.read(2000).decode("utf-8", "replace")
+            ok = 200 <= r.status < 300
+            return ok, f"resend HTTP {r.status}: {body[:200]}"
+    except Exception as e:
+        return False, f"resend falló: {type(e).__name__}: {e}"
+
+
+def _smtp_send(to: str, subject: str, text_body: str, html_body=None,
+               from_header=None) -> tuple:
+    """Envío clásico por Gmail SMTP (fallback para desarrollo local; en
+    Render free está bloqueado). Devuelve (ok, detalle)."""
+    import smtplib
+    from email.message import EmailMessage
+    user = (os.environ.get("EMAIL_USER") or "").strip()
+    pwd = os.environ.get("EMAIL_PASS") or ""
+    if not (user and pwd):
+        return False, "faltan EMAIL_USER/EMAIL_PASS"
+    try:
+        msg = EmailMessage()
+        msg["Subject"] = subject
+        msg["From"] = from_header or f"The Sharp Team <{user}>"
+        msg["To"] = to
+        msg.set_content(text_body)
+        if html_body:
+            msg.add_alternative(html_body, subtype="html")
+        with smtplib.SMTP("smtp.gmail.com", 587, timeout=20) as s:
+            s.starttls()
+            s.login(user, pwd)
+            s.send_message(msg)
+        return True, f"smtp enviado a {to}"
+    except Exception as e:
+        return False, f"smtp falló: {type(e).__name__}: {e}"
+
+
+def _dispatch_email(to: str, subject: str, text_body: str, html_body=None,
+                    from_header=None) -> tuple:
+    """Despacha un email: Resend si hay API key (producción en Render),
+    si no SMTP Gmail (desarrollo local). Devuelve (ok, detalle)."""
+    if (os.environ.get("RESEND_API_KEY") or "").strip():
+        return _resend_send(to, subject, text_body, html_body)
+    return _smtp_send(to, subject, text_body, html_body, from_header)
+
+
+def send_email_sync(to: str, subject: str, text_body: str,
+                    html_body=None) -> tuple:
+    """Versión síncrona para pruebas/admin: devuelve (ok, detalle) real."""
+    return _dispatch_email(to, subject, text_body, html_body)
+
+
 def notify_new_member(nombre: str, email: str):
     """Avisa a Alex por email cuando alguien se registra.
 
-    SMTP Gmail con EMAIL_USER / EMAIL_PASS / ADMIN_EMAIL.
+    Resend (RESEND_API_KEY) en producción; SMTP Gmail (EMAIL_USER /
+    EMAIL_PASS) como fallback local. Usa ADMIN_EMAIL como destino.
     Si las variables no están configuradas o el envío falla, no hace
     nada: el registro sigue funcionando sin errores para el usuario.
     Se ejecuta en un hilo aparte para no retrasar la respuesta.
     """
+    dest = admin_email()
+    resend_ok = bool((os.environ.get("RESEND_API_KEY") or "").strip())
     user = (os.environ.get("EMAIL_USER") or "").strip()
     pwd = os.environ.get("EMAIL_PASS") or ""
-    dest = admin_email()
-    if not (user and pwd and dest):
+    if not dest or not (resend_ok or (user and pwd)):
         return
+
+    subject = f"The Sharp Team: new member — {nombre}"
+    text = (f"A new member registered:\n\n"
+            f"Name: {nombre}\n"
+            f"Email: {email}\n"
+            f"Date: {datetime.now(TZ).strftime('%Y-%m-%d %H:%M %Z')}\n")
 
     def _send():
         try:
-            import smtplib
-            from email.message import EmailMessage
-
-            msg = EmailMessage()
-            msg["Subject"] = f"The Sharp Team: new member — {nombre}"
-            msg["From"] = user
-            msg["To"] = dest
-            msg.set_content(
-                f"A new member registered:\n\n"
-                f"Name: {nombre}\n"
-                f"Email: {email}\n"
-                f"Date: {datetime.now(TZ).strftime('%Y-%m-%d %H:%M %Z')}\n"
-            )
-            with smtplib.SMTP("smtp.gmail.com", 587, timeout=20) as s:
-                s.starttls()
-                s.login(user, pwd)
-                s.send_message(msg)
+            _dispatch_email(dest, subject, text, from_header=user or None)
         except Exception:
             pass  # silencioso: nunca rompe el registro
 
@@ -637,31 +701,24 @@ WELCOME_HTML = """<div style="max-width:460px;margin:0 auto;background:#f2efe7;f
 def send_welcome_email(nombre: str, email: str):
     """Email de bienvenida al nuevo miembro (HTML profesional + texto plano).
 
-    Usa el mismo SMTP Gmail (EMAIL_USER / EMAIL_PASS). Si no está
-    configurado o el envío falla, no hace nada: el registro sigue
+    Resend (RESEND_API_KEY) en producción; SMTP Gmail como fallback local.
+    Si no está configurado o el envío falla, no hace nada: el registro sigue
     funcionando y el miembro ve la página de bienvenida en pantalla.
     Se ejecuta en un hilo aparte para no retrasar la respuesta.
     """
+    resend_ok = bool((os.environ.get("RESEND_API_KEY") or "").strip())
     user = (os.environ.get("EMAIL_USER") or "").strip()
     pwd = os.environ.get("EMAIL_PASS") or ""
-    if not (user and pwd):
+    if not (resend_ok or (user and pwd)):
         return
+
+    subject = WELCOME_SUBJECT
+    text = WELCOME_TEXT.replace("__NOMBRE__", nombre)
+    html = WELCOME_HTML.replace("__NOMBRE__", nombre)
 
     def _send():
         try:
-            import smtplib
-            from email.message import EmailMessage
-
-            msg = EmailMessage()
-            msg["Subject"] = WELCOME_SUBJECT
-            msg["From"] = f"The Sharp Team <{user}>"
-            msg["To"] = email
-            msg.set_content(WELCOME_TEXT.replace("__NOMBRE__", nombre))
-            msg.add_alternative(WELCOME_HTML.replace("__NOMBRE__", nombre), subtype="html")
-            with smtplib.SMTP("smtp.gmail.com", 587, timeout=20) as s:
-                s.starttls()
-                s.login(user, pwd)
-                s.send_message(msg)
+            _dispatch_email(email, subject, text, html)
         except Exception:
             pass  # silencioso: nunca rompe el registro
 
@@ -736,13 +793,15 @@ def send_payment_failed_email(nombre: str, email: str, pay_url: str) -> bool:
     Se envía UNA vez por factura (el webhook deduplica por invoice id, porque
     Stripe reintenta el cobro y manda payment_failed en cada intento).
 
-    Usa el mismo SMTP Gmail (EMAIL_USER / EMAIL_PASS). Si no está configurado
-    o el envío falla, no hace nada y devuelve False (el webhook lo audita).
+    Usa Resend (RESEND_API_KEY) en producción; SMTP Gmail como fallback
+    local. Si no está configurado o el envío falla, no hace nada y devuelve
+    False (el webhook lo audita).
     Se ejecuta en un hilo aparte para no retrasar la respuesta al webhook.
     """
+    resend_ok = bool((os.environ.get("RESEND_API_KEY") or "").strip())
     user = (os.environ.get("EMAIL_USER") or "").strip()
     pwd = os.environ.get("EMAIL_PASS") or ""
-    if not (user and pwd and email and pay_url):
+    if not (email and pay_url and (resend_ok or (user and pwd))):
         return False
 
     fecha = datetime.now(TZ).strftime("%b %-d, %-I:%M:%S %p %Z")
@@ -756,19 +815,7 @@ def send_payment_failed_email(nombre: str, email: str, pay_url: str) -> bool:
 
     def _send():
         try:
-            import smtplib
-            from email.message import EmailMessage
-
-            msg = EmailMessage()
-            msg["Subject"] = DUNNING_SUBJECT
-            msg["From"] = f"The Sharp Team <{user}>"
-            msg["To"] = email
-            msg.set_content(text)
-            msg.add_alternative(html, subtype="html")
-            with smtplib.SMTP("smtp.gmail.com", 587, timeout=20) as s:
-                s.starttls()
-                s.login(user, pwd)
-                s.send_message(msg)
+            _dispatch_email(email, DUNNING_SUBJECT, text, html)
         except Exception:
             pass  # silencioso: nunca rompe el webhook
 
@@ -2595,6 +2642,32 @@ def admin_cambiar_email():
     db.commit()
     flash(f"Email changed: {viejo} → {nuevo}.", "ok")
     return redirect(url_for("admin_miembros"))
+
+
+@app.route("/admin/test-welcome", methods=["POST"])
+def admin_test_welcome():
+    """ONE-TIME (prueba Resend 2026-10-01): envía el email de bienvenida REAL
+    a un email dado, como si el miembro se acabara de suscribir. Protegido
+    con X-Push-Key. Síncrono: reporta el resultado real del envío.
+    Se elimina después de la prueba."""
+    if not PUSH_TRIGGER_KEY or not secrets.compare_digest(
+        request.headers.get("X-Push-Key", ""), PUSH_TRIGGER_KEY
+    ):
+        return jsonify({"error": "forbidden"}), 403
+    data = request.get_json(force=True, silent=True) or {}
+    email = (data.get("email") or "").strip()
+    nombre = (data.get("nombre") or "").strip() or "Alex"
+    if "@" not in email:
+        return jsonify({"ok": False, "detail": "email inválido"}), 400
+    try:
+        ok, detail = send_email_sync(
+            email, WELCOME_SUBJECT,
+            WELCOME_TEXT.replace("__NOMBRE__", nombre),
+            WELCOME_HTML.replace("__NOMBRE__", nombre))
+        return jsonify({"ok": ok, "detail": detail})
+    except Exception as e:
+        return jsonify({"ok": False,
+                        "detail": f"falló: {type(e).__name__}: {e}"}), 500
 
 
 @app.route("/admin/migrar-track", methods=["GET", "POST"])
