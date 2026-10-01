@@ -2597,6 +2597,43 @@ def admin_cambiar_email():
     return redirect(url_for("admin_miembros"))
 
 
+@app.route("/admin/test-welcome", methods=["POST"])
+def admin_test_welcome():
+    """ONE-TIME (prueba 2026-10-01): envía el email de bienvenida REAL a un
+    email dado, como si el miembro se acabara de suscribir. Protegido con
+    X-Push-Key. Envío SÍNCRONO para reportar el resultado real. Se elimina
+    después de la prueba."""
+    if not PUSH_TRIGGER_KEY or not secrets.compare_digest(
+        request.headers.get("X-Push-Key", ""), PUSH_TRIGGER_KEY
+    ):
+        return jsonify({"error": "forbidden"}), 403
+    data = request.get_json(force=True, silent=True) or {}
+    email = (data.get("email") or "").strip()
+    nombre = (data.get("nombre") or "").strip() or "Alex"
+    if "@" not in email:
+        return jsonify({"ok": False, "detail": "email inválido"}), 400
+    user = (os.environ.get("EMAIL_USER") or "").strip()
+    pwd = os.environ.get("EMAIL_PASS") or ""
+    if not (user and pwd):
+        return jsonify({"ok": False, "detail": "faltan EMAIL_USER/EMAIL_PASS en Render"}), 500
+    try:
+        import smtplib
+        from email.message import EmailMessage
+        msg = EmailMessage()
+        msg["Subject"] = WELCOME_SUBJECT
+        msg["From"] = f"The Sharp Team <{user}>"
+        msg["To"] = email
+        msg.set_content(WELCOME_TEXT.replace("__NOMBRE__", nombre))
+        msg.add_alternative(WELCOME_HTML.replace("__NOMBRE__", nombre), subtype="html")
+        with smtplib.SMTP("smtp.gmail.com", 587, timeout=25) as s:
+            s.starttls()
+            s.login(user, pwd)
+            s.send_message(msg)
+        return jsonify({"ok": True, "detail": f"welcome enviado a {email} desde {user}"})
+    except Exception as e:
+        return jsonify({"ok": False, "detail": f"SMTP falló: {type(e).__name__}: {e}"}), 500
+
+
 @app.route("/admin/migrar-track", methods=["GET", "POST"])
 @login_required
 def admin_migrar_track():
