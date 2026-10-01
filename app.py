@@ -525,7 +525,12 @@ def _resend_send(to: str, subject: str, text_body: str, html_body=None) -> tuple
         "https://api.resend.com/emails",
         data=json.dumps(payload).encode("utf-8"),
         headers={"Authorization": f"Bearer {key}",
-                 "Content-Type": "application/json"},
+                 "Content-Type": "application/json",
+                 # Resend va detrás de Cloudflare: sin UA de navegador
+                 # devuelve 403 (error 1010, browser integrity check).
+                 "User-Agent": ("Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 "
+                               "like Mac OS X) AppleWebKit/605.1.15"),
+                 "Accept": "application/json"},
         method="POST",
     )
     try:
