@@ -62,6 +62,10 @@
 {% endblock %}
 {% block content %}
 {% if not skip_splash %}{% include "_splash.html" %}{% endif %}
+<style>
+/* Títulos "Today's Free Selections" / "Today's VIP Selection" pegados al borde izquierdo (pedido Alex 2026-10-01). Inline para que se actualice con la página sin depender del caché del style.css externo. */
+.section-head.title-flush{margin-left:-16px !important}
+</style>
 
 <!-- 01 · HERO estilo WGT (pedido Alex 2026-09-30): saludo + nombre completo del miembro en grande -->
 <section class="greet greet-wgt">
