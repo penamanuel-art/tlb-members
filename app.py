@@ -2927,13 +2927,13 @@ def api_new_members():
     db = get_db()
     if since:
         rows = db.execute(
-            "SELECT id, nombre, email, created_at FROM users"
+            "SELECT id, nombre, email, created_at, platinum_unlocked FROM users"
             " WHERE created_at >= ? ORDER BY created_at ASC, id ASC",
             (since,),
         ).fetchall()
     else:
         rows = db.execute(
-            "SELECT id, nombre, email, created_at FROM users"
+            "SELECT id, nombre, email, created_at, platinum_unlocked FROM users"
             " ORDER BY created_at DESC, id DESC LIMIT 20"
         ).fetchall()
     members = []
@@ -2945,6 +2945,7 @@ def api_new_members():
                 "nombre": d.get("nombre"),
                 "email": d.get("email"),
                 "created_at": d.get("created_at"),
+                "elite": bool(d.get("platinum_unlocked")),
             }
         )
     return jsonify({"members": members})
