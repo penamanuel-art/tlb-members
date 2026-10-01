@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-01T12:57:23-04:00",
+  "updated_at": "2026-10-01T13:27:24-04:00",
   "refresh_minutes": 60,
   "fair_source": "no-vig true line (median of implied, 2+ books)",
   "info_only": true,
@@ -27,14 +27,21 @@
       "game": "Philadelphia Phillies @ Atlanta Braves",
       "game_time": "Thu 8:11 PM ET",
       "commence_time": "2026-10-02T00:11:00Z",
-      "book": "BetOnline.ag",
-      "price": -169,
-      "price_fmt": "-169",
+      "book": "BetMGM",
+      "price": -165,
+      "price_fmt": "-165",
       "fair_prob_pct": 72.9,
       "fair_american": -269,
-      "ev_pct": 16.0,
+      "ev_pct": 17.0,
       "books_count": 6,
       "books": [
+        {
+          "book": "BetMGM",
+          "line": "0.5",
+          "price": "-165",
+          "ev_pct": 17.0,
+          "url": "https://sports.betmgm.com"
+        },
         {
           "book": "BetOnline.ag",
           "line": "0.5",
@@ -50,13 +57,6 @@
           "url": null
         },
         {
-          "book": "BetMGM",
-          "line": "0.5",
-          "price": "-175",
-          "ev_pct": 14.5,
-          "url": "https://sports.betmgm.com"
-        },
-        {
           "book": "theScore Bet",
           "line": "1.5",
           "price": "+130",
@@ -64,21 +64,21 @@
           "url": null
         },
         {
-          "book": "DraftKings",
-          "line": "1.5",
-          "price": "+116",
-          "ev_pct": -11.2,
-          "url": "https://sportsbook.draftkings.com"
-        },
-        {
           "book": "Bovada",
           "line": "1.5",
-          "price": "+115",
-          "ev_pct": -11.6,
+          "price": "+120",
+          "ev_pct": -9.5,
           "url": null
+        },
+        {
+          "book": "DraftKings",
+          "line": "1.5",
+          "price": "+120",
+          "ev_pct": -9.5,
+          "url": "https://sportsbook.draftkings.com"
         }
       ],
-      "bet_url": "https://novig.com",
+      "bet_url": "https://sports.betmgm.com",
       "headshot": "https://a.espn.com/i/headshots/mlb/players/full/33712.png"
     },
     {
@@ -179,6 +179,13 @@
           "url": null
         },
         {
+          "book": "BetMGM",
+          "line": "1.5",
+          "price": "+155",
+          "ev_pct": -3.0,
+          "url": "https://sports.betmgm.com"
+        },
+        {
           "book": "BetOnline.ag",
           "line": "1.5",
           "price": "+152",
@@ -191,13 +198,6 @@
           "price": "+146",
           "ev_pct": -6.4,
           "url": "https://sportsbook.draftkings.com"
-        },
-        {
-          "book": "BetMGM",
-          "line": "1.5",
-          "price": "+145",
-          "ev_pct": -6.8,
-          "url": "https://sports.betmgm.com"
         },
         {
           "book": "Bovada",
@@ -422,6 +422,46 @@
       "headshot": "https://a.espn.com/i/headshots/nfl/players/full/4569987.png"
     },
     {
+      "id": "ncaaf-player-pass-yds-ethan-grunkemeyer-over",
+      "sport": "NCAAF",
+      "market": "player_pass_yds",
+      "market_label": "Pass Yds",
+      "player": "Ethan Grunkemeyer",
+      "side": "Over",
+      "line": 254.5,
+      "line_fmt": "254.5",
+      "prop_label": "Over 254.5 Pass Yds",
+      "true_line": 260.47,
+      "game": "Pittsburgh Panthers @ Virginia Tech Hokies",
+      "game_time": "Fri 7:00 PM ET",
+      "commence_time": "2026-10-02T23:00:00Z",
+      "book": "theScore Bet",
+      "price": -110,
+      "price_fmt": "-110",
+      "fair_prob_pct": 54.8,
+      "fair_american": -121,
+      "ev_pct": 4.5,
+      "books_count": 2,
+      "books": [
+        {
+          "book": "theScore Bet",
+          "line": "254.5",
+          "price": "-110",
+          "ev_pct": 4.5,
+          "url": null
+        },
+        {
+          "book": "BetOnline.ag",
+          "line": "261.5",
+          "price": "-110",
+          "ev_pct": -6.1,
+          "url": null
+        }
+      ],
+      "bet_url": "https://novig.com",
+      "headshot": null
+    },
+    {
       "id": "mlb-batter-total-bases-mauricio-dubon-over",
       "sport": "MLB",
       "market": "batter_total_bases",
@@ -451,18 +491,18 @@
           "url": null
         },
         {
-          "book": "BetMGM",
-          "line": "1.5",
-          "price": "+160",
-          "ev_pct": -4.7,
-          "url": "https://sports.betmgm.com"
-        },
-        {
           "book": "BetOnline.ag",
           "line": "1.5",
           "price": "+158",
           "ev_pct": -5.4,
           "url": null
+        },
+        {
+          "book": "BetMGM",
+          "line": "1.5",
+          "price": "+155",
+          "ev_pct": -6.5,
+          "url": "https://sports.betmgm.com"
         },
         {
           "book": "Bovada",
@@ -490,58 +530,44 @@
       "headshot": "https://a.espn.com/i/headshots/mlb/players/full/35304.png"
     },
     {
-      "id": "mlb-batter-total-bases-sean-murphy-over",
+      "id": "mlb-pitcher-strikeouts-ray-kerr-over",
       "sport": "MLB",
-      "market": "batter_total_bases",
-      "market_label": "Total Bases",
-      "player": "Sean Murphy",
+      "market": "pitcher_strikeouts",
+      "market_label": "Strikeouts",
+      "player": "Ray Kerr",
       "side": "Over",
       "line": 0.5,
       "line_fmt": "0.5",
-      "prop_label": "Over 0.5 Total Bases",
-      "true_line": 0.5,
+      "prop_label": "Over 0.5 Strikeouts",
+      "true_line": 1.6,
       "game": "Philadelphia Phillies @ Atlanta Braves",
       "game_time": "Thu 8:11 PM ET",
       "commence_time": "2026-10-02T00:11:00Z",
-      "book": "BetMGM",
-      "price": 105,
-      "price_fmt": "+105",
-      "fair_prob_pct": 50.0,
-      "fair_american": -100,
-      "ev_pct": 2.5,
-      "books_count": 4,
+      "book": "BetOnline.ag",
+      "price": -222,
+      "price_fmt": "-222",
+      "fair_prob_pct": 70.9,
+      "fair_american": -244,
+      "ev_pct": 2.9,
+      "books_count": 2,
       "books": [
-        {
-          "book": "BetMGM",
-          "line": "0.5",
-          "price": "+105",
-          "ev_pct": 2.5,
-          "url": "https://sports.betmgm.com"
-        },
-        {
-          "book": "theScore Bet",
-          "line": "0.5",
-          "price": "-110",
-          "ev_pct": -4.5,
-          "url": null
-        },
         {
           "book": "BetOnline.ag",
           "line": "0.5",
-          "price": "-114",
-          "ev_pct": -6.1,
+          "price": "-222",
+          "ev_pct": 2.9,
           "url": null
         },
         {
           "book": "MyBookie.ag",
-          "line": "0.5",
-          "price": "-117",
+          "line": "1.5",
+          "price": "-128",
           "ev_pct": -7.3,
           "url": null
         }
       ],
-      "bet_url": "https://sports.betmgm.com",
-      "headshot": "https://a.espn.com/i/headshots/mlb/players/full/33557.png"
+      "bet_url": "https://novig.com",
+      "headshot": "https://a.espn.com/i/headshots/mlb/players/full/40426.png"
     }
   ]
 }
