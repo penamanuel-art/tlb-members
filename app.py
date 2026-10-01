@@ -534,7 +534,13 @@ def _resend_send(to: str, subject: str, text_body: str, html_body=None) -> tuple
             ok = 200 <= r.status < 300
             return ok, f"resend HTTP {r.status}: {body[:200]}"
     except Exception as e:
-        return False, f"resend falló: {type(e).__name__}: {e}"
+        extra = ""
+        try:  # HTTPError trae el cuerpo con el motivo real
+            code = getattr(e, "code", "?")
+            extra = f" [HTTP {code}] " + e.read().decode("utf-8", "replace")[:300]
+        except Exception:
+            pass
+        return False, f"resend falló: {type(e).__name__}: {e}{extra}".strip()
 
 
 def _smtp_send(to: str, subject: str, text_body: str, html_body=None,
