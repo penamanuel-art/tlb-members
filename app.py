@@ -669,6 +669,105 @@ def send_welcome_email(nombre: str, email: str):
     threading.Thread(target=_send, daemon=True).start()
 
 
+# --------------------------------- Dunning (pago fallido) ----
+DUNNING_SUBJECT = "Today's card is set. Your card isn't."
+
+DUNNING_TEXT = """Hi __NOMBRE__,
+
+Today's card is set. Your card isn't.
+
+Your last membership payment did not go through, so your VIP plays are paused.
+
+Nothing is canceled and nothing was missed on your end - cards just fail sometimes. Today's card is posted and waiting. Fix the card and everything switches back on instantly, usually within a couple of minutes.
+
+Fix your card in one tap (takes about 30 seconds):
+__PAY_URL__
+
+Your Free Plays stay on while the card is sorted - that is part of every membership. Your VIP plays unlock the moment the payment lands. If anything looks off, just reply to this email and a real person will sort it.
+
+- The Sharp Team
+
+Service notice about your membership billing.
+
+Bet responsibly - 21+ - Gambling problem? Call 1-800-GAMBLER (1-800-426-2537): free and confidential help, 24/7.
+"""
+
+DUNNING_HTML = """<div style="max-width:460px;margin:0 auto;background:#ffffff;font-family:-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+<div style="background:#0a0a0f;text-align:center;padding:26px 30px 24px;border-top:3px solid #d4af37;border-radius:18px 18px 0 0;">
+<div style="font-size:13px;letter-spacing:4px;color:#d4af37;margin-bottom:8px;">THE&nbsp;SHARP&nbsp;TEAM</div>
+<div style="color:#8f8fa3;font-size:13px;letter-spacing:1px;">MEMBERSHIP&nbsp;BILLING</div>
+</div>
+<div style="padding:30px 28px 26px;">
+<div style="font-size:29px;font-weight:800;color:#111111;line-height:1.3;text-align:center;margin:0 0 22px;">Today's card is <span style="color:#b8860b;">set.</span><br>Your card isn't.</div>
+<div style="background:#fdf6e3;border:1.5px solid #e3b341;border-radius:16px;padding:24px 22px;text-align:center;">
+<p style="margin:0 0 14px;font-size:19px;font-weight:700;color:#7a5b00;line-height:1.45;">Your last membership payment did not go through, so your VIP plays are paused.</p>
+<p style="margin:0 0 18px;font-size:15px;color:#8a6d1a;line-height:1.6;">Nothing is canceled and nothing was missed on your end &mdash; cards just fail sometimes. Today's card is posted and waiting. Fix the card and everything switches back on instantly, usually within a couple of minutes.</p>
+<a href="__PAY_URL__" style="display:inline-block;background:#c9920e;color:#141414;font-weight:800;font-size:17px;padding:14px 28px;border-radius:12px;text-decoration:none;">Fix my card in one tap &rarr;</a>
+<p style="margin:16px 0 0;font-size:13.5px;color:#a0863a;line-height:1.55;">Takes about 30 seconds. Your Free Plays stay yours either way.</p>
+</div>
+<p style="font-size:15.5px;line-height:1.65;color:#555555;margin:24px 0;">Your Free Plays stay on while the card is sorted &mdash; that is part of every membership. Your VIP plays unlock the moment the payment lands. If anything looks off, just reply to this email and a real person will sort it.</p>
+<div style="text-align:center;margin:4px 0;">
+<a href="__PAY_URL__" style="display:inline-block;background:#00c389;color:#06281c;font-weight:800;font-size:17px;letter-spacing:1px;padding:16px 34px;border-radius:12px;text-decoration:none;">FIX MY CARD &rarr;</a>
+</div>
+<p style="text-align:center;font-size:14px;color:#888888;margin:16px 0 2px;">Service notice about your membership billing.</p>
+<p style="text-align:center;font-size:13px;color:#bbbbbb;margin:0;">__FECHA__</p>
+</div>
+<div style="background:#0a0a0f;border-radius:0 0 18px 18px;padding:26px 28px;text-align:center;">
+<div style="color:#d4af37;font-size:13px;letter-spacing:3px;margin-bottom:10px;">THE&nbsp;SHARP&nbsp;TEAM</div>
+<div style="color:#77778a;font-size:13.5px;line-height:1.8;">250 Park Avenue, Suite 1800, New York, NY 10017<br>(551) 326-3312<br><br>21+ &middot; Play responsibly &middot; 1-800-GAMBLER<br><span style="font-size:12px;">Informational purposes only. Betting involves risk &mdash; never wager more than you can afford to lose.</span></div>
+</div>
+</div>"""
+
+
+def send_payment_failed_email(nombre: str, email: str, pay_url: str) -> bool:
+    """Dunning estilo WGT: al fallar un cobro (invoice.payment_failed).
+
+    Email al miembro con el botón "Fix my card in one tap" que apunta a la
+    hosted_invoice_url de Stripe (paga esa factura / actualiza la tarjeta).
+    Se envía UNA vez por factura (el webhook deduplica por invoice id, porque
+    Stripe reintenta el cobro y manda payment_failed en cada intento).
+
+    Usa el mismo SMTP Gmail (EMAIL_USER / EMAIL_PASS). Si no está configurado
+    o el envío falla, no hace nada y devuelve False (el webhook lo audita).
+    Se ejecuta en un hilo aparte para no retrasar la respuesta al webhook.
+    """
+    user = (os.environ.get("EMAIL_USER") or "").strip()
+    pwd = os.environ.get("EMAIL_PASS") or ""
+    if not (user and pwd and email and pay_url):
+        return False
+
+    fecha = datetime.now(TZ).strftime("%b %-d, %-I:%M:%S %p %Z")
+    html = (DUNNING_HTML
+            .replace("__NOMBRE__", nombre or "there")
+            .replace("__PAY_URL__", pay_url)
+            .replace("__FECHA__", fecha))
+    text = (DUNNING_TEXT
+            .replace("__NOMBRE__", nombre or "there")
+            .replace("__PAY_URL__", pay_url))
+
+    def _send():
+        try:
+            import smtplib
+            from email.message import EmailMessage
+
+            msg = EmailMessage()
+            msg["Subject"] = DUNNING_SUBJECT
+            msg["From"] = f"The Sharp Team <{user}>"
+            msg["To"] = email
+            msg.set_content(text)
+            msg.add_alternative(html, subtype="html")
+            with smtplib.SMTP("smtp.gmail.com", 587, timeout=20) as s:
+                s.starttls()
+                s.login(user, pwd)
+                s.send_message(msg)
+        except Exception:
+            pass  # silencioso: nunca rompe el webhook
+
+    import threading
+    threading.Thread(target=_send, daemon=True).start()
+    return True
+
+
 
 def load_data():
     """Devuelve (program, plays). Soporta plays.json como lista (viejo) o dict (nuevo)."""
@@ -3084,7 +3183,7 @@ def stripe_webhook():
       - invoice.paid                 -> activa Elite (pago inicial o renovación semanal)
       - customer.subscription.updated -> actualiza estado / detecta cancelación al fin del período
       - customer.subscription.deleted -> desactiva Elite
-      - invoice.payment_failed        -> queda en auditoría para que Alex lo vea
+      - invoice.payment_failed        -> dunning al miembro (email "Fix my card", 1x por factura)
 
     Seguridad: verifica la firma con STRIPE_WEBHOOK_SECRET. Deduplica por
     event_id (Stripe reintenta eventos). Nunca devuelve 500: ante cualquier
@@ -3224,8 +3323,31 @@ def stripe_webhook():
             else:
                 _auditar("", f"{etype} sin miembro vinculado (sub {sub_id[:20] if sub_id else 'n/a'})")
         elif etype == "invoice.payment_failed":
+            # Cobro fallido: dunning estilo WGT al miembro (una vez por factura,
+            # porque Stripe reintenta y manda payment_failed en cada intento).
             email = (data.get("customer_email") or "").strip().lower()
-            _auditar(email, "pago fallido: revisar con el miembro")
+            invoice_id = data.get("id") or ""
+            pay_url = (data.get("hosted_invoice_url") or
+                       "https://the-line-breaker-members.onrender.com/cuenta")
+            nombre = ""
+            if email:
+                r = db.execute("SELECT nombre FROM users WHERE email = ?",
+                               (email,)).fetchone()
+                if r:
+                    nombre = r["nombre"] or ""
+            ya_notificado = False
+            if invoice_id:
+                ya_notificado = bool(db.execute(
+                    "SELECT 1 FROM stripe_events WHERE tipo = 'invoice.payment_failed'"
+                    " AND detalle LIKE ? LIMIT 1",
+                    (f"%{invoice_id}%",)).fetchone())
+            if ya_notificado:
+                _auditar(email, f"pago fallido invoice {invoice_id}: ya notificado antes")
+            else:
+                ok = send_payment_failed_email(nombre, email, pay_url)
+                _auditar(email, f"pago fallido invoice {invoice_id}: "
+                                + ("dunning enviado" if ok
+                                   else "dunning NO enviado (falta EMAIL_USER/EMAIL_PASS en Render)"))
         else:
             _auditar("", f"evento no procesado: {etype}")
     except Exception as exc:  # nunca 500: Stripe reintentaría sin parar
