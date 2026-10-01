@@ -2951,51 +2951,6 @@ def api_new_members():
     return jsonify({"members": members})
 
 
-@app.route("/api/admin/cambiar-email", methods=["POST"])
-def api_admin_cambiar_email():
-    """TEMPORAL (pedido Alex 2026-10-01): cambia el email de un usuario.
-
-    JSON: {"old_email": "...", "new_email": "..."}.
-    Solo permite cambiar el email de la cuenta admin (is_admin=1) y falla
-    si el email nuevo ya está en uso. Protegido con
-    header X-Push-Key == PUSH_TRIGGER_KEY. SE ELIMINA después de usar.
-    """
-    if not PUSH_TRIGGER_KEY or not secrets.compare_digest(
-        request.headers.get("X-Push-Key", ""), PUSH_TRIGGER_KEY
-    ):
-        return jsonify({"error": "forbidden"}), 403
-    data = request.get_json(force=True, silent=True) or {}
-    old_email = (data.get("old_email") or "").strip().lower()
-    new_email = (data.get("new_email") or "").strip().lower()
-    if not old_email or not new_email or "@" not in new_email:
-        return jsonify({"error": "emails invalidos"}), 400
-    db = get_db()
-    cols = ("id, nombre, email, is_admin, platinum_unlocked,"
-            " stripe_customer_id, stripe_subscription_id")
-    row = db.execute(
-        "SELECT " + cols + " FROM users WHERE email = ?", (old_email,)
-    ).fetchone()
-    if not row:
-        return jsonify({"error": "usuario no encontrado"}), 404
-    row = dict(row) if not isinstance(row, dict) else row
-    if not row.get("is_admin"):
-        return jsonify({"error": "solo la cuenta admin"}), 403
-    ocupado = db.execute(
-        "SELECT id FROM users WHERE email = ?", (new_email,)
-    ).fetchone()
-    if ocupado:
-        return jsonify({"error": "el email nuevo ya esta en uso"}), 409
-    db.execute(
-        "UPDATE users SET email = ? WHERE id = ?", (new_email, row["id"])
-    )
-    db.commit()
-    despues = db.execute(
-        "SELECT " + cols + " FROM users WHERE id = ?", (row["id"],)
-    ).fetchone()
-    despues = dict(despues) if not isinstance(despues, dict) else despues
-    return jsonify({"ok": True, "antes": row, "despues": despues})
-
-
 @app.route("/api/telegram-invite-pool/add", methods=["POST"])
 def api_telegram_invite_pool_add():
     """El cron de la VM deposita links de invitación a Sharp Club.
