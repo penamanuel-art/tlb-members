@@ -2911,6 +2911,45 @@ def api_telegram_pending_ack():
     return jsonify({"ok": True})
 
 
+@app.route("/api/new-members", methods=["GET"])
+def api_new_members():
+    """Miembros registrados. ?since=ISO (created_at) filtra desde esa marca.
+
+    Lo lee el cron de la VM cada 10 min para avisar a Alex en el chat
+    cada vez que alguien crea su cuenta. Protegido con
+    header X-Push-Key == PUSH_TRIGGER_KEY.
+    """
+    if not PUSH_TRIGGER_KEY or not secrets.compare_digest(
+        request.headers.get("X-Push-Key", ""), PUSH_TRIGGER_KEY
+    ):
+        return jsonify({"error": "forbidden"}), 403
+    since = (request.args.get("since") or "").strip()
+    db = get_db()
+    if since:
+        rows = db.execute(
+            "SELECT id, nombre, email, created_at FROM users"
+            " WHERE created_at >= ? ORDER BY created_at ASC, id ASC",
+            (since,),
+        ).fetchall()
+    else:
+        rows = db.execute(
+            "SELECT id, nombre, email, created_at FROM users"
+            " ORDER BY created_at DESC, id DESC LIMIT 20"
+        ).fetchall()
+    members = []
+    for r in rows:
+        d = dict(r) if not isinstance(r, dict) else r
+        members.append(
+            {
+                "id": d["id"],
+                "nombre": d.get("nombre"),
+                "email": d.get("email"),
+                "created_at": d.get("created_at"),
+            }
+        )
+    return jsonify({"members": members})
+
+
 @app.route("/api/telegram-invite-pool/add", methods=["POST"])
 def api_telegram_invite_pool_add():
     """El cron de la VM deposita links de invitación a Sharp Club.
