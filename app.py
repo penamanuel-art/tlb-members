@@ -2597,6 +2597,48 @@ def admin_cambiar_email():
     return redirect(url_for("admin_miembros"))
 
 
+@app.route("/admin/consolidar-email")
+@login_required
+def admin_consolidar_email():
+    """ONE-TIME (2026-10-01, pedido por Alex): cambia el email de una cuenta de
+    miembro al nuevo indicado (?origen= &nuevo=). Si el email nuevo ya lo ocupa
+    una cuenta de prueba VACÍA (sin VIP, sin Stripe, sin jugadas, no admin),
+    la elimina primero. Solo admin. Se quitará después de usar."""
+    me = current_user()
+    if not is_admin_for(me):
+        return "Forbidden", 403
+    origen = (request.args.get("origen") or "").strip().lower()
+    nuevo = (request.args.get("nuevo") or "").strip().lower()
+    db = get_db()
+    acc = db.execute("SELECT * FROM users WHERE email = ?", (origen,)).fetchone()
+    if not acc:
+        return f"Origen {origen} no existe", 404
+    if not nuevo or "@" not in nuevo or "." not in nuevo.split("@")[-1]:
+        return "Nuevo email inválido", 400
+    conf = db.execute("SELECT * FROM users WHERE email = ? AND id != ?",
+                      (nuevo, acc["id"])).fetchone()
+    borrada = None
+    if conf:
+        if conf["platinum_unlocked"] or conf["stripe_customer_id"] or conf["is_admin"]:
+            return f"Conflicto: {nuevo} es cuenta con VIP/Stripe/admin; no se toca", 409
+        njug = db.execute("SELECT COUNT(*) c FROM tracked_plays WHERE user_id = ?",
+                          (conf["id"],)).fetchone()["c"]
+        if njug:
+            return f"Conflicto: {nuevo} tiene {njug} jugadas; no se toca", 409
+        db.execute("DELETE FROM tracked_plays WHERE user_id = ?", (conf["id"],))
+        db.execute("DELETE FROM checkins WHERE user_id = ?", (conf["id"],))
+        try:
+            db.execute("DELETE FROM push_subscriptions WHERE member_id = ?", (conf["id"],))
+        except Exception:
+            pass
+        db.execute("DELETE FROM users WHERE id = ?", (conf["id"],))
+        borrada = f"{conf['nombre']} <{conf['email']}>"
+    db.execute("UPDATE users SET email = ? WHERE id = ?", (nuevo, acc["id"]))
+    db.commit()
+    return ("OK: cuenta '%s' %s -> %s" % (acc["nombre"], origen, nuevo)
+            + (f" | eliminada cuenta vacía: {borrada}" if borrada else "")), 200
+
+
 @app.route("/admin/migrar-track", methods=["GET", "POST"])
 @login_required
 def admin_migrar_track():
