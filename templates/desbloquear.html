@@ -1,30 +1,30 @@
 {% extends "base.html" %}
-{% block title %}Unlock Elite — The Sharp Team{% endblock %}
+{% block title %}Unlock VIP — The Sharp Team{% endblock %}
 {% block content %}
 
 <section class="tracker-head">
   <div>
-    <p class="kicker">ELITE MEMBERS</p>
-    <h2>Unlock the Elite play.</h2>
+    <p class="kicker">VIP MEMBERS</p>
+    <h2>Unlock the VIP play.</h2>
   </div>
 </section>
 
 {% if ya_desbloqueada %}
-<div class="flash flash-ok">Your Elite access is already active. The day's top play appears unlocked on your card.</div>
+<div class="flash flash-ok">Your VIP access is already active. The day's top play appears unlocked on your card.</div>
 <p class="center"><a class="btn btn-place" href="{{ url_for('home') }}">View my plays →</a></p>
 {% else %}
 <article class="price-box">
-  <p class="price-kicker">★ WEEKLY ELITE</p>
+  <p class="price-kicker">★ WEEKLY VIP</p>
   <p class="price-value"><b>$1</b> <span>the first week</span></p>
   <p class="price-then">then <b>$23/week</b> · cancel anytime</p>
   <ul class="price-list">
     <li>The top play of each day, complete: pick, odds, stake and edge</li>
     <li>The highest estimated value of the day</li>
-    <li>Everything else stays the same: Platinum, tracker, Masterclass and results</li>
+    <li>Everything else stays the same: Free Plays, tracker, Masterclass and results</li>
   </ul>
   <a class="btn btn-place btn-block" href="{{ stripe_url }}" target="_blank" rel="noopener">Pay $1 and unlock →</a>
-  <p class="center"><b>Important:</b> use the same email address as your member account — that's how your Elite access unlocks automatically.</p>
-  <p class="muted center">Secure payment with Stripe. $1 the first week, then $23/week · cancel anytime. After paying, we activate your Elite access.</p>
+  <p class="center"><b>Important:</b> use the same email address as your member account — that's how your VIP access unlocks automatically.</p>
+  <p class="muted center">Secure payment with Stripe. $1 the first week, then $23/week · cancel anytime. After paying, we activate your VIP access.</p>
 </article>
 
 <div class="section-head" style="margin-top: 32px;">

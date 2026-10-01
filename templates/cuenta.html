@@ -86,8 +86,8 @@
       <a href="https://t.me/thesharpteam" target="_blank" class="btn btn-block" style="text-decoration:none;text-align:center;border:1px solid var(--gold);color:var(--gold);">Join Public Card →</a>
     </div>
     <div>
-      <p class="muted">⭐ <b>Sharp Club channel:</b> unlock your Elite membership to get your personal invite.</p>
-      <a href="{{ url_for('desbloquear') }}" class="btn btn-primary btn-block" style="text-decoration:none;text-align:center;">Unlock Elite →</a>
+      <p class="muted">⭐ <b>Sharp Club channel:</b> unlock your VIP membership to get your personal invite.</p>
+      <a href="{{ url_for('desbloquear') }}" class="btn btn-primary btn-block" style="text-decoration:none;text-align:center;">Unlock VIP →</a>
     </div>
   </div>
   {% endif %}
@@ -152,7 +152,7 @@
   <p class="muted"><a href="{{ url_for('cuenta_cancelar') }}" class="danger-link">Cancel my membership</a></p>
   {% else %}
   <p class="bankroll-current">Status: <b class="cancel-text">Inactive</b></p>
-  <p class="muted"><a href="{{ url_for('desbloquear_platinum') }}">Subscribe for $1 and unlock Elite →</a></p>
+  <p class="muted"><a href="{{ url_for('desbloquear_platinum') }}">Subscribe for $1 and unlock VIP →</a></p>
   {% endif %}
 </section>
 {% endblock %}
