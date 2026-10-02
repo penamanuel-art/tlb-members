@@ -98,6 +98,13 @@ PUSH_TRIGGER_KEY = os.environ.get("PUSH_TRIGGER_KEY", "")
 # env var TELEGRAM_WEBHOOK_SECRET.
 TELEGRAM_WEBHOOK_SECRET = os.environ.get("TELEGRAM_WEBHOOK_SECRET", "")
 TELEGRAM_BOT_USERNAME = os.environ.get("TELEGRAM_BOT_USERNAME", "thesharpteam_bot")
+# Link permanente de invitación al canal privado VIP Plays (Telegram).
+# 2026-10-02: reemplaza el pool de links de un solo uso (fricción: Telegram
+# muestra "Expired Link" a usuarios baneados y los links se agotaban).
+# Es directo, sin expiración ni límite de miembros; el control de acceso lo
+# hace el ban-sync (los que cancelan son baneados del canal en ~10 min y un
+# baneado no puede entrar aunque tenga el link).
+TELEGRAM_VIP_INVITE_LINK = "https://t.me/+_eNhcbD3k4RlNTk5"
 
 try:
     from pywebpush import webpush, WebPushException
@@ -3335,37 +3342,19 @@ def api_telegram_invite_pool_status():
 
 @app.route("/api/telegram-invite", methods=["GET"])
 def api_telegram_invite():
-    """Entrega al miembro Elite un link personal de invitación a Sharp Club.
+    """Entrega al miembro Elite el link permanente de invitación a VIP Plays.
 
-    Un solo uso por link (member_limit=1 en Telegram). Requiere sesión y
-    Elite activa. Si el pool está vacío, el cron lo rellena en ~10 min.
+    2026-10-02: link permanente directo (sin expiración ni límite de
+    miembros); reemplaza el pool de un solo uso. Requiere sesión y Elite
+    activa. El control de acceso lo hace el ban-sync: un baneado no puede
+    entrar aunque tenga el link.
     """
     user = current_user()
     if user is None:
         return jsonify({"error": "login_required"}), 401
     if not platinum_unlocked_for(user):
         return jsonify({"error": "elite_required"}), 403
-    db = get_db()
-    # 2026-10-01 (incidente real): el pool entregaba el link más VIEJO primero
-    # (ORDER BY id), que podía estar a horas de expirar (7 días). Ahora se
-    # entrega el más FRESCO y se ignoran los ya expirados.
-    from datetime import timedelta as _td
-    limite = (datetime.now(timezone.utc) - _td(days=7)).isoformat(timespec="seconds")
-    row = db.execute(
-        "SELECT id, invite_link FROM telegram_invite_links"
-        " WHERE used = 0 AND created_at > ? ORDER BY id DESC LIMIT 1",
-        (limite,),
-    ).fetchone()
-    if row is None:
-        return jsonify({"error": "empty_pool", "retry_in": "10 min"}), 503
-    d = dict(row) if not isinstance(row, dict) else row
-    db.execute(
-        "UPDATE telegram_invite_links SET used = 1, used_by_user_id = ?"
-        " WHERE id = ?",
-        (user["id"], d["id"]),
-    )
-    db.commit()
-    return jsonify({"ok": True, "invite_link": d["invite_link"]})
+    return jsonify({"ok": True, "invite_link": TELEGRAM_VIP_INVITE_LINK})
 
 
 @app.route("/stripe/webhook", methods=["POST"])

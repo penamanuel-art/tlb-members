@@ -54,7 +54,7 @@
           if (d.ok && d.invite_link) {
             window.open(d.invite_link, '_blank');
             msg.style.display = 'block';
-            msg.textContent = 'Invite opened. If it expired, tap again for a fresh one.';
+            msg.textContent = 'Invite opened in Telegram.';
             btn.disabled = false;
             btn.textContent = 'Join VIP Plays →';
           } else if (d.error === 'empty_pool') {
