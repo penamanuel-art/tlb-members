@@ -3232,6 +3232,15 @@ def api_telegram_invite_pool_status():
     ):
         return jsonify({"error": "forbidden"}), 403
     db = get_db()
+    # 2026-10-01: los links expiran a los 7 días en Telegram; los vencidos sin
+    # usar se purgan para que el conteo sea real y el cron reponga.
+    from datetime import timedelta as _td
+    limite = (datetime.now(timezone.utc) - _td(days=7)).isoformat(timespec="seconds")
+    db.execute(
+        "DELETE FROM telegram_invite_links WHERE used = 0 AND created_at <= ?",
+        (limite,),
+    )
+    db.commit()
     row = db.execute(
         "SELECT COUNT(*) AS n FROM telegram_invite_links WHERE used = 0"
     ).fetchone()
@@ -3252,9 +3261,15 @@ def api_telegram_invite():
     if not platinum_unlocked_for(user):
         return jsonify({"error": "elite_required"}), 403
     db = get_db()
+    # 2026-10-01 (incidente real): el pool entregaba el link más VIEJO primero
+    # (ORDER BY id), que podía estar a horas de expirar (7 días). Ahora se
+    # entrega el más FRESCO y se ignoran los ya expirados.
+    from datetime import timedelta as _td
+    limite = (datetime.now(timezone.utc) - _td(days=7)).isoformat(timespec="seconds")
     row = db.execute(
         "SELECT id, invite_link FROM telegram_invite_links"
-        " WHERE used = 0 ORDER BY id LIMIT 1"
+        " WHERE used = 0 AND created_at > ? ORDER BY id DESC LIMIT 1",
+        (limite,),
     ).fetchone()
     if row is None:
         return jsonify({"error": "empty_pool", "retry_in": "10 min"}), 503
