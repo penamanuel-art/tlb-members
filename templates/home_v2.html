@@ -1,0 +1,524 @@
+{% extends "base_v2.html" %}
+{% block title %}Today — The Sharp Team{% endblock %}
+{% block content %}
+<style>
+/* v2-only extras for home */
+.v2-bar{height:8px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;margin-top:10px}
+.v2-bar span{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--v2-blue),var(--v2-green))}
+.v2-level-sub{font-size:12px;color:var(--v2-muted);margin-top:8px}
+</style>
+
+<!-- HERO · compact performance header (original v2 design, not a WGT greeting) -->
+<section class="v2-hero">
+  <div>
+    <p class="v2-eyebrow">The Sharp Team · {{ fecha }}</p>
+    <h1 class="v2-greet">{{ saludo }}, <span>{{ nombre_corto }}</span></h1>
+  </div>
+  <div class="v2-hero-right">
+    <img src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team" class="v2-hero-logo">
+    {% if card_pendiente %}
+    <span class="v2-status pending"><span class="v2-dot"></span>CARD PENDING</span>
+    {% else %}
+    <span class="v2-status live"><span class="v2-dot"></span>CARD LIVE</span>
+    {% endif %}
+  </div>
+</section>
+
+<!-- 01 · TODAY'S PLAYS -->
+<section class="v2-sec">
+  <div class="v2-sec-head">
+    <div>
+      <p class="v2-sec-eyebrow"><b>01</b> · Today's plays</p>
+      <h2 class="v2-sec-title">{% if card_pendiente %}Nothing posted yet{% else %}Today's plays{% endif %}</h2>
+      {% if not card_pendiente %}
+      <p class="v2-sec-sub">Tap a card for the ticket + write-up</p>
+      <span class="v2-free-badge">FREE WITH YOUR MEMBERSHIP</span>
+      {% endif %}
+    </div>
+    <a class="v2-link" href="{{ url_for('tracker') }}">View my tracker →</a>
+  </div>
+
+  {% set golds = plays | rejectattr('nivel', 'equalto', 'ELITE') | list %}
+  {% if card_pendiente %}
+  <div class="v2-empty">
+    <h3>No plays posted yet today</h3>
+    <p>The Sharp Team posts today's card at 2:00 PM ET on weekdays and 11:00 AM ET on weekends. Check back then — every play public, win or loss.</p>
+    <p>Made a bet on your own? <a href="{{ url_for('tracker') }}">Log it in your tracker →</a></p>
+  </div>
+  {% elif golds %}
+  <p class="v2-sec-eyebrow" style="margin-bottom:10px">Today's Free Selections</p>
+  <div class="v2-plays">
+    {% for p in golds %}
+      {% include "_play_card.html" %}
+    {% endfor %}
+  </div>
+  {% else %}
+  <p class="muted">No value plays today.</p>
+  {% endif %}
+
+  {# VIP selection — teaser stays visible for non-VIP, exactly like the classic theme #}
+  {% set plat = plays | selectattr('nivel', 'equalto', 'ELITE') | list %}
+  {% if plat or not platinum_unlocked %}
+  <p class="v2-sec-eyebrow" style="margin:22px 0 10px">Today's VIP Selection</p>
+  <div class="v2-plays">
+    {% if plat %}
+      {% for p in plat %}
+        {% if platinum_unlocked %}
+          {% include "_play_card.html" %}
+        {% else %}
+          {% include "_play_locked.html" %}
+        {% endif %}
+      {% endfor %}
+    {% else %}
+      {% set p = {'liga': ''} %}
+      {% include "_play_locked.html" %}
+    {% endif %}
+  </div>
+  {% endif %}
+</section>
+
+<!-- 02 · BANKROLL & STAKING -->
+<section class="v2-sec">
+  <div class="v2-sec-head">
+    <div>
+      <p class="v2-sec-eyebrow"><b>02</b> · Bankroll</p>
+      <h2 class="v2-sec-title">Bankroll &amp; staking</h2>
+    </div>
+  </div>
+  <div class="v2-br">
+    <div class="v2-br-top">
+      <div>
+        <p class="v2-eyebrow">Bankroll</p>
+        {% if bankroll %}
+        <p class="v2-br-num">${{ '%.2f' % bankroll }}</p>
+        {% else %}
+        <p class="v2-br-num muted" style="font-size:22px">not set</p>
+        {% endif %}
+      </div>
+      <a class="v2-br-edit" href="{{ url_for('cuenta') }}">Edit</a>
+    </div>
+    <form method="post" action="{{ url_for('stake_mode') }}" class="v2-seg">
+      <input type="hidden" name="next" value="home">
+      <button type="submit" name="mode" value="units" class="{% if stake_mode == 'units' %}active{% endif %}">TST Units</button>
+      <button type="submit" name="mode" value="kelly" class="{% if stake_mode == 'kelly' %}active{% endif %}">Kelly $</button>
+    </form>
+    <button class="v2-br-how" id="v2-br-how-open" type="button">how much should I bet?</button>
+  </div>
+  <div class="v2-modal" id="v2-br-how-modal" hidden>
+    <div class="v2-modal-card">
+      <h3>How much should I bet?</h3>
+      <p class="v2-modal-sub">Same edge, two ways to size it. Most members start with TST Units. Switch anytime.</p>
+      <div class="v2-opt">
+        <p class="v2-opt-title">TST Units — the disciplined way</p>
+        <p>Bet in units. <b>1 unit = 1% of your bankroll.</b> We size every play by its badge: ★ VIP = 1u, FREE PLAYS = 0.6u. Small and steady, exactly how The Sharp Team plays it. Less swing, easy to follow.</p>
+        {% if bankroll %}
+        <p class="v2-opt-ex">On your ${{ '%.0f' % bankroll }} bankroll, a 1u play is about ${{ '%.0f' % (bankroll / 100) }}.</p>
+        {% endif %}
+      </div>
+      <div class="v2-opt">
+        <p class="v2-opt-title">Kelly $ — the math-optimal way</p>
+        <p>Bet the exact dollars the math says is best. We use <b>quarter Kelly</b>, the model the sharpest bettors use: it stakes more on bigger edges, less on smaller ones. Higher long-run growth, bigger swings.</p>
+      </div>
+      <button class="v2-gotit" id="v2-br-how-close" type="button">Got it</button>
+    </div>
+  </div>
+</section>
+<script>
+(function(){var m=document.getElementById('v2-br-how-modal'),o=document.getElementById('v2-br-how-open'),c=document.getElementById('v2-br-how-close');if(o&&m){o.addEventListener('click',function(){m.hidden=false;});}if(c&&m){c.addEventListener('click',function(){m.hidden=true;});}if(m){m.addEventListener('click',function(e){if(e.target===m){m.hidden=true;}});}})();
+</script>
+
+<!-- 03 · DOCUMENTED PROFIT -->
+<section class="v2-sec">
+  <div class="v2-sec-head">
+    <div>
+      <p class="v2-sec-eyebrow"><b>03</b> · Verified</p>
+      <h2 class="v2-sec-title">Documented program profit</h2>
+    </div>
+  </div>
+  <div class="v2-profit">
+    <p class="v2-eyebrow">Documented program profit</p>
+    <p class="v2-profit-num {{ 'pos' if res.get('profit_all_time', 0) >= 0 else 'neg' }}">{% if res.get('profit_all_time') is not none %}{{ '+$%.2f' % res.get('profit_all_time') }}{% else %}—{% endif %}</p>
+    <p class="v2-profit-note">{% if res.get('profit_all_time') is not none %}{{ '+$%.2f' % res.get('profit_all_time') }}{% endif %}{% if res.get('win_rate') is not none %} · {{ '%.1f' % res.get('win_rate') }}% win rate{% endif %} · every public play, won or lost</p>
+  </div>
+</section>
+
+<!-- 04 · TOOLS -->
+<section class="v2-sec">
+  <div class="v2-sec-head">
+    <div>
+      <p class="v2-sec-eyebrow"><b>04</b> · Toolkit</p>
+      <h2 class="v2-sec-title">Your tools</h2>
+    </div>
+  </div>
+  <div class="v2-tools">
+    <a class="v2-tool" href="{{ url_for('ev_board') }}">
+      <span class="v2-tool-emoji">⚡</span><b>EV Board</b><span class="v2-tool-sub">Live +EV edges</span>
+    </a>
+    <a class="v2-tool" href="{{ url_for('sharp') }}">
+      <span class="v2-tool-emoji">🔪</span><b>Sharp Money</b><span class="v2-tool-sub">Where the pros are betting</span>
+    </a>
+    <a class="v2-tool" href="{{ url_for('props') }}">
+      <span class="v2-tool-emoji">🎯</span><b>Player Props</b><span class="v2-tool-sub">Best price + edge</span>
+    </a>
+    <a class="v2-tool" href="{{ url_for('tracker') }}">
+      <span class="v2-tool-emoji">📊</span><b>My Tracker</b><span class="v2-tool-sub">Log and grade your plays</span>
+    </a>
+    <a class="v2-tool" href="{{ url_for('masterclass') }}">
+      <span class="v2-tool-emoji">🎓</span><b>Masterclass</b><span class="v2-tool-sub">The 30-day course</span>
+    </a>
+    <a class="v2-tool" href="{{ url_for('archivo') }}">
+      <span class="v2-tool-emoji">🗂️</span><b>Archive</b><span class="v2-tool-sub">Every published play</span>
+    </a>
+  </div>
+</section>
+
+<!-- 05 · ALERTS -->
+<section class="v2-sec">
+  <div class="v2-sec-head">
+    <div>
+      <p class="v2-sec-eyebrow"><b>05</b> · Alerts</p>
+      <h2 class="v2-sec-title">Get alerts</h2>
+      <p class="v2-sec-sub">Never miss a play.</p>
+    </div>
+  </div>
+  <div class="v2-alerts">
+    <button id="alertsPushBtn" class="v2-alert-btn v2-alert-push" type="button">🔔 Push Notifications</button>
+    <a class="v2-alert-btn v2-alert-tg" href="https://t.me/thesharpteam" target="_blank" rel="noopener">✈️ Join Telegram</a>
+  </div>
+</section>
+<script>
+(function(){
+  var btn = document.getElementById('alertsPushBtn');
+  if (!btn || !window.TLB_push) return;
+  function paint(st){
+    if (st === 'granted') { btn.textContent = '🔔 Push Notifications On'; btn.disabled = true; }
+    else if (st === 'denied') { btn.textContent = '🔕 Push Blocked'; btn.disabled = true; }
+    else if (st === 'unsupported') { btn.textContent = '🔔 Not supported'; btn.disabled = true; }
+  }
+  window.TLB_push.status().then(paint);
+  btn.addEventListener('click', async function(){
+    btn.disabled = true;
+    var st = await window.TLB_push.enable();
+    paint(st);
+    if (st !== 'granted') btn.disabled = false;
+  });
+})();
+</script>
+
+<!-- 06 · TRACKER -->
+<section class="v2-sec">
+  {% if es_admin %}
+  <div class="v2-sec-head">
+    <div>
+      <p class="v2-sec-eyebrow"><b>06</b> · Tracker</p>
+      <h2 class="v2-sec-title">Alex Owner Results</h2>
+      <p class="v2-sec-sub">Every official play, auto-graded from the final score.</p>
+    </div>
+    <a class="v2-link" href="{{ url_for('tracker') }}">Open my tracker →</a>
+  </div>
+  {% set _settled = tstats.wins + tstats.losses %}
+  {% set _wr = (tstats.wins / _settled * 100) if _settled else 0 %}
+  <div class="v2-stats">
+    <div class="v2-stat">
+      <p class="v2-stat-label">Total profit</p>
+      <p class="v2-stat-value {{ 'pos' if tstats.net_dollars > 0 else ('neg' if tstats.net_dollars < 0 else '') }}">{% if tstats.net_dollars > 0 %}{{ '+$%.2f' % tstats.net_dollars }}{% elif tstats.net_dollars < 0 %}{{ '-$%.2f' % -tstats.net_dollars }}{% else %}$0.00{% endif %}</p>
+      <p class="v2-stat-sub">your tracked profit</p>
+    </div>
+    <div class="v2-stat">
+      <p class="v2-stat-label">Win rate</p>
+      <p class="v2-stat-value">{{ '%.1f' % _wr }}%</p>
+      <p class="v2-stat-sub">won / settled</p>
+    </div>
+    <div class="v2-stat">
+      <p class="v2-stat-label">Record</p>
+      <p class="v2-stat-value">{{ tstats.wins }}–{{ tstats.losses }}</p>
+      <p class="v2-stat-sub">settled plays</p>
+    </div>
+    <div class="v2-stat">
+      <p class="v2-stat-label">ROI</p>
+      <p class="v2-stat-value {{ 'pos' if tstats.roi > 0 else ('neg' if tstats.roi < 0 else '') }}">{{ '%+.1f' % tstats.roi }}%</p>
+      <p class="v2-stat-sub">on amount risked</p>
+    </div>
+  </div>
+
+  <div class="v2-sec-head" style="margin-top:26px">
+    <div>
+      <p class="v2-eyebrow">Verified program results</p>
+      <h2 class="v2-sec-title">We bet every play we post.</h2>
+    </div>
+    <a class="v2-link" href="{{ url_for('resultados') }}">Full results →</a>
+  </div>
+  <div class="v2-verify">
+    <span class="v2-verify-check">✓</span>
+    <p>EVERY PLAY IS POSTED BEFORE GAME TIME — THEN LOCKED AND GRADED AGAINST THE FINAL SCORE.<br>
+    <span class="muted">WIN OR LOSS, EVERY PLAY STAYS ON THE RECORD.</span></p>
+  </div>
+  <div class="v2-stats">
+    <div class="v2-stat">
+      <p class="v2-stat-label">Total profit</p>
+      <p class="v2-stat-value {{ 'pos' if res.get('profit_all_time') is not none and res.get('profit_all_time') > 0 else ('neg' if res.get('profit_all_time') is not none and res.get('profit_all_time') < 0 else '') }}">{% if res.get('profit_all_time') is not none %}{{ '+$%.2f' % res.get('profit_all_time') }}{% else %}—{% endif %}</p>
+      <p class="v2-stat-sub">actual system profit</p>
+    </div>
+    <div class="v2-stat">
+      <p class="v2-stat-label">Win rate</p>
+      <p class="v2-stat-value">{% if res.get('win_rate') is not none %}{{ '%.1f' % res.get('win_rate') }}%{% else %}—{% endif %}</p>
+      <p class="v2-stat-sub">won / settled</p>
+    </div>
+    <div class="v2-stat">
+      <p class="v2-stat-label">Record</p>
+      <p class="v2-stat-value">{{ res.get('ganadas', 0) }}–{{ res.get('perdidas', 0) }}</p>
+      <p class="v2-stat-sub">settled plays</p>
+    </div>
+    <div class="v2-stat">
+      <p class="v2-stat-label">ROI</p>
+      <p class="v2-stat-value">{% if res.get('roi') is not none %}{{ '%+.1f' % res.get('roi') }}%{% else %}—{% endif %}</p>
+      <p class="v2-stat-sub">on amount risked</p>
+    </div>
+  </div>
+  {% else %}
+  <div class="v2-sec-head">
+    <div>
+      <p class="v2-sec-eyebrow"><b>06</b> · Tracker</p>
+      <h2 class="v2-sec-title">Your own tracker</h2>
+      <p class="v2-sec-sub">Your records live here. Every time you make a play, make sure to hit <b>Track</b>.</p>
+    </div>
+    <a class="v2-link" href="{{ url_for('tracker') }}">Open my tracker →</a>
+  </div>
+  {% set _settled = tstats.wins + tstats.losses %}
+  {% set _wr = (tstats.wins / _settled * 100) if _settled else 0 %}
+  <div class="v2-ringrow">
+    <div>
+      <p class="v2-eyebrow">Your profit</p>
+      <p class="v2-ring-profit {{ 'pos' if tstats.net_dollars > 0 else ('neg' if tstats.net_dollars < 0 else '') }}">{% if tstats.net_dollars > 0 %}{{ '+$%.2f' % tstats.net_dollars }}{% elif tstats.net_dollars < 0 %}{{ '-$%.2f' % -tstats.net_dollars }}{% else %}$0.00{% endif %}</p>
+      <p class="v2-ring-sub">{{ tstats.tracked }} tracked · {{ tstats.pending }} pending</p>
+    </div>
+    <div>
+      <svg class="v2-ring" viewBox="0 0 72 72" aria-hidden="true">
+        <defs>
+          <linearGradient id="v2-rg-mytrk" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#4ade80"/><stop offset="1" stop-color="#16a34a"/>
+          </linearGradient>
+        </defs>
+        <circle cx="36" cy="36" r="30" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="7"/>
+        <circle cx="36" cy="36" r="30" fill="none" stroke="url(#v2-rg-mytrk)" stroke-width="7" stroke-linecap="round" stroke-dasharray="188.5" stroke-dashoffset="{{ '%.1f' % (188.5 * (1 - _wr/100)) }}" transform="rotate(-90 36 36)"/>
+        <text x="36" y="42" text-anchor="middle" class="v2-ring-pct">{{ '%.0f' % _wr }}%</text>
+      </svg>
+      <p class="v2-ring-lab">WIN RATE</p>
+    </div>
+  </div>
+  {% if tcurve %}
+  <p class="v2-chart-label">Profit over time</p>
+  <svg class="v2-chart" viewBox="0 0 {{ tcurve.w }} {{ tcurve.h }}" preserveAspectRatio="none" aria-hidden="true">
+    <defs>
+      <linearGradient id="v2-mytrk-fill" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="{{ '#4ade80' if tcurve.up else '#f87171' }}" stop-opacity=".35"/>
+        <stop offset="1" stop-color="{{ '#4ade80' if tcurve.up else '#f87171' }}" stop-opacity="0"/>
+      </linearGradient>
+    </defs>
+    <path d="{{ tcurve.area }}" fill="url(#v2-mytrk-fill)"/>
+    <path d="{{ tcurve.line }}" fill="none" stroke="{{ '#4ade80' if tcurve.up else '#f87171' }}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+  {% endif %}
+  <div class="v2-stats" style="margin-top:12px">
+    <div class="v2-stat">
+      <p class="v2-stat-label">Record</p>
+      <p class="v2-stat-value">{{ tstats.wins }}–{{ tstats.losses }}</p>
+      <p class="v2-stat-sub">settled plays</p>
+    </div>
+    <div class="v2-stat">
+      <p class="v2-stat-label">ROI</p>
+      <p class="v2-stat-value {{ 'pos' if tstats.roi > 0 else ('neg' if tstats.roi < 0 else '') }}">{{ '%+.1f' % tstats.roi }}%</p>
+      <p class="v2-stat-sub">on amount risked</p>
+    </div>
+    <div class="v2-stat">
+      <p class="v2-stat-label">Streak</p>
+      <p class="v2-stat-value">{{ tstats.streak }}</p>
+      <p class="v2-stat-sub">current run</p>
+    </div>
+    <div class="v2-stat">
+      <p class="v2-stat-label">Tracked</p>
+      <p class="v2-stat-value">{{ tstats.tracked }}</p>
+      <p class="v2-stat-sub">{{ tstats.pending }} pending</p>
+    </div>
+  </div>
+
+  <div class="v2-sec-head" style="margin-top:26px">
+    <div>
+      <p class="v2-eyebrow">The Sharp Team · Documented profit</p>
+      <h2 class="v2-sec-title">Program tracker</h2>
+      <p class="v2-sec-sub">Every play posted before game time — wins and losses stay on the record.</p>
+    </div>
+    <a class="v2-link" href="{{ url_for('resultados') }}">Full results →</a>
+  </div>
+  <div class="v2-profit">
+    <p class="v2-profit-num {{ res.get('profit_cls', '') }}">{{ res.get('profit_display', '$0') }}</p>
+    <p class="v2-profit-note"><strong>{{ res.get('ganadas', 0) }}–{{ res.get('perdidas', 0) }}</strong> · every play public, win or loss</p>
+  </div>
+  <div class="v2-levels">
+    {% for lvl_key, lvl_name, lvl_emoji, lvl_class in [('GOLD', 'FREE PLAYS', '&#x26aa;', 'gold'), ('ELITE', 'VIP', '&#x2b50;', 'elite')] %}
+    {% set L = res['niveles'][lvl_key] %}
+    {% set wr = L.win_rate %}
+    <div class="v2-level {{ lvl_class }}">
+      <div class="v2-level-head"><span>{{ lvl_emoji|safe }}</span><span class="v2-level-name">{{ lvl_name }}</span></div>
+      <div class="v2-level-body">
+        <div>
+          <p class="v2-level-record">{{ L.record }}</p>
+          <p class="v2-level-profit {{ L.net_cls }}">{{ L.net_display }}</p>
+        </div>
+        <p class="v2-ring-pct">{{ '%.0f' % wr }}%</p>
+      </div>
+      <div class="v2-bar"><span style="width:{{ '%.0f' % wr }}%"></span></div>
+      <p class="v2-level-sub">{{ L.ganadas + L.perdidas }} plays graded · lifetime</p>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+</section>
+
+<!-- 07 · RECENT GRADED TICKETS (ticket presentation untouchable) -->
+<section class="v2-sec">
+  <div class="v2-sec-head">
+    <div>
+      <p class="v2-sec-eyebrow"><b>07</b> · Receipts</p>
+      <h2 class="v2-sec-title">Recent graded tickets</h2>
+      <p class="v2-sec-sub">Every play posted before the game — wins and losses. Tap a ticket to see the original receipt.</p>
+    </div>
+    <a class="v2-link" href="{{ url_for('resultados') }}">View all →</a>
+  </div>
+  {% if recientes %}
+  <div class="ticket-grid">
+  {% for r in recientes %}
+    {% set won = r.resultado == 'WON' %}
+    <button type="button" class="ticket-card" data-ticket="v2ht-{{ loop.index }}" aria-label="View receipt for {{ r.pick }}">
+      <span class="ticket-img">
+        {% if r.comprobante %}
+        <img src="{{ url_for('static', filename=r.comprobante) }}" alt="Original receipt: {{ r.pick }}" loading="lazy">
+        {% else %}
+        <span class="ticket-fallback">
+          <span class="ticket-brand">THE SHARP TEAM</span>
+          <span class="ticket-fallback-pick">{{ r.pick }}</span>
+          <span class="ticket-fallback-odds">{{ fmt_odds(r.cuota) }} · {{ r.nivel }}</span>
+          <span class="ticket-fallback-result {{ 'win' if won else 'loss' }}">{{ '✓ WON' if won else '✕ LOST' }}</span>
+        </span>
+        {% endif %}
+        <span class="ticket-pill {{ 'win' if won else 'loss' }}">{{ '✓' if won else '✕' }} {{ fmt_money(r.profit) }}</span>
+      </span>
+      <span class="ticket-title">{{ r.pick }} <span class="muted">{{ fmt_odds(r.cuota) }}</span></span>
+      <span class="ticket-sub">{{ r.fecha }} · {{ r.nivel }}</span>
+      {% if r.comprobante %}<span class="ticket-view-link">View ticket →</span>{% endif %}
+    </button>
+    <div class="modal" id="v2ht-{{ loop.index }}" hidden>
+      <div class="modal-card ticket-photo-card">
+        <button type="button" class="modal-close" data-close>✕</button>
+        {% if r.comprobante %}
+        <img class="ticket-photo" src="{{ url_for('static', filename=r.comprobante) }}" alt="Original receipt: {{ r.pick }}">
+        {% else %}
+        <p class="ticket-brand">THE SHARP TEAM</p>
+        <p class="ticket-pick">{{ r.pick }} {{ fmt_odds(r.cuota) }}</p>
+        <div class="ticket-rows">
+          <div><span>Date</span><b>{{ r.fecha }}</b></div>
+          <div><span>Level</span><b>{{ r.nivel }}</b></div>
+          <div><span>Result</span><b class="{{ 'pos' if won else 'neg' }}">{{ 'WON' if won else 'LOST' }} · {{ fmt_money(r.profit) }}</b></div>
+        </div>
+        <p class="ticket-note">Original receipt not uploaded for this play.</p>
+        {% endif %}
+      </div>
+    </div>
+  {% endfor %}
+  </div>
+  {% else %}
+  <p class="muted">No settled plays yet — tickets appear here as soon as the first plays are graded.</p>
+  {% endif %}
+</section>
+
+<!-- 08 · RECENT RESULTS -->
+<section class="v2-sec">
+  <div class="v2-sec-head">
+    <div>
+      <p class="v2-sec-eyebrow"><b>08</b> · Results</p>
+      <h2 class="v2-sec-title">Recent results</h2>
+    </div>
+    <a class="v2-link" href="{{ url_for('resultados') }}">View all →</a>
+  </div>
+  {% if recientes %}
+  <div class="v2-rows">
+    {% for r in recientes %}
+    <div class="v2-row">
+      <div>
+        <p class="v2-row-pick"><span class="v2-badge v2-badge-{{ r.nivel|lower }}">{{ r.nivel }}</span>{{ r.pick }} <span class="muted">{{ fmt_odds(r.cuota) }}</span></p>
+        <p class="v2-row-sub">{{ r.fecha }}</p>
+      </div>
+      {% if r.resultado == 'WON' %}
+        <span class="v2-result win">✓ {{ fmt_money(r.profit) }}</span>
+      {% else %}
+        <span class="v2-result loss">✕ {{ fmt_money(r.profit) }}</span>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p class="muted">No results published yet.</p>
+  {% endif %}
+</section>
+
+<!-- 09 · THE PROCESS -->
+<section class="v2-sec">
+  <div class="v2-process">
+    <p class="v2-eyebrow">The process</p>
+    <h2 class="v2-process-title">One system. Three filters.</h2>
+    <p class="v2-process-sub">Every published pick must pass the model, the market, and the staking rules.</p>
+    <div class="v2-prow">
+      <span class="v2-pnum">01</span>
+      <div><h3>FAIR LINE</h3><p>Estimated probability is calculated before deciding whether the available price is worth a bet.</p></div>
+    </div>
+    <div class="v2-prow">
+      <span class="v2-pnum">02</span>
+      <div><h3>REAL EDGE</h3><p>The fair line is compared with the best odds. Research can veto a pick; it never invents value.</p></div>
+    </div>
+    <div class="v2-prow">
+      <span class="v2-pnum">03</span>
+      <div><h3>FIXED STAKE</h3><p>The stake stays disciplined. Neither losses nor streaks change the amount.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · MASTERCLASS -->
+<section class="v2-sec">
+  <div class="v2-sec-head">
+    <div>
+      <p class="v2-sec-eyebrow"><b>10</b> · Education</p>
+      <h2 class="v2-sec-title">Masterclass</h2>
+      <p class="v2-sec-sub">30 lessons on discipline and value — one per day.</p>
+    </div>
+  </div>
+  {% if leccion.get('titulo') %}
+  <a class="v2-mc-feat" href="{{ url_for('masterclass') }}">
+    <p class="v2-mc-tag">TODAY'S LESSON · DAY {{ leccion.get('dia') }}</p>
+    <h3>{{ leccion.get('titulo') }}</h3>
+    <p>{{ leccion.get('resumen') }}</p>
+    <span class="v2-link">Read the full lesson →</span>
+  </a>
+  {% endif %}
+  <div class="v2-mc-list">
+  {% for l in archivo_mc %}
+    <a class="v2-mc-item" href="{{ url_for('masterclass') }}#day-{{ l.dia }}">
+      <span class="v2-mc-day">Day {{ l.dia }}</span><b>{{ l.titulo }}</b>
+    </a>
+  {% endfor %}
+  </div>
+</section>
+
+<!-- Elite sticky banner (non-VIP only), v2 pill -->
+{% if not platinum_unlocked %}
+<div class="v2-sticky" role="complementary" aria-label="Unlock VIP">
+  <div class="v2-sticky-inner">
+    <p>Unlock VIP plays for <b>$1</b></p>
+    <a href="{{ url_for('desbloquear_platinum') }}">$1 trial &rarr;</a>
+  </div>
+</div>
+<div class="v2-sticky-spacer" aria-hidden="true"></div>
+{% endif %}
+
+<!-- Theme toggle (parallel theme rollback) -->
+<a class="v2-toggle" href="{{ url_for('theme', name='v1', next=url_for('home')) }}">↩ Classic look</a>
+{% endblock %}
