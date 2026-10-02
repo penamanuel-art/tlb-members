@@ -499,13 +499,9 @@
     <span class="v2-link">Read the full lesson →</span>
   </a>
   {% endif %}
-  <div class="v2-mc-list">
-  {% for l in archivo_mc %}
-    <a class="v2-mc-item" href="{{ url_for('masterclass') }}#day-{{ l.dia }}">
-      <span class="v2-mc-day">Day {{ l.dia }}</span><b>{{ l.titulo }}</b>
-    </a>
-  {% endfor %}
-  </div>
+  {# Archivo de 30 lecciones colapsado tras botón (pedido Alex 2026-10-02):
+     la lista completa vive en /masterclass, no desplegada en el Dashboard. #}
+  <a class="v2-mc-open" href="{{ url_for('masterclass') }}">🎓 Open Masterclass →</a>
 </section>
 
 <!-- Elite sticky banner (non-VIP only), v2 pill -->
