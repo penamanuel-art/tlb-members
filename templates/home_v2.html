@@ -13,6 +13,14 @@
   <div>
     <p class="v2-eyebrow">The Sharp Team · {{ fecha }}</p>
     <h1 class="v2-greet">{{ saludo }}, <span>{{ nombre_corto }}</span></h1>
+    <div class="v2-hero-meta">
+      {% if streak %}
+      <span class="v2-streak {{ 'hot' if streak.tipo == 'W' else 'cold' }}">{% if streak.tipo == 'W' %}🔥 {% endif %}{{ streak.tipo }}{{ streak.n }}</span>
+      {% endif %}
+      {% if card_pendiente and resumen_ayer %}
+      <span class="v2-yesterday">Yesterday <b>{{ resumen_ayer.w }}-{{ resumen_ayer.l }}</b> · <b class="{{ 'pos' if resumen_ayer.profit >= 0 else 'neg' }}">{{ '$%+.2f' % resumen_ayer.profit }}</b></span>
+      {% endif %}
+    </div>
   </div>
   <div class="v2-hero-right">
     <img src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team" class="v2-hero-logo">
@@ -30,7 +38,9 @@
     <div>
       <p class="v2-sec-eyebrow"><b>01</b> · Today's plays</p>
       <h2 class="v2-sec-title">{% if card_pendiente %}Nothing posted yet{% else %}Today's plays{% endif %}</h2>
-      {% if not card_pendiente %}
+      {% if card_pendiente %}
+      <p class="v2-sec-sub">Today's card drops in <b id="v2-countdown">…</b></p>
+      {% else %}
       <p class="v2-sec-sub">Tap a card for the ticket + write-up</p>
       <span class="v2-free-badge">FREE WITH YOUR MEMBERSHIP</span>
       {% endif %}
@@ -513,6 +523,32 @@
   </div>
 </div>
 <div class="v2-sticky-spacer" aria-hidden="true"></div>
+{% endif %}
+
+{% if card_pendiente %}
+<script>
+/* Cuenta regresiva a la próxima card (pedido Alex 2026-10-02):
+   2:00 PM ET lun–vie, 11:00 AM ET sáb–dom. */
+(function () {
+  var el = document.getElementById('v2-countdown');
+  if (!el) return;
+  function etNow() { return new Date(new Date().toLocaleString('en-US', { timeZone: 'America/New_York' })); }
+  function targetFor(d) {
+    var t = new Date(d), day = t.getDay();
+    t.setHours((day === 0 || day === 6) ? 11 : 14, 0, 0, 0);
+    return t;
+  }
+  function tick() {
+    var now = etNow(), tgt = targetFor(new Date(now));
+    if (tgt <= now) { var nx = new Date(now); nx.setDate(nx.getDate() + 1); tgt = targetFor(nx); }
+    var s = Math.max(0, Math.floor((tgt - now) / 1000));
+    var h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60);
+    el.textContent = h > 0 ? h + 'h ' + m + 'm' : m + 'm';
+  }
+  tick();
+  setInterval(tick, 30000);
+})();
+</script>
 {% endif %}
 
 {% endblock %}
