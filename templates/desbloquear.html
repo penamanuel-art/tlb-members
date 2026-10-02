@@ -2,14 +2,8 @@
 {% block title %}Unlock VIP — The Sharp Team{% endblock %}
 {% block content %}
 {# Página de desbloqueo VIP rediseñada 2026-10-02 (pedido Alex, modelada del
-   ejemplo que envió): banner de pago fallido + tarjeta de membresía + CTA. #}
-
-{% if past_due %}
-<div class="v2-pastdue" role="alert">
-  <p>⚠️ Your last payment didn't go through, so your membership is past due and access is paused.</p>
-  <a href="{{ url_for('cuenta') }}">Update your card to restore it →</a>
-</div>
-{% endif %}
+   ejemplo que envió): tarjeta de membresía + CTA. El banner de pago fallido
+   sale global desde base_v2.html. #}
 
 {% if ya_desbloqueada and not past_due %}
 <div class="v2-upsell-done">
