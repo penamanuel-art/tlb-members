@@ -1748,6 +1748,8 @@ def migrate_db():
         )
         # Pool de links de invitación a Sharp Club (un solo uso, los genera
         # el cron de la VM con el token del bot; /cuenta los reparte).
+        # 2026-10-02: EN DESUSO — reemplazado por el link permanente
+        # TELEGRAM_VIP_INVITE_LINK. La tabla queda como respaldo.
         _id_col = "id SERIAL PRIMARY KEY" if USE_PG else "id INTEGER PRIMARY KEY AUTOINCREMENT"
         conn.execute(
             f"""CREATE TABLE IF NOT EXISTS telegram_invite_links (
