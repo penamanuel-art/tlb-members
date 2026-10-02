@@ -628,4 +628,10 @@
 <div class="elite-sticky-spacer" aria-hidden="true"></div>
 {% endif %}
 
+<!-- Selector de tema (pedido Alex 2026-10-02): probar el look moderno del Dashboard -->
+<a href="{{ url_for('theme', name='v2', next=url_for('home')) }}" title="Try the new look"
+   style="position:fixed;right:14px;bottom:88px;z-index:70;background:linear-gradient(135deg,#2b6fd6,#2fd47e);
+          color:#fff;font-weight:800;font-size:.82rem;padding:10px 16px;border-radius:999px;
+          text-decoration:none;box-shadow:0 4px 16px rgba(0,0,0,.4);">✨ New look</a>
+
 {% endblock %}
