@@ -1920,6 +1920,9 @@ def home():
         last_elite_win=last_elite_win(),
         es_admin=is_admin_for(user),
         skip_splash=request.args.get("splash") == "0",
+        # miembro_platinum con preview: en ?preview=locked el banner de
+        # invitación VIP también se muestra (pedido Alex 2026-10-02).
+        miembro_platinum=(platinum_unlocked_for(user) and not preview_locked),
     )
 
 
