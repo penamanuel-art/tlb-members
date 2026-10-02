@@ -87,6 +87,12 @@
   {% endif %}
 </section>
 
+<!-- Upsell VIP (solo miembros sin VIP) — pedido Alex 2026-10-02 -->
+{% if not platinum_unlocked %}
+{% set upsell_cta_url = url_for('desbloquear_platinum') %}
+{% include "_upsell_vip.html" %}
+{% endif %}
+
 <!-- 02 · BANKROLL & STAKING -->
 <section class="v2-sec">
   <div class="v2-sec-head">
