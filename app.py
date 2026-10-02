@@ -630,11 +630,11 @@ WELCOME_TEXT = """Hi __NOMBRE__,
 Welcome to The Sharp Team! Your dashboard is ready.
 
 EVERYTHING YOUR PLAN UNLOCKS
-1. THE DAILY CARD - Every morning at 11:00 AM ET: the day's official plays (Free Plays plus the one VIP), each with its original bet ticket. Minimum 3-point edge. No filler, ever.
+1. THE DAILY CARD - Every day at 2:00 PM ET (11:00 AM ET on weekends): the day's official plays (Free Plays plus the one VIP), each with its original bet ticket. No filler, ever.
 2. YOUR PERSONAL TRACKER - One-tap tracking: mark each play, log won or lost. Verified history, real record, net units, ROI and streak. No spreadsheets.
 3. LIVE +EV BOARD - Value edges updated around the clock, measured against Pinnacle's no-vig fair price, with sharp-confirmed badges.
 4. PUSH ALERTS - Alerts the moment the card drops and when new edges appear. Turn "Alerts on" in your dashboard.
-5. TELEGRAM CHANNELS - Free Plays in the free channel, VIP plays in the private VIP channel, each with the original ticket.
+5. TELEGRAM CHANNELS - Free Plays in "Free Plays", VIP plays in the private "Jugadas VIP" channel, each with the original ticket.
 6. DAILY MASTERCLASS - One sharp betting lesson every morning: discipline, bankroll management, reading lines and edges.
 
 "Every play is posted before game time - then locked and graded against the final score."
@@ -649,64 +649,84 @@ Your first week is $1 - then $23/week. Cancel anytime. No questions asked.
 Bet responsibly - 21+ - Gambling problem? Call 1-800-GAMBLER (1-800-426-2537): free and confidential help, 24/7.
 """
 
-WELCOME_HTML = """<div style="max-width:460px;margin:0 auto;background:#f2efe7;font-family:-apple-system,'Segoe UI',Roboto,sans-serif;">
-<div style="background:#0a0a0f;text-align:center;padding:28px 30px 26px;border-top:3px solid #d4af37;border-radius:18px 18px 0 0;">
-<div style="font-size:13px;letter-spacing:4px;color:#d4af37;margin-bottom:16px;">MEMBERSHIP&nbsp;CONFIRMED</div>
-<img src="https://files.catbox.moe/74qot5.png" alt="The Sharp Team" style="width:110px;height:auto;display:block;margin:0 auto 10px;border-radius:50%;border:1px solid #3a2f14;">
-<div style="color:#d4af37;font-size:16px;font-weight:700;letter-spacing:5px;margin-bottom:14px;">THE SHARP TEAM</div>
-<div style="width:130px;height:1px;margin:0 auto 18px;background:linear-gradient(90deg,transparent,#d4af37,transparent);"></div>
-<h1 style="font-family:Georgia,'Times New Roman',serif;font-size:42px;font-weight:400;color:#ffffff;margin:0 0 10px;line-height:1.25;">Welcome to<br><em style="color:#ffd257;">the team.</em></h1>
-<p style="color:#a9a9b8;font-size:17px;line-height:1.6;margin:0;">Hi __NOMBRE__ &mdash; your dashboard is ready.<br>Here is everything waiting for you inside:</p>
+WELCOME_HTML = """<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark">
+<title>Welcome to The Sharp Team</title>
+</head>
+<body style="margin:0;padding:0;background:#0a0f1c;color-scheme:light dark;">
+<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;max-width:460px;margin:0 auto;background:#0a0f1c;">
+<div style="text-align:center;padding:30px 24px 18px;">
+<div style="font-size:13px;letter-spacing:4px;color:#2fd47e;margin-bottom:14px;">MEMBERSHIP&nbsp;CONFIRMED</div>
+<img src="https://files.catbox.moe/74qot5.png" alt="The Sharp Team" style="width:110px;height:auto;display:block;margin:0 auto 12px;border-radius:50%;border:1px solid #2b6fd6;">
+<div style="color:#ffffff;font-size:15px;font-weight:800;letter-spacing:5px;margin-bottom:6px;">THE SHARP TEAM</div>
+<div style="width:120px;height:1px;margin:12px auto;background:linear-gradient(90deg,transparent,#2b6fd6,transparent);"></div>
+<h1 style="font-size:40px;font-weight:800;color:#ffffff;margin:8px 0 10px;line-height:1.2;">Welcome to<br><span style="color:#2fd47e;">the team.</span></h1>
+<p style="color:#9aa3b8;font-size:16px;line-height:1.6;margin:0;">Hi __NOMBRE__ &mdash; your dashboard is ready.<br>Here is everything waiting for you inside:</p>
 </div>
-<div style="padding:28px 24px 18px;text-align:center;">
-<div style="font-family:Georgia,'Times New Roman',serif;font-size:32px;color:#14141d;line-height:1.3;">Everything Your<br><em style="color:#8a6a1c;">Plan Unlocks</em></div>
-<div style="width:64px;height:2px;background:#d4af37;margin:14px auto 0;"></div>
+<div style="padding:0 16px;">
+<div style="text-align:center;padding:6px 0 16px;">
+<div style="font-size:24px;font-weight:800;color:#ffffff;">Everything Your Plan Unlocks</div>
+<div style="width:60px;height:3px;background:#2b6fd6;margin:10px auto 0;border-radius:2px;">&nbsp;</div>
 </div>
-<div style="background:#ffffff;border:1px solid #e8e0cb;border-radius:16px;margin:0 24px 14px;box-shadow:0 2px 10px rgba(20,20,29,0.05);overflow:hidden;">
-<div style="height:3px;background:linear-gradient(90deg,#b8912b,#f5e3a8,#b8912b);"></div>
+<div style="background:#0d1626;border:1px solid #2b6fd6;border-radius:16px;margin:0 0 12px;overflow:hidden;">
 <table width="100%" cellpadding="0" cellspacing="0"><tr>
-<td width="64" style="vertical-align:top;padding:20px 0 20px 22px;"><div style="font-family:Georgia,'Times New Roman',serif;font-size:36px;color:#d4af37;line-height:1;">01</div><div style="width:28px;height:2px;background:#d4af37;margin-top:8px;"></div></td>
-<td style="vertical-align:top;padding:20px 22px 20px 6px;font-family:-apple-system,'Segoe UI',Roboto,sans-serif;"><div style="font-size:16px;font-weight:800;color:#14141d;letter-spacing:1.5px;margin-bottom:6px;">THE DAILY CARD</div><div style="font-size:15px;color:#5a5a68;line-height:1.65;">Every morning at 11:00 AM ET: the day's official plays &mdash; Free Plays plus the one &starf; VIP &mdash; each with its <em>original bet ticket</em>. Minimum 3-point edge. No filler, ever.</div></td>
-</tr></table></div><div style="background:#ffffff;border:1px solid #e8e0cb;border-radius:16px;margin:0 24px 14px;box-shadow:0 2px 10px rgba(20,20,29,0.05);overflow:hidden;">
-<div style="height:3px;background:linear-gradient(90deg,#b8912b,#f5e3a8,#b8912b);"></div>
-<table width="100%" cellpadding="0" cellspacing="0"><tr>
-<td width="64" style="vertical-align:top;padding:20px 0 20px 22px;"><div style="font-family:Georgia,'Times New Roman',serif;font-size:36px;color:#d4af37;line-height:1;">02</div><div style="width:28px;height:2px;background:#d4af37;margin-top:8px;"></div></td>
-<td style="vertical-align:top;padding:20px 22px 20px 6px;font-family:-apple-system,'Segoe UI',Roboto,sans-serif;"><div style="font-size:16px;font-weight:800;color:#14141d;letter-spacing:1.5px;margin-bottom:6px;">YOUR PERSONAL TRACKER</div><div style="font-size:15px;color:#5a5a68;line-height:1.65;">One-tap tracking: mark each play, log won or lost. Verified history, real record, net units, ROI and streak &mdash; no spreadsheets.</div></td>
-</tr></table></div><div style="background:#ffffff;border:1px solid #e8e0cb;border-radius:16px;margin:0 24px 14px;box-shadow:0 2px 10px rgba(20,20,29,0.05);overflow:hidden;">
-<div style="height:3px;background:linear-gradient(90deg,#b8912b,#f5e3a8,#b8912b);"></div>
-<table width="100%" cellpadding="0" cellspacing="0"><tr>
-<td width="64" style="vertical-align:top;padding:20px 0 20px 22px;"><div style="font-family:Georgia,'Times New Roman',serif;font-size:36px;color:#d4af37;line-height:1;">03</div><div style="width:28px;height:2px;background:#d4af37;margin-top:8px;"></div></td>
-<td style="vertical-align:top;padding:20px 22px 20px 6px;font-family:-apple-system,'Segoe UI',Roboto,sans-serif;"><div style="font-size:16px;font-weight:800;color:#14141d;letter-spacing:1.5px;margin-bottom:6px;">LIVE +EV BOARD</div><div style="font-size:15px;color:#5a5a68;line-height:1.65;">Value edges updated around the clock, measured against Pinnacle's no-vig fair price, with sharp-confirmed badges.</div></td>
-</tr></table></div><div style="background:#ffffff;border:1px solid #e8e0cb;border-radius:16px;margin:0 24px 14px;box-shadow:0 2px 10px rgba(20,20,29,0.05);overflow:hidden;">
-<div style="height:3px;background:linear-gradient(90deg,#b8912b,#f5e3a8,#b8912b);"></div>
-<table width="100%" cellpadding="0" cellspacing="0"><tr>
-<td width="64" style="vertical-align:top;padding:20px 0 20px 22px;"><div style="font-family:Georgia,'Times New Roman',serif;font-size:36px;color:#d4af37;line-height:1;">04</div><div style="width:28px;height:2px;background:#d4af37;margin-top:8px;"></div></td>
-<td style="vertical-align:top;padding:20px 22px 20px 6px;font-family:-apple-system,'Segoe UI',Roboto,sans-serif;"><div style="font-size:16px;font-weight:800;color:#14141d;letter-spacing:1.5px;margin-bottom:6px;">PUSH ALERTS</div><div style="font-size:15px;color:#5a5a68;line-height:1.65;">Alerts the moment the card drops and when new edges appear. Turn &ldquo;Alerts on&rdquo; in your dashboard.</div></td>
-</tr></table></div><div style="background:#ffffff;border:1px solid #e8e0cb;border-radius:16px;margin:0 24px 14px;box-shadow:0 2px 10px rgba(20,20,29,0.05);overflow:hidden;">
-<div style="height:3px;background:linear-gradient(90deg,#b8912b,#f5e3a8,#b8912b);"></div>
-<table width="100%" cellpadding="0" cellspacing="0"><tr>
-<td width="64" style="vertical-align:top;padding:20px 0 20px 22px;"><div style="font-family:Georgia,'Times New Roman',serif;font-size:36px;color:#d4af37;line-height:1;">05</div><div style="width:28px;height:2px;background:#d4af37;margin-top:8px;"></div></td>
-<td style="vertical-align:top;padding:20px 22px 20px 6px;font-family:-apple-system,'Segoe UI',Roboto,sans-serif;"><div style="font-size:16px;font-weight:800;color:#14141d;letter-spacing:1.5px;margin-bottom:6px;">TELEGRAM CHANNELS</div><div style="font-size:15px;color:#5a5a68;line-height:1.65;">Free Plays in the free channel, VIP plays in the private VIP channel &mdash; each with the original ticket.</div></td>
+<td width="58" style="vertical-align:top;padding:18px 0 18px 20px;"><div style="font-size:32px;font-weight:800;color:#2fd47e;line-height:1;">01</div><div style="width:26px;height:2px;background:#2fd47e;margin-top:8px;"></div></td>
+<td style="vertical-align:top;padding:18px 20px 18px 4px;"><div style="font-size:15px;font-weight:800;color:#ffffff;letter-spacing:1.5px;margin-bottom:6px;">THE DAILY CARD</div><div style="font-size:14px;color:#9aa3b8;line-height:1.65;">Every day at 2:00 PM ET (11:00 AM ET on weekends): the day's official plays &mdash; Free Plays plus the one &starf; VIP &mdash; each with its <em>original bet ticket</em>. No filler, ever.</div></td>
 </tr></table></div>
-<div style="background:#ffffff;border:1px solid #e8e0cb;border-radius:16px;margin:0 24px 14px;box-shadow:0 2px 10px rgba(20,20,29,0.05);overflow:hidden;">
-<div style="height:3px;background:linear-gradient(90deg,#b8912b,#f5e3a8,#b8912b);"></div>
+<div style="background:#0d1626;border:1px solid #2b6fd6;border-radius:16px;margin:0 0 12px;overflow:hidden;">
 <table width="100%" cellpadding="0" cellspacing="0"><tr>
-<td width="64" style="vertical-align:top;padding:20px 0 20px 22px;"><div style="font-family:Georgia,'Times New Roman',serif;font-size:36px;color:#d4af37;line-height:1;">06</div><div style="width:28px;height:2px;background:#d4af37;margin-top:8px;"></div></td>
-<td style="vertical-align:top;padding:20px 22px 20px 6px;font-family:-apple-system,'Segoe UI',Roboto,sans-serif;"><div style="font-size:16px;font-weight:800;color:#14141d;letter-spacing:1.5px;margin-bottom:6px;">DAILY MASTERCLASS</div><div style="font-size:15px;color:#5a5a68;line-height:1.65;">One sharp betting lesson every morning &mdash; discipline, bankroll management, reading lines and edges. The 30-day course that turns bettors into investors.</div></td>
+<td width="58" style="vertical-align:top;padding:18px 0 18px 20px;"><div style="font-size:32px;font-weight:800;color:#2fd47e;line-height:1;">02</div><div style="width:26px;height:2px;background:#2fd47e;margin-top:8px;"></div></td>
+<td style="vertical-align:top;padding:18px 20px 18px 4px;"><div style="font-size:15px;font-weight:800;color:#ffffff;letter-spacing:1.5px;margin-bottom:6px;">YOUR PERSONAL TRACKER</div><div style="font-size:14px;color:#9aa3b8;line-height:1.65;">One-tap tracking: mark each play, log won or lost. Verified history, real record, net units, ROI and streak &mdash; no spreadsheets.</div></td>
 </tr></table></div>
-<div style="margin:12px 24px 0;padding:18px 20px;border-left:3px solid #d4af37;background:#0a0a0f;border-radius:0 12px 12px 0;">
-<p style="font-family:Georgia,'Times New Roman',serif;font-size:18px;font-style:italic;line-height:1.7;color:#e6ddc4;margin:0;">&ldquo;Every play is posted before game time &mdash; then locked and graded against the final score.&rdquo;</p>
+<div style="background:#0d1626;border:1px solid #2b6fd6;border-radius:16px;margin:0 0 12px;overflow:hidden;">
+<table width="100%" cellpadding="0" cellspacing="0"><tr>
+<td width="58" style="vertical-align:top;padding:18px 0 18px 20px;"><div style="font-size:32px;font-weight:800;color:#2fd47e;line-height:1;">03</div><div style="width:26px;height:2px;background:#2fd47e;margin-top:8px;"></div></td>
+<td style="vertical-align:top;padding:18px 20px 18px 4px;"><div style="font-size:15px;font-weight:800;color:#ffffff;letter-spacing:1.5px;margin-bottom:6px;">LIVE +EV BOARD</div><div style="font-size:14px;color:#9aa3b8;line-height:1.65;">Value edges updated around the clock, measured against Pinnacle's no-vig fair price, with sharp-confirmed badges.</div></td>
+</tr></table></div>
+<div style="background:#0d1626;border:1px solid #2b6fd6;border-radius:16px;margin:0 0 12px;overflow:hidden;">
+<table width="100%" cellpadding="0" cellspacing="0"><tr>
+<td width="58" style="vertical-align:top;padding:18px 0 18px 20px;"><div style="font-size:32px;font-weight:800;color:#2fd47e;line-height:1;">04</div><div style="width:26px;height:2px;background:#2fd47e;margin-top:8px;"></div></td>
+<td style="vertical-align:top;padding:18px 20px 18px 4px;"><div style="font-size:15px;font-weight:800;color:#ffffff;letter-spacing:1.5px;margin-bottom:6px;">PUSH ALERTS</div><div style="font-size:14px;color:#9aa3b8;line-height:1.65;">Alerts the moment the card drops and when new edges appear. Turn &ldquo;Alerts on&rdquo; in your dashboard.</div></td>
+</tr></table></div>
+<div style="background:#0d1626;border:1px solid #2b6fd6;border-radius:16px;margin:0 0 12px;overflow:hidden;">
+<table width="100%" cellpadding="0" cellspacing="0"><tr>
+<td width="58" style="vertical-align:top;padding:18px 0 18px 20px;"><div style="font-size:32px;font-weight:800;color:#2fd47e;line-height:1;">05</div><div style="width:26px;height:2px;background:#2fd47e;margin-top:8px;"></div></td>
+<td style="vertical-align:top;padding:18px 20px 18px 4px;"><div style="font-size:15px;font-weight:800;color:#ffffff;letter-spacing:1.5px;margin-bottom:6px;">TELEGRAM CHANNELS</div><div style="font-size:14px;color:#9aa3b8;line-height:1.65;">Free Plays in &ldquo;Free Plays&rdquo;, VIP plays in the private &ldquo;Jugadas VIP&rdquo; channel &mdash; each with the original ticket.</div></td>
+</tr></table></div>
+<div style="background:#0d1626;border:1px solid #2b6fd6;border-radius:16px;margin:0 0 12px;overflow:hidden;">
+<table width="100%" cellpadding="0" cellspacing="0"><tr>
+<td width="58" style="vertical-align:top;padding:18px 0 18px 20px;"><div style="font-size:32px;font-weight:800;color:#2fd47e;line-height:1;">06</div><div style="width:26px;height:2px;background:#2fd47e;margin-top:8px;"></div></td>
+<td style="vertical-align:top;padding:18px 20px 18px 4px;"><div style="font-size:15px;font-weight:800;color:#ffffff;letter-spacing:1.5px;margin-bottom:6px;">DAILY MASTERCLASS</div><div style="font-size:14px;color:#9aa3b8;line-height:1.65;">One sharp betting lesson every morning &mdash; discipline, bankroll management, reading lines and edges. The 30-day course that turns bettors into investors.</div></td>
+</tr></table></div>
+<div style="margin:6px 0 0;padding:16px 18px;border-left:3px solid #2fd47e;background:#0d1626;border-radius:0 12px 12px 0;">
+<p style="font-size:16px;font-style:italic;line-height:1.7;color:#d4dbe8;margin:0;">&ldquo;Every play is posted before game time &mdash; then locked and graded against the final score.&rdquo;</p>
 </div>
-<div style="text-align:center;padding:26px 30px 8px;">
-<a href="https://the-line-breaker-members.onrender.com/home" style="display:inline-block;background:linear-gradient(180deg,#ffd257,#c9971f);color:#0a0a0f;font-size:18px;font-weight:800;letter-spacing:1px;padding:15px 40px;border-radius:30px;text-decoration:none;">ENTER THE DASHBOARD</a>
-<p style="color:#5a5a68;font-size:16px;line-height:1.7;margin:16px 0 4px;">Your first week is <strong style="color:#8a6a1c;">$1</strong> &mdash; then $23/week.<br>Cancel anytime. No questions asked.</p>
+<div style="text-align:center;padding:24px 20px 6px;">
+<a href="https://the-line-breaker-members.onrender.com/home" style="display:inline-block;background:#2fd47e;color:#06130c;font-size:17px;font-weight:800;letter-spacing:1px;padding:15px 42px;border-radius:30px;text-decoration:none;">ENTER THE DASHBOARD</a>
+<p style="color:#9aa3b8;font-size:15px;line-height:1.7;margin:16px 0 4px;">Your first week is <strong style="color:#2fd47e;">$1</strong> &mdash; then $23/week.<br>Cancel anytime. No questions asked.</p>
 </div>
-<div style="margin-top:22px;background:#0a0a0f;text-align:center;padding:24px 30px;border-radius:0 0 18px 18px;border-top:3px solid #d4af37;">
-<img src="https://files.catbox.moe/74qot5.png" alt="The Sharp Team" style="width:72px;height:auto;display:block;margin:0 auto 10px;border-radius:50%;">
-<div style="color:#d4af37;font-size:14px;font-weight:700;letter-spacing:3px;margin-bottom:10px;">THE SHARP TEAM</div>
-<div style="color:#77778a;font-size:14px;line-height:1.8;">250 Park Avenue, Suite 1800, New York, NY 10017<br>(983) 819-4589<br><br>Juega responsablemente &middot; 21+ &middot; 1-800-GAMBLER<br><span style="font-size:13px;">Informational purposes only. Betting involves risk &mdash; never wager more than you can afford to lose.</span></div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:18px 0 0;background:#0d1626;border-radius:18px;border-top:3px solid #2b6fd6;">
+<tr><td style="padding:22px 20px;text-align:center;">
+<img src="https://files.catbox.moe/74qot5.png" alt="The Sharp Team" width="72" style="width:72px;height:auto;display:block;margin:0 auto;border:0;border-radius:50%;">
+<p style="margin:10px 0 4px;font-size:13px;font-weight:800;color:#ffffff;letter-spacing:4px;">THE SHARP TEAM</p>
+<p style="margin:0;font-size:12px;color:#9aa3b8;">250 Park Avenue, Suite 1800, New York, NY 10017</p>
+<p style="margin:4px 0 0;font-size:12px;color:#9aa3b8;">(551) 326-3312</p>
+<div style="width:60%;height:1px;background:#1e2a45;margin:14px auto;">&nbsp;</div>
+<p style="margin:0;font-size:11px;color:#9aa3b8;line-height:1.6;">Bet responsibly &middot; 21+<br>If you have a gambling problem, call 1-800-GAMBLER (1-800-426-2537), free and confidential help, 24/7.</p>
+<p style="margin:10px 0 0;font-size:10px;color:#6b7690;line-height:1.6;">The Sharp Team picks are for informational and entertainment purposes. No pick guarantees winnings; sports betting involves risk of loss.</p>
+<p style="margin:8px 0 0;font-size:10px;color:#6b7690;">&copy; 2026 The Sharp Team &middot; All rights reserved</p>
+</td></tr>
+</table>
 </div>
-</div>"""
+</div>
+</body>
+</html>
+"""
 
 
 def send_welcome_email(nombre: str, email: str):
