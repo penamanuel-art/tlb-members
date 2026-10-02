@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}The Sharp Team{% endblock %}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style-v2.css') }}?v={{ asset_v }}">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/static/img/apple-touch-icon-v2.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="The Sharp Team">
+<meta name="theme-color" content="#070c18">
+<script src="/static/js/push.js?v={{ asset_v }}"></script>
+</head>
+<body class="v2">
+<header class="v2-topbar">
+  <div class="v2-topbar-left">
+    {% if session.get('user_id') %}
+    <a href="{{ url_for('home', splash='0') }}" class="v2-home-link{% if request.endpoint == 'home' %} active{% endif %}" title="Home Dashboard">Home Dashboard</a>
+    <div class="v2-menu-wrap">
+      <button class="v2-icon-btn" id="v2menuBtn" aria-label="Menu">☰</button>
+      <div class="v2-menu-drop" id="v2menuDrop" hidden>
+        <a href="{{ url_for('home', splash='0') }}">🏠 Home Dashboard</a>
+        <a href="{{ url_for('tracker') }}">My Tracker</a>
+        <a href="{{ url_for('masterclass') }}">🎓 Masterclass</a>
+        <a href="{{ url_for('resultados') }}">📊 Results</a>
+        <a href="{{ url_for('ev_board') }}">⚡ +EV Board</a>
+        <a href="{{ url_for('sharp') }}">🔪 Sharp Money</a>
+        <a href="{{ url_for('programa') }}">📘 Program</a>
+        <a href="{{ url_for('archivo') }}">🗂️ Archive</a>
+        {% if es_admin %}<a href="{{ url_for('admin_miembros') }}">👥 Members</a>{% endif %}
+        {% if es_admin %}<a href="{{ url_for('free_plays') }}">🧪 Free Plays</a>{% endif %}
+        {% if es_admin %}<a href="{{ url_for('admin_migrar_track') }}">🔀 Migrate track</a>{% endif %}
+        <a href="{{ url_for('cuenta') }}">💰 My account</a>
+        <a href="{{ url_for('logout') }}">Log out</a>
+      </div>
+    </div>
+    <a href="{{ url_for('tracker') }}" class="v2-track-link{% if request.endpoint == 'tracker' %} active{% endif %}" title="Track a play">+ Track</a>
+    {% else %}
+    <a class="v2-brand" href="{{ url_for('index') }}">
+      <img src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team">
+    </a>
+    {% endif %}
+  </div>
+  <div class="v2-topbar-right">
+    {% if session.get('user_id') %}
+    {% if es_admin %}<button id="langToggle" class="v2-lang-btn notranslate" title="Ver en español">🇺🇸 EN</button>{% endif %}
+    <a class="v2-avatar" href="{{ url_for('cuenta') }}" title="{{ nombre_corto }} — My account">{% if foto_perfil %}<img src="{{ foto_perfil }}" alt="{{ nombre_corto }}">{% else %}{{ inicial }}{% endif %}</a>
+    {% else %}
+    <nav class="v2-nav">
+      {% if es_admin %}<button id="langToggle" class="v2-lang-btn notranslate" title="Ver en español">🇺🇸 EN</button>{% endif %}
+      <a class="v2-nav-link" href="{{ url_for('login') }}">Log in</a>
+      <a class="v2-btn-sm" href="{{ url_for('register') }}">Sign up</a>
+    </nav>
+    {% endif %}
+  </div>
+</header>
+
+<main class="v2-wrap">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="v2-flashes">
+        {% for cat, msg in messages %}
+          <div class="v2-flash v2-flash-{{ cat }}">{{ msg }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+  {% block content %}{% endblock %}
+</main>
+
+<footer class="v2-footer">
+  <p><b>THE SHARP TEAM</b> · Measurable value. Total discipline.</p>
+  <p>Play responsibly · 21+ · If you or someone you know has a gambling problem, call <a href="tel:1800426537">1-800-GAMBLER</a> (1-800-426-2537), free and confidential help, 24/7.</p>
+</footer>
+
+<script>
+(function () {
+  var btn = document.getElementById('v2menuBtn');
+  var drop = document.getElementById('v2menuDrop');
+  if (btn && drop) {
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      drop.hidden = !drop.hidden;
+    });
+    document.addEventListener('click', function () { drop.hidden = true; });
+  }
+  document.querySelectorAll('[data-ticket]').forEach(function (el) {
+    el.addEventListener('click', function () {
+      var m = document.getElementById(el.getAttribute('data-ticket'));
+      if (m) m.hidden = false;
+    });
+  });
+  document.querySelectorAll('.modal').forEach(function (m) {
+    m.addEventListener('click', function (e) {
+      if (e.target === m || e.target.hasAttribute('data-close')) m.hidden = true;
+    });
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') document.querySelectorAll('.modal').forEach(function (m) { m.hidden = true; });
+  });
+})();
+</script>
+{% if es_admin %}
+<!-- Admin-only translator EN→ES (Alex): Google Translate gated to admin sessions -->
+<div id="google_translate_element" style="display:none!important"></div>
+<script>
+function googleTranslateElementInit(){new google.translate.TranslateElement({pageLanguage:'en',includedLanguages:'es',autoDisplay:false},'google_translate_element');}
+(function(){
+  var btn=document.getElementById('langToggle');
+  if(!btn)return;
+  function isES(){return document.cookie.split(';').some(function(c){return c.trim().indexOf('googtrans=/en/es')===0;});}
+  function paint(){var es=isES();btn.textContent=es?'🇪🇸 ES':'🇺🇸 EN';btn.title=es?'View in English':'Ver en español';}
+  btn.addEventListener('click',function(){
+    if(isES()){document.cookie='googtrans=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';}
+    else{document.cookie='googtrans=/en/es; path=/';}
+    location.reload();
+  });
+  paint();
+})();
+</script>
+<script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+{% endif %}
+{% if session.get('user_id') %}{% with ticker_dock="bottom" %}{% include "_results_ticker.html" %}{% endwith %}{% endif %}
+</body>
+</html>
