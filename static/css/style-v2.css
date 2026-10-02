@@ -58,7 +58,24 @@ body.v2 {
 body.v2 a { color: inherit; }
 body.v2 img { max-width: 100%; }
 
+/* Marca de agua de fútbol americano (pedido Alex 2026-10-02):
+   la misma de la versión anterior, tenue y fundida para no competir
+   con el contenido. */
+body.v2::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: var(--wm-img) center 18% / cover no-repeat;
+  opacity: .10;
+  pointer-events: none;
+  z-index: 0;
+  -webkit-mask-image: radial-gradient(ellipse 105% 88% at 50% 22%, #000 22%, transparent 76%);
+  mask-image: radial-gradient(ellipse 105% 88% at 50% 22%, #000 22%, transparent 76%);
+}
+
 .v2-wrap {
+  position: relative;
+  z-index: 1;
   width: 100%;
   max-width: 720px;
   margin: 0 auto;
