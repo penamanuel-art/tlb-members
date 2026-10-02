@@ -1861,7 +1861,7 @@ def home():
     record_checkin(db, session["user_id"])
     auto_grado_tracked(db, current_user())
     program, plays = load_data()
-    card_pendiente = not card_publicada_hoy()
+    card_pendiente = not card_publicada_hoy() or not plays
     if card_pendiente:
         plays = []  # las de ayer no se muestran: la card de hoy aún no sale
     user = current_user()
