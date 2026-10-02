@@ -1022,6 +1022,42 @@ def load_archive():
     return load_json_file(ARCHIVE_PATH).get("dias", [])
 
 
+def program_streak():
+    """Racha actual del programa (W/L) desde el archivo, la más reciente primero.
+    (Pedido Alex 2026-10-02: racha visible en el hero del Dashboard.)"""
+    ordered = []
+    for d in load_archive():
+        for j in d.get("jugadas", []) or []:
+            if j.get("resultado") in ("WON", "LOST") and not j.get("bloqueada"):
+                ordered.append(j["resultado"])
+    if not ordered:
+        return None
+    tipo = ordered[0]
+    n = 0
+    for r in ordered:
+        if r == tipo:
+            n += 1
+        else:
+            break
+    return {"tipo": "W" if tipo == "WON" else "L", "n": n}
+
+
+def resumen_ayer():
+    """Récord y profit del día calendario anterior (America/New_York).
+    Se muestra en el hero cuando la card de hoy aún no sale. (Pedido Alex 2026-10-02.)"""
+    ayer = (datetime.now(TZ).date() - timedelta(days=1)).isoformat()
+    for d in load_archive():
+        if d.get("fecha") == ayer:
+            js = [j for j in (d.get("jugadas", []) or []) if j.get("resultado") in ("WON", "LOST")]
+            if not js:
+                return None
+            w = sum(1 for j in js if j["resultado"] == "WON")
+            l = len(js) - w
+            p = round(sum(float(j.get("profit") or 0) for j in js), 2)
+            return {"w": w, "l": l, "profit": p}
+    return None
+
+
 def recientes_oficiales(n=6):
     """Jugadas liquidadas del archivo oficial (sin bloqueadas), más recientes primero."""
     recientes = []
@@ -2211,6 +2247,8 @@ def tracker():
         platinum_unlocked=platinum_unlocked_for(user),
         res=program_stats(),
         recientes=recientes_oficiales(),
+        streak=program_streak(),
+        resumen_ayer=resumen_ayer(),
         es_admin=is_admin_for(user),
     )
 
