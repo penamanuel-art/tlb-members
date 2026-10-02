@@ -58,6 +58,14 @@
 </header>
 
 <main class="v2-wrap">
+  {# Aviso permanente de pago fallido (pedido Alex 2026-10-02): sale en TODAS
+     las páginas del miembro mientras stripe_past_due=1, hasta que pague. #}
+  {% if past_due %}
+  <div class="v2-pastdue v2-pastdue-global" role="alert">
+    <p>⚠️ Your last payment didn't go through, so your membership is past due and access is paused.</p>
+    <a href="{{ url_for('cuenta') }}">Update your card to restore it →</a>
+  </div>
+  {% endif %}
   {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
       <div class="v2-flashes">
