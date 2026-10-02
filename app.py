@@ -1699,6 +1699,8 @@ def migrate_db():
             pending.append("ALTER TABLE users ADD COLUMN stripe_customer_id TEXT")
         if "stripe_subscription_id" not in cols:
             pending.append("ALTER TABLE users ADD COLUMN stripe_subscription_id TEXT")
+        if "stripe_past_due" not in cols:
+            pending.append("ALTER TABLE users ADD COLUMN stripe_past_due INTEGER NOT NULL DEFAULT 0")
         if "foto" not in cols:
             pending.append("ALTER TABLE users ADD COLUMN foto TEXT")
         if "telegram_user_id" not in cols:
@@ -2570,9 +2572,14 @@ def desbloquear_platinum():
     db = get_db()
     record_checkin(db, session["user_id"])
     user = current_user()
+    try:
+        past_due = bool(user and user["stripe_past_due"])
+    except (KeyError, IndexError, TypeError):
+        past_due = False
     return render_template(
         "desbloquear.html",
         ya_desbloqueada=platinum_unlocked_for(user),
+        past_due=past_due,
         stripe_url=STRIPE_PLATINUM_URL,
     )
 
@@ -3424,7 +3431,7 @@ def stripe_webhook():
             tiene_tg = bool(row["telegram_user_id"])
             db.execute(
                 "UPDATE users SET platinum_unlocked = 1, stripe_customer_id = ?, "
-                "stripe_subscription_id = ?, cancel_requested_at = NULL WHERE id = ?",
+                "stripe_subscription_id = ?, stripe_past_due = 0, cancel_requested_at = NULL WHERE id = ?",
                 (customer_id or None, sub_id or None, uid),
             )
             # Si tiene Telegram vinculado, el cron lo desbanea del canal Sharp Club
@@ -3518,6 +3525,11 @@ def stripe_webhook():
                                (email,)).fetchone()
                 if r:
                     nombre = r["nombre"] or ""
+                    # Marca past_due para el banner de dunning en /desbloquear-platinum
+                    # (pedido Alex 2026-10-02, idea del ejemplo que envió).
+                    db.execute("UPDATE users SET stripe_past_due = 1 WHERE email = ?",
+                               (email,))
+                    db.commit()
             ya_notificado = False
             if invoice_id:
                 ya_notificado = bool(db.execute(
