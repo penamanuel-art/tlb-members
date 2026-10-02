@@ -439,6 +439,12 @@ body.v2 img { max-width: 100%; }
 .v2-mc-feat p { font-size: 13.5px; color: var(--v2-muted); line-height: 1.6; margin-bottom: 10px; }
 .v2-mc-feat .v2-link { font-size: 13.5px; }
 .v2-mc-list { display: grid; gap: 8px; margin-top: 12px; }
+.v2-mc-open {
+  display: block; text-align: center; text-decoration: none; margin-top: 12px;
+  background: var(--v2-surface); border: 1px solid rgba(43, 111, 214, 0.45);
+  border-radius: 12px; padding: 15px; color: #fff; font-size: 15px; font-weight: 800;
+}
+.v2-mc-open:active { transform: scale(0.98); }
 .v2-mc-item {
   display: flex; align-items: center; gap: 12px; text-decoration: none;
   background: var(--v2-surface); border: 1px solid var(--v2-border);
