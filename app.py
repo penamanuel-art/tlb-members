@@ -1854,7 +1854,9 @@ def home():
     # home como lo ve un miembro sin Elite (teaser bloqueado + pancarta $1).
     preview_locked = is_admin_for(user) and request.args.get("preview") == "locked"
     return render_template(
-        "home_v2.html" if session.get("theme") == "v2" else "home.html",
+        # Tema v2 (moderno) es el predeterminado desde 2026-10-02 (pedido Alex);
+        # v1 (clásico) queda como reversión vía /theme/v1.
+        "home.html" if session.get("theme") == "v1" else "home_v2.html",
         plays=plays,
         card_pendiente=card_pendiente,
         tracked_ids=tracked_ids,
