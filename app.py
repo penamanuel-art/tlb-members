@@ -1641,6 +1641,10 @@ def inject_user():
     except (ValueError, TypeError, KeyError, IndexError):
         dias_miembro = 1
     etiqueta = "VIP Member" if platinum_unlocked_for(cu) else "Member"
+    try:
+        past_due = bool(cu and cu["stripe_past_due"])
+    except (KeyError, IndexError, TypeError):
+        past_due = False
     return {
         "nombre_corto": corto,
         "nombre_completo": nombre,
@@ -1650,6 +1654,7 @@ def inject_user():
         "etiqueta_miembro": etiqueta,
         "es_admin": bool(session.get("is_admin")),
         "miembro_platinum": platinum_unlocked_for(cu),
+        "past_due": past_due,
         "ticker_days": compute_ticker_days(),
         "asset_v": ASSET_V,
         "watermark_img": session.get("watermark", WATERMARKS[0]),
