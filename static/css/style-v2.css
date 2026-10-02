@@ -515,6 +515,90 @@ body.v2::before {
 .v2-footer b { color: var(--v2-muted); letter-spacing: 0.14em; }
 .v2-footer a { color: var(--v2-muted); }
 
+/* ---------------- Upsell VIP (pedido Alex 2026-10-02) ----------------
+   Diseno propio de The Sharp Team: dorado + degradado azul->verde + mono.
+   La IDEA viene del ejemplo que envio Alex; el diseno es original. */
+.v2-upsell-sec { margin-top: 6px; }
+.v2-upsell-card {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(160deg, #0e1830 0%, #0a1122 70%);
+  border: 1px solid var(--v2-border);
+  border-radius: 22px;
+  padding: 26px 24px;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, .45);
+}
+.v2-upsell-card::before {
+  content: "";
+  position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, var(--v2-gold), var(--v2-blue), var(--v2-green));
+}
+.v2-upsell-card-head { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.v2-upsell-shark { width: 44px; height: 44px; object-fit: contain; flex-shrink: 0; }
+.v2-upsell-kicker {
+  font-size: 12px; font-weight: 800; letter-spacing: .22em;
+  color: var(--v2-gold); margin-bottom: 4px;
+}
+.v2-upsell-price {
+  font-family: var(--v2-mono);
+  font-size: 54px; font-weight: 800; letter-spacing: -2px; line-height: 1;
+  background: linear-gradient(90deg, var(--v2-blue), var(--v2-green));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.v2-upsell-price span {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Inter, sans-serif;
+  font-size: 21px; font-weight: 700; letter-spacing: -.3px;
+  background: none; color: #fff; -webkit-text-fill-color: #fff;
+}
+.v2-upsell-then { color: var(--v2-muted); font-size: 14px; margin-top: 10px; font-weight: 600; }
+.v2-upsell-then b { color: #fff; }
+.v2-upsell-list { list-style: none; margin: 20px 0 0; padding: 0; display: grid; gap: 13px; }
+.v2-upsell-list li { display: flex; align-items: flex-start; gap: 11px; font-size: 16px; font-weight: 600; }
+.v2-check {
+  flex-shrink: 0; width: 22px; height: 22px; border-radius: 999px;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 800; color: #fff;
+  background: linear-gradient(135deg, var(--v2-blue), var(--v2-green));
+}
+.v2-upsell-title { font-size: 34px; letter-spacing: -1px; line-height: 1.1; margin: 28px 0 10px; }
+.v2-upsell-title em {
+  font-style: normal;
+  background: linear-gradient(90deg, var(--v2-gold), var(--v2-amber));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.v2-upsell-sub { color: var(--v2-muted); font-size: 15.5px; font-weight: 600; }
+.v2-upsell-terms {
+  background: var(--v2-gold-soft);
+  border: 1px solid rgba(212, 175, 55, .25);
+  border-radius: 18px;
+  padding: 20px;
+  margin-top: 20px;
+}
+.v2-upsell-terms p { font-size: 15px; line-height: 1.65; color: #d8deea; }
+.v2-upsell-terms b { color: var(--v2-gold); }
+.v2-upsell-cta {
+  display: block; text-align: center; text-decoration: none;
+  background: linear-gradient(135deg, var(--v2-blue), var(--v2-green));
+  color: #fff; font-weight: 800; font-size: 19px; letter-spacing: -.2px;
+  padding: 19px 20px; border-radius: 999px; margin-top: 20px;
+  box-shadow: 0 12px 34px rgba(43, 111, 214, .4);
+}
+.v2-upsell-cta:active { transform: scale(.985); }
+.v2-upsell-note { margin-top: 18px; font-size: 14.5px; line-height: 1.55; color: #c9d4ea; }
+.v2-upsell-note b { color: var(--v2-gold); }
+.v2-upsell-fine { margin-top: 10px; font-size: 13px; color: var(--v2-muted); text-align: center; }
+.v2-upsell-done { text-align: center; padding: 34px 10px; }
+.v2-upsell-done .v2-upsell-cta { max-width: 340px; margin-left: auto; margin-right: auto; }
+/* Banner de pago fallido (dunning, idea del ejemplo) */
+.v2-pastdue {
+  background: linear-gradient(180deg, #3a2a12, #2b2010);
+  border: 1px solid rgba(212, 175, 55, .4);
+  border-radius: 18px;
+  padding: 18px 20px;
+  margin-bottom: 22px;
+}
+.v2-pastdue p { font-size: 15.5px; font-weight: 700; color: #ffe1a1; line-height: 1.5; }
+.v2-pastdue a { display: inline-block; margin-top: 10px; color: var(--v2-gold); font-weight: 800; font-size: 16px; }
 /* ---------------- Utilities ---------------- */
 .pos { color: var(--v2-green) !important; }
 .neg { color: var(--v2-red) !important; }
