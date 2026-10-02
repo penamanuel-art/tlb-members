@@ -1,0 +1,33 @@
+{# Sección upsell VIP (pedido Alex 2026-10-02, idea del ejemplo que envió):
+   se muestra a miembros SIN suscripción VIP. Diseño propio de The Sharp Team.
+   Requiere en el contexto: upsell_cta_url (destino del botón),
+   upsell_cta_target (opcional, ej "_blank"),
+   upsell_show_email_note (opcional, true en la página de desbloqueo). #}
+<section class="v2-sec v2-upsell-sec">
+  <div class="v2-upsell-card">
+    <div class="v2-upsell-card-head">
+      <img class="v2-upsell-shark" src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team">
+      <div>
+        <p class="v2-upsell-kicker">VIP MEMBERSHIP</p>
+        <p class="v2-upsell-price">$1 <span>first week</span></p>
+      </div>
+    </div>
+    <p class="v2-upsell-then">then <b>$23/week</b> · cancel anytime</p>
+    <ul class="v2-upsell-list">
+      <li><span class="v2-check">✓</span>VIP official plays</li>
+      <li><span class="v2-check">✓</span>Max-conviction play of the day</li>
+      <li><span class="v2-check">✓</span>Bonus plays — +EV player props</li>
+      <li><span class="v2-check">✓</span>Every tool + line shopping</li>
+    </ul>
+  </div>
+  <h2 class="v2-sec-title v2-upsell-title">Unlock VIP +<br><em>the full board</em></h2>
+  <p class="v2-upsell-sub">$1 first week · cancel anytime · 100% documented</p>
+  <div class="v2-upsell-terms">
+    <p>Your $1 first week unlocks VIP, Bonus &amp; every official play. Cancel anytime. The $1 first week is one time per customer. If you have used a trial before, you are charged <b>$23 a week</b> right away, no matter how you sign up.</p>
+  </div>
+  <a class="v2-upsell-cta" href="{{ upsell_cta_url }}"{% if upsell_cta_target %} target="{{ upsell_cta_target }}" rel="noopener"{% endif %}>Start $1 trial →</a>
+  {% if upsell_show_email_note %}
+  <p class="v2-upsell-note"><b>Important:</b> use the same email address as your member account — that's how your VIP access unlocks automatically.</p>
+  <p class="v2-upsell-fine">Secure payment with Stripe. After paying, we activate your VIP access.</p>
+  {% endif %}
+</section>
