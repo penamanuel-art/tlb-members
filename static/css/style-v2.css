@@ -600,6 +600,23 @@ body.v2::before {
 .v2-pastdue p { font-size: 15.5px; font-weight: 700; color: #ffe1a1; line-height: 1.5; }
 .v2-pastdue a { display: inline-block; margin-top: 10px; color: var(--v2-gold); font-weight: 800; font-size: 16px; }
 .v2-pastdue-global { margin-top: 14px; }
+/* Invitación VIP persistente para miembros que nunca se suscribieron
+   (pedido Alex 2026-10-02): distinta del banner de pago fallido. */
+.v2-vipinvite {
+  display: flex; align-items: center; gap: 11px;
+  margin-top: 14px; padding: 13px 16px;
+  background: linear-gradient(135deg, rgba(43, 111, 214, .16), rgba(47, 212, 126, .10));
+  border: 1px solid rgba(212, 175, 55, .35);
+  border-radius: 16px;
+  text-decoration: none; font-size: 14.5px; font-weight: 600; color: #eef3fb;
+}
+.v2-vipinvite-badge {
+  font-size: 11px; font-weight: 800; letter-spacing: .12em;
+  color: #04150c; background: linear-gradient(135deg, var(--v2-gold), var(--v2-amber));
+  padding: 5px 10px; border-radius: 999px; flex-shrink: 0;
+}
+.v2-vipinvite b { color: var(--v2-gold); }
+.v2-vipinvite-arrow { margin-left: auto; color: var(--v2-gold); font-weight: 800; flex-shrink: 0; }
 /* ---------------- Utilities ---------------- */
 .pos { color: var(--v2-green) !important; }
 .neg { color: var(--v2-red) !important; }
