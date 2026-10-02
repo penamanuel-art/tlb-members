@@ -1,41 +1,28 @@
-{% extends "base.html" %}
+{% extends "base_v2.html" %}
 {% block title %}Unlock VIP — The Sharp Team{% endblock %}
 {% block content %}
+{# Página de desbloqueo VIP rediseñada 2026-10-02 (pedido Alex, modelada del
+   ejemplo que envió): banner de pago fallido + tarjeta de membresía + CTA. #}
 
-<section class="tracker-head">
-  <div>
-    <p class="kicker">VIP MEMBERS</p>
-    <h2>Unlock the VIP play.</h2>
-  </div>
-</section>
+{% if past_due %}
+<div class="v2-pastdue" role="alert">
+  <p>⚠️ Your last payment didn't go through, so your membership is past due and access is paused.</p>
+  <a href="{{ url_for('cuenta') }}">Update your card to restore it →</a>
+</div>
+{% endif %}
 
-{% if ya_desbloqueada %}
-<div class="flash flash-ok">Your VIP access is already active. The day's top play appears unlocked on your card.</div>
-<p class="center"><a class="btn btn-place" href="{{ url_for('home') }}">View my plays →</a></p>
+{% if ya_desbloqueada and not past_due %}
+<div class="v2-upsell-done">
+  <p class="v2-upsell-kicker">VIP MEMBERSHIP</p>
+  <h2 class="v2-sec-title">Your VIP access is active ✓</h2>
+  <p class="v2-upsell-sub">The day's top play appears unlocked on your card.</p>
+  <a class="v2-upsell-cta" href="{{ url_for('home') }}">View my plays →</a>
+</div>
 {% else %}
-<article class="price-box">
-  <p class="price-kicker">★ WEEKLY VIP</p>
-  <p class="price-value"><b>$1</b> <span>the first week</span></p>
-  <p class="price-then">then <b>$23/week</b> · cancel anytime</p>
-  <ul class="price-list">
-    <li>The top play of each day, complete: pick, odds, stake and edge</li>
-    <li>The highest estimated value of the day</li>
-    <li>Everything else stays the same: Free Plays, tracker, Masterclass and results</li>
-  </ul>
-  <a class="btn btn-place btn-block" href="{{ stripe_url }}" target="_blank" rel="noopener">Pay $1 and unlock →</a>
-  <p class="center"><b>Important:</b> use the same email address as your member account — that's how your VIP access unlocks automatically.</p>
-  <p class="muted center">Secure payment with Stripe. $1 the first week, then $23/week · cancel anytime. After paying, we activate your VIP access.</p>
-</article>
-
-<div class="section-head" style="margin-top: 32px;">
-  <h2 class="section-title">FULL TRANSPARENCY</h2>
-  <p class="section-sub">The Sharp Team documents everything. Nothing hidden, nothing edited.</p>
-</div>
-<div class="tst-steps">
-  <article class="tst-step"><span class="tst-step-num">01</span><div><h4>Locked Before Game Time</h4><p>Every play is posted with its original ticket photo before the game starts. No backdated picks, ever.</p></div></article>
-  <article class="tst-step"><span class="tst-step-num">02</span><div><h4>Graded Win or Loss</h4><p>Every play stays on the public record — wins and losses. Nothing deleted, nothing rewritten.</p></div></article>
-  <article class="tst-step"><span class="tst-step-num">03</span><div><h4>Open Track Record</h4><p>Full history visible to every member. The numbers speak for themselves.</p></div></article>
-</div>
+{% set upsell_cta_url = stripe_url %}
+{% set upsell_cta_target = "_blank" %}
+{% set upsell_show_email_note = true %}
+{% include "_upsell_vip.html" %}
 {% endif %}
 
 {% endblock %}
