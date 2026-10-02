@@ -1808,6 +1808,16 @@ def last_elite_win():
     return None
 
 
+@app.route("/theme/<name>")
+@login_required
+def theme(name):
+    # Selector de tema del Dashboard (pedido Alex 2026-10-02): v2 = look moderno,
+    # v1 = diseño actual. El cambio es por sesión y reversible en un toque.
+    if name in ("v1", "v2"):
+        session["theme"] = name
+    return redirect(request.args.get("next") or url_for("home"))
+
+
 @app.route("/home")
 @login_required
 def home():
@@ -1844,7 +1854,7 @@ def home():
     # home como lo ve un miembro sin Elite (teaser bloqueado + pancarta $1).
     preview_locked = is_admin_for(user) and request.args.get("preview") == "locked"
     return render_template(
-        "home.html",
+        "home_v2.html" if session.get("theme") == "v2" else "home.html",
         plays=plays,
         card_pendiente=card_pendiente,
         tracked_ids=tracked_ids,
