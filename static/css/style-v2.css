@@ -603,6 +603,7 @@ body.v2::before {
 /* Invitación VIP persistente para miembros que nunca se suscribieron
    (pedido Alex 2026-10-02): distinta del banner de pago fallido. */
 .v2-vipinvite {
+  position: sticky; top: 64px; z-index: 40;
   display: flex; align-items: center; gap: 11px;
   margin-top: 14px; padding: 13px 16px;
   background: linear-gradient(135deg, rgba(43, 111, 214, .16), rgba(47, 212, 126, .10));
