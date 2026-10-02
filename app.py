@@ -3342,9 +3342,13 @@ def stripe_webhook():
                 "stripe_subscription_id = ?, cancel_requested_at = NULL WHERE id = ?",
                 (customer_id or None, sub_id or None, uid),
             )
-            # Si vuelve después de cancelar y tiene Telegram vinculado, el cron
-            # lo desbanea del canal Sharp Club para que pueda reingresar.
-            if estaba_cancelado and tiene_tg:
+            # Si tiene Telegram vinculado, el cron lo desbanea del canal Sharp Club
+            # para que pueda reingresar. Se hace SIEMPRE al activar (no solo si
+            # cancel_requested_at está marcado): el 2026-10-01 la cancelación se
+            # hizo con el botón de prueba (no marca cancel_requested_at) y al
+            # reactivar por Stripe el desbaneo jamás se encoló — Alex lo reclamó.
+            # unbanChatMember es seguro aunque no esté baneado.
+            if tiene_tg:
                 db.execute(
                     "UPDATE users SET telegram_unban_pending = 1, telegram_ban_pending = 0"
                     " WHERE id = ?", (uid,),
