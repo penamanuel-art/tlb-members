@@ -5,10 +5,13 @@
 #faqPanel{position:fixed;right:14px;bottom:86px;z-index:2001;width:min(340px,calc(100vw - 28px));height:min(480px,calc(100dvh - 140px));background:#0b0e14;border:1.5px solid #c9a227;border-radius:18px;box-shadow:0 12px 40px rgba(0,0,0,.55);display:none;flex-direction:column;overflow:hidden}
 #faqPanel.above-ticker{bottom:160px}
 #faqPanel.open{display:flex}
+#faqPanel.full{right:0;bottom:0;width:100vw;height:100dvh;max-height:100dvh;border-radius:0;border-left:none;border-right:none}
 #faqHead{background:linear-gradient(160deg,#12233a,#0b1426);padding:12px 14px;border-bottom:1px solid #22345c;display:flex;align-items:center;gap:10px}
 #faqHead .t{color:#fff;font-weight:800;font-size:15px}
 #faqHead .s{color:#9aa3b8;font-size:12px}
-#faqHead button{margin-left:auto;background:none;border:none;color:#9aa3b8;font-size:20px;cursor:pointer}
+#faqHead button{background:none;border:none;color:#9aa3b8;font-size:20px;cursor:pointer;padding:4px}
+#faqHead #faqExpand{margin-left:auto}
+#faqHead #faqClose{margin-left:6px}
 #faqMsgs{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px}
 .faq-b{max-width:82%;padding:9px 12px;border-radius:14px;font-size:14px;line-height:1.45}
 .faq-b.bot{background:#131a2b;color:#e8ecf4;border:1px solid #22345c;align-self:flex-start;border-bottom-left-radius:4px}
@@ -23,6 +26,7 @@
 <div id="faqPanel" role="dialog" aria-label="Questions and answers">
   <div id="faqHead">
     <div><div class="t">The Sharp Team</div><div class="s">Questions, answered</div></div>
+    <button id="faqExpand" aria-label="Full screen">⛶</button>
     <button id="faqClose" aria-label="Close">✕</button>
   </div>
   <div id="faqMsgs"></div>
@@ -56,6 +60,11 @@
     if(panel.classList.contains('open')&&!greeted){greeted=true;bubble('Hey 👋 Ask me anything about Free Plays, VIP, pricing or Telegram — en español o en inglés.','bot');}
   });
   document.getElementById('faqClose').addEventListener('click',function(){panel.classList.remove('open');});
+  document.getElementById('faqExpand').addEventListener('click',function(){
+    var full=panel.classList.toggle('full');
+    this.textContent=full?'🗗':'⛶';
+    this.setAttribute('aria-label',full?'Exit full screen':'Full screen');
+  });
   form.addEventListener('submit',function(e){e.preventDefault();ask(input.value);});
   document.querySelectorAll('#faqChips button').forEach(function(b){b.addEventListener('click',function(){ask(b.getAttribute('data-q'));});});
 })();
