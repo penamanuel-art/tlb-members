@@ -65,6 +65,9 @@ STRIPE_PLATINUM_URL = os.environ.get(
 # sistema en 200 jugadas antes del lanzamiento público. Se cambia con la
 # env var FREE_STAKE en Render (default $50).
 FREE_STAKE = float(os.environ.get("FREE_STAKE", "50"))
+# Capital simulado del tracker de validación "Free Plays" (2026-10-03, orden
+# de Alex): $10,000 al 1% estilo WGT — VIP 1u = $100, Free 0.6u = $60.
+FREE_TEST_BANKROLL = float(os.environ.get("FREE_TEST_BANKROLL", "10000"))
 # Meta de jugadas para la validación (default 200).
 FREE_PLAYS_GOAL = int(os.environ.get("FREE_PLAYS_GOAL", "200"))
 
@@ -1557,12 +1560,27 @@ def _dedup_free_plays(db):
     return len(doomed)
 
 
+def _free_stake(nivel, stake_unidades):
+    """Stake simulado del tracker Free Plays: 1% de FREE_TEST_BANKROLL ($10k).
+
+    Orden de Alex 2026-10-03: mismo método WGT — 1u = 1% ($100), 0.6u = $60.
+    """
+    try:
+        u = float(stake_unidades or 0)
+    except (TypeError, ValueError):
+        u = 0
+    if u <= 0:
+        u = 1.0 if str(nivel or "").upper() == "ELITE" else 0.6
+    return u, round(FREE_TEST_BANKROLL * 0.01 * u, 2)
+
+
 def sync_free_plays(db):
     """Registra automáticamente en el tracker "Free Plays" las jugadas de la
     card publicada (data/plays.json) y del histórico (data/archive.json)
     que aún no estén registradas.
 
-    Cada jugada entra con el stake fijo FREE_STAKE. Idempotente: las jugadas
+    Cada jugada entra con stake simulado 1% de $10,000 por unidades
+    (2026-10-03, orden de Alex). Idempotente: las jugadas
     ya registradas (por play_id) se saltan. Se llama al publicar la card y
     al abrir /free-plays.
     """
@@ -1570,7 +1588,7 @@ def sync_free_plays(db):
     now = datetime.now(timezone.utc).isoformat()
     n = 0
 
-    def _insert(pid, fecha, nivel, pick, cuota, edge):
+    def _insert(pid, fecha, nivel, pick, cuota, edge, stake_unidades=None):
         nonlocal n
         if not pid:
             return
@@ -1583,12 +1601,13 @@ def sync_free_plays(db):
             cuota = int(cuota)
         except (TypeError, ValueError):
             return
+        u, monto = _free_stake(nivel, stake_unidades)
         db.execute(
             "INSERT INTO free_plays "
             "(play_id, fecha, nivel, pick, cuota, stake_unidades, stake_monto, edge, resultado, created_at) "
             "VALUES (?, ?, ?, ?, ?, ?, ?, ?, NULL, ?)",
             (pid, fecha or "", nivel or "GOLD", pick or "", cuota,
-             1.0, FREE_STAKE, edge, now),
+             u, monto, edge, now),
         )
         n += 1
 
@@ -1597,6 +1616,7 @@ def sync_free_plays(db):
         _insert(
             p.get("id"), p.get("fecha"), p.get("nivel"),
             p.get("pick"), p.get("cuota"), p.get("edge"),
+            p.get("stake_unidades"),
         )
 
     # 2) Histórico (archive.json) — backfill de jugadas ya publicadas
@@ -1609,6 +1629,7 @@ def sync_free_plays(db):
             _insert(
                 _free_play_id(fecha, pick), fecha, j.get("nivel"),
                 pick, j.get("cuota"), j.get("edge"),
+                j.get("stake_unidades"),
             )
 
     if n:
