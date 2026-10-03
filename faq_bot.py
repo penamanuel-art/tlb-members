@@ -71,6 +71,8 @@ _CANON = {
     "programa": "program", "programas": "program",
     "funciona": "work", "funcionar": "work", "funcionamiento": "work",
     "sistema": "system", "systems": "system",
+    "seguimiento": "track", "rastreo": "track", "llevar": "track",
+    "sigo": "track", "sigue": "track",
 }
 
 _STOP = {
@@ -147,6 +149,11 @@ class FaqBot:
             for w in set(toks):
                 df[w] = df.get(w, 0) + 1
         self.idf = {w: math.log(n_docs / max(1, c)) for w, c in df.items()}
+        # tokens de las preguntas canónicas (para el atajo de coincidencia directa)
+        self.q_toks = [
+            set(_tokens(it.get("q_en", "") + " " + it.get("q_es", "")))
+            for it in self.items
+        ]
         self.doc_vecs = []
         for toks in docs:
             tf = {}
@@ -192,6 +199,17 @@ class FaqBot:
             g = next((it for it in self.items if it.get("id") == "greeting"), None)
             if g:
                 return self._pick(g, lang), "greeting", lang
+        # atajo: la pregunta calza dentro de la pregunta canónica de un tema
+        # ("What do I get for free?" -> {free} ⊆ {free} del tema "free")
+        qset = set(toks)
+        best_pre, best_ratio = None, 0.0
+        for it, qt in zip(self.items, self.q_toks):
+            if qset and qset <= qt:
+                ratio = len(qset) / len(qt)
+                if ratio > best_ratio:
+                    best_pre, best_ratio = it, ratio
+        if best_pre is not None:
+            return self._pick(best_pre, lang), best_pre.get("id"), lang
         tf = {}
         for w in toks:
             tf[w] = tf.get(w, 0) + 1
