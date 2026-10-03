@@ -120,6 +120,9 @@
     </form>
     <button class="v2-br-how" id="v2-br-how-open" type="button">how much should I bet?</button>
   </div>
+  {% if es_alex and not es_admin %}
+  <a href="{{ url_for('balances') }}" class="v2-balances-link">💰 My book balances →</a>
+  {% endif %}
   <div class="v2-modal" id="v2-br-how-modal" hidden>
     <div class="v2-modal-card">
       <h3>How much should I bet?</h3>
