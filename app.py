@@ -1794,6 +1794,43 @@ def index():
     return render_template("index.html")
 
 
+@app.route("/free")
+def free_landing():
+    """Landing pública estilo WGT para la membresía gratuita (pedido por Alex 2026-10-03).
+
+    OJO: /free-plays es el tracker admin de jugadas simuladas — esta página usa /free.
+    Stats en vivo desde data/archive.json (verificado 2026-10-03: 15-5, +52.08% ROI, 20 jugadas).
+    """
+    wins = losses = 0
+    profit = staked = 0.0
+    try:
+        with open(os.path.join(os.path.dirname(__file__), "data", "archive.json")) as f:
+            dias = json.load(f).get("dias", [])
+        for dia in dias:
+            for j in dia.get("jugadas", []):
+                r = j.get("resultado")
+                if r == "WON":
+                    wins += 1
+                elif r == "LOST":
+                    losses += 1
+                else:
+                    continue
+                profit += float(j.get("profit") or 0)
+                staked += float(j.get("stake_monto") or 0)
+    except Exception:
+        pass
+    total = wins + losses
+    roi = (100.0 * profit / staked) if staked else 0.0
+    return render_template(
+        "free_landing.html",
+        wins=wins,
+        losses=losses,
+        total=total,
+        roi=roi,
+        stripe_url=STRIPE_PLATINUM_URL,
+    )
+
+
 def compute_ticker_days():
     """Ticker de resultados (pedido por Alex 2026-09-26, refinado el mismo día):
     UN solo día: el último día con jugadas liquidadas (el día anterior).
