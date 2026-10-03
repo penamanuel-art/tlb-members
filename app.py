@@ -98,6 +98,12 @@ PUSH_TRIGGER_KEY = os.environ.get("PUSH_TRIGGER_KEY", "")
 # env var TELEGRAM_WEBHOOK_SECRET.
 TELEGRAM_WEBHOOK_SECRET = os.environ.get("TELEGRAM_WEBHOOK_SECRET", "")
 TELEGRAM_BOT_USERNAME = os.environ.get("TELEGRAM_BOT_USERNAME", "thesharpteam_bot")
+# Token del bot para avisos en tiempo real (ruta /go/<slug>).
+# Se configura en Render como env var TELEGRAM_BOT_TOKEN. Si no está,
+# el aviso lo sigue mandando el watcher de la VM (cron click-notify).
+TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "")
+# Chat de Alex para los avisos de clics (su telegram_user_id).
+CLICK_NOTIFY_CHAT_ID = os.environ.get("CLICK_NOTIFY_CHAT_ID", "8600523481")
 # Link permanente de invitación al canal privado VIP Plays (Telegram).
 # 2026-10-02: reemplaza el pool de links de un solo uso (fricción: Telegram
 # muestra "Expired Link" a usuarios baneados y los links se agotaban).
@@ -1990,6 +1996,33 @@ TRACKED_LINKS = {
 }
 
 
+def _notify_click_telegram(slug):
+    """Aviso en tiempo real por Telegram cuando tocan un link rastreado.
+
+    Solo funciona si Render tiene TELEGRAM_BOT_TOKEN. Nunca bloquea:
+    timeout corto y todo error se traga en silencio (el watcher de la VM
+    es el respaldo).
+    """
+    if not TELEGRAM_BOT_TOKEN or not CLICK_NOTIFY_CHAT_ID:
+        return False
+    try:
+        payload = json.dumps(
+            {
+                "chat_id": CLICK_NOTIFY_CHAT_ID,
+                "text": "🔗 Alguien tocó tu link de Instagram",
+            }
+        ).encode("utf-8")
+        req = urllib.request.Request(
+            f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage",
+            data=payload,
+            headers={"Content-Type": "application/json"},
+        )
+        with urllib.request.urlopen(req, timeout=4) as resp:
+            return resp.status == 200
+    except Exception:
+        return False
+
+
 @app.route("/go/<slug>")
 def tracked_link(slug):
     dest = TRACKED_LINKS.get(slug)
@@ -2010,6 +2043,11 @@ def tracked_link(slug):
         db.commit()
     except Exception:
         pass  # el redirect nunca se bloquea por un fallo del log
+    # Aviso en tiempo real (si hay token en Render; si no, el watcher lo manda).
+    try:
+        _notify_click_telegram(slug)
+    except Exception:
+        pass
     return redirect(dest, code=302)
 
 
