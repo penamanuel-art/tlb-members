@@ -3,7 +3,8 @@
 .tstc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
 .tstc-league{background:#1a2233;color:#9aa3b8;font-size:12px;font-weight:700;letter-spacing:1px;padding:6px 14px;border-radius:999px}
 .tstc-odds{color:#2fd47e;font-size:19px;font-weight:800}
-.tstc-title{font-size:20px;font-weight:800;color:#fff;margin:0 0 10px;letter-spacing:-.3px}
+.tstc-title{font-size:20px;font-weight:800;color:#fff;margin:0 0 10px;letter-spacing:-.3px;display:flex;align-items:center;gap:10px}
+.tstc-logo{width:40px;height:40px;border-radius:50%;background:#fff;object-fit:contain;flex:none;padding:3px;box-sizing:border-box}
 {# El ticket se ve DE FRENTE: es la imagen del ticket, no una reconstrucción HTML (estilo WGT, pedido por Alex 2026-09-29). Ticket más pequeño que el cuadro, centrado con espacio alrededor (diseño de referencia de Alex 2026-10-01). #}
 .tstc-face{display:block;width:100%;position:relative;border-radius:14px;cursor:pointer;border:none;padding:0;background:none;-webkit-tap-highlight-color:transparent}
 .tstc-face img{display:block;width:94%;height:auto;margin:0 auto;border-radius:14px}
@@ -16,7 +17,7 @@
 .tstc-view{background:none;border:none;color:#4b8bf5;font-size:16px;font-weight:700;cursor:pointer;padding:0}
 .tstc-actions{display:flex;gap:10px}
 .tstc-btn{font-weight:800;border-radius:12px;padding:9px 14px;text-decoration:none;display:inline-block;font-size:13px;border:none;cursor:pointer;text-align:center}
-.tstc-novig{background:#22c55e;color:#052e16;flex:1}
+.tstc-novig{background:#4898df;color:#fff;flex:1}
 .tstc-track{background:transparent;color:#4ade80;border:1.5px solid #22c55e;flex:1}
 .tstc-tracked{background:rgba(34,197,94,.12);color:#4ade80;border:1.5px solid #22c55e;flex:1;cursor:default}
 .tstc-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:9999;align-items:center;justify-content:center;padding:16px}
@@ -30,7 +31,7 @@
     <span class="tstc-league">{{ p.liga }}</span>
     <span class="tstc-odds">{{ fmt_odds(p.cuota) }}</span>
   </div>
-  <div class="tstc-title">{{ p.abbr }} {{ p.bettype }} (Winner)</div>
+  <div class="tstc-title">{% set _logo = team_logo_url(p.liga, p.abbr) %}{% if _logo %}<img class="tstc-logo" src="{{ _logo }}" alt="{{ p.abbr }}" loading="lazy" onerror="this.style.display='none'">{% endif %}<span>{{ p.abbr }} {{ p.bettype }} (Winner)</span></div>
   {# La cara de la tarjeta es el TICKET ORIGINAL de Novig que envía Alex (p.comprobante), no el ticket simulado (orden de Alex 2026-09-29). #}
   {% if p.comprobante %}
   <button class="tstc-face" onclick="document.getElementById('tstc-zoom-{{ p.id }}').style.display='flex'" aria-label="Ver ticket en grande">
