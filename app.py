@@ -2020,10 +2020,10 @@ def home():
     user = current_user()
     card_pendiente = not card_publicada_hoy() or not plays
     if card_pendiente:
-        # La cuenta personal de Alex y el administrador ven la card pendiente
-        # (2026-10-03, orden de Alex: el admin la necesita para trackear y
-        # operar las jugadas desde su dashboard).
-        pending = load_pending_plays() if (is_alex_member(user) or is_admin_for(user)) else []
+        # Solo el administrador ve la card pendiente (2026-10-03, orden de Alex:
+        # su cuenta personal de miembro es un miembro normal más y solo ve
+        # jugadas publicadas; él opera desde el dashboard de admin).
+        pending = load_pending_plays() if is_admin_for(user) else []
         if pending:
             plays = pending
             card_pendiente = False
@@ -2734,9 +2734,9 @@ def tracker_export():
 def track(play_id):
     play = next((p for p in load_plays() if p.get("id") == play_id), None)
     _cu = current_user()
-    if play is None and (is_alex_member(_cu) or is_admin_for(_cu)):
-        # La cuenta personal de Alex y el admin pueden trackear la card
-        # pendiente (sin tickets) desde su dashboard (2026-10-03).
+    if play is None and is_admin_for(_cu):
+        # Solo el admin puede trackear la card pendiente (sin tickets)
+        # desde su dashboard (2026-10-03, orden de Alex).
         play = next((p for p in load_pending_plays() if p.get("id") == play_id), None)
     if not play:
         flash("Play not found.", "error")
