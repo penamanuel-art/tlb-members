@@ -68,6 +68,9 @@ _CANON = {
     "tablero": "dashboard",
     "regalan": "whyfree", "regala": "whyfree",
     "verdad": "really",
+    "programa": "program", "programas": "program",
+    "funciona": "work", "funcionar": "work", "funcionamiento": "work",
+    "sistema": "system", "systems": "system",
 }
 
 _STOP = {
@@ -178,6 +181,12 @@ class FaqBot:
         lang = self.lang(q)
         toks = _tokens(q)
         if not toks:
+            # "¿qué es esto?" / "what is this?" — casi no deja tokens útiles
+            raw_words = set(re.findall(r"[a-z]+", _u_norm("NFKD", q.lower())))
+            if raw_words & {"esto", "eso", "this", "that"}:
+                w = next((it for it in self.items if it.get("id") == "what-is"), None)
+                if w:
+                    return self._pick(w, lang), "what-is", lang
             return self.fallback[lang], None, lang
         if set(toks) <= _GREETING:
             g = next((it for it in self.items if it.get("id") == "greeting"), None)
