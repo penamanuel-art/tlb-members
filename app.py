@@ -289,6 +289,17 @@ CREATE TABLE IF NOT EXISTS push_subscriptions (
     auth TEXT NOT NULL,
     created_at TEXT NOT NULL
 );
+-- Balances por casa de apuesta (v1: solo cuenta personal de Alex).
+-- Cada miembro ve solo los suyos; se actualizan manualmente y a futuro
+-- se ajustarán solos al liquidarse las jugadas trackeadas.
+CREATE TABLE IF NOT EXISTS book_balances (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL REFERENCES users(id),
+    book_name TEXT NOT NULL,
+    balance REAL NOT NULL DEFAULT 0,
+    updated_at TEXT NOT NULL,
+    UNIQUE(user_id, book_name)
+);
 CREATE INDEX IF NOT EXISTS idx_push_member ON push_subscriptions(member_id);
 CREATE TABLE IF NOT EXISTS stripe_events (   -- auditoría de webhooks de Stripe (deduplicada por event_id)
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -368,6 +379,14 @@ CREATE TABLE IF NOT EXISTS push_subscriptions (
     created_at TEXT NOT NULL
 );
 CREATE INDEX IF NOT EXISTS idx_push_member ON push_subscriptions(member_id);
+CREATE TABLE IF NOT EXISTS book_balances (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES users(id),
+    book_name TEXT NOT NULL,
+    balance DOUBLE PRECISION NOT NULL DEFAULT 0,
+    updated_at TEXT NOT NULL,
+    UNIQUE(user_id, book_name)
+);
 CREATE TABLE IF NOT EXISTS stripe_events (   -- auditoría de webhooks de Stripe (deduplicada por event_id)
     id SERIAL PRIMARY KEY,
     event_id TEXT NOT NULL UNIQUE,
@@ -2104,6 +2123,7 @@ def home():
         recientes=recientes,
         last_elite_win=last_elite_win(),
         es_admin=is_admin_for(user),
+        es_alex=is_alex_member(user),
         skip_splash=request.args.get("splash") == "0",
         # miembro_platinum con preview: en ?preview=locked el banner de
         # invitación VIP también se muestra (pedido Alex 2026-10-02).
@@ -2465,6 +2485,41 @@ def cuenta_foto():
     db.commit()
     flash("Profile photo updated.", "ok")
     return redirect(url_for("cuenta"))
+
+
+@app.route("/balances", methods=["GET", "POST"])
+@login_required
+def balances():
+    """Balances por casa de apuesta (v1: solo cuenta personal de Alex, 2026-10-03).
+    Manual por ahora; a futuro se ajustan solos al liquidarse las jugadas."""
+    db = get_db()
+    user = current_user()
+    if not is_alex_member(user):
+        return redirect(url_for("home"))
+    uid = session["user_id"]
+    if request.method == "POST":
+        book = (request.form.get("book_name") or "").strip()[:40]
+        try:
+            monto = float(request.form.get("balance") or 0)
+        except ValueError:
+            monto = 0
+        if book:
+            now = datetime.now(TZ).strftime("%Y-%m-%d %H:%M:%S")
+            db.execute(
+                """INSERT INTO book_balances (user_id, book_name, balance, updated_at)
+                   VALUES (?, ?, ?, ?)
+                   ON CONFLICT(user_id, book_name)
+                   DO UPDATE SET balance = excluded.balance, updated_at = excluded.updated_at""",
+                (uid, book, monto, now),
+            )
+            db.commit()
+        return redirect(url_for("balances"))
+    rows = db.execute(
+        "SELECT book_name, balance, updated_at FROM book_balances WHERE user_id = ? ORDER BY book_name",
+        (uid,),
+    ).fetchall()
+    total = sum(float(r["balance"] or 0) for r in rows)
+    return render_template("balances.html", balances=rows, total=total)
 
 
 @app.route("/tracker")
