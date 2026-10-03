@@ -2473,6 +2473,7 @@ def cuenta_foto():
 # Mapeo nombre de casa -> logo oficial (static/img/books/)
 BOOK_LOGOS = {
     "novig": "books/novig.png",
+    "noving": "books/novig.png",
     "draftkings": "books/draftkings.png",
     "fanduel": "books/fanduel.png",
     "betmgm": "books/betmgm.png",
@@ -2484,6 +2485,8 @@ BOOK_LOGOS = {
     "espn": "books/espnbet.png",
     "hardrock": "books/hardrock.png",
     "hardrockbet": "books/hardrock.png",
+    "kalshi": "books/kalshi.png",
+    "kaslshy": "books/kalshi.png",
 }
 
 
