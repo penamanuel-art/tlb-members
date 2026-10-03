@@ -56,10 +56,14 @@
     {% else %}
       <a class="tstc-btn tstc-novig" href="https://novig.com" target="_blank" rel="noopener">Place at Novig &rarr;</a>
     {% endif %}
+    {% if p.comprobante %}
+    {# Track solo si hay ticket (2026-10-03, orden de Alex): sin ticket no se #}
+    {# puede trackear — evita marcar por error una jugada no apostada (trampa). #}
     {% if p.id in tracked_ids %}
       <span class="tstc-btn tstc-tracked">&check; Tracked</span>
     {% else %}
       <a class="tstc-btn tstc-track" href="{{ url_for('track', play_id=p.id) }}">+ Track</a>
+    {% endif %}
     {% endif %}
   </div>
 </div>
