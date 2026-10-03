@@ -32,7 +32,7 @@
     <button data-q="How do I cancel?">How to cancel?</button>
   </div>
   <form id="faqForm">
-    <input id="faqInput" type="text" placeholder="Ask a question…" autocomplete="off" maxlength="300">
+    <input id="faqInput" type="text" placeholder="Ask anything… / Pregunta lo que sea…" autocomplete="off" maxlength="300">
     <button id="faqSend" type="submit">Send</button>
   </form>
 </div>
@@ -53,7 +53,7 @@
   }
   fab.addEventListener('click',function(){
     panel.classList.toggle('open');
-    if(panel.classList.contains('open')&&!greeted){greeted=true;bubble('Hey 👋 Ask me anything about Free Plays, VIP, pricing or Telegram.','bot');}
+    if(panel.classList.contains('open')&&!greeted){greeted=true;bubble('Hey 👋 Ask me anything about Free Plays, VIP, pricing or Telegram — en español o en inglés.','bot');}
   });
   document.getElementById('faqClose').addEventListener('click',function(){panel.classList.remove('open');});
   form.addEventListener('submit',function(e){e.preventDefault();ask(input.value);});

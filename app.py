@@ -3746,49 +3746,20 @@ def api_untracked():
     return jsonify({"fecha": hoy, "total": len(plays), "faltan": faltan})
 
 
-FAQ_PATH = os.path.join(os.path.dirname(__file__), "data", "faq.json")
-_FAQ_CACHE = {}
-
-
-def _faq_data():
-    if "items" not in _FAQ_CACHE:
-        data = load_json_file(FAQ_PATH)
-        _FAQ_CACHE["items"] = data.get("items", [])
-        _FAQ_CACHE["fallback"] = data.get(
-            "fallback",
-            "Sorry, I didn't get that — try asking about pricing, Free Plays, VIP or Telegram.",
-        )
-    return _FAQ_CACHE
-
-
-def _faq_score(words, item):
-    keywords = item.get("keywords", "").lower()
-    score = 0
-    for w in words:
-        if len(w) < 3:
-            continue
-        if w in keywords:
-            score += 2
-        elif w in item.get("q", "").lower():
-            score += 1
-    return score
+from faq_bot import get_bot
 
 
 @app.route("/api/faq-ask", methods=["POST"])
 def api_faq_ask():
-    """Chatbot de preguntas y respuestas: responde desde data/faq.json (sin login)."""
+    """Chatbot de preguntas y respuestas: responde desde data/faq.json (sin login).
+
+    Motor TF-IDF bilingüe (faq_bot.py): entiende preguntas libres en español
+    o inglés y responde en el idioma de la pregunta. Sin APIs externas.
+    """
     data = request.get_json(force=True, silent=True) or {}
     q = (data.get("question") or "").strip()[:300]
-    faq = _faq_data()
-    words = re.findall(r"[a-z0-9$]+", q.lower())
-    best, best_score = None, 0
-    for item in faq["items"]:
-        s = _faq_score(words, item)
-        if s > best_score:
-            best, best_score = item, s
-    if best and best_score >= 2:
-        return jsonify({"answer": best["a"], "matched": best["q"]})
-    return jsonify({"answer": faq["fallback"], "matched": None})
+    answer, matched, _lang = get_bot().answer(q)
+    return jsonify({"answer": answer, "matched": matched})
 
 
 if __name__ == "__main__":
