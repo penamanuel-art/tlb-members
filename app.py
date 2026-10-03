@@ -2477,9 +2477,16 @@ def balances():
     Manual por ahora; a futuro se ajustan solos al liquidarse las jugadas."""
     db = get_db()
     user = current_user()
-    if not is_alex_member(user):
+    if not (is_alex_member(user) or is_admin_for(user)):
         return redirect(url_for("home"))
-    uid = session["user_id"]
+    # Los balances siempre viven en la cuenta personal de Alex (aunque entre como admin)
+    if is_admin_for(user) and not is_alex_member(user):
+        row = db.execute(
+            "SELECT id FROM users WHERE LOWER(email) = ?", (ALEX_MEMBER_EMAIL,)
+        ).fetchone()
+        uid = row["id"] if row else session["user_id"]
+    else:
+        uid = session["user_id"]
     # Crear tabla si no existe (fuera del DDL inicial para no romper el deploy)
     if db.use_pg:
         db.execute(
