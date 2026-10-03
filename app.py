@@ -939,22 +939,24 @@ def stake_kelly(play, bankroll):
 
     f* = p - (1-p)/b, con b = cuota decimal - 1 y p = prob. implícita + edge.
     Se apuesta el cuarto de Kelly: 0.25 * f* * bankroll. Si f* <= 0, $0.
+    Acepta cuota como int o string, con o sin signo (ej. 186, "+186", "-110").
     """
     try:
         edge = float(play.get("edge") or 0) / 100.0
         cuota = str(play.get("cuota") or "").strip().replace("−", "-")
-        if cuota.startswith("+"):
-            v = float(cuota[1:])
-            b = v / 100.0
-            implied = 100.0 / (v + 100.0)
-        elif cuota.startswith("-"):
+        if cuota.startswith("-"):
             v = float(cuota[1:])
             if v <= 0:
                 return 0.0
             b = 100.0 / v
             implied = v / (v + 100.0)
         else:
-            return 0.0
+            # Positiva: con "+" explícito o sin signo (ej. 186)
+            v = float(cuota.lstrip("+"))
+            if v <= 0:
+                return 0.0
+            b = v / 100.0
+            implied = 100.0 / (v + 100.0)
         p = implied + edge
         if not (0.0 < p < 1.0):
             return 0.0
