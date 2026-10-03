@@ -50,6 +50,22 @@
 
   {% set golds = plays | selectattr('nivel', 'equalto', 'GOLD') | list %}
   {% set values = plays | selectattr('nivel', 'equalto', 'VALUE') | list %}
+
+  {# Explicación de tipos de jugada (pedido por Alex 2026-10-03) #}
+  <details class="v2-playtypes" style="margin:0 0 16px;">
+    <summary style="cursor:pointer;font-weight:700;font-size:.9rem;color:var(--v2-gold);">What are the play types?</summary>
+    <div style="margin-top:10px;display:flex;flex-direction:column;gap:10px;font-size:.85rem;line-height:1.5;">
+      <div style="background:var(--v2-surface);border:1px solid var(--v2-border);border-radius:12px;padding:12px 14px;">
+        <strong>⭐ VIP Plays</strong> — Our top selection of the day, picked by the model (highest edge). 1u stake. Part of the official record. Requires VIP membership.
+      </div>
+      <div style="background:var(--v2-surface);border:1px solid var(--v2-border);border-radius:12px;padding:12px 14px;">
+        <strong>⚪ Free Plays</strong> — Quality selections for every member (0.6u stake). Part of the official record. Free with your membership.
+      </div>
+      <div style="background:rgba(255,210,87,.06);border:1px solid rgba(255,210,87,.25);border-radius:12px;padding:12px 14px;">
+        <strong>💎 Value Plays</strong> — Extra +EV opportunities found by our scanner during the day. They pass all program filters (5%+ edge, odds −185…+250, moneyline/spread only) but are <em>optional</em> — not part of the official daily card. You decide whether to play them. Tracked separately.
+      </div>
+    </div>
+  </details>
   {% if card_pendiente %}
   <div class="v2-empty">
     <h3>No plays posted yet today</h3>
