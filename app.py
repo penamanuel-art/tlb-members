@@ -163,6 +163,9 @@ app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(days=30)
 DB_PATH = os.path.join(INSTANCE_DIR, "members.db")
 PLAYS_PATH = os.path.join(BASE_DIR, "data", "plays.json")
 PENDING_PLAYS_PATH = os.path.join(BASE_DIR, "data", "plays-pending.json")
+# Cuenta personal de miembro de Alex (NO es la de administrador). Es la única
+# que ve la card pendiente (sin tickets) en /home — orden de Alex 2026-10-03.
+ALEX_MEMBER_EMAIL = "alexpena1509@gmail.com"
 MASTERCLASS_PATH = os.path.join(BASE_DIR, "data", "masterclass.json")
 RESULTS_PATH = os.path.join(BASE_DIR, "data", "results.json")
 ARCHIVE_PATH = os.path.join(BASE_DIR, "data", "archive.json")
@@ -885,13 +888,22 @@ def load_data():
     return program, plays
 
 
+def is_alex_member(user) -> bool:
+    """True si el usuario es la cuenta personal de miembro de Alex."""
+    try:
+        return bool(user) and (user["email"] or "").strip().lower() == ALEX_MEMBER_EMAIL
+    except (KeyError, IndexError, TypeError):
+        return False
+
+
 def load_pending_plays():
     """Card del día aún sin tickets (data/plays-pending.json).
 
-    Regla de Alex (2026-10-03): su cuenta (admin) ve la card del día en /home
-    SIEMPRE, con o sin tickets — es su cuenta de seguimiento personal. Los
-    demás miembros solo la ven cuando él envía los tickets (flujo normal que
-    publica plays.json verificado y limpia este archivo).
+    Regla de Alex (2026-10-03): solo su cuenta personal de miembro
+    (ALEX_MEMBER_EMAIL) ve la card del día en /home SIEMPRE, con o sin
+    tickets — es su cuenta de seguimiento personal. Ni el admin ni los
+    demás miembros la ven: ellos solo la ven cuando él envía los tickets
+    (flujo normal que publica plays.json verificado y limpia este archivo).
     """
     try:
         with open(PENDING_PLAYS_PATH, "r", encoding="utf-8") as f:
@@ -1436,15 +1448,16 @@ def auto_grado_tracked(db, user):
     """Liquida automáticamente las jugadas trackeadas pendientes usando los
     resultados oficiales del programa (data/archive.json).
 
-    SOLO para el administrador (Alex): su tracker se actualiza solo en
-    cuanto la liquidación nocturna publica el resultado oficial. Los
-    miembros marcan sus resultados a mano, según sus propias jugadas.
+    Para el administrador y para la cuenta personal de miembro de Alex: su
+    tracker se actualiza solo en cuanto la liquidación nocturna publica el
+    resultado oficial. Los demás miembros marcan sus resultados a mano,
+    según sus propias jugadas.
 
     Se ejecuta en cada vista del tracker y del home. Solo toca jugadas
     con resultado pendiente (NULL); nunca reescribe un resultado ya
     marcado.
     """
-    if not is_admin_for(user):
+    if not (is_admin_for(user) or is_alex_member(user)):
         return 0
     user_id = user["id"]
     pendientes = db.execute(
@@ -1971,9 +1984,8 @@ def home():
     user = current_user()
     card_pendiente = not card_publicada_hoy() or not plays
     if card_pendiente:
-        # Alex (admin) ve la card de hoy en su cuenta aun sin tickets
-        # (2026-10-03): es su cuenta de seguimiento personal.
-        pending = load_pending_plays() if is_admin_for(user) else []
+        # Solo la cuenta personal de Alex ve la card pendiente (2026-10-03).
+        pending = load_pending_plays() if is_alex_member(user) else []
         if pending:
             plays = pending
             card_pendiente = False
@@ -2684,8 +2696,8 @@ def tracker_export():
 def track(play_id):
     play = next((p for p in load_plays() if p.get("id") == play_id), None)
     _cu = current_user()
-    if play is None and is_admin_for(_cu):
-        # Alex puede trackear la card pendiente (sin tickets) en su cuenta.
+    if play is None and is_alex_member(_cu):
+        # La cuenta personal de Alex puede trackear la card pendiente (sin tickets).
         play = next((p for p in load_pending_plays() if p.get("id") == play_id), None)
     if not play:
         flash("Play not found.", "error")
