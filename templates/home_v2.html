@@ -387,6 +387,41 @@
   {% endif %}
 </section>
 
+<!-- PERFORMANCE — diseño original The Sharp Team (pedido por Alex 2026-10-03) -->
+{% if snapshot %}
+<section class="v2-sec">
+  <div class="v2-sec-head">
+    <div>
+      <p class="v2-sec-eyebrow"><b>·</b> Performance</p>
+      <h2 class="v2-sec-title">The numbers speak</h2>
+      <p class="v2-sec-sub">Every play documented — wins and losses stay on the record.</p>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+    <div style="background:linear-gradient(150deg,#1a2340,#0f1526);border:1px solid rgba(255,210,87,.22);border-radius:16px;padding:16px 14px;">
+      <p style="font-size:.68rem;letter-spacing:1.5px;color:#9aa3b8;font-weight:700;margin:0 0 8px;">LAST 30 DAYS</p>
+      <p style="font-size:1.7rem;font-weight:800;margin:0;color:{% if snapshot.u30_cls=='pos' %}#00e07f{% elif snapshot.u30_cls=='neg' %}#ff6b6b{% else %}#fff{% endif %};">{{ '+' if snapshot.u30>0 else '' }}{{ snapshot.u30 }}u</p>
+      <p style="font-size:.8rem;color:#9aa3b8;margin:6px 0 0;">{{ snapshot.w30 }}–{{ snapshot.l30 }} record</p>
+    </div>
+    <div style="background:linear-gradient(150deg,#1a2340,#0f1526);border:1px solid rgba(255,210,87,.22);border-radius:16px;padding:16px 14px;">
+      <p style="font-size:.68rem;letter-spacing:1.5px;color:#9aa3b8;font-weight:700;margin:0 0 8px;">CURRENT RUN</p>
+      <p style="font-size:1.7rem;font-weight:800;margin:0;color:#ffd257;">{{ snapshot.streak_n }} {{ 'straight' if snapshot.streak_n==1 else 'straight' }}</p>
+      <p style="font-size:.8rem;color:#9aa3b8;margin:6px 0 0;">{{ 'Won' if snapshot.streak_tipo=='W' else ('Lost' if snapshot.streak_tipo=='L' else '—') }} last {{ snapshot.streak_n }}</p>
+    </div>
+    <div style="background:linear-gradient(150deg,#1a2340,#0f1526);border:1px solid rgba(255,210,87,.22);border-radius:16px;padding:16px 14px;">
+      <p style="font-size:.68rem;letter-spacing:1.5px;color:#9aa3b8;font-weight:700;margin:0 0 8px;">ALL-TIME PROFIT</p>
+      <p style="font-size:1.7rem;font-weight:800;margin:0;color:{% if snapshot.profit_cls=='pos' %}#00e07f{% elif snapshot.profit_cls=='neg' %}#ff6b6b{% else %}#fff{% endif %};">{{ snapshot.profit_display }}</p>
+      <p style="font-size:.8rem;color:#9aa3b8;margin:6px 0 0;">{{ snapshot.w_all }}W / {{ snapshot.l_all }}L</p>
+    </div>
+    <div style="background:linear-gradient(150deg,#1a2340,#0f1526);border:1px solid rgba(255,210,87,.22);border-radius:16px;padding:16px 14px;">
+      <p style="font-size:.68rem;letter-spacing:1.5px;color:#9aa3b8;font-weight:700;margin:0 0 8px;">WIN RATE</p>
+      <p style="font-size:1.7rem;font-weight:800;margin:0;color:#fff;">{{ snapshot.win_rate }}%</p>
+      <p style="font-size:.8rem;color:#9aa3b8;margin:6px 0 0;">all-time, official plays</p>
+    </div>
+  </div>
+</section>
+{% endif %}
+
 <!-- 07 · RECENT GRADED TICKETS (ticket presentation untouchable) -->
 <section class="v2-sec">
   <div class="v2-sec-head">
