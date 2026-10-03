@@ -2524,17 +2524,23 @@ def track_value():
         edge = float(ev)
     except ValueError:
         edge = 0
+    # Stake real (del ticket); si no viene, 1u = $50
+    try:
+        monto = float(request.values.get("stake", "50"))
+    except ValueError:
+        monto = 50.0
+    unidades = round(monto / 50.0, 2)
     pid = "value-%s-%s" % (
         datetime.now(TZ).strftime("%Y-%m-%d"),
         re.sub(r"[^a-z0-9]+", "-", team.lower()).strip("-"),
     )
     now = datetime.now(TZ).strftime("%Y-%m-%d %H:%M:%S")
-    # Stake 1u del capital personal ($5,000 -> $50)
+    # Stake 1u del capital personal ($5,000 -> $50), o el monto real del ticket
     db.execute(
         """INSERT OR IGNORE INTO tracked_plays
            (user_id, play_id, fecha, nivel, pick, cuota, stake_unidades, stake_monto, edge, resultado, created_at)
-           VALUES (?, ?, ?, 'VALUE', ?, ?, 1.0, 50.0, ?, NULL, ?)""",
-        (uid, pid, datetime.now(TZ).strftime("%Y-%m-%d"), team, cuota, edge, now),
+           VALUES (?, ?, ?, 'VALUE', ?, ?, ?, ?, ?, NULL, ?)""",
+        (uid, pid, datetime.now(TZ).strftime("%Y-%m-%d"), team, cuota, unidades, monto, edge, now),
     )
     db.commit()
     return redirect(url_for("tracker"))
