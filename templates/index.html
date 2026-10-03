@@ -31,4 +31,48 @@
     <p>Record, net units, ROI and current streak. The truth of your numbers, always visible.</p>
   </div>
 </section>
+
+<section class="diff-section">
+<style>
+.diff-section{max-width:720px;margin:8px auto 0;padding:0 20px 40px}
+.diff-title{font-size:32px;letter-spacing:-.5px;margin:10px 0 22px;color:#fff}
+.diff-title .gold{color:#f5c542}
+.diff-card{background:#101828;border:1px solid #1e2a45;border-left:4px solid #f5c542;border-radius:16px;padding:18px;margin-bottom:12px}
+.diff-cat{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#8b94a7;margin-bottom:12px;font-weight:700}
+.diff-us{display:flex;gap:10px;align-items:flex-start;margin-bottom:10px}
+.diff-us .ck{color:#4ade80;font-weight:900;font-size:18px;line-height:1.3}
+.diff-us .tx{color:#fff;font-weight:700;font-size:16px;line-height:1.45}
+.diff-us .who{display:block;font-size:10px;letter-spacing:1.5px;color:#f5c542;font-weight:800;margin-bottom:3px}
+.diff-them{display:flex;gap:10px;align-items:flex-start;opacity:.8}
+.diff-them .xx{color:#6b7488;font-weight:900;font-size:18px;line-height:1.3}
+.diff-them .tx{color:#9aa3b8;font-size:15px;line-height:1.45}
+.diff-them .who{display:block;font-size:10px;letter-spacing:1.5px;color:#6b7488;font-weight:800;margin-bottom:3px}
+</style>
+  <h2 class="diff-title">What makes this <span class="gold">different</span></h2>
+  <div class="diff-card">
+    <div class="diff-cat">The record</div>
+    <div class="diff-us"><span class="ck">✓</span><span class="tx"><span class="who">THE SHARP TEAM</span>Every play posted before game time — wins and losses stay on the public record.</span></div>
+    <div class="diff-them"><span class="xx">✕</span><span class="tx"><span class="who">TYPICAL</span>Only the winning picks ever see the light.</span></div>
+  </div>
+  <div class="diff-card">
+    <div class="diff-cat">Real money</div>
+    <div class="diff-us"><span class="ck">✓</span><span class="tx"><span class="who">THE SHARP TEAM</span>Every play bet with real money — ticket photo to prove it.</span></div>
+    <div class="diff-them"><span class="xx">✕</span><span class="tx"><span class="who">TYPICAL</span>Paper picks with nothing on the line.</span></div>
+  </div>
+  <div class="diff-card">
+    <div class="diff-cat">The price</div>
+    <div class="diff-us"><span class="ck">✓</span><span class="tx"><span class="who">THE SHARP TEAM</span>$1 for the first week, $23/week after. That's it.</span></div>
+    <div class="diff-them"><span class="xx">✕</span><span class="tx"><span class="who">TYPICAL</span>Hundreds upfront before you see a single pick.</span></div>
+  </div>
+  <div class="diff-card">
+    <div class="diff-cat">The proof</div>
+    <div class="diff-us"><span class="ck">✓</span><span class="tx"><span class="who">THE SHARP TEAM</span>{{ wins }}-{{ losses }}, +{{ "%.2f"|format(roi) }}% ROI — every play documented and graded.</span></div>
+    <div class="diff-them"><span class="xx">✕</span><span class="tx"><span class="who">TYPICAL</span>Big claims, no record to check.</span></div>
+  </div>
+  <div class="diff-card">
+    <div class="diff-cat">The exit</div>
+    <div class="diff-us"><span class="ck">✓</span><span class="tx"><span class="who">THE SHARP TEAM</span>Cancel in one click from your account, anytime.</span></div>
+    <div class="diff-them"><span class="xx">✕</span><span class="tx"><span class="who">TYPICAL</span>Locked in — good luck getting out.</span></div>
+  </div>
+</section>
 {% endblock %}

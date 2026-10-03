@@ -1787,20 +1787,8 @@ migrate_db()  # no borra datos: solo agrega la columna si falta
 
 
 # ------------------------------------------------------------ Routes ----
-@app.route("/")
-def index():
-    if "user_id" in session:
-        return redirect(url_for("home"))
-    return render_template("index.html")
-
-
-@app.route("/free")
-def free_landing():
-    """Landing pública estilo WGT para la membresía gratuita (pedido por Alex 2026-10-03).
-
-    OJO: /free-plays es el tracker admin de jugadas simuladas — esta página usa /free.
-    Stats en vivo desde data/archive.json (verificado 2026-10-03: 15-5, +52.08% ROI, 20 jugadas).
-    """
+def _public_stats():
+    """Récord/ROI/total en vivo desde data/archive.json (compartido por /free y /)."""
     wins = losses = 0
     profit = staked = 0.0
     try:
@@ -1821,6 +1809,25 @@ def free_landing():
         pass
     total = wins + losses
     roi = (100.0 * profit / staked) if staked else 0.0
+    return wins, losses, total, roi
+
+
+@app.route("/")
+def index():
+    if "user_id" in session:
+        return redirect(url_for("home"))
+    wins, losses, total, roi = _public_stats()
+    return render_template("index.html", wins=wins, losses=losses, total=total, roi=roi)
+
+
+@app.route("/free")
+def free_landing():
+    """Landing pública estilo WGT para la membresía gratuita (pedido por Alex 2026-10-03).
+
+    OJO: /free-plays es el tracker admin de jugadas simuladas — esta página usa /free.
+    Stats en vivo desde data/archive.json (verificado 2026-10-03: 15-5, +52.08% ROI, 20 jugadas).
+    """
+    wins, losses, total, roi = _public_stats()
     return render_template(
         "free_landing.html",
         wins=wins,
