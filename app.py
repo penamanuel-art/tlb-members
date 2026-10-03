@@ -2739,11 +2739,17 @@ def track(play_id):
     play = next((p for p in load_plays() if p.get("id") == play_id), None)
     _cu = current_user()
     if play is None and is_admin_for(_cu):
-        # Solo el admin puede trackear la card pendiente (sin tickets)
+        # Solo el admin puede ver la card pendiente (sin tickets)
         # desde su dashboard (2026-10-03, orden de Alex).
         play = next((p for p in load_pending_plays() if p.get("id") == play_id), None)
     if not play:
         flash("Play not found.", "error")
+        return redirect(url_for("home"))
+    # Sin ticket no se trackea (2026-10-03, orden de Alex): evita marcar por
+    # error una jugada no apostada — eso sería trampa. El botón aparece solo
+    # cuando se sube el ticket.
+    if not play.get("comprobante"):
+        flash("This play has no ticket yet — it can't be tracked.", "warn")
         return redirect(url_for("home"))
     # La Elite bloqueada no se puede trackear: no revela nada.
     if play.get("nivel") in ("PLATINUM", "ELITE") and not platinum_unlocked_for(_cu):
