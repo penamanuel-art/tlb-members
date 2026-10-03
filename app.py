@@ -289,17 +289,7 @@ CREATE TABLE IF NOT EXISTS push_subscriptions (
     auth TEXT NOT NULL,
     created_at TEXT NOT NULL
 );
--- Balances por casa de apuesta (v1: solo cuenta personal de Alex).
--- Cada miembro ve solo los suyos. Se actualizan manualmente y a futuro
--- se ajustarán solos al liquidarse las jugadas trackeadas.
-CREATE TABLE IF NOT EXISTS book_balances (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id INTEGER NOT NULL REFERENCES users(id),
-    book_name TEXT NOT NULL,
-    balance REAL NOT NULL DEFAULT 0,
-    updated_at TEXT NOT NULL,
-    UNIQUE(user_id, book_name)
-);
+-- (book_balances se crea por migración separada, no en el DDL inicial)
 CREATE INDEX IF NOT EXISTS idx_push_member ON push_subscriptions(member_id);
 CREATE TABLE IF NOT EXISTS stripe_events (   -- auditoría de webhooks de Stripe (deduplicada por event_id)
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -379,14 +369,7 @@ CREATE TABLE IF NOT EXISTS push_subscriptions (
     created_at TEXT NOT NULL
 );
 CREATE INDEX IF NOT EXISTS idx_push_member ON push_subscriptions(member_id);
-CREATE TABLE IF NOT EXISTS book_balances (
-    id SERIAL PRIMARY KEY,
-    user_id INTEGER NOT NULL REFERENCES users(id),
-    book_name TEXT NOT NULL,
-    balance DOUBLE PRECISION NOT NULL DEFAULT 0,
-    updated_at TEXT NOT NULL,
-    UNIQUE(user_id, book_name)
-);
+-- (book_balances se crea por migración separada, no en el DDL inicial)
 CREATE TABLE IF NOT EXISTS stripe_events (   -- auditoría de webhooks de Stripe (deduplicada por event_id)
     id SERIAL PRIMARY KEY,
     event_id TEXT NOT NULL UNIQUE,
@@ -2497,6 +2480,30 @@ def balances():
     if not is_alex_member(user):
         return redirect(url_for("home"))
     uid = session["user_id"]
+    # Crear tabla si no existe (fuera del DDL inicial para no romper el deploy)
+    if db.use_pg:
+        db.execute(
+            """CREATE TABLE IF NOT EXISTS book_balances (
+                   id SERIAL PRIMARY KEY,
+                   user_id INTEGER NOT NULL REFERENCES users(id),
+                   book_name TEXT NOT NULL,
+                   balance DOUBLE PRECISION NOT NULL DEFAULT 0,
+                   updated_at TEXT NOT NULL,
+                   UNIQUE(user_id, book_name)
+               )"""
+        )
+    else:
+        db.execute(
+            """CREATE TABLE IF NOT EXISTS book_balances (
+                   id INTEGER PRIMARY KEY AUTOINCREMENT,
+                   user_id INTEGER NOT NULL REFERENCES users(id),
+                   book_name TEXT NOT NULL,
+                   balance REAL NOT NULL DEFAULT 0,
+                   updated_at TEXT NOT NULL,
+                   UNIQUE(user_id, book_name)
+               )"""
+        )
+    db.commit()
     if request.method == "POST":
         book = (request.form.get("book_name") or "").strip()[:40]
         try:
