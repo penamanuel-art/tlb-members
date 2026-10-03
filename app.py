@@ -1669,6 +1669,38 @@ def fmt_odds(o) -> str:
 
 app.jinja_env.globals.update(fmt_money=fmt_money, fmt_units=fmt_units, fmt_odds=fmt_odds)
 
+
+def _load_ncaaf_abbr2id():
+    # ESPN exige ID numérico para logos NCAAF (ncaa/500/<id>.png); NFL/MLB aceptan abreviatura.
+    try:
+        with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "ncaaf-abbr2id.json")) as f:
+            return {k.upper(): v for k, v in json.load(f).items()}
+    except Exception:
+        return {}
+
+
+NCAAF_ABBR2ID = _load_ncaaf_abbr2id()
+
+
+def team_logo_url(liga, abbr) -> str:
+    """URL del logo ESPN del equipo apostado (orden Alex 2026-10-03: siempre en la tarjeta)."""
+    if not abbr:
+        return ""
+    a = str(abbr).strip().upper()
+    lg = str(liga or "").strip().upper()
+    if lg == "NFL":
+        return f"https://a.espncdn.com/i/teamlogos/nfl/500/{a}.png"
+    if lg == "MLB":
+        return f"https://a.espncdn.com/i/teamlogos/mlb/500/{a}.png"
+    if lg in ("NCAAF", "NCAAB"):
+        tid = NCAAF_ABBR2ID.get(a)
+        if tid:
+            return f"https://a.espncdn.com/i/teamlogos/ncaa/500/{tid}.png"
+    return ""
+
+
+app.jinja_env.globals.update(team_logo_url=team_logo_url)
+
 # Marcas de agua rotativas (2026-09-30, pedido por Alex): cada sesión ve una
 # distinta — fútbol americano o béisbol — siempre tenue.
 WATERMARKS = [
