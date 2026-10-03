@@ -2496,7 +2496,7 @@ def book_logo(book_name):
 
 
 # Trackear una Value Play en el tracker personal de Alex (no toca el récord de miembros)
-@app.route("/track-value", methods=["POST"])
+@app.route("/track-value", methods=["GET", "POST"])
 def track_value():
     db = get_db()
     user = current_user()
@@ -2510,10 +2510,10 @@ def track_value():
         uid = row["id"] if row else session["user_id"]
     else:
         uid = session["user_id"]
-    team = (request.form.get("team") or "").strip()
-    game = (request.form.get("game") or "").strip()
-    price = request.form.get("price", "0")
-    ev = request.form.get("ev", "0")
+    team = (request.values.get("team") or "").strip()
+    game = (request.values.get("game") or "").strip()
+    price = request.values.get("price", "0")
+    ev = request.values.get("ev", "0")
     if not team:
         return redirect(url_for("home"))
     try:
