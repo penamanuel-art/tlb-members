@@ -10,6 +10,7 @@ Uso:
 import json
 import math
 import os
+import random
 import re
 from unicodedata import normalize as _u_norm, combining as _u_comb
 
@@ -131,12 +132,12 @@ class FaqBot:
         }
         docs = []
         for it in self.items:
-            blob = " ".join([
-                it.get("q_en", ""), it.get("a_en", ""),
-                it.get("q_es", ""), it.get("a_es", ""),
-                it.get("keywords", ""), it.get("keywords", ""),
-            ])
-            docs.append(_tokens(blob))
+            parts = []
+            for key in ("q_en", "a_en", "q_es", "a_es", "keywords"):
+                v = it.get(key, "")
+                parts.extend(v if isinstance(v, list) else [v])
+            parts.append(it.get("keywords", ""))
+            docs.append(_tokens(" ".join(parts)))
         n_docs = len(docs)
         df = {}
         for toks in docs:
@@ -163,6 +164,13 @@ class FaqBot:
             es += 2
         return "es" if es > en else "en"
 
+    def _pick(self, item, lang):
+        """Elige una variante al azar para que no suene robótico."""
+        variants = item["a_es"] if lang == "es" else item["a_en"]
+        if isinstance(variants, list) and variants:
+            return random.choice(variants)
+        return variants if isinstance(variants, str) else self.fallback[lang]
+
     def answer(self, question, threshold=0.10):
         q = (question or "").strip()[:300]
         if not q:
@@ -174,7 +182,7 @@ class FaqBot:
         if set(toks) <= _GREETING:
             g = next((it for it in self.items if it.get("id") == "greeting"), None)
             if g:
-                return (g["a_es"] if lang == "es" else g["a_en"]), "greeting", lang
+                return self._pick(g, lang), "greeting", lang
         tf = {}
         for w in toks:
             tf[w] = tf.get(w, 0) + 1
@@ -187,8 +195,7 @@ class FaqBot:
             if s > best_s:
                 best, best_s = it, s
         if best is not None and best_s >= threshold:
-            ans = best["a_es"] if lang == "es" else best["a_en"]
-            return ans, best.get("id"), lang
+            return self._pick(best, lang), best.get("id"), lang
         return self.fallback[lang], None, lang
 
 
