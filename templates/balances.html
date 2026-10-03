@@ -1,43 +1,51 @@
-{% extends "base.html" %}
+{% extends "base_v2.html" %}
 {% block title %}Book Balances — The Sharp Team{% endblock %}
 {% block content %}
-<section class="tracker-head">
-  <div>
+<div class="v2-wrap">
+  <section class="bb-head">
     <p class="kicker">MY MONEY</p>
     <h2>Book balances</h2>
-    <p class="muted">Where your bankroll lives. Update manually — auto-settlement on graded plays coming soon.</p>
+    <p class="muted">Where your bankroll lives. Updated manually.</p>
+  </section>
+
+  <div class="bb-total">
+    <span class="bb-total-label">TOTAL ACROSS BOOKS</span>
+    <span class="bb-total-amount">${{ "%.2f"|format(total) }}</span>
   </div>
-</section>
 
-<div class="balance-total-card">
-  <span class="balance-total-label">TOTAL ACROSS BOOKS</span>
-  <span class="balance-total-amount">${{ "%.2f"|format(total) }}</span>
-</div>
-
-<div class="balance-list">
-  {% for b in balances %}
-  <div class="balance-row">
-    <div>
-      <strong>{{ b["book_name"] }}</strong>
-      <span class="muted small"> · updated {{ b["updated_at"] }}</span>
+  <div class="bb-list">
+    {% for b in balances %}
+    <div class="bb-card">
+      <div class="bb-card-top">
+        <div class="bb-book">
+          <span class="bb-avatar">{{ b["book_name"][0]|upper }}</span>
+          <span class="bb-name">{{ b["book_name"] }}</span>
+        </div>
+        <form method="post" action="{{ url_for('balances_delete', book_name=b['book_name']) }}"
+              onsubmit="return confirm('Remove {{ b['book_name'] }}?');">
+          <button type="submit" class="bb-del" aria-label="Remove">🗑</button>
+        </form>
+      </div>
+      <span class="bb-label">Balance</span>
+      <span class="bb-amount">${{ "%.2f"|format(b["balance"]|float) }}</span>
+      <span class="bb-updated">Last update: {{ b["updated_at"] }}</span>
     </div>
-    <span class="balance-amount">${{ "%.2f"|format(b["balance"]|float) }}</span>
+    {% else %}
+    <p class="muted">No books yet. Add your first one below.</p>
+    {% endfor %}
   </div>
-  {% else %}
-  <p class="muted">No books yet. Add your first one below.</p>
-  {% endfor %}
+
+  <form method="post" action="{{ url_for('balances') }}" class="bb-form">
+    <h3>Add / update a book</h3>
+    <label>Book name
+      <input type="text" name="book_name" placeholder="Novig" maxlength="40" required>
+    </label>
+    <label>Balance ($)
+      <input type="number" name="balance" step="0.01" min="0" placeholder="500.00" required>
+    </label>
+    <button type="submit" class="btn-primary">Save</button>
+  </form>
+
+  <p class="back-link"><a href="{{ url_for('home') }}">← Back to Dashboard</a></p>
 </div>
-
-<form method="post" action="{{ url_for('balances') }}" class="balance-form">
-  <h3>Add / update a book</h3>
-  <label>Book name
-    <input type="text" name="book_name" placeholder="Novig" maxlength="40" required>
-  </label>
-  <label>Balance ($)
-    <input type="number" name="balance" step="0.01" min="0" placeholder="500.00" required>
-  </label>
-  <button type="submit" class="btn-primary">Save</button>
-</form>
-
-<p class="back-link"><a href="{{ url_for('home') }}">← Back to Dashboard</a></p>
 {% endblock %}
