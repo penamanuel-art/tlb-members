@@ -2470,6 +2470,28 @@ def cuenta_foto():
     return redirect(url_for("cuenta"))
 
 
+# Mapeo nombre de casa -> logo oficial (static/img/books/)
+BOOK_LOGOS = {
+    "novig": "books/novig.png",
+    "draftkings": "books/draftkings.png",
+    "fanduel": "books/fanduel.png",
+    "betmgm": "books/betmgm.png",
+    "caesars": "books/caesars.png",
+    "caesarssportsbook": "books/caesars.png",
+    "fanatics": "books/fanatics.png",
+    "betrivers": "books/betrivers.png",
+    "espnbet": "books/espnbet.png",
+    "espn": "books/espnbet.png",
+    "hardrock": "books/hardrock.png",
+    "hardrockbet": "books/hardrock.png",
+}
+
+
+def book_logo(book_name):
+    key = re.sub(r"[^a-z0-9]", "", (book_name or "").lower())
+    return BOOK_LOGOS.get(key)
+
+
 @app.route("/balances/delete/<book_name>", methods=["POST"])
 def balances_delete(book_name):
     db = get_db()
@@ -2553,8 +2575,17 @@ def balances():
         "SELECT book_name, balance, updated_at FROM book_balances WHERE user_id = ? ORDER BY book_name",
         (uid,),
     ).fetchall()
+    balances = [
+        {
+            "book_name": r["book_name"],
+            "balance": r["balance"],
+            "updated_at": r["updated_at"],
+            "logo": book_logo(r["book_name"]),
+        }
+        for r in rows
+    ]
     total = sum(float(r["balance"] or 0) for r in rows)
-    return render_template("balances.html", balances=rows, total=total)
+    return render_template("balances.html", balances=balances, total=total)
 
 
 @app.route("/tracker")
