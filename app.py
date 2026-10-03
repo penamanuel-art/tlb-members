@@ -162,6 +162,7 @@ app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(days=30)
 
 DB_PATH = os.path.join(INSTANCE_DIR, "members.db")
 PLAYS_PATH = os.path.join(BASE_DIR, "data", "plays.json")
+PENDING_PLAYS_PATH = os.path.join(BASE_DIR, "data", "plays-pending.json")
 MASTERCLASS_PATH = os.path.join(BASE_DIR, "data", "masterclass.json")
 RESULTS_PATH = os.path.join(BASE_DIR, "data", "results.json")
 ARCHIVE_PATH = os.path.join(BASE_DIR, "data", "archive.json")
@@ -884,6 +885,28 @@ def load_data():
     return program, plays
 
 
+def load_pending_plays():
+    """Card del día aún sin tickets (data/plays-pending.json).
+
+    Regla de Alex (2026-10-03): su cuenta (admin) ve la card del día en /home
+    SIEMPRE, con o sin tickets — es su cuenta de seguimiento personal. Los
+    demás miembros solo la ven cuando él envía los tickets (flujo normal que
+    publica plays.json verificado y limpia este archivo).
+    """
+    try:
+        with open(PENDING_PLAYS_PATH, "r", encoding="utf-8") as f:
+            data = json.load(f)
+    except (OSError, json.JSONDecodeError):
+        return []
+    if not isinstance(data, dict):
+        return []
+    hoy = datetime.now(TZ).strftime("%Y-%m-%d")
+    if data.get("fecha") != hoy:
+        return []
+    plays = data.get("plays", []) or []
+    return [p for p in plays if isinstance(p, dict) and p.get("id")]
+
+
 def load_plays():
     return load_data()[1]
 
@@ -1436,7 +1459,11 @@ def auto_grado_tracked(db, user):
         fecha = (d.get("fecha") or "").strip()
         for j in d.get("jugadas", []) or []:
             r = j.get("resultado")
-            pick = (j.get("pick") or "").strip().lower()
+            # Matching normalizado (2026-10-03): el pick trackeado viene de la
+            # card ("TCU ML (+186)") y el oficial del archivo ("TCU ML vs BYU");
+            # se comparan sin cuota ni rival para que el tracker de Alex se
+            # liquide solo aunque haya trackeado antes de los tickets.
+            pick = _norm_free_pick(j.get("pick") or "").lower()
             if r in ("WON", "LOST") and pick:
                 oficiales[(fecha, pick)] = "W" if r == "WON" else "L"
     n = 0
@@ -1445,7 +1472,7 @@ def auto_grado_tracked(db, user):
             _RE_FECHA_PLAYID.match(t["play_id"] or "").group(1)
             if _RE_FECHA_PLAYID.match(t["play_id"] or "") else ""
         )
-        key = (f, (t["pick"] or "").strip().lower())
+        key = (f, _norm_free_pick(t["pick"] or "").lower())
         res = oficiales.get(key)
         if res:
             db.execute(
@@ -1589,7 +1616,8 @@ def auto_grado_free(db):
         fecha = (d.get("fecha") or "").strip()
         for j in d.get("jugadas", []) or []:
             r = j.get("resultado")
-            pick = (j.get("pick") or "").strip().lower()
+            # Matching normalizado igual que auto_grado_tracked (2026-10-03).
+            pick = _norm_free_pick(j.get("pick") or "").lower()
             if r in ("WON", "LOST") and pick:
                 oficiales[(fecha, pick)] = "W" if r == "WON" else "L"
     n = 0
@@ -1598,7 +1626,7 @@ def auto_grado_free(db):
             _RE_FECHA_PLAYID.match(t["play_id"] or "").group(1)
             if _RE_FECHA_PLAYID.match(t["play_id"] or "") else ""
         )
-        key = (f, (t["pick"] or "").strip().lower())
+        key = (f, _norm_free_pick(t["pick"] or "").lower())
         res = oficiales.get(key)
         if res:
             db.execute(
@@ -1940,10 +1968,17 @@ def home():
     record_checkin(db, session["user_id"])
     auto_grado_tracked(db, current_user())
     program, plays = load_data()
+    user = current_user()
     card_pendiente = not card_publicada_hoy() or not plays
     if card_pendiente:
-        plays = []  # las de ayer no se muestran: la card de hoy aún no sale
-    user = current_user()
+        # Alex (admin) ve la card de hoy en su cuenta aun sin tickets
+        # (2026-10-03): es su cuenta de seguimiento personal.
+        pending = load_pending_plays() if is_admin_for(user) else []
+        if pending:
+            plays = pending
+            card_pendiente = False
+        else:
+            plays = []  # las de ayer no se muestran: la card de hoy aún no sale
     plays = personalizar_plays(plays, user)
     tracked_rows = db.execute(
         "SELECT * FROM tracked_plays WHERE user_id = ?",
@@ -2648,11 +2683,14 @@ def tracker_export():
 @login_required
 def track(play_id):
     play = next((p for p in load_plays() if p.get("id") == play_id), None)
+    _cu = current_user()
+    if play is None and is_admin_for(_cu):
+        # Alex puede trackear la card pendiente (sin tickets) en su cuenta.
+        play = next((p for p in load_pending_plays() if p.get("id") == play_id), None)
     if not play:
         flash("Play not found.", "error")
         return redirect(url_for("home"))
     # La Elite bloqueada no se puede trackear: no revela nada.
-    _cu = current_user()
     if play.get("nivel") in ("PLATINUM", "ELITE") and not platinum_unlocked_for(_cu):
         flash("The VIP play is locked. Unlock it to track it.", "warn")
         return redirect(url_for("desbloquear_platinum"))
