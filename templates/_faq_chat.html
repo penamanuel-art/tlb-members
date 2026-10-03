@@ -5,7 +5,9 @@
 #faqPanel{position:fixed;right:14px;bottom:86px;z-index:2001;width:min(340px,calc(100vw - 28px));height:min(480px,calc(100dvh - 140px));background:#0b0e14;border:1.5px solid #c9a227;border-radius:18px;box-shadow:0 12px 40px rgba(0,0,0,.55);display:none;flex-direction:column;overflow:hidden}
 #faqPanel.above-ticker{bottom:160px}
 #faqPanel.open{display:flex}
-#faqPanel.full{right:0;bottom:0;width:100vw;height:100dvh;max-height:100dvh;border-radius:0;border-left:none;border-right:none}
+#faqPanel.full{position:fixed;top:0;left:0;right:0;bottom:0;width:auto;height:auto;max-height:none;border-radius:0;border:none;z-index:2001}
+#faqForm{flex:none}
+#faqInput{min-width:0}
 #faqHead{background:linear-gradient(160deg,#12233a,#0b1426);padding:12px 14px;border-bottom:1px solid #22345c;display:flex;align-items:center;gap:10px}
 #faqHead .t{color:#fff;font-weight:800;font-size:15px}
 #faqHead .s{color:#9aa3b8;font-size:12px}
@@ -36,7 +38,7 @@
     <button data-q="How do I cancel?">How to cancel?</button>
   </div>
   <form id="faqForm">
-    <input id="faqInput" type="text" placeholder="Ask anything… / Pregunta lo que sea…" autocomplete="off" maxlength="300">
+    <input id="faqInput" type="text" placeholder="Ask anything… / Pregunta lo que sea…" autocomplete="off" maxlength="300" enterkeyhint="send">
     <button id="faqSend" type="submit">Send</button>
   </form>
 </div>
@@ -64,7 +66,22 @@
     var full=panel.classList.toggle('full');
     this.textContent=full?'🗗':'⛶';
     this.setAttribute('aria-label',full?'Exit full screen':'Full screen');
+    faqFit();
   });
+  // iOS: el teclado cambia el viewport y movía todo — fijar el alto visible
+  // para que el input y el botón Send queden siempre a la vista.
+  function faqFit(){
+    if(panel.classList.contains('full')){
+      var vv=window.visualViewport;
+      panel.style.height=(vv?vv.height:window.innerHeight)+'px';
+      panel.style.top=((vv&&vv.offsetTop)||0)+'px';
+    }else{panel.style.height='';panel.style.top='';}
+  }
+  if(window.visualViewport){
+    window.visualViewport.addEventListener('resize',faqFit);
+    window.visualViewport.addEventListener('scroll',faqFit);
+  }
+  input.addEventListener('focus',function(){setTimeout(function(){faqFit();msgs.scrollTop=msgs.scrollHeight;},300);});
   form.addEventListener('submit',function(e){e.preventDefault();ask(input.value);});
   document.querySelectorAll('#faqChips button').forEach(function(b){b.addEventListener('click',function(){ask(b.getAttribute('data-q'));});});
 })();
