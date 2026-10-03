@@ -290,7 +290,7 @@ CREATE TABLE IF NOT EXISTS push_subscriptions (
     created_at TEXT NOT NULL
 );
 -- Balances por casa de apuesta (v1: solo cuenta personal de Alex).
--- Cada miembro ve solo los suyos; se actualizan manualmente y a futuro
+-- Cada miembro ve solo los suyos. Se actualizan manualmente y a futuro
 -- se ajustarán solos al liquidarse las jugadas trackeadas.
 CREATE TABLE IF NOT EXISTS book_balances (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
