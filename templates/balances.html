@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Book Balances — The Sharp Team{% endblock %}
+{% block content %}
+<section class="tracker-head">
+  <div>
+    <p class="kicker">MY MONEY</p>
+    <h2>Book balances</h2>
+    <p class="muted">Where your bankroll lives. Update manually — auto-settlement on graded plays coming soon.</p>
+  </div>
+</section>
+
+<div class="balance-total-card">
+  <span class="balance-total-label">TOTAL ACROSS BOOKS</span>
+  <span class="balance-total-amount">${{ "%.2f"|format(total) }}</span>
+</div>
+
+<div class="balance-list">
+  {% for b in balances %}
+  <div class="balance-row">
+    <div>
+      <strong>{{ b["book_name"] }}</strong>
+      <span class="muted small"> · updated {{ b["updated_at"] }}</span>
+    </div>
+    <span class="balance-amount">${{ "%.2f"|format(b["balance"]|float) }}</span>
+  </div>
+  {% else %}
+  <p class="muted">No books yet. Add your first one below.</p>
+  {% endfor %}
+</div>
+
+<form method="post" action="{{ url_for('balances') }}" class="balance-form">
+  <h3>Add / update a book</h3>
+  <label>Book name
+    <input type="text" name="book_name" placeholder="Novig" maxlength="40" required>
+  </label>
+  <label>Balance ($)
+    <input type="number" name="balance" step="0.01" min="0" placeholder="500.00" required>
+  </label>
+  <button type="submit" class="btn-primary">Save</button>
+</form>
+
+<p class="back-link"><a href="{{ url_for('home') }}">← Back to Dashboard</a></p>
+{% endblock %}
