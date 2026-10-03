@@ -18,7 +18,11 @@
     <div class="bb-card">
       <div class="bb-card-top">
         <div class="bb-book">
+          {% if b["logo"] %}
+          <img src="{{ url_for('static', filename='img/' + b['logo']) }}" alt="{{ b['book_name'] }}" class="bb-logo">
+          {% else %}
           <span class="bb-avatar">{{ b["book_name"][0]|upper }}</span>
+          {% endif %}
           <span class="bb-name">{{ b["book_name"] }}</span>
         </div>
         <form method="post" action="{{ url_for('balances_delete', book_name=b['book_name']) }}"
