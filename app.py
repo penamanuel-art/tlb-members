@@ -1760,6 +1760,18 @@ def migrate_db():
                 created_at TEXT NOT NULL
             )"""
         )
+        # Clicks en links rastreados (pedido Alex 2026-10-02: notificación
+        # instantánea por Telegram cuando alguien toca el link del anuncio).
+        conn.execute(
+            f"""CREATE TABLE IF NOT EXISTS link_clicks (
+                {_id_col},
+                slug TEXT NOT NULL,
+                created_at TEXT NOT NULL,
+                ip TEXT NOT NULL DEFAULT '',
+                ua TEXT NOT NULL DEFAULT '',
+                referer TEXT NOT NULL DEFAULT ''
+            )"""
+        )
         conn.commit()
     finally:
         conn.close()
@@ -1968,6 +1980,72 @@ def register():
         notify_new_member(nombre, email)
         return redirect(url_for("bienvenida"))
     return render_template("register.html")
+
+
+# Links rastreados (pedido Alex 2026-10-02): cada clic se guarda en
+# link_clicks y redirige al destino. Un watcher en la VM lee
+# /api/clicks-feed y avisa a Alex por Telegram al instante.
+TRACKED_LINKS = {
+    "ig": "/registro",  # link del anuncio de Instagram/Facebook
+}
+
+
+@app.route("/go/<slug>")
+def tracked_link(slug):
+    dest = TRACKED_LINKS.get(slug)
+    if not dest:
+        return render_template("404.html"), 404
+    try:
+        db = get_db()
+        db.execute(
+            "INSERT INTO link_clicks (slug, created_at, ip, ua, referer) VALUES (?, ?, ?, ?, ?)",
+            (
+                slug,
+                now_iso(),
+                (request.headers.get("X-Forwarded-For", "") or request.remote_addr or "")[:64],
+                (request.headers.get("User-Agent", "") or "")[:300],
+                (request.headers.get("Referer", "") or "")[:300],
+            ),
+        )
+        db.commit()
+    except Exception:
+        pass  # el redirect nunca se bloquea por un fallo del log
+    return redirect(dest, code=302)
+
+
+@app.route("/api/clicks-feed")
+def api_clicks_feed():
+    """Feed de clics nuevos para el watcher de la VM.
+
+    Protegido igual que /api/push-edge: header X-Push-Key == PUSH_TRIGGER_KEY.
+    Query: ?since=<ISO UTC>. Devuelve {"clicks": [{id, slug, created_at, ...}]}.
+    """
+    if not PUSH_TRIGGER_KEY or not secrets.compare_digest(
+        request.headers.get("X-Push-Key", ""), PUSH_TRIGGER_KEY
+    ):
+        return jsonify({"error": "forbidden"}), 403
+    since = request.args.get("since", "1970-01-01T00:00:00+00:00")
+    db = get_db()
+    rows = db.execute(
+        "SELECT id, slug, created_at, ip, ua, referer FROM link_clicks "
+        "WHERE created_at > ? ORDER BY id ASC LIMIT 200",
+        (since,),
+    ).fetchall()
+    return jsonify(
+        {
+            "clicks": [
+                {
+                    "id": r["id"],
+                    "slug": r["slug"],
+                    "created_at": r["created_at"],
+                    "ip": r["ip"],
+                    "ua": r["ua"],
+                    "referer": r["referer"],
+                }
+                for r in rows
+            ]
+        }
+    )
 
 
 @app.route("/bienvenida")
