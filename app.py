@@ -1154,7 +1154,8 @@ def program_stats():
     ganadas = perdidas = 0
     profit = risked = 0.0
     niveles = {"GOLD": {"ganadas": 0, "perdidas": 0, "profit": 0.0},
-               "ELITE": {"ganadas": 0, "perdidas": 0, "profit": 0.0}}
+               "ELITE": {"ganadas": 0, "perdidas": 0, "profit": 0.0},
+               "VALUE": {"ganadas": 0, "perdidas": 0, "profit": 0.0}}
     for d in load_archive():
         for j in d.get("jugadas", []) or []:
             if j.get("resultado") not in ("WON", "LOST") or j.get("bloqueada"):
