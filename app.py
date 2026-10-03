@@ -970,9 +970,10 @@ def stake_personalizado(play, user):
     """Monto a mostrar/trackear.
 
     Pedido por Alex 2026-09-26 (como la app de WGT): cada miembro ve en su
-    dashboard su monto personal = 1% de SU bankroll x las unidades de la
-    jugada (1u -> 1%, 0.75u -> 0.75%, 0.5u -> 0.5%). Si no tiene bankroll configurado,
-    se usa el stake oficial del programa (stake_monto de plays.json).
+    dashboard su monto personal = 2% de SU bankroll x las unidades de la
+    jugada (1u -> 2%, 0.6u -> 1.2%). Regla del 2% vigente desde 2026-10-02
+    (antes 1%). Si no tiene bankroll configurado, se usa el stake oficial
+    del programa (stake_monto de plays.json).
 
     Montos fijos por nivel (pedido por Alex 2026-09-26): si el miembro tiene
     stake_fijo_elite / stake_fijo_gold configurado, ese monto fijo reemplaza
@@ -1002,7 +1003,7 @@ def stake_personalizado(play, user):
     except (TypeError, ValueError):
         units = 0
     if br > 0 and units > 0:
-        return round(br * 0.01 * units, 2)
+        return round(br * 0.02 * units, 2)
     return play.get("stake_monto")
 
 
