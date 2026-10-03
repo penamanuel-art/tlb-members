@@ -2524,6 +2524,12 @@ def track_value():
         edge = float(ev)
     except ValueError:
         edge = 0
+    # Migración perezosa: columna comprobante en tracked_plays
+    try:
+        db.execute("ALTER TABLE tracked_plays ADD COLUMN comprobante TEXT")
+        db.commit()
+    except Exception:
+        pass
     # Stake real (del ticket); si no viene, 1u = $50
     try:
         monto = float(request.values.get("stake", "50"))
@@ -2535,12 +2541,13 @@ def track_value():
         re.sub(r"[^a-z0-9]+", "-", team.lower()).strip("-"),
     )
     now = datetime.now(TZ).strftime("%Y-%m-%d %H:%M:%S")
+    comprobante = (request.values.get("comprobante") or "").strip()
     # Stake 1u del capital personal ($5,000 -> $50), o el monto real del ticket
     db.execute(
         """INSERT OR IGNORE INTO tracked_plays
-           (user_id, play_id, fecha, nivel, pick, cuota, stake_unidades, stake_monto, edge, resultado, created_at)
-           VALUES (?, ?, ?, 'VALUE', ?, ?, ?, ?, ?, NULL, ?)""",
-        (uid, pid, datetime.now(TZ).strftime("%Y-%m-%d"), team, cuota, unidades, monto, edge, now),
+           (user_id, play_id, fecha, nivel, pick, cuota, stake_unidades, stake_monto, edge, resultado, comprobante, created_at)
+           VALUES (?, ?, ?, 'VALUE', ?, ?, ?, ?, ?, NULL, ?, ?)""",
+        (uid, pid, datetime.now(TZ).strftime("%Y-%m-%d"), team, cuota, unidades, monto, edge, comprobante or None, now),
     )
     db.commit()
     return redirect(url_for("tracker"))
