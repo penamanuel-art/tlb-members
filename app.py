@@ -2470,6 +2470,27 @@ def cuenta_foto():
     return redirect(url_for("cuenta"))
 
 
+@app.route("/balances/delete/<book_name>", methods=["POST"])
+def balances_delete(book_name):
+    db = get_db()
+    user = current_user()
+    if not (is_alex_member(user) or is_admin_for(user)):
+        return redirect(url_for("home"))
+    if is_admin_for(user) and not is_alex_member(user):
+        row = db.execute(
+            "SELECT id FROM users WHERE LOWER(email) = ?", (ALEX_MEMBER_EMAIL,)
+        ).fetchone()
+        uid = row["id"] if row else session["user_id"]
+    else:
+        uid = session["user_id"]
+    db.execute(
+        "DELETE FROM book_balances WHERE user_id = ? AND book_name = ?",
+        (uid, book_name),
+    )
+    db.commit()
+    return redirect(url_for("balances"))
+
+
 @app.route("/balances", methods=["GET", "POST"])
 @login_required
 def balances():
