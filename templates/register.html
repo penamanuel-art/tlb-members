@@ -16,7 +16,14 @@
     </label>
     <button class="btn btn-primary btn-block" type="submit">Create my account →</button>
   </form>
+  <a href="{{ url_for('free_landing') }}" class="free-plays-promo">⭐ SEE WHAT'S INCLUDED — FREE PLAYS →</a>
   <p class="muted center">Already have an account? <a href="{{ url_for('login') }}">Log in here</a></p>
-  <p class="muted center" style="margin-top:12px">Want to see what's included? <a href="{{ url_for('free_landing') }}">Check out Free Plays →</a></p>
 </section>
+<style>
+.free-plays-promo{display:block;text-align:center;margin:22px 0 6px;padding:20px 16px;border-radius:16px;
+  background:linear-gradient(135deg,rgba(245,197,66,.16),rgba(245,197,66,.06));
+  border:2px solid #f5c542;color:#f5c542;font-weight:900;font-size:21px;letter-spacing:.3px;text-decoration:none;
+  box-shadow:0 0 22px rgba(245,197,66,.25)}
+.free-plays-promo:active{transform:scale(.98)}
+</style>
 {% endblock %}
