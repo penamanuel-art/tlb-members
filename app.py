@@ -2444,6 +2444,10 @@ def cuenta_foto():
 def tracker():
     db = get_db()
     record_checkin(db, session["user_id"])
+    # El admin no usa tracker personal: ve el oficial con tickets (2026-10-03,
+    # orden de Alex). Su "Alex Owner Results" estaba vacío y no tenía sentido.
+    if is_admin_for(current_user()):
+        return redirect(url_for("resultados"))
     auto_grado_tracked(db, current_user())
     tracked = db.execute(
         "SELECT * FROM tracked_plays WHERE user_id = ? ORDER BY fecha DESC, id DESC",
