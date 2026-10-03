@@ -70,9 +70,6 @@
   {# 💎 VALUE PLAYS — oportunidades +EV del escáner, opcionales #}
   {% if values %}
   <p class="v2-sec-eyebrow" style="margin:22px 0 10px">💎 Value Plays</p>
-  <div style="background:rgba(255,210,87,.08);border:1px solid rgba(255,210,87,.25);border-radius:12px;padding:12px 14px;margin-bottom:12px;font-size:.85rem;color:#ffe9a8;">
-    <strong>What are Value Plays?</strong> Extra +EV opportunities found by our scanner during the day. They pass all program filters (5%+ edge, odds −185…+250, moneyline/spread only) but are <em>optional</em> — not part of the official daily card. You decide whether to play them. Tracked separately in the 💎 VALUE section below.
-  </div>
   <div class="v2-plays">
     {% for p in values %}
       {% include "_play_card.html" %}
