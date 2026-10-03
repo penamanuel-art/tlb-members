@@ -1,0 +1,62 @@
+<!-- FAQ chatbot — burbuja de preguntas y respuestas (The Sharp Team) -->
+<style>
+#faqFab{position:fixed;right:18px;bottom:18px;z-index:2000;width:56px;height:56px;border-radius:50%;background:linear-gradient(160deg,#12233a,#0b1426);border:2px solid #c9a227;color:#fff;font-size:26px;cursor:pointer;box-shadow:0 6px 24px rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center}
+#faqFab.above-ticker{bottom:92px}
+#faqPanel{position:fixed;right:14px;bottom:86px;z-index:2001;width:min(340px,calc(100vw - 28px));height:min(480px,calc(100dvh - 140px));background:#0b0e14;border:1.5px solid #c9a227;border-radius:18px;box-shadow:0 12px 40px rgba(0,0,0,.55);display:none;flex-direction:column;overflow:hidden}
+#faqPanel.above-ticker{bottom:160px}
+#faqPanel.open{display:flex}
+#faqHead{background:linear-gradient(160deg,#12233a,#0b1426);padding:12px 14px;border-bottom:1px solid #22345c;display:flex;align-items:center;gap:10px}
+#faqHead .t{color:#fff;font-weight:800;font-size:15px}
+#faqHead .s{color:#9aa3b8;font-size:12px}
+#faqHead button{margin-left:auto;background:none;border:none;color:#9aa3b8;font-size:20px;cursor:pointer}
+#faqMsgs{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px}
+.faq-b{max-width:82%;padding:9px 12px;border-radius:14px;font-size:14px;line-height:1.45}
+.faq-b.bot{background:#131a2b;color:#e8ecf4;border:1px solid #22345c;align-self:flex-start;border-bottom-left-radius:4px}
+.faq-b.me{background:#c9a227;color:#0b0e14;font-weight:600;align-self:flex-end;border-bottom-right-radius:4px}
+#faqChips{display:flex;gap:6px;flex-wrap:wrap;padding:0 12px 8px}
+#faqChips button{background:#131a2b;border:1px solid #2c3a5e;color:#c9a227;font-size:12px;font-weight:700;border-radius:999px;padding:6px 10px;cursor:pointer}
+#faqForm{display:flex;gap:8px;padding:10px;border-top:1px solid #22345c}
+#faqInput{flex:1;background:#131a2b;border:1px solid #2c3a5e;border-radius:12px;color:#fff;padding:10px 12px;font-size:14px;outline:none}
+#faqSend{background:#c9a227;border:none;border-radius:12px;color:#0b0e14;font-weight:800;padding:0 16px;font-size:14px;cursor:pointer}
+</style>
+<button id="faqFab" aria-label="Questions?">💬</button>
+<div id="faqPanel" role="dialog" aria-label="Questions and answers">
+  <div id="faqHead">
+    <div><div class="t">The Sharp Team</div><div class="s">Questions, answered</div></div>
+    <button id="faqClose" aria-label="Close">✕</button>
+  </div>
+  <div id="faqMsgs"></div>
+  <div id="faqChips">
+    <button data-q="How much does VIP cost?">VIP price?</button>
+    <button data-q="What do I get for free?">What's free?</button>
+    <button data-q="How do I cancel?">How to cancel?</button>
+  </div>
+  <form id="faqForm">
+    <input id="faqInput" type="text" placeholder="Ask a question…" autocomplete="off" maxlength="300">
+    <button id="faqSend" type="submit">Send</button>
+  </form>
+</div>
+<script>
+(function(){
+  var fab=document.getElementById('faqFab'),panel=document.getElementById('faqPanel'),
+      msgs=document.getElementById('faqMsgs'),form=document.getElementById('faqForm'),
+      input=document.getElementById('faqInput'),greeted=false;
+  if(document.querySelector('.ticker-dock-bottom')){fab.classList.add('above-ticker');panel.classList.add('above-ticker');}
+  function bubble(text,cls){var d=document.createElement('div');d.className='faq-b '+cls;d.textContent=text;msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;}
+  function ask(q){
+    if(!q.trim())return;bubble(q,'me');input.value='';
+    var wait=document.createElement('div');wait.className='faq-b bot';wait.textContent='…';msgs.appendChild(wait);msgs.scrollTop=msgs.scrollHeight;
+    fetch('/api/faq-ask',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({question:q})})
+      .then(function(r){return r.json();})
+      .then(function(j){wait.remove();bubble(j.answer||'Sorry — try again in a moment.','bot');})
+      .catch(function(){wait.remove();bubble('Sorry — try again in a moment.','bot');});
+  }
+  fab.addEventListener('click',function(){
+    panel.classList.toggle('open');
+    if(panel.classList.contains('open')&&!greeted){greeted=true;bubble('Hey 👋 Ask me anything about Free Plays, VIP, pricing or Telegram.','bot');}
+  });
+  document.getElementById('faqClose').addEventListener('click',function(){panel.classList.remove('open');});
+  form.addEventListener('submit',function(e){e.preventDefault();ask(input.value);});
+  document.querySelectorAll('#faqChips button').forEach(function(b){b.addEventListener('click',function(){ask(b.getAttribute('data-q'));});});
+})();
+</script>
