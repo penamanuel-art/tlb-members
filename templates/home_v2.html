@@ -348,7 +348,7 @@
   </div>
   <div class="v2-linecard">
   <div class="v2-levels">
-    {% for lvl_key, lvl_name, lvl_emoji, lvl_class in [('GOLD', 'FREE PLAYS', '&#x26aa;', 'gold'), ('ELITE', 'VIP', '&#x2b50;', 'elite')] %}
+    {% for lvl_key, lvl_name, lvl_emoji, lvl_class in [('GOLD', 'FREE PLAYS', '&#x26aa;', 'gold'), ('ELITE', 'VIP', '&#x2b50;', 'elite'), ('VALUE', '💎 VALUE', '&#x1f48e;', 'value')] %}
     {% set L = res['niveles'][lvl_key] %}
     {% set wr = L.win_rate %}
     <div class="v2-level {{ lvl_class }}">
