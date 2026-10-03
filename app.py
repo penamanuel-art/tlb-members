@@ -101,9 +101,9 @@ TELEGRAM_BOT_USERNAME = os.environ.get("TELEGRAM_BOT_USERNAME", "thesharpteam_bo
 # Token del bot para avisos en tiempo real (ruta /go/<slug>).
 # Se configura en Render como env var TELEGRAM_BOT_TOKEN. Si no está,
 # el aviso lo sigue mandando el watcher de la VM (cron click-notify).
-TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "")
+TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "").strip()
 # Chat de Alex para los avisos de clics (su telegram_user_id).
-CLICK_NOTIFY_CHAT_ID = os.environ.get("CLICK_NOTIFY_CHAT_ID", "8600523481")
+CLICK_NOTIFY_CHAT_ID = os.environ.get("CLICK_NOTIFY_CHAT_ID", "8600523481").strip()
 # Link permanente de invitación al canal privado VIP Plays (Telegram).
 # 2026-10-02: reemplaza el pool de links de un solo uso (fricción: Telegram
 # muestra "Expired Link" a usuarios baneados y los links se agotaban).
@@ -2018,8 +2018,11 @@ def _notify_click_telegram(slug):
             headers={"Content-Type": "application/json"},
         )
         with urllib.request.urlopen(req, timeout=4) as resp:
-            return resp.status == 200
-    except Exception:
+            ok = resp.status == 200
+            print(f"[click-notify] telegram direct: status={resp.status}", flush=True)
+            return ok
+    except Exception as e:
+        print(f"[click-notify] telegram direct FAILED: {type(e).__name__}: {e}", flush=True)
         return False
 
 
