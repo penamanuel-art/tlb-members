@@ -1105,6 +1105,58 @@ def program_streak():
     return {"tipo": "W" if tipo == "WON" else "L", "n": n}
 
 
+def performance_snapshot():
+    """Snapshot de rendimiento para la sección 'Performance' del Dashboard.
+
+    Diseño 100% original de The Sharp Team (pedido por Alex 2026-10-03):
+    muestra últimos 30 días, racha actual, carrera y win rate. Datos reales
+    del archivo oficial — nunca inventados.
+    """
+    hoy = datetime.now(TZ).date()
+    hace_30 = hoy - timedelta(days=30)
+    w30 = l30 = 0
+    u30 = 0.0
+    w_all = l_all = 0
+    profit_all = 0.0
+    ordered = []
+    for d in load_archive():
+        try:
+            f = datetime.strptime(d.get("fecha", ""), "%Y-%m-%d").date()
+        except (ValueError, TypeError):
+            continue
+        for j in d.get("jugadas", []) or []:
+            if j.get("resultado") not in ("WON", "LOST") or j.get("bloqueada"):
+                continue
+            r = j["resultado"]
+            ordered.append(r)
+            w_all += 1 if r == "WON" else 0
+            l_all += 1 if r == "LOST" else 0
+            profit_all += float(j.get("profit") or 0.0)
+            if f >= hace_30:
+                if r == "WON":
+                    w30 += 1
+                else:
+                    l30 += 1
+                u30 += float(j.get("stake_unidades") or 0.0) * (1 if r == "WON" else -1)
+    streak = program_streak() or {"tipo": "—", "n": 0}
+    settled = w_all + l_all
+    wr = round(w_all / settled * 100, 1) if settled else 0.0
+    pn = int(round(profit_all))
+    return {
+        "u30": round(u30, 1),
+        "u30_cls": "pos" if u30 > 0 else ("neg" if u30 < 0 else ""),
+        "w30": w30,
+        "l30": l30,
+        "streak_tipo": streak["tipo"],
+        "streak_n": streak["n"],
+        "profit_display": ("+$" if pn > 0 else ("-$" if pn < 0 else "$")) + f"{abs(pn):,}",
+        "profit_cls": "pos" if pn > 0 else ("neg" if pn < 0 else ""),
+        "w_all": w_all,
+        "l_all": l_all,
+        "win_rate": wr,
+    }
+
+
 def resumen_ayer():
     """Récord y profit del día calendario anterior (America/New_York).
     Se muestra en el hero cuando la card de hoy aún no sale. (Pedido Alex 2026-10-02.)"""
@@ -2099,6 +2151,7 @@ def home():
         stake_mode=user["stake_mode"] if user else "units",
         platinum_unlocked=(platinum_unlocked_for(user) and not preview_locked),
         res=program_stats(),
+        snapshot=performance_snapshot(),
         leccion=load_masterclass(),
         archivo_mc=load_masterclass_archivo(),
         tstats=tstats,
