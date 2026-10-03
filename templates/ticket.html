@@ -32,6 +32,10 @@ h1{width:100%;max-width:520px;font-size:34px;font-weight:800;letter-spacing:-.5p
 </style>
 </head>
 <body style="--wm-img: url('{{ url_for('static', filename=watermark_img) }}')">
+{# Botón de regreso al Dashboard (pedido por Alex 2026-10-03) #}
+<div style="width:100%;max-width:520px;margin-bottom:12px;">
+  <a href="{{ url_for('home') }}" style="display:inline-flex;align-items:center;gap:6px;color:#ffd257;font-weight:700;font-size:15px;text-decoration:none;padding:8px 12px;border:1px solid rgba(255,210,87,.35);border-radius:999px;background:rgba(255,210,87,.08);">← Home</a>
+</div>
 <div class="brand">
   <img src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team">
   <div class="brand-name">THE SHARP TEAM</div>
