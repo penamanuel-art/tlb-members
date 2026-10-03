@@ -1992,6 +1992,11 @@ def home():
         else:
             plays = []  # las de ayer no se muestran: la card de hoy aún no sale
     plays = personalizar_plays(plays, user)
+    if is_admin_for(user) and not is_alex_member(user):
+        # En el dashboard del administrador no se muestran las Free
+        # (2026-10-03, orden de Alex): solo la VIP. Sus trackers siguen
+        # con todas las jugadas.
+        plays = [p for p in plays if str(p.get("nivel") or "").upper() in ("ELITE", "PLATINUM")]
     tracked_rows = db.execute(
         "SELECT * FROM tracked_plays WHERE user_id = ?",
         (session["user_id"],),
