@@ -2020,19 +2020,16 @@ def home():
     user = current_user()
     card_pendiente = not card_publicada_hoy() or not plays
     if card_pendiente:
-        # Solo la cuenta personal de Alex ve la card pendiente (2026-10-03).
-        pending = load_pending_plays() if is_alex_member(user) else []
+        # La cuenta personal de Alex y el administrador ven la card pendiente
+        # (2026-10-03, orden de Alex: el admin la necesita para trackear y
+        # operar las jugadas desde su dashboard).
+        pending = load_pending_plays() if (is_alex_member(user) or is_admin_for(user)) else []
         if pending:
             plays = pending
             card_pendiente = False
         else:
             plays = []  # las de ayer no se muestran: la card de hoy aún no sale
     plays = personalizar_plays(plays, user)
-    if is_admin_for(user) and not is_alex_member(user):
-        # En el dashboard del administrador no se muestran las Free
-        # (2026-10-03, orden de Alex): solo la VIP. Sus trackers siguen
-        # con todas las jugadas.
-        plays = [p for p in plays if str(p.get("nivel") or "").upper() in ("ELITE", "PLATINUM")]
     tracked_rows = db.execute(
         "SELECT * FROM tracked_plays WHERE user_id = ?",
         (session["user_id"],),
@@ -2737,8 +2734,9 @@ def tracker_export():
 def track(play_id):
     play = next((p for p in load_plays() if p.get("id") == play_id), None)
     _cu = current_user()
-    if play is None and is_alex_member(_cu):
-        # La cuenta personal de Alex puede trackear la card pendiente (sin tickets).
+    if play is None and (is_alex_member(_cu) or is_admin_for(_cu)):
+        # La cuenta personal de Alex y el admin pueden trackear la card
+        # pendiente (sin tickets) desde su dashboard (2026-10-03).
         play = next((p for p in load_pending_plays() if p.get("id") == play_id), None)
     if not play:
         flash("Play not found.", "error")
