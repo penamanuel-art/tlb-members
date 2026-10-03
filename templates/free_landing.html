@@ -48,6 +48,14 @@
 .fl-diff-them .tx{color:#9aa3b8;font-size:15px;line-height:1.45}
 .fl-diff-them .who{display:block;font-size:10px;letter-spacing:1.5px;color:#6b7488;font-weight:800;margin-bottom:3px}
 .fl-cta{position:sticky;bottom:0;background:linear-gradient(transparent,#0a0f1e 35%);padding:18px 0 22px;display:flex;gap:12px;align-items:center}
+.fl-faq{margin:6px 0 44px}
+.fl-faq-title{font-size:32px;letter-spacing:-.5px;margin:10px 0 22px;color:#fff}
+.fl-faq details{background:#101828;border:1px solid #1e2a45;border-radius:16px;margin-bottom:12px;overflow:hidden}
+.fl-faq summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:20px;font-weight:700;font-size:17px;color:#fff}
+.fl-faq summary::-webkit-details-marker{display:none}
+.fl-faq summary .pm{color:#f5c542;font-size:24px;font-weight:900;flex-shrink:0;transition:transform .2s}
+.fl-faq details[open] summary .pm{transform:rotate(45deg)}
+.fl-faq .ans{padding:0 20px 20px;color:#9aa3b8;font-size:15.5px;line-height:1.65}
 .fl-cta .fl-btn{flex:1}
 .fl-cta .x{color:#8b94a7;font-size:24px;background:none;border:none;cursor:pointer;padding:8px;text-decoration:none}
 </style>
@@ -126,6 +134,34 @@
     <a href="{{ url_for('home') }}">Today's free sports picks →</a>
     <a href="{{ url_for('resultados') }}">Documented record →</a><br>
     <a href="{{ url_for('masterclass') }}">Free 30-day masterclass →</a>
+  </div>
+
+  <div class="fl-faq">
+    <h2 class="fl-faq-title">Questions, answered</h2>
+    <details>
+      <summary>Is sports betting actually profitable?<span class="pm">+</span></summary>
+      <div class="ans">It can be — but only with a real edge, strict bankroll management, and the discipline to follow the system every single day. Most bettors lose because they chase, overbet, or follow hunches. We publish every play before game time with a ticket photo and grade it win or loss on our public record ({{ wins }}-{{ losses }}, +{{ "%.2f"|format(roi) }}% ROI so far). No cherry-picking, ever.</div>
+    </details>
+    <details>
+      <summary>How does The Sharp Team find its plays?<span class="pm">+</span></summary>
+      <div class="ans">Our Elo-based model prices every game in the NFL, NCAAF and MLB, and we compare it against Pinnacle's no-vig line plus 2–3 sportsbooks. We only post plays with a real edge, shop for the best price, and stake a flat 1u (2% of bankroll) on VIP and 0.6u on Free Plays — never more, never chasing.</div>
+    </details>
+    <details>
+      <summary>Do you really bet every play yourself?<span class="pm">+</span></summary>
+      <div class="ans">Yes. Alex places every official play with real money and posts the original ticket photo. If there's no ticket, it's not an official play.</div>
+    </details>
+    <details>
+      <summary>What does the $1 trial include?<span class="pm">+</span></summary>
+      <div class="ans">The full VIP board for a week: the daily VIP play, the +EV board, line-shopping tools, the AI betting coach and the 30-day masterclass. After the first week it's $23/week — cancel anytime from your account.</div>
+    </details>
+    <details>
+      <summary>What happens if I have a losing week?<span class="pm">+</span></summary>
+      <div class="ans">Losing weeks happen — variance is part of betting and we never hide it. What matters is the long run: flat stakes, no chasing, every result on the record. Our rules cap daily risk at 6% of bankroll, so no single week can damage the program.</div>
+    </details>
+    <details>
+      <summary>How do I cancel?<span class="pm">+</span></summary>
+      <div class="ans">One click from your account page. No lock-in, no calls, no hassle — and your free account stays free forever.</div>
+    </details>
   </div>
 
   <p class="fl-fine">21+. For entertainment and educational purposes, not financial advice. If gambling stops being fun, take a break. 1-800-GAMBLER.</p>

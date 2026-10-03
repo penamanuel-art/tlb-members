@@ -47,6 +47,14 @@
 .diff-them .xx{color:#6b7488;font-weight:900;font-size:18px;line-height:1.3}
 .diff-them .tx{color:#9aa3b8;font-size:15px;line-height:1.45}
 .diff-them .who{display:block;font-size:10px;letter-spacing:1.5px;color:#6b7488;font-weight:800;margin-bottom:3px}
+.hm-faq{max-width:720px;margin:0 auto;padding:0 20px 48px}
+.hm-faq-title{font-size:32px;letter-spacing:-.5px;margin:10px 0 22px;color:#fff}
+.hm-faq details{background:#101828;border:1px solid #1e2a45;border-radius:16px;margin-bottom:12px;overflow:hidden}
+.hm-faq summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:20px;font-weight:700;font-size:17px;color:#fff}
+.hm-faq summary::-webkit-details-marker{display:none}
+.hm-faq summary .pm{color:#f5c542;font-size:24px;font-weight:900;flex-shrink:0;transition:transform .2s}
+.hm-faq details[open] summary .pm{transform:rotate(45deg)}
+.hm-faq .ans{padding:0 20px 20px;color:#9aa3b8;font-size:15.5px;line-height:1.65}
 </style>
   <h2 class="diff-title">What makes this <span class="gold">different</span></h2>
   <div class="diff-card">
@@ -74,5 +82,33 @@
     <div class="diff-us"><span class="ck">✓</span><span class="tx"><span class="who">THE SHARP TEAM</span>Cancel in one click from your account, anytime.</span></div>
     <div class="diff-them"><span class="xx">✕</span><span class="tx"><span class="who">TYPICAL</span>Locked in — good luck getting out.</span></div>
   </div>
+</section>
+
+<section class="hm-faq">
+  <h2 class="hm-faq-title">Questions, answered</h2>
+  <details>
+    <summary>Is sports betting actually profitable?<span class="pm">+</span></summary>
+    <div class="ans">It can be — but only with a real edge, strict bankroll management, and the discipline to follow the system every single day. Most bettors lose because they chase, overbet, or follow hunches. We publish every play before game time with a ticket photo and grade it win or loss on our public record ({{ wins }}-{{ losses }}, +{{ "%.2f"|format(roi) }}% ROI so far). No cherry-picking, ever.</div>
+  </details>
+  <details>
+    <summary>How does The Sharp Team find its plays?<span class="pm">+</span></summary>
+    <div class="ans">Our Elo-based model prices every game in the NFL, NCAAF and MLB, and we compare it against Pinnacle's no-vig line plus 2–3 sportsbooks. We only post plays with a real edge, shop for the best price, and stake a flat 1u (2% of bankroll) on VIP and 0.6u on Free Plays — never more, never chasing.</div>
+  </details>
+  <details>
+    <summary>Do you really bet every play yourself?<span class="pm">+</span></summary>
+    <div class="ans">Yes. Alex places every official play with real money and posts the original ticket photo. If there's no ticket, it's not an official play.</div>
+  </details>
+  <details>
+    <summary>What does the $1 trial include?<span class="pm">+</span></summary>
+    <div class="ans">The full VIP board for a week: the daily VIP play, the +EV board, line-shopping tools, the AI betting coach and the 30-day masterclass. After the first week it's $23/week — cancel anytime from your account.</div>
+  </details>
+  <details>
+    <summary>What happens if I have a losing week?<span class="pm">+</span></summary>
+    <div class="ans">Losing weeks happen — variance is part of betting and we never hide it. What matters is the long run: flat stakes, no chasing, every result on the record. Our rules cap daily risk at 6% of bankroll, so no single week can damage the program.</div>
+  </details>
+  <details>
+    <summary>How do I cancel?<span class="pm">+</span></summary>
+    <div class="ans">One click from your account page. No lock-in, no calls, no hassle — and your free account stays free forever.</div>
+  </details>
 </section>
 {% endblock %}
