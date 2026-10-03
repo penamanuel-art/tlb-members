@@ -192,9 +192,12 @@ body.v2::before {
 .v2-eyebrow {
   font-size: 11px; font-weight: 700; letter-spacing: 0.24em;
   text-transform: uppercase; color: var(--v2-muted);
+  white-space: nowrap;
 }
 .v2-greet { font-size: 30px; font-weight: 800; letter-spacing: -0.8px; margin-top: 8px; line-height: 1.12; }
-.v2-greet span {
+.v2-greet-saludo { display: block; white-space: nowrap; }
+.v2-greet-nombre {
+  display: block;
   background: linear-gradient(90deg, var(--v2-blue), var(--v2-green));
   -webkit-background-clip: text; background-clip: text; color: transparent;
 }
