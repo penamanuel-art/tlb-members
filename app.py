@@ -1415,11 +1415,11 @@ def profit_curve_svg(values, w=300, h=84, pad=6):
 
 
 def stats_por_nivel(tracked):
-    """Ganadas/perdidas/profit por nivel (GOLD/ELITE) para el bloque estilo WGT."""
+    """Ganadas/perdidas/profit por nivel (GOLD/ELITE/VALUE) para el bloque estilo WGT."""
     out = {}
     for t in tracked:
         lvl = (t.get("nivel") or "").upper()
-        if lvl not in ("GOLD", "ELITE"):
+        if lvl not in ("GOLD", "ELITE", "VALUE"):
             continue
         s = out.setdefault(lvl, {"wins": 0, "losses": 0, "net": 0.0})
         if t.get("resultado") == "W":
@@ -1433,7 +1433,7 @@ def stats_por_nivel(tracked):
         s["net_display"] = ("+$" if _n > 0 else ("-$" if _n < 0 else "$")) + f"{abs(_n):,}"
         s["net_cls"] = "pos" if _n > 0 else ("neg" if _n < 0 else "")
         s["record"] = f"{s['wins']}–{s['losses']}"
-    for _lvl in ("GOLD", "ELITE"):
+    for _lvl in ("GOLD", "ELITE", "VALUE"):
         out.setdefault(_lvl, {"wins": 0, "losses": 0, "net": 0.0,
                               "net_display": "$0", "net_cls": "", "record": "0–0"})
     return out
