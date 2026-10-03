@@ -400,7 +400,7 @@
   <p class="pro-profit {{ res.get('profit_cls', '') }}">{{ res.get('profit_display', '$0') }}</p>
   <p class="pro-sub"><strong>{{ res.get('ganadas', 0) }}&ndash;{{ res.get('perdidas', 0) }}</strong> &middot; every play public, win or loss</p>
   <div class="pro-levels">
-    {% for lvl_key, lvl_name, lvl_emoji, lvl_class in [('GOLD', 'FREE PLAYS', '&#x26aa;', 'gold'), ('ELITE', 'VIP', '&#x2b50;', 'elite')] %}
+    {% for lvl_key, lvl_name, lvl_emoji, lvl_class in [('GOLD', 'FREE PLAYS', '&#x26aa;', 'gold'), ('ELITE', 'VIP', '&#x2b50;', 'elite'), ('VALUE', '💎 VALUE', '&#x1f48e;', 'value')] %}
     {% set L = res['niveles'][lvl_key] %}
     {% set wr = L.win_rate %}
     <div class="pro-level lvl-{{ lvl_class }}">
