@@ -226,40 +226,9 @@
 <!-- 06 · TRACKER -->
 <section class="v2-sec">
   {% if es_admin %}
-  <div class="v2-sec-head">
-    <div>
-      <p class="v2-sec-eyebrow"><b>06</b> · Tracker</p>
-      <h2 class="v2-sec-title">Alex Owner Results</h2>
-      <p class="v2-sec-sub">Every official play, auto-graded from the final score.</p>
-    </div>
-    <a class="v2-link" href="{{ url_for('tracker') }}">Open my tracker →</a>
-  </div>
-  {% set _settled = tstats.wins + tstats.losses %}
-  {% set _wr = (tstats.wins / _settled * 100) if _settled else 0 %}
-  <div class="v2-stats">
-    <div class="v2-stat">
-      <p class="v2-stat-label">Total profit</p>
-      <p class="v2-stat-value {{ 'pos' if tstats.net_dollars > 0 else ('neg' if tstats.net_dollars < 0 else '') }}">{% if tstats.net_dollars > 0 %}{{ '+$%.2f' % tstats.net_dollars }}{% elif tstats.net_dollars < 0 %}{{ '-$%.2f' % -tstats.net_dollars }}{% else %}$0.00{% endif %}</p>
-      <p class="v2-stat-sub">your tracked profit</p>
-    </div>
-    <div class="v2-stat">
-      <p class="v2-stat-label">Win rate</p>
-      <p class="v2-stat-value">{{ '%.1f' % _wr }}%</p>
-      <p class="v2-stat-sub">won / settled</p>
-    </div>
-    <div class="v2-stat">
-      <p class="v2-stat-label">Record</p>
-      <p class="v2-stat-value">{{ tstats.wins }}–{{ tstats.losses }}</p>
-      <p class="v2-stat-sub">settled plays</p>
-    </div>
-    <div class="v2-stat">
-      <p class="v2-stat-label">ROI</p>
-      <p class="v2-stat-value {{ 'pos' if tstats.roi > 0 else ('neg' if tstats.roi < 0 else '') }}">{{ '%+.1f' % tstats.roi }}%</p>
-      <p class="v2-stat-sub">on amount risked</p>
-    </div>
-  </div>
-
-  <div class="v2-sec-head" style="margin-top:48px;padding-top:28px;border-top:1px solid var(--v2-border,#1e2a45)">
+  {# Solo resultados oficiales del programa en el dashboard admin (2026-10-03, #}
+  {# orden de Alex): el tracker personal "Alex Owner Results" se quitó de aquí. #}
+  <div class="v2-sec-head" style="padding-top:28px">
     <div>
       <p class="v2-eyebrow">Verified program results</p>
       <h2 class="v2-sec-title">We bet every play we post.</h2>
