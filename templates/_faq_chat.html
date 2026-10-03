@@ -7,7 +7,8 @@
 #faqPanel.open{display:flex}
 #faqPanel.full{position:fixed;top:0;left:0;right:0;bottom:0;width:auto;height:auto;max-height:none;border-radius:0;border:none;z-index:2001}
 #faqForm{flex:none}
-#faqInput{min-width:0}
+#faqInput{min-width:0;font-size:16px} /* 16px: iOS no hace zoom al escribir */
+#faqSend{flex:none}
 #faqHead{background:linear-gradient(160deg,#12233a,#0b1426);padding:12px 14px;border-bottom:1px solid #22345c;display:flex;align-items:center;gap:10px}
 #faqHead .t{color:#fff;font-weight:800;font-size:15px}
 #faqHead .s{color:#9aa3b8;font-size:12px}
@@ -73,9 +74,16 @@
   function faqFit(){
     if(panel.classList.contains('full')){
       var vv=window.visualViewport;
-      panel.style.height=(vv?vv.height:window.innerHeight)+'px';
-      panel.style.top=((vv&&vv.offsetTop)||0)+'px';
-    }else{panel.style.height='';panel.style.top='';}
+      if(vv){
+        panel.style.height=vv.height+'px';
+        panel.style.width=vv.width+'px';
+        panel.style.top=vv.offsetTop+'px';
+        panel.style.left=vv.offsetLeft+'px';
+        panel.style.right='auto';
+      }else{
+        panel.style.height=window.innerHeight+'px';
+      }
+    }else{panel.style.height='';panel.style.width='';panel.style.top='';panel.style.left='';panel.style.right='';}
   }
   if(window.visualViewport){
     window.visualViewport.addEventListener('resize',faqFit);
