@@ -248,6 +248,10 @@ body.v2::before {
 
 /* ---------------- Plays stack ---------------- */
 .v2-plays { display: grid; gap: 14px; }
+/* 2026-10-03 (orden Alex, referencia WGT): cards del home casi full-bleed,
+   pegadas a los bordes con mínimo margen — solo tema v2. */
+body.v2 .v2-plays { margin: 0 -14px; }
+body.v2 .v2-plays .tstc { max-width: 680px; }
 .v2-empty {
   background: linear-gradient(165deg, rgba(255,255,255,.05), rgba(255,255,255,.015));
   border: 1px dashed rgba(255, 255, 255, 0.18);
