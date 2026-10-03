@@ -376,6 +376,18 @@ body.v2 .tstc-novig:active, body.v2 .tstc-track:active { transform: scale(0.97);
 .v2-profit-num { font-family: var(--v2-mono); font-size: 46px; font-weight: 800; letter-spacing: -1.5px; margin: 8px 0; }
 .v2-profit-note { font-size: 13px; color: var(--v2-muted); line-height: 1.5; }
 
+/* Tarjeta con la línea verde del hero de profit (pedido por Alex 2026-10-03:
+   "Your tools" y los trackers del Dashboard llevan la misma línea) */
+.v2-linecard {
+  position: relative; overflow: hidden;
+  padding: 20px 18px;
+  background:
+    radial-gradient(420px 200px at 50% -60px, rgba(47, 212, 126, 0.16), transparent 65%),
+    linear-gradient(180deg, rgba(47, 212, 126, 0.07), rgba(255, 255, 255, 0.015));
+  border: 1px solid rgba(47, 212, 126, 0.22); border-radius: 24px;
+  box-shadow: var(--v2-shadow-md), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
 /* ---------------- Stat tiles (2x2 glass) ---------------- */
 .v2-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .v2-stat {

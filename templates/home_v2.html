@@ -166,6 +166,7 @@
       <h2 class="v2-sec-title">Your tools</h2>
     </div>
   </div>
+  <div class="v2-linecard">
   <div class="v2-tools">
     <a class="v2-tool" href="{{ url_for('ev_board') }}">
       <span class="v2-tool-emoji">⚡</span><b>EV Board</b><span class="v2-tool-sub">Live +EV edges</span>
@@ -185,6 +186,7 @@
     <a class="v2-tool" href="{{ url_for('archivo') }}">
       <span class="v2-tool-emoji">🗂️</span><b>Archive</b><span class="v2-tool-sub">Every published play</span>
     </a>
+  </div>
   </div>
 </section>
 
@@ -302,6 +304,7 @@
   </div>
   {% set _settled = tstats.wins + tstats.losses %}
   {% set _wr = (tstats.wins / _settled * 100) if _settled else 0 %}
+  <div class="v2-linecard">
   <div class="v2-ringrow">
     <div>
       <p class="v2-eyebrow">Your profit</p>
@@ -357,6 +360,7 @@
       <p class="v2-stat-sub">{{ tstats.pending }} pending</p>
     </div>
   </div>
+  </div>
 
   <div class="v2-sec-head" style="margin-top:48px;padding-top:28px;border-top:1px solid var(--v2-border,#1e2a45)">
     <div>
@@ -370,6 +374,7 @@
     <p class="v2-profit-num {{ res.get('profit_cls', '') }}">{{ res.get('profit_display', '$0') }}</p>
     <p class="v2-profit-note"><strong>{{ res.get('ganadas', 0) }}–{{ res.get('perdidas', 0) }}</strong> · every play public, win or loss</p>
   </div>
+  <div class="v2-linecard">
   <div class="v2-levels">
     {% for lvl_key, lvl_name, lvl_emoji, lvl_class in [('GOLD', 'FREE PLAYS', '&#x26aa;', 'gold'), ('ELITE', 'VIP', '&#x2b50;', 'elite')] %}
     {% set L = res['niveles'][lvl_key] %}
@@ -387,6 +392,7 @@
       <p class="v2-level-sub">{{ L.ganadas + L.perdidas }} plays graded · lifetime</p>
     </div>
     {% endfor %}
+  </div>
   </div>
   {% endif %}
 </section>
