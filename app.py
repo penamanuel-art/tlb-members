@@ -423,6 +423,12 @@ def fecha_larga() -> str:
     return f"{DAYS_EN[d.weekday()]}, {MONTHS_EN[d.month - 1]} {d.day}, {d.year}"
 
 
+def fecha_corta() -> str:
+    """Fecha compacta para el hero (una línea en móvil)."""
+    d = datetime.now(TZ).date()
+    return f"{DAYS_EN[d.weekday()][:3]}, {MONTHS_EN[d.month - 1][:3]} {d.day}, {d.year}"
+
+
 def primer_nombre(nombre: str) -> str:
     return (nombre or "").strip().split(" ")[0] if nombre else ""
 
@@ -2083,6 +2089,7 @@ def home():
         tracked_ids=tracked_ids,
         program=program,
         fecha=fecha_larga(),
+        fecha_corta=fecha_corta(),
         saludo=saludo_hoy(),
         racha=checkin_streak(db, session["user_id"]),
         bankroll=user["bankroll"] if user else None,
