@@ -2495,6 +2495,51 @@ def book_logo(book_name):
     return BOOK_LOGOS.get(key)
 
 
+# Trackear una Value Play en el tracker personal de Alex (no toca el récord de miembros)
+@app.route("/track-value", methods=["POST"])
+def track_value():
+    db = get_db()
+    user = current_user()
+    if not (is_alex_member(user) or is_admin_for(user)):
+        return redirect(url_for("home"))
+    # Siempre en la cuenta personal de Alex
+    if is_admin_for(user) and not is_alex_member(user):
+        row = db.execute(
+            "SELECT id FROM users WHERE LOWER(email) = ?", (ALEX_MEMBER_EMAIL,)
+        ).fetchone()
+        uid = row["id"] if row else session["user_id"]
+    else:
+        uid = session["user_id"]
+    team = (request.form.get("team") or "").strip()
+    game = (request.form.get("game") or "").strip()
+    price = request.form.get("price", "0")
+    ev = request.form.get("ev", "0")
+    if not team:
+        return redirect(url_for("home"))
+    try:
+        cuota = int(float(price))
+    except ValueError:
+        cuota = 0
+    try:
+        edge = float(ev)
+    except ValueError:
+        edge = 0
+    pid = "value-%s-%s" % (
+        datetime.now(TZ).strftime("%Y-%m-%d"),
+        re.sub(r"[^a-z0-9]+", "-", team.lower()).strip("-"),
+    )
+    now = datetime.now(TZ).strftime("%Y-%m-%d %H:%M:%S")
+    # Stake 1u del capital personal ($5,000 -> $50)
+    db.execute(
+        """INSERT OR IGNORE INTO tracked_plays
+           (user_id, play_id, fecha, nivel, pick, cuota, stake_unidades, stake_monto, edge, resultado, created_at)
+           VALUES (?, ?, ?, 'VALUE', ?, ?, 1.0, 50.0, ?, NULL, ?)""",
+        (uid, pid, datetime.now(TZ).strftime("%Y-%m-%d"), team, cuota, edge, now),
+    )
+    db.commit()
+    return redirect(url_for("tracker"))
+
+
 @app.route("/balances/delete/<book_name>", methods=["POST"])
 def balances_delete(book_name):
     db = get_db()
