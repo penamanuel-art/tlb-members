@@ -460,9 +460,14 @@
   <div class="v2-rows">
     {% for r in recientes %}
     <div class="v2-row">
-      <div>
+      {% if r.comprobante %}
+      <a class="v2-row-thumb" href="{{ url_for('ticket_view', play_id=r.id) if r.id else url_for('static', filename=r.comprobante) }}" aria-label="View ticket">
+        <img src="{{ url_for('static', filename=r.comprobante) }}" alt="Ticket" loading="lazy">
+      </a>
+      {% endif %}
+      <div class="v2-row-main">
         <p class="v2-row-pick"><span class="v2-badge v2-badge-{{ r.nivel|lower }}">{{ r.nivel }}</span>{{ r.pick }} <span class="muted">{{ fmt_odds(r.cuota) }}</span></p>
-        <p class="v2-row-sub">{{ r.fecha }}</p>
+        <p class="v2-row-sub">{{ r.fecha }}{% if r.comprobante %} · <a class="v2-row-tlink" href="{{ url_for('ticket_view', play_id=r.id) if r.id else url_for('static', filename=r.comprobante) }}">View ticket →</a>{% endif %}</p>
       </div>
       {% if r.resultado == 'WON' %}
         <span class="v2-result win">✓ {{ fmt_money(r.profit) }}</span>

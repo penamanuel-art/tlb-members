@@ -1082,6 +1082,7 @@ def recientes_oficiales(n=6):
                 and j.get("pick")
             ):
                 recientes.append({
+                    "id": j.get("id"),
                     "fecha": d.get("titulo") or d.get("fecha", ""),
                     "nivel": j.get("nivel", ""),
                     "pick": j.get("pick", ""),
