@@ -12,7 +12,7 @@
 <section class="v2-hero">
   <div>
     <p class="v2-eyebrow">The Sharp Team · {{ fecha }}</p>
-    <h1 class="v2-greet">{{ saludo }}, <span>{{ nombre_corto }}</span></h1>
+    <h1 class="v2-greet"><span class="v2-greet-saludo">{{ saludo }},</span><span class="v2-greet-nombre">{{ nombre_corto }}</span></h1>
     <div class="v2-hero-meta">
       {% if streak %}
       <span class="v2-streak {{ 'hot' if streak.tipo == 'W' else 'cold' }}">{% if streak.tipo == 'W' %}🔥 {% endif %}{{ streak.tipo }}{{ streak.n }}</span>
