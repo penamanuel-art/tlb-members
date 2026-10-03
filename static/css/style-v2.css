@@ -891,3 +891,60 @@ body.v2 .tstc-novig:active, body.v2 .tstc-track:active { transform: scale(0.97);
 .back-link{margin-top:16px}
 .muted.small{font-size:12px}
 .v2-balances-link{display:block;text-align:center;margin:12px 0;padding:13px;border-radius:14px;border:1px solid rgba(47,212,126,.35);background:rgba(47,212,126,.08);color:#4ade80;font-weight:700;text-decoration:none;font-size:15px}
+
+/* ---------------- Book balances (estilo tarjeta por casa) ---------------- */
+.bb-head { margin: 18px 0 14px; }
+.bb-head h2 { margin: 4px 0 6px; font-size: 1.5rem; }
+.bb-total {
+  background: linear-gradient(135deg, #0e1a2e, #0a1220);
+  border: 1px solid var(--v2-border);
+  border-radius: 16px;
+  padding: 18px 20px;
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.bb-total-label { font-size: .72rem; letter-spacing: .12em; color: var(--v2-muted); }
+.bb-total-amount { font-size: 2rem; font-weight: 800; color: var(--v2-gold); }
+.bb-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+.bb-card {
+  background: var(--v2-surface);
+  border: 1px solid var(--v2-border);
+  border-radius: 16px;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.bb-card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.bb-book { display: flex; align-items: center; gap: 10px; }
+.bb-avatar {
+  width: 38px; height: 38px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--v2-gold), #b8860b);
+  color: #0a0f1c; font-weight: 800; font-size: 1.1rem;
+  display: flex; align-items: center; justify-content: center;
+}
+.bb-name { font-weight: 700; font-size: 1.05rem; }
+.bb-del { background: none; border: none; font-size: 1.15rem; cursor: pointer; opacity: .7; padding: 4px; }
+.bb-del:hover { opacity: 1; }
+.bb-label { font-size: .8rem; color: var(--v2-muted); }
+.bb-amount { font-size: 1.7rem; font-weight: 800; }
+.bb-updated { font-size: .78rem; color: var(--v2-muted); margin-top: 4px; }
+.bb-form {
+  background: var(--v2-surface);
+  border: 1px solid var(--v2-border);
+  border-radius: 16px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.bb-form h3 { margin: 0 0 4px; font-size: 1.05rem; }
+.bb-form label { display: flex; flex-direction: column; gap: 6px; font-size: .85rem; color: var(--v2-muted); }
+.bb-form input {
+  background: #0c1425; border: 1px solid var(--v2-border); border-radius: 10px;
+  padding: 12px; color: #fff; font-size: 1rem;
+}
+.bb-form input:focus { outline: none; border-color: var(--v2-gold); }
