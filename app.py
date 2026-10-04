@@ -4231,6 +4231,7 @@ def track_value_auto():
     """
     from flask import Response, request
     db = get_db()
+    ensure_value_system_user(db)
     data = request.get_json(force=True, silent=True) or {}
     
     play_id = data.get("play_id")
@@ -4282,6 +4283,23 @@ def value_system_stats():
                     mimetype="application/json")
 
 
+def ensure_value_system_user(db):
+    """Crea el usuario sistema para VALUE tracking si no existe."""
+    row = db.execute("SELECT id FROM users WHERE id = ?", (VALUE_SYSTEM_USER_ID,)).fetchone()
+    if not row:
+        # Crear usuario sistema (id fijo 0)
+        try:
+            db.execute(
+                "INSERT INTO users (id, nombre, email, password_hash, created_at) "
+                "VALUES (?, 'VALUE System', 'system@value.local', '', ?)",
+                (VALUE_SYSTEM_USER_ID, "2026-10-04 00:00:00")
+            )
+            db.commit()
+        except Exception:
+            db.rollback()
+    return VALUE_SYSTEM_USER_ID
+
+
 @app.route("/admin/backfill-value-2026-10-03")
 @admin_required
 def backfill_value_2026_10_03():
@@ -4290,6 +4308,7 @@ def backfill_value_2026_10_03():
     from flask import Response
     from datetime import datetime
     db = get_db()
+    ensure_value_system_user(db)
     
     plays = [
         # (play_id, pick, cuota, edge, resultado)
