@@ -330,19 +330,7 @@
   </div>
   </div>
 
-  <div class="v2-sec-head" style="margin-top:48px;padding-top:28px;border-top:1px solid var(--v2-border,#1e2a45);display:block;">
-    <div>
-      <p class="v2-eyebrow">The Sharp Team · Documented profit</p>
-      <h2 class="v2-sec-title" style="margin-bottom:6px;">Program tracker</h2>
-      <p class="v2-sec-sub" style="margin:0 0 10px;">Every play posted before game time — wins and losses stay on the record.</p>
-      <a class="v2-link" href="{{ url_for('resultados') }}" style="font-size:14px;">Full results →</a>
-    </div>
-  </div>
-  <div class="v2-profit">
-    <p class="v2-profit-num {{ res.get('profit_cls', '') }}">{{ res.get('profit_display', '$0') }}</p>
-    <p class="v2-profit-note"><strong>{{ res.get('ganadas', 0) }}–{{ res.get('perdidas', 0) }}</strong> · every play public, win or loss</p>
-  </div>
-  <div class="v2-linecard">
+  <div class="v2-linecard" style="margin-top:24px;">
   <div class="v2-levels">
     {% for lvl_key, lvl_name, lvl_emoji, lvl_class in [('VALUE', '💎 VALUE', '&#x1f48e;', 'value')] %}
     {% set L = res['niveles'][lvl_key] %}
