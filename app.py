@@ -18,6 +18,7 @@ import random
 import re
 import secrets
 import sqlite3
+import time
 import urllib.request
 from datetime import date, timedelta, datetime, timezone
 from functools import wraps
@@ -2255,14 +2256,44 @@ TRACKED_LINKS = {
 }
 
 
+# Anti-spam de avisos de clic (2026-10-04, pedido por Alex): los crawlers de
+# Meta (facebookexternalhit) golpean /go/ig en ráfagas durante la revisión del
+# anuncio y cada golpe mandaba un aviso. Ahora: 1) no se avisa si el User-Agent
+# es de bot/crawler; 2) como máximo un aviso cada 10 min por slug.
+_BOT_UA_PATTERNS = (
+    "facebookexternalhit", "facebot", "meta-external",
+    "googlebot", "bingbot", "slurp", "duckduckbot", "baiduspider",
+    "yandexbot", "sogou", "twitterbot", "linkedinbot", "slackbot",
+    "discordbot", "telegrambot", "whatsapp", "crawl", "spider",
+)
+_CLICK_NOTIFY_COOLDOWN_SEC = 600
+_last_click_notify = {}
+
+
+def _is_bot_ua(ua):
+    ua_l = (ua or "").lower()
+    return any(p in ua_l for p in _BOT_UA_PATTERNS)
+
+
 def _notify_click_telegram(slug):
     """Aviso en tiempo real por Telegram cuando tocan un link rastreado.
 
     Solo funciona si Render tiene TELEGRAM_BOT_TOKEN. Nunca bloquea:
     timeout corto y todo error se traga en silencio (el watcher de la VM
-    es el respaldo).
+    es el respaldo). No avisa bots/crawlers ni más de 1 vez cada 10 min.
     """
     if not TELEGRAM_BOT_TOKEN or not CLICK_NOTIFY_CHAT_ID:
+        return False
+    try:
+        ua = request.headers.get("User-Agent", "") or ""
+    except Exception:
+        ua = ""
+    if _is_bot_ua(ua):
+        print("[click-notify] bot UA, sin aviso", flush=True)
+        return False
+    now = time.time()
+    if now - _last_click_notify.get(slug, 0) < _CLICK_NOTIFY_COOLDOWN_SEC:
+        print("[click-notify] cooldown, sin aviso", flush=True)
         return False
     try:
         payload = json.dumps(
@@ -2279,6 +2310,8 @@ def _notify_click_telegram(slug):
         with urllib.request.urlopen(req, timeout=4) as resp:
             ok = resp.status == 200
             print(f"[click-notify] telegram direct: status={resp.status}", flush=True)
+            if ok:
+                _last_click_notify[slug] = now
             return ok
     except Exception as e:
         print(f"[click-notify] telegram direct FAILED: {type(e).__name__}: {e}", flush=True)
