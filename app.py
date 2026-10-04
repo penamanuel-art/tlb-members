@@ -1196,6 +1196,21 @@ def recientes_oficiales(n=6):
     return recientes[:n]
 
 
+def recientes_value(n=20):
+    """Jugadas VALUE del sistema (simuladas), más recientes primero.
+    Para el historial desplegable de la sección VALUE."""
+    try:
+        db = get_db()
+        rows = db.execute(
+            "SELECT * FROM tracked_plays WHERE user_id = ? AND nivel = 'VALUE' "
+            "ORDER BY fecha DESC, id DESC LIMIT ?",
+            (VALUE_SYSTEM_USER_ID, n),
+        ).fetchall()
+        return [dict(r) for r in rows]
+    except Exception:
+        return []
+
+
 def program_stats():
     """Stats del programa calculadas EN VIVO desde data/archive.json.
 
