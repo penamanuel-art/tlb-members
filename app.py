@@ -2601,12 +2601,20 @@ def track_value():
     now = datetime.now(TZ).strftime("%Y-%m-%d %H:%M:%S")
     comprobante = (request.values.get("comprobante") or "").strip()
     # Stake 1u del capital personal ($5,000 -> $50), o el monto real del ticket
-    db.execute(
-        """INSERT OR IGNORE INTO tracked_plays
-           (user_id, play_id, fecha, nivel, pick, cuota, stake_unidades, stake_monto, edge, resultado, comprobante, created_at)
-           VALUES (?, ?, ?, 'VALUE', ?, ?, ?, ?, ?, NULL, ?, ?)""",
-        (uid, pid, datetime.now(TZ).strftime("%Y-%m-%d"), team, cuota, unidades, monto, edge, comprobante or None, now),
-    )
+    if db.use_pg:
+        db.execute(
+            """INSERT INTO tracked_plays
+               (user_id, play_id, fecha, nivel, pick, cuota, stake_unidades, stake_monto, edge, resultado, comprobante, created_at)
+               VALUES (?, ?, ?, 'VALUE', ?, ?, ?, ?, ?, NULL, ?, ?) ON CONFLICT DO NOTHING""",
+            (uid, pid, datetime.now(TZ).strftime("%Y-%m-%d"), team, cuota, unidades, monto, edge, comprobante or None, now),
+        )
+    else:
+        db.execute(
+            """INSERT OR IGNORE INTO tracked_plays
+               (user_id, play_id, fecha, nivel, pick, cuota, stake_unidades, stake_monto, edge, resultado, comprobante, created_at)
+               VALUES (?, ?, ?, 'VALUE', ?, ?, ?, ?, ?, NULL, ?, ?)""",
+            (uid, pid, datetime.now(TZ).strftime("%Y-%m-%d"), team, cuota, unidades, monto, edge, comprobante or None, now),
+        )
     db.commit()
     return redirect(url_for("tracker"))
 
