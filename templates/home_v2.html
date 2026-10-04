@@ -518,8 +518,9 @@
       <p class="v2-sec-eyebrow"><b>08b</b> · Value track record</p>
       <h2 class="v2-sec-title">💎 Value plays</h2>
     </div>
+    <a class="v2-link" href="javascript:void(0)" onclick="document.getElementById('value-history').style.display=document.getElementById('value-history').style.display==='none'?'block':'none';this.textContent=this.textContent==='View history →'?'Hide ↑':'View history →'">View history →</a>
   </div>
-  <div class="v2-rows">
+  <div class="v2-rows" id="value-history" style="display:none;">
     {% for r in recientes_value %}
     <div class="v2-row">
       <div class="v2-row-main">
