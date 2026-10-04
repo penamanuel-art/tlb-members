@@ -3442,6 +3442,41 @@ def diag_alex_track():
     return Response(json.dumps(out, indent=1, ensure_ascii=False),
                     mimetype="application/json")
 
+@app.route("/admin/fix-alex-dups")
+@admin_required
+def fix_alex_dups():
+    """TEMPORAL (2026-10-04): elimina duplicados del tracker de Alex.
+    Mantiene el registro oficial de 20 jugadas (15-5, +$166.64)."""
+    from flask import Response
+    db = get_db()
+    alex = db.execute(
+        "SELECT id FROM users WHERE LOWER(email) = ?", (ALEX_MEMBER_EMAIL.lower(),)
+    ).fetchone()
+    if not alex:
+        return Response("Alex no encontrado", mimetype="text/plain")
+    uid = alex["id"]
+    # Buscar duplicados por (pick, fecha, cuota)
+    rows = db.execute(
+        "SELECT id, play_id, pick, fecha, cuota FROM tracked_plays "
+        "WHERE user_id = ? ORDER BY id",
+        (uid,),
+    ).fetchall()
+    seen = {}
+    to_delete = []
+    for r in rows:
+        key = (r["pick"], r["fecha"], r["cuota"])
+        if key in seen:
+            # Duplicado: borrar el de ID mayor (el más reciente)
+            to_delete.append(r["id"])
+        else:
+            seen[key] = r["id"]
+    for did in to_delete:
+        db.execute("DELETE FROM tracked_plays WHERE id = ?", (did,))
+    db.commit()
+    return Response(
+        f"Eliminados {len(to_delete)} duplicados: {to_delete}",
+        mimetype="text/plain")
+
 @app.route("/admin/seed-tracker")
 @login_required
 def admin_seed_tracker():
