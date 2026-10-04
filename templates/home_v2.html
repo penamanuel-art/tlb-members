@@ -8,22 +8,22 @@
 .v2-level-sub{font-size:12px;color:var(--v2-muted);margin-top:8px}
 </style>
 
-<!-- HERO · compact performance header (original v2 design, not a WGT greeting) -->
-<section class="v2-hero">
-  <div>
-    <p class="v2-eyebrow">The Sharp Team · {{ fecha_corta }}</p>
-    <h1 class="v2-greet"><span class="v2-greet-saludo">{{ saludo }},</span><span class="v2-greet-nombre">{{ nombre_corto }}</span></h1>
-    <div class="v2-hero-meta">
-      {% if streak %}
-      <span class="v2-streak {{ 'hot' if streak.tipo == 'W' else 'cold' }}">{% if streak.tipo == 'W' %}🔥 {% endif %}{{ streak.tipo }}{{ streak.n }}</span>
-      {% endif %}
-      {% if card_pendiente and resumen_ayer %}
-      <span class="v2-yesterday">Yesterday <b>{{ resumen_ayer.w }}-{{ resumen_ayer.l }}</b> · <b class="{{ 'pos' if resumen_ayer.profit >= 0 else 'neg' }}">{{ '$%+.2f' % resumen_ayer.profit }}</b></span>
-      {% endif %}
-    </div>
-  </div>
-  <div class="v2-hero-right">
-    <img src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team" class="v2-hero-logo">
+<!-- HERO · estilo saludo WGT (pedido por Alex 2026-10-04): plano, sin tarjeta -->
+<section class="v2-hero v2-hero-wgt">
+  <p class="v2-hero-date"><span class="v2-live-dot"></span>{{ saludo }} · {{ fecha }}</p>
+  <h1 class="v2-hero-title">{{ nombre_corto }},<br><span class="v2-hero-today">here&rsquo;s today.</span></h1>
+  {% if card_pendiente %}
+  <p class="v2-hero-sub">Today&rsquo;s card hasn&rsquo;t dropped yet — check back soon. Every play public, win or loss.</p>
+  {% else %}
+  <p class="v2-hero-sub">{{ plays|length }} play{{ 's' if plays|length != 1 else '' }} on your card. Place each at your book, then tap + Track to check it off.</p>
+  {% endif %}
+  <div class="v2-hero-meta">
+    {% if streak %}
+    <span class="v2-streak {{ 'hot' if streak.tipo == 'W' else 'cold' }}">{% if streak.tipo == 'W' %}🔥 {% endif %}{{ streak.tipo }}{{ streak.n }}</span>
+    {% endif %}
+    {% if resumen_ayer %}
+    <span class="v2-yesterday">Yesterday <b>{{ resumen_ayer.w }}-{{ resumen_ayer.l }}</b> · <b class="{{ 'pos' if resumen_ayer.profit >= 0 else 'neg' }}">{{ '$%+.2f' % resumen_ayer.profit }}</b></span>
+    {% endif %}
     {% if card_pendiente %}
     <span class="v2-status pending"><span class="v2-dot"></span>CARD PENDING</span>
     {% else %}

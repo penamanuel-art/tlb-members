@@ -173,6 +173,40 @@ body.v2::before {
 .v2-flash-success { border-color: rgba(47, 212, 126, 0.5); color: #a9f0c9; }
 
 /* ---------------- Hero — premium gradient mesh ---------------- */
+/* HERO estilo saludo (pedido por Alex 2026-10-04) — plano, sin tarjeta contenedora */
+.v2-hero-wgt {
+  background: none;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  backdrop-filter: none; -webkit-backdrop-filter: none;
+  padding: 8px 4px 0;
+  display: block;
+  margin-top: 14px;
+  overflow: visible;
+}
+.v2-hero-date {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 14px; font-weight: 500; color: var(--v2-muted);
+  margin: 0 0 10px;
+}
+.v2-live-dot {
+  width: 9px; height: 9px; border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 8px rgba(34, 197, 94, .8);
+  flex-shrink: 0;
+}
+.v2-hero-title {
+  font-size: 42px; font-weight: 800; letter-spacing: -1.2px; line-height: 1.05;
+  color: #fff; margin: 0;
+}
+.v2-hero-today { color: var(--v2-blue); }
+.v2-hero-sub {
+  font-size: 16px; line-height: 1.5; color: rgba(255,255,255,.82);
+  margin: 14px 0 0; max-width: 34ch;
+}
+.v2-hero-wgt .v2-hero-meta { margin-top: 16px; }
+
 .v2-hero {
   position: relative;
   overflow: hidden;

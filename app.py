@@ -432,6 +432,12 @@ def fecha_corta() -> str:
     return f"{DAYS_EN[d.weekday()][:3]}, {MONTHS_EN[d.month - 1][:3]} {d.day}, {d.year}"
 
 
+def fecha_larga() -> str:
+    """Fecha larga estilo WGT para el hero (ej. 'Sunday, October 4')."""
+    d = datetime.now(TZ).date()
+    return f"{DAYS_EN[d.weekday()]}, {MONTHS_EN[d.month - 1]} {d.day}"
+
+
 def primer_nombre(nombre: str) -> str:
     return (nombre or "").strip().split(" ")[0] if nombre else ""
 
