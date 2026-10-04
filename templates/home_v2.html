@@ -532,9 +532,12 @@
       <p class="v2-sec-eyebrow"><b>08b</b> · Value track record</p>
       <h2 class="v2-sec-title">💎 Value plays</h2>
     </div>
+    {% if recientes_value|length > 5 %}
+    <a class="v2-link" href="javascript:void(0)" onclick="var e=document.getElementById('value-history-more');var h=e.style.display==='none';e.style.display=h?'block':'none';this.textContent=h?'Show less ↑':'View all →'">View all →</a>
+    {% endif %}
   </div>
   <div class="v2-rows" id="value-history">
-    {% for r in recientes_value %}
+    {% for r in recientes_value[:5] %}
     <div class="v2-row">
       <div class="v2-row-main">
         <p class="v2-row-pick"><span class="v2-badge" style="background:rgba(77,166,255,.15);border:1px solid rgba(77,166,255,.4);color:#7db8ff;">💎 VALUE</span>{{ r.pick }} <span class="muted">{{ fmt_odds(r.cuota) }}</span></p>
@@ -548,6 +551,23 @@
     </div>
     {% endfor %}
   </div>
+  {% if recientes_value|length > 5 %}
+  <div class="v2-rows" id="value-history-more" style="display:none;">
+    {% for r in recientes_value[5:] %}
+    <div class="v2-row">
+      <div class="v2-row-main">
+        <p class="v2-row-pick"><span class="v2-badge" style="background:rgba(77,166,255,.15);border:1px solid rgba(77,166,255,.4);color:#7db8ff;">💎 VALUE</span>{{ r.pick }} <span class="muted">{{ fmt_odds(r.cuota) }}</span></p>
+        <p class="v2-row-sub">{{ r.fecha }}</p>
+      </div>
+      {% if r.resultado == 'WON' %}
+        <span class="v2-result win">✓ {{ fmt_money(r.profit) }}</span>
+      {% else %}
+        <span class="v2-result loss">✕ {{ fmt_money(r.profit) }}</span>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
   <p class="muted" style="margin-top:8px;font-size:.8rem;">Simulated · $5,000 bankroll · 1% per play · All system value plays, played or not.</p>
 </section>
 {% endif %}
