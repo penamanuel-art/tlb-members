@@ -2194,6 +2194,7 @@ def home():
         stake_mode=user["stake_mode"] if user else "units",
         platinum_unlocked=(platinum_unlocked_for(user) and not preview_locked),
         res=program_stats(),
+        dias=load_archive(),
         snapshot=performance_snapshot(),
         leccion=load_masterclass(),
         archivo_mc=load_masterclass_archivo(),

@@ -415,6 +415,80 @@
 </section>
 {% endif %}
 
+<!-- OFFICIAL PROGRAM RECORD — en home page (pedido por Alex 2026-10-04) -->
+{% if res and dias %}
+<section class="v2-sec">
+  <div style="background:rgba(255,210,87,.08);border:1px solid rgba(255,210,87,.25);border-radius:16px;padding:18px;display:flex;gap:14px;align-items:flex-start;margin-bottom:16px;">
+    <span style="background:#ffd257;color:#1a1a1a;font-weight:900;font-size:1.2rem;width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">✓</span>
+    <p style="margin:0;color:#fff;font-size:.95rem;line-height:1.5;"><b>Every play posted before the game. Graded against the final score.</b><br>
+    <span style="color:#9aa3b8;">Wins and losses — nothing hidden, nothing edited after the fact.</span></p>
+  </div>
+  {% set profit = res.get('profit_all_time') %}
+  {% set roi = res.get('roi') %}
+  {% set g = res.get('ganadas', 0) %}
+  {% set p = res.get('perdidas', 0) %}
+  {% set ns = namespace(pw=0, pl=0, pp=0.0, pu=0.0, gw=0, gl=0, gp=0.0, gu=0.0, tu=0.0) %}
+  {% for d in dias %}
+    {% for j in d.get('jugadas', []) or [] %}
+      {% if j.get('resultado') in ('WON', 'LOST') and j.get('pick') and not j.get('bloqueada') %}
+        {% set prof = j.profit if j.profit is not none else 0 %}
+        {% set stake_u = j.stake_unidades if j.stake_unidades else 0 %}
+        {% set stake_m = j.stake_monto if j.stake_monto else 0 %}
+        {% set uw = (prof / (stake_m / stake_u)) if stake_u and stake_m else 0 %}
+        {% set ns.tu = ns.tu + uw %}
+        {% if (j.get('nivel') or '') in ('PLATINUM', 'ELITE') %}
+          {% set ns.pw = ns.pw + (1 if j.resultado == 'WON' else 0) %}
+          {% set ns.pl = ns.pl + (1 if j.resultado == 'LOST' else 0) %}
+          {% set ns.pp = ns.pp + prof %}
+          {% set ns.pu = ns.pu + uw %}
+        {% else %}
+          {% set ns.gw = ns.gw + (1 if j.resultado == 'WON' else 0) %}
+          {% set ns.gl = ns.gl + (1 if j.resultado == 'LOST' else 0) %}
+          {% set ns.gp = ns.gp + prof %}
+          {% set ns.gu = ns.gu + uw %}
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+  {% endfor %}
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+    <div style="background:linear-gradient(150deg,#1a2340,#0f1526);border:1px solid rgba(0,224,127,.3);border-radius:16px;padding:18px 16px;">
+      <p style="font-size:.68rem;letter-spacing:1.5px;color:#9aa3b8;font-weight:700;margin:0 0 8px;">TOTAL PROFIT</p>
+      <p style="font-size:1.8rem;font-weight:800;margin:0;color:#00e07f;">{% if profit is not none %}{{ '+$%.2f' % profit }}{% else %}—{% endif %}</p>
+      <p style="font-size:.8rem;color:#9aa3b8;margin:6px 0 0;">actual system profit</p>
+    </div>
+    <div style="background:linear-gradient(150deg,#1a2340,#0f1526);border:1px solid rgba(0,224,127,.3);border-radius:16px;padding:18px 16px;">
+      <p style="font-size:.68rem;letter-spacing:1.5px;color:#9aa3b8;font-weight:700;margin:0 0 8px;">RECORD</p>
+      <p style="font-size:1.8rem;font-weight:800;margin:0;color:#fff;">{{ g }}–{{ p }}</p>
+      <p style="font-size:.8rem;color:#9aa3b8;margin:6px 0 0;">settled plays</p>
+    </div>
+    <div style="background:linear-gradient(150deg,#1a2340,#0f1526);border:1px solid rgba(0,224,127,.3);border-radius:16px;padding:18px 16px;">
+      <p style="font-size:.68rem;letter-spacing:1.5px;color:#9aa3b8;font-weight:700;margin:0 0 8px;">UNITS WON</p>
+      <p style="font-size:1.8rem;font-weight:800;margin:0;color:#00e07f;">{{ '%+.2f' % ns.tu }}u</p>
+      <p style="font-size:.8rem;color:#9aa3b8;margin:6px 0 0;">net units</p>
+    </div>
+    <div style="background:linear-gradient(150deg,#1a2340,#0f1526);border:1px solid rgba(0,224,127,.3);border-radius:16px;padding:18px 16px;">
+      <p style="font-size:.68rem;letter-spacing:1.5px;color:#9aa3b8;font-weight:700;margin:0 0 8px;">WIN RATE</p>
+      <p style="font-size:1.8rem;font-weight:800;margin:0;color:#fff;">{% if res.get('win_rate') is not none %}{{ '%.1f' % res.get('win_rate') }}%{% else %}—{% endif %}</p>
+      <p style="font-size:.8rem;color:#9aa3b8;margin:6px 0 0;">won / settled</p>
+    </div>
+  </div>
+  <p style="text-align:center;color:#9aa3b8;font-size:.9rem;margin:0 0 18px;">ROI {% if roi is not none %}{{ '%+.1f' % roi }}%{% else %}—{% endif %} on ${{ '%.2f' % (res.get('total_arriesgado') or 0) }} risked</p>
+  <h2 style="font-size:1.6rem;font-weight:900;color:#fff;text-align:center;margin:0 0 14px;">Breakdown by level</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+    <div style="background:#141a2b;border:1px solid #2a3441;border-radius:16px;padding:18px 16px;">
+      <p style="margin:0 0 8px;"><span style="background:#ffd257;color:#1a1a1a;font-size:.7rem;font-weight:800;padding:4px 10px;border-radius:20px;letter-spacing:1px;">★ VIP</span></p>
+      <p style="font-size:1.6rem;font-weight:800;margin:0;color:#fff;">{{ ns.pw }}–{{ ns.pl }}</p>
+      <p style="font-size:.85rem;color:#9aa3b8;margin:6px 0 0;">{{ '+$%.2f' % ns.pp }} · {{ '%+.2f' % ns.pu }}u</p>
+    </div>
+    <div style="background:#141a2b;border:1px solid #2a3441;border-radius:16px;padding:18px 16px;">
+      <p style="margin:0 0 8px;"><span style="background:rgba(0,224,127,.15);color:#00e07f;font-size:.7rem;font-weight:800;padding:4px 10px;border-radius:20px;letter-spacing:1px;border:1px solid rgba(0,224,127,.4);">● FREE PLAYS</span></p>
+      <p style="font-size:1.6rem;font-weight:800;margin:0;color:#fff;">{{ ns.gw }}–{{ ns.gl }}</p>
+      <p style="font-size:.85rem;color:#9aa3b8;margin:6px 0 0;">{{ '+$%.2f' % ns.gp }} · {{ '%+.2f' % ns.gu }}u</p>
+    </div>
+  </div>
+</section>
+{% endif %}
+
 <!-- 07 · RECENT GRADED TICKETS (ticket presentation untouchable) -->
 <section class="v2-sec">
   <div class="v2-sec-head">
