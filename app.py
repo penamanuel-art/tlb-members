@@ -3414,6 +3414,34 @@ def diag_tracker():
     return Response(json.dumps(data, indent=1, ensure_ascii=False),
                     mimetype="application/json")
 
+@app.route("/admin/diag-alex-track")
+@admin_required
+def diag_alex_track():
+    """TEMPORAL: desglose del tracker de Alex por nivel."""
+    from flask import Response
+    db = get_db()
+    alex = db.execute(
+        "SELECT id FROM users WHERE LOWER(email) = ?", (ALEX_MEMBER_EMAIL.lower(),)
+    ).fetchone()
+    if not alex:
+        return Response("Alex no encontrado", mimetype="text/plain")
+    uid = alex["id"]
+    rows = db.execute(
+        "SELECT id, play_id, fecha, nivel, pick, cuota, stake_monto, "
+        "resultado, comprobante, created_at "
+        "FROM tracked_plays WHERE user_id = ? ORDER BY id",
+        (uid,),
+    ).fetchall()
+    data = [dict(r) for r in rows]
+    # Resumen por nivel
+    summary = {}
+    for r in data:
+        niv = r.get("nivel") or "NULL"
+        summary[niv] = summary.get(niv, 0) + 1
+    out = {"total": len(data), "por_nivel": summary, "plays": data}
+    return Response(json.dumps(out, indent=1, ensure_ascii=False),
+                    mimetype="application/json")
+
 @app.route("/admin/seed-tracker")
 @login_required
 def admin_seed_tracker():
