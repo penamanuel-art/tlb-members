@@ -57,9 +57,10 @@
     {% else %}
       <a class="tstc-btn tstc-novig" href="https://novig.com" target="_blank" rel="noopener">Place at Novig &rarr;</a>
     {% endif %}
-    {% if p.comprobante %}
+    {% if p.comprobante and p.nivel != 'VALUE' %}
     {# Track solo si hay ticket (2026-10-03, orden de Alex): sin ticket no se #}
     {# puede trackear — evita marcar por error una jugada no apostada (trampa). #}
+    {# VALUE nunca se trackea (2026-10-04, orden de Alex): solo oficiales con ticket. #}
     {% if p.id in tracked_ids %}
       <span class="tstc-btn tstc-tracked">&check; Tracked</span>
     {% else %}
