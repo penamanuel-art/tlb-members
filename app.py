@@ -2826,6 +2826,7 @@ def tracker():
         platinum_unlocked=platinum_unlocked_for(user),
         res=program_stats(),
         recientes=recientes_oficiales(),
+        recientes_value=recientes_value(),
         streak=program_streak(),
         resumen_ayer=resumen_ayer(),
         es_admin=is_admin_for(user),
