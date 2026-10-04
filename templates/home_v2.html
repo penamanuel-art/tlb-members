@@ -353,44 +353,56 @@
   <div style="background:rgba(255,210,87,.08);border:1px solid rgba(255,210,87,.25);border-radius:12px;padding:12px 14px;margin-top:12px;font-size:.85rem;color:#ffe9a8;">
     <strong>What are Value Plays?</strong> Extra +EV opportunities found by our scanner during the day. They pass all program filters (5%+ edge, odds −185…+250, moneyline/spread only) but are <em>optional</em> — not part of the official daily card. You decide whether to play them. Tracked separately in this 💎 VALUE section.
   </div>
-  {# Filas de cada value play (pedido por Alex 2026-10-04): 5 recientes + View all #}
+  {# Cards de cada value play estilo tracker (pedido por Alex 2026-10-04): se despliegan debajo del récord #}
   {% if recientes_value %}
-  <div class="v2-rows" style="margin-top:14px;">
+  <div style="margin-top:14px;display:flex;flex-direction:column;gap:12px;">
     {% for r in recientes_value[:5] %}
-    <div class="v2-row">
-      <div class="v2-row-main">
-        <p class="v2-row-pick"><span class="v2-badge" style="background:rgba(77,166,255,.15);border:1px solid rgba(77,166,255,.4);color:#7db8ff;">💎 VALUE</span>{{ r.pick }} <span class="muted">{{ fmt_odds(r.cuota) }}</span></p>
-        <p class="v2-row-sub">{{ r.fecha }}</p>
+    <article style="background:#1a1c20;border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:16px;">
+      <div style="display:flex;gap:12px;align-items:flex-start;">
+        <div style="flex:1;min-width:0;">
+          <p style="margin:0 0 4px;font-size:16px;font-weight:700;color:#fff;">{{ r.pick }} <span style="color:#9aa3b8;">({{ fmt_odds(r.cuota) }})</span></p>
+          <p style="margin:0 0 4px;font-size:12px;color:#9aa3b8;">{{ fmt_odds(r.cuota) }} · {{ r.fecha }} · <span style="background:rgba(77,166,255,.15);border:1px solid rgba(77,166,255,.4);color:#7db8ff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:12px;">💎 VALUE</span></p>
+          <p style="margin:0;font-size:12px;color:#9aa3b8;">Stake $50 (1.0u)</p>
+        </div>
+        <div style="text-align:right;flex-shrink:0;">
+          {% if r.resultado in ('WON', 'W') %}
+            <span style="display:inline-block;background:#22c55e;color:#fff;font-weight:800;font-size:14px;padding:8px 14px;border-radius:20px;">✓ {{ fmt_money(r.profit) }}</span>
+          {% elif r.resultado in ('LOST', 'L') %}
+            <span style="display:inline-block;background:#ef4444;color:#fff;font-weight:800;font-size:14px;padding:8px 14px;border-radius:20px;">✕ {{ fmt_money(r.profit) }}</span>
+          {% else %}
+            <span style="display:inline-block;background:rgba(255,255,255,.08);color:#9aa3b8;font-weight:700;font-size:12px;padding:8px 14px;border-radius:20px;">pending</span>
+          {% endif %}
+          <div style="margin-top:8px;"><a href="https://novig.com" style="display:inline-block;border:1px solid rgba(125,184,255,.4);color:#7db8ff;font-size:12px;font-weight:600;padding:6px 14px;border-radius:16px;text-decoration:none;">Novig</a></div>
+        </div>
       </div>
-      {% if r.resultado in ('WON', 'W') %}
-        <span class="v2-result win">✓ {{ fmt_money(r.profit) }}</span>
-      {% elif r.resultado in ('LOST', 'L') %}
-        <span class="v2-result loss">✕ {{ fmt_money(r.profit) }}</span>
-      {% else %}
-        <span class="v2-result" style="background:rgba(255,255,255,.08);color:#9aa3b8;">pending</span>
-      {% endif %}
-    </div>
+    </article>
     {% endfor %}
   </div>
   {% if recientes_value|length > 5 %}
   <div style="margin-top:10px;">
-    <a class="v2-link" href="javascript:void(0)" onclick="var e=document.getElementById('value-more');var h=e.style.display==='none';e.style.display=h?'block':'none';this.textContent=h?'Show less ↑':'View all →'">View all →</a>
+    <a class="v2-link" href="javascript:void(0)" onclick="var e=document.getElementById('value-more');var h=e.style.display==='none';e.style.display=h?'flex':'none';this.textContent=h?'Show less ↑':'View all →'">View all →</a>
   </div>
-  <div class="v2-rows" id="value-more" style="display:none;margin-top:10px;">
+  <div id="value-more" style="display:none;margin-top:12px;flex-direction:column;gap:12px;">
     {% for r in recientes_value[5:] %}
-    <div class="v2-row">
-      <div class="v2-row-main">
-        <p class="v2-row-pick"><span class="v2-badge" style="background:rgba(77,166,255,.15);border:1px solid rgba(77,166,255,.4);color:#7db8ff;">💎 VALUE</span>{{ r.pick }} <span class="muted">{{ fmt_odds(r.cuota) }}</span></p>
-        <p class="v2-row-sub">{{ r.fecha }}</p>
+    <article style="background:#1a1c20;border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:16px;">
+      <div style="display:flex;gap:12px;align-items:flex-start;">
+        <div style="flex:1;min-width:0;">
+          <p style="margin:0 0 4px;font-size:16px;font-weight:700;color:#fff;">{{ r.pick }} <span style="color:#9aa3b8;">({{ fmt_odds(r.cuota) }})</span></p>
+          <p style="margin:0 0 4px;font-size:12px;color:#9aa3b8;">{{ fmt_odds(r.cuota) }} · {{ r.fecha }} · <span style="background:rgba(77,166,255,.15);border:1px solid rgba(77,166,255,.4);color:#7db8ff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:12px;">💎 VALUE</span></p>
+          <p style="margin:0;font-size:12px;color:#9aa3b8;">Stake $50 (1.0u)</p>
+        </div>
+        <div style="text-align:right;flex-shrink:0;">
+          {% if r.resultado in ('WON', 'W') %}
+            <span style="display:inline-block;background:#22c55e;color:#fff;font-weight:800;font-size:14px;padding:8px 14px;border-radius:20px;">✓ {{ fmt_money(r.profit) }}</span>
+          {% elif r.resultado in ('LOST', 'L') %}
+            <span style="display:inline-block;background:#ef4444;color:#fff;font-weight:800;font-size:14px;padding:8px 14px;border-radius:20px;">✕ {{ fmt_money(r.profit) }}</span>
+          {% else %}
+            <span style="display:inline-block;background:rgba(255,255,255,.08);color:#9aa3b8;font-weight:700;font-size:12px;padding:8px 14px;border-radius:20px;">pending</span>
+          {% endif %}
+          <div style="margin-top:8px;"><a href="https://novig.com" style="display:inline-block;border:1px solid rgba(125,184,255,.4);color:#7db8ff;font-size:12px;font-weight:600;padding:6px 14px;border-radius:16px;text-decoration:none;">Novig</a></div>
+        </div>
       </div>
-      {% if r.resultado in ('WON', 'W') %}
-        <span class="v2-result win">✓ {{ fmt_money(r.profit) }}</span>
-      {% elif r.resultado in ('LOST', 'L') %}
-        <span class="v2-result loss">✕ {{ fmt_money(r.profit) }}</span>
-      {% else %}
-        <span class="v2-result" style="background:rgba(255,255,255,.08);color:#9aa3b8;">pending</span>
-      {% endif %}
-    </div>
+    </article>
     {% endfor %}
   </div>
   {% endif %}
