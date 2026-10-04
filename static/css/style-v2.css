@@ -173,8 +173,9 @@ body.v2::before {
 .v2-flash-success { border-color: rgba(47, 212, 126, 0.5); color: #a9f0c9; }
 
 /* ---------------- Hero — premium gradient mesh ---------------- */
-/* HERO estilo saludo (pedido por Alex 2026-10-04) — plano, sin tarjeta contenedora */
-.v2-hero-wgt {
+/* HERO estilo saludo (pedido por Alex 2026-10-04) — plano, sin tarjeta contenedora.
+   Selector doble .v2-hero.v2-hero-wgt para ganarle en especificidad al .v2-hero base. */
+.v2-hero.v2-hero-wgt {
   background: none;
   border: none;
   border-radius: 0;
@@ -182,6 +183,7 @@ body.v2::before {
   backdrop-filter: none; -webkit-backdrop-filter: none;
   padding: 8px 4px 0;
   display: block;
+  align-items: normal; justify-content: normal; gap: 0;
   margin-top: 14px;
   overflow: visible;
 }
@@ -889,6 +891,7 @@ body.v2 .tstc-novig:active, body.v2 .tstc-track:active { transform: scale(0.97);
   .v2-wrap { padding-left: 14px; padding-right: 14px; }
   .v2-greet { font-size: 25px; }
   .v2-hero { padding: 20px 18px; border-radius: 22px; }
+  .v2-hero.v2-hero-wgt { padding: 8px 4px 0; border-radius: 0; }
   .v2-hero-logo { width: 54px; height: 54px; }
   .v2-profit-num { font-size: 38px; }
   .v2-br-num { font-size: 30px; }
@@ -999,6 +1002,7 @@ body.v2 .tstc-novig:active, body.v2 .tstc-track:active { transform: scale(0.97);
     align-items: center;
     text-align: left;
   }
+  .v2-hero.v2-hero-wgt { display: block; }
   .v2-hero .v2-hero-copy { text-align: left; }
 
   /* Stats en 4 columnas */
