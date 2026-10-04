@@ -362,9 +362,9 @@
         <p class="v2-row-pick"><span class="v2-badge" style="background:rgba(77,166,255,.15);border:1px solid rgba(77,166,255,.4);color:#7db8ff;">💎 VALUE</span>{{ r.pick }} <span class="muted">{{ fmt_odds(r.cuota) }}</span></p>
         <p class="v2-row-sub">{{ r.fecha }}</p>
       </div>
-      {% if r.resultado == 'WON' %}
+      {% if r.resultado in ('WON', 'W') %}
         <span class="v2-result win">✓ {{ fmt_money(r.profit) }}</span>
-      {% elif r.resultado == 'LOST' %}
+      {% elif r.resultado in ('LOST', 'L') %}
         <span class="v2-result loss">✕ {{ fmt_money(r.profit) }}</span>
       {% else %}
         <span class="v2-result" style="background:rgba(255,255,255,.08);color:#9aa3b8;">pending</span>
@@ -383,9 +383,9 @@
         <p class="v2-row-pick"><span class="v2-badge" style="background:rgba(77,166,255,.15);border:1px solid rgba(77,166,255,.4);color:#7db8ff;">💎 VALUE</span>{{ r.pick }} <span class="muted">{{ fmt_odds(r.cuota) }}</span></p>
         <p class="v2-row-sub">{{ r.fecha }}</p>
       </div>
-      {% if r.resultado == 'WON' %}
+      {% if r.resultado in ('WON', 'W') %}
         <span class="v2-result win">✓ {{ fmt_money(r.profit) }}</span>
-      {% elif r.resultado == 'LOST' %}
+      {% elif r.resultado in ('LOST', 'L') %}
         <span class="v2-result loss">✕ {{ fmt_money(r.profit) }}</span>
       {% else %}
         <span class="v2-result" style="background:rgba(255,255,255,.08);color:#9aa3b8;">pending</span>
