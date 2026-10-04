@@ -3414,6 +3414,26 @@ def diag_tracker():
     return Response(json.dumps(data, indent=1, ensure_ascii=False),
                     mimetype="application/json")
 
+@app.route("/admin/clean-value-track")
+@admin_required
+def admin_clean_value_track():
+    """TEMPORAL (2026-10-04): elimina las VALUE del tracker personal de Alex.
+    Orden de Alex: 'En mi tracker no pongas la Value, solo las que te envío tickets.'
+    Se elimina tras usar."""
+    from flask import Response
+    db = get_db()
+    alex = db.execute(
+        "SELECT id FROM users WHERE LOWER(email) = ?", (ALEX_MEMBER_EMAIL.lower(),)
+    ).fetchone()
+    if not alex:
+        return Response("Alex no encontrado", mimetype="text/plain")
+    uid = alex["id"]
+    cur = db.execute(
+        "DELETE FROM tracked_plays WHERE user_id = ? AND nivel = 'VALUE'", (uid,)
+    )
+    db.commit()
+    return Response(f"Eliminadas {cur.rowcount} VALUE de Alex", mimetype="text/plain")
+
 @app.route("/admin/seed-tracker")
 @login_required
 def admin_seed_tracker():
