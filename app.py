@@ -2836,12 +2836,10 @@ def tracker():
 @app.route("/free-plays")
 @login_required
 def free_plays():
-    """Tracker paralelo "Free Plays" — SOLO admin (Alex).
-
-    Las jugadas recomendadas se registran automáticamente con el stake fijo
-    FREE_STAKE para validar el sistema en FREE_PLAYS_GOAL jugadas antes del
-    lanzamiento público. Tabla aislada: no toca tracked_plays ni el récord.
-    """
+    """DESACTIVADO (2026-10-04, orden de Alex): tracker de prueba eliminado.
+    Quedan: récord oficial, tracker personal y tracker VALUE."""
+    from flask import redirect, url_for
+    return redirect(url_for("home"))
     user = current_user()
     if not is_admin_for(user):
         return redirect(url_for("home"))

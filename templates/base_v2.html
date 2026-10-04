@@ -30,7 +30,7 @@
         <a href="{{ url_for('programa') }}">📘 Program</a>
         <a href="{{ url_for('archivo') }}">🗂️ Archive</a>
         {% if es_admin %}<a href="{{ url_for('admin_miembros') }}">👥 Members</a>{% endif %}
-        {% if es_admin %}<a href="{{ url_for('free_plays') }}">🧪 Free Plays</a>{% endif %}
+        
         {% if es_admin %}<a href="{{ url_for('admin_migrar_track') }}">🔀 Migrate track</a>{% endif %}
         <a href="{{ url_for('cuenta') }}">💰 My account</a>
         <a href="{{ url_for('logout') }}">Log out</a>
