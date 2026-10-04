@@ -2989,47 +2989,46 @@ def tracker_export():
             if fecha and pk:
                 oficiales[(fecha, pk)] = j
 
-    import csv
-    import io
-    buf = io.StringIO()
-    w = csv.writer(buf)
-    w.writerow(["THE SHARP TEAM — Tracker export"])
-    w.writerow(["Range", nombre_rango])
-    w.writerow(["Generated", datetime.now(TZ).strftime("%Y-%m-%d %H:%M ET")])
-    w.writerow([])
-    w.writerow(["SUMMARY"])
     liquidadas = stats["wins"] + stats["losses"]
-    w.writerow(["Settled plays", liquidadas])
-    w.writerow(["Won", stats["wins"]])
-    w.writerow(["Lost", stats["losses"]])
     wr = (stats["wins"] / liquidadas * 100) if liquidadas else 0
-    w.writerow(["Win rate", f"{wr:.1f}%"])
-    w.writerow(["Total staked", f"${stats['risked']:.2f}"])
-    w.writerow(["Total profit", f"${stats['net_dollars']:.2f}"])
-    w.writerow(["ROI", f"{stats['roi']:+.1f}%"])
-    w.writerow([])
-    w.writerow(["PLAYS"])
-    w.writerow(["Date", "Pick", "Odds", "Level", "Staked", "Result",
-                "Profit", "Score", "Book"])
+    plays_html = []
     for t in filtradas:
         f = (t["fecha"] or "").strip()
         off = oficiales.get((f, (t["pick"] or "").strip().lower()), {})
         res = t["resultado"] or ""
-        w.writerow([
-            f or "—",
-            t["pick"] or "",
-            fmt_odds(t["cuota"]),
-            t["nivel"] or "",
-            f"${t['stake_monto']:.2f}",
-            {"W": "Won", "L": "Lost"}.get(res, "Pending"),
-            f"${play_profit_dollars(t):+.2f}" if res in ("W", "L") else "—",
-            off.get("marcador") or "",
-            off.get("casa") or "Novig",
-        ])
+        nivel = (t["nivel"] or "").upper()
+        nivel_txt = "VIP" if nivel in ("ELITE", "PLATINUM") else ("FREE" if nivel == "GOLD" else nivel)
+        try:
+            fecha_corta = datetime.strptime(f, "%Y-%m-%d").strftime("%b %d") if f else "—"
+        except (ValueError, TypeError):
+            fecha_corta = f or "—"
+        plays_html.append({
+            "pick": t["pick"] or "",
+            "fecha": fecha_corta,
+            "cuota": fmt_odds(t["cuota"]),
+            "nivel": nivel,
+            "nivel_txt": nivel_txt,
+            "stake": t["stake_monto"] or 0,
+            "resultado": res if res in ("W", "L") else "P",
+            "resultado_txt": {"W": "Won", "L": "Lost"}.get(res, "Pending"),
+            "profit": play_profit_dollars(t) if res in ("W", "L") else None,
+            "casa": off.get("casa") or "Novig",
+        })
     etiqueta = {"7": "7d", "30": "30d", "365": "12m", "mtd": "mtd", "all": "all"}.get(
         rng, f"{desde.isoformat()}_{hasta.isoformat()}" if desde else "all")
-    fname = f"tracker-{etiqueta}-{hoy.isoformat()}.csv"
-    return Response(buf.getvalue(), mimetype="text/csv",
+    fname = f"tracker-{etiqueta}-{hoy.isoformat()}.html"
+    html = render_template("tracker_export.html",
+        nombre_rango=nombre_rango,
+        generado=datetime.now(TZ).strftime("%Y-%m-%d %H:%M ET"),
+        profit=stats["net_dollars"],
+        liquidadas=liquidadas,
+        win_rate=wr,
+        wins=stats["wins"],
+        losses=stats["losses"],
+        staked=stats["risked"],
+        roi=stats["roi"],
+        plays=plays_html)
+    return Response(html, mimetype="text/html",
                     headers={"Content-Disposition": f"attachment; filename={fname}"})
 
 
