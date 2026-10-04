@@ -2228,6 +2228,7 @@ def home():
         tlevels=tlevels,
         tcurve=tcurve,
         recientes=recientes,
+        recientes_value=recientes_value(),
         last_elite_win=last_elite_win(),
         es_admin=is_admin_for(user),
         es_alex=is_alex_member(user),
