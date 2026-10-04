@@ -1226,6 +1226,27 @@ def program_stats():
                 else:
                     _s["perdidas"] += 1
                 _s["profit"] += float(j.get("profit") or 0.0)
+    # VALUE del sistema: desde tracked_plays del usuario sistema (2026-10-04)
+    # Las values se trackean automáticamente, las juegue Alex o no.
+    try:
+        _db = get_db()
+        _vrows = _db.execute(
+            "SELECT resultado, cuota, stake_monto FROM tracked_plays "
+            "WHERE user_id = ? AND nivel = 'VALUE' AND resultado IN ('W', 'L')",
+            (VALUE_SYSTEM_USER_ID,),
+        ).fetchall()
+        for _vr in _vrows:
+            _vs = niveles["VALUE"]
+            _cuota = int(_vr["cuota"] or 0)
+            _stake = float(_vr["stake_monto"] or 50.0)
+            if _vr["resultado"] == "W":
+                _vs["ganadas"] += 1
+                _vs["profit"] += _stake * (_cuota / 100.0) if _cuota > 0 else _stake * (100.0 / abs(_cuota))
+            else:
+                _vs["perdidas"] += 1
+                _vs["profit"] -= _stake
+    except Exception:
+        pass
     settled = ganadas + perdidas
     for _s in niveles.values():
         _n = int(round(_s["profit"]))
