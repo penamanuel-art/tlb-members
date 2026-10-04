@@ -1213,7 +1213,23 @@ def recientes_value(n=20):
             "ORDER BY fecha DESC, id DESC LIMIT ?",
             (VALUE_SYSTEM_USER_ID, n),
         ).fetchall()
-        return [dict(r) for r in rows]
+        out = []
+        for r in rows:
+            d = dict(r)
+            # Calcula profit si no viene en la BD (formato W/L del tracker VALUE).
+            # Sin esto fmt_money(None) tumba el Dashboard con 500 (2026-10-04).
+            if d.get("profit") is None and d.get("resultado") in ("W", "WON", "L", "LOST"):
+                try:
+                    stake = float(d.get("stake_monto") or 50.0)
+                    cuota = float(d.get("cuota") or 0)
+                    if d["resultado"] in ("W", "WON"):
+                        d["profit"] = stake * (cuota / 100.0) if cuota > 0 else stake * (100.0 / abs(cuota))
+                    else:
+                        d["profit"] = -stake
+                except Exception:
+                    d["profit"] = 0.0
+            out.append(d)
+        return out
     except Exception:
         return []
 
