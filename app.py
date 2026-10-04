@@ -2580,9 +2580,13 @@ def track_value():
         edge = 0
     # Migración perezosa: columna comprobante en tracked_plays
     try:
-        db.execute("ALTER TABLE tracked_plays ADD COLUMN comprobante TEXT")
+        if USE_PG:
+            db.execute("ALTER TABLE tracked_plays ADD COLUMN IF NOT EXISTS comprobante TEXT")
+        else:
+            db.execute("ALTER TABLE tracked_plays ADD COLUMN comprobante TEXT")
         db.commit()
     except Exception:
+        db.rollback()
         pass
     # Stake real (del ticket); si no viene, 1u = $50
     try:
