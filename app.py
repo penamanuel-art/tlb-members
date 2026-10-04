@@ -1930,6 +1930,10 @@ def migrate_db():
             pending.append("ALTER TABLE users ADD COLUMN telegram_ban_pending INTEGER NOT NULL DEFAULT 0")
         if "telegram_unban_pending" not in cols:
             pending.append("ALTER TABLE users ADD COLUMN telegram_unban_pending INTEGER NOT NULL DEFAULT 0")
+        if "phone" not in cols:
+            pending.append("ALTER TABLE users ADD COLUMN phone TEXT")
+        if "sms_optin" not in cols:
+            pending.append("ALTER TABLE users ADD COLUMN sms_optin INTEGER NOT NULL DEFAULT 0")
         for stmt in pending:
             conn.execute(stmt)
         if pending:
@@ -2227,6 +2231,8 @@ def register():
         nombre = request.form.get("nombre", "").strip()
         email = request.form.get("email", "").strip().lower()
         password = request.form.get("password", "")
+        phone = request.form.get("phone", "").strip()
+        sms_optin = 1 if request.form.get("sms_optin") == "1" and phone else 0
         if not nombre or not email or len(password) < 6:
             flash("Enter your name, a valid email and a password of at least 6 characters.", "error")
             return render_template("register.html"), 400
@@ -2237,8 +2243,8 @@ def register():
             return render_template("register.html"), 400
         new_id = insert_returning_id(
             db,
-            "INSERT INTO users (nombre, email, password_hash, created_at) VALUES (?, ?, ?, ?)",
-            (nombre, email, hash_password(password), now_iso()),
+            "INSERT INTO users (nombre, email, password_hash, phone, sms_optin, created_at) VALUES (?, ?, ?, ?, ?, ?)",
+            (nombre, email, hash_password(password), phone or None, sms_optin, now_iso()),
         )
         db.commit()
         # El email del admin (ADMIN_EMAIL) queda marcado automáticamente.
