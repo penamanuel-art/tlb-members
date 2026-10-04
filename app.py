@@ -2840,28 +2840,6 @@ def free_plays():
     Quedan: récord oficial, tracker personal y tracker VALUE."""
     from flask import redirect, url_for
     return redirect(url_for("home"))
-    user = current_user()
-    if not is_admin_for(user):
-        return redirect(url_for("home"))
-    db = get_db()
-    record_checkin(db, session["user_id"])
-    sync_free_plays(db)
-    auto_grado_free(db)
-    plays = [
-        dict(t)
-        for t in db.execute(
-            "SELECT * FROM free_plays ORDER BY fecha DESC, id DESC"
-        ).fetchall()
-    ]
-    stats = compute_stats(plays)
-    stats["goal"] = FREE_PLAYS_GOAL
-    stats["stake"] = FREE_STAKE
-    return render_template(
-        "free_plays.html",
-        plays=plays,
-        stats=stats,
-        es_admin=True,
-    )
 
 
 @app.route("/admin/free-plays/clear", methods=["POST"])
