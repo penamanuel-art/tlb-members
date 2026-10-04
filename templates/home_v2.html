@@ -157,21 +157,6 @@
 (function(){var m=document.getElementById('v2-br-how-modal'),o=document.getElementById('v2-br-how-open'),c=document.getElementById('v2-br-how-close');if(o&&m){o.addEventListener('click',function(){m.hidden=false;});}if(c&&m){c.addEventListener('click',function(){m.hidden=true;});}if(m){m.addEventListener('click',function(e){if(e.target===m){m.hidden=true;}});}})();
 </script>
 
-<!-- 03 · DOCUMENTED PROFIT -->
-<section class="v2-sec">
-  <div class="v2-sec-head">
-    <div>
-      <p class="v2-sec-eyebrow"><b>03</b> · Verified</p>
-      <h2 class="v2-sec-title">Documented program profit</h2>
-    </div>
-  </div>
-  <div class="v2-profit">
-    <p class="v2-eyebrow">Documented program profit</p>
-    <p class="v2-profit-num {{ 'pos' if res.get('profit_all_time', 0) >= 0 else 'neg' }}">{% if res.get('profit_all_time') is not none %}{{ '+$%.2f' % res.get('profit_all_time') }}{% else %}—{% endif %}</p>
-    <p class="v2-profit-note">{% if res.get('profit_all_time') is not none %}{{ '+$%.2f' % res.get('profit_all_time') }}{% endif %}{% if res.get('win_rate') is not none %} · {{ '%.1f' % res.get('win_rate') }}% win rate{% endif %} · every public play, won or lost</p>
-  </div>
-</section>
-
 <!-- 04 · TOOLS -->
 <section class="v2-sec">
   <div class="v2-sec-head">
