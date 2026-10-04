@@ -4280,3 +4280,54 @@ def value_system_stats():
     }
     return Response(json.dumps(out, indent=1, ensure_ascii=False),
                     mimetype="application/json")
+
+
+@app.route("/admin/backfill-value-2026-10-03")
+@admin_required
+def backfill_value_2026_10_03():
+    """TEMPORAL: backfill de las 10 VALUE del sábado 2026-10-03 con resultados.
+    6-4, +$151.00"""
+    from flask import Response
+    from datetime import datetime
+    db = get_db()
+    
+    plays = [
+        # (play_id, pick, cuota, edge, resultado)
+        ("play-2026-10-03-missouri-value", "Missouri Tigers", 184, 0, "W"),
+        ("play-2026-10-03-kentucky-value", "Kentucky Wildcats", 182, 0, "W"),
+        ("play-2026-10-03-unlv-value", "UNLV Rebels", 122, 0, "W"),
+        ("play-2026-10-03-louisville-value", "Louisville Cardinals", 250, 0, "L"),
+        ("play-2026-10-03-nebraska-value", "Nebraska Cornhuskers", -150, 0, "W"),
+        ("play-2026-10-03-tampabay-value", "Tampa Bay Rays", -130, 0, "W"),
+        ("play-2026-10-03-southflorida-value", "South Florida Bulls", 180, 17.3, "L"),
+        ("play-2026-10-03-texastech-value", "Texas Tech Red Raiders", -142, 13.6, "W"),
+        ("play-2026-10-03-milwaukee-value", "Milwaukee Brewers -1.5", 135, 9.0, "L"),
+        ("play-2026-10-03-washington-value", "Washington Huskies", 205, 8.0, "L"),
+    ]
+    
+    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    inserted = 0
+    for play_id, pick, cuota, edge, resultado in plays:
+        existing = db.execute(
+            "SELECT id FROM tracked_plays WHERE user_id = ? AND play_id = ?",
+            (VALUE_SYSTEM_USER_ID, play_id)
+        ).fetchone()
+        if existing:
+            # Actualizar resultado si no tiene
+            db.execute(
+                "UPDATE tracked_plays SET resultado = ? WHERE id = ? AND resultado IS NULL",
+                (resultado, existing["id"])
+            )
+            continue
+        db.execute(
+            """INSERT INTO tracked_plays
+               (user_id, play_id, fecha, nivel, pick, cuota, stake_unidades,
+                stake_monto, edge, resultado, created_at)
+               VALUES (?, ?, '2026-10-03', 'VALUE', ?, ?, 1.0, 50.0, ?, ?, ?)""",
+            (VALUE_SYSTEM_USER_ID, play_id, pick, cuota, edge, resultado, now)
+        )
+        inserted += 1
+    
+    db.commit()
+    return Response(f"Backfill completo: {inserted} nuevas, resto actualizadas",
+                    mimetype="text/plain")
