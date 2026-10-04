@@ -384,37 +384,6 @@
   {% endif %}
 </section>
 
-<!-- PERFORMANCE SNAPSHOT — diseño pedido por Alex 2026-10-04 -->
-{% if snapshot %}
-<section class="v2-sec">
-  <h2 style="font-size:2rem;font-weight:900;margin:0 0 4px;color:#fff;">Performance <span style="color:#4d9fff;">snapshot</span></h2>
-  <p style="font-size:1rem;color:#9aa3b8;margin:0 0 18px;">100% publicly documented</p>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid #2a3441;border-radius:20px;overflow:hidden;">
-    <div style="background:#141a2b;padding:22px 18px;border-right:1px solid #2a3441;border-bottom:1px solid #2a3441;">
-      <p style="font-size:.68rem;letter-spacing:1.5px;color:#9aa3b8;font-weight:600;margin:0 0 12px;">ALL PROGRAMS · LAST 30 DAYS</p>
-      <p style="font-size:2.2rem;font-weight:900;margin:0;color:#4ade80;">{{ '+' if snapshot.u30>0 else '' }}{{ snapshot.u30 }}u</p>
-      <p style="font-size:.9rem;color:#9aa3b8;margin:8px 0 0;">{{ snapshot.w30 }}–{{ snapshot.l30 }} record</p>
-    </div>
-    <div style="background:#1a2333;padding:22px 18px;border-bottom:1px solid #2a3441;">
-      <p style="font-size:.68rem;letter-spacing:1.5px;color:#9aa3b8;font-weight:600;margin:0 0 12px;">CURRENT RUN</p>
-      <p style="font-size:2.2rem;font-weight:900;margin:0;color:#4ade80;">🔥 {{ snapshot.streak_n }}</p>
-      <p style="font-size:2rem;font-weight:900;margin:0;color:#4ade80;">straight</p>
-      <p style="font-size:.9rem;color:#9aa3b8;margin:8px 0 0;">Last {{ snapshot.streak_n }} plays {{ 'won' if snapshot.streak_tipo=='W' else 'lost' }}</p>
-    </div>
-    <div style="background:#141a2b;padding:22px 18px;border-right:1px solid #2a3441;">
-      <p style="font-size:.68rem;letter-spacing:1.5px;color:#9aa3b8;font-weight:600;margin:0 0 12px;">OFFICIALS · CAREER</p>
-      <p style="font-size:2rem;font-weight:900;margin:0;color:#4ade80;">{{ snapshot.profit_display }}</p>
-      <p style="font-size:.9rem;color:#9aa3b8;margin:8px 0 0;">{{ snapshot.w_all }}W / {{ snapshot.l_all }}L</p>
-    </div>
-    <div style="background:#141a2b;padding:22px 18px;">
-      <p style="font-size:.68rem;letter-spacing:1.5px;color:#9aa3b8;font-weight:600;margin:0 0 12px;">WIN RATE · CAREER</p>
-      <p style="font-size:2.2rem;font-weight:900;margin:0;color:#fff;">{{ snapshot.win_rate }}%</p>
-      <p style="font-size:.9rem;color:#9aa3b8;margin:8px 0 0;">official plays</p>
-    </div>
-  </div>
-</section>
-{% endif %}
-
 <!-- OFFICIAL PROGRAM RECORD — en home page (pedido por Alex 2026-10-04) -->
 {% if res and dias %}
 <section class="v2-sec">
