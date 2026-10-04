@@ -2116,9 +2116,16 @@ def home():
         "SELECT * FROM tracked_plays WHERE user_id = ?",
         (session["user_id"],),
     ).fetchall()
+    # VALUE del sistema: se muestran en la sección VALUE para todos
+    # (2026-10-04, orden de Alex: "las valúes se trakean las juegue yo o no")
+    system_value_rows = db.execute(
+        "SELECT * FROM tracked_plays WHERE user_id = ? AND nivel = 'VALUE'",
+        (VALUE_SYSTEM_USER_ID,),
+    ).fetchall()
     tracked_ids = {r["play_id"] for r in tracked_rows}
     tstats = compute_stats([dict(r) for r in tracked_rows])
-    tlevels = stats_por_nivel([dict(r) for r in tracked_rows])
+    # tlevels incluye VALUE del sistema para la sección VALUE
+    tlevels = stats_por_nivel([dict(r) for r in tracked_rows] + [dict(r) for r in system_value_rows])
     tstats["net_display"] = fmt_big_dollars(tstats["net_dollars"])
     # Curva de profit acumulado para el gráfico del tracker personal.
     _graded = sorted(
@@ -4205,3 +4212,71 @@ def api_faq_ask():
 
 if __name__ == "__main__":
     app.run(host="127.0.0.1", port=5000, debug=False)
+
+
+# ============================================================================
+# VALUE SYSTEM TRACKING (2026-10-04, orden de Alex)
+# "Las valúes se trakean las juegue yo o no."
+# Las VALUE plays se trackean automáticamente a nivel SISTEMA (no personal).
+# user_id=0 = usuario sistema para VALUE. No aparece en trackers personales.
+# ============================================================================
+VALUE_SYSTEM_USER_ID = 0
+
+
+@app.route("/admin/track-value-auto", methods=["POST"])
+@admin_required
+def track_value_auto():
+    """Auto-trackea una VALUE play al sistema (llamado por ev-board-refresh).
+    Body JSON: {play_id, fecha, pick, cuota, edge, game, liga}
+    """
+    from flask import Response, request
+    db = get_db()
+    data = request.get_json(force=True, silent=True) or {}
+    
+    play_id = data.get("play_id")
+    if not play_id:
+        return Response("play_id requerido", status=400, mimetype="text/plain")
+    
+    # Verificar si ya existe
+    existing = db.execute(
+        "SELECT id FROM tracked_plays WHERE user_id = ? AND play_id = ?",
+        (VALUE_SYSTEM_USER_ID, play_id)
+    ).fetchone()
+    if existing:
+        return Response(f"Ya trackeada: {play_id}", mimetype="text/plain")
+    
+    from datetime import datetime
+    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    
+    db.execute(
+        """INSERT INTO tracked_plays
+           (user_id, play_id, fecha, nivel, pick, cuota, stake_unidades,
+            stake_monto, edge, resultado, created_at)
+           VALUES (?, ?, ?, 'VALUE', ?, ?, 1.0, 50.0, ?, NULL, ?)""",
+        (VALUE_SYSTEM_USER_ID, play_id, data.get("fecha", ""),
+         data.get("pick", ""), int(data.get("cuota", 0)),
+         data.get("edge"), now)
+    )
+    db.commit()
+    return Response(f"VALUE trackeada: {play_id}", mimetype="text/plain")
+
+
+@app.route("/admin/value-system-stats")
+@admin_required
+def value_system_stats():
+    """Estadísticas del tracker SYSTEM de VALUE."""
+    from flask import Response
+    db = get_db()
+    rows = db.execute(
+        "SELECT * FROM tracked_plays WHERE user_id = ? ORDER BY fecha DESC, id DESC",
+        (VALUE_SYSTEM_USER_ID,)
+    ).fetchall()
+    data = [dict(r) for r in rows]
+    stats = stats_por_nivel(data)
+    out = {
+        "total": len(data),
+        "value": stats.get("VALUE", {}),
+        "plays": data,
+    }
+    return Response(json.dumps(out, indent=1, ensure_ascii=False),
+                    mimetype="application/json")
