@@ -2549,12 +2549,12 @@ def book_logo(book_name):
     return BOOK_LOGOS.get(key)
 
 
-# Trackear una Value Play — DESACTIVADO (2026-10-04, orden de Alex):
-# "En mi tracker no pongas la Value, solo las que te envío tickets."
-# El tracker personal solo lleva oficiales (ELITE/GOLD) con ticket.
+# Trackear una Value Play en el tracker personal de Alex (2026-10-04, regla de Alex):
+# Las VALUE solo se trackean si Alex envía el ticket (manual, vía chat).
+# No hay botón "+ Track" en las cards VALUE (se quitó del template) — solo
+# el flujo manual cuando él manda la foto del ticket.
 @app.route("/track-value", methods=["GET", "POST"])
 def track_value():
-    return redirect(url_for("home"))
     db = get_db()
     user = current_user()
     if not (is_alex_member(user) or is_admin_for(user)):
