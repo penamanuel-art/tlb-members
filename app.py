@@ -1595,6 +1595,70 @@ def fecha_de_play(play):
     return m.group(1) if m else ""
 
 
+def _ensure_book_balances_table(db):
+    """Crea la tabla de balances por casa si no existe (fuera del DDL inicial
+    para no romper el deploy)."""
+    if db.use_pg:
+        db.execute(
+            """CREATE TABLE IF NOT EXISTS book_balances (
+                   id SERIAL PRIMARY KEY,
+                   user_id INTEGER NOT NULL REFERENCES users(id),
+                   book_name TEXT NOT NULL,
+                   balance DOUBLE PRECISION NOT NULL DEFAULT 0,
+                   updated_at TEXT NOT NULL,
+                   UNIQUE(user_id, book_name)
+               )"""
+        )
+    else:
+        db.execute(
+            """CREATE TABLE IF NOT EXISTS book_balances (
+                   id INTEGER PRIMARY KEY AUTOINCREMENT,
+                   user_id INTEGER NOT NULL REFERENCES users(id),
+                   book_name TEXT NOT NULL,
+                   balance REAL NOT NULL DEFAULT 0,
+                   updated_at TEXT NOT NULL,
+                   UNIQUE(user_id, book_name)
+               )"""
+        )
+    db.commit()
+
+
+def bump_book_balance(db, user_id, book_name, delta):
+    """Suma delta (+/-) al balance de una casa de apuestas.
+
+    Se llama al liquidarse una jugada trackeada: la ganancia o pérdida va a
+    la casa del ticket. (Pedido por Alex 2026-10-05: los balances se
+    actualizan solos al liquidarse, ya no son solo manuales.)
+    """
+    try:
+        delta = round(float(delta or 0), 2)
+    except (TypeError, ValueError):
+        return
+    if not delta or not book_name:
+        return
+    _ensure_book_balances_table(db)
+    now = datetime.now(TZ).strftime("%Y-%m-%d %H:%M:%S")
+    row = db.execute(
+        "SELECT balance FROM book_balances WHERE user_id = ? AND book_name = ?",
+        (user_id, book_name),
+    ).fetchone()
+    if row:
+        try:
+            nuevo = round(float(row["balance"] or 0) + delta, 2)
+        except (TypeError, ValueError):
+            nuevo = delta
+        db.execute(
+            "UPDATE book_balances SET balance = ?, updated_at = ? WHERE user_id = ? AND book_name = ?",
+            (nuevo, now, user_id, book_name),
+        )
+    else:
+        db.execute(
+            "INSERT INTO book_balances (user_id, book_name, balance, updated_at) VALUES (?, ?, ?, ?)",
+            (user_id, book_name, delta, now),
+        )
+    db.commit()
+
+
 def auto_grado_tracked(db, user):
     """Liquida automáticamente las jugadas trackeadas pendientes usando los
     resultados oficiales del programa (data/archive.json).
@@ -1611,8 +1675,16 @@ def auto_grado_tracked(db, user):
     if not (is_admin_for(user) or is_alex_member(user)):
         return 0
     user_id = user["id"]
+    # Los balances viven en la cuenta personal de Alex (igual que en /balances)
+    if is_admin_for(user) and not is_alex_member(user):
+        _r = db.execute(
+            "SELECT id FROM users WHERE LOWER(email) = ?", (ALEX_MEMBER_EMAIL,)
+        ).fetchone()
+        balance_uid = _r["id"] if _r else user_id
+    else:
+        balance_uid = user_id
     pendientes = db.execute(
-        "SELECT id, play_id, fecha, pick FROM tracked_plays "
+        "SELECT id, play_id, fecha, pick, cuota, stake_monto FROM tracked_plays "
         "WHERE user_id = ? AND resultado IS NULL",
         (user_id,),
     ).fetchall()
@@ -1643,6 +1715,21 @@ def auto_grado_tracked(db, user):
                 "UPDATE tracked_plays SET resultado = ? WHERE id = ?",
                 (res, t["id"]),
             )
+            # Balance automático de la casa (2026-10-05, pedido por Alex):
+            # todo lo de Alex se apuesta en Novig; la ganancia/pérdida de la
+            # jugada actualiza ese balance en cuanto se liquida.
+            try:
+                profit = play_profit_dollars(
+                    {
+                        "cuota": t["cuota"] or 0,
+                        "resultado": res,
+                        "stake_monto": float(t["stake_monto"] or 0),
+                    }
+                )
+            except (TypeError, ValueError):
+                profit = 0
+            if profit:
+                bump_book_balance(db, balance_uid, "Novig", profit)
             n += 1
     if n:
         db.commit()
@@ -2803,29 +2890,7 @@ def balances():
     else:
         uid = session["user_id"]
     # Crear tabla si no existe (fuera del DDL inicial para no romper el deploy)
-    if db.use_pg:
-        db.execute(
-            """CREATE TABLE IF NOT EXISTS book_balances (
-                   id SERIAL PRIMARY KEY,
-                   user_id INTEGER NOT NULL REFERENCES users(id),
-                   book_name TEXT NOT NULL,
-                   balance DOUBLE PRECISION NOT NULL DEFAULT 0,
-                   updated_at TEXT NOT NULL,
-                   UNIQUE(user_id, book_name)
-               )"""
-        )
-    else:
-        db.execute(
-            """CREATE TABLE IF NOT EXISTS book_balances (
-                   id INTEGER PRIMARY KEY AUTOINCREMENT,
-                   user_id INTEGER NOT NULL REFERENCES users(id),
-                   book_name TEXT NOT NULL,
-                   balance REAL NOT NULL DEFAULT 0,
-                   updated_at TEXT NOT NULL,
-                   UNIQUE(user_id, book_name)
-               )"""
-        )
-    db.commit()
+    _ensure_book_balances_table(db)
     if request.method == "POST":
         book = (request.form.get("book_name") or "").strip()[:40]
         try:
