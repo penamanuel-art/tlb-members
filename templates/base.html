@@ -19,7 +19,7 @@
 </style>
 <script src="/static/js/push.js?v={{ asset_v }}"></script>
 </head>
-<body style="--wm-img: url('{{ url_for('static', filename=watermark_img) }}')">
+<body class="{% if session.get('user_id') %}has-bottomnav{% endif %}{% if ticker_days %} has-ticker{% endif %}" style="--wm-img: url('{{ url_for('static', filename=watermark_img) }}')">
 <header class="topbar">
   <div class="topbar-left">
     {% if session.get('user_id') %}
@@ -131,5 +131,25 @@ function googleTranslateElementInit(){new google.translate.TranslateElement({pag
 {% endif %}
 {% include "_faq_chat.html" %}
 {% if session.get('user_id') %}{% with ticker_dock="bottom" %}{% include "_results_ticker.html" %}{% endwith %}{% endif %}
+{% if session.get('user_id') %}
+<!-- Barra de navegación inferior (pedido Alex 2026-10-05) — también en tema v1 -->
+<nav class="v2-bottomnav" aria-label="Primary">
+  <a href="{{ url_for('home', splash='0') }}" class="v2-bnav-item{% if request.endpoint == 'home' %} active{% endif %}">
+    <span class="v2-bnav-ico" aria-hidden="true">&#8962;</span><span>Home</span>
+  </a>
+  <a href="{{ url_for('home', splash='0') }}#plays" class="v2-bnav-item">
+    <span class="v2-bnav-ico" aria-hidden="true">&#127919;</span><span>Plays</span>
+  </a>
+  <a href="{{ url_for('tracker') }}" class="v2-bnav-item{% if request.endpoint == 'tracker' %} active{% endif %}">
+    <span class="v2-bnav-ico" aria-hidden="true">&#128202;</span><span>Tracker</span>
+  </a>
+  <a href="{{ url_for('ev_board') }}" class="v2-bnav-item{% if request.endpoint == 'ev_board' %} active{% endif %}">
+    <span class="v2-bnav-ico" aria-hidden="true">&#128200;</span><span>EV Board</span>
+  </a>
+  <a href="{{ url_for('cuenta') }}" class="v2-bnav-item{% if request.endpoint == 'cuenta' %} active{% endif %}">
+    <span class="v2-bnav-ico" aria-hidden="true">&#128100;</span><span>Account</span>
+  </a>
+</nav>
+{% endif %}
 </body>
 </html>
