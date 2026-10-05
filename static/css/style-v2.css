@@ -13,13 +13,13 @@
 
 :root {
   /* v2 palette */
-  --v2-bg: #060b16;
-  --v2-surface: rgba(255, 255, 255, 0.04);
-  --v2-surface-2: rgba(255, 255, 255, 0.07);
-  --v2-border: rgba(255, 255, 255, 0.10);
+  --v2-bg: #0d1626;
+  --v2-surface: rgba(255, 255, 255, 0.055);
+  --v2-surface-2: rgba(255, 255, 255, 0.09);
+  --v2-border: rgba(255, 255, 255, 0.13);
   --v2-text: #f2f5fb;
-  --v2-muted: #93a0b8;
-  --v2-faint: #5f6b82;
+  --v2-muted: #a3b0c6;
+  --v2-faint: #75829a;
   --v2-blue: #3b82f6;
   --v2-blue-soft: rgba(59, 130, 246, 0.14);
   --v2-green: #2fd47e;
@@ -54,9 +54,9 @@
 body.v2 {
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Inter, sans-serif;
   background:
-    radial-gradient(1000px 520px at 8% -80px, rgba(59, 130, 246, 0.18), transparent 62%),
-    radial-gradient(820px 440px at 106% 32%, rgba(245, 197, 66, 0.07), transparent 60%),
-    radial-gradient(920px 560px at 85% 112%, rgba(47, 212, 126, 0.10), transparent 62%),
+    radial-gradient(1000px 520px at 8% -80px, rgba(59, 130, 246, 0.26), transparent 62%),
+    radial-gradient(820px 440px at 106% 32%, rgba(245, 197, 66, 0.11), transparent 60%),
+    radial-gradient(920px 560px at 85% 112%, rgba(47, 212, 126, 0.15), transparent 62%),
     var(--v2-bg);
   color: var(--v2-text);
   -webkit-font-smoothing: antialiased;
@@ -95,7 +95,7 @@ body.v2::before {
   position: sticky; top: 0; z-index: 50;
   display: flex; align-items: center; justify-content: space-between;
   gap: 10px; padding: 10px 16px;
-  background: rgba(6, 11, 22, 0.86);
+  background: rgba(13, 22, 38, 0.86);
   backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--v2-border);
 }
@@ -1054,7 +1054,7 @@ body.v2 .tstc-novig:active, body.v2 .tstc-track:active { transform: scale(0.97);
 
 /* Caja única estilo WGT para el récord oficial del programa (2026-10-05, pedido por Alex):
    un solo cuadro con borde azul; el récord debajo del número grande. */
-.wgt-box{border-radius:20px;padding:26px 22px;background:linear-gradient(160deg,#101828,#0b111d);border:2px solid rgba(96,165,250,.55);}
+.wgt-box{border-radius:20px;padding:26px 22px;background:linear-gradient(160deg,#16223a,#101a2e);border:2px solid rgba(96,165,250,.55);}
 .wgt-eyebrow{font-size:.72rem;letter-spacing:2px;text-transform:uppercase;color:#9aa3b8;font-weight:700;margin:0 0 10px;}
 .wgt-hero{font-size:3rem;font-weight:800;margin:0;line-height:1;letter-spacing:-.02em;color:#fff;}
 .wgt-hero.pos{color:#4ade80;}
