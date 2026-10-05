@@ -2468,7 +2468,7 @@ def _notify_click_telegram(slug):
 
 
 _last_login_notify = {}
-_LOGIN_NOTIFY_COOLDOWN_SEC = 600  # 10 min por miembro (evita spam al recargar)
+_LOGIN_NOTIFY_COOLDOWN_SEC = 60  # 60 seg por miembro (solo evita duplicados por doble-carga)
 
 
 def _notify_login_telegram(user):
@@ -2478,9 +2478,9 @@ def _notify_login_telegram(user):
     (no solo al login, porque la sesión queda abierta permanente).
     INCLUIDA su propia cuenta de miembro (alexpena1509@gmail.com, "Alex Peña"),
     aunque tenga marca de admin en la base de datos. Solo se excluyen OTROS
-    logins de admin. No avisa bots/crawlers, ni más de 1 vez cada 10 min por
-    miembro (para no spamear al recargar la página). Nunca bloquea la carga:
-    timeout corto y todo error se traga en silencio.
+    logins de admin. No avisa bots/crawlers. Cooldown de solo 60 seg por
+    miembro (únicamente para no duplicar por doble-carga de la página).
+    Nunca bloquea la carga: timeout corto y todo error se traga en silencio.
     """
     if not TELEGRAM_BOT_TOKEN or not CLICK_NOTIFY_CHAT_ID:
         return False
