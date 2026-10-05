@@ -2248,6 +2248,7 @@ def home():
         tstats=tstats,
         tlevels=tlevels,
         tcurve=tcurve,
+        pstreak=program_streak(),
         recientes=recientes,
         recientes_value=recientes_value(),
         last_elite_win=last_elite_win(),

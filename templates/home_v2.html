@@ -325,7 +325,7 @@
 
 <!-- OFFICIAL PROGRAM RECORD — en home page (pedido por Alex 2026-10-04) -->
 {% if res and dias %}
-<div style="border:2px solid rgba(34,197,94,.65);border-radius:16px;padding:14px;margin-bottom:8px;margin-top:44px;">
+<div style="margin-bottom:8px;margin-top:44px;">
 <section class="v2-sec" style="margin-bottom:0;">
   <div style="background:rgba(255,210,87,.08);border:1px solid rgba(255,210,87,.25);border-radius:16px;padding:18px;display:flex;gap:14px;align-items:flex-start;margin-bottom:16px;">
     <span style="background:#ffd257;color:#1a1a1a;font-weight:900;font-size:1.2rem;width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">✓</span>
@@ -359,30 +359,22 @@
       {% endif %}
     {% endfor %}
   {% endfor %}
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
-    <div style="background:linear-gradient(150deg,#1a2340,#0f1526);border:1px solid rgba(0,224,127,.3);border-radius:16px;padding:18px 16px;">
-      <p style="font-size:.68rem;letter-spacing:1.5px;color:#9aa3b8;font-weight:700;margin:0 0 8px;">TOTAL PROFIT</p>
-      <p style="font-size:1.8rem;font-weight:800;margin:0;color:#00e07f;">{% if profit is not none %}{{ '+$%.2f' % profit }}{% else %}—{% endif %}</p>
-      <p style="font-size:.8rem;color:#9aa3b8;margin:6px 0 0;">actual system profit</p>
+  <div class="wgt-box">
+    <p class="wgt-eyebrow">The Sharp Team &middot; All-time</p>
+    <p class="wgt-hero {{ 'pos' if profit and profit > 0 else ('neg' if profit and profit < 0 else '') }}">{% if profit is not none %}{% if profit > 0 %}{{ '+$%.2f' % profit }}{% elif profit < 0 %}{{ '-$%.2f' % -profit }}{% else %}$0.00{% endif %}{% else %}—{% endif %}</p>
+    <p class="wgt-sub"><strong>{{ g }}&ndash;{{ p }}</strong> &middot; official program record</p>
+    {% if pstreak %}
+    <div class="wgt-inset">
+      <span class="wgt-fire">&#x1f525;</span>
+      <div>
+        <p class="wgt-inset-val">{{ pstreak.tipo }}{{ pstreak.n }}</p>
+        <p class="wgt-inset-lab">Current streak</p>
+      </div>
     </div>
-    <div style="background:linear-gradient(150deg,#1a2340,#0f1526);border:1px solid rgba(0,224,127,.3);border-radius:16px;padding:18px 16px;">
-      <p style="font-size:.68rem;letter-spacing:1.5px;color:#9aa3b8;font-weight:700;margin:0 0 8px;">RECORD</p>
-      <p style="font-size:1.8rem;font-weight:800;margin:0;color:#fff;">{{ g }}–{{ p }}</p>
-      <p style="font-size:.8rem;color:#9aa3b8;margin:6px 0 0;">settled plays</p>
-    </div>
-    <div style="background:linear-gradient(150deg,#1a2340,#0f1526);border:1px solid rgba(0,224,127,.3);border-radius:16px;padding:18px 16px;">
-      <p style="font-size:.68rem;letter-spacing:1.5px;color:#9aa3b8;font-weight:700;margin:0 0 8px;">UNITS WON</p>
-      <p style="font-size:1.8rem;font-weight:800;margin:0;color:#00e07f;">{{ '%+.2f' % ns.tu }}u</p>
-      <p style="font-size:.8rem;color:#9aa3b8;margin:6px 0 0;">net units</p>
-    </div>
-    <div style="background:linear-gradient(150deg,#1a2340,#0f1526);border:1px solid rgba(0,224,127,.3);border-radius:16px;padding:18px 16px;">
-      <p style="font-size:.68rem;letter-spacing:1.5px;color:#9aa3b8;font-weight:700;margin:0 0 8px;">WIN RATE</p>
-      <p style="font-size:1.8rem;font-weight:800;margin:0;color:#fff;">{% if res.get('win_rate') is not none %}{{ '%.1f' % res.get('win_rate') }}%{% else %}—{% endif %}</p>
-      <p style="font-size:.8rem;color:#9aa3b8;margin:6px 0 0;">won / settled</p>
-    </div>
+    {% endif %}
+    <p class="wgt-meta">{{ g + p }} settled &middot; {% if res.get('win_rate') is not none %}{{ '%.1f' % res.get('win_rate') }}%{% else %}—{% endif %} win rate &middot; {% if roi is not none %}{{ '%+.1f' % roi }}%{% else %}—{% endif %} ROI</p>
   </div>
-  <p style="text-align:center;color:#9aa3b8;font-size:.9rem;margin:0 0 18px;">ROI {% if roi is not none %}{{ '%+.1f' % roi }}%{% else %}—{% endif %} on ${{ '%.2f' % (res.get('total_arriesgado') or 0) }} risked</p>
-  <h2 style="font-size:1.6rem;font-weight:900;color:#fff;text-align:center;margin:0 0 14px;">Breakdown by level</h2>
+  <h2 style="font-size:1.6rem;font-weight:900;color:#fff;text-align:center;margin:18px 0 14px;">Breakdown by level</h2>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
     <div style="background:#141a2b;border:1px solid #2a3441;border-radius:16px;padding:18px 16px;">
       <p style="margin:0 0 8px;"><span style="background:#ffd257;color:#1a1a1a;font-size:.7rem;font-weight:800;padding:4px 10px;border-radius:20px;letter-spacing:1px;">★ VIP</span></p>
