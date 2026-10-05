@@ -2465,24 +2465,20 @@ def _notify_click_telegram(slug):
 
 _last_login_notify = {}
 _LOGIN_NOTIFY_COOLDOWN_SEC = 1800  # 30 min por miembro
-# Emails que nunca generan aviso (cuentas propias de Alex).
-_LOGIN_NOTIFY_SKIP_EMAILS = {"alexpena1509@gmail.com"}
 
 
 def _notify_login_telegram(user):
     """Aviso a Alex por Telegram cuando un miembro inicia sesión.
 
     Pedido por Alex 2026-10-05: notificación cada vez que un miembro
-    registrado entre al Dashboard. No avisa logins de admin ni de las
-    cuentas propias de Alex, ni bots/crawlers, ni más de 1 vez cada
-    30 min por miembro. Nunca bloquea el login: timeout corto y todo
-    error se traga en silencio.
+    registrado entre al Dashboard — INCLUIDA su propia cuenta de miembro
+    (alexpena1509@gmail.com, "Alex Peña"). Solo se excluyen logins de admin.
+    No avisa bots/crawlers, ni más de 1 vez cada 30 min por miembro.
+    Nunca bloquea el login: timeout corto y todo error se traga en silencio.
     """
     if not TELEGRAM_BOT_TOKEN or not CLICK_NOTIFY_CHAT_ID:
         return False
     if _uget(user, "is_admin"):
-        return False
-    if (_uget(user, "email") or "").strip().lower() in _LOGIN_NOTIFY_SKIP_EMAILS:
         return False
     try:
         ua = request.headers.get("User-Agent", "") or ""
