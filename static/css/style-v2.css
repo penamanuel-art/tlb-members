@@ -1067,3 +1067,33 @@ body.v2 .tstc-novig:active, body.v2 .tstc-track:active { transform: scale(0.97);
 .wgt-inset-lab{font-size:.7rem;letter-spacing:1.6px;text-transform:uppercase;color:#9aa3b8;margin:4px 0 0;}
 .wgt-fire{font-size:2rem;line-height:1;}
 .wgt-meta{text-align:center;color:#9aa3b8;font-size:.85rem;margin:16px 0 0;}
+
+/* Barra de navegación inferior (2026-10-05, pedido por Alex — idea 2 aprobada):
+   Home · Plays · Tracker · EV Board · Account, fija abajo estilo app. */
+.v2-bottomnav {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 1001;
+  display: flex; justify-content: space-around; align-items: stretch;
+  background: rgba(6, 10, 19, 0.96);
+  border-top: 1px solid var(--v2-border);
+  padding: 8px 4px calc(8px + env(safe-area-inset-bottom));
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+}
+.v2-bnav-item {
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px;
+  padding: 6px 2px; text-decoration: none; color: var(--v2-muted);
+  font-size: 10px; font-weight: 700; min-width: 0;
+}
+.v2-bnav-item:active { transform: scale(0.95); }
+.v2-bnav-ico { font-size: 21px; line-height: 1; }
+.v2-bnav-item.active { color: var(--v2-green); }
+/* El ticker de resultados sube encima de la barra */
+body.v2.has-bottomnav .ticker-dock-bottom { bottom: calc(68px + env(safe-area-inset-bottom)); }
+/* Espacio al final del body: barra (+ ticker si existe) */
+body.v2.has-bottomnav { padding-bottom: calc(78px + env(safe-area-inset-bottom)); }
+body.v2.has-bottomnav.has-ticker { padding-bottom: calc(152px + env(safe-area-inset-bottom)); }
+/* El banner sticky de VIP y el botón de FAQ suben también */
+body.v2.has-bottomnav .v2-sticky { bottom: calc(68px + env(safe-area-inset-bottom)); }
+body.v2.has-bottomnav #faqFab { bottom: calc(86px + env(safe-area-inset-bottom)); }
+body.v2.has-bottomnav #faqFab.above-ticker { bottom: calc(160px + env(safe-area-inset-bottom)); }
+body.v2.has-bottomnav #faqPanel { bottom: calc(154px + env(safe-area-inset-bottom)); }
+body.v2.has-bottomnav #faqPanel.above-ticker { bottom: calc(228px + env(safe-area-inset-bottom)); }
