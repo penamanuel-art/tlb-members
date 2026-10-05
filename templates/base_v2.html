@@ -13,7 +13,7 @@
 <meta name="theme-color" content="#070c18">
 <script src="/static/js/push.js?v={{ asset_v }}"></script>
 </head>
-<body class="v2{% if day_mode %} v2-light{% endif %}" style="--wm-img: url('{{ url_for('static', filename='img/watermark-football.jpg') }}')">
+<body class="v2" style="--wm-img: url('{{ url_for('static', filename='img/watermark-football.jpg') }}')">
 <header class="v2-topbar">
   <div class="v2-topbar-left">
     {% if session.get('user_id') %}

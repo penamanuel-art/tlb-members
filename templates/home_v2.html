@@ -329,8 +329,8 @@
 <section class="v2-sec" style="margin-bottom:0;">
   <div style="background:rgba(255,210,87,.08);border:1px solid rgba(255,210,87,.25);border-radius:16px;padding:18px;display:flex;gap:14px;align-items:flex-start;margin-bottom:16px;">
     <span style="background:#ffd257;color:#1a1a1a;font-weight:900;font-size:1.2rem;width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">✓</span>
-    <p style="margin:0;color:var(--v2-text);font-size:.95rem;line-height:1.5;"><b>Every play posted before the game. Graded against the final score.</b><br>
-    <span style="color:var(--v2-muted);">Wins and losses — nothing hidden, nothing edited after the fact.</span></p>
+    <p style="margin:0;color:#fff;font-size:.95rem;line-height:1.5;"><b>Every play posted before the game. Graded against the final score.</b><br>
+    <span style="color:#9aa3b8;">Wins and losses — nothing hidden, nothing edited after the fact.</span></p>
   </div>
   {% set profit = res.get('profit_all_time') %}
   {% set roi = res.get('roi') %}
@@ -374,17 +374,17 @@
     {% endif %}
     <p class="wgt-meta">{{ g + p }} settled &middot; {% if res.get('win_rate') is not none %}{{ '%.1f' % res.get('win_rate') }}%{% else %}—{% endif %} win rate &middot; {% if roi is not none %}{{ '%+.1f' % roi }}%{% else %}—{% endif %} ROI</p>
   </div>
-  <h2 style="font-size:1.6rem;font-weight:900;color:var(--v2-text);text-align:center;margin:18px 0 14px;">Breakdown by level</h2>
+  <h2 style="font-size:1.6rem;font-weight:900;color:#fff;text-align:center;margin:18px 0 14px;">Breakdown by level</h2>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-    <div class="v2-brk">
+    <div style="background:#141a2b;border:1px solid #2a3441;border-radius:16px;padding:18px 16px;">
       <p style="margin:0 0 8px;"><span style="background:#ffd257;color:#1a1a1a;font-size:.7rem;font-weight:800;padding:4px 10px;border-radius:20px;letter-spacing:1px;">★ VIP</span></p>
-      <p style="font-size:1.6rem;font-weight:800;margin:0;color:var(--v2-text);">{{ ns.pw }}–{{ ns.pl }}</p>
-      <p style="font-size:.85rem;color:var(--v2-muted);margin:6px 0 0;">{{ '+$%.2f' % ns.pp }} · {{ '%+.2f' % ns.pu }}u</p>
+      <p style="font-size:1.6rem;font-weight:800;margin:0;color:#fff;">{{ ns.pw }}–{{ ns.pl }}</p>
+      <p style="font-size:.85rem;color:#9aa3b8;margin:6px 0 0;">{{ '+$%.2f' % ns.pp }} · {{ '%+.2f' % ns.pu }}u</p>
     </div>
-    <div class="v2-brk">
+    <div style="background:#141a2b;border:1px solid #2a3441;border-radius:16px;padding:18px 16px;">
       <p style="margin:0 0 8px;"><span style="background:rgba(0,224,127,.15);color:#00e07f;font-size:.7rem;font-weight:800;padding:4px 10px;border-radius:20px;letter-spacing:1px;border:1px solid rgba(0,224,127,.4);">● FREE PLAYS</span></p>
-      <p style="font-size:1.6rem;font-weight:800;margin:0;color:var(--v2-text);">{{ ns.gw }}–{{ ns.gl }}</p>
-      <p style="font-size:.85rem;color:var(--v2-muted);margin:6px 0 0;">{{ '+$%.2f' % ns.gp }} · {{ '%+.2f' % ns.gu }}u</p>
+      <p style="font-size:1.6rem;font-weight:800;margin:0;color:#fff;">{{ ns.gw }}–{{ ns.gl }}</p>
+      <p style="font-size:.85rem;color:#9aa3b8;margin:6px 0 0;">{{ '+$%.2f' % ns.gp }} · {{ '%+.2f' % ns.gu }}u</p>
     </div>
   </div>
 </section>

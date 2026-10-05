@@ -49,12 +49,6 @@ ASSET_V = _asset_version()
 
 TZ = ZoneInfo("America/New_York")
 
-
-def is_daytime_et():
-    """True de 6:00 AM a 5:59 PM ET: la plataforma muestra el modo día (fondo blanco).
-    De noche vuelve al tema oscuro normal. (Pedido por Alex 2026-10-05.)"""
-    return 6 <= datetime.now(TZ).hour < 18
-
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 INSTANCE_DIR = os.path.join(BASE_DIR, "instance")
 os.makedirs(INSTANCE_DIR, exist_ok=True)
@@ -2001,7 +1995,6 @@ def inject_user():
         "ticker_days": compute_ticker_days(),
         "asset_v": ASSET_V,
         "watermark_img": session.get("watermark", WATERMARKS[0]),
-        "day_mode": is_daytime_et(),
     }
 
 
