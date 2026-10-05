@@ -61,6 +61,12 @@ USE_PG = bool(DATABASE_URL)
 STRIPE_PLATINUM_URL = os.environ.get(
     "STRIPE_PLATINUM_URL", "https://buy.stripe.com/28E14p64MfDeeiybEQefC00"
 )
+# Pedido Alex 2026-10-05: checkout de Stripe siempre en inglés. Stripe
+# localiza la página de pago según el navegador del cliente (si está en
+# español, todo sale en español); el parámetro locale=en lo fija en inglés.
+if "locale=" not in STRIPE_PLATINUM_URL:
+    _sep = "&" if "?" in STRIPE_PLATINUM_URL else "?"
+    STRIPE_PLATINUM_URL = f"{STRIPE_PLATINUM_URL}{_sep}locale=en"
 
 # Tracker "Free Plays" (solo Alex): stake fijo por jugada para validar el
 # sistema en 200 jugadas antes del lanzamiento público. Se cambia con la
