@@ -2763,6 +2763,8 @@ BOOK_LOGOS = {
     "hardrockbet": "books/hardrock.png",
     "kalshi": "books/kalshi.png",
     "kaslshy": "books/kalshi.png",
+    "thescorebet": "books/thescorebet.png",
+    "thescore": "books/thescorebet.png",
 }
 
 
