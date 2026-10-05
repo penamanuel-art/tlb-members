@@ -74,6 +74,51 @@
   <img src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team" class="greet-logo-fixed">
 </section>
 
+<!-- OFFICIAL PROGRAM RECORD arriba (pedido Alex 2026-10-05) — solo miembros -->
+{% if not es_admin %}
+<section class="pro-record">
+  <p class="pro-kicker"><span>THE SHARP TEAM &middot; ALL-TIME</span></p>
+  <p class="pro-profit wgt-countup {{ res.get('profit_cls', '') }}" data-profit="{{ res.get('profit_all_time', 0) or 0 }}">{{ res.get('profit_display', '$0') }}</p>
+  <p class="pro-sub"><strong>{{ res.get('ganadas', 0) }}&ndash;{{ res.get('perdidas', 0) }}</strong> &middot; official program record</p>
+  {% if pstreak %}
+  <div class="wgt-inset">
+    <span class="wgt-fire">&#x1f525;</span>
+    <div>
+      <p class="wgt-inset-val">{{ pstreak.tipo }}{{ pstreak.n }}</p>
+      <p class="wgt-inset-lab">Current streak</p>
+    </div>
+  </div>
+  {% endif %}
+  <p class="wgt-meta">{{ res.get('ganadas', 0) + res.get('perdidas', 0) }} settled &middot; {{ '%.1f' % res.get('win_rate', 0) }}% win rate &middot; {{ '%+.1f' % res.get('roi', 0) }}% ROI</p>
+  <div class="pro-levels">
+    {% for lvl_key, lvl_name, lvl_emoji, lvl_class in [('GOLD', 'FREE PLAYS', '&#x26aa;', 'gold'), ('ELITE', 'VIP', '&#x2b50;', 'elite')] %}
+    {% set L = res['niveles'][lvl_key] %}
+    {% set wr = L.win_rate %}
+    <div class="pro-level lvl-{{ lvl_class }}">
+      <div class="pro-lvl-head"><span class="pro-badge">{{ lvl_emoji|safe }}</span><span class="pro-lvl-name">{{ lvl_name }} PROGRAMA</span></div>
+      <div class="pro-lvl-body">
+        <div>
+          <p class="pro-lvl-record">{{ L.record }}</p>
+          <p class="pro-lvl-profit {{ L.net_cls }}">{{ L.net_display }}</p>
+        </div>
+        <svg class="pro-ring" viewBox="0 0 72 72" aria-hidden="true">
+          <defs>
+            <linearGradient id="rg-{{ lvl_class }}" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#f6d47c"/><stop offset="1" stop-color="#c9962e"/>
+            </linearGradient>
+          </defs>
+          <circle cx="36" cy="36" r="30" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="7"/>
+          <circle cx="36" cy="36" r="30" fill="none" stroke="url(#rg-{{ lvl_class }})" stroke-width="7" stroke-linecap="round" stroke-dasharray="188.5" stroke-dashoffset="{{ '%.1f' % (188.5 * (1 - wr/100)) }}" transform="rotate(-90 36 36)"/>
+          <text x="36" y="42" text-anchor="middle" class="pro-ring-pct">{{ '%.0f' % wr }}%</text>
+        </svg>
+      </div>
+      <p class="pro-lvl-foot">{{ L.ganadas + L.perdidas }} plays graded &middot; lifetime</p>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
 <!-- 03 · TODAY'S PLAYS -->
 <div class="section-head plays-head">
   <div>
@@ -396,47 +441,7 @@
   </div>
   <a class="link-more" href="{{ url_for('resultados') }}">Full results →</a>
 </div>
-<section class="pro-record">
-  <p class="pro-kicker"><span>THE SHARP TEAM &middot; ALL-TIME</span></p>
-  <p class="pro-profit {{ res.get('profit_cls', '') }}">{{ res.get('profit_display', '$0') }}</p>
-  <p class="pro-sub"><strong>{{ res.get('ganadas', 0) }}&ndash;{{ res.get('perdidas', 0) }}</strong> &middot; official program record</p>
-  {% if pstreak %}
-  <div class="wgt-inset">
-    <span class="wgt-fire">&#x1f525;</span>
-    <div>
-      <p class="wgt-inset-val">{{ pstreak.tipo }}{{ pstreak.n }}</p>
-      <p class="wgt-inset-lab">Current streak</p>
-    </div>
-  </div>
-  {% endif %}
-  <p class="wgt-meta">{{ res.get('ganadas', 0) + res.get('perdidas', 0) }} settled &middot; {{ '%.1f' % res.get('win_rate', 0) }}% win rate &middot; {{ '%+.1f' % res.get('roi', 0) }}% ROI</p>
-  <div class="pro-levels">
-    {% for lvl_key, lvl_name, lvl_emoji, lvl_class in [('GOLD', 'FREE PLAYS', '&#x26aa;', 'gold'), ('ELITE', 'VIP', '&#x2b50;', 'elite')] %}
-    {% set L = res['niveles'][lvl_key] %}
-    {% set wr = L.win_rate %}
-    <div class="pro-level lvl-{{ lvl_class }}">
-      <div class="pro-lvl-head"><span class="pro-badge">{{ lvl_emoji|safe }}</span><span class="pro-lvl-name">{{ lvl_name }} PROGRAMA</span></div>
-      <div class="pro-lvl-body">
-        <div>
-          <p class="pro-lvl-record">{{ L.record }}</p>
-          <p class="pro-lvl-profit {{ L.net_cls }}">{{ L.net_display }}</p>
-        </div>
-        <svg class="pro-ring" viewBox="0 0 72 72" aria-hidden="true">
-          <defs>
-            <linearGradient id="rg-{{ lvl_class }}" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0" stop-color="#f6d47c"/><stop offset="1" stop-color="#c9962e"/>
-            </linearGradient>
-          </defs>
-          <circle cx="36" cy="36" r="30" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="7"/>
-          <circle cx="36" cy="36" r="30" fill="none" stroke="url(#rg-{{ lvl_class }})" stroke-width="7" stroke-linecap="round" stroke-dasharray="188.5" stroke-dashoffset="{{ '%.1f' % (188.5 * (1 - wr/100)) }}" transform="rotate(-90 36 36)"/>
-          <text x="36" y="42" text-anchor="middle" class="pro-ring-pct">{{ '%.0f' % wr }}%</text>
-        </svg>
-      </div>
-      <p class="pro-lvl-foot">{{ L.ganadas + L.perdidas }} plays graded &middot; lifetime</p>
-    </div>
-    {% endfor %}
-  </div>
-</section>
+
 </div>
 {% endif %}
 
@@ -644,5 +649,30 @@
    style="position:fixed;right:14px;bottom:88px;z-index:70;background:linear-gradient(135deg,#2b6fd6,#2fd47e);
           color:#fff;font-weight:800;font-size:.82rem;padding:10px 16px;border-radius:999px;
           text-decoration:none;box-shadow:0 4px 16px rgba(0,0,0,.4);">✨ New look</a>
+
+<script>
+/* Count-up del profit oficial (pedido Alex 2026-10-05):
+   al entrar, el número corre desde $0 hasta el monto oficial. */
+(function () {
+  var el = document.querySelector('.wgt-countup');
+  if (!el || el.dataset.done) return;
+  el.dataset.done = '1';
+  var target = parseFloat(el.getAttribute('data-profit')) || 0;
+  var dur = 1600, t0 = null;
+  function fmt(v) {
+    var a = Math.abs(v).toFixed(2);
+    return (v > 0 ? '+$' : v < 0 ? '-$' : '$') + a;
+  }
+  function step(ts) {
+    if (!t0) t0 = ts;
+    var p = Math.min(1, (ts - t0) / dur);
+    var e = 1 - Math.pow(1 - p, 3);
+    el.textContent = fmt(target * e);
+    if (p < 1) requestAnimationFrame(step);
+    else el.textContent = fmt(target);
+  }
+  requestAnimationFrame(step);
+})();
+</script>
 
 {% endblock %}
