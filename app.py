@@ -2468,7 +2468,7 @@ def _notify_click_telegram(slug):
 
 
 _last_login_notify = {}
-_LOGIN_NOTIFY_COOLDOWN_SEC = 60  # 60 seg por miembro (solo evita duplicados por doble-carga)
+_LOGIN_NOTIFY_COOLDOWN_SEC = 10  # 10 seg por miembro (solo evita duplicados por doble-carga)
 
 
 def _notify_login_telegram(user):
