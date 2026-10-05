@@ -2463,6 +2463,59 @@ def _notify_click_telegram(slug):
         return False
 
 
+_last_login_notify = {}
+_LOGIN_NOTIFY_COOLDOWN_SEC = 1800  # 30 min por miembro
+
+
+def _notify_login_telegram(user):
+    """Aviso a Alex por Telegram cuando un miembro inicia sesión.
+
+    Pedido por Alex 2026-10-05: notificación cada vez que un miembro
+    registrado entre al Dashboard. No avisa logins de admin (sus propias
+    cuentas), ni bots/crawlers, ni más de 1 vez cada 30 min por miembro.
+    Nunca bloquea el login: timeout corto y todo error se traga en silencio.
+    """
+    if not TELEGRAM_BOT_TOKEN or not CLICK_NOTIFY_CHAT_ID:
+        return False
+    if _uget(user, "is_admin"):
+        return False
+    try:
+        ua = request.headers.get("User-Agent", "") or ""
+    except Exception:
+        ua = ""
+    if _is_bot_ua(ua):
+        return False
+    now = time.time()
+    key = f"login:{_uget(user, 'id')}"
+    if now - _last_login_notify.get(key, 0) < _LOGIN_NOTIFY_COOLDOWN_SEC:
+        return False
+    nombre = _uget(user, "nombre") or _uget(user, "email") or "?"
+    email = _uget(user, "email") or ""
+    elite = "⭐ VIP" if _uget(user, "platinum_unlocked") else "🟡 Free"
+    try:
+        hora = datetime.now(ZoneInfo("America/New_York")).strftime("%-I:%M %p ET")
+    except Exception:
+        hora = ""
+    text = f"👤 {nombre} ({elite}) entró al Dashboard\n{email}\n{hora}".strip()
+    try:
+        payload = json.dumps(
+            {"chat_id": CLICK_NOTIFY_CHAT_ID, "text": text}
+        ).encode("utf-8")
+        req = urllib.request.Request(
+            f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage",
+            data=payload,
+            headers={"Content-Type": "application/json"},
+        )
+        with urllib.request.urlopen(req, timeout=4) as resp:
+            ok = resp.status == 200
+            if ok:
+                _last_login_notify[key] = now
+            return ok
+    except Exception as e:
+        print(f"[login-notify] telegram FAILED: {type(e).__name__}: {e}", flush=True)
+        return False
+
+
 @app.route("/go/<slug>")
 def tracked_link(slug):
     dest = TRACKED_LINKS.get(slug)
@@ -2564,6 +2617,10 @@ def login():
         session["nombre"] = user["nombre"]
         session["is_admin"] = es_admin
         session.permanent = True  # 2026-09-25: cookie persistente 30 días (antes iOS la borraba → logout)
+        try:
+            _notify_login_telegram(user)  # 2026-10-05: aviso a Alex por Telegram en cada login de miembro
+        except Exception:
+            pass
         flash(f"Welcome back, {user['nombre']}!", "ok")
         next_url = request.args.get("next") or url_for("home")
         return redirect(next_url)
