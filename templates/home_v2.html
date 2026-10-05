@@ -49,7 +49,6 @@
   </div>
 
   {% set golds = plays | selectattr('nivel', 'equalto', 'GOLD') | list %}
-  {% set values = plays | selectattr('nivel', 'equalto', 'VALUE') | list %}
   {% if card_pendiente %}
   <div class="v2-empty">
     <h3>No plays posted yet today</h3>
@@ -67,15 +66,6 @@
   <p class="muted">No free plays today.</p>
   {% endif %}
 
-  {# 💎 VALUE PLAYS — oportunidades +EV del escáner, opcionales #}
-  {% if values %}
-  <p class="v2-sec-eyebrow" style="margin:22px 0 10px">💎 Value Plays</p>
-  <div class="v2-plays">
-    {% for p in values %}
-      {% include "_play_card.html" %}
-    {% endfor %}
-  </div>
-  {% endif %}
 
   {# VIP selection — teaser stays visible for non-VIP, exactly like the classic theme #}
   {% set plat = plays | selectattr('nivel', 'equalto', 'ELITE') | list %}
@@ -330,85 +320,6 @@
   </div>
   </div>
 
-  <div class="v2-linecard" style="margin-top:24px;">
-  <div class="v2-levels">
-    {% for lvl_key, lvl_name, lvl_emoji, lvl_class in [('VALUE', '💎 VALUE', '&#x1f48e;', 'value')] %}
-    {% set L = res['niveles'][lvl_key] %}
-    {% set wr = L.win_rate %}
-    <div class="v2-level {{ lvl_class }}">
-      <div class="v2-level-head"><span>{{ lvl_emoji|safe }}</span><span class="v2-level-name">{{ lvl_name }}</span></div>
-      <div class="v2-level-body">
-        <div>
-          <p class="v2-level-record">{{ L.record }}</p>
-          <p class="v2-level-profit {{ L.net_cls }}">{{ L.net_display }}</p>
-        </div>
-        <p class="v2-ring-pct">{{ '%.0f' % wr }}%</p>
-      </div>
-      <div class="v2-bar"><span style="width:{{ '%.0f' % wr }}%"></span></div>
-      <p class="v2-level-sub">{{ L.ganadas + L.perdidas }} plays graded · lifetime</p>
-    </div>
-    {% endfor %}
-  </div>
-  {# Explicación Value Plays en el Tracker (pedido por Alex 2026-10-03) #}
-  <div style="background:rgba(255,210,87,.08);border:1px solid rgba(255,210,87,.25);border-radius:12px;padding:12px 14px;margin-top:12px;font-size:.85rem;color:#ffe9a8;">
-    <strong>What are Value Plays?</strong> Extra +EV opportunities found by our scanner during the day. They pass all program filters (5%+ edge, odds −185…+250, moneyline/spread only) but are <em>optional</em> — not part of the official daily card. You decide whether to play them. Tracked separately in this 💎 VALUE section.
-  </div>
-  {# Cards de cada value play estilo tracker (pedido por Alex 2026-10-04): se despliegan debajo del récord.
-     Visibles: en vivo/pending o del día. Pasadas: bajo "View all →". #}
-  {% if recientes_value.todas %}
-  <div style="margin-top:14px;display:flex;flex-direction:column;gap:12px;">
-    {% for r in recientes_value.actuales %}
-    <article style="background:#1a1c20;border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:16px;">
-      <div style="display:flex;gap:12px;align-items:flex-start;">
-        <div style="flex:1;min-width:0;">
-          <p style="margin:0 0 4px;font-size:16px;font-weight:700;color:#fff;">{{ r.pick }} <span style="color:#9aa3b8;">({{ fmt_odds(r.cuota) }})</span></p>
-          <p style="margin:0 0 4px;font-size:12px;color:#9aa3b8;">{{ fmt_odds(r.cuota) }} · {{ r.fecha }} · <span style="background:rgba(77,166,255,.15);border:1px solid rgba(77,166,255,.4);color:#7db8ff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:12px;">💎 VALUE</span></p>
-          <p style="margin:0;font-size:12px;color:#9aa3b8;">Stake $50 (1.0u)</p>
-        </div>
-        <div style="text-align:right;flex-shrink:0;">
-          {% if r.resultado in ('WON', 'W') %}
-            <span style="display:inline-block;background:#22c55e;color:#fff;font-weight:800;font-size:14px;padding:8px 14px;border-radius:20px;">✓ {{ fmt_money(r.profit) }}</span>
-          {% elif r.resultado in ('LOST', 'L') %}
-            <span style="display:inline-block;background:#ef4444;color:#fff;font-weight:800;font-size:14px;padding:8px 14px;border-radius:20px;">✕ {{ fmt_money(r.profit) }}</span>
-          {% else %}
-            <span style="display:inline-block;background:rgba(255,255,255,.08);color:#9aa3b8;font-weight:700;font-size:12px;padding:8px 14px;border-radius:20px;">pending</span>
-          {% endif %}
-          <div style="margin-top:8px;"><a href="https://novig.com" style="display:inline-block;border:1px solid rgba(125,184,255,.4);color:#7db8ff;font-size:12px;font-weight:600;padding:6px 14px;border-radius:16px;text-decoration:none;">Novig</a></div>
-        </div>
-      </div>
-    </article>
-    {% endfor %}
-  </div>
-  {% if recientes_value.pasadas %}
-  <div style="margin-top:10px;">
-    <a class="v2-link" href="javascript:void(0)" onclick="var e=document.getElementById('value-more');var h=e.style.display==='none';e.style.display=h?'flex':'none';this.textContent=h?'Show less ↑':'View all →'">View all →</a>
-  </div>
-  <div id="value-more" style="display:none;margin-top:12px;flex-direction:column;gap:12px;">
-    {% for r in recientes_value.pasadas %}
-    <article style="background:#1a1c20;border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:16px;">
-      <div style="display:flex;gap:12px;align-items:flex-start;">
-        <div style="flex:1;min-width:0;">
-          <p style="margin:0 0 4px;font-size:16px;font-weight:700;color:#fff;">{{ r.pick }} <span style="color:#9aa3b8;">({{ fmt_odds(r.cuota) }})</span></p>
-          <p style="margin:0 0 4px;font-size:12px;color:#9aa3b8;">{{ fmt_odds(r.cuota) }} · {{ r.fecha }} · <span style="background:rgba(77,166,255,.15);border:1px solid rgba(77,166,255,.4);color:#7db8ff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:12px;">💎 VALUE</span></p>
-          <p style="margin:0;font-size:12px;color:#9aa3b8;">Stake $50 (1.0u)</p>
-        </div>
-        <div style="text-align:right;flex-shrink:0;">
-          {% if r.resultado in ('WON', 'W') %}
-            <span style="display:inline-block;background:#22c55e;color:#fff;font-weight:800;font-size:14px;padding:8px 14px;border-radius:20px;">✓ {{ fmt_money(r.profit) }}</span>
-          {% elif r.resultado in ('LOST', 'L') %}
-            <span style="display:inline-block;background:#ef4444;color:#fff;font-weight:800;font-size:14px;padding:8px 14px;border-radius:20px;">✕ {{ fmt_money(r.profit) }}</span>
-          {% else %}
-            <span style="display:inline-block;background:rgba(255,255,255,.08);color:#9aa3b8;font-weight:700;font-size:12px;padding:8px 14px;border-radius:20px;">pending</span>
-          {% endif %}
-          <div style="margin-top:8px;"><a href="https://novig.com" style="display:inline-block;border:1px solid rgba(125,184,255,.4);color:#7db8ff;font-size:12px;font-weight:600;padding:6px 14px;border-radius:16px;text-decoration:none;">Novig</a></div>
-        </div>
-      </div>
-    </article>
-    {% endfor %}
-  </div>
-  {% endif %}
-  {% endif %}
-  </div>
   {% endif %}
 </section>
 
@@ -578,8 +489,6 @@
   <p class="muted">No results published yet.</p>
   {% endif %}
 </section>
-
-<!-- 08b · VALUE PLAYS TRACK RECORD: ahora va inline junto al resumen (ver arriba) -->
 
 <!-- 09 · THE PROCESS -->
 <section class="v2-sec">
