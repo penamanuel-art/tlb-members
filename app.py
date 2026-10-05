@@ -1962,6 +1962,8 @@ def migrate_db():
             pending.append("ALTER TABLE users ADD COLUMN phone TEXT")
         if "sms_optin" not in cols:
             pending.append("ALTER TABLE users ADD COLUMN sms_optin INTEGER NOT NULL DEFAULT 0")
+        if "welcome_email_sent" not in cols:
+            pending.append("ALTER TABLE users ADD COLUMN welcome_email_sent INTEGER NOT NULL DEFAULT 0")
         for stmt in pending:
             conn.execute(stmt)
         if pending:
@@ -2285,6 +2287,14 @@ def register():
         session["nombre"] = nombre
         session["is_admin"] = es_admin
         notify_new_member(nombre, email)
+        # Pedido Alex 2026-10-05: el email de bienvenida llega a TODOS al
+        # registrarse, aunque sea cuenta gratis.
+        try:
+            send_welcome_email(nombre, email)
+            db.execute("UPDATE users SET welcome_email_sent = 1 WHERE id = ?", (new_id,))
+            db.commit()
+        except Exception:
+            pass
         return redirect(url_for("bienvenida"))
     return render_template("register.html")
 
@@ -4120,7 +4130,7 @@ def stripe_webhook():
         if not email:
             _auditar("", f"{origen} sin email")
             return
-        row = db.execute("SELECT id, nombre, platinum_unlocked, cancel_requested_at, telegram_user_id FROM users WHERE email = ?",
+        row = db.execute("SELECT id, nombre, platinum_unlocked, cancel_requested_at, telegram_user_id, welcome_email_sent FROM users WHERE email = ?",
                          (email,)).fetchone()
         if row:
             uid = row["id"]
@@ -4149,9 +4159,13 @@ def stripe_webhook():
             # Pedido Alex 2026-09-30: al pagar le llega el email bonito de
             # bienvenida (WELCOME_HTML: todo lo incluido en la membresía +
             # botones directos al Dashboard). Solo en activaciones nuevas.
-            if era_nuevo:
+            # 2026-10-05: si ya lo recibió al registrarse (gratis o no),
+            # no se repite.
+            if era_nuevo and not bool(row["welcome_email_sent"]):
                 try:
                     send_welcome_email(row["nombre"] or "", email)
+                    db.execute("UPDATE users SET welcome_email_sent = 1 WHERE id = ?", (uid,))
+                    db.commit()
                 except Exception:
                     pass
         else:
