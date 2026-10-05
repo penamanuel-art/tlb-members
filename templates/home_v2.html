@@ -69,7 +69,7 @@
     {% endfor %}
   {% endfor %}
   <div class="wgt-box">
-    <p class="wgt-eyebrow">The Sharp Team &middot; All-time</p>
+    <p class="wgt-eyebrow">The Sharp Team &middot; Track Record</p>
     <p class="wgt-hero wgt-countup" data-profit="{{ profit if profit is not none else 0 }}" {{ 'pos' if profit and profit > 0 else ('neg' if profit and profit < 0 else '') }}">{% if profit is not none %}{% if profit > 0 %}{{ '+$%.2f' % profit }}{% elif profit < 0 %}{{ '-$%.2f' % -profit }}{% else %}$0.00{% endif %}{% else %}—{% endif %}</p>
     <p class="wgt-sub"><strong>{{ g }}&ndash;{{ p }}</strong> &middot; official program record</p>
     {% if pstreak %}
