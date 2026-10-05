@@ -4487,3 +4487,106 @@ def backfill_value_2026_10_03():
     db.commit()
     return Response(f"Backfill completo: {inserted} nuevas, resto actualizadas",
                     mimetype="text/plain")
+
+
+@app.route("/api/auto-track-alex", methods=["POST"])
+def api_auto_track_alex():
+    """Trackea automáticamente una jugada en el tracker personal de Alex
+    (cuenta de miembro alexpena1509@gmail.com).
+
+    Lo llama el asistente cuando Alex envía tickets originales
+    (regla permanente 2026-10-05, pedido por Alex: "cuando yo te mande
+    los ticket original inmediatamente dale a trake automáticamente").
+
+    Protegido con header X-Push-Key == PUSH_TRIGGER_KEY
+    (mismo patrón que /api/push-edge).
+
+    JSON: {"play_id": str (requerido),
+           "fecha": "YYYY-MM-DD",
+           "nivel": "ELITE|GOLD",
+           "pick": str,
+           "cuota": int (americano),
+           "stake_unidades": float,
+           "stake_monto": float (opcional: si no viene se calcula con
+               stake_personalizado, igual que el botón "+ Track"),
+           "edge": float|null,
+           "resultado": "W"|"L"|null (null = pendiente; la app lo liquida
+               sola al ver el tracker/home),
+           "comprobante": "img/comprobantes/....jpg"|null}
+
+    Idempotente: si (user_id, play_id) ya existe no duplica; si viene
+    resultado y el existente está pendiente, lo actualiza.
+    """
+    if not PUSH_TRIGGER_KEY or not secrets.compare_digest(
+        request.headers.get("X-Push-Key", ""), PUSH_TRIGGER_KEY
+    ):
+        return jsonify({"error": "forbidden"}), 403
+    data = request.get_json(force=True, silent=True) or {}
+    play_id = (data.get("play_id") or "").strip()
+    if not play_id:
+        return jsonify({"error": "play_id requerido"}), 400
+    resultado = data.get("resultado")
+    if resultado not in ("W", "L", None):
+        return jsonify({"error": "resultado debe ser W, L o null"}), 400
+    db = get_db()
+    alex = db.execute(
+        "SELECT * FROM users WHERE LOWER(email) = ?", (ALEX_MEMBER_EMAIL.lower(),)
+    ).fetchone()
+    if not alex:
+        return jsonify({"error": "cuenta de Alex no encontrada"}), 404
+    uid = alex["id"]
+    now = datetime.now(TZ).strftime("%Y-%m-%d %H:%M:%S")
+    existing = db.execute(
+        "SELECT id, resultado FROM tracked_plays WHERE user_id = ? AND play_id = ?",
+        (uid, play_id),
+    ).fetchone()
+    if existing:
+        if resultado and not existing["resultado"]:
+            db.execute(
+                "UPDATE tracked_plays SET resultado = ? WHERE id = ?",
+                (resultado, existing["id"]),
+            )
+            db.commit()
+            return jsonify({"ok": True, "action": "resultado_actualizado"})
+        return jsonify({"ok": True, "action": "ya_existe"})
+    play = {
+        "nivel": data.get("nivel") or "",
+        "stake_unidades": data.get("stake_unidades") or 0,
+        "stake_monto": data.get("stake_monto") or 0,
+    }
+    stake_monto = data.get("stake_monto")
+    if not stake_monto:
+        stake_monto = stake_personalizado(play, alex)
+    params = (
+        uid,
+        play_id,
+        data.get("fecha") or datetime.now(TZ).strftime("%Y-%m-%d"),
+        data.get("nivel") or "",
+        data.get("pick") or "",
+        int(data.get("cuota") or 0),
+        float(data.get("stake_unidades") or 0),
+        float(stake_monto or 0),
+        data.get("edge"),
+        resultado,
+        data.get("comprobante"),
+        now,
+    )
+    if db.use_pg:
+        db.execute(
+            """INSERT INTO tracked_plays
+               (user_id, play_id, fecha, nivel, pick, cuota, stake_unidades,
+                stake_monto, edge, resultado, comprobante, created_at)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+               ON CONFLICT DO NOTHING""",
+            params,
+        )
+    else:
+        db.execute(
+            """INSERT OR IGNORE INTO tracked_plays
+               (user_id, play_id, fecha, nivel, pick, cuota, stake_unidades,
+                stake_monto, edge, resultado, comprobante, created_at)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+            params,
+        )
+    db.commit()
+    return jsonify({"ok": True, "action": "insertado"})
