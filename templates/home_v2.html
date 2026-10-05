@@ -353,10 +353,11 @@
   <div style="background:rgba(255,210,87,.08);border:1px solid rgba(255,210,87,.25);border-radius:12px;padding:12px 14px;margin-top:12px;font-size:.85rem;color:#ffe9a8;">
     <strong>What are Value Plays?</strong> Extra +EV opportunities found by our scanner during the day. They pass all program filters (5%+ edge, odds −185…+250, moneyline/spread only) but are <em>optional</em> — not part of the official daily card. You decide whether to play them. Tracked separately in this 💎 VALUE section.
   </div>
-  {# Cards de cada value play estilo tracker (pedido por Alex 2026-10-04): se despliegan debajo del récord #}
-  {% if recientes_value %}
+  {# Cards de cada value play estilo tracker (pedido por Alex 2026-10-04): se despliegan debajo del récord.
+     Visibles: en vivo/pending o del día. Pasadas: bajo "View all →". #}
+  {% if recientes_value.todas %}
   <div style="margin-top:14px;display:flex;flex-direction:column;gap:12px;">
-    {% for r in recientes_value[:5] %}
+    {% for r in recientes_value.actuales %}
     <article style="background:#1a1c20;border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:16px;">
       <div style="display:flex;gap:12px;align-items:flex-start;">
         <div style="flex:1;min-width:0;">
@@ -378,12 +379,12 @@
     </article>
     {% endfor %}
   </div>
-  {% if recientes_value|length > 5 %}
+  {% if recientes_value.pasadas %}
   <div style="margin-top:10px;">
     <a class="v2-link" href="javascript:void(0)" onclick="var e=document.getElementById('value-more');var h=e.style.display==='none';e.style.display=h?'flex':'none';this.textContent=h?'Show less ↑':'View all →'">View all →</a>
   </div>
   <div id="value-more" style="display:none;margin-top:12px;flex-direction:column;gap:12px;">
-    {% for r in recientes_value[5:] %}
+    {% for r in recientes_value.pasadas %}
     <article style="background:#1a1c20;border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:16px;">
       <div style="display:flex;gap:12px;align-items:flex-start;">
         <div style="flex:1;min-width:0;">

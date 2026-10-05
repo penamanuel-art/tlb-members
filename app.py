@@ -1205,8 +1205,14 @@ def recientes_oficiales(n=6):
 
 def recientes_value(n=20):
     """Jugadas VALUE del sistema (simuladas), más recientes primero.
-    Para el historial desplegable de la sección VALUE."""
+    Para el historial desplegable de la sección VALUE.
+    Devuelve dict con 'actuales' (en vivo/pending o del día, van visibles)
+    y 'pasadas' (ya terminadas de días anteriores, van bajo "View all").
+    (2026-10-04, pedido por Alex)."""
+    vacio = {"actuales": [], "pasadas": [], "todas": []}
     try:
+        from datetime import datetime
+        hoy = datetime.now(TZ).strftime("%Y-%m-%d")
         db = get_db()
         rows = db.execute(
             "SELECT * FROM tracked_plays WHERE user_id = ? AND nivel = 'VALUE' "
@@ -1229,9 +1235,14 @@ def recientes_value(n=20):
                 except Exception:
                     d["profit"] = 0.0
             out.append(d)
-        return out
+        actuales, pasadas = [], []
+        for d in out:
+            pendiente = d.get("resultado") not in ("W", "WON", "L", "LOST")
+            es_hoy = str(d.get("fecha") or "")[:10] == hoy
+            (actuales if (pendiente or es_hoy) else pasadas).append(d)
+        return {"actuales": actuales, "pasadas": pasadas, "todas": out}
     except Exception:
-        return []
+        return vacio
 
 
 def program_stats():
