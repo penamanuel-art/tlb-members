@@ -512,32 +512,6 @@
 <p class="muted">No results published yet.</p>
 {% endif %}
 
-{% if action_tracker %}
-<!-- ACTION NETWORK TRACKER (pedido por Alex 2026-10-04) -->
-<div class="section-head title-flush" style="margin-top:26px">
-  <h2 class="section-title">◈ Action Network · Action Tracker</h2>
-</div>
-<p class="muted" style="font-size:.85rem;margin:-4px 0 12px;">Our official tracked results — every play graded win or loss, nothing hidden.</p>
-<div class="pro-stats" style="margin-bottom:12px">
-  <div class="pro-stat"><p class="pro-stat-label">Record</p><p class="pro-stat-value">{{ action_tracker.w }}–{{ action_tracker.l }}</p></div>
-  <div class="pro-stat"><p class="pro-stat-label">Profit</p><p class="pro-stat-value {{ 'pos' if action_tracker.profit > 0 else ('neg' if action_tracker.profit < 0 else '') }}">{{ '+$%.2f' % action_tracker.profit if action_tracker.profit >= 0 else '−$%.2f' % -action_tracker.profit }}</p></div>
-  <div class="pro-stat"><p class="pro-stat-label">Win rate</p><p class="pro-stat-value">{{ '%.1f' % action_tracker.win_rate }}%</p></div>
-  <div class="pro-stat"><p class="pro-stat-label">ROI</p><p class="pro-stat-value {{ 'pos' if action_tracker.roi > 0 else ('neg' if action_tracker.roi < 0 else '') }}">{{ '%+.1f' % action_tracker.roi }}%</p></div>
-</div>
-<p class="muted" style="font-size:.8rem;margin:0 0 12px;">{{ action_tracker.tracked }} tracked · {{ action_tracker.pending }} pending</p>
-{% set _pend = action_tracker.picks | selectattr('resultado', 'none') | list %}
-{% if _pend %}
-<div class="section-head title-flush" style="margin-top:8px"><h2 class="section-title" style="font-size:1rem;">Pending ({{ _pend|length }})</h2></div>
-{% for p in _pend %}
-<article class="recent-row">
-  <div style="flex:1;min-width:0;">
-    <p style="margin:0;font-weight:700;">{{ p.pick }} <span class="muted">({{ fmt_odds(p.cuota) }})</span></p>
-    <p class="muted" style="margin:2px 0 0;font-size:.78rem;">{{ p._sport }} · {{ p.fecha }}</p>
-  </div>
-  <span class="result-badge pending">pending</span>
-</article>
-{% endfor %}
-{% endif %}
 {% endif %}
 
 <!-- 09 · THE PROCESS (requested by Alex 2026-09-26: same section as the public page) -->
