@@ -4734,6 +4734,19 @@ def api_set_balance_alex():
         return jsonify({"error": "balance inválido"}), 400
     if not book:
         return jsonify({"error": "book requerido"}), 400
+    if data.get("delete") is True:
+        db = get_db()
+        row = db.execute(
+            "SELECT id FROM users WHERE LOWER(email) = ?", (ALEX_MEMBER_EMAIL,)
+        ).fetchone()
+        if not row:
+            return jsonify({"error": "cuenta de Alex no encontrada"}), 404
+        db.execute(
+            "DELETE FROM book_balances WHERE user_id = ? AND book_name = ?",
+            (row["id"], book),
+        )
+        db.commit()
+        return jsonify({"ok": True, "action": "eliminado", "book": book})
     db = get_db()
     row = db.execute(
         "SELECT id FROM users WHERE LOWER(email) = ?", (ALEX_MEMBER_EMAIL,)
