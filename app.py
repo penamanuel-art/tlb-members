@@ -4705,3 +4705,58 @@ def api_auto_track_alex():
         )
     db.commit()
     return jsonify({"ok": True, "action": "insertado"})
+
+
+@app.route("/api/set-balance-alex", methods=["POST"])
+def api_set_balance_alex():
+    """Fija el balance de una casa en la cuenta personal de Alex
+    (alexpena1509@gmail.com).
+
+    Lo llama el asistente para sincronizaciones puntuales pedidas por Alex
+    (2026-10-05: Novig a $802.88 = $500 base + $302.88 profit del tracker).
+    De aquí en adelante el balance se mueve solo vía bump_book_balance al
+    liquidarse cada jugada.
+
+    Protegido con header X-Push-Key == PUSH_TRIGGER_KEY
+    (mismo patrón que /api/auto-track-alex).
+
+    JSON: {"book": "Novig", "balance": 802.88}
+    """
+    if not PUSH_TRIGGER_KEY or not secrets.compare_digest(
+        request.headers.get("X-Push-Key", ""), PUSH_TRIGGER_KEY
+    ):
+        return jsonify({"error": "forbidden"}), 403
+    data = request.get_json(force=True, silent=True) or {}
+    book = (data.get("book") or "").strip()[:40]
+    try:
+        balance = round(float(data.get("balance")), 2)
+    except (TypeError, ValueError):
+        return jsonify({"error": "balance inválido"}), 400
+    if not book:
+        return jsonify({"error": "book requerido"}), 400
+    db = get_db()
+    row = db.execute(
+        "SELECT id FROM users WHERE LOWER(email) = ?", (ALEX_MEMBER_EMAIL,)
+    ).fetchone()
+    if not row:
+        return jsonify({"error": "cuenta de Alex no encontrada"}), 404
+    _ensure_book_balances_table(db)
+    now = datetime.now(TZ).strftime("%Y-%m-%d %H:%M:%S")
+    ex = db.execute(
+        "SELECT id FROM book_balances WHERE user_id = ? AND book_name = ?",
+        (row["id"], book),
+    ).fetchone()
+    if ex:
+        db.execute(
+            "UPDATE book_balances SET balance = ?, updated_at = ? WHERE id = ?",
+            (balance, now, ex["id"]),
+        )
+        action = "actualizado"
+    else:
+        db.execute(
+            "INSERT INTO book_balances (user_id, book_name, balance, updated_at) VALUES (?, ?, ?, ?)",
+            (row["id"], book, balance, now),
+        )
+        action = "creado"
+    db.commit()
+    return jsonify({"ok": True, "action": action, "book": book, "balance": balance})
