@@ -1197,30 +1197,16 @@ def _sport_of_pick(pick):
     return "NCAAF"
 
 
-def action_tracker_data(db):
+def action_tracker_data(plays):
     """Sección 'Action Tracker' de NUESTRO Dashboard (pedido por Alex 2026-10-04).
-    Muestra NUESTROS números reales: las jugadas oficiales trackeadas por Alex
-    (las mismas de su Dashboard), con menú de estadísticas estilo Action Network.
+    Recibe las MISMAS jugadas trackeadas que el tracker visible del Dashboard
+    (las de la sesión del miembro), así los números son idénticos por diseño.
     Es INDEPENDIENTE del registro de VALUE plays en Action Network (eso va por
     separado y no se mezcla aquí).
     """
     try:
         from datetime import datetime, timedelta
-        # Dueño: admin primero; si no, la cuenta miembro de Alex
-        row = db.execute("SELECT id FROM users WHERE is_admin = 1 ORDER BY id LIMIT 1").fetchone()
-        if not row:
-            row = db.execute(
-                "SELECT id FROM users WHERE LOWER(email) = ?", (ALEX_MEMBER_EMAIL,)
-            ).fetchone()
-        if not row:
-            return None
-        uid = row["id"]
-        rows = db.execute(
-            "SELECT * FROM tracked_plays WHERE user_id = ? AND nivel IN ('GOLD','ELITE') "
-            "ORDER BY fecha DESC, id DESC",
-            (uid,),
-        ).fetchall()
-        plays = [dict(r) for r in rows]
+        plays = [dict(p) for p in (plays or [])]
         if not plays:
             return None
         # Números idénticos a su Dashboard (misma función que usa el home)
@@ -2338,7 +2324,7 @@ def home():
         tcurve=tcurve,
         recientes=recientes,
         recientes_value=recientes_value(),
-        action_tracker=action_tracker_data(db),
+        action_tracker=action_tracker_data([dict(r) for r in tracked_rows]),
         last_elite_win=last_elite_win(),
         es_admin=is_admin_for(user),
         es_alex=is_alex_member(user),
