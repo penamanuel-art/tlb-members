@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Trakeos — Admin{% endblock %}
+{% block content %}
+
+<section class="tracker-head">
+  <div>
+    <p class="kicker">ADMIN</p>
+    <h2>Who tracked each play</h2>
+    <p class="muted">Members who hit "+ Track" on posted plays, by play.</p>
+  </div>
+</section>
+
+{% for j in jugadas %}
+<article class="member-row">
+  <div class="m-name">{{ j.pick }} <span class="m-pill">{{ '+' if j.cuota > 0 else '' }}{{ j.cuota }}</span></div>
+  <div class="m-email">{{ j.fecha }} · <span class="m-pill on">{{ j.nivel }}</span></div>
+  <div class="m-meta">
+    {% for m in j.miembros %}
+    <span class="m-pill{% if m.resultado == 'W' %} on{% endif %}" title="{{ m.email }} · tracked {{ m.created_at[:16] if m.created_at else '—' }}">
+      {{ m.nombre }}{% if m.resultado == 'W' %} ✓{% elif m.resultado == 'L' %} ✕{% endif %}
+    </span>
+    {% endfor %}
+  </div>
+</article>
+{% else %}
+<p class="muted">No member has tracked a posted play yet.</p>
+{% endfor %}
+
+{% endblock %}

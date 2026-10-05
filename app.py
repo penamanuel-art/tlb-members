@@ -3664,6 +3664,36 @@ def admin_miembros():
                            eventos=[dict(e) for e in eventos])
 
 
+@app.route("/admin/trakeos")
+@login_required
+def admin_trakeos():
+    """Quién trakeó cada jugada publicada — solo para Alex (2026-10-05, pedido por Alex)."""
+    db = get_db()
+    user = current_user()
+    if not is_admin_for(user):
+        flash("You don't have permission to view this page.", "error")
+        return redirect(url_for("home"))
+    rows = db.execute(
+        "SELECT t.play_id, t.fecha, t.nivel, t.pick, t.cuota, t.resultado, "
+        "t.stake_monto, t.created_at, u.nombre, u.email "
+        "FROM tracked_plays t JOIN users u ON u.id = t.user_id "
+        "WHERE t.user_id != 0 AND t.nivel != 'VALUE' "
+        "ORDER BY t.fecha DESC, t.created_at DESC"
+    ).fetchall()
+    jugadas = []
+    idx = {}
+    for r in rows:
+        d = dict(r)
+        key = (d["play_id"], d["fecha"])
+        if key not in idx:
+            idx[key] = {"play_id": d["play_id"], "fecha": d["fecha"],
+                        "nivel": d["nivel"], "pick": d["pick"],
+                        "cuota": d["cuota"], "miembros": []}
+            jugadas.append(idx[key])
+        idx[key]["miembros"].append(d)
+    return render_template("admin_trakeos.html", jugadas=jugadas)
+
+
 @app.route("/resultados")
 @login_required
 def resultados():
