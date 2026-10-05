@@ -1180,6 +1180,69 @@ def resumen_ayer():
     return None
 
 
+def action_tracker_data():
+    """Tracker espejo de Action Network (pedido por Alex 2026-10-04).
+    Lee data/action-tracker.json: los mismos picks registrados en su cuenta
+    de Action Network como jugadas manuales de $50 (1u), calificados con
+    scores reales. Devuelve dict con summary y picks (o None si no hay datos).
+    Incluye desglose por período (today/last7/last30), por deporte y por
+    mercado para el menú de estadísticas estilo Action (pedido 2026-10-04).
+    """
+    try:
+        from datetime import datetime, timedelta
+        with open(os.path.join(BASE_DIR, "data", "action-tracker.json"), encoding="utf-8") as f:
+            d = json.load(f)
+        picks = d.get("picks", [])
+        s = d.get("summary") or {}
+        w, l = int(s.get("w", 0)), int(s.get("l", 0))
+        profit = float(s.get("profit", 0) or 0)
+        graded = w + l
+        hoy = datetime.now(TZ).date()
+        d7 = hoy - timedelta(days=7)
+        d30 = hoy - timedelta(days=30)
+
+        def _stats(ps):
+            gw = sum(1 for p in ps if p.get("resultado") == "W")
+            gl = sum(1 for p in ps if p.get("resultado") == "L")
+            gp = round(sum(float(p.get("profit") or 0) for p in ps if p.get("resultado") in ("W", "L")), 2)
+            n = gw + gl
+            return {"w": gw, "l": gl, "profit": gp,
+                    "win_rate": round(100.0 * gw / n, 1) if n else 0.0,
+                    "roi": round(100.0 * gp / (n * 50.0), 1) if n else 0.0,
+                    "n": n}
+
+        def _pdate(p):
+            try:
+                return datetime.strptime(p.get("game_date", ""), "%Y-%m-%d").date()
+            except Exception:
+                return None
+
+        by_sport = {}
+        for p in picks:
+            sp = p.get("sport", "?")
+            by_sport.setdefault(sp, []).append(p)
+        by_market = {}
+        for p in picks:
+            mk = p.get("market", "?")
+            by_market.setdefault(mk, []).append(p)
+        return {
+            "w": w, "l": l, "profit": profit,
+            "win_rate": round(100.0 * w / graded, 1) if graded else 0.0,
+            "roi": round(100.0 * profit / (graded * 50.0), 1) if graded else 0.0,
+            "registered": int(s.get("registered", 0)),
+            "total": int(s.get("total", len(picks))),
+            "updated": d.get("updated"),
+            "picks": picks,
+            "today": _stats([p for p in picks if _pdate(p) == hoy]),
+            "last7": _stats([p for p in picks if _pdate(p) and _pdate(p) >= d7]),
+            "last30": _stats([p for p in picks if _pdate(p) and _pdate(p) >= d30]),
+            "by_sport": {k: _stats(v) for k, v in sorted(by_sport.items())},
+            "by_market": {k: _stats(v) for k, v in sorted(by_market.items())},
+        }
+    except Exception:
+        return None
+
+
 def recientes_oficiales(n=6):
     """Jugadas liquidadas del archivo oficial (sin bloqueadas), más recientes primero."""
     recientes = []
@@ -2241,6 +2304,7 @@ def home():
         tcurve=tcurve,
         recientes=recientes,
         recientes_value=recientes_value(),
+        action_tracker=action_tracker_data(),
         last_elite_win=last_elite_win(),
         es_admin=is_admin_for(user),
         es_alex=is_alex_member(user),

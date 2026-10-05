@@ -490,6 +490,111 @@
   {% endif %}
 </section>
 
+{% if action_tracker %}
+<!-- ACTION NETWORK TRACKER (pedido por Alex 2026-10-04): espejo de las VALUE registradas en Action Network.
+     Click en el encabezado despliega el menú de estadísticas estilo Action (pedido 2026-10-04). -->
+<section class="v2-sec">
+  <a href="javascript:void(0)" onclick="var e=document.getElementById('action-stats');var h=e.style.display==='none';e.style.display=h?'block':'none';var c=document.getElementById('action-caret');if(c)c.textContent=h?'▴':'▾';" style="text-decoration:none;color:inherit;display:block;">
+  <div class="v2-sec-head">
+    <div>
+      <p class="v2-sec-eyebrow"><b>◈</b> · Action Network</p>
+      <h2 class="v2-sec-title">Value Plays Tracker <span id="action-caret" style="font-size:1rem;color:#9aa3b8;">▾</span></h2>
+      <p class="v2-sec-sub">Every system value play tracked as a $50 (1u) pick on our Action Network account (@TheLineBreaker). Graded against the final score — win or loss, nothing hidden. Tap for full stats.</p>
+    </div>
+  </div>
+  </a>
+  <div class="v2-stats" style="margin-bottom:12px">
+    <div class="v2-stat">
+      <p class="v2-stat-label">Record</p>
+      <p class="v2-stat-value">{{ action_tracker.w }}–{{ action_tracker.l }}</p>
+      <p class="v2-stat-sub">settled picks</p>
+    </div>
+    <div class="v2-stat">
+      <p class="v2-stat-label">Profit</p>
+      <p class="v2-stat-value {{ 'pos' if action_tracker.profit > 0 else ('neg' if action_tracker.profit < 0 else '') }}">{{ '+$%.2f' % action_tracker.profit if action_tracker.profit >= 0 else '−$%.2f' % -action_tracker.profit }}</p>
+      <p class="v2-stat-sub">at $50 per pick</p>
+    </div>
+    <div class="v2-stat">
+      <p class="v2-stat-label">Win rate</p>
+      <p class="v2-stat-value">{{ '%.1f' % action_tracker.win_rate }}%</p>
+      <p class="v2-stat-sub">settled picks</p>
+    </div>
+    <div class="v2-stat">
+      <p class="v2-stat-label">ROI</p>
+      <p class="v2-stat-value {{ 'pos' if action_tracker.roi > 0 else ('neg' if action_tracker.roi < 0 else '') }}">{{ '%+.1f' % action_tracker.roi }}%</p>
+      <p class="v2-stat-sub">on amount risked</p>
+    </div>
+  </div>
+  {# Menú de estadísticas estilo Action Network (desplegable) #}
+  <div id="action-stats" style="display:none;">
+    <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:16px;margin-bottom:12px;">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:6px;">
+        <p style="margin:0;font-size:1.05rem;font-weight:800;color:#fff;">Last 30 Days</p>
+        <p style="margin:0;font-size:.85rem;color:#9aa3b8;">Wins <b style="color:{{ '#4ade80' if action_tracker.last30.win_rate >= 50 else '#f87171' }};">{{ '%.0f' % action_tracker.last30.win_rate }}%</b>
+        &nbsp;ROI <b style="color:{{ '#4ade80' if action_tracker.last30.roi >= 0 else '#f87171' }};">{{ '%+.2f' % action_tracker.last30.roi }}%</b></p>
+      </div>
+      <p style="margin:4px 0 0;font-size:1.6rem;font-weight:900;color:{{ '#4ade80' if action_tracker.last30.profit >= 0 else '#f87171' }};">{{ '+$%.2f' % action_tracker.last30.profit if action_tracker.last30.profit >= 0 else '−$%.2f' % -action_tracker.last30.profit }}</p>
+      <p style="margin:2px 0 0;font-size:.85rem;color:#9aa3b8;">Record <b style="color:#fff;">{{ action_tracker.last30.w }}-{{ action_tracker.last30.l }}-0</b></p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px;">
+      {% for _lbl, _s in [('Today', action_tracker.today), ('Last 7', action_tracker.last7), ('Last 30', action_tracker.last30)] %}
+      <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:12px;">
+        <p style="margin:0 0 6px;font-size:.85rem;font-weight:700;color:#fff;">{{ _lbl }}</p>
+        <p style="margin:0;font-size:1.15rem;font-weight:900;color:{{ '#4ade80' if _s.profit >= 0 else '#f87171' }};">{{ '+$%.2f' % _s.profit if _s.profit >= 0 else '−$%.2f' % -_s.profit }}</p>
+        <p style="margin:4px 0 0;font-size:.78rem;color:#9aa3b8;">{{ _s.w }}-{{ _s.l }}-0</p>
+        <p style="margin:2px 0 0;font-size:.78rem;color:#9aa3b8;">ROI <b style="color:{{ '#4ade80' if _s.roi >= 0 else '#f87171' }};">{{ '%+.1f' % _s.roi }}%</b></p>
+      </div>
+      {% endfor %}
+    </div>
+    {% set _ball = '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#aab4c8" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M6.6 3.9c2.7 2.6 2.7 13.6 0 16.2M17.4 3.9c-2.7 2.6-2.7 13.6 0 16.2"/></svg>' %}
+    {% set _fb = '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#aab4c8" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3.2 15.2c2.2-3.8 5.8-5.7 8.8-5.7s6.6 1.9 8.8 5.7c-2.2 3.8-5.8 5.7-8.8 5.7s-6.6-1.9-8.8-5.7z"/><path d="M9.2 12.6h5.6M10.6 11.2v2.8M12 11.2v2.8M13.4 11.2v2.8"/></svg>' %}
+    {% set _icons = {'MLB': _ball, 'NFL': _fb, 'NCAAF': _fb} %}
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px;">
+      {% for _sp, _s in action_tracker.by_sport.items() %}
+      <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:12px;text-align:center;">
+        <div style="margin-bottom:6px;">{{ _icons.get(_sp, _fb)|safe }}</div>
+        <p style="margin:0 0 6px;font-size:.8rem;font-weight:800;letter-spacing:.06em;color:#fff;">{{ _sp }}</p>
+        <p style="margin:0;font-size:.9rem;font-weight:700;color:#9aa3b8;">{{ _s.w }}-{{ _s.l }}-0</p>
+        <p style="margin:4px 0 0;font-size:1rem;font-weight:900;color:{{ '#4ade80' if _s.profit >= 0 else '#f87171' }};">{{ '+$%.2f' % _s.profit if _s.profit >= 0 else '−$%.2f' % -_s.profit }}</p>
+      </div>
+      {% endfor %}
+    </div>
+    {% set _ml = action_tracker.by_market.get('ML', {'n':0}) %}{% set _sp2 = action_tracker.by_market.get('Spread', {'n':0}) %}
+    {% set _tot = _ml.n + _sp2.n %}
+    <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:16px;margin-bottom:12px;">
+      <p style="margin:0 0 10px;font-size:1.05rem;font-weight:800;color:#fff;">Favorite Bets</p>
+      {% for _lbl, _s, _col in [('Moneyline', _ml, '#c084fc'), ('Spread', _sp2, '#60a5fa')] %}
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+        <p style="margin:0;font-size:.8rem;color:#9aa3b8;width:78px;flex-shrink:0;">{{ _lbl }}</p>
+        <div style="flex:1;height:10px;background:rgba(255,255,255,.07);border-radius:6px;overflow:hidden;">
+          <div style="height:100%;width:{{ '%.0f' % (100.0*_s.n/_tot) if _tot else 0 }}%;background:{{ _col }};border-radius:6px;"></div>
+        </div>
+        <p style="margin:0;font-size:.8rem;color:#fff;font-weight:700;width:88px;text-align:right;flex-shrink:0;">{{ _s.n }} picks · {{ '%+.0f' % _s.profit if _s.profit==_s.profit|int else '%+.2f' % _s.profit }}</p>
+      </div>
+      {% endfor %}
+      <p style="margin:6px 0 0;font-size:.75rem;color:#9aa3b8;"><span style="color:#c084fc;">●</span> ML &nbsp;<span style="color:#60a5fa;">●</span> Spread</p>
+    </div>
+  </div>
+  <p class="muted" style="font-size:.8rem;margin:0 0 12px;">{{ action_tracker.registered }} of {{ action_tracker.total }} picks synced to Action Network{% if action_tracker.updated %} · updated {{ action_tracker.updated }}{% endif %}</p>
+  {% set _pend = action_tracker.picks | selectattr('resultado', 'none') | list %}
+  {% if _pend %}
+  <p class="v2-sec-eyebrow" style="margin:0 0 10px">Pending ({{ _pend|length }})</p>
+  <div style="display:flex;flex-direction:column;gap:8px;">
+    {% for p in _pend %}
+    <div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05);border-radius:12px;padding:10px 12px;">
+      <div style="flex:1;min-width:0;">
+        <p style="margin:0;font-size:.9rem;font-weight:700;color:#fff;">{{ p.team }}{% if p.market == 'Spread' %} {{ p.line }}{% endif %} <span style="color:#9aa3b8;font-weight:600;">({{ fmt_odds(p.odds) }})</span></p>
+        <p style="margin:2px 0 0;font-size:.75rem;color:#9aa3b8;">{{ p.sport }} · {{ p.game_date }}{% if not p.registered %} · syncing to Action…{% endif %}</p>
+      </div>
+      <span style="background:rgba(255,255,255,.08);color:#9aa3b8;font-weight:700;font-size:.75rem;padding:6px 12px;border-radius:16px;white-space:nowrap;">pending</span>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+</section>
+
+{% endif %}
+
 <!-- 09 · THE PROCESS -->
 <section class="v2-sec">
   <div class="v2-process">
