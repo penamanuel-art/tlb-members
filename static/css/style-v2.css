@@ -12,8 +12,9 @@
    ============================================================ */
 
 :root {
-  /* v2 palette */
-  --v2-bg: #0d1626;
+  /* v2 palette — tono Fubo (pedido Alex 2026-10-05):
+     negro profundo + acentos con más punch */
+  --v2-bg: #060a13;
   --v2-surface: rgba(255, 255, 255, 0.055);
   --v2-surface-2: rgba(255, 255, 255, 0.09);
   --v2-border: rgba(255, 255, 255, 0.13);
@@ -39,8 +40,8 @@
   --v2-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 
   /* legacy vars consumed by _results_ticker.html inline styles */
-  --card: #0d1526;
-  --card-2: #111c33;
+  --card: #060a13;
+  --card-2: #0b1220;
   --line: rgba(255, 255, 255, 0.09);
   --text: #eef3fb;
   --gold: #d4af37;
@@ -54,9 +55,9 @@
 body.v2 {
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Inter, sans-serif;
   background:
-    radial-gradient(1000px 520px at 8% -80px, rgba(59, 130, 246, 0.26), transparent 62%),
-    radial-gradient(820px 440px at 106% 32%, rgba(245, 197, 66, 0.11), transparent 60%),
-    radial-gradient(920px 560px at 85% 112%, rgba(47, 212, 126, 0.15), transparent 62%),
+    radial-gradient(1000px 520px at 8% -80px, rgba(59, 130, 246, 0.30), transparent 62%),
+    radial-gradient(820px 440px at 106% 32%, rgba(245, 197, 66, 0.14), transparent 60%),
+    radial-gradient(920px 560px at 85% 112%, rgba(47, 212, 126, 0.19), transparent 62%),
     var(--v2-bg);
   color: var(--v2-text);
   -webkit-font-smoothing: antialiased;
@@ -157,7 +158,7 @@ body.v2::before {
   font-size: 13px; font-weight: 800; text-decoration: none;
   padding: 10px 17px; border-radius: var(--v2-radius-sm); color: #04120a;
   background: linear-gradient(135deg, #7dffb0, var(--v2-green));
-  box-shadow: 0 6px 18px rgba(47, 212, 126, 0.30);
+  box-shadow: 0 8px 26px rgba(47, 212, 126, 0.45);
   transition: transform .18s var(--v2-ease), box-shadow .18s var(--v2-ease);
 }
 .v2-btn-sm:active { transform: scale(0.96); }
@@ -389,7 +390,7 @@ body.v2 .tstc-novig:active, body.v2 .tstc-track:active { transform: scale(0.97);
   backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
 .v2-modal[hidden] { display: none; }
 .v2-modal-card {
-  background: #0d1526; border: 1px solid var(--v2-border); border-radius: 24px;
+  background: #0a101d; border: 1px solid var(--v2-border); border-radius: 24px;
   padding: 28px 24px; width: 100%; max-width: 440px; max-height: 86vh; overflow-y: auto;
   box-shadow: var(--v2-shadow-lg);
 }
@@ -577,7 +578,7 @@ body.v2 .tstc-novig:active, body.v2 .tstc-track:active { transform: scale(0.97);
   backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
 .modal[hidden] { display: none; }
 .modal-card {
-  background: #0d1526; border: 1px solid var(--v2-border); border-radius: 22px;
+  background: #0a101d; border: 1px solid var(--v2-border); border-radius: 22px;
   padding: 22px; width: 100%; max-width: 420px; position: relative; max-height: 88vh; overflow-y: auto;
   box-shadow: var(--v2-shadow-lg);
 }
