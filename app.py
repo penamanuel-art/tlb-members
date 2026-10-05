@@ -4730,10 +4730,6 @@ def api_set_balance_alex():
         return jsonify({"error": "forbidden"}), 403
     data = request.get_json(force=True, silent=True) or {}
     book = (data.get("book") or "").strip()[:40]
-    try:
-        balance = round(float(data.get("balance")), 2)
-    except (TypeError, ValueError):
-        return jsonify({"error": "balance inválido"}), 400
     if not book:
         return jsonify({"error": "book requerido"}), 400
     if data.get("delete") is True:
@@ -4749,6 +4745,10 @@ def api_set_balance_alex():
         )
         db.commit()
         return jsonify({"ok": True, "action": "eliminado", "book": book})
+    try:
+        balance = round(float(data.get("balance")), 2)
+    except (TypeError, ValueError):
+        return jsonify({"error": "balance inválido"}), 400
     db = get_db()
     row = db.execute(
         "SELECT id FROM users WHERE LOWER(email) = ?", (ALEX_MEMBER_EMAIL,)
