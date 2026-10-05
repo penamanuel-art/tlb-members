@@ -1,0 +1,195 @@
+{# VISTA PREVIA TEMPORAL (2026-10-05, pedido por Alex): rediseño del tracker
+   personal estilo "My Action" de Action Network, con las herramientas del
+   programa. NO enlazada en la app; se elimina al aprobar/rechazar. #}
+{% extends "base.html" %}
+{% block title %}My Tracker — Preview{% endblock %}
+{% block content %}
+<style>
+.ma-wrap{max-width:560px;margin:0 auto;padding:6px 2px 90px;}
+.ma-prev{display:inline-block;font-size:.65rem;font-weight:800;letter-spacing:2px;color:#111;background:#ffd257;border-radius:6px;padding:3px 8px;margin-left:10px;vertical-align:middle;}
+.ma-head h1{margin:0;color:#fff;font-size:2rem;font-weight:800;display:inline;}
+.ma-profile{display:flex;align-items:center;gap:18px;margin:20px 0 4px;}
+.ma-avatar{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#d4af37,#8a6d1c);color:#111;font-weight:900;font-size:1.6rem;display:flex;align-items:center;justify-content:center;flex:none;}
+.ma-pstats{display:flex;gap:26px;}
+.ma-pstats div{text-align:center;}
+.ma-pstats b{display:block;color:#fff;font-size:1.35rem;font-weight:800;}
+.ma-pstats b.pos{color:#4ade80;} .ma-pstats b.neg{color:#f87171;}
+.ma-pstats span{color:#9aa3b8;font-size:.8rem;}
+.ma-name{color:#fff;font-weight:800;letter-spacing:1px;margin:2px 0 18px;font-size:.95rem;}
+.ma-tabs{display:flex;gap:10px;margin-bottom:16px;}
+.ma-tab{flex:1;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:#e2e8f0;border-radius:14px;padding:12px 8px;font-weight:800;font-size:.95rem;cursor:pointer;}
+.ma-tab.active{background:#fff;color:#111;border-color:#fff;}
+.ma-stake-card{background:linear-gradient(150deg,#151a2e,#0d1220);border:1px solid rgba(0,224,127,.35);border-radius:16px;padding:16px 18px;margin-bottom:14px;}
+.ma-stake-t{margin:0;color:#9aa3b8;font-size:.75rem;letter-spacing:1.5px;font-weight:700;}
+.ma-stake-v{margin:6px 0 0;color:#fff;font-size:1.15rem;font-weight:800;}
+.ma-stake-v b{color:#4ade80;}
+.ma-seg{display:flex;background:rgba(255,255,255,.06);border-radius:999px;padding:4px;margin-bottom:14px;}
+.ma-segbtn{flex:1;border:0;background:transparent;color:#9aa3b8;border-radius:999px;padding:9px;font-weight:800;font-size:.9rem;cursor:pointer;}
+.ma-segbtn.active{background:#fff;color:#111;}
+.ma-row{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:12px 14px;margin-bottom:10px;}
+.ma-row-main{flex:1;min-width:0;}
+.ma-row-pick{margin:0;color:#fff;font-weight:700;font-size:.92rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ma-row-sub{margin:4px 0 0;color:#9aa3b8;font-size:.78rem;}
+.ma-row-right{text-align:right;flex:none;}
+.ma-row-profit{margin:0;font-weight:800;font-size:1rem;}
+.ma-row-profit.pos{color:#4ade80;} .ma-row-profit.neg{color:#f87171;} .ma-row-profit.pend{color:#9aa3b8;}
+.ma-badge{display:inline-block;font-size:.68rem;font-weight:800;border-radius:6px;padding:2px 7px;margin-top:4px;}
+.ma-badge.w{background:rgba(74,222,128,.15);color:#4ade80;}
+.ma-badge.l{background:rgba(248,113,113,.15);color:#f87171;}
+.ma-badge.p{background:rgba(154,163,184,.15);color:#9aa3b8;}
+.ma-empty{text-align:center;color:#9aa3b8;padding:30px 10px;}
+.ma-lvl{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:16px;margin-bottom:10px;}
+.ma-lvl-head{margin:0 0 8px;color:#fff;font-weight:800;}
+.ma-lvl-nums{display:flex;gap:18px;color:#9aa3b8;font-size:.9rem;}
+.ma-lvl-nums b{color:#fff;font-size:1.1rem;}
+.ma-bookcard{display:flex;align-items:center;gap:14px;background:linear-gradient(150deg,#151a2e,#0d1220);border:1px solid rgba(96,165,250,.4);border-radius:16px;padding:18px;color:#fff;text-decoration:none;}
+.ma-bookcard b{display:block;font-size:1rem;} .ma-bookcard span{color:#9aa3b8;font-size:.82rem;}
+.ma-bookcard .go{margin-left:auto;color:#60a5fa;font-weight:800;}
+.ma-tools-t{color:#fff;font-size:1.3rem;font-weight:800;margin:26px 0 12px;}
+.ma-tools{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+.ma-tool{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);border-radius:16px;padding:18px 8px;text-align:center;text-decoration:none;color:#fff;}
+.ma-tool .ic{font-size:1.7rem;display:block;margin-bottom:8px;}
+.ma-tool span{font-weight:700;font-size:.85rem;}
+.ma-mystats{margin-top:26px;}
+.ma-mystats-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.ma-mystats-head h3{margin:0;color:#fff;font-size:1.3rem;font-weight:800;}
+.ma-mystats-head a{color:#60a5fa;font-weight:700;font-size:.9rem;text-decoration:none;}
+.ma-curve{width:100%;height:120px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:16px;}
+.ma-fab{position:fixed;right:18px;bottom:24px;width:60px;height:60px;border-radius:50%;background:#22c55e;color:#fff;font-size:2rem;font-weight:400;display:flex;align-items:center;justify-content:center;text-decoration:none;box-shadow:0 6px 20px rgba(34,197,94,.45);z-index:50;line-height:1;}
+</style>
+
+<div class="ma-wrap">
+  <div class="ma-head"><h1>My Tracker</h1><span class="ma-prev">PREVIEW</span></div>
+
+  {% set _settled = stats.wins + stats.losses %}
+  {% set _wr = (stats.wins / _settled * 100) if _settled else 0 %}
+  <section class="ma-profile">
+    <div class="ma-avatar">{{ (nombre or 'M')[:1]|upper }}</div>
+    <div class="ma-pstats">
+      <div><b>{{ stats.tracked }}</b><span>Tracked</span></div>
+      <div><b>{{ '%.0f' % _wr }}%</b><span>Win rate</span></div>
+      <div><b class="{{ 'pos' if stats.net_dollars > 0 else ('neg' if stats.net_dollars < 0 else '') }}">{% if stats.net_dollars > 0 %}{{ '+$%.2f' % stats.net_dollars }}{% elif stats.net_dollars < 0 %}{{ '-$%.2f' % -stats.net_dollars }}{% else %}$0.00{% endif %}</b><span>Profit</span></div>
+    </div>
+  </section>
+  <p class="ma-name">{{ (nombre or 'MIEMBRO')|upper }}</p>
+
+  <div class="ma-tabs">
+    <button type="button" class="ma-tab active" data-tab="bets">&#x1f4c8; Bets</button>
+    <button type="button" class="ma-tab" data-tab="stats">&#x1f4ca; Stats</button>
+    <button type="button" class="ma-tab" data-tab="books">&#x1f4b0; Books</button>
+  </div>
+
+  <div class="ma-panel" id="ma-bets">
+    <div class="ma-stake-card">
+      <p class="ma-stake-t">1u = 1% OF YOUR BANKROLL</p>
+      <p class="ma-stake-v">VIP <b>${{ '%.2f' % u1 }}</b> &middot; Free <b>${{ '%.2f' % u06 }}</b></p>
+    </div>
+    <div class="ma-seg">
+      <button type="button" class="ma-segbtn active" data-f="settled">Settled</button>
+      <button type="button" class="ma-segbtn" data-f="pending">Pending</button>
+    </div>
+    <div class="ma-list" id="ma-list">
+      {% for r in rows %}
+      <div class="ma-row" data-r="{{ 'W' if r.resultado=='W' else ('L' if r.resultado=='L' else 'P') }}">
+        <div class="ma-row-main">
+          <p class="ma-row-pick">{{ r.pick }} ({{ r.cuota_txt }})</p>
+          <p class="ma-row-sub">{{ r.fecha_corta }} &middot; ${{ '%.2f' % r.stake_monto }} &middot; {{ r.casa }}{% if r.marcador %} &middot; {{ r.marcador }}{% endif %}</p>
+        </div>
+        <div class="ma-row-right">
+          {% if r.resultado == 'W' %}
+          <p class="ma-row-profit pos">+${{ '%.2f' % r.profit }}</p><span class="ma-badge w">WON</span>
+          {% elif r.resultado == 'L' %}
+          <p class="ma-row-profit neg">-${{ '%.2f' % -r.profit }}</p><span class="ma-badge l">LOST</span>
+          {% else %}
+          <p class="ma-row-profit pend">Pending</p><span class="ma-badge p">OPEN</span>
+          {% endif %}
+        </div>
+      </div>
+      {% else %}
+      <p class="ma-empty">Bets you track will appear here.</p>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="ma-panel" id="ma-stats" hidden>
+    {% for lvl, d in por_nivel.items() %}
+    <div class="ma-lvl">
+      <p class="ma-lvl-head">{{ '&#x2b50;' if lvl == 'VIP' else '&#x1f7e2;' }} {{ lvl }}</p>
+      <div class="ma-lvl-nums">
+        <span><b>{{ d.w }}&ndash;{{ d.l }}</b><br>record</span>
+        <span><b class="{{ 'pos' if d.profit > 0 else ('neg' if d.profit < 0 else '') }}" style="{{ 'color:#4ade80' if d.profit > 0 else ('color:#f87171' if d.profit < 0 else '') }}">{{ '+$%.2f' % d.profit if d.profit >= 0 else '-$%.2f' % -d.profit }}</b><br>profit</span>
+      </div>
+    </div>
+    {% endfor %}
+    <div class="ma-mystats">
+      <div class="ma-mystats-head"><h3>My Stats</h3><a href="{{ url_for('tracker_export') }}">See more &rarr;</a></div>
+      {% if curve_pts and curve_pts|length > 1 %}
+      {% set ns = namespace(d="") %}
+      {% set mn = curve_pts|min %}{% set mx = curve_pts|max %}
+      {% set rng = (mx - mn) if mx != mn else 1 %}
+      {% for v in curve_pts %}
+        {% set x = (loop.index0 / (curve_pts|length - 1) * 100) %}
+        {% set y = 92 - ((v - mn) / rng * 78) %}
+        {% set ns.d = ns.d + '%.1f,%.1f ' % (x, y) %}
+      {% endfor %}
+      <svg class="ma-curve" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+        <polyline points="{{ ns.d }}" fill="none" stroke="#4ade80" stroke-width="2" vector-effect="non-scaling-stroke"/>
+      </svg>
+      {% else %}
+      <p class="ma-empty">Not enough graded plays for a curve yet.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="ma-panel" id="ma-books" hidden>
+    <a class="ma-bookcard" href="{{ url_for('balances') }}">
+      <span style="font-size:1.8rem;">&#x1f4b0;</span>
+      <div><b>Book balances</b><span>Track your balance per sportsbook</span></div>
+      <span class="go">&rarr;</span>
+    </a>
+  </div>
+
+  <h3 class="ma-tools-t">Tools</h3>
+  <div class="ma-tools">
+    <a class="ma-tool" href="{{ url_for('ev_board') }}"><span class="ic">&#x26a1;</span><span>EV Board</span></a>
+    <a class="ma-tool" href="{{ url_for('props') }}"><span class="ic">&#x1f3af;</span><span>Player Props</span></a>
+    <a class="ma-tool" href="{{ url_for('balances') }}"><span class="ic">&#x1f4b0;</span><span>Balances</span></a>
+  </div>
+</div>
+
+<a class="ma-fab" href="{{ url_for('home') }}" aria-label="Track today's plays">+</a>
+
+<script>
+(function(){
+  var tabs = document.querySelectorAll('.ma-tab');
+  tabs.forEach(function(t){
+    t.addEventListener('click', function(){
+      tabs.forEach(function(x){ x.classList.remove('active'); });
+      t.classList.add('active');
+      ['bets','stats','books'].forEach(function(k){
+        document.getElementById('ma-'+k).hidden = (k !== t.dataset.tab);
+      });
+    });
+  });
+  var segs = document.querySelectorAll('.ma-segbtn');
+  var rows = document.querySelectorAll('#ma-list .ma-row');
+  function apply(f){
+    var n = 0;
+    rows.forEach(function(r){
+      var settled = (r.dataset.r === 'W' || r.dataset.r === 'L');
+      var show = (f === 'settled') ? settled : !settled;
+      r.style.display = show ? '' : 'none';
+      if (show) n++;
+    });
+  }
+  segs.forEach(function(b){
+    b.addEventListener('click', function(){
+      segs.forEach(function(x){ x.classList.remove('active'); });
+      b.classList.add('active');
+      apply(b.dataset.f);
+    });
+  });
+  apply('settled');
+})();
+</script>
+{% endblock %}

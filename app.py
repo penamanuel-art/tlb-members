@@ -2861,10 +2861,21 @@ def tracker():
     # orden de Alex). Su "Alex Owner Results" estaba vacío y no tenía sentido.
     if is_admin_for(current_user()):
         return redirect(url_for("resultados"))
-    auto_grado_tracked(db, current_user())
+    return render_template("dashboard.html", **_tracker_context(current_user()))
+
+
+def _tracker_context(user):
+    """Contexto del tracker personal para un usuario dado (fila de users).
+
+    Extraído de tracker() el 2026-10-05 para reutilizarlo en la vista previa
+    del rediseño estilo 'My Action' sin duplicar la lógica.
+    """
+    db = get_db()
+    uid = user["id"]
+    auto_grado_tracked(db, user)
     tracked = db.execute(
         "SELECT * FROM tracked_plays WHERE user_id = ? ORDER BY fecha DESC, id DESC",
-        (session["user_id"],),
+        (uid,),
     ).fetchall()
     tracked = [dict(t) for t in tracked]
     tracked_ids = {t["play_id"] for t in tracked}
@@ -2879,7 +2890,6 @@ def tracker():
         and play_map[t["play_id"]].get("clv") is not None
     ]
     stats["clv_avg"] = (sum(clvs) / len(clvs)) if clvs else None
-    user = current_user()
     card_pendiente = not card_publicada_hoy()
     # Filas enriquecidas para el tracker unico estilo WGT: marcador y casa
     # desde el archivo oficial (match por fecha+pick), logo ESPN del equipo.
@@ -2919,14 +2929,13 @@ def tracker():
             "abbr": abbr,
             "logo": logo,
         })
-    return render_template(
-        "dashboard.html",
+    return dict(
         plays=[] if card_pendiente else load_plays(),
         card_pendiente=card_pendiente,
         rows=rows,
         tracked_ids=tracked_ids,
         stats=stats,
-        nombre=session.get("nombre", ""),
+        nombre=user["nombre"] if user else "",
         bankroll=user["bankroll"] if user else None,
         stake_mode=user["stake_mode"] if user else "units",
         platinum_unlocked=platinum_unlocked_for(user),
@@ -2936,6 +2945,46 @@ def tracker():
         streak=program_streak(),
         resumen_ayer=resumen_ayer(),
         es_admin=is_admin_for(user),
+    )
+
+
+@app.route("/preview/my-action-8f3k2")
+@login_required
+def preview_my_action():
+    """VISTA PREVIA TEMPORAL (2026-10-05, pedido por Alex): rediseño del
+    tracker personal estilo 'My Action' de Action Network, con las
+    herramientas del programa. URL sin enlaces en la app; muestra siempre
+    el tracker del miembro de Alex para que él lo apruebe desde cualquiera
+    de sus dos teléfonos. Se elimina al aprobar o rechazar el diseño."""
+    db = get_db()
+    alex = db.execute(
+        "SELECT * FROM users WHERE LOWER(email) = ?", (ALEX_MEMBER_EMAIL.lower(),)
+    ).fetchone()
+    if not alex:
+        return "Preview no disponible", 404
+    ctx = _tracker_context(alex)
+    rows = ctx["rows"]
+    # Desglose por nivel para la pestaña Stats
+    por_nivel = {}
+    for r in rows:
+        niv = "VIP" if (r["nivel"] or "").upper() in ("ELITE", "PLATINUM") else "Free Plays"
+        d = por_nivel.setdefault(niv, {"w": 0, "l": 0, "profit": 0.0})
+        if r["resultado"] == "W":
+            d["w"] += 1
+        elif r["resultado"] == "L":
+            d["l"] += 1
+        d["profit"] += float(r["profit"] or 0)
+    # Curva de profit acumulado (cronológico) para "My Stats"
+    cron = sorted([r for r in rows if r["resultado"] in ("W", "L")],
+                  key=lambda r: (r["fecha"], r["id"]))
+    acc, pts = 0.0, []
+    for r in cron:
+        acc += float(r["profit"] or 0)
+        pts.append(round(acc, 2))
+    br = float(ctx.get("bankroll") or 0)
+    return render_template(
+        "my_action_preview.html", **ctx, por_nivel=por_nivel,
+        curve_pts=pts, u1=round(br * 0.01, 2), u06=round(br * 0.006, 2),
     )
 
 
