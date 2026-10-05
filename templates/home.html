@@ -259,20 +259,31 @@
 </div>
 {% set _settled = tstats.wins + tstats.losses %}
 {% set _wr = (tstats.wins / _settled * 100) if _settled else 0 %}
-<div class="wgt-box wgt-personal">
-  <p class="wgt-eyebrow">Your profit &middot; All-time</p>
-  <p class="wgt-hero {{ 'pos' if tstats.net_dollars > 0 else ('neg' if tstats.net_dollars < 0 else '') }}">{% if tstats.net_dollars > 0 %}{{ '+$%.2f' % tstats.net_dollars }}{% elif tstats.net_dollars < 0 %}{{ '-$%.2f' % -tstats.net_dollars }}{% else %}$0.00{% endif %}</p>
-  <p class="wgt-sub"><strong>{{ tstats.wins }}&ndash;{{ tstats.losses }}</strong> &middot; your tracked plays</p>
-  <div class="wgt-inset">
-    <span class="wgt-fire">&#x1f525;</span>
-    <div>
-      <p class="wgt-inset-val">{{ tstats.streak }}</p>
-      <p class="wgt-inset-lab">Current streak</p>
-    </div>
+<section class="stats-grid results-hero member-cards">
+  <div class="stat">
+    <span class="stat-label">TOTAL PROFIT</span>
+    <span class="stat-value {{ 'pos' if tstats.net_dollars > 0 else ('neg' if tstats.net_dollars < 0 else '') }}">{% if tstats.net_dollars > 0 %}{{ '+$%.2f' % tstats.net_dollars }}{% elif tstats.net_dollars < 0 %}{{ '-$%.2f' % -tstats.net_dollars }}{% else %}$0.00{% endif %}</span>
+    <span class="stat-sub">your tracked profit</span>
   </div>
-  <p class="wgt-meta">{{ tstats.tracked }} tracked &middot; {{ tstats.pending }} pending &middot; {{ '%.0f' % _wr }}% win rate &middot; {{ '%+.1f' % tstats.roi }}% ROI</p>
+  <div class="stat">
+    <span class="stat-label">WIN RATE</span>
+    <span class="stat-value">{{ '%.1f' % _wr }}%</span>
+    <span class="stat-sub">won / settled</span>
+  </div>
+  <div class="stat">
+    <span class="stat-label">RECORD</span>
+    <span class="stat-value">{{ tstats.wins }}–{{ tstats.losses }}</span>
+    <span class="stat-sub">settled plays</span>
+  </div>
+  <div class="stat">
+    <span class="stat-label">ROI</span>
+    <span class="stat-value {{ 'pos' if tstats.roi > 0 else ('neg' if tstats.roi < 0 else '') }}">{{ '%+.1f' % tstats.roi }}%</span>
+    <span class="stat-sub">on amount risked</span>
+  </div>
+</section>
 </div>
 
+<hr class="section-divider">
 
 <!-- 06 · DOCUMENTED RECORD (admin) -->
 <div class="official-box">
