@@ -2267,6 +2267,10 @@ def theme(name):
 def home():
     db = get_db()
     record_checkin(db, session["user_id"])
+    try:
+        _notify_login_telegram(current_user())  # 2026-10-05: aviso a Alex por Telegram en cada visita
+    except Exception:
+        pass
     auto_grado_tracked(db, current_user())
     program, plays = load_data()
     user = current_user()
@@ -2464,18 +2468,19 @@ def _notify_click_telegram(slug):
 
 
 _last_login_notify = {}
-_LOGIN_NOTIFY_COOLDOWN_SEC = 1800  # 30 min por miembro
+_LOGIN_NOTIFY_COOLDOWN_SEC = 600  # 10 min por miembro (evita spam al recargar)
 
 
 def _notify_login_telegram(user):
-    """Aviso a Alex por Telegram cuando un miembro inicia sesión.
+    """Aviso a Alex por Telegram cada vez que un miembro entra al Dashboard.
 
-    Pedido por Alex 2026-10-05: notificación cada vez que un miembro
-    registrado entre al Dashboard — INCLUIDA su propia cuenta de miembro
-    (alexpena1509@gmail.com, "Alex Peña"), aunque tenga marca de admin en
-    la base de datos. Solo se excluyen OTROS logins de admin.
-    No avisa bots/crawlers, ni más de 1 vez cada 30 min por miembro.
-    Nunca bloquea el login: timeout corto y todo error se traga en silencio.
+    Pedido por Alex 2026-10-05: notificación en CADA visita al Dashboard
+    (no solo al login, porque la sesión queda abierta permanente).
+    INCLUIDA su propia cuenta de miembro (alexpena1509@gmail.com, "Alex Peña"),
+    aunque tenga marca de admin en la base de datos. Solo se excluyen OTROS
+    logins de admin. No avisa bots/crawlers, ni más de 1 vez cada 10 min por
+    miembro (para no spamear al recargar la página). Nunca bloquea la carga:
+    timeout corto y todo error se traga en silencio.
     """
     if not TELEGRAM_BOT_TOKEN or not CLICK_NOTIFY_CHAT_ID:
         return False
@@ -2621,10 +2626,6 @@ def login():
         session["nombre"] = user["nombre"]
         session["is_admin"] = es_admin
         session.permanent = True  # 2026-09-25: cookie persistente 30 días (antes iOS la borraba → logout)
-        try:
-            _notify_login_telegram(user)  # 2026-10-05: aviso a Alex por Telegram en cada login de miembro
-        except Exception:
-            pass
         flash(f"Welcome back, {user['nombre']}!", "ok")
         next_url = request.args.get("next") or url_for("home")
         return redirect(next_url)
