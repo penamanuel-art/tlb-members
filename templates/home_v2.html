@@ -498,8 +498,8 @@
   <div class="v2-sec-head">
     <div>
       <p class="v2-sec-eyebrow"><b>◈</b> · Action Network</p>
-      <h2 class="v2-sec-title">Value Plays Tracker <span id="action-caret" style="font-size:1rem;color:#9aa3b8;">▾</span></h2>
-      <p class="v2-sec-sub">Every system value play tracked as a $50 (1u) pick on our Action Network account (@TheLineBreaker). Graded against the final score — win or loss, nothing hidden. Tap for full stats.</p>
+      <h2 class="v2-sec-title">Action Tracker <span id="action-caret" style="font-size:1rem;color:#9aa3b8;">▾</span></h2>
+      <p class="v2-sec-sub">Our official tracked results — every play graded win or loss, nothing hidden. Tap for full stats.</p>
     </div>
   </div>
   </a>
@@ -548,12 +548,14 @@
     </div>
     {% set _ball = '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#aab4c8" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M6.6 3.9c2.7 2.6 2.7 13.6 0 16.2M17.4 3.9c-2.7 2.6-2.7 13.6 0 16.2"/></svg>' %}
     {% set _fb = '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#aab4c8" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3.2 15.2c2.2-3.8 5.8-5.7 8.8-5.7s6.6 1.9 8.8 5.7c-2.2 3.8-5.8 5.7-8.8 5.7s-6.6-1.9-8.8-5.7z"/><path d="M9.2 12.6h5.6M10.6 11.2v2.8M12 11.2v2.8M13.4 11.2v2.8"/></svg>' %}
-    {% set _icons = {'MLB': _ball, 'NFL': _fb, 'NCAAF': _fb} %}
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px;">
+    {% set _bk = '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#aab4c8" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3.5 9.5c5 2.5 12 2.5 17 0M3.5 14.5c5-2.5 12-2.5 17 0"/></svg>' %}
+    {% set _pk = '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#aab4c8" stroke-width="1.6" stroke-linecap="round"><ellipse cx="12" cy="13" rx="9" ry="6"/><path d="M3 13h18"/></svg>' %}
+    {% set _icons = {'MLB': _ball, 'NFL': _fb, 'NCAAF': _fb, 'NBA': _bk, 'WNBA': _bk, 'NHL': _pk} %}
+    <div style="display:flex;gap:10px;margin-bottom:12px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;padding-bottom:4px;scrollbar-width:none;">
       {% for _sp, _s in action_tracker.by_sport.items() %}
-      <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:12px;text-align:center;">
+      <div style="flex:0 0 30%;min-width:104px;scroll-snap-align:start;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:12px 8px;text-align:center;">
         <div style="margin-bottom:6px;">{{ _icons.get(_sp, _fb)|safe }}</div>
-        <p style="margin:0 0 6px;font-size:.8rem;font-weight:800;letter-spacing:.06em;color:#fff;">{{ _sp }}</p>
+        <p style="margin:0 0 6px;font-size:.78rem;font-weight:800;letter-spacing:.05em;color:#fff;">{{ _sp }}</p>
         <p style="margin:0;font-size:.9rem;font-weight:700;color:#9aa3b8;">{{ _s.w }}-{{ _s.l }}-0</p>
         <p style="margin:4px 0 0;font-size:1rem;font-weight:900;color:{{ '#4ade80' if _s.profit >= 0 else '#f87171' }};">{{ '+$%.2f' % _s.profit if _s.profit >= 0 else '−$%.2f' % -_s.profit }}</p>
       </div>
@@ -575,7 +577,7 @@
       <p style="margin:6px 0 0;font-size:.75rem;color:#9aa3b8;"><span style="color:#c084fc;">●</span> ML &nbsp;<span style="color:#60a5fa;">●</span> Spread</p>
     </div>
   </div>
-  <p class="muted" style="font-size:.8rem;margin:0 0 12px;">{{ action_tracker.registered }} of {{ action_tracker.total }} picks synced to Action Network{% if action_tracker.updated %} · updated {{ action_tracker.updated }}{% endif %}</p>
+  <p class="muted" style="font-size:.8rem;margin:0 0 12px;">{{ action_tracker.tracked }} tracked · {{ action_tracker.pending }} pending</p>
   {% set _pend = action_tracker.picks | selectattr('resultado', 'none') | list %}
   {% if _pend %}
   <p class="v2-sec-eyebrow" style="margin:0 0 10px">Pending ({{ _pend|length }})</p>
@@ -583,8 +585,8 @@
     {% for p in _pend %}
     <div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05);border-radius:12px;padding:10px 12px;">
       <div style="flex:1;min-width:0;">
-        <p style="margin:0;font-size:.9rem;font-weight:700;color:#fff;">{{ p.team }}{% if p.market == 'Spread' %} {{ p.line }}{% endif %} <span style="color:#9aa3b8;font-weight:600;">({{ fmt_odds(p.odds) }})</span></p>
-        <p style="margin:2px 0 0;font-size:.75rem;color:#9aa3b8;">{{ p.sport }} · {{ p.game_date }}{% if not p.registered %} · syncing to Action…{% endif %}</p>
+        <p style="margin:0;font-size:.9rem;font-weight:700;color:#fff;">{{ p.pick }} <span style="color:#9aa3b8;font-weight:600;">({{ fmt_odds(p.cuota) }})</span></p>
+        <p style="margin:2px 0 0;font-size:.75rem;color:#9aa3b8;">{{ p._sport }} · {{ p.fecha }}</p>
       </div>
       <span style="background:rgba(255,255,255,.08);color:#9aa3b8;font-weight:700;font-size:.75rem;padding:6px 12px;border-radius:16px;white-space:nowrap;">pending</span>
     </div>

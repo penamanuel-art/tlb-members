@@ -1180,23 +1180,58 @@ def resumen_ayer():
     return None
 
 
-def action_tracker_data():
-    """Tracker espejo de Action Network (pedido por Alex 2026-10-04).
-    Lee data/action-tracker.json: los mismos picks registrados en su cuenta
-    de Action Network como jugadas manuales de $50 (1u), calificados con
-    scores reales. Devuelve dict con summary y picks (o None si no hay datos).
-    Incluye desglose por período (today/last7/last30), por deporte y por
-    mercado para el menú de estadísticas estilo Action (pedido 2026-10-04).
+# Ligas que cubrimos: clasificación del pick por equipo (desglose por liga).
+_NFL_TEAMS = {"Arizona Cardinals","Atlanta Falcons","Baltimore Ravens","Buffalo Bills","Carolina Panthers","Chicago Bears","Cincinnati Bengals","Cleveland Browns","Dallas Cowboys","Denver Broncos","Detroit Lions","Green Bay Packers","Houston Texans","Indianapolis Colts","Jacksonville Jaguars","Kansas City Chiefs","Las Vegas Raiders","Los Angeles Chargers","Los Angeles Rams","Miami Dolphins","Minnesota Vikings","New England Patriots","New Orleans Saints","New York Giants","New York Jets","Philadelphia Eagles","Pittsburgh Steelers","San Francisco 49ers","Seattle Seahawks","Tampa Bay Buccaneers","Tennessee Titans","Washington Commanders"}
+_MLB_TEAMS = {"Arizona Diamondbacks","Atlanta Braves","Baltimore Orioles","Boston Red Sox","Chicago White Sox","Chicago Cubs","Cincinnati Reds","Cleveland Guardians","Colorado Rockies","Detroit Tigers","Houston Astros","Kansas City Royals","Los Angeles Angels","Los Angeles Dodgers","Miami Marlins","Milwaukee Brewers","Minnesota Twins","New York Yankees","New York Mets","Oakland Athletics","Philadelphia Phillies","Pittsburgh Pirates","San Diego Padres","San Francisco Giants","St. Louis Cardinals","Tampa Bay Rays","Texas Rangers","Toronto Blue Jays","Washington Nationals","Seattle Mariners"}
+
+
+def _sport_of_pick(pick):
+    """Liga del pick por nombre del equipo (NFL/MLB por lista, resto NCAAF)."""
+    pl = (pick or "").lower()
+    for t in _NFL_TEAMS:
+        if t.lower() in pl:
+            return "NFL"
+    for t in _MLB_TEAMS:
+        if t.lower() in pl:
+            return "MLB"
+    return "NCAAF"
+
+
+def action_tracker_data(db):
+    """Sección 'Action Tracker' de NUESTRO Dashboard (pedido por Alex 2026-10-04).
+    Muestra NUESTROS números reales: las jugadas oficiales trackeadas por Alex
+    (las mismas de su Dashboard), con menú de estadísticas estilo Action Network.
+    Es INDEPENDIENTE del registro de VALUE plays en Action Network (eso va por
+    separado y no se mezcla aquí).
     """
     try:
         from datetime import datetime, timedelta
-        with open(os.path.join(BASE_DIR, "data", "action-tracker.json"), encoding="utf-8") as f:
-            d = json.load(f)
-        picks = d.get("picks", [])
-        s = d.get("summary") or {}
-        w, l = int(s.get("w", 0)), int(s.get("l", 0))
-        profit = float(s.get("profit", 0) or 0)
+        # Dueño: admin primero; si no, la cuenta miembro de Alex
+        row = db.execute("SELECT id FROM users WHERE is_admin = 1 ORDER BY id LIMIT 1").fetchone()
+        if not row:
+            row = db.execute(
+                "SELECT id FROM users WHERE LOWER(email) = ?", (ALEX_MEMBER_EMAIL,)
+            ).fetchone()
+        if not row:
+            return None
+        uid = row["id"]
+        rows = db.execute(
+            "SELECT * FROM tracked_plays WHERE user_id = ? AND nivel IN ('GOLD','ELITE') "
+            "ORDER BY fecha DESC, id DESC",
+            (uid,),
+        ).fetchall()
+        plays = [dict(r) for r in rows]
+        if not plays:
+            return None
+        # Números idénticos a su Dashboard (misma función que usa el home)
+        base = compute_stats(plays)
+        w, l = base["wins"], base["losses"]
+        profit = round(base["net_dollars"], 2)
         graded = w + l
+        for p in plays:
+            p["_profit"] = round(play_profit_dollars(p), 2)
+            p["_sport"] = _sport_of_pick(p.get("pick"))
+            p["_market"] = "ML" if " ML" in (p.get("pick") or "") else "Spread"
         hoy = datetime.now(TZ).date()
         d7 = hoy - timedelta(days=7)
         d30 = hoy - timedelta(days=30)
@@ -1204,43 +1239,42 @@ def action_tracker_data():
         def _stats(ps):
             gw = sum(1 for p in ps if p.get("resultado") == "W")
             gl = sum(1 for p in ps if p.get("resultado") == "L")
-            gp = round(sum(float(p.get("profit") or 0) for p in ps if p.get("resultado") in ("W", "L")), 2)
+            gp = round(sum(p["_profit"] for p in ps if p.get("resultado") in ("W", "L")), 2)
             n = gw + gl
-            return {"w": gw, "l": gl, "profit": gp,
+            risk = sum(float(p.get("stake_monto") or 0) for p in ps if p.get("resultado") in ("W", "L"))
+            return {"w": gw, "l": gl, "profit": gp, "n": n,
                     "win_rate": round(100.0 * gw / n, 1) if n else 0.0,
-                    "roi": round(100.0 * gp / (n * 50.0), 1) if n else 0.0,
-                    "n": n}
+                    "roi": round(100.0 * gp / risk, 1) if risk else 0.0}
 
         def _pdate(p):
             try:
-                return datetime.strptime(p.get("game_date", ""), "%Y-%m-%d").date()
+                return datetime.strptime(str(p.get("fecha") or "")[:10], "%Y-%m-%d").date()
             except Exception:
                 return None
 
-        by_sport = {}
-        for p in picks:
-            sp = p.get("sport", "?")
-            by_sport.setdefault(sp, []).append(p)
-        by_market = {}
-        for p in picks:
-            mk = p.get("market", "?")
-            by_market.setdefault(mk, []).append(p)
+        by_sport, by_market = {}, {}
+        for p in plays:
+            by_sport.setdefault(p["_sport"], []).append(p)
+            by_market.setdefault(p["_market"], []).append(p)
+        # Las 6 ligas siempre visibles (pedido por Alex 2026-10-04); sin jugadas van 0-0-0
+        for _lg in ("NFL", "NCAAF", "MLB", "NBA", "NHL", "WNBA"):
+            by_sport.setdefault(_lg, [])
         return {
             "w": w, "l": l, "profit": profit,
             "win_rate": round(100.0 * w / graded, 1) if graded else 0.0,
-            "roi": round(100.0 * profit / (graded * 50.0), 1) if graded else 0.0,
-            "registered": int(s.get("registered", 0)),
-            "total": int(s.get("total", len(picks))),
-            "updated": d.get("updated"),
-            "picks": picks,
-            "today": _stats([p for p in picks if _pdate(p) == hoy]),
-            "last7": _stats([p for p in picks if _pdate(p) and _pdate(p) >= d7]),
-            "last30": _stats([p for p in picks if _pdate(p) and _pdate(p) >= d30]),
+            "roi": round(base["roi"], 1),
+            "tracked": base["tracked"], "pending": base["pending"],
+            "streak": base["streak"],
+            "picks": plays,
+            "today": _stats([p for p in plays if _pdate(p) == hoy]),
+            "last7": _stats([p for p in plays if _pdate(p) and _pdate(p) >= d7]),
+            "last30": _stats([p for p in plays if _pdate(p) and _pdate(p) >= d30]),
             "by_sport": {k: _stats(v) for k, v in sorted(by_sport.items())},
             "by_market": {k: _stats(v) for k, v in sorted(by_market.items())},
         }
     except Exception:
         return None
+
 
 
 def recientes_oficiales(n=6):
@@ -2304,7 +2338,7 @@ def home():
         tcurve=tcurve,
         recientes=recientes,
         recientes_value=recientes_value(),
-        action_tracker=action_tracker_data(),
+        action_tracker=action_tracker_data(db),
         last_elite_win=last_elite_win(),
         es_admin=is_admin_for(user),
         es_alex=is_alex_member(user),
