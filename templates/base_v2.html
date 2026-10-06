@@ -115,6 +115,7 @@
       setTimeout(function () { touchHandled = false; }, 500);
     }, {passive: false});
     btn.addEventListener('click', function (e) {
+      e.stopPropagation();
       if (touchHandled) return;
       toggleMenu(e);
     });
