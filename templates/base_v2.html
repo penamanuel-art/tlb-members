@@ -17,11 +17,12 @@
 <header class="v2-topbar">
   <div class="v2-topbar-left">
     {% if session.get('user_id') %}
-    <a href="{{ url_for('home', splash='0') }}" class="v2-home-link{% if request.endpoint == 'home' %} active{% endif %}" title="Home Dashboard">Home Dashboard</a>
+    <a href="{{ url_for('home', splash='0') }}" class="v2-home-link{% if request.endpoint == 'home' %} active{% endif %}" title="Home">Home</a>
     <div class="v2-menu-wrap">
       <button class="v2-icon-btn" id="v2menuBtn" aria-label="Menu">☰</button>
       <div class="v2-menu-drop" id="v2menuDrop" hidden>
-        <a href="{{ url_for('home', splash='0') }}">🏠 Home Dashboard</a>
+        <a href="{{ url_for('home', splash='0') }}">🏠 Home</a>
+        <a href="{{ url_for('records') }}">📜 Full record</a>
         <a href="{{ url_for('tracker') }}">My Tracker</a>
         <a href="{{ url_for('masterclass') }}">🎓 Masterclass</a>
         <a href="{{ url_for('resultados') }}">📊 Results</a>
@@ -36,7 +37,7 @@
         <a href="{{ url_for('logout') }}">Log out</a>
       </div>
     </div>
-    <a href="{{ url_for('tracker') }}" class="v2-track-link{% if request.endpoint == 'tracker' %} active{% endif %}" title="Track a play">+ Track</a>
+    <a href="{{ url_for('records') }}" class="v2-track-link{% if request.endpoint == 'records' %} active{% endif %}" title="Full record">📜 Full record</a>
     {% else %}
     <a class="v2-brand" href="{{ url_for('index') }}">
       <img src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team">
@@ -152,6 +153,9 @@ function googleTranslateElementInit(){new google.translate.TranslateElement({pag
   </a>
   <a href="{{ url_for('ev_board') }}" class="v2-bnav-item{% if request.endpoint == 'ev_board' %} active{% endif %}">
     <span class="v2-bnav-ico" aria-hidden="true">&#128200;</span><span>EV Board</span>
+  </a>
+  <a href="{{ url_for('records') }}" class="v2-bnav-item{% if request.endpoint == 'records' %} active{% endif %}">
+    <span class="v2-bnav-ico" aria-hidden="true">📜</span><span>Full record</span>
   </a>
   <a href="{{ url_for('cuenta') }}" class="v2-bnav-item{% if request.endpoint == 'cuenta' %} active{% endif %}">
     <span class="v2-bnav-ico" aria-hidden="true">&#128100;</span><span>Account</span>
