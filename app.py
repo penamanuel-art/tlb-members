@@ -175,7 +175,7 @@ PLAYS_PATH = os.path.join(BASE_DIR, "data", "plays.json")
 PENDING_PLAYS_PATH = os.path.join(BASE_DIR, "data", "plays-pending.json")
 # Cuenta personal de miembro de Alex (NO es la de administrador). Es la única
 # que ve la card pendiente (sin tickets) en /home — orden de Alex 2026-10-03.
-ALEX_MEMBER_EMAIL = "alexpena1509@gmail.com"
+ALEX_MEMBER_EMAIL = "pena.manuel@myyahoo.com"
 MASTERCLASS_PATH = os.path.join(BASE_DIR, "data", "masterclass.json")
 RESULTS_PATH = os.path.join(BASE_DIR, "data", "results.json")
 ARCHIVE_PATH = os.path.join(BASE_DIR, "data", "archive.json")
@@ -2534,7 +2534,7 @@ def _notify_login_telegram(user):
 
     Pedido por Alex 2026-10-05: notificación en CADA visita al Dashboard
     (no solo al login, porque la sesión queda abierta permanente).
-    INCLUIDA su propia cuenta de miembro (alexpena1509@gmail.com, "Alex Peña"),
+    INCLUIDA su propia cuenta de miembro (pena.manuel@myyahoo.com, "Alex Peña"),
     aunque tenga marca de admin en la base de datos. Solo se excluyen OTROS
     logins de admin. No avisa bots/crawlers. Cooldown de solo 60 seg por
     miembro (únicamente para no duplicar por doble-carga de la página).
@@ -2544,7 +2544,7 @@ def _notify_login_telegram(user):
         return False
     email = (_uget(user, "email") or "").strip().lower()
     # La cuenta de miembro de Alex siempre avisa, aun si quedó marcada admin.
-    if _uget(user, "is_admin") and email != "alexpena1509@gmail.com":
+    if _uget(user, "is_admin") and email != ALEX_MEMBER_EMAIL:
         return False
     try:
         ua = request.headers.get("User-Agent", "") or ""
@@ -3856,6 +3856,28 @@ def admin_resend_welcome():
     except Exception as e:
         return f"Error: {e}", 500
 
+@app.route("/admin/migrate-alex-email", methods=["GET", "POST"])
+@admin_required
+def admin_migrate_alex_email():
+    """TEMPORAL (2026-10-06, pedido por Alex): migra el email de su cuenta
+    de miembro de alexpena1509@gmail.com a pena.manuel@myyahoo.com.
+    Idempotente: si ya está migrado, lo reporta sin tocar nada."""
+    from flask import request
+    db = get_db()
+    old = "alexpena1509@gmail.com"
+    new = ALEX_MEMBER_EMAIL
+    ya = db.execute("SELECT id FROM users WHERE LOWER(email) = ?",
+                    (new.lower(),)).fetchone()
+    if ya:
+        return f"Ya migrado: la cuenta {new} existe (id {ya['id']})", 200
+    row = db.execute("SELECT id, nombre FROM users WHERE LOWER(email) = ?",
+                     (old,)).fetchone()
+    if not row:
+        return f"No existe cuenta con {old}", 404
+    db.execute("UPDATE users SET email = ? WHERE id = ?", (new, row["id"]))
+    db.commit()
+    return f"Email migrado: {old} -> {new} (id {row['id']})", 200
+
 @app.route("/admin/diag-alex-track")
 @admin_required
 def diag_alex_track():
@@ -4830,7 +4852,7 @@ def backfill_value_2026_10_03():
 @app.route("/api/auto-track-alex", methods=["POST"])
 def api_auto_track_alex():
     """Trackea automáticamente una jugada en el tracker personal de Alex
-    (cuenta de miembro alexpena1509@gmail.com).
+    (cuenta de miembro pena.manuel@myyahoo.com).
 
     Lo llama el asistente cuando Alex envía tickets originales
     (regla permanente 2026-10-05, pedido por Alex: "cuando yo te mande
@@ -4933,7 +4955,7 @@ def api_auto_track_alex():
 @app.route("/api/set-balance-alex", methods=["POST"])
 def api_set_balance_alex():
     """Fija el balance de una casa en la cuenta personal de Alex
-    (alexpena1509@gmail.com).
+    (pena.manuel@myyahoo.com).
 
     Lo llama el asistente para sincronizaciones puntuales pedidas por Alex
     (2026-10-05: Novig a $802.88 = $500 base + $302.88 profit del tracker).
