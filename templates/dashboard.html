@@ -153,6 +153,18 @@
 {% if rows %}
 <div class="wgt-list" id="wgtList">
   {% for r in rows %}
+  {% if r.nivel == 'ELITE' and not platinum_unlocked %}
+  <article class="wgt-row wgt-locked">
+    <div class="wgt-row-top">
+      <div class="wgt-logo-fallback">🔒</div>
+      <div class="wgt-row-main">
+        <p class="wgt-pick">🔒 Platinum Play</p>
+        <p class="wgt-meta">{{ r.fecha_corta }} · <span class="wgt-nivel elite">PLATINUM</span></p>
+        <p class="wgt-stake"><a href="{{ url_for('desbloquear_platinum') }}" style="color:#fbbf24;font-weight:700;">Unlock Platinum to reveal this play →</a></p>
+      </div>
+    </div>
+  </article>
+  {% else %}
   <article class="wgt-row" data-fecha="{{ r.fecha }}" data-profit="{{ '%.2f' % r.profit }}"
            data-stake="{{ '%.2f' % r.stake_monto }}" data-result="{{ r.resultado }}">
     <div class="wgt-row-top">
@@ -207,6 +219,7 @@
       </form>
     </div>
   </article>
+  {% endif %}
   {% endfor %}
 </div>
 <p class="wgt-empty" id="wgtEmpty" hidden>No plays in this range.</p>
