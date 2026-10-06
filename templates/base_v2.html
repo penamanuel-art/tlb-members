@@ -14,22 +14,6 @@
 <script src="/static/js/push.js?v={{ asset_v }}"></script>
 </head>
 <body class="v2{% if session.get('user_id') %} has-bottomnav{% endif %}{% if ticker_days %} has-ticker{% endif %}" style="--wm-img: url('{{ url_for('static', filename='img/watermark-football.jpg') }}')">
-<script>
-/* Marca de agua rotativa por visita (pedido Alex 2026-10-05): NFL, MLB, NBA, NHL */
-(function(){
-  try{
-    var wms = [
-      "{{ url_for('static', filename='img/watermark-football.jpg') }}",
-      "{{ url_for('static', filename='img/watermark-baseball.jpg') }}",
-      "{{ url_for('static', filename='img/watermark-basketball.jpg') }}",
-      "{{ url_for('static', filename='img/watermark-hockey.jpg') }}"
-    ];
-    var i = (parseInt(localStorage.getItem('tst-wm-idx') || '0', 10) + 1) % wms.length;
-    localStorage.setItem('tst-wm-idx', String(i));
-    document.body.style.setProperty('--wm-img', "url('" + wms[i] + "')");
-  }catch(e){}
-})();
-</script>
 <header class="v2-topbar">
   <div class="v2-topbar-left">
     {% if session.get('user_id') %}
