@@ -147,6 +147,9 @@ function googleTranslateElementInit(){new google.translate.TranslateElement({pag
   <a href="{{ url_for('ev_board') }}" class="v2-bnav-item{% if request.endpoint == 'ev_board' %} active{% endif %}">
     <span class="v2-bnav-ico" aria-hidden="true">&#128200;</span><span>EV Board</span>
   </a>
+  <a href="{{ url_for('records') }}" class="v2-bnav-item{% if request.endpoint == 'records' %} active{% endif %}">
+    <span class="v2-bnav-ico" aria-hidden="true">📜</span><span>Full record</span>
+  </a>
   <a href="{{ url_for('cuenta') }}" class="v2-bnav-item{% if request.endpoint == 'cuenta' %} active{% endif %}">
     <span class="v2-bnav-ico" aria-hidden="true">&#128100;</span><span>Account</span>
   </a>
