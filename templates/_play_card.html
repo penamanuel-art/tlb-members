@@ -113,17 +113,6 @@
       <span class="tstc-lvl">{{ 'PLATINUM' if is_vip else ('💎 VALUE PLAY' if is_value else 'GOLD') }}</span>
       {% if p.comprobante %}<a class="tk-view" href="{{ url_for('ticket_view', play_id=p.id) }}">View ticket &rarr;</a>{% endif %}
     </div>
-    {# La cara de la tarjeta es el TICKET ORIGINAL de Novig que envía Alex (p.comprobante). Tocar el ticket abre lightbox a pantalla completa. #}
-    {% if p.comprobante %}
-    <button class="tstc-face" onclick="document.getElementById('tstc-zoom-{{ p.id }}').style.display='flex'" aria-label="View ticket enlarged">
-      <img src="{{ url_for('static', filename=p.comprobante) }}" alt="Original ticket {{ p.abbr }} {{ p.bettype }}">
-      <span class="tstc-tap">🔍 Tap ticket</span>
-    </button>
-    <div id="tstc-zoom-{{ p.id }}" class="tstc-modal" onclick="if(event.target===this)this.style.display='none'">
-      <button class="tstc-x" onclick="document.getElementById('tstc-zoom-{{ p.id }}').style.display='none'" aria-label="Close">&times;</button>
-      <img src="{{ url_for('static', filename=p.comprobante) }}" alt="Original ticket {{ p.abbr }} {{ p.bettype }} enlarged">
-    </div>
-    {% endif %}
     <div class="tstc-actions">
       {# Botón de Novig SIEMPRE (regla de Alex 2026-09-28): OneLink oficial verificado tal cual; sin link verificado -> https://novig.com. Nunca inventar UUIDs. #}
       {% if p.novig_url and '%2Fevent-markets%2F' in p.novig_url %}
