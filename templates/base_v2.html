@@ -100,6 +100,12 @@
   if (btn && drop) {
     function toggleMenu(e) {
       if (e) { e.stopPropagation(); e.preventDefault(); }
+      if (drop.hidden) {
+        var r = btn.getBoundingClientRect();
+        drop.style.top = (r.bottom + 8) + 'px';
+        drop.style.right = Math.max(8, window.innerWidth - r.right) + 'px';
+        drop.style.left = 'auto';
+      }
       drop.hidden = !drop.hidden;
     }
     btn.addEventListener('click', toggleMenu);
