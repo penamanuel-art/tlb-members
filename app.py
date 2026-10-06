@@ -3830,6 +3830,27 @@ def diag_tracker():
     return Response(json.dumps(data, indent=1, ensure_ascii=False),
                     mimetype="application/json")
 
+@app.route("/admin/resend-welcome", methods=["GET", "POST"])
+@admin_required
+def admin_resend_welcome():
+    """Reenvía el email de bienvenida a un miembro (solo admin).
+    Resetea welcome_email_sent y lo envía de inmediato."""
+    from flask import request
+    db = get_db()
+    email = (request.values.get("email") or "").strip().lower()
+    if not email:
+        return "Falta ?email=", 400
+    row = db.execute("SELECT id, nombre FROM users WHERE email = ?", (email,)).fetchone()
+    if not row:
+        return f"No existe cuenta con {email}", 404
+    try:
+        send_welcome_email(row["nombre"] or "", email)
+        db.execute("UPDATE users SET welcome_email_sent = 1 WHERE id = ?", (row["id"],))
+        db.commit()
+        return f"Email de bienvenida reenviado a {email}", 200
+    except Exception as e:
+        return f"Error: {e}", 500
+
 @app.route("/admin/diag-alex-track")
 @admin_required
 def diag_alex_track():
