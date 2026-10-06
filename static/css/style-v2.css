@@ -100,7 +100,8 @@ body.v2::before {
   backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--v2-border);
 }
-.v2-topbar-left { display: flex; align-items: center; gap: 10px; }
+.v2-topbar-left { display: flex; align-items: center; gap: 10px; overflow-x: auto; scrollbar-width: none; }
+.v2-topbar-left::-webkit-scrollbar { display: none; }
 .v2-brand { display: inline-flex; align-items: center; text-decoration: none; }
 .v2-brand img { height: 34px; width: auto; display: block; }
 .v2-home-link {
@@ -135,7 +136,7 @@ body.v2::before {
   font-size: 13px; font-weight: 700; text-decoration: none;
   padding: 9px 13px; border-radius: var(--v2-radius-sm);
   background: var(--v2-green-soft); border: 1px solid rgba(47, 212, 126, 0.35);
-  color: var(--v2-green);
+  color: var(--v2-green); white-space: nowrap; flex: none;
 }
 .v2-topbar-right { display: flex; align-items: center; gap: 10px; }
 .v2-lang-btn {
