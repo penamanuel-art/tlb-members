@@ -1,29 +1,50 @@
 <style>
-.tstc{position:relative;background:#0d1117;border:1px solid rgba(255,255,255,.09);border-radius:24px;padding:14px;color:#f3f4f6;font-family:-apple-system,system-ui,"Segoe UI",sans-serif;box-shadow:0 10px 32px rgba(0,0,0,.55);max-width:560px;margin:0 auto}
-.tstc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-.tstc-league{background:#1a2233;color:#9aa3b8;font-size:12px;font-weight:700;letter-spacing:1px;padding:6px 14px;border-radius:999px}
-.tstc-odds{color:#2fd47e;font-size:19px;font-weight:800}
-.tstc-title{font-size:20px;font-weight:800;color:#fff;margin:0 0 10px;letter-spacing:-.3px;display:flex;align-items:center;gap:10px}
-.tstc-logo{width:40px;height:40px;border-radius:50%;background:#fff;object-fit:contain;flex:none;padding:3px;box-sizing:border-box}
-{# El ticket se ve DE FRENTE: es la imagen del ticket, no una reconstrucción HTML (estilo WGT, pedido por Alex 2026-09-29). Ticket más pequeño que el cuadro, centrado con espacio alrededor (diseño de referencia de Alex 2026-10-01). #}
-.tstc-face{display:block;width:100%;position:relative;border-radius:14px;cursor:pointer;border:none;padding:0;background:none;-webkit-tap-highlight-color:transparent}
+.tstc{position:relative;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:560px;margin:0 auto;border-radius:28px;padding:34px 12px 12px;overflow:hidden;background:#111111;border:2px solid #c9a227;box-shadow:0 8px 32px rgba(0,0,0,.5);color:#f3f4f6}
+.tk-odds{position:absolute;inset:0;overflow:hidden;pointer-events:none;opacity:.5}
+.tk-odds div{font-size:8px;color:#c9a227;white-space:nowrap;line-height:2;letter-spacing:1px;font-family:monospace;padding:4px 6px}
+.tk-odds div:nth-child(2){padding-top:0}
+.tk-odds div:last-child{position:absolute;bottom:0;left:0;right:0}
+.tk-card{position:relative;background:#0b0e17;border-radius:22px;padding:12px 14px 10px;border:2px solid #179BE7}
+.tk-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px}
+.tk-team{display:flex;align-items:center;gap:10px}
+.tk-logo{width:44px;height:44px;border-radius:12px;background:#1a2233;display:flex;align-items:center;justify-content:center;overflow:hidden;flex:none}
+.tk-logo img{width:36px;height:36px;object-fit:contain}
+.tk-name{font-size:19px;font-weight:800;color:#fff}
+.tk-name .tk-dot{color:#8b93a7;font-weight:400}
+.tk-name .tk-prob{color:#e0c070}
+.tk-bettype{font-size:13px;color:#9aa3b8;margin-top:1px}
+.tk-status{font-size:11px;font-weight:800;letter-spacing:1px;padding:6px 12px;border-radius:999px;border:1px solid;flex:none}
+.tk-status.pending{background:rgba(224,192,112,.14);color:#e0c070;border-color:rgba(224,192,112,.4)}
+.tk-status.won{background:rgba(34,197,94,.14);color:#22c55e;border-color:rgba(34,197,94,.4)}
+.tk-status.lost{background:rgba(239,68,68,.14);color:#ef4444;border-color:rgba(239,68,68,.4)}
+.tstc-bet{margin:10px 0 4px}
+.tk-amt-label{font-size:13px;color:#8b93a7}
+.tk-amt{font-size:26px;font-weight:800;color:#fff;margin-top:1px}
+.tk-units{font-size:14px;font-weight:700;color:#e0c070;margin-top:2px}
+.tk-game{margin:10px 0;background:#141a28;border-radius:16px;padding:10px 12px;display:flex;align-items:center;justify-content:space-between}
+.tk-side{display:flex;align-items:center;gap:8px}
+.tk-glogo{width:38px;height:38px;border-radius:10px;background:#1e2a3f;display:flex;align-items:center;justify-content:center;overflow:hidden;flex:none}
+.tk-glogo img{width:30px;height:30px;object-fit:contain}
+.tk-gabbr{font-size:15px;font-weight:800;color:#fff}
+.tk-gtime{text-align:center}
+.tk-gtime div:first-child{font-size:13px;color:#8b93a7}
+.tk-gtime div:last-child{font-size:12px;color:#5a6478;margin-top:1px}
+.tk-info{font-size:12px;color:#5a6478;margin-top:8px}
+.tk-badgerow{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
+.tstc-lvl{background:#2a2113;color:#f5c518;font-weight:800;font-size:12px;letter-spacing:1px;padding:6px 14px;border-radius:999px}
+.tk-view{background:none;border:none;color:#c9a227;font-size:15px;font-weight:700;cursor:pointer;padding:0;text-decoration:none}
+.tstc-face{display:block;width:100%;position:relative;border-radius:14px;cursor:pointer;border:none;padding:0;background:none;-webkit-tap-highlight-color:transparent;margin-top:10px}
 .tstc-face img{display:block;width:94%;height:auto;margin:0 auto;border-radius:14px;filter:brightness(.82)}
 .tstc-tap{position:absolute;right:calc(3% + 10px);bottom:10px;background:rgba(0,0,0,.65);color:#fff;font-size:12px;font-weight:600;padding:6px 12px;border-radius:999px;pointer-events:none}
-.tstc-bet{font-size:20px;font-weight:800;color:#2fd47e;margin:10px 0 8px}
-.tstc-bet span{color:#8b93a7;font-weight:400;font-size:17px}
-.tstc-bot{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-.tstc-lvl{background:#2a2113;color:#f5c518;font-weight:800;font-size:12px;letter-spacing:1px;padding:6px 14px;border-radius:999px}
-.tstc-lvl.vip{background:#2a2113;color:#f5c518}
-.tstc-view{background:none;border:none;color:#4b8bf5;font-size:16px;font-weight:700;cursor:pointer;padding:0}
-.tstc-actions{display:flex;gap:10px}
-.tstc-btn{font-weight:800;border-radius:12px;padding:9px 14px;text-decoration:none;display:inline-block;font-size:13px;border:none;cursor:pointer;text-align:center}
-.tstc-novig{background:#4898df;color:#fff;flex:1;box-shadow:0 6px 20px rgba(72,152,223,.4)}
-.tstc-track{background:transparent;color:#4ade80;border:1.5px solid #22c55e;flex:1}
-.tstc-tracked{background:rgba(34,197,94,.12);color:#4ade80;border:1.5px solid #22c55e;flex:1;cursor:default}
 .tstc-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:9999;align-items:center;justify-content:center;padding:16px}
 .tstc-modal img{max-width:100%;max-height:92vh;border-radius:12px;filter:brightness(.82)}
 .tstc-x{position:absolute;top:14px;right:18px;background:none;border:none;color:#fff;font-size:30px;cursor:pointer;line-height:1}
-{# Write-up del análisis por jugada (pedido Alex 2026-10-06): bloque colapsable "Why we like it" con los datos del modelo. Solo se muestra si la jugada trae writeup. #}
+.tstc-actions{display:flex;gap:8px;margin-top:10px}
+.tstc-btn{font-weight:800;border-radius:12px;padding:11px 0;text-decoration:none;display:inline-block;font-size:13px;border:none;cursor:pointer;text-align:center;flex:1;white-space:nowrap}
+.tstc-novig{background:#179BE7;color:#fff;box-shadow:0 6px 20px rgba(23,155,231,.35)}
+.tstc-track{background:transparent;color:#4ade80;border:1.5px solid #22c55e}
+.tstc-tracked{background:rgba(34,197,94,.12);color:#4ade80;border:1.5px solid #22c55e;cursor:default}
+.tk-perf{margin:10px -14px -10px;padding:8px 0 2px;text-align:center;color:#c0a050;font-size:12px;letter-spacing:6px;opacity:.7}
 .tstc-wu{margin:10px 0 2px;border:1px solid rgba(212,175,55,.35);border-radius:12px;background:#0a0f1c}
 .tstc-wu summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;padding:10px 14px;font-size:13px;font-weight:800;letter-spacing:1px;color:#d4af37}
 .tstc-wu summary::-webkit-details-marker{display:none}
@@ -38,68 +59,109 @@
 .tstc-wu-p{color:#d5dbe8;margin:0 0 4px}
 .tstc-wu-risk{color:#f0b429}
 </style>
-{# Card estilo WGT — aprobada por Alex 2026-09-29 ("Así", con captura): tarjeta oscura con el TICKET ORIGINAL DE NOVIG que manda Alex DE FRENTE como imagen. Tocar el ticket abre lightbox a pantalla completa. #}
+{# Card estilo ticket — aprobada por Alex 2026-10-06: marco oscuro #111111 con patrón de líneas doradas #c9a227, tarjeta interior negra con borde azul Novig #179BE7. #}
 {% set is_vip = p.nivel in ['PLATINUM', 'ELITE'] %}
 {% set is_value = p.nivel == 'VALUE' %}
+{% set _res = p.resultado if p.resultado is defined else None %}
 <div class="tstc">
-  <div class="tstc-top">
-    <span class="tstc-league">{{ p.liga }}</span>
-    <span class="tstc-odds">{{ fmt_odds(p.cuota) }}</span>
+  <div class="tk-odds" aria-hidden="true">
+    <div>MLB &bull; MIL +122 &nbsp; NFL &bull; KC -110 &nbsp; NBA &bull; LAL -120 &nbsp; NHL &bull; BOS -115 &nbsp; MLB &bull; NYY +145 &nbsp; NFL &bull; DAL -105 &nbsp; NBA &bull; MIA +110 &nbsp; NHL &bull; TOR -115 &nbsp; MLB &bull; CHC +130 &nbsp; NFL &bull; ATL -115 &nbsp; NBA &bull; BOS +145 &nbsp; NHL &bull; NYR +120 &nbsp;</div>
+    <div>NFL &bull; KC -110 +115 48.5 O/U &nbsp; NBA &bull; LAL -120 +100 223.5 O/U &nbsp; MLB &bull; NYY +145 -160 9.0 RUN &nbsp; NHL &bull; BOS -115 +105 5.5 O/U &nbsp; NFL &bull; DAL -105 +110 47.5 O/U &nbsp; NBA &bull; MIA -110 +110 215.5 O/U &nbsp;</div>
+    <div>UFC &bull; FIGHT +250 -300 2.5 RD &nbsp; MLB &bull; CHC +130 -150 8.5 RUN &nbsp; NFL &bull; ATL -115 +105 5.5 O/U &nbsp; NBA &bull; CHC +130 -150 8.5 O/U &nbsp; NHL &bull; TOR -115 +105 5.5 O/U &nbsp; EPL &bull; ARS +180 -140 2.5 O/U &nbsp;</div>
   </div>
-  <div class="tstc-title">{% set _logo = team_logo_url(p.liga, p.abbr) %}{% if _logo %}<img class="tstc-logo" src="{{ _logo }}" alt="{{ p.abbr }}" loading="lazy" onerror="this.style.display='none'">{% endif %}<span>{{ p.abbr }} {{ p.bettype }} (Winner)</span></div>
-  {# La cara de la tarjeta es el TICKET ORIGINAL de Novig que envía Alex (p.comprobante), no el ticket simulado (orden de Alex 2026-09-29). #}
-  {% if p.comprobante %}
-  <button class="tstc-face" onclick="document.getElementById('tstc-zoom-{{ p.id }}').style.display='flex'" aria-label="Ver ticket en grande">
-    <img src="{{ url_for('static', filename=p.comprobante) }}" alt="Ticket original {{ p.abbr }} {{ p.bettype }}">
-    <span class="tstc-tap">🔍 Tap ticket</span>
-  </button>
-  <div id="tstc-zoom-{{ p.id }}" class="tstc-modal" onclick="if(event.target===this)this.style.display='none'">
-    <button class="tstc-x" onclick="document.getElementById('tstc-zoom-{{ p.id }}').style.display='none'" aria-label="Cerrar">&times;</button>
-    <img src="{{ url_for('static', filename=p.comprobante) }}" alt="Ticket original {{ p.abbr }} {{ p.bettype }} en grande">
-  </div>
-  {% endif %}
-  <div class="tstc-bet">Bet &nbsp;{{ '$%g' % p.stake_monto }} <span>({{ p.stake_unidades }}u)</span></div>
-  <div class="tstc-bot">
-    <span class="tstc-lvl{% if is_vip %} vip{% endif %}">{{ 'PLATINUM' if is_vip else ('💎 VALUE PLAY' if is_value else 'GOLD') }}</span>
-    {# Link "View ticket" → página del ticket con diseño propio (pedido Alex 2026-09-29: "Del Dashboard"). Solo si hay ticket (sin 404 en pendientes). #}
-    {% if p.comprobante %}<a class="tstc-view" href="{{ url_for('ticket_view', play_id=p.id) }}">View ticket &rarr;</a>{% endif %}
-  </div>
-  <div class="tstc-actions">
-    {# Botón de Novig SIEMPRE (regla de Alex 2026-09-28): OneLink oficial verificado tal cual; sin link verificado -> https://novig.com. Nunca inventar UUIDs. #}
-    {% if p.novig_url and '%2Fevent-markets%2F' in p.novig_url %}
-      <a class="tstc-btn tstc-novig" href="{{ p.novig_url }}" target="_blank" rel="noopener">Place at Novig &rarr;</a>
-    {% else %}
-      <a class="tstc-btn tstc-novig" href="https://novig.com" target="_blank" rel="noopener">Place at Novig &rarr;</a>
-    {% endif %}
-    {% if p.comprobante and p.nivel != 'VALUE' %}
-    {# Track solo si hay ticket (2026-10-03, orden de Alex): sin ticket no se #}
-    {# puede trackear — evita marcar por error una jugada no apostada (trampa). #}
-    {# VALUE nunca se trackea (2026-10-04, orden de Alex): solo oficiales con ticket. #}
-    {% if p.id in tracked_ids %}
-      <span class="tstc-btn tstc-tracked">&check; Tracked</span>
-    {% else %}
-      <a class="tstc-btn tstc-track" href="{{ url_for('track', play_id=p.id) }}">+ Track</a>
-    {% endif %}
-    {% endif %}
-  </div>
-  {# Write-up del análisis (pedido Alex 2026-10-06): "Why we like it" — modelo, factor clave y riesgo. Datos reales del análisis; si no hay writeup no se muestra nada. #}
-  {% if p.writeup %}
-  <details class="tstc-wu">
-    <summary><span>📊 WHY WE LIKE IT</span><span class="tstc-wu-arr">TAP TO EXPAND ▾</span></summary>
-    <div class="tstc-wu-body">
-      <div class="tstc-wu-row"><span class="tstc-wu-k">Model win probability</span><span class="tstc-wu-v">{{ p.writeup.model_prob }}</span></div>
-      <div class="tstc-wu-row"><span class="tstc-wu-k">Implied by the price</span><span class="tstc-wu-v">{{ p.writeup.implied_prob }}</span></div>
-      <div class="tstc-wu-row"><span class="tstc-wu-k">Fair price (model)</span><span class="tstc-wu-v">{{ p.writeup.fair_price }}</span></div>
-      <div class="tstc-wu-row"><span class="tstc-wu-k">Edge</span><span class="tstc-wu-edge">{{ p.writeup.edge }}</span></div>
-      {% if p.writeup.key_factor %}
-      <p class="tstc-wu-h">🔑 KEY FACTOR</p>
-      <p class="tstc-wu-p">{{ p.writeup.key_factor }}</p>
-      {% endif %}
-      {% if p.writeup.risk %}
-      <p class="tstc-wu-h">⚠️ THE RISK</p>
-      <p class="tstc-wu-p tstc-wu-risk">{{ p.writeup.risk }}</p>
+  <div class="tk-card">
+    <div class="tk-head">
+      <div class="tk-team">
+        {% set _logo = team_logo_url(p.liga, p.abbr) %}
+        <div class="tk-logo">{% if _logo %}<img src="{{ _logo }}" alt="{{ p.abbr }}" loading="lazy" onerror="this.style.display='none'">{% endif %}</div>
+        <div>
+          <div class="tk-name">{{ p.abbr }}{% if p.writeup and p.writeup.model_prob %} <span class="tk-dot">&bull;</span> <span class="tk-prob">{{ p.writeup.model_prob }}</span>{% endif %}</div>
+          <div class="tk-bettype">{{ p.bettype }} Winner</div>
+        </div>
+      </div>
+      {% if _res == 'W' %}
+      <span class="tk-status won">WON</span>
+      {% elif _res == 'L' %}
+      <span class="tk-status lost">LOST</span>
+      {% else %}
+      <span class="tk-status pending">PENDING</span>
       {% endif %}
     </div>
-  </details>
-  {% endif %}
+    <div class="tstc-bet">
+      <div class="tk-amt-label">Amount</div>
+      <div class="tk-amt">{{ '$%.2f' % p.stake_monto }}</div>
+      <div class="tk-units">{{ '%g' % p.stake_unidades }}u</div>
+    </div>
+    <div class="tk-game">
+      <div class="tk-side">
+        {% set _hl = team_logo_url(p.liga, p.abbr) %}
+        <div class="tk-glogo">{% if _hl %}<img src="{{ _hl }}" alt="{{ p.abbr }}" loading="lazy" onerror="this.style.display='none'">{% endif %}</div>
+        <span class="tk-gabbr">{{ p.abbr }}</span>
+      </div>
+      <div class="tk-gtime">
+        <div>{{ p.game_time_et or '' }}</div>
+        <div>{{ p.liga or '' }}</div>
+      </div>
+      <div class="tk-side">
+        <span class="tk-gabbr">{{ p.opp_abbr or '' }}</span>
+        {% set _ol = team_logo_url(p.liga, p.opp_abbr) if p.opp_abbr is defined and p.opp_abbr else '' %}
+        <div class="tk-glogo">{% if _ol %}<img src="{{ _ol }}" alt="{{ p.opp_abbr }}" loading="lazy" onerror="this.style.display='none'">{% endif %}</div>
+      </div>
+    </div>
+    <div class="tk-info">{{ 'Platinum' if is_vip else ('Value' if is_value else 'Gold') }} Play &bull; {{ fmt_odds(p.cuota) }} {{ p.casa or 'Pinnacle' }}{% if p.writeup and p.writeup.fair_price %} &bull; Fair {{ p.writeup.fair_price }}{% endif %}</div>
+    <div class="tk-badgerow">
+      <span class="tstc-lvl">{{ 'PLATINUM' if is_vip else ('💎 VALUE PLAY' if is_value else 'GOLD') }}</span>
+      {% if p.comprobante %}<a class="tk-view" href="{{ url_for('ticket_view', play_id=p.id) }}">View ticket &rarr;</a>{% endif %}
+    </div>
+    {# La cara de la tarjeta es el TICKET ORIGINAL de Novig que envía Alex (p.comprobante). Tocar el ticket abre lightbox a pantalla completa. #}
+    {% if p.comprobante %}
+    <button class="tstc-face" onclick="document.getElementById('tstc-zoom-{{ p.id }}').style.display='flex'" aria-label="View ticket enlarged">
+      <img src="{{ url_for('static', filename=p.comprobante) }}" alt="Original ticket {{ p.abbr }} {{ p.bettype }}">
+      <span class="tstc-tap">🔍 Tap ticket</span>
+    </button>
+    <div id="tstc-zoom-{{ p.id }}" class="tstc-modal" onclick="if(event.target===this)this.style.display='none'">
+      <button class="tstc-x" onclick="document.getElementById('tstc-zoom-{{ p.id }}').style.display='none'" aria-label="Close">&times;</button>
+      <img src="{{ url_for('static', filename=p.comprobante) }}" alt="Original ticket {{ p.abbr }} {{ p.bettype }} enlarged">
+    </div>
+    {% endif %}
+    <div class="tstc-actions">
+      {# Botón de Novig SIEMPRE (regla de Alex 2026-09-28): OneLink oficial verificado tal cual; sin link verificado -> https://novig.com. Nunca inventar UUIDs. #}
+      {% if p.novig_url and '%2Fevent-markets%2F' in p.novig_url %}
+        <a class="tstc-btn tstc-novig" href="{{ p.novig_url }}" target="_blank" rel="noopener">Place at Novig &rarr;</a>
+      {% else %}
+        <a class="tstc-btn tstc-novig" href="https://novig.com" target="_blank" rel="noopener">Place at Novig &rarr;</a>
+      {% endif %}
+      {% if p.comprobante and p.nivel != 'VALUE' %}
+      {# Track solo si hay ticket (2026-10-03, orden de Alex): sin ticket no se #}
+      {# puede trackear — evita marcar por error una jugada no apostada (trampa). #}
+      {# VALUE nunca se trackea (2026-10-04, orden de Alex): solo oficiales con ticket. #}
+      {% if p.id in tracked_ids %}
+        <span class="tstc-btn tstc-tracked">&check; Tracked</span>
+      {% else %}
+        <a class="tstc-btn tstc-track" href="{{ url_for('track', play_id=p.id) }}">+ Track</a>
+      {% endif %}
+      {% endif %}
+    </div>
+    {# Write-up del análisis (pedido Alex 2026-10-06): "Why we like it" — modelo, factor clave y riesgo. Datos reales del análisis; si no hay writeup no se muestra nada. #}
+    {% if p.writeup %}
+    <details class="tstc-wu">
+      <summary><span>📊 WHY WE LIKE IT</span><span class="tstc-wu-arr">TAP TO EXPAND ▾</span></summary>
+      <div class="tstc-wu-body">
+        <div class="tstc-wu-row"><span class="tstc-wu-k">Model win probability</span><span class="tstc-wu-v">{{ p.writeup.model_prob }}</span></div>
+        <div class="tstc-wu-row"><span class="tstc-wu-k">Implied by the price</span><span class="tstc-wu-v">{{ p.writeup.implied_prob }}</span></div>
+        <div class="tstc-wu-row"><span class="tstc-wu-k">Fair price (model)</span><span class="tstc-wu-v">{{ p.writeup.fair_price }}</span></div>
+        <div class="tstc-wu-row"><span class="tstc-wu-k">Edge</span><span class="tstc-wu-edge">{{ p.writeup.edge }}</span></div>
+        {% if p.writeup.key_factor %}
+        <p class="tstc-wu-h">🔑 KEY FACTOR</p>
+        <p class="tstc-wu-p">{{ p.writeup.key_factor }}</p>
+        {% endif %}
+        {% if p.writeup.risk %}
+        <p class="tstc-wu-h">⚠️ THE RISK</p>
+        <p class="tstc-wu-p tstc-wu-risk">{{ p.writeup.risk }}</p>
+        {% endif %}
+      </div>
+    </details>
+    {% endif %}
+    <div class="tk-perf" aria-hidden="true">&bull; &bull; &bull; &bull; &bull; &bull; &bull; &bull; &bull; &bull; &bull; &bull; &bull; &bull; &bull;</div>
+  </div>
 </div>
