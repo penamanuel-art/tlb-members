@@ -165,3 +165,17 @@
     <div class="tk-perf" aria-hidden="true">&bull; &bull; &bull; &bull; &bull; &bull; &bull; &bull; &bull; &bull; &bull; &bull; &bull; &bull; &bull;</div>
   </div>
 </div>
+{# Al pulsar "TAP TO EXPAND" se cierra solo a los 7 segundos (pedido Alex 2026-10-06) #}
+<script>
+(function(){
+  var timers = {};
+  document.querySelectorAll('details.tstc-wu').forEach(function(d, i){
+    d.addEventListener('toggle', function(){
+      if(timers[i]){ clearTimeout(timers[i]); timers[i] = null; }
+      if(d.open){
+        timers[i] = setTimeout(function(){ d.open = false; timers[i] = null; }, 7000);
+      }
+    });
+  });
+})();
+</script>
