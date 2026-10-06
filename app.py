@@ -1662,9 +1662,16 @@ def auto_grado_tracked(db, user):
     resultado oficial. Los demás miembros marcan sus resultados a mano,
     según sus propias jugadas.
 
-    Se ejecuta en cada vista del tracker y del home. Solo toca jugadas
-    con resultado pendiente (NULL); nunca reescribe un resultado ya
-    marcado.
+    Se ejecuta en cada vista del tracker y del home.
+
+    2026-10-06 (pedido por Alex: su tracker personal lleva los mismos
+    números que el récord oficial del programa): para su cuenta de miembro,
+    cada jugada trackeada que exista en el archivo oficial se sincroniza
+    por play_id — resultado, cuota y montos reales del ticket — así el W-L
+    y el profit quedan idénticos al programa. El match por play_id es
+    determinista; el match por (fecha, pick) queda como respaldo para
+    pendientes sin play_id. Nunca se reescribe un resultado ya marcado a
+    mano; solo se completa el pendiente (NULL).
     """
     if not (is_admin_for(user) or is_alex_member(user)):
         return 0
@@ -1677,54 +1684,104 @@ def auto_grado_tracked(db, user):
         balance_uid = _r["id"] if _r else user_id
     else:
         balance_uid = user_id
-    pendientes = db.execute(
-        "SELECT id, play_id, fecha, pick, cuota, stake_monto FROM tracked_plays "
-        "WHERE user_id = ? AND resultado IS NULL",
-        (user_id,),
-    ).fetchall()
-    if not pendientes:
-        return 0
-    oficiales = {}
+    solo_alex = is_alex_member(user)
+    # Índice oficial: por play_id (determinista) y por (fecha, pick) como respaldo.
+    oficiales_by_id = {}
+    oficiales_by_key = {}
     for d in load_archive():
         fecha = (d.get("fecha") or "").strip()
         for j in d.get("jugadas", []) or []:
             r = j.get("resultado")
-            # Matching normalizado (2026-10-03): el pick trackeado viene de la
-            # card ("TCU ML (+186)") y el oficial del archivo ("TCU ML vs BYU");
-            # se comparan sin cuota ni rival para que el tracker de Alex se
-            # liquide solo aunque haya trackeado antes de los tickets.
+            if r not in ("WON", "LOST"):
+                continue
+            res = "W" if r == "WON" else "L"
+            pid = (j.get("id") or "").strip()
+            if pid:
+                oficiales_by_id[pid] = (j, res, fecha)
+            # Respaldo (2026-10-03): el pick trackeado viene de la card
+            # ("TCU ML (+186)") y el oficial del archivo ("TCU ML vs BYU");
+            # se comparan sin cuota ni rival.
             pick = _norm_free_pick(j.get("pick") or "").lower()
-            if r in ("WON", "LOST") and pick:
-                oficiales[(fecha, pick)] = "W" if r == "WON" else "L"
+            if pick:
+                oficiales_by_key[(fecha, pick)] = (j, res, fecha)
+    rows = db.execute(
+        "SELECT id, play_id, fecha, pick, cuota, stake_monto, stake_unidades, "
+        "resultado FROM tracked_plays WHERE user_id = ?",
+        (user_id,),
+    ).fetchall()
+    if not rows:
+        return 0
     n = 0
-    for t in pendientes:
-        f = (t["fecha"] or "").strip() or (
-            _RE_FECHA_PLAYID.match(t["play_id"] or "").group(1)
-            if _RE_FECHA_PLAYID.match(t["play_id"] or "") else ""
-        )
-        key = (f, _norm_free_pick(t["pick"] or "").lower())
-        res = oficiales.get(key)
-        if res:
-            db.execute(
-                "UPDATE tracked_plays SET resultado = ? WHERE id = ?",
-                (res, t["id"]),
+    for t in rows:
+        tid = t["id"]
+        pid = (t["play_id"] or "").strip()
+        official = oficiales_by_id.get(pid) if pid else None
+        if not official and not t["resultado"]:
+            f = (t["fecha"] or "").strip() or (
+                _RE_FECHA_PLAYID.match(pid).group(1)
+                if pid and _RE_FECHA_PLAYID.match(pid) else ""
             )
-            # Balance automático de la casa (2026-10-05, pedido por Alex):
-            # todo lo de Alex se apuesta en Novig; la ganancia/pérdida de la
-            # jugada actualiza ese balance en cuanto se liquida.
+            official = oficiales_by_key.get(
+                (f, _norm_free_pick(t["pick"] or "").lower())
+            )
+        if not official:
+            continue
+        j, res, fecha_of = official
+        era_pendiente = not t["resultado"]
+        updates = {}
+        # Resultado: solo se completa el pendiente; nunca se reescribe uno marcado.
+        if era_pendiente:
+            updates["resultado"] = res
+        # Sincronía con el programa (solo la cuenta de Alex): cuota y montos
+        # reales del ticket para que el profit sea idéntico al oficial.
+        if solo_alex:
+            try:
+                cuota_of = int(j.get("cuota") or 0)
+            except (TypeError, ValueError):
+                cuota_of = 0
+            if cuota_of and cuota_of != (t["cuota"] or 0):
+                updates["cuota"] = cuota_of
+            try:
+                monto_of = float(j.get("stake_monto") or 0)
+            except (TypeError, ValueError):
+                monto_of = 0
+            if monto_of > 0 and abs(monto_of - float(t["stake_monto"] or 0)) > 0.005:
+                updates["stake_monto"] = monto_of
+            try:
+                u_of = float(j.get("stake_unidades") or 0)
+            except (TypeError, ValueError):
+                u_of = 0
+            if u_of > 0 and abs(u_of - float(t["stake_unidades"] or 0)) > 0.001:
+                updates["stake_unidades"] = u_of
+            if fecha_of and fecha_of != (t["fecha"] or "").strip():
+                updates["fecha"] = fecha_of
+        if not updates:
+            continue
+        set_clause = ", ".join("%s = ?" % k for k in updates)
+        db.execute(
+            "UPDATE tracked_plays SET %s WHERE id = ?" % set_clause,
+            (*updates.values(), tid),
+        )
+        # Balance automático de la casa (2026-10-05, pedido por Alex):
+        # todo lo de Alex se apuesta en Novig; la ganancia/pérdida de la
+        # jugada actualiza ese balance en cuanto se liquida (solo al pasar
+        # de pendiente a W/L, con los montos ya sincronizados; no se repite).
+        if era_pendiente:
             try:
                 profit = play_profit_dollars(
                     {
-                        "cuota": t["cuota"] or 0,
+                        "cuota": updates.get("cuota", t["cuota"]) or 0,
                         "resultado": res,
-                        "stake_monto": float(t["stake_monto"] or 0),
+                        "stake_monto": float(
+                            updates.get("stake_monto", t["stake_monto"]) or 0
+                        ),
                     }
                 )
             except (TypeError, ValueError):
                 profit = 0
             if profit:
                 bump_book_balance(db, balance_uid, "Novig", profit)
-            n += 1
+        n += 1
     if n:
         db.commit()
     return n
