@@ -2014,15 +2014,30 @@ app.jinja_env.globals.update(team_logo_url=team_logo_url)
 WATERMARKS = [
     "img/watermark-football.jpg",
     "img/watermark-baseball.jpg",
+    "img/watermark-basketball.jpg",
+    "img/watermark-hockey.jpg",
 ]
+
+# Fondo por sección (2026-10-06, pedido por Alex): cada página muestra
+# el fondo de su deporte/tema correspondiente.
+WATERMARK_POR_RUTA = {
+    "home": "img/watermark-football.jpg",
+    "tracker": "img/watermark-baseball.jpg",
+    "ev_board": "img/watermark-basketball.jpg",
+    "records": "img/watermark-hockey.jpg",
+}
 
 
 @app.context_processor
 def inject_user():
-    wm = session.get("watermark")
-    if wm not in WATERMARKS:
-        wm = random.choice(WATERMARKS)
-        session["watermark"] = wm
+    from flask import request as freq
+    ruta = (freq.endpoint or "")
+    wm = WATERMARK_POR_RUTA.get(ruta)
+    if not wm:
+        wm = session.get("watermark")
+        if wm not in WATERMARKS:
+            wm = random.choice(WATERMARKS)
+            session["watermark"] = wm
     nombre = session.get("nombre", "")
     corto = primer_nombre(nombre)
     cu = current_user()
