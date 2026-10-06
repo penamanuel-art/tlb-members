@@ -103,9 +103,10 @@
       if (e) { e.stopPropagation(); e.preventDefault(); }
       if (drop.hidden) {
         var r = btn.getBoundingClientRect();
+        var left = Math.min(r.left, window.innerWidth - 236);
         drop.style.top = (r.bottom + 8) + 'px';
-        drop.style.right = Math.max(8, window.innerWidth - r.right) + 'px';
-        drop.style.left = 'auto';
+        drop.style.left = Math.max(8, left) + 'px';
+        drop.style.right = 'auto';
       }
       drop.hidden = !drop.hidden;
     }
