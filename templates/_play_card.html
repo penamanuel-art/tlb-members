@@ -87,11 +87,11 @@
       <span class="tk-status pending">PENDING</span>
       {% endif %}
     </div>
-    {# Ticket original como visual principal CUANDO llega (pedido Alex 2026-10-06: la card se actualiza al recibir el ticket) #}
+    {# Ticket original como visual principal CUANDO llega (pedido Alex 2026-10-06: la card se actualiza al recibir el ticket). Tamaño compacto para no agrandar la card. #}
     {% if p.comprobante %}
-    <div class="tk-ticket" style="position:relative;border-radius:14px;overflow:hidden;margin:4px 0 8px;cursor:pointer;" onclick="window.location.href='{{ url_for('ticket_view', play_id=p.id) }}'">
-      <img src="{{ url_for('static', filename=p.comprobante) }}" alt="Original ticket {{ p.abbr }} {{ p.bettype }}" style="display:block;width:100%;height:auto;border-radius:14px;filter:brightness(.9);" loading="lazy">
-      <span style="position:absolute;right:10px;bottom:10px;background:rgba(0,0,0,.65);color:#fff;font-size:12px;font-weight:600;padding:6px 12px;border-radius:999px;pointer-events:none;">🔍 Tap ticket</span>
+    <div class="tk-ticket" style="position:relative;border-radius:12px;overflow:hidden;margin:4px auto 8px;cursor:pointer;max-width:280px;" onclick="window.location.href='{{ url_for('ticket_view', play_id=p.id) }}'">
+      <img src="{{ url_for('static', filename=p.comprobante) }}" alt="Original ticket {{ p.abbr }} {{ p.bettype }}" style="display:block;width:100%;height:auto;max-height:180px;object-fit:cover;object-position:top;border-radius:12px;filter:brightness(.9);" loading="lazy">
+      <span style="position:absolute;right:8px;bottom:8px;background:rgba(0,0,0,.65);color:#fff;font-size:11px;font-weight:600;padding:5px 10px;border-radius:999px;pointer-events:none;">🔍 Tap ticket</span>
     </div>
     {% endif %}
     <div class="tstc-bet">
