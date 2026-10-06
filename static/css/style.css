@@ -85,6 +85,10 @@ a { color: var(--blue); text-decoration: none; }
 @media (max-width: 560px) {
   .qa-txt { display: none; }
   .qa-btn { padding: 9px 11px; font-size: 16px; }
+  /* ---- Topbar deslizable en móvil: los botones no se cortan (2026-10-06) ---- */
+  .topbar-left { overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+  .topbar-left::-webkit-scrollbar { display: none; }
+  .topbar-left > * { flex: none; }
 }
 .tabs {
   display: flex; background: var(--card-2);
