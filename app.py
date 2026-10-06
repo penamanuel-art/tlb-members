@@ -3457,6 +3457,10 @@ def untrack(tracked_id):
 def masterclass():
     db = get_db()
     record_checkin(db, session["user_id"])
+    from flask import request
+    # Intro promocional de 40s la primera vez (pedido Alex 2026-10-06).
+    if not request.args.get("start"):
+        return render_template("masterclass_intro.html")
     return render_template(
         "masterclass.html",
         leccion=load_masterclass(),

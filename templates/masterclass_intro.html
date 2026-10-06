@@ -1,0 +1,39 @@
+{% extends "base_v2.html" %}
+{% block title %}Academy — The Sharp Team{% endblock %}
+{% block content %}
+<style>
+  .ac-intro { max-width: 560px; margin: 8vh auto 0; padding: 0 20px; text-align: center; }
+  .ac-card { background: linear-gradient(160deg,#141b2e,#0b101d); border: 1px solid rgba(212,175,55,.4); border-radius: 20px; padding: 36px 28px; box-shadow: 0 8px 40px rgba(0,0,0,.5); }
+  .ac-logo { width: 84px; height: 84px; border-radius: 20px; margin-bottom: 18px; }
+  .ac-card h1 { color: #fff; font-size: 1.6rem; font-weight: 800; margin: 0 0 6px; }
+  .ac-kicker { color: #d4af37; font-weight: 700; font-size: .9rem; letter-spacing: 2px; margin: 0 0 20px; }
+  .ac-card p { color: #d7dce4; font-size: 1.02rem; line-height: 1.65; margin: 0 0 14px; }
+  .ac-card p b { color: #fff; }
+  .ac-card p .gold { color: #fbbf24; font-weight: 700; }
+  .ac-count { margin-top: 22px; color: #9aa3b2; font-size: .9rem; }
+  .ac-count b { color: #4ade80; font-size: 1.3rem; }
+  .ac-skip { display: inline-block; margin-top: 16px; color: #4ade80; font-weight: 700; text-decoration: none; font-size: 1rem; }
+</style>
+<div class="ac-intro">
+  <div class="ac-card">
+    <img src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team" class="ac-logo">
+    <h1>The Sharp Team Academy</h1>
+    <p class="ac-kicker">BEFORE YOU PLACE ANOTHER BET</p>
+    <p>We promise you this: <b>if you read the Academy before becoming a bettor — before you ever decide to place a bet — it will change your mind 100%.</b></p>
+    <p>This is <span class="gold">what the sportsbooks don't want bettors to know.</span></p>
+    <p>If you want to be part of the <b>1% who are profitable</b> — the 1% who actually survive in the world of sports betting — read the Academy. It will give you the full knowledge and help you understand <b>how sportsbooks really work.</b></p>
+    <p class="ac-count">Taking you to the Academy in <b id="acTimer">40</b>s…</p>
+    <a class="ac-skip" href="{{ url_for('masterclass') }}?start=1">Continue now →</a>
+  </div>
+</div>
+<script>
+(function(){
+  var t = 40, el = document.getElementById("acTimer");
+  var iv = setInterval(function(){
+    t--;
+    if (el) el.textContent = t;
+    if (t <= 0) { clearInterval(iv); location.href = "{{ url_for('masterclass') }}?start=1"; }
+  }, 1000);
+})();
+</script>
+{% endblock %}
