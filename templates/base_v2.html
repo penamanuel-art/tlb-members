@@ -98,6 +98,7 @@
   var btn = document.getElementById('v2menuBtn');
   var drop = document.getElementById('v2menuDrop');
   if (btn && drop) {
+    var touchHandled = false;
     function toggleMenu(e) {
       if (e) { e.stopPropagation(); e.preventDefault(); }
       if (drop.hidden) {
@@ -108,8 +109,15 @@
       }
       drop.hidden = !drop.hidden;
     }
-    btn.addEventListener('click', toggleMenu);
-    btn.addEventListener('touchend', toggleMenu, {passive: false});
+    btn.addEventListener('touchend', function (e) {
+      touchHandled = true;
+      toggleMenu(e);
+      setTimeout(function () { touchHandled = false; }, 500);
+    }, {passive: false});
+    btn.addEventListener('click', function (e) {
+      if (touchHandled) return;
+      toggleMenu(e);
+    });
     document.addEventListener('click', function () { drop.hidden = true; });
     document.addEventListener('touchend', function (e) {
       if (drop.hidden) return;
