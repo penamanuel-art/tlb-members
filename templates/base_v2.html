@@ -200,7 +200,11 @@ function googleTranslateElementInit(){new google.translate.TranslateElement({pag
       localStorage.setItem("tst_app_v", serverV);
     }).catch(function(){});
     var r = document.getElementById("verRefresh");
-    if (r) r.addEventListener("click", function(e){ e.preventDefault(); location.reload(true); });
+    if (r) r.addEventListener("click", function(e){
+      e.preventDefault();
+      var u = location.href.split('?')[0].split('#')[0];
+      location.href = u + '?_v=' + Date.now();
+    });
   } catch(e){}
 })();
 </script>
