@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}Records — The Sharp Team{% endblock %}
+{% block content %}
+<style>
+.rec-wrap{max-width:640px;margin:0 auto;padding:20px 16px 90px}
+.rec-crumb{color:#8a93a8;font-size:14px;margin-bottom:14px}
+.rec-crumb a{color:#8a93a8;text-decoration:none}
+.rec-hero{font-size:40px;font-weight:800;letter-spacing:-1px;line-height:1.1;margin:0 0 12px;color:#fff}
+.rec-hero em{font-style:normal;color:#2f9dff}
+.rec-sub{color:#9aa3b8;font-size:15px;line-height:1.6;margin:0 0 24px}
+.rec-box{background:#101a2c;border:1px solid rgba(47,212,126,.25);border-radius:20px;padding:22px;margin-bottom:14px}
+.rec-box.plat{border-color:rgba(245,197,66,.3)}
+.rec-box.gold{border-color:rgba(47,212,126,.25)}
+.rec-box-eyebrow{color:#8a93a8;font-size:11px;letter-spacing:2px;font-weight:700;margin-bottom:10px}
+.rec-big{font-size:44px;font-weight:800;letter-spacing:-1px;color:#fff;margin:0}
+.rec-units{color:#2fd47e;font-size:22px;font-weight:800;margin:6px 0 4px}
+.rec-units.neg{color:#ff6b6b}
+.rec-meta{color:#8a93a8;font-size:14px}
+.rec-list{margin-top:28px}
+.rec-row{display:flex;gap:12px;align-items:center;background:#0f1729;border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:12px;margin-bottom:10px}
+.rec-thumb{width:56px;height:56px;border-radius:12px;object-fit:cover;flex:none;background:#1a2438}
+.rec-thumb-ph{width:56px;height:56px;border-radius:12px;flex:none;background:#1a2438;display:flex;align-items:center;justify-content:center;font-size:22px}
+.rec-main{flex:1;min-width:0}
+.rec-lvl{font-size:11px;font-weight:800;letter-spacing:1px;margin-bottom:4px}
+.rec-lvl.plat{color:#f5c542}.rec-lvl.gold{color:#2fd47e}
+.rec-pick{font-size:16px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rec-sub2{color:#8a93a8;font-size:13px;margin-top:2px}
+.rec-res{text-align:right;flex:none}
+.rec-res .w{color:#2fd47e;font-weight:800;font-size:13px;letter-spacing:1px}
+.rec-res .l{color:#ff6b6b;font-weight:800;font-size:13px;letter-spacing:1px}
+.rec-res .u{font-size:17px;font-weight:800;color:#fff;margin-top:2px}
+</style>
+<div class="rec-wrap">
+  <p class="rec-crumb"><a href="{{ url_for('home') }}">Home</a> &nbsp;/&nbsp; Records</p>
+  <h1 class="rec-hero">The documented<br><em>record:</em><br>every pick, win or loss.</h1>
+  <p class="rec-sub">Every play graded, win or loss, posted publicly. Every pick is posted before the game with its timestamped ticket and graded against the final score — win or loss, in public. No picks deleted, no record rewritten.</p>
+
+  <div class="rec-box">
+    <p class="rec-box-eyebrow">OFFICIAL PLAYS (PLATINUM + GOLD)</p>
+    <p class="rec-big">{{ stats.W }}-{{ stats.L }}</p>
+    <p class="rec-units{% if stats.units < 0 %} neg{% endif %}">{{ '+' if stats.units >= 0 else '' }}{{ '%.2f' % stats.units }}u</p>
+    <p class="rec-meta">{{ '%.0f' % win_rate }}% win rate · {{ total }} plays graded</p>
+  </div>
+  <div class="rec-box plat">
+    <p class="rec-box-eyebrow">⭐ PLATINUM</p>
+    <p class="rec-big">{{ by_level.PLATINUM.W }}-{{ by_level.PLATINUM.L }}</p>
+    <p class="rec-units{% if by_level.PLATINUM.units < 0 %} neg{% endif %}">{{ '+' if by_level.PLATINUM.units >= 0 else '' }}{{ '%.2f' % by_level.PLATINUM.units }}u</p>
+    <p class="rec-meta">{{ '%.0f' % by_level.PLATINUM.wr }}% win rate · 1u per play</p>
+  </div>
+  <div class="rec-box gold">
+    <p class="rec-box-eyebrow">● GOLD</p>
+    <p class="rec-big">{{ by_level.GOLD.W }}-{{ by_level.GOLD.L }}</p>
+    <p class="rec-units{% if by_level.GOLD.units < 0 %} neg{% endif %}">{{ '+' if by_level.GOLD.units >= 0 else '' }}{{ '%.2f' % by_level.GOLD.units }}u</p>
+    <p class="rec-meta">{{ '%.0f' % by_level.GOLD.wr }}% win rate · 0.6u per play</p>
+  </div>
+
+  <div class="rec-list">
+    {% for r in graded %}
+    <div class="rec-row">
+      {% if r.comprobante %}
+      <a href="{{ url_for('ticket_view', play_id=r.id) if r.id else url_for('static', filename=r.comprobante) }}"><img class="rec-thumb" src="{{ url_for('static', filename=r.comprobante) }}" alt="Ticket" loading="lazy"></a>
+      {% else %}
+      <span class="rec-thumb-ph">🎫</span>
+      {% endif %}
+      <div class="rec-main">
+        <p class="rec-lvl {{ 'plat' if r.nivel == 'PLATINUM' else 'gold' }}">{{ '⭐' if r.nivel == 'PLATINUM' else '●' }} {{ r.nivel }} play{% if r.liga %} · {{ r.liga }}{% endif %}</p>
+        <p class="rec-pick">{{ r.abbr }} {{ r.bettype }} (Winner)</p>
+        <p class="rec-sub2">{{ r.fecha }}{% if r.cuota is not none %} · {{ fmt_odds(r.cuota) }}{% endif %}</p>
+      </div>
+      <div class="rec-res">
+        <p class="{{ 'w' if r.won else 'l' }}">{{ 'WON' if r.won else 'LOST' }}</p>
+        <p class="u">{{ '+' if r.units >= 0 else '' }}{{ '%.2f' % r.units }}u</p>
+      </div>
+    </div>
+    {% else %}
+    <p class="muted">No graded plays yet.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

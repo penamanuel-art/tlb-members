@@ -456,7 +456,10 @@
       <p class="v2-sec-eyebrow"><b>08</b> · Results</p>
       <h2 class="v2-sec-title">Recent results</h2>
     </div>
-    <a class="v2-link" href="{{ url_for('resultados') }}">View all →</a>
+    <div style="display:flex;gap:10px;align-items:center;">
+      <a class="v2-link" href="{{ url_for('records') }}" style="border:1px solid rgba(255,255,255,.15);border-radius:999px;padding:8px 16px;text-decoration:none;">↗ Full records</a>
+      <a class="v2-link" href="{{ url_for('resultados') }}">View all →</a>
+    </div>
   </div>
   {% if recientes %}
   <div class="v2-rows">

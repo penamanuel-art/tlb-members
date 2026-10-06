@@ -3471,6 +3471,63 @@ def archivo():
     )
 
 
+@app.route("/records")
+@login_required
+def records():
+    """Página de récord documentado estilo WGT (pedido Alex 2026-10-06 con capturas):
+    hero + cajas de stats (oficiales, Platinum, Gold) + lista completa de jugadas liquidadas."""
+    db = get_db()
+    record_checkin(db, session["user_id"])
+
+    def _units(j):
+        """Unidades ganadas/perdidas de una jugada liquidada."""
+        try:
+            stake = float(j.get("stake_monto") or 0)
+            u = float(j.get("stake_unidades") or 0)
+            profit = float(j.get("profit") or 0)
+            if u > 0 and stake > 0:
+                return profit / (stake / u)
+            return 0.0
+        except (TypeError, ValueError, ZeroDivisionError):
+            return 0.0
+
+    stats = {"W": 0, "L": 0, "units": 0.0}
+    by_level = {"PLATINUM": {"W": 0, "L": 0, "units": 0.0},
+                "GOLD": {"W": 0, "L": 0, "units": 0.0}}
+    graded = []
+    for d in load_archive():
+        fecha = d.get("fecha", "")
+        for j in d.get("jugadas", []) or []:
+            if j.get("resultado") not in ("WON", "LOST") or j.get("bloqueada"):
+                continue
+            nv = (j.get("nivel") or "").upper()
+            if nv not in ("ELITE", "PLATINUM", "GOLD"):
+                continue
+            disp = "PLATINUM" if nv in ("ELITE", "PLATINUM") else "GOLD"
+            un = _units(j)
+            won = j["resultado"] == "WON"
+            stats["W" if won else "L"] += 1
+            stats["units"] += un
+            by_level[disp]["W" if won else "L"] += 1
+            by_level[disp]["units"] += un
+            graded.append({
+                "pick": j.get("pick", ""), "cuota": j.get("cuota"),
+                "nivel": disp, "liga": j.get("liga", ""), "fecha": fecha,
+                "won": won, "units": un,
+                "comprobante": j.get("comprobante", ""),
+                "id": j.get("id", ""),
+                "abbr": j.get("abbr", ""), "bettype": j.get("bettype", ""),
+            })
+    graded.sort(key=lambda r: r["fecha"], reverse=True)
+    total = stats["W"] + stats["L"]
+    wr = (100.0 * stats["W"] / total) if total else 0.0
+    for _lv in by_level.values():
+        _t = _lv["W"] + _lv["L"]
+        _lv["wr"] = (100.0 * _lv["W"] / _t) if _t else 0.0
+    return render_template("records.html", stats=stats, by_level=by_level,
+                           graded=graded, total=total, win_rate=wr)
+
+
 @app.route("/desbloquear-platinum")
 @login_required
 def desbloquear_platinum():
