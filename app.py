@@ -4206,6 +4206,12 @@ def api_push_edge():
     return jsonify({"sent": sent, "failed": failed})
 
 
+@app.route("/api/version")
+def api_version():
+    """Versión actual del deploy (para el aviso de 'nueva versión disponible')."""
+    from flask import jsonify
+    return jsonify({"v": ASSET_V})
+
 @app.route("/api/push-status")
 def api_push_status():
     """Estado de suscripciones push. Protegido con X-Push-Key.
