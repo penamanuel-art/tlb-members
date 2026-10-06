@@ -3546,6 +3546,13 @@ def records():
                            graded=graded, total=total, win_rate=wr)
 
 
+@app.route("/about")
+def about():
+    """Nuestra historia — la promesa (pedido por Alex 2026-10-06).
+    Página pública, no requiere login."""
+    return render_template("about.html")
+
+
 @app.route("/desbloquear-platinum")
 @login_required
 def desbloquear_platinum():

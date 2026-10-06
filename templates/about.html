@@ -1,0 +1,40 @@
+{% extends "base_v2.html" %}
+{% block title %}Our Story — The Sharp Team{% endblock %}
+{% block content %}
+<style>
+.about-wrap{max-width:640px;margin:0 auto;padding:28px 20px 90px}
+.about-eyebrow{color:#2fd47e;font-size:11px;letter-spacing:3px;font-weight:800;margin-bottom:12px}
+.about-title{font-size:34px;font-weight:800;letter-spacing:-1px;line-height:1.15;margin:0 0 8px;color:#fff}
+.about-sub{color:#9aa3b8;font-size:15px;margin:0 0 28px}
+.about-story{background:#101a2c;border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:28px 24px}
+.about-story p{color:#d5dbe8;font-size:16px;line-height:1.75;margin:0 0 18px}
+.about-story p:last-child{margin-bottom:0}
+.about-story .pull{font-size:20px;font-weight:700;color:#fff;border-left:3px solid #2fd47e;padding-left:16px;margin:24px 0;font-style:italic;line-height:1.5}
+.about-story .promise{color:#2fd47e;font-weight:700}
+.about-sign{margin-top:28px;text-align:center}
+.about-sign img{width:72px;height:72px;border-radius:50%;margin-bottom:10px}
+.about-sign .name{color:#fff;font-weight:800;font-size:16px}
+.about-sign .role{color:#8a93a8;font-size:13px;margin-top:4px}
+</style>
+<div class="about-wrap">
+  <div class="about-eyebrow">THE SHARP TEAM</div>
+  <h1 class="about-title">The Promise</h1>
+  <p class="about-sub">Why this exists. Why every play is on the record.</p>
+  <div class="about-story">
+    <p>My father was a banca man. The kind who walks in with a wrinkled ticket in his pocket and his hope intact, even when his pocket is empty.</p>
+    <p>He never owned a home. Not because he didn't work — he worked. But because every peso he earned went back to the banca, as if the banca were a river and he was just passing the water through his hands. He was a common bettor: he played with his heart, with hunches, with &ldquo;today&rsquo;s the day.&rdquo; Nobody ever taught him there was a system. Nobody ever taught him how it really worked.</p>
+    <p>I saw it all. I saw the tickets. I saw the nights. I saw the house that never came.</p>
+    <p>And one day I made him a promise. Not the kind you say just to say it — the kind that marks you for life: <span class="promise">I&rsquo;m going to investigate this. I&rsquo;m going to study it like no one ever has. I&rsquo;m going to understand it completely. I&rsquo;m going to become a professional bettor. And in your honor, Dad, I&rsquo;m going to make the bancas pay dearly for everything they took from you.</span></p>
+    <p>Not with anger. With discipline. With numbers. With a system that doesn&rsquo;t feel, doesn&rsquo;t panic, doesn&rsquo;t chase losses. Everything he never had, I was going to build.</p>
+    <div class="pull">That&rsquo;s why every play carries a real ticket. That&rsquo;s why every result stays on the record, win or lose. That&rsquo;s why the stake is dictated by the system and never by emotion.</div>
+    <p>Because this isn&rsquo;t revenge — it&rsquo;s the promise fulfilled: the common bettor&rsquo;s son who became what the banca fears most.</p>
+    <p>A man with a system.</p>
+    <p>And every time the banca pays, somewhere, my father smiles. Because the house he could never buy is being built play by play, with his name in the foundation.</p>
+  </div>
+  <div class="about-sign">
+    <img src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team">
+    <div class="name">The Sharp Team</div>
+    <div class="role">Every play on the record.</div>
+  </div>
+</div>
+{% endblock %}
