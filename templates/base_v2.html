@@ -98,11 +98,17 @@
   var btn = document.getElementById('v2menuBtn');
   var drop = document.getElementById('v2menuDrop');
   if (btn && drop) {
-    btn.addEventListener('click', function (e) {
-      e.stopPropagation();
+    function toggleMenu(e) {
+      if (e) { e.stopPropagation(); e.preventDefault(); }
       drop.hidden = !drop.hidden;
-    });
+    }
+    btn.addEventListener('click', toggleMenu);
+    btn.addEventListener('touchend', toggleMenu, {passive: false});
     document.addEventListener('click', function () { drop.hidden = true; });
+    document.addEventListener('touchend', function (e) {
+      if (drop.hidden) return;
+      if (!drop.contains(e.target) && e.target !== btn) drop.hidden = true;
+    }, {passive: true});
   }
   document.querySelectorAll('[data-ticket]').forEach(function (el) {
     el.addEventListener('click', function () {
