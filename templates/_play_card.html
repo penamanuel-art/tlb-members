@@ -76,7 +76,7 @@
         <div class="tk-logo">{% if _logo %}<img src="{{ _logo }}" alt="{{ p.abbr }}" loading="lazy" onerror="this.style.display='none'">{% endif %}</div>
         <div>
           <div class="tk-name">{{ p.abbr }}{% if p.writeup and p.writeup.model_prob %} <span class="tk-dot">&bull;</span> <span class="tk-prob">{{ p.writeup.model_prob }}</span>{% endif %}</div>
-          <div class="tk-bettype">{{ p.bettype }} Winner</div>
+          <div class="tk-bettype">{{ p.bettype }} Winner{% if p.opp_abbr %} vs {{ p.opp_abbr }}{% endif %}{% if p.game_time_et %} &bull; {{ p.game_time_et }}{% endif %}</div>
         </div>
       </div>
       {% if _res == 'W' %}
@@ -99,23 +99,6 @@
       <div class="tk-amt">{{ '$%.2f' % p.stake_monto }}</div>
       <div class="tk-units">{{ '%g' % p.stake_unidades }}u</div>
     </div>
-    <div class="tk-game">
-      <div class="tk-side">
-        {% set _hl = team_logo_url(p.liga, p.abbr) %}
-        <div class="tk-glogo">{% if _hl %}<img src="{{ _hl }}" alt="{{ p.abbr }}" loading="lazy" onerror="this.style.display='none'">{% endif %}</div>
-        <span class="tk-gabbr">{{ p.abbr }}</span>
-      </div>
-      <div class="tk-gtime">
-        <div>{{ p.game_time_et or '' }}</div>
-        <div>{{ p.liga or '' }}</div>
-      </div>
-      <div class="tk-side">
-        <span class="tk-gabbr">{{ p.opp_abbr or '' }}</span>
-        {% set _ol = team_logo_url(p.liga, p.opp_abbr) if p.opp_abbr is defined and p.opp_abbr else '' %}
-        <div class="tk-glogo">{% if _ol %}<img src="{{ _ol }}" alt="{{ p.opp_abbr }}" loading="lazy" onerror="this.style.display='none'">{% endif %}</div>
-      </div>
-    </div>
-    <div class="tk-info">{{ 'Platinum' if is_vip else ('Value' if is_value else 'Gold') }} Play &bull; {{ fmt_odds(p.cuota) }} {{ p.casa or 'Pinnacle' }}{% if p.writeup and p.writeup.fair_price %} &bull; Fair {{ p.writeup.fair_price }}{% endif %}</div>
     <div class="tk-badgerow">
       <span class="tstc-lvl">{{ 'PLATINUM' if is_vip else ('💎 VALUE PLAY' if is_value else 'GOLD') }}</span>
       {% if p.comprobante %}<a class="tk-view" href="{{ url_for('ticket_view', play_id=p.id) }}">View ticket &rarr;</a>{% endif %}
