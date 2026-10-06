@@ -17,7 +17,8 @@
 <header class="v2-topbar">
   <div class="v2-topbar-left">
     {% if session.get('user_id') %}
-    <a href="{{ url_for('home', splash='0') }}" class="v2-brand" title="Home"><img src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team" style="height:38px;width:auto;"></a>
+    <a href="{{ url_for('home', splash='0') }}" class="v2-brand" title="Home"><img src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team" style="height:56px;width:auto;"></a>
+    <div class="v2-topbar-menu">
     <div class="v2-menu-wrap">
       <button class="v2-icon-btn" id="v2menuBtn" aria-label="Menu">☰</button>
       <div class="v2-menu-drop" id="v2menuDrop" hidden>
@@ -39,6 +40,7 @@
     </div>
     <a href="{{ url_for('records') }}" class="v2-track-link{% if request.endpoint == 'records' %} active{% endif %}" title="Full record">📜 Full record</a>
     <a href="{{ url_for('masterclass') }}" class="v2-track-link{% if request.endpoint == 'masterclass' %} active{% endif %}" title="Academy">🎓 Academy</a>
+    </div>
     {% else %}
     <a class="v2-brand" href="{{ url_for('index') }}">
       <img src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team">
