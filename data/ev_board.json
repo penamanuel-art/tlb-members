@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-05T19:09:00-04:00",
+  "updated_at": "2026-10-05T20:08:51-04:00",
   "refresh_minutes": 15,
   "fair_source": "Pinnacle no-vig",
   "filters": {
@@ -16,6 +16,64 @@
     "live_included": true
   },
   "edges": [
+    {
+      "id": "ccd487a87bb73145e3f12dd3a765ad47-totals-7.5-Over",
+      "skey": "ccd487a87bb73145e3f12dd3a765ad47|totals|7.5|Over",
+      "sport": "MLB",
+      "game": "Chicago White Sox @ Cleveland Guardians",
+      "team": "Over 7.5",
+      "market": "Total",
+      "point": "7.5",
+      "book": "Novig",
+      "price": 376,
+      "fair_prob_pct": 34.4,
+      "fair_american": 190,
+      "ev_pct": 64.0,
+      "books_count": 4,
+      "books": [
+        {
+          "book": "Novig",
+          "price": 376,
+          "ev_pct": 64.0,
+          "url": "https://novig.com"
+        },
+        {
+          "book": "DraftKings",
+          "price": 282,
+          "ev_pct": 31.6,
+          "url": "https://sportsbook.draftkings.com"
+        },
+        {
+          "book": "FanDuel",
+          "price": 265,
+          "ev_pct": 25.7,
+          "url": "https://sportsbook.fanduel.com"
+        },
+        {
+          "book": "BetMGM",
+          "price": 260,
+          "ev_pct": 24.0,
+          "url": "https://sports.betmgm.com"
+        }
+      ],
+      "also_at": [
+        "BetMGM",
+        "DraftKings",
+        "FanDuel"
+      ],
+      "sharp": false,
+      "verified": true,
+      "edge_label": "Strong edge",
+      "rec_units": 1.0,
+      "rec_stake": 50,
+      "live": true,
+      "game_time": "LIVE now",
+      "commence_time": "2026-10-05T21:10:00Z",
+      "bet_url": "https://novig.com",
+      "novig_deep": false,
+      "stale": false,
+      "first_seen": "2026-10-06T00:08:51.030929+00:00"
+    },
     {
       "id": "ccd487a87bb73145e3f12dd3a765ad47-h2h-None-Cleveland Guardian",
       "skey": "ccd487a87bb73145e3f12dd3a765ad47|h2h|None|Cleveland Guardians",
@@ -71,8 +129,9 @@
       "commence_time": "2026-10-05T21:10:00Z",
       "bet_url": "https://novig.com",
       "novig_deep": false,
-      "stale": false,
-      "first_seen": "2026-10-05T23:09:00.891911+00:00"
+      "stale": true,
+      "first_seen": "2026-10-05T23:09:00.891911+00:00",
+      "stale_reason": "line moved below 3%"
     },
     {
       "id": "ccd487a87bb73145e3f12dd3a765ad47-h2h-None-Chicago White Sox",
@@ -348,8 +407,8 @@
         },
         {
           "book": "BetRivers",
-          "price": 475,
-          "ev_pct": 5.4,
+          "price": 480,
+          "ev_pct": 6.3,
           "url": null
         },
         {
@@ -535,50 +594,6 @@
       "novig_deep": false,
       "stale": false,
       "first_seen": "2026-10-04T17:27:20.855346+00:00"
-    },
-    {
-      "id": "9383cbbbb905d9ee50a3341f6945eae7-h2h-None-South Carolina Gam",
-      "skey": "9383cbbbb905d9ee50a3341f6945eae7|h2h|None|South Carolina Gamecocks",
-      "sport": "NCAAF",
-      "game": "South Carolina Gamecocks @ Florida Gators",
-      "team": "South Carolina Gamecocks",
-      "market": "Moneyline",
-      "point": "",
-      "book": "Novig",
-      "price": 441,
-      "fair_prob_pct": 19.7,
-      "fair_american": 407,
-      "ev_pct": 6.6,
-      "books_count": 2,
-      "books": [
-        {
-          "book": "Novig",
-          "price": 441,
-          "ev_pct": 6.6,
-          "url": "https://novig.com"
-        },
-        {
-          "book": "BetUS",
-          "price": 425,
-          "ev_pct": 3.5,
-          "url": null
-        }
-      ],
-      "also_at": [
-        "BetUS"
-      ],
-      "sharp": true,
-      "verified": true,
-      "edge_label": "Strong edge",
-      "rec_units": 1.0,
-      "rec_stake": 50,
-      "live": false,
-      "game_time": "Sat, Oct 10 \u00b7 12:45 PM ET",
-      "commence_time": "2026-10-10T16:45:00Z",
-      "bet_url": "https://novig.com",
-      "novig_deep": false,
-      "stale": false,
-      "first_seen": "2026-10-04T18:57:23.084583+00:00"
     }
   ]
 }
