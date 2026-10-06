@@ -165,3 +165,16 @@
     <div class="tk-perf" aria-hidden="true">&bull; &bull; &bull; &bull; &bull; &bull; &bull; &bull; &bull; &bull; &bull; &bull; &bull; &bull; &bull;</div>
   </div>
 </div>
+{# Auto-abrir "WHY WE LIKE IT" por 10 segundos al cargar y cerrarlo solo (pedido Alex 2026-10-06) #}
+<script>
+(function(){
+  function autoWu(){
+    var els = document.querySelectorAll('details.tstc-wu');
+    if(!els.length) return;
+    els.forEach(function(d){ d.open = true; });
+    setTimeout(function(){ els.forEach(function(d){ d.open = false; }); }, 10000);
+  }
+  if(document.readyState === 'loading'){ document.addEventListener('DOMContentLoaded', autoWu); }
+  else { autoWu(); }
+})();
+</script>
