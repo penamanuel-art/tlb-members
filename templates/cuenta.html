@@ -28,7 +28,7 @@
   <h2>✈️ Telegram</h2>
   {% if tg_linked %}
   <p class="bankroll-current">Status: <b class="ok-text">Connected</b></p>
-  <p class="muted">Your Telegram is linked to your membership. If you cancel, you'll be removed from the private VIP Plays channel automatically.</p>
+  <p class="muted">Your Telegram is linked to your membership. If you cancel, you'll be removed from the private Platinum channel automatically.</p>
   {% if platinum %}
   <div style="margin-top:12px;display:grid;gap:12px;">
     <div>
@@ -36,8 +36,8 @@
       <a href="https://t.me/thesharpteam" target="_blank" class="btn btn-block" style="text-decoration:none;text-align:center;border:1px solid var(--gold);color:var(--gold);">Join Public Card →</a>
     </div>
   <div id="elite-join-wrap">
-    <p class="muted">⭐ <b>VIP Plays channel:</b> tap to get your personal invite link and join.</p>
-    <button id="elite-join-btn" class="btn btn-primary btn-block" type="button">Join VIP Plays →</button>
+    <p class="muted">⭐ <b>Platinum channel:</b> tap to get your personal invite link and join.</p>
+    <button id="elite-join-btn" class="btn btn-primary btn-block" type="button">Join Platinum →</button>
     <p id="elite-join-msg" class="muted" style="display:none;margin-top:8px;"></p>
   </div>
   <script>
@@ -56,24 +56,24 @@
             msg.style.display = 'block';
             msg.textContent = 'Invite opened in Telegram.';
             btn.disabled = false;
-            btn.textContent = 'Join VIP Plays →';
+            btn.textContent = 'Join Platinum →';
           } else if (d.error === 'empty_pool') {
             msg.style.display = 'block';
             msg.textContent = 'Generating your invite, try again in a couple of minutes.';
             btn.disabled = false;
-            btn.textContent = 'Join VIP Plays →';
+            btn.textContent = 'Join Platinum →';
           } else {
             msg.style.display = 'block';
             msg.textContent = 'Something went wrong, try again.';
             btn.disabled = false;
-            btn.textContent = 'Join VIP Plays →';
+            btn.textContent = 'Join Platinum →';
           }
         })
         .catch(function(){
           msg.style.display = 'block';
           msg.textContent = 'Something went wrong, try again.';
           btn.disabled = false;
-          btn.textContent = 'Join VIP Plays →';
+          btn.textContent = 'Join Platinum →';
         });
     });
   })();
@@ -86,8 +86,8 @@
       <a href="https://t.me/thesharpteam" target="_blank" class="btn btn-block" style="text-decoration:none;text-align:center;border:1px solid var(--gold);color:var(--gold);">Join Public Card →</a>
     </div>
     <div>
-      <p class="muted">⭐ <b>VIP Plays channel:</b> unlock your VIP membership to get your personal invite.</p>
-      <a href="{{ url_for('desbloquear_platinum') }}" class="btn btn-primary btn-block" style="text-decoration:none;text-align:center;">Unlock VIP →</a>
+      <p class="muted">⭐ <b>Platinum channel:</b> unlock your Platinum membership to get your personal invite.</p>
+      <a href="{{ url_for('desbloquear_platinum') }}" class="btn btn-primary btn-block" style="text-decoration:none;text-align:center;">Unlock Platinum →</a>
     </div>
   </div>
   {% endif %}
@@ -102,7 +102,7 @@
     <button type="submit" class="danger-link foto-remove">Generate a new link</button>
   </form>
   {% else %}
-  <p class="muted">Link your Telegram so we can manage your access to the private <b>VIP Plays</b> channel automatically.</p>
+  <p class="muted">Link your Telegram so we can manage your access to the private <b>Platinum</b> channel automatically.</p>
   <form method="post" action="{{ url_for('cuenta_telegram_link') }}">
     <button class="btn btn-primary btn-block" type="submit">Connect Telegram</button>
   </form>
@@ -152,7 +152,7 @@
   <p class="muted"><a href="{{ url_for('cuenta_cancelar') }}" class="danger-link">Cancel my membership</a></p>
   {% else %}
   <p class="bankroll-current">Status: <b class="cancel-text">Inactive</b></p>
-  <p class="muted"><a href="{{ url_for('desbloquear_platinum') }}">Subscribe for $1 and unlock VIP →</a></p>
+  <p class="muted"><a href="{{ url_for('desbloquear_platinum') }}">Subscribe for $1 and unlock Platinum →</a></p>
   {% endif %}
 </section>
 {% endblock %}

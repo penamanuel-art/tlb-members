@@ -91,7 +91,7 @@
   {% endif %}
   <p class="wgt-meta">{{ res.get('ganadas', 0) + res.get('perdidas', 0) }} settled &middot; {{ '%.1f' % res.get('win_rate', 0) }}% win rate &middot; {{ '%+.1f' % res.get('roi', 0) }}% ROI</p>
   <div class="pro-levels">
-    {% for lvl_key, lvl_name, lvl_emoji, lvl_class in [('GOLD', 'FREE PLAYS', '&#x26aa;', 'gold'), ('ELITE', 'VIP', '&#x2b50;', 'elite')] %}
+    {% for lvl_key, lvl_name, lvl_emoji, lvl_class in [('GOLD', 'GOLD', '&#x26aa;', 'gold'), ('ELITE', 'PLATINUM', '&#x2b50;', 'elite')] %}
     {% set L = res['niveles'][lvl_key] %}
     {% set wr = L.win_rate %}
     <div class="pro-level lvl-{{ lvl_class }}">
@@ -200,7 +200,7 @@
     <p class="br-modal-sub">Same edge, two ways to size it. Most members start with TST Units. Switch anytime.</p>
     <div class="br-opt br-opt-units">
       <p class="br-opt-title">TST Units — the disciplined way</p>
-      <p>Bet in units. <b>1 unit = 1% of your bankroll.</b> We size every play by its badge: ★ VIP = 1u, FREE PLAYS = 0.6u. Small and steady, exactly how The Sharp Team plays it. Less swing, easy to follow.</p>
+      <p>Bet in units. <b>1 unit = 1% of your bankroll.</b> We size every play by its badge: ★ PLATINUM = 1u, GOLD = 0.6u. Small and steady, exactly how The Sharp Team plays it. Less swing, easy to follow.</p>
       {% if bankroll %}
       <p class="br-opt-ex">On your ${{ '%.0f' % bankroll }} bankroll, a 1u play is about ${{ '%.0f' % (bankroll / 100) }}.</p>
       {% endif %}
@@ -464,14 +464,14 @@
       <span class="ticket-fallback">
         <span class="ticket-brand">THE SHARP TEAM</span>
         <span class="ticket-fallback-pick">{{ r.pick }}</span>
-        <span class="ticket-fallback-odds">{{ fmt_odds(r.cuota) }} · {{ 'VIP' if r.nivel in ['ELITE','PLATINUM'] else ('FREE PLAYS' if r.nivel == 'GOLD' else r.nivel) }}</span>
+        <span class="ticket-fallback-odds">{{ fmt_odds(r.cuota) }} · {{ 'PLATINUM' if r.nivel in ['ELITE','PLATINUM'] else ('GOLD' if r.nivel == 'GOLD' else r.nivel) }}</span>
         <span class="ticket-fallback-result {{ 'win' if won else 'loss' }}">{{ '✓ WON' if won else '✕ LOST' }}</span>
       </span>
       {% endif %}
       <span class="ticket-pill {{ 'win' if won else 'loss' }}">{{ '✓' if won else '✕' }} {{ fmt_money(r.profit) }}</span>
     </span>
     <span class="ticket-title">{{ r.pick }} <span class="muted">{{ fmt_odds(r.cuota) }}</span></span>
-    <span class="ticket-sub">{{ r.fecha }} · {{ 'VIP' if r.nivel in ['ELITE','PLATINUM'] else ('FREE PLAYS' if r.nivel == 'GOLD' else r.nivel) }}</span>
+    <span class="ticket-sub">{{ r.fecha }} · {{ 'PLATINUM' if r.nivel in ['ELITE','PLATINUM'] else ('GOLD' if r.nivel == 'GOLD' else r.nivel) }}</span>
     {% if r.comprobante %}<span class="ticket-view-link">View ticket →</span>{% endif %}
   </button>
   <div class="modal" id="ht-{{ loop.index }}" hidden>
@@ -484,7 +484,7 @@
       <p class="ticket-pick">{{ r.pick }} {{ fmt_odds(r.cuota) }}</p>
       <div class="ticket-rows">
         <div><span>Date</span><b>{{ r.fecha }}</b></div>
-        <div><span>Level</span><b>{{ 'VIP' if r.nivel in ['ELITE','PLATINUM'] else ('FREE PLAYS' if r.nivel == 'GOLD' else r.nivel) }}</b></div>
+        <div><span>Level</span><b>{{ 'PLATINUM' if r.nivel in ['ELITE','PLATINUM'] else ('GOLD' if r.nivel == 'GOLD' else r.nivel) }}</b></div>
         <div><span>Result</span><b class="{{ 'pos' if won else 'neg' }}">{{ 'WON' if won else 'LOST' }} · {{ fmt_money(r.profit) }}</b></div>
       </div>
       <p class="ticket-note">Original receipt not uploaded for this play.</p>
@@ -507,7 +507,7 @@
   {% for r in recientes %}
   <article class="tracked-row">
     <div class="tracked-info">
-      <span class="badge badge-{{ r.nivel|lower }} badge-sm">{{ 'VIP' if r.nivel in ['ELITE','PLATINUM'] else ('FREE PLAYS' if r.nivel == 'GOLD' else r.nivel) }}</span>
+      <span class="badge badge-{{ r.nivel|lower }} badge-sm">{{ 'PLATINUM' if r.nivel in ['ELITE','PLATINUM'] else ('GOLD' if r.nivel == 'GOLD' else r.nivel) }}</span>
       <div>
         <div class="tracked-pick">{{ r.pick }} <span class="muted">{{ fmt_odds(r.cuota) }}</span></div>
         <div class="tracked-sub">{{ r.fecha }}</div>

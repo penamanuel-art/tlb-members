@@ -68,11 +68,11 @@ if "locale=" not in STRIPE_PLATINUM_URL:
     _sep = "&" if "?" in STRIPE_PLATINUM_URL else "?"
     STRIPE_PLATINUM_URL = f"{STRIPE_PLATINUM_URL}{_sep}locale=en"
 
-# Tracker "Free Plays" (solo Alex): stake fijo por jugada para validar el
+# Tracker "Gold" (solo Alex): stake fijo por jugada para validar el
 # sistema en 200 jugadas antes del lanzamiento público. Se cambia con la
 # env var FREE_STAKE en Render (default $50).
 FREE_STAKE = float(os.environ.get("FREE_STAKE", "50"))
-# Capital simulado del tracker de validación "Free Plays" (2026-10-03, orden
+# Capital simulado del tracker de validación "Gold" (2026-10-03, orden
 # de Alex): $10,000 al 1% estilo WGT — VIP 1u = $100, Free 0.6u = $60.
 FREE_TEST_BANKROLL = float(os.environ.get("FREE_TEST_BANKROLL", "10000"))
 # Meta de jugadas para la validación (default 200).
@@ -114,7 +114,7 @@ TELEGRAM_BOT_USERNAME = os.environ.get("TELEGRAM_BOT_USERNAME", "thesharpteam_bo
 TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "").strip()
 # Chat de Alex para los avisos de clics (su telegram_user_id).
 CLICK_NOTIFY_CHAT_ID = os.environ.get("CLICK_NOTIFY_CHAT_ID", "8600523481").strip()
-# Link permanente de invitación al canal privado VIP Plays (Telegram).
+# Link permanente de invitación al canal privado Platinum (Telegram).
 # 2026-10-02: reemplaza el pool de links de un solo uso (fricción: Telegram
 # muestra "Expired Link" a usuarios baneados y los links se agotaban).
 # Es directo, sin expiración ni límite de miembros; el control de acceso lo
@@ -266,7 +266,7 @@ CREATE TABLE IF NOT EXISTS tracked_plays (
     UNIQUE(user_id, play_id)
 );
 CREATE INDEX IF NOT EXISTS idx_tracked_user ON tracked_plays(user_id);
--- Tracker paralelo "Free Plays" (solo Alex): las jugadas recomendadas se
+-- Tracker paralelo "Gold" (solo Alex): las jugadas recomendadas se
 -- registran automáticamente con su stake configurado para validar el
 -- sistema en 200 jugadas antes del lanzamiento público. Tabla aislada:
 -- se puede borrar sin afectar tracked_plays ni el récord oficial.
@@ -345,7 +345,7 @@ CREATE TABLE IF NOT EXISTS tracked_plays (
     UNIQUE(user_id, play_id)
 );
 CREATE INDEX IF NOT EXISTS idx_tracked_user ON tracked_plays(user_id);
--- Tracker paralelo "Free Plays" (solo Alex): las jugadas recomendadas se
+-- Tracker paralelo "Gold" (solo Alex): las jugadas recomendadas se
 -- registran automáticamente con su stake configurado para validar el
 -- sistema en 200 jugadas antes del lanzamiento público. Tabla aislada:
 -- se puede borrar sin afectar tracked_plays ni el récord oficial.
@@ -671,11 +671,11 @@ WELCOME_TEXT = """Hi __NOMBRE__,
 Welcome to The Sharp Team! Your dashboard is ready.
 
 EVERYTHING YOUR PLAN UNLOCKS
-1. THE DAILY CARD - Every day at 2:00 PM ET (11:00 AM ET on weekends): the day's official plays (Free Plays plus the one VIP), each with its original bet ticket. No filler, ever.
+1. THE DAILY CARD - Every day at 2:00 PM ET (11:00 AM ET on weekends): the day's official plays (Gold plus the one Platinum), each with its original bet ticket. No filler, ever.
 2. YOUR PERSONAL TRACKER - One-tap tracking: mark each play, log won or lost. Verified history, real record, net units, ROI and streak. No spreadsheets.
 3. LIVE +EV BOARD - Value edges updated around the clock, measured against Pinnacle's no-vig fair price, with sharp-confirmed badges.
 4. PUSH ALERTS - Alerts the moment the card drops and when new edges appear. Turn "Alerts on" in your dashboard.
-5. TELEGRAM CHANNELS - Free Plays in "Free Plays", VIP plays in the private "Jugadas VIP" channel, each with the original ticket.
+5. TELEGRAM CHANNELS - Gold plays in "Public Card", Platinum plays in the private "Sharp Club" channel, each with the original ticket.
 6. DAILY MASTERCLASS - One sharp betting lesson every morning: discipline, bankroll management, reading lines and edges.
 
 "Every play is posted before game time - then locked and graded against the final score."
@@ -717,7 +717,7 @@ WELCOME_HTML = """<!DOCTYPE html>
 <div style="background:#0d1626;border:1px solid #2b6fd6;border-radius:16px;margin:0 0 12px;overflow:hidden;">
 <table width="100%" cellpadding="0" cellspacing="0"><tr>
 <td width="58" style="vertical-align:top;padding:18px 0 18px 20px;"><div style="font-size:32px;font-weight:800;color:#2fd47e;line-height:1;">01</div><div style="width:26px;height:2px;background:#2fd47e;margin-top:8px;"></div></td>
-<td style="vertical-align:top;padding:18px 20px 18px 4px;"><div style="font-size:15px;font-weight:800;color:#ffffff;letter-spacing:1.5px;margin-bottom:6px;">THE DAILY CARD</div><div style="font-size:14px;color:#9aa3b8;line-height:1.65;">Every day at 2:00 PM ET (11:00 AM ET on weekends): the day's official plays &mdash; Free Plays plus the one &starf; VIP &mdash; each with its <em>original bet ticket</em>. No filler, ever.</div></td>
+<td style="vertical-align:top;padding:18px 20px 18px 4px;"><div style="font-size:15px;font-weight:800;color:#ffffff;letter-spacing:1.5px;margin-bottom:6px;">THE DAILY CARD</div><div style="font-size:14px;color:#9aa3b8;line-height:1.65;">Every day at 2:00 PM ET (11:00 AM ET on weekends): the day's official plays &mdash; Gold plus the one &starf; Platinum &mdash; each with its <em>original bet ticket</em>. No filler, ever.</div></td>
 </tr></table></div>
 <div style="background:#0d1626;border:1px solid #2b6fd6;border-radius:16px;margin:0 0 12px;overflow:hidden;">
 <table width="100%" cellpadding="0" cellspacing="0"><tr>
@@ -737,7 +737,7 @@ WELCOME_HTML = """<!DOCTYPE html>
 <div style="background:#0d1626;border:1px solid #2b6fd6;border-radius:16px;margin:0 0 12px;overflow:hidden;">
 <table width="100%" cellpadding="0" cellspacing="0"><tr>
 <td width="58" style="vertical-align:top;padding:18px 0 18px 20px;"><div style="font-size:32px;font-weight:800;color:#2fd47e;line-height:1;">05</div><div style="width:26px;height:2px;background:#2fd47e;margin-top:8px;"></div></td>
-<td style="vertical-align:top;padding:18px 20px 18px 4px;"><div style="font-size:15px;font-weight:800;color:#ffffff;letter-spacing:1.5px;margin-bottom:6px;">TELEGRAM CHANNELS</div><div style="font-size:14px;color:#9aa3b8;line-height:1.65;">Free Plays in &ldquo;Free Plays&rdquo;, VIP plays in the private &ldquo;Jugadas VIP&rdquo; channel &mdash; each with the original ticket.</div></td>
+<td style="vertical-align:top;padding:18px 20px 18px 4px;"><div style="font-size:15px;font-weight:800;color:#ffffff;letter-spacing:1.5px;margin-bottom:6px;">TELEGRAM CHANNELS</div><div style="font-size:14px;color:#9aa3b8;line-height:1.65;">Gold plays in &ldquo;Public Card&rdquo;, Platinum plays in the private &ldquo;Sharp Club&rdquo; channel &mdash; each with the original ticket.</div></td>
 </tr></table></div>
 <div style="background:#0d1626;border:1px solid #2b6fd6;border-radius:16px;margin:0 0 12px;overflow:hidden;">
 <table width="100%" cellpadding="0" cellspacing="0"><tr>
@@ -805,14 +805,14 @@ DUNNING_TEXT = """Hi __NOMBRE__,
 
 Today's card is set. Your card isn't.
 
-Your last membership payment did not go through, so your VIP plays are paused.
+Your last membership payment did not go through, so your Platinum plays are paused.
 
 Nothing is canceled and nothing was missed on your end - cards just fail sometimes. Today's card is posted and waiting. Fix the card and everything switches back on instantly, usually within a couple of minutes.
 
 Fix your card in one tap (takes about 30 seconds):
 __PAY_URL__
 
-Your Free Plays stay on while the card is sorted - that is part of every membership. Your VIP plays unlock the moment the payment lands. If anything looks off, just reply to this email and a real person will sort it.
+Your Gold plays stay on while the card is sorted - that is part of every membership. Your Platinum plays unlock the moment the payment lands. If anything looks off, just reply to this email and a real person will sort it.
 
 - The Sharp Team
 
@@ -832,18 +832,18 @@ DUNNING_HTML = """<div style="max-width:480px;margin:0 auto;background:#0a0a0f;f
 <div style="font-size:30px;font-weight:800;color:#ffffff;line-height:1.25;margin:0;">Today's card is <span style="color:#d4af37;">set.</span><br>Your card isn't.</div>
 </div>
 <div style="margin:22px 24px 0;background:#14141c;border:1px solid #2a2a35;border-left:4px solid #d4af37;border-radius:12px;padding:20px 22px;">
-<p style="margin:0 0 10px;font-size:16.5px;font-weight:700;color:#ffffff;line-height:1.5;">Your last payment didn't go through, so your VIP plays are on hold.</p>
+<p style="margin:0 0 10px;font-size:16.5px;font-weight:700;color:#ffffff;line-height:1.5;">Your last payment didn't go through, so your Platinum plays are on hold.</p>
 <p style="margin:0;font-size:14.5px;color:#b9b9c7;line-height:1.65;">Nothing is canceled &mdash; cards just fail sometimes. Fix it now and everything switches back on instantly, usually within a couple of minutes.</p>
 </div>
 <div style="text-align:center;padding:24px 32px 0;">
 <a href="__PAY_URL__" style="display:block;background:linear-gradient(180deg,#e8c34a,#c9920e);color:#141414;font-weight:800;font-size:18px;padding:16px 20px;border-radius:12px;text-decoration:none;">Fix my card in one tap &rarr;</a>
-<p style="margin:12px 0 0;font-size:13px;color:#8f8fa3;">Takes about 30 seconds &middot; Your Free Plays stay yours either way.</p>
+<p style="margin:12px 0 0;font-size:13px;color:#8f8fa3;">Takes about 30 seconds &middot; Your Gold plays stay yours either way.</p>
 </div>
 <div style="margin:24px 24px 0;background:#101016;border:1px solid #23232e;border-radius:12px;padding:18px 20px;">
 <div style="font-size:12px;letter-spacing:2px;color:#d4af37;font-weight:700;margin-bottom:12px;">WHAT HAPPENS NEXT</div>
 <div style="font-size:14px;color:#cfcfda;line-height:1.5;margin-bottom:10px;"><span style="color:#d4af37;font-weight:800;">1.</span>&nbsp; You fix your card <span style="color:#77778a;">(30 seconds)</span></div>
-<div style="font-size:14px;color:#cfcfda;line-height:1.5;margin-bottom:10px;"><span style="color:#d4af37;font-weight:800;">2.</span>&nbsp; Your VIP plays unlock instantly</div>
-<div style="font-size:14px;color:#cfcfda;line-height:1.5;"><span style="color:#d4af37;font-weight:800;">3.</span>&nbsp; Your Free Plays never stop</div>
+<div style="font-size:14px;color:#cfcfda;line-height:1.5;margin-bottom:10px;"><span style="color:#d4af37;font-weight:800;">2.</span>&nbsp; Your Platinum plays unlock instantly</div>
+<div style="font-size:14px;color:#cfcfda;line-height:1.5;"><span style="color:#d4af37;font-weight:800;">3.</span>&nbsp; Your Gold plays never stop</div>
 </div>
 <p style="font-size:14.5px;line-height:1.65;color:#9a9aa8;margin:22px 32px 0;text-align:center;">If anything looks off, just reply to this email and a real person will sort it.</p>
 <p style="text-align:center;font-size:12.5px;color:#55555f;margin:18px 0 2px;">Service notice about your membership billing.</p>
@@ -1806,7 +1806,7 @@ def _free_play_id(fecha, pick):
 
 def _dedup_free_plays(db):
     """Migración única (2026-10-01, pedido por Alex): elimina filas duplicadas
-    del tracker Free Plays — la misma jugada registrada con dos nombres
+    del tracker Gold — la misma jugada registrada con dos nombres
     ('White Sox ML (+134)' vs 'White Sox ML @ Astros'). Conserva la fila
     liquidada (con resultado) o, si ninguna lo está, la más antigua.
     Idempotente: sin duplicados no hace nada."""
@@ -1843,7 +1843,7 @@ def _dedup_free_plays(db):
 
 
 def _free_stake(nivel, stake_unidades):
-    """Stake simulado del tracker Free Plays: 1% de FREE_TEST_BANKROLL ($10k).
+    """Stake simulado del tracker Gold: 1% de FREE_TEST_BANKROLL ($10k).
 
     Orden de Alex 2026-10-03: mismo método WGT — 1u = 1% ($100), 0.6u = $60.
     """
@@ -1857,7 +1857,7 @@ def _free_stake(nivel, stake_unidades):
 
 
 def sync_free_plays(db):
-    """Registra automáticamente en el tracker "Free Plays" las jugadas de la
+    """Registra automáticamente en el tracker "Gold" las jugadas de la
     card publicada (data/plays.json) y del histórico (data/archive.json)
     que aún no estén registradas.
 
@@ -1920,7 +1920,7 @@ def sync_free_plays(db):
 
 
 def auto_grado_free(db):
-    """Liquida las jugadas pendientes del tracker "Free Plays" usando los
+    """Liquida las jugadas pendientes del tracker "Gold" usando los
     resultados oficiales del programa (data/archive.json).
 
     Misma lógica que auto_grado_tracked pero sobre la tabla free_plays.
@@ -3154,7 +3154,7 @@ def preview_my_action():
     # Desglose por nivel para la pestaña Stats
     por_nivel = {}
     for r in rows:
-        niv = "VIP" if (r["nivel"] or "").upper() in ("ELITE", "PLATINUM") else "Free Plays"
+        niv = "Platinum" if (r["nivel"] or "").upper() in ("ELITE", "PLATINUM") else "Gold"
         d = por_nivel.setdefault(niv, {"w": 0, "l": 0, "profit": 0.0})
         if r["resultado"] == "W":
             d["w"] += 1
@@ -3187,7 +3187,7 @@ def free_plays():
 @app.route("/admin/free-plays/clear", methods=["POST"])
 @login_required
 def admin_free_plays_clear():
-    """Borra el tracker "Free Plays" (solo admin). No afecta tracked_plays
+    """Borra el tracker "Gold" (solo admin). No afecta tracked_plays
     ni el récord oficial del programa."""
     user = current_user()
     if not is_admin_for(user):
@@ -3200,7 +3200,7 @@ def admin_free_plays_clear():
 
 @app.route("/api/free-plays/add", methods=["POST"])
 def api_free_plays_add():
-    """Registra jugadas en el tracker "Free Plays". Protegido con header
+    """Registra jugadas en el tracker "Gold". Protegido con header
     X-Push-Key == PUSH_TRIGGER_KEY (lo usa el asistente al entregar la card).
 
     JSON: {"plays": [{"pick": "...", "cuota": 128, "nivel": "ELITE",
@@ -3323,7 +3323,7 @@ def tracker_export():
         off = oficiales.get((f, (t["pick"] or "").strip().lower()), {})
         res = t["resultado"] or ""
         nivel = (t["nivel"] or "").upper()
-        nivel_txt = "VIP" if nivel in ("ELITE", "PLATINUM") else ("FREE" if nivel == "GOLD" else nivel)
+        nivel_txt = "PLATINUM" if nivel in ("ELITE", "PLATINUM") else ("GOLD" if nivel == "GOLD" else nivel)
         try:
             fecha_corta = datetime.strptime(f, "%Y-%m-%d").strftime("%b %d") if f else "—"
         except (ValueError, TypeError):
@@ -3378,7 +3378,7 @@ def track(play_id):
         return redirect(url_for("home"))
     # La Elite bloqueada no se puede trackear: no revela nada.
     if play.get("nivel") in ("PLATINUM", "ELITE") and not platinum_unlocked_for(_cu):
-        flash("The VIP play is locked. Unlock it to track it.", "warn")
+        flash("The Platinum play is locked. Unlock it to track it.", "warn")
         return redirect(url_for("desbloquear_platinum"))
     db = get_db()
     try:
@@ -3521,7 +3521,7 @@ def admin_toggle_platinum():
             )
         db.commit()
         flash(
-            "VIP access activated." if nuevo else "VIP access deactivated.",
+            "Platinum access activated." if nuevo else "Platinum access deactivated.",
             "ok",
         )
     return redirect(url_for("admin_miembros"))
@@ -3548,7 +3548,7 @@ def admin_test_simulate_cancel():
             (row["id"],),
         )
         db.commit()
-        flash(f"Simulated cancellation for {email}: VIP off, ban pending.", "ok")
+        flash(f"Simulated cancellation for {email}: Platinum off, ban pending.", "ok")
     return redirect(url_for("admin_miembros"))
 
 
@@ -3573,7 +3573,7 @@ def admin_test_simulate_reactivate():
             (row["id"],),
         )
         db.commit()
-        flash(f"Simulated reactivation for {email}: VIP on, unban pending.", "ok")
+        flash(f"Simulated reactivation for {email}: Platinum on, unban pending.", "ok")
     return redirect(url_for("admin_miembros"))
 
 
@@ -4325,7 +4325,7 @@ def api_telegram_invite_pool_status():
 
 @app.route("/api/telegram-invite", methods=["GET"])
 def api_telegram_invite():
-    """Entrega al miembro Elite el link permanente de invitación a VIP Plays.
+    """Entrega al miembro Platinum el link permanente de invitación al canal Platinum.
 
     2026-10-02: link permanente directo (sin expiración ni límite de
     miembros); reemplaza el pool de un solo uso. Requiere sesión y Elite

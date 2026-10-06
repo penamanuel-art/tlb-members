@@ -1,10 +1,10 @@
 {% extends "base.html" %}
-{% block title %}Free Plays — Validation Tracker{% endblock %}
+{% block title %}Gold — Validation Tracker{% endblock %}
 {% block content %}
 <section class="tracker-head">
   <div>
     <p class="kicker" style="color:var(--gold);">🧪 VALIDATION MODE — ADMIN ONLY</p>
-    <h2>Free Plays Tracker</h2>
+    <h2>Gold Tracker</h2>
     <p class="muted">Paper-trading the system's picks at ${{ '%g' % stats.stake }} each. Goal: {{ stats.goal }} plays, then review and decide.</p>
   </div>
 </section>
@@ -72,15 +72,15 @@
 </div>
 {% else %}
 <div class="empty-card">
-  <h3>No free plays yet</h3>
+  <h3>No Gold plays yet</h3>
   <p>They register automatically when the day's card is published.</p>
 </div>
 {% endif %}
 
 <div style="margin-top:28px;padding:16px;border:1px dashed var(--border);border-radius:12px;">
   <p class="muted" style="margin:0 0 12px;font-size:.9rem;">When the validation is done, clear this tracker. The official record is never affected.</p>
-  <form method="post" action="{{ url_for('admin_free_plays_clear') }}" onsubmit="return confirm('¿Borrar TODAS las jugadas del tracker Free Plays? El récord oficial no se toca.');">
-    <button type="submit" class="btn btn-danger">🗑 Clear Free Plays tracker</button>
+  <form method="post" action="{{ url_for('admin_free_plays_clear') }}" onsubmit="return confirm('¿Borrar TODAS las jugadas del tracker Gold? El récord oficial no se toca.');">
+    <button type="submit" class="btn btn-danger">🗑 Clear Gold tracker</button>
   </form>
 </div>
 {% endblock %}

@@ -9,9 +9,9 @@
   <div class="locked-blur" aria-hidden="true">
     <span></span><span></span><span></span>
   </div>
-  <h3 class="locked-live"><span aria-hidden="true">⭐</span> Today's VIP play is live</h3>
+  <h3 class="locked-live"><span aria-hidden="true">⭐</span> Today's Platinum play is live</h3>
   {% if last_elite_win %}
-  <p class="locked-proof">✓ Last VIP win paid +${{ last_elite_win }}</p>
+  <p class="locked-proof">✓ Last Platinum win paid +${{ last_elite_win }}</p>
   {% endif %}
-  <a class="locked-cta" href="{{ url_for('desbloquear_platinum') }}">Unlock VIP &rarr;</a>
+  <a class="locked-cta" href="{{ url_for('desbloquear_platinum') }}">Unlock Platinum &rarr;</a>
 </article>

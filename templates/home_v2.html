@@ -147,7 +147,7 @@
       <p style="font-size:.85rem;color:#9aa3b8;margin:6px 0 0;">{{ '+$%.2f' % ns.pp }} · {{ '%+.2f' % ns.pu }}u</p>
     </div>
     <div style="background:#141a2b;border:1px solid #2a3441;border-radius:16px;padding:18px 16px;">
-      <p style="margin:0 0 8px;"><span style="background:rgba(0,224,127,.15);color:#00e07f;font-size:.7rem;font-weight:800;padding:4px 10px;border-radius:20px;letter-spacing:1px;border:1px solid rgba(0,224,127,.4);">● FREE PLAYS</span></p>
+      <p style="margin:0 0 8px;"><span style="background:rgba(0,224,127,.15);color:#00e07f;font-size:.7rem;font-weight:800;padding:4px 10px;border-radius:20px;letter-spacing:1px;border:1px solid rgba(0,224,127,.4);">● GOLD</span></p>
       <p style="font-size:1.6rem;font-weight:800;margin:0;color:#fff;">{{ ns.gw }}–{{ ns.gl }}</p>
       <p style="font-size:.85rem;color:#9aa3b8;margin:6px 0 0;">{{ '+$%.2f' % ns.gp }} · {{ '%+.2f' % ns.gu }}u</p>
     </div>
@@ -178,14 +178,14 @@
         <span class="ticket-fallback">
           <span class="ticket-brand">THE SHARP TEAM</span>
           <span class="ticket-fallback-pick">{{ r.pick }}</span>
-          <span class="ticket-fallback-odds">{{ fmt_odds(r.cuota) }} · {{ 'VIP' if r.nivel in ['ELITE','PLATINUM'] else ('FREE PLAYS' if r.nivel == 'GOLD' else r.nivel) }}</span>
+          <span class="ticket-fallback-odds">{{ fmt_odds(r.cuota) }} · {{ 'PLATINUM' if r.nivel in ['ELITE','PLATINUM'] else ('GOLD' if r.nivel == 'GOLD' else r.nivel) }}</span>
           <span class="ticket-fallback-result {{ 'win' if won else 'loss' }}">{{ '✓ WON' if won else '✕ LOST' }}</span>
         </span>
         {% endif %}
         <span class="ticket-pill {{ 'win' if won else 'loss' }}">{{ '✓' if won else '✕' }} {{ fmt_money(r.profit) }}</span>
       </span>
       <span class="ticket-title">{{ r.pick }} <span class="muted">{{ fmt_odds(r.cuota) }}</span></span>
-      <span class="ticket-sub">{{ r.fecha }} · {{ 'VIP' if r.nivel in ['ELITE','PLATINUM'] else ('FREE PLAYS' if r.nivel == 'GOLD' else r.nivel) }}</span>
+      <span class="ticket-sub">{{ r.fecha }} · {{ 'PLATINUM' if r.nivel in ['ELITE','PLATINUM'] else ('GOLD' if r.nivel == 'GOLD' else r.nivel) }}</span>
       {% if r.comprobante %}<span class="ticket-view-link">View ticket →</span>{% endif %}
     </button>
     <div class="modal" id="v2ht-{{ loop.index }}" hidden>
@@ -198,7 +198,7 @@
         <p class="ticket-pick">{{ r.pick }} {{ fmt_odds(r.cuota) }}</p>
         <div class="ticket-rows">
           <div><span>Date</span><b>{{ r.fecha }}</b></div>
-          <div><span>Level</span><b>{{ 'VIP' if r.nivel in ['ELITE','PLATINUM'] else ('FREE PLAYS' if r.nivel == 'GOLD' else r.nivel) }}</b></div>
+          <div><span>Level</span><b>{{ 'PLATINUM' if r.nivel in ['ELITE','PLATINUM'] else ('GOLD' if r.nivel == 'GOLD' else r.nivel) }}</b></div>
           <div><span>Result</span><b class="{{ 'pos' if won else 'neg' }}">{{ 'WON' if won else 'LOST' }} · {{ fmt_money(r.profit) }}</b></div>
         </div>
         <p class="ticket-note">Original receipt not uploaded for this play.</p>
@@ -255,7 +255,7 @@
       <p class="v2-modal-sub">Same edge, two ways to size it. Most members start with TST Units. Switch anytime.</p>
       <div class="v2-opt">
         <p class="v2-opt-title">TST Units — the disciplined way</p>
-        <p>Bet in units. <b>1 unit = 1% of your bankroll.</b> We size every play by its badge: ★ VIP = 1u, FREE PLAYS = 0.6u. Small and steady, exactly how The Sharp Team plays it. Less swing, easy to follow.</p>
+        <p>Bet in units. <b>1 unit = 1% of your bankroll.</b> We size every play by its badge: ★ PLATINUM = 1u, GOLD = 0.6u. Small and steady, exactly how The Sharp Team plays it. Less swing, easy to follow.</p>
         {% if bankroll %}
         <p class="v2-opt-ex">On your ${{ '%.0f' % bankroll }} bankroll, a 1u play is about ${{ '%.0f' % (bankroll / 100) }}.</p>
         {% endif %}
@@ -468,7 +468,7 @@
       </a>
       {% endif %}
       <div class="v2-row-main">
-        <p class="v2-row-pick"><span class="v2-badge v2-badge-{{ r.nivel|lower }}">{{ 'VIP' if r.nivel in ['ELITE','PLATINUM'] else ('FREE PLAYS' if r.nivel == 'GOLD' else r.nivel) }}</span>{{ r.pick }} <span class="muted">{{ fmt_odds(r.cuota) }}</span></p>
+        <p class="v2-row-pick"><span class="v2-badge v2-badge-{{ r.nivel|lower }}">{{ 'PLATINUM' if r.nivel in ['ELITE','PLATINUM'] else ('GOLD' if r.nivel == 'GOLD' else r.nivel) }}</span>{{ r.pick }} <span class="muted">{{ fmt_odds(r.cuota) }}</span></p>
         <p class="v2-row-sub">{{ r.fecha }}{% if r.comprobante %} · <a class="v2-row-tlink" href="{{ url_for('ticket_view', play_id=r.id) if r.id else url_for('static', filename=r.comprobante) }}">View ticket →</a>{% endif %}</p>
       </div>
       {% if r.resultado == 'WON' %}
@@ -566,7 +566,7 @@
   </details>
   <details>
     <summary>How does The Sharp Team find its plays?<span class="pm">+</span></summary>
-    <div class="ans">Our Elo-based model prices every game in the NFL, NCAAF and MLB, and we compare it against Pinnacle's no-vig line plus 2–3 sportsbooks. We only post plays with a real edge, shop for the best price, and stake a flat 1u (2% of bankroll) on VIP and 0.6u on Free Plays — never more, never chasing.</div>
+    <div class="ans">Our Elo-based model prices every game in the NFL, NCAAF and MLB, and we compare it against Pinnacle's no-vig line plus 2–3 sportsbooks. We only post plays with a real edge, shop for the best price, and stake a flat 1u (2% of bankroll) on Platinum and 0.6u on Gold — never more, never chasing.</div>
   </details>
   <details>
     <summary>Do you really bet every play yourself?<span class="pm">+</span></summary>
