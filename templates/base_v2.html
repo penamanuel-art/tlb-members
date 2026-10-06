@@ -38,6 +38,7 @@
       </div>
     </div>
     <a href="{{ url_for('records') }}" class="v2-track-link{% if request.endpoint == 'records' %} active{% endif %}" title="Full record">📜 Full record</a>
+    <a href="{{ url_for('masterclass') }}" class="v2-track-link{% if request.endpoint == 'masterclass' %} active{% endif %}" title="Masterclass">🎓 Masterclass</a>
     {% else %}
     <a class="v2-brand" href="{{ url_for('index') }}">
       <img src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team">
