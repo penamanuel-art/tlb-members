@@ -700,6 +700,7 @@ WELCOME_HTML = """<!DOCTYPE html>
 <title>Welcome to The Sharp Team</title>
 </head>
 <body style="margin:0;padding:0;background:#0a0f1c;color-scheme:light dark;">
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;">Welcome to The Sharp Team. Your Platinum plays are live — every pick tracked, every ticket verified.&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;</div>
 <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;max-width:460px;margin:0 auto;background:#0a0f1c;">
 <div style="text-align:center;padding:30px 24px 18px;">
 <div style="font-size:13px;letter-spacing:4px;color:#2fd47e;margin-bottom:14px;">MEMBERSHIP&nbsp;CONFIRMED</div>
