@@ -24,7 +24,7 @@
         <a href="{{ url_for('home', splash='0') }}">🏠 Home</a>
         <a href="{{ url_for('records') }}">📜 Full record</a>
         <a href="{{ url_for('tracker') }}">My Tracker</a>
-        <a href="{{ url_for('masterclass') }}">🎓 Masterclass</a>
+        <a href="{{ url_for('masterclass') }}">🎓 Academy</a>
         <a href="{{ url_for('resultados') }}">📊 Results</a>
         <a href="{{ url_for('ev_board') }}">⚡ +EV Board</a>
         <a href="{{ url_for('sharp') }}">🔪 Sharp Money</a>
@@ -38,7 +38,7 @@
       </div>
     </div>
     <a href="{{ url_for('records') }}" class="v2-track-link{% if request.endpoint == 'records' %} active{% endif %}" title="Full record">📜 Full record</a>
-    <a href="{{ url_for('masterclass') }}" class="v2-track-link{% if request.endpoint == 'masterclass' %} active{% endif %}" title="Masterclass">🎓 Masterclass</a>
+    <a href="{{ url_for('masterclass') }}" class="v2-track-link{% if request.endpoint == 'masterclass' %} active{% endif %}" title="Academy">🎓 Academy</a>
     {% else %}
     <a class="v2-brand" href="{{ url_for('index') }}">
       <img src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team">
