@@ -854,13 +854,19 @@ img { max-width: 100%; height: auto; }
 
 /* ---- Botón Home Dashboard siempre visible en el topbar (2026-09-30, pedido por Alex) ---- */
 .qa-btn.qa-home .qa-txt { display: inline; }
+/* ---- Botón Full record visible con texto igual que Home Dashboard (2026-10-06, pedido por Alex) ---- */
+.qa-btn.qa-records .qa-txt { display: inline; }
 @media (max-width: 560px) {
   .qa-btn.qa-home { padding: 9px 12px; font-size: 13px; }
   .qa-btn.qa-home .qa-txt { display: inline; }
   .qa-btn.qa-home .qa-ico { font-size: 15px; }
+  .qa-btn.qa-records { padding: 9px 12px; font-size: 13px; }
+  .qa-btn.qa-records .qa-txt { display: inline; }
+  .qa-btn.qa-records .qa-ico { font-size: 15px; }
 }
 @media (max-width: 380px) {
   .qa-btn.qa-home { padding: 8px 10px; font-size: 12px; }
+  .qa-btn.qa-records { padding: 8px 10px; font-size: 12px; }
 }
 
 /* ---- Foto de perfil (2026-09-30, pedido por Alex) ---- */

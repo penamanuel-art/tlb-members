@@ -24,7 +24,7 @@
   <div class="topbar-left">
     {% if session.get('user_id') %}
     <a href="{{ url_for('home', splash='0') }}" class="qa-btn qa-primary qa-home{% if request.endpoint == 'home' %} active{% endif %}" title="Home Dashboard"><span class="qa-ico">🏠</span><span class="qa-txt">Home Dashboard</span></a>
-    <a href="{{ url_for('records') }}" class="qa-btn{% if request.endpoint == 'records' %} active{% endif %}" title="Full record"><span class="qa-ico">📜</span><span class="qa-txt">Full record</span></a>
+    <a href="{{ url_for('records') }}" class="qa-btn qa-records{% if request.endpoint == 'records' %} active{% endif %}" title="Full record"><span class="qa-ico">📜</span><span class="qa-txt">Full record</span></a>
     <div class="menu-wrap">
       <button class="icon-btn" id="menuBtn" aria-label="Menu">☰</button>
       <div class="menu-drop" id="menuDrop" hidden>
