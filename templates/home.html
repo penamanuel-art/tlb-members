@@ -464,14 +464,14 @@
       <span class="ticket-fallback">
         <span class="ticket-brand">THE SHARP TEAM</span>
         <span class="ticket-fallback-pick">{{ r.pick }}</span>
-        <span class="ticket-fallback-odds">{{ fmt_odds(r.cuota) }} · {{ r.nivel }}</span>
+        <span class="ticket-fallback-odds">{{ fmt_odds(r.cuota) }} · {{ 'VIP' if r.nivel in ['ELITE','PLATINUM'] else ('FREE PLAYS' if r.nivel == 'GOLD' else r.nivel) }}</span>
         <span class="ticket-fallback-result {{ 'win' if won else 'loss' }}">{{ '✓ WON' if won else '✕ LOST' }}</span>
       </span>
       {% endif %}
       <span class="ticket-pill {{ 'win' if won else 'loss' }}">{{ '✓' if won else '✕' }} {{ fmt_money(r.profit) }}</span>
     </span>
     <span class="ticket-title">{{ r.pick }} <span class="muted">{{ fmt_odds(r.cuota) }}</span></span>
-    <span class="ticket-sub">{{ r.fecha }} · {{ r.nivel }}</span>
+    <span class="ticket-sub">{{ r.fecha }} · {{ 'VIP' if r.nivel in ['ELITE','PLATINUM'] else ('FREE PLAYS' if r.nivel == 'GOLD' else r.nivel) }}</span>
     {% if r.comprobante %}<span class="ticket-view-link">View ticket →</span>{% endif %}
   </button>
   <div class="modal" id="ht-{{ loop.index }}" hidden>
@@ -484,7 +484,7 @@
       <p class="ticket-pick">{{ r.pick }} {{ fmt_odds(r.cuota) }}</p>
       <div class="ticket-rows">
         <div><span>Date</span><b>{{ r.fecha }}</b></div>
-        <div><span>Level</span><b>{{ r.nivel }}</b></div>
+        <div><span>Level</span><b>{{ 'VIP' if r.nivel in ['ELITE','PLATINUM'] else ('FREE PLAYS' if r.nivel == 'GOLD' else r.nivel) }}</b></div>
         <div><span>Result</span><b class="{{ 'pos' if won else 'neg' }}">{{ 'WON' if won else 'LOST' }} · {{ fmt_money(r.profit) }}</b></div>
       </div>
       <p class="ticket-note">Original receipt not uploaded for this play.</p>
@@ -507,7 +507,7 @@
   {% for r in recientes %}
   <article class="tracked-row">
     <div class="tracked-info">
-      <span class="badge badge-{{ r.nivel|lower }} badge-sm">{{ r.nivel }}</span>
+      <span class="badge badge-{{ r.nivel|lower }} badge-sm">{{ 'VIP' if r.nivel in ['ELITE','PLATINUM'] else ('FREE PLAYS' if r.nivel == 'GOLD' else r.nivel) }}</span>
       <div>
         <div class="tracked-pick">{{ r.pick }} <span class="muted">{{ fmt_odds(r.cuota) }}</span></div>
         <div class="tracked-sub">{{ r.fecha }}</div>
