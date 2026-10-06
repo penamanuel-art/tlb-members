@@ -70,6 +70,43 @@
     <div>UFC &bull; FIGHT +250 -300 2.5 RD &nbsp; MLB &bull; CHC +130 -150 8.5 RUN &nbsp; NFL &bull; ATL -115 +105 5.5 O/U &nbsp; NBA &bull; CHC +130 -150 8.5 O/U &nbsp; NHL &bull; TOR -115 +105 5.5 O/U &nbsp; EPL &bull; ARS +180 -140 2.5 O/U &nbsp;</div>
   </div>
   <div class="tk-card">
+    {% if p.comprobante %}
+    {# DISEÑO CON TICKET estilo Novig — aprobado por Alex 2026-10-06 #}
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+      <span style="background:#232b3d;color:#c7cddb;font-size:11px;font-weight:700;padding:5px 12px;border-radius:20px;">{{ p.liga or '' }}</span>
+      <span style="color:#4ade80;font-size:15px;font-weight:800;">{{ fmt_odds(p.cuota) }}</span>
+    </div>
+    <div style="font-size:19px;font-weight:800;color:#fff;margin-bottom:8px;">{{ p.team_name or p.abbr }} {{ 'ML' if p.bettype == 'Moneyline' else p.bettype }}</div>
+    <div style="border-radius:12px;overflow:hidden;margin-bottom:10px;position:relative;cursor:pointer;" onclick="window.location.href='{{ url_for('ticket_view', play_id=p.id) }}'">
+      <img src="{{ url_for('static', filename=p.comprobante) }}" alt="Original ticket {{ p.abbr }} {{ p.bettype }}" style="width:100%;height:140px;object-fit:cover;object-position:top;display:block;filter:brightness(.92);" loading="lazy">
+      <span style="position:absolute;top:8px;right:8px;background:rgba(74,222,128,.92);color:#0b0e17;font-size:10px;font-weight:800;letter-spacing:1px;padding:4px 10px;border-radius:20px;pointer-events:none;">MATCHED</span>
+    </div>
+    <div style="margin:0 0 8px;font-size:14px;font-weight:800;color:#4ade80;">Bet&nbsp;&nbsp;{{ '$%.0f' % p.stake_monto }} <span style="color:#8b93a7;font-weight:400;">({{ '%g' % p.stake_unidades }}u)</span></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <span class="tstc-lvl">{{ 'PLATINUM' if is_vip else ('💎 VALUE PLAY' if is_value else 'GOLD') }}</span>
+      <a class="tk-view" href="{{ url_for('ticket_view', play_id=p.id) }}">View ticket &rarr;</a>
+    </div>
+    {% if p.writeup %}
+    <details class="tstc-wu" style="margin-top:8px;">
+      <summary><span>📊 WHY WE LIKE IT</span><span class="tstc-wu-arr">TAP TO EXPAND ▾</span></summary>
+      <div class="tstc-wu-body">
+        <div class="tstc-wu-row"><span class="tstc-wu-k">Model win probability</span><span class="tstc-wu-v">{{ p.writeup.model_prob }}</span></div>
+        <div class="tstc-wu-row"><span class="tstc-wu-k">Implied by the price</span><span class="tstc-wu-v">{{ p.writeup.implied_prob }}</span></div>
+        <div class="tstc-wu-row"><span class="tstc-wu-k">Fair price (model)</span><span class="tstc-wu-v">{{ p.writeup.fair_price }}</span></div>
+        <div class="tstc-wu-row"><span class="tstc-wu-k">Edge</span><span class="tstc-wu-edge">{{ p.writeup.edge }}</span></div>
+        {% if p.writeup.key_factor %}
+        <p class="tstc-wu-h">🔑 KEY FACTOR</p>
+        <p class="tstc-wu-p">{{ p.writeup.key_factor }}</p>
+        {% endif %}
+        {% if p.writeup.risk %}
+        <p class="tstc-wu-h">⚠️ THE RISK</p>
+        <p class="tstc-wu-p tstc-wu-risk">{{ p.writeup.risk }}</p>
+        {% endif %}
+      </div>
+    </details>
+    {% endif %}
+    {% else %}
+    {# DISEÑO SIN TICKET — aprobado por Alex 2026-10-06, NO SE TOCA #}
     <div class="tk-head">
       <div class="tk-team">
         {% set _logo = team_logo_url(p.liga, p.abbr) %}
@@ -158,6 +195,7 @@
       </div>
     </details>
     {% endif %}
+    {% endif %}{# fin DISEÑO SIN TICKET #}
     <div class="tk-perf" aria-hidden="true">&bull; &bull; &bull; &bull; &bull; &bull; &bull; &bull; &bull; &bull; &bull; &bull; &bull; &bull; &bull;</div>
   </div>
 </div>
