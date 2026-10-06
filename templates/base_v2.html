@@ -48,7 +48,6 @@
   <div class="v2-topbar-right">
     {% if session.get('user_id') %}
     {% if es_admin %}<button id="langToggle" class="v2-lang-btn notranslate" title="Ver en español">🇺🇸 EN</button>{% endif %}
-    <a class="v2-avatar" href="{{ url_for('cuenta') }}" title="{{ nombre_corto }} — My account">{% if foto_perfil %}<img src="{{ foto_perfil }}" alt="{{ nombre_corto }}">{% else %}{{ inicial }}{% endif %}</a>
     {% else %}
     <nav class="v2-nav">
       {% if es_admin %}<button id="langToggle" class="v2-lang-btn notranslate" title="Ver en español">🇺🇸 EN</button>{% endif %}
