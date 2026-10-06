@@ -40,6 +40,15 @@
   #wgtCurve { width:100%; height:120px; display:block; }
   .wgt-curve-empty { text-align:center; color:var(--muted); font-size:.85rem; padding:38px 0; }
   .wgt-list { display:grid; gap:10px; }
+  .plat-upsell { background:linear-gradient(160deg,#1a1408,#0d0b06); border:1px solid rgba(212,175,55,.45); border-radius:18px; padding:22px 20px; margin-bottom:14px; }
+  .plat-upsell-head { display:flex; gap:14px; align-items:center; margin-bottom:14px; }
+  .plat-upsell-logo { width:52px; height:52px; border-radius:14px; flex:none; }
+  .plat-upsell-head h3 { margin:0; color:#fff; font-size:1.35rem; font-weight:800; }
+  .plat-upsell-sub { margin:4px 0 0; color:#9aa3b2; font-size:.9rem; }
+  .plat-upsell-desc { color:#d7dce4; font-size:1rem; line-height:1.55; margin:0 0 18px; }
+  .plat-upsell-desc b { color:#fff; }
+  .plat-upsell-btn { display:inline-block; background:#4ade80; color:#06240f; font-weight:800; font-size:1.05rem; padding:14px 28px; border-radius:999px; text-decoration:none; box-shadow:0 0 24px rgba(74,222,128,.35); }
+  .plat-upsell-fine { margin:14px 0 0; color:#9aa3b2; font-size:.85rem; }
   .wgt-row { background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:12px; }
   .wgt-row-top { display:flex; gap:12px; align-items:flex-start; }
   .wgt-logo { width:46px; height:46px; border-radius:50%; background:#fff; object-fit:contain; padding:4px; flex:none; }
@@ -151,20 +160,25 @@
 </section>
 
 {% if rows %}
+{% set ns = namespace(locked=0) %}
+{% for r in rows %}{% if r.nivel == 'ELITE' and not platinum_unlocked %}{% set ns.locked = ns.locked + 1 %}{% endif %}{% endfor %}
+{% if ns.locked > 0 %}
+<section class="plat-upsell">
+  <div class="plat-upsell-head">
+    <img src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team" class="plat-upsell-logo">
+    <div>
+      <h3>Platinum Play of the Day</h3>
+      <p class="plat-upsell-sub">Platinum · Our highest-conviction play</p>
+    </div>
+  </div>
+  <p class="plat-upsell-desc">The model flags one play a day: our single highest-probability edge, from matchup ratings and situational edges. Platinum is <b>{{ plat_w }}-{{ plat_l }}</b> all-time. {{ 'Tonight' if ns.locked == 1 else 'These plays are' }} waiting for you.</p>
+  <a href="{{ url_for('desbloquear_platinum') }}" class="plat-upsell-btn">Unlock Platinum →</a>
+  <p class="plat-upsell-fine">$1 your first week, then $23/week. Cancel anytime.</p>
+</section>
+{% endif %}
 <div class="wgt-list" id="wgtList">
   {% for r in rows %}
-  {% if r.nivel == 'ELITE' and not platinum_unlocked %}
-  <article class="wgt-row wgt-locked">
-    <div class="wgt-row-top">
-      <div class="wgt-logo-fallback">🔒</div>
-      <div class="wgt-row-main">
-        <p class="wgt-pick">🔒 Platinum Play</p>
-        <p class="wgt-meta">{{ r.fecha_corta }} · <span class="wgt-nivel elite">PLATINUM</span></p>
-        <p class="wgt-stake"><a href="{{ url_for('desbloquear_platinum') }}" style="color:#fbbf24;font-weight:700;">Unlock Platinum to reveal this play →</a></p>
-      </div>
-    </div>
-  </article>
-  {% else %}
+  {% if not (r.nivel == 'ELITE' and not platinum_unlocked) %}
   <article class="wgt-row" data-fecha="{{ r.fecha }}" data-profit="{{ '%.2f' % r.profit }}"
            data-stake="{{ '%.2f' % r.stake_monto }}" data-result="{{ r.resultado }}">
     <div class="wgt-row-top">

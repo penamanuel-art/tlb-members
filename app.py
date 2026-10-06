@@ -3116,10 +3116,23 @@ def _tracker_context(user):
             "abbr": abbr,
             "logo": logo,
         })
+    # Récord Platinum real del archivo oficial (para el upsell del tracker).
+    _pw = _pl = 0
+    for _d in load_archive():
+        for _j in _d.get("jugadas", []) or []:
+            if _j.get("resultado") not in ("WON", "LOST") or _j.get("bloqueada"):
+                continue
+            if (_j.get("nivel") or "").upper() in ("ELITE", "PLATINUM"):
+                if _j["resultado"] == "WON":
+                    _pw += 1
+                else:
+                    _pl += 1
     return dict(
         plays=[] if card_pendiente else load_plays(),
         card_pendiente=card_pendiente,
         rows=rows,
+        plat_w=_pw,
+        plat_l=_pl,
         tracked_ids=tracked_ids,
         stats=stats,
         nombre=user["nombre"] if user else "",
