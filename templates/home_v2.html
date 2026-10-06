@@ -32,6 +32,62 @@
   </div>
 </section>
 
+<!-- 01 · TODAY'S PLAYS -->
+<section class="v2-sec" id="plays" style="scroll-margin-top:70px;">
+  <div class="v2-sec-head">
+    <div>
+      <p class="v2-sec-eyebrow"><b>01</b> · Today's plays</p>
+      <h2 class="v2-sec-title">{% if card_pendiente %}Nothing posted yet{% else %}Today's plays{% endif %}</h2>
+      {% if card_pendiente %}
+      <p class="v2-sec-sub">Today's card drops in <b id="v2-countdown">…</b></p>
+      {% else %}
+      <p class="v2-sec-sub">Tap a card for the ticket + write-up</p>
+      <span class="v2-free-badge">FREE WITH YOUR MEMBERSHIP</span>
+      {% endif %}
+    </div>
+    <a class="v2-link" href="{{ url_for('tracker') }}">View my tracker →</a>
+  </div>
+
+  {% set golds = plays | selectattr('nivel', 'equalto', 'GOLD') | list %}
+  {% if card_pendiente %}
+  <div class="v2-empty">
+    <h3>No plays posted yet today</h3>
+    <p>The Sharp Team posts today's card at 2:00 PM ET on weekdays and 11:00 AM ET on weekends. Check back then — every play public, win or loss.</p>
+    <p>Made a bet on your own? <a href="{{ url_for('tracker') }}">Log it in your tracker →</a></p>
+  </div>
+  {% elif golds %}
+  <p class="v2-sec-eyebrow" style="margin-bottom:10px">Today's Free Selections</p>
+  <div class="v2-plays">
+    {% for p in golds %}
+      {% include "_play_card.html" %}
+    {% endfor %}
+  </div>
+  {% else %}
+  <p class="muted">No free plays today.</p>
+  {% endif %}
+
+
+  {# VIP selection — teaser stays visible for non-VIP, exactly like the classic theme #}
+  {% set plat = plays | selectattr('nivel', 'equalto', 'ELITE') | list %}
+  {% if plat or not platinum_unlocked %}
+  <p class="v2-sec-eyebrow" style="margin:22px 0 10px">Today's VIP Selection</p>
+  <div class="v2-plays">
+    {% if plat %}
+      {% for p in plat %}
+        {% if platinum_unlocked %}
+          {% include "_play_card.html" %}
+        {% else %}
+          {% include "_play_locked.html" %}
+        {% endif %}
+      {% endfor %}
+    {% else %}
+      {% set p = {'liga': ''} %}
+      {% include "_play_locked.html" %}
+    {% endif %}
+  </div>
+  {% endif %}
+</section>
+
 <!-- OFFICIAL PROGRAM RECORD — en home page (pedido por Alex 2026-10-04) -->
 {% if res and dias %}
 <div style="margin-bottom:8px;margin-top:18px;">
@@ -100,62 +156,6 @@
 </div>
 {% endif %}
 
-
-<!-- 01 · TODAY'S PLAYS -->
-<section class="v2-sec" id="plays" style="scroll-margin-top:70px;">
-  <div class="v2-sec-head">
-    <div>
-      <p class="v2-sec-eyebrow"><b>01</b> · Today's plays</p>
-      <h2 class="v2-sec-title">{% if card_pendiente %}Nothing posted yet{% else %}Today's plays{% endif %}</h2>
-      {% if card_pendiente %}
-      <p class="v2-sec-sub">Today's card drops in <b id="v2-countdown">…</b></p>
-      {% else %}
-      <p class="v2-sec-sub">Tap a card for the ticket + write-up</p>
-      <span class="v2-free-badge">FREE WITH YOUR MEMBERSHIP</span>
-      {% endif %}
-    </div>
-    <a class="v2-link" href="{{ url_for('tracker') }}">View my tracker →</a>
-  </div>
-
-  {% set golds = plays | selectattr('nivel', 'equalto', 'GOLD') | list %}
-  {% if card_pendiente %}
-  <div class="v2-empty">
-    <h3>No plays posted yet today</h3>
-    <p>The Sharp Team posts today's card at 2:00 PM ET on weekdays and 11:00 AM ET on weekends. Check back then — every play public, win or loss.</p>
-    <p>Made a bet on your own? <a href="{{ url_for('tracker') }}">Log it in your tracker →</a></p>
-  </div>
-  {% elif golds %}
-  <p class="v2-sec-eyebrow" style="margin-bottom:10px">Today's Free Selections</p>
-  <div class="v2-plays">
-    {% for p in golds %}
-      {% include "_play_card.html" %}
-    {% endfor %}
-  </div>
-  {% else %}
-  <p class="muted">No free plays today.</p>
-  {% endif %}
-
-
-  {# VIP selection — teaser stays visible for non-VIP, exactly like the classic theme #}
-  {% set plat = plays | selectattr('nivel', 'equalto', 'ELITE') | list %}
-  {% if plat or not platinum_unlocked %}
-  <p class="v2-sec-eyebrow" style="margin:22px 0 10px">Today's VIP Selection</p>
-  <div class="v2-plays">
-    {% if plat %}
-      {% for p in plat %}
-        {% if platinum_unlocked %}
-          {% include "_play_card.html" %}
-        {% else %}
-          {% include "_play_locked.html" %}
-        {% endif %}
-      {% endfor %}
-    {% else %}
-      {% set p = {'liga': ''} %}
-      {% include "_play_locked.html" %}
-    {% endif %}
-  </div>
-  {% endif %}
-</section>
 
 <!-- Upsell VIP (solo miembros sin VIP) — pedido Alex 2026-10-02 -->
 {% if not platinum_unlocked %}
