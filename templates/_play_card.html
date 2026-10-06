@@ -23,6 +23,20 @@
 .tstc-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:9999;align-items:center;justify-content:center;padding:16px}
 .tstc-modal img{max-width:100%;max-height:92vh;border-radius:12px;filter:brightness(.82)}
 .tstc-x{position:absolute;top:14px;right:18px;background:none;border:none;color:#fff;font-size:30px;cursor:pointer;line-height:1}
+{# Write-up del análisis por jugada (pedido Alex 2026-10-06): bloque colapsable "Why we like it" con los datos del modelo. Solo se muestra si la jugada trae writeup. #}
+.tstc-wu{margin:10px 0 2px;border:1px solid rgba(212,175,55,.35);border-radius:12px;background:#0a0f1c}
+.tstc-wu summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;padding:10px 14px;font-size:13px;font-weight:800;letter-spacing:1px;color:#d4af37}
+.tstc-wu summary::-webkit-details-marker{display:none}
+.tstc-wu summary .tstc-wu-arr{color:#8b93a7;font-size:11px}
+.tstc-wu-body{padding:2px 14px 12px;font-size:13px;line-height:1.55}
+.tstc-wu-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px dashed #1e2a45}
+.tstc-wu-row:last-child{border-bottom:none}
+.tstc-wu-k{color:#8b93a7}
+.tstc-wu-v{font-weight:700;color:#f3f4f6}
+.tstc-wu-edge{color:#2fd47e;font-weight:800}
+.tstc-wu-h{font-size:11px;letter-spacing:1.5px;color:#d4af37;font-weight:800;margin:10px 0 4px}
+.tstc-wu-p{color:#d5dbe8;margin:0 0 4px}
+.tstc-wu-risk{color:#f0b429}
 </style>
 {# Card estilo WGT — aprobada por Alex 2026-09-29 ("Así", con captura): tarjeta oscura con el TICKET ORIGINAL DE NOVIG que manda Alex DE FRENTE como imagen. Tocar el ticket abre lightbox a pantalla completa. #}
 {% set is_vip = p.nivel in ['PLATINUM', 'ELITE'] %}
@@ -68,4 +82,24 @@
     {% endif %}
     {% endif %}
   </div>
+  {# Write-up del análisis (pedido Alex 2026-10-06): "Why we like it" — modelo, factor clave y riesgo. Datos reales del análisis; si no hay writeup no se muestra nada. #}
+  {% if p.writeup %}
+  <details class="tstc-wu">
+    <summary><span>📊 WHY WE LIKE IT</span><span class="tstc-wu-arr">TAP TO EXPAND ▾</span></summary>
+    <div class="tstc-wu-body">
+      <div class="tstc-wu-row"><span class="tstc-wu-k">Model win probability</span><span class="tstc-wu-v">{{ p.writeup.model_prob }}</span></div>
+      <div class="tstc-wu-row"><span class="tstc-wu-k">Implied by the price</span><span class="tstc-wu-v">{{ p.writeup.implied_prob }}</span></div>
+      <div class="tstc-wu-row"><span class="tstc-wu-k">Fair price (model)</span><span class="tstc-wu-v">{{ p.writeup.fair_price }}</span></div>
+      <div class="tstc-wu-row"><span class="tstc-wu-k">Edge</span><span class="tstc-wu-edge">{{ p.writeup.edge }}</span></div>
+      {% if p.writeup.key_factor %}
+      <p class="tstc-wu-h">🔑 KEY FACTOR</p>
+      <p class="tstc-wu-p">{{ p.writeup.key_factor }}</p>
+      {% endif %}
+      {% if p.writeup.risk %}
+      <p class="tstc-wu-h">⚠️ THE RISK</p>
+      <p class="tstc-wu-p tstc-wu-risk">{{ p.writeup.risk }}</p>
+      {% endif %}
+    </div>
+  </details>
+  {% endif %}
 </div>
