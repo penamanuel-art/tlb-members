@@ -131,7 +131,7 @@ function googleTranslateElementInit(){new google.translate.TranslateElement({pag
 </script>
 <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 {% endif %}
-{% include "_faq_chat.html" %}
+{# (2026-10-07, pedido por Alex: chat FAQ eliminado de la plataforma) #}
 {% if session.get('user_id') %}{% with ticker_dock="bottom" %}{% include "_results_ticker.html" %}{% endwith %}{% endif %}
 {% if session.get('user_id') %}
 <!-- Barra de navegación inferior (pedido Alex 2026-10-05) — también en tema v1 -->
