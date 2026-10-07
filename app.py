@@ -3824,6 +3824,25 @@ def desbloquear_platinum():
     )
 
 
+@app.route("/admin/api/members-emails")
+@login_required
+def admin_api_members_emails():
+    """Lista de miembros para emails personalizados (2026-10-07, pedido por Alex):
+    los emails de motivación salen con sección de upsell solo para no-Platinum.
+    Retorna JSON: [{email, nombre, platinum}]."""
+    if not is_admin_for(current_user()):
+        return jsonify({"error": "admin only"}), 403
+    db = get_db()
+    rows = db.execute(
+        "SELECT email, nombre, platinum_unlocked FROM users WHERE email IS NOT NULL AND email != ''"
+    ).fetchall()
+    return jsonify([
+        {"email": r["email"], "nombre": r["nombre"] or "there",
+         "platinum": bool(r["platinum_unlocked"])}
+        for r in rows
+    ])
+
+
 @app.route("/admin/miembros/platinum", methods=["POST"])
 @login_required
 def admin_toggle_platinum():
