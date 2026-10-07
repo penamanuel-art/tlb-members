@@ -1,0 +1,63 @@
+{% extends "base_v2.html" %}
+{% block title %}Subir tickets — Admin{% endblock %}
+{% block content %}
+<style>
+.ticket-form { background: #141a2b; border: 1px solid #2a3350; border-radius: 16px; padding: 20px; margin-top: 16px; }
+.ticket-form label { display: block; font-size: 0.85rem; color: #9aa3b8; margin: 12px 0 6px; }
+.ticket-form select, .ticket-form input[type=file] { width: 100%; background: #1a2036; border: 1px solid #2a3350; color: #fff; padding: 12px; border-radius: 12px; font-size: 1rem; }
+.ticket-form button { background: #c9a227; color: #0b0e14; font-weight: 800; padding: 14px 24px; border: none; border-radius: 12px; font-size: 1rem; margin-top: 16px; width: 100%; }
+.ticket-play { background: #1a2036; border-radius: 12px; padding: 12px; margin-bottom: 8px; }
+.ticket-play .teams { font-weight: 800; }
+.ticket-play .meta { font-size: 0.8rem; color: #9aa3b8; }
+.pending-item { background: #1a2036; border: 1px solid #c9a227; border-radius: 12px; padding: 12px; margin-bottom: 8px; }
+.pending-item img { max-width: 100%; border-radius: 8px; margin-top: 8px; }
+</style>
+
+<div style="padding: 20px 0 6px;">
+  <p style="font-size: 11px; font-weight: 800; letter-spacing: 2px; color: #c9a227; margin: 0;">ADMIN</p>
+  <h1 style="margin: 6px 0 0; font-size: 1.8rem;">Subir tickets</h1>
+  <p style="color: #9aa3b8; font-size: 0.9rem;">Sube el ticket de cada jugada. Al recibirlo lo verifico y lo publico automáticamente.</p>
+</div>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for cat, msg in messages %}
+      <div style="background: {% if cat == 'ok' %}#1a3a2a{% else %}#3a1a1a{% endif %}; border-radius: 12px; padding: 12px; margin: 10px 0;">{{ msg }}</div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+<div class="ticket-form">
+  <form method="post" enctype="multipart/form-data">
+    <label>¿Para qué jugada es este ticket?</label>
+    <select name="play_id" required>
+      <option value="">— Elige la jugada —</option>
+      {% for p in plays_sin_ticket %}
+        <option value="{{ p.id }}">{{ p.pick }} — {{ p.game }} ({{ p.nivel }})</option>
+      {% endfor %}
+    </select>
+
+    <label>Foto del ticket</label>
+    <input type="file" name="ticket" accept="image/*" required>
+
+    <button type="submit">📤 Subir ticket</button>
+  </form>
+</div>
+
+{% if pendientes %}
+<div style="margin-top: 20px;">
+  <h3 style="font-size: 1rem; color: #9aa3b8;">Tickets subidos (pendientes de publicar)</h3>
+  {% for t in pendientes %}
+    <div class="pending-item">
+      <div class="teams">{{ t.play_pick }} — {{ t.play_game }}</div>
+      <div class="meta">Subido: {{ t.subido }}</div>
+      <img src="{{ t.url }}" alt="Ticket">
+    </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<div style="margin-top: 16px;">
+  <a href="/admin" style="color: #c9a227;">← Volver al Dashboard</a>
+</div>
+{% endblock %}

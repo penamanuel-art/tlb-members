@@ -4030,6 +4030,89 @@ def admin_dashboard():
                                   "jugadas_hoy": jugadas_hoy})
 
 
+@app.route("/admin/subir-ticket", methods=["GET", "POST"])
+@login_required
+def admin_subir_ticket():
+    """Alex sube los tickets originales desde el panel admin."""
+    import os, time
+    from werkzeug.utils import secure_filename
+    db = get_db()
+    user = current_user()
+    if not is_admin_for(user):
+        flash("You don't have permission to view this page.", "error")
+        return redirect(url_for("home"))
+
+    program, plays = load_data()
+    plays_sin_ticket = [p for p in plays if not p.get("comprobante")]
+
+    pending_dir = os.path.join(app.static_folder, "img", "tickets-pending")
+    os.makedirs(pending_dir, exist_ok=True)
+
+    if request.method == "POST":
+        play_id = (request.form.get("play_id") or "").strip()
+        f = request.files.get("ticket")
+        if not play_id or not f or not f.filename:
+            flash("Elige la jugada y la foto del ticket.", "error")
+            return redirect(url_for("admin_subir_ticket"))
+        play = next((p for p in plays if p.get("id") == play_id), None)
+        if not play:
+            flash("Jugada no encontrada.", "error")
+            return redirect(url_for("admin_subir_ticket"))
+        ext = os.path.splitext(secure_filename(f.filename))[1].lower() or ".jpg"
+        if ext not in (".jpg", ".jpeg", ".png", ".webp"):
+            ext = ".jpg"
+        fname = f"{play_id}-{int(time.time())}{ext}"
+        f.save(os.path.join(pending_dir, fname))
+        # Registrar en el log para que el cron lo detecte
+        try:
+            log_path = os.path.join(os.path.dirname(__file__), "..", "goals",
+                "programa-de-apuestas-deportivas", "hidden_files",
+                "tickets-pendientes.json")
+            log_path = os.path.abspath(log_path)
+            import json as _json
+            try:
+                with open(log_path) as _f:
+                    _log = _json.load(_f)
+            except Exception:
+                _log = []
+            _log.append({"play_id": play_id,
+                         "pick": play.get("pick", ""),
+                         "game": play.get("game", ""),
+                         "archivo": fname,
+                         "subido": time.strftime("%Y-%m-%d %H:%M:%S"),
+                         "procesado": False})
+            with open(log_path, "w") as _f:
+                _json.dump(_log, _f, indent=2)
+        except Exception:
+            pass
+        flash(f"Ticket recibido para {play.get('pick', play_id)}. Lo verifico y lo publico.", "ok")
+        return redirect(url_for("admin_subir_ticket"))
+
+    # Lista de pendientes
+    pendientes = []
+    try:
+        import json as _json
+        log_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..",
+            "goals", "programa-de-apuestas-deportivas", "hidden_files",
+            "tickets-pendientes.json"))
+        with open(log_path) as _f:
+            _log = _json.load(_f)
+        for t in _log:
+            if not t.get("procesado"):
+                pendientes.append({
+                    "play_pick": t.get("pick", ""),
+                    "play_game": t.get("game", ""),
+                    "subido": t.get("subido", ""),
+                    "url": url_for("static", filename=f"img/tickets-pending/{t['archivo']}"),
+                })
+    except Exception:
+        pass
+
+    return render_template("admin_subir_ticket.html",
+                           plays_sin_ticket=plays_sin_ticket,
+                           pendientes=pendientes)
+
+
 @app.route("/admin/miembros")
 @login_required
 def admin_miembros():
