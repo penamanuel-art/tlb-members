@@ -3891,14 +3891,24 @@ def admin_migrate_alex_email():
     ya = db.execute("SELECT id FROM users WHERE LOWER(email) = ?",
                     (new.lower(),)).fetchone()
     if ya:
-        return f"Ya migrado: la cuenta {new} existe (id {ya['id']})", 200
-    row = db.execute("SELECT id, nombre FROM users WHERE LOWER(email) = ?",
-                     (old,)).fetchone()
-    if not row:
-        return f"No existe cuenta con {old}", 404
-    db.execute("UPDATE users SET email = ? WHERE id = ?", (new, row["id"]))
-    db.commit()
-    return f"Email migrado: {old} -> {new} (id {row['id']})", 200
+        msg = f"Ya migrado: la cuenta {new} existe (id {ya['id']})"
+    else:
+        row = db.execute("SELECT id, nombre FROM users WHERE LOWER(email) = ?",
+                         (old,)).fetchone()
+        if not row:
+            msg = f"No existe cuenta con {old}"
+        else:
+            db.execute("UPDATE users SET email = ? WHERE id = ?", (new, row["id"]))
+            db.commit()
+            msg = f"Email migrado: {old} -> {new} (id {row['id']})"
+    return (f"<!doctype html><html><head><meta name='viewport' "
+            f"content='width=device-width,initial-scale=1'><title>Migración</title></head>"
+            f"<body style='background:#0b0e14;color:#fff;font-family:sans-serif;"
+            f"padding:40px 20px;text-align:center;'>"
+            f"<h2 style='color:#c9a227;'>Migración de email</h2>"
+            f"<p style='font-size:1.1rem;'>{msg}</p>"
+            f"<p><a href='/admin' style='color:#c9a227;'>← Volver al panel</a></p>"
+            f"</body></html>"), 200
 
 @app.route("/admin/diag-alex-track")
 @admin_required
