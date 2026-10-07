@@ -41,6 +41,45 @@
   <a href="/admin/trakeos">📊 Trakeos</a>
 </div>
 
+<div style="margin-top: 20px;">
+  <h3 style="font-size: 1rem; color: #c9a227;">⚡ Acciones rápidas</h3>
+  <p style="font-size: 0.85rem; color: #9aa3b8;">Toca un botón y se ejecuta solo.</p>
+  <div class="admin-grid">
+    <button class="admin-card" onclick="ejecutarAccion('email-jugadas', this)" style="text-align: left; cursor: pointer; width: 100%;">
+      <div class="icon">📧</div>
+      <h3>Enviar email de jugadas</h3>
+      <p>Manda la card a todos los miembros</p>
+    </button>
+    <button class="admin-card" onclick="ejecutarAccion('telegram', this)" style="text-align: left; cursor: pointer; width: 100%;">
+      <div class="icon">📲</div>
+      <h3>Publicar en Telegram</h3>
+      <p>Envía las jugadas a los canales</p>
+    </button>
+  </div>
+</div>
+
+<script>
+function ejecutarAccion(accion, btn) {
+  btn.style.opacity = '0.5';
+  btn.querySelector('p').textContent = 'Enviando...';
+  fetch('/admin/accion/' + accion, {method: 'POST'})
+    .then(r => r.json())
+    .then(d => {
+      if (d.ok) {
+        btn.querySelector('p').textContent = '✓ En cola — se ejecuta en unos minutos';
+        btn.style.borderColor = '#00e07f';
+      } else {
+        btn.querySelector('p').textContent = 'Error: ' + (d.error || 'desconocido');
+        btn.style.opacity = '1';
+      }
+    })
+    .catch(e => {
+      btn.querySelector('p').textContent = 'Error de conexión';
+      btn.style.opacity = '1';
+    });
+}
+</script>
+
 <div class="admin-grid">
   <a class="admin-card" href="/admin/subir-ticket" style="border-color: #c9a227;">
     <div class="icon">🎫</div>

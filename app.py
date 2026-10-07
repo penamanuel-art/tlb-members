@@ -4128,6 +4128,54 @@ def api_tickets_pendientes():
         return jsonify({"error": str(e)}), 500
 
 
+@app.route("/admin/accion/<accion>", methods=["POST"])
+@login_required
+def admin_accion(accion):
+    """Alex dispara manualmente una acción automática desde el panel."""
+    import json as _json, os, time
+    db = get_db()
+    user = current_user()
+    if not is_admin_for(user):
+        return jsonify({"error": "unauthorized"}), 401
+    validas = {"email-jugadas", "telegram", "publicar-todo"}
+    if accion not in validas:
+        return jsonify({"error": "acción no válida"}), 400
+    try:
+        queue_path = os.path.join(os.path.dirname(__file__), "data",
+                                  "acciones-pendientes.json")
+        try:
+            with open(queue_path) as _f:
+                _q = _json.load(_f)
+        except Exception:
+            _q = []
+        _q.append({"accion": accion,
+                   "pedido": time.strftime("%Y-%m-%d %H:%M:%S"),
+                   "ejecutado": False})
+        with open(queue_path, "w") as _f:
+            _json.dump(_q, _f, indent=2)
+        return jsonify({"ok": True, "accion": accion})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/acciones-pendientes")
+def api_acciones_pendientes():
+    """Devuelve las acciones pedidas por Alex sin ejecutar (para el cron)."""
+    import json as _json, os
+    if request.headers.get("X-Push-Key") != os.environ.get("PUSH_KEY", ""):
+        return jsonify({"error": "unauthorized"}), 401
+    try:
+        queue_path = os.path.join(os.path.dirname(__file__), "data",
+                                  "acciones-pendientes.json")
+        if os.path.exists(queue_path):
+            with open(queue_path) as _f:
+                _q = _json.load(_f)
+            return jsonify({"pendientes": [a for a in _q if not a.get("ejecutado")]})
+        return jsonify({"pendientes": []})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 @app.route("/admin/miembros")
 @login_required
 def admin_miembros():
