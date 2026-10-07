@@ -3825,12 +3825,19 @@ def desbloquear_platinum():
 
 
 @app.route("/admin/api/members-emails")
-@login_required
 def admin_api_members_emails():
     """Lista de miembros para emails personalizados (2026-10-07, pedido por Alex):
     los emails de motivación salen con sección de upsell solo para no-Platinum.
-    Retorna JSON: [{email, nombre, platinum}]."""
-    if not is_admin_for(current_user()):
+    Retorna JSON: [{email, nombre, platinum}].
+    Auth: sesión admin O header X-Admin-Key == ADMIN_API_KEY (para los crons)."""
+    api_key = os.environ.get("ADMIN_API_KEY", "")
+    header_key = request.headers.get("X-Admin-Key", "")
+    is_cron = api_key and header_key and hmac.compare_digest(header_key, api_key)
+    try:
+        is_admin = is_admin_for(current_user())
+    except Exception:
+        is_admin = False
+    if not (is_cron or is_admin):
         return jsonify({"error": "admin only"}), 403
     db = get_db()
     rows = db.execute(
