@@ -12,6 +12,8 @@ Uso local:
 En Render (ver render.yaml):
     gunicorn app:app --bind 0.0.0.0:$PORT
 """
+import hashlib
+import hmac
 import json
 import os
 import random
