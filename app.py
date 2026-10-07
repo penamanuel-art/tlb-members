@@ -675,8 +675,8 @@ EVERYTHING YOUR PLAN UNLOCKS
 2. YOUR PERSONAL TRACKER - One-tap tracking: mark each play, log won or lost. Verified history, real record, net units, ROI and streak. No spreadsheets.
 3. LIVE +EV BOARD - Value edges updated around the clock, measured against Pinnacle's no-vig fair price, with sharp-confirmed badges.
 4. PUSH ALERTS - Alerts the moment the card drops and when new edges appear. Turn "Alerts on" in your dashboard.
-5. TELEGRAM CHANNELS - Gold plays in "Public Card", Platinum plays in the private "Sharp Club" channel, each with the original ticket.
-6. DAILY MASTERCLASS - One sharp betting lesson every morning: discipline, bankroll management, reading lines and edges.
+5. TELEGRAM CHANNELS - Gold plays in the "Gold" channel, Platinum plays in the private "Platinum" channel, each with the original ticket.
+6. DAILY ACADEMY - One sharp betting lesson every morning: discipline, bankroll management, reading lines and edges.
 
 "Every play is posted before game time - then locked and graded against the final score."
 
@@ -738,12 +738,12 @@ WELCOME_HTML = """<!DOCTYPE html>
 <div style="background:#0d1626;border:1px solid #2b6fd6;border-radius:16px;margin:0 0 12px;overflow:hidden;">
 <table width="100%" cellpadding="0" cellspacing="0"><tr>
 <td width="58" style="vertical-align:top;padding:18px 0 18px 20px;"><div style="font-size:32px;font-weight:800;color:#2fd47e;line-height:1;">05</div><div style="width:26px;height:2px;background:#2fd47e;margin-top:8px;"></div></td>
-<td style="vertical-align:top;padding:18px 20px 18px 4px;"><div style="font-size:15px;font-weight:800;color:#ffffff;letter-spacing:1.5px;margin-bottom:6px;">TELEGRAM CHANNELS</div><div style="font-size:14px;color:#9aa3b8;line-height:1.65;">Gold plays in &ldquo;Public Card&rdquo;, Platinum plays in the private &ldquo;Sharp Club&rdquo; channel &mdash; each with the original ticket.</div></td>
+<td style="vertical-align:top;padding:18px 20px 18px 4px;"><div style="font-size:15px;font-weight:800;color:#ffffff;letter-spacing:1.5px;margin-bottom:6px;">TELEGRAM CHANNELS</div><div style="font-size:14px;color:#9aa3b8;line-height:1.65;">Gold plays in the &ldquo;Gold&rdquo; channel, Platinum plays in the private &ldquo;Platinum&rdquo; channel &mdash; each with the original ticket.</div></td>
 </tr></table></div>
 <div style="background:#0d1626;border:1px solid #2b6fd6;border-radius:16px;margin:0 0 12px;overflow:hidden;">
 <table width="100%" cellpadding="0" cellspacing="0"><tr>
 <td width="58" style="vertical-align:top;padding:18px 0 18px 20px;"><div style="font-size:32px;font-weight:800;color:#2fd47e;line-height:1;">06</div><div style="width:26px;height:2px;background:#2fd47e;margin-top:8px;"></div></td>
-<td style="vertical-align:top;padding:18px 20px 18px 4px;"><div style="font-size:15px;font-weight:800;color:#ffffff;letter-spacing:1.5px;margin-bottom:6px;">DAILY MASTERCLASS</div><div style="font-size:14px;color:#9aa3b8;line-height:1.65;">One sharp betting lesson every morning &mdash; discipline, bankroll management, reading lines and edges. The 30-day course that turns bettors into investors.</div></td>
+<td style="vertical-align:top;padding:18px 20px 18px 4px;"><div style="font-size:15px;font-weight:800;color:#ffffff;letter-spacing:1.5px;margin-bottom:6px;">DAILY ACADEMY</div><div style="font-size:14px;color:#9aa3b8;line-height:1.65;">One sharp betting lesson every morning &mdash; discipline, bankroll management, reading lines and edges. The 30-day course that turns bettors into investors.</div></td>
 </tr></table></div>
 <div style="margin:6px 0 0;padding:16px 18px;border-left:3px solid #2fd47e;background:#0d1626;border-radius:0 12px 12px 0;">
 <p style="font-size:16px;font-style:italic;line-height:1.7;color:#d4dbe8;margin:0;">&ldquo;Every play is posted before game time &mdash; then locked and graded against the final score.&rdquo;</p>
