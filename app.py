@@ -712,29 +712,29 @@ WELCOME_HTML = """<!DOCTYPE html>
 <p style="color:#555555;font-size:15px;line-height:1.6;margin:0;">Hi __NOMBRE__ &mdash; your dashboard is ready. Here is everything waiting for you inside:</p>
 </div>
 <div style="padding:14px 20px 0;">
-<table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 10px;background:#ffffff;border:1px solid #e5e7eb;border-radius:12px;"><tr>
+<table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 10px;background:#2e4053;border:1px solid #2e4053;border-radius:12px;"><tr>
 <td width="44" style="vertical-align:top;padding:14px 0 14px 16px;"><div style="font-size:20px;font-weight:800;color:#16a34a;">01</div></td>
-<td style="vertical-align:top;padding:14px 16px 14px 4px;"><div style="font-size:14px;font-weight:800;color:#111111;letter-spacing:1px;">THE DAILY CARD</div><div style="font-size:13px;color:#555555;line-height:1.6;margin-top:4px;">Every day at 2:00 PM ET (11:00 AM ET on weekends): the official plays &mdash; Gold plus the one Platinum &mdash; each with its original ticket.</div></td>
+<td style="vertical-align:top;padding:14px 16px 14px 4px;"><div style="font-size:14px;font-weight:800;color:#ffffff;letter-spacing:1px;">THE DAILY CARD</div><div style="font-size:13px;color:#c8d0dc;line-height:1.6;margin-top:4px;">Every day at 2:00 PM ET (11:00 AM ET on weekends): the official plays &mdash; Gold plus the one Platinum &mdash; each with its original ticket.</div></td>
 </tr></table>
-<table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 10px;background:#ffffff;border:1px solid #e5e7eb;border-radius:12px;"><tr>
+<table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 10px;background:#2e4053;border:1px solid #2e4053;border-radius:12px;"><tr>
 <td width="44" style="vertical-align:top;padding:14px 0 14px 16px;"><div style="font-size:20px;font-weight:800;color:#16a34a;">02</div></td>
-<td style="vertical-align:top;padding:14px 16px 14px 4px;"><div style="font-size:14px;font-weight:800;color:#111111;letter-spacing:1px;">YOUR PERSONAL TRACKER</div><div style="font-size:13px;color:#555555;line-height:1.6;margin-top:4px;">One-tap tracking: mark each play, log won or lost. Real record, net units, ROI and streak.</div></td>
+<td style="vertical-align:top;padding:14px 16px 14px 4px;"><div style="font-size:14px;font-weight:800;color:#ffffff;letter-spacing:1px;">YOUR PERSONAL TRACKER</div><div style="font-size:13px;color:#c8d0dc;line-height:1.6;margin-top:4px;">One-tap tracking: mark each play, log won or lost. Real record, net units, ROI and streak.</div></td>
 </tr></table>
-<table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 10px;background:#ffffff;border:1px solid #e5e7eb;border-radius:12px;"><tr>
+<table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 10px;background:#2e4053;border:1px solid #2e4053;border-radius:12px;"><tr>
 <td width="44" style="vertical-align:top;padding:14px 0 14px 16px;"><div style="font-size:20px;font-weight:800;color:#16a34a;">03</div></td>
-<td style="vertical-align:top;padding:14px 16px 14px 4px;"><div style="font-size:14px;font-weight:800;color:#111111;letter-spacing:1px;">LIVE +EV BOARD</div><div style="font-size:13px;color:#555555;line-height:1.6;margin-top:4px;">Value edges updated around the clock, measured against Pinnacle&apos;s no-vig fair price.</div></td>
+<td style="vertical-align:top;padding:14px 16px 14px 4px;"><div style="font-size:14px;font-weight:800;color:#ffffff;letter-spacing:1px;">LIVE +EV BOARD</div><div style="font-size:13px;color:#c8d0dc;line-height:1.6;margin-top:4px;">Value edges updated around the clock, measured against Pinnacle&apos;s no-vig fair price.</div></td>
 </tr></table>
-<table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 10px;background:#ffffff;border:1px solid #e5e7eb;border-radius:12px;"><tr>
+<table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 10px;background:#2e4053;border:1px solid #2e4053;border-radius:12px;"><tr>
 <td width="44" style="vertical-align:top;padding:14px 0 14px 16px;"><div style="font-size:20px;font-weight:800;color:#16a34a;">04</div></td>
-<td style="vertical-align:top;padding:14px 16px 14px 4px;"><div style="font-size:14px;font-weight:800;color:#111111;letter-spacing:1px;">PUSH ALERTS</div><div style="font-size:13px;color:#555555;line-height:1.6;margin-top:4px;">Alerts the moment the card drops. Turn &ldquo;Alerts on&rdquo; in your dashboard.</div></td>
+<td style="vertical-align:top;padding:14px 16px 14px 4px;"><div style="font-size:14px;font-weight:800;color:#ffffff;letter-spacing:1px;">PUSH ALERTS</div><div style="font-size:13px;color:#c8d0dc;line-height:1.6;margin-top:4px;">Alerts the moment the card drops. Turn &ldquo;Alerts on&rdquo; in your dashboard.</div></td>
 </tr></table>
-<table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 10px;background:#ffffff;border:1px solid #e5e7eb;border-radius:12px;"><tr>
+<table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 10px;background:#2e4053;border:1px solid #2e4053;border-radius:12px;"><tr>
 <td width="44" style="vertical-align:top;padding:14px 0 14px 16px;"><div style="font-size:20px;font-weight:800;color:#16a34a;">05</div></td>
-<td style="vertical-align:top;padding:14px 16px 14px 4px;"><div style="font-size:14px;font-weight:800;color:#111111;letter-spacing:1px;">TELEGRAM CHANNELS</div><div style="font-size:13px;color:#555555;line-height:1.6;margin-top:4px;">Gold plays in the Gold channel, Platinum plays in the private Platinum channel.</div></td>
+<td style="vertical-align:top;padding:14px 16px 14px 4px;"><div style="font-size:14px;font-weight:800;color:#ffffff;letter-spacing:1px;">TELEGRAM CHANNELS</div><div style="font-size:13px;color:#c8d0dc;line-height:1.6;margin-top:4px;">Gold plays in the Gold channel, Platinum plays in the private Platinum channel.</div></td>
 </tr></table>
-<table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 10px;background:#ffffff;border:1px solid #e5e7eb;border-radius:12px;"><tr>
+<table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 10px;background:#2e4053;border:1px solid #2e4053;border-radius:12px;"><tr>
 <td width="44" style="vertical-align:top;padding:14px 0 14px 16px;"><div style="font-size:20px;font-weight:800;color:#16a34a;">06</div></td>
-<td style="vertical-align:top;padding:14px 16px 14px 4px;"><div style="font-size:14px;font-weight:800;color:#111111;letter-spacing:1px;">DAILY ACADEMY</div><div style="font-size:13px;color:#555555;line-height:1.6;margin-top:4px;">One sharp betting lesson every morning &mdash; discipline, bankroll, reading lines.</div></td>
+<td style="vertical-align:top;padding:14px 16px 14px 4px;"><div style="font-size:14px;font-weight:800;color:#ffffff;letter-spacing:1px;">DAILY ACADEMY</div><div style="font-size:13px;color:#c8d0dc;line-height:1.6;margin-top:4px;">One sharp betting lesson every morning &mdash; discipline, bankroll, reading lines.</div></td>
 </tr></table>
 </div>
 <div style="margin:14px 20px 0;padding:14px 18px;border-left:3px solid #22c55e;">
