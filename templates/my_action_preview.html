@@ -82,7 +82,7 @@
   <div class="ma-panel" id="ma-bets">
     <div class="ma-stake-card">
       <p class="ma-stake-t">1u = 1% OF YOUR BANKROLL</p>
-      <p class="ma-stake-v">VIP <b>${{ '%.2f' % u1 }}</b> &middot; Free <b>${{ '%.2f' % u06 }}</b></p>
+      <p class="ma-stake-v">Platinum <b>${{ '%.2f' % u1 }}</b> &middot; Free <b>${{ '%.2f' % u06 }}</b></p>
     </div>
     <div class="ma-seg">
       <button type="button" class="ma-segbtn active" data-f="settled">Settled</button>
@@ -114,7 +114,7 @@
   <div class="ma-panel" id="ma-stats" hidden>
     {% for lvl, d in por_nivel.items() %}
     <div class="ma-lvl">
-      <p class="ma-lvl-head">{{ '&#x2b50;' if lvl == 'VIP' else '&#x1f7e2;' }} {{ lvl }}</p>
+      <p class="ma-lvl-head">{{ '&#x2b50;' if lvl == 'Platinum' else '&#x1f7e2;' }} {{ lvl }}</p>
       <div class="ma-lvl-nums">
         <span><b>{{ d.w }}&ndash;{{ d.l }}</b><br>record</span>
         <span><b class="{{ 'pos' if d.profit > 0 else ('neg' if d.profit < 0 else '') }}" style="{{ 'color:#4ade80' if d.profit > 0 else ('color:#f87171' if d.profit < 0 else '') }}">{{ '+$%.2f' % d.profit if d.profit >= 0 else '-$%.2f' % -d.profit }}</b><br>profit</span>

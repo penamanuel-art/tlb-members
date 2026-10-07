@@ -124,7 +124,7 @@
   <div>
     <h2 class="plays-title">{% if card_pendiente %}Nothing posted yet{% else %}Today's <span>plays</span>{% endif %}</h2>
     {% if not card_pendiente %}<p class="plays-sub">Tap a card for the ticket + write-up</p>
-    <span class="free-badge">FREE with your membership</span>{% endif %}
+    {% endif %}
   </div>
   <a class="link-more" href="{{ url_for('tracker') }}">View my tracker →</a>
 </div>
@@ -154,7 +154,7 @@
 {% set plat = plays | selectattr('nivel', 'equalto', 'ELITE') | list %}
 {% if plat or not platinum_unlocked %}
 <div class="section-head title-flush">
-  <h2 class="section-title">Today's VIP Selection</h2>
+  <h2 class="section-title">Today's Platinum Selection</h2>
 </div>
 <div class="plays">
   {% if plat %}
@@ -635,9 +635,9 @@
 
 <!-- Pancarta fija para no-Elite (formato WGT, pedido Alex 2026-09-30) -->
 {% if not platinum_unlocked %}
-<div class="elite-sticky" role="complementary" aria-label="Unlock VIP">
+<div class="elite-sticky" role="complementary" aria-label="Unlock Platinum">
   <div class="elite-sticky-inner">
-    <p>Unlock VIP plays for <b>$1</b></p>
+    <p>Unlock Platinum plays for <b>$1</b></p>
     <a href="{{ url_for('desbloquear_platinum') }}">$1 trial &rarr;</a>
   </div>
 </div>

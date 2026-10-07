@@ -1,5 +1,5 @@
 {% extends "base_v2.html" %}
-{% block title %}Unlock VIP — The Sharp Team{% endblock %}
+{% block title %}Unlock Platinum — The Sharp Team{% endblock %}
 {% block content %}
 {# Página de desbloqueo VIP rediseñada 2026-10-02 (pedido Alex, modelada del
    ejemplo que envió): tarjeta de membresía + CTA. El banner de pago fallido
@@ -7,8 +7,8 @@
 
 {% if ya_desbloqueada and not past_due %}
 <div class="v2-upsell-done">
-  <p class="v2-upsell-kicker">VIP MEMBERSHIP</p>
-  <h2 class="v2-sec-title">Your VIP access is active ✓</h2>
+  <p class="v2-upsell-kicker">PLATINUM MEMBERSHIP</p>
+  <h2 class="v2-sec-title">Your Platinum access is active ✓</h2>
   <p class="v2-upsell-sub">The day's top play appears unlocked on your card.</p>
   <a class="v2-upsell-cta" href="{{ url_for('home') }}">View my plays →</a>
 </div>
