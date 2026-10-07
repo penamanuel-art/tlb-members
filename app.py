@@ -706,9 +706,9 @@ WELCOME_HTML = """<!DOCTYPE html>
 <div style="background:#ffffff;padding:14px 0 12px;text-align:center;">
 <p style="margin:0;font-size:13px;font-weight:800;letter-spacing:5px;color:#2e4053;">THE SHARP TEAM</p>
 </div>
-<div style="background:#2e4053;padding:28px 24px;text-align:center;">
-<p style="margin:0;font-size:12px;font-weight:800;letter-spacing:3px;color:#9aa3b8;">MEMBERSHIP CONFIRMED</p>
-<h1 style="font-size:30px;font-weight:800;color:#ffffff;margin:10px 0 0;line-height:1.25;">Welcome to <span style="color:#22c55e;">the team.</span></h1>
+<div style="background:#c9a227;padding:28px 24px;text-align:center;">
+<p style="margin:0;font-size:12px;font-weight:800;letter-spacing:3px;color:#0a0f1c;">MEMBERSHIP CONFIRMED</p>
+<h1 style="font-size:30px;font-weight:800;color:#0a0f1c;margin:10px 0 0;line-height:1.25;">Welcome to the team.</h1>
 </div>
 <div style="text-align:center;padding:16px 20px 0;">
 <p style="color:#555555;font-size:15px;line-height:1.6;margin:0;">Hi __NOMBRE__ &mdash; your dashboard is ready. Here is everything waiting for you inside:</p>
