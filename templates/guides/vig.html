@@ -1,0 +1,40 @@
+{% extends "base_v2.html" %}
+{% block title %}What Is the Vig (and Why It Matters) — The Sharp Team{% endblock %}
+{% block content %}
+<style>
+.guide-wrap{max-width:680px;margin:0 auto;padding:28px 20px 90px}
+.guide-eyebrow{color:#2fd47e;font-size:11px;letter-spacing:3px;font-weight:800;margin-bottom:12px}
+.guide-title{font-size:32px;font-weight:800;letter-spacing:-1px;line-height:1.15;margin:0 0 8px;color:#fff}
+.guide-lede{color:#9aa3b8;font-size:15px;margin:0 0 24px;line-height:1.6}
+.guide-body{background:#101a2c;border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:28px 24px}
+.guide-body p{color:#d5dbe8;font-size:16px;line-height:1.75;margin:0 0 18px}
+.guide-body p:last-child{margin-bottom:0}
+.guide-body h2{color:#fff;font-size:20px;margin:26px 0 12px;font-weight:800}
+.guide-body h2:first-child{margin-top:0}
+.guide-key{background:rgba(47,212,126,.08);border:1px solid rgba(47,212,126,.3);border-radius:14px;padding:16px 18px;margin:22px 0 0}
+.guide-key p{margin:0;font-size:15px}
+.guide-key strong{color:#2fd47e}
+.guide-nav{display:flex;justify-content:space-between;gap:12px;margin-top:28px}
+.guide-nav a{color:#2fd47e;font-weight:700;text-decoration:none;font-size:15px}
+</style>
+<div class="guide-wrap">
+  <p class="guide-eyebrow">BETTING GUIDES · 5 OF 6</p>
+  <h1 class="guide-title">What Is the Vig (and Why It Matters)</h1>
+  <p class="guide-lede">The invisible tax on every bet you place — and the reason "picking winners" isn't enough.</p>
+  <div class="guide-body">
+    <p>The <strong>vig</strong> (short for vigorish, also called <strong>juice</strong>) is the sportsbook's commission, baked directly into the price. When both sides of a bet are listed at -110, each side implies a 52.4% chance of winning. Add them up: 104.8%. That extra 4.8% is the vig — the book's cut, collected whether you win or lose.</p>
+    <h2>Why it matters</h2>
+    <p>Because of the vig, you don't need to win 50% of your bets to break even at -110 — you need <strong>52.4%</strong>. Every bettor starts every bet in a small hole. Casual bettors never notice it; professionals never stop accounting for it. Over hundreds of bets, the vig is the difference between a winning system and an expensive hobby.</p>
+    <h2>The fair price underneath</h2>
+    <p>Strip the commission out and you get the <strong>no-vig</strong> price — the market's honest estimate of each side's true chance. If the book offers -110 on both sides, the no-vig price is roughly +100 (50/50) each way. That stripped-down number is the only fair baseline to measure an edge against.</p>
+    <p>This is also why <strong>line shopping</strong> matters: one book's -110 is another book's -105, and that 5-cent difference is pure vig you're choosing not to pay. The price <em>is</em> part of the edge.</p>
+    <h2>Reduced juice</h2>
+    <p>Some books compete by offering -105 instead of -110 on both sides — "reduced juice." The break-even win rate drops from 52.4% to 51.2%, which is a meaningful gift over a full season. Whenever you have the choice, always take the lower vig. It's the closest thing to free money the market offers.</p>
+    <div class="guide-key"><p><strong>The Sharp Team way:</strong> our model's fair line is always compared against the no-vig price. If there's no edge after the vig is removed, there's no play — no matter how much we "like" the team. Numbers only, no feelings.</p></div>
+  </div>
+  <nav class="guide-nav">
+    <a href="{{ url_for('guide_american_odds') }}">← American odds explained</a>
+    <a href="{{ url_for('guide_reading_card') }}">How to read a card →</a>
+  </nav>
+</div>
+{% endblock %}

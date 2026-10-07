@@ -1,0 +1,187 @@
+{% extends "base_v2.html" %}
+{% block title %}Betting Glossary — The Sharp Team{% endblock %}
+{% block content %}
+<style>
+.gloss-wrap{max-width:680px;margin:0 auto;padding:28px 20px 90px}
+.gloss-eyebrow{color:#2fd47e;font-size:11px;letter-spacing:3px;font-weight:800;margin-bottom:12px}
+.gloss-title{font-size:32px;font-weight:800;letter-spacing:-1px;line-height:1.15;margin:0 0 8px;color:#fff}
+.gloss-lede{color:#9aa3b8;font-size:15px;margin:0 0 24px;line-height:1.6}
+.gloss-index{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:28px}
+.gloss-index a{color:#2fd47e;font-weight:700;text-decoration:none;font-size:14px;background:rgba(47,212,126,.08);border:1px solid rgba(47,212,126,.25);border-radius:999px;padding:6px 12px}
+.gloss-letter{color:#fff;font-size:13px;letter-spacing:2px;font-weight:800;margin:28px 0 12px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.1)}
+.gloss-term{background:#101a2c;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:16px 18px;margin-bottom:10px;scroll-margin-top:90px}
+.gloss-term h3{color:#fff;font-size:16px;margin:0 0 6px;font-weight:800}
+.gloss-term h3 .tag{color:#2fd47e;font-weight:700}
+.gloss-term p{color:#9aa3b8;font-size:14.5px;line-height:1.6;margin:0}
+.gloss-nav{display:flex;justify-content:space-between;gap:12px;margin-top:32px}
+.gloss-nav a{color:#2fd47e;font-weight:700;text-decoration:none;font-size:15px}
+</style>
+<div class="gloss-wrap">
+  <p class="gloss-eyebrow">BETTING GUIDES</p>
+  <h1 class="gloss-title">Betting Glossary</h1>
+  <p class="gloss-lede">Every term you'll see on the card, in plain English. No jargon without an explanation.</p>
+
+  <nav class="gloss-index">
+    <a href="#g-b">B</a><a href="#g-c">C</a><a href="#g-e">E</a><a href="#g-f">F</a><a href="#g-g">G</a><a href="#g-h">H</a><a href="#g-i">I</a><a href="#g-l">L</a><a href="#g-m">M</a><a href="#g-n">N</a><a href="#g-p">P</a><a href="#g-r">R</a><a href="#g-s">S</a><a href="#g-t">T</a><a href="#g-u">U</a><a href="#g-v">V</a><a href="#g-w">W</a>
+  </nav>
+
+  <p class="gloss-letter" id="g-b">B</p>
+  <div class="gloss-term" id="bankroll">
+    <h3>Bankroll</h3>
+    <p>The total money set aside exclusively for betting. Your unit size is a percentage of it — 1u = 1% of bankroll — so every member risks proportionally, whatever their bankroll.</p>
+  </div>
+  <div class="gloss-term" id="bankroll-management">
+    <h3>Bankroll management</h3>
+    <p>The system of sizing every bet as a fixed fraction of bankroll. Rule #1: the stake is dictated by the system, never by emotion — not in a streak, not after a loss.</p>
+  </div>
+
+  <p class="gloss-letter" id="g-c">C</p>
+  <div class="gloss-term" id="clv">
+    <h3>CLV <span class="tag">· closing line value</span></h3>
+    <p>How the price you took compares to the final price before the game starts. Consistently beating the close is the strongest predictor of long-term profit — our north-star metric, ahead of win rate.</p>
+  </div>
+
+  <p class="gloss-letter" id="g-e">E</p>
+  <div class="gloss-term" id="edge">
+    <h3>Edge</h3>
+    <p>The gap between the true probability of an outcome and the probability implied by the price. Positive edge means the bet is mathematically profitable over time. No edge, no play.</p>
+  </div>
+
+  <p class="gloss-letter" id="g-f">F</p>
+  <div class="gloss-term" id="fair-price">
+    <h3>Fair price</h3>
+    <p>The price a bet <em>should</em> be, based on the true probability with the book's commission removed. Our model computes a fair price for every game before the market is consulted.</p>
+  </div>
+  <div class="gloss-term" id="favorite">
+    <h3>Favorite</h3>
+    <p>The side expected to win, shown with negative American odds (-150). You risk more than you can win — the market is charging you for the higher probability.</p>
+  </div>
+
+  <p class="gloss-letter" id="g-g">G</p>
+  <div class="gloss-term" id="grading">
+    <h3>Grading</h3>
+    <p>Settling a play as a win or loss against the final score. Every play is graded — wins and losses stay on the record, nothing hidden, nothing edited after the fact.</p>
+  </div>
+
+  <p class="gloss-letter" id="g-h">H</p>
+  <div class="gloss-term" id="handle">
+    <h3>Handle</h3>
+    <p>The total amount of money wagered on a game or market. Books watch the handle; sharp money often hides inside it.</p>
+  </div>
+  <div class="gloss-term" id="hedging">
+    <h3>Hedging</h3>
+    <p>Placing a bet on the opposite side to lock in profit or cut a loss. Our system rarely hedges: the stake was correct when it was placed, and second-guessing it is emotion, not math.</p>
+  </div>
+
+  <p class="gloss-letter" id="g-i">I</p>
+  <div class="gloss-term" id="implied-probability">
+    <h3>Implied probability</h3>
+    <p>The win probability baked into a price. -110 implies 52.4%; +150 implies 40%. The whole game is comparing this number against the true probability.</p>
+  </div>
+
+  <p class="gloss-letter" id="g-l">L</p>
+  <div class="gloss-term" id="line-shopping">
+    <h3>Line shopping</h3>
+    <p>Comparing prices across sportsbooks and taking the best one. A better price is a bigger edge — the price <em>is</em> part of the bet.</p>
+  </div>
+
+  <p class="gloss-letter" id="g-m">M</p>
+  <div class="gloss-term" id="middling">
+    <h3>Middling</h3>
+    <p>Betting both sides of the same game at different numbers, hoping the final score lands in between. A situational tactic — not part of our system.</p>
+  </div>
+  <div class="gloss-term" id="moneyline">
+    <h3>Moneyline</h3>
+    <p>A bet on who wins the game, with no point spread. The foundation of our card — most official plays are moneylines. <a href="{{ url_for('guide_moneyline') }}" style="color:#2fd47e">Full guide →</a></p>
+  </div>
+
+  <p class="gloss-letter" id="g-n">N</p>
+  <div class="gloss-term" id="no-vig">
+    <h3>No-vig</h3>
+    <p>A price with the book's commission stripped out, revealing the market's honest probability. Our edges are always measured against the no-vig baseline.</p>
+  </div>
+
+  <p class="gloss-letter" id="g-p">P</p>
+  <div class="gloss-term" id="parlay">
+    <h3>Parlay</h3>
+    <p>Combining multiple bets into one ticket — every leg must win. The house edge multiplies with each leg, which is why professionals avoid them. Our daily bonus parlay is a fixed $5, outside the official record.</p>
+  </div>
+  <div class="gloss-term" id="public-betting">
+    <h3>Public betting</h3>
+    <p>Where the casual money is going. We bet with the numbers, never with the crowd — and we never confuse popularity with probability.</p>
+  </div>
+  <div class="gloss-term" id="push">
+    <h3>Push</h3>
+    <p>A tie against the spread or total — e.g., favorite -3 winning by exactly 3. Nobody wins; the stake is returned.</p>
+  </div>
+
+  <p class="gloss-letter" id="g-r">R</p>
+  <div class="gloss-term" id="reverse-line-movement">
+    <h3>Reverse line movement</h3>
+    <p>When the line moves <em>against</em> the side taking most of the bets — a classic sign that respected (sharp) money is on the other side.</p>
+  </div>
+  <div class="gloss-term" id="roi">
+    <h3>ROI <span class="tag">· return on investment</span></h3>
+    <p>Profit divided by total amount risked, as a percentage. The honest measure of a system — it accounts for prices, not just wins.</p>
+  </div>
+
+  <p class="gloss-letter" id="g-s">S</p>
+  <div class="gloss-term" id="sharp-money">
+    <h3>Sharp money</h3>
+    <p>Wagers from professional, respected bettors — the money that moves lines. We track where it goes, but we follow our model, not the steam.</p>
+  </div>
+  <div class="gloss-term" id="spread">
+    <h3>Spread</h3>
+    <p>A point handicap. The favorite must win by more than the spread; the underdog can lose by less — or win outright. <a href="{{ url_for('guide_spread') }}" style="color:#2fd47e">Full guide →</a></p>
+  </div>
+  <div class="gloss-term" id="stake">
+    <h3>Stake</h3>
+    <p>The amount risked on a play. Ours is set by the system in units — never raised after wins, never chased after losses.</p>
+  </div>
+  <div class="gloss-term" id="staking">
+    <h3>Staking</h3>
+    <p>The method for sizing bets. Ours: 1u = 1% of bankroll; Platinum plays = 1u, Gold = 0.6u. Fixed, automatic, emotion-free.</p>
+  </div>
+  <div class="gloss-term" id="steam-move">
+    <h3>Steam move</h3>
+    <p>A sudden, sharp line move across the betting market, usually triggered by respected money hitting the same side at multiple books.</p>
+  </div>
+
+  <p class="gloss-letter" id="g-t">T</p>
+  <div class="gloss-term" id="ticket">
+    <h3>Ticket</h3>
+    <p>The original bet receipt photo. Every official play carries one — it's the proof the bet was placed, at that price, before the game. No ticket, no official play.</p>
+  </div>
+  <div class="gloss-term" id="total">
+    <h3>Total <span class="tag">· over/under</span></h3>
+    <p>A bet on the combined score of both teams versus the posted number. Our official card doesn't publish totals. <a href="{{ url_for('guide_total') }}" style="color:#2fd47e">Full guide →</a></p>
+  </div>
+
+  <p class="gloss-letter" id="g-u">U</p>
+  <div class="gloss-term" id="underdog">
+    <h3>Underdog</h3>
+    <p>The side expected to lose, shown with positive American odds (+150). Less likely to win — but often where the value lives.</p>
+  </div>
+  <div class="gloss-term" id="unit">
+    <h3>Unit</h3>
+    <p>The standard bet size: 1% of bankroll. Units keep every member's risk proportional — a 1u play means the same risk for a $1,000 bankroll as for a $10,000 one.</p>
+  </div>
+
+  <p class="gloss-letter" id="g-v">V</p>
+  <div class="gloss-term" id="vig">
+    <h3>Vig <span class="tag">· juice, vigorish</span></h3>
+    <p>The sportsbook's commission, built into the price. Both sides at -110 means you're paying about 4.8% just to play. <a href="{{ url_for('guide_vig') }}" style="color:#2fd47e">Full guide →</a></p>
+  </div>
+
+  <p class="gloss-letter" id="g-w">W</p>
+  <div class="gloss-term" id="win-rate">
+    <h3>Win rate</h3>
+    <p>The percentage of settled plays won. A secondary metric — a 45% win rate can be excellent at the right prices. CLV and ROI tell the real story.</p>
+  </div>
+
+  <nav class="gloss-nav">
+    <a href="{{ url_for('guide_reading_card') }}">← How to read a card</a>
+    <a href="{{ url_for('guide_moneyline') }}">Start the guides →</a>
+  </nav>
+</div>
+{% endblock %}

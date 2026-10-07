@@ -3484,6 +3484,49 @@ def masterclass():
     )
 
 
+# Guías educativas para principiantes (pedido por Alex 2026-10-06).
+@app.route("/guides/moneyline")
+@login_required
+def guide_moneyline():
+    return render_template("guides/moneyline.html")
+
+
+@app.route("/guides/spread")
+@login_required
+def guide_spread():
+    return render_template("guides/spread.html")
+
+
+@app.route("/guides/total")
+@login_required
+def guide_total():
+    return render_template("guides/total.html")
+
+
+@app.route("/guides/american-odds")
+@login_required
+def guide_american_odds():
+    return render_template("guides/american-odds.html")
+
+
+@app.route("/guides/vig")
+@login_required
+def guide_vig():
+    return render_template("guides/vig.html")
+
+
+@app.route("/guides/reading-card")
+@login_required
+def guide_reading_card():
+    return render_template("guides/reading-card.html")
+
+
+@app.route("/guides/glossary")
+@login_required
+def guide_glossary():
+    return render_template("guides/glossary.html")
+
+
 @app.route("/programa")
 @login_required
 def programa():

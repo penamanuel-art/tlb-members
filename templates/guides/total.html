@@ -1,0 +1,40 @@
+{% extends "base_v2.html" %}
+{% block title %}What Is a Total (Over/Under)? — The Sharp Team{% endblock %}
+{% block content %}
+<style>
+.guide-wrap{max-width:680px;margin:0 auto;padding:28px 20px 90px}
+.guide-eyebrow{color:#2fd47e;font-size:11px;letter-spacing:3px;font-weight:800;margin-bottom:12px}
+.guide-title{font-size:32px;font-weight:800;letter-spacing:-1px;line-height:1.15;margin:0 0 8px;color:#fff}
+.guide-lede{color:#9aa3b8;font-size:15px;margin:0 0 24px;line-height:1.6}
+.guide-body{background:#101a2c;border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:28px 24px}
+.guide-body p{color:#d5dbe8;font-size:16px;line-height:1.75;margin:0 0 18px}
+.guide-body p:last-child{margin-bottom:0}
+.guide-body h2{color:#fff;font-size:20px;margin:26px 0 12px;font-weight:800}
+.guide-body h2:first-child{margin-top:0}
+.guide-key{background:rgba(47,212,126,.08);border:1px solid rgba(47,212,126,.3);border-radius:14px;padding:16px 18px;margin:22px 0 0}
+.guide-key p{margin:0;font-size:15px}
+.guide-key strong{color:#2fd47e}
+.guide-nav{display:flex;justify-content:space-between;gap:12px;margin-top:28px}
+.guide-nav a{color:#2fd47e;font-weight:700;text-decoration:none;font-size:15px}
+</style>
+<div class="guide-wrap">
+  <p class="guide-eyebrow">BETTING GUIDES · 3 OF 6</p>
+  <h1 class="guide-title">What Is a Total (Over/Under)?</h1>
+  <p class="guide-lede">Forget who wins. This bet is only about how much scoring happens.</p>
+  <div class="guide-body">
+    <p>A total is a bet on the combined score of both teams — not on the winner. The sportsbook posts a number, and you bet whether the final combined score goes <strong>over</strong> or <strong>under</strong> it.</p>
+    <h2>How it reads</h2>
+    <p>"Yankees vs. Red Sox — Total 8.5" means the two teams' runs are added together. Bet the over, and you need 9 or more combined runs to win. Bet the under, and you need 8 or fewer. The final score could be 5-4 (over), 3-2 (under) — who won the game is irrelevant.</p>
+    <p>As with spreads, the ".5" avoids ties. On a whole-number total like 8, a combined score of exactly 8 is a <strong>push</strong> and your stake comes back.</p>
+    <h2>Totals beyond the full game</h2>
+    <p>Books also post totals for halves, quarters, innings, and even team totals (one team's score alone). The same logic applies everywhere: the number is a prediction, and your job is to decide whether the true scoring expectation sits above or below it. Beginners should master full-game totals first — the shorter the window, the more randomness dominates.</p>
+    <h2>What moves a total</h2>
+    <p>Totals move on pitching matchups, weather (wind blowing out in baseball, cold in football), pace of play, and injuries to key offensive players. The market is sharp here — totals are one of the most efficient lines in sports betting, which is exactly why discipline matters more than opinions.</p>
+    <div class="guide-key"><p><strong>The Sharp Team way:</strong> we don't publish totals. Our official card is moneylines and spreads — that's where our system has a measurable edge, and we stay inside our circle of competence. No feelings, no experiments with your money.</p></div>
+  </div>
+  <nav class="guide-nav">
+    <a href="{{ url_for('guide_spread') }}">← What is a spread?</a>
+    <a href="{{ url_for('guide_american_odds') }}">American odds explained →</a>
+  </nav>
+</div>
+{% endblock %}

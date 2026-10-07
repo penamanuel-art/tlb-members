@@ -19,6 +19,20 @@
 {% endif %}
 
 <div class="section-head">
+  <h2 class="section-title">BETTING GUIDES</h2>
+</div>
+<p class="muted">New to betting? Start here.</p>
+<div class="guides-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px;">
+  <a href="{{ url_for('guide_moneyline') }}" class="v2-tool"><b>Moneyline</b><span class="v2-tool-sub">What it is</span></a>
+  <a href="{{ url_for('guide_spread') }}" class="v2-tool"><b>Spread</b><span class="v2-tool-sub">What it is</span></a>
+  <a href="{{ url_for('guide_total') }}" class="v2-tool"><b>Total</b><span class="v2-tool-sub">Over/under</span></a>
+  <a href="{{ url_for('guide_american_odds') }}" class="v2-tool"><b>American odds</b><span class="v2-tool-sub">+150, -110…</span></a>
+  <a href="{{ url_for('guide_vig') }}" class="v2-tool"><b>The vig</b><span class="v2-tool-sub">Why it matters</span></a>
+  <a href="{{ url_for('guide_reading_card') }}" class="v2-tool"><b>Reading a card</b><span class="v2-tool-sub">Our picks</span></a>
+  <a href="{{ url_for('guide_glossary') }}" class="v2-tool" style="grid-column:1/-1;"><b>📖 Betting glossary</b><span class="v2-tool-sub">Every term, plain English</span></a>
+</div>
+
+<div class="section-head">
   <h2 class="section-title">ARCHIVE · 30 DAYS</h2>
 </div>
 <p class="muted">The complete course, one lesson per day.</p>

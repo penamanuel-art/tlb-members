@@ -1,0 +1,53 @@
+{% extends "base_v2.html" %}
+{% block title %}American Odds, Explained — The Sharp Team{% endblock %}
+{% block content %}
+<style>
+.guide-wrap{max-width:680px;margin:0 auto;padding:28px 20px 90px}
+.guide-eyebrow{color:#2fd47e;font-size:11px;letter-spacing:3px;font-weight:800;margin-bottom:12px}
+.guide-title{font-size:32px;font-weight:800;letter-spacing:-1px;line-height:1.15;margin:0 0 8px;color:#fff}
+.guide-lede{color:#9aa3b8;font-size:15px;margin:0 0 24px;line-height:1.6}
+.guide-body{background:#101a2c;border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:28px 24px}
+.guide-body p{color:#d5dbe8;font-size:16px;line-height:1.75;margin:0 0 18px}
+.guide-body p:last-child{margin-bottom:0}
+.guide-body h2{color:#fff;font-size:20px;margin:26px 0 12px;font-weight:800}
+.guide-body h2:first-child{margin-top:0}
+.guide-table{width:100%;border-collapse:collapse;margin:18px 0;font-size:15px}
+.guide-table th{color:#8a93a8;text-align:left;padding:8px 10px;border-bottom:1px solid rgba(255,255,255,.12);font-weight:700}
+.guide-table td{color:#d5dbe8;padding:8px 10px;border-bottom:1px solid rgba(255,255,255,.06)}
+.guide-table td.num{font-variant-numeric:tabular-nums}
+.guide-key{background:rgba(47,212,126,.08);border:1px solid rgba(47,212,126,.3);border-radius:14px;padding:16px 18px;margin:22px 0 0}
+.guide-key p{margin:0;font-size:15px}
+.guide-key strong{color:#2fd47e}
+.guide-nav{display:flex;justify-content:space-between;gap:12px;margin-top:28px}
+.guide-nav a{color:#2fd47e;font-weight:700;text-decoration:none;font-size:15px}
+</style>
+<div class="guide-wrap">
+  <p class="guide-eyebrow">BETTING GUIDES · 4 OF 6</p>
+  <h1 class="guide-title">American Odds, Explained</h1>
+  <p class="guide-lede">+150, -110, -200 — what those numbers actually mean, and the probability hiding inside each one.</p>
+  <div class="guide-body">
+    <p>American odds always revolve around $100. A <strong>positive</strong> number tells you how much profit a $100 bet wins: +150 wins $150. A <strong>negative</strong> number tells you how much you must risk to win $100: -150 risks $150 to win $100. Positive = underdog. Negative = favorite.</p>
+    <h2>The probability inside the price</h2>
+    <p>Every price implies a probability — the book's estimate of how often that side wins. The math is simple:</p>
+    <p>For positive odds: <strong>100 ÷ (odds + 100)</strong>. For negative odds: <strong>|odds| ÷ (|odds| + 100)</strong>.</p>
+    <table class="guide-table">
+      <tr><th>Odds</th><th>Implied probability</th><th>What it means</th></tr>
+      <tr><td class="num">-110</td><td class="num">52.4%</td><td>Risk $110 to win $100</td></tr>
+      <tr><td class="num">-150</td><td class="num">60.0%</td><td>Risk $150 to win $100</td></tr>
+      <tr><td class="num">+100</td><td class="num">50.0%</td><td>Risk $100 to win $100</td></tr>
+      <tr><td class="num">+125</td><td class="num">44.4%</td><td>Risk $100 to win $125</td></tr>
+      <tr><td class="num">+150</td><td class="num">40.0%</td><td>Risk $100 to win $150</td></tr>
+      <tr><td class="num">+300</td><td class="num">25.0%</td><td>Risk $100 to win $300</td></tr>
+    </table>
+    <h2>Why this is the whole game</h2>
+    <p>A bet is only worth making when the <em>true</em> probability is higher than the <em>implied</em> one. If a team at +150 (40% implied) actually wins 48% of the time, you have an 8-point edge — and over hundreds of bets, that edge is profit. If the true chance is only 38%, the same ticket is a slow leak.</p>
+    <h2>A note on other formats</h2>
+    <p>Outside the US you'll see decimal odds (2.50 means a $100 bet returns $250 total, stake included) and fractional odds (6/4 in the UK). They're the same information in different packaging — decimal minus 1, times 100, gives you the implied probability directly. American odds dominate US sportsbooks, so they're the format we use everywhere on this platform.</p>
+    <div class="guide-key"><p><strong>The Sharp Team way:</strong> every card shows the model's probability next to the price. You never have to guess whether +150 is "good" — the edge is printed right there, computed before the ticket is ever placed.</p></div>
+  </div>
+  <nav class="guide-nav">
+    <a href="{{ url_for('guide_total') }}">← What is a total?</a>
+    <a href="{{ url_for('guide_vig') }}">What is the vig? →</a>
+  </nav>
+</div>
+{% endblock %}

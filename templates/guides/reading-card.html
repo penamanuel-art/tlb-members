@@ -1,0 +1,45 @@
+{% extends "base_v2.html" %}
+{% block title %}How to Read a Sharp Team Card — The Sharp Team{% endblock %}
+{% block content %}
+<style>
+.guide-wrap{max-width:680px;margin:0 auto;padding:28px 20px 90px}
+.guide-eyebrow{color:#2fd47e;font-size:11px;letter-spacing:3px;font-weight:800;margin-bottom:12px}
+.guide-title{font-size:32px;font-weight:800;letter-spacing:-1px;line-height:1.15;margin:0 0 8px;color:#fff}
+.guide-lede{color:#9aa3b8;font-size:15px;margin:0 0 24px;line-height:1.6}
+.guide-body{background:#101a2c;border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:28px 24px}
+.guide-body p{color:#d5dbe8;font-size:16px;line-height:1.75;margin:0 0 18px}
+.guide-body p:last-child{margin-bottom:0}
+.guide-body h2{color:#fff;font-size:20px;margin:26px 0 12px;font-weight:800}
+.guide-body h2:first-child{margin-top:0}
+.guide-body ul{color:#d5dbe8;font-size:16px;line-height:1.75;margin:0 0 18px;padding-left:22px}
+.guide-body li{margin-bottom:10px}
+.guide-key{background:rgba(47,212,126,.08);border:1px solid rgba(47,212,126,.3);border-radius:14px;padding:16px 18px;margin:22px 0 0}
+.guide-key p{margin:0;font-size:15px}
+.guide-key strong{color:#2fd47e}
+.guide-nav{display:flex;justify-content:space-between;gap:12px;margin-top:28px}
+.guide-nav a{color:#2fd47e;font-weight:700;text-decoration:none;font-size:15px}
+</style>
+<div class="guide-wrap">
+  <p class="guide-eyebrow">BETTING GUIDES · 6 OF 6</p>
+  <h1 class="guide-title">How to Read a Sharp Team Card</h1>
+  <p class="guide-lede">Every number on the card, decoded — so you always know exactly what you're looking at.</p>
+  <div class="guide-body">
+    <p>Every official play arrives as a card. Here's what each part means:</p>
+    <ul>
+      <li><strong>The badge — PLATINUM or GOLD.</strong> Platinum is our highest-conviction play of the day (1 unit). Gold plays are strong supporting value (0.6 units). The badge sets the stake — nothing else does.</li>
+      <li><strong>The pick and the price.</strong> "Brewers ML (+125)" means Milwaukee to win outright at +125. The price shown is the reference line; your book's number may differ slightly — that's why the Novig button is right there.</li>
+      <li><strong>The stake — in units and dollars.</strong> 1 unit = 1% of <em>your</em> bankroll. On a $5,000 bankroll, a 1u Platinum play is $50 and a 0.6u Gold play is $30. Your card shows your numbers, not anyone else's.</li>
+      <li><strong>Place at Novig →</strong> opens the direct link to place the bet. <strong>+ Track</strong> logs the play in your personal tracker with one tap.</li>
+      <li><strong>See the ticket →</strong> opens the original ticket photo. Every official play carries the real receipt — the photo is the proof the bet was placed, at that price, before the game.</li>
+      <li><strong>Why we like it.</strong> Tap to expand: the model's win probability, the fair price, and the edge versus the market — the three numbers behind every play.</li>
+    </ul>
+    <h2>Two states of a card</h2>
+    <p>A card first appears as a forecast — the play, the numbers, the reasoning. When the official ticket arrives, the card transforms: the real receipt is attached, the price and stake are locked to what was actually bet, and the play is confirmed. No ticket, no official play. That's the rule, with no exceptions.</p>
+    <div class="guide-key"><p><strong>The Sharp Team way:</strong> every play is posted before game time, then locked and graded against the final score. Win or loss, every play stays on the record — and the ticket proves it was real.</p></div>
+  </div>
+  <nav class="guide-nav">
+    <a href="{{ url_for('guide_vig') }}">← What is the vig?</a>
+    <a href="{{ url_for('guide_glossary') }}">Glossary →</a>
+  </nav>
+</div>
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends "base_v2.html" %}
+{% block title %}What Is a Spread? — The Sharp Team{% endblock %}
+{% block content %}
+<style>
+.guide-wrap{max-width:680px;margin:0 auto;padding:28px 20px 90px}
+.guide-eyebrow{color:#2fd47e;font-size:11px;letter-spacing:3px;font-weight:800;margin-bottom:12px}
+.guide-title{font-size:32px;font-weight:800;letter-spacing:-1px;line-height:1.15;margin:0 0 8px;color:#fff}
+.guide-lede{color:#9aa3b8;font-size:15px;margin:0 0 24px;line-height:1.6}
+.guide-body{background:#101a2c;border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:28px 24px}
+.guide-body p{color:#d5dbe8;font-size:16px;line-height:1.75;margin:0 0 18px}
+.guide-body p:last-child{margin-bottom:0}
+.guide-body h2{color:#fff;font-size:20px;margin:26px 0 12px;font-weight:800}
+.guide-body h2:first-child{margin-top:0}
+.guide-key{background:rgba(47,212,126,.08);border:1px solid rgba(47,212,126,.3);border-radius:14px;padding:16px 18px;margin:22px 0 0}
+.guide-key p{margin:0;font-size:15px}
+.guide-key strong{color:#2fd47e}
+.guide-nav{display:flex;justify-content:space-between;gap:12px;margin-top:28px}
+.guide-nav a{color:#2fd47e;font-weight:700;text-decoration:none;font-size:15px}
+</style>
+<div class="guide-wrap">
+  <p class="guide-eyebrow">BETTING GUIDES · 2 OF 6</p>
+  <h1 class="guide-title">What Is a Spread?</h1>
+  <p class="guide-lede">The great equalizer: a handicap that makes every game a coin flip — almost.</p>
+  <div class="guide-body">
+    <p>A spread (point spread) is a handicap the sportsbook applies to level the teams. Instead of betting on who wins, you bet on whether a team beats the handicap. The favorite must win by <em>more</em> than the spread; the underdog can lose by <em>less</em> than the spread — or win outright — and still cash.</p>
+    <h2>How it reads</h2>
+    <p>"Chiefs -3.5" means Kansas City must win by 4 or more points. If they win 27-24, they covered — a winning bet. If they win 24-21, they failed to cover, and the bet loses even though they won the game. "Raiders +3.5" is the other side: Las Vegas can lose by 3 and your bet still wins.</p>
+    <p>That ".5" is called the hook, and it exists to avoid ties. On a whole-number spread like -3, if the favorite wins by exactly 3, the bet is a <strong>push</strong> — nobody wins, and your stake is returned.</p>
+    <h2>Key numbers</h2>
+    <p>In football, not all points are equal. Games most often end with margins of 3 and 7 (a field goal, a touchdown), so spreads of -3, -7, +3, and +7 are called key numbers. Moving off a key number — say from -3 to -2.5 — is worth real money, which is why books charge extra ("buying points") to move across them. Professionals pay close attention to which side of a key number they're on.</p>
+    <h2>Spreads vs. moneylines</h2>
+    <p>Spreads usually pay close to -110 on both sides, while moneyline prices swing widely. They're two ways of expressing the same opinion about a game. Our model prices the game first and then checks both markets — whichever side of the market offers the real edge is the one we take.</p>
+    <div class="guide-key"><p><strong>The Sharp Team way:</strong> we only play a spread when the edge holds up against the no-vig fair price on that exact line. Research can veto a spread — it can never create one out of thin air.</p></div>
+  </div>
+  <nav class="guide-nav">
+    <a href="{{ url_for('guide_moneyline') }}">← What is a moneyline?</a>
+    <a href="{{ url_for('guide_total') }}">What is a total? →</a>
+  </nav>
+</div>
+{% endblock %}
