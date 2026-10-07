@@ -748,7 +748,8 @@ WELCOME_HTML = """<!DOCTYPE html>
 </div>
 <div style="padding:14px 16px 12px;text-align:center;">
 <p style="margin:0;color:#9ca3af;font-size:10px;">THE SHARP TEAM &middot; 250 Park Avenue, Suite 1800, New York, NY 10017 &middot; <a href="tel:+15513263312" style="color:#9ca3af;text-decoration:none;">(551) 326-3312</a></p>
-<p style="margin:6px 0 0;color:#9ca3af;font-size:10px;">Play responsibly &middot; 21+ &middot; <a href="tel:18004262537" style="color:#9ca3af;text-decoration:none;">1-800-GAMBLER</a> &middot; &copy; 2026 The Sharp Team</p>
+<p style="margin:6px 0 0;color:#9ca3af;font-size:10px;">21+. Play responsibly. If you or someone you know has a gambling problem, call or text <a href="tel:18004262537" style="color:#9ca3af;text-decoration:underline;">1-800-GAMBLER</a>.</p>
+<p style="margin:6px 0 0;color:#9ca3af;font-size:10px;">&copy; 2026 The Sharp Team</p>
 </div>
 </div>
 </div>
@@ -827,7 +828,8 @@ DUNNING_HTML = """<div style="font-family:Arial,sans-serif;max-width:480px;margi
 <p style="text-align:center;font-size:12px;color:#9ca3af;margin:14px 0 0;">__FECHA__</p>
 <div style="padding:14px 16px 12px;text-align:center;">
 <p style="margin:0;color:#9ca3af;font-size:10px;">THE SHARP TEAM &middot; 250 Park Avenue, Suite 1800, New York, NY 10017 &middot; <a href="tel:+15513263312" style="color:#9ca3af;text-decoration:none;">(551) 326-3312</a></p>
-<p style="margin:6px 0 0;color:#9ca3af;font-size:10px;">Play responsibly &middot; 21+ &middot; <a href="tel:18004262537" style="color:#9ca3af;text-decoration:none;">1-800-GAMBLER</a> &middot; &copy; 2026 The Sharp Team</p>
+<p style="margin:6px 0 0;color:#9ca3af;font-size:10px;">21+. Play responsibly. If you or someone you know has a gambling problem, call or text <a href="tel:18004262537" style="color:#9ca3af;text-decoration:underline;">1-800-GAMBLER</a>.</p>
+<p style="margin:6px 0 0;color:#9ca3af;font-size:10px;">&copy; 2026 The Sharp Team</p>
 </div>
 </div>"""
 
