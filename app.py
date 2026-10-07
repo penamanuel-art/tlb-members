@@ -703,9 +703,11 @@ WELCOME_HTML = """<!DOCTYPE html>
 <div style="display:none;max-height:0;overflow:hidden;opacity:0;">Welcome to The Sharp Team. Your Platinum plays are live &mdash; every pick tracked, every ticket verified.</div>
 <div style="font-family:Arial,sans-serif;max-width:460px;margin:0 auto;background:#ffffff;">
 <img src="https://the-line-breaker-members.onrender.com/static/img/sharp-team-banner.png" alt="The Sharp Team" width="460" style="width:100%;height:auto;display:block;border:0;">
+<div style="background:#0a0f1c;padding:28px 24px;text-align:center;">
+<p style="margin:0;font-size:12px;font-weight:800;letter-spacing:3px;color:#9aa3b8;">MEMBERSHIP CONFIRMED</p>
+<h1 style="font-size:30px;font-weight:800;color:#ffffff;margin:10px 0 0;line-height:1.25;">Welcome to <span style="color:#22c55e;">the team.</span></h1>
+</div>
 <div style="text-align:center;padding:16px 20px 0;">
-<p style="margin:0;font-size:12px;font-weight:800;letter-spacing:3px;color:#6b7280;">MEMBERSHIP CONFIRMED</p>
-<h1 style="font-size:30px;font-weight:800;color:#111111;margin:10px 0;line-height:1.2;">Welcome to the team.</h1>
 <p style="color:#555555;font-size:15px;line-height:1.6;margin:0;">Hi __NOMBRE__ &mdash; your dashboard is ready. Here is everything waiting for you inside:</p>
 </div>
 <div style="padding:14px 20px 0;">
@@ -738,7 +740,7 @@ WELCOME_HTML = """<!DOCTYPE html>
 <p style="font-size:15px;font-style:italic;line-height:1.7;color:#555555;margin:0;">&ldquo;Every play is posted before game time &mdash; then locked and graded against the final score.&rdquo;</p>
 </div>
 <div style="text-align:center;padding:18px 20px 0;">
-<a href="https://the-line-breaker-members.onrender.com/home" style="display:inline-block;background:#22c55e;color:#111111;font-size:16px;font-weight:800;padding:12px 28px;border-radius:10px;text-decoration:none;">ENTER THE DASHBOARD</a>
+<a href="https://the-line-breaker-members.onrender.com/home" style="display:inline-block;background:#22c55e;color:#111111;font-size:16px;font-weight:800;padding:14px 36px;border-radius:999px;text-decoration:none;">ENTER THE DASHBOARD</a>
 <p style="color:#555555;font-size:14px;line-height:1.7;margin:14px 0 0;">Your first week is <strong style="color:#16a34a;">$1</strong> &mdash; then $23/week.<br>Cancel anytime.</p>
 </div>
 <div style="padding:14px 16px 12px;text-align:center;">
@@ -805,16 +807,16 @@ Bet responsibly - 21+ - Gambling problem? Call 1-800-GAMBLER (1-800-426-2537): f
 
 DUNNING_HTML = """<div style="font-family:Arial,sans-serif;max-width:480px;margin:0 auto;background:#ffffff;">
 <img src="https://the-line-breaker-members.onrender.com/static/img/sharp-team-banner.png" alt="The Sharp Team" width="480" style="width:100%;height:auto;display:block;border:0;">
-<div style="text-align:center;padding:16px 24px 0;">
-<p style="margin:0;font-size:12px;font-weight:800;letter-spacing:2px;color:#6b7280;">&#9888;&nbsp;PAYMENT ISSUE</p>
-<h1 style="font-size:26px;font-weight:800;color:#111111;margin:10px 0;line-height:1.25;">Today&apos;s card is set.<br>Your card isn&apos;t.</h1>
+<div style="background:#0a0f1c;padding:28px 24px;text-align:center;">
+<p style="margin:0;font-size:12px;font-weight:800;letter-spacing:2px;color:#9aa3b8;">&#9888;&nbsp;PAYMENT ISSUE</p>
+<h1 style="font-size:30px;font-weight:800;color:#ffffff;margin:10px 0 0;line-height:1.25;">Today&apos;s card is set.<br><span style="color:#22c55e;">Your card isn&apos;t.</span></h1>
 </div>
 <div style="margin:14px 24px 0;background:#ffffff;border:1px solid #e5e7eb;border-radius:12px;padding:18px;">
 <p style="margin:0;font-size:15px;font-weight:700;color:#111111;line-height:1.55;">Hi __NOMBRE__ &mdash; your last payment didn&apos;t go through, so your Platinum plays are on hold.</p>
 <p style="margin:10px 0 0;font-size:14px;color:#555555;line-height:1.6;">Nothing is canceled &mdash; cards just fail sometimes. Fix it now and everything switches back on instantly.</p>
 </div>
 <div style="text-align:center;padding:16px 24px 0;">
-<a href="__PAY_URL__" style="display:inline-block;background:#22c55e;color:#111111;font-weight:800;font-size:16px;padding:12px 28px;border-radius:10px;text-decoration:none;">Fix my card in one tap &rarr;</a>
+<a href="__PAY_URL__" style="display:inline-block;background:#22c55e;color:#111111;font-weight:800;font-size:16px;padding:14px 36px;border-radius:999px;text-decoration:none;">Fix my card in one tap &rarr;</a>
 <p style="margin:10px 0 0;font-size:13px;color:#6b7280;">Takes about 30 seconds &middot; Your Gold plays stay yours either way.</p>
 </div>
 <p style="font-size:13px;line-height:1.6;color:#6b7280;margin:16px 24px 0;text-align:center;">If anything looks off, just reply to this email and a real person will sort it.</p>
