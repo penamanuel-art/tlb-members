@@ -4401,7 +4401,54 @@ def api_tickets_pendientes():
         return jsonify({"error": str(e)}), 500
 
 
-@app.route("/admin/accion/<accion>", methods=["POST"])
+@app.route("/api/values-record")
+def api_values_record():
+    """Récord del tracker VALUE del sistema (protegido con X-Push-Key).
+
+    Lo usa el asistente para el botón 💎 Value plays del chat.
+    Devuelve: wins, losses, profit, record y las values activas (pendientes).
+    """
+    import os
+    if request.headers.get("X-Push-Key") != os.environ.get("PUSH_TRIGGER_KEY", ""):
+        return jsonify({"error": "unauthorized"}), 401
+    try:
+        db = get_db()
+        rows = db.execute(
+            "SELECT pick, cuota, fecha, resultado, stake_monto FROM tracked_plays "
+            "WHERE user_id = ? AND nivel = 'VALUE' ORDER BY fecha DESC, id DESC LIMIT 50",
+            (VALUE_SYSTEM_USER_ID,),
+        ).fetchall()
+        wins = losses = 0
+        profit = 0.0
+        active = []
+        history = []
+        for r in rows:
+            d = dict(r)
+            p = play_profit_dollars({"cuota": d["cuota"], "stake_monto": d["stake_monto"] or 50.0,
+                                     "resultado": d["resultado"]})
+            if d["resultado"] == "W":
+                wins += 1
+                profit += p
+                history.append({"pick": d["pick"], "cuota": d["cuota"], "fecha": d["fecha"],
+                                "resultado": "W", "profit": round(p, 2)})
+            elif d["resultado"] == "L":
+                losses += 1
+                profit += p
+                history.append({"pick": d["pick"], "cuota": d["cuota"], "fecha": d["fecha"],
+                                "resultado": "L", "profit": round(p, 2)})
+            else:
+                active.append({"pick": d["pick"], "cuota": d["cuota"], "fecha": d["fecha"]})
+        return jsonify({
+            "wins": wins, "losses": losses,
+            "record": f"{wins}-{losses}",
+            "profit": round(profit, 2),
+            "profit_display": fmt_big_dollars(profit),
+            "positive": profit >= 0,
+            "active": active[:10],
+            "history": history[:10],
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 @login_required
 def admin_accion(accion):
     """Alex dispara manualmente una acción automática desde el panel."""
