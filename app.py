@@ -4065,11 +4065,9 @@ def admin_subir_ticket():
         f.save(os.path.join(pending_dir, fname))
         # Registrar en el log para que el cron lo detecte
         try:
-            log_path = os.path.join(os.path.dirname(__file__), "..", "goals",
-                "programa-de-apuestas-deportivas", "hidden_files",
-                "tickets-pendientes.json")
-            log_path = os.path.abspath(log_path)
             import json as _json
+            log_path = os.path.join(os.path.dirname(__file__), "data",
+                                    "tickets-pendientes.json")
             try:
                 with open(log_path) as _f:
                     _log = _json.load(_f)
@@ -4092,9 +4090,8 @@ def admin_subir_ticket():
     pendientes = []
     try:
         import json as _json
-        log_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..",
-            "goals", "programa-de-apuestas-deportivas", "hidden_files",
-            "tickets-pendientes.json"))
+        log_path = os.path.join(os.path.dirname(__file__), "data",
+                                "tickets-pendientes.json")
         with open(log_path) as _f:
             _log = _json.load(_f)
         for t in _log:
@@ -4111,6 +4108,24 @@ def admin_subir_ticket():
     return render_template("admin_subir_ticket.html",
                            plays_sin_ticket=plays_sin_ticket,
                            pendientes=pendientes)
+
+
+@app.route("/api/tickets-pendientes")
+def api_tickets_pendientes():
+    """Devuelve los tickets subidos sin procesar (para el cron de vigilancia)."""
+    import json as _json, os
+    if request.headers.get("X-Push-Key") != os.environ.get("PUSH_KEY", ""):
+        return jsonify({"error": "unauthorized"}), 401
+    try:
+        log_path = os.path.join(os.path.dirname(__file__), "data",
+                                "tickets-pendientes.json")
+        if os.path.exists(log_path):
+            with open(log_path) as _f:
+                _log = _json.load(_f)
+            return jsonify({"pendientes": [t for t in _log if not t.get("procesado")]})
+        return jsonify({"pendientes": []})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 @app.route("/admin/miembros")
