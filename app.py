@@ -743,7 +743,7 @@ WELCOME_HTML = """<!DOCTYPE html>
 <p style="font-size:15px;font-style:italic;line-height:1.7;color:#555555;margin:0;">&ldquo;Every play is posted before game time &mdash; then locked and graded against the final score.&rdquo;</p>
 </div>
 <div style="text-align:center;padding:18px 20px 0;">
-<a href="https://the-line-breaker-members.onrender.com/home" style="display:inline-block;background:#22c55e;color:#111111;font-size:16px;font-weight:800;padding:14px 36px;border-radius:999px;text-decoration:none;">ENTER THE DASHBOARD</a>
+<a href="https://the-line-breaker-members.onrender.com/home" style="display:inline-block;background:#22c55e;color:#111111;font-size:14px;font-weight:800;padding:11px 28px;border-radius:999px;text-decoration:none;">ENTER THE DASHBOARD</a>
 <p style="color:#555555;font-size:14px;line-height:1.7;margin:14px 0 0;">Your first week is <strong style="color:#16a34a;">$1</strong> &mdash; then $23/week.<br>Cancel anytime.</p>
 </div>
 <div style="text-align:center;padding:20px 20px 14px;">
