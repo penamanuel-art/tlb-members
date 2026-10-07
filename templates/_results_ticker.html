@@ -1,10 +1,9 @@
-{# Results ticker (requested by Alex 2026-09-26): strip showing
+{# Results ticker (requested by Alex 2026-09-26): scrolling marquee showing
    ONLY the last settled day (Alex 2026-09-26: un solo día, el anterior) — day label, W-L record, day profit and ROI.
    Fed by `ticker_days` from the context processor (computed live from
    data/archive.json, so it updates as plays settle). Styles are scoped here
    so no change to static/css/style.css is needed.
-   (2026-10-07, pedido por Alex: tira ESTÁTICA — la marquesina animada hacía
-   que la página "se moviera para los lados".)
+   (2026-10-07, pedido por Alex: la tira VUELVE a moverse como marquesina.)
    Dock: "top" (sticky under the viewport top) by default; pass
    ticker_dock="bottom" for a bar fixed to the viewport bottom that stays
    visible while scrolling (Alex 2026-09-26). #}
@@ -16,16 +15,18 @@
 .ticker-dock-bottom{position:fixed;bottom:0;left:0;right:0;z-index:1000;border-top:1px solid var(--line);}
 {% if dock == 'bottom' %}body{padding-bottom:74px;}{% endif %}
 .ticker-kicker{padding:8px 14px 0;font-size:11px;letter-spacing:1.5px;color:var(--muted);font-weight:700;}
-.ticker-track{display:flex;flex-wrap:wrap;padding:8px 0 12px;}
-.ticker-item{display:inline-flex;align-items:center;gap:10px;padding:6px 24px 6px 0;white-space:nowrap;color:var(--text);font-size:14px;font-weight:600;}
-.ticker-item + .ticker-item{border-left:1px solid var(--line);padding-left:24px;margin-left:0;}
+.ticker-track{display:flex;width:max-content;animation:tlb-ticker 7s linear infinite;padding:8px 0 12px;}
+.ticker-wrap:hover .ticker-track{animation-play-state:paused;}
+@keyframes tlb-ticker{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+.ticker-item{display:inline-flex;align-items:center;gap:10px;padding:0 24px;white-space:nowrap;color:var(--text);font-size:14px;font-weight:600;border-right:1px solid var(--line);}
 .ticker-item .tk-day{color:var(--gold);letter-spacing:.6px;}
 .ticker-item .tk-roi{color:var(--muted);font-weight:500;}
+@media (prefers-reduced-motion: reduce){.ticker-track{animation:none;flex-wrap:wrap;width:auto;}}
 </style>
-<div class="ticker-wrap ticker-dock-{{ dock }}" aria-label="Yesterday's results">
+<div class="ticker-wrap ticker-dock-{{ dock }}" role="marquee" aria-label="Yesterday's results">
   <div class="ticker-kicker">YESTERDAY'S RESULTS</div>
   <div class="ticker-track">
-    {% for t in ticker_days %}<span class="ticker-item"><span class="tk-day">{{ t.etiqueta }}</span><span>{{ t.record }}</span><span class="{{ 'pos' if t.profit >= 0 else 'neg' }}">{{ ('+$%.2f' % t.profit) if t.profit >= 0 else ('-$%.2f' % -t.profit) }}</span><span class="tk-roi">ROI {{ '%+.1f' % t.roi }}%</span></span>{% endfor %}
+    {% for _rep in [1, 2] %}{% for t in ticker_days %}<span class="ticker-item"><span class="tk-day">{{ t.etiqueta }}</span><span>{{ t.record }}</span><span class="{{ 'pos' if t.profit >= 0 else 'neg' }}">{{ ('+$%.2f' % t.profit) if t.profit >= 0 else ('-$%.2f' % -t.profit) }}</span><span class="tk-roi">ROI {{ '%+.1f' % t.roi }}%</span></span>{% endfor %}{% endfor %}
   </div>
 </div>
 {% endif %}
