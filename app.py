@@ -681,7 +681,7 @@ EVERYTHING YOUR PLAN UNLOCKS
 "Every play is posted before game time - then locked and graded against the final score."
 
 Enter your dashboard:
-https://the-sharp-team-members.onrender.com/home
+https://www.thesharpteam.bet/home
 
 Your first week is $1 - then $23/week. Cancel anytime. No questions asked.
 
@@ -702,7 +702,7 @@ WELCOME_HTML = """<!DOCTYPE html>
 <body style="margin:0;padding:0;background:#ffffff;">
 <div style="display:none;max-height:0;overflow:hidden;opacity:0;">Welcome to The Sharp Team. Your Platinum plays are live &mdash; every pick tracked, every ticket verified.</div>
 <div style="font-family:Arial,sans-serif;max-width:460px;margin:0 auto;background:#ffffff;">
-<img src="https://the-sharp-team-members.onrender.com/static/img/sharp-team-banner.png" alt="The Sharp Team" width="460" style="width:100%;height:auto;display:block;border:0;">
+<img src="https://www.thesharpteam.bet/static/img/sharp-team-banner.png" alt="The Sharp Team" width="460" style="width:100%;height:auto;display:block;border:0;">
 <div style="background:#ffffff;padding:14px 0 12px;text-align:center;">
 <p style="margin:0;font-size:13px;font-weight:800;letter-spacing:5px;color:#2e4053;">THE SHARP TEAM</p>
 </div>
@@ -743,7 +743,7 @@ WELCOME_HTML = """<!DOCTYPE html>
 <p style="font-size:15px;font-style:italic;line-height:1.7;color:#555555;margin:0;">&ldquo;Every play is posted before game time &mdash; then locked and graded against the final score.&rdquo;</p>
 </div>
 <div style="text-align:center;padding:18px 20px 0;">
-<a href="https://the-sharp-team-members.onrender.com/home" style="display:inline-block;background:#22c55e;color:#111111;font-size:14px;font-weight:800;padding:11px 28px;border-radius:999px;text-decoration:none;">ENTER THE DASHBOARD</a>
+<a href="https://www.thesharpteam.bet/home" style="display:inline-block;background:#22c55e;color:#111111;font-size:14px;font-weight:800;padding:11px 28px;border-radius:999px;text-decoration:none;">ENTER THE DASHBOARD</a>
 <p style="color:#555555;font-size:14px;line-height:1.7;margin:14px 0 0;">Your first week is <strong style="color:#16a34a;">$1</strong> &mdash; then $23/week.<br>Cancel anytime.</p>
 </div>
 <div style="text-align:center;padding:20px 20px 14px;">
@@ -813,7 +813,7 @@ Bet responsibly - 21+ - Gambling problem? Call 1-800-GAMBLER (1-800-426-2537): f
 """
 
 DUNNING_HTML = """<div style="font-family:Arial,sans-serif;max-width:480px;margin:0 auto;background:#ffffff;">
-<img src="https://the-sharp-team-members.onrender.com/static/img/sharp-team-banner.png" alt="The Sharp Team" width="480" style="width:100%;height:auto;display:block;border:0;">
+<img src="https://www.thesharpteam.bet/static/img/sharp-team-banner.png" alt="The Sharp Team" width="480" style="width:100%;height:auto;display:block;border:0;">
 <div style="background:#ffffff;height:18px;line-height:18px;font-size:1px;">&nbsp;</div>
 <div style="background:#2e4053;padding:28px 24px;text-align:center;">
 <p style="margin:0;font-size:12px;font-weight:800;letter-spacing:2px;color:#9aa3b8;">&#9888;&nbsp;PAYMENT ISSUE</p>
@@ -893,7 +893,7 @@ MONTHLY_HTML = """<!DOCTYPE html>
 <body style="margin:0;padding:0;background:#ffffff;">
 <div style="display:none;max-height:0;overflow:hidden;opacity:0;">Your {mes} statement &mdash; every play graded, every dollar accounted.&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;</div>
 <div style="font-family:Arial,sans-serif;max-width:460px;margin:0 auto;background:#ffffff;">
-<img src="https://the-sharp-team-members.onrender.com/static/img/sharp-team-banner.png" alt="The Sharp Team" width="460" style="width:100%;height:auto;display:block;border:0;">
+<img src="https://www.thesharpteam.bet/static/img/sharp-team-banner.png" alt="The Sharp Team" width="460" style="width:100%;height:auto;display:block;border:0;">
 <div style="background:#ffffff;padding:14px 0 12px;text-align:center;">
 <p style="margin:0;font-size:13px;font-weight:800;letter-spacing:5px;color:#2e4053;">THE SHARP TEAM</p>
 </div>
@@ -943,7 +943,7 @@ MONTHLY_HTML = """<!DOCTYPE html>
 __PLAYS_ROWS__
 </div>
 <div style="text-align:center;padding:18px 20px 0;">
-<a href="https://the-sharp-team-members.onrender.com/records" style="display:inline-block;background:#22c55e;color:#111111;font-size:14px;font-weight:800;padding:11px 28px;border-radius:999px;text-decoration:none;">View full record &rarr;</a>
+<a href="https://www.thesharpteam.bet/records" style="display:inline-block;background:#22c55e;color:#111111;font-size:14px;font-weight:800;padding:11px 28px;border-radius:999px;text-decoration:none;">View full record &rarr;</a>
 </div>
 <div style="text-align:center;padding:20px 20px 14px;">
 <img src="https://files.catbox.moe/74qot5.png" alt="The Sharp Team" width="110" style="width:110px;height:auto;display:block;margin:0 auto;border:0;">
@@ -967,7 +967,7 @@ ROI: __ROI__
 Platinum: __PLATINUM__
 Gold: __GOLD__
 
-View your full record: https://the-sharp-team-members.onrender.com/records
+View your full record: https://www.thesharpteam.bet/records
 
 21+. Play responsibly. If you or someone you know has a gambling problem, call or text 1-800-GAMBLER.
 (c) 2026 The Sharp Team
@@ -5141,7 +5141,7 @@ def stripe_webhook():
             email = (data.get("customer_email") or "").strip().lower()
             invoice_id = data.get("id") or ""
             pay_url = (data.get("hosted_invoice_url") or
-                       "https://the-sharp-team-members.onrender.com/cuenta")
+                       "https://www.thesharpteam.bet/cuenta")
             nombre = ""
             if email:
                 r = db.execute("SELECT nombre FROM users WHERE email = ?",
