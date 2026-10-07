@@ -703,7 +703,8 @@ WELCOME_HTML = """<!DOCTYPE html>
 <div style="display:none;max-height:0;overflow:hidden;opacity:0;">Welcome to The Sharp Team. Your Platinum plays are live &mdash; every pick tracked, every ticket verified.</div>
 <div style="font-family:Arial,sans-serif;max-width:460px;margin:0 auto;background:#ffffff;">
 <img src="https://the-line-breaker-members.onrender.com/static/img/sharp-team-banner.png" alt="The Sharp Team" width="460" style="width:100%;height:auto;display:block;border:0;">
-<div style="background:#0a0f1c;padding:28px 24px;text-align:center;">
+<div style="background:#ffffff;height:18px;line-height:18px;font-size:1px;">&nbsp;</div>
+<div style="background:#2e4053;padding:28px 24px;text-align:center;">
 <p style="margin:0;font-size:12px;font-weight:800;letter-spacing:3px;color:#9aa3b8;">MEMBERSHIP CONFIRMED</p>
 <h1 style="font-size:30px;font-weight:800;color:#ffffff;margin:10px 0 0;line-height:1.25;">Welcome to <span style="color:#22c55e;">the team.</span></h1>
 </div>
@@ -807,7 +808,8 @@ Bet responsibly - 21+ - Gambling problem? Call 1-800-GAMBLER (1-800-426-2537): f
 
 DUNNING_HTML = """<div style="font-family:Arial,sans-serif;max-width:480px;margin:0 auto;background:#ffffff;">
 <img src="https://the-line-breaker-members.onrender.com/static/img/sharp-team-banner.png" alt="The Sharp Team" width="480" style="width:100%;height:auto;display:block;border:0;">
-<div style="background:#0a0f1c;padding:28px 24px;text-align:center;">
+<div style="background:#ffffff;height:18px;line-height:18px;font-size:1px;">&nbsp;</div>
+<div style="background:#2e4053;padding:28px 24px;text-align:center;">
 <p style="margin:0;font-size:12px;font-weight:800;letter-spacing:2px;color:#9aa3b8;">&#9888;&nbsp;PAYMENT ISSUE</p>
 <h1 style="font-size:30px;font-weight:800;color:#ffffff;margin:10px 0 0;line-height:1.25;">Today&apos;s card is set.<br><span style="color:#22c55e;">Your card isn&apos;t.</span></h1>
 </div>
