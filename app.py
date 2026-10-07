@@ -4114,7 +4114,7 @@ def admin_subir_ticket():
 def api_tickets_pendientes():
     """Devuelve los tickets subidos sin procesar (para el cron de vigilancia)."""
     import json as _json, os
-    if request.headers.get("X-Push-Key") != os.environ.get("PUSH_KEY", ""):
+    if request.headers.get("X-Push-Key") != os.environ.get("PUSH_TRIGGER_KEY", ""):
         return jsonify({"error": "unauthorized"}), 401
     try:
         log_path = os.path.join(os.path.dirname(__file__), "data",
@@ -4162,7 +4162,7 @@ def admin_accion(accion):
 def api_acciones_pendientes():
     """Devuelve las acciones pedidas por Alex sin ejecutar (para el cron)."""
     import json as _json, os
-    if request.headers.get("X-Push-Key") != os.environ.get("PUSH_KEY", ""):
+    if request.headers.get("X-Push-Key") != os.environ.get("PUSH_TRIGGER_KEY", ""):
         return jsonify({"error": "unauthorized"}), 401
     try:
         queue_path = os.path.join(os.path.dirname(__file__), "data",
