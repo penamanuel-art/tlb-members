@@ -879,6 +879,212 @@ def send_payment_failed_email(nombre: str, email: str, pay_url: str) -> bool:
     return True
 
 
+MONTHLY_SUBJECT = "Your {mes} statement is here \U0001F4CA"
+
+MONTHLY_HTML = """<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta name="supported-color-schemes" content="light">
+<title>Your monthly statement</title>
+</head>
+<body style="margin:0;padding:0;background:#ffffff;">
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;">Your {mes} statement &mdash; every play graded, every dollar accounted.&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;</div>
+<div style="font-family:Arial,sans-serif;max-width:460px;margin:0 auto;background:#ffffff;">
+<img src="https://the-line-breaker-members.onrender.com/static/img/sharp-team-banner.png" alt="The Sharp Team" width="460" style="width:100%;height:auto;display:block;border:0;">
+<div style="background:#ffffff;padding:14px 0 12px;text-align:center;">
+<p style="margin:0;font-size:13px;font-weight:800;letter-spacing:5px;color:#2e4053;">THE SHARP TEAM</p>
+</div>
+<div style="background:#c9a227;padding:28px 24px;text-align:center;">
+<p style="margin:0;font-size:12px;font-weight:800;letter-spacing:3px;color:#0a0f1c;">MONTHLY STATEMENT</p>
+<h1 style="font-size:30px;font-weight:800;color:#0a0f1c;margin:10px 0 0;line-height:1.25;">Your {mes} statement.</h1>
+</div>
+<div style="text-align:center;padding:16px 20px 0;">
+<p style="color:#555555;font-size:15px;line-height:1.6;margin:0;">Hi __NOMBRE__ &mdash; here is how your {mes} closed. Every play graded, every dollar accounted.</p>
+</div>
+<div style="padding:14px 20px 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+<td width="50%" style="padding:0 5px 10px 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:12px;"><tr><td style="padding:14px;text-align:center;">
+<p style="margin:0;font-size:11px;font-weight:800;letter-spacing:2px;color:#6b7280;">RECORD</p>
+<p style="margin:6px 0 0;font-size:22px;font-weight:800;color:#111111;">__RECORD__</p>
+</td></tr></table>
+</td>
+<td width="50%" style="padding:0 0 10px 5px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:12px;"><tr><td style="padding:14px;text-align:center;">
+<p style="margin:0;font-size:11px;font-weight:800;letter-spacing:2px;color:#6b7280;">WIN RATE</p>
+<p style="margin:6px 0 0;font-size:22px;font-weight:800;color:#111111;">__WINRATE__</p>
+</td></tr></table>
+</td>
+</tr><tr>
+<td width="50%" style="padding:0 5px 10px 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:12px;"><tr><td style="padding:14px;text-align:center;">
+<p style="margin:0;font-size:11px;font-weight:800;letter-spacing:2px;color:#6b7280;">NET PROFIT</p>
+<p style="margin:6px 0 0;font-size:22px;font-weight:800;color:__PROFIT_COLOR__;">__PROFIT__</p>
+</td></tr></table>
+</td>
+<td width="50%" style="padding:0 0 10px 5px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:12px;"><tr><td style="padding:14px;text-align:center;">
+<p style="margin:0;font-size:11px;font-weight:800;letter-spacing:2px;color:#6b7280;">ROI</p>
+<p style="margin:6px 0 0;font-size:22px;font-weight:800;color:__PROFIT_COLOR__;">__ROI__</p>
+</td></tr></table>
+</td>
+</tr></table>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:2px 0 0;background:#ffffff;border:1px solid #e5e7eb;border-radius:12px;"><tr><td style="padding:14px 16px;">
+<p style="margin:0;font-size:11px;font-weight:800;letter-spacing:2px;color:#6b7280;">BY LEVEL</p>
+<p style="margin:8px 0 0;font-size:14px;color:#111111;">&#11088; <strong>Platinum</strong> &mdash; __PLATINUM__</p>
+<p style="margin:6px 0 0;font-size:14px;color:#111111;">&#9898; <strong>Gold</strong> &mdash; __GOLD__</p>
+</td></tr></table>
+</div>
+<div style="padding:14px 20px 0;">
+<p style="margin:0 0 8px;font-size:11px;font-weight:800;letter-spacing:2px;color:#6b7280;">PLAY BY PLAY</p>
+__PLAYS_ROWS__
+</div>
+<div style="text-align:center;padding:18px 20px 0;">
+<a href="https://the-line-breaker-members.onrender.com/records" style="display:inline-block;background:#22c55e;color:#111111;font-size:14px;font-weight:800;padding:11px 28px;border-radius:999px;text-decoration:none;">View full record &rarr;</a>
+</div>
+<div style="text-align:center;padding:20px 20px 14px;">
+<img src="https://files.catbox.moe/74qot5.png" alt="The Sharp Team" width="110" style="width:110px;height:auto;display:block;margin:0 auto;border:0;">
+<p style="margin:10px 0 0;color:#111111;font-size:12px;font-weight:800;letter-spacing:3px;">THE SHARP TEAM</p>
+<p style="margin:8px 0 0;color:#9ca3af;font-size:11px;">250 Park Avenue, Suite 1800, New York, NY 10017</p>
+<p style="margin:4px 0 0;color:#9ca3af;font-size:11px;"><a href="tel:+15513263312" style="color:#9ca3af;text-decoration:none;">(551) 326-3312</a></p>
+<p style="margin:12px 0 0;color:#9ca3af;font-size:10px;">21+. Play responsibly. If you or someone you know has a gambling problem, call or text <a href="tel:18004262537" style="color:#9ca3af;text-decoration:underline;">1-800-GAMBLER</a>.</p>
+<p style="margin:6px 0 0;color:#9ca3af;font-size:10px;">&copy; 2026 The Sharp Team</p>
+</div>
+</div>
+</body>
+</html>
+"""
+
+MONTHLY_TEXT = """Hi __NOMBRE__ — here is your {mes} statement from The Sharp Team.
+
+Record: __RECORD__ (__WINRATE__ win rate)
+Net profit: __PROFIT__
+ROI: __ROI__
+
+Platinum: __PLATINUM__
+Gold: __GOLD__
+
+View your full record: https://the-line-breaker-members.onrender.com/records
+
+21+. Play responsibly. If you or someone you know has a gambling problem, call or text 1-800-GAMBLER.
+(c) 2026 The Sharp Team
+"""
+
+
+def _month_name_es_month(ym: str) -> str:
+    """'2026-09' -> 'September' (nombre del mes en inglés para el email)."""
+    import calendar
+    y, m = ym.split("-")
+    return calendar.month_name[int(m)]
+
+
+def monthly_member_stats(db, user_id: int, ym: str) -> dict:
+    """Stats reales del miembro para el mes YYYY-MM desde tracked_plays."""
+    rows = db.execute(
+        "SELECT * FROM tracked_plays WHERE user_id = ? AND substr(fecha, 1, 7) = ? "
+        "ORDER BY fecha, id",
+        (user_id, ym),
+    ).fetchall()
+    tracked = [dict(r) for r in rows]
+    graded = [t for t in tracked if t["resultado"] in ("W", "L")]
+    base = compute_stats(tracked)
+    # Desglose por nivel
+    niveles = {}
+    for lvl in ("ELITE", "GOLD"):
+        g = [t for t in graded if (t["nivel"] or "").upper() in (lvl, "PLATINUM" if lvl == "ELITE" else lvl)]
+        w = sum(1 for t in g if t["resultado"] == "W")
+        p = sum(play_profit_dollars(t) for t in g)
+        tag = "Platinum" if lvl == "ELITE" else "Gold"
+        niveles[tag] = f"{w}-{len(g) - w}, {'+' if p >= 0 else '-'}$ {abs(p):,.2f}".replace("$-", "-$")
+    win_rate = (base["wins"] / (base["wins"] + base["losses"]) * 100) if (base["wins"] + base["losses"]) else 0.0
+    profit = base["net_dollars"]
+    return {
+        "plays": graded,
+        "record": base["record"],
+        "win_rate": f"{win_rate:.1f}%",
+        "profit": profit,
+        "profit_str": f"${profit:,.2f}" if profit >= 0 else f"-${abs(profit):,.2f}",
+        "profit_color": "#16a34a" if profit >= 0 else "#dc2626",
+        "roi": f"{base['roi']:.1f}%",
+        "risked": base["risked"],
+        "platinum": niveles.get("Platinum", "0-0, $0.00"),
+        "gold": niveles.get("Gold", "0-0, $0.00"),
+    }
+
+
+def build_monthly_html(nombre: str, ym: str, st: dict) -> str:
+    """Arma el HTML de la liquidación mensual con los números reales."""
+    mes = _month_name_es_month(ym)
+    rows = []
+    for t in st["plays"]:
+        p = play_profit_dollars(t)
+        color = "#16a34a" if p >= 0 else "#dc2626"
+        marca = "&#10003;" if t["resultado"] == "W" else "&#10007;"
+        nivel = "PLATINUM" if (t["nivel"] or "").upper() in ("ELITE", "PLATINUM") else "GOLD"
+        rows.append(
+            f'<table role="presentation" width="100%" cellpadding="0" cellspacing="0" '
+            f'style="margin:0 0 8px;background:#ffffff;border:1px solid #e5e7eb;border-radius:10px;">'
+            f'<tr><td style="padding:10px 14px;">'
+            f'<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>'
+            f'<td><span style="font-size:14px;font-weight:800;color:#111111;">{t["pick"]}</span> '
+            f'<span style="font-size:12px;color:#6b7280;">{t["cuota"]:+d} &middot; {nivel}</span><br>'
+            f'<span style="font-size:12px;color:#6b7280;">{t["fecha"]}</span></td>'
+            f'<td align="right" style="font-size:14px;font-weight:800;color:{color};">{marca} '
+            f'{"+" if p >= 0 else "-"}${abs(p):,.2f}</td>'
+            f'</tr></table></td></tr></table>'
+        )
+    plays_html = "\n".join(rows) if rows else (
+        '<p style="font-size:14px;color:#6b7280;">No graded plays this month.</p>'
+    )
+    html = (MONTHLY_HTML
+            .replace("{mes}", mes)
+            .replace("__NOMBRE__", nombre or "there")
+            .replace("__RECORD__", st["record"])
+            .replace("__WINRATE__", st["win_rate"])
+            .replace("__PROFIT__", st["profit_str"])
+            .replace("__PROFIT_COLOR__", st["profit_color"])
+            .replace("__ROI__", st["roi"])
+            .replace("__PLATINUM__", st["platinum"])
+            .replace("__GOLD__", st["gold"])
+            .replace("__PLAYS_ROWS__", plays_html))
+    return html
+
+
+def send_monthly_statement(email: str, ym: str) -> tuple:
+    """Genera y envía la liquidación mensual al miembro (números reales de su tracker).
+
+    Devuelve (ok, detalle). No lanza excepciones.
+    """
+    try:
+        db = get_db()
+        row = db.execute("SELECT id, nombre FROM users WHERE LOWER(email) = ?",
+                         (email.strip().lower(),)).fetchone()
+        if not row:
+            return (False, f"No existe cuenta con {email}")
+        st = monthly_member_stats(db, row["id"], ym)
+        if not st["plays"]:
+            return (False, f"Sin jugadas liquidadas en {ym} para {email}")
+        mes = _month_name_es_month(ym)
+        html = build_monthly_html(row["nombre"] or "", ym, st)
+        text = (MONTHLY_TEXT
+                .replace("{mes}", mes)
+                .replace("__NOMBRE__", row["nombre"] or "there")
+                .replace("__RECORD__", st["record"])
+                .replace("__WINRATE__", st["win_rate"])
+                .replace("__PROFIT__", st["profit_str"])
+                .replace("__ROI__", st["roi"])
+                .replace("__PLATINUM__", st["platinum"])
+                .replace("__GOLD__", st["gold"]))
+        subject = MONTHLY_SUBJECT.replace("{mes}", mes)
+        ok, detail = _dispatch_email(email, subject, text, html)
+        return (ok, detail)
+    except Exception as e:
+        return (False, f"Error: {e}")
+
+
 
 def load_data():
     """Devuelve (program, plays). Soporta plays.json como lista (viejo) o dict (nuevo)."""
@@ -3904,6 +4110,31 @@ def admin_resend_welcome():
         return f"Email de bienvenida reenviado a {email}", 200
     except Exception as e:
         return f"Error: {e}", 500
+
+@app.route("/admin/send-monthly", methods=["GET", "POST"])
+@admin_required
+def admin_send_monthly():
+    """Envía la liquidación mensual a un miembro (solo admin).
+
+    Uso: /admin/send-monthly?email=X&month=YYYY-MM (month default: mes anterior).
+    Usa los números REALES del tracker personal del miembro.
+    """
+    from flask import request
+    import re as _re
+    email = (request.values.get("email") or "").strip().lower()
+    month = (request.values.get("month") or "").strip()
+    if not email:
+        return "Falta ?email=", 400
+    if not month:
+        _hoy = datetime.now(TZ)
+        _pm = _hoy.month - 1 or 12
+        _py = _hoy.year - (1 if _hoy.month == 1 else 0)
+        month = f"{_py}-{_pm:02d}"
+    if not _re.fullmatch(r"\d{4}-\d{2}", month):
+        return "month debe ser YYYY-MM", 400
+    ok, detail = send_monthly_statement(email, month)
+    code = 200 if ok else 404
+    return f"Liquidación {month} a {email}: {'enviada' if ok else 'NO enviada'} ({detail})", code
 
 @app.route("/admin/migrate-alex-email", methods=["GET", "POST"])
 @admin_required
