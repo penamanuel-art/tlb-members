@@ -16,6 +16,10 @@
   --radius: 18px;
 }
 * { box-sizing: border-box; }
+html, body { overflow-x: clip; }
+@supports not (overflow: clip) {
+  html, body { overflow-x: hidden; }
+}
 body {
   margin: 0;
   background:
