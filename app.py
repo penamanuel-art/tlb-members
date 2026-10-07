@@ -1001,8 +1001,13 @@ def monthly_member_stats(db, user_id: int, ym: str) -> dict:
         niveles[tag] = f"{w}-{len(g) - w}, {'+' if p >= 0 else '-'}$ {abs(p):,.2f}".replace("$-", "-$")
     win_rate = (base["wins"] / (base["wins"] + base["losses"]) * 100) if (base["wins"] + base["losses"]) else 0.0
     profit = base["net_dollars"]
+    plays_out = []
+    for t in graded:
+        d = dict(t)
+        d["_profit"] = play_profit_dollars(t)
+        plays_out.append(d)
     return {
-        "plays": graded,
+        "plays": plays_out,
         "record": base["record"],
         "win_rate": f"{win_rate:.1f}%",
         "profit": profit,
@@ -1020,7 +1025,7 @@ def build_monthly_html(nombre: str, ym: str, st: dict) -> str:
     mes = _month_name_es_month(ym)
     rows = []
     for t in st["plays"]:
-        p = play_profit_dollars(t)
+        p = t["_profit"] if "_profit" in t else play_profit_dollars(t)
         color = "#16a34a" if p >= 0 else "#dc2626"
         marca = "&#10003;" if t["resultado"] == "W" else "&#10007;"
         nivel = "PLATINUM" if (t["nivel"] or "").upper() in ("ELITE", "PLATINUM") else "GOLD"
