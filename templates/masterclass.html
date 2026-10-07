@@ -22,14 +22,22 @@
   <h2 class="section-title">BETTING GUIDES</h2>
 </div>
 <p class="muted">New to betting? Start here.</p>
-<div class="guides-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px;">
-  <a href="{{ url_for('guide_moneyline') }}" class="v2-tool"><b>Moneyline</b><span class="v2-tool-sub">What it is</span></a>
-  <a href="{{ url_for('guide_spread') }}" class="v2-tool"><b>Spread</b><span class="v2-tool-sub">What it is</span></a>
-  <a href="{{ url_for('guide_total') }}" class="v2-tool"><b>Total</b><span class="v2-tool-sub">Over/under</span></a>
-  <a href="{{ url_for('guide_american_odds') }}" class="v2-tool"><b>American odds</b><span class="v2-tool-sub">+150, -110…</span></a>
-  <a href="{{ url_for('guide_vig') }}" class="v2-tool"><b>The vig</b><span class="v2-tool-sub">Why it matters</span></a>
-  <a href="{{ url_for('guide_reading_card') }}" class="v2-tool"><b>Reading a card</b><span class="v2-tool-sub">Our picks</span></a>
-  <a href="{{ url_for('guide_glossary') }}" class="v2-tool" style="grid-column:1/-1;"><b>📖 Betting glossary</b><span class="v2-tool-sub">Every term, plain English</span></a>
+<style>
+.guides-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px;}
+.guide-card{display:block;text-decoration:none;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.10);border-radius:14px;padding:14px 14px;transition:transform .15s ease,border-color .15s ease;}
+.guide-card:active{transform:scale(.97);}
+.guide-card b{display:block;font-size:15px;font-weight:800;color:#ffffff;letter-spacing:-.2px;line-height:1.3;}
+.guide-card span{display:block;margin-top:5px;font-size:12.5px;color:#9aa3b8;line-height:1.45;}
+.guide-card-full{grid-column:1/-1;}
+</style>
+<div class="guides-grid">
+  <a href="{{ url_for('guide_moneyline') }}" class="guide-card"><b>Moneyline</b><span>What it is</span></a>
+  <a href="{{ url_for('guide_spread') }}" class="guide-card"><b>Spread</b><span>What it is</span></a>
+  <a href="{{ url_for('guide_total') }}" class="guide-card"><b>Total</b><span>Over/under</span></a>
+  <a href="{{ url_for('guide_american_odds') }}" class="guide-card"><b>American odds</b><span>+150, -110&hellip;</span></a>
+  <a href="{{ url_for('guide_vig') }}" class="guide-card"><b>The vig</b><span>Why it matters</span></a>
+  <a href="{{ url_for('guide_reading_card') }}" class="guide-card"><b>Reading a card</b><span>Our picks</span></a>
+  <a href="{{ url_for('guide_glossary') }}" class="guide-card guide-card-full"><b>&#x1F4D6; Betting glossary</b><span>Every term, plain English</span></a>
 </div>
 
 <div class="section-head">
