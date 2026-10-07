@@ -51,6 +51,10 @@
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { overflow-x: clip; }
+@supports not (overflow: clip) {
+  html, body { overflow-x: hidden; }
+}
 
 body.v2 {
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Inter, sans-serif;
