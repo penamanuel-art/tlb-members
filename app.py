@@ -4003,6 +4003,33 @@ def admin_seed_tracker():
     return redirect(url_for("tracker"))
 
 
+@app.route("/admin")
+@login_required
+def admin_dashboard():
+    """Panel central del administrador — solo para Alex (is_admin=1)."""
+    db = get_db()
+    user = current_user()
+    if not is_admin_for(user):
+        flash("You don't have permission to view this page.", "error")
+        return redirect(url_for("home"))
+    try:
+        miembros = db.execute("SELECT COUNT(*) c FROM users").fetchone()["c"]
+    except Exception:
+        miembros = 0
+    try:
+        platinum = db.execute("SELECT COUNT(*) c FROM users WHERE platinum_unlocked=1").fetchone()["c"]
+    except Exception:
+        platinum = 0
+    try:
+        _, plays = load_data()
+        jugadas_hoy = len(plays) if plays else 0
+    except Exception:
+        jugadas_hoy = 0
+    return render_template("admin_dashboard.html",
+                           stats={"miembros": miembros, "platinum": platinum,
+                                  "jugadas_hoy": jugadas_hoy})
+
+
 @app.route("/admin/miembros")
 @login_required
 def admin_miembros():

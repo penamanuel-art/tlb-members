@@ -1,0 +1,82 @@
+{% extends "base_v2.html" %}
+{% block title %}Admin Dashboard — The Sharp Team{% endblock %}
+{% block content %}
+<style>
+.admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 16px; }
+.admin-card { background: #141a2b; border: 1px solid #2a3350; border-radius: 16px; padding: 20px; text-decoration: none; color: #fff; display: block; }
+.admin-card:hover { border-color: #c9a227; }
+.admin-card .icon { font-size: 2rem; margin-bottom: 8px; }
+.admin-card h3 { margin: 0 0 6px; font-size: 1.1rem; }
+.admin-card p { margin: 0; font-size: 0.85rem; color: #9aa3b8; }
+.admin-stat { background: #1a2036; border-radius: 12px; padding: 14px; text-align: center; }
+.admin-stat .num { font-size: 1.8rem; font-weight: 800; color: #e8c15a; }
+.admin-stat .lbl { font-size: 0.75rem; color: #9aa3b8; text-transform: uppercase; letter-spacing: 1px; }
+.admin-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin: 16px 0; }
+.admin-quick { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+.admin-quick a { background: #c9a227; color: #0b0e14; font-weight: 800; padding: 12px 20px; border-radius: 12px; text-decoration: none; font-size: 0.9rem; }
+</style>
+
+<div style="padding: 20px 0 6px;">
+  <p style="font-size: 11px; font-weight: 800; letter-spacing: 2px; color: #c9a227; margin: 0;">ADMIN</p>
+  <h1 style="margin: 6px 0 0; font-size: 1.8rem;">Dashboard</h1>
+</div>
+
+<div class="admin-stats">
+  <div class="admin-stat">
+    <div class="num">{{ stats.miembros }}</div>
+    <div class="lbl">Miembros</div>
+  </div>
+  <div class="admin-stat">
+    <div class="num">{{ stats.platinum }}</div>
+    <div class="lbl">Platinum</div>
+  </div>
+  <div class="admin-stat">
+    <div class="num">{{ stats.jugadas_hoy }}</div>
+    <div class="lbl">Jugadas hoy</div>
+  </div>
+</div>
+
+<div class="admin-quick">
+  <a href="/admin/miembros">👥 Miembros</a>
+  <a href="/admin/trakeos">📊 Trakeos</a>
+</div>
+
+<div class="admin-grid">
+  <a class="admin-card" href="/admin/miembros">
+    <div class="icon">👥</div>
+    <h3>Miembros</h3>
+    <p>Lista, activar Platinum, stakes, eliminar</p>
+  </a>
+  <a class="admin-card" href="/admin/trakeos">
+    <div class="icon">📊</div>
+    <h3>Trakeos</h3>
+    <p>Ver jugadas trackeadas por miembros</p>
+  </a>
+  <a class="admin-card" href="/admin/migrar-track">
+    <div class="icon">🔄</div>
+    <h3>Migrar track</h3>
+    <p>Herramientas de migración de datos</p>
+  </a>
+  <a class="admin-card" href="/admin/diag-tracker">
+    <div class="icon">🔧</div>
+    <h3>Diagnóstico</h3>
+    <p>Revisar estado del tracker</p>
+  </a>
+</div>
+
+<div style="margin-top: 20px;">
+  <h3 style="font-size: 1rem; color: #9aa3b8;">Herramientas</h3>
+  <div class="admin-grid">
+    <a class="admin-card" href="/admin/resend-welcome">
+      <div class="icon">✉️</div>
+      <h3>Reenviar bienvenida</h3>
+      <p>Email de bienvenida manual</p>
+    </a>
+    <a class="admin-card" href="/admin/migrate-alex-email">
+      <div class="icon">📧</div>
+      <h3>Migrar email Alex</h3>
+      <p>Cambiar email de la cuenta</p>
+    </a>
+  </div>
+</div>
+{% endblock %}
