@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-08T00:08:47-04:00",
+  "updated_at": "2026-10-08T01:08:52-04:00",
   "refresh_minutes": 15,
   "fair_source": "Pinnacle no-vig",
   "filters": {
@@ -16,6 +16,57 @@
     "live_included": true
   },
   "edges": [
+    {
+      "id": "3c71012ad7a75e6c11575285e6841e14-totals-4.5-Over",
+      "skey": "3c71012ad7a75e6c11575285e6841e14|totals|4.5|Over",
+      "sport": "MLB",
+      "game": "Milwaukee Brewers @ San Diego Padres",
+      "team": "Over 4.5",
+      "market": "Total",
+      "point": "4.5",
+      "book": "FanDuel",
+      "price": 1000,
+      "fair_prob_pct": 36.8,
+      "fair_american": 172,
+      "ev_pct": 305.1,
+      "books_count": 3,
+      "books": [
+        {
+          "book": "FanDuel",
+          "price": 1000,
+          "ev_pct": 305.1,
+          "url": "https://sportsbook.fanduel.com"
+        },
+        {
+          "book": "Bovada",
+          "price": 550,
+          "ev_pct": 139.4,
+          "url": null
+        },
+        {
+          "book": "BetRivers",
+          "price": 420,
+          "ev_pct": 91.5,
+          "url": null
+        }
+      ],
+      "also_at": [
+        "BetRivers",
+        "Bovada"
+      ],
+      "sharp": false,
+      "verified": true,
+      "edge_label": "Strong edge",
+      "rec_units": 1.0,
+      "rec_stake": 50,
+      "live": true,
+      "game_time": "LIVE now",
+      "commence_time": "2026-10-08T02:10:00Z",
+      "bet_url": "https://novig.com",
+      "novig_deep": false,
+      "stale": false,
+      "first_seen": "2026-10-08T05:08:52.948657+00:00"
+    },
     {
       "id": "e2a6fcdae461277e7cc041ff631d1b0c-h2h-None-Buffalo Bulls",
       "skey": "e2a6fcdae461277e7cc041ff631d1b0c|h2h|None|Buffalo Bulls",
@@ -146,28 +197,28 @@
       "team": "Kent State Golden Flashes",
       "market": "Moneyline",
       "point": "",
-      "book": "Novig",
-      "price": 525,
+      "book": "BetRivers",
+      "price": 500,
       "fair_prob_pct": 18.0,
       "fair_american": 455,
-      "ev_pct": 12.7,
+      "ev_pct": 8.2,
       "books_count": 2,
       "books": [
-        {
-          "book": "Novig",
-          "price": 525,
-          "ev_pct": 12.7,
-          "url": "https://novig.com"
-        },
         {
           "book": "BetRivers",
           "price": 500,
           "ev_pct": 8.2,
           "url": null
+        },
+        {
+          "book": "Novig",
+          "price": 488,
+          "ev_pct": 6.0,
+          "url": "https://novig.com"
         }
       ],
       "also_at": [
-        "BetRivers"
+        "Novig"
       ],
       "sharp": false,
       "verified": true,
@@ -454,51 +505,6 @@
       "novig_deep": false,
       "stale": true,
       "first_seen": "2026-10-04T18:57:23.084583+00:00",
-      "stale_reason": "line moved below 3%"
-    },
-    {
-      "id": "f513c11a62ce92d74d70cf446e92e197-h2h-None-Rice Owls",
-      "skey": "f513c11a62ce92d74d70cf446e92e197|h2h|None|Rice Owls",
-      "sport": "NCAAF",
-      "game": "Rice Owls @ East Carolina Pirates",
-      "team": "Rice Owls",
-      "market": "Moneyline",
-      "point": "",
-      "book": "theScore Bet",
-      "price": 360,
-      "fair_prob_pct": 23.5,
-      "fair_american": 326,
-      "ev_pct": 8.0,
-      "books_count": 2,
-      "books": [
-        {
-          "book": "theScore Bet",
-          "price": 360,
-          "ev_pct": 8.0,
-          "url": null
-        },
-        {
-          "book": "FanDuel",
-          "price": 340,
-          "ev_pct": 3.3,
-          "url": "https://sportsbook.fanduel.com"
-        }
-      ],
-      "also_at": [
-        "FanDuel"
-      ],
-      "sharp": false,
-      "verified": true,
-      "edge_label": "Strong edge",
-      "rec_units": 1.0,
-      "rec_stake": 50,
-      "live": false,
-      "game_time": "Sat, Oct 10 \u00b7 4:00 PM ET",
-      "commence_time": "2026-10-10T20:00:00Z",
-      "bet_url": "https://novig.com",
-      "novig_deep": false,
-      "stale": true,
-      "first_seen": "2026-10-05T00:57:33.630319+00:00",
       "stale_reason": "line moved below 3%"
     }
   ]
