@@ -5264,10 +5264,17 @@ def api_push_edge():
     body = data.get("body") or "New +EV edge on the board."
     url = data.get("url") or "/ev-board"
     image = data.get("image") or ""
+    # Filtro por preferencia (pedido Alex 2026-10-08, estilo WGT):
+    # notif_type mapea al campo notif_* del usuario.
+    notif_type = data.get("notif_type") or "notif_ev"
+    allowed_types = {"notif_plays", "notif_graded", "notif_reminder", "notif_ev", "notif_price"}
+    if notif_type not in allowed_types:
+        notif_type = "notif_ev"
     payload = json.dumps({"title": title, "body": body, "url": url, "image": image})
     db = get_db()
     subs = db.execute(
-        "SELECT id, endpoint, p256dh, auth FROM push_subscriptions"
+        f"SELECT ps.id, ps.endpoint, ps.p256dh, ps.auth FROM push_subscriptions ps"
+        f" JOIN users u ON u.id = ps.member_id WHERE u.{notif_type} = 1"
     ).fetchall()
     sent, failed = 0, 0
     for s in subs:
