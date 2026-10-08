@@ -5573,19 +5573,10 @@ def stripe_webhook():
             # porque Stripe reintenta y manda payment_failed en cada intento).
             email = (data.get("customer_email") or "").strip().lower()
             invoice_id = data.get("id") or ""
-            # El botón "Fix my card" lleva EXACTO a la ventana de pago de Stripe
-            # (pedido por Alex 2026-10-08): hosted_invoice_url de la factura.
-            # Si el evento no la trae, se busca por API; sin URL no se envía
-            # el email (nunca con un link que no sea la ventana de pago).
-            pay_url = data.get("hosted_invoice_url") or ""
-            if not pay_url and invoice_id and stripe_configurado():
-                try:
-                    import stripe as _st
-                    _st.api_key = STRIPE_SECRET_KEY
-                    _inv = _st.Invoice.retrieve(invoice_id)
-                    pay_url = _inv.get("hosted_invoice_url") or ""
-                except Exception:
-                    pay_url = ""
+            # Todos los links de pago fallido llevan a /cuenta (pedido por Alex
+            # 2026-10-08): ahí está la sección past-due estilo WGT con el botón
+            # "Update card & restore access" que sí abre la ventana de pago de Stripe.
+            pay_url = "https://www.thesharpteam.bet/cuenta"
             nombre = ""
             if email:
                 r = db.execute("SELECT nombre FROM users WHERE email = ?",
@@ -5611,7 +5602,7 @@ def stripe_webhook():
                 ok = send_payment_failed_email(nombre, email, pay_url)
                 _auditar(email, f"pago fallido invoice {invoice_id}: "
                                 + ("dunning enviado" if ok
-                                   else "dunning NO enviado (sin pay_url o falta EMAIL_USER/EMAIL_PASS en Render)"))
+                                   else "dunning NO enviado (falta EMAIL_USER/EMAIL_PASS en Render)"))
         else:
             _auditar("", f"evento no procesado: {etype}")
     except Exception as exc:  # nunca 500: Stripe reintentaría sin parar
