@@ -5028,11 +5028,18 @@ def api_recent_results():
             try:
                 ts = p.get("graded_at") or p.get("fecha", "")
                 # Si no hay timestamp confiable, incluirlo igual (mejor mostrar que perder)
+                abbr = (p.get("abbr") or "").lower()
+                liga = (p.get("liga") or "").upper()
+                logo = ""
+                if abbr and liga in ("MLB", "NFL", "NBA", "NHL"):
+                    logo = f"https://a.espncdn.com/i/teamlogos/{liga.lower()}/500/{abbr}.png"
                 resultados.append({
                     "id": p.get("id"),
                     "pick": p.get("pick"),
                     "resultado": p.get("resultado"),
                     "nivel": p.get("nivel"),
+                    "logo": logo,
+                    "equipo": p.get("equipo"),
                 })
             except Exception:
                 continue

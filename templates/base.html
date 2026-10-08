@@ -233,7 +233,16 @@ function googleTranslateElementInit(){new google.translate.TranslateElement({pag
       box.appendChild(st);
       var inner = document.createElement('div');
       inner.className = 'tst-result-toast';
-      var ico = document.createElement('div'); ico.className = 'tst-rt-ico'; ico.textContent = win ? '✅' : '❌';
+      var ico = document.createElement('div'); ico.className = 'tst-rt-ico';
+      if (nuevo.logo) {
+        var img = document.createElement('img');
+        img.src = nuevo.logo;
+        img.style.cssText = 'width:36px;height:36px;object-fit:contain;';
+        img.onerror = function(){ ico.textContent = win ? '✅' : '❌'; };
+        ico.appendChild(img);
+      } else {
+        ico.textContent = win ? '✅' : '❌';
+      }
       var txt = document.createElement('div'); txt.className = 'tst-rt-txt';
       txt.textContent = (nuevo.pick || 'Play') + ' — ' + (win ? 'WON' : 'LOST');
       var row = document.createElement('div'); row.className = 'tst-rt-row';
