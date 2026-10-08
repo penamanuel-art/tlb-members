@@ -2600,35 +2600,6 @@ def home():
     # Vista previa admin (pedido Alex 2026-09-30): ?preview=locked muestra el
     # home como lo ve un miembro sin Elite (teaser bloqueado + pancarta $1).
     preview_locked = is_admin_for(user) and request.args.get("preview") == "locked"
-    # Burbujita de nuevos suscriptores SOLO para Alex (2026-10-07, pedido por Alex):
-    # en su Dashboard de miembro le avisa cuando alguien se suscribe (Free o Platinum).
-    new_subscribers = []
-    if is_alex_member(user):
-        # Modo prueba: ?test_sub=1 muestra una burbujita demo
-        if request.args.get("test_sub") == "1":
-            new_subscribers = [{
-                "nombre": "Carlos M.",
-                "email": "carlos.m@email.com",
-                "plan": "Free",
-                "created_at": "just now",
-            }]
-        else:
-            try:
-                rows = db.execute(
-                    """SELECT nombre, email, platinum_unlocked, created_at FROM users
-                       WHERE email != ? AND created_at >= datetime('now', '-24 hours')
-                       ORDER BY created_at DESC LIMIT 5""",
-                    (ALEX_MEMBER_EMAIL,),
-                ).fetchall()
-                for r in rows:
-                    new_subscribers.append({
-                        "nombre": r["nombre"] or "Member",
-                        "email": r["email"] or "",
-                        "plan": "Platinum" if r["platinum_unlocked"] else "Free",
-                        "created_at": r["created_at"] or "",
-                    })
-            except Exception:
-                pass
     return render_template(
         # Tema v2 (moderno) es el predeterminado desde 2026-10-02 (pedido Alex);
         # v1 (clásico) queda como reversión vía /theme/v1.
@@ -2662,7 +2633,6 @@ def home():
         # miembro_platinum con preview: en ?preview=locked el banner de
         # invitación VIP también se muestra (pedido Alex 2026-10-02).
         miembro_platinum=(platinum_unlocked_for(user) and not preview_locked),
-        new_subscribers=new_subscribers,
     )
 
 
