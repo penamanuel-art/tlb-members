@@ -163,7 +163,7 @@ function googleTranslateElementInit(){new google.translate.TranslateElement({pag
   try {
     var testMode = /[?&]test_sub=1/.test(location.search);
     var url = '/api/new-subscribers' + (testMode ? '?test=1' : '');
-    fetch(url, {cache: 'no-store'}).then(function(r){ return r.json(); }).then(function(d){
+    fetch(url, {cache: 'no-store', credentials: 'same-origin'}).then(function(r){ return r.json(); }).then(function(d){
       var subs = (d && d.subscribers) || [];
       if (!subs.length) return;
       var s = subs[0];
