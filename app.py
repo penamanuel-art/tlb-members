@@ -2676,7 +2676,7 @@ def register():
             (nombre, email, hash_password(password), phone or None, sms_optin, now_iso()),
         )
         db.commit()
-        log_notificacion(db, "miembro_nuevo", f"Nuevo miembro: {nombre}", email)
+        log_notificacion(db, "miembro_nuevo", f"New member: {nombre}", email)
         # El email del admin (ADMIN_EMAIL) queda marcado automáticamente.
         es_admin = bool(admin_email()) and email == admin_email()
         if es_admin:
@@ -3917,9 +3917,9 @@ def admin_toggle_platinum():
         target = db.execute("SELECT email, nombre FROM users WHERE id = ?", (user_id,)).fetchone()
         if target:
             if nuevo:
-                log_notificacion(db, "platinum", f"Platinum activado: {target['nombre']}", target["email"])
+                log_notificacion(db, "platinum", f"Platinum activated: {target['nombre']}", target["email"])
             else:
-                log_notificacion(db, "platinum", f"Platinum quitado: {target['nombre']}", target["email"])
+                log_notificacion(db, "platinum", f"Platinum removed: {target['nombre']}", target["email"])
         flash(
             "Platinum access activated." if nuevo else "Platinum access deactivated.",
             "ok",
@@ -4527,7 +4527,7 @@ def admin_subir_ticket():
         except Exception:
             pass
         db = get_db()
-        log_notificacion(db, "ticket_subido", f"Ticket subido: {play.get('pick', play_id)}", play_id)
+        log_notificacion(db, "ticket_subido", f"Ticket uploaded: {play.get('pick', play_id)}", play_id)
         flash(f"Ticket recibido para {play.get('pick', play_id)}. Lo verifico y lo publico.", "ok")
         return redirect(url_for("admin_subir_ticket"))
 
@@ -4646,7 +4646,7 @@ def admin_accion(accion):
         with open(queue_path, "w") as _f:
             _json.dump(_q, _f, indent=2)
         if accion == "email-jugadas":
-            log_notificacion(db, "email", "Email de jugadas encolado", "Se enviará a todos los miembros")
+            log_notificacion(db, "email", "Plays email queued", "Will be sent to all members")
         return jsonify({"ok": True, "accion": accion})
     except Exception as e:
         return jsonify({"error": str(e)}), 500

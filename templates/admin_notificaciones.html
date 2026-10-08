@@ -1,12 +1,12 @@
 {% extends "base.html" %}
-{% block title %}Notificaciones — Admin{% endblock %}
+{% block title %}Notifications — Admin{% endblock %}
 {% block content %}
 
 <section class="tracker-head">
   <div>
     <p class="kicker">ADMIN</p>
-    <h2>🔔 Notificaciones</h2>
-    <p class="muted">Todo lo que pasa en el programa</p>
+    <h2>🔔 Notifications</h2>
+    <p class="muted">Everything happening in the program</p>
   </div>
   <a href="{{ url_for('admin_dashboard') }}" class="btn btn-sm btn-ghost">← Dashboard</a>
 </section>
@@ -29,7 +29,7 @@
   </div>
 </article>
 {% else %}
-<p class="muted">No hay notificaciones todavía.</p>
+<p class="muted">No notifications yet.</p>
 {% endfor %}
 
 {% endblock %}
