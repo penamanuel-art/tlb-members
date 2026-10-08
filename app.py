@@ -4796,6 +4796,43 @@ def api_version():
     from flask import jsonify
     return jsonify({"v": ASSET_V})
 
+@app.route("/api/new-subscribers")
+def api_new_subscribers():
+    """Burbujita de nuevos suscriptores (2026-10-07, pedido por Alex).
+    Solo la cuenta de miembro de Alex puede verla. Devuelve los miembros
+    registrados en las últimas 24h (máx 5)."""
+    from flask import jsonify
+    user = current_user()
+    if not is_alex_member(user):
+        return jsonify({"subscribers": []})
+    # Modo prueba: ?test=1 devuelve un suscriptor demo
+    if request.args.get("test") == "1":
+        return jsonify({"subscribers": [{
+            "nombre": "Carlos M.",
+            "email": "carlos.m@email.com",
+            "plan": "Free",
+            "created_at": "just now",
+        }]})
+    subs = []
+    try:
+        db = get_db()
+        rows = db.execute(
+            """SELECT nombre, email, platinum_unlocked, created_at FROM users
+               WHERE email != ? AND created_at >= datetime('now', '-24 hours')
+               ORDER BY created_at DESC LIMIT 5""",
+            (ALEX_MEMBER_EMAIL,),
+        ).fetchall()
+        for r in rows:
+            subs.append({
+                "nombre": r["nombre"] or "Member",
+                "email": r["email"] or "",
+                "plan": "Platinum" if r["platinum_unlocked"] else "Free",
+                "created_at": r["created_at"] or "",
+            })
+    except Exception:
+        pass
+    return jsonify({"subscribers": subs})
+
 @app.route("/api/push-status")
 def api_push_status():
     """Estado de suscripciones push. Protegido con X-Push-Key.
