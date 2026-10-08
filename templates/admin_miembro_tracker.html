@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Tracker de {{ miembro.nombre }} — Admin{% endblock %}
+{% block content %}
+
+<section class="tracker-head">
+  <div>
+    <p class="kicker">ADMIN</p>
+    <h2>Tracker: {{ miembro.nombre }}</h2>
+    <p class="muted">{{ miembro.email }}</p>
+  </div>
+  <a href="{{ url_for('admin_miembros') }}" class="btn btn-sm btn-ghost">← Miembros</a>
+</section>
+
+{% if stats %}
+<div class="admin-stats" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:16px 0;">
+  <div class="admin-stat"><div class="num">{{ stats.record or '—' }}</div><div class="lbl">Récord</div></div>
+  <div class="admin-stat"><div class="num">{{ stats.net_display or '—' }}</div><div class="lbl">Profit</div></div>
+  <div class="admin-stat"><div class="num">{{ stats.roi_pct or '—' }}%</div><div class="lbl">ROI</div></div>
+</div>
+{% endif %}
+
+{% for t in tracked %}
+<article class="member-row">
+  <div class="m-name">{{ t.pick }} <span class="m-pill">{{ t.nivel }}</span></div>
+  <div class="m-meta">
+    <span class="m-pill">{{ t.fecha }}</span>
+    {% if t.resultado == 'W' %}<span class="m-pill on">✓ Win</span>
+    {% elif t.resultado == 'L' %}<span class="m-pill cancel">✗ Loss</span>
+    {% else %}<span class="m-pill">Pendiente</span>{% endif %}
+  </div>
+</article>
+{% else %}
+<p class="muted">Este miembro no tiene jugadas trackeadas.</p>
+{% endfor %}
+
+{% endblock %}

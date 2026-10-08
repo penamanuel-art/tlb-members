@@ -33,6 +33,28 @@
       {{ 'Remove VIP' if m.platinum_unlocked else 'Activate VIP' }}
     </button>
   </form>
+  <a href="{{ url_for('admin_ver_tracker', user_id=m.id) }}" class="btn btn-sm btn-ghost">📊 Ver tracker</a>
+  {% if m.telegram_user_id %}
+  <form method="post" action="{{ url_for('admin_telegram_ban') }}" style="display:inline;">
+    <input type="hidden" name="user_id" value="{{ m.id }}">
+    {% if m.telegram_ban_pending %}
+    <button class="btn btn-sm btn-ghost" type="submit" name="action" value="unban" style="border-color:#3c3;color:#3c3;">⏳ Ban pendiente — deshacer</button>
+    {% elif m.telegram_unban_pending %}
+    <button class="btn btn-sm btn-ghost" type="submit" name="action" value="ban" style="border-color:#c33;color:#c33;">⏳ Unban pendiente — banear</button>
+    {% else %}
+    <button class="btn btn-sm btn-ghost" type="submit" name="action" value="ban" style="border-color:#c33;color:#c33;" onclick="return confirm('Banear a {{ m.email }} del Sharp Club?');">🚫 Ban Telegram</button>
+    {% endif %}
+  </form>
+  {% endif %}
+  <details style="margin-top:8px;">
+    <summary class="btn btn-sm btn-ghost" style="cursor:pointer;display:inline-block;">✉️ Email directo</summary>
+    <form method="post" action="{{ url_for('admin_email_directo') }}" style="margin-top:8px;">
+      <input type="hidden" name="user_id" value="{{ m.id }}">
+      <input type="text" name="subject" placeholder="Asunto" required style="width:100%;margin-bottom:6px;padding:8px;border-radius:8px;border:1px solid #2a3350;background:#141a2b;color:#fff;">
+      <textarea name="body" placeholder="Mensaje..." required rows="3" style="width:100%;margin-bottom:6px;padding:8px;border-radius:8px;border:1px solid #2a3350;background:#141a2b;color:#fff;"></textarea>
+      <button class="btn btn-sm btn-place" type="submit">Enviar</button>
+    </form>
+  </details>
   <form method="post" action="{{ url_for('admin_test_simulate_cancel') }}" onsubmit="return confirm('Simulate Stripe cancellation for {{ m.email }}?');">
     <input type="hidden" name="email" value="{{ m.email }}">
     <button class="btn btn-sm btn-ghost" type="submit" style="border-color:#c33;color:#c33;">🧪 Test cancel</button>

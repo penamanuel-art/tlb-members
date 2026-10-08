@@ -3983,6 +3983,93 @@ def admin_eliminar_miembro():
     return redirect(url_for("admin_miembros"))
 
 
+@app.route("/admin/miembros/telegram-ban", methods=["POST"])
+@login_required
+def admin_telegram_ban():
+    """Banea o desbanea a un miembro del canal Sharp Club de Telegram (solo admin).
+    Marca el flag pendiente; el cron lo procesa."""
+    me = current_user()
+    if not is_admin_for(me):
+        flash("You don't have permission.", "error")
+        return redirect(url_for("home"))
+    user_id = request.form.get("user_id", type=int)
+    action = request.form.get("action", "")  # 'ban' o 'unban'
+    db = get_db()
+    target = db.execute("SELECT * FROM users WHERE id = ?", (user_id,)).fetchone()
+    if not target:
+        flash("That account no longer exists.", "error")
+        return redirect(url_for("admin_miembros"))
+    if action == "ban":
+        db.execute(
+            "UPDATE users SET telegram_ban_pending = 1, telegram_unban_pending = 0 WHERE id = ?",
+            (user_id,),
+        )
+        flash(f"{target['email']} marcado para banear de Telegram.", "ok")
+    elif action == "unban":
+        db.execute(
+            "UPDATE users SET telegram_unban_pending = 1, telegram_ban_pending = 0 WHERE id = ?",
+            (user_id,),
+        )
+        flash(f"{target['email']} marcado para desbanear de Telegram.", "ok")
+    db.commit()
+    return redirect(url_for("admin_miembros"))
+
+
+@app.route("/admin/miembros/email-directo", methods=["POST"])
+@login_required
+def admin_email_directo():
+    """Envía un email directo a un miembro específico (solo admin)."""
+    me = current_user()
+    if not is_admin_for(me):
+        flash("You don't have permission.", "error")
+        return redirect(url_for("home"))
+    user_id = request.form.get("user_id", type=int)
+    subject = (request.form.get("subject") or "").strip()
+    body = (request.form.get("body") or "").strip()
+    if not user_id or not subject or not body:
+        flash("Faltan datos para enviar el email.", "error")
+        return redirect(url_for("admin_miembros"))
+    db = get_db()
+    target = db.execute("SELECT email, nombre FROM users WHERE id = ?", (user_id,)).fetchone()
+    if not target:
+        flash("That account no longer exists.", "error")
+        return redirect(url_for("admin_miembros"))
+    try:
+        text_body = body  # versión texto plano
+        html = f"""<div style="font-family:-apple-system,Helvetica,Arial,sans-serif;max-width:600px;margin:0 auto;background:#ffffff;">
+<img src="https://www.thesharpteam.bet/static/img/sharp-team-banner.png" alt="The Sharp Team" style="width:100%;height:auto;display:block;border:0;">
+<div style="padding:24px 28px;"><p style="font-size:16px;color:#111;line-height:1.6;">{body}</p>
+<p style="font-size:14px;color:#6b7280;margin-top:20px;"><strong>The Sharp Team</strong></p></div></div>"""
+        _dispatch_email(target["email"], subject, text_body, html_body=html)
+        flash(f"Email enviado a {target['email']}.", "ok")
+    except Exception as e:
+        flash(f"Error enviando email: {e}", "error")
+    return redirect(url_for("admin_miembros"))
+
+
+@app.route("/admin/miembros/<int:user_id>/tracker")
+@login_required
+def admin_ver_tracker(user_id):
+    """Ve el tracker personal de un miembro (solo admin)."""
+    me = current_user()
+    if not is_admin_for(me):
+        flash("You don't have permission.", "error")
+        return redirect(url_for("home"))
+    db = get_db()
+    target = db.execute("SELECT id, nombre, email FROM users WHERE id = ?", (user_id,)).fetchone()
+    if not target:
+        flash("That account no longer exists.", "error")
+        return redirect(url_for("admin_miembros"))
+    rows = db.execute(
+        "SELECT * FROM tracked_plays WHERE user_id = ? ORDER BY fecha DESC, id DESC LIMIT 100",
+        (user_id,),
+    ).fetchall()
+    tracked = [dict(r) for r in rows]
+    stats = compute_stats(tracked) if tracked else {}
+    return render_template("admin_miembro_tracker.html", miembro=dict(target),
+                           tracked=tracked, stats=stats)
+
+
 @app.route("/admin/miembros/email", methods=["POST"])
 @login_required
 def admin_cambiar_email():
@@ -4549,7 +4636,8 @@ def admin_miembros():
         return redirect(url_for("home"))
     miembros = db.execute(
         "SELECT id, nombre, email, created_at, platinum_unlocked, is_admin, "
-        "stake_fijo_elite, stake_fijo_gold, cancel_requested_at, stripe_customer_id "
+        "stake_fijo_elite, stake_fijo_gold, cancel_requested_at, stripe_customer_id, "
+        "telegram_user_id, telegram_ban_pending, telegram_unban_pending "
         "FROM users ORDER BY created_at DESC"
     ).fetchall()
     ahora = datetime.now(timezone.utc)
