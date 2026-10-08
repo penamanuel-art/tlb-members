@@ -322,6 +322,14 @@ CREATE TABLE IF NOT EXISTS stripe_events (   -- auditoría de webhooks de Stripe
     detalle TEXT,
     created_at TEXT NOT NULL
 );
+CREATE TABLE IF NOT EXISTS notificaciones (  -- centro de notificaciones del admin (2026-10-07)
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    tipo TEXT NOT NULL,        -- 'miembro_nuevo', 'ticket_subido', 'platinum', 'cancelacion', 'pago'
+    titulo TEXT NOT NULL,
+    detalle TEXT,
+    created_at TEXT NOT NULL,
+    leida INTEGER NOT NULL DEFAULT 0
+);
 """
 
 DDL_PG = """
@@ -400,6 +408,14 @@ CREATE TABLE IF NOT EXISTS stripe_events (   -- auditoría de webhooks de Stripe
     email TEXT,
     detalle TEXT,
     created_at TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS notificaciones (  -- centro de notificaciones del admin (2026-10-07)
+    id SERIAL PRIMARY KEY,
+    tipo TEXT NOT NULL,
+    titulo TEXT NOT NULL,
+    detalle TEXT,
+    created_at TEXT NOT NULL,
+    leida INTEGER NOT NULL DEFAULT 0
 );
 """
 
@@ -2660,6 +2676,7 @@ def register():
             (nombre, email, hash_password(password), phone or None, sms_optin, now_iso()),
         )
         db.commit()
+        log_notificacion(db, "miembro_nuevo", f"Nuevo miembro: {nombre}", email)
         # El email del admin (ADMIN_EMAIL) queda marcado automáticamente.
         es_admin = bool(admin_email()) and email == admin_email()
         if es_admin:
@@ -3897,6 +3914,12 @@ def admin_toggle_platinum():
                 (user_id,),
             )
         db.commit()
+        target = db.execute("SELECT email, nombre FROM users WHERE id = ?", (user_id,)).fetchone()
+        if target:
+            if nuevo:
+                log_notificacion(db, "platinum", f"Platinum activado: {target['nombre']}", target["email"])
+            else:
+                log_notificacion(db, "platinum", f"Platinum quitado: {target['nombre']}", target["email"])
         flash(
             "Platinum access activated." if nuevo else "Platinum access deactivated.",
             "ok",
@@ -4405,6 +4428,20 @@ def admin_seed_tracker():
     return redirect(url_for("tracker"))
 
 
+def log_notificacion(db, tipo, titulo, detalle=""):
+    """Registra una notificación en el centro del admin (2026-10-07)."""
+    try:
+        from datetime import datetime, timezone
+        ahora = datetime.now(timezone.utc).isoformat()
+        db.execute(
+            "INSERT INTO notificaciones (tipo, titulo, detalle, created_at) VALUES (?, ?, ?, ?)",
+            (tipo, titulo, detalle, ahora),
+        )
+        db.commit()
+    except Exception:
+        pass
+
+
 @app.route("/admin")
 @login_required
 def admin_dashboard():
@@ -4427,9 +4464,13 @@ def admin_dashboard():
         jugadas_hoy = len(plays) if plays else 0
     except Exception:
         jugadas_hoy = 0
+    try:
+        no_leidas = db.execute("SELECT COUNT(*) c FROM notificaciones WHERE leida = 0").fetchone()["c"]
+    except Exception:
+        no_leidas = 0
     return render_template("admin_dashboard.html",
                            stats={"miembros": miembros, "platinum": platinum,
-                                  "jugadas_hoy": jugadas_hoy})
+                                  "jugadas_hoy": jugadas_hoy, "no_leidas": no_leidas})
 
 
 @app.route("/admin/subir-ticket", methods=["GET", "POST"])
@@ -4485,6 +4526,8 @@ def admin_subir_ticket():
                 _json.dump(_log, _f, indent=2)
         except Exception:
             pass
+        db = get_db()
+        log_notificacion(db, "ticket_subido", f"Ticket subido: {play.get('pick', play_id)}", play_id)
         flash(f"Ticket recibido para {play.get('pick', play_id)}. Lo verifico y lo publico.", "ok")
         return redirect(url_for("admin_subir_ticket"))
 
@@ -4602,6 +4645,8 @@ def admin_accion(accion):
                    "ejecutado": False})
         with open(queue_path, "w") as _f:
             _json.dump(_q, _f, indent=2)
+        if accion == "email-jugadas":
+            log_notificacion(db, "email", "Email de jugadas encolado", "Se enviará a todos los miembros")
         return jsonify({"ok": True, "accion": accion})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -4661,6 +4706,34 @@ def admin_miembros():
         eventos = []
     return render_template("admin_miembros.html", miembros=lista,
                            eventos=[dict(e) for e in eventos])
+
+
+@app.route("/admin/notificaciones")
+@login_required
+def admin_notificaciones():
+    """Centro de notificaciones del admin (2026-10-07, pedido por Alex):
+    todo lo que pasa — miembros nuevos, tickets, pagos."""
+    db = get_db()
+    user = current_user()
+    if not (is_admin_for(user) or is_alex_member(user)):
+        flash("You don't have permission to view this page.", "error")
+        return redirect(url_for("home"))
+    try:
+        rows = db.execute(
+            "SELECT id, tipo, titulo, detalle, created_at, leida FROM notificaciones "
+            "ORDER BY id DESC LIMIT 100"
+        ).fetchall()
+        notifs = [dict(r) for r in rows]
+    except Exception:
+        notifs = []
+    # Marcar como leídas al verlas
+    try:
+        db.execute("UPDATE notificaciones SET leida = 1 WHERE leida = 0")
+        db.commit()
+    except Exception:
+        pass
+    # Contar no leídas para el badge (antes de marcar)
+    return render_template("admin_notificaciones.html", notificaciones=notifs)
 
 
 @app.route("/admin/trakeos")

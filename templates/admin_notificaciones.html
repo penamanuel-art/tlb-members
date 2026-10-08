@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Notificaciones — Admin{% endblock %}
+{% block content %}
+
+<section class="tracker-head">
+  <div>
+    <p class="kicker">ADMIN</p>
+    <h2>🔔 Notificaciones</h2>
+    <p class="muted">Todo lo que pasa en el programa</p>
+  </div>
+  <a href="{{ url_for('admin_dashboard') }}" class="btn btn-sm btn-ghost">← Dashboard</a>
+</section>
+
+{% for n in notificaciones %}
+<article class="member-row" style="{% if not n.leida %}border-color:#c9a227;{% endif %}">
+  <div class="m-name">
+    {% if n.tipo == 'miembro_nuevo' %}🎉
+    {% elif n.tipo == 'ticket_subido' %}🎫
+    {% elif n.tipo == 'platinum' %}💎
+    {% elif n.tipo == 'cancelacion' %}⚠️
+    {% elif n.tipo == 'pago' %}💳
+    {% else %}📌{% endif %}
+    {{ n.titulo }}
+  </div>
+  {% if n.detalle %}<div class="m-email">{{ n.detalle }}</div>{% endif %}
+  <div class="m-meta">
+    <span class="m-pill">{{ n.created_at[:16] if n.created_at else '—' }}</span>
+    <span class="m-pill">{{ n.tipo }}</span>
+  </div>
+</article>
+{% else %}
+<p class="muted">No hay notificaciones todavía.</p>
+{% endfor %}
+
+{% endblock %}
