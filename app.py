@@ -5015,7 +5015,17 @@ def api_version():
 def api_recent_results():
     """Últimos resultados W/L para la burbuja flotante de miembros (2026-10-07,
     pedido por Alex): burbuja que aparece al ganar/perder y desaparece en 5s."""
-    from flask import jsonify
+    from flask import jsonify, request
+    # Modo prueba: ?test=1
+    if request.args.get("test") == "1":
+        return jsonify({"results": [{
+            "id": "test-braves-001",
+            "pick": "Braves ML (+141)",
+            "resultado": "L",
+            "nivel": "ELITE",
+            "logo": "https://a.espncdn.com/i/teamlogos/mlb/500/atl.png",
+            "equipo": "Atlanta Braves",
+        }]})
     from datetime import datetime, timezone, timedelta
     resultados = []
     try:
