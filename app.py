@@ -4805,14 +4805,14 @@ def api_new_subscribers():
     user = current_user()
     if not is_alex_member(user):
         return jsonify({"subscribers": []})
-    # Modo prueba TEMPORAL (2026-10-07): siempre devuelve demo para Alex
-    # hasta que confirme que ve la burbujita. Luego se quita.
-    return jsonify({"subscribers": [{
-        "nombre": "Carlos M.",
-        "email": "carlos.m@email.com",
-        "plan": "Free",
-        "created_at": "just now",
-    }]})
+    # Modo prueba: ?test=1 devuelve un suscriptor demo
+    if request.args.get("test") == "1":
+        return jsonify({"subscribers": [{
+            "nombre": "Carlos M.",
+            "email": "carlos.m@email.com",
+            "plan": "Free",
+            "created_at": "just now",
+        }]})
     subs = []
     try:
         db = get_db()
