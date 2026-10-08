@@ -12,6 +12,8 @@ Uso local:
 En Render (ver render.yaml):
     gunicorn app:app --bind 0.0.0.0:$PORT
 """
+import hashlib
+import hmac
 import json
 import os
 import random
@@ -31,16 +33,30 @@ from flask import (
 from zoneinfo import ZoneInfo
 
 def _asset_version():
-    """Short git hash so every deploy busts the static-asset cache."""
+    """Hash of CODE files only — data pushes (tickets, plays.json) must NOT
+    trigger the 'new version' banner. Only real code changes do."""
     try:
-        import subprocess
-        out = subprocess.run(
-            ["git", "rev-parse", "--short", "HEAD"],
-            capture_output=True, text=True, timeout=5,
-            cwd=os.path.dirname(os.path.abspath(__file__)),
-        )
-        if out.returncode == 0 and out.stdout.strip():
-            return out.stdout.strip()
+        import hashlib
+        base = os.path.dirname(os.path.abspath(__file__))
+        h = hashlib.md5()
+        # Code paths that constitute a "new version" of the page
+        code_paths = [
+            os.path.join(base, "app.py"),
+            os.path.join(base, "templates"),
+            os.path.join(base, "static", "css"),
+            os.path.join(base, "static", "js"),
+        ]
+        for p in code_paths:
+            if os.path.isfile(p):
+                with open(p, "rb") as f:
+                    h.update(f.read())
+            elif os.path.isdir(p):
+                for root, dirs, files in os.walk(p):
+                    for fn in sorted(files):
+                        fp = os.path.join(root, fn)
+                        with open(fp, "rb") as f:
+                            h.update(f.read())
+        return h.hexdigest()[:10]
     except Exception:
         pass
     return datetime.now(timezone.utc).strftime("%Y%m%d%H%M")
@@ -3822,6 +3838,32 @@ def desbloquear_platinum():
         past_due=past_due,
         stripe_url=STRIPE_PLATINUM_URL,
     )
+
+
+@app.route("/admin/api/members-emails")
+def admin_api_members_emails():
+    """Lista de miembros para emails personalizados (2026-10-07, pedido por Alex):
+    los emails de motivación salen con sección de upsell solo para no-Platinum.
+    Retorna JSON: [{email, nombre, platinum}].
+    Auth: sesión admin O header X-Admin-Key == ADMIN_API_KEY (para los crons)."""
+    api_key = os.environ.get("ADMIN_API_KEY", "")
+    header_key = request.headers.get("X-Admin-Key", "")
+    is_cron = api_key and header_key and hmac.compare_digest(header_key, api_key)
+    try:
+        is_admin = is_admin_for(current_user())
+    except Exception:
+        is_admin = False
+    if not (is_cron or is_admin):
+        return jsonify({"error": "admin only"}), 403
+    db = get_db()
+    rows = db.execute(
+        "SELECT email, nombre, platinum_unlocked FROM users WHERE email IS NOT NULL AND email != ''"
+    ).fetchall()
+    return jsonify([
+        {"email": r["email"], "nombre": r["nombre"] or "there",
+         "platinum": bool(r["platinum_unlocked"])}
+        for r in rows
+    ])
 
 
 @app.route("/admin/miembros/platinum", methods=["POST"])
