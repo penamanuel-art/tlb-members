@@ -62,6 +62,11 @@
 {% endblock %}
 {% block content %}
 {% if not skip_splash %}{% include "_splash.html" %}{% endif %}
+{% if es_admin %}
+<div style="padding:12px 16px 0;">
+  <a href="{{ url_for('admin_dashboard') }}" style="display:inline-block;padding:8px 16px;background:#c9a227;color:#0b0e14;font-weight:800;font-size:13px;border-radius:999px;text-decoration:none;">⚙️ Admin Dashboard</a>
+</div>
+{% endif %}
 <style>
 /* Títulos "Today's Free Selections" / "Today's VIP Selection" pegados al borde izquierdo (pedido Alex 2026-10-01). Inline para que se actualice con la página sin depender del caché del style.css externo. */
 .section-head.title-flush{margin-left:-16px !important}
