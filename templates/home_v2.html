@@ -610,4 +610,48 @@
 })();
 </script>
 
+{% if new_subscribers %}
+<!-- Burbujita de nuevos suscriptores (2026-10-07, pedido por Alex: solo él la ve en su Dashboard de miembro) -->
+<style>
+.tst-sub-notif{position:fixed;bottom:18px;left:16px;right:16px;z-index:3000;background:#111827;border:1px solid #22c55e;border-radius:16px;padding:16px;box-shadow:0 8px 30px rgba(0,0,0,.65);animation:tstSubUp .45s ease-out;max-width:420px;margin:0 auto;}
+@keyframes tstSubUp{from{transform:translateY(120%);opacity:0}to{transform:translateY(0);opacity:1}}
+.tst-sub-notif .tst-sub-head{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.tst-sub-notif .tst-sub-ico{font-size:26px;}
+.tst-sub-notif .tst-sub-title{font-size:15px;font-weight:800;color:#fff;flex:1;}
+.tst-sub-notif .tst-sub-x{background:rgba(255,255,255,.1);border:none;color:#9ca3af;width:28px;height:28px;border-radius:50%;font-size:14px;cursor:pointer;flex-shrink:0;}
+.tst-sub-notif .tst-sub-row{display:flex;justify-content:space-between;padding:6px 0;border-top:1px solid #1f2937;font-size:13px;}
+.tst-sub-notif .tst-sub-lbl{color:#9ca3af;}
+.tst-sub-notif .tst-sub-val{color:#fff;font-weight:700;}
+.tst-sub-notif .tst-sub-val.green{color:#22c55e;}
+.tst-sub-notif .tst-sub-val.gold{color:#fbbf24;}
+</style>
+<div class="tst-sub-notif" id="tstSubNotif">
+  <div class="tst-sub-head">
+    <div class="tst-sub-ico" id="tstSubIco">🎉</div>
+    <div class="tst-sub-title" id="tstSubTitle">New member joined!</div>
+    <button class="tst-sub-x" onclick="document.getElementById('tstSubNotif').style.display='none'">✕</button>
+  </div>
+  <div class="tst-sub-row"><span class="tst-sub-lbl">Name</span><span class="tst-sub-val" id="tstSubName">—</span></div>
+  <div class="tst-sub-row"><span class="tst-sub-lbl">Plan</span><span class="tst-sub-val green" id="tstSubPlan">—</span></div>
+  <div class="tst-sub-row"><span class="tst-sub-lbl">Email</span><span class="tst-sub-val" id="tstSubEmail" style="font-size:12px;">—</span></div>
+  <div class="tst-sub-row"><span class="tst-sub-lbl">Joined</span><span class="tst-sub-val" id="tstSubTime" style="font-weight:400;color:#9ca3af;">—</span></div>
+</div>
+<script>
+(function(){
+  var subs = {{ new_subscribers|tojson }};
+  if (!subs || !subs.length) return;
+  var s = subs[0];
+  var isPlat = (s.plan === 'Platinum');
+  document.getElementById('tstSubIco').textContent = isPlat ? '💎' : '🎉';
+  document.getElementById('tstSubTitle').textContent = isPlat ? 'New Platinum subscriber!' : 'New member joined!';
+  document.getElementById('tstSubName').textContent = s.nombre || 'Member';
+  var planEl = document.getElementById('tstSubPlan');
+  planEl.textContent = s.plan || 'Free';
+  planEl.className = 'tst-sub-val ' + (isPlat ? 'gold' : 'green');
+  document.getElementById('tstSubEmail').textContent = s.email || '';
+  document.getElementById('tstSubTime').textContent = s.created_at || 'just now';
+})();
+</script>
+{% endif %}
+
 {% endblock %}
