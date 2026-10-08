@@ -4029,6 +4029,23 @@ def _admin_api_autorizado():
         return False
 
 
+@app.route("/admin/test-clear-past-due", methods=["POST"])
+def admin_test_clear_past_due():
+    """TEMPORAL para pruebas de Alex: quita SOLO el flag stripe_past_due,
+    sin tocar el resto del estado (para volver al estado previo a la prueba).
+    Auth: sesión admin O header X-Admin-Key."""
+    if not _admin_api_autorizado():
+        return jsonify({"error": "admin only"}), 403
+    db = get_db()
+    email = (request.form.get("email") or "").strip().lower()
+    row = db.execute("SELECT id FROM users WHERE email = ?", (email,)).fetchone()
+    if not row:
+        return jsonify({"error": "not found"}), 404
+    db.execute("UPDATE users SET stripe_past_due = 0 WHERE id = ?", (row["id"],))
+    db.commit()
+    return jsonify({"ok": True, "email": email})
+
+
 @app.route("/admin/test-simulate-past-due", methods=["POST"])
 def admin_test_simulate_past_due():
     """TEMPORAL para pruebas de Alex: simula pago fallido (stripe_past_due=1).
