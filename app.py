@@ -4953,6 +4953,17 @@ def admin_accion(accion):
             log_notificacion(db, "email", "Plays email queued", "Will be sent to all members")
         if accion == "publish-plays":
             log_notificacion(db, "publish", "Publish ordered by Alex", "Today's plays queued for publication")
+        if accion == "publicar-todo":
+            # Un solo botón: email + Dashboard de miembros (pedido Alex 2026-10-08)
+            _q.append({"accion": "email-jugadas",
+                       "pedido": time.strftime("%Y-%m-%d %H:%M:%S"),
+                       "ejecutado": False})
+            _q.append({"accion": "publish-plays",
+                       "pedido": time.strftime("%Y-%m-%d %H:%M:%S"),
+                       "ejecutado": False})
+            with open(queue_path, "w") as _f:
+                _json.dump(_q, _f, indent=2)
+            log_notificacion(db, "publish", "Publish to members ordered", "Email + Dashboard queued")
         return jsonify({"ok": True, "accion": accion})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
