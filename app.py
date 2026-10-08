@@ -5167,6 +5167,13 @@ def tools_parlay_calculator():
     return render_template("tools_parlay_calculator.html")
 
 
+@app.route("/tools")
+@login_required
+def tools():
+    """Hub de herramientas (pedido Alex 2026-10-08, estilo WGT)."""
+    return render_template("tools.html")
+
+
 @app.route("/tools/line-moves")
 def tools_line_moves():
     """Movimientos sharp recientes. Pública, sin login; datos de la rama data-board."""

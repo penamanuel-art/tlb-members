@@ -1,0 +1,65 @@
+{% extends "base_v2.html" %}
+{% block title %}Tools — The Sharp Team{% endblock %}
+{% block content %}
+<style>
+.tools-wrap{max-width:560px;margin:0 auto;padding:20px 16px 100px}
+.tools-title{font-size:28px;font-weight:800;color:#fff;margin:0 0 6px}
+.tools-sub{color:#9a9ab5;font-size:14px;margin:0 0 20px}
+.tool-card{display:flex;align-items:center;gap:14px;background:#17171f;border:2px solid #22c55e;border-radius:18px;padding:16px;margin:0 0 12px;color:#fff;text-decoration:none}
+.tool-card:active{transform:scale(.98)}
+.tool-ico{width:48px;height:48px;border-radius:14px;background:#1c2a1c;display:flex;align-items:center;justify-content:center;font-size:24px;flex:0 0 auto}
+.tool-info b{font-size:16px;display:block;margin-bottom:2px}
+.tool-info span{font-size:13px;color:#9a9ab5;line-height:1.4;display:block}
+.tool-arrow{margin-left:auto;color:#22c55e;font-size:20px;font-weight:800;flex:0 0 auto}
+</style>
+
+<div class="tools-wrap">
+  <h1 class="tools-title">Tools</h1>
+  <p class="tools-sub">Every edge-finding tool in one place.</p>
+
+  <a class="tool-card" href="{{ url_for('ev_board') }}">
+    <div class="tool-ico">⚡</div>
+    <div class="tool-info">
+      <b>+EV Board</b>
+      <span>Live value edges vs Pinnacle no-vig fair price.</span>
+    </div>
+    <span class="tool-arrow">›</span>
+  </a>
+
+  <a class="tool-card" href="{{ url_for('props') }}">
+    <div class="tool-ico">🎯</div>
+    <div class="tool-info">
+      <b>Player Props</b>
+      <span>+EV player props across every book.</span>
+    </div>
+    <span class="tool-arrow">›</span>
+  </a>
+
+  <a class="tool-card" href="{{ url_for('tools_line_moves') }}">
+    <div class="tool-ico">📉</div>
+    <div class="tool-info">
+      <b>Line Moves</b>
+      <span>Sharp money moves tracked in real time.</span>
+    </div>
+    <span class="tool-arrow">›</span>
+  </a>
+
+  <a class="tool-card" href="{{ url_for('sharp') }}">
+    <div class="tool-ico">🔪</div>
+    <div class="tool-info">
+      <b>Sharp Board</b>
+      <span>Full sharp money board, every game.</span>
+    </div>
+    <span class="tool-arrow">›</span>
+  </a>
+
+  <a class="tool-card" href="{{ url_for('records') }}">
+    <div class="tool-ico">📜</div>
+    <div class="tool-info">
+      <b>Full Record</b>
+      <span>Every official play, graded and on the record.</span>
+    </div>
+    <span class="tool-arrow">›</span>
+  </a>
+</div>
+{% endblock %}
