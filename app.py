@@ -695,6 +695,113 @@ def notify_new_member(nombre: str, email: str):
     threading.Thread(target=_send, daemon=True).start()
 
 
+# ----------------- Welcome back (re-suscripción, pedido Alex 2026-10-08) ----
+WELCOME_BACK_SUBJECT = "Welcome back. You're back on track."
+
+WELCOME_BACK_TEXT = """Hi __NOMBRE__,
+
+Welcome back to The Sharp Team. Your Platinum access is live again, right where you left it.
+
+TODAY'S CARD IS WAITING - Today's official plays (Gold plus the Platinum) are live on your dashboard now, each with its original bet ticket.
+
+YOUR TRACKER IS INTACT - Every play you tracked is still there. Record, ROI and streaks picked up right where they stopped.
+
+EVERYTHING RESUMES INSTANTLY - Push alerts, Telegram channels, the +EV board and the Daily Academy. All back on, no setup needed.
+
+"Every play is posted before game time - then locked and graded against the final score."
+
+Enter your dashboard:
+https://www.thesharpteam.bet/home
+
+$23/week. Cancel anytime.
+
+- The Sharp Team
+
+Bet responsibly - 21+ - Gambling problem? Call 1-800-GAMBLER (1-800-426-2537): free and confidential help, 24/7.
+"""
+
+WELCOME_BACK_HTML = """<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta name="supported-color-schemes" content="light">
+<title>Welcome back to The Sharp Team</title>
+</head>
+<body style="margin:0;padding:0;background:#ffffff;">
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;">Welcome back to The Sharp Team. Your Platinum plays are live again.</div>
+<div style="font-family:Arial,sans-serif;max-width:460px;margin:0 auto;background:#ffffff;">
+<img src="https://www.thesharpteam.bet/static/img/sharp-team-banner.png" alt="The Sharp Team" width="460" style="width:100%;height:auto;display:block;border:0;">
+<div style="background:#ffffff;padding:14px 0 12px;text-align:center;">
+<p style="margin:0;font-size:13px;font-weight:800;letter-spacing:5px;color:#2e4053;">THE SHARP TEAM</p>
+</div>
+<div style="background:#c9a227;padding:28px 24px;text-align:center;">
+<p style="margin:0;font-size:12px;font-weight:800;letter-spacing:3px;color:#0a0f1c;">WELCOME BACK</p>
+<h1 style="font-size:30px;font-weight:800;color:#0a0f1c;margin:10px 0 0;line-height:1.25;">Back on track.</h1>
+</div>
+<div style="text-align:center;padding:16px 20px 0;">
+<p style="color:#555555;font-size:15px;line-height:1.6;margin:0;">Hi __NOMBRE__ &mdash; good to have you back. Your Platinum access is live again, right where you left it:</p>
+</div>
+<div style="padding:14px 20px 0;">
+<table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 10px;background:#2e4053;border:1px solid #2e4053;border-radius:12px;"><tr>
+<td width="44" style="vertical-align:top;padding:14px 0 14px 16px;"><div style="font-size:24px;line-height:1.2;">🎯</div></td>
+<td style="vertical-align:top;padding:14px 16px 14px 4px;"><div style="font-size:14px;font-weight:800;color:#ffffff;letter-spacing:1px;">TODAY&rsquo;S CARD IS WAITING</div><div style="font-size:13px;color:#c8d0dc;line-height:1.6;margin-top:4px;">Today&rsquo;s official plays &mdash; Gold plus the Platinum &mdash; are live on your dashboard now, each with its original ticket.</div></td>
+</tr></table>
+<table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 10px;background:#2e4053;border:1px solid #2e4053;border-radius:12px;"><tr>
+<td width="44" style="vertical-align:top;padding:14px 0 14px 16px;"><div style="font-size:24px;line-height:1.2;">📊</div></td>
+<td style="vertical-align:top;padding:14px 16px 14px 4px;"><div style="font-size:14px;font-weight:800;color:#ffffff;letter-spacing:1px;">YOUR TRACKER IS INTACT</div><div style="font-size:13px;color:#c8d0dc;line-height:1.6;margin-top:4px;">Every play you tracked is still there &mdash; record, ROI and streaks picked up right where they stopped.</div></td>
+</tr></table>
+<table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 10px;background:#2e4053;border:1px solid #2e4053;border-radius:12px;"><tr>
+<td width="44" style="vertical-align:top;padding:14px 0 14px 16px;"><div style="font-size:24px;line-height:1.2;">⚡</div></td>
+<td style="vertical-align:top;padding:14px 16px 14px 4px;"><div style="font-size:14px;font-weight:800;color:#ffffff;letter-spacing:1px;">EVERYTHING RESUMES INSTANTLY</div><div style="font-size:13px;color:#c8d0dc;line-height:1.6;margin-top:4px;">Push alerts, Telegram channels, the +EV board and the Daily Academy &mdash; all back on, no setup needed.</div></td>
+</tr></table>
+</div>
+<div style="margin:14px 20px 0;padding:14px 18px;border-left:3px solid #22c55e;">
+<p style="font-size:15px;font-style:italic;line-height:1.7;color:#555555;margin:0;">&ldquo;Every play is posted before game time &mdash; then locked and graded against the final score.&rdquo;</p>
+</div>
+<div style="text-align:center;padding:18px 20px 0;">
+<a href="https://www.thesharpteam.bet/home" style="display:inline-block;background:#22c55e;color:#111111;font-size:14px;font-weight:800;padding:11px 28px;border-radius:999px;text-decoration:none;">ENTER THE DASHBOARD</a>
+<p style="color:#555555;font-size:14px;line-height:1.7;margin:14px 0 0;">$23/week.<br>Cancel anytime.</p>
+</div>
+<div style="text-align:center;padding:20px 20px 14px;">
+<img src="https://files.catbox.moe/74qot5.png" alt="The Sharp Team" width="110" style="width:110px;height:auto;display:block;margin:0 auto;border:0;">
+<p style="margin:10px 0 0;color:#111111;font-size:12px;font-weight:800;letter-spacing:3px;">THE SHARP TEAM</p>
+<p style="margin:8px 0 0;color:#9ca3af;font-size:11px;">250 Park Avenue, Suite 1800, New York, NY 10017</p>
+<p style="margin:4px 0 0;color:#9ca3af;font-size:11px;"><a href="tel:+15513263312" style="color:#9ca3af;text-decoration:none;">(551) 326-3312</a></p>
+<p style="margin:12px 0 0;color:#9ca3af;font-size:10px;">21+. Play responsibly. If you or someone you know has a gambling problem, call or text <a href="tel:18004262537" style="color:#9ca3af;text-decoration:underline;">1-800-GAMBLER</a>.</p>
+<p style="margin:6px 0 0;color:#9ca3af;font-size:10px;">&copy; 2026 The Sharp Team</p>
+</div>
+</div>
+</div>
+</body>
+</html>
+"""
+
+
+def send_welcome_back_email(nombre: str, email: str):
+    """Email de bienvenida para miembros que se RE-suscriben (pedido Alex 2026-10-08).
+    Tono distinto al de primera vez: más corto, "back on track"."""
+    resend_ok = bool((os.environ.get("RESEND_API_KEY") or "").strip())
+    user = (os.environ.get("EMAIL_USER") or "").strip()
+    pwd = os.environ.get("EMAIL_PASS") or ""
+    if not (resend_ok or (user and pwd)):
+        return
+
+    subject = WELCOME_BACK_SUBJECT
+    text = WELCOME_BACK_TEXT.replace("__NOMBRE__", nombre)
+    html = WELCOME_BACK_HTML.replace("__NOMBRE__", nombre)
+
+    def _send():
+        try:
+            _dispatch_email(email, subject, text, html)
+        except Exception:
+            pass  # silencioso: nunca rompe la activación
+
+    import threading
+    threading.Thread(target=_send, daemon=True).start()
+
+
 # ------------------------------------------------------------- Plays ----
 WELCOME_SUBJECT = "Welcome to The Sharp Team \U0001F988"
 
@@ -5557,8 +5664,15 @@ def stripe_webhook():
             # 2026-10-05: si ya lo recibió al registrarse (gratis o no),
             # no se repite.
             # 2026-10-08 (pedido Alex): si se había cancelado y se vuelve a
-            # suscribir, el welcome SÍ se reenvía (bienvenida nuevamente).
-            if (era_nuevo and not bool(row["welcome_email_sent"])) or estaba_cancelado:
+            # suscribir, le llega el WELCOME BACK (distinto al de primera vez).
+            if estaba_cancelado:
+                try:
+                    send_welcome_back_email(row["nombre"] or "", email)
+                    db.execute("UPDATE users SET welcome_email_sent = 1 WHERE id = ?", (uid,))
+                    db.commit()
+                except Exception:
+                    pass
+            elif era_nuevo and not bool(row["welcome_email_sent"]):
                 try:
                     send_welcome_email(row["nombre"] or "", email)
                     db.execute("UPDATE users SET welcome_email_sent = 1 WHERE id = ?", (uid,))
