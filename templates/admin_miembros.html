@@ -33,6 +33,14 @@
       {{ 'Remove VIP' if m.platinum_unlocked else 'Activate VIP' }}
     </button>
   </form>
+  <form method="post" action="{{ url_for('admin_test_simulate_past_due') }}" style="display:inline;">
+    <input type="hidden" name="email" value="{{ m.email }}">
+    <button class="btn btn-sm btn-ghost" type="submit" style="border-color:#f59e0b;color:#f59e0b;" title="Test: simula pago fallido">🧪 Past-due</button>
+  </form>
+  <form method="post" action="{{ url_for('admin_test_simulate_reactivate') }}" style="display:inline;">
+    <input type="hidden" name="email" value="{{ m.email }}">
+    <button class="btn btn-sm btn-ghost" type="submit" title="Test: quita past-due y reactiva">🧪 Reactivar</button>
+  </form>
   <a href="{{ url_for('admin_ver_tracker', user_id=m.id) }}" class="btn btn-sm btn-ghost">📊 Ver tracker</a>
   {% if m.telegram_user_id %}
   <form method="post" action="{{ url_for('admin_telegram_ban') }}" style="display:inline;">
