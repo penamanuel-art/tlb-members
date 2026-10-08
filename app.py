@@ -3430,7 +3430,7 @@ def admin_free_plays_clear():
     """Borra el tracker "Gold" (solo admin). No afecta tracked_plays
     ni el récord oficial del programa."""
     user = current_user()
-    if not is_admin_for(user):
+    if not (is_admin_for(user) or is_alex_member(user)):
         return redirect(url_for("home"))
     db = get_db()
     db.execute("DELETE FROM free_plays")
@@ -4182,7 +4182,7 @@ def admin_stake_fijo():
     """
     db = get_db()
     user = current_user()
-    if not is_admin_for(user):
+    if not (is_admin_for(user) or is_alex_member(user)):
         flash("You don't have permission.", "error")
         return redirect(url_for("home"))
     uid = request.form.get("user_id")
@@ -4371,7 +4371,7 @@ def admin_seed_tracker():
     """Importa una sola vez las jugadas liquidadas del programa al tracker personal del admin."""
     db = get_db()
     user = current_user()
-    if not is_admin_for(user):
+    if not (is_admin_for(user) or is_alex_member(user)):
         flash("You don't have permission to view this page.", "error")
         return redirect(url_for("home"))
     added = 0
@@ -4408,10 +4408,10 @@ def admin_seed_tracker():
 @app.route("/admin")
 @login_required
 def admin_dashboard():
-    """Panel central del administrador — solo para Alex (is_admin=1)."""
+    """Panel central del administrador — para Alex (is_admin=1 o su cuenta de miembro)."""
     db = get_db()
     user = current_user()
-    if not is_admin_for(user):
+    if not (is_admin_for(user) or is_alex_member(user)):
         flash("You don't have permission to view this page.", "error")
         return redirect(url_for("home"))
     try:
@@ -4440,7 +4440,7 @@ def admin_subir_ticket():
     from werkzeug.utils import secure_filename
     db = get_db()
     user = current_user()
-    if not is_admin_for(user):
+    if not (is_admin_for(user) or is_alex_member(user)):
         flash("You don't have permission to view this page.", "error")
         return redirect(url_for("home"))
 
@@ -4584,7 +4584,7 @@ def admin_accion(accion):
     import json as _json, os, time
     db = get_db()
     user = current_user()
-    if not is_admin_for(user):
+    if not (is_admin_for(user) or is_alex_member(user)):
         return jsonify({"error": "unauthorized"}), 401
     validas = {"email-jugadas", "telegram", "publicar-todo"}
     if accion not in validas:
@@ -4631,7 +4631,7 @@ def admin_miembros():
     """Lista privada de miembros — solo para Alex (is_admin=1)."""
     db = get_db()
     user = current_user()
-    if not is_admin_for(user):
+    if not (is_admin_for(user) or is_alex_member(user)):
         flash("You don't have permission to view this page.", "error")
         return redirect(url_for("home"))
     miembros = db.execute(
@@ -4669,7 +4669,7 @@ def admin_trakeos():
     """Quién trakeó cada jugada publicada — solo para Alex (2026-10-05, pedido por Alex)."""
     db = get_db()
     user = current_user()
-    if not is_admin_for(user):
+    if not (is_admin_for(user) or is_alex_member(user)):
         flash("You don't have permission to view this page.", "error")
         return redirect(url_for("home"))
     rows = db.execute(
