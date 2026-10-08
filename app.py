@@ -264,6 +264,11 @@ CREATE TABLE IF NOT EXISTS users (
     telegram_user_id TEXT,                         -- id de Telegram vinculado (NULL = sin vincular)
     telegram_ban_pending INTEGER NOT NULL DEFAULT 0,   -- 1 = banear de Sharp Club (lo procesa el cron)
     telegram_unban_pending INTEGER NOT NULL DEFAULT 0, -- 1 = desbanear de Sharp Club (lo procesa el cron)
+    notif_plays INTEGER NOT NULL DEFAULT 1,     -- 1 = avisar jugadas publicadas
+    notif_graded INTEGER NOT NULL DEFAULT 1,    -- 1 = avisar W/L al liquidarse
+    notif_reminder INTEGER NOT NULL DEFAULT 1,  -- 1 = recordatorio 15 min antes
+    notif_ev INTEGER NOT NULL DEFAULT 1,        -- 1 = alertas +EV
+    notif_price INTEGER NOT NULL DEFAULT 0,    -- 1 = alerta si se mueve el precio
     created_at TEXT NOT NULL
 );
 CREATE TABLE IF NOT EXISTS tracked_plays (
@@ -351,6 +356,11 @@ CREATE TABLE IF NOT EXISTS users (
     telegram_user_id TEXT,                         -- id de Telegram vinculado (NULL = sin vincular)
     telegram_ban_pending INTEGER NOT NULL DEFAULT 0,   -- 1 = banear de Sharp Club (lo procesa el cron)
     telegram_unban_pending INTEGER NOT NULL DEFAULT 0, -- 1 = desbanear de Sharp Club (lo procesa el cron)
+    notif_plays INTEGER NOT NULL DEFAULT 1,     -- 1 = avisar jugadas publicadas
+    notif_graded INTEGER NOT NULL DEFAULT 1,    -- 1 = avisar W/L al liquidarse
+    notif_reminder INTEGER NOT NULL DEFAULT 1,  -- 1 = recordatorio 15 min antes
+    notif_ev INTEGER NOT NULL DEFAULT 1,        -- 1 = alertas +EV
+    notif_price INTEGER NOT NULL DEFAULT 0,    -- 1 = alerta si se mueve el precio
     created_at TEXT NOT NULL
 );
 CREATE TABLE IF NOT EXISTS tracked_plays (
@@ -2440,6 +2450,9 @@ def migrate_db():
             pending.append("ALTER TABLE users ADD COLUMN stake_mode TEXT NOT NULL DEFAULT 'units'")
         if "platinum_unlocked" not in cols:
             pending.append("ALTER TABLE users ADD COLUMN platinum_unlocked INTEGER NOT NULL DEFAULT 0")
+        for _col, _default in [("notif_plays", "1"), ("notif_graded", "1"), ("notif_reminder", "1"), ("notif_ev", "1"), ("notif_price", "0")]:
+            if _col not in cols:
+                pending.append(f"ALTER TABLE users ADD COLUMN {_col} INTEGER NOT NULL DEFAULT {_default}")
         if "is_admin" not in cols:
             pending.append("ALTER TABLE users ADD COLUMN is_admin INTEGER NOT NULL DEFAULT 0")
         if "cancel_requested_at" not in cols:
@@ -3212,6 +3225,36 @@ def cuenta_telegram_link():
     El miembro abre el link, pulsa START en el bot y la app vincula su
     telegram_user_id. Sirve para sacarlo del canal Sharp Club si cancela.
     """
+
+
+# --------------------------------- alertas (pedido Alex 2026-10-08, estilo WGT) --
+@app.route("/alertas")
+@login_required
+def alertas():
+    """Página de preferencias de notificaciones del miembro."""
+    db = get_db()
+    u = db.execute(
+        "SELECT notif_plays, notif_graded, notif_reminder, notif_ev, notif_price"
+        " FROM users WHERE id = ?", (session["user_id"],)
+    ).fetchone()
+    prefs = dict(u) if u else {}
+    return render_template("alertas.html", prefs=prefs)
+
+
+@app.route("/api/alertas", methods=["POST"])
+@login_required
+def api_alertas():
+    """Guarda una preferencia de notificación del miembro."""
+    data = request.get_json(silent=True) or {}
+    pref = data.get("pref", "")
+    value = 1 if data.get("value") else 0
+    allowed = {"notif_plays", "notif_graded", "notif_reminder", "notif_ev", "notif_price"}
+    if pref not in allowed:
+        return jsonify({"ok": False, "error": "invalid pref"}), 400
+    db = get_db()
+    db.execute(f"UPDATE users SET {pref} = ? WHERE id = ?", (value, session["user_id"]))
+    db.commit()
+    return jsonify({"ok": True})
     db = get_db()
     uid = session.get("user_id")
     db.execute("DELETE FROM telegram_link_codes WHERE user_id = ?", (uid,))

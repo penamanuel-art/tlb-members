@@ -137,19 +137,16 @@ function googleTranslateElementInit(){new google.translate.TranslateElement({pag
 <!-- Barra de navegación inferior (pedido Alex 2026-10-05) — también en tema v1 -->
 <nav class="v2-bottomnav" aria-label="Primary">
   <a href="{{ url_for('home', splash='0') }}" class="v2-bnav-item{% if request.endpoint == 'home' %} active{% endif %}">
-    <span class="v2-bnav-ico" aria-hidden="true">&#8962;</span><span>Home</span>
-  </a>
-  <a href="{{ url_for('home', splash='0') }}#plays" class="v2-bnav-item">
-    <span class="v2-bnav-ico" aria-hidden="true">&#127919;</span><span>Plays</span>
-  </a>
-  <a href="{{ url_for('tracker') }}" class="v2-bnav-item{% if request.endpoint == 'tracker' %} active{% endif %}">
-    <span class="v2-bnav-ico" aria-hidden="true">&#128202;</span><span>Tracker</span>
+    <span class="v2-bnav-ico" aria-hidden="true">&#8962;</span><span>Today</span>
   </a>
   <a href="{{ url_for('ev_board') }}" class="v2-bnav-item{% if request.endpoint == 'ev_board' %} active{% endif %}">
-    <span class="v2-bnav-ico" aria-hidden="true">&#128200;</span><span>EV Board</span>
+    <span class="v2-bnav-ico" aria-hidden="true">&#129520;</span><span>Tools</span>
   </a>
-  <a href="{{ url_for('records') }}" class="v2-bnav-item{% if request.endpoint == 'records' %} active{% endif %}">
-    <span class="v2-bnav-ico" aria-hidden="true">📜</span><span>Full record</span>
+  <a href="{{ url_for('tracker') }}" class="v2-bnav-item{% if request.endpoint == 'tracker' %} active{% endif %}">
+    <span class="v2-bnav-ico" aria-hidden="true">&#127915;</span><span>Tracker</span>
+  </a>
+  <a href="{{ url_for('alertas') }}" class="v2-bnav-item{% if request.endpoint == 'alertas' %} active{% endif %}">
+    <span class="v2-bnav-ico" aria-hidden="true">&#128276;</span><span>Alerts</span>
   </a>
   <a href="{{ url_for('cuenta') }}" class="v2-bnav-item{% if request.endpoint == 'cuenta' %} active{% endif %}">
     <span class="v2-bnav-ico" aria-hidden="true">&#128100;</span><span>Account</span>
