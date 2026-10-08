@@ -31,10 +31,25 @@
     <div class="num">{{ stats.platinum }}</div>
     <div class="lbl">Platinum</div>
   </div>
-  <div class="admin-stat">
+  <div class="admin-stat" onclick="toggleJugadasHoy()" style="cursor:pointer;" title="Toca para ver las jugadas">
     <div class="num">{{ stats.jugadas_hoy }}</div>
-    <div class="lbl">Jugadas hoy</div>
+    <div class="lbl">Jugadas hoy ▾</div>
   </div>
+</div>
+
+<div id="jh-detail" style="display:none;margin:-6px 0 16px;">
+  {% for p in plays_hoy %}
+  <div class="admin-card" style="margin-bottom:10px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;">
+      <h3 style="margin:0;">{{ p.equipo or p.pick }}</h3>
+      <span style="background:{% if p.nivel == 'ELITE' %}#c9a227{% else %}#2a3350{% endif %};color:{% if p.nivel == 'ELITE' %}#0b0e14{% else %}#fff{% endif %};font-size:0.7rem;font-weight:800;border-radius:999px;padding:4px 10px;white-space:nowrap;">{% if p.nivel == 'ELITE' %}⭐ Platinum{% else %}⚪ Gold{% endif %}</span>
+    </div>
+    <p style="margin-top:8px;">{{ p.pick }}{% if p.game %} · {{ p.game }}{% endif %}{% if p.game_time_et %} · {{ p.game_time_et }}{% endif %}</p>
+    {% if p.comprobante %}<p style="color:#00e07f;">📸 Ticket recibido</p>{% endif %}
+  </div>
+  {% else %}
+  <p style="color:#9aa3b8;font-size:0.85rem;">No hay jugadas publicadas hoy.</p>
+  {% endfor %}
 </div>
 
 <div class="admin-quick">
@@ -77,6 +92,10 @@
 </div>
 
 <script>
+function toggleJugadasHoy() {
+  var d = document.getElementById('jh-detail');
+  d.style.display = (d.style.display === 'none') ? 'block' : 'none';
+}
 function ejecutarAccion(accion, btn) {
   btn.style.opacity = '0.5';
   btn.querySelector('p').textContent = 'Enviando...';

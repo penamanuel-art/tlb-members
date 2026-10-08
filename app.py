@@ -4774,7 +4774,8 @@ def admin_dashboard():
     return render_template("admin_dashboard.html",
                            stats={"miembros": miembros, "platinum": platinum,
                                   "jugadas_hoy": jugadas_hoy, "no_leidas": no_leidas},
-                           selecciones=selecciones)
+                           selecciones=selecciones,
+                           plays_hoy=plays)
 
 
 @app.route("/admin/subir-ticket", methods=["GET", "POST"])
