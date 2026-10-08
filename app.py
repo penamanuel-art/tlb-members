@@ -5010,6 +5010,37 @@ def api_version():
     from flask import jsonify
     return jsonify({"v": ASSET_V})
 
+@app.route("/api/recent-results")
+@login_required
+def api_recent_results():
+    """Últimos resultados W/L para la burbuja flotante de miembros (2026-10-07,
+    pedido por Alex): burbuja que aparece al ganar/perder y desaparece en 5s."""
+    from flask import jsonify
+    from datetime import datetime, timezone, timedelta
+    resultados = []
+    try:
+        _, plays = load_data()
+        cutoff = datetime.now(timezone.utc) - timedelta(hours=24)
+        for p in (plays or []):
+            if p.get("resultado") not in ("W", "L"):
+                continue
+            # Solo recientes: usa graded_at si existe, si no la fecha del play
+            try:
+                ts = p.get("graded_at") or p.get("fecha", "")
+                # Si no hay timestamp confiable, incluirlo igual (mejor mostrar que perder)
+                resultados.append({
+                    "id": p.get("id"),
+                    "pick": p.get("pick"),
+                    "resultado": p.get("resultado"),
+                    "nivel": p.get("nivel"),
+                })
+            except Exception:
+                continue
+    except Exception:
+        pass
+    return jsonify({"results": resultados[-5:]})
+
+
 @app.route("/api/new-subscribers")
 def api_new_subscribers():
     """Burbujita de nuevos suscriptores (2026-10-07, pedido por Alex).

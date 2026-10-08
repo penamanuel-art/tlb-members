@@ -198,5 +198,55 @@ function googleTranslateElementInit(){new google.translate.TranslateElement({pag
   } catch(e){}
 })();
 </script>
+<script>
+/* Burbuja flotante de resultados W/L (2026-10-07, pedido por Alex):
+   aparece cuando hay resultado nuevo y desaparece sola en 5 segundos. */
+(function(){
+  try {
+    var SEEN_KEY = 'tst_seen_results';
+    function getSeen(){ try { return JSON.parse(localStorage.getItem(SEEN_KEY) || '[]'); } catch(e){ return []; } }
+    function markSeen(id){ try { var s = getSeen(); s.push(id); localStorage.setItem(SEEN_KEY, JSON.stringify(s.slice(-50))); } catch(e){} }
+    fetch('/api/recent-results', {cache: 'no-store', credentials: 'same-origin'}).then(function(r){ return r.json(); }).then(function(d){
+      var res = (d && d.results) || [];
+      if (!res.length) return;
+      var seen = getSeen();
+      var nuevo = null;
+      for (var i = res.length - 1; i >= 0; i--) {
+        if (seen.indexOf(res[i].id) === -1) { nuevo = res[i]; break; }
+      }
+      if (!nuevo) return;
+      markSeen(nuevo.id);
+      var win = nuevo.resultado === 'W';
+      var box = document.createElement('div');
+      box.id = 'tstResultToast';
+      var st = document.createElement('style');
+      st.textContent =
+        '.tst-result-toast{position:fixed;top:70px;left:16px;right:16px;z-index:3000;max-width:420px;margin:0 auto;' +
+        'background:' + (win ? '#052e16' : '#2a0a0a') + ';border:1px solid ' + (win ? '#22c55e' : '#ef4444') + ';' +
+        'border-radius:16px;padding:14px 16px;box-shadow:0 8px 30px rgba(0,0,0,.65);' +
+        'font-family:-apple-system,Helvetica,Arial,sans-serif;animation:tstToastIn .4s ease-out;}' +
+        '@keyframes tstToastIn{from{transform:translateY(-120%);opacity:0}to{transform:translateY(0);opacity:1}}' +
+        '.tst-result-toast.out{transition:opacity .5s,transform .5s;opacity:0;transform:translateY(-120%);}' +
+        '.tst-result-toast .tst-rt-row{display:flex;align-items:center;gap:10px;}' +
+        '.tst-result-toast .tst-rt-ico{font-size:24px;}' +
+        '.tst-result-toast .tst-rt-txt{color:#fff;font-size:15px;font-weight:800;flex:1;}';
+      box.appendChild(st);
+      var inner = document.createElement('div');
+      inner.className = 'tst-result-toast';
+      var ico = document.createElement('div'); ico.className = 'tst-rt-ico'; ico.textContent = win ? '✅' : '❌';
+      var txt = document.createElement('div'); txt.className = 'tst-rt-txt';
+      txt.textContent = (nuevo.pick || 'Play') + ' — ' + (win ? 'WON' : 'LOST');
+      var row = document.createElement('div'); row.className = 'tst-rt-row';
+      row.appendChild(ico); row.appendChild(txt); inner.appendChild(row);
+      box.appendChild(inner);
+      document.body.appendChild(box);
+      setTimeout(function(){
+        inner.classList.add('out');
+        setTimeout(function(){ box.remove(); }, 550);
+      }, 5000);
+    }).catch(function(){});
+  } catch(e){}
+})();
+</script>
 </body>
 </html>
