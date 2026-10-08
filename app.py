@@ -4017,6 +4017,27 @@ def admin_toggle_platinum():
     return redirect(url_for("admin_miembros"))
 
 
+@app.route("/admin/test-simulate-past-due", methods=["POST"])
+@login_required
+def admin_test_simulate_past_due():
+    """TEMPORAL para pruebas de Alex: simula pago fallido (stripe_past_due=1).
+    Solo admin. Para quitarlo, usar test-simulate-reactivate."""
+    me = current_user()
+    if not is_admin_for(me):
+        flash("You don't have permission.", "error")
+        return redirect(url_for("home"))
+    db = get_db()
+    email = request.form.get("email", "").strip().lower()
+    row = db.execute("SELECT id FROM users WHERE email = ?", (email,)).fetchone()
+    if not row:
+        flash("Member not found.", "error")
+    else:
+        db.execute("UPDATE users SET stripe_past_due = 1 WHERE id = ?", (row["id"],))
+        db.commit()
+        flash(f"Simulated failed payment for {email}: past-due ON.", "ok")
+    return redirect(url_for("admin_miembros"))
+
+
 @app.route("/admin/test-simulate-cancel", methods=["POST"])
 @login_required
 def admin_test_simulate_cancel():
@@ -4059,11 +4080,11 @@ def admin_test_simulate_reactivate():
     else:
         db.execute(
             "UPDATE users SET platinum_unlocked = 1, telegram_unban_pending = 1, "
-            "telegram_ban_pending = 0 WHERE id = ?",
+            "telegram_ban_pending = 0, stripe_past_due = 0, cancel_requested_at = NULL WHERE id = ?",
             (row["id"],),
         )
         db.commit()
-        flash(f"Simulated reactivation for {email}: Platinum on, unban pending.", "ok")
+        flash(f"Simulated reactivation for {email}: Platinum on, past-due cleared, unban pending.", "ok")
     return redirect(url_for("admin_miembros"))
 
 
