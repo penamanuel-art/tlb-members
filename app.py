@@ -4017,13 +4017,24 @@ def admin_toggle_platinum():
     return redirect(url_for("admin_miembros"))
 
 
+def _admin_api_autorizado():
+    """True si hay sesión admin O header X-Admin-Key válido (para los crons/scripts)."""
+    api_key = os.environ.get("ADMIN_API_KEY", "")
+    header_key = request.headers.get("X-Admin-Key", "")
+    if api_key and header_key and hmac.compare_digest(header_key, api_key):
+        return True
+    try:
+        return bool(is_admin_for(current_user()))
+    except Exception:
+        return False
+
+
 @app.route("/admin/test-simulate-past-due", methods=["POST"])
-@login_required
 def admin_test_simulate_past_due():
     """TEMPORAL para pruebas de Alex: simula pago fallido (stripe_past_due=1).
-    Solo admin. Para quitarlo, usar test-simulate-reactivate."""
-    me = current_user()
-    if not is_admin_for(me):
+    Auth: sesión admin O header X-Admin-Key (para activar por API).
+    Para quitarlo, usar test-simulate-reactivate."""
+    if not _admin_api_autorizado():
         flash("You don't have permission.", "error")
         return redirect(url_for("home"))
     db = get_db()
