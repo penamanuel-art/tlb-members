@@ -46,6 +46,11 @@
 <div style="margin-top: 20px;">
   <h3 style="font-size: 1rem; color: #c9a227;">🎯 Today's Plays — pre-publish</h3>
   <p style="font-size: 0.85rem; color: #9aa3b8;">Selections before they go live.</p>
+  <button class="admin-card" onclick="ejecutarAccion('publish-plays', this)" style="text-align:center;cursor:pointer;width:100%;margin-bottom:14px;border-color:#00e07f;">
+    <div class="icon">🚀</div>
+    <h3>Publish Today's Plays</h3>
+    <p>Order publication to members</p>
+  </button>
   {% for s in selecciones %}
   <div class="admin-card" style="margin-bottom: 10px;">
     <div style="display:flex;justify-content:space-between;align-items:center;">

@@ -4641,7 +4641,7 @@ def admin_accion(accion):
     user = current_user()
     if not (is_admin_for(user) or is_alex_member(user)):
         return jsonify({"error": "unauthorized"}), 401
-    validas = {"email-jugadas", "telegram", "publicar-todo"}
+    validas = {"email-jugadas", "telegram", "publicar-todo", "publish-plays"}
     if accion not in validas:
         return jsonify({"error": "acción no válida"}), 400
     try:
@@ -4659,6 +4659,8 @@ def admin_accion(accion):
             _json.dump(_q, _f, indent=2)
         if accion == "email-jugadas":
             log_notificacion(db, "email", "Plays email queued", "Will be sent to all members")
+        if accion == "publish-plays":
+            log_notificacion(db, "publish", "Publish ordered by Alex", "Today's plays queued for publication")
         return jsonify({"ok": True, "accion": accion})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
