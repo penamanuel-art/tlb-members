@@ -4722,6 +4722,24 @@ def admin_miembros():
                            eventos=[dict(e) for e in eventos])
 
 
+@app.route("/admin/notificaciones/limpiar", methods=["POST"])
+@login_required
+def admin_notificaciones_limpiar():
+    """Limpia todas las notificaciones (solo Alex/admin)."""
+    db = get_db()
+    user = current_user()
+    if not (is_admin_for(user) or is_alex_member(user)):
+        flash("You don't have permission.", "error")
+        return redirect(url_for("home"))
+    try:
+        db.execute("DELETE FROM notificaciones")
+        db.commit()
+        flash("Notifications cleared.", "ok")
+    except Exception as e:
+        flash(f"Error: {e}", "error")
+    return redirect(url_for("admin_notificaciones"))
+
+
 @app.route("/admin/notificaciones")
 @login_required
 def admin_notificaciones():

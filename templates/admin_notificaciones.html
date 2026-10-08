@@ -11,6 +11,12 @@
   <a href="{{ url_for('admin_dashboard') }}" class="btn btn-sm btn-ghost">← Dashboard</a>
 </section>
 
+{% if notificaciones %}
+<form method="post" action="{{ url_for('admin_notificaciones_limpiar') }}" onsubmit="return confirm('Clear all notifications?');" style="margin-bottom:16px;">
+  <button class="btn btn-sm btn-ghost" type="submit" style="border-color:#c33;color:#c33;">🗑️ Clear all</button>
+</form>
+{% endif %}
+
 {% for n in notificaciones %}
 <article class="member-row" style="{% if not n.leida %}border-color:#c9a227;{% endif %}">
   <div class="m-name">
