@@ -2776,6 +2776,11 @@ def home():
 def register():
     if "user_id" in session:
         return redirect(url_for("home"))
+    # Récord Gold en vivo para la prueba social (2026-10-08, pedido por Alex)
+    try:
+        _gold = program_stats()["niveles"]["GOLD"]
+    except Exception:
+        _gold = {"ganadas": 0, "perdidas": 0, "win_rate": 0.0, "net_display": "$0"}
     if request.method == "POST":
         nombre = request.form.get("nombre", "").strip()
         email = request.form.get("email", "").strip().lower()
@@ -2784,12 +2789,12 @@ def register():
         sms_optin = 1 if request.form.get("sms_optin") == "1" and phone else 0
         if not nombre or not email or len(password) < 6:
             flash("Enter your name, a valid email and a password of at least 6 characters.", "error")
-            return render_template("register.html"), 400
+            return render_template("register.html", gold=_gold), 400
         db = get_db()
         exists = db.execute("SELECT id FROM users WHERE email = ?", (email,)).fetchone()
         if exists:
             flash("That email is already registered. Log in.", "error")
-            return render_template("register.html"), 400
+            return render_template("register.html", gold=_gold), 400
         new_id = insert_returning_id(
             db,
             "INSERT INTO users (nombre, email, password_hash, phone, sms_optin, created_at) VALUES (?, ?, ?, ?, ?, ?)",
@@ -2815,7 +2820,7 @@ def register():
         except Exception:
             pass
         return redirect(url_for("bienvenida"))
-    return render_template("register.html")
+    return render_template("register.html", gold=_gold)
 
 
 # Links rastreados (pedido Alex 2026-10-02): cada clic se guarda en

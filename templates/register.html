@@ -1,9 +1,20 @@
 {% extends "base.html" %}
-{% block title %}Create account — The Sharp Team{% endblock %}
+{% block title %}Get Today's Free Plays — The Sharp Team{% endblock %}
 {% block content %}
-<section class="auth-card">
-  <h2>Create your <span class="accent">free</span> account</h2>
-  <p class="muted">No card, no payments. Just your tracker.</p>
+<section class="auth-card reg-hero">
+  <div class="reg-pill">FREE FOREVER &middot; NO CARD NEEDED</div>
+  <h2>Get Today&rsquo;s <span class="accent">Free Plays</span></h2>
+  <p class="muted reg-sub">Data-backed picks posted daily &mdash; every one verified with the original ticket as proof.</p>
+  <div class="reg-proof">
+    <div class="reg-proof-kicker">GOLD PLAYS RECORD</div>
+    <div class="reg-proof-nums">{{ gold.ganadas }}&ndash;{{ gold.perdidas }} ({{ gold.win_rate }}%) &middot; {{ gold.net_display }}</div>
+    <div class="reg-proof-note">Every play posted before game time &mdash; then locked and graded.</div>
+  </div>
+  <ul class="reg-benefits">
+    <li><b>Daily free plays</b> with the original ticket as proof</li>
+    <li><b>Your own tracker</b> &mdash; follow every play automatically</li>
+    <li><b>No card, no payments.</b> Free means free.</li>
+  </ul>
   <form method="post" action="{{ url_for('register') }}">
     <label>Name
       <input type="text" name="nombre" required autocomplete="name" placeholder="Your name">
@@ -21,12 +32,26 @@
       <input type="checkbox" name="sms_optin" value="1">
       <span>Yes, text me my daily plays and membership updates from The Sharp Team at the number above. Msg &amp; data rates may apply. Reply STOP to cancel, HELP for help.</span>
     </label>
-    <button class="btn btn-primary btn-block" type="submit">Create my account →</button>
+    <button class="btn btn-primary btn-block reg-cta" type="submit">Get My Free Plays &rarr;</button>
+    <p class="muted center reg-micro">No card. No payments. Unsubscribe anytime.</p>
   </form>
   <a href="{{ url_for('free_landing') }}" class="free-plays-promo">⭐ SEE WHAT'S INCLUDED — GOLD →</a>
   <p class="muted center">Already have an account? <a href="{{ url_for('login') }}">Log in here</a></p>
 </section>
 <style>
+.reg-hero h2{font-size:2rem;line-height:1.15;text-align:center;margin:14px 0 8px}
+.reg-pill{display:block;width:fit-content;margin:0 auto;background:rgba(34,197,94,.12);border:1px solid #22c55e;color:#22c55e;font-size:12px;font-weight:800;letter-spacing:1.5px;padding:6px 14px;border-radius:999px}
+.reg-sub{text-align:center;margin:0 0 18px}
+.reg-proof{background:rgba(245,197,66,.07);border:1px solid #f5c542;border-radius:14px;padding:14px 16px;margin:0 0 18px;text-align:center}
+.reg-proof-kicker{font-size:12px;color:var(--muted,#9aa3b8);letter-spacing:1px;font-weight:700;margin-bottom:4px}
+.reg-proof-nums{font-size:22px;font-weight:900;color:#f5c542}
+.reg-proof-note{font-size:12px;color:var(--muted,#9aa3b8);margin-top:4px}
+.reg-benefits{list-style:none;margin:0 0 20px;padding:0;display:grid;gap:10px}
+.reg-benefits li{position:relative;padding-left:26px;font-size:14px;color:var(--muted,#9aa3b8)}
+.reg-benefits li::before{content:"✓";position:absolute;left:2px;color:#22c55e;font-weight:900}
+.reg-benefits li b{color:#fff}
+.reg-cta{border-radius:999px !important;font-size:17px !important;padding:15px !important}
+.reg-micro{font-size:12px;margin:12px 0 0}
 .free-plays-promo{display:block;text-align:center;margin:22px 0 6px;padding:20px 16px;border-radius:16px;
   background:linear-gradient(135deg,rgba(245,197,66,.16),rgba(245,197,66,.06));
   border:2px solid #f5c542;color:#f5c542;font-weight:900;font-size:21px;letter-spacing:.3px;text-decoration:none;
