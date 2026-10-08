@@ -5556,7 +5556,9 @@ def stripe_webhook():
             # botones directos al Dashboard). Solo en activaciones nuevas.
             # 2026-10-05: si ya lo recibió al registrarse (gratis o no),
             # no se repite.
-            if era_nuevo and not bool(row["welcome_email_sent"]):
+            # 2026-10-08 (pedido Alex): si se había cancelado y se vuelve a
+            # suscribir, el welcome SÍ se reenvía (bienvenida nuevamente).
+            if (era_nuevo and not bool(row["welcome_email_sent"])) or estaba_cancelado:
                 try:
                     send_welcome_email(row["nombre"] or "", email)
                     db.execute("UPDATE users SET welcome_email_sent = 1 WHERE id = ?", (uid,))
