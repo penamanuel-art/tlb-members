@@ -206,7 +206,9 @@ function googleTranslateElementInit(){new google.translate.TranslateElement({pag
     var SEEN_KEY = 'tst_seen_results';
     function getSeen(){ try { return JSON.parse(localStorage.getItem(SEEN_KEY) || '[]'); } catch(e){ return []; } }
     function markSeen(id){ try { var s = getSeen(); s.push(id); localStorage.setItem(SEEN_KEY, JSON.stringify(s.slice(-50))); } catch(e){} }
-    fetch('/api/recent-results', {cache: 'no-store', credentials: 'same-origin'}).then(function(r){ return r.json(); }).then(function(d){
+    var testMode = /[?&]test_result=1/.test(location.search);
+    var url = '/api/recent-results' + (testMode ? '?test=1' : '');
+    fetch(url, {cache: 'no-store', credentials: 'same-origin'}).then(function(r){ return r.json(); }).then(function(d){
       var res = (d && d.results) || [];
       if (!res.length) return;
       var seen = getSeen();
