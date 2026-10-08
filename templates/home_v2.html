@@ -9,7 +9,7 @@
 .tst-admin-switch{display:inline-block;margin-bottom:10px;padding:8px 16px;background:#c9a227;color:#0b0e14;font-weight:800;font-size:13px;border-radius:999px;text-decoration:none;}
 </style>
 
-{% if es_admin %}
+{% if es_alex or es_admin %}
 <div style="padding:12px 16px 0;">
   <a href="{{ url_for('admin_dashboard') }}" class="tst-admin-switch">⚙️ Admin Dashboard</a>
 </div>
@@ -344,7 +344,7 @@
 
 <!-- 06 · TRACKER -->
 <section class="v2-sec">
-  {% if es_admin %}
+  {% if es_alex or es_admin %}
   {# Solo resultados oficiales del programa en el dashboard admin (2026-10-03, #}
   {# orden de Alex): el tracker personal "Alex Owner Results" se quitó de aquí. #}
   <div class="v2-sec-head" style="padding-top:28px">
