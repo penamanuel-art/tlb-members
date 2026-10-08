@@ -5605,10 +5605,10 @@ def stripe_webhook():
             # porque Stripe reintenta y manda payment_failed en cada intento).
             email = (data.get("customer_email") or "").strip().lower()
             invoice_id = data.get("id") or ""
-            # Todos los links de pago fallido llevan a /cuenta (pedido por Alex
+            # Todos los links de pago fallido llevan a /cuenta#past-due (pedido por Alex
             # 2026-10-08): ahí está la sección past-due estilo WGT con el botón
             # "Update card & restore access" que sí abre la ventana de pago de Stripe.
-            pay_url = "https://www.thesharpteam.bet/cuenta"
+            pay_url = "https://www.thesharpteam.bet/cuenta#past-due"
             nombre = ""
             if email:
                 r = db.execute("SELECT nombre FROM users WHERE email = ?",
