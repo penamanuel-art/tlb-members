@@ -4388,10 +4388,12 @@ def diag_tracker():
                     mimetype="application/json")
 
 @app.route("/admin/resend-welcome", methods=["GET", "POST"])
-@admin_required
 def admin_resend_welcome():
-    """Reenvía el email de bienvenida a un miembro (solo admin).
+    """Reenvía el email de bienvenida a un miembro.
+    Auth: sesión admin O header X-Admin-Key.
     Resetea welcome_email_sent y lo envía de inmediato."""
+    if not _admin_api_autorizado():
+        return "admin only", 403
     from flask import request
     db = get_db()
     email = (request.values.get("email") or "").strip().lower()
