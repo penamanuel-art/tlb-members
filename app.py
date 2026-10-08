@@ -4667,6 +4667,26 @@ def admin_accion(accion):
         return jsonify({"error": str(e)}), 500
 
 
+@app.route("/api/log-notificacion", methods=["POST"])
+def api_log_notificacion():
+    """Los trabajos automáticos del agente registran notificaciones aquí.
+    Protegido con X-Push-Key == PUSH_TRIGGER_KEY (2026-10-07, pedido por Alex:
+    'todo lo que tú hagas debe enviar la notificación con el desglose')."""
+    if not PUSH_TRIGGER_KEY or not secrets.compare_digest(
+        request.headers.get("X-Push-Key", ""), PUSH_TRIGGER_KEY
+    ):
+        return jsonify({"error": "forbidden"}), 403
+    data = request.get_json(force=True, silent=True) or {}
+    tipo = (data.get("tipo") or "info")[:30]
+    titulo = (data.get("titulo") or "")[:200]
+    detalle = (data.get("detalle") or "")[:500]
+    if not titulo:
+        return jsonify({"error": "titulo requerido"}), 400
+    db = get_db()
+    log_notificacion(db, tipo, titulo, detalle)
+    return jsonify({"ok": True})
+
+
 @app.route("/api/acciones-pendientes")
 def api_acciones_pendientes():
     """Devuelve las acciones pedidas por Alex sin ejecutar (para el cron)."""
