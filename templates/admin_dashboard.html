@@ -2,12 +2,12 @@
 {% block title %}Admin Dashboard — The Sharp Team{% endblock %}
 {% block content %}
 <style>
-.admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 16px; }
-.admin-card { background: #141a2b; border: 1px solid #2a3350; border-radius: 16px; padding: 20px; text-decoration: none; color: #fff; display: block; }
+.admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 16px; align-items: stretch; }
+.admin-card { background: #141a2b; border: 1px solid #2a3350; border-radius: 16px; padding: 20px; text-decoration: none; color: #fff; display: flex; flex-direction: column; height: 100%; box-sizing: border-box; }
 .admin-card:hover { border-color: #c9a227; }
 .admin-card .icon { font-size: 2rem; margin-bottom: 8px; }
 .admin-card h3 { margin: 0 0 6px; font-size: 1.1rem; }
-.admin-card p { margin: 0; font-size: 0.85rem; color: #9aa3b8; }
+.admin-card p { margin: 0; font-size: 0.85rem; color: #9aa3b8; flex-grow: 1; }
 .admin-stat { background: #1a2036; border-radius: 12px; padding: 14px; text-align: center; }
 .admin-stat .num { font-size: 1.8rem; font-weight: 800; color: #e8c15a; }
 .admin-stat .lbl { font-size: 0.75rem; color: #9aa3b8; text-transform: uppercase; letter-spacing: 1px; }
