@@ -2961,6 +2961,84 @@ def stake_mode():
     return redirect(url_for("cuenta"))
 
 
+def _past_due_billing_info(user):
+    """Datos de facturación para la sección past-due de /cuenta (modelo WGT).
+
+    Lee de Stripe: tarjeta por defecto (marca, últimos 4, vencimiento),
+    precio/intervalo de la suscripción, próxima fecha de cobro y URL de la
+    factura abierta (para el botón "Update card & restore access").
+    Nunca rompe la página: ante cualquier fallo devuelve los campos en None.
+    """
+    info = {"card_brand": None, "card_last4": None, "card_exp": None,
+            "plan_price": None, "plan_interval": None,
+            "next_billing": None, "pay_url": None}
+    if not stripe_configurado():
+        return info
+    customer_id = ""
+    try:
+        customer_id = (user["stripe_customer_id"] or "").strip()
+    except Exception:
+        pass
+    if not customer_id:
+        return info
+    try:
+        import stripe
+        stripe.api_key = STRIPE_SECRET_KEY
+        try:
+            cu = stripe.Customer.retrieve(customer_id)
+            pm_id = ((cu.get("invoice_settings") or {}).get("default_payment_method")
+                     or cu.get("default_source"))
+            if pm_id:
+                pm = stripe.PaymentMethod.retrieve(pm_id)
+                card = pm.get("card") or {}
+                info["card_brand"] = (card.get("brand") or "").replace("_", " ").title()
+                info["card_last4"] = card.get("last4")
+                if card.get("exp_month") and card.get("exp_year"):
+                    info["card_exp"] = "%02d/%d" % (card["exp_month"], card["exp_year"])
+        except Exception:
+            pass
+        try:
+            subs = stripe.Subscription.list(customer=customer_id, limit=1)
+            if subs and subs.data:
+                sub = subs.data[0]
+                items = (sub.get("items") or {}).get("data") or []
+                if items:
+                    price = items[0].get("price") or {}
+                    if price.get("unit_amount") is not None:
+                        info["plan_price"] = price["unit_amount"] / 100.0
+                    info["plan_interval"] = ((price.get("recurring") or {}).get("interval") or "")
+                cpe = sub.get("current_period_end")
+                if cpe:
+                    info["next_billing"] = datetime.fromtimestamp(
+                        cpe, tz=timezone.utc).astimezone(TZ).strftime("%d %b %Y")
+        except Exception:
+            pass
+        try:
+            invs = stripe.Invoice.list(customer=customer_id, status="open", limit=1)
+            if invs and invs.data:
+                info["pay_url"] = invs.data[0].get("hosted_invoice_url")
+        except Exception:
+            pass
+    except Exception:
+        pass
+    return info
+
+
+def _stripe_force_english(customer_id):
+    """Fuerza inglés en las páginas de Stripe que ve el miembro (pedido por Alex
+    2026-10-08: el portal de Stripe salía en español según el idioma del teléfono).
+    `preferred_locales=['en']` en el Customer hace que facturas hospedadas y
+    portal se muestren en inglés. Nunca rompe el flujo: silencioso ante fallos."""
+    if not customer_id or not stripe_configurado():
+        return
+    try:
+        import stripe
+        stripe.api_key = STRIPE_SECRET_KEY
+        stripe.Customer.modify(str(customer_id), preferred_locales=["en"])
+    except Exception:
+        pass
+
+
 @app.route("/cuenta", methods=["GET", "POST"])
 @login_required
 def cuenta():
@@ -2981,6 +3059,14 @@ def cuenta():
     link_code = link_row["code"] if isinstance(link_row, dict) else (link_row[0] if link_row else None)
     tg_link = f"https://t.me/{TELEGRAM_BOT_USERNAME}?start={link_code}" if link_code else None
     tg_linked = bool(user and user["telegram_user_id"])
+    # Estado past-due (modelo WGT): datos de facturación desde Stripe.
+    past_due = bool(user and user["stripe_past_due"])
+    billing = _past_due_billing_info(user) if past_due else None
+    try:
+        member_since = datetime.fromisoformat(
+            user["created_at"]).strftime("%d %b %Y") if user and user["created_at"] else None
+    except Exception:
+        member_since = None
     if request.method == "POST":
         raw = request.form.get("bankroll", "").strip()
         # Acepta formatos como "$10,000", "10,000", "10000", "10000.50".
@@ -2995,7 +3081,9 @@ def cuenta():
                                    cancel_at=user["cancel_requested_at"] if user else None,
                                    platinum=platinum_unlocked_for(user),
                                    stake_mode=user["stake_mode"] if user else "units",
-                                   tg_link=tg_link, tg_linked=tg_linked), 400
+                                   tg_link=tg_link, tg_linked=tg_linked,
+                                   past_due=past_due, billing=billing,
+                                   member_since=member_since), 400
         db.execute("UPDATE users SET bankroll = ? WHERE id = ?", (val, session["user_id"]))
         db.commit()
         flash(f"Bankroll saved: ${val:,.2f}.", "ok")
@@ -3004,7 +3092,9 @@ def cuenta():
                            cancel_at=user["cancel_requested_at"] if user else None,
                            platinum=platinum_unlocked_for(user),
                            stake_mode=user["stake_mode"] if user else "units",
-                           tg_link=tg_link, tg_linked=tg_linked)
+                           tg_link=tg_link, tg_linked=tg_linked,
+                           past_due=past_due, billing=billing,
+                           member_since=member_since)
 
 
 @app.route("/cuenta/telegram-link", methods=["POST"])
@@ -5394,6 +5484,8 @@ def stripe_webhook():
                 "stripe_subscription_id = ?, stripe_past_due = 0, cancel_requested_at = NULL WHERE id = ?",
                 (customer_id or None, sub_id or None, uid),
             )
+            # Inglés forzado en las páginas de Stripe del miembro.
+            _stripe_force_english(customer_id)
             # Si tiene Telegram vinculado, el cron lo desbanea del canal Sharp Club
             # para que pueda reingresar. Se hace SIEMPRE al activar (no solo si
             # cancel_requested_at está marcado): el 2026-10-01 la cancelación se
@@ -5503,6 +5595,8 @@ def stripe_webhook():
             if ya_notificado:
                 _auditar(email, f"pago fallido invoice {invoice_id}: ya notificado antes")
             else:
+                # Inglés forzado en las páginas de Stripe del miembro.
+                _stripe_force_english(data.get("customer"))
                 ok = send_payment_failed_email(nombre, email, pay_url)
                 _auditar(email, f"pago fallido invoice {invoice_id}: "
                                 + ("dunning enviado" if ok

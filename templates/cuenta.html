@@ -141,7 +141,54 @@
 <section class="auth-card">
   <h2>👤 Membership</h2>
   <p class="muted">The Sharp Team — $1 for your first week, then $23/week. Cancel anytime, no questions asked.</p>
-  {% if cancel_at %}
+  {% if past_due %}
+  {# Estado past-due estilo WGT (pedido por Alex 2026-10-08) #}
+  <div style="border:1px solid #b45309;border-radius:14px;padding:16px;background:rgba(180,83,9,.12);margin:14px 0;">
+    <p style="margin:0;font-size:14px;line-height:1.6;color:#e5e7eb;"><span style="color:#22c55e;font-weight:800;">Your last payment didn't go through.</span><br>Your Platinum Weekly is past due and access is paused. Update your card to restore it right away.</p>
+  </div>
+  <div style="border:1px solid #2a3350;border-radius:14px;padding:18px;background:#101828;margin:0 0 12px;">
+    <p style="margin:0 0 10px;font-size:11px;font-weight:800;letter-spacing:2px;color:#8a94ad;">YOUR PLAN</p>
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
+      <span style="font-size:12px;font-weight:800;letter-spacing:1px;color:#7fb3ff;border:1px solid #2c4a7c;border-radius:999px;padding:4px 12px;">PLATINUM</span>
+      <span style="font-size:12px;font-weight:800;letter-spacing:1px;color:#f5b544;background:rgba(245,181,68,.15);border-radius:999px;padding:4px 12px;">Past Due</span>
+    </div>
+    <p style="margin:0;font-size:26px;font-weight:800;color:#ffffff;">${{ '%.2f' % (billing.plan_price if billing and billing.plan_price else 23) }}<span style="font-size:14px;font-weight:600;color:#8a94ad;">/week</span></p>
+    <p style="margin:10px 0 0;font-size:13px;color:#c3cadb;"><span style="color:#22c55e;">●</span> Platinum Membership — All Official Platinum Plays</p>
+    <div style="margin-top:12px;border-top:1px solid #232c47;padding-top:10px;display:flex;justify-content:space-between;font-size:13px;">
+      <span style="color:#8a94ad;">Next charge</span>
+      <span style="color:#ffffff;font-weight:700;">${{ '%.2f' % (billing.plan_price if billing and billing.plan_price else 23) }}</span>
+    </div>
+    {% if billing and billing.next_billing %}
+    <div style="border-top:1px solid #232c47;padding-top:10px;margin-top:10px;display:flex;justify-content:space-between;font-size:13px;">
+      <span style="color:#8a94ad;">Next billing date</span>
+      <span style="color:#ffffff;font-weight:700;">{{ billing.next_billing }}</span>
+    </div>
+    {% endif %}
+    {% if member_since %}
+    <div style="border-top:1px solid #232c47;padding-top:10px;margin-top:10px;display:flex;justify-content:space-between;font-size:13px;">
+      <span style="color:#8a94ad;">Member since</span>
+      <span style="color:#ffffff;font-weight:700;">{{ member_since }}</span>
+    </div>
+    {% endif %}
+  </div>
+  {% if billing and billing.card_last4 %}
+  <div style="border:1px solid #2a3350;border-radius:14px;padding:18px;background:#101828;margin:0 0 12px;">
+    <p style="margin:0 0 10px;font-size:11px;font-weight:800;letter-spacing:2px;color:#8a94ad;">PAYMENT METHOD</p>
+    <p style="margin:0;font-size:16px;font-weight:800;color:#ffffff;">{{ billing.card_brand }} •••• {{ billing.card_last4 }}</p>
+    <div style="display:flex;justify-content:space-between;font-size:13px;margin-top:8px;">
+      <span style="color:#8a94ad;">Expires</span>
+      <span style="color:#ffffff;font-weight:700;">{{ billing.card_exp }}</span>
+    </div>
+    <a href="{{ billing.pay_url or url_for('desbloquear_platinum') }}" class="btn btn-block" style="margin-top:14px;text-decoration:none;text-align:center;border:1px solid #3a4666;color:#e5e7eb;">Update card &amp; invoices</a>
+  </div>
+  {% endif %}
+  <div style="border:1px solid #2a3350;border-radius:14px;padding:18px;background:#101828;">
+    <p style="margin:0 0 6px;font-size:11px;font-weight:800;letter-spacing:2px;color:#8a94ad;">MANAGE MEMBERSHIP</p>
+    <p style="margin:0 0 14px;font-size:14px;line-height:1.6;color:#c3cadb;">Update your card to restore your Platinum access right away.</p>
+    <a href="{{ (billing.pay_url if billing else None) or url_for('desbloquear_platinum') }}" class="btn btn-primary btn-block" style="text-decoration:none;text-align:center;">Update card &amp; restore access →</a>
+    <a href="{{ url_for('home') }}" class="btn btn-block" style="margin-top:10px;text-decoration:none;text-align:center;border:1px solid #3a4666;color:#e5e7eb;">Go to dashboard</a>
+  </div>
+  {% elif cancel_at %}
   <p class="bankroll-current">Status: <b class="cancel-text">Cancelled</b></p>
   <p class="muted">You keep full access until the end of your current billing period. You won't be charged again.</p>
   <form method="post" action="{{ url_for('cuenta_reactivar') }}">
