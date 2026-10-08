@@ -4002,6 +4002,7 @@ def admin_eliminar_miembro():
     db.execute("DELETE FROM push_subscriptions WHERE member_id = ?", (user_id,))
     db.execute("DELETE FROM users WHERE id = ?", (user_id,))
     db.commit()
+    log_notificacion(db, "miembro", f"Member deleted: {target['email']}", "")
     flash(f"Account {target['email']} deleted.", "ok")
     return redirect(url_for("admin_miembros"))
 
