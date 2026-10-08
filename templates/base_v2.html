@@ -68,7 +68,7 @@
   {% if past_due %}
   <div class="v2-pastdue v2-pastdue-global" role="alert">
     <p>⚠️ Your last payment didn't go through, so your membership is past due and access is paused.</p>
-    <a href="{{ url_for('cuenta') }}">Update your card to restore it →</a>
+    <a href="{{ url_for('cuenta') }}#past-due">Update your card to restore it →</a>
   </div>
   {% elif not miembro_platinum %}
   <a class="v2-vipinvite" href="{{ url_for('desbloquear_platinum') }}">
