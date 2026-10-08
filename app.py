@@ -747,7 +747,7 @@ WELCOME_HTML = """<!DOCTYPE html>
 </div>
 <div style="padding:14px 20px 0;">
 <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 10px;background:#2e4053;border:1px solid #2e4053;border-radius:12px;"><tr>
-<td width="44" style="vertical-align:top;padding:14px 0 14px 16px;"><div style="font-size:24px;line-height:1.2;">🃏</div></td>
+<td width="44" style="vertical-align:top;padding:14px 0 14px 16px;"><div style="font-size:24px;line-height:1.2;">🎯</div></td>
 <td style="vertical-align:top;padding:14px 16px 14px 4px;"><div style="font-size:14px;font-weight:800;color:#ffffff;letter-spacing:1px;">THE DAILY CARD</div><div style="font-size:13px;color:#c8d0dc;line-height:1.6;margin-top:4px;">Every day at 2:00 PM ET (11:00 AM ET on weekends): the official plays &mdash; Gold plus the one Platinum &mdash; each with its original ticket.</div></td>
 </tr></table>
 <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 10px;background:#2e4053;border:1px solid #2e4053;border-radius:12px;"><tr>
