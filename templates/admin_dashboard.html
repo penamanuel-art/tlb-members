@@ -42,6 +42,23 @@
   <a href="/admin/trakeos">📊 Trakeos</a>
 </div>
 
+{% if selecciones %}
+<div style="margin-top: 20px;">
+  <h3 style="font-size: 1rem; color: #c9a227;">🎯 Today's Plays — pre-publish</h3>
+  <p style="font-size: 0.85rem; color: #9aa3b8;">Selections before they go live.</p>
+  {% for s in selecciones %}
+  <div class="admin-card" style="margin-bottom: 10px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <h3 style="margin:0;">{{ s.pick or s.equipo }}</h3>
+      <span style="background:{% if s.nivel == 'ELITE' %}#c9a227{% else %}#2a3350{% endif %};color:{% if s.nivel == 'ELITE' %}#0b0e14{% else %}#fff{% endif %};font-size:0.7rem;font-weight:800;border-radius:999px;padding:4px 10px;">{{ s.nivel }}</span>
+    </div>
+    <p style="margin-top:8px;">{{ s.game or '' }}{% if s.game_time_et %} · {{ s.game_time_et }}{% endif %}</p>
+    {% if s.edge %}<p>Edge: {{ s.edge }}%</p>{% endif %}
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
 <div style="margin-top: 20px;">
   <h3 style="font-size: 1rem; color: #c9a227;">⚡ Acciones rápidas</h3>
   <p style="font-size: 0.85rem; color: #9aa3b8;">Toca un botón y se ejecuta solo.</p>

@@ -4464,13 +4464,25 @@ def admin_dashboard():
         jugadas_hoy = len(plays) if plays else 0
     except Exception:
         jugadas_hoy = 0
+        plays = []
     try:
         no_leidas = db.execute("SELECT COUNT(*) c FROM notificaciones WHERE leida = 0").fetchone()["c"]
     except Exception:
         no_leidas = 0
+    # Selecciones pendientes (antes de publicarse) — 2026-10-07, pedido por Alex
+    import json as _json2, os as _os2
+    selecciones = []
+    try:
+        pp = _os2.path.join(_os2.path.dirname(__file__), "data", "plays-pending.json")
+        with open(pp) as _f:
+            _data = _json2.load(_f)
+            selecciones = _data.get("plays", []) if isinstance(_data, dict) else []
+    except Exception:
+        selecciones = []
     return render_template("admin_dashboard.html",
                            stats={"miembros": miembros, "platinum": platinum,
-                                  "jugadas_hoy": jugadas_hoy, "no_leidas": no_leidas})
+                                  "jugadas_hoy": jugadas_hoy, "no_leidas": no_leidas},
+                           selecciones=selecciones)
 
 
 @app.route("/admin/subir-ticket", methods=["GET", "POST"])
