@@ -4930,6 +4930,48 @@ def api_chat_pendientes():
         return jsonify({"error": str(e)}), 500
 
 
+@app.route("/api/chat-marcar-leidos", methods=["POST"])
+def api_chat_marcar_leidos():
+    """Marca mensajes del chat admin como leídos."""
+    import json as _json, os
+    if request.headers.get("X-Push-Key") != os.environ.get("PUSH_TRIGGER_KEY", ""):
+        try:
+            with open(os.path.join(os.path.dirname(__file__), "..", "goals",
+                                   "programa-de-apuestas-deportivas", "hidden_files",
+                                   "push-keys.env")) as _f:
+                for _line in _f:
+                    if _line.strip().startswith("PUSH_TRIGGER_KEY="):
+                        _key = _line.strip().split("=", 1)[1]
+                        break
+                else:
+                    _key = ""
+            if request.headers.get("X-Push-Key") != _key:
+                return jsonify({"error": "unauthorized"}), 401
+        except Exception:
+            return jsonify({"error": "unauthorized"}), 401
+    try:
+        log_path = os.path.join(os.path.dirname(__file__), "data", "admin-chat", "mensajes.jsonl")
+        if not os.path.exists(log_path):
+            return jsonify({"ok": True, "marcados": 0})
+        lineas = []
+        marcados = 0
+        with open(log_path) as _f:
+            for _line in _f:
+                _line = _line.strip()
+                if not _line:
+                    continue
+                _m = _json.loads(_line)
+                if not _m.get("leido"):
+                    _m["leido"] = True
+                    marcados += 1
+                lineas.append(_json.dumps(_m))
+        with open(log_path, "w") as _f:
+            _f.write("\n".join(lineas) + "\n" if lineas else "")
+        return jsonify({"ok": True, "marcados": marcados})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 @app.route("/api/values-record")
 def api_values_record():
     """Récord del tracker VALUE del sistema (protegido con X-Push-Key).
