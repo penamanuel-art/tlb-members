@@ -85,24 +85,69 @@
   {% endif %}
 </div>
 
-<!-- 3: Subir tickets con chat embebido -->
+<!-- 3: Subir tickets -->
 <div class="admin-card" style="margin-bottom:14px;">
   <div class="icon">🎫</div>
   <h3>Upload Tickets</h3>
-  <p>Write to me here and paste tickets like in the chat</p>
-  
-  <div class="chat-box">
-    <div class="chat-messages" id="chatMessages">
-      <div class="chat-msg theirs">Hi Alex 👋<br>Paste the tickets here and I'll process them for publishing.</div>
-    </div>
-    <div class="chat-preview" id="chatPreview"></div>
-    <div class="chat-input-area">
-      <label class="chat-attach" title="Adjuntar ticket">📎<input type="file" id="chatFile" accept="image/*" multiple style="display:none;"></label>
-      <input type="text" id="chatText" placeholder="Write to me..." onkeypress="if(event.key==='Enter')sendChatMsg()">
-      <button class="chat-btn" onclick="sendChatMsg()">➤</button>
-    </div>
+  <p>Upload the original tickets to publish</p>
+  <div style="margin-top:12px;">
+    <label for="ticketUpload" style="display:block;text-align:center;background:#c9a227;color:#0b0e14;font-weight:800;border-radius:12px;padding:14px;cursor:pointer;font-size:1rem;">
+      📤 Upload Tickets
+    </label>
+    <input type="file" id="ticketUpload" accept="image/*" multiple style="display:none;">
+    <div id="uploadPreview" style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;"></div>
+    <button id="sendTicketsBtn" onclick="sendTickets()" style="display:none;width:100%;margin-top:10px;background:#00e07f;color:#0b0e14;border:none;border-radius:12px;padding:12px;font-weight:800;font-size:1rem;cursor:pointer;">Send Tickets</button>
+  </div>
+  <div id="ticketNotif" style="display:none;margin-top:12px;background:#00e07f;color:#0b0e14;border-radius:12px;padding:12px;font-weight:700;text-align:center;animation:popIn 0.3s;">
+    ✓ Confirmed — tickets received
   </div>
 </div>
+<style>@keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }</style>
+<script>
+let ticketFiles = [];
+document.getElementById('ticketUpload').addEventListener('change', function(e) {
+  ticketFiles = Array.from(e.target.files);
+  const preview = document.getElementById('uploadPreview');
+  preview.innerHTML = '';
+  ticketFiles.forEach(f => {
+    const img = document.createElement('img');
+    img.src = URL.createObjectURL(f);
+    img.style.cssText = 'width:70px;height:70px;object-fit:cover;border-radius:8px;border:1px solid #2a3350;';
+    preview.appendChild(img);
+  });
+  document.getElementById('sendTicketsBtn').style.display = ticketFiles.length ? 'block' : 'none';
+});
+function sendTickets() {
+  if (!ticketFiles.length) return;
+  const btn = document.getElementById('sendTicketsBtn');
+  btn.textContent = 'Sending...';
+  btn.disabled = true;
+  const formData = new FormData();
+  formData.append('mensaje', '');
+  ticketFiles.forEach((f, i) => formData.append('tickets', f, 'ticket-' + Date.now() + '-' + i + '.jpg'));
+  fetch('/admin/chat-mensaje', {method: 'POST', body: formData})
+    .then(r => r.json())
+    .then(d => {
+      if (d.ok) {
+        document.getElementById('ticketNotif').style.display = 'block';
+        document.getElementById('uploadPreview').innerHTML = '';
+        document.getElementById('ticketUpload').value = '';
+        ticketFiles = [];
+        btn.style.display = 'none';
+        btn.textContent = 'Send Tickets';
+        btn.disabled = false;
+        setTimeout(() => { document.getElementById('ticketNotif').style.display = 'none'; }, 5000);
+      } else {
+        btn.textContent = 'Error — try again';
+        btn.disabled = false;
+      }
+    })
+    .catch(e => {
+      btn.textContent = 'Connection error';
+      btn.disabled = false;
+    });
+}
+</script>
 
 <!-- 4: Acciones rápidas -->
 <div class="admin-card" style="margin-bottom:14px;">
