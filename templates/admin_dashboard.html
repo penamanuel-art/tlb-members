@@ -145,9 +145,21 @@ function sendTickets() {
     checklist.appendChild(div);
     return div;
   };
+  const beep = () => {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.connect(g); g.connect(ctx.destination);
+      o.frequency.value = 1200; o.type = 'sine';
+      g.gain.setValueAtTime(0.25, ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15);
+      o.start(ctx.currentTime); o.stop(ctx.currentTime + 0.15);
+    } catch(e) {}
+  };
   const completeTask = (div) => {
     div.style.color = '#00e07f';
     div.innerHTML = div.innerHTML.replace('⏳', '✓');
+    beep();
   };
   (async () => {
     // Tiempo real: como cuando me mandas el ticket por el chat (3-5 min)
