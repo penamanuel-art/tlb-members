@@ -4767,15 +4767,27 @@ def admin_dashboard():
     except Exception:
         no_leidas = 0
     # Selecciones pendientes (antes de publicarse) — 2026-10-07, pedido por Alex
+    # Solo las de HOY — las de ayer se limpian a medianoche (2026-10-09, pedido por Alex)
     import json as _json2, os as _os2
+    from datetime import datetime as _dt2
+    _hoy = _dt2.now().strftime("%Y-%m-%d")
     selecciones = []
     try:
         pp = _os2.path.join(_os2.path.dirname(__file__), "data", "plays-pending.json")
         with open(pp) as _f:
             _data = _json2.load(_f)
-            selecciones = _data.get("plays", []) if isinstance(_data, dict) else []
+            if isinstance(_data, dict) and _data.get("fecha") == _hoy:
+                selecciones = _data.get("plays", [])
     except Exception:
         selecciones = []
+    # plays_hoy también solo de hoy
+    try:
+        _, _plays_all = load_data()
+        plays = [p for p in (_plays_all or []) if str(p.get("fecha", ""))[:10] == _hoy]
+        jugadas_hoy = len(plays)
+    except Exception:
+        jugadas_hoy = 0
+        plays = []
     return render_template("admin_dashboard.html",
                            stats={"miembros": miembros, "platinum": platinum,
                                   "jugadas_hoy": jugadas_hoy, "no_leidas": no_leidas},
