@@ -40,13 +40,13 @@
   <a href="/admin/miembros" style="text-decoration:none;">
     <div class="admin-stat">
       <div class="num">{{ stats.miembros }}</div>
-      <div class="lbl">👥 Miembros</div>
+      <div class="lbl">👥 Members</div>
     </div>
   </a>
   <a href="/admin/miembros" style="text-decoration:none;">
     <div class="admin-stat" style="border-color:#c9a227;">
       <div class="num" style="color:#c9a227;">{{ stats.platinum }}</div>
-      <div class="lbl">⭐ Platinum pagando</div>
+      <div class="lbl">⭐ Platinum paying</div>
     </div>
   </a>
 </div>
@@ -55,8 +55,8 @@
 {% if selecciones or plays_hoy %}
 <div class="admin-card" style="margin-bottom:14px;border-color:#c9a227;">
   <div class="icon">🎯</div>
-  <h3>Jugadas de hoy</h3>
-  <p>Las ves aquí cuando estén listas</p>
+  <h3>Today's Plays</h3>
+  <p>You'll see them here when they're ready</p>
   <div style="margin-top:12px;display:flex;flex-direction:column;gap:10px;">
   {% for s in selecciones %}
     <div style="background:#0f1420;border:1px solid #2a3350;border-radius:12px;padding:12px;">
@@ -85,17 +85,17 @@
 <!-- 3: Subir tickets con chat embebido -->
 <div class="admin-card" style="margin-bottom:14px;">
   <div class="icon">🎫</div>
-  <h3>Subir tickets</h3>
-  <p>Escríbeme aquí y pega los tickets como en el chat</p>
+  <h3>Upload Tickets</h3>
+  <p>Write to me here and paste tickets like in the chat</p>
   
   <div class="chat-box">
     <div class="chat-messages" id="chatMessages">
-      <div class="chat-msg theirs">Hola Alex 👋<br>Pégame los tickets aquí y los proceso para publicar.</div>
+      <div class="chat-msg theirs">Hi Alex 👋<br>Paste the tickets here and I'll process them for publishing.</div>
     </div>
     <div class="chat-preview" id="chatPreview"></div>
     <div class="chat-input-area">
       <label class="chat-attach" title="Adjuntar ticket">📎<input type="file" id="chatFile" accept="image/*" multiple style="display:none;"></label>
-      <input type="text" id="chatText" placeholder="Escríbeme..." onkeypress="if(event.key==='Enter')sendChatMsg()">
+      <input type="text" id="chatText" placeholder="Write to me..." onkeypress="if(event.key==='Enter')sendChatMsg()">
       <button class="chat-btn" onclick="sendChatMsg()">➤</button>
     </div>
   </div>
@@ -104,11 +104,11 @@
 <!-- 4: Acciones rápidas -->
 <div class="admin-card" style="margin-bottom:14px;">
   <div class="icon">⚡</div>
-  <h3>Acciones rápidas</h3>
-  <p>Publicar y enviar con un toque</p>
+  <h3>Quick Actions</h3>
+  <p>Publish and send with one tap</p>
   <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;">
-    <button onclick="ejecutarAccion('publish-plays', this)" style="flex:1;min-width:140px;background:#0f1420;border:1px solid #00e07f;color:#fff;border-radius:12px;padding:12px;font-weight:700;cursor:pointer;">🚀 Publicar jugadas</button>
-    <button onclick="ejecutarAccion('email-jugadas', this)" style="flex:1;min-width:140px;background:#0f1420;border:1px solid #2a3350;color:#fff;border-radius:12px;padding:12px;font-weight:700;cursor:pointer;">📧 Email jugadas</button>
+    <button onclick="ejecutarAccion('publish-plays', this)" style="flex:1;min-width:140px;background:#0f1420;border:1px solid #00e07f;color:#fff;border-radius:12px;padding:12px;font-weight:700;cursor:pointer;">🚀 Publish plays</button>
+    <button onclick="ejecutarAccion('email-jugadas', this)" style="flex:1;min-width:140px;background:#0f1420;border:1px solid #2a3350;color:#fff;border-radius:12px;padding:12px;font-weight:700;cursor:pointer;">📧 Email plays</button>
   </div>
   <p id="accionStatus" style="margin-top:8px;font-size:0.8rem;"></p>
 </div>
@@ -162,14 +162,14 @@ function sendChatMsg() {
     .then(d => {
       const reply = document.createElement('div');
       reply.className = 'chat-msg theirs';
-      reply.textContent = d.ok ? '✓ Recibido, lo proceso ahora.' : 'Error: ' + (d.error || 'desconocido');
+      reply.textContent = d.ok ? '✓ Received, processing now.' : 'Error: ' + (d.error || 'desconocido');
       msgs.appendChild(reply);
       msgs.scrollTop = msgs.scrollHeight;
     })
     .catch(e => {
       const reply = document.createElement('div');
       reply.className = 'chat-msg theirs';
-      reply.textContent = 'Error de conexión.';
+      reply.textContent = 'Connection error.';
       msgs.appendChild(reply);
     });
   
@@ -180,11 +180,11 @@ function sendChatMsg() {
 }
 function ejecutarAccion(accion, btn) {
   btn.style.opacity = '0.5';
-  document.getElementById('accionStatus').textContent = 'Enviando...';
+  document.getElementById('accionStatus').textContent = 'Sending...';
   fetch('/admin/accion/' + accion, {method: 'POST'})
     .then(r => r.json())
     .then(d => {
-      document.getElementById('accionStatus').textContent = d.ok ? '✓ En cola — se ejecuta en unos minutos' : 'Error: ' + (d.error || 'desconocido');
+      document.getElementById('accionStatus').textContent = d.ok ? '✓ Queued — runs in a few minutes' : 'Error: ' + (d.error || 'desconocido');
       btn.style.opacity = '1';
     })
     .catch(e => {
