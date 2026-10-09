@@ -1,119 +1,134 @@
 {% extends "base.html" %}
 {% block content %}
 <style>
-.admin-card { background: #141a2b; border: 1px solid #2a3350; border-radius: 16px; padding: 20px; text-decoration: none; color: #fff; display: flex; flex-direction: column; height: 100%; box-sizing: border-box; }
-.admin-card:hover { border-color: #c9a227; }
-.admin-card .icon { font-size: 2rem; margin-bottom: 8px; }
-.admin-card h3 { margin: 0 0 6px; font-size: 1.1rem; }
-.admin-card p { margin: 0; font-size: 0.85rem; color: #9aa3b8; flex-grow: 1; }
-.admin-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 18px; }
-.admin-stat { background: #141a2b; border: 1px solid #2a3350; border-radius: 16px; padding: 18px; text-align: center; }
-.admin-stat .num { font-size: 2rem; font-weight: 800; color: #fff; }
-.admin-stat .lbl { font-size: 0.8rem; color: #9aa3b8; margin-top: 4px; }
-.admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-/* Chat embebido */
-
-
-
-.chat-msg.mine { align-self: flex-end; background: #1a6fd4; color: #fff; border-bottom-right-radius: 4px; }
-.chat-msg.theirs { align-self: flex-start; background: #1e2538; color: #fff; border-bottom-left-radius: 4px; }
-.chat-msg img { max-width: 100%; border-radius: 8px; margin-top: 6px; }
-
-.chat-input-area input[type="text"] { flex: 1; background: #0f1420; border: 1px solid #2a3350; border-radius: 999px; padding: 10px 16px; color: #fff; font-size: 0.9rem; outline: none; }
-.chat-input-area input[type="text"]:focus { border-color: #c9a227; }
-
-.chat-btn:hover { opacity: 0.9; }
-
-.chat-attach:hover { border-color: #c9a227; }
-
-.chat-preview img { width: 60px; height: 60px; object-fit: cover; border-radius: 8px; border: 1px solid #2a3350; }
+.adm-wrap { max-width: 640px; margin: 0 auto; }
+.adm-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.adm-header h1 { margin: 0; font-size: 1.6rem; font-weight: 800; }
+.adm-header .badge { font-size: 10px; font-weight: 800; letter-spacing: 2px; color: #c9a227; }
+.adm-link { display: inline-block; margin-top: 8px; padding: 7px 14px; background: #1a2036; border: 1px solid #2a3350; color: #fff; font-weight: 600; font-size: 12px; border-radius: 999px; text-decoration: none; }
+.adm-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+.adm-stat { background: linear-gradient(135deg, #161d31, #101625); border: 1px solid #2a3350; border-radius: 14px; padding: 16px; text-align: center; text-decoration: none; display: block; transition: border-color .2s; }
+.adm-stat:hover { border-color: #c9a227; }
+.adm-stat .num { font-size: 1.9rem; font-weight: 800; color: #fff; line-height: 1; }
+.adm-stat .lbl { font-size: 0.75rem; color: #9aa3b8; margin-top: 6px; font-weight: 600; letter-spacing: .5px; }
+.adm-stat.gold { border-color: rgba(201,162,39,.5); }
+.adm-stat.gold .num { color: #c9a227; }
+.adm-card { background: #121828; border: 1px solid #232c47; border-radius: 14px; padding: 18px; margin-bottom: 14px; }
+.adm-card.gold-border { border: 1.5px solid #c9a227; }
+.adm-card h3 { margin: 0; font-size: 1.05rem; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+.adm-card .sub { margin: 4px 0 0; font-size: 0.82rem; color: #8b94a9; }
+.adm-play { background: #0d1322; border: 1px solid #232c47; border-radius: 10px; padding: 12px; margin-top: 10px; }
+.adm-play .top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.adm-play .pick { font-weight: 700; font-size: 0.95rem; }
+.adm-play .meta { font-size: 0.78rem; color: #8b94a9; margin-top: 5px; }
+.adm-play .ticket-ok { color: #00e07f; font-size: 0.78rem; margin-top: 4px; font-weight: 600; }
+.badge-lvl { font-size: 0.68rem; font-weight: 800; border-radius: 999px; padding: 4px 10px; white-space: nowrap; }
+.badge-elite { background: #c9a227; color: #0b0e14; }
+.badge-gold { background: #2a3350; color: #fff; }
+.adm-pending { margin-top: 12px; padding: 14px; background: #0d1322; border: 1px dashed #3a4560; border-radius: 10px; text-align: center; }
+.adm-pending .t { color: #c9a227; font-weight: 700; font-size: 0.9rem; }
+.adm-pending .s { font-size: 0.8rem; color: #8b94a9; margin-top: 4px; }
+.btn-upload { display: block; text-align: center; background: #c9a227; color: #0b0e14; font-weight: 800; border-radius: 12px; padding: 15px; cursor: pointer; font-size: 1rem; margin-top: 12px; transition: opacity .2s; }
+.btn-upload:hover { opacity: .92; }
+.btn-send { display: none; width: 100%; margin-top: 10px; background: #00e07f; color: #0b0e14; border: none; border-radius: 12px; padding: 13px; font-weight: 800; font-size: 1rem; cursor: pointer; }
+.adm-preview { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+.adm-preview img { width: 64px; height: 64px; object-fit: cover; border-radius: 8px; border: 1px solid #2a3350; }
+.adm-working { display: none; margin-top: 12px; background: #0d1322; border: 1px solid #c9a227; border-radius: 12px; padding: 14px; }
+.adm-working .row { display: flex; gap: 12px; align-items: flex-start; }
+.adm-working video { width: 72px; height: 72px; border-radius: 50%; object-fit: cover; border: 2px solid #c9a227; flex-shrink: 0; }
+.adm-working .title { color: #c9a227; font-weight: 700; font-size: 0.9rem; }
+.adm-tasks { margin-top: 8px; display: flex; flex-direction: column; gap: 5px; font-size: 0.82rem; }
+.adm-notif { display: none; margin-top: 12px; background: #00e07f; color: #0b0e14; border-radius: 12px; padding: 13px; font-weight: 700; text-align: center; }
+.adm-actions { display: flex; gap: 10px; margin-top: 12px; }
+.adm-actions button { flex: 1; padding: 13px; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 0.9rem; }
+.btn-publish { background: #0d1322; border: 1px solid #00e07f; color: #fff; }
+.btn-email { background: #0d1322; border: 1px solid #2a3350; color: #fff; }
+@keyframes popIn { from { transform: scale(.92); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.adm-notif.show { display: block; animation: popIn .25s; }
 </style>
 
-<div style="margin-bottom: 18px;">
-  <p style="font-size: 11px; font-weight: 800; letter-spacing: 2px; color: #c9a227; margin: 0;">ADMIN</p>
-  <h1 style="margin: 6px 0 0; font-size: 1.8rem;">Dashboard</h1>
-  <a href="{{ url_for('home') }}" style="display:inline-block;margin-top:10px;padding:8px 16px;background:#1a2036;border:1px solid #2a3350;color:#fff;font-weight:700;font-size:13px;border-radius:999px;text-decoration:none;">← Member Dashboard</a>
-</div>
+<div class="adm-wrap">
+  <div class="adm-header">
+    <div>
+      <div class="badge">ADMIN</div>
+      <h1>Dashboard</h1>
+      <a class="adm-link" href="{{ url_for('home') }}">← Member Dashboard</a>
+    </div>
+  </div>
 
-<!-- 1 y 2: Miembros y Platinum -->
-<div class="admin-stats">
-  <a href="/admin/miembros" style="text-decoration:none;">
-    <div class="admin-stat">
+  <div class="adm-stats">
+    <a class="adm-stat" href="/admin/miembros">
       <div class="num">{{ stats.miembros }}</div>
-      <div class="lbl">👥 Members</div>
-    </div>
-  </a>
-  <a href="/admin/miembros" style="text-decoration:none;">
-    <div class="admin-stat" style="border-color:#c9a227;">
-      <div class="num" style="color:#c9a227;">{{ stats.platinum }}</div>
-      <div class="lbl">⭐ Platinum paying</div>
-    </div>
-  </a>
-</div>
-
-<!-- Jugadas de hoy -->
-<div class="admin-card" style="margin-bottom:14px;border-color:#c9a227;">
-  <div class="icon">🎯</div>
-  <h3>Today's Plays</h3>
-  {% if selecciones or plays_hoy %}
-  <p>Here are today's selections</p>
-  <div style="margin-top:12px;display:flex;flex-direction:column;gap:10px;">
-  {% for s in selecciones %}
-    <div style="background:#0f1420;border:1px solid #2a3350;border-radius:12px;padding:12px;">
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;">
-        <b style="font-size:0.95rem;">{{ s.pick or s.equipo }}</b>
-        <span style="background:{% if s.nivel == 'ELITE' %}#c9a227{% else %}#2a3350{% endif %};color:{% if s.nivel == 'ELITE' %}#0b0e14{% else %}#fff{% endif %};font-size:0.7rem;font-weight:800;border-radius:999px;padding:4px 10px;white-space:nowrap;">{% if s.nivel == 'ELITE' %}⭐ Platinum{% else %}⚪ Gold{% endif %}</span>
-      </div>
-      <div style="font-size:0.8rem;color:#9aa3b8;margin-top:6px;">{{ s.game or '' }}{% if s.game_time_et %} · {{ s.game_time_et }}{% endif %}{% if s.edge %} · Edge {{ s.edge }}%{% endif %}</div>
-      {% if s.comprobante %}<div style="color:#00e07f;font-size:0.8rem;margin-top:4px;">📸 Ticket recibido</div>{% endif %}
-    </div>
-  {% endfor %}
-  {% for p in plays_hoy %}
-    <div style="background:#0f1420;border:1px solid #00e07f;border-radius:12px;padding:12px;">
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;">
-        <b style="font-size:0.95rem;">{{ p.equipo or p.pick }}</b>
-        <span style="background:{% if p.nivel == 'ELITE' %}#c9a227{% else %}#2a3350{% endif %};color:{% if p.nivel == 'ELITE' %}#0b0e14{% else %}#fff{% endif %};font-size:0.7rem;font-weight:800;border-radius:999px;padding:4px 10px;white-space:nowrap;">{% if p.nivel == 'ELITE' %}⭐ Platinum{% else %}⚪ Gold{% endif %}</span>
-      </div>
-      <div style="font-size:0.8rem;color:#9aa3b8;margin-top:6px;">{{ p.pick }}{% if p.game %} · {{ p.game }}{% endif %}{% if p.game_time_et %} · {{ p.game_time_et }}{% endif %}</div>
-      {% if p.comprobante %}<div style="color:#00e07f;font-size:0.8rem;margin-top:4px;">📸 Ticket recibido</div>{% endif %}
-    </div>
-  {% endfor %}
+      <div class="lbl">👥 MEMBERS</div>
+    </a>
+    <a class="adm-stat gold" href="/admin/miembros">
+      <div class="num">{{ stats.platinum }}</div>
+      <div class="lbl">⭐ PLATINUM PAYING</div>
+    </a>
   </div>
-  {% else %}
-  <p style="color:#c9a227;font-weight:700;">⏳ Pending — no plays yet</p>
-  <p style="font-size:0.85rem;">The selections will appear here when they're ready.</p>
-  {% endif %}
-</div>
 
-<!-- 3: Subir tickets -->
-<div class="admin-card" style="margin-bottom:14px;border:2px solid #c9a227;">
-  <div class="icon">🎫</div>
-  <h3>Upload Tickets</h3>
-  <p>Upload the original tickets to publish</p>
-  <div style="margin-top:12px;">
-    <label for="ticketUpload" style="display:block;text-align:center;background:#c9a227;color:#0b0e14;font-weight:800;border-radius:12px;padding:14px;cursor:pointer;font-size:1rem;">
-      📤 Upload Tickets
-    </label>
+  <div class="adm-card" style="border-color: rgba(201,162,39,.45);">
+    <h3>🎯 Today's Plays</h3>
+    {% if selecciones or plays_hoy %}
+    <p class="sub">Today's selections</p>
+    {% for s in selecciones %}
+    <div class="adm-play">
+      <div class="top">
+        <span class="pick">{{ s.pick or s.equipo }}</span>
+        <span class="badge-lvl {% if s.nivel == 'ELITE' %}badge-elite{% else %}badge-gold{% endif %}">{% if s.nivel == 'ELITE' %}⭐ Platinum{% else %}⚪ Gold{% endif %}</span>
+      </div>
+      <div class="meta">{{ s.game or '' }}{% if s.game_time_et %} · {{ s.game_time_et }}{% endif %}{% if s.edge %} · Edge {{ s.edge }}%{% endif %}</div>
+      {% if s.comprobante %}<div class="ticket-ok">📸 Ticket received</div>{% endif %}
+    </div>
+    {% endfor %}
+    {% for p in plays_hoy %}
+    <div class="adm-play" style="border-color: rgba(0,224,127,.4);">
+      <div class="top">
+        <span class="pick">{{ p.equipo or p.pick }}</span>
+        <span class="badge-lvl {% if p.nivel == 'ELITE' %}badge-elite{% else %}badge-gold{% endif %}">{% if p.nivel == 'ELITE' %}⭐ Platinum{% else %}⚪ Gold{% endif %}</span>
+      </div>
+      <div class="meta">{{ p.pick }}{% if p.game %} · {{ p.game }}{% endif %}{% if p.game_time_et %} · {{ p.game_time_et }}{% endif %}</div>
+      {% if p.comprobante %}<div class="ticket-ok">📸 Ticket received</div>{% endif %}
+    </div>
+    {% endfor %}
+    {% else %}
+    <div class="adm-pending">
+      <div class="t">⏳ Pending — no plays yet</div>
+      <div class="s">Selections will appear here when they're ready.</div>
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="adm-card gold-border">
+    <h3>🎫 Upload Tickets</h3>
+    <p class="sub">Upload the original tickets to publish</p>
+    <label class="btn-upload" for="ticketUpload">📤 Upload Tickets</label>
     <input type="file" id="ticketUpload" accept="image/*" multiple style="display:none;">
-    <div id="uploadPreview" style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;"></div>
-    <button id="sendTicketsBtn" onclick="sendTickets()" style="display:none;width:100%;margin-top:10px;background:#00e07f;color:#0b0e14;border:none;border-radius:12px;padding:12px;font-weight:800;font-size:1rem;cursor:pointer;">Send Tickets</button>
-  </div>
-  <div id="ticketWorking" style="display:none;margin-top:12px;background:#1a2036;border:1px solid #c9a227;border-radius:12px;padding:16px;">
-    <div style="display:flex;gap:14px;align-items:flex-start;">
-      <video src="/static/img/muse-working.mp4" autoplay loop muted playsinline style="width:90px;height:90px;border-radius:50%;object-fit:cover;border:2px solid #c9a227;flex-shrink:0;"></video>
-      <div style="flex:1;">
-        <div style="color:#c9a227;font-weight:700;">Muse is working...</div>
-        <div id="taskChecklist" style="margin-top:8px;display:flex;flex-direction:column;gap:6px;font-size:0.85rem;"></div>
+    <div class="adm-preview" id="uploadPreview"></div>
+    <button class="btn-send" id="sendTicketsBtn" onclick="sendTickets()">Send Tickets</button>
+    <div class="adm-working" id="ticketWorking">
+      <div class="row">
+        <video src="/static/img/muse-working.mp4" autoplay loop muted playsinline></video>
+        <div style="flex:1;">
+          <div class="title">Muse is working...</div>
+          <div class="adm-tasks" id="taskChecklist"></div>
+        </div>
       </div>
     </div>
+    <div class="adm-notif" id="ticketNotif">✓ Ready — tickets uploaded and cards updated</div>
   </div>
-  <div id="ticketNotif" style="display:none;margin-top:12px;background:#00e07f;color:#0b0e14;border-radius:12px;padding:12px;font-weight:700;text-align:center;animation:popIn 0.3s;">
-    ✓ Ready — tickets uploaded and cards updated
+
+  <div class="adm-card">
+    <h3>⚡ Quick Actions</h3>
+    <p class="sub">Publish and send with one tap</p>
+    <div class="adm-actions">
+      <button class="btn-publish" onclick="ejecutarAccion('publish-plays', this)">🚀 Publish plays</button>
+      <button class="btn-email" onclick="ejecutarAccion('email-jugadas', this)">📧 Email plays</button>
+    </div>
+    <p id="accionStatus" style="margin:8px 0 0;font-size:0.8rem;color:#8b94a9;"></p>
   </div>
 </div>
-<style>
-@keyframes working { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
-@keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }</style>
+
 <script>
 let ticketFiles = [];
 document.getElementById('ticketUpload').addEventListener('change', function(e) {
@@ -123,24 +138,37 @@ document.getElementById('ticketUpload').addEventListener('change', function(e) {
   ticketFiles.forEach(f => {
     const img = document.createElement('img');
     img.src = URL.createObjectURL(f);
-    img.style.cssText = 'width:70px;height:70px;object-fit:cover;border-radius:8px;border:1px solid #2a3350;';
     preview.appendChild(img);
   });
   document.getElementById('sendTicketsBtn').style.display = ticketFiles.length ? 'block' : 'none';
 });
+function ejecutarAccion(accion, btn) {
+  btn.style.opacity = '0.5';
+  document.getElementById('accionStatus').textContent = 'Sending...';
+  fetch('/admin/accion/' + accion, {method: 'POST'})
+    .then(r => r.json())
+    .then(d => {
+      document.getElementById('accionStatus').textContent = d.ok ? '✓ Queued — runs in a few minutes' : 'Error: ' + (d.error || 'unknown');
+      btn.style.opacity = '1';
+    })
+    .catch(e => {
+      document.getElementById('accionStatus').textContent = 'Connection error';
+      btn.style.opacity = '1';
+    });
+}
 function sendTickets() {
   if (!ticketFiles.length) return;
   const btn = document.getElementById('sendTicketsBtn');
   const total = ticketFiles.length;
   btn.style.display = 'none';
-  document.getElementById('ticketNotif').style.display = 'none';
+  document.getElementById('ticketNotif').classList.remove('show');
   document.getElementById('ticketWorking').style.display = 'block';
   const checklist = document.getElementById('taskChecklist');
   checklist.innerHTML = '';
   const sleep = ms => new Promise(r => setTimeout(r, ms));
   const addTask = (text) => {
     const div = document.createElement('div');
-    div.style.cssText = 'color:#9aa3b8;';
+    div.style.color = '#8b94a9';
     div.innerHTML = '<span style="display:inline-block;width:20px;">⏳</span> ' + text;
     checklist.appendChild(div);
     return div;
@@ -151,9 +179,9 @@ function sendTickets() {
       const o = ctx.createOscillator(), g = ctx.createGain();
       o.connect(g); g.connect(ctx.destination);
       o.frequency.value = 1200; o.type = 'sine';
-      g.gain.setValueAtTime(0.25, ctx.currentTime);
-      g.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15);
-      o.start(ctx.currentTime); o.stop(ctx.currentTime + 0.15);
+      g.gain.setValueAtTime(0.22, ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.14);
+      o.start(ctx.currentTime); o.stop(ctx.currentTime + 0.14);
     } catch(e) {}
   };
   const completeTask = (div) => {
@@ -162,7 +190,6 @@ function sendTickets() {
     beep();
   };
   (async () => {
-    // Tiempo real: como cuando me mandas el ticket por el chat (3-5 min)
     for (let i = 0; i < total; i++) {
       let task = addTask('Receiving ticket ' + (i+1) + ' of ' + total + '...');
       const formData = new FormData();
@@ -187,14 +214,14 @@ function sendTickets() {
     await sleep(20000);
     completeTask(task);
     document.getElementById('ticketWorking').style.display = 'none';
-    document.getElementById('ticketNotif').style.display = 'block';
+    document.getElementById('ticketNotif').classList.add('show');
     try {
       const ctx = new (window.AudioContext || window.webkitAudioContext)();
       const play = (f, t, d) => {
         const o = ctx.createOscillator(), g = ctx.createGain();
         o.connect(g); g.connect(ctx.destination);
         o.frequency.value = f; o.type = 'sine';
-        g.gain.setValueAtTime(0.3, ctx.currentTime + t);
+        g.gain.setValueAtTime(0.28, ctx.currentTime + t);
         g.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + t + d);
         o.start(ctx.currentTime + t); o.stop(ctx.currentTime + t + d);
       };
@@ -203,45 +230,19 @@ function sendTickets() {
     document.getElementById('uploadPreview').innerHTML = '';
     document.getElementById('ticketUpload').value = '';
     ticketFiles = [];
-    // Reset completo de la sección
-    document.getElementById('uploadPreview').innerHTML = '';
-    document.getElementById('ticketUpload').value = '';
-    ticketFiles = [];
-    const sendBtn = document.getElementById('sendTicketsBtn');
-    sendBtn.style.display = 'none';
-    sendBtn.textContent = 'Send Tickets';
-    setTimeout(() => { document.getElementById('ticketNotif').style.display = 'none'; }, 8000);
+    btn.textContent = 'Send Tickets';
+    setTimeout(() => { document.getElementById('ticketNotif').classList.remove('show'); }, 8000);
   })().catch(e => {
     document.getElementById('ticketWorking').style.display = 'none';
     btn.style.display = 'block';
     btn.textContent = 'Error — try again';
   });
 }
-</script>
-
-<!-- 4: Acciones rápidas -->
-<div class="admin-card" style="margin-bottom:14px;">
-  <div class="icon">⚡</div>
-  <h3>Quick Actions</h3>
-  <p>Publish and send with one tap</p>
-  <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;">
-    <button onclick="ejecutarAccion('publish-plays', this)" style="flex:1;min-width:140px;background:#0f1420;border:1px solid #00e07f;color:#fff;border-radius:12px;padding:12px;font-weight:700;cursor:pointer;">🚀 Publish plays</button>
-    <button onclick="ejecutarAccion('email-jugadas', this)" style="flex:1;min-width:140px;background:#0f1420;border:1px solid #2a3350;color:#fff;border-radius:12px;padding:12px;font-weight:700;cursor:pointer;">📧 Email plays</button>
-  </div>
-  <p id="accionStatus" style="margin-top:8px;font-size:0.8rem;"></p>
-</div>
-
-
-<script>
-// Auto-reset a medianoche: recarga la página para limpiar todo
 (function() {
-  function msToMidnight() {
-    const now = new Date();
-    const midnight = new Date(now);
-    midnight.setHours(24, 0, 0, 0);
-    return midnight - now;
-  }
-  setTimeout(() => { location.reload(); }, msToMidnight());
+  const now = new Date();
+  const midnight = new Date(now);
+  midnight.setHours(24, 0, 0, 0);
+  setTimeout(() => { location.reload(); }, midnight - now);
 })();
 </script>
 {% endblock %}
