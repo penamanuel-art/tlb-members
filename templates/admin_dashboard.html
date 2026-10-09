@@ -134,22 +134,25 @@ function sendTickets() {
   const stage = document.getElementById('workingStage');
   const sleep = ms => new Promise(r => setTimeout(r, ms));
   (async () => {
+    // Tiempo real: como cuando me mandas el ticket por el chat (3-5 min)
     for (let i = 0; i < total; i++) {
-      stage.textContent = 'Uploading ticket ' + (i+1) + ' of ' + total + '...';
+      stage.textContent = 'Receiving ticket ' + (i+1) + ' of ' + total + '...';
       const formData = new FormData();
       formData.append('mensaje', '');
       formData.append('tickets', ticketFiles[i], 'ticket-' + Date.now() + '-' + i + '.jpg');
-      await sleep(800);
       const resp = await fetch('/admin/chat-mensaje', {method: 'POST', body: formData});
       const d = await resp.json();
       if (!d.ok) throw new Error('upload failed');
-      stage.textContent = 'Saving ticket ' + (i+1) + '...';
-      await sleep(1000);
+      await sleep(15000);
+      stage.textContent = 'Reviewing ticket ' + (i+1) + ' — checking team and odds...';
+      await sleep(45000);
+      stage.textContent = 'Verifying ticket ' + (i+1) + '...';
+      await sleep(30000);
       stage.textContent = 'Updating card ' + (i+1) + '...';
-      await sleep(1500);
+      await sleep(40000);
     }
-    stage.textContent = 'Verifying everything...';
-    await sleep(1200);
+    stage.textContent = 'Verifying all cards updated...';
+    await sleep(20000);
     document.getElementById('ticketWorking').style.display = 'none';
     document.getElementById('ticketNotif').style.display = 'block';
     try {
