@@ -125,19 +125,29 @@ document.getElementById('chatFile').addEventListener('change', function(e) {
     preview.appendChild(img);
   });
 });
-// Pegar imágenes con Ctrl+V
-document.getElementById('chatText').addEventListener('paste', function(e) {
-  const items = e.clipboardData.items;
+// Pegar imágenes en cualquier parte del chat (como en el chat de Muse)
+function handlePaste(e) {
+  const items = (e.clipboardData || e.originalEvent.clipboardData).items;
   for (let i = 0; i < items.length; i++) {
     if (items[i].type.indexOf('image') !== -1) {
+      e.preventDefault();
       const blob = items[i].getAsFile();
       chatFiles.push(blob);
       const img = document.createElement('img');
       img.src = URL.createObjectURL(blob);
       document.getElementById('chatPreview').appendChild(img);
+      const msgs = document.getElementById('chatMessages');
+      const hint = document.createElement('div');
+      hint.className = 'chat-msg mine';
+      hint.style.opacity = '0.7';
+      hint.textContent = '📸 Imagen pegada — dale ➤ para enviar';
+      msgs.appendChild(hint);
+      msgs.scrollTop = msgs.scrollHeight;
+      setTimeout(() => hint.remove(), 3000);
     }
   }
-});
+}
+document.querySelector('.chat-box').addEventListener('paste', handlePaste);
 function sendChatMsg() {
   const text = document.getElementById('chatText').value.trim();
   if (!text && chatFiles.length === 0) return;
