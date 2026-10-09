@@ -4783,6 +4783,16 @@ def admin_dashboard():
                            plays_hoy=plays)
 
 
+@app.route("/admin/wgt-tracker")
+@login_required
+def admin_wgt_tracker():
+    """Tracker privado de WGT (5 meses) — solo Alex, en el Admin Dashboard."""
+    user = current_user()
+    if not (is_admin_for(user) or is_alex_member(user)):
+        flash("You don't have permission to view this page.", "error")
+        return redirect(url_for("home"))
+    return render_template("admin_wgt_tracker.html")
+
 @app.route("/admin/subir-ticket", methods=["GET", "POST"])
 @login_required
 def admin_subir_ticket():
