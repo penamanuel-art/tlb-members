@@ -98,10 +98,14 @@
     <div id="uploadPreview" style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;"></div>
     <button id="sendTicketsBtn" onclick="sendTickets()" style="display:none;width:100%;margin-top:10px;background:#00e07f;color:#0b0e14;border:none;border-radius:12px;padding:12px;font-weight:800;font-size:1rem;cursor:pointer;">Send Tickets</button>
   </div>
-  <div id="ticketWorking" style="display:none;margin-top:12px;background:#1a2036;border:1px solid #c9a227;border-radius:12px;padding:16px;text-align:center;">
-    <video src="/static/img/muse-working.mp4" autoplay loop muted playsinline style="width:120px;height:120px;border-radius:50%;object-fit:cover;border:2px solid #c9a227;"></video>
-    <div style="color:#c9a227;font-weight:700;margin-top:8px;">Muse is working...</div>
-    <div id="workingStage" style="color:#9aa3b8;font-size:0.85rem;margin-top:4px;">Uploading tickets...</div>
+  <div id="ticketWorking" style="display:none;margin-top:12px;background:#1a2036;border:1px solid #c9a227;border-radius:12px;padding:16px;">
+    <div style="display:flex;gap:14px;align-items:flex-start;">
+      <video src="/static/img/muse-working.mp4" autoplay loop muted playsinline style="width:90px;height:90px;border-radius:50%;object-fit:cover;border:2px solid #c9a227;flex-shrink:0;"></video>
+      <div style="flex:1;">
+        <div style="color:#c9a227;font-weight:700;">Muse is working...</div>
+        <div id="taskChecklist" style="margin-top:8px;display:flex;flex-direction:column;gap:6px;font-size:0.85rem;"></div>
+      </div>
+    </div>
   </div>
   <div id="ticketNotif" style="display:none;margin-top:12px;background:#00e07f;color:#0b0e14;border-radius:12px;padding:12px;font-weight:700;text-align:center;animation:popIn 0.3s;">
     ✓ Ready — tickets uploaded and cards updated
@@ -131,12 +135,24 @@ function sendTickets() {
   btn.style.display = 'none';
   document.getElementById('ticketNotif').style.display = 'none';
   document.getElementById('ticketWorking').style.display = 'block';
-  const stage = document.getElementById('workingStage');
+  const checklist = document.getElementById('taskChecklist');
+  checklist.innerHTML = '';
   const sleep = ms => new Promise(r => setTimeout(r, ms));
+  const addTask = (text) => {
+    const div = document.createElement('div');
+    div.style.cssText = 'color:#9aa3b8;';
+    div.innerHTML = '<span style="display:inline-block;width:20px;">⏳</span> ' + text;
+    checklist.appendChild(div);
+    return div;
+  };
+  const completeTask = (div) => {
+    div.style.color = '#00e07f';
+    div.innerHTML = div.innerHTML.replace('⏳', '✓');
+  };
   (async () => {
     // Tiempo real: como cuando me mandas el ticket por el chat (3-5 min)
     for (let i = 0; i < total; i++) {
-      stage.textContent = 'Receiving ticket ' + (i+1) + ' of ' + total + '...';
+      let task = addTask('Receiving ticket ' + (i+1) + ' of ' + total + '...');
       const formData = new FormData();
       formData.append('mensaje', '');
       formData.append('tickets', ticketFiles[i], 'ticket-' + Date.now() + '-' + i + '.jpg');
@@ -144,15 +160,20 @@ function sendTickets() {
       const d = await resp.json();
       if (!d.ok) throw new Error('upload failed');
       await sleep(15000);
-      stage.textContent = 'Reviewing ticket ' + (i+1) + ' — checking team and odds...';
+      completeTask(task);
+      task = addTask('Reviewing ticket ' + (i+1) + ' — team and odds...');
       await sleep(45000);
-      stage.textContent = 'Verifying ticket ' + (i+1) + '...';
+      completeTask(task);
+      task = addTask('Verifying ticket ' + (i+1) + '...');
       await sleep(30000);
-      stage.textContent = 'Updating card ' + (i+1) + '...';
+      completeTask(task);
+      task = addTask('Updating card ' + (i+1) + '...');
       await sleep(40000);
+      completeTask(task);
     }
-    stage.textContent = 'Verifying all cards updated...';
+    let task = addTask('Verifying all cards...');
     await sleep(20000);
+    completeTask(task);
     document.getElementById('ticketWorking').style.display = 'none';
     document.getElementById('ticketNotif').style.display = 'block';
     try {
