@@ -5035,7 +5035,7 @@ def api_values_record():
 @app.route("/admin/chat-mensaje", methods=["POST"])
 @login_required
 def admin_chat_mensaje():
-    """Alex me escribe desde la ventanita del admin: guarda mensaje + tickets."""
+    """Alex sube tickets desde el admin: se guardan y se adjuntan a las jugadas de hoy."""
     import os, time, json as _json
     from datetime import datetime
     from werkzeug.utils import secure_filename
@@ -5044,18 +5044,39 @@ def admin_chat_mensaje():
     if not (is_admin_for(user) or is_alex_member(user)):
         return jsonify({"ok": False, "error": "no autorizado"}), 403
     mensaje = request.form.get("mensaje", "").strip()
-    # Guardar tickets
+    hoy = datetime.now().strftime("%Y-%m-%d")
+    ts = datetime.now().strftime("%Y%m%d-%H%M%S")
+    # Guardar tickets en comprobantes (formato del flujo oficial)
+    comp_dir = os.path.join(os.path.dirname(__file__), "static", "img", "comprobantes")
+    os.makedirs(comp_dir, exist_ok=True)
     chat_dir = os.path.join(os.path.dirname(__file__), "data", "admin-chat")
     os.makedirs(chat_dir, exist_ok=True)
-    ts = datetime.now().strftime("%Y%m%d-%H%M%S")
     guardados = []
-    for f in request.files.getlist("tickets"):
+    for i, f in enumerate(request.files.getlist("tickets")):
         if f and f.filename:
-            fn = secure_filename(f.filename) or "ticket.jpg"
-            nombre = f"{ts}-{fn}"
-            f.save(os.path.join(chat_dir, nombre))
-            guardados.append(nombre)
-    # Log para que el watcher lo recoja
+            # Nombre oficial: YYYY-MM-DD-ticket-N.jpg
+            nombre = f"{hoy}-ticket-{i+1}.jpg"
+            f.save(os.path.join(comp_dir, nombre))
+            guardados.append(f"img/comprobantes/{nombre}")
+    # Auto-adjuntar a las jugadas de hoy (en orden)
+    actualizadas = 0
+    if guardados:
+        for fname in ["plays-pending.json", "plays.json"]:
+            pp = os.path.join(os.path.dirname(__file__), "data", fname)
+            try:
+                with open(pp) as _f:
+                    _data = _json.load(_f)
+                if isinstance(_data, dict) and _data.get("fecha") == hoy:
+                    _plays = _data.get("plays", [])
+                    for j, _p in enumerate(_plays):
+                        if j < len(guardados) and not _p.get("comprobante"):
+                            _p["comprobante"] = guardados[j]
+                            actualizadas += 1
+                    with open(pp, "w") as _f:
+                        _json.dump(_data, _f, indent=2)
+            except Exception:
+                pass
+    # Log para el watcher
     if mensaje or guardados:
         log_path = os.path.join(chat_dir, "mensajes.jsonl")
         with open(log_path, "a") as lf:
@@ -5063,14 +5084,15 @@ def admin_chat_mensaje():
                 "ts": ts,
                 "mensaje": mensaje,
                 "tickets": guardados,
-                "leido": False,
+                "actualizadas": actualizadas,
+                "leido": True,  # Ya procesado automáticamente
             }) + "\n")
         try:
-            log_notificacion(db, "admin_chat", "Mensaje de Alex (admin)",
-                             (mensaje[:100] if mensaje else "") + f" [{len(guardados)} ticket(s)]")
+            log_notificacion(db, "admin_chat", "Tickets de Alex procesados",
+                             f"{len(guardados)} ticket(s), {actualizadas} carta(s) actualizada(s)")
         except Exception:
             pass
-    return jsonify({"ok": True, "tickets": len(guardados)})
+    return jsonify({"ok": True, "tickets": len(guardados), "actualizadas": actualizadas})
 
 @login_required
 def admin_accion(accion):
