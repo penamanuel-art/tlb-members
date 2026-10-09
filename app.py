@@ -4893,6 +4893,43 @@ def api_tickets_pendientes():
         return jsonify({"error": str(e)}), 500
 
 
+@app.route("/api/chat-pendientes")
+def api_chat_pendientes():
+    """Mensajes del chat embebido del admin sin leer (para el cron de vigilancia)."""
+    import json as _json, os
+    if request.headers.get("X-Push-Key") != os.environ.get("PUSH_TRIGGER_KEY", ""):
+        # Fallback: leer de push-keys.env como hacen los scripts
+        try:
+            with open(os.path.join(os.path.dirname(__file__), "..", "goals",
+                                   "programa-de-apuestas-deportivas", "hidden_files",
+                                   "push-keys.env")) as _f:
+                for _line in _f:
+                    if _line.strip().startswith("PUSH_TRIGGER_KEY="):
+                        _key = _line.strip().split("=", 1)[1]
+                        break
+                else:
+                    _key = ""
+            if request.headers.get("X-Push-Key") != _key:
+                return jsonify({"error": "unauthorized"}), 401
+        except Exception:
+            return jsonify({"error": "unauthorized"}), 401
+    try:
+        log_path = os.path.join(os.path.dirname(__file__), "data", "admin-chat", "mensajes.jsonl")
+        pendientes = []
+        if os.path.exists(log_path):
+            with open(log_path) as _f:
+                for _line in _f:
+                    _line = _line.strip()
+                    if not _line:
+                        continue
+                    _m = _json.loads(_line)
+                    if not _m.get("leido"):
+                        pendientes.append(_m)
+        return jsonify({"pendientes": pendientes})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 @app.route("/api/values-record")
 def api_values_record():
     """Récord del tracker VALUE del sistema (protegido con X-Push-Key).
