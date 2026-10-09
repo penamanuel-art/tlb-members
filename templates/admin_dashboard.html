@@ -170,7 +170,14 @@ function sendTickets() {
     document.getElementById('uploadPreview').innerHTML = '';
     document.getElementById('ticketUpload').value = '';
     ticketFiles = [];
-    setTimeout(() => { document.getElementById('ticketNotif').style.display = 'none'; }, 6000);
+    // Reset completo de la sección
+    document.getElementById('uploadPreview').innerHTML = '';
+    document.getElementById('ticketUpload').value = '';
+    ticketFiles = [];
+    const sendBtn = document.getElementById('sendTicketsBtn');
+    sendBtn.style.display = 'none';
+    sendBtn.textContent = 'Send Tickets';
+    setTimeout(() => { document.getElementById('ticketNotif').style.display = 'none'; }, 8000);
   })().catch(e => {
     document.getElementById('ticketWorking').style.display = 'none';
     btn.style.display = 'block';
@@ -192,4 +199,16 @@ function sendTickets() {
 </div>
 
 
+<script>
+// Auto-reset a medianoche: recarga la página para limpiar todo
+(function() {
+  function msToMidnight() {
+    const now = new Date();
+    const midnight = new Date(now);
+    midnight.setHours(24, 0, 0, 0);
+    return midnight - now;
+  }
+  setTimeout(() => { location.reload(); }, msToMidnight());
+})();
+</script>
 {% endblock %}
