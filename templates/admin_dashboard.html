@@ -126,24 +126,43 @@ document.getElementById('chatFile').addEventListener('change', function(e) {
   });
 });
 // Pegar imágenes en cualquier parte del chat (como en el chat de Muse)
+function addPastedImage(blob) {
+  chatFiles.push(blob);
+  const img = document.createElement('img');
+  img.src = URL.createObjectURL(blob);
+  document.getElementById('chatPreview').appendChild(img);
+  const msgs = document.getElementById('chatMessages');
+  const hint = document.createElement('div');
+  hint.className = 'chat-msg mine';
+  hint.style.opacity = '0.7';
+  hint.textContent = '📸 Image pasted — tap ➤ to send';
+  msgs.appendChild(hint);
+  msgs.scrollTop = msgs.scrollHeight;
+  setTimeout(() => hint.remove(), 3000);
+}
 function handlePaste(e) {
-  const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+  const cd = e.clipboardData || (e.originalEvent && e.originalEvent.clipboardData);
+  if (!cd) return;
+  const items = cd.items;
+  // 1) Imagen directa
   for (let i = 0; i < items.length; i++) {
     if (items[i].type.indexOf('image') !== -1) {
       e.preventDefault();
-      const blob = items[i].getAsFile();
-      chatFiles.push(blob);
-      const img = document.createElement('img');
-      img.src = URL.createObjectURL(blob);
-      document.getElementById('chatPreview').appendChild(img);
-      const msgs = document.getElementById('chatMessages');
-      const hint = document.createElement('div');
-      hint.className = 'chat-msg mine';
-      hint.style.opacity = '0.7';
-      hint.textContent = '📸 Imagen pegada — dale ➤ para enviar';
-      msgs.appendChild(hint);
-      msgs.scrollTop = msgs.scrollHeight;
-      setTimeout(() => hint.remove(), 3000);
+      addPastedImage(items[i].getAsFile());
+      return;
+    }
+  }
+  // 2) HTML con <img> (copiado desde una página web)
+  for (let i = 0; i < items.length; i++) {
+    if (items[i].type === 'text/html') {
+      items[i].getAsString(function(htmlStr) {
+        const m = htmlStr.match(/<img[^>]+src=["']([^"']+)["']/i);
+        if (m && m[1]) {
+          e.preventDefault();
+          fetch(m[1]).then(r => r.blob()).then(addPastedImage).catch(() => {});
+        }
+      });
+      return;
     }
   }
 }
