@@ -4984,6 +4984,42 @@ def api_chat_marcar_leidos():
         return jsonify({"error": str(e)}), 500
 
 
+@app.route("/api/tickets-notificar")
+def api_tickets_notificar():
+    """Notificaciones de tickets procesados pendientes de avisar a Alex en el chat."""
+    import json as _json, os
+    if request.headers.get("X-Push-Key") != os.environ.get("PUSH_TRIGGER_KEY", ""):
+        try:
+            with open(os.path.join(os.path.dirname(__file__), "..", "goals",
+                                   "programa-de-apuestas-deportivas", "hidden_files",
+                                   "push-keys.env")) as _f:
+                for _line in _f:
+                    if _line.strip().startswith("PUSH_TRIGGER_KEY="):
+                        _key = _line.strip().split("=", 1)[1]
+                        break
+                else:
+                    _key = ""
+            if request.headers.get("X-Push-Key") != _key:
+                return jsonify({"error": "unauthorized"}), 401
+        except Exception:
+            return jsonify({"error": "unauthorized"}), 401
+    try:
+        notif_path = os.path.join(os.path.dirname(__file__), "data", "admin-chat", "notificar.jsonl")
+        pendientes = []
+        if os.path.exists(notif_path):
+            with open(notif_path) as _f:
+                for _line in _f:
+                    _line = _line.strip()
+                    if not _line:
+                        continue
+                    _m = _json.loads(_line)
+                    if not _m.get("notificado"):
+                        pendientes.append(_m)
+        return jsonify({"pendientes": pendientes})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 @app.route("/api/values-record")
 def api_values_record():
     """Récord del tracker VALUE del sistema (protegido con X-Push-Key).
@@ -5090,6 +5126,18 @@ def admin_chat_mensaje():
         try:
             log_notificacion(db, "admin_chat", "Tickets de Alex procesados",
                              f"{len(guardados)} ticket(s), {actualizadas} carta(s) actualizada(s)")
+        except Exception:
+            pass
+        # Guardar para notificar a Alex en el chat principal
+        try:
+            notif_path = os.path.join(os.path.dirname(__file__), "data", "admin-chat", "notificar.jsonl")
+            with open(notif_path, "a") as nf:
+                nf.write(_json.dumps({
+                    "ts": ts,
+                    "tickets": len(guardados),
+                    "actualizadas": actualizadas,
+                    "notificado": False,
+                }) + "\n")
         except Exception:
             pass
     return jsonify({"ok": True, "tickets": len(guardados), "actualizadas": actualizadas})
