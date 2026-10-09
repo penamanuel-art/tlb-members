@@ -12,20 +12,20 @@
 .admin-stat .lbl { font-size: 0.8rem; color: #9aa3b8; margin-top: 4px; }
 .admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 /* Chat embebido */
-.chat-box { background: #0f1420; border: 1px solid #2a3350; border-radius: 16px; overflow: hidden; margin-top: 12px; }
-.chat-messages { max-height: 300px; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
-.chat-msg { max-width: 85%; padding: 10px 14px; border-radius: 14px; font-size: 0.9rem; line-height: 1.4; }
+
+
+
 .chat-msg.mine { align-self: flex-end; background: #1a6fd4; color: #fff; border-bottom-right-radius: 4px; }
 .chat-msg.theirs { align-self: flex-start; background: #1e2538; color: #fff; border-bottom-left-radius: 4px; }
 .chat-msg img { max-width: 100%; border-radius: 8px; margin-top: 6px; }
-.chat-input-area { display: flex; gap: 8px; padding: 12px; border-top: 1px solid #2a3350; background: #141a2b; }
+
 .chat-input-area input[type="text"] { flex: 1; background: #0f1420; border: 1px solid #2a3350; border-radius: 999px; padding: 10px 16px; color: #fff; font-size: 0.9rem; outline: none; }
 .chat-input-area input[type="text"]:focus { border-color: #c9a227; }
-.chat-btn { background: #c9a227; color: #0b0e14; border: none; border-radius: 999px; padding: 10px 18px; font-weight: 800; font-size: 0.9rem; cursor: pointer; }
+
 .chat-btn:hover { opacity: 0.9; }
-.chat-attach { background: #1e2538; color: #fff; border: 1px solid #2a3350; border-radius: 999px; padding: 10px 14px; cursor: pointer; font-size: 1.1rem; }
+
 .chat-attach:hover { border-color: #c9a227; }
-.chat-preview { display: flex; gap: 8px; padding: 0 12px; flex-wrap: wrap; }
+
 .chat-preview img { width: 60px; height: 60px; object-fit: cover; border-radius: 8px; border: 1px solid #2a3350; }
 </style>
 
@@ -161,113 +161,5 @@ function sendTickets() {
   <p id="accionStatus" style="margin-top:8px;font-size:0.8rem;"></p>
 </div>
 
-<script>
-let chatFiles = [];
-document.getElementById('chatFile').addEventListener('change', function(e) {
-  chatFiles = Array.from(e.target.files);
-  const preview = document.getElementById('chatPreview');
-  preview.innerHTML = '';
-  chatFiles.forEach(f => {
-    const img = document.createElement('img');
-    img.src = URL.createObjectURL(f);
-    preview.appendChild(img);
-  });
-});
-// Pegar imágenes en cualquier parte del chat (como en el chat de Muse)
-function addPastedImage(blob) {
-  chatFiles.push(blob);
-  const img = document.createElement('img');
-  img.src = URL.createObjectURL(blob);
-  document.getElementById('chatPreview').appendChild(img);
-  const msgs = document.getElementById('chatMessages');
-  const hint = document.createElement('div');
-  hint.className = 'chat-msg mine';
-  hint.style.opacity = '0.7';
-  hint.textContent = '📸 Image pasted — tap ➤ to send';
-  msgs.appendChild(hint);
-  msgs.scrollTop = msgs.scrollHeight;
-  setTimeout(() => hint.remove(), 3000);
-}
-function handlePaste(e) {
-  const cd = e.clipboardData || (e.originalEvent && e.originalEvent.clipboardData);
-  if (!cd) return;
-  const items = cd.items;
-  // 1) Imagen directa
-  for (let i = 0; i < items.length; i++) {
-    if (items[i].type.indexOf('image') !== -1) {
-      e.preventDefault();
-      addPastedImage(items[i].getAsFile());
-      return;
-    }
-  }
-  // 2) HTML con <img> (copiado desde una página web)
-  for (let i = 0; i < items.length; i++) {
-    if (items[i].type === 'text/html') {
-      items[i].getAsString(function(htmlStr) {
-        const m = htmlStr.match(/<img[^>]+src=["']([^"']+)["']/i);
-        if (m && m[1]) {
-          e.preventDefault();
-          fetch(m[1]).then(r => r.blob()).then(addPastedImage).catch(() => {});
-        }
-      });
-      return;
-    }
-  }
-}
-document.querySelector('.chat-box').addEventListener('paste', handlePaste);
-function sendChatMsg() {
-  const text = document.getElementById('chatText').value.trim();
-  if (!text && chatFiles.length === 0) return;
-  const msgs = document.getElementById('chatMessages');
-  const div = document.createElement('div');
-  div.className = 'chat-msg mine';
-  div.textContent = text || '📸 Ticket';
-  chatFiles.forEach(f => {
-    const img = document.createElement('img');
-    img.src = URL.createObjectURL(f);
-    div.appendChild(img);
-  });
-  msgs.appendChild(div);
-  msgs.scrollTop = msgs.scrollHeight;
-  
-  const formData = new FormData();
-  formData.append('mensaje', text);
-  chatFiles.forEach((f, i) => formData.append('tickets', f, 'ticket-' + Date.now() + '-' + i + '.jpg'));
-  
-  fetch('/admin/chat-mensaje', {method: 'POST', body: formData})
-    .then(r => r.json())
-    .then(d => {
-      const reply = document.createElement('div');
-      reply.className = 'chat-msg theirs';
-      reply.textContent = d.ok ? '✓ Received, processing now.' : 'Error: ' + (d.error || 'desconocido');
-      msgs.appendChild(reply);
-      msgs.scrollTop = msgs.scrollHeight;
-    })
-    .catch(e => {
-      const reply = document.createElement('div');
-      reply.className = 'chat-msg theirs';
-      reply.textContent = 'Connection error.';
-      msgs.appendChild(reply);
-    });
-  
-  document.getElementById('chatText').value = '';
-  document.getElementById('chatPreview').innerHTML = '';
-  document.getElementById('chatFile').value = '';
-  chatFiles = [];
-}
-function ejecutarAccion(accion, btn) {
-  btn.style.opacity = '0.5';
-  document.getElementById('accionStatus').textContent = 'Sending...';
-  fetch('/admin/accion/' + accion, {method: 'POST'})
-    .then(r => r.json())
-    .then(d => {
-      document.getElementById('accionStatus').textContent = d.ok ? '✓ Queued — runs in a few minutes' : 'Error: ' + (d.error || 'desconocido');
-      btn.style.opacity = '1';
-    })
-    .catch(e => {
-      document.getElementById('accionStatus').textContent = 'Error de conexión';
-      btn.style.opacity = '1';
-    });
-}
-</script>
+
 {% endblock %}
