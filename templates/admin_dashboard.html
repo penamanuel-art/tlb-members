@@ -127,55 +127,52 @@ document.getElementById('ticketUpload').addEventListener('change', function(e) {
 function sendTickets() {
   if (!ticketFiles.length) return;
   const btn = document.getElementById('sendTicketsBtn');
+  const total = ticketFiles.length;
   btn.style.display = 'none';
   document.getElementById('ticketNotif').style.display = 'none';
   document.getElementById('ticketWorking').style.display = 'block';
-  document.getElementById('workingStage').textContent = 'Uploading tickets...';
-  const formData = new FormData();
-  formData.append('mensaje', '');
-  ticketFiles.forEach((f, i) => formData.append('tickets', f, 'ticket-' + Date.now() + '-' + i + '.jpg'));
-  fetch('/admin/chat-mensaje', {method: 'POST', body: formData})
-    .then(r => r.json())
-    .then(d => {
-      if (d.ok) {
-        document.getElementById('workingStage').textContent = 'Updating cards...';
-        // Pequeña pausa para que se vea el proceso
-        setTimeout(() => {
-        document.getElementById('ticketWorking').style.display = 'none';
-        // Sonido de confirmación
-        try {
-          const ctx = new (window.AudioContext || window.webkitAudioContext)();
-          const play = (f, t, d) => {
-            const o = ctx.createOscillator(), g = ctx.createGain();
-            o.connect(g); g.connect(ctx.destination);
-            o.frequency.value = f; o.type = 'sine';
-            g.gain.setValueAtTime(0.3, ctx.currentTime + t);
-            g.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + t + d);
-            o.start(ctx.currentTime + t); o.stop(ctx.currentTime + t + d);
-          };
-          play(880, 0, 0.15); play(1174, 0.15, 0.2);
-        } catch(e) {}
-        document.getElementById('ticketNotif').style.display = 'block';
-        document.getElementById('uploadPreview').innerHTML = '';
-        document.getElementById('ticketUpload').value = '';
-        ticketFiles = [];
-        btn.style.display = 'none';
-        btn.textContent = 'Send Tickets';
-        btn.disabled = false;
-        document.getElementById('ticketNotif').style.display = 'block';
-        setTimeout(() => { document.getElementById('ticketNotif').style.display = 'none'; }, 5000);
-        }, 800);
-      } else {
-        document.getElementById('ticketWorking').style.display = 'none';
-        btn.style.display = 'block';
-        btn.textContent = 'Error — try again';
-      }
-    })
-    .catch(e => {
-      document.getElementById('ticketWorking').style.display = 'none';
-      btn.style.display = 'block';
-      btn.textContent = 'Connection error — try again';
-    });
+  const stage = document.getElementById('workingStage');
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+  (async () => {
+    for (let i = 0; i < total; i++) {
+      stage.textContent = 'Uploading ticket ' + (i+1) + ' of ' + total + '...';
+      const formData = new FormData();
+      formData.append('mensaje', '');
+      formData.append('tickets', ticketFiles[i], 'ticket-' + Date.now() + '-' + i + '.jpg');
+      await sleep(800);
+      const resp = await fetch('/admin/chat-mensaje', {method: 'POST', body: formData});
+      const d = await resp.json();
+      if (!d.ok) throw new Error('upload failed');
+      stage.textContent = 'Saving ticket ' + (i+1) + '...';
+      await sleep(1000);
+      stage.textContent = 'Updating card ' + (i+1) + '...';
+      await sleep(1500);
+    }
+    stage.textContent = 'Verifying everything...';
+    await sleep(1200);
+    document.getElementById('ticketWorking').style.display = 'none';
+    document.getElementById('ticketNotif').style.display = 'block';
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const play = (f, t, d) => {
+        const o = ctx.createOscillator(), g = ctx.createGain();
+        o.connect(g); g.connect(ctx.destination);
+        o.frequency.value = f; o.type = 'sine';
+        g.gain.setValueAtTime(0.3, ctx.currentTime + t);
+        g.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + t + d);
+        o.start(ctx.currentTime + t); o.stop(ctx.currentTime + t + d);
+      };
+      play(880, 0, 0.15); play(1174, 0.15, 0.2);
+    } catch(e) {}
+    document.getElementById('uploadPreview').innerHTML = '';
+    document.getElementById('ticketUpload').value = '';
+    ticketFiles = [];
+    setTimeout(() => { document.getElementById('ticketNotif').style.display = 'none'; }, 6000);
+  })().catch(e => {
+    document.getElementById('ticketWorking').style.display = 'none';
+    btn.style.display = 'block';
+    btn.textContent = 'Error — try again';
+  });
 }
 </script>
 
