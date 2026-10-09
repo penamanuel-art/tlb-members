@@ -1,248 +1,196 @@
 {% extends "base.html" %}
 {% block content %}
 <style>
-.adm-wrap { max-width: 640px; margin: 0 auto; }
-.adm-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
-.adm-header h1 { margin: 0; font-size: 1.6rem; font-weight: 800; }
-.adm-header .badge { font-size: 10px; font-weight: 800; letter-spacing: 2px; color: #c9a227; }
-.adm-link { display: inline-block; margin-top: 8px; padding: 7px 14px; background: #1a2036; border: 1px solid #2a3350; color: #fff; font-weight: 600; font-size: 12px; border-radius: 999px; text-decoration: none; }
-.adm-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
-.adm-stat { background: linear-gradient(135deg, #161d31, #101625); border: 1px solid #2a3350; border-radius: 14px; padding: 16px; text-align: center; text-decoration: none; display: block; transition: border-color .2s; }
-.adm-stat:hover { border-color: #c9a227; }
-.adm-stat .num { font-size: 1.9rem; font-weight: 800; color: #fff; line-height: 1; }
-.adm-stat .lbl { font-size: 0.75rem; color: #9aa3b8; margin-top: 6px; font-weight: 600; letter-spacing: .5px; }
-.adm-stat.gold { border-color: rgba(201,162,39,.5); }
-.adm-stat.gold .num { color: #c9a227; }
-.adm-card { background: #121828; border: 1px solid #232c47; border-radius: 14px; padding: 18px; margin-bottom: 14px; }
-.adm-card.gold-border { border: 1.5px solid #c9a227; }
-.adm-card h3 { margin: 0; font-size: 1.05rem; font-weight: 700; display: flex; align-items: center; gap: 8px; }
-.adm-card .sub { margin: 4px 0 0; font-size: 0.82rem; color: #8b94a9; }
-.adm-play { background: #0d1322; border: 1px solid #232c47; border-radius: 10px; padding: 12px; margin-top: 10px; }
-.adm-play .top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
-.adm-play .pick { font-weight: 700; font-size: 0.95rem; }
-.adm-play .meta { font-size: 0.78rem; color: #8b94a9; margin-top: 5px; }
-.adm-play .ticket-ok { color: #00e07f; font-size: 0.78rem; margin-top: 4px; font-weight: 600; }
-.badge-lvl { font-size: 0.68rem; font-weight: 800; border-radius: 999px; padding: 4px 10px; white-space: nowrap; }
-.badge-elite { background: #c9a227; color: #0b0e14; }
-.badge-gold { background: #2a3350; color: #fff; }
-.adm-pending { margin-top: 12px; padding: 14px; background: #0d1322; border: 1px dashed #3a4560; border-radius: 10px; text-align: center; }
-.adm-pending .t { color: #c9a227; font-weight: 700; font-size: 0.9rem; }
-.adm-pending .s { font-size: 0.8rem; color: #8b94a9; margin-top: 4px; }
-.btn-upload { display: block; text-align: center; background: #c9a227; color: #0b0e14; font-weight: 800; border-radius: 12px; padding: 15px; cursor: pointer; font-size: 1rem; margin-top: 12px; transition: opacity .2s; }
-.btn-upload:hover { opacity: .92; }
-.btn-send { display: none; width: 100%; margin-top: 10px; background: #00e07f; color: #0b0e14; border: none; border-radius: 12px; padding: 13px; font-weight: 800; font-size: 1rem; cursor: pointer; }
-.adm-preview { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
-.adm-preview img { width: 64px; height: 64px; object-fit: cover; border-radius: 8px; border: 1px solid #2a3350; }
-.adm-working { display: none; margin-top: 12px; background: #0d1322; border: 1px solid #c9a227; border-radius: 12px; padding: 14px; }
-.adm-working .row { display: flex; gap: 12px; align-items: flex-start; }
-.adm-working video { width: 72px; height: 72px; border-radius: 50%; object-fit: cover; border: 2px solid #c9a227; flex-shrink: 0; }
-.adm-working .title { color: #c9a227; font-weight: 700; font-size: 0.9rem; }
-.adm-tasks { margin-top: 8px; display: flex; flex-direction: column; gap: 5px; font-size: 0.82rem; }
-.adm-notif { display: none; margin-top: 12px; background: #00e07f; color: #0b0e14; border-radius: 12px; padding: 13px; font-weight: 700; text-align: center; }
-.adm-actions { display: flex; gap: 10px; margin-top: 12px; }
-.adm-actions button { flex: 1; padding: 13px; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 0.9rem; }
-.btn-publish { background: #0d1322; border: 1px solid #00e07f; color: #fff; }
-.btn-email { background: #0d1322; border: 1px solid #2a3350; color: #fff; }
-@keyframes popIn { from { transform: scale(.92); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-.adm-notif.show { display: block; animation: popIn .25s; }
+:root { --gold: #c9a227; --bg: #080b14; --card: rgba(18,24,40,.72); --line: rgba(120,140,180,.14); --txt: #e8ecf4; --mut: #8b94a9; --green: #00e07f; }
+.adm { max-width: 680px; margin: 0 auto; padding: 4px 2px 40px; font-family: -apple-system, 'SF Pro', Inter, system-ui, sans-serif; }
+.adm-top { display: flex; align-items: center; justify-content: space-between; margin: 6px 0 18px; }
+.adm-top .kicker { font-size: 10px; font-weight: 800; letter-spacing: 3px; color: var(--gold); }
+.adm-top h1 { margin: 2px 0 0; font-size: 1.7rem; font-weight: 800; letter-spacing: -0.5px; }
+.adm-top .live { display: flex; align-items: center; gap: 6px; font-size: 0.72rem; color: var(--mut); font-weight: 600; }
+.adm-top .live .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 8px var(--green); animation: pulse 2s infinite; }
+@keyframes pulse { 50% { opacity: .5; } }
+.adm-back { display: inline-flex; align-items: center; gap: 6px; margin-bottom: 16px; padding: 8px 14px; background: var(--card); border: 1px solid var(--line); color: var(--txt); font-size: 0.8rem; font-weight: 600; border-radius: 999px; text-decoration: none; backdrop-filter: blur(12px); }
+.stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+.stat { position: relative; overflow: hidden; background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 18px 16px; text-align: center; text-decoration: none; backdrop-filter: blur(12px); transition: transform .15s, border-color .2s; }
+.stat:active { transform: scale(.97); }
+.stat::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--gold), transparent); opacity: 0; transition: opacity .2s; }
+.stat:hover::before { opacity: 1; }
+.stat .n { font-size: 2.1rem; font-weight: 800; color: #fff; letter-spacing: -1px; font-variant-numeric: tabular-nums; }
+.stat .l { font-size: 0.68rem; color: var(--mut); margin-top: 6px; font-weight: 700; letter-spacing: 1.5px; }
+.stat.gold .n { background: linear-gradient(135deg, #f5d76e, #c9a227); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 20px; padding: 20px; margin-bottom: 14px; backdrop-filter: blur(16px); }
+.card.hl { border: 1px solid rgba(201,162,39,.45); box-shadow: 0 0 24px rgba(201,162,39,.08); }
+.card h2 { margin: 0; font-size: 1rem; font-weight: 700; display: flex; align-items: center; gap: 8px; letter-spacing: -0.2px; }
+.card .desc { margin: 5px 0 0; font-size: 0.8rem; color: var(--mut); }
+.play { background: rgba(8,12,22,.6); border: 1px solid var(--line); border-radius: 14px; padding: 13px 14px; margin-top: 10px; }
+.play.verified { border-color: rgba(0,224,127,.35); }
+.play .row { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.play .pk { font-weight: 700; font-size: 0.94rem; }
+.play .mt { font-size: 0.76rem; color: var(--mut); margin-top: 5px; }
+.play .tk { color: var(--green); font-size: 0.76rem; margin-top: 4px; font-weight: 600; }
+.lv { font-size: 0.66rem; font-weight: 800; border-radius: 999px; padding: 5px 11px; white-space: nowrap; letter-spacing: .5px; }
+.lv.e { background: linear-gradient(135deg, #f5d76e, #c9a227); color: #0b0e14; }
+.lv.g { background: rgba(255,255,255,.1); color: #fff; border: 1px solid rgba(255,255,255,.12); }
+.empty { margin-top: 12px; padding: 18px; border: 1.5px dashed rgba(140,160,190,.25); border-radius: 14px; text-align: center; }
+.empty .a { color: var(--gold); font-weight: 700; font-size: 0.88rem; }
+.empty .b { font-size: 0.78rem; color: var(--mut); margin-top: 4px; }
+.upbtn { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 14px; background: linear-gradient(135deg, #e8c547, #c9a227); color: #0b0e14; font-weight: 800; font-size: 1rem; border-radius: 16px; padding: 16px; cursor: pointer; border: none; width: 100%; box-shadow: 0 4px 20px rgba(201,162,39,.25); transition: transform .12s, box-shadow .2s; }
+.upbtn:active { transform: scale(.98); }
+.upbtn .ic { font-size: 1.3rem; }
+.sendbtn { display: none; width: 100%; margin-top: 10px; background: var(--green); color: #06130c; border: none; border-radius: 14px; padding: 14px; font-weight: 800; font-size: 0.95rem; cursor: pointer; }
+.prev { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+.prev img { width: 62px; height: 62px; object-fit: cover; border-radius: 10px; border: 1px solid var(--line); }
+.work { display: none; margin-top: 14px; background: rgba(8,12,22,.7); border: 1px solid rgba(201,162,39,.4); border-radius: 16px; padding: 16px; }
+.work .flex { display: flex; gap: 14px; align-items: flex-start; }
+.work video { width: 76px; height: 76px; border-radius: 50%; object-fit: cover; border: 2px solid var(--gold); flex-shrink: 0; box-shadow: 0 0 16px rgba(201,162,39,.3); }
+.work .wt { color: var(--gold); font-weight: 700; font-size: 0.88rem; }
+.tasks { margin-top: 10px; display: flex; flex-direction: column; gap: 7px; font-size: 0.82rem; }
+.tasks .tk-pend { color: var(--mut); display: flex; align-items: center; gap: 8px; }
+.tasks .tk-done { color: var(--green); display: flex; align-items: center; gap: 8px; font-weight: 600; }
+.tasks .spin { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(139,148,169,.3); border-top-color: var(--gold); border-radius: 50%; animation: rot .7s linear infinite; flex-shrink: 0; }
+@keyframes rot { to { transform: rotate(360deg); } }
+.done-banner { display: none; margin-top: 14px; background: linear-gradient(135deg, #00e07f, #00b868); color: #06130c; border-radius: 16px; padding: 15px; font-weight: 800; text-align: center; font-size: 0.95rem; box-shadow: 0 4px 24px rgba(0,224,127,.3); }
+.done-banner.show { display: block; animation: pop .3s; }
+@keyframes pop { from { transform: scale(.94); opacity: 0; } }
+.qa { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+.qa button { padding: 15px 10px; border-radius: 14px; font-weight: 700; font-size: 0.88rem; cursor: pointer; border: 1px solid var(--line); background: rgba(8,12,22,.6); color: #fff; transition: transform .12s; }
+.qa button:active { transform: scale(.96); }
+.qa .pub { border-color: rgba(0,224,127,.5); }
+.qa-status { margin: 10px 0 0; font-size: 0.78rem; color: var(--mut); min-height: 1.2em; }
 </style>
 
-<div class="adm-wrap">
-  <div class="adm-header">
+<div class="adm">
+  <div class="adm-top">
     <div>
-      <div class="badge">ADMIN</div>
+      <div class="kicker">ADMIN CONSOLE</div>
       <h1>Dashboard</h1>
-      <a class="adm-link" href="{{ url_for('home') }}">← Member Dashboard</a>
     </div>
+    <div class="live"><span class="dot"></span>LIVE</div>
+  </div>
+  <a class="adm-back" href="{{ url_for('home') }}">← Member view</a>
+
+  <div class="stats">
+    <a class="stat" href="/admin/miembros">
+      <div class="n">{{ stats.miembros }}</div>
+      <div class="l">👥 MEMBERS</div>
+    </a>
+    <a class="stat gold" href="/admin/miembros">
+      <div class="n">{{ stats.platinum }}</div>
+      <div class="l">⭐ PLATINUM</div>
+    </a>
   </div>
 
-  <div class="adm-stats">
-    <a class="adm-stat" href="/admin/miembros">
-      <div class="num">{{ stats.miembros }}</div>
-      <div class="lbl">👥 MEMBERS</div>
-    </a>
-    <a class="adm-stat gold" href="/admin/miembros">
-      <div class="num">{{ stats.platinum }}</div>
-      <div class="lbl">⭐ PLATINUM PAYING</div>
-    </a>
-  </div>
-
-  <div class="adm-card" style="border-color: rgba(201,162,39,.45);">
-    <h3>🎯 Today's Plays</h3>
+  <div class="card hl">
+    <h2>🎯 Today's Plays</h2>
     {% if selecciones or plays_hoy %}
-    <p class="sub">Today's selections</p>
+    <p class="desc">Live selections</p>
     {% for s in selecciones %}
-    <div class="adm-play">
-      <div class="top">
-        <span class="pick">{{ s.pick or s.equipo }}</span>
-        <span class="badge-lvl {% if s.nivel == 'ELITE' %}badge-elite{% else %}badge-gold{% endif %}">{% if s.nivel == 'ELITE' %}⭐ Platinum{% else %}⚪ Gold{% endif %}</span>
+    <div class="play{% if s.comprobante %} verified{% endif %}">
+      <div class="row">
+        <span class="pk">{{ s.pick or s.equipo }}</span>
+        <span class="lv {% if s.nivel == 'ELITE' %}e{% else %}g{% endif %}">{% if s.nivel == 'ELITE' %}⭐ PLATINUM{% else %}⚪ GOLD{% endif %}</span>
       </div>
-      <div class="meta">{{ s.game or '' }}{% if s.game_time_et %} · {{ s.game_time_et }}{% endif %}{% if s.edge %} · Edge {{ s.edge }}%{% endif %}</div>
-      {% if s.comprobante %}<div class="ticket-ok">📸 Ticket received</div>{% endif %}
+      <div class="mt">{{ s.game or '' }}{% if s.game_time_et %} · {{ s.game_time_et }}{% endif %}{% if s.edge %} · {{ s.edge }}% edge{% endif %}</div>
+      {% if s.comprobante %}<div class="tk">📸 Ticket attached</div>{% endif %}
     </div>
     {% endfor %}
     {% for p in plays_hoy %}
-    <div class="adm-play" style="border-color: rgba(0,224,127,.4);">
-      <div class="top">
-        <span class="pick">{{ p.equipo or p.pick }}</span>
-        <span class="badge-lvl {% if p.nivel == 'ELITE' %}badge-elite{% else %}badge-gold{% endif %}">{% if p.nivel == 'ELITE' %}⭐ Platinum{% else %}⚪ Gold{% endif %}</span>
+    <div class="play verified">
+      <div class="row">
+        <span class="pk">{{ p.equipo or p.pick }}</span>
+        <span class="lv {% if p.nivel == 'ELITE' %}e{% else %}g{% endif %}">{% if p.nivel == 'ELITE' %}⭐ PLATINUM{% else %}⚪ GOLD{% endif %}</span>
       </div>
-      <div class="meta">{{ p.pick }}{% if p.game %} · {{ p.game }}{% endif %}{% if p.game_time_et %} · {{ p.game_time_et }}{% endif %}</div>
-      {% if p.comprobante %}<div class="ticket-ok">📸 Ticket received</div>{% endif %}
+      <div class="mt">{{ p.pick }}{% if p.game %} · {{ p.game }}{% endif %}{% if p.game_time_et %} · {{ p.game_time_et }}{% endif %}</div>
+      {% if p.comprobante %}<div class="tk">📸 Ticket attached</div>{% endif %}
     </div>
     {% endfor %}
     {% else %}
-    <div class="adm-pending">
-      <div class="t">⏳ Pending — no plays yet</div>
-      <div class="s">Selections will appear here when they're ready.</div>
+    <div class="empty">
+      <div class="a">⏳ Pending — no plays yet</div>
+      <div class="b">Selections appear here when ready.</div>
     </div>
     {% endif %}
   </div>
 
-  <div class="adm-card gold-border">
-    <h3>🎫 Upload Tickets</h3>
-    <p class="sub">Upload the original tickets to publish</p>
-    <label class="btn-upload" for="ticketUpload">📤 Upload Tickets</label>
+  <div class="card hl">
+    <h2>🎫 Upload Tickets</h2>
+    <p class="desc">Original tickets — auto-attached to today's cards</p>
+    <label class="upbtn" for="ticketUpload"><span class="ic">📤</span>Upload Tickets</label>
     <input type="file" id="ticketUpload" accept="image/*" multiple style="display:none;">
-    <div class="adm-preview" id="uploadPreview"></div>
-    <button class="btn-send" id="sendTicketsBtn" onclick="sendTickets()">Send Tickets</button>
-    <div class="adm-working" id="ticketWorking">
-      <div class="row">
+    <div class="prev" id="uploadPreview"></div>
+    <button class="sendbtn" id="sendTicketsBtn" onclick="sendTickets()">Send Tickets →</button>
+    <div class="work" id="ticketWorking">
+      <div class="flex">
         <video src="/static/img/muse-working.mp4" autoplay loop muted playsinline></video>
-        <div style="flex:1;">
-          <div class="title">Muse is working...</div>
-          <div class="adm-tasks" id="taskChecklist"></div>
+        <div style="flex:1;min-width:0;">
+          <div class="wt">Muse is working…</div>
+          <div class="tasks" id="taskChecklist"></div>
         </div>
       </div>
     </div>
-    <div class="adm-notif" id="ticketNotif">✓ Ready — tickets uploaded and cards updated</div>
+    <div class="done-banner" id="ticketNotif">✓ Ready — tickets uploaded and cards updated</div>
   </div>
 
-  <div class="adm-card">
-    <h3>⚡ Quick Actions</h3>
-    <p class="sub">Publish and send with one tap</p>
-    <div class="adm-actions">
-      <button class="btn-publish" onclick="ejecutarAccion('publish-plays', this)">🚀 Publish plays</button>
-      <button class="btn-email" onclick="ejecutarAccion('email-jugadas', this)">📧 Email plays</button>
+  <div class="card">
+    <h2>⚡ Quick Actions</h2>
+    <p class="desc">One-tap publish</p>
+    <div class="qa">
+      <button class="pub" onclick="ejecutarAccion('publish-plays', this)">🚀 Publish plays</button>
+      <button onclick="ejecutarAccion('email-jugadas', this)">📧 Email plays</button>
     </div>
-    <p id="accionStatus" style="margin:8px 0 0;font-size:0.8rem;color:#8b94a9;"></p>
+    <p class="qa-status" id="accionStatus"></p>
   </div>
 </div>
 
 <script>
 let ticketFiles = [];
-document.getElementById('ticketUpload').addEventListener('change', function(e) {
+const $ = id => document.getElementById(id);
+$('ticketUpload').addEventListener('change', e => {
   ticketFiles = Array.from(e.target.files);
-  const preview = document.getElementById('uploadPreview');
-  preview.innerHTML = '';
-  ticketFiles.forEach(f => {
-    const img = document.createElement('img');
-    img.src = URL.createObjectURL(f);
-    preview.appendChild(img);
-  });
-  document.getElementById('sendTicketsBtn').style.display = ticketFiles.length ? 'block' : 'none';
+  const pv = $('uploadPreview'); pv.innerHTML = '';
+  ticketFiles.forEach(f => { const i = document.createElement('img'); i.src = URL.createObjectURL(f); pv.appendChild(i); });
+  $('sendTicketsBtn').style.display = ticketFiles.length ? 'block' : 'none';
 });
-function ejecutarAccion(accion, btn) {
-  btn.style.opacity = '0.5';
-  document.getElementById('accionStatus').textContent = 'Sending...';
-  fetch('/admin/accion/' + accion, {method: 'POST'})
-    .then(r => r.json())
-    .then(d => {
-      document.getElementById('accionStatus').textContent = d.ok ? '✓ Queued — runs in a few minutes' : 'Error: ' + (d.error || 'unknown');
-      btn.style.opacity = '1';
-    })
-    .catch(e => {
-      document.getElementById('accionStatus').textContent = 'Connection error';
-      btn.style.opacity = '1';
-    });
+function ejecutarAccion(a, btn) {
+  btn.style.opacity = '.5';
+  $('accionStatus').textContent = 'Working…';
+  fetch('/admin/accion/' + a, {method: 'POST'}).then(r => r.json()).then(d => {
+    $('accionStatus').textContent = d.ok ? '✓ Queued — runs shortly' : 'Error: ' + (d.error || 'unknown');
+    btn.style.opacity = '1';
+  }).catch(() => { $('accionStatus').textContent = 'Connection error'; btn.style.opacity = '1'; });
 }
 function sendTickets() {
   if (!ticketFiles.length) return;
-  const btn = document.getElementById('sendTicketsBtn');
-  const total = ticketFiles.length;
+  const btn = $('sendTicketsBtn'), total = ticketFiles.length;
   btn.style.display = 'none';
-  document.getElementById('ticketNotif').classList.remove('show');
-  document.getElementById('ticketWorking').style.display = 'block';
-  const checklist = document.getElementById('taskChecklist');
-  checklist.innerHTML = '';
+  $('ticketNotif').classList.remove('show');
+  $('ticketWorking').style.display = 'block';
+  const list = $('taskChecklist'); list.innerHTML = '';
   const sleep = ms => new Promise(r => setTimeout(r, ms));
-  const addTask = (text) => {
-    const div = document.createElement('div');
-    div.style.color = '#8b94a9';
-    div.innerHTML = '<span style="display:inline-block;width:20px;">⏳</span> ' + text;
-    checklist.appendChild(div);
-    return div;
-  };
-  const beep = () => {
-    try {
-      const ctx = new (window.AudioContext || window.webkitAudioContext)();
-      const o = ctx.createOscillator(), g = ctx.createGain();
-      o.connect(g); g.connect(ctx.destination);
-      o.frequency.value = 1200; o.type = 'sine';
-      g.gain.setValueAtTime(0.22, ctx.currentTime);
-      g.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.14);
-      o.start(ctx.currentTime); o.stop(ctx.currentTime + 0.14);
-    } catch(e) {}
-  };
-  const completeTask = (div) => {
-    div.style.color = '#00e07f';
-    div.innerHTML = div.innerHTML.replace('⏳', '✓');
-    beep();
-  };
+  const mk = t => { const d = document.createElement('div'); d.className = 'tk-pend'; d.innerHTML = '<span class="spin"></span><span>' + t + '</span>'; list.appendChild(d); return d; };
+  const beep = (f) => { try { const c = new (window.AudioContext || window.webkitAudioContext)(); const o = c.createOscillator(), g = c.createGain(); o.connect(g); g.connect(c.destination); o.frequency.value = f || 1200; o.type = 'sine'; g.gain.setValueAtTime(.22, c.currentTime); g.gain.exponentialRampToValueAtTime(.01, c.currentTime + .14); o.start(c.currentTime); o.stop(c.currentTime + .14); } catch(e) {} };
+  const ok = d => { d.className = 'tk-done'; d.innerHTML = '<span>✓</span><span>' + d.querySelector('span:last-child').textContent + '</span>'; beep(); };
   (async () => {
     for (let i = 0; i < total; i++) {
-      let task = addTask('Receiving ticket ' + (i+1) + ' of ' + total + '...');
-      const formData = new FormData();
-      formData.append('mensaje', '');
-      formData.append('tickets', ticketFiles[i], 'ticket-' + Date.now() + '-' + i + '.jpg');
-      const resp = await fetch('/admin/chat-mensaje', {method: 'POST', body: formData});
-      const d = await resp.json();
-      if (!d.ok) throw new Error('upload failed');
-      await sleep(15000);
-      completeTask(task);
-      task = addTask('Reviewing ticket ' + (i+1) + ' — team and odds...');
-      await sleep(45000);
-      completeTask(task);
-      task = addTask('Verifying ticket ' + (i+1) + '...');
-      await sleep(30000);
-      completeTask(task);
-      task = addTask('Updating card ' + (i+1) + '...');
-      await sleep(40000);
-      completeTask(task);
+      let t = mk('Receiving ticket ' + (i+1) + '/' + total + '…');
+      const fd = new FormData(); fd.append('mensaje', '');
+      fd.append('tickets', ticketFiles[i], 'ticket-' + Date.now() + '-' + i + '.jpg');
+      const r = await fetch('/admin/chat-mensaje', {method: 'POST', body: fd});
+      const dj = await r.json(); if (!dj.ok) throw 0;
+      await sleep(15000); ok(t);
+      t = mk('Reviewing ticket ' + (i+1) + ' — team & odds…'); await sleep(45000); ok(t);
+      t = mk('Verifying ticket ' + (i+1) + '…'); await sleep(30000); ok(t);
+      t = mk('Updating card ' + (i+1) + '…'); await sleep(40000); ok(t);
     }
-    let task = addTask('Verifying all cards...');
-    await sleep(20000);
-    completeTask(task);
-    document.getElementById('ticketWorking').style.display = 'none';
-    document.getElementById('ticketNotif').classList.add('show');
-    try {
-      const ctx = new (window.AudioContext || window.webkitAudioContext)();
-      const play = (f, t, d) => {
-        const o = ctx.createOscillator(), g = ctx.createGain();
-        o.connect(g); g.connect(ctx.destination);
-        o.frequency.value = f; o.type = 'sine';
-        g.gain.setValueAtTime(0.28, ctx.currentTime + t);
-        g.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + t + d);
-        o.start(ctx.currentTime + t); o.stop(ctx.currentTime + t + d);
-      };
-      play(880, 0, 0.15); play(1174, 0.15, 0.2);
-    } catch(e) {}
-    document.getElementById('uploadPreview').innerHTML = '';
-    document.getElementById('ticketUpload').value = '';
-    ticketFiles = [];
-    btn.textContent = 'Send Tickets';
-    setTimeout(() => { document.getElementById('ticketNotif').classList.remove('show'); }, 8000);
-  })().catch(e => {
-    document.getElementById('ticketWorking').style.display = 'none';
-    btn.style.display = 'block';
-    btn.textContent = 'Error — try again';
-  });
+    let t = mk('Final verification…'); await sleep(20000); ok(t);
+    $('ticketWorking').style.display = 'none';
+    $('ticketNotif').classList.add('show');
+    beep(880); setTimeout(() => beep(1174), 180);
+    $('uploadPreview').innerHTML = ''; $('ticketUpload').value = ''; ticketFiles = [];
+    btn.textContent = 'Send Tickets →';
+    setTimeout(() => $('ticketNotif').classList.remove('show'), 8000);
+  })().catch(() => { $('ticketWorking').style.display = 'none'; btn.style.display = 'block'; btn.textContent = 'Error — try again'; });
 }
-(function() {
-  const now = new Date();
-  const midnight = new Date(now);
-  midnight.setHours(24, 0, 0, 0);
-  setTimeout(() => { location.reload(); }, midnight - now);
-})();
+(function() { const n = new Date(), m = new Date(n); m.setHours(24,0,0,0); setTimeout(() => location.reload(), m - n); })();
 </script>
 {% endblock %}
