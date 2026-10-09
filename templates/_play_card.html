@@ -85,7 +85,7 @@
     <div style="margin:0 0 6px;font-size:14px;font-weight:800;color:#4ade80;">Bet&nbsp;&nbsp;{{ '$%.0f' % p.stake_monto }} <span style="color:#8b93a7;font-weight:400;">({{ '%g' % p.stake_unidades }}u)</span></div>
     <div style="display:flex;justify-content:space-between;align-items:center;">
       <span class="tstc-lvl">{{ 'PLATINUM' if is_vip else ('💎 VALUE PLAY' if is_value else 'GOLD') }}</span>
-      <a class="tk-view" href="{{ url_for('ticket_view', play_id=p.id) }}">View ticket &rarr;</a>
+      <a class="tk-view" href="javascript:void(0)" onclick="document.getElementById('tstc-modal-{{ p.id }}').style.display='flex'">View ticket &rarr;</a>
     </div>
     {% if p.writeup %}
     <details class="tstc-wu" style="margin-top:8px;">
