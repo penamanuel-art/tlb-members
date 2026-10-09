@@ -52,11 +52,11 @@
 </div>
 
 <!-- Jugadas de hoy -->
-{% if selecciones or plays_hoy %}
 <div class="admin-card" style="margin-bottom:14px;border-color:#c9a227;">
   <div class="icon">🎯</div>
   <h3>Today's Plays</h3>
-  <p>You'll see them here when they're ready</p>
+  {% if selecciones or plays_hoy %}
+  <p>Here are today's selections</p>
   <div style="margin-top:12px;display:flex;flex-direction:column;gap:10px;">
   {% for s in selecciones %}
     <div style="background:#0f1420;border:1px solid #2a3350;border-radius:12px;padding:12px;">
@@ -79,8 +79,11 @@
     </div>
   {% endfor %}
   </div>
+  {% else %}
+  <p style="color:#c9a227;font-weight:700;">⏳ Pending — no plays yet</p>
+  <p style="font-size:0.85rem;">The selections will appear here when they're ready.</p>
+  {% endif %}
 </div>
-{% endif %}
 
 <!-- 3: Subir tickets con chat embebido -->
 <div class="admin-card" style="margin-bottom:14px;">
