@@ -742,7 +742,7 @@ WELCOME_BACK_HTML = """<!DOCTYPE html>
 <body style="margin:0;padding:0;background:#ffffff;">
 <div style="display:none;max-height:0;overflow:hidden;opacity:0;">Welcome back to The Sharp Team. Your Platinum plays are live again.</div>
 <div style="font-family:Arial,sans-serif;max-width:460px;margin:0 auto;background:#ffffff;">
-<img src="https://www.thesharpteam.bet/static/img/sharp-team-banner.png?v=20261009" alt="The Sharp Team" width="460" style="width:100%;height:auto;display:block;border:0;">
+<img src="https://www.thesharpteam.bet/static/img/sharp-team-banner.png" alt="The Sharp Team" width="460" style="width:100%;height:auto;display:block;border:0;">
 <div style="background:#ffffff;padding:14px 0 12px;text-align:center;">
 <p style="margin:0;font-size:13px;font-weight:800;letter-spacing:5px;color:#2e4053;">THE SHARP TEAM</p>
 </div>
@@ -851,7 +851,7 @@ WELCOME_HTML = """<!DOCTYPE html>
 <body style="margin:0;padding:0;background:#ffffff;">
 <div style="display:none;max-height:0;overflow:hidden;opacity:0;">Welcome to The Sharp Team. Your Platinum plays are live &mdash; every pick tracked, every ticket verified.</div>
 <div style="font-family:Arial,sans-serif;max-width:460px;margin:0 auto;background:#ffffff;">
-<img src="https://www.thesharpteam.bet/static/img/sharp-team-banner.png?v=20261009" alt="The Sharp Team" width="460" style="width:100%;height:auto;display:block;border:0;">
+<img src="https://www.thesharpteam.bet/static/img/sharp-team-banner.png" alt="The Sharp Team" width="460" style="width:100%;height:auto;display:block;border:0;">
 <div style="background:#ffffff;padding:14px 0 12px;text-align:center;">
 <p style="margin:0;font-size:13px;font-weight:800;letter-spacing:5px;color:#2e4053;">THE SHARP TEAM</p>
 </div>
@@ -962,7 +962,7 @@ Bet responsibly - 21+ - Gambling problem? Call 1-800-GAMBLER (1-800-426-2537): f
 """
 
 DUNNING_HTML = """<div style="font-family:Arial,sans-serif;max-width:480px;margin:0 auto;background:#ffffff;">
-<img src="https://www.thesharpteam.bet/static/img/sharp-team-banner.png?v=20261009" alt="The Sharp Team" width="480" style="width:100%;height:auto;display:block;border:0;">
+<img src="https://www.thesharpteam.bet/static/img/sharp-team-banner.png" alt="The Sharp Team" width="480" style="width:100%;height:auto;display:block;border:0;">
 <div style="background:#ffffff;height:18px;line-height:18px;font-size:1px;">&nbsp;</div>
 <div style="background:#2e4053;padding:28px 24px;text-align:center;">
 <p style="margin:0;font-size:12px;font-weight:800;letter-spacing:2px;color:#9aa3b8;">&#9888;&nbsp;PAYMENT ISSUE</p>
@@ -1042,7 +1042,7 @@ MONTHLY_HTML = """<!DOCTYPE html>
 <body style="margin:0;padding:0;background:#ffffff;">
 <div style="display:none;max-height:0;overflow:hidden;opacity:0;">Your {mes} statement &mdash; every play graded, every dollar accounted.&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;</div>
 <div style="font-family:Arial,sans-serif;max-width:460px;margin:0 auto;background:#ffffff;">
-<img src="https://www.thesharpteam.bet/static/img/sharp-team-banner.png?v=20261009" alt="The Sharp Team" width="460" style="width:100%;height:auto;display:block;border:0;">
+<img src="https://www.thesharpteam.bet/static/img/sharp-team-banner.png" alt="The Sharp Team" width="460" style="width:100%;height:auto;display:block;border:0;">
 <div style="background:#ffffff;padding:14px 0 12px;text-align:center;">
 <p style="margin:0;font-size:13px;font-weight:800;letter-spacing:5px;color:#2e4053;">THE SHARP TEAM</p>
 </div>
@@ -4355,7 +4355,7 @@ def admin_email_directo():
     try:
         text_body = body  # versión texto plano
         html = f"""<div style="font-family:-apple-system,Helvetica,Arial,sans-serif;max-width:600px;margin:0 auto;background:#ffffff;">
-<img src="https://www.thesharpteam.bet/static/img/sharp-team-banner.png?v=20261009" alt="The Sharp Team" style="width:100%;height:auto;display:block;border:0;">
+<img src="https://www.thesharpteam.bet/static/img/sharp-team-banner.png" alt="The Sharp Team" style="width:100%;height:auto;display:block;border:0;">
 <div style="padding:24px 28px;"><p style="font-size:16px;color:#111;line-height:1.6;">{body}</p>
 <p style="font-size:14px;color:#6b7280;margin-top:20px;"><strong>The Sharp Team</strong></p></div></div>"""
         _dispatch_email(target["email"], subject, text_body, html_body=html)
