@@ -114,7 +114,7 @@
 
   <div class="card hl">
     <h2>🎫 Upload Tickets</h2>
-    <p class="desc">Original tickets — auto-attached to today's cards</p>
+    <p class="desc">Upload — everything publishes automatically when done</p>
     <label class="upbtn" for="ticketUpload"><span class="ic">📤</span>Upload Tickets</label>
     <input type="file" id="ticketUpload" accept="image/*" multiple style="display:none;">
     <div class="prev" id="uploadPreview"></div>
@@ -131,15 +131,7 @@
     <div class="done-banner" id="ticketNotif">✓ Ready — tickets uploaded and cards updated</div>
   </div>
 
-  <div class="card">
-    <h2>⚡ Quick Actions</h2>
-    <p class="desc">One-tap publish</p>
-    <div class="qa">
-      <button class="pub" onclick="ejecutarAccion('publish-plays', this)">🚀 Publish plays</button>
-      <button onclick="ejecutarAccion('email-jugadas', this)">📧 Email plays</button>
-    </div>
-    <p class="qa-status" id="accionStatus"></p>
-  </div>
+
 </div>
 
 <script>
@@ -151,14 +143,7 @@ $('ticketUpload').addEventListener('change', e => {
   ticketFiles.forEach(f => { const i = document.createElement('img'); i.src = URL.createObjectURL(f); pv.appendChild(i); });
   $('sendTicketsBtn').style.display = ticketFiles.length ? 'block' : 'none';
 });
-function ejecutarAccion(a, btn) {
-  btn.style.opacity = '.5';
-  $('accionStatus').textContent = 'Working…';
-  fetch('/admin/accion/' + a, {method: 'POST'}).then(r => r.json()).then(d => {
-    $('accionStatus').textContent = d.ok ? '✓ Queued — runs shortly' : 'Error: ' + (d.error || 'unknown');
-    btn.style.opacity = '1';
-  }).catch(() => { $('accionStatus').textContent = 'Connection error'; btn.style.opacity = '1'; });
-}
+
 function sendTickets() {
   if (!ticketFiles.length) return;
   const btn = $('sendTicketsBtn'), total = ticketFiles.length;

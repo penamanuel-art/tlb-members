@@ -5140,7 +5140,22 @@ def admin_chat_mensaje():
                 }) + "\n")
         except Exception:
             pass
-    return jsonify({"ok": True, "tickets": len(guardados), "actualizadas": actualizadas})
+        # AUTO-PUBLICAR: encolar publish + email + telegram automáticamente (Alex 2026-10-09)
+        # Ya no necesita oprimir "Publish plays" — todo sale solo al subir los tickets
+        try:
+            queue_path = os.path.join(os.path.dirname(__file__), "data", "acciones-pendientes.json")
+            try:
+                with open(queue_path) as _f:
+                    _q = _json.load(_f)
+            except Exception:
+                _q = []
+            _q.append({"accion": "publish-plays", "pedido": ts, "ejecutado": False, "auto": True})
+            _q.append({"accion": "email-jugadas", "pedido": ts, "ejecutado": False, "auto": True})
+            with open(queue_path, "w") as _f:
+                _json.dump(_q, _f, indent=2)
+        except Exception:
+            pass
+    return jsonify({"ok": True, "tickets": len(guardados), "actualizadas": actualizadas, "auto_publish": True})
 
 @login_required
 def admin_accion(accion):
