@@ -5150,6 +5150,31 @@ def admin_chat_mensaje():
                 }) + "\n")
         except Exception:
             pass
+        # PUBLICAR EN GITHUB: si se adjuntaron tickets, commitear para que el
+        # Dashboard los muestre (Alex 2026-10-09 - el ticket debe verse en la web)
+        if actualizadas > 0:
+            try:
+                import subprocess
+                repo_dir = os.path.dirname(__file__)
+                # Agregar los archivos modificados
+                subprocess.run(["git", "add", "data/plays.json", "data/plays-pending.json"],
+                               cwd=repo_dir, capture_output=True, timeout=10)
+                # Agregar los tickets nuevos
+                for g in guardados:
+                    # g es como "img/comprobantes/2026-10-09-ticket-1.jpg"
+                    # el path real es static/img/comprobantes/...
+                    fpath = os.path.join("static", g)
+                    subprocess.run(["git", "add", fpath],
+                                   cwd=repo_dir, capture_output=True, timeout=10)
+                # Commit
+                subprocess.run(
+                    ["git", "commit", "-m", f"Admin: ticket adjuntado {hoy} ({actualizadas} carta(s))"],
+                    cwd=repo_dir, capture_output=True, timeout=15)
+                # Push (best-effort, si falla no bloquea la respuesta)
+                subprocess.run(["git", "push", "origin", "master"],
+                               cwd=repo_dir, capture_output=True, timeout=30)
+            except Exception:
+                pass
     return jsonify({"ok": True, "tickets": len(guardados), "actualizadas": actualizadas})
 
 @login_required
