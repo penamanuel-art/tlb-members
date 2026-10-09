@@ -98,11 +98,18 @@
     <div id="uploadPreview" style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;"></div>
     <button id="sendTicketsBtn" onclick="sendTickets()" style="display:none;width:100%;margin-top:10px;background:#00e07f;color:#0b0e14;border:none;border-radius:12px;padding:12px;font-weight:800;font-size:1rem;cursor:pointer;">Send Tickets</button>
   </div>
+  <div id="ticketWorking" style="display:none;margin-top:12px;background:#1a2036;border:1px solid #c9a227;border-radius:12px;padding:16px;text-align:center;">
+    <div style="font-size:2.5rem;animation:working 1s infinite;">👨‍💻</div>
+    <div style="color:#c9a227;font-weight:700;margin-top:8px;">Working...</div>
+    <div id="workingStage" style="color:#9aa3b8;font-size:0.85rem;margin-top:4px;">Uploading tickets...</div>
+  </div>
   <div id="ticketNotif" style="display:none;margin-top:12px;background:#00e07f;color:#0b0e14;border-radius:12px;padding:12px;font-weight:700;text-align:center;animation:popIn 0.3s;">
-    ✓ Tickets received and cards updated
+    ✓ Ready — tickets uploaded and cards updated
   </div>
 </div>
-<style>@keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }</style>
+<style>
+@keyframes working { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+@keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }</style>
 <script>
 let ticketFiles = [];
 document.getElementById('ticketUpload').addEventListener('change', function(e) {
@@ -120,8 +127,10 @@ document.getElementById('ticketUpload').addEventListener('change', function(e) {
 function sendTickets() {
   if (!ticketFiles.length) return;
   const btn = document.getElementById('sendTicketsBtn');
-  btn.textContent = 'Sending...';
-  btn.disabled = true;
+  btn.style.display = 'none';
+  document.getElementById('ticketNotif').style.display = 'none';
+  document.getElementById('ticketWorking').style.display = 'block';
+  document.getElementById('workingStage').textContent = 'Uploading tickets...';
   const formData = new FormData();
   formData.append('mensaje', '');
   ticketFiles.forEach((f, i) => formData.append('tickets', f, 'ticket-' + Date.now() + '-' + i + '.jpg'));
@@ -129,6 +138,10 @@ function sendTickets() {
     .then(r => r.json())
     .then(d => {
       if (d.ok) {
+        document.getElementById('workingStage').textContent = 'Updating cards...';
+        // Pequeña pausa para que se vea el proceso
+        setTimeout(() => {
+        document.getElementById('ticketWorking').style.display = 'none';
         // Sonido de confirmación
         try {
           const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -149,15 +162,19 @@ function sendTickets() {
         btn.style.display = 'none';
         btn.textContent = 'Send Tickets';
         btn.disabled = false;
+        document.getElementById('ticketNotif').style.display = 'block';
         setTimeout(() => { document.getElementById('ticketNotif').style.display = 'none'; }, 5000);
+        }, 800);
       } else {
+        document.getElementById('ticketWorking').style.display = 'none';
+        btn.style.display = 'block';
         btn.textContent = 'Error — try again';
-        btn.disabled = false;
       }
     })
     .catch(e => {
-      btn.textContent = 'Connection error';
-      btn.disabled = false;
+      document.getElementById('ticketWorking').style.display = 'none';
+      btn.style.display = 'block';
+      btn.textContent = 'Connection error — try again';
     });
 }
 </script>
