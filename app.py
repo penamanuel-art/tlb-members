@@ -5088,10 +5088,20 @@ def admin_chat_mensaje():
     chat_dir = os.path.join(os.path.dirname(__file__), "data", "admin-chat")
     os.makedirs(chat_dir, exist_ok=True)
     guardados = []
-    for i, f in enumerate(request.files.getlist("tickets")):
+    # Siguiente índice libre del día: los tickets llegan en POSTs separados
+    # (uno por ticket desde el admin) — numerar por lo que ya existe en disco
+    # evita que el ticket 2 sobreescriba al ticket 1 (bug real 2026-10-09).
+    try:
+        _exist = [n for n in os.listdir(comp_dir)
+                  if n.startswith(f"{hoy}-ticket-") and n.endswith(".jpg")]
+    except Exception:
+        _exist = []
+    _idx = len(_exist) + 1
+    for f in request.files.getlist("tickets"):
         if f and f.filename:
-            # Nombre oficial: YYYY-MM-DD-ticket-N.jpg
-            nombre = f"{hoy}-ticket-{i+1}.jpg"
+            # Nombre oficial: YYYY-MM-DD-ticket-N.jpg (único por día)
+            nombre = f"{hoy}-ticket-{_idx}.jpg"
+            _idx += 1
             f.save(os.path.join(comp_dir, nombre))
             guardados.append(f"img/comprobantes/{nombre}")
     # Auto-adjuntar a las jugadas de hoy (en orden)
@@ -5140,22 +5150,7 @@ def admin_chat_mensaje():
                 }) + "\n")
         except Exception:
             pass
-        # AUTO-PUBLICAR: encolar publish + email + telegram automáticamente (Alex 2026-10-09)
-        # Ya no necesita oprimir "Publish plays" — todo sale solo al subir los tickets
-        try:
-            queue_path = os.path.join(os.path.dirname(__file__), "data", "acciones-pendientes.json")
-            try:
-                with open(queue_path) as _f:
-                    _q = _json.load(_f)
-            except Exception:
-                _q = []
-            _q.append({"accion": "publish-plays", "pedido": ts, "ejecutado": False, "auto": True})
-            _q.append({"accion": "email-jugadas", "pedido": ts, "ejecutado": False, "auto": True})
-            with open(queue_path, "w") as _f:
-                _json.dump(_q, _f, indent=2)
-        except Exception:
-            pass
-    return jsonify({"ok": True, "tickets": len(guardados), "actualizadas": actualizadas, "auto_publish": True})
+    return jsonify({"ok": True, "tickets": len(guardados), "actualizadas": actualizadas})
 
 @login_required
 def admin_accion(accion):
