@@ -4984,6 +4984,48 @@ def api_chat_marcar_leidos():
         return jsonify({"error": str(e)}), 500
 
 
+
+@app.route("/api/marcar-notificado", methods=["POST"])
+def api_marcar_notificado():
+    import json as _json, os
+    key_ok = request.headers.get("X-Push-Key") == os.environ.get("PUSH_TRIGGER_KEY", "")
+    if not key_ok:
+        try:
+            kf = os.path.join(os.path.dirname(__file__), "..", "goals",
+                              "programa-de-apuestas-deportivas", "hidden_files", "push-keys.env")
+            _key = ""
+            with open(kf) as _f:
+                for _line in _f:
+                    if _line.strip().startswith("PUSH_TRIGGER_KEY="):
+                        _key = _line.strip().split("=", 1)[1]
+                        break
+            if request.headers.get("X-Push-Key") != _key:
+                return jsonify({"error": "unauthorized"}), 401
+        except Exception:
+            return jsonify({"error": "unauthorized"}), 401
+    ts = (request.get_json(silent=True) or {}).get("ts", "")
+    try:
+        notif_path = os.path.join(os.path.dirname(__file__), "data", "admin-chat", "notificar.jsonl")
+        if not os.path.exists(notif_path):
+            return jsonify({"ok": False, "error": "no file"}), 404
+        lines = []
+        updated = 0
+        with open(notif_path) as _f:
+            for _line in _f:
+                s = _line.strip()
+                if not s:
+                    continue
+                _m = _json.loads(s)
+                if _m.get("ts") == ts and not _m.get("notificado"):
+                    _m["notificado"] = True
+                    updated += 1
+                lines.append(_json.dumps(_m))
+        with open(notif_path, "w") as _f:
+            _f.write(chr(10).join(lines) + chr(10))
+        return jsonify({"ok": True, "updated": updated})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 @app.route("/api/tickets-notificar")
 def api_tickets_notificar():
     """Notificaciones de tickets procesados pendientes de avisar a Alex en el chat."""
