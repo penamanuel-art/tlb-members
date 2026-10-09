@@ -2,51 +2,70 @@
 {% block title %}Sharp Line Moves — The Sharp Team{% endblock %}
 {% block content %}
 <style>
-.lm-wrap{max-width:720px;margin:0 auto;color:#fff}
-.lm-wrap .kicker{font-size:11px;font-weight:800;letter-spacing:2px;color:#8f8fb0;margin:6px 0 4px}
-.lm-wrap h2{font-size:26px;font-weight:800;margin:0 0 6px}
-.lm-wrap .muted{color:#9a9ab5;font-size:14px;margin:0 0 6px;line-height:1.5}
-.lm-updated{color:#9a9ab5;font-size:12px;margin:0 0 18px}
-.lm-card{background:#17171f;border:1px solid #26262f;border-radius:16px;padding:16px;margin:0 0 12px}
-.lm-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
-.lm-league{font-size:11px;font-weight:800;letter-spacing:1.5px;color:#8f8fb0}
-.lm-books{font-size:12px;color:#9a9ab5;font-weight:700}
-.lm-team{font-size:20px;font-weight:800;margin:0 0 2px}
-.lm-team .lm-ml{color:#9a9ab5;font-weight:600;font-size:14px}
-.lm-game{color:#9a9ab5;font-size:14px;margin:0 0 10px}
-.lm-move{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}
-.lm-odds{font-size:15px;font-weight:800}
-.lm-odds.open{color:#9a9ab5}
-.lm-arrow{color:#fbbf24;font-weight:800}
-.lm-odds.now{color:#4ade80}
-.lm-time{color:#9a9ab5;font-size:13px;margin:0}
-.lm-empty{border:2px dashed #3a3a4a;border-radius:18px;padding:28px 20px;text-align:center;margin:16px 0}
-.lm-empty h3{color:#fff;margin:0 0 8px}
-.lm-empty p{color:#9a9ab5;margin:0;font-size:14px}
-.lm-note{color:#9a9ab5;font-size:12px;text-align:center;margin-top:18px;line-height:1.6}
+.lm-wrap{max-width:720px;margin:0 auto;color:#fff;padding:24px 16px;}
+.lm-header{text-align:center;margin-bottom:28px;}
+.lm-wrap .kicker{font-size:11px;font-weight:800;letter-spacing:3px;color:#4ade80;margin:0 0 8px;}
+.lm-wrap h2{font-size:2rem;font-weight:900;margin:0 0 8px;}
+.lm-wrap .muted{color:#9a9ab5;font-size:14px;margin:0;line-height:1.5;}
+.lm-updated{color:#5a6478;font-size:12px;margin:12px 0 0;}
+.lm-league-sec{margin-bottom:28px;}
+.lm-league-head{display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #1e2a45;}
+.lm-league-name{font-size:13px;font-weight:800;letter-spacing:2px;color:#d4af37;}
+.lm-league-count{font-size:12px;color:#5a6478;}
+.lm-card{background:linear-gradient(135deg,#0f2a1a 0%,#0a1f14 100%);border:2px solid #22c55e;border-radius:16px;padding:16px;margin:0 0 12px;}
+.lm-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;}
+.lm-books{font-size:12px;color:#9aa3b8;font-weight:700;}
+.lm-team{font-size:19px;font-weight:800;margin:0 0 2px;color:#fff;}
+.lm-team .lm-ml{color:#9aa3b8;font-weight:600;font-size:14px;}
+.lm-game{color:#9aa3b8;font-size:13px;margin:0 0 12px;}
+.lm-move{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.lm-odds{font-size:16px;font-weight:800;padding:6px 12px;border-radius:8px;}
+.lm-odds.open{background:#1a2233;color:#9aa3b8;}
+.lm-arrow{color:#fbbf24;font-weight:800;font-size:18px;}
+.lm-odds.now{background:rgba(34,197,94,.15);color:#4ade80;border:1px solid rgba(34,197,94,.4);}
+.lm-time{color:#5a6478;font-size:12px;margin:10px 0 0;}
+.lm-live{display:inline-block;background:#ef4444;color:#fff;font-size:10px;font-weight:800;letter-spacing:1px;padding:3px 8px;border-radius:999px;margin-left:8px;}
+.lm-empty{border:2px dashed #3a3a4a;border-radius:18px;padding:28px 20px;text-align:center;margin:16px 0;}
+.lm-empty h3{color:#fff;margin:0 0 8px;}
+.lm-empty p{color:#9a9ab5;margin:0;font-size:14px;}
+.lm-note{color:#9a9ab5;font-size:12px;text-align:center;margin-top:18px;line-height:1.6;}
 </style>
 
 <div class="lm-wrap">
-  <p class="kicker">FREE TOOL · SHARP MONEY</p>
-  <h2>Sharp Line Moves</h2>
-  <p class="muted">Real moneyline movement across US sportsbooks — where the respected money is going. Not picks: information.</p>
-  {% if updated_at %}<p class="lm-updated">Updated {{ updated_at }} · refreshes about every 30 min</p>{% endif %}
+  <div class="lm-header">
+    <p class="kicker">FREE TOOL · SHARP MONEY</p>
+    <h2>Sharp Line Moves</h2>
+    <p class="muted">Real moneyline movement across US sportsbooks — where the respected money is going. Not picks: information.</p>
+    {% if updated_at %}<p class="lm-updated">Updated {{ updated_at }} · refreshes about every 30 min</p>{% endif %}
+  </div>
 
   {% if moves %}
+    {% set leagues = {} %}
     {% for m in moves %}
-    <div class="lm-card">
-      <div class="lm-top">
-        <span class="lm-league">{{ m.league or '—' }}</span>
-        <span class="lm-books">{{ m.books }} books</span>
+      {% set _ = leagues.update({m.league: leagues.get(m.league, []) + [m]}) %}
+    {% endfor %}
+    {% for league, league_moves in leagues.items() %}
+    <div class="lm-league-sec">
+      <div class="lm-league-head">
+        <span class="lm-league-name">{{ league or '—' }}</span>
+        <span class="lm-league-count">{{ league_moves|length }} move{{ 's' if league_moves|length != 1 }}</span>
       </div>
-      <p class="lm-team">{{ m.team }} <span class="lm-ml">(Moneyline)</span></p>
-      <p class="lm-game">{{ m.game }}</p>
-      <div class="lm-move">
-        <span class="lm-odds open">{{ m.open }}</span>
-        <span class="lm-arrow">→</span>
-        <span class="lm-odds now">{{ m.current }}</span>
+      {% for m in league_moves %}
+      <div class="lm-card">
+        <div class="lm-top">
+          <span class="lm-books">{{ m.books }} books</span>
+          {% if m.live %}<span class="lm-live">LIVE</span>{% endif %}
+        </div>
+        <p class="lm-team">{{ m.team }} <span class="lm-ml">(Moneyline)</span></p>
+        <p class="lm-game">{{ m.game }}</p>
+        <div class="lm-move">
+          <span class="lm-odds open">{{ m.open }}</span>
+          <span class="lm-arrow">→</span>
+          <span class="lm-odds now">{{ m.current }}</span>
+        </div>
+        <p class="lm-time">{{ m.kickoff_et }}</p>
       </div>
-      <p class="lm-time">{{ m.kickoff_et }}</p>
+      {% endfor %}
     </div>
     {% endfor %}
   {% else %}
