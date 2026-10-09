@@ -1,173 +1,165 @@
-{% extends "base_v2.html" %}
-{% block title %}Admin Dashboard — The Sharp Team{% endblock %}
+{% extends "base.html" %}
 {% block content %}
 <style>
-.admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 16px; align-items: stretch; }
 .admin-card { background: #141a2b; border: 1px solid #2a3350; border-radius: 16px; padding: 20px; text-decoration: none; color: #fff; display: flex; flex-direction: column; height: 100%; box-sizing: border-box; }
 .admin-card:hover { border-color: #c9a227; }
 .admin-card .icon { font-size: 2rem; margin-bottom: 8px; }
 .admin-card h3 { margin: 0 0 6px; font-size: 1.1rem; }
 .admin-card p { margin: 0; font-size: 0.85rem; color: #9aa3b8; flex-grow: 1; }
-.admin-stat { background: #1a2036; border-radius: 12px; padding: 14px; text-align: center; }
-.admin-stat .num { font-size: 1.8rem; font-weight: 800; color: #e8c15a; }
-.admin-stat .lbl { font-size: 0.75rem; color: #9aa3b8; text-transform: uppercase; letter-spacing: 1px; }
-.admin-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin: 16px 0; }
-.admin-quick { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
-.admin-quick a { background: #c9a227; color: #0b0e14; font-weight: 800; padding: 12px 20px; border-radius: 12px; text-decoration: none; font-size: 0.9rem; }
+.admin-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 18px; }
+.admin-stat { background: #141a2b; border: 1px solid #2a3350; border-radius: 16px; padding: 18px; text-align: center; }
+.admin-stat .num { font-size: 2rem; font-weight: 800; color: #fff; }
+.admin-stat .lbl { font-size: 0.8rem; color: #9aa3b8; margin-top: 4px; }
+.admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+/* Chat embebido */
+.chat-box { background: #0f1420; border: 1px solid #2a3350; border-radius: 16px; overflow: hidden; margin-top: 12px; }
+.chat-messages { max-height: 300px; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+.chat-msg { max-width: 85%; padding: 10px 14px; border-radius: 14px; font-size: 0.9rem; line-height: 1.4; }
+.chat-msg.mine { align-self: flex-end; background: #1a6fd4; color: #fff; border-bottom-right-radius: 4px; }
+.chat-msg.theirs { align-self: flex-start; background: #1e2538; color: #fff; border-bottom-left-radius: 4px; }
+.chat-msg img { max-width: 100%; border-radius: 8px; margin-top: 6px; }
+.chat-input-area { display: flex; gap: 8px; padding: 12px; border-top: 1px solid #2a3350; background: #141a2b; }
+.chat-input-area input[type="text"] { flex: 1; background: #0f1420; border: 1px solid #2a3350; border-radius: 999px; padding: 10px 16px; color: #fff; font-size: 0.9rem; outline: none; }
+.chat-input-area input[type="text"]:focus { border-color: #c9a227; }
+.chat-btn { background: #c9a227; color: #0b0e14; border: none; border-radius: 999px; padding: 10px 18px; font-weight: 800; font-size: 0.9rem; cursor: pointer; }
+.chat-btn:hover { opacity: 0.9; }
+.chat-attach { background: #1e2538; color: #fff; border: 1px solid #2a3350; border-radius: 999px; padding: 10px 14px; cursor: pointer; font-size: 1.1rem; }
+.chat-attach:hover { border-color: #c9a227; }
+.chat-preview { display: flex; gap: 8px; padding: 0 12px; flex-wrap: wrap; }
+.chat-preview img { width: 60px; height: 60px; object-fit: cover; border-radius: 8px; border: 1px solid #2a3350; }
 </style>
 
-<div style="padding: 20px 0 6px;">
+<div style="margin-bottom: 18px;">
   <p style="font-size: 11px; font-weight: 800; letter-spacing: 2px; color: #c9a227; margin: 0;">ADMIN</p>
   <h1 style="margin: 6px 0 0; font-size: 1.8rem;">Dashboard</h1>
   <a href="{{ url_for('home') }}" style="display:inline-block;margin-top:10px;padding:8px 16px;background:#1a2036;border:1px solid #2a3350;color:#fff;font-weight:700;font-size:13px;border-radius:999px;text-decoration:none;">← Member Dashboard</a>
 </div>
 
+<!-- 1 y 2: Miembros y Platinum -->
 <div class="admin-stats">
-  <div class="admin-stat">
-    <div class="num">{{ stats.miembros }}</div>
-    <div class="lbl">Miembros</div>
-  </div>
-  <div class="admin-stat">
-    <div class="num">{{ stats.platinum }}</div>
-    <div class="lbl">Platinum</div>
-  </div>
-  <div class="admin-stat" onclick="toggleJugadasHoy()" style="cursor:pointer;" title="Toca para ver las jugadas">
-    <div class="num">{{ stats.jugadas_hoy }}</div>
-    <div class="lbl">Jugadas hoy ▾</div>
-  </div>
-</div>
-
-<div id="jh-detail" style="display:none;margin:-6px 0 16px;">
-  {% for p in plays_hoy %}
-  <div class="admin-card" style="margin-bottom:10px;">
-    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;">
-      <h3 style="margin:0;">{{ p.equipo or p.pick }}</h3>
-      <span style="background:{% if p.nivel == 'ELITE' %}#c9a227{% else %}#2a3350{% endif %};color:{% if p.nivel == 'ELITE' %}#0b0e14{% else %}#fff{% endif %};font-size:0.7rem;font-weight:800;border-radius:999px;padding:4px 10px;white-space:nowrap;">{% if p.nivel == 'ELITE' %}⭐ Platinum{% else %}⚪ Gold{% endif %}</span>
+  <a href="/admin/miembros" style="text-decoration:none;">
+    <div class="admin-stat">
+      <div class="num">{{ stats.miembros }}</div>
+      <div class="lbl">👥 Miembros</div>
     </div>
-    <p style="margin-top:8px;">{{ p.pick }}{% if p.game %} · {{ p.game }}{% endif %}{% if p.game_time_et %} · {{ p.game_time_et }}{% endif %}</p>
-    {% if p.comprobante %}<p style="color:#00e07f;">📸 Ticket recibido</p>{% endif %}
-  </div>
-  {% else %}
-  <p style="color:#9aa3b8;font-size:0.85rem;">No hay jugadas publicadas hoy.</p>
-  {% endfor %}
-</div>
-
-<div class="admin-quick">
-  <a href="/admin/miembros">👥 Miembros</a>
-  <a href="/admin/trakeos">📊 Trakeos</a>
-</div>
-
-{% if selecciones %}
-<div style="margin-top: 20px;">
-  <h3 style="font-size: 1rem; color: #c9a227;">🎯 Today's Plays — pre-publish</h3>
-  <p style="font-size: 0.85rem; color: #9aa3b8;">Selections before they go live.</p>
-  <button class="admin-card" onclick="ejecutarAccion('publish-plays', this)" style="text-align:center;cursor:pointer;width:100%;margin-bottom:14px;border-color:#00e07f;">
-    <div class="icon">🚀</div>
-    <h3>Publish Today's Plays</h3>
-    <p>Order publication to members</p>
-  </button>
-  {% for s in selecciones %}
-  <div class="admin-card" style="margin-bottom: 10px;">
-    <div style="display:flex;justify-content:space-between;align-items:center;">
-      <h3 style="margin:0;">{{ s.pick or s.equipo }}</h3>
-      <span style="background:{% if s.nivel == 'ELITE' %}#c9a227{% else %}#2a3350{% endif %};color:{% if s.nivel == 'ELITE' %}#0b0e14{% else %}#fff{% endif %};font-size:0.7rem;font-weight:800;border-radius:999px;padding:4px 10px;">{{ s.nivel }}</span>
+  </a>
+  <a href="/admin/miembros" style="text-decoration:none;">
+    <div class="admin-stat" style="border-color:#c9a227;">
+      <div class="num" style="color:#c9a227;">{{ stats.platinum }}</div>
+      <div class="lbl">⭐ Platinum pagando</div>
     </div>
-    <p style="margin-top:8px;">{{ s.game or '' }}{% if s.game_time_et %} · {{ s.game_time_et }}{% endif %}</p>
-    {% if s.edge %}<p>Edge: {{ s.edge }}%</p>{% endif %}
-  </div>
-  {% endfor %}
+  </a>
 </div>
-{% endif %}
 
-<div style="margin-top: 20px;">
-  <h3 style="font-size: 1rem; color: #c9a227;">⚡ Acciones rápidas</h3>
-  <p style="font-size: 0.85rem; color: #9aa3b8;">Toca un botón y se ejecuta solo.</p>
-  <div class="admin-grid">
-    <button class="admin-card" onclick="ejecutarAccion('email-jugadas', this)" style="text-align: left; cursor: pointer; width: 100%;">
-      <div class="icon">📧</div>
-      <h3>Enviar email de jugadas</h3>
-      <p>Manda la card a todos los miembros</p>
-    </button>
+<!-- 3: Subir tickets con chat embebido -->
+<div class="admin-card" style="margin-bottom:14px;">
+  <div class="icon">🎫</div>
+  <h3>Subir tickets</h3>
+  <p>Escríbeme aquí y pega los tickets como en el chat</p>
+  
+  <div class="chat-box">
+    <div class="chat-messages" id="chatMessages">
+      <div class="chat-msg theirs">Hola Alex 👋<br>Pégame los tickets aquí y los proceso para publicar.</div>
+    </div>
+    <div class="chat-preview" id="chatPreview"></div>
+    <div class="chat-input-area">
+      <label class="chat-attach" title="Adjuntar ticket">📎<input type="file" id="chatFile" accept="image/*" multiple style="display:none;"></label>
+      <input type="text" id="chatText" placeholder="Escríbeme..." onkeypress="if(event.key==='Enter')sendChatMsg()">
+      <button class="chat-btn" onclick="sendChatMsg()">➤</button>
+    </div>
   </div>
+</div>
+
+<!-- 4: Acciones rápidas -->
+<div class="admin-card" style="margin-bottom:14px;">
+  <div class="icon">⚡</div>
+  <h3>Acciones rápidas</h3>
+  <p>Publicar y enviar con un toque</p>
+  <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;">
+    <button onclick="ejecutarAccion('publish-plays', this)" style="flex:1;min-width:140px;background:#0f1420;border:1px solid #00e07f;color:#fff;border-radius:12px;padding:12px;font-weight:700;cursor:pointer;">🚀 Publicar jugadas</button>
+    <button onclick="ejecutarAccion('email-jugadas', this)" style="flex:1;min-width:140px;background:#0f1420;border:1px solid #2a3350;color:#fff;border-radius:12px;padding:12px;font-weight:700;cursor:pointer;">📧 Email jugadas</button>
+  </div>
+  <p id="accionStatus" style="margin-top:8px;font-size:0.8rem;"></p>
 </div>
 
 <script>
-function toggleJugadasHoy() {
-  var d = document.getElementById('jh-detail');
-  d.style.display = (d.style.display === 'none') ? 'block' : 'none';
+let chatFiles = [];
+document.getElementById('chatFile').addEventListener('change', function(e) {
+  chatFiles = Array.from(e.target.files);
+  const preview = document.getElementById('chatPreview');
+  preview.innerHTML = '';
+  chatFiles.forEach(f => {
+    const img = document.createElement('img');
+    img.src = URL.createObjectURL(f);
+    preview.appendChild(img);
+  });
+});
+// Pegar imágenes con Ctrl+V
+document.getElementById('chatText').addEventListener('paste', function(e) {
+  const items = e.clipboardData.items;
+  for (let i = 0; i < items.length; i++) {
+    if (items[i].type.indexOf('image') !== -1) {
+      const blob = items[i].getAsFile();
+      chatFiles.push(blob);
+      const img = document.createElement('img');
+      img.src = URL.createObjectURL(blob);
+      document.getElementById('chatPreview').appendChild(img);
+    }
+  }
+});
+function sendChatMsg() {
+  const text = document.getElementById('chatText').value.trim();
+  if (!text && chatFiles.length === 0) return;
+  const msgs = document.getElementById('chatMessages');
+  const div = document.createElement('div');
+  div.className = 'chat-msg mine';
+  div.textContent = text || '📸 Ticket';
+  chatFiles.forEach(f => {
+    const img = document.createElement('img');
+    img.src = URL.createObjectURL(f);
+    div.appendChild(img);
+  });
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+  
+  const formData = new FormData();
+  formData.append('mensaje', text);
+  chatFiles.forEach((f, i) => formData.append('tickets', f, 'ticket-' + Date.now() + '-' + i + '.jpg'));
+  
+  fetch('/admin/chat-mensaje', {method: 'POST', body: formData})
+    .then(r => r.json())
+    .then(d => {
+      const reply = document.createElement('div');
+      reply.className = 'chat-msg theirs';
+      reply.textContent = d.ok ? '✓ Recibido, lo proceso ahora.' : 'Error: ' + (d.error || 'desconocido');
+      msgs.appendChild(reply);
+      msgs.scrollTop = msgs.scrollHeight;
+    })
+    .catch(e => {
+      const reply = document.createElement('div');
+      reply.className = 'chat-msg theirs';
+      reply.textContent = 'Error de conexión.';
+      msgs.appendChild(reply);
+    });
+  
+  document.getElementById('chatText').value = '';
+  document.getElementById('chatPreview').innerHTML = '';
+  document.getElementById('chatFile').value = '';
+  chatFiles = [];
 }
 function ejecutarAccion(accion, btn) {
   btn.style.opacity = '0.5';
-  btn.querySelector('p').textContent = 'Enviando...';
+  document.getElementById('accionStatus').textContent = 'Enviando...';
   fetch('/admin/accion/' + accion, {method: 'POST'})
     .then(r => r.json())
     .then(d => {
-      if (d.ok) {
-        btn.querySelector('p').textContent = '✓ En cola — se ejecuta en unos minutos';
-        btn.style.borderColor = '#00e07f';
-      } else {
-        btn.querySelector('p').textContent = 'Error: ' + (d.error || 'desconocido');
-        btn.style.opacity = '1';
-      }
+      document.getElementById('accionStatus').textContent = d.ok ? '✓ En cola — se ejecuta en unos minutos' : 'Error: ' + (d.error || 'desconocido');
+      btn.style.opacity = '1';
     })
     .catch(e => {
-      btn.querySelector('p').textContent = 'Error de conexión';
+      document.getElementById('accionStatus').textContent = 'Error de conexión';
       btn.style.opacity = '1';
     });
 }
 </script>
-
-<div class="admin-grid">
-  <a class="admin-card" href="/admin/notificaciones" style="border-color: #c9a227;">
-    <div class="icon">🔔{% if stats.no_leidas %} <span style="background:#e33;color:#fff;font-size:0.7rem;font-weight:800;border-radius:999px;padding:2px 8px;vertical-align:middle;">{{ stats.no_leidas }}</span>{% endif %}</div>
-    <h3>Notifications</h3>
-    <p>New members, tickets, payments and more</p>
-  </a>
-  <a class="admin-card" href="/admin/wgt-tracker" style="border-color: #c9a227;">
-    <div class="icon">📊</div>
-    <h3>WGT Tracker</h3>
-    <p>Resultados privados de Wise Guy Team (5 meses)</p>
-  </a>
-  <a class="admin-card" href="/admin/subir-ticket" style="border-color: #c9a227;">
-    <div class="icon">🎫</div>
-    <h3>Subir tickets</h3>
-    <p>Sube los tickets originales para publicar</p>
-  </a>
-  <a class="admin-card" href="/admin/miembros">
-    <div class="icon">👥</div>
-    <h3>Miembros</h3>
-    <p>Lista, activar Platinum, stakes, eliminar</p>
-  </a>
-  <a class="admin-card" href="/admin/trakeos">
-    <div class="icon">📊</div>
-    <h3>Trakeos</h3>
-    <p>Ver jugadas trackeadas por miembros</p>
-  </a>
-  <a class="admin-card" href="/admin/migrar-track">
-    <div class="icon">🔄</div>
-    <h3>Migrar track</h3>
-    <p>Herramientas de migración de datos</p>
-  </a>
-  <a class="admin-card" href="/admin/diag-tracker">
-    <div class="icon">🔧</div>
-    <h3>Diagnóstico</h3>
-    <p>Revisar estado del tracker</p>
-  </a>
-</div>
-
-<div style="margin-top: 20px;">
-  <h3 style="font-size: 1rem; color: #9aa3b8;">Herramientas</h3>
-  <div class="admin-grid">
-    <a class="admin-card" href="/admin/resend-welcome">
-      <div class="icon">✉️</div>
-      <h3>Reenviar bienvenida</h3>
-      <p>Email de bienvenida manual</p>
-    </a>
-    <a class="admin-card" href="/admin/migrate-alex-email">
-      <div class="icon">📧</div>
-      <h3>Migrar email Alex</h3>
-      <p>Cambiar email de la cuenta</p>
-    </a>
-  </div>
-</div>
 {% endblock %}

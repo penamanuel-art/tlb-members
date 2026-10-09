@@ -4941,6 +4941,46 @@ def api_values_record():
         })
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+@app.route("/admin/chat-mensaje", methods=["POST"])
+@login_required
+def admin_chat_mensaje():
+    """Alex me escribe desde la ventanita del admin: guarda mensaje + tickets."""
+    import os, time, json as _json
+    from datetime import datetime
+    from werkzeug.utils import secure_filename
+    db = get_db()
+    user = current_user()
+    if not (is_admin_for(user) or is_alex_member(user)):
+        return jsonify({"ok": False, "error": "no autorizado"}), 403
+    mensaje = request.form.get("mensaje", "").strip()
+    # Guardar tickets
+    chat_dir = os.path.join(os.path.dirname(__file__), "data", "admin-chat")
+    os.makedirs(chat_dir, exist_ok=True)
+    ts = datetime.now().strftime("%Y%m%d-%H%M%S")
+    guardados = []
+    for f in request.files.getlist("tickets"):
+        if f and f.filename:
+            fn = secure_filename(f.filename) or "ticket.jpg"
+            nombre = f"{ts}-{fn}"
+            f.save(os.path.join(chat_dir, nombre))
+            guardados.append(nombre)
+    # Log para que el watcher lo recoja
+    if mensaje or guardados:
+        log_path = os.path.join(chat_dir, "mensajes.jsonl")
+        with open(log_path, "a") as lf:
+            lf.write(_json.dumps({
+                "ts": ts,
+                "mensaje": mensaje,
+                "tickets": guardados,
+                "leido": False,
+            }) + "\n")
+        try:
+            log_notificacion(db, "admin_chat", "Mensaje de Alex (admin)",
+                             (mensaje[:100] if mensaje else "") + f" [{len(guardados)} ticket(s)]")
+        except Exception:
+            pass
+    return jsonify({"ok": True, "tickets": len(guardados)})
+
 @login_required
 def admin_accion(accion):
     """Alex dispara manualmente una acción automática desde el panel."""
