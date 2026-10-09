@@ -1080,21 +1080,30 @@ body.v2 .tstc-novig:active, body.v2 .tstc-track:active { transform: scale(0.97);
 /* Barra de navegación inferior (2026-10-05, pedido por Alex — idea 2 aprobada):
    Home · Plays · Tracker · EV Board · Account, fija abajo estilo app. */
 .v2-bottomnav {
-  position: fixed; left: 0; right: 0; bottom: 0; z-index: 1001;
+  position: fixed; left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom)); z-index: 1001;
   display: flex; justify-content: space-around; align-items: stretch;
-  background: rgba(6, 10, 19, 0.96);
-  border-top: 1px solid var(--v2-border);
-  padding: 8px 4px calc(8px + env(safe-area-inset-bottom));
-  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  background: rgba(13, 25, 48, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 28px;
+  padding: 10px 6px;
+  backdrop-filter: blur(30px) saturate(180%); -webkit-backdrop-filter: blur(30px) saturate(180%);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 .v2-bnav-item {
-  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px;
-  padding: 6px 2px; text-decoration: none; color: var(--v2-muted);
-  font-size: 10px; font-weight: 700; min-width: 0;
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px;
+  padding: 8px 4px; text-decoration: none; color: rgba(255, 255, 255, 0.45);
+  font-size: 10px; font-weight: 700; min-width: 0; border-radius: 20px;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
 }
 .v2-bnav-item:active { transform: scale(0.95); }
-.v2-bnav-ico { font-size: 21px; line-height: 1; }
-.v2-bnav-item.active { color: var(--v2-green); }
+.v2-bnav-ico { font-size: 22px; line-height: 1; }
+.v2-bnav-item.active {
+  color: #7cc4ff;
+  background: rgba(47, 157, 255, 0.15);
+  border-color: rgba(47, 157, 255, 0.3);
+  box-shadow: 0 4px 16px rgba(47, 157, 255, 0.15);
+}
 /* El ticker de resultados sube encima de la barra */
 body.v2.has-bottomnav .ticker-dock-bottom { bottom: calc(68px + env(safe-area-inset-bottom)); }
 /* Espacio al final del body: barra (+ ticker si existe) */
