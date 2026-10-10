@@ -170,11 +170,6 @@
         <div>{{ p.game_time_et or '' }}</div>
         <div>{{ p.liga or '' }}</div>
       </div>
-      <div class="tk-side">
-        <span class="tk-gabbr">{{ p.opp_abbr or '' }}</span>
-        {% set _ol = team_logo_url(p.liga, p.opp_abbr) if p.opp_abbr is defined and p.opp_abbr else '' %}
-        <div class="tk-glogo">{% if _ol %}<img src="{{ _ol }}" alt="{{ p.opp_abbr }}" loading="lazy" onerror="this.style.display='none'">{% endif %}</div>
-      </div>
     </div>
     <div class="tk-info">{{ 'Platinum' if is_vip else ('Value' if is_value else 'Gold') }} Play &bull; {{ fmt_odds(p.cuota) }} {{ p.casa or 'Pinnacle' }}{% if p.writeup and p.writeup.fair_price %} &bull; Fair {{ p.writeup.fair_price }}{% endif %}</div>
     <div class="tk-badgerow">
