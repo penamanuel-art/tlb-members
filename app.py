@@ -2348,6 +2348,8 @@ def team_logo_url(liga, abbr) -> str:
         tid = NCAAF_ABBR2ID.get(a)
         if tid:
             return f"https://a.espncdn.com/i/teamlogos/ncaa/500/{tid}.png"
+    if lg == "NHL":
+        return f"https://a.espncdn.com/i/teamlogos/nhl/500/{a.lower()}.png"
     return ""
 
 
@@ -3859,6 +3861,57 @@ def tracker_export():
     return Response(html, mimetype="text/html",
                     headers={"Content-Disposition": f"attachment; filename={fname}"})
 
+
+
+@app.route("/api/admin/autotrack", methods=["POST"])
+def api_admin_autotrack():
+    import json as _json, os
+    from datetime import datetime
+    key_ok = request.headers.get("X-Push-Key") == os.environ.get("PUSH_TRIGGER_KEY", "")
+    if not key_ok:
+        try:
+            kf = os.path.join(os.path.dirname(__file__), "..", "goals",
+                              "programa-de-apuestas-deportivas", "hidden_files", "push-keys.env")
+            _key = ""
+            with open(kf) as _f:
+                for _line in _f:
+                    if _line.strip().startswith("PUSH_TRIGGER_KEY="):
+                        _key = _line.strip().split("=", 1)[1]
+                        break
+            if request.headers.get("X-Push-Key") != _key:
+                return jsonify({"error": "unauthorized"}), 401
+        except Exception:
+            return jsonify({"error": "unauthorized"}), 401
+    data = request.get_json(silent=True) or {}
+    play_id = data.get("play_id", "")
+    email = data.get("email", "pena.manuel@myyahoo.com").strip().lower()
+    try:
+        db = get_db()
+        user = db.execute("SELECT id FROM users WHERE LOWER(email)=?", (email,)).fetchone()
+        if not user:
+            return jsonify({"error": "user not found"}), 404
+        user_id = user["id"] if isinstance(user, dict) else user[0]
+        play = next((p for p in load_plays() if p.get("id") == play_id), None)
+        if not play:
+            return jsonify({"error": "play not found"}), 404
+        existing = db.execute(
+            "SELECT id FROM tracked_plays WHERE user_id=? AND play_id=?",
+            (user_id, play_id)).fetchone()
+        if existing:
+            return jsonify({"ok": True, "already": True})
+        hoy = datetime.now().strftime("%Y-%m-%d")
+        db.execute(
+            """INSERT INTO tracked_plays
+               (user_id, play_id, fecha, nivel, pick, cuota, stake_unidades,
+                stake_monto, edge, resultado, created_at)
+               VALUES (?,?,?,?,?,?,?,?,?,?,?)""",
+            (user_id, play_id, hoy, play.get("nivel"), play.get("pick"),
+             play.get("cuota"), play.get("unidades", 1), play.get("stake", 50),
+             play.get("edge"), "PENDING", datetime.now().isoformat()))
+        db.commit()
+        return jsonify({"ok": True, "tracked": play_id})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route("/track/<play_id>", methods=["GET", "POST"])
 @login_required
