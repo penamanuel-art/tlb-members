@@ -75,6 +75,10 @@
 .tk-status { font-size: 0.82rem; color: var(--green); font-weight: 700; }
 .tk-status.err { color: #ff6b6b; }
 .tk-status.busy { color: var(--mut); }
+/* Pegar ticket con Ctrl+V (2026-10-10, pedido por Alex: copiar y pegar) */
+.tk-zone { outline: none; border-radius: 10px; }
+.tk-zone:focus { box-shadow: 0 0 0 1px rgba(201,162,39,.4); }
+.tk-paste-hint { display: block; font-size: 0.72rem; color: var(--mut); margin-top: 4px; text-align: right; }
 </style>
 
 <div class="adm">
@@ -155,10 +159,13 @@
           <span class="mt">🏟 {{ s.deporte or s.liga or '' }}{% if s.game %} · {{ s.game }}{% endif %}{% if s.game_time_et %} · 🕐 {{ s.game_time_et }}{% endif %}{% if s.cuota %} · Cuota {{ s.cuota_texto or s.cuota }}{% endif %}{% if s.edge %} · {{ s.edge }}% edge{% endif %}</span>
         </span>
       </label>
-      <div class="pend-ticket">
+      <div class="pend-ticket tk-zone" tabindex="0" id="tk-zone-{{ loop.index }}" data-play-id="{{ s.id or '' }}" data-row="{{ loop.index }}">
         <span class="tk-status" id="tk-status-{{ loop.index }}">{% if s.comprobante %}📸 Ticket ✓{% endif %}</span>
         {% if not s.comprobante %}
-        <label class="tk-add" id="tk-add-{{ loop.index }}" for="tk-file-{{ loop.index }}">📎 Agregar ticket</label>
+        <span class="tk-col">
+          <label class="tk-add" id="tk-add-{{ loop.index }}" for="tk-file-{{ loop.index }}">📎 Agregar ticket</label>
+          <span class="tk-paste-hint" id="tk-paste-{{ loop.index }}">o pega la imagen aquí (Ctrl+V)</span>
+        </span>
         <input type="file" id="tk-file-{{ loop.index }}" class="tk-input" accept="image/*" data-play-id="{{ s.id or '' }}" data-row="{{ loop.index }}">
         {% endif %}
       </div>
@@ -180,35 +187,56 @@
       boxes.forEach(function(b) { b.addEventListener('change', upd); });
     })();
     /* Subir ticket directo por jugada (2026-10-10, pedido por Alex: "Hazlo más fácil") */
+    function uploadTicket(playId, row, file) {
+      var status = document.getElementById('tk-status-' + row);
+      var addBtn = document.getElementById('tk-add-' + row);
+      var hint = document.getElementById('tk-paste-' + row);
+      var inp = document.getElementById('tk-file-' + row);
+      if (!playId) { if (status) { status.textContent = '⚠️ Sin id de jugada'; status.className = 'tk-status err'; } return; }
+      if (status) { status.textContent = '⏳ Subiendo ticket…'; status.className = 'tk-status busy'; }
+      var fd = new FormData();
+      fd.append('play_id', playId);
+      fd.append('ticket', file, file.name || 'ticket.jpg');
+      fetch('{{ url_for("admin_ticket_por_jugada") }}', {method: 'POST', body: fd})
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+          if (d.ok) {
+            if (status) { status.textContent = '📸 Ticket ✓'; status.className = 'tk-status'; }
+            if (addBtn) addBtn.style.display = 'none';
+            if (inp) inp.style.display = 'none';
+            if (hint) hint.style.display = 'none';
+            var lbl = document.getElementById('pend-label-' + row);
+            if (lbl) lbl.classList.add('verified');
+          } else {
+            if (status) { status.textContent = '⚠️ ' + (d.error || 'Error al subir'); status.className = 'tk-status err'; }
+          }
+        })
+        .catch(function() {
+          if (status) { status.textContent = '⚠️ Error de red — reintenta'; status.className = 'tk-status err'; }
+        });
+    }
     (function() {
       document.querySelectorAll('.tk-input').forEach(function(inp) {
         inp.addEventListener('change', function() {
           var file = inp.files[0]; if (!file) return;
-          var playId = inp.getAttribute('data-play-id');
-          var row = inp.getAttribute('data-row');
-          var status = document.getElementById('tk-status-' + row);
-          var addBtn = document.getElementById('tk-add-' + row);
-          if (!playId) { status.textContent = '⚠️ Sin id de jugada'; status.className = 'tk-status err'; return; }
-          status.textContent = '⏳ Subiendo ticket…'; status.className = 'tk-status busy';
-          var fd = new FormData();
-          fd.append('play_id', playId);
-          fd.append('ticket', file, file.name);
-          fetch('{{ url_for("admin_ticket_por_jugada") }}', {method: 'POST', body: fd})
-            .then(function(r) { return r.json(); })
-            .then(function(d) {
-              if (d.ok) {
-                status.textContent = '📸 Ticket ✓'; status.className = 'tk-status';
-                if (addBtn) addBtn.style.display = 'none';
-                inp.style.display = 'none';
-                var lbl = document.getElementById('pend-label-' + row);
-                if (lbl) lbl.classList.add('verified');
-              } else {
-                status.textContent = '⚠️ ' + (d.error || 'Error al subir'); status.className = 'tk-status err';
-              }
-            })
-            .catch(function() {
-              status.textContent = '⚠️ Error de red — reintenta'; status.className = 'tk-status err';
-            });
+          uploadTicket(inp.getAttribute('data-play-id'), inp.getAttribute('data-row'), file);
+        });
+      });
+      /* Pegar ticket con Ctrl+V / Cmd+V (2026-10-10, pedido por Alex: copiar y pegar) */
+      document.querySelectorAll('.tk-zone').forEach(function(zone) {
+        zone.addEventListener('paste', function(e) {
+          var items = (e.clipboardData && e.clipboardData.items) || [];
+          var img = null;
+          for (var i = 0; i < items.length; i++) {
+            if (items[i].type && items[i].type.indexOf('image/') === 0) { img = items[i].getAsFile(); break; }
+          }
+          if (!img) {
+            var st = document.getElementById('tk-status-' + zone.getAttribute('data-row'));
+            if (st) { st.textContent = '⚠️ Pega una imagen, no texto'; st.className = 'tk-status err'; }
+            return;
+          }
+          e.preventDefault();
+          uploadTicket(zone.getAttribute('data-play-id'), zone.getAttribute('data-row'), img);
         });
       });
     })();
