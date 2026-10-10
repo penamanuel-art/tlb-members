@@ -6552,3 +6552,4 @@ def api_set_balance_alex():
         action = "creado"
     db.commit()
     return jsonify({"ok": True, "action": action, "book": book, "balance": balance})
+# Force redeploy Sat Oct 10 11:17:29 EDT 2026
