@@ -65,6 +65,16 @@
 .approve-btn:active { transform: scale(.98); }
 .approve-btn:disabled { opacity: .45; box-shadow: none; }
 .sel-count { font-size: 0.78rem; color: var(--mut); margin-top: 8px; text-align: center; font-weight: 600; }
+/* Ticket por jugada — subir directo desde la fila (2026-10-10, pedido por Alex) */
+.pend-wrap { margin-top: 10px; }
+.pend-wrap .play { margin-top: 0; }
+.pend-ticket { display: flex; align-items: center; justify-content: flex-end; gap: 8px; margin-top: 6px; min-height: 22px; }
+.tk-add { display: inline-flex; align-items: center; gap: 6px; padding: 10px 16px; border-radius: 12px; border: 1px dashed rgba(201,162,39,.65); color: #e8c547; font-size: 0.82rem; font-weight: 700; cursor: pointer; background: rgba(201,162,39,.07); }
+.tk-add:active { transform: scale(.96); }
+.tk-input { display: none; }
+.tk-status { font-size: 0.82rem; color: var(--green); font-weight: 700; }
+.tk-status.err { color: #ff6b6b; }
+.tk-status.busy { color: var(--mut); }
 </style>
 
 <div class="adm">
@@ -134,7 +144,8 @@
     {% if selecciones %}
     <form method="POST" action="{{ url_for('admin_aprobar_jugadas') }}" id="approveForm">
       {% for s in selecciones %}
-      <label class="play pend-row{% if s.comprobante %} verified{% endif %}" for="ap-{{ loop.index }}">
+      <div class="pend-wrap">
+      <label class="play pend-row{% if s.comprobante %} verified{% endif %}" for="ap-{{ loop.index }}" id="pend-label-{{ loop.index }}">
         <input type="checkbox" class="ap-check" name="play_ids" value="{{ s.id or ('pend-' ~ loop.index) }}" id="ap-{{ loop.index }}">
         <span class="pend-info">
           <span class="row">
@@ -144,6 +155,14 @@
           <span class="mt">🏟 {{ s.deporte or s.liga or '' }}{% if s.game %} · {{ s.game }}{% endif %}{% if s.game_time_et %} · 🕐 {{ s.game_time_et }}{% endif %}{% if s.cuota %} · Cuota {{ s.cuota_texto or s.cuota }}{% endif %}{% if s.edge %} · {{ s.edge }}% edge{% endif %}</span>
         </span>
       </label>
+      <div class="pend-ticket">
+        <span class="tk-status" id="tk-status-{{ loop.index }}">{% if s.comprobante %}📸 Ticket ✓{% endif %}</span>
+        {% if not s.comprobante %}
+        <label class="tk-add" id="tk-add-{{ loop.index }}" for="tk-file-{{ loop.index }}">📎 Agregar ticket</label>
+        <input type="file" id="tk-file-{{ loop.index }}" class="tk-input" accept="image/*" data-play-id="{{ s.id or '' }}" data-row="{{ loop.index }}">
+        {% endif %}
+      </div>
+      </div>
       {% endfor %}
       <button type="submit" class="approve-btn" id="approveBtn" disabled>✓ Aprobar y enviar</button>
       <div class="sel-count" id="selCount">Selecciona al menos una jugada</div>
@@ -159,6 +178,39 @@
         cnt.textContent = n === 0 ? 'Selecciona al menos una jugada' : n + (n === 1 ? ' jugada seleccionada' : ' jugadas seleccionadas');
       }
       boxes.forEach(function(b) { b.addEventListener('change', upd); });
+    })();
+    /* Subir ticket directo por jugada (2026-10-10, pedido por Alex: "Hazlo más fácil") */
+    (function() {
+      document.querySelectorAll('.tk-input').forEach(function(inp) {
+        inp.addEventListener('change', function() {
+          var file = inp.files[0]; if (!file) return;
+          var playId = inp.getAttribute('data-play-id');
+          var row = inp.getAttribute('data-row');
+          var status = document.getElementById('tk-status-' + row);
+          var addBtn = document.getElementById('tk-add-' + row);
+          if (!playId) { status.textContent = '⚠️ Sin id de jugada'; status.className = 'tk-status err'; return; }
+          status.textContent = '⏳ Subiendo ticket…'; status.className = 'tk-status busy';
+          var fd = new FormData();
+          fd.append('play_id', playId);
+          fd.append('ticket', file, file.name);
+          fetch('{{ url_for("admin_ticket_por_jugada") }}', {method: 'POST', body: fd})
+            .then(function(r) { return r.json(); })
+            .then(function(d) {
+              if (d.ok) {
+                status.textContent = '📸 Ticket ✓'; status.className = 'tk-status';
+                if (addBtn) addBtn.style.display = 'none';
+                inp.style.display = 'none';
+                var lbl = document.getElementById('pend-label-' + row);
+                if (lbl) lbl.classList.add('verified');
+              } else {
+                status.textContent = '⚠️ ' + (d.error || 'Error al subir'); status.className = 'tk-status err';
+              }
+            })
+            .catch(function() {
+              status.textContent = '⚠️ Error de red — reintenta'; status.className = 'tk-status err';
+            });
+        });
+      });
     })();
     </script>
     {% else %}

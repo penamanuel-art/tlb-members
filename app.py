@@ -5080,6 +5080,87 @@ def admin_aprobar_jugadas():
 
 
 
+@app.route("/admin/ticket-por-jugada", methods=["POST"])
+@login_required
+def admin_ticket_por_jugada():
+    """Alex sube el ticket original de UNA jugada pendiente, directo desde su
+    fila en el Admin (2026-10-10, pedido por Alex: "Hazlo más fácil").
+
+    Guarda en static/img/comprobantes/<fecha>-<slug>.jpg y marca el campo
+    "comprobante" en plays-pending.json, para que el flujo de aprobación lo
+    encuentre y lo envíe. Devuelve JSON."""
+    from flask import jsonify
+    user = current_user()
+    if not (is_admin_for(user) or is_alex_member(user)):
+        return jsonify({"ok": False, "error": "sin permiso"}), 403
+    import json as _jsonT, os as _osT, re as _reT
+    from datetime import datetime as _dtT
+    from werkzeug.utils import secure_filename
+    _base = _osT.path.dirname(__file__)
+    _play_id = (request.form.get("play_id") or "").strip()
+    _f = request.files.get("ticket")
+    if not _play_id or not _f or not _f.filename:
+        return jsonify({"ok": False, "error": "Falta la jugada o la foto"}), 400
+
+    # Cargar pendientes y localizar la jugada
+    _pp_path = _osT.path.join(_base, "data", "plays-pending.json")
+    _fecha = _dtT.now().strftime("%Y-%m-%d")
+    try:
+        with open(_pp_path, encoding="utf-8") as _fh:
+            _d = _jsonT.load(_fh)
+        if isinstance(_d, dict) and _d.get("fecha"):
+            _fecha = str(_d.get("fecha"))[:10]
+        _plays = _d.get("plays", []) or []
+    except Exception:
+        _plays = []
+    _play = next((p for p in _plays if str(p.get("id")) == _play_id), None)
+    if _play is None:
+        return jsonify({"ok": False, "error": "Jugada no encontrada en pendientes"}), 404
+
+    # Slug del nombre de archivo — igual que el flujo aprobar-jugadas
+    _slug = _play_id
+    _m = _reT.match(r"^play-(\d{4}-\d{2}-\d{2})-(.+)$", _play_id)
+    if _m:
+        _fecha, _slug = _m.group(1), _m.group(2)
+    _slug = _reT.sub(r"[^a-z0-9\-]", "", _slug.lower()) or "ticket"
+    _fname = "%s-%s.jpg" % (_fecha, _slug)
+    _dir = _osT.path.join(_base, "static", "img", "comprobantes")
+    _osT.makedirs(_dir, exist_ok=True)
+    _dest = _osT.path.join(_dir, _fname)
+
+    # Guardar (convertir a JPEG si PIL está disponible)
+    try:
+        _raw = _f.read()
+        _saved = False
+        try:
+            from PIL import Image as _ImT
+            import io as _ioT
+            _img = _ImT.open(_ioT.BytesIO(_raw))
+            if _img.mode in ("RGBA", "LA", "P"):
+                _img = _img.convert("RGB")
+            _img.save(_dest, "JPEG", quality=90)
+            _saved = True
+        except ImportError:
+            pass
+        if not _saved:
+            with open(_dest, "wb") as _wf:
+                _wf.write(_raw)
+    except Exception as _e:
+        return jsonify({"ok": False, "error": "No se pudo guardar: %s" % str(_e)[:120]}), 500
+
+    # Marcar en plays-pending.json
+    _rel = "img/comprobantes/%s" % _fname
+    try:
+        _play["comprobante"] = _rel
+        with open(_pp_path, "w", encoding="utf-8") as _fh:
+            _jsonT.dump({"fecha": _fecha, "plays": _plays}, _fh,
+                        ensure_ascii=False, indent=2)
+    except Exception as _e:
+        return jsonify({"ok": False, "error": "Ticket guardado pero no se marcó: %s" % str(_e)[:120]}), 500
+
+    return jsonify({"ok": True, "comprobante": _rel, "play_id": _play_id})
+
+
 @app.route("/admin/wgt-tracker")
 @login_required
 def admin_wgt_tracker():
