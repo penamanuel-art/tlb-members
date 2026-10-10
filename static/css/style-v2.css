@@ -359,6 +359,16 @@ body.v2 .tstc-btn {
   transition: transform .18s var(--v2-ease), box-shadow .18s var(--v2-ease), filter .18s var(--v2-ease);
 }
 body.v2 .tstc-novig { box-shadow: 0 8px 20px rgba(34, 197, 94, 0.32); }
+/* Botón Novig compacto (orden de Alex 2026-10-10: "pequeño y letras más pequeñas").
+   Se achica solo el Novig; el + Track mantiene su tamaño. align-items:center evita
+   que el flex estire el botón compacto a la altura del vecino. */
+body.v2 .tstc-actions { align-items: center; }
+body.v2 .tstc-novig {
+  padding: 7px 12px;
+  font-size: 12px;
+  min-height: 0;
+  flex: 0 0 auto;
+}
 body.v2 .tstc-novig:active, body.v2 .tstc-track:active { transform: scale(0.97); }
 @media (hover: hover) {
   body.v2 .tstc-novig:hover { filter: brightness(1.06); }
