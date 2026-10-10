@@ -40,10 +40,10 @@
 .tstc-modal img{max-width:100%;max-height:92vh;border-radius:12px;filter:brightness(.82)}
 .tstc-x{position:absolute;top:14px;right:18px;background:none;border:none;color:#fff;font-size:30px;cursor:pointer;line-height:1}
 .tstc-actions{display:flex;gap:8px;margin-top:10px}
-.tstc-btn{font-weight:800;border-radius:12px;padding:11px 0;text-decoration:none;display:inline-block;font-size:13px;border:none;cursor:pointer;text-align:center;flex:1;white-space:nowrap}
+.tstc-btn{font-weight:800;border-radius:12px;padding:14px 0;text-decoration:none;display:inline-block;font-size:14px;border:none;cursor:pointer;text-align:center;flex:1;white-space:nowrap;min-height:44px;box-sizing:border-box;line-height:1.2}
 .tstc-novig{background:#22c55e;color:#06240f;box-shadow:0 6px 20px rgba(34,197,94,.35)}
-.tstc-track{background:transparent;color:#4ade80;border:1.5px solid #22c55e}
-.tstc-tracked{background:rgba(34,197,94,.12);color:#4ade80;border:1.5px solid #22c55e;cursor:default}
+.tstc-track{background:rgba(34,197,94,.15);color:#4ade80;border:2px solid #22c55e;font-size:15px}
+.tstc-tracked{background:rgba(34,197,94,.12);color:#4ade80;border:2px solid #22c55e;cursor:default;font-size:15px}
 .tk-perf{margin:10px -14px -10px;padding:8px 0 2px;text-align:center;color:#c0a050;font-size:12px;letter-spacing:6px;opacity:.7}
 .tstc-wu{margin:10px 0 2px;border:1px solid rgba(212,175,55,.35);border-radius:12px;background:#0a0f1c}
 .tstc-wu summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;padding:10px 14px;font-size:13px;font-weight:800;letter-spacing:1px;color:#d4af37}
@@ -84,6 +84,21 @@
       <img src="{{ url_for('static', filename=p.comprobante) }}" alt="Original ticket {{ p.abbr }} {{ p.bettype }}" style="filter:brightness(1);">
     </div>
     <div style="margin:0 0 6px;font-size:14px;font-weight:800;color:#4ade80;">Bet&nbsp;&nbsp;{{ '$%.0f' % p.stake_monto }} <span style="color:#8b93a7;font-weight:400;">({{ '%g' % p.stake_unidades }}u)</span></div>
+    {# Botones de acción PROMINENTES (orden de Alex 2026-10-10: "Ponle track botón") — visibles y fáciles de pulsar en móvil #}
+    <div class="tstc-actions" style="margin-top:10px;margin-bottom:4px;">
+      {% if p.novig_url and '%2Fevent-markets%2F' in p.novig_url %}
+        <a class="tstc-btn tstc-novig" href="{{ p.novig_url }}" target="_blank" rel="noopener">Place at Novig &rarr;</a>
+      {% else %}
+        <a class="tstc-btn tstc-novig" href="https://novig.com" target="_blank" rel="noopener">Place at Novig &rarr;</a>
+      {% endif %}
+      {% if p.nivel != 'VALUE' %}
+      {% if p.id in tracked_ids %}
+        <span class="tstc-btn tstc-tracked">&check; Tracked</span>
+      {% else %}
+        <a class="tstc-btn tstc-track" href="{{ url_for('track', play_id=p.id) }}">+ Track</a>
+      {% endif %}
+      {% endif %}
+    </div>
     <div style="display:flex;justify-content:space-between;align-items:center;">
       <span class="tstc-lvl">{{ 'PLATINUM' if is_vip else ('💎 VALUE PLAY' if is_value else 'GOLD') }}</span>
       <a class="tk-view" href="javascript:void(0)" onclick="document.getElementById('tstc-modal-{{ p.id }}').style.display='flex'">View ticket &rarr;</a>
