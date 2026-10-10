@@ -359,12 +359,24 @@ body.v2 .tstc-btn {
   transition: transform .18s var(--v2-ease), box-shadow .18s var(--v2-ease), filter .18s var(--v2-ease);
 }
 body.v2 .tstc-novig { box-shadow: 0 8px 20px rgba(34, 197, 94, 0.32); }
-/* Botón Novig compacto (orden de Alex 2026-10-10: "pequeño y letras más pequeñas").
-   Se achica solo el Novig; el + Track mantiene su tamaño. align-items:center evita
-   que el flex estire el botón compacto a la altura del vecino. */
+/* Botones Novig + Track: MISMO tamaño compacto (orden de Alex 2026-10-10:
+   "Novig azul como el de ellos (WGT), Track mismo tamaño que el de Novig").
+   Novig en azul estilo WGT; Track igual de compacto (su borde verde de 2px se
+   compensa con menos padding para que la altura total sea idéntica).
+   align-items:center evita que el flex estire los botones compactos. */
 body.v2 .tstc-actions { align-items: center; }
 body.v2 .tstc-novig {
+  background: #2563eb;
+  color: #ffffff;
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.32);
   padding: 7px 12px;
+  font-size: 12px;
+  min-height: 0;
+  flex: 0 0 auto;
+}
+body.v2 .tstc-track,
+body.v2 .tstc-tracked {
+  padding: 5px 12px;
   font-size: 12px;
   min-height: 0;
   flex: 0 0 auto;
