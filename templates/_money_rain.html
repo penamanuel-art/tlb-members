@@ -22,6 +22,45 @@
     sessionStorage.setItem('lb_lluvia', '1');
   } catch (e) {}
   if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) { quitar(); return; }
+  // Sonido "cha-ching" estilo Cash App (Alex 2026-10-10): sintetizado con Web Audio API,
+  // sin archivos externos. Doble tono metálico (E6 -> A6). Si el navegador bloquea el
+  // autoplay (iOS), se reintenta al primer toque del usuario; si sigue bloqueado, no pasa nada.
+  function tono(ac, freq, t0, dur){
+    try {
+      var o = ac.createOscillator(), g = ac.createGain();
+      o.type = 'triangle'; o.frequency.value = freq;
+      g.gain.setValueAtTime(0.0001, t0);
+      g.gain.exponentialRampToValueAtTime(0.45, t0 + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+      o.connect(g); g.connect(ac.destination);
+      o.start(t0); o.stop(t0 + dur + 0.05);
+    } catch (e) {}
+  }
+  function chaching(){
+    try {
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return;
+      if (!window.__mrAC) window.__mrAC = new AC();
+      var ac = window.__mrAC;
+      function play(){
+        var t = ac.currentTime + 0.02;
+        tono(ac, 1318.5, t, 0.12);        // E6 — el "cha"
+        tono(ac, 1760.0, t + 0.11, 0.40); // A6 — el "ching"
+      }
+      if (ac.state === 'suspended') {
+        var retry = function(){
+          try { ac.resume(); play(); } catch (e) {}
+          window.removeEventListener('touchstart', retry);
+          window.removeEventListener('pointerdown', retry);
+        };
+        window.addEventListener('touchstart', retry);
+        window.addEventListener('pointerdown', retry);
+        try { ac.resume(); } catch (e) {}
+      }
+      play();
+    } catch (e) {}
+  }
+  chaching();
   var ctx = canvas.getContext('2d');
   var W, H, DPR = Math.min(window.devicePixelRatio || 1, 2);
   function size(){ W = innerWidth; H = innerHeight; canvas.width = W*DPR; canvas.height = H*DPR; ctx.setTransform(DPR,0,0,DPR,0,0); }
