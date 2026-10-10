@@ -590,10 +590,13 @@ def admin_email() -> str:
     return (os.environ.get("ADMIN_EMAIL") or "").strip().lower()
 
 
-def _resend_send(to: str, subject: str, text_body: str, html_body=None) -> tuple:
+def _resend_send(to: str, subject: str, text_body: str, html_body=None,
+                 attachments=None) -> tuple:
     """Envía un email vía Resend HTTP API (HTTPS/443, funciona en Render free
-    donde el SMTP está bloqueado). Devuelve (ok, detalle)."""
+    donde el SMTP está bloqueado). attachments: lista de (filename, bytes).
+    Devuelve (ok, detalle)."""
     import urllib.request
+    import base64 as _b64
     key = (os.environ.get("RESEND_API_KEY") or "").strip()
     if not key:
         return False, "falta RESEND_API_KEY"
@@ -604,6 +607,14 @@ def _resend_send(to: str, subject: str, text_body: str, html_body=None) -> tuple
                "reply_to": reply_to, "text": text_body}
     if html_body:
         payload["html"] = html_body
+    if attachments:
+        payload["attachments"] = [
+            {"filename": fn,
+             "content": _b64.b64encode(data).decode("ascii")}
+            for fn, data in attachments if data
+        ] or None
+        if not payload["attachments"]:
+            del payload["attachments"]
     req = urllib.request.Request(
         "https://api.resend.com/emails",
         data=json.dumps(payload).encode("utf-8"),
@@ -632,9 +643,10 @@ def _resend_send(to: str, subject: str, text_body: str, html_body=None) -> tuple
 
 
 def _smtp_send(to: str, subject: str, text_body: str, html_body=None,
-               from_header=None) -> tuple:
+               from_header=None, attachments=None) -> tuple:
     """Envío clásico por Gmail SMTP (fallback para desarrollo local; en
-    Render free está bloqueado). Devuelve (ok, detalle)."""
+    Render free está bloqueado). attachments: lista de (filename, bytes).
+    Devuelve (ok, detalle)."""
     import smtplib
     from email.message import EmailMessage
     user = (os.environ.get("EMAIL_USER") or "").strip()
@@ -649,6 +661,11 @@ def _smtp_send(to: str, subject: str, text_body: str, html_body=None,
         msg.set_content(text_body)
         if html_body:
             msg.add_alternative(html_body, subtype="html")
+        for fn, data in (attachments or []):
+            maintype, subtype = ("image", "jpeg") if str(fn).lower().endswith(
+                (".jpg", ".jpeg")) else ("application", "octet-stream")
+            msg.add_attachment(data, maintype=maintype, subtype=subtype,
+                               filename=fn)
         with smtplib.SMTP("smtp.gmail.com", 587, timeout=20) as s:
             s.starttls()
             s.login(user, pwd)
@@ -659,18 +676,21 @@ def _smtp_send(to: str, subject: str, text_body: str, html_body=None,
 
 
 def _dispatch_email(to: str, subject: str, text_body: str, html_body=None,
-                    from_header=None) -> tuple:
+                    from_header=None, attachments=None) -> tuple:
     """Despacha un email: Resend si hay API key (producción en Render),
-    si no SMTP Gmail (desarrollo local). Devuelve (ok, detalle)."""
+    si no SMTP Gmail (desarrollo local). attachments: lista de
+    (filename, bytes). Devuelve (ok, detalle)."""
     if (os.environ.get("RESEND_API_KEY") or "").strip():
-        return _resend_send(to, subject, text_body, html_body)
-    return _smtp_send(to, subject, text_body, html_body, from_header)
+        return _resend_send(to, subject, text_body, html_body, attachments)
+    return _smtp_send(to, subject, text_body, html_body, from_header,
+                      attachments)
 
 
 def send_email_sync(to: str, subject: str, text_body: str,
-                    html_body=None) -> tuple:
+                    html_body=None, attachments=None) -> tuple:
     """Versión síncrona para pruebas/admin: devuelve (ok, detalle) real."""
-    return _dispatch_email(to, subject, text_body, html_body)
+    return _dispatch_email(to, subject, text_body, html_body,
+                           attachments=attachments)
 
 
 def notify_new_member(nombre: str, email: str):
@@ -5046,6 +5066,9 @@ def admin_aprobar_jugadas():
     _ALEX_EMAIL = "pena.manuel@myyahoo.com"
     for _pl in _publicadas:
         _pid = str(_pl.get("id"))
+        _slug = _pid.replace("play-2026-10-10-", "")
+        _ticket_path = _osA.path.join(_base, "static", "img", "comprobantes",
+                                      "2026-10-10-%s.jpg" % _slug)
         _nivel = str(_pl.get("nivel", ""))
         _badge = "PLATINUM PLAY" if _nivel == "ELITE" else "GOLD PLAY"
         _subject = "The Sharp Team | Prueba - %s" % _pl.get("pick", "")
@@ -5053,16 +5076,25 @@ def admin_aprobar_jugadas():
 <p style="background:#fff3cd;padding:10px;border-radius:8px;">🧪 <b>PRUEBA</b> — flujo de aprobación (solo para Alex)</p>
 <h2>%s</h2>
 <p><b>%s</b> · %s · 🕐 %s</p>
-<p>Ticket: %s</p>
+<p>🎫 <b>Ticket original adjunto</b> en este correo.</p>
 <p style="color:#888;font-size:12px;">The Sharp Team</p>
 </div>""" % (_badge, _pl.get("pick", ""), _pl.get("cuota_texto", ""),
-             _pl.get("game_time_et", ""), _pl.get("comprobante", ""))
+             _pl.get("game_time_et", ""))
+        # Ticket original como archivo adjunto (2026-10-10, pedido por Alex:
+        # antes solo llegaba el path como texto)
+        _atts = []
         try:
-            _text = "%s\n%s (%s)\n%s\nTicket: %s" % (
+            if _osA.path.isfile(_ticket_path):
+                with open(_ticket_path, "rb") as _tf:
+                    _atts = [("ticket-%s.jpg" % _slug, _tf.read())]
+        except Exception:
+            _atts = []
+        try:
+            _text = "%s\n%s (%s)\n%s\nTicket original adjunto." % (
                 _badge, _pl.get("pick", ""), _pl.get("cuota_texto", ""),
-                _pl.get("game_time_et", ""), _pl.get("comprobante", ""))
+                _pl.get("game_time_et", ""))
             _ok, _det = _dispatch_email(_ALEX_EMAIL, _subject, _text,
-                                        html_body=_html)
+                                        html_body=_html, attachments=_atts)
             if _ok:
                 _em_ok.append(_pid)
             else:
