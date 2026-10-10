@@ -162,8 +162,6 @@
     </div>
     <div class="tk-game">
       <div class="tk-side">
-        {% set _hl = team_logo_url(p.liga, p.abbr) %}
-        <div class="tk-glogo">{% if _hl %}<img src="{{ _hl }}" alt="{{ p.abbr }}" loading="lazy" onerror="this.style.display='none'">{% endif %}</div>
         <span class="tk-gabbr">{{ p.abbr }}</span>
       </div>
       <div class="tk-gtime">
