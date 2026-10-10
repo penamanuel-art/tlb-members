@@ -3922,17 +3922,18 @@ def track(play_id):
         # Solo el admin puede ver la card pendiente (sin tickets)
         # desde su dashboard (2026-10-03, orden de Alex).
         play = next((p for p in load_pending_plays() if p.get("id") == play_id), None)
+    _is_ajax = request.headers.get("X-Requested-With") == "XMLHttpRequest"
     if not play:
+        if _is_ajax:
+            return jsonify({"ok": False, "error": "Play not found."}), 404
         flash("Play not found.", "error")
         return redirect(url_for("home"))
-    # Sin ticket no se trackea (2026-10-03, orden de Alex): evita marcar por
-    # error una jugada no apostada — eso sería trampa. El botón aparece solo
-    # cuando se sube el ticket.
-    if not play.get("comprobante"):
-        flash("This play has no ticket yet — it can't be tracked.", "warn")
-        return redirect(url_for("home"))
+    # Track con o sin ticket (2026-10-10, orden de Alex: revierte la regla
+    # anti-trampa del 2026-10-03; el botón "+ Track" ahora es visible siempre).
     # La Elite bloqueada no se puede trackear: no revela nada.
     if play.get("nivel") in ("PLATINUM", "ELITE") and not platinum_unlocked_for(_cu):
+        if _is_ajax:
+            return jsonify({"ok": False, "error": "The Platinum play is locked. Unlock it to track it."}), 403
         flash("The Platinum play is locked. Unlock it to track it.", "warn")
         return redirect(url_for("desbloquear_platinum"))
     db = get_db()
@@ -3951,8 +3952,12 @@ def track(play_id):
             ),
         )
         db.commit()
+        if _is_ajax:
+            return jsonify({"ok": True})
         flash("Play added to your tracker.", "ok")
     except INTEGRITY_ERRORS:
+        if _is_ajax:
+            return jsonify({"ok": True, "already": True})
         flash("That play is already in your tracker.", "warn")
     return back("home")
 

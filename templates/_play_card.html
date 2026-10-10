@@ -95,7 +95,7 @@
       {% if p.id in tracked_ids %}
         <span class="tstc-btn tstc-tracked">&check; Tracked</span>
       {% else %}
-        <a class="tstc-btn tstc-track" href="{{ url_for('track', play_id=p.id) }}">+ Track</a>
+        <a class="tstc-btn tstc-track" href="{{ url_for('track', play_id=p.id) }}" data-track-url="{{ url_for('track', play_id=p.id) }}">+ Track</a>
       {% endif %}
       {% endif %}
     </div>
@@ -187,7 +187,7 @@
       {% if p.id in tracked_ids %}
         <span class="tstc-btn tstc-tracked">&check; Tracked</span>
       {% else %}
-        <a class="tstc-btn tstc-track" href="{{ url_for('track', play_id=p.id) }}">+ Track</a>
+        <a class="tstc-btn tstc-track" href="{{ url_for('track', play_id=p.id) }}" data-track-url="{{ url_for('track', play_id=p.id) }}">+ Track</a>
       {% endif %}
       {% endif %}
     </div>
@@ -225,6 +225,44 @@
       if(d.open){
         timers[i] = setTimeout(function(){ d.open = false; timers[i] = null; }, 7000);
       }
+    });
+  });
+})();
+</script>
+{# Track vía AJAX sin mover la página (pedido Alex 2026-10-10: "que no me saque de la sesión"). #}
+<script>
+(function(){
+  if (window.__tstTrackInit) return;
+  window.__tstTrackInit = true;
+  document.addEventListener('click', function(e){
+    var a = e.target.closest('a.tstc-track[data-track-url]');
+    if (!a) return;
+    e.preventDefault();
+    if (a.dataset.busy) return;
+    a.dataset.busy = '1';
+    var orig = a.textContent;
+    a.textContent = '…';
+    fetch(a.dataset.trackUrl, {
+      method: 'POST',
+      headers: {'X-Requested-With': 'XMLHttpRequest'},
+      credentials: 'same-origin'
+    }).then(function(r){
+      return r.json().then(function(j){ return {status: r.status, body: j}; });
+    }).then(function(res){
+      if (res.body && res.body.ok) {
+        var s = document.createElement('span');
+        s.className = 'tstc-btn tstc-tracked';
+        s.innerHTML = '&check; Tracked';
+        a.replaceWith(s);
+      } else {
+        a.textContent = orig;
+        delete a.dataset.busy;
+        alert((res.body && res.body.error) || 'Could not track this play.');
+      }
+    }).catch(function(){
+      a.textContent = orig;
+      delete a.dataset.busy;
+      alert('Could not track this play. Please try again.');
     });
   });
 })();
