@@ -1006,3 +1006,10 @@ body.has-bottomnav #faqFab { bottom: calc(86px + env(safe-area-inset-bottom)); }
 body.has-bottomnav #faqFab.above-ticker { bottom: calc(160px + env(safe-area-inset-bottom)); }
 body.has-bottomnav #faqPanel { bottom: calc(154px + env(safe-area-inset-bottom)); }
 body.has-bottomnav #faqPanel.above-ticker { bottom: calc(228px + env(safe-area-inset-bottom)); }
+
+/* Menú details/summary — sin JavaScript, funciona en iPhone */
+.menu-details { position: relative; }
+.menu-details summary::-webkit-details-marker { display: none; }
+.menu-details summary::marker { display: none; }
+.menu-details .menu-drop { display: none; }
+.menu-details[open] .menu-drop { display: block; }

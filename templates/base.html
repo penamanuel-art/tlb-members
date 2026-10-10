@@ -25,8 +25,9 @@
     {% if session.get('user_id') %}
     <a href="{{ url_for('home', splash='0') }}" class="qa-btn qa-primary qa-home{% if request.endpoint == 'home' %} active{% endif %}" title="Home"><span class="qa-ico">🏠</span><span class="qa-txt">Home</span></a>
     <div class="menu-wrap">
-      <button class="icon-btn" id="menuBtn" aria-label="Menu" onclick="var d=document.getElementById('menuDrop');if(d)d.hidden=!d.hidden;return false;">☰</button>
-      <div class="menu-drop" id="menuDrop" hidden>
+      <details class="menu-details">
+        <summary class="icon-btn" aria-label="Menu" style="list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:center;">☰</summary>
+        <div class="menu-drop" id="menuDrop">
         <a href="{{ url_for('home', splash='0') }}">🏠 Home</a>
         <a href="{{ url_for('records') }}">📜 Full record</a>
         <a href="{{ url_for('tracker') }}">My Tracker</a>
@@ -44,6 +45,7 @@
         <a href="{{ url_for('cuenta') }}">💰 My account</a>
         <a href="{{ url_for('logout') }}">Log out</a>
       </div>
+      </details>
     </div>
     <div class="quick-actions">
       <a href="{{ url_for('records') }}" class="qa-btn qa-records{% if request.endpoint == 'records' %} active{% endif %}" title="Full record"><span class="qa-ico">📜</span><span class="qa-txt">Full record</span></a>
@@ -86,16 +88,14 @@
 
 <script>
 (function () {
-  var drop = document.getElementById('menuDrop');
-  // El toggle lo maneja el onclick inline del botón (más confiable en iPhone).
-  // Aquí solo cerramos el menú al tocar fuera de él.
-  if (drop) {
-    document.addEventListener('click', function (e) {
-      var btn = document.getElementById('menuBtn');
-      if (btn && (e.target === btn || btn.contains(e.target))) return;
-      drop.hidden = true;
+  // El menú usa <details>/<summary> (sin JavaScript) — funciona en iPhone siempre.
+  // Aquí solo cerramos el menú al tocar un enlace dentro de él.
+  document.querySelectorAll('.menu-details .menu-drop a').forEach(function (a) {
+    a.addEventListener('click', function () {
+      var d = a.closest('details');
+      if (d) d.open = false;
     });
-  }
+  });
   document.querySelectorAll('[data-ticket]').forEach(function (el) {
     el.addEventListener('click', function () {
       var m = document.getElementById(el.getAttribute('data-ticket'));
