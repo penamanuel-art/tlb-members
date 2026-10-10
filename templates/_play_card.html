@@ -101,7 +101,7 @@
     </div>
     <div style="display:flex;justify-content:space-between;align-items:center;">
       <span class="tstc-lvl">{{ 'PLATINUM' if is_vip else ('💎 VALUE PLAY' if is_value else 'GOLD') }}</span>
-      <a class="tk-view" href="javascript:void(0)" onclick="document.getElementById('tstc-modal-{{ p.id }}').style.display='flex'">View ticket &rarr;</a>
+      <a class="tk-view" style="color:#2563eb" href="javascript:void(0)" onclick="document.getElementById('tstc-modal-{{ p.id }}').style.display='flex'">View ticket &rarr;</a>
     </div>
     {% if p.writeup %}
     <details class="tstc-wu" style="margin-top:6px;">
@@ -172,7 +172,7 @@
     <div class="tk-info">{{ 'Platinum' if is_vip else ('Value' if is_value else 'Gold') }} Play &bull; {{ fmt_odds(p.cuota) }} {{ p.casa or 'Pinnacle' }}{% if p.writeup and p.writeup.fair_price %} &bull; Fair {{ p.writeup.fair_price }}{% endif %}</div>
     <div class="tk-badgerow">
       <span class="tstc-lvl">{{ 'PLATINUM' if is_vip else ('💎 VALUE PLAY' if is_value else 'GOLD') }}</span>
-      {% if p.comprobante %}<a class="tk-view" href="{{ url_for('ticket_view', play_id=p.id) }}">View ticket &rarr;</a>{% endif %}
+      {% if p.comprobante %}<a class="tk-view" style="color:#2563eb" href="{{ url_for('ticket_view', play_id=p.id) }}">View ticket &rarr;</a>{% endif %}
     </div>
     <div class="tstc-actions">
       {# Botón de Novig SIEMPRE (regla de Alex 2026-09-28): OneLink oficial verificado tal cual; sin link verificado -> https://novig.com. Nunca inventar UUIDs. #}
