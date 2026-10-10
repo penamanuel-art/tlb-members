@@ -9,7 +9,7 @@
 .tk-team{display:flex;align-items:center;gap:10px}
 .tk-logo{width:44px;height:44px;border-radius:12px;background:#1a2233;display:flex;align-items:center;justify-content:center;overflow:hidden;flex:none}
 .tk-logo img{width:36px;height:36px;object-fit:contain}
-.tk-name{font-size:19px;font-weight:800;color:#fff}
+.tk-name{font-size:16px;font-weight:600;color:#fff}
 .tk-name .tk-dot{color:#8b93a7;font-weight:400}
 .tk-name .tk-prob{color:#e0c070}
 .tk-bettype{font-size:13px;color:#9aa3b8;margin-top:1px}
@@ -19,7 +19,7 @@
 .tk-status.lost{background:rgba(239,68,68,.14);color:#ef4444;border-color:rgba(239,68,68,.4)}
 .tstc-bet{margin:10px 0 4px}
 .tk-amt-label{font-size:13px;color:#8b93a7}
-.tk-amt{font-size:26px;font-weight:800;color:#fff;margin-top:1px}
+.tk-amt{font-size:22px;font-weight:600;color:#fff;margin-top:1px}
 .tk-units{font-size:14px;font-weight:700;color:#e0c070;margin-top:2px}
 .tk-game{margin:10px 0;background:#141a28;border-radius:16px;padding:10px 12px;display:flex;align-items:center;justify-content:space-between}
 .tk-side{display:flex;align-items:center;gap:8px}
@@ -120,7 +120,7 @@
         {% set _logo = team_logo_url(p.liga, p.abbr) %}
         <div class="tk-logo">{% if _logo %}<img src="{{ _logo }}" alt="{{ p.abbr }}" loading="lazy" onerror="this.style.display='none'">{% endif %}</div>
         <div>
-          <div class="tk-name">{{ p.abbr }}{% if p.writeup and p.writeup.model_prob %} <span class="tk-dot">&bull;</span> <span class="tk-prob">{{ p.writeup.model_prob }}</span>{% endif %}</div>
+          <div class="tk-name">{{ p.team_name or p.abbr }}{% if p.writeup and p.writeup.model_prob %} <span class="tk-dot">&bull;</span> <span class="tk-prob">{{ p.writeup.model_prob }}</span>{% endif %}</div>
           <div class="tk-bettype">{{ p.bettype }} Winner</div>
         </div>
       </div>
