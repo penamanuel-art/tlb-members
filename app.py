@@ -4861,9 +4861,12 @@ def admin_dashboard():
 def admin_aprobar_jugadas():
     """Flujo de aprobación de jugadas (2026-10-10, pedido por Alex).
 
-    MODO PRUEBA: solo muestra la pantalla de confirmación con las jugadas
-    seleccionadas. NO publica en la BD, NO toca plays.json, NO envía
-    Telegram ni email. El envío real se activará con la orden de Alex.
+    FLUJO REAL (solo para Alex en prueba):
+    1. Marca las jugadas seleccionadas como aprobadas (las quita de pendientes).
+    2. Las publica en data/plays.json (Dashboard de miembro).
+    3. Envía cada jugada por Telegram SOLO a Alex (chat 8600523481).
+    4. Envía email de confirmación SOLO a pena.manuel@myyahoo.com.
+    Muestra pantalla de confirmación con resumen real.
     """
     user = current_user()
     if not (is_admin_for(user) or is_alex_member(user)):
@@ -4871,30 +4874,146 @@ def admin_aprobar_jugadas():
         return redirect(url_for("home"))
     import json as _jsonA
     import os as _osA
+    import subprocess as _spA
     from datetime import datetime as _dtA
     _hoy = _dtA.now().strftime("%Y-%m-%d")
+    _base = _osA.path.dirname(__file__)
     sel_ids = request.form.getlist("play_ids")
+
+    # Cargar pendientes
     pendientes = []
+    _pp_path = _osA.path.join(_base, "data", "plays-pending.json")
     try:
-        with open(_osA.path.join(_osA.path.dirname(__file__), "data",
-                                 "plays-pending.json"), encoding="utf-8") as _f:
+        with open(_pp_path, encoding="utf-8") as _f:
             _d = _jsonA.load(_f)
             if isinstance(_d, dict) and _d.get("fecha") == _hoy:
                 pendientes = _d.get("plays", []) or []
     except Exception:
         pendientes = []
     elegidas = [p for p in pendientes if str(p.get("id")) in sel_ids]
-    # Clientes (para el resumen; en prueba no se envía nada)
+
+    # Cargar plays.json actual para copiar datos completos
+    _plays_path = _osA.path.join(_base, "data", "plays.json")
+    _full_plays = {}
+    _plays_data = None
     try:
-        db = get_db()
-        n_clientes = db.execute("SELECT COUNT(*) c FROM users").fetchone()["c"]
+        with open(_plays_path, encoding="utf-8") as _f:
+            _plays_data = _jsonA.load(_f)
+            for _p in (_plays_data.get("plays", []) or []):
+                _full_plays[str(_p.get("id"))] = _p
     except Exception:
-        n_clientes = 0
+        _plays_data = {"fecha": _hoy, "plays": []}
+
+    # 1+2. Marcar aprobadas (quitar de pendientes) y publicar en plays.json
+    _publicadas = []
+    if elegidas:
+        # Quitar de pendientes
+        _restantes = [p for p in pendientes if str(p.get("id")) not in sel_ids]
+        try:
+            with open(_pp_path, "w", encoding="utf-8") as _f:
+                _jsonA.dump({"fecha": _hoy, "plays": _restantes}, _f, ensure_ascii=False, indent=2)
+        except Exception:
+            pass
+        # Agregar a plays.json (copia de datos completos existentes)
+        if not isinstance(_plays_data, dict):
+            _plays_data = {"fecha": _hoy, "plays": []}
+        if "plays" not in _plays_data or not isinstance(_plays_data["plays"], list):
+            _plays_data["plays"] = []
+        for _ep in elegidas:
+            _pid = str(_ep.get("id"))
+            _full = _full_plays.get(_pid)
+            if _full:
+                # Copia para la prueba (Alex acepta duplicadas)
+                import copy as _copyA
+                _plays_data["plays"].append(_copyA.deepcopy(_full))
+                _publicadas.append(_full)
+            else:
+                # Construir entrada mínima desde pendiente
+                _slug = _pid.replace("play-2026-10-10-", "")
+                _min = {
+                    "id": _pid,
+                    "nivel": _ep.get("nivel", "GOLD"),
+                    "pick": _ep.get("pick", ""),
+                    "liga": _ep.get("liga", ""),
+                    "cuota_texto": _ep.get("cuota_texto", _ep.get("cuota", "")),
+                    "game_time_et": _ep.get("game_time_et", ""),
+                    "comprobante": "img/comprobantes/2026-10-10-%s.jpg" % _slug,
+                    "verificada": True,
+                }
+                _plays_data["plays"].append(_min)
+                _publicadas.append(_min)
+        try:
+            with open(_plays_path, "w", encoding="utf-8") as _f:
+                _jsonA.dump(_plays_data, _f, ensure_ascii=False, indent=2)
+        except Exception:
+            pass
+
+    # 3. Telegram SOLO a Alex
+    _ALEX_TG = "8600523481"
+    _tg_ok, _tg_fail = [], []
+    _TG_BIN = "/home/hatch/workspace/skills/telegram/bin/tg"
+    for _pl in _publicadas:
+        _pid = str(_pl.get("id"))
+        _slug = _pid.replace("play-2026-10-10-", "")
+        _foto = _osA.path.join(_base, "static", "img", "comprobantes",
+                               "2026-10-10-%s.jpg" % _slug)
+        _nivel = str(_pl.get("nivel", ""))
+        _badge = "⭐ PLATINUM PLAY" if _nivel == "ELITE" else "⚪ GOLD PLAY"
+        _caption = "🧪 PRUEBA\n%s\n%s (%s)\n🕐 %s" % (
+            _badge, _pl.get("pick", ""), _pl.get("cuota_texto", ""),
+            _pl.get("game_time_et", ""))
+        try:
+            if _osA.path.isfile(_foto):
+                _r = _spA.run([_TG_BIN, "sendphoto", _ALEX_TG, _foto,
+                               "--caption", _caption],
+                              capture_output=True, text=True, timeout=60)
+            else:
+                _r = _spA.run([_TG_BIN, "send", _ALEX_TG, _caption],
+                              capture_output=True, text=True, timeout=60)
+            if _r.returncode == 0:
+                _tg_ok.append(_pid)
+            else:
+                _tg_fail.append((_pid, (_r.stderr or _r.stdout or "")[:200]))
+        except Exception as _e:
+            _tg_fail.append((_pid, str(_e)[:200]))
+
+    # 4. Email SOLO a Alex
+    _em_ok, _em_fail = [], []
+    _RS_BIN = "/home/hatch/workspace/skills/resend/bin/send.py"
+    _ALEX_EMAIL = "pena.manuel@myyahoo.com"
+    for _pl in _publicadas:
+        _pid = str(_pl.get("id"))
+        _nivel = str(_pl.get("nivel", ""))
+        _badge = "PLATINUM PLAY" if _nivel == "ELITE" else "GOLD PLAY"
+        _subject = "The Sharp Team | Prueba - %s" % _pl.get("pick", "")
+        _html = """<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
+<p style="background:#fff3cd;padding:10px;border-radius:8px;">🧪 <b>PRUEBA</b> — flujo de aprobación (solo para Alex)</p>
+<h2>%s</h2>
+<p><b>%s</b> · %s · 🕐 %s</p>
+<p>Ticket: %s</p>
+<p style="color:#888;font-size:12px;">The Sharp Team</p>
+</div>""" % (_badge, _pl.get("pick", ""), _pl.get("cuota_texto", ""),
+             _pl.get("game_time_et", ""), _pl.get("comprobante", ""))
+        try:
+            _r = _spA.run([_RS_BIN, "--to", _ALEX_EMAIL, "--subject", _subject,
+                           "--html", _html,
+                           "--from", "The Sharp Team <plays@thesharpteam.bet>"],
+                          capture_output=True, text=True, timeout=60)
+            if _r.returncode == 0:
+                _em_ok.append(_pid)
+            else:
+                _em_fail.append((_pid, (_r.stderr or _r.stdout or "")[:200]))
+        except Exception as _e:
+            _em_fail.append((_pid, str(_e)[:200]))
+
     return render_template("admin_aprobar_confirm.html",
-                           elegidas=elegidas,
-                           n_clientes=n_clientes,
-                           modo_prueba=True,
-                           hoy=_hoy)
+                           elegidas=_publicadas,
+                           n_clientes=1,
+                           modo_prueba=False,
+                           hoy=_hoy,
+                           tg_ok=_tg_ok, tg_fail=_tg_fail,
+                           em_ok=_em_ok, em_fail=_em_fail)
+
 
 
 @app.route("/admin/wgt-tracker")

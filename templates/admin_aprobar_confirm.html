@@ -58,6 +58,22 @@
 
   <div class="card">
     <h2>📊 Resumen de envíos</h2>
+    {% if not modo_prueba %}
+    <p class="desc">Enviado solo a Alex (prueba) · {{ hoy }}</p>
+    <div class="sum">
+      <div class="cell ok"><div class="n">{{ tg_ok|length if tg_ok is defined else 0 }}</div><div class="l">📲 TELEGRAM OK</div></div>
+      <div class="cell bad"><div class="n">{{ tg_fail|length if tg_fail is defined else 0 }}</div><div class="l">📲 TELEGRAM FALLÓ</div></div>
+      <div class="cell ok"><div class="n">{{ em_ok|length if em_ok is defined else 0 }}</div><div class="l">📧 EMAIL OK</div></div>
+      <div class="cell bad"><div class="n">{{ em_fail|length if em_fail is defined else 0 }}</div><div class="l">📧 EMAIL FALLÓ</div></div>
+    </div>
+    {% if tg_fail %}
+    <p class="note" style="color:#ff5a5a;">Telegram falló: {% for pid, err in tg_fail %}{{ pid }}{% if not loop.last %}, {% endif %}{% endfor %}</p>
+    {% endif %}
+    {% if em_fail %}
+    <p class="note" style="color:#ff5a5a;">Email falló: {% for pid, err in em_fail %}{{ pid }}{% if not loop.last %}, {% endif %}{% endfor %}</p>
+    {% endif %}
+    <p class="note">✅ Jugadas publicadas en el Dashboard · 📲 Telegram solo a Alex · 📧 Email solo a pena.manuel@myyahoo.com</p>
+    {% else %}
     <p class="desc">En producción verás aquí los resultados reales con opción de reintentar</p>
     <div class="sum">
       <div class="cell ok"><div class="n">—</div><div class="l">📲 TELEGRAM OK</div></div>
@@ -68,6 +84,7 @@
     <button class="retry-btn" disabled>↻ Reintentar Telegram fallidos (disponible en producción)</button>
     <button class="retry-btn" disabled>↻ Reintentar emails fallidos (disponible en producción)</button>
     <p class="note">Al activar el flujo real, este paso: 1) marca las jugadas como aprobadas/publicadas, 2) las publica en el dashboard de miembro, 3) envía el ticket por Telegram a cada canal, 4) envía el email de confirmación con el ticket a cada cliente.</p>
+    {% endif %}
   </div>
 </div>
 {% endblock %}
