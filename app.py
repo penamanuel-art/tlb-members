@@ -4856,6 +4856,47 @@ def admin_dashboard():
                            plays_hoy=plays)
 
 
+@app.route("/admin/aprobar-jugadas", methods=["POST"])
+@login_required
+def admin_aprobar_jugadas():
+    """Flujo de aprobación de jugadas (2026-10-10, pedido por Alex).
+
+    MODO PRUEBA: solo muestra la pantalla de confirmación con las jugadas
+    seleccionadas. NO publica en la BD, NO toca plays.json, NO envía
+    Telegram ni email. El envío real se activará con la orden de Alex.
+    """
+    user = current_user()
+    if not (is_admin_for(user) or is_alex_member(user)):
+        flash("You don't have permission to view this page.", "error")
+        return redirect(url_for("home"))
+    import json as _jsonA
+    import os as _osA
+    from datetime import datetime as _dtA
+    _hoy = _dtA.now().strftime("%Y-%m-%d")
+    sel_ids = request.form.getlist("play_ids")
+    pendientes = []
+    try:
+        with open(_osA.path.join(_osA.path.dirname(__file__), "data",
+                                 "plays-pending.json"), encoding="utf-8") as _f:
+            _d = _jsonA.load(_f)
+            if isinstance(_d, dict) and _d.get("fecha") == _hoy:
+                pendientes = _d.get("plays", []) or []
+    except Exception:
+        pendientes = []
+    elegidas = [p for p in pendientes if str(p.get("id")) in sel_ids]
+    # Clientes (para el resumen; en prueba no se envía nada)
+    try:
+        db = get_db()
+        n_clientes = db.execute("SELECT COUNT(*) c FROM users").fetchone()["c"]
+    except Exception:
+        n_clientes = 0
+    return render_template("admin_aprobar_confirm.html",
+                           elegidas=elegidas,
+                           n_clientes=n_clientes,
+                           modo_prueba=True,
+                           hoy=_hoy)
+
+
 @app.route("/admin/wgt-tracker")
 @login_required
 def admin_wgt_tracker():
