@@ -39,6 +39,121 @@
   </div>
 </section>
 
+<!-- TRACKER · personal (arriba por orden de Alex 2026-10-10) -->
+<section class="v2-sec">
+  {% if false %}
+  {# 2026-10-10, orden de Alex: el tracker OFICIAL del programa se esconde del #}
+  {# home — solo queda el link "View official program record →" a /records. #}
+  {# Aquí siempre se muestra el tracker PERSONAL del miembro logueado. #}
+  <div class="v2-sec-head" style="padding-top:28px">
+    <div>
+      <p class="v2-eyebrow">Verified program results</p>
+      <h2 class="v2-sec-title">We bet every play we post.</h2>
+    </div>
+    <a class="v2-link" href="{{ url_for('resultados') }}">Full results →</a>
+  </div>
+  <div class="v2-verify">
+    <span class="v2-verify-check">✓</span>
+    <p>EVERY PLAY IS POSTED BEFORE GAME TIME — THEN LOCKED AND GRADED AGAINST THE FINAL SCORE.<br>
+    <span class="muted">WIN OR LOSS, EVERY PLAY STAYS ON THE RECORD.</span></p>
+  </div>
+  <div class="v2-stats">
+    <div class="v2-stat">
+      <p class="v2-stat-label">Total profit</p>
+      <p class="v2-stat-value {{ 'pos' if res.get('profit_all_time') is not none and res.get('profit_all_time') > 0 else ('neg' if res.get('profit_all_time') is not none and res.get('profit_all_time') < 0 else '') }}">{% if res.get('profit_all_time') is not none %}{{ '+$%.2f' % res.get('profit_all_time') }}{% else %}—{% endif %}</p>
+      <p class="v2-stat-sub">actual system profit</p>
+    </div>
+    <div class="v2-stat">
+      <p class="v2-stat-label">Win rate</p>
+      <p class="v2-stat-value">{% if res.get('win_rate') is not none %}{{ '%.1f' % res.get('win_rate') }}%{% else %}—{% endif %}</p>
+      <p class="v2-stat-sub">won / settled</p>
+    </div>
+    <div class="v2-stat">
+      <p class="v2-stat-label">Record</p>
+      <p class="v2-stat-value">{{ res.get('ganadas', 0) }}–{{ res.get('perdidas', 0) }}</p>
+      <p class="v2-stat-sub">settled plays</p>
+    </div>
+    <div class="v2-stat">
+      <p class="v2-stat-label">ROI</p>
+      <p class="v2-stat-value">{% if res.get('roi') is not none %}{{ '%+.1f' % res.get('roi') }}%{% else %}—{% endif %}</p>
+      <p class="v2-stat-sub">on amount risked</p>
+    </div>
+  </div>
+  {% else %}
+  <div class="v2-sec-head">
+    <div>
+      <p class="v2-sec-eyebrow"><b>05</b> · Tracker</p>
+      <h2 class="v2-sec-title">Your own tracker</h2>
+      <p class="v2-sec-sub">Your records live here. Every time you make a play, make sure to hit <b>Track</b>.</p>
+    </div>
+    <a class="v2-link" href="{{ url_for('tracker') }}">Open my tracker →</a>
+  </div>
+  {% set _settled = tstats.wins + tstats.losses %}
+  {% set _wr = (tstats.wins / _settled * 100) if _settled else 0 %}
+  <div class="v2-linecard">
+  <div class="v2-ringrow">
+    <div>
+      <p class="v2-eyebrow">Your profit</p>
+      <p class="v2-ring-profit {{ 'pos' if tstats.net_dollars > 0 else ('neg' if tstats.net_dollars < 0 else '') }}">{% if tstats.net_dollars > 0 %}{{ '+$%.2f' % tstats.net_dollars }}{% elif tstats.net_dollars < 0 %}{{ '-$%.2f' % -tstats.net_dollars }}{% else %}$0.00{% endif %}</p>
+      <p class="v2-ring-sub">{{ tstats.tracked }} tracked · {{ tstats.pending }} pending</p>
+    </div>
+    <div>
+      <svg class="v2-ring" viewBox="0 0 72 72" aria-hidden="true">
+        <defs>
+          <linearGradient id="v2-rg-mytrk" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#4ade80"/><stop offset="1" stop-color="#16a34a"/>
+          </linearGradient>
+        </defs>
+        <circle cx="36" cy="36" r="30" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="7"/>
+        <circle cx="36" cy="36" r="30" fill="none" stroke="url(#v2-rg-mytrk)" stroke-width="7" stroke-linecap="round" stroke-dasharray="188.5" stroke-dashoffset="{{ '%.1f' % (188.5 * (1 - _wr/100)) }}" transform="rotate(-90 36 36)"/>
+        <text x="36" y="42" text-anchor="middle" class="v2-ring-pct">{{ '%.0f' % _wr }}%</text>
+      </svg>
+      <p class="v2-ring-lab">WIN RATE</p>
+    </div>
+  </div>
+  {% if tcurve %}
+  <p class="v2-chart-label">Profit over time</p>
+  <svg class="v2-chart" viewBox="0 0 {{ tcurve.w }} {{ tcurve.h }}" preserveAspectRatio="none" aria-hidden="true">
+    <defs>
+      <linearGradient id="v2-mytrk-fill" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="{{ '#4ade80' if tcurve.up else '#f87171' }}" stop-opacity=".35"/>
+        <stop offset="1" stop-color="{{ '#4ade80' if tcurve.up else '#f87171' }}" stop-opacity="0"/>
+      </linearGradient>
+    </defs>
+    <path d="{{ tcurve.area }}" fill="url(#v2-mytrk-fill)"/>
+    <path d="{{ tcurve.line }}" fill="none" stroke="{{ '#4ade80' if tcurve.up else '#f87171' }}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+  {% endif %}
+  <div class="v2-stats" style="margin-top:12px">
+    <div class="v2-stat">
+      <p class="v2-stat-label">Record</p>
+      <p class="v2-stat-value">{{ tstats.wins }}–{{ tstats.losses }}</p>
+      <p class="v2-stat-sub">settled plays</p>
+    </div>
+    <div class="v2-stat">
+      <p class="v2-stat-label">ROI</p>
+      <p class="v2-stat-value {{ 'pos' if tstats.roi > 0 else ('neg' if tstats.roi < 0 else '') }}">{{ '%+.1f' % tstats.roi }}%</p>
+      <p class="v2-stat-sub">on amount risked</p>
+    </div>
+    <div class="v2-stat">
+      <p class="v2-stat-label">Streak</p>
+      <p class="v2-stat-value">{{ tstats.streak }}</p>
+      <p class="v2-stat-sub">current run</p>
+    </div>
+    <div class="v2-stat">
+      <p class="v2-stat-label">Tracked</p>
+      <p class="v2-stat-value">{{ tstats.tracked }}</p>
+      <p class="v2-stat-sub">{{ tstats.pending }} pending</p>
+    </div>
+  </div>
+  </div>
+  <div style="text-align:center;margin:16px 0 4px;">
+    <a class="v2-link" href="{{ url_for('resultados') }}">View official program record →</a>
+  </div>
+
+  {% endif %}
+</section>
+
 <!-- TOOLS PROMO (rediseño liquid glass aprobado por Alex 2026-10-09) -->
 <section class="v2-sec">
   <a href="{{ url_for('tools') }}" style="text-decoration:none;display:block;backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);background:rgba(20,30,50,0.45);border:1px solid rgba(255,255,255,0.14);border-radius:24px;padding:22px 20px;color:#fff;box-shadow:0 8px 32px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.12);">
@@ -297,120 +412,6 @@
 })();
 </script>
 
-<!-- 06 · TRACKER -->
-<section class="v2-sec">
-  {% if false %}
-  {# 2026-10-10, orden de Alex: el tracker OFICIAL del programa se esconde del #}
-  {# home — solo queda el link "View official program record →" a /records. #}
-  {# Aquí siempre se muestra el tracker PERSONAL del miembro logueado. #}
-  <div class="v2-sec-head" style="padding-top:28px">
-    <div>
-      <p class="v2-eyebrow">Verified program results</p>
-      <h2 class="v2-sec-title">We bet every play we post.</h2>
-    </div>
-    <a class="v2-link" href="{{ url_for('resultados') }}">Full results →</a>
-  </div>
-  <div class="v2-verify">
-    <span class="v2-verify-check">✓</span>
-    <p>EVERY PLAY IS POSTED BEFORE GAME TIME — THEN LOCKED AND GRADED AGAINST THE FINAL SCORE.<br>
-    <span class="muted">WIN OR LOSS, EVERY PLAY STAYS ON THE RECORD.</span></p>
-  </div>
-  <div class="v2-stats">
-    <div class="v2-stat">
-      <p class="v2-stat-label">Total profit</p>
-      <p class="v2-stat-value {{ 'pos' if res.get('profit_all_time') is not none and res.get('profit_all_time') > 0 else ('neg' if res.get('profit_all_time') is not none and res.get('profit_all_time') < 0 else '') }}">{% if res.get('profit_all_time') is not none %}{{ '+$%.2f' % res.get('profit_all_time') }}{% else %}—{% endif %}</p>
-      <p class="v2-stat-sub">actual system profit</p>
-    </div>
-    <div class="v2-stat">
-      <p class="v2-stat-label">Win rate</p>
-      <p class="v2-stat-value">{% if res.get('win_rate') is not none %}{{ '%.1f' % res.get('win_rate') }}%{% else %}—{% endif %}</p>
-      <p class="v2-stat-sub">won / settled</p>
-    </div>
-    <div class="v2-stat">
-      <p class="v2-stat-label">Record</p>
-      <p class="v2-stat-value">{{ res.get('ganadas', 0) }}–{{ res.get('perdidas', 0) }}</p>
-      <p class="v2-stat-sub">settled plays</p>
-    </div>
-    <div class="v2-stat">
-      <p class="v2-stat-label">ROI</p>
-      <p class="v2-stat-value">{% if res.get('roi') is not none %}{{ '%+.1f' % res.get('roi') }}%{% else %}—{% endif %}</p>
-      <p class="v2-stat-sub">on amount risked</p>
-    </div>
-  </div>
-  {% else %}
-  <div class="v2-sec-head">
-    <div>
-      <p class="v2-sec-eyebrow"><b>05</b> · Tracker</p>
-      <h2 class="v2-sec-title">Your own tracker</h2>
-      <p class="v2-sec-sub">Your records live here. Every time you make a play, make sure to hit <b>Track</b>.</p>
-    </div>
-    <a class="v2-link" href="{{ url_for('tracker') }}">Open my tracker →</a>
-  </div>
-  {% set _settled = tstats.wins + tstats.losses %}
-  {% set _wr = (tstats.wins / _settled * 100) if _settled else 0 %}
-  <div class="v2-linecard">
-  <div class="v2-ringrow">
-    <div>
-      <p class="v2-eyebrow">Your profit</p>
-      <p class="v2-ring-profit {{ 'pos' if tstats.net_dollars > 0 else ('neg' if tstats.net_dollars < 0 else '') }}">{% if tstats.net_dollars > 0 %}{{ '+$%.2f' % tstats.net_dollars }}{% elif tstats.net_dollars < 0 %}{{ '-$%.2f' % -tstats.net_dollars }}{% else %}$0.00{% endif %}</p>
-      <p class="v2-ring-sub">{{ tstats.tracked }} tracked · {{ tstats.pending }} pending</p>
-    </div>
-    <div>
-      <svg class="v2-ring" viewBox="0 0 72 72" aria-hidden="true">
-        <defs>
-          <linearGradient id="v2-rg-mytrk" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stop-color="#4ade80"/><stop offset="1" stop-color="#16a34a"/>
-          </linearGradient>
-        </defs>
-        <circle cx="36" cy="36" r="30" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="7"/>
-        <circle cx="36" cy="36" r="30" fill="none" stroke="url(#v2-rg-mytrk)" stroke-width="7" stroke-linecap="round" stroke-dasharray="188.5" stroke-dashoffset="{{ '%.1f' % (188.5 * (1 - _wr/100)) }}" transform="rotate(-90 36 36)"/>
-        <text x="36" y="42" text-anchor="middle" class="v2-ring-pct">{{ '%.0f' % _wr }}%</text>
-      </svg>
-      <p class="v2-ring-lab">WIN RATE</p>
-    </div>
-  </div>
-  {% if tcurve %}
-  <p class="v2-chart-label">Profit over time</p>
-  <svg class="v2-chart" viewBox="0 0 {{ tcurve.w }} {{ tcurve.h }}" preserveAspectRatio="none" aria-hidden="true">
-    <defs>
-      <linearGradient id="v2-mytrk-fill" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0" stop-color="{{ '#4ade80' if tcurve.up else '#f87171' }}" stop-opacity=".35"/>
-        <stop offset="1" stop-color="{{ '#4ade80' if tcurve.up else '#f87171' }}" stop-opacity="0"/>
-      </linearGradient>
-    </defs>
-    <path d="{{ tcurve.area }}" fill="url(#v2-mytrk-fill)"/>
-    <path d="{{ tcurve.line }}" fill="none" stroke="{{ '#4ade80' if tcurve.up else '#f87171' }}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-  </svg>
-  {% endif %}
-  <div class="v2-stats" style="margin-top:12px">
-    <div class="v2-stat">
-      <p class="v2-stat-label">Record</p>
-      <p class="v2-stat-value">{{ tstats.wins }}–{{ tstats.losses }}</p>
-      <p class="v2-stat-sub">settled plays</p>
-    </div>
-    <div class="v2-stat">
-      <p class="v2-stat-label">ROI</p>
-      <p class="v2-stat-value {{ 'pos' if tstats.roi > 0 else ('neg' if tstats.roi < 0 else '') }}">{{ '%+.1f' % tstats.roi }}%</p>
-      <p class="v2-stat-sub">on amount risked</p>
-    </div>
-    <div class="v2-stat">
-      <p class="v2-stat-label">Streak</p>
-      <p class="v2-stat-value">{{ tstats.streak }}</p>
-      <p class="v2-stat-sub">current run</p>
-    </div>
-    <div class="v2-stat">
-      <p class="v2-stat-label">Tracked</p>
-      <p class="v2-stat-value">{{ tstats.tracked }}</p>
-      <p class="v2-stat-sub">{{ tstats.pending }} pending</p>
-    </div>
-  </div>
-  </div>
-  <div style="text-align:center;margin:16px 0 4px;">
-    <a class="v2-link" href="{{ url_for('resultados') }}">View official program record →</a>
-  </div>
-
-  {% endif %}
-</section>
 
 
 <!-- 09 · THE PROCESS -->
