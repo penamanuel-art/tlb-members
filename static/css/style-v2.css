@@ -12,9 +12,9 @@
    ============================================================ */
 
 :root {
-  /* v2 palette — tono Fubo (pedido Alex 2026-10-05):
-     negro profundo + acentos con más punch */
-  --v2-bg: #060a13;
+  /* v2 palette — tono Monarch (pedido Alex 2026-10-10):
+     oscuro con matiz verde-azulado sutil, no negro puro */
+  --v2-bg: #0a1413;
   --v2-surface: rgba(255, 255, 255, 0.055);
   --v2-surface-2: rgba(255, 255, 255, 0.09);
   --v2-border: rgba(255, 255, 255, 0.13);
@@ -40,8 +40,8 @@
   --v2-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 
   /* legacy vars consumed by _results_ticker.html inline styles */
-  --card: #060a13;
-  --card-2: #0b1220;
+  --card: #0a1413;
+  --card-2: #0e1a18;
   --line: rgba(255, 255, 255, 0.09);
   --text: #eef3fb;
   --gold: #d4af37;
@@ -58,11 +58,13 @@ html, body { overflow-x: clip; }
 
 body.v2 {
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Inter, sans-serif;
+  /* Fondo estilo Monarch (pedido Alex 2026-10-10): oscuro con matiz
+     verde-azulado sutil, no negro puro */
   background:
-    radial-gradient(1000px 520px at 8% -80px, rgba(59, 130, 246, 0.30), transparent 62%),
-    radial-gradient(820px 440px at 106% 32%, rgba(245, 197, 66, 0.14), transparent 60%),
-    radial-gradient(920px 560px at 85% 112%, rgba(47, 212, 126, 0.19), transparent 62%),
-    var(--v2-bg);
+    radial-gradient(1000px 520px at 8% -80px, rgba(45, 190, 160, 0.13), transparent 62%),
+    radial-gradient(820px 440px at 106% 32%, rgba(245, 197, 66, 0.08), transparent 60%),
+    radial-gradient(920px 560px at 85% 112%, rgba(47, 212, 126, 0.15), transparent 62%),
+    linear-gradient(180deg, #0d1a19 0%, #0a1413 45%, #080f0e 100%);
   color: var(--v2-text);
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
@@ -100,7 +102,7 @@ body.v2::before {
   position: sticky; top: 0; z-index: 50;
   display: flex; align-items: center; justify-content: space-between;
   gap: 10px; padding: 10px 16px;
-  background: rgba(13, 22, 38, 0.86);
+  background: rgba(10, 20, 19, 0.86);
   backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--v2-border);
 }
@@ -555,7 +557,7 @@ body.v2 .tstc-novig:active, body.v2 .tstc-track:active { transform: scale(0.97);
   background: var(--card); border: 1px solid var(--line); border-radius: 14px;
   padding: 0; overflow: hidden; cursor: pointer;
 }
-.ticket-img { position: relative; display: block; aspect-ratio: 4/5; background: #0b0e17; overflow: hidden; }
+.ticket-img { position: relative; display: block; aspect-ratio: 4/5; background: #0c1514; overflow: hidden; }
 .ticket-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .ticket-pill {
   position: absolute; top: 8px; left: 8px;
@@ -571,7 +573,7 @@ body.v2 .tstc-novig:active, body.v2 .tstc-track:active { transform: scale(0.97);
 .ticket-fallback {
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   gap: 8px; height: 100%; padding: 20px; text-align: center;
-  background: linear-gradient(160deg, #16213a 0%, #0b0e17 70%);
+  background: linear-gradient(160deg, #16211f 0%, #0c1514 70%);
 }
 .ticket-brand { color: var(--gold); font-size: 11px; letter-spacing: 2px; font-weight: 800; }
 .ticket-fallback-pick { font-size: 1.1rem; font-weight: 800; }
@@ -1082,7 +1084,7 @@ body.v2 .tstc-novig:active, body.v2 .tstc-track:active { transform: scale(0.97);
 .v2-bottomnav {
   position: fixed; left: 12px; right: 12px; bottom: calc(8px + env(safe-area-inset-bottom)); z-index: 1001;
   display: flex; justify-content: space-around; align-items: stretch;
-  background: rgba(13, 22, 38, 0.86);
+  background: rgba(10, 20, 19, 0.86);
   border: 1px solid var(--v2-border);
   border-radius: 22px;
   padding: 6px 4px;
