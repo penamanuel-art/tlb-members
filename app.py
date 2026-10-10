@@ -1443,6 +1443,40 @@ def load_archive():
     return load_json_file(ARCHIVE_PATH).get("dias", [])
 
 
+# SIMULACIÓN DE PRUEBA (Alex 2026-10-10): fuerza la lluvia de dinero en el
+# Dashboard para que Alex la pruebe al entrar. Poner en False para volver a
+# la condición real (el día más reciente del archivo quedó en profit positivo).
+SIMULAR_LLUVIA_DINERO = True
+SIMULAR_LLUVIA_MONTO = 127.50
+
+
+def dia_profit_positivo():
+    """(llueve, monto) — True si el día más reciente del archivo quedó en profit positivo.
+
+    (Pedido Alex 2026-10-10: llueve dinero cuando el DÍA queda en positivo,
+    no solo cuando se barre. Ej: 2-1 con profit positivo → llueve;
+    1-2 con pérdida → no llueve.)"""
+    if SIMULAR_LLUVIA_DINERO:
+        return True, round(SIMULAR_LLUVIA_MONTO, 2)
+    dias = load_archive()
+    if not dias:
+        return False, 0.0
+    d = dias[0]
+    jugadas = d.get("jugadas", [])
+    if not jugadas:
+        return False, 0.0
+    profit = 0.0
+    for j in jugadas:
+        r = (j.get("resultado") or "").upper()
+        if r not in ("WON", "LOST"):
+            return False, 0.0  # día aún sin liquidar → no llueve
+        try:
+            profit += float(j.get("profit", 0) or 0)
+        except (TypeError, ValueError):
+            return False, 0.0
+    return profit > 0, round(profit, 2)
+
+
 def program_streak():
     """Racha actual del programa (W/L) desde el archivo, la más reciente primero.
     (Pedido Alex 2026-10-02: racha visible en el hero del Dashboard.)"""
@@ -2738,6 +2772,9 @@ def home():
     # Vista previa admin (pedido Alex 2026-09-30): ?preview=locked muestra el
     # home como lo ve un miembro sin Elite (teaser bloqueado + pancarta $1).
     preview_locked = is_admin_for(user) and request.args.get("preview") == "locked"
+    # Lluvia de dinero (Alex 2026-10-10): llueve si el día quedó en positivo.
+    _lluvia_ok, _lluvia_monto = dia_profit_positivo()
+    _lluvia_monto_txt = "+$%.2f" % _lluvia_monto if _lluvia_ok else ""
     return render_template(
         # Tema v2 (moderno) es el predeterminado desde 2026-10-02 (pedido Alex);
         # v1 (clásico) queda como reversión vía /theme/v1.
@@ -2771,6 +2808,9 @@ def home():
         # miembro_platinum con preview: en ?preview=locked el banner de
         # invitación VIP también se muestra (pedido Alex 2026-10-02).
         miembro_platinum=(platinum_unlocked_for(user) and not preview_locked),
+        # Lluvia de dinero (Alex 2026-10-10): solo si el día quedó en positivo.
+        lluvia_dinero=_lluvia_ok,
+        lluvia_monto=_lluvia_monto_txt,
     )
 
 

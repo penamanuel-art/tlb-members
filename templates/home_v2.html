@@ -1,6 +1,7 @@
 {% extends "base_v2.html" %}
 {% block title %}Today — The Sharp Team{% endblock %}
 {% block content %}
+{% if lluvia_dinero %}{% include "_money_rain.html" %}{% endif %}
 <style>
 /* v2-only extras for home */
 .v2-bar{height:8px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;margin-top:10px}

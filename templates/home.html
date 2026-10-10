@@ -1,65 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Today — The Sharp Team
-<!-- MONEY RAIN (updated 2026-09-26 per Alex: money bags emoji instead of line chips): ~4s, once per session -->
-<canvas id="lluvia-dinero" style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9999;"></canvas>
-<script>
-(function(){
-  var canvas = document.getElementById('lluvia-dinero');
-  function quitar(){ if (canvas) canvas.remove(); }
-  // Once per session: if it already rained on entry, don't repeat when navigating the menu
-  try {
-    if (sessionStorage.getItem('lb_lluvia') === '1') { quitar(); return; }
-    sessionStorage.setItem('lb_lluvia', '1');
-  } catch (e) {}
-  if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) { quitar(); return; }
-  var ctx = canvas.getContext('2d');
-  var W, H, DPR = Math.min(window.devicePixelRatio || 1, 2);
-  function size(){ W = innerWidth; H = innerHeight; canvas.width = W*DPR; canvas.height = H*DPR; ctx.setTransform(DPR,0,0,DPR,0,0); }
-  size(); addEventListener('resize', size);
-  // Money rain: money bags, dollar bills and gold $ — reads as "money" instantly.
-  var POOL = ['\uD83D\uDCB0','\uD83D\uDCB0','\uD83D\uDCB0','\uD83D\uDCB0','\uD83D\uDCB0',
-              '\uD83D\uDCB5','\uD83D\uDCB5','$','$'];
-  var N = Math.max(70, Math.min(150, Math.floor(W/6))), chips = [], i;
-  for (i = 0; i < N; i++) { var e = POOL[Math.floor(Math.random()*POOL.length)];
-    chips.push({
-      x: Math.random()*W, y: -50 - Math.random()*H*0.6,
-      vy: 3.2 + Math.random()*3.2,
-      sway: Math.random()*6.28, swaySpd: 0.02 + Math.random()*0.03,
-      rot: (Math.random()-0.5)*0.9, rotSpd: (Math.random()-0.5)*0.06,
-      e: e, size: e === '$' ? 22 + Math.random()*10 : 30 + Math.random()*18, alpha: 1
-    });
-  }
-  function draw(c){
-    ctx.save(); ctx.translate(c.x, c.y); ctx.rotate(c.rot); ctx.globalAlpha = c.alpha;
-    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    if (c.e === '$') {
-      ctx.font = 'bold ' + Math.round(c.size) + 'px system-ui, sans-serif';
-      ctx.fillStyle = '#fbbf24';
-      ctx.strokeStyle = 'rgba(0,0,0,.35)'; ctx.lineWidth = 3;
-      ctx.strokeText('$', 0, 0); ctx.fillText('$', 0, 0);
-    } else {
-      ctx.font = Math.round(c.size) + 'px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",serif';
-      ctx.fillText(c.e, 0, 0);
-    }
-    ctx.restore();
-  }
-  var t0 = performance.now(), DUR = 4000;
-  function frame(t){
-    var el = t - t0, p = el / DUR;
-    ctx.clearRect(0, 0, W, H);
-    for (i = 0; i < chips.length; i++){ var c = chips[i];
-      c.y += c.vy; c.sway += c.swaySpd; c.x += Math.sin(c.sway)*1.2; c.rot += c.rotSpd;
-      if (p > 0.82) c.alpha = Math.max(0, 1 - (p - 0.82)/0.18);
-      if (c.y < H + 60) draw(c);
-    }
-    if (el < DUR + 300) requestAnimationFrame(frame); else canvas.remove();
-  }
-  requestAnimationFrame(frame);
-})();
-</script>
-
-
-{% endblock %}
+{% block title %}Today — The Sharp Team{% endblock %}
 {% block content %}
 {% if not skip_splash %}{% include "_splash.html" %}{% endif %}
 {% if es_alex or es_admin %}
@@ -488,63 +428,8 @@
   </div>
 </section>
 
-<!-- MONEY RAIN (updated 2026-09-26 per Alex: money bags emoji instead of line chips): ~4s, once per session -->
-<canvas id="lluvia-dinero" style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9999;"></canvas>
-<script>
-(function(){
-  var canvas = document.getElementById('lluvia-dinero');
-  function quitar(){ if (canvas) canvas.remove(); }
-  // Once per session: if it already rained on entry, don't repeat when navigating the menu
-  try {
-    if (sessionStorage.getItem('lb_lluvia') === '1') { quitar(); return; }
-    sessionStorage.setItem('lb_lluvia', '1');
-  } catch (e) {}
-  if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) { quitar(); return; }
-  var ctx = canvas.getContext('2d');
-  var W, H, DPR = Math.min(window.devicePixelRatio || 1, 2);
-  function size(){ W = innerWidth; H = innerHeight; canvas.width = W*DPR; canvas.height = H*DPR; ctx.setTransform(DPR,0,0,DPR,0,0); }
-  size(); addEventListener('resize', size);
-  // Money rain: money bags, dollar bills and gold $ — reads as "money" instantly.
-  var POOL = ['\uD83D\uDCB0','\uD83D\uDCB0','\uD83D\uDCB0','\uD83D\uDCB0','\uD83D\uDCB0',
-              '\uD83D\uDCB5','\uD83D\uDCB5','$','$'];
-  var N = Math.max(70, Math.min(150, Math.floor(W/6))), chips = [], i;
-  for (i = 0; i < N; i++) { var e = POOL[Math.floor(Math.random()*POOL.length)];
-    chips.push({
-      x: Math.random()*W, y: -50 - Math.random()*H*0.6,
-      vy: 3.2 + Math.random()*3.2,
-      sway: Math.random()*6.28, swaySpd: 0.02 + Math.random()*0.03,
-      rot: (Math.random()-0.5)*0.9, rotSpd: (Math.random()-0.5)*0.06,
-      e: e, size: e === '$' ? 22 + Math.random()*10 : 30 + Math.random()*18, alpha: 1
-    });
-  }
-  function draw(c){
-    ctx.save(); ctx.translate(c.x, c.y); ctx.rotate(c.rot); ctx.globalAlpha = c.alpha;
-    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    if (c.e === '$') {
-      ctx.font = 'bold ' + Math.round(c.size) + 'px system-ui, sans-serif';
-      ctx.fillStyle = '#fbbf24';
-      ctx.strokeStyle = 'rgba(0,0,0,.35)'; ctx.lineWidth = 3;
-      ctx.strokeText('$', 0, 0); ctx.fillText('$', 0, 0);
-    } else {
-      ctx.font = Math.round(c.size) + 'px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",serif';
-      ctx.fillText(c.e, 0, 0);
-    }
-    ctx.restore();
-  }
-  var t0 = performance.now(), DUR = 4000;
-  function frame(t){
-    var el = t - t0, p = el / DUR;
-    ctx.clearRect(0, 0, W, H);
-    for (i = 0; i < chips.length; i++){ var c = chips[i];
-      c.y += c.vy; c.sway += c.swaySpd; c.x += Math.sin(c.sway)*1.2; c.rot += c.rotSpd;
-      if (p > 0.82) c.alpha = Math.max(0, 1 - (p - 0.82)/0.18);
-      if (c.y < H + 60) draw(c);
-    }
-    if (el < DUR + 300) requestAnimationFrame(frame); else canvas.remove();
-  }
-  requestAnimationFrame(frame);
-})();
-</script>
+{% if lluvia_dinero %}{% include "_money_rain.html" %}{% endif %}
+
 
 
 <!-- Pancarta fija para no-Elite (formato WGT, pedido Alex 2026-09-30) -->
