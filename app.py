@@ -4856,6 +4856,69 @@ def admin_dashboard():
                            plays_hoy=plays)
 
 
+def _tg_send_message(chat_id, text):
+    """Envía texto por Telegram vía Bot API directo (funciona en Render,
+    donde no existen los binarios de la VM). Devuelve (ok, detalle)."""
+    if not TELEGRAM_BOT_TOKEN:
+        return False, "falta TELEGRAM_BOT_TOKEN en Render"
+    try:
+        payload = json.dumps({"chat_id": str(chat_id), "text": text}).encode("utf-8")
+        req = urllib.request.Request(
+            "https://api.telegram.org/bot%s/sendMessage" % TELEGRAM_BOT_TOKEN,
+            data=payload, headers={"Content-Type": "application/json"}, method="POST")
+        with urllib.request.urlopen(req, timeout=25) as r:
+            body = r.read(500).decode("utf-8", "replace")
+            return (200 <= r.status < 300), "telegram HTTP %s: %s" % (r.status, body[:150])
+    except Exception as e:
+        extra = ""
+        try:
+            extra = " [HTTP %s] %s" % (getattr(e, "code", "?"),
+                                       e.read().decode("utf-8", "replace")[:200])
+        except Exception:
+            pass
+        return False, "telegram falló: %s%s" % (e, extra)
+
+
+def _tg_send_photo(chat_id, photo_path, caption=""):
+    """Envía foto por Telegram vía Bot API directo (multipart, funciona en
+    Render). Devuelve (ok, detalle)."""
+    if not TELEGRAM_BOT_TOKEN:
+        return False, "falta TELEGRAM_BOT_TOKEN en Render"
+    try:
+        import uuid as _uuid
+        boundary = "----tst%s" % _uuid.uuid4().hex
+        with open(photo_path, "rb") as f:
+            photo_bytes = f.read()
+        parts = []
+
+        def _field(name, value):
+            parts.append(("--%s\r\nContent-Disposition: form-data; name=\"%s\"\r\n\r\n%s\r\n"
+                          % (boundary, name, value)).encode("utf-8"))
+        _field("chat_id", str(chat_id))
+        _field("caption", caption)
+        parts.append(("--%s\r\nContent-Disposition: form-data; name=\"photo\"; "
+                      "filename=\"ticket.jpg\"\r\nContent-Type: image/jpeg\r\n\r\n"
+                      % boundary).encode("utf-8") + photo_bytes + b"\r\n")
+        parts.append(("--%s--\r\n" % boundary).encode("utf-8"))
+        body = b"".join(parts)
+        req = urllib.request.Request(
+            "https://api.telegram.org/bot%s/sendPhoto" % TELEGRAM_BOT_TOKEN,
+            data=body,
+            headers={"Content-Type": "multipart/form-data; boundary=%s" % boundary},
+            method="POST")
+        with urllib.request.urlopen(req, timeout=60) as r:
+            resp = r.read(500).decode("utf-8", "replace")
+            return (200 <= r.status < 300), "telegram HTTP %s: %s" % (r.status, resp[:150])
+    except Exception as e:
+        extra = ""
+        try:
+            extra = " [HTTP %s] %s" % (getattr(e, "code", "?"),
+                                       e.read().decode("utf-8", "replace")[:200])
+        except Exception:
+            pass
+        return False, "telegram foto falló: %s%s" % (e, extra)
+
+
 @app.route("/admin/aprobar-jugadas", methods=["POST"])
 @login_required
 def admin_aprobar_jugadas():
@@ -4948,10 +5011,11 @@ def admin_aprobar_jugadas():
         except Exception:
             pass
 
-    # 3. Telegram SOLO a Alex
+    # 3. Telegram SOLO a Alex — directo vía Bot API desde Render (2026-10-10:
+    #    el subprocess con binarios de la VM fallaba porque este código corre
+    #    en el servidor de Render, donde /home/hatch/... no existe)
     _ALEX_TG = "8600523481"
     _tg_ok, _tg_fail = [], []
-    _TG_BIN = "/home/hatch/workspace/skills/telegram/bin/tg"
     for _pl in _publicadas:
         _pid = str(_pl.get("id"))
         _slug = _pid.replace("play-2026-10-10-", "")
@@ -4964,22 +5028,21 @@ def admin_aprobar_jugadas():
             _pl.get("game_time_et", ""))
         try:
             if _osA.path.isfile(_foto):
-                _r = _spA.run([_TG_BIN, "sendphoto", _ALEX_TG, _foto,
-                               "--caption", _caption],
-                              capture_output=True, text=True, timeout=60)
+                _ok, _det = _tg_send_photo(_ALEX_TG, _foto, _caption)
             else:
-                _r = _spA.run([_TG_BIN, "send", _ALEX_TG, _caption],
-                              capture_output=True, text=True, timeout=60)
-            if _r.returncode == 0:
+                _ok, _det = _tg_send_message(_ALEX_TG, _caption)
+            if _ok:
                 _tg_ok.append(_pid)
             else:
-                _tg_fail.append((_pid, (_r.stderr or _r.stdout or "")[:200]))
+                _tg_fail.append((_pid, _det[:200]))
         except Exception as _e:
             _tg_fail.append((_pid, str(_e)[:200]))
 
-    # 4. Email SOLO a Alex
+    # 4. Email SOLO a Alex — directo vía Resend HTTP desde Render (2026-10-10:
+    #    el subprocess con el binario de la VM fallaba en el servidor de Render;
+    #    _dispatch_email usa RESEND_API_KEY de Render y RESEND_FROM ya es
+    #    "The Sharp Team <plays@thesharpteam.bet>")
     _em_ok, _em_fail = [], []
-    _RS_BIN = "/home/hatch/workspace/skills/resend/bin/send.py"
     _ALEX_EMAIL = "pena.manuel@myyahoo.com"
     for _pl in _publicadas:
         _pid = str(_pl.get("id"))
@@ -4995,14 +5058,15 @@ def admin_aprobar_jugadas():
 </div>""" % (_badge, _pl.get("pick", ""), _pl.get("cuota_texto", ""),
              _pl.get("game_time_et", ""), _pl.get("comprobante", ""))
         try:
-            _r = _spA.run([_RS_BIN, "--to", _ALEX_EMAIL, "--subject", _subject,
-                           "--html", _html,
-                           "--from", "The Sharp Team <plays@thesharpteam.bet>"],
-                          capture_output=True, text=True, timeout=60)
-            if _r.returncode == 0:
+            _text = "%s\n%s (%s)\n%s\nTicket: %s" % (
+                _badge, _pl.get("pick", ""), _pl.get("cuota_texto", ""),
+                _pl.get("game_time_et", ""), _pl.get("comprobante", ""))
+            _ok, _det = _dispatch_email(_ALEX_EMAIL, _subject, _text,
+                                        html_body=_html)
+            if _ok:
                 _em_ok.append(_pid)
             else:
-                _em_fail.append((_pid, (_r.stderr or _r.stdout or "")[:200]))
+                _em_fail.append((_pid, _det[:200]))
         except Exception as _e:
             _em_fail.append((_pid, str(_e)[:200]))
 
