@@ -2904,17 +2904,20 @@ def _notify_login_telegram(user):
 
     Pedido por Alex 2026-10-05: notificación en CADA visita al Dashboard
     (no solo al login, porque la sesión queda abierta permanente).
-    INCLUIDA su propia cuenta de miembro (pena.manuel@myyahoo.com, "Alex Peña"),
-    aunque tenga marca de admin en la base de datos. Solo se excluyen OTROS
-    logins de admin. No avisa bots/crawlers. Cooldown de solo 60 seg por
-    miembro (únicamente para no duplicar por doble-carga de la página).
+    CAMBIO 2026-10-10 (orden de Alex): la cuenta de miembro de Alex
+    (pena.manuel@myyahoo.com) YA NO se notifica — solo avisa cuando
+    OTROS miembros entran. Se excluyen logins de admin. No avisa
+    bots/crawlers. Cooldown de solo 60 seg por miembro (únicamente para
+    no duplicar por doble-carga de la página).
     Nunca bloquea la carga: timeout corto y todo error se traga en silencio.
     """
     if not TELEGRAM_BOT_TOKEN or not CLICK_NOTIFY_CHAT_ID:
         return False
     email = (_uget(user, "email") or "").strip().lower()
-    # La cuenta de miembro de Alex siempre avisa, aun si quedó marcada admin.
-    if _uget(user, "is_admin") and email != ALEX_MEMBER_EMAIL:
+    # Alex no se notifica a sí mismo (2026-10-10, orden de Alex): solo cuando otros miembros entran.
+    if email == ALEX_MEMBER_EMAIL:
+        return False
+    if _uget(user, "is_admin"):
         return False
     try:
         ua = request.headers.get("User-Agent", "") or ""
