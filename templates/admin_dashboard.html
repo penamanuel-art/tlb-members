@@ -69,6 +69,14 @@
   </div>
   <a class="adm-back" href="{{ url_for('home') }}">← Member view</a>
 
+  <div style="display:flex;gap:8px;overflow-x:auto;padding:4px 2px 12px;margin-bottom:4px;-webkit-overflow-scrolling:touch;">
+    <a href="/admin/miembros" style="flex:0 0 auto;padding:10px 16px;background:rgba(18,24,40,.72);border:1px solid rgba(120,140,180,.14);border-radius:999px;color:#e8ecf4;font-size:.8rem;font-weight:700;text-decoration:none;white-space:nowrap;">👥 Members</a>
+    <a href="/admin/trakeos" style="flex:0 0 auto;padding:10px 16px;background:rgba(18,24,40,.72);border:1px solid rgba(120,140,180,.14);border-radius:999px;color:#e8ecf4;font-size:.8rem;font-weight:700;text-decoration:none;white-space:nowrap;">📊 Trakeos</a>
+    <a href="{{ url_for('home', splash='0') }}" style="flex:0 0 auto;padding:10px 16px;background:rgba(18,24,40,.72);border:1px solid rgba(120,140,180,.14);border-radius:999px;color:#e8ecf4;font-size:.8rem;font-weight:700;text-decoration:none;white-space:nowrap;">🏠 Home</a>
+    <a href="{{ url_for('records') }}" style="flex:0 0 auto;padding:10px 16px;background:rgba(18,24,40,.72);border:1px solid rgba(120,140,180,.14);border-radius:999px;color:#e8ecf4;font-size:.8rem;font-weight:700;text-decoration:none;white-space:nowrap;">📜 Full record</a>
+    <a href="{{ url_for('ev_board') }}" style="flex:0 0 auto;padding:10px 16px;background:rgba(18,24,40,.72);border:1px solid rgba(120,140,180,.14);border-radius:999px;color:#e8ecf4;font-size:.8rem;font-weight:700;text-decoration:none;white-space:nowrap;">⚡ +EV Board</a>
+  </div>
+
   <div class="stats">
     <a class="stat" href="/admin/miembros">
       <div class="n">{{ stats.miembros }}</div>
