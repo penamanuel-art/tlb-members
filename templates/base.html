@@ -86,19 +86,15 @@
 
 <script>
 (function () {
-  var btn = document.getElementById('menuBtn');
   var drop = document.getElementById('menuDrop');
-  function toggleMenu(e) {
-    if (e) { e.stopPropagation(); e.preventDefault(); }
-    if (drop) drop.hidden = !drop.hidden;
-  }
-  if (btn && drop) {
-    btn.addEventListener('click', toggleMenu);
-    btn.addEventListener('touchend', toggleMenu, {passive: false});
-    document.addEventListener('click', function () { drop.hidden = true; });
-    document.addEventListener('touchend', function (e) {
-      if (e.target !== btn && !btn.contains(e.target)) drop.hidden = true;
-    }, {passive: true});
+  // El toggle lo maneja el onclick inline del botón (más confiable en iPhone).
+  // Aquí solo cerramos el menú al tocar fuera de él.
+  if (drop) {
+    document.addEventListener('click', function (e) {
+      var btn = document.getElementById('menuBtn');
+      if (btn && (e.target === btn || btn.contains(e.target))) return;
+      drop.hidden = true;
+    });
   }
   document.querySelectorAll('[data-ticket]').forEach(function (el) {
     el.addEventListener('click', function () {
