@@ -2396,7 +2396,7 @@ def inject_user():
         dias_miembro = max(1, (datetime.now() - creado).days + 1) if creado else 1
     except (ValueError, TypeError, KeyError, IndexError):
         dias_miembro = 1
-    etiqueta = "VIP Member" if platinum_unlocked_for(cu) else "Member"
+    etiqueta = "Platinum Member" if platinum_unlocked_for(cu) else "Member"
     try:
         past_due = bool(cu and cu["stripe_past_due"])
     except (KeyError, IndexError, TypeError):
@@ -2928,7 +2928,7 @@ def _notify_login_telegram(user):
         return False
     nombre = _uget(user, "nombre") or _uget(user, "email") or "?"
     email = _uget(user, "email") or ""
-    elite = "⭐ VIP" if _uget(user, "platinum_unlocked") else "🟡 Free"
+    elite = "⭐ Platinum" if _uget(user, "platinum_unlocked") else "🟡 Free"
     try:
         hora = datetime.now(ZoneInfo("America/New_York")).strftime("%-I:%M %p ET")
     except Exception:
@@ -4833,10 +4833,18 @@ def admin_dashboard():
                 selecciones = _data.get("plays", [])
     except Exception:
         selecciones = []
-    # plays_hoy también solo de hoy
+    # plays_hoy también solo de hoy — la fecha está en la raíz del JSON, no en cada jugada
     try:
+        import json as _json3, os as _os3
+        _pp = _os3.path.join(_os3.path.dirname(__file__), "data", "plays.json")
+        with open(_pp) as _ff:
+            _d = _json3.load(_ff)
+        _root_fecha = str(_d.get("fecha", ""))[:10] if isinstance(_d, dict) else ""
         _, _plays_all = load_data()
-        plays = [p for p in (_plays_all or []) if str(p.get("fecha", ""))[:10] == _hoy]
+        if _root_fecha == _hoy:
+            plays = _plays_all or []
+        else:
+            plays = []
         jugadas_hoy = len(plays)
     except Exception:
         jugadas_hoy = 0
