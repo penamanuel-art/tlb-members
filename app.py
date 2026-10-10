@@ -1446,7 +1446,7 @@ def load_archive():
 # SIMULACIÓN DE PRUEBA (Alex 2026-10-10): fuerza la lluvia de dinero en el
 # Dashboard para que Alex la pruebe al entrar. Poner en False para volver a
 # la condición real (el día más reciente del archivo quedó en profit positivo).
-SIMULAR_LLUVIA_DINERO = True
+SIMULAR_LLUVIA_DINERO = False
 SIMULAR_LLUVIA_MONTO = 127.50
 
 
