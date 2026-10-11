@@ -94,6 +94,16 @@
     <h2 class="wgt-name">Your tracker</h2>
     <p class="wgt-sub">Your records live here. Every time you make a play, make sure to hit <b>Track</b>.</p>
     {% endif %}
+    {# Toggle Value Plays solo para Alex (2026-10-11) #}
+    {% if is_alex %}
+    <div style="margin-top:12px;">
+      {% if view == "values" %}
+      <a href="{{ url_for('tracker') }}" style="display:inline-block;background:#1a2233;color:#c9a227;border:1px solid #c9a227;font-size:13px;font-weight:700;padding:10px 18px;border-radius:12px;text-decoration:none;">← My Tracker</a>
+      {% else %}
+      <a href="{{ url_for('tracker', view='values') }}" style="display:inline-block;background:#1a2233;color:#c9a227;border:1px solid #c9a227;font-size:13px;font-weight:700;padding:10px 18px;border-radius:12px;text-decoration:none;">💎 Value Plays →</a>
+      {% endif %}
+    </div>
+    {% endif %}
   </div>
   {% if stats.streak and stats.streak != '—' %}
   <span class="wgt-streak-pill">🔥 {{ stats.streak }}</span>

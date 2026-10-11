@@ -3563,7 +3563,15 @@ def tracker():
     # orden de Alex). Su "Alex Owner Results" estaba vacío y no tenía sentido.
     if is_admin_for(current_user()):
         return redirect(url_for("resultados"))
-    return render_template("dashboard.html", **_tracker_context(current_user()))
+    # Toggle Value Plays solo para Alex (2026-10-11, pedido por Alex)
+    user = current_user()
+    is_alex = (user["email"] or "").strip().lower() == ALEX_MEMBER_EMAIL
+    if is_alex and request.args.get("view") == "values":
+        return values_page()
+    ctx = _tracker_context(user)
+    ctx["is_alex"] = is_alex
+    ctx["view"] = request.args.get("view", "personal")
+    return render_template("dashboard.html", **ctx)
 
 
 def _tracker_context(user):
