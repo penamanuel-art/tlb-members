@@ -142,36 +142,6 @@
     {% endif %}
   </div>
 
-  <div class="card">
-    <h2>💎 VALUE Tracker</h2>
-    <p class="desc">Auto-tracked · simulated $5,000 @ $50/play (1u) — not on the official record</p>
-    <div class="stats" style="margin-top:12px;">
-      <div class="stat">
-        <div class="n">{{ value_stats.record }}</div>
-        <div class="l">💎 RECORD</div>
-      </div>
-      <div class="stat gold">
-        <div class="n" style="{% if value_stats.positive %}color:#00e07f;{% else %}color:#ff6b6b;{% endif %}">{{ value_stats.profit_display }}</div>
-        <div class="l">PROFIT</div>
-      </div>
-    </div>
-    {% if value_stats.plays %}
-    {% for v in value_stats.plays %}
-    <div class="play"{% if v.resultado == 'W' %} style="border-color:rgba(0,224,127,.4);"{% elif v.resultado == 'L' %} style="border-color:rgba(255,107,107,.4);"{% endif %}>
-      <div class="row">
-        <span class="pk">{% if v.resultado == 'W' %}✓{% elif v.resultado == 'L' %}✕{% else %}⏳{% endif %} {{ v.pick }}</span>
-        <span class="lv g">{% if v.cuota > 0 %}+{% endif %}{{ v.cuota }}</span>
-      </div>
-      <div class="mt">{{ v.fecha or '' }}{% if v.resultado in ('W', 'L') %} · {% if v.profit >= 0 %}+{% endif %}${{ '%.2f'|format(v.profit) }}{% else %} · pending{% endif %}</div>
-    </div>
-    {% endfor %}
-    {% else %}
-    <div class="empty">
-      <div class="a">No VALUE plays tracked yet</div>
-    </div>
-    {% endif %}
-  </div>
-
   <div class="card hl">
     <h2>📋 Jugadas Pendientes</h2>
     <p class="desc">Selecciona las jugadas a aprobar y publicar</p>
