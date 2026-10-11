@@ -58,9 +58,13 @@ html, body { overflow-x: clip; }
 
 body.v2 {
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Inter, sans-serif;
-  /* Fondo gris oscuro (pedido Alex 2026-10-11): las cartas negras
-     resaltan por contraste */
-  background: #1a1d24;
+  /* Fondo estilo Monarch (Alex 2026-10-11): verde-azulado oscuro
+     con brillos sutiles, como la referencia */
+  background:
+    radial-gradient(1000px 520px at 8% -80px, rgba(45, 190, 160, 0.13), transparent 62%),
+    radial-gradient(820px 440px at 106% 32%, rgba(245, 197, 66, 0.08), transparent 60%),
+    radial-gradient(920px 560px at 85% 112%, rgba(47, 212, 126, 0.15), transparent 62%),
+    linear-gradient(180deg, #0d1a19 0%, #0a1413 45%, #080f0e 100%);
   color: var(--v2-text);
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
