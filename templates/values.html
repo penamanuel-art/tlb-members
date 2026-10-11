@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Value Plays — The Sharp Team{% endblock %}
+{% block content %}
+<div style="max-width:480px;margin:0 auto;padding:16px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
+<div style="text-align:center;margin-bottom:16px;">
+<div style="color:#c9a227;font-size:11px;letter-spacing:3px;font-weight:800;">THE SHARP TEAM</div>
+<div style="color:#fff;font-size:22px;font-weight:800;margin-top:4px;">💎 Value Plays</div>
+<div style="color:#9aa3b8;font-size:12px;margin-top:4px;">Internal tracker · $50/play simulated</div>
+</div>
+
+<div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:16px;margin-bottom:12px;">
+<div style="display:flex;justify-content:space-between;align-items:center;">
+<div>
+<div style="font-size:10px;letter-spacing:2px;color:#9aa3b8;">YOUR PROFIT</div>
+<div style="font-size:32px;font-weight:800;color:{% if profit >= 0 %}#4ade80{% else %}#f87171{% endif %};">{{ profit_str }}</div>
+<div style="font-size:12px;color:#9aa3b8;margin-top:4px;">{{ settled_count }} tracked · {{ pending_count }} pending</div>
+</div>
+<div style="text-align:center;">
+<div style="width:70px;height:70px;border-radius:50%;border:6px solid #4ade80;border-top-color:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;">
+<span style="color:#fff;font-weight:800;font-size:16px;">{{ win_rate }}%</span>
+</div>
+<div style="font-size:9px;letter-spacing:1.5px;color:#9aa3b8;margin-top:4px;">WIN RATE</div>
+</div>
+</div>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+<div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:12px;">
+<div style="font-size:9px;letter-spacing:2px;color:#9aa3b8;">RECORD</div>
+<div style="font-size:22px;font-weight:800;color:#fff;">{{ wins }}–{{ losses }}</div>
+<div style="font-size:11px;color:#9aa3b8;">settled plays</div>
+</div>
+<div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:12px;">
+<div style="font-size:9px;letter-spacing:2px;color:#9aa3b8;">ROI</div>
+<div style="font-size:22px;font-weight:800;color:{% if profit >= 0 %}#4ade80{% else %}#f87171{% endif %};">{{ roi_str }}</div>
+<div style="font-size:11px;color:#9aa3b8;">on amount risked</div>
+</div>
+</div>
+
+<div style="font-size:10px;letter-spacing:2px;color:#9aa3b8;margin-bottom:8px;">LAST 4 PLAYS</div>
+{% for p in last4 %}
+<div style="background:#141a2b;border:1px solid #c9a227;border-radius:12px;padding:10px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;">
+<span style="color:#fff;font-size:13px;font-weight:700;">{{ p.pick }} <span style="color:#9aa3b8;font-weight:400;">({{ p.cuota_str }})</span></span>
+<span style="white-space:nowrap;">
+{% if p.resultado == 'W' %}
+<span style="background:rgba(34,197,94,.15);color:#4ade80;font-size:10px;font-weight:800;padding:3px 8px;border-radius:999px;">WON</span>
+<span style="color:#4ade80;font-size:12px;font-weight:800;margin-left:6px;">{{ p.profit_str }}</span>
+{% elif p.resultado == 'L' %}
+<span style="background:rgba(248,113,113,.15);color:#f87171;font-size:10px;font-weight:800;padding:3px 8px;border-radius:999px;">LOSS</span>
+<span style="color:#f87171;font-size:12px;font-weight:800;margin-left:6px;">{{ p.profit_str }}</span>
+{% else %}
+<span style="background:rgba(139,146,167,.15);color:#8b93a7;font-size:10px;font-weight:800;padding:3px 8px;border-radius:999px;">PENDING</span>
+{% endif %}
+</span>
+</div>
+{% endfor %}
+
+</div>
+{% endblock %}

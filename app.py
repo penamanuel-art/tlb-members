@@ -5551,6 +5551,57 @@ def api_values_record():
         })
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+@app.route("/values")
+@login_required
+def values_page():
+    """Página del Value Tracker (2026-10-11, pedido por Alex: verlo en el Dashboard cuando quiera)."""
+    db = get_db()
+    rows = db.execute(
+        "SELECT pick, cuota, fecha, resultado, stake_monto FROM tracked_plays "
+        "WHERE user_id = ? AND nivel = 'VALUE' ORDER BY fecha DESC, id DESC LIMIT 50",
+        (VALUE_SYSTEM_USER_ID,),
+    ).fetchall()
+    wins = losses = 0
+    profit = 0.0
+    active = []
+    history = []
+    for r in rows:
+        d = dict(r)
+        p = play_profit_dollars({"cuota": d["cuota"], "stake_monto": d["stake_monto"] or 50.0,
+                                 "resultado": d["resultado"]})
+        cuota = d["cuota"] or 0
+        cuota_str = f"+{cuota}" if cuota > 0 else str(cuota)
+        if d["resultado"] == "W":
+            wins += 1
+            profit += p
+            history.append({"pick": d["pick"], "cuota_str": cuota_str, "fecha": d["fecha"],
+                            "resultado": "W", "profit_str": fmt_money(p)})
+        elif d["resultado"] == "L":
+            losses += 1
+            profit += p
+            history.append({"pick": d["pick"], "cuota_str": cuota_str, "fecha": d["fecha"],
+                            "resultado": "L", "profit_str": fmt_money(p)})
+        else:
+            active.append({"pick": d["pick"], "cuota_str": cuota_str, "fecha": d["fecha"],
+                           "resultado": "P", "profit_str": ""})
+    settled = wins + losses
+    win_rate = round(wins / settled * 100) if settled else 0
+    risked = settled * 50.0
+    roi = (profit / risked * 100) if risked else 0
+    # Últimas 4: activas primero, luego historial
+    all_plays = active + sorted(history, key=lambda x: x["fecha"], reverse=True)
+    last4 = all_plays[:4]
+    return render_template("values.html",
+                           profit=profit,
+                           profit_str=fmt_money(profit),
+                           settled_count=settled,
+                           pending_count=len(active),
+                           win_rate=win_rate,
+                           wins=wins, losses=losses,
+                           roi_str=f"{roi:+.1f}%",
+                           last4=last4)
+
 @app.route("/admin/chat-mensaje", methods=["POST"])
 @login_required
 def admin_chat_mensaje():
