@@ -5,8 +5,8 @@
   <div style="pointer-events:auto;background:#0b0e14;border:2px solid #c9a227;border-radius:20px;padding:26px 32px;text-align:center;max-width:88vw;box-shadow:0 20px 60px rgba(0,0,0,.65);animation:mrpop .45s ease-out;">
     <div style="font-size:54px;line-height:1;">💸</div>
     <div style="color:#c9a227;font-weight:900;font-size:26px;letter-spacing:1px;margin-top:8px;font-family:system-ui,-apple-system,sans-serif;">MONEY RAIN!</div>
-    <div style="color:#22c55e;font-weight:900;font-size:34px;margin-top:8px;font-family:system-ui,-apple-system,sans-serif;">{{ lluvia_monto }} today!</div>
-    <div style="color:#ffffff;font-size:15px;margin-top:10px;opacity:.92;font-family:system-ui,-apple-system,sans-serif;">We finished the day in profit.<br>Discipline pays. 🦈</div>
+    <div style="color:#22c55e;font-weight:900;font-size:34px;margin-top:8px;font-family:system-ui,-apple-system,sans-serif;">{{ lluvia_monto }} yesterday!</div>
+    <div style="color:#ffffff;font-size:15px;margin-top:10px;opacity:.92;font-family:system-ui,-apple-system,sans-serif;">We finished yesterday in profit.<br>Discipline pays. 🦈</div>
     <button onclick="document.getElementById('moneyrain-popup').remove()" style="margin-top:18px;background:#22c55e;color:#0b0e14;font-weight:800;font-size:15px;border:0;border-radius:999px;padding:11px 30px;cursor:pointer;font-family:system-ui,-apple-system,sans-serif;">Let's go! &rarr;</button>
   </div>
 </div>
@@ -65,23 +65,42 @@
   var W, H, DPR = Math.min(window.devicePixelRatio || 1, 2);
   function size(){ W = innerWidth; H = innerHeight; canvas.width = W*DPR; canvas.height = H*DPR; ctx.setTransform(DPR,0,0,DPR,0,0); }
   size(); addEventListener('resize', size);
-  // Money rain: money bags, dollar bills and gold $ — reads as "money" instantly.
+  // Money rain INTENSA (Alex 2026-10-10: "que llueva MUCHO dinero, como la de
+  // Wise Guys"): lluvia fuerte, no ligera — muchos más billetes cayendo.
   var POOL = ['\uD83D\uDCB0','\uD83D\uDCB0','\uD83D\uDCB0','\uD83D\uDCB0','\uD83D\uDCB0',
-              '\uD83D\uDCB5','\uD83D\uDCB5','$','$'];
-  var N = Math.max(70, Math.min(150, Math.floor(W/6))), chips = [], i;
+              '\uD83D\uDCB5','\uD83D\uDCB5','\uD83D\uDCB5',
+              '$','$','$','$','$'];
+  var N = Math.max(160, Math.min(320, Math.floor(W/3))), chips = [], i;
   for (i = 0; i < N; i++) { var e = POOL[Math.floor(Math.random()*POOL.length)];
     chips.push({
       x: Math.random()*W, y: -50 - Math.random()*H*0.6,
-      vy: 3.2 + Math.random()*3.2,
+      vy: 4.5 + Math.random()*4.5,
       sway: Math.random()*6.28, swaySpd: 0.02 + Math.random()*0.03,
       rot: (Math.random()-0.5)*0.9, rotSpd: (Math.random()-0.5)*0.06,
-      e: e, size: e === '$' ? 22 + Math.random()*10 : 30 + Math.random()*18, alpha: 1
+      e: e, size: e === '$' ? 26 + Math.random()*14 : 36 + Math.random()*24, alpha: 1
+    });
+  }
+  // El MONTO cae con la lluvia (Alex 2026-10-10): el número va cayendo junto
+  // con los billetes, no solo en el popup.
+  var MONTO_TXT = {{ lluvia_monto|tojson }};
+  for (var k = 0; k < 10; k++) {
+    chips.push({
+      x: Math.random()*W, y: -50 - Math.random()*H*0.4,
+      vy: 4.0 + Math.random()*3.0,
+      sway: Math.random()*6.28, swaySpd: 0.02 + Math.random()*0.03,
+      rot: (Math.random()-0.5)*0.3, rotSpd: (Math.random()-0.5)*0.03,
+      e: 'monto', size: 30 + Math.random()*14, alpha: 1
     });
   }
   function draw(c){
     ctx.save(); ctx.translate(c.x, c.y); ctx.rotate(c.rot); ctx.globalAlpha = c.alpha;
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    if (c.e === '$') {
+    if (c.e === 'monto') {
+      ctx.font = '900 ' + Math.round(c.size) + 'px system-ui, sans-serif';
+      ctx.fillStyle = '#22c55e';
+      ctx.strokeStyle = 'rgba(0,0,0,.45)'; ctx.lineWidth = 4;
+      ctx.strokeText(MONTO_TXT, 0, 0); ctx.fillText(MONTO_TXT, 0, 0);
+    } else if (c.e === '$') {
       ctx.font = 'bold ' + Math.round(c.size) + 'px system-ui, sans-serif';
       ctx.fillStyle = '#fbbf24';
       ctx.strokeStyle = 'rgba(0,0,0,.35)'; ctx.lineWidth = 3;
@@ -92,7 +111,7 @@
     }
     ctx.restore();
   }
-  var t0 = performance.now(), DUR = 5000;
+  var t0 = performance.now(), DUR = 7000;
   function frame(t){
     var el = t - t0, p = el / DUR;
     ctx.clearRect(0, 0, W, H);

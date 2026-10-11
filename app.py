@@ -1445,23 +1445,26 @@ def load_archive():
 
 # SIMULACIÓN DE PRUEBA (Alex 2026-10-10): fuerza la lluvia de dinero en el
 # Dashboard para que Alex la pruebe al entrar. Poner en False para volver a
-# la condición real (el día más reciente del archivo quedó en profit positivo).
+# la condición real (AYER quedó en profit positivo).
 SIMULAR_LLUVIA_DINERO = False
 SIMULAR_LLUVIA_MONTO = 127.50
 
 
 def dia_profit_positivo():
-    """(llueve, monto) — True si el día más reciente del archivo quedó en profit positivo.
+    """(llueve, monto) — True si AYER quedó en profit positivo.
 
-    (Pedido Alex 2026-10-10: llueve dinero cuando el DÍA queda en positivo,
-    no solo cuando se barre. Ej: 2-1 con profit positivo → llueve;
-    1-2 con pérdida → no llueve.)"""
+    (Pedido Alex 2026-10-10: la lluvia de dinero aparece AL DÍA SIGUIENTE
+    de un día en positivo, no el mismo día. Ej: ayer +$22.63 → hoy llueve;
+    si ayer quedó en negativo → hoy no llueve.)"""
     if SIMULAR_LLUVIA_DINERO:
         return True, round(SIMULAR_LLUVIA_MONTO, 2)
     dias = load_archive()
     if not dias:
         return False, 0.0
-    d = dias[0]
+    ayer = (datetime.now(TZ).date() - timedelta(days=1)).isoformat()
+    d = next((x for x in dias if x.get("fecha") == ayer), None)
+    if not d:
+        return False, 0.0
     jugadas = d.get("jugadas", [])
     if not jugadas:
         return False, 0.0
@@ -1469,7 +1472,7 @@ def dia_profit_positivo():
     for j in jugadas:
         r = (j.get("resultado") or "").upper()
         if r not in ("WON", "LOST"):
-            return False, 0.0  # día aún sin liquidar → no llueve
+            return False, 0.0  # ayer aún sin liquidar → no llueve
         try:
             profit += float(j.get("profit", 0) or 0)
         except (TypeError, ValueError):
