@@ -90,67 +90,58 @@
 {% set is_value = p.nivel == 'VALUE' %}
 {% set _res = p.resultado if p.resultado is defined else None %}
 {% if p.comprobante %}
-  {# DISEÑO CON TICKET — fondo verde oscuro (2026-10-08, pedido por Alex), sin cuadro exterior #}
-  <div class="tk-card" style="border:2px solid transparent;background:linear-gradient(rgba(17,22,32,.9),rgba(17,22,32,.9)) padding-box,linear-gradient(135deg,rgba(201,162,39,.55),rgba(201,162,39,.08) 45%,rgba(34,197,94,.35)) border-box;-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);box-sizing:border-box;max-width:100%;margin:0 4px;color:#f3f4f6;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;padding:6px 6px 4px;border-radius:22px;">
-    {# DISEÑO CON TICKET estilo Novig — aprobado por Alex 2026-10-06 #}
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">
-      <div style="font-size:19px;font-weight:800;color:#fff;">{{ p.team_name or p.abbr }} {{ 'ML' if p.bettype == 'Moneyline' else p.bettype }} <span style="font-size:12px;color:#c9a227;font-weight:700;">&middot; {{ p.liga or '' }}</span></div>
-      <span style="color:#4ade80;font-size:15px;font-weight:800;flex:none;margin-left:8px;">{{ fmt_odds(p.cuota) }}</span>
-    </div>
-    <div style="margin:0 0 2px;font-size:11px;font-weight:800;letter-spacing:2px;color:#8b93a7;">🎫 ORIGINAL TICKET</div>
-    <div style="margin-bottom:2px;text-align:center;cursor:pointer;" onclick="document.getElementById('tstc-modal-{{ p.id }}').style.display='flex'">
-      <span style="position:relative;display:inline-block;width:100%;">
-      <img src="{{ url_for('static', filename=p.comprobante) }}" alt="Original ticket {{ p.abbr }} {{ p.bettype }}" style="width:100%;aspect-ratio:16/9;object-fit:cover;object-position:top;display:block;border-radius:12px;" loading="lazy">
-      <span style="position:absolute;top:8px;right:8px;background:rgba(74,222,128,.92);color:#0b0e17;font-size:10px;font-weight:800;letter-spacing:1px;padding:4px 10px;border-radius:20px;pointer-events:none;">MATCHED</span>
-      <span style="position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,.65);color:#fff;font-size:14px;padding:6px 10px;border-radius:999px;pointer-events:none;">🔍</span>
-      </span>
-    </div>
-    {# Modal con el ticket en tamaño original (pedido Alex 2026-10-08, estilo Novig) #}
-    <div id="tstc-modal-{{ p.id }}" class="tstc-modal" onclick="this.style.display='none'">
-      <button class="tstc-x" onclick="document.getElementById('tstc-modal-{{ p.id }}').style.display='none'">&times;</button>
-      <img src="{{ url_for('static', filename=p.comprobante) }}" alt="Original ticket {{ p.abbr }} {{ p.bettype }}" style="filter:brightness(1);">
-    </div>
-    <div style="display:flex;justify-content:space-between;align-items:center;margin:0 0 4px;">
-      <div style="font-size:14px;font-weight:800;color:#4ade80;">Bet&nbsp;&nbsp;{{ '$%.0f' % p.stake_monto }} <span style="color:#8b93a7;font-weight:400;">({{ '%g' % p.stake_unidades }}u)</span></div>
-      {% if p.nivel != 'VALUE' %}
-      {% if p.id in tracked_ids %}
-        <span class="tstc-btn tstc-tracked">&check; Tracked</span>
-      {% else %}
-        <a class="tstc-track tstg-track" href="{{ url_for('track', play_id=p.id) }}" data-track-url="{{ url_for('track', play_id=p.id) }}">+ Track</a>
-      {% endif %}
-      {% endif %}
-    </div>
-    {# Novig solo en letras (2026-10-11, orden de Alex) #}
-    <div style="margin:2px 0 6px;">
-      {% if p.novig_url and '%2Fevent-markets%2F' in p.novig_url %}
-        <a class="tstg-novig" href="{{ p.novig_url }}" target="_blank" rel="noopener">Place at Novig &rarr;</a>
-      {% else %}
-        <a class="tstg-novig" href="https://novig.com" target="_blank" rel="noopener">Place at Novig &rarr;</a>
-      {% endif %}
-    </div>
-    <div style="display:flex;justify-content:space-between;align-items:center;">
-      <span class="tstc-lvl">{{ 'PLATINUM' if is_vip else ('💎 VALUE PLAY' if is_value else 'GOLD') }}</span>
-      <a class="tk-view" style="color:#2563eb" href="javascript:void(0)" onclick="document.getElementById('tstc-modal-{{ p.id }}').style.display='flex'">View ticket &rarr;</a>
-    </div>
-    {% if p.writeup %}
-    <details class="tstc-wu" style="margin-top:10px;">
-      <summary><span>📊 WHY WE LIKE IT</span><span class="tstc-wu-arr">TAP TO EXPAND ▾</span></summary>
-      <div class="tstc-wu-body">
-        <div class="tstc-wu-row"><span class="tstc-wu-k">Model win probability</span><span class="tstc-wu-v">{{ p.writeup.model_prob }}</span></div>
-        <div class="tstc-wu-row"><span class="tstc-wu-k">Implied by the price</span><span class="tstc-wu-v">{{ p.writeup.implied_prob }}</span></div>
-        <div class="tstc-wu-row"><span class="tstc-wu-k">Fair price (model)</span><span class="tstc-wu-v">{{ p.writeup.fair_price }}</span></div>
-        <div class="tstc-wu-row"><span class="tstc-wu-k">Edge</span><span class="tstc-wu-edge">{{ p.writeup.edge }}</span></div>
-        {% if p.writeup.key_factor %}
-        <p class="tstc-wu-h">🔑 KEY FACTOR</p>
-        <p class="tstc-wu-p">{{ p.writeup.key_factor }}</p>
+    {# DISEÑO CON TICKET v4 — mismo que Estado 1 + ticket (aprobado Alex 2026-10-11) #}
+    <div style="background:url('{{ url_for('static', filename='img/watermark-football.jpg') }}') center 20%/cover no-repeat;border-radius:16px;padding:12px;color:#fff;position:relative;overflow:hidden;box-sizing:border-box;max-width:100%;margin:0 4px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
+      <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(3,5,4,.94),rgba(3,5,4,.98));border-radius:16px;"></div>
+      <div style="position:relative;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <div style="font-size:16px;color:#fff;">{{ p.team_name or p.abbr }} {{ 'ML' if p.bettype == 'Moneyline' else p.bettype }} <span style="font-size:11px;color:#e3b93c;">&middot; {{ p.liga or '' }}</span> <span style="font-size:10px;letter-spacing:1px;color:#f5c518;background:#2a2113;padding:4px 10px;border-radius:999px;">{{ 'PLATINUM' if is_vip else 'GOLD' }}</span></div>
+          <span style="color:#4ade80;font-size:14px;flex:none;margin-left:8px;">{{ fmt_odds(p.cuota) }}</span>
+        </div>
+        {% if p.writeup %}
+        <details class="tstc-wu" style="border:1px solid rgba(212,175,55,.3);border-radius:10px;background:rgba(0,0,0,.3);margin-bottom:8px;">
+          <summary style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;font-size:12px;letter-spacing:1px;color:#e3b93c;cursor:pointer;list-style:none;"><span>&#x1F4CA; WHY WE LIKE IT</span><span style="color:#9ca3af;font-size:10px;">TAP TO EXPAND &#x25BE;</span></summary>
+          <div style="padding:0 12px 10px;font-size:12px;color:#d1d5db;">
+            <div style="display:flex;justify-content:space-between;padding:3px 0;"><span>Model win probability</span><span>{{ p.writeup.model_prob }}</span></div>
+            <div style="display:flex;justify-content:space-between;padding:3px 0;"><span>Implied by the price</span><span>{{ p.writeup.implied_prob }}</span></div>
+            <div style="display:flex;justify-content:space-between;padding:3px 0;"><span>Fair price (model)</span><span>{{ p.writeup.fair_price }}</span></div>
+            <div style="display:flex;justify-content:space-between;padding:3px 0;"><span>Edge</span><span style="color:#4ade80;">{{ p.writeup.edge }}</span></div>
+            {% if p.writeup.key_factor %}<p style="margin:6px 0 3px;color:#e3b93c;">&#x1F511; KEY FACTOR</p><p style="margin:0 0 6px;">{{ p.writeup.key_factor }}</p>{% endif %}
+            {% if p.writeup.risk %}<p style="margin:6px 0 3px;color:#e3b93c;">&#x26A0;&#xFE0F; THE RISK</p><p style="margin:0;">{{ p.writeup.risk }}</p>{% endif %}
+          </div>
+        </details>
         {% endif %}
-        {% if p.writeup.risk %}
-        <p class="tstc-wu-h">⚠️ THE RISK</p>
-        <p class="tstc-wu-p tstc-wu-risk">{{ p.writeup.risk }}</p>
-        {% endif %}
+        <div style="margin-bottom:6px;text-align:center;cursor:pointer;" onclick="document.getElementById('tstc-modal-{{ p.id }}').style.display='flex'">
+          <span style="position:relative;display:inline-block;width:100%;">
+          <img src="{{ url_for('static', filename=p.comprobante) }}" alt="Original ticket {{ p.abbr }} {{ p.bettype }}" style="width:100%;aspect-ratio:21/9;object-fit:cover;object-position:top;display:block;border-radius:10px;" loading="lazy">
+          <span style="position:absolute;top:6px;right:6px;background:rgba(74,222,128,.92);color:#0b0e17;font-size:9px;letter-spacing:1px;padding:3px 8px;border-radius:20px;pointer-events:none;">MATCHED</span>
+          <span style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,.55);color:#fff;font-size:18px;padding:10px 12px;border-radius:999px;pointer-events:none;">&#x1F50D;</span>
+          </span>
+        </div>
+        <div id="tstc-modal-{{ p.id }}" class="tstc-modal" onclick="this.style.display='none'">
+          <button class="tstc-x" onclick="document.getElementById('tstc-modal-{{ p.id }}').style.display='none'">&times;</button>
+          <img src="{{ url_for('static', filename=p.comprobante) }}" alt="Original ticket {{ p.abbr }} {{ p.bettype }}" style="filter:brightness(1);">
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+          <div style="font-size:13px;color:#4ade80;">Bet&nbsp;&nbsp;{{ '$%.0f' % p.stake_monto }} <span style="color:#9ca3af;">({{ '%g' % p.stake_unidades }}u)</span></div>
+          {% if p.nivel != 'VALUE' %}
+          {% if p.id in tracked_ids %}
+            <span style="color:#4ade80;font-size:11px;">&#x2713; Tracked</span>
+          {% else %}
+            <a class="tstc-track" href="{{ url_for('track', play_id=p.id) }}" data-track-url="{{ url_for('track', play_id=p.id) }}" style="color:#4ade80;border:1px solid rgba(34,197,94,.6);font-size:11px;padding:6px 16px;border-radius:10px;background:rgba(34,197,94,.12);text-decoration:none;">+ Track</a>
+          {% endif %}
+          {% endif %}
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          {% if p.novig_url and '%2Fevent-markets%2F' in p.novig_url %}
+            <a href="{{ p.novig_url }}" target="_blank" rel="noopener" style="color:#e3b93c;font-size:12px;text-decoration:none;">Place at Novig &rarr;</a>
+          {% else %}
+            <a href="https://novig.com" target="_blank" rel="noopener" style="color:#e3b93c;font-size:12px;text-decoration:none;">Place at Novig &rarr;</a>
+          {% endif %}
+          <a href="javascript:void(0)" onclick="document.getElementById('tstc-modal-{{ p.id }}').style.display='flex'" style="color:#60a5fa;font-size:12px;text-decoration:none;">View ticket &rarr;</a>
+        </div>
       </div>
-    </details>
-    {% endif %}
+    </div>
     {% else %}
     {# DISEÑO SIN TICKET v3 — estilo Novig + fondo futbolista, aprobado por Alex 2026-10-11 #}
     <div style="background:url('{{ url_for('static', filename='img/watermark-football.jpg') }}') center 20%/cover no-repeat;border-radius:20px;padding:16px 14px;color:#fff;position:relative;overflow:hidden;box-sizing:border-box;max-width:100%;margin:0 4px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
