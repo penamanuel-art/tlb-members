@@ -283,6 +283,8 @@ CREATE TABLE IF NOT EXISTS tracked_plays (
     stake_monto REAL NOT NULL,
     edge REAL,
     resultado TEXT,          -- NULL = pendiente, 'W' = ganada, 'L' = perdida
+    juego TEXT,              -- ej. "Tulsa vs Navy" (para lookup de scores)
+    liga TEXT,               -- clave de deporte the-odds-api (ej. americanfootball_ncaaf)
     created_at TEXT NOT NULL,
     UNIQUE(user_id, play_id)
 );
@@ -375,6 +377,8 @@ CREATE TABLE IF NOT EXISTS tracked_plays (
     stake_monto DOUBLE PRECISION NOT NULL,
     edge DOUBLE PRECISION,
     resultado TEXT,          -- NULL = pendiente, 'W' = ganada, 'L' = perdida
+    juego TEXT,              -- ej. "Tulsa vs Navy" (para lookup de scores)
+    liga TEXT,               -- clave de deporte the-odds-api (ej. americanfootball_ncaaf)
     created_at TEXT NOT NULL,
     UNIQUE(user_id, play_id)
 );
@@ -2532,6 +2536,21 @@ def migrate_db():
             conn.execute(
                 f"ALTER TABLE free_plays ADD COLUMN stake_unidades {coltype} NOT NULL DEFAULT 1.0"
             )
+            conn.commit()
+        # Columnas juego/liga en tracked_plays (2026-10-10: para el cron
+        # value-results-update que liquida VALUE plays al terminar cada juego).
+        if USE_PG:
+            tcols = {r["column_name"] for r in conn.execute(
+                "SELECT column_name FROM information_schema.columns "
+                "WHERE table_name = 'tracked_plays'"
+            ).fetchall()}
+        else:
+            tcols = {r[1] for r in conn.execute("PRAGMA table_info(tracked_plays)").fetchall()}
+        if tcols:
+            if "juego" not in tcols:
+                conn.execute("ALTER TABLE tracked_plays ADD COLUMN juego TEXT")
+            if "liga" not in tcols:
+                conn.execute("ALTER TABLE tracked_plays ADD COLUMN liga TEXT")
             conn.commit()
         # Códigos de vinculación Telegram (un solo uso, los crea /cuenta).
         conn.execute(
@@ -6703,17 +6722,87 @@ def track_value_auto():
     from datetime import datetime
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     
+    # Migración perezosa por si la columna no existe aún en producción
+    try:
+        db.execute("ALTER TABLE tracked_plays ADD COLUMN juego TEXT")
+    except Exception:
+        pass
+    try:
+        db.execute("ALTER TABLE tracked_plays ADD COLUMN liga TEXT")
+    except Exception:
+        pass
     db.execute(
         """INSERT INTO tracked_plays
            (user_id, play_id, fecha, nivel, pick, cuota, stake_unidades,
-            stake_monto, edge, resultado, created_at)
-           VALUES (?, ?, ?, 'VALUE', ?, ?, 1.0, 50.0, ?, NULL, ?)""",
+            stake_monto, edge, resultado, juego, liga, created_at)
+           VALUES (?, ?, ?, 'VALUE', ?, ?, 1.0, 50.0, ?, NULL, ?, ?, ?)""",
         (VALUE_SYSTEM_USER_ID, play_id, data.get("fecha", ""),
          data.get("pick", ""), int(data.get("cuota", 0)),
-         data.get("edge"), now)
+         data.get("edge"), data.get("game", ""), data.get("liga", ""), now)
     )
     db.commit()
     return Response(f"VALUE trackeada: {play_id}", mimetype="text/plain")
+
+
+def _value_cron_auth():
+    """Auth compartida para endpoints del cron de VALUE: X-Push-Key o sesión admin."""
+    from flask import request, session
+    import os
+    push_key = request.headers.get("X-Push-Key", "")
+    key_ok = push_key and push_key == os.environ.get("PUSH_TRIGGER_KEY", "")
+    if key_ok:
+        return True
+    if "user_id" in session:
+        db_chk = get_db()
+        user = db_chk.execute("SELECT * FROM users WHERE id = ?", (session["user_id"],)).fetchone()
+        if user and is_admin_for(user):
+            return True
+    return False
+
+
+@app.route("/admin/value-pending", methods=["GET"])
+def value_pending():
+    """Lista las VALUE plays pendientes (resultado NULL). Para el cron value-results-update.
+    Auth: X-Push-Key (crons) o sesión admin."""
+    from flask import Response
+    import json as _json
+    if not _value_cron_auth():
+        return Response("Admin access required.", status=403, mimetype="text/plain")
+    db = get_db()
+    rows = db.execute(
+        """SELECT play_id, fecha, pick, cuota, stake_monto, juego, liga
+           FROM tracked_plays WHERE user_id = ? AND nivel = 'VALUE'
+           AND (resultado IS NULL OR resultado = '')
+           ORDER BY fecha DESC, id DESC""",
+        (VALUE_SYSTEM_USER_ID,),
+    ).fetchall()
+    data = [dict(r) for r in rows]
+    return Response(_json.dumps({"pending": data}, ensure_ascii=False),
+                    mimetype="application/json")
+
+
+@app.route("/admin/value-result", methods=["POST"])
+def value_result():
+    """Actualiza el resultado de una VALUE play (W/L). Para el cron value-results-update.
+    Body JSON: {play_id, resultado: "W"|"L"}. Auth: X-Push-Key (crons) o sesión admin."""
+    from flask import Response, request
+    if not _value_cron_auth():
+        return Response("Admin access required.", status=403, mimetype="text/plain")
+    data = request.get_json(force=True, silent=True) or {}
+    play_id = data.get("play_id")
+    res = (data.get("resultado") or "").upper()
+    if not play_id or res not in ("W", "L"):
+        return Response("play_id y resultado W/L requeridos", status=400, mimetype="text/plain")
+    db = get_db()
+    cur = db.execute(
+        "UPDATE tracked_plays SET resultado = ? WHERE user_id = ? AND play_id = ? "
+        "AND (resultado IS NULL OR resultado = '')",
+        (res, VALUE_SYSTEM_USER_ID, play_id),
+    )
+    db.commit()
+    if cur.rowcount:
+        return Response(f"Actualizada: {play_id} = {res}", mimetype="text/plain")
+    return Response(f"Sin cambios (no pendiente o no existe): {play_id}", mimetype="text/plain")
 
 
 @app.route("/admin/value-system-stats")
