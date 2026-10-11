@@ -148,7 +148,7 @@
       <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(3,5,4,.94),rgba(3,5,4,.98));border-radius:20px;"></div>
       <div style="position:relative;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-          <span style="font-size:11px;letter-spacing:1.5px;padding:6px 14px;border-radius:999px;background:rgba(125,180,255,.15);color:#7db4ff;">{{ 'PLATINUM' if is_vip else ('💎 VALUE PLAY' if is_value else 'GOLD') }}</span>
+          {% if is_vip %}<span style="font-size:11px;letter-spacing:1.5px;padding:6px 14px;border-radius:999px;background:rgba(125,180,255,.15);color:#7db4ff;">PLATINUM</span>{% elif is_value %}<span style="font-size:11px;letter-spacing:1.5px;padding:6px 14px;border-radius:999px;background:rgba(125,180,255,.15);color:#7db4ff;">💎 VALUE PLAY</span>{% else %}<span style="font-size:11px;letter-spacing:1.5px;padding:6px 14px;border-radius:999px;background:rgba(201,162,39,.15);color:#e3b93c;">GOLD</span>{% endif %}
           {% if _res == 'W' %}<span style="font-size:10px;letter-spacing:1.5px;color:#4ade80;background:rgba(74,222,128,.1);padding:5px 12px;border-radius:999px;">WON</span>
           {% elif _res == 'L' %}<span style="font-size:10px;letter-spacing:1.5px;color:#f87171;background:rgba(248,113,113,.1);padding:5px 12px;border-radius:999px;">LOST</span>
           {% else %}<span style="font-size:10px;letter-spacing:1.5px;color:#f5c518;background:rgba(245,197,24,.08);padding:5px 12px;border-radius:999px;">PENDING</span>{% endif %}
