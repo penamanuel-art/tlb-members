@@ -5577,7 +5577,8 @@ def values_page():
     history = []
     for r in rows:
         d = dict(r)
-        p = play_profit_dollars({"cuota": d["cuota"], "stake_monto": d["stake_monto"] or 50.0,
+        # Bankroll $10,000, 1% = $100 por jugada (2026-10-11, Alex)
+        p = play_profit_dollars({"cuota": d["cuota"], "stake_monto": 100.0,
                                  "resultado": d["resultado"]})
         cuota = d["cuota"] or 0
         cuota_str = f"+{cuota}" if cuota > 0 else str(cuota)
@@ -5601,6 +5602,9 @@ def values_page():
     # Últimas 4: activas primero, luego historial
     all_plays = active + sorted(history, key=lambda x: x["fecha"], reverse=True)
     last4 = all_plays[:4]
+    # Bankroll simulado: $10,000 inicial, 1% por jugada (2026-10-11, Alex)
+    START_BANKROLL = 10000.0
+    current_bankroll = START_BANKROLL + profit
     return render_template("values.html",
                            profit=profit,
                            profit_str=fmt_money(profit),
@@ -5609,6 +5613,7 @@ def values_page():
                            win_rate=win_rate,
                            wins=wins, losses=losses,
                            roi_str=f"{roi:+.1f}%",
+                           current_bankroll_str=fmt_money(current_bankroll),
                            last4=last4)
 
 @app.route("/admin/chat-mensaje", methods=["POST"])
@@ -6749,7 +6754,7 @@ def track_value_auto():
         """INSERT INTO tracked_plays
            (user_id, play_id, fecha, nivel, pick, cuota, stake_unidades,
             stake_monto, edge, resultado, juego, liga, created_at)
-           VALUES (?, ?, ?, 'VALUE', ?, ?, 1.0, 50.0, ?, NULL, ?, ?, ?)""",
+           VALUES (?, ?, ?, 'VALUE', ?, ?, 1.0, 100.0, ?, NULL, ?, ?, ?)""",
         (VALUE_SYSTEM_USER_ID, play_id, data.get("fecha", ""),
          data.get("pick", ""), int(data.get("cuota", 0)),
          data.get("edge"), data.get("game", ""), data.get("liga", ""), now)
