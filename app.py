@@ -4843,6 +4843,51 @@ def log_notificacion(db, tipo, titulo, detalle=""):
         pass
 
 
+def _value_stats_for_admin(db):
+    """💎 VALUE tracker del sistema para el admin (2026-10-10, pedido por Alex).
+
+    Alex opera desde el admin y no podía ver las VALUE plays (solo salían en la
+    cuenta de miembro). Devuelve récord + historial del tracker VALUE simulado
+    (user_id=0, VALUE System), igual que /api/values-record.
+    """
+    stats = {"wins": 0, "losses": 0, "profit": 0.0, "profit_display": "$0.00",
+             "record": "0-0", "positive": True, "plays": []}
+    try:
+        ensure_value_system_user(db)
+        _vrows = db.execute(
+            "SELECT pick, cuota, fecha, resultado, stake_monto FROM tracked_plays "
+            "WHERE user_id = ? AND nivel = 'VALUE' ORDER BY fecha DESC, id DESC LIMIT 30",
+            (VALUE_SYSTEM_USER_ID,),
+        ).fetchall()
+        _vw = _vl = 0
+        _vp = 0.0
+        _vplays = []
+        for _r in _vrows:
+            _d = dict(_r)
+            _p = play_profit_dollars({"cuota": _d["cuota"], "stake_monto": _d["stake_monto"] or 50.0,
+                                      "resultado": _d["resultado"]})
+            if _d["resultado"] == "W":
+                _vw += 1
+                _vp += _p
+            elif _d["resultado"] == "L":
+                _vl += 1
+                _vp += _p
+            _vplays.append({
+                "pick": _d["pick"], "cuota": _d["cuota"], "fecha": _d["fecha"],
+                "resultado": _d["resultado"] or "PENDING",
+                "profit": round(_p, 2),
+            })
+        stats = {
+            "wins": _vw, "losses": _vl,
+            "profit": round(_vp, 2), "profit_display": fmt_big_dollars(_vp),
+            "record": f"{_vw}-{_vl}", "positive": _vp >= 0,
+            "plays": _vplays,
+        }
+    except Exception:
+        pass
+    return stats
+
+
 @app.route("/admin")
 @login_required
 def admin_dashboard():
@@ -4904,7 +4949,8 @@ def admin_dashboard():
                            stats={"miembros": miembros, "platinum": platinum,
                                   "jugadas_hoy": jugadas_hoy, "no_leidas": no_leidas},
                            selecciones=selecciones,
-                           plays_hoy=plays)
+                           plays_hoy=plays,
+                           value_stats=_value_stats_for_admin(db))
 
 
 def _tg_send_message(chat_id, text):
