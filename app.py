@@ -6681,15 +6681,10 @@ def track_value_auto():
     from datetime import datetime
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     
-    # Migración perezosa por si la columna no existe aún en producción
-    try:
-        db.execute("ALTER TABLE tracked_plays ADD COLUMN juego TEXT")
-    except Exception:
-        pass
-    try:
-        db.execute("ALTER TABLE tracked_plays ADD COLUMN liga TEXT")
-    except Exception:
-        pass
+    # NOTA: las columnas juego/liga las garantiza migrate_db() al arrancar
+    # (chequeo seguro con information_schema + commit). NO hacer ALTER aquí:
+    # en PostgreSQL un ALTER fallido (columna ya existe) aborta la transacción
+    # y envenena el INSERT posterior -> HTTP 500 (incidente 2026-10-11 00:08 ET).
     db.execute(
         """INSERT INTO tracked_plays
            (user_id, play_id, fecha, nivel, pick, cuota, stake_unidades,
