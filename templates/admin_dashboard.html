@@ -115,9 +115,11 @@
     {% if selecciones or plays_hoy %}
     <p class="desc">Live selections</p>
     {% for p in selecciones %}
+      {% set force_pre = True %}
       {% include "_play_card.html" %}
     {% endfor %}
     {% for p in plays_hoy %}
+      {% set force_pre = True %}
       {% include "_play_card.html" %}
     {% endfor %}
     {% else %}
