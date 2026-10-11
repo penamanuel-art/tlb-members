@@ -4936,7 +4936,8 @@ def admin_dashboard():
                            stats={"miembros": miembros, "platinum": platinum,
                                   "jugadas_hoy": jugadas_hoy, "no_leidas": no_leidas},
                            selecciones=selecciones,
-                           plays_hoy=plays)
+                           plays_hoy=plays,
+                           tracked_ids=[])
 
 
 def _tg_send_message(chat_id, text):

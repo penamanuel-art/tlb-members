@@ -114,25 +114,11 @@
     <h2>🎯 Today's Plays</h2>
     {% if selecciones or plays_hoy %}
     <p class="desc">Live selections</p>
-    {% for s in selecciones %}
-    <div class="play{% if s.comprobante %} verified{% endif %}">
-      <div class="row">
-        <span class="pk">{{ s.pick or s.equipo }}</span>
-        <span class="lv {% if s.nivel == 'ELITE' %}e{% else %}g{% endif %}">{% if s.nivel == 'ELITE' %}⭐ PLATINUM{% else %}⚪ GOLD{% endif %}</span>
-      </div>
-      <div class="mt">{{ s.game or '' }}{% if s.game_time_et %} · {{ s.game_time_et }}{% endif %}{% if s.edge %} · {{ s.edge }}% edge{% endif %}</div>
-      {% if s.comprobante %}<div class="tk">📸 Ticket attached</div>{% endif %}
-    </div>
+    {% for p in selecciones %}
+      {% include "_play_card.html" %}
     {% endfor %}
     {% for p in plays_hoy %}
-    <div class="play verified">
-      <div class="row">
-        <span class="pk">{{ p.equipo or p.pick }}</span>
-        <span class="lv {% if p.nivel == 'ELITE' %}e{% else %}g{% endif %}">{% if p.nivel == 'ELITE' %}⭐ PLATINUM{% else %}⚪ GOLD{% endif %}</span>
-      </div>
-      <div class="mt">{{ p.pick }}{% if p.game %} · {{ p.game }}{% endif %}{% if p.game_time_et %} · {{ p.game_time_et }}{% endif %}</div>
-      {% if p.comprobante %}<div class="tk">📸 Ticket attached</div>{% endif %}
-    </div>
+      {% include "_play_card.html" %}
     {% endfor %}
     {% else %}
     <div class="empty">
