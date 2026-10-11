@@ -114,7 +114,7 @@
   <style>
     #sendForm > div > div:last-child { width:100% !important; margin:0 !important; max-width:100% !important; box-sizing:border-box !important; }
   </style>
-  <div style="margin:0 -8px;">
+  <div>
     {% if selecciones or plays_hoy %}
     {% set force_pre = True %}
     <form method="POST" action="{{ url_for('admin_aprobar_jugadas') }}" id="sendForm">
