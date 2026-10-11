@@ -6665,12 +6665,25 @@ VALUE_SYSTEM_USER_ID = 0
 
 
 @app.route("/admin/track-value-auto", methods=["POST"])
-@admin_required
 def track_value_auto():
     """Auto-trackea una VALUE play al sistema (llamado por ev-board-refresh).
     Body JSON: {play_id, fecha, pick, cuota, edge, game, liga}
+    Auth: sesión admin O header X-Push-Key (para crons).
     """
     from flask import Response, request
+    import os
+    # Auth: X-Push-Key (crons) o sesión admin
+    push_key = request.headers.get("X-Push-Key", "")
+    key_ok = push_key and push_key == os.environ.get("PUSH_TRIGGER_KEY", "")
+    if not key_ok:
+        # Fallback a sesión admin
+        from flask import session
+        user = None
+        if "user_id" in session:
+            db_chk = get_db()
+            user = db_chk.execute("SELECT * FROM users WHERE id = ?", (session["user_id"],)).fetchone()
+        if not (user and is_admin_for(user)):
+            return Response("Admin access required.", status=403, mimetype="text/plain")
     db = get_db()
     ensure_value_system_user(db)
     data = request.get_json(force=True, silent=True) or {}
