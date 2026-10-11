@@ -76,6 +76,7 @@ a { color: var(--blue); text-decoration: none; }
 }
 .menu-drop a { display: block; padding: 10px 12px; border-radius: 10px; color: var(--text); }
 .menu-drop a:hover { background: var(--line); }
+.menu-drop[hidden] { display: none; } /* 2026-10-10: el menú ahora es botón+JS (fix iPhone) */
 .quick-actions { display: flex; align-items: center; gap: 8px; margin-left: 2px; }
 .qa-btn {
   display: inline-flex; align-items: center; gap: 6px;
