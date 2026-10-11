@@ -1447,42 +1447,6 @@ def load_archive():
     return load_json_file(ARCHIVE_PATH).get("dias", [])
 
 
-# SIMULACIÓN DE PRUEBA (Alex 2026-10-10): fuerza la lluvia de dinero en el
-# Dashboard para que Alex la pruebe al entrar. Poner en False para volver a
-# la condición real (AYER quedó en profit positivo).
-SIMULAR_LLUVIA_DINERO = False
-SIMULAR_LLUVIA_MONTO = 127.50
-
-
-def dia_profit_positivo():
-    """(llueve, monto) — True si AYER quedó en profit positivo.
-
-    (Pedido Alex 2026-10-10: la lluvia de dinero aparece AL DÍA SIGUIENTE
-    de un día en positivo, no el mismo día. Ej: ayer +$22.63 → hoy llueve;
-    si ayer quedó en negativo → hoy no llueve.)"""
-    if SIMULAR_LLUVIA_DINERO:
-        return True, round(SIMULAR_LLUVIA_MONTO, 2)
-    dias = load_archive()
-    if not dias:
-        return False, 0.0
-    ayer = (datetime.now(TZ).date() - timedelta(days=1)).isoformat()
-    d = next((x for x in dias if x.get("fecha") == ayer), None)
-    if not d:
-        return False, 0.0
-    jugadas = d.get("jugadas", [])
-    if not jugadas:
-        return False, 0.0
-    profit = 0.0
-    for j in jugadas:
-        r = (j.get("resultado") or "").upper()
-        if r not in ("WON", "LOST"):
-            return False, 0.0  # ayer aún sin liquidar → no llueve
-        try:
-            profit += float(j.get("profit", 0) or 0)
-        except (TypeError, ValueError):
-            return False, 0.0
-    return profit > 0, round(profit, 2)
-
 
 def program_streak():
     """Racha actual del programa (W/L) desde el archivo, la más reciente primero.
@@ -2794,9 +2758,7 @@ def home():
     # Vista previa admin (pedido Alex 2026-09-30): ?preview=locked muestra el
     # home como lo ve un miembro sin Elite (teaser bloqueado + pancarta $1).
     preview_locked = is_admin_for(user) and request.args.get("preview") == "locked"
-    # Lluvia de dinero (Alex 2026-10-10): llueve si el día quedó en positivo.
-    _lluvia_ok, _lluvia_monto = dia_profit_positivo()
-    _lluvia_monto_txt = "+$%.2f" % _lluvia_monto if _lluvia_ok else ""
+    # Lluvia de dinero ELIMINADA por orden de Alex 2026-10-10: ya no se muestra.
     return render_template(
         # Tema v2 (moderno) es el predeterminado desde 2026-10-02 (pedido Alex);
         # v1 (clásico) queda como reversión vía /theme/v1.
@@ -2830,9 +2792,6 @@ def home():
         # miembro_platinum con preview: en ?preview=locked el banner de
         # invitación VIP también se muestra (pedido Alex 2026-10-02).
         miembro_platinum=(platinum_unlocked_for(user) and not preview_locked),
-        # Lluvia de dinero (Alex 2026-10-10): solo si el día quedó en positivo.
-        lluvia_dinero=_lluvia_ok,
-        lluvia_monto=_lluvia_monto_txt,
     )
 
 
