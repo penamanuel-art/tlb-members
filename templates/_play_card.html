@@ -152,69 +152,62 @@
     </details>
     {% endif %}
     {% else %}
-    {# DISEÑO SIN TICKET v2 — Liquid Glass, aprobado por Alex 2026-10-11 #}
-    <div class="tstg">
-      <div class="tstg-in">
-        <div class="tstg-top">
-          <span class="tstg-lvl">{{ 'PLATINUM' if is_vip else ('💎 VALUE PLAY' if is_value else 'GOLD') }}</span>
-          {% if _res == 'W' %}<span class="tstg-st won">WON</span>
-          {% elif _res == 'L' %}<span class="tstg-st lost">LOST</span>
-          {% else %}<span class="tstg-st pending">PENDING</span>{% endif %}
+    {# DISEÑO SIN TICKET v3 — estilo Novig + fondo futbolista, aprobado por Alex 2026-10-11 #}
+    <div style="background:url('{{ url_for('static', filename='img/watermark-football.jpg') }}') center 20%/cover no-repeat;border-radius:20px;padding:16px 14px;color:#fff;position:relative;overflow:hidden;box-sizing:border-box;max-width:100%;margin:0 4px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
+      <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(3,5,4,.88),rgba(3,5,4,.96));border-radius:20px;"></div>
+      <div style="position:relative;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+          <span style="font-size:11px;letter-spacing:1.5px;padding:6px 14px;border-radius:999px;background:rgba(125,180,255,.15);color:#7db4ff;">{{ 'PLATINUM' if is_vip else ('💎 VALUE PLAY' if is_value else 'GOLD') }}</span>
+          {% if _res == 'W' %}<span style="font-size:10px;letter-spacing:1.5px;color:#4ade80;background:rgba(74,222,128,.1);padding:5px 12px;border-radius:999px;">WON</span>
+          {% elif _res == 'L' %}<span style="font-size:10px;letter-spacing:1.5px;color:#f87171;background:rgba(248,113,113,.1);padding:5px 12px;border-radius:999px;">LOST</span>
+          {% else %}<span style="font-size:10px;letter-spacing:1.5px;color:#f5c518;background:rgba(245,197,24,.08);padding:5px 12px;border-radius:999px;">PENDING</span>{% endif %}
         </div>
-        <div class="tstg-team">
-          {% set _logo = team_logo_url(p.liga, p.abbr) %}
-          {% if _logo %}<img src="{{ _logo }}" alt="{{ p.abbr }}" loading="lazy" onerror="this.style.display='none'">{% endif %}
+        <div style="display:flex;gap:12px;align-items:center;margin-bottom:12px;">
+          <svg width="64" height="64" viewBox="0 0 60 60" style="flex:none;"><path d="M22 8 L12 14 L6 28 L15 31 L17 25 L17 54 L43 54 L43 25 L45 31 L54 28 L48 14 L38 8 C36 13 33 15 30 15 C27 15 24 13 22 8 Z" fill="#1a2233" stroke="#c9a227" stroke-width="2"/><path d="M22 8 C24 13 27 15 30 15 C33 15 36 13 38 8" fill="none" stroke="#c9a227" stroke-width="1.2"/><text x="30" y="42" text-anchor="middle" fill="#fff" font-size="12" font-family:sans-serif">{{ p.abbr }}</text></svg>
           <div>
-            <div class="tstg-name">{{ p.team_name or p.abbr }}</div>
-            <div class="tstg-sub">{{ p.bettype }} Winner &middot; {{ p.abbr }} vs {{ p.opp_abbr or '' }} &middot; {{ p.game_time_et or '' }}</div>
+            <div style="font-size:18px;color:#fff;">{{ p.team_name or p.abbr }}</div>
+            <div style="font-size:12px;color:#d1d5db;margin-top:2px;">{{ p.bettype }} &middot; <span style="color:#e3b93c;">{{ p.liga or '' }}</span> &middot; {{ p.game_time_et or p.hora or '' }}</div>
           </div>
         </div>
-        <div class="tstg-odds">
-          <span class="tstg-price">{{ fmt_odds(p.cuota) }}</span>
-          {% if p.writeup and p.writeup.fair_price %}<span class="tstg-fair">Fair {{ p.writeup.fair_price }}</span>{% endif %}
-          {% if p.writeup and p.writeup.edge %}<span class="tstg-edge">{{ p.writeup.edge }} EDGE</span>{% endif %}
+        <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:10px;">
+          <span style="font-size:30px;color:#4ade80;">{{ fmt_odds(p.cuota) }}</span>
+          {% if p.writeup and p.writeup.fair_price %}<span style="font-size:12px;color:#d1d5db;">Fair <span style="color:#fff;">{{ p.writeup.fair_price }}</span></span>{% endif %}
+          {% if p.writeup and p.writeup.edge %}<span style="font-size:12px;color:#d1d5db;">Edge <span style="color:#4ade80;">{{ p.writeup.edge }}</span></span>{% endif %}
         </div>
-        <div class="tstg-meta">
-          <span class="tstg-meta-k">Stake</span>
-          <span class="tstg-stake">{{ '$%.2f' % p.stake_monto }} <em>({{ '%g' % p.stake_unidades }}u)</em></span>
-          {% if p.writeup and p.writeup.model_prob %}<span class="tstg-meta-k">Model <b>{{ p.writeup.model_prob }}</b></span>{% endif %}
+        <div style="display:flex;gap:16px;margin-bottom:12px;font-size:12px;color:#d1d5db;">
+          <span>Stake <span style="color:#fff;">{{ '$%.2f' % p.stake_monto }} ({{ '%g' % p.stake_unidades }}u)</span></span>
+          {% if p.writeup and p.writeup.model_prob %}<span>Model <span style="color:#fff;">{{ p.writeup.model_prob }}</span></span>{% endif %}
         </div>
         {% if p.writeup %}
-        <details class="tstc-wu tstg-wu">
-          <summary><span>📊 WHY WE LIKE IT</span><span class="tstc-wu-arr">TAP TO EXPAND ▾</span></summary>
-          <div class="tstc-wu-body">
-            <div class="tstc-wu-row"><span class="tstc-wu-k">Model win probability</span><span class="tstc-wu-v">{{ p.writeup.model_prob }}</span></div>
-            <div class="tstc-wu-row"><span class="tstc-wu-k">Implied by the price</span><span class="tstc-wu-v">{{ p.writeup.implied_prob }}</span></div>
-            <div class="tstc-wu-row"><span class="tstc-wu-k">Fair price (model)</span><span class="tstc-wu-v">{{ p.writeup.fair_price }}</span></div>
-            <div class="tstc-wu-row"><span class="tstc-wu-k">Edge</span><span class="tstc-wu-edge">{{ p.writeup.edge }}</span></div>
-            {% if p.writeup.key_factor %}
-            <p class="tstc-wu-h">🔑 KEY FACTOR</p>
-            <p class="tstc-wu-p">{{ p.writeup.key_factor }}</p>
-            {% endif %}
-            {% if p.writeup.risk %}
-            <p class="tstc-wu-h">⚠️ THE RISK</p>
-            <p class="tstc-wu-p tstc-wu-risk">{{ p.writeup.risk }}</p>
-            {% endif %}
+        <details class="tstc-wu" style="margin-bottom:12px;border:1px solid rgba(212,175,55,.3);border-radius:12px;background:rgba(0,0,0,.3);">
+          <summary style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;font-size:13px;letter-spacing:1px;color:#e3b93c;cursor:pointer;list-style:none;"><span>📊 WHY WE LIKE IT</span><span style="color:#9ca3af;font-size:11px;">TAP TO EXPAND ▾</span></summary>
+          <div style="padding:0 14px 12px;font-size:13px;color:#d1d5db;">
+            <div style="display:flex;justify-content:space-between;padding:4px 0;"><span>Model win probability</span><span>{{ p.writeup.model_prob }}</span></div>
+            <div style="display:flex;justify-content:space-between;padding:4px 0;"><span>Implied by the price</span><span>{{ p.writeup.implied_prob }}</span></div>
+            <div style="display:flex;justify-content:space-between;padding:4px 0;"><span>Fair price (model)</span><span>{{ p.writeup.fair_price }}</span></div>
+            <div style="display:flex;justify-content:space-between;padding:4px 0;"><span>Edge</span><span style="color:#4ade80;">{{ p.writeup.edge }}</span></div>
+            {% if p.writeup.key_factor %}<p style="margin:8px 0 4px;color:#e3b93c;">🔑 KEY FACTOR</p><p style="margin:0 0 8px;">{{ p.writeup.key_factor }}</p>{% endif %}
+            {% if p.writeup.risk %}<p style="margin:8px 0 4px;color:#e3b93c;">⚠️ THE RISK</p><p style="margin:0;">{{ p.writeup.risk }}</p>{% endif %}
           </div>
         </details>
         {% endif %}
-        <div class="tstg-foot">
+        <div style="display:flex;align-items:center;justify-content:space-between;">
           {% if p.novig_url and '%2Fevent-markets%2F' in p.novig_url %}
-            <a class="tstg-novig" href="{{ p.novig_url }}" target="_blank" rel="noopener">Place at Novig &rarr;</a>
+            <a href="{{ p.novig_url }}" target="_blank" rel="noopener" style="color:#4ade80;font-size:13px;text-decoration:none;">Place at Novig &rarr;</a>
           {% else %}
-            <a class="tstg-novig" href="https://novig.com" target="_blank" rel="noopener">Place at Novig &rarr;</a>
+            <a href="https://novig.com" target="_blank" rel="noopener" style="color:#4ade80;font-size:13px;text-decoration:none;">Place at Novig &rarr;</a>
           {% endif %}
           {% if p.nivel != 'VALUE' %}
           {% if p.id in tracked_ids %}
-            <span class="tstc-btn tstc-tracked">&check; Tracked</span>
+            <span style="color:#4ade80;font-size:12px;">✓ Tracked</span>
           {% else %}
-            <a class="tstc-track tstg-track" href="{{ url_for('track', play_id=p.id) }}" data-track-url="{{ url_for('track', play_id=p.id) }}">+ Track</a>
+            <a class="tstc-track" href="{{ url_for('track', play_id=p.id) }}" data-track-url="{{ url_for('track', play_id=p.id) }}" style="color:#4ade80;border:1.5px solid rgba(34,197,94,.6);font-size:12px;padding:8px 20px;border-radius:12px;background:rgba(34,197,94,.12);text-decoration:none;">+ Track</a>
           {% endif %}
           {% endif %}
         </div>
       </div>
     </div>
-    {% endif %}{# fin DISEÑO SIN TICKET v2 #}
+    {% endif %}{# fin DISEÑO SIN TICKET v3 #}
     <div class="tk-perf" aria-hidden="true">&bull; &bull; &bull; &bull; &bull; &bull; &bull; &bull; &bull; &bull; &bull; &bull; &bull; &bull; &bull;</div>
   </div>{% if not p.comprobante %}
 </div>{% endif %}
