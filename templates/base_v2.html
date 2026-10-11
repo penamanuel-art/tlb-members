@@ -25,6 +25,7 @@
         <a href="{{ url_for('home', splash='0') }}">🏠 Home</a>
         <a href="{{ url_for('records') }}">📜 Full record</a>
         <a href="{{ url_for('tracker') }}">My Tracker</a>
+        {% if is_alex %}<a href="{{ url_for('values_page') }}">💎 Value Plays</a>{% endif %}
         <a href="{{ url_for('masterclass') }}">🎓 Academy</a>
         <a href="{{ url_for('guide_moneyline') }}">📚 Betting Guides</a>
         <a href="{{ url_for('about') }}">📖 Our story</a>

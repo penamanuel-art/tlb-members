@@ -2414,6 +2414,7 @@ def inject_user():
         "dias_miembro": dias_miembro,
         "etiqueta_miembro": etiqueta,
         "es_admin": bool(session.get("is_admin")),
+        "is_alex": bool(cu and (cu["email"] or "").strip().lower() == ALEX_MEMBER_EMAIL),
         "miembro_platinum": platinum_unlocked_for(cu),
         "past_due": past_due,
         "ticker_days": compute_ticker_days(),
