@@ -34,7 +34,11 @@
   {% for m in moments %}
   <div class="wm-card">
     <div class="wm-video">
+      {% if m.video_url %}
+      <video src="{{ m.video_url }}" controls preload="metadata" playsinline style="position:absolute;top:0;left:0;width:100%;height:100%;"></video>
+      {% elif m.youtube_id %}
       <iframe src="https://www.youtube-nocookie.com/embed/{{ m.youtube_id }}" title="{{ m.team }} highlights" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      {% endif %}
     </div>
     <div class="wm-body">
       <div class="wm-meta">
