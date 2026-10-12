@@ -2,28 +2,39 @@
 {% block title %}Brain — The Sharp Team{% endblock %}
 {% block content %}
 <style>
-.brain-wrap{max-width:640px;margin:0 auto;color:#fff;display:flex;flex-direction:column;min-height:60vh}
-.brain-head{text-align:center;padding:14px 0 6px}
-.brain-ico{font-size:44px;filter:drop-shadow(0 0 14px rgba(212,175,55,.45))}
-.brain-head h2{font-size:26px;font-weight:800;margin:8px 0 4px}
+.brain-wrap{max-width:640px;margin:0 auto;color:#fff;display:flex;flex-direction:column;min-height:62vh}
+/* header */
+.brain-head{text-align:center;padding:16px 8px 4px}
+.brain-ico{font-size:46px;filter:drop-shadow(0 0 14px rgba(212,175,55,.45))}
+.brain-head h2{font-size:28px;font-weight:800;margin:8px 0 2px}
 .brain-head .kicker{font-size:11px;font-weight:800;letter-spacing:2px;color:#8f8fb0}
-.brain-head .muted{color:#9a9ab5;font-size:13px;margin:6px 0 0;line-height:1.5}
-#brainMsgs{display:flex;flex-direction:column;gap:10px;padding:14px 2px;overflow-y:auto;flex:1}
+.brain-head .sub1{font-size:16px;font-weight:700;color:#e8e8f2;margin:10px 0 2px}
+.brain-head .sub2{font-size:13px;color:#9a9ab5;margin:0 0 4px}
+/* league tabs */
+.brain-tabs{display:flex;gap:8px;overflow-x:auto;padding:12px 2px 4px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.brain-tabs::-webkit-scrollbar{display:none}
+.btab{flex:none;background:#17171f;border:1px solid #3a3a4a;color:#9a9ab5;border-radius:999px;padding:9px 18px;font-size:13px;font-weight:800;cursor:pointer;white-space:nowrap}
+.btab.active{background:rgba(43,111,214,.18);border-color:#2b6fd6;color:#fff}
+.btab:active{transform:scale(.95)}
+/* suggestion cards grid */
+.brain-sugg{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:10px 2px 6px}
+.bcard-btn{background:#17171f;border:1px solid #3a3a4a;color:#fff;border-radius:14px;padding:16px 12px;font-size:14px;font-weight:700;cursor:pointer;text-align:left;line-height:1.35;min-height:86px;display:flex;align-items:center}
+.bcard-btn:active{transform:scale(.97);border-color:#d4af37}
+.bcard-btn .em{font-size:20px;margin-right:8px}
+/* chat history */
+#brainMsgs{display:flex;flex-direction:column;gap:10px;padding:12px 2px;overflow-y:auto}
 .bmsg{max-width:88%;padding:11px 14px;border-radius:14px;font-size:14px;line-height:1.55;word-wrap:break-word}
 .bmsg.user{align-self:flex-end;background:#2b6fd6;color:#fff;border-bottom-right-radius:4px}
-.bmsg.bot{align-self:flex-start;background:#17171f;border:1px solid #26262f;color:#e8e8f2;border-bottom-left-radius:4px}
-.bmsg.bot a{color:#d4af37}
-.bcard{background:#0f0f16;border:1px solid #3a3a4a;border-radius:10px;padding:9px 12px;margin-top:8px}
+.bmsg.bot{align-self:flex-start;background:#17171f;border:1px solid #3a3a4a;color:#e8e8f2;border-bottom-left-radius:4px}
+.bcard{background:#0f0f16;border:1px solid #d4af37;border-radius:10px;padding:9px 12px;margin-top:8px}
 .bcard .t{font-weight:800;font-size:13px}
 .bcard .s{font-size:12px;color:#9a9ab5;margin-top:2px}
 .bcard .b{font-size:12px;font-weight:800;color:#d4af37;margin-top:4px}
-.bchips{display:flex;gap:8px;flex-wrap:wrap;padding:4px 2px 10px}
-.bchip{background:#1c1c28;border:1px solid #3a3a4a;color:#e8e8f2;border-radius:999px;padding:8px 14px;font-size:13px;font-weight:700;cursor:pointer}
-.bchip:active{transform:scale(.96)}
+/* input */
 .brain-input{display:flex;gap:8px;padding:10px 0 18px;position:sticky;bottom:0;background:inherit}
-#brainQ{flex:1;background:#0f0f16;border:1px solid #3a3a4a;color:#fff;border-radius:12px;padding:13px 14px;font-size:15px;box-sizing:border-box}
+#brainQ{flex:1;background:#0f0f16;border:1px solid #3a3a4a;color:#fff;border-radius:999px;padding:14px 18px;font-size:15px;box-sizing:border-box}
 #brainQ:focus{outline:none;border-color:#d4af37}
-#brainSend{background:#d4af37;color:#17171f;font-weight:800;font-size:15px;border:none;border-radius:12px;padding:13px 20px;cursor:pointer}
+#brainSend{background:#d4af37;color:#17171f;font-weight:800;font-size:15px;border:none;border-radius:999px;padding:14px 22px;cursor:pointer}
 #brainSend:disabled{opacity:.4;cursor:default}
 #brainSend:active:not(:disabled){transform:scale(.96)}
 .btyping{color:#9a9ab5;font-size:13px;font-style:italic}
@@ -34,20 +45,25 @@
     <div class="kicker">PLATINUM TOOL</div>
     <div class="brain-ico">🧠</div>
     <h2>Brain</h2>
-    <p class="muted">Ask about today's edges, parlays, official plays, our record or your bankroll — answered from real program data.</p>
+    <p class="sub1">How can I assist you today?</p>
+    <p class="sub2">Tap a suggestion below or write your own query</p>
   </div>
 
-  <div class="bchips" id="brainChips">
-    <button class="bchip" type="button">Best plays</button>
-    <button class="bchip" type="button">Build me a parlay</button>
-    <button class="bchip" type="button">Today's plays</button>
-    <button class="bchip" type="button">Our record</button>
+  <div class="brain-tabs" id="brainTabs" role="tablist" aria-label="Leagues">
+    <button class="btab active" type="button" data-league="">All</button>
+    <button class="btab" type="button" data-league="NFL">NFL</button>
+    <button class="btab" type="button" data-league="NCAAF">NCAAF</button>
+    <button class="btab" type="button" data-league="MLB">MLB</button>
+    <button class="btab" type="button" data-league="NHL">NHL</button>
+    <button class="btab" type="button" data-league="NBA">NBA</button>
   </div>
 
-  <div id="brainMsgs"></div>
+  <div class="brain-sugg" id="brainSugg"></div>
+
+  <div id="brainMsgs" aria-live="polite"></div>
 
   <div class="brain-input">
-    <input id="brainQ" type="text" placeholder="Ask Brain…" autocomplete="off" maxlength="500" aria-label="Ask Brain">
+    <input id="brainQ" type="text" placeholder="Ask me for odds, picks, parlays…" autocomplete="off" maxlength="500" aria-label="Ask Brain">
     <button id="brainSend" type="button">Send</button>
   </div>
 </div>
@@ -57,6 +73,37 @@
   var msgs = document.getElementById('brainMsgs');
   var input = document.getElementById('brainQ');
   var send = document.getElementById('brainSend');
+  var sugg = document.getElementById('brainSugg');
+  var tabs = document.getElementById('brainTabs');
+  var league = '';
+
+  var SUGGESTIONS = [
+    {em:'⚡', label:'best', text:function(l){ return l ? 'Show me the best ' + l + ' bets' : 'Show me the best bets'; }},
+    {em:'🎫', label:'parlay', text:function(l){ return l ? 'Build me an ' + l + ' parlay' : 'Build me a parlay'; }},
+    {em:'📋', label:'plays', text:function(){ return "Show me today's official plays"; }},
+    {em:'📊', label:'record', text:function(){ return "What's our record?"; }}
+  ];
+
+  function renderSugg(){
+    sugg.innerHTML = '';
+    SUGGESTIONS.forEach(function(s){
+      var b = document.createElement('button');
+      b.className = 'bcard-btn';
+      b.type = 'button';
+      b.innerHTML = '<span class="em">' + s.em + '</span><span>' + s.text(league) + '</span>';
+      b.addEventListener('click', function(){ ask(s.text(league)); });
+      sugg.appendChild(b);
+    });
+  }
+
+  tabs.addEventListener('click', function(e){
+    var t = e.target.closest('.btab');
+    if (!t) return;
+    tabs.querySelectorAll('.btab').forEach(function(x){ x.classList.remove('active'); });
+    t.classList.add('active');
+    league = t.getAttribute('data-league') || '';
+    renderSugg();
+  });
 
   function esc(s){
     return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
@@ -76,7 +123,8 @@
       d.innerHTML = '<div class="t">' + esc(c.title || '') + '</div>'
         + (c.sub ? '<div class="s">' + esc(c.sub) + '</div>' : '')
         + (c.badge ? '<div class="b">' + esc(c.badge) + '</div>' : '');
-      var last = msgs.querySelector('.bmsg.bot:last-of-type');
+      var bots = msgs.querySelectorAll('.bmsg.bot');
+      var last = bots[bots.length - 1];
       if (last) last.appendChild(d);
     });
     msgs.scrollTop = msgs.scrollHeight;
@@ -119,11 +167,8 @@
   input.addEventListener('keydown', function(e){
     if (e.key === 'Enter') ask(input.value);
   });
-  document.getElementById('brainChips').addEventListener('click', function(e){
-    if (e.target && e.target.classList.contains('bchip')) ask(e.target.textContent);
-  });
 
-  addMsg('Hey — I\'m Brain. Ask me for the best plays, a parlay, today\'s official card, our record, or your bankroll.', 'bot');
+  renderSugg();
 })();
 </script>
 {% endblock %}

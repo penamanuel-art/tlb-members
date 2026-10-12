@@ -6045,15 +6045,37 @@ def _ai_to_american(dec):
     return str(-int(round(100 / (dec - 1))))
 
 
-def _ai_best_edges(limit=5):
-    """Top edges from the +EV board, sorted by EV%."""
+def _ai_best_edges(limit=5, sport=None):
+    """Top edges from the +EV board, sorted by EV%. Optional sport filter."""
     try:
         board = load_ev_board() or {}
     except Exception:
         return []
     edges = [e for e in (board.get("edges") or []) if isinstance(e, dict)]
+    if sport:
+        edges = [e for e in edges if str(e.get("sport") or "").upper() == sport]
     edges.sort(key=lambda e: float(e.get("ev_pct") or 0), reverse=True)
     return edges[:max(1, limit)]
+
+
+_AI_LEAGUE_ALIASES = (
+    ("nfl", "NFL"),
+    ("ncaaf", "NCAAF"),
+    ("college football", "NCAAF"),
+    ("mlb", "MLB"),
+    ("baseball", "MLB"),
+    ("nhl", "NHL"),
+    ("hockey", "NHL"),
+    ("nba", "NBA"),
+    ("basketball", "NBA"),
+)
+
+
+def _ai_detect_sport(q):
+    for alias, sport in _AI_LEAGUE_ALIASES:
+        if alias in q:
+            return sport
+    return None
 
 
 def _ai_answer(question, user):
@@ -6074,9 +6096,10 @@ def _ai_answer(question, user):
 
     # ---- parlay suggestion ----
     if any(k in q for k in ("parlay", "parley", "combo", "multi-leg", "accumulator")):
+        sport = _ai_detect_sport(q)
         legs = []
         seen_games = set()
-        for e in _ai_best_edges(12):
+        for e in _ai_best_edges(12, sport=sport):
             if str(e.get("market", "")).lower() != "moneyline":
                 continue
             if e.get("live"):
@@ -6092,26 +6115,36 @@ def _ai_answer(question, user):
             if len(legs) == 3:
                 break
         if len(legs) < 2:
-            return ("I don't have enough moneyline edges right now to build a parlay. Check the +EV Board for the latest.", [])
+            scope = f" for {sport}" if sport else ""
+            return (f"I don't have enough moneyline edges{scope} right now to build a parlay. Check the +EV Board for the latest.", [])
         combined = 1.0
         for e in legs:
             combined *= _ai_to_decimal(e.get("price"))
         lines = [f"Leg {i+1}: {e.get('team')} ({_ai_fmt_odds(e.get('price'))})" for i, e in enumerate(legs)]
-        answer = ("Here's a {n}-leg moneyline parlay from today's top edges:\n".format(n=len(legs))
+        scope = f" ({sport})" if sport else ""
+        answer = ("Here's a {n}-leg moneyline parlay{scope} from today's top edges:\n".format(n=len(legs), scope=scope)
                   + "\n".join(lines)
                   + f"\n\nCombined odds: {_ai_to_american(combined)}")
         cards = [_edge_card(e) for e in legs]
         return (answer, cards)
 
     # ---- best plays / top edges ----
-    if any(k in q for k in ("best play", "best edge", "top edge", "top play", "value play",
-                            "what should i bet", "what to bet", "recommend", "suggestion",
-                            "sharpest", "highest ev")):
-        edges = _ai_best_edges(5)
+    _best_kw = any(k in q for k in ("best play", "best edge", "top edge", "top play", "value play",
+                                   "what should i bet", "what to bet", "recommend", "suggestion",
+                                   "sharpest", "highest ev"))
+    _best_kw = _best_kw or (
+        ("best" in q or "top" in q)
+        and any(k in q for k in ("bet", "play", "edge", "pick"))
+    )
+    if _best_kw:
+        sport = _ai_detect_sport(q)
+        edges = _ai_best_edges(5, sport=sport)
         if not edges:
-            return ("The +EV Board is empty right now. Check back later — it refreshes throughout the day.", [])
+            scope = f" for {sport}" if sport else ""
+            return (f"The +EV Board has no edges{scope} right now. Check back later — it refreshes throughout the day.", [])
         lines = [_edge_line(e) for e in edges]
-        answer = "Top edges on the +EV Board right now:\n" + "\n".join(lines)
+        scope = f" ({sport})" if sport else ""
+        answer = f"Top edges on the +EV Board right now{scope}:\n" + "\n".join(lines)
         cards = [_edge_card(e) for e in edges]
         return (answer, cards)
 
