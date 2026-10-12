@@ -167,9 +167,16 @@ function googleTranslateElementInit(){new google.translate.TranslateElement({pag
   <a href="{{ url_for('tracker') }}" class="v2-bnav-item{% if request.endpoint == 'tracker' %} active{% endif %}">
     <span class="v2-bnav-ico" aria-hidden="true">&#127915;</span><span>Tracker</span>
   </a>
+  {% if is_alex or es_admin %}
+  {# Admin en el bottom nav solo para Alex (2026-10-12, pedido por Alex) #}
+  <a href="{{ url_for('admin_dashboard') }}" class="v2-bnav-item{% if request.endpoint == 'admin_dashboard' %} active{% endif %}">
+    <span class="v2-bnav-ico" aria-hidden="true">&#9881;&#65039;</span><span>Admin</span>
+  </a>
+  {% else %}
   <a href="{{ url_for('alertas') }}" class="v2-bnav-item{% if request.endpoint == 'alertas' %} active{% endif %}">
     <span class="v2-bnav-ico" aria-hidden="true">&#128276;</span><span>Alerts</span>
   </a>
+  {% endif %}
   <a href="{{ url_for('cuenta') }}" class="v2-bnav-item{% if request.endpoint == 'cuenta' %} active{% endif %}">
     <span class="v2-bnav-ico" aria-hidden="true">&#128100;</span><span>Account</span>
   </a>
