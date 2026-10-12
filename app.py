@@ -6216,6 +6216,21 @@ def ai_assistant():
     return render_template("ai_assistant.html")
 
 
+@app.route("/winning-moments")
+@login_required
+def winning_moments():
+    """Winning Moments — video highlights of our biggest wins. All members."""
+    db = get_db()
+    record_checkin(db, session["user_id"])
+    moments = []
+    try:
+        with open(os.path.join(os.path.dirname(__file__), "data", "winning_moments.json"), encoding="utf-8") as f:
+            moments = json.load(f)
+    except Exception:
+        moments = []
+    return render_template("winning_moments.html", moments=moments)
+
+
 @app.route("/api/ai-ask", methods=["POST"])
 @login_required
 def api_ai_ask():
