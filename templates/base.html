@@ -162,6 +162,9 @@ function googleTranslateElementInit(){new google.translate.TranslateElement({pag
   <a href="{{ url_for('tools') }}" class="v2-bnav-item{% if request.endpoint == 'tools' %} active{% endif %}">
     <span class="v2-bnav-ico" aria-hidden="true">&#129520;</span><span>Tools</span>
   </a>
+  <a href="{{ url_for('ai_assistant') }}" class="v2-bnav-item{% if request.endpoint == 'ai_assistant' %} active{% endif %}">
+    <span class="v2-bnav-ico" aria-hidden="true">🧠</span><span>Brain</span>
+  </a>
   <a href="{{ url_for('tracker') }}" class="v2-bnav-item{% if request.endpoint == 'tracker' %} active{% endif %}">
     <span class="v2-bnav-ico" aria-hidden="true">&#127915;</span><span>Tracker</span>
   </a>
