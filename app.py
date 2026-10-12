@@ -2568,6 +2568,20 @@ def migrate_db():
                 created_at TEXT NOT NULL
             )"""
         )
+        # Botón de disparo de publicación (2026-10-12, pedido por Alex):
+        # el Admin registra aquí las jugadas aprobadas y el agente las
+        # publica de verdad en el Dashboard (commit/push verificado).
+        _pr_id = "id SERIAL PRIMARY KEY" if USE_PG else "id INTEGER PRIMARY KEY AUTOINCREMENT"
+        conn.execute(
+            f"""CREATE TABLE IF NOT EXISTS publish_requests (
+                {_pr_id},
+                fecha TEXT NOT NULL,
+                play_ids TEXT NOT NULL,
+                status TEXT NOT NULL DEFAULT 'pending',
+                created_at TEXT NOT NULL,
+                done_at TEXT
+            )"""
+        )
         # Pool de links de invitación a Sharp Club (un solo uso, los genera
         # el cron de la VM con el token del bot; /cuenta los reparte).
         # 2026-10-02: EN DESUSO — reemplazado por el link permanente
@@ -5227,161 +5241,101 @@ def _tg_send_photo(chat_id, photo_path, caption=""):
 @app.route("/admin/aprobar-jugadas", methods=["POST"])
 @login_required
 def admin_aprobar_jugadas():
-    """Flujo de aprobación de jugadas (2026-10-10, pedido por Alex).
+    """BOTÓN DE DISPARO de publicación (2026-10-12, pedido por Alex).
 
-    FLUJO REAL (solo para Alex en prueba):
-    1. Marca las jugadas seleccionadas como aprobadas (las quita de pendientes).
-    2. Las publica en data/plays.json (Dashboard de miembro).
-    3. Envía cada jugada por Telegram SOLO a Alex (chat 8600523481).
-    4. Envía email de confirmación SOLO a pena.manuel@myyahoo.com.
-    Muestra pantalla de confirmación con resumen real.
+    El botón NO publica directamente: registra las jugadas seleccionadas
+    como una solicitud pendiente en la tabla publish_requests. El agente
+    (cron vigilar-aprobaciones-admin) la recoge en minutos y hace la
+    publicación REAL en el Dashboard de miembros: entradas completas en
+    data/plays.json vía commit/push al repo, verificadas. Las jugadas se
+    quedan en plays-pending.json hasta que la publicación se confirma.
     """
     user = current_user()
     if not (is_admin_for(user) or is_alex_member(user)):
         flash("You don't have permission to view this page.", "error")
         return redirect(url_for("home"))
-    import json as _jsonA
-    import os as _osA
-    import subprocess as _spA
-    from datetime import datetime as _dtA
-    _hoy = _dtA.now().strftime("%Y-%m-%d")
-    _base = _osA.path.dirname(__file__)
-    sel_ids = request.form.getlist("play_ids")
-
-    # Cargar pendientes
+    import json as _jsonB
+    import os as _osB
+    from datetime import datetime as _dtB
+    _hoy = _dtB.now().strftime("%Y-%m-%d")
+    _base = _osB.path.dirname(__file__)
+    sel_ids = [str(s) for s in request.form.getlist("play_ids")]
     pendientes = []
-    _pp_path = _osA.path.join(_base, "data", "plays-pending.json")
     try:
-        with open(_pp_path, encoding="utf-8") as _f:
-            _d = _jsonA.load(_f)
+        with open(_osB.path.join(_base, "data", "plays-pending.json"), encoding="utf-8") as _f:
+            _d = _jsonB.load(_f)
             if isinstance(_d, dict) and _d.get("fecha") == _hoy:
                 pendientes = _d.get("plays", []) or []
     except Exception:
         pendientes = []
     elegidas = [p for p in pendientes if str(p.get("id")) in sel_ids]
-
-    # Cargar plays.json actual para copiar datos completos
-    _plays_path = _osA.path.join(_base, "data", "plays.json")
-    _full_plays = {}
-    _plays_data = None
-    try:
-        with open(_plays_path, encoding="utf-8") as _f:
-            _plays_data = _jsonA.load(_f)
-            for _p in (_plays_data.get("plays", []) or []):
-                _full_plays[str(_p.get("id"))] = _p
-    except Exception:
-        _plays_data = {"fecha": _hoy, "plays": []}
-
-    # 1+2. Marcar aprobadas (quitar de pendientes) y publicar en plays.json
-    _publicadas = []
-    if elegidas:
-        # Quitar de pendientes
-        _restantes = [p for p in pendientes if str(p.get("id")) not in sel_ids]
+    if not elegidas:
+        flash("No plays selected.", "error")
+        return redirect(url_for("admin_dashboard"))
+    db = get_db()
+    ya = db.execute(
+        "SELECT play_ids FROM publish_requests WHERE fecha = ? AND status = 'pending'",
+        (_hoy,)).fetchall()
+    ya_ids = set()
+    for _r in ya:
         try:
-            with open(_pp_path, "w", encoding="utf-8") as _f:
-                _jsonA.dump({"fecha": _hoy, "plays": _restantes}, _f, ensure_ascii=False, indent=2)
+            ya_ids.update(_jsonB.loads(_r["play_ids"]))
         except Exception:
             pass
-        # Agregar a plays.json (copia de datos completos existentes)
-        if not isinstance(_plays_data, dict):
-            _plays_data = {"fecha": _hoy, "plays": []}
-        if "plays" not in _plays_data or not isinstance(_plays_data["plays"], list):
-            _plays_data["plays"] = []
-        for _ep in elegidas:
-            _pid = str(_ep.get("id"))
-            _full = _full_plays.get(_pid)
-            if _full:
-                # Copia para la prueba (Alex acepta duplicadas)
-                import copy as _copyA
-                _plays_data["plays"].append(_copyA.deepcopy(_full))
-                _publicadas.append(_full)
-            else:
-                # Construir entrada mínima desde pendiente
-                _slug = _pid.replace("play-2026-10-10-", "")
-                _min = {
-                    "id": _pid,
-                    "nivel": _ep.get("nivel", "GOLD"),
-                    "pick": _ep.get("pick", ""),
-                    "liga": _ep.get("liga", ""),
-                    "cuota_texto": _ep.get("cuota_texto", _ep.get("cuota", "")),
-                    "game_time_et": _ep.get("game_time_et", ""),
-                    "comprobante": "img/comprobantes/2026-10-10-%s.jpg" % _slug,
-                    "verificada": True,
-                }
-                _plays_data["plays"].append(_min)
-                _publicadas.append(_min)
-        try:
-            with open(_plays_path, "w", encoding="utf-8") as _f:
-                _jsonA.dump(_plays_data, _f, ensure_ascii=False, indent=2)
-        except Exception:
-            pass
-
-    # 3. Telegram SOLO a Alex — directo vía Bot API desde Render (2026-10-10:
-    #    el subprocess con binarios de la VM fallaba porque este código corre
-    #    en el servidor de Render, donde /home/hatch/... no existe)
-    _ALEX_TG = "8600523481"
-    _tg_ok, _tg_fail = [], []
-    for _pl in _publicadas:
-        _pid = str(_pl.get("id"))
-        _slug = _pid.replace("play-2026-10-10-", "")
-        _foto = _osA.path.join(_base, "static", "img", "comprobantes",
-                               "2026-10-10-%s.jpg" % _slug)
-        _nivel = str(_pl.get("nivel", ""))
-        _badge = "⭐ PLATINUM PLAY" if _nivel == "ELITE" else "⚪ GOLD PLAY"
-        _caption = "🧪 PRUEBA\n%s\n%s (%s)\n🕐 %s" % (
-            _badge, _pl.get("pick", ""), _pl.get("cuota_texto", ""),
-            _pl.get("game_time_et", ""))
-        try:
-            if _osA.path.isfile(_foto):
-                _ok, _det = _tg_send_photo(_ALEX_TG, _foto, _caption)
-            else:
-                _ok, _det = _tg_send_message(_ALEX_TG, _caption)
-            if _ok:
-                _tg_ok.append(_pid)
-            else:
-                _tg_fail.append((_pid, _det[:200]))
-        except Exception as _e:
-            _tg_fail.append((_pid, str(_e)[:200]))
-
-    # 4. Email SOLO a Alex — directo vía Resend HTTP desde Render (2026-10-10:
-    #    el subprocess con el binario de la VM fallaba en el servidor de Render;
-    #    _dispatch_email usa RESEND_API_KEY de Render y RESEND_FROM ya es
-    #    "The Sharp Team <plays@thesharpteam.bet>")
-    _em_ok, _em_fail = [], []
-    _ALEX_EMAIL = "pena.manuel@myyahoo.com"
-    for _pl in _publicadas:
-        _pid = str(_pl.get("id"))
-        _nivel = str(_pl.get("nivel", ""))
-        _badge = "PLATINUM PLAY" if _nivel == "ELITE" else "GOLD PLAY"
-        _subject = "The Sharp Team | Prueba - %s" % _pl.get("pick", "")
-        _html = """<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
-<p style="background:#fff3cd;padding:10px;border-radius:8px;">🧪 <b>PRUEBA</b> — flujo de aprobación (solo para Alex)</p>
-<h2>%s</h2>
-<p><b>%s</b> · %s · 🕐 %s</p>
-<p>Ticket: %s</p>
-<p style="color:#888;font-size:12px;">The Sharp Team</p>
-</div>""" % (_badge, _pl.get("pick", ""), _pl.get("cuota_texto", ""),
-             _pl.get("game_time_et", ""), _pl.get("comprobante", ""))
-        try:
-            _text = "%s\n%s (%s)\n%s\nTicket: %s" % (
-                _badge, _pl.get("pick", ""), _pl.get("cuota_texto", ""),
-                _pl.get("game_time_et", ""), _pl.get("comprobante", ""))
-            _ok, _det = _dispatch_email(_ALEX_EMAIL, _subject, _text,
-                                        html_body=_html)
-            if _ok:
-                _em_ok.append(_pid)
-            else:
-                _em_fail.append((_pid, _det[:200]))
-        except Exception as _e:
-            _em_fail.append((_pid, str(_e)[:200]))
-
+    nuevas = [str(p.get("id")) for p in elegidas if str(p.get("id")) not in ya_ids]
+    if nuevas:
+        db.execute(
+            "INSERT INTO publish_requests (fecha, play_ids, status, created_at)"
+            " VALUES (?, ?, 'pending', ?)",
+            (_hoy, _jsonB.dumps(nuevas), _dtB.now(timezone.utc).isoformat()))
+        db.commit()
     return render_template("admin_aprobar_confirm.html",
-                           elegidas=_publicadas,
-                           n_clientes=1,
+                           elegidas=elegidas,
+                           n_clientes=0,
                            modo_prueba=False,
                            hoy=_hoy,
-                           tg_ok=_tg_ok, tg_fail=_tg_fail,
-                           em_ok=_em_ok, em_fail=_em_fail)
+                           tg_ok=[], tg_fail=[],
+                           em_ok=[], em_fail=[])
+
+
+@app.route("/admin/publish-pending", methods=["GET"])
+def admin_publish_pending():
+    """Solicitudes de publicación pendientes (para el cron del agente).
+    Auth: X-Admin-Key o sesión admin."""
+    if not _admin_api_autorizado():
+        return jsonify({"error": "admin only"}), 403
+    import json as _jsonC
+    db = get_db()
+    rows = db.execute(
+        "SELECT id, fecha, play_ids, created_at FROM publish_requests"
+        " WHERE status = 'pending' ORDER BY id").fetchall()
+    out = []
+    for r in rows:
+        try:
+            ids = _jsonC.loads(r["play_ids"])
+        except Exception:
+            ids = []
+        out.append({"id": r["id"], "fecha": r["fecha"], "play_ids": ids,
+                    "created_at": r["created_at"]})
+    return jsonify({"pending": out})
+
+
+@app.route("/admin/publish-done", methods=["POST"])
+def admin_publish_done():
+    """Marca una solicitud de publicación como completada.
+    Auth: X-Admin-Key o sesión admin."""
+    if not _admin_api_autorizado():
+        return jsonify({"error": "admin only"}), 403
+    from datetime import datetime as _dtC
+    rid = (request.get_json(silent=True) or {}).get("id")
+    if not rid:
+        return jsonify({"error": "missing id"}), 400
+    db = get_db()
+    db.execute(
+        "UPDATE publish_requests SET status = 'done', done_at = ? WHERE id = ?",
+        (_dtC.now(timezone.utc).isoformat(), rid))
+    db.commit()
+    return jsonify({"ok": True, "id": rid})
 
 
 
