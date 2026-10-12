@@ -1602,6 +1602,95 @@ def recientes_value(n=20):
         return vacio
 
 
+def official_tracker_full():
+    """Tracker oficial COMPLETO para el Admin (2026-10-12, pedido por Alex:
+    un tracker especial, más profesional y con más estadísticas que el del
+    Dashboard de miembro). Todo calculado EN VIVO desde data/archive.json.
+    Devuelve stats generales, por nivel, por banda de cuota, rachas,
+    últimos 7/30 días, mejores/peores jugadas y las últimas 12 liquidadas."""
+    from datetime import datetime as _dt, timedelta as _td
+    dias = sorted(load_archive(), key=lambda d: d.get("fecha") or "")
+    settled = []  # (fecha, jugada) en orden cronológico
+    for d in dias:
+        for j in d.get("jugadas", []) or []:
+            if j.get("resultado") in ("WON", "LOST") and not j.get("bloqueada"):
+                settled.append((d.get("fecha") or "", j))
+
+    def _agg(items):
+        w = sum(1 for _, j in items if j["resultado"] == "WON")
+        l = sum(1 for _, j in items if j["resultado"] == "LOST")
+        profit = sum(float(j.get("profit") or 0.0) for _, j in items)
+        risked = sum(float(j.get("stake_monto") or 0.0) for _, j in items)
+        n = w + l
+        return {"w": w, "l": l, "record": f"{w}–{l}",
+                "win_rate": round(w / n * 100, 1) if n else 0.0,
+                "profit": round(profit, 2),
+                "profit_display": (("+$" if profit > 0 else ("-$" if profit < 0 else "$"))
+                                   + f"{abs(int(round(profit))):,}"),
+                "cls": "pos" if profit > 0 else ("neg" if profit < 0 else ""),
+                "risked": round(risked, 2),
+                "roi": round(profit / risked * 100, 1) if risked else 0.0,
+                "n": n}
+
+    general = _agg(settled)
+    cuotas = [int(j.get("cuota") or 0) for _, j in settled]
+    general["avg_odds"] = round(sum(cuotas) / len(cuotas)) if cuotas else 0
+    general["avg_stake"] = round(general["risked"] / general["n"], 2) if general["n"] else 0.0
+    general["progress"] = general["n"]
+    general["progress_pct"] = min(100.0, round(general["n"] / 200 * 100, 1))
+
+    por_nivel = {}
+    for nv in ("ELITE", "GOLD"):
+        por_nivel[nv] = _agg([it for it in settled
+                              if (it[1].get("nivel") or "").upper() == nv])
+    bandas = {
+        "Favorites (−110 o mejor)": [it for it in settled if int(it[1].get("cuota") or 0) <= -110],
+        "Pick'em (−109 a +109)": [it for it in settled if -109 <= int(it[1].get("cuota") or 0) <= 109],
+        "Underdogs (+110 o más)": [it for it in settled if int(it[1].get("cuota") or 0) >= 110],
+    }
+    por_banda = {k: _agg(v) for k, v in bandas.items() if v}
+
+    # Rachas (orden cronológico)
+    racha_actual, mejor_w, peor_l = "—", 0, 0
+    run_w = run_l = 0
+    for _, j in settled:
+        if j["resultado"] == "WON":
+            run_w += 1; run_l = 0
+        else:
+            run_l += 1; run_w = 0
+        mejor_w = max(mejor_w, run_w); peor_l = max(peor_l, run_l)
+    if settled:
+        racha_actual = f"W{run_w}" if run_w else f"L{run_l}"
+
+    hoy = _dt.now().date()
+    def _en_rango(it, dias_n):
+        try:
+            f = _dt.strptime(it[0], "%Y-%m-%d").date()
+        except Exception:
+            return False
+        return (hoy - f).days < dias_n
+    ult7 = _agg([it for it in settled if _en_rango(it, 7)])
+    ult30 = _agg([it for it in settled if _en_rango(it, 30)])
+
+    ordenadas = sorted(settled, key=lambda it: float(it[1].get("profit") or 0.0))
+    peor = [{"fecha": f, "pick": j.get("pick"), "cuota": j.get("cuota_texto") or j.get("cuota"),
+             "profit": float(j.get("profit") or 0.0), "nivel": (j.get("nivel") or "").upper(),
+             "comprobante": j.get("comprobante")} for f, j in ordenadas[:3]]
+    mejor = [{"fecha": f, "pick": j.get("pick"), "cuota": j.get("cuota_texto") or j.get("cuota"),
+              "profit": float(j.get("profit") or 0.0), "nivel": (j.get("nivel") or "").upper(),
+              "comprobante": j.get("comprobante")} for f, j in reversed(ordenadas[-3:])]
+    ultimas = [{"fecha": f, "pick": j.get("pick"), "cuota": j.get("cuota_texto") or j.get("cuota"),
+                "resultado": j.get("resultado"), "profit": float(j.get("profit") or 0.0),
+                "nivel": (j.get("nivel") or "").upper(),
+                "comprobante": j.get("comprobante")} for f, j in reversed(settled[-12:])]
+    verif = sum(1 for _, j in settled if j.get("comprobante"))
+    return {"general": general, "por_nivel": por_nivel, "por_banda": por_banda,
+            "racha_actual": racha_actual, "mejor_racha_w": mejor_w, "peor_racha_l": peor_l,
+            "ult7": ult7, "ult30": ult30, "mejor": mejor, "peor": peor,
+            "ultimas": ultimas, "verificadas": verif,
+            "verificadas_pct": round(verif / general["n"] * 100) if general["n"] else 0}
+
+
 def program_stats():
     """Stats del programa calculadas EN VIVO desde data/archive.json.
 
@@ -4714,6 +4803,19 @@ def admin_ver_tracker(user_id):
                            tracked=tracked, stats=stats)
 
 
+@app.route("/admin/tracker-oficial")
+@login_required
+def admin_tracker_oficial():
+    """Tracker oficial ESPECIAL del Admin (2026-10-12, pedido por Alex):
+    más estadísticas y más profesional que el del Dashboard de miembro.
+    Solo admin o la cuenta de miembro de Alex, igual que /admin."""
+    user = current_user()
+    if not (is_admin_for(user) or is_alex_member(user)):
+        flash("You don't have permission to view this page.", "error")
+        return redirect(url_for("home"))
+    return render_template("admin_tracker_oficial.html", t=official_tracker_full())
+
+
 @app.route("/admin/miembros/email", methods=["POST"])
 @login_required
 def admin_cambiar_email():
@@ -5172,6 +5274,7 @@ def admin_dashboard():
                                   "jugadas_hoy": jugadas_hoy, "no_leidas": no_leidas},
                            selecciones=selecciones,
                            plays_hoy=plays,
+                           oficial=program_stats(),
                            tracked_ids=[])
 
 

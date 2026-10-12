@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+.ot-wrap { max-width: 680px; margin: 0 auto; padding: 16px 12px 40px; font-family: -apple-system, 'SF Pro', Inter, system-ui, sans-serif; }
+.ot-wrap h1 { font-size: 1.5rem; font-weight: 800; color: #fff; margin: 0 0 4px; }
+.ot-wrap .sub { font-size: 0.85rem; color: #8b94a9; margin-bottom: 20px; }
+.ot-hero { background: linear-gradient(135deg, rgba(20,30,52,.9), rgba(12,18,32,.9)); border: 1px solid rgba(245,193,24,.35); border-radius: 20px; padding: 22px 18px; text-align: center; margin-bottom: 14px; }
+.ot-hero .profit { font-size: 2.6rem; font-weight: 800; line-height: 1; }
+.ot-hero .lbl { font-size: 0.7rem; color: #8b94a9; font-weight: 700; letter-spacing: 2px; margin-top: 6px; }
+.ot-hero .rec { font-size: 1.05rem; color: #fff; font-weight: 700; margin-top: 12px; }
+.ot-pos { color: #00e07f; } .ot-neg { color: #ff5d5d; }
+.ot-bar { background: rgba(120,140,180,.18); border-radius: 999px; height: 10px; margin: 14px 0 6px; overflow: hidden; }
+.ot-bar > div { background: linear-gradient(90deg, #f5c518, #00e07f); height: 100%; border-radius: 999px; }
+.ot-bar-lbl { font-size: 0.75rem; color: #8b94a9; text-align: center; }
+.ot-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+.ot-grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+.ot-stat { background: rgba(18,24,40,.72); border: 1px solid rgba(120,140,180,.14); border-radius: 16px; padding: 14px 10px; text-align: center; }
+.ot-stat .n { font-size: 1.35rem; font-weight: 800; color: #fff; }
+.ot-stat .l { font-size: 0.62rem; color: #8b94a9; margin-top: 4px; font-weight: 700; letter-spacing: 1px; }
+.ot-section { margin-bottom: 22px; }
+.ot-section h2 { font-size: 1.05rem; font-weight: 700; color: #fff; margin: 0 0 10px; }
+.ot-card { background: rgba(18,24,40,.72); border: 1px solid rgba(120,140,180,.14); border-radius: 16px; padding: 16px; margin-bottom: 10px; }
+.ot-card .ttl { font-size: 0.95rem; font-weight: 800; color: #fff; margin-bottom: 8px; }
+.ot-row { display: flex; justify-content: space-between; font-size: 0.85rem; color: #c7cede; padding: 3px 0; }
+.ot-row b { color: #fff; }
+.ot-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+.ot-table th { text-align: left; color: #8b94a9; font-size: 0.65rem; letter-spacing: 1px; padding: 6px 4px; border-bottom: 1px solid rgba(120,140,180,.18); }
+.ot-table td { color: #e6eaf2; padding: 7px 4px; border-bottom: 1px solid rgba(120,140,180,.08); }
+.ot-badge { display: inline-block; font-size: 10px; font-weight: 800; padding: 3px 9px; border-radius: 999px; }
+.ot-w { background: rgba(0,224,127,.15); color: #00e07f; border: 1px solid rgba(0,224,127,.35); }
+.ot-l { background: rgba(255,93,93,.13); color: #ff5d5d; border: 1px solid rgba(255,93,93,.3); }
+.ot-lvl { font-size: 10px; font-weight: 800; color: #f5c518; letter-spacing: 1px; }
+.ot-play { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px solid rgba(120,140,180,.08); font-size: 0.85rem; }
+.ot-play:last-child { border-bottom: none; }
+.ot-play .pk { color: #fff; font-weight: 600; }
+.ot-play .dt { color: #8b94a9; font-size: 0.72rem; }
+.ot-play a { color: #58a6ff; text-decoration: none; font-size: 0.75rem; }
+.ot-back { display: inline-block; color: #58a6ff; text-decoration: none; font-size: 0.9rem; margin-bottom: 14px; }
+</style>
+
+<div class="ot-wrap">
+  <a class="ot-back" href="/admin">← Admin Dashboard</a>
+  <h1>🏆 Official Tracker</h1>
+  <div class="sub">Full program record — every stat, admin only. Updated live from the official archive.</div>
+
+  {% set g = t.general %}
+  <div class="ot-hero">
+    <div class="profit {{ 'ot-pos' if g.cls == 'pos' else ('ot-neg' if g.cls == 'neg' else '') }}" style="color:{{ '#00e07f' if g.cls == 'pos' else ('#ff5d5d' if g.cls == 'neg' else '#fff') }};">{{ g.profit_display }}</div>
+    <div class="lbl">NET PROFIT · ALL TIME</div>
+    <div class="rec">{{ g.record }} · {{ g.win_rate }}% win rate · ROI {{ '+' if g.roi > 0 else '' }}{{ g.roi }}%</div>
+    <div class="ot-bar"><div style="width: {{ g.progress_pct }}%;"></div></div>
+    <div class="ot-bar-lbl">{{ g.progress }} of 200 plays graded ({{ g.progress_pct }}%)</div>
+  </div>
+
+  <div class="ot-grid3">
+    <div class="ot-stat"><div class="n">${{ '{:,.0f}'.format(g.risked) }}</div><div class="l">TOTAL RISKED</div></div>
+    <div class="ot-stat"><div class="n">{{ g.racha_actual }}</div><div class="l">CURRENT STREAK</div></div>
+    <div class="ot-stat"><div class="n">{{ t.verificadas_pct }}%</div><div class="l">TICKET VERIFIED</div></div>
+    <div class="ot-stat"><div class="n">{{ '+' if g.avg_odds > 0 else '' }}{{ g.avg_odds }}</div><div class="l">AVG ODDS</div></div>
+    <div class="ot-stat"><div class="n">${{ g.avg_stake }}</div><div class="l">AVG STAKE</div></div>
+    <div class="ot-stat"><div class="n">W{{ t.mejor_racha_w }} / L{{ t.peor_racha_l }}</div><div class="l">BEST / WORST RUN</div></div>
+  </div>
+
+  <div class="ot-section">
+    <h2>By level</h2>
+    {% for key, nombre in [('ELITE', '⭐ PLATINUM'), ('GOLD', '⚪ GOLD')] %}
+    {% set s = t.por_nivel[key] %}
+    <div class="ot-card">
+      <div class="ttl">{{ nombre }}</div>
+      <div class="ot-row"><span>Record</span><b>{{ s.record }} ({{ s.win_rate }}%)</b></div>
+      <div class="ot-row"><span>Net profit</span><b style="color:{{ '#00e07f' if s.cls == 'pos' else ('#ff5d5d' if s.cls == 'neg' else '#fff') }};">{{ s.profit_display }}</b></div>
+      <div class="ot-row"><span>ROI</span><b>{{ '+' if s.roi > 0 else '' }}{{ s.roi }}%</b></div>
+      <div class="ot-row"><span>Total risked</span><b>${{ '{:,.0f}'.format(s.risked) }}</b></div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="ot-section">
+    <h2>Recent windows</h2>
+    <div class="ot-grid">
+      {% for s, nombre in [(t.ult7, 'LAST 7 DAYS'), (t.ult30, 'LAST 30 DAYS')] %}
+      <div class="ot-stat">
+        <div class="n" style="color:{{ '#00e07f' if s.cls == 'pos' else ('#ff5d5d' if s.cls == 'neg' else '#fff') }};">{{ s.profit_display }}</div>
+        <div class="l">{{ nombre }}</div>
+        <div style="font-size:0.75rem;color:#c7cede;margin-top:4px;">{{ s.record }} · {{ s.win_rate }}% · ROI {{ '+' if s.roi > 0 else '' }}{{ s.roi }}%</div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  {% if t.por_banda %}
+  <div class="ot-section">
+    <h2>By odds band</h2>
+    <div class="ot-card" style="padding:8px 14px;">
+      <table class="ot-table">
+        <tr><th>BAND</th><th>RECORD</th><th>WIN %</th><th>NET</th><th>ROI</th></tr>
+        {% for nombre, s in t.por_banda.items() %}
+        <tr><td>{{ nombre }}</td><td>{{ s.record }}</td><td>{{ s.win_rate }}%</td>
+          <td style="color:{{ '#00e07f' if s.cls == 'pos' else ('#ff5d5d' if s.cls == 'neg' else '#e6eaf2') }};">{{ s.profit_display }}</td>
+          <td>{{ '+' if s.roi > 0 else '' }}{{ s.roi }}%</td></tr>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="ot-section">
+    <h2>Best &amp; worst plays</h2>
+    <div class="ot-card">
+      {% for x in t.mejor %}
+      <div class="ot-play"><div><span class="pk">{{ x.pick }}</span> <span class="ot-lvl">{{ 'PLATINUM' if x.nivel == 'ELITE' else x.nivel }}</span><div class="dt">{{ x.fecha }} · {{ x.cuota }}</div></div>
+        <b class="ot-pos">+${{ '{:,.2f}'.format(x.profit) }}</b></div>
+      {% endfor %}
+      {% for x in t.peor %}
+      <div class="ot-play"><div><span class="pk">{{ x.pick }}</span> <span class="ot-lvl">{{ 'PLATINUM' if x.nivel == 'ELITE' else x.nivel }}</span><div class="dt">{{ x.fecha }} · {{ x.cuota }}</div></div>
+        <b class="ot-neg">−${{ '{:,.2f}'.format(-x.profit) }}</b></div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="ot-section">
+    <h2>Latest graded plays</h2>
+    <div class="ot-card">
+      {% for x in t.ultimas %}
+      <div class="ot-play">
+        <div><span class="pk">{{ x.pick }}</span> <span class="ot-lvl">{{ 'PLATINUM' if x.nivel == 'ELITE' else x.nivel }}</span>
+          <div class="dt">{{ x.fecha }} · {{ x.cuota }}{% if x.comprobante %} · <a href="{{ url_for('static', filename=x.comprobante) }}" target="_blank">View ticket →</a>{% endif %}</div></div>
+        <div style="text-align:right;"><span class="ot-badge {{ 'ot-w' if x.resultado == 'WON' else 'ot-l' }}">{{ x.resultado }}</span>
+          <div style="font-size:0.78rem;margin-top:3px;color:{{ '#00e07f' if x.profit > 0 else ('#ff5d5d' if x.profit < 0 else '#8b94a9') }};">{{ '+$' if x.profit > 0 else ('−$' if x.profit < 0 else '$') }}{{ '{:,.2f}'.format(x.profit|abs) }}</div></div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div style="text-align:center;">
+    <a href="/resultados" style="color:#58a6ff;text-decoration:none;font-size:0.9rem;">Open the member-style full record →</a>
+  </div>
+</div>
+{% endblock %}

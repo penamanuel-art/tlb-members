@@ -32,6 +32,21 @@
     </a>
   </div>
 
+  {% if oficial %}
+  <div class="adm-section">
+    <h2>🏆 Official Tracker</h2>
+    <a href="/admin/tracker-oficial" style="text-decoration:none;">
+      <div class="adm-card" style="display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          <div style="font-size:1.7rem;font-weight:800;color:{{ '#00e07f' if oficial.profit_cls == 'pos' else ('#ff5d5d' if oficial.profit_cls == 'neg' else '#fff') }};">{{ oficial.profit_display }}</div>
+          <div style="font-size:0.78rem;color:#8b94a9;margin-top:2px;">{{ oficial.ganadas }}–{{ oficial.perdidas }} · {{ oficial.win_rate }}% win rate · ROI {{ '+' if oficial.roi > 0 else '' }}{{ oficial.roi }}%</div>
+        </div>
+        <div style="color:#58a6ff;font-size:0.85rem;font-weight:700;">Full tracker →</div>
+      </div>
+    </a>
+  </div>
+  {% endif %}
+
   <div class="adm-section">
     <h2>🎯 Today's Plays</h2>
     {% set force_pre = True %}
