@@ -2828,7 +2828,6 @@ def home():
         es_admin=is_admin_for(user),
         es_alex=is_alex_member(user),
         skip_splash=request.args.get("splash") == "0",
-        winning_moments=load_winning_moments()[:3],
         # miembro_platinum con preview: en ?preview=locked el banner de
         # invitación VIP también se muestra (pedido Alex 2026-10-02).
         miembro_platinum=(platinum_unlocked_for(user) and not preview_locked),
@@ -6241,23 +6240,6 @@ def ai_assistant():
     return render_template("ai_assistant.html")
 
 
-def load_winning_moments():
-    """Load Winning Moments entries from data/winning_moments.json (newest first)."""
-    try:
-        with open(os.path.join(os.path.dirname(__file__), "data", "winning_moments.json"), encoding="utf-8") as f:
-            moments = json.load(f)
-        return sorted(moments, key=lambda m: m.get("date", ""), reverse=True)
-    except Exception:
-        return []
-
-
-@app.route("/winning-moments")
-@login_required
-def winning_moments():
-    """Winning Moments — video highlights of our biggest wins. All members."""
-    db = get_db()
-    record_checkin(db, session["user_id"])
-    return render_template("winning_moments.html", moments=load_winning_moments())
 
 
 @app.route("/api/ai-ask", methods=["POST"])
