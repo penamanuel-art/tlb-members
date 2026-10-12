@@ -5611,23 +5611,27 @@ def values_page():
     ).fetchall()
     wins = losses = 0
     profit = 0.0
+    risked = 0.0
     active = []
     history = []
     for r in rows:
         d = dict(r)
-        # Bankroll $10,000, 1% = $100 por jugada (2026-10-11, Alex)
-        p = play_profit_dollars({"cuota": d["cuota"], "stake_monto": 100.0,
+        # Stake real de cada jugada (2026-10-12, Alex: $100 desde el 11-oct, $50 antes)
+        stake = d["stake_monto"] or 100.0
+        p = play_profit_dollars({"cuota": d["cuota"], "stake_monto": stake,
                                  "resultado": d["resultado"]})
         cuota = d["cuota"] or 0
         cuota_str = f"+{cuota}" if cuota > 0 else str(cuota)
         if d["resultado"] == "W":
             wins += 1
             profit += p
+            risked += stake
             history.append({"pick": d["pick"], "cuota_str": cuota_str, "fecha": d["fecha"],
                             "resultado": "W", "profit_str": fmt_money(p)})
         elif d["resultado"] == "L":
             losses += 1
             profit += p
+            risked += stake
             history.append({"pick": d["pick"], "cuota_str": cuota_str, "fecha": d["fecha"],
                             "resultado": "L", "profit_str": fmt_money(p)})
         else:
@@ -5635,7 +5639,6 @@ def values_page():
                            "resultado": "P", "profit_str": ""})
     settled = wins + losses
     win_rate = round(wins / settled * 100) if settled else 0
-    risked = settled * 50.0
     roi = (profit / risked * 100) if risked else 0
     # Últimas 4: activas primero, luego historial
     all_plays = active + sorted(history, key=lambda x: x["fecha"], reverse=True)
