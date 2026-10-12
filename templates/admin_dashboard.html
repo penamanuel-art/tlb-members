@@ -12,7 +12,6 @@
 .adm-section h2 { font-size: 1.1rem; font-weight: 700; color: #fff; margin: 0 0 12px; }
 .adm-card { background: rgba(18,24,40,.72); border: 1px solid rgba(120,140,180,.14); border-radius: 16px; padding: 16px; margin-bottom: 12px; }
 .send-btn { width: 100%; background: #00e07f; color: #06130c; border: none; border-radius: 14px; padding: 14px; font-weight: 800; font-size: 1rem; cursor: pointer; margin-top: 12px; display: block; }
-.send-btn:disabled { background: #2a3350; color: #8b94a9; cursor: not-allowed; }
 .status-badge { display: inline-block; font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 999px; margin-bottom: 8px; }
 .status-pend { background: rgba(245,193,24,.15); color: #f5c518; border: 1px solid rgba(245,193,24,.3); }
 .status-sent { background: rgba(0,224,127,.15); color: #00e07f; border: 1px solid rgba(0,224,127,.3); }
@@ -62,7 +61,7 @@
         <div class="adm-card" style="text-align:center;color:#8b94a9;">No hay jugadas hoy.</div>
       {% endif %}
       {% if selecciones %}
-        <button type="submit" class="send-btn" id="sendBtn" disabled>📤 Enviar seleccionadas</button>
+        <button type="submit" class="send-btn" id="sendBtn">📤 Enviar seleccionadas</button>
       {% endif %}
     </form>
     <script>
@@ -72,11 +71,14 @@
       function upd() {
         var n = 0;
         checks.forEach(function(c) { if (c.checked) n++; });
-        if (btn) {
-          btn.disabled = n === 0;
-          btn.textContent = n > 0 ? ('📤 Enviar seleccionadas (' + n + ')') : '📤 Enviar seleccionadas';
-        }
+        if (btn) btn.textContent = n > 0 ? ('📤 Enviar seleccionadas (' + n + ')') : '📤 Enviar seleccionadas';
       }
+      var form = document.getElementById('sendForm');
+      if (form) form.addEventListener('submit', function(e) {
+        var n = 0;
+        checks.forEach(function(c) { if (c.checked) n++; });
+        if (n === 0) { e.preventDefault(); alert('Marca primero la casilla "Seleccionar" de cada jugada que quieres enviar.'); }
+      });
       checks.forEach(function(c) { c.addEventListener('change', upd); });
       upd();
     })();
