@@ -36,6 +36,12 @@
 .ot-play .dt { color: #93b3aa; font-size: 0.72rem; }
 .ot-play a { color: #2fe6a7; text-decoration: none; font-size: 0.75rem; }
 .ot-back { display: inline-block; color: #2fe6a7; text-decoration: none; font-size: 0.9rem; margin-bottom: 14px; }
+.ot-thumbwrap { position: relative; flex-shrink: 0; width: 46px; height: 58px; cursor: pointer; }
+.ot-thumb { width: 46px; height: 58px; object-fit: cover; border-radius: 8px; border: 1px solid rgba(140,240,205,.3); display: block; }
+.ot-zoom { position: absolute; right: -6px; bottom: -6px; background: #2fe6a7; color: #032117; font-size: 11px; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,.5); }
+#otModal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.92); z-index: 4000; align-items: center; justify-content: center; padding: 18px; }
+#otModal img { max-width: 100%; max-height: 92vh; border-radius: 14px; }
+#otModal .ot-x { position: absolute; top: 16px; right: 18px; color: #fff; font-size: 1.6rem; background: rgba(255,255,255,.12); border: none; width: 42px; height: 42px; border-radius: 50%; cursor: pointer; }
 </style>
 
 <div class="ot-wrap">
@@ -108,11 +114,11 @@
     <h2>Best &amp; worst plays</h2>
     <div class="ot-card">
       {% for x in t.mejor %}
-      <div class="ot-play"><div><span class="pk">{{ x.pick }}</span> <span class="ot-lvl">{{ 'PLATINUM' if x.nivel == 'ELITE' else x.nivel }}</span><div class="dt">{{ x.fecha }} · {{ x.cuota }}</div></div>
+      <div class="ot-play">{% if x.comprobante %}<div class="ot-thumbwrap" onclick="otZoom('{{ url_for('static', filename=x.comprobante) }}')"><img class="ot-thumb" src="{{ url_for('static', filename=x.comprobante) }}" alt="Original ticket" loading="lazy"><span class="ot-zoom">🔍</span></div>{% endif %}<div style="flex:1;"><span class="pk">{{ x.pick }}</span> <span class="ot-lvl">{{ 'PLATINUM' if x.nivel == 'ELITE' else x.nivel }}</span><div class="dt">{{ x.fecha }} · {{ x.cuota }}</div></div>
         <b class="ot-pos">+${{ '{:,.2f}'.format(x.profit) }}</b></div>
       {% endfor %}
       {% for x in t.peor %}
-      <div class="ot-play"><div><span class="pk">{{ x.pick }}</span> <span class="ot-lvl">{{ 'PLATINUM' if x.nivel == 'ELITE' else x.nivel }}</span><div class="dt">{{ x.fecha }} · {{ x.cuota }}</div></div>
+      <div class="ot-play">{% if x.comprobante %}<div class="ot-thumbwrap" onclick="otZoom('{{ url_for('static', filename=x.comprobante) }}')"><img class="ot-thumb" src="{{ url_for('static', filename=x.comprobante) }}" alt="Original ticket" loading="lazy"><span class="ot-zoom">🔍</span></div>{% endif %}<div style="flex:1;"><span class="pk">{{ x.pick }}</span> <span class="ot-lvl">{{ 'PLATINUM' if x.nivel == 'ELITE' else x.nivel }}</span><div class="dt">{{ x.fecha }} · {{ x.cuota }}</div></div>
         <b class="ot-neg">−${{ '{:,.2f}'.format(-x.profit) }}</b></div>
       {% endfor %}
     </div>
@@ -123,7 +129,8 @@
     <div class="ot-card">
       {% for x in t.ultimas %}
       <div class="ot-play">
-        <div><span class="pk">{{ x.pick }}</span> <span class="ot-lvl">{{ 'PLATINUM' if x.nivel == 'ELITE' else x.nivel }}</span>
+        {% if x.comprobante %}<div class="ot-thumbwrap" onclick="otZoom('{{ url_for('static', filename=x.comprobante) }}')"><img class="ot-thumb" src="{{ url_for('static', filename=x.comprobante) }}" alt="Original ticket" loading="lazy"><span class="ot-zoom">🔍</span></div>{% endif %}
+        <div style="flex:1;"><span class="pk">{{ x.pick }}</span> <span class="ot-lvl">{{ 'PLATINUM' if x.nivel == 'ELITE' else x.nivel }}</span>
           <div class="dt">{{ x.fecha }} · {{ x.cuota }}{% if x.comprobante %} · <a href="{{ url_for('static', filename=x.comprobante) }}" target="_blank">View ticket →</a>{% endif %}</div></div>
         <div style="text-align:right;"><span class="ot-badge {{ 'ot-w' if x.resultado == 'WON' else 'ot-l' }}">{{ x.resultado }}</span>
           <div style="font-size:0.78rem;margin-top:3px;color:{{ '#00e07f' if x.profit > 0 else ('#ff5d5d' if x.profit < 0 else '#8b94a9') }};">{{ '+$' if x.profit > 0 else ('−$' if x.profit < 0 else '$') }}{{ '{:,.2f}'.format(x.profit|abs) }}</div></div>
@@ -136,4 +143,13 @@
     <a href="/resultados" style="color:#2fe6a7;text-decoration:none;font-size:0.9rem;">Open the member-style full record →</a>
   </div>
 </div>
+
+<div id="otModal" onclick="if(event.target.id==='otModal')otClose()">
+  <button class="ot-x" onclick="otClose()" aria-label="Close">✕</button>
+  <img id="otModalImg" src="" alt="Original ticket — full size">
+</div>
+<script>
+function otZoom(src){ var m=document.getElementById('otModal'); document.getElementById('otModalImg').src=src; m.style.display='flex'; }
+function otClose(){ document.getElementById('otModal').style.display='none'; }
+</script>
 {% endblock %}
