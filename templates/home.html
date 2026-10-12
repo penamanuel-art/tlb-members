@@ -469,4 +469,9 @@
 })();
 </script>
 
+{# Botón flotante Admin — solo para Alex (2026-10-12, pedido por Alex) #}
+{% if es_alex %}
+<a href="{{ url_for('admin_dashboard') }}" style="position:fixed;bottom:96px;right:16px;z-index:999;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#e8c96a,#c9a227);display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:0 4px 16px rgba(0,0,0,.5);text-decoration:none;" aria-label="Admin">⚙️</a>
+{% endif %}
+
 {% endblock %}
