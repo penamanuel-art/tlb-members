@@ -23,6 +23,11 @@
 .wm-odds{font-size:13px;color:#9a9ab5;font-weight:700}
 .wm-empty{text-align:center;color:#9a9ab5;padding:40px 20px;font-size:14px;line-height:1.6}
 .wm-note{color:#9a9ab5;font-size:12px;text-align:center;line-height:1.6;margin:14px 0 0}
+.wm-expand{position:absolute;top:8px;right:8px;z-index:5;background:rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.25);color:#fff;font-size:16px;width:36px;height:36px;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.wm-full{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.95);display:none;align-items:center;justify-content:center;padding:12px}
+.wm-full.open{display:flex}
+.wm-full video{width:100%;max-height:90vh;border-radius:12px}
+.wm-close{position:absolute;top:14px;right:14px;background:rgba(255,255,255,.15);border:none;color:#fff;font-size:20px;width:44px;height:44px;border-radius:50%;cursor:pointer}
 </style>
 
 <div class="wm-wrap">
@@ -36,6 +41,7 @@
     <div class="wm-video">
       {% if m.video_url %}
       <video src="{{ m.video_url }}" controls preload="metadata" playsinline style="position:absolute;top:0;left:0;width:100%;height:100%;"></video>
+      <button class="wm-expand" data-src="{{ m.video_url }}" aria-label="Watch fullscreen">⛶</button>
       {% elif m.youtube_id %}
       <iframe src="https://www.youtube-nocookie.com/embed/{{ m.youtube_id }}" title="{{ m.team }} highlights" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
       {% endif %}
@@ -62,4 +68,32 @@
 
   <p class="wm-note">Highlights courtesy of the leagues' official channels.<br>Play responsibly · 21+ · 1-800-GAMBLER</p>
 </div>
+
+<div class="wm-full" id="wmFull">
+  <button class="wm-close" id="wmClose" aria-label="Close">✕</button>
+  <video id="wmFullVideo" controls playsinline preload="metadata"></video>
+</div>
+<script>
+(function(){
+  var full = document.getElementById('wmFull');
+  var fullVideo = document.getElementById('wmFullVideo');
+  if(!full || !fullVideo) return;
+  document.querySelectorAll('.wm-expand').forEach(function(btn){
+    btn.addEventListener('click', function(e){
+      e.stopPropagation();
+      fullVideo.src = btn.getAttribute('data-src');
+      full.classList.add('open');
+      fullVideo.play();
+    });
+  });
+  function close(){
+    full.classList.remove('open');
+    fullVideo.pause();
+    fullVideo.removeAttribute('src');
+    fullVideo.load();
+  }
+  document.getElementById('wmClose').addEventListener('click', close);
+  full.addEventListener('click', function(e){ if(e.target === full) close(); });
+})();
+</script>
 {% endblock %}
