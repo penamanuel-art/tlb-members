@@ -6015,6 +6015,192 @@ def parlay_builder():
     return render_template("parlay_builder.html", games=load_parlay_games())
 
 
+# ----------------------------- AI Assistant (Platinum only) -----------------------------
+# Rule-based assistant: answers from real program data only (no external LLM).
+# Intents: best plays, parlay suggestion, today's official plays, record, bankroll.
+
+def _ai_fmt_odds(price):
+    try:
+        p = int(float(price))
+    except (TypeError, ValueError):
+        return "—"
+    return f"+{p}" if p > 0 else str(p)
+
+
+def _ai_to_decimal(odds):
+    try:
+        odds = float(odds)
+    except (TypeError, ValueError):
+        return None
+    if odds == 0 or (-100 < odds < 100):
+        return None
+    return 1 + odds / 100.0 if odds > 0 else 1 + 100.0 / abs(odds)
+
+
+def _ai_to_american(dec):
+    if dec is None or dec <= 1:
+        return "—"
+    if dec >= 2.0:
+        return f"+{int(round((dec - 1) * 100))}"
+    return str(-int(round(100 / (dec - 1))))
+
+
+def _ai_best_edges(limit=5):
+    """Top edges from the +EV board, sorted by EV%."""
+    try:
+        board = load_ev_board() or {}
+    except Exception:
+        return []
+    edges = [e for e in (board.get("edges") or []) if isinstance(e, dict)]
+    edges.sort(key=lambda e: float(e.get("ev_pct") or 0), reverse=True)
+    return edges[:max(1, limit)]
+
+
+def _ai_answer(question, user):
+    """Keyword intent matching. Returns (answer_text, cards). Never invents data."""
+    q = (question or "").strip().lower()
+    cards = []
+
+    def _edge_line(e):
+        live = " · LIVE" if e.get("live") else ""
+        return f"• {e.get('team', '?')} ({_ai_fmt_odds(e.get('price'))}) — {float(e.get('ev_pct') or 0):.1f}% edge{live}"
+
+    def _edge_card(e):
+        return {
+            "title": str(e.get("team") or "?"),
+            "sub": f"{e.get('game', '')} · {e.get('market', '')}".strip(" ·"),
+            "badge": f"{_ai_fmt_odds(e.get('price'))} · {float(e.get('ev_pct') or 0):.1f}% EV",
+        }
+
+    # ---- parlay suggestion ----
+    if any(k in q for k in ("parlay", "parley", "combo", "multi-leg", "accumulator")):
+        legs = []
+        seen_games = set()
+        for e in _ai_best_edges(12):
+            if str(e.get("market", "")).lower() != "moneyline":
+                continue
+            if e.get("live"):
+                continue
+            g = str(e.get("game") or "")
+            if g in seen_games:
+                continue
+            dec = _ai_to_decimal(e.get("price"))
+            if dec is None:
+                continue
+            seen_games.add(g)
+            legs.append(e)
+            if len(legs) == 3:
+                break
+        if len(legs) < 2:
+            return ("I don't have enough moneyline edges right now to build a parlay. Check the +EV Board for the latest.", [])
+        combined = 1.0
+        for e in legs:
+            combined *= _ai_to_decimal(e.get("price"))
+        lines = [f"Leg {i+1}: {e.get('team')} ({_ai_fmt_odds(e.get('price'))})" for i, e in enumerate(legs)]
+        answer = ("Here's a {n}-leg moneyline parlay from today's top edges:\n".format(n=len(legs))
+                  + "\n".join(lines)
+                  + f"\n\nCombined odds: {_ai_to_american(combined)}")
+        cards = [_edge_card(e) for e in legs]
+        return (answer, cards)
+
+    # ---- best plays / top edges ----
+    if any(k in q for k in ("best play", "best edge", "top edge", "top play", "value play",
+                            "what should i bet", "what to bet", "recommend", "suggestion",
+                            "sharpest", "highest ev")):
+        edges = _ai_best_edges(5)
+        if not edges:
+            return ("The +EV Board is empty right now. Check back later — it refreshes throughout the day.", [])
+        lines = [_edge_line(e) for e in edges]
+        answer = "Top edges on the +EV Board right now:\n" + "\n".join(lines)
+        cards = [_edge_card(e) for e in edges]
+        return (answer, cards)
+
+    # ---- today's official plays ----
+    if any(k in q for k in ("today", "official", "card", "tonight", "plays")):
+        try:
+            plays = load_plays() or []
+        except Exception:
+            plays = []
+        if not plays:
+            return ("No official plays are published yet today. The card drops once tickets are verified.", [])
+        lines = []
+        for p in plays:
+            lines.append(f"• {p.get('pick', '?')} ({_ai_fmt_odds(p.get('cuota'))}) · {p.get('liga', '')} · {p.get('hora', '')}".rstrip(" ·"))
+        answer = "Today's official plays:\n" + "\n".join(lines)
+        return (answer, cards)
+
+    # ---- record ----
+    if any(k in q for k in ("record", "how are we", "profit", "win rate", "roi", "stats",
+                            "performance", "results", "doing")):
+        try:
+            s = program_stats() or {}
+        except Exception:
+            s = {}
+        if not s:
+            return ("I couldn't load the program record right now. Try the Full Record page.", [])
+        answer = (f"Program record: {s.get('ganadas', 0)}–{s.get('perdidas', 0)} "
+                  f"({s.get('win_rate', 0)}% win rate), {s.get('profit_display', '$0')} profit, "
+                  f"{s.get('roi', 0)}% ROI.")
+        return (answer, cards)
+
+    # ---- bankroll ----
+    if any(k in q for k in ("bankroll", "my stake", "unit size", "how much", "1u", "stake")):
+        try:
+            br = float(user["bankroll"]) if user and user["bankroll"] else None
+        except (KeyError, IndexError, TypeError, ValueError):
+            br = None
+        if br:
+            answer = f"Your bankroll is ${br:,.2f}. At 1% staking, 1u = ${br * 0.01:,.2f}."
+        else:
+            answer = "You don't have a bankroll set. Add one in Account so I can size your stakes (1u = 1% of bankroll)."
+        return (answer, cards)
+
+    # ---- help / greeting ----
+    if any(k in q for k in ("help", "what can you", "hello", "hi", "hey", "hola")):
+        return ("I'm The Sharp Team assistant. Ask me for:\n"
+                "• \"best plays\" — top +EV edges right now\n"
+                "• \"build me a parlay\" — a 2–3 leg parlay from top edges\n"
+                "• \"today's plays\" — today's official card\n"
+                "• \"record\" — program record and profit\n"
+                "• \"bankroll\" — your bankroll and unit size", [])
+
+    # ---- fallback ----
+    return ("I can help with: best plays, parlay suggestions, today's official plays, program record, and your bankroll. "
+            "What do you need?", [])
+
+
+@app.route("/ai-assistant")
+@login_required
+def ai_assistant():
+    """AI Assistant — Platinum members only. Free members see the upsell."""
+    db = get_db()
+    record_checkin(db, session["user_id"])
+    if not platinum_unlocked_for(current_user()):
+        return render_template(
+            "ai_assistant_locked.html",
+            upsell_cta_url=url_for("desbloquear_platinum"),
+        )
+    return render_template("ai_assistant.html")
+
+
+@app.route("/api/ai-ask", methods=["POST"])
+@login_required
+def api_ai_ask():
+    """JSON Q&A endpoint for the AI Assistant. Platinum only."""
+    user = current_user()
+    if not platinum_unlocked_for(user):
+        return jsonify({"error": "platinum_required"}), 403
+    data = request.get_json(silent=True) or {}
+    question = str(data.get("question") or "")[:500]
+    if not question.strip():
+        return jsonify({
+            "answer": "Ask me something — try \"best plays\" or \"build me a parlay\".",
+            "cards": [],
+        })
+    answer, cards = _ai_answer(question, user)
+    return jsonify({"answer": answer, "cards": cards})
+
+
 @app.route("/props")
 @login_required
 def props():
