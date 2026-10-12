@@ -2778,6 +2778,7 @@ def home():
         res=program_stats(),
         dias=load_archive(),
         snapshot=performance_snapshot(),
+        now_day_of_year=datetime.now().timetuple().tm_yday,
         leccion=load_masterclass(),
         archivo_mc=load_masterclass_archivo(),
         tstats=tstats,

@@ -19,6 +19,8 @@
 <section class="v2-hero v2-hero-wgt">
   <p class="v2-hero-date"><span class="v2-live-dot"></span>{{ saludo }} · {{ fecha }}</p>
   <h1 class="v2-hero-title">Welcome back, <span class="v2-hero-today">{{ nombre_corto }}</span>.</h1>
+  {% set phrases = ["Stay sharp.", "Discipline wins.", "Trust the numbers.", "Every play counts.", "Lock in.", "Patience pays.", "No hype, just edge.", "Bet smart, not hard.", "The edge is real.", "Winners stay disciplined.", "Small edges, big results.", "Process over profit.", "Sharp minds win.", "Data beats gut.", "Stay the course."] %}
+  <p class="v2-hero-phrase">{{ phrases[now_day_of_year % phrases|length] }}</p>
   {% if card_pendiente %}
   <p class="v2-hero-sub">Today&rsquo;s card hasn&rsquo;t dropped yet — check back soon. Every play public, win or loss.</p>
   {% else %}
