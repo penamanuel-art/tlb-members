@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-11T20:11:20-04:00",
+  "updated_at": "2026-10-11T20:41:22-04:00",
   "refresh_minutes": 30,
   "source": "The Odds API (multi-book consensus)",
   "leagues": [
@@ -9,6 +9,34 @@
   ],
   "note": "Line movement vs first seen today. Juice-filtered: the 🔪 badge only shows when a side's implied probability rose 1+ points. Informational only — not picks.",
   "games": [
+    {
+      "id": "9e8578b415e664eea71185131401e537",
+      "sport": "NCAAF",
+      "away": "Kansas Jayhawks",
+      "home": "Kansas State Wildcats",
+      "game": "Kansas Jayhawks @ Kansas State Wildcats",
+      "kickoff_et": "Saturday 10/17, 12:00 PM ET",
+      "books": 8,
+      "line": {
+        "away": {
+          "first": 257.5,
+          "now": 190.5,
+          "pp": 6.45
+        },
+        "home": {
+          "first": -327.5,
+          "now": -235.0,
+          "pp": -6.46
+        }
+      },
+      "sharp_slot": "home",
+      "sharp_team": "Kansas State Wildcats",
+      "pp_gain": 6.45,
+      "alerted": true,
+      "signal_move": "Kansas State Wildcats -312 -> -299 (mediana, 4 casas)",
+      "signal_confirmed": true,
+      "novig_url": null
+    },
     {
       "id": "930dea051dca737443eb7aec0b650f45",
       "sport": "NCAAF",
@@ -34,34 +62,6 @@
       "pp_gain": 5.92,
       "alerted": true,
       "signal_move": "Tulsa Golden Hurricane -142.0 -> -160.0 (mediana, 5 casas)",
-      "signal_confirmed": true,
-      "novig_url": null
-    },
-    {
-      "id": "9e8578b415e664eea71185131401e537",
-      "sport": "NCAAF",
-      "away": "Kansas Jayhawks",
-      "home": "Kansas State Wildcats",
-      "game": "Kansas Jayhawks @ Kansas State Wildcats",
-      "kickoff_et": "Saturday 10/17, 12:00 PM ET",
-      "books": 8,
-      "line": {
-        "away": {
-          "first": 257.5,
-          "now": 197.5,
-          "pp": 5.64
-        },
-        "home": {
-          "first": -327.5,
-          "now": -241.5,
-          "pp": -5.89
-        }
-      },
-      "sharp_slot": "home",
-      "sharp_team": "Kansas State Wildcats",
-      "pp_gain": 5.64,
-      "alerted": true,
-      "signal_move": "Kansas State Wildcats -312 -> -299 (mediana, 4 casas)",
       "signal_confirmed": true,
       "novig_url": null
     },
@@ -94,18 +94,46 @@
       "novig_url": null
     },
     {
+      "id": "9ed02ffe3e126a8ec8846278bf18d393",
+      "sport": "NCAAF",
+      "away": "Alabama Crimson Tide",
+      "home": "Tennessee Volunteers",
+      "game": "Alabama Crimson Tide @ Tennessee Volunteers",
+      "kickoff_et": "Saturday 10/17, 3:30 PM ET",
+      "books": 8,
+      "line": {
+        "away": {
+          "first": -241.5,
+          "now": -305.0,
+          "pp": 4.59
+        },
+        "home": {
+          "first": 192.5,
+          "now": 250.0,
+          "pp": -5.62
+        }
+      },
+      "sharp_slot": "home",
+      "sharp_team": "Tennessee Volunteers",
+      "pp_gain": 4.59,
+      "alerted": true,
+      "signal_move": "Tennessee Volunteers 180 -> 170 (mediana, 2 casas)",
+      "signal_confirmed": true,
+      "novig_url": null
+    },
+    {
       "id": "e86227938fd3cf008fc5648fb5128344",
       "sport": "NFL",
       "away": "Baltimore Ravens",
       "home": "Cleveland Browns",
       "game": "Baltimore Ravens @ Cleveland Browns",
       "kickoff_et": "Sunday 10/18, 1:00 PM ET",
-      "books": 4,
+      "books": 5,
       "line": {
         "away": {
           "first": -184.0,
-          "now": -219.0,
-          "pp": 3.86
+          "now": -218.0,
+          "pp": 3.76
         },
         "home": {
           "first": 147.0,
@@ -115,7 +143,7 @@
       },
       "sharp_slot": "away",
       "sharp_team": "Baltimore Ravens",
-      "pp_gain": 3.86,
+      "pp_gain": 3.76,
       "alerted": true,
       "signal_move": "Baltimore Ravens -152 -> -139 (mediana, 2 casas)",
       "signal_confirmed": true,
@@ -150,34 +178,6 @@
       "novig_url": null
     },
     {
-      "id": "bd2d52fadefed8a6174e73c84cca9ce3",
-      "sport": "NCAAF",
-      "away": "Notre Dame Fighting Irish",
-      "home": "BYU Cougars",
-      "game": "Notre Dame Fighting Irish @ BYU Cougars",
-      "kickoff_et": "Saturday 10/17, 7:30 PM ET",
-      "books": 8,
-      "line": {
-        "away": {
-          "first": -522.5,
-          "now": -422.5,
-          "pp": -3.07
-        },
-        "home": {
-          "first": 390.0,
-          "now": 322.5,
-          "pp": 3.26
-        }
-      },
-      "sharp_slot": "away",
-      "sharp_team": "Notre Dame Fighting Irish",
-      "pp_gain": 3.26,
-      "alerted": true,
-      "signal_move": "Notre Dame Fighting Irish -600 -> -580 (mediana, 1 casas)",
-      "signal_confirmed": true,
-      "novig_url": null
-    },
-    {
       "id": "006c37db6769b587a0adde2067498d53",
       "sport": "NCAAF",
       "away": "Toledo Rockets",
@@ -202,6 +202,34 @@
       "pp_gain": 3.04,
       "alerted": true,
       "signal_move": "Toledo Rockets -235 -> -197 (mediana, 2 casas)",
+      "signal_confirmed": true,
+      "novig_url": null
+    },
+    {
+      "id": "bd2d52fadefed8a6174e73c84cca9ce3",
+      "sport": "NCAAF",
+      "away": "Notre Dame Fighting Irish",
+      "home": "BYU Cougars",
+      "game": "Notre Dame Fighting Irish @ BYU Cougars",
+      "kickoff_et": "Saturday 10/17, 7:30 PM ET",
+      "books": 8,
+      "line": {
+        "away": {
+          "first": -522.5,
+          "now": -427.5,
+          "pp": -2.89
+        },
+        "home": {
+          "first": 390.0,
+          "now": 327.5,
+          "pp": 2.98
+        }
+      },
+      "sharp_slot": "away",
+      "sharp_team": "Notre Dame Fighting Irish",
+      "pp_gain": 2.98,
+      "alerted": true,
+      "signal_move": "Notre Dame Fighting Irish -600 -> -580 (mediana, 1 casas)",
       "signal_confirmed": true,
       "novig_url": null
     },
@@ -318,34 +346,6 @@
       "novig_url": null
     },
     {
-      "id": "8e5b5fc6829c6204c73178807614cd97",
-      "sport": "NCAAF",
-      "away": "Arizona State Sun Devils",
-      "home": "Texas Tech Red Raiders",
-      "game": "Arizona State Sun Devils @ Texas Tech Red Raiders",
-      "kickoff_et": "Saturday 10/17, 3:30 PM ET",
-      "books": 8,
-      "line": {
-        "away": {
-          "first": 390.0,
-          "now": 472.5,
-          "pp": -2.94
-        },
-        "home": {
-          "first": -527.5,
-          "now": -650.0,
-          "pp": 2.6
-        }
-      },
-      "sharp_slot": "away",
-      "sharp_team": "Arizona State Sun Devils",
-      "pp_gain": 2.6,
-      "alerted": true,
-      "signal_move": "Arizona State Sun Devils 390.0 -> 400.0 (mediana, 5 casas)",
-      "signal_confirmed": true,
-      "novig_url": null
-    },
-    {
       "id": "9e7a1e65bd6ffb3ff108db2a5e125170",
       "sport": "NCAAF",
       "away": "North Carolina Tar Heels",
@@ -384,8 +384,8 @@
       "line": {
         "away": {
           "first": 147.5,
-          "now": 162.5,
-          "pp": -2.31
+          "now": 164.5,
+          "pp": -2.6
         },
         "home": {
           "first": -179.5,
@@ -402,30 +402,142 @@
       "novig_url": null
     },
     {
-      "id": "9ed02ffe3e126a8ec8846278bf18d393",
+      "id": "8e5b5fc6829c6204c73178807614cd97",
       "sport": "NCAAF",
-      "away": "Alabama Crimson Tide",
-      "home": "Tennessee Volunteers",
-      "game": "Alabama Crimson Tide @ Tennessee Volunteers",
+      "away": "Arizona State Sun Devils",
+      "home": "Texas Tech Red Raiders",
+      "game": "Arizona State Sun Devils @ Texas Tech Red Raiders",
       "kickoff_et": "Saturday 10/17, 3:30 PM ET",
       "books": 8,
       "line": {
         "away": {
-          "first": -241.5,
-          "now": -270.0,
-          "pp": 2.26
+          "first": 390.0,
+          "now": 472.5,
+          "pp": -2.94
         },
         "home": {
-          "first": 192.5,
-          "now": 215.0,
+          "first": -527.5,
+          "now": -637.5,
+          "pp": 2.38
+        }
+      },
+      "sharp_slot": "away",
+      "sharp_team": "Arizona State Sun Devils",
+      "pp_gain": 2.38,
+      "alerted": true,
+      "signal_move": "Arizona State Sun Devils 390.0 -> 400.0 (mediana, 5 casas)",
+      "signal_confirmed": true,
+      "novig_url": null
+    },
+    {
+      "id": "1cf74afd313e9fd300e1462012b174cb",
+      "sport": "NFL",
+      "away": "New Orleans Saints",
+      "home": "New York Giants",
+      "game": "New Orleans Saints @ New York Giants",
+      "kickoff_et": "Sunday 10/18, 1:00 PM ET",
+      "books": 5,
+      "line": {
+        "away": {
+          "first": -118.0,
+          "now": -107.0,
           "pp": -2.44
+        },
+        "home": {
+          "first": -102.0,
+          "now": -110.0,
+          "pp": 1.89
         }
       },
       "sharp_slot": "home",
-      "sharp_team": "Tennessee Volunteers",
-      "pp_gain": 2.26,
+      "sharp_team": "New York Giants",
+      "pp_gain": 1.89,
       "alerted": true,
-      "signal_move": "Tennessee Volunteers 180 -> 170 (mediana, 2 casas)",
+      "signal_move": "New York Giants +100 -> -1 (mediana, 4 casas)",
+      "signal_confirmed": true,
+      "novig_url": null
+    },
+    {
+      "id": "755ef069f0fe7ee21fbda33f7c93247e",
+      "sport": "NCAAF",
+      "away": "Appalachian State Mountaineers",
+      "home": "Coastal Carolina Chanticleers",
+      "game": "Appalachian State Mountaineers @ Coastal Carolina Chanticleers",
+      "kickoff_et": "Friday 10/16, 8:00 PM ET",
+      "books": 8,
+      "line": {
+        "away": {
+          "first": -110.5,
+          "now": -119.0,
+          "pp": 1.84
+        },
+        "home": {
+          "first": -109.0,
+          "now": 100.0,
+          "pp": -2.15
+        }
+      },
+      "sharp_slot": "home",
+      "sharp_team": "Coastal Carolina Chanticleers",
+      "pp_gain": 1.84,
+      "alerted": true,
+      "signal_move": "Coastal Carolina Chanticleers -105 -> 100 (mediana, 8 casas)",
+      "signal_confirmed": true,
+      "novig_url": null
+    },
+    {
+      "id": "0b0b582b32b09ab6ff6664ffae0c9653",
+      "sport": "NFL",
+      "away": "New York Jets",
+      "home": "New England Patriots",
+      "game": "New York Jets @ New England Patriots",
+      "kickoff_et": "Sunday 10/18, 1:00 PM ET",
+      "books": 6,
+      "line": {
+        "away": {
+          "first": 260.0,
+          "now": 280.0,
+          "pp": -1.46
+        },
+        "home": {
+          "first": -325.0,
+          "now": -360.0,
+          "pp": 1.79
+        }
+      },
+      "sharp_slot": "away",
+      "sharp_team": "New York Jets",
+      "pp_gain": 1.79,
+      "alerted": true,
+      "signal_move": "New York Jets 292.5 -> 280 (mediana, 6 casas)",
+      "signal_confirmed": true,
+      "novig_url": null
+    },
+    {
+      "id": "7c312fdf24fb35f58b0e07c2932cc997",
+      "sport": "NFL",
+      "away": "Chicago Bears",
+      "home": "Atlanta Falcons",
+      "game": "Chicago Bears @ Atlanta Falcons",
+      "kickoff_et": "Sunday 10/18, 1:00 PM ET",
+      "books": 6,
+      "line": {
+        "away": {
+          "first": -130.0,
+          "now": -121.0,
+          "pp": -1.77
+        },
+        "home": {
+          "first": 108.0,
+          "now": -1.5,
+          "pp": -46.6
+        }
+      },
+      "sharp_slot": "home",
+      "sharp_team": "Atlanta Falcons",
+      "pp_gain": -1.77,
+      "alerted": true,
+      "signal_move": "Atlanta Falcons 104 -> -1.5 (mediana, 6 casas)",
       "signal_confirmed": true,
       "novig_url": null
     },
@@ -570,6 +682,34 @@
       "novig_url": null
     },
     {
+      "id": "2bbbf3488a5d57c9c13ae578bad17a9d",
+      "sport": "NCAAF",
+      "away": "Western Kentucky Hilltoppers",
+      "home": "Sam Houston State Bearkats",
+      "game": "Western Kentucky Hilltoppers @ Sam Houston State Bearkats",
+      "kickoff_et": "Wednesday 10/14, 8:00 PM ET",
+      "books": 8,
+      "line": {
+        "away": {
+          "first": -110.0,
+          "now": -116.5,
+          "pp": 1.43
+        },
+        "home": {
+          "first": -110.0,
+          "now": -103.5,
+          "pp": -1.52
+        }
+      },
+      "sharp_slot": "away",
+      "sharp_team": "Western Kentucky Hilltoppers",
+      "pp_gain": 1.43,
+      "alerted": true,
+      "signal_move": "Western Kentucky Hilltoppers -128.0 -> -110.0 (mediana, 1 casas)",
+      "signal_confirmed": true,
+      "novig_url": null
+    },
+    {
       "id": "917d8eb9ffc25af2925d0e7e8c91a0f4",
       "sport": "NCAAF",
       "away": "Fresno State Bulldogs",
@@ -710,30 +850,86 @@
       "novig_url": null
     },
     {
-      "id": "33f259d8951535f271a8df5c790a832e",
+      "id": "3729ac6d2a66b642850caf2044cdc658",
+      "sport": "NFL",
+      "away": "Arizona Cardinals",
+      "home": "Los Angeles Rams",
+      "game": "Arizona Cardinals @ Los Angeles Rams",
+      "kickoff_et": "Sunday 10/18, 4:05 PM ET",
+      "books": 5,
+      "line": {
+        "away": {
+          "first": 475.0,
+          "now": 525.0,
+          "pp": -1.39
+        },
+        "home": {
+          "first": -670.0,
+          "now": -750.0,
+          "pp": 1.22
+        }
+      },
+      "sharp_slot": "home",
+      "sharp_team": "Los Angeles Rams",
+      "pp_gain": 1.22,
+      "alerted": true,
+      "signal_move": "Los Angeles Rams -670 -> -660 (mediana, 4 casas)",
+      "signal_confirmed": true,
+      "novig_url": null
+    },
+    {
+      "id": "84aa9e190e625d7e9cd67e1f157a45b4",
+      "sport": "NFL",
+      "away": "Tennessee Titans",
+      "home": "Indianapolis Colts",
+      "game": "Tennessee Titans @ Indianapolis Colts",
+      "kickoff_et": "Sunday 10/18, 1:00 PM ET",
+      "books": 6,
+      "line": {
+        "away": {
+          "first": 245.0,
+          "now": 255.0,
+          "pp": -0.82
+        },
+        "home": {
+          "first": -300.0,
+          "now": -320.0,
+          "pp": 1.19
+        }
+      },
+      "sharp_slot": "home",
+      "sharp_team": "Indianapolis Colts",
+      "pp_gain": 1.19,
+      "alerted": true,
+      "signal_move": "Indianapolis Colts -310 -> -320 (mediana, 6 casas)",
+      "signal_confirmed": true,
+      "novig_url": null
+    },
+    {
+      "id": "473d8828a17151640834e090d9eb46e4",
       "sport": "NCAAF",
-      "away": "Florida State Seminoles",
-      "home": "Miami Hurricanes",
-      "game": "Florida State Seminoles @ Miami Hurricanes",
-      "kickoff_et": "Saturday 10/17, 7:00 PM ET",
+      "away": "Washington State Cougars",
+      "home": "Oregon State Beavers",
+      "game": "Washington State Cougars @ Oregon State Beavers",
+      "kickoff_et": "Saturday 10/17, 6:00 PM ET",
       "books": 8,
       "line": {
         "away": {
-          "first": 1100.0,
-          "now": 950.0,
-          "pp": 1.19
+          "first": 610,
+          "now": 675.0,
+          "pp": -1.18
         },
         "home": {
-          "first": -2350.0,
-          "now": -1800.0,
-          "pp": -1.18
+          "first": -950,
+          "now": -1100.0,
+          "pp": 1.19
         }
       },
       "sharp_slot": "away",
-      "sharp_team": "Florida State Seminoles",
+      "sharp_team": "Washington State Cougars",
       "pp_gain": 1.19,
       "alerted": true,
-      "signal_move": "Florida State Seminoles +1100 -> +1130 (mediana, 4 casas)",
+      "signal_move": "Washington State Cougars +600 -> +750 (mediana, 4 casas)",
       "signal_confirmed": true,
       "novig_url": null
     },
@@ -766,30 +962,30 @@
       "novig_url": null
     },
     {
-      "id": "2851c11a3831feac527b6df0b34b2a2a",
+      "id": "5d147fefd2182aa2f5573ac03700a775",
       "sport": "NCAAF",
-      "away": "Auburn Tigers",
-      "home": "Georgia Bulldogs",
-      "game": "Auburn Tigers @ Georgia Bulldogs",
-      "kickoff_et": "Saturday 10/17, 3:30 PM ET",
+      "away": "Nebraska Cornhuskers",
+      "home": "Oregon Ducks",
+      "game": "Nebraska Cornhuskers @ Oregon Ducks",
+      "kickoff_et": "Saturday 10/17, 11:00 PM ET",
       "books": 8,
       "line": {
         "away": {
-          "first": 850.0,
-          "now": 762.5,
-          "pp": 1.07
+          "first": 202.5,
+          "now": 220.0,
+          "pp": -1.81
         },
         "home": {
-          "first": -1475.0,
-          "now": -1202.5,
-          "pp": -1.33
+          "first": -260.5,
+          "now": -275.0,
+          "pp": 1.07
         }
       },
       "sharp_slot": "home",
-      "sharp_team": "Georgia Bulldogs",
+      "sharp_team": "Oregon Ducks",
       "pp_gain": 1.07,
       "alerted": true,
-      "signal_move": "Georgia Bulldogs -1425 -> -1375 (mediana, 4 casas)",
+      "signal_move": "Oregon Ducks -520.0 -> -555.0 (mediana, 2 casas)",
       "signal_confirmed": true,
       "novig_url": null
     },
@@ -822,86 +1018,86 @@
       "novig_url": null
     },
     {
-      "id": "5d147fefd2182aa2f5573ac03700a775",
+      "id": "7d7f757d2bf4cb7b6d8bbfe9589d25a2",
       "sport": "NCAAF",
-      "away": "Nebraska Cornhuskers",
-      "home": "Oregon Ducks",
-      "game": "Nebraska Cornhuskers @ Oregon Ducks",
-      "kickoff_et": "Saturday 10/17, 11:00 PM ET",
-      "books": 8,
+      "away": "UMass Minutemen",
+      "home": "Buffalo Bulls",
+      "game": "UMass Minutemen @ Buffalo Bulls",
+      "kickoff_et": "Saturday 10/17, 1:00 PM ET",
+      "books": 6,
       "line": {
         "away": {
-          "first": 202.5,
-          "now": 217.5,
-          "pp": -1.56
+          "first": 146.0,
+          "now": 140.0,
+          "pp": 1.02
         },
         "home": {
-          "first": -260.5,
-          "now": -272.5,
-          "pp": 0.89
+          "first": -175.5,
+          "now": -165.5,
+          "pp": -1.37
         }
       },
       "sharp_slot": "home",
-      "sharp_team": "Oregon Ducks",
-      "pp_gain": 0.89,
+      "sharp_team": "Buffalo Bulls",
+      "pp_gain": 1.02,
       "alerted": true,
-      "signal_move": "Oregon Ducks -520.0 -> -555.0 (mediana, 2 casas)",
+      "signal_move": "Buffalo Bulls -175.5 -> -187.5 (mediana, 4 casas)",
       "signal_confirmed": true,
       "novig_url": null
     },
     {
-      "id": "473d8828a17151640834e090d9eb46e4",
+      "id": "33f259d8951535f271a8df5c790a832e",
       "sport": "NCAAF",
-      "away": "Washington State Cougars",
-      "home": "Oregon State Beavers",
-      "game": "Washington State Cougars @ Oregon State Beavers",
-      "kickoff_et": "Saturday 10/17, 6:00 PM ET",
+      "away": "Florida State Seminoles",
+      "home": "Miami Hurricanes",
+      "game": "Florida State Seminoles @ Miami Hurricanes",
+      "kickoff_et": "Saturday 10/17, 7:00 PM ET",
       "books": 8,
       "line": {
         "away": {
-          "first": 610,
-          "now": 665.0,
-          "pp": -1.01
+          "first": 1100.0,
+          "now": 975.0,
+          "pp": 0.97
         },
         "home": {
-          "first": -950,
-          "now": -1050.0,
-          "pp": 0.83
+          "first": -2350.0,
+          "now": -1900.0,
+          "pp": -0.92
         }
       },
       "sharp_slot": "away",
-      "sharp_team": "Washington State Cougars",
-      "pp_gain": 0.83,
+      "sharp_team": "Florida State Seminoles",
+      "pp_gain": 0.97,
       "alerted": true,
-      "signal_move": "Washington State Cougars +600 -> +750 (mediana, 4 casas)",
+      "signal_move": "Florida State Seminoles +1100 -> +1130 (mediana, 4 casas)",
       "signal_confirmed": true,
       "novig_url": null
     },
     {
-      "id": "1cf74afd313e9fd300e1462012b174cb",
-      "sport": "NFL",
-      "away": "New Orleans Saints",
-      "home": "New York Giants",
-      "game": "New Orleans Saints @ New York Giants",
-      "kickoff_et": "Sunday 10/18, 1:00 PM ET",
-      "books": 4,
+      "id": "2851c11a3831feac527b6df0b34b2a2a",
+      "sport": "NCAAF",
+      "away": "Auburn Tigers",
+      "home": "Georgia Bulldogs",
+      "game": "Auburn Tigers @ Georgia Bulldogs",
+      "kickoff_et": "Saturday 10/17, 3:30 PM ET",
+      "books": 8,
       "line": {
         "away": {
-          "first": -118.0,
-          "now": -113.0,
-          "pp": -1.08
+          "first": 850.0,
+          "now": 775.0,
+          "pp": 0.9
         },
         "home": {
-          "first": -102.0,
-          "now": -105.0,
-          "pp": 0.72
+          "first": -1475.0,
+          "now": -1202.5,
+          "pp": -1.33
         }
       },
       "sharp_slot": "home",
-      "sharp_team": "New York Giants",
-      "pp_gain": 0.72,
+      "sharp_team": "Georgia Bulldogs",
+      "pp_gain": 0.9,
       "alerted": true,
-      "signal_move": "New York Giants +100 -> -1 (mediana, 4 casas)",
+      "signal_move": "Georgia Bulldogs -1425 -> -1375 (mediana, 4 casas)",
       "signal_confirmed": true,
       "novig_url": null
     },
@@ -921,15 +1117,71 @@
         },
         "home": {
           "first": -312.5,
-          "now": -325.0,
-          "pp": 0.71
+          "now": -327.5,
+          "pp": 0.85
         }
       },
       "sharp_slot": "home",
       "sharp_team": "SMU Mustangs",
-      "pp_gain": 0.71,
+      "pp_gain": 0.85,
       "alerted": true,
       "signal_move": "SMU Mustangs -312.5 -> -325 (mediana, 7 casas)",
+      "signal_confirmed": true,
+      "novig_url": null
+    },
+    {
+      "id": "04c740fce71d3f3b8a4bdc4ea69f1281",
+      "sport": "NCAAF",
+      "away": "Mississippi State Bulldogs",
+      "home": "LSU Tigers",
+      "game": "Mississippi State Bulldogs @ LSU Tigers",
+      "kickoff_et": "Saturday 10/17, 12:00 PM ET",
+      "books": 8,
+      "line": {
+        "away": {
+          "first": 320.0,
+          "now": 330.0,
+          "pp": -0.55
+        },
+        "home": {
+          "first": -417.5,
+          "now": -437.5,
+          "pp": 0.72
+        }
+      },
+      "sharp_slot": "away",
+      "sharp_team": "Mississippi State Bulldogs",
+      "pp_gain": 0.72,
+      "alerted": true,
+      "signal_move": "Mississippi State Bulldogs 320 -> 330 (mediana, 1 casas)",
+      "signal_confirmed": true,
+      "novig_url": null
+    },
+    {
+      "id": "fd8eda4d35be24559269f63ca7bbb06b",
+      "sport": "NCAAF",
+      "away": "Washington Huskies",
+      "home": "Purdue Boilermakers",
+      "game": "Washington Huskies @ Purdue Boilermakers",
+      "kickoff_et": "Friday 10/16, 8:00 PM ET",
+      "books": 10,
+      "line": {
+        "away": {
+          "first": 130.0,
+          "now": 135.0,
+          "pp": -0.93
+        },
+        "home": {
+          "first": -155.5,
+          "now": -160.0,
+          "pp": 0.68
+        }
+      },
+      "sharp_slot": "home",
+      "sharp_team": "Purdue Boilermakers",
+      "pp_gain": 0.68,
+      "alerted": true,
+      "signal_move": "Purdue Boilermakers -152 -> -163.0 (mediana, 8 casas)",
       "signal_confirmed": true,
       "novig_url": null
     },
@@ -1018,90 +1270,6 @@
       "novig_url": null
     },
     {
-      "id": "fd8eda4d35be24559269f63ca7bbb06b",
-      "sport": "NCAAF",
-      "away": "Washington Huskies",
-      "home": "Purdue Boilermakers",
-      "game": "Washington Huskies @ Purdue Boilermakers",
-      "kickoff_et": "Friday 10/16, 8:00 PM ET",
-      "books": 10,
-      "line": {
-        "away": {
-          "first": 130.0,
-          "now": 135.0,
-          "pp": -0.93
-        },
-        "home": {
-          "first": -155.5,
-          "now": -159.5,
-          "pp": 0.6
-        }
-      },
-      "sharp_slot": "home",
-      "sharp_team": "Purdue Boilermakers",
-      "pp_gain": 0.6,
-      "alerted": true,
-      "signal_move": "Purdue Boilermakers -152 -> -163.0 (mediana, 8 casas)",
-      "signal_confirmed": true,
-      "novig_url": null
-    },
-    {
-      "id": "7d7f757d2bf4cb7b6d8bbfe9589d25a2",
-      "sport": "NCAAF",
-      "away": "UMass Minutemen",
-      "home": "Buffalo Bulls",
-      "game": "UMass Minutemen @ Buffalo Bulls",
-      "kickoff_et": "Saturday 10/17, 1:00 PM ET",
-      "books": 6,
-      "line": {
-        "away": {
-          "first": 146.0,
-          "now": 142.5,
-          "pp": 0.59
-        },
-        "home": {
-          "first": -175.5,
-          "now": -170.0,
-          "pp": -0.74
-        }
-      },
-      "sharp_slot": "home",
-      "sharp_team": "Buffalo Bulls",
-      "pp_gain": 0.59,
-      "alerted": true,
-      "signal_move": "Buffalo Bulls -175.5 -> -187.5 (mediana, 4 casas)",
-      "signal_confirmed": true,
-      "novig_url": null
-    },
-    {
-      "id": "2bbbf3488a5d57c9c13ae578bad17a9d",
-      "sport": "NCAAF",
-      "away": "Western Kentucky Hilltoppers",
-      "home": "Sam Houston State Bearkats",
-      "game": "Western Kentucky Hilltoppers @ Sam Houston State Bearkats",
-      "kickoff_et": "Wednesday 10/14, 8:00 PM ET",
-      "books": 8,
-      "line": {
-        "away": {
-          "first": -110.0,
-          "now": -112.5,
-          "pp": 0.56
-        },
-        "home": {
-          "first": -110.0,
-          "now": -108.0,
-          "pp": -0.46
-        }
-      },
-      "sharp_slot": "away",
-      "sharp_team": "Western Kentucky Hilltoppers",
-      "pp_gain": 0.56,
-      "alerted": true,
-      "signal_move": "Western Kentucky Hilltoppers -128.0 -> -110.0 (mediana, 1 casas)",
-      "signal_confirmed": true,
-      "novig_url": null
-    },
-    {
       "id": "5d09c85c1d67e8f9db8db560cb038027",
       "sport": "NCAAF",
       "away": "Missouri Tigers",
@@ -1140,18 +1308,18 @@
       "line": {
         "away": {
           "first": 149.0,
-          "now": 146.0,
-          "pp": 0.49
+          "now": 150.0,
+          "pp": -0.16
         },
         "home": {
           "first": -175.0,
-          "now": -172.0,
-          "pp": -0.4
+          "now": -179.0,
+          "pp": 0.52
         }
       },
       "sharp_slot": "home",
       "sharp_team": "Atlanta Falcons",
-      "pp_gain": 0.49,
+      "pp_gain": 0.52,
       "alerted": true,
       "signal_move": "Atlanta Falcons 250 -> 237.5 (mediana, 4 casas)",
       "signal_confirmed": true,
@@ -1173,8 +1341,8 @@
         },
         "home": {
           "first": 390,
-          "now": 400.0,
-          "pp": -0.41
+          "now": 405.0,
+          "pp": -0.61
         }
       },
       "sharp_slot": "away",
@@ -1214,30 +1382,30 @@
       "novig_url": null
     },
     {
-      "id": "7ebcab7b97620342a9205b32139222d1",
-      "sport": "NCAAF",
-      "away": "Kennesaw State Owls",
-      "home": "Missouri State Bears",
-      "game": "Kennesaw State Owls @ Missouri State Bears",
-      "kickoff_et": "Wednesday 10/14, 7:30 PM ET",
-      "books": 10,
+      "id": "20fefae8c296247460ba5773caa42218",
+      "sport": "NFL",
+      "away": "Los Angeles Chargers",
+      "home": "Kansas City Chiefs",
+      "game": "Los Angeles Chargers @ Kansas City Chiefs",
+      "kickoff_et": "Sunday 10/18, 4:25 PM ET",
+      "books": 6,
       "line": {
         "away": {
-          "first": -164.0,
-          "now": -161.0,
-          "pp": -0.44
+          "first": 310.0,
+          "now": 320.0,
+          "pp": -0.58
         },
         "home": {
-          "first": 136.0,
-          "now": 140.0,
-          "pp": -0.71
+          "first": -422.5,
+          "now": -410.0,
+          "pp": -0.47
         }
       },
       "sharp_slot": "away",
-      "sharp_team": "Kennesaw State Owls",
-      "pp_gain": -0.44,
+      "sharp_team": "Los Angeles Chargers",
+      "pp_gain": -0.47,
       "alerted": true,
-      "signal_move": "Kennesaw State Owls -178.0 -> -164.0 (mediana, 1 casas)",
+      "signal_move": "Los Angeles Chargers +330 -> +310 (mediana, 3 casas)",
       "signal_confirmed": true,
       "novig_url": null
     },
@@ -1270,62 +1438,6 @@
       "novig_url": null
     },
     {
-      "id": "3729ac6d2a66b642850caf2044cdc658",
-      "sport": "NFL",
-      "away": "Arizona Cardinals",
-      "home": "Los Angeles Rams",
-      "game": "Arizona Cardinals @ Los Angeles Rams",
-      "kickoff_et": "Sunday 10/18, 4:05 PM ET",
-      "books": 4,
-      "line": {
-        "away": {
-          "first": 475.0,
-          "now": 490.0,
-          "pp": -0.44
-        },
-        "home": {
-          "first": -670.0,
-          "now": -687.5,
-          "pp": 0.29
-        }
-      },
-      "sharp_slot": "home",
-      "sharp_team": "Los Angeles Rams",
-      "pp_gain": 0.29,
-      "alerted": true,
-      "signal_move": "Los Angeles Rams -670 -> -660 (mediana, 4 casas)",
-      "signal_confirmed": true,
-      "novig_url": null
-    },
-    {
-      "id": "f122527f003276d3bca19efa48c902c1",
-      "sport": "NFL",
-      "away": "Washington Commanders",
-      "home": "San Francisco 49ers",
-      "game": "Washington Commanders @ San Francisco 49ers",
-      "kickoff_et": "Monday 10/19, 8:15 PM ET",
-      "books": 4,
-      "line": {
-        "away": {
-          "first": 320.0,
-          "now": 315.0,
-          "pp": 0.29
-        },
-        "home": {
-          "first": -420.0,
-          "now": -402.5,
-          "pp": -0.67
-        }
-      },
-      "sharp_slot": "home",
-      "sharp_team": "San Francisco 49ers",
-      "pp_gain": 0.29,
-      "alerted": true,
-      "signal_move": "San Francisco 49ers -408 → -420 (mediana, 3 casas)",
-      "signal_confirmed": true,
-      "novig_url": null
-    },
-    {
       "id": "7926661d4efb4a5fb94233d5e8aca9df",
       "sport": "NCAAF",
       "away": "Northern Illinois Huskies",
@@ -1336,8 +1448,8 @@
       "line": {
         "away": {
           "first": 250.0,
-          "now": 246.5,
-          "pp": 0.29
+          "now": 245.0,
+          "pp": 0.41
         },
         "home": {
           "first": -310.0,
@@ -1347,65 +1459,65 @@
       },
       "sharp_slot": "away",
       "sharp_team": "Northern Illinois Huskies",
-      "pp_gain": 0.29,
+      "pp_gain": 0.41,
       "alerted": true,
       "signal_move": "Northern Illinois Huskies 250.0 -> 275.0 (mediana, 5 casas)",
       "signal_confirmed": true,
       "novig_url": null
     },
     {
-      "id": "04c740fce71d3f3b8a4bdc4ea69f1281",
+      "id": "7ebcab7b97620342a9205b32139222d1",
       "sport": "NCAAF",
-      "away": "Mississippi State Bulldogs",
-      "home": "LSU Tigers",
-      "game": "Mississippi State Bulldogs @ LSU Tigers",
-      "kickoff_et": "Saturday 10/17, 12:00 PM ET",
-      "books": 8,
+      "away": "Kennesaw State Owls",
+      "home": "Missouri State Bears",
+      "game": "Kennesaw State Owls @ Missouri State Bears",
+      "kickoff_et": "Wednesday 10/14, 7:30 PM ET",
+      "books": 10,
       "line": {
         "away": {
-          "first": 320.0,
-          "now": 330.0,
-          "pp": -0.55
+          "first": -164.0,
+          "now": -160.0,
+          "pp": -0.58
         },
         "home": {
-          "first": -417.5,
-          "now": -425.0,
-          "pp": 0.28
+          "first": 136.0,
+          "now": 138.0,
+          "pp": -0.36
         }
       },
       "sharp_slot": "away",
-      "sharp_team": "Mississippi State Bulldogs",
-      "pp_gain": 0.28,
+      "sharp_team": "Kennesaw State Owls",
+      "pp_gain": -0.36,
       "alerted": true,
-      "signal_move": "Mississippi State Bulldogs 320 -> 330 (mediana, 1 casas)",
+      "signal_move": "Kennesaw State Owls -178.0 -> -164.0 (mediana, 1 casas)",
       "signal_confirmed": true,
       "novig_url": null
     },
     {
-      "id": "20fefae8c296247460ba5773caa42218",
-      "sport": "NFL",
-      "away": "Los Angeles Chargers",
-      "home": "Kansas City Chiefs",
-      "game": "Los Angeles Chargers @ Kansas City Chiefs",
-      "kickoff_et": "Sunday 10/18, 4:25 PM ET",
-      "books": 4,
+      "id": "f10a59f9dd66cb1aa169a293326449d9",
+      "sport": "NCAAF",
+      "away": "Charlotte 49ers",
+      "home": "Temple Owls",
+      "game": "Charlotte 49ers @ Temple Owls",
+      "kickoff_et": "Saturday 10/17, 1:00 PM ET",
+      "books": 8,
       "line": {
         "away": {
-          "first": 310.0,
-          "now": 322.5,
-          "pp": -0.72
+          "first": 1165.0,
+          "now": 1125.0,
+          "pp": 0.26
         },
         "home": {
-          "first": -422.5,
-          "now": -417.5,
-          "pp": -0.18
+          "first": -2650.0,
+          "now": -2200.0,
+          "pp": -0.71
         }
       },
       "sharp_slot": "away",
-      "sharp_team": "Los Angeles Chargers",
-      "pp_gain": -0.18,
+      "sharp_team": "Charlotte 49ers",
+      "pp_gain": 0.26,
       "alerted": true,
-      "signal_move": "Los Angeles Chargers +330 -> +310 (mediana, 3 casas)",
+      "signal_move": "Charlotte 49ers +1165 -> +1500 (mediana, 3 casas)",
       "signal_confirmed": true,
       "novig_url": null
     },
@@ -1466,34 +1578,6 @@
       "novig_url": null
     },
     {
-      "id": "f10a59f9dd66cb1aa169a293326449d9",
-      "sport": "NCAAF",
-      "away": "Charlotte 49ers",
-      "home": "Temple Owls",
-      "game": "Charlotte 49ers @ Temple Owls",
-      "kickoff_et": "Saturday 10/17, 1:00 PM ET",
-      "books": 8,
-      "line": {
-        "away": {
-          "first": 1165.0,
-          "now": 1175.0,
-          "pp": -0.06
-        },
-        "home": {
-          "first": -2650.0,
-          "now": -2200.0,
-          "pp": -0.71
-        }
-      },
-      "sharp_slot": "away",
-      "sharp_team": "Charlotte 49ers",
-      "pp_gain": -0.06,
-      "alerted": true,
-      "signal_move": "Charlotte 49ers +1165 -> +1500 (mediana, 3 casas)",
-      "signal_confirmed": true,
-      "novig_url": null
-    },
-    {
       "id": "e6d00eedd87d367e510314bd8cab8f6f",
       "sport": "NFL",
       "away": "Buffalo Bills",
@@ -1518,6 +1602,34 @@
       "pp_gain": 0.0,
       "alerted": true,
       "signal_move": "Los Angeles Rams -164 -> -154 (mediana, 9 casas)",
+      "signal_confirmed": true,
+      "novig_url": null
+    },
+    {
+      "id": "f122527f003276d3bca19efa48c902c1",
+      "sport": "NFL",
+      "away": "Washington Commanders",
+      "home": "San Francisco 49ers",
+      "game": "Washington Commanders @ San Francisco 49ers",
+      "kickoff_et": "Monday 10/19, 8:15 PM ET",
+      "books": 6,
+      "line": {
+        "away": {
+          "first": 320.0,
+          "now": 325.0,
+          "pp": -0.28
+        },
+        "home": {
+          "first": -420.0,
+          "now": -420.0,
+          "pp": 0.0
+        }
+      },
+      "sharp_slot": "home",
+      "sharp_team": "San Francisco 49ers",
+      "pp_gain": 0.0,
+      "alerted": true,
+      "signal_move": "San Francisco 49ers -408 → -420 (mediana, 3 casas)",
       "signal_confirmed": true,
       "novig_url": null
     },
@@ -1584,7 +1696,7 @@
       "home": "Las Vegas Raiders",
       "game": "Buffalo Bills @ Las Vegas Raiders",
       "kickoff_et": "Sunday 10/18, 4:25 PM ET",
-      "books": 4,
+      "books": 5,
       "line": {
         "away": {
           "first": -235.0,
@@ -1593,13 +1705,41 @@
         },
         "home": {
           "first": 190.0,
-          "now": 217.5,
-          "pp": -2.99
+          "now": 220.0,
+          "pp": -3.23
         }
       },
       "sharp_slot": "away",
       "sharp_team": "Buffalo Bills",
       "pp_gain": 3.18,
+      "alerted": false,
+      "signal_move": null,
+      "signal_confirmed": false,
+      "novig_url": null
+    },
+    {
+      "id": "855f58fad5f0f14b239f4f63df27998b",
+      "sport": "NFL",
+      "away": "Seattle Seahawks",
+      "home": "Denver Broncos",
+      "game": "Seattle Seahawks @ Denver Broncos",
+      "kickoff_et": "Thursday 10/15, 8:15 PM ET",
+      "books": 7,
+      "line": {
+        "away": {
+          "first": -136.0,
+          "now": -148.0,
+          "pp": 2.05
+        },
+        "home": {
+          "first": 112.0,
+          "now": 121.0,
+          "pp": -1.92
+        }
+      },
+      "sharp_slot": "away",
+      "sharp_team": "Seattle Seahawks",
+      "pp_gain": 2.05,
       "alerted": false,
       "signal_move": null,
       "signal_confirmed": false,
@@ -1612,50 +1752,22 @@
       "home": "Jacksonville Jaguars",
       "game": "Houston Texans @ Jacksonville Jaguars",
       "kickoff_et": "Sunday 10/18, 9:30 AM ET",
-      "books": 4,
+      "books": 6,
       "line": {
         "away": {
           "first": 138.0,
-          "now": 124.5,
-          "pp": 2.53
+          "now": 127.5,
+          "pp": 1.94
         },
         "home": {
           "first": -166.0,
-          "now": -147.0,
-          "pp": -2.89
+          "now": -150.0,
+          "pp": -2.41
         }
       },
       "sharp_slot": "away",
       "sharp_team": "Houston Texans",
-      "pp_gain": 2.53,
-      "alerted": false,
-      "signal_move": null,
-      "signal_confirmed": false,
-      "novig_url": null
-    },
-    {
-      "id": "0b0b582b32b09ab6ff6664ffae0c9653",
-      "sport": "NFL",
-      "away": "New York Jets",
-      "home": "New England Patriots",
-      "game": "New York Jets @ New England Patriots",
-      "kickoff_et": "Sunday 10/18, 1:00 PM ET",
-      "books": 4,
-      "line": {
-        "away": {
-          "first": 260.0,
-          "now": 292.5,
-          "pp": -2.3
-        },
-        "home": {
-          "first": -325.0,
-          "now": -367.5,
-          "pp": 2.14
-        }
-      },
-      "sharp_slot": "home",
-      "sharp_team": "New England Patriots",
-      "pp_gain": 2.14,
+      "pp_gain": 1.94,
       "alerted": false,
       "signal_move": null,
       "signal_confirmed": false,
@@ -1668,12 +1780,12 @@
       "home": "Philadelphia Eagles",
       "game": "Carolina Panthers @ Philadelphia Eagles",
       "kickoff_et": "Sunday 10/18, 1:00 PM ET",
-      "books": 4,
+      "books": 6,
       "line": {
         "away": {
           "first": 108.0,
-          "now": 100.0,
-          "pp": 1.92
+          "now": 101.0,
+          "pp": 1.67
         },
         "home": {
           "first": -130.0,
@@ -1683,7 +1795,7 @@
       },
       "sharp_slot": "away",
       "sharp_team": "Carolina Panthers",
-      "pp_gain": 1.92,
+      "pp_gain": 1.67,
       "alerted": false,
       "signal_move": null,
       "signal_confirmed": false,
@@ -1700,18 +1812,18 @@
       "line": {
         "away": {
           "first": 220.0,
-          "now": 205.0,
-          "pp": 1.54
+          "now": 206.5,
+          "pp": 1.38
         },
         "home": {
           "first": -275.0,
-          "now": -252.5,
-          "pp": -1.7
+          "now": -255.0,
+          "pp": -1.5
         }
       },
       "sharp_slot": "away",
       "sharp_team": "Navy Midshipmen",
-      "pp_gain": 1.54,
+      "pp_gain": 1.38,
       "alerted": false,
       "signal_move": null,
       "signal_confirmed": false,
@@ -1723,7 +1835,7 @@
       "away": "Los Angeles Dodgers",
       "home": "Milwaukee Brewers",
       "game": "Los Angeles Dodgers @ Milwaukee Brewers",
-      "kickoff_et": "Sunday 10/11, 8:00 PM ET",
+      "kickoff_et": "Sunday 10/11, 8:15 PM ET",
       "books": 11,
       "line": {
         "away": {
@@ -1733,41 +1845,13 @@
         },
         "home": {
           "first": -110.0,
-          "now": -103.0,
-          "pp": -1.64
+          "now": -107.0,
+          "pp": -0.69
         }
       },
       "sharp_slot": "away",
       "sharp_team": "Los Angeles Dodgers",
       "pp_gain": 1.16,
-      "alerted": false,
-      "signal_move": null,
-      "signal_confirmed": false,
-      "novig_url": null
-    },
-    {
-      "id": "755ef069f0fe7ee21fbda33f7c93247e",
-      "sport": "NCAAF",
-      "away": "Appalachian State Mountaineers",
-      "home": "Coastal Carolina Chanticleers",
-      "game": "Appalachian State Mountaineers @ Coastal Carolina Chanticleers",
-      "kickoff_et": "Friday 10/16, 8:00 PM ET",
-      "books": 8,
-      "line": {
-        "away": {
-          "first": -110.5,
-          "now": -115.5,
-          "pp": 1.1
-        },
-        "home": {
-          "first": -109.0,
-          "now": -105.0,
-          "pp": -0.93
-        }
-      },
-      "sharp_slot": "away",
-      "sharp_team": "Appalachian State Mountaineers",
-      "pp_gain": 1.1,
       "alerted": false,
       "signal_move": null,
       "signal_confirmed": false,
@@ -1784,8 +1868,8 @@
       "line": {
         "away": {
           "first": 125.0,
-          "now": 131.5,
-          "pp": -1.25
+          "now": 135.0,
+          "pp": -1.89
         },
         "home": {
           "first": -154.0,
@@ -1796,90 +1880,6 @@
       "sharp_slot": null,
       "sharp_team": null,
       "pp_gain": 0.98,
-      "alerted": false,
-      "signal_move": null,
-      "signal_confirmed": false,
-      "novig_url": null
-    },
-    {
-      "id": "7c312fdf24fb35f58b0e07c2932cc997",
-      "sport": "NFL",
-      "away": "Chicago Bears",
-      "home": "Atlanta Falcons",
-      "game": "Chicago Bears @ Atlanta Falcons",
-      "kickoff_et": "Sunday 10/18, 1:00 PM ET",
-      "books": 4,
-      "line": {
-        "away": {
-          "first": -130.0,
-          "now": -123.0,
-          "pp": -1.36
-        },
-        "home": {
-          "first": 108.0,
-          "now": 104.0,
-          "pp": 0.94
-        }
-      },
-      "sharp_slot": null,
-      "sharp_team": null,
-      "pp_gain": 0.94,
-      "alerted": false,
-      "signal_move": null,
-      "signal_confirmed": false,
-      "novig_url": null
-    },
-    {
-      "id": "c92acc311e3c969f78faf7c2ec5ef5b1",
-      "sport": "NCAAF",
-      "away": "Arkansas Razorbacks",
-      "home": "Vanderbilt Commodores",
-      "game": "Arkansas Razorbacks @ Vanderbilt Commodores",
-      "kickoff_et": "Saturday 10/17, 7:00 PM ET",
-      "books": 8,
-      "line": {
-        "away": {
-          "first": 184.5,
-          "now": 192.5,
-          "pp": -0.96
-        },
-        "home": {
-          "first": -225.0,
-          "now": -235.0,
-          "pp": 0.92
-        }
-      },
-      "sharp_slot": null,
-      "sharp_team": null,
-      "pp_gain": 0.92,
-      "alerted": false,
-      "signal_move": null,
-      "signal_confirmed": false,
-      "novig_url": null
-    },
-    {
-      "id": "855f58fad5f0f14b239f4f63df27998b",
-      "sport": "NFL",
-      "away": "Seattle Seahawks",
-      "home": "Denver Broncos",
-      "game": "Seattle Seahawks @ Denver Broncos",
-      "kickoff_et": "Thursday 10/15, 8:15 PM ET",
-      "books": 4,
-      "line": {
-        "away": {
-          "first": -136.0,
-          "now": -141.0,
-          "pp": 0.88
-        },
-        "home": {
-          "first": 112.0,
-          "now": 114.5,
-          "pp": -0.55
-        }
-      },
-      "sharp_slot": null,
-      "sharp_team": null,
-      "pp_gain": 0.88,
       "alerted": false,
       "signal_move": null,
       "signal_confirmed": false,
@@ -1914,28 +1914,84 @@
       "novig_url": null
     },
     {
-      "id": "84aa9e190e625d7e9cd67e1f157a45b4",
+      "id": "82fd5a159fa130e67abab93a9537f70b",
       "sport": "NFL",
-      "away": "Tennessee Titans",
-      "home": "Indianapolis Colts",
-      "game": "Tennessee Titans @ Indianapolis Colts",
-      "kickoff_et": "Sunday 10/18, 1:00 PM ET",
-      "books": 4,
+      "away": "Dallas Cowboys",
+      "home": "Green Bay Packers",
+      "game": "Dallas Cowboys @ Green Bay Packers",
+      "kickoff_et": "Sunday 10/18, 8:20 PM ET",
+      "books": 6,
       "line": {
         "away": {
-          "first": 245.0,
-          "now": 250.0,
-          "pp": -0.41
+          "first": -116.5,
+          "now": -112.0,
+          "pp": -0.98
         },
         "home": {
-          "first": -300.0,
-          "now": -310.0,
-          "pp": 0.61
+          "first": -103.0,
+          "now": -106.5,
+          "pp": 0.83
         }
       },
       "sharp_slot": null,
       "sharp_team": null,
-      "pp_gain": 0.61,
+      "pp_gain": 0.83,
+      "alerted": false,
+      "signal_move": null,
+      "signal_confirmed": false,
+      "novig_url": null
+    },
+    {
+      "id": "27f3994841ce8081c0b7349cf3d1e3d7",
+      "sport": "NFL",
+      "away": "Pittsburgh Steelers",
+      "home": "Tampa Bay Buccaneers",
+      "game": "Pittsburgh Steelers @ Tampa Bay Buccaneers",
+      "kickoff_et": "Sunday 10/18, 1:00 PM ET",
+      "books": 6,
+      "line": {
+        "away": {
+          "first": -143.0,
+          "now": -147.5,
+          "pp": 0.75
+        },
+        "home": {
+          "first": 119.0,
+          "now": 126.5,
+          "pp": -1.51
+        }
+      },
+      "sharp_slot": null,
+      "sharp_team": null,
+      "pp_gain": 0.75,
+      "alerted": false,
+      "signal_move": null,
+      "signal_confirmed": false,
+      "novig_url": null
+    },
+    {
+      "id": "c92acc311e3c969f78faf7c2ec5ef5b1",
+      "sport": "NCAAF",
+      "away": "Arkansas Razorbacks",
+      "home": "Vanderbilt Commodores",
+      "game": "Arkansas Razorbacks @ Vanderbilt Commodores",
+      "kickoff_et": "Saturday 10/17, 7:00 PM ET",
+      "books": 8,
+      "line": {
+        "away": {
+          "first": 184.5,
+          "now": 189.0,
+          "pp": -0.55
+        },
+        "home": {
+          "first": -225.0,
+          "now": -232.5,
+          "pp": 0.69
+        }
+      },
+      "sharp_slot": null,
+      "sharp_team": null,
+      "pp_gain": 0.69,
       "alerted": false,
       "signal_move": null,
       "signal_confirmed": false,
@@ -1970,34 +2026,6 @@
       "novig_url": null
     },
     {
-      "id": "362511067a27b4ef89418639e15e80b6",
-      "sport": "MLB",
-      "away": "Cleveland Guardians",
-      "home": "Tampa Bay Rays",
-      "game": "Cleveland Guardians @ Tampa Bay Rays",
-      "kickoff_et": "Monday 10/12, 8:00 PM ET",
-      "books": 11,
-      "line": {
-        "away": {
-          "first": 138.0,
-          "now": 140.0,
-          "pp": -0.35
-        },
-        "home": {
-          "first": -165.0,
-          "now": -168.0,
-          "pp": 0.42
-        }
-      },
-      "sharp_slot": null,
-      "sharp_team": null,
-      "pp_gain": 0.42,
-      "alerted": false,
-      "signal_move": null,
-      "signal_confirmed": false,
-      "novig_url": null
-    },
-    {
       "id": "ec190e5e3401bc9ea7799610c0ca1125",
       "sport": "NCAAF",
       "away": "Florida Atlantic Owls",
@@ -2020,6 +2048,34 @@
       "sharp_slot": null,
       "sharp_team": null,
       "pp_gain": 0.41,
+      "alerted": false,
+      "signal_move": null,
+      "signal_confirmed": false,
+      "novig_url": null
+    },
+    {
+      "id": "362511067a27b4ef89418639e15e80b6",
+      "sport": "MLB",
+      "away": "Cleveland Guardians",
+      "home": "Tampa Bay Rays",
+      "game": "Cleveland Guardians @ Tampa Bay Rays",
+      "kickoff_et": "Monday 10/12, 8:00 PM ET",
+      "books": 11,
+      "line": {
+        "away": {
+          "first": 138.0,
+          "now": 141.0,
+          "pp": -0.52
+        },
+        "home": {
+          "first": -165.0,
+          "now": -167.0,
+          "pp": 0.28
+        }
+      },
+      "sharp_slot": null,
+      "sharp_team": null,
+      "pp_gain": 0.28,
       "alerted": false,
       "signal_move": null,
       "signal_confirmed": false,
@@ -2064,8 +2120,8 @@
       "line": {
         "away": {
           "first": -275.0,
-          "now": -272.5,
-          "pp": -0.18
+          "now": -275.0,
+          "pp": 0.0
         },
         "home": {
           "first": 221.5,
@@ -2076,62 +2132,6 @@
       "sharp_slot": null,
       "sharp_team": null,
       "pp_gain": 0.15,
-      "alerted": false,
-      "signal_move": null,
-      "signal_confirmed": false,
-      "novig_url": null
-    },
-    {
-      "id": "27f3994841ce8081c0b7349cf3d1e3d7",
-      "sport": "NFL",
-      "away": "Pittsburgh Steelers",
-      "home": "Tampa Bay Buccaneers",
-      "game": "Pittsburgh Steelers @ Tampa Bay Buccaneers",
-      "kickoff_et": "Sunday 10/18, 1:00 PM ET",
-      "books": 4,
-      "line": {
-        "away": {
-          "first": -143.0,
-          "now": -143.0,
-          "pp": 0.0
-        },
-        "home": {
-          "first": 119.0,
-          "now": 119.0,
-          "pp": 0.0
-        }
-      },
-      "sharp_slot": null,
-      "sharp_team": null,
-      "pp_gain": 0.0,
-      "alerted": false,
-      "signal_move": null,
-      "signal_confirmed": false,
-      "novig_url": null
-    },
-    {
-      "id": "82fd5a159fa130e67abab93a9537f70b",
-      "sport": "NFL",
-      "away": "Dallas Cowboys",
-      "home": "Green Bay Packers",
-      "game": "Dallas Cowboys @ Green Bay Packers",
-      "kickoff_et": "Sunday 10/18, 8:20 PM ET",
-      "books": 4,
-      "line": {
-        "away": {
-          "first": -116.5,
-          "now": -116.5,
-          "pp": 0.0
-        },
-        "home": {
-          "first": -103.0,
-          "now": -103.0,
-          "pp": 0.0
-        }
-      },
-      "sharp_slot": null,
-      "sharp_team": null,
-      "pp_gain": 0.0,
       "alerted": false,
       "signal_move": null,
       "signal_confirmed": false,
@@ -2166,6 +2166,6 @@
       "novig_url": null
     }
   ],
-  "signals_today": 55,
-  "sharp_now": 63
+  "signals_today": 59,
+  "sharp_now": 66
 }
