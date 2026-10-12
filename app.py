@@ -5564,7 +5564,7 @@ def api_values_record():
         db = get_db()
         rows = db.execute(
             "SELECT pick, cuota, fecha, resultado, stake_monto FROM tracked_plays "
-            "WHERE user_id = ? AND nivel = 'VALUE' ORDER BY fecha DESC, id DESC LIMIT 50",
+            "WHERE user_id = ? AND nivel = 'VALUE' ORDER BY fecha DESC, id DESC",
             (VALUE_SYSTEM_USER_ID,),
         ).fetchall()
         wins = losses = 0
@@ -5606,7 +5606,7 @@ def values_page():
     db = get_db()
     rows = db.execute(
         "SELECT pick, cuota, fecha, resultado, stake_monto FROM tracked_plays "
-        "WHERE user_id = ? AND nivel = 'VALUE' ORDER BY fecha DESC, id DESC LIMIT 50",
+        "WHERE user_id = ? AND nivel = 'VALUE' ORDER BY fecha DESC, id DESC",
         (VALUE_SYSTEM_USER_ID,),
     ).fetchall()
     wins = losses = 0
@@ -5662,7 +5662,7 @@ def values_all():
     db = get_db()
     rows = db.execute(
         "SELECT pick, cuota, fecha, resultado, stake_monto FROM tracked_plays "
-        "WHERE user_id = ? AND nivel = 'VALUE' ORDER BY fecha DESC, id DESC LIMIT 200",
+        "WHERE user_id = ? AND nivel = 'VALUE' ORDER BY fecha DESC, id DESC",
         (VALUE_SYSTEM_USER_ID,),
     ).fetchall()
     plays = []
