@@ -1,211 +1,372 @@
 {% extends "base.html" %}
-{% block title %}My account — The Sharp Team{% endblock %}
+{% block title %}Account — The Sharp Team{% endblock %}
 {% block content %}
+{# Página Account con pestañas estilo WGT (2026-10-12, pedido por Alex) #}
+<style>
+.acct-head{display:flex;justify-content:space-between;align-items:center;margin:6px 0 2px;}
+.acct-head h1{font-size:30px;font-weight:800;color:#fff;margin:0;}
+.acct-logout{border:1px solid #2a3648;border-radius:12px;padding:9px 18px;font-size:14px;color:#d1d5db;text-decoration:none;}
+.acct-sub{font-size:14px;color:#8b93a7;margin-bottom:16px;}
+.acct-tabs{display:flex;flex-wrap:wrap;gap:2px 18px;border-bottom:1px solid #1e2a3a;margin-bottom:18px;}
+.acct-tab{padding:10px 2px;font-size:15px;color:#8b93a7;cursor:pointer;background:none;border:none;border-bottom:2px solid transparent;font-family:inherit;}
+.acct-tab.on{color:#fff;border-bottom:2px solid #22c55e;font-weight:700;}
+.acct-pane{display:none;}
+.acct-pane.on{display:block;}
+.acct-card{background:#0d1420;border:1px solid #1c2739;border-radius:16px;padding:18px;margin-bottom:16px;}
+.acct-k{font-size:12px;letter-spacing:1.5px;color:#8b93a7;margin:0 0 12px;font-weight:700;}
+.acct-input{width:100%;box-sizing:border-box;background:#131c2e;border:1px solid #26334d;border-radius:12px;padding:13px 14px;font-size:15px;color:#fff;margin-bottom:14px;font-family:inherit;}
+.acct-btn{display:inline-block;background:#22c55e;color:#06240f;font-weight:800;font-size:15px;padding:12px 22px;border-radius:12px;border:none;cursor:pointer;text-decoration:none;text-align:center;}
+.acct-btn-block{display:block;width:100%;box-sizing:border-box;}
+.acct-badge{display:inline-block;background:rgba(59,130,246,.15);color:#7db4ff;font-weight:800;font-size:13px;letter-spacing:1px;padding:7px 16px;border-radius:999px;}
+.acct-badge-gold{display:inline-block;background:rgba(201,162,39,.15);color:#e3b93c;font-weight:800;font-size:13px;letter-spacing:1px;padding:7px 16px;border-radius:999px;}
+.acct-check{display:flex;align-items:center;gap:10px;background:#131c2e;border:1px solid #26334d;border-radius:12px;padding:12px 14px;font-size:15px;color:#d1d5db;cursor:pointer;}
+.acct-check input{width:20px;height:20px;accent-color:#22c55e;flex:none;}
+.acct-grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+.acct-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #1c2739;font-size:15px;}
+.acct-row:last-child{border-bottom:none;}
+.acct-muted{font-size:14px;color:#8b93a7;line-height:1.55;}
+.acct-ok{display:inline-block;background:rgba(34,197,94,.15);color:#4ade80;font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px;}
+.acct-fail{display:inline-block;background:rgba(245,181,68,.15);color:#f5b544;font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px;}
+</style>
+
+<div class="acct-head">
+  <h1>Account</h1>
+  <a class="acct-logout" href="{{ url_for('logout') }}">Log out</a>
+</div>
+<div class="acct-sub">{{ u.nombre if u else '' }} · {{ u.email if u else '' }}</div>
+
 {% if es_admin or is_alex %}
 <section class="auth-card" style="border:1px solid rgba(201,162,39,.3);">
   <h2>⚙️ Admin</h2>
   <a href="{{ url_for('admin_dashboard') }}" class="btn btn-block" style="text-decoration:none;text-align:center;display:block;">Open Admin Dashboard →</a>
 </section>
 {% endif %}
-<section class="auth-card">
-  <h2>📸 Profile photo</h2>
-  <p class="muted">This photo shows in the top bar instead of your initial. Tap it anytime to come back here and change it.</p>
-  <div class="foto-perfil-wrap">
-    {% if foto_perfil %}
-    <img src="{{ foto_perfil }}" class="foto-perfil-big" alt="Profile photo">
+
+<div class="acct-tabs" id="acctTabs">
+  <button type="button" class="acct-tab" data-tab="overview">Overview</button>
+  <button type="button" class="acct-tab" data-tab="subscriptions">Subscriptions</button>
+  <button type="button" class="acct-tab" data-tab="preferences">Preferences</button>
+  <button type="button" class="acct-tab" data-tab="payments">Payments</button>
+  <button type="button" class="acct-tab" data-tab="profile">Profile</button>
+  <button type="button" class="acct-tab" data-tab="security">Security</button>
+</div>
+
+{# ============ OVERVIEW ============ #}
+<div class="acct-pane" id="pane-overview">
+  <div class="acct-card">
+    <p class="acct-k">YOUR PLAN</p>
+    {% if platinum %}<span class="acct-badge">PLATINUM</span>{% else %}<span class="acct-badge-gold">GOLD · FREE</span>{% endif %}
+    <p class="acct-k" style="margin-top:18px;">WHAT YOU HAVE ACCESS TO</p>
+    {% if platinum %}
+    <p style="font-size:15px;color:#d1d5db;margin:4px 0;"><span style="color:#22c55e;">●</span>&nbsp; Platinum Plays — every official play, every day</p>
+    <p style="font-size:15px;color:#d1d5db;margin:4px 0;"><span style="color:#22c55e;">●</span>&nbsp; EV Board, Parlay Builder &amp; Brain</p>
+    <p style="font-size:15px;color:#d1d5db;margin:4px 0;"><span style="color:#22c55e;">●</span>&nbsp; Gold Plays &amp; full record</p>
     {% else %}
-    <div class="foto-perfil-big foto-placeholder">{{ inicial }}</div>
+    <p style="font-size:15px;color:#d1d5db;margin:4px 0;"><span style="color:#22c55e;">●</span>&nbsp; Gold Plays — free picks every day</p>
+    <p style="font-size:15px;color:#d1d5db;margin:4px 0;"><span style="color:#22c55e;">●</span>&nbsp; Full record &amp; Academy</p>
+    {% endif %}
+    {% if member_since %}<p class="acct-muted" style="margin-top:12px;">Member since {{ member_since }}</p>{% endif %}
+  </div>
+
+  <div class="acct-card">
+    <p class="acct-k">BILLING</p>
+    {% if past_due %}
+    <p style="font-size:15px;color:#e5e7eb;margin:0;"><span style="color:#f5b544;font-weight:800;">Your last payment didn't go through.</span><br>Your Platinum Weekly is past due and access is paused. Update your card to restore it right away.</p>
+    {% elif cancel_at %}
+    <p style="font-size:15px;color:#d1d5db;margin:0;">Your membership is cancelled. You keep full access until the end of your current billing period — you won't be charged again.</p>
+    {% elif platinum %}
+    <p style="font-size:15px;color:#d1d5db;margin:0;">You're paid up — your plan renews automatically each week.</p>
+    <p class="acct-muted" style="margin-top:8px;">Your access runs through the end of your current term.</p>
+    {% else %}
+    <p style="font-size:15px;color:#d1d5db;margin:0;">You're on the free plan. Unlock Platinum for $1 your first week, then $23/week.</p>
     {% endif %}
   </div>
-  <form method="post" action="{{ url_for('cuenta_foto') }}" enctype="multipart/form-data" class="foto-form">
-    <label class="foto-label">Choose a photo
-      <input type="file" name="foto" accept="image/*">
-    </label>
-    <button class="btn btn-primary btn-block" type="submit">Upload photo</button>
-  </form>
-  {% if foto_perfil %}
-  <form method="post" action="{{ url_for('cuenta_foto') }}">
-    <button type="submit" name="quitar" value="1" class="danger-link foto-remove">Remove photo</button>
-  </form>
-  {% endif %}
-</section>
 
-<section class="auth-card" id="telegram">
-  <h2>✈️ Telegram</h2>
-  {% if tg_linked %}
-  <p class="bankroll-current">Status: <b class="ok-text">Connected</b></p>
-  <p class="muted">Your Telegram is linked to your membership. If you cancel, you'll be removed from the private Platinum channel automatically.</p>
-  {% if platinum %}
-  <div style="margin-top:12px;display:grid;gap:12px;">
-    <div>
-      <p class="muted">🟡 <b>Public Card channel (free):</b> daily free picks, open to everyone.</p>
-      <a href="https://t.me/thesharpteam" target="_blank" class="btn btn-block" style="text-decoration:none;text-align:center;border:1px solid var(--gold);color:var(--gold);">Join Public Card →</a>
-    </div>
-  <div id="elite-join-wrap">
-    <p class="muted">⭐ <b>Platinum channel:</b> tap to get your personal invite link and join.</p>
-    <button id="elite-join-btn" class="btn btn-primary btn-block" type="button">Join Platinum →</button>
-    <p id="elite-join-msg" class="muted" style="display:none;margin-top:8px;"></p>
-  </div>
-  <script>
-  (function(){
-    var btn = document.getElementById('elite-join-btn');
-    var msg = document.getElementById('elite-join-msg');
-    if (!btn) return;
-    btn.addEventListener('click', function(){
-      btn.disabled = true;
-      btn.textContent = 'Getting your invite…';
-      fetch('{{ url_for("api_telegram_invite") }}')
-        .then(function(r){ return r.json(); })
-        .then(function(d){
-          if (d.ok && d.invite_link) {
-            window.open(d.invite_link, '_blank');
-            msg.style.display = 'block';
-            msg.textContent = 'Invite opened in Telegram.';
-            btn.disabled = false;
-            btn.textContent = 'Join Platinum →';
-          } else if (d.error === 'empty_pool') {
-            msg.style.display = 'block';
-            msg.textContent = 'Generating your invite, try again in a couple of minutes.';
-            btn.disabled = false;
-            btn.textContent = 'Join Platinum →';
-          } else {
-            msg.style.display = 'block';
-            msg.textContent = 'Something went wrong, try again.';
-            btn.disabled = false;
-            btn.textContent = 'Join Platinum →';
-          }
-        })
-        .catch(function(){
-          msg.style.display = 'block';
-          msg.textContent = 'Something went wrong, try again.';
-          btn.disabled = false;
-          btn.textContent = 'Join Platinum →';
-        });
-    });
-  })();
-  </script>
-  </div>
-  {% else %}
-  <div style="margin-top:12px;display:grid;gap:12px;">
-    <div>
-      <p class="muted">🟡 <b>Public Card channel (free):</b> daily free picks, open to everyone.</p>
-      <a href="https://t.me/thesharpteam" target="_blank" class="btn btn-block" style="text-decoration:none;text-align:center;border:1px solid var(--gold);color:var(--gold);">Join Public Card →</a>
-    </div>
-    <div>
-      <p class="muted">⭐ <b>Platinum channel:</b> unlock your Platinum membership to get your personal invite.</p>
-      <a href="{{ url_for('desbloquear_platinum') }}" class="btn btn-primary btn-block" style="text-decoration:none;text-align:center;">Unlock Platinum →</a>
-    </div>
-  </div>
-  {% endif %}
-  <form method="post" action="{{ url_for('cuenta_telegram_unlink') }}">
-    <button type="submit" class="danger-link foto-remove">Disconnect Telegram</button>
-  </form>
-  {% elif tg_link %}
-  <p class="bankroll-current">Status: <b class="cancel-text">Almost there</b></p>
-  <p class="muted">Tap the button, then press <b>START</b> in the bot to finish linking. The link expires in 24 hours.</p>
-  <a href="{{ tg_link }}" target="_blank" class="btn btn-primary btn-block" style="text-decoration:none;text-align:center;">Open @thesharpteam_bot →</a>
-  <form method="post" action="{{ url_for('cuenta_telegram_link') }}" style="margin-top:8px;">
-    <button type="submit" class="danger-link foto-remove">Generate a new link</button>
-  </form>
-  {% else %}
-  <p class="muted">Link your Telegram so we can manage your access to the private <b>Platinum</b> channel automatically.</p>
-  <form method="post" action="{{ url_for('cuenta_telegram_link') }}">
-    <button class="btn btn-primary btn-block" type="submit">Connect Telegram</button>
-  </form>
-  {% endif %}
-</section>
-
-<section class="auth-card">
-  <h2>💰 My bankroll</h2>
-  <p class="muted">The total you play with. 1 unit = 1% of your bankroll, and every
-  recommended size is based on that. It's saved to your account: still there
-  even if you log out and back in.</p>
-  {% if bankroll %}
-  <p class="bankroll-current">Current: <b>${{ '%.2f' % bankroll }}</b>
-    <span class="muted">(1u = ${{ '%.2f' % (bankroll / 100) }})</span></p>
-  {% else %}
-  <p class="bankroll-current muted">You haven't set it up yet.</p>
-  {% endif %}
-  <form method="post" action="{{ url_for('cuenta') }}">
-    <label>{{ 'Update' if bankroll else 'Set up' }} bankroll
-      <input type="text" name="bankroll" inputmode="decimal" autocomplete="off"
-             placeholder="E.g. 10000" value="{{ ('%.2f' % bankroll) if bankroll else '' }}">
-    </label>
-    <button class="btn btn-primary btn-block" type="submit">Save</button>
-  </form>
-  <h2 style="margin-top:26px;">📐 Bet sizing</h2>
-  <p class="muted">Two ways to size every play. Switch anytime.</p>
-  <form method="post" action="{{ url_for('stake_mode') }}" class="br-toggle">
-    <input type="hidden" name="next" value="cuenta">
-    <button type="submit" name="mode" value="units" class="br-pill{% if stake_mode == 'units' %} active{% endif %}">TST Units</button>
-    <button type="submit" name="mode" value="kelly" class="br-pill{% if stake_mode == 'kelly' %} active{% endif %}">Kelly $</button>
-  </form>
-  <p class="muted" style="margin-top:10px;font-size:.92rem;">TST Units: 1u = 1% of your bankroll · Kelly $: quarter Kelly on the model's edge.</p>
-  <p class="muted center"><a href="{{ url_for('home') }}">← Back to today</a></p>
-</section>
-
-<section class="auth-card">
-  <h2>👤 Membership</h2>
-  <p class="muted">The Sharp Team — $1 for your first week, then $23/week. Cancel anytime, no questions asked.</p>
-  {% if past_due %}
-  {# Estado past-due estilo WGT (pedido por Alex 2026-10-08) #}
-  <div id="past-due" style="border:1px solid #b45309;border-radius:14px;padding:16px;background:rgba(180,83,9,.12);margin:14px 0;scroll-margin-top:80px;">
-    <p style="margin:0;font-size:14px;line-height:1.6;color:#e5e7eb;"><span style="color:#22c55e;font-weight:800;">Your last payment didn't go through.</span><br>Your Platinum Weekly is past due and access is paused. Update your card to restore it right away.</p>
-  </div>
-  <div style="border:1px solid #2a3350;border-radius:14px;padding:18px;background:#101828;margin:0 0 12px;">
-    <p style="margin:0 0 10px;font-size:11px;font-weight:800;letter-spacing:2px;color:#8a94ad;">YOUR PLAN</p>
-    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
-      <span style="font-size:12px;font-weight:800;letter-spacing:1px;color:#7fb3ff;border:1px solid #2c4a7c;border-radius:999px;padding:4px 12px;">PLATINUM</span>
-      <span style="font-size:12px;font-weight:800;letter-spacing:1px;color:#f5b544;background:rgba(245,181,68,.15);border-radius:999px;padding:4px 12px;">Past Due</span>
-    </div>
-    <p style="margin:0;font-size:26px;font-weight:800;color:#ffffff;">${{ '%.2f' % (billing.plan_price if billing and billing.plan_price else 23) }}<span style="font-size:14px;font-weight:600;color:#8a94ad;">/week</span></p>
-    <p style="margin:10px 0 0;font-size:13px;color:#c3cadb;"><span style="color:#22c55e;">●</span> Platinum Membership — All Official Platinum Plays</p>
-    <div style="margin-top:12px;border-top:1px solid #232c47;padding-top:10px;display:flex;justify-content:space-between;font-size:13px;">
-      <span style="color:#8a94ad;">Next charge</span>
-      <span style="color:#ffffff;font-weight:700;">${{ '%.2f' % (billing.plan_price if billing and billing.plan_price else 23) }}</span>
-    </div>
-    {% if billing and billing.next_billing %}
-    <div style="border-top:1px solid #232c47;padding-top:10px;margin-top:10px;display:flex;justify-content:space-between;font-size:13px;">
-      <span style="color:#8a94ad;">Next billing date</span>
-      <span style="color:#ffffff;font-weight:700;">{{ billing.next_billing }}</span>
-    </div>
-    {% endif %}
-    {% if member_since %}
-    <div style="border-top:1px solid #232c47;padding-top:10px;margin-top:10px;display:flex;justify-content:space-between;font-size:13px;">
-      <span style="color:#8a94ad;">Member since</span>
-      <span style="color:#ffffff;font-weight:700;">{{ member_since }}</span>
-    </div>
+  <div class="acct-card">
+    <p class="acct-k">MANAGE MEMBERSHIP</p>
+    {% if past_due %}
+    <p class="acct-muted" style="margin:0 0 14px;">Update your card to restore your Platinum access right away.</p>
+    <a href="{{ (billing.pay_url if billing else None) or url_for('desbloquear_platinum') }}" class="acct-btn acct-btn-block">Update card &amp; restore access →</a>
+    {% elif cancel_at %}
+    <p class="acct-muted" style="margin:0 0 14px;">Changed your mind? Keep your membership and nothing changes.</p>
+    <form method="post" action="{{ url_for('cuenta_reactivar') }}">
+      <button class="acct-btn acct-btn-block" type="submit">Keep my membership</button>
+    </form>
+    {% elif platinum %}
+    <p class="acct-muted" style="margin:0 0 14px;">Need a break? You can cancel anytime — your access stays active until the end of your current term.</p>
+    <a href="{{ url_for('cuenta_cancelar') }}" style="border:1px solid #2a3648;border-radius:12px;padding:10px 18px;font-size:14px;color:#f87171;text-decoration:none;display:inline-block;">Cancel membership</a>
+    {% else %}
+    <p class="acct-muted" style="margin:0 0 14px;">Get every Platinum play, the EV Board, the Parlay Builder and Brain.</p>
+    <a href="{{ url_for('desbloquear_platinum') }}" class="acct-btn acct-btn-block">Unlock Platinum →</a>
     {% endif %}
   </div>
-  {% if billing and billing.card_last4 %}
-  <div style="border:1px solid #2a3350;border-radius:14px;padding:18px;background:#101828;margin:0 0 12px;">
-    <p style="margin:0 0 10px;font-size:11px;font-weight:800;letter-spacing:2px;color:#8a94ad;">PAYMENT METHOD</p>
+
+  <div class="acct-card">
+    <p class="acct-k">💰 MY BANKROLL</p>
+    <p class="acct-muted" style="margin:0 0 12px;">The total you play with. 1 unit = 1% of your bankroll, and every recommended size is based on that.</p>
+    {% if bankroll %}
+    <p style="font-size:15px;color:#d1d5db;margin:0 0 12px;">Current: <b style="color:#fff;">${{ '%.2f' % bankroll }}</b> <span class="acct-muted">(1u = ${{ '%.2f' % (bankroll / 100) }})</span></p>
+    {% else %}
+    <p class="acct-muted" style="margin:0 0 12px;">You haven't set it up yet.</p>
+    {% endif %}
+    <form method="post" action="{{ url_for('cuenta') }}">
+      <input type="text" name="bankroll" class="acct-input" inputmode="decimal" autocomplete="off" placeholder="E.g. 10000" value="{{ ('%.2f' % bankroll) if bankroll else '' }}">
+      <button class="acct-btn" type="submit">Save bankroll</button>
+    </form>
+    <p class="acct-k" style="margin-top:22px;">📐 BET SIZING</p>
+    <p class="acct-muted" style="margin:0 0 12px;">Two ways to size every play. Switch anytime. TST Units: 1u = 1% of your bankroll · Kelly $: quarter Kelly on the model's edge.</p>
+    <form method="post" action="{{ url_for('stake_mode') }}" class="br-toggle">
+      <input type="hidden" name="next" value="cuenta">
+      <button type="submit" name="mode" value="units" class="br-pill{% if stake_mode == 'units' %} active{% endif %}">TST Units</button>
+      <button type="submit" name="mode" value="kelly" class="br-pill{% if stake_mode == 'kelly' %} active{% endif %}">Kelly $</button>
+    </form>
+  </div>
+</div>
+
+{# ============ SUBSCRIPTIONS ============ #}
+<div class="acct-pane" id="pane-subscriptions">
+  <div class="acct-card">
+    <p class="acct-k">YOUR SUBSCRIPTIONS</p>
+    <p class="acct-muted" style="margin:0 0 14px;">Everything you're currently subscribed to. Recurring plans can be cancelled here.</p>
+    {% if sub_info %}
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;">
+      <div>
+        <div style="font-size:16px;font-weight:700;color:#fff;">The Sharp Team — Platinum Weekly</div>
+        <div style="font-size:13px;color:#8b93a7;margin-top:2px;">{% if sub_info.price %}${{ '%.2f' % sub_info.price }}/{{ sub_info.interval or 'week' }} · {% endif %}Status: {{ sub_info.status }}{% if sub_info.next_billing %} · Next billing {{ sub_info.next_billing }}{% endif %}</div>
+      </div>
+      {% if past_due %}<span class="acct-fail">Past Due</span>{% elif cancel_at or sub_info.cancel_at_period_end %}<span class="acct-fail">Cancels at term end</span>{% else %}<span class="acct-ok">Active</span>{% endif %}
+    </div>
+    {% elif platinum %}
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;">
+      <div>
+        <div style="font-size:16px;font-weight:700;color:#fff;">The Sharp Team — Platinum</div>
+        <div style="font-size:13px;color:#8b93a7;margin-top:2px;">Active access</div>
+      </div>
+      <span class="acct-ok">Active</span>
+    </div>
+    <p class="acct-muted" style="margin-top:12px;">This membership doesn't auto-renew, so there's nothing to cancel.</p>
+    {% else %}
+    <p style="font-size:15px;color:#d1d5db;margin:0;">No active subscription.</p>
+    <p class="acct-muted" style="margin-top:8px;">Unlock Platinum to get every official play plus the pro tools.</p>
+    <a href="{{ url_for('desbloquear_platinum') }}" class="acct-btn" style="margin-top:12px;">Unlock Platinum →</a>
+    {% endif %}
+  </div>
+  {% if past_due and billing and billing.card_last4 %}
+  <div class="acct-card">
+    <p class="acct-k">PAYMENT METHOD</p>
     <p style="margin:0;font-size:16px;font-weight:800;color:#ffffff;">{{ billing.card_brand }} •••• {{ billing.card_last4 }}</p>
     <div style="display:flex;justify-content:space-between;font-size:13px;margin-top:8px;">
       <span style="color:#8a94ad;">Expires</span>
       <span style="color:#ffffff;font-weight:700;">{{ billing.card_exp }}</span>
     </div>
-    <a href="{{ billing.pay_url or url_for('desbloquear_platinum') }}" class="btn btn-block" style="margin-top:14px;text-decoration:none;text-align:center;border:1px solid #3a4666;color:#e5e7eb;">Update card &amp; invoices</a>
+    <a href="{{ billing.pay_url or url_for('desbloquear_platinum') }}" class="acct-btn acct-btn-block" style="margin-top:14px;">Update card &amp; invoices</a>
   </div>
   {% endif %}
-  <div style="border:1px solid #2a3350;border-radius:14px;padding:18px;background:#101828;">
-    <p style="margin:0 0 6px;font-size:11px;font-weight:800;letter-spacing:2px;color:#8a94ad;">MANAGE MEMBERSHIP</p>
-    <p style="margin:0 0 14px;font-size:14px;line-height:1.6;color:#c3cadb;">Update your card to restore your Platinum access right away.</p>
-    <a href="{{ (billing.pay_url if billing else None) or url_for('desbloquear_platinum') }}" class="btn btn-primary btn-block" style="text-decoration:none;text-align:center;">Update card &amp; restore access →</a>
-    <a href="{{ url_for('home') }}" class="btn btn-block" style="margin-top:10px;text-decoration:none;text-align:center;border:1px solid #3a4666;color:#e5e7eb;">Go to dashboard</a>
-  </div>
-  {% elif cancel_at %}
-  <p class="bankroll-current">Status: <b class="cancel-text">Cancelled</b></p>
-  <p class="muted">You keep full access until the end of your current billing period. You won't be charged again.</p>
-  <form method="post" action="{{ url_for('cuenta_reactivar') }}">
-    <button class="btn btn-primary btn-block" type="submit">Keep my membership</button>
+</div>
+
+{# ============ PREFERENCES ============ #}
+<div class="acct-pane" id="pane-preferences">
+  <form method="post" action="{{ url_for('cuenta_preferencias') }}">
+    <div class="acct-card">
+      <p class="acct-k">BETTING PROFILE</p>
+      <p class="acct-muted" style="margin:0 0 14px;">Tell us your state and which sportsbooks you bet at. We use this to tailor your Line Shopping and Odds tools — so they surface the best available number at your books, in your state.</p>
+      <p class="acct-k">YOUR STATE</p>
+      <select name="bet_state" class="acct-input">
+        <option value="">Select your state…</option>
+        {% for s in bet_states_all %}<option value="{{ s }}"{% if u and u.bet_state == s %} selected{% endif %}>{{ s }}</option>{% endfor %}
+      </select>
+      <p class="acct-k">YOUR SPORTSBOOKS</p>
+      <div class="acct-grid2">
+        {% for b in bet_books_all %}
+        <label class="acct-check"><input type="checkbox" name="bet_books" value="{{ b }}"{% if b in bet_books_saved %} checked{% endif %}> {{ b }}</label>
+        {% endfor %}
+      </div>
+      <p class="acct-k" style="margin-top:6px;">🔔 NOTIFICATIONS</p>
+      <div style="display:grid;gap:10px;margin-bottom:6px;">
+        <label class="acct-check"><input type="checkbox" name="notif_plays"{% if u and u.notif_plays %} checked{% endif %}> Plays posted</label>
+        <label class="acct-check"><input type="checkbox" name="notif_graded"{% if u and u.notif_graded %} checked{% endif %}> Results when plays are graded</label>
+        <label class="acct-check"><input type="checkbox" name="notif_reminder"{% if u and u.notif_reminder %} checked{% endif %}> Reminder before the game</label>
+      </div>
+    </div>
+    <div class="acct-card">
+      <p class="acct-k">📱 TEXT ALERTS</p>
+      <p class="acct-muted" style="margin:0 0 14px;">Get a text the moment today's plays are released — your cue to log in and view them on the site. We never send picks or odds by text. Msg &amp; data rates may apply; reply STOP anytime to opt out.</p>
+      <p class="acct-k">MOBILE NUMBER</p>
+      <input type="tel" name="phone" class="acct-input" autocomplete="tel" placeholder="(555) 123-4567" value="{{ u.phone if u and u.phone else '' }}">
+      <label class="acct-check" style="margin-bottom:14px;"><input type="checkbox" name="sms_optin"{% if u and u.sms_optin %} checked{% endif %}> Text me to log in when plays are released</label>
+      <button class="acct-btn" type="submit">Save preferences</button>
+    </div>
   </form>
-  {% elif platinum %}
-  <p class="bankroll-current">Status: <b class="ok-text">Active</b></p>
-  <p class="muted"><a href="{{ url_for('cuenta_cancelar') }}" class="danger-link">Cancel my membership</a></p>
-  {% else %}
-  <p class="bankroll-current">Status: <b class="cancel-text">Inactive</b></p>
-  <p class="muted"><a href="{{ url_for('desbloquear_platinum') }}">Subscribe for $1 and unlock Platinum →</a></p>
-  {% endif %}
-</section>
+
+  <div class="acct-card" id="telegram">
+    <p class="acct-k">✈️ TELEGRAM</p>
+    {% if tg_linked %}
+    <p style="font-size:15px;color:#d1d5db;margin:0 0 8px;">Status: <b style="color:#4ade80;">Connected</b></p>
+    <p class="acct-muted" style="margin:0 0 12px;">Your Telegram is linked to your membership. If you cancel, you'll be removed from the private Platinum channel automatically.</p>
+    <div style="display:grid;gap:12px;">
+      <div>
+        <p class="acct-muted" style="margin:0 0 6px;">🟡 <b>Public Card channel (free):</b> daily free picks, open to everyone.</p>
+        <a href="https://t.me/thesharpteam" target="_blank" class="acct-btn acct-btn-block" style="background:none;border:1px solid #c9a227;color:#e3b93c;">Join Public Card →</a>
+      </div>
+      {% if platinum %}
+      <div id="elite-join-wrap">
+        <p class="acct-muted" style="margin:0 0 6px;">⭐ <b>Platinum channel:</b> tap to get your personal invite link and join.</p>
+        <button id="elite-join-btn" class="acct-btn acct-btn-block" type="button">Join Platinum →</button>
+        <p id="elite-join-msg" class="acct-muted" style="display:none;margin-top:8px;"></p>
+      </div>
+      <script>
+      (function(){
+        var btn = document.getElementById('elite-join-btn');
+        var msg = document.getElementById('elite-join-msg');
+        if (!btn) return;
+        btn.addEventListener('click', function(){
+          btn.disabled = true;
+          btn.textContent = 'Getting your invite…';
+          fetch('{{ url_for("api_telegram_invite") }}')
+            .then(function(r){ return r.json(); })
+            .then(function(d){
+              if (d.ok && d.invite_link) {
+                window.open(d.invite_link, '_blank');
+                msg.style.display = 'block';
+                msg.textContent = 'Invite opened in Telegram.';
+              } else if (d.error === 'empty_pool') {
+                msg.style.display = 'block';
+                msg.textContent = 'Generating your invite, try again in a couple of minutes.';
+              } else {
+                msg.style.display = 'block';
+                msg.textContent = 'Something went wrong, try again.';
+              }
+              btn.disabled = false;
+              btn.textContent = 'Join Platinum →';
+            })
+            .catch(function(){
+              msg.style.display = 'block';
+              msg.textContent = 'Something went wrong, try again.';
+              btn.disabled = false;
+              btn.textContent = 'Join Platinum →';
+            });
+        });
+      })();
+      </script>
+      {% else %}
+      <div>
+        <p class="acct-muted" style="margin:0 0 6px;">⭐ <b>Platinum channel:</b> unlock your Platinum membership to get your personal invite.</p>
+        <a href="{{ url_for('desbloquear_platinum') }}" class="acct-btn acct-btn-block">Unlock Platinum →</a>
+      </div>
+      {% endif %}
+    </div>
+    <form method="post" action="{{ url_for('cuenta_telegram_unlink') }}" style="margin-top:12px;">
+      <button type="submit" class="danger-link foto-remove">Disconnect Telegram</button>
+    </form>
+    {% elif tg_link %}
+    <p style="font-size:15px;color:#d1d5db;margin:0 0 8px;">Status: <b style="color:#f5b544;">Almost there</b></p>
+    <p class="acct-muted" style="margin:0 0 12px;">Tap the button, then press <b>START</b> in the bot to finish linking. The link expires in 24 hours.</p>
+    <a href="{{ tg_link }}" target="_blank" class="acct-btn acct-btn-block">Open @thesharpteam_bot →</a>
+    <form method="post" action="{{ url_for('cuenta_telegram_link') }}" style="margin-top:8px;">
+      <button type="submit" class="danger-link foto-remove">Generate a new link</button>
+    </form>
+    {% else %}
+    <p class="acct-muted" style="margin:0 0 12px;">Link your Telegram so we can manage your access to the private <b>Platinum</b> channel automatically.</p>
+    <form method="post" action="{{ url_for('cuenta_telegram_link') }}">
+      <button class="acct-btn acct-btn-block" type="submit">Connect Telegram</button>
+    </form>
+    {% endif %}
+  </div>
+</div>
+
+{# ============ PAYMENTS ============ #}
+<div class="acct-pane" id="pane-payments">
+  <div class="acct-card">
+    <p class="acct-k">PAYMENT HISTORY</p>
+    {% if payments %}
+      {% for p in payments %}
+      <div class="acct-row">
+        <div><div style="color:#fff;">{{ p.desc }}</div><div style="font-size:13px;color:#8b93a7;">{{ p.fecha }}</div></div>
+        <div style="text-align:right;"><div style="color:#fff;">${{ '%.2f' % p.amount }}</div>{% if p.status == 'Complete' %}<span class="acct-ok">Complete</span>{% elif p.status == 'Pending' %}<span class="acct-fail">Pending</span>{% else %}<span class="acct-fail">Failed</span>{% endif %}</div>
+      </div>
+      {% endfor %}
+    {% else %}
+    <p class="acct-muted" style="margin:0;">No payments yet. When you subscribe, your payment history will show up here.</p>
+    {% endif %}
+  </div>
+</div>
+
+{# ============ PROFILE ============ #}
+<div class="acct-pane" id="pane-profile">
+  <div class="acct-card">
+    <p class="acct-k">📸 PROFILE PHOTO</p>
+    <div class="foto-perfil-wrap">
+      {% if foto_perfil %}
+      <img src="{{ foto_perfil }}" class="foto-perfil-big" alt="Profile photo">
+      {% else %}
+      <div class="foto-perfil-big foto-placeholder">{{ inicial }}</div>
+      {% endif %}
+    </div>
+    <form method="post" action="{{ url_for('cuenta_foto') }}" enctype="multipart/form-data" class="foto-form">
+      <label class="foto-label">Choose a photo
+        <input type="file" name="foto" accept="image/*">
+      </label>
+      <button class="acct-btn acct-btn-block" type="submit">Upload photo</button>
+    </form>
+    {% if foto_perfil %}
+    <form method="post" action="{{ url_for('cuenta_foto') }}">
+      <button type="submit" name="quitar" value="1" class="danger-link foto-remove">Remove photo</button>
+    </form>
+    {% endif %}
+  </div>
+  <form method="post" action="{{ url_for('cuenta_perfil') }}">
+    <div class="acct-card">
+      <p class="acct-k">PROFILE</p>
+      <p class="acct-k">FULL NAME</p>
+      <input type="text" name="nombre" class="acct-input" autocomplete="name" value="{{ u.nombre if u else '' }}">
+      <p class="acct-k">EMAIL</p>
+      <input type="text" class="acct-input" value="{{ u.email if u else '' }}" readonly style="opacity:.6;">
+      <p class="acct-muted" style="margin:-6px 0 14px;">Your email is your login. To change it, contact support.</p>
+      <p style="font-size:16px;font-weight:700;color:#fff;margin:18px 0 12px;">Mailing address</p>
+      <p class="acct-k">ADDRESS</p>
+      <input type="text" name="addr_line1" class="acct-input" autocomplete="address-line1" value="{{ u.addr_line1 if u and u.addr_line1 else '' }}">
+      <p class="acct-k">ADDRESS LINE 2</p>
+      <input type="text" name="addr_line2" class="acct-input" autocomplete="address-line2" value="{{ u.addr_line2 if u and u.addr_line2 else '' }}">
+      <p class="acct-k">CITY</p>
+      <input type="text" name="addr_city" class="acct-input" autocomplete="address-level2" value="{{ u.addr_city if u and u.addr_city else '' }}">
+      <p class="acct-k">STATE / REGION</p>
+      <input type="text" name="addr_state" class="acct-input" autocomplete="address-level1" value="{{ u.addr_state if u and u.addr_state else '' }}">
+      <p class="acct-k">ZIP / POSTAL CODE</p>
+      <input type="text" name="addr_zip" class="acct-input" autocomplete="postal-code" value="{{ u.addr_zip if u and u.addr_zip else '' }}">
+      <p class="acct-k">COUNTRY</p>
+      <input type="text" name="addr_country" class="acct-input" autocomplete="country-name" value="{{ u.addr_country if u and u.addr_country else '' }}">
+      <button class="acct-btn" type="submit">Save profile</button>
+    </div>
+  </form>
+</div>
+
+{# ============ SECURITY ============ #}
+<div class="acct-pane" id="pane-security">
+  <form method="post" action="{{ url_for('cuenta_password') }}">
+    <div class="acct-card">
+      <p class="acct-k">PASSWORD</p>
+      <p class="acct-k">CURRENT PASSWORD</p>
+      <input type="password" name="current_password" class="acct-input" autocomplete="current-password">
+      <p class="acct-k">NEW PASSWORD</p>
+      <input type="password" name="new_password" class="acct-input" autocomplete="new-password">
+      <p class="acct-k">CONFIRM NEW PASSWORD</p>
+      <input type="password" name="confirm_password" class="acct-input" autocomplete="new-password">
+      <button class="acct-btn" type="submit">Update password</button>
+    </div>
+  </form>
+</div>
+
+<script>
+(function(){
+  var tabs = document.querySelectorAll('#acctTabs .acct-tab');
+  function show(id){
+    tabs.forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-tab') === id); });
+    document.querySelectorAll('.acct-pane').forEach(function(p){ p.classList.toggle('on', p.id === 'pane-' + id); });
+  }
+  tabs.forEach(function(b){ b.addEventListener('click', function(){ show(b.getAttribute('data-tab')); }); });
+  var want = new URLSearchParams(location.search).get('tab') || 'overview';
+  var valid = ['overview','subscriptions','preferences','payments','profile','security'];
+  show(valid.indexOf(want) >= 0 ? want : 'overview');
+})();
+</script>
 {% endblock %}

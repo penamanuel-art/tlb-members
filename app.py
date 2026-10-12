@@ -2522,6 +2522,12 @@ def migrate_db():
             pending.append("ALTER TABLE users ADD COLUMN sms_optin INTEGER NOT NULL DEFAULT 0")
         if "welcome_email_sent" not in cols:
             pending.append("ALTER TABLE users ADD COLUMN welcome_email_sent INTEGER NOT NULL DEFAULT 0")
+        # Página Account estilo WGT (2026-10-12, pedido por Alex): dirección
+        # postal del perfil + perfil de apuestas (estado y casas).
+        for _col in ["addr_line1", "addr_line2", "addr_city", "addr_state",
+                     "addr_zip", "addr_country", "bet_state", "bet_books"]:
+            if _col not in cols:
+                pending.append(f"ALTER TABLE users ADD COLUMN {_col} TEXT")
         for stmt in pending:
             conn.execute(stmt)
         if pending:
@@ -3214,6 +3220,82 @@ def _past_due_billing_info(user):
     return info
 
 
+def _stripe_subscription_info(user):
+    """Info de la suscripción activa para la pestaña Subscriptions de /cuenta
+    (2026-10-12, página Account estilo WGT pedida por Alex). Nunca rompe:
+    devuelve None si no hay cliente/suscripción o Stripe falla."""
+    if not stripe_configurado() or not user:
+        return None
+    try:
+        customer_id = (user["stripe_customer_id"] or "").strip()
+    except Exception:
+        customer_id = ""
+    if not customer_id:
+        return None
+    try:
+        import stripe
+        stripe.api_key = STRIPE_SECRET_KEY
+        subs = stripe.Subscription.list(customer=customer_id, limit=1)
+        if not subs or not subs.data:
+            return None
+        sub = subs.data[0]
+        info = {"status": sub.get("status") or "",
+                "price": None, "interval": "",
+                "next_billing": None, "cancel_at_period_end": bool(sub.get("cancel_at_period_end"))}
+        items = (sub.get("items") or {}).get("data") or []
+        if items:
+            price = items[0].get("price") or {}
+            if price.get("unit_amount") is not None:
+                info["price"] = price["unit_amount"] / 100.0
+            info["interval"] = ((price.get("recurring") or {}).get("interval") or "")
+        cpe = sub.get("current_period_end")
+        if cpe:
+            info["next_billing"] = datetime.fromtimestamp(
+                cpe, tz=timezone.utc).astimezone(TZ).strftime("%d %b %Y")
+        return info
+    except Exception:
+        return None
+
+
+def _stripe_payment_history(user, limit=20):
+    """Historial de pagos (facturas de Stripe) para la pestaña Payments de
+    /cuenta (2026-10-12). Devuelve lista de dicts; [] ante cualquier fallo."""
+    if not stripe_configurado() or not user:
+        return []
+    try:
+        customer_id = (user["stripe_customer_id"] or "").strip()
+    except Exception:
+        customer_id = ""
+    if not customer_id:
+        return []
+    try:
+        import stripe
+        stripe.api_key = STRIPE_SECRET_KEY
+        invs = stripe.Invoice.list(customer=customer_id, limit=limit)
+        out = []
+        for inv in (invs.data if invs else []):
+            st = inv.get("status") or ""
+            label = {"paid": "Complete", "open": "Pending"}.get(st, "Failed")
+            desc = ""
+            try:
+                lines = (inv.get("lines") or {}).get("data") or []
+                if lines:
+                    desc = lines[0].get("description") or ""
+            except Exception:
+                pass
+            if not desc:
+                desc = inv.get("description") or "The Sharp Team — Platinum Weekly"
+            created = inv.get("created")
+            fecha = (datetime.fromtimestamp(created, tz=timezone.utc)
+                     .astimezone(TZ).strftime("%Y-%m-%d") if created else "")
+            out.append({"desc": desc, "fecha": fecha,
+                        "amount": (inv.get("amount_paid") or inv.get("amount_due") or 0) / 100.0,
+                        "status": label})
+        return out
+    except Exception:
+        return []
+
+
 def _stripe_force_english(customer_id):
     """Fuerza inglés en las páginas de Stripe que ve el miembro (pedido por Alex
     2026-10-08: el portal de Stripe salía en español según el idioma del teléfono).
@@ -3252,6 +3334,27 @@ def cuenta():
     # Estado past-due (modelo WGT): datos de facturación desde Stripe.
     past_due = bool(user and user["stripe_past_due"])
     billing = _past_due_billing_info(user) if past_due else None
+    # Página Account con pestañas (2026-10-12, estilo WGT pedido por Alex):
+    # suscripción e historial desde Stripe + perfil de apuestas guardado.
+    sub_info = _stripe_subscription_info(user)
+    payments = _stripe_payment_history(user)
+    try:
+        bet_books_saved = json.loads(user["bet_books"] or "[]") if user else []
+    except Exception:
+        bet_books_saved = []
+    def _ctx():
+        return dict(
+            bankroll=user["bankroll"] if user else None,
+            cancel_at=user["cancel_requested_at"] if user else None,
+            platinum=platinum_unlocked_for(user),
+            stake_mode=user["stake_mode"] if user else "units",
+            tg_link=tg_link, tg_linked=tg_linked,
+            past_due=past_due, billing=billing,
+            member_since=member_since,
+            u=user, sub_info=sub_info, payments=payments,
+            bet_books_saved=bet_books_saved,
+            bet_books_all=BET_BOOKS, bet_states_all=BET_STATES,
+        )
     try:
         member_since = datetime.fromisoformat(
             user["created_at"]).strftime("%d %b %Y") if user and user["created_at"] else None
@@ -3267,25 +3370,105 @@ def cuenta():
             val = 0.0
         if val <= 0:
             flash("Enter a valid bankroll greater than zero.", "error")
-            return render_template("cuenta.html", bankroll=user["bankroll"] if user else None,
-                                   cancel_at=user["cancel_requested_at"] if user else None,
-                                   platinum=platinum_unlocked_for(user),
-                                   stake_mode=user["stake_mode"] if user else "units",
-                                   tg_link=tg_link, tg_linked=tg_linked,
-                                   past_due=past_due, billing=billing,
-                                   member_since=member_since), 400
+            return render_template("cuenta.html", **_ctx()), 400
+
+
         db.execute("UPDATE users SET bankroll = ? WHERE id = ?", (val, session["user_id"]))
         db.commit()
         flash(f"Bankroll saved: ${val:,.2f}.", "ok")
         return redirect(url_for("cuenta"))
-    return render_template("cuenta.html", bankroll=user["bankroll"] if user else None,
-                           cancel_at=user["cancel_requested_at"] if user else None,
-                           platinum=platinum_unlocked_for(user),
-                           stake_mode=user["stake_mode"] if user else "units",
-                           tg_link=tg_link, tg_linked=tg_linked,
-                           past_due=past_due, billing=billing,
-                           member_since=member_since)
+    return render_template("cuenta.html", **_ctx())
 
+
+# Libros del perfil de apuestas (pestaña Preferences, 2026-10-12).
+BET_BOOKS = ["DraftKings", "FanDuel", "BetMGM", "Caesars", "ESPN BET",
+             "Fanatics", "BetRivers", "Hard Rock Bet", "bet365", "Fliff",
+             "Novig", "ProphetX"]
+BET_STATES = ["Arizona", "Arkansas", "Colorado", "Connecticut", "Delaware",
+              "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky",
+              "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan",
+              "Mississippi", "Missouri", "Nevada", "New Hampshire",
+              "New Jersey", "New York", "North Carolina", "Ohio", "Oregon",
+              "Pennsylvania", "Rhode Island", "Tennessee", "Vermont",
+              "Virginia", "Washington DC", "West Virginia", "Wyoming", "Other"]
+
+
+@app.route("/cuenta/perfil", methods=["POST"])
+@login_required
+def cuenta_perfil():
+    """Guarda nombre y dirección postal (pestaña Profile, 2026-10-12)."""
+    db = get_db()
+    nombre = (request.form.get("nombre") or "").strip()[:120]
+    if not nombre:
+        flash("Your name can't be empty.", "error")
+        return redirect(url_for("cuenta"))
+    db.execute(
+        "UPDATE users SET nombre = ?, addr_line1 = ?, addr_line2 = ?,"
+        " addr_city = ?, addr_state = ?, addr_zip = ?, addr_country = ?"
+        " WHERE id = ?",
+        (nombre,
+         (request.form.get("addr_line1") or "").strip()[:200],
+         (request.form.get("addr_line2") or "").strip()[:100],
+         (request.form.get("addr_city") or "").strip()[:100],
+         (request.form.get("addr_state") or "").strip()[:100],
+         (request.form.get("addr_zip") or "").strip()[:20],
+         (request.form.get("addr_country") or "").strip()[:60],
+         session["user_id"]))
+    db.commit()
+    session["nombre"] = nombre
+    flash("Profile saved.", "ok")
+    return redirect(url_for("cuenta") + "?tab=profile")
+
+
+@app.route("/cuenta/preferencias", methods=["POST"])
+@login_required
+def cuenta_preferencias():
+    """Guarda perfil de apuestas, alertas por texto y notificaciones
+    (pestaña Preferences, 2026-10-12)."""
+    db = get_db()
+    bet_state = (request.form.get("bet_state") or "").strip()
+    if bet_state not in BET_STATES:
+        bet_state = ""
+    books = [b for b in request.form.getlist("bet_books") if b in BET_BOOKS]
+    phone = (request.form.get("phone") or "").strip()[:30]
+    sms = 1 if request.form.get("sms_optin") else 0
+    db.execute(
+        "UPDATE users SET bet_state = ?, bet_books = ?, phone = ?,"
+        " sms_optin = ?, notif_plays = ?, notif_graded = ?,"
+        " notif_reminder = ? WHERE id = ?",
+        (bet_state, json.dumps(books), phone, sms,
+         1 if request.form.get("notif_plays") else 0,
+         1 if request.form.get("notif_graded") else 0,
+         1 if request.form.get("notif_reminder") else 0,
+         session["user_id"]))
+    db.commit()
+    flash("Preferences saved.", "ok")
+    return redirect(url_for("cuenta") + "?tab=preferences")
+
+
+@app.route("/cuenta/password", methods=["POST"])
+@login_required
+def cuenta_password():
+    """Cambio de contraseña (pestaña Security, 2026-10-12)."""
+    db = get_db()
+    user = current_user()
+    actual = request.form.get("current_password") or ""
+    nueva = request.form.get("new_password") or ""
+    confirma = request.form.get("confirm_password") or ""
+    if not user or not check_password(actual, user["password_hash"]):
+        flash("Your current password doesn't match.", "error")
+        return redirect(url_for("cuenta") + "?tab=security")
+    if len(nueva) < 8:
+        flash("Your new password needs at least 8 characters.", "error")
+        return redirect(url_for("cuenta") + "?tab=security")
+    if nueva != confirma:
+        flash("The new passwords don't match.", "error")
+        return redirect(url_for("cuenta") + "?tab=security")
+    db.execute("UPDATE users SET password_hash = ? WHERE id = ?",
+               (hash_password(nueva), session["user_id"]))
+    db.commit()
+    flash("Password updated.", "ok")
+    return redirect(url_for("cuenta") + "?tab=security")
 
 @app.route("/cuenta/telegram-link", methods=["POST"])
 @login_required
