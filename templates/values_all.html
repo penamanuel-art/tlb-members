@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}All Value Plays — The Sharp Team{% endblock %}
+{% block content %}
+<div style="max-width:720px;margin:0 auto;color:#fff;padding:0 4px;">
+  <p style="font-size:11px;font-weight:800;letter-spacing:2px;color:#8f8fb0;margin:6px 0 4px;">VALUE TRACKER</p>
+  <h2 style="font-size:26px;font-weight:800;margin:0 0 4px;">All Value Plays</h2>
+  <p style="color:#9a9ab5;font-size:14px;margin:0 0 18px;">{{ total }} tracked · won and lost, every play on the record.</p>
+
+  {% if plays %}
+  {% for p in plays %}
+  <div style="background:#141a2b;border:1px solid #c9a227;border-radius:12px;padding:10px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;">
+    <span style="color:#fff;font-size:13px;font-weight:700;">{{ p.pick }} <span style="color:#9aa3b8;font-weight:400;">({{ p.cuota_str }})</span><br><span style="color:#9aa3b8;font-size:11px;font-weight:400;">{{ p.fecha }}</span></span>
+    <span style="white-space:nowrap;">
+{% if p.resultado == 'W' %}
+<span style="background:rgba(34,197,94,.15);color:#4ade80;font-size:10px;font-weight:800;padding:3px 8px;border-radius:999px;">WON</span>
+<span style="color:#4ade80;font-size:12px;font-weight:800;margin-left:6px;">{{ p.profit_str }}</span>
+{% elif p.resultado == 'L' %}
+<span style="background:rgba(248,113,113,.15);color:#f87171;font-size:10px;font-weight:800;padding:3px 8px;border-radius:999px;">LOSS</span>
+<span style="color:#f87171;font-size:12px;font-weight:800;margin-left:6px;">{{ p.profit_str }}</span>
+{% else %}
+<span style="background:rgba(139,146,167,.15);color:#8b93a7;font-size:10px;font-weight:800;padding:3px 8px;border-radius:999px;">PENDING</span>
+{% endif %}
+    </span>
+  </div>
+  {% endfor %}
+  {% else %}
+  <p style="text-align:center;color:#9a9ab5;padding:40px 20px;">No value plays tracked yet.</p>
+  {% endif %}
+
+  <p style="text-align:center;margin-top:16px;">
+    <a href="{{ url_for('values_page') }}" style="font-size:13px;font-weight:800;color:#d4af37;">← Back to Value Plays</a>
+  </p>
+</div>
+{% endblock %}

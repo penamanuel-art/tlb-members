@@ -5655,6 +5655,30 @@ def values_page():
                            current_bankroll_str=fmt_money(current_bankroll),
                            last4=last4)
 
+
+@app.route("/values/all")
+@login_required
+def values_all():
+    """Todas las jugadas VALUE registradas (2026-10-12, pedido por Alex: link 'View all')."""
+    db = get_db()
+    rows = db.execute(
+        "SELECT pick, cuota, fecha, resultado, stake_monto FROM tracked_plays "
+        "WHERE user_id = ? AND nivel = 'VALUE' ORDER BY fecha DESC, id DESC LIMIT 200",
+        (VALUE_SYSTEM_USER_ID,),
+    ).fetchall()
+    plays = []
+    for r in rows:
+        d = dict(r)
+        p = play_profit_dollars({"cuota": d["cuota"], "stake_monto": 100.0,
+                                 "resultado": d["resultado"]})
+        cuota = d["cuota"] or 0
+        cuota_str = f"+{cuota}" if cuota > 0 else str(cuota)
+        res = d["resultado"]
+        plays.append({"pick": d["pick"], "cuota_str": cuota_str, "fecha": d["fecha"],
+                      "resultado": res,
+                      "profit_str": fmt_money(p) if res in ("W", "L") else ""})
+    return render_template("values_all.html", plays=plays, total=len(plays))
+
 @app.route("/admin/chat-mensaje", methods=["POST"])
 @login_required
 def admin_chat_mensaje():
