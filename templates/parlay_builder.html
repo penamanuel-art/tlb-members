@@ -1,0 +1,264 @@
+{% extends "base.html" %}
+{% block title %}Parlay Builder — The Sharp Team{% endblock %}
+{% block content %}
+<style>
+.pb-wrap{max-width:640px;margin:0 auto;color:#fff}
+.pb-wrap .kicker{font-size:11px;font-weight:800;letter-spacing:2px;color:#8f8fb0;margin:6px 0 4px}
+.pb-wrap h2{font-size:26px;font-weight:800;margin:0 0 6px}
+.pb-wrap .muted{color:#9a9ab5;font-size:14px;margin:0 0 18px;line-height:1.5}
+.pb-sport{font-size:12px;font-weight:800;letter-spacing:2px;color:#d4af37;margin:20px 0 10px}
+.pb-game{background:#17171f;border:1px solid #26262f;border-radius:14px;padding:12px;margin:0 0 10px}
+.pb-game-meta{font-size:12px;color:#9a9ab5;margin-bottom:10px}
+.pb-teams{display:flex;gap:10px}
+.pb-team{flex:1;background:#0f0f16;border:1px solid #3a3a4a;color:#fff;border-radius:10px;padding:10px 8px;cursor:pointer;text-align:center;transition:border-color .15s,background .15s}
+.pb-team:active{transform:scale(.97)}
+.pb-team.added{border-color:#4ade80;background:rgba(74,222,128,.08)}
+.pb-team .nm{display:block;font-size:13px;font-weight:700;line-height:1.25;margin-bottom:4px}
+.pb-team .od{display:block;font-size:16px;font-weight:800;color:#d4af37}
+.pb-vs{align-self:center;font-size:12px;color:#9a9ab5;font-weight:700}
+/* slip */
+.pb-slip{background:#17171f;border:1px solid #d4af37;border-radius:16px;padding:16px;margin:22px 0 14px}
+.pb-slip.hidden{display:none}
+.pb-slip-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.pb-slip-title{font-weight:800;font-size:16px}
+.pb-clear{background:transparent;border:1px solid #3a3a4a;color:#9a9ab5;border-radius:10px;padding:6px 12px;font-size:13px;font-weight:700;cursor:pointer}
+.pb-leg{display:flex;align-items:center;gap:10px;background:#0f0f16;border:1px solid #26262f;border-radius:10px;padding:10px 12px;margin-bottom:8px}
+.pb-leg-info{flex:1}
+.pb-leg-team{font-size:14px;font-weight:700}
+.pb-leg-game{font-size:12px;color:#9a9ab5}
+.pb-leg-odds{font-size:15px;font-weight:800;color:#d4af37}
+.pb-rm{background:transparent;border:1px solid #3a3a4a;color:#f87171;border-radius:8px;padding:5px 10px;font-size:13px;font-weight:700;cursor:pointer}
+.pb-stake-row{display:flex;align-items:center;gap:10px;margin:12px 0}
+.pb-stake-row label{font-weight:800;font-size:15px}
+.pb-stake-row input{flex:1;background:#0f0f16;border:1px solid #3a3a4a;color:#fff;border-radius:10px;padding:12px;font-size:18px;font-weight:700;box-sizing:border-box}
+.pb-stake-row input:focus{outline:none;border-color:#d4af37}
+.pb-nums{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.pb-stat{background:#0f0f16;border:1px solid #26262f;border-radius:12px;padding:12px}
+.pb-stat .v{font-size:20px;font-weight:800;color:#4ade80}
+.pb-stat .l{font-size:12px;color:#9a9ab5;margin-top:2px}
+.pb-gen{width:100%;background:#d4af37;color:#17171f;font-weight:800;font-size:16px;border:none;border-radius:12px;padding:14px;cursor:pointer;margin-top:4px}
+.pb-gen:disabled{opacity:.35;cursor:default}
+.pb-gen:active:not(:disabled){transform:scale(.98)}
+.pb-err{color:#f87171;font-size:13px;font-weight:700;margin:0 0 10px}
+/* generated slip */
+.pb-ticket{background:linear-gradient(180deg,#1d1a12 0%,#141310 100%);border:2px solid #d4af37;border-radius:16px;padding:20px;margin:18px 0;box-shadow:0 0 16px rgba(212,175,55,.25)}
+.pb-ticket.hidden{display:none}
+.pb-ticket h3{margin:0 0 2px;font-size:20px;font-weight:800;text-align:center}
+.pb-ticket .tsub{text-align:center;color:#9a9ab5;font-size:12px;margin-bottom:14px}
+.pb-ticket-leg{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px dashed #3a3a4a;font-size:14px}
+.pb-ticket-leg:last-of-type{border-bottom:none}
+.pb-ticket-leg .t{font-weight:700}
+.pb-ticket-leg .o{font-weight:800;color:#d4af37;white-space:nowrap}
+.pb-ticket-total{display:flex;justify-content:space-between;margin-top:12px;padding-top:12px;border-top:1px solid #d4af37;font-weight:800;font-size:16px}
+.pb-ticket-total .pay{color:#4ade80}
+.pb-copy{width:100%;background:#1c1c28;border:1.5px solid #3a3a4a;color:#e8e8f2;font-weight:800;font-size:15px;border-radius:12px;padding:12px;cursor:pointer;margin-top:12px}
+.pb-copy:active{transform:scale(.98)}
+.pb-note{color:#9a9ab5;font-size:12px;text-align:center;line-height:1.6;margin:14px 0 0}
+.pb-empty{color:#9a9ab5;font-size:14px;text-align:center;padding:14px 0}
+.pb-stale{color:#fbbf24;font-size:12px;text-align:center;margin:0 0 12px}
+</style>
+
+<div class="pb-wrap">
+  <p class="kicker">PLATINUM TOOL</p>
+  <h2>Parlay Builder</h2>
+  <p class="muted">Tap a team to add it as a moneyline leg. Add 2 to 10 legs, set your stake, then generate your slip.</p>
+  {% if not games %}
+  <p class="pb-empty">No games available right now — check back soon.</p>
+  {% else %}
+  <p class="pb-stale">Odds refresh every few minutes and may differ at your book. Always confirm before placing.</p>
+  {% endif %}
+
+  <div id="games">
+  {% for sport, glist in games|groupby("sport") %}
+    <div class="pb-sport">{{ sport }}</div>
+    {% for g in glist %}
+    <div class="pb-game" data-game-id="{{ g.id }}">
+      <div class="pb-game-meta">{{ g.game }} · {{ g.kickoff }}</div>
+      <div class="pb-teams">
+        <button type="button" class="pb-team" data-game="{{ g.id }}" data-team="{{ g.away }}" data-odds="{{ g.away_odds }}" data-matchup="{{ g.game }}">
+          <span class="nm">{{ g.away }}</span><span class="od">{{ "%+d"|format(g.away_odds) }}</span>
+        </button>
+        <span class="pb-vs">vs</span>
+        <button type="button" class="pb-team" data-game="{{ g.id }}" data-team="{{ g.home }}" data-odds="{{ g.home_odds }}" data-matchup="{{ g.game }}">
+          <span class="nm">{{ g.home }}</span><span class="od">{{ "%+d"|format(g.home_odds) }}</span>
+        </button>
+      </div>
+    </div>
+    {% endfor %}
+  {% endfor %}
+  </div>
+
+  <div id="slip" class="pb-slip hidden">
+    <div class="pb-slip-head">
+      <span class="pb-slip-title">Your parlay <span id="legCount">(0)</span></span>
+      <button id="clearSlip" class="pb-clear" type="button">Clear</button>
+    </div>
+    <div id="legs"></div>
+    <div class="pb-stake-row">
+      <label for="stake">Stake</label>
+      <input id="stake" type="number" min="0" step="any" value="10" inputmode="decimal" aria-label="Stake in dollars">
+    </div>
+    <p id="err" class="pb-err" hidden></p>
+    <div class="pb-nums">
+      <div class="pb-stat"><div class="v" id="resOdds">—</div><div class="l">Combined odds</div></div>
+      <div class="pb-stat"><div class="v" id="resProb">—</div><div class="l">Implied probability</div></div>
+      <div class="pb-stat"><div class="v" id="resPayout">—</div><div class="l">Total payout</div></div>
+      <div class="pb-stat"><div class="v" id="resProfit">—</div><div class="l">Profit</div></div>
+    </div>
+    <button id="genBtn" class="pb-gen" type="button" disabled>Generate parlay slip</button>
+  </div>
+
+  <div id="ticket" class="pb-ticket hidden">
+    <h3>🎯 My Parlay</h3>
+    <p class="tsub">The Sharp Team · generated just now</p>
+    <div id="ticketLegs"></div>
+    <div class="pb-ticket-total"><span id="ticketMeta">—</span><span class="pay" id="ticketPay">—</span></div>
+    <button id="copyBtn" class="pb-copy" type="button">Copy slip</button>
+  </div>
+
+  <p class="pb-note">For education only. Parlays are high-variance — never risk more than your plan allows.<br>Play responsibly · 21+ · 1-800-GAMBLER</p>
+</div>
+
+<script>
+(function(){
+  var MAX_LEGS = 10, MIN_LEGS = 2;
+  var legs = []; // {game, team, odds, matchup}
+  var slipEl = document.getElementById('slip');
+  var legsEl = document.getElementById('legs');
+  var errEl = document.getElementById('err');
+  var stakeEl = document.getElementById('stake');
+  var genBtn = document.getElementById('genBtn');
+  var ticketEl = document.getElementById('ticket');
+
+  function fmtOdds(o){
+    o = Math.round(o);
+    return (o > 0 ? '+' : '') + o;
+  }
+  function toDecimal(odds){
+    odds = parseFloat(String(odds).trim().replace('+',''));
+    if(!isFinite(odds) || odds === 0 || (odds > -100 && odds < 100)) return NaN;
+    return odds > 0 ? 1 + odds/100 : 1 + 100/Math.abs(odds);
+  }
+  function toAmerican(dec){
+    if(!isFinite(dec) || dec <= 1) return NaN;
+    return dec >= 2 ? Math.round((dec - 1) * 100) : Math.round(-100 / (dec - 1));
+  }
+  function money(v){
+    return '$' + Number(v).toFixed(2);
+  }
+  function showErr(msg){
+    errEl.textContent = msg;
+    errEl.hidden = !msg;
+  }
+  function markAdded(){
+    document.querySelectorAll('.pb-team').forEach(function(b){
+      var inSlip = legs.some(function(l){ return l.game === b.dataset.game && l.team === b.dataset.team; });
+      b.classList.toggle('added', inSlip);
+    });
+  }
+  function render(){
+    legsEl.innerHTML = '';
+    legs.forEach(function(l, i){
+      var row = document.createElement('div');
+      row.className = 'pb-leg';
+      row.innerHTML =
+        '<div class="pb-leg-info"><div class="pb-leg-team"></div><div class="pb-leg-game"></div></div>' +
+        '<div class="pb-leg-odds">' + fmtOdds(l.odds) + '</div>' +
+        '<button type="button" class="pb-rm" data-i="' + i + '">✕</button>';
+      row.querySelector('.pb-leg-team').textContent = l.team + ' ML';
+      row.querySelector('.pb-leg-game').textContent = l.matchup;
+      legsEl.appendChild(row);
+    });
+    legsEl.querySelectorAll('.pb-rm').forEach(function(b){
+      b.addEventListener('click', function(){ legs.splice(parseInt(b.dataset.i,10), 1); render(); });
+    });
+    document.getElementById('legCount').textContent = '(' + legs.length + ')';
+    slipEl.classList.toggle('hidden', legs.length === 0);
+    markAdded();
+    calc();
+  }
+  function calc(){
+    showErr('');
+    var decs = [], ok = true;
+    legs.forEach(function(l){
+      var d = toDecimal(l.odds);
+      if(!isFinite(d)){ ok = false; } else { decs.push(d); }
+    });
+    if(!ok || legs.length === 0){
+      setNums('—','—','—','—');
+      genBtn.disabled = true;
+      return;
+    }
+    var comb = decs.reduce(function(a,b){ return a*b; }, 1);
+    var am = toAmerican(comb);
+    var stake = parseFloat(stakeEl.value);
+    var payout = isFinite(stake) && stake > 0 ? stake * comb : NaN;
+    setNums(fmtOdds(am),
+            (100/comb).toFixed(1) + '%',
+            isFinite(payout) ? money(payout) : '—',
+            isFinite(payout) ? money(payout - stake) : '—');
+    genBtn.disabled = legs.length < MIN_LEGS;
+    if(legs.length >= 1 && legs.length < MIN_LEGS) showErr('Add at least ' + MIN_LEGS + ' legs to generate your slip.');
+  }
+  function setNums(o, p, pay, prof){
+    document.getElementById('resOdds').textContent = o;
+    document.getElementById('resProb').textContent = p;
+    document.getElementById('resPayout').textContent = pay;
+    document.getElementById('resProfit').textContent = prof;
+  }
+  document.querySelectorAll('.pb-team').forEach(function(b){
+    b.addEventListener('click', function(){
+      var game = b.dataset.game, team = b.dataset.team;
+      if(legs.some(function(l){ return l.game === game && l.team === team; })) return; // already added
+      if(legs.some(function(l){ return l.game === game; })){
+        showErr('One pick per game — remove the other side first.');
+        return;
+      }
+      if(legs.length >= MAX_LEGS){ showErr('Maximum ' + MAX_LEGS + ' legs.'); return; }
+      legs.push({ game: game, team: team, odds: parseFloat(b.dataset.odds), matchup: b.dataset.matchup });
+      ticketEl.classList.add('hidden');
+      render();
+    });
+  });
+  document.getElementById('clearSlip').addEventListener('click', function(){
+    legs = []; ticketEl.classList.add('hidden'); render();
+  });
+  stakeEl.addEventListener('input', calc);
+  genBtn.addEventListener('click', function(){
+    if(legs.length < MIN_LEGS) return;
+    var box = document.getElementById('ticketLegs');
+    box.innerHTML = '';
+    legs.forEach(function(l){
+      var row = document.createElement('div');
+      row.className = 'pb-ticket-leg';
+      var t = document.createElement('span'); t.className = 't'; t.textContent = l.team + ' ML';
+      var o = document.createElement('span'); o.className = 'o'; o.textContent = fmtOdds(l.odds);
+      row.appendChild(t); row.appendChild(o); box.appendChild(row);
+    });
+    document.getElementById('ticketMeta').textContent =
+      legs.length + '-leg parlay · ' + document.getElementById('resOdds').textContent;
+    document.getElementById('ticketPay').textContent =
+      'Stake ' + money(parseFloat(stakeEl.value) || 0) + ' → ' + document.getElementById('resPayout').textContent;
+    ticketEl.classList.remove('hidden');
+    ticketEl.scrollIntoView({behavior:'smooth', block:'center'});
+  });
+  document.getElementById('copyBtn').addEventListener('click', function(){
+    var lines = ['MY PARLAY — The Sharp Team'];
+    legs.forEach(function(l){ lines.push(l.team + ' ML (' + fmtOdds(l.odds) + ')'); });
+    lines.push(document.getElementById('ticketMeta').textContent);
+    lines.push(document.getElementById('ticketPay').textContent);
+    var txt = lines.join('\n');
+    function done(){ var b = document.getElementById('copyBtn'); b.textContent = 'Copied ✓'; setTimeout(function(){ b.textContent = 'Copy slip'; }, 1500); }
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(txt).then(done, done);
+    } else {
+      var ta = document.createElement('textarea');
+      ta.value = txt; document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); } catch(e){}
+      document.body.removeChild(ta); done();
+    }
+  });
+  render();
+})();
+</script>
+{% endblock %}

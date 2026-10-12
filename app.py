@@ -1728,6 +1728,43 @@ def load_sharp_board():
     return data
 
 
+# Parlay Builder (Platinum tool): moneyline odds per game, sourced from
+# sharp_board.json on the `data-board` branch — same feed as the /sharp page,
+# so the builder burns ZERO Odds API credits per page view.
+_parlay_games_cache = {"at": 0.0, "data": []}
+
+
+def load_parlay_games():
+    import time
+    now = time.time()
+    if now - _parlay_games_cache["at"] < 300 and _parlay_games_cache["data"]:
+        return _parlay_games_cache["data"]
+    games = []
+    try:
+        board = load_sharp_board()
+        for g in board.get("games", []):
+            line = g.get("line", {}) or {}
+            away = (line.get("away") or {}).get("now")
+            home = (line.get("home") or {}).get("now")
+            if away is None or home is None:
+                continue
+            games.append({
+                "id": g.get("id"),
+                "sport": g.get("sport") or "",
+                "game": g.get("game") or "",
+                "away": g.get("away") or "",
+                "home": g.get("home") or "",
+                "away_odds": int(round(away)),
+                "home_odds": int(round(home)),
+                "kickoff": g.get("kickoff_et") or "",
+            })
+    except Exception:
+        games = _parlay_games_cache["data"] or []
+    _parlay_games_cache["at"] = now
+    _parlay_games_cache["data"] = games
+    return games
+
+
 # Player Props board: el JSON vive en la rama `data-board`
 # (igual que el +EV Board: actualizar datos NO redespliega Render).
 PROPS_BOARD_URL = (
@@ -5962,6 +5999,20 @@ def sharp():
     db = get_db()
     record_checkin(db, session["user_id"])
     return render_template("sharp.html", board=load_sharp_board())
+
+
+@app.route("/parlay-builder")
+@login_required
+def parlay_builder():
+    """Parlay Builder — Platinum members only. Free members see the upsell."""
+    db = get_db()
+    record_checkin(db, session["user_id"])
+    if not platinum_unlocked_for(current_user()):
+        return render_template(
+            "parlay_builder_locked.html",
+            upsell_cta_url=url_for("desbloquear_platinum"),
+        )
+    return render_template("parlay_builder.html", games=load_parlay_games())
 
 
 @app.route("/props")
