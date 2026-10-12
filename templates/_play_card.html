@@ -180,11 +180,12 @@
             <div style="font-size:12px;color:#d1d5db;margin-top:2px;">{{ p.bettype }} &middot; <span style="color:#e3b93c;">{{ p.liga or '' }}</span> &middot; {{ p.game_time_et or p.hora or '' }}</div>
           </div>
         </div>
-        <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:10px;">
+        <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:6px;">
           <span style="font-size:30px;color:#4ade80;">{{ fmt_odds(p.cuota) }}</span>
           {% if p.writeup and p.writeup.fair_price %}<span style="font-size:12px;color:#d1d5db;">Fair <span style="color:#fff;">{{ p.writeup.fair_price }}</span></span>{% endif %}
           {% if p.writeup and p.writeup.edge %}<span style="font-size:12px;color:#d1d5db;">Edge <span style="color:#4ade80;">{{ p.writeup.edge }}</span></span>{% endif %}
         </div>
+        {% if p.casa %}<div style="margin-bottom:10px;"><span style="font-size:12px;color:#9aa3b8;">Best price at </span><span style="font-size:12px;font-weight:800;color:#e3b93c;">{{ p.casa }}</span></div>{% endif %}
         <div style="display:flex;gap:16px;margin-bottom:12px;font-size:12px;color:#d1d5db;">
           <span>Stake <span style="color:#fff;">{{ '$%.2f' % p.stake_monto }} ({{ '%g' % p.stake_unidades }}u)</span></span>
           {% if p.writeup and p.writeup.model_prob %}<span>Model <span style="color:#fff;">{{ p.writeup.model_prob }}</span></span>{% endif %}
