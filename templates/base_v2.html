@@ -344,5 +344,23 @@ function googleTranslateElementInit(){new google.translate.TranslateElement({pag
 })();
 </script>
 {% endif %}
+{% if request.path == '/home' %}
+<script>
+/* Auto-refresh al entrar al Dashboard (2026-10-13, pedido por Alex):
+   al entrar, la página se actualiza SOLA una vez a los 2 segundos para
+   mostrar siempre lo último (card en vivo, estados) sin darle a Refresh.
+   La marca en sessionStorage evita bucles en la recarga misma. */
+(function(){
+  try {
+    var KEY='tst_home_refreshed_at', now=Date.now();
+    var last=parseInt(sessionStorage.getItem(KEY)||'0',10);
+    if(now-last>15000){
+      sessionStorage.setItem(KEY,String(now));
+      window.addEventListener('load',function(){ setTimeout(function(){ location.reload(); },2000); });
+    }
+  } catch(e) {}
+})();
+</script>
+{% endif %}
 </body>
 </html>
