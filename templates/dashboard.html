@@ -5,13 +5,17 @@
    un solo tracker personal. Header con perfil, píldoras 7D/30D/3M/MTD/Todo
    que filtran por fecha y recalculan profit/ROI/récord/curva/filas en vivo. #}
 <style>
-  .wgt-head { display:flex; align-items:center; gap:14px; margin:6px 0 16px; }
+  .wgt-head { display:flex; align-items:flex-start; gap:14px; margin:6px 0 16px; }
   .wgt-avatar { width:52px; height:52px; border-radius:50%; background:linear-gradient(135deg,#d4af37,#8a6d1c);
     color:#111; font-weight:900; font-size:1.4rem; display:flex; align-items:center; justify-content:center; flex:none; }
-  .wgt-head .kicker { margin:0; }
-  .wgt-name { margin:2px 0 0; color:#fff; font-size:2rem; font-weight:800; }
-  .wgt-streak-pill { margin-left:auto; background:rgba(251,191,36,.12); border:1px solid rgba(251,191,36,.5);
-    color:#fbbf24; border-radius:999px; padding:6px 12px; font-weight:800; font-size:.85rem; white-space:nowrap; }
+  /* Encabezado organizado (2026-10-12, pedido por Alex): la etiqueta va en
+     UNA sola línea junto a la píldora de racha, sobre el título. */
+  .wgt-head-txt { flex:1; min-width:0; }
+  .wgt-head-top { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+  .wgt-head .kicker { margin:0; font-size:.64rem; letter-spacing:1.6px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .wgt-name { margin:4px 0 0; color:#fff; font-size:2rem; font-weight:800; line-height:1.12; }
+  .wgt-streak-pill { background:rgba(251,191,36,.12); border:1px solid rgba(251,191,36,.5);
+    color:#fbbf24; border-radius:999px; padding:5px 11px; font-weight:800; font-size:.8rem; white-space:nowrap; flex:none; }
   .wgt-pills { display:flex; gap:8px; margin:0 0 14px; overflow-x:auto; padding-bottom:2px; }
   .wgt-pill { border:1px solid var(--line); background:var(--card); color:var(--muted); border-radius:999px;
     padding:8px 16px; font-weight:800; font-size:.85rem; cursor:pointer; white-space:nowrap; }
@@ -84,20 +88,25 @@
 <div class="tracker-box" id="wgtTrackerTop">
 <section class="wgt-head">
   <div class="wgt-avatar">{{ (nombre or 'M')[:1]|upper }}</div>
-  <div>
+  <div class="wgt-head-txt">
+    <div class="wgt-head-top">
+      {% if es_admin %}
+      <p class="kicker">ALEX · OWNER · THE SHARP TEAM</p>
+      {% else %}
+      <p class="kicker">MY TRACKER · THE SHARP TEAM</p>
+      {% endif %}
+      {% if stats.streak and stats.streak != '—' %}
+      <span class="wgt-streak-pill">🔥 {{ stats.streak }}</span>
+      {% endif %}
+    </div>
     {% if es_admin %}
-    <p class="kicker">ALEX · OWNER · THESHARPTEAM</p>
     <h2 class="wgt-name">Alex Owner Results</h2>
     <p class="wgt-sub">Every official play, auto-graded from the final score.</p>
     {% else %}
-    <p class="kicker">MY TRACKER · THESHARPTEAM</p>
     <h2 class="wgt-name">Your tracker</h2>
     <p class="wgt-sub">Your records live here. Every time you make a play, make sure to hit <b>Track</b>.</p>
     {% endif %}
   </div>
-  {% if stats.streak and stats.streak != '—' %}
-  <span class="wgt-streak-pill">🔥 {{ stats.streak }}</span>
-  {% endif %}
 </section>
 
 <div class="wgt-pills" id="wgtPills">
