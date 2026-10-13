@@ -2,8 +2,10 @@
 {% block title %}Academy — The Sharp Team{% endblock %}
 {% block content %}
 <style>
-  .ac-intro { max-width: 560px; margin: 8vh auto 0; padding: 0 20px; text-align: center; }
-  .ac-card { background: linear-gradient(160deg,#141b2e,#0b101d); border: 1px solid rgba(212,175,55,.4); border-radius: 20px; padding: 36px 28px; box-shadow: 0 8px 40px rgba(0,0,0,.5); }
+  /* Sin cuadro (2026-10-12, orden de Alex): el texto va de lado a lado,
+     casi sin espacio en los bordes. */
+  .ac-intro { max-width: none; margin: 26px 0 0; padding: 0 8px; text-align: center; }
+  .ac-card { background: none; border: none; border-radius: 0; padding: 0; box-shadow: none; }
   .ac-logo { width: 84px; height: 84px; border-radius: 20px; margin-bottom: 18px; }
   .ac-card h1 { color: #fff; font-size: 1.6rem; font-weight: 800; margin: 0 0 6px; }
   .ac-kicker { color: #d4af37; font-weight: 700; font-size: .9rem; letter-spacing: 2px; margin: 0 0 20px; }
