@@ -1,26 +1,80 @@
 {% extends "base.html" %}
 {% block title %}Results — The Sharp Team{% endblock %}
 {% block content %}
-<section class="tracker-head">
-  <div>
-    <p class="kicker">PROGRAM RESULTS</p>
-    <h2>The documented record:<br>every pick, win or loss.</h2>
-  </div>
-</section>
-
-<div class="verify-strip">
-  <span class="verify-check">✓</span>
-  <p><b>Every play posted before the game. Graded against the final score.</b><br>
-  <span class="muted">Wins and losses — nothing hidden, nothing edited after the fact.</span></p>
-</div>
+<style>
+/* Tracker de miembros — diseño ejecutivo moderno (2026-10-12, aprobado por
+   Alex con prueba en el chat). Misma lógica y datos de siempre; solo la piel. */
+.mt-wrap { max-width: 680px; margin: 0 auto; padding: 24px 16px 36px; border-radius: 26px;
+  background: radial-gradient(600px 300px at 85% -4%, rgba(212,175,55,.13), transparent 60%),
+              radial-gradient(500px 320px at -10% 30%, rgba(16,120,90,.10), transparent 60%), #05080a;
+  color: #eef2f0; font-family: -apple-system, 'SF Pro Display', Inter, system-ui, sans-serif; }
+.mt-brand { display: flex; align-items: center; gap: 10px; justify-content: center; }
+.mt-brand img { width: 34px; height: 34px; border-radius: 50%; }
+.mt-brand span { letter-spacing: 4px; font-size: .72rem; font-weight: 700; color: #d8c690; }
+.mt-kicker { text-align: center; margin-top: 18px; font-size: .62rem; letter-spacing: 3.5px; color: #8fa39b; font-weight: 700; }
+.mt-h1 { text-align: center; font-size: 1.9rem; font-weight: 800; letter-spacing: -.5px; line-height: 1.14; margin-top: 8px; color: #fff; }
+.mt-h1 em { font-style: normal; background: linear-gradient(92deg, #f3d27a, #c9a227); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.mt-verify { display: flex; gap: 9px; align-items: center; justify-content: center; margin: 14px auto 0; background: rgba(255,255,255,.045); border: 1px solid rgba(255,255,255,.09); border-radius: 999px; padding: 8px 14px; width: fit-content; max-width: 100%; font-size: .7rem; color: #b9c8c2; text-align: center; }
+.mt-verify b { color: #2fe6a7; }
+.mt-hero { margin-top: 20px; background: linear-gradient(165deg, rgba(24,28,26,.92), rgba(10,13,12,.94)); border: 1px solid rgba(212,175,55,.35); border-radius: 26px; padding: 24px 18px 20px; box-shadow: 0 24px 50px rgba(0,0,0,.5); }
+.mt-hero .lbl { font-size: .62rem; letter-spacing: 3px; color: #97a89f; font-weight: 700; text-align: center; }
+.mt-profit { text-align: center; font-size: 3.3rem; font-weight: 800; letter-spacing: -1.5px; line-height: 1.05; color: #fff; }
+.mt-profit .gold { background: linear-gradient(92deg, #f3d27a, #c9a227); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.mt-herosub { text-align: center; color: #aebdb5; font-size: .86rem; margin-top: 6px; }
+.mt-herosub b { color: #fff; }
+.mt-ringrow { display: flex; align-items: center; gap: 16px; margin-top: 20px; background: rgba(255,255,255,.035); border: 1px solid rgba(255,255,255,.07); border-radius: 18px; padding: 14px 16px; }
+.mt-ring { position: relative; width: 74px; height: 74px; flex-shrink: 0; }
+.mt-ring svg { transform: rotate(-90deg); display: block; }
+.mt-ring .rv { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: .9rem; color: #fff; }
+.mt-ringstats { flex: 1; }
+.mt-ringstats .rs { display: flex; justify-content: space-between; font-size: .8rem; color: #aebdb5; padding: 2.5px 0; }
+.mt-ringstats .rs b { color: #fff; }
+.mt-bar { height: 8px; background: rgba(255,255,255,.08); border-radius: 99px; margin-top: 18px; overflow: hidden; }
+.mt-bar > div { height: 100%; background: linear-gradient(90deg, #c9a227, #f3d27a); border-radius: 99px; }
+.mt-barlbl { display: flex; justify-content: space-between; font-size: .68rem; color: #8fa39b; margin-top: 7px; letter-spacing: .4px; }
+.mt-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 9px; margin-top: 14px; }
+.mt-stat { background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08); border-radius: 18px; padding: 13px 6px; text-align: center; }
+.mt-stat .n { font-size: 1rem; font-weight: 800; color: #fff; }
+.mt-stat .l { font-size: .54rem; letter-spacing: 1.5px; color: #8fa39b; font-weight: 700; margin-top: 4px; }
+.mt-h2 { font-size: .95rem; font-weight: 800; letter-spacing: .2px; margin: 24px 2px 11px; display: flex; align-items: center; gap: 8px; color: #fff; }
+.mt-h2::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, rgba(255,255,255,.16), transparent); }
+.mt-h2 .cnt { font-size: .7rem; color: #8fa39b; font-weight: 600; }
+.mt-lvlcards { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.mt-lvlcard { border-radius: 20px; padding: 16px 14px; border: 1px solid rgba(255,255,255,.09); background: linear-gradient(160deg, rgba(255,255,255,.055), rgba(255,255,255,.02)); }
+.mt-lvlcard.plat { border-color: rgba(212,175,55,.45); background: linear-gradient(160deg, rgba(212,175,55,.13), rgba(212,175,55,.03)); }
+.mt-lvlcard .lt { font-size: .64rem; letter-spacing: 2px; font-weight: 800; color: #e8cf7f; }
+.mt-lvlcard.goldc .lt { color: #c8d4ce; }
+.mt-lvlcard .lr { font-size: 1.45rem; font-weight: 800; margin-top: 7px; color: #fff; }
+.mt-lvlcard .lm { font-size: .72rem; color: #aebdb5; margin-top: 3px; line-height: 1.55; }
+.mt-lvlcard .lm b.pos { color: #2fe6a7; } .mt-lvlcard .lm b.neg { color: #ff7b7b; }
+.mt-card { background: rgba(255,255,255,.035); border: 1px solid rgba(255,255,255,.08); border-radius: 20px; padding: 4px 14px; }
+.mt-row { display: flex; align-items: center; gap: 11px; width: 100%; padding: 11px 0; border: none; border-bottom: 1px solid rgba(255,255,255,.06); background: none; cursor: pointer; text-align: left; font-family: inherit; }
+.mt-row:last-child { border-bottom: none; }
+.mt-thumb { width: 40px; height: 50px; object-fit: cover; border-radius: 8px; border: 1px solid rgba(255,255,255,.16); flex-shrink: 0; }
+.mt-thumbph { width: 40px; height: 50px; border-radius: 8px; border: 1px solid rgba(255,255,255,.12); flex-shrink: 0; background: linear-gradient(150deg, rgba(212,175,55,.25), rgba(255,255,255,.04)); }
+.mt-rmid { flex: 1; min-width: 0; }
+.mt-pick { font-size: .86rem; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+.mt-meta { font-size: .68rem; color: #8fa39b; margin-top: 2px; display: block; }
+.mt-meta .lvl { color: #e8cf7f; font-weight: 700; letter-spacing: .6px; }
+.mt-rend { text-align: right; flex-shrink: 0; }
+.mt-pill { display: inline-block; font-size: .58rem; font-weight: 800; letter-spacing: 1.2px; padding: 4px 9px; border-radius: 99px; }
+.mt-pill.won { background: rgba(47,230,167,.14); color: #2fe6a7; border: 1px solid rgba(47,230,167,.35); }
+.mt-pill.lost { background: rgba(255,93,93,.12); color: #ff7b7b; border: 1px solid rgba(255,93,93,.3); }
+.mt-pill.pend { background: rgba(243,210,122,.13); color: #f3d27a; border: 1px solid rgba(243,210,122,.35); }
+.mt-amt { font-size: .8rem; font-weight: 800; margin-top: 4px; display: block; }
+.mt-amt.pos { color: #2fe6a7; } .mt-amt.neg { color: #ff7b7b; }
+.mt-view { font-size: .66rem; color: #7dd8f0; margin-top: 3px; display: block; }
+.mt-foot { margin-top: 26px; text-align: center; font-size: .58rem; letter-spacing: 1.6px; color: #67776f; line-height: 1.9; padding: 0 10px; }
+.mt-none { color: #8fa39b; font-size: .85rem; padding: 8px 2px; }
+</style>
 
 {% set profit = res.get('profit_all_time') %}
 {% set roi = res.get('roi') %}
 {% set g = res.get('ganadas', 0) %}
 {% set p = res.get('perdidas', 0) %}
 
-{# Real numbers accumulated from the settled-play archive (no estimates) #}
-{% set ns = namespace(pw=0, pl=0, pp=0.0, pu=0.0, gw=0, gl=0, gp=0.0, gu=0.0, tu=0.0) %}
+{# Acumulados por nivel desde el archivo (misma lógica de siempre + risked y verificadas) #}
+{% set ns = namespace(pw=0, pl=0, pp=0.0, pu=0.0, pr=0.0, gw=0, gl=0, gp=0.0, gu=0.0, gr=0.0, tu=0.0, vc=0, tc=0) %}
 {% for d in dias %}
   {% for j in d.get('jugadas', []) or [] %}
     {% if j.get('resultado') in ('WON', 'LOST') and j.get('pick') and not j.get('bloqueada') %}
@@ -29,146 +83,91 @@
       {% set stake_m = j.stake_monto if j.stake_monto else 0 %}
       {% set uw = (prof / (stake_m / stake_u)) if stake_u and stake_m else 0 %}
       {% set ns.tu = ns.tu + uw %}
+      {% set ns.tc = ns.tc + 1 %}
+      {% if j.comprobante %}{% set ns.vc = ns.vc + 1 %}{% endif %}
       {% if (j.get('nivel') or '') in ('PLATINUM', 'ELITE') %}
         {% set ns.pw = ns.pw + (1 if j.resultado == 'WON' else 0) %}
         {% set ns.pl = ns.pl + (1 if j.resultado == 'LOST' else 0) %}
         {% set ns.pp = ns.pp + prof %}
         {% set ns.pu = ns.pu + uw %}
+        {% set ns.pr = ns.pr + stake_m %}
       {% else %}
         {% set ns.gw = ns.gw + (1 if j.resultado == 'WON' else 0) %}
         {% set ns.gl = ns.gl + (1 if j.resultado == 'LOST' else 0) %}
         {% set ns.gp = ns.gp + prof %}
         {% set ns.gu = ns.gu + uw %}
+        {% set ns.gr = ns.gr + stake_m %}
       {% endif %}
     {% endif %}
   {% endfor %}
 {% endfor %}
+{% set wr = res.get('win_rate') or 0 %}
+{% set proi = (ns.pp / ns.pr * 100) if ns.pr else 0 %}
+{% set groi = (ns.gp / ns.gr * 100) if ns.gr else 0 %}
+{% set pwr = (ns.pw / (ns.pw + ns.pl) * 100) if (ns.pw + ns.pl) else 0 %}
+{% set gwr = (ns.gw / (ns.gw + ns.gl) * 100) if (ns.gw + ns.gl) else 0 %}
+{% set vpct = (ns.vc / ns.tc * 100) if ns.tc else 0 %}
+{% set settled = g + p %}
+{% set prog_pct = [settled / 200 * 100, 100] | min %}
 
-<section class="stats-grid results-hero">
-  <div class="stat">
-    <span class="stat-label">TOTAL PROFIT</span>
-    <span class="stat-value {{ 'pos' if profit is not none and profit > 0 else ('neg' if profit is not none and profit < 0 else '') }}">{% if profit is not none %}{{ '+$%.2f' % profit }}{% else %}—{% endif %}</span>
-    <span class="stat-sub">actual system profit</span>
-  </div>
-  <div class="stat">
-    <span class="stat-label">RECORD</span>
-    <span class="stat-value">{{ g }}–{{ p }}</span>
-    <span class="stat-sub">settled plays</span>
-  </div>
-  <div class="stat">
-    <span class="stat-label">UNITS WON</span>
-    <span class="stat-value {{ 'pos' if ns.tu > 0 else ('neg' if ns.tu < 0 else '') }}">{{ fmt_units(ns.tu) }}</span>
-    <span class="stat-sub">net units</span>
-  </div>
-  <div class="stat">
-    <span class="stat-label">WIN RATE</span>
-    <span class="stat-value">{% if res.get('win_rate') is not none %}{{ '%.1f' % res.get('win_rate') }}%{% else %}—{% endif %}</span>
-    <span class="stat-sub">won / settled</span>
-  </div>
-</section>
-<p class="muted center">ROI {% if roi is not none %}{{ '%+.1f' % roi }}%{% else %}—{% endif %} on {{ fmt_money(res.get('total_arriesgado') or 0) }} risked{% if res.get('updated') %} · updated {{ res.get('updated') }}{% endif %}</p>
+<div class="mt-wrap">
+  <div class="mt-brand"><img src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team"><span>THE SHARP TEAM</span></div>
+  <div class="mt-kicker">OFFICIAL MEMBER TRACKER</div>
+  <h1 class="mt-h1">The documented<br>record, <em>elevated.</em></h1>
+  <div class="mt-verify"><span>🛡️</span><span>Every play <b>posted before game time</b> · graded vs the final score</span></div>
 
-<div class="section-head">
-  <h2 class="section-title">Breakdown by level</h2>
-</div>
-<section class="stats-grid">
-  <div class="stat">
-    <span class="badge badge-elite">★ PLATINUM</span>
-    <span class="stat-value">{{ ns.pw }}–{{ ns.pl }}</span>
-    <span class="stat-sub {{ 'pos' if ns.pp > 0 else ('neg' if ns.pp < 0 else '') }}">{{ fmt_money(ns.pp) }} · {{ fmt_units(ns.pu) }}</span>
-  </div>
-  <div class="stat">
-    <span class="badge badge-gold">● GOLD</span>
-    <span class="stat-value">{{ ns.gw }}–{{ ns.gl }}</span>
-    <span class="stat-sub {{ 'pos' if ns.gp > 0 else ('neg' if ns.gp < 0 else '') }}">{{ fmt_money(ns.gp) }} · {{ fmt_units(ns.gu) }}</span>
-  </div>
-</section>
-
-{% if pendientes %}
-<div class="section-head">
-  <div>
-    <h2 class="section-title">Pending plays</h2>
-    <p class="muted section-sub">Today's plays — not graded yet. Results post after the final score.</p>
-  </div>
-  <span class="muted">{{ pendientes|length }} pending</span>
-</div>
-<div class="ticket-grid">
-  {% for j in pendientes %}
-  <button type="button" class="ticket-card" data-ticket="rp-{{ loop.index }}" aria-label="View receipt for {{ j.pick }}">
-    <span class="ticket-img">
-      {% if j.comprobante %}
-      <img src="{{ url_for('static', filename=j.comprobante) }}" alt="Original receipt: {{ j.pick }}" loading="lazy">
-      {% else %}
-      <span class="ticket-fallback">
-        <span class="ticket-brand">THE SHARP TEAM</span>
-        <span class="ticket-fallback-pick">{{ j.pick }}</span>
-        <span class="ticket-fallback-odds">{{ fmt_odds(j.cuota) }} · {{ j.get('nivel', '') }}</span>
-        <span class="ticket-fallback-result pending">PENDING</span>
-      </span>
-      {% endif %}
-      <span class="ticket-pill pending">⏳ PENDING</span>
-    </span>
-    <span class="ticket-title">{{ j.pick }} <span class="muted">{{ fmt_odds(j.cuota) }}</span></span>
-    <span class="ticket-sub">{{ fecha_hoy }} · {{ j.get('nivel', '') }}</span>
-    {% if j.comprobante %}<span class="ticket-view-link">View ticket →</span>{% endif %}
-  </button>
-  <div class="modal" id="rp-{{ loop.index }}" hidden>
-    <div class="modal-card ticket-photo-card">
-      <button type="button" class="modal-close" data-close>✕</button>
-      {% if j.comprobante %}
-      <img class="ticket-photo" src="{{ url_for('static', filename=j.comprobante) }}" alt="Original receipt: {{ j.pick }}">
-      {% else %}
-      <p class="ticket-brand">THE SHARP TEAM</p>
-      <p class="ticket-pick">{{ j.pick }} {{ fmt_odds(j.cuota) }}</p>
-      <div class="ticket-rows">
-        <div><span>Date</span><b>{{ fecha_hoy }}</b></div>
-        <div><span>Level</span><b>{{ j.get('nivel', '') }}</b></div>
-        <div><span>Stake</span><b>{% if j.stake_monto is not none %}${{ '%.0f' % j.stake_monto }}{% else %}—{% endif %}</b></div>
-        <div><span>Result</span><b style="color:#fbbf24">PENDING</b></div>
+  <div class="mt-hero">
+    <div class="lbl">NET PROFIT · ALL TIME</div>
+    <div class="mt-profit">{% if profit is not none %}<span class="gold">{{ '+$%.0f' % profit if profit > 0 else ('−$%.0f' % (-profit) if profit < 0 else '$0') }}</span>{% else %}—{% endif %}</div>
+    <div class="mt-herosub"><b>{{ g }}–{{ p }}</b> record · ROI <b>{% if roi is not none %}{{ '%+.1f' % roi }}%{% else %}—{% endif %}</b> · {{ fmt_money(res.get('total_arriesgado') or 0) }} risked</div>
+    <div class="mt-ringrow">
+      <div class="mt-ring">
+        <svg width="74" height="74"><circle cx="37" cy="37" r="31" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="7"/><circle cx="37" cy="37" r="31" fill="none" stroke="#d4af37" stroke-width="7" stroke-linecap="round" stroke-dasharray="194.8" stroke-dashoffset="{{ '%.1f' % (194.8 * (1 - wr / 100)) }}"/></svg>
+        <div class="rv">{{ '%.1f' % wr }}%</div>
       </div>
-      <p class="ticket-note">Original receipt not uploaded for this play.</p>
-      {% endif %}
+      <div class="mt-ringstats">
+        <div class="rs"><span>Platinum</span><b>{{ ns.pw }}–{{ ns.pl }} · {{ fmt_money(ns.pp) }}</b></div>
+        <div class="rs"><span>Gold</span><b>{{ ns.gw }}–{{ ns.gl }} · {{ fmt_money(ns.gp) }}</b></div>
+        <div class="rs"><span>Ticket verified</span><b>{{ '%.0f' % vpct }}%</b></div>
+      </div>
+    </div>
+    <div class="mt-bar"><div style="width: {{ '%.1f' % prog_pct }}%;"></div></div>
+    <div class="mt-barlbl"><span>ROAD TO 200 PLAYS</span><span>{{ settled }} / 200</span></div>
+  </div>
+
+  <div class="mt-stats">
+    <div class="mt-stat"><div class="n">{{ fmt_money(ns.pp) }}</div><div class="l">PLATINUM NET</div></div>
+    <div class="mt-stat"><div class="n">{{ '%+.1f' % proi }}%</div><div class="l">PLATINUM ROI</div></div>
+    <div class="mt-stat"><div class="n">{{ '%+.1f' % groi }}%</div><div class="l">GOLD ROI</div></div>
+  </div>
+
+  <h2 class="mt-h2">Breakdown by level</h2>
+  <div class="mt-lvlcards">
+    <div class="mt-lvlcard plat">
+      <div class="lt">⭐ PLATINUM</div>
+      <div class="lr">{{ ns.pw }}–{{ ns.pl }}</div>
+      <div class="lm">Win rate {{ '%.1f' % pwr }}% · Net <b class="{{ 'pos' if ns.pp > 0 else ('neg' if ns.pp < 0 else '') }}">{{ fmt_money(ns.pp) }}</b><br>ROI {{ '%+.1f' % proi }}% · {{ fmt_units(ns.pu) }}</div>
+    </div>
+    <div class="mt-lvlcard goldc">
+      <div class="lt">⚪ GOLD</div>
+      <div class="lr">{{ ns.gw }}–{{ ns.gl }}</div>
+      <div class="lm">Win rate {{ '%.1f' % gwr }}% · Net <b class="{{ 'pos' if ns.gp > 0 else ('neg' if ns.gp < 0 else '') }}">{{ fmt_money(ns.gp) }}</b><br>ROI {{ '%+.1f' % groi }}% · {{ fmt_units(ns.gu) }}</div>
     </div>
   </div>
-  {% endfor %}
-</div>
-{% endif %}
 
-<div class="section-head">
-  <div>
-    <h2 class="section-title">Recent graded tickets</h2>
-    <p class="muted section-sub">Every play posted before the game — wins and losses. Tap a ticket to see the original receipt.</p>
-  </div>
-  <span class="muted">{{ g + p }} settled</span>
-</div>
-
-{% set ti = namespace(i=0) %}
-<div class="ticket-grid">
-{% for d in dias %}
-  {% for j in d.get('jugadas', []) or [] %}
-    {% if j.get('resultado') in ('WON', 'LOST') and j.get('pick') and not j.get('bloqueada') %}
-    {% set ti.i = ti.i + 1 %}
-    {% set won = j.resultado == 'WON' %}
-    {% set prof = j.profit if j.profit is not none else 0 %}
-    <button type="button" class="ticket-card" data-ticket="rt-{{ ti.i }}" aria-label="View receipt for {{ j.pick }}">
-      <span class="ticket-img">
-        {% if j.comprobante %}
-        <img src="{{ url_for('static', filename=j.comprobante) }}" alt="Original receipt: {{ j.pick }}" loading="lazy">
-        {% else %}
-        <span class="ticket-fallback">
-          <span class="ticket-brand">THE SHARP TEAM</span>
-          <span class="ticket-fallback-pick">{{ j.pick }}</span>
-          <span class="ticket-fallback-odds">{{ fmt_odds(j.cuota) }} · {{ j.get('nivel', '') }}</span>
-          <span class="ticket-fallback-result {{ 'win' if won else 'loss' }}">{{ '✓ WON' if won else '✕ LOST' }}</span>
-        </span>
-        {% endif %}
-        <span class="ticket-pill {{ 'win' if won else 'loss' }}">{{ '✓' if won else '✕' }} {{ fmt_money(prof) }}</span>
+  {% if pendientes %}
+  <h2 class="mt-h2">Pending plays <span class="cnt">{{ pendientes|length }} pending — results post after the final score</span></h2>
+  <div class="mt-card">
+    {% for j in pendientes %}
+    <button type="button" class="mt-row" data-ticket="rp-{{ loop.index }}" aria-label="View receipt for {{ j.pick }}">
+      {% if j.comprobante %}<img class="mt-thumb" src="{{ url_for('static', filename=j.comprobante) }}" alt="Original receipt: {{ j.pick }}" loading="lazy">{% else %}<span class="mt-thumbph"></span>{% endif %}
+      <span class="mt-rmid">
+        <span class="mt-pick">{{ j.pick }}</span>
+        <span class="mt-meta">{{ fecha_hoy }} · {{ fmt_odds(j.cuota) }} · <span class="lvl">{{ 'PLATINUM' if (j.get('nivel') or '') in ('ELITE','PLATINUM') else (j.get('nivel') or '') }}</span></span>
       </span>
-      <span class="ticket-title">{{ j.pick }} <span class="muted">{{ fmt_odds(j.cuota) }}</span></span>
-      <span class="ticket-sub">{{ d.get('titulo') or d.get('fecha', '') }} · {{ j.get('nivel', '') }}</span>
-      {% if j.comprobante %}<span class="ticket-view-link">View ticket →</span>{% endif %}
+      <span class="mt-rend"><span class="mt-pill pend">⏳ PENDING</span>{% if j.comprobante %}<span class="mt-view">View ticket →</span>{% endif %}</span>
     </button>
-    <div class="modal" id="rt-{{ ti.i }}" hidden>
+    <div class="modal" id="rp-{{ loop.index }}" hidden>
       <div class="modal-card ticket-photo-card">
         <button type="button" class="modal-close" data-close>✕</button>
         {% if j.comprobante %}
@@ -177,20 +176,62 @@
         <p class="ticket-brand">THE SHARP TEAM</p>
         <p class="ticket-pick">{{ j.pick }} {{ fmt_odds(j.cuota) }}</p>
         <div class="ticket-rows">
-          <div><span>Date</span><b>{{ d.get('titulo') or d.get('fecha', '') }}</b></div>
+          <div><span>Date</span><b>{{ fecha_hoy }}</b></div>
           <div><span>Level</span><b>{{ j.get('nivel', '') }}</b></div>
           <div><span>Stake</span><b>{% if j.stake_monto is not none %}${{ '%.0f' % j.stake_monto }}{% else %}—{% endif %}</b></div>
-          <div><span>Result</span><b class="{{ 'pos' if won else 'neg' }}">{{ 'WON' if won else 'LOST' }} · {{ fmt_money(prof) }}</b></div>
+          <div><span>Result</span><b style="color:#fbbf24">PENDING</b></div>
         </div>
         <p class="ticket-note">Original receipt not uploaded for this play.</p>
         {% endif %}
       </div>
     </div>
-    {% endif %}
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <h2 class="mt-h2">Recent graded tickets <span class="cnt">{{ settled }} settled</span></h2>
+  {% set ti = namespace(i=0) %}
+  <div class="mt-card">
+  {% for d in dias %}
+    {% for j in d.get('jugadas', []) or [] %}
+      {% if j.get('resultado') in ('WON', 'LOST') and j.get('pick') and not j.get('bloqueada') %}
+      {% set ti.i = ti.i + 1 %}
+      {% set won = j.resultado == 'WON' %}
+      {% set prof = j.profit if j.profit is not none else 0 %}
+      <button type="button" class="mt-row" data-ticket="rt-{{ ti.i }}" aria-label="View receipt for {{ j.pick }}">
+        {% if j.comprobante %}<img class="mt-thumb" src="{{ url_for('static', filename=j.comprobante) }}" alt="Original receipt: {{ j.pick }}" loading="lazy">{% else %}<span class="mt-thumbph"></span>{% endif %}
+        <span class="mt-rmid">
+          <span class="mt-pick">{{ j.pick }}</span>
+          <span class="mt-meta">{{ d.get('titulo') or d.get('fecha', '') }} · {{ fmt_odds(j.cuota) }} · <span class="lvl">{{ 'PLATINUM' if (j.get('nivel') or '') in ('ELITE','PLATINUM') else (j.get('nivel') or '') }}</span></span>
+        </span>
+        <span class="mt-rend"><span class="mt-pill {{ 'won' if won else 'lost' }}">{{ 'WON' if won else 'LOST' }}</span><span class="mt-amt {{ 'pos' if prof > 0 else ('neg' if prof < 0 else '') }}">{{ fmt_money(prof) }}</span></span>
+      </button>
+      <div class="modal" id="rt-{{ ti.i }}" hidden>
+        <div class="modal-card ticket-photo-card">
+          <button type="button" class="modal-close" data-close>✕</button>
+          {% if j.comprobante %}
+          <img class="ticket-photo" src="{{ url_for('static', filename=j.comprobante) }}" alt="Original receipt: {{ j.pick }}">
+          {% else %}
+          <p class="ticket-brand">THE SHARP TEAM</p>
+          <p class="ticket-pick">{{ j.pick }} {{ fmt_odds(j.cuota) }}</p>
+          <div class="ticket-rows">
+            <div><span>Date</span><b>{{ d.get('titulo') or d.get('fecha', '') }}</b></div>
+            <div><span>Level</span><b>{{ j.get('nivel', '') }}</b></div>
+            <div><span>Stake</span><b>{% if j.stake_monto is not none %}${{ '%.0f' % j.stake_monto }}{% else %}—{% endif %}</b></div>
+            <div><span>Result</span><b class="{{ 'pos' if won else 'neg' }}">{{ 'WON' if won else 'LOST' }} · {{ fmt_money(prof) }}</b></div>
+          </div>
+          <p class="ticket-note">Original receipt not uploaded for this play.</p>
+          {% endif %}
+        </div>
+      </div>
+      {% endif %}
+    {% endfor %}
   {% endfor %}
-{% endfor %}
+  </div>
+  {% if ti.i == 0 %}
+  <p class="mt-none">No settled plays yet — tickets appear here as soon as the first plays are graded.</p>
+  {% endif %}
+
+  <div class="mt-foot">EVERY PLAY IS POSTED BEFORE GAME TIME — THEN LOCKED<br>AND GRADED AGAINST THE FINAL SCORE.<br>WIN OR LOSS, EVERY PLAY STAYS ON THE RECORD.</div>
 </div>
-{% if ti.i == 0 %}
-<p class="muted">No settled plays yet — tickets appear here as soon as the first plays are graded.</p>
-{% endif %}
 {% endblock %}
