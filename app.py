@@ -4803,6 +4803,17 @@ def admin_ver_tracker(user_id):
                            tracked=tracked, stats=stats)
 
 
+@app.route("/official-tracker")
+@login_required
+def official_tracker():
+    """Tracker EJECUTIVO del programa para miembros (2026-10-12, pedido por
+    Alex): el sofisticado que será el oficial del programa — mismas stats
+    completas que la versión del Admin. El tracker clásico de miembros
+    (/resultados) queda igual. El link bajo la tarjeta de números del home
+    apunta aquí."""
+    return render_template("official_tracker.html", t=official_tracker_full())
+
+
 @app.route("/admin/tracker-oficial")
 @login_required
 def admin_tracker_oficial():

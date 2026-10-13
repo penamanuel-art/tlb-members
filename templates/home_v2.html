@@ -7,6 +7,12 @@
 .v2-bar span{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--v2-blue),var(--v2-green))}
 .v2-level-sub{font-size:12px;color:var(--v2-muted);margin-top:8px}
 .tst-admin-switch{display:inline-block;margin-bottom:10px;padding:8px 16px;background:#c9a227;color:#0b0e14;font-weight:800;font-size:13px;border-radius:999px;text-decoration:none;}
+/* Tarjeta de números del programa estilo WGT + link a resultados (2026-10-12, pedido por Alex) */
+.v2-progcard{margin:18px 0 4px;padding:20px 18px;border-radius:22px;text-align:left;background:linear-gradient(155deg,rgba(16,46,40,.72),rgba(8,16,20,.85));border:1px solid rgba(60,232,171,.22);box-shadow:0 14px 34px rgba(0,0,0,.35)}
+.v2-progcard-label{font-size:.62rem;letter-spacing:2.6px;font-weight:700;color:#8fa39b;margin:0}
+.v2-progcard-num{font-size:2.5rem;font-weight:800;letter-spacing:-1px;line-height:1.08;margin:6px 0 4px;color:#3ce8ab}
+.v2-progcard-num.neg{color:#ff7b7b}
+.v2-progcard-sub{font-size:.82rem;color:#aebdb5;margin:0}
 </style>
 
 {% if False %}
@@ -149,8 +155,13 @@
     </div>
   </div>
   </div>
-  <div style="text-align:center;margin:16px 0 4px;">
-    <a class="v2-link" href="{{ url_for('resultados') }}">View official program record →</a>
+  <div class="v2-progcard">
+    <p class="v2-progcard-label">THE SHARP TEAM PROFIT · ALL-TIME</p>
+    <p class="v2-progcard-num {{ 'neg' if res.profit_cls == 'neg' else '' }}">{{ res.profit_display }}</p>
+    <p class="v2-progcard-sub">{{ res.ganadas }}–{{ res.perdidas }} record · {{ res.win_rate }}% win rate · every play public, win or loss</p>
+  </div>
+  <div style="text-align:center;margin:12px 0 4px;">
+    <a class="v2-link" href="{{ url_for('official_tracker') }}">View full results →</a>
   </div>
 
   {% endif %}
