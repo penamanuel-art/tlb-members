@@ -5530,6 +5530,52 @@ def _tg_send_photo(chat_id, photo_path, caption=""):
         return False, "telegram foto falló: %s%s" % (e, extra)
 
 
+def _push_aviso_disparo_alex(n_jugadas):
+    """Aviso push INSTANTÁNEO solo para Alex cuando dispara jugadas en el
+    Admin (2026-10-13, pedido por Alex): al darle "Enviar" le llega al
+    teléfono la confirmación de recibido en el momento, sin esperar a que
+    la publicación termine minutos después. Nunca lanza excepción: un
+    fallo del push jamás bloquea el disparo."""
+    try:
+        if not (HAVE_WEBPUSH and VAPID_PRIVATE_KEY and VAPID_PUBLIC_KEY and webpush):
+            return
+        payload = json.dumps({
+            "title": "🚀 Disparo recibido",
+            "body": ("Recibí tu envío (%d jugada%s). Publicando en el Dashboard…"
+                     % (n_jugadas, "s" if n_jugadas != 1 else "")),
+            "url": "/admin",
+            "image": "",
+        })
+        db = get_db()
+        subs = db.execute(
+            "SELECT ps.id, ps.endpoint, ps.p256dh, ps.auth FROM push_subscriptions ps"
+            " JOIN users u ON u.id = ps.member_id WHERE u.notif_plays = 1"
+            " AND lower(u.email) = ?",
+            ("pena.manuel@myyahoo.com",),
+        ).fetchall()
+        for s in subs:
+            try:
+                webpush(
+                    subscription_info={
+                        "endpoint": s["endpoint"],
+                        "keys": {"p256dh": s["p256dh"], "auth": s["auth"]},
+                    },
+                    data=payload,
+                    vapid_private_key=VAPID_PRIVATE_KEY,
+                    vapid_claims={"sub": VAPID_CLAIM_EMAIL},
+                )
+            except WebPushException as ex:
+                code = getattr(getattr(ex, "response", None), "status_code", None)
+                if code in (404, 410):
+                    db.execute(
+                        "DELETE FROM push_subscriptions WHERE id = ?", (s["id"],))
+            except Exception:
+                pass
+        db.commit()
+    except Exception:
+        pass
+
+
 @app.route("/admin/aprobar-jugadas", methods=["POST"])
 @login_required
 def admin_aprobar_jugadas():
@@ -5581,6 +5627,7 @@ def admin_aprobar_jugadas():
             " VALUES (?, ?, 'pending', ?)",
             (_hoy, _jsonB.dumps(nuevas), _dtB.now(timezone.utc).isoformat()))
         db.commit()
+        _push_aviso_disparo_alex(len(nuevas))
     return render_template("admin_aprobar_confirm.html",
                            elegidas=elegidas,
                            n_clientes=0,
