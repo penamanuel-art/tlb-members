@@ -12,8 +12,47 @@
 <meta name="apple-mobile-web-app-title" content="The Sharp Team">
 <meta name="theme-color" content="#070c18">
 <script src="/static/js/push.js?v={{ asset_v }}"></script>
+{% if request.path == '/home' %}
+<script>
+/* Skeleton con ondas al entrar al Dashboard (2026-10-13, pedido por Alex,
+   estilo WGT): al entrar se ven los bloques con la onda de luz ~2s mientras
+   la página se refresca sola, y después aparece el contenido fresco.
+   Fase 1 (entrada): esqueleto + recarga a los 1.4s. Fase 2 (tras recargar):
+   esqueleto hasta que la página cargue y se desvanece. */
+(function(){try{
+  var P='tst_skel_phase', T='tst_skel_ts', now=Date.now();
+  var ph=sessionStorage.getItem(P), ts=parseInt(sessionStorage.getItem(T)||'0',10);
+  if(!ph || now-ts>20000){ ph='1'; sessionStorage.setItem(P,'1'); sessionStorage.setItem(T,String(now)); }
+  document.documentElement.classList.add('tst-skel');
+  document.documentElement.setAttribute('data-tst-phase', ph);
+}catch(e){}})();
+</script>
+<style>
+.tst-skel-overlay{display:none}
+html.tst-skel .tst-skel-overlay{display:block;position:fixed;left:0;right:0;top:58px;bottom:0;z-index:995;background:var(--v2-bg,#06060c);padding:14px 14px 110px;box-sizing:border-box;animation:tstSkelKill .4s ease 6s forwards}
+html.tst-skel-off .tst-skel-overlay{opacity:0;transition:opacity .35s ease;pointer-events:none}
+.tst-sk-block{position:relative;overflow:hidden;background:var(--v2-surface-2,rgba(255,255,255,.09));border-radius:18px;margin-bottom:14px}
+.tst-sk-block::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 20%,rgba(255,255,255,.09) 50%,transparent 80%);transform:translateX(-100%);animation:tstOnda 1.15s infinite}
+.tst-sk-hero{height:172px}
+.tst-sk-card{height:196px}
+.tst-sk-line{height:14px;width:46%;border-radius:8px}
+.tst-sk-line.short{width:30%}
+@keyframes tstOnda{to{transform:translateX(100%)}}
+@keyframes tstSkelKill{to{opacity:0;visibility:hidden}}
+</style>
+{% endif %}
 </head>
 <body class="v2{% if session.get('user_id') %} has-bottomnav{% endif %}{% if ticker_days %} has-ticker{% endif %}" style="--wm-img: url('{{ url_for('static', filename=watermark_img) }}')">
+{% if request.path == '/home' %}
+<div class="tst-skel-overlay" aria-hidden="true">
+  <div class="tst-sk-block tst-sk-hero"></div>
+  <div class="tst-sk-block tst-sk-line"></div>
+  <div class="tst-sk-block tst-sk-card"></div>
+  <div class="tst-sk-block tst-sk-card"></div>
+  <div class="tst-sk-block tst-sk-card"></div>
+  <div class="tst-sk-block tst-sk-line short"></div>
+</div>
+{% endif %}
 <header class="v2-topbar">
   <div class="v2-topbar-left">
     {% if session.get('user_id') %}
@@ -346,17 +385,29 @@ function googleTranslateElementInit(){new google.translate.TranslateElement({pag
 {% endif %}
 {% if request.path == '/home' %}
 <script>
-/* Auto-refresh al entrar al Dashboard (2026-10-13, pedido por Alex):
-   al entrar, la página se actualiza SOLA una vez a los 2 segundos para
-   mostrar siempre lo último (card en vivo, estados) sin darle a Refresh.
-   La marca en sessionStorage evita bucles en la recarga misma. */
+/* Controlador del esqueleto con ondas (ver script en el <head>):
+   fase 1 = recargar a los 1.4s; fase 2 = desvanecer al cargar. */
 (function(){
   try {
-    var KEY='tst_home_refreshed_at', now=Date.now();
-    var last=parseInt(sessionStorage.getItem(KEY)||'0',10);
-    if(now-last>15000){
-      sessionStorage.setItem(KEY,String(now));
-      window.addEventListener('load',function(){ setTimeout(function(){ location.reload(); },2000); });
+    var ph=document.documentElement.getAttribute('data-tst-phase');
+    if(ph==='1'){
+      setTimeout(function(){
+        try{ sessionStorage.setItem('tst_skel_phase','2'); sessionStorage.setItem('tst_skel_ts',String(Date.now())); }catch(e){}
+        location.reload();
+      }, 1400);
+    } else if(ph==='2'){
+      var done=false;
+      function hide(){
+        if(done) return; done=true;
+        document.documentElement.classList.add('tst-skel-off');
+        setTimeout(function(){
+          document.documentElement.classList.remove('tst-skel','tst-skel-off');
+          try{ sessionStorage.removeItem('tst_skel_phase'); sessionStorage.removeItem('tst_skel_ts'); }catch(e){}
+        }, 420);
+      }
+      window.addEventListener('load', function(){ setTimeout(hide, 350); });
+      setTimeout(hide, 3200);
+      window.addEventListener('pageshow', function(e){ if(e.persisted){ hide(); } });
     }
   } catch(e) {}
 })();
