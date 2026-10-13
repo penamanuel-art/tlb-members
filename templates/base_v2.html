@@ -30,7 +30,7 @@
 <style>
 .tst-skel-overlay{display:none}
 html.tst-skel .tst-skel-overlay{display:block;position:fixed;left:0;right:0;top:58px;bottom:0;z-index:995;background:var(--v2-bg,#06060c);padding:14px 14px 110px;box-sizing:border-box;animation:tstSkelKill .4s ease 6s forwards}
-html.tst-skel-off .tst-skel-overlay{opacity:0;transition:opacity .35s ease;pointer-events:none}
+html.tst-skel-off .tst-skel-overlay{opacity:0;transition:opacity .25s ease;pointer-events:none}
 .tst-sk-block{position:relative;overflow:hidden;background:var(--v2-surface-2,rgba(255,255,255,.09));border-radius:18px;margin-bottom:14px}
 .tst-sk-block::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 20%,rgba(255,255,255,.09) 50%,transparent 80%);transform:translateX(-100%);animation:tstOnda 1.15s infinite}
 .tst-sk-hero{height:172px}
@@ -392,9 +392,9 @@ function googleTranslateElementInit(){new google.translate.TranslateElement({pag
     var ph=document.documentElement.getAttribute('data-tst-phase');
     if(ph==='1'){
       setTimeout(function(){
-        try{ sessionStorage.setItem('tst_skel_phase','2'); sessionStorage.setItem('tst_skel_ts',String(Date.now())); }catch(e){}
+        try{ sessionStorage.setItem('tst_skel_phase','2'); }catch(e){}
         location.reload();
-      }, 1400);
+      }, 900);
     } else if(ph==='2'){
       var done=false;
       function hide(){
@@ -403,10 +403,19 @@ function googleTranslateElementInit(){new google.translate.TranslateElement({pag
         setTimeout(function(){
           document.documentElement.classList.remove('tst-skel','tst-skel-off');
           try{ sessionStorage.removeItem('tst_skel_phase'); sessionStorage.removeItem('tst_skel_ts'); }catch(e){}
-        }, 420);
+        }, 300);
       }
-      window.addEventListener('load', function(){ setTimeout(hide, 350); });
-      setTimeout(hide, 3200);
+      /* Total desde la entrada: ~2s como WGT ("uno, dos y abre") — se mide
+         contra el timestamp ORIGINAL de entrada, no desde esta recarga. */
+      var ts=0; try{ ts=parseInt(sessionStorage.getItem('tst_skel_ts')||'0',10); }catch(e){}
+      function alListo(){
+        var elapsed=ts? (Date.now()-ts) : 9999;
+        var wait=Math.max(0, 1900-elapsed);
+        setTimeout(hide, wait);
+      }
+      if(document.readyState!=='loading'){ alListo(); }
+      else { document.addEventListener('DOMContentLoaded', alListo); }
+      setTimeout(hide, 2600);
       window.addEventListener('pageshow', function(e){ if(e.persisted){ hide(); } });
     }
   } catch(e) {}
