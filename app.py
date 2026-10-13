@@ -164,6 +164,21 @@ if USE_PG and not HAVE_PSYCOPG:
 
 # Excepciones de integridad en ambos backends (ej. email duplicado).
 INTEGRITY_ERRORS = (sqlite3.IntegrityError,)
+
+
+def _edge_num(v):
+    """Edge como número para la BD (fix 2026-10-12): plays.json trae el edge
+    como texto ('+5.7%') y la columna edge de Postgres es DOUBLE PRECISION —
+    insertar el texto explotaba con HTTP 500 y NINGÚN miembro podía trackear
+    (en SQLite no fallaba por la afinidad de tipos). Devuelve float o None."""
+    if v is None:
+        return None
+    if isinstance(v, (int, float)):
+        return float(v)
+    try:
+        return float(str(v).replace("%", "").replace("+", "").strip())
+    except (TypeError, ValueError):
+        return None
 if HAVE_PSYCOPG:
     INTEGRITY_ERRORS = INTEGRITY_ERRORS + (pg_errors.UniqueViolation,)
 
@@ -3796,14 +3811,14 @@ def track_value():
             """INSERT INTO tracked_plays
                (user_id, play_id, fecha, nivel, pick, cuota, stake_unidades, stake_monto, edge, resultado, comprobante, created_at)
                VALUES (?, ?, ?, 'VALUE', ?, ?, ?, ?, ?, NULL, ?, ?) ON CONFLICT DO NOTHING""",
-            (uid, pid, datetime.now(TZ).strftime("%Y-%m-%d"), team, cuota, unidades, monto, edge, comprobante or None, now),
+            (uid, pid, datetime.now(TZ).strftime("%Y-%m-%d"), team, cuota, unidades, monto, _edge_num(edge), comprobante or None, now),
         )
     else:
         db.execute(
             """INSERT OR IGNORE INTO tracked_plays
                (user_id, play_id, fecha, nivel, pick, cuota, stake_unidades, stake_monto, edge, resultado, comprobante, created_at)
                VALUES (?, ?, ?, 'VALUE', ?, ?, ?, ?, ?, NULL, ?, ?)""",
-            (uid, pid, datetime.now(TZ).strftime("%Y-%m-%d"), team, cuota, unidades, monto, edge, comprobante or None, now),
+            (uid, pid, datetime.now(TZ).strftime("%Y-%m-%d"), team, cuota, unidades, monto, _edge_num(edge), comprobante or None, now),
         )
     db.commit()
     return redirect(url_for("tracker"))
@@ -4268,7 +4283,7 @@ def api_admin_autotrack():
                VALUES (?,?,?,?,?,?,?,?,?,?,?)""",
             (user_id, play_id, hoy, play.get("nivel"), play.get("pick"),
              play.get("cuota"), play.get("unidades", 1), play.get("stake", 50),
-             play.get("edge"), "PENDING", datetime.now().isoformat()))
+             _edge_num(play.get("edge")), "PENDING", datetime.now().isoformat()))
         db.commit()
         return jsonify({"ok": True, "tracked": play_id})
     except Exception as e:
@@ -4309,7 +4324,7 @@ def track(play_id):
                 play.get("nivel", ""), play.get("pick", ""), int(play.get("cuota", 0)),
                 float(play.get("stake_unidades", 0)),
                 float(stake_personalizado(play, _cu)),
-                play.get("edge"), now_iso(),
+                _edge_num(play.get("edge")), now_iso(),
             ),
         )
         db.commit()
@@ -4320,6 +4335,16 @@ def track(play_id):
         if _is_ajax:
             return jsonify({"ok": True, "already": True})
         flash("That play is already in your tracker.", "warn")
+    except Exception:
+        # Blindaje 2026-10-12: cualquier otro error de BD devuelve JSON al
+        # AJAX (antes un 500 HTML y el miembro solo veía el aviso genérico).
+        try:
+            db.rollback()
+        except Exception:
+            pass
+        if _is_ajax:
+            return jsonify({"ok": False, "error": "Could not track this play."}), 500
+        flash("Could not track this play.", "error")
     return back("home")
 
 
@@ -5159,7 +5184,7 @@ def admin_seed_tracker():
                         session["user_id"], play_id, fecha,
                         j.get("nivel", ""), j.get("pick", ""), int(j.get("cuota", 0)),
                         float(j.get("stake_unidades", 0)), float(j.get("stake_monto", 0)),
-                        j.get("edge"), "W" if j.get("resultado") == "WON" else "L",
+                        _edge_num(j.get("edge")), "W" if j.get("resultado") == "WON" else "L",
                         now_iso(),
                     ),
                 )
@@ -7300,7 +7325,7 @@ def track_value_auto():
            VALUES (?, ?, ?, 'VALUE', ?, ?, 1.0, 100.0, ?, NULL, ?, ?, ?)""",
         (VALUE_SYSTEM_USER_ID, play_id, data.get("fecha", ""),
          data.get("pick", ""), int(data.get("cuota", 0)),
-         data.get("edge"), data.get("game", ""), data.get("liga", ""), now)
+         _edge_num(data.get("edge")), data.get("game", ""), data.get("liga", ""), now)
     )
     db.commit()
     return Response(f"VALUE trackeada: {play_id}", mimetype="text/plain")
@@ -7534,7 +7559,7 @@ def api_auto_track_alex():
         int(data.get("cuota") or 0),
         float(data.get("stake_unidades") or 0),
         float(stake_monto or 0),
-        data.get("edge"),
+        _edge_num(data.get("edge")),
         resultado,
         data.get("comprobante"),
         now,
