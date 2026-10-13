@@ -1,0 +1,488 @@
+{% extends "base_v2.html" %}
+{% block title %}Today — The Sharp Team{% endblock %}
+{% block content %}
+<style>
+/* ===== Diseño LUX del home (2026-10-12, aprobado por Alex con muestra v2) =====
+   Negro premium + oro + cristal, tipografía grande, gráfica real del programa.
+   Reversible desde el botón del admin (site_settings home_lux). */
+.lux-glow{position:relative}
+.lux-adminbar{display:flex;justify-content:flex-end;margin:10px 0 0}
+.lux-adminbar button{padding:8px 14px;border-radius:999px;border:1px solid rgba(243,205,107,.55);background:rgba(212,160,23,.14);color:#ffe9a8;font-weight:700;font-size:12.5px;cursor:pointer}
+.lux-hero{position:relative;margin-top:14px;padding:22px 18px 18px;border-radius:24px;overflow:hidden;background:linear-gradient(160deg,#0a1120,#0d1830 55%,#0a1424);border:1px solid rgba(243,205,107,.30);box-shadow:0 16px 40px rgba(0,0,0,.45)}
+.lux-hero::before{content:"";position:absolute;inset:0;background:radial-gradient(420px 220px at 10% -8%,rgba(212,160,23,.32),transparent 62%),radial-gradient(420px 260px at 108% 30%,rgba(38,110,255,.22),transparent 60%),radial-gradient(340px 220px at 88% 112%,rgba(47,230,167,.18),transparent 62%);pointer-events:none}
+.lux-hero>*{position:relative}
+.lux-live{display:inline-flex;align-items:center;gap:6px;font-size:9.5px;font-weight:800;letter-spacing:1.6px;color:#2fe6a7;background:rgba(47,230,167,.10);border:1px solid rgba(47,230,167,.35);padding:5px 10px;border-radius:99px}
+.lux-live i{width:6px;height:6px;border-radius:50%;background:#2fe6a7;box-shadow:0 0 10px #2fe6a7}
+.lux-hlabel{font-size:10.5px;letter-spacing:3px;color:#f3cd6b;font-weight:800;margin-top:14px}
+.lux-units{font-size:64px;font-weight:800;letter-spacing:-2px;line-height:1.04;background:linear-gradient(92deg,#fdf3c4 0%,#f3cd6b 34%,#2fe6a7 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.lux-units.neg{background:linear-gradient(92deg,#ffd9d9,#ff7b7b);-webkit-background-clip:text;background-clip:text}
+.lux-hsub{font-size:13px;color:#b9c8da;margin-top:4px}
+.lux-hsub b{color:#2fe6a7}
+.lux-chart{margin-top:12px}
+.lux-pills{display:flex;gap:8px;margin-top:14px}
+.lux-pill{flex:1;background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.10);border-radius:14px;padding:10px 4px;text-align:center}
+.lux-pill b{display:block;font-size:15px;font-weight:800;color:#f2f5f9}
+.lux-pill span{display:block;font-size:8.5px;letter-spacing:1.6px;color:#93a5bd;margin-top:3px;font-weight:700}
+.lux-fulllink{display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding:13px 16px;border-radius:14px;background:linear-gradient(90deg,rgba(212,160,23,.22),rgba(212,160,23,.06));border:1px solid rgba(243,205,107,.45);color:#ffe9a8;font-size:13.5px;font-weight:700;text-decoration:none}
+.lux-chiprow{display:flex;gap:10px;margin-top:16px;overflow-x:auto;padding-bottom:8px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.lux-chip{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:12px 18px;border-radius:999px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);font-size:13px;font-weight:600;white-space:nowrap;color:#fff;text-decoration:none}
+/* Barra inferior con píldora dorada activa (solo en esta página) */
+body.v2 .v2-bottomnav{background:rgba(13,20,36,.78);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.12);border-radius:22px;box-shadow:0 14px 34px rgba(0,0,0,.5)}
+body.v2 .v2-bottomnav .v2-bnav-item.active{background:linear-gradient(180deg,#ffe9a8,#e9bc45);color:#1c1400;border-radius:15px;font-weight:800}
+</style>
+
+{% if es_admin or es_alex %}
+<div class="lux-adminbar">
+  <form method="post" action="{{ url_for('admin_diseno_home') }}">
+    <button type="submit">↩ Revert design</button>
+  </form>
+</div>
+{% endif %}
+
+<!-- SALUDO · compacto -->
+<section class="v2-hero v2-hero-wgt">
+  <p class="v2-hero-date"><span class="v2-live-dot"></span>{{ saludo }} · {{ fecha }}</p>
+  <h1 class="v2-hero-title">Welcome back, <span class="v2-hero-today">{{ nombre_corto }}</span>.</h1>
+  {% set phrases = ["Stay sharp.", "Discipline wins.", "Trust the numbers.", "Every play counts.", "Lock in.", "Patience pays.", "No hype, just edge.", "Bet smart, not hard.", "The edge is real.", "Winners stay disciplined.", "Small edges, big results.", "Process over profit.", "Sharp minds win.", "Data beats gut.", "Stay the course."] %}
+  <p class="v2-hero-phrase">{{ phrases[now_day_of_year % phrases|length] }}</p>
+  {% if card_pendiente %}
+  <p class="v2-hero-sub">Today&rsquo;s card hasn&rsquo;t dropped yet — check back soon. Every play public, win or loss.</p>
+  {% else %}
+  <p class="v2-hero-sub">{{ plays|length }} play{{ 's' if plays|length != 1 else '' }} on your card. Place each at your book, then tap + Track to check it off.</p>
+  {% endif %}
+  <div class="v2-hero-meta">
+    {% if streak %}
+    <span class="v2-streak {{ 'hot' if streak.tipo == 'W' else 'cold' }}">{% if streak.tipo == 'W' %}🔥 {% endif %}{{ streak.tipo }}{{ streak.n }}</span>
+    {% endif %}
+    {% if resumen_ayer %}
+    <span class="v2-yesterday">Yesterday <b>{{ resumen_ayer.w }}-{{ resumen_ayer.l }}</b> · <b class="{{ 'pos' if resumen_ayer.profit >= 0 else 'neg' }}">{{ '$%+.2f' % resumen_ayer.profit }}</b></span>
+    {% endif %}
+    {% if card_pendiente %}
+    <span class="v2-status pending"><span class="v2-dot"></span>CARD PENDING</span>
+    {% else %}
+    <span class="v2-status live"><span class="v2-dot"></span>CARD LIVE</span>
+    {% endif %}
+  </div>
+</section>
+
+<!-- HÉROE DEL PROGRAMA · diseño lux con la curva REAL del profit -->
+<div class="lux-hero">
+  <span class="lux-live"><i></i>VERIFIED RECORD</span>
+  <p class="lux-hlabel">THE SHARP TEAM · NET UNITS ALL-TIME</p>
+  <p class="lux-units {{ 'neg' if res.profit_cls == 'neg' else '' }}">{{ res.profit_units_display }}</p>
+  <p class="lux-hsub"><b>{{ res.profit_display }}</b> net profit · every play posted before game time, win or loss</p>
+  {% if pcurve %}
+  <div class="lux-chart">
+    <svg viewBox="0 0 {{ pcurve.w }} {{ pcurve.h }}" width="100%" height="86" preserveAspectRatio="none" aria-hidden="true">
+      <defs>
+        <linearGradient id="lux-stroke" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stop-color="#f3cd6b"/><stop offset="1" stop-color="#2fe6a7"/>
+        </linearGradient>
+        <linearGradient id="lux-fill" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#2fe6a7" stop-opacity=".30"/><stop offset="1" stop-color="#2fe6a7" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <path d="{{ pcurve.area }}" fill="url(#lux-fill)"/>
+      <path d="{{ pcurve.line }}" fill="none" stroke="url(#lux-stroke)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+  {% endif %}
+  <div class="lux-pills">
+    <div class="lux-pill"><b>{{ res.ganadas }}–{{ res.perdidas }}</b><span>RECORD</span></div>
+    <div class="lux-pill"><b>{{ res.win_rate }}%</b><span>WIN RATE</span></div>
+    <div class="lux-pill"><b>{{ '%+.1f' % res.roi }}%</b><span>ROI</span></div>
+    <div class="lux-pill"><b>{{ res.ganadas + res.perdidas }}/200</b><span>PLAYS</span></div>
+  </div>
+  <a class="lux-fulllink" href="{{ url_for('official_tracker') }}">View the full record <span>→</span></a>
+</div>
+
+<!-- TODAY'S PLAYS -->
+<section class="v2-sec" id="plays" style="scroll-margin-top:70px;">
+  <div class="v2-sec-head">
+    <div>
+      <h2 class="v2-sec-title">{% if card_pendiente %}Nothing posted yet{% else %}Today's plays{% endif %}</h2>
+      {% if card_pendiente %}
+      <p class="v2-sec-sub">Today's card drops in <b id="v2-countdown">…</b></p>
+      {% else %}
+      <p class="v2-sec-sub">Tap a card for the ticket + write-up</p>
+      {% endif %}
+    </div>
+    <a class="v2-link" href="{{ url_for('tracker') }}">View my tracker →</a>
+  </div>
+
+  {% set golds = plays | selectattr('nivel', 'equalto', 'GOLD') | list %}
+  {% if card_pendiente %}
+  <div class="v2-empty">
+    <h3>No plays posted yet today</h3>
+    <p>The Sharp Team posts today's card at 2:00 PM ET on weekdays and 11:00 AM ET on weekends. Check back then — every play public, win or loss.</p>
+    <p>Made a bet on your own? <a href="{{ url_for('tracker') }}">Log it in your tracker →</a></p>
+  </div>
+  {% elif golds %}
+  <p class="v2-sec-eyebrow" style="margin-bottom:10px">Today's Free Selections</p>
+  <div class="v2-plays">
+    {% for p in golds %}
+      {% include "_play_card.html" %}
+    {% endfor %}
+  </div>
+  {% else %}
+  <p class="muted">No free plays today.</p>
+  {% endif %}
+
+  {% set plat = plays | selectattr('nivel', 'equalto', 'ELITE') | list %}
+  {% if plat or not platinum_unlocked %}
+  <p class="v2-sec-eyebrow" style="margin:22px 0 10px">Today's Platinum Selection</p>
+  <div class="v2-plays">
+    {% if plat %}
+      {% for p in plat %}
+        {% if platinum_unlocked %}
+          {% include "_play_card.html" %}
+        {% else %}
+          {% include "_play_locked.html" %}
+        {% endif %}
+      {% endfor %}
+    {% else %}
+      {% set p = {'liga': ''} %}
+      {% include "_play_locked.html" %}
+    {% endif %}
+  </div>
+  {% endif %}
+</section>
+
+<!-- RECENT GRADED TICKETS (presentación del ticket intacta) -->
+<section class="v2-sec">
+  <div class="v2-sec-head">
+    <div>
+      <p class="v2-sec-eyebrow"><b>01</b> · Receipts</p>
+      <h2 class="v2-sec-title">Recent graded tickets</h2>
+      <p class="v2-sec-sub">Every play posted before the game — wins and losses. Tap a ticket to see the original receipt.</p>
+    </div>
+    <a class="v2-link" href="{{ url_for('official_tracker') }}">View all →</a>
+  </div>
+  {% if recientes %}
+  <div class="ticket-grid">
+  {% for r in recientes %}
+    {% set won = r.resultado == 'WON' %}
+    <button type="button" class="ticket-card" data-ticket="luxht-{{ loop.index }}" aria-label="View receipt for {{ r.pick }}">
+      <span class="ticket-img">
+        {% if r.comprobante %}
+        <img src="{{ url_for('static', filename=r.comprobante) }}" alt="Original receipt: {{ r.pick }}" loading="lazy">
+        {% else %}
+        <span class="ticket-fallback">
+          <span class="ticket-brand">THE SHARP TEAM</span>
+          <span class="ticket-fallback-pick">{{ r.pick }}</span>
+          <span class="ticket-fallback-odds">{{ fmt_odds(r.cuota) }} · {{ 'PLATINUM' if r.nivel in ['ELITE','PLATINUM'] else ('GOLD' if r.nivel == 'GOLD' else r.nivel) }}</span>
+          <span class="ticket-fallback-result {{ 'win' if won else 'loss' }}">{{ '✓ WON' if won else '✕ LOST' }}</span>
+        </span>
+        {% endif %}
+        <span class="ticket-pill {{ 'win' if won else 'loss' }}">{{ '✓' if won else '✕' }} {{ fmt_money(r.profit) }}</span>
+      </span>
+      <span class="ticket-title">{{ r.pick }} <span class="muted">{{ fmt_odds(r.cuota) }}</span></span>
+      <span class="ticket-sub">{{ r.fecha }} · {{ 'PLATINUM' if r.nivel in ['ELITE','PLATINUM'] else ('GOLD' if r.nivel == 'GOLD' else r.nivel) }}</span>
+      {% if r.comprobante %}<span class="ticket-view-link">View ticket →</span>{% endif %}
+    </button>
+    <div class="modal" id="luxht-{{ loop.index }}" hidden>
+      <div class="modal-card ticket-photo-card">
+        <button type="button" class="modal-close" data-close>✕</button>
+        {% if r.comprobante %}
+        <img class="ticket-photo" src="{{ url_for('static', filename=r.comprobante) }}" alt="Original receipt: {{ r.pick }}">
+        {% else %}
+        <p class="ticket-brand">THE SHARP TEAM</p>
+        <p class="ticket-pick">{{ r.pick }} {{ fmt_odds(r.cuota) }}</p>
+        <div class="ticket-rows">
+          <div><span>Date</span><b>{{ r.fecha }}</b></div>
+          <div><span>Level</span><b>{{ 'PLATINUM' if r.nivel in ['ELITE','PLATINUM'] else ('GOLD' if r.nivel == 'GOLD' else r.nivel) }}</b></div>
+          <div><span>Result</span><b class="{{ 'pos' if won else 'neg' }}">{{ 'WON' if won else 'LOST' }} · {{ fmt_money(r.profit) }}</b></div>
+        </div>
+        <p class="ticket-note">Original receipt not uploaded for this play.</p>
+        {% endif %}
+      </div>
+    </div>
+  {% endfor %}
+  </div>
+  {% else %}
+  <p class="muted">No settled plays yet — tickets appear here as soon as the first plays are graded.</p>
+  {% endif %}
+</section>
+
+<!-- TOOLS PROMO · chips con destino real -->
+<section class="v2-sec">
+  <a href="{{ url_for('tools') }}" style="text-decoration:none;display:block;backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);background:rgba(16,28,26,0.45);border:1px solid rgba(255,255,255,0.14);border-radius:24px;padding:22px 20px;color:#fff;box-shadow:0 8px 32px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.12);">
+    <div style="display:flex;align-items:flex-start;gap:14px;">
+      <div style="width:64px;height:64px;flex:0 0 64px;border-radius:18px;background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.3);display:flex;align-items:center;justify-content:center;font-size:32px;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);">⚡</div>
+      <div>
+        <b style="font-size:20px;font-weight:800;">Your tools, <span style="color:#4ade80;">one tap</span></b>
+        <p style="margin:6px 0 0;font-size:14px;color:rgba(255,255,255,0.65);line-height:1.5;">Track every play, shop the best lines and find +EV edges — all in one place.</p>
+      </div>
+    </div>
+    <div style="display:block;text-align:center;margin:16px auto 0;padding:11px 28px;max-width:240px;background:linear-gradient(135deg,rgba(74,222,128,0.9),rgba(34,197,94,0.85));color:#062a16;font-weight:800;font-size:15px;border-radius:18px;border:1px solid rgba(255,255,255,0.25);">Open the tools →</div>
+  </a>
+  <div class="lux-chiprow">
+    <a class="lux-chip" href="{{ url_for('ev_board') }}">⚡ EV Board</a>
+    <a class="lux-chip" href="{{ url_for('tracker') }}">📊 Bet Tracker</a>
+    <a class="lux-chip" href="{{ url_for('official_tracker') }}">📜 Full Record</a>
+    <a class="lux-chip" href="{{ url_for('masterclass') }}">🎓 Academy</a>
+    <a class="lux-chip" href="{{ url_for('sharp') }}">🔪 Line Moves</a>
+    <a class="lux-chip" href="{{ url_for('props') }}">📈 Props</a>
+  </div>
+</section>
+
+<!-- Upsell VIP (solo miembros sin VIP) -->
+{% if not platinum_unlocked %}
+{% set upsell_cta_url = url_for('desbloquear_platinum') %}
+{% include "_upsell_vip.html" %}
+{% endif %}
+
+<!-- BANKROLL & STAKING -->
+<section class="v2-sec">
+  <div class="v2-sec-head">
+    <div>
+      <p class="v2-sec-eyebrow"><b>02</b> · Bankroll</p>
+      <h2 class="v2-sec-title">Bankroll &amp; staking</h2>
+    </div>
+  </div>
+  <div class="v2-br">
+    <div class="v2-br-top">
+      <div>
+        <p class="v2-eyebrow">Bankroll</p>
+        {% if bankroll %}
+        <p class="v2-br-num">${{ '%.2f' % bankroll }}</p>
+        {% else %}
+        <p class="v2-br-num muted" style="font-size:22px">not set</p>
+        {% endif %}
+      </div>
+      <a class="v2-br-edit" href="{{ url_for('cuenta') }}">Edit</a>
+    </div>
+    <form method="post" action="{{ url_for('stake_mode') }}" class="v2-seg">
+      <input type="hidden" name="next" value="home">
+      <button type="submit" name="mode" value="units" class="{% if stake_mode == 'units' %}active{% endif %}">TST Units</button>
+      <button type="submit" name="mode" value="kelly" class="{% if stake_mode == 'kelly' %}active{% endif %}">Kelly $</button>
+    </form>
+    <button class="v2-br-how" id="v2-br-how-open" type="button">how much should I bet?</button>
+  </div>
+  {% if es_alex or es_admin %}
+  <a href="{{ url_for('balances') }}" class="v2-balances-link">💰 My book balances →</a>
+  {% endif %}
+  <div class="v2-modal" id="v2-br-how-modal" hidden>
+    <div class="v2-modal-card">
+      <h3>How much should I bet?</h3>
+      <p class="v2-modal-sub">Same edge, two ways to size it. Most members start with TST Units. Switch anytime.</p>
+      <div class="v2-opt">
+        <p class="v2-opt-title">TST Units — the disciplined way</p>
+        <p>Bet in units. <b>1 unit = 1% of your bankroll.</b> We size every play by its badge: ★ PLATINUM = 1u, GOLD = 0.6u. Small and steady, exactly how The Sharp Team plays it. Less swing, easy to follow.</p>
+        {% if bankroll %}
+        <p class="v2-opt-ex">On your ${{ '%.0f' % bankroll }} bankroll, a 1u play is about ${{ '%.0f' % (bankroll / 100) }}.</p>
+        {% endif %}
+      </div>
+      <div class="v2-opt">
+        <p class="v2-opt-title">Kelly $ — the math-optimal way</p>
+        <p>Bet the exact dollars the math says is best. We use <b>quarter Kelly</b>, the model the sharpest bettors use: it stakes more on bigger edges, less on smaller ones. Higher long-run growth, bigger swings.</p>
+      </div>
+      <button class="v2-gotit" id="v2-br-how-close" type="button">Got it</button>
+    </div>
+  </div>
+</section>
+<script>
+(function(){var m=document.getElementById('v2-br-how-modal'),o=document.getElementById('v2-br-how-open'),c=document.getElementById('v2-br-how-close');if(o&&m){o.addEventListener('click',function(){m.hidden=false;});}if(c&&m){c.addEventListener('click',function(){m.hidden=true;});}if(m){m.addEventListener('click',function(e){if(e.target===m){m.hidden=true;}});}})();
+</script>
+
+<!-- TOOLS -->
+<section class="v2-sec">
+  <div class="v2-sec-head">
+    <div>
+      <p class="v2-sec-eyebrow"><b>03</b> · Toolkit</p>
+      <h2 class="v2-sec-title">Your tools</h2>
+    </div>
+  </div>
+  <div class="v2-linecard">
+  <div class="v2-tools">
+    <a class="v2-tool" href="{{ url_for('ev_board') }}">
+      <span class="v2-tool-emoji">⚡</span><b>EV Board</b><span class="v2-tool-sub">Live +EV edges</span>
+    </a>
+    <a class="v2-tool" href="{{ url_for('sharp') }}">
+      <span class="v2-tool-emoji">🔪</span><b>Sharp Money</b><span class="v2-tool-sub">Where the pros are betting</span>
+    </a>
+    <a class="v2-tool" href="{{ url_for('props') }}">
+      <span class="v2-tool-emoji">🎯</span><b>Player Props</b><span class="v2-tool-sub">Best price + edge</span>
+    </a>
+    <a class="v2-tool" href="{{ url_for('parlay_builder') }}">
+      <span class="v2-tool-emoji">🎫</span><b>Parlay Builder</b><span class="v2-tool-sub">Build your own parlay</span>
+    </a>
+    <a class="v2-tool" href="{{ url_for('ai_assistant') }}">
+      <span class="v2-tool-emoji">🧠</span><b>Brain</b><span class="v2-tool-sub">Ask for plays & parlays</span>
+    </a>
+    <a class="v2-tool" href="{{ url_for('masterclass') }}">
+      <span class="v2-tool-emoji">🎓</span><b>Masterclass</b><span class="v2-tool-sub">The 30-day course</span>
+    </a>
+    <a class="v2-tool" href="{{ url_for('archivo') }}">
+      <span class="v2-tool-emoji">🗂️</span><b>Archive</b><span class="v2-tool-sub">Every published play</span>
+    </a>
+  </div>
+  </div>
+</section>
+
+<!-- ALERTS -->
+<section class="v2-sec">
+  <div class="v2-sec-head">
+    <div>
+      <p class="v2-sec-eyebrow"><b>04</b> · Alerts</p>
+      <h2 class="v2-sec-title">Get alerts</h2>
+      <p class="v2-sec-sub">Never miss a play.</p>
+    </div>
+  </div>
+  <div class="v2-alerts">
+    <button id="alertsPushBtn" class="v2-alert-btn v2-alert-push" type="button">🔔 Push Notifications</button>
+    <a class="v2-alert-btn v2-alert-tg" href="https://t.me/thesharpteam" target="_blank" rel="noopener">✈️ Join Telegram</a>
+  </div>
+</section>
+<script>
+(function(){
+  var btn = document.getElementById('alertsPushBtn');
+  if (!btn || !window.TLB_push) return;
+  function paint(st){
+    if (st === 'granted') { btn.textContent = '🔔 Push Notifications On'; btn.disabled = true; }
+    else if (st === 'denied') { btn.textContent = '🔕 Push Blocked'; btn.disabled = true; }
+    else if (st === 'unsupported') { btn.textContent = '🔔 Not supported'; btn.disabled = true; }
+  }
+  window.TLB_push.status().then(paint);
+  btn.addEventListener('click', async function(){
+    btn.disabled = true;
+    var st = await window.TLB_push.enable();
+    paint(st);
+    if (st !== 'granted') btn.disabled = false;
+  });
+})();
+</script>
+
+<!-- THE PROCESS -->
+<section class="v2-sec">
+  <div class="v2-process">
+    <p class="v2-eyebrow">The process</p>
+    <h2 class="v2-process-title">One system. Three filters.</h2>
+    <p class="v2-process-sub">Every published pick must pass the model, the market, and the staking rules.</p>
+    <div class="v2-prow">
+      <span class="v2-pnum">01</span>
+      <div><h3>FAIR LINE</h3><p>Estimated probability is calculated before deciding whether the available price is worth a bet.</p></div>
+    </div>
+    <div class="v2-prow">
+      <span class="v2-pnum">02</span>
+      <div><h3>REAL EDGE</h3><p>The fair line is compared with the best odds. Research can veto a pick; it never invents value.</p></div>
+    </div>
+    <div class="v2-prow">
+      <span class="v2-pnum">03</span>
+      <div><h3>FIXED STAKE</h3><p>The stake stays disciplined. Neither losses nor streaks change the amount.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- MASTERCLASS -->
+<section class="v2-sec">
+  <div class="v2-sec-head">
+    <div>
+      <p class="v2-sec-eyebrow"><b>06</b> · Education</p>
+      <h2 class="v2-sec-title">Masterclass</h2>
+      <p class="v2-sec-sub">30 lessons on discipline and value — one per day.</p>
+    </div>
+  </div>
+  {% if leccion.get('titulo') %}
+  <a class="v2-mc-feat" href="{{ url_for('masterclass') }}">
+    <p class="v2-mc-tag">TODAY'S LESSON · DAY {{ leccion.get('dia') }}</p>
+    <h3>{{ leccion.get('titulo') }}</h3>
+    <p>{{ leccion.get('resumen') }}</p>
+    <span class="v2-link">Read the full lesson →</span>
+  </a>
+  {% endif %}
+  <a class="v2-mc-open" href="{{ url_for('masterclass') }}">🎓 Open Masterclass →</a>
+</section>
+
+<section class="db-diff">
+  <h2 class="db-diff-title">What makes this <span class="gold">different</span></h2>
+  <div class="db-diff-card">
+    <div class="db-diff-cat">The record</div>
+    <div class="db-diff-us"><span class="ck">✓</span><span class="tx"><span class="who">THE SHARP TEAM</span>Every play posted before game time — wins and losses stay on the public record.</span></div>
+    <div class="db-diff-them"><span class="xx">✕</span><span class="tx"><span class="who">TYPICAL</span>Only the winning picks ever see the light.</span></div>
+  </div>
+  <div class="db-diff-card">
+    <div class="db-diff-cat">Real money</div>
+    <div class="db-diff-us"><span class="ck">✓</span><span class="tx"><span class="who">THE SHARP TEAM</span>Every play bet with real money — ticket photo to prove it.</span></div>
+    <div class="db-diff-them"><span class="xx">✕</span><span class="tx"><span class="who">TYPICAL</span>Paper picks with nothing on the line.</span></div>
+  </div>
+  <div class="db-diff-card">
+    <div class="db-diff-cat">The price</div>
+    <div class="db-diff-us"><span class="ck">✓</span><span class="tx"><span class="who">THE SHARP TEAM</span>$1 for the first week, $23/week after. That's it.</span></div>
+    <div class="db-diff-them"><span class="xx">✕</span><span class="tx"><span class="who">TYPICAL</span>Hundreds upfront before you see a single pick.</span></div>
+  </div>
+  <div class="db-diff-card">
+    <div class="db-diff-cat">The proof</div>
+    <div class="db-diff-us"><span class="ck">✓</span><span class="tx"><span class="who">THE SHARP TEAM</span>{{ res.ganadas }}-{{ res.perdidas }}, +{{ "%.1f"|format(res.roi) }}% ROI — every play documented and graded.</span></div>
+    <div class="db-diff-them"><span class="xx">✕</span><span class="tx"><span class="who">TYPICAL</span>Big claims, no record to check.</span></div>
+  </div>
+  <div class="db-diff-card">
+    <div class="db-diff-cat">The exit</div>
+    <div class="db-diff-us"><span class="ck">✓</span><span class="tx"><span class="who">THE SHARP TEAM</span>Cancel in one click from your account, anytime.</span></div>
+    <div class="db-diff-them"><span class="xx">✕</span><span class="tx"><span class="who">TYPICAL</span>Locked in — good luck getting out.</span></div>
+  </div>
+</section>
+
+<section class="db-faq">
+  <h2 class="db-faq-title">Questions, answered</h2>
+  <details>
+    <summary>Is sports betting actually profitable?<span class="pm">+</span></summary>
+    <div class="ans">It can be — but only with a real edge, strict bankroll management, and the discipline to follow the system every single day. Most bettors lose because they chase, overbet, or follow hunches. We publish every play before game time with a ticket photo and grade it win or loss on our public record ({{ res.ganadas }}-{{ res.perdidas }}, +{{ "%.1f"|format(res.roi) }}% ROI so far). No cherry-picking, ever.</div>
+  </details>
+  <details>
+    <summary>How does The Sharp Team find its plays?<span class="pm">+</span></summary>
+    <div class="ans">Our Elo-based model prices every game in the NFL, NCAAF and MLB, and we compare it against Pinnacle's no-vig line plus 2–3 sportsbooks. We only post plays with a real edge, shop for the best price, and stake a flat 1u (2% of bankroll) on Platinum and 0.6u on Gold — never more, never chasing.</div>
+  </details>
+  <details>
+    <summary>Do you really bet every play yourself?<span class="pm">+</span></summary>
+    <div class="ans">Yes. Alex places every official play with real money and posts the original ticket photo. If there's no ticket, it's not an official play.</div>
+  </details>
+  <details>
+    <summary>What does the $1 trial include?<span class="pm">+</span></summary>
+    <div class="ans">The full Platinum board for a week: the daily Platinum play, the +EV board, line-shopping tools, the AI betting coach and the 30-day masterclass. After the first week it's $23/week — cancel anytime from your account.</div>
+  </details>
+  <details>
+    <summary>What happens if I have a losing week?<span class="pm">+</span></summary>
+    <div class="ans">Losing weeks happen — variance is part of betting and we never hide it. What matters is the long run: flat stakes, no chasing, every result on the record. Our rules cap daily risk at 6% of bankroll, so no single week can damage the program.</div>
+  </details>
+  <details>
+    <summary>How do I cancel?<span class="pm">+</span></summary>
+    <div class="ans">One click from your account page. No lock-in, no calls, no hassle — and your free account stays free forever.</div>
+  </details>
+</section>
+
+{% if not platinum_unlocked %}
+<div class="v2-sticky" role="complementary" aria-label="Unlock Platinum">
+  <div class="v2-sticky-inner">
+    <p>Unlock Platinum plays for <b>$1</b></p>
+    <a href="{{ url_for('desbloquear_platinum') }}">$1 trial &rarr;</a>
+  </div>
+</div>
+<div class="v2-sticky-spacer" aria-hidden="true"></div>
+{% endif %}
+
+{% if card_pendiente %}
+<script>
+(function () {
+  var el = document.getElementById('v2-countdown');
+  if (!el) return;
+  function etNow() { return new Date(new Date().toLocaleString('en-US', { timeZone: 'America/New_York' })); }
+  function targetFor(d) {
+    var t = new Date(d), day = t.getDay();
+    t.setHours((day === 0 || day === 6) ? 11 : 14, 0, 0, 0);
+    return t;
+  }
+  function tick() {
+    var now = etNow(), tgt = targetFor(new Date(now));
+    if (tgt <= now) { var nx = new Date(now); nx.setDate(nx.getDate() + 1); tgt = targetFor(nx); }
+    var s = Math.max(0, Math.floor((tgt - now) / 1000));
+    var h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60);
+    el.textContent = h > 0 ? h + 'h ' + m + 'm' : m + 'm';
+  }
+  tick();
+  setInterval(tick, 30000);
+})();
+</script>
+{% endif %}
+
+{% endblock %}

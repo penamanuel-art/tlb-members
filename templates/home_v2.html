@@ -21,6 +21,14 @@
 </div>
 {% endif %}
 
+{% if (es_admin or es_alex) and not diseno_lux %}
+<div style="padding:12px 16px 0;text-align:right;">
+  <form method="post" action="{{ url_for('admin_diseno_home') }}" style="display:inline;">
+    <button type="submit" style="padding:8px 14px;border-radius:999px;border:1px solid rgba(243,205,107,.55);background:rgba(212,160,23,.14);color:#ffe9a8;font-weight:700;font-size:12.5px;cursor:pointer;">✨ Activar diseño nuevo</button>
+  </form>
+</div>
+{% endif %}
+
 <!-- HERO · estilo saludo WGT (pedido por Alex 2026-10-04): plano, sin tarjeta -->
 <section class="v2-hero v2-hero-wgt">
   <p class="v2-hero-date"><span class="v2-live-dot"></span>{{ saludo }} · {{ fecha }}</p>

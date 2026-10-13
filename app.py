@@ -2038,6 +2038,53 @@ def profit_curve_svg(values, w=300, h=84, pad=6):
             "up": values[-1] >= 0}
 
 
+def get_setting(key, default=None):
+    """Lee un ajuste global de site_settings (None si no existe)."""
+    try:
+        row = get_db().execute(
+            "SELECT value FROM site_settings WHERE key = ?", (key,)
+        ).fetchone()
+        return row["value"] if row else default
+    except Exception:
+        return default
+
+
+def set_setting(key, value):
+    db = get_db()
+    if USE_PG:
+        db.execute(
+            "INSERT INTO site_settings (key, value) VALUES (?, ?) "
+            "ON CONFLICT(key) DO UPDATE SET value = excluded.value",
+            (key, value),
+        )
+    else:
+        db.execute(
+            "INSERT OR REPLACE INTO site_settings (key, value) VALUES (?, ?)",
+            (key, value),
+        )
+    db.commit()
+
+
+def home_lux_enabled():
+    """Diseño premium (lux) del home: activo salvo que el admin lo revierta
+    con el botón de revertir (2026-10-12, pedido por Alex)."""
+    return get_setting("home_lux", "1") == "1"
+
+
+def program_curve():
+    """Curva SVG del profit acumulado REAL del programa (del archivo)."""
+    try:
+        vals, cum = [], 0.0
+        for d in sorted(load_archive(), key=lambda x: x.get("fecha", "")):
+            for j in d.get("jugadas", []) or []:
+                if j.get("resultado") in ("WON", "LOST") and not j.get("bloqueada"):
+                    cum += float(j.get("profit") or 0)
+                    vals.append(round(cum, 2))
+        return profit_curve_svg(vals, w=320, h=90, pad=8)
+    except Exception:
+        return None
+
+
 def stats_por_nivel(tracked):
     """Ganadas/perdidas/profit por nivel (GOLD/ELITE/VALUE) para el bloque estilo WGT."""
     out = {}
@@ -2690,6 +2737,15 @@ def migrate_db():
                 done_at TEXT
             )"""
         )
+        # Ajustes globales del sitio (2026-10-12): pares clave/valor para
+        # interruptores como el diseño del home (lux on/off con botón de
+        # revertir del admin, pedido por Alex).
+        conn.execute(
+            """CREATE TABLE IF NOT EXISTS site_settings (
+                key TEXT PRIMARY KEY,
+                value TEXT
+            )"""
+        )
         # Pool de links de invitación a Sharp Club (un solo uso, los genera
         # el cron de la VM con el token del bot; /cuenta los reparte).
         # 2026-10-02: EN DESUSO — reemplazado por el link permanente
@@ -2870,6 +2926,25 @@ def theme(name):
     return redirect(request.args.get("next") or url_for("home"))
 
 
+@app.route("/admin/diseno-home", methods=["POST"])
+@login_required
+def admin_diseno_home():
+    """Interruptor del diseño premium del home (2026-10-12, pedido por Alex):
+    el botón de revertir apaga el diseño lux para TODOS y vuelve al home
+    anterior; el mismo botón lo vuelve a encender. Solo admin."""
+    user = current_user()
+    if not (is_admin_for(user) or is_alex_member(user)):
+        flash("You don't have permission to do that.", "error")
+        return redirect(url_for("home"))
+    nuevo = "0" if home_lux_enabled() else "1"
+    set_setting("home_lux", nuevo)
+    if nuevo == "1":
+        flash("New design is ON.", "ok")
+    else:
+        flash("Design reverted — previous home is live.", "ok")
+    return redirect(url_for("home"))
+
+
 @app.route("/home")
 @login_required
 def home():
@@ -2925,10 +3000,12 @@ def home():
     # home como lo ve un miembro sin Elite (teaser bloqueado + pancarta $1).
     preview_locked = is_admin_for(user) and request.args.get("preview") == "locked"
     # Lluvia de dinero ELIMINADA por orden de Alex 2026-10-10: ya no se muestra.
+    _lux = home_lux_enabled()
     return render_template(
         # Tema v2 (moderno) es el predeterminado desde 2026-10-02 (pedido Alex);
-        # v1 (clásico) queda como reversión vía /theme/v1.
-        "home.html" if session.get("theme") == "v1" else "home_v2.html",
+        # v1 (clásico) queda como reversión vía /theme/v1. Diseño lux
+        # (2026-10-12): home premium salvo revert del admin (site_settings).
+        "home.html" if session.get("theme") == "v1" else ("home_lux.html" if _lux else "home_v2.html"),
         plays=plays,
         card_pendiente=card_pendiente,
         tracked_ids=tracked_ids,
@@ -2941,6 +3018,8 @@ def home():
         stake_mode=user["stake_mode"] if user else "units",
         platinum_unlocked=(platinum_unlocked_for(user) and not preview_locked),
         res=program_stats(),
+        pcurve=program_curve(),
+        diseno_lux=_lux,
         dias=load_archive(),
         snapshot=performance_snapshot(),
         now_day_of_year=datetime.now().timetuple().tm_yday,
