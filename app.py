@@ -4783,6 +4783,31 @@ def _admin_api_autorizado():
         return False
 
 
+@app.route("/admin/api/stake-mode", methods=["POST"])
+def admin_api_stake_mode():
+    """Fija el modo de sizing de un miembro (units | kelly) por API admin.
+
+    2026-10-13: la cuenta de miembro de Alex quedó en modo kelly (activado
+    por accidente el 2026-10-03) y su card mostraba un monto distinto al del
+    ticket oficial ($189 vs $50). Este endpoint permite corregirlo por API
+    sin depender de la sesión del miembro. Auth: sesión admin O X-Admin-Key.
+    """
+    if not _admin_api_autorizado():
+        return jsonify({"error": "admin only"}), 403
+    data = request.get_json(silent=True) or {}
+    email = (data.get("email") or request.form.get("email") or "").strip().lower()
+    mode = (data.get("mode") or request.form.get("mode") or "").strip().lower()
+    if mode not in ("units", "kelly"):
+        return jsonify({"error": "invalid mode"}), 400
+    db = get_db()
+    row = db.execute("SELECT id FROM users WHERE email = ?", (email,)).fetchone()
+    if not row:
+        return jsonify({"error": "not found"}), 404
+    db.execute("UPDATE users SET stake_mode = ? WHERE id = ?", (mode, row["id"]))
+    db.commit()
+    return jsonify({"ok": True, "email": email, "stake_mode": mode})
+
+
 @app.route("/admin/test-clear-past-due", methods=["POST"])
 def admin_test_clear_past_due():
     """TEMPORAL para pruebas de Alex: quita SOLO el flag stripe_past_due,
