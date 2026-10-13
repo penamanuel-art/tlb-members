@@ -108,7 +108,7 @@ body.v2 .v2-bottomnav .v2-bnav-item.active{background:linear-gradient(180deg,#ff
       <p class="v2-sec-sub">Tap a card for the ticket + write-up</p>
       {% endif %}
     </div>
-    <a class="v2-link" href="{{ url_for('tracker') }}">View my tracker →</a>
+    {# "View my tracker" eliminado (2026-10-12): el Tracker ya vive en el menú inferior. #}
   </div>
 
   {% set golds = plays | selectattr('nivel', 'equalto', 'GOLD') | list %}
@@ -205,27 +205,8 @@ body.v2 .v2-bottomnav .v2-bnav-item.active{background:linear-gradient(180deg,#ff
   {% endif %}
 </section>
 
-<!-- TOOLS PROMO · chips con destino real -->
-<section class="v2-sec">
-  <a href="{{ url_for('tools') }}" style="text-decoration:none;display:block;backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);background:rgba(16,28,26,0.45);border:1px solid rgba(255,255,255,0.14);border-radius:24px;padding:22px 20px;color:#fff;box-shadow:0 8px 32px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.12);">
-    <div style="display:flex;align-items:flex-start;gap:14px;">
-      <div style="width:64px;height:64px;flex:0 0 64px;border-radius:18px;background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.3);display:flex;align-items:center;justify-content:center;font-size:32px;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);">⚡</div>
-      <div>
-        <b style="font-size:20px;font-weight:800;">Your tools, <span style="color:#4ade80;">one tap</span></b>
-        <p style="margin:6px 0 0;font-size:14px;color:rgba(255,255,255,0.65);line-height:1.5;">Track every play, shop the best lines and find +EV edges — all in one place.</p>
-      </div>
-    </div>
-    <div style="display:block;text-align:center;margin:16px auto 0;padding:11px 28px;max-width:240px;background:linear-gradient(135deg,rgba(74,222,128,0.9),rgba(34,197,94,0.85));color:#062a16;font-weight:800;font-size:15px;border-radius:18px;border:1px solid rgba(255,255,255,0.25);">Open the tools →</div>
-  </a>
-  <div class="lux-chiprow">
-    <a class="lux-chip" href="{{ url_for('ev_board') }}">⚡ EV Board</a>
-    <a class="lux-chip" href="{{ url_for('tracker') }}">📊 Bet Tracker</a>
-    <a class="lux-chip" href="{{ url_for('official_tracker') }}">📜 Full Record</a>
-    <a class="lux-chip" href="{{ url_for('masterclass') }}">🎓 Academy</a>
-    <a class="lux-chip" href="{{ url_for('sharp') }}">🔪 Line Moves</a>
-    <a class="lux-chip" href="{{ url_for('props') }}">📈 Props</a>
-  </div>
-</section>
+{# Promo de tools + chips ELIMINADOS (2026-10-12, orden de Alex): repetían la
+   sección Your Tools de abajo y el botón Tools del menú inferior. #}
 
 <!-- Upsell VIP (solo miembros sin VIP) -->
 {% if not platinum_unlocked %}
@@ -432,7 +413,7 @@ body.v2 .v2-bottomnav .v2-bnav-item.active{background:linear-gradient(180deg,#ff
   </details>
   <details>
     <summary>How does The Sharp Team find its plays?<span class="pm">+</span></summary>
-    <div class="ans">Our Elo-based model prices every game in the NFL, NCAAF and MLB, and we compare it against Pinnacle's no-vig line plus 2–3 sportsbooks. We only post plays with a real edge, shop for the best price, and stake a flat 1u (2% of bankroll) on Platinum and 0.6u on Gold — never more, never chasing.</div>
+    <div class="ans">Our Elo-based model prices every game in the NFL, NCAAF and MLB, and we compare it against Pinnacle's no-vig line plus 2–3 sportsbooks. We only post plays with a real edge, shop for the best price, and stake a flat 1u (1% of bankroll) on Platinum and 0.6u on Gold — never more, never chasing.</div>
   </details>
   <details>
     <summary>Do you really bet every play yourself?<span class="pm">+</span></summary>

@@ -179,27 +179,8 @@
 </section>
 {% endif %}
 
-<!-- TOOLS PROMO (rediseño liquid glass aprobado por Alex 2026-10-09) -->
-<section class="v2-sec">
-  <a href="{{ url_for('tools') }}" style="text-decoration:none;display:block;backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);background:rgba(16,28,26,0.45);border:1px solid rgba(255,255,255,0.14);border-radius:24px;padding:22px 20px;color:#fff;box-shadow:0 8px 32px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.12);">
-    <div style="display:flex;align-items:flex-start;gap:14px;">
-      <div style="width:64px;height:64px;flex:0 0 64px;border-radius:18px;background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.3);display:flex;align-items:center;justify-content:center;font-size:32px;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);">⚡</div>
-      <div>
-        <b style="font-size:20px;font-weight:800;">Your tools, <span style="color:#4ade80;">one tap</span></b>
-        <p style="margin:6px 0 0;font-size:14px;color:rgba(255,255,255,0.65);line-height:1.5;">Track every play, shop the best lines and find +EV edges — all in one place.</p>
-      </div>
-    </div>
-    <div style="display:block;text-align:center;margin:16px auto 0;padding:11px 28px;max-width:240px;background:linear-gradient(135deg,rgba(74,222,128,0.9),rgba(34,197,94,0.85));color:#062a16;font-weight:800;font-size:15px;border-radius:18px;border:1px solid rgba(255,255,255,0.25);">Open the tools →</div>
-    <div style="display:flex;gap:10px;margin-top:16px;overflow-x:auto;padding-bottom:8px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;">
-      <div style="flex:0 0 auto;scroll-snap-align:start;display:flex;align-items:center;gap:8px;padding:12px 18px;border-radius:999px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.14);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);font-size:13px;font-weight:600;white-space:nowrap;">⚡ EV Board</div>
-      <div style="flex:0 0 auto;scroll-snap-align:start;display:flex;align-items:center;gap:8px;padding:12px 18px;border-radius:999px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.14);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);font-size:13px;font-weight:600;white-space:nowrap;">📊 Bet Tracker</div>
-      <div style="flex:0 0 auto;scroll-snap-align:start;display:flex;align-items:center;gap:8px;padding:12px 18px;border-radius:999px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.14);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);font-size:13px;font-weight:600;white-space:nowrap;">📜 Full Record</div>
-      <div style="flex:0 0 auto;scroll-snap-align:start;display:flex;align-items:center;gap:8px;padding:12px 18px;border-radius:999px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.14);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);font-size:13px;font-weight:600;white-space:nowrap;">🎓 Academy</div>
-      <div style="flex:0 0 auto;scroll-snap-align:start;display:flex;align-items:center;gap:8px;padding:12px 18px;border-radius:999px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.14);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);font-size:13px;font-weight:600;white-space:nowrap;">🔪 Line Moves</div>
-      <div style="flex:0 0 auto;scroll-snap-align:start;display:flex;align-items:center;gap:8px;padding:12px 18px;border-radius:999px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.14);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);font-size:13px;font-weight:600;white-space:nowrap;">📈 Props</div>
-    </div>
-  </a>
-</section>
+{# Promo de tools ELIMINADA (2026-10-12, orden de Alex): repetía la sección
+   Your Tools y el botón Tools del menú inferior. #}
 
 <!-- 01 · TODAY'S PLAYS -->
 <section class="v2-sec" id="plays" style="scroll-margin-top:70px;">
@@ -212,7 +193,7 @@
       <p class="v2-sec-sub">Tap a card for the ticket + write-up</p>
       {% endif %}
     </div>
-    <a class="v2-link" href="{{ url_for('tracker') }}">View my tracker →</a>
+    {# "View my tracker" eliminado (2026-10-12): el Tracker ya vive en el menú inferior. #}
   </div>
 
   {% set golds = plays | selectattr('nivel', 'equalto', 'GOLD') | list %}
@@ -264,7 +245,7 @@
       <h2 class="v2-sec-title">Recent graded tickets</h2>
       <p class="v2-sec-sub">Every play posted before the game — wins and losses. Tap a ticket to see the original receipt.</p>
     </div>
-    <a class="v2-link" href="{{ url_for('resultados') }}">View all →</a>
+    <a class="v2-link" href="{{ url_for('official_tracker') }}">View all →</a>
   </div>
   {% if recientes %}
   <div class="ticket-grid">
@@ -524,7 +505,7 @@
   </details>
   <details>
     <summary>How does The Sharp Team find its plays?<span class="pm">+</span></summary>
-    <div class="ans">Our Elo-based model prices every game in the NFL, NCAAF and MLB, and we compare it against Pinnacle's no-vig line plus 2–3 sportsbooks. We only post plays with a real edge, shop for the best price, and stake a flat 1u (2% of bankroll) on Platinum and 0.6u on Gold — never more, never chasing.</div>
+    <div class="ans">Our Elo-based model prices every game in the NFL, NCAAF and MLB, and we compare it against Pinnacle's no-vig line plus 2–3 sportsbooks. We only post plays with a real edge, shop for the best price, and stake a flat 1u (1% of bankroll) on Platinum and 0.6u on Gold — never more, never chasing.</div>
   </details>
   <details>
     <summary>Do you really bet every play yourself?<span class="pm">+</span></summary>
