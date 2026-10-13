@@ -441,7 +441,7 @@
 <section class="v2-sec">
   <div class="v2-sec-head">
     <div>
-      <p class="v2-sec-eyebrow"><b>06</b> · Education</p>
+      <p class="v2-sec-eyebrow"><b>05</b> · Education</p>
       <h2 class="v2-sec-title">Academy</h2>
       <p class="v2-sec-sub">30 lessons on discipline and value — one per day.</p>
     </div>
@@ -480,7 +480,7 @@
   </div>
   <div class="db-diff-card">
     <div class="db-diff-cat">The proof</div>
-    <div class="db-diff-us"><span class="ck">✓</span><span class="tx"><span class="who">THE SHARP TEAM</span>{{ res.ganadas }}-{{ res.perdidas }}, +{{ "%.1f"|format(res.roi) }}% ROI — every play documented and graded.</span></div>
+    <div class="db-diff-us"><span class="ck">✓</span><span class="tx"><span class="who">THE SHARP TEAM</span>{{ res.ganadas }}-{{ res.perdidas }}, {{ "%+.1f"|format(res.roi) }}% ROI — every play documented and graded.</span></div>
     <div class="db-diff-them"><span class="xx">✕</span><span class="tx"><span class="who">TYPICAL</span>Big claims, no record to check.</span></div>
   </div>
   <div class="db-diff-card">
@@ -494,11 +494,11 @@
   <h2 class="db-faq-title">Questions, answered</h2>
   <details>
     <summary>Is sports betting actually profitable?<span class="pm">+</span></summary>
-    <div class="ans">It can be — but only with a real edge, strict bankroll management, and the discipline to follow the system every single day. Most bettors lose because they chase, overbet, or follow hunches. We publish every play before game time with a ticket photo and grade it win or loss on our public record ({{ res.ganadas }}-{{ res.perdidas }}, +{{ "%.1f"|format(res.roi) }}% ROI so far). No cherry-picking, ever.</div>
+    <div class="ans">It can be — but only with a real edge, strict bankroll management, and the discipline to follow the system every single day. Most bettors lose because they chase, overbet, or follow hunches. We publish every play before game time with a ticket photo and grade it win or loss on our public record ({{ res.ganadas }}-{{ res.perdidas }}, {{ "%+.1f"|format(res.roi) }}% ROI so far). No cherry-picking, ever.</div>
   </details>
   <details>
     <summary>How does The Sharp Team find its plays?<span class="pm">+</span></summary>
-    <div class="ans">Our Elo-based model prices every game in the NFL, NCAAF and MLB, and we compare it against Pinnacle's no-vig line plus 2–3 sportsbooks. We only post plays with a real edge, shop for the best price, and stake a flat 1u (1% of bankroll) on Platinum and 0.6u on Gold — never more, never chasing.</div>
+    <div class="ans">Our Elo-based model prices every game in the NFL, NCAAF, MLB and NHL, and we compare it against Pinnacle's no-vig line plus 2–3 sportsbooks. We only post plays with a real edge, shop for the best price, and stake a flat 1u (1% of bankroll) on Platinum and 0.6u on Gold — never more, never chasing.</div>
   </details>
   <details>
     <summary>Do you really bet every play yourself?<span class="pm">+</span></summary>
@@ -506,7 +506,7 @@
   </details>
   <details>
     <summary>What does the $1 trial include?<span class="pm">+</span></summary>
-    <div class="ans">The full Platinum board for a week: the daily Platinum play, the +EV board, line-shopping tools, the AI betting coach and the 30-day masterclass. After the first week it's $23/week — cancel anytime from your account.</div>
+    <div class="ans">The full Platinum board for a week: the daily Platinum play, the +EV board, line-shopping tools, the AI betting coach and the Academy. After the first week it's $23/week — cancel anytime from your account.</div>
   </details>
   <details>
     <summary>What happens if I have a losing week?<span class="pm">+</span></summary>
@@ -547,29 +547,6 @@
 </script>
 {% endif %}
 
-<script>
-/* Count-up del profit oficial (pedido Alex 2026-10-05):
-   al entrar, el número corre desde $0 hasta el monto oficial. */
-(function () {
-  var el = document.querySelector('.wgt-countup');
-  if (!el) return;
-  var target = parseFloat(el.getAttribute('data-profit')) || 0;
-  var dur = 1600, t0 = null;
-  function fmt(v) {
-    var a = Math.abs(v).toFixed(2);
-    return (v > 0 ? '+$' : v < 0 ? '-$' : '$') + a;
-  }
-  function step(ts) {
-    if (!t0) t0 = ts;
-    var p = Math.min(1, (ts - t0) / dur);
-    var e = 1 - Math.pow(1 - p, 3); /* easeOutCubic */
-    el.textContent = fmt(target * e);
-    if (p < 1) requestAnimationFrame(step);
-    else el.textContent = fmt(target);
-  }
-  requestAnimationFrame(step);
-})();
-</script>
 
 {% if celebracion %}
 {# LLUVIA DE DINERO + BURBUJA (pedido de Alex 2026-10-13): igual que en el

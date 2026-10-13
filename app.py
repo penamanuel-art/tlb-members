@@ -1383,10 +1383,15 @@ def stake_personalizado(play, user):
     nivel = (play.get("nivel") or "").upper()
     if user:
         try:
-            if nivel == "ELITE" and _uget(user, "stake_fijo_elite"):
-                return round(float(_uget(user, "stake_fijo_elite")), 2)
-            if nivel == "GOLD" and _uget(user, "stake_fijo_gold"):
-                return round(float(_uget(user, "stake_fijo_gold")), 2)
+            # Un stake fijo guardado como "0" (texto truthy) devolvía $0 en la
+            # card — misma clase de trampa que el bug del Bet $0 (2026-10-13):
+            # solo aplica si el monto fijo es mayor que cero.
+            _fijo_e = float(_uget(user, "stake_fijo_elite") or 0)
+            _fijo_g = float(_uget(user, "stake_fijo_gold") or 0)
+            if nivel == "ELITE" and _fijo_e > 0:
+                return round(_fijo_e, 2)
+            if nivel == "GOLD" and _fijo_g > 0:
+                return round(_fijo_g, 2)
         except (TypeError, ValueError):
             pass
     try:
@@ -1547,7 +1552,7 @@ def resumen_ayer():
     ayer = (datetime.now(TZ).date() - timedelta(days=1)).isoformat()
     for d in load_archive():
         if d.get("fecha") == ayer:
-            js = [j for j in (d.get("jugadas", []) or []) if j.get("resultado") in ("WON", "LOST")]
+            js = [j for j in (d.get("jugadas", []) or []) if j.get("resultado") in ("WON", "LOST") and not j.get("bloqueada")]
             if not js:
                 return None
             w = sum(1 for j in js if j["resultado"] == "WON")
@@ -2557,7 +2562,10 @@ def fmt_units(v: float) -> str:
 
 
 def fmt_odds(o) -> str:
-    o = int(o)
+    try:
+        o = int(str(o).replace("−", "-").strip())
+    except (TypeError, ValueError):
+        return "—"
     return f"+{o}" if o > 0 else str(o)
 
 
@@ -2956,7 +2964,7 @@ def last_elite_win():
         return None
     for d in sorted(arch.get("dias", []), key=lambda x: x.get("fecha", ""), reverse=True):
         for j in d.get("jugadas", []):
-            if j.get("nivel") == "ELITE" and j.get("resultado") == "WON" and j.get("profit"):
+            if j.get("nivel") == "ELITE" and j.get("resultado") == "WON" and j.get("profit") and not j.get("bloqueada"):
                 return int(round(j["profit"]))
     return None
 
@@ -3077,6 +3085,8 @@ def home():
         tlevels=tlevels,
         tcurve=tcurve,
         pstreak=program_streak(),
+        streak=program_streak(),
+        resumen_ayer=resumen_ayer(),
         recientes=recientes,
         recientes_value=recientes_value(),
         last_elite_win=last_elite_win(),

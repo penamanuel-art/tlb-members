@@ -197,7 +197,7 @@
         </div>
         {% if p.casa %}<div style="margin-bottom:10px;"><span style="font-size:12px;color:#9aa3b8;">Best price at </span><span style="font-size:12px;font-weight:800;color:#e3b93c;">{{ p.casa }}</span></div>{% endif %}
         <div style="display:flex;gap:16px;margin-bottom:12px;font-size:12px;color:#d1d5db;">
-          <span>Stake <span style="color:#fff;">{{ '$%.2f' % p.stake_monto }} ({{ '%g' % p.stake_unidades }}u)</span></span>
+          <span>Stake <span style="color:#fff;">{{ '$%.0f' % p.stake_monto }} ({{ '%g' % p.stake_unidades }}u)</span></span>
           {% if p.writeup and p.writeup.model_prob %}<span>Model <span style="color:#fff;">{{ p.writeup.model_prob }}</span></span>{% endif %}
         </div>
         {% if p.writeup %}
