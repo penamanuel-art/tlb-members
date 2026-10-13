@@ -86,17 +86,27 @@
 .tstg-track{color:#4ade80;border:1.5px solid #22c55e;font-weight:800;font-size:12px;padding:8px 20px;border-radius:12px;background:rgba(34,197,94,.12);text-decoration:none;white-space:nowrap;}
 </style>
 {# Card estilo ticket — aprobada por Alex 2026-10-06; fondo verde oscuro estilo "Your tools" aprobado 2026-10-08, sin cuadro exterior. #}
+{# Paleta LUX (2026-10-12, pedido por Alex): cuando la card sale en el home
+   nuevo (card_lux), usa los colores de la página — azul marino cristal, oro
+   suave y menta — en vez de su paleta propia. En el resto (Admin, home
+   anterior) se ve exactamente como siempre. #}
+{% set _lux = card_lux if card_lux is defined and card_lux else false %}
+{% set _mint = '#2fe6a7' if _lux else '#4ade80' %}
+{% set _view = '#7cc4ff' if _lux else '#60a5fa' %}
+{% set _platbg = 'rgba(207,224,245,.13)' if _lux else 'rgba(125,180,255,.15)' %}
+{% set _platfg = '#cfe0f5' if _lux else '#7db4ff' %}
+{% set _pendfg = '#f3cd6b' if _lux else '#f5c518' %}
 {% set is_vip = p.nivel in ['PLATINUM', 'ELITE'] %}
 {% set is_value = p.nivel == 'VALUE' %}
 {% set _res = p.resultado if p.resultado is defined else None %}
 {% if p.comprobante and not force_pre %}
     {# DISEÑO CON TICKET v4 — mismo que Estado 1 + ticket (aprobado Alex 2026-10-11) #}
-    <div style="background:url('{{ url_for('static', filename='img/watermark-football.jpg') }}') center 20%/cover no-repeat;border-radius:16px;padding:12px;color:#fff;position:relative;overflow:hidden;border:2px solid #c9a227;box-sizing:border-box;max-width:100%;margin:{% if force_pre %}0{% else %}0 4px{% endif %};font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
-      <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(3,5,4,.94),rgba(3,5,4,.98));border-radius:16px;"></div>
+    <div style="background:{% if _lux %}linear-gradient(160deg,rgba(17,29,54,.97),rgba(8,14,26,.98)){% else %}url('{{ url_for('static', filename='img/watermark-football.jpg') }}') center 20%/cover no-repeat{% endif %};border-radius:16px;padding:12px;color:#fff;position:relative;overflow:hidden;border:{{ '1px solid rgba(243,205,107,.35)' if _lux else '2px solid #c9a227' }};box-sizing:border-box;max-width:100%;margin:{% if force_pre %}0{% else %}0 4px{% endif %};font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
+      <div style="position:absolute;inset:0;background:{% if _lux %}radial-gradient(420px 200px at 12% -10%,rgba(212,160,23,.18),transparent 60%){% else %}linear-gradient(180deg,rgba(3,5,4,.94),rgba(3,5,4,.98)){% endif %};border-radius:16px;"></div>
       <div style="position:relative;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
           <div style="font-size:16px;color:#fff;">{{ p.team_name or p.abbr }} {{ 'ML' if p.bettype == 'Moneyline' else p.bettype }} <span style="font-size:11px;color:#e3b93c;">&middot; {{ p.liga or '' }}</span> <span style="font-size:10px;letter-spacing:1px;color:#f5c518;background:#2a2113;padding:4px 10px;border-radius:999px;">{{ 'PLATINUM' if is_vip else 'GOLD' }}</span></div>
-          <span style="color:#4ade80;font-size:14px;flex:none;margin-left:8px;">{{ fmt_odds(p.cuota) }}</span>
+          <span style="color:{{ _mint }};font-size:14px;flex:none;margin-left:8px;">{{ fmt_odds(p.cuota) }}</span>
         </div>
         {% if p.writeup %}
         <details class="tstc-wu" style="border:1px solid rgba(212,175,55,.3);border-radius:10px;background:rgba(0,0,0,.3);margin-bottom:8px;">
@@ -105,7 +115,7 @@
             <div style="display:flex;justify-content:space-between;padding:3px 0;"><span>Model win probability</span><span>{{ p.writeup.model_prob }}</span></div>
             <div style="display:flex;justify-content:space-between;padding:3px 0;"><span>Implied by the price</span><span>{{ p.writeup.implied_prob }}</span></div>
             <div style="display:flex;justify-content:space-between;padding:3px 0;"><span>Fair price (model)</span><span>{{ p.writeup.fair_price }}</span></div>
-            <div style="display:flex;justify-content:space-between;padding:3px 0;"><span>Edge</span><span style="color:#4ade80;">{{ p.writeup.edge }}</span></div>
+            <div style="display:flex;justify-content:space-between;padding:3px 0;"><span>Edge</span><span style="color:{{ _mint }};">{{ p.writeup.edge }}</span></div>
             {% if p.writeup.key_factor %}<p style="margin:6px 0 3px;color:#e3b93c;">&#x1F511; KEY FACTOR</p><p style="margin:0 0 6px;">{{ p.writeup.key_factor }}</p>{% endif %}
             {% if p.writeup.risk %}<p style="margin:6px 0 3px;color:#e3b93c;">&#x26A0;&#xFE0F; THE RISK</p><p style="margin:0;">{{ p.writeup.risk }}</p>{% endif %}
           </div>
@@ -143,12 +153,12 @@
           </div>
         </div>
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
-          <div style="font-size:13px;color:#4ade80;">Bet&nbsp;&nbsp;{{ '$%.0f' % p.stake_monto }} <span style="color:#9ca3af;">({{ '%g' % p.stake_unidades }}u)</span></div>
+          <div style="font-size:13px;color:{{ _mint }};">Bet&nbsp;&nbsp;{{ '$%.0f' % p.stake_monto }} <span style="color:#9ca3af;">({{ '%g' % p.stake_unidades }}u)</span></div>
           {% if p.nivel != 'VALUE' %}
           {% if p.id in tracked_ids %}
-            <span style="color:#4ade80;font-size:11px;">&#x2713; Tracked</span>
+            <span style="color:{{ _mint }};font-size:11px;">&#x2713; Tracked</span>
           {% else %}
-            <a class="tstc-track" href="{{ url_for('track', play_id=p.id) }}" data-track-url="{{ url_for('track', play_id=p.id) }}" style="color:#4ade80;border:1px solid rgba(34,197,94,.6);font-size:11px;padding:6px 16px;border-radius:10px;background:rgba(34,197,94,.12);text-decoration:none;">+ Track</a>
+            <a class="tstc-track" href="{{ url_for('track', play_id=p.id) }}" data-track-url="{{ url_for('track', play_id=p.id) }}" style="color:{{ _mint }};border:1px solid {{ 'rgba(47,230,167,.55)' if _lux else 'rgba(34,197,94,.6)' }};font-size:11px;padding:6px 16px;border-radius:10px;background:{{ 'rgba(47,230,167,.10)' if _lux else 'rgba(34,197,94,.12)' }};text-decoration:none;">+ Track</a>
           {% endif %}
           {% endif %}
         </div>
@@ -158,20 +168,20 @@
           {% else %}
             <a href="https://novig.com" target="_blank" rel="noopener" style="color:#e3b93c;font-size:12px;text-decoration:none;">Place at Novig &rarr;</a>
           {% endif %}
-          <a href="javascript:void(0)" onclick="document.getElementById('tstc-modal-{{ p.id }}').style.display='flex'" style="color:#60a5fa;font-size:12px;text-decoration:none;">View ticket &rarr;</a>
+          <a href="javascript:void(0)" onclick="document.getElementById('tstc-modal-{{ p.id }}').style.display='flex'" style="color:{{ _view }};font-size:12px;text-decoration:none;">View ticket &rarr;</a>
         </div>
       </div>
     </div>
     {% else %}
     {# DISEÑO SIN TICKET v3 — estilo Novig + fondo futbolista, aprobado por Alex 2026-10-11 #}
-    <div style="background:url('{{ url_for('static', filename='img/watermark-football.jpg') }}') center 20%/cover no-repeat;border-radius:20px;padding:16px 14px;color:#fff;position:relative;overflow:hidden;border:2px solid #c9a227;box-sizing:border-box;max-width:100%;margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
-      <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(3,5,4,.94),rgba(3,5,4,.98));border-radius:20px;"></div>
+    <div style="background:{% if _lux %}linear-gradient(160deg,rgba(17,29,54,.97),rgba(8,14,26,.98)){% else %}url('{{ url_for('static', filename='img/watermark-football.jpg') }}') center 20%/cover no-repeat{% endif %};border-radius:20px;padding:16px 14px;color:#fff;position:relative;overflow:hidden;border:{{ '1px solid rgba(243,205,107,.35)' if _lux else '2px solid #c9a227' }};box-sizing:border-box;max-width:100%;margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
+      <div style="position:absolute;inset:0;background:{% if _lux %}radial-gradient(420px 200px at 12% -10%,rgba(212,160,23,.18),transparent 60%){% else %}linear-gradient(180deg,rgba(3,5,4,.94),rgba(3,5,4,.98)){% endif %};border-radius:20px;"></div>
       <div style="position:relative;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-          {% if is_vip %}<span style="font-size:11px;letter-spacing:1.5px;padding:6px 14px;border-radius:999px;background:rgba(125,180,255,.15);color:#7db4ff;">PLATINUM</span>{% elif is_value %}<span style="font-size:11px;letter-spacing:1.5px;padding:6px 14px;border-radius:999px;background:rgba(125,180,255,.15);color:#7db4ff;">💎 VALUE PLAY</span>{% else %}<span style="font-size:11px;letter-spacing:1.5px;padding:6px 14px;border-radius:999px;background:rgba(201,162,39,.15);color:#e3b93c;">GOLD</span>{% endif %}
+          {% if is_vip %}<span style="font-size:11px;letter-spacing:1.5px;padding:6px 14px;border-radius:999px;background:{{ _platbg }};color:{{ _platfg }};">PLATINUM</span>{% elif is_value %}<span style="font-size:11px;letter-spacing:1.5px;padding:6px 14px;border-radius:999px;background:{{ _platbg }};color:{{ _platfg }};">💎 VALUE PLAY</span>{% else %}<span style="font-size:11px;letter-spacing:1.5px;padding:6px 14px;border-radius:999px;background:rgba(201,162,39,.15);color:#e3b93c;">GOLD</span>{% endif %}
           {% if _res == 'W' %}<span style="font-size:10px;letter-spacing:1.5px;color:#4ade80;background:rgba(74,222,128,.1);padding:5px 12px;border-radius:999px;">WON</span>
           {% elif _res == 'L' %}<span style="font-size:10px;letter-spacing:1.5px;color:#f87171;background:rgba(248,113,113,.1);padding:5px 12px;border-radius:999px;">LOST</span>
-          {% else %}<span style="font-size:10px;letter-spacing:1.5px;color:#f5c518;background:rgba(245,197,24,.08);padding:5px 12px;border-radius:999px;">PENDING</span>{% endif %}
+          {% else %}<span style="font-size:10px;letter-spacing:1.5px;color:{{ _pendfg }};background:rgba(245,197,24,.08);padding:5px 12px;border-radius:999px;">PENDING</span>{% endif %}
         </div>
         <div style="display:flex;gap:12px;align-items:center;margin-bottom:12px;">
           <svg width="64" height="64" viewBox="0 0 60 60" style="flex:none;"><path d="M22 8 L12 14 L6 28 L15 31 L17 25 L17 54 L43 54 L43 25 L45 31 L54 28 L48 14 L38 8 C36 13 33 15 30 15 C27 15 24 13 22 8 Z" fill="#1a2233" stroke="#c9a227" stroke-width="2"/><path d="M22 8 C24 13 27 15 30 15 C33 15 36 13 38 8" fill="none" stroke="#c9a227" stroke-width="1.2"/><text x="30" y="42" text-anchor="middle" fill="#fff" font-size="12" font-family:sans-serif">{{ p.abbr }}</text></svg>
@@ -181,9 +191,9 @@
           </div>
         </div>
         <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:6px;">
-          <span style="font-size:30px;color:#4ade80;">{{ fmt_odds(p.cuota) }}</span>
+          <span style="font-size:30px;color:{{ _mint }};">{{ fmt_odds(p.cuota) }}</span>
           {% if p.writeup and p.writeup.fair_price %}<span style="font-size:12px;color:#d1d5db;">Fair <span style="color:#fff;">{{ p.writeup.fair_price }}</span></span>{% endif %}
-          {% if p.writeup and p.writeup.edge %}<span style="font-size:12px;color:#d1d5db;">Edge <span style="color:#4ade80;">{{ p.writeup.edge }}</span></span>{% endif %}
+          {% if p.writeup and p.writeup.edge %}<span style="font-size:12px;color:#d1d5db;">Edge <span style="color:{{ _mint }};">{{ p.writeup.edge }}</span></span>{% endif %}
         </div>
         {% if p.casa %}<div style="margin-bottom:10px;"><span style="font-size:12px;color:#9aa3b8;">Best price at </span><span style="font-size:12px;font-weight:800;color:#e3b93c;">{{ p.casa }}</span></div>{% endif %}
         <div style="display:flex;gap:16px;margin-bottom:12px;font-size:12px;color:#d1d5db;">
@@ -197,7 +207,7 @@
             <div style="display:flex;justify-content:space-between;padding:4px 0;"><span>Model win probability</span><span>{{ p.writeup.model_prob }}</span></div>
             <div style="display:flex;justify-content:space-between;padding:4px 0;"><span>Implied by the price</span><span>{{ p.writeup.implied_prob }}</span></div>
             <div style="display:flex;justify-content:space-between;padding:4px 0;"><span>Fair price (model)</span><span>{{ p.writeup.fair_price }}</span></div>
-            <div style="display:flex;justify-content:space-between;padding:4px 0;"><span>Edge</span><span style="color:#4ade80;">{{ p.writeup.edge }}</span></div>
+            <div style="display:flex;justify-content:space-between;padding:4px 0;"><span>Edge</span><span style="color:{{ _mint }};">{{ p.writeup.edge }}</span></div>
             {% if p.writeup.key_factor %}<p style="margin:8px 0 4px;color:#e3b93c;">🔑 KEY FACTOR</p><p style="margin:0 0 8px;">{{ p.writeup.key_factor }}</p>{% endif %}
             {% if p.writeup.risk %}<p style="margin:8px 0 4px;color:#e3b93c;">⚠️ THE RISK</p><p style="margin:0;">{{ p.writeup.risk }}</p>{% endif %}
           </div>
@@ -205,15 +215,15 @@
         {% endif %}
         <div style="display:flex;align-items:center;justify-content:space-between;">
           {% if p.novig_url and '%2Fevent-markets%2F' in p.novig_url %}
-            <a href="{{ p.novig_url }}" target="_blank" rel="noopener" style="color:#4ade80;font-size:13px;text-decoration:none;">Place at Novig &rarr;</a>
+            <a href="{{ p.novig_url }}" target="_blank" rel="noopener" style="color:{{ _mint }};font-size:13px;text-decoration:none;">Place at Novig &rarr;</a>
           {% else %}
-            <a href="https://novig.com" target="_blank" rel="noopener" style="color:#4ade80;font-size:13px;text-decoration:none;">Place at Novig &rarr;</a>
+            <a href="https://novig.com" target="_blank" rel="noopener" style="color:{{ _mint }};font-size:13px;text-decoration:none;">Place at Novig &rarr;</a>
           {% endif %}
           {% if p.nivel != 'VALUE' %}
           {% if p.id in tracked_ids %}
-            <span style="color:#4ade80;font-size:12px;">✓ Tracked</span>
+            <span style="color:{{ _mint }};font-size:12px;">✓ Tracked</span>
           {% else %}
-            <a class="tstc-track" href="{{ url_for('track', play_id=p.id) }}" data-track-url="{{ url_for('track', play_id=p.id) }}" style="color:#4ade80;border:1.5px solid rgba(34,197,94,.6);font-size:12px;padding:8px 20px;border-radius:12px;background:rgba(34,197,94,.12);text-decoration:none;">+ Track</a>
+            <a class="tstc-track" href="{{ url_for('track', play_id=p.id) }}" data-track-url="{{ url_for('track', play_id=p.id) }}" style="color:{{ _mint }};border:1.5px solid {{ 'rgba(47,230,167,.55)' if _lux else 'rgba(34,197,94,.6)' }};font-size:12px;padding:8px 20px;border-radius:12px;background:{{ 'rgba(47,230,167,.10)' if _lux else 'rgba(34,197,94,.12)' }};text-decoration:none;">+ Track</a>
           {% endif %}
           {% endif %}
         </div>

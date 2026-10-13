@@ -96,7 +96,8 @@ body.v2 .v2-bottomnav .v2-bnav-item.active{background:linear-gradient(180deg,#ff
   <a class="lux-fulllink" href="{{ url_for('official_tracker') }}">View the full record <span>→</span></a>
 </div>
 
-<!-- TODAY'S PLAYS -->
+{% set card_lux = true %}
+<!-- TODAY'S PLAYS · tarjetas con la paleta de la página (card_lux) -->
 <section class="v2-sec" id="plays" style="scroll-margin-top:70px;">
   <div class="v2-sec-head">
     <div>
