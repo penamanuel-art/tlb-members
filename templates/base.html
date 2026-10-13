@@ -84,7 +84,7 @@ body.admin-theme .ot-bar > div{ background: linear-gradient(90deg, #2fe6a7, #7df
         <a href="{{ url_for('ai_assistant') }}">🧠 Brain</a>
         <a href="{{ url_for('records') }}">📜 Full record</a>
         {% if is_alex and not es_admin %}<a href="{{ url_for('values_page') }}">💎 Value Plays</a>{% endif %}
-        <a href="{{ url_for('masterclass') }}">🎓 Masterclass</a>
+        <a href="{{ url_for('masterclass') }}">🎓 Academy</a>
         <a href="{{ url_for('guide_moneyline') }}">📚 Betting Guides</a>
         {# "📊 Results" eliminado del menú (2026-10-12): duplicaba "📜 Full record". #}
         <a href="{{ url_for('ev_board') }}">⚡ +EV Board</a>

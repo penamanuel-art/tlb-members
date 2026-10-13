@@ -1,10 +1,10 @@
 {% extends "base.html" %}
-{% block title %}Masterclass — The Sharp Team{% endblock %}
+{% block title %}Academy — The Sharp Team{% endblock %}
 {% block content %}
 <section class="tracker-head">
   <div>
     <p class="kicker">THE SHARP TEAM MASTERCLASS · 30-DAY COURSE</p>
-    <h2>{% if leccion.get('dia') %}Day {{ leccion.get('dia') }} of 30{% else %}Masterclass{% endif %}</h2>
+    <h2>{% if leccion.get('dia') %}Day {{ leccion.get('dia') }} of 30{% else %}Academy{% endif %}</h2>
     {% if leccion.get('fase') %}<p class="muted">{{ leccion.get('fase') }}</p>{% endif %}
   </div>
 </section>
