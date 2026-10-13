@@ -35,12 +35,8 @@
 </div>
 <div class="acct-sub">{{ u.nombre if u else '' }} · {{ u.email if u else '' }}</div>
 
-{% if es_admin or is_alex %}
-<section class="auth-card" style="border:1px solid rgba(201,162,39,.3);">
-  <h2>⚙️ Admin</h2>
-  <a href="{{ url_for('admin_dashboard') }}" class="btn btn-block" style="text-decoration:none;text-align:center;display:block;">Open Admin Dashboard →</a>
-</section>
-{% endif %}
+{# Sección Admin ELIMINADA de Account (2026-10-12, orden de Alex): él entra
+   al Admin desde el menú inferior; esta tarjeta sobraba aquí. #}
 
 <div class="acct-tabs" id="acctTabs">
   <button type="button" class="acct-tab" data-tab="overview">Overview</button>
