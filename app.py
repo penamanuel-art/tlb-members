@@ -1732,10 +1732,10 @@ def official_tracker_full():
     ordenadas = sorted(settled, key=lambda it: float(it[1].get("profit") or 0.0))
     peor = [{"fecha": f, "pick": j.get("pick"), "cuota": j.get("cuota_texto") or j.get("cuota"),
              "profit": float(j.get("profit") or 0.0), "nivel": (j.get("nivel") or "").upper(),
-             "comprobante": j.get("comprobante")} for f, j in ordenadas[:3]]
+             "comprobante": j.get("comprobante")} for f, j in ordenadas[:5]]
     mejor = [{"fecha": f, "pick": j.get("pick"), "cuota": j.get("cuota_texto") or j.get("cuota"),
               "profit": float(j.get("profit") or 0.0), "nivel": (j.get("nivel") or "").upper(),
-              "comprobante": j.get("comprobante")} for f, j in reversed(ordenadas[-3:])]
+              "comprobante": j.get("comprobante")} for f, j in reversed(ordenadas[-5:])]
     ultimas = [{"fecha": f, "pick": j.get("pick"), "cuota": j.get("cuota_texto") or j.get("cuota"),
                 "resultado": j.get("resultado"), "profit": float(j.get("profit") or 0.0),
                 "nivel": (j.get("nivel") or "").upper(),
