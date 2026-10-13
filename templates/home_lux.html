@@ -468,4 +468,36 @@ body.v2 .v2-bottomnav .v2-bnav-item.active{background:linear-gradient(180deg,#ff
 </script>
 {% endif %}
 
+{% if dia_positivo %}
+{# LLUVIA DE DINERO (pedido de Alex 2026-10-13): cae al entrar al dashboard
+   SOLO cuando el último día liquidado quedó positivo ("cuando ganemos, que
+   quedemos positivos, que llueva dinero"). Una vez al día por dispositivo. #}
+<style>
+.money-rain{position:fixed;top:-60px;z-index:60;pointer-events:none;animation:moneyfall linear forwards;}
+@keyframes moneyfall{to{transform:translateY(110vh) rotate(360deg);}}
+@media (prefers-reduced-motion: reduce){ .money-rain{display:none;} }
+</style>
+<script>
+(function(){
+  try{
+    var hoy = new Date().toLocaleDateString('en-CA',{timeZone:'America/New_York'});
+    if (localStorage.getItem('ts_rain_day') === hoy) return;
+    localStorage.setItem('ts_rain_day', hoy);
+  }catch(e){}
+  var emojis = ['💵','💰','💸'];
+  for(var i = 0; i < 40; i++){
+    var s = document.createElement('span');
+    s.className = 'money-rain';
+    s.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    s.style.left = Math.random() * 100 + 'vw';
+    s.style.fontSize = (20 + Math.random() * 24) + 'px';
+    s.style.animationDuration = (2.5 + Math.random() * 2.5) + 's';
+    s.style.animationDelay = (Math.random() * 2) + 's';
+    document.body.appendChild(s);
+    (function(el){ setTimeout(function(){ el.remove(); }, 7000); })(s);
+  }
+})();
+</script>
+{% endif %}
+
 {% endblock %}

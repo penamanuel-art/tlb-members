@@ -1551,6 +1551,18 @@ def resumen_ayer():
     return None
 
 
+def ultimo_dia_positivo():
+    """True si el último día liquidado del archivo oficial cerró en positivo.
+    Alimenta la lluvia de dinero del dashboard (pedido de Alex 2026-10-13:
+    que llueva dinero al entrar SOLO cuando ganamos / quedamos positivos)."""
+    mejor = None
+    for d in load_archive():
+        js = [j for j in (d.get("jugadas", []) or []) if j.get("resultado") in ("WON", "LOST")]
+        if js and (mejor is None or (d.get("fecha") or "") > mejor[0]):
+            mejor = (d.get("fecha") or "", round(sum(float(j.get("profit") or 0) for j in js), 2))
+    return bool(mejor and mejor[1] > 0)
+
+
 # Ligas que cubrimos: clasificación del pick por equipo (desglose por liga).
 def recientes_oficiales(n=6):
     """Jugadas liquidadas del archivo oficial (sin bloqueadas), más recientes primero."""
@@ -2999,7 +3011,9 @@ def home():
     # Vista previa admin (pedido Alex 2026-09-30): ?preview=locked muestra el
     # home como lo ve un miembro sin Elite (teaser bloqueado + pancarta $1).
     preview_locked = is_admin_for(user) and request.args.get("preview") == "locked"
-    # Lluvia de dinero ELIMINADA por orden de Alex 2026-10-10: ya no se muestra.
+    # Lluvia de dinero: eliminada en general el 2026-10-10; Alex la pidió de
+    # vuelta el 2026-10-13 SOLO para días ganadores (último día liquidado en
+    # positivo) al entrar al dashboard — ver ultimo_dia_positivo().
     _lux = home_lux_enabled()
     return render_template(
         # Tema v2 (moderno) es el predeterminado desde 2026-10-02 (pedido Alex);
@@ -3020,6 +3034,7 @@ def home():
         res=program_stats(),
         pcurve=program_curve(),
         diseno_lux=_lux,
+        dia_positivo=ultimo_dia_positivo(),
         dias=load_archive(),
         snapshot=performance_snapshot(),
         now_day_of_year=datetime.now().timetuple().tm_yday,

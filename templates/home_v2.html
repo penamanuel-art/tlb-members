@@ -585,13 +585,21 @@
 })();
 </script>
 
-{% if resumen_ayer and resumen_ayer.profit > 0 %}
+{% if dia_positivo %}
+{# Lluvia reactivada 2026-10-13 con la condición de Alex (día positivo),
+   ahora sobre el último día liquidado y una vez al día por dispositivo. #}
 <style>
-.money-rain{position:fixed;top:-60px;z-index:9998;pointer-events:none;animation:moneyfall linear forwards;}
+.money-rain{position:fixed;top:-60px;z-index:60;pointer-events:none;animation:moneyfall linear forwards;}
 @keyframes moneyfall{to{transform:translateY(110vh) rotate(360deg);}}
+@media (prefers-reduced-motion: reduce){ .money-rain{display:none;} }
 </style>
 <script>
 (function(){
+  try{
+    var hoy = new Date().toLocaleDateString('en-CA',{timeZone:'America/New_York'});
+    if (localStorage.getItem('ts_rain_day') === hoy) return;
+    localStorage.setItem('ts_rain_day', hoy);
+  }catch(e){}
   var emojis = ['💵','💰','💸'];
   for(var i = 0; i < 40; i++){
     var s = document.createElement('span');
