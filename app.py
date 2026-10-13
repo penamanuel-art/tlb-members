@@ -3087,11 +3087,36 @@ def home():
 def register():
     if "user_id" in session:
         return redirect(url_for("home"))
-    # Récord Gold en vivo para la prueba social (2026-10-08, pedido por Alex)
+    # Prueba social EN VIVO para la landing de registro (todo desde el
+    # archivo oficial; rediseño de conversión aprobado por Alex 2026-10-13:
+    # unidades al frente, récord completo, resultados recientes, fondo de
+    # futbolista). Nada hardcodeado.
     try:
-        _gold = program_stats()["niveles"]["GOLD"]
+        _stats = program_stats()
+        _gold = _stats["niveles"]["GOLD"]
     except Exception:
-        _gold = {"ganadas": 0, "perdidas": 0, "win_rate": 0.0, "net_display": "$0"}
+        _stats = {"ganadas": 0, "perdidas": 0, "win_rate": 0.0,
+                  "profit_units_display": "+0.00u"}
+        _gold = {"ganadas": 0, "perdidas": 0, "win_rate": 0.0,
+                 "net_display": "$0", "profit": 0.0}
+    _gold = dict(_gold)
+    _gold["units_display"] = f"{float(_gold.get('profit') or 0) / 25.0:+.2f}u"
+    try:
+        _ayer = resumen_ayer()
+    except Exception:
+        _ayer = None
+    if _ayer:
+        _ayer = dict(_ayer)
+        _ayer["units_display"] = f"{float(_ayer.get('profit') or 0) / 25.0:+.2f}u"
+    try:
+        _recientes = recientes_oficiales(4)
+    except Exception:
+        _recientes = []
+    for _r in _recientes:
+        _r["units_display"] = f"{float(_r.get('profit') or 0) / 25.0:+.2f}u"
+    _drop = "11:00 AM ET" if datetime.now(TZ).weekday() >= 5 else "2:00 PM ET"
+    _reg_ctx = {"gold": _gold, "stats": _stats, "ayer": _ayer,
+                "recientes": _recientes, "drop_time": _drop}
     if request.method == "POST":
         nombre = request.form.get("nombre", "").strip()
         email = request.form.get("email", "").strip().lower()
@@ -3100,12 +3125,12 @@ def register():
         sms_optin = 1 if request.form.get("sms_optin") == "1" and phone else 0
         if not nombre or not email or len(password) < 6:
             flash("Enter your name, a valid email and a password of at least 6 characters.", "error")
-            return render_template("register.html", gold=_gold), 400
+            return render_template("register.html", **_reg_ctx), 400
         db = get_db()
         exists = db.execute("SELECT id FROM users WHERE email = ?", (email,)).fetchone()
         if exists:
             flash("That email is already registered. Log in.", "error")
-            return render_template("register.html", gold=_gold), 400
+            return render_template("register.html", **_reg_ctx), 400
         new_id = insert_returning_id(
             db,
             "INSERT INTO users (nombre, email, password_hash, phone, sms_optin, created_at) VALUES (?, ?, ?, ?, ?, ?)",
@@ -3131,7 +3156,7 @@ def register():
         except Exception:
             pass
         return redirect(url_for("bienvenida"))
-    return render_template("register.html", gold=_gold)
+    return render_template("register.html", **_reg_ctx)
 
 
 # Links rastreados (pedido Alex 2026-10-02): cada clic se guarda en
