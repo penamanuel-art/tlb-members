@@ -31,13 +31,9 @@ body.v2 .v2-bottomnav{background:rgba(13,20,36,.78);backdrop-filter:blur(16px);-
 body.v2 .v2-bottomnav .v2-bnav-item.active{background:linear-gradient(180deg,#ffe9a8,#e9bc45);color:#1c1400;border-radius:15px;font-weight:800}
 </style>
 
-{% if es_admin or es_alex %}
-<div class="lux-adminbar">
-  <form method="post" action="{{ url_for('admin_diseno_home') }}">
-    <button type="submit">↩ Revert design</button>
-  </form>
-</div>
-{% endif %}
+{# Botón "Revert design" ELIMINADO (2026-10-13, orden de Alex: "quita eso").
+   El diseño lux queda fijo; el endpoint /admin/diseno-home sigue existiendo
+   por si algún día se pide volver atrás desde el Admin. #}
 
 <!-- SALUDO · compacto -->
 <section class="v2-hero v2-hero-wgt">
@@ -468,22 +464,23 @@ body.v2 .v2-bottomnav .v2-bnav-item.active{background:linear-gradient(180deg,#ff
 </script>
 {% endif %}
 
-{% if dia_positivo %}
-{# LLUVIA DE DINERO (pedido de Alex 2026-10-13): cae al entrar al dashboard
-   SOLO cuando el último día liquidado quedó positivo ("cuando ganemos, que
-   quedemos positivos, que llueva dinero"). Una vez al día por dispositivo. #}
+{% if celebracion %}
+{# LLUVIA DE DINERO + BURBUJA (pedido de Alex 2026-10-13): al entrar al
+   dashboard llueve dinero en cada visita mientras dure la celebración
+   (ayer positivo, hasta el primer partido de hoy — lo corta el servidor).
+   La burbuja con los resultados del día desaparece a los 4 segundos. #}
 <style>
-.money-rain{position:fixed;top:-60px;z-index:60;pointer-events:none;animation:moneyfall linear forwards;}
+.money-rain{position:fixed;top:-60px;z-index:9998;pointer-events:none;animation:moneyfall linear forwards;}
 @keyframes moneyfall{to{transform:translateY(110vh) rotate(360deg);}}
 @media (prefers-reduced-motion: reduce){ .money-rain{display:none;} }
+.win-bubble{position:fixed;top:calc(env(safe-area-inset-top, 0px) + 84px);left:50%;transform:translateX(-50%);z-index:9999;background:rgba(10,18,34,.92);border:1px solid rgba(243,205,107,.65);color:#fff;border-radius:999px;padding:11px 20px;font-size:.95rem;font-weight:700;white-space:nowrap;box-shadow:0 12px 34px rgba(0,0,0,.55);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);animation:wb-in .35s ease-out;transition:opacity .5s ease;}
+.win-bubble .wb-pos{color:#2fe6a7;font-weight:900;}
+.win-bubble.wb-out{opacity:0;}
+@keyframes wb-in{from{opacity:0;transform:translateX(-50%) translateY(-8px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}
 </style>
+<div class="win-bubble" id="winBubble">🎉 <b>WINNING DAY!</b>&nbsp; Yesterday: {{ celebracion.w }}–{{ celebracion.l }} · <span class="wb-pos">+${{ '%.2f' % celebracion.profit }}</span></div>
 <script>
 (function(){
-  try{
-    var hoy = new Date().toLocaleDateString('en-CA',{timeZone:'America/New_York'});
-    if (localStorage.getItem('ts_rain_day') === hoy) return;
-    localStorage.setItem('ts_rain_day', hoy);
-  }catch(e){}
   var emojis = ['💵','💰','💸'];
   for(var i = 0; i < 40; i++){
     var s = document.createElement('span');
@@ -495,6 +492,11 @@ body.v2 .v2-bottomnav .v2-bnav-item.active{background:linear-gradient(180deg,#ff
     s.style.animationDelay = (Math.random() * 2) + 's';
     document.body.appendChild(s);
     (function(el){ setTimeout(function(){ el.remove(); }, 7000); })(s);
+  }
+  var b = document.getElementById('winBubble');
+  if (b) {
+    setTimeout(function(){ b.classList.add('wb-out'); }, 4000);
+    setTimeout(function(){ if (b.parentNode) b.remove(); }, 4600);
   }
 })();
 </script>

@@ -1551,16 +1551,43 @@ def resumen_ayer():
     return None
 
 
-def ultimo_dia_positivo():
-    """True si el último día liquidado del archivo oficial cerró en positivo.
-    Alimenta la lluvia de dinero del dashboard (pedido de Alex 2026-10-13:
-    que llueva dinero al entrar SOLO cuando ganamos / quedamos positivos)."""
-    mejor = None
-    for d in load_archive():
-        js = [j for j in (d.get("jugadas", []) or []) if j.get("resultado") in ("WON", "LOST")]
-        if js and (mejor is None or (d.get("fecha") or "") > mejor[0]):
-            mejor = (d.get("fecha") or "", round(sum(float(j.get("profit") or 0) for j in js), 2))
-    return bool(mejor and mejor[1] > 0)
+def celebracion_hoy():
+    """Lluvia de dinero del dashboard (pedido de Alex 2026-10-13): si AYER
+    cerró positivo devuelve {w, l, profit} para la burbuja de resultados;
+    la celebración termina cuando empieza el primer partido de HOY (se
+    busca la hora más temprana entre la card publicada y la pendiente de
+    hoy). Si ayer no fue positivo o ya empezó la acción de hoy: None."""
+    r = resumen_ayer()
+    if not r or r["profit"] <= 0:
+        return None
+    try:
+        ahora = datetime.now(TZ)
+        hoy = ahora.date().isoformat()
+        inicios = []
+        fuentes = []
+        for ruta in (PLAYS_PATH, PENDING_PLAYS_PATH):
+            try:
+                with open(ruta, "r", encoding="utf-8") as f:
+                    fuentes.append(json.load(f))
+            except (OSError, json.JSONDecodeError):
+                pass
+        for fuente in fuentes:
+            if not isinstance(fuente, dict) or fuente.get("fecha") != hoy:
+                continue
+            for p in fuente.get("plays", []) or []:
+                hora = (p.get("hora") or "").replace("ET", "").strip()
+                for fmt in ("%I:%M %p", "%I %p", "%H:%M"):
+                    try:
+                        t = datetime.strptime(hora, fmt)
+                        inicios.append(ahora.replace(hour=t.hour, minute=t.minute, second=0, microsecond=0))
+                        break
+                    except ValueError:
+                        continue
+        if inicios and ahora >= min(inicios):
+            return None
+    except Exception:
+        pass
+    return r
 
 
 # Ligas que cubrimos: clasificación del pick por equipo (desglose por liga).
@@ -3011,9 +3038,9 @@ def home():
     # Vista previa admin (pedido Alex 2026-09-30): ?preview=locked muestra el
     # home como lo ve un miembro sin Elite (teaser bloqueado + pancarta $1).
     preview_locked = is_admin_for(user) and request.args.get("preview") == "locked"
-    # Lluvia de dinero: eliminada en general el 2026-10-10; Alex la pidió de
-    # vuelta el 2026-10-13 SOLO para días ganadores (último día liquidado en
-    # positivo) al entrar al dashboard — ver ultimo_dia_positivo().
+    # Lluvia de dinero (Alex 2026-10-13): SOLO cuando ayer quedó positivo,
+    # con burbuja de resultados, hasta que empieza el primer partido de hoy
+    # — ver celebracion_hoy().
     _lux = home_lux_enabled()
     return render_template(
         # Tema v2 (moderno) es el predeterminado desde 2026-10-02 (pedido Alex);
@@ -3034,7 +3061,7 @@ def home():
         res=program_stats(),
         pcurve=program_curve(),
         diseno_lux=_lux,
-        dia_positivo=ultimo_dia_positivo(),
+        celebracion=celebracion_hoy(),
         dias=load_archive(),
         snapshot=performance_snapshot(),
         now_day_of_year=datetime.now().timetuple().tm_yday,
