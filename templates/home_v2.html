@@ -42,9 +42,7 @@
     {% if resumen_ayer %}
     <span class="v2-yesterday">Yesterday <b>{{ resumen_ayer.w }}-{{ resumen_ayer.l }}</b> · <b class="{{ 'pos' if resumen_ayer.profit >= 0 else 'neg' }}">{{ '$%+.2f' % resumen_ayer.profit }}</b></span>
     {% endif %}
-    {% if card_pendiente %}
-    <span class="v2-status pending"><span class="v2-dot"></span>CARD PENDING</span>
-    {% else %}
+    {% if not card_pendiente %}
     <span class="v2-status live"><span class="v2-dot"></span>CARD LIVE</span>
     {% endif %}
   </div>
