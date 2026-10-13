@@ -519,15 +519,7 @@
 </section>
 
 <!-- Elite sticky banner (non-VIP only), v2 pill -->
-{% if not platinum_unlocked %}
-<div class="v2-sticky" role="complementary" aria-label="Unlock Platinum">
-  <div class="v2-sticky-inner">
-    <p>Unlock Platinum plays for <b>$1</b></p>
-    <a href="{{ url_for('desbloquear_platinum') }}">$1 trial &rarr;</a>
-  </div>
-</div>
-<div class="v2-sticky-spacer" aria-hidden="true"></div>
-{% endif %}
+{# Barra dorada fija "Unlock Platinum" ELIMINADA (2026-10-13, orden de Alex): duplicaba el banner superior del $1 trial; queda solo el de arriba. #}
 
 {% if card_pendiente %}
 <script>
