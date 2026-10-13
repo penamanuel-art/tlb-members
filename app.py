@@ -4442,6 +4442,9 @@ def records():
     hero + cajas de stats (oficiales, Platinum, Gold) + lista completa de jugadas liquidadas."""
     db = get_db()
     record_checkin(db, session["user_id"])
+    # RETIRADO 2026-10-12 (orden de Alex): solo quedan el tracker EJECUTIVO
+    # del programa y el de VALUES — /records redirige al ejecutivo.
+    return redirect(url_for("official_tracker"))
 
     def _units(j):
         """Unidades ganadas/perdidas de una jugada liquidada."""
@@ -6240,27 +6243,12 @@ def admin_trakeos():
 @app.route("/resultados")
 @login_required
 def resultados():
+    # RETIRADO 2026-10-12 (orden de Alex): solo quedan DOS trackers activos —
+    # el EJECUTIVO del programa (/official-tracker) y el de VALUES. El tracker
+    # clásico de miembros se elimina; todo link viejo aterriza en el ejecutivo.
     db = get_db()
     record_checkin(db, session["user_id"])
-    # Jugadas pendientes de hoy (pedido Alex 2026-09-28): la card del día vive
-    # en plays.json; el archivo solo tiene liquidadas. Se muestran marcadas
-    # como pendientes, sin tocar las stats (que siguen siendo solo settled).
-    pendientes = []
-    fecha_hoy = ""
-    if card_publicada_hoy():
-        try:
-            with open(PLAYS_PATH, "r", encoding="utf-8") as f:
-                _dj = json.load(f)
-            fecha_hoy = _dj.get("fecha", "") if isinstance(_dj, dict) else ""
-        except (OSError, json.JSONDecodeError):
-            pass
-        pendientes = [
-            p for p in load_plays()
-            if p.get("pick") and not p.get("bloqueada")
-            and p.get("resultado") not in ("WON", "LOST")
-        ]
-    return render_template("resultados.html", res=program_stats(), dias=load_archive(),
-                           pendientes=pendientes, fecha_hoy=fecha_hoy)
+    return redirect(url_for("official_tracker"))
 
 
 @app.route("/ev-board")
