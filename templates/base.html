@@ -336,5 +336,26 @@ function googleTranslateElementInit(){new google.translate.TranslateElement({pag
   } catch(e){}
 })();
 </script>
+{% if session.get('user_id') %}
+<script>
+/* Espacio real para la pila inferior (menú + correa de resultados):
+   se MIDE en el teléfono en vez de asumir alturas fijas — así ninguna
+   sección queda tapada ni se asoma detrás de la correa. (Bug visto por
+   Alex el 2026-10-13: el borde de una tarjeta se veía detrás de la correa.) */
+(function(){
+  function fit(){
+    var nav=document.querySelector('.v2-bottomnav'), tk=document.querySelector('.ticker-dock-bottom');
+    var nh=0;
+    if(nav){ var r=nav.getBoundingClientRect(); nh=(window.innerHeight-r.top)+6; }
+    if(tk&&nav){ tk.style.bottom=nh+'px'; }
+    var total=nh+(tk?tk.offsetHeight:0);
+    if(total>0){ document.body.style.paddingBottom=(total+16)+'px'; }
+  }
+  window.addEventListener('load',fit);
+  window.addEventListener('resize',fit);
+  setTimeout(fit,300); setTimeout(fit,1200);
+})();
+</script>
+{% endif %}
 </body>
 </html>
