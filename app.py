@@ -5550,8 +5550,7 @@ def _push_aviso_disparo_alex(n_jugadas):
         subs = db.execute(
             "SELECT ps.id, ps.endpoint, ps.p256dh, ps.auth FROM push_subscriptions ps"
             " JOIN users u ON u.id = ps.member_id WHERE u.notif_plays = 1"
-            " AND lower(u.email) = ?",
-            ("pena.manuel@myyahoo.com",),
+            " AND u.is_admin = 1"
         ).fetchall()
         for s in subs:
             try:
