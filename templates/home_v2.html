@@ -49,9 +49,9 @@
 
 <!-- TARJETA DEL PROGRAMA · arriba del todo (orden de Alex 2026-10-12) -->
 <div class="v2-progcard">
-  <p class="v2-progcard-label">THE SHARP TEAM PROFIT · ALL-TIME</p>
-  <p class="v2-progcard-num {{ 'neg' if res.profit_cls == 'neg' else '' }}">{{ res.profit_display }}</p>
-  <p class="v2-progcard-sub">{{ res.ganadas }}–{{ res.perdidas }} record · {{ res.win_rate }}% win rate · every play public, win or loss</p>
+  <p class="v2-progcard-label">THE SHARP TEAM · NET UNITS ALL-TIME</p>
+  <p class="v2-progcard-num {{ 'neg' if res.profit_cls == 'neg' else '' }}">{{ res.profit_units_display }}</p>
+  <p class="v2-progcard-sub">{{ res.profit_display }} profit · {{ res.ganadas }}–{{ res.perdidas }} record · {{ res.win_rate }}% win rate · every play public, win or loss</p>
 </div>
 <div style="text-align:center;margin:12px 0 4px;">
   <a class="v2-link" href="{{ url_for('official_tracker') }}">View full results →</a>

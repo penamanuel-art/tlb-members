@@ -1622,9 +1622,12 @@ def official_tracker_full():
         profit = sum(float(j.get("profit") or 0.0) for _, j in items)
         risked = sum(float(j.get("stake_monto") or 0.0) for _, j in items)
         n = w + l
+        _units = profit / 25.0  # 1u oficial = $25 (Platinum $25=1u, Gold $15=0.6u)
         return {"w": w, "l": l, "record": f"{w}–{l}",
                 "win_rate": round(w / n * 100, 1) if n else 0.0,
                 "profit": round(profit, 2),
+                "units": round(_units, 2),
+                "units_display": f"{_units:+.2f}u",
                 "profit_display": (("+$" if profit > 0 else ("-$" if profit < 0 else "$"))
                                    + f"{abs(int(round(profit))):,}"),
                 "cls": "pos" if profit > 0 else ("neg" if profit < 0 else ""),
@@ -1753,6 +1756,7 @@ def program_stats():
     _pn = int(round(profit))
     return {
         "profit_all_time": round(profit, 2),
+        "profit_units_display": f"{profit / 25.0:+.2f}u",
         "profit_display": ("+$" if _pn > 0 else ("-$" if _pn < 0 else "$")) + f"{abs(_pn):,}",
         "profit_cls": "pos" if _pn > 0 else ("neg" if _pn < 0 else ""),
         "ganadas": ganadas,

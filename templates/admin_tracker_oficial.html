@@ -51,9 +51,9 @@
 
   {% set g = t.general %}
   <div class="ot-hero">
-    <div class="profit {{ 'ot-pos' if g.cls == 'pos' else ('ot-neg' if g.cls == 'neg' else '') }}" style="color:{{ '#00e07f' if g.cls == 'pos' else ('#ff5d5d' if g.cls == 'neg' else '#fff') }};">{{ g.profit_display }}</div>
-    <div class="lbl">NET PROFIT · ALL TIME</div>
-    <div class="rec">{{ g.record }} · {{ g.win_rate }}% win rate · ROI {{ '+' if g.roi > 0 else '' }}{{ g.roi }}%</div>
+    <div class="profit {{ 'ot-pos' if g.cls == 'pos' else ('ot-neg' if g.cls == 'neg' else '') }}" style="color:{{ '#00e07f' if g.cls == 'pos' else ('#ff5d5d' if g.cls == 'neg' else '#fff') }};">{{ g.units_display }}</div>
+    <div class="lbl">NET UNITS · ALL TIME</div>
+    <div class="rec">{{ g.record }} · {{ g.win_rate }}% win rate · ROI {{ '+' if g.roi > 0 else '' }}{{ g.roi }}% · {{ g.profit_display }} net profit</div>
     <div class="ot-bar"><div style="width: {{ g.progress_pct }}%;"></div></div>
     <div class="ot-bar-lbl">{{ g.progress }} of 200 plays graded ({{ g.progress_pct }}%)</div>
   </div>
