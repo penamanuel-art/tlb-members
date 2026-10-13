@@ -1330,7 +1330,13 @@ def stake_kelly(play, bankroll):
     Acepta cuota como int o string, con o sin signo (ej. 186, "+186", "-110").
     """
     try:
-        edge = float(play.get("edge") or 0) / 100.0
+        _edge_raw = play.get("edge") or 0
+        if isinstance(_edge_raw, str):
+            # plays.json trae el edge como texto ("+6.2%"): sin esta limpieza
+            # float() explotaba y stake_kelly devolvía $0 (bug visto por Alex
+            # el 2026-10-13: la card mostraba "Bet $0" con ticket de $50).
+            _edge_raw = _edge_raw.replace("%", "").replace("EV", "").strip()
+        edge = float(_edge_raw) / 100.0
         cuota = str(play.get("cuota") or "").strip().replace("−", "-")
         if cuota.startswith("-"):
             v = float(cuota[1:])
