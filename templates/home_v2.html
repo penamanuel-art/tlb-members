@@ -61,9 +61,8 @@
   <p class="v2-progcard-num {{ 'neg' if res.profit_cls == 'neg' else '' }}">{{ res.profit_units_display }}</p>
   <p class="v2-progcard-sub">{{ res.profit_display }} profit · {{ res.ganadas }}–{{ res.perdidas }} record · {{ res.win_rate }}% win rate · every play public, win or loss</p>
 </div>
-<div style="text-align:center;margin:12px 0 4px;">
-  <a class="v2-link" href="{{ url_for('official_tracker') }}">View full results →</a>
-</div>
+{# Link "View full results" ELIMINADO (2026-10-12, orden de Alex): repetido —
+   el récord completo ya se abre desde "📜 Full record" de la barra superior. #}
 
 <!-- TRACKER · personal — ESCONDIDO del home (orden de Alex 2026-10-12: "esconde el tracker de los miembros de la home page"). El código queda guardado para cuando se diseñe el nuevo. -->
 {% if false %}
@@ -245,7 +244,7 @@
       <h2 class="v2-sec-title">Recent graded tickets</h2>
       <p class="v2-sec-sub">Every play posted before the game — wins and losses. Tap a ticket to see the original receipt.</p>
     </div>
-    <a class="v2-link" href="{{ url_for('official_tracker') }}">View all →</a>
+    {# "View all" eliminado (2026-10-12): mismo destino que "📜 Full record". #}
   </div>
   {% if recientes %}
   <div class="ticket-grid">

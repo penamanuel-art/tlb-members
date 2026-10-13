@@ -93,7 +93,8 @@ body.v2 .v2-bottomnav .v2-bnav-item.active{background:linear-gradient(180deg,#ff
     <div class="lux-pill"><b>{{ '%+.1f' % res.roi }}%</b><span>ROI</span></div>
     <div class="lux-pill"><b>{{ res.ganadas + res.perdidas }}/200</b><span>PLAYS</span></div>
   </div>
-  <a class="lux-fulllink" href="{{ url_for('official_tracker') }}">View the full record <span>→</span></a>
+  {# Barra "View the full record" ELIMINADA (2026-10-12, orden de Alex): el
+     récord completo ya se abre desde "📜 Full record" de la barra superior. #}
 </div>
 
 {% set card_lux = true %}
@@ -157,7 +158,7 @@ body.v2 .v2-bottomnav .v2-bnav-item.active{background:linear-gradient(180deg,#ff
       <h2 class="v2-sec-title">Recent graded tickets</h2>
       <p class="v2-sec-sub">Every play posted before the game — wins and losses. Tap a ticket to see the original receipt.</p>
     </div>
-    <a class="v2-link" href="{{ url_for('official_tracker') }}">View all →</a>
+    {# "View all" eliminado (2026-10-12): mismo destino que "📜 Full record". #}
   </div>
   {% if recientes %}
   <div class="ticket-grid">
