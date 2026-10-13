@@ -6779,10 +6779,22 @@ def api_push_edge():
         notif_type = "notif_ev"
     payload = json.dumps({"title": title, "body": body, "url": url, "image": image})
     db = get_db()
-    subs = db.execute(
-        f"SELECT ps.id, ps.endpoint, ps.p256dh, ps.auth FROM push_subscriptions ps"
-        f" JOIN users u ON u.id = ps.member_id WHERE u.{notif_type} = 1"
-    ).fetchall()
+    # Targeting opcional por email (2026-10-13): si el payload trae "emails",
+    # el push va SOLO a esos miembros (ej. alertas en vivo solo para Alex).
+    emails = data.get("emails") or []
+    if emails:
+        ph = ",".join("?" for _ in emails)
+        subs = db.execute(
+            f"SELECT ps.id, ps.endpoint, ps.p256dh, ps.auth FROM push_subscriptions ps"
+            f" JOIN users u ON u.id = ps.member_id WHERE u.{notif_type} = 1"
+            f" AND lower(u.email) IN ({ph})",
+            [str(e).lower() for e in emails],
+        ).fetchall()
+    else:
+        subs = db.execute(
+            f"SELECT ps.id, ps.endpoint, ps.p256dh, ps.auth FROM push_subscriptions ps"
+            f" JOIN users u ON u.id = ps.member_id WHERE u.{notif_type} = 1"
+        ).fetchall()
     sent, failed = 0, 0
     for s in subs:
         try:
