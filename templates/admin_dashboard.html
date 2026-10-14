@@ -108,37 +108,115 @@
       <input type="file" id="ticketUpload" accept="image/*" multiple style="display:none;">
       <div id="uploadPreview" style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;justify-content:center;"></div>
       <button id="sendTicketsBtn" onclick="sendTickets()" style="display:none;width:100%;margin-top:12px;background:#00e07f;color:#06130c;border:none;border-radius:12px;padding:12px;font-weight:800;cursor:pointer;">Enviar →</button>
-      <!-- Panel de procesamiento (2026-10-14, diseño aprobado por Alex):
-           avatar EN VIVO trabajando + checklist de 5 pasos con la rayita de
-           progreso. Los estados vienen del servidor (polling a
+      <!-- Panel de procesamiento (diseño v3, 2026-10-14, pedido por Alex:
+           "más grande, más profesional, más sofisticado"): héroe ANCHO con el
+           avatar EN VIVO, anillo de progreso con el % real, chip de la jugada
+           y checklist en tarjetas altas con medallones y la rayita gruesa.
+           Los estados vienen del servidor (polling a
            /admin/ticket-status/<batch>) — nunca se simulan en el cliente. -->
       <style>
-        @keyframes tpPulse { 0% { box-shadow: 0 0 0 0 rgba(201,162,39,.55); } 70% { box-shadow: 0 0 0 9px rgba(201,162,39,0); } 100% { box-shadow: 0 0 0 0 rgba(201,162,39,0); } }
-        .tp-dot { width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:900;flex:0 0 26px; }
-        .tp-done { background:#00e07f;color:#06130c; }
-        .tp-working { border:2px solid #c9a227;color:#c9a227;animation:tpPulse 1.2s infinite; }
-        .tp-pending { border:2px solid #3a4358;color:#3a4358; }
-        .tp-error { background:#ff5f57;color:#fff; }
+        @keyframes tpPulse { 0% { box-shadow: 0 0 0 0 rgba(245,197,66,.55); } 70% { box-shadow: 0 0 0 10px rgba(245,197,66,0); } 100% { box-shadow: 0 0 0 0 rgba(245,197,66,0); } }
+        @keyframes tpLivePulse { 0%,100% { opacity:1; } 50% { opacity:.3; } }
+        .tp3 { margin-top:14px; text-align:left; background:radial-gradient(120% 55% at 50% 0%, rgba(245,197,66,.10), rgba(245,197,66,0) 60%), #070d18; border:1px solid rgba(245,197,66,.55); border-radius:22px; padding:16px 16px 14px; box-shadow:0 0 34px rgba(245,197,66,.16); }
+        .tp3-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+        .tp3-brand { font-weight:900; letter-spacing:.06em; font-size:.82rem; color:#f5c542; }
+        .tp3-brand span { color:#8b94a9; font-weight:700; }
+        .tp3-live { display:inline-flex; align-items:center; gap:6px; background:rgba(255,95,87,.14); border:1px solid rgba(255,95,87,.55); color:#ff6f68; font-size:.7rem; font-weight:900; letter-spacing:.08em; border-radius:999px; padding:4px 11px; }
+        .tp3-live i { width:7px; height:7px; border-radius:50%; background:#ff5f57; display:block; animation:tpLivePulse 1.4s infinite; }
+        .tp3-hero { position:relative; border-radius:18px; overflow:hidden; border:1px solid rgba(245,197,66,.5); box-shadow:0 0 26px rgba(245,197,66,.30); background:#0a1120; aspect-ratio:3/2; }
+        .tp3-hero video { width:100%; height:100%; object-fit:cover; object-position:50% 22%; display:block; }
+        .tp3-wm { position:absolute; top:10px; left:0; right:0; text-align:center; font-weight:900; font-size:1.65rem; letter-spacing:.14em; color:rgba(10,17,32,.13); pointer-events:none; }
+        .tp3-head { display:flex; align-items:center; gap:12px; margin-top:18px; }
+        .tp3-title { font-weight:900; font-size:1.58rem; line-height:1.13; color:#fff; letter-spacing:-.01em; }
+        .tp3-sub { color:#2fe08c; font-size:.92rem; font-weight:600; margin-top:5px; }
+        .tp3-ringwrap { position:relative; flex:0 0 92px; width:92px; height:92px; }
+        .tp3-pct { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:1.26rem; color:#f5c542; }
+        .tp3-chip { gap:12px; align-items:stretch; margin-top:16px; border:1px solid rgba(245,197,66,.75); background:linear-gradient(180deg, rgba(245,197,66,.07), rgba(245,197,66,.02)), #0a1322; border-radius:16px; padding:12px 14px; }
+        .tp3-stub { flex:0 0 62px; background:linear-gradient(180deg,#f7ead0,#eee0ba); border-radius:9px; color:#0b0e14; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:7px 4px 6px; }
+        .tp3-stub-book { font-size:.52rem; font-weight:900; letter-spacing:.12em; background:#c9a227; color:#0b0e14; border-radius:4px; padding:1px 6px; }
+        .tp3-stub-odds { font-weight:900; font-size:.95rem; margin-top:4px; }
+        .tp3-stub-code { width:38px; height:12px; margin-top:4px; background:repeating-linear-gradient(90deg,#0b0e14 0 2px,transparent 2px 4px,#0b0e14 4px 7px,transparent 7px 9px); opacity:.8; }
+        .tp3-chip-main { flex:1; min-width:0; display:flex; flex-direction:column; justify-content:center; }
+        .tp3-chip-l1 { font-weight:800; font-size:1.0rem; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .tp3-chip-l2 { color:#f5c542; font-size:.85rem; font-weight:700; margin-top:3px; }
+        .tp3-steps { margin-top:18px; }
+        .tp3-step { display:flex; gap:13px; background:#0e1930; border:1px solid #1d2a44; border-radius:16px; padding:13px 14px; }
+        .tp3-step.pending { background:#0a1322; }
+        .tp3-step.working { border-color:rgba(245,197,66,.78); box-shadow:0 0 18px rgba(245,197,66,.13); }
+        .tp3-step.error { border-color:rgba(255,95,87,.7); }
+        .tp3-rail { display:flex; flex-direction:column; align-items:center; flex:0 0 52px; width:52px; }
+        .tp3-medal { position:relative; width:52px; height:52px; flex:0 0 52px; border-radius:50%; display:flex; align-items:center; justify-content:center; }
+        .tp3-medal svg { width:27px; height:27px; }
+        .tp3-medal.done { background:#00e07f; color:#052e1b; box-shadow:0 0 14px rgba(0,224,127,.45); }
+        .tp3-medal.working { border:3px solid #f5c542; color:#f5c542; background:rgba(245,197,66,.08); animation:tpPulse 1.2s infinite; }
+        .tp3-medal.pending { border:2px solid #2c3a55; color:#5b6579; background:#0a1220; }
+        .tp3-medal.error { background:#ff5f57; color:#fff; }
+        .tp3-badge { position:absolute; right:-3px; bottom:-3px; width:19px; height:19px; border-radius:50%; background:#00e07f; border:2px solid #070d18; display:flex; align-items:center; justify-content:center; }
+        .tp3-badge svg { width:11px; height:11px; }
+        .tp3-badge.working { background:#f5c542; }
+        .tp3-badge.working i { width:7px; height:7px; border-radius:50%; background:#0b0e14; display:block; animation:tpLivePulse 1s infinite; }
+        .tp3-seg { width:5px; border-radius:3px; margin-top:6px; flex:1; min-height:12px; background:#22304d; }
+        .tp3-seg.done { background:#00e07f; box-shadow:0 0 9px rgba(0,224,127,.65); }
+        .tp3-seg.working { background:#f5c542; box-shadow:0 0 9px rgba(245,197,66,.6); }
+        .tp3-seg.error { background:#ff5f57; }
+        .tp3-bridge { height:10px; }
+        .tp3-bridge .tp3-seg { height:100%; min-height:0; margin-top:0; margin-left:37.5px; flex:none; }
+        .tp3-sbody { flex:1; min-width:0; padding-top:3px; }
+        .tp3-srow { display:flex; justify-content:space-between; align-items:baseline; gap:10px; }
+        .tp3-sname { font-weight:800; font-size:1.03rem; color:#fff; }
+        .tp3-sname.pending { color:#93a0b8; }
+        .tp3-sstate { font-size:.82rem; font-weight:800; white-space:nowrap; }
+        .tp3-sdetail { color:#8b94a9; font-size:.82rem; margin-top:3px; line-height:1.35; }
+        .tp3-barwrap { margin-top:18px; background:#131a29; border-radius:999px; height:27px; overflow:hidden; position:relative; }
+        .tp3-bar { height:100%; width:0%; background:linear-gradient(90deg,#f5c542,#7ee787 70%,#00e07f); border-radius:999px; transition:width .5s; position:relative; }
+        .tp3-barpct { position:absolute; right:11px; top:50%; transform:translateY(-50%); font-size:.8rem; font-weight:900; color:#0b0e14; }
+        .tp3-meta { display:flex; justify-content:space-between; gap:8px; margin-top:8px; color:#8b94a9; font-size:.8rem; }
+        .tp3-foot { text-align:center; color:#8b94a9; font-size:.82rem; margin-top:12px; }
       </style>
-      <div id="ticketPanel" style="display:none;margin-top:14px;text-align:left;background:#0a0f1a;border:1px solid rgba(201,162,39,.45);border-radius:16px;padding:14px;box-shadow:0 0 24px rgba(201,162,39,.15);">
-        <div style="display:flex;gap:12px;align-items:center;">
-          <div style="flex:0 0 86px;width:86px;height:86px;border-radius:14px;overflow:hidden;border:1px solid rgba(201,162,39,.6);box-shadow:0 0 16px rgba(201,162,39,.35);background:#000;">
-            <video src="/static/img/sharp-working.mp4" autoplay loop muted playsinline style="width:100%;height:100%;object-fit:cover;display:block;"></video>
-          </div>
+      <div id="ticketPanel" class="tp3" style="display:none;">
+        <div class="tp3-top">
+          <div class="tp3-brand">THE SHARP TEAM <span>· ADMIN</span></div>
+          <div class="tp3-live"><i></i>LIVE</div>
+        </div>
+        <div class="tp3-hero">
+          <video src="/static/img/sharp-working.mp4" autoplay loop muted playsinline></video>
+          <div class="tp3-wm">THE SHARP TEAM</div>
+        </div>
+        <div class="tp3-head">
           <div style="flex:1;min-width:0;">
-            <div id="tpTitle" style="font-weight:800;font-size:1.02rem;color:#fff;">Processing your ticket</div>
-            <div style="color:#8b94a9;font-size:0.8rem;">The Sharp is on it</div>
-            <div id="tpChip" style="display:none;margin-top:6px;font-size:0.78rem;color:#0b0e14;background:linear-gradient(90deg,#c9a227,#e8c85a);border-radius:999px;padding:3px 10px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></div>
+            <div id="tpTitle" class="tp3-title">Processing your ticket</div>
+            <div class="tp3-sub">The Sharp is on it</div>
           </div>
-          <div style="flex:0 0 auto;color:#ff5f57;font-size:0.72rem;font-weight:800;">● LIVE</div>
+          <div class="tp3-ringwrap">
+            <svg width="92" height="92" viewBox="0 0 92 92">
+              <defs>
+                <linearGradient id="tpRingGrad" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#f5c542"/>
+                  <stop offset="100%" stop-color="#00e07f"/>
+                </linearGradient>
+              </defs>
+              <circle cx="46" cy="46" r="38" fill="none" stroke="#1c2942" stroke-width="9"/>
+              <circle id="tpRingFg" cx="46" cy="46" r="38" fill="none" stroke="url(#tpRingGrad)" stroke-width="9" stroke-linecap="round" stroke-dasharray="238.76" stroke-dashoffset="238.76" transform="rotate(-90 46 46)"/>
+              <circle id="tpRingDot" cx="46" cy="8" r="5" fill="#00e07f" style="display:none;"/>
+            </svg>
+            <div id="tpPct" class="tp3-pct">0%</div>
+          </div>
         </div>
-        <div id="tpSteps" style="margin-top:14px;"></div>
-        <div style="margin-top:4px;background:#131a29;border-radius:999px;height:8px;overflow:hidden;">
-          <div id="tpBar" style="height:100%;width:0%;background:linear-gradient(90deg,#c9a227,#00e07f);border-radius:999px;transition:width .5s;"></div>
+        <div id="tpChip" class="tp3-chip" style="display:none;">
+          <div class="tp3-stub">
+            <div class="tp3-stub-book">NOVIG</div>
+            <div class="tp3-stub-odds" id="tpStubOdds"></div>
+            <div class="tp3-stub-code"></div>
+          </div>
+          <div class="tp3-chip-main">
+            <div class="tp3-chip-l1" id="tpChipLine1"></div>
+            <div class="tp3-chip-l2" id="tpChipLine2"></div>
+          </div>
         </div>
-        <div style="display:flex;justify-content:space-between;gap:8px;margin-top:6px;color:#8b94a9;font-size:0.75rem;">
-          <span id="tpStepCount">Step 0 of 5</span><span>You can close this — processing continues.</span>
-        </div>
+        <div id="tpSteps" class="tp3-steps"></div>
+        <div class="tp3-barwrap"><div id="tpBar" class="tp3-bar"><span id="tpBarPct" class="tp3-barpct"></span></div></div>
+        <div class="tp3-meta"><span id="tpStepCount">Step 0 of 5</span><span id="tpDoneCount">0 of 5 complete</span></div>
+        <div class="tp3-foot">You can close this — processing continues.</div>
       </div>
     </div>
   </div>
@@ -178,9 +256,18 @@ var TP_STEPS = [
   ['alerts', 'Telegram & alerts sent']
 ];
 var TP_STATE_TXT = { done: 'Done', working: 'Working…', pending: 'Pending', error: 'Error' };
-var TP_STATE_CLR = { done: '#00e07f', working: '#c9a227', pending: '#5b6579', error: '#ff5f57' };
+var TP_STATE_CLR = { done: '#00e07f', working: '#f5c542', pending: '#5b6579', error: '#ff5f57' };
 var tpBatchId = null, tpPollTimer = null, tpPollCount = 0;
 function tpEsc(s) { var d = document.createElement('div'); d.textContent = s == null ? '' : String(s); return d.innerHTML; }
+var TP_STEP_ICONS = {
+  received: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v10"/><path d="M7 9.5L12 14.5 17 9.5"/><path d="M4 17.5V19a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-1.5"/></svg>',
+  verifying: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.8" cy="10.8" r="6.8"/><path d="M15.8 15.8L21 21"/></svg>',
+  matched: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.8"/><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"/></svg>',
+  dashboard: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="12" rx="2"/><path d="M9.5 20.5h5M12 16.5v4"/></svg>',
+  alerts: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2.8" width="10" height="18.4" rx="2.6"/><path d="M10.6 18.4h2.8"/></svg>'
+};
+var TP_CHECK_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="#052e1b" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.8l5 5L19.5 7"/></svg>';
+var TP_X_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>';
 function tpRender(batch) {
   var panel = document.getElementById('ticketPanel');
   if (!panel || !batch) return;
@@ -189,30 +276,54 @@ function tpRender(batch) {
   var chip = document.getElementById('tpChip');
   if (batch.plays && batch.plays.length) {
     var p = batch.plays[0];
-    chip.textContent = p.pick + ' · ' + p.cuota_texto + ' · $' + p.stake_monto + (batch.plays.length > 1 ? ' +' + (batch.plays.length - 1) : '');
-    chip.style.display = 'block';
+    document.getElementById('tpChipLine1').textContent = p.pick + ' · ' + p.cuota_texto + ' · Stake $' + p.stake_monto + (batch.plays.length > 1 ? ' +' + (batch.plays.length - 1) : '');
+    var l2 = [p.liga, p.hora].filter(function(x) { return x; }).join(' · ');
+    var l2el = document.getElementById('tpChipLine2');
+    l2el.textContent = l2;
+    l2el.style.display = l2 ? 'block' : 'none';
+    document.getElementById('tpStubOdds').textContent = p.cuota_texto || '';
+    chip.style.display = 'flex';
+  } else {
+    chip.style.display = 'none';
   }
   var done = 0, html = '';
   TP_STEPS.forEach(function(s, idx) {
     var st = steps[s[0]] || { state: 'pending' };
     if (st.state === 'done') done++;
-    var dot = st.state === 'done' ? '<div class="tp-dot tp-done">✓</div>'
-      : st.state === 'working' ? '<div class="tp-dot tp-working">●</div>'
-      : st.state === 'error' ? '<div class="tp-dot tp-error">✗</div>'
-      : '<div class="tp-dot tp-pending"></div>';
-    var lineClr = st.state === 'done' ? '#00e07f' : st.state === 'working' ? '#c9a227' : '#2a3247';
-    var line = idx < TP_STEPS.length - 1 ? '<div style="width:2px;flex:1;min-height:12px;background:' + lineClr + ';"></div>' : '';
-    html += '<div style="display:flex;gap:10px;">'
-      + '<div style="display:flex;flex-direction:column;align-items:center;">' + dot + line + '</div>'
-      + '<div style="flex:1;min-width:0;padding-bottom:' + (idx < TP_STEPS.length - 1 ? '12' : '2') + 'px;">'
-      + '<div style="display:flex;justify-content:space-between;gap:8px;"><span style="font-weight:700;color:' + (st.state === 'pending' ? '#8b94a9' : '#fff') + ';">' + s[1] + '</span>'
-      + '<span style="font-size:0.78rem;font-weight:800;color:' + (TP_STATE_CLR[st.state] || '#5b6579') + ';">' + (TP_STATE_TXT[st.state] || 'Pending') + '</span></div>'
-      + (st.detail ? '<div style="color:#8b94a9;font-size:0.78rem;margin-top:2px;">' + tpEsc(st.detail) + '</div>' : '')
+    var medalInner = st.state === 'error' ? TP_X_SVG : (TP_STEP_ICONS[s[0]] || '');
+    var badge = st.state === 'done' ? '<span class="tp3-badge">' + TP_CHECK_SVG + '</span>'
+      : st.state === 'working' ? '<span class="tp3-badge working"><i></i></span>' : '';
+    var segCls = st.state === 'done' ? ' done' : st.state === 'working' ? ' working' : st.state === 'error' ? ' error' : '';
+    var seg = idx < TP_STEPS.length - 1 ? '<div class="tp3-seg' + segCls + '"></div>' : '';
+    html += '<div class="tp3-step ' + st.state + '">'
+      + '<div class="tp3-rail"><div class="tp3-medal ' + st.state + '">' + medalInner + badge + '</div>' + seg + '</div>'
+      + '<div class="tp3-sbody">'
+      + '<div class="tp3-srow"><span class="tp3-sname' + (st.state === 'pending' ? ' pending' : '') + '">' + s[1] + '</span>'
+      + '<span class="tp3-sstate" style="color:' + (TP_STATE_CLR[st.state] || '#5b6579') + ';">' + (TP_STATE_TXT[st.state] || 'Pending') + '</span></div>'
+      + (st.detail ? '<div class="tp3-sdetail">' + tpEsc(st.detail) + '</div>' : '')
       + '</div></div>';
+    if (idx < TP_STEPS.length - 1) html += '<div class="tp3-bridge"><div class="tp3-seg' + segCls + '"></div></div>';
   });
   document.getElementById('tpSteps').innerHTML = html;
-  document.getElementById('tpBar').style.width = (done / TP_STEPS.length * 100) + '%';
+  var pct = Math.round(done / TP_STEPS.length * 100);
+  document.getElementById('tpBar').style.width = pct + '%';
+  document.getElementById('tpBarPct').textContent = pct > 0 ? pct + '%' : '';
+  var C = 238.76;
+  document.getElementById('tpRingFg').style.strokeDashoffset = (C * (1 - pct / 100)).toFixed(1);
+  var dot = document.getElementById('tpRingDot');
+  if (pct > 0 && pct < 100) {
+    var ang = (-90 + 360 * pct / 100) * Math.PI / 180;
+    dot.setAttribute('cx', (46 + 38 * Math.cos(ang)).toFixed(1));
+    dot.setAttribute('cy', (46 + 38 * Math.sin(ang)).toFixed(1));
+    dot.style.display = 'block';
+  } else {
+    dot.style.display = 'none';
+  }
+  var pctEl = document.getElementById('tpPct');
+  pctEl.textContent = pct + '%';
+  pctEl.style.color = done === TP_STEPS.length ? '#00e07f' : '#f5c542';
   document.getElementById('tpStepCount').textContent = 'Step ' + done + ' of ' + TP_STEPS.length;
+  document.getElementById('tpDoneCount').textContent = done + ' of ' + TP_STEPS.length + ' complete';
   document.getElementById('tpTitle').textContent = done === TP_STEPS.length ? '✓ Ticket processed' : 'Processing your ticket';
   if (done === TP_STEPS.length) tpStopPoll();
 }
