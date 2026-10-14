@@ -4818,6 +4818,33 @@ def admin_api_stake_mode():
     return jsonify({"ok": True, "email": email, "stake_mode": mode})
 
 
+@app.route("/admin/api/members-delete", methods=["POST"])
+def admin_api_members_delete():
+    """Elimina una cuenta de miembro por API admin (2026-10-13, pedido por Alex:
+    borrar su cuenta de prueba sin depender de la sesión del panel).
+    Mismas protecciones que la ruta del panel: nunca una cuenta admin ni la
+    cuenta de sistema VALUE. Auth: sesión admin O header X-Admin-Key."""
+    if not _admin_api_autorizado():
+        return jsonify({"error": "admin only"}), 403
+    data = request.get_json(silent=True) or {}
+    email = (data.get("email") or request.form.get("email") or "").strip().lower()
+    if not email:
+        return jsonify({"error": "email required"}), 400
+    db = get_db()
+    target = db.execute("SELECT * FROM users WHERE email = ?", (email,)).fetchone()
+    if not target:
+        return jsonify({"error": "not found"}), 404
+    if is_admin_for(target) or email == "system@value.local":
+        return jsonify({"error": "protected account"}), 403
+    db.execute("DELETE FROM tracked_plays WHERE user_id = ?", (target["id"],))
+    db.execute("DELETE FROM checkins WHERE user_id = ?", (target["id"],))
+    db.execute("DELETE FROM push_subscriptions WHERE member_id = ?", (target["id"],))
+    db.execute("DELETE FROM users WHERE id = ?", (target["id"],))
+    db.commit()
+    log_notificacion(db, "miembro", f"Member deleted: {email}", "")
+    return jsonify({"ok": True, "deleted": email})
+
+
 @app.route("/admin/test-clear-past-due", methods=["POST"])
 def admin_test_clear_past_due():
     """TEMPORAL para pruebas de Alex: quita SOLO el flag stripe_past_due,
