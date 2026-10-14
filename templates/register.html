@@ -29,7 +29,11 @@ fbq('track', 'PageView');
     font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     line-height:1.5;
   }
-  .page { max-width:430px; margin:0 auto; padding:0 14px 110px; background:linear-gradient(180deg,#0a1230 0%,#070d24 320px,#060a1e 100%); min-height:100vh; }
+  .page { max-width:430px; margin:0 auto; padding:0 14px 110px; min-height:100vh;
+    background:
+      radial-gradient(ellipse 95% 460px at 50% -60px, rgba(232,199,102,.17), rgba(232,199,102,0) 70%),
+      linear-gradient(180deg,#0c1638 0%,#081029 340px,#05081a 100%);
+  }
   .gold { color:#e8c766; }
   .mint { color:#2ee6a8; }
   .muted { color:#9aa7c7; }
@@ -97,7 +101,7 @@ fbq('track', 'PageView');
   .field label { display:block; font-size:14px; font-weight:700; }
   .field .hint { color:#9aa7c7; font-size:13px; margin-top:2px; }
   .field input {
-    width:100%; margin-top:8px; background:#05081a; border:1.5px solid rgba(120,150,255,.55);
+    width:100%; margin-top:8px; background:#05081a; border:1.5px solid rgba(232,199,102,.35);
     border-radius:12px; padding:15px 16px; color:#eef1fb; font-size:15px; font-family:inherit;
   }
   .field input::placeholder { color:#5f6d94; }
@@ -106,15 +110,14 @@ fbq('track', 'PageView');
     display:block; width:100%; text-align:center; text-decoration:none; cursor:pointer;
     border:none; border-radius:14px; padding:17px 14px; margin-top:18px;
     font-size:17px; font-weight:800; color:#0a1230; font-family:inherit;
-    background:linear-gradient(180deg,#f2d47c,#d9ab3c);
-    box-shadow:0 6px 22px rgba(217,171,60,.35);
+    background:linear-gradient(135deg,#f5c542,#caa12e);
+    box-shadow:0 6px 22px rgba(202,161,46,.35);
   }
   .btn small { display:block; font-size:13px; font-weight:600; opacity:.75; margin-top:2px; }
-  .btn.blue { background:linear-gradient(180deg,#2f6bff,#1d4ed8); color:#fff; box-shadow:0 6px 22px rgba(47,107,255,.35); }
   .micro { display:flex; justify-content:space-between; gap:8px; margin-top:14px; font-size:12px; color:#9aa7c7; flex-wrap:wrap; }
   .micro .mint { font-weight:700; }
   .login-line { text-align:center; font-size:13.5px; color:#9aa7c7; margin-top:16px; }
-  .login-line a { color:#7ea2ff; font-weight:700; }
+  .login-line a { color:#e8c766; font-weight:700; }
 
   /* sections */
   h3.sec { font-size:24px; font-weight:900; letter-spacing:.01em; margin:6px 0 4px; }
@@ -122,7 +125,7 @@ fbq('track', 'PageView');
   .step:last-child { border-bottom:none; padding-bottom:2px; }
   .num {
     flex:0 0 34px; width:34px; height:34px; border-radius:50%;
-    border:1.5px solid rgba(120,150,255,.7); color:#7ea2ff;
+    border:1.5px solid rgba(232,199,102,.6); color:#e8c766;
     display:flex; align-items:center; justify-content:center; font-weight:800; font-size:16px; margin-top:2px;
   }
   .step b { font-size:16.5px; display:block; }
@@ -141,7 +144,7 @@ fbq('track', 'PageView');
   .brandcard { text-align:center; }
   .brandcard img { width:76px; height:76px; border-radius:50%; border:2px solid rgba(232,199,102,.55); }
   .brandcard .nm { font-size:21px; font-weight:900; letter-spacing:.12em; margin-top:10px; }
-  .brandcard .role { color:#7ea2ff; font-size:11.5px; font-weight:800; letter-spacing:.22em; margin-top:3px; }
+  .brandcard .role { color:#e8c766; font-size:11.5px; font-weight:800; letter-spacing:.22em; margin-top:3px; }
   .brandcard p { color:#c3cdea; font-size:14.5px; margin-top:12px; font-style:italic; }
 
   /* stats */
@@ -149,7 +152,7 @@ fbq('track', 'PageView');
   .stats-row { display:flex; }
   .stat { flex:1; text-align:center; padding:18px 2px 14px; }
   .stat + .stat { border-left:1px solid rgba(154,167,199,.16); }
-  .stat .v { font-size:20px; font-weight:900; color:#7ea2ff; }
+  .stat .v { font-size:20px; font-weight:900; color:#eef1fb; }
   .stat .v.goldv { color:#e8c766; }
   .stat .v.mintv { color:#2ee6a8; }
   .stat .l { font-size:9.5px; letter-spacing:.1em; color:#9aa7c7; font-weight:700; margin-top:3px; }
@@ -158,7 +161,7 @@ fbq('track', 'PageView');
 
   .vtitle { text-align:center; font-size:11.5px; letter-spacing:.26em; color:#9aa7c7; font-weight:800; margin-bottom:8px; }
   .check { display:flex; gap:11px; padding:8px 0; font-size:14.5px; color:#c3cdea; }
-  .check .ck { color:#2f6bff; font-weight:900; }
+  .check .ck { color:#e8c766; font-weight:900; }
   .check b { color:#fff; }
 
   .get { display:flex; gap:11px; padding:8px 0; font-size:14.5px; color:#c3cdea; border-bottom:1px solid rgba(154,167,199,.1); }
@@ -176,7 +179,7 @@ fbq('track', 'PageView');
 
   /* closing */
   .closing { text-align:center; background:linear-gradient(180deg,#12204d,#0c1430); }
-  .closing .kick { color:#7ea2ff; font-size:12px; font-weight:800; letter-spacing:.26em; }
+  .closing .kick { color:#e8c766; font-size:12px; font-weight:800; letter-spacing:.26em; }
   .closing h3 { font-size:29px; font-weight:900; line-height:1.2; margin-top:10px; }
   .closing p { color:#9aa7c7; font-size:14px; margin-top:10px; }
   .closing .micro { justify-content:center; }
@@ -195,9 +198,9 @@ fbq('track', 'PageView');
   }
   .sticky .in { max-width:430px; margin:0 auto; }
   .sticky a {
-    display:block; text-align:center; text-decoration:none; color:#fff; font-weight:800; font-size:17px;
-    background:linear-gradient(180deg,#2f6bff,#1d4ed8); border-radius:14px; padding:15px;
-    box-shadow:0 6px 22px rgba(47,107,255,.4);
+    display:block; text-align:center; text-decoration:none; color:#0a1230; font-weight:800; font-size:17px;
+    background:linear-gradient(135deg,#f5c542,#caa12e); border-radius:14px; padding:15px;
+    box-shadow:0 6px 22px rgba(202,161,46,.4);
   }
   .sticky p { text-align:center; font-size:11.5px; color:#9aa7c7; margin-top:7px; }
 </style>
@@ -338,7 +341,7 @@ fbq('track', 'PageView');
     <div class="kick">STILL DECIDING?</div>
     <h3>Every play. Documented. Free.</h3>
     <p>No credit card. No trial period. No expiration date. Every Gold play posted to your dashboard the moment it's released — with the original ticket.</p>
-    <a class="btn blue" href="#signup" style="margin-top:18px;">Back to the signup form ↑</a>
+    <a class="btn" href="#signup" style="margin-top:18px;">Back to the signup form ↑</a>
     <div class="micro"><span>No credit card</span><span>·</span><span>No expiration</span><span>·</span><span>Unsubscribe anytime</span></div>
   </div>
 
