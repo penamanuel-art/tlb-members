@@ -10,7 +10,8 @@ self.addEventListener("push", (event) => {
     /* plain-text payload fallback */
     data = { body: event.data ? event.data.text() : "" };
   }
-  const title = data.title || "The Sharp Team";
+  const title = (data.title === undefined || data.title === null)
+    ? "The Sharp Team" : data.title;
   const options = {
     body: data.body || "New +EV edge on the board.",
     icon: "/static/img/apple-touch-icon.png",

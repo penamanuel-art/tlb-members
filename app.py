@@ -6879,7 +6879,12 @@ def api_push_edge():
     if not HAVE_WEBPUSH or not VAPID_PRIVATE_KEY or not VAPID_PUBLIC_KEY:
         return jsonify({"error": "push not configured"}), 503
     data = request.get_json(force=True, silent=True) or {}
-    title = data.get("title") or "The Sharp Team"
+    # Un título "" explícito se respeta (alertas en vivo estilo Action:
+    # iOS pone el nombre de la app una sola vez; un título con la marca
+    # la duplica con su línea "from Sharp Team"). Solo si falta la
+    # clave o viene null se usa el default de la marca.
+    _t = data.get("title")
+    title = _t if _t is not None else "The Sharp Team"
     body = data.get("body") or "New +EV edge on the board."
     url = data.get("url") or "/ev-board"
     image = data.get("image") or ""
