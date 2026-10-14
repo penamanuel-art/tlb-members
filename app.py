@@ -3171,6 +3171,8 @@ def register():
             db.commit()
         except Exception:
             pass
+        # Pixel de Meta: la bienvenida reporta el registro una sola vez.
+        session["fb_reg"] = 1
         return redirect(url_for("bienvenida"))
     return render_template("register.html", **_reg_ctx)
 
@@ -3372,8 +3374,11 @@ def api_clicks_feed():
 @app.route("/bienvenida")
 @login_required
 def bienvenida():
-    """Página de bienvenida tras el registro: explica el programa."""
-    return render_template("bienvenida.html", nombre=session.get("nombre", ""))
+    """Página de bienvenida tras el registro: explica el programa.
+    Si el miembro acaba de registrarse, la base dispara una sola vez el
+    evento CompleteRegistration del pixel de Meta (2026-10-14)."""
+    fb_reg = bool(session.pop("fb_reg", None))
+    return render_template("bienvenida.html", nombre=session.get("nombre", ""), fb_reg=fb_reg)
 
 
 @app.route("/login", methods=["GET", "POST"])

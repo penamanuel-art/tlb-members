@@ -41,6 +41,21 @@ html.tst-skel-off .tst-skel-overlay{opacity:0;transition:opacity .25s ease;point
 @keyframes tstSkelKill{to{opacity:0;visibility:hidden}}
 </style>
 {% endif %}
+<!-- Meta Pixel Code (2026-10-14: el anuncio mide visitas y registros) -->
+<script>
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '2516573342062924');
+fbq('track', 'PageView');
+{% if fb_reg %}fbq('track', 'CompleteRegistration');{% endif %}
+</script>
+<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=2516573342062924&ev=PageView&noscript=1"/></noscript>
+<!-- End Meta Pixel Code -->
 </head>
 <body class="v2{% if session.get('user_id') %} has-bottomnav{% endif %}{% if ticker_days %} has-ticker{% endif %}" style="--wm-img: url('{{ url_for('static', filename=watermark_img) }}')">
 {% if request.path == '/home' %}
