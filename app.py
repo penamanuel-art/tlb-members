@@ -6802,8 +6802,8 @@ def admin_chat_mensaje():
     if not (is_admin_for(user) or is_alex_member(user)):
         return jsonify({"ok": False, "error": "no autorizado"}), 403
     mensaje = request.form.get("mensaje", "").strip()
-    hoy = datetime.now().strftime("%Y-%m-%d")
-    ts = datetime.now().strftime("%Y%m%d-%H%M%S")
+    hoy = datetime.now(TZ).strftime("%Y-%m-%d")
+    ts = datetime.now(TZ).strftime("%Y%m%d-%H%M%S")
     # Guardar tickets en comprobantes (formato del flujo oficial)
     comp_dir = os.path.join(os.path.dirname(__file__), "static", "img", "comprobantes")
     os.makedirs(comp_dir, exist_ok=True)
@@ -6834,13 +6834,34 @@ def admin_chat_mensaje():
         for fname in ["plays-pending.json", "plays.json"]:
             pp = os.path.join(os.path.dirname(__file__), "data", fname)
             try:
-                with open(pp) as _f:
-                    _data = _json.load(_f)
+                # FIX 2026-10-14 (incidente Missouri State): leer la copia
+                # FRESCA de master primero. La copia local es la del ultimo
+                # despliegue: una jugada publicada por disparo DESPUES del
+                # despliegue no existe localmente y su ticket quedaba sin
+                # adjuntar ("Ninguna jugada de hoy esperaba ticket").
+                _data = None
+                try:
+                    import urllib.request as _ur
+                    _rq = _ur.Request(
+                        "https://raw.githubusercontent.com/penamanuel-art"
+                        "/tlb-members/master/data/" + fname,
+                        headers={"User-Agent": "tlb-members"})
+                    with _ur.urlopen(_rq, timeout=8) as _r:
+                        _data = _json.load(_r)
+                except Exception:
+                    _data = None
+                if not isinstance(_data, dict):
+                    with open(pp) as _f:
+                        _data = _json.load(_f)
                 if isinstance(_data, dict) and _data.get("fecha") == hoy:
                     _plays = _data.get("plays", [])
-                    for j, _p in enumerate(_plays):
-                        if j < len(guardados) and not _p.get("comprobante"):
-                            _p["comprobante"] = guardados[j]
+                    _ti = 0
+                    for _p in _plays:
+                        if _ti >= len(guardados):
+                            break
+                        if not _p.get("comprobante"):
+                            _p["comprobante"] = guardados[_ti]
+                            _ti += 1
                             actualizadas += 1
                             if not any(m.get("id") == _p.get("id") for m in _matched):
                                 _matched.append({
@@ -6864,7 +6885,7 @@ def admin_chat_mensaje():
                 "mensaje": mensaje,
                 "tickets": guardados,
                 "actualizadas": actualizadas,
-                "leido": True,  # Ya procesado automáticamente
+                "leido": False,  # FIX 2026-10-14: nace sin leer — el procesador lo completa y lo marca
             }) + "\n")
         try:
             log_notificacion(db, "admin_chat", "Tickets de Alex procesados",
