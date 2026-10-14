@@ -84,6 +84,26 @@
 .tstg-foot{display:flex;align-items:center;justify-content:space-between;margin-top:12px;}
 .tstg-novig{color:#4ade80;font-weight:700;font-size:13px;text-decoration:none;}
 .tstg-track{color:#4ade80;border:1.5px solid #22c55e;font-weight:800;font-size:12px;padding:8px 20px;border-radius:12px;background:rgba(34,197,94,.12);text-decoration:none;white-space:nowrap;}
+/* FRANJA LIVE fina (2026-10-14, pedido por Alex: pequeña, que no agrande la
+   card) — una sola línea compacta (~26px) + barra de probabilidad de 4px.
+   Total añadido: ~40px máx, y solo mientras el juego está en curso. */
+.tst-live{margin:6px 0 0}
+.tst-live-band{display:flex;align-items:center;gap:8px;background:rgba(47,230,167,.06);border:1px solid rgba(47,230,167,.28);border-radius:9px;padding:5px 9px;font-size:12px;line-height:1.25;color:#dbe4f5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.tst-live-dot{width:7px;height:7px;border-radius:50%;background:#2fe6a7;flex:none;animation:tstlivepulse 1.6s ease-out infinite}
+@keyframes tstlivepulse{0%{box-shadow:0 0 0 0 rgba(47,230,167,.45)}70%{box-shadow:0 0 0 7px rgba(47,230,167,0)}100%{box-shadow:0 0 0 0 rgba(47,230,167,0)}}
+.tst-live-tag{font-size:9.5px;font-weight:800;letter-spacing:1.2px;color:#2fe6a7;flex:none}
+.tst-live-score{font-weight:800;color:#fff;white-space:nowrap;font-variant-numeric:tabular-nums}
+.tst-live-score .win{color:#2fe6a7}
+.tst-live-score .lose{color:#ff9c9c}
+.tst-live-per{color:#9aa6c4;font-size:11px;white-space:nowrap}
+.tst-live-right{margin-left:auto;display:flex;align-items:baseline;gap:5px;flex:none}
+.tst-live-plab{font-size:8.5px;letter-spacing:1px;color:#8b96b5;font-weight:700}
+.tst-live-pct{font-size:13px;font-weight:800;color:#2fe6a7}
+.tst-live-pct.low{color:#ffb3b3}
+.tst-live-ats{font-size:11px;font-weight:700;color:#e8c85a}
+.tst-live-bar{height:4px;border-radius:99px;background:rgba(255,255,255,.10);margin-top:4px;overflow:hidden}
+.tst-live-bar>div{height:100%;border-radius:99px;background:linear-gradient(90deg,#1f9d6c,#2fe6a7)}
+.tst-live-bar>div.low{background:linear-gradient(90deg,#b84a4a,#ff8f8f)}
 </style>
 {# Card estilo ticket — aprobada por Alex 2026-10-06; fondo verde oscuro estilo "Your tools" aprobado 2026-10-08, sin cuadro exterior. #}
 {# Paleta LUX (2026-10-12, pedido por Alex): cuando la card sale en el home
@@ -108,6 +128,7 @@
           <div style="font-size:16px;color:#fff;">{{ p.team_name or p.abbr }} {{ 'ML' if p.bettype == 'Moneyline' else p.bettype }} <span style="font-size:11px;color:#e3b93c;">&middot; {{ p.liga or '' }}</span> <span style="font-size:10px;letter-spacing:1px;color:#f5c518;background:#2a2113;padding:4px 10px;border-radius:999px;">{{ 'PLATINUM' if is_vip else 'GOLD' }}</span></div>
           <span style="color:{{ _mint }};font-size:14px;flex:none;margin-left:8px;">{{ fmt_odds(p.cuota) }}</span>
         </div>
+        <div class="tst-live" data-live-play="{{ p.id }}" hidden></div>
         {% if p.writeup %}
         <details class="tstc-wu" style="border:1px solid rgba(212,175,55,.3);border-radius:10px;background:rgba(0,0,0,.3);margin-bottom:8px;">
           <summary style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;font-size:12px;letter-spacing:1px;color:#e3b93c;cursor:pointer;list-style:none;"><span>&#x1F4CA; WHY WE LIKE IT</span><span style="color:#9ca3af;font-size:10px;">TAP TO EXPAND &#x25BE;</span></summary>
@@ -195,6 +216,7 @@
           {% if p.writeup and p.writeup.fair_price %}<span style="font-size:12px;color:#d1d5db;">Fair <span style="color:#fff;">{{ p.writeup.fair_price }}</span></span>{% endif %}
           {% if p.writeup and p.writeup.edge %}<span style="font-size:12px;color:#d1d5db;">Edge <span style="color:{{ _mint }};">{{ p.writeup.edge }}</span></span>{% endif %}
         </div>
+        <div class="tst-live" data-live-play="{{ p.id }}" hidden></div>
         {% if p.casa %}<div style="margin-bottom:10px;"><span style="font-size:12px;color:#9aa3b8;">Best price at </span><span style="font-size:12px;font-weight:800;color:#e3b93c;">{{ p.casa }}</span></div>{% endif %}
         <div style="display:flex;gap:16px;margin-bottom:12px;font-size:12px;color:#d1d5db;">
           <span>Stake <span style="color:#fff;">{{ '$%.0f' % p.stake_monto }} ({{ '%g' % p.stake_unidades }}u)</span></span>
@@ -243,6 +265,51 @@
       }
     });
   });
+})();
+</script>
+{# Franja LIVE: polling ligero a /api/live-plays cada 45s (2026-10-14).
+   Sin juego en vivo el slot queda oculto y la card no cambia de tamaño. #}
+<script>
+(function(){
+  if (window.__tstLiveInit) return;
+  window.__tstLiveInit = true;
+  function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function render(slot, d){
+    var cls = d.ours > d.opp ? 'win' : (d.ours < d.opp ? 'lose' : '');
+    var h = '<div class="tst-live-band"><span class="tst-live-dot"></span>'
+      + '<span class="tst-live-tag">LIVE</span>'
+      + '<span class="tst-live-score">' + esc(d.abbr) + ' <span class="' + cls + '">' + d.ours + '</span> &ndash; ' + d.opp + ' ' + esc(d.opp_abbr) + '</span>'
+      + (d.period ? '<span class="tst-live-per">' + esc(d.period) + '</span>' : '');
+    if (typeof d.prob === 'number') {
+      h += '<span class="tst-live-right"><span class="tst-live-plab">WIN PROB</span>'
+        + '<span class="tst-live-pct' + (d.prob < 50 ? ' low' : '') + '">' + d.prob + '%</span></span>';
+    } else if (d.ats) {
+      h += '<span class="tst-live-right"><span class="tst-live-ats">' + esc(d.ats) + ' ATS</span></span>';
+    }
+    h += '</div>';
+    if (typeof d.prob === 'number') {
+      h += '<div class="tst-live-bar"><div class="' + (d.prob < 50 ? 'low' : '') + '" style="width:' + d.prob + '%"></div></div>';
+    }
+    slot.innerHTML = h;
+    slot.hidden = false;
+  }
+  function tick(){
+    var slots = document.querySelectorAll('.tst-live[data-live-play]');
+    if (!slots.length) return;
+    fetch('/api/live-plays', {credentials: 'same-origin', headers: {'X-Requested-With': 'XMLHttpRequest'}})
+      .then(function(r){ return r.json(); })
+      .then(function(j){
+        var map = (j && j.plays) || {};
+        slots.forEach(function(s){
+          var d = map[s.getAttribute('data-live-play')];
+          if (d) { render(s, d); }
+          else { s.hidden = true; s.innerHTML = ''; }
+        });
+      })
+      .catch(function(){});
+  }
+  tick();
+  setInterval(tick, 45000);
 })();
 </script>
 {# Track vía AJAX sin mover la página (pedido Alex 2026-10-10: "que no me saque de la sesión"). #}
