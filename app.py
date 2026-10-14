@@ -283,6 +283,7 @@ CREATE TABLE IF NOT EXISTS users (
     telegram_unban_pending INTEGER NOT NULL DEFAULT 0, -- 1 = desbanear de Sharp Club (lo procesa el cron)
     notif_plays INTEGER NOT NULL DEFAULT 1,     -- 1 = avisar jugadas publicadas
     notif_graded INTEGER NOT NULL DEFAULT 1,    -- 1 = avisar W/L al liquidarse
+    notif_live INTEGER NOT NULL DEFAULT 1,      -- 1 = marcador en vivo (lock screen) de las jugadas oficiales
     notif_reminder INTEGER NOT NULL DEFAULT 1,  -- 1 = recordatorio 15 min antes
     notif_ev INTEGER NOT NULL DEFAULT 1,        -- 1 = alertas +EV
     notif_price INTEGER NOT NULL DEFAULT 0,    -- 1 = alerta si se mueve el precio
@@ -377,6 +378,7 @@ CREATE TABLE IF NOT EXISTS users (
     telegram_unban_pending INTEGER NOT NULL DEFAULT 0, -- 1 = desbanear de Sharp Club (lo procesa el cron)
     notif_plays INTEGER NOT NULL DEFAULT 1,     -- 1 = avisar jugadas publicadas
     notif_graded INTEGER NOT NULL DEFAULT 1,    -- 1 = avisar W/L al liquidarse
+    notif_live INTEGER NOT NULL DEFAULT 1,      -- 1 = marcador en vivo (lock screen) de las jugadas oficiales
     notif_reminder INTEGER NOT NULL DEFAULT 1,  -- 1 = recordatorio 15 min antes
     notif_ev INTEGER NOT NULL DEFAULT 1,        -- 1 = alertas +EV
     notif_price INTEGER NOT NULL DEFAULT 0,    -- 1 = alerta si se mueve el precio
@@ -2794,7 +2796,7 @@ def migrate_db():
             pending.append("ALTER TABLE users ADD COLUMN stake_mode TEXT NOT NULL DEFAULT 'units'")
         if "platinum_unlocked" not in cols:
             pending.append("ALTER TABLE users ADD COLUMN platinum_unlocked INTEGER NOT NULL DEFAULT 0")
-        for _col, _default in [("notif_plays", "1"), ("notif_graded", "1"), ("notif_reminder", "1"), ("notif_ev", "1"), ("notif_price", "0")]:
+        for _col, _default in [("notif_plays", "1"), ("notif_graded", "1"), ("notif_live", "1"), ("notif_reminder", "1"), ("notif_ev", "1"), ("notif_price", "0")]:
             if _col not in cols:
                 pending.append(f"ALTER TABLE users ADD COLUMN {_col} INTEGER NOT NULL DEFAULT {_default}")
         if "is_admin" not in cols:
@@ -3945,7 +3947,7 @@ def alertas():
     """Página de preferencias de notificaciones del miembro."""
     db = get_db()
     u = db.execute(
-        "SELECT notif_plays, notif_graded, notif_reminder, notif_ev, notif_price"
+        "SELECT notif_plays, notif_graded, notif_live, notif_reminder, notif_ev, notif_price"
         " FROM users WHERE id = ?", (session["user_id"],)
     ).fetchone()
     prefs = dict(u) if u else {}
@@ -3959,7 +3961,7 @@ def api_alertas():
     data = request.get_json(silent=True) or {}
     pref = data.get("pref", "")
     value = 1 if data.get("value") else 0
-    allowed = {"notif_plays", "notif_graded", "notif_reminder", "notif_ev", "notif_price"}
+    allowed = {"notif_plays", "notif_graded", "notif_live", "notif_reminder", "notif_ev", "notif_price"}
     if pref not in allowed:
         return jsonify({"ok": False, "error": "invalid pref"}), 400
     db = get_db()
@@ -7482,7 +7484,7 @@ def api_push_edge():
     # Filtro por preferencia (pedido Alex 2026-10-08, estilo WGT):
     # notif_type mapea al campo notif_* del usuario.
     notif_type = data.get("notif_type") or "notif_ev"
-    allowed_types = {"notif_plays", "notif_graded", "notif_reminder", "notif_ev", "notif_price"}
+    allowed_types = {"notif_plays", "notif_graded", "notif_live", "notif_reminder", "notif_ev", "notif_price"}
     if notif_type not in allowed_types:
         notif_type = "notif_ev"
     payload = json.dumps({"title": title, "body": body, "url": url, "image": image})
@@ -7499,10 +7501,23 @@ def api_push_edge():
             [str(e).lower() for e in emails],
         ).fetchall()
     else:
-        subs = db.execute(
-            f"SELECT ps.id, ps.endpoint, ps.p256dh, ps.auth FROM push_subscriptions ps"
-            f" JOIN users u ON u.id = ps.member_id WHERE u.{notif_type} = 1"
-        ).fetchall()
+        # Exclusión opcional (2026-10-14): "exclude_emails" deja fuera a esos
+        # miembros del envío general (ej. las alertas en vivo de miembros no
+        # deben duplicar el push personal de Alex, que va por "emails").
+        exclude = data.get("exclude_emails") or []
+        if exclude:
+            ph = ",".join("?" for _ in exclude)
+            subs = db.execute(
+                f"SELECT ps.id, ps.endpoint, ps.p256dh, ps.auth FROM push_subscriptions ps"
+                f" JOIN users u ON u.id = ps.member_id WHERE u.{notif_type} = 1"
+                f" AND lower(u.email) NOT IN ({ph})",
+                [str(e).lower() for e in exclude],
+            ).fetchall()
+        else:
+            subs = db.execute(
+                f"SELECT ps.id, ps.endpoint, ps.p256dh, ps.auth FROM push_subscriptions ps"
+                f" JOIN users u ON u.id = ps.member_id WHERE u.{notif_type} = 1"
+            ).fetchall()
     sent, failed = 0, 0
     for s in subs:
         try:

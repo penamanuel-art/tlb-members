@@ -64,6 +64,17 @@
 
     <div class="alert-row">
       <div class="alert-info">
+        <b>Live scores</b>
+        <span>Every score from today's official plays, right on your lock screen as it happens.</span>
+      </div>
+      <label class="toggle">
+        <input type="checkbox" data-pref="notif_live" {% if prefs.notif_live %}checked{% endif %}>
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <div class="alert-row">
+      <div class="alert-info">
         <b>Game starting reminder</b>
         <span>About 15 minutes before a game you tracked starts.</span>
       </div>
