@@ -20,8 +20,10 @@ import random
 import re
 import secrets
 import sqlite3
+import threading
 import time
 import urllib.request
+import uuid
 from datetime import date, timedelta, datetime, timezone
 from functools import wraps
 
@@ -3099,6 +3101,68 @@ def home():
     )
 
 
+def _send_meta_capi_registration(email, event_id, ip, user_agent, fbp, fbc, source_url):
+    """Conversions API de Meta (2026-10-14): envía el CompleteRegistration
+    también desde el servidor, con el MISMO event_id que dispara el pixel
+    del navegador en /bienvenida, para que Meta deduplique el evento y
+    active las coincidencias avanzadas (email hasheado SHA-256).
+
+    No-op silencioso si no existe la env var META_CAPI_TOKEN. El envío va
+    SIEMPRE en un hilo de fondo con timeout corto y try/except total: un
+    fallo de Meta NUNCA puede bloquear ni romper un registro. El token
+    jamás se loguea ni se imprime."""
+    token = os.environ.get("META_CAPI_TOKEN")
+    if not token or not email:
+        return
+
+    def _go():
+        try:
+            user_data = {
+                "em": [hashlib.sha256(email.strip().lower().encode("utf-8")).hexdigest()],
+            }
+            if ip:
+                user_data["client_ip_address"] = ip
+            if user_agent:
+                user_data["client_user_agent"] = user_agent
+            if fbp:
+                user_data["fbp"] = fbp
+            if fbc:
+                user_data["fbc"] = fbc
+            payload = {
+                "data": [{
+                    "event_name": "CompleteRegistration",
+                    "event_time": int(time.time()),
+                    "event_id": event_id,
+                    "event_source_url": source_url,
+                    "action_source": "website",
+                    "user_data": user_data,
+                }],
+                "access_token": token,
+            }
+            req = urllib.request.Request(
+                "https://graph.facebook.com/v21.0/1625430959036525/events",
+                data=json.dumps(payload).encode("utf-8"),
+                headers={
+                    "Content-Type": "application/json",
+                    "User-Agent": (
+                        "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) "
+                        "AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 "
+                        "Mobile/15E148 Safari/604.1"
+                    ),
+                },
+                method="POST",
+            )
+            with urllib.request.urlopen(req, timeout=4) as resp:
+                resp.read()
+        except Exception:
+            pass
+
+    try:
+        threading.Thread(target=_go, daemon=True).start()
+    except Exception:
+        pass
+
+
 @app.route("/registro", methods=["GET", "POST"])
 def register():
     if "user_id" in session:
@@ -3172,7 +3236,22 @@ def register():
         except Exception:
             pass
         # Pixel de Meta: la bienvenida reporta el registro una sola vez.
+        # CAPI (2026-10-14): se genera UN event_id por registro y se
+        # comparte entre el envío del servidor (aquí) y el pixel del
+        # navegador (en /bienvenida) para que Meta deduplique el evento.
+        fb_event_id = uuid.uuid4().hex
         session["fb_reg"] = 1
+        session["fb_event_id"] = fb_event_id
+        client_ip = (request.headers.get("X-Forwarded-For", "") or "").split(",")[0].strip() or request.remote_addr
+        _send_meta_capi_registration(
+            email,
+            fb_event_id,
+            client_ip,
+            request.user_agent.string if request.user_agent else "",
+            request.cookies.get("_fbp"),
+            request.cookies.get("_fbc"),
+            request.url,
+        )
         return redirect(url_for("bienvenida"))
     return render_template("register.html", **_reg_ctx)
 
@@ -3378,7 +3457,8 @@ def bienvenida():
     Si el miembro acaba de registrarse, la base dispara una sola vez el
     evento CompleteRegistration del pixel de Meta (2026-10-14)."""
     fb_reg = bool(session.pop("fb_reg", None))
-    return render_template("bienvenida.html", nombre=session.get("nombre", ""), fb_reg=fb_reg)
+    fb_event_id = session.pop("fb_event_id", None)
+    return render_template("bienvenida.html", nombre=session.get("nombre", ""), fb_reg=fb_reg, fb_event_id=fb_event_id)
 
 
 @app.route("/login", methods=["GET", "POST"])
