@@ -108,6 +108,7 @@
       <input type="file" id="ticketUpload" accept="image/*" multiple style="display:none;">
       <div id="uploadPreview" style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;justify-content:center;"></div>
       <button id="sendTicketsBtn" onclick="sendTickets()" style="display:none;width:100%;margin-top:12px;background:#00e07f;color:#06130c;border:none;border-radius:12px;padding:12px;font-weight:800;cursor:pointer;">Enviar →</button>
+      <div id="uploadStatus" style="display:none;margin-top:10px;font-size:0.9rem;font-weight:700;"></div>
     </div>
   </div>
 
@@ -136,10 +137,75 @@ document.getElementById('ticketUpload').addEventListener('change', function(e) {
   });
   document.getElementById('sendTicketsBtn').style.display = ticketFiles.length ? 'block' : 'none';
 });
-function sendTickets() {
-  // Reutiliza la lógica existente de subida
-  if (typeof window.sendTicketsOriginal === 'function') { window.sendTicketsOriginal(); return; }
-  alert('Subiendo ' + ticketFiles.length + ' ticket(s)...');
+var uploadingTickets = false;
+function setUploadStatus(msg, color) {
+  var el = document.getElementById('uploadStatus');
+  if (!el) return;
+  el.style.display = 'block';
+  el.style.color = color || '#e8ecf4';
+  el.textContent = msg;
+}
+// Convierte la foto a JPEG (máx 1600px) antes de subir: las fotos de iPhone
+// pueden venir en HEIC y pesar 3-6 MB. Si la conversión falla, va el original.
+function fotoParaSubir(f) {
+  return new Promise(function(resolve) {
+    if (!/^image\//.test(f.type) || (f.type === 'image/jpeg' && f.size < 1500000)) { resolve(f); return; }
+    var url = URL.createObjectURL(f);
+    var img = new Image();
+    img.onload = function() {
+      try {
+        var esc = Math.min(1, 1600 / Math.max(img.width, img.height));
+        var c = document.createElement('canvas');
+        c.width = Math.round(img.width * esc);
+        c.height = Math.round(img.height * esc);
+        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+        URL.revokeObjectURL(url);
+        c.toBlob(function(b) { resolve(b || f); }, 'image/jpeg', 0.9);
+      } catch (e) { resolve(f); }
+    };
+    img.onerror = function() { URL.revokeObjectURL(url); resolve(f); };
+    img.src = url;
+  });
+}
+// Subida REAL a /admin/chat-mensaje (el stub anterior llamaba a una función
+// inexistente — sendTicketsOriginal — y solo mostraba un alert: nunca salía
+// ninguna petición y el ticket jamás se guardaba. Bug del rediseño 2026-10-11,
+// corregido 2026-10-14).
+async function sendTickets() {
+  if (uploadingTickets || !ticketFiles.length) return;
+  uploadingTickets = true;
+  var btn = document.getElementById('sendTicketsBtn');
+  btn.disabled = true;
+  btn.textContent = 'Subiendo…';
+  setUploadStatus('Subiendo ' + ticketFiles.length + ' ticket(s)…', '#8b94a9');
+  try {
+    var fd = new FormData();
+    fd.append('mensaje', '');
+    for (var i = 0; i < ticketFiles.length; i++) {
+      var f = await fotoParaSubir(ticketFiles[i]);
+      fd.append('tickets', f, 'ticket-' + Date.now() + '-' + i + '.jpg');
+    }
+    var ctrl = new AbortController();
+    var timer = setTimeout(function() { ctrl.abort(); }, 120000);
+    var r = await fetch('/admin/chat-mensaje', { method: 'POST', body: fd, signal: ctrl.signal });
+    clearTimeout(timer);
+    var dj = null;
+    try { dj = await r.json(); } catch (e) { /* respuesta no-JSON */ }
+    if (!r.ok || !dj || !dj.ok) {
+      throw new Error((dj && dj.error) ? dj.error : ('El servidor respondió ' + r.status + '. ¿Sesión expirada? Recarga la página.'));
+    }
+    setUploadStatus('✓ ' + dj.tickets + ' ticket(s) subido(s) · ' + dj.actualizadas + ' carta(s) actualizada(s). Ya lo proceso.', '#00e07f');
+    ticketFiles = [];
+    document.getElementById('uploadPreview').innerHTML = '';
+    document.getElementById('ticketUpload').value = '';
+    btn.style.display = 'none';
+  } catch (err) {
+    setUploadStatus('✗ No se pudo subir: ' + (err.name === 'AbortError' ? 'la subida tardó demasiado — revisa tu conexión y reintenta' : err.message), '#ff6b6b');
+    btn.disabled = false;
+    btn.textContent = 'Reintentar →';
+  } finally {
+    uploadingTickets = false;
+  }
 }
 </script>
 {% endblock %}
