@@ -4252,10 +4252,27 @@ def _tracker_context(user):
             pk = (j.get("pick") or "").strip().lower()
             if fecha and pk:
                 oficiales[(fecha, pk)] = j
+    # Enlace por play_id (2026-10-14, bug visto por Alex: "no se están
+    # publicando los tickets ahí"): la fila trackeada guarda el pick CORTO
+    # de plays.json ("Carolina Hurricanes ML") y el archivo el LARGO
+    # ("...vs Washington Capitals"), así que el match por (fecha, pick)
+    # fallaba y la fila quedaba sin ticket ni marcador. El play_id SÍ es
+    # el mismo en los tres lados: se busca primero por id (archivo y, para
+    # las de hoy aún sin liquidar, plays.json publicado) y el match por
+    # texto queda solo como respaldo.
+    oficiales_id = {}
+    for d in load_archive():
+        for j in d.get("jugadas", []) or []:
+            if j.get("id"):
+                oficiales_id[j["id"]] = j
+    for p in load_plays():
+        if p.get("id") and p["id"] not in oficiales_id:
+            oficiales_id[p["id"]] = p
     rows = []
     for t in tracked:
         f = (t["fecha"] or "").strip()
-        off = oficiales.get((f, (t["pick"] or "").strip().lower()), {})
+        off = (oficiales_id.get(t["play_id"])
+               or oficiales.get((f, (t["pick"] or "").strip().lower()), {}))
         abbr, logo = equipo_logo_info(t["pick"])
         try:
             fecha_corta = datetime.strptime(f, "%Y-%m-%d").strftime("%d %b %Y").upper()
