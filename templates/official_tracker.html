@@ -82,6 +82,23 @@
     {% endfor %}
   </div>
 
+  {% if t.por_liga %}
+  <div class="ot-section">
+    <h2>Record by league</h2>
+    {% for L in t.por_liga %}
+    <div class="ot-card">
+      <div class="ttl">{{ L.icon }} {{ L.liga }}<span style="float:right;color:{{ '#00e07f' if L.cls == 'pos' else ('#ff5d5d' if L.cls == 'neg' else '#fff') }};">{{ L.units_display }}</span></div>
+      <div class="ot-row"><span>Record</span><b>{{ L.record }} · {{ L.n }} plays</b></div>
+      <div class="ot-row"><span>Win rate</span><b>{{ L.win_rate }}%</b></div>
+      <div class="ot-row"><span>Net profit</span><b style="color:{{ '#00e07f' if L.cls == 'pos' else ('#ff5d5d' if L.cls == 'neg' else '#fff') }};">{{ L.profit_display }}</b></div>
+      <div class="ot-row"><span>ROI</span><b>{{ '+' if L.roi > 0 else '' }}{{ L.roi }}%</b></div>
+      <div class="ot-row"><span>Avg odds</span><b>{{ L.avg_odds_display }}</b></div>
+    </div>
+    {% endfor %}
+    <p style="font-size:0.72rem;color:#77819e;text-align:center;line-height:1.55;margin-top:2px;">Units normalized at 1u = $25. Every play is posted before game time — then locked and graded against the final score.</p>
+  </div>
+  {% endif %}
+
   <div class="ot-section">
     <h2>Recent windows</h2>
     <div class="ot-grid">

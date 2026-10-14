@@ -1767,8 +1767,71 @@ def official_tracker_full():
                 "nivel": (j.get("nivel") or "").upper(),
                 "comprobante": j.get("comprobante"),
                 "share_id": _share_id(f, j)} for f, j in reversed(settled[-12:])]
+    # Record por liga (2026-10-14, pedido por Alex) con PUERTA DE
+    # RECONCILIACIÓN DURA: la sección solo existe si TODAS las jugadas
+    # liquidadas tienen liga derivable (_league_of_archive_play: campo
+    # `liga` del archivo o mapa equipo→liga sobre el pick) y las sumas por
+    # liga cuadran EXACTAS con los totales oficiales (récord y profit).
+    # Si algo no cuadra, por_liga = None y la sección no se muestra —
+    # jamás se publica un desglose que no reconcilia.
+    _LG_ICONS = {"NFL": "🏈", "NCAAF": "🎓", "MLB": "⚾", "NHL": "🏒",
+                 "NBA": "🏀"}
+    _lg_acc = {}
+    _sin_liga = 0
+    for _f, _j in settled:
+        _L = _league_of_archive_play(_j)
+        if not _L:
+            _sin_liga += 1
+            continue
+        _s = _lg_acc.setdefault(_L, {"w": 0, "l": 0, "profit": 0.0,
+                                     "risked": 0.0, "odds": []})
+        if _j["resultado"] == "WON":
+            _s["w"] += 1
+        else:
+            _s["l"] += 1
+        _s["profit"] += float(_j.get("profit") or 0.0)
+        _s["risked"] += float(_j.get("stake_monto") or 0.0)
+        _s["odds"].append(int(_j.get("cuota") or 0))
+    por_liga = None
+    if not _sin_liga and _lg_acc:
+        _tw = sum(s["w"] for s in _lg_acc.values())
+        _tl = sum(s["l"] for s in _lg_acc.values())
+        _tp = sum(s["profit"] for s in _lg_acc.values())
+        if ((_tw, _tl, _tw + _tl) == (general["w"], general["l"],
+                                      general["n"])
+                and abs(_tp - general["profit"]) < 0.005):
+            por_liga = []
+            for _L in ("NFL", "NCAAF", "MLB", "NHL", "NBA"):
+                if _L not in _lg_acc:
+                    continue
+                _s = _lg_acc[_L]
+                _n = _s["w"] + _s["l"]
+                _u = _s["profit"] / 25.0  # normalización oficial 1u = $25
+                _avg = (round(sum(_s["odds"]) / len(_s["odds"]))
+                        if _s["odds"] else 0)
+                por_liga.append({
+                    "liga": _L, "icon": _LG_ICONS.get(_L, "🎯"),
+                    "w": _s["w"], "l": _s["l"], "n": _n,
+                    "record": f"{_s['w']}–{_s['l']}",
+                    "win_rate": round(_s["w"] / _n * 100, 1) if _n else 0.0,
+                    "profit": round(_s["profit"], 2),
+                    "profit_display": (
+                        ("+$" if _s["profit"] > 0
+                         else ("-$" if _s["profit"] < 0 else "$"))
+                        + f"{abs(_s['profit']):,.2f}"),
+                    "units": round(_u, 2),
+                    "units_display": f"{_u:+.2f}u",
+                    "cls": "pos" if _s["profit"] > 0 else (
+                        "neg" if _s["profit"] < 0 else ""),
+                    "roi": (round(_s["profit"] / _s["risked"] * 100, 1)
+                            if _s["risked"] else 0.0),
+                    "avg_odds": _avg,
+                    "avg_odds_display": f"{_avg:+d}",
+                })
+
     verif = sum(1 for _, j in settled if j.get("comprobante"))
     return {"general": general, "por_nivel": por_nivel, "por_banda": por_banda,
+            "por_liga": por_liga,
             "racha_actual": racha_actual, "mejor_racha_w": mejor_w, "peor_racha_l": peor_l,
             "ult7": ult7, "ult30": ult30, "mejor": mejor, "peor": peor,
             "ultimas": ultimas, "verificadas": verif,
