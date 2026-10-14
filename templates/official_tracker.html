@@ -115,7 +115,7 @@
     <h2>Best &amp; worst plays</h2>
     <div class="ot-card">
       {% for x in t.mejor %}
-      <div class="ot-play">{% if x.comprobante %}<div class="ot-thumbwrap" onclick="otZoom('{{ url_for('static', filename=x.comprobante) }}')"><img class="ot-thumb" src="{{ url_for('static', filename=x.comprobante) }}" alt="Original ticket" loading="lazy"><span class="ot-zoom">🔍</span></div>{% endif %}<div style="flex:1;"><span class="pk">{{ x.pick }}</span> <span class="ot-lvl">{{ 'PLATINUM' if x.nivel == 'ELITE' else x.nivel }}</span><div class="dt">{{ x.fecha }} · {{ x.cuota }}</div></div>
+      <div class="ot-play">{% if x.comprobante %}<div class="ot-thumbwrap" onclick="otZoom('{{ url_for('static', filename=x.comprobante) }}')"><img class="ot-thumb" src="{{ url_for('static', filename=x.comprobante) }}" alt="Original ticket" loading="lazy"><span class="ot-zoom">🔍</span></div>{% endif %}<div style="flex:1;"><span class="pk">{{ x.pick }}</span> <span class="ot-lvl">{{ 'PLATINUM' if x.nivel == 'ELITE' else x.nivel }}</span><div class="dt">{{ x.fecha }} · {{ x.cuota }}{% if x.share_id %} · <a href="{{ url_for('share_play', play_id=x.share_id) }}">Share 📤</a>{% endif %}</div></div>
         <b class="ot-pos">+${{ '{:,.2f}'.format(x.profit) }}</b></div>
       {% endfor %}
       {% for x in t.peor %}
@@ -132,7 +132,7 @@
       <div class="ot-play">
         {% if x.comprobante %}<div class="ot-thumbwrap" onclick="otZoom('{{ url_for('static', filename=x.comprobante) }}')"><img class="ot-thumb" src="{{ url_for('static', filename=x.comprobante) }}" alt="Original ticket" loading="lazy"><span class="ot-zoom">🔍</span></div>{% endif %}
         <div style="flex:1;"><span class="pk">{{ x.pick }}</span> <span class="ot-lvl">{{ 'PLATINUM' if x.nivel == 'ELITE' else x.nivel }}</span>
-          <div class="dt">{{ x.fecha }} · {{ x.cuota }}{% if x.comprobante %} · <a href="{{ url_for('static', filename=x.comprobante) }}" target="_blank">View ticket →</a>{% endif %}</div></div>
+          <div class="dt">{{ x.fecha }} · {{ x.cuota }}{% if x.comprobante %} · <a href="{{ url_for('static', filename=x.comprobante) }}" target="_blank">View ticket →</a>{% endif %}{% if x.share_id %} · <a href="{{ url_for('share_play', play_id=x.share_id) }}">Share 📤</a>{% endif %}</div></div>
         <div style="text-align:right;"><span class="ot-badge {{ 'ot-w' if x.resultado == 'WON' else 'ot-l' }}">{{ x.resultado }}</span>
           <div style="font-size:0.78rem;margin-top:3px;color:{{ '#00e07f' if x.profit > 0 else ('#ff5d5d' if x.profit < 0 else '#8b94a9') }};">{{ '+$' if x.profit > 0 else ('−$' if x.profit < 0 else '$') }}{{ '{:,.2f}'.format(x.profit|abs) }}</div></div>
       </div>

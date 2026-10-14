@@ -1743,16 +1743,30 @@ def official_tracker_full():
     ult30 = _agg([it for it in settled if _en_rango(it, 30)])
 
     ordenadas = sorted(settled, key=lambda it: float(it[1].get("profit") or 0.0))
+    # Share de victorias (2026-10-14): id estable por jugada + gate de
+    # compartibilidad (ganada, con ticket y marcador parseable).
+    _seen_pid = {}
+
+    def _pid(f, j):
+        pid = _archive_play_id(f, j, _seen_pid)
+        _seen_pid[pid] = True
+        return pid
+
+    def _share_id(f, j):
+        return _pid(f, j) if _share_data(f, j) else None
+
     peor = [{"fecha": f, "pick": j.get("pick"), "cuota": j.get("cuota_texto") or j.get("cuota"),
              "profit": float(j.get("profit") or 0.0), "nivel": (j.get("nivel") or "").upper(),
              "comprobante": j.get("comprobante")} for f, j in ordenadas[:5]]
     mejor = [{"fecha": f, "pick": j.get("pick"), "cuota": j.get("cuota_texto") or j.get("cuota"),
               "profit": float(j.get("profit") or 0.0), "nivel": (j.get("nivel") or "").upper(),
-              "comprobante": j.get("comprobante")} for f, j in reversed(ordenadas[-5:])]
+              "comprobante": j.get("comprobante"),
+              "share_id": _share_id(f, j)} for f, j in reversed(ordenadas[-5:])]
     ultimas = [{"fecha": f, "pick": j.get("pick"), "cuota": j.get("cuota_texto") or j.get("cuota"),
                 "resultado": j.get("resultado"), "profit": float(j.get("profit") or 0.0),
                 "nivel": (j.get("nivel") or "").upper(),
-                "comprobante": j.get("comprobante")} for f, j in reversed(settled[-12:])]
+                "comprobante": j.get("comprobante"),
+                "share_id": _share_id(f, j)} for f, j in reversed(settled[-12:])]
     verif = sum(1 for _, j in settled if j.get("comprobante"))
     return {"general": general, "por_nivel": por_nivel, "por_banda": por_banda,
             "racha_actual": racha_actual, "mejor_racha_w": mejor_w, "peor_racha_l": peor_l,
@@ -5132,6 +5146,355 @@ def admin_ver_tracker(user_id):
     stats = compute_stats(tracked) if tracked else {}
     return render_template("admin_miembro_tracker.html", miembro=dict(target),
                            tracked=tracked, stats=stats)
+
+
+# ============ Liga por jugada del archivo (compartido F2/F3) ==============
+# El campo `liga` del archivo solo existe en las jugadas recientes; para el
+# resto se deriva DETERMINÍSTICAMENTE del pick con este mapa equipo→liga
+# (verificado contra las etiquetas del registro: la suma por liga cuadra
+# exacta con el récord oficial). Si un equipo futuro no está en el mapa, la
+# función devuelve None y las superficies que dependen de la liga se
+# ocultan antes que mostrar un dato dudoso.
+_TEAM_LEAGUE = [
+    ("Buffalo Bills", "NFL"), ("Los Angeles Rams", "NFL"),
+    ("Green Bay Packers", "NFL"), ("Chicago Bears", "NFL"),
+    ("Indianapolis Colts", "NFL"), ("Pittsburgh Steelers", "NFL"),
+    ("New Orleans Saints", "NFL"), ("Atlanta Falcons", "NFL"),
+    ("Dallas Cowboys", "NFL"), ("Houston Texans", "NFL"),
+    ("San Francisco 49ers", "NFL"), ("Denver Broncos", "NFL"),
+    ("Cleveland Browns", "NFL"), ("Carolina Panthers", "NFL"),
+    ("Arizona Cardinals", "NFL"), ("Los Angeles Chargers", "NFL"),
+    ("Las Vegas Raiders", "NFL"), ("Philadelphia Eagles", "NFL"),
+    ("Bills", "NFL"), ("Rams", "NFL"), ("Packers", "NFL"), ("Bears", "NFL"),
+    ("Colts", "NFL"), ("Steelers", "NFL"), ("Saints", "NFL"),
+    ("Falcons", "NFL"), ("Cowboys", "NFL"), ("Texans", "NFL"),
+    ("49ers", "NFL"), ("Broncos", "NFL"), ("Browns", "NFL"),
+    ("Panthers", "NFL"), ("Cardinals", "NFL"), ("Chargers", "NFL"),
+    ("Raiders", "NFL"), ("Eagles", "NFL"),
+    ("Houston Cougars", "NCAAF"), ("Kansas State Wildcats", "NCAAF"),
+    ("Kansas State", "NCAAF"), ("Penn State", "NCAAF"),
+    ("Northwestern", "NCAAF"), ("Cougars", "NCAAF"), ("Wildcats", "NCAAF"),
+    ("Milwaukee Brewers", "MLB"), ("Los Angeles Dodgers", "MLB"),
+    ("Cleveland Guardians", "MLB"), ("Chicago White Sox", "MLB"),
+    ("Atlanta Braves", "MLB"), ("Tampa Bay Rays", "MLB"),
+    ("New York Yankees", "MLB"), ("San Diego Padres", "MLB"),
+    ("Chicago Cubs", "MLB"), ("Houston Astros", "MLB"),
+    ("Philadelphia Phillies", "MLB"), ("Washington Nationals", "MLB"),
+    ("New York Mets", "MLB"), ("Arizona Diamondbacks", "MLB"),
+    ("Miami Marlins", "MLB"), ("Boston Red Sox", "MLB"),
+    ("Brewers", "MLB"), ("Dodgers", "MLB"), ("Guardians", "MLB"),
+    ("White Sox", "MLB"), ("Braves", "MLB"), ("Rays", "MLB"),
+    ("Yankees", "MLB"), ("Padres", "MLB"), ("Cubs", "MLB"),
+    ("Astros", "MLB"), ("Phillies", "MLB"), ("Nationals", "MLB"),
+    ("Mets", "MLB"), ("Diamondbacks", "MLB"), ("Marlins", "MLB"),
+    ("Red Sox", "MLB"),
+    ("Carolina Hurricanes", "NHL"), ("Washington Capitals", "NHL"),
+    ("San Jose Sharks", "NHL"), ("Edmonton Oilers", "NHL"),
+    ("Calgary Flames", "NHL"), ("Anaheim Ducks", "NHL"),
+    ("Buffalo Sabres", "NHL"), ("Dallas Stars", "NHL"),
+    ("New York Rangers", "NHL"),
+    ("Hurricanes", "NHL"), ("Capitals", "NHL"), ("Sharks", "NHL"),
+    ("Oilers", "NHL"), ("Flames", "NHL"), ("Ducks", "NHL"),
+    ("Sabres", "NHL"), ("Stars", "NHL"), ("Rangers", "NHL"),
+]
+
+
+def _league_of_archive_play(j):
+    lg = (j.get("liga") or "").upper()
+    if lg in ("NFL", "NCAAF", "MLB", "NHL", "NBA"):
+        return lg
+    pick = j.get("pick") or ""
+    for name, liga in _TEAM_LEAGUE:
+        if re.search(r"(?<![A-Za-z])" + re.escape(name) + r"(?![A-Za-z])",
+                     pick):
+            return liga
+    return None
+
+
+# ================= Share de victorias (2026-10-14, pedido por Alex) =======
+# Imagen vertical 1080×1920 de cada jugada oficial GANADA, generada en el
+# servidor con PIL desde los datos REALES del archivo (pick, cuota,
+# marcador final, profit y la foto del ticket original). Si a la jugada
+# le falta ticket, marcador parseable o liga, el botón Share simplemente
+# no aparece — jamás se fabrica un número ni un marcador.
+_MARCADOR_RE = re.compile(
+    r"^\s*(.+?)\s+(\d+)\s*[-–]\s*(\d+)\s+(?:vs|@)\s+(.+?)\s*$")
+
+
+def _archive_play_id(fecha, jugada, seen):
+    pid = jugada.get("id")
+    if pid:
+        return pid
+    slug = re.sub(r"[^a-z0-9]+", "-",
+                  (jugada.get("pick") or "play").lower()).strip("-")[:48]
+    base = f"{fecha}-{slug}"
+    pid, n = base, 2
+    while pid in seen:
+        pid = f"{base}-{n}"
+        n += 1
+    return pid
+
+
+def _archive_index():
+    """{play_id: (fecha, jugada)} de TODO el archivo oficial."""
+    idx = {}
+    for d in load_archive():
+        fecha = d.get("fecha") or ""
+        for j in d.get("jugadas", []) or []:
+            idx[_archive_play_id(fecha, j, idx)] = (fecha, j)
+    return idx
+
+
+def _pick_short(pick):
+    p = (pick or "").strip()
+    for sep in (" vs ", " @ "):
+        if sep in p:
+            return p.split(sep)[0].strip()
+    return p
+
+
+def _marcador_labels(j, name_a, name_b):
+    """Etiquetas cortas del marcador: las abreviaturas del archivo si se
+    identifica nuestro lado; si no, la última palabra de cada nombre TAL
+    como viene escrito en el marcador (los números nunca se alteran)."""
+    def lastw(n):
+        n = (n or "").strip()
+        return n.split()[-1] if n else ""
+    abbr = (j.get("abbr") or "").upper()
+    oabbr = (j.get("opp_abbr") or "").upper()
+    if abbr and oabbr:
+        seg = re.sub(r"\s+(ML|[+-]\d+(?:\.\d+)?)\s*$", "",
+                     _pick_short(j.get("pick") or ""))
+        ours_last = lastw(seg).lower()
+        if ours_last and ours_last == lastw(name_a).lower():
+            return abbr, oabbr
+        if ours_last and ours_last == lastw(name_b).lower():
+            return oabbr, abbr
+    return lastw(name_a), lastw(name_b)
+
+
+def _share_data(fecha, j):
+    """Datos para la imagen Share de UNA jugada, o None si no es
+    compartible (no ganada, sin ticket, sin marcador parseable o sin
+    liga derivable). Todo sale del archivo oficial — nada inventado."""
+    if j.get("resultado") != "WON" or j.get("bloqueada"):
+        return None
+    comp = j.get("comprobante")
+    if not comp:
+        return None
+    if not os.path.exists(os.path.join(BASE_DIR, "static", comp)):
+        return None
+    m = _MARCADOR_RE.match(j.get("marcador") or "")
+    if not m:
+        return None
+    liga = _league_of_archive_play(j)
+    if not liga:
+        return None
+    la, lb = _marcador_labels(j, m.group(1), m.group(4))
+    if not la or not lb:
+        return None
+    profit = float(j.get("profit") or 0.0)
+    nv = (j.get("nivel") or "").upper()
+    return {
+        "fecha": fecha,
+        "pick": j.get("pick") or "",
+        "pick_short": _pick_short(j.get("pick") or ""),
+        "odds": fmt_odds(j.get("cuota")),
+        "nivel_label": "PLATINUM" if nv in ("ELITE", "PLATINUM")
+                       else (nv or "GOLD"),
+        "liga": liga,
+        "la": la, "sa": int(m.group(2)), "sb": int(m.group(3)), "lb": lb,
+        "profit": profit,
+        "units": profit / 25.0,  # normalización oficial: 1u = $25
+        "comprobante": comp,
+    }
+
+
+def _share_info(play_id):
+    got = _archive_index().get(play_id)
+    if not got:
+        return None
+    return _share_data(got[0], got[1])
+
+
+def _share_font(bold, size):
+    from PIL import ImageFont
+    name = "DejaVuSans-Bold.ttf" if bold else "DejaVuSans.ttf"
+    for cand in (os.path.join(BASE_DIR, "static", "fonts", name),
+                 "/usr/share/fonts/truetype/dejavu/" + name):
+        try:
+            return ImageFont.truetype(cand, size)
+        except Exception:
+            pass
+    return ImageFont.load_default(size=size)
+
+
+def _draw_tracked(d, cx, y, text, font, fill, tracking=0):
+    widths = [d.textlength(ch, font=font) for ch in text]
+    total = sum(widths) + tracking * max(0, len(text) - 1)
+    x = cx - total / 2.0
+    for ch, w in zip(text, widths):
+        d.text((x, y), ch, font=font, fill=fill)
+        x += w + tracking
+    return total
+
+
+def _fit_font(d, text, bold, max_w, start):
+    size = start
+    while size > 18:
+        f = _share_font(bold, size)
+        if d.textlength(text, font=f) <= max_w:
+            return f
+        size -= 4
+    return _share_font(bold, size)
+
+
+def _generate_share_image(play_id):
+    """Genera (y cachea en static/img/share/) la imagen Share de la
+    jugada. Devuelve la ruta del PNG o None si no es compartible."""
+    info = _share_info(play_id)
+    if not info:
+        return None
+    from PIL import Image, ImageDraw, ImageFilter
+    W, H = 1080, 1920
+    GOLD = (232, 200, 90)
+    GOLD_D = (201, 162, 39)
+    MINT = (61, 220, 151)
+    WHITE = (245, 247, 255)
+    GRAY = (154, 166, 196)
+    # Fondo: degradado vertical navy + glow dorado suave tras el héroe
+    img = Image.new("RGB", (W, H))
+    d0 = ImageDraw.Draw(img)
+    top, bot = (20, 27, 49), (5, 8, 26)
+    for y in range(H):
+        t = y / (H - 1)
+        d0.line([(0, y), (W, y)], fill=tuple(
+            int(top[i] + (bot[i] - top[i]) * t) for i in range(3)))
+    glow = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    gd = ImageDraw.Draw(glow)
+    gd.ellipse([70, -180, 1010, 760], fill=(212, 160, 39, 55))
+    img = Image.alpha_composite(
+        img.convert("RGBA"), glow.filter(ImageFilter.GaussianBlur(130)))
+    d = ImageDraw.Draw(img)
+    d.rounded_rectangle([24, 24, W - 24, H - 24], radius=36,
+                        outline=GOLD_D, width=3)
+    # Logo circular con aro dorado
+    try:
+        logo = Image.open(os.path.join(
+            BASE_DIR, "static", "img", "sharp-team-logo.png")).convert("RGBA")
+        side = min(logo.size)
+        logo = logo.crop(((logo.width - side) // 2, (logo.height - side) // 2,
+                          (logo.width + side) // 2, (logo.height + side) // 2)
+                         ).resize((210, 210))
+        mask = Image.new("L", (210, 210), 0)
+        ImageDraw.Draw(mask).ellipse([0, 0, 210, 210], fill=255)
+        img.paste(logo, (W // 2 - 105, 110), mask)
+        d.ellipse([W // 2 - 107, 108, W // 2 + 107, 322],
+                  outline=GOLD, width=4)
+    except Exception:
+        pass
+    _draw_tracked(d, W // 2, 348, "THE SHARP TEAM",
+                  _share_font(True, 58), GOLD, tracking=6)
+    d.line([(370, 428), (710, 428)], fill=GOLD_D, width=3)
+    # WINNER con badge de check menta
+    wf = _share_font(True, 118)
+    wt = d.textlength("WINNER", font=wf)
+    badge_r, gap = 52, 30
+    gx = (W - (badge_r * 2 + gap + wt)) / 2
+    cy = 480 + 62
+    cxb = gx + badge_r
+    d.ellipse([cxb - badge_r, cy - badge_r, cxb + badge_r, cy + badge_r],
+              fill=MINT)
+    d.line([(cxb - 24, cy + 0), (cxb - 7, cy + 18), (cxb + 27, cy - 21)],
+           fill=(6, 20, 14), width=11, joint="curve")
+    d.text((gx + badge_r * 2 + gap, 480), "WINNER", font=wf, fill=WHITE)
+    # Píldora de nivel · liga
+    pill_txt = f"{info['nivel_label']} PLAY · {info['liga']}"
+    pf = _share_font(True, 38)
+    tw = sum(d.textlength(c, font=pf) for c in pill_txt) + 3 * len(pill_txt)
+    d.rounded_rectangle([W // 2 - tw / 2 - 36, 618, W // 2 + tw / 2 + 36, 682],
+                        radius=32, fill=(42, 33, 19), outline=GOLD_D, width=3)
+    _draw_tracked(d, W // 2, 630, pill_txt, pf, GOLD, tracking=3)
+    # Pick + marcador + profit (todo del archivo oficial)
+    pick_line = f"{info['pick_short']} ({info['odds']})"
+    d.text((W / 2, 712), pick_line,
+           font=_fit_font(d, pick_line, True, 950, 60), fill=WHITE,
+           anchor="ma")
+    score_line = (f"{info['la']} {info['sa']} – {info['sb']} {info['lb']}"
+                  " · Final")
+    d.text((W / 2, 792), score_line,
+           font=_fit_font(d, score_line, True, 950, 64), fill=GOLD,
+           anchor="ma")
+    d.text((W / 2, 878), f"Profit: +${info['profit']:,.2f}",
+           font=_share_font(True, 92), fill=MINT, anchor="ma")
+    d.text((W / 2, 990), f"{info['units']:+.2f} units",
+           font=_share_font(True, 46), fill=MINT, anchor="ma")
+    d.line([(90, 1062), (W - 90, 1062)], fill=(70, 82, 120), width=2)
+    # Ticket original (foto real del archivo) con borde dorado
+    ty = 1092
+    th = 0
+    try:
+        tk = Image.open(os.path.join(
+            BASE_DIR, "static", info["comprobante"])).convert("RGB")
+        tk = tk.resize((880, int(tk.height * 880 / tk.width)))
+        if tk.height > 548:
+            topc = int(tk.height * 0.12)
+            tk = tk.crop((0, topc, 880, topc + 548))
+        th = tk.height
+        tmask = Image.new("L", tk.size, 0)
+        ImageDraw.Draw(tmask).rounded_rectangle(
+            [0, 0, tk.width, tk.height], radius=26, fill=255)
+        img.paste(tk, (100, ty), tmask)
+        d.rounded_rectangle([100, ty, 980, ty + th], radius=26,
+                            outline=GOLD_D, width=3)
+    except Exception:
+        th = 0
+    if th:
+        _draw_tracked(d, W // 2, ty + th + 22, "ORIGINAL TICKET · NOVIG",
+                      _share_font(True, 33), (139, 150, 181), tracking=4)
+    d.text((W / 2, 1748), "Every play posted before game time — locked & graded.",
+           font=_fit_font(d, "Every play posted before game time — locked & graded.",
+                          False, 950, 39),
+           fill=(199, 206, 222), anchor="ma")
+    d.text((W / 2, 1808), "thesharpteam.bet",
+           font=_share_font(True, 54), fill=GOLD, anchor="ma")
+    out_dir = os.path.join(BASE_DIR, "static", "img", "share")
+    os.makedirs(out_dir, exist_ok=True)
+    out_path = os.path.join(out_dir, f"{play_id}.png")
+    img.convert("RGB").save(out_path, "PNG")
+    return out_path
+
+
+def _share_image_path(play_id):
+    if not re.fullmatch(r"[A-Za-z0-9\-]+", play_id or ""):
+        return None
+    out_path = os.path.join(BASE_DIR, "static", "img", "share",
+                            f"{play_id}.png")
+    if os.path.exists(out_path):
+        return out_path
+    return _generate_share_image(play_id)
+
+
+@app.route("/share/<play_id>")
+@login_required
+def share_play(play_id):
+    """Página Share de una victoria oficial (2026-10-14): muestra la
+    imagen generada desde el archivo y el botón de descarga."""
+    info = _share_info(play_id)
+    if not info:
+        from flask import abort
+        abort(404)
+    return render_template("share_play.html", info=info, play_id=play_id)
+
+
+@app.route("/share/<play_id>/image.png")
+@login_required
+def share_play_image(play_id):
+    from flask import abort, send_file
+    path = _share_image_path(play_id)
+    if not path:
+        abort(404)
+    return send_file(path, mimetype="image/png")
 
 
 # ================= LIVE strip en las cards (2026-10-14, pedido por Alex) ====
