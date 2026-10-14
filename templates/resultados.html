@@ -177,7 +177,7 @@
         <p class="ticket-pick">{{ j.pick }} {{ fmt_odds(j.cuota) }}</p>
         <div class="ticket-rows">
           <div><span>Date</span><b>{{ fecha_hoy }}</b></div>
-          <div><span>Level</span><b>{{ j.get('nivel', '') }}</b></div>
+          <div><span>Level</span><b>{{ nivel_display(j.get('nivel', '')) }}</b></div>
           <div><span>Stake</span><b>{% if j.stake_monto is not none %}${{ '%.0f' % j.stake_monto }}{% else %}—{% endif %}</b></div>
           <div><span>Result</span><b style="color:#fbbf24">PENDING</b></div>
         </div>
@@ -216,7 +216,7 @@
           <p class="ticket-pick">{{ j.pick }} {{ fmt_odds(j.cuota) }}</p>
           <div class="ticket-rows">
             <div><span>Date</span><b>{{ d.get('titulo') or d.get('fecha', '') }}</b></div>
-            <div><span>Level</span><b>{{ j.get('nivel', '') }}</b></div>
+            <div><span>Level</span><b>{{ nivel_display(j.get('nivel', '')) }}</b></div>
             <div><span>Stake</span><b>{% if j.stake_monto is not none %}${{ '%.0f' % j.stake_monto }}{% else %}—{% endif %}</b></div>
             <div><span>Result</span><b class="{{ 'pos' if won else 'neg' }}">{{ 'WON' if won else 'LOST' }} · {{ fmt_money(prof) }}</b></div>
           </div>

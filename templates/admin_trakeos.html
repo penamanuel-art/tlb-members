@@ -13,7 +13,7 @@
 {% for j in jugadas %}
 <article class="member-row">
   <div class="m-name">{{ j.pick }} <span class="m-pill">{{ '+' if j.cuota > 0 else '' }}{{ j.cuota }}</span></div>
-  <div class="m-email">{{ j.fecha }} · <span class="m-pill on">{{ j.nivel }}</span></div>
+  <div class="m-email">{{ j.fecha }} · <span class="m-pill on">{{ nivel_display(j.nivel) }}</span></div>
   <div class="m-meta">
     {% for m in j.miembros %}
     <span class="m-pill{% if m.resultado == 'W' %} on{% endif %}" title="{{ m.email }} · tracked {{ m.created_at[:16] if m.created_at else '—' }}">

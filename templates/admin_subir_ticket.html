@@ -33,7 +33,7 @@
     <select name="play_id" required>
       <option value="">— Elige la jugada —</option>
       {% for p in plays_sin_ticket %}
-        <option value="{{ p.id }}">{{ p.pick }} — {{ p.game }} ({{ p.nivel }})</option>
+        <option value="{{ p.id }}">{{ p.pick }} — {{ p.game }} ({{ nivel_display(p.nivel) }})</option>
       {% endfor %}
     </select>
 

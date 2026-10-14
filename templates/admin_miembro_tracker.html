@@ -21,7 +21,7 @@
 
 {% for t in tracked %}
 <article class="member-row">
-  <div class="m-name">{{ t.pick }} <span class="m-pill">{{ t.nivel }}</span></div>
+  <div class="m-name">{{ t.pick }} <span class="m-pill">{{ nivel_display(t.nivel) }}</span></div>
   <div class="m-meta">
     <span class="m-pill">{{ t.fecha }}</span>
     {% if t.resultado == 'W' %}<span class="m-pill on">✓ Win</span>

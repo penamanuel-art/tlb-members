@@ -2588,6 +2588,18 @@ def fmt_odds(o) -> str:
 app.jinja_env.globals.update(fmt_money=fmt_money, fmt_units=fmt_units, fmt_odds=fmt_odds)
 
 
+def nivel_display(nivel) -> str:
+    """Nombre VISIBLE de un nivel (2026-10-14, bug visto por Alex): el
+    valor interno 'ELITE' se muestra SIEMPRE como 'PLATINUM' (renombre del
+    2026-10-06). Solo capa de presentación — JSON, BD, crons y scripts
+    siguen usando ELITE/GOLD como valores internos."""
+    n = (nivel or "").upper()
+    return "PLATINUM" if n in ("ELITE", "PLATINUM") else n
+
+
+app.jinja_env.globals.update(nivel_display=nivel_display)
+
+
 def _load_ncaaf_abbr2id():
     # ESPN exige ID numérico para logos NCAAF (ncaa/500/<id>.png); NFL/MLB aceptan abreviatura.
     try:
@@ -4179,6 +4191,29 @@ def tracker():
     return render_template("dashboard.html", **ctx)
 
 
+_SPORT_ICONS = {"NFL": "🏈", "NCAAF": "🏈", "MLB": "⚾", "NHL": "🏒",
+                "NBA": "🏀"}
+_ODDS_KEY_LEAGUE = {"americanfootball_nfl": "NFL",
+                    "americanfootball_ncaaf": "NCAAF",
+                    "baseball_mlb": "MLB", "icehockey_nhl": "NHL",
+                    "basketball_nba": "NBA"}
+
+
+def _sport_icon(t, off):
+    """Icono del deporte de una fila del tracker (2026-10-14, bug visto
+    por Alex: el fallback era SIEMPRE 🏈, hasta en jugadas NHL/MLB).
+    Orden: liga de la jugada oficial enlazada → clave de deporte guardada
+    en la fila → derivación por el pick. Sin liga conocida: 🎯 neutro."""
+    liga = None
+    if off:
+        liga = _league_of_archive_play(off)
+    if not liga:
+        liga = _ODDS_KEY_LEAGUE.get((t.get("liga") or "").strip())
+    if not liga:
+        liga = _league_of_archive_play({"pick": t.get("pick") or ""})
+    return _SPORT_ICONS.get(liga or "", "🎯")
+
+
 def _tracker_context(user):
     """Contexto del tracker personal para un usuario dado (fila de users).
 
@@ -4243,6 +4278,7 @@ def _tracker_context(user):
             "comprobante": (off.get("comprobante") or ""),
             "abbr": abbr,
             "logo": logo,
+            "sport_icon": _sport_icon(t, off),
         })
     # Récord Platinum real del archivo oficial (para el upsell del tracker).
     _pw = _pl = 0

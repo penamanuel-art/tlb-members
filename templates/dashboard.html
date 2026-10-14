@@ -194,11 +194,11 @@
       {% if r.logo %}
       <img class="wgt-logo" src="{{ r.logo }}" alt="{{ r.abbr }}" loading="lazy">
       {% else %}
-      <div class="wgt-logo-fallback">🏈</div>
+      <div class="wgt-logo-fallback">{{ r.sport_icon or '🎯' }}</div>
       {% endif %}
       <div class="wgt-row-main">
         <p class="wgt-pick">{{ r.pick }}</p>
-        <p class="wgt-meta">{% if r.abbr %}<b>{{ r.abbr }}</b> {% endif %}{{ r.cuota_txt }} · {{ r.fecha_corta }} · <span class="wgt-nivel {{ r.nivel|lower }}">{{ r.nivel }}</span></p>
+        <p class="wgt-meta">{% if r.abbr %}<b>{{ r.abbr }}</b> {% endif %}{{ r.cuota_txt }} · {{ r.fecha_corta }} · <span class="wgt-nivel {{ r.nivel|lower }}">{{ nivel_display(r.nivel) }}</span></p>
         {% if r.marcador %}<p class="wgt-score">{{ r.marcador }}</p>{% endif %}
         <p class="wgt-stake">Stake ${{ '%.0f' % r.stake_monto }} ({{ r.stake_unidades }}u)</p>
         {% if r.comprobante %}
@@ -322,14 +322,14 @@
       <span class="ticket-fallback">
         <span class="ticket-brand">THE SHARP TEAM</span>
         <span class="ticket-fallback-pick">{{ r.pick }}</span>
-        <span class="ticket-fallback-odds">{{ fmt_odds(r.cuota) }} · {{ r.nivel }}</span>
+        <span class="ticket-fallback-odds">{{ fmt_odds(r.cuota) }} · {{ nivel_display(r.nivel) }}</span>
         <span class="ticket-fallback-result {{ 'win' if won else 'loss' }}">{{ '✓ WON' if won else '✕ LOST' }}</span>
       </span>
       {% endif %}
       <span class="ticket-pill {{ 'win' if won else 'loss' }}">{{ '✓' if won else '✕' }} {{ fmt_money(r.profit) }}</span>
     </span>
     <span class="ticket-title">{{ r.pick }} <span class="muted">{{ fmt_odds(r.cuota) }}</span></span>
-    <span class="ticket-sub">{{ r.fecha }} · {{ r.nivel }}</span>
+    <span class="ticket-sub">{{ r.fecha }} · {{ nivel_display(r.nivel) }}</span>
     {% if r.comprobante %}<span class="ticket-view-link">View ticket →</span>{% endif %}
   </button>
   <div class="modal" id="dt-{{ loop.index }}" hidden>
@@ -342,7 +342,7 @@
       <p class="ticket-pick">{{ r.pick }} {{ fmt_odds(r.cuota) }}</p>
       <div class="ticket-rows">
         <div><span>Date</span><b>{{ r.fecha }}</b></div>
-        <div><span>Level</span><b>{{ r.nivel }}</b></div>
+        <div><span>Level</span><b>{{ nivel_display(r.nivel) }}</b></div>
         <div><span>Result</span><b class="{{ 'pos' if won else 'neg' }}">{{ 'WON' if won else 'LOST' }} · {{ fmt_money(r.profit) }}</b></div>
       </div>
       <p class="ticket-note">Original receipt not uploaded for this play.</p>
