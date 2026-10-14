@@ -108,7 +108,38 @@
       <input type="file" id="ticketUpload" accept="image/*" multiple style="display:none;">
       <div id="uploadPreview" style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;justify-content:center;"></div>
       <button id="sendTicketsBtn" onclick="sendTickets()" style="display:none;width:100%;margin-top:12px;background:#00e07f;color:#06130c;border:none;border-radius:12px;padding:12px;font-weight:800;cursor:pointer;">Enviar →</button>
-      <div id="uploadStatus" style="display:none;margin-top:10px;font-size:0.9rem;font-weight:700;"></div>
+      <!-- Panel de procesamiento (2026-10-14, diseño aprobado por Alex):
+           avatar EN VIVO trabajando + checklist de 5 pasos con la rayita de
+           progreso. Los estados vienen del servidor (polling a
+           /admin/ticket-status/<batch>) — nunca se simulan en el cliente. -->
+      <style>
+        @keyframes tpPulse { 0% { box-shadow: 0 0 0 0 rgba(201,162,39,.55); } 70% { box-shadow: 0 0 0 9px rgba(201,162,39,0); } 100% { box-shadow: 0 0 0 0 rgba(201,162,39,0); } }
+        .tp-dot { width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:900;flex:0 0 26px; }
+        .tp-done { background:#00e07f;color:#06130c; }
+        .tp-working { border:2px solid #c9a227;color:#c9a227;animation:tpPulse 1.2s infinite; }
+        .tp-pending { border:2px solid #3a4358;color:#3a4358; }
+        .tp-error { background:#ff5f57;color:#fff; }
+      </style>
+      <div id="ticketPanel" style="display:none;margin-top:14px;text-align:left;background:#0a0f1a;border:1px solid rgba(201,162,39,.45);border-radius:16px;padding:14px;box-shadow:0 0 24px rgba(201,162,39,.15);">
+        <div style="display:flex;gap:12px;align-items:center;">
+          <div style="flex:0 0 86px;width:86px;height:86px;border-radius:14px;overflow:hidden;border:1px solid rgba(201,162,39,.6);box-shadow:0 0 16px rgba(201,162,39,.35);background:#000;">
+            <video src="/static/img/sharp-working.mp4" autoplay loop muted playsinline style="width:100%;height:100%;object-fit:cover;display:block;"></video>
+          </div>
+          <div style="flex:1;min-width:0;">
+            <div id="tpTitle" style="font-weight:800;font-size:1.02rem;color:#fff;">Processing your ticket</div>
+            <div style="color:#8b94a9;font-size:0.8rem;">The Sharp is on it</div>
+            <div id="tpChip" style="display:none;margin-top:6px;font-size:0.78rem;color:#0b0e14;background:linear-gradient(90deg,#c9a227,#e8c85a);border-radius:999px;padding:3px 10px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></div>
+          </div>
+          <div style="flex:0 0 auto;color:#ff5f57;font-size:0.72rem;font-weight:800;">● LIVE</div>
+        </div>
+        <div id="tpSteps" style="margin-top:14px;"></div>
+        <div style="margin-top:4px;background:#131a29;border-radius:999px;height:8px;overflow:hidden;">
+          <div id="tpBar" style="height:100%;width:0%;background:linear-gradient(90deg,#c9a227,#00e07f);border-radius:999px;transition:width .5s;"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;gap:8px;margin-top:6px;color:#8b94a9;font-size:0.75rem;">
+          <span id="tpStepCount">Step 0 of 5</span><span>You can close this — processing continues.</span>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -138,13 +169,64 @@ document.getElementById('ticketUpload').addEventListener('change', function(e) {
   document.getElementById('sendTicketsBtn').style.display = ticketFiles.length ? 'block' : 'none';
 });
 var uploadingTickets = false;
-function setUploadStatus(msg, color) {
-  var el = document.getElementById('uploadStatus');
-  if (!el) return;
-  el.style.display = 'block';
-  el.style.color = color || '#e8ecf4';
-  el.textContent = msg;
+// ── Panel de procesamiento: pasos y render desde el estado del servidor ──
+var TP_STEPS = [
+  ['received', 'Ticket received'],
+  ['verifying', 'Verifying price & stake'],
+  ['matched', 'Ticket matched to the play'],
+  ['dashboard', 'Dashboard updated'],
+  ['alerts', 'Telegram & alerts sent']
+];
+var TP_STATE_TXT = { done: 'Done', working: 'Working…', pending: 'Pending', error: 'Error' };
+var TP_STATE_CLR = { done: '#00e07f', working: '#c9a227', pending: '#5b6579', error: '#ff5f57' };
+var tpBatchId = null, tpPollTimer = null, tpPollCount = 0;
+function tpEsc(s) { var d = document.createElement('div'); d.textContent = s == null ? '' : String(s); return d.innerHTML; }
+function tpRender(batch) {
+  var panel = document.getElementById('ticketPanel');
+  if (!panel || !batch) return;
+  panel.style.display = 'block';
+  var steps = batch.steps || {};
+  var chip = document.getElementById('tpChip');
+  if (batch.plays && batch.plays.length) {
+    var p = batch.plays[0];
+    chip.textContent = p.pick + ' · ' + p.cuota_texto + ' · $' + p.stake_monto + (batch.plays.length > 1 ? ' +' + (batch.plays.length - 1) : '');
+    chip.style.display = 'block';
+  }
+  var done = 0, html = '';
+  TP_STEPS.forEach(function(s, idx) {
+    var st = steps[s[0]] || { state: 'pending' };
+    if (st.state === 'done') done++;
+    var dot = st.state === 'done' ? '<div class="tp-dot tp-done">✓</div>'
+      : st.state === 'working' ? '<div class="tp-dot tp-working">●</div>'
+      : st.state === 'error' ? '<div class="tp-dot tp-error">✗</div>'
+      : '<div class="tp-dot tp-pending"></div>';
+    var lineClr = st.state === 'done' ? '#00e07f' : st.state === 'working' ? '#c9a227' : '#2a3247';
+    var line = idx < TP_STEPS.length - 1 ? '<div style="width:2px;flex:1;min-height:12px;background:' + lineClr + ';"></div>' : '';
+    html += '<div style="display:flex;gap:10px;">'
+      + '<div style="display:flex;flex-direction:column;align-items:center;">' + dot + line + '</div>'
+      + '<div style="flex:1;min-width:0;padding-bottom:' + (idx < TP_STEPS.length - 1 ? '12' : '2') + 'px;">'
+      + '<div style="display:flex;justify-content:space-between;gap:8px;"><span style="font-weight:700;color:' + (st.state === 'pending' ? '#8b94a9' : '#fff') + ';">' + s[1] + '</span>'
+      + '<span style="font-size:0.78rem;font-weight:800;color:' + (TP_STATE_CLR[st.state] || '#5b6579') + ';">' + (TP_STATE_TXT[st.state] || 'Pending') + '</span></div>'
+      + (st.detail ? '<div style="color:#8b94a9;font-size:0.78rem;margin-top:2px;">' + tpEsc(st.detail) + '</div>' : '')
+      + '</div></div>';
+  });
+  document.getElementById('tpSteps').innerHTML = html;
+  document.getElementById('tpBar').style.width = (done / TP_STEPS.length * 100) + '%';
+  document.getElementById('tpStepCount').textContent = 'Step ' + done + ' of ' + TP_STEPS.length;
+  document.getElementById('tpTitle').textContent = done === TP_STEPS.length ? '✓ Ticket processed' : 'Processing your ticket';
+  if (done === TP_STEPS.length) tpStopPoll();
 }
+function tpStopPoll() { if (tpPollTimer) { clearInterval(tpPollTimer); tpPollTimer = null; } }
+function tpPoll() {
+  if (!tpBatchId) return;
+  tpPollCount++;
+  if (tpPollCount > 200) { tpStopPoll(); return; }
+  fetch('/admin/ticket-status/' + encodeURIComponent(tpBatchId))
+    .then(function(r) { return r.json(); })
+    .then(function(b) { if (b && b.steps) tpRender(b); })
+    .catch(function() { /* reintenta en el siguiente ciclo */ });
+}
+function tpStartPoll() { tpStopPoll(); tpPollCount = 0; tpPoll(); tpPollTimer = setInterval(tpPoll, 3000); }
 // Convierte la foto a JPEG (máx 1600px) antes de subir: las fotos de iPhone
 // pueden venir en HEIC y pesar 3-6 MB. Si la conversión falla, va el original.
 function fotoParaSubir(f) {
@@ -170,14 +252,16 @@ function fotoParaSubir(f) {
 // Subida REAL a /admin/chat-mensaje (el stub anterior llamaba a una función
 // inexistente — sendTicketsOriginal — y solo mostraba un alert: nunca salía
 // ninguna petición y el ticket jamás se guardaba. Bug del rediseño 2026-10-11,
-// corregido 2026-10-14).
+// corregido 2026-10-14). Al enviar, el panel muestra el paso 1 en curso (la
+// subida está ocurriendo de verdad) y después sigue el estado del servidor.
 async function sendTickets() {
   if (uploadingTickets || !ticketFiles.length) return;
   uploadingTickets = true;
   var btn = document.getElementById('sendTicketsBtn');
   btn.disabled = true;
   btn.textContent = 'Subiendo…';
-  setUploadStatus('Subiendo ' + ticketFiles.length + ' ticket(s)…', '#8b94a9');
+  tpStopPoll();
+  tpRender({ plays: [], steps: { received: { state: 'working', detail: 'Uploading ' + ticketFiles.length + ' file(s)…' } } });
   try {
     var fd = new FormData();
     fd.append('mensaje', '');
@@ -194,18 +278,45 @@ async function sendTickets() {
     if (!r.ok || !dj || !dj.ok) {
       throw new Error((dj && dj.error) ? dj.error : ('El servidor respondió ' + r.status + '. ¿Sesión expirada? Recarga la página.'));
     }
-    setUploadStatus('✓ ' + dj.tickets + ' ticket(s) subido(s) · ' + dj.actualizadas + ' carta(s) actualizada(s). Ya lo proceso.', '#00e07f');
     ticketFiles = [];
     document.getElementById('uploadPreview').innerHTML = '';
     document.getElementById('ticketUpload').value = '';
     btn.style.display = 'none';
+    if (dj.batch_id) {
+      tpBatchId = dj.batch_id;
+      tpStartPoll();
+    } else {
+      // Sin lote (deploy anterior): se refleja lo que devolvió el endpoint.
+      tpRender({ plays: [], steps: {
+        received: { state: 'done', detail: dj.tickets + ' archivo(s) en el servidor' },
+        matched: { state: dj.actualizadas > 0 ? 'done' : 'error', detail: '' }
+      } });
+    }
   } catch (err) {
-    setUploadStatus('✗ No se pudo subir: ' + (err.name === 'AbortError' ? 'la subida tardó demasiado — revisa tu conexión y reintenta' : err.message), '#ff6b6b');
+    tpRender({ plays: [], steps: { received: { state: 'error',
+      detail: err.name === 'AbortError' ? 'La subida tardó demasiado — revisa tu conexión y reintenta' : err.message } } });
     btn.disabled = false;
     btn.textContent = 'Reintentar →';
   } finally {
     uploadingTickets = false;
   }
 }
+// Al cargar el Admin: si hay un lote reciente sin terminar, el panel retoma
+// su estado real (no se pierde el hilo si Alex cierra y vuelve).
+(function() {
+  fetch('/admin/ticket-status/latest')
+    .then(function(r) { if (!r.ok) throw 0; return r.json(); })
+    .then(function(b) {
+      if (!b || !b.steps || !b.id) return;
+      var done = TP_STEPS.filter(function(s) { return (b.steps[s[0]] || {}).state === 'done'; }).length;
+      var ageMin = b.epoch ? (Date.now() / 1000 - b.epoch) / 60 : 9999;
+      if (done < TP_STEPS.length && ageMin < 120) {
+        tpBatchId = b.id;
+        tpRender(b);
+        tpStartPoll();
+      }
+    })
+    .catch(function() { /* sin lotes: el panel queda oculto */ });
+})();
 </script>
 {% endblock %}

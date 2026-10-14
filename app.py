@@ -6810,6 +6810,7 @@ def admin_chat_mensaje():
     chat_dir = os.path.join(os.path.dirname(__file__), "data", "admin-chat")
     os.makedirs(chat_dir, exist_ok=True)
     guardados = []
+    _batch_id = None
     # Siguiente índice libre del día: los tickets llegan en POSTs separados
     # (uno por ticket desde el admin) — numerar por lo que ya existe en disco
     # evita que el ticket 2 sobreescriba al ticket 1 (bug real 2026-10-09).
@@ -6828,6 +6829,7 @@ def admin_chat_mensaje():
             guardados.append(f"img/comprobantes/{nombre}")
     # Auto-adjuntar a las jugadas de hoy (en orden)
     actualizadas = 0
+    _matched = []
     if guardados:
         for fname in ["plays-pending.json", "plays.json"]:
             pp = os.path.join(os.path.dirname(__file__), "data", fname)
@@ -6840,6 +6842,15 @@ def admin_chat_mensaje():
                         if j < len(guardados) and not _p.get("comprobante"):
                             _p["comprobante"] = guardados[j]
                             actualizadas += 1
+                            if not any(m.get("id") == _p.get("id") for m in _matched):
+                                _matched.append({
+                                    "id": _p.get("id", ""),
+                                    "pick": _p.get("pick", ""),
+                                    "cuota_texto": _p.get("cuota_texto", ""),
+                                    "stake_monto": _p.get("stake_monto", ""),
+                                    "liga": _p.get("liga", ""),
+                                    "hora": _p.get("game_time_et") or _p.get("hora", ""),
+                                })
                     with open(pp, "w") as _f:
                         _json.dump(_data, _f, indent=2)
             except Exception:
@@ -6874,6 +6885,7 @@ def admin_chat_mensaje():
             pass
         # PUBLICAR EN GITHUB: si se adjuntaron tickets, commitear para que el
         # Dashboard los muestre (Alex 2026-10-09 - el ticket debe verse en la web)
+        _push_ok = False
         if actualizadas > 0:
             try:
                 import subprocess
@@ -6892,12 +6904,148 @@ def admin_chat_mensaje():
                 subprocess.run(
                     ["git", "commit", "-m", f"Admin: ticket adjuntado {hoy} ({actualizadas} carta(s))"],
                     cwd=repo_dir, capture_output=True, timeout=15)
-                # Push (best-effort, si falla no bloquea la respuesta)
-                subprocess.run(["git", "push", "origin", "master"],
-                               cwd=repo_dir, capture_output=True, timeout=30)
+                # Push (best-effort, si falla no bloquea la respuesta).
+                # Se captura el resultado: es la señal REAL del paso
+                # "Dashboard updated" del panel de procesamiento.
+                _push_ok = (subprocess.run(
+                    ["git", "push", "origin", "master"],
+                    cwd=repo_dir, capture_output=True, timeout=30).returncode == 0)
             except Exception:
                 pass
-    return jsonify({"ok": True, "tickets": len(guardados), "actualizadas": actualizadas})
+        # ESTADO DEL PANEL DE PROCESAMIENTO (2026-10-14, diseño aprobado por
+        # Alex): registro por lote con los pasos REALES del pipeline. El panel
+        # del Admin lo lee por polling (/admin/ticket-status/<id>) y el
+        # procesador del flujo (agente/crons) marca verifying y alerts vía
+        # /admin/ticket-status-update. Ningún paso se simula aquí: received =
+        # archivos guardados en ESTE request; matched = comprobante escrito en
+        # la jugada; dashboard = carta actualizada + push a GitHub confirmado.
+        if guardados:
+            try:
+                import secrets as _secrets
+                _batch_id = "%s-%s" % (ts, _secrets.token_hex(3))
+                _now_s = time.strftime("%Y-%m-%d %H:%M:%S")
+                if actualizadas > 0:
+                    _matched_step = {"state": "done", "at": _now_s,
+                                     "detail": "Ticket adjuntado a la jugada"}
+                    if _push_ok:
+                        _dash_step = {"state": "done", "at": _now_s,
+                                      "detail": "Carta en vivo en el Dashboard · guardado en GitHub"}
+                    else:
+                        _dash_step = {"state": "error", "at": _now_s,
+                                      "detail": "La carta se actualizó en el servidor, pero el guardado en GitHub falló — no sobreviviría un reinicio"}
+                else:
+                    _matched_step = {"state": "error", "at": _now_s,
+                                     "detail": "Ninguna jugada de hoy esperaba ticket — el archivo quedó guardado sin adjuntar"}
+                    _dash_step = {"state": "error", "at": _now_s,
+                                  "detail": "Sin carta que actualizar"}
+                _batch = {
+                    "id": _batch_id, "fecha": hoy, "ts": _now_s,
+                    "epoch": time.time(),
+                    "tickets": guardados, "actualizadas": actualizadas,
+                    "plays": _matched,
+                    "steps": {
+                        "received": {"state": "done", "at": _now_s,
+                                     "detail": "%d archivo(s) en el servidor" % len(guardados)},
+                        "verifying": {"state": "pending"},
+                        "matched": _matched_step,
+                        "dashboard": _dash_step,
+                        "alerts": {"state": "pending"},
+                    },
+                }
+                _sp = os.path.join(chat_dir, "ticket-status.json")
+                try:
+                    with open(_sp) as _sf:
+                        _all = _json.load(_sf)
+                    if not isinstance(_all, dict):
+                        _all = {}
+                except Exception:
+                    _all = {}
+                _all[_batch_id] = _batch
+                if len(_all) > 20:
+                    for _k in sorted(_all.keys())[:len(_all) - 20]:
+                        _all.pop(_k, None)
+                with open(_sp, "w") as _sf:
+                    _json.dump(_all, _sf, indent=2)
+            except Exception:
+                _batch_id = None
+    return jsonify({"ok": True, "tickets": len(guardados),
+                    "actualizadas": actualizadas, "batch_id": _batch_id})
+
+
+def _ticket_status_file():
+    return os.path.join(os.path.dirname(__file__), "data", "admin-chat",
+                        "ticket-status.json")
+
+
+def _ticket_status_todos():
+    import json as _json
+    try:
+        with open(_ticket_status_file()) as _f:
+            _d = _json.load(_f)
+        return _d if isinstance(_d, dict) else {}
+    except Exception:
+        return {}
+
+
+@app.route("/admin/ticket-status/latest")
+def admin_ticket_status_latest():
+    """Último lote de tickets (el panel del Admin retoma el estado al
+    recargar la página). Auth: sesión admin o X-Admin-Key."""
+    if not _admin_api_autorizado():
+        return jsonify({"error": "admin only"}), 403
+    _all = _ticket_status_todos()
+    if not _all:
+        return jsonify({"error": "sin lotes"}), 404
+    return jsonify(_all[sorted(_all.keys())[-1]])
+
+
+@app.route("/admin/ticket-status/<batch_id>")
+def admin_ticket_status(batch_id):
+    """Estado REAL de un lote de tickets (polling del panel).
+    Auth: sesión admin o X-Admin-Key."""
+    if not _admin_api_autorizado():
+        return jsonify({"error": "admin only"}), 403
+    _b = _ticket_status_todos().get(batch_id)
+    if not _b:
+        return jsonify({"error": "lote no encontrado"}), 404
+    return jsonify(_b)
+
+
+@app.route("/admin/ticket-status-update", methods=["POST"])
+def admin_ticket_status_update():
+    """El procesador del pipeline marca los pasos que ocurren FUERA del
+    endpoint de subida: verifying (precio/monto leídos del ticket contra la
+    jugada) y alerts (Telegram + push enviados). También puede corregir
+    matched/dashboard si el flujo los completa por otra vía.
+    Auth: sesión admin o X-Admin-Key.
+    Body JSON: {batch_id, step, state, detail}."""
+    import json as _json
+    from datetime import datetime as _dtS
+    if not _admin_api_autorizado():
+        return jsonify({"error": "admin only"}), 403
+    _d = request.get_json(silent=True) or {}
+    _bid = (_d.get("batch_id") or "").strip()
+    _step = (_d.get("step") or "").strip()
+    _state = (_d.get("state") or "").strip()
+    if _step not in ("received", "verifying", "matched", "dashboard", "alerts"):
+        return jsonify({"error": "step inválido"}), 400
+    if _state not in ("pending", "working", "done", "error"):
+        return jsonify({"error": "state inválido"}), 400
+    _all = _ticket_status_todos()
+    _b = _all.get(_bid)
+    if not _b:
+        return jsonify({"error": "lote no encontrado"}), 404
+    _b.setdefault("steps", {})[_step] = {
+        "state": _state,
+        "detail": (_d.get("detail") or "")[:200],
+        "at": _dtS.now().strftime("%Y-%m-%d %H:%M:%S"),
+    }
+    try:
+        with open(_ticket_status_file(), "w") as _f:
+            _json.dump(_all, _f, indent=2)
+    except Exception as _e:
+        return jsonify({"error": "no se pudo guardar: %s" % str(_e)[:100]}), 500
+    return jsonify({"ok": True, "batch_id": _bid, "step": _step, "state": _state})
 
 @login_required
 def admin_accion(accion):
