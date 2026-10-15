@@ -4362,7 +4362,10 @@ def tracker():
     # de Alex): quien no paga ve la pagina de membresia con el EJEMPLO
     # de como se ve el tracker (modelo WGT). El admin ya salio arriba
     # y la cuenta personal de Alex no se toca.
-    if not platinum_unlocked_for(user) and not is_alex:
+    # La cuenta de MIEMBRO de Alex obedece la misma bandera que todos
+    # (2026-10-15, orden suya): asi puede quitarse el Platinum desde el
+    # panel y probar la vista de quien no paga. Su cuenta admin no se toca.
+    if not platinum_unlocked_for(user):
         # Dos estados (2026-10-15, pedido por Alex con captura de WGT):
         # (a) TUVO Platinum y se le vencio o le fallo el pago -> aviso
         #     de actualizar la tarjeta (su historial sigue guardado);
@@ -4657,8 +4660,7 @@ def tracker_export():
         return redirect(url_for("login"))
     # Export del tracker personal: mismo candado de membresia (2026-10-15).
     _cu = current_user()
-    if (not is_admin_for(_cu) and not platinum_unlocked_for(_cu)
-            and (_cu["email"] or "").strip().lower() != ALEX_MEMBER_EMAIL):
+    if not is_admin_for(_cu) and not platinum_unlocked_for(_cu):
         return redirect(url_for("tracker"))
     rng = (request.args.get("range") or "").strip().lower()
     f_from = (request.args.get("from") or "").strip()
@@ -4827,8 +4829,7 @@ def track(play_id):
         return redirect(url_for("home"))
     # Tracker personal SOLO con membresia pagando (2026-10-15, orden
     # de Alex): sin pago no se puede trackear — primero la membresia.
-    if (not is_admin_for(_cu) and not platinum_unlocked_for(_cu)
-            and (_cu["email"] or "").strip().lower() != ALEX_MEMBER_EMAIL):
+    if not is_admin_for(_cu) and not platinum_unlocked_for(_cu):
         if _is_ajax:
             return jsonify({"ok": False, "error": "Your personal Tracker comes with a paid membership. Tap Tracker below to see how it works."}), 403
         flash("Your personal Tracker comes with a paid membership.", "warn")
