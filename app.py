@@ -206,6 +206,15 @@ app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(days=30)
 DB_PATH = os.path.join(INSTANCE_DIR, "members.db")
 PLAYS_PATH = os.path.join(BASE_DIR, "data", "plays.json")
 PENDING_PLAYS_PATH = os.path.join(BASE_DIR, "data", "plays-pending.json")
+# Lectura fresca de datos (2026-10-15, pedido por Alex: que las jugadas
+# caigan al Dashboard en el menor tiempo posible tras su disparo): las
+# lecturas de plays/pendings van primero al raw de GitHub master — el dato
+# se publica por commit y así NO hay que esperar el redeploy de Render.
+PLAYS_RAW_URL = ("https://raw.githubusercontent.com/penamanuel-art/"
+                 "tlb-members/master/data/plays.json")
+PENDING_RAW_URL = ("https://raw.githubusercontent.com/penamanuel-art/"
+                   "tlb-members/master/data/plays-pending.json")
+_REMOTE_JSON_CACHE = {}
 # Cuenta personal de miembro de Alex (NO es la de administrador). Es la única
 # que ve la card pendiente (sin tickets) en /home — orden de Alex 2026-10-03.
 ALEX_MEMBER_EMAIL = "pena.manuel@myyahoo.com"
@@ -1263,12 +1272,37 @@ def send_monthly_statement(email: str, ym: str) -> tuple:
 
 
 
+def _json_remoto_o_local(url, path, ttl=30):
+    """JSON de datos fresco: primero el raw de GitHub master (caché de
+    `ttl` s en memoria), y si la red falla, el archivo local del despliegue.
+    Los fallos se reintentan como máximo cada 10 s para no castigar las
+    cargas de página durante una caída de GitHub."""
+    slot = _REMOTE_JSON_CACHE.setdefault(
+        url, {"data": None, "ts": 0.0, "fail_ts": 0.0})
+    now = time.time()
+    if slot["data"] is not None and now - slot["ts"] < ttl:
+        return slot["data"]
+    if now - slot["fail_ts"] > 10:
+        try:
+            req = urllib.request.Request(
+                url, headers={"User-Agent": "Mozilla/5.0 (TheSharpTeam)"})
+            with urllib.request.urlopen(req, timeout=2.5) as resp:
+                data = json.loads(resp.read().decode("utf-8"))
+            if isinstance(data, (dict, list)):
+                slot["data"] = data
+                slot["ts"] = now
+                return data
+        except Exception:
+            slot["fail_ts"] = now
+    if slot["data"] is not None:
+        return slot["data"]
+    return load_json_file(path)
+
+
 def load_data():
     """Devuelve (program, plays). Soporta plays.json como lista (viejo) o dict (nuevo)."""
-    try:
-        with open(PLAYS_PATH, "r", encoding="utf-8") as f:
-            data = json.load(f)
-    except (OSError, json.JSONDecodeError):
+    data = _json_remoto_o_local(PLAYS_RAW_URL, PLAYS_PATH)
+    if data is None:
         data = []
     if isinstance(data, dict):
         program = data.get("program", {}) or {}
@@ -1297,11 +1331,7 @@ def load_pending_plays():
     demás miembros la ven: ellos solo la ven cuando él envía los tickets
     (flujo normal que publica plays.json verificado y limpia este archivo).
     """
-    try:
-        with open(PENDING_PLAYS_PATH, "r", encoding="utf-8") as f:
-            data = json.load(f)
-    except (OSError, json.JSONDecodeError):
-        return []
+    data = _json_remoto_o_local(PENDING_RAW_URL, PENDING_PLAYS_PATH)
     if not isinstance(data, dict):
         return []
     hoy = datetime.now(TZ).strftime("%Y-%m-%d")
@@ -1436,7 +1466,7 @@ def card_publicada_hoy() -> bool:
     de 'aún no publicada', nunca las jugadas de ayer.
     """
     hoy = datetime.now(TZ).strftime("%Y-%m-%d")
-    data = load_json_file(PLAYS_PATH)
+    data = _json_remoto_o_local(PLAYS_RAW_URL, PLAYS_PATH)
     if isinstance(data, dict):
         fecha = data.get("fecha")
         if fecha:
@@ -6124,19 +6154,14 @@ def admin_dashboard():
     _hoy = _dt2.now().strftime("%Y-%m-%d")
     selecciones = []
     try:
-        pp = _os2.path.join(_os2.path.dirname(__file__), "data", "plays-pending.json")
-        with open(pp) as _f:
-            _data = _json2.load(_f)
-            if isinstance(_data, dict) and _data.get("fecha") == _hoy:
-                selecciones = _data.get("plays", [])
+        _data = _json_remoto_o_local(PENDING_RAW_URL, PENDING_PLAYS_PATH)
+        if isinstance(_data, dict) and _data.get("fecha") == _hoy:
+            selecciones = _data.get("plays", [])
     except Exception:
         selecciones = []
     # plays_hoy también solo de hoy — la fecha está en la raíz del JSON, no en cada jugada
     try:
-        import json as _json3, os as _os3
-        _pp = _os3.path.join(_os3.path.dirname(__file__), "data", "plays.json")
-        with open(_pp) as _ff:
-            _d = _json3.load(_ff)
+        _d = _json_remoto_o_local(PLAYS_RAW_URL, PLAYS_PATH)
         _root_fecha = str(_d.get("fecha", ""))[:10] if isinstance(_d, dict) else ""
         _, _plays_all = load_data()
         if _root_fecha == _hoy:
@@ -6288,10 +6313,9 @@ def admin_aprobar_jugadas():
     sel_ids = [str(s) for s in request.form.getlist("play_ids")]
     pendientes = []
     try:
-        with open(_osB.path.join(_base, "data", "plays-pending.json"), encoding="utf-8") as _f:
-            _d = _jsonB.load(_f)
-            if isinstance(_d, dict) and _d.get("fecha") == _hoy:
-                pendientes = _d.get("plays", []) or []
+        _d = _json_remoto_o_local(PENDING_RAW_URL, PENDING_PLAYS_PATH)
+        if isinstance(_d, dict) and _d.get("fecha") == _hoy:
+            pendientes = _d.get("plays", []) or []
     except Exception:
         pendientes = []
     elegidas = [p for p in pendientes if str(p.get("id")) in sel_ids]
