@@ -241,26 +241,27 @@
     {# "View all" eliminado (2026-10-12): mismo destino que "📜 Full record". #}
   </div>
   {% if recientes %}
-  <div class="ticket-grid">
+  <div class="rc-ledger">
   {% for r in recientes %}
     {% set won = r.resultado == 'WON' %}
-    <button type="button" class="ticket-card" data-ticket="v2ht-{{ loop.index }}" aria-label="View receipt for {{ r.pick }}">
-      <span class="ticket-img">
+    <button type="button" class="rc-row" data-ticket="v2ht-{{ loop.index }}" aria-label="View receipt for {{ r.pick }}">
+      <span class="rc-bar {{ 'win' if won else 'loss' }}"></span>
+      <span class="rc-thumb">
         {% if r.comprobante %}
         <img src="{{ url_for('static', filename=r.comprobante) }}" alt="Original receipt: {{ r.pick }}" loading="lazy">
         {% else %}
-        <span class="ticket-fallback">
-          <span class="ticket-brand">THE SHARP TEAM</span>
-          <span class="ticket-fallback-pick">{{ r.pick }}</span>
-          <span class="ticket-fallback-odds">{{ fmt_odds(r.cuota) }} · {{ 'PLATINUM' if r.nivel in ['ELITE','PLATINUM'] else ('GOLD' if r.nivel == 'GOLD' else r.nivel) }}</span>
-          <span class="ticket-fallback-result {{ 'win' if won else 'loss' }}">{{ '✓ WON' if won else '✕ LOST' }}</span>
-        </span>
+        <span class="rc-thumb-fallback">THE<br>SHARP<br>TEAM</span>
         {% endif %}
-        <span class="ticket-pill {{ 'win' if won else 'loss' }}">{{ '✓' if won else '✕' }} {{ fmt_money(r.profit) }}</span>
       </span>
-      <span class="ticket-title">{{ r.pick }} <span class="muted">{{ fmt_odds(r.cuota) }}</span></span>
-      <span class="ticket-sub">{{ r.fecha }} · {{ 'PLATINUM' if r.nivel in ['ELITE','PLATINUM'] else ('GOLD' if r.nivel == 'GOLD' else r.nivel) }}</span>
-      {% if r.comprobante %}<span class="ticket-view-link">View ticket →</span>{% endif %}
+      <span class="rc-main">
+        <span class="rc-pick">{{ r.pick }}</span>
+        <span class="rc-meta">{{ fmt_odds(r.cuota) }} · {{ 'PLATINUM' if r.nivel in ['ELITE','PLATINUM'] else ('GOLD' if r.nivel == 'GOLD' else r.nivel) }} · {{ r.fecha }}</span>
+        {% if r.comprobante %}<span class="rc-tap">View ticket →</span>{% endif %}
+      </span>
+      <span class="rc-right">
+        <span class="rc-profit {{ 'win' if won else 'loss' }}">{{ fmt_money(r.profit) }}</span>
+        <span class="rc-st {{ 'win' if won else 'loss' }}">{{ 'WON' if won else 'LOST' }}</span>
+      </span>
     </button>
     <div class="modal" id="v2ht-{{ loop.index }}" hidden>
       <div class="modal-card ticket-photo-card">
