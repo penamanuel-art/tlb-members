@@ -3234,6 +3234,7 @@ def home():
         resumen_ayer=resumen_ayer(),
         recientes=recientes,
         recientes_value=recientes_value(),
+        record_stats=official_tracker_full(),
         last_elite_win=last_elite_win(),
         es_admin=is_admin_for(user),
         es_alex=is_alex_member(user),
@@ -4343,6 +4344,15 @@ def tracker():
     # Toggle Value Plays solo para Alex (2026-10-11, pedido por Alex)
     user = current_user()
     is_alex = (user["email"] or "").strip().lower() == ALEX_MEMBER_EMAIL
+    # Tracker personal SOLO para miembros que pagan (2026-10-15, orden
+    # de Alex): quien no paga ve la pagina de membresia con el EJEMPLO
+    # de como se ve el tracker (modelo WGT). El admin ya salio arriba
+    # y la cuenta personal de Alex no se toca.
+    if not platinum_unlocked_for(user) and not is_alex:
+        return render_template(
+            "tracker_locked.html",
+            upsell_cta_url=url_for("desbloquear_platinum"),
+        )
     if is_alex and request.args.get("view") == "values":
         return values_page()
     ctx = _tracker_context(user)
@@ -4613,6 +4623,11 @@ def tracker_export():
     """
     if "user_id" not in session:
         return redirect(url_for("login"))
+    # Export del tracker personal: mismo candado de membresia (2026-10-15).
+    _cu = current_user()
+    if (not is_admin_for(_cu) and not platinum_unlocked_for(_cu)
+            and (_cu["email"] or "").strip().lower() != ALEX_MEMBER_EMAIL):
+        return redirect(url_for("tracker"))
     rng = (request.args.get("range") or "").strip().lower()
     f_from = (request.args.get("from") or "").strip()
     f_to = (request.args.get("to") or "").strip()
@@ -4778,6 +4793,14 @@ def track(play_id):
             return jsonify({"ok": False, "error": "Play not found."}), 404
         flash("Play not found.", "error")
         return redirect(url_for("home"))
+    # Tracker personal SOLO con membresia pagando (2026-10-15, orden
+    # de Alex): sin pago no se puede trackear — primero la membresia.
+    if (not is_admin_for(_cu) and not platinum_unlocked_for(_cu)
+            and (_cu["email"] or "").strip().lower() != ALEX_MEMBER_EMAIL):
+        if _is_ajax:
+            return jsonify({"ok": False, "error": "Your personal Tracker comes with a paid membership. Tap Tracker below to see how it works."}), 403
+        flash("Your personal Tracker comes with a paid membership.", "warn")
+        return redirect(url_for("tracker"))
     # Track con o sin ticket (2026-10-10, orden de Alex: revierte la regla
     # anti-trampa del 2026-10-03; el botón "+ Track" ahora es visible siempre).
     # La Elite bloqueada no se puede trackear: no revela nada.
