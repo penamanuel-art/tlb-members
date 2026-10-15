@@ -36,9 +36,21 @@
 .tk-sec li{font-size:14px;color:#c3cedd;line-height:1.5;margin:9px 0 9px 18px}
 .tk-sec li b{color:#fff}
 .tk-foot{font-size:12.5px;color:#8b98ab;line-height:1.55;margin-top:14px}
+.tk-btn{display:block;background:#1fc86b;color:#04150a;font-weight:800;font-size:16px;border-radius:14px;padding:15px;text-decoration:none;margin-top:8px}
 </style>
 
 <div class="tk-wrap">
+  {% if past_due_mode %}
+  <!-- VENCIDO / PAGO FALLIDO (2026-10-15, modelo de la captura de Alex):
+       aviso de actualizar la tarjeta; su historial sigue guardado. -->
+  <div class="tk-panel">
+    <div class="tk-ico">🔒</div>
+    <h2>Your card needs an update</h2>
+    <p class="tk-sub">Your Platinum access is paused until the card on file is fixed. Update your card and everything comes right back — your tracked plays, your record and your stats are saved and waiting for you.</p>
+    <a class="tk-btn" href="{{ update_card_url }}">Update your card</a>
+    <p class="tk-foot" style="text-align:center">Access restores automatically as soon as the payment goes through — nothing is lost.</p>
+  </div>
+  {% else %}
   <!-- CANDADO: el tracker personal va incluido con la membresía pagando -->
   <div class="tk-panel">
     <div class="tk-ico">🔒</div>
@@ -121,5 +133,6 @@
     </ul>
     <p class="tk-foot">Sample bets, graded by the same system as your real tracker. Your stakes follow your own bankroll setting — Platinum plays at 1 unit, Gold at 0.6 units.</p>
   </div>
+  {% endif %}
 </div>
 {% endblock %}
