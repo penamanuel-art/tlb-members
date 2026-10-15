@@ -37,6 +37,11 @@
 .ot-play .dt { color: #93b3aa; font-size: 0.72rem; }
 .ot-play a { color: #2fe6a7; text-decoration: none; font-size: 0.75rem; }
 .ot-back { display: inline-block; color: #2fe6a7; text-decoration: none; font-size: 0.9rem; margin-bottom: 14px; }
+.ot-tabs { display: flex; gap: 8px; margin: 4px 0 16px; }
+.ot-tab { flex: 1; text-align: center; padding: 11px 6px; border-radius: 12px; border: 1px solid rgba(255,255,255,.14); background: rgba(18,24,40,.72); color: #c7cede; font-size: 0.82rem; font-weight: 800; text-decoration: none; }
+.ot-tab.active { background: linear-gradient(135deg, #e8c766, #8a6d2f); color: #1a1405; border-color: transparent; }
+.ot-libro-stats { font-size: 0.8rem; color: #93b3aa; margin: -4px 0 10px; }
+.ot-libro-stats b { color: #fff; }
 .ot-thumbwrap { position: relative; flex-shrink: 0; width: 46px; height: 58px; cursor: pointer; }
 .ot-thumb { width: 46px; height: 58px; object-fit: cover; border-radius: 8px; border: 1px solid rgba(140,240,205,.3); display: block; }
 .ot-zoom { position: absolute; right: -6px; bottom: -6px; background: #2fe6a7; color: #032117; font-size: 11px; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,.5); }
@@ -142,10 +147,17 @@
     </div>
   </div>
 
+  <div class="ot-tabs">
+    <a class="ot-tab{% if programa == 'all' %} active{% endif %}" href="{{ url_for('official_tracker') }}">All plays</a>
+    <a class="ot-tab{% if programa == 'platinum' %} active{% endif %}" href="{{ url_for('official_tracker', programa='platinum') }}">⭐ Platinum</a>
+    <a class="ot-tab{% if programa == 'gold' %} active{% endif %}" href="{{ url_for('official_tracker', programa='gold') }}">⚪ Gold</a>
+  </div>
+
   <div class="ot-section">
-    <h2>Latest graded plays</h2>
+    <h2>{{ libro_titulo }} — the full ledger</h2>
+    <p class="ot-libro-stats"><b>{{ libro_stats.record }}</b> · {{ libro_stats.win_rate }}% win rate · <b>{{ libro_stats.units_display }}</b> · {{ libro_stats.profit_display }} · ROI {{ '+' if libro_stats.roi > 0 else '' }}{{ libro_stats.roi }}% · {{ libro|length }} plays, each with its original ticket.</p>
     <div class="ot-card">
-      {% for x in t.ultimas %}
+      {% for x in libro %}
       <div class="ot-play">
         {% if x.comprobante %}<div class="ot-thumbwrap" onclick="otZoom('{{ url_for('static', filename=x.comprobante) }}')"><img class="ot-thumb" src="{{ url_for('static', filename=x.comprobante) }}" alt="Original ticket" loading="lazy"><span class="ot-zoom">🔍</span></div>{% endif %}
         <div style="flex:1;"><span class="pk">{{ x.pick }}</span> <span class="ot-lvl">{{ 'PLATINUM' if x.nivel == 'ELITE' else x.nivel }}</span>
