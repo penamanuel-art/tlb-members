@@ -45,6 +45,10 @@ body.v2{background-color:#07090c;background-image:radial-gradient(560px 300px at
 .lux-rec-h span{color:#f3cd6b}
 .lux-rec-sub{font-size:13.5px;color:#9aa7b8;line-height:1.5;margin-top:8px}
 .lux-rec-card{background:#10141b;border:1px solid rgba(255,255,255,.07);border-radius:18px;padding:16px;margin-top:10px}
+a.lux-rec-card{display:block;text-decoration:none;color:inherit;transition:transform .15s ease}
+a.lux-rec-card:active{transform:scale(.985)}
+.lux-rec-top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.lux-rec-ver{font-size:11px;font-weight:800;letter-spacing:.4px;color:#e8c766;white-space:nowrap}
 .lux-rec-main{background:linear-gradient(160deg,rgba(212,160,23,.13),#10141b 55%);border-color:rgba(243,205,107,.30);margin-top:16px}
 .lux-rec-k{font-size:10.5px;font-weight:700;letter-spacing:1.6px;color:#9aa7b8}
 .lux-rec-n{font-size:37px;font-weight:800;letter-spacing:-1px;color:#f2f5f9;margin-top:6px;line-height:1}
@@ -222,24 +226,24 @@ body.v2{background-color:#07090c;background-image:radial-gradient(560px 300px at
   <h2 class="lux-rec-h">The documented <span>record</span>: every play, win or loss.</h2>
   <p class="lux-rec-sub">Every official play is posted before the game with its real ticket, then graded against the final score in public — win or loss, nothing hidden.</p>
   {% set g = record_stats.general %}{% set pl = record_stats.por_nivel.ELITE %}{% set gd = record_stats.por_nivel.GOLD %}
-  <div class="lux-rec-card lux-rec-main">
-    <p class="lux-rec-k">OFFICIAL PLAYS</p>
+  <a class="lux-rec-card lux-rec-main" href="{{ url_for('official_tracker') }}">
+    <div class="lux-rec-top"><p class="lux-rec-k">OFFICIAL PLAYS</p><span class="lux-rec-ver">View plays &amp; tickets ›</span></div>
     <p class="lux-rec-n">{{ g.record }}</p>
     <p class="lux-rec-u{% if g.profit < 0 %} neg{% endif %}">{{ g.units_display }}</p>
     <p class="lux-rec-s">{{ g.win_rate }}% win rate · {{ g.roi }}% ROI · {{ "+$" if g.profit > 0 else "-$" }}{{ "%.2f"|format(g.profit|abs) }}</p>
-  </div>
-  <div class="lux-rec-card">
-    <p class="lux-rec-k">PLATINUM PLAYS</p>
+  </a>
+  <a class="lux-rec-card" href="{{ url_for('official_tracker', programa='platinum') }}">
+    <div class="lux-rec-top"><p class="lux-rec-k">PLATINUM PLAYS</p><span class="lux-rec-ver">View plays &amp; tickets ›</span></div>
     <p class="lux-rec-n">{{ pl.record }}</p>
     <p class="lux-rec-u{% if pl.profit < 0 %} neg{% endif %}">{{ pl.units_display }}</p>
     <p class="lux-rec-s">{{ pl.win_rate }}% win rate</p>
-  </div>
-  <div class="lux-rec-card">
-    <p class="lux-rec-k">GOLD PLAYS</p>
+  </a>
+  <a class="lux-rec-card" href="{{ url_for('official_tracker', programa='gold') }}">
+    <div class="lux-rec-top"><p class="lux-rec-k">GOLD PLAYS</p><span class="lux-rec-ver">View plays &amp; tickets ›</span></div>
     <p class="lux-rec-n">{{ gd.record }}</p>
     <p class="lux-rec-u{% if gd.profit < 0 %} neg{% endif %}">{{ gd.units_display }}</p>
     <p class="lux-rec-s">{{ gd.win_rate }}% win rate</p>
-  </div>
+  </a>
 </section>
 {% endif %}
 
