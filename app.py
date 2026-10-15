@@ -4341,12 +4341,15 @@ def tracker():
     # ?preview=locked muestra la pagina de membresia tal cual la ve
     # quien no paga, aunque la cuenta tenga acceso (patron del home).
     _u0 = current_user()
-    if request.args.get("preview") == "locked" and (
+    _pv = request.args.get("preview")
+    if _pv in ("locked", "vencido") and (
             is_admin_for(_u0)
             or (_u0["email"] or "").strip().lower() == ALEX_MEMBER_EMAIL):
         return render_template(
             "tracker_locked.html",
             upsell_cta_url=url_for("desbloquear_platinum"),
+            past_due_mode=(_pv == "vencido"),
+            update_card_url=url_for("cuenta"),
         )
     # El admin no usa tracker personal: ve el oficial con tickets (2026-10-03,
     # orden de Alex). Su "Alex Owner Results" estaba vacío y no tenía sentido.
@@ -4360,9 +4363,27 @@ def tracker():
     # de como se ve el tracker (modelo WGT). El admin ya salio arriba
     # y la cuenta personal de Alex no se toca.
     if not platinum_unlocked_for(user) and not is_alex:
+        # Dos estados (2026-10-15, pedido por Alex con captura de WGT):
+        # (a) TUVO Platinum y se le vencio o le fallo el pago -> aviso
+        #     de actualizar la tarjeta (su historial sigue guardado);
+        # (b) NUNCA desbloqueo Platinum -> pagina de venta con ejemplo.
+        try:
+            _vencido = bool(user["stripe_past_due"]) or bool(
+                (user["stripe_customer_id"] or "").strip()) or bool(
+                (user["stripe_subscription_id"] or "").strip())
+        except (KeyError, IndexError, TypeError):
+            _vencido = False
+        _pay_url = None
+        if _vencido:
+            try:
+                _pay_url = (_past_due_billing_info(user) or {}).get("pay_url")
+            except Exception:
+                _pay_url = None
         return render_template(
             "tracker_locked.html",
             upsell_cta_url=url_for("desbloquear_platinum"),
+            past_due_mode=_vencido,
+            update_card_url=_pay_url or url_for("cuenta"),
         )
     if is_alex and request.args.get("view") == "values":
         return values_page()
