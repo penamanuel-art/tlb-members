@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jugadas Gratis de Hoy — The Sharp Team</title>
+<meta name="theme-color" content="#0a1230">
+<!-- Meta Pixel Code (mismo bloque que base.html — no tocar) -->
+<script>
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '1625430959036525');
+fbq('track', 'PageView');
+{% if fb_reg %}fbq('track', 'CompleteRegistration'{% if fb_event_id %}, {}, {eventID: '{{ fb_event_id }}'}{% endif %});{% endif %}
+</script>
+<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1625430959036525&ev=PageView&noscript=1"/></noscript>
+<!-- End Meta Pixel Code -->
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { -webkit-text-size-adjust:100%; scroll-behavior:smooth; }
+  body {
+    background:#05081a;
+    color:#eef1fb;
+    font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height:1.5;
+  }
+  .page { max-width:430px; margin:0 auto; padding:0 14px 110px; min-height:100vh;
+    background:
+      radial-gradient(ellipse 95% 460px at 50% -60px, rgba(232,199,102,.17), rgba(232,199,102,0) 70%),
+      linear-gradient(180deg,#0c1638 0%,#081029 340px,#05081a 100%);
+  }
+  .gold { color:#e8c766; }
+  .mint { color:#2ee6a8; }
+  .muted { color:#9aa7c7; }
+  .card {
+    background:linear-gradient(180deg,#111a3e,#0c1430);
+    border:1px solid rgba(232,199,102,.22);
+    border-radius:20px;
+    padding:22px 20px;
+    margin:16px 0;
+  }
+  .card.plain { border-color:rgba(154,167,199,.18); }
+
+  /* proof strip */
+  .proof {
+    margin:0 -14px; padding:9px 10px;
+    background:#0d173c; border-bottom:1px solid rgba(232,199,102,.25);
+    text-align:center; font-size:11.5px; letter-spacing:.04em; color:#c8d2ec;
+  }
+  .proof b { color:#e8c766; font-weight:700; }
+
+  /* header */
+  header { text-align:center; padding:22px 0 4px; }
+  header img { width:88px; height:88px; border-radius:50%; border:2px solid rgba(232,199,102,.55); box-shadow:0 0 24px rgba(232,199,102,.25); }
+  .brand { font-size:13px; letter-spacing:.34em; color:#e8c766; font-weight:800; margin-top:10px; }
+  .stars { text-align:center; margin-top:18px; font-size:19px; color:#f5c542; letter-spacing:4px; }
+  .stars-sub { text-align:center; font-size:13px; color:#9aa7c7; margin-top:4px; }
+  .stars-sub b { color:#eef1fb; }
+
+  /* hero */
+  h1 { font-size:38px; line-height:1.12; font-weight:900; text-align:center; margin:16px 4px 0; letter-spacing:-.01em; }
+  h1 .l2 { color:#2ee6a8; display:block; }
+  .hero-sub { text-align:center; color:#c3cdea; font-size:15.5px; margin:14px 8px 0; }
+  .hero-sub b { color:#fff; }
+
+  /* free card */
+  .pill {
+    display:inline-block; font-size:11px; font-weight:800; letter-spacing:.14em;
+    color:#0a1230; background:linear-gradient(90deg,#e8c766,#c9a13b);
+    padding:5px 12px; border-radius:999px;
+  }
+  .free-price { font-size:44px; font-weight:900; margin:10px 0 2px; }
+  .free-price span { font-size:17px; color:#9aa7c7; font-weight:600; }
+  .free-line { color:#c3cdea; font-size:14.5px; }
+  .free-line b { color:#2ee6a8; }
+  .trustbox {
+    margin-top:16px; background:rgba(46,230,168,.07); border:1px solid rgba(46,230,168,.28);
+    border-radius:14px; padding:14px 16px; display:flex; gap:12px; align-items:flex-start;
+  }
+  .trustbox .ic { font-size:20px; line-height:1.2; }
+  .trustbox b { display:block; font-size:15px; }
+  .trustbox p { color:#9aa7c7; font-size:13.5px; }
+
+  /* signup / form */
+  .signup h2 { font-size:22px; font-weight:800; }
+  .signup p.lead { color:#9aa7c7; font-size:14px; margin-top:6px; }
+  .pill10 {
+    display:inline-flex; gap:8px; align-items:center; margin-top:14px;
+    background:rgba(46,230,168,.1); border:1px solid rgba(46,230,168,.35); color:#2ee6a8;
+    font-size:13px; font-weight:700; padding:6px 12px; border-radius:999px;
+  }
+  .flash { border-radius:12px; padding:12px 15px; font-size:14px; margin-top:14px; }
+  .flash-error { background:rgba(255,95,107,.12); border:1px solid rgba(255,95,107,.5); color:#ffb3b9; }
+  .flash-success { background:rgba(46,230,168,.1); border:1px solid rgba(46,230,168,.4); color:#a9f5d9; }
+  .field { margin-top:16px; }
+  .field label { display:block; font-size:14px; font-weight:700; }
+  .field .hint { color:#9aa7c7; font-size:13px; margin-top:2px; }
+  .field input {
+    width:100%; margin-top:8px; background:#05081a; border:1.5px solid rgba(232,199,102,.35);
+    border-radius:12px; padding:15px 16px; color:#eef1fb; font-size:15px; font-family:inherit;
+  }
+  .field input::placeholder { color:#5f6d94; }
+  .field input:focus { outline:none; border-color:#e8c766; }
+  .btn {
+    display:block; width:100%; text-align:center; text-decoration:none; cursor:pointer;
+    border:none; border-radius:14px; padding:17px 14px; margin-top:18px;
+    font-size:17px; font-weight:800; color:#0a1230; font-family:inherit;
+    background:linear-gradient(135deg,#f5c542,#caa12e);
+    box-shadow:0 6px 22px rgba(202,161,46,.35);
+  }
+  .btn small { display:block; font-size:13px; font-weight:600; opacity:.75; margin-top:2px; }
+  .micro { display:flex; justify-content:space-between; gap:8px; margin-top:14px; font-size:12px; color:#9aa7c7; flex-wrap:wrap; }
+  .micro .mint { font-weight:700; }
+  .login-line { text-align:center; font-size:13.5px; color:#9aa7c7; margin-top:16px; }
+  .login-line a { color:#e8c766; font-weight:700; }
+
+  /* sections */
+  h3.sec { font-size:24px; font-weight:900; letter-spacing:.01em; margin:6px 0 4px; }
+  .step { display:flex; gap:14px; padding:15px 0; border-bottom:1px solid rgba(154,167,199,.14); }
+  .step:last-child { border-bottom:none; padding-bottom:2px; }
+  .num {
+    flex:0 0 34px; width:34px; height:34px; border-radius:50%;
+    border:1.5px solid rgba(232,199,102,.6); color:#e8c766;
+    display:flex; align-items:center; justify-content:center; font-weight:800; font-size:16px; margin-top:2px;
+  }
+  .step b { font-size:16.5px; display:block; }
+  .step p { color:#9aa7c7; font-size:14px; margin-top:3px; }
+  .kicker-gold { color:#e8c766; font-size:14.5px; font-weight:700; margin-bottom:8px; }
+  .dont { display:flex; gap:12px; padding:11px 0; border-bottom:1px solid rgba(154,167,199,.12); }
+  .dont:last-of-type { border-bottom:none; }
+  .dont .x { color:#ff5f6b; font-weight:900; font-size:16px; }
+  .dont p { font-size:14.5px; color:#c3cdea; }
+  .dont b { color:#fff; }
+  .dorow { display:flex; gap:12px; margin-top:14px; padding-top:14px; border-top:1px solid rgba(232,199,102,.25); font-size:14.5px; color:#c3cdea; }
+  .dorow .ck { color:#2ee6a8; font-weight:900; }
+  .dorow b { color:#fff; }
+
+  /* brand card */
+  .brandcard { text-align:center; }
+  .brandcard img { width:76px; height:76px; border-radius:50%; border:2px solid rgba(232,199,102,.55); }
+  .brandcard .nm { font-size:21px; font-weight:900; letter-spacing:.12em; margin-top:10px; }
+  .brandcard .role { color:#e8c766; font-size:11.5px; font-weight:800; letter-spacing:.22em; margin-top:3px; }
+  .brandcard p { color:#c3cdea; font-size:14.5px; margin-top:12px; font-style:italic; }
+
+  /* stats */
+  .stats { padding:0; overflow:hidden; }
+  .stats-row { display:flex; }
+  .stat { flex:1; text-align:center; padding:18px 2px 14px; }
+  .stat + .stat { border-left:1px solid rgba(154,167,199,.16); }
+  .stat .v { font-size:20px; font-weight:900; color:#eef1fb; }
+  .stat .v.goldv { color:#e8c766; }
+  .stat .v.mintv { color:#2ee6a8; }
+  .stat .l { font-size:9.5px; letter-spacing:.1em; color:#9aa7c7; font-weight:700; margin-top:3px; }
+  .stats-cap { text-align:center; font-size:12.5px; color:#9aa7c7; padding:0 14px 15px; }
+  .stats-cap b { color:#eef1fb; }
+
+  .vtitle { text-align:center; font-size:11.5px; letter-spacing:.26em; color:#9aa7c7; font-weight:800; margin-bottom:8px; }
+  .check { display:flex; gap:11px; padding:8px 0; font-size:14.5px; color:#c3cdea; }
+  .check .ck { color:#e8c766; font-weight:900; }
+  .check b { color:#fff; }
+
+  .get { display:flex; gap:11px; padding:8px 0; font-size:14.5px; color:#c3cdea; border-bottom:1px solid rgba(154,167,199,.1); }
+  .get:last-child { border-bottom:none; }
+  .get .ck { color:#2ee6a8; font-weight:900; }
+  .get b { color:#fff; }
+
+  /* faq */
+  .faq { padding:6px 20px; }
+  .faqrow { padding:15px 0; border-bottom:1px solid rgba(154,167,199,.14); display:flex; justify-content:space-between; gap:10px; align-items:center; }
+  .faqrow:last-child { border-bottom:none; }
+  .faqrow .q { font-size:15.5px; font-weight:700; }
+  .faqrow .a { font-size:13.5px; color:#9aa7c7; margin-top:4px; font-weight:400; }
+  .faqrow .plus { color:#9aa7c7; font-size:20px; font-weight:300; }
+
+  /* closing */
+  .closing { text-align:center; background:linear-gradient(180deg,#12204d,#0c1430); }
+  .closing .kick { color:#e8c766; font-size:12px; font-weight:800; letter-spacing:.26em; }
+  .closing h3 { font-size:29px; font-weight:900; line-height:1.2; margin-top:10px; }
+  .closing p { color:#9aa7c7; font-size:14px; margin-top:10px; }
+  .closing .micro { justify-content:center; }
+
+  footer { text-align:center; padding:26px 6px 6px; }
+  footer .motto { font-weight:800; color:#e8c766; font-size:14px; letter-spacing:.06em; }
+  footer p { color:#77839f; font-size:12px; margin-top:10px; }
+  footer .links { color:#9aa7c7; font-size:12.5px; margin-top:14px; }
+  footer .links span { text-decoration:underline; }
+
+  /* sticky CTA */
+  .sticky {
+    position:fixed; left:0; right:0; bottom:0; z-index:50;
+    background:rgba(6,10,30,.92); backdrop-filter:blur(10px);
+    border-top:1px solid rgba(232,199,102,.3); padding:10px 14px calc(10px + env(safe-area-inset-bottom));
+  }
+  .sticky .in { max-width:430px; margin:0 auto; }
+  .sticky a {
+    display:block; text-align:center; text-decoration:none; color:#0a1230; font-weight:800; font-size:17px;
+    background:linear-gradient(135deg,#f5c542,#caa12e); border-radius:14px; padding:15px;
+    box-shadow:0 6px 22px rgba(202,161,46,.4);
+  }
+  .sticky p { text-align:center; font-size:11.5px; color:#9aa7c7; margin-top:7px; }
+</style>
+</head>
+<body>
+{% set _pa = stats.profit_all_time or 0 %}
+<div class="page" id="top">
+
+  <div class="proof">Cada jugada <b>publicada antes del juego</b> · <b>Bloqueada y calificada</b> · <b>Ticket original</b> en cada jugada</div>
+  <div style="text-align:center;padding:7px;font-size:12.5px;"><a href="/registro?lang=en" style="color:#9aa7c7;">View in English</a></div>
+
+  <header>
+    <img src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="Logo del tiburón de The Sharp Team">
+    <div class="brand">THE SHARP TEAM</div>
+  </header>
+
+  <div class="stars">★★★★★</div>
+  <div class="stars-sub">Récord oficial <b>{{ stats.ganadas }}–{{ stats.perdidas }}</b> — cada ticket publicado</div>
+
+  <h1>Jugadas Gratis. Todos los Días. <span class="l2">Todos los Deportes.</span></h1>
+  <p class="hero-sub">Nuestras <b>jugadas Gold</b> son gratis en tu panel de miembro en el momento en que salen — con <b>alertas por email y push</b> para que nunca te pierdas una.</p>
+
+  <div class="card">
+    <span class="pill">SIN TARJETA · SIN VENCIMIENTO</span>
+    <div class="free-price">GRATIS <span>Jugadas Gold</span></div>
+    <p class="free-line"><b>Todas las Jugadas Gold</b> · Todos los deportes, toda la temporada · Sin vencimiento</p>
+    <div class="trustbox">
+      <div class="ic">🛡️</div>
+      <div>
+        <b>Sin tarjeta, sin vencimiento, sin trampas</b>
+        <p>Sin tarjeta de crédito, sin periodo de prueba, sin fecha de vencimiento. Regístrate y tu panel queda activo de inmediato.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card signup" id="signup">
+    <h2>Crea tu cuenta gratis</h2>
+    <p class="lead">La card de hoy sale a las {{ drop_time }}. Cada jugada se publica en el momento en que sale — antes del juego, y queda bloqueada.</p>
+    <span class="pill10">✓ Sin tarjeta, nunca &nbsp;·&nbsp; ⏱ 10 segundos</span>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for cat, msg in messages %}
+          <div class="flash flash-{{ cat }}">{{ msg }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+    <form method="post" action="{{ url_for('register', lang='es') }}">
+      <div class="field">
+        <label for="f-nombre">Tu nombre</label>
+        <input id="f-nombre" type="text" name="nombre" required autocomplete="name" placeholder="Tu nombre">
+      </div>
+      <div class="field">
+        <label for="f-email">Tu correo electrónico</label>
+        <p class="hint">Aquí te enviaremos las jugadas todos los días antes de los juegos.</p>
+        <input id="f-email" type="email" name="email" required autocomplete="email" placeholder="tu@correo.com">
+      </div>
+      <div class="field">
+        <label for="f-password">Contraseña</label>
+        <input id="f-password" type="password" name="password" required minlength="6" autocomplete="new-password" placeholder="Mínimo 6 caracteres">
+      </div>
+      <button class="btn" type="submit">Crear mi cuenta gratis<small>y ver las jugadas de hoy →</small></button>
+    </form>
+    <div class="micro"><span><span class="mint">✓</span> Sin tarjeta de crédito</span><span><span class="mint">✓</span> Sin vencimiento</span><span><span class="mint">✓</span> Cancela cuando quieras</span></div>
+    <p class="login-line">¿Ya tienes cuenta? <a href="{{ url_for('login') }}">Inicia sesión aquí →</a></p>
+  </div>
+
+  <div class="card plain">
+    <h3 class="sec">CÓMO FUNCIONA</h3>
+    <div class="step">
+      <div class="num">1</div>
+      <div><b>Crea tu cuenta gratis — acceso inmediato a tu panel</b>
+      <p>Regístrate en 10 segundos. Las jugadas de hoy que ya salieron están en tu panel ahora mismo.</p></div>
+    </div>
+    <div class="step">
+      <div class="num">2</div>
+      <div><b>Cada jugada nueva se publica en el panel en el momento en que sale</b>
+      <p>Publicada antes del juego y bloqueada — el precio que ves es el precio del ticket original. Una alerta sale al mismo tiempo para que nunca te la pierdas.</p></div>
+    </div>
+    <div class="step">
+      <div class="num">3</div>
+      <div><b>Sin tarjeta — sube de nivel cuando quieras</b>
+      <p>Las jugadas Gold son gratis y sin vencimiento. Los miembros Platinum ($1 la primera semana, luego $23/semana) también reciben la jugada Platinum diaria, el +EV Board completo y todas las herramientas de miembro.</p></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 class="sec">LO QUE NO HACEMOS</h3>
+    <p class="kicker-gold">Lee esto antes de registrarte. Si algo de esto te molesta, esto no es para ti.</p>
+    <div class="dont"><div class="x">✕</div><p><b>No prometemos victorias.</b> Quien te promete una victoria te está mintiendo. Buscamos ventaja a largo plazo, no emoción noche a noche.</p></div>
+    <div class="dont"><div class="x">✕</div><p><b>No escondemos las pérdidas.</b> Cada resultado — victoria o derrota — se publica y se califica contra el marcador final. El récord completo queda visible, en las semanas buenas y en las malas.</p></div>
+    <div class="dont"><div class="x">✕</div><p><b>No movemos las líneas después.</b> Cada jugada se publica antes del juego y queda bloqueada. Sin ediciones, sin recalificar, sin escoger solo las buenas.</p></div>
+    <div class="dont"><div class="x">✕</div><p><b>No te atrapamos.</b> Los miembros gratis se pueden ir cuando quieran. Los miembros pagos cancelan en dos clics — sin llamadas, sin guiones de retención, sin culpas.</p></div>
+    <div class="dorow"><div class="ck">✓</div><p><b>Lo que sí hacemos:</b> documentar cada jugada en público, se gane o se pierda — con el ticket original en cada una.</p></div>
+  </div>
+
+  <div class="card brandcard">
+    <img src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="Logo del tiburón de The Sharp Team">
+    <div class="nm">THE SHARP TEAM</div>
+    <div class="role">JUGADAS DOCUMENTADAS · TICKETS REALES</div>
+    <p>"Cada jugada se publica antes del juego — luego se bloquea y se califica contra el marcador final. Se gane o se pierda, cada jugada queda en el récord."</p>
+  </div>
+
+  <div class="card stats">
+    <div class="stats-row">
+      <div class="stat"><div class="v mintv">{{ stats.profit_units_display }}</div><div class="l">UNIDADES GANADAS</div></div>
+      <div class="stat"><div class="v">{{ stats.win_rate }}%</div><div class="l">ACIERTOS</div></div>
+      <div class="stat"><div class="v">100%</div><div class="l">TICKETS PUBLICADOS</div></div>
+      <div class="stat"><div class="v goldv">{{ "%+.0f"|format(_pa / 500 * 100) }}%</div><div class="l">CRECIMIENTO</div></div>
+    </div>
+    <p class="stats-cap">Bankroll: <b>$500 → {{ "$%.2f"|format(500 + _pa) }}</b> · Récord oficial: <b>{{ stats.ganadas }}–{{ stats.perdidas }}</b> — cada dólar rastreado en público</p>
+  </div>
+
+  <div class="card plain">
+    <div class="vtitle">VERIFICADO POR EL RÉCORD</div>
+    <div class="check"><div class="ck">✓</div><p><b>{{ stats.ganadas }}–{{ stats.perdidas }} de récord oficial</b> — cada jugada documentada en público, se gane o se pierda</p></div>
+    <div class="check"><div class="ck">✓</div><p><b>Calificado contra los marcadores finales oficiales</b> — el resultado que ves es el resultado que cuenta</p></div>
+    <div class="check"><div class="ck">✓</div><p><b>Ticket original de Novig</b> en cada jugada — precio y monto, exactamente como se jugó</p></div>
+    <div class="check"><div class="ck">✓</div><p><b>Reporte público diario</b> — victorias y derrotas publicadas el mismo día, sin escoger</p></div>
+    <div class="check"><div class="ck">✓</div><p><b>100% de los tickets publicados</b> — {{ stats.ganadas + stats.perdidas }} jugadas calificadas, cada una con su ticket, nada fuera del récord</p></div>
+  </div>
+
+  <div class="card plain">
+    <h3 class="sec">LO QUE RECIBES GRATIS</h3>
+    <div class="get"><div class="ck">✓</div><p><b>Jugada(s) Gold diaria(s)</b> — con el ticket original, publicada antes del juego</p></div>
+    <div class="get"><div class="ck">✓</div><p><b>Récord oficial y tracker completos</b> — cada jugada, cada resultado, en público</p></div>
+    <div class="get"><div class="ck">✓</div><p><b>Bet Tracker</b> — rastrea tus propias apuestas y tu propio bankroll</p></div>
+    <div class="get"><div class="ck">✓</div><p><b>+EV Board</b> — mira dónde se puede vencer el precio del mercado</p></div>
+    <div class="get"><div class="ck">✓</div><p><b>Academia</b> — un curso de 30 días sobre disciplina, unidades y bankroll</p></div>
+    <div class="get"><div class="ck">✓</div><p><b>Alertas push + Telegram</b> — entérate en el momento en que sale una jugada</p></div>
+  </div>
+
+  <div class="card faq">
+    <div class="faqrow"><div><div class="q">¿Qué pasa después de registrarme?</div><div class="a">Tu panel se abre de inmediato con las jugadas de hoy ya publicadas. Las jugadas nuevas aparecen en el momento en que salen, y una alerta sale al mismo tiempo.</div></div><div class="plus">+</div></div>
+    <div class="faqrow"><div><div class="q">¿La cuenta gratis es realmente gratis?</div><div class="a">Sí. Sin tarjeta de crédito, sin reloj de prueba, sin vencimiento. Las jugadas Gold se quedan gratis el tiempo que quieras.</div></div><div class="plus">+</div></div>
+    <div class="faqrow"><div><div class="q">¿Qué es Platinum?</div><div class="a">El nivel pago: la jugada Platinum diaria (nuestra jugada de mayor convicción), más todas las herramientas de miembro desbloqueadas. $1 tu primera semana, luego $23/semana — cancela en dos clics, cuando quieras.</div></div><div class="plus">+</div></div>
+  </div>
+
+  <div class="card closing">
+    <div class="kick">¿TODAVÍA LO ESTÁS PENSANDO?</div>
+    <h3>Cada jugada. Documentada. Gratis.</h3>
+    <p>Sin tarjeta de crédito. Sin periodo de prueba. Sin fecha de vencimiento. Cada jugada Gold publicada en tu panel en el momento en que sale — con el ticket original.</p>
+    <a class="btn" href="#signup" style="margin-top:18px;">Volver al formulario ↑</a>
+    <div class="micro"><span>Sin tarjeta de crédito</span><span>·</span><span>Sin vencimiento</span><span>·</span><span>Cancela cuando quieras</span></div>
+  </div>
+
+  <footer>
+    <div class="motto">Publicada antes del juego. Bloqueada. Calificada.</div>
+    <p>Todas las jugadas y la información se ofrecen solo con fines de entretenimiento.<br>
+    <b style="color:#9aa7c7;">Solo mayores de 21 años.</b> Juega con responsabilidad. ¿Problemas con el juego? Llama o escribe al <b style="color:#9aa7c7;">1-800-GAMBLER</b>.</p>
+    <div class="links"><span>Términos de uso</span> · <span>Aviso legal</span> · <span>Contacto</span></div>
+    <p>© 2026 The Sharp Team. All rights reserved.</p>
+  </footer>
+
+</div>
+
+<div class="sticky">
+  <div class="in">
+    <a href="#signup">Ver las Jugadas Gratis de Hoy →</a>
+    <p>Sin vencimiento · Sin tarjeta de crédito</p>
+  </div>
+</div>
+
+</body>
+</html>
