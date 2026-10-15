@@ -7692,8 +7692,10 @@ def tools_parlay_calculator():
 @app.route("/tools")
 @login_required
 def tools():
-    """Hub de herramientas (pedido Alex 2026-10-08, estilo WGT)."""
-    return render_template("tools.html")
+    """Tools = la seccion del home (2026-10-15, orden de Alex: no
+    pueden existir DOS secciones de herramientas; el menu inferior
+    lleva a la del home y esta ruta redirige ahi mismo)."""
+    return redirect(url_for("home") + "#tools")
 
 
 @app.route("/tools/line-moves")
