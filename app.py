@@ -29,8 +29,8 @@ from functools import wraps
 
 import bcrypt
 from flask import (
-    Flask, Response, flash, g, jsonify, redirect, render_template, request,
-    session, url_for,
+    Flask, Response, flash, g, jsonify, make_response, redirect,
+    render_template, request, session, url_for,
 )
 from zoneinfo import ZoneInfo
 
@@ -3254,6 +3254,38 @@ def _send_meta_capi_registration(email, event_id, ip, user_agent, fbp, fbc, sour
         pass
 
 
+_GEO_CACHE = {}
+
+
+def _pais_visitante():
+    """País del visitante por geo-IP (ip-api.com, sin clave). Caché por
+    IP de 24 h; timeout corto y cualquier fallo devuelve '' (la página
+    sale en inglés — esto nunca puede romper el registro)."""
+    try:
+        ip = (request.headers.get("X-Forwarded-For", "")
+              or "").split(",")[0].strip() or (request.remote_addr or "")
+    except Exception:
+        return ""
+    if not ip or ip.startswith(("127.", "10.", "172.", "192.168.", "::1")):
+        return ""
+    _hit = _GEO_CACHE.get(ip)
+    if _hit and time.time() - _hit[0] < 86400:
+        return _hit[1]
+    pais = ""
+    try:
+        _req = urllib.request.Request(
+            f"http://ip-api.com/json/{ip}?fields=status,countryCode",
+            headers={"User-Agent": "Mozilla/5.0"})
+        with urllib.request.urlopen(_req, timeout=1.5) as _r:
+            _d = json.loads(_r.read() or b"{}")
+        if _d.get("status") == "success":
+            pais = (_d.get("countryCode") or "").upper()
+    except Exception:
+        pais = ""
+    _GEO_CACHE[ip] = (time.time(), pais)
+    return pais
+
+
 @app.route("/registro", methods=["GET", "POST"])
 def register():
     if "user_id" in session:
@@ -3288,6 +3320,15 @@ def register():
     _drop = "11:00 AM ET" if datetime.now(TZ).weekday() >= 5 else "2:00 PM ET"
     _reg_ctx = {"gold": _gold, "stats": _stats, "ayer": _ayer,
                 "recientes": _recientes, "drop_time": _drop}
+    # Idioma de la landing (2026-10-14, pedido de Alex): manda ?lang=;
+    # si no, la cookie; si no, SOLO República Dominicana (geo-IP) recibe
+    # español — cualquier otro país ve inglés, siempre.
+    _lang = (request.args.get("lang") or "").strip().lower()
+    if _lang not in ("es", "en"):
+        _lang = (request.cookies.get("tst_lang") or "").strip().lower()
+    if _lang not in ("es", "en"):
+        _lang = "es" if _pais_visitante() == "DO" else "en"
+    _tpl = "register_es.html" if _lang == "es" else "register.html"
     if request.method == "POST":
         nombre = request.form.get("nombre", "").strip()
         email = request.form.get("email", "").strip().lower()
@@ -3295,13 +3336,13 @@ def register():
         phone = request.form.get("phone", "").strip()
         sms_optin = 1 if request.form.get("sms_optin") == "1" and phone else 0
         if not nombre or not email or len(password) < 6:
-            flash("Enter your name, a valid email and a password of at least 6 characters.", "error")
-            return render_template("register.html", **_reg_ctx), 400
+            flash("Escribe tu nombre, un correo válido y una contraseña de al menos 6 caracteres." if _lang == "es" else "Enter your name, a valid email and a password of at least 6 characters.", "error")
+            return render_template(_tpl, **_reg_ctx), 400
         db = get_db()
         exists = db.execute("SELECT id FROM users WHERE email = ?", (email,)).fetchone()
         if exists:
-            flash("That email is already registered. Log in.", "error")
-            return render_template("register.html", **_reg_ctx), 400
+            flash("Ese correo ya está registrado. Inicia sesión." if _lang == "es" else "That email is already registered. Log in.", "error")
+            return render_template(_tpl, **_reg_ctx), 400
         new_id = insert_returning_id(
             db,
             "INSERT INTO users (nombre, email, password_hash, phone, sms_optin, created_at) VALUES (?, ?, ?, ?, ?, ?)",
@@ -3344,7 +3385,9 @@ def register():
             request.url,
         )
         return redirect(url_for("bienvenida"))
-    return render_template("register.html", **_reg_ctx)
+    _resp = make_response(render_template(_tpl, **_reg_ctx))
+    _resp.set_cookie("tst_lang", _lang, max_age=30 * 86400, samesite="Lax")
+    return _resp
 
 
 # Links rastreados (pedido Alex 2026-10-02): cada clic se guarda en
@@ -6802,8 +6845,8 @@ def admin_chat_mensaje():
     if not (is_admin_for(user) or is_alex_member(user)):
         return jsonify({"ok": False, "error": "no autorizado"}), 403
     mensaje = request.form.get("mensaje", "").strip()
-    hoy = datetime.now(TZ).strftime("%Y-%m-%d")
-    ts = datetime.now(TZ).strftime("%Y%m%d-%H%M%S")
+    hoy = datetime.now().strftime("%Y-%m-%d")
+    ts = datetime.now().strftime("%Y%m%d-%H%M%S")
     # Guardar tickets en comprobantes (formato del flujo oficial)
     comp_dir = os.path.join(os.path.dirname(__file__), "static", "img", "comprobantes")
     os.makedirs(comp_dir, exist_ok=True)
@@ -6834,34 +6877,13 @@ def admin_chat_mensaje():
         for fname in ["plays-pending.json", "plays.json"]:
             pp = os.path.join(os.path.dirname(__file__), "data", fname)
             try:
-                # FIX 2026-10-14 (incidente Missouri State): leer la copia
-                # FRESCA de master primero. La copia local es la del ultimo
-                # despliegue: una jugada publicada por disparo DESPUES del
-                # despliegue no existe localmente y su ticket quedaba sin
-                # adjuntar ("Ninguna jugada de hoy esperaba ticket").
-                _data = None
-                try:
-                    import urllib.request as _ur
-                    _rq = _ur.Request(
-                        "https://raw.githubusercontent.com/penamanuel-art"
-                        "/tlb-members/master/data/" + fname,
-                        headers={"User-Agent": "tlb-members"})
-                    with _ur.urlopen(_rq, timeout=8) as _r:
-                        _data = _json.load(_r)
-                except Exception:
-                    _data = None
-                if not isinstance(_data, dict):
-                    with open(pp) as _f:
-                        _data = _json.load(_f)
+                with open(pp) as _f:
+                    _data = _json.load(_f)
                 if isinstance(_data, dict) and _data.get("fecha") == hoy:
                     _plays = _data.get("plays", [])
-                    _ti = 0
-                    for _p in _plays:
-                        if _ti >= len(guardados):
-                            break
-                        if not _p.get("comprobante"):
-                            _p["comprobante"] = guardados[_ti]
-                            _ti += 1
+                    for j, _p in enumerate(_plays):
+                        if j < len(guardados) and not _p.get("comprobante"):
+                            _p["comprobante"] = guardados[j]
                             actualizadas += 1
                             if not any(m.get("id") == _p.get("id") for m in _matched):
                                 _matched.append({
@@ -6885,7 +6907,7 @@ def admin_chat_mensaje():
                 "mensaje": mensaje,
                 "tickets": guardados,
                 "actualizadas": actualizadas,
-                "leido": False,  # FIX 2026-10-14: nace sin leer — el procesador lo completa y lo marca
+                "leido": True,  # Ya procesado automáticamente
             }) + "\n")
         try:
             log_notificacion(db, "admin_chat", "Tickets de Alex procesados",
