@@ -2763,7 +2763,7 @@ def inject_user():
     from flask import request as freq
     ruta = (freq.endpoint or "")
     wm = WATERMARK_POR_RUTA.get(ruta)
-    if not wm:
+    if wm is None:
         wm = session.get("watermark")
         if wm not in WATERMARKS:
             wm = random.choice(WATERMARKS)
@@ -2798,7 +2798,7 @@ def inject_user():
         "past_due": past_due,
         "ticker_days": compute_ticker_days(),
         "asset_v": ASSET_V,
-        "watermark_img": session.get("watermark", WATERMARKS[0]),
+        "watermark_img": wm,
     }
 
 
