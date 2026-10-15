@@ -156,26 +156,33 @@ body.v2 .v2-bottomnav .v2-bnav-item.active{background:linear-gradient(180deg,#ff
     {# "View all" eliminado (2026-10-12): mismo destino que "📜 Full record". #}
   </div>
   {% if recientes %}
-  <div class="rc-ledger">
+  <div class="wg-rows">
   {% for r in recientes %}
     {% set won = r.resultado == 'WON' %}
-    <button type="button" class="rc-row" data-ticket="luxht-{{ loop.index }}" aria-label="View receipt for {{ r.pick }}">
-      <span class="rc-bar {{ 'win' if won else 'loss' }}"></span>
-      <span class="rc-thumb">
+    <button type="button" class="wg-row" data-ticket="luxht-{{ loop.index }}" aria-label="View receipt for {{ r.pick }}">
+      <span class="wg-thumb">
         {% if r.comprobante %}
         <img src="{{ url_for('static', filename=r.comprobante) }}" alt="Original receipt: {{ r.pick }}" loading="lazy">
         {% else %}
-        <span class="rc-thumb-fallback">THE<br>SHARP<br>TEAM</span>
+        <span class="wg-thumb-fallback">THE<br>SHARP<br>TEAM</span>
         {% endif %}
       </span>
-      <span class="rc-main">
-        <span class="rc-pick">{{ r.pick }}</span>
-        <span class="rc-meta">{{ fmt_odds(r.cuota) }} · {{ 'PLATINUM' if r.nivel in ['ELITE','PLATINUM'] else ('GOLD' if r.nivel == 'GOLD' else r.nivel) }} · {{ r.fecha }}</span>
-        {% if r.comprobante %}<span class="rc-tap">View ticket →</span>{% endif %}
+      <span class="wg-main">
+        <span class="wg-topline">
+          <span class="wg-pill {{ 'plat' if r.nivel in ['ELITE','PLATINUM'] else 'gold' }}">{{ 'PLATINUM' if r.nivel in ['ELITE','PLATINUM'] else ('GOLD' if r.nivel == 'GOLD' else r.nivel) }}</span>
+          <span class="wg-when">{{ r.fecha }}</span>
+        </span>
+        <span class="wg-pick">{{ r.pick }}</span>
+        <span class="wg-meta">{{ fmt_odds(r.cuota) }}{% if r.stake_unidades %} · {{ '%g' % r.stake_unidades }}u{% endif %}{% if r.comprobante %} · <span class="wg-tap">View ticket →</span>{% endif %}</span>
       </span>
-      <span class="rc-right">
-        <span class="rc-profit {{ 'win' if won else 'loss' }}">{{ fmt_money(r.profit) }}</span>
-        <span class="rc-st {{ 'win' if won else 'loss' }}">{{ 'WON' if won else 'LOST' }}</span>
+      <span class="wg-right">
+        <span class="wg-st {{ 'win' if won else 'loss' }}">{{ 'WON' if won else 'LOST' }}</span>
+        {% if r.unidades is not none %}
+        <span class="wg-units {{ 'win' if won else 'loss' }}">{{ '+' if r.unidades > 0 else '' }}{{ '%.2f' % r.unidades }}u</span>
+        <span class="wg-dollars">{{ fmt_money(r.profit) }}</span>
+        {% else %}
+        <span class="wg-units {{ 'win' if won else 'loss' }}">{{ fmt_money(r.profit) }}</span>
+        {% endif %}
       </span>
     </button>
     <div class="modal" id="luxht-{{ loop.index }}" hidden>
