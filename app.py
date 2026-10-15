@@ -1616,6 +1616,16 @@ def recientes_oficiales(n=6):
                 and not j.get("bloqueada")
                 and j.get("pick")
             ):
+                # Unidades de profit (2026-10-15): la fila de Receipts
+                # lidera con unidades estilo WGT (+1.56u) y el $ va debajo.
+                _su = j.get("stake_unidades")
+                _sm = j.get("stake_monto")
+                _unidades = None
+                try:
+                    if _su and _sm:
+                        _unidades = round(float(j.get("profit") or 0) * float(_su) / float(_sm), 2)
+                except (TypeError, ValueError):
+                    _unidades = None
                 recientes.append({
                     "id": j.get("id"),
                     "fecha": d.get("titulo") or d.get("fecha", ""),
@@ -1625,6 +1635,8 @@ def recientes_oficiales(n=6):
                     "resultado": j.get("resultado"),
                     "profit": j.get("profit") if j.get("profit") is not None else 0.0,
                     "comprobante": j.get("comprobante"),
+                    "stake_unidades": _su,
+                    "unidades": _unidades,
                 })
     return recientes[:n]
 
