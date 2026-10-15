@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{% block title %}My Tracker — The Sharp Team{% endblock %}
+{% block content %}
+<style>
+.tk-wrap{max-width:560px;margin:0 auto;color:#eef2f7;padding:10px 4px 34px}
+.tk-panel{background:#10141b;border:1px solid rgba(255,255,255,.08);border-radius:22px;padding:26px 20px 22px;text-align:center;box-shadow:0 18px 44px rgba(0,0,0,.45)}
+.tk-ico{width:64px;height:64px;margin:2px auto 14px;border-radius:18px;background:rgba(212,160,23,.14);border:1px solid rgba(243,205,107,.35);display:flex;align-items:center;justify-content:center;font-size:30px}
+.tk-panel h2{font-size:25px;font-weight:800;line-height:1.2;margin:0 0 10px;color:#fff}
+.tk-sub{color:#9aa7b8;font-size:14px;line-height:1.55;margin:0 auto 18px;max-width:420px}
+.tk-feats{text-align:left;max-width:400px;margin:0 auto}
+.tk-feats li{list-style:none;margin:11px 0;font-size:14px;color:#e8edf5;display:flex;gap:10px;align-items:flex-start;line-height:1.45}
+.tk-feats ul{margin:0;padding:0}
+.tk-ck{color:#2fe6a7;font-weight:800;flex:0 0 auto}
+.tk-sec{background:#10141b;border:1px solid rgba(255,255,255,.08);border-radius:22px;padding:20px;margin-top:16px;box-shadow:0 18px 44px rgba(0,0,0,.35)}
+.tk-sec-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px}
+.tk-sec-head h3{font-size:19px;font-weight:800;color:#fff;margin:0}
+.tk-sample-pill{font-size:11px;font-weight:700;color:#f3cd6b;border:1.5px dashed rgba(243,205,107,.6);background:rgba(212,160,23,.12);padding:5px 10px;border-radius:99px;white-space:nowrap}
+.tk-bet{padding:13px 0;border-bottom:1px solid rgba(255,255,255,.07)}
+.tk-bet:last-of-type{border-bottom:none}
+.tk-bet-name{font-size:15.5px;font-weight:800;color:#fff}
+.tk-bet-sub{font-size:12px;color:#8b98ab;margin-top:1px}
+.tk-cols{display:flex;gap:10px;margin-top:9px}
+.tk-col{flex:1}
+.tk-col span{display:block;font-size:10.5px;font-weight:700;letter-spacing:1.2px;color:#8b98ab}
+.tk-col b{display:block;font-size:15px;font-weight:700;color:#eef2f7;margin-top:2px}
+.tk-col b.win{color:#2fe6a7}
+.tk-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.tk-stat{background:#0a0d12;border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:13px 14px}
+.tk-stat span{display:block;font-size:10.5px;font-weight:700;letter-spacing:1.4px;color:#8b98ab}
+.tk-stat b{display:block;font-size:21px;font-weight:800;color:#fff;margin-top:4px}
+.tk-stat b.win{color:#2fe6a7}
+.tk-stat i{display:block;font-style:normal;font-size:11.5px;color:#8b98ab;margin-top:2px;line-height:1.4}
+.tk-sec h3{font-size:20px;font-weight:800;color:#fff;margin:0 0 8px}
+.tk-sec p{font-size:14px;color:#c3cedd;line-height:1.55;margin:0 0 10px}
+.tk-sec .tk-big{font-size:15px;font-weight:800;color:#fff;margin-top:14px}
+.tk-sec li{font-size:14px;color:#c3cedd;line-height:1.5;margin:9px 0 9px 18px}
+.tk-sec li b{color:#fff}
+.tk-foot{font-size:12.5px;color:#8b98ab;line-height:1.55;margin-top:14px}
+</style>
+
+<div class="tk-wrap">
+  <!-- CANDADO: el tracker personal va incluido con la membresía pagando -->
+  <div class="tk-panel">
+    <div class="tk-ico">🔒</div>
+    <h2>Your bet tracker is members-only</h2>
+    <p class="tk-sub">Track every play in one place. We grade each one from the final score and keep your record, profit and ROI up to date — automatically.</p>
+    <div class="tk-feats">
+      <ul>
+        <li><span class="tk-ck">✓</span><span>Grading from the final score — no manual entry, ever</span></li>
+        <li><span class="tk-ck">✓</span><span>Your own stake on every play: 1% of your bankroll per unit</span></li>
+        <li><span class="tk-ck">✓</span><span>Record, profit and ROI, broken down by level</span></li>
+        <li><span class="tk-ck">✓</span><span>Track any official play in one tap from its card</span></li>
+        <li><span class="tk-ck">✓</span><span>Full history with CSV export</span></li>
+      </ul>
+    </div>
+  </div>
+
+  {% include "_upsell_vip.html" %}
+
+  <!-- EJEMPLO: así se ve el tracker con la membresía activa -->
+  <div class="tk-sec">
+    <div class="tk-sec-head">
+      <h3>Example tracker</h3>
+      <span class="tk-sample-pill">Sample bets · not real results</span>
+    </div>
+    <div class="tk-bet">
+      <div class="tk-bet-name">Sample Team A ML</div>
+      <div class="tk-bet-sub">graded from the final score</div>
+      <div class="tk-cols">
+        <div class="tk-col"><span>ODDS</span><b>+150</b></div>
+        <div class="tk-col"><span>STAKE</span><b>$100</b></div>
+        <div class="tk-col"><span>RESULT</span><b class="win">+$150.00</b></div>
+      </div>
+    </div>
+    <div class="tk-bet">
+      <div class="tk-bet-name">Sample Team B -3.5</div>
+      <div class="tk-bet-sub">graded from the final score</div>
+      <div class="tk-cols">
+        <div class="tk-col"><span>ODDS</span><b>-110</b></div>
+        <div class="tk-col"><span>STAKE</span><b>$100</b></div>
+        <div class="tk-col"><span>RESULT</span><b>-$100.00</b></div>
+      </div>
+    </div>
+    <div class="tk-bet">
+      <div class="tk-bet-name">Sample Team C Over 47.5</div>
+      <div class="tk-bet-sub">graded from the final score</div>
+      <div class="tk-cols">
+        <div class="tk-col"><span>ODDS</span><b>-110</b></div>
+        <div class="tk-col"><span>STAKE</span><b>$100</b></div>
+        <div class="tk-col"><span>RESULT</span><b class="win">+$90.91</b></div>
+      </div>
+    </div>
+    <div class="tk-bet">
+      <div class="tk-bet-name">Sample Player D Over 6.5 rebounds</div>
+      <div class="tk-bet-sub">graded from the final score</div>
+      <div class="tk-cols">
+        <div class="tk-col"><span>ODDS</span><b>-105</b></div>
+        <div class="tk-col"><span>STAKE</span><b>$100</b></div>
+        <div class="tk-col"><span>RESULT</span><b>Push $0.00</b></div>
+      </div>
+    </div>
+    <div class="tk-stats">
+      <div class="tk-stat"><span>RECORD</span><b>2-1-1</b><i>won, lost, push</i></div>
+      <div class="tk-stat"><span>NET</span><b class="win">+$140.91</b><i>on $300 risked</i></div>
+      <div class="tk-stat"><span>ROI</span><b>+47.0%</b><i>net / risked; pushes risk nothing</i></div>
+      <div class="tk-stat"><span>WIN RATE</span><b>66.7%</b><i>of graded bets, pushes excluded</i></div>
+    </div>
+  </div>
+
+  <!-- EJEMPLO RESUELTO: cómo se calcula cada resultado -->
+  <div class="tk-sec">
+    <h3>Worked example: Bet Tracker</h3>
+    <p>Your tracked bets, graded against the final score, with profit and ROI.</p>
+    <p class="tk-big">Four bets at $100 · example</p>
+    <ul>
+      <li>Won at +150 (stake × (decimal − 1) = 100 × 1.5000): <b>+$150.00</b></li>
+      <li>Lost at −110 (minus the stake): <b>−$100.00</b></li>
+      <li>Won at −110 (100 × 0.9091): <b>+$90.91</b></li>
+      <li>Push at −105 (stake back, risks nothing in ROI): <b>$0.00</b></li>
+      <li><b>2-1-1</b> net <b>+$140.91</b> · risked on won and lost bets <b>$300</b> · ROI = net / risked = <b>+47.0%</b></li>
+    </ul>
+    <p class="tk-foot">Sample bets, graded by the same system as your real tracker. Your stakes follow your own bankroll setting — Platinum plays at 1 unit, Gold at 0.6 units.</p>
+  </div>
+</div>
+{% endblock %}
