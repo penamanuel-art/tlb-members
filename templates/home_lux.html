@@ -51,67 +51,50 @@ body.v2{background-color:#07090c;background-image:radial-gradient(560px 300px at
 .lux-rec-u{font-size:17px;font-weight:800;color:#2fe6a7;margin-top:3px}
 .lux-rec-u.neg{color:#ff7b7b}
 .lux-rec-s{font-size:12px;color:#9aa7b8;margin-top:5px}
+.lux-head{padding:4px 2px 2px}
+.lux-head-date{font-size:11.5px;font-weight:700;letter-spacing:2.2px;color:#8b98ab;text-transform:uppercase}
+.lux-head-hi{font-size:16.5px;font-weight:600;color:#eef2f7;margin-top:10px}
+.lux-head-title{font-size:37px;font-weight:800;letter-spacing:-.8px;color:#fff;margin-top:2px;line-height:1.08}
+.lux-head-title span{color:#2fe6a7}
+.lux-head-card{display:flex;gap:13px;align-items:center;background:rgba(47,230,167,.07);border:1px solid rgba(47,230,167,.45);border-radius:18px;padding:14px 15px;margin-top:16px}
+.lux-head-card.pend{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.12)}
+.lux-head-ico{flex:0 0 auto;width:47px;height:47px;border-radius:14px;background:#2fe6a7;color:#04150a;font-size:23px;font-weight:800;display:flex;align-items:center;justify-content:center}
+.lux-head-card.pend .lux-head-ico{background:#39445a;color:#dbe4f0}
+.lux-head-card b{font-size:16.5px;color:#fff}
+.lux-head-card p{font-size:13px;color:#9aa7b8;line-height:1.45;margin-top:2px}
+
 </style>
 
 {# Botón "Revert design" ELIMINADO (2026-10-13, orden de Alex: "quita eso").
    El diseño lux queda fijo; el endpoint /admin/diseno-home sigue existiendo
    por si algún día se pide volver atrás desde el Admin. #}
 
-<!-- SALUDO · compacto -->
-<section class="v2-hero v2-hero-wgt">
-  <p class="v2-hero-date"><span class="v2-live-dot"></span>{{ saludo }} · {{ fecha }}</p>
-  <h1 class="v2-hero-title">Welcome back, <span class="v2-hero-today">{{ nombre_corto }}</span>.</h1>
-  {% set phrases = ["Stay sharp.", "Discipline wins.", "Trust the numbers.", "Every play counts.", "Lock in.", "Patience pays.", "No hype, just edge.", "Bet smart, not hard.", "The edge is real.", "Winners stay disciplined.", "Small edges, big results.", "Process over profit.", "Sharp minds win.", "Data beats gut.", "Stay the course."] %}
-  <p class="v2-hero-phrase">{{ phrases[now_day_of_year % phrases|length] }}</p>
+<!-- ENCABEZADO COMPACTO (2026-10-15, orden de Alex: como el de su
+     captura — fecha, saludo, titulo y estado de la card; chiquito
+     y no largo. Reemplaza el saludo anterior y el heroe de unidades.) -->
+<header class="lux-head">
+  <p class="lux-head-date">{{ fecha }} &middot; ET</p>
+  <p class="lux-head-hi">{{ saludo }}, {{ nombre_corto }}</p>
+  <h1 class="lux-head-title">Today's <span>card</span></h1>
   {% if card_pendiente %}
-  <p class="v2-hero-sub">Today&rsquo;s card hasn&rsquo;t dropped yet — check back soon. Every play public, win or loss.</p>
+  <div class="lux-head-card pend">
+    <span class="lux-head-ico">&hellip;</span>
+    <div>
+      <b>Today's card hasn't dropped yet</b>
+      <p>New plays post at 2:00 PM ET on weekdays and 11:00 AM ET on weekends. Every play public, win or loss.</p>
+    </div>
+  </div>
   {% else %}
-  <p class="v2-hero-sub">{{ plays|length }} play{{ 's' if plays|length != 1 else '' }} on your card. Place each at your book, then tap + Track to check it off.</p>
-  {% endif %}
-  <div class="v2-hero-meta">
-    {% if streak %}
-    <span class="v2-streak {{ 'hot' if streak.tipo == 'W' else 'cold' }}">{% if streak.tipo == 'W' %}🔥 {% endif %}{{ streak.tipo }}{{ streak.n }}</span>
-    {% endif %}
-    {% if resumen_ayer %}
-    <span class="v2-yesterday">Yesterday <b>{{ resumen_ayer.w }}-{{ resumen_ayer.l }}</b> · <b class="{{ 'pos' if resumen_ayer.profit >= 0 else 'neg' }}">{{ '$%+.2f' % resumen_ayer.profit }}</b></span>
-    {% endif %}
-    {% if not card_pendiente %}
-    <span class="v2-status live"><span class="v2-dot"></span>CARD LIVE</span>
-    {% endif %}
-  </div>
-</section>
-
-<!-- HÉROE DEL PROGRAMA · diseño lux con la curva REAL del profit -->
-<div class="lux-hero">
-  <span class="lux-live"><i></i>VERIFIED RECORD</span>
-  <p class="lux-hlabel">THE SHARP TEAM · NET UNITS ALL-TIME</p>
-  <p class="lux-units {{ 'neg' if res.profit_cls == 'neg' else '' }}">{{ res.profit_units_display }}</p>
-  <p class="lux-hsub"><b>{{ res.profit_display }}</b> net profit · every play posted before game time, win or loss</p>
-  {% if pcurve %}
-  <div class="lux-chart">
-    <svg viewBox="0 0 {{ pcurve.w }} {{ pcurve.h }}" width="100%" height="86" preserveAspectRatio="none" aria-hidden="true">
-      <defs>
-        <linearGradient id="lux-stroke" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0" stop-color="#f3cd6b"/><stop offset="1" stop-color="#2fe6a7"/>
-        </linearGradient>
-        <linearGradient id="lux-fill" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stop-color="#2fe6a7" stop-opacity=".30"/><stop offset="1" stop-color="#2fe6a7" stop-opacity="0"/>
-        </linearGradient>
-      </defs>
-      <path d="{{ pcurve.area }}" fill="url(#lux-fill)"/>
-      <path d="{{ pcurve.line }}" fill="none" stroke="url(#lux-stroke)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
+  {% set _np = plays|selectattr('nivel', 'equalto', 'ELITE')|list|length %}
+  <div class="lux-head-card">
+    <span class="lux-head-ico">&#10003;</span>
+    <div>
+      <b>Today's card is posted</b>
+      <p>{{ plays|length }} play{{ 's' if plays|length != 1 else '' }} today — {{ _np }} Platinum, {{ plays|length - _np }} Gold. Live on your Dashboard right now.</p>
+    </div>
   </div>
   {% endif %}
-  <div class="lux-pills">
-    <div class="lux-pill"><b>{{ res.ganadas }}–{{ res.perdidas }}</b><span>RECORD</span></div>
-    <div class="lux-pill"><b>{{ res.win_rate }}%</b><span>WIN RATE</span></div>
-    <div class="lux-pill"><b>{{ '%+.1f' % res.roi }}%</b><span>ROI</span></div>
-    <div class="lux-pill"><b>{{ res.ganadas + res.perdidas }}/200</b><span>PLAYS</span></div>
-  </div>
-  {# Barra "View the full record" ELIMINADA (2026-10-12, orden de Alex): el
-     récord completo ya se abre desde "📜 Full record" de la barra superior. #}
-</div>
+</header>
 
 {% set card_lux = true %}
 <!-- TODAY'S PLAYS · tarjetas con la paleta de la página (card_lux) -->
