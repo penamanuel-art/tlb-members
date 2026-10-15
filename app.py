@@ -7185,7 +7185,10 @@ def admin_miembros():
         "SELECT id, nombre, email, created_at, platinum_unlocked, is_admin, "
         "stake_fijo_elite, stake_fijo_gold, cancel_requested_at, stripe_customer_id, "
         "telegram_user_id, telegram_ban_pending, telegram_unban_pending "
-        "FROM users ORDER BY created_at DESC"
+        "FROM users "
+        "WHERE LOWER(email) NOT LIKE '%@value.local' "
+        "AND LOWER(email) NOT IN ('thesharpteam8@gmail.com', 'pena.manuel@myyahoo.com') "
+        "ORDER BY created_at DESC"
     ).fetchall()
     ahora = datetime.now(timezone.utc)
     lista = []
