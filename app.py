@@ -2743,19 +2743,17 @@ app.jinja_env.globals.update(team_logo_url=team_logo_url)
 # Marcas de agua rotativas (2026-09-30, pedido por Alex): cada sesión ve una
 # distinta — fútbol americano o béisbol — siempre tenue.
 WATERMARKS = [
+    "img/watermark-football.jpg",
     "img/watermark-baseball.jpg",
-    "img/watermark-basketball.jpg",
     "img/watermark-hockey.jpg",
 ]
 
 # Fondo por sección (2026-10-06, pedido por Alex): cada página muestra
 # el fondo de su deporte/tema correspondiente.
-WATERMARK_POR_RUTA = {
-    "home": "img/watermark-baseball.jpg",
-    "tracker": "img/watermark-baseball.jpg",
-    "ev_board": "img/watermark-basketball.jpg",
-    "records": "img/watermark-hockey.jpg",
-}
+# Fondos rotativos: TRES (2026-10-15, orden de Alex) — futbol
+# americano, beisbol y NHL, los tres deportes del programa.
+# Sin fondo fijo por ruta: rotan por sesion entre los tres.
+WATERMARK_POR_RUTA = {}
 
 
 @app.context_processor
