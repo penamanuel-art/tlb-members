@@ -219,16 +219,31 @@ function tpRender(batch) {
   if (done === TP_STEPS.length) tpStopPoll();
 }
 function tpStopPoll() { if (tpPollTimer) { clearInterval(tpPollTimer); tpPollTimer = null; } }
+var tpMiss = 0;
 function tpPoll() {
   if (!tpBatchId) return;
   tpPollCount++;
   if (tpPollCount > 200) { tpStopPoll(); return; }
   fetch('/admin/ticket-status/' + encodeURIComponent(tpBatchId))
     .then(function(r) { return r.json(); })
-    .then(function(b) { if (b && b.steps) tpRender(b); })
+    .then(function(b) {
+      if (b && b.steps) { tpMiss = 0; tpRender(b); return; }
+      // Lote no encontrado (el servidor se reinicio): buscar el ultimo lote;
+      // si tampoco hay, ocultar el panel en vez de girar para siempre.
+      if (++tpMiss >= 3) {
+        tpStopPoll();
+        fetch('/admin/ticket-status/latest')
+          .then(function(r) { if (!r.ok) throw 0; return r.json(); })
+          .then(function(l) {
+            if (l && l.steps && l.id) { tpBatchId = l.id; tpRender(l); tpStartPoll(); }
+            else { var p = document.getElementById('ticketPanel'); if (p) p.style.display = 'none'; }
+          })
+          .catch(function() { var p = document.getElementById('ticketPanel'); if (p) p.style.display = 'none'; });
+      }
+    })
     .catch(function() { /* reintenta en el siguiente ciclo */ });
 }
-function tpStartPoll() { tpStopPoll(); tpPollCount = 0; tpPoll(); tpPollTimer = setInterval(tpPoll, 3000); }
+function tpStartPoll() { tpStopPoll(); tpPollCount = 0; tpMiss = 0; tpPoll(); tpPollTimer = setInterval(tpPoll, 3000); }
 // Convierte la foto a JPEG (máx 1600px) antes de subir: las fotos de iPhone
 // pueden venir en HEIC y pesar 3-6 MB. Si la conversión falla, va el original.
 function fotoParaSubir(f) {
@@ -264,6 +279,24 @@ async function sendTickets() {
   btn.textContent = 'Subiendo…';
   tpStopPoll();
   tpRender({ plays: [], steps: { received: { state: 'working', detail: 'Uploading ' + ticketFiles.length + ' file(s)…' } } });
+  // Vigilante: si la respuesta de la subida se pierde o tarda demasiado,
+  // adoptar el lote desde el servidor en cuanto aparezca — nunca quedarse
+  // pegado en "Uploading…" (paso el 2026-10-15 con el ticket de Tampa).
+  var tpWatchdog = setInterval(function() {
+    if (tpBatchId) { clearInterval(tpWatchdog); return; }
+    fetch('/admin/ticket-status/latest')
+      .then(function(r) { if (!r.ok) throw 0; return r.json(); })
+      .then(function(l) {
+        if (l && l.steps && l.id && l.epoch && (Date.now() / 1000 - l.epoch) < 600) {
+          clearInterval(tpWatchdog);
+          tpBatchId = l.id;
+          tpRender(l);
+          tpStartPoll();
+        }
+      })
+      .catch(function() { });
+  }, 4000);
+  setTimeout(function() { clearInterval(tpWatchdog); }, 180000);
   try {
     var fd = new FormData();
     fd.append('mensaje', '');
