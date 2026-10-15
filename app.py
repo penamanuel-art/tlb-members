@@ -4337,6 +4337,17 @@ def balances():
 def tracker():
     db = get_db()
     record_checkin(db, session["user_id"])
+    # Vista previa del candado (2026-10-15, para que Alex lo pruebe):
+    # ?preview=locked muestra la pagina de membresia tal cual la ve
+    # quien no paga, aunque la cuenta tenga acceso (patron del home).
+    _u0 = current_user()
+    if request.args.get("preview") == "locked" and (
+            is_admin_for(_u0)
+            or (_u0["email"] or "").strip().lower() == ALEX_MEMBER_EMAIL):
+        return render_template(
+            "tracker_locked.html",
+            upsell_cta_url=url_for("desbloquear_platinum"),
+        )
     # El admin no usa tracker personal: ve el oficial con tickets (2026-10-03,
     # orden de Alex). Su "Alex Owner Results" estaba vacío y no tenía sentido.
     if is_admin_for(current_user()):
