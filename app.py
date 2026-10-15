@@ -3002,6 +3002,16 @@ def index():
     return render_template("index.html", wins=wins, losses=losses, total=total, roi=roi)
 
 
+@app.route("/privacy")
+def privacy_page():
+    return render_template("privacy.html")
+
+
+@app.route("/terms")
+def terms_page():
+    return render_template("terms.html")
+
+
 @app.route("/free")
 def free_landing():
     """Landing pública estilo WGT para la membresía gratuita (pedido por Alex 2026-10-03).
