@@ -2762,10 +2762,10 @@ def inject_user():
     ruta = (freq.endpoint or "")
     wm = WATERMARK_POR_RUTA.get(ruta)
     if wm is None:
-        wm = session.get("watermark")
-        if wm not in WATERMARKS:
-            wm = random.choice(WATERMARKS)
-            session["watermark"] = wm
+        # Rotacion POR CARGA (2026-10-15, orden de Alex): el fondo
+        # cambia entre los TRES (futbol, beisbol, NHL) en cada visita;
+        # antes la sesion fijaba uno solo y siempre salia el mismo.
+        wm = random.choice(WATERMARKS)
     nombre = session.get("nombre", "")
     corto = primer_nombre(nombre)
     cu = current_user()
