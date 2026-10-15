@@ -7007,20 +7007,12 @@ def admin_chat_mensaje():
                         "alerts": {"state": "pending"},
                     },
                 }
-                _sp = os.path.join(chat_dir, "ticket-status.json")
-                try:
-                    with open(_sp) as _sf:
-                        _all = _json.load(_sf)
-                    if not isinstance(_all, dict):
-                        _all = {}
-                except Exception:
-                    _all = {}
+                _all = _ticket_status_todos()
                 _all[_batch_id] = _batch
                 if len(_all) > 20:
                     for _k in sorted(_all.keys())[:len(_all) - 20]:
                         _all.pop(_k, None)
-                with open(_sp, "w") as _sf:
-                    _json.dump(_all, _sf, indent=2)
+                _ticket_status_guardar(_all)
             except Exception:
                 _batch_id = None
     return jsonify({"ok": True, "tickets": len(guardados),
@@ -7035,11 +7027,47 @@ def _ticket_status_file():
 def _ticket_status_todos():
     import json as _json
     try:
+        db = get_db()
+        db.execute("CREATE TABLE IF NOT EXISTS ticket_status_kv "
+                   "(id INTEGER PRIMARY KEY CHECK (id = 1), data TEXT)")
+        row = db.execute(
+            "SELECT data FROM ticket_status_kv WHERE id = 1").fetchone()
+        if row and row["data"]:
+            _d = _json.loads(row["data"])
+            if isinstance(_d, dict) and _d:
+                return _d
+    except Exception:
+        pass
+    try:
         with open(_ticket_status_file()) as _f:
             _d = _json.load(_f)
         return _d if isinstance(_d, dict) else {}
     except Exception:
         return {}
+
+
+def _ticket_status_guardar(_all):
+    # Persiste en la BD (sobrevive redeploys); el archivo queda como espejo.
+    import json as _json
+    ok = False
+    try:
+        db = get_db()
+        db.execute("CREATE TABLE IF NOT EXISTS ticket_status_kv "
+                   "(id INTEGER PRIMARY KEY CHECK (id = 1), data TEXT)")
+        db.execute("INSERT INTO ticket_status_kv (id, data) VALUES (1, ?) "
+                   "ON CONFLICT(id) DO UPDATE SET data = excluded.data",
+                   (_json.dumps(_all),))
+        db.commit()
+        ok = True
+    except Exception:
+        pass
+    try:
+        with open(_ticket_status_file(), "w") as _f:
+            _json.dump(_all, _f, indent=2)
+        ok = True
+    except Exception:
+        pass
+    return ok
 
 
 @app.route("/admin/ticket-status/latest")
@@ -7095,11 +7123,8 @@ def admin_ticket_status_update():
         "detail": (_d.get("detail") or "")[:200],
         "at": _dtS.now().strftime("%Y-%m-%d %H:%M:%S"),
     }
-    try:
-        with open(_ticket_status_file(), "w") as _f:
-            _json.dump(_all, _f, indent=2)
-    except Exception as _e:
-        return jsonify({"error": "no se pudo guardar: %s" % str(_e)[:100]}), 500
+    if not _ticket_status_guardar(_all):
+        return jsonify({"error": "no se pudo guardar el estado"}), 500
     return jsonify({"ok": True, "batch_id": _bid, "step": _step, "state": _state})
 
 @login_required
