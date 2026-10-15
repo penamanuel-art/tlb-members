@@ -1755,8 +1755,12 @@ def official_tracker_full():
 
     por_nivel = {}
     for nv in ("ELITE", "GOLD"):
+        # PLATINUM = ELITE + las viejas con etiqueta PLATINUM del
+        # pre-renombre (2026-10-15): asi Platinum + Gold = el total
+        # oficial EXACTO y ningun libro deja jugadas fuera.
+        _nvs = ("ELITE", "PLATINUM") if nv == "ELITE" else (nv,)
         por_nivel[nv] = _agg([it for it in settled
-                              if (it[1].get("nivel") or "").upper() == nv])
+                              if (it[1].get("nivel") or "").upper() in _nvs])
     bandas = {
         "Favorites (−110 o mejor)": [it for it in settled if int(it[1].get("cuota") or 0) <= -110],
         "Pick'em (−109 a +109)": [it for it in settled if -109 <= int(it[1].get("cuota") or 0) <= 109],
@@ -1811,6 +1815,14 @@ def official_tracker_full():
                 "nivel": (j.get("nivel") or "").upper(),
                 "comprobante": j.get("comprobante"),
                 "share_id": _share_id(f, j)} for f, j in reversed(settled[-12:])]
+    # LIBRO COMPLETO (2026-10-15, pedido por Alex): TODAS las liquidadas,
+    # mas nuevas primero, para la contabilidad por programa del tracker
+    # (cada jugada con su informacion y su ticket al lado).
+    historial = [{"fecha": f, "pick": j.get("pick"), "cuota": j.get("cuota_texto") or j.get("cuota"),
+                  "resultado": j.get("resultado"), "profit": float(j.get("profit") or 0.0),
+                  "nivel": (j.get("nivel") or "").upper(),
+                  "comprobante": j.get("comprobante"),
+                  "share_id": _share_id(f, j)} for f, j in reversed(settled)]
     # Record por liga (2026-10-14, pedido por Alex) con PUERTA DE
     # RECONCILIACIÓN DURA: la sección solo existe si TODAS las jugadas
     # liquidadas tienen liga derivable (_league_of_archive_play: campo
@@ -1878,7 +1890,7 @@ def official_tracker_full():
             "por_liga": por_liga,
             "racha_actual": racha_actual, "mejor_racha_w": mejor_w, "peor_racha_l": peor_l,
             "ult7": ult7, "ult30": ult30, "mejor": mejor, "peor": peor,
-            "ultimas": ultimas, "verificadas": verif,
+            "ultimas": ultimas, "historial": historial, "verificadas": verif,
             "verificadas_pct": round(verif / general["n"] * 100) if general["n"] else 0}
 
 
@@ -5771,7 +5783,24 @@ def official_tracker():
     completas que la versión del Admin. El tracker clásico de miembros
     (/resultados) queda igual. El link bajo la tarjeta de números del home
     apunta aquí."""
-    return render_template("official_tracker.html", t=official_tracker_full())
+    t = official_tracker_full()
+    # Contabilidad por programa (2026-10-15, pedido por Alex): cada
+    # tarjeta del home (Official / Platinum / Gold) abre el libro de SU
+    # programa: sus jugadas, cada una con su informacion y su ticket.
+    programa = (request.args.get("programa") or "all").strip().lower()
+    if programa not in ("all", "platinum", "gold"):
+        programa = "all"
+    if programa == "platinum":
+        libro = [x for x in t["historial"] if x["nivel"] in ("ELITE", "PLATINUM")]
+        libro_stats, libro_titulo = t["por_nivel"]["ELITE"], "Platinum plays"
+    elif programa == "gold":
+        libro = [x for x in t["historial"] if x["nivel"] == "GOLD"]
+        libro_stats, libro_titulo = t["por_nivel"]["GOLD"], "Gold plays"
+    else:
+        libro, libro_stats, libro_titulo = t["historial"], t["general"], "All official plays"
+    return render_template("official_tracker.html", t=t, programa=programa,
+                           libro=libro, libro_stats=libro_stats,
+                           libro_titulo=libro_titulo)
 
 
 @app.route("/admin/tracker-oficial")
