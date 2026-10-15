@@ -1171,3 +1171,30 @@ body.v2.has-bottomnav #faqPanel.above-ticker { bottom: calc(228px + env(safe-are
 .rc-st{font-size:10px;font-weight:900;letter-spacing:.14em;margin-top:3px}
 .rc-st.win{color:#3ddc84}
 .rc-st.loss{color:#ff7d92}
+
+/* ===== Receipts estilo referencia (2026-10-15, Alex: "al que te envié,
+   todo más pequeño") — fila compacta: ticket, pill del nivel, pick,
+   resultado en UNIDADES con el $ debajo. Reemplaza al Ledger rc-*. ===== */
+.wg-rows{display:flex;flex-direction:column;gap:9px}
+.wg-row{display:flex;gap:11px;align-items:center;width:100%;text-align:left;font:inherit;color:inherit;cursor:pointer;background:linear-gradient(180deg,#131a29,#0d1421);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:10px 12px;-webkit-tap-highlight-color:transparent}
+.wg-row:active{transform:scale(.995)}
+.wg-thumb{flex:0 0 58px}
+.wg-thumb img{width:58px;height:74px;object-fit:cover;object-position:top center;border-radius:10px;display:block}
+.wg-thumb-fallback{display:flex;align-items:center;justify-content:center;width:58px;height:74px;border-radius:10px;border:1px solid rgba(217,164,65,.45);background:linear-gradient(160deg,#16233c,#0b1322);color:#ffd257;font-size:8px;font-weight:900;letter-spacing:.12em;text-align:center;line-height:1.5}
+.wg-main{flex:1;min-width:0;display:flex;flex-direction:column}
+.wg-topline{display:flex;align-items:center;gap:8px;margin-bottom:5px}
+.wg-pill{font-size:9.5px;font-weight:900;letter-spacing:.13em;padding:3px 7px;border-radius:7px}
+.wg-pill.plat{color:#ffd257;border:1.5px solid rgba(255,210,87,.55);background:rgba(255,210,87,.07)}
+.wg-pill.gold{color:#e8edf5;border:1.5px solid rgba(232,237,245,.4);background:rgba(232,237,245,.05)}
+.wg-when{color:#8fa3bf;font-size:11px;font-weight:600;letter-spacing:.06em}
+.wg-pick{font-size:15px;font-weight:900;line-height:1.25;letter-spacing:-.01em;color:#eef2f8}
+.wg-meta{color:#8fa3bf;font-size:12px;font-weight:600;margin-top:4px}
+.wg-tap{color:#5ea3ff;font-weight:800}
+.wg-right{text-align:right;flex:0 0 auto;display:flex;flex-direction:column}
+.wg-st{font-size:11px;font-weight:900;letter-spacing:.16em}
+.wg-st.win{color:#3ddc84}
+.wg-st.loss{color:#9aa7ba}
+.wg-units{font-size:16.5px;font-weight:900;margin-top:2px}
+.wg-units.win{color:#3ddc84}
+.wg-units.loss{color:#9aa7ba}
+.wg-dollars{color:#7186a3;font-size:11px;font-weight:700;margin-top:1px}
