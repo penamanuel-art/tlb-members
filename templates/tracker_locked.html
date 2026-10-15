@@ -37,6 +37,12 @@
 .tk-sec li b{color:#fff}
 .tk-foot{font-size:12.5px;color:#8b98ab;line-height:1.55;margin-top:14px}
 .tk-btn{display:block;background:#1fc86b;color:#04150a;font-weight:800;font-size:16px;border-radius:14px;padding:15px;text-decoration:none;margin-top:8px}
+.tk-hero{padding:6px 2px 20px}
+.tk-hero h1{font-size:31px;font-weight:800;line-height:1.14;letter-spacing:-.5px;color:#fff;margin:0}
+.tk-hero h1 span{color:#f3cd6b}
+.tk-hero p{font-size:14.5px;color:#9aa7b8;line-height:1.55;margin-top:12px}
+.tk-dot{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:#2fe6a7;margin-top:14px}
+.tk-dot i{width:8px;height:8px;border-radius:50%;background:#2fe6a7;box-shadow:0 0 10px #2fe6a7;flex:0 0 auto}
 </style>
 
 <div class="tk-wrap">
@@ -51,6 +57,13 @@
     <p class="tk-foot" style="text-align:center">Access restores automatically as soon as the payment goes through — nothing is lost.</p>
   </div>
   {% else %}
+  <!-- ENCABEZADO (2026-10-15, pedido por Alex): titulo grande con
+       acento dorado y palabras NUESTRAS, lo primero de la pagina. -->
+  <div class="tk-hero">
+    <h1>Every play you track, <span>graded in public.</span></h1>
+    <p>Add any official play in one tap and your tracker follows it with your own stake — your record, your profit and your ROI, updated automatically when each game ends. Nothing edited, nothing hidden: every result stays on your record, win or loss.</p>
+    <div class="tk-dot"><i></i>Included with Platinum</div>
+  </div>
   <!-- CANDADO: el tracker personal va incluido con la membresía pagando -->
   <div class="tk-panel">
     <div class="tk-ico">🔒</div>
