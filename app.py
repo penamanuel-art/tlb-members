@@ -1809,15 +1809,24 @@ def official_tracker_full():
 
     peor = [{"fecha": f, "pick": j.get("pick"), "cuota": j.get("cuota_texto") or j.get("cuota"),
              "profit": float(j.get("profit") or 0.0), "nivel": (j.get("nivel") or "").upper(),
-             "comprobante": j.get("comprobante")} for f, j in ordenadas[:5]]
+             "comprobante": j.get("comprobante"),
+             "liga": _league_of_archive_play(j) or "",
+             "abbr": j.get("abbr") or "", "opp_abbr": j.get("opp_abbr") or "",
+             "unidades": round(float(j.get("profit") or 0.0) / 25.0, 2)} for f, j in ordenadas[:5]]
     mejor = [{"fecha": f, "pick": j.get("pick"), "cuota": j.get("cuota_texto") or j.get("cuota"),
               "profit": float(j.get("profit") or 0.0), "nivel": (j.get("nivel") or "").upper(),
               "comprobante": j.get("comprobante"),
+              "liga": _league_of_archive_play(j) or "",
+              "abbr": j.get("abbr") or "", "opp_abbr": j.get("opp_abbr") or "",
+              "unidades": round(float(j.get("profit") or 0.0) / 25.0, 2),
               "share_id": _share_id(f, j)} for f, j in reversed(ordenadas[-5:])]
     ultimas = [{"fecha": f, "pick": j.get("pick"), "cuota": j.get("cuota_texto") or j.get("cuota"),
                 "resultado": j.get("resultado"), "profit": float(j.get("profit") or 0.0),
                 "nivel": (j.get("nivel") or "").upper(),
                 "comprobante": j.get("comprobante"),
+                "liga": _league_of_archive_play(j) or "",
+                "abbr": j.get("abbr") or "", "opp_abbr": j.get("opp_abbr") or "",
+                "unidades": round(float(j.get("profit") or 0.0) / 25.0, 2),
                 "share_id": _share_id(f, j)} for f, j in reversed(settled[-12:])]
     # LIBRO COMPLETO (2026-10-15, pedido por Alex): TODAS las liquidadas,
     # mas nuevas primero, para la contabilidad por programa del tracker
@@ -1826,6 +1835,9 @@ def official_tracker_full():
                   "resultado": j.get("resultado"), "profit": float(j.get("profit") or 0.0),
                   "nivel": (j.get("nivel") or "").upper(),
                   "comprobante": j.get("comprobante"),
+                  "liga": _league_of_archive_play(j) or "",
+                  "abbr": j.get("abbr") or "", "opp_abbr": j.get("opp_abbr") or "",
+                  "unidades": round(float(j.get("profit") or 0.0) / 25.0, 2),
                   "share_id": _share_id(f, j)} for f, j in reversed(settled)]
     # Record por liga (2026-10-14, pedido por Alex) con PUERTA DE
     # RECONCILIACIÓN DURA: la sección solo existe si TODAS las jugadas
