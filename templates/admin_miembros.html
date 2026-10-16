@@ -2,6 +2,28 @@
 {% block title %}Members — Admin{% endblock %}
 {% block content %}
 
+<style>
+  .mx-card{background:linear-gradient(160deg,#101828,#0c1322);border:1px solid #1e2a45;border-radius:18px;padding:18px;margin-bottom:14px;}
+  .mx-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;}
+  .mx-name{font-size:19px;font-weight:800;color:#ffffff;line-height:1.2;}
+  .mx-new{font-size:10px;font-weight:800;color:#f5c542;letter-spacing:1px;vertical-align:middle;}
+  .mx-email{font-size:13px;color:#8fa1bd;margin-top:3px;word-break:break-all;}
+  .mx-status{flex:none;font-size:11px;font-weight:800;letter-spacing:1px;padding:6px 12px;border-radius:999px;white-space:nowrap;}
+  .mx-status.plat{background:#f5c542;color:#141414;}
+  .mx-status.free{background:#22345c;color:#aebdd4;}
+  .mx-status.adm{background:#22c55e;color:#08130c;}
+  .mx-rows{margin-top:14px;border-top:1px solid #1e2a45;padding-top:12px;display:flex;flex-direction:column;gap:8px;}
+  .mx-row{display:flex;justify-content:space-between;align-items:center;font-size:13.5px;gap:10px;}
+  .mx-row .k{color:#8fa1bd;}
+  .mx-row .v{color:#e6ecf5;font-weight:700;text-align:right;}
+  .mx-row .v.gold{color:#f5c542;}
+  .mx-row .v.red{color:#f87171;}
+  .mx-note{margin-top:10px;font-size:12px;color:#f59e0b;}
+  .mx-actions{margin-top:14px;display:flex;gap:8px;}
+  .mx-actions form{flex:1;}
+  .mx-actions button{width:100%;}
+</style>
+
 <section class="tracker-head">
   <div>
     <p class="kicker">ADMIN</p>
@@ -10,57 +32,44 @@
 </section>
 
 {% for m in miembros %}
-<article class="member-row">
-  <div class="m-name">{{ m.nombre }}</div>
-  <div class="m-email">{{ m.email }}</div>
-  <div class="m-meta">
-    <span class="m-pill">Joined: {{ m.created_at[:10] if m.created_at else '—' }}</span>
-    {% if m.es_nuevo %}<span class="m-pill on">NEW</span>{% endif %}
-    {% if m.platinum_unlocked %}<span class="m-pill on">★ PLATINUM</span>{% endif %}
-    {% if m.is_admin %}<span class="m-pill on">Admin</span>{% endif %}
-    {% if m.cancel_requested_at %}<span class="m-pill cancel">⚠️ Cancel requested {{ m.cancel_requested_at[:10] }}</span>{% endif %}
-    {% if m.stripe_customer_id %}<span class="m-pill on">💳 Stripe</span>{% endif %}
+<article class="mx-card">
+  <div class="mx-top">
+    <div>
+      <div class="mx-name">{{ m.nombre }} {% if m.es_nuevo %}<span class="mx-new">● NEW</span>{% endif %}</div>
+      <div class="mx-email">{{ m.email }}</div>
+    </div>
+    {% if m.is_admin %}<span class="mx-status adm">ADMIN</span>
+    {% elif m.platinum_unlocked %}<span class="mx-status plat">★ PLATINUM</span>
+    {% else %}<span class="mx-status free">FREE</span>{% endif %}
   </div>
-  <form method="post" action="{{ url_for('admin_stake_fijo') }}" class="m-stake-form">
-    <input type="hidden" name="user_id" value="{{ m.id }}">
-    <label>Platinum $<input type="number" name="stake_elite" min="0" step="0.01" placeholder="auto" value="{{ m.stake_fijo_elite if m.stake_fijo_elite else '' }}"></label>
-    <label>Gold $<input type="number" name="stake_gold" min="0" step="0.01" placeholder="auto" value="{{ m.stake_fijo_gold if m.stake_fijo_gold else '' }}"></label>
-    <button class="btn btn-sm btn-ghost" type="submit">Save stakes</button>
-  </form>
-  <form method="post" action="{{ url_for('admin_toggle_platinum') }}">
-    <input type="hidden" name="user_id" value="{{ m.id }}">
-    <button class="btn btn-sm {{ 'btn-ghost' if m.platinum_unlocked else 'btn-place' }}" type="submit">
-      {{ 'Remove Platinum' if m.platinum_unlocked else 'Activate Platinum' }}
-    </button>
-  </form>
-  <a href="{{ url_for('admin_ver_tracker', user_id=m.id) }}" class="btn btn-sm btn-ghost">📊 Ver tracker</a>
-  {% if m.telegram_user_id %}
-  <form method="post" action="{{ url_for('admin_telegram_ban') }}" style="display:inline;">
-    <input type="hidden" name="user_id" value="{{ m.id }}">
-    {% if m.telegram_ban_pending %}
-    <button class="btn btn-sm btn-ghost" type="submit" name="action" value="unban" style="border-color:#3c3;color:#3c3;">⏳ Ban pendiente — deshacer</button>
-    {% elif m.telegram_unban_pending %}
-    <button class="btn btn-sm btn-ghost" type="submit" name="action" value="ban" style="border-color:#c33;color:#c33;">⏳ Unban pendiente — banear</button>
+  <div class="mx-rows">
+    <div class="mx-row"><span class="k">📅 Joined</span><span class="v">{{ m.created_at[:10] if m.created_at else '—' }}</span></div>
+    {% if m.platinum_unlocked %}
+    <div class="mx-row"><span class="k">💎 Platinum</span>
+      {% if m.platinum_trial_ends %}<span class="v gold">Until {{ m.platinum_trial_ends[:10] }}</span>
+      {% elif m.stripe_subscription_id %}<span class="v gold">Active · Stripe</span>
+      {% else %}<span class="v gold">Active · No expiry</span>{% endif %}
+    </div>
     {% else %}
-    <button class="btn btn-sm btn-ghost" type="submit" name="action" value="ban" style="border-color:#c33;color:#c33;" onclick="return confirm('Banear a {{ m.email }} del Sharp Club?');">🚫 Ban Telegram</button>
+    <div class="mx-row"><span class="k">💎 Platinum</span><span class="v">Not subscribed</span></div>
     {% endif %}
-  </form>
-  {% endif %}
-  <details style="margin-top:8px;">
-    <summary class="btn btn-sm btn-ghost" style="cursor:pointer;display:inline-block;">✉️ Email directo</summary>
-    <form method="post" action="{{ url_for('admin_email_directo') }}" style="margin-top:8px;">
+    {% if m.stripe_past_due %}
+    <div class="mx-row"><span class="k">💳 Payment</span><span class="v red">Past due</span></div>
+    {% endif %}
+  </div>
+  {% if m.cancel_requested_at %}<div class="mx-note">⚠️ Cancel requested {{ m.cancel_requested_at[:10] }}</div>{% endif %}
+  <div class="mx-actions">
+    <form method="post" action="{{ url_for('admin_toggle_platinum') }}">
       <input type="hidden" name="user_id" value="{{ m.id }}">
-      <input type="text" name="subject" placeholder="Asunto" required style="width:100%;margin-bottom:6px;padding:8px;border-radius:8px;border:1px solid #2a3350;background:#141a2b;color:#fff;">
-      <textarea name="body" placeholder="Mensaje..." required rows="3" style="width:100%;margin-bottom:6px;padding:8px;border-radius:8px;border:1px solid #2a3350;background:#141a2b;color:#fff;"></textarea>
-      <button class="btn btn-sm btn-place" type="submit">Enviar</button>
+      <button class="btn btn-sm {{ 'btn-ghost' if m.platinum_unlocked else 'btn-place' }}" type="submit">{{ 'Remove Platinum' if m.platinum_unlocked else 'Activate Platinum' }}</button>
     </form>
-  </details>
-  {% if not m.is_admin %}
-  <form method="post" action="{{ url_for('admin_eliminar_miembro') }}" onsubmit="return confirm('Delete this account?');">
-    <input type="hidden" name="user_id" value="{{ m.id }}">
-    <button class="btn btn-sm btn-ghost" type="submit">Delete</button>
-  </form>
-  {% endif %}
+    {% if not m.is_admin %}
+    <form method="post" action="{{ url_for('admin_eliminar_miembro') }}" onsubmit="return confirm('Delete this account?');">
+      <input type="hidden" name="user_id" value="{{ m.id }}">
+      <button class="btn btn-sm btn-ghost" type="submit">Delete</button>
+    </form>
+    {% endif %}
+  </div>
 </article>
 {% else %}
 <p class="muted">No registered members.</p>
