@@ -175,47 +175,95 @@ a.lux-rec-card:active{transform:scale(.985)}
   {% endif %}
 </section>
 
-<!-- RECENT GRADED TICKETS (presentación del ticket intacta) -->
+<!-- RECENT GRADED TICKETS — diseño "Yesterday" (2026-10-16, aprobado por
+     Alex tras ver muestras): encabezado por día, resumen por nivel SOLO
+     PLATINUM y GOLD (sin fila de totales), tarjetas con el ticket
+     chiquito, WON/LOST y unidades — letra fina y pequeña en todo.
+     El toque de la tarjeta abre el ticket original en el modal. -->
+<style>
+  .yw-head { display:flex; align-items:center; justify-content:space-between; margin:2px 0 12px; }
+  .yw-title { font-size:21px; font-weight:300; letter-spacing:-.3px; color:#eef2f8; }
+  .yw-title span { color:#8b98ad; font-size:13px; font-weight:300; margin-left:8px; }
+  .yw-full { background:#131e31; border:1px solid #24334d; color:#dbe4f2; font-size:12px; font-weight:300; padding:8px 12px; border-radius:10px; text-decoration:none; }
+  .yw-sum { display:flex; align-items:center; gap:10px; background:#0d1626; border:1px solid #1d2a42; border-radius:14px; padding:11px 13px; margin-bottom:9px; color:#eef2f8; }
+  .yw-sum .rec { font-size:16px; font-weight:300; }
+  .yw-sum .net { font-size:14px; font-weight:300; color:#c7d2e4; }
+  .yw-sum .graded { margin-left:auto; color:#8b98ad; font-size:12px; font-weight:300; }
+  .yw-badge { display:inline-block; font-size:10px; font-weight:300; letter-spacing:1.2px; padding:5px 9px; border-radius:8px; white-space:nowrap; }
+  .yw-b-plat { background:rgba(232,199,102,.13); color:#e8c766; border:1px solid rgba(232,199,102,.45); }
+  .yw-b-gold { background:rgba(148,166,196,.12); color:#aebdd4; border:1px solid rgba(148,166,196,.35); }
+  .yw-card { display:flex; gap:12px; width:100%; text-align:left; background:#0d1626; border:1px solid #1d2a42; border-radius:16px; padding:13px; margin-top:11px; align-items:center; cursor:pointer; font:inherit; color:#eef2f8; appearance:none; -webkit-appearance:none; }
+  .yw-card.won { border-color:rgba(47,191,113,.45); }
+  .yw-thumb { width:60px; height:60px; border-radius:10px; object-fit:cover; flex:none; background:#16223a; }
+  .yw-thumb-fallback { width:60px; height:60px; border-radius:10px; flex:none; background:#16223a; color:#8b98ad; font-size:9px; font-weight:300; display:flex; align-items:center; justify-content:center; text-align:center; line-height:1.5; }
+  .yw-main { flex:1; min-width:0; display:block; }
+  .yw-meta { display:flex; align-items:center; gap:8px; margin-bottom:5px; }
+  .yw-kind { color:#8b98ad; font-size:12px; font-weight:300; }
+  .yw-pick { font-size:15.5px; font-weight:300; line-height:1.25; display:block; }
+  .yw-match { color:#8b98ad; font-size:12.5px; font-weight:300; margin-top:4px; display:block; }
+  .yw-res { text-align:right; flex:none; display:block; }
+  .yw-res .st { font-size:11px; font-weight:300; letter-spacing:1.4px; display:block; }
+  .yw-res .u { font-size:16px; font-weight:300; margin-top:3px; display:block; }
+  .yw-won-t { color:#2fbf71; }
+  .yw-lost-t { color:#8b98ad; }
+  .yw-day + .yw-day { margin-top:22px; }
+</style>
 <section class="v2-sec lux-panel lux-receipts">
-  <div class="v2-sec-head">
-    <div>
-      <p class="v2-sec-eyebrow"><b>01</b> · Receipts</p>
-      <h2 class="v2-sec-title">Recent graded tickets</h2>
-      <p class="v2-sec-sub">Every play posted before the game — wins and losses. Tap a ticket to see the original receipt.</p>
-    </div>
-    {# "View all" eliminado (2026-10-12): mismo destino que "📜 Full record". #}
-  </div>
   {% if recientes %}
-  <div class="wg-rows">
-  {% for r in recientes %}
-    {% set won = r.resultado == 'WON' %}
-    <button type="button" class="wg-row" data-ticket="luxht-{{ loop.index }}" aria-label="View receipt for {{ r.pick }}">
-      <span class="wg-thumb">
-        {% if r.comprobante %}
-        <img src="{{ url_for('static', filename=r.comprobante) }}" alt="Original receipt: {{ r.pick }}" loading="lazy">
-        {% else %}
-        <span class="wg-thumb-fallback">THE<br>SHARP<br>TEAM</span>
-        {% endif %}
+  {% set mc = namespace(n=0) %}
+  {% set meses = {'01':'Jan','02':'Feb','03':'Mar','04':'Apr','05':'May','06':'Jun','07':'Jul','08':'Aug','09':'Sep','10':'Oct','11':'Nov','12':'Dec'} %}
+  {% for g in recientes_dias %}
+    {% set iso = g.fecha_iso %}
+    {% set etiqueta = 'Yesterday' if iso == ayer_iso else ('Today' if iso == hoy_iso else (meses.get(iso[5:7], '') ~ ' ' ~ (iso[8:10] | int))) %}
+    {% set sub = meses.get(iso[5:7], '') ~ ' ' ~ (iso[8:10] | int) ~ ' card' %}
+    {% set ns = namespace(pw=0, pl=0, pu=0.0, gw=0, gl=0, gu=0.0) %}
+    {% for r in g.plays %}
+      {% if r.nivel in ['ELITE','PLATINUM'] %}
+        {% if r.resultado == 'WON' %}{% set ns.pw = ns.pw + 1 %}{% else %}{% set ns.pl = ns.pl + 1 %}{% endif %}
+        {% if r.unidades is not none %}{% set ns.pu = ns.pu + r.unidades %}{% endif %}
+      {% elif r.nivel == 'GOLD' %}
+        {% if r.resultado == 'WON' %}{% set ns.gw = ns.gw + 1 %}{% else %}{% set ns.gl = ns.gl + 1 %}{% endif %}
+        {% if r.unidades is not none %}{% set ns.gu = ns.gu + r.unidades %}{% endif %}
+      {% endif %}
+    {% endfor %}
+  <div class="yw-day">
+    <div class="yw-head">
+      <div class="yw-title">{{ etiqueta }} <span>{{ sub }}</span></div>
+      {% if loop.first %}<a class="yw-full" href="/official-tracker">&#8599; Full record</a>{% endif %}
+    </div>
+    {% if ns.pw + ns.pl > 0 %}
+    <div class="yw-sum"><span class="yw-badge yw-b-plat">PLATINUM</span><span class="rec">{{ ns.pw }}-{{ ns.pl }}</span><span class="net">{{ '+' if ns.pu > 0 else '' }}{{ '%.2f' % ns.pu }}u</span><span class="graded">{{ ns.pw + ns.pl }} graded</span></div>
+    {% endif %}
+    {% if ns.gw + ns.gl > 0 %}
+    <div class="yw-sum"><span class="yw-badge yw-b-gold">GOLD</span><span class="rec">{{ ns.gw }}-{{ ns.gl }}</span><span class="net">{{ '+' if ns.gu > 0 else '' }}{{ '%.2f' % ns.gu }}u</span><span class="graded">{{ ns.gw + ns.gl }} graded</span></div>
+    {% endif %}
+    {% for r in g.plays %}
+      {% set mc.n = mc.n + 1 %}
+      {% set won = r.resultado == 'WON' %}
+      {% set es_plat = r.nivel in ['ELITE','PLATINUM'] %}
+      {% set partes = r.pick.split(' vs ') %}
+      {% if partes | length < 2 %}{% set partes = r.pick.split(' @ ') %}{% endif %}
+    <button type="button" class="yw-card {{ 'won' if won else '' }}" data-ticket="luxht-{{ mc.n }}" aria-label="View receipt for {{ r.pick }}">
+      {% if r.comprobante %}
+      <img class="yw-thumb" src="{{ url_for('static', filename=r.comprobante) }}" alt="Original receipt: {{ r.pick }}" loading="lazy">
+      {% else %}
+      <span class="yw-thumb-fallback">THE<br>SHARP<br>TEAM</span>
+      {% endif %}
+      <span class="yw-main">
+        <span class="yw-meta"><span class="yw-badge {{ 'yw-b-plat' if es_plat else 'yw-b-gold' }}">{{ 'PLATINUM' if es_plat else 'GOLD' }}</span><span class="yw-kind">{{ 'Platinum' if es_plat else 'Gold' }} play{% if r.liga %} · {{ r.liga }}{% endif %}</span></span>
+        <span class="yw-pick">{{ partes[0] }}</span>
+        {% if r.abbr and r.opp_abbr %}<span class="yw-match">{{ r.abbr }} vs {{ r.opp_abbr }}</span>{% endif %}
       </span>
-      <span class="wg-main">
-        <span class="wg-topline">
-          <span class="wg-pill {{ 'plat' if r.nivel in ['ELITE','PLATINUM'] else 'gold' }}">{{ 'PLATINUM' if r.nivel in ['ELITE','PLATINUM'] else ('GOLD' if r.nivel == 'GOLD' else r.nivel) }}</span>
-          <span class="wg-when">{{ r.fecha }}</span>
-        </span>
-        <span class="wg-pick">{{ r.pick }}</span>
-        <span class="wg-meta">{{ fmt_odds(r.cuota) }}{% if r.stake_unidades %} · {{ '%g' % r.stake_unidades }}u{% endif %}{% if r.comprobante %} · <span class="wg-tap">View ticket →</span>{% endif %}</span>
-      </span>
-      <span class="wg-right">
-        <span class="wg-st {{ 'win' if won else 'loss' }}">{{ 'WON' if won else 'LOST' }}</span>
+      <span class="yw-res">
+        <span class="st {{ 'yw-won-t' if won else 'yw-lost-t' }}">{{ 'WON' if won else 'LOST' }}</span>
         {% if r.unidades is not none %}
-        <span class="wg-units {{ 'win' if won else 'loss' }}">{{ '+' if r.unidades > 0 else '' }}{{ '%.2f' % r.unidades }}u</span>
-        <span class="wg-dollars">{{ fmt_money(r.profit) }}</span>
+        <span class="u {{ 'yw-won-t' if won else 'yw-lost-t' }}">{{ '+' if r.unidades > 0 else '' }}{{ '%.2f' % r.unidades }}u</span>
         {% else %}
-        <span class="wg-units {{ 'win' if won else 'loss' }}">{{ fmt_money(r.profit) }}</span>
+        <span class="u {{ 'yw-won-t' if won else 'yw-lost-t' }}">{{ fmt_money(r.profit) }}</span>
         {% endif %}
       </span>
     </button>
-    <div class="modal" id="luxht-{{ loop.index }}" hidden>
+    <div class="modal" id="luxht-{{ mc.n }}" hidden>
       <div class="modal-card ticket-photo-card">
         <button type="button" class="modal-close" data-close>✕</button>
         {% if r.comprobante %}
@@ -225,19 +273,21 @@ a.lux-rec-card:active{transform:scale(.985)}
         <p class="ticket-pick">{{ r.pick }} {{ fmt_odds(r.cuota) }}</p>
         <div class="ticket-rows">
           <div><span>Date</span><b>{{ r.fecha }}</b></div>
-          <div><span>Level</span><b>{{ 'PLATINUM' if r.nivel in ['ELITE','PLATINUM'] else ('GOLD' if r.nivel == 'GOLD' else r.nivel) }}</b></div>
+          <div><span>Level</span><b>{{ 'PLATINUM' if es_plat else 'GOLD' }}</b></div>
           <div><span>Result</span><b class="{{ 'pos' if won else 'neg' }}">{{ 'WON' if won else 'LOST' }} · {{ fmt_money(r.profit) }}</b></div>
         </div>
         <p class="ticket-note">Original receipt not uploaded for this play.</p>
         {% endif %}
       </div>
     </div>
-  {% endfor %}
+    {% endfor %}
   </div>
+  {% endfor %}
   {% else %}
   <p class="muted">No settled plays yet — tickets appear here as soon as the first plays are graded.</p>
   {% endif %}
 </section>
+
 
 <!-- THE DOCUMENTED RECORD (2026-10-15, diseno aprobado por Alex):
      tarjetas grandes con el record oficial EN VIVO (official_tracker_full,
