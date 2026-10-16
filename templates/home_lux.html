@@ -204,6 +204,9 @@ a.lux-rec-card:active{transform:scale(.985)}
   .yw-kind { color:#8b98ad; font-size:12px; font-weight:300; }
   .yw-pick { font-size:15.5px; font-weight:300; line-height:1.25; display:block; }
   .yw-match { color:#8b98ad; font-size:12.5px; font-weight:300; margin-top:4px; display:block; }
+  .yw-clv { color:#8b98ad; font-size:11.5px; font-weight:300; margin-top:3px; display:block; }
+  .yw-clv-pos { color:#2fbf71; }
+  .yw-clv-neg { color:#ff8a8a; }
   .yw-res { text-align:right; flex:none; display:block; }
   .yw-res .st { font-size:11px; font-weight:300; letter-spacing:1.4px; display:block; }
   .yw-res .u { font-size:16px; font-weight:300; margin-top:3px; display:block; }
@@ -256,6 +259,7 @@ a.lux-rec-card:active{transform:scale(.985)}
         <span class="yw-meta"><span class="yw-badge {{ 'yw-b-plat' if es_plat else 'yw-b-gold' }}">{{ 'PLATINUM' if es_plat else 'GOLD' }}</span><span class="yw-kind">{{ 'Platinum' if es_plat else 'Gold' }} play{% if r.liga %} · {{ r.liga }}{% endif %}</span></span>
         <span class="yw-pick">{{ partes[0] }}</span>
         {% if r.abbr and r.opp_abbr %}<span class="yw-match">{{ r.abbr }} vs {{ r.opp_abbr }}</span>{% endif %}
+        {% if r.cierre %}<span class="yw-clv">Closed {{ r.cierre }} · CLV <span class="{{ 'yw-clv-pos' if (r.clv or 0) >= 0 else 'yw-clv-neg' }}">{{ '%+.1f' % (r.clv or 0) }}%</span></span>{% endif %}
       </span>
       <span class="yw-res">
         <span class="st {{ 'yw-won-t' if won else 'yw-lost-t' }}">{{ 'WON' if won else 'LOST' }}</span>
