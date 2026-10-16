@@ -102,7 +102,9 @@ body.v2::before {
   position: sticky; top: 0; z-index: 50;
   display: flex; align-items: center; justify-content: space-between;
   gap: 10px; padding: 10px 16px;
-  background: rgba(10, 20, 19, 0.86);
+  /* Color EXACTO del disco del logo (#151616) y opaco: el logo se funde
+     con la barra sin borde de otro color (pedido de Alex, 2026-10-15). */
+  background: #151616;
   backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--v2-border);
 }
