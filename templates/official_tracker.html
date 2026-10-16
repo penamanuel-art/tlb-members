@@ -48,7 +48,57 @@
 #otModal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.92); z-index: 4000; align-items: center; justify-content: center; padding: 18px; }
 #otModal img { max-width: 100%; max-height: 92vh; border-radius: 14px; }
 #otModal .ot-x { position: absolute; top: 16px; right: 18px; color: #fff; font-size: 1.6rem; background: rgba(255,255,255,.12); border: none; width: 42px; height: 42px; border-radius: 50%; cursor: pointer; }
+
+/* Tarjetas de jugada — diseño nuevo (2026-10-16, aprobado por Alex) */
+.yw-badge { display:inline-block; font-size:10px; font-weight:300; letter-spacing:1.2px; padding:5px 9px; border-radius:8px; white-space:nowrap; }
+.yw-b-plat { background:rgba(232,199,102,.13); color:#e8c766; border:1px solid rgba(232,199,102,.45); }
+.yw-b-gold { background:rgba(148,166,196,.12); color:#aebdd4; border:1px solid rgba(148,166,196,.35); }
+.yw-card { display:flex; gap:12px; width:100%; box-sizing:border-box; text-align:left; background:#0d1626; border:1px solid #1d2a42; border-radius:16px; padding:13px; margin-top:11px; align-items:center; color:#eef2f8; font-family:-apple-system,'SF Pro',Inter,system-ui,sans-serif; }
+.yw-card.won { border-color:rgba(47,191,113,.45); }
+.yw-thumb { width:60px; height:60px; border-radius:10px; object-fit:cover; flex:none; background:#16223a; }
+.yw-thumb-fallback { width:60px; height:60px; border-radius:10px; flex:none; background:#16223a; color:#8b98ad; font-size:9px; font-weight:300; display:flex; align-items:center; justify-content:center; text-align:center; line-height:1.5; }
+.yw-main { flex:1; min-width:0; display:block; }
+.yw-meta { display:flex; align-items:center; gap:8px; margin-bottom:5px; }
+.yw-kind { color:#8b98ad; font-size:12px; font-weight:300; }
+.yw-pick { font-size:15.5px; font-weight:300; line-height:1.25; display:block; color:#eef2f8; }
+.yw-match { color:#8b98ad; font-size:12.5px; font-weight:300; margin-top:4px; display:block; }
+.yw-share { color:#2fe6a7; font-size:12px; font-weight:300; text-decoration:none; display:inline-block; margin-top:5px; }
+.yw-res { text-align:right; flex:none; display:block; }
+.yw-res .st { font-size:11px; font-weight:300; letter-spacing:1.4px; display:block; }
+.yw-res .u { font-size:16px; font-weight:300; margin-top:3px; display:block; }
+.yw-won-t { color:#2fbf71; }
+.yw-lost-t { color:#8b98ad; }
 </style>
+
+{# Tarjeta de jugada — diseño nuevo aprobado por Alex (2026-10-16):
+   la misma carta del Receipts del home (ticket chiquito, badge, pick,
+   matchup y WON/LOST con unidades; letra fina y pequeña). #}
+{% set meses = {'01':'Jan','02':'Feb','03':'Mar','04':'Apr','05':'May','06':'Jun','07':'Jul','08':'Aug','09':'Sep','10':'Oct','11':'Nov','12':'Dec'} %}
+{% macro yw_play(x, resultado) %}
+  {% set won = resultado == 'WON' %}
+  {% set es_plat = x.nivel in ['ELITE','PLATINUM'] %}
+  {% set partes = (x.pick or '').split(' vs ') %}
+  {% if partes | length < 2 %}{% set partes = (x.pick or '').split(' @ ') %}{% endif %}
+  {% set f = x.fecha or '' %}
+  {% set ftexto = (meses.get(f[5:7], '') ~ ' ' ~ (f[8:10] | int)) if (f | length) >= 10 else f %}
+  <div class="yw-card {{ 'won' if won else '' }}"{% if x.comprobante %} onclick="otZoom('{{ url_for('static', filename=x.comprobante) }}')" style="cursor:pointer;"{% endif %}>
+    {% if x.comprobante %}
+    <img class="yw-thumb" src="{{ url_for('static', filename=x.comprobante) }}" alt="Original ticket" loading="lazy">
+    {% else %}
+    <span class="yw-thumb-fallback">THE<br>SHARP<br>TEAM</span>
+    {% endif %}
+    <span class="yw-main">
+      <span class="yw-meta"><span class="yw-badge {{ 'yw-b-plat' if es_plat else 'yw-b-gold' }}">{{ 'PLATINUM' if es_plat else 'GOLD' }}</span><span class="yw-kind">{{ 'Platinum' if es_plat else 'Gold' }} play{% if x.liga %} · {{ x.liga }}{% endif %}</span></span>
+      <span class="yw-pick">{{ partes[0] }}</span>
+      <span class="yw-match">{% if x.abbr and x.opp_abbr %}{{ x.abbr }} vs {{ x.opp_abbr }} · {% endif %}{{ ftexto }}{% if x.cuota %} · {{ x.cuota }}{% endif %}</span>
+      {% if x.share_id %}<a class="yw-share" href="{{ url_for('share_play', play_id=x.share_id) }}" onclick="event.stopPropagation()">Share 📤</a>{% endif %}
+    </span>
+    <span class="yw-res">
+      <span class="st {{ 'yw-won-t' if won else 'yw-lost-t' }}">{{ 'WON' if won else 'LOST' }}</span>
+      <span class="u {{ 'yw-won-t' if won else 'yw-lost-t' }}">{{ '+' if x.unidades > 0 else '' }}{{ '%.2f' % x.unidades }}u</span>
+    </span>
+  </div>
+{% endmacro %}
 
 <div class="ot-wrap">
   <a class="ot-back" href="/home">← Back to Dashboard</a>
@@ -135,16 +185,8 @@
 
   <div class="ot-section">
     <h2>Best &amp; worst plays</h2>
-    <div class="ot-card">
-      {% for x in t.mejor %}
-      <div class="ot-play">{% if x.comprobante %}<div class="ot-thumbwrap" onclick="otZoom('{{ url_for('static', filename=x.comprobante) }}')"><img class="ot-thumb" src="{{ url_for('static', filename=x.comprobante) }}" alt="Original ticket" loading="lazy"><span class="ot-zoom">🔍</span></div>{% endif %}<div style="flex:1;"><span class="pk">{{ x.pick }}</span> <span class="ot-lvl">{{ 'PLATINUM' if x.nivel == 'ELITE' else x.nivel }}</span><div class="dt">{{ x.fecha }} · {{ x.cuota }}{% if x.share_id %} · <a href="{{ url_for('share_play', play_id=x.share_id) }}">Share 📤</a>{% endif %}</div></div>
-        <b class="ot-pos">+${{ '{:,.2f}'.format(x.profit) }}</b></div>
-      {% endfor %}
-      {% for x in t.peor %}
-      <div class="ot-play">{% if x.comprobante %}<div class="ot-thumbwrap" onclick="otZoom('{{ url_for('static', filename=x.comprobante) }}')"><img class="ot-thumb" src="{{ url_for('static', filename=x.comprobante) }}" alt="Original ticket" loading="lazy"><span class="ot-zoom">🔍</span></div>{% endif %}<div style="flex:1;"><span class="pk">{{ x.pick }}</span> <span class="ot-lvl">{{ 'PLATINUM' if x.nivel == 'ELITE' else x.nivel }}</span><div class="dt">{{ x.fecha }} · {{ x.cuota }}</div></div>
-        <b class="ot-neg">−${{ '{:,.2f}'.format(-x.profit) }}</b></div>
-      {% endfor %}
-    </div>
+    {% for x in t.mejor %}{{ yw_play(x, 'WON') }}{% endfor %}
+    {% for x in t.peor %}{{ yw_play(x, 'LOST') }}{% endfor %}
   </div>
 
   <div class="ot-tabs">
@@ -156,17 +198,7 @@
   <div class="ot-section">
     <h2>{{ libro_titulo }} — the full ledger</h2>
     <p class="ot-libro-stats"><b>{{ libro_stats.record }}</b> · {{ libro_stats.win_rate }}% win rate · <b>{{ libro_stats.units_display }}</b> · {{ libro_stats.profit_display }} · ROI {{ '+' if libro_stats.roi > 0 else '' }}{{ libro_stats.roi }}% · {{ libro|length }} plays, each with its original ticket.</p>
-    <div class="ot-card">
-      {% for x in libro %}
-      <div class="ot-play">
-        {% if x.comprobante %}<div class="ot-thumbwrap" onclick="otZoom('{{ url_for('static', filename=x.comprobante) }}')"><img class="ot-thumb" src="{{ url_for('static', filename=x.comprobante) }}" alt="Original ticket" loading="lazy"><span class="ot-zoom">🔍</span></div>{% endif %}
-        <div style="flex:1;"><span class="pk">{{ x.pick }}</span> <span class="ot-lvl">{{ 'PLATINUM' if x.nivel == 'ELITE' else x.nivel }}</span>
-          <div class="dt">{{ x.fecha }} · {{ x.cuota }}{% if x.comprobante %} · <a href="{{ url_for('static', filename=x.comprobante) }}" target="_blank">View ticket →</a>{% endif %}{% if x.share_id %} · <a href="{{ url_for('share_play', play_id=x.share_id) }}">Share 📤</a>{% endif %}</div></div>
-        <div style="text-align:right;"><span class="ot-badge {{ 'ot-w' if x.resultado == 'WON' else 'ot-l' }}">{{ x.resultado }}</span>
-          <div style="font-size:0.78rem;margin-top:3px;color:{{ '#00e07f' if x.profit > 0 else ('#ff5d5d' if x.profit < 0 else '#8b94a9') }};">{{ '+$' if x.profit > 0 else ('−$' if x.profit < 0 else '$') }}{{ '{:,.2f}'.format(x.profit|abs) }}</div></div>
-      </div>
-      {% endfor %}
-    </div>
+    {% for x in libro %}{{ yw_play(x, x.resultado) }}{% endfor %}
   </div>
 
 </div>
