@@ -851,6 +851,10 @@ WELCOME_TEXT = """Hi __NOMBRE__,
 
 Welcome to The Sharp Team! Your dashboard is ready \u2014 and your Platinum membership starts with a FULL MONTH FREE.
 
+YOUR ACCESS, IN PLAIN WORDS:
+- PLATINUM plays: FREE for your first month (then $49.99/month only if you stay).
+- GOLD plays: FREE FOR LIFE \u2014 no card, no expiration, yours forever.
+
 EVERYTHING YOUR PLAN UNLOCKS
 1. THE DAILY CARD - Every day at 2:00 PM ET (11:00 AM ET on weekends): the day's official plays (Gold plus the one Platinum), each with its original bet ticket. No filler, ever.
 2. YOUR PERSONAL TRACKER - One-tap tracking: mark each play, log won or lost. Verified history, real record, net units, ROI and streak. No spreadsheets.
@@ -895,6 +899,11 @@ WELCOME_HTML = """<!DOCTYPE html>
 </div>
 <div style="text-align:center;padding:16px 20px 0;">
 <p style="color:#555555;font-size:15px;line-height:1.6;margin:0;">Hi __NOMBRE__ &mdash; your dashboard is ready, and Platinum starts with a FULL MONTH FREE. Here is everything waiting for you inside:</p>
+</div>
+<div style="margin:14px 20px 0;background:#fdf6dd;border:1px solid #c9a227;border-radius:12px;padding:14px 16px;text-align:center;">
+<p style="margin:0;font-size:14px;font-weight:800;color:#111111;">&#11088; PLATINUM plays &mdash; FREE for your first month</p>
+<p style="margin:6px 0 0;font-size:14px;font-weight:800;color:#111111;">&#128994; GOLD plays &mdash; FREE FOR LIFE</p>
+<p style="margin:6px 0 0;font-size:12.5px;color:#555555;">No card needed for Gold. They never expire.</p>
 </div>
 <div style="padding:14px 20px 0;">
 <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 10px;background:#2e4053;border:1px solid #2e4053;border-radius:12px;"><tr>
