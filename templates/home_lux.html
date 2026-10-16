@@ -85,7 +85,7 @@ a.lux-rec-card:active{transform:scale(.985)}
 /* Rayita fina separadora bajo la barra superior (2026-10-16, pedido de
    Alex): excepción puntual a la regla sin-bordes, solo para la topbar. */
 .v2-topbar{border-bottom:1px solid rgba(255,255,255,.09)!important}
-/* LIVE en movimiento + PENDING (2026-10-15, pedido de Alex) */
+/* LIVE en movimiento + UPCOMING (2026-10-15, pedido de Alex; renombrado 2026-10-16: «PENDING» junto a «posted» se leía como card sin publicar) */
 .lux-live-pill{display:inline-flex;align-items:center;gap:5px;margin-left:8px;padding:2.5px 8px;border-radius:999px;background:rgba(239,68,68,.16);border:1px solid rgba(239,68,68,.55);color:#ff6b6b;font-size:10.5px;font-weight:800;letter-spacing:.8px;vertical-align:2px}
 .lux-live-dot{width:7px;height:7px;border-radius:50%;background:#ef4444;animation:luxpulse 1.1s ease-in-out infinite}
 @keyframes luxpulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.55);opacity:.55}}
@@ -117,7 +117,7 @@ a.lux-rec-card:active{transform:scale(.985)}
   <div class="lux-head-card">
     <span class="lux-head-ico">&#10003;</span>
     <div>
-      <b>Today's card is posted</b>{% if hay_live %}<span class="lux-live-pill"><span class="lux-live-dot"></span>LIVE</span>{% elif esperando %}<span class="lux-pend-pill">&#9203; PENDING</span>{% endif %}
+      <b>Today's card is posted</b>{% if hay_live %}<span class="lux-live-pill"><span class="lux-live-dot"></span>LIVE</span>{% elif esperando %}<span class="lux-pend-pill">&#9203; UPCOMING</span>{% endif %}
       <p>{{ plays|length }} play{{ 's' if plays|length != 1 else '' }} today — {{ _np }} Platinum, {{ plays|length - _np }} Gold. Live on your Dashboard right now.</p>
     </div>
   </div>
