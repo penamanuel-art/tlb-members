@@ -933,58 +933,59 @@ https://www.thesharpteam.bet/home
 Bet responsibly - 21+ - Gambling problem? Call 1-800-GAMBLER (1-800-426-2537): free and confidential help, 24/7.
 """
 
-WELCOME_HTML = """<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Welcome to The Sharp Team</title></head>
+WELCOME_HTML = """<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="light dark"><title>Welcome to The Sharp Team</title></head>
 <body style="margin:0;padding:0;background:#021f16;"><div style="display:none;max-height:0;overflow:hidden;opacity:0;">Welcome to The Sharp Team. Your first month of Platinum is FREE — every pick tracked, every ticket verified.</div>
-<div style="font-family:-apple-system,'Segoe UI',Arial,sans-serif;max-width:400px;margin:0 auto;background:#04392a;">
-<div style="padding:16px 18px 0;text-align:center;">
-<img src="https://files.catbox.moe/74qot5.png" alt="The Sharp Team" width="62" style="width:62px;height:auto;border:0;">
-<p style="margin:8px 0 0;font-size:10px;font-weight:800;letter-spacing:4px;color:#ffffff;">THE SHARP TEAM</p>
-<h1 style="font-size:21px;font-weight:800;color:#ffffff;margin:10px 0 0;">Welcome aboard, __NOMBRE__ 👋</h1>
-<p style="color:#b9d8cb;font-size:12px;line-height:1.5;margin:7px 0 0;">Your dashboard is ready. Your first month of Platinum is free — and already on.</p></div>
-<div style="margin:12px 14px 0;background:#032a1f;border:1px solid #2fe6a7;border-bottom:3px solid #e8c766;border-radius:15px;padding:14px 15px;">
-<p style="margin:0;font-size:10px;font-weight:800;letter-spacing:2px;color:#ffd93b;">⭐ PLATINUM</p>
-<p style="margin:4px 0 0;font-size:15px;font-weight:800;color:#ffffff;">Free for 30 days <span style="color:#2fe6a7;">· Active</span></p>
-<p style="margin:5px 0 0;font-size:11px;color:#b9d8cb;line-height:1.5;">Our most valuable play — the best pick of the day, every day.</p>
-<div style="border-top:1px solid #0d4a36;margin:10px 0;"></div>
-<p style="margin:0;font-size:10px;font-weight:800;letter-spacing:2px;color:#2fe6a7;">🟢 GOLD</p>
-<p style="margin:4px 0 0;font-size:15px;font-weight:800;color:#ffffff;">Free for life <span style="color:#8fb8a6;font-size:11px;font-weight:600;">· No card, never expires</span></p></div>
-<div style="padding:12px 14px 0;"><table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 7px;background:#0a4a37;border:1px solid #116149;border-bottom:3px solid #e8c766;border-radius:13px;"><tr>
-<td width="42" style="vertical-align:top;padding:10px 0 10px 11px;"><div style="width:30px;height:30px;border-radius:50%;background:rgba(47,230,167,0.16);text-align:center;line-height:30px;font-size:15px;">🎯</div></td>
-<td style="vertical-align:top;padding:10px 11px 10px 3px;"><div style="font-size:11.5px;font-weight:700;color:#ffffff;letter-spacing:.6px;">THE DAILY CARD</div><div style="font-size:11px;color:#b9d8cb;line-height:1.5;margin-top:1px;">Every day at 2:00 PM ET (11:00 AM ET on weekends): the official plays — Gold plus the one Platinum — each with its original bet ticket. No filler, ever.</div></td></tr></table><table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 7px;background:#0a4a37;border:1px solid #116149;border-bottom:3px solid #e8c766;border-radius:13px;"><tr>
-<td width="42" style="vertical-align:top;padding:10px 0 10px 11px;"><div style="width:30px;height:30px;border-radius:50%;background:rgba(47,230,167,0.16);text-align:center;line-height:30px;font-size:15px;">📊</div></td>
-<td style="vertical-align:top;padding:10px 11px 10px 3px;"><div style="font-size:11.5px;font-weight:700;color:#ffffff;letter-spacing:.6px;">YOUR PERSONAL TRACKER</div><div style="font-size:11px;color:#b9d8cb;line-height:1.5;margin-top:1px;">One-tap tracking: mark each play, log won or lost. Real record, net units, ROI and streak. No spreadsheets.</div></td></tr></table><table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 7px;background:#0a4a37;border:1px solid #116149;border-bottom:3px solid #e8c766;border-radius:13px;"><tr>
-<td width="42" style="vertical-align:top;padding:10px 0 10px 11px;"><div style="width:30px;height:30px;border-radius:50%;background:rgba(47,230,167,0.16);text-align:center;line-height:30px;font-size:15px;">⚡</div></td>
-<td style="vertical-align:top;padding:10px 11px 10px 3px;"><div style="font-size:11.5px;font-weight:700;color:#ffffff;letter-spacing:.6px;">LIVE +EV BOARD</div><div style="font-size:11px;color:#b9d8cb;line-height:1.5;margin-top:1px;">Value edges updated around the clock, measured against Pinnacle's no-vig fair price, with sharp-confirmed badges.</div></td></tr></table><table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 7px;background:#0a4a37;border:1px solid #116149;border-bottom:3px solid #e8c766;border-radius:13px;"><tr>
-<td width="42" style="vertical-align:top;padding:10px 0 10px 11px;"><div style="width:30px;height:30px;border-radius:50%;background:rgba(47,230,167,0.16);text-align:center;line-height:30px;font-size:15px;">📣</div></td>
-<td style="vertical-align:top;padding:10px 11px 10px 3px;"><div style="font-size:11.5px;font-weight:700;color:#ffffff;letter-spacing:.6px;">PUSH ALERTS</div><div style="font-size:11px;color:#b9d8cb;line-height:1.5;margin-top:1px;">Alerts the moment the card drops and when new edges appear. Turn &ldquo;Alerts on&rdquo; in your dashboard.</div></td></tr></table><table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 7px;background:#0a4a37;border:1px solid #116149;border-bottom:3px solid #e8c766;border-radius:13px;"><tr>
-<td width="42" style="vertical-align:top;padding:10px 0 10px 11px;"><div style="width:30px;height:30px;border-radius:50%;background:rgba(47,230,167,0.16);text-align:center;line-height:30px;font-size:15px;">✈️</div></td>
-<td style="vertical-align:top;padding:10px 11px 10px 3px;"><div style="font-size:11.5px;font-weight:700;color:#ffffff;letter-spacing:.6px;">TELEGRAM CHANNELS</div><div style="font-size:11px;color:#b9d8cb;line-height:1.5;margin-top:1px;">Gold plays in the Gold channel, Platinum plays in the private Platinum channel — each with the original ticket.</div></td></tr></table><table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 7px;background:#0a4a37;border:1px solid #116149;border-bottom:3px solid #e8c766;border-radius:13px;"><tr>
-<td width="42" style="vertical-align:top;padding:10px 0 10px 11px;"><div style="width:30px;height:30px;border-radius:50%;background:rgba(47,230,167,0.16);text-align:center;line-height:30px;font-size:15px;">🎓</div></td>
-<td style="vertical-align:top;padding:10px 11px 10px 3px;"><div style="font-size:11.5px;font-weight:700;color:#ffffff;letter-spacing:.6px;">DAILY ACADEMY</div><div style="font-size:11px;color:#b9d8cb;line-height:1.5;margin-top:1px;">One sharp betting lesson every morning: discipline, bankroll management, reading lines and edges.</div></td></tr></table></div>
-<div style="margin:2px 14px 0;padding:8px 11px;border-left:3px solid #2fe6a7;"><p style="font-size:12px;font-style:italic;line-height:1.55;color:#b9d8cb;margin:0;">&ldquo;Every play is posted before game time — then locked and graded against the final score.&rdquo;</p></div>
-<div style="text-align:center;padding:12px 14px 0;">
-<a href="__PAY_URL__" style="display:inline-block;background:#2fe6a7;color:#03231a;font-size:12px;font-weight:800;padding:11px 22px;border-radius:10px;text-decoration:none;">KEEP PLATINUM AFTER MY FREE MONTH</a>
-<p style="color:#b9d8cb;font-size:11.5px;line-height:1.55;margin:8px 0 0;">Your free month is already on — <strong style="color:#ffffff;">no card, nothing to activate</strong>.<br>After 30 days, keep Platinum for $49.99/month. Cancel anytime.</p>
-<p style="color:#b9d8cb;font-size:11px;line-height:1.55;margin:6px 0 0;">Your free Gold plays are already live: <a href="https://www.thesharpteam.bet/home" style="font-weight:700;color:#2fe6a7;">enter your dashboard</a></p></div>
-<div style="margin:12px 14px 0;background:#032a1f;border-radius:12px;padding:13px;">
-<p style="margin:0;font-size:10.5px;font-weight:800;letter-spacing:2px;color:#2fe6a7;text-align:center;">MAKE SURE YOU DON'T MISS A PLAY</p>
-<p style="margin:7px 0 0;font-size:11.5px;line-height:1.55;color:#e5f5ee;text-align:center;">Two quick steps so every play reaches you the second it posts:</p>
-<p style="margin:10px 0 0;font-size:12px;font-weight:800;color:#ffffff;">✈️ 1. Join the Telegram channels</p>
-<p style="margin:3px 0 0;font-size:11px;line-height:1.5;color:#b9d8cb;">The plays land on Telegram instantly — Gold in the public channel, Platinum in the private one.</p>
-<div style="text-align:center;padding:8px 0 2px;">
-<a href="https://t.me/thesharpteam" style="display:inline-block;background:#2fe6a7;color:#03231a;font-size:11px;font-weight:800;padding:8px 15px;border-radius:999px;text-decoration:none;margin:0 3px 5px;">Join the Gold channel</a>
-<a href="https://t.me/+_eNhcbD3k4RlNTk5" style="display:inline-block;background:#2fe6a7;color:#03231a;font-size:11px;font-weight:800;padding:8px 15px;border-radius:999px;text-decoration:none;margin:0 3px 5px;">Join the Platinum channel</a></div>
-<p style="margin:8px 0 0;font-size:12px;font-weight:800;color:#ffffff;">🔔 2. Turn on push notifications</p>
-<p style="margin:3px 0 0;font-size:11px;line-height:1.5;color:#b9d8cb;">Open your dashboard and tap <strong style="color:#ffffff;">&ldquo;Alerts on&rdquo;</strong> — plays, results and line moves, straight to your phone.</p>
-<div style="text-align:center;padding:8px 0 0;"><a href="https://www.thesharpteam.bet/home" style="display:inline-block;border:1px solid #2fe6a7;color:#2fe6a7;font-size:11px;font-weight:800;padding:8px 15px;border-radius:999px;text-decoration:none;">Open my dashboard</a></div></div>
-<div style="text-align:center;padding:14px 14px 12px;">
-<img src="https://files.catbox.moe/74qot5.png" alt="The Sharp Team" width="74" style="width:74px;height:auto;display:block;margin:0 auto;border:0;">
-<p style="margin:8px 0 0;color:#ffffff;font-size:11px;font-weight:800;letter-spacing:3px;">THE SHARP TEAM</p>
+<div style="padding:8px 14px 12px;"><div style="font-family:Arial,sans-serif;max-width:400px;margin:0 auto;background:#04392a;border-radius:14px;overflow:hidden;">
+<div style="background:#021f16;padding:10px 14px;border-bottom:2px solid #c9a227;text-align:center;"><table cellpadding="0" cellspacing="0" style="margin:0 auto;"><tr>
+<td width="36"><img src="https://files.catbox.moe/74qot5.png" alt="The Sharp Team" width="30" style="width:30px;height:auto;border:0;"></td>
+<td style="white-space:nowrap;"><p style="margin:0;font-size:12px;font-weight:800;letter-spacing:3px;color:#ffffff;white-space:nowrap;">THE SHARP TEAM</p></td></tr></table></div>
+<div style="background:#032a1f;padding:11px 16px;text-align:center;border-bottom:1px solid #14532d;"><p style="margin:0;font-family:'Arial Black','Archivo Black',Arial,sans-serif;font-size:17px;font-weight:900;letter-spacing:3px;color:#e8c766;">MEMBER WELCOME</p></div>
+<img src="https://www.thesharpteam.bet/static/img/sharp-team-banner.png" alt="The Sharp Team" width="460" style="width:100%;height:auto;display:block;border:0;">
+<div style="padding:20px 24px 0;">
+<h1 style="font-family:Georgia,serif;font-size:29px;font-weight:700;color:#ffffff;margin:0;line-height:1.15;">Welcome to the team.</h1>
+<p style="color:#b9d8cb;font-size:12.5px;line-height:1.6;margin:10px 0 0;">Hi __NOMBRE__ — your dashboard is ready, and Platinum starts with a FULL MONTH FREE. Everything your membership unlocks:</p></div>
+<div style="margin:14px 24px 0;background:#032a1f;border:1px solid #2fe6a7;border-bottom:3px solid #e8c766;border-radius:12px;padding:13px 15px;">
+<p style="margin:0;font-size:13px;font-weight:800;color:#ffffff;">⭐ PLATINUM — FREE for your first month · <span style="color:#2fe6a7;">ACTIVE</span></p>
+<p style="margin:4px 0 0;font-size:11px;color:#b9d8cb;">Our most valuable play — the best pick of the day, every day.</p>
+<p style="margin:9px 0 0;font-size:13px;font-weight:800;color:#ffffff;">🟢 GOLD — FREE FOR LIFE</p>
+<p style="margin:4px 0 0;font-size:11px;color:#b9d8cb;">No card needed. They never expire.</p></div>
+<div style="padding:14px 24px 0;"><table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 8px;background:#e9f3ec;border:1px solid #cfe0d4;border-bottom:3px solid #0e7a4e;border-radius:12px;"><tr>
+<td width="46" style="vertical-align:top;padding:11px 0 11px 12px;"><div style="width:32px;height:32px;border-radius:9px;background:#d2e7d9;text-align:center;line-height:32px;font-size:16px;">🎯</div></td>
+<td style="vertical-align:top;padding:11px 12px 11px 3px;"><div style="font-size:12px;font-weight:800;color:#0c231a;letter-spacing:.5px;">THE DAILY CARD</div><div style="font-size:11.5px;color:#43564c;line-height:1.55;margin-top:2px;">Every day at 2:00 PM ET (11:00 AM ET on weekends): the official plays — Gold plus the one Platinum — each with its original bet ticket. No filler, ever.</div></td></tr></table><table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 8px;background:#e9f3ec;border:1px solid #cfe0d4;border-bottom:3px solid #0e7a4e;border-radius:12px;"><tr>
+<td width="46" style="vertical-align:top;padding:11px 0 11px 12px;"><div style="width:32px;height:32px;border-radius:9px;background:#d2e7d9;text-align:center;line-height:32px;font-size:16px;">📊</div></td>
+<td style="vertical-align:top;padding:11px 12px 11px 3px;"><div style="font-size:12px;font-weight:800;color:#0c231a;letter-spacing:.5px;">YOUR PERSONAL TRACKER</div><div style="font-size:11.5px;color:#43564c;line-height:1.55;margin-top:2px;">One-tap tracking: mark each play, log won or lost. Real record, net units, ROI and streak. No spreadsheets.</div></td></tr></table><table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 8px;background:#e9f3ec;border:1px solid #cfe0d4;border-bottom:3px solid #0e7a4e;border-radius:12px;"><tr>
+<td width="46" style="vertical-align:top;padding:11px 0 11px 12px;"><div style="width:32px;height:32px;border-radius:9px;background:#d2e7d9;text-align:center;line-height:32px;font-size:16px;">⚡</div></td>
+<td style="vertical-align:top;padding:11px 12px 11px 3px;"><div style="font-size:12px;font-weight:800;color:#0c231a;letter-spacing:.5px;">LIVE +EV BOARD</div><div style="font-size:11.5px;color:#43564c;line-height:1.55;margin-top:2px;">Value edges updated around the clock, measured against Pinnacle's no-vig fair price, with sharp-confirmed badges.</div></td></tr></table><table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 8px;background:#e9f3ec;border:1px solid #cfe0d4;border-bottom:3px solid #0e7a4e;border-radius:12px;"><tr>
+<td width="46" style="vertical-align:top;padding:11px 0 11px 12px;"><div style="width:32px;height:32px;border-radius:9px;background:#d2e7d9;text-align:center;line-height:32px;font-size:16px;">📣</div></td>
+<td style="vertical-align:top;padding:11px 12px 11px 3px;"><div style="font-size:12px;font-weight:800;color:#0c231a;letter-spacing:.5px;">PUSH ALERTS</div><div style="font-size:11.5px;color:#43564c;line-height:1.55;margin-top:2px;">Alerts the moment the card drops and when new edges appear. Turn &ldquo;Alerts on&rdquo; in your dashboard.</div></td></tr></table><table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 8px;background:#e9f3ec;border:1px solid #cfe0d4;border-bottom:3px solid #0e7a4e;border-radius:12px;"><tr>
+<td width="46" style="vertical-align:top;padding:11px 0 11px 12px;"><div style="width:32px;height:32px;border-radius:9px;background:#d2e7d9;text-align:center;line-height:32px;font-size:16px;">✈️</div></td>
+<td style="vertical-align:top;padding:11px 12px 11px 3px;"><div style="font-size:12px;font-weight:800;color:#0c231a;letter-spacing:.5px;">TELEGRAM CHANNELS</div><div style="font-size:11.5px;color:#43564c;line-height:1.55;margin-top:2px;">Gold plays in the Gold channel, Platinum plays in the private Platinum channel — each with the original ticket.</div></td></tr></table><table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 8px;background:#e9f3ec;border:1px solid #cfe0d4;border-bottom:3px solid #0e7a4e;border-radius:12px;"><tr>
+<td width="46" style="vertical-align:top;padding:11px 0 11px 12px;"><div style="width:32px;height:32px;border-radius:9px;background:#d2e7d9;text-align:center;line-height:32px;font-size:16px;">🎓</div></td>
+<td style="vertical-align:top;padding:11px 12px 11px 3px;"><div style="font-size:12px;font-weight:800;color:#0c231a;letter-spacing:.5px;">DAILY ACADEMY</div><div style="font-size:11.5px;color:#43564c;line-height:1.55;margin-top:2px;">One sharp betting lesson every morning: discipline, bankroll management, reading lines and edges.</div></td></tr></table></div>
+<div style="margin:14px 24px 0;padding:10px 14px;background:#032a1f;border-radius:10px;"><p style="font-family:Georgia,serif;font-size:13px;font-style:italic;line-height:1.6;color:#dcefe6;margin:0;">&ldquo;Every play is posted before game time — then locked and graded against the final score.&rdquo;</p></div>
+<div style="text-align:center;padding:14px 24px 0;">
+<a href="__PAY_URL__" style="display:inline-block;background:#2fe6a7;color:#03231a;font-size:12.5px;font-weight:800;padding:11px 24px;border-radius:999px;text-decoration:none;">KEEP PLATINUM AFTER MY FREE MONTH</a>
+<p style="color:#b9d8cb;font-size:11.5px;line-height:1.6;margin:9px 0 0;">Your free month is already on — <strong style="color:#ffffff;">no card, nothing to activate</strong>. After 30 days, keep Platinum for $49.99/month. Cancel anytime.</p>
+<p style="color:#b9d8cb;font-size:11px;margin:7px 0 0;">Your free Gold plays are already live: <a href="https://www.thesharpteam.bet/home" style="font-weight:700;color:#2fe6a7;">enter your dashboard</a></p></div>
+<div style="margin:14px 18px 0;background:#032a1f;border-radius:12px;padding:15px;">
+<p style="margin:0;font-size:11px;font-weight:800;letter-spacing:2px;color:#e8c766;text-align:center;">MAKE SURE YOU DON'T MISS A PLAY</p>
+<p style="margin:7px 0 0;font-size:12px;line-height:1.55;color:#dcefe6;text-align:center;">Two quick steps so every play reaches you the second it posts:</p>
+<p style="margin:11px 0 0;font-size:12.5px;font-weight:800;color:#ffffff;">✈️ 1. Join the Telegram channels</p>
+<p style="margin:3px 0 0;font-size:11.5px;line-height:1.5;color:#b9d8cb;">The plays land on Telegram instantly — Gold in the public channel, Platinum in the private one.</p>
+<div style="text-align:center;padding:9px 0 2px;">
+<a href="https://t.me/thesharpteam" style="display:inline-block;background:#2fe6a7;color:#03231a;font-size:11.5px;font-weight:800;padding:8px 16px;border-radius:999px;text-decoration:none;margin:0 3px 5px;">Join the Gold channel</a>
+<a href="https://t.me/+_eNhcbD3k4RlNTk5" style="display:inline-block;background:#2fe6a7;color:#03231a;font-size:11.5px;font-weight:800;padding:8px 16px;border-radius:999px;text-decoration:none;margin:0 3px 5px;">Join the Platinum channel</a></div>
+<p style="margin:9px 0 0;font-size:12.5px;font-weight:800;color:#ffffff;">🔔 2. Turn on push notifications</p>
+<p style="margin:3px 0 0;font-size:11.5px;line-height:1.5;color:#b9d8cb;">Open your dashboard and tap <strong style="color:#ffffff;">&ldquo;Alerts on&rdquo;</strong> — plays, results and line moves, straight to your phone.</p>
+<div style="text-align:center;padding:9px 0 0;"><a href="https://www.thesharpteam.bet/home" style="display:inline-block;border:1px solid #2fe6a7;color:#2fe6a7;font-size:11.5px;font-weight:800;padding:8px 16px;border-radius:999px;text-decoration:none;">Open my dashboard</a></div></div>
+<div style="text-align:center;padding:16px 18px 13px;">
+<img src="https://files.catbox.moe/74qot5.png" alt="The Sharp Team" width="80" style="width:80px;height:auto;display:block;margin:0 auto;border:0;">
+<p style="margin:9px 0 0;color:#e8c766;font-size:11px;font-weight:800;letter-spacing:3px;">THE SHARP TEAM</p>
 <p style="margin:7px 0 0;color:#8fb8a6;font-size:10px;">250 Park Avenue, Suite 1800, New York, NY 10017</p>
 <p style="margin:3px 0 0;color:#8fb8a6;font-size:10px;"><a href="tel:+15513263312" style="color:#8fb8a6;text-decoration:none;">(551) 326-3312</a></p>
 <p style="margin:10px 0 0;color:#8fb8a6;font-size:9.5px;">21+. Play responsibly. If you or someone you know has a gambling problem, call or text <a href="tel:18004262537" style="color:#8fb8a6;text-decoration:underline;">1-800-GAMBLER</a>.</p>
 <p style="margin:5px 0 0;color:#8fb8a6;font-size:9.5px;">&copy; 2026 The Sharp Team</p></div>
-</div></body></html>"""
+</div></div></body></html>"""
 
 
 def send_welcome_email(nombre: str, email: str):
