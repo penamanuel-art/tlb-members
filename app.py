@@ -1659,6 +1659,10 @@ def recientes_oficiales(n=6):
                 recientes.append({
                     "id": j.get("id"),
                     "fecha": d.get("titulo") or d.get("fecha", ""),
+                    "fecha_iso": d.get("fecha", ""),
+                    "liga": j.get("liga", ""),
+                    "abbr": j.get("abbr", ""),
+                    "opp_abbr": j.get("opp_abbr", ""),
                     "nivel": j.get("nivel", ""),
                     "pick": j.get("pick", ""),
                     "cuota": j.get("cuota"),
@@ -3214,6 +3218,22 @@ def home():
     tcurve = profit_curve_svg(_vals)
     # Resultados recientes: jugadas liquidadas del archivo (sin bloqueadas).
     recientes = recientes_oficiales(6)
+    # Fechas para el encabezado por día de Receipts (2026-10-16, diseño
+    # "Yesterday" estilo WGT aprobado por Alex): la plantilla etiqueta
+    # el día más reciente como Yesterday/Today según corresponda.
+    _hoy_iso = datetime.now(TZ).strftime("%Y-%m-%d")
+    _ayer_iso = (datetime.now(TZ) - timedelta(days=1)).strftime("%Y-%m-%d")
+    # Agrupado por día para Receipts conservando el orden del archivo
+    # (día más reciente primero): el groupby de Jinja ordena las claves
+    # y pondría el día más viejo arriba.
+    recientes_dias = []
+    for _r in recientes:
+        if recientes_dias and recientes_dias[-1]["fecha"] == _r.get("fecha"):
+            recientes_dias[-1]["plays"].append(_r)
+        else:
+            recientes_dias.append({"fecha": _r.get("fecha", ""),
+                                   "fecha_iso": _r.get("fecha_iso", ""),
+                                   "plays": [_r]})
     # Vista previa admin (pedido Alex 2026-09-30): ?preview=locked muestra el
     # home como lo ve un miembro sin Elite (teaser bloqueado + pancarta $1).
     preview_locked = is_admin_for(user) and request.args.get("preview") == "locked"
@@ -3284,6 +3304,9 @@ def home():
         streak=program_streak(),
         resumen_ayer=resumen_ayer(),
         recientes=recientes,
+        recientes_dias=recientes_dias,
+        hoy_iso=_hoy_iso,
+        ayer_iso=_ayer_iso,
         recientes_value=recientes_value(),
         record_stats=official_tracker_full(),
         last_elite_win=last_elite_win(),
