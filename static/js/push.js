@@ -1,4 +1,4 @@
-/* The Sharp Team — Web Push client (v2, 2026-10-16).
+/* The Sharp Team — Web Push client (v3, 2026-10-16).
  * Arreglo del botón que "no hacía nada" (reporte de Alex 2026-10-15):
  *  - status() verifica la SUSCRIPCIÓN REAL (pushManager.getSubscription),
  *    no solo Notification.permission: si hay permiso pero no suscripción,
@@ -50,7 +50,8 @@ window.TLB_push = (function () {
       const reg = await navigator.serviceWorker.register("/sw.js");
       await navigator.serviceWorker.ready;
       const perm = await Notification.requestPermission();
-      if (perm !== "granted") return "denied";
+      if (perm === "denied") return "denied";
+      if (perm !== "granted") return "default";
       // Si ya existe una suscripción en este aparato, re-sincronizarla con
       // el servidor (cubre el caso "permiso sí, suscripción perdida").
       let sub = null;
@@ -87,6 +88,36 @@ window.TLB_push = (function () {
     }
   }
 
+  async function disable() {
+    api.lastError = "";
+    if (!supported()) return "unsupported";
+    try {
+      const reg = await navigator.serviceWorker.getRegistration();
+      if (!reg) return "off";
+      const sub = await reg.pushManager.getSubscription();
+      if (!sub) return "off";
+      const endpoint = sub.endpoint;
+      try {
+        await sub.unsubscribe();
+      } catch (e) {
+        /* seguimos: hay que limpiar el servidor igual */
+      }
+      try {
+        await fetch("/push/unsubscribe", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ endpoint: endpoint }),
+        });
+      } catch (e) {
+        /* la fila huerfana se poda sola en el proximo envio fallido */
+      }
+      return "off";
+    } catch (e) {
+      api.lastError = (e && e.name) || "error";
+      return "error";
+    }
+  }
+
   async function status() {
     if (!supported()) return "unsupported";
     const perm = Notification.permission;
@@ -103,6 +134,7 @@ window.TLB_push = (function () {
   }
 
   api.enable = enable;
+  api.disable = disable;
   api.status = status;
   return api;
 })();
