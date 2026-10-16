@@ -14,7 +14,7 @@
 :root {
   /* v2 palette — tono Monarch (pedido Alex 2026-10-10):
      oscuro con matiz verde-azulado sutil, no negro puro */
-  --v2-bg: #070d18; /* azul medianoche tipo Wise Guy (2026-10-16, pedido de Alex: «que se vea casi como the Wise guys»; negro NO) */
+  --v2-bg: #0c0f16; /* fondo EXACTO de la app de WGT (captura de Alex 2026-10-16): gris azulado con tono visible, NO negro plano */
   --v2-surface: rgba(255, 255, 255, 0.055);
   --v2-surface-2: rgba(255, 255, 255, 0.09);
   --v2-border: rgba(255, 255, 255, 0.13);
@@ -58,15 +58,13 @@ html, body { overflow-x: clip; }
 
 body.v2 {
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Inter, sans-serif;
-  /* Fondo estilo Monarch (Alex 2026-10-11): verde-azulado oscuro
-     con brillos sutiles, como la referencia. (La prueba de página
-     entera en #151616 del 2026-10-15 se revirtió el mismo día:
-     Alex no notó cambio y pidió dejarlo como estaba.) */
+  /* Fondo de PÁGINA = el de la app de Wise Guy Team (captura que Alex
+     envió el 2026-10-16): base #0C0F16 (gris azulado, se le ve el tono;
+     NO el negro cerrado #06060a anterior) + UN brillo azul suave arriba
+     a la derecha, igual al de ellos. Las tarjetas NO se tocaron. */
   background:
-    radial-gradient(1000px 520px at 8% -80px, rgba(45, 190, 160, 0.13), transparent 62%),
-    radial-gradient(820px 440px at 106% 32%, rgba(245, 197, 66, 0.08), transparent 60%),
-    radial-gradient(920px 560px at 85% 112%, rgba(232, 199, 102, 0.15), transparent 62%),
-    linear-gradient(180deg, #090910 0%, #06060c 45%, #06060a 100%);
+    radial-gradient(1100px 560px at 72% -8%, rgba(0, 123, 255, 0.10), transparent 60%),
+    #0c0f16;
   color: var(--v2-text);
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
