@@ -1,9 +1,19 @@
-/* The Sharp Team — Web Push client.
- * Usage: await window.TLB_push.enable() -> 'granted' | 'denied' | 'unsupported' | 'error'
- *        await window.TLB_push.status() -> Notification.permission or 'unsupported'
+/* The Sharp Team — Web Push client (v2, 2026-10-16).
+ * Arreglo del botón que "no hacía nada" (reporte de Alex 2026-10-15):
+ *  - status() verifica la SUSCRIPCIÓN REAL (pushManager.getSubscription),
+ *    no solo Notification.permission: si hay permiso pero no suscripción,
+ *    devuelve 'unsubscribed' y el botón ofrece reconectar.
+ *  - enable() re-sincroniza una suscripción existente con el servidor antes
+ *    de crear una nueva, y guarda el motivo en TLB_push.lastError.
+ * Usage: await window.TLB_push.enable()
+ *          -> 'granted' | 'denied' | 'unsupported' | 'error'
+ *        await window.TLB_push.status()
+ *          -> 'granted' | 'denied' | 'default' | 'unsubscribed' | 'unsupported'
  */
 window.TLB_push = (function () {
   "use strict";
+
+  var api = { lastError: "" };
 
   function supported() {
     return (
@@ -24,35 +34,75 @@ window.TLB_push = (function () {
     return out;
   }
 
+  async function saveSubscription(sub) {
+    const saveRes = await fetch("/push/subscribe", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(sub.toJSON()),
+    });
+    return saveRes.ok;
+  }
+
   async function enable() {
+    api.lastError = "";
     if (!supported()) return "unsupported";
     try {
       const reg = await navigator.serviceWorker.register("/sw.js");
+      await navigator.serviceWorker.ready;
       const perm = await Notification.requestPermission();
       if (perm !== "granted") return "denied";
+      // Si ya existe una suscripción en este aparato, re-sincronizarla con
+      // el servidor (cubre el caso "permiso sí, suscripción perdida").
+      let sub = null;
+      try {
+        sub = await reg.pushManager.getSubscription();
+      } catch (e) {
+        sub = null;
+      }
+      if (sub) {
+        return (await saveSubscription(sub)) ? "granted" : "error";
+      }
       const keyRes = await fetch("/push/vapid-public-key");
-      if (!keyRes.ok) return "error";
+      if (!keyRes.ok) {
+        api.lastError = "vapid-key";
+        return "error";
+      }
       const keyJson = await keyRes.json();
-      if (!keyJson.publicKey) return "error";
-      const sub = await reg.pushManager.subscribe({
+      if (!keyJson.publicKey) {
+        api.lastError = "vapid-key";
+        return "error";
+      }
+      sub = await reg.pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: urlBase64ToUint8Array(keyJson.publicKey),
       });
-      const saveRes = await fetch("/push/subscribe", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(sub.toJSON()),
-      });
-      return saveRes.ok ? "granted" : "error";
+      if (!(await saveSubscription(sub))) {
+        api.lastError = "save";
+        return "error";
+      }
+      return "granted";
     } catch (e) {
+      api.lastError = (e && e.name) || "error";
       return "error";
     }
   }
 
   async function status() {
     if (!supported()) return "unsupported";
-    return Notification.permission;
+    const perm = Notification.permission;
+    if (perm !== "granted") return perm;
+    // Permiso concedido: lo que manda es la suscripción real de este aparato.
+    try {
+      const reg = await navigator.serviceWorker.getRegistration();
+      if (!reg) return "unsubscribed";
+      const sub = await reg.pushManager.getSubscription();
+      return sub ? "granted" : "unsubscribed";
+    } catch (e) {
+      return perm;
+    }
   }
 
-  return { enable: enable, status: status };
+  api.enable = enable;
+  api.status = status;
+  return api;
 })();
