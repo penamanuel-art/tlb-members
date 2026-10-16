@@ -2881,6 +2881,10 @@ def migrate_db():
             pending.append("ALTER TABLE users ADD COLUMN welcome_email_sent INTEGER NOT NULL DEFAULT 0")
         if "lang" not in cols:
             pending.append("ALTER TABLE users ADD COLUMN lang TEXT")
+        if "reset_token" not in cols:
+            pending.append("ALTER TABLE users ADD COLUMN reset_token TEXT")
+        if "reset_expires" not in cols:
+            pending.append("ALTER TABLE users ADD COLUMN reset_expires TEXT")
         # Página Account estilo WGT (2026-10-12, pedido por Alex): dirección
         # postal del perfil + perfil de apuestas (estado y casas).
         for _col in ["addr_line1", "addr_line2", "addr_city", "addr_state",
@@ -4072,6 +4076,41 @@ def cuenta_password():
     db.commit()
     flash("Password updated.", "ok")
     return redirect(url_for("cuenta") + "?tab=security")
+
+@app.route("/reset/<token>", methods=["GET", "POST"])
+def reset_password_public(token):
+    """Página pública de restablecer contraseña con enlace de un solo
+    uso (2026-10-16). La plataforma no tenía flujo de 'olvidé mi
+    contraseña': el enlace lo genera el admin por API
+    (members-reset-link) y viaja solo en el email del miembro. El
+    token vence a las 24 horas y se borra al usarse."""
+    db = get_db()
+    row = db.execute("SELECT * FROM users WHERE reset_token = ?",
+                     (token,)).fetchone()
+    valido = False
+    if row:
+        try:
+            vence = datetime.fromisoformat(row["reset_expires"] or "")
+            valido = datetime.now() < vence
+        except (ValueError, TypeError, KeyError, IndexError):
+            valido = False
+    if not valido:
+        return render_template("reset_password.html", estado="invalido"), 400
+    if request.method == "POST":
+        nueva = request.form.get("new_password") or ""
+        confirma = request.form.get("confirm_password") or ""
+        if len(nueva) < 8:
+            return render_template("reset_password.html", estado="corta"), 400
+        if nueva != confirma:
+            return render_template("reset_password.html", estado="distinta"), 400
+        db.execute(
+            "UPDATE users SET password_hash = ?, reset_token = NULL,"
+            " reset_expires = NULL WHERE id = ?",
+            (hash_password(nueva), row["id"]))
+        db.commit()
+        return render_template("reset_password.html", estado="ok")
+    return render_template("reset_password.html", estado="form")
+
 
 @app.route("/cuenta/telegram-link", methods=["POST"])
 @login_required
@@ -5344,6 +5383,35 @@ def admin_api_members_set_lang():
                (lang, target["id"]))
     db.commit()
     return jsonify({"ok": True, "email": email, "lang": lang})
+
+
+@app.route("/admin/api/members-reset-link", methods=["POST"])
+def admin_api_members_reset_link():
+    """Genera un enlace de un solo uso para que un miembro cree una
+    contraseña nueva (2026-10-16, pedido por Alex para su hermano
+    Johan, que olvidó la suya y la plataforma no tenía flujo de
+    recuperación). La URL se devuelve SOLO en la respuesta de esta
+    API: viaja únicamente en el email del miembro, nunca en el chat
+    ni en logs. Auth: sesión admin O header X-Admin-Key."""
+    if not _admin_api_autorizado():
+        return jsonify({"error": "admin only"}), 403
+    data = request.get_json(silent=True) or {}
+    email = (data.get("email") or request.form.get("email") or "").strip().lower()
+    if not email:
+        return jsonify({"error": "email required"}), 400
+    db = get_db()
+    target = db.execute("SELECT * FROM users WHERE email = ?",
+                        (email,)).fetchone()
+    if not target:
+        return jsonify({"error": "not found"}), 404
+    token = secrets.token_urlsafe(32)
+    vence = (datetime.now() + timedelta(hours=24)).isoformat()
+    db.execute("UPDATE users SET reset_token = ?, reset_expires = ?"
+               " WHERE id = ?", (token, vence, target["id"]))
+    db.commit()
+    return jsonify({"ok": True, "email": email,
+                    "url": f"https://www.thesharpteam.bet/reset/{token}",
+                    "expira": vence})
 
 
 @app.route("/admin/test-clear-past-due", methods=["POST"])
