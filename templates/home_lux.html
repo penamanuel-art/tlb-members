@@ -64,6 +64,9 @@ a.lux-rec-card:active{transform:scale(.985)}
 /* Franja de luz verde en el borde izquierdo, como un trueno
    (2026-10-15, pedido de Alex con captura de referencia) */
 .lux-head-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:linear-gradient(180deg,#5cffb1,#2fbf71);box-shadow:0 0 16px 3px rgba(61,255,169,.55),inset 0 0 6px rgba(255,255,255,.35)}
+/* Y la línea de abajo también (Alex: "ponlo abajo también") — la luz
+   corre por el borde inferior y se une con la franja izquierda. */
+.lux-head-card::after{content:"";position:absolute;left:0;right:0;bottom:0;height:6px;background:linear-gradient(90deg,#5cffb1,#2fbf71);box-shadow:0 0 16px 3px rgba(61,255,169,.55),inset 0 0 6px rgba(255,255,255,.35)}
 .lux-head-card.pend{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.12)}
 .lux-head-ico{flex:0 0 auto;width:47px;height:47px;border-radius:14px;background:#e8c766;color:#04150a;font-size:23px;font-weight:800;display:flex;align-items:center;justify-content:center}
 .lux-head-card.pend .lux-head-ico{background:#39445a;color:#dbe4f0}
