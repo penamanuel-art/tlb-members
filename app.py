@@ -869,6 +869,10 @@ ACTIVATE YOUR FREE MONTH:
 __PAY_URL__
 Add your card and pay $0 today \u2014 Platinum unlocks instantly for 30 days. Then $49.99/month. Cancel anytime. No questions asked.
 
+MAKE SURE YOU DON'T MISS A PLAY:
+- Join the Telegram channels: Gold (free plays) https://t.me/thesharpteam - Platinum (private) https://t.me/+_eNhcbD3k4RlNTk5
+- Turn on push notifications: open your dashboard and tap "Alerts on".
+
 Your free Gold plays are already live on your dashboard:
 https://www.thesharpteam.bet/home
 
@@ -886,11 +890,11 @@ WELCOME_HTML = """<!DOCTYPE html>
 <meta name="supported-color-schemes" content="light">
 <title>Welcome to The Sharp Team</title>
 </head>
-<body style="margin:0;padding:0;background:#ffffff;">
+<body style="margin:0;padding:0;background:#eef0f3;">
 <div style="display:none;max-height:0;overflow:hidden;opacity:0;">Welcome to The Sharp Team. Your first month of Platinum is FREE &mdash; every pick tracked, every ticket verified.</div>
 <div style="font-family:Arial,sans-serif;max-width:430px;margin:0 auto;background:#ffffff;">
 <img src="https://www.thesharpteam.bet/static/img/sharp-team-banner.png" alt="The Sharp Team" width="430" style="width:100%;height:auto;display:block;border:0;">
-<div style="background:#ffffff;padding:10px 0 8px;text-align:center;">
+<div style="background:#ffffff;padding:10px 0 8px;text-align:center;border-bottom:2px solid #c9a227;">
 <p style="margin:0;font-size:12px;font-weight:800;letter-spacing:5px;color:#2e4053;">THE SHARP TEAM</p>
 </div>
 <div style="background:#c9a227;padding:20px 20px;text-align:center;">
@@ -938,6 +942,21 @@ WELCOME_HTML = """<!DOCTYPE html>
 <a href="__PAY_URL__" style="display:inline-block;background:#22c55e;color:#111111;font-size:13px;font-weight:800;padding:10px 24px;border-radius:999px;text-decoration:none;">ACTIVATE MY FREE MONTH</a>
 <p style="color:#555555;font-size:13px;line-height:1.6;margin:10px 0 0;">Add your card and pay <strong style="color:#16a34a;">$0 today</strong> &mdash; Platinum unlocks instantly for 30 days.<br>Then $49.99/month. Cancel anytime.</p>
 <p style="color:#555555;font-size:12px;line-height:1.6;margin:8px 0 0;">Your free Gold plays are already live: <a href="https://www.thesharpteam.bet/home" style="color:#2e4053;font-weight:700;">enter your dashboard</a></p>
+</div>
+<div style="margin:14px 18px 0;background:#0e1626;border-radius:12px;padding:16px;">
+<p style="margin:0;font-size:12px;font-weight:800;letter-spacing:2px;color:#c9a227;text-align:center;">MAKE SURE YOU DON'T MISS A PLAY</p>
+<p style="margin:8px 0 0;font-size:13px;line-height:1.6;color:#e5e7eb;text-align:center;">Two quick steps so every play reaches you the second it posts:</p>
+<p style="margin:12px 0 0;font-size:13px;font-weight:800;color:#ffffff;">&#9992;&#65039; 1. Join the Telegram channels</p>
+<p style="margin:4px 0 0;font-size:12.5px;line-height:1.55;color:#c8d0dc;">The plays land on Telegram instantly &mdash; Gold in the public channel, Platinum in the private one.</p>
+<div style="text-align:center;padding:10px 0 2px;">
+<a href="https://t.me/thesharpteam" style="display:inline-block;background:#c9a227;color:#111111;font-size:12.5px;font-weight:800;padding:9px 18px;border-radius:999px;text-decoration:none;margin:0 4px 6px;">Join the Gold channel</a>
+<a href="https://t.me/+_eNhcbD3k4RlNTk5" style="display:inline-block;background:#c9a227;color:#111111;font-size:12.5px;font-weight:800;padding:9px 18px;border-radius:999px;text-decoration:none;margin:0 4px 6px;">Join the Platinum channel</a>
+</div>
+<p style="margin:10px 0 0;font-size:13px;font-weight:800;color:#ffffff;">&#128276; 2. Turn on push notifications</p>
+<p style="margin:4px 0 0;font-size:12.5px;line-height:1.55;color:#c8d0dc;">Open your dashboard and tap <strong style="color:#ffffff;">&ldquo;Alerts on&rdquo;</strong> &mdash; plays, results and line moves, straight to your phone.</p>
+<div style="text-align:center;padding:10px 0 0;">
+<a href="https://www.thesharpteam.bet/home" style="display:inline-block;border:1px solid #c9a227;color:#e8c766;font-size:12.5px;font-weight:800;padding:9px 18px;border-radius:999px;text-decoration:none;">Open my dashboard</a>
+</div>
 </div>
 <div style="text-align:center;padding:16px 18px 12px;">
 <img src="https://files.catbox.moe/74qot5.png" alt="The Sharp Team" width="90" style="width:90px;height:auto;display:block;margin:0 auto;border:0;">
