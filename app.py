@@ -74,10 +74,12 @@ os.makedirs(INSTANCE_DIR, exist_ok=True)
 DATABASE_URL = os.environ.get("DATABASE_URL")
 USE_PG = bool(DATABASE_URL)
 
-# Link de pago de Stripe para desbloquear Platinum (primer mes gratis, luego $49.99/mes — oferta desde 2026-10-16).
+# Link de PAGO de Stripe para MANTENER Platinum: $49.99/mes desde el primer cobro, sin otro mes de prueba.
+# El mes gratis ya NO vive en Stripe: se activa solo en la plataforma al registrarse (reloj interno de
+# 30 días platinum_trial_ends — orden de Alex 2026-10-16: todos activos y que se apague solo al vencer).
 # Se cambia sin tocar código con la env var STRIPE_PLATINUM_URL en Render.
 STRIPE_PLATINUM_URL = os.environ.get(
-    "STRIPE_PLATINUM_URL", "https://buy.stripe.com/6oUaEZ0Ksdv64HY6kwefC04"
+    "STRIPE_PLATINUM_URL", "https://buy.stripe.com/9B6aEZ9gYezab6m24gefC06"
 )
 # Pedido Alex 2026-10-05: checkout de Stripe siempre en inglés. Stripe
 # localiza la página de pago según el navegador del cliente (si está en
@@ -598,13 +600,63 @@ def current_user():
     if "user_id" not in session:
         return None
     db = get_db()
-    return db.execute("SELECT * FROM users WHERE id = ?", (session["user_id"],)).fetchone()
+    row = db.execute("SELECT * FROM users WHERE id = ?", (session["user_id"],)).fetchone()
+    if row is not None and _apagar_trial_si_vencido(db, row):
+        row = db.execute("SELECT * FROM users WHERE id = ?", (session["user_id"],)).fetchone()
+    return row
+
+
+def _trial_vencido(user) -> bool:
+    """True si el mes gratis de plataforma (reloj interno, sin Stripe)
+    ya venció. Quien paga por Stripe no lleva reloj: manda su sub."""
+    try:
+        te = user["platinum_trial_ends"]
+        sub = user["stripe_subscription_id"]
+    except (KeyError, IndexError, TypeError):
+        return False
+    if not te or sub:
+        return False
+    try:
+        return datetime.now() > datetime.fromisoformat(te)
+    except (ValueError, TypeError):
+        return False
+
+
+def _apagar_trial_si_vencido(db, user) -> bool:
+    """Apaga el Platinum de UN usuario si su mes gratis venció."""
+    try:
+        if user and user["platinum_unlocked"] and _trial_vencido(user):
+            db.execute(
+                "UPDATE users SET platinum_unlocked = 0, platinum_trial_ends = NULL WHERE id = ?",
+                (user["id"],),
+            )
+            db.commit()
+            return True
+    except (KeyError, IndexError, TypeError):
+        pass
+    return False
+
+
+def _barrer_trials_vencidos(db):
+    """Apaga todos los Platinum cuyo mes gratis de plataforma venció
+    (sin suscripción de Stripe). Se llama al abrir el panel de miembros
+    y la API de miembros: lo que Alex ve siempre es la verdad."""
+    db.execute(
+        "UPDATE users SET platinum_unlocked = 0, platinum_trial_ends = NULL "
+        "WHERE platinum_unlocked = 1 AND platinum_trial_ends IS NOT NULL "
+        "AND platinum_trial_ends < ? "
+        "AND (stripe_subscription_id IS NULL OR stripe_subscription_id = '')",
+        (datetime.now().isoformat(),),
+    )
+    db.commit()
 
 
 def platinum_unlocked_for(user) -> bool:
-    """True si el miembro desbloqueó la jugada Elite (default: bloqueada)."""
+    """True si el miembro desbloqueó la jugada Elite (default: bloqueada).
+    El mes gratis de plataforma vence solo: con el reloj pasado y sin
+    suscripción de Stripe, el acceso cuenta como apagado."""
     try:
-        return bool(user and user["platinum_unlocked"])
+        return bool(user and user["platinum_unlocked"]) and not _trial_vencido(user)
     except (KeyError, IndexError, TypeError):
         return False
 
@@ -852,7 +904,7 @@ WELCOME_TEXT = """Hi __NOMBRE__,
 Welcome to The Sharp Team! Your dashboard is ready \u2014 and your Platinum membership starts with a FULL MONTH FREE.
 
 YOUR ACCESS, IN PLAIN WORDS:
-- PLATINUM plays: FREE for your first month (then $49.99/month only if you stay).
+- PLATINUM plays: FREE for your first month \u2014 already ACTIVE on your account (then $49.99/month only if you stay).
 - GOLD plays: FREE FOR LIFE \u2014 no card, no expiration, yours forever.
 
 EVERYTHING YOUR PLAN UNLOCKS
@@ -867,7 +919,7 @@ EVERYTHING YOUR PLAN UNLOCKS
 
 ACTIVATE YOUR FREE MONTH:
 __PAY_URL__
-Add your card and pay $0 today \u2014 Platinum unlocks instantly for 30 days. Then $49.99/month. Cancel anytime. No questions asked.
+Your first month of Platinum is already active \u2014 no card, nothing to activate. After 30 days, keep Platinum for $49.99/month. Cancel anytime. No questions asked.
 
 MAKE SURE YOU DON'T MISS A PLAY:
 - Join the Telegram channels: Gold (free plays) https://t.me/thesharpteam - Platinum (private) https://t.me/+_eNhcbD3k4RlNTk5
@@ -905,7 +957,7 @@ WELCOME_HTML = """<!DOCTYPE html>
 <p style="color:#555555;font-size:13.5px;line-height:1.55;margin:0;">Hi __NOMBRE__ &mdash; your dashboard is ready, and Platinum starts with a FULL MONTH FREE. Here is everything waiting for you inside:</p>
 </div>
 <div style="margin:10px 18px 0;background:#fdf6dd;border:1px solid #c9a227;border-radius:12px;padding:10px 12px;text-align:center;">
-<p style="margin:0;font-size:13px;font-weight:800;color:#111111;">&#11088; PLATINUM plays &mdash; FREE for your first month</p>
+<p style="margin:0;font-size:13px;font-weight:800;color:#111111;">&#11088; PLATINUM plays &mdash; FREE for your first month &middot; ALREADY ACTIVE</p>
 <p style="margin:6px 0 0;font-size:13px;font-weight:800;color:#111111;">&#128994; GOLD plays &mdash; FREE FOR LIFE</p>
 <p style="margin:6px 0 0;font-size:11.5px;color:#555555;">No card needed for Gold. They never expire.</p>
 </div>
@@ -939,8 +991,8 @@ WELCOME_HTML = """<!DOCTYPE html>
 <p style="font-size:13.5px;font-style:italic;line-height:1.6;color:#555555;margin:0;">&ldquo;Every play is posted before game time &mdash; then locked and graded against the final score.&rdquo;</p>
 </div>
 <div style="text-align:center;padding:14px 18px 0;">
-<a href="__PAY_URL__" style="display:inline-block;background:#22c55e;color:#111111;font-size:13px;font-weight:800;padding:10px 24px;border-radius:999px;text-decoration:none;">ACTIVATE MY FREE MONTH</a>
-<p style="color:#555555;font-size:13px;line-height:1.6;margin:10px 0 0;">Add your card and pay <strong style="color:#16a34a;">$0 today</strong> &mdash; Platinum unlocks instantly for 30 days.<br>Then $49.99/month. Cancel anytime.</p>
+<a href="__PAY_URL__" style="display:inline-block;background:#22c55e;color:#111111;font-size:13px;font-weight:800;padding:10px 24px;border-radius:999px;text-decoration:none;">KEEP PLATINUM AFTER MY FREE MONTH</a>
+<p style="color:#555555;font-size:13px;line-height:1.6;margin:10px 0 0;">Your free month is already on &mdash; <strong style="color:#16a34a;">no card, nothing to activate</strong>.<br>After 30 days, keep Platinum for $49.99/month. Cancel anytime.</p>
 <p style="color:#555555;font-size:12px;line-height:1.6;margin:8px 0 0;">Your free Gold plays are already live: <a href="https://www.thesharpteam.bet/home" style="color:#2e4053;font-weight:700;">enter your dashboard</a></p>
 </div>
 <div style="margin:14px 18px 0;background:#0e1626;border-radius:12px;padding:16px;">
@@ -2927,6 +2979,8 @@ def migrate_db():
             pending.append("ALTER TABLE users ADD COLUMN stripe_subscription_id TEXT")
         if "stripe_past_due" not in cols:
             pending.append("ALTER TABLE users ADD COLUMN stripe_past_due INTEGER NOT NULL DEFAULT 0")
+        if "platinum_trial_ends" not in cols:
+            pending.append("ALTER TABLE users ADD COLUMN platinum_trial_ends TEXT")
         if "foto" not in cols:
             pending.append("ALTER TABLE users ADD COLUMN foto TEXT")
         if "telegram_user_id" not in cols:
@@ -3108,7 +3162,7 @@ def free_landing():
         losses=losses,
         total=total,
         roi=roi,
-        stripe_url=STRIPE_PLATINUM_URL,
+        stripe_url=url_for("registro"),
     )
 
 
@@ -3539,6 +3593,15 @@ def register():
         es_admin = bool(admin_email()) and email == admin_email()
         if es_admin:
             db.execute("UPDATE users SET is_admin = 1 WHERE id = ?", (new_id,))
+            db.commit()
+        if not es_admin:
+            # Mes gratis de Platinum ACTIVO desde el registro (orden de
+            # Alex 2026-10-16): reloj interno de 30 días, sin Stripe y
+            # sin tarjeta; al vencer, el acceso se apaga solo.
+            db.execute(
+                "UPDATE users SET platinum_unlocked = 1, platinum_trial_ends = ? WHERE id = ?",
+                ((datetime.now() + timedelta(days=30)).isoformat(), new_id),
+            )
             db.commit()
         session["user_id"] = new_id
         session["nombre"] = nombre
@@ -5262,6 +5325,7 @@ def admin_api_members_emails():
     if not (is_cron or is_admin):
         return jsonify({"error": "admin only"}), 403
     db = get_db()
+    _barrer_trials_vencidos(db)
     rows = db.execute(
         "SELECT email, nombre, platinum_unlocked FROM users WHERE email IS NOT NULL AND email != ''"
     ).fetchall()
@@ -5493,6 +5557,30 @@ def admin_api_members_reset_link():
     return jsonify({"ok": True, "email": email,
                     "url": f"https://www.thesharpteam.bet/reset/{token}",
                     "expira": vence})
+
+
+@app.route("/admin/api/platinum-trial-activate-all", methods=["POST"])
+def admin_api_platinum_trial_activate_all():
+    """Activa el mes gratis de Platinum (30 días, reloj interno) a todos
+    los miembros sin Platinum y sin suscripción de Stripe (orden de Alex
+    2026-10-16: todos activos; al vencer los 30 días se apaga solo).
+    NO toca: cuentas admin, la cuenta del sistema, miembros con sub de
+    Stripe (manda Stripe) ni grants ya activos sin reloj (manuales)."""
+    if not _admin_api_autorizado():
+        return jsonify({"error": "admin only"}), 403
+    db = get_db()
+    vence = (datetime.now() + timedelta(days=30)).isoformat()
+    cur = db.execute(
+        "UPDATE users SET platinum_unlocked = 1, platinum_trial_ends = ?, "
+        "telegram_unban_pending = CASE WHEN telegram_user_id IS NOT NULL "
+        "THEN 1 ELSE telegram_unban_pending END "
+        "WHERE platinum_unlocked = 0 AND is_admin = 0 "
+        "AND (stripe_subscription_id IS NULL OR stripe_subscription_id = '') "
+        "AND email != 'system@value.local'",
+        (vence,),
+    )
+    db.commit()
+    return jsonify({"ok": True, "activados": cur.rowcount, "vence": vence})
 
 
 @app.route("/admin/api/members-set-stakes", methods=["POST"])
@@ -7639,6 +7727,7 @@ def admin_miembros():
     if not is_admin_for(user):
         flash("You don't have permission to view this page.", "error")
         return redirect(url_for("home"))
+    _barrer_trials_vencidos(db)
     miembros = db.execute(
         "SELECT id, nombre, email, created_at, platinum_unlocked, is_admin, "
         "stake_fijo_elite, stake_fijo_gold, cancel_requested_at, stripe_customer_id, "
@@ -8594,7 +8683,7 @@ def stripe_webhook():
             tiene_tg = bool(row["telegram_user_id"])
             db.execute(
                 "UPDATE users SET platinum_unlocked = 1, stripe_customer_id = ?, "
-                "stripe_subscription_id = ?, stripe_past_due = 0, cancel_requested_at = NULL WHERE id = ?",
+                "stripe_subscription_id = ?, stripe_past_due = 0, cancel_requested_at = NULL, platinum_trial_ends = NULL WHERE id = ?",
                 (customer_id or None, sub_id or None, uid),
             )
             # Inglés forzado en las páginas de Stripe del miembro.
