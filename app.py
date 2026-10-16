@@ -5287,6 +5287,32 @@ def admin_api_members_set_admin():
     return jsonify({"ok": True, "email": email, "is_admin": nuevo})
 
 
+@app.route("/admin/api/members-set-name", methods=["POST"])
+def admin_api_members_set_name():
+    """Corrige el nombre (campo `nombre`) de un miembro por API admin
+    (2026-10-15, pedido por Alex: su hermano se registró poniendo su
+    número de teléfono en vez de su nombre y hubo que corregirlo sin
+    depender de la sesión del miembro). Auth: sesión admin O header
+    X-Admin-Key (mismo patrón que members-set-admin)."""
+    if not _admin_api_autorizado():
+        return jsonify({"error": "admin only"}), 403
+    data = request.get_json(silent=True) or {}
+    email = (data.get("email") or request.form.get("email") or "").strip().lower()
+    nombre = (data.get("nombre") or data.get("name") or
+              request.form.get("nombre") or "").strip()[:120]
+    if not email or not nombre:
+        return jsonify({"error": "email and nombre required"}), 400
+    db = get_db()
+    target = db.execute("SELECT * FROM users WHERE email = ?",
+                        (email,)).fetchone()
+    if not target:
+        return jsonify({"error": "not found"}), 404
+    db.execute("UPDATE users SET nombre = ? WHERE id = ?",
+               (nombre, target["id"]))
+    db.commit()
+    return jsonify({"ok": True, "email": email, "nombre": nombre})
+
+
 @app.route("/admin/test-clear-past-due", methods=["POST"])
 def admin_test_clear_past_due():
     """TEMPORAL para pruebas de Alex: quita SOLO el flag stripe_past_due,
