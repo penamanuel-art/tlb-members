@@ -3140,7 +3140,7 @@ def admin_diseno_home():
     el botón de revertir apaga el diseño lux para TODOS y vuelve al home
     anterior; el mismo botón lo vuelve a encender. Solo admin."""
     user = current_user()
-    if not (is_admin_for(user) or is_alex_member(user)):
+    if not is_admin_for(user):
         flash("You don't have permission to do that.", "error")
         return redirect(url_for("home"))
     nuevo = "0" if home_lux_enabled() else "1"
@@ -4598,7 +4598,7 @@ def admin_free_plays_clear():
     """Borra el tracker "Gold" (solo admin). No afecta tracked_plays
     ni el récord oficial del programa."""
     user = current_user()
-    if not (is_admin_for(user) or is_alex_member(user)):
+    if not is_admin_for(user):
         return redirect(url_for("home"))
     db = get_db()
     db.execute("DELETE FROM free_plays")
@@ -5222,6 +5222,40 @@ def admin_api_members_delete():
     return jsonify({"ok": True, "deleted": email})
 
 
+@app.route("/admin/api/members-set-admin", methods=["POST"])
+def admin_api_members_set_admin():
+    """Quita o pone la bandera is_admin de una cuenta por API admin
+    (2026-10-15, pedido por Alex: su cuenta de miembro queda como
+    miembro normal, sin admin; el admin vive solo en su cuenta admin).
+    Auth: sesión admin O header X-Admin-Key. Protecciones: nunca
+    degradar la cuenta del ADMIN_EMAIL ni dejar el sistema sin
+    ningún admin."""
+    if not _admin_api_autorizado():
+        return jsonify({"error": "admin only"}), 403
+    data = request.get_json(silent=True) or {}
+    email = (data.get("email") or request.form.get("email") or "").strip().lower()
+    val = data.get("is_admin")
+    if not email or val is None:
+        return jsonify({"error": "email and is_admin required"}), 400
+    db = get_db()
+    target = db.execute("SELECT * FROM users WHERE email = ?", (email,)).fetchone()
+    if not target:
+        return jsonify({"error": "not found"}), 404
+    nuevo = 1 if val in (True, 1, "1", "true") else 0
+    if nuevo == 0 and is_admin_for(target):
+        if admin_email() and email == admin_email():
+            return jsonify({"error": "protected account"}), 403
+        fila = db.execute(
+            "SELECT COUNT(*) AS n FROM users WHERE is_admin = 1").fetchone()
+        n_admin = fila["n"] if isinstance(fila, dict) else fila[0]
+        if n_admin <= 1:
+            return jsonify({"error": "cannot remove the last admin"}), 403
+    db.execute("UPDATE users SET is_admin = ? WHERE id = ?",
+               (nuevo, target["id"]))
+    db.commit()
+    return jsonify({"ok": True, "email": email, "is_admin": nuevo})
+
+
 @app.route("/admin/test-clear-past-due", methods=["POST"])
 def admin_test_clear_past_due():
     """TEMPORAL para pruebas de Alex: quita SOLO el flag stripe_past_due,
@@ -5810,7 +5844,7 @@ def admin_tracker_oficial():
     más estadísticas y más profesional que el del Dashboard de miembro.
     Solo admin o la cuenta de miembro de Alex, igual que /admin."""
     user = current_user()
-    if not (is_admin_for(user) or is_alex_member(user)):
+    if not is_admin_for(user):
         flash("You don't have permission to view this page.", "error")
         return redirect(url_for("home"))
     return render_template("admin_tracker_oficial.html", t=official_tracker_full())
@@ -5928,7 +5962,7 @@ def admin_stake_fijo():
     """
     db = get_db()
     user = current_user()
-    if not (is_admin_for(user) or is_alex_member(user)):
+    if not is_admin_for(user):
         flash("You don't have permission.", "error")
         return redirect(url_for("home"))
     uid = request.form.get("user_id")
@@ -6119,7 +6153,7 @@ def admin_seed_tracker():
     """Importa una sola vez las jugadas liquidadas del programa al tracker personal del admin."""
     db = get_db()
     user = current_user()
-    if not (is_admin_for(user) or is_alex_member(user)):
+    if not is_admin_for(user):
         flash("You don't have permission to view this page.", "error")
         return redirect(url_for("home"))
     added = 0
@@ -6215,10 +6249,12 @@ def _value_stats_for_admin(db):
 @app.route("/admin")
 @login_required
 def admin_dashboard():
-    """Panel central del administrador — para Alex (is_admin=1 o su cuenta de miembro)."""
+    """Panel central del administrador — SOLO cuentas con is_admin=1
+    (2026-10-15, orden de Alex: su cuenta de miembro es un miembro
+    normal, sin acceso admin; el admin vive solo en su cuenta admin)."""
     db = get_db()
     user = current_user()
-    if not (is_admin_for(user) or is_alex_member(user)):
+    if not is_admin_for(user):
         flash("You don't have permission to view this page.", "error")
         return redirect(url_for("home"))
     try:
@@ -6394,7 +6430,7 @@ def admin_aprobar_jugadas():
     quedan en plays-pending.json hasta que la publicación se confirma.
     """
     user = current_user()
-    if not (is_admin_for(user) or is_alex_member(user)):
+    if not is_admin_for(user):
         flash("You don't have permission to view this page.", "error")
         return redirect(url_for("home"))
     import json as _jsonB
@@ -6493,7 +6529,7 @@ def admin_ticket_por_jugada():
     encuentre y lo envíe. Devuelve JSON."""
     from flask import jsonify
     user = current_user()
-    if not (is_admin_for(user) or is_alex_member(user)):
+    if not is_admin_for(user):
         return jsonify({"ok": False, "error": "sin permiso"}), 403
     import json as _jsonT, os as _osT, re as _reT
     from datetime import datetime as _dtT
@@ -6568,7 +6604,7 @@ def admin_ticket_por_jugada():
 def admin_wgt_tracker():
     """Tracker privado de WGT (5 meses) — solo Alex, en el Admin Dashboard."""
     user = current_user()
-    if not (is_admin_for(user) or is_alex_member(user)):
+    if not is_admin_for(user):
         flash("You don't have permission to view this page.", "error")
         return redirect(url_for("home"))
     return render_template("admin_wgt_tracker.html")
@@ -6581,7 +6617,7 @@ def admin_subir_ticket():
     from werkzeug.utils import secure_filename
     db = get_db()
     user = current_user()
-    if not (is_admin_for(user) or is_alex_member(user)):
+    if not is_admin_for(user):
         flash("You don't have permission to view this page.", "error")
         return redirect(url_for("home"))
 
@@ -6970,7 +7006,7 @@ def admin_chat_mensaje():
     from werkzeug.utils import secure_filename
     db = get_db()
     user = current_user()
-    if not (is_admin_for(user) or is_alex_member(user)):
+    if not is_admin_for(user):
         return jsonify({"ok": False, "error": "no autorizado"}), 403
     mensaje = request.form.get("mensaje", "").strip()
     hoy = datetime.now().strftime("%Y-%m-%d")
@@ -7249,7 +7285,7 @@ def admin_accion(accion):
     import json as _json, os, time
     db = get_db()
     user = current_user()
-    if not (is_admin_for(user) or is_alex_member(user)):
+    if not is_admin_for(user):
         return jsonify({"error": "unauthorized"}), 401
     validas = {"email-jugadas", "telegram", "publicar-todo", "publish-plays"}
     if accion not in validas:
@@ -7331,7 +7367,7 @@ def admin_miembros():
     """Lista privada de miembros — solo para Alex (is_admin=1)."""
     db = get_db()
     user = current_user()
-    if not (is_admin_for(user) or is_alex_member(user)):
+    if not is_admin_for(user):
         flash("You don't have permission to view this page.", "error")
         return redirect(url_for("home"))
     miembros = db.execute(
@@ -7371,7 +7407,7 @@ def admin_notificaciones_limpiar():
     """Limpia todas las notificaciones (solo Alex/admin)."""
     db = get_db()
     user = current_user()
-    if not (is_admin_for(user) or is_alex_member(user)):
+    if not is_admin_for(user):
         flash("You don't have permission.", "error")
         return redirect(url_for("home"))
     try:
@@ -7390,7 +7426,7 @@ def admin_notificaciones():
     todo lo que pasa — miembros nuevos, tickets, pagos."""
     db = get_db()
     user = current_user()
-    if not (is_admin_for(user) or is_alex_member(user)):
+    if not is_admin_for(user):
         flash("You don't have permission to view this page.", "error")
         return redirect(url_for("home"))
     try:
@@ -7417,7 +7453,7 @@ def admin_trakeos():
     """Quién trakeó cada jugada publicada — solo para Alex (2026-10-05, pedido por Alex)."""
     db = get_db()
     user = current_user()
-    if not (is_admin_for(user) or is_alex_member(user)):
+    if not is_admin_for(user):
         flash("You don't have permission to view this page.", "error")
         return redirect(url_for("home"))
     rows = db.execute(
