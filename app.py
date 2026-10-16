@@ -74,10 +74,10 @@ os.makedirs(INSTANCE_DIR, exist_ok=True)
 DATABASE_URL = os.environ.get("DATABASE_URL")
 USE_PG = bool(DATABASE_URL)
 
-# Link de pago de Stripe para desbloquear Elite ($1 primera semana, luego $23/semana).
+# Link de pago de Stripe para desbloquear Platinum (primer mes gratis, luego $49.99/mes — oferta desde 2026-10-16).
 # Se cambia sin tocar código con la env var STRIPE_PLATINUM_URL en Render.
 STRIPE_PLATINUM_URL = os.environ.get(
-    "STRIPE_PLATINUM_URL", "https://buy.stripe.com/28E14p64MfDeeiybEQefC00"
+    "STRIPE_PLATINUM_URL", "https://buy.stripe.com/14A3cx8cU4YAcaq24gefC03"
 )
 # Pedido Alex 2026-10-05: checkout de Stripe siempre en inglés. Stripe
 # localiza la página de pago según el navegador del cliente (si está en
@@ -755,7 +755,7 @@ EVERYTHING RESUMES INSTANTLY - Push alerts, Telegram channels, the +EV board and
 Enter your dashboard:
 https://www.thesharpteam.bet/home
 
-$23/week. Cancel anytime.
+First month free, then $49.99/month. Cancel anytime.
 
 - The Sharp Team
 
@@ -804,7 +804,7 @@ WELCOME_BACK_HTML = """<!DOCTYPE html>
 </div>
 <div style="text-align:center;padding:18px 20px 0;">
 <a href="https://www.thesharpteam.bet/home" style="display:inline-block;background:#22c55e;color:#111111;font-size:14px;font-weight:800;padding:11px 28px;border-radius:999px;text-decoration:none;">ENTER THE DASHBOARD</a>
-<p style="color:#555555;font-size:14px;line-height:1.7;margin:14px 0 0;">$23/week.<br>Cancel anytime.</p>
+<p style="color:#555555;font-size:14px;line-height:1.7;margin:14px 0 0;">First month free &mdash; then $49.99/month.<br>Cancel anytime.</p>
 </div>
 <div style="text-align:center;padding:20px 20px 14px;">
 <img src="https://files.catbox.moe/74qot5.png" alt="The Sharp Team" width="110" style="width:110px;height:auto;display:block;margin:0 auto;border:0;">
@@ -845,11 +845,11 @@ def send_welcome_back_email(nombre: str, email: str):
 
 
 # ------------------------------------------------------------- Plays ----
-WELCOME_SUBJECT = "Welcome to The Sharp Team \U0001F988"
+WELCOME_SUBJECT = "Welcome to The Sharp Team \U0001F988 \u2014 your first month of Platinum is FREE"
 
 WELCOME_TEXT = """Hi __NOMBRE__,
 
-Welcome to The Sharp Team! Your dashboard is ready.
+Welcome to The Sharp Team! Your dashboard is ready \u2014 and your Platinum membership starts with a FULL MONTH FREE.
 
 EVERYTHING YOUR PLAN UNLOCKS
 1. THE DAILY CARD - Every day at 2:00 PM ET (11:00 AM ET on weekends): the day's official plays (Gold plus the one Platinum), each with its original bet ticket. No filler, ever.
@@ -861,10 +861,12 @@ EVERYTHING YOUR PLAN UNLOCKS
 
 "Every play is posted before game time - then locked and graded against the final score."
 
-Enter your dashboard:
-https://www.thesharpteam.bet/home
+ACTIVATE YOUR FREE MONTH:
+__PAY_URL__
+Add your card and pay $0 today \u2014 Platinum unlocks instantly for 30 days. Then $49.99/month. Cancel anytime. No questions asked.
 
-Your first week is $1 - then $23/week. Cancel anytime. No questions asked.
+Your free Gold plays are already live on your dashboard:
+https://www.thesharpteam.bet/home
 
 - The Sharp Team
 
@@ -881,18 +883,18 @@ WELCOME_HTML = """<!DOCTYPE html>
 <title>Welcome to The Sharp Team</title>
 </head>
 <body style="margin:0;padding:0;background:#ffffff;">
-<div style="display:none;max-height:0;overflow:hidden;opacity:0;">Welcome to The Sharp Team. Your Platinum plays are live &mdash; every pick tracked, every ticket verified.</div>
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;">Welcome to The Sharp Team. Your first month of Platinum is FREE &mdash; every pick tracked, every ticket verified.</div>
 <div style="font-family:Arial,sans-serif;max-width:460px;margin:0 auto;background:#ffffff;">
 <img src="https://www.thesharpteam.bet/static/img/sharp-team-banner.png" alt="The Sharp Team" width="460" style="width:100%;height:auto;display:block;border:0;">
 <div style="background:#ffffff;padding:14px 0 12px;text-align:center;">
 <p style="margin:0;font-size:13px;font-weight:800;letter-spacing:5px;color:#2e4053;">THE SHARP TEAM</p>
 </div>
 <div style="background:#c9a227;padding:28px 24px;text-align:center;">
-<p style="margin:0;font-size:12px;font-weight:800;letter-spacing:3px;color:#0a0f1c;">MEMBERSHIP CONFIRMED</p>
+<p style="margin:0;font-size:12px;font-weight:800;letter-spacing:3px;color:#0a0f1c;">YOUR PLATINUM FREE MONTH IS READY</p>
 <h1 style="font-size:30px;font-weight:800;color:#0a0f1c;margin:10px 0 0;line-height:1.25;">Welcome to the team.</h1>
 </div>
 <div style="text-align:center;padding:16px 20px 0;">
-<p style="color:#555555;font-size:15px;line-height:1.6;margin:0;">Hi __NOMBRE__ &mdash; your dashboard is ready. Here is everything waiting for you inside:</p>
+<p style="color:#555555;font-size:15px;line-height:1.6;margin:0;">Hi __NOMBRE__ &mdash; your dashboard is ready, and Platinum starts with a FULL MONTH FREE. Here is everything waiting for you inside:</p>
 </div>
 <div style="padding:14px 20px 0;">
 <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 10px;background:#2e4053;border:1px solid #2e4053;border-radius:12px;"><tr>
@@ -924,8 +926,9 @@ WELCOME_HTML = """<!DOCTYPE html>
 <p style="font-size:15px;font-style:italic;line-height:1.7;color:#555555;margin:0;">&ldquo;Every play is posted before game time &mdash; then locked and graded against the final score.&rdquo;</p>
 </div>
 <div style="text-align:center;padding:18px 20px 0;">
-<a href="https://www.thesharpteam.bet/home" style="display:inline-block;background:#22c55e;color:#111111;font-size:14px;font-weight:800;padding:11px 28px;border-radius:999px;text-decoration:none;">ENTER THE DASHBOARD</a>
-<p style="color:#555555;font-size:14px;line-height:1.7;margin:14px 0 0;">Your first week is <strong style="color:#16a34a;">$1</strong> &mdash; then $23/week.<br>Cancel anytime.</p>
+<a href="__PAY_URL__" style="display:inline-block;background:#22c55e;color:#111111;font-size:14px;font-weight:800;padding:11px 28px;border-radius:999px;text-decoration:none;">ACTIVATE MY FREE MONTH</a>
+<p style="color:#555555;font-size:14px;line-height:1.7;margin:14px 0 0;">Add your card and pay <strong style="color:#16a34a;">$0 today</strong> &mdash; Platinum unlocks instantly for 30 days.<br>Then $49.99/month. Cancel anytime.</p>
+<p style="color:#555555;font-size:13px;line-height:1.7;margin:10px 0 0;">Your free Gold plays are already live: <a href="https://www.thesharpteam.bet/home" style="color:#2e4053;font-weight:700;">enter your dashboard</a></p>
 </div>
 <div style="text-align:center;padding:20px 20px 14px;">
 <img src="https://files.catbox.moe/74qot5.png" alt="The Sharp Team" width="110" style="width:110px;height:auto;display:block;margin:0 auto;border:0;">
@@ -957,8 +960,8 @@ def send_welcome_email(nombre: str, email: str):
         return
 
     subject = WELCOME_SUBJECT
-    text = WELCOME_TEXT.replace("__NOMBRE__", nombre)
-    html = WELCOME_HTML.replace("__NOMBRE__", nombre)
+    text = WELCOME_TEXT.replace("__NOMBRE__", nombre).replace("__PAY_URL__", STRIPE_PLATINUM_URL)
+    html = WELCOME_HTML.replace("__NOMBRE__", nombre).replace("__PAY_URL__", STRIPE_PLATINUM_URL)
 
     def _send():
         try:
