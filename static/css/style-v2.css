@@ -58,15 +58,15 @@ html, body { overflow-x: clip; }
 
 body.v2 {
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Inter, sans-serif;
-  /* PRUEBA (Alex 2026-10-15): la página entera con el MISMO fondo
-     sólido de la barra superior (#151616, el color del disco del
-     logo), para ver cómo se ve todo fundido en un solo tono.
-     Fondo anterior (Monarch, 2026-10-11) por si se revierte:
-     radial-gradient(1000px 520px at 8% -80px, rgba(45, 190, 160, 0.13), transparent 62%),
-     radial-gradient(820px 440px at 106% 32%, rgba(245, 197, 66, 0.08), transparent 60%),
-     radial-gradient(920px 560px at 85% 112%, rgba(232, 199, 102, 0.15), transparent 62%),
-     linear-gradient(180deg, #090910 0%, #06060c 45%, #06060a 100%) */
-  background: #151616;
+  /* Fondo estilo Monarch (Alex 2026-10-11): verde-azulado oscuro
+     con brillos sutiles, como la referencia. (La prueba de página
+     entera en #151616 del 2026-10-15 se revirtió el mismo día:
+     Alex no notó cambio y pidió dejarlo como estaba.) */
+  background:
+    radial-gradient(1000px 520px at 8% -80px, rgba(45, 190, 160, 0.13), transparent 62%),
+    radial-gradient(820px 440px at 106% 32%, rgba(245, 197, 66, 0.08), transparent 60%),
+    radial-gradient(920px 560px at 85% 112%, rgba(232, 199, 102, 0.15), transparent 62%),
+    linear-gradient(180deg, #090910 0%, #06060c 45%, #06060a 100%);
   color: var(--v2-text);
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
