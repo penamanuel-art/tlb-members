@@ -1636,6 +1636,18 @@ def celebracion_hoy():
 
 
 # Ligas que cubrimos: clasificación del pick por equipo (desglose por liga).
+def _cierre_txt(j):
+    """Precio de cierre formateado (+120 / -107) desde cuota_cierre de la
+    jugada; cadena vacía si la jugada no tiene cierre verificado."""
+    c = j.get("cuota_cierre")
+    if c in (None, "", 0):
+        return ""
+    try:
+        return f"{int(float(c)):+d}"
+    except (TypeError, ValueError):
+        return ""
+
+
 def recientes_oficiales(n=6):
     """Jugadas liquidadas del archivo oficial (sin bloqueadas), más recientes primero."""
     recientes = []
@@ -1668,7 +1680,7 @@ def recientes_oficiales(n=6):
                     "cuota": j.get("cuota"),
                     "resultado": j.get("resultado"),
                     "profit": j.get("profit") if j.get("profit") is not None else 0.0,
-                    "comprobante": j.get("comprobante"),
+                    "comprobante": j.get("comprobante"), "cierre": _cierre_txt(j), "clv": j.get("clv_pct"),
                     "stake_unidades": _su,
                     "unidades": _unidades,
                 })
@@ -1809,13 +1821,13 @@ def official_tracker_full():
 
     peor = [{"fecha": f, "pick": j.get("pick"), "cuota": j.get("cuota_texto") or j.get("cuota"),
              "profit": float(j.get("profit") or 0.0), "nivel": (j.get("nivel") or "").upper(),
-             "comprobante": j.get("comprobante"),
+             "comprobante": j.get("comprobante"), "cierre": _cierre_txt(j), "clv": j.get("clv_pct"),
              "liga": _league_of_archive_play(j) or "",
              "abbr": j.get("abbr") or "", "opp_abbr": j.get("opp_abbr") or "",
              "unidades": round(float(j.get("profit") or 0.0) / 25.0, 2)} for f, j in ordenadas[:5]]
     mejor = [{"fecha": f, "pick": j.get("pick"), "cuota": j.get("cuota_texto") or j.get("cuota"),
               "profit": float(j.get("profit") or 0.0), "nivel": (j.get("nivel") or "").upper(),
-              "comprobante": j.get("comprobante"),
+              "comprobante": j.get("comprobante"), "cierre": _cierre_txt(j), "clv": j.get("clv_pct"),
               "liga": _league_of_archive_play(j) or "",
               "abbr": j.get("abbr") or "", "opp_abbr": j.get("opp_abbr") or "",
               "unidades": round(float(j.get("profit") or 0.0) / 25.0, 2),
@@ -1823,7 +1835,7 @@ def official_tracker_full():
     ultimas = [{"fecha": f, "pick": j.get("pick"), "cuota": j.get("cuota_texto") or j.get("cuota"),
                 "resultado": j.get("resultado"), "profit": float(j.get("profit") or 0.0),
                 "nivel": (j.get("nivel") or "").upper(),
-                "comprobante": j.get("comprobante"),
+                "comprobante": j.get("comprobante"), "cierre": _cierre_txt(j), "clv": j.get("clv_pct"),
                 "liga": _league_of_archive_play(j) or "",
                 "abbr": j.get("abbr") or "", "opp_abbr": j.get("opp_abbr") or "",
                 "unidades": round(float(j.get("profit") or 0.0) / 25.0, 2),
@@ -1834,7 +1846,7 @@ def official_tracker_full():
     historial = [{"fecha": f, "pick": j.get("pick"), "cuota": j.get("cuota_texto") or j.get("cuota"),
                   "resultado": j.get("resultado"), "profit": float(j.get("profit") or 0.0),
                   "nivel": (j.get("nivel") or "").upper(),
-                  "comprobante": j.get("comprobante"),
+                  "comprobante": j.get("comprobante"), "cierre": _cierre_txt(j), "clv": j.get("clv_pct"),
                   "liga": _league_of_archive_play(j) or "",
                   "abbr": j.get("abbr") or "", "opp_abbr": j.get("opp_abbr") or "",
                   "unidades": round(float(j.get("profit") or 0.0) / 25.0, 2),
@@ -1902,12 +1914,15 @@ def official_tracker_full():
                 })
 
     verif = sum(1 for _, j in settled if j.get("comprobante"))
+    _clvs = [float(j["clv_pct"]) for _, j in settled if j.get("clv_pct") is not None]
     return {"general": general, "por_nivel": por_nivel, "por_banda": por_banda,
             "por_liga": por_liga,
             "racha_actual": racha_actual, "mejor_racha_w": mejor_w, "peor_racha_l": peor_l,
             "ult7": ult7, "ult30": ult30, "mejor": mejor, "peor": peor,
             "ultimas": ultimas, "historial": historial, "verificadas": verif,
-            "verificadas_pct": round(verif / general["n"] * 100) if general["n"] else 0}
+            "verificadas_pct": round(verif / general["n"] * 100) if general["n"] else 0,
+            "clv_n": len(_clvs),
+            "clv_prom": round(sum(_clvs) / len(_clvs), 2) if _clvs else None}
 
 
 def program_stats():
