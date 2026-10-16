@@ -77,12 +77,12 @@ fbq('track', 'PageView');
       <button class="v2-icon-btn" id="v2menuBtn" aria-label="Menu">☰</button>
       <div class="v2-menu-drop" id="v2menuDrop" hidden>
         <a href="{{ url_for('home', splash='0') }}">🏠 Home</a>
-        <a href="{{ url_for('records') }}">🧮 Full record</a>
+        <a href="{{ url_for('records') }}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px" aria-hidden="true"><path d="M4 20v-4"/><path d="M8 20v-7"/><path d="M12 20v-5"/><path d="M16 20v-8"/><path d="M20 20V8"/><path d="M3 12l5-4 3.5 2.5L17 5"/><path d="M14.5 5H17v2.5"/></svg> Full record</a>
         {% if is_alex and not es_admin %}<a href="{{ url_for('values_page') }}">💎 Value Plays</a>{% endif %}
         <a href="{{ url_for('masterclass') }}">🎓 Academy</a>
         <a href="{{ url_for('guide_moneyline') }}">📚 Betting Guides</a>
         <a href="{{ url_for('about') }}">📖 Our story</a>
-        {# "📊 Results" eliminado del menú (2026-10-12): duplicaba "🧮 Full record" — ambos llegan al tracker ejecutivo. #}
+        {# "📊 Results" eliminado del menú (2026-10-12): duplicaba "<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px" aria-hidden="true"><path d="M4 20v-4"/><path d="M8 20v-7"/><path d="M12 20v-5"/><path d="M16 20v-8"/><path d="M20 20V8"/><path d="M3 12l5-4 3.5 2.5L17 5"/><path d="M14.5 5H17v2.5"/></svg> Full record" — ambos llegan al tracker ejecutivo. #}
         <a href="{{ url_for('ev_board') }}">⚡ +EV Board</a>
         <a href="{{ url_for('sharp') }}">🔪 Sharp Money</a>
         <a href="{{ url_for('programa') }}">📘 Program</a>
@@ -94,7 +94,7 @@ fbq('track', 'PageView');
         <a href="{{ url_for('logout') }}">Log out</a>
       </div>
     </div>
-    <a href="{{ url_for('records') }}" class="v2-track-link{% if request.endpoint == 'records' %} active{% endif %}" title="Full record">🧮 Full record</a>
+    <a href="{{ url_for('records') }}" class="v2-track-link{% if request.endpoint == 'records' %} active{% endif %}" title="Full record"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px" aria-hidden="true"><path d="M4 20v-4"/><path d="M8 20v-7"/><path d="M12 20v-5"/><path d="M16 20v-8"/><path d="M20 20V8"/><path d="M3 12l5-4 3.5 2.5L17 5"/><path d="M14.5 5H17v2.5"/></svg> Full record</a>
     <a href="{{ url_for('masterclass') }}" class="v2-track-link{% if request.endpoint == 'masterclass' %} active{% endif %}" title="Academy">🎓 Academy</a>
     </div>
     {% else %}
