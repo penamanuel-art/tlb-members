@@ -2790,10 +2790,10 @@ def inject_user():
     ruta = (freq.endpoint or "")
     wm = WATERMARK_POR_RUTA.get(ruta)
     if wm is None:
-        # Rotacion POR CARGA (2026-10-15, orden de Alex): el fondo
-        # cambia entre los TRES (futbol, beisbol, NHL) en cada visita;
-        # antes la sesion fijaba uno solo y siempre salia el mismo.
-        wm = random.choice(WATERMARKS)
+        # SIN marca de agua (2026-10-16, orden de Alex: "quítale esos
+        # fondos de futbolista, ponle un fondo normal"): ya no rotan las
+        # fotos de jugadores; la página usa su fondo normal.
+        wm = ""
     nombre = session.get("nombre", "")
     corto = primer_nombre(nombre)
     cu = current_user()
