@@ -1,0 +1,430 @@
+{% extends "base.html" %}
+{% block title %}Free Betting Calculators — The Sharp Team{% endblock %}
+{% block content %}
+<style>
+.tc-wrap{max-width:640px;margin:0 auto;color:#fff}
+.tc-wrap .kicker{font-size:11px;font-weight:700;letter-spacing:2px;color:#d4af37;margin:6px 0 4px}
+.tc-wrap h2{font-size:25px;font-weight:600;margin:0 0 6px;letter-spacing:-.3px}
+.tc-wrap .muted{color:#9a9ab5;font-size:14px;font-weight:300;margin:0 0 16px;line-height:1.55}
+.tc-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 16px}
+.tc-tab{background:#17171f;border:1px solid #3a3a4a;color:#c9c9da;border-radius:999px;padding:9px 15px;font-size:13.5px;font-weight:600;cursor:pointer}
+.tc-tab.active{border-color:#d4af37;color:#d4af37;background:#1d1a12}
+.tc-panel{display:none}
+.tc-panel.active{display:block}
+.tc-card{background:#17171f;border:1px solid #26262f;border-radius:14px;padding:16px;margin:0 0 12px}
+.tc-card h3{font-size:16px;font-weight:600;margin:0 0 4px}
+.tc-card .how{color:#9a9ab5;font-size:13px;font-weight:300;line-height:1.55;margin:0 0 14px}
+.tc-field{margin:0 0 12px}
+.tc-field label{display:block;font-size:12.5px;font-weight:600;color:#c9c9da;margin:0 0 6px;letter-spacing:.3px}
+.tc-field input{width:100%;background:#0f0f16;border:1px solid #3a3a4a;color:#fff;border-radius:10px;padding:12px;font-size:17px;font-weight:600;box-sizing:border-box}
+.tc-field input:focus{outline:none;border-color:#d4af37}
+.tc-field input.bad{border-color:#f87171}
+.tc-2col{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tc-results{background:#17171f;border:1px solid #d4af37;border-radius:16px;padding:16px;margin:0 0 12px}
+.tc-results.hidden{display:none}
+.tc-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tc-stat{background:#0f0f16;border:1px solid #26262f;border-radius:12px;padding:12px}
+.tc-stat .v{font-size:19px;font-weight:700;color:#4ade80}
+.tc-stat .v.gold{color:#d4af37}
+.tc-stat .v.red{color:#f87171}
+.tc-stat .l{font-size:11.5px;color:#9a9ab5;margin-top:2px;line-height:1.4}
+.tc-msg{font-size:13.5px;line-height:1.55;color:#e8e8f2;background:#0f0f16;border:1px solid #26262f;border-radius:12px;padding:12px;margin:0 0 12px}
+.tc-msg.hidden{display:none}
+.tc-leg{background:#17171f;border:1px solid #26262f;border-radius:14px;padding:14px;margin:0 0 10px}
+.tc-leg-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.tc-leg-title{font-weight:600;font-size:14.5px}
+.tc-remove{background:transparent;border:1px solid #3a3a4a;color:#9a9ab5;border-radius:10px;padding:6px 12px;font-size:13px;font-weight:600;cursor:pointer}
+.tc-remove:disabled{opacity:.35;cursor:default}
+.tc-odds{width:100%;background:#0f0f16;border:1px solid #3a3a4a;color:#fff;border-radius:10px;padding:12px;font-size:17px;font-weight:600;box-sizing:border-box}
+.tc-odds:focus{outline:none;border-color:#d4af37}
+.tc-odds.bad{border-color:#f87171}
+.tc-add{width:100%;background:#1c1c28;border:1.5px dashed #3a3a4a;color:#e8e8f2;font-weight:600;font-size:14.5px;border-radius:12px;padding:12px;cursor:pointer;margin:0 0 12px}
+.tc-add:disabled{opacity:.35;cursor:default}
+.tc-err{color:#f87171;font-size:13px;font-weight:600;margin:0 0 10px}
+.tc-cta{display:block;background:linear-gradient(165deg,#151e36,#0a0f1d);border:1px solid rgba(212,175,55,.45);border-radius:16px;padding:16px;margin:18px 0 8px;color:#fff;text-decoration:none}
+.tc-cta b{font-size:15.5px;font-weight:600;display:block;margin:0 0 3px}
+.tc-cta span{font-size:13px;font-weight:300;color:#9a9ab5;line-height:1.5;display:block}
+.tc-cta .go{color:#d4af37;font-weight:600}
+.tc-note{color:#9a9ab5;font-size:12px;text-align:center;line-height:1.6;margin:14px 0 0}
+</style>
+
+<div class="tc-wrap">
+  <p class="kicker">FREE TOOLS</p>
+  <h2>Betting Calculators</h2>
+  <p class="muted">Five pro calculators, free forever — no account needed. The same math our model runs on every play: fair prices, true probabilities and disciplined stake sizing.</p>
+
+  <div class="tc-tabs" role="tablist">
+    <button class="tc-tab active" type="button" data-tab="converter">Odds Converter</button>
+    <button class="tc-tab" type="button" data-tab="novig">No-Vig</button>
+    <button class="tc-tab" type="button" data-tab="kelly">Kelly</button>
+    <button class="tc-tab" type="button" data-tab="hedge">Hedge</button>
+    <button class="tc-tab" type="button" data-tab="parlay">Parlay</button>
+  </div>
+
+  <!-- ============ CONVERTER ============ -->
+  <section class="tc-panel active" id="panel-converter">
+    <div class="tc-card">
+      <h3>Odds Converter</h3>
+      <p class="how">Type in one format and get the rest. The implied probability is how often a bet needs to win just to break even at that price.</p>
+      <div class="tc-2col">
+        <div class="tc-field">
+          <label for="cvAm">AMERICAN ODDS</label>
+          <input id="cvAm" type="text" inputmode="numeric" value="+150" aria-label="American odds">
+        </div>
+        <div class="tc-field">
+          <label for="cvDec">DECIMAL ODDS</label>
+          <input id="cvDec" type="text" inputmode="decimal" value="2.50" aria-label="Decimal odds">
+        </div>
+      </div>
+    </div>
+    <div class="tc-results" id="cvResults">
+      <div class="tc-grid">
+        <div class="tc-stat"><div class="v gold" id="cvFrac">—</div><div class="l">Fractional odds</div></div>
+        <div class="tc-stat"><div class="v" id="cvProb">—</div><div class="l">Implied probability (break-even)</div></div>
+        <div class="tc-stat"><div class="v gold" id="cvAmOut">—</div><div class="l">American</div></div>
+        <div class="tc-stat"><div class="v gold" id="cvDecOut">—</div><div class="l">Decimal</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ NO-VIG ============ -->
+  <section class="tc-panel" id="panel-novig">
+    <div class="tc-card">
+      <h3>No-Vig Fair Odds</h3>
+      <p class="how">Every price includes the bookmaker's cut (the vig). Enter both sides of a market and we strip the vig out, so you can see the true fair price — the number our +EV board grades every play against.</p>
+      <div class="tc-2col">
+        <div class="tc-field">
+          <label for="nvA">SIDE A ODDS</label>
+          <input id="nvA" type="text" inputmode="numeric" value="-110" aria-label="Side A odds">
+        </div>
+        <div class="tc-field">
+          <label for="nvB">SIDE B ODDS</label>
+          <input id="nvB" type="text" inputmode="numeric" value="-110" aria-label="Side B odds">
+        </div>
+      </div>
+    </div>
+    <div class="tc-results hidden" id="nvResults">
+      <div class="tc-grid">
+        <div class="tc-stat"><div class="v" id="nvFairA">—</div><div class="l">Fair odds — Side A</div></div>
+        <div class="tc-stat"><div class="v" id="nvFairB">—</div><div class="l">Fair odds — Side B</div></div>
+        <div class="tc-stat"><div class="v gold" id="nvProbA">—</div><div class="l">True probability — Side A</div></div>
+        <div class="tc-stat"><div class="v gold" id="nvProbB">—</div><div class="l">True probability — Side B</div></div>
+        <div class="tc-stat"><div class="v red" id="nvVig">—</div><div class="l">Vig in this market</div></div>
+        <div class="tc-stat"><div class="v gold" id="nvOver">—</div><div class="l">Total implied (with vig)</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ KELLY ============ -->
+  <section class="tc-panel" id="panel-kelly">
+    <div class="tc-card">
+      <h3>Kelly Stake Calculator</h3>
+      <p class="how">The Kelly formula sizes a bet by your edge: your estimated win probability versus the price. Most pros bet half or quarter Kelly to smooth the swings — full Kelly is aggressive.</p>
+      <div class="tc-field">
+        <label for="kBank">YOUR BANKROLL ($)</label>
+        <input id="kBank" type="number" min="0" step="any" value="1000" inputmode="decimal" aria-label="Bankroll">
+      </div>
+      <div class="tc-2col">
+        <div class="tc-field">
+          <label for="kOdds">BET ODDS (AMERICAN)</label>
+          <input id="kOdds" type="text" inputmode="numeric" value="+120" aria-label="Bet odds">
+        </div>
+        <div class="tc-field">
+          <label for="kProb">YOUR WIN PROBABILITY (%)</label>
+          <input id="kProb" type="number" min="0" max="100" step="any" value="50" inputmode="decimal" aria-label="Your estimated win probability">
+        </div>
+      </div>
+    </div>
+    <p class="tc-msg hidden" id="kMsg"></p>
+    <div class="tc-results hidden" id="kResults">
+      <div class="tc-grid">
+        <div class="tc-stat"><div class="v" id="kEdge">—</div><div class="l">Your edge vs the price</div></div>
+        <div class="tc-stat"><div class="v gold" id="kFull">—</div><div class="l">Full Kelly stake</div></div>
+        <div class="tc-stat"><div class="v" id="kHalf">—</div><div class="l">Half Kelly stake (pro standard)</div></div>
+        <div class="tc-stat"><div class="v" id="kQuarter">—</div><div class="l">Quarter Kelly stake (conservative)</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HEDGE ============ -->
+  <section class="tc-panel" id="panel-hedge">
+    <div class="tc-card">
+      <h3>Hedge Calculator</h3>
+      <p class="how">Already holding a ticket? Enter your original bet and the current price on the other side. We calculate the exact hedge stake that locks in the same profit no matter who wins.</p>
+      <div class="tc-field">
+        <label for="hStake">ORIGINAL STAKE ($)</label>
+        <input id="hStake" type="number" min="0" step="any" value="100" inputmode="decimal" aria-label="Original stake">
+      </div>
+      <div class="tc-2col">
+        <div class="tc-field">
+          <label for="hOrig">ORIGINAL ODDS (AMERICAN)</label>
+          <input id="hOrig" type="text" inputmode="numeric" value="+150" aria-label="Original odds">
+        </div>
+        <div class="tc-field">
+          <label for="hHedge">HEDGE ODDS (AMERICAN)</label>
+          <input id="hHedge" type="text" inputmode="numeric" value="-130" aria-label="Hedge odds">
+        </div>
+      </div>
+    </div>
+    <div class="tc-results hidden" id="hResults">
+      <div class="tc-grid">
+        <div class="tc-stat"><div class="v gold" id="hAmt">—</div><div class="l">Hedge stake (bet the other side)</div></div>
+        <div class="tc-stat"><div class="v" id="hProfit">—</div><div class="l">Guaranteed profit, win either way</div></div>
+        <div class="tc-stat"><div class="v gold" id="hTotal">—</div><div class="l">Total wagered (both bets)</div></div>
+        <div class="tc-stat"><div class="v gold" id="hReturn">—</div><div class="l">Total returned, win either way</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PARLAY ============ -->
+  <section class="tc-panel" id="panel-parlay">
+    <div class="tc-card">
+      <h3>Parlay Calculator</h3>
+      <p class="how">Add 2 to 10 legs with American odds. See the combined odds, implied probability and payout for your stake.</p>
+      <div id="pLegs"></div>
+      <button id="pAdd" class="tc-add" type="button">+ Add leg</button>
+      <div class="tc-field" style="margin:0">
+        <label for="pStake">STAKE ($)</label>
+        <input id="pStake" type="number" min="0" step="any" value="10" inputmode="decimal" aria-label="Parlay stake">
+      </div>
+    </div>
+    <p id="pErr" class="tc-err" hidden></p>
+    <div class="tc-results hidden" id="pResults">
+      <div class="tc-grid">
+        <div class="tc-stat"><div class="v gold" id="pOdds">—</div><div class="l">Combined odds</div></div>
+        <div class="tc-stat"><div class="v" id="pProb">—</div><div class="l">Implied probability</div></div>
+        <div class="tc-stat"><div class="v" id="pPayout">—</div><div class="l">Total payout</div></div>
+        <div class="tc-stat"><div class="v" id="pProfit">—</div><div class="l">Profit</div></div>
+      </div>
+    </div>
+  </section>
+
+  <a class="tc-cta" href="/free">
+    <b>Want the math already done for you?</b>
+    <span>Our model runs these numbers on every game, every day — and posts one free play daily. <span class="go">See today's free play →</span></span>
+  </a>
+
+  <p class="tc-note">For education only. Always verify the final odds at your sportsbook before placing a bet.<br>Play responsibly · 21+ · 1-800-GAMBLER</p>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  /* ---------- shared math ---------- */
+  function parseAm(v){
+    v = parseFloat(String(v).trim().replace('+',''));
+    if(!isFinite(v) || v === 0 || (v > -100 && v < 100)) return NaN;
+    return v;
+  }
+  function amToDec(a){ return a > 0 ? 1 + a/100 : 1 + 100/Math.abs(a); }
+  function decToAmStr(d){
+    if(!isFinite(d) || d <= 1) return '—';
+    if(d >= 2) return '+' + Math.round((d - 1) * 100);
+    return '-' + Math.round(100 / (d - 1));
+  }
+  function probToAm(p){
+    if(!isFinite(p) || p <= 0 || p >= 1) return NaN;
+    var d = 1 / p;
+    return d >= 2 ? Math.round((d - 1) * 100) : -Math.round(100 / (d - 1));
+  }
+  function amStr(a){ return (a > 0 ? '+' : '') + Math.round(a); }
+  function gcd(a,b){ return b ? gcd(b, a % b) : a; }
+  function decToFrac(d){
+    var x = d - 1;
+    if(!isFinite(x) || x <= 0) return '—';
+    var bn = 1, bd = 1, be = 1e9;
+    for(var den = 1; den <= 100; den++){
+      var num = Math.round(x * den);
+      if(num < 1) continue;
+      var err = Math.abs(num/den - x);
+      if(err < be){ be = err; bn = num; bd = den; }
+    }
+    var g = gcd(bn, bd);
+    return (bn/g) + '/' + (bd/g);
+  }
+  function money(x){
+    var s = '$' + Math.abs(x).toLocaleString('en-US',{minimumFractionDigits:2, maximumFractionDigits:2});
+    return x < 0 ? '-' + s : s;
+  }
+  function pct(x, dec){ return (x * 100).toFixed(dec == null ? 1 : dec) + '%'; }
+
+  /* ---------- tabs ---------- */
+  var tabs = document.querySelectorAll('.tc-tab');
+  function openTab(name){
+    tabs.forEach(function(t){ t.classList.toggle('active', t.getAttribute('data-tab') === name); });
+    document.querySelectorAll('.tc-panel').forEach(function(p){
+      p.classList.toggle('active', p.id === 'panel-' + name);
+    });
+  }
+  tabs.forEach(function(t){
+    t.addEventListener('click', function(){
+      openTab(t.getAttribute('data-tab'));
+      try{ history.replaceState(null, '', '#' + t.getAttribute('data-tab')); }catch(e){}
+    });
+  });
+  var h = (location.hash || '').replace('#','');
+  if(['converter','novig','kelly','hedge','parlay'].indexOf(h) >= 0) openTab(h);
+
+  /* ---------- converter ---------- */
+  var cvAm = document.getElementById('cvAm'), cvDec = document.getElementById('cvDec');
+  function cvShow(dec){
+    document.getElementById('cvFrac').textContent = decToFrac(dec);
+    document.getElementById('cvProb').textContent = pct(1/dec);
+    document.getElementById('cvAmOut').textContent = decToAmStr(dec);
+    document.getElementById('cvDecOut').textContent = dec.toFixed(3).replace(/0+$/,'').replace(/\.$/,'.0');
+  }
+  function cvFromAm(){
+    var a = parseAm(cvAm.value);
+    if(!isFinite(a)){ cvAm.classList.add('bad'); return; }
+    cvAm.classList.remove('bad');
+    var dec = amToDec(a);
+    cvDec.value = dec.toFixed(3).replace(/0+$/,'').replace(/\.$/,'.0');
+    cvShow(dec);
+  }
+  function cvFromDec(){
+    var dec = parseFloat(cvDec.value);
+    if(!isFinite(dec) || dec <= 1){ cvDec.classList.add('bad'); return; }
+    cvDec.classList.remove('bad');
+    var a = probToAm(1/dec);
+    cvAm.value = amStr(a);
+    cvShow(dec);
+  }
+  cvAm.addEventListener('input', cvFromAm);
+  cvDec.addEventListener('input', cvFromDec);
+  cvFromAm();
+
+  /* ---------- no-vig ---------- */
+  var nvA = document.getElementById('nvA'), nvB = document.getElementById('nvB');
+  var nvRes = document.getElementById('nvResults');
+  function nvCalc(){
+    var a = parseAm(nvA.value), b = parseAm(nvB.value);
+    nvA.classList.toggle('bad', !isFinite(a));
+    nvB.classList.toggle('bad', !isFinite(b));
+    if(!isFinite(a) || !isFinite(b)){ nvRes.classList.add('hidden'); return; }
+    var pa = 1 / amToDec(a), pb = 1 / amToDec(b), tot = pa + pb;
+    var fa = pa / tot, fb = pb / tot;
+    document.getElementById('nvFairA').textContent = amStr(probToAm(fa));
+    document.getElementById('nvFairB').textContent = amStr(probToAm(fb));
+    document.getElementById('nvProbA').textContent = pct(fa);
+    document.getElementById('nvProbB').textContent = pct(fb);
+    document.getElementById('nvVig').textContent = pct(tot - 1, 2);
+    document.getElementById('nvOver').textContent = pct(tot, 2);
+    nvRes.classList.remove('hidden');
+  }
+  nvA.addEventListener('input', nvCalc);
+  nvB.addEventListener('input', nvCalc);
+  nvCalc();
+
+  /* ---------- kelly ---------- */
+  var kBank = document.getElementById('kBank'), kOdds = document.getElementById('kOdds'),
+      kProb = document.getElementById('kProb'), kRes = document.getElementById('kResults'),
+      kMsg = document.getElementById('kMsg');
+  function kCalc(){
+    var bank = parseFloat(kBank.value), a = parseAm(kOdds.value), p = parseFloat(kProb.value) / 100;
+    kOdds.classList.toggle('bad', !isFinite(a));
+    if(!isFinite(bank) || bank <= 0 || !isFinite(a) || !isFinite(p) || p <= 0 || p >= 1){
+      kRes.classList.add('hidden'); kMsg.classList.add('hidden'); return;
+    }
+    var dec = amToDec(a), b = dec - 1, q = 1 - p;
+    var edge = p - 1/dec;
+    var f = (b * p - q) / b;
+    if(f <= 0){
+      kRes.classList.add('hidden');
+      kMsg.textContent = 'No edge at your numbers: at ' + pct(p) + ' the price ' + amStr(a) +
+        ' implies ' + pct(1/dec) + '. Kelly says bet $0 — pass the game or find a better price.';
+      kMsg.classList.remove('hidden');
+      return;
+    }
+    kMsg.classList.add('hidden');
+    document.getElementById('kEdge').textContent = '+' + pct(edge);
+    document.getElementById('kFull').textContent = money(bank * f) + ' (' + pct(f) + ')';
+    document.getElementById('kHalf').textContent = money(bank * f / 2);
+    document.getElementById('kQuarter').textContent = money(bank * f / 4);
+    kRes.classList.remove('hidden');
+  }
+  [kBank, kOdds, kProb].forEach(function(el){ el.addEventListener('input', kCalc); });
+  kCalc();
+
+  /* ---------- hedge ---------- */
+  var hStake = document.getElementById('hStake'), hOrig = document.getElementById('hOrig'),
+      hHedge = document.getElementById('hHedge'), hRes = document.getElementById('hResults');
+  function hCalc(){
+    var s = parseFloat(hStake.value), a1 = parseAm(hOrig.value), a2 = parseAm(hHedge.value);
+    hOrig.classList.toggle('bad', !isFinite(a1));
+    hHedge.classList.toggle('bad', !isFinite(a2));
+    if(!isFinite(s) || s <= 0 || !isFinite(a1) || !isFinite(a2)){ hRes.classList.add('hidden'); return; }
+    var d1 = amToDec(a1), d2 = amToDec(a2);
+    var hedge = s * d1 / d2;
+    var profit = s * (d1 - 1) - hedge;
+    var profEl = document.getElementById('hProfit');
+    document.getElementById('hAmt').textContent = money(hedge);
+    profEl.textContent = money(profit) + (profit < 0 ? ' (locks in a loss at these prices)' : '');
+    profEl.classList.toggle('red', profit < 0);
+    document.getElementById('hTotal').textContent = money(s + hedge);
+    document.getElementById('hReturn').textContent = money(s + hedge + profit);
+    hRes.classList.remove('hidden');
+  }
+  [hStake, hOrig, hHedge].forEach(function(el){ el.addEventListener('input', hCalc); });
+  hCalc();
+
+  /* ---------- parlay ---------- */
+  var pLegs = document.getElementById('pLegs'), pAdd = document.getElementById('pAdd'),
+      pStake = document.getElementById('pStake'), pErr = document.getElementById('pErr'),
+      pRes = document.getElementById('pResults');
+  var MAX_LEGS = 10, MIN_LEGS = 2;
+  function pCount(){ return pLegs.querySelectorAll('.tc-leg').length; }
+  function pRenumber(){
+    var rows = pLegs.querySelectorAll('.tc-leg');
+    rows.forEach(function(r, i){
+      r.querySelector('.tc-leg-title').textContent = 'Leg ' + (i + 1);
+      r.querySelector('.tc-remove').disabled = rows.length <= MIN_LEGS;
+    });
+    pAdd.disabled = rows.length >= MAX_LEGS;
+  }
+  function pCalc(){
+    var inputs = pLegs.querySelectorAll('.tc-odds');
+    var dec = 1, ok = true;
+    inputs.forEach(function(inp){
+      var a = parseAm(inp.value);
+      if(!isFinite(a)){ ok = false; inp.classList.add('bad'); }
+      else { inp.classList.remove('bad'); dec *= amToDec(a); }
+    });
+    var stake = parseFloat(pStake.value);
+    if(!isFinite(stake) || stake <= 0) ok = false;
+    if(!ok){
+      pRes.classList.add('hidden');
+      var bad = false;
+      inputs.forEach(function(inp){ if(inp.classList.contains('bad')) bad = true; });
+      pErr.hidden = false;
+      pErr.textContent = bad ? 'Check the highlighted odds — use American format like +150 or -110.'
+                             : 'Enter a stake greater than 0.';
+      return;
+    }
+    pErr.hidden = true;
+    document.getElementById('pOdds').textContent = decToAmStr(dec);
+    document.getElementById('pProb').textContent = pct(1 / dec);
+    document.getElementById('pPayout').textContent = money(stake * dec);
+    document.getElementById('pProfit').textContent = money(stake * dec - stake);
+    pRes.classList.remove('hidden');
+  }
+  function pAddLeg(value){
+    if(pCount() >= MAX_LEGS) return;
+    var div = document.createElement('div');
+    div.className = 'tc-leg';
+    div.innerHTML = '<div class="tc-leg-head"><span class="tc-leg-title">Leg</span>' +
+      '<button class="tc-remove" type="button">Remove</button></div>' +
+      '<input class="tc-odds" type="text" inputmode="numeric" placeholder="American odds, e.g. +150 or -110" value="' +
+      (value || '') + '">';
+    div.querySelector('.tc-remove').addEventListener('click', function(){
+      if(pCount() > MIN_LEGS){ div.remove(); pRenumber(); pCalc(); }
+    });
+    div.querySelector('.tc-odds').addEventListener('input', pCalc);
+    pLegs.appendChild(div);
+    pRenumber(); pCalc();
+  }
+  pAdd.addEventListener('click', function(){ pAddLeg(''); });
+  pStake.addEventListener('input', pCalc);
+  pAddLeg('-110'); pAddLeg('-110');
+})();
+</script>
+{% endblock %}
