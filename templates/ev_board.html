@@ -74,26 +74,23 @@ a.book-chip{text-decoration:none;display:inline-block}
   var btn = document.getElementById('pushBtn');
   var hint = document.getElementById('pushHint');
   if (!btn || !window.TLB_push) return;
+  var current = 'default';
   function paint(st) {
-    if (st === 'granted') { btn.textContent = '🔔 Alerts on'; hint.textContent = "You'll get a phone push when a new edge hits the board."; }
-    else if (st === 'denied') { btn.textContent = '🔔 Blocked'; hint.textContent = 'Notifications are blocked — allow them in your browser settings, then try again.'; }
-    else if (st === 'unsupported') { btn.textContent = '🔔 Not supported'; hint.textContent = (/iphone|ipad|ipod/i.test(navigator.userAgent || '') && !window.navigator.standalone) ? 'On iPhone/iPad, alerts only work from the Home Screen app: tap Share \u2192 "Add to Home Screen", open The Sharp Team from there, then turn alerts on.' : "This browser doesn't support push notifications."; }
-    else if (st === 'unsubscribed') { btn.textContent = '🔔 Enable alerts'; btn.disabled = false; hint.textContent = 'Permission is on but this device isn\'t connected \u2014 tap to reconnect.'; }
+    current = st;
+    if (st === 'granted') { btn.textContent = '🔔 Alerts on'; btn.disabled = false; hint.textContent = "You'll get a phone push when a new edge hits the board. Tap to turn off."; }
+    else if (st === 'off' || st === 'default') { btn.textContent = '🔔 Enable alerts'; btn.disabled = false; hint.textContent = 'Get a phone push when a new edge hits the board.'; }
+    else if (st === 'unsubscribed') { btn.textContent = '🔔 Enable alerts'; btn.disabled = false; hint.textContent = "This device isn't connected \u2014 tap to reconnect."; }
+    else if (st === 'denied') { btn.textContent = '🔔 Blocked'; btn.disabled = true; hint.textContent = 'Notifications are blocked \u2014 allow them in your browser settings, then try again.'; }
+    else if (st === 'unsupported') { btn.textContent = '🔔 Not supported'; btn.disabled = true; hint.textContent = (/iphone|ipad|ipod/i.test(navigator.userAgent || '') && !window.navigator.standalone) ? 'On iPhone/iPad, alerts only work from the Home Screen app: tap Share \u2192 "Add to Home Screen", open The Sharp Team from there, then turn alerts on.' : "This browser doesn't support push notifications."; }
+    else if (st === 'error') { btn.textContent = '🔔 Enable alerts'; btn.disabled = false; hint.textContent = 'Something went wrong \u2014 try again.'; }
   }
   window.TLB_push.status().then(paint);
   btn.addEventListener('click', async function () {
+    if (btn.disabled) return;
     btn.disabled = true;
-    btn.textContent = '⏳ Enabling…';
-    try {
-      var st = await window.TLB_push.enable();
-      if (st === 'granted') paint('granted');
-      else if (st === 'denied') paint('denied');
-      else if (st === 'unsupported') paint('unsupported');
-      else { btn.textContent = '🔔 Enable alerts'; btn.disabled = false; hint.textContent = 'Something went wrong — try again.'; }
-    } catch (e) {
-      btn.textContent = '🔔 Enable alerts';
-      btn.disabled = false;
-    }
+    btn.textContent = '⏳ Working\u2026';
+    var st = (current === 'granted') ? await window.TLB_push.disable() : await window.TLB_push.enable();
+    paint(st);
   });
 })();
 </script>
