@@ -86,7 +86,7 @@ fbq('track', 'PageView');
 <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1625430959036525&ev=PageView&noscript=1"/></noscript>
 <!-- End Meta Pixel Code -->
 </head>
-<body class="{% if session.get('user_id') %}has-bottomnav{% endif %}{% if ticker_days %} has-ticker{% endif %}{% if request.path.startswith('/admin') %} admin-theme{% endif %}" style="--wm-img: url('{{ url_for('static', filename=watermark_img) }}')">
+<body class="{% if session.get('user_id') %}has-bottomnav{% endif %}{% if ticker_days %} has-ticker{% endif %}{% if request.path.startswith('/admin') %} admin-theme{% endif %}"{% if watermark_img %} style="--wm-img: url('{{ url_for('static', filename=watermark_img) }}')"{% endif %}>
 <header class="topbar">
   <div class="topbar-left">
     {% if session.get('user_id') %}
