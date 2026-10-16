@@ -14,7 +14,7 @@
 :root {
   /* v2 palette — tono Monarch (pedido Alex 2026-10-10):
      oscuro con matiz verde-azulado sutil, no negro puro */
-  --v2-bg: #0c0f16; /* fondo EXACTO de la app de WGT (captura de Alex 2026-10-16): gris azulado con tono visible, NO negro plano */
+  --v2-bg: #131926; /* fondo de la app de WGT (captura de Alex 2026-10-16) aclarado UN POQUITITO a su pedido, para que las tarjetas se vean por encima */
   --v2-surface: rgba(255, 255, 255, 0.055);
   --v2-surface-2: rgba(255, 255, 255, 0.09);
   --v2-border: rgba(255, 255, 255, 0.13);
@@ -64,7 +64,7 @@ body.v2 {
      a la derecha, igual al de ellos. Las tarjetas NO se tocaron. */
   background:
     radial-gradient(1100px 560px at 72% -8%, rgba(0, 123, 255, 0.10), transparent 60%),
-    #0c0f16;
+    #131926;
   color: var(--v2-text);
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
