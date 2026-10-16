@@ -212,7 +212,7 @@ a.lux-rec-card:active{transform:scale(.985)}
   {% if recientes %}
   {% set mc = namespace(n=0) %}
   {% set meses = {'01':'Jan','02':'Feb','03':'Mar','04':'Apr','05':'May','06':'Jun','07':'Jul','08':'Aug','09':'Sep','10':'Oct','11':'Nov','12':'Dec'} %}
-  {% for g in recientes_dias %}
+  {% for g in recientes_dias[:1] %}
     {% set iso = g.fecha_iso %}
     {% set etiqueta = 'Yesterday' if iso == ayer_iso else ('Today' if iso == hoy_iso else (meses.get(iso[5:7], '') ~ ' ' ~ (iso[8:10] | int))) %}
     {% set sub = meses.get(iso[5:7], '') ~ ' ' ~ (iso[8:10] | int) ~ ' card' %}
