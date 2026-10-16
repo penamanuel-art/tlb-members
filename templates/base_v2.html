@@ -105,7 +105,7 @@ fbq('track', 'PageView');
   </div>
   <div class="v2-topbar-right">
     {% if session.get('user_id') %}
-    {% if es_admin %}<button id="langToggle" class="v2-lang-btn notranslate" title="Ver en español">🇺🇸 EN</button>{% endif %}
+    {% if es_admin or cuenta_es %}<button id="langToggle" class="v2-lang-btn notranslate" title="Ver en español">🇺🇸 EN</button>{% endif %}
     {% else %}
     <nav class="v2-nav">
       {% if es_admin %}<button id="langToggle" class="v2-lang-btn notranslate" title="Ver en español">🇺🇸 EN</button>{% endif %}
@@ -201,8 +201,10 @@ fbq('track', 'PageView');
   });
 })();
 </script>
-{% if es_admin %}
-<!-- Admin-only translator EN→ES (Alex): Google Translate gated to admin sessions -->
+{% if es_admin or cuenta_es %}
+<!-- Translator EN→ES (Alex): Google Translate para sesiones admin y
+     para cuentas de miembro marcadas en español (users.lang='es',
+     2026-10-16: la cuenta de Johan, que no entiende inglés) -->
 <div id="google_translate_element" style="display:none!important"></div>
 <script>
 function googleTranslateElementInit(){new google.translate.TranslateElement({pageLanguage:'en',includedLanguages:'es',autoDisplay:false},'google_translate_element');}
@@ -210,6 +212,9 @@ function googleTranslateElementInit(){new google.translate.TranslateElement({pag
   var btn=document.getElementById('langToggle');
   if(!btn)return;
   function isES(){return document.cookie.split(';').some(function(c){return c.trim().indexOf('googtrans=/en/es')===0;});}
+  {% if cuenta_es %}
+  if(!isES() && !sessionStorage.getItem('tst_es_auto')){sessionStorage.setItem('tst_es_auto','1');document.cookie='googtrans=/en/es;path=/';location.reload();return;}
+  {% endif %}
   function paint(){var es=isES();btn.textContent=es?'🇪🇸 ES':'🇺🇸 EN';btn.title=es?'View in English':'Ver en español';}
   btn.addEventListener('click',function(){
     if(isES()){document.cookie='googtrans=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';}
