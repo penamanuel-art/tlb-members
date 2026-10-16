@@ -82,6 +82,9 @@ a.lux-rec-card:active{transform:scale(.985)}
    barra inferior, las píldoras LIVE/PENDING, el aviso VIP y las
    insignias, cajas y botones dentro de las tarjetas — solo home. */
 .v2-topbar,.v2-icon-btn,.v2-track-link,.v2-lang-btn,.v2-menu-drop,.v2-vipinvite,.v2-pastdue,.v2-flash,.lux-live,.lux-live-pill,.lux-pend-pill,.tk-status,.tstg-st,.tstc-wu,.tstg-wu,.tstc-track,.tstg-track,.win-bubble,body.v2 .v2-bottomnav{border:none!important}
+/* Rayita fina separadora bajo la barra superior (2026-10-16, pedido de
+   Alex): excepción puntual a la regla sin-bordes, solo para la topbar. */
+.v2-topbar{border-bottom:1px solid rgba(255,255,255,.09)!important}
 /* LIVE en movimiento + PENDING (2026-10-15, pedido de Alex) */
 .lux-live-pill{display:inline-flex;align-items:center;gap:5px;margin-left:8px;padding:2.5px 8px;border-radius:999px;background:rgba(239,68,68,.16);border:1px solid rgba(239,68,68,.55);color:#ff6b6b;font-size:10.5px;font-weight:800;letter-spacing:.8px;vertical-align:2px}
 .lux-live-dot{width:7px;height:7px;border-radius:50%;background:#ef4444;animation:luxpulse 1.1s ease-in-out infinite}
