@@ -7992,6 +7992,16 @@ def tools_parlay_calculator():
     return render_template("tools_parlay_calculator.html")
 
 
+@app.route("/tools/calculators")
+def tools_calculators():
+    """Hub público de calculadoras: conversor, no-vig, Kelly, hedge y parlay.
+
+    100% del lado del cliente, sin login (innovación aprobada por Alex
+    2026-10-16 del inventario de herramientas de referencia).
+    """
+    return render_template("tools_calculators.html")
+
+
 @app.route("/tools")
 @login_required
 def tools():
