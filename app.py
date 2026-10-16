@@ -3210,6 +3210,35 @@ def home():
     # con burbuja de resultados, hasta que empieza el primer partido de hoy
     # — ver celebracion_hoy().
     _lux = home_lux_enabled()
+    # LIVE / PENDING en la tarjeta de estado (2026-10-15, pedido de Alex:
+    # "a la tarjeta métele un live en movimiento y un pendiente cuando no
+    # estén"): LIVE si alguna jugada de hoy ya empezó y sigue dentro de
+    # su ventana de juego (~3 h 45 m); PENDING si la card está publicada
+    # y ningún juego ha empezado. Nunca rompe el home: ante cualquier
+    # problema de parseo, ambos quedan en False.
+    hay_live = False
+    esperando = False
+    try:
+        _now = datetime.now(TZ)
+        _starts = []
+        for _p in plays:
+            _gt = (_p.get("game_time_et") or _p.get("hora") or "")
+            _gt = _gt.replace(" ET", "").strip()
+            if not _gt:
+                continue
+            try:
+                _t = datetime.strptime(_gt, "%I:%M %p")
+            except ValueError:
+                continue
+            _starts.append(datetime(_now.year, _now.month, _now.day,
+                                    _t.hour, _t.minute, tzinfo=TZ))
+        if _starts:
+            esperando = all(s > _now for s in _starts)
+            hay_live = any(s <= _now <= s + timedelta(hours=3, minutes=45)
+                           for s in _starts)
+    except Exception:
+        hay_live = False
+        esperando = False
     return render_template(
         # Tema v2 (moderno) es el predeterminado desde 2026-10-02 (pedido Alex);
         # v1 (clásico) queda como reversión vía /theme/v1. Diseño lux
@@ -3217,6 +3246,8 @@ def home():
         "home.html" if session.get("theme") == "v1" else ("home_lux.html" if _lux else "home_v2.html"),
         plays=plays,
         card_pendiente=card_pendiente,
+        hay_live=hay_live,
+        esperando=esperando,
         tracked_ids=tracked_ids,
         program=program,
         fecha=fecha_larga(),
