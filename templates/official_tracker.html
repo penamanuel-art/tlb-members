@@ -62,6 +62,9 @@
 .yw-kind { color:#8b98ad; font-size:12px; font-weight:300; }
 .yw-pick { font-size:15.5px; font-weight:300; line-height:1.25; display:block; color:#eef2f8; }
 .yw-match { color:#8b98ad; font-size:12.5px; font-weight:300; margin-top:4px; display:block; }
+.yw-clv { color:#8b98ad; font-size:11.5px; font-weight:300; margin-top:3px; display:block; }
+.yw-clv-pos { color:#2fbf71; }
+.yw-clv-neg { color:#ff8a8a; }
 .yw-share { color:#2fe6a7; font-size:12px; font-weight:300; text-decoration:none; display:inline-block; margin-top:5px; }
 .yw-res { text-align:right; flex:none; display:block; }
 .yw-res .st { font-size:11px; font-weight:300; letter-spacing:1.4px; display:block; }
@@ -91,6 +94,7 @@
       <span class="yw-meta"><span class="yw-badge {{ 'yw-b-plat' if es_plat else 'yw-b-gold' }}">{{ 'PLATINUM' if es_plat else 'GOLD' }}</span><span class="yw-kind">{{ 'Platinum' if es_plat else 'Gold' }} play{% if x.liga %} · {{ x.liga }}{% endif %}</span></span>
       <span class="yw-pick">{{ partes[0] }}</span>
       <span class="yw-match">{% if x.abbr and x.opp_abbr %}{{ x.abbr }} vs {{ x.opp_abbr }} · {% endif %}{{ ftexto }}{% if x.cuota %} · {{ x.cuota }}{% endif %}</span>
+      {% if x.cierre %}<span class="yw-clv">Closed {{ x.cierre }} · CLV <span class="{{ 'yw-clv-pos' if (x.clv or 0) >= 0 else 'yw-clv-neg' }}">{{ '%+.1f' % (x.clv or 0) }}%</span></span>{% endif %}
       {% if x.share_id %}<a class="yw-share" href="{{ url_for('share_play', play_id=x.share_id) }}" onclick="event.stopPropagation()">Share 📤</a>{% endif %}
     </span>
     <span class="yw-res">
@@ -118,6 +122,7 @@
     <div class="ot-stat"><div class="n">${{ '{:,.0f}'.format(g.risked) }}</div><div class="l">TOTAL RISKED</div></div>
     <div class="ot-stat"><div class="n">{{ g.racha_actual }}</div><div class="l">CURRENT STREAK</div></div>
     <div class="ot-stat"><div class="n">{{ t.verificadas_pct }}%</div><div class="l">TICKET VERIFIED</div></div>
+    {% if t.clv_n and t.clv_n >= 3 %}<div class="ot-stat"><div class="n" style="color:{{ '#2fbf71' if t.clv_prom >= 0 else '#ff8a8a' }};">{{ '%+.1f' % t.clv_prom }}%</div><div class="l">AVG CLV · {{ t.clv_n }} PLAYS</div></div>{% endif %}
     <div class="ot-stat"><div class="n">{{ '+' if g.avg_odds > 0 else '' }}{{ g.avg_odds }}</div><div class="l">AVG ODDS</div></div>
     <div class="ot-stat"><div class="n">${{ g.avg_stake }}</div><div class="l">AVG STAKE</div></div>
     <div class="ot-stat"><div class="n">W{{ t.mejor_racha_w }} / L{{ t.peor_racha_l }}</div><div class="l">BEST / WORST RUN</div></div>
