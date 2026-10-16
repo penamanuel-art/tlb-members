@@ -7731,6 +7731,7 @@ def admin_miembros():
     miembros = db.execute(
         "SELECT id, nombre, email, created_at, platinum_unlocked, is_admin, "
         "stake_fijo_elite, stake_fijo_gold, cancel_requested_at, stripe_customer_id, "
+        "stripe_subscription_id, stripe_past_due, platinum_trial_ends, "
         "telegram_user_id, telegram_ban_pending, telegram_unban_pending "
         "FROM users "
         "WHERE LOWER(email) NOT IN ('thesharpteam8@gmail.com', 'system@value.local') "
