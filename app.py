@@ -77,7 +77,7 @@ USE_PG = bool(DATABASE_URL)
 # Link de pago de Stripe para desbloquear Platinum (primer mes gratis, luego $49.99/mes — oferta desde 2026-10-16).
 # Se cambia sin tocar código con la env var STRIPE_PLATINUM_URL en Render.
 STRIPE_PLATINUM_URL = os.environ.get(
-    "STRIPE_PLATINUM_URL", "https://buy.stripe.com/14A3cx8cU4YAcaq24gefC03"
+    "STRIPE_PLATINUM_URL", "https://buy.stripe.com/6oUaEZ0Ksdv64HY6kwefC04"
 )
 # Pedido Alex 2026-10-05: checkout de Stripe siempre en inglés. Stripe
 # localiza la página de pago según el navegador del cliente (si está en
