@@ -77,7 +77,8 @@ a.book-chip{text-decoration:none;display:inline-block}
   function paint(st) {
     if (st === 'granted') { btn.textContent = '🔔 Alerts on'; hint.textContent = "You'll get a phone push when a new edge hits the board."; }
     else if (st === 'denied') { btn.textContent = '🔔 Blocked'; hint.textContent = 'Notifications are blocked — allow them in your browser settings, then try again.'; }
-    else if (st === 'unsupported') { btn.textContent = '🔔 Not supported'; hint.textContent = "This browser doesn't support push notifications."; }
+    else if (st === 'unsupported') { btn.textContent = '🔔 Not supported'; hint.textContent = (/iphone|ipad|ipod/i.test(navigator.userAgent || '') && !window.navigator.standalone) ? 'On iPhone/iPad, alerts only work from the Home Screen app: tap Share \u2192 "Add to Home Screen", open The Sharp Team from there, then turn alerts on.' : "This browser doesn't support push notifications."; }
+    else if (st === 'unsubscribed') { btn.textContent = '🔔 Enable alerts'; btn.disabled = false; hint.textContent = 'Permission is on but this device isn\'t connected \u2014 tap to reconnect.'; }
   }
   window.TLB_push.status().then(paint);
   btn.addEventListener('click', async function () {
