@@ -2795,6 +2795,10 @@ def inject_user():
         past_due = bool(cu and cu["stripe_past_due"])
     except (KeyError, IndexError, TypeError):
         past_due = False
+    try:
+        cuenta_es = bool(cu) and (cu["lang"] or "") == "es"
+    except (KeyError, IndexError, TypeError):
+        cuenta_es = False
     return {
         "nombre_corto": corto,
         "nombre_completo": nombre,
@@ -2803,6 +2807,7 @@ def inject_user():
         "dias_miembro": dias_miembro,
         "etiqueta_miembro": etiqueta,
         "es_admin": bool(session.get("is_admin")),
+        "cuenta_es": cuenta_es,
         "is_alex": bool(cu and (cu["email"] or "").strip().lower() == ALEX_MEMBER_EMAIL),
         "miembro_platinum": platinum_unlocked_for(cu),
         "past_due": past_due,
@@ -2874,6 +2879,8 @@ def migrate_db():
             pending.append("ALTER TABLE users ADD COLUMN sms_optin INTEGER NOT NULL DEFAULT 0")
         if "welcome_email_sent" not in cols:
             pending.append("ALTER TABLE users ADD COLUMN welcome_email_sent INTEGER NOT NULL DEFAULT 0")
+        if "lang" not in cols:
+            pending.append("ALTER TABLE users ADD COLUMN lang TEXT")
         # Página Account estilo WGT (2026-10-12, pedido por Alex): dirección
         # postal del perfil + perfil de apuestas (estado y casas).
         for _col in ["addr_line1", "addr_line2", "addr_city", "addr_state",
@@ -5311,6 +5318,32 @@ def admin_api_members_set_name():
                (nombre, target["id"]))
     db.commit()
     return jsonify({"ok": True, "email": email, "nombre": nombre})
+
+
+@app.route("/admin/api/members-set-lang", methods=["POST"])
+def admin_api_members_set_lang():
+    """Fija el idioma de la interfaz de un miembro ('en' o 'es')
+    (2026-10-16, pedido por Alex: la cuenta de su hermano Johan queda
+    en español porque no entiende inglés). Con lang='es', base_v2 le
+    muestra el botón de idioma y el traductor se activa solo al
+    entrar. Auth: sesión admin O header X-Admin-Key (mismo patrón
+    que members-set-name)."""
+    if not _admin_api_autorizado():
+        return jsonify({"error": "admin only"}), 403
+    data = request.get_json(silent=True) or {}
+    email = (data.get("email") or request.form.get("email") or "").strip().lower()
+    lang = (data.get("lang") or request.form.get("lang") or "").strip().lower()
+    if not email or lang not in ("en", "es"):
+        return jsonify({"error": "email and lang (en|es) required"}), 400
+    db = get_db()
+    target = db.execute("SELECT * FROM users WHERE email = ?",
+                        (email,)).fetchone()
+    if not target:
+        return jsonify({"error": "not found"}), 404
+    db.execute("UPDATE users SET lang = ? WHERE id = ?",
+               (lang, target["id"]))
+    db.commit()
+    return jsonify({"ok": True, "email": email, "lang": lang})
 
 
 @app.route("/admin/test-clear-past-due", methods=["POST"])
