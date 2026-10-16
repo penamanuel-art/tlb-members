@@ -235,8 +235,8 @@ function googleTranslateElementInit(){new google.translate.TranslateElement({pag
   <a href="{{ url_for('tracker') }}" class="v2-bnav-item{% if request.endpoint == 'tracker' %} active{% endif %}">
     <span class="v2-bnav-ico" aria-hidden="true">&#127915;</span><span>Tracker</span>
   </a>
-  {% if is_alex or es_admin %}
-  {# Admin en el bottom nav solo para Alex (2026-10-12, pedido por Alex) #}
+  {% if es_admin %}
+  {# Admin en el bottom nav SOLO para sesiones admin (2026-10-15, orden de Alex: su cuenta de miembro lleva la barra normal de miembro, con Alerts) #}
   <a href="{{ url_for('admin_dashboard') }}" class="v2-bnav-item{% if request.endpoint == 'admin_dashboard' %} active{% endif %}">
     <span class="v2-bnav-ico" aria-hidden="true">&#9881;&#65039;</span><span>Admin</span>
   </a>
