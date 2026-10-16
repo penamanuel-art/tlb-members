@@ -37,7 +37,7 @@ h1{width:100%;max-width:520px;font-size:34px;font-weight:800;letter-spacing:-.5p
 .lightbox .x{position:absolute;top:12px;right:18px;font-size:32px;color:#fff;cursor:pointer}
 </style>
 </head>
-<body style="--wm-img: url('{{ url_for('static', filename=watermark_img) }}')">
+<body{% if watermark_img %} style="--wm-img: url('{{ url_for('static', filename=watermark_img) }}')"{% endif %}>
 {# Barra superior fija con Home — siempre visible (pedido Alex 2026-10-06) #}
 <nav class="topnav">
   <a class="topnav-left" href="{{ url_for('home') }}">
