@@ -5414,6 +5414,36 @@ def admin_api_members_reset_link():
                     "expira": vence})
 
 
+@app.route("/admin/api/members-set-stakes", methods=["POST"])
+def admin_api_members_set_stakes():
+    """Fija los montos por jugada de un miembro (stake_fijo_elite /
+    stake_fijo_gold), que anulan la fórmula del 1% de su bankroll
+    (2026-10-16, pedido por Alex para su hermano Johan: Platinum $25
+    y Gold $15 fijos). Auth: sesión admin O header X-Admin-Key
+    (mismo patrón que los demás members-set-*)."""
+    if not _admin_api_autorizado():
+        return jsonify({"error": "admin only"}), 403
+    data = request.get_json(silent=True) or {}
+    email = (data.get("email") or request.form.get("email") or "").strip().lower()
+    try:
+        plat = float(data.get("platinum"))
+        gold = float(data.get("gold"))
+    except (TypeError, ValueError):
+        return jsonify({"error": "platinum and gold amounts required"}), 400
+    if not email or plat < 0 or gold < 0:
+        return jsonify({"error": "invalid amounts"}), 400
+    db = get_db()
+    target = db.execute("SELECT * FROM users WHERE email = ?",
+                        (email,)).fetchone()
+    if not target:
+        return jsonify({"error": "not found"}), 404
+    db.execute("UPDATE users SET stake_fijo_elite = ?, stake_fijo_gold = ?"
+               " WHERE id = ?", (plat, gold, target["id"]))
+    db.commit()
+    return jsonify({"ok": True, "email": email,
+                    "stake_fijo_elite": plat, "stake_fijo_gold": gold})
+
+
 @app.route("/admin/test-clear-past-due", methods=["POST"])
 def admin_test_clear_past_due():
     """TEMPORAL para pruebas de Alex: quita SOLO el flag stripe_past_due,
