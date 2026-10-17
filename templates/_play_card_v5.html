@@ -112,11 +112,9 @@
     <div class="v5stitle">{{ p.team_name or p.abbr }} {{ 'Moneyline' if p.bettype == 'Moneyline' else p.bettype }}</div>
     <div class="v5ssub">{{ 'Platinum play' if is_vip else ('Value play' if is_value else 'Gold play') }} &middot; {{ p.liga or '' }}</div>
     <div style="margin-top:12px">
-      <div class="v5row"><span class="v5row-k">Pick</span><span class="v5row-v"><b>{{ p.team_name or p.abbr }} {{ 'Moneyline' if p.bettype == 'Moneyline' else p.bettype }}</b></span></div>
-      <div class="v5row"><span class="v5row-k">Game</span><span class="v5row-v">{{ p.abbr }} vs {{ p.opp_abbr }}</span></div>
-      <div class="v5row"><span class="v5row-k">Starts</span><span class="v5row-v">{{ p.game_time_et or p.hora or '' }}</span></div>
+      {% if p.posted %}<div class="v5row"><span class="v5row-k">Posted</span><span class="v5row-v">{{ p.posted }}</span></div>{% endif %}
       <div class="v5row"><span class="v5row-k">Price posted</span><span class="v5row-v"><b>{{ fmt_odds(p.cuota) }}</b></span></div>
-      <div class="v5row"><span class="v5row-k">Stake</span><span class="v5row-v">{{ '%g' % p.stake_unidades }}u &middot; ${{ '%g' % p.stake_monto }}</span></div>
+      <div class="v5row"><span class="v5row-k">Stake</span><span class="v5row-v"><b>{{ '%g' % p.stake_unidades }}u</b><br><span style="color:#e8c766;font-weight:600">${{ '%g' % p.stake_monto }}</span></span></div>
       <div class="v5row"><span class="v5row-k">Program</span><span class="v5prog">OFFICIALS</span></div>
     </div>
     {% if p.writeup %}
@@ -136,6 +134,7 @@
       <span class="v5c-matched" style="position:absolute;top:8px;right:8px">✓ MATCHED</span>
     </div>
     {% endif %}
+    <p style="font-size:12.5px;color:#8b94a7;line-height:1.55;margin:14px 0 0">Prices move after a play is posted. Compare the current price across the books before you bet.</p>
     {% if p.nivel != 'VALUE' %}
       {% if p.id in tracked_ids %}
         <span class="v5big-tracked">✓ Tracked</span>
