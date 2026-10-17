@@ -49,7 +49,7 @@
 .v5kick.gold{color:#e8c766}
 .v5stitle{font-size:20px;font-weight:600;color:#fff;margin-top:5px;letter-spacing:-.3px}
 .v5ssub{font-size:12.5px;color:#8b94a7;margin-top:3px}
-.v5row{display:flex;justify-content:space-between;gap:14px;padding:10px 0;border-top:1px solid rgba(255,255,255,.07)}
+.v5row{display:flex;justify-content:space-between;gap:14px;padding:8px 0;border-top:1px solid rgba(255,255,255,.07)}
 .v5row-k{font-size:13px;color:#8b94a7;flex:none}
 .v5row-v{font-size:13.5px;font-weight:500;color:#fff;text-align:right}
 .v5row-v b{font-weight:600}
@@ -61,7 +61,7 @@
 .v5wu-p{font-size:12.5px;color:#c6cfdf;line-height:1.55;margin:6px 0 0}
 .v5wu-p b{color:#e3b93c;font-weight:600}
 .v5timg{margin-top:14px;border-radius:14px;overflow:hidden;position:relative}
-.v5timg img{width:100%;display:block}
+.v5timg img{width:100%;display:block;max-height:34vh;object-fit:cover;object-position:top}
 .v5big-track{display:block;text-align:center;font-size:15px;font-weight:700;color:#231a00;background:linear-gradient(135deg,#f3cd6b,#d9a92f);border-radius:14px;padding:14px;margin-top:16px;text-decoration:none;cursor:pointer}
 .v5big-tracked{display:block;text-align:center;font-size:14px;font-weight:600;color:#2fe6a7;border:1px solid rgba(47,230,167,.5);border-radius:14px;padding:14px;margin-top:16px}
 .v5sbtns{display:flex;gap:9px;margin-top:10px}
@@ -91,7 +91,7 @@
       <a class="v5c-btn" href="https://novig.com" target="_blank" rel="noopener">↗ Place at Novig</a>
     {% endif %}
     {% if p.comprobante and not force_pre %}
-      <a class="v5c-btn" href="{{ url_for('ticket_view', play_id=p.id) }}">🎫 Slip</a>
+      <a class="v5c-btn" href="javascript:void(0)" data-v5-open="{{ p.id }}">🎫 Slip</a>
     {% endif %}
     {% if p.nivel != 'VALUE' %}
       {% if p.id in tracked_ids %}
@@ -111,22 +111,25 @@
     <div class="v5kick{% if not is_vip %} gold{% endif %}">{{ '💎 PLATINUM' if is_vip else ('💎 VALUE PLAY' if is_value else 'GOLD') }}</div>
     <div class="v5stitle">{{ p.team_name or p.abbr }} {{ 'Moneyline' if p.bettype == 'Moneyline' else p.bettype }}</div>
     <div class="v5ssub">{{ 'Platinum play' if is_vip else ('Value play' if is_value else 'Gold play') }} &middot; {{ p.liga or '' }}</div>
-    <div style="margin-top:12px">
+    <div style="margin-top:10px">
+      <div class="v5row"><span class="v5row-k">Pick</span><span class="v5row-v"><b>{{ p.team_name or p.abbr }} {{ 'Moneyline' if p.bettype == 'Moneyline' else p.bettype }}</b></span></div>
+      <div class="v5row"><span class="v5row-k">Game</span><span class="v5row-v">{{ p.abbr }} vs {{ p.opp_abbr }}</span></div>
+      <div class="v5row"><span class="v5row-k">Starts</span><span class="v5row-v">{{ p.game_time_et or p.hora or '' }}</span></div>
       {% if p.posted %}<div class="v5row"><span class="v5row-k">Posted</span><span class="v5row-v">{{ p.posted }}</span></div>{% endif %}
       <div class="v5row"><span class="v5row-k">Price posted</span><span class="v5row-v"><b>{{ fmt_odds(p.cuota) }}</b></span></div>
       <div class="v5row"><span class="v5row-k">Stake</span><span class="v5row-v"><b>{{ '%g' % p.stake_unidades }}u</b><br><span style="color:#e8c766;font-weight:600">${{ '%g' % p.stake_monto }}</span></span></div>
       <div class="v5row"><span class="v5row-k">Program</span><span class="v5prog">OFFICIALS</span></div>
     </div>
     {% if p.writeup %}
-    <div class="v5wu">
-      <div class="v5wu-h">📊 WHY WE LIKE IT</div>
+    <details class="v5wu">
+      <summary class="v5wu-h" style="cursor:pointer;list-style:none">📊 WHY WE LIKE IT <span style="color:#8b94a7;float:right">▾</span></summary>
       <div class="v5wu-row"><span>Model win probability</span><b>{{ p.writeup.model_prob }}</b></div>
       <div class="v5wu-row"><span>Implied by the price</span><b>{{ p.writeup.implied_prob }}</b></div>
       <div class="v5wu-row"><span>Fair price (model)</span><b>{{ p.writeup.fair_price }}</b></div>
       <div class="v5wu-row"><span>Edge</span><b style="color:#2fe6a7">{{ p.writeup.edge }}</b></div>
       {% if p.writeup.key_factor %}<p class="v5wu-p"><b>Key factor:</b> {{ p.writeup.key_factor }}</p>{% endif %}
       {% if p.writeup.risk %}<p class="v5wu-p"><b>The risk:</b> {{ p.writeup.risk }}</p>{% endif %}
-    </div>
+    </details>
     {% endif %}
     {% if p.comprobante and not force_pre %}
     <div class="v5timg">
