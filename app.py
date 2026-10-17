@@ -3264,7 +3264,7 @@ def admin_diseno_home():
     el botón de revertir apaga el diseño lux para TODOS y vuelve al home
     anterior; el mismo botón lo vuelve a encender. Solo admin."""
     user = current_user()
-    if not is_admin_for(user):
+    if not _admin_o_cuenta_alex(user):
         flash("You don't have permission to do that.", "error")
         return redirect(url_for("home"))
     nuevo = "0" if home_lux_enabled() else "1"
@@ -4841,7 +4841,7 @@ def admin_free_plays_clear():
     """Borra el tracker "Gold" (solo admin). No afecta tracked_plays
     ni el récord oficial del programa."""
     user = current_user()
-    if not is_admin_for(user):
+    if not _admin_o_cuenta_alex(user):
         return redirect(url_for("home"))
     db = get_db()
     db.execute("DELETE FROM free_plays")
@@ -5367,7 +5367,7 @@ def admin_toggle_platinum():
     la notificación de pago Alex activa el acceso aquí con un toque.
     """
     db = get_db()
-    if not is_admin_for(current_user()):
+    if not _admin_o_cuenta_alex(current_user()):
         flash("You don't have permission.", "error")
         return redirect(url_for("home"))
     user_id = request.form.get("user_id")
@@ -5678,7 +5678,7 @@ def admin_test_simulate_cancel():
     """TEMPORAL para pruebas de Alex: simula lo que hace el webhook de Stripe
     al cancelar (customer.subscription.deleted). Solo admin."""
     me = current_user()
-    if not is_admin_for(me):
+    if not _admin_o_cuenta_alex(me):
         flash("You don't have permission.", "error")
         return redirect(url_for("home"))
     db = get_db()
@@ -5703,7 +5703,7 @@ def admin_test_simulate_reactivate():
     """TEMPORAL para pruebas de Alex: simula lo que hace el webhook de Stripe
     al reactivar/pagar (invoice.paid). Solo admin."""
     me = current_user()
-    if not is_admin_for(me):
+    if not _admin_o_cuenta_alex(me):
         flash("You don't have permission.", "error")
         return redirect(url_for("home"))
     db = get_db()
@@ -5727,7 +5727,7 @@ def admin_test_simulate_reactivate():
 def admin_eliminar_miembro():
     """Elimina una cuenta de miembro (solo admin). No permite borrarse a sí mismo ni a otro admin."""
     me = current_user()
-    if not is_admin_for(me):
+    if not _admin_o_cuenta_alex(me):
         flash("You don't have permission.", "error")
         return redirect(url_for("home"))
     user_id = request.form.get("user_id", type=int)
@@ -5758,7 +5758,7 @@ def admin_telegram_ban():
     """Banea o desbanea a un miembro del canal Sharp Club de Telegram (solo admin).
     Marca el flag pendiente; el cron lo procesa."""
     me = current_user()
-    if not is_admin_for(me):
+    if not _admin_o_cuenta_alex(me):
         flash("You don't have permission.", "error")
         return redirect(url_for("home"))
     user_id = request.form.get("user_id", type=int)
@@ -5789,7 +5789,7 @@ def admin_telegram_ban():
 def admin_email_directo():
     """Envía un email directo a un miembro específico (solo admin)."""
     me = current_user()
-    if not is_admin_for(me):
+    if not _admin_o_cuenta_alex(me):
         flash("You don't have permission.", "error")
         return redirect(url_for("home"))
     user_id = request.form.get("user_id", type=int)
@@ -5821,7 +5821,7 @@ def admin_email_directo():
 def admin_ver_tracker(user_id):
     """Ve el tracker personal de un miembro (solo admin)."""
     me = current_user()
-    if not is_admin_for(me):
+    if not _admin_o_cuenta_alex(me):
         flash("You don't have permission.", "error")
         return redirect(url_for("home"))
     db = get_db()
@@ -6223,7 +6223,7 @@ def admin_tracker_oficial():
     más estadísticas y más profesional que el del Dashboard de miembro.
     Solo admin o la cuenta de miembro de Alex, igual que /admin."""
     user = current_user()
-    if not is_admin_for(user):
+    if not _admin_o_cuenta_alex(user):
         flash("You don't have permission to view this page.", "error")
         return redirect(url_for("home"))
     return render_template("admin_tracker_oficial.html", t=official_tracker_full())
@@ -6234,7 +6234,7 @@ def admin_tracker_oficial():
 def admin_cambiar_email():
     """Cambia el email de una cuenta de miembro (solo admin). Valida unicidad."""
     me = current_user()
-    if not is_admin_for(me):
+    if not _admin_o_cuenta_alex(me):
         flash("You don't have permission.", "error")
         return redirect(url_for("home"))
     user_id = request.form.get("user_id", type=int)
@@ -6264,7 +6264,7 @@ def admin_migrar_track():
     """Migra el historial de trackeo (jugadas + checkins + bankroll) de una
     cuenta a otra. Solo admin. No toca is_admin, platinum_unlocked ni datos de Stripe."""
     me = current_user()
-    if not is_admin_for(me):
+    if not _admin_o_cuenta_alex(me):
         flash("You don't have permission.", "error")
         return redirect(url_for("home"))
     db = get_db()
@@ -6341,7 +6341,7 @@ def admin_stake_fijo():
     """
     db = get_db()
     user = current_user()
-    if not is_admin_for(user):
+    if not _admin_o_cuenta_alex(user):
         flash("You don't have permission.", "error")
         return redirect(url_for("home"))
     uid = request.form.get("user_id")
@@ -6532,7 +6532,7 @@ def admin_seed_tracker():
     """Importa una sola vez las jugadas liquidadas del programa al tracker personal del admin."""
     db = get_db()
     user = current_user()
-    if not is_admin_for(user):
+    if not _admin_o_cuenta_alex(user):
         flash("You don't have permission to view this page.", "error")
         return redirect(url_for("home"))
     added = 0
@@ -6633,7 +6633,7 @@ def admin_dashboard():
     normal, sin acceso admin; el admin vive solo en su cuenta admin)."""
     db = get_db()
     user = current_user()
-    if not is_admin_for(user):
+    if not _admin_o_cuenta_alex(user):
         flash("You don't have permission to view this page.", "error")
         return redirect(url_for("home"))
     try:
@@ -6809,7 +6809,7 @@ def admin_aprobar_jugadas():
     quedan en plays-pending.json hasta que la publicación se confirma.
     """
     user = current_user()
-    if not is_admin_for(user):
+    if not _admin_o_cuenta_alex(user):
         flash("You don't have permission to view this page.", "error")
         return redirect(url_for("home"))
     import json as _jsonB
@@ -6908,7 +6908,7 @@ def admin_ticket_por_jugada():
     encuentre y lo envíe. Devuelve JSON."""
     from flask import jsonify
     user = current_user()
-    if not is_admin_for(user):
+    if not _admin_o_cuenta_alex(user):
         return jsonify({"ok": False, "error": "sin permiso"}), 403
     import json as _jsonT, os as _osT, re as _reT
     from datetime import datetime as _dtT
@@ -6983,7 +6983,7 @@ def admin_ticket_por_jugada():
 def admin_wgt_tracker():
     """Tracker privado de WGT (5 meses) — solo Alex, en el Admin Dashboard."""
     user = current_user()
-    if not is_admin_for(user):
+    if not _admin_o_cuenta_alex(user):
         flash("You don't have permission to view this page.", "error")
         return redirect(url_for("home"))
     return render_template("admin_wgt_tracker.html")
@@ -6996,7 +6996,7 @@ def admin_subir_ticket():
     from werkzeug.utils import secure_filename
     db = get_db()
     user = current_user()
-    if not is_admin_for(user):
+    if not _admin_o_cuenta_alex(user):
         flash("You don't have permission to view this page.", "error")
         return redirect(url_for("home"))
 
@@ -7385,7 +7385,7 @@ def admin_chat_mensaje():
     from werkzeug.utils import secure_filename
     db = get_db()
     user = current_user()
-    if not is_admin_for(user):
+    if not _admin_o_cuenta_alex(user):
         return jsonify({"ok": False, "error": "no autorizado"}), 403
     mensaje = request.form.get("mensaje", "").strip()
     hoy = datetime.now().strftime("%Y-%m-%d")
@@ -7664,7 +7664,7 @@ def admin_accion(accion):
     import json as _json, os, time
     db = get_db()
     user = current_user()
-    if not is_admin_for(user):
+    if not _admin_o_cuenta_alex(user):
         return jsonify({"error": "unauthorized"}), 401
     validas = {"email-jugadas", "telegram", "publicar-todo", "publish-plays"}
     if accion not in validas:
@@ -7746,7 +7746,7 @@ def admin_miembros():
     """Lista privada de miembros — solo para Alex (is_admin=1)."""
     db = get_db()
     user = current_user()
-    if not is_admin_for(user):
+    if not _admin_o_cuenta_alex(user):
         flash("You don't have permission to view this page.", "error")
         return redirect(url_for("home"))
     _barrer_trials_vencidos(db)
@@ -7788,7 +7788,7 @@ def admin_notificaciones_limpiar():
     """Limpia todas las notificaciones (solo Alex/admin)."""
     db = get_db()
     user = current_user()
-    if not is_admin_for(user):
+    if not _admin_o_cuenta_alex(user):
         flash("You don't have permission.", "error")
         return redirect(url_for("home"))
     try:
@@ -7807,7 +7807,7 @@ def admin_notificaciones():
     todo lo que pasa — miembros nuevos, tickets, pagos."""
     db = get_db()
     user = current_user()
-    if not is_admin_for(user):
+    if not _admin_o_cuenta_alex(user):
         flash("You don't have permission to view this page.", "error")
         return redirect(url_for("home"))
     try:
@@ -7834,7 +7834,7 @@ def admin_trakeos():
     """Quién trakeó cada jugada publicada — solo para Alex (2026-10-05, pedido por Alex)."""
     db = get_db()
     user = current_user()
-    if not is_admin_for(user):
+    if not _admin_o_cuenta_alex(user):
         flash("You don't have permission to view this page.", "error")
         return redirect(url_for("home"))
     rows = db.execute(
