@@ -8891,6 +8891,24 @@ def api_new_members():
     members = []
     for r in rows:
         d = dict(r) if not isinstance(r, dict) else r
+        # Ciudad de registro (pedido de Alex 2026-10-17: la tarjeta de
+        # nuevo miembro lleva la ciudad de donde se registro): se toma la
+        # IP de su primera actividad (el login automatico al registrarse)
+        # y se resuelve con el geo-cache de la plataforma.
+        ciudad = ""
+        try:
+            act = db.execute(
+                "SELECT ip FROM member_activity WHERE user_id = ?"
+                " AND ip IS NOT NULL AND ip != ''"
+                " ORDER BY created_at ASC LIMIT 1",
+                (d["id"],),
+            ).fetchone()
+            if act:
+                ip0 = act["ip"] if not isinstance(act, dict) else act.get("ip")
+                if ip0:
+                    ciudad = _ciudad_de_ip(db, ip0) or ""
+        except Exception:
+            ciudad = ""
         members.append(
             {
                 "id": d["id"],
@@ -8898,6 +8916,7 @@ def api_new_members():
                 "email": d.get("email"),
                 "created_at": d.get("created_at"),
                 "elite": bool(d.get("platinum_unlocked")),
+                "ciudad": ciudad,
             }
         )
     return jsonify({"members": members})
