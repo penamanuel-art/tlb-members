@@ -2887,6 +2887,17 @@ def inject_user():
                     trial_dias_left = max(1, int(resto // 86400) + (1 if resto % 86400 > 0 else 0))
     except (KeyError, IndexError, TypeError, ValueError):
         trial_dias_left = None
+    if trial_dias_left is None and cu and platinum_unlocked_for(cu):
+        # Vista previa de Alex (2026-10-17): su cuenta de miembro es pase de
+        # dueno sin reloj; su burbuja muestra los dias del grupo del mes
+        # gratis (vence 2026-11-15) para que vea el diseno como un miembro.
+        try:
+            if (cu["email"] or "").strip().lower() == ALEX_MEMBER_EMAIL:
+                resto = (datetime(2026, 11, 15, 23, 59) - datetime.now()).total_seconds()
+                if resto > 0:
+                    trial_dias_left = max(1, int(resto // 86400) + (1 if resto % 86400 > 0 else 0))
+        except (KeyError, IndexError, TypeError):
+            pass
     return {
         "nombre_corto": corto,
         "nombre_completo": nombre,
