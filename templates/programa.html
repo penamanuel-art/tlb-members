@@ -10,7 +10,7 @@
 </section>
 
 <blockquote class="credo">
-  <p>We only play two plays a day, no more. Same amount, same plays. We don't chase losses or wins. Discipline is the foundation of success and profitability.</p>
+  {% if request.args.get('nv') == '1' %}<p>We play only what the numbers qualify — some days that is two or three plays, some days none. Same stakes, same plays for everyone. We don't chase losses or wins. Discipline is the foundation of success and profitability.</p>{% else %}<p>We only play two plays a day, no more. Same amount, same plays. We don't chase losses or wins. Discipline is the foundation of success and profitability.</p>{% endif %}
   <footer>— The Sharp Team creed</footer>
 </blockquote>
 
@@ -35,9 +35,22 @@
   <article class="method-step"><span class="step-num">03 / DISCIPLINE</span><h3>FIXED STAKE</h3><p>The stake stays disciplined. Neither losses nor streaks change the amount.</p></article>
 </div>
 
+{% if request.args.get('nv') == '1' %}
+<div class="section-head" id="origen">
+  <h2 class="section-title">WHERE OUR PLAYS COME FROM</h2>
+</div>
+<p class="muted">The fair question every member asks — answered straight.</p>
+<div class="method-steps">
+  <article class="method-step"><span class="step-num">01 / THE SCAN</span><h3>EVERY GAME, EVERY DAY</h3><p>Our model rates every team from real game data — scoring, pace, home and road form, injuries and schedule. Nothing is picked by hand, by hype, or by who is popular.</p></article>
+  <article class="method-step"><span class="step-num">02 / THE PROBABILITY</span><h3>A NUMBER, NOT A FEELING</h3><p>For each game, the model calculates each team's true win probability. Probability always comes first — before we ever look at the price.</p></article>
+  <article class="method-step"><span class="step-num">03 / THE PRICE CHECK</span><h3>THE MARKET HAS TO BE WRONG</h3><p>We compare the model's probability against the price at every sportsbook. A play qualifies only when the price is off in our favor — that edge is printed on every card, in WHY WE LIKE IT.</p></article>
+  <article class="method-step"><span class="step-num">04 / THE TICKET</span><h3>PUBLISHED, THEN GRADED</h3><p>Qualifying plays are posted before game time with the real ticket. Win or lose, the result goes on the public record — and never comes off.</p></article>
+</div>
+<p class="muted" style="text-align:center;margin-top:14px">No tips from a guy. No "locks". A model, a price check, and a record anyone can audit.</p>
+{% endif %}
 <section class="princ-strip">
   <div class="princ"><b>Edge first</b><span>No measurable edge, no play</span></div>
-  <div class="princ"><b>Max 2</b><span>Quality over volume every day</span></div>
+  {% if request.args.get('nv') == '1' %}<div class="princ"><b>No filler</b><span>If it doesn't qualify, it doesn't post</span></div>{% else %}<div class="princ"><b>Max 2</b><span>Quality over volume every day</span></div>{% endif %}
   <div class="princ"><b>Public record</b><span>Every result stays visible</span></div>
 </section>
 
