@@ -88,6 +88,7 @@ fbq('track', 'PageView');
         <a href="{{ url_for('programa') }}">📘 Program</a>
         <a href="{{ url_for('archivo') }}">🗂️ Archive</a>
         {% if es_admin %}<a href="{{ url_for('admin_miembros') }}">👥 Members</a>{% endif %}
+        {% if is_alex and not es_admin %}<a href="{{ url_for('admin_dashboard') }}">⚙️ Admin Dashboard</a>{% endif %}
         
         {% if es_admin %}<a href="{{ url_for('admin_migrar_track') }}">🔀 Migrate track</a>{% endif %}
         <a href="{{ url_for('reportar', tipo='error') }}">⚠️ Report a problem</a>
