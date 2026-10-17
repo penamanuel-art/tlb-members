@@ -4048,6 +4048,31 @@ def _stripe_force_english(customer_id):
         pass
 
 
+@app.route("/reportar", methods=["GET", "POST"])
+@login_required
+def reportar():
+    """Reporta un error o sugiere una mejora (2026-10-17, pedido de Alex):
+    llega al centro de notificaciones del admin con el email del miembro."""
+    user = current_user()
+    tipo = (request.args.get("tipo") or request.form.get("tipo") or "error").strip().lower()
+    if tipo not in ("error", "idea"):
+        tipo = "error"
+    enviado = False
+    if request.method == "POST":
+        mensaje = (request.form.get("mensaje") or "").strip()[:2000]
+        pagina = (request.form.get("pagina") or "").strip()[:200]
+        if mensaje:
+            db = get_db()
+            nombre = (user["nombre"] or "") if user else ""
+            email = (user["email"] or "") if user else ""
+            titulo = ("⚠️ Error reportado" if tipo == "error" else "💡 Sugerencia") + (f" — {nombre}" if nombre else "")
+            detalle = mensaje + f"\n— {email} · página: {pagina or '—'}"
+            log_notificacion(db, "reporte_error" if tipo == "error" else "sugerencia", titulo, detalle)
+            db.commit()
+            enviado = True
+    return render_template("reportar.html", tipo=tipo, enviado=enviado)
+
+
 @app.route("/cuenta", methods=["GET", "POST"])
 @login_required
 def cuenta():
