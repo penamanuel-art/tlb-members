@@ -939,7 +939,7 @@ WELCOME_HTML = """<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="v
 <div style="background:#021f16;padding:10px 14px;border-bottom:2px solid #c9a227;text-align:center;"><table cellpadding="0" cellspacing="0" style="margin:0 auto;"><tr>
 <td width="36"><img src="https://files.catbox.moe/74qot5.png" alt="The Sharp Team" width="30" style="width:30px;height:auto;border:0;"></td>
 <td style="white-space:nowrap;"><p style="margin:0;font-size:12px;font-weight:800;letter-spacing:3px;color:#ffffff;white-space:nowrap;">THE SHARP TEAM</p></td></tr></table></div>
-<div style="background:#032a1f;padding:11px 16px;text-align:center;border-bottom:1px solid #14532d;"><p style="margin:0;font-family:'Arial Black','Archivo Black',Arial,sans-serif;font-size:17px;font-weight:900;letter-spacing:3px;color:#e8c766;">MEMBER WELCOME</p></div>
+<div style="background:#032a1f;padding:11px 16px;text-align:center;border-bottom:1px solid #14532d;"><p style="margin:0;font-family:'Arial Black','Archivo Black',Arial,sans-serif;font-size:15px;font-weight:900;letter-spacing:3px;color:#e8c766;">THANK YOU FOR JOINING</p></div>
 <img src="https://www.thesharpteam.bet/static/img/sharp-team-banner.png" alt="The Sharp Team" width="460" style="width:100%;height:auto;display:block;border:0;">
 <div style="padding:20px 24px 0;text-align:center;">
 <h1 style="font-family:Georgia,serif;font-size:29px;font-weight:700;color:#e8c766;margin:0;line-height:1.15;">Welcome to the team.</h1>
