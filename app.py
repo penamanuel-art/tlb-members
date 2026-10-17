@@ -6816,9 +6816,9 @@ def admin_control_trial_all():
     cur = db.execute(
         "UPDATE users SET platinum_unlocked = 1, platinum_trial_ends = ?"
         " WHERE is_admin = 0 AND (stripe_subscription_id IS NULL OR stripe_subscription_id = '')"
-        " AND email NOT LIKE '%@value.local'"
+        " AND email NOT LIKE ?"
         " AND (platinum_unlocked = 0 OR platinum_trial_ends IS NOT NULL)",
-        (fin,),
+        (fin, "%@value.local"),
     )
     db.commit()
     n = cur.rowcount if cur.rowcount is not None else 0
@@ -6935,7 +6935,8 @@ def admin_actividad():
         " bankroll, stake_mode, stake_fijo_elite, stake_fijo_gold,"
         " stripe_subscription_id, stripe_customer_id, cancel_requested_at,"
         " telegram_user_id, platinum_trial_ends, sms_optin FROM users"
-        " WHERE is_admin = 0 AND email NOT LIKE '%@value.local' ORDER BY nombre"
+        " WHERE is_admin = 0 AND email NOT LIKE ? ORDER BY nombre",
+        ("%@value.local",),
     ).fetchall()
     datos = []
     for m in miembros:
