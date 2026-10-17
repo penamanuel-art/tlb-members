@@ -3145,6 +3145,16 @@ def terms_page():
     return render_template("terms.html")
 
 
+@app.route("/legal")
+def legal_page():
+    return render_template("legal.html")
+
+
+@app.route("/contact")
+def contact_page():
+    return render_template("contact.html")
+
+
 @app.route("/free")
 def free_landing():
     """Landing pública estilo WGT para la membresía gratuita (pedido por Alex 2026-10-03).
