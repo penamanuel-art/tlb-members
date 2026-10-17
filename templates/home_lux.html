@@ -103,10 +103,11 @@ a.lux-rec-card:active{transform:scale(.985)}
 {% if is_alex and miembro_platinum and not celebracion %}
 <style>
 @keyframes fa-in{from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:translateY(0);}}
-.fa-strip{display:flex;justify-content:center;align-items:center;gap:4px;flex-wrap:nowrap;white-space:nowrap;margin:12px auto 2px;max-width:560px;padding:8px 15px;border-radius:999px;background:linear-gradient(165deg, #151e36, #0a0f1d);border:1px solid rgba(255, 255, 255, 0.08);box-shadow:0 10px 26px rgba(0, 0, 0, 0.35);color:#fff;font-size:clamp(.74rem, 3.8vw, .9rem);font-weight:500;letter-spacing:.3px;text-align:center;transition:opacity .5s ease,transform .5s ease,margin .5s ease,padding .5s ease;animation:fa-in .35s ease-out;cursor:pointer;}
+.fa-strip{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:1px;flex-wrap:nowrap;max-width:94vw;box-sizing:border-box;margin:12px auto 2px;max-width:560px;padding:8px 15px;border-radius:999px;background:linear-gradient(165deg, #151e36, #0a0f1d);border:1px solid rgba(255, 255, 255, 0.08);box-shadow:0 10px 26px rgba(0, 0, 0, 0.35);color:#fff;font-size:clamp(.74rem, 3.8vw, .9rem);font-weight:500;letter-spacing:.3px;text-align:center;transition:opacity .5s ease,transform .5s ease,margin .5s ease,padding .5s ease;animation:fa-in .35s ease-out;cursor:pointer;}
 .fa-strip .fa-star{color:#ffd93b;}
 .fa-strip .fa-days{color:#e8c766;font-weight:700;}
 .fa-strip b{font-weight:700;color:#ffffff;}
+.fa-strip .fa-l2{font-size:.84em;opacity:.94;}
 .fa-strip.fa-urgent{border-color:rgba(255,157,92,.75);}
 .fa-strip.fa-urgent .fa-days{color:#ffb27d;}
 .fa-strip.fa-out{opacity:0;transform:translateY(-6px);margin-top:0;margin-bottom:0;padding-top:0;padding-bottom:0;border-width:0;}
@@ -114,7 +115,7 @@ a.lux-rec-card:active{transform:scale(.985)}
 .fa-strip::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg, transparent 30%, rgba(255,255,255,.14) 50%, transparent 70%);transform:translateX(-120%);animation:fa-shine 2.8s ease-in-out infinite;pointer-events:none;}
 @keyframes fa-shine{0%{transform:translateX(-120%);}55%{transform:translateX(120%);}100%{transform:translateX(120%);}}
 </style>
-<div class="fa-strip{% if trial_dias_left and trial_dias_left <= 5 %} fa-urgent{% endif %}" id="faBubble" role="status"><span class="fa-star">&#11088;</span> <b>{% if cuenta_es %}ACCESO TOTAL ACTIVO{% else %}FULL ACCESS ACTIVE{% endif %}</b>{% if trial_dias_left %}<span>&middot; {% if cuenta_es %}Platinum desbloqueado &middot; te quedan <span class="fa-days">{{ trial_dias_left }} d&iacute;as</span>{% else %}Platinum unlocked &middot; <span class="fa-days">{{ trial_dias_left }} days left</span>{% endif %}</span>{% else %}<span>&middot; {% if cuenta_es %}Platinum desbloqueado{% else %}Platinum unlocked{% endif %}</span>{% endif %}</div>
+<div class="fa-strip{% if trial_dias_left and trial_dias_left <= 5 %} fa-urgent{% endif %}" id="faBubble" role="status"><span class="fa-l1"><span class="fa-star">&#11088;</span> <b>{% if cuenta_es %}ACCESO TOTAL ACTIVO{% else %}FULL ACCESS ACTIVE{% endif %}</b></span>{% if trial_dias_left %}<span class="fa-l2">{% if cuenta_es %}Platinum desbloqueado &middot; te quedan <span class="fa-days">{{ trial_dias_left }} d&iacute;as</span>{% else %}Platinum unlocked &middot; <span class="fa-days">{{ trial_dias_left }} days left</span>{% endif %}</span>{% else %}<span class="fa-l2">{% if cuenta_es %}Platinum desbloqueado{% else %}Platinum unlocked{% endif %}</span>{% endif %}</div>
 <script>
 (function(){
   var b = document.getElementById('faBubble');
