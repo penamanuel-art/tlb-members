@@ -177,7 +177,7 @@ a.lux-rec-card:active{transform:scale(.985)}
   <p class="v2-sec-eyebrow" style="margin-bottom:10px">Today's Free Selections</p>
   <div class="v2-plays">
     {% for p in golds %}
-      {% include "_play_card.html" %}
+      {% if is_alex %}{% include "_play_card_v5.html" %}{% else %}{% include "_play_card.html" %}{% endif %}
     {% endfor %}
   </div>
   {% else %}
@@ -191,7 +191,7 @@ a.lux-rec-card:active{transform:scale(.985)}
     {% if plat %}
       {% for p in plat %}
         {% if platinum_unlocked %}
-          {% include "_play_card.html" %}
+          {% if is_alex %}{% include "_play_card_v5.html" %}{% else %}{% include "_play_card.html" %}{% endif %}
         {% else %}
           {% include "_play_locked.html" %}
         {% endif %}
