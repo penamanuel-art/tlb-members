@@ -14,15 +14,15 @@
 :root {
   /* v2 palette — tono Monarch (pedido Alex 2026-10-10):
      oscuro con matiz verde-azulado sutil, no negro puro */
-  --v2-bg: #131926; /* fondo de la app de WGT (captura de Alex 2026-10-16) aclarado UN POQUITITO a su pedido, para que las tarjetas se vean por encima */
+  --v2-bg: #060d1a; /* fondo de la app de WGT (captura de Alex 2026-10-16) aclarado UN POQUITITO a su pedido, para que las tarjetas se vean por encima */
   --v2-surface: rgba(255, 255, 255, 0.055);
   --v2-surface-2: rgba(255, 255, 255, 0.09);
   --v2-border: rgba(255, 255, 255, 0.13);
   --v2-text: #f2f5fb;
   --v2-muted: #a3b0c6;
   --v2-faint: #75829a;
-  --v2-blue: #e8c766;
-  --v2-blue-soft: rgba(232, 199, 102, 0.14);
+  --v2-blue: #409cff;
+  --v2-blue-soft: rgba(64, 156, 255, 0.14);
   --v2-green: #2fbf71;
   --v2-green-soft: rgba(47, 191, 113, 0.12);
   --v2-gold: #f5c542;
@@ -64,7 +64,7 @@ body.v2 {
      a la derecha, igual al de ellos. Las tarjetas NO se tocaron. */
   background:
     radial-gradient(1100px 560px at 72% -8%, rgba(0, 123, 255, 0.10), transparent 60%),
-    #131926;
+    #060d1a;
   color: var(--v2-text);
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
@@ -299,7 +299,7 @@ body.v2::before {
 }
 .v2-sec-eyebrow b { color: var(--v2-blue); font-weight: 700; }
 .v2-sec-title { font-size: 20px; font-weight: 600; letter-spacing: -0.5px; }
-#plays .v2-sec-title { font-size: 28px; letter-spacing: -1px; line-height: 1.05; white-space: nowrap; color: var(--v2-blue); }
+#plays .v2-sec-title { font-size: 28px; letter-spacing: -1px; line-height: 1.05; white-space: nowrap; color: var(--v2-text); }
 .v2-sec-sub { font-size: 13.5px; color: var(--v2-muted); margin-top: 5px; line-height: 1.5; }
 .v2-link { font-size: 13px; font-weight: 700; color: var(--v2-blue); text-decoration: none; white-space: nowrap; }
 .v2-link:hover { text-decoration: underline; }
@@ -448,7 +448,7 @@ body.v2 .tstc-novig:active, body.v2 .tstc-track:active { transform: scale(0.97);
 .v2-opt-ex { margin-top: 8px; color: var(--v2-green) !important; font-weight: 700; }
 .v2-gotit {
   width: 100%; margin-top: 8px; padding: 14px; border-radius: var(--v2-radius-sm); border: none; cursor: pointer;
-  background: linear-gradient(135deg, var(--v2-blue), #8a6d2f); color: #fff;
+  background: linear-gradient(135deg, var(--v2-gold), #8a6d2f); color: #fff;
   font-size: 15px; font-weight: 800; font-family: inherit;
   box-shadow: 0 8px 22px rgba(232, 199, 102, 0.35);
   transition: transform .18s var(--v2-ease);
@@ -578,7 +578,7 @@ body.v2 .tstc-novig:active, body.v2 .tstc-track:active { transform: scale(0.97);
   transition: transform .18s var(--v2-ease), box-shadow .18s var(--v2-ease), filter .18s var(--v2-ease);
 }
 .v2-alert-btn:active { transform: scale(0.97); }
-.v2-alert-push { background: linear-gradient(135deg, var(--v2-blue), #8a6d2f); color: #1a1405; border: none; box-shadow: 0 8px 22px rgba(232, 199, 102, 0.35); }
+.v2-alert-push { background: linear-gradient(135deg, var(--v2-gold), #8a6d2f); color: #1a1405; border: none; box-shadow: 0 8px 22px rgba(232, 199, 102, 0.35); }
 .v2-alert-push:disabled { opacity: 0.65; cursor: default; }
 @media (hover: hover) {
   .v2-alert-push:hover:not(:disabled) { filter: brightness(1.07); }
