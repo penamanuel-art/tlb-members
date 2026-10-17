@@ -1,0 +1,94 @@
+<style>
+.hub{background:#12151d;border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:8px 16px 12px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.hub-g{font-size:10px;font-weight:700;letter-spacing:2px;color:#a8873a;margin:14px 0 2px}
+.hub-g:first-child{margin-top:8px}
+.hub-row{display:flex;align-items:center;gap:11px;padding:10px 0;border-top:1px solid rgba(255,255,255,.06);text-decoration:none}
+.hub-row:first-of-type{border-top:none}
+.hub-ico{flex:none;width:34px;height:34px;border-radius:10px;background:#1a1e29;display:flex;align-items:center;justify-content:center;font-size:16px}
+.hub-tx{flex:1;min-width:0}
+.hub-tx b{display:block;font-size:14px;font-weight:500;color:#fff}
+.hub-tx i{display:block;font-style:normal;font-size:11.5px;font-weight:400;color:#8b94a7;margin-top:1px}
+.hub-new{flex:none;font-size:9px;font-weight:700;letter-spacing:1px;color:#0d1420;background:linear-gradient(135deg,#f3cd6b,#d9a92f);border-radius:99px;padding:2.5px 7px}
+.hub-ch{flex:none;color:#5b6478;font-size:16px}
+</style>
+<div class="hub">
+  <div class="hub-g">TODAY</div>
+  <a class="hub-row" href="{{ url_for('home') }}">
+    <span class="hub-ico">🎯</span>
+    <span class="hub-tx"><b>Today's Card</b><i>Today's official plays, posted at 2:00 PM ET</i></span>
+    <span class="hub-ch">›</span>
+  </a>
+  <a class="hub-row" href="{{ url_for('ev_board') }}">
+    <span class="hub-ico">⚖️</span>
+    <span class="hub-tx"><b>Compare Prices</b><i>The best price for today's plays, across every book</i></span>
+    <span class="hub-new">NEW</span><span class="hub-ch">›</span>
+  </a>
+  <a class="hub-row" href="{{ url_for('values_page') }}">
+    <span class="hub-ico">💎</span>
+    <span class="hub-tx"><b>Value Plays</b><i>Extra value plays, tracked at $100 each</i></span>
+    <span class="hub-ch">›</span>
+  </a>
+  <div class="hub-g">TRACK</div>
+  <a class="hub-row" href="{{ url_for('official_tracker') }}">
+    <span class="hub-ico">🏆</span>
+    <span class="hub-tx"><b>Official Tracker</b><i>The program's complete record, ticket by ticket</i></span>
+    <span class="hub-ch">›</span>
+  </a>
+  <a class="hub-row" href="{{ url_for('tracker') }}">
+    <span class="hub-ico">🎟️</span>
+    <span class="hub-tx"><b>My Own Tracker</b><i>Your personal record on the plays you track</i></span>
+    <span class="hub-ch">›</span>
+  </a>
+  <a class="hub-row" href="{{ url_for('archivo') }}">
+    <span class="hub-ico">🗂️</span>
+    <span class="hub-tx"><b>Archive</b><i>Every settled play, day by day</i></span>
+    <span class="hub-ch">›</span>
+  </a>
+  <div class="hub-g">LEARN &amp; BUILD</div>
+  <a class="hub-row" href="{{ url_for('masterclass') }}">
+    <span class="hub-ico">🎓</span>
+    <span class="hub-tx"><b>The Sharp Team Academy</b><i>The 30-day course: how the system works</i></span>
+    <span class="hub-ch">›</span>
+  </a>
+  <a class="hub-row" href="{{ url_for('parlay_builder') }}">
+    <span class="hub-ico">🧩</span>
+    <span class="hub-tx"><b>Parlay Builder</b><i>Build parlays with model prices</i></span>
+    <span class="hub-ch">›</span>
+  </a>
+  <a class="hub-row" href="{{ url_for('props') }}">
+    <span class="hub-ico">🎯</span>
+    <span class="hub-tx"><b>Player Props</b><i>Prop markets with model edges</i></span>
+    <span class="hub-ch">›</span>
+  </a>
+  <a class="hub-row" href="{{ url_for('sharp') }}">
+    <span class="hub-ico">🔪</span>
+    <span class="hub-tx"><b>Sharp Money</b><i>Where the sharp money is moving</i></span>
+    <span class="hub-ch">›</span>
+  </a>
+  <a class="hub-row" href="{{ url_for('tools_calculators') }}">
+    <span class="hub-ico">🧮</span>
+    <span class="hub-tx"><b>Calculators</b><i>Odds, hedge and bankroll calculators</i></span>
+    <span class="hub-ch">›</span>
+  </a>
+  <a class="hub-row" href="{{ url_for('ai_assistant') }}">
+    <span class="hub-ico">🧠</span>
+    <span class="hub-tx"><b>The Brain</b><i>Ask the model about any matchup</i></span>
+    <span class="hub-ch">›</span>
+  </a>
+  <div class="hub-g">STAY CONNECTED</div>
+  <a class="hub-row" href="https://t.me/thesharpteam" target="_blank" rel="noopener">
+    <span class="hub-ico">✈️</span>
+    <span class="hub-tx"><b>Telegram</b><i>Every play also lands on Telegram</i></span>
+    <span class="hub-ch">›</span>
+  </a>
+  <a class="hub-row" href="{{ url_for('alertas') }}">
+    <span class="hub-ico">🔔</span>
+    <span class="hub-tx"><b>Alerts</b><i>Push notifications for plays and results</i></span>
+    <span class="hub-ch">›</span>
+  </a>
+  <a class="hub-row" href="{{ url_for('cuenta') }}">
+    <span class="hub-ico">👤</span>
+    <span class="hub-tx"><b>My Account</b><i>Plan, bankroll and settings</i></span>
+    <span class="hub-ch">›</span>
+  </a>
+</div>
