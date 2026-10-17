@@ -1,20 +1,25 @@
-{% extends "base.html" %}
+{% extends "base_v2.html" %}
 {% block content %}
 <style>
 .adm-clean { max-width: 680px; margin: 0 auto; padding: 16px 12px 40px; font-family: -apple-system, 'SF Pro', Inter, system-ui, sans-serif; }
 .adm-clean h1 { font-size: 1.5rem; font-weight: 800; color: #fff; margin: 0 0 4px; }
-.adm-clean .sub { font-size: 0.85rem; color: #8b94a9; margin-bottom: 20px; }
+.adm-clean .sub { font-size: 0.85rem; color: #8fa1c2; margin-bottom: 20px; }
 .adm-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 24px; }
-.adm-stat { background: rgba(18,24,40,.72); border: 1px solid rgba(120,140,180,.14); border-radius: 16px; padding: 16px; text-align: center; text-decoration: none; }
+.adm-stat { background: linear-gradient(165deg,#151e36,#0a0f1d); border: 1px solid rgba(255,255,255,.08); border-radius: 16px; padding: 16px; text-align: center; text-decoration: none; }
 .adm-stat .n { font-size: 1.8rem; font-weight: 800; color: #fff; }
-.adm-stat .l { font-size: 0.7rem; color: #8b94a9; margin-top: 4px; font-weight: 700; letter-spacing: 1px; }
+.adm-stat .l { font-size: 0.7rem; color: #8fa1c2; margin-top: 4px; font-weight: 700; letter-spacing: 1px; }
 .adm-section { margin-bottom: 28px; }
 .adm-section h2 { font-size: 1.1rem; font-weight: 700; color: #fff; margin: 0 0 12px; }
-.adm-card { background: rgba(18,24,40,.72); border: 1px solid rgba(120,140,180,.14); border-radius: 16px; padding: 16px; margin-bottom: 12px; }
-.send-btn { width: 100%; background: #00e07f; color: #06130c; border: none; border-radius: 14px; padding: 14px; font-weight: 800; font-size: 1rem; cursor: pointer; margin-top: 12px; display: block; }
+.adm-card { background: linear-gradient(165deg,#151e36,#0a0f1d); border: 1px solid rgba(255,255,255,.08); border-radius: 16px; padding: 16px; margin-bottom: 12px; }
+.send-btn { width: 100%; background: linear-gradient(180deg,#4da3ff,#2f7bff); color: #ffffff; border: none; border-radius: 14px; padding: 14px; font-weight: 800; font-size: 1rem; cursor: pointer; margin-top: 12px; display: block; }
 .status-badge { display: inline-block; font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 999px; margin-bottom: 8px; }
 .status-pend { background: rgba(245,193,24,.15); color: #f5c518; border: 1px solid rgba(245,193,24,.3); }
 .status-sent { background: rgba(0,224,127,.15); color: #00e07f; border: 1px solid rgba(0,224,127,.3); }
+.ctl-t { font-weight: 800; color: #fff; margin-bottom: 10px; font-size: 0.95rem; }
+.ctl-in { width: 100%; box-sizing: border-box; background: #070d1d; border: 1px solid rgba(255,255,255,.14); border-radius: 12px; color: #fff; padding: 11px 12px; font-size: 0.9rem; margin-bottom: 8px; font-family: inherit; }
+.ctl-btn { width: 100%; background: linear-gradient(180deg,#4da3ff,#2f7bff); color: #fff; border: none; border-radius: 999px; padding: 11px; font-weight: 800; cursor: pointer; font-size: 0.9rem; }
+.ctl-btn.gold { background: linear-gradient(180deg,#ffe9a8,#e9bc45); color: #1c1400; }
+.ctl-note { font-size: 0.75rem; color: #8fa1c2; margin-top: 8px; line-height: 1.5; }
 </style>
 
 <div class="adm-clean">
@@ -30,6 +35,51 @@
       <div class="n">{{ stats.platinum }}</div>
       <div class="l">PLATINUM</div>
     </a>
+    <div class="adm-stat">
+      <div class="n">{{ stats.jugadas_hoy }}</div>
+      <div class="l">PLAYS TODAY</div>
+    </div>
+    <a class="adm-stat" href="/admin/notificaciones">
+      <div class="n">{{ stats.no_leidas }}</div>
+      <div class="l">ALERTS / REPORTS</div>
+    </a>
+  </div>
+
+  <div class="adm-section">
+    <h2>🎛️ Control Manual</h2>
+    <div class="adm-card">
+      <div class="ctl-t">🔔 Push a los miembros</div>
+      <form method="POST" action="{{ url_for('admin_control_push') }}">
+        <input class="ctl-in" name="titulo" maxlength="80" placeholder="Título del push" required>
+        <input class="ctl-in" name="mensaje" maxlength="240" placeholder="Mensaje" required>
+        <button class="ctl-btn" type="submit">Enviar push</button>
+      </form>
+      <p class="ctl-note">Llega a los miembros con las alertas de jugadas activadas. Abre el Dashboard.</p>
+    </div>
+    <div class="adm-card">
+      <div class="ctl-t">📧 Email a los miembros</div>
+      <form method="POST" action="{{ url_for('admin_control_email') }}">
+        <input class="ctl-in" name="asunto" maxlength="120" placeholder="Asunto" required>
+        <textarea class="ctl-in" name="mensaje" rows="4" maxlength="4000" placeholder="Mensaje (en inglés, es para los miembros)" required></textarea>
+        <button class="ctl-btn" type="submit">Enviar email</button>
+      </form>
+      <p class="ctl-note">A todos los miembros reales (sin cuentas de prueba ni admin).</p>
+    </div>
+    <div class="adm-card">
+      <div class="ctl-t">🎁 Dar Platinum a un miembro</div>
+      <form method="POST" action="{{ url_for('admin_control_grant') }}">
+        <input class="ctl-in" name="email" type="email" placeholder="Email del miembro" required>
+        <input class="ctl-in" name="dias" type="number" min="1" max="3650" placeholder="Días (vacío = permanente)">
+        <button class="ctl-btn gold" type="submit">Activar Platinum</button>
+      </form>
+    </div>
+    <div class="adm-card">
+      <div class="ctl-t">⚡ Mes gratis para todos</div>
+      <form method="POST" action="{{ url_for('admin_control_trial_all') }}" onsubmit="return confirm('¿Activar/renovar el mes gratis de Platinum (30 días) para TODOS los miembros sin Stripe?');">
+        <button class="ctl-btn gold" type="submit">Activar mes gratis — 30 días</button>
+      </form>
+      <p class="ctl-note">No toca a los que ya pagan por Stripe ni a los regalos permanentes.</p>
+    </div>
   </div>
 
   {% if oficial %}
@@ -73,7 +123,7 @@
         {% endfor %}
       {% endif %}
       {% if not selecciones and not plays_hoy %}
-        <div class="adm-card" style="text-align:center;color:#8b94a9;">No hay jugadas hoy.</div>
+        <div class="adm-card" style="text-align:center;color:#8fa1c2;">No hay jugadas hoy.</div>
       {% endif %}
       {% if selecciones %}
         <button type="submit" class="send-btn" id="sendBtn">📤 Enviar seleccionadas</button>
@@ -103,7 +153,7 @@
   <div class="adm-section">
     <h2>🎫 Upload Tickets</h2>
     <div class="adm-card" style="text-align:center;">
-      <p style="color:#8b94a9;font-size:0.85rem;margin:0 0 12px;">Sube los tickets originales de Novig</p>
+      <p style="color:#8fa1c2;font-size:0.85rem;margin:0 0 12px;">Sube los tickets originales de Novig</p>
       <label for="ticketUpload" style="display:inline-block;padding:12px 24px;background:#c9a227;color:#0b0e14;font-weight:800;border-radius:12px;cursor:pointer;">📤 Subir Tickets</label>
       <input type="file" id="ticketUpload" accept="image/*" multiple style="display:none;">
       <div id="uploadPreview" style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;justify-content:center;"></div>
@@ -129,7 +179,7 @@
           </div>
           <div style="flex:1;min-width:0;">
             <div id="tpTitle" style="font-weight:800;font-size:1.08rem;color:#fff;">Processing your ticket</div>
-            <div style="color:#8b94a9;font-size:0.8rem;">The Sharp is on it</div>
+            <div style="color:#8fa1c2;font-size:0.8rem;">The Sharp is on it</div>
             <div id="tpChip" style="display:none;margin-top:6px;font-size:0.78rem;color:#0b0e14;background:linear-gradient(90deg,#c9a227,#e8c85a);border-radius:999px;padding:3px 10px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></div>
           </div>
           <div style="flex:0 0 auto;color:#ff5f57;font-size:0.72rem;font-weight:800;">● LIVE</div>
@@ -138,7 +188,7 @@
         <div style="margin-top:4px;background:#131a29;border-radius:999px;height:8px;overflow:hidden;">
           <div id="tpBar" style="height:100%;width:0%;background:linear-gradient(90deg,#c9a227,#00e07f);border-radius:999px;transition:width .5s;"></div>
         </div>
-        <div style="display:flex;justify-content:space-between;gap:8px;margin-top:6px;color:#8b94a9;font-size:0.75rem;">
+        <div style="display:flex;justify-content:space-between;gap:8px;margin-top:6px;color:#8fa1c2;font-size:0.75rem;">
           <span id="tpStepCount">Step 0 of 5</span><span>You can close this — processing continues.</span>
         </div>
       </div>
@@ -152,6 +202,8 @@
       <a href="/admin/trakeos" class="adm-card" style="text-decoration:none;color:#fff;text-align:center;">📊 Trakeos</a>
       <a href="{{ url_for('home', splash='0') }}" class="adm-card" style="text-decoration:none;color:#fff;text-align:center;">🏠 Home</a>
       <a href="{{ url_for('ev_board') }}" class="adm-card" style="text-decoration:none;color:#fff;text-align:center;">⚡ EV Board</a>
+      <a href="/admin/tracker-oficial" class="adm-card" style="text-decoration:none;color:#fff;text-align:center;">🏆 Tracker oficial</a>
+      <a href="/admin/notificaciones" class="adm-card" style="text-decoration:none;color:#fff;text-align:center;">📩 Reportes</a>
     </div>
   </div>
 </div>
@@ -207,9 +259,9 @@ function tpRender(batch) {
     html += '<div style="display:flex;gap:10px;">'
       + '<div style="display:flex;flex-direction:column;align-items:center;">' + dot + line + '</div>'
       + '<div style="flex:1;min-width:0;padding-bottom:' + (idx < TP_STEPS.length - 1 ? '12' : '2') + 'px;">'
-      + '<div style="display:flex;justify-content:space-between;gap:8px;"><span style="font-weight:700;color:' + (st.state === 'pending' ? '#8b94a9' : '#fff') + ';">' + s[1] + '</span>'
+      + '<div style="display:flex;justify-content:space-between;gap:8px;"><span style="font-weight:700;color:' + (st.state === 'pending' ? '#8fa1c2' : '#fff') + ';">' + s[1] + '</span>'
       + '<span style="font-size:0.78rem;font-weight:800;color:' + (TP_STATE_CLR[st.state] || '#5b6579') + ';">' + (TP_STATE_TXT[st.state] || 'Pending') + '</span></div>'
-      + (st.detail ? '<div style="color:#8b94a9;font-size:0.78rem;margin-top:2px;">' + tpEsc(st.detail) + '</div>' : '')
+      + (st.detail ? '<div style="color:#8fa1c2;font-size:0.78rem;margin-top:2px;">' + tpEsc(st.detail) + '</div>' : '')
       + '</div></div>';
   });
   document.getElementById('tpSteps').innerHTML = html;
