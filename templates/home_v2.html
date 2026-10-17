@@ -619,12 +619,8 @@
 (function(){
   var b = document.getElementById('faBubble');
   if (!b) return;
-  var key = 'fa_bubble_day';
-  var hoy = new Date().toISOString().slice(0,10);
-  try { if (localStorage.getItem(key) === hoy) { b.remove(); return; } } catch(e) {}
   b.style.display = '';
   b.style.animation = 'wb-in .35s ease-out';
-  try { localStorage.setItem(key, hoy); } catch(e) {}
   b.addEventListener('click', function(){ window.location.href = '/cuenta'; });
   setTimeout(function(){ b.classList.add('wb-out'); }, 4000);
   setTimeout(function(){ if (b.parentNode) b.remove(); }, 4600);
