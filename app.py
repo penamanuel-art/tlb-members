@@ -3164,37 +3164,45 @@ def free_landing():
 
 
 def compute_ticker_days():
-    """Ticker de resultados (pedido por Alex 2026-09-26, refinado el mismo día):
-    UN solo día: el último día con jugadas liquidadas (el día anterior).
-    En vivo desde data/archive.json — se actualiza solo al liquidar.
-    Sin inventos: solo jugadas WON/LOST reales."""
-    ticker_days = []
+    """Ticker de resultados (pedido por Alex 2026-09-26; CORREGIDO el
+    2026-10-17 por orden de Alex: la franja dice YESTERDAY y debe ser el
+    dia calendario ANTERIOR siempre — antes tomaba el ultimo dia con
+    liquidadas y se quedaba pegada en un dia viejo cuando ayer no tuvo
+    resultados, p. ej. un juego pospuesto). En vivo desde
+    data/archive.json. Si ayer no tuvo jugadas liquidadas, la franja lo
+    dice ("NO SETTLED PLAYS") en vez de saltar a un dia mas viejo."""
+    ayer = datetime.now(TZ).date() - timedelta(days=1)
+    ayer_iso = ayer.isoformat()
+    etiqueta = ayer.strftime("%a %b %d").upper()
+    dia = None
     for d in load_archive():
-        fecha = d.get("fecha", "")
+        if d.get("fecha") == ayer_iso:
+            dia = d
+            break
+    jugadas = []
+    if dia is not None:
         jugadas = [
-            j for j in (d.get("jugadas", []) or [])
+            j for j in (dia.get("jugadas", []) or [])
             if j.get("resultado") in ("WON", "LOST") and not j.get("bloqueada")
         ]
-        if not jugadas:
-            continue
-        wins = sum(1 for j in jugadas if j.get("resultado") == "WON")
-        losses = len(jugadas) - wins
-        profit = sum(float(j.get("profit") or 0.0) for j in jugadas)
-        risked = sum(float(j.get("stake_monto") or 0.0) for j in jugadas)
-        roi = (profit / risked * 100.0) if risked else 0.0
-        try:
-            etiqueta = datetime.strptime(fecha, "%Y-%m-%d").strftime("%a %b %d").upper()
-        except (ValueError, TypeError):
-            etiqueta = (d.get("titulo") or fecha).upper()
-        ticker_days.append({
+    if not jugadas:
+        return [{
             "etiqueta": etiqueta,
-            "record": f"{wins}-{losses}",
-            "profit": profit,
-            "roi": roi,
-        })
-        if len(ticker_days) >= 1:
-            break
-    return ticker_days
+            "record": "NO SETTLED PLAYS",
+            "profit": 0.0,
+            "roi": 0.0,
+        }]
+    wins = sum(1 for j in jugadas if j.get("resultado") == "WON")
+    losses = len(jugadas) - wins
+    profit = sum(float(j.get("profit") or 0.0) for j in jugadas)
+    risked = sum(float(j.get("stake_monto") or 0.0) for j in jugadas)
+    roi = (profit / risked * 100.0) if risked else 0.0
+    return [{
+        "etiqueta": etiqueta,
+        "record": f"{wins}-{losses}",
+        "profit": profit,
+        "roi": roi,
+    }]
 
 
 @app.route("/ticket/<play_id>")
