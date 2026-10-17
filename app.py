@@ -5361,7 +5361,7 @@ def desbloquear_platinum():
 def admin_api_members_emails():
     """Lista de miembros para emails personalizados (2026-10-07, pedido por Alex):
     los emails de motivación salen con sección de upsell solo para no-Platinum.
-    Retorna JSON: [{email, nombre, platinum}].
+    Retorna JSON: [{email, nombre, platinum, phone, sms_optin, lang, platinum_trial_ends}].
     Auth: sesión admin O header X-Admin-Key == ADMIN_API_KEY (para los crons)."""
     api_key = os.environ.get("ADMIN_API_KEY", "")
     header_key = request.headers.get("X-Admin-Key", "")
@@ -5375,11 +5375,13 @@ def admin_api_members_emails():
     db = get_db()
     _barrer_trials_vencidos(db)
     rows = db.execute(
-        "SELECT email, nombre, platinum_unlocked FROM users WHERE email IS NOT NULL AND email != ''"
+        "SELECT email, nombre, platinum_unlocked, phone, sms_optin, lang, platinum_trial_ends FROM users WHERE email IS NOT NULL AND email != ''"
     ).fetchall()
     return jsonify([
         {"email": r["email"], "nombre": r["nombre"] or "there",
-         "platinum": bool(r["platinum_unlocked"])}
+         "platinum": bool(r["platinum_unlocked"]),
+         "phone": r["phone"] or "", "sms_optin": bool(r["sms_optin"]),
+         "lang": r["lang"] or "en", "platinum_trial_ends": r["platinum_trial_ends"]}
         for r in rows
     ])
 
