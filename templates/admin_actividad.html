@@ -1,0 +1,61 @@
+{% extends "base_v2.html" %}
+{% block title %}Member Activity — The Sharp Team{% endblock %}
+{% block content %}
+<style>
+  .act-wrap { max-width: 680px; margin: 0 auto; padding: 16px 12px 40px; }
+  .act-wrap h1 { font-size: 1.5rem; font-weight: 800; color: #fff; margin: 0 0 4px; }
+  .act-sub { font-size: 0.85rem; color: #8fa1c2; margin-bottom: 20px; }
+  .act-card { background: linear-gradient(165deg,#151e36,#0a0f1d); border: 1px solid rgba(255,255,255,.08); border-radius: 20px; padding: 16px; margin-bottom: 12px; }
+  .act-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+  .act-name { font-size: 1.05rem; font-weight: 800; color: #fff; }
+  .act-email { font-size: 0.8rem; color: #8fa1c2; margin-top: 1px; }
+  .act-pill { flex: none; font-size: 10px; font-weight: 800; letter-spacing: 1px; padding: 5px 10px; border-radius: 999px; }
+  .act-pill.plat { background: linear-gradient(180deg,#cdf3ff,#63cbf5); color: #07304a; }
+  .act-pill.free { background: #22345c; color: #aebdd4; }
+  .act-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 14px; margin-top: 12px; }
+  .act-meta .k { font-size: 0.68rem; font-weight: 700; letter-spacing: 1px; color: #8fa1c2; }
+  .act-meta .v { font-size: 0.92rem; font-weight: 700; color: #fff; margin-top: 1px; }
+  .act-tracks { margin-top: 12px; border-top: 1px solid rgba(255,255,255,.07); padding-top: 10px; }
+  .act-tracks .k { font-size: 0.68rem; font-weight: 700; letter-spacing: 1px; color: #8fa1c2; margin-bottom: 6px; }
+  .act-track { display: flex; justify-content: space-between; gap: 8px; font-size: 0.83rem; color: #dbe4f5; padding: 4px 0; }
+  .act-track .f { color: #8fa1c2; font-size: 0.75rem; white-space: nowrap; }
+  .res-w { color: #2fe6a7; font-weight: 800; } .res-l { color: #ff7d7d; font-weight: 800; } .res-p { color: #ffd93b; font-weight: 800; }
+</style>
+<div class="act-wrap">
+  <h1>👁️ Member Activity</h1>
+  <div class="act-sub">Quién entra al Dashboard, cuántas veces al día, desde qué ciudad y qué jugadas trackea. El registro de entradas empieza hoy, 17 de octubre.</div>
+  {% for d in datos %}
+  <div class="act-card">
+    <div class="act-head">
+      <div>
+        <div class="act-name">{{ d.nombre }}</div>
+        <div class="act-email">{{ d.email }}</div>
+      </div>
+      {% if d.platinum %}<span class="act-pill plat">★ PLATINUM</span>{% else %}<span class="act-pill free">FREE</span>{% endif %}
+    </div>
+    <div class="act-meta">
+      <div><div class="k">📍 CONNECTED FROM</div><div class="v">{{ d.ciudad or '—' }}</div></div>
+      <div><div class="k">🕐 LAST ENTRY</div><div class="v">{{ d.ultima }}</div></div>
+      <div><div class="k">📅 ENTRIES TODAY</div><div class="v">{{ d.entradas_hoy }}</div></div>
+      <div><div class="k">🔑 LOGINS TODAY</div><div class="v">{{ d.logins_hoy }}</div></div>
+    </div>
+    <div class="act-tracks">
+      <div class="k">🎯 TRACKED PLAYS ({{ d.total_tracks }})</div>
+      {% if d.tracks %}
+        {% for t in d.tracks %}
+        <div class="act-track">
+          <span>{{ t.pick }} <span style="color:#8fa1c2;">· {{ t.nivel }}</span></span>
+          <span class="f">{{ t.fecha }} · {% if t.resultado == 'W' %}<span class="res-w">WON</span>{% elif t.resultado == 'L' %}<span class="res-l">LOST</span>{% else %}<span class="res-p">PENDING</span>{% endif %}</span>
+        </div>
+        {% endfor %}
+      {% else %}
+        <div style="font-size:0.83rem;color:#8fa1c2;">No ha trackeado jugadas todavía.</div>
+      {% endif %}
+    </div>
+  </div>
+  {% endfor %}
+  {% if not datos %}
+  <div class="act-card" style="text-align:center;color:#8fa1c2;">No hay miembros todavía.</div>
+  {% endif %}
+</div>
+{% endblock %}
