@@ -1,195 +1,101 @@
 {% extends "base.html" %}
-{% block title %}+EV Board — The Sharp Team{% endblock %}
+{% block title %}Compare Prices — The Sharp Team{% endblock %}
 {% block content %}
 <style>
-/* ===== +EV Board · diseño "Edge" (pedido por Alex 2026-09-27 con captura) ===== */
-.ev-card{position:relative;background:linear-gradient(180deg,#231510 0%,#140d09 100%);border:2px solid #ff8c2b;border-radius:18px;padding:20px;margin:18px 0;color:#fff;box-shadow:0 0 16px rgba(255,140,43,.45),0 0 4px rgba(255,205,100,.75)}
-.ev-card.hot{border-color:#ff6a1a;box-shadow:0 0 28px rgba(255,106,26,.65),0 0 6px rgba(255,205,100,.9)}
-.ev-card.stale{opacity:.88}
-.ev-firehead{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-.ev-fires{font-size:20px;letter-spacing:2px;filter:drop-shadow(0 0 6px rgba(255,140,0,.8))}
-.ev-title{font-size:24px;font-weight:800;margin:0 0 4px;color:#fff;line-height:1.15}
-.ev-game{color:#c9a98a;font-size:14px;margin:0 0 10px}
-.ev-badges{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
-.badge{display:inline-flex;align-items:center;border-radius:10px;padding:5px 12px;font-size:13px;font-weight:800}
-.badge.verified{background:#1d3a2a;color:#4ade80}
-.badge.sharp{background:#2f6fed;color:#fff}
-.badge.moved{background:#3a2f10;color:#fbbf24}
-.badge.sim{background:#3a1a3a;color:#e879f9}
-.badge.live{background:#3a1010;color:#f87171}
-.ev-stale-note{color:#fbbf24;font-size:13px;margin:0 0 10px}
-.ev-sub{font-size:15px;font-weight:700;color:#e8e8f2;margin:0 0 4px}
-.ev-pickrow{display:flex;align-items:center;gap:14px;margin:6px 0 10px;flex-wrap:wrap}
-.ev-dir{background:rgba(255,140,43,.18);border:1px solid rgba(255,140,43,.5);color:#ffb37a;font-weight:800;font-size:13px;letter-spacing:1px;border-radius:10px;padding:6px 12px}
-.ev-bigprice{font-size:30px;font-weight:800;color:#fff;line-height:1}
-.ev-edgepill{margin-left:auto;background:rgba(255,140,43,.22);border:1px solid rgba(255,140,43,.55);color:#ffb37a;font-weight:800;font-size:14px;border-radius:999px;padding:7px 14px;white-space:nowrap}
-.ev-predrow{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin:0 0 4px}
-.ev-pred{color:#8f7a68;font-size:12px;letter-spacing:2px;font-weight:700}
-.ev-pred b{color:#ffd9a8;font-size:15px;letter-spacing:0}
-.ev-via{color:#8f7a68;font-size:13px}
-.ev-rec{color:#d4af37;font-size:17px;font-weight:800;margin:10px 0 12px}
-.ev-best{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:12px}
-.ev-price{font-size:34px;font-weight:800;color:#fff;line-height:1}
-.ev-bookname{color:#c9a98a;font-size:14px;margin-top:2px}
-.ev-edgepct{color:#4ade80;font-weight:800;font-size:20px;text-align:center;line-height:1.15}
-.ev-edgepct small{display:block;font-size:11px;letter-spacing:1px;font-weight:800}
-.ev-betbtn{margin-left:auto;background:#3ddc84;color:#0b2417;font-weight:800;font-size:17px;border-radius:14px;padding:14px 26px;text-decoration:none;white-space:nowrap}
-.ev-betbtn:active{transform:scale(.98)}
-.ev-books-toggle{width:100%;background:#1c1410;border:1px solid #5a3a22;color:#ffb37a;font-weight:700;font-size:15px;border-radius:12px;padding:10px;cursor:pointer;margin-bottom:10px}
-.ev-books-list{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
-.book-chip{border:1px solid #4a3220;border-radius:10px;padding:6px 12px;font-size:13px;color:#e8d5c0;background:#1c1410}
-.book-chip small{color:#8f7a68}
-.book-chip.best{border-color:#ff8c2b;color:#fff}
-.book-chip.best small{color:#ffb37a;font-weight:800}
-a.book-chip{text-decoration:none;display:inline-block}
-.ev-track{width:100%;background:transparent;border:1.5px solid #4a3220;color:#e8d5c0;font-weight:700;font-size:15px;border-radius:12px;padding:10px;cursor:pointer}
-.ev-track.tracked{border-color:#4ade80;color:#4ade80}
-.ev-empty{border:2px dashed #4a3220;border-radius:18px;padding:28px 20px;text-align:center;margin:16px 0}
-.ev-empty h3{color:#fff;margin:0 0 8px}
-.ev-empty p{color:#c9a98a;margin:0;font-size:14px}
-.ev-note{color:#8f7a68;font-size:12px;text-align:center;margin-top:18px;line-height:1.5}
-.sport-tag{font-size:11px;font-weight:800;letter-spacing:1px;color:#c9a98a}
-.push-cta{margin:4px 0 6px}
-.push-btn{cursor:pointer;background:#1c1c34;color:#fff;font-weight:700;font-size:13px;padding:8px 16px;border:1px solid #3a3a5c;border-radius:999px}
-.push-btn:disabled{opacity:.6;cursor:default}
-.push-hint{color:#9a9ab5;font-size:12px;margin:6px 0 0}
+/* ===== Compare Prices · mismo diseño de las cards v5 del Dashboard (Alex 2026-10-17) ===== */
+.cmp-wrap{max-width:560px;margin:0 auto;padding:6px 2px 10px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#eef1f7}
+.cmp-h{font-size:20px;font-weight:600;letter-spacing:-.3px;margin:4px 0 2px}
+.cmp-sub{font-size:12.5px;font-weight:400;color:#8b94a7;margin:0 0 14px}
+.cmp-card{position:relative;background:linear-gradient(180deg,#151822,#10131b);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:16px 18px 14px;margin:0 0 14px;overflow:hidden}
+.cmp-edge{position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,#f3cd6b,#b98c1e)}
+.cmp-top{display:flex;align-items:center;gap:8px}
+.cmp-liga{font-size:10px;font-weight:600;letter-spacing:1.4px;color:#c8cede;border:1px solid rgba(255,255,255,.18);border-radius:99px;padding:3px 9px}
+.cmp-time{margin-left:auto;font-size:12px;font-weight:400;color:#8b94a7}
+.cmp-game{font-size:16px;font-weight:600;letter-spacing:-.2px;margin-top:9px}
+.cmp-div{position:relative;border-top:1.5px dashed rgba(255,255,255,.14);margin:13px -18px 2px}
+.cmp-notch{position:absolute;top:-11px;width:22px;height:22px;border-radius:50%;background:#070d1d}
+.cmp-notch.l{left:-11px}.cmp-notch.r{right:-11px}
+.cmp-team{padding:11px 0 3px}
+.cmp-team + .cmp-team{border-top:1px solid rgba(255,255,255,.06)}
+.cmp-trow{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.cmp-tname{font-size:15px;font-weight:500;color:#fff}
+.cmp-posted{font-size:11px;font-weight:600;color:#e8c766;border:1px solid rgba(232,199,102,.55);border-radius:99px;padding:2.5px 9px}
+.cmp-ourpick{font-size:10px;font-weight:700;letter-spacing:1.2px;color:#0d1420;background:linear-gradient(135deg,#f3cd6b,#d9a92f);border-radius:99px;padding:3px 8px}
+.cmp-best{margin-left:auto;text-align:right}
+.cmp-best-p{font-size:19px;font-weight:600;color:#2fe6a7;line-height:1}
+.cmp-best-b{font-size:11px;font-weight:400;color:#8b94a7;margin-top:2px}
+.cmp-delta{font-size:12px;font-weight:500;color:#2fe6a7;margin-top:7px}
+.cmp-delta.flat{color:#8b94a7;font-weight:400}
+.cmp-chips{display:flex;gap:8px;margin-top:10px}
+.cmp-chip{flex:1;display:flex;align-items:center;justify-content:center;gap:7px;background:#1a1e29;border:1px solid rgba(255,255,255,.09);border-radius:11px;padding:9px 4px;font-size:14px;font-weight:500;color:#fff}
+.cmp-chip.best{border-color:rgba(47,230,167,.65);background:rgba(47,230,167,.08);color:#2fe6a7}
+.cmp-mono{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 4px;border-radius:6px;background:#0d1017;color:#c8cede;font-size:10px;font-weight:700;letter-spacing:.4px}
+.cmp-chip.best .cmp-mono{background:rgba(47,230,167,.16);color:#2fe6a7}
+.cmp-all{margin-top:11px}
+.cmp-all summary{list-style:none;cursor:pointer;text-align:center;font-size:13px;font-weight:500;color:#c8cede;background:#1a1e29;border:1px solid rgba(255,255,255,.08);border-radius:11px;padding:10px}
+.cmp-all summary::-webkit-details-marker{display:none}
+.cmp-brow{display:flex;justify-content:space-between;align-items:center;padding:8px 2px;border-top:1px solid rgba(255,255,255,.06);font-size:13.5px}
+.cmp-brow .cb{font-weight:400;color:#c8cede}
+.cmp-brow .cp{font-weight:600;color:#fff}
+.cmp-brow.best .cb,.cmp-brow.best .cp{color:#2fe6a7}
+.cmp-novig{display:block;text-align:center;margin-top:11px;font-size:13px;font-weight:600;color:#e8c766;text-decoration:none;border:1px solid rgba(232,199,102,.45);border-radius:11px;padding:10px}
+.cmp-foot{display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(255,255,255,.07);margin-top:13px;padding-top:10px}
+.cmp-foot .k{font-size:12.5px;font-weight:400;color:#8b94a7}
+.cmp-foot .v{font-size:13px;font-weight:600;color:#2fe6a7}
+.cmp-empty{background:#12151d;border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:22px 18px;font-size:13.5px;font-weight:400;color:#9aa3b8;text-align:center;line-height:1.6}
 </style>
+<div class="cmp-wrap">
+  <h1 class="cmp-h">Compare Prices</h1>
+  <p class="cmp-sub">Only the games on today's official card{% if board and board.updated_at %} · Updated {{ board.updated_at }}{% endif %}</p>
 
-<section class="tracker-head">
-  <div>
-    <p class="kicker">+EV BOARD · FILTERED</p>
-    <h2>Best value right now</h2>
-    {% if board.get('updated_at') %}
-    <p class="muted">Updated {{ board.updated_at }} ET · refreshes every ~15 min</p>
-    {% endif %}
-  </div>
-</section>
-
-<div class="push-cta">
-  <button id="pushBtn" class="push-btn" type="button">🔔 Enable alerts</button>
-  <p id="pushHint" class="push-hint">Get a phone push when a new edge hits the board.</p>
-</div>
-<script>
-(function () {
-  var btn = document.getElementById('pushBtn');
-  var hint = document.getElementById('pushHint');
-  if (!btn || !window.TLB_push) return;
-  var current = 'default';
-  function paint(st) {
-    current = st;
-    if (st === 'granted') { btn.textContent = '🔔 Alerts on'; btn.disabled = false; hint.textContent = "You'll get a phone push when a new edge hits the board. Tap to turn off."; }
-    else if (st === 'off' || st === 'default') { btn.textContent = '🔔 Enable alerts'; btn.disabled = false; hint.textContent = 'Get a phone push when a new edge hits the board.'; }
-    else if (st === 'unsubscribed') { btn.textContent = '🔔 Enable alerts'; btn.disabled = false; hint.textContent = "This device isn't connected \u2014 tap to reconnect."; }
-    else if (st === 'denied') { btn.textContent = '🔔 Blocked'; btn.disabled = true; hint.textContent = 'Notifications are blocked \u2014 allow them in your browser settings, then try again.'; }
-    else if (st === 'unsupported') { btn.textContent = '🔔 Not supported'; btn.disabled = true; hint.textContent = (/iphone|ipad|ipod/i.test(navigator.userAgent || '') && !window.navigator.standalone) ? 'On iPhone/iPad, alerts only work from the Home Screen app: tap Share \u2192 "Add to Home Screen", open The Sharp Team from there, then turn alerts on.' : "This browser doesn't support push notifications."; }
-    else if (st === 'error') { btn.textContent = '🔔 Enable alerts'; btn.disabled = false; hint.textContent = 'Something went wrong \u2014 try again.'; }
-  }
-  window.TLB_push.status().then(paint);
-  btn.addEventListener('click', async function () {
-    if (btn.disabled) return;
-    btn.disabled = true;
-    btn.textContent = '⏳ Working\u2026';
-    var st = (current === 'granted') ? await window.TLB_push.disable() : await window.TLB_push.enable();
-    paint(st);
-  });
-})();
-</script>
-
-{% set edges = board.get('edges', []) %}
-{% if edges %}
-  {% for e in edges %}
-  {% set _ev = e.ev_pct|float %}
-  {% set _fires = '🔥🔥🔥' if _ev >= 25 else ('🔥🔥' if _ev >= 10 else '🔥') %}
-  {% set _dir = 'ML' if (e.market|default('Moneyline')) == 'Moneyline' else ((e.market|default(''))[:6]|upper) %}
-  <article class="ev-card{% if e.stale %} stale{% endif %}{% if _ev >= 25 %} hot{% endif %}">
-    <div class="ev-firehead">
-      <span class="sport-tag">{{ e.sport }}</span>
-      <span class="ev-fires">{{ _fires }}</span>
-    </div>
-    <h3 class="ev-title">{{ e.team }}</h3>
-    <p class="ev-game">{{ e.game }}{% if e.game_time %} · {{ e.game_time }}{% endif %}</p>
-    <div class="ev-badges">
-      <span class="badge verified">Verified</span>
-      {% if e.stale %}<span class="badge moved">⚠️ LINE MOVED</span>{% endif %}
-      {% if e.simulated %}<span class="badge sim">🧪 SIM</span>{% endif %}
-      {% if e.live and not e.simulated %}<span class="badge live">🔴 LIVE</span>{% endif %}
-      {% if e.sharp %}<span class="badge sharp">🔪 SHARP</span>{% endif %}
-    </div>
-    <div class="ev-pickrow">
-      <span class="ev-dir">{{ _dir }}</span>
-      <span class="ev-bigprice">{% if e.price > 0 %}+{% endif %}{{ e.price }}</span>
-      <span class="ev-edgepill">+{{ e.ev_pct }}% edge</span>
-    </div>
-    <div class="ev-predrow">
-      <span class="ev-pred">MODEL PREDICTION&nbsp;&nbsp;<b>FAIR {% if e.fair_american > 0 %}+{% endif %}{{ e.fair_american }}</b></span>
-      <span class="ev-via">via {{ e.book }}</span>
-    </div>
-    <p class="ev-sub">{{ e.edge_label | default('Value edge') }} · {{ e.books_count }} books agree{% if e.sharp %} · sharp money this side{% endif %}</p>
-    {% if e.stale %}<p class="ev-stale-note">Price moved since posted — verify at your book.</p>{% endif %}
-    {% if e.rec_units is defined %}
-    <p class="ev-rec">🎯 Rec {{ "%g"|format(e.rec_units) }}u (${{ e.rec_stake }})</p>
-    {% endif %}
-    <div class="ev-best">
-      <div>
-        <div class="ev-price">{% if e.price > 0 %}+{% endif %}{{ e.price }}</div>
-        <div class="ev-bookname">{{ e.book }}</div>
+  {% if board and board.events %}
+    {% for e in board.events %}
+    <div class="cmp-card">
+      <div class="cmp-edge"></div>
+      <div class="cmp-top">
+        <span class="cmp-liga">{{ e.league }}</span>
+        <span class="cmp-time">Today · {{ e.time_label }}</span>
       </div>
-      <div class="ev-edgepct">+{{ e.ev_pct }}%<small>YOUR EDGE</small></div>
-      <a class="ev-betbtn" href="{{ e.bet_url | default('https://novig.com') }}" target="_blank" rel="noopener">Bet Novig →</a>
-    </div>
-    {% if e.books %}
-    <button class="ev-books-toggle" type="button" data-books-toggle>📚 {{ e.books_count }} books ▾</button>
-    <div class="ev-books-list" data-books-list hidden>
-      {% for b in e.books %}
-      {% if b.url %}<a class="book-chip{% if loop.first %} best{% endif %}" href="{{ b.url }}" target="_blank" rel="noopener">{{ b.book }} <small>{% if b.price > 0 %}+{% endif %}{{ b.price }}</small></a>{% else %}<span class="book-chip{% if loop.first %} best{% endif %}">{{ b.book }} <small>{% if b.price > 0 %}+{% endif %}{{ b.price }}</small></span>{% endif %}
+      <div class="cmp-game">{{ e.label }}</div>
+      <div class="cmp-div"><span class="cmp-notch l"></span><span class="cmp-notch r"></span></div>
+      {% for t in e.teams %}
+      <div class="cmp-team">
+        <div class="cmp-trow">
+          <span class="cmp-tname">{{ t.name }}</span>
+          {% if t.is_pick %}<span class="cmp-ourpick">OUR PLAY</span>{% endif %}
+          {% if t.posted %}<span class="cmp-posted">Posted {{ t.posted }}</span>{% endif %}
+          <span class="cmp-best"><span class="cmp-best-p">{{ t.best_price }}</span><br><span class="cmp-best-b">best at {{ t.best_book }}</span></span>
+        </div>
+        {% if t.delta != "$0.00" %}
+        <div class="cmp-delta">▲ {{ t.delta }} more than the worst price on a $100 bet</div>
+        {% else %}
+        <div class="cmp-delta flat">Same price at all {{ t.books_count }} books</div>
+        {% endif %}
+        <div class="cmp-chips">
+          {% for b in t.books[:3] %}
+          <span class="cmp-chip{% if loop.first %} best{% endif %}"><span class="cmp-mono">{{ b.short }}</span>{{ b.price }}</span>
+          {% endfor %}
+        </div>
+        {% if t.books_count > 3 %}
+        <details class="cmp-all">
+          <summary>Compare all {{ t.books_count }} books ›</summary>
+          <div style="margin-top:6px">
+          {% for b in t.books %}
+            <div class="cmp-brow{% if loop.first %} best{% endif %}"><span class="cb">{{ b.book }}</span><span class="cp">{{ b.price }}</span></div>
+          {% endfor %}
+          </div>
+        </details>
+        {% endif %}
+      </div>
       {% endfor %}
+      {% if e.novig_url %}
+      <a class="cmp-novig" href="{{ e.novig_url }}" target="_blank" rel="noopener">↗ Bet this game at Novig</a>
+      {% endif %}
+      <div class="cmp-foot"><span class="k">Market vig</span><span class="v">{{ e.vig }}</span></div>
     </div>
-    {% endif %}
-    <button class="ev-track" type="button" data-track="{{ e.id }}">+ Track this bet</button>
-  </article>
-  {% endfor %}
-{% else %}
-  <div class="ev-empty">
-    <h3>No +EV edges right now</h3>
-    <p>The filters are strict on purpose — only edges of 3%+ confirmed at 2 or more books make the cut. When one clears them, it shows up here.</p>
-  </div>
-{% endif %}
-
-<p class="ev-note">Fair odds = Pinnacle no-vig. Filters: EV ≥ 3% · odds −200…+250 · 2+ books · max 10 edges.<br>Lines move fast — always verify the price at your book before you bet. This board is informational, not a pick.</p>
-
-<script>
-(function () {
-  // Desplegable "N books": muestra todas las casas con su precio
-  document.querySelectorAll('[data-books-toggle]').forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      var list = btn.parentElement.querySelector('[data-books-list]');
-      if (!list) return;
-      var open = list.hidden;
-      list.hidden = !open;
-      btn.innerHTML = open ? btn.innerHTML.replace('▾', '▴') : btn.innerHTML.replace('▴', '▾');
-    });
-  });
-  // Track this bet: se guarda en el teléfono (localStorage), sin cuenta
-  var KEY = 'tlb_tracked_bets';
-  function getTracked() {
-    try { return JSON.parse(localStorage.getItem(KEY) || '[]'); }
-    catch (e) { return []; }
-  }
-  function paintTrack(btn, tracked) {
-    btn.classList.toggle('tracked', tracked);
-    btn.textContent = tracked ? '✓ Tracked' : '+ Track this bet';
-  }
-  document.querySelectorAll('[data-track]').forEach(function (btn) {
-    var id = btn.getAttribute('data-track');
-    paintTrack(btn, getTracked().indexOf(id) !== -1);
-    btn.addEventListener('click', function () {
-      var t = getTracked();
-      var i = t.indexOf(id);
-      if (i === -1) t.push(id); else t.splice(i, 1);
-      try { localStorage.setItem(KEY, JSON.stringify(t)); } catch (e) {}
-      paintTrack(btn, i === -1);
-    });
-  });
-})();
-</script>
+    {% endfor %}
+  {% else %}
+    <div class="cmp-empty">No games to compare right now.<br>Prices appear here as soon as today's official card is live.</div>
+  {% endif %}
+</div>
 {% endblock %}
