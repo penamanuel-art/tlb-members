@@ -606,4 +606,30 @@
 </script>
 {% endif %}
 
+{% if is_alex and miembro_platinum and not celebracion %}
+<style>
+.fa-bubble{border-color:rgba(47,230,167,.55);cursor:pointer;}
+.fa-bubble .fa-star{color:#ffd93b;}
+.fa-bubble .fa-days{color:#e8c766;font-weight:900;}
+.fa-bubble.fa-urgent{border-color:rgba(255,157,92,.75);}
+.fa-bubble.fa-urgent .fa-days{color:#ffb27d;}
+</style>
+<div class="win-bubble fa-bubble{% if trial_dias_left and trial_dias_left <= 5 %} fa-urgent{% endif %}" id="faBubble" style="display:none" role="status"><span class="fa-star">&#11088;</span> <b>{% if cuenta_es %}ACCESO TOTAL ACTIVO{% else %}FULL ACCESS ACTIVE{% endif %}</b>{% if trial_dias_left %}&nbsp;&middot; {% if cuenta_es %}Platinum desbloqueado &middot; te quedan <span class="fa-days">{{ trial_dias_left }} d&iacute;as</span>{% else %}Platinum unlocked &middot; <span class="fa-days">{{ trial_dias_left }} days left</span>{% endif %}{% else %}&nbsp;&middot; {% if cuenta_es %}Platinum desbloqueado{% else %}Platinum unlocked{% endif %}{% endif %}</div>
+<script>
+(function(){
+  var b = document.getElementById('faBubble');
+  if (!b) return;
+  var key = 'fa_bubble_day';
+  var hoy = new Date().toISOString().slice(0,10);
+  try { if (localStorage.getItem(key) === hoy) { b.remove(); return; } } catch(e) {}
+  b.style.display = '';
+  b.style.animation = 'wb-in .35s ease-out';
+  try { localStorage.setItem(key, hoy); } catch(e) {}
+  b.addEventListener('click', function(){ window.location.href = '/cuenta'; });
+  setTimeout(function(){ b.classList.add('wb-out'); }, 4000);
+  setTimeout(function(){ if (b.parentNode) b.remove(); }, 4600);
+})();
+</script>
+{% endif %}
+
 {% endblock %}
