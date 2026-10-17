@@ -11,7 +11,7 @@
   </div>
   {% else %}
   <div style="background:linear-gradient(165deg,#151e36,#0a0f1d);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:22px 20px;">
-    <h1 style="font-size:1.25rem;margin:0 0 6px;color:#fff;">{% if tipo == 'idea' %}💡 {% if cuenta_es %}Sugerir una mejora{% else %}Suggest a feature{% endif %}{% else %}⚠️ {% if cuenta_es %}Reportar un problema{% else %}Report a problem{% endif %}</h1>
+    <h1 style="font-size:1.25rem;margin:0 0 6px;color:#fff;">{% if tipo == 'idea' %}💡 {% if cuenta_es %}Sugerir una mejora{% else %}Suggest a feature{% endif %}{% else %}⚠️ {% if cuenta_es %}Reportar un problema{% else %}Report a problem{% endif %}{% endif %}</h1>
     <p style="color:#a8b3cf;font-size:.9rem;line-height:1.55;margin:0 0 16px;">{% if tipo == 'idea' %}{% if cuenta_es %}¿Qué te gustaría ver en The Sharp Team? Cuéntanos tu idea — las leemos todas.{% else %}What would you like to see in The Sharp Team? Tell us your idea — we read every one.{% endif %}{% else %}{% if cuenta_es %}¿Algo salió mal? Describe qué pasó y en qué página — lo reparamos.{% else %}Something went wrong? Tell us what happened and on which page — we'll fix it.{% endif %}{% endif %}</p>
     <div style="display:flex;gap:8px;margin-bottom:14px;">
       <a href="{{ url_for('reportar', tipo='error') }}" style="flex:1;text-align:center;padding:9px 6px;border-radius:999px;text-decoration:none;font-size:.82rem;font-weight:700;{% if tipo == 'error' %}background:#2f7bff;color:#fff;{% else %}background:rgba(255,255,255,.06);color:#a8b3cf;{% endif %}">⚠️ {% if cuenta_es %}Un problema{% else %}A problem{% endif %}</a>
