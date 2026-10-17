@@ -67,7 +67,7 @@
   <div class="acct-card">
     <p class="acct-k">BILLING</p>
     {% if past_due %}
-    <p style="font-size:15px;color:#e5e7eb;margin:0;"><span style="color:#f5b544;font-weight:800;">Your last payment didn't go through.</span><br>Your Platinum Weekly is past due and access is paused. Update your card to restore it right away.</p>
+    <p style="font-size:15px;color:#e5e7eb;margin:0;"><span style="color:#f5b544;font-weight:800;">Your last payment didn't go through.</span><br>Your Platinum membership is past due and access is paused. Update your card to restore it right away.</p>
     {% elif cancel_at %}
     <p style="font-size:15px;color:#d1d5db;margin:0;">Your membership is cancelled. You keep full access until the end of your current billing period — you won't be charged again.</p>
     {% elif platinum %}
@@ -127,8 +127,8 @@
     {% if sub_info %}
     <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;">
       <div>
-        <div style="font-size:16px;font-weight:700;color:#fff;">The Sharp Team — Platinum Weekly</div>
-        <div style="font-size:13px;color:#8b93a7;margin-top:2px;">{% if sub_info.price %}${{ '%.2f' % sub_info.price }}/{{ sub_info.interval or 'week' }} · {% endif %}Status: {{ sub_info.status }}{% if sub_info.next_billing %} · Next billing {{ sub_info.next_billing }}{% endif %}</div>
+        <div style="font-size:16px;font-weight:700;color:#fff;">The Sharp Team — Platinum</div>
+        <div style="font-size:13px;color:#8b93a7;margin-top:2px;">{% if sub_info.price %}${{ '%.2f' % sub_info.price }}/{{ sub_info.interval or 'month' }} · {% endif %}Status: {{ sub_info.status }}{% if sub_info.next_billing %} · Next billing {{ sub_info.next_billing }}{% endif %}</div>
       </div>
       {% if past_due %}<span class="acct-fail">Past Due</span>{% elif cancel_at or sub_info.cancel_at_period_end %}<span class="acct-fail">Cancels at term end</span>{% else %}<span class="acct-ok">Active</span>{% endif %}
     </div>
