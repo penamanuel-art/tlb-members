@@ -3281,6 +3281,7 @@ def admin_diseno_home():
 def home():
     db = get_db()
     record_checkin(db, session["user_id"])
+    _registrar_visita(current_user())
     try:
         _notify_login_telegram(current_user())  # 2026-10-05: aviso a Alex por Telegram en cada visita
     except Exception:
@@ -3601,6 +3602,7 @@ def register():
             )
             db.commit()
         session["user_id"] = new_id
+        _registrar_actividad(new_id, "login")
         session["nombre"] = nombre
         session["is_admin"] = es_admin
         notify_new_member(nombre, email)
@@ -3871,6 +3873,7 @@ def login():
         session["nombre"] = user["nombre"]
         session["is_admin"] = es_admin
         session.permanent = True  # 2026-09-25: cookie persistente 30 días (antes iOS la borraba → logout)
+        _registrar_actividad(user["id"], "login")
         flash(f"Welcome back, {user['nombre']}!", "ok")
         next_url = request.args.get("next") or url_for("home")
         return redirect(next_url)
@@ -6821,6 +6824,151 @@ def admin_control_trial_all():
     n = cur.rowcount if cur.rowcount is not None else 0
     flash(f"⚡ Mes gratis activado/renovado para {n} miembros (vence {fin[:10]}).", "success")
     return redirect(url_for("admin_dashboard"))
+
+
+
+# ============================================================
+#  ACTIVIDAD DE MIEMBROS (2026-10-17, pedido de Alex): quien
+#  entra al Dashboard, cuantas veces al dia y desde que ciudad.
+# ============================================================
+_ultima_visita = {}
+
+
+def _ip_cliente():
+    try:
+        xff = (request.headers.get("X-Forwarded-For") or "").split(",")[0].strip()
+        return xff or (request.remote_addr or "")
+    except Exception:
+        return ""
+
+
+def _registrar_actividad(user_id, kind):
+    try:
+        db = get_db()
+        db.execute("CREATE TABLE IF NOT EXISTS member_activity (user_id INTEGER, kind TEXT, ip TEXT, created_at TEXT)")
+        from datetime import datetime as _dta, timezone as _tza
+        db.execute(
+            "INSERT INTO member_activity (user_id, kind, ip, created_at) VALUES (?, ?, ?, ?)",
+            (user_id, kind, _ip_cliente(), _dta.now(_tza.utc).isoformat()),
+        )
+        db.commit()
+    except Exception:
+        pass
+
+
+def _registrar_visita(user):
+    """Visita al Dashboard con freno de 30 min por miembro (cuenta sesiones)."""
+    try:
+        if not user:
+            return
+        import time as _tm
+        uid = user["id"]
+        ahora = _tm.time()
+        if ahora - _ultima_visita.get(uid, 0) < 1800:
+            return
+        _ultima_visita[uid] = ahora
+        _registrar_actividad(uid, "visit")
+    except Exception:
+        pass
+
+
+def _ciudad_de_ip(db, ip):
+    if not ip:
+        return ""
+    g = db.execute("SELECT city, region, country FROM geo_cache WHERE ip = ?", (ip,)).fetchone()
+    if g:
+        return ", ".join([x for x in [g["city"], g["region"]] if x]) or (g["country"] or "")
+    city = region = country = ""
+    if not ip.startswith(("10.", "192.168.", "172.16.", "172.17.", "172.18.", "172.19.", "172.2", "172.30.", "172.31.", "127.", "::1")):
+        try:
+            import urllib.request as _ur, json as _js
+            req = _ur.Request(
+                f"http://ip-api.com/json/{ip}?fields=status,city,regionName,country",
+                headers={"User-Agent": "Mozilla/5.0"},
+            )
+            with _ur.urlopen(req, timeout=3) as r:
+                d = _js.loads(r.read().decode("utf-8", "ignore"))
+            if d.get("status") == "success":
+                city, region, country = d.get("city") or "", d.get("regionName") or "", d.get("country") or ""
+        except Exception:
+            pass
+    try:
+        db.execute(
+            "INSERT INTO geo_cache (ip, city, region, country) VALUES (?, ?, ?, ?) ON CONFLICT(ip) DO NOTHING",
+            (ip, city, region, country),
+        )
+        db.commit()
+    except Exception:
+        pass
+    return ", ".join([x for x in [city, region] if x]) or country
+
+
+@app.route("/admin/actividad")
+@admin_required
+def admin_actividad():
+    """Panel de actividad de miembros: entradas, sesiones y trackeos."""
+    db = get_db()
+    db.execute("CREATE TABLE IF NOT EXISTS member_activity (user_id INTEGER, kind TEXT, ip TEXT, created_at TEXT)")
+    db.execute("CREATE TABLE IF NOT EXISTS geo_cache (ip TEXT PRIMARY KEY, city TEXT, region TEXT, country TEXT)")
+    db.commit()
+    from datetime import datetime, timezone
+    try:
+        from zoneinfo import ZoneInfo
+        et = ZoneInfo("America/New_York")
+    except Exception:
+        et = timezone.utc
+    corte = datetime.now(et).replace(hour=0, minute=0, second=0, microsecond=0).astimezone(timezone.utc).isoformat()
+
+    def fmt(ts):
+        if not ts:
+            return "—"
+        try:
+            d = datetime.fromisoformat(str(ts).replace("Z", "+00:00"))
+            if d.tzinfo is None:
+                d = d.replace(tzinfo=timezone.utc)
+            return d.astimezone(et).strftime("%b %d, %I:%M %p")
+        except Exception:
+            return str(ts)[:16]
+
+    miembros = db.execute(
+        "SELECT id, nombre, email, platinum_unlocked FROM users"
+        " WHERE is_admin = 0 AND email NOT LIKE '%@value.local' ORDER BY nombre"
+    ).fetchall()
+    datos = []
+    for m in miembros:
+        uid = m["id"]
+        ult = db.execute(
+            "SELECT created_at, ip FROM member_activity WHERE user_id = ? ORDER BY created_at DESC LIMIT 1",
+            (uid,),
+        ).fetchone()
+        entradas_hoy = db.execute(
+            "SELECT COUNT(*) c FROM member_activity WHERE user_id = ? AND created_at >= ?",
+            (uid, corte),
+        ).fetchone()["c"]
+        logins_hoy = db.execute(
+            "SELECT COUNT(*) c FROM member_activity WHERE user_id = ? AND kind = 'login' AND created_at >= ?",
+            (uid, corte),
+        ).fetchone()["c"]
+        tracks = db.execute(
+            "SELECT pick, nivel, fecha, resultado FROM tracked_plays WHERE user_id = ? ORDER BY created_at DESC LIMIT 5",
+            (uid,),
+        ).fetchall()
+        total_tracks = db.execute(
+            "SELECT COUNT(*) c FROM tracked_plays WHERE user_id = ?", (uid,)
+        ).fetchone()["c"]
+        datos.append({
+            "nombre": m["nombre"], "email": m["email"],
+            "platinum": bool(m["platinum_unlocked"]),
+            "ultima": fmt(ult["created_at"]) if ult else "Sin registro aún",
+            "con_registro": bool(ult),
+            "ciudad": _ciudad_de_ip(db, ult["ip"]) if ult else "",
+            "entradas_hoy": entradas_hoy, "logins_hoy": logins_hoy,
+            "tracks": [{"pick": t["pick"], "nivel": t["nivel"], "fecha": t["fecha"],
+                        "resultado": t["resultado"]} for t in tracks],
+            "total_tracks": total_tracks,
+        })
+    datos.sort(key=lambda d: (not d["con_registro"], d["nombre"]))
+    return render_template("admin_actividad.html", datos=datos)
 
 
 
