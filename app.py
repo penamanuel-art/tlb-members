@@ -3531,7 +3531,7 @@ def register():
         _recientes = []
     for _r in _recientes:
         _r["units_display"] = f"{float(_r.get('profit') or 0) / 25.0:+.2f}u"
-    _drop = "11:00 AM ET" if datetime.now(TZ).weekday() >= 5 else "2:00 PM ET"
+    _drop = "2:00 PM ET"  # 2026-10-17, orden de Alex: la card sale a las 2:00 PM ET TODOS los dias
     _reg_ctx = {"gold": _gold, "stats": _stats, "ayer": _ayer,
                 "recientes": _recientes, "drop_time": _drop}
     # Idioma de la landing (2026-10-14, pedido de Alex): manda ?lang=;
