@@ -110,6 +110,9 @@ a.lux-rec-card:active{transform:scale(.985)}
 .fa-strip.fa-urgent{border-color:rgba(255,157,92,.75);}
 .fa-strip.fa-urgent .fa-days{color:#ffb27d;}
 .fa-strip.fa-out{opacity:0;transform:translateY(-6px);margin-top:0;margin-bottom:0;padding-top:0;padding-bottom:0;border-width:0;}
+.fa-strip{position:relative;overflow:hidden;}
+.fa-strip::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg, transparent 30%, rgba(255,255,255,.14) 50%, transparent 70%);transform:translateX(-120%);animation:fa-shine 2.8s ease-in-out infinite;pointer-events:none;}
+@keyframes fa-shine{0%{transform:translateX(-120%);}55%{transform:translateX(120%);}100%{transform:translateX(120%);}}
 </style>
 <div class="fa-strip{% if trial_dias_left and trial_dias_left <= 5 %} fa-urgent{% endif %}" id="faBubble" role="status"><span class="fa-star">&#11088;</span> <b>{% if cuenta_es %}ACCESO TOTAL ACTIVO{% else %}FULL ACCESS ACTIVE{% endif %}</b>{% if trial_dias_left %}<span>&middot; {% if cuenta_es %}Platinum desbloqueado &middot; te quedan <span class="fa-days">{{ trial_dias_left }} d&iacute;as</span>{% else %}Platinum unlocked &middot; <span class="fa-days">{{ trial_dias_left }} days left</span>{% endif %}</span>{% else %}<span>&middot; {% if cuenta_es %}Platinum desbloqueado{% else %}Platinum unlocked{% endif %}</span>{% endif %}</div>
 <script>
