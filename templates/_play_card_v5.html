@@ -23,7 +23,10 @@
 .v5c-res.won{color:#2fe6a7;background:rgba(47,230,167,.1)}
 .v5c-res.lost{color:#f87171;background:rgba(248,113,113,.1)}
 .v5c-res.pend{color:#f3cd6b;background:rgba(243,205,107,.08)}
-.v5c-div{border-top:1.5px dashed rgba(255,255,255,.16);margin:12px -16px 0}
+.v5c-div{position:relative;border-top:1.5px dashed rgba(255,255,255,.16);margin:12px -16px 0}
+.v5c-notch{position:absolute;top:-11px;width:22px;height:22px;border-radius:50%;background:#070d1d;z-index:2}
+.v5c-notch.l{left:-11px}.v5c-notch.r{right:-11px}
+.v5c-posted{font-size:12.5px;color:#8b94a7;margin-top:6px}
 .v5c-nums{display:flex;gap:26px;margin-top:11px;align-items:flex-start}
 .v5c-k{font-size:10px;font-weight:600;letter-spacing:1.7px;color:#6e7787}
 .v5c-v{font-size:19px;font-weight:600;color:#fff;margin-top:3px}
@@ -73,19 +76,14 @@
   </div>
   <div class="v5c-title">{{ p.team_name or p.abbr }} {{ 'Moneyline' if p.bettype == 'Moneyline' else p.bettype }}</div>
   <div class="v5c-sub">{{ p.abbr }} vs {{ p.opp_abbr }} &middot; {{ p.game_time_et or p.hora or '' }}</div>
+  {% if p.posted %}<div class="v5c-posted">🕐 Posted {{ p.posted }}</div>{% endif %}
   {% if _res == 'W' %}<span class="v5c-res won">WON</span>{% elif _res == 'L' %}<span class="v5c-res lost">LOST</span>{% endif %}
-  <div class="v5c-div"></div>
+  <div class="v5c-div"><span class="v5c-notch l"></span><span class="v5c-notch r"></span></div>
   <div class="v5c-nums">
     <div><div class="v5c-k">PRICE POSTED</div><div class="v5c-v">{{ fmt_odds(p.cuota) }}</div></div>
     <div><div class="v5c-k">STAKE</div><div class="v5c-v">{{ '%g' % p.stake_unidades }}u</div><div class="v5c-amt">${{ '%g' % p.stake_monto }}</div></div>
     <div class="v5c-tk"><div class="v5c-k">TICKET</div>{% if p.comprobante %}<span class="v5c-matched">✓ MATCHED</span>{% else %}<span class="v5c-pend">PENDING</span>{% endif %}</div>
   </div>
-  {% if p.comprobante and not force_pre %}
-  <div class="v5c-strip" data-v5-open="{{ p.id }}">
-    <span class="v5c-strip-t">📸 Ticket original &middot; {{ p.abbr }} {{ p.bettype }}</span>
-    <span class="v5c-strip-v">Details &rarr;</span>
-  </div>
-  {% endif %}
   <div class="v5c-btns">
     {% if p.novig_url and '%2Fevent-markets%2F' in p.novig_url %}
       <a class="v5c-btn" href="{{ p.novig_url }}" target="_blank" rel="noopener">↗ Place at Novig</a>
