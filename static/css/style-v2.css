@@ -1123,7 +1123,7 @@ body.v2 .tstc-novig:active, body.v2 .tstc-track:active { transform: scale(0.97);
 .v2-bottomnav {
   position: fixed; left: 12px; right: 12px; bottom: calc(8px + env(safe-area-inset-bottom)); z-index: 1001;
   display: flex; justify-content: space-around; align-items: stretch;
-  background: rgba(10, 20, 19, 0.86);
+  background: rgba(8, 15, 30, 0.88);
   border: 1px solid var(--v2-border);
   border-radius: 22px;
   padding: 6px 4px;
@@ -1132,7 +1132,7 @@ body.v2 .tstc-novig:active, body.v2 .tstc-track:active { transform: scale(0.97);
 }
 .v2-bnav-item {
   flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px;
-  padding: 5px 2px; text-decoration: none; color: rgba(255, 255, 255, 0.45);
+  padding: 5px 2px; text-decoration: none; color: #7e8db0;
   font-size: 9px; font-weight: 700; min-width: 0; border-radius: 16px;
   border: 1px solid transparent;
   transition: all 0.2s ease;
@@ -1140,10 +1140,10 @@ body.v2 .tstc-novig:active, body.v2 .tstc-track:active { transform: scale(0.97);
 .v2-bnav-item:active { transform: scale(0.95); }
 .v2-bnav-ico { font-size: 18px; line-height: 1; }
 .v2-bnav-item.active {
-  color: #e8c766;
-  background: rgba(232, 199, 102, 0.15);
-  border-color: rgba(232, 199, 102, 0.3);
-  box-shadow: 0 4px 16px rgba(232, 199, 102, 0.15);
+  color: #409cff;
+  background: rgba(64, 156, 255, 0.14);
+  border-color: rgba(64, 156, 255, 0.35);
+  box-shadow: 0 4px 16px rgba(64, 156, 255, 0.18);
 }
 /* El ticker de resultados sube encima de la barra */
 body.v2.has-bottomnav .ticker-dock-bottom { bottom: calc(68px + env(safe-area-inset-bottom)); }
