@@ -6931,7 +6931,10 @@ def admin_actividad():
             return str(ts)[:16]
 
     miembros = db.execute(
-        "SELECT id, nombre, email, platinum_unlocked FROM users"
+        "SELECT id, nombre, email, platinum_unlocked, phone, lang, created_at,"
+        " bankroll, stake_mode, stake_fijo_elite, stake_fijo_gold,"
+        " stripe_subscription_id, stripe_customer_id, cancel_requested_at,"
+        " telegram_user_id, platinum_trial_ends, sms_optin FROM users"
         " WHERE is_admin = 0 AND email NOT LIKE '%@value.local' ORDER BY nombre"
     ).fetchall()
     datos = []
@@ -6956,6 +6959,42 @@ def admin_actividad():
         total_tracks = db.execute(
             "SELECT COUNT(*) c FROM tracked_plays WHERE user_id = ?", (uid,)
         ).fetchone()["c"]
+        # --- Expediente completo del miembro (2026-10-17) ---
+        tot_entradas = db.execute(
+            "SELECT COUNT(*) c FROM member_activity WHERE user_id = ?", (uid,)
+        ).fetchone()["c"]
+        dias_activo = db.execute(
+            "SELECT COUNT(*) c FROM checkins WHERE user_id = ?", (uid,)
+        ).fetchone()["c"]
+        dispositivos = db.execute(
+            "SELECT COUNT(*) c FROM push_subscriptions WHERE member_id = ?", (uid,)
+        ).fetchone()["c"]
+        wl = db.execute(
+            "SELECT resultado, COUNT(*) c FROM tracked_plays WHERE user_id = ?"
+            " AND resultado IN ('W', 'L') GROUP BY resultado", (uid,)
+        ).fetchall()
+        wins = sum(r["c"] for r in wl if r["resultado"] == "W")
+        losses = sum(r["c"] for r in wl if r["resultado"] == "L")
+        liquidadas = db.execute(
+            "SELECT cuota, stake_monto, resultado FROM tracked_plays"
+            " WHERE user_id = ? AND resultado IN ('W', 'L')", (uid,)
+        ).fetchall()
+        profit = 0.0
+        for t in liquidadas:
+            monto = t["stake_monto"] or 0
+            if t["resultado"] == "W":
+                q = t["cuota"] or 0
+                profit += monto * (q / 100.0) if q > 0 else monto * (100.0 / abs(q)) if q else 0
+            else:
+                profit -= monto
+        if m["stripe_subscription_id"]:
+            estado = "Pagando por Stripe"
+        elif m["platinum_trial_ends"]:
+            estado = "Mes gratis hasta " + str(m["platinum_trial_ends"])[:10]
+        elif m["platinum_unlocked"]:
+            estado = "Platinum permanente"
+        else:
+            estado = "Gratis (Gold)"
         datos.append({
             "nombre": m["nombre"], "email": m["email"],
             "platinum": bool(m["platinum_unlocked"]),
@@ -6966,6 +7005,21 @@ def admin_actividad():
             "tracks": [{"pick": t["pick"], "nivel": t["nivel"], "fecha": t["fecha"],
                         "resultado": t["resultado"]} for t in tracks],
             "total_tracks": total_tracks,
+            "telefono": m["phone"] or "—",
+            "idioma": "Español" if (m["lang"] or "en") == "es" else "English",
+            "desde": fmt(m["created_at"]),
+            "bankroll": ("$" + format(m["bankroll"], ",.2f")) if m["bankroll"] else "Sin configurar",
+            "stake": ("Fijo P $" + str(m["stake_fijo_elite"]) + " / G $" + str(m["stake_fijo_gold"]))
+                     if m["stake_fijo_elite"] else ("1% de su bankroll (" + (m["stake_mode"] or "units") + ")"),
+            "estado": estado,
+            "cancel_pedida": bool(m["cancel_requested_at"]),
+            "telegram": "Vinculado" if m["telegram_user_id"] else "Sin vincular",
+            "push": f"Activado ({dispositivos} disp.)" if dispositivos else "No activado",
+            "sms": "Aceptó SMS" if m["sms_optin"] else "Sin SMS",
+            "tot_entradas": tot_entradas, "dias_activo": dias_activo,
+            "record": f"{wins}–{losses}",
+            "profit": (("+$" if profit >= 0 else "−$") + format(abs(profit), ",.2f")),
+            "profit_pos": profit >= 0,
         })
     datos.sort(key=lambda d: (not d["con_registro"], d["nombre"]))
     return render_template("admin_actividad.html", datos=datos)
