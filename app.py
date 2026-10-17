@@ -6688,6 +6688,142 @@ def admin_dashboard():
                            tracked_ids=[])
 
 
+# ============================================================
+#  CONTROL MANUAL DEL ADMIN (2026-10-17, pedido de Alex:
+#  "métele potencia, más manera de controlar manualmente")
+# ============================================================
+
+@app.route("/admin/control/push", methods=["POST"])
+@admin_required
+def admin_control_push():
+    """Push manual a todos los miembros suscritos (respeta notif_plays)."""
+    titulo = (request.form.get("titulo") or "").strip()[:80]
+    mensaje = (request.form.get("mensaje") or "").strip()[:240]
+    if not titulo or not mensaje:
+        flash("Push: falta el título o el mensaje.", "error")
+        return redirect(url_for("admin_dashboard"))
+    if not HAVE_WEBPUSH or not VAPID_PRIVATE_KEY:
+        flash("El push no está configurado en el servidor.", "error")
+        return redirect(url_for("admin_dashboard"))
+    payload = json.dumps({"title": titulo, "body": mensaje, "url": "/home", "image": ""})
+    db = get_db()
+    subs = db.execute(
+        "SELECT ps.id, ps.endpoint, ps.p256dh, ps.auth FROM push_subscriptions ps"
+        " JOIN users u ON u.id = ps.member_id WHERE u.notif_plays = 1"
+    ).fetchall()
+    sent = failed = 0
+    for sub in subs:
+        try:
+            webpush(
+                subscription_info={"endpoint": sub["endpoint"],
+                                   "keys": {"p256dh": sub["p256dh"], "auth": sub["auth"]}},
+                data=payload,
+                vapid_private_key=VAPID_PRIVATE_KEY,
+                vapid_claims={"sub": VAPID_CLAIM_EMAIL},
+            )
+            sent += 1
+        except WebPushException as ex:
+            code = getattr(getattr(ex, "response", None), "status_code", None)
+            if code in (404, 410):
+                db.execute("DELETE FROM push_subscriptions WHERE id = ?", (sub["id"],))
+            failed += 1
+        except Exception:
+            failed += 1
+    db.commit()
+    flash(f"🔔 Push enviado: {sent} entregados, {failed} fallidos.", "success")
+    return redirect(url_for("admin_dashboard"))
+
+
+@app.route("/admin/control/email", methods=["POST"])
+@admin_required
+def admin_control_email():
+    """Email de anuncio manual a todos los miembros reales."""
+    asunto = (request.form.get("asunto") or "").strip()[:120]
+    mensaje = (request.form.get("mensaje") or "").strip()[:4000]
+    if not asunto or not mensaje:
+        flash("Email: falta el asunto o el mensaje.", "error")
+        return redirect(url_for("admin_dashboard"))
+    import html as _html
+    parrafos = "".join(
+        f'<p style="margin:0 0 10px;font-size:13.5px;line-height:1.65;color:#dbe4f5;">{_html.escape(p)}</p>'
+        for p in mensaje.split("\n") if p.strip()
+    )
+    html_body = (
+        '<div style="background:#070d1d;padding:18px 12px;">'
+        '<div style="font-family:Arial,sans-serif;max-width:440px;margin:0 auto;background:#0e1730;border-radius:14px;padding:22px 24px;">'
+        '<p style="margin:0 0 4px;font-size:11px;font-weight:800;letter-spacing:3px;color:#e8c766;">THE SHARP TEAM</p>'
+        f'<h1 style="font-family:Georgia,serif;font-size:19px;color:#ffffff;margin:6px 0 12px;">{_html.escape(asunto)}</h1>'
+        + parrafos +
+        '<a href="https://www.thesharpteam.bet/home" style="display:inline-block;background:#2f7bff;color:#ffffff;font-size:12.5px;font-weight:800;padding:11px 22px;border-radius:999px;text-decoration:none;margin-top:8px;">OPEN MY DASHBOARD</a>'
+        '<p style="margin:16px 0 0;color:#7e8db0;font-size:9.5px;">21+. Play responsibly. If you or someone you know has a gambling problem, call or text 1-800-GAMBLER.</p>'
+        '</div></div>'
+    )
+    db = get_db()
+    filas = db.execute("SELECT email FROM users WHERE is_admin = 0").fetchall()
+    sent = 0
+    for f in filas:
+        email = (f["email"] or "").strip()
+        if not email or "@value.local" in email:
+            continue
+        ok, _det = _dispatch_email(email, asunto, mensaje, html_body)
+        if ok:
+            sent += 1
+    flash(f"📧 Email enviado a {sent} miembros.", "success")
+    return redirect(url_for("admin_dashboard"))
+
+
+@app.route("/admin/control/grant", methods=["POST"])
+@admin_required
+def admin_control_grant():
+    """Dar Platinum a un miembro por email (días vacío = permanente)."""
+    email = (request.form.get("email") or "").strip().lower()
+    dias_raw = (request.form.get("dias") or "").strip()
+    db = get_db()
+    u = db.execute("SELECT * FROM users WHERE lower(email) = ?", (email,)).fetchone()
+    if not u:
+        flash(f"No existe un miembro con el email {email}.", "error")
+        return redirect(url_for("admin_dashboard"))
+    if dias_raw:
+        try:
+            dias = max(1, int(dias_raw))
+        except ValueError:
+            dias = 30
+        from datetime import datetime as _dt3, timedelta as _td3, timezone as _tz3
+        fin = (_dt3.now(_tz3.utc) + _td3(days=dias)).isoformat()
+        db.execute("UPDATE users SET platinum_unlocked = 1, platinum_trial_ends = ? WHERE id = ?",
+                   (fin, u["id"]))
+        detalle = f"Platinum activo hasta el {fin[:10]}"
+    else:
+        db.execute("UPDATE users SET platinum_unlocked = 1, platinum_trial_ends = NULL WHERE id = ?",
+                   (u["id"],))
+        detalle = "Platinum permanente (sin reloj)"
+    db.commit()
+    flash(f"🎁 {email}: {detalle}.", "success")
+    return redirect(url_for("admin_dashboard"))
+
+
+@app.route("/admin/control/trial-all", methods=["POST"])
+@admin_required
+def admin_control_trial_all():
+    """Mes gratis de Platinum para todos los miembros sin Stripe.
+    No toca: cuentas que ya pagan, ni regalos permanentes (sin reloj)."""
+    from datetime import datetime as _dt4, timedelta as _td4, timezone as _tz4
+    fin = (_dt4.now(_tz4.utc) + _td4(days=30)).isoformat()
+    db = get_db()
+    cur = db.execute(
+        "UPDATE users SET platinum_unlocked = 1, platinum_trial_ends = ?"
+        " WHERE is_admin = 0 AND (stripe_subscription_id IS NULL OR stripe_subscription_id = '')"
+        " AND email NOT LIKE '%@value.local'"
+        " AND (platinum_unlocked = 0 OR platinum_trial_ends IS NOT NULL)",
+        (fin,),
+    )
+    db.commit()
+    n = cur.rowcount if cur.rowcount is not None else 0
+    flash(f"⚡ Mes gratis activado/renovado para {n} miembros (vence {fin[:10]}).", "success")
+    return redirect(url_for("admin_dashboard"))
+
+
+
 def _tg_send_message(chat_id, text):
     """Envía texto por Telegram vía Bot API directo (funciona en Render,
     donde no existen los binarios de la VM). Devuelve (ok, detalle)."""
