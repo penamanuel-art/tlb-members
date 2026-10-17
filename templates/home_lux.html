@@ -100,6 +100,27 @@ a.lux-rec-card:active{transform:scale(.985)}
 <!-- ENCABEZADO COMPACTO (2026-10-15, orden de Alex: como el de su
      captura — fecha, saludo, titulo y estado de la card; chiquito
      y no largo. Reemplaza el saludo anterior y el heroe de unidades.) -->
+{% if is_alex and miembro_platinum and not celebracion %}
+<style>
+@keyframes fa-in{from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:translateY(0);}}
+.fa-strip{display:flex;justify-content:center;align-items:center;gap:6px;flex-wrap:wrap;margin:12px auto 2px;max-width:560px;padding:9px 16px;border-radius:999px;background:rgba(3,42,31,.88);border:1px solid rgba(47,230,167,.5);color:#fff;font-size:.85rem;font-weight:700;text-align:center;box-shadow:0 10px 26px rgba(0,0,0,.4);transition:opacity .5s ease,transform .5s ease,margin .5s ease,padding .5s ease;animation:fa-in .35s ease-out;cursor:pointer;}
+.fa-strip .fa-star{color:#ffd93b;}
+.fa-strip .fa-days{color:#e8c766;font-weight:900;}
+.fa-strip.fa-urgent{border-color:rgba(255,157,92,.75);}
+.fa-strip.fa-urgent .fa-days{color:#ffb27d;}
+.fa-strip.fa-out{opacity:0;transform:translateY(-6px);margin-top:0;margin-bottom:0;padding-top:0;padding-bottom:0;border-width:0;}
+</style>
+<div class="fa-strip{% if trial_dias_left and trial_dias_left <= 5 %} fa-urgent{% endif %}" id="faBubble" role="status"><span class="fa-star">&#11088;</span> <b>{% if cuenta_es %}ACCESO TOTAL ACTIVO{% else %}FULL ACCESS ACTIVE{% endif %}</b>{% if trial_dias_left %}<span>&middot; {% if cuenta_es %}Platinum desbloqueado &middot; te quedan <span class="fa-days">{{ trial_dias_left }} d&iacute;as</span>{% else %}Platinum unlocked &middot; <span class="fa-days">{{ trial_dias_left }} days left</span>{% endif %}</span>{% else %}<span>&middot; {% if cuenta_es %}Platinum desbloqueado{% else %}Platinum unlocked{% endif %}</span>{% endif %}</div>
+<script>
+(function(){
+  var b = document.getElementById('faBubble');
+  if (!b) return;
+  b.addEventListener('click', function(){ window.location.href = '/cuenta'; });
+  setTimeout(function(){ b.classList.add('fa-out'); }, 4000);
+  setTimeout(function(){ if (b.parentNode) b.remove(); }, 4600);
+})();
+</script>
+{% endif %}
 <header class="lux-head">
   <p class="lux-head-date">{{ fecha }} &middot; ET</p>
   <p class="lux-head-hi">{{ saludo }}, {{ nombre_corto }}</p>
@@ -633,27 +654,6 @@ a.lux-rec-card:active{transform:scale(.985)}
 </script>
 {% endif %}
 
-{% if is_alex and miembro_platinum and not celebracion %}
-<style>
-.fa-bubble{border-color:rgba(47,230,167,.55);cursor:pointer;}
-.fa-bubble .fa-star{color:#ffd93b;}
-.fa-bubble .fa-days{color:#e8c766;font-weight:900;}
-.fa-bubble.fa-urgent{border-color:rgba(255,157,92,.75);}
-.fa-bubble.fa-urgent .fa-days{color:#ffb27d;}
-</style>
-<div class="win-bubble fa-bubble{% if trial_dias_left and trial_dias_left <= 5 %} fa-urgent{% endif %}" id="faBubble" style="display:none" role="status"><span class="fa-star">&#11088;</span> <b>{% if cuenta_es %}ACCESO TOTAL ACTIVO{% else %}FULL ACCESS ACTIVE{% endif %}</b>{% if trial_dias_left %}&nbsp;&middot; {% if cuenta_es %}Platinum desbloqueado &middot; te quedan <span class="fa-days">{{ trial_dias_left }} d&iacute;as</span>{% else %}Platinum unlocked &middot; <span class="fa-days">{{ trial_dias_left }} days left</span>{% endif %}{% else %}&nbsp;&middot; {% if cuenta_es %}Platinum desbloqueado{% else %}Platinum unlocked{% endif %}{% endif %}</div>
-<script>
-(function(){
-  var b = document.getElementById('faBubble');
-  if (!b) return;
-  b.style.display = '';
-  b.style.animation = 'wb-in .35s ease-out';
-  b.addEventListener('click', function(){ window.location.href = '/cuenta'; });
-  setTimeout(function(){ b.classList.add('wb-out'); }, 4000);
-  setTimeout(function(){ if (b.parentNode) b.remove(); }, 4600);
-})();
-</script>
-{% endif %}
 
 
 {% endblock %}
