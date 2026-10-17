@@ -18,11 +18,11 @@
   <h2 class="section-title">THE FUNDAMENTALS</h2>
 </div>
 <div class="fund-grid">
-  <article class="fund-card"><span class="fund-num">01</span><h4>TOTAL DISCIPLINE</h4><p>The plan rules. Emotion never changes a decision.</p></article>
-  <article class="fund-card"><span class="fund-num">02</span><h4>BANKROLL MANAGEMENT</h4><p>The stake is protected and respected on every play.</p></article>
-  <article class="fund-card"><span class="fund-num">03</span><h4>NUMBERS ONLY</h4><p>No feelings or fandom: value decides.</p></article>
-  <article class="fund-card"><span class="fund-num">04</span><h4>LINE VALUE</h4><p>The right price matters as much as the pick.</p></article>
-  <article class="fund-card"><span class="fund-num">05</span><h4>DAILY CONSISTENCY</h4><p>Same process, same rules, every day.</p></article>
+  <article class="fund-card"{% if request.args.get('nv') == '1' %} style="border-bottom:3px solid #2fe6a7"{% endif %}><span class="fund-num">01</span><h4>TOTAL DISCIPLINE</h4><p>The plan rules. Emotion never changes a decision.</p></article>
+  <article class="fund-card"{% if request.args.get('nv') == '1' %} style="border-bottom:3px solid #2fe6a7"{% endif %}><span class="fund-num">02</span><h4>BANKROLL MANAGEMENT</h4><p>The stake is protected and respected on every play.</p></article>
+  <article class="fund-card"{% if request.args.get('nv') == '1' %} style="border-bottom:3px solid #2fe6a7"{% endif %}><span class="fund-num">03</span><h4>NUMBERS ONLY</h4><p>No feelings or fandom: value decides.</p></article>
+  <article class="fund-card"{% if request.args.get('nv') == '1' %} style="border-bottom:3px solid #2fe6a7"{% endif %}><span class="fund-num">04</span><h4>LINE VALUE</h4><p>The right price matters as much as the pick.</p></article>
+  <article class="fund-card"{% if request.args.get('nv') == '1' %} style="border-bottom:3px solid #2fe6a7"{% endif %}><span class="fund-num">05</span><h4>DAILY CONSISTENCY</h4><p>Same process, same rules, every day.</p></article>
 </div>
 
 <div class="section-head">
@@ -30,9 +30,9 @@
 </div>
 <p class="muted">One system. Three filters.</p>
 <div class="method-steps">
-  <article class="method-step"><span class="step-num">01 / MODEL</span><h3>FAIR LINE</h3><p>The estimated probability is calculated before evaluating whether the available price deserves a bet.</p></article>
-  <article class="method-step"><span class="step-num">02 / MARKET</span><h3>REAL EDGE</h3><p>The fair line is compared against the best odds. Research can veto; never invent value.</p></article>
-  <article class="method-step"><span class="step-num">03 / DISCIPLINE</span><h3>FIXED STAKE</h3><p>The stake stays disciplined. Neither losses nor streaks change the amount.</p></article>
+  <article class="method-step"{% if request.args.get('nv') == '1' %} style="border-bottom:3px solid #2fe6a7"{% endif %}><span class="step-num">01 / MODEL</span><h3>FAIR LINE</h3><p>The estimated probability is calculated before evaluating whether the available price deserves a bet.</p></article>
+  <article class="method-step"{% if request.args.get('nv') == '1' %} style="border-bottom:3px solid #2fe6a7"{% endif %}><span class="step-num">02 / MARKET</span><h3>REAL EDGE</h3><p>The fair line is compared against the best odds. Research can veto; never invent value.</p></article>
+  <article class="method-step"{% if request.args.get('nv') == '1' %} style="border-bottom:3px solid #2fe6a7"{% endif %}><span class="step-num">03 / DISCIPLINE</span><h3>FIXED STAKE</h3><p>The stake stays disciplined. Neither losses nor streaks change the amount.</p></article>
 </div>
 
 {% if request.args.get('nv') == '1' %}
