@@ -584,12 +584,23 @@ def login_required(view):
     return wrapper
 
 
+def _admin_o_cuenta_alex(user) -> bool:
+    """Admin real O la cuenta de miembro de Alex (2026-10-17, pedido suyo:
+    entrar al Admin Dashboard sin salir de su cuenta de miembro)."""
+    if is_admin_for(user):
+        return True
+    try:
+        return bool(user) and (user["email"] or "").strip().lower() == ALEX_MEMBER_EMAIL.strip().lower()
+    except Exception:
+        return False
+
+
 def admin_required(view):
     """Solo administradores: requiere login + flag de admin."""
     @wraps(view)
     @login_required
     def wrapper(*args, **kwargs):
-        if not is_admin_for(current_user()):
+        if not _admin_o_cuenta_alex(current_user()):
             flash("Admin access required.", "error")
             return redirect(url_for("home"))
         return view(*args, **kwargs)
