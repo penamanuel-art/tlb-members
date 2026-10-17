@@ -7,6 +7,17 @@
 {% set is_vip = p.nivel in ['PLATINUM', 'ELITE'] %}
 {% set is_value = p.nivel == 'VALUE' %}
 {% set _res = p.resultado if p.resultado is defined else None %}
+{% set _ncaa = {'KSU':2306,'KU':2305,'IU':84,'OSU':194,'CIN':2132,'WVU':277,'AF':2005,'UNLV':2439,'ALA':333,'UGA':61,'TEX':251,'MICH':130,'ND':87,'LSU':99,'TENN':2633,'PSU':213,'ORE':2483,'CLEM':228,'FLA':57,'AUB':2,'TAMU':245,'OU':201,'USC':30,'UCLA':26,'MIA':2390,'FSU':52,'UNC':153,'DUKE':150,'VT':259,'LOU':97,'NCST':152,'SYR':183,'BC':103,'PITT':221,'BAY':239,'TCU':2628,'TTU':2641,'OKST':197,'ISU':66,'UTAH':254,'BYU':252,'ARIZ':12,'ASU':9,'COL':38,'HOU':248,'UCF':2116,'MEM':235,'BSU':68,'SDSU':21,'FRES':278,'ARMY':349,'NAVY':2426,'MRSH':276,'LIB':2335,'JMU':256,'APP':2026,'CCU':324,'GASO':290,'TROY':2653,'ULL':309,'TULN':2655} %}
+{% set _mlb_slug = {'CHW':'cws','WSH':'was'} %}
+{% set _logo = p.logo_url if (p.logo_url is defined and p.logo_url) else '' %}
+{% if not _logo %}
+  {% if p.liga == 'NCAAF' and _ncaa.get(p.abbr) %}{% set _logo = 'https://a.espncdn.com/i/teamlogos/ncaa/500/' ~ _ncaa[p.abbr] ~ '.png' %}
+  {% elif p.liga == 'MLB' %}{% set _logo = 'https://a.espncdn.com/i/teamlogos/mlb/500/' ~ (_mlb_slug.get(p.abbr) or (p.abbr|lower)) ~ '.png' %}
+  {% elif p.liga == 'NFL' %}{% set _logo = 'https://a.espncdn.com/i/teamlogos/nfl/500/' ~ (p.abbr|lower) ~ '.png' %}
+  {% elif p.liga == 'NHL' %}{% set _logo = 'https://a.espncdn.com/i/teamlogos/nhl/500/' ~ (p.abbr|lower) ~ '.png' %}
+  {% elif p.liga == 'NBA' %}{% set _logo = 'https://a.espncdn.com/i/teamlogos/nba/500/' ~ (p.abbr|lower) ~ '.png' %}
+  {% endif %}
+{% endif %}
 <style>
 .v5c{position:relative;overflow:hidden;background:linear-gradient(170deg,#12151d,#0b0e14);border:1px solid rgba(255,255,255,.09);border-radius:20px;padding:14px 16px 12px;box-sizing:border-box;width:100%;max-width:100%;margin:0 0 12px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#eef1f7}
 .v5c-edge{position:absolute;left:0;top:0;bottom:0;width:5px;background:linear-gradient(180deg,#f3cd6b,#b8860b)}
@@ -17,7 +28,9 @@
 .v5c-pill.gold{color:#e8c766;border-color:rgba(232,199,102,.45);background:rgba(232,199,102,.07)}
 .v5c-kind{font-size:12.5px;font-weight:400;color:#9aa3b8}
 .v5c-liga{margin-left:auto;font-size:10.5px;font-weight:600;letter-spacing:1px;color:#9aa3b8;border:1px solid rgba(255,255,255,.14);padding:6px 10px;border-radius:9px}
-.v5c-title{font-size:18px;font-weight:600;color:#fff;letter-spacing:-.3px;margin-top:11px;line-height:1.2}
+.v5c-head{display:flex;gap:11px;align-items:flex-start;margin-top:11px}
+.v5c-logo{width:38px;height:38px;object-fit:contain;flex:none;margin-top:1px}
+.v5c-title{font-size:18px;font-weight:600;color:#fff;letter-spacing:-.3px;line-height:1.2}
 .v5c-sub{font-size:12.5px;color:#8b94a7;margin-top:5px}
 .v5c-res{display:inline-block;font-size:10px;font-weight:700;letter-spacing:1.4px;padding:4px 10px;border-radius:999px;margin-top:9px}
 .v5c-res.won{color:#2fe6a7;background:rgba(47,230,167,.1)}
@@ -77,8 +90,13 @@ body.v5-sheet-open .ticker-dock-bottom{display:none!important}
     {% if is_vip %}<span class="v5c-pill plat">💎 PLATINUM</span><span class="v5c-kind">Platinum play</span>{% elif is_value %}<span class="v5c-pill gold">💎 VALUE PLAY</span><span class="v5c-kind">Value play</span>{% else %}<span class="v5c-pill gold">GOLD</span><span class="v5c-kind">Gold play</span>{% endif %}
     <span class="v5c-liga">{{ p.liga or '' }}</span>
   </div>
-  <div class="v5c-title" data-v5-open="{{ p.id }}" style="cursor:pointer">{{ p.team_name or p.abbr }} {{ 'Moneyline' if p.bettype == 'Moneyline' else p.bettype }}</div>
-  <div class="v5c-sub" data-v5-open="{{ p.id }}" style="cursor:pointer">{{ p.abbr }} vs {{ p.opp_abbr }} &middot; {{ p.game_time_et or p.hora or '' }}</div>
+  <div class="v5c-head">
+    {% if _logo %}<img class="v5c-logo" src="{{ _logo }}" alt="{{ p.abbr }} logo" loading="lazy" onerror="this.remove()">{% endif %}
+    <div style="flex:1;min-width:0">
+      <div class="v5c-title" data-v5-open="{{ p.id }}" style="cursor:pointer">{{ p.team_name or p.abbr }} {{ 'Moneyline' if p.bettype == 'Moneyline' else p.bettype }}</div>
+      <div class="v5c-sub" data-v5-open="{{ p.id }}" style="cursor:pointer">{{ p.abbr }} vs {{ p.opp_abbr }} &middot; {{ p.game_time_et or p.hora or '' }}</div>
+    </div>
+  </div>
   {% if p.posted %}<div class="v5c-posted">🕐 Posted {{ p.posted }}</div>{% endif %}
   {% if _res == 'W' %}<span class="v5c-res won">WON</span>{% elif _res == 'L' %}<span class="v5c-res lost">LOST</span>{% endif %}
   <div class="v5c-div"><span class="v5c-notch l"></span><span class="v5c-notch r"></span></div>
