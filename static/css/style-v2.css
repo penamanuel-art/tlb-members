@@ -474,8 +474,8 @@ body.v2 .tstc-novig:active, body.v2 .tstc-track:active { transform: scale(0.97);
   position: relative; overflow: hidden;
   padding: 20px 18px;
   /* Tema unico (2026-10-15): TODAS las cartas con el color del encabezado */
-  background: linear-gradient(165deg, #151e36, #0a0f1d);
-  border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 24px;
+  background: radial-gradient(360px 180px at 110% -30px, rgba(232, 199, 102, 0.18), transparent 65%), linear-gradient(150deg, rgba(232, 199, 102, 0.14), rgba(255, 255, 255, 0.02));
+  border: 1px solid rgba(232, 199, 102, 0.4); border-radius: 24px;
   box-shadow: var(--v2-shadow-md), inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
@@ -566,7 +566,7 @@ body.v2 .tstc-novig:active, body.v2 .tstc-track:active { transform: scale(0.97);
    El panel lleva el mismo degradado del encabezado del home y los
    iconos pierden los brillos de colores: un solo fondo uniforme,
    un chin mas claro que el panel, pero oscuro. */
-#tools .v2-linecard { background: linear-gradient(165deg, #151e36, #0a0f1d); border-color: rgba(255,255,255,.08); }
+#tools .v2-linecard { background: radial-gradient(360px 180px at 110% -30px, rgba(232, 199, 102, 0.18), transparent 65%), linear-gradient(150deg, rgba(232, 199, 102, 0.14), rgba(255, 255, 255, 0.02)); border-color: rgba(232, 199, 102, 0.4); }
 #tools .v2-tool-emoji { background: linear-gradient(165deg, rgba(255,255,255,.10), rgba(255,255,255,.03) 60%); border-color: rgba(255,255,255,.14); box-shadow: inset 0 1px 0 rgba(255,255,255,.12), 0 8px 18px rgba(0,0,0,.35); }
 
 /* ---------------- Alerts ---------------- */
@@ -769,10 +769,8 @@ body.v2 .tstc-novig:active, body.v2 .tstc-track:active { transform: scale(0.97);
 .v2-upsell-card {
   position: relative;
   overflow: hidden;
-  background:
-    radial-gradient(480px 240px at 110% -40px, rgba(245, 197, 66, 0.14), transparent 65%),
-    linear-gradient(160deg, #0e1830 0%, #0a1122 70%);
-  border: 1px solid var(--v2-border);
+  background: radial-gradient(360px 180px at 110% -30px, rgba(232, 199, 102, 0.18), transparent 65%), linear-gradient(150deg, rgba(232, 199, 102, 0.14), rgba(255, 255, 255, 0.02));
+  border: 1px solid rgba(232, 199, 102, 0.4);
   border-radius: 26px;
   padding: 28px 24px;
   box-shadow: var(--v2-shadow-lg), inset 0 1px 0 rgba(255, 255, 255, 0.06);
@@ -910,8 +908,8 @@ body.v2 .tstc-novig:active, body.v2 .tstc-track:active { transform: scale(0.97);
 .db-faq { max-width: 720px; margin: 0 auto; padding: 0 20px 44px; }
 .db-faq-title { font-size: 30px; letter-spacing: -0.8px; margin: 28px 0 20px; color: var(--v2-text); font-weight: 800; }
 .db-faq details {
-  background: linear-gradient(160deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.015));
-  border: 1px solid var(--v2-border); border-radius: 18px; margin-bottom: 12px; overflow: hidden;
+  background: radial-gradient(360px 180px at 110% -30px, rgba(232, 199, 102, 0.18), transparent 65%), linear-gradient(150deg, rgba(232, 199, 102, 0.14), rgba(255, 255, 255, 0.02));
+  border: 1px solid rgba(232, 199, 102, 0.4); border-radius: 18px; margin-bottom: 12px; overflow: hidden;
   box-shadow: var(--v2-shadow-sm);
   transition: border-color .18s var(--v2-ease);
 }
@@ -972,7 +970,7 @@ body.v2 .tstc-novig:active, body.v2 .tstc-track:active { transform: scale(0.97);
 .balance-list{display:flex;flex-direction:column;gap:10px;margin-bottom:18px}
 .balance-row{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-radius:14px;border:1px solid var(--v2-border);background:rgba(255,255,255,.03)}
 .balance-amount{font-size:18px;font-weight:800;font-family:var(--v2-mono)}
-.balance-form{display:flex;flex-direction:column;gap:12px;padding:18px;border-radius:16px;border:1px solid var(--v2-border);background:rgba(255,255,255,.02)}
+.balance-form{display:flex;flex-direction:column;gap:12px;padding:18px;border-radius:16px;border:1px solid rgba(232, 199, 102, 0.4);background:radial-gradient(360px 180px at 110% -30px, rgba(232, 199, 102, 0.18), transparent 65%), linear-gradient(150deg, rgba(232, 199, 102, 0.14), rgba(255, 255, 255, 0.02))}
 .balance-form h3{margin:0;font-size:16px}
 .balance-form label{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:var(--v2-muted)}
 .balance-form input{padding:12px;border-radius:10px;border:1px solid var(--v2-border);background:rgba(0,0,0,.3);color:#fff;font-size:16px}
