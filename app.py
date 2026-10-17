@@ -3238,7 +3238,12 @@ def ticket_view(play_id):
             if cu is None:
                 return redirect(url_for("login", next=url_for("ticket_view", play_id=play_id)))
             return redirect(url_for("desbloquear_platinum"))
-    return render_template("ticket.html", p=play)
+    # Fila de compartir (estilo referencia WGT, 2026-10-17): por ahora
+    # SOLO la ve Alex (admin o su cuenta de miembro) hasta que apruebe
+    # publicarla para todos.
+    return render_template(
+        "ticket.html", p=play, ver_compartir=_admin_o_cuenta_alex(current_user())
+    )
 
 
 def last_elite_win():
