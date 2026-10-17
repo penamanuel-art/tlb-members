@@ -74,12 +74,12 @@
     {% if is_vip %}<span class="v5c-pill plat">💎 PLATINUM</span><span class="v5c-kind">Platinum play</span>{% elif is_value %}<span class="v5c-pill gold">💎 VALUE PLAY</span><span class="v5c-kind">Value play</span>{% else %}<span class="v5c-pill gold">GOLD</span><span class="v5c-kind">Gold play</span>{% endif %}
     <span class="v5c-liga">{{ p.liga or '' }}</span>
   </div>
-  <div class="v5c-title">{{ p.team_name or p.abbr }} {{ 'Moneyline' if p.bettype == 'Moneyline' else p.bettype }}</div>
-  <div class="v5c-sub">{{ p.abbr }} vs {{ p.opp_abbr }} &middot; {{ p.game_time_et or p.hora or '' }}</div>
+  <div class="v5c-title" data-v5-open="{{ p.id }}" style="cursor:pointer">{{ p.team_name or p.abbr }} {{ 'Moneyline' if p.bettype == 'Moneyline' else p.bettype }}</div>
+  <div class="v5c-sub" data-v5-open="{{ p.id }}" style="cursor:pointer">{{ p.abbr }} vs {{ p.opp_abbr }} &middot; {{ p.game_time_et or p.hora or '' }}</div>
   {% if p.posted %}<div class="v5c-posted">🕐 Posted {{ p.posted }}</div>{% endif %}
   {% if _res == 'W' %}<span class="v5c-res won">WON</span>{% elif _res == 'L' %}<span class="v5c-res lost">LOST</span>{% endif %}
   <div class="v5c-div"><span class="v5c-notch l"></span><span class="v5c-notch r"></span></div>
-  <div class="v5c-nums">
+  <div class="v5c-nums" data-v5-open="{{ p.id }}" style="cursor:pointer">
     <div><div class="v5c-k">PRICE POSTED</div><div class="v5c-v">{{ fmt_odds(p.cuota) }}</div></div>
     <div><div class="v5c-k">STAKE</div><div class="v5c-v">{{ '%g' % p.stake_unidades }}u</div><div class="v5c-amt">${{ '%g' % p.stake_monto }}</div></div>
     <div class="v5c-tk"><div class="v5c-k">TICKET</div>{% if p.comprobante %}<span class="v5c-matched">✓ MATCHED</span>{% else %}<span class="v5c-pend">PENDING</span>{% endif %}</div>
