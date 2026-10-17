@@ -12,18 +12,19 @@
   .act-pill { flex: none; font-size: 10px; font-weight: 800; letter-spacing: 1px; padding: 5px 10px; border-radius: 999px; }
   .act-pill.plat { background: linear-gradient(180deg,#cdf3ff,#63cbf5); color: #07304a; }
   .act-pill.free { background: #22345c; color: #aebdd4; }
-  .act-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 14px; margin-top: 12px; }
-  .act-meta .k { font-size: 0.68rem; font-weight: 700; letter-spacing: 1px; color: #8fa1c2; }
-  .act-meta .v { font-size: 0.92rem; font-weight: 700; color: #fff; margin-top: 1px; }
-  .act-tracks { margin-top: 12px; border-top: 1px solid rgba(255,255,255,.07); padding-top: 10px; }
-  .act-tracks .k { font-size: 0.68rem; font-weight: 700; letter-spacing: 1px; color: #8fa1c2; margin-bottom: 6px; }
+  .act-sec { font-size: 0.68rem; font-weight: 800; letter-spacing: 1.5px; color: #ffd93b; margin: 14px 0 6px; }
+  .act-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 14px; }
+  .act-meta .k { font-size: 0.66rem; font-weight: 700; letter-spacing: 1px; color: #8fa1c2; }
+  .act-meta .v { font-size: 0.9rem; font-weight: 700; color: #fff; margin-top: 1px; }
+  .act-tracks { margin-top: 4px; }
   .act-track { display: flex; justify-content: space-between; gap: 8px; font-size: 0.83rem; color: #dbe4f5; padding: 4px 0; }
   .act-track .f { color: #8fa1c2; font-size: 0.75rem; white-space: nowrap; }
   .res-w { color: #2fe6a7; font-weight: 800; } .res-l { color: #ff7d7d; font-weight: 800; } .res-p { color: #ffd93b; font-weight: 800; }
+  .pos { color: #2fe6a7; } .neg { color: #ff7d7d; }
 </style>
 <div class="act-wrap">
   <h1>👁️ Member Activity</h1>
-  <div class="act-sub">Quién entra al Dashboard, cuántas veces al día, desde qué ciudad y qué jugadas trackea. El registro de entradas empieza hoy, 17 de octubre.</div>
+  <div class="act-sub">El expediente completo de cada miembro: contacto, cuenta, actividad, ciudad y sus números. El registro de entradas empieza hoy, 17 de octubre.</div>
   {% for d in datos %}
   <div class="act-card">
     <div class="act-head">
@@ -33,14 +34,33 @@
       </div>
       {% if d.platinum %}<span class="act-pill plat">★ PLATINUM</span>{% else %}<span class="act-pill free">FREE</span>{% endif %}
     </div>
+
+    <div class="act-sec">📇 CONTACTO Y CUENTA</div>
     <div class="act-meta">
-      <div><div class="k">📍 CONNECTED FROM</div><div class="v">{{ d.ciudad or '—' }}</div></div>
-      <div><div class="k">🕐 LAST ENTRY</div><div class="v">{{ d.ultima }}</div></div>
-      <div><div class="k">📅 ENTRIES TODAY</div><div class="v">{{ d.entradas_hoy }}</div></div>
-      <div><div class="k">🔑 LOGINS TODAY</div><div class="v">{{ d.logins_hoy }}</div></div>
+      <div><div class="k">📱 TELÉFONO</div><div class="v">{{ d.telefono }}</div></div>
+      <div><div class="k">🌎 IDIOMA</div><div class="v">{{ d.idioma }}</div></div>
+      <div><div class="k">📆 MIEMBRO DESDE</div><div class="v">{{ d.desde }}</div></div>
+      <div><div class="k">⭐ ESTADO</div><div class="v">{{ d.estado }}{% if d.cancel_pedida %} · ⚠️ cancelación pedida{% endif %}</div></div>
+      <div><div class="k">💰 SU BANKROLL</div><div class="v">{{ d.bankroll }}</div></div>
+      <div><div class="k">🎯 SU STAKE</div><div class="v">{{ d.stake }}</div></div>
+    </div>
+
+    <div class="act-sec">👁️ ACTIVIDAD</div>
+    <div class="act-meta">
+      <div><div class="k">📍 CONECTADO DESDE</div><div class="v">{{ d.ciudad or '—' }}</div></div>
+      <div><div class="k">🕐 ÚLTIMA ENTRADA</div><div class="v">{{ d.ultima }}</div></div>
+      <div><div class="k">📅 ENTRADAS HOY</div><div class="v">{{ d.entradas_hoy }} ({{ d.logins_hoy }} inicios de sesión)</div></div>
+      <div><div class="k">📊 TOTAL ENTRADAS / DÍAS</div><div class="v">{{ d.tot_entradas }} · {{ d.dias_activo }} días</div></div>
+      <div><div class="k">🔔 PUSH</div><div class="v">{{ d.push }}</div></div>
+      <div><div class="k">✈️ TELEGRAM / SMS</div><div class="v">{{ d.telegram }} · {{ d.sms }}</div></div>
+    </div>
+
+    <div class="act-sec">🎯 SUS NÚMEROS (SU TRACKER)</div>
+    <div class="act-meta">
+      <div><div class="k">🏆 RÉCORD</div><div class="v">{{ d.record }}</div></div>
+      <div><div class="k">💵 SU PROFIT</div><div class="v {{ 'pos' if d.profit_pos else 'neg' }}">{{ d.profit }}</div></div>
     </div>
     <div class="act-tracks">
-      <div class="k">🎯 TRACKED PLAYS ({{ d.total_tracks }})</div>
       {% if d.tracks %}
         {% for t in d.tracks %}
         <div class="act-track">
@@ -49,7 +69,7 @@
         </div>
         {% endfor %}
       {% else %}
-        <div style="font-size:0.83rem;color:#8fa1c2;">No ha trackeado jugadas todavía.</div>
+        <div style="font-size:0.83rem;color:#8fa1c2;">No ha trackeado jugadas todavía ({{ d.total_tracks }} en total).</div>
       {% endif %}
     </div>
   </div>
