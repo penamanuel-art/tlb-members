@@ -2877,6 +2877,16 @@ def inject_user():
         cuenta_es = bool(cu) and (cu["lang"] or "") == "es"
     except (KeyError, IndexError, TypeError):
         cuenta_es = False
+    trial_dias_left = None
+    try:
+        if cu and not (cu["stripe_subscription_id"] or ""):
+            te = cu["platinum_trial_ends"]
+            if te:
+                resto = (datetime.fromisoformat(te) - datetime.now()).total_seconds()
+                if resto > 0:
+                    trial_dias_left = max(1, int(resto // 86400) + (1 if resto % 86400 > 0 else 0))
+    except (KeyError, IndexError, TypeError, ValueError):
+        trial_dias_left = None
     return {
         "nombre_corto": corto,
         "nombre_completo": nombre,
@@ -2888,6 +2898,7 @@ def inject_user():
         "cuenta_es": cuenta_es,
         "is_alex": bool(cu and (cu["email"] or "").strip().lower() == ALEX_MEMBER_EMAIL),
         "miembro_platinum": platinum_unlocked_for(cu),
+        "trial_dias_left": trial_dias_left,
         "past_due": past_due,
         "ticker_days": compute_ticker_days(),
         "asset_v": ASSET_V,
