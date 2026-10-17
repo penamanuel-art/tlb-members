@@ -70,6 +70,45 @@ h1{width:100%;max-width:520px;font-size:34px;font-weight:800;letter-spacing:-.5p
   <a class="btn btn-dark" href="/home">+ Track this play</a>
 </div>
 
+{% if ver_compartir %}
+{% set share_url = request.url %}
+{% set share_txt = 'The Sharp Team · ' ~ p.abbr ~ ' ' ~ p.bettype ~ ' (' ~ ('+' if p.cuota is number and p.cuota > 0 else '') ~ p.cuota ~ ') — official ticket' %}
+<style>
+.share-row{width:100%;max-width:520px;margin-top:20px}
+.share-k{font-size:10.5px;font-weight:600;letter-spacing:1.8px;color:#5c6577;text-align:center;margin-bottom:10px}
+.share-btns{display:flex;gap:8px}
+.share-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 2px;background:#131c30;border:1px solid rgba(255,255,255,.1);border-radius:14px;color:#d6dbe6;font-size:10.5px;font-weight:500;letter-spacing:.6px;text-decoration:none;cursor:pointer}
+.share-btn svg{width:19px;height:19px}
+.share-btn:active{transform:scale(.96)}
+</style>
+<div class="share-row">
+  <div class="share-k">SHARE THIS TICKET</div>
+  <div class="share-btns">
+    <a class="share-btn" id="shareCopy" href="javascript:void(0)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg><span id="shareCopyTxt">COPY LINK</span></a>
+    <a class="share-btn" target="_blank" rel="noopener" href="https://t.me/share/url?url={{ share_url | urlencode }}&text={{ share_txt | urlencode }}"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.9 4.4c.2-1-.5-1.7-1.5-1.4L2.7 9.1c-1 .3-1 1.6-.1 2l4.3 1.6 1.7 5.4c.2.7 1 .9 1.6.4l2.4-2.3 4.6 3.4c.7.5 1.7.1 1.9-.7l3-14.5zM8.4 12.3l9.2-5.8c.2-.1.4.1.2.3l-7.8 7.1-.3 3-1.3-4.6z"/></svg>TELEGRAM</a>
+    <a class="share-btn" target="_blank" rel="noopener" href="https://wa.me/?text={{ (share_txt ~ ' ' ~ share_url) | urlencode }}"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5.1-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.6-6.1c-.3-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4 0-.5.2-.8l.5-.6c.1-.2.1-.4 0-.5l-.8-1.9c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.4-.9.9-1.1 2.2-.2 3.9a11.6 11.6 0 0 0 4.5 4.2c1.7.8 2.4.9 3.2.7.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.1-1.2 0-.1-.2-.2-.5-.3z"/></svg>WHATSAPP</a>
+    <a class="share-btn" target="_blank" rel="noopener" href="https://twitter.com/intent/tweet?url={{ share_url | urlencode }}&text={{ share_txt | urlencode }}"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 2H22l-6.8 7.8L23.2 22h-6.3l-4.9-6.4L6.4 22H3.2l7.3-8.3L1.6 2H8l4.4 5.9L18.9 2zm-1.1 18.1h1.7L7.1 3.8H5.3l12.5 16.3z"/></svg>X</a>
+    <a class="share-btn" id="shareMore" href="javascript:void(0)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>MORE</a>
+  </div>
+</div>
+<script>
+(function(){
+  var url = {{ share_url | tojson }}, txt = {{ share_txt | tojson }};
+  var cp = document.getElementById('shareCopy');
+  if (cp) cp.onclick = function(){
+    function done(){ var t = document.getElementById('shareCopyTxt'); if (t) { t.textContent = 'COPIED ✓'; setTimeout(function(){ t.textContent = 'COPY LINK'; }, 1800); } }
+    if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(url).then(done, done); }
+    else { var ta = document.createElement('textarea'); ta.value = url; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); } catch(e) {} document.body.removeChild(ta); done(); }
+  };
+  var mr = document.getElementById('shareMore');
+  if (mr) mr.onclick = function(){
+    if (navigator.share) { navigator.share({title: 'The Sharp Team', text: txt, url: url}).catch(function(){}); }
+    else if (cp) { cp.click(); }
+  };
+})();
+</script>
+{% endif %}
+
 <p class="fine">Every play is posted before game time — then locked and graded against the final score.<br>Gamble responsibly · 21+ · 1-800-GAMBLER</p>
 
 <div class="lightbox" id="lb"><span class="x" id="lbx">✕</span><img id="lbimg" src="" alt="Ticket"></div>
