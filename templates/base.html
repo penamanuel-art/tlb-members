@@ -235,7 +235,7 @@ function googleTranslateElementInit(){new google.translate.TranslateElement({pag
     <span class="v2-bnav-ico" aria-hidden="true">&#129520;</span><span>Tools</span>
   </a>
   <a href="{{ url_for('tracker') }}" class="v2-bnav-item{% if request.endpoint == 'tracker' %} active{% endif %}">
-    <span class="v2-bnav-ico" aria-hidden="true">&#127915;</span><span>Tracker</span>
+    <span class="v2-bnav-ico" aria-hidden="true">&#127915;</span><span style="white-space:nowrap;font-size:10px">My Own Tracker</span>
   </a>
   {% if is_alex or es_admin %}
   {# Admin en el bottom nav solo para Alex (2026-10-12, pedido por Alex) #}
