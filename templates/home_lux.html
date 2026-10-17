@@ -186,7 +186,7 @@ a.lux-rec-card:active{transform:scale(.985)}
 
   {% set plat = plays | selectattr('nivel', 'equalto', 'ELITE') | list %}
   {% if plat or not platinum_unlocked %}
-  <p class="v2-sec-eyebrow" style="margin:22px 0 10px">Today's Platinum Selection</p>
+  <p class="v2-sec-eyebrow" style="margin:22px 0 10px;color:#e8c766">Today's Platinum Selection</p>
   <div class="v2-plays">
     {% if plat %}
       {% for p in plat %}
