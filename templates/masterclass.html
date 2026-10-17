@@ -58,6 +58,123 @@
   <h2 class="section-title">ARCHIVE · 30 DAYS</h2>
 </div>
 <p class="muted">The complete course, one lesson per day.</p>
+{# Archivo por FASES estilo tarjeta (pedido de Alex 2026-10-17 con captura
+   de referencia): tarjetas a ancho completo con el numero del dia en marca
+   de agua, agrupadas por fase; cada tarjeta se expande con la leccion
+   completa (resumen + idea clave), como antes. #}
+{% set mc_fases = [
+  ('Foundations', 'The pillars of the system — how the house thinks, and why most bettors lose.'),
+  ('The long game', 'Variance, patience and the math of playing the long run.'),
+  ('The bankroll system', 'Money rules: units, stakes and protecting the roll at all times.'),
+  ('How we win', 'How plays are selected, and why we bet with the books.'),
+  ('The mental game', 'Discipline under pressure — the habits that protect the system.')
+] %}
+<style>
+.ph-head-row{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-top:28px;}
+.ph-kick{font-size:.68rem;font-weight:800;letter-spacing:2.2px;color:#e8c766;}
+.ph-name{font-size:1.32rem;font-weight:900;color:#ffffff;letter-spacing:-.3px;}
+.ph-desc{font-size:.86rem;color:#93a1b5;margin-top:5px;line-height:1.5;}
+.ph-rule{border-top:1px solid rgba(255,255,255,.10);margin-top:12px;}
+.ph-item{position:relative;overflow:hidden;background:#14161c;border:1px solid rgba(255,255,255,.07);border-radius:18px;margin-top:12px;}
+.ph-item.today{border-color:rgba(232,199,102,.45);}
+.ph-wm{position:absolute;top:-18px;right:8px;font-size:104px;font-weight:900;line-height:1;color:rgba(255,255,255,.05);pointer-events:none;}
+.ph-head{display:block;padding:18px;cursor:pointer;list-style:none;position:relative;}
+.ph-head::-webkit-details-marker{display:none;}
+.ph-dia{display:flex;align-items:center;gap:8px;font-size:.66rem;font-weight:800;letter-spacing:2px;color:#e8c766;}
+.ph-today{background:#2fe6a7;color:#04150d;font-size:.56rem;font-weight:900;letter-spacing:1.2px;padding:3px 8px;border-radius:999px;}
+.ph-done{color:#2fe6a7;font-size:.62rem;font-weight:900;letter-spacing:1.2px;}
+.ph-titulo{display:block;margin-top:7px;font-size:1.18rem;font-weight:800;color:#ffffff;line-height:1.25;letter-spacing:-.2px;}
+.ph-res{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-top:6px;font-size:.86rem;color:#9aa3b8;line-height:1.5;}
+.ph-link{display:block;margin-top:10px;font-size:.86rem;font-weight:700;color:#e8c766;}
+.ph-item[open ] .ph-link{display:none;}
+.ph-body{padding:0 18px 18px;position:relative;}
+.ph-body p{font-size:.92rem;color:#c6cfdf;line-height:1.6;}
+</style>
+{% for fname, fdesc in mc_fases %}
+{% set items = archivo | selectattr('fase', 'equalto', fname) | list %}
+{% if items %}
+<div class="ph-head-row">
+  <span class="ph-kick">PHASE {{ loop.index }} · DAYS {{ items[0].dia }}–{{ items[-1].dia }}</span>
+  <span class="ph-name">{{ fname }}</span>
+</div>
+<p class="ph-desc">{{ fdesc }}</p>
+<div class="ph-rule"></div>
+{% for l in items %}
+  <details class="ph-item{% if l.dia == leccion.get('dia') %} today{% endif %}" id="day-{{ l.dia }}"{% if l.dia == leccion.get('dia') %} open{% endif %}>
+    <summary class="ph-head">
+      <span class="ph-wm">{{ l.dia }}</span>
+      <span class="ph-dia">DAY {{ l.dia }}{% if l.dia == leccion.get('dia') %}<span class="ph-today">TODAY</span>{% elif leccion.get('dia') and l.dia < leccion.get('dia') %}<span class="ph-done">✓ DONE</span>{% endif %}</span>
+      <span class="ph-titulo">{{ l.titulo }}</span>
+      <span class="ph-res">{{ l.resumen }}</span>
+      <span class="ph-link">Read the lesson →</span>
+    </summary>
+    <div class="ph-body">
+      <p>{{ l.resumen }}</p>
+      <div class="lesson-clave"><strong>Key idea:</strong> {{ l.clave }}</div>
+    </div>
+  </details>
+{% endfor %}
+{% endif %}
+{% endfor %}
+{% endblock %}
+{% block content %}
+{# Titular grande de la Academy (pedido de Alex 2026-10-13): el manual que te
+   hace pensar distinto a los apostadores regulares. #}
+<style>
+.ac-hero{padding:18px 2px 6px;}
+.ac-hero .kick{color:#f3cd6b;font-size:.68rem;font-weight:800;letter-spacing:2.6px;margin:0;}
+.ac-hero h1{color:#fff;font-size:2.05rem;line-height:1.14;font-weight:900;letter-spacing:-.5px;margin:10px 0 0;}
+.ac-hero h1 .gold{background:linear-gradient(92deg,#f7dc8a,#e9b64f 55%,#c9932b);-webkit-background-clip:text;background-clip:text;color:transparent;}
+.ac-hero p{color:#93a1b5;font-size:.95rem;line-height:1.55;margin:10px 0 0;}
+</style>
+<div class="ac-hero">
+  <p class="kick">THE SHARP TEAM ACADEMY</p>
+  <h1>The manual that makes you <span class="gold">think different</span> from regular bettors.</h1>
+  <p>Thirty short lessons. Zero hype. The way the house actually works — and how the 1% play it.</p>
+</div>
+<section class="tracker-head">
+  <div>
+    <p class="kicker">THE SHARP TEAM ACADEMY · 30-DAY COURSE</p>
+    <h2>{% if leccion.get('dia') %}Day {{ leccion.get('dia') }} of 30{% else %}Academy{% endif %}</h2>
+    {% if leccion.get('fase') %}<p class="muted">{{ leccion.get('fase') }}</p>{% endif %}
+  </div>
+</section>
+{% if leccion.get('titulo') %}
+<article class="lesson-card">
+  <h3 class="lesson-title">{{ leccion.get('titulo') }}</h3>
+  <p class="lesson-body">{{ leccion.get('resumen') }}</p>
+  <div class="lesson-clave"><strong>Key idea:</strong> {{ leccion.get('clave') }}</div>
+</article>
+{% else %}
+<p class="muted">Today's lesson isn't published yet.</p>
+{% endif %}
+
+<div class="section-head">
+  <h2 class="section-title">BETTING GUIDES</h2>
+</div>
+<p class="muted">New to betting? Start here.</p>
+<style>
+.guides-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px;}
+.guide-card{display:block;text-decoration:none;background:radial-gradient(360px 180px at 110% -30px, rgba(232, 199, 102, 0.18), transparent 65%), linear-gradient(150deg, rgba(232, 199, 102, 0.14), rgba(255, 255, 255, 0.02));border:1px solid rgba(232, 199, 102, 0.4);border-radius:14px;padding:14px 14px;transition:transform .15s ease,border-color .15s ease;}
+.guide-card:active{transform:scale(.97);}
+.guide-card b{display:block;font-size:15px;font-weight:800;color:#ffffff;letter-spacing:-.2px;line-height:1.3;}
+.guide-card span{display:block;margin-top:5px;font-size:12.5px;color:#9aa3b8;line-height:1.45;}
+.guide-card-full{grid-column:1/-1;}
+</style>
+<div class="guides-grid">
+  <a href="{{ url_for('guide_moneyline') }}" class="guide-card"><b>Moneyline</b><span>What it is</span></a>
+  <a href="{{ url_for('guide_spread') }}" class="guide-card"><b>Spread</b><span>What it is</span></a>
+  <a href="{{ url_for('guide_total') }}" class="guide-card"><b>Total</b><span>Over/under</span></a>
+  <a href="{{ url_for('guide_american_odds') }}" class="guide-card"><b>American odds</b><span>+150, -110&hellip;</span></a>
+  <a href="{{ url_for('guide_vig') }}" class="guide-card"><b>The vig</b><span>Why it matters</span></a>
+  <a href="{{ url_for('guide_reading_card') }}" class="guide-card"><b>Reading a card</b><span>Our picks</span></a>
+  <a href="{{ url_for('guide_glossary') }}" class="guide-card guide-card-full"><b>&#x1F4D6; Betting glossary</b><span>Every term, plain English</span></a>
+</div>
+
+<div class="section-head">
+  <h2 class="section-title">ARCHIVE · 30 DAYS</h2>
+</div>
+<p class="muted">The complete course, one lesson per day.</p>
 {# Archivo en CUADRÍCULA con un emoji por lección (diseño aprobado por Alex
    2026-10-13 tras ver la muestra): cada tarjeta se expande a ancho completo
    al abrirla, con el mismo contenido de siempre. #}
