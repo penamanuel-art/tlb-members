@@ -1,55 +1,88 @@
 {% extends "base_v2.html" %}
 {% block title %}Book Balances — The Sharp Team{% endblock %}
 {% block content %}
-<div class="v2-wrap">
-  <section class="bb-head">
-    <p class="kicker">MY MONEY</p>
-    <h2>Book balances</h2>
-    <p class="muted">Where your bankroll lives. Updated manually.</p>
-  </section>
+{# Nueva versión (aprobada por Alex 2026-10-18, muestra v4): moderna, sencilla,
+   pantalla completa sin scroll — total en franja con degradado dorado, casas
+   en filas compactas dentro de un panel, raya verde entre separaciones,
+   explicación ligera de cómo funciona y formulario en una línea. #}
+<style>
+.bbn-wrap{display:flex;flex-direction:column;min-height:calc(100dvh - 170px);padding:4px 2px 0;
+  background-image:radial-gradient(420px 240px at 85% -60px, rgba(232,199,102,.10), transparent 65%), radial-gradient(500px 300px at -10% 30%, rgba(47,123,255,.06), transparent 60%);}
+.bbn-kicker{color:#7e8ea8;font-size:9.5px;font-weight:600;letter-spacing:2.2px;margin:0;}
+.bbn-h{font-size:21px;font-weight:600;letter-spacing:-.2px;margin:3px 0 0;color:#eef2f8;}
+.bbn-sub{color:#8fa1c2;font-size:11px;font-weight:300;margin:3px 0 0;}
+.bbn-how{color:#71809a;font-size:10.5px;font-weight:300;line-height:1.5;margin:5px 0 0;}
+.bbn-total{display:flex;align-items:center;justify-content:space-between;border-radius:16px;padding:15px 17px;margin-top:14px;
+  background:linear-gradient(140deg, rgba(232,199,102,.16), rgba(13,22,38,.4) 55%), #0d1830;border:1px solid rgba(232,199,102,.35);}
+.bbn-tl{display:block;color:#a9b8d0;font-size:9.5px;font-weight:600;letter-spacing:1.8px;}
+.bbn-tv{display:block;color:#e8c766;font-size:27px;font-weight:700;letter-spacing:-.4px;padding-top:2px;}
+.bbn-cnt{background:rgba(232,199,102,.14);border:1px solid rgba(232,199,102,.4);color:#e8c766;font-size:10px;font-weight:600;letter-spacing:1px;padding:6px 10px;border-radius:999px;white-space:nowrap;}
+.bbn-panel{background:rgba(13,22,38,.72);border:1px solid rgba(255,255,255,.08);border-radius:16px;margin-top:12px;padding:4px 16px;flex:1;display:flex;flex-direction:column;justify-content:space-evenly;}
+.bbn-row{display:flex;align-items:center;gap:12px;padding:9px 0;}
+.bbn-gdiv{height:1px;background:linear-gradient(90deg, transparent, rgba(47,230,167,.6) 30%, rgba(47,230,167,.6) 70%, transparent);box-shadow:0 0 7px rgba(47,230,167,.35);}
+.bbn-chip{width:38px;height:38px;border-radius:11px;background:#16223a;color:#e8edf5;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex:none;box-shadow:inset 0 0 0 1px rgba(255,255,255,.14);}
+.bbn-chipimg{width:38px;height:38px;border-radius:11px;object-fit:cover;background:#fff;flex:none;box-shadow:inset 0 0 0 1px rgba(255,255,255,.14);}
+.bbn-who{flex:1;min-width:0;display:block;}
+.bbn-nm{display:block;font-size:14.5px;font-weight:500;color:#eef2f8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.bbn-up{display:block;color:#71809a;font-size:9.5px;font-weight:300;padding-top:2px;}
+.bbn-bal{font-size:16.5px;font-weight:600;color:#ffffff;}
+.bbn-bal.zero{color:#5f718e;font-weight:400;}
+.bbn-delform{margin:0;flex:none;}
+.bbn-del{background:none;border:none;color:#54637c;font-size:13px;cursor:pointer;padding:4px 0 4px 2px;}
+.bbn-form{background:rgba(13,22,38,.72);border:1px solid rgba(255,255,255,.08);border-radius:16px;margin-top:12px;padding:12px 14px;}
+.bbn-ft{font-size:10px;font-weight:600;color:#a9b8d0;letter-spacing:1.6px;padding-bottom:9px;}
+.bbn-frow{display:flex;gap:8px;}
+.bbn-in{background:#0a1120;border:1px solid #22314f;border-radius:10px;color:#e8edf5;font-size:12px;padding:10px 11px;min-width:0;}
+.bbn-in.b1{flex:1.25;} .bbn-in.b2{flex:1;}
+.bbn-save{background:#5dc98d;color:#0b2018;font-size:12.5px;font-weight:700;border:none;border-radius:10px;padding:10px 17px;cursor:pointer;flex:none;}
+.bbn-back{text-align:center;padding:12px 0 4px;margin:0;}
+.bbn-back a{color:#7dd3fc;font-size:11.5px;text-decoration:none;}
+.bbn-empty{color:#8fa1c2;font-size:12px;font-weight:300;text-align:center;padding:18px 0;}
+</style>
+<div class="bbn-wrap">
+  {% set meses = {'01':'Jan','02':'Feb','03':'Mar','04':'Apr','05':'May','06':'Jun','07':'Jul','08':'Aug','09':'Sep','10':'Oct','11':'Nov','12':'Dec'} %}
+  <p class="bbn-kicker">MY MONEY</p>
+  <h2 class="bbn-h">Book balances</h2>
+  <p class="bbn-sub">Where your bankroll lives. Updated manually.</p>
+  <p class="bbn-how">How it works: add each book where you keep money and update its balance when it changes — deposits, withdrawals, settled bets. The total is your bankroll across every book.</p>
 
-  <div class="bb-total">
-    <span class="bb-total-label">TOTAL ACROSS BOOKS</span>
-    <span class="bb-total-amount">${{ "%.2f"|format(total) }}</span>
+  <div class="bbn-total">
+    <span><span class="bbn-tl">TOTAL ACROSS BOOKS</span><span class="bbn-tv">${{ "%.2f"|format(total) }}</span></span>
+    <span class="bbn-cnt">{{ balances|length }} BOOKS</span>
   </div>
 
-  <div class="bb-list">
+  <div class="bbn-panel">
     {% for b in balances %}
-    <div class="bb-card">
-      <div class="bb-card-top">
-        <div class="bb-book">
-          {% if b["logo"] %}
-          <img src="{{ url_for('static', filename='img/' + b['logo']) }}" alt="{{ b['book_name'] }}" class="bb-logo">
-          {% else %}
-          <span class="bb-avatar">{{ b["book_name"][0]|upper }}</span>
-          {% endif %}
-          <span class="bb-name">{{ b["book_name"] }}</span>
-        </div>
-        <form method="post" action="{{ url_for('balances_delete', book_name=b['book_name']) }}"
-              onsubmit="return confirm('Remove {{ b['book_name'] }}?');">
-          <button type="submit" class="bb-del" aria-label="Remove">🗑</button>
-        </form>
-      </div>
-      <span class="bb-label">Balance</span>
-      <span class="bb-amount">${{ "%.2f"|format(b["balance"]|float) }}</span>
-      <span class="bb-updated">Last update: {{ b["updated_at"] }}</span>
+    {% set f = (b["updated_at"] or '') | string %}
+    {% set fc = (meses.get(f[5:7], '') ~ ' ' ~ (f[8:10] | int)) if (f | length) >= 10 else f %}
+    <div class="bbn-row">
+      {% if b["logo"] %}
+      <img class="bbn-chipimg" src="{{ url_for('static', filename='img/' + b['logo']) }}" alt="{{ b['book_name'] }}">
+      {% else %}
+      <span class="bbn-chip">{{ b["book_name"][0]|upper }}</span>
+      {% endif %}
+      <span class="bbn-who"><span class="bbn-nm">{{ b["book_name"] }}</span><span class="bbn-up">Updated {{ fc }}</span></span>
+      <span class="bbn-bal{{ ' zero' if (b['balance']|float) == 0 else '' }}">${{ "%.2f"|format(b["balance"]|float) }}</span>
+      <form class="bbn-delform" method="post" action="{{ url_for('balances_delete', book_name=b['book_name']) }}"
+            onsubmit="return confirm('Remove {{ b['book_name'] }}?');">
+        <button type="submit" class="bbn-del" aria-label="Remove">🗑</button>
+      </form>
     </div>
+    {% if not loop.last %}<div class="bbn-gdiv"></div>{% endif %}
     {% else %}
-    <p class="muted">No books yet. Add your first one below.</p>
+    <p class="bbn-empty">No books yet. Add your first one below.</p>
     {% endfor %}
   </div>
 
-  <form method="post" action="{{ url_for('balances') }}" class="bb-form">
-    <h3>Add / update a book</h3>
-    <label>Book name
-      <input type="text" name="book_name" placeholder="Novig" maxlength="40" required>
-    </label>
-    <label>Balance ($)
-      <input type="number" name="balance" step="0.01" min="0" placeholder="500.00" required>
-    </label>
-    <button type="submit" class="btn-primary">Save</button>
+  <form class="bbn-form" method="post" action="{{ url_for('balances') }}">
+    <div class="bbn-ft">ADD / UPDATE A BOOK</div>
+    <div class="bbn-frow">
+      <input class="bbn-in b1" type="text" name="book_name" placeholder="Book name" maxlength="40" required>
+      <input class="bbn-in b2" type="number" name="balance" step="0.01" min="0" placeholder="Balance ($)" required>
+      <button type="submit" class="bbn-save">Save</button>
+    </div>
   </form>
 
-  <p class="back-link"><a href="{{ url_for('home') }}">← Back to Dashboard</a></p>
+  <p class="bbn-back"><a href="{{ url_for('home') }}">← Back to Dashboard</a></p>
 </div>
 {% endblock %}
