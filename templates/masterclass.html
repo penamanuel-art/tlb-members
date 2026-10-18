@@ -100,7 +100,7 @@
 <p class="ph-desc">{{ fdesc }}</p>
 <div class="ph-rule"></div>
 {% for l in items %}
-  <details class="ph-item{% if l.dia == leccion.get('dia') %} today{% endif %}" id="day-{{ l.dia }}"{% if l.dia == leccion.get('dia') %} open{% endif %}>
+  <details class="ph-item{% if l.dia == leccion.get('dia') %} today{% endif %}" id="day-{{ l.dia }}">
     <summary class="ph-head">
       <span class="ph-wm">{{ l.dia }}</span>
       <span class="ph-dia">DAY {{ l.dia }}{% if l.dia == leccion.get('dia') %}<span class="ph-today">TODAY</span>{% elif leccion.get('dia') and l.dia < leccion.get('dia') %}<span class="ph-done">✓ DONE</span>{% endif %}</span>
