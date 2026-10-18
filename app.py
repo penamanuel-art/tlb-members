@@ -3770,8 +3770,9 @@ def activar_cuenta(token):
     db.execute("UPDATE users SET email_verified = 1, activation_token = NULL WHERE id = ?",
                (uid,))
     db.commit()
-    # El email del admin (ADMIN_EMAIL) queda marcado automáticamente.
-    es_admin = bool(admin_email()) and email == admin_email()
+    # Admin solo si la cuenta ya trae la marca en la BD (2026-10-18:
+    # ADMIN_EMAIL es el correo de avisos, no una identidad).
+    es_admin = is_admin_for(user)
     if es_admin:
         db.execute("UPDATE users SET is_admin = 1 WHERE id = ?", (uid,))
         db.commit()
@@ -4034,13 +4035,11 @@ def login():
         if not user or not check_password(password, user["password_hash"]):
             flash("Incorrect email or password.", "error")
             return render_template("login.html"), 401
-        # Marca admin automáticamente si el email coincide con ADMIN_EMAIL
-        # (cubre cuentas creadas antes de configurar la variable).
+        # is_admin sale SOLO de la base de datos (2026-10-18): ADMIN_EMAIL
+        # es el correo de AVISOS del admin (la cuenta personal de Alex),
+        # NO una marca de identidad: su cuenta de miembro usa ese mismo
+        # correo y debe verse como miembro normal.
         es_admin = is_admin_for(user)
-        if not es_admin and admin_email() and email == admin_email():
-            db.execute("UPDATE users SET is_admin = 1 WHERE id = ?", (user["id"],))
-            db.commit()
-            es_admin = True
         # Arranque: si todavía no existe ningún admin, el primero en entrar lo es.
         if not es_admin:
             fila = db.execute("SELECT COUNT(*) AS n FROM users WHERE is_admin = 1").fetchone()
@@ -5683,8 +5682,8 @@ def admin_api_members_set_admin():
     (2026-10-15, pedido por Alex: su cuenta de miembro queda como
     miembro normal, sin admin; el admin vive solo en su cuenta admin).
     Auth: sesión admin O header X-Admin-Key. Protecciones: nunca
-    degradar la cuenta del ADMIN_EMAIL ni dejar el sistema sin
-    ningún admin."""
+    degradar la cuenta admin real (thesharpteam8@gmail.com) ni dejar
+    el sistema sin ningún admin."""
     if not _admin_api_autorizado():
         return jsonify({"error": "admin only"}), 403
     data = request.get_json(silent=True) or {}
@@ -5698,7 +5697,7 @@ def admin_api_members_set_admin():
         return jsonify({"error": "not found"}), 404
     nuevo = 1 if val in (True, 1, "1", "true") else 0
     if nuevo == 0 and is_admin_for(target):
-        if admin_email() and email == admin_email():
+        if email == "thesharpteam8@gmail.com":
             return jsonify({"error": "protected account"}), 403
         fila = db.execute(
             "SELECT COUNT(*) AS n FROM users WHERE is_admin = 1").fetchone()
