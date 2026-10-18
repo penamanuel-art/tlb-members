@@ -245,6 +245,7 @@ document.getElementById('nvX').addEventListener('click',function(){done();b.remo
   .yw-clv { color:#8b98ad; font-size:11.5px; font-weight:300; margin-top:3px; display:block; }
   .yw-clv-pos { color:#2fbf71; }
   .yw-clv-neg { color:#ff8a8a; }
+  .yw-view { color:#7dd3fc; font-size:11.5px; font-weight:300; margin-top:5px; display:block; }
   .yw-res { text-align:right; flex:none; display:block; }
   .yw-res .st { font-size:11px; font-weight:300; letter-spacing:1.4px; display:block; }
   .yw-res .u { font-size:16px; font-weight:300; margin-top:3px; display:block; }
@@ -298,6 +299,7 @@ document.getElementById('nvX').addEventListener('click',function(){done();b.remo
         <span class="yw-pick">{{ partes[0] }}</span>
         {% if r.abbr and r.opp_abbr %}<span class="yw-match">{{ r.abbr }} vs {{ r.opp_abbr }}</span>{% endif %}
         {% if r.cierre %}<span class="yw-clv">Closed {{ r.cierre }} · CLV <span class="{{ 'yw-clv-pos' if (r.clv or 0) >= 0 else 'yw-clv-neg' }}">{{ '%+.1f' % (r.clv or 0) }}%</span></span>{% endif %}
+        {% if r.comprobante %}<span class="yw-view">🎫 View ticket</span>{% endif %}
       </span>
       <span class="yw-res">
         <span class="st {{ 'yw-won-t' if won else 'yw-lost-t' }}">{{ 'WON' if won else 'LOST' }}</span>
