@@ -22,15 +22,7 @@
     {% if leccion.get('fase') %}<p class="muted">{{ leccion.get('fase') }}</p>{% endif %}
   </div>
 </section>
-{% if leccion.get('titulo') %}
-<article class="lesson-card">
-  <h3 class="lesson-title">{{ leccion.get('titulo') }}</h3>
-  <p class="lesson-body">{{ leccion.get('resumen') }}</p>
-  <div class="lesson-clave"><strong>Key idea:</strong> {{ leccion.get('clave') }}</div>
-</article>
-{% else %}
-<p class="muted">Today's lesson isn't published yet.</p>
-{% endif %}
+
 
 <div class="section-head">
   <h2 class="section-title">BETTING GUIDES</h2>
