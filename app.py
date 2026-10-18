@@ -3169,7 +3169,7 @@ def free_landing():
         losses=losses,
         total=total,
         roi=roi,
-        stripe_url=url_for("registro"),
+        stripe_url=url_for("register"),
     )
 
 
