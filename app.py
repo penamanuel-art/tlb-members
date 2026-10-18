@@ -8911,7 +8911,7 @@ def api_new_members():
     else:
         rows = db.execute(
             "SELECT id, nombre, email, created_at, platinum_unlocked FROM users"
-            " ORDER BY created_at DESC, id DESC LIMIT 20"
+            " ORDER BY created_at DESC, id DESC LIMIT 500"
         ).fetchall()
     members = []
     for r in rows:
