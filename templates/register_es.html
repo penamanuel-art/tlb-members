@@ -275,6 +275,10 @@ twq('config','rhgk7');
         <label for="f-password">Contraseña</label>
         <input id="f-password" type="password" name="password" required minlength="6" autocomplete="new-password" placeholder="Mínimo 6 caracteres">
       </div>
+      {% if turnstile_key %}
+      <div class="cf-turnstile" data-sitekey="{{ turnstile_key }}" data-theme="dark" style="margin:12px 0 4px"></div>
+      <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+      {% endif %}
       <button class="btn" type="submit">Crear mi cuenta gratis<small>y ver las jugadas de hoy →</small></button>
     </form>
     <div class="micro"><span><span class="mint">✓</span> Sin tarjeta de crédito</span><span><span class="mint">✓</span> Sin vencimiento</span><span><span class="mint">✓</span> Cancela cuando quieras</span></div>
