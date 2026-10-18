@@ -19,9 +19,11 @@
   {% endif %}
 {% endif %}
 <style>
-.v5c{position:relative;overflow:hidden;background:linear-gradient(170deg,#12151d,#0b0e14);border:1px solid rgba(255,255,255,.09);border-radius:20px;padding:14px 16px 12px;box-sizing:border-box;width:100%;max-width:100%;margin:0 0 12px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#eef1f7}
-.v5c-edge{position:absolute;left:0;top:0;bottom:0;width:5px;background:linear-gradient(180deg,#f3cd6b,#b8860b)}
-.v5c-edge.gold{background:linear-gradient(180deg,#d7dde8,#8b94a7)}
+.v5c{position:relative;overflow:hidden;background:#0b0f18;border:1px solid rgba(255,255,255,.09);border-radius:20px;padding:0;box-sizing:border-box;width:100%;max-width:100%;margin:0 0 12px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#eef1f7}
+.v5c-topsec{background:linear-gradient(180deg,#1b2338,#141a2b);padding:14px 16px 12px}
+.v5c-botsec{background:#0b0f18;padding:0 16px 12px}
+.v5c-edge{position:absolute;left:0;top:0;bottom:0;width:5px;z-index:3;background:linear-gradient(180deg,#2fe6a7,#0d9d68)}
+.v5c-edge.gold{background:linear-gradient(180deg,#f3cd6b,#b8860b)}
 .v5c-top{display:flex;align-items:center;gap:9px}
 .v5c-pill{font-size:10.5px;font-weight:700;letter-spacing:1.4px;padding:6px 11px;border-radius:9px;border:1px solid}
 .v5c-pill.plat{color:#7dd3fc;border-color:rgba(125,211,252,.5);background:rgba(125,211,252,.08)}
@@ -36,14 +38,14 @@
 .v5c-res.won{color:#2fe6a7;background:rgba(47,230,167,.1)}
 .v5c-res.lost{color:#f87171;background:rgba(248,113,113,.1)}
 .v5c-res.pend{color:#f3cd6b;background:rgba(243,205,107,.08)}
-.v5c-div{position:relative;border-top:1.5px dashed rgba(255,255,255,.16);margin:12px -16px 0}
+.v5c-div{position:relative;border-top:1.5px dashed rgba(255,255,255,.16);margin:0 -16px 0}
 .v5c-notch{position:absolute;top:-11px;width:22px;height:22px;border-radius:50%;background:#070d1d;z-index:2}
 .v5c-notch.l{left:-11px}.v5c-notch.r{right:-11px}
 .v5c-posted{font-size:12.5px;color:#8b94a7;margin-top:6px}
 .v5c-nums{display:flex;gap:26px;margin-top:11px;align-items:flex-start}
 .v5c-k{font-size:10px;font-weight:600;letter-spacing:1.7px;color:#6e7787}
 .v5c-v{font-size:18px;font-weight:600;color:#fff;margin-top:3px}
-.v5c-amt{font-size:13px;font-weight:600;color:#e8c766;margin-top:1px}
+.v5c-amt{font-size:13px;font-weight:600;color:#2fe6a7;margin-top:1px}
 .v5c-tk{margin-left:auto;text-align:right}
 .v5c-matched{display:inline-block;margin-top:6px;font-size:9.5px;font-weight:800;letter-spacing:1px;color:#04150d;background:#2fe6a7;padding:4px 9px;border-radius:999px}
 .v5c-pend{display:inline-block;margin-top:6px;font-size:9.5px;font-weight:700;letter-spacing:1px;color:#f3cd6b;border:1px solid rgba(243,205,107,.45);padding:4px 9px;border-radius:999px}
@@ -52,7 +54,7 @@
 .v5c-strip-v{font-size:12px;font-weight:600;color:#7dd3fc;flex:none}
 .v5c-btns{display:flex;gap:9px;margin-top:11px}
 .v5c-btn{flex:1;text-align:center;font-size:13.5px;font-weight:500;color:#fff;border:1px solid rgba(255,255,255,.16);border-radius:12px;padding:10px 4px;text-decoration:none;box-sizing:border-box}
-.v5c-track{flex:1;text-align:center;font-size:14px;font-weight:600;color:#e8c766;background:rgba(232,199,102,.08);border:1px solid rgba(232,199,102,.55);border-radius:12px;padding:10px 4px;text-decoration:none;box-sizing:border-box;cursor:pointer}
+.v5c-track{flex:1;text-align:center;font-size:14px;font-weight:700;color:#04150d;background:#2fe6a7;border:1px solid #2fe6a7;border-radius:12px;padding:10px 4px;text-decoration:none;box-sizing:border-box;cursor:pointer}
 .v5c-tracked{flex:1;text-align:center;font-size:13.5px;font-weight:600;color:#2fe6a7;border:1px solid rgba(47,230,167,.5);border-radius:12px;padding:10px 4px;box-sizing:border-box}
 body.v5-sheet-open .ticker-dock-bottom,body.v5-sheet-open .v2-bottomnav,body.v5-sheet-open .v2-topbar{display:none!important}
 .v5sheet{display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:99999;align-items:flex-end;justify-content:center;box-sizing:border-box;padding:12px 0 0}
@@ -87,6 +89,7 @@ body.v5-sheet-open .ticker-dock-bottom,body.v5-sheet-open .v2-bottomnav,body.v5-
 </style>
 <div class="v5c">
   <div class="v5c-edge{% if not is_vip %} gold{% endif %}"></div>
+  <div class="v5c-topsec">
   <div class="v5c-top">
     {% if is_vip %}<span class="v5c-pill plat">💎 PLATINUM</span><span class="v5c-kind">Platinum play</span>{% elif is_value %}<span class="v5c-pill gold">💎 VALUE PLAY</span><span class="v5c-kind">Value play</span>{% else %}<span class="v5c-pill gold">GOLD</span><span class="v5c-kind">Gold play</span>{% endif %}
     <span class="v5c-liga">{{ p.liga or '' }}</span>
@@ -100,6 +103,8 @@ body.v5-sheet-open .ticker-dock-bottom,body.v5-sheet-open .v2-bottomnav,body.v5-
   </div>
   {% if p.posted %}<div class="v5c-posted">🕐 Posted {{ p.posted }}</div>{% endif %}
   {% if _res == 'W' %}<span class="v5c-res won">WON</span>{% elif _res == 'L' %}<span class="v5c-res lost">LOST</span>{% endif %}
+  </div>
+  <div class="v5c-botsec">
   <div class="v5c-div"><span class="v5c-notch l"></span><span class="v5c-notch r"></span></div>
   <div class="v5c-nums" data-v5-open="{{ p.id }}" style="cursor:pointer">
     <div><div class="v5c-k">PRICE POSTED</div><div class="v5c-v">{{ fmt_odds(p.cuota) }}</div></div>
@@ -122,6 +127,7 @@ body.v5-sheet-open .ticker-dock-bottom,body.v5-sheet-open .v2-bottomnav,body.v5-
         <a class="v5c-track tstc-track" href="{{ url_for('track', play_id=p.id) }}" data-track-url="{{ url_for('track', play_id=p.id) }}">+ Track</a>
       {% endif %}
     {% endif %}
+  </div>
   </div>
 </div>
 
