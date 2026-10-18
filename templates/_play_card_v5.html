@@ -125,7 +125,7 @@ body.v5-sheet-open .ticker-dock-bottom,body.v5-sheet-open .v2-bottomnav,body.v5-
       {% if p.id in tracked_ids %}
         <span class="v5c-tracked">✓ Tracked</span>
       {% else %}
-        <a class="v5c-track tstc-track" href="{{ url_for('track', play_id=p.id) }}" data-track-url="{{ url_for('track', play_id=p.id) }}">+ Track</a>
+        <a class="v5c-track tstc-track" style="flex:1 1 0;padding:10px 4px" href="{{ url_for('track', play_id=p.id) }}" data-track-url="{{ url_for('track', play_id=p.id) }}">+ Track</a>
       {% endif %}
     {% endif %}
   </div>
