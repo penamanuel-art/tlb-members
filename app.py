@@ -768,6 +768,107 @@ def send_email_sync(to: str, subject: str, text_body: str,
     return _dispatch_email(to, subject, text_body, html_body)
 
 
+# ---------- Activación por correo + captcha anti-robots (2026-10-18) ----------
+# Orden de Alex tras detectar registros basura de Meta: la cuenta nueva nace
+# SIN activar y solo se activa cuando el dueño toca el enlace que llega a su
+# correo (un correo inventado nunca se activa). El mes gratis de Platinum y
+# la bienvenida arrancan AL ACTIVAR, no al llenar el formulario. El captcha
+# de Cloudflare Turnstile frena los registros automáticos; sin llaves en el
+# entorno, el captcha queda dormido y el registro sigue funcionando.
+TURNSTILE_SITE_KEY = (os.environ.get("TURNSTILE_SITE_KEY") or "").strip()
+TURNSTILE_SECRET_KEY = (os.environ.get("TURNSTILE_SECRET_KEY") or "").strip()
+SITE_URL = "https://www.thesharpteam.bet"
+
+
+def _turnstile_ok() -> bool:
+    """Verifica el captcha Turnstile del formulario. Sin llave secreta
+    configurada devuelve True (no bloquea). Ante error de red: False."""
+    if not TURNSTILE_SECRET_KEY:
+        return True
+    token = (request.form.get("cf-turnstile-response") or "").strip()
+    if not token:
+        return False
+    try:
+        from urllib.parse import urlencode
+        data = urlencode({"secret": TURNSTILE_SECRET_KEY,
+                          "response": token}).encode()
+        req = urllib.request.Request(
+            "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+            data=data)
+        with urllib.request.urlopen(req, timeout=8) as r:
+            return bool(json.loads(r.read().decode("utf-8")).get("success"))
+    except Exception:
+        return False
+
+
+_ACTIVATION_FOOTER = """<div style="text-align:center;padding:16px 18px 13px;">
+<img src="https://files.catbox.moe/74qot5.png" alt="The Sharp Team" width="80" style="width:80px;height:auto;display:block;margin:0 auto;border:0;">
+<p style="margin:9px 0 0;color:#e8c766;font-size:11px;font-weight:800;letter-spacing:3px;">THE SHARP TEAM</p>
+<p style="margin:7px 0 0;color:#7e8db0;font-size:10px;">250 Park Avenue, Suite 1800, New York, NY 10017</p>
+<p style="margin:3px 0 0;color:#7e8db0;font-size:10px;"><a href="tel:+15513263312" style="color:#7e8db0;text-decoration:none;">(551) 326-3312</a></p>
+<p style="margin:10px 0 0;color:#7e8db0;font-size:9.5px;">21+. Play responsibly. If you or someone you know has a gambling problem, call or text <a href="tel:18004262537" style="color:#7e8db0;text-decoration:underline;">1-800-GAMBLER</a>.</p>
+<p style="margin:5px 0 0;color:#7e8db0;font-size:9.5px;">&copy; 2026 The Sharp Team</p></div>"""
+
+
+def send_activation_email(nombre: str, email: str, token: str, lang: str = "en"):
+    """Email de activación de cuenta (hilo aparte, nunca rompe el registro).
+
+    El enlace apunta a /activar/<token>. EN por defecto; ES si lang == 'es'.
+    """
+    link = f"{SITE_URL}/activar/{token}"
+    if lang == "es":
+        subject = "Activa tu cuenta de The Sharp Team"
+        titulo = "Activa tu cuenta"
+        cuerpo = (f"Hola {nombre} — toca el botón para activar tu cuenta de "
+                  "The Sharp Team. Tu mes gratis de Platinum empieza en el "
+                  "momento en que activas.")
+        boton = "ACTIVAR MI CUENTA"
+        nota = ("¿No se creó esta cuenta con tu correo? Ignora este mensaje "
+                "y la cuenta nunca se activará.")
+        texto = (f"Hola {nombre},\n\nActiva tu cuenta de The Sharp Team "
+                 f"tocando este enlace:\n{link}\n\nTu mes gratis de Platinum "
+                 "empieza al activar. Si no creaste esta cuenta, ignora "
+                 "este mensaje.\n\nThe Sharp Team")
+    else:
+        subject = "Activate your The Sharp Team account"
+        titulo = "Activate your account"
+        cuerpo = (f"Hi {nombre} — tap the button to activate your "
+                  "The Sharp Team account. Your free Platinum month starts "
+                  "the moment you activate.")
+        boton = "ACTIVATE MY ACCOUNT"
+        nota = ("Didn't create this account? Ignore this email and the "
+                "account will never be activated.")
+        texto = (f"Hi {nombre},\n\nActivate your The Sharp Team account by "
+                 f"opening this link:\n{link}\n\nYour free Platinum month "
+                 "starts when you activate. If you didn't create this "
+                 "account, ignore this email.\n\nThe Sharp Team")
+    html = f"""<html><body style="margin:0;background:#070d1d;padding:24px 10px;font-family:Arial,Helvetica,sans-serif;">
+<div style="max-width:480px;margin:0 auto;background:#0e1730;border:1px solid #d4af37;border-radius:14px;overflow:hidden;">
+<div style="text-align:center;padding:22px 18px 4px;">
+<img src="https://files.catbox.moe/74qot5.png" alt="The Sharp Team" width="110" style="width:110px;height:auto;border:0;">
+<p style="margin:12px 0 0;color:#e8c766;font-size:11px;font-weight:800;letter-spacing:3px;">THE SHARP TEAM</p>
+</div>
+<div style="padding:10px 26px 4px;text-align:center;">
+<p style="margin:0;color:#ffffff;font-size:21px;font-weight:800;">{titulo}</p>
+<p style="margin:10px 0 0;color:#a8b3cf;font-size:13.5px;line-height:1.6;">{cuerpo}</p>
+<div style="padding:18px 0 6px;">
+<a href="{link}" style="display:inline-block;background:#2f7bff;color:#ffffff;font-size:14px;font-weight:800;padding:13px 30px;border-radius:999px;text-decoration:none;">{boton}</a>
+</div>
+<p style="margin:8px 0 0;color:#7e8db0;font-size:11px;line-height:1.5;">{nota}</p>
+</div>
+{_ACTIVATION_FOOTER}
+</div></body></html>"""
+
+    def _send():
+        try:
+            _dispatch_email(email, subject, texto, html)
+        except Exception:
+            pass  # silencioso: nunca rompe el registro
+
+    import threading
+    threading.Thread(target=_send, daemon=True).start()
+
+
 def notify_new_member(nombre: str, email: str):
     """Avisa a Alex por email cuando alguien se registra.
 
@@ -2998,6 +3099,13 @@ def migrate_db():
             pending.append("ALTER TABLE users ADD COLUMN reset_token TEXT")
         if "reset_expires" not in cols:
             pending.append("ALTER TABLE users ADD COLUMN reset_expires TEXT")
+        # Activación por correo (2026-10-18, orden de Alex): los miembros que
+        # ya existen quedan verificados (DEFAULT 1) — nadie pierde acceso;
+        # solo los registros NUEVOS nacen sin activar (email_verified = 0).
+        if "email_verified" not in cols:
+            pending.append("ALTER TABLE users ADD COLUMN email_verified INTEGER NOT NULL DEFAULT 1")
+        if "activation_token" not in cols:
+            pending.append("ALTER TABLE users ADD COLUMN activation_token TEXT")
         # Página Account estilo WGT (2026-10-12, pedido por Alex): dirección
         # postal del perfil + perfil de apuestas (estado y casas).
         for _col in ["addr_line1", "addr_line2", "addr_city", "addr_state",
@@ -3579,7 +3687,8 @@ def register():
         _r["units_display"] = f"{float(_r.get('profit') or 0) / 25.0:+.2f}u"
     _drop = "2:00 PM ET"  # 2026-10-17, orden de Alex: la card sale a las 2:00 PM ET TODOS los dias
     _reg_ctx = {"gold": _gold, "stats": _stats, "ayer": _ayer,
-                "recientes": _recientes, "drop_time": _drop}
+                "recientes": _recientes, "drop_time": _drop,
+                "turnstile_key": TURNSTILE_SITE_KEY}
     # Idioma de la landing (2026-10-14, pedido de Alex): manda ?lang=;
     # si no, la cookie; si no, SOLO República Dominicana (geo-IP) recibe
     # español — cualquier otro país ve inglés, siempre.
@@ -3598,66 +3707,114 @@ def register():
         if not nombre or not email or len(password) < 6:
             flash("Escribe tu nombre, un correo válido y una contraseña de al menos 6 caracteres." if _lang == "es" else "Enter your name, a valid email and a password of at least 6 characters.", "error")
             return render_template(_tpl, **_reg_ctx), 400
-        db = get_db()
-        exists = db.execute("SELECT id FROM users WHERE email = ?", (email,)).fetchone()
-        if exists:
-            flash("Ese correo ya está registrado. Inicia sesión." if _lang == "es" else "That email is already registered. Log in.", "error")
+        # Captcha anti-robots (2026-10-18): sin pasar Turnstile no se crea
+        # ninguna cuenta. Sin llaves configuradas, _turnstile_ok() no bloquea.
+        if not _turnstile_ok():
+            flash("Completa la verificación «No soy un robot» e inténtalo de nuevo." if _lang == "es" else "Please complete the 'I'm not a robot' check and try again.", "error")
             return render_template(_tpl, **_reg_ctx), 400
-        new_id = insert_returning_id(
+        db = get_db()
+        exists = db.execute("SELECT id, email_verified FROM users WHERE email = ?", (email,)).fetchone()
+        if exists:
+            _ya_verificado = 1
+            try:
+                _ya_verificado = exists["email_verified"]
+            except Exception:
+                _ya_verificado = 1
+            if _ya_verificado:
+                flash("Ese correo ya está registrado. Inicia sesión." if _lang == "es" else "That email is already registered. Log in.", "error")
+                return render_template(_tpl, **_reg_ctx), 400
+            # Se registró antes pero nunca activó: token nuevo y reenvío.
+            _tok = secrets.token_urlsafe(32)
+            db.execute("UPDATE users SET activation_token = ? WHERE id = ?",
+                       (_tok, exists["id"]))
+            db.commit()
+            send_activation_email(nombre, email, _tok, _lang)
+            flash("Ese correo ya estaba registrado pero sin activar — te reenviamos el correo de activación. Toca el enlace para entrar." if _lang == "es" else "That email was registered but never activated — we just re-sent the activation email. Tap the link inside to get in.", "success")
+            return render_template(_tpl, **_reg_ctx)
+        # La cuenta nace SIN ACTIVAR (2026-10-18, orden de Alex): no hay
+        # sesión, no hay mes gratis ni bienvenida hasta que el dueño toque
+        # el enlace del correo de activación (/activar/<token>).
+        _tok = secrets.token_urlsafe(32)
+        insert_returning_id(
             db,
-            "INSERT INTO users (nombre, email, password_hash, phone, sms_optin, created_at) VALUES (?, ?, ?, ?, ?, ?)",
-            (nombre, email, hash_password(password), phone or None, sms_optin, now_iso()),
+            "INSERT INTO users (nombre, email, password_hash, phone, sms_optin, created_at, lang, email_verified, activation_token) VALUES (?, ?, ?, ?, ?, ?, ?, 0, ?)",
+            (nombre, email, hash_password(password), phone or None, sms_optin, now_iso(), _lang, _tok),
         )
         db.commit()
-        log_notificacion(db, "miembro_nuevo", f"New member: {nombre}", email)
-        # El email del admin (ADMIN_EMAIL) queda marcado automáticamente.
-        es_admin = bool(admin_email()) and email == admin_email()
-        if es_admin:
-            db.execute("UPDATE users SET is_admin = 1 WHERE id = ?", (new_id,))
-            db.commit()
-        if not es_admin:
-            # Mes gratis de Platinum ACTIVO desde el registro (orden de
-            # Alex 2026-10-16): reloj interno de 30 días, sin Stripe y
-            # sin tarjeta; al vencer, el acceso se apaga solo.
-            db.execute(
-                "UPDATE users SET platinum_unlocked = 1, platinum_trial_ends = ? WHERE id = ?",
-                ((datetime.now() + timedelta(days=30)).isoformat(), new_id),
-            )
-            db.commit()
-        session["user_id"] = new_id
-        _registrar_actividad(new_id, "login")
-        session["nombre"] = nombre
-        session["is_admin"] = es_admin
-        notify_new_member(nombre, email)
-        # Pedido Alex 2026-10-05: el email de bienvenida llega a TODOS al
-        # registrarse, aunque sea cuenta gratis.
-        try:
-            send_welcome_email(nombre, email)
-            db.execute("UPDATE users SET welcome_email_sent = 1 WHERE id = ?", (new_id,))
-            db.commit()
-        except Exception:
-            pass
-        # Pixel de Meta: la bienvenida reporta el registro una sola vez.
-        # CAPI (2026-10-14): se genera UN event_id por registro y se
-        # comparte entre el envío del servidor (aquí) y el pixel del
-        # navegador (en /bienvenida) para que Meta deduplique el evento.
-        fb_event_id = uuid.uuid4().hex
-        session["fb_reg"] = 1
-        session["fb_event_id"] = fb_event_id
-        client_ip = (request.headers.get("X-Forwarded-For", "") or "").split(",")[0].strip() or request.remote_addr
-        _send_meta_capi_registration(
-            email,
-            fb_event_id,
-            client_ip,
-            request.user_agent.string if request.user_agent else "",
-            request.cookies.get("_fbp"),
-            request.cookies.get("_fbc"),
-            request.url,
-        )
-        return redirect(url_for("bienvenida"))
+        send_activation_email(nombre, email, _tok, _lang)
+        flash("✅ ¡Ya casi! Te enviamos un correo de activación — toca el enlace para activar tu cuenta y tu mes gratis de Platinum." if _lang == "es" else "✅ Almost there! We sent you an activation email — tap the link inside to activate your account and your free Platinum month.", "success")
+        return render_template(_tpl, **_reg_ctx)
     _resp = make_response(render_template(_tpl, **_reg_ctx))
     _resp.set_cookie("tst_lang", _lang, max_age=30 * 86400, samesite="Lax")
     return _resp
+
+
+@app.route("/activar/<token>")
+def activar_cuenta(token):
+    """Activa una cuenta nueva desde el enlace del correo (2026-10-18).
+
+    Al activar: se marca verificada, arranca el mes gratis de Platinum
+    (30 días, orden de Alex 2026-10-16 corrida a este momento), entra la
+    sesión, sale la bienvenida y el aviso de miembro nuevo, y se reporta
+    el registro a Meta (pixel + CAPI con el mismo event_id, como antes).
+    """
+    db = get_db()
+    user = db.execute("SELECT * FROM users WHERE activation_token = ?",
+                      (token,)).fetchone()
+    if not user:
+        flash("That activation link is no longer valid. Log in or register again.", "error")
+        return redirect(url_for("login"))
+    uid = user["id"]
+    nombre = user["nombre"]
+    email = user["email"]
+    db.execute("UPDATE users SET email_verified = 1, activation_token = NULL WHERE id = ?",
+               (uid,))
+    db.commit()
+    # El email del admin (ADMIN_EMAIL) queda marcado automáticamente.
+    es_admin = bool(admin_email()) and email == admin_email()
+    if es_admin:
+        db.execute("UPDATE users SET is_admin = 1 WHERE id = ?", (uid,))
+        db.commit()
+    else:
+        # Mes gratis de Platinum ACTIVO desde la ACTIVACIÓN (2026-10-18;
+        # antes arrancaba al llenar el formulario).
+        db.execute(
+            "UPDATE users SET platinum_unlocked = 1, platinum_trial_ends = ? WHERE id = ?",
+            ((datetime.now() + timedelta(days=30)).isoformat(), uid),
+        )
+        db.commit()
+    log_notificacion(db, "miembro_nuevo", f"New member: {nombre}", email)
+    session["user_id"] = uid
+    session["nombre"] = nombre
+    session["is_admin"] = es_admin
+    session.permanent = True
+    _registrar_actividad(uid, "login")
+    notify_new_member(nombre, email)
+    # Pedido Alex 2026-10-05: el email de bienvenida llega a TODOS, y desde
+    # 2026-10-18 llega al ACTIVAR la cuenta (cuenta real, correo real).
+    try:
+        send_welcome_email(nombre, email)
+        db.execute("UPDATE users SET welcome_email_sent = 1 WHERE id = ?", (uid,))
+        db.commit()
+    except Exception:
+        pass
+    # Pixel de Meta: la bienvenida reporta el registro una sola vez.
+    # CAPI (2026-10-14): UN event_id compartido entre el servidor (aquí) y
+    # el pixel del navegador (en /bienvenida) para que Meta deduplique.
+    fb_event_id = uuid.uuid4().hex
+    session["fb_reg"] = 1
+    session["fb_event_id"] = fb_event_id
+    client_ip = (request.headers.get("X-Forwarded-For", "") or "").split(",")[0].strip() or request.remote_addr
+    _send_meta_capi_registration(
+        email,
+        fb_event_id,
+        client_ip,
+        request.user_agent.string if request.user_agent else "",
+        request.cookies.get("_fbp"),
+        request.cookies.get("_fbc"),
+        request.url,
+    )
+    return redirect(url_for("bienvenida"))
 
 
 # Links rastreados (pedido Alex 2026-10-02): cada clic se guarda en
@@ -3892,6 +4049,32 @@ def login():
                 db.execute("UPDATE users SET is_admin = 1 WHERE id = ?", (user["id"],))
                 db.commit()
                 es_admin = True
+        # Cuenta SIN ACTIVAR (2026-10-18): llenó el formulario pero nunca
+        # tocó el enlace del correo — no entra; se le reenvía la activación
+        # al momento (token nuevo). El admin nunca se bloquea a sí mismo.
+        _verificado = 1
+        try:
+            _verificado = user["email_verified"]
+        except Exception:
+            _verificado = 1
+        if not _verificado and es_admin:
+            db.execute("UPDATE users SET email_verified = 1, activation_token = NULL WHERE id = ?",
+                       (user["id"],))
+            db.commit()
+            _verificado = 1
+        if not _verificado:
+            _tok = secrets.token_urlsafe(32)
+            db.execute("UPDATE users SET activation_token = ? WHERE id = ?",
+                       (_tok, user["id"]))
+            db.commit()
+            _ulang = "en"
+            try:
+                _ulang = user["lang"] or "en"
+            except Exception:
+                _ulang = "en"
+            send_activation_email(user["nombre"], email, _tok, _ulang)
+            flash("Your account isn't activated yet — we just re-sent the activation email. Tap the link inside to get in.", "error")
+            return render_template("login.html"), 403
         session["user_id"] = user["id"]
         session["nombre"] = user["nombre"]
         session["is_admin"] = es_admin
@@ -9088,7 +9271,7 @@ def stripe_webhook():
             estaba_cancelado = bool(row["cancel_requested_at"])
             tiene_tg = bool(row["telegram_user_id"])
             db.execute(
-                "UPDATE users SET platinum_unlocked = 1, stripe_customer_id = ?, "
+                "UPDATE users SET platinum_unlocked = 1, email_verified = 1, activation_token = NULL, stripe_customer_id = ?, "
                 "stripe_subscription_id = ?, stripe_past_due = 0, cancel_requested_at = NULL, platinum_trial_ends = NULL WHERE id = ?",
                 (customer_id or None, sub_id or None, uid),
             )
