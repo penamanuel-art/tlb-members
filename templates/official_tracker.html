@@ -66,6 +66,7 @@
 .yw-clv-pos { color:#2fbf71; }
 .yw-clv-neg { color:#ff8a8a; }
 .yw-share { color:#2fe6a7; font-size:12px; font-weight:300; text-decoration:none; display:inline-block; margin-top:5px; }
+.yw-view { color:#7dd3fc; font-size:11.5px; font-weight:300; display:block; margin-top:5px; }
 .yw-res { text-align:right; flex:none; display:block; }
 .yw-res .st { font-size:11px; font-weight:300; letter-spacing:1.4px; display:block; }
 .yw-res .u { font-size:16px; font-weight:300; margin-top:3px; display:block; }
@@ -96,6 +97,7 @@
       <span class="yw-match">{% if x.abbr and x.opp_abbr %}{{ x.abbr }} vs {{ x.opp_abbr }} · {% endif %}{{ ftexto }}{% if x.cuota %} · {{ x.cuota }}{% endif %}</span>
       {% if x.cierre %}<span class="yw-clv">Closed {{ x.cierre }} · CLV <span class="{{ 'yw-clv-pos' if (x.clv or 0) >= 0 else 'yw-clv-neg' }}">{{ '%+.1f' % (x.clv or 0) }}%</span></span>{% endif %}
       {% if x.share_id %}<a class="yw-share" href="{{ url_for('share_play', play_id=x.share_id) }}" onclick="event.stopPropagation()">Share 📤</a>{% endif %}
+      {% if x.comprobante %}<span class="yw-view">🎫 View ticket</span>{% endif %}
     </span>
     <span class="yw-res">
       <span class="st {{ 'yw-won-t' if won else 'yw-lost-t' }}">{{ 'WON' if won else 'LOST' }}</span>
