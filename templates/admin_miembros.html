@@ -3,25 +3,15 @@
 {% block content %}
 
 <style>
-  .mx-card{background:linear-gradient(160deg,#101828,#0c1322);border:1px solid #1e2a45;border-radius:18px;padding:18px;margin-bottom:14px;}
-  .mx-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;}
-  .mx-name{font-size:19px;font-weight:800;color:#ffffff;line-height:1.2;}
-  .mx-new{font-size:10px;font-weight:800;color:#f5c542;letter-spacing:1px;vertical-align:middle;}
-  .mx-email{font-size:13px;color:#8fa1bd;margin-top:3px;word-break:break-all;}
-  .mx-status{flex:none;font-size:11px;font-weight:800;letter-spacing:1px;padding:6px 12px;border-radius:999px;white-space:nowrap;}
+  .mx-item{display:flex;align-items:center;gap:11px;background:linear-gradient(160deg,#101828,#0c1322);border:1px solid #1e2a45;border-radius:14px;padding:11px 13px;margin-bottom:8px;text-decoration:none;}
+  .mx-av{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#d4af37,#8a6d1c);color:#111;font-weight:900;font-size:15px;display:flex;align-items:center;justify-content:center;flex:none;}
+  .mx-nm{flex:1;min-width:0;color:#ffffff;font-size:15px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .mx-new{font-size:10px;font-weight:800;color:#f5c542;letter-spacing:1px;}
+  .mx-status{flex:none;font-size:10px;font-weight:800;letter-spacing:1px;padding:5px 10px;border-radius:999px;white-space:nowrap;}
   .mx-status.plat{background:linear-gradient(180deg,#cdf3ff,#63cbf5);color:#07304a;}
   .mx-status.free{background:#22345c;color:#aebdd4;}
   .mx-status.adm{background:#22c55e;color:#08130c;}
-  .mx-rows{margin-top:14px;border-top:1px solid #1e2a45;padding-top:12px;display:flex;flex-direction:column;gap:8px;}
-  .mx-row{display:flex;justify-content:space-between;align-items:center;font-size:13.5px;gap:10px;}
-  .mx-row .k{color:#8fa1bd;}
-  .mx-row .v{color:#e6ecf5;font-weight:700;text-align:right;}
-  .mx-row .v.gold{color:#f5c542;}
-  .mx-row .v.red{color:#f87171;}
-  .mx-note{margin-top:10px;font-size:12px;color:#f59e0b;}
-  .mx-actions{margin-top:14px;display:flex;gap:8px;}
-  .mx-actions form{flex:1;}
-  .mx-actions button{width:100%;}
+  .mx-more{color:#7dd3fc;font-size:12.5px;font-weight:700;flex:none;white-space:nowrap;}
 </style>
 
 <section class="tracker-head">
@@ -32,45 +22,14 @@
 </section>
 
 {% for m in miembros %}
-<article class="mx-card">
-  <div class="mx-top">
-    <div>
-      <div class="mx-name">{{ m.nombre }} {% if m.es_nuevo %}<span class="mx-new">● NEW</span>{% endif %}</div>
-      <div class="mx-email">{{ m.email }}</div>
-    </div>
-    {% if m.is_admin %}<span class="mx-status adm">ADMIN</span>
-    {% elif m.platinum_unlocked %}<span class="mx-status plat">★ PLATINUM</span>
-    {% else %}<span class="mx-status free">FREE</span>{% endif %}
-  </div>
-  <div class="mx-rows">
-    <div class="mx-row"><span class="k">📅 Joined</span><span class="v">{{ m.created_at[:10] if m.created_at else '—' }}</span></div>
-    {% if m.platinum_unlocked %}
-    <div class="mx-row"><span class="k">💎 Platinum</span>
-      {% if m.platinum_trial_ends %}<span class="v gold">Until {{ m.platinum_trial_ends[:10] }}</span>
-      {% elif m.stripe_subscription_id %}<span class="v gold">Active · Stripe</span>
-      {% else %}<span class="v gold">Active · No expiry</span>{% endif %}
-    </div>
-    {% else %}
-    <div class="mx-row"><span class="k">💎 Platinum</span><span class="v">Not subscribed</span></div>
-    {% endif %}
-    {% if m.stripe_past_due %}
-    <div class="mx-row"><span class="k">💳 Payment</span><span class="v red">Past due</span></div>
-    {% endif %}
-  </div>
-  {% if m.cancel_requested_at %}<div class="mx-note">⚠️ Cancel requested {{ m.cancel_requested_at[:10] }}</div>{% endif %}
-  <div class="mx-actions">
-    <form method="post" action="{{ url_for('admin_toggle_platinum') }}">
-      <input type="hidden" name="user_id" value="{{ m.id }}">
-      <button class="btn btn-sm {{ 'btn-ghost' if m.platinum_unlocked else 'btn-place' }}" type="submit">{{ 'Remove Platinum' if m.platinum_unlocked else 'Activate Platinum' }}</button>
-    </form>
-    {% if not m.is_admin %}
-    <form method="post" action="{{ url_for('admin_eliminar_miembro') }}" onsubmit="return confirm('Delete this account?');">
-      <input type="hidden" name="user_id" value="{{ m.id }}">
-      <button class="btn btn-sm btn-ghost" type="submit">Delete</button>
-    </form>
-    {% endif %}
-  </div>
-</article>
+<a class="mx-item" href="{{ url_for('admin_miembro_detalle', user_id=m.id) }}">
+  <span class="mx-av">{{ (m.nombre or '?')[:1]|upper }}</span>
+  <span class="mx-nm">{{ m.nombre }}{% if m.es_nuevo %} <span class="mx-new">● NEW</span>{% endif %}</span>
+  {% if m.is_admin %}<span class="mx-status adm">ADMIN</span>
+  {% elif m.platinum_unlocked %}<span class="mx-status plat">★ PLATINUM</span>
+  {% else %}<span class="mx-status free">FREE</span>{% endif %}
+  <span class="mx-more">Ver más →</span>
+</a>
 {% else %}
 <p class="muted">No registered members.</p>
 {% endfor %}
