@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Free Plays &amp; Your First Month of Platinum Free — The Sharp Team{% endblock %}
+{% block title %}Free Plays &amp; Platinum from $1 — The Sharp Team{% endblock %}
 {% block content %}
 <!-- /free rediseñada 2026-10-17 (muestra aprobada por Alex): familia marino/oro
      de bienvenida+alerta. Record EN VIVO desde _public_stats() — nunca a mano. -->
@@ -296,7 +296,7 @@
 
     <!-- ================= CREDENTIALS BAR ================= -->
     <div class="credbar">
-      Real ticket on every play <span class="sep">·</span> Posted before game time <span class="sep">·</span> Graded in public, win or loss <span class="sep">·</span> <strong>First month FREE — no card</strong>
+      Real ticket on every play <span class="sep">·</span> Posted before game time <span class="sep">·</span> Graded in public, win or loss <span class="sep">·</span> <strong>Platinum starts at $1</strong>
     </div>
 
     <!-- ================= HERO ================= -->
@@ -304,15 +304,15 @@
       <div class="wrap">
         <img class="hero-logo rise" src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team — golden shark emblem" width="196" height="196" />
         <p class="hero-brand">The Sharp Team</p>
-        <h1>Your first month of Platinum is <span class="free-word">free</span>.</h1>
+        <h1>Your first week of Platinum is <span class="free-word">$1</span>.</h1>
         <p class="hero-sub">
           Real tickets, posted <strong>before kickoff</strong> and graded in public —
           <strong>wins and losses, all of it</strong>. No system hides its record here.
-          Start today: full Platinum access for 30 days, <strong>no card required</strong>.
+          Start today: your Gold plays are free forever — and full Platinum access starts with a <strong>$1 week</strong>.
         </p>
         <div class="cta-row">
-          <a class="btn" href="{{ stripe_url }}" target="_blank" rel="noopener">Start free today</a>
-          <p class="cta-note"><span class="dot">●</span>&nbsp; No card required &nbsp;·&nbsp; Free play every day, forever</p>
+          <a class="btn" href="{{ stripe_url }}" target="_blank" rel="noopener">Create my free account</a>
+          <p class="cta-note"><span class="dot">●</span>&nbsp; Free play every day, forever &nbsp;·&nbsp; Platinum from $1</p>
         </div>
 
         <div class="next-card">
@@ -423,7 +423,7 @@
       <div class="wrap">
         <div class="sec-head">
           <h2 id="how-h">How it works</h2>
-          <p>From sign-up to your first card in three steps — and the first month costs you nothing.</p>
+          <p>From sign-up to your first card in three steps — and your Gold plays cost you nothing, ever.</p>
         </div>
         <div class="steps">
           <article class="step">
@@ -433,8 +433,8 @@
           </article>
           <article class="step">
             <div class="step-num" aria-hidden="true">2</div>
-            <h3>Platinum turns on by itself</h3>
-            <p>Your free month starts the moment you register. Full access — the complete card and every tool — with nothing to activate.</p>
+            <h3>Platinum starts for $1</h3>
+            <p>When you&rsquo;re ready, one dollar turns on full Platinum for 7 days — the complete card and every tool, right from your Dashboard.</p>
           </article>
           <article class="step">
             <div class="step-num" aria-hidden="true">3</div>
@@ -454,13 +454,13 @@
     <section aria-labelledby="whyfree-h">
       <div class="wrap">
         <div class="sec-head">
-          <h2 id="whyfree-h">Why is the first month actually free?</h2>
-          <p>Fair question — &ldquo;free&rdquo; usually hides a catch. Here is exactly how ours works.</p>
+          <h2 id="whyfree-h">Why does Platinum start at $1?</h2>
+          <p>Fair question — a dollar sounds like a trick. Here is exactly how it works.</p>
         </div>
         <div class="whyfree">
-          <p>When you register, Platinum switches on <strong>automatically for 30 days</strong>. We never ask for a card, so there is <strong>nothing on file to charge</strong> when the month ends — no surprise bill, ever. If you do nothing, you simply keep the free plan.</p>
-          <p>The members who stay and pay <strong>$49.99 a month</strong> are what fund the free daily play everyone else gets. That&rsquo;s the whole model: prove the system for a month, earn the subscription, and let the people it works for pay for the ones still deciding.</p>
-          <p><span class="accent">Transparency is the pitch.</span> If the plays and the tools aren&rsquo;t worth $49.99 after a free month of watching every ticket get graded in public — don&rsquo;t pay it.</p>
+          <p>When you register, your account and the daily Gold play are <strong>free forever</strong> — no card, no clock. Platinum is separate: <strong>$1 starts your first 7 days</strong>, charged once through Stripe. If you do nothing else, you simply keep the free plan.</p>
+          <p>The members who stay and pay <strong>$15.99 a week</strong> are what fund the free daily play everyone else gets. That&rsquo;s the whole model: prove the system for a week, earn the subscription, and let the people it works for pay for the ones still deciding.</p>
+          <p><span class="accent">Transparency is the pitch.</span> If the plays and the tools aren&rsquo;t worth $15.99 a week after a $1 week of watching every ticket get graded in public — don&rsquo;t pay it.</p>
         </div>
       </div>
     </section>
@@ -497,7 +497,7 @@
             <div class="dont-x" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></div>
             <div>
               <h3>No surprise charges</h3>
-              <p>Your free month never asks for a card. Nothing to forget, nothing to cancel, nothing billed by accident.</p>
+              <p>Your free account never asks for a card. Platinum&rsquo;s $1 week is charged once, up front, through Stripe — and cancelling before day 8 means that&rsquo;s all you ever pay.</p>
             </div>
           </article>
         </div>
@@ -509,7 +509,7 @@
       <div class="wrap">
         <div class="sec-head">
           <h2 id="plans-h">Start free. Stay for as long as it earns its place.</h2>
-          <p>Free is free forever. Platinum starts with a full free month — then it&rsquo;s your call.</p>
+          <p>Free is free forever. Platinum starts with a $1 week — then it&rsquo;s your call.</p>
         </div>
         <div class="plans">
 
@@ -527,17 +527,17 @@
           </article>
 
           <article class="plan platinum">
-            <span class="plan-flag">First month free</span>
+            <span class="plan-flag">First week $1</span>
             <h3>Platinum</h3>
-            <p class="price">$0 <small>for 30 days</small></p>
-            <p class="price-sub">Then $49.99/month. Cancel anytime, in two clicks.</p>
+            <p class="price">$1 <small>for 7 days</small></p>
+            <p class="price-sub">Then $15.99/week. Cancel anytime, in two clicks.</p>
             <ul>
               <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span><strong>Everything in Free</strong>, plus the full daily card — Platinum plays included</span></li>
               <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>+EV Board, Sharp Money &amp; Compare Prices</li>
               <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Platinum Telegram channel — the card the moment it posts</li>
               <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>The full Academy — the system, lesson by lesson</li>
             </ul>
-            <a class="btn btn-gold" href="{{ stripe_url }}" target="_blank" rel="noopener">Start my free month</a>
+            <a class="btn btn-gold" href="{{ stripe_url }}" target="_blank" rel="noopener">Start my $1 week</a>
           </article>
 
         </div>
@@ -554,8 +554,8 @@
         </div>
         <div class="faq">
           <details>
-            <summary>Is the first month of Platinum really free?</summary>
-            <p>Yes. It turns on <strong>automatically the moment you register</strong>, and we never ask for a card. When the 30 days end, nothing is charged — you choose whether to subscribe, and your free plan keeps working either way.</p>
+            <summary>Is the free plan really free?</summary>
+            <p>Yes. Your account and the daily Gold play are <strong>free forever</strong> — we never ask for a card. Platinum is the paid tier: it starts at <strong>$1 for your first 7 days</strong>, and only continues at $15.99/week if you choose to stay. Your free plan keeps working either way.</p>
           </details>
           <details>
             <summary>When do the plays come out?</summary>
@@ -566,8 +566,8 @@
             <p>On your <strong>Dashboard</strong> — that&rsquo;s home base. The free card also goes out on the public Telegram channel, Platinum members get the full card on the Platinum channel, and email and push alerts tell you the moment the card is live.</p>
           </details>
           <details>
-            <summary>How do I pay or cancel after the free month?</summary>
-            <p>If you stay, Platinum is <strong>$49.99/month</strong>, paid securely through Stripe from your account page. Cancel anytime from that same page — two clicks, no phone calls, no retention scripts.</p>
+            <summary>How do I pay for Platinum, and how do I cancel?</summary>
+            <p>Platinum starts at <strong>$1 for your first 7 days</strong>, then <strong>$15.99/week</strong>, paid securely through Stripe. Cancel anytime from your account page — two clicks, no phone calls, no retention scripts.</p>
           </details>
           <details>
             <summary>What sports do you cover?</summary>
@@ -585,9 +585,9 @@
     <div class="final">
       <div class="wrap">
         <h2>Today&rsquo;s card posts at 2:00 PM ET. Be inside when it does.</h2>
-        <p>Your free month is already waiting — it starts the second you register, no card required.</p>
+        <p>Your free account is waiting — Gold plays from the second you register, no card required. Platinum starts at $1 when you&rsquo;re ready.</p>
         <div class="cta-row">
-          <a class="btn" href="{{ stripe_url }}" target="_blank" rel="noopener">Start free today</a>
+          <a class="btn" href="{{ stripe_url }}" target="_blank" rel="noopener">Create my free account</a>
           <p class="cta-note">Free forever plan included &nbsp;·&nbsp; Cancel Platinum anytime</p>
         </div>
       </div>
