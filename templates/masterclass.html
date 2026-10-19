@@ -81,6 +81,15 @@
 .ph-item[open ] .ph-link{display:none;}
 .ph-body{padding:0 18px 18px;position:relative;}
 .ph-body p{font-size:.92rem;color:#c6cfdf;line-height:1.6;}
+.mc-h{font-size:1rem;font-weight:800;color:#f5eeda;margin:18px 0 4px;letter-spacing:.2px;}
+.mc-h:first-child{margin-top:4px;}
+.ph-body ul.mc-ul,.ph-body ol.mc-ol{color:#c6cfdf;font-size:.92rem;line-height:1.6;padding-left:20px;margin:8px 0;}
+.ph-body li{margin:4px 0;}
+.mc-q{font-weight:700;color:#ffffff;margin-top:14px;}
+.mc-quote{border-left:3px solid #e8c766;padding-left:12px;color:#f5eeda;font-style:italic;}
+.mc-table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.85rem;}
+.mc-table th{color:#e8c766;text-align:left;padding:7px 8px;border-bottom:1px solid rgba(232,199,102,.35);font-size:.78rem;letter-spacing:.4px;}
+.mc-table td{color:#c6cfdf;padding:7px 8px;border-bottom:1px solid rgba(255,255,255,.07);line-height:1.45;vertical-align:top;}
 </style>
 {% for fname, fdesc in mc_fases %}
 {% set items = archivo | selectattr('fase', 'equalto', fname) | list %}
@@ -101,7 +110,7 @@
       <span class="ph-link">Read the lesson →</span>
     </summary>
     <div class="ph-body">
-      <p>{{ l.resumen }}</p>
+      {% if l.cuerpo %}{{ l.cuerpo | safe }}{% else %}<p>{{ l.resumen }}</p>{% endif %}
       <div class="lesson-clave"><strong>Key idea:</strong> {{ l.clave }}</div>
     </div>
   </details>
