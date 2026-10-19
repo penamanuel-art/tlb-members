@@ -8752,8 +8752,12 @@ def ev_board_results():
 @app.route("/sharp")
 @login_required
 def sharp():
+    """Sharp Money (Platinum, 2026-10-19): sin Platinum activo, el
+    miembro cae en la página de desbloqueo."""
     db = get_db()
     record_checkin(db, session["user_id"])
+    if not platinum_unlocked_for(current_user()):
+        return redirect(url_for("desbloquear_platinum"))
     return render_template("sharp.html", board=load_sharp_board())
 
 
