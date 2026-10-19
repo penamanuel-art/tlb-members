@@ -1,0 +1,31 @@
+{% extends "base_v2.html" %}
+{% block title %}Odds Board — The Sharp Team{% endblock %}
+{% block content %}
+<style>
+.ob-lock{max-width:560px;margin:0 auto;color:#fff;text-align:center;padding:28px 16px 40px}
+.ob-lock .kicker{font-size:11px;font-weight:800;letter-spacing:2px;color:#8f8fb0;margin:6px 0 4px}
+.ob-lock h2{font-size:26px;font-weight:800;margin:0 0 8px}
+.ob-lock .muted{color:#9a9ab5;font-size:14px;margin:0 0 18px;line-height:1.6}
+.ob-lock-ico{font-size:44px;margin-bottom:10px;filter:drop-shadow(0 0 12px rgba(47,230,167,.45))}
+.ob-lock-feats{text-align:left;background:#101828;border:1px solid #22314f;border-radius:14px;padding:16px 18px;margin:0 0 18px}
+.ob-lock-feats ul{margin:0;padding:0}
+.ob-lock-feats li{list-style:none;margin:10px 0;font-size:14px;color:#e8e8f2;display:flex;gap:10px;align-items:flex-start}
+.ob-lock-feats .ck{color:#2fe6a7;font-weight:800}
+</style>
+
+<div class="ob-lock">
+  <p class="kicker">PLATINUM TOOL</p>
+  <div class="ob-lock-ico">&#128202;</div>
+  <h2>Odds Board</h2>
+  <p class="muted">Every game on today&rsquo;s slate with the best moneyline price for each side — and the book offering it — so you never leave cents on the table.</p>
+  <div class="ob-lock-feats">
+    <ul>
+      <li><span class="ck">✓</span><span>Best price for both sides of every game today</span></li>
+      <li><span class="ck">✓</span><span>NFL, college football, MLB, NHL and NBA in one board</span></li>
+      <li><span class="ck">✓</span><span>The book with the top price named on every line</span></li>
+    </ul>
+  </div>
+</div>
+
+{% include "_upsell_vip.html" %}
+{% endblock %}
