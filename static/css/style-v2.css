@@ -1119,29 +1119,38 @@ body.v2 .tstc-novig:active, body.v2 .tstc-track:active { transform: scale(0.97);
 /* Barra de navegación inferior (2026-10-05, pedido por Alex — idea 2 aprobada):
    Home · Plays · Tracker · EV Board · Account, fija abajo estilo app. */
 .v2-bottomnav {
-  position: fixed; left: 12px; right: 12px; bottom: calc(8px + env(safe-area-inset-bottom)); z-index: 1001;
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 1001;
   display: flex; justify-content: space-around; align-items: stretch;
-  background: linear-gradient(180deg, rgba(17, 28, 52, 0.82), rgba(8, 15, 30, 0.9));
-  border: 1px solid rgba(120, 160, 255, 0.16);
-  border-radius: 26px;
-  padding: 6px 4px;
-  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  background: #0b0f14;
+  border: 0; border-top: 1px solid rgba(139, 152, 173, 0.16);
+  border-radius: 0;
+  padding: 6px 6px calc(6px + env(safe-area-inset-bottom));
+  backdrop-filter: none; -webkit-backdrop-filter: none;
+  box-shadow: none;
 }
 .v2-bnav-item {
-  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px;
-  padding: 6px 2px; text-decoration: none; color: #8fa1c2;
-  font-size: 9px; font-weight: 700; min-width: 0; border-radius: 18px;
-  border: 1px solid transparent;
-  transition: all 0.2s ease;
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px;
+  padding: 7px 2px 6px; text-decoration: none; color: #8b98ad;
+  font-size: 10px; font-weight: 500; letter-spacing: 0.01em; min-width: 0; border-radius: 22px;
+  border: 0 solid transparent;
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
 }
 .v2-bnav-item:active { transform: scale(0.95); }
-.v2-bnav-ico { font-size: 19px; line-height: 1; }
+.v2-bnav-ico {
+  display: flex; align-items: center; justify-content: center;
+  width: 22px; height: 22px; font-size: 20px; line-height: 1;
+}
+.v2-bnav-ico svg {
+  display: block; width: 21px; height: 21px;
+  fill: none; stroke: currentColor; stroke-width: 1.7;
+  stroke-linecap: round; stroke-linejoin: round;
+}
 .v2-bnav-item.active {
-  color: #ffffff;
-  background: linear-gradient(180deg, #4da3ff, #2f7bff);
-  border-color: rgba(255, 255, 255, 0.22);
-  box-shadow: 0 6px 18px rgba(47, 123, 255, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  color: #2fe6a7;
+  background: rgba(47, 230, 167, 0.15);
+  border-color: transparent;
+  box-shadow: none;
+  font-weight: 600;
 }
 /* El ticker de resultados sube encima de la barra */
 body.v2.has-bottomnav .ticker-dock-bottom { bottom: calc(68px + env(safe-area-inset-bottom)); }
