@@ -46,12 +46,16 @@
 .tc-cta span{font-size:13px;font-weight:300;color:#9a9ab5;line-height:1.5;display:block}
 .tc-cta .go{color:#d4af37;font-weight:600}
 .tc-note{color:#9a9ab5;font-size:12px;text-align:center;line-height:1.6;margin:14px 0 0}
+.tc-checks{display:flex;gap:8px;flex-wrap:wrap}
+.tc-check{display:inline-flex;align-items:center;gap:7px;background:#0f0f16;border:1px solid #3a3a4a;color:#c9c9da;border-radius:999px;padding:8px 13px;font-size:13.5px;font-weight:600;cursor:pointer}
+.tc-check input{accent-color:#d4af37;width:16px;height:16px;padding:0;margin:0;cursor:pointer}
+.tc-check.off{opacity:.35}
 </style>
 
 <div class="tc-wrap">
   <p class="kicker">FREE TOOLS</p>
   <h2>Betting Calculators</h2>
-  <p class="muted">Five pro calculators, free forever — no account needed. The same math our model runs on every play: fair prices, true probabilities and disciplined stake sizing.</p>
+  <p class="muted">Nine pro calculators, free forever — no account needed. The same math our model runs on every play: fair prices, true probabilities and disciplined stake sizing.</p>
 
   <div class="tc-tabs" role="tablist">
     <button class="tc-tab active" type="button" data-tab="converter">Odds Converter</button>
@@ -59,6 +63,10 @@
     <button class="tc-tab" type="button" data-tab="kelly">Kelly</button>
     <button class="tc-tab" type="button" data-tab="hedge">Hedge</button>
     <button class="tc-tab" type="button" data-tab="parlay">Parlay</button>
+    <button class="tc-tab" type="button" data-tab="arbitrage">Arbitrage</button>
+    <button class="tc-tab" type="button" data-tab="middle">Middle</button>
+    <button class="tc-tab" type="button" data-tab="roundrobin">Round Robin</button>
+    <button class="tc-tab" type="button" data-tab="clv">CLV</button>
   </div>
 
   <!-- ============ CONVERTER ============ -->
@@ -199,6 +207,172 @@
     </div>
   </section>
 
+  <!-- ============ ARBITRAGE ============ -->
+  <section class="tc-panel" id="panel-arbitrage">
+    <div class="tc-card">
+      <h3>Arbitrage Calculator</h3>
+      <p class="how">Two books disagree on a game? Enter both prices and your total stake. If the combined implied probability is under 100%, we split your money so you lock in the same profit no matter who wins.</p>
+      <div class="tc-2col">
+        <div class="tc-field">
+          <label for="arbA">SIDE A ODDS</label>
+          <input id="arbA" type="text" inputmode="numeric" value="+110" aria-label="Side A odds">
+        </div>
+        <div class="tc-field">
+          <label for="arbB">SIDE B ODDS</label>
+          <input id="arbB" type="text" inputmode="numeric" value="+110" aria-label="Side B odds">
+        </div>
+      </div>
+      <div class="tc-field" style="margin:0">
+        <label for="arbTotal">TOTAL STAKE ($)</label>
+        <input id="arbTotal" type="number" min="0" step="any" value="100" inputmode="decimal" aria-label="Total stake">
+      </div>
+    </div>
+    <p class="tc-msg hidden" id="arbMsg"></p>
+    <div class="tc-results hidden" id="arbResults">
+      <div class="tc-grid">
+        <div class="tc-stat"><div class="v gold" id="arbStakeA">—</div><div class="l">Bet on Side A</div></div>
+        <div class="tc-stat"><div class="v gold" id="arbStakeB">—</div><div class="l">Bet on Side B</div></div>
+        <div class="tc-stat"><div class="v" id="arbProfit">—</div><div class="l">Guaranteed profit, win either way</div></div>
+        <div class="tc-stat"><div class="v" id="arbRoi">—</div><div class="l">Return on total stake (ROI)</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ MIDDLE ============ -->
+  <section class="tc-panel" id="panel-middle">
+    <div class="tc-card">
+      <h3>Middle Calculator</h3>
+      <p class="how">A middle is two bets on opposite sides of the same game at different lines — if the result lands between the lines, both bets win. Enter spread lines as the book shows them (e.g. -3.5 and +4.5). For totals, enter the Over line as a negative and the Under line as a positive (e.g. -47.5 and +49.5).</p>
+      <div class="tc-2col">
+        <div class="tc-field">
+          <label for="midLA">SIDE A LINE</label>
+          <input id="midLA" type="number" step="any" value="-3.5" inputmode="decimal" aria-label="Side A line">
+        </div>
+        <div class="tc-field">
+          <label for="midLB">SIDE B LINE</label>
+          <input id="midLB" type="number" step="any" value="4.5" inputmode="decimal" aria-label="Side B line">
+        </div>
+      </div>
+      <div class="tc-2col">
+        <div class="tc-field">
+          <label for="midOA">SIDE A ODDS</label>
+          <input id="midOA" type="text" inputmode="numeric" value="-110" aria-label="Side A odds">
+        </div>
+        <div class="tc-field">
+          <label for="midOB">SIDE B ODDS</label>
+          <input id="midOB" type="text" inputmode="numeric" value="-110" aria-label="Side B odds">
+        </div>
+      </div>
+      <div class="tc-2col">
+        <div class="tc-field" style="margin:0">
+          <label for="midSA">SIDE A STAKE ($)</label>
+          <input id="midSA" type="number" min="0" step="any" value="100" inputmode="decimal" aria-label="Side A stake">
+        </div>
+        <div class="tc-field" style="margin:0">
+          <label for="midSB">SIDE B STAKE ($)</label>
+          <input id="midSB" type="number" min="0" step="any" value="100" inputmode="decimal" aria-label="Side B stake">
+        </div>
+      </div>
+    </div>
+    <p class="tc-msg hidden" id="midMsg"></p>
+    <div class="tc-results hidden" id="midResults">
+      <div class="tc-grid">
+        <div class="tc-stat"><div class="v gold" id="midWindow">—</div><div class="l">Middle window</div></div>
+        <div class="tc-stat"><div class="v" id="midBoth">—</div><div class="l">Net if the middle hits (both win)</div></div>
+        <div class="tc-stat"><div class="v" id="midAOnly">—</div><div class="l">Net if only Side A wins</div></div>
+        <div class="tc-stat"><div class="v" id="midBOnly">—</div><div class="l">Net if only Side B wins</div></div>
+        <div class="tc-stat" id="midPushAStat" style="display:none"><div class="v" id="midPushA">—</div><div class="l">Net if it lands exactly on A's line (A pushes, B wins)</div></div>
+        <div class="tc-stat" id="midPushBStat" style="display:none"><div class="v" id="midPushB">—</div><div class="l">Net if it lands exactly on B's line (B pushes, A wins)</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ROUND ROBIN ============ -->
+  <section class="tc-panel" id="panel-roundrobin">
+    <div class="tc-card">
+      <h3>Round Robin Calculator</h3>
+      <p class="how">A round robin turns 3 to 6 picks into a set of smaller parlays, so one loss doesn't kill the whole ticket. Enter your legs, pick the parlay sizes and your stake per parlay.</p>
+      <div class="tc-2col">
+        <div class="tc-field">
+          <label for="rrL1">LEG 1 ODDS</label>
+          <input id="rrL1" type="text" inputmode="numeric" value="-110" aria-label="Leg 1 odds">
+        </div>
+        <div class="tc-field">
+          <label for="rrL2">LEG 2 ODDS</label>
+          <input id="rrL2" type="text" inputmode="numeric" value="+120" aria-label="Leg 2 odds">
+        </div>
+      </div>
+      <div class="tc-2col">
+        <div class="tc-field">
+          <label for="rrL3">LEG 3 ODDS</label>
+          <input id="rrL3" type="text" inputmode="numeric" value="+150" aria-label="Leg 3 odds">
+        </div>
+        <div class="tc-field">
+          <label for="rrL4">LEG 4 ODDS (OPTIONAL)</label>
+          <input id="rrL4" type="text" inputmode="numeric" value="" placeholder="+150" aria-label="Leg 4 odds">
+        </div>
+      </div>
+      <div class="tc-2col">
+        <div class="tc-field">
+          <label for="rrL5">LEG 5 ODDS (OPTIONAL)</label>
+          <input id="rrL5" type="text" inputmode="numeric" value="" placeholder="+150" aria-label="Leg 5 odds">
+        </div>
+        <div class="tc-field">
+          <label for="rrL6">LEG 6 ODDS (OPTIONAL)</label>
+          <input id="rrL6" type="text" inputmode="numeric" value="" placeholder="+150" aria-label="Leg 6 odds">
+        </div>
+      </div>
+      <div class="tc-field">
+        <label>PARLAY SIZES</label>
+        <div class="tc-checks">
+          <label class="tc-check"><input type="checkbox" id="rrS2" checked> 2s</label>
+          <label class="tc-check"><input type="checkbox" id="rrS3" checked> 3s</label>
+          <label class="tc-check"><input type="checkbox" id="rrS4"> 4s</label>
+          <label class="tc-check"><input type="checkbox" id="rrS5"> 5s</label>
+        </div>
+      </div>
+      <div class="tc-field" style="margin:0">
+        <label for="rrStake">STAKE PER PARLAY ($)</label>
+        <input id="rrStake" type="number" min="0" step="any" value="10" inputmode="decimal" aria-label="Stake per parlay">
+      </div>
+    </div>
+    <p id="rrErr" class="tc-err" hidden></p>
+    <div class="tc-results hidden" id="rrResults">
+      <div class="tc-grid">
+        <div class="tc-stat"><div class="v gold" id="rrCount">—</div><div class="l">Parlays generated</div></div>
+        <div class="tc-stat"><div class="v gold" id="rrCost">—</div><div class="l">Total cost</div></div>
+        <div class="tc-stat"><div class="v" id="rrPayout">—</div><div class="l">Max payout if every leg wins</div></div>
+        <div class="tc-stat"><div class="v" id="rrProfit">—</div><div class="l">Max profit if every leg wins</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CLV ============ -->
+  <section class="tc-panel" id="panel-clv">
+    <div class="tc-card">
+      <h3>Closing Line Value (CLV) Calculator</h3>
+      <p class="how">CLV measures the price you got against the closing line — the market's final word. Beat the close consistently and you are betting at better prices than the market settled on, which is the clearest sign of a real edge.</p>
+      <div class="tc-2col">
+        <div class="tc-field">
+          <label for="clvBet">ODDS YOU BET</label>
+          <input id="clvBet" type="text" inputmode="numeric" value="+110" aria-label="Odds you bet">
+        </div>
+        <div class="tc-field">
+          <label for="clvClose">CLOSING ODDS</label>
+          <input id="clvClose" type="text" inputmode="numeric" value="-105" aria-label="Closing odds">
+        </div>
+      </div>
+    </div>
+    <p class="tc-msg hidden" id="clvMsg"></p>
+    <div class="tc-results hidden" id="clvResults">
+      <div class="tc-grid">
+        <div class="tc-stat"><div class="v" id="clvVal">—</div><div class="l">Closing line value</div></div>
+        <div class="tc-stat"><div class="v gold" id="clvYourProb">—</div><div class="l">Implied probability — your price</div></div>
+        <div class="tc-stat"><div class="v gold" id="clvCloseProb">—</div><div class="l">Implied probability — closing price</div></div>
+      </div>
+    </div>
+  </section>
+
   <a class="tc-cta" href="/free">
     <b>Want the math already done for you?</b>
     <span>Our model runs these numbers on every game, every day — and posts one free play daily. <span class="go">See today's free play →</span></span>
@@ -263,7 +437,7 @@
     });
   });
   var h = (location.hash || '').replace('#','');
-  if(['converter','novig','kelly','hedge','parlay'].indexOf(h) >= 0) openTab(h);
+  if(['converter','novig','kelly','hedge','parlay','arbitrage','middle','roundrobin','clv'].indexOf(h) >= 0) openTab(h);
 
   /* ---------- converter ---------- */
   var cvAm = document.getElementById('cvAm'), cvDec = document.getElementById('cvDec');
@@ -425,6 +599,195 @@
   pAdd.addEventListener('click', function(){ pAddLeg(''); });
   pStake.addEventListener('input', pCalc);
   pAddLeg('-110'); pAddLeg('-110');
+
+  /* ---------- arbitrage ---------- */
+  var arbA = document.getElementById('arbA'), arbB = document.getElementById('arbB'),
+      arbTotal = document.getElementById('arbTotal'), arbRes = document.getElementById('arbResults'),
+      arbMsg = document.getElementById('arbMsg');
+  function arbCalc(){
+    var a = parseAm(arbA.value), b = parseAm(arbB.value), tot = parseFloat(arbTotal.value);
+    arbA.classList.toggle('bad', !isFinite(a));
+    arbB.classList.toggle('bad', !isFinite(b));
+    if(!isFinite(a) || !isFinite(b) || !isFinite(tot) || tot <= 0){
+      arbRes.classList.add('hidden'); arbMsg.classList.add('hidden'); return;
+    }
+    var pa = 1 / amToDec(a), pb = 1 / amToDec(b), sum = pa + pb;
+    if(sum >= 1){
+      arbRes.classList.add('hidden');
+      arbMsg.textContent = 'No arbitrage at these prices: the two sides imply ' + pct(sum, 2) +
+        ' combined. You need the total under 100% to guarantee a profit \u2014 shop for a better price on one side.';
+      arbMsg.classList.remove('hidden');
+      return;
+    }
+    arbMsg.classList.add('hidden');
+    var sa = tot * pa / sum, sb = tot * pb / sum;
+    var profit = tot / sum - tot;
+    document.getElementById('arbStakeA').textContent = money(sa);
+    document.getElementById('arbStakeB').textContent = money(sb);
+    document.getElementById('arbProfit').textContent = money(profit);
+    document.getElementById('arbRoi').textContent = '+' + pct(profit / tot, 2);
+    arbRes.classList.remove('hidden');
+  }
+  [arbA, arbB, arbTotal].forEach(function(el){ el.addEventListener('input', arbCalc); });
+  arbCalc();
+
+  /* ---------- middle ---------- */
+  function stakeProfit(am, stake){ return stake * (amToDec(am) - 1); }
+  var midLA = document.getElementById('midLA'), midLB = document.getElementById('midLB'),
+      midOA = document.getElementById('midOA'), midOB = document.getElementById('midOB'),
+      midSA = document.getElementById('midSA'), midSB = document.getElementById('midSB'),
+      midRes = document.getElementById('midResults'), midMsg = document.getElementById('midMsg');
+  function midSetNet(id, x){
+    var el = document.getElementById(id);
+    el.textContent = money(x);
+    el.classList.toggle('red', x < 0);
+  }
+  function midCalc(){
+    var la = parseFloat(midLA.value), lb = parseFloat(midLB.value);
+    var oa = parseAm(midOA.value), ob = parseAm(midOB.value);
+    var sa = parseFloat(midSA.value), sb = parseFloat(midSB.value);
+    midOA.classList.toggle('bad', !isFinite(oa));
+    midOB.classList.toggle('bad', !isFinite(ob));
+    if(!isFinite(la) || !isFinite(lb) || !isFinite(oa) || !isFinite(ob) ||
+       !isFinite(sa) || sa <= 0 || !isFinite(sb) || sb <= 0){
+      midRes.classList.add('hidden'); midMsg.classList.add('hidden'); return;
+    }
+    var pa = stakeProfit(oa, sa), pb = stakeProfit(ob, sb);
+    var tA = -la, tB = lb, w = tB - tA;
+    var winEl = document.getElementById('midWindow');
+    var bothEl = document.getElementById('midBoth');
+    var pushAStat = document.getElementById('midPushAStat'), pushBStat = document.getElementById('midPushBStat');
+    midSetNet('midAOnly', pa - sb);
+    midSetNet('midBOnly', pb - sa);
+    pushAStat.style.display = 'none';
+    pushBStat.style.display = 'none';
+    if(w <= 0){
+      winEl.textContent = 'No middle';
+      bothEl.textContent = '\u2014';
+      bothEl.classList.remove('red');
+      midMsg.textContent = 'These lines don\'t create a middle \u2014 they overlap, so both bets can never win together. Widen the gap between the two lines to open a middle window.';
+      midMsg.classList.remove('hidden');
+    } else {
+      winEl.textContent = (Math.round(w * 10) / 10) + ' pts';
+      var bothPossible = (Math.floor(tA) + 1) < tB - 1e-9;
+      if(bothPossible){
+        midSetNet('midBoth', pa + pb);
+        midMsg.classList.add('hidden');
+      } else {
+        bothEl.textContent = '\u2014';
+        bothEl.classList.remove('red');
+        midMsg.textContent = 'The window is ' + (Math.round(w * 10) / 10) +
+          ' pts wide, but no whole-number result lands strictly inside it \u2014 both bets can\'t win together. The best case is a push on one side with the other side winning.';
+        midMsg.classList.remove('hidden');
+      }
+      if(Math.abs(tA % 1) < 1e-9){
+        midSetNet('midPushA', pb);
+        pushAStat.style.display = '';
+      }
+      if(Math.abs(tB % 1) < 1e-9){
+        midSetNet('midPushB', pa);
+        pushBStat.style.display = '';
+      }
+    }
+    midRes.classList.remove('hidden');
+  }
+  [midLA, midLB, midOA, midOB, midSA, midSB].forEach(function(el){ el.addEventListener('input', midCalc); });
+  midCalc();
+
+  /* ---------- round robin ---------- */
+  var rrLegIds = ['rrL1', 'rrL2', 'rrL3', 'rrL4', 'rrL5', 'rrL6'];
+  var rrLegs = rrLegIds.map(function(id){ return document.getElementById(id); });
+  var rrSizeIds = [2, 3, 4, 5];
+  var rrSizes = rrSizeIds.map(function(k){ return document.getElementById('rrS' + k); });
+  var rrStake = document.getElementById('rrStake'), rrErr = document.getElementById('rrErr'),
+      rrRes = document.getElementById('rrResults');
+  function combos(arr, k){
+    var out = [];
+    (function rec(start, cur){
+      if(cur.length === k){ out.push(cur.slice()); return; }
+      for(var i = start; i < arr.length; i++){ cur.push(arr[i]); rec(i + 1, cur); cur.pop(); }
+    })(0, []);
+    return out;
+  }
+  function rrCalc(){
+    var decs = [], legOk = true;
+    rrLegs.forEach(function(inp){
+      var v = String(inp.value).trim();
+      if(v === ''){ inp.classList.remove('bad'); return; }
+      var a = parseAm(v);
+      if(!isFinite(a)){ legOk = false; inp.classList.add('bad'); }
+      else { inp.classList.remove('bad'); decs.push(amToDec(a)); }
+    });
+    var n = decs.length;
+    rrSizes.forEach(function(box, i){
+      var dis = !(legOk && n >= 3 && rrSizeIds[i] <= n - 1);
+      box.disabled = dis;
+      box.parentNode.classList.toggle('off', dis);
+    });
+    var stake = parseFloat(rrStake.value), err = '';
+    if(!legOk) err = 'Check the highlighted odds \u2014 use American format like +150 or -110.';
+    else if(n < 3) err = 'Enter at least 3 legs to build a round robin.';
+    else if(!isFinite(stake) || stake <= 0) err = 'Enter a stake per parlay greater than 0.';
+    var chosen = [];
+    rrSizes.forEach(function(box, i){ if(!box.disabled && box.checked) chosen.push(rrSizeIds[i]); });
+    if(!err && chosen.length === 0) err = 'Select at least one parlay size.';
+    if(err){
+      rrRes.classList.add('hidden');
+      rrErr.hidden = false;
+      rrErr.textContent = err;
+      return;
+    }
+    rrErr.hidden = true;
+    var count = 0, payout = 0;
+    chosen.forEach(function(k){
+      combos(decs, k).forEach(function(c){
+        var d = 1;
+        c.forEach(function(x){ d *= x; });
+        count++;
+        payout += stake * d;
+      });
+    });
+    var cost = count * stake;
+    document.getElementById('rrCount').textContent = count;
+    document.getElementById('rrCost').textContent = money(cost);
+    document.getElementById('rrPayout').textContent = money(payout);
+    document.getElementById('rrProfit').textContent = money(payout - cost);
+    rrRes.classList.remove('hidden');
+  }
+  rrLegs.forEach(function(el){ el.addEventListener('input', rrCalc); });
+  rrSizes.forEach(function(el){ el.addEventListener('change', rrCalc); });
+  rrStake.addEventListener('input', rrCalc);
+  rrCalc();
+
+  /* ---------- clv ---------- */
+  var clvBet = document.getElementById('clvBet'), clvClose = document.getElementById('clvClose'),
+      clvRes = document.getElementById('clvResults'), clvMsg = document.getElementById('clvMsg');
+  function clvCalc(){
+    var a = parseAm(clvBet.value), c = parseAm(clvClose.value);
+    clvBet.classList.toggle('bad', !isFinite(a));
+    clvClose.classList.toggle('bad', !isFinite(c));
+    if(!isFinite(a) || !isFinite(c)){ clvRes.classList.add('hidden'); clvMsg.classList.add('hidden'); return; }
+    var dBet = amToDec(a), dClose = amToDec(c);
+    var clv = (dBet / dClose - 1) * 100;
+    var valEl = document.getElementById('clvVal');
+    valEl.textContent = (clv >= 0 ? '+' : '') + clv.toFixed(2) + '%';
+    valEl.classList.toggle('red', clv < 0);
+    document.getElementById('clvYourProb').textContent = pct(1 / dBet);
+    document.getElementById('clvCloseProb').textContent = pct(1 / dClose);
+    if(clv > 0){
+      clvMsg.textContent = 'You beat the close: your price of ' + amStr(a) + ' was better than the closing ' +
+        amStr(c) + ' \u2014 positive CLV of ' + clv.toFixed(2) + '%. Do that consistently and the math is on your side.';
+    } else if(clv < 0){
+      clvMsg.textContent = 'The line moved against you: you took ' + amStr(a) + ' and it closed ' + amStr(c) +
+        ' \u2014 negative CLV of ' + clv.toFixed(2) + '%. Betting earlier or shopping more books usually fixes this.';
+    } else {
+      clvMsg.textContent = 'Dead even: you bet at exactly the closing price \u2014 0.00% CLV.';
+    }
+    clvMsg.classList.remove('hidden');
+    clvRes.classList.remove('hidden');
+  }
+  [clvBet, clvClose].forEach(function(el){ el.addEventListener('input', clvCalc); });
+  clvCalc();
 })();
 </script>
 {% endblock %}
