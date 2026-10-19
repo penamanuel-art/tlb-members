@@ -298,6 +298,8 @@ CREATE TABLE IF NOT EXISTS users (
     notif_reminder INTEGER NOT NULL DEFAULT 1,  -- 1 = recordatorio 15 min antes
     notif_ev INTEGER NOT NULL DEFAULT 1,        -- 1 = alertas +EV
     notif_price INTEGER NOT NULL DEFAULT 0,    -- 1 = alerta si se mueve el precio
+    notif_sharp INTEGER NOT NULL DEFAULT 1,     -- 1 = alertas sharp money / line movement (2026-10-19)
+    notif_masterclass INTEGER NOT NULL DEFAULT 1, -- 1 = aviso de la leccion diaria Masterclass (2026-10-19)
     created_at TEXT NOT NULL
 );
 CREATE TABLE IF NOT EXISTS tracked_plays (
@@ -393,6 +395,8 @@ CREATE TABLE IF NOT EXISTS users (
     notif_reminder INTEGER NOT NULL DEFAULT 1,  -- 1 = recordatorio 15 min antes
     notif_ev INTEGER NOT NULL DEFAULT 1,        -- 1 = alertas +EV
     notif_price INTEGER NOT NULL DEFAULT 0,    -- 1 = alerta si se mueve el precio
+    notif_sharp INTEGER NOT NULL DEFAULT 1,     -- 1 = alertas sharp money / line movement (2026-10-19)
+    notif_masterclass INTEGER NOT NULL DEFAULT 1, -- 1 = aviso de la leccion diaria Masterclass (2026-10-19)
     created_at TEXT NOT NULL
 );
 CREATE TABLE IF NOT EXISTS tracked_plays (
@@ -3171,7 +3175,7 @@ def migrate_db():
             pending.append("ALTER TABLE users ADD COLUMN stake_mode TEXT NOT NULL DEFAULT 'units'")
         if "platinum_unlocked" not in cols:
             pending.append("ALTER TABLE users ADD COLUMN platinum_unlocked INTEGER NOT NULL DEFAULT 0")
-        for _col, _default in [("notif_plays", "1"), ("notif_graded", "1"), ("notif_live", "1"), ("notif_reminder", "1"), ("notif_ev", "1"), ("notif_price", "0")]:
+        for _col, _default in [("notif_plays", "1"), ("notif_graded", "1"), ("notif_live", "1"), ("notif_reminder", "1"), ("notif_ev", "1"), ("notif_price", "0"), ("notif_sharp", "1"), ("notif_masterclass", "1")]:
             if _col not in cols:
                 pending.append(f"ALTER TABLE users ADD COLUMN {_col} INTEGER NOT NULL DEFAULT {_default}")
         if "is_admin" not in cols:
@@ -4620,7 +4624,7 @@ def alertas():
     """Página de preferencias de notificaciones del miembro."""
     db = get_db()
     u = db.execute(
-        "SELECT notif_plays, notif_graded, notif_live, notif_reminder, notif_ev, notif_price"
+        "SELECT notif_plays, notif_graded, notif_live, notif_reminder, notif_ev, notif_price, notif_sharp, notif_masterclass"
         " FROM users WHERE id = ?", (session["user_id"],)
     ).fetchone()
     prefs = dict(u) if u else {}
@@ -4634,7 +4638,7 @@ def api_alertas():
     data = request.get_json(silent=True) or {}
     pref = data.get("pref", "")
     value = 1 if data.get("value") else 0
-    allowed = {"notif_plays", "notif_graded", "notif_live", "notif_reminder", "notif_ev", "notif_price"}
+    allowed = {"notif_plays", "notif_graded", "notif_live", "notif_reminder", "notif_ev", "notif_price", "notif_sharp", "notif_masterclass"}
     if pref not in allowed:
         return jsonify({"ok": False, "error": "invalid pref"}), 400
     db = get_db()
@@ -8989,7 +8993,7 @@ def api_push_edge():
     # Filtro por preferencia (pedido Alex 2026-10-08, estilo WGT):
     # notif_type mapea al campo notif_* del usuario.
     notif_type = data.get("notif_type") or "notif_ev"
-    allowed_types = {"notif_plays", "notif_graded", "notif_live", "notif_reminder", "notif_ev", "notif_price"}
+    allowed_types = {"notif_plays", "notif_graded", "notif_live", "notif_reminder", "notif_ev", "notif_price", "notif_sharp", "notif_masterclass"}
     if notif_type not in allowed_types:
         notif_type = "notif_ev"
     payload = json.dumps({"title": title, "body": body, "url": url, "image": image})
