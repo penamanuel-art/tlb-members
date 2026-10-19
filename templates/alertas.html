@@ -109,7 +109,33 @@
         <input type="checkbox" data-pref="notif_price" {% if prefs.notif_price %}checked{% endif %}>
         <span class="slider"></span>
       </label>
+    
+    <p class="alert-section">LINE MOVEMENT</p>
+
+    <div class="alert-row">
+      <div class="alert-info">
+        <b>Sharp Money alerts</b>
+        <span>When the pros move a line 20&cent; or more on a game &mdash; learn to read the market.</span>
+      </div>
+      <label class="toggle">
+        <input type="checkbox" data-pref="notif_sharp" {% if prefs.notif_sharp %}checked{% endif %}>
+        <span class="slider"></span>
+      </label>
     </div>
+
+    <p class="alert-section">ACADEMY</p>
+
+    <div class="alert-row">
+      <div class="alert-info">
+        <b>Daily Masterclass lesson</b>
+        <span>A heads-up at 1 PM when your lesson of the day is ready.</span>
+      </div>
+      <label class="toggle">
+        <input type="checkbox" data-pref="notif_masterclass" {% if prefs.notif_masterclass %}checked{% endif %}>
+        <span class="slider"></span>
+      </label>
+    </div>
+</div>
   </div>
 </div>
 
