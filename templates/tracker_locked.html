@@ -47,22 +47,15 @@
 
 <div class="tk-wrap">
   {% if past_due_mode %}
-  <!-- VENCIDO / PAGO FALLIDO (2026-10-15, modelo de la captura de Alex):
-       aviso de actualizar la tarjeta; su historial sigue guardado. -->
-  <div class="tk-panel">
-    <div class="tk-ico">🔒</div>
-    <h2>Your card needs an update</h2>
-    <p class="tk-sub">Your Platinum access is paused until the card on file is fixed. Update your card and everything comes right back — your tracked plays, your record and your stats are saved and waiting for you.</p>
-    <a class="tk-btn" href="{{ update_card_url }}">Update your card</a>
-    <p class="tk-foot" style="text-align:center">Access restores automatically as soon as the payment goes through — nothing is lost.</p>
-  </div>
-  <!-- Debajo del aviso, la página completa de venta del Tracker (2026-10-19,
-       extensión de Alex): el mismo cuerpo visual que ve el visitante y el
-       miembro sin Platinum vive en _tracker_sales_body.html (una sola
-       fuente). En modo past-due ese cuerpo omite la tira del mes gratis y
-       sus CTA dicen «Update your card» hacia update_card_url: el CTA que
-       manda en esta vista es arreglar la tarjeta. -->
-  <div class="tp" style="margin-top:22px">
+  <!-- VENCIDO / PAGO FALLIDO: la vista empieza DIRECTAMENTE con la página
+       completa de venta del Tracker (2026-10-19, orden de Alex: la tarjeta
+       de aviso de pago fallido que iba arriba se eliminó — en
+       la página equivalente de WGT no existe; el bloqueado ve la página
+       de venta tal cual). El cuerpo vive en _tracker_sales_body.html (una
+       sola fuente, la misma que ve el visitante y el miembro sin
+       Platinum). En modo past-due ese cuerpo omite la tira del mes gratis
+       y sus CTA dicen «Update your card» hacia update_card_url. -->
+  <div class="tp">
     {% with cta_url=update_card_url, watch_url=url_for('masterclass') %}
     {% include "_tracker_sales_body.html" %}
     {% endwith %}
