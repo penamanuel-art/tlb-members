@@ -2,29 +2,30 @@
 {% block title %}EV Board Results — The Sharp Team{% endblock %}
 {% block content %}
 <style>
+body.v2{background-color:#161d29;background-image:radial-gradient(560px 300px at 50% -80px,rgba(47,230,167,.06),transparent 65%),radial-gradient(700px 500px at 110% 30%,rgba(77,163,255,.05),transparent 60%)}
 .er-wrap{max-width:720px;margin:0 auto;color:#fff;padding:24px 16px 100px}
 .er-header{text-align:center;margin-bottom:22px}
 .er-wrap .kicker{font-size:11px;font-weight:800;letter-spacing:3px;color:#2fe6a7;margin:0 0 8px}
 .er-wrap h2{font-size:2rem;font-weight:900;margin:0 0 8px}
-.er-wrap .muted{color:#9a9ab5;font-size:14px;margin:0;line-height:1.5}
+.er-wrap .muted{color:#9aa7b8;font-size:14px;margin:0;line-height:1.5}
 .er-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:0 0 20px}
-.er-stat{background:#101828;border:1px solid #22314f;border-radius:14px;padding:12px 6px;text-align:center}
+.er-stat{background:linear-gradient(155deg, #26303f, #1c2431 60%, #1a222e);border:1px solid rgba(148,178,220,.16);border-radius:14px;padding:12px 6px;text-align:center}
 .er-stat b{font-size:19px;font-weight:800;display:block;color:#fff}
-.er-stat span{font-size:10.5px;color:#7286a8;font-weight:700;letter-spacing:.8px}
+.er-stat span{font-size:10.5px;color:#8b98ad;font-weight:700;letter-spacing:.8px}
 .er-pos{color:#2fe6a7 !important}
 .er-neg{color:#f87171 !important}
-.er-row{display:flex;align-items:center;gap:10px;background:#101828;border:1px solid #22314f;border-radius:14px;padding:11px 13px;margin:0 0 8px}
+.er-row{display:flex;align-items:center;gap:10px;background:radial-gradient(360px 180px at 110% -30px, rgba(87, 227, 137, 0.10), transparent 65%), linear-gradient(155deg, #26303f, #1c2431 60%, #1a222e);border:1px solid rgba(148,178,220,.16);border-radius:14px;padding:11px 13px;margin:0 0 8px}
 .er-pick{flex:1;min-width:0}
 .er-pick b{font-size:14.5px;font-weight:700;display:block;color:#fff}
-.er-pick span{font-size:12px;color:#93a5c4;display:block}
+.er-pick span{font-size:12px;color:#9aa7b8;display:block}
 .er-badge{flex:none;font-size:11px;font-weight:800;letter-spacing:.6px;padding:4px 9px;border-radius:999px}
 .er-w{background:rgba(47,230,167,.14);color:#2fe6a7;border:1px solid rgba(47,230,167,.4)}
 .er-l{background:rgba(248,113,113,.12);color:#f87171;border:1px solid rgba(248,113,113,.35)}
-.er-p{background:rgba(147,165,196,.12);color:#93a5c4;border:1px solid rgba(147,165,196,.3)}
+.er-p{background:rgba(139,152,173,.12);color:#9aa7b8;border:1px solid rgba(139,152,173,.3)}
 .er-profit{flex:none;font-size:14px;font-weight:800;min-width:74px;text-align:right}
-.er-empty{border:2px dashed #3a3a4a;border-radius:18px;padding:28px 20px;text-align:center;margin:16px 0}
+.er-empty{border:2px dashed rgba(148,178,220,.30);border-radius:18px;padding:28px 20px;text-align:center;margin:16px 0}
 .er-empty h3{color:#fff;margin:0 0 8px}
-.er-empty p{color:#9a9ab5;margin:0;font-size:14px;line-height:1.55}
+.er-empty p{color:#9aa7b8;margin:0;font-size:14px;line-height:1.55}
 @media (max-width:520px){.er-stats{grid-template-columns:repeat(2,1fr)}}
 </style>
 
