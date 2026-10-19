@@ -1,0 +1,191 @@
+<style>
+body.v2{background-color:#161d29;background-image:radial-gradient(560px 300px at 50% -80px,rgba(47,230,167,.06),transparent 65%),radial-gradient(700px 500px at 110% 30%,rgba(77,163,255,.05),transparent 60%)}
+.tp{max-width:560px;margin:0 auto;color:#eef2f8;padding:22px 16px 44px}
+.tp h1{font-size:31px;font-weight:800;line-height:1.16;letter-spacing:-.5px;color:#fff;margin:0 0 12px}
+.tp h1 .tp-mint{color:#2fe6a7}
+.tp-lede{font-size:14.5px;color:#9aa7b8;line-height:1.6;margin:0 0 16px}
+.tp-dot{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:#2fe6a7;margin:0 0 18px}
+.tp-dot i{width:8px;height:8px;border-radius:50%;background:#2fe6a7;box-shadow:0 0 10px #2fe6a7;flex:0 0 auto}
+.tp-btns{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 14px}
+.tp-promo{display:flex;align-items:center;gap:10px;background:rgba(47,230,167,.08);border:1px solid rgba(47,230,167,.35);border-radius:14px;padding:10px 12px;margin:0 0 26px}
+.tp-promo .tp-flame{font-size:16px;flex:0 0 auto}
+.tp-promo .tp-ptext{font-size:13px;font-weight:600;color:#eef2f8;line-height:1.35}
+.tp-promo .tp-ptext b{color:#2fe6a7;font-weight:800}
+.tp-promo .tp-start{margin-left:auto;flex:0 0 auto;background:#2fe6a7;color:#04150a;font-size:13px;font-weight:800;border-radius:999px;padding:8px 18px;text-decoration:none}
+.tp-promo .tp-x{flex:0 0 auto;background:none;border:none;color:#8b98ad;font-size:15px;line-height:1;cursor:pointer;padding:4px 2px}
+.tp-btn{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(155deg,#26303f,#1c2431 60%,#1a222e);border:1px solid rgba(148,178,220,.22);color:#eef2f8;font-size:13.5px;font-weight:700;border-radius:12px;padding:11px 16px;text-decoration:none}
+.tp-kicker{font-size:11px;font-weight:800;letter-spacing:2px;color:#e8c766;margin:0 0 10px}
+.tp-card{background:radial-gradient(360px 180px at 110% -30px, rgba(87,227,137,.08), transparent 65%), linear-gradient(155deg,#26303f,#1c2431 60%,#1a222e);border:1px solid rgba(232,199,102,.45);border-radius:18px;padding:26px 20px 22px;text-align:center;box-shadow:0 18px 44px rgba(0,0,0,.35)}
+.tp-ico{width:58px;height:58px;margin:0 auto 14px;border-radius:16px;background:rgba(232,199,102,.12);border:1px solid rgba(232,199,102,.4);display:flex;align-items:center;justify-content:center;font-size:27px}
+.tp-card h2{font-size:23px;font-weight:800;line-height:1.25;color:#fff;margin:0 0 10px}
+.tp-sub{color:#9aa7b8;font-size:14px;line-height:1.55;margin:0 auto 16px;max-width:420px}
+.tp-feats{text-align:left;max-width:420px;margin:0 auto}
+.tp-feats ul{margin:0;padding:0}
+.tp-feats li{list-style:none;margin:11px 0;font-size:14px;color:#eef2f8;display:flex;gap:10px;align-items:flex-start;line-height:1.45}
+.tp-ck{color:#2fe6a7;font-weight:800;flex:0 0 auto}
+.tp-cta{display:block;background:#2fe6a7;color:#04150a;font-weight:800;font-size:16px;border-radius:14px;padding:15px;text-decoration:none;margin:20px auto 0;max-width:420px}
+.tp-fine{font-size:12px;color:#8b98ad;margin:10px 0 0}
+.tp-nav{position:fixed;left:0;right:0;bottom:0;z-index:1100;display:flex;background:#0b0f14;border-top:1px solid rgba(139,152,173,.16);backdrop-filter:none;padding:6px 6px calc(6px + env(safe-area-inset-bottom, 0px))}
+.tp-nav a{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;color:#8b98ad;text-decoration:none;font-size:10px;font-weight:500;letter-spacing:.01em;padding:7px 0 6px;border-radius:22px;transition:background-color .2s ease,color .2s ease}
+.tp-nav a .tp-nico{display:flex;align-items:center;justify-content:center;width:22px;height:22px;font-size:20px;line-height:1}
+.tp-nav a .tp-nico svg{display:block;width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.tp-nav a.active{color:#2fe6a7;background:rgba(47,230,167,.15);font-weight:600}
+.tp-sec{margin:36px 0 0}
+.tp-sec-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 12px}
+.tp-sec-t{font-size:20px;font-weight:800;color:#fff;margin:0;letter-spacing:-.2px}
+.tp-pill{margin-left:auto;font-size:11px;font-weight:700;color:#e8c766;background:rgba(232,199,102,.1);border:1px dashed rgba(232,199,102,.55);border-radius:999px;padding:5px 11px}
+.tp-panel{background:linear-gradient(155deg,#26303f,#1c2431 60%,#1a222e);border:1px solid rgba(148,178,220,.18);border-radius:18px;padding:20px 18px;box-shadow:0 14px 34px rgba(0,0,0,.3)}
+.tp-intro{font-size:13.5px;color:#9aa7b8;line-height:1.6;margin:0 0 4px}
+.tp-bet{padding:13px 0;border-bottom:1px solid rgba(148,178,220,.12)}
+.tp-bet:last-of-type{border-bottom:none;padding-bottom:2px}
+.tp-bet-top{display:flex;align-items:center;gap:8px}
+.tp-bet-name{font-size:15px;font-weight:700;color:#fff;margin:0}
+.tp-tag{margin-left:auto;flex:0 0 auto;font-size:10px;font-weight:800;letter-spacing:1.2px;border-radius:999px;padding:3px 9px}
+.tp-tag-w{color:#2fe6a7;background:rgba(47,230,167,.12);border:1px solid rgba(47,230,167,.35)}
+.tp-tag-l{color:#f0716b;background:rgba(240,113,107,.1);border:1px solid rgba(240,113,107,.3)}
+.tp-tag-p{color:#8b98ad;background:rgba(139,152,173,.1);border:1px solid rgba(139,152,173,.3)}
+.tp-bet-sub{font-size:12px;color:#8b98ad;margin:3px 0 9px}
+.tp-cols{display:flex;gap:10px}
+.tp-col{flex:1}
+.tp-cl{font-size:10px;font-weight:800;letter-spacing:1.6px;color:#8b98ad;margin:0 0 3px}
+.tp-cv{font-size:14.5px;font-weight:700;color:#eef2f8;margin:0}
+.tp-pos{color:#2fe6a7}
+.tp-neg{color:#f0716b}
+.tp-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0 0}
+.tp-stat{background:#121a26;border:1px solid rgba(148,178,220,.14);border-radius:14px;padding:13px 14px}
+.tp-sl{font-size:10px;font-weight:800;letter-spacing:1.6px;color:#8b98ad;margin:0 0 5px}
+.tp-sv{font-size:21px;font-weight:900;color:#fff;margin:0;line-height:1.1}
+.tp-ss{font-size:11.5px;color:#8b98ad;margin:4px 0 0;line-height:1.45}
+.tp-work p{font-size:13.5px;color:#c6d0de;line-height:1.65;margin:0 0 11px}
+.tp-work p:last-child{margin-bottom:0}
+.tp-work b{color:#fff}
+.tp-lead{color:#2fe6a7;font-weight:800}
+.tp-faq h4{font-size:15.5px;font-weight:800;color:#fff;margin:20px 0 6px}
+.tp-faq h4:first-child{margin-top:2px}
+.tp-faq p{font-size:13.5px;color:#9aa7b8;line-height:1.65;margin:0}
+.tp-endcta{margin:34px 0 0;text-align:center}
+.tp-endcta .tp-endq{font-size:14.5px;color:#c6d0de;margin:0}
+</style>
+  <h1>Bet Tracker: <span class="tp-mint">Every Bet You Track, Graded for You</span></h1>
+  <p class="tp-lede">Your personal record book for the plays you follow. Add a play once and the Tracker keeps score for you: every bet is graded from the final score, your record, win rate, profit and ROI update on their own, and nothing is ever edited after the fact. No spreadsheets, no manual math.</p>
+  <div class="tp-dot"><i></i>Members-only tool</div>
+  <div class="tp-btns">
+    <a class="tp-btn" href="{{ watch_url }}">&#9654; Watch how it works</a>
+    <a class="tp-btn" href="#what-members-get">&#9432; How it works</a>
+  </div>
+
+  {% if not past_due_mode %}
+  <div class="tp-promo" id="tp-promo">
+    <span class="tp-flame" aria-hidden="true">🔥</span>
+    <span class="tp-ptext">Today's plays are live &middot; your first month of Platinum is <b>FREE</b></span>
+    <a class="tp-start" href="{{ cta_url }}">Start</a>
+    <button class="tp-x" type="button" aria-label="Dismiss" onclick="try{localStorage.setItem('tst_tracker_promo_off','1')}catch(e){}document.getElementById('tp-promo').style.display='none'">&#10005;</button>
+  </div>
+  <script>try{if(localStorage.getItem('tst_tracker_promo_off')==='1'){document.getElementById('tp-promo').style.display='none'}}catch(e){}</script>
+  {% endif %}
+
+  <p class="tp-kicker" id="what-members-get">&#128274; WHAT MEMBERS GET</p>
+  <div class="tp-card">
+    <div class="tp-ico">🔒</div>
+    <h2>Your bet tracker is members-only</h2>
+    <p class="tp-sub">The Tracker comes with Platinum. Join and every play you add is graded automatically — your full history saved, current and public-grade honest.</p>
+    <div class="tp-feats">
+      <ul>
+        <li><span class="tp-ck">✓</span><span>Graded automatically from the final score — no manual entry, ever</span></li>
+        <li><span class="tp-ck">✓</span><span>Closing line value (CLV) shown whenever a closing line is captured</span></li>
+        <li><span class="tp-ck">✓</span><span>Breakdowns by league and by level — Platinum and Gold</span></li>
+        <li><span class="tp-ck">✓</span><span>Your real record, win rate, profit and ROI — always up to date</span></li>
+        <li><span class="tp-ck">✓</span><span>Official plays carry the verified ticket — add any of them in one tap with + Track</span></li>
+      </ul>
+    </div>
+    {% if past_due_mode %}<a class="tp-cta" href="{{ update_card_url }}">Update your card &rarr;</a>
+    <p class="tp-fine">Access restores automatically as soon as the payment goes through &mdash; nothing is lost.</p>{% else %}<a class="tp-cta" href="{{ cta_url }}">Start your free month &rarr;</a>
+    <p class="tp-fine">First month of Platinum is free &middot; then $49.99/month &middot; cancel anytime</p>{% endif %}
+  </div>
+
+  <div class="tp-sec">
+    <div class="tp-sec-head">
+      <h3 class="tp-sec-t">Example tracker</h3>
+      <span class="tp-pill">Example bets &middot; not real results</span>
+    </div>
+    <div class="tp-panel">
+      <p class="tp-intro">A small set of made-up bets, scored exactly the way your real ledger will be. The teams are invented — the grading is not.</p>
+      <div class="tp-bet">
+        <div class="tp-bet-top"><p class="tp-bet-name">Sample Team A ML</p><span class="tp-tag tp-tag-w">WON</span></div>
+        <p class="tp-bet-sub">graded from the final score</p>
+        <div class="tp-cols">
+          <div class="tp-col"><p class="tp-cl">ODDS</p><p class="tp-cv">+150</p></div>
+          <div class="tp-col"><p class="tp-cl">STAKE</p><p class="tp-cv">$100</p></div>
+          <div class="tp-col"><p class="tp-cl">RESULT</p><p class="tp-cv tp-pos">+$150.00</p></div>
+        </div>
+      </div>
+      <div class="tp-bet">
+        <div class="tp-bet-top"><p class="tp-bet-name">Sample Team B -3.5</p><span class="tp-tag tp-tag-l">LOST</span></div>
+        <p class="tp-bet-sub">graded from the final score</p>
+        <div class="tp-cols">
+          <div class="tp-col"><p class="tp-cl">ODDS</p><p class="tp-cv">-110</p></div>
+          <div class="tp-col"><p class="tp-cl">STAKE</p><p class="tp-cv">$100</p></div>
+          <div class="tp-col"><p class="tp-cl">RESULT</p><p class="tp-cv tp-neg">-$100.00</p></div>
+        </div>
+      </div>
+      <div class="tp-bet">
+        <div class="tp-bet-top"><p class="tp-bet-name">Sample Team C Over 47.5</p><span class="tp-tag tp-tag-w">WON</span></div>
+        <p class="tp-bet-sub">graded from the final score</p>
+        <div class="tp-cols">
+          <div class="tp-col"><p class="tp-cl">ODDS</p><p class="tp-cv">-110</p></div>
+          <div class="tp-col"><p class="tp-cl">STAKE</p><p class="tp-cv">$100</p></div>
+          <div class="tp-col"><p class="tp-cl">RESULT</p><p class="tp-cv tp-pos">+$90.91</p></div>
+        </div>
+      </div>
+      <div class="tp-bet">
+        <div class="tp-bet-top"><p class="tp-bet-name">Sample Player D Over 6.5 rebounds</p><span class="tp-tag tp-tag-p">PUSH</span></div>
+        <p class="tp-bet-sub">graded from the final score</p>
+        <div class="tp-cols">
+          <div class="tp-col"><p class="tp-cl">ODDS</p><p class="tp-cv">-105</p></div>
+          <div class="tp-col"><p class="tp-cl">STAKE</p><p class="tp-cv">$100</p></div>
+          <div class="tp-col"><p class="tp-cl">RESULT</p><p class="tp-cv">Push $0.00</p></div>
+        </div>
+      </div>
+      <div class="tp-stats">
+        <div class="tp-stat"><p class="tp-sl">RECORD</p><p class="tp-sv">2-1-1</p><p class="tp-ss">won, lost, push</p></div>
+        <div class="tp-stat"><p class="tp-sl">NET</p><p class="tp-sv tp-pos">+$140.91</p><p class="tp-ss">on $300 risked</p></div>
+        <div class="tp-stat"><p class="tp-sl">ROI</p><p class="tp-sv">+47.0%</p><p class="tp-ss">net &divide; amount risked</p></div>
+        <div class="tp-stat"><p class="tp-sl">CLOSING LINE VALUE</p><p class="tp-sv">+3.33 pts</p><p class="tp-ss">bet -105, closed -120</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tp-sec">
+    <div class="tp-sec-head">
+      <h3 class="tp-sec-t">Worked example</h3>
+    </div>
+    <div class="tp-panel tp-work">
+      <p class="tp-intro" style="margin-bottom:12px">Four sample bets at $100 each — and exactly where every number above comes from.</p>
+      <p><span class="tp-lead">Won at +150:</span> plus odds pay more than the stake. The decimal price is 2.50, and profit = stake &times; (decimal &minus; 1), so $100 &times; 1.50 = <b>+$150.00</b>.</p>
+      <p><span class="tp-lead">Lost at -110:</span> a loss always costs exactly the stake, <b>-$100.00</b>. The price decides what a win pays — it never changes what a loss costs.</p>
+      <p><span class="tp-lead">Won at -110:</span> minus odds pay less than the stake. $100 &times; 0.9091 = <b>+$90.91</b> — 0.9091 is what a -110 price returns in profit for every dollar risked.</p>
+      <p><span class="tp-lead">Push at -105:</span> the full stake comes back, <b>$0.00</b>. Nothing was truly won or lost, so a push is left out of the ROI math entirely.</p>
+      <p><span class="tp-lead">The set, totaled:</span> 2 wins, 1 loss and 1 push net <b>+$140.91</b>, and only $300 was ever really at risk once the push is set aside. ROI = net &divide; risked = +$140.91 &divide; $300 = <b>+47.0%</b>.</p>
+      <p><span class="tp-lead">Closing line value:</span> the -105 bet closed at -120. The closing price implied about a 54.5% chance; the price taken implied about 51.2%. The gap between them, <b>+3.33 points</b>, is the CLV — the bet was placed at a better number than the market's final one.</p>
+      <p>Every sample on this page is scored by the same grading engine that settles the real ledger — no hand-entered results, nothing adjusted after the fact. One last definition: at The Sharp Team, <b>1 unit = 1% of your bankroll</b>. Set your bankroll on your account and every stake, unit and stat follows it; until you set one, the Tracker works off a $100 reference unit.</p>
+    </div>
+  </div>
+
+  <div class="tp-sec">
+    <div class="tp-sec-head">
+      <h3 class="tp-sec-t">Common questions</h3>
+    </div>
+    <div class="tp-faq">
+      <h4>What is a bet tracker?</h4>
+      <p>Your personal betting ledger. Each play you add is stored with the price and stake you actually got, then graded on its own the moment the final score is in. Your record, win rate, profit, ROI and closing line value stay current by themselves — no spreadsheet to maintain, and no result ever quietly edited or dropped.</p>
+      <h4>What is closing line value?</h4>
+      <p>CLV measures the price you took against the market's last price before the game started. Beat that closing number often enough and, on average, your tickets were worth more than you paid for them — the market's final word said so. One night proves nothing either way; across hundreds of plays, steady positive CLV is one of the clearest signs that a process is sound.</p>
+    </div>
+  </div>
+
+  <div class="tp-endcta">
+    <p class="tp-endq">Ready to have every play you make scored for you?</p>
+    {% if past_due_mode %}<a class="tp-cta" href="{{ update_card_url }}">Update your card &rarr;</a>
+    <p class="tp-fine">Access restores automatically as soon as the payment goes through &mdash; nothing is lost.</p>{% else %}<a class="tp-cta" href="{{ cta_url }}">Start your free month &rarr;</a>
+    <p class="tp-fine">First month of Platinum is free &middot; then $49.99/month &middot; cancel anytime</p>{% endif %}
+  </div>
