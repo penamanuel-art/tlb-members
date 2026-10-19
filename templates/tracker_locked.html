@@ -56,6 +56,17 @@
     <a class="tk-btn" href="{{ update_card_url }}">Update your card</a>
     <p class="tk-foot" style="text-align:center">Access restores automatically as soon as the payment goes through — nothing is lost.</p>
   </div>
+  <!-- Debajo del aviso, la página completa de venta del Tracker (2026-10-19,
+       extensión de Alex): el mismo cuerpo visual que ve el visitante y el
+       miembro sin Platinum vive en _tracker_sales_body.html (una sola
+       fuente). En modo past-due ese cuerpo omite la tira del mes gratis y
+       sus CTA dicen «Update your card» hacia update_card_url: el CTA que
+       manda en esta vista es arreglar la tarjeta. -->
+  <div class="tp" style="margin-top:22px">
+    {% with cta_url=update_card_url, watch_url=url_for('masterclass') %}
+    {% include "_tracker_sales_body.html" %}
+    {% endwith %}
+  </div>
   {% else %}
   <!-- ENCABEZADO (2026-10-15, pedido por Alex): titulo grande con
        acento dorado y palabras NUESTRAS, lo primero de la pagina. -->
