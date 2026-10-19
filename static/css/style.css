@@ -990,18 +990,31 @@ a.avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .v2-bottomnav {
   position: fixed; left: 0; right: 0; bottom: 0; z-index: 1001;
   display: flex; justify-content: space-around; align-items: stretch;
-  background: rgba(8, 12, 22, 0.96);
-  border-top: 1px solid var(--line);
-  padding: 8px 4px calc(8px + env(safe-area-inset-bottom));
+  background: #0b0f14;
+  border-top: 1px solid rgba(139, 152, 173, 0.16);
+  padding: 6px 6px calc(6px + env(safe-area-inset-bottom));
 }
 .v2-bnav-item {
   flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px;
-  padding: 6px 2px; text-decoration: none; color: var(--muted);
-  font-size: 10px; font-weight: 700; min-width: 0;
+  padding: 7px 2px 6px; text-decoration: none; color: #8b98ad;
+  font-size: 10px; font-weight: 500; letter-spacing: 0.01em; min-width: 0; border-radius: 22px;
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
 }
 .v2-bnav-item:active { transform: scale(0.95); }
-.v2-bnav-ico { font-size: 21px; line-height: 1; }
-.v2-bnav-item.active { color: var(--green-bright); }
+.v2-bnav-ico {
+  display: flex; align-items: center; justify-content: center;
+  width: 22px; height: 22px; font-size: 20px; line-height: 1;
+}
+.v2-bnav-ico svg {
+  display: block; width: 21px; height: 21px;
+  fill: none; stroke: currentColor; stroke-width: 1.7;
+  stroke-linecap: round; stroke-linejoin: round;
+}
+.v2-bnav-item.active {
+  color: #2fe6a7;
+  background: rgba(47, 230, 167, 0.15);
+  font-weight: 600;
+}
 body.has-bottomnav .ticker-dock-bottom { bottom: calc(68px + env(safe-area-inset-bottom)); }
 body.has-bottomnav { padding-bottom: calc(78px + env(safe-area-inset-bottom)); }
 body.has-bottomnav.has-ticker { padding-bottom: calc(152px + env(safe-area-inset-bottom)); }
