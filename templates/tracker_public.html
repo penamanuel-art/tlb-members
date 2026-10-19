@@ -1,75 +1,8 @@
 {% extends "base_v2.html" %}
 {% block title %}Bet Tracker — The Sharp Team{% endblock %}
 {% block content %}
-<style>
-body.v2{background-color:#161d29;background-image:radial-gradient(560px 300px at 50% -80px,rgba(47,230,167,.06),transparent 65%),radial-gradient(700px 500px at 110% 30%,rgba(77,163,255,.05),transparent 60%)}
-.tp{max-width:560px;margin:0 auto;color:#eef2f8;padding:22px 16px 44px}
-.tp h1{font-size:31px;font-weight:800;line-height:1.16;letter-spacing:-.5px;color:#fff;margin:0 0 12px}
-.tp h1 .tp-mint{color:#2fe6a7}
-.tp-lede{font-size:14.5px;color:#9aa7b8;line-height:1.6;margin:0 0 16px}
-.tp-dot{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:#2fe6a7;margin:0 0 18px}
-.tp-dot i{width:8px;height:8px;border-radius:50%;background:#2fe6a7;box-shadow:0 0 10px #2fe6a7;flex:0 0 auto}
-.tp-btns{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 14px}
-.tp-promo{display:flex;align-items:center;gap:10px;background:rgba(47,230,167,.08);border:1px solid rgba(47,230,167,.35);border-radius:14px;padding:10px 12px;margin:0 0 26px}
-.tp-promo .tp-flame{font-size:16px;flex:0 0 auto}
-.tp-promo .tp-ptext{font-size:13px;font-weight:600;color:#eef2f8;line-height:1.35}
-.tp-promo .tp-ptext b{color:#2fe6a7;font-weight:800}
-.tp-promo .tp-start{margin-left:auto;flex:0 0 auto;background:#2fe6a7;color:#04150a;font-size:13px;font-weight:800;border-radius:999px;padding:8px 18px;text-decoration:none}
-.tp-promo .tp-x{flex:0 0 auto;background:none;border:none;color:#8b98ad;font-size:15px;line-height:1;cursor:pointer;padding:4px 2px}
-.tp-btn{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(155deg,#26303f,#1c2431 60%,#1a222e);border:1px solid rgba(148,178,220,.22);color:#eef2f8;font-size:13.5px;font-weight:700;border-radius:12px;padding:11px 16px;text-decoration:none}
-.tp-kicker{font-size:11px;font-weight:800;letter-spacing:2px;color:#e8c766;margin:0 0 10px}
-.tp-card{background:radial-gradient(360px 180px at 110% -30px, rgba(87,227,137,.08), transparent 65%), linear-gradient(155deg,#26303f,#1c2431 60%,#1a222e);border:1px solid rgba(232,199,102,.45);border-radius:18px;padding:26px 20px 22px;text-align:center;box-shadow:0 18px 44px rgba(0,0,0,.35)}
-.tp-ico{width:58px;height:58px;margin:0 auto 14px;border-radius:16px;background:rgba(232,199,102,.12);border:1px solid rgba(232,199,102,.4);display:flex;align-items:center;justify-content:center;font-size:27px}
-.tp-card h2{font-size:23px;font-weight:800;line-height:1.25;color:#fff;margin:0 0 10px}
-.tp-sub{color:#9aa7b8;font-size:14px;line-height:1.55;margin:0 auto 16px;max-width:420px}
-.tp-feats{text-align:left;max-width:420px;margin:0 auto}
-.tp-feats ul{margin:0;padding:0}
-.tp-feats li{list-style:none;margin:11px 0;font-size:14px;color:#eef2f8;display:flex;gap:10px;align-items:flex-start;line-height:1.45}
-.tp-ck{color:#2fe6a7;font-weight:800;flex:0 0 auto}
-.tp-cta{display:block;background:#2fe6a7;color:#04150a;font-weight:800;font-size:16px;border-radius:14px;padding:15px;text-decoration:none;margin:20px auto 0;max-width:420px}
-.tp-fine{font-size:12px;color:#8b98ad;margin:10px 0 0}
-.tp-nav{position:fixed;left:0;right:0;bottom:0;z-index:1100;display:flex;background:#0b0f14;border-top:1px solid rgba(139,152,173,.16);backdrop-filter:none;padding:6px 6px calc(6px + env(safe-area-inset-bottom, 0px))}
-.tp-nav a{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;color:#8b98ad;text-decoration:none;font-size:10px;font-weight:500;letter-spacing:.01em;padding:7px 0 6px;border-radius:22px;transition:background-color .2s ease,color .2s ease}
-.tp-nav a .tp-nico{display:flex;align-items:center;justify-content:center;width:22px;height:22px;font-size:20px;line-height:1}
-.tp-nav a .tp-nico svg{display:block;width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
-.tp-nav a.active{color:#2fe6a7;background:rgba(47,230,167,.15);font-weight:600}
-</style>
-
 <div class="tp"{% if public_mode %} style="padding-bottom:104px"{% endif %}>
-  <h1>Bet Tracker: <span class="tp-mint">Every Bet You Track, Graded for You</span></h1>
-  <p class="tp-lede">Your personal record book for the plays you follow. Add a play once and the Tracker keeps score for you: every bet is graded from the final score, your record, win rate, profit and ROI update on their own, and nothing is ever edited after the fact. No spreadsheets, no manual math.</p>
-  <div class="tp-dot"><i></i>Members-only tool</div>
-  <div class="tp-btns">
-    <a class="tp-btn" href="{{ watch_url }}">&#9654; Watch how it works</a>
-    <a class="tp-btn" href="#what-members-get">&#9432; How it works</a>
-  </div>
-
-  <div class="tp-promo" id="tp-promo">
-    <span class="tp-flame" aria-hidden="true">🔥</span>
-    <span class="tp-ptext">Today's plays are live &middot; your first month of Platinum is <b>FREE</b></span>
-    <a class="tp-start" href="{{ cta_url }}">Start</a>
-    <button class="tp-x" type="button" aria-label="Dismiss" onclick="try{localStorage.setItem('tst_tracker_promo_off','1')}catch(e){}document.getElementById('tp-promo').style.display='none'">&#10005;</button>
-  </div>
-  <script>try{if(localStorage.getItem('tst_tracker_promo_off')==='1'){document.getElementById('tp-promo').style.display='none'}}catch(e){}</script>
-
-  <p class="tp-kicker" id="what-members-get">&#128274; WHAT MEMBERS GET</p>
-  <div class="tp-card">
-    <div class="tp-ico">🔒</div>
-    <h2>Your bet tracker is members-only</h2>
-    <p class="tp-sub">The Tracker comes with Platinum. Join and every play you add is graded automatically — your full history saved, current and public-grade honest.</p>
-    <div class="tp-feats">
-      <ul>
-        <li><span class="tp-ck">✓</span><span>Graded automatically from the final score — no manual entry, ever</span></li>
-        <li><span class="tp-ck">✓</span><span>Closing line value (CLV) shown whenever a closing line is captured</span></li>
-        <li><span class="tp-ck">✓</span><span>Breakdowns by league and by level — Platinum and Gold</span></li>
-        <li><span class="tp-ck">✓</span><span>Your real record, win rate, profit and ROI — always up to date</span></li>
-        <li><span class="tp-ck">✓</span><span>Official plays carry the verified ticket — add any of them in one tap with + Track</span></li>
-      </ul>
-    </div>
-    <a class="tp-cta" href="{{ cta_url }}">Start your free month &rarr;</a>
-    <p class="tp-fine">First month of Platinum is free &middot; then $49.99/month &middot; cancel anytime</p>
-  </div>
-
+{% include "_tracker_sales_body.html" %}
   {% if not public_mode %}
   {% include "_upsell_vip.html" %}
   {% endif %}
