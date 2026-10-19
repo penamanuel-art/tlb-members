@@ -1,100 +1,254 @@
 {% extends "base_v2.html" %}
-{% block title %}Tools — The Sharp Team{% endblock %}
+{% block title %}All Tools — The Sharp Team{% endblock %}
 {% block content %}
+{% set tracker_href = '/tracker' if es_platinum else desbloquear_url %}
+{% set evboard_href = '/ev-board' if es_platinum else desbloquear_url %}
+{% set oddsboard_href = '/odds-board' if es_platinum else desbloquear_url %}
+{% set parlay_href = '/parlay-builder' if es_platinum else desbloquear_url %}
+{% set evresults_href = '/ev-board/results' if es_platinum else desbloquear_url %}
 <style>
-.tools-wrap{max-width:560px;margin:0 auto;padding:20px 16px 100px}
-.tools-head{display:flex;gap:13px;align-items:center;background:linear-gradient(165deg,#151e36,#0a0f1d);border:1px solid rgba(255,255,255,.08);border-radius:24px;padding:16px;margin:-2px -8px 18px}
-.tools-head-ico{flex:0 0 auto;width:47px;height:47px;border-radius:14px;background:rgba(47,230,167,.13);border:1px solid rgba(47,230,167,.4);display:flex;align-items:center;justify-content:center;font-size:23px}
-.tools-title{font-size:27px;font-weight:800;color:#fff;margin:0;letter-spacing:-.5px}
-.tools-title span{color:#2fe6a7}
-.tools-sub{color:#9a9ab5;font-size:13.5px;margin:3px 0 0;line-height:1.45}
-.tool-card{display:flex;align-items:center;gap:14px;background:#17171f;border:2px solid #22c55e;border-radius:18px;padding:16px;margin:0 0 12px;color:#fff;text-decoration:none}
-.tool-card:active{transform:scale(.98)}
-.tool-ico{width:48px;height:48px;border-radius:14px;background:#1c2a1c;display:flex;align-items:center;justify-content:center;font-size:24px;flex:0 0 auto}
-.tool-info b{font-size:16px;display:block;margin-bottom:2px}
-.tool-info span{font-size:13px;color:#9a9ab5;line-height:1.4;display:block}
-.tool-arrow{margin-left:auto;color:#22c55e;font-size:20px;font-weight:800;flex:0 0 auto}
+.at-wrap{max-width:560px;margin:0 auto;padding:18px 16px 100px;color:#eef2f8}
+.at-title{font-size:21px;font-weight:800;letter-spacing:.2px;color:#fff;margin:0}
+.at-sub{font-size:12.5px;color:#93a5c4;margin:3px 0 0}
+.at-search{margin-top:14px;background:#131f36;border:1px solid #22314f;border-radius:11px;padding:10px 12px;display:flex;align-items:center;gap:8px}
+.at-search input{flex:1;background:none;border:none;outline:none;color:#eef2f8;font-size:13.5px;font-family:inherit}
+.at-search input::placeholder{color:#7286a8}
+.at-sec{font-size:11px;letter-spacing:1.6px;color:#2fe6a7;font-weight:700;margin:20px 0 8px}
+.at-sec .at-sec-note{color:#5f7396;letter-spacing:.4px;font-weight:600}
+.at-sec .at-count{color:#5f7396}
+.at-recent{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.at-recent::-webkit-scrollbar{display:none}
+.at-chip{flex:none;display:flex;align-items:center;gap:7px;background:#131f36;border:1px solid #22314f;border-radius:999px;padding:8px 14px;font-size:13.5px;font-weight:600;color:#eef2f8;text-decoration:none}
+.at-chip .dot{color:#2fe6a7;font-size:9px}
+.at-box{border:1px solid #22314f;border-radius:14px;overflow:hidden;background:rgba(10,15,26,.55)}
+.at-row{display:flex;align-items:center;gap:11px;padding:11px 12px;border-bottom:1px solid #1a2947;color:#eef2f8;text-decoration:none}
+.at-row:last-child{border-bottom:none}
+.at-row:active{background:#131f36}
+.at-ico{width:34px;height:34px;border-radius:9px;background:#16263f;display:flex;align-items:center;justify-content:center;flex:none}
+.at-info{flex:1;min-width:0}
+.at-info b{font-size:14.5px;font-weight:700;display:block;color:#fff}
+.at-info span{font-size:12px;color:#93a5c4;display:block}
+.at-plat{background:#123524;color:#5eeaa0;font-size:9.5px;font-weight:800;letter-spacing:.6px;padding:3px 7px;border-radius:6px;flex:none}
+.at-chev{color:#5f7396;font-size:17px;flex:none}
+.at-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.at-tile{border:1px solid #22314f;border-radius:12px;padding:10px 12px;font-size:13.5px;font-weight:600;color:#eef2f8;text-decoration:none;background:rgba(10,15,26,.55)}
+.at-tile:active{background:#131f36}
+.at-new{background:#0f2e21;color:#2fe6a7;font-size:8.5px;font-weight:800;letter-spacing:.6px;padding:2px 5px;border-radius:5px;vertical-align:2px}
+.at-guide-panel{border-top:1px solid #1a2947;background:rgba(8,15,26,.66);padding:10px 12px 12px 57px}
+.at-guide-panel h4{font-size:12.5px;font-weight:700;color:#eef2f8;margin:0}
+.at-guide-panel p{font-size:12px;line-height:1.5;color:#aebdd4;margin:4px 0 0}
+.at-guide-nums{font-size:12px;line-height:1.55;color:#d7e0ee;margin-top:7px}
+.at-guide-nums b{color:#2fe6a7}
+.at-guide-more{font-size:12px;color:#93a5c4;margin-top:8px;line-height:1.7}
+.at-guide-more a{color:#93a5c4;text-decoration:none;border-bottom:1px dotted #3a4f74}
+.at-guide-open{display:inline-block;font-size:12px;font-weight:700;color:#2fe6a7;margin-top:7px;text-decoration:none}
+.at-empty{display:none;text-align:center;color:#7286a8;font-size:13px;padding:22px 0 4px}
 </style>
 
-<div class="tools-wrap">
-  <div class="tools-head">
-    <span class="tools-head-ico">🧰</span>
-    <div>
-      <h1 class="tools-title">Your <span>Tools</span></h1>
-      <p class="tools-sub">Every edge-finding tool in one place.</p>
+<div class="at-wrap">
+  <h1 class="at-title">All tools</h1>
+  <p class="at-sub">10 tools and 9 calculators. Tap one to open it.</p>
+
+  <div class="at-search">
+    <span style="color:#7286a8;font-size:13px">&#128269;</span>
+    <input id="atSearch" type="text" placeholder="Search tools" autocomplete="off">
+  </div>
+
+  <div id="atRecentSec">
+    <p class="at-sec">RECENT <span class="at-sec-note">on this device</span></p>
+    <div class="at-recent" id="atRecentRow">
+      <a class="at-chip" href="/home" data-recent='{"id":"today","label":"Today\u2019s plays","href":"/home"}'><span class="dot">&#9679;</span>Today&rsquo;s plays</a>
+      <a class="at-chip" href="{{ tracker_href }}" data-recent='{"id":"tracker","label":"Bet Tracker","href":"{{ tracker_href }}"}'><span class="dot">&#9679;</span>Bet Tracker</a>
+      <a class="at-chip" href="{{ evboard_href }}" data-recent='{"id":"evboard","label":"+EV Board","href":"{{ evboard_href }}"}'><span class="dot">&#9679;</span>+EV Board</a>
+      <a class="at-chip" href="/alertas" data-recent='{"id":"alerts","label":"Alerts","href":"/alertas"}'><span class="dot">&#9679;</span>Alerts</a>
+      <a class="at-chip" href="/masterclass" data-recent='{"id":"academy","label":"Academy","href":"/masterclass"}'><span class="dot">&#9679;</span>Academy</a>
     </div>
   </div>
 
-  <a class="tool-card" href="{{ url_for('ev_board') }}">
-    <div class="tool-ico">⚡</div>
-    <div class="tool-info">
-      <b>+EV Board</b>
-      <span>Live value edges vs Pinnacle no-vig fair price.</span>
+  <div class="at-section">
+    <p class="at-sec">MY TOOLS <span class="at-count">3</span></p>
+    <div class="at-box">
+      <a class="at-row at-item" href="{{ tracker_href }}" data-search="bet tracker profit roi clv my bets" data-recent='{"id":"tracker","label":"Bet Tracker","href":"{{ tracker_href }}"}'>
+        <span class="at-ico"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#2fe6a7" stroke-width="2"><path d="M3 9V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2.5 2.5 0 0 0 0 5v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2.5 2.5 0 0 0 0-5z"/><path d="M13 5v2M13 11v2M13 17v2"/></svg></span>
+        <span class="at-info"><b>Bet Tracker</b><span>Profit, ROI and CLV</span></span>
+        <span class="at-plat">&#128142; PLATINUM</span>
+        <span class="at-chev">›</span>
+      </a>
+      <a class="at-row at-item" href="/alertas" data-search="alerts notifications plays results line moves" data-recent='{"id":"alerts","label":"Alerts","href":"/alertas"}'>
+        <span class="at-ico"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#2fe6a7" stroke-width="2"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 8-3 8h18s-3-1-3-8"/><path d="M10.3 21a2 2 0 0 0 3.4 0"/></svg></span>
+        <span class="at-info"><b>Alerts</b><span>Plays, results and line moves — you choose</span></span>
+        <span class="at-chev">›</span>
+      </a>
+      <a class="at-row at-item" href="/records" data-search="full record official plays graded history" data-recent='{"id":"record","label":"Full Record","href":"/records"}'>
+        <span class="at-ico"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#2fe6a7" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V4H6.5A2.5 2.5 0 0 0 4 6.5v13z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></svg></span>
+        <span class="at-info"><b>Full Record</b><span>Every official play, graded</span></span>
+        <span class="at-chev">›</span>
+      </a>
     </div>
-    <span class="tool-arrow">›</span>
-  </a>
+  </div>
 
-  <a class="tool-card" href="{{ url_for('props') }}">
-    <div class="tool-ico">🎯</div>
-    <div class="tool-info">
-      <b>Player Props</b>
-      <span>+EV player props across every book.</span>
+  <div class="at-section">
+    <p class="at-sec">MARKET DATA <span class="at-count">3</span></p>
+    <div class="at-box">
+      <a class="at-row at-item" href="{{ evboard_href }}" data-search="ev board value edges prices fair ranked" data-recent='{"id":"evboard","label":"+EV Board","href":"{{ evboard_href }}"}'>
+        <span class="at-ico"><svg width="17" height="17" viewBox="0 0 24 24" fill="#2fe6a7"><path d="M13 2 4.5 13.5H11L9.5 22 19 9.5h-6.5L13 2z"/></svg></span>
+        <span class="at-info"><b>+EV Board</b><span>Prices above fair, ranked</span></span>
+        <span class="at-plat">&#128142; PLATINUM</span>
+        <span class="at-chev">›</span>
+      </a>
+      <a class="at-row at-item" href="/tools/line-moves" data-search="line movement sharp money moves tracked" data-recent='{"id":"linemoves","label":"Line Movement","href":"/tools/line-moves"}'>
+        <span class="at-ico"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#2fe6a7" stroke-width="2"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg></span>
+        <span class="at-info"><b>Line Movement</b><span>Sharp money, tracked live</span></span>
+        <span class="at-chev">›</span>
+      </a>
+      <a class="at-row at-item" href="{{ oddsboard_href }}" data-search="odds board every game best price moneyline" data-recent='{"id":"oddsboard","label":"Odds Board","href":"{{ oddsboard_href }}"}'>
+        <span class="at-ico"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#2fe6a7" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h10"/></svg></span>
+        <span class="at-info"><b>Odds Board</b><span>Every game, best price</span></span>
+        <span class="at-plat">&#128142; PLATINUM</span>
+        <span class="at-chev">›</span>
+      </a>
     </div>
-    <span class="tool-arrow">›</span>
-  </a>
+  </div>
 
-  <a class="tool-card" href="{{ url_for('tools_line_moves') }}">
-    <div class="tool-ico">📉</div>
-    <div class="tool-info">
-      <b>Line Moves</b>
-      <span>Sharp money moves tracked in real time.</span>
+  <div class="at-section">
+    <p class="at-sec">RESEARCH <span class="at-count">2</span></p>
+    <div class="at-box">
+      <a class="at-row at-item" href="{{ parlay_href }}" data-search="parlay builder legs slip combined" data-recent='{"id":"parlay","label":"Parlay Builder","href":"{{ parlay_href }}"}'>
+        <span class="at-ico"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#2fe6a7" stroke-width="2"><path d="M12 2 3 7l9 5 9-5-9-5z"/><path d="M3 12l9 5 9-5"/><path d="M3 17l9 5 9-5"/></svg></span>
+        <span class="at-info"><b>Parlay Builder</b><span>Parlays built from +EV legs</span></span>
+        <span class="at-plat">&#128142; PLATINUM</span>
+        <span class="at-chev">›</span>
+      </a>
+      <a class="at-row at-item" href="{{ evresults_href }}" data-search="ev board results graded edges record profit" data-recent='{"id":"evresults","label":"EV Board Results","href":"{{ evresults_href }}"}'>
+        <span class="at-ico"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#2fe6a7" stroke-width="2"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg></span>
+        <span class="at-info"><b>EV Board Results</b><span>Board edges, graded</span></span>
+        <span class="at-plat">&#128142; PLATINUM</span>
+        <span class="at-chev">›</span>
+      </a>
     </div>
-    <span class="tool-arrow">›</span>
-  </a>
+  </div>
 
-  <a class="tool-card" href="{{ url_for('sharp') }}">
-    <div class="tool-ico">🔪</div>
-    <div class="tool-info">
-      <b>Sharp Board</b>
-      <span>Full sharp money board, every game.</span>
+  <div class="at-section">
+    <p class="at-sec">CALCULATORS <span class="at-count">9</span></p>
+    <div class="at-grid">
+      <a class="at-tile at-item" href="/tools/calculators#converter" data-search="odds converter american decimal fractional" data-recent='{"id":"calc-converter","label":"Odds Converter","href":"/tools/calculators#converter"}'>Odds Converter</a>
+      <a class="at-tile at-item" href="/tools/calculators#parlay" data-search="parlay calculator combined odds payout" data-recent='{"id":"calc-parlay","label":"Parlay","href":"/tools/calculators#parlay"}'>Parlay</a>
+      <a class="at-tile at-item" href="/tools/calculators#hedge" data-search="hedge calculator guarantee profit" data-recent='{"id":"calc-hedge","label":"Hedge","href":"/tools/calculators#hedge"}'>Hedge</a>
+      <a class="at-tile at-item" href="/tools/calculators#novig" data-search="no vig fair odds remove juice" data-recent='{"id":"calc-novig","label":"No-Vig Fair Odds","href":"/tools/calculators#novig"}'>No-Vig Fair Odds</a>
+      <a class="at-tile at-item" href="/tools/calculators#kelly" data-search="ev kelly stake sizing bankroll" data-recent='{"id":"calc-kelly","label":"EV and Kelly","href":"/tools/calculators#kelly"}'>EV and Kelly</a>
+      <a class="at-tile at-item" href="/tools/calculators#arbitrage" data-search="arbitrage calculator sure bet both sides" data-recent='{"id":"calc-arbitrage","label":"Arbitrage","href":"/tools/calculators#arbitrage"}'>Arbitrage <span class="at-new">NEW</span></a>
+      <a class="at-tile at-item" href="/tools/calculators#middle" data-search="middle calculator window both sides" data-recent='{"id":"calc-middle","label":"Middle","href":"/tools/calculators#middle"}'>Middle <span class="at-new">NEW</span></a>
+      <a class="at-tile at-item" href="/tools/calculators#roundrobin" data-search="round robin calculator combinations parlays" data-recent='{"id":"calc-roundrobin","label":"Round Robin","href":"/tools/calculators#roundrobin"}'>Round Robin <span class="at-new">NEW</span></a>
+      <a class="at-tile at-item" href="/tools/calculators#clv" data-search="closing line value clv beat the close" data-recent='{"id":"calc-clv","label":"Closing Line Value","href":"/tools/calculators#clv"}'>Closing Line Value <span class="at-new">NEW</span></a>
     </div>
-    <span class="tool-arrow">›</span>
-  </a>
+  </div>
 
-  <a class="tool-card" href="{{ url_for('records') }}">
-    <div class="tool-ico">📜</div>
-    <div class="tool-info">
-      <b>Full Record</b>
-      <span>Every official play, graded and on the record.</span>
+  <div class="at-section">
+    <p class="at-sec">LEARN <span class="at-count">2</span></p>
+    <div class="at-box">
+      <a class="at-row at-item" href="/masterclass" data-search="academy masterclass lessons 30 day course" data-recent='{"id":"academy","label":"Academy","href":"/masterclass"}'>
+        <span class="at-ico"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#2fe6a7" stroke-width="2"><path d="M22 9 12 4 2 9l10 5 10-5z"/><path d="M6 11.5V16c0 1.7 2.7 3 6 3s6-1.3 6-3v-4.5"/></svg></span>
+        <span class="at-info"><b>Academy</b><span>The 30-day Masterclass</span></span>
+        <span class="at-chev">›</span>
+      </a>
+      <div class="at-row at-item" id="atGuidesRow" data-search="guides american odds explained moneyline spread total vig glossary" style="cursor:pointer">
+        <span class="at-ico"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#2fe6a7" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M10 8.5v7l6-3.5-6-3.5z"/></svg></span>
+        <span class="at-info"><b>Guides</b><span>American odds, explained</span></span>
+        <span class="at-chev" id="atGuidesChev">&#9662;</span>
+      </div>
+      <div class="at-guide-panel" id="atGuidesPanel" style="display:none">
+        <h4>American Odds — quick guide</h4>
+        <p>Minus price = favorite. Plus price = underdog.</p>
+        <div class="at-guide-nums"><b>&minus;150</b> · Bet $150 to win $100 · 60% chance<br><b>+150</b> · Bet $100 to win $150 · 40% chance</div>
+        <p class="at-guide-more">More guides: <a href="/guides/moneyline">Moneyline</a> · <a href="/guides/spread">Spread</a> · <a href="/guides/total">Total</a> · <a href="/guides/vig">Vig</a> · <a href="/guides/reading-card">Reading a card</a> · <a href="/guides/glossary">Glossary</a></p>
+        <a class="at-guide-open" href="/guides/american-odds">Open full guide ›</a>
+      </div>
     </div>
-    <span class="tool-arrow">›</span>
-  </a>
+  </div>
 
-  <a class="tool-card" href="{{ url_for('parlay_builder') }}">
-    <div class="tool-ico">🎫</div>
-    <div class="tool-info">
-      <b>Parlay Builder</b>
-      <span>Build your own parlay, get the slip.</span>
-    </div>
-    <span class="tool-arrow">›</span>
-  </a>
-
-  <a class="tool-card" href="{{ url_for('tools_calculators') }}">
-    <div class="tool-ico">🧮</div>
-    <div class="tool-info">
-      <b>Calculators</b>
-      <span>Odds converter, no-vig fair price, Kelly stakes, hedge and parlay math.</span>
-    </div>
-    <span class="tool-arrow">›</span>
-  </a>
-
-  <a class="tool-card" href="{{ url_for('ai_assistant') }}">
-    <div class="tool-ico">🧠</div>
-    <div class="tool-info">
-      <b>Brain</b>
-      <span>Ask for best plays, parlays and more.</span>
-    </div>
-    <span class="tool-arrow">›</span>
-  </a>
+  <p class="at-empty" id="atNoResults">No tools match your search.</p>
 </div>
+
+<script>
+(function(){
+  var KEY = 'tst_recent_tools';
+
+  /* ---------- Recientes del dispositivo ---------- */
+  function loadRecents(){
+    try { var v = JSON.parse(localStorage.getItem(KEY)); return Array.isArray(v) ? v : null; }
+    catch(e){ return null; }
+  }
+  function saveRecent(item){
+    if(!item || !item.id) return;
+    var list = loadRecents() || [];
+    list = list.filter(function(x){ return x.id !== item.id; });
+    list.unshift(item);
+    list = list.slice(0, 6);
+    try { localStorage.setItem(KEY, JSON.stringify(list)); } catch(e){}
+  }
+  function bindRecent(el){
+    el.addEventListener('click', function(){
+      try { saveRecent(JSON.parse(el.getAttribute('data-recent'))); } catch(e){}
+    });
+  }
+  var row = document.getElementById('atRecentRow');
+  var stored = loadRecents();
+  if(row && stored && stored.length){
+    row.innerHTML = '';
+    stored.slice(0, 6).forEach(function(it){
+      if(!it.href || !it.label) return;
+      var a = document.createElement('a');
+      a.className = 'at-chip';
+      a.href = it.href;
+      a.setAttribute('data-recent', JSON.stringify(it));
+      var dot = document.createElement('span');
+      dot.className = 'dot';
+      dot.innerHTML = '&#9679;';
+      a.appendChild(dot);
+      a.appendChild(document.createTextNode(it.label));
+      row.appendChild(a);
+    });
+  }
+  document.querySelectorAll('[data-recent]').forEach(bindRecent);
+
+  /* ---------- Acordeon de Guides ---------- */
+  var grow = document.getElementById('atGuidesRow');
+  var gpanel = document.getElementById('atGuidesPanel');
+  var gchev = document.getElementById('atGuidesChev');
+  if(grow && gpanel){
+    grow.addEventListener('click', function(){
+      var open = gpanel.style.display !== 'none';
+      gpanel.style.display = open ? 'none' : 'block';
+      if(gchev) gchev.innerHTML = open ? '&#9662;' : '&#9652;';
+    });
+  }
+
+  /* ---------- Buscador en vivo ---------- */
+  var input = document.getElementById('atSearch');
+  var items = Array.prototype.slice.call(document.querySelectorAll('.at-item'));
+  var sections = Array.prototype.slice.call(document.querySelectorAll('.at-section'));
+  var recentSec = document.getElementById('atRecentSec');
+  var noRes = document.getElementById('atNoResults');
+  if(input){
+    input.addEventListener('input', function(){
+      var q = input.value.trim().toLowerCase();
+      var anyVisible = false;
+      items.forEach(function(el){
+        var hay = (el.getAttribute('data-search') || '') + ' ' + el.textContent.toLowerCase();
+        var show = !q || hay.indexOf(q) !== -1;
+        el.style.display = show ? '' : 'none';
+        if(show) anyVisible = true;
+      });
+      sections.forEach(function(sec){
+        var kids = sec.querySelectorAll('.at-item');
+        var vis = false;
+        kids.forEach(function(k){ if(k.style.display !== 'none') vis = true; });
+        sec.style.display = vis ? '' : 'none';
+      });
+      if(recentSec) recentSec.style.display = q ? 'none' : '';
+      if(noRes) noRes.style.display = (q && !anyVisible) ? 'block' : 'none';
+    });
+  }
+})();
+</script>
 {% endblock %}
