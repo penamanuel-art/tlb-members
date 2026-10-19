@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% block title %}{{ m.nombre }} — Member detail{% endblock %}
+{% block content %}
+
+<style>
+  .mx-card{background:linear-gradient(160deg,#101828,#0c1322);border:1px solid #1e2a45;border-radius:18px;padding:18px;margin-bottom:14px;}
+  .mx-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;}
+  .mx-name{font-size:19px;font-weight:800;color:#ffffff;line-height:1.2;}
+  .mx-new{font-size:10px;font-weight:800;color:#f5c542;letter-spacing:1px;vertical-align:middle;}
+  .mx-email{font-size:13px;color:#8fa1bd;margin-top:3px;word-break:break-all;}
+  .mx-status{flex:none;font-size:11px;font-weight:800;letter-spacing:1px;padding:6px 12px;border-radius:999px;white-space:nowrap;}
+  .mx-status.plat{background:linear-gradient(180deg,#cdf3ff,#63cbf5);color:#07304a;}
+  .mx-status.free{background:#22345c;color:#aebdd4;}
+  .mx-status.adm{background:#22c55e;color:#08130c;}
+  .mx-rows{margin-top:14px;border-top:1px solid #1e2a45;padding-top:12px;display:flex;flex-direction:column;gap:8px;}
+  .mx-row{display:flex;justify-content:space-between;align-items:center;font-size:13.5px;gap:10px;}
+  .mx-row .k{color:#8fa1bd;}
+  .mx-row .v{color:#e6ecf5;font-weight:700;text-align:right;}
+  .mx-row .v.gold{color:#f5c542;}
+  .mx-row .v.red{color:#f87171;}
+  .mx-row .v.green{color:#4ade80;}
+  .mx-note{margin-top:10px;font-size:12px;color:#f59e0b;}
+  .mx-actions{margin-top:14px;display:flex;gap:8px;}
+  .mx-actions form{flex:1;}
+  .mx-actions button{width:100%;}
+  .mx-sec{font-size:11px;font-weight:800;letter-spacing:2px;color:#8fa1bd;margin:20px 0 8px;}
+  .mx-back{display:inline-block;color:#7dd3fc;font-size:13px;font-weight:700;text-decoration:none;margin-bottom:12px;}
+  .mx-act{display:flex;justify-content:space-between;font-size:12.5px;padding:6px 0;border-bottom:1px solid #16223a;}
+  .mx-act .ak{color:#c9d4e8;text-transform:capitalize;}
+  .mx-act .av{color:#8fa1bd;}
+  .mx-play{display:flex;justify-content:space-between;gap:8px;font-size:12.5px;padding:6px 0;border-bottom:1px solid #16223a;}
+  .mx-play .pk{color:#e6ecf5;font-weight:600;}
+  .mx-play .pm{color:#8fa1bd;white-space:nowrap;}
+</style>
+
+<a class="mx-back" href="{{ url_for('admin_miembros') }}">← Members</a>
+
+<article class="mx-card">
+  <div class="mx-top">
+    <div>
+      <div class="mx-name">{{ m.nombre }}</div>
+      <div class="mx-email">{{ m.email }}</div>
+    </div>
+    {% if m.is_admin %}<span class="mx-status adm">ADMIN</span>
+    {% elif m.platinum_unlocked %}<span class="mx-status plat">★ PLATINUM</span>
+    {% else %}<span class="mx-status free">FREE</span>{% endif %}
+  </div>
+  <div class="mx-rows">
+    <div class="mx-row"><span class="k">📅 Joined</span><span class="v">{{ m.created_at[:10] if m.created_at else '—' }}</span></div>
+    <div class="mx-row"><span class="k">✅ Confirmed</span><span class="v">{{ m.activated_at[:10] if m.activated_at else '—' }}</span></div>
+    {% if ciudad %}<div class="mx-row"><span class="k">📍 City</span><span class="v">{{ ciudad }}</span></div>{% endif %}
+    <div class="mx-row"><span class="k">🌐 Language</span><span class="v">{{ 'Español' if m.lang == 'es' else 'English' }}</span></div>
+    {% if m.phone %}<div class="mx-row"><span class="k">📱 Phone</span><span class="v">{{ m.phone }}</span></div>
+    <div class="mx-row"><span class="k">💬 SMS alerts</span><span class="v">{{ 'Yes' if m.sms_optin else 'No' }}</span></div>{% endif %}
+  </div>
+</article>
+
+<p class="mx-sec">PLATINUM & BILLING</p>
+<article class="mx-card">
+  <div class="mx-rows" style="margin-top:0;border-top:none;padding-top:0;">
+    {% if m.platinum_unlocked %}
+    <div class="mx-row"><span class="k">💎 Platinum</span>
+      {% if m.platinum_trial_ends %}<span class="v gold">Free month · Until {{ m.platinum_trial_ends[:10] }}</span>
+      {% elif m.stripe_subscription_id %}<span class="v gold">Active · Stripe</span>
+      {% else %}<span class="v gold">Active · No expiry</span>{% endif %}
+    </div>
+    {% else %}
+    <div class="mx-row"><span class="k">💎 Platinum</span><span class="v">Not subscribed</span></div>
+    {% endif %}
+    {% if m.stripe_past_due %}<div class="mx-row"><span class="k">💳 Payment</span><span class="v red">Past due</span></div>{% endif %}
+    {% if m.cancel_requested_at %}<div class="mx-row"><span class="k">⚠️ Cancel requested</span><span class="v red">{{ m.cancel_requested_at[:10] }}</span></div>{% endif %}
+    <div class="mx-row"><span class="k">💳 Stripe customer</span><span class="v">{{ 'Yes' if m.stripe_customer_id else 'No' }}</span></div>
+    <div class="mx-row"><span class="k">✈️ Telegram</span><span class="v">{{ 'Linked' if m.telegram_user_id else 'Not linked' }}</span></div>
+    {% if m.stake_fijo_elite or m.stake_fijo_gold %}<div class="mx-row"><span class="k">🎯 Fixed stakes</span><span class="v">Platinum ${{ m.stake_fijo_elite or '—' }} · Gold ${{ m.stake_fijo_gold or '—' }}</span></div>{% endif %}
+  </div>
+  <div class="mx-actions">
+    <form method="post" action="{{ url_for('admin_toggle_platinum') }}">
+      <input type="hidden" name="user_id" value="{{ m.id }}">
+      <button class="btn btn-sm {{ 'btn-ghost' if m.platinum_unlocked else 'btn-place' }}" type="submit">{{ 'Remove Platinum' if m.platinum_unlocked else 'Activate Platinum' }}</button>
+    </form>
+    {% if not m.is_admin %}
+    <form method="post" action="{{ url_for('admin_eliminar_miembro') }}" onsubmit="return confirm('Delete this account?');">
+      <input type="hidden" name="user_id" value="{{ m.id }}">
+      <button class="btn btn-sm btn-ghost" type="submit">Delete</button>
+    </form>
+    {% endif %}
+  </div>
+</article>
+
+<p class="mx-sec">PROGRAM ACTIVITY</p>
+<article class="mx-card">
+  <div class="mx-rows" style="margin-top:0;border-top:none;padding-top:0;">
+    <div class="mx-row"><span class="k">🖥️ Days on the Dashboard</span><span class="v">{{ dias_dashboard }}</span></div>
+    {% if ultimo_dia %}<div class="mx-row"><span class="k">🕐 Last day in</span><span class="v">{{ ultimo_dia }}</span></div>{% endif %}
+  </div>
+  {% if actividad %}
+  <div style="margin-top:10px;">
+    {% for a in actividad %}
+    <div class="mx-act"><span class="ak">{{ a.kind }}</span><span class="av">{{ a.created_at[:16].replace('T', ' ') }}</span></div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p class="muted" style="margin:10px 0 0;">No recorded activity yet.</p>
+  {% endif %}
+</article>
+
+<p class="mx-sec">PERSONAL TRACKER</p>
+<article class="mx-card">
+  {% if stats %}
+  <div class="mx-rows" style="margin-top:0;border-top:none;padding-top:0;">
+    <div class="mx-row"><span class="k">🎯 Plays tracked</span><span class="v">{{ stats.tracked }} ({{ stats.pending }} pending)</span></div>
+    <div class="mx-row"><span class="k">📊 Record</span><span class="v">{{ stats.record }}</span></div>
+    <div class="mx-row"><span class="k">💰 Profit</span><span class="v {{ 'green' if stats.net_dollars >= 0 else 'red' }}">{{ fmt_money(stats.net_dollars) }}</span></div>
+    <div class="mx-row"><span class="k">🎲 Risked</span><span class="v">{{ fmt_money(stats.risked) }}</span></div>
+  </div>
+  {% if tracked %}
+  <div style="margin-top:10px;">
+    {% for t in tracked %}
+    <div class="mx-play"><span class="pk">{{ t.pick }} <span style="color:#8fa1bd;">{{ fmt_odds(t.cuota) }}</span></span><span class="pm">{{ t.fecha }} · {{ 'WON ' + fmt_money(t.profit) if t.resultado == 'W' else ('LOST ' + fmt_money(t.profit) if t.resultado == 'L' else 'Pending') }}</span></div>
+    {% endfor %}
+  </div>
+  {% endif %}
+  <div class="mx-actions">
+    <form method="get" action="{{ url_for('admin_ver_tracker', user_id=m.id) }}">
+      <button class="btn btn-sm btn-ghost" type="submit">View full tracker →</button>
+    </form>
+  </div>
+  {% else %}
+  <p class="muted" style="margin:0;">This member hasn't tracked any plays yet.</p>
+  {% endif %}
+</article>
+
+{% endblock %}
