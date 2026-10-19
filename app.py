@@ -4996,7 +4996,7 @@ def tracker():
             "tracker_locked.html",
             upsell_cta_url=url_for("desbloquear_platinum"),
             past_due_mode=True,
-            update_card_url=url_for("cuenta"),
+            update_card_url=url_for("desbloquear_platinum"),
         )
     # El admin no usa tracker personal: ve el oficial con tickets (2026-10-03,
     # orden de Alex). Su "Alex Owner Results" estaba vacío y no tenía sentido.
@@ -5035,7 +5035,7 @@ def tracker():
                 "tracker_locked.html",
                 upsell_cta_url=url_for("desbloquear_platinum"),
                 past_due_mode=True,
-                update_card_url=_pay_url or url_for("cuenta"),
+                update_card_url=url_for("desbloquear_platinum"),
             )
         # Sin Platinum activo (nunca lo activó o se le acabó el mes
         # gratis): la página de venta con candado WHAT MEMBERS GET,
