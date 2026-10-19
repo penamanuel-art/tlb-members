@@ -1,0 +1,71 @@
+{% extends "base_v2.html" %}
+{% block title %}EV Board Results — The Sharp Team{% endblock %}
+{% block content %}
+<style>
+.er-wrap{max-width:720px;margin:0 auto;color:#fff;padding:24px 16px 100px}
+.er-header{text-align:center;margin-bottom:22px}
+.er-wrap .kicker{font-size:11px;font-weight:800;letter-spacing:3px;color:#2fe6a7;margin:0 0 8px}
+.er-wrap h2{font-size:2rem;font-weight:900;margin:0 0 8px}
+.er-wrap .muted{color:#9a9ab5;font-size:14px;margin:0;line-height:1.5}
+.er-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:0 0 20px}
+.er-stat{background:#101828;border:1px solid #22314f;border-radius:14px;padding:12px 6px;text-align:center}
+.er-stat b{font-size:19px;font-weight:800;display:block;color:#fff}
+.er-stat span{font-size:10.5px;color:#7286a8;font-weight:700;letter-spacing:.8px}
+.er-pos{color:#2fe6a7 !important}
+.er-neg{color:#f87171 !important}
+.er-row{display:flex;align-items:center;gap:10px;background:#101828;border:1px solid #22314f;border-radius:14px;padding:11px 13px;margin:0 0 8px}
+.er-pick{flex:1;min-width:0}
+.er-pick b{font-size:14.5px;font-weight:700;display:block;color:#fff}
+.er-pick span{font-size:12px;color:#93a5c4;display:block}
+.er-badge{flex:none;font-size:11px;font-weight:800;letter-spacing:.6px;padding:4px 9px;border-radius:999px}
+.er-w{background:rgba(47,230,167,.14);color:#2fe6a7;border:1px solid rgba(47,230,167,.4)}
+.er-l{background:rgba(248,113,113,.12);color:#f87171;border:1px solid rgba(248,113,113,.35)}
+.er-p{background:rgba(147,165,196,.12);color:#93a5c4;border:1px solid rgba(147,165,196,.3)}
+.er-profit{flex:none;font-size:14px;font-weight:800;min-width:74px;text-align:right}
+.er-empty{border:2px dashed #3a3a4a;border-radius:18px;padding:28px 20px;text-align:center;margin:16px 0}
+.er-empty h3{color:#fff;margin:0 0 8px}
+.er-empty p{color:#9a9ab5;margin:0;font-size:14px;line-height:1.55}
+@media (max-width:520px){.er-stats{grid-template-columns:repeat(2,1fr)}}
+</style>
+
+<div class="er-wrap">
+  <div class="er-header">
+    <p class="kicker">EV BOARD RESULTS</p>
+    <h2>Board Edges, Graded</h2>
+    <p class="muted">Every +EV board edge the system tracks, graded at its tracked stake. No cherry-picking — the full record.</p>
+  </div>
+
+  <div class="er-stats">
+    <div class="er-stat"><b>{{ wins }}–{{ losses }}</b><span>RECORD</span></div>
+    <div class="er-stat"><b>{{ win_rate }}%</b><span>WIN RATE</span></div>
+    <div class="er-stat"><b class="{{ 'er-pos' if profit_positive else 'er-neg' }}">{{ profit_str }}</b><span>PROFIT</span></div>
+    <div class="er-stat"><b>{{ roi_str }}</b><span>ROI</span></div>
+  </div>
+
+  {% if plays %}
+    {% for p in plays %}
+    <div class="er-row">
+      <div class="er-pick">
+        <b>{{ p.pick }}</b>
+        <span>{{ p.cuota_str }} · {{ p.fecha }}</span>
+      </div>
+      {% if p.resultado == 'W' %}
+        <span class="er-badge er-w">WON</span>
+        <span class="er-profit er-pos">{{ p.profit_str }}</span>
+      {% elif p.resultado == 'L' %}
+        <span class="er-badge er-l">LOST</span>
+        <span class="er-profit er-neg">{{ p.profit_str }}</span>
+      {% else %}
+        <span class="er-badge er-p">PENDING</span>
+        <span class="er-profit"></span>
+      {% endif %}
+    </div>
+    {% endfor %}
+  {% else %}
+    <div class="er-empty">
+      <h3>Tracking is live</h3>
+      <p>Results will appear here as board edges are graded. Every tracked edge will be listed — wins and losses.</p>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
