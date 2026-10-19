@@ -6,6 +6,7 @@
 {% set oddsboard_href = '/odds-board' if es_platinum else desbloquear_url %}
 {% set parlay_href = '/parlay-builder' if es_platinum else desbloquear_url %}
 {% set evresults_href = '/ev-board/results' if es_platinum else desbloquear_url %}
+{% set linemoves_href = '/tools/line-moves' if es_platinum else desbloquear_url %}
 <style>
 body.v2{background-color:#161d29;background-image:radial-gradient(560px 300px at 50% -80px,rgba(47,230,167,.06),transparent 65%),radial-gradient(700px 500px at 110% 30%,rgba(77,163,255,.05),transparent 60%)}
 .at-wrap{max-width:560px;margin:0 auto;padding:18px 16px 100px;color:#eef2f8}
@@ -97,9 +98,10 @@ body.v2{background-color:#161d29;background-image:radial-gradient(560px 300px at
         <span class="at-plat">&#128142; PLATINUM</span>
         <span class="at-chev">›</span>
       </a>
-      <a class="at-row at-item" href="/tools/line-moves" data-search="line movement sharp money moves tracked" data-recent='{"id":"linemoves","label":"Line Movement","href":"/tools/line-moves"}'>
+      <a class="at-row at-item" href="{{ linemoves_href }}" data-search="line movement sharp money moves tracked" data-recent='{"id":"linemoves","label":"Line Movement","href":"{{ linemoves_href }}"}'>
         <span class="at-ico"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#2fe6a7" stroke-width="2"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg></span>
         <span class="at-info"><b>Line Movement</b><span>Sharp money, tracked live</span></span>
+        <span class="at-plat">&#128142; PLATINUM</span>
         <span class="at-chev">›</span>
       </a>
       <a class="at-row at-item" href="{{ oddsboard_href }}" data-search="odds board every game best price moneyline" data-recent='{"id":"oddsboard","label":"Odds Board","href":"{{ oddsboard_href }}"}'>
