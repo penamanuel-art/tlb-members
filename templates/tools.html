@@ -7,42 +7,43 @@
 {% set parlay_href = '/parlay-builder' if es_platinum else desbloquear_url %}
 {% set evresults_href = '/ev-board/results' if es_platinum else desbloquear_url %}
 <style>
+body.v2{background-color:#161d29;background-image:radial-gradient(560px 300px at 50% -80px,rgba(47,230,167,.06),transparent 65%),radial-gradient(700px 500px at 110% 30%,rgba(77,163,255,.05),transparent 60%)}
 .at-wrap{max-width:560px;margin:0 auto;padding:18px 16px 100px;color:#eef2f8}
 .at-title{font-size:21px;font-weight:800;letter-spacing:.2px;color:#fff;margin:0}
-.at-sub{font-size:12.5px;color:#93a5c4;margin:3px 0 0}
-.at-search{margin-top:14px;background:#131f36;border:1px solid #22314f;border-radius:11px;padding:10px 12px;display:flex;align-items:center;gap:8px}
+.at-sub{font-size:12.5px;color:#9aa7b8;margin:3px 0 0}
+.at-search{margin-top:14px;background:#16223a;border:1px solid rgba(148,178,220,.16);border-radius:11px;padding:10px 12px;display:flex;align-items:center;gap:8px}
 .at-search input{flex:1;background:none;border:none;outline:none;color:#eef2f8;font-size:13.5px;font-family:inherit}
-.at-search input::placeholder{color:#7286a8}
+.at-search input::placeholder{color:#8b98ad}
 .at-sec{font-size:11px;letter-spacing:1.6px;color:#2fe6a7;font-weight:700;margin:20px 0 8px}
-.at-sec .at-sec-note{color:#5f7396;letter-spacing:.4px;font-weight:600}
-.at-sec .at-count{color:#5f7396}
+.at-sec .at-sec-note{color:#8b98ad;letter-spacing:.4px;font-weight:600}
+.at-sec .at-count{color:#8b98ad}
 .at-recent{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .at-recent::-webkit-scrollbar{display:none}
-.at-chip{flex:none;display:flex;align-items:center;gap:7px;background:#131f36;border:1px solid #22314f;border-radius:999px;padding:8px 14px;font-size:13.5px;font-weight:600;color:#eef2f8;text-decoration:none}
+.at-chip{flex:none;display:flex;align-items:center;gap:7px;background:#16223a;border:1px solid rgba(148,178,220,.16);border-radius:999px;padding:8px 14px;font-size:13.5px;font-weight:600;color:#eef2f8;text-decoration:none}
 .at-chip .dot{color:#2fe6a7;font-size:9px}
-.at-box{border:1px solid #22314f;border-radius:14px;overflow:hidden;background:rgba(10,15,26,.55)}
-.at-row{display:flex;align-items:center;gap:11px;padding:11px 12px;border-bottom:1px solid #1a2947;color:#eef2f8;text-decoration:none}
+.at-box{border:1px solid rgba(148,178,220,.16);border-radius:14px;overflow:hidden;background:radial-gradient(360px 180px at 110% -30px, rgba(87, 227, 137, 0.10), transparent 65%), linear-gradient(155deg, #26303f, #1c2431 60%, #1a222e)}
+.at-row{display:flex;align-items:center;gap:11px;padding:11px 12px;border-bottom:1px solid rgba(148,178,220,.10);color:#eef2f8;text-decoration:none}
 .at-row:last-child{border-bottom:none}
-.at-row:active{background:#131f36}
-.at-ico{width:34px;height:34px;border-radius:9px;background:#16263f;display:flex;align-items:center;justify-content:center;flex:none}
+.at-row:active{background:rgba(255,255,255,.05)}
+.at-ico{width:34px;height:34px;border-radius:9px;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;flex:none}
 .at-info{flex:1;min-width:0}
 .at-info b{font-size:14.5px;font-weight:700;display:block;color:#fff}
-.at-info span{font-size:12px;color:#93a5c4;display:block}
+.at-info span{font-size:12px;color:#9aa7b8;display:block}
 .at-plat{background:#123524;color:#5eeaa0;font-size:9.5px;font-weight:800;letter-spacing:.6px;padding:3px 7px;border-radius:6px;flex:none}
-.at-chev{color:#5f7396;font-size:17px;flex:none}
+.at-chev{color:#8b98ad;font-size:17px;flex:none}
 .at-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.at-tile{border:1px solid #22314f;border-radius:12px;padding:10px 12px;font-size:13.5px;font-weight:600;color:#eef2f8;text-decoration:none;background:rgba(10,15,26,.55)}
-.at-tile:active{background:#131f36}
+.at-tile{border:1px solid rgba(148,178,220,.16);border-radius:12px;padding:10px 12px;font-size:13.5px;font-weight:600;color:#eef2f8;text-decoration:none;background:linear-gradient(155deg, #26303f, #1c2431 60%, #1a222e)}
+.at-tile:active{background:rgba(255,255,255,.05)}
 .at-new{background:#0f2e21;color:#2fe6a7;font-size:8.5px;font-weight:800;letter-spacing:.6px;padding:2px 5px;border-radius:5px;vertical-align:2px}
-.at-guide-panel{border-top:1px solid #1a2947;background:rgba(8,15,26,.66);padding:10px 12px 12px 57px}
+.at-guide-panel{border-top:1px solid rgba(148,178,220,.12);background:#0d1626;padding:10px 12px 12px 57px}
 .at-guide-panel h4{font-size:12.5px;font-weight:700;color:#eef2f8;margin:0}
-.at-guide-panel p{font-size:12px;line-height:1.5;color:#aebdd4;margin:4px 0 0}
+.at-guide-panel p{font-size:12px;line-height:1.5;color:#9aa7b8;margin:4px 0 0}
 .at-guide-nums{font-size:12px;line-height:1.55;color:#d7e0ee;margin-top:7px}
 .at-guide-nums b{color:#2fe6a7}
-.at-guide-more{font-size:12px;color:#93a5c4;margin-top:8px;line-height:1.7}
-.at-guide-more a{color:#93a5c4;text-decoration:none;border-bottom:1px dotted #3a4f74}
+.at-guide-more{font-size:12px;color:#9aa7b8;margin-top:8px;line-height:1.7}
+.at-guide-more a{color:#9aa7b8;text-decoration:none;border-bottom:1px dotted rgba(148,178,220,.35)}
 .at-guide-open{display:inline-block;font-size:12px;font-weight:700;color:#2fe6a7;margin-top:7px;text-decoration:none}
-.at-empty{display:none;text-align:center;color:#7286a8;font-size:13px;padding:22px 0 4px}
+.at-empty{display:none;text-align:center;color:#8b98ad;font-size:13px;padding:22px 0 4px}
 </style>
 
 <div class="at-wrap">
@@ -50,7 +51,7 @@
   <p class="at-sub">10 tools and 9 calculators. Tap one to open it.</p>
 
   <div class="at-search">
-    <span style="color:#7286a8;font-size:13px">&#128269;</span>
+    <span style="color:#8b98ad;font-size:13px">&#128269;</span>
     <input id="atSearch" type="text" placeholder="Search tools" autocomplete="off">
   </div>
 
