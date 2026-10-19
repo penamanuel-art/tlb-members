@@ -29,9 +29,6 @@
 .mt-ringstats { flex: 1; }
 .mt-ringstats .rs { display: flex; justify-content: space-between; font-size: .8rem; color: #aebdb5; padding: 2.5px 0; }
 .mt-ringstats .rs b { color: #fff; }
-.mt-bar { height: 8px; background: rgba(255,255,255,.08); border-radius: 99px; margin-top: 18px; overflow: hidden; }
-.mt-bar > div { height: 100%; background: linear-gradient(90deg, #c9a227, #f3d27a); border-radius: 99px; }
-.mt-barlbl { display: flex; justify-content: space-between; font-size: .68rem; color: #8fa39b; margin-top: 7px; letter-spacing: .4px; }
 .mt-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 9px; margin-top: 14px; }
 .mt-stat { background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08); border-radius: 18px; padding: 13px 6px; text-align: center; }
 .mt-stat .n { font-size: 1rem; font-weight: 800; color: #fff; }
@@ -108,7 +105,6 @@
 {% set gwr = (ns.gw / (ns.gw + ns.gl) * 100) if (ns.gw + ns.gl) else 0 %}
 {% set vpct = (ns.vc / ns.tc * 100) if ns.tc else 0 %}
 {% set settled = g + p %}
-{% set prog_pct = [settled / 200 * 100, 100] | min %}
 
 <div class="mt-wrap">
   <div class="mt-brand"><img src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team"><span>THE SHARP TEAM</span></div>
@@ -131,8 +127,6 @@
         <div class="rs"><span>Ticket verified</span><b>{{ '%.0f' % vpct }}%</b></div>
       </div>
     </div>
-    <div class="mt-bar"><div style="width: {{ '%.1f' % prog_pct }}%;"></div></div>
-    <div class="mt-barlbl"><span>ROAD TO 200 PLAYS</span><span>{{ settled }} / 200</span></div>
   </div>
 
   <div class="mt-stats">
