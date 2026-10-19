@@ -83,6 +83,29 @@
     width:38px; height:32px; font-size:1rem; cursor:pointer; }
   .wgt-btn.win { color:#4ade80; } .wgt-btn.loss { color:#f87171; }
   .wgt-empty { text-align:center; color:var(--muted); padding:28px 12px; }
+
+  /* Tarjetas del tracker COMPACTAS (2026-10-19, pedido por Alex):
+     igual que los Receipts del home — miniatura, badge, pick, WON/LOST. */
+  .wgt-row { background:#0d1626; border:1px solid #1d2a42; border-radius:16px; padding:13px; }
+  .wgt-row.won { border-color:rgba(47,191,113,.45); }
+  .tkc-top { display:flex; gap:12px; align-items:center; }
+  .tkc-thumbbtn { border:none; background:none; padding:0; cursor:pointer; flex:none; }
+  .tkc-thumb { width:60px; height:60px; border-radius:10px; object-fit:cover; flex:none; background:#16223a; display:block; }
+  .tkc-logo { object-fit:contain; background:#eef1f6; padding:5px; box-sizing:border-box; }
+  .tkc-fallback { width:60px; height:60px; border-radius:10px; flex:none; background:#16223a; display:flex; align-items:center; justify-content:center; font-size:24px; }
+  .tkc-main { flex:1; min-width:0; }
+  .tkc-meta { display:flex; align-items:center; gap:8px; margin-bottom:5px; }
+  .tkc-kind { color:#8b98ad; font-size:12px; font-weight:300; }
+  .tkc-pick { font-size:15.5px; font-weight:300; line-height:1.25; color:#eef2f8; margin:0; }
+  .tkc-match { color:#8b98ad; font-size:12.5px; font-weight:300; margin:4px 0 0; }
+  .tkc-sub { color:#8b98ad; font-size:11.5px; font-weight:300; margin:3px 0 0; }
+  .tkc-view { color:#7dd3fc; font-size:11.5px; font-weight:300; display:block; margin-top:5px; }
+  .tkc-res { text-align:right; flex:none; }
+  .tkc-res .st { font-size:11px; font-weight:300; letter-spacing:1.4px; display:block; }
+  .tkc-res .u { font-size:16px; font-weight:300; margin-top:3px; display:block; }
+  .tkc-won { color:#2fbf71; } .tkc-lost { color:#8b98ad; } .tkc-pend { color:#8b98ad; }
+  .wgt-actions { margin-top:10px; padding-top:10px; border-top:1px solid #1d2a42; }
+  .wgt-btn { width:34px; height:28px; font-size:.9rem; border-radius:8px; }
 </style>
 
 <div class="tracker-box" id="wgtTrackerTop">
@@ -188,40 +211,39 @@
 <div class="wgt-list" id="wgtList">
   {% for r in rows %}
   {% if not (r.nivel == 'ELITE' and not platinum_unlocked) %}
-  <article class="wgt-row" data-fecha="{{ r.fecha }}" data-profit="{{ '%.2f' % r.profit }}"
+  <article class="wgt-row {{ 'won' if r.resultado == 'W' else '' }}" data-fecha="{{ r.fecha }}" data-profit="{{ '%.2f' % r.profit }}"
            data-stake="{{ '%.2f' % r.stake_monto }}" data-result="{{ r.resultado }}">
-    <div class="wgt-row-top">
-      {% if r.logo %}
-      <img class="wgt-logo" src="{{ r.logo }}" alt="{{ r.abbr }}" loading="lazy">
-      {% else %}
-      <div class="wgt-logo-fallback">{{ r.sport_icon or '🎯' }}</div>
-      {% endif %}
-      <div class="wgt-row-main">
-        <p class="wgt-pick">{{ r.pick }}</p>
-        <p class="wgt-meta">{% if r.abbr %}<b>{{ r.abbr }}</b> {% endif %}{{ r.cuota_txt }} · {{ r.fecha_corta }} · <span class="wgt-nivel {{ r.nivel|lower }}">{{ nivel_display(r.nivel) }}</span></p>
-        {% if r.marcador %}<p class="wgt-score">{{ r.marcador }}</p>{% endif %}
-        <p class="wgt-stake">Stake ${{ '%.0f' % r.stake_monto }} ({{ r.stake_unidades }}u)</p>
-        {% if r.comprobante %}
-        <button type="button" class="wgt-thumb" data-ticket="wt-{{ r.id }}" aria-label="View original ticket for {{ r.pick }}">
-          <img src="{{ url_for('static', filename=r.comprobante) }}" alt="Ticket: {{ r.pick }}" loading="lazy">
-        </button>
-        <div class="modal" id="wt-{{ r.id }}" hidden>
-          <div class="modal-card ticket-photo-card">
-            <button type="button" class="modal-close" data-close>✕</button>
-            <img class="ticket-photo" src="{{ url_for('static', filename=r.comprobante) }}" alt="Original ticket: {{ r.pick }}">
-          </div>
+    <div class="tkc-top">
+      {% if r.comprobante %}
+      <button type="button" class="tkc-thumbbtn" data-ticket="wt-{{ r.id }}" aria-label="View original ticket for {{ r.pick }}">
+        <img class="tkc-thumb" src="{{ url_for('static', filename=r.comprobante) }}" alt="Ticket: {{ r.pick }}" loading="lazy">
+      </button>
+      <div class="modal" id="wt-{{ r.id }}" hidden>
+        <div class="modal-card ticket-photo-card">
+          <button type="button" class="modal-close" data-close>✕</button>
+          <img class="ticket-photo" src="{{ url_for('static', filename=r.comprobante) }}" alt="Original ticket: {{ r.pick }}">
         </div>
-        {% endif %}
       </div>
-      <div class="wgt-side">
+      {% elif r.logo %}
+      <img class="tkc-thumb tkc-logo" src="{{ r.logo }}" alt="{{ r.abbr }}" loading="lazy">
+      {% else %}
+      <span class="tkc-fallback">{{ r.sport_icon or '🎯' }}</span>
+      {% endif %}
+      <div class="tkc-main">
+        <div class="tkc-meta"><span class="wgt-nivel {{ r.nivel|lower }}">{{ nivel_display(r.nivel) }}</span><span class="tkc-kind">{{ 'Platinum' if r.nivel in ['ELITE','PLATINUM'] else 'Gold' }} play</span></div>
+        <p class="tkc-pick">{{ r.pick }}</p>
+        {% if r.marcador %}<p class="tkc-match">{{ r.marcador }}</p>{% else %}<p class="tkc-match">{% if r.abbr %}{{ r.abbr }} · {% endif %}{{ r.fecha_corta }} · {{ r.cuota_txt }}</p>{% endif %}
+        <p class="tkc-sub">Stake ${{ '%.0f' % r.stake_monto }} ({{ r.stake_unidades }}u) · {{ r.casa }}</p>
+        {% if r.comprobante %}<span class="tkc-view">🎫 View ticket</span>{% endif %}
+      </div>
+      <div class="tkc-res">
         {% if r.resultado == 'W' %}
-        <span class="wgt-result win">✓ {{ fmt_money(r.profit) }}</span>
+        <span class="st tkc-won">WON</span><span class="u tkc-won">{{ fmt_money(r.profit) }}</span>
         {% elif r.resultado == 'L' %}
-        <span class="wgt-result loss">✕ {{ fmt_money(r.profit) }}</span>
+        <span class="st tkc-lost">LOST</span><span class="u tkc-lost">{{ fmt_money(r.profit) }}</span>
         {% else %}
-        <span class="wgt-result pending">Pending</span>
+        <span class="st tkc-pend">PENDING</span><span class="u tkc-pend">{{ r.cuota_txt }}</span>
         {% endif %}
-        <span class="wgt-casa">{{ r.casa }}</span>
       </div>
     </div>
     <div class="wgt-actions">
