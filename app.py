@@ -811,6 +811,7 @@ _ACTIVATION_FOOTER = """<div style="text-align:center;padding:16px 18px 13px;">
 <p style="margin:7px 0 0;color:#7e8db0;font-size:10px;">250 Park Avenue, Suite 1800, New York, NY 10017</p>
 <p style="margin:3px 0 0;color:#7e8db0;font-size:10px;"><a href="tel:+15513263312" style="color:#7e8db0;text-decoration:none;">(551) 326-3312</a></p>
 <p style="margin:10px 0 0;color:#7e8db0;font-size:9.5px;">21+. Play responsibly. If you or someone you know has a gambling problem, call or text <a href="tel:18004262537" style="color:#7e8db0;text-decoration:underline;">1-800-GAMBLER</a>.</p>
+<p style="margin:8px 0 0;color:#7e8db0;font-size:9.5px;">Don't want these emails anymore? <a href="{{{RESEND_UNSUBSCRIBE_URL}}}" style="color:#7e8db0;text-decoration:underline;">Unsubscribe</a> — one click, no questions asked.</p>
 <p style="margin:5px 0 0;color:#7e8db0;font-size:9.5px;">&copy; 2026 The Sharp Team</p></div>"""
 
 
@@ -1087,6 +1088,7 @@ WELCOME_BACK_HTML = """<!DOCTYPE html>
 <p style="margin:8px 0 0;color:#9ca3af;font-size:11px;">250 Park Avenue, Suite 1800, New York, NY 10017</p>
 <p style="margin:4px 0 0;color:#9ca3af;font-size:11px;"><a href="tel:+15513263312" style="color:#9ca3af;text-decoration:none;">(551) 326-3312</a></p>
 <p style="margin:12px 0 0;color:#9ca3af;font-size:10px;">21+. Play responsibly. If you or someone you know has a gambling problem, call or text <a href="tel:18004262537" style="color:#9ca3af;text-decoration:underline;">1-800-GAMBLER</a>.</p>
+<p style="margin:8px 0 0;color:#9ca3af;font-size:10px;">Don't want these emails anymore? <a href="{{{RESEND_UNSUBSCRIBE_URL}}}" style="color:#9ca3af;text-decoration:underline;">Unsubscribe</a> — one click, no questions asked.</p>
 <p style="margin:6px 0 0;color:#9ca3af;font-size:10px;">&copy; 2026 The Sharp Team</p>
 </div>
 </div>
@@ -1208,6 +1210,7 @@ WELCOME_HTML = """<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="v
 <p style="margin:7px 0 0;color:#7e8db0;font-size:10px;">250 Park Avenue, Suite 1800, New York, NY 10017</p>
 <p style="margin:3px 0 0;color:#7e8db0;font-size:10px;"><a href="tel:+15513263312" style="color:#7e8db0;text-decoration:none;">(551) 326-3312</a></p>
 <p style="margin:10px 0 0;color:#7e8db0;font-size:9.5px;">21+. Play responsibly. If you or someone you know has a gambling problem, call or text <a href="tel:18004262537" style="color:#7e8db0;text-decoration:underline;">1-800-GAMBLER</a>.</p>
+<p style="margin:8px 0 0;color:#7e8db0;font-size:9.5px;">Don't want these emails anymore? <a href="{{{RESEND_UNSUBSCRIBE_URL}}}" style="color:#7e8db0;text-decoration:underline;">Unsubscribe</a> — one click, no questions asked.</p>
 <p style="margin:5px 0 0;color:#7e8db0;font-size:9.5px;">&copy; 2026 The Sharp Team</p></div>
 </div></div></body></html>"""
 
@@ -1286,6 +1289,7 @@ DUNNING_HTML = """<div style="font-family:Arial,sans-serif;max-width:480px;margi
 <p style="margin:8px 0 0;color:#9ca3af;font-size:11px;">250 Park Avenue, Suite 1800, New York, NY 10017</p>
 <p style="margin:4px 0 0;color:#9ca3af;font-size:11px;"><a href="tel:+15513263312" style="color:#9ca3af;text-decoration:none;">(551) 326-3312</a></p>
 <p style="margin:12px 0 0;color:#9ca3af;font-size:10px;">21+. Play responsibly. If you or someone you know has a gambling problem, call or text <a href="tel:18004262537" style="color:#9ca3af;text-decoration:underline;">1-800-GAMBLER</a>.</p>
+<p style="margin:8px 0 0;color:#9ca3af;font-size:10px;">Don't want these emails anymore? <a href="{{{RESEND_UNSUBSCRIBE_URL}}}" style="color:#9ca3af;text-decoration:underline;">Unsubscribe</a> — one click, no questions asked.</p>
 <p style="margin:6px 0 0;color:#9ca3af;font-size:10px;">&copy; 2026 The Sharp Team</p>
 </div>
 </div>"""
@@ -1402,6 +1406,7 @@ __PLAYS_ROWS__
 <p style="margin:8px 0 0;color:#9ca3af;font-size:11px;">250 Park Avenue, Suite 1800, New York, NY 10017</p>
 <p style="margin:4px 0 0;color:#9ca3af;font-size:11px;"><a href="tel:+15513263312" style="color:#9ca3af;text-decoration:none;">(551) 326-3312</a></p>
 <p style="margin:12px 0 0;color:#9ca3af;font-size:10px;">21+. Play responsibly. If you or someone you know has a gambling problem, call or text <a href="tel:18004262537" style="color:#9ca3af;text-decoration:underline;">1-800-GAMBLER</a>.</p>
+<p style="margin:8px 0 0;color:#9ca3af;font-size:10px;">Don't want these emails anymore? <a href="{{{RESEND_UNSUBSCRIBE_URL}}}" style="color:#9ca3af;text-decoration:underline;">Unsubscribe</a> — one click, no questions asked.</p>
 <p style="margin:6px 0 0;color:#9ca3af;font-size:10px;">&copy; 2026 The Sharp Team</p>
 </div>
 </div>
