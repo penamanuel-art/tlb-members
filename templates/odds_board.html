@@ -1,0 +1,71 @@
+{% extends "base_v2.html" %}
+{% block title %}Odds Board — The Sharp Team{% endblock %}
+{% block content %}
+<style>
+.ob-wrap{max-width:720px;margin:0 auto;color:#fff;padding:24px 16px 100px}
+.ob-header{text-align:center;margin-bottom:24px}
+.ob-wrap .kicker{font-size:11px;font-weight:800;letter-spacing:3px;color:#2fe6a7;margin:0 0 8px}
+.ob-wrap h2{font-size:2rem;font-weight:900;margin:0 0 8px}
+.ob-wrap .muted{color:#9a9ab5;font-size:14px;margin:0;line-height:1.5}
+.ob-updated{color:#5a6478;font-size:12px;margin:12px 0 0}
+.ob-league-sec{margin-bottom:26px}
+.ob-league-head{display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #1e2a45}
+.ob-league-name{font-size:13px;font-weight:800;letter-spacing:2px;color:#2fe6a7}
+.ob-league-count{font-size:12px;color:#5a6478}
+.ob-card{background:#101828;border:1px solid #22314f;border-radius:16px;padding:14px 16px;margin:0 0 10px}
+.ob-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+.ob-kick{font-size:12px;color:#9aa3b8;font-weight:700}
+.ob-live{display:inline-block;background:#ef4444;color:#fff;font-size:10px;font-weight:800;letter-spacing:1px;padding:3px 8px;border-radius:999px}
+.ob-side{display:flex;align-items:center;gap:10px;padding:7px 0;border-top:1px solid #1a2947}
+.ob-side:first-of-type{border-top:none}
+.ob-team{flex:1;min-width:0;font-size:15.5px;font-weight:700;color:#fff}
+.ob-team small{display:block;font-size:11px;color:#7286a8;font-weight:600;letter-spacing:.6px}
+.ob-price{font-size:17px;font-weight:800;color:#2fe6a7;flex:none}
+.ob-book{font-size:11.5px;color:#9aa3b8;flex:none;min-width:86px;text-align:right}
+.ob-empty{border:2px dashed #3a3a4a;border-radius:18px;padding:28px 20px;text-align:center;margin:16px 0}
+.ob-empty h3{color:#fff;margin:0 0 8px}
+.ob-empty p{color:#9a9ab5;margin:0;font-size:14px;line-height:1.55}
+</style>
+
+<div class="ob-wrap">
+  <div class="ob-header">
+    <p class="kicker">ODDS BOARD</p>
+    <h2>Today&rsquo;s Games, Best Price</h2>
+    <p class="muted">Every game on today&rsquo;s slate with the best moneyline price for each side — and the book offering it.</p>
+    {% if updated_at %}<p class="ob-updated">Updated {{ updated_at }}</p>{% endif %}
+  </div>
+
+  {% if games %}
+    {% for league, gs in games|groupby('sport') %}
+    <div class="ob-league-sec">
+      <div class="ob-league-head">
+        <span class="ob-league-name">{{ league }}</span>
+        <span class="ob-league-count">{{ gs|length }} game{{ 's' if gs|length != 1 }}</span>
+      </div>
+      {% for g in gs %}
+      <div class="ob-card">
+        <div class="ob-top">
+          <span class="ob-kick">{{ g.kickoff_et }}{% if g.live %} <span class="ob-live">LIVE</span>{% endif %}</span>
+        </div>
+        <div class="ob-side">
+          <span class="ob-team"><small>AWAY</small>{{ g.away }}</span>
+          <span class="ob-price">{{ g.away_best.price_str }}</span>
+          <span class="ob-book">{{ g.away_best.book }}</span>
+        </div>
+        <div class="ob-side">
+          <span class="ob-team"><small>HOME</small>{{ g.home }}</span>
+          <span class="ob-price">{{ g.home_best.price_str }}</span>
+          <span class="ob-book">{{ g.home_best.book }}</span>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endfor %}
+  {% else %}
+    <div class="ob-empty">
+      <h3>No games on the board right now</h3>
+      <p>The board fills in as today&rsquo;s games are priced across the books. Check back a little later.</p>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
