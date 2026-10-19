@@ -8446,6 +8446,72 @@ def admin_miembros():
                            eventos=[dict(e) for e in eventos])
 
 
+@app.route("/admin/miembros/<int:user_id>")
+@login_required
+def admin_miembro_detalle(user_id):
+    """Ficha completa de un miembro (2026-10-19, pedido por Alex): el panel
+    /admin/miembros es solo la lista de nombres con «Ver más»; toda la
+    información del miembro y su actividad en el programa vive aquí."""
+    me = current_user()
+    if not _admin_o_cuenta_alex(me):
+        flash("You don't have permission to view this page.", "error")
+        return redirect(url_for("home"))
+    db = get_db()
+    _barrer_trials_vencidos(db)
+    row = db.execute("SELECT * FROM users WHERE id = ?", (user_id,)).fetchone()
+    if not row:
+        flash("That account no longer exists.", "error")
+        return redirect(url_for("admin_miembros"))
+    m = dict(row)
+    # Ciudad de registro: primera IP de actividad (mismo criterio que
+    # /api/new-members).
+    ciudad = ""
+    try:
+        act0 = db.execute(
+            "SELECT ip FROM member_activity WHERE user_id = ?"
+            " AND ip IS NOT NULL AND ip != ''"
+            " ORDER BY created_at ASC LIMIT 1", (user_id,)).fetchone()
+        if act0:
+            ip0 = act0["ip"] if not isinstance(act0, dict) else act0.get("ip")
+            if ip0:
+                ciudad = _ciudad_de_ip(db, ip0) or ""
+    except Exception:
+        ciudad = ""
+    # Días que entró al Dashboard (checkins) + actividad reciente.
+    dias_dashboard = 0
+    ultimo_dia = ""
+    try:
+        ck = db.execute(
+            "SELECT COUNT(*) AS n, MAX(fecha) AS u FROM checkins WHERE user_id = ?",
+            (user_id,)).fetchone()
+        if ck:
+            dias_dashboard = ck["n"] if not isinstance(ck, dict) else (ck.get("n") or 0)
+            ultimo_dia = (ck["u"] if not isinstance(ck, dict) else ck.get("u")) or ""
+    except Exception:
+        pass
+    try:
+        actividad = [dict(r) for r in db.execute(
+            "SELECT kind, created_at FROM member_activity WHERE user_id = ?"
+            " ORDER BY created_at DESC LIMIT 20", (user_id,)).fetchall()]
+    except Exception:
+        actividad = []
+    # Tracker personal: resumen + últimas jugadas con su profit.
+    trows = db.execute(
+        "SELECT * FROM tracked_plays WHERE user_id = ? ORDER BY fecha DESC, id DESC LIMIT 100",
+        (user_id,)).fetchall()
+    tracked = [dict(r) for r in trows]
+    for r in tracked:
+        try:
+            r["profit"] = play_profit_dollars(r)
+        except Exception:
+            r["profit"] = 0.0
+    stats = compute_stats(tracked) if tracked else {}
+    return render_template(
+        "admin_miembro_detalle.html", m=m, ciudad=ciudad,
+        dias_dashboard=dias_dashboard, ultimo_dia=ultimo_dia,
+        actividad=actividad, tracked=tracked[:10], stats=stats)
+
+
 @app.route("/admin/notificaciones/limpiar", methods=["POST"])
 @login_required
 def admin_notificaciones_limpiar():
