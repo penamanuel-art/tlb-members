@@ -2392,7 +2392,7 @@ def load_props_board():
 
 # Public free tools: Sharp Line Moves — el JSON vive en la rama `data-board`
 # (igual que el +EV Board: actualizar datos NO redespliega Render).
-# La página /tools/line-moves es pública (sin login) y lo lee en vivo.
+# La página /tools/line-moves lo lee en vivo (desde el 2026-10-19 es Platinum).
 LINE_MOVES_URL = (
     "https://raw.githubusercontent.com/penamanuel-art/tlb-members"
     "/data-board/data/line_moves.json"
@@ -8995,8 +8995,12 @@ def api_ai_ask():
 @app.route("/props")
 @login_required
 def props():
+    """Player Props Board (Platinum, 2026-10-19): sin Platinum activo,
+    el miembro cae en la página de desbloqueo."""
     db = get_db()
     record_checkin(db, session["user_id"])
+    if not platinum_unlocked_for(current_user()):
+        return redirect(url_for("desbloquear_platinum"))
     return render_template("props.html", board=load_props_board())
 
 
@@ -9051,8 +9055,15 @@ def odds_board():
 
 
 @app.route("/tools/line-moves")
+@login_required
 def tools_line_moves():
-    """Movimientos sharp recientes. Pública, sin login; datos de la rama data-board."""
+    """Sharp Line Movement (Platinum, 2026-10-19): sin sesión cae en
+    login; sin Platinum activo, en la página de desbloqueo. Datos de
+    la rama data-board."""
+    db = get_db()
+    record_checkin(db, session["user_id"])
+    if not platinum_unlocked_for(current_user()):
+        return redirect(url_for("desbloquear_platinum"))
     board = load_line_moves()
     return render_template("tools_line_moves.html",
                            moves=board.get("moves", []),
