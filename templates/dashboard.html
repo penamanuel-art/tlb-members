@@ -16,6 +16,18 @@
   .wgt-name { margin:4px 0 0; color:#fff; font-size:2rem; font-weight:800; line-height:1.12; }
   .wgt-streak-pill { background:rgba(251,191,36,.12); border:1px solid rgba(251,191,36,.5);
     color:#fbbf24; border-radius:999px; padding:5px 11px; font-weight:800; font-size:.8rem; white-space:nowrap; flex:none; }
+  /* Cabecera estilo WGT (2026-10-19, pedido por Alex): la fila de perfil/racha
+     queda compacta sobre el titular grande con los textos de la pública. */
+  .wgt-head-compact { align-items:center; margin:6px 0 12px; }
+  .wgt-avatar-sm { width:38px; height:38px; font-size:1.05rem; }
+  .trk-hero { margin:0 0 18px; }
+  .trk-h1 { font-size:31px; font-weight:800; line-height:1.16; letter-spacing:-.5px; color:#fff; margin:0 0 12px; }
+  .trk-h1 .trk-mint { color:#2fe6a7; }
+  .trk-lede { font-size:14.5px; color:#9aa7b8; line-height:1.6; margin:0 0 16px; }
+  .trk-dot { display:flex; align-items:center; gap:8px; font-size:13px; font-weight:700; color:#2fe6a7; margin:0 0 18px; }
+  .trk-dot i { width:8px; height:8px; border-radius:50%; background:#2fe6a7; box-shadow:0 0 10px #2fe6a7; flex:0 0 auto; }
+  .trk-btns { display:flex; gap:10px; flex-wrap:wrap; }
+  .trk-btn { display:inline-flex; align-items:center; gap:8px; background:linear-gradient(155deg,#26303f,#1c2431 60%,#1a222e); border:1px solid rgba(148,178,220,.22); color:#eef2f8; font-size:13.5px; font-weight:700; border-radius:12px; padding:11px 16px; text-decoration:none; }
   .wgt-pills { display:flex; gap:8px; margin:0 0 14px; overflow-x:auto; padding-bottom:2px; }
   .wgt-pill { border:1px solid var(--line); background:var(--card); color:var(--muted); border-radius:999px;
     padding:8px 16px; font-weight:800; font-size:.85rem; cursor:pointer; white-space:nowrap; }
@@ -109,8 +121,8 @@
 </style>
 
 <div class="tracker-box" id="wgtTrackerTop">
-<section class="wgt-head">
-  <div class="wgt-avatar">{{ (nombre or 'M')[:1]|upper }}</div>
+<section class="wgt-head wgt-head-compact">
+  <div class="wgt-avatar wgt-avatar-sm">{{ (nombre or 'M')[:1]|upper }}</div>
   <div class="wgt-head-txt">
     <div class="wgt-head-top">
       {% if es_admin %}
@@ -122,13 +134,16 @@
       <span class="wgt-streak-pill">🔥 {{ stats.streak }}</span>
       {% endif %}
     </div>
-    {% if es_admin %}
-    <h2 class="wgt-name">Alex Owner Results</h2>
-    <p class="wgt-sub">Every official play, auto-graded from the final score.</p>
-    {% else %}
-    <h2 class="wgt-name">Your tracker</h2>
-    <p class="wgt-sub">Your records live here. Every time you make a play, make sure to hit <b>Track</b>.</p>
-    {% endif %}
+  </div>
+</section>
+
+<section class="trk-hero">
+  <h1 class="trk-h1">Bet Tracker: <span class="trk-mint">Every Bet You Track, Graded for You</span></h1>
+  <p class="trk-lede">Your personal record book for the plays you follow. Add a play once and the Tracker keeps score for you: every bet is graded from the final score, your record, win rate, profit and ROI update on their own, and nothing is ever edited after the fact. No spreadsheets, no manual math.</p>
+  <div class="trk-dot"><i></i>Members-only tool</div>
+  <div class="trk-btns">
+    <a class="trk-btn" href="{{ url_for('masterclass') }}">&#9654; Watch how it works</a>
+    <a class="trk-btn" href="#wgtPills">&#9432; How it works</a>
   </div>
 </section>
 
