@@ -2412,6 +2412,34 @@ def load_line_moves():
     return data
 
 
+# Odds Board (Platinum): juegos de hoy con el mejor moneyline por lado.
+# El JSON vive en la rama `data-board` (igual que line moves y el +EV
+# Board); lo publica hidden_files/publish-odds-board.py con datos de
+# The Odds API. Actualizar datos NO redespliega Render.
+ODDS_BOARD_URL = (
+    "https://raw.githubusercontent.com/penamanuel-art/tlb-members"
+    "/data-board/data/odds_board.json"
+)
+_odds_board_cache = {"at": 0.0, "data": {}}
+
+
+def load_odds_board():
+    import time
+    now = time.time()
+    if now - _odds_board_cache["at"] < 300 and _odds_board_cache["data"]:
+        return _odds_board_cache["data"]
+    data = {}
+    try:
+        req = urllib.request.Request(ODDS_BOARD_URL, headers={"User-Agent": "tlb-members"})
+        with urllib.request.urlopen(req, timeout=10) as r:
+            data = json.load(r)
+    except Exception:
+        data = _odds_board_cache["data"] or {}
+    _odds_board_cache["at"] = now
+    _odds_board_cache["data"] = data
+    return data
+
+
 def american_profit_ratio(odds) -> float:
     """Cuánto se gana por cada 1 apostado en cuota americana."""
     o = int(odds)
@@ -8611,6 +8639,62 @@ def ev_board():
     return render_template("ev_board.html", board=load_ev_board())
 
 
+@app.route("/ev-board/results")
+@login_required
+def ev_board_results():
+    """EV Board Results (Platinum, 2026-10-19): los edges del board que el
+    sistema auto-trackea (nivel VALUE) ya calificados: record, profit y
+    ROI reales del tracker del sistema, sin numeros inventados."""
+    db = get_db()
+    record_checkin(db, session["user_id"])
+    if not platinum_unlocked_for(current_user()):
+        return render_template(
+            "ev_board_results_locked.html",
+            upsell_cta_url=url_for("desbloquear_platinum"),
+        )
+    rows = db.execute(
+        "SELECT pick, cuota, fecha, resultado, stake_monto FROM tracked_plays "
+        "WHERE user_id = ? AND nivel = 'VALUE' ORDER BY fecha DESC, id DESC",
+        (VALUE_SYSTEM_USER_ID,),
+    ).fetchall()
+    wins = losses = 0
+    profit = 0.0
+    risked = 0.0
+    plays = []
+    for r in rows:
+        d = dict(r)
+        stake = d["stake_monto"] or 100.0
+        p = play_profit_dollars({"cuota": d["cuota"], "stake_monto": stake,
+                                 "resultado": d["resultado"]})
+        cuota = d["cuota"] or 0
+        cuota_str = f"+{cuota}" if cuota > 0 else str(cuota)
+        res = d["resultado"]
+        if res == "W":
+            wins += 1
+            profit += p
+            risked += stake
+        elif res == "L":
+            losses += 1
+            profit += p
+            risked += stake
+        plays.append({"pick": d["pick"], "cuota_str": cuota_str,
+                      "fecha": d["fecha"], "resultado": res,
+                      "profit_str": fmt_money(p) if res in ("W", "L") else ""})
+    settled = wins + losses
+    win_rate = round(wins / settled * 100) if settled else 0
+    roi = (profit / risked * 100) if risked else 0
+    return render_template(
+        "ev_board_results.html",
+        wins=wins, losses=losses, settled=settled,
+        pending=len(plays) - settled,
+        win_rate=win_rate,
+        profit_str=fmt_money(profit),
+        profit_positive=profit >= 0,
+        roi_str=f"{roi:+.1f}%",
+        plays=plays[:100],
+    )
+
+
 @app.route("/sharp")
 @login_required
 def sharp():
@@ -8882,10 +8966,34 @@ def tools_calculators():
 @app.route("/tools")
 @login_required
 def tools():
-    """Tools = la seccion del home (2026-10-15, orden de Alex: no
-    pueden existir DOS secciones de herramientas; el menu inferior
-    lleva a la del home y esta ruta redirige ahi mismo)."""
-    return redirect(url_for("home") + "#tools")
+    """Panel All Tools (2026-10-19, diseno aprobado por Alex estilo
+    sheet): buscador, recientes del dispositivo (localStorage) y
+    candado Platinum en las herramientas de pago."""
+    db = get_db()
+    record_checkin(db, session["user_id"])
+    return render_template(
+        "tools.html",
+        es_platinum=platinum_unlocked_for(current_user()),
+        desbloquear_url=url_for("desbloquear_platinum"),
+    )
+
+
+@app.route("/odds-board")
+@login_required
+def odds_board():
+    """Odds Board (Platinum, 2026-10-19): juegos de hoy con el mejor
+    moneyline por lado y la casa que lo da. Datos de la rama data-board."""
+    db = get_db()
+    record_checkin(db, session["user_id"])
+    if not platinum_unlocked_for(current_user()):
+        return render_template(
+            "odds_board_locked.html",
+            upsell_cta_url=url_for("desbloquear_platinum"),
+        )
+    board = load_odds_board()
+    return render_template("odds_board.html",
+                           games=board.get("games", []),
+                           updated_at=board.get("updated_at", ""))
 
 
 @app.route("/tools/line-moves")
