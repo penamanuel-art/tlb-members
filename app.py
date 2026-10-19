@@ -869,6 +869,113 @@ def send_activation_email(nombre: str, email: str, token: str, lang: str = "en")
     threading.Thread(target=_send, daemon=True).start()
 
 
+def send_activation_reminder_email(nombre: str, email: str, token: str, lang: str = "en") -> tuple:
+    """Recordatorio de activación (2026-10-19, orden de Alex): quien se
+    registró pero no confirmó su cuenta recibe un aviso de que debe
+    confirmar para activarla y arrancar su mes gratis de Platinum.
+    Síncrono (devuelve el resultado real) porque lo dispara un endpoint
+    que debe contar solo los envíos que sí salieron."""
+    link = f"{SITE_URL}/activar/{token}"
+    if lang == "es":
+        subject = "Recordatorio: confirma tu cuenta de The Sharp Team"
+        titulo = "Tu cuenta aún no está activa"
+        cuerpo = (f"Hola {nombre} — creaste tu cuenta de The Sharp Team pero "
+                  "todavía no la has confirmado. Toca el botón para confirmar "
+                  "tu correo y activar tu cuenta: tu mes gratis de Platinum "
+                  "empieza en ese momento.")
+        boton = "CONFIRMAR MI CUENTA"
+        nota = ("¿No se creó esta cuenta con tu correo? Ignora este mensaje "
+                "y la cuenta nunca se activará.")
+        texto = (f"Hola {nombre},\n\nCreaste tu cuenta de The Sharp Team pero "
+                 f"todavía no la has confirmado. Confírmala aquí:\n{link}\n\n"
+                 "Tu mes gratis de Platinum empieza al confirmar. Si no "
+                 "creaste esta cuenta, ignora este mensaje.\n\nThe Sharp Team")
+    else:
+        subject = "Reminder: confirm your The Sharp Team account"
+        titulo = "Your account is not active yet"
+        cuerpo = (f"Hi {nombre} — you created your The Sharp Team account but "
+                  "haven't confirmed it yet. Tap the button to confirm your "
+                  "email and activate your account: your free Platinum month "
+                  "starts the moment you do.")
+        boton = "CONFIRM MY ACCOUNT"
+        nota = ("Didn't create this account? Ignore this email and the "
+                "account will never be activated.")
+        texto = (f"Hi {nombre},\n\nYou created your The Sharp Team account but "
+                 f"haven't confirmed it yet. Confirm it here:\n{link}\n\n"
+                 "Your free Platinum month starts when you confirm. If you "
+                 "didn't create this account, ignore this email.\n\nThe Sharp Team")
+    html = f"""<html><body style="margin:0;background:#070d1d;padding:24px 10px;font-family:Arial,Helvetica,sans-serif;">
+<div style="max-width:480px;margin:0 auto;background:#0e1730;border:1px solid #d4af37;border-radius:14px;overflow:hidden;">
+<div style="text-align:center;padding:22px 18px 4px;">
+<img src="https://files.catbox.moe/74qot5.png" alt="The Sharp Team" width="110" style="width:110px;height:auto;border:0;">
+<p style="margin:12px 0 0;color:#e8c766;font-size:11px;font-weight:800;letter-spacing:3px;">THE SHARP TEAM</p>
+</div>
+<div style="padding:10px 26px 4px;text-align:center;">
+<p style="margin:0;color:#ffffff;font-size:21px;font-weight:800;">{titulo}</p>
+<p style="margin:10px 0 0;color:#a8b3cf;font-size:13.5px;line-height:1.6;">{cuerpo}</p>
+<div style="padding:18px 0 6px;">
+<a href="{link}" style="display:inline-block;background:#2f7bff;color:#ffffff;font-size:14px;font-weight:800;padding:13px 30px;border-radius:999px;text-decoration:none;">{boton}</a>
+</div>
+<p style="margin:8px 0 0;color:#7e8db0;font-size:11px;line-height:1.5;">{nota}</p>
+</div>
+{_ACTIVATION_FOOTER}
+</div></body></html>"""
+    return _dispatch_email(email, subject, texto, html)
+
+
+@app.route("/api/activation-reminders", methods=["POST"])
+def api_activation_reminders():
+    """Dispara los recordatorios de activación (2026-10-19, orden de Alex).
+
+    A quien se registró pero NO confirmó su cuenta se le recuerda a las
+    ~3 horas del registro y otra vez a las ~24 horas (máximo 2). Sin
+    confirmar no es miembro: estos correos son el único contacto.
+    Protegido con header X-Push-Key == PUSH_TRIGGER_KEY.
+    """
+    if not PUSH_TRIGGER_KEY or not secrets.compare_digest(
+        request.headers.get("X-Push-Key", ""), PUSH_TRIGGER_KEY
+    ):
+        return jsonify({"error": "forbidden"}), 403
+    db = get_db()
+    ahora = datetime.now(timezone.utc)
+    rows = db.execute(
+        "SELECT id, nombre, email, lang, created_at, activation_token, activation_reminders "
+        "FROM users WHERE email_verified = 0 AND activation_token IS NOT NULL "
+        "AND is_admin = 0 AND activation_reminders < 2 "
+        "AND LOWER(email) != 'system@value.local' "
+        "ORDER BY created_at ASC LIMIT 20"
+    ).fetchall()
+    enviados = []
+    for r in rows:
+        d = dict(r) if not isinstance(r, dict) else r
+        try:
+            creado = datetime.fromisoformat(d["created_at"])
+            if creado.tzinfo is None:
+                creado = creado.replace(tzinfo=timezone.utc)
+        except Exception:
+            continue
+        edad_h = (ahora - creado).total_seconds() / 3600.0
+        n = d.get("activation_reminders") or 0
+        if n == 0 and edad_h < 3:
+            continue
+        if n >= 1 and edad_h < 24:
+            continue
+        try:
+            ok, _det = send_activation_reminder_email(
+                d.get("nombre") or "there", d["email"],
+                d["activation_token"], d.get("lang") or "en")
+        except Exception:
+            ok = False
+        if ok:
+            db.execute(
+                "UPDATE users SET activation_reminders = ?, activation_reminder_last = ? WHERE id = ?",
+                (n + 1, ahora.isoformat(), d["id"]))
+            db.commit()
+            enviados.append({"nombre": d.get("nombre"), "email": d.get("email"),
+                             "recordatorio": n + 1})
+    return jsonify({"ok": True, "reminders_sent": enviados})
+
+
 def notify_new_member(nombre: str, email: str):
     """Avisa a Alex por email cuando alguien se registra.
 
@@ -3106,6 +3213,16 @@ def migrate_db():
             pending.append("ALTER TABLE users ADD COLUMN email_verified INTEGER NOT NULL DEFAULT 1")
         if "activation_token" not in cols:
             pending.append("ALTER TABLE users ADD COLUMN activation_token TEXT")
+        # Sin verificar no es miembro (2026-10-19, orden de Alex): lo que
+        # manda es la ACTIVACIÓN — fecha en que confirmó su correo. Los ya
+        # verificados heredan su fecha de registro como fecha de activación.
+        if "activated_at" not in cols:
+            pending.append("ALTER TABLE users ADD COLUMN activated_at TEXT")
+            pending.append("UPDATE users SET activated_at = created_at WHERE email_verified = 1 AND activated_at IS NULL")
+        if "activation_reminders" not in cols:
+            pending.append("ALTER TABLE users ADD COLUMN activation_reminders INTEGER NOT NULL DEFAULT 0")
+        if "activation_reminder_last" not in cols:
+            pending.append("ALTER TABLE users ADD COLUMN activation_reminder_last TEXT")
         # Página Account estilo WGT (2026-10-12, pedido por Alex): dirección
         # postal del perfil + perfil de apuestas (estado y casas).
         for _col in ["addr_line1", "addr_line2", "addr_city", "addr_state",
@@ -3767,8 +3884,8 @@ def activar_cuenta(token):
     uid = user["id"]
     nombre = user["nombre"]
     email = user["email"]
-    db.execute("UPDATE users SET email_verified = 1, activation_token = NULL WHERE id = ?",
-               (uid,))
+    db.execute("UPDATE users SET email_verified = 1, activation_token = NULL, activated_at = ? WHERE id = ?",
+               (now_iso(), uid))
     db.commit()
     # Admin solo si la cuenta ya trae la marca en la BD (2026-10-18:
     # ADMIN_EMAIL es el correo de avisos, no una identidad).
@@ -5557,7 +5674,7 @@ def admin_api_members_emails():
     db = get_db()
     _barrer_trials_vencidos(db)
     rows = db.execute(
-        "SELECT email, nombre, platinum_unlocked, phone, sms_optin, lang, platinum_trial_ends FROM users WHERE email IS NOT NULL AND email != ''"
+        "SELECT email, nombre, platinum_unlocked, phone, sms_optin, lang, platinum_trial_ends FROM users WHERE email IS NOT NULL AND email != '' AND email_verified = 1"
     ).fetchall()
     return jsonify([
         {"email": r["email"], "nombre": r["nombre"] or "there",
@@ -8303,6 +8420,7 @@ def admin_miembros():
         "telegram_user_id, telegram_ban_pending, telegram_unban_pending "
         "FROM users "
         "WHERE LOWER(email) NOT IN ('thesharpteam8@gmail.com', 'system@value.local') "
+        "AND email_verified = 1 "
         "ORDER BY created_at DESC"
     ).fetchall()
     ahora = datetime.now(timezone.utc)
@@ -9072,10 +9190,13 @@ def api_telegram_pending_ack():
 
 @app.route("/api/new-members", methods=["GET"])
 def api_new_members():
-    """Miembros registrados. ?since=ISO (created_at) filtra desde esa marca.
+    """Miembros CONFIRMADOS. ?since=ISO (created_at) filtra desde esa marca.
 
-    Lo lee el cron de la VM cada 10 min para avisar a Alex en el chat
-    cada vez que alguien crea su cuenta. Protegido con
+    Sin verificar no es miembro (2026-10-19, orden de Alex): esta lista
+    solo incluye cuentas con el correo confirmado (email_verified = 1) y
+    ordena por la fecha de ACTIVACIÓN — el aviso de miembro nuevo llega
+    cuando la persona confirma, no cuando llena el formulario.
+    Lo lee el cron de la VM cada 10 min. Protegido con
     header X-Push-Key == PUSH_TRIGGER_KEY.
     """
     if not PUSH_TRIGGER_KEY or not secrets.compare_digest(
@@ -9086,14 +9207,15 @@ def api_new_members():
     db = get_db()
     if since:
         rows = db.execute(
-            "SELECT id, nombre, email, created_at, platinum_unlocked FROM users"
-            " WHERE created_at >= ? ORDER BY created_at ASC, id ASC",
+            "SELECT id, nombre, email, created_at, activated_at, platinum_unlocked FROM users"
+            " WHERE email_verified = 1 AND created_at >= ? ORDER BY COALESCE(activated_at, created_at) ASC, id ASC",
             (since,),
         ).fetchall()
     else:
         rows = db.execute(
-            "SELECT id, nombre, email, created_at, platinum_unlocked FROM users"
-            " ORDER BY created_at DESC, id DESC LIMIT 500"
+            "SELECT id, nombre, email, created_at, activated_at, platinum_unlocked FROM users"
+            " WHERE email_verified = 1"
+            " ORDER BY COALESCE(activated_at, created_at) DESC, id DESC LIMIT 500"
         ).fetchall()
     members = []
     for r in rows:
@@ -9122,6 +9244,7 @@ def api_new_members():
                 "nombre": d.get("nombre"),
                 "email": d.get("email"),
                 "created_at": d.get("created_at"),
+                "activated_at": d.get("activated_at") or d.get("created_at"),
                 "elite": bool(d.get("platinum_unlocked")),
                 "ciudad": ciudad,
             }
