@@ -1,9 +1,14 @@
 {% extends "base_v2.html" %}
 {% block title %}Unlock Platinum — The Sharp Team{% endblock %}
 {% block content %}
-{# Página de desbloqueo VIP rediseñada 2026-10-02 (pedido Alex, modelada del
-   ejemplo que envió): tarjeta de membresía + CTA. El banner de pago fallido
-   sale global desde base_v2.html. #}
+{# Página COMPLETA de suscripción Platinum (2026-10-19, orden de Alex):
+   estructura espejo de la página de WGT que Alex envió, textos 100%
+   propios y SOLO números reales del programa (board viene de
+   _desbloquear_board() en app.py, calculado desde data/archive.json).
+   Oferta vigente: $1 la primera semana (7 días), luego $15.99/semana.
+   El checkout es el link hospedado de Stripe (stripe_url) — aquí NO se
+   pide tarjeta. La página del Tracker bloqueado (_tracker_sales_body)
+   lleva a esta ruta para miembros con sesión. #}
 
 {% if ya_desbloqueada and not past_due %}
 <div class="v2-upsell-done">
@@ -13,10 +18,176 @@
   <a class="v2-upsell-cta" href="{{ url_for('home') }}">View my plays →</a>
 </div>
 {% else %}
-{% set upsell_cta_url = stripe_url %}
-{% set upsell_cta_target = "_blank" %}
-{% set upsell_show_email_note = true %}
-{% include "_upsell_vip.html" %}
-{% endif %}
+<style>
+.upl-wrap{max-width:520px;margin:0 auto;padding:6px 2px 120px;color:#e6edf7}
+.upl-hero{text-align:center;padding:10px 6px 4px}
+.upl-hero img{width:104px;height:auto}
+.upl-kicker{margin:10px 0 0;font-size:10.5px;font-weight:800;letter-spacing:3px;color:#e8c766}
+.upl-h1{margin:8px 0 0;font-size:27px;line-height:1.18;font-weight:900;color:#fff}
+.upl-h1 .dollar{color:#2fe6a7}
+.upl-sub{margin:10px auto 0;max-width:430px;font-size:13px;line-height:1.6;color:#a8b3cf}
+.upl-tiles{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:16px 0 0}
+.upl-tile{background:linear-gradient(180deg,#26303f,#1a222e);border:1px solid #33415555;border-radius:12px;padding:11px 4px;text-align:center}
+.upl-tile b{display:block;font-size:19px;color:#fff;font-weight:900}
+.upl-tile span{display:block;margin-top:2px;font-size:9.5px;letter-spacing:1.2px;color:#8b98ad;font-weight:700}
+.upl-graded{margin:10px 0 0;text-align:center;font-size:11px;color:#2fe6a7;font-weight:700}
+.upl-card{margin:16px 0 0;background:linear-gradient(180deg,#26303f,#1c2431 60%,#1a222e);border:1px solid #e8c76655;border-radius:16px;padding:16px 15px 14px}
+.upl-pill{display:inline-block;background:#e8c766;color:#161d29;font-size:10px;font-weight:900;letter-spacing:1.6px;padding:4px 10px;border-radius:999px}
+.upl-price{margin:10px 0 0;font-size:21px;font-weight:900;color:#fff}
+.upl-then{margin:3px 0 0;font-size:12.5px;color:#a8b3cf}
+.upl-live{margin:12px 0 0;font-size:12px;color:#e6edf7}
+.upl-live .dot{color:#2fe6a7}
+.upl-as{margin:8px 0 0;font-size:11px;color:#8b98ad}
+.upl-as a{color:#7dd3fc}
+.upl-duenote{margin:12px 0 0;background:#3a1522;border:1px solid #7f1d3a;border-radius:10px;padding:9px 11px;font-size:11.5px;line-height:1.55;color:#fda4af}
+.upl-duenote a{color:#fff;font-weight:800}
+.upl-board{margin:14px 0 0;border-top:1px solid #33415566;padding-top:12px}
+.upl-board h3{margin:0;font-size:10.5px;letter-spacing:2px;color:#e8c766;font-weight:900}
+.upl-teaser{display:flex;justify-content:space-between;align-items:center;gap:10px;text-decoration:none;padding:9px 2px;border-bottom:1px solid #33415544}
+.upl-teaser:last-of-type{border-bottom:0}
+.upl-teaser .t{font-size:13.5px;font-weight:800;color:#fff}
+.upl-teaser .s{font-size:10.5px;color:#8b98ad;margin-top:1px}
+.upl-teaser .arr{color:#2fe6a7;font-size:15px}
+.upl-recon{margin:8px 0 0;font-size:10.5px;color:#8b98ad;font-style:italic}
+.upl-cta{display:block;margin:14px 0 0;background:linear-gradient(180deg,#35f0b0,#1fc98d);color:#06281c;text-align:center;font-size:16px;font-weight:900;padding:14px 12px;border-radius:12px;text-decoration:none}
+.upl-under{margin:9px 0 0;text-align:center;font-size:12px;color:#e6edf7;font-weight:700}
+.upl-fine{margin:7px 0 0;text-align:center;font-size:10.5px;line-height:1.55;color:#8b98ad}
+.upl-trust{margin:11px 0 0;text-align:center;font-size:10.5px;color:#8b98ad}
+.upl-record{margin:9px 0 0;text-align:center;font-size:11.5px;color:#e8c766;font-weight:800}
+.upl-emailnote{margin:11px 0 0;font-size:11px;line-height:1.55;color:#fbbf24;background:#2a2113;border:1px solid #92600f;border-radius:10px;padding:9px 11px}
+.upl-sec{margin:22px 0 0}
+.upl-sec h2{margin:0;font-size:16px;font-weight:900;color:#fff}
+.upl-sec .lead{margin:5px 0 0;font-size:12px;color:#8b98ad;line-height:1.55}
+.upl-tix{display:flex;gap:9px;overflow-x:auto;padding:12px 2px 4px;scroll-snap-type:x mandatory}
+.upl-tix figure{margin:0;flex:0 0 128px;scroll-snap-align:start}
+.upl-tix .ph{position:relative;border-radius:10px;overflow:hidden;border:1px solid #33415566}
+.upl-tix img{width:128px;height:160px;object-fit:cover;display:block}
+.upl-won{position:absolute;top:6px;left:6px;background:#16a34a;color:#fff;font-size:9px;font-weight:900;letter-spacing:1px;padding:2px 7px;border-radius:999px}
+.upl-tix figcaption{margin-top:5px;font-size:10px;line-height:1.45;color:#a8b3cf}
+.upl-tix figcaption b{color:#2fe6a7}
+.upl-bens{list-style:none;margin:12px 0 0;padding:0}
+.upl-bens li{display:flex;gap:9px;padding:7px 0;font-size:13px;line-height:1.5;color:#e6edf7;border-bottom:1px solid #33415533}
+.upl-bens li:last-child{border-bottom:0}
+.upl-bens .ck{color:#2fe6a7;font-weight:900}
+.upl-value{margin:12px 0 0;background:#0f2a1e;border:1px solid #14532d;border-radius:12px;padding:12px 13px;font-size:12.5px;line-height:1.6;color:#d1fae5;text-align:center}
+.upl-dont{list-style:none;margin:12px 0 0;padding:0}
+.upl-dont li{display:flex;gap:9px;padding:7px 0;font-size:13px;line-height:1.55;color:#e6edf7}
+.upl-dont .x{color:#f87171;font-weight:900}
+.upl-dont .ok{color:#2fe6a7;font-weight:900}
+.upl-faq{margin:12px 0 0}
+.upl-faq details{background:linear-gradient(180deg,#26303f,#1a222e);border:1px solid #33415555;border-radius:11px;padding:11px 13px;margin:0 0 8px}
+.upl-faq summary{font-size:13px;font-weight:800;color:#fff;cursor:pointer;list-style:none}
+.upl-faq p{margin:8px 0 0;font-size:12.5px;line-height:1.6;color:#a8b3cf}
+.upl-legal{margin:18px 0 0;text-align:center;font-size:10.5px;line-height:1.6;color:#8b98ad}
+.upl-wrap{padding-bottom:150px}
+</style>
 
+<div class="upl-wrap">
+  <div class="upl-hero">
+    <img src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team">
+    <p class="upl-kicker">THE SHARP TEAM · PLATINUM</p>
+    <h1 class="upl-h1">Get every official play for <span class="dollar">$1</span></h1>
+    <p class="upl-sub">Seven days of full Platinum: every Platinum and Gold play with the real ticket, posted the same day — before game time.</p>
+  </div>
+
+  <div class="upl-tiles">
+    <div class="upl-tile"><b>{{ board.total }}</b><span>DOCUMENTED PLAYS</span></div>
+    <div class="upl-tile"><b>{{ board.win_rate }}%</b><span>WIN RATE</span></div>
+    <div class="upl-tile"><b>100%</b><span>RESULTS POSTED</span></div>
+  </div>
+  <p class="upl-graded">✓ Graded against the final score · every result posted, win or loss</p>
+
+  <div class="upl-card">
+    <span class="upl-pill">7-DAY FULL ACCESS</span>
+    <p class="upl-price">$1 for your first 7 days</p>
+    <p class="upl-then">Then $15.99/week · cancel anytime</p>
+    <p class="upl-live"><span class="dot">●</span> Live now — today's card posts at 2:00 PM ET</p>
+    {% if user_email %}<p class="upl-as">COMPLETING PURCHASE AS {{ user_email }} · Not you? <a href="{{ url_for('logout') }}">Log out</a></p>{% endif %}
+    {% if past_due %}
+    <div class="upl-duenote">⚠ Your Platinum is paused — a card payment failed. <a href="{{ url_for('cuenta') }}">Update your card in your account</a> to restore access, or start fresh below.</div>
+    {% endif %}
+    {% if board.teasers %}
+    <div class="upl-board">
+      <h3>ON THE BOARD RIGHT NOW</h3>
+      {% for t in board.teasers %}
+      <a class="upl-teaser" href="{{ url_for('official_tracker') }}"><span><span class="t">{{ t.texto }}</span><div class="s">{{ t.sub }}</div></span><span class="arr">›</span></a>
+      {% endfor %}
+      <p class="upl-recon">Every claim reconciles to the public graded ledger.</p>
+    </div>
+    {% endif %}
+    <a class="upl-cta" href="{{ stripe_url }}" target="_blank" rel="noopener">Start my $1 week →</a>
+    <p class="upl-under">Cancel before day 8 and you only ever pay $1.</p>
+    <p class="upl-fine">One $1 first week per customer. Your weekly price is shown at checkout before you pay. Cancel anytime — no calls, no retention scripts.</p>
+    <div class="upl-emailnote"><b>Important:</b> check out with the same email as your member account — that's how your Platinum access turns on automatically, today.</div>
+    <p class="upl-trust">🔒 256-bit SSL · Powered by Stripe · PCI compliant</p>
+    <p class="upl-record">★ Official record {{ board.record }} ({{ board.win_rate }}%) · every ticket graded in public</p>
+  </div>
+
+  {% if board.tickets %}
+  <div class="upl-sec">
+    <h2>Recent winning tickets</h2>
+    <p class="lead">Pulled straight from the graded board. Every result, win or loss, is posted.</p>
+    <div class="upl-tix">
+      {% for tk in board.tickets %}
+      <figure>
+        <div class="ph"><img src="{{ url_for('static', filename=tk.img) }}" alt="Winning ticket — {{ tk.pick }}" loading="lazy"><span class="upl-won">WON</span></div>
+        <figcaption>{{ tk.pick }}<br>{{ tk.fecha }} · <b>{{ tk.profit }}</b></figcaption>
+      </figure>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="upl-sec">
+    <h2>Platinum, Gold, and the tools</h2>
+    <ul class="upl-bens">
+      <li><span class="ck">✓</span>Every official Platinum &amp; Gold play, with the real ticket</li>
+      <li><span class="ck">✓</span>Delivered the same day on your Dashboard and Telegram — before game time</li>
+      <li><span class="ck">✓</span>+EV Board, updated all day</li>
+      <li><span class="ck">✓</span>Line shopping with the Odds Board — never bet a stale price</li>
+      <li><span class="ck">✓</span>Bet Tracker, auto-graded with CLV</li>
+      <li><span class="ck">✓</span>Player Props Board</li>
+      <li><span class="ck">✓</span>30-day Academy — one lesson a day</li>
+    </ul>
+    <div class="upl-value">Buying tools like these one by one adds up fast. Here it is one membership: <b>all of it — plays, boards and tracker — for $1 your first week.</b></div>
+  </div>
+
+  <div class="upl-sec">
+    <h2>What we don't do</h2>
+    <ul class="upl-dont">
+      <li><span class="x">✗</span><span><b>We don't promise wins.</b> No honest service can. We publish a process and a record — you judge both.</span></li>
+      <li><span class="x">✗</span><span><b>We don't hide losses.</b> Every official play stays posted, win or loss, in the public graded ledger.</span></li>
+      <li><span class="x">✗</span><span><b>We don't trap you.</b> Cancel in two clicks from your account, whenever you want.</span></li>
+      <li><span class="ok">✓</span><span><b>What we do:</b> every play is posted before the game, with its real ticket — then graded against the final score.</span></li>
+    </ul>
+  </div>
+
+  <div class="upl-sec">
+    <h2>Common questions</h2>
+    <div class="upl-faq">
+      <details>
+        <summary>What happens after the $1 week?</summary>
+        <p>Your Platinum continues at $15.99/week, billed weekly by Stripe. Nothing changes about your access — and you can cancel anytime from your account before the next billing if you decide it's not for you.</p>
+      </details>
+      <details>
+        <summary>How do I cancel?</summary>
+        <p>From your account page, in two clicks — no phone calls, no chat with retention agents. Cancellation stops future charges; any week already paid stays active to its end.</p>
+      </details>
+      <details>
+        <summary>Is the track record legit?</summary>
+        <p>Every official play is posted before game time with its real ticket, then graded against the final score in the public <a href="{{ url_for('official_tracker') }}" style="color:#7dd3fc;">Official Tracker</a> — wins and losses alike. The record on this page is calculated from that same ledger.</p>
+      </details>
+    </div>
+  </div>
+
+  <p class="upl-legal">$1 for the first 7 days, then $15.99/week billed weekly until cancelled. Cancel anytime from your account. 21+. Play responsibly — if gambling stops being fun, call or text 1-800-GAMBLER.</p>
+</div>
+
+{# Barra fija inferior: usa el componente .v2-sticky del sitio — el JS de
+   base_v2 la coloca sola sobre el menú inferior (y la correa si está). #}
+<div class="v2-sticky"><div class="v2-sticky-inner">
+  <p>Start for <b>$1</b> · then $15.99/wk, cancel anytime</p>
+  <a href="{{ stripe_url }}" target="_blank" rel="noopener">Get the plays →</a>
+</div></div>
+{% endif %}
 {% endblock %}
