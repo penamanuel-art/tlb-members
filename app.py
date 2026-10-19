@@ -4947,8 +4947,20 @@ def balances():
 
 
 @app.route("/tracker")
-@login_required
 def tracker():
+    # Visitante SIN sesión (2026-10-19, pedido de Alex): en vez del
+    # rebote al login, ve la página PÚBLICA de venta del Tracker con la
+    # tarjeta WHAT MEMBERS GET — la misma que ve el miembro con sesión
+    # pero sin Platinum activo. La puerta de Platinum es
+    # platinum_unlocked_for() (mes gratis vigente cuenta como activo).
+    if current_user() is None:
+        return render_template(
+            "tracker_public.html",
+            public_mode=True,
+            cta_url=url_for("register"),
+            watch_url=url_for("register"),
+            upsell_cta_url=url_for("register"),
+        )
     db = get_db()
     record_checkin(db, session["user_id"])
     # Vista previa del candado (2026-10-15, para que Alex lo pruebe):
@@ -4959,10 +4971,18 @@ def tracker():
     if _pv in ("locked", "vencido") and (
             is_admin_for(_u0)
             or (_u0["email"] or "").strip().lower() == ALEX_MEMBER_EMAIL):
+        if _pv == "locked":
+            return render_template(
+                "tracker_public.html",
+                public_mode=False,
+                cta_url=url_for("desbloquear_platinum"),
+                watch_url=url_for("masterclass"),
+                upsell_cta_url=url_for("desbloquear_platinum"),
+            )
         return render_template(
             "tracker_locked.html",
             upsell_cta_url=url_for("desbloquear_platinum"),
-            past_due_mode=(_pv == "vencido"),
+            past_due_mode=True,
             update_card_url=url_for("cuenta"),
         )
     # El admin no usa tracker personal: ve el oficial con tickets (2026-10-03,
@@ -4973,9 +4993,8 @@ def tracker():
     user = current_user()
     is_alex = (user["email"] or "").strip().lower() == ALEX_MEMBER_EMAIL
     # Tracker personal SOLO para miembros que pagan (2026-10-15, orden
-    # de Alex): quien no paga ve la pagina de membresia con el EJEMPLO
-    # de como se ve el tracker (modelo WGT). El admin ya salio arriba
-    # y la cuenta personal de Alex no se toca.
+    # de Alex): quien no paga ve la pagina de venta con candado. El
+    # admin ya salio arriba y la cuenta personal de Alex no se toca.
     # La cuenta de MIEMBRO de Alex obedece la misma bandera que todos
     # (2026-10-15, orden suya): asi puede quitarse el Platinum desde el
     # panel y probar la vista de quien no paga. Su cuenta admin no se toca.
@@ -4983,7 +5002,7 @@ def tracker():
         # Dos estados (2026-10-15, pedido por Alex con captura de WGT):
         # (a) TUVO Platinum y se le vencio o le fallo el pago -> aviso
         #     de actualizar la tarjeta (su historial sigue guardado);
-        # (b) NUNCA desbloqueo Platinum -> pagina de venta con ejemplo.
+        # (b) NUNCA desbloqueo Platinum -> pagina de venta con candado.
         try:
             _vencido = bool(user["stripe_past_due"]) or bool(
                 (user["stripe_customer_id"] or "").strip()) or bool(
@@ -4996,11 +5015,24 @@ def tracker():
                 _pay_url = (_past_due_billing_info(user) or {}).get("pay_url")
             except Exception:
                 _pay_url = None
+        if _vencido:
+            # Tuvo Platinum y el pago falló/venció la sub: aviso de
+            # actualizar la tarjeta (su historial sigue guardado).
+            return render_template(
+                "tracker_locked.html",
+                upsell_cta_url=url_for("desbloquear_platinum"),
+                past_due_mode=True,
+                update_card_url=_pay_url or url_for("cuenta"),
+            )
+        # Sin Platinum activo (nunca lo activó o se le acabó el mes
+        # gratis): la página de venta con candado WHAT MEMBERS GET,
+        # la misma que ve el visitante sin sesión (2026-10-19).
         return render_template(
-            "tracker_locked.html",
+            "tracker_public.html",
+            public_mode=False,
+            cta_url=url_for("desbloquear_platinum"),
+            watch_url=url_for("masterclass"),
             upsell_cta_url=url_for("desbloquear_platinum"),
-            past_due_mode=_vencido,
-            update_card_url=_pay_url or url_for("cuenta"),
         )
     if is_alex and request.args.get("view") == "values":
         return values_page()
