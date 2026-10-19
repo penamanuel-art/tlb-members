@@ -22,10 +22,11 @@ body.v2{background-color:#161d29;background-image:radial-gradient(560px 300px at
 .tp-ck{color:#2fe6a7;font-weight:800;flex:0 0 auto}
 .tp-cta{display:block;background:#2fe6a7;color:#04150a;font-weight:800;font-size:16px;border-radius:14px;padding:15px;text-decoration:none;margin:20px auto 0;max-width:420px}
 .tp-fine{font-size:12px;color:#8b98ad;margin:10px 0 0}
-.tp-nav{position:fixed;left:0;right:0;bottom:0;z-index:1100;display:flex;background:rgba(13,19,32,.92);border-top:1px solid rgba(148,178,220,.16);backdrop-filter:blur(10px);padding:6px 4px calc(6px + env(safe-area-inset-bottom, 0px))}
-.tp-nav a{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;color:#8b98ad;text-decoration:none;font-size:10.5px;font-weight:600;padding:5px 0;border-radius:10px}
-.tp-nav a .tp-nico{font-size:19px;line-height:1.2}
-.tp-nav a.active{color:#2fe6a7;background:rgba(47,230,167,.10)}
+.tp-nav{position:fixed;left:0;right:0;bottom:0;z-index:1100;display:flex;background:#0b0f14;border-top:1px solid rgba(139,152,173,.16);backdrop-filter:none;padding:6px 6px calc(6px + env(safe-area-inset-bottom, 0px))}
+.tp-nav a{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;color:#8b98ad;text-decoration:none;font-size:10px;font-weight:500;letter-spacing:.01em;padding:7px 0 6px;border-radius:22px;transition:background-color .2s ease,color .2s ease}
+.tp-nav a .tp-nico{display:flex;align-items:center;justify-content:center;width:22px;height:22px;font-size:20px;line-height:1}
+.tp-nav a .tp-nico svg{display:block;width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.tp-nav a.active{color:#2fe6a7;background:rgba(47,230,167,.15);font-weight:600}
 </style>
 
 <div class="tp"{% if public_mode %} style="padding-bottom:104px"{% endif %}>
@@ -62,11 +63,11 @@ body.v2{background-color:#161d29;background-image:radial-gradient(560px 300px at
 
 {% if public_mode %}
 <nav class="tp-nav" aria-label="Primary">
-  <a href="{{ url_for('index') }}"><span class="tp-nico" aria-hidden="true">&#8962;</span><span>Today</span></a>
-  <a href="{{ url_for('tools') }}"><span class="tp-nico" aria-hidden="true">&#129520;</span><span>Tools</span></a>
-  <a href="{{ url_for('tracker') }}" class="active"><span class="tp-nico" aria-hidden="true">&#127915;</span><span>Tracker</span></a>
-  <a href="{{ url_for('alertas') }}"><span class="tp-nico" aria-hidden="true">&#128276;</span><span>Alerts</span></a>
-  <a href="{{ url_for('cuenta') }}"><span class="tp-nico" aria-hidden="true">&#128100;</span><span>Settings</span></a>
+  <a href="{{ url_for('index') }}"><span class="tp-nico" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9 21v-6h6v6"/></svg></span><span>Today</span></a>
+  <a href="{{ url_for('tools') }}"><span class="tp-nico" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></span><span>Tools</span></a>
+  <a href="{{ url_for('tracker') }}" class="active"><span class="tp-nico" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a3 3 0 0 0 0 6v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a3 3 0 0 0 0-6Z"/><path d="M13 5v2"/><path d="M13 11v2"/><path d="M13 17v2"/></svg></span><span>Tracker</span></a>
+  <a href="{{ url_for('alertas') }}"><span class="tp-nico" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M13.7 20a2 2 0 0 1-3.4 0"/></svg></span><span>Alerts</span></a>
+  <a href="{{ url_for('cuenta') }}"><span class="tp-nico" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-3.6 4.3-5.4 8-5.4s6.5 1.8 8 5.4"/></svg></span><span>Settings</span></a>
 </nav>
 {% endif %}
 {% endblock %}
