@@ -26,9 +26,9 @@
 .lux-fulllink{display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding:13px 16px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid rgba(148,178,220,.28);color:#eef2f7;font-size:13.5px;font-weight:700;text-decoration:none}
 .lux-chiprow{display:flex;gap:10px;margin-top:16px;overflow-x:auto;padding-bottom:8px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .lux-chip{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:12px 18px;border-radius:999px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);font-size:13px;font-weight:600;white-space:nowrap;color:#fff;text-decoration:none}
-/* Barra inferior con píldora dorada activa (solo en esta página) */
-body.v2 .v2-bottomnav{background:rgba(13,20,36,.78);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.12);border-radius:22px;box-shadow:0 14px 34px rgba(0,0,0,.5)}
-body.v2 .v2-bottomnav .v2-bnav-item.active{background:linear-gradient(180deg,#4da3ff,#2f7bff);color:#ffffff;border-radius:15px;font-weight:800}
+/* Barra inferior moderna estilo WGT: negra, pegada al borde y pastilla menta translúcida en el activo */
+body.v2 .v2-bottomnav{background:#0b0f14;backdrop-filter:none;-webkit-backdrop-filter:none;border:0;border-top:1px solid rgba(139,152,173,.16);border-radius:0;box-shadow:none}
+body.v2 .v2-bottomnav .v2-bnav-item.active{background:rgba(47,230,167,.15);color:#2fe6a7;border-radius:22px;font-weight:600}
 /* ===== Fondo casi negro + Receipts en panel + tarjetas de record
    (2026-10-15, diseno aprobado por Alex con la referencia que envio:
    fondo oscuro para que las tarjetas resalten; heroe intacto) ===== */
@@ -86,7 +86,7 @@ main.v2-wrap{padding-bottom:24px!important}
    fuera los bordes de la barra superior y sus botones, el menú, la
    barra inferior, las píldoras LIVE/PENDING, el aviso VIP y las
    insignias, cajas y botones dentro de las tarjetas — solo home. */
-.v2-topbar,.v2-icon-btn,.v2-track-link,.v2-lang-btn,.v2-menu-drop,.v2-vipinvite,.v2-pastdue,.v2-flash,.lux-live,.lux-live-pill,.lux-pend-pill,.tk-status,.tstg-st,.tstc-wu,.tstg-wu,.tstc-track,.tstg-track,.win-bubble,body.v2 .v2-bottomnav{border:none!important}
+.v2-topbar,.v2-icon-btn,.v2-track-link,.v2-lang-btn,.v2-menu-drop,.v2-vipinvite,.v2-pastdue,.v2-flash,.lux-live,.lux-live-pill,.lux-pend-pill,.tk-status,.tstg-st,.tstc-wu,.tstg-wu,.tstc-track,.tstg-track,.win-bubble{border:none!important}
 /* Rayita fina separadora bajo la barra superior (2026-10-16, pedido de
    Alex): excepción puntual a la regla sin-bordes, solo para la topbar. */
 .v2-topbar{border-bottom:1px solid rgba(255,255,255,.09)!important}
