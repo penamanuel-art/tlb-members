@@ -1,0 +1,196 @@
+{% extends "base.html" %}
+{% block title %}My Plays — The Sharp Team{% endblock %}
+{% block content %}
+<style>
+  .wgt-head { display:flex; align-items:flex-start; gap:14px; margin:6px 0 16px; }
+  .wgt-avatar { width:52px; height:52px; border-radius:50%; background:linear-gradient(135deg,#d4af37,#8a6d1c);
+    color:#111; font-weight:900; font-size:1.4rem; display:flex; align-items:center; justify-content:center; flex:none; }
+  /* Encabezado organizado (2026-10-12, pedido por Alex): la etiqueta va en
+     UNA sola línea junto a la píldora de racha, sobre el título. */
+  .wgt-head-txt { flex:1; min-width:0; }
+  .wgt-head-top { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+  .wgt-head .kicker { margin:0; font-size:.64rem; letter-spacing:1.6px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .wgt-name { margin:4px 0 0; color:#fff; font-size:2rem; font-weight:800; line-height:1.12; }
+  .wgt-streak-pill { background:rgba(251,191,36,.12); border:1px solid rgba(251,191,36,.5);
+    color:#fbbf24; border-radius:999px; padding:5px 11px; font-weight:800; font-size:.8rem; white-space:nowrap; flex:none; }
+  /* Cabecera estilo WGT (2026-10-19, pedido por Alex): la fila de perfil/racha
+     queda compacta sobre el titular grande con los textos de la pública. */
+  .wgt-head-compact { align-items:center; margin:6px 0 12px; }
+  .wgt-avatar-sm { width:38px; height:38px; font-size:1.05rem; }
+  .trk-hero { margin:0 0 18px; }
+  .trk-h1 { font-size:31px; font-weight:800; line-height:1.16; letter-spacing:-.5px; color:#fff; margin:0 0 12px; }
+  .trk-h1 .trk-mint { color:#2fe6a7; }
+  .trk-lede { font-size:14.5px; color:#9aa7b8; line-height:1.6; margin:0 0 16px; }
+  .trk-dot { display:flex; align-items:center; gap:8px; font-size:13px; font-weight:700; color:#2fe6a7; margin:0 0 18px; }
+  .trk-dot i { width:8px; height:8px; border-radius:50%; background:#2fe6a7; box-shadow:0 0 10px #2fe6a7; flex:0 0 auto; }
+  .trk-btns { display:flex; gap:10px; flex-wrap:wrap; }
+  .trk-btn { display:inline-flex; align-items:center; gap:8px; background:linear-gradient(155deg,#26303f,#1c2431 60%,#1a222e); border:1px solid rgba(148,178,220,.22); color:#eef2f8; font-size:13.5px; font-weight:700; border-radius:12px; padding:11px 16px; text-decoration:none; }
+  .wgt-pills { display:flex; gap:8px; margin:0 0 14px; overflow-x:auto; padding-bottom:2px; }
+  .wgt-pill { border:1px solid var(--line); background:var(--card); color:var(--muted); border-radius:999px;
+    padding:8px 16px; font-weight:800; font-size:.85rem; cursor:pointer; white-space:nowrap; }
+  .wgt-pill.active { background:#fbbf24; border-color:#fbbf24; color:#111; }
+  .wgt-range-btns { display:grid; gap:10px; margin: 4px 0 22px; }
+  .wgt-range-btns button { display:block; width:100%; text-align:left;
+    background:var(--card); border:1px solid var(--line); border-radius:14px;
+    color:var(--text); font-weight:800; font-size:1rem; padding:15px 18px; cursor:pointer; }
+  .wgt-range-btns button.active { border-color:#fbbf24; background:rgba(251,191,36,.10); }
+  .wgt-export { margin: 0 0 14px; }
+  .wgt-export-btn { border:1px solid var(--line); background:var(--card); color:var(--text); border-radius:999px;
+    padding:8px 16px; font-weight:800; font-size:.85rem; cursor:pointer; }
+  .wgt-export-panel { margin-top:10px; background:var(--card); border:1px solid var(--line);
+    border-radius:14px; padding:12px; display:grid; gap:10px; }
+  .wgt-export-row { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+  .wgt-export-row button[data-exp], .wgt-exp-go { border:1px solid var(--line); background:var(--card-2);
+    color:var(--text); border-radius:999px; padding:8px 14px; font-weight:800; font-size:.82rem; cursor:pointer; }
+  .wgt-exp-go { background:#22c55e; border-color:#22c55e; color:#06210f; }
+  .wgt-export-row label { color:var(--muted); font-size:.82rem; font-weight:700; display:flex; gap:6px; align-items:center; }
+  .wgt-export-row input[type=date] { background:var(--bg-soft); color:var(--text); border:1px solid var(--line);
+    border-radius:10px; padding:7px 10px; font-size:.85rem; color-scheme: dark; }
+  .wgt-card { background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:16px; margin-bottom:14px; }
+  .wgt-risked-row { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px; }
+  .wgt-label { color:var(--muted); font-size:.78rem; font-weight:800; letter-spacing:.12em; }
+  .wgt-risked-val { color:#fff; font-weight:800; font-size:1.1rem; }
+  #wgtCurve { width:100%; height:120px; display:block; }
+  .wgt-curve-empty { text-align:center; color:var(--muted); font-size:.85rem; padding:38px 0; }
+  .wgt-list { display:grid; gap:10px; }
+  .plat-upsell { background:linear-gradient(160deg,#1a1408,#0d0b06); border:1px solid rgba(212,175,55,.45); border-radius:18px; padding:22px 20px; margin-bottom:14px; }
+  .plat-upsell-head { display:flex; gap:14px; align-items:center; margin-bottom:14px; }
+  .plat-upsell-logo { width:52px; height:52px; border-radius:14px; flex:none; }
+  .plat-upsell-head h3 { margin:0; color:#fff; font-size:1.35rem; font-weight:800; }
+  .plat-upsell-sub { margin:4px 0 0; color:#9aa3b2; font-size:.9rem; }
+  .plat-upsell-desc { color:#d7dce4; font-size:1rem; line-height:1.55; margin:0 0 18px; }
+  .plat-upsell-desc b { color:#fff; }
+  .plat-upsell-btn { display:inline-block; background:#4ade80; color:#06240f; font-weight:800; font-size:1.05rem; padding:14px 28px; border-radius:999px; text-decoration:none; box-shadow:0 0 24px rgba(74,222,128,.35); }
+  .plat-upsell-fine { margin:14px 0 0; color:#9aa3b2; font-size:.85rem; }
+  .wgt-row { background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:12px; }
+  .wgt-row-top { display:flex; gap:12px; align-items:flex-start; }
+  .wgt-logo { width:46px; height:46px; border-radius:50%; background:#fff; object-fit:contain; padding:4px; flex:none; }
+  .wgt-logo-fallback { width:46px; height:46px; border-radius:50%; background:var(--card-2); color:var(--muted);
+    display:flex; align-items:center; justify-content:center; font-weight:800; flex:none; border:1px solid var(--line); }
+  .wgt-row-main { flex:1; min-width:0; }
+  .wgt-pick { color:#fff; font-weight:800; font-size:1rem; margin:0 0 2px; }
+  .wgt-meta { color:var(--muted); font-size:.82rem; margin:0 0 2px; }
+  .wgt-meta b { color:#cbd5e1; }
+  .wgt-score { color:var(--muted); font-size:.82rem; margin:0 0 2px; }
+  .wgt-stake { color:var(--muted); font-size:.82rem; margin:0; }
+  .wgt-ticket-link { background:none; border:none; padding:0; margin:4px 0 0; color:#5b9dff;
+    font-size:.82rem; font-weight:700; cursor:pointer; }
+  .wgt-thumb { border:1px solid var(--line); border-radius:10px; overflow:hidden; padding:0;
+    cursor:pointer; width:100%; display:block; margin-top:10px; background:#0b0e17; }
+  .wgt-thumb img { width:100%; height:auto; display:block; }
+  .wgt-side { text-align:right; flex:none; display:flex; flex-direction:column; gap:6px; align-items:flex-end; }
+  .wgt-result { font-weight:800; font-size:1rem; }
+  .wgt-result.win { color:#4ade80; } .wgt-result.loss { color:#f87171; } .wgt-result.pending { color:var(--muted); font-size:.85rem; }
+  .wgt-casa { font-size:.72rem; font-weight:800; color:#7dd3fc; background:rgba(125,211,252,.12);
+    border:1px solid rgba(125,211,252,.35); border-radius:999px; padding:3px 10px; }
+  .wgt-nivel { font-size:.7rem; font-weight:800; letter-spacing:.08em; border-radius:6px; padding:3px 8px; }
+  .wgt-nivel.gold { color:#4ade80; background:rgba(74,222,128,.12); border:1px solid rgba(74,222,128,.4); }
+  .wgt-nivel.elite, .wgt-nivel.platinum { color:#fbbf24; background:rgba(251,191,36,.12); border:1px solid rgba(251,191,36,.4); }
+  .wgt-actions { display:flex; gap:6px; margin-top:10px; padding-top:10px; border-top:1px solid var(--line); }
+  .wgt-actions form { margin:0; }
+  .wgt-btn { border:1px solid var(--line); background:var(--card-2); color:var(--text); border-radius:10px;
+    width:38px; height:32px; font-size:1rem; cursor:pointer; }
+  .wgt-btn.win { color:#4ade80; } .wgt-btn.loss { color:#f87171; }
+  .wgt-empty { text-align:center; color:var(--muted); padding:28px 12px; }
+
+  /* Tarjetas del tracker COMPACTAS (2026-10-19, pedido por Alex):
+     igual que los Receipts del home — miniatura, badge, pick, WON/LOST. */
+  .wgt-row { background:#0d1626; border:1px solid #1d2a42; border-radius:16px; padding:13px; }
+  .wgt-row.won { border-color:rgba(47,191,113,.45); }
+  .tkc-top { display:flex; gap:12px; align-items:center; }
+  .tkc-thumbbtn { border:none; background:none; padding:0; cursor:pointer; flex:none; }
+  .tkc-thumb { width:60px; height:60px; border-radius:10px; object-fit:cover; flex:none; background:#16223a; display:block; }
+  .tkc-logo { object-fit:contain; background:#eef1f6; padding:5px; box-sizing:border-box; }
+  .tkc-fallback { width:60px; height:60px; border-radius:10px; flex:none; background:#16223a; display:flex; align-items:center; justify-content:center; font-size:24px; }
+  .tkc-main { flex:1; min-width:0; }
+  .tkc-meta { display:flex; align-items:center; gap:8px; margin-bottom:5px; }
+  .tkc-kind { color:#8b98ad; font-size:12px; font-weight:300; }
+  .tkc-pick { font-size:15.5px; font-weight:300; line-height:1.25; color:#eef2f8; margin:0; }
+  .tkc-match { color:#8b98ad; font-size:12.5px; font-weight:300; margin:4px 0 0; }
+  .tkc-sub { color:#8b98ad; font-size:11.5px; font-weight:300; margin:3px 0 0; }
+  .tkc-view { color:#7dd3fc; font-size:11.5px; font-weight:300; display:block; margin-top:5px; }
+  .tkc-res { text-align:right; flex:none; }
+  .tkc-res .st { font-size:11px; font-weight:300; letter-spacing:1.4px; display:block; }
+  .tkc-res .u { font-size:16px; font-weight:300; margin-top:3px; display:block; }
+  .tkc-won { color:#2fbf71; } .tkc-lost { color:#8b98ad; } .tkc-pend { color:#8b98ad; }
+  .wgt-actions { margin-top:10px; padding-top:10px; border-top:1px solid #1d2a42; }
+  .wgt-btn { width:34px; height:28px; font-size:.9rem; border-radius:8px; }
+
+  /* Vista de jugadas del tracker personal (2026-10-19): la lista vive
+     en su propia pagina /tracker/plays, enlazada desde el tracker. */
+  .ply-back { display:inline-flex; align-items:center; gap:6px; color:#2fe6a7; font-size:13px; font-weight:700; text-decoration:none; margin:4px 0 10px; }
+  .ply-h { color:#fff; font-size:22px; font-weight:800; margin:0 0 14px; letter-spacing:-.3px; }
+</style>
+
+<a class="ply-back" href="{{ url_for('tracker') }}">&#8592; Back to my tracker</a>
+<h1 class="ply-h">All my plays</h1>
+
+{% if rows %}
+{% set ns = namespace(locked=0) %}
+{% for r in rows %}{% if r.nivel == 'ELITE' and not platinum_unlocked %}{% set ns.locked = ns.locked + 1 %}{% endif %}{% endfor %}
+{% if ns.locked > 0 %}
+<section class="plat-upsell">
+  <div class="plat-upsell-head">
+    <img src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team" class="plat-upsell-logo">
+    <div>
+      <h3>Platinum Play of the Day</h3>
+      <p class="plat-upsell-sub">Platinum · Our highest-conviction play</p>
+    </div>
+  </div>
+  <p class="plat-upsell-desc">The model flags one play a day: our single highest-probability edge, from matchup ratings and situational edges. Platinum is <b>{{ plat_w }}-{{ plat_l }}</b> all-time. {{ 'Tonight' if ns.locked == 1 else 'These plays are' }} waiting for you.</p>
+  <a href="{{ url_for('desbloquear_platinum') }}" class="plat-upsell-btn">Unlock Platinum →</a>
+  <p class="plat-upsell-fine">Your first month is FREE, then $49.99/month. Cancel anytime.</p>
+</section>
+{% endif %}
+<div class="wgt-list" id="wgtList">
+  {% for r in rows %}
+  {% if not (r.nivel == 'ELITE' and not platinum_unlocked) %}
+  <article class="wgt-row {{ 'won' if r.resultado == 'W' else '' }}" data-fecha="{{ r.fecha }}" data-profit="{{ '%.2f' % r.profit }}"
+           data-stake="{{ '%.2f' % r.stake_monto }}" data-result="{{ r.resultado }}">
+    <div class="tkc-top">
+      {% if r.logo %}
+      <img class="tkc-thumb tkc-logo" src="{{ r.logo }}" alt="{{ r.abbr }}" loading="lazy">
+      {% else %}
+      <span class="tkc-fallback">{{ r.sport_icon or '🎯' }}</span>
+      {% endif %}
+      <div class="tkc-main">
+        <div class="tkc-meta"><span class="wgt-nivel {{ r.nivel|lower }}">{{ nivel_display(r.nivel) }}</span><span class="tkc-kind">{{ 'Platinum' if r.nivel in ['ELITE','PLATINUM'] else 'Gold' }} play</span></div>
+        <p class="tkc-pick">{{ r.pick }}</p>
+        {% if r.marcador %}<p class="tkc-match">{{ r.marcador }}</p>{% else %}<p class="tkc-match">{% if r.abbr %}{{ r.abbr }} · {% endif %}{{ r.fecha_corta }} · {{ r.cuota_txt }}</p>{% endif %}
+        <p class="tkc-sub">Stake ${{ '%.0f' % r.stake_monto }} ({{ r.stake_unidades }}u) · {{ r.casa }}</p>
+      </div>
+      <div class="tkc-res">
+        {% if r.resultado == 'W' %}
+        <span class="st tkc-won">WON</span><span class="u tkc-won">{{ fmt_money(r.profit) }}</span>
+        {% elif r.resultado == 'L' %}
+        <span class="st tkc-lost">LOST</span><span class="u tkc-lost">{{ fmt_money(r.profit) }}</span>
+        {% else %}
+        <span class="st tkc-pend">PENDING</span><span class="u tkc-pend">{{ r.cuota_txt }}</span>
+        {% endif %}
+      </div>
+    </div>
+    <div class="wgt-actions">
+      <form method="post" action="{{ url_for('set_result', tracked_id=r.id) }}">
+        <input type="hidden" name="resultado" value="W">
+        <button class="wgt-btn win" type="submit" title="Mark as won">✓</button>
+      </form>
+      <form method="post" action="{{ url_for('set_result', tracked_id=r.id) }}">
+        <input type="hidden" name="resultado" value="L">
+        <button class="wgt-btn loss" type="submit" title="Mark as lost">✕</button>
+      </form>
+      <form method="post" action="{{ url_for('set_result', tracked_id=r.id) }}">
+        <input type="hidden" name="resultado" value="">
+        <button class="wgt-btn" type="submit" title="Back to pending">↺</button>
+      </form>
+      <form method="post" action="{{ url_for('untrack', tracked_id=r.id) }}" onsubmit="return confirm('Remove this play from your tracker?');">
+        <button class="wgt-btn" type="submit" title="Remove">🗑</button>
+      </form>
+    </div>
+  </article>
+  {% endif %}
+  {% endfor %}
+</div>
+{% else %}
+<p class="wgt-empty">You haven't tracked any plays yet. Tap <b>+ Track</b> on today's plays to log them here.</p>
+{% endif %}
+{% endblock %}
