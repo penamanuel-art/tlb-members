@@ -5042,6 +5042,23 @@ def tracker():
     return render_template("dashboard.html", **ctx)
 
 
+@app.route("/tracker/plays")
+def tracker_plays():
+    """Lista completa de jugadas trackeadas del miembro (2026-10-19,
+    refinamiento de Alex): la vista principal de /tracker queda compacta
+    en una sola pantalla y la lista vive en esta vista propia, enlazada
+    desde abajo del tracker. Misma puerta que /tracker: sin sesion, el
+    admin o quien no tenga Platinum activo caen a /tracker, que muestra
+    la pagina que corresponda (venta con candado u oficial). Las acciones
+    de calificacion (set_result/untrack) usan back(), asi que desde aqui
+    regresan solas a esta vista."""
+    user = current_user()
+    if user is None or is_admin_for(user) or not platinum_unlocked_for(user):
+        return redirect(url_for("tracker"))
+    ctx = _tracker_context(user)
+    return render_template("tracker_plays.html", **ctx)
+
+
 _SPORT_ICONS = {"NFL": "🏈", "NCAAF": "🏈", "MLB": "⚾", "NHL": "🏒",
                 "NBA": "🏀"}
 _ODDS_KEY_LEAGUE = {"americanfootball_nfl": "NFL",
