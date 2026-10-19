@@ -74,12 +74,15 @@ os.makedirs(INSTANCE_DIR, exist_ok=True)
 DATABASE_URL = os.environ.get("DATABASE_URL")
 USE_PG = bool(DATABASE_URL)
 
-# Link de PAGO de Stripe para MANTENER Platinum: $49.99/mes desde el primer cobro, sin otro mes de prueba.
-# El mes gratis ya NO vive en Stripe: se activa solo en la plataforma al registrarse (reloj interno de
-# 30 días platinum_trial_ends — orden de Alex 2026-10-16: todos activos y que se apague solo al vencer).
+# Link de PAGO de Stripe para Platinum (orden de Alex 2026-10-19): $1 la primera
+# semana (7 días de trial dentro del link) y luego $15.99/semana. El mes gratis
+# de plataforma MURIÓ: ya no se otorga platinum_trial_ends al registrarse ni al
+# activar la cuenta; los relojes ya vigentes corren hasta su fecha sin tocarse.
+# Link: plink_1USPKERwCjFIsFzUtk6yQ6kg = one-time $1 (price_1USPJnRwCjFIsFzU4pYcIqnq)
+# + recurrente $15.99/sem (price_1USPJvRwCjFIsFzUH8rwj5K8), trial_period_days=7.
 # Se cambia sin tocar código con la env var STRIPE_PLATINUM_URL en Render.
 STRIPE_PLATINUM_URL = os.environ.get(
-    "STRIPE_PLATINUM_URL", "https://buy.stripe.com/9B6aEZ9gYezab6m24gefC06"
+    "STRIPE_PLATINUM_URL", "https://buy.stripe.com/5kQdRbfFmgHideubEQefC07"
 )
 # Pedido Alex 2026-10-05: checkout de Stripe siempre en inglés. Stripe
 # localiza la página de pago según el navegador del cliente (si está en
@@ -775,8 +778,9 @@ def send_email_sync(to: str, subject: str, text_body: str,
 # ---------- Activación por correo + captcha anti-robots (2026-10-18) ----------
 # Orden de Alex tras detectar registros basura de Meta: la cuenta nueva nace
 # SIN activar y solo se activa cuando el dueño toca el enlace que llega a su
-# correo (un correo inventado nunca se activa). El mes gratis de Platinum y
-# la bienvenida arrancan AL ACTIVAR, no al llenar el formulario. El captcha
+# correo (un correo inventado nunca se activa). La bienvenida arranca AL
+# ACTIVAR, no al llenar el formulario (el mes gratis de Platinum al activar
+# murió el 2026-10-19 — ver activar_cuenta). El captcha
 # de Cloudflare Turnstile frena los registros automáticos; sin llaves en el
 # entorno, el captcha queda dormido y el registro sigue funcionando.
 TURNSTILE_SITE_KEY = (os.environ.get("TURNSTILE_SITE_KEY") or "").strip()
@@ -825,27 +829,31 @@ def send_activation_email(nombre: str, email: str, token: str, lang: str = "en")
         subject = "Activa tu cuenta de The Sharp Team"
         titulo = "Activa tu cuenta"
         cuerpo = (f"Hola {nombre} — toca el botón para activar tu cuenta de "
-                  "The Sharp Team. Tu mes gratis de Platinum empieza en el "
-                  "momento en que activas.")
+                  "The Sharp Team. Tus jugadas Gold y tu Dashboard quedan "
+                  "activos en el momento en que activas — y Platinum "
+                  "empieza por $1 cuando quieras.")
         boton = "ACTIVAR MI CUENTA"
         nota = ("¿No se creó esta cuenta con tu correo? Ignora este mensaje "
                 "y la cuenta nunca se activará.")
         texto = (f"Hola {nombre},\n\nActiva tu cuenta de The Sharp Team "
-                 f"tocando este enlace:\n{link}\n\nTu mes gratis de Platinum "
-                 "empieza al activar. Si no creaste esta cuenta, ignora "
+                 f"tocando este enlace:\n{link}\n\nTus jugadas Gold quedan "
+                 "activas al activar, y Platinum empieza por $1 cuando "
+                 "quieras. Si no creaste esta cuenta, ignora "
                  "este mensaje.\n\nThe Sharp Team")
     else:
         subject = "Activate your The Sharp Team account"
         titulo = "Activate your account"
         cuerpo = (f"Hi {nombre} — tap the button to activate your "
-                  "The Sharp Team account. Your free Platinum month starts "
-                  "the moment you activate.")
+                  "The Sharp Team account. Your Gold plays and your "
+                  "Dashboard go live the moment you activate — and "
+                  "Platinum starts for $1 whenever you're ready.")
         boton = "ACTIVATE MY ACCOUNT"
         nota = ("Didn't create this account? Ignore this email and the "
                 "account will never be activated.")
         texto = (f"Hi {nombre},\n\nActivate your The Sharp Team account by "
-                 f"opening this link:\n{link}\n\nYour free Platinum month "
-                 "starts when you activate. If you didn't create this "
+                 f"opening this link:\n{link}\n\nYour Gold plays go live "
+                 "when you activate, and Platinum starts for $1 whenever "
+                 "you're ready. If you didn't create this "
                  "account, ignore this email.\n\nThe Sharp Team")
     html = f"""<html><body style="margin:0;background:#070d1d;padding:24px 10px;font-family:Arial,Helvetica,sans-serif;">
 <div style="max-width:480px;margin:0 auto;background:#0e1730;border:1px solid #d4af37;border-radius:14px;overflow:hidden;">
@@ -877,7 +885,9 @@ def send_activation_email(nombre: str, email: str, token: str, lang: str = "en")
 def send_activation_reminder_email(nombre: str, email: str, token: str, lang: str = "en") -> tuple:
     """Recordatorio de activación (2026-10-19, orden de Alex): quien se
     registró pero no confirmó su cuenta recibe un aviso de que debe
-    confirmar para activarla y arrancar su mes gratis de Platinum.
+    confirmar para activarla (desde el 2026-10-19 activar ya no otorga
+    Platinum: el aviso dice que sus Gold quedan activas y que Platinum
+    empieza por $1).
     Síncrono (devuelve el resultado real) porque lo dispara un endpoint
     que debe contar solo los envíos que sí salieron."""
     link = f"{SITE_URL}/activar/{token}"
@@ -886,28 +896,30 @@ def send_activation_reminder_email(nombre: str, email: str, token: str, lang: st
         titulo = "Tu cuenta aún no está activa"
         cuerpo = (f"Hola {nombre} — creaste tu cuenta de The Sharp Team pero "
                   "todavía no la has confirmado. Toca el botón para confirmar "
-                  "tu correo y activar tu cuenta: tu mes gratis de Platinum "
-                  "empieza en ese momento.")
+                  "tu correo y activar tu cuenta: tus jugadas Gold quedan "
+                  "activas en ese momento, y Platinum empieza por $1.")
         boton = "CONFIRMAR MI CUENTA"
         nota = ("¿No se creó esta cuenta con tu correo? Ignora este mensaje "
                 "y la cuenta nunca se activará.")
         texto = (f"Hola {nombre},\n\nCreaste tu cuenta de The Sharp Team pero "
                  f"todavía no la has confirmado. Confírmala aquí:\n{link}\n\n"
-                 "Tu mes gratis de Platinum empieza al confirmar. Si no "
+                 "Tus jugadas Gold quedan activas al confirmar, y Platinum "
+                 "empieza por $1 cuando quieras. Si no "
                  "creaste esta cuenta, ignora este mensaje.\n\nThe Sharp Team")
     else:
         subject = "Reminder: confirm your The Sharp Team account"
         titulo = "Your account is not active yet"
         cuerpo = (f"Hi {nombre} — you created your The Sharp Team account but "
                   "haven't confirmed it yet. Tap the button to confirm your "
-                  "email and activate your account: your free Platinum month "
-                  "starts the moment you do.")
+                  "email and activate your account: your Gold plays go "
+                  "live the moment you do, and Platinum starts for $1.")
         boton = "CONFIRM MY ACCOUNT"
         nota = ("Didn't create this account? Ignore this email and the "
                 "account will never be activated.")
         texto = (f"Hi {nombre},\n\nYou created your The Sharp Team account but "
                  f"haven't confirmed it yet. Confirm it here:\n{link}\n\n"
-                 "Your free Platinum month starts when you confirm. If you "
+                 "Your Gold plays go live when you confirm, and Platinum "
+                 "starts for $1 whenever you're ready. If you "
                  "didn't create this account, ignore this email.\n\nThe Sharp Team")
     html = f"""<html><body style="margin:0;background:#070d1d;padding:24px 10px;font-family:Arial,Helvetica,sans-serif;">
 <div style="max-width:480px;margin:0 auto;background:#0e1730;border:1px solid #d4af37;border-radius:14px;overflow:hidden;">
@@ -1031,7 +1043,7 @@ EVERYTHING RESUMES INSTANTLY - Push alerts, Telegram channels, the +EV board and
 Enter your dashboard:
 https://www.thesharpteam.bet/home
 
-First month free, then $49.99/month. Cancel anytime.
+$1 for the first 7 days, then $15.99/week. Cancel anytime.
 
 - The Sharp Team
 
@@ -1080,7 +1092,7 @@ WELCOME_BACK_HTML = """<!DOCTYPE html>
 </div>
 <div style="text-align:center;padding:18px 20px 0;">
 <a href="https://www.thesharpteam.bet/home" style="display:inline-block;background:#22c55e;color:#111111;font-size:14px;font-weight:800;padding:11px 28px;border-radius:999px;text-decoration:none;">ENTER THE DASHBOARD</a>
-<p style="color:#555555;font-size:14px;line-height:1.7;margin:14px 0 0;">First month free &mdash; then $49.99/month.<br>Cancel anytime.</p>
+<p style="color:#555555;font-size:14px;line-height:1.7;margin:14px 0 0;">$1 for the first 7 days &mdash; then $15.99/week.<br>Cancel anytime.</p>
 </div>
 <div style="text-align:center;padding:20px 20px 14px;">
 <img src="https://files.catbox.moe/74qot5.png" alt="The Sharp Team" width="110" style="width:110px;height:auto;display:block;margin:0 auto;border:0;">
@@ -1122,14 +1134,14 @@ def send_welcome_back_email(nombre: str, email: str):
 
 
 # ------------------------------------------------------------- Plays ----
-WELCOME_SUBJECT = "Welcome to The Sharp Team \U0001F988 \u2014 your first month of Platinum is FREE"
+WELCOME_SUBJECT = "Welcome to The Sharp Team \U0001F988 \u2014 Platinum starts with a $1 week"
 
 WELCOME_TEXT = """Hi __NOMBRE__,
 
-Welcome to The Sharp Team! Your dashboard is ready \u2014 and your Platinum membership starts with a FULL MONTH FREE.
+Welcome to The Sharp Team! Your dashboard is ready \u2014 and Platinum starts with a $1 first week.
 
 YOUR ACCESS, IN PLAIN WORDS:
-- PLATINUM plays: FREE for your first month \u2014 already ACTIVE on your account (then $49.99/month only if you stay). Our most valuable play \u2014 the best pick of the day, every day.
+- PLATINUM plays: start for $1 \u2014 your first 7 days of full Platinum cost a single dollar (then $15.99/week only if you stay). Our most valuable play \u2014 the best pick of the day, every day.
 - GOLD plays: FREE FOR LIFE \u2014 no card, no expiration, yours forever.
 
 EVERYTHING YOUR PLAN UNLOCKS
@@ -1142,9 +1154,9 @@ EVERYTHING YOUR PLAN UNLOCKS
 
 "Every play is posted before game time - then locked and graded against the final score."
 
-ACTIVATE YOUR FREE MONTH:
+START PLATINUM FOR $1:
 __PAY_URL__
-Your first month of Platinum is already active \u2014 no card, nothing to activate. After 30 days, keep Platinum for $49.99/month. Cancel anytime. No questions asked.
+Platinum is not automatic \u2014 it starts when you do. One dollar unlocks your first 7 days of full Platinum; after that it is $15.99/week. Cancel anytime. No questions asked.
 
 MAKE SURE YOU DON'T MISS A PLAY:
 - Join the Telegram channels: Gold (free plays) https://t.me/thesharpteam - Platinum (private) https://t.me/+_eNhcbD3k4RlNTk5
@@ -1159,7 +1171,7 @@ Bet responsibly - 21+ - Gambling problem? Call 1-800-GAMBLER (1-800-426-2537): f
 """
 
 WELCOME_HTML = """<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="light dark"><title>Welcome to The Sharp Team</title></head>
-<body style="margin:0;padding:0;background:#070d1d;"><div style="display:none;max-height:0;overflow:hidden;opacity:0;">Welcome to The Sharp Team. Your first month of Platinum is FREE — every pick tracked, every ticket verified.</div>
+<body style="margin:0;padding:0;background:#070d1d;"><div style="display:none;max-height:0;overflow:hidden;opacity:0;">Welcome to The Sharp Team. Platinum starts with a $1 week — every pick tracked, every ticket verified.</div>
 <div style="padding:8px 14px 12px;"><div style="font-family:Arial,sans-serif;max-width:400px;margin:0 auto;background:#0e1730;border-radius:14px;overflow:hidden;">
 <div style="background:#021f16;padding:10px 14px;border-bottom:2px solid #c9a227;text-align:center;"><table cellpadding="0" cellspacing="0" style="margin:0 auto;"><tr>
 <td width="36"><img src="https://files.catbox.moe/74qot5.png" alt="The Sharp Team" width="30" style="width:30px;height:auto;border:0;"></td>
@@ -1169,9 +1181,9 @@ WELCOME_HTML = """<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="v
 <div style="padding:20px 24px 0;text-align:center;">
 <h1 style="font-family:Georgia,serif;font-size:29px;font-weight:700;color:#e8c766;margin:0;line-height:1.15;">Welcome to the team.</h1>
 <p style="color:#ffffff;font-size:13px;font-weight:700;line-height:1.55;margin:9px 0 0;">99% of bettors lose — and it's not bad luck. They have no system.</p>
-<p style="color:#a8b3cf;font-size:12.5px;line-height:1.6;margin:10px 0 0;">Hi __NOMBRE__ — your dashboard is ready, and Platinum starts with a FULL MONTH FREE. Everything your membership unlocks:</p></div>
+<p style="color:#a8b3cf;font-size:12.5px;line-height:1.6;margin:10px 0 0;">Hi __NOMBRE__ — your dashboard is ready, and Platinum starts with a $1 first week. Everything your membership unlocks:</p></div>
 <div style="margin:14px 24px 0;background:#032a1f;border:1px solid #14532d;border-bottom:3px solid #e8c766;border-radius:12px;padding:13px 15px;">
-<p style="margin:0;font-size:13px;font-weight:800;color:#ffffff;">⭐ PLATINUM — FREE for your first month · <span style="color:#2fe6a7;">ACTIVE</span></p>
+<p style="margin:0;font-size:13px;font-weight:800;color:#ffffff;">⭐ PLATINUM — FIRST WEEK $1 · <span style="color:#2fe6a7;">THEN $15.99/WEEK</span></p>
 <p style="margin:4px 0 0;font-size:11px;color:#a8b3cf;">Our most valuable play — the best pick of the day, every day.</p>
 <p style="margin:9px 0 0;font-size:13px;font-weight:800;color:#ffffff;">🟢 GOLD — FREE FOR LIFE</p>
 <p style="margin:4px 0 0;font-size:11px;color:#a8b3cf;">No card needed. They never expire.</p></div>
@@ -1190,8 +1202,8 @@ WELCOME_HTML = """<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="v
 <td style="vertical-align:top;padding:11px 12px 11px 3px;"><div style="font-size:12px;font-weight:800;color:#ffffff;letter-spacing:.5px;">DAILY ACADEMY</div><div style="font-size:11.5px;color:#a8b3cf;line-height:1.55;margin-top:2px;">One sharp betting lesson every morning: discipline, bankroll management, reading lines and edges.</div></td></tr></table></div>
 <div style="margin:14px 24px 0;padding:10px 14px;background:#032a1f;border-radius:10px;"><p style="font-family:Georgia,serif;font-size:13px;font-style:italic;line-height:1.6;color:#e6edf7;margin:0;">&ldquo;Every play is posted before game time — then locked and graded against the final score.&rdquo;</p></div>
 <div style="text-align:center;padding:14px 24px 0;">
-<a href="__PAY_URL__" style="display:inline-block;background:#2f7bff;color:#ffffff;font-size:12.5px;font-weight:800;padding:11px 24px;border-radius:999px;text-decoration:none;">KEEP PLATINUM AFTER MY FREE MONTH</a>
-<p style="color:#a8b3cf;font-size:11.5px;line-height:1.6;margin:9px 0 0;">Your free month is already on — <strong style="color:#ffffff;">no card, nothing to activate</strong>. After 30 days, keep Platinum for $49.99/month. Cancel anytime.</p>
+<a href="__PAY_URL__" style="display:inline-block;background:#2f7bff;color:#ffffff;font-size:12.5px;font-weight:800;padding:11px 24px;border-radius:999px;text-decoration:none;">START PLATINUM — $1 FIRST WEEK</a>
+<p style="color:#a8b3cf;font-size:11.5px;line-height:1.6;margin:9px 0 0;">Platinum starts the moment you check out — <strong style="color:#ffffff;">$1 for your first 7 days</strong>, then $15.99/week. Cancel anytime.</p>
 <p style="color:#a8b3cf;font-size:11px;margin:7px 0 0;">Your free Gold plays are already live: <a href="https://www.thesharpteam.bet/home" style="font-weight:700;color:#7dd3fc;">enter your dashboard</a></p></div>
 <div style="margin:14px 18px 0;background:#0a1122;border:1px solid #1d2a4a;border-radius:12px;padding:15px;">
 <p style="margin:0;font-size:11px;font-weight:800;letter-spacing:2px;color:#e8c766;text-align:center;">MAKE SURE YOU DON'T MISS A PLAY</p>
@@ -3896,7 +3908,7 @@ def register():
         )
         db.commit()
         send_activation_email(nombre, email, _tok, _lang)
-        flash("✅ ¡Ya casi! Te enviamos un correo de activación — toca el enlace para activar tu cuenta y tu mes gratis de Platinum." if _lang == "es" else "✅ Almost there! We sent you an activation email — tap the link inside to activate your account and your free Platinum month.", "success")
+        flash("✅ ¡Ya casi! Te enviamos un correo de activación — toca el enlace para activar tu cuenta." if _lang == "es" else "✅ Almost there! We sent you an activation email — tap the link inside to activate your account.", "success")
         return render_template(_tpl, **_reg_ctx)
     _resp = make_response(render_template(_tpl, **_reg_ctx))
     _resp.set_cookie("tst_lang", _lang, max_age=30 * 86400, samesite="Lax")
@@ -3907,10 +3919,15 @@ def register():
 def activar_cuenta(token):
     """Activa una cuenta nueva desde el enlace del correo (2026-10-18).
 
-    Al activar: se marca verificada, arranca el mes gratis de Platinum
-    (30 días, orden de Alex 2026-10-16 corrida a este momento), entra la
-    sesión, sale la bienvenida y el aviso de miembro nuevo, y se reporta
-    el registro a Meta (pixel + CAPI con el mismo event_id, como antes).
+    Al activar: se marca verificada, entra la sesión, sale la bienvenida
+    y el aviso de miembro nuevo, y se reporta el registro a Meta (pixel +
+    CAPI con el mismo event_id, como antes).
+
+    Desde 2026-10-19 (orden de Alex) activar YA NO otorga Platinum: el
+    mes gratis murió. Platinum arranca solo con el checkout de $1
+    (webhook checkout.session.completed). Las cuentas con reloj de mes
+    gratis ya vigente no se tocan: su platinum_trial_ends sigue corriendo
+    hasta su fecha.
     """
     db = get_db()
     user = db.execute("SELECT * FROM users WHERE activation_token = ?",
@@ -3930,14 +3947,10 @@ def activar_cuenta(token):
     if es_admin:
         db.execute("UPDATE users SET is_admin = 1 WHERE id = ?", (uid,))
         db.commit()
-    else:
-        # Mes gratis de Platinum ACTIVO desde la ACTIVACIÓN (2026-10-18;
-        # antes arrancaba al llenar el formulario).
-        db.execute(
-            "UPDATE users SET platinum_unlocked = 1, platinum_trial_ends = ? WHERE id = ?",
-            ((datetime.now() + timedelta(days=30)).isoformat(), uid),
-        )
-        db.commit()
+    # Sin grant de Platinum al activar (2026-10-19): la cuenta queda en
+    # nivel Gold/free hasta que pague el checkout de $1. Nada que hacer
+    # aquí a propósito — platinum_unlocked y platinum_trial_ends se dejan
+    # exactamente como están.
     log_notificacion(db, "miembro_nuevo", f"New member: {nombre}", email)
     session["user_id"] = uid
     session["nombre"] = nombre
@@ -5724,6 +5737,81 @@ def about():
     return render_template("about.html")
 
 
+def _desbloquear_board():
+    """Datos REALES del programa para la página de desbloqueo (2026-10-19).
+
+    Récord oficial con el MISMO cálculo del Official Tracker
+    (official_tracker_full), teasers de las últimas jugadas liquidadas y
+    los tickets GANADORES recientes con su foto — todo desde
+    data/archive.json. Si algo falla, devuelve vacío y la página se
+    renderiza igual, sin esas piezas (nunca números inventados).
+    """
+    board = {"w": 0, "l": 0, "total": 0, "win_rate": 0.0,
+             "record": "0–0", "teasers": [], "tickets": []}
+    try:
+        g = official_tracker_full().get("general") or {}
+        board.update({"w": g.get("w", 0), "l": g.get("l", 0),
+                      "total": g.get("n", 0),
+                      "win_rate": g.get("win_rate", 0.0),
+                      "record": g.get("record", "0–0")})
+        dias = sorted(load_archive(), key=lambda d: d.get("fecha") or "")
+        settled = []
+        for d in dias:
+            for j in d.get("jugadas", []) or []:
+                if j.get("resultado") in ("WON", "LOST") and not j.get("bloqueada"):
+                    settled.append((d.get("fecha") or "", j))
+        newest = list(reversed(settled))
+
+        def _wl(items):
+            w = sum(1 for _, j in items if j["resultado"] == "WON")
+            return w, len(items) - w
+
+        teasers = []
+        if newest:
+            liga_top = _league_of_archive_play(newest[0][1])
+            if liga_top:
+                de_liga = [it for it in newest
+                           if _league_of_archive_play(it[1]) == liga_top][:5]
+                if len(de_liga) >= 3:
+                    w, l = _wl(de_liga)
+                    teasers.append({
+                        "texto": f"{w}–{l} in the last {len(de_liga)} {liga_top} plays",
+                        "sub": "Official plays · tap for the graded plays"})
+            ult10 = newest[:10]
+            if len(ult10) >= 5:
+                w, l = _wl(ult10)
+                teasers.append({
+                    "texto": f"{w}–{l} in the last {len(ult10)} official plays",
+                    "sub": "Every league · tap for the graded plays"})
+            ult5 = newest[:5]
+            if len(ult5) >= 3 and len(teasers) < 3:
+                w, l = _wl(ult5)
+                teasers.append({
+                    "texto": f"{w}–{l} in the last {len(ult5)} official plays",
+                    "sub": "Most recent · tap for the graded plays"})
+        board["teasers"] = teasers[:3]
+        tickets = []
+        for fecha, j in newest:
+            if j.get("resultado") == "WON" and j.get("comprobante"):
+                p = float(j.get("profit") or 0)
+                try:
+                    f_txt = datetime.strptime(fecha, "%Y-%m-%d").strftime("%b %d")
+                except Exception:
+                    f_txt = fecha
+                tickets.append({
+                    "img": j["comprobante"],
+                    "pick": j.get("pick") or "",
+                    "fecha": f_txt,
+                    "profit": ("+$" + (f"{p:,.0f}" if p == int(p) else f"{p:,.2f}")),
+                })
+            if len(tickets) >= 6:
+                break
+        board["tickets"] = tickets
+    except Exception:
+        pass
+    return board
+
+
 @app.route("/desbloquear-platinum")
 @login_required
 def desbloquear_platinum():
@@ -5739,6 +5827,9 @@ def desbloquear_platinum():
         ya_desbloqueada=platinum_unlocked_for(user),
         past_due=past_due,
         stripe_url=STRIPE_PLATINUM_URL,
+        board=_desbloquear_board(),
+        user_email=(user["email"] if user else ""),
+        user_nombre=(user["nombre"] if user else ""),
     )
 
 
@@ -8752,12 +8843,8 @@ def ev_board_results():
 @app.route("/sharp")
 @login_required
 def sharp():
-    """Sharp Money (Platinum, 2026-10-19): sin Platinum activo, el
-    miembro cae en la página de desbloqueo."""
     db = get_db()
     record_checkin(db, session["user_id"])
-    if not platinum_unlocked_for(current_user()):
-        return redirect(url_for("desbloquear_platinum"))
     return render_template("sharp.html", board=load_sharp_board())
 
 
