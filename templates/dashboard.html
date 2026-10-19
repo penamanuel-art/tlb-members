@@ -229,17 +229,7 @@
   <article class="wgt-row {{ 'won' if r.resultado == 'W' else '' }}" data-fecha="{{ r.fecha }}" data-profit="{{ '%.2f' % r.profit }}"
            data-stake="{{ '%.2f' % r.stake_monto }}" data-result="{{ r.resultado }}">
     <div class="tkc-top">
-      {% if r.comprobante %}
-      <button type="button" class="tkc-thumbbtn" data-ticket="wt-{{ r.id }}" aria-label="View original ticket for {{ r.pick }}">
-        <img class="tkc-thumb" src="{{ url_for('static', filename=r.comprobante) }}" alt="Ticket: {{ r.pick }}" loading="lazy">
-      </button>
-      <div class="modal" id="wt-{{ r.id }}" hidden>
-        <div class="modal-card ticket-photo-card">
-          <button type="button" class="modal-close" data-close>✕</button>
-          <img class="ticket-photo" src="{{ url_for('static', filename=r.comprobante) }}" alt="Original ticket: {{ r.pick }}">
-        </div>
-      </div>
-      {% elif r.logo %}
+      {% if r.logo %}
       <img class="tkc-thumb tkc-logo" src="{{ r.logo }}" alt="{{ r.abbr }}" loading="lazy">
       {% else %}
       <span class="tkc-fallback">{{ r.sport_icon or '🎯' }}</span>
@@ -249,7 +239,6 @@
         <p class="tkc-pick">{{ r.pick }}</p>
         {% if r.marcador %}<p class="tkc-match">{{ r.marcador }}</p>{% else %}<p class="tkc-match">{% if r.abbr %}{{ r.abbr }} · {% endif %}{{ r.fecha_corta }} · {{ r.cuota_txt }}</p>{% endif %}
         <p class="tkc-sub">Stake ${{ '%.0f' % r.stake_monto }} ({{ r.stake_unidades }}u) · {{ r.casa }}</p>
-        {% if r.comprobante %}<span class="tkc-view">🎫 View ticket</span>{% endif %}
       </div>
       <div class="tkc-res">
         {% if r.resultado == 'W' %}
