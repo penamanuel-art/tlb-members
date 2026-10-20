@@ -747,39 +747,6 @@ body.v2 .tstc-novig:active, body.v2 .tstc-track:active { transform: scale(0.97);
 .v2-mc-day { font-family: var(--v2-mono); font-size: 12px; font-weight: 800; color: var(--v2-blue); flex-shrink: 0; }
 .v2-mc-item b { font-size: 13.5px; font-weight: 700; }
 
-/* ---------------- Elite sticky banner (v2 pill) ---------------- */
-.v2-sticky { position: fixed; left: 0; right: 0; bottom: 0; z-index: 55; padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
-  background: rgba(6, 11, 22, 0.9); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-  border-top: 1px solid rgba(245, 197, 66, 0.3); }
-.v2-sticky-inner {
-  max-width: 720px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 12px;
-  background: linear-gradient(135deg, rgba(245, 197, 66, 0.16), rgba(245, 197, 66, 0.06));
-  border: 1px solid rgba(245, 197, 66, 0.45); border-radius: 18px; padding: 12px 16px;
-  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.4), 0 0 24px rgba(245, 197, 66, 0.10);
-}
-.v2-sticky-inner p { font-size: 13.5px; font-weight: 600; }
-.v2-sticky-inner p b { color: var(--v2-gold); }
-.v2-sticky-inner a {
-  flex-shrink: 0; text-decoration: none; font-weight: 800; font-size: 13.5px; color: #06060c;
-  background: linear-gradient(135deg, #f8d97e, var(--v2-gold)); padding: 10px 19px; border-radius: 12px;
-  box-shadow: 0 6px 18px rgba(245, 197, 66, 0.35);
-  transition: transform .18s var(--v2-ease);
-}
-.v2-sticky-inner a:active { transform: scale(0.96); }
-.v2-sticky-spacer { height: 78px; }
-
-/* ---------------- Theme toggle pill ---------------- */
-.v2-toggle {
-  position: fixed; right: 14px; bottom: 88px; z-index: 60;
-  display: inline-flex; align-items: center; gap: 6px;
-  font-size: 12.5px; font-weight: 800; text-decoration: none; color: var(--v2-text);
-  background: rgba(13, 21, 38, 0.94); border: 1px solid rgba(232, 199, 102, 0.55);
-  border-radius: 999px; padding: 11px 17px;
-  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.5);
-  transition: transform .18s var(--v2-ease);
-}
-.v2-toggle:active { transform: scale(0.96); }
-
 /* ---------------- Footer ---------------- */
 .v2-footer { margin-top: 16px; text-align: center; }
 .v2-footer p { font-size: 12px; color: var(--v2-faint); line-height: 1.7; }
@@ -892,27 +859,6 @@ body.v2 .tstc-novig:active, body.v2 .tstc-track:active { transform: scale(0.97);
 .v2-pastdue p { font-size: 15.5px; font-weight: 700; color: #ffe1a1; line-height: 1.5; }
 .v2-pastdue a { display: inline-block; margin-top: 10px; color: var(--v2-gold); font-weight: 800; font-size: 16px; }
 .v2-pastdue-global { margin-top: 14px; }
-/* Invitación VIP persistente para miembros que nunca se suscribieron
-   (pedido Alex 2026-10-02): distinta del banner de pago fallido.
-   Color dorado -> verde menta de marca #2fe6a7 (2026-10-20, orden de Alex). */
-.v2-vipinvite {
-  /* En flujo normal (2026-10-20): como sticky tapaba la primera fila de tarjetas al hacer scroll (captura de Alex en /tools); ya no flota sobre el contenido. */
-  display: flex; align-items: center; gap: 11px;
-  margin-top: 14px; padding: 14px 16px;
-  background: linear-gradient(135deg, rgba(47, 230, 167, .16), rgba(47, 230, 167, .10));
-  border: 1px solid rgba(47, 230, 167, .35);
-  border-radius: 18px;
-  text-decoration: none; font-size: 14.5px; font-weight: 600; color: #eef3fb;
-  box-shadow: var(--v2-shadow-sm);
-}
-.v2-vipinvite-badge {
-  font-size: 11px; font-weight: 800; letter-spacing: .12em;
-  color: #04150c; background: #2fe6a7;
-  padding: 6px 11px; border-radius: 999px; flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(47, 230, 167, 0.30);
-}
-.v2-vipinvite b { color: #2fe6a7; }
-.v2-vipinvite-arrow { margin-left: auto; color: #2fe6a7; font-weight: 800; flex-shrink: 0; }
 
 /* ---------------- "What makes this different" (pedido Alex 2026-10-03) ---------------- */
 .db-diff { max-width: 720px; margin: 10px auto 0; padding: 0 20px; }
@@ -995,7 +941,6 @@ body.v2 .tstc-novig:active, body.v2 .tstc-track:active { transform: scale(0.97);
   .v2-status.live .v2-dot { animation: none; }
   .db-faq summary .pm { transition: none; }
 }
-
 
 /* Miniatura del ticket en Recent results, estilo WGT (pedido por Alex 2026-10-03) */
 .v2-row-thumb{flex-shrink:0;width:62px;height:62px;border-radius:14px;overflow:hidden;border:1px solid var(--v2-border);display:block}
@@ -1194,10 +1139,6 @@ body.v2 .tstc-novig:active, body.v2 .tstc-track:active { transform: scale(0.97);
 }
 /* Espacio al final del body: barra inferior */
 body.v2.has-bottomnav { padding-bottom: calc(78px + env(safe-area-inset-bottom)); }
-/* El banner sticky de VIP y el botón de FAQ suben también */
-body.v2.has-bottomnav .v2-sticky { bottom: calc(68px + env(safe-area-inset-bottom)); }
-body.v2.has-bottomnav #faqFab { bottom: calc(86px + env(safe-area-inset-bottom)); }
-body.v2.has-bottomnav #faqPanel { bottom: calc(154px + env(safe-area-inset-bottom)); }
 
 /* ===== Receipts Ledger (2026-10-15, diseño aprobado por Alex: lista moderna
    con miniatura del ticket expandible; reemplaza la rejilla de fotos crudas) ===== */
