@@ -4,7 +4,6 @@
    EXCEPTIONS (partials included as-is, keep their class names):
      - _play_card.html  → self-contained inline styles (.tstc*)
      - _play_locked.html → needs .play-card / .play-top / .locked-*
-     - _results_ticker.html → needs CSS vars --card/--line/--text/--gold/--muted
      - ticket grid + modals → ticket presentation is UNTOUCHABLE,
        styles carried over faithfully from the classic theme
    Visual refresh 2026-10-03 (pedido Alex: "más moderno"):
@@ -39,7 +38,7 @@
   --v2-ease: cubic-bezier(.22, .61, .36, 1);
   --v2-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 
-  /* legacy vars consumed by _results_ticker.html inline styles */
+  /* legacy vars (aliases kept for older partials) */
   --card: #06060c;
   --card-2: #0a0a11;
   --line: rgba(255, 255, 255, 0.09);
@@ -1193,18 +1192,12 @@ body.v2 .tstc-novig:active, body.v2 .tstc-track:active { transform: scale(0.97);
   box-shadow: none;
   font-weight: 600;
 }
-/* El ticker de resultados sube encima de la barra */
-body.v2.has-bottomnav .ticker-dock-bottom { bottom: calc(68px + env(safe-area-inset-bottom)); }
-/* Espacio al final del body: barra (+ ticker si existe) */
+/* Espacio al final del body: barra inferior */
 body.v2.has-bottomnav { padding-bottom: calc(78px + env(safe-area-inset-bottom)); }
-body.v2.has-bottomnav.has-ticker { padding-bottom: calc(152px + env(safe-area-inset-bottom)); }
 /* El banner sticky de VIP y el botón de FAQ suben también */
 body.v2.has-bottomnav .v2-sticky { bottom: calc(68px + env(safe-area-inset-bottom)); }
-body.v2.has-bottomnav.has-ticker .v2-sticky { bottom: calc(150px + env(safe-area-inset-bottom)); }
 body.v2.has-bottomnav #faqFab { bottom: calc(86px + env(safe-area-inset-bottom)); }
-body.v2.has-bottomnav #faqFab.above-ticker { bottom: calc(160px + env(safe-area-inset-bottom)); }
 body.v2.has-bottomnav #faqPanel { bottom: calc(154px + env(safe-area-inset-bottom)); }
-body.v2.has-bottomnav #faqPanel.above-ticker { bottom: calc(228px + env(safe-area-inset-bottom)); }
 
 /* ===== Receipts Ledger (2026-10-15, diseño aprobado por Alex: lista moderna
    con miniatura del ticket expandible; reemplaza la rejilla de fotos crudas) ===== */
