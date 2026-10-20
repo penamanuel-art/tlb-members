@@ -3560,6 +3560,46 @@ def last_elite_win():
     return None
 
 
+def locked_ticket_url_for(play, fecha):
+    """URL pública de la copia DIFUMINADA del ticket Platinum de hoy.
+
+    Doctrina sellada (fuga real del 2026-10-15): el difuminado va HORNEADO
+    en el archivo — pixelado fuerte (//22) + GaussianBlur(16), los mismos
+    parámetros del mecanismo del email free v2 — con nombre neutro
+    img/locked/locked-<fecha>.jpg. La carta bloqueada del home JAMÁS
+    sirve la foto original ni deja su nombre en el HTML. La copia se
+    genera una vez por fecha dentro de static/ y se reutiliza; si ya
+    existe (p. ej. la dejó el flujo del email), se usa tal cual. Falla
+    cerrado: ante cualquier problema devuelve None y la carta sale sin
+    foto, con su panel bloqueado.
+    """
+    try:
+        comp = ((play or {}).get("comprobante") or "").strip()
+        if not comp or not fecha:
+            return None
+        # El comprobante debe ser una foto nuestra bajo static, sin escapes.
+        if ".." in comp or comp.startswith(("/", "http")) \
+                or not comp.startswith("img/comprobantes/"):
+            return None
+        rel = f"img/locked/locked-{fecha}.jpg"
+        dest = os.path.join(app.static_folder, rel)
+        if not os.path.exists(dest):
+            src = os.path.join(app.static_folder, comp)
+            if not os.path.exists(src):
+                return None
+            from PIL import Image, ImageFilter
+            im = Image.open(src).convert("RGB")
+            w, h = im.size
+            im = im.resize((max(20, w // 22), max(20, h // 22)), Image.BOX)
+            im = im.resize((w, h), Image.BILINEAR)
+            im = im.filter(ImageFilter.GaussianBlur(16))
+            os.makedirs(os.path.dirname(dest), exist_ok=True)
+            im.save(dest, quality=82)
+        return url_for("static", filename=rel)
+    except Exception:
+        return None
+
+
 @app.route("/theme/<name>")
 @login_required
 def theme(name):
@@ -3693,6 +3733,21 @@ def home():
     except Exception:
         hay_live = False
         esperando = False
+    # Carta bloqueada con el TICKET real difuminado (2026-10-20, pedido de
+    # Alex: «haz la jugada con su ticket, que se vea bloqueada»): quien no
+    # tiene Platinum ve la foto del ticket Platinum de hoy con el blur
+    # HORNEADO en la copia de nombre neutro (locked_ticket_url_for) — la
+    # foto original y su nombre nunca llegan a su HTML. Sin ticket o ante
+    # cualquier fallo: None y la carta sale con su panel bloqueado.
+    locked_ticket_url = None
+    if not card_pendiente and not (platinum_unlocked_for(user)
+                                   and not preview_locked):
+        _plat = next((p for p in plays
+                      if p.get("nivel") == "ELITE" and p.get("comprobante")),
+                     None)
+        if _plat:
+            locked_ticket_url = locked_ticket_url_for(
+                _plat, datetime.now(TZ).strftime("%Y-%m-%d"))
     return render_template(
         # Tema v2 (moderno) es el predeterminado desde 2026-10-02 (pedido Alex);
         # v1 (clásico) queda como reversión vía /theme/v1. Diseño lux
@@ -3733,6 +3788,7 @@ def home():
         recientes_value=recientes_value(),
         record_stats=official_tracker_full(),
         last_elite_win=last_elite_win(),
+        locked_ticket_url=locked_ticket_url,
         es_admin=is_admin_for(user),
         es_alex=is_alex_member(user),
         skip_splash=request.args.get("splash") == "0",
