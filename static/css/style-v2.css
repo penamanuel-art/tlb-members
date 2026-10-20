@@ -290,7 +290,7 @@ body.v2::before {
 @keyframes v2-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
 
 /* ---------------- Section scaffolding ---------------- */
-.v2-sec { margin-top: 36px; }
+.v2-sec { margin-top: 24px; }
 .v2-sec-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
 .v2-sec-head > div { min-width: 0; }
 .v2-sec-eyebrow {
@@ -891,7 +891,7 @@ body.v2 .tstc-novig:active, body.v2 .tstc-track:active { transform: scale(0.97);
    (pedido Alex 2026-10-02): distinta del banner de pago fallido.
    Color dorado -> verde menta de marca #2fe6a7 (2026-10-20, orden de Alex). */
 .v2-vipinvite {
-  position: sticky; top: 64px; z-index: 40;
+  /* En flujo normal (2026-10-20): como sticky tapaba la primera fila de tarjetas al hacer scroll (captura de Alex en /tools); ya no flota sobre el contenido. */
   display: flex; align-items: center; gap: 11px;
   margin-top: 14px; padding: 14px 16px;
   background: linear-gradient(135deg, rgba(47, 230, 167, .16), rgba(47, 230, 167, .10));
