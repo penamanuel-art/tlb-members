@@ -339,6 +339,15 @@ body.v2 .tstc-btn { white-space: nowrap; }
 }
 .play-top { display: flex; justify-content: space-between; align-items: center; }
 .locked-padlock { font-size: 1.1rem; opacity: 0.85; }
+/* Teaser con el juego de hoy + selección tapada (2026-10-20, pedido Alex:
+   la tarjeta bloqueada se veía vacía — «ahí no se ve nada»). El pick NO
+   viaja en el HTML: solo se pinta el rótulo «🔒 Platinum pick». */
+.locked-match { margin: 14px 0 0; }
+.locked-teams { margin: 0; font-size: 1.08rem; font-weight: 800; color: #fff; letter-spacing: -0.2px; }
+.locked-when { margin: 3px 0 0; font-size: 0.86rem; font-weight: 600; color: var(--v2-muted); }
+.locked-cover { position: relative; margin: 14px 0 16px; }
+.locked-cover .locked-blur { margin: 0; }
+.locked-pick { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 7px; margin: 0; font-size: 0.98rem; font-weight: 800; color: #fff; letter-spacing: 0.2px; text-shadow: 0 1px 10px rgba(0, 0, 0, 0.65); }
 .locked-blur { display: flex; flex-direction: column; gap: 10px; margin: 14px 0 16px; }
 .locked-blur span { display: block; height: 16px; border-radius: 8px; background: rgba(255, 255, 255, 0.10); filter: blur(6px); }
 .locked-blur span:nth-child(1) { width: 88%; }
@@ -347,10 +356,10 @@ body.v2 .tstc-btn { white-space: nowrap; }
 .locked-live { margin: 0 0 8px; font-size: 1.25rem; font-weight: 800; color: #fff; letter-spacing: -0.3px; }
 .locked-proof { margin: 0 0 14px; color: var(--v2-green); font-weight: 700; font-size: 0.95rem; }
 .locked-cta {
-  display: inline-block; color: #06060c; font-weight: 800; font-size: 1rem; text-decoration: none;
-  background: linear-gradient(135deg, #f8d97e, var(--v2-gold));
+  display: inline-block; color: #0b0f14; font-weight: 800; font-size: 1rem; text-decoration: none;
+  background: #2fe6a7;
   padding: 12px 24px; border-radius: var(--v2-radius-sm);
-  box-shadow: 0 8px 22px rgba(245, 197, 66, 0.30);
+  box-shadow: 0 8px 22px rgba(47, 230, 167, 0.30);
   transition: transform .18s var(--v2-ease), box-shadow .18s var(--v2-ease);
 }
 .locked-cta:active { transform: scale(0.97); }
@@ -869,26 +878,25 @@ body.v2 .tstc-novig:active, body.v2 .tstc-track:active { transform: scale(0.97);
 .v2-pastdue a { display: inline-block; margin-top: 10px; color: var(--v2-gold); font-weight: 800; font-size: 16px; }
 .v2-pastdue-global { margin-top: 14px; }
 /* Invitación VIP persistente para miembros que nunca se suscribieron
-   (pedido Alex 2026-10-02): distinta del banner de pago fallido.
-   Color dorado -> verde menta de marca #2fe6a7 (2026-10-20, orden de Alex). */
+   (pedido Alex 2026-10-02): distinta del banner de pago fallido. */
 .v2-vipinvite {
   position: sticky; top: 64px; z-index: 40;
   display: flex; align-items: center; gap: 11px;
   margin-top: 14px; padding: 14px 16px;
-  background: linear-gradient(135deg, rgba(47, 230, 167, .16), rgba(47, 230, 167, .10));
-  border: 1px solid rgba(47, 230, 167, .35);
+  background: linear-gradient(135deg, rgba(232, 199, 102, .16), rgba(232, 199, 102, .10));
+  border: 1px solid rgba(245, 197, 66, .35);
   border-radius: 18px;
   text-decoration: none; font-size: 14.5px; font-weight: 600; color: #eef3fb;
   box-shadow: var(--v2-shadow-sm);
 }
 .v2-vipinvite-badge {
   font-size: 11px; font-weight: 800; letter-spacing: .12em;
-  color: #04150c; background: #2fe6a7;
+  color: #04150c; background: linear-gradient(135deg, var(--v2-gold), var(--v2-amber));
   padding: 6px 11px; border-radius: 999px; flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(47, 230, 167, 0.30);
+  box-shadow: 0 4px 12px rgba(245, 197, 66, 0.30);
 }
-.v2-vipinvite b { color: #2fe6a7; }
-.v2-vipinvite-arrow { margin-left: auto; color: #2fe6a7; font-weight: 800; flex-shrink: 0; }
+.v2-vipinvite b { color: var(--v2-gold); }
+.v2-vipinvite-arrow { margin-left: auto; color: var(--v2-gold); font-weight: 800; flex-shrink: 0; }
 
 /* ---------------- "What makes this different" (pedido Alex 2026-10-03) ---------------- */
 .db-diff { max-width: 720px; margin: 10px auto 0; padding: 0 20px; }
