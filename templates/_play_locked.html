@@ -1,10 +1,12 @@
-{# Carta Platinum BLOQUEADA — espejo de la carta real v5 (_play_card_v5.html):
-   mismo caparazón (fondo #0c1113, franja superior #151e20, línea verde
-   vertical, píldora 💎 PLATINUM) y tipografía fina de carta, sin titulares
-   gigantes. Muestra el JUEGO de hoy (liga, hora y enfrentamiento — datos
-   del calendario) pero JAMÁS la selección: el pick, la cuota, el stake y
-   el edge NO se renderizan en este parcial; en su lugar va el panel
-   sobrio «Platinum pick · Members only». Solo para no-Platinum. #}
+{# Carta Platinum BLOQUEADA premium — espejo de la carta real v5
+   (_play_card_v5.html): mismo caparazón y tipografía fina de carta.
+   Pieza central: el TICKET real de la jugada con el difuminado HORNEADO
+   en la copia de nombre neutro (locked_ticket_url, la genera
+   locked_ticket_url_for en app.py) — la foto original y su nombre
+   JAMÁS aparecen en este HTML. Sin ticket disponible, la carta muestra
+   el panel de vidrio «Platinum pick · Members only». El pick, la cuota,
+   el stake y el edge NO se renderizan nunca: la fila de datos va tapada
+   con píldoras decorativas, sin un solo número. Solo para no-Platinum. #}
 <article class="lkc">
   <div class="lkc-edge" aria-hidden="true"></div>
   {% set _hay_juego = p is defined and p and (p.abbr or p.team_name) and (p.opp_abbr or p.opp_name) %}
@@ -26,12 +28,24 @@
   <div class="lkc-botsec">
     <div class="lkc-div" aria-hidden="true"></div>
     {% if _hay_juego %}
+    {% if locked_ticket_url %}
+    <div class="lkc-ticket">
+      <img class="lkc-ticket-img" src="{{ locked_ticket_url }}" alt="Members-only ticket" loading="lazy">
+      <span class="lkc-lockpill"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#e8c766" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>PLATINUM PICK</span>
+    </div>
+    {% else %}
     <div class="lkc-panel">
-      <span class="lkc-lock-ico" aria-hidden="true"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#5eeaa0" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span>
+      <span class="lkc-lock-ico" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e8c766" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span>
       <div>
         <div class="lkc-panel-t">Platinum pick</div>
         <div class="lkc-panel-s">Members only</div>
       </div>
+    </div>
+    {% endif %}
+    <div class="lkc-nums" aria-hidden="true">
+      <div class="lkc-num"><div class="lkc-k">PRICE POSTED</div><span class="lkc-cov"></span></div>
+      <div class="lkc-num"><div class="lkc-k">STAKE</div><span class="lkc-cov"></span></div>
+      <div class="lkc-num"><div class="lkc-k">MODEL EDGE</div><span class="lkc-cov"></span></div>
     </div>
     {% endif %}
     {% if last_elite_win %}
