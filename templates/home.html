@@ -179,7 +179,7 @@
       {% endif %}
     {% endfor %}
   {% else %}
-    {% set p = {'liga': ''} %}
+    {% set p = preview_locked_play or {'liga': ''} %}
     {% include "_play_locked.html" %}
   {% endif %}
 </div>
