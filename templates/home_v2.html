@@ -297,11 +297,9 @@
 </section>
 
 
-<!-- Upsell VIP (solo miembros sin VIP) — pedido Alex 2026-10-02 -->
-{% if not platinum_unlocked %}
-{% set upsell_cta_url = url_for('desbloquear_platinum') %}
-{% include "_upsell_vip.html" %}
-{% endif %}
+{# Sección upsell del $1 ELIMINADA del Home v2 (2026-10-20, orden de
+   Alex: limpieza general): la oferta vive solo en /desbloquear-platinum
+   y el Home ya trae su CTA en la tarjeta Platinum bloqueada. #}
 
 <!-- 02 · BANKROLL & STAKING -->
 <section class="v2-sec">
