@@ -44,7 +44,10 @@ body.v2{background-color:#161d29;background-image:radial-gradient(560px 300px at
 .lux-rec-h{font-size:26px;font-weight:800;line-height:1.16;letter-spacing:-.4px;color:#f2f5f9}
 .lux-rec-h span{color:#f3cd6b}
 .lux-rec-sub{font-size:13.5px;color:#9aa7b8;line-height:1.5;margin-top:8px}
-.lux-rec-card{background:radial-gradient(360px 180px at 110% -30px, rgba(87, 227, 137, 0.10), transparent 65%), linear-gradient(155deg, #26303f, #1c2431 60%, #1a222e);border:1px solid rgba(148, 178, 220, 0.16);border-radius:18px;padding:16px;margin-top:10px}
+.lux-rec-card{position:relative;overflow:hidden;background:radial-gradient(360px 180px at 110% -30px, rgba(87, 227, 137, 0.10), transparent 65%), linear-gradient(155deg, #26303f, #1c2431 60%, #1a222e);border:1px solid rgba(148, 178, 220, 0.16);border-radius:18px;padding:16px;margin-top:10px}
+/* Raya verde inferior en las tarjetas de record (orden Alex 2026-10-20):
+   el mismo degradado verde de la casa que luce la tarjeta de membresia. */
+.lux-rec-card::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:linear-gradient(90deg,#5eeaa0,#2fe6a7 55%,#12b76a)}
 a.lux-rec-card{display:block;text-decoration:none;color:inherit;transition:transform .15s ease}
 a.lux-rec-card:active{transform:scale(.985)}
 .lux-rec-top{display:flex;justify-content:space-between;align-items:center;gap:10px}
