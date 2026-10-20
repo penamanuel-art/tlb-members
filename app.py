@@ -3560,6 +3560,28 @@ def last_elite_win():
     return None
 
 
+def platinum_reciente_con_ticket():
+    """(jugada, fecha) de la Platinum (ELITE) más reciente con comprobante
+    en el archivo, o (None, None) si no hay ninguna.
+
+    Fuente de la VISTA PREVIA admin de la carta bloqueada
+    (?preview=locked) cuando aún no hay card de hoy publicada: Alex
+    juzga la carta con un ticket real — hoy, el de Tampa Bay Rays ML
+    del 2026-10-19 (2026-10-20: «hazlo con la Platinum de Tampa, usa
+    ese recibo»). El flujo de miembros NO usa esta función.
+    """
+    try:
+        with open(ARCHIVE_PATH, encoding="utf-8") as f:
+            arch = json.load(f)
+    except Exception:
+        return None, None
+    for d in sorted(arch.get("dias", []), key=lambda x: x.get("fecha", ""), reverse=True):
+        for j in d.get("jugadas", []):
+            if j.get("nivel") == "ELITE" and (j.get("comprobante") or "").strip():
+                return j, d.get("fecha")
+    return None, None
+
+
 def locked_ticket_url_for(play, fecha):
     """URL pública de la copia DIFUMINADA del ticket Platinum de hoy.
 
@@ -3748,6 +3770,20 @@ def home():
         if _plat:
             locked_ticket_url = locked_ticket_url_for(
                 _plat, datetime.now(TZ).strftime("%Y-%m-%d"))
+    # Vista previa admin CON ticket real (2026-10-20, pedido de Alex:
+    # «hazlo con la Platinum de Tampa, usa ese recibo»): sin card de hoy
+    # publicada, la carta bloqueada de la preview se renderiza con la
+    # Platinum más reciente con comprobante del archivo y su imagen
+    # bloqueada (blur horneado con la fecha de ESA jugada). SOLO entra
+    # ?preview=locked (admin): las plantillas leen preview_locked_play
+    # únicamente en la rama sin jugada de hoy, y el flujo de miembros
+    # nunca lo recibe con valor — su estado pendiente no cambia.
+    preview_locked_play = None
+    if preview_locked and card_pendiente:
+        preview_locked_play, _prev_fecha = platinum_reciente_con_ticket()
+        if preview_locked_play:
+            locked_ticket_url = locked_ticket_url_for(
+                preview_locked_play, _prev_fecha)
     return render_template(
         # Tema v2 (moderno) es el predeterminado desde 2026-10-02 (pedido Alex);
         # v1 (clásico) queda como reversión vía /theme/v1. Diseño lux
@@ -3789,6 +3825,7 @@ def home():
         record_stats=official_tracker_full(),
         last_elite_win=last_elite_win(),
         locked_ticket_url=locked_ticket_url,
+        preview_locked_play=preview_locked_play,
         es_admin=is_admin_for(user),
         es_alex=is_alex_member(user),
         skip_splash=request.args.get("splash") == "0",
