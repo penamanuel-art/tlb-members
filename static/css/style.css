@@ -981,17 +981,6 @@ a.avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .locked-cta { color: #fbbf24; font-weight: 800; font-size: 1.05rem; text-decoration: none; }
 .locked-cta:hover { text-decoration: underline; }
 
-/* Pancarta fija de Elite para no-Elite (pedido Alex 2026-09-30) */
-.elite-sticky { position: fixed; left: 0; right: 0; bottom: 0; z-index: 60;
-  background: rgba(10,12,20,.96); border-top: 1px solid rgba(251,191,36,.35);
-  padding: 10px 16px calc(10px + env(safe-area-inset-bottom)); backdrop-filter: blur(8px); }
-.elite-sticky-inner { max-width: 560px; margin: 0 auto; }
-.elite-sticky p { margin: 0 0 8px; color: #e8e8e8; font-size: .95rem; }
-.elite-sticky p b { color: #34d399; }
-.elite-sticky a { display: block; text-align: center; background: #10b981; color: #06281c;
-  font-weight: 800; font-size: 1.05rem; padding: 12px; border-radius: 14px; text-decoration: none; }
-.elite-sticky-spacer { height: 96px; }
-
 /* Inset de racha + meta para el récord oficial (2026-10-05, pedido por Alex) */
 .wgt-inset{margin:18px auto 0;max-width:420px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.09);border-radius:14px;padding:16px 18px;display:flex;align-items:center;justify-content:center;gap:14px;}
 .wgt-inset-val{font-size:1.7rem;font-weight:800;margin:0;color:#ffd257;}
@@ -1030,8 +1019,6 @@ a.avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
   font-weight: 600;
 }
 body.has-bottomnav { padding-bottom: calc(78px + env(safe-area-inset-bottom)); }
-body.has-bottomnav #faqFab { bottom: calc(86px + env(safe-area-inset-bottom)); }
-body.has-bottomnav #faqPanel { bottom: calc(154px + env(safe-area-inset-bottom)); }
 
 /* Menú details/summary — sin JavaScript, funciona en iPhone */
 .menu-details { position: relative; }
