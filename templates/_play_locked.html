@@ -1,34 +1,42 @@
-<style>.play-locked{margin-left:-12px;margin-right:-12px;height:auto;min-height:0}</style>
-{# Tarjeta ELITE bloqueada: teaser estilo WGT, diseño propio The Sharp Team.
-   Muestra el JUEGO de hoy (liga, equipos y hora — datos del calendario)
-   pero JAMÁS la selección: el pick, la cuota, el stake y el edge NO se
-   renderizan; la selección va tapada con el bloque «🔒 Platinum pick»
-   sobre el desenfoque decorativo. Solo para no-Elite. #}
-<article class="play-card play-locked">
-  <div class="play-top">
-    {% if p is defined and p and p.liga %}<span class="tstc-league">{{ p.liga }}</span>{% endif %}
-    <span class="locked-padlock" aria-hidden="true">&#x1f512;</span>
-  </div>
+{# Carta Platinum BLOQUEADA — espejo de la carta real v5 (_play_card_v5.html):
+   mismo caparazón (fondo #0c1113, franja superior #151e20, línea verde
+   vertical, píldora 💎 PLATINUM) y tipografía fina de carta, sin titulares
+   gigantes. Muestra el JUEGO de hoy (liga, hora y enfrentamiento — datos
+   del calendario) pero JAMÁS la selección: el pick, la cuota, el stake y
+   el edge NO se renderizan en este parcial; en su lugar va el panel
+   sobrio «Platinum pick · Members only». Solo para no-Platinum. #}
+<article class="lkc">
+  <div class="lkc-edge" aria-hidden="true"></div>
   {% set _hay_juego = p is defined and p and (p.abbr or p.team_name) and (p.opp_abbr or p.opp_name) %}
-  {% if _hay_juego %}
-  <div class="locked-match">
-    <p class="locked-teams">{{ p.team_name or p.abbr }} vs {{ p.opp_name or p.opp_abbr }}</p>
-    {% if p.game_time_et or p.hora %}<p class="locked-when">{{ p.game_time_et or p.hora }}</p>{% endif %}
-  </div>
-  <div class="locked-cover">
-    <div class="locked-blur" aria-hidden="true">
-      <span></span><span></span><span></span>
+  {% set _hora = (p.game_time_et or p.hora) if _hay_juego else '' %}
+  <div class="lkc-topsec">
+    <div class="lkc-top">
+      <span class="lkc-pill">💎 PLATINUM</span>
+      <span class="lkc-kind">Platinum play</span>
+      {% if _hay_juego %}<span class="lkc-meta">{{ p.liga }}{% if _hora %} · {{ _hora }}{% endif %}</span>{% endif %}
     </div>
-    <p class="locked-pick"><span aria-hidden="true">&#x1f512;</span> Platinum pick</p>
+    {% if _hay_juego %}
+    <div class="lkc-title">{{ p.team_name or p.abbr }} vs {{ p.opp_name or p.opp_abbr }}</div>
+    {% elif card_pendiente %}
+    <div class="lkc-title lkc-title-note">Today's Platinum play posts at 2:00 PM ET</div>
+    {% else %}
+    <div class="lkc-title lkc-title-note">No Platinum play today</div>
+    {% endif %}
   </div>
-  <h3 class="locked-live"><span aria-hidden="true">⭐</span> Today's Platinum play is live</h3>
-  {% elif card_pendiente %}
-  <h3 class="locked-live"><span aria-hidden="true">⭐</span> Today's Platinum play posts at 2:00 PM ET</h3>
-  {% else %}
-  <h3 class="locked-live"><span aria-hidden="true">⭐</span> No Platinum play today</h3>
-  {% endif %}
-  {% if last_elite_win %}
-  <p class="locked-proof">✓ Last Platinum win paid +${{ last_elite_win }}</p>
-  {% endif %}
-  <a class="locked-cta" href="{{ url_for('desbloquear_platinum') }}">Unlock Platinum &rarr;</a>
+  <div class="lkc-botsec">
+    <div class="lkc-div" aria-hidden="true"></div>
+    {% if _hay_juego %}
+    <div class="lkc-panel">
+      <span class="lkc-lock-ico" aria-hidden="true"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#5eeaa0" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span>
+      <div>
+        <div class="lkc-panel-t">Platinum pick</div>
+        <div class="lkc-panel-s">Members only</div>
+      </div>
+    </div>
+    {% endif %}
+    {% if last_elite_win %}
+    <p class="lkc-proof">✓ Last Platinum win paid +${{ last_elite_win }}</p>
+    {% endif %}
+    <a class="locked-cta" href="{{ url_for('desbloquear_platinum') }}">Unlock Platinum &rarr;</a>
+  </div>
 </article>
