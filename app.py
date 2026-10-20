@@ -114,9 +114,14 @@ STRIPE_WEBHOOK_SECRET = os.environ.get("STRIPE_WEBHOOK_SECRET", "")
 
 # Publishable key (pk_live) para Stripe.js en el checkout incrustado de
 # /desbloquear-platinum. Es pública por diseño, pero la API de Stripe NO la
-# devuelve: sale del Dashboard de Stripe (Developers -> API keys) y se
-# configura como env var en Render. Sin ella la página cae al link hospedado.
-STRIPE_PUBLISHABLE_KEY = os.environ.get("STRIPE_PUBLISHABLE_KEY", "")
+# devuelve: sale del Dashboard de Stripe (Developers -> API keys). Se lee de
+# la env var STRIPE_PUBLISHABLE_KEY; si está vacía, se usa como respaldo la
+# constante de abajo (la pk_live pública de la cuenta, entregada por Alex el
+# 2026-10-19) y la env var siempre manda cuando existe. Sin llave, la página
+# cae al link hospedado.
+STRIPE_PUBLISHABLE_KEY = os.environ.get(
+    "STRIPE_PUBLISHABLE_KEY", ""
+) or "pk_live_51UIyagRwCjFIsFzUW89rnPLseuYlxaUMrRIe2bIpPteTHAHefiUbYTrXE9rTDsGGDGrD3c7SofspGpmE4jcRdHEL00vCim5NrT"
 # Precios de la oferta vigente — los mismos del Payment Link hospedado:
 # $1 la primera semana (one-time) + $15.99/semana (recurrente).
 PLATINUM_PRICE_PRIMERA_SEMANA = "price_1USPJnRwCjFIsFzU4pYcIqnq"
