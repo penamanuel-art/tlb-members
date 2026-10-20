@@ -1,0 +1,31 @@
+{# Carta-aviso Platinum — ESTADO 1 del diseño C «Emblema» (aprobado por
+   Alex 2026-10-20; reemplaza el «no sale nada hasta publicar» de la
+   mañana): para quien NO tiene Platinum y aún NO hay card publicada de
+   verdad, la sección muestra este aviso de desbloqueo: emblema 💎 en
+   círculo fino dorado, «PLATINUM» en letras espaciadas, «Our most
+   valuable play of the day», la línea de valor, botón Unlock en pastilla
+   menta y los términos del $1. NO anuncia ninguna jugada: sin liga, sin
+   hora, sin matchup, sin ninguna pista de la carta del día (todavía no
+   existe públicamente). En cuanto la card se publica de verdad, este
+   aviso desaparece y entra la carta real bloqueada
+   (_play_card_locked.html) con el mismo chrome del diseño C. Quien tiene
+   Platinum nunca ve este aviso. Estilos propios (espejo de la variante C)
+   para rendir igual en lux/v2/v1. #}
+<style>
+.ptc{position:relative;overflow:hidden;background:linear-gradient(165deg,#26303f,#1c2431 60%,#1a222e);border:1px solid rgba(255,255,255,.07);border-radius:18px;padding:24px 20px 18px;box-sizing:border-box;width:100%;max-width:100%;margin:0 0 12px;text-align:center;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#eef2f7}
+.ptc:after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:linear-gradient(90deg,#5eeaa0,#2fe6a7 55%,#12b76a)}
+.ptc-emblem{width:62px;height:62px;margin:0 auto;border:1px solid rgba(232,199,102,.45);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:27px;background:radial-gradient(circle at 50% 35%,rgba(47,230,167,.14),rgba(47,230,167,0) 70%)}
+.ptc-word{font-size:12px;letter-spacing:.5em;font-weight:800;color:#eef2f7;margin:13px 0 0;padding-left:.5em}
+.ptc-h{font-size:16.5px;font-weight:700;line-height:1.35;margin:8px 0 0;color:#dbe6f2}
+.ptc-p{font-size:12.5px;line-height:1.6;color:#aebdce;margin:9px auto 16px;max-width:280px}
+.ptc-cta,body.v2 .ptc-cta{display:inline-block;min-width:210px;background:#2fe6a7;color:#0b0f14;font-weight:800;font-size:14.5px;text-align:center;text-decoration:none;padding:12px 10px;border-radius:999px;box-shadow:0 8px 22px rgba(47,230,167,.30)}
+.ptc-terms{font-size:11px;color:#8fa1c2;text-align:center;margin-top:9px}
+</style>
+<div class="ptc">
+  <div class="ptc-emblem" aria-hidden="true">💎</div>
+  <div class="ptc-word">PLATINUM</div>
+  <h3 class="ptc-h">Our most valuable play of the day</h3>
+  <p class="ptc-p">The highest-confidence pick on the board — posted before game time with its verified real ticket. Free members see it locked.</p>
+  <a class="ptc-cta" href="{{ url_for('desbloquear_platinum') }}">Unlock Platinum</a>
+  <div class="ptc-terms">$1 first week &middot; then $15.99/week &middot; cancel anytime</div>
+</div>
