@@ -6056,6 +6056,16 @@ def desbloquear_checkout_session():
                 {"price": PLATINUM_PRICE_SEMANAL, "quantity": 1},
             ],
             "subscription_data": {"trial_period_days": 7},
+            # Solo Card + Apple Pay (orden de Alex 2026-10-20, espejo
+            # del checkout de WGT): en la API basil que fija el SDK,
+            # payment_method_types=['card'] deja fuera los metodos
+            # dinamicos extra (Klarna, Cash App, Amazon Pay y Link) y
+            # Apple Pay viaja dentro de 'card' (los dominios
+            # thesharpteam.bet ya estan registrados en Stripe). Link
+            # queda apagado del todo con wallet_options: el formulario
+            # abre directo en el pago, sin su aviso de codigo.
+            "payment_method_types": ["card"],
+            "wallet_options": {"link": {"display": "never"}},
             "metadata": {
                 "member_email": email,
                 "member_id": str(user["id"]),
@@ -6070,7 +6080,15 @@ def desbloquear_checkout_session():
             params["customer"] = customer_id
         else:
             params["customer_email"] = email
-        cs = stripe.checkout.Session.create(**params)
+        try:
+            cs = stripe.checkout.Session.create(**params)
+        except Exception:
+            # Si la API rechazara algun dia los parametros de metodos
+            # de pago, se reintenta con los parametros de siempre: el
+            # checkout nunca se cae por este ajuste.
+            params.pop("payment_method_types", None)
+            params.pop("wallet_options", None)
+            cs = stripe.checkout.Session.create(**params)
     except Exception:
         return jsonify({"error": "could not create checkout session"}), 502
     return jsonify({"clientSecret": cs.get("client_secret") or ""})
