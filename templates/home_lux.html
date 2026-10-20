@@ -3,13 +3,15 @@
 {% block content %}
 {% if es_alex %}
 {# Vista SOLO Alex (2026-10-20, tono aprobado por el en el chat): la zona
-   superior de la tarjeta v5 mas clara y un poco mas alta. Este bloque solo
-   se renderiza para su cuenta personal de miembro (es_alex =
-   is_alex_member(user), email pena.manuel@myyahoo.com); para cualquier
-   otro miembro o visitante no existe en el HTML. Reversible: quitar este
-   bloque devuelve la tarjeta a su estado original. #}
+   superior de la tarjeta v5 mas clara y un poco mas alta, y la hoja de
+   detalle del Receipt (.v5sheet-in) con ese mismo degradado de fondo.
+   Este bloque solo se renderiza para su cuenta personal de miembro
+   (es_alex = is_alex_member(user), email pena.manuel@myyahoo.com); para
+   cualquier otro miembro o visitante no existe en el HTML. Reversible:
+   quitar este bloque devuelve la tarjeta a su estado original. #}
 <style>
 body.v2 .v5c-topsec{background:linear-gradient(180deg,#2b303a,#262a33);padding:18px 16px 16px}
+body.v2 .v5sheet-in{background:linear-gradient(180deg,#2b303a,#262a33)}
 </style>
 {% endif %}
 <style>
