@@ -13,6 +13,24 @@ body{background-color:#161d29;background-image:radial-gradient(560px 300px at 50
 .ot-hero .lbl { font-size: 0.7rem; color: #93b3aa; font-weight: 700; letter-spacing: 2px; margin-top: 6px; }
 .ot-hero .rec { font-size: 1.05rem; color: #fff; font-weight: 700; margin-top: 12px; }
 .ot-pos { color: #00e07f; } .ot-neg { color: #ff5d5d; }
+/* Encabezado de estadísticas — panel único integrado (2026-10-20, aprobado por Alex) */
+.oth-panel { position: relative; overflow: hidden; background: linear-gradient(160deg, #26303f 0%, #1c2431 55%, #1a222e 100%); border: 1px solid rgba(148,166,196,.16); border-radius: 22px; padding: 22px 18px 20px; box-shadow: 0 10px 28px rgba(0,0,0,.35); margin-bottom: 14px; }
+.oth-panel::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: linear-gradient(90deg, #5eeaa0, #2fe6a7 55%, #12b76a); }
+.oth-hero { text-align: center; padding-bottom: 16px; }
+.oth-units { font-size: 2.55rem; font-weight: 800; letter-spacing: -.5px; line-height: 1; color: #2fe6a7; }
+.oth-lbl { margin-top: 7px; font-size: .66rem; font-weight: 700; letter-spacing: 2.6px; color: #e8c766; }
+.oth-rec { margin-top: 13px; font-size: .92rem; font-weight: 600; color: #f2f5fa; line-height: 1.5; }
+.oth-rec .oth-dim { color: #9fb0c9; font-weight: 500; }
+.oth-rule { height: 1px; background: linear-gradient(90deg, transparent, rgba(148,166,196,.28), transparent); }
+.oth-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; padding-top: 6px; }
+.oth-stat { text-align: center; padding: 13px 4px 9px; border-bottom: 1px solid rgba(148,166,196,.10); }
+.oth-stat:nth-child(3n+2) { border-left: 1px solid rgba(148,166,196,.10); border-right: 1px solid rgba(148,166,196,.10); }
+.oth-stat:nth-child(n+4) { border-bottom: none; padding-bottom: 3px; }
+.oth-stats.has-clv .oth-stat:nth-child(n+4):nth-child(-n+6) { border-bottom: 1px solid rgba(148,166,196,.10); padding-bottom: 9px; }
+.oth-stats.has-clv .oth-stat:nth-child(7) { border-bottom: none; padding-bottom: 3px; }
+.oth-n { font-size: 1.18rem; font-weight: 700; color: #fff; line-height: 1.15; }
+.oth-n.mint { color: #2fe6a7; }
+.oth-l { margin-top: 4px; font-size: .56rem; font-weight: 700; letter-spacing: 1.6px; color: #8fa1c2; line-height: 1.45; }
 .ot-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
 .ot-grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 14px; }
 .ot-stat { background: rgba(18,24,40,.72); border: 1px solid rgba(120,140,180,.14); border-radius: 16px; padding: 14px 10px; text-align: center; }
@@ -112,20 +130,25 @@ body{background-color:#161d29;background-image:radial-gradient(560px 300px at 50
   <div class="sub">The full official record — every stat. Updated live from the official archive.</div>
 
   {% set g = t.general %}
-  <div class="ot-hero">
-    <div class="profit {{ 'ot-pos' if g.cls == 'pos' else ('ot-neg' if g.cls == 'neg' else '') }}" style="color:{{ '#00e07f' if g.cls == 'pos' else ('#ff5d5d' if g.cls == 'neg' else '#fff') }};">{{ g.units_display }}</div>
-    <div class="lbl">NET UNITS · ALL TIME</div>
-    <div class="rec">{{ g.record }} · {{ g.win_rate }}% win rate · ROI {{ '+' if g.roi > 0 else '' }}{{ g.roi }}% · {{ g.profit_display }} net profit</div>
-  </div>
-
-  <div class="ot-grid3">
-    <div class="ot-stat"><div class="n">${{ '{:,.0f}'.format(g.risked) }}</div><div class="l">TOTAL RISKED</div></div>
-    <div class="ot-stat"><div class="n">{{ g.racha_actual }}</div><div class="l">CURRENT STREAK</div></div>
-    <div class="ot-stat"><div class="n">{{ t.verificadas_pct }}%</div><div class="l">TICKET VERIFIED</div></div>
-    {% if t.clv_n and t.clv_n >= 3 %}<div class="ot-stat"><div class="n" style="color:{{ '#2fbf71' if t.clv_prom >= 0 else '#ff8a8a' }};">{{ '%+.1f' % t.clv_prom }}%</div><div class="l">AVG CLV · {{ t.clv_n }} PLAYS</div></div>{% endif %}
-    <div class="ot-stat"><div class="n">{{ '+' if g.avg_odds > 0 else '' }}{{ g.avg_odds }}</div><div class="l">AVG ODDS</div></div>
-    <div class="ot-stat"><div class="n">${{ g.avg_stake }}</div><div class="l">AVG STAKE</div></div>
-    <div class="ot-stat"><div class="n">W{{ t.mejor_racha_w }} / L{{ t.peor_racha_l }}</div><div class="l">BEST / WORST RUN</div></div>
+  {# Encabezado de estadísticas: panel único (2026-10-20, aprobado por Alex).
+     CURRENT STREAK lee t.racha_actual (nivel superior de t): el agregado
+     general (g) no trae esa clave y el tile salía vacío. #}
+  <div class="oth-panel">
+    <div class="oth-hero">
+      <div class="oth-units" style="color:{{ '#2fe6a7' if g.cls == 'pos' else ('#ff5d5d' if g.cls == 'neg' else '#fff') }};">{{ g.units_display }}</div>
+      <div class="oth-lbl">NET UNITS · ALL TIME</div>
+      <div class="oth-rec">{{ g.record }} <span class="oth-dim">·</span> {{ g.win_rate }}% win rate <span class="oth-dim">·</span> ROI {{ '+' if g.roi > 0 else '' }}{{ g.roi }}% <span class="oth-dim">·</span> {{ g.profit_display }} net profit</div>
+    </div>
+    <div class="oth-rule"></div>
+    <div class="oth-stats{% if t.clv_n and t.clv_n >= 3 %} has-clv{% endif %}">
+      <div class="oth-stat"><div class="oth-n">${{ '{:,.0f}'.format(g.risked) }}</div><div class="oth-l">TOTAL RISKED</div></div>
+      <div class="oth-stat"><div class="oth-n{% if (t.racha_actual or '')[:1] == 'W' %} mint{% endif %}">{{ t.racha_actual }}</div><div class="oth-l">CURRENT STREAK</div></div>
+      <div class="oth-stat"><div class="oth-n">{{ t.verificadas_pct }}%</div><div class="oth-l">TICKET VERIFIED</div></div>
+      {% if t.clv_n and t.clv_n >= 3 %}<div class="oth-stat"><div class="oth-n" style="color:{{ '#2fbf71' if t.clv_prom >= 0 else '#ff8a8a' }};">{{ '%+.1f' % t.clv_prom }}%</div><div class="oth-l">AVG CLV · {{ t.clv_n }} PLAYS</div></div>{% endif %}
+      <div class="oth-stat"><div class="oth-n">{{ '+' if g.avg_odds > 0 else '' }}{{ g.avg_odds }}</div><div class="oth-l">AVG ODDS</div></div>
+      <div class="oth-stat"><div class="oth-n">${{ g.avg_stake }}</div><div class="oth-l">AVG STAKE</div></div>
+      <div class="oth-stat"><div class="oth-n">W{{ t.mejor_racha_w }} / L{{ t.peor_racha_l }}</div><div class="oth-l">BEST / WORST RUN</div></div>
+    </div>
   </div>
 
   <div class="ot-section">
