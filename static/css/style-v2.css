@@ -878,25 +878,26 @@ body.v2 .tstc-novig:active, body.v2 .tstc-track:active { transform: scale(0.97);
 .v2-pastdue a { display: inline-block; margin-top: 10px; color: var(--v2-gold); font-weight: 800; font-size: 16px; }
 .v2-pastdue-global { margin-top: 14px; }
 /* Invitación VIP persistente para miembros que nunca se suscribieron
-   (pedido Alex 2026-10-02): distinta del banner de pago fallido. */
+   (pedido Alex 2026-10-02): distinta del banner de pago fallido.
+   Color dorado -> verde menta de marca #2fe6a7 (2026-10-20, orden de Alex). */
 .v2-vipinvite {
   position: sticky; top: 64px; z-index: 40;
   display: flex; align-items: center; gap: 11px;
   margin-top: 14px; padding: 14px 16px;
-  background: linear-gradient(135deg, rgba(232, 199, 102, .16), rgba(232, 199, 102, .10));
-  border: 1px solid rgba(245, 197, 66, .35);
+  background: linear-gradient(135deg, rgba(47, 230, 167, .16), rgba(47, 230, 167, .10));
+  border: 1px solid rgba(47, 230, 167, .35);
   border-radius: 18px;
   text-decoration: none; font-size: 14.5px; font-weight: 600; color: #eef3fb;
   box-shadow: var(--v2-shadow-sm);
 }
 .v2-vipinvite-badge {
   font-size: 11px; font-weight: 800; letter-spacing: .12em;
-  color: #04150c; background: linear-gradient(135deg, var(--v2-gold), var(--v2-amber));
+  color: #04150c; background: #2fe6a7;
   padding: 6px 11px; border-radius: 999px; flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(245, 197, 66, 0.30);
+  box-shadow: 0 4px 12px rgba(47, 230, 167, 0.30);
 }
-.v2-vipinvite b { color: var(--v2-gold); }
-.v2-vipinvite-arrow { margin-left: auto; color: var(--v2-gold); font-weight: 800; flex-shrink: 0; }
+.v2-vipinvite b { color: #2fe6a7; }
+.v2-vipinvite-arrow { margin-left: auto; color: #2fe6a7; font-weight: 800; flex-shrink: 0; }
 
 /* ---------------- "What makes this different" (pedido Alex 2026-10-03) ---------------- */
 .db-diff { max-width: 720px; margin: 10px auto 0; padding: 0 20px; }
