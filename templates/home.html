@@ -441,16 +441,8 @@
 
 
 
-<!-- Pancarta fija para no-Elite (formato WGT, pedido Alex 2026-09-30) -->
-{% if not platinum_unlocked %}
-<div class="elite-sticky" role="complementary" aria-label="Unlock Platinum">
-  <div class="elite-sticky-inner">
-    <p>Unlock Platinum plays — <b>first week $1</b></p>
-    <a href="{{ url_for('desbloquear_platinum') }}">Start my $1 week &rarr;</a>
-  </div>
-</div>
-<div class="elite-sticky-spacer" aria-hidden="true"></div>
-{% endif %}
+{# Pancarta fija del $1 ELIMINADA (2026-10-20, orden de Alex: limpieza
+   general): dock fijo fuera; la oferta vive solo en /desbloquear-platinum. #}
 
 <!-- Selector de tema (pedido Alex 2026-10-02): probar el look moderno del Dashboard -->
 <a href="{{ url_for('theme', name='v2', next=url_for('home')) }}" title="Try the new look"
