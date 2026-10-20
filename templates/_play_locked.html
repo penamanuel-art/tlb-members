@@ -1,15 +1,32 @@
-<style>.play-locked{margin-left:-12px;margin-right:-12px}</style>
-{# Tarjeta ELITE bloqueada: formato teaser estilo WGT, diseño propio The Sharp Team.
-   No revela nada: ni pick, ni cuota, ni stake, ni edge. Solo para no-Elite. #}
+<style>.play-locked{margin-left:-12px;margin-right:-12px;height:auto;min-height:0}</style>
+{# Tarjeta ELITE bloqueada: teaser estilo WGT, diseño propio The Sharp Team.
+   Muestra el JUEGO de hoy (liga, equipos y hora — datos del calendario)
+   pero JAMÁS la selección: el pick, la cuota, el stake y el edge NO se
+   renderizan; la selección va tapada con el bloque «🔒 Platinum pick»
+   sobre el desenfoque decorativo. Solo para no-Elite. #}
 <article class="play-card play-locked">
   <div class="play-top">
     {% if p is defined and p and p.liga %}<span class="tstc-league">{{ p.liga }}</span>{% endif %}
     <span class="locked-padlock" aria-hidden="true">&#x1f512;</span>
   </div>
-  <div class="locked-blur" aria-hidden="true">
-    <span></span><span></span><span></span>
+  {% set _hay_juego = p is defined and p and (p.abbr or p.team_name) and (p.opp_abbr or p.opp_name) %}
+  {% if _hay_juego %}
+  <div class="locked-match">
+    <p class="locked-teams">{{ p.team_name or p.abbr }} vs {{ p.opp_name or p.opp_abbr }}</p>
+    {% if p.game_time_et or p.hora %}<p class="locked-when">{{ p.game_time_et or p.hora }}</p>{% endif %}
+  </div>
+  <div class="locked-cover">
+    <div class="locked-blur" aria-hidden="true">
+      <span></span><span></span><span></span>
+    </div>
+    <p class="locked-pick"><span aria-hidden="true">&#x1f512;</span> Platinum pick</p>
   </div>
   <h3 class="locked-live"><span aria-hidden="true">⭐</span> Today's Platinum play is live</h3>
+  {% elif card_pendiente %}
+  <h3 class="locked-live"><span aria-hidden="true">⭐</span> Today's Platinum play posts at 2:00 PM ET</h3>
+  {% else %}
+  <h3 class="locked-live"><span aria-hidden="true">⭐</span> No Platinum play today</h3>
+  {% endif %}
   {% if last_elite_win %}
   <p class="locked-proof">✓ Last Platinum win paid +${{ last_elite_win }}</p>
   {% endif %}
