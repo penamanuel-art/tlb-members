@@ -112,6 +112,17 @@ STRIPE_SECRET_KEY = os.environ.get("STRIPE_SECRET_KEY", "")
 STRIPE_WEBHOOK_SECRET = os.environ.get("STRIPE_WEBHOOK_SECRET", "")
 
 
+# Publishable key (pk_live) para Stripe.js en el checkout incrustado de
+# /desbloquear-platinum. Es pública por diseño, pero la API de Stripe NO la
+# devuelve: sale del Dashboard de Stripe (Developers -> API keys) y se
+# configura como env var en Render. Sin ella la página cae al link hospedado.
+STRIPE_PUBLISHABLE_KEY = os.environ.get("STRIPE_PUBLISHABLE_KEY", "")
+# Precios de la oferta vigente — los mismos del Payment Link hospedado:
+# $1 la primera semana (one-time) + $15.99/semana (recurrente).
+PLATINUM_PRICE_PRIMERA_SEMANA = "price_1USPJnRwCjFIsFzU4pYcIqnq"
+PLATINUM_PRICE_SEMANAL = "price_1USPJvRwCjFIsFzUH8rwj5K8"
+
+
 def stripe_configurado():
     return bool(STRIPE_SECRET_KEY and STRIPE_WEBHOOK_SECRET)
 
@@ -5812,6 +5823,27 @@ def _desbloquear_board():
     return board
 
 
+def _checkout_embed_confirmado(session_id, user):
+    """True si la Checkout Session `session_id` quedó COMPLETA y es del
+    miembro en sesión. Solo pinta el estado de éxito al volver del pago
+    incrustado — la activación real la hace el webhook de siempre."""
+    if not (session_id and user and STRIPE_SECRET_KEY):
+        return False
+    try:
+        import stripe
+        stripe.api_key = STRIPE_SECRET_KEY
+        cs = stripe.checkout.Session.retrieve(session_id)
+    except Exception:
+        return False
+    if (cs.get("status") or "") != "complete":
+        return False
+    meta = cs.get("metadata") or {}
+    try:
+        return str(meta.get("member_id") or "") == str(user["id"])
+    except (KeyError, IndexError, TypeError):
+        return False
+
+
 @app.route("/desbloquear-platinum")
 @login_required
 def desbloquear_platinum():
@@ -5822,15 +5854,80 @@ def desbloquear_platinum():
         past_due = bool(user and user["stripe_past_due"])
     except (KeyError, IndexError, TypeError):
         past_due = False
+    # Vuelta del checkout incrustado (?checkout=ok&session_id=...): el éxito
+    # solo se muestra con la sesión de Stripe verificada como completa y
+    # propia; el webhook activa en paralelo y la página tolera su retraso.
+    checkout_ok = False
+    if request.args.get("checkout") == "ok" and request.args.get("session_id"):
+        checkout_ok = _checkout_embed_confirmado(
+            request.args.get("session_id"), user)
     return render_template(
         "desbloquear.html",
         ya_desbloqueada=platinum_unlocked_for(user),
         past_due=past_due,
         stripe_url=STRIPE_PLATINUM_URL,
+        stripe_pk=STRIPE_PUBLISHABLE_KEY,
+        stripe_embed_ok=bool(STRIPE_SECRET_KEY and STRIPE_PUBLISHABLE_KEY),
+        checkout_ok=checkout_ok,
         board=_desbloquear_board(),
         user_email=(user["email"] if user else ""),
         user_nombre=(user["nombre"] if user else ""),
     )
+
+
+@app.route("/api/desbloquear/checkout-session", methods=["POST"])
+@login_required
+def desbloquear_checkout_session():
+    """Checkout INCRUSTADO de la oferta $1 (espejo WGT, 2026-10-19): crea
+    la Checkout Session en modo embedded y devuelve su client_secret; el
+    formulario de Stripe se monta DENTRO de /desbloquear-platinum y el
+    miembro paga sin salir del sitio. Cobro: $1 hoy (precio one-time) +
+    suscripción de $15.99/semana con 7 días de trial (el primer cobro
+    semanal cae al día 8) — los mismos precios del Payment Link hospedado,
+    que queda como respaldo. La activación la hace el webhook
+    checkout.session.completed de siempre (match por email)."""
+    if not STRIPE_SECRET_KEY:
+        return jsonify({"error": "stripe not configured"}), 503
+    user = current_user()
+    if user is None:
+        return jsonify({"error": "login required"}), 401
+    email = (user["email"] or "").strip()
+    try:
+        customer_id = (user["stripe_customer_id"] or "").strip()
+    except (KeyError, IndexError, TypeError):
+        customer_id = ""
+    try:
+        import stripe
+        stripe.api_key = STRIPE_SECRET_KEY
+        params = {
+            # El SDK del servidor (stripe 12.5.0) fija la API
+            # 2025-08-27.basil: ahí el modo incrustado se llama "embedded"
+            # (en la API más nueva de la cuenta es "embedded_page").
+            "ui_mode": "embedded",
+            "mode": "subscription",
+            "line_items": [
+                {"price": PLATINUM_PRICE_PRIMERA_SEMANA, "quantity": 1},
+                {"price": PLATINUM_PRICE_SEMANAL, "quantity": 1},
+            ],
+            "subscription_data": {"trial_period_days": 7},
+            "metadata": {
+                "member_email": email,
+                "member_id": str(user["id"]),
+                "source": "desbloquear-embedded",
+            },
+            "return_url": (
+                url_for("desbloquear_platinum", _external=True)
+                + "?checkout=ok&session_id={CHECKOUT_SESSION_ID}"
+            ),
+        }
+        if customer_id:
+            params["customer"] = customer_id
+        else:
+            params["customer_email"] = email
+        cs = stripe.checkout.Session.create(**params)
+    except Exception:
+        return jsonify({"error": "could not create checkout session"}), 502
+    return jsonify({"clientSecret": cs.get("client_secret") or ""})
 
 
 @app.route("/admin/api/members-emails")
