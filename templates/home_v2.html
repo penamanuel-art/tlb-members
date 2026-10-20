@@ -208,22 +208,24 @@
   {% endif %}
 
 
-  {# VIP selection — teaser stays visible for non-VIP, exactly like the classic theme #}
+  {# Sección Platinum — estados sellados por Alex (2026-10-20): sin card
+     publicada de verdad, para quien no tiene Platinum la sección NO se
+     renderiza (ni encabezado); con la card publicada sale LA MISMA carta
+     original bloqueada (_play_card_locked, datos sanitizados en app.py).
+     locked_plays solo trae jugadas con publicación real o, en la preview
+     admin, el fallback de verificación — nunca candidatas del Admin. #}
   {% set plat = plays | selectattr('nivel', 'equalto', 'ELITE') | list %}
-  {% if plat or not platinum_unlocked %}
+  {% if plat or locked_plays %}
   <p class="v2-sec-eyebrow" style="margin:22px 0 10px">Today's Platinum Selection</p>
   <div class="v2-plays">
-    {% if plat %}
+    {% if platinum_unlocked %}
       {% for p in plat %}
-        {% if platinum_unlocked %}
-          {% include "_play_card.html" %}
-        {% else %}
-          {% include "_play_locked.html" %}
-        {% endif %}
+        {% include "_play_card.html" %}
       {% endfor %}
     {% else %}
-      {% set p = preview_locked_play or {'liga': ''} %}
-      {% include "_play_locked.html" %}
+      {% for p in locked_plays %}
+        {% include "_play_card_locked.html" %}
+      {% endfor %}
     {% endif %}
   </div>
   {% endif %}
