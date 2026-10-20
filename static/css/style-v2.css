@@ -328,33 +328,30 @@ body.v2 .tstc-btn { white-space: nowrap; }
 .v2-empty p { font-size: 14px; color: var(--v2-muted); line-height: 1.6; margin-bottom: 8px; }
 .v2-empty a { color: var(--v2-blue); font-weight: 700; }
 
-/* Locked VIP teaser — same partial (_play_locked.html), v2 skin.
-   Class names must stay identical so the partial works as-is. */
-.play-card {
-  background: linear-gradient(165deg, rgba(245, 197, 66, 0.11), rgba(255, 255, 255, 0.02) 60%);
-  border: 1px solid rgba(245, 197, 66, 0.35);
-  border-radius: 24px;
-  padding: 22px;
-  box-shadow: var(--v2-shadow-md), 0 0 28px rgba(245, 197, 66, 0.08);
-}
-.play-top { display: flex; justify-content: space-between; align-items: center; }
-.locked-padlock { font-size: 1.1rem; opacity: 0.85; }
-/* Teaser con el juego de hoy + selección tapada (2026-10-20, pedido Alex:
-   la tarjeta bloqueada se veía vacía — «ahí no se ve nada»). El pick NO
-   viaja en el HTML: solo se pinta el rótulo «🔒 Platinum pick». */
-.locked-match { margin: 14px 0 0; }
-.locked-teams { margin: 0; font-size: 1.08rem; font-weight: 800; color: #fff; letter-spacing: -0.2px; }
-.locked-when { margin: 3px 0 0; font-size: 0.86rem; font-weight: 600; color: var(--v2-muted); }
-.locked-cover { position: relative; margin: 14px 0 16px; }
-.locked-cover .locked-blur { margin: 0; }
-.locked-pick { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 7px; margin: 0; font-size: 0.98rem; font-weight: 800; color: #fff; letter-spacing: 0.2px; text-shadow: 0 1px 10px rgba(0, 0, 0, 0.65); }
-.locked-blur { display: flex; flex-direction: column; gap: 10px; margin: 14px 0 16px; }
-.locked-blur span { display: block; height: 16px; border-radius: 8px; background: rgba(255, 255, 255, 0.10); filter: blur(6px); }
-.locked-blur span:nth-child(1) { width: 88%; }
-.locked-blur span:nth-child(2) { width: 64%; }
-.locked-blur span:nth-child(3) { width: 42%; }
-.locked-live { margin: 0 0 8px; font-size: 1.25rem; font-weight: 800; color: #fff; letter-spacing: -0.3px; }
-.locked-proof { margin: 0 0 14px; color: var(--v2-green); font-weight: 700; font-size: 0.95rem; }
+/* Carta Platinum BLOQUEADA — espejo de la carta real v5 (_play_card_v5.html):
+   mismo caparazón (fondo #0c1113, sección superior #151e20→#12181b, línea
+   verde vertical #5eeaa0→#12b76a, píldora 💎 PLATINUM, tipografía fina de
+   carta). Rehúso 2026-10-20 (Alex: «ponga una carta de verdad, moderna»):
+   fuera el titular gigante y el candado-emoji suelto. SEGURIDAD: el pick,
+   la cuota, el stake y el edge NUNCA se renderizan en el parcial — en su
+   lugar va el panel sobrio «Platinum pick · Members only». */
+.lkc { position: relative; overflow: hidden; background: #0c1113; border: 1px solid rgba(255,255,255,.09); border-radius: 20px; color: #eef1f7; margin: 0 0 12px; box-sizing: border-box; width: 100%; }
+.lkc-edge { position: absolute; left: 0; top: 0; bottom: 0; width: 5px; z-index: 3; background: linear-gradient(180deg,#5eeaa0,#12b76a); }
+.lkc-topsec { background: linear-gradient(180deg,#151e20,#12181b); padding: 14px 16px 12px; }
+.lkc-top { display: flex; align-items: center; gap: 9px; }
+.lkc-pill { font-size: 10.5px; font-weight: 700; letter-spacing: 1.4px; padding: 6px 11px; border-radius: 9px; border: 1px solid; color: #5eeaa0; border-color: rgba(94,234,160,.5); background: rgba(94,234,160,.08); white-space: nowrap; }
+.lkc-kind { font-size: 12.5px; font-weight: 400; color: #9aa3b8; }
+.lkc-meta { margin-left: auto; font-size: 11px; font-weight: 600; letter-spacing: .6px; color: #9aa3b8; text-align: right; white-space: nowrap; }
+.lkc-title { font-size: 18px; font-weight: 600; color: #fff; letter-spacing: -.3px; line-height: 1.25; margin-top: 11px; }
+.lkc-title-note { font-size: 15px; }
+.lkc-botsec { background: #0c1113; padding: 0 16px 14px; }
+.lkc-div { border-top: 1.5px dashed rgba(255,255,255,.16); margin: 0 -16px; }
+.lkc-panel { display: flex; align-items: center; gap: 11px; background: #16211c; border: 1px solid rgba(94,234,160,.35); border-radius: 12px; padding: 11px 13px; margin-top: 12px; }
+.lkc-lock-ico { flex: none; width: 34px; height: 34px; border-radius: 10px; background: rgba(94,234,160,.10); display: flex; align-items: center; justify-content: center; }
+.lkc-panel-t { font-size: 13.5px; font-weight: 600; color: #fff; }
+.lkc-panel-s { font-size: 11.5px; color: #8b94a7; margin-top: 1px; }
+.lkc-proof { margin: 12px 0 0; color: #5eeaa0; font-weight: 700; font-size: 12.5px; }
+.lkc .locked-cta { margin-top: 12px; }
 /* Fix cascada (2026-10-20): «body.v2 a{color:inherit}» (línea 73,
    especificidad 0,1,2) le ganaba a «.locked-cta» (0,1,0) y el texto del
    botón salía heredado casi blanco (#f2f5fb) sobre el menta — ilegible
