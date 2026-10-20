@@ -176,25 +176,28 @@
 
 <!-- 01 · TODAY'S PLAYS -->
 <section class="v2-sec" id="plays" style="scroll-margin-top:70px;">
+  {% if not card_pendiente %}
   <div class="v2-sec-head">
     <div>
-      <h2 class="v2-sec-title">{% if card_pendiente %}Nothing posted yet{% else %}Today's plays{% endif %}</h2>
-      {% if card_pendiente %}
-      <p class="v2-sec-sub">Today's card drops in <b id="v2-countdown">…</b></p>
-      {% else %}
+      <h2 class="v2-sec-title">Today's plays</h2>
       <p class="v2-sec-sub">Tap a card for the ticket + write-up</p>
-      {% endif %}
     </div>
     {# "View my tracker" eliminado (2026-10-12): el Tracker ya vive en el menú inferior. #}
   </div>
+  {% endif %}
+  {# Estado vacío del board (Alex, 2026-10-20): sin título por fuera ni
+     cuenta regresiva — solo la cajita «The board is not posted yet». #}
 
   {% set golds = plays | selectattr('nivel', 'equalto', 'GOLD') | list %}
   {% if card_pendiente %}
-  <div class="v2-empty">
-    <p style="margin:0 0 12px"><span class="v2-status pending"><span class="v2-dot"></span>CARD PENDING</span></p>
-    <h3>No plays posted yet today</h3>
-    <p>The Sharp Team posts today's card at 2:00 PM ET every day. Check back then — every play public, win or loss.</p>
-    <p>Made a bet on your own? <a href="{{ url_for('tracker') }}">Log it in your tracker →</a></p>
+  <style>
+  .board-empty{background:linear-gradient(165deg,#26303f,#1c2431 60%,#1a222e);border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:18px 16px;text-align:center}
+  .board-empty-t{font-size:15px;font-weight:700;color:#eef2f7;margin:0}
+  .board-empty-s{font-size:12.5px;line-height:1.5;color:#8fa1c2;margin:6px 0 0}
+  </style>
+  <div class="board-empty">
+    <p class="board-empty-t">The board is not posted yet</p>
+    <p class="board-empty-s">Your plays show here the moment they are posted.</p>
   </div>
   {% elif golds %}
   <p class="v2-sec-eyebrow" style="margin-bottom:10px">Today's Free Selections</p>
@@ -549,31 +552,8 @@
 <!-- Elite sticky banner (non-VIP only), v2 pill -->
 {# Barra dorada fija "Unlock Platinum" ELIMINADA (2026-10-13, orden de Alex): duplicaba el banner superior del $1 trial; queda solo el de arriba. #}
 
-{% if card_pendiente %}
-<script>
-/* Cuenta regresiva a la próxima card (pedido Alex 2026-10-02):
-   2:00 PM ET lun–vie, 11:00 AM ET sáb–dom. */
-(function () {
-  var el = document.getElementById('v2-countdown');
-  if (!el) return;
-  function etNow() { return new Date(new Date().toLocaleString('en-US', { timeZone: 'America/New_York' })); }
-  function targetFor(d) {
-    var t = new Date(d);
-    t.setHours(14, 0, 0, 0);
-    return t;
-  }
-  function tick() {
-    var now = etNow(), tgt = targetFor(new Date(now));
-    if (tgt <= now) { var nx = new Date(now); nx.setDate(nx.getDate() + 1); tgt = targetFor(nx); }
-    var s = Math.max(0, Math.floor((tgt - now) / 1000));
-    var h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60);
-    el.textContent = h > 0 ? h + 'h ' + m + 'm' : m + 'm';
-  }
-  tick();
-  setInterval(tick, 30000);
-})();
-</script>
-{% endif %}
+{# Cuenta regresiva ELIMINADA (2026-10-20, orden de Alex): el estado
+   vacío del board ya no lleva conteo — solo la cajita simple. #}
 
 
 {% if celebracion %}
