@@ -11,7 +11,7 @@ self.addEventListener("push", (event) => {
     data = { body: event.data ? event.data.text() : "" };
   }
   const title = (data.title === undefined || data.title === null)
-    ? "The Sharp Team" : data.title;
+    ? "The Sharp" : data.title;
   const options = {
     body: data.body || "New +EV edge on the board.",
     icon: "/static/img/apple-touch-icon.png",
