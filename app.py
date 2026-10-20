@@ -3622,6 +3622,29 @@ def locked_ticket_url_for(play, fecha):
         return None
 
 
+def _locked_play_view(play, ticket_url):
+    """Vista SANITIZADA de una jugada Platinum para la carta bloqueada.
+
+    La carta bloqueada del home (estados sellados por Alex, 2026-10-20)
+    es LA MISMA carta original en estado bloqueado: solo viajan liga,
+    hora, matchup y la URL del ticket difuminado. El pick, la cuota, el
+    stake, el edge, el write-up y la ruta del comprobante original NO
+    entran en este dict — así jamás pueden aparecer en el HTML de quien
+    no tiene Platinum, ni como texto, ni en atributos, ni en URLs.
+    """
+    play = play or {}
+    return {
+        "liga": play.get("liga") or "",
+        "game_time_et": play.get("game_time_et") or "",
+        "hora": play.get("hora") or "",
+        "team_name": play.get("team_name") or "",
+        "abbr": play.get("abbr") or "",
+        "opp_name": play.get("opp_name") or "",
+        "opp_abbr": play.get("opp_abbr") or "",
+        "ticket_url": ticket_url,
+    }
+
+
 @app.route("/theme/<name>")
 @login_required
 def theme(name):
@@ -3664,7 +3687,8 @@ def home():
     auto_grado_tracked(db, current_user())
     program, plays = load_data()
     user = current_user()
-    card_pendiente = not card_publicada_hoy() or not plays
+    _card_publicada = card_publicada_hoy()
+    card_pendiente = not _card_publicada or not plays
     if card_pendiente:
         # Solo el administrador ve la card pendiente (2026-10-03, orden de Alex:
         # su cuenta personal de miembro es un miembro normal más y solo ve
@@ -3784,6 +3808,29 @@ def home():
         if preview_locked_play:
             locked_ticket_url = locked_ticket_url_for(
                 preview_locked_play, _prev_fecha)
+    # Estados sellados de la sección Platinum (Alex, 2026-10-20): para
+    # quien NO tiene Platinum, si la card de hoy NO está publicada de
+    # verdad, la sección NO existe (locked_plays vacío: la plantilla no
+    # renderiza ni el encabezado). Solo la publicación real — el mismo
+    # estado card_publicada_hoy() de siempre, nunca un anuncio, el
+    # horario, una preview ni una candidata del Admin — enciende la
+    # carta original bloqueada con las ELITE de hoy sanitizadas
+    # (_locked_play_view). La preview admin (?preview=locked) es solo la
+    # herramienta de verificación de Alex: sin card de hoy usa el
+    # fallback de la Platinum reciente con ticket (Tampa); el flujo de
+    # miembros jamás recibe ese fallback.
+    locked_plays = []
+    if not platinum_unlocked_for(user) or preview_locked:
+        if _card_publicada:
+            _hoy_lock = datetime.now(TZ).strftime("%Y-%m-%d")
+            for _p in plays:
+                if _p.get("nivel") == "ELITE":
+                    _tk = (locked_ticket_url_for(_p, _hoy_lock)
+                           if _p.get("comprobante") else None)
+                    locked_plays.append(_locked_play_view(_p, _tk))
+        elif preview_locked and preview_locked_play:
+            locked_plays.append(
+                _locked_play_view(preview_locked_play, locked_ticket_url))
     return render_template(
         # Tema v2 (moderno) es el predeterminado desde 2026-10-02 (pedido Alex);
         # v1 (clásico) queda como reversión vía /theme/v1. Diseño lux
@@ -3825,6 +3872,7 @@ def home():
         record_stats=official_tracker_full(),
         last_elite_win=last_elite_win(),
         locked_ticket_url=locked_ticket_url,
+        locked_plays=locked_plays,
         preview_locked_play=preview_locked_play,
         es_admin=is_admin_for(user),
         es_alex=is_alex_member(user),
