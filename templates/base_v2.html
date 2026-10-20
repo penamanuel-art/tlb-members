@@ -134,7 +134,9 @@ twq('config','rhgk7');
     <p>⚠️ Your last payment didn't go through, so your membership is past due and access is paused.</p>
     <a href="{{ url_for('cuenta') }}#past-due">Update your card to restore it →</a>
   </div>
-  {% elif not miembro_platinum %}
+  {# En /desbloquear-platinum la tira NO sale (2026-10-19, enmienda de Alex):
+     es el destino de la propia tira y se cruzaba sobre el contenido. #}
+  {% elif not miembro_platinum and request.endpoint != 'desbloquear_platinum' %}
   <a class="v2-vipinvite" href="{{ url_for('desbloquear_platinum') }}">
     <span class="v2-vipinvite-badge">PLATINUM</span>
     <span>Unlock the Platinum play — <b>first week $1</b></span>
