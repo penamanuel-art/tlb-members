@@ -1161,7 +1161,7 @@ YOUR ACCESS, IN PLAIN WORDS:
 - GOLD plays: FREE FOR LIFE \u2014 no card, no expiration, yours forever.
 
 EVERYTHING YOUR PLAN UNLOCKS
-1. THE DAILY CARD - Every day at 2:00 PM ET: the day's official plays (Gold plus the one Platinum), each with its original bet ticket. No filler, ever.
+1. THE DAILY CARD - Every day at 1:00 PM ET: the day's official plays (Gold plus the one Platinum), each with its original bet ticket. No filler, ever.
 2. YOUR PERSONAL TRACKER - One-tap tracking: mark each play, log won or lost. Verified history, real record, net units, ROI and streak. No spreadsheets.
 3. LIVE +EV BOARD - Value edges updated around the clock, measured against Pinnacle's no-vig fair price, with sharp-confirmed badges.
 4. PUSH ALERTS - Alerts the moment the card drops and when new edges appear. Turn "Alerts on" in your dashboard.
@@ -1205,7 +1205,7 @@ WELCOME_HTML = """<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="v
 <p style="margin:4px 0 0;font-size:11px;color:#a8b3cf;">No card needed. They never expire.</p></div>
 <div style="padding:14px 24px 0;"><table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 8px;background:#032a1f;border:1px solid #14532d;border-bottom:3px solid #e8c766;border-radius:12px;"><tr>
 <td width="46" style="vertical-align:top;padding:11px 0 11px 12px;"><div style="width:32px;height:32px;border-radius:9px;background:#14532d;text-align:center;line-height:32px;font-size:16px;">🎯</div></td>
-<td style="vertical-align:top;padding:11px 12px 11px 3px;"><div style="font-size:12px;font-weight:800;color:#ffffff;letter-spacing:.5px;">THE DAILY CARD</div><div style="font-size:11.5px;color:#a8b3cf;line-height:1.55;margin-top:2px;">Every day at 2:00 PM ET: the official plays — Gold plus the one Platinum — each with its original bet ticket. No filler, ever.</div></td></tr></table><table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 8px;background:#032a1f;border:1px solid #14532d;border-bottom:3px solid #e8c766;border-radius:12px;"><tr>
+<td style="vertical-align:top;padding:11px 12px 11px 3px;"><div style="font-size:12px;font-weight:800;color:#ffffff;letter-spacing:.5px;">THE DAILY CARD</div><div style="font-size:11.5px;color:#a8b3cf;line-height:1.55;margin-top:2px;">Every day at 1:00 PM ET: the official plays — Gold plus the one Platinum — each with its original bet ticket. No filler, ever.</div></td></tr></table><table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 8px;background:#032a1f;border:1px solid #14532d;border-bottom:3px solid #e8c766;border-radius:12px;"><tr>
 <td width="46" style="vertical-align:top;padding:11px 0 11px 12px;"><div style="width:32px;height:32px;border-radius:9px;background:#14532d;text-align:center;line-height:32px;font-size:16px;">📊</div></td>
 <td style="vertical-align:top;padding:11px 12px 11px 3px;"><div style="font-size:12px;font-weight:800;color:#ffffff;letter-spacing:.5px;">YOUR PERSONAL TRACKER</div><div style="font-size:11.5px;color:#a8b3cf;line-height:1.55;margin-top:2px;">One-tap tracking: mark each play, log won or lost. Real record, net units, ROI and streak. No spreadsheets.</div></td></tr></table><table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 8px;background:#032a1f;border:1px solid #14532d;border-bottom:3px solid #e8c766;border-radius:12px;"><tr>
 <td width="46" style="vertical-align:top;padding:11px 0 11px 12px;"><div style="width:32px;height:32px;border-radius:9px;background:#14532d;text-align:center;line-height:32px;font-size:16px;">⚡</div></td>
@@ -4008,7 +4008,7 @@ def register():
         _recientes = []
     for _r in _recientes:
         _r["units_display"] = f"{float(_r.get('profit') or 0) / 25.0:+.2f}u"
-    _drop = "2:00 PM ET"  # 2026-10-17, orden de Alex: la card sale a las 2:00 PM ET TODOS los dias
+    _drop = "1:00 PM ET"  # 2026-10-20, orden de Alex: la card sale a la 1:00 PM ET TODOS los dias (antes 2:00 PM, orden 2026-10-17)
     _reg_ctx = {"gold": _gold, "stats": _stats, "ayer": _ayer,
                 "recientes": _recientes, "drop_time": _drop,
                 "turnstile_key": TURNSTILE_SITE_KEY}
