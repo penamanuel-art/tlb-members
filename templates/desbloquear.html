@@ -6,9 +6,14 @@
    propios y SOLO números reales del programa (board viene de
    _desbloquear_board() en app.py, calculado desde data/archive.json).
    Oferta vigente: $1 la primera semana (7 días), luego $15.99/semana.
-   El checkout es el link hospedado de Stripe (stripe_url) — aquí NO se
-   pide tarjeta. La página del Tracker bloqueado (_tracker_sales_body)
-   lleva a esta ruta para miembros con sesión. #}
+   El pago va INCRUSTADO en esta misma página (Stripe Checkout en modo
+   embedded, espejo WGT 2026-10-19): el servidor crea la sesión vía
+   /api/desbloquear/checkout-session y el formulario de Stripe se monta
+   dentro de la tarjeta — el miembro paga sin salir del sitio. Si el
+   modo incrustado no está disponible (sin llaves o fallo de Stripe.js),
+   la página cae al botón con el link hospedado (stripe_url). La página
+   del Tracker bloqueado (_tracker_sales_body) lleva a esta ruta para
+   miembros con sesión. #}
 
 {% if ya_desbloqueada and not past_due %}
 <div class="v2-upsell-done">
@@ -16,6 +21,14 @@
   <h2 class="v2-sec-title">Your Platinum access is active ✓</h2>
   <p class="v2-upsell-sub">The day's top play appears unlocked on your card.</p>
   <a class="v2-upsell-cta" href="{{ url_for('home') }}">View my plays →</a>
+</div>
+{% elif checkout_ok %}
+<div class="v2-upsell-done">
+  <p class="v2-upsell-kicker">PLATINUM MEMBERSHIP</p>
+  <h2 class="v2-sec-title">You're in — Platinum is activating ✓</h2>
+  <p class="v2-upsell-sub">Your $1 week just started and your access turns on automatically. If your plays don't look unlocked yet, give it a few seconds — this page reloads itself.</p>
+  <a class="v2-upsell-cta" href="{{ url_for('home') }}">Go to my Dashboard →</a>
+  <script>setTimeout(function(){window.location.replace("{{ url_for('desbloquear_platinum') }}");},10000);</script>
 </div>
 {% else %}
 <style>
@@ -50,6 +63,8 @@
 .upl-teaser .arr{color:#2fe6a7;font-size:15px}
 .upl-recon{margin:8px 0 0;font-size:10.5px;color:#8b98ad;font-style:italic}
 .upl-cta{display:block;margin:14px 0 0;background:linear-gradient(180deg,#35f0b0,#1fc98d);color:#06281c;text-align:center;font-size:17px;font-weight:900;padding:14px 12px;border-radius:12px;text-decoration:none}
+.upl-embbox{margin:14px 0 0;background:#ffffff;border-radius:12px;padding:10px 8px}
+.upl-embload{margin:6px 0;text-align:center;font-size:12.5px;font-weight:700;color:#525f7f}
 .upl-under{margin:9px 0 0;text-align:center;font-size:12px;color:#e6edf7;font-weight:700}
 .upl-fine{margin:7px 0 0;text-align:center;font-size:10.5px;line-height:1.55;color:#8b98ad}
 .upl-trust{margin:11px 0 0;text-align:center;font-size:10.5px;color:#8b98ad}
@@ -115,13 +130,49 @@
       <p class="upl-recon">Every claim reconciles to the public graded ledger.</p>
     </div>
     {% endif %}
+    {% if stripe_embed_ok %}
+    <div class="upl-embbox" id="upl-emb-box">
+      <p class="upl-embload" id="upl-emb-loading">Loading secure checkout…</p>
+      <div id="upl-emb"></div>
+    </div>
+    <a class="upl-cta" id="upl-emb-fallback" href="{{ stripe_url }}" target="_blank" rel="noopener" style="display:none">Start my $1 week →</a>
+    <noscript><a class="upl-cta" href="{{ stripe_url }}" target="_blank" rel="noopener">Start my $1 week →</a></noscript>
+    {% else %}
     <a class="upl-cta" href="{{ stripe_url }}" target="_blank" rel="noopener">Start my $1 week →</a>
+    {% endif %}
     <p class="upl-under">Cancel before day 8 and you only ever pay $1.</p>
     <p class="upl-fine">One $1 first week per customer. Your weekly price is shown at checkout before you pay. Cancel anytime — no calls, no retention scripts.</p>
     <div class="upl-emailnote"><b>Important:</b> check out with the same email as your member account — that's how your Platinum access turns on automatically, today.</div>
     <p class="upl-trust">🔒 256-bit SSL · Powered by Stripe · PCI compliant</p>
     <p class="upl-record">★ Official record {{ board.record }} ({{ board.win_rate }}%) · every ticket graded in public</p>
   </div>
+
+  {% if stripe_embed_ok %}
+  <script src="https://js.stripe.com/v3"></script>
+  <script>
+  (function(){
+    var box=document.getElementById('upl-emb-box'),
+        fb=document.getElementById('upl-emb-fallback'),
+        load=document.getElementById('upl-emb-loading');
+    function fallback(){
+      if(box){box.style.display='none';}
+      if(fb){fb.style.display='block';}
+    }
+    if(!window.Stripe){fallback();return;}
+    fetch("{{ url_for('desbloquear_checkout_session') }}",{method:"POST",headers:{"Content-Type":"application/json"},body:"{}",credentials:"same-origin"})
+      .then(function(r){if(!r.ok){throw new Error("session");}return r.json();})
+      .then(function(d){
+        if(!d.clientSecret){throw new Error("secret");}
+        return Stripe({{ stripe_pk|tojson }}).initEmbeddedCheckout({clientSecret:d.clientSecret});
+      })
+      .then(function(checkout){
+        if(load){load.style.display='none';}
+        checkout.mount('#upl-emb');
+      })
+      .catch(function(){fallback();});
+  })();
+  </script>
+  {% endif %}
 
   {% if board.tickets %}
   <div class="upl-sec">
