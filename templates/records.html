@@ -8,7 +8,9 @@
 .rec-hero{font-size:40px;font-weight:800;letter-spacing:-1px;line-height:1.1;margin:0 0 12px;color:#fff}
 .rec-hero em{font-style:normal;color:#2f9dff}
 .rec-sub{color:#9aa3b8;font-size:15px;line-height:1.6;margin:0 0 24px}
-.rec-box{background:#101a2c;border:1px solid rgba(47,212,126,.25);border-radius:20px;padding:22px;margin-bottom:14px}
+.rec-box{position:relative;overflow:hidden;background:#101a2c;border:1px solid rgba(47,212,126,.25);border-radius:20px;padding:22px;margin-bottom:14px}
+/* Raya verde inferior (orden Alex 2026-10-20): mismo degradado verde de la casa. */
+.rec-box::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:linear-gradient(90deg,#5eeaa0,#2fe6a7 55%,#12b76a)}
 .rec-box.plat{border-color:rgba(245,197,66,.3)}
 .rec-box.gold{border-color:rgba(47,212,126,.25)}
 .rec-box-eyebrow{color:#8a93a8;font-size:11px;letter-spacing:2px;font-weight:700;margin-bottom:10px}
