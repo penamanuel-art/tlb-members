@@ -225,7 +225,6 @@ document.getElementById('nvX').addEventListener('click',function(){done();b.remo
     {% endif %}
   </div>
   {% endif %}
-  <p style="font-size:12.5px;color:#8b94a7;line-height:1.55;margin:14px 2px 0">Stakes are Sharp Team units (1 unit = 1% of your bankroll). Dollar amounts use your own unit size. Track saves the play to your tracker at your size, and it grades on its own. <a href="{{ url_for('cuenta') }}" style="color:#4da3ff">Change your unit</a></p>
 </section>
 
 <!-- RECENT GRADED TICKETS — diseño "Yesterday" (2026-10-16, aprobado por
@@ -410,6 +409,7 @@ document.getElementById('nvX').addEventListener('click',function(){done();b.remo
       <button type="submit" name="mode" value="kelly" class="{% if stake_mode == 'kelly' %}active{% endif %}">Kelly $</button>
     </form>
     <button class="v2-br-how" id="v2-br-how-open" type="button">how much should I bet?</button>
+    <p style="font-size:12.5px;color:#8b94a7;line-height:1.55;margin:12px 0 0">Stakes are Sharp Team units (1 unit = 1% of your bankroll). Dollar amounts use your own unit size. Track saves the play to your tracker at your size, and it grades on its own. <a href="{{ url_for('cuenta') }}" style="color:#4da3ff">Change your unit</a></p>
   </div>
   {% if es_alex or es_admin %}
   <a href="{{ url_for('balances') }}" class="v2-balances-link">💰 My book balances →</a>
