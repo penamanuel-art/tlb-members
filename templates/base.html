@@ -93,7 +93,7 @@ twq('config','rhgk7');
 </script>
 <!-- End X conversion tracking base code -->
 </head>
-<body class="{% if session.get('user_id') %}has-bottomnav{% endif %}{% if ticker_days %} has-ticker{% endif %}{% if request.path.startswith('/admin') %} admin-theme{% endif %}"{% if watermark_img %} style="--wm-img: url('{{ url_for('static', filename=watermark_img) }}')"{% endif %}>
+<body class="{% if session.get('user_id') %}has-bottomnav{% endif %}{% if request.path.startswith('/admin') %} admin-theme{% endif %}"{% if watermark_img %} style="--wm-img: url('{{ url_for('static', filename=watermark_img) }}')"{% endif %}>
 <header class="topbar">
   <div class="topbar-left">
     {% if session.get('user_id') %}
@@ -235,7 +235,6 @@ function googleTranslateElementInit(){new google.translate.TranslateElement({pag
 <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 {% endif %}
 {# (2026-10-07, pedido por Alex: chat FAQ eliminado de la plataforma) #}
-{% if session.get('user_id') %}{% with ticker_dock="bottom" %}{% include "_results_ticker.html" %}{% endwith %}{% endif %}
 {% if session.get('user_id') %}
 <!-- Barra de navegación inferior (pedido Alex 2026-10-05) — también en tema v1 -->
 <nav class="v2-bottomnav" aria-label="Primary">
@@ -368,20 +367,19 @@ function googleTranslateElementInit(){new google.translate.TranslateElement({pag
 </script>
 {% if session.get('user_id') %}
 <script>
-/* Espacio real para la pila inferior (menú + correa de resultados):
+/* Espacio real para la pila inferior (menú + banner sticky):
    se MIDE en el teléfono en vez de asumir alturas fijas — así ninguna
-   sección queda tapada ni se asoma detrás de la correa. (Bug visto por
-   Alex el 2026-10-13: el borde de una tarjeta se veía detrás de la correa.) */
+   sección queda tapada ni se asoma detrás de la barra.
+   (2026-10-20: la correa de resultados de ayer fue eliminada por orden de Alex.) */
 (function(){
   function fit(){
-    var nav=document.querySelector('.v2-bottomnav'), tk=document.querySelector('.ticker-dock-bottom'), st=document.querySelector('.v2-sticky');
+    var nav=document.querySelector('.v2-bottomnav'), st=document.querySelector('.v2-sticky');
     var nh=0;
     if(nav){ var r=nav.getBoundingClientRect(); nh=(window.innerHeight-r.top)+6; }
-    if(tk&&nav){ tk.style.bottom=nh+'px'; }
-    var th=tk?tk.offsetHeight:0, sh=0;
-    if(st){ st.style.bottom=(nh+th+4)+'px'; sh=st.offsetHeight;
+    var sh=0;
+    if(st){ st.style.bottom=(nh+4)+'px'; sh=st.offsetHeight;
       var sp=document.querySelector('.v2-sticky-spacer'); if(sp){ sp.style.display='none'; } }
-    var total=nh+th+sh;
+    var total=nh+sh;
     if(total>0){ document.body.style.paddingBottom=(total+16)+'px'; }
   }
   window.addEventListener('load',fit);
