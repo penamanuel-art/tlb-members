@@ -204,24 +204,31 @@ document.getElementById('nvX').addEventListener('click',function(){done();b.remo
   <p class="muted">No free plays today.</p>
   {% endif %}
 
-  {# Sección Platinum — estados sellados por Alex (2026-10-20): sin card
-     publicada de verdad, para quien no tiene Platinum la sección NO se
-     renderiza (ni encabezado); con la card publicada sale LA MISMA carta
-     original bloqueada (_play_card_locked, datos sanitizados en app.py).
-     locked_plays solo trae jugadas con publicación real o, en la preview
-     admin, el fallback de verificación — nunca candidatas del Admin. #}
+  {# Sección Platinum — diseño C «Emblema» (Alex, 2026-10-20; REEMPLAZA
+     el «no sale nada hasta publicar» de la mañana): quien NO tiene
+     Platinum ve (1) sin card publicada de verdad, la carta-aviso de
+     desbloqueo (_platinum_teaser: emblema, «Our most valuable play of
+     the day», botón Unlock — sin jugada, liga ni hora: el aviso no
+     anuncia ninguna jugada) y (2) con la card publicada, la carta real
+     bloqueada (_play_card_locked, datos sanitizados en app.py) con el
+     chrome del diseño C. locked_plays solo trae jugadas con
+     publicación real o, en la preview admin, el fallback de
+     verificación — nunca candidatas del Admin. Quien tiene Platinum ve
+     su carta abierta como siempre; sin card, no ve aviso. #}
   {% set plat = plays | selectattr('nivel', 'equalto', 'ELITE') | list %}
-  {% if plat or locked_plays %}
+  {% if plat or locked_plays or not platinum_unlocked %}
   <p class="v2-sec-eyebrow" style="margin:22px 0 10px;color:#e8c766">Today's Platinum Selection</p>
   <div class="v2-plays">
     {% if platinum_unlocked %}
       {% for p in plat %}
         {% include "_play_card_v5.html" %}
       {% endfor %}
-    {% else %}
+    {% elif locked_plays %}
       {% for p in locked_plays %}
         {% include "_play_card_locked.html" %}
       {% endfor %}
+    {% else %}
+      {% include "_platinum_teaser.html" %}
     {% endif %}
   </div>
   {% endif %}
