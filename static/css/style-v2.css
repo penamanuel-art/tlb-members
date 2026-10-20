@@ -355,7 +355,12 @@ body.v2 .tstc-btn { white-space: nowrap; }
 .locked-blur span:nth-child(3) { width: 42%; }
 .locked-live { margin: 0 0 8px; font-size: 1.25rem; font-weight: 800; color: #fff; letter-spacing: -0.3px; }
 .locked-proof { margin: 0 0 14px; color: var(--v2-green); font-weight: 700; font-size: 0.95rem; }
-.locked-cta {
+/* Fix cascada (2026-10-20): «body.v2 a{color:inherit}» (línea 73,
+   especificidad 0,1,2) le ganaba a «.locked-cta» (0,1,0) y el texto del
+   botón salía heredado casi blanco (#f2f5fb) sobre el menta — ilegible
+   en el teléfono de Alex. Con «body.v2 .locked-cta» (0,2,1) la regla
+   del botón manda: fondo sólido #2fe6a7 y texto #0b0f14. */
+.locked-cta, body.v2 .locked-cta {
   display: inline-block; color: #0b0f14; font-weight: 800; font-size: 1rem; text-decoration: none;
   background: #2fe6a7;
   padding: 12px 24px; border-radius: var(--v2-radius-sm);
