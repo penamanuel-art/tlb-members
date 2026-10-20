@@ -1,0 +1,81 @@
+{# Carta Platinum BLOQUEADA — LA MISMA carta original v5 (_play_card_v5.html)
+   en estado bloqueado (2026-10-20, estados sellados por Alex): misma
+   estructura de la carta real (caparazón v5c, píldora PLATINUM, liga,
+   matchup, divisor, fila de datos) con TODO lo que identifica la apuesta
+   tapado. El dict `p` que recibe este parcial viene SANITIZADO desde
+   app.py (locked_plays): solo liga, hora, matchup y la URL del ticket
+   difuminado — el pick, la cuota, el stake, el edge, el write-up y la
+   ruta del comprobante original NUNCA llegan a este HTML. El ticket se
+   muestra con el blur HORNEADO (locked_ticket_url_for, nombre neutro
+   locked-<fecha>.jpg); sin ticket, panel esmerilado «Platinum pick».
+   Sin hoja de detalle, sin logo del equipo elegido (delataría el lado),
+   sin línea de prueba: la carta original bloqueada + el botón, nada más.
+   Estilos propios (espejo v5) para rendir igual en lux/v2/v1 aunque no
+   haya ninguna carta v5 en la página. #}
+<style>
+.v5c{position:relative;overflow:hidden;background:#0c1113;border:1px solid rgba(255,255,255,.09);border-radius:20px;padding:0;box-sizing:border-box;width:100%;max-width:100%;margin:0 0 12px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#eef1f7}
+.v5c-topsec{background:linear-gradient(180deg,#151e20,#12181b);padding:14px 16px 12px}
+.v5c-botsec{background:#0c1113;padding:0 16px 12px}
+.v5c-edge{position:absolute;left:0;top:0;bottom:0;width:5px;z-index:3;background:linear-gradient(180deg,#5eeaa0,#12b76a)}
+.v5c-top{display:flex;align-items:center;gap:9px}
+.v5c-pill{font-size:10.5px;font-weight:700;letter-spacing:1.4px;padding:6px 11px;border-radius:9px;border:1px solid}
+.v5c-pill.plat{color:#5eeaa0;border-color:rgba(94,234,160,.5);background:rgba(94,234,160,.08)}
+.v5c-kind{font-size:12.5px;font-weight:400;color:#9aa3b8}
+.v5c-liga{margin-left:auto;font-size:10.5px;font-weight:600;letter-spacing:1px;color:#9aa3b8;border:1px solid rgba(255,255,255,.14);padding:6px 10px;border-radius:9px}
+.v5c-head{display:flex;gap:11px;align-items:flex-start;margin-top:11px}
+.v5c-title{font-size:18px;font-weight:600;color:#fff;letter-spacing:-.3px;line-height:1.2}
+.v5c-sub{font-size:12.5px;color:#8b94a7;margin-top:5px}
+.v5c-div{position:relative;border-top:1.5px dashed rgba(255,255,255,.16);margin:0 -16px 0}
+.v5c-notch{position:absolute;top:-11px;width:22px;height:22px;border-radius:50%;background:#070d1d;z-index:2}
+.v5c-notch.l{left:-11px}.v5c-notch.r{right:-11px}
+.v5c-nums{display:flex;gap:26px;margin-top:11px;align-items:flex-start}
+.v5c-k{font-size:10px;font-weight:600;letter-spacing:1.7px;color:#6e7787}
+.lkcv-cov{display:inline-block;width:52px;height:15px;margin-top:5px;border-radius:999px;background:linear-gradient(90deg,rgba(94,234,160,.20),rgba(232,199,102,.14));border:1px solid rgba(255,255,255,.09);filter:blur(1px)}
+.lkcv-ticket{position:relative;margin-top:12px;border-radius:14px;overflow:hidden;border:1px solid rgba(232,199,102,.30);box-shadow:0 12px 30px rgba(0,0,0,.42);background:#07090c}
+.lkcv-ticket-img{display:block;width:100%;height:auto;max-height:380px;object-fit:contain}
+.lkcv-lockpill{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:2;display:inline-flex;align-items:center;gap:7px;padding:7px 13px;border-radius:999px;background:rgba(8,12,10,.58);border:1px solid rgba(232,199,102,.55);color:#e8c766;font-size:10px;font-weight:800;letter-spacing:1.6px;white-space:nowrap;backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);box-shadow:0 0 26px rgba(232,199,102,.22)}
+.lkcv-panel{position:relative;overflow:hidden;display:flex;align-items:center;gap:11px;background:linear-gradient(155deg,rgba(94,234,160,.09),rgba(255,255,255,.03) 55%,rgba(232,199,102,.06));border:1px solid rgba(232,199,102,.30);border-radius:12px;padding:12px 13px;margin-top:12px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.lkcv-lock-ico{position:relative;flex:none;width:34px;height:34px;border-radius:999px;background:rgba(232,199,102,.13);border:1px solid rgba(232,199,102,.45);display:flex;align-items:center;justify-content:center;box-shadow:0 0 18px rgba(232,199,102,.18)}
+.lkcv-panel-t{position:relative;font-size:13.5px;font-weight:600;color:#e8c766;letter-spacing:.2px}
+.lkcv-panel-s{position:relative;font-size:11.5px;color:#8b94a7;margin-top:1px}
+.locked-cta,body.v2 .locked-cta{display:inline-block;color:#0b0f14;font-weight:800;font-size:1rem;text-decoration:none;background:#2fe6a7;padding:12px 24px;border-radius:12px;box-shadow:0 8px 22px rgba(47,230,167,.30)}
+.v5c a.lkcv-cta{display:block;text-align:center;margin-top:12px}
+</style>
+<article class="v5c">
+  <div class="v5c-edge"></div>
+  <div class="v5c-topsec">
+    <div class="v5c-top">
+      <span class="v5c-pill plat">💎 PLATINUM</span><span class="v5c-kind">Platinum play</span>
+      <span class="v5c-liga">{{ p.liga or '' }}</span>
+    </div>
+    <div class="v5c-head">
+      <div style="flex:1;min-width:0">
+        <div class="v5c-title">{{ p.team_name or p.abbr }} vs {{ p.opp_name or p.opp_abbr }}</div>
+        <div class="v5c-sub">{{ p.abbr }} vs {{ p.opp_abbr }} &middot; {{ p.game_time_et or p.hora or '' }}</div>
+      </div>
+    </div>
+  </div>
+  <div class="v5c-botsec">
+    <div class="v5c-div"><span class="v5c-notch l"></span><span class="v5c-notch r"></span></div>
+    {% if p.ticket_url %}
+    <div class="lkcv-ticket">
+      <img class="lkcv-ticket-img" src="{{ p.ticket_url }}" alt="Members-only ticket" loading="lazy">
+      <span class="lkcv-lockpill"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#e8c766" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>PLATINUM PICK</span>
+    </div>
+    {% else %}
+    <div class="lkcv-panel">
+      <span class="lkcv-lock-ico" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e8c766" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span>
+      <div>
+        <div class="lkcv-panel-t">Platinum pick</div>
+        <div class="lkcv-panel-s">Members only</div>
+      </div>
+    </div>
+    {% endif %}
+    <div class="v5c-nums" aria-hidden="true">
+      <div><div class="v5c-k">PRICE POSTED</div><span class="lkcv-cov"></span></div>
+      <div><div class="v5c-k">STAKE</div><span class="lkcv-cov"></span></div>
+      <div><div class="v5c-k">MODEL EDGE</div><span class="lkcv-cov"></span></div>
+    </div>
+    <a class="locked-cta lkcv-cta" href="{{ url_for('desbloquear_platinum') }}">Unlock Platinum &rarr;</a>
+  </div>
+</article>
