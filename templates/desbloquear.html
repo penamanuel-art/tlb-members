@@ -49,7 +49,7 @@
 .upl-teaser .s{font-size:10.5px;color:#8b98ad;margin-top:1px}
 .upl-teaser .arr{color:#2fe6a7;font-size:15px}
 .upl-recon{margin:8px 0 0;font-size:10.5px;color:#8b98ad;font-style:italic}
-.upl-cta{display:block;margin:14px 0 0;background:linear-gradient(180deg,#35f0b0,#1fc98d);color:#06281c;text-align:center;font-size:16px;font-weight:900;padding:14px 12px;border-radius:12px;text-decoration:none}
+.upl-cta{display:block;margin:14px 0 0;background:linear-gradient(180deg,#35f0b0,#1fc98d);color:#06281c;text-align:center;font-size:17px;font-weight:900;padding:14px 12px;border-radius:12px;text-decoration:none}
 .upl-under{margin:9px 0 0;text-align:center;font-size:12px;color:#e6edf7;font-weight:700}
 .upl-fine{margin:7px 0 0;text-align:center;font-size:10.5px;line-height:1.55;color:#8b98ad}
 .upl-trust{margin:11px 0 0;text-align:center;font-size:10.5px;color:#8b98ad}
@@ -183,11 +183,9 @@
   <p class="upl-legal">$1 for the first 7 days, then $15.99/week billed weekly until cancelled. Cancel anytime from your account. 21+. Play responsibly — if gambling stops being fun, call or text 1-800-GAMBLER.</p>
 </div>
 
-{# Barra fija inferior: usa el componente .v2-sticky del sitio — el JS de
-   base_v2 la coloca sola sobre el menú inferior (y la correa si está). #}
-<div class="v2-sticky"><div class="v2-sticky-inner">
-  <p>Start for <b>$1</b> · then $15.99/wk, cancel anytime</p>
-  <a href="{{ stripe_url }}" target="_blank" rel="noopener">Get the plays →</a>
-</div></div>
+{# Barra fija inferior ELIMINADA (2026-10-19, enmienda de Alex): repetía la
+   oferta del botón principal «Start my $1 week» — la página queda con ese
+   único CTA de pago. El componente .v2-sticky sigue definido en el CSS del
+   sitio; su markup solo existía en esta página. #}
 {% endif %}
 {% endblock %}
