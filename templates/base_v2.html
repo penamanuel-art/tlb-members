@@ -134,19 +134,11 @@ twq('config','rhgk7');
     <p>⚠️ Your last payment didn't go through, so your membership is past due and access is paused.</p>
     <a href="{{ url_for('cuenta') }}#past-due">Update your card to restore it →</a>
   </div>
-  {# En /desbloquear-platinum la tira NO sale (2026-10-19, enmienda de Alex):
-     es el destino de la propia tira y se cruzaba sobre el contenido.
-     Tampoco en el Home (2026-10-20): la tira es sticky y al hacer scroll
-     quedaba encimada sobre el estado vacío («No plays posted yet today»,
-     captura de Alex); la oferta $1 ya vive en la tarjeta bloqueada
-     «Unlock Platinum» de esa misma pantalla — nada repetido. #}
-  {% elif not miembro_platinum and request.endpoint not in ('desbloquear_platinum', 'home') %}
-  <a class="v2-vipinvite" href="{{ url_for('desbloquear_platinum') }}">
-    <span class="v2-vipinvite-badge">PLATINUM</span>
-    <span>Unlock the Platinum play — <b>first week $1</b></span>
-    <span class="v2-vipinvite-arrow">→</span>
-  </a>
   {% endif %}
+  {# Tira global del $1 ELIMINADA (2026-10-20, orden de Alex: «vamos a
+     limpiar lo más que se pueda — que se vea limpio todo»): la oferta $1
+     vive solo en /desbloquear-platinum; cada página conserva su CTA
+     contextual propio y nada repetido encima del contenido. #}
   {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
       <div class="v2-flashes">
