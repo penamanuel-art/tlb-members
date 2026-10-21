@@ -283,20 +283,31 @@ document.getElementById('nvX').addEventListener('click',function(){done();b.remo
    prácticamente negro #04040a→#020203 sin brillos de color,
    superficies #171f31→#111827 (un escalón claro sobre el fondo) y
    borde fuerte rgba(255,255,255,.20) en todas las tarjetas. ═══ */
-body.v2{background-color:#020203;background-image:linear-gradient(180deg,#04040a 0%,#020203 100%)}
-body.v2 .lux-head,body.v2 .lux-panel,body.v2 .lux-rec-card,body.v2 .v2-br,body.v2 .db-diff-card,body.v2 .yw-sum,body.v2 .yw-card,body.v2 .board-empty,body.v2 .v2-mc-feat,body.v2 .v2-process,body.v2 .v5c,body.v2 .hub,body.v2 .f1b-rec{background:linear-gradient(180deg,#171f31,#111827);border:1px solid rgba(255,255,255,.20)!important}
+body.v2{background-color:#0b1322;background-image:linear-gradient(180deg,#0b1322 0%,#0c1524 45%,#0d1626 100%)}
+body.v2 .lux-head,body.v2 .lux-panel,body.v2 .lux-rec-card,body.v2 .v2-br,body.v2 .db-diff-card,body.v2 .yw-sum,body.v2 .yw-card,body.v2 .board-empty,body.v2 .v2-mc-feat,body.v2 .v2-process,body.v2 .v5c,body.v2 .hub,body.v2 .f1b-rec{background:linear-gradient(180deg,#182238,#141d31);border:1px solid rgba(255,255,255,.20)!important}
 body.v2 .lux-receipts .ticket-card,body.v2 .tstc,body.v2 .tk-card,body.v2 .lux-pill,body.v2 .lux-fulllink{border:1px solid rgba(255,255,255,.20)!important}
 body.v2 .hub-row{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.18)!important}
-body.v2 .lux-head{padding:28px;margin-top:12px;border-radius:26px}
+body.v2 .lux-head{padding:28px;margin-top:16px;border-radius:26px}
 body.v2 .lux-head-date{font-size:11.5px}
 body.v2 .lux-head-hi{margin-top:10px;font-size:18px}
 body.v2 .lux-head-title{font-size:39px;margin-top:3px}
-body.v2 .lux-head-card{padding:20px;margin-top:18px;gap:15px;border-radius:18px;border:1px solid rgba(255,255,255,.20)!important}
+body.v2 .lux-head-card{padding:20px;margin-top:20px;gap:15px;border-radius:18px;border:1px solid rgba(255,255,255,.20)!important}
 body.v2 .lux-head-card.pend{background:#0a101f}
 body.v2 .lux-head-card.pend .lux-head-ico{background:rgba(232,199,102,.16);color:#e8c766}
 body.v2 .lux-head-ico{width:54px;height:54px;border-radius:16px;font-size:26px}
 body.v2 .lux-head-card b{font-size:17px}
 body.v2 .lux-head-card p{font-size:13.5px}
+/* ═══ 3ª PASADA (2026-10-21, Alex con captura: las tarjetas «están muy
+   juntas, pegadas» y el fondo «muy oscuro… no así»): (1) FONDO SUBIDO a
+   azul-gris oscuro tipo WGT #0b1322→#0d1626 (negro puro prohibido) con
+   las superficies un escalón por encima #182238→#141d31 y el borde
+   fuerte .20 intacto — se mantiene el escalón fondo < superficie <
+   borde; (2) RITMO VERTICAL uniforme de aire entre bloques principales:
+   secciones a 20px y la franja de récord a 18px sobre el bloque
+   anterior (antes 2px: quedaba pegada al board). Sin tocar textos,
+   tamaños ni estructura. ═══ */
+body.v2 .v2-sec{margin-top:20px}
+body.v2 .f1b-rec{margin:18px 0 0}
 </style>
 <header class="lux-head">
   <p class="lux-head-date">{{ fecha }} &middot; ET</p>
