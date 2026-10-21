@@ -1841,11 +1841,15 @@ def win_streak_days():
     Un día aún no calificado por completo no cuenta ni corta la racha;
     el primer día calificado con neto <= 0 la corta. Sin datos: 0."""
     n = 0
-    dias = sorted(load_archive(), key=lambda d: d.get("fecha") or "",
-                  reverse=True)
+    try:
+        dias = sorted(
+            (d for d in load_archive() if isinstance(d, dict)),
+            key=lambda d: d.get("fecha") or "", reverse=True)
+    except Exception:
+        return 0
     for d in dias:
         jugadas = [j for j in (d.get("jugadas", []) or [])
-                   if not j.get("bloqueada")]
+                   if isinstance(j, dict) and not j.get("bloqueada")]
         if not jugadas:
             continue
         if any(j.get("resultado") not in ("WON", "LOST", "PUSH")
@@ -1854,10 +1858,19 @@ def win_streak_days():
         neto = 0.0
         ok = True
         for j in jugadas:
-            p = j.get("profit")
-            sm = j.get("stake_monto") or 0
-            su = j.get("stake_unidades") or 0
-            if p is None or not sm or not su:
+            # Coerción defensiva (2026-10-21): si un script escribe los
+            # montos como texto ("100"), float() los rescata; si no son
+            # números, el día se salta en vez de explotar — esta función
+            # corre en el context processor global y JAMÁS debe tumbar
+            # una página.
+            try:
+                p = float(j.get("profit"))
+                sm = float(j.get("stake_monto") or 0)
+                su = float(j.get("stake_unidades") or 0)
+            except (TypeError, ValueError):
+                ok = False
+                break
+            if not sm or not su:
                 ok = False
                 break
             neto += p * su / sm
@@ -3169,6 +3182,16 @@ WATERMARKS = [
 WATERMARK_POR_RUTA = {}
 
 
+def _seguro(fn, defecto):
+    """Context processor a prueba de fallos (2026-10-21): un cálculo
+    decorativo (racha, ticker) NUNCA puede tumbar el render de una
+    página; ante cualquier excepción devuelve el valor neutro."""
+    try:
+        return fn()
+    except Exception:
+        return defecto
+
+
 @app.context_processor
 def inject_user():
     from flask import request as freq
@@ -3234,8 +3257,8 @@ def inject_user():
         "miembro_platinum": platinum_unlocked_for(cu),
         "trial_dias_left": trial_dias_left,
         "past_due": past_due,
-        "ticker_days": compute_ticker_days(),
-        "racha_dias": win_streak_days(),
+        "ticker_days": _seguro(compute_ticker_days, []),
+        "racha_dias": _seguro(win_streak_days, 0),
         "asset_v": ASSET_V,
         "watermark_img": wm,
     }
