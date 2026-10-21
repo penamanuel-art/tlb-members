@@ -8466,7 +8466,7 @@ def api_values_record():
         return jsonify({"error": str(e)}), 500
 
 @app.route("/values")
-@login_required
+@admin_required
 def values_page():
     """Página del Value Tracker (2026-10-11, pedido por Alex: verlo en el Dashboard cuando quiera)."""
     db = get_db()
@@ -8525,7 +8525,7 @@ def values_page():
 
 
 @app.route("/values/all")
-@login_required
+@admin_required
 def values_all():
     """Todas las jugadas VALUE registradas (2026-10-12, pedido por Alex: link 'View all')."""
     db = get_db()
