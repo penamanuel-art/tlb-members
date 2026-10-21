@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="{{ lang or 'en' }}">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% if lang == 'es' %}Revisa tu correo — The Sharp Team{% else %}Check your email — The Sharp Team{% endif %}</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif; background:#070b18; color:#e6edf7; padding:26px 14px 40px; }
+  .wrap { max-width:430px; margin:0 auto; }
+  .logo { display:block; width:110px; margin:6px auto 8px; }
+  .brand { text-align:center; color:#f5c542; font-weight:900; letter-spacing:2.5px; font-size:15px; margin-bottom:20px; }
+  .card { background:#0d1526; border:1px solid #22304f; border-radius:22px; padding:22px 18px 24px; }
+  .steps { display:flex; gap:8px; margin-bottom:20px; }
+  .step { flex:1; text-align:center; background:#131f38; border:1px solid #27355a; border-radius:12px; padding:9px 2px 8px; }
+  .step .dot { display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; border-radius:50%; border:2px solid #2c3c63; color:#9aa3b8; font-size:11.5px; font-weight:900; }
+  .step .slab { display:block; margin-top:5px; font-size:10.5px; color:#9aa3b8; white-space:nowrap; }
+  .step.done .dot { background:#22c55e; border-color:#22c55e; color:#04150a; }
+  .step.done .slab { color:#22c55e; font-weight:800; }
+  .step.now { border-color:#f5c542; }
+  .step.now .dot { border-color:#f5c542; color:#f5c542; }
+  .step.now .slab { color:#f5c542; font-weight:800; }
+  .mailcircle { width:74px; height:74px; border-radius:50%; border:2px solid #f5c542; margin:2px auto 14px; display:flex; align-items:center; justify-content:center; font-size:32px; background:rgba(245,197,66,.08); }
+  h1 { text-align:center; font-size:22px; font-weight:900; margin-bottom:9px; }
+  .ptext { text-align:center; color:#d7deeb; font-size:14px; line-height:1.55; margin-bottom:6px; }
+  .ptext b { color:#fff; }
+  .again { background:rgba(34,197,94,.12); border:1px solid rgba(34,197,94,.5); color:#7ee2a8; border-radius:11px; font-size:13px; font-weight:700; text-align:center; padding:9px 10px; margin:12px 0 0; }
+  .spam { background:rgba(245,197,66,.10); border:1px solid rgba(245,197,66,.45); border-radius:11px; color:#f0d089; font-size:12.5px; text-align:center; padding:10px 11px; line-height:1.5; margin:14px 0 16px; }
+  .resend { width:100%; background:transparent; color:#f5c542; border:2px solid #f5c542; border-radius:12px; font-size:15px; font-weight:800; padding:12px 10px; cursor:pointer; font-family:inherit; }
+  .wrong { text-align:center; margin-top:14px; font-size:12.5px; }
+  .wrong a { color:#9aa3b8; }
+  .note { margin-top:16px; background:#131f38; border:1px dashed #2c3c63; border-radius:11px; color:#9aa3b8; font-size:12px; text-align:center; padding:9px 10px; line-height:1.45; }
+  footer { text-align:center; color:#5f6f8f; font-size:11px; margin-top:20px; line-height:1.6; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <img class="logo" src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team">
+  <div class="brand">THE SHARP TEAM</div>
+
+  <div class="card">
+    {% if lang == 'es' %}
+    <div class="steps">
+      <div class="step done"><span class="dot">✓</span><span class="slab">Cuenta</span></div>
+      <div class="step now"><span class="dot">2</span><span class="slab">Confirma tu correo</span></div>
+      <div class="step"><span class="dot">3</span><span class="slab">Jugadas de hoy</span></div>
+    </div>
+    <div class="mailcircle">✉️</div>
+    <h1>Revisa tu correo</h1>
+    <p class="ptext">Te enviamos un enlace de confirmación a<br><b>{{ email }}</b></p>
+    <p class="ptext">Tócalo y tu panel se abre con la jugada gratis de hoy.</p>
+    {% if reenviado %}<div class="again">✅ Listo — te lo enviamos de nuevo</div>{% endif %}
+    <div class="spam">⚠️ <b>¿No lo ves?</b> Revisa tu carpeta de <b>spam</b> o <b>promociones</b> — la primera vez puede caer ahí. El enlace vence en 24 horas.</div>
+    <form method="post" action="{{ url_for('reenviar_activacion') }}">
+      <input type="hidden" name="email" value="{{ email }}">
+      <input type="hidden" name="lang" value="es">
+      <button class="resend" type="submit">Reenviar el correo</button>
+    </form>
+    <div class="wrong"><a href="{{ url_for('register') }}">¿Correo equivocado? Vuelve y corrígelo</a></div>
+    <div class="note">Sin confirmar no podemos enviarte las jugadas — ese toque es lo que activa tu cuenta.</div>
+    {% else %}
+    <div class="steps">
+      <div class="step done"><span class="dot">✓</span><span class="slab">Account</span></div>
+      <div class="step now"><span class="dot">2</span><span class="slab">Confirm email</span></div>
+      <div class="step"><span class="dot">3</span><span class="slab">Today's plays</span></div>
+    </div>
+    <div class="mailcircle">✉️</div>
+    <h1>Check your email</h1>
+    <p class="ptext">We just sent a confirmation link to<br><b>{{ email }}</b></p>
+    <p class="ptext">Tap it and your dashboard opens with today's free play.</p>
+    {% if reenviado %}<div class="again">✅ Done — we sent it again</div>{% endif %}
+    <div class="spam">⚠️ <b>Don't see it?</b> Check your <b>spam</b> or <b>promotions</b> folder — it can land there the first time. The link expires in 24 hours.</div>
+    <form method="post" action="{{ url_for('reenviar_activacion') }}">
+      <input type="hidden" name="email" value="{{ email }}">
+      <input type="hidden" name="lang" value="en">
+      <button class="resend" type="submit">Resend the email</button>
+    </form>
+    <div class="wrong"><a href="{{ url_for('register') }}">Wrong email? Go back and fix it</a></div>
+    <div class="note">Until you confirm, we can't send you the plays — this one tap is what activates your account.</div>
+    {% endif %}
+  </div>
+
+  <footer>21+. Play responsibly. Gambling problem? Call or text 1-800-GAMBLER.<br>© 2026 The Sharp Team. All rights reserved.</footer>
+</div>
+</body>
+</html>
