@@ -1,5 +1,35 @@
 {% extends "base_v2.html" %}
-{% block title %}Alerts — The Sharp Team{% endblock %}
+{% block title %}Alerts — The Sharp Team<script>
+(function(){
+  var btn = document.getElementById('alertsPushBtn');
+  var hint = document.getElementById('alertsPushHint');
+  if (!btn || !window.TLB_push) return;
+  var current = 'default';
+  function isIOS(){ return /iphone|ipad|ipod/i.test(navigator.userAgent || ''); }
+  function isStandalone(){ return (window.navigator && window.navigator.standalone) || (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches); }
+  function say(t){ if (hint) hint.textContent = t || ''; }
+  function paint(st){
+    current = st;
+    if (st === 'granted') { btn.textContent = '🔔 Push Notifications On'; btn.disabled = false; say('On \u2014 tap to turn off.'); }
+    else if (st === 'off') { btn.textContent = '🔔 Push Notifications Off'; btn.disabled = false; say('Off \u2014 tap to turn on.'); }
+    else if (st === 'unsubscribed') { btn.textContent = '🔔 Push Notifications Off'; btn.disabled = false; say('This device isn\u2019t connected \u2014 tap to turn on.'); }
+    else if (st === 'denied') { btn.textContent = '🔕 Push Blocked'; btn.disabled = true; say('Notifications are blocked \u2014 allow them in your browser settings, then come back.'); }
+    else if (st === 'unsupported') { btn.textContent = '🔔 Push Notifications'; btn.disabled = true;
+      if (isIOS() && !isStandalone()) say('On iPhone/iPad, alerts only work from the Home Screen app: tap Share \u2192 \u201cAdd to Home Screen\u201d, open The Sharp Team from there, then turn alerts on.');
+      else say('This browser doesn\u2019t support push notifications.'); }
+    else if (st === 'error') { btn.disabled = false; say('Something went wrong \u2014 tap to try again.'); window.TLB_push.status().then(function(s2){ if (s2 !== 'error') paint(s2); }); }
+    else { btn.textContent = '🔔 Push Notifications'; btn.disabled = false; say(''); }
+  }
+  window.TLB_push.status().then(paint);
+  btn.addEventListener('click', async function(){
+    if (btn.disabled) return;
+    btn.disabled = true;
+    var st = (current === 'granted') ? await window.TLB_push.disable() : await window.TLB_push.enable();
+    paint(st);
+  });
+})();
+</script>
+{% endblock %}
 {% block content %}
 <style>
 /* Alerts — estilo compacto moderno (2026-10-15, pedido de Alex: menos
@@ -26,6 +56,11 @@
 .toggle input:checked + .slider:before{transform:translateX(20px)}
 .alerts-saved{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#101828;color:#e8c766;border:1px solid rgba(232,199,102,.5);font-weight:800;font-size:13px;padding:9px 18px;border-radius:999px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:100}
 .alerts-saved.show{opacity:1}
+.v2-alert-btn{display:block;width:100%;padding:12px;border-radius:14px;border:1px solid rgba(232,199,102,.5);font-size:14px;font-weight:800;cursor:pointer;text-align:center;font-family:inherit}
+.v2-alert-push{background:linear-gradient(180deg,#f3cd6b,#e8c766);color:#14100a}
+.v2-alert-push:disabled{opacity:.55;cursor:default}
+.alerts-push-wrap{margin:4px 0 2px}
+.alerts-push-hint{font-size:12px;color:#9a9ab5;margin:6px 0 0;text-align:center}
 </style>
 
 <div class="alerts-wrap">
@@ -39,6 +74,11 @@
         <b>Notifications are on</b>
         <span>This device gets what is switched on below.</span>
       </div>
+    </div>
+
+    <div class="alerts-push-wrap">
+      <button id="alertsPushBtn" class="v2-alert-btn v2-alert-push" type="button">🔔 Push Notifications</button>
+      <p class="alerts-push-hint" id="alertsPushHint"></p>
     </div>
 
     <p class="alert-section">PLAYS</p>
