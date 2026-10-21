@@ -290,6 +290,12 @@ twq('config','rhgk7');
         <input id="f-email" type="email" name="email" required autocomplete="email" placeholder="tu@correo.com">
       </div>
       <div class="field">
+        <label for="f-phone">Tu n&uacute;mero de tel&eacute;fono</label>
+        <p class="hint">Opcional — recibe las jugadas por texto en cuanto salgan.</p>
+        <input id="f-phone" type="tel" name="phone" autocomplete="tel" placeholder="(555) 123-4567">
+        <label for="f-sms" style="display:flex;gap:8px;align-items:center;margin-top:10px;font-size:.85rem;color:#a8b3cf;cursor:pointer;"><input id="f-sms" type="checkbox" name="sms_optin" value="1" style="width:17px;height:17px;accent-color:#2fe6a7;"> Env&iacute;ame las jugadas por texto en cuanto salgan</label>
+      </div>
+      <div class="field">
         <label for="f-password">Contraseña</label>
         <input id="f-password" type="password" name="password" required minlength="6" autocomplete="new-password" placeholder="Mínimo 6 caracteres">
       </div>
@@ -299,7 +305,6 @@ twq('config','rhgk7');
       {% endif %}
       <button class="btn" type="submit">Crear mi cuenta gratis<small>y ver las jugadas de hoy →</small></button>
     </form>
-    <div class="later-note">📱 <b>¿Teléfono y alertas por texto?</b> Opcional — agrégalos luego en tu cuenta, solo si quieres.</div>
     <div class="micro"><span><span class="mint">✓</span> Sin tarjeta de crédito</span><span><span class="mint">✓</span> Sin vencimiento</span><span><span class="mint">✓</span> Cancela cuando quieras</span></div>
     <p class="login-line">¿Ya tienes cuenta? <a href="{{ url_for('login') }}">Inicia sesión aquí →</a></p>
   </div>
