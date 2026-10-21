@@ -5991,10 +5991,16 @@ def _checkout_embed_confirmado(session_id, user):
 
 
 @app.route("/desbloquear-platinum")
-@login_required
 def desbloquear_platinum():
+    # PUBLICA por diseno (2026-10-20, orden de Alex): el boton de los
+    # correos debe aterrizar en la oferta sin sesion — los navegadores
+    # internos de los correos no traen la cookie y el rebote al login se
+    # veia como link roto. Solo la OFERTA es publica: crear el cobro
+    # sigue exigiendo sesion (endpoint con @login_required) y la
+    # activacion la sigue haciendo el webhook tras un pago real.
     db = get_db()
-    record_checkin(db, session["user_id"])
+    if session.get("user_id"):
+        record_checkin(db, session["user_id"])
     user = current_user()
     try:
         past_due = bool(user and user["stripe_past_due"])
@@ -6016,6 +6022,7 @@ def desbloquear_platinum():
         stripe_embed_ok=bool(STRIPE_SECRET_KEY and STRIPE_PUBLISHABLE_KEY),
         checkout_ok=checkout_ok,
         board=_desbloquear_board(),
+        anonimo=(user is None),
         user_email=(user["email"] if user else ""),
         user_nombre=(user["nombre"] if user else ""),
     )
