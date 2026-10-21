@@ -12,6 +12,15 @@
 <meta name="apple-mobile-web-app-title" content="The Sharp">
 <meta name="theme-color" content="#070c18">
 <script src="/static/js/push.js?v={{ asset_v }}"></script>
+<style>
+/* Barra superior v2 (2026-10-21, pedido Alex, referencia WGT): logo a la
+   izquierda; a la derecha UN botón principal menta «View plays →» y el
+   botón ☰. «Full record» y «Academy» viven en el menú ☰. */
+.v2-view-plays{display:inline-flex;align-items:center;background:#2ee6a8;color:#052e21;font-weight:800;font-size:14.5px;line-height:1;padding:12px 18px;border-radius:12px;text-decoration:none;white-space:nowrap;flex:none}
+.v2-view-plays:active{transform:translateY(1px)}
+/* Franja de racha: fina, a todo el ancho, menta muy oscuro. */
+.v2-streak-strip{background:#0a2e22;color:#2ee6a8;text-align:center;font-size:13.5px;font-weight:600;letter-spacing:.2px;padding:7px 12px}
+</style>
 {% if request.path == '/home' %}
 <script>
 /* Skeleton con ondas al entrar al Dashboard (2026-10-13, pedido por Alex,
@@ -79,7 +88,16 @@ twq('config','rhgk7');
   <div class="v2-topbar-left">
     {% if session.get('user_id') %}
     <a href="{{ url_for('home', splash='0') }}" class="v2-brand" title="Home"><img src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team" style="height:56px;width:auto;"></a>
-    <div class="v2-topbar-menu">
+    {% else %}
+    <a class="v2-brand" href="{{ url_for('index') }}">
+      <img src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team">
+    </a>
+    {% endif %}
+  </div>
+  <div class="v2-topbar-right">
+    {% if session.get('user_id') %}
+    {% if es_admin or cuenta_es %}<button id="langToggle" class="v2-lang-btn notranslate" title="Ver en español">🇺🇸 EN</button>{% endif %}
+    <a href="{{ url_for('home', splash='0') }}#plays" class="v2-view-plays">View plays →</a>
     <div class="v2-menu-wrap">
       <button class="v2-icon-btn" id="v2menuBtn" aria-label="Menu">☰</button>
       <div class="v2-menu-drop" id="v2menuDrop" hidden>
@@ -104,18 +122,6 @@ twq('config','rhgk7');
         <a href="{{ url_for('logout') }}">Log out</a>
       </div>
     </div>
-    <a href="{{ url_for('records') }}" class="v2-track-link{% if request.endpoint == 'records' %} active{% endif %}" title="Full record"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px" aria-hidden="true"><path d="M4 20v-4"/><path d="M8 20v-7"/><path d="M12 20v-5"/><path d="M16 20v-8"/><path d="M20 20V8"/><path d="M3 12l5-4 3.5 2.5L17 5"/><path d="M14.5 5H17v2.5"/></svg> Full record</a>
-    <a href="{{ url_for('masterclass') }}" class="v2-track-link{% if request.endpoint == 'masterclass' %} active{% endif %}" title="Academy">🎓 Academy</a>
-    </div>
-    {% else %}
-    <a class="v2-brand" href="{{ url_for('index') }}">
-      <img src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team">
-    </a>
-    {% endif %}
-  </div>
-  <div class="v2-topbar-right">
-    {% if session.get('user_id') %}
-    {% if es_admin or cuenta_es %}<button id="langToggle" class="v2-lang-btn notranslate" title="Ver en español">🇺🇸 EN</button>{% endif %}
     {% else %}
     <nav class="v2-nav">
       {% if es_admin %}<button id="langToggle" class="v2-lang-btn notranslate" title="Ver en español">🇺🇸 EN</button>{% endif %}
@@ -125,6 +131,13 @@ twq('config','rhgk7');
     {% endif %}
   </div>
 </header>
+
+{# Franja de racha (2026-10-21, pedido Alex, referencia WGT): solo con
+   sesión y con 2+ días ganadores seguidos reales; racha_dias viene del
+   helper win_streak_days() en app.py, calculado desde data/archive.json. #}
+{% if session.get('user_id') and racha_dias and racha_dias >= 2 %}
+<div class="v2-streak-strip">🔥 {{ racha_dias }}-day win streak</div>
+{% endif %}
 
 <main class="v2-wrap">
   {# Aviso permanente de pago fallido (pedido Alex 2026-10-02): sale en TODAS
