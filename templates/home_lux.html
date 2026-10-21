@@ -14,18 +14,17 @@ body.v2 .v5c-topsec{background:linear-gradient(180deg,#2b303a,#262a33);padding:2
 body.v2 .v5sheet-in{background:linear-gradient(180deg,#2b303a,#262a33)}
 </style>
 {% endif %}
-{% if es_alex %}
-{# ═══ FASE 1 · HOME UNIFICADO — SOLO ALEX (2026-10-21, aprobado por él:
-   «Aplícalo solo para mí, para yo ver si me gusta») ═══
+{# ═══ FASE 1 · HOME UNIFICADO — PARA TODOS LOS MIEMBROS (2026-10-21) ═══
    Paleta ÚNICA de la muestra aprobada (fase1-home-moderno-2026-10-21):
    fondo marino #05081a→#0c1638, dorado #e8c766, menta #2ee6a8/#5eeaa0,
    tarjetas con el degradado único linear-gradient(180deg,#111a3e,#0c1430)
-   y radio 20px. Este bloque SOLO se renderiza para la cuenta personal
-   de Alex (es_alex = is_alex_member(user), pena.manuel@myyahoo.com);
-   para cualquier otro miembro no existe en el HTML y su Home queda
-   intacto. REVERSIBLE: borrar este bloque y los dos «if not es_alex»
-   de abajo (tarjetas de récord por nivel y tarjeta «The proof»)
-   devuelve el Home de Alex a su estado anterior. #}
+   y radio 20px. Nació SOLO para la cuenta de Alex (2026-10-21:
+   «Aplícalo solo para mí, para yo ver si me gusta») y el mismo día,
+   ya probado, él ordenó abrirlo a TODOS los miembros: desde entonces
+   este bloque se renderiza siempre, sin compuerta. REVERSIBLE: volver
+   a envolver este bloque y el de la Fase 1B en una compuerta es_alex
+   y descomentar las secciones preservadas de abajo restaura el
+   comportamiento anterior (ver también commits 69bc2d8 y 499f717). #}
 <style>
 /* Fondo marino único de la muestra (sustituye el fondo #161d29) */
 body.v2{background-color:#05081a;background-image:radial-gradient(640px 300px at 85% -60px,rgba(232,199,102,.13),transparent 60%),radial-gradient(520px 380px at -10% 40%,rgba(46,230,168,.06),transparent 60%),linear-gradient(180deg,#0c1638 0%,#081029 45%,#05081a 100%);background-attachment:fixed}
@@ -43,21 +42,19 @@ body.v2 .v2-bottomnav .v2-bnav-item.active{color:#2ee6a8;background:rgba(46,230,
 body.v2 .lux-rec-card::after{background:linear-gradient(90deg,#5eeaa0,#2ee6a8 55%,#12b76a)}
 body.v2 .yw-won-t,body.v2 .yw-clv-pos{color:#2ee6a8}
 </style>
-{% endif %}
-{% if es_alex %}
-{# ═══ FASE 1B · HOME COMO PANEL — SOLO ALEX (2026-10-21, aprobado por él:
-   «Si» a la Fase 1B) ═══
+{# ═══ FASE 1B · HOME COMO PANEL — PARA TODOS LOS MIEMBROS (2026-10-21) ═══
    Segunda capa sobre la Fase 1, de ESTRUCTURA y orden, no de pintura:
    encabezado compacto, tarjetas de jugada con jerarquía más clara,
    herramientas en cuadrícula, bankroll/alertas compactas y barras a
    juego. La franja de récord (.f1b-rec) va en el cuerpo, justo tras la
-   sección de jugadas, y la sección completa «The documented record» más
-   la cola de venta (proceso, «What makes this different», FAQ) quedan
-   fuera de su variante con «if not es_alex». Este bloque SOLO se
-   renderiza para su cuenta (es_alex); para cualquier otro miembro no
-   existe en el HTML. REVERSIBLE: borrar este bloque, la franja .f1b-rec
-   y los «if not es_alex» de esta fase devuelve su Home al estado de
-   Fase 1. #}
+   sección de jugadas, para TODOS. Nació solo para Alex y él ordenó
+   abrirla a todos el mismo 2026-10-21: este bloque ya no lleva
+   compuerta, y la sección completa del récord más la cola de venta
+   (proceso, «What makes this different», FAQ) quedaron retiradas del
+   render para todos, con su código preservado en comentarios más
+   abajo. REVERSIBLE: volver a envolver este bloque y el de la Fase 1
+   en una compuerta es_alex y descomentar las secciones preservadas
+   restaura el comportamiento anterior (commit 499f717). #}
 <style>
 /* FASE 1B · encabezado compacto: misma información, menos pantalla */
 body.v2 .lux-head{padding:14px 16px 13px;margin-top:8px}
@@ -116,7 +113,6 @@ body.v2 .v2-mc-open{margin-top:8px}
 body.v2 .v2-topbar{background:#0c1638}
 body.v2 .v2-bottomnav{background:#081029!important}
 </style>
-{% endif %}
 <style>
 /* ===== Diseño LUX del home (2026-10-12, aprobado por Alex con muestra v2) =====
    Negro premium + oro + cristal, tipografía grande, gráfica real del programa.
@@ -353,10 +349,11 @@ document.getElementById('nvX').addEventListener('click',function(){done();b.remo
   {% endif %}
 </section>
 
-{% if es_alex and record_stats %}
-{# FASE 1B (solo Alex): franja compacta de récord justo tras las jugadas —
-   su récord va arriba y una sola vez en todo el Home; la sección completa
-   «The documented record» de más abajo queda fuera de su variante. #}
+{% if record_stats %}
+{# FASE 1B (para TODOS desde el 2026-10-21): franja compacta de récord
+   justo tras las jugadas — el récord va arriba y una sola vez en todo
+   el Home; la sección completa del récord quedó retirada del render
+   para todos (código preservado en comentario más abajo). #}
 {% set _rg = record_stats.general %}
 <a class="f1b-rec" href="{{ url_for('official_tracker') }}">
   <span class="f1b-rec-main">
@@ -488,13 +485,23 @@ document.getElementById('nvX').addEventListener('click',function(){done();b.remo
 </section>
 
 
-<!-- THE DOCUMENTED RECORD (2026-10-15, diseno aprobado por Alex):
-     tarjetas grandes con el record oficial EN VIVO (official_tracker_full,
-     los mismos numeros de /official-tracker). -->
+<!-- Sección grande de récord (2026-10-15): RETIRADA del render para
+     TODOS el 2026-10-21 (Home moderno Fase 1+1B abierto a todos por
+     orden de Alex). La franja compacta .f1b-rec tras las jugadas, con
+     su enlace a /official-tracker, la reemplaza. El código original
+     queda preservado en el comentario Jinja siguiente. -->
+{# ═══ CÓDIGO PRESERVADO — SECCIÓN GRANDE DE RÉCORD (2026-10-15) ═══
+   Para restaurarla: quita la marca de apertura de este comentario y
+   la de cierre tras el fin de la sección, y vuelve a poner sobre la
+   sección su compuerta original (record_stats sin es_alex = para
+   todos; con la variante solo-Alex era record_stats and not es_alex,
+   ver commit 499f717). Los dos comentarios internos van en HTML para
+   no cerrar este comentario envolvente.
+   ── INICIO DEL CÓDIGO PRESERVADO ──
 {% if record_stats and not es_alex %}
-{# FASE 1B (solo Alex): la sección completa sale de su variante — su récord
-   ya va en la franja compacta .f1b-rec tras las jugadas, una sola vez.
-   Los demás miembros la siguen viendo igual que siempre. #}
+<!-- FASE 1B (solo Alex): la sección completa salía de su variante — su
+   récord ya va en la franja compacta .f1b-rec tras las jugadas, una
+   sola vez. Los demás miembros la seguían viendo igual que siempre. -->
 <section class="v2-sec lux-record">
   <h2 class="lux-rec-h">The documented <span>record</span>: every play, win or loss.</h2>
   <p class="lux-rec-sub">Every official play is posted before the game with its real ticket, then graded against the final score in public — win or loss, nothing hidden.</p>
@@ -506,8 +513,8 @@ document.getElementById('nvX').addEventListener('click',function(){done();b.remo
     <p class="lux-rec-s">{{ g.win_rate }}% win rate · {{ g.roi }}% ROI · {{ "+$" if g.profit > 0 else "-$" }}{{ "%.2f"|format(g.profit|abs) }}</p>
   </a>
   {% if not es_alex %}
-  {# Fase 1 (solo Alex): su récord sale UNA sola vez — la tarjeta general
-     de arriba; las tarjetas por nivel se quedan para los demás. #}
+  <!-- Fase 1 (solo Alex): su récord salía UNA sola vez — la tarjeta
+     general de arriba; las tarjetas por nivel se quedaban para los demás. -->
   <a class="lux-rec-card" href="{{ url_for('official_tracker', programa='platinum') }}">
     <div class="lux-rec-top"><p class="lux-rec-k">PLATINUM PLAYS</p><span class="lux-rec-ver">View plays &amp; tickets ›</span></div>
     <p class="lux-rec-n">{{ pl.record }}</p>
@@ -523,6 +530,7 @@ document.getElementById('nvX').addEventListener('click',function(){done();b.remo
   {% endif %}
 </section>
 {% endif %}
+   ── FIN DEL CÓDIGO PRESERVADO (sección grande de récord) ── #}
 
 {# Promo de tools + chips ELIMINADOS (2026-10-12, orden de Alex): repetían la
    sección Your Tools de abajo y el botón Tools del menú inferior. #}
@@ -642,9 +650,14 @@ document.getElementById('nvX').addEventListener('click',function(){done();b.remo
 })();
 </script>
 
+{# ═══ CÓDIGO PRESERVADO — «THE PROCESS» ═══
+   Retirado del render para TODOS el 2026-10-21 (Home moderno abierto a
+   todos): era cola de venta dentro del panel del miembro. Para
+   restaurarlo: quita las marcas de comentario que envuelven la sección
+   y, si se quiere la compuerta anterior, vuelve a poner la condición
+   not es_alex sobre ella (estado anterior: commit 499f717).
+   ── INICIO DEL CÓDIGO PRESERVADO ──
 {% if not es_alex %}
-{# FASE 1B (solo Alex): la cola de venta sale de su Home-panel; para los
-   demás miembros queda intacta. #}
 <!-- THE PROCESS -->
 <section class="v2-sec">
   <div class="v2-process">
@@ -666,6 +679,7 @@ document.getElementById('nvX').addEventListener('click',function(){done();b.remo
   </div>
 </section>
 {% endif %}
+   ── FIN DEL CÓDIGO PRESERVADO («THE PROCESS») ── #}
 
 <!-- MASTERCLASS -->
 <section class="v2-sec">
@@ -687,8 +701,16 @@ document.getElementById('nvX').addEventListener('click',function(){done();b.remo
   <a class="v2-mc-open" href="{{ url_for('masterclass') }}">🎓 Open Academy →</a>
 </section>
 
+{# ═══ CÓDIGO PRESERVADO — «WHAT MAKES THIS DIFFERENT» ═══
+   Retirado del render para TODOS el 2026-10-21 (Home moderno abierto a
+   todos): era cola de venta dentro del panel del miembro. Para
+   restaurarlo: quita las marcas de comentario que envuelven la sección
+   y, si se quiere la compuerta anterior, vuelve a poner la condición
+   not es_alex sobre ella (estado anterior: commit 499f717). El
+   comentario interno de la tarjeta «The proof» va en HTML para no
+   cerrar este comentario envolvente.
+   ── INICIO DEL CÓDIGO PRESERVADO ──
 {% if not es_alex %}
-{# FASE 1B (solo Alex): fuera de su variante; intacta para los demás. #}
 <section class="db-diff">
   <h2 class="db-diff-title">What makes this <span class="gold">different</span></h2>
   <div class="db-diff-card">
@@ -707,8 +729,9 @@ document.getElementById('nvX').addEventListener('click',function(){done();b.remo
     <div class="db-diff-them"><span class="xx">✕</span><span class="tx"><span class="who">TYPICAL</span>Hundreds upfront before you see a single pick.</span></div>
   </div>
   {% if not es_alex %}
-  {# Fase 1 (solo Alex): esta tarjeta repite el récord que ya salió en su
-     único bloque de récord — fuera de su variante, intacta para los demás. #}
+  <!-- Fase 1 (solo Alex): esta tarjeta repetía el récord que ya salía
+     en su único bloque de récord — fuera de su variante, intacta para
+     los demás. -->
   <div class="db-diff-card">
     <div class="db-diff-cat">The proof</div>
     <div class="db-diff-us"><span class="ck">✓</span><span class="tx"><span class="who">THE SHARP TEAM</span>{{ res.ganadas }}-{{ res.perdidas }}, {{ "%+.1f"|format(res.roi) }}% ROI — every play documented and graded.</span></div>
@@ -722,10 +745,16 @@ document.getElementById('nvX').addEventListener('click',function(){done();b.remo
   </div>
 </section>
 {% endif %}
+   ── FIN DEL CÓDIGO PRESERVADO («WHAT MAKES THIS DIFFERENT») ── #}
 
+{# ═══ CÓDIGO PRESERVADO — FAQ «QUESTIONS, ANSWERED» ═══
+   Retirado del render para TODOS el 2026-10-21 (Home moderno abierto a
+   todos): era cola de venta dentro del panel del miembro. Para
+   restaurarlo: quita las marcas de comentario que envuelven la sección
+   y, si se quiere la compuerta anterior, vuelve a poner la condición
+   not es_alex sobre ella (estado anterior: commit 499f717).
+   ── INICIO DEL CÓDIGO PRESERVADO ──
 {% if not es_alex %}
-{# FASE 1B (solo Alex): el FAQ de venta sale de su Home-panel; intacto
-   para los demás miembros. #}
 <section class="db-faq">
   <h2 class="db-faq-title">Questions, answered</h2>
   <details>
@@ -754,6 +783,7 @@ document.getElementById('nvX').addEventListener('click',function(){done();b.remo
   </details>
 </section>
 {% endif %}
+   ── FIN DEL CÓDIGO PRESERVADO (FAQ) ── #}
 
 {# Barra dorada fija "Unlock Platinum" ELIMINADA (2026-10-13, orden de Alex): duplicaba el banner superior del $1 trial; queda solo el de arriba. #}
 
