@@ -197,6 +197,22 @@ twq('config','rhgk7');
   footer .links { color:#9aa7c7; font-size:12.5px; margin-top:14px; }
   footer .links span, footer .links a { text-decoration:underline; color:#9aa7c7; }
 
+  /* hot 7-day strip + signup benefits + later note (2026-10-21) */
+  .hot7 {
+    margin:14px auto 0; max-width:520px; text-align:center;
+    background:rgba(34,197,94,.10); border:1px solid rgba(34,197,94,.5);
+    color:#7ee2a8; border-radius:11px; font-size:13px; font-weight:700; padding:9px 10px;
+  }
+  .hot7 b { color:#2fe6a7; }
+  .ben { list-style:none; margin:14px 0 2px; padding:0; }
+  .ben li { display:flex; gap:8px; font-size:13.5px; line-height:1.45; color:#d7deeb; padding:4px 0; }
+  .ben .ck { color:#2fe6a7; font-weight:900; }
+  .later-note {
+    margin-top:14px; background:rgba(255,255,255,.03); border:1px dashed #2c3c63;
+    border-radius:11px; color:#a8b3cf; font-size:12.5px; text-align:center; padding:9px 10px; line-height:1.45;
+  }
+  .later-note b { color:#e6edf7; }
+
   /* sticky CTA */
   .sticky {
     position:fixed; left:0; right:0; bottom:0; z-index:50;
@@ -226,6 +242,9 @@ twq('config','rhgk7');
 
   <div class="stars">★★★★★</div>
   <div class="stars-sub">Official record <b>{{ stats.ganadas }}–{{ stats.perdidas }}</b> — every ticket posted</div>
+  {% if semana and semana.total %}
+  <div class="hot7">🔥 Last 7 days: <b>{{ semana.ganadas }}–{{ semana.perdidas }} · {{ semana.win_rate }}% · {{ semana.profit_display }}</b></div>
+  {% endif %}
 
   <h1>Free Plays. Every Day.</h1>
   <p class="hero-sub">Our <b>Gold plays</b> are free on your member dashboard the moment they're released — with <b>email and push alerts</b> so you never miss one.</p>
@@ -248,6 +267,11 @@ twq('config','rhgk7');
     <h2>Create your free account</h2>
     <p class="lead">Today's card drops at {{ drop_time }}. Every play goes up the moment it's released — posted before game time, then locked.</p>
     <span class="pill10">✓ No card, ever &nbsp;·&nbsp; ⏱ 10 seconds</span>
+    <ul class="ben">
+      <li><span class="ck">✓</span><span>A free Gold play on your dashboard every day — with the original ticket</span></li>
+      <li><span class="ck">✓</span><span>Every play posted <b>before</b> game time, then locked &amp; graded</span></li>
+      <li><span class="ck">✓</span><span>Email &amp; push alerts so you never miss a play</span></li>
+    </ul>
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
         {% for cat, msg in messages %}
@@ -266,12 +290,6 @@ twq('config','rhgk7');
         <input id="f-email" type="email" name="email" required autocomplete="email" placeholder="you@email.com">
       </div>
       <div class="field">
-        <label for="f-phone">Your phone number</label>
-        <p class="hint">Optional — get the plays by text the moment they drop.</p>
-        <input id="f-phone" type="tel" name="phone" autocomplete="tel" placeholder="(555) 123-4567">
-        <label for="f-sms" style="display:flex;gap:8px;align-items:center;margin-top:10px;font-size:.85rem;color:#a8b3cf;cursor:pointer;"><input id="f-sms" type="checkbox" name="sms_optin" value="1" style="width:17px;height:17px;accent-color:#2fe6a7;"> Text me the plays when they go live</label>
-      </div>
-      <div class="field">
         <label for="f-password">Password</label>
         <input id="f-password" type="password" name="password" required minlength="6" autocomplete="new-password" placeholder="Minimum 6 characters">
       </div>
@@ -281,6 +299,7 @@ twq('config','rhgk7');
       {% endif %}
       <button class="btn" type="submit">Create my free account<small>then see today's plays →</small></button>
     </form>
+    <div class="later-note">📱 <b>Phone &amp; text alerts?</b> Optional — add them later in your account, only if you want them.</div>
     <div class="micro"><span><span class="mint">✓</span> No credit card</span><span><span class="mint">✓</span> No expiration</span><span><span class="mint">✓</span> Unsubscribe anytime</span></div>
     <p class="login-line">Already have an account? <a href="{{ url_for('login') }}">Log in here →</a></p>
   </div>
