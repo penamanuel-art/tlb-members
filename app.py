@@ -2534,20 +2534,25 @@ def american_profit_ratio(odds) -> float:
 
 
 def play_profit_units(tp) -> float:
+    # float() obligatorio (2026-10-21): en Postgres los montos pueden llegar
+    # como Decimal y Decimal * float lanza TypeError (500 en /home con
+    # sesión; en SQLite llegan float y el mismo código no fallaba).
     ratio = american_profit_ratio(tp["cuota"])
     if tp["resultado"] == "W":
-        return tp["stake_unidades"] * ratio
+        return float(tp["stake_unidades"]) * ratio
     if tp["resultado"] == "L":
-        return -tp["stake_unidades"]
+        return -float(tp["stake_unidades"])
     return 0.0
 
 
 def play_profit_dollars(tp) -> float:
+    # float() obligatorio: misma divergencia Decimal de Postgres que en
+    # play_profit_units (2026-10-21).
     ratio = american_profit_ratio(tp["cuota"])
     if tp["resultado"] == "W":
-        return tp["stake_monto"] * ratio
+        return float(tp["stake_monto"]) * ratio
     if tp["resultado"] == "L":
-        return -tp["stake_monto"]
+        return -float(tp["stake_monto"])
     return 0.0
 
 
@@ -2592,7 +2597,7 @@ def compute_stats(tracked):
     losses = sum(1 for t in graded if t["resultado"] == "L")
     net_units = sum(play_profit_units(t) for t in graded)
     net_dollars = sum(play_profit_dollars(t) for t in graded)
-    risked = sum(t["stake_monto"] for t in graded)
+    risked = sum(float(t["stake_monto"] or 0) for t in graded)
     roi = (net_dollars / risked * 100.0) if risked else 0.0
 
     # Racha: orden cronológico, racha actual desde la más reciente.
@@ -7877,7 +7882,7 @@ def admin_actividad():
         ).fetchall()
         profit = 0.0
         for t in liquidadas:
-            monto = t["stake_monto"] or 0
+            monto = float(t["stake_monto"] or 0)
             if t["resultado"] == "W":
                 q = t["cuota"] or 0
                 profit += monto * (q / 100.0) if q > 0 else monto * (100.0 / abs(q)) if q else 0
@@ -8546,7 +8551,7 @@ def values_page():
     for r in rows:
         d = dict(r)
         # Stake real de cada jugada (2026-10-12, Alex: $100 desde el 11-oct, $50 antes)
-        stake = d["stake_monto"] or 100.0
+        stake = float(d["stake_monto"] or 100.0)
         p = play_profit_dollars({"cuota": d["cuota"], "stake_monto": stake,
                                  "resultado": d["resultado"]})
         cuota = d["cuota"] or 0
@@ -9290,7 +9295,7 @@ def ev_board_results():
     plays = []
     for r in rows:
         d = dict(r)
-        stake = d["stake_monto"] or 100.0
+        stake = float(d["stake_monto"] or 100.0)
         p = play_profit_dollars({"cuota": d["cuota"], "stake_monto": stake,
                                  "resultado": d["resultado"]})
         cuota = d["cuota"] or 0
@@ -10499,6 +10504,10 @@ def value_pending():
         (VALUE_SYSTEM_USER_ID,),
     ).fetchall()
     data = [dict(r) for r in rows]
+    for _d in data:
+        # Decimal de Postgres no es serializable a JSON (2026-10-21).
+        if _d.get("stake_monto") is not None:
+            _d["stake_monto"] = float(_d["stake_monto"])
     return Response(_json.dumps({"pending": data}, ensure_ascii=False),
                     mimetype="application/json")
 
@@ -10538,6 +10547,12 @@ def value_system_stats():
         (VALUE_SYSTEM_USER_ID,)
     ).fetchall()
     data = [dict(r) for r in rows]
+    for _d in data:
+        # Decimal de Postgres: ni la aritmética ni json.dumps lo aceptan
+        # mezclado con float (2026-10-21).
+        for _k in ("stake_monto", "stake_unidades", "edge"):
+            if _d.get(_k) is not None:
+                _d[_k] = float(_d[_k])
     stats = stats_por_nivel(data)
     out = {
         "total": len(data),
