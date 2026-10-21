@@ -141,6 +141,43 @@
   .wgt-plays-count { background:rgba(47,230,167,.14); border:1px solid rgba(47,230,167,.45); color:#2fe6a7;
     border-radius:999px; padding:2px 10px; font-size:.8rem; font-weight:800; }
   .wgt-plays-arrow { margin-left:auto; color:#2fe6a7; font-size:1.1rem; }
+
+  /* ============================================================
+     FASE 2 — Tracker con el sistema del Home nuevo (2026-10-21,
+     pedido por Alex tras su captura: el título caía en 3 líneas
+     y la página no tenía la estética nueva). Fondo marino
+     unificado #05081a→#0c1638, dorado único #e8c766, menta único
+     #2ee6a8, tarjetas radio 20px con la superficie del Home.
+     Todo vive en el <style> propio de ESTA plantilla (se carga
+     solo en esta página): NO se toca el CSS compartido. */
+  body { background:linear-gradient(180deg,#05081a,#0c1638); background-color:#05081a; }
+  /* Fuera la caja gris envolvente: como en el Home, las tarjetas
+     flotan directo sobre el fondo marino. */
+  .tracker-box { background:transparent; border:none; border-radius:0; padding:2px 0 8px; }
+  /* Título en EXACTAMENTE 2 líneas (corte fijo por <span> + <br>
+     estructural): línea 1 «Bet Tracker: Every Bet You Track,» y
+     línea 2 «Graded for You». clamp() medido contra el ancho útil
+     (viewport − 32px de .container): a 360px da 19.1px y la línea
+     1 ocupa ~287px de 328px (medido con Liberation Sans Bold,
+     métrica Arial/Helvetica); a 430px da 22.8px y ocupa ~346px
+     de 398px. nowrap en cada línea: jamás una tercera línea. */
+  .trk-h1 { font-size:clamp(19px,5.3vw,24px); line-height:1.15; letter-spacing:-.5px; margin:0 0 9px; }
+  .trk-h1 .trk-l { display:block; white-space:nowrap; }
+  .trk-h1 .trk-mint { color:#2ee6a8; }
+  .trk-dot { color:#2ee6a8; }
+  .trk-dot i { background:#2ee6a8; box-shadow:0 0 10px #2ee6a8; }
+  .trk-btn { background:linear-gradient(180deg,#111a3e,#0c1430); border:1px solid rgba(232,199,102,.18); border-radius:14px; }
+  .tracker-box .wgt-avatar { background:linear-gradient(135deg,#e8c766,#a8832a); }
+  .tracker-box .wgt-streak-pill { background:rgba(232,199,102,.12); border-color:rgba(232,199,102,.5); color:#e8c766; }
+  .tracker-box .wgt-pill.active { background:#e8c766; border-color:#e8c766; color:#141414; }
+  .tracker-box .wgt-card,
+  .tracker-box .wgt-export-panel,
+  .tracker-box .wgt-plays-link { background:linear-gradient(180deg,#111a3e,#0c1430); border:1px solid rgba(232,199,102,.14); border-radius:20px; }
+  .tracker-box .results-hero .stat { background:linear-gradient(180deg,#111a3e,#0c1430); border:1px solid rgba(232,199,102,.14); border-radius:20px; }
+  .tracker-box .stat-value.pos { color:#2ee6a8; }
+  .tracker-box .wgt-exp-go { background:#2ee6a8; border-color:#2ee6a8; color:#052e22; }
+  .tracker-box .wgt-plays-count { background:rgba(47,230,168,.14); border-color:rgba(47,230,168,.45); color:#2ee6a8; }
+  .tracker-box .wgt-plays-arrow { color:#2ee6a8; }
 </style>
 
 <div class="tracker-box" id="wgtTrackerTop">
@@ -161,7 +198,7 @@
 </section>
 
 <section class="trk-hero">
-  <h1 class="trk-h1">Bet Tracker: <span class="trk-mint">Every Bet You Track, Graded for You</span></h1>
+  <h1 class="trk-h1"><span class="trk-l">Bet Tracker: <span class="trk-mint">Every Bet You Track,</span></span><span class="trk-l trk-mint">Graded for You</span></h1>
   <p class="trk-lede">Your personal record book for the plays you follow. Add a play once and the Tracker keeps score for you: every bet is graded from the final score, your record, win rate, profit and ROI update on their own, and nothing is ever edited after the fact. No spreadsheets, no manual math.</p>
   <div class="trk-dot"><i></i>Members-only tool</div>
   <div class="trk-btns">
