@@ -4,6 +4,8 @@
 .hub-g:first-child{margin-top:8px}
 .hub-row{display:flex;align-items:center;gap:11px;padding:10px 0;border-top:1px solid rgba(255,255,255,.06);text-decoration:none}
 .hub-row:first-of-type{border-top:none}
+.hub-g+.hub-grid>.hub-row:first-of-type{border-top:1px solid rgba(255,255,255,.06)}
+.hub>.hub-g:first-child+.hub-grid>.hub-row:first-of-type{border-top:none}
 .hub-ico{flex:none;width:34px;height:34px;border-radius:10px;background:#1a1e29;display:flex;align-items:center;justify-content:center;font-size:16px}
 .hub-tx{flex:1;min-width:0}
 .hub-tx b{display:block;font-size:14px;font-weight:500;color:#fff}
@@ -14,6 +16,7 @@
 </style>
 <div class="hub">
   <div class="hub-g">TODAY</div>
+  <div class="hub-grid">
   <a class="hub-row" href="{{ url_for('home') }}">
     <span class="hub-ico">🎯</span>
     <span class="hub-tx"><b>Today's Card</b><i>Today's official plays, posted at 1:00 PM ET</i></span>
@@ -29,7 +32,9 @@
     <span class="hub-tx"><b>Value Plays</b><i>Extra value plays, tracked at $100 each</i></span>
     <span class="hub-ch">›</span>
   </a>
+  </div>
   <div class="hub-g">TRACK</div>
+  <div class="hub-grid">
   <a class="hub-row" href="{{ url_for('official_tracker') }}">
     <span class="hub-ico">🏆</span>
     <span class="hub-tx"><b>Official Tracker</b><i>The program's complete record, ticket by ticket</i></span>
@@ -45,7 +50,9 @@
     <span class="hub-tx"><b>Archive</b><i>Every settled play, day by day</i></span>
     <span class="hub-ch">›</span>
   </a>
+  </div>
   <div class="hub-g">LEARN &amp; BUILD</div>
+  <div class="hub-grid">
   <a class="hub-row" href="{{ url_for('programa') }}">
     <span class="hub-ico">🧭</span>
     <span class="hub-tx"><b>How Our Plays Are Made</b><i>Where every play comes from — the model, the price check, the ticket</i></span>
@@ -83,7 +90,9 @@
     <span class="hub-tx"><b>The Brain</b><i>Ask the model about any matchup</i></span>
     <span class="hub-ch">›</span>
   </a>
+  </div>
   <div class="hub-g">STAY CONNECTED</div>
+  <div class="hub-grid">
   <a class="hub-row" href="https://t.me/thesharpteam" target="_blank" rel="noopener">
     <span class="hub-ico">✈️</span>
     <span class="hub-tx"><b>Telegram</b><i>Every play also lands on Telegram</i></span>
@@ -99,4 +108,5 @@
     <span class="hub-tx"><b>My Account</b><i>Plan, bankroll and settings</i></span>
     <span class="hub-ch">›</span>
   </a>
+  </div>
 </div>
