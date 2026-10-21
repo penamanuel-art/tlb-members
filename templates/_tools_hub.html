@@ -17,11 +17,17 @@
 <div class="hub">
   <div class="hub-g">TODAY</div>
   <div class="hub-grid">
+  {# ═══ CÓDIGO PRESERVADO — fila «Today's Card» del hub ═══
+     Retirada del render el 2026-10-21 (orden de Alex): apuntaba al
+     mismo Home donde vive el hub (hallazgo H4 de la auditoría de
+     páginas — un destino que se enlaza a sí mismo). Para
+     restaurarla: quita las marcas de comentario que la envuelven.
   <a class="hub-row" href="{{ url_for('home') }}">
     <span class="hub-ico">🎯</span>
     <span class="hub-tx"><b>Today's Card</b><i>Today's official plays, posted at 1:00 PM ET</i></span>
     <span class="hub-ch">›</span>
   </a>
+  ═══ FIN DEL CÓDIGO PRESERVADO ═══ #}
   <a class="hub-row" href="{{ url_for('ev_board') }}">
     <span class="hub-ico">⚖️</span>
     <span class="hub-tx"><b>Compare Prices</b><i>The best price for today's plays, across every book</i></span>
