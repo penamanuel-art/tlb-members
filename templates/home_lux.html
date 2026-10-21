@@ -611,6 +611,16 @@ document.getElementById('nvX').addEventListener('click',function(){done();b.remo
   {% include "_tools_hub.html" %}
 </section>
 
+{# ═══ CÓDIGO PRESERVADO — «GET ALERTS» (04 · ALERTS) ═══
+   Retirado del render para TODOS el 2026-10-21 (orden de Alex con
+   captura): Telegram y las notificaciones ya están en el hub de
+   herramientas (grupo STAY CONNECTED: filas «Telegram» y «Alerts»)
+   y esta sección las repetía debajo del hub. El interruptor de push
+   que vivía aquí (botón #alertsPushBtn) quedó en la página /alertas
+   (templates/alertas.html), junto a los toggles de preferencias —
+   la función no se pierde. Para restaurar esta sección: quita las
+   marcas de comentario que la envuelven.
+   ── INICIO DEL CÓDIGO PRESERVADO ──
 <!-- ALERTS -->
 <section class="v2-sec">
   <div class="v2-sec-head">
@@ -655,6 +665,7 @@ document.getElementById('nvX').addEventListener('click',function(){done();b.remo
   });
 })();
 </script>
+   ── FIN DEL CÓDIGO PRESERVADO («GET ALERTS») ── #}
 
 {# ═══ CÓDIGO PRESERVADO — «THE PROCESS» ═══
    Retirado del render para TODOS el 2026-10-21 (Home moderno abierto a
