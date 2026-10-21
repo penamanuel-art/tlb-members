@@ -90,22 +90,22 @@ body.v2 .v5c-strip{border-radius:14px;margin-top:12px}
 .f1b-rec-u.neg{color:#ff7b7b}
 .f1b-rec-s{flex:none;text-align:right;font-size:11.5px;line-height:1.5;color:#9aa7b8}
 .f1b-rec-go{flex:none;font-size:22px;color:#e8c766;font-weight:700}
-/* FASE 1B · herramientas: cuadrícula 2 columnas por grupo (.hub-grid),
-   tarjetas compactas y SIN HUECOS — si un grupo trae número impar de
-   tarjetas, la última ocupa todo el ancho (nth-child(odd):last-child
-   dentro de su .hub-grid); la regla aguanta cambios de conteo. */
+/* FASE 1B · herramientas: FILAS compactas de una sola columna (cambio de
+   raíz 2026-10-21: la cuadrícula de tarjetas quedaba demasiado larga).
+   Cada .hub-row a ancho completo: icono 30px a la izquierda, título y
+   descripción a la derecha en la misma fila (descripción en una línea,
+   con elipsis si no cabe). Con filas no hay huecos posibles; .hub-grid
+   queda como contenedor neutro en columna. */
 body.v2 .hub{background:linear-gradient(180deg,#111a3e,#0c1430);border:none;border-radius:20px;padding:12px}
-body.v2 .hub-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
-body.v2 .hub-grid>.hub-row:nth-child(odd):last-child{grid-column:1/-1}
+body.v2 .hub-grid{display:flex;flex-direction:column;gap:8px;margin-top:10px}
 body.v2 .hub-g{margin:12px 2px 0;color:#e8c766}
 body.v2 .hub-g:first-child{margin-top:0}
-body.v2 .hub-row{flex-direction:column;align-items:flex-start;gap:6px;padding:12px;border-top:none;background:rgba(255,255,255,.04);border-radius:16px;position:relative;min-height:64px;box-sizing:border-box}
-body.v2 .hub-grid>.hub-row:first-of-type{border-top:none}
+body.v2 .hub-row{flex-direction:row;align-items:center;gap:11px;padding:8px 12px;border-top:none;background:rgba(255,255,255,.04);border-radius:16px;position:relative;min-height:58px;box-sizing:border-box}
 body.v2 .hub-ico{width:30px;height:30px;border-radius:9px;background:rgba(46,230,168,.10);font-size:16px}
 body.v2 .hub-tx b{font-size:15px;line-height:1.25}
-body.v2 .hub-tx i{font-size:12.5px;line-height:1.35}
+body.v2 .hub-tx i{font-size:12.5px;line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 body.v2 .hub-ch{display:none}
-body.v2 .hub-new,body.v2 .hub-plat{position:absolute;top:10px;right:10px}
+body.v2 .hub-new,body.v2 .hub-plat{position:static}
 /* FASE 1B · bankroll y alertas compactas */
 body.v2 .v2-br{padding:14px 16px}
 body.v2 .v2-br-num{font-size:27px}
