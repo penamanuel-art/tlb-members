@@ -51,11 +51,15 @@
 .upl-what .note b{color:#e8c766}
 .upl-card{margin:16px 0 0;background:linear-gradient(180deg,#26303f,#1c2431 60%,#1a222e);border:1px solid #e8c76655;border-radius:16px;padding:16px 15px 14px}
 .upl-pill{display:inline-block;background:#e8c766;color:#161d29;font-size:10px;font-weight:900;letter-spacing:1.6px;padding:4px 10px;border-radius:999px}
-.upl-price{margin:10px 0 0;font-size:21px;font-weight:900;color:#fff}
+.upl-price{margin:10px 0 0;font-size:17px;font-weight:800;color:#fff}
+.upl-price .big{font-size:46px;font-weight:900;vertical-align:-9px;margin-right:3px}
 .upl-then{margin:3px 0 0;font-size:12.5px;color:#a8b3cf}
 .upl-live{margin:12px 0 0;font-size:12px;color:#e6edf7}
 .upl-live .dot{color:#2fe6a7}
-.upl-as{margin:8px 0 0;font-size:11px;color:#8b98ad}
+.upl-as{margin:12px 0 0;background:#0f2a1e;border:1px solid #14532d;border-radius:10px;padding:10px 12px;text-align:center}
+.upl-as .t{font-size:9.5px;letter-spacing:1.6px;color:#8b98ad;font-weight:800}
+.upl-as .e{margin-top:3px;font-size:13.5px;font-weight:800;color:#fff}
+.upl-as .o{margin-top:6px;font-size:11.5px;color:#8b98ad}
 .upl-as a{color:#7dd3fc}
 .upl-duenote{margin:12px 0 0;background:#3a1522;border:1px solid #7f1d3a;border-radius:10px;padding:9px 11px;font-size:11.5px;line-height:1.55;color:#fda4af}
 .upl-duenote a{color:#fff;font-weight:800}
@@ -134,10 +138,11 @@
 
   <div class="upl-card">
     <span class="upl-pill">7-DAY FULL ACCESS</span>
-    <p class="upl-price">$1 for your first 7 days</p>
+    <p class="upl-price"><span class="big">$1</span> for your first 7 days</p>
     <p class="upl-then">Then $15.99/week · cancel anytime</p>
-    <p class="upl-live"><span class="dot">●</span> Live now — today's card posts at 1:00 PM ET</p>
-    {% if user_email %}<p class="upl-as">COMPLETING PURCHASE AS {{ user_email }} · Not you? <a href="{{ url_for('logout') }}">Log out</a></p>{% endif %}
+    <p class="upl-trust" style="margin-top:9px;">🔒 256-bit SSL · Powered by Stripe · PCI compliant</p>
+    <p class="upl-live"><span class="dot">●</span> Live now — today's +EV board is updating in real time</p>
+    {% if user_email %}<div class="upl-as"><div class="t">COMPLETING PURCHASE AS</div><div class="e">✓ {{ user_email }}</div><div class="o">Not you? <a href="{{ url_for('logout') }}">Log out</a></div></div>{% endif %}
     {% if past_due %}
     <div class="upl-duenote">⚠ Your Platinum is paused — a card payment failed. <a href="{{ url_for('cuenta') }}">Update your card in your account</a> to restore access, or start fresh below.</div>
     {% endif %}
@@ -166,9 +171,8 @@
     <a class="upl-cta" href="{{ stripe_url }}" target="_blank" rel="noopener">Start my $1 week →</a>
     {% endif %}
     <p class="upl-under">Cancel before day 8 and you only ever pay $1.</p>
-    <p class="upl-fine">One $1 first week per customer. Your weekly price is shown at checkout before you pay. Cancel anytime — no calls, no retention scripts.</p>
+    <p class="upl-fine">One $1 first week per customer. Your weekly price is shown at checkout before you pay. Cancel anytime — no calls, no retention scripts.<br>Your card is held by Stripe — we never see or store your card number.</p>
     <div class="upl-emailnote"><b>Important:</b> check out with the same email as your member account — that's how your Platinum access turns on automatically, today.</div>
-    <p class="upl-trust">🔒 256-bit SSL · Powered by Stripe · PCI compliant</p>
     <p class="upl-record">★ Official record {{ board.record }} ({{ board.win_rate }}%) · every ticket graded in public</p>
   </div>
 
