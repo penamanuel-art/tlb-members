@@ -826,7 +826,7 @@ def _turnstile_ok() -> bool:
 
 
 _ACTIVATION_FOOTER = """<div style="text-align:center;padding:16px 18px 13px;">
-<img src="https://files.catbox.moe/74qot5.png" alt="The Sharp Team" width="80" style="width:80px;height:auto;display:block;margin:0 auto;border:0;">
+<img src="https://www.thesharpteam.bet/static/img/sharp-team-logo.png" alt="The Sharp Team" width="80" style="width:80px;height:auto;display:block;margin:0 auto;border:0;">
 <p style="margin:9px 0 0;color:#e8c766;font-size:11px;font-weight:800;letter-spacing:3px;">THE SHARP TEAM</p>
 <p style="margin:7px 0 0;color:#7e8db0;font-size:10px;">250 Park Avenue, Suite 1800, New York, NY 10017</p>
 <p style="margin:3px 0 0;color:#7e8db0;font-size:10px;"><a href="tel:+15513263312" style="color:#7e8db0;text-decoration:none;">(551) 326-3312</a></p>
@@ -874,7 +874,7 @@ def send_activation_email(nombre: str, email: str, token: str, lang: str = "en")
     html = f"""<html><body style="margin:0;background:#070d1d;padding:24px 10px;font-family:Arial,Helvetica,sans-serif;">
 <div style="max-width:480px;margin:0 auto;background:#0e1730;border:1px solid #d4af37;border-radius:14px;overflow:hidden;">
 <div style="text-align:center;padding:22px 18px 4px;">
-<img src="https://files.catbox.moe/74qot5.png" alt="The Sharp Team" width="110" style="width:110px;height:auto;border:0;">
+<img src="https://www.thesharpteam.bet/static/img/sharp-team-logo.png" alt="The Sharp Team" width="110" style="width:110px;height:auto;border:0;">
 <p style="margin:12px 0 0;color:#e8c766;font-size:11px;font-weight:800;letter-spacing:3px;">THE SHARP TEAM</p>
 </div>
 <div style="padding:10px 26px 4px;text-align:center;">
@@ -940,7 +940,7 @@ def send_activation_reminder_email(nombre: str, email: str, token: str, lang: st
     html = f"""<html><body style="margin:0;background:#070d1d;padding:24px 10px;font-family:Arial,Helvetica,sans-serif;">
 <div style="max-width:480px;margin:0 auto;background:#0e1730;border:1px solid #d4af37;border-radius:14px;overflow:hidden;">
 <div style="text-align:center;padding:22px 18px 4px;">
-<img src="https://files.catbox.moe/74qot5.png" alt="The Sharp Team" width="110" style="width:110px;height:auto;border:0;">
+<img src="https://www.thesharpteam.bet/static/img/sharp-team-logo.png" alt="The Sharp Team" width="110" style="width:110px;height:auto;border:0;">
 <p style="margin:12px 0 0;color:#e8c766;font-size:11px;font-weight:800;letter-spacing:3px;">THE SHARP TEAM</p>
 </div>
 <div style="padding:10px 26px 4px;text-align:center;">
@@ -1111,7 +1111,7 @@ WELCOME_BACK_HTML = """<!DOCTYPE html>
 <p style="color:#555555;font-size:14px;line-height:1.7;margin:14px 0 0;">$1 for the first 7 days &mdash; then $15.99/week.<br>Cancel anytime.</p>
 </div>
 <div style="text-align:center;padding:20px 20px 14px;">
-<img src="https://files.catbox.moe/74qot5.png" alt="The Sharp Team" width="110" style="width:110px;height:auto;display:block;margin:0 auto;border:0;">
+<img src="https://www.thesharpteam.bet/static/img/sharp-team-logo.png" alt="The Sharp Team" width="110" style="width:110px;height:auto;display:block;margin:0 auto;border:0;">
 <p style="margin:10px 0 0;color:#111111;font-size:12px;font-weight:800;letter-spacing:3px;">THE SHARP TEAM</p>
 <p style="margin:8px 0 0;color:#9ca3af;font-size:11px;">250 Park Avenue, Suite 1800, New York, NY 10017</p>
 <p style="margin:4px 0 0;color:#9ca3af;font-size:11px;"><a href="tel:+15513263312" style="color:#9ca3af;text-decoration:none;">(551) 326-3312</a></p>
@@ -1190,7 +1190,7 @@ WELCOME_HTML = """<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="v
 <body style="margin:0;padding:0;background:#070d1d;"><div style="display:none;max-height:0;overflow:hidden;opacity:0;">Welcome to The Sharp Team. Platinum starts with a $1 week — every pick tracked, every ticket verified.</div>
 <div style="padding:8px 14px 12px;"><div style="font-family:Arial,sans-serif;max-width:400px;margin:0 auto;background:#0e1730;border-radius:14px;overflow:hidden;">
 <div style="background:#021f16;padding:10px 14px;border-bottom:2px solid #c9a227;text-align:center;"><table cellpadding="0" cellspacing="0" style="margin:0 auto;"><tr>
-<td width="36"><img src="https://files.catbox.moe/74qot5.png" alt="The Sharp Team" width="30" style="width:30px;height:auto;border:0;"></td>
+<td width="36"><img src="https://www.thesharpteam.bet/static/img/sharp-team-logo.png" alt="The Sharp Team" width="30" style="width:30px;height:auto;border:0;"></td>
 <td style="white-space:nowrap;"><p style="margin:0;font-size:12px;font-weight:800;letter-spacing:3px;color:#ffffff;white-space:nowrap;">THE SHARP TEAM</p></td></tr></table></div>
 <div style="background:#032a1f;padding:11px 16px;text-align:center;border-bottom:1px solid #14532d;"><p style="margin:0;font-family:'Arial Black','Archivo Black',Arial,sans-serif;font-size:15px;font-weight:900;letter-spacing:3px;color:#e8c766;">THANK YOU FOR JOINING</p></div>
 <img src="https://www.thesharpteam.bet/static/img/sharp-team-banner.png" alt="The Sharp Team" width="460" style="width:100%;height:auto;display:block;border:0;">
@@ -1233,7 +1233,7 @@ WELCOME_HTML = """<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="v
 <p style="margin:3px 0 0;font-size:11.5px;line-height:1.5;color:#a8b3cf;">Open your dashboard and tap <strong style="color:#ffffff;">&ldquo;Alerts on&rdquo;</strong> — plays, results and line moves, straight to your phone.</p>
 <div style="text-align:center;padding:9px 0 0;"><a href="https://www.thesharpteam.bet/home" style="display:inline-block;border:1px solid #7dd3fc;color:#7dd3fc;font-size:11.5px;font-weight:800;padding:8px 16px;border-radius:999px;text-decoration:none;">Open my dashboard</a></div></div>
 <div style="text-align:center;padding:16px 18px 13px;">
-<img src="https://files.catbox.moe/74qot5.png" alt="The Sharp Team" width="80" style="width:80px;height:auto;display:block;margin:0 auto;border:0;">
+<img src="https://www.thesharpteam.bet/static/img/sharp-team-logo.png" alt="The Sharp Team" width="80" style="width:80px;height:auto;display:block;margin:0 auto;border:0;">
 <p style="margin:9px 0 0;color:#e8c766;font-size:11px;font-weight:800;letter-spacing:3px;">THE SHARP TEAM</p>
 <p style="margin:7px 0 0;color:#7e8db0;font-size:10px;">250 Park Avenue, Suite 1800, New York, NY 10017</p>
 <p style="margin:3px 0 0;color:#7e8db0;font-size:10px;"><a href="tel:+15513263312" style="color:#7e8db0;text-decoration:none;">(551) 326-3312</a></p>
@@ -1312,7 +1312,7 @@ DUNNING_HTML = """<div style="font-family:Arial,sans-serif;max-width:480px;margi
 <p style="font-size:13px;line-height:1.6;color:#6b7280;margin:16px 24px 0;text-align:center;">If anything looks off, just reply to this email and a real person will sort it.</p>
 <p style="text-align:center;font-size:12px;color:#9ca3af;margin:14px 0 0;">__FECHA__</p>
 <div style="text-align:center;padding:20px 20px 14px;">
-<img src="https://files.catbox.moe/74qot5.png" alt="The Sharp Team" width="110" style="width:110px;height:auto;display:block;margin:0 auto;border:0;">
+<img src="https://www.thesharpteam.bet/static/img/sharp-team-logo.png" alt="The Sharp Team" width="110" style="width:110px;height:auto;display:block;margin:0 auto;border:0;">
 <p style="margin:10px 0 0;color:#111111;font-size:12px;font-weight:800;letter-spacing:3px;">THE SHARP TEAM</p>
 <p style="margin:8px 0 0;color:#9ca3af;font-size:11px;">250 Park Avenue, Suite 1800, New York, NY 10017</p>
 <p style="margin:4px 0 0;color:#9ca3af;font-size:11px;"><a href="tel:+15513263312" style="color:#9ca3af;text-decoration:none;">(551) 326-3312</a></p>
@@ -1429,7 +1429,7 @@ __PLAYS_ROWS__
 <a href="https://www.thesharpteam.bet/records" style="display:inline-block;background:#22c55e;color:#111111;font-size:14px;font-weight:800;padding:11px 28px;border-radius:999px;text-decoration:none;">View full record &rarr;</a>
 </div>
 <div style="text-align:center;padding:20px 20px 14px;">
-<img src="https://files.catbox.moe/74qot5.png" alt="The Sharp Team" width="110" style="width:110px;height:auto;display:block;margin:0 auto;border:0;">
+<img src="https://www.thesharpteam.bet/static/img/sharp-team-logo.png" alt="The Sharp Team" width="110" style="width:110px;height:auto;display:block;margin:0 auto;border:0;">
 <p style="margin:10px 0 0;color:#111111;font-size:12px;font-weight:800;letter-spacing:3px;">THE SHARP TEAM</p>
 <p style="margin:8px 0 0;color:#9ca3af;font-size:11px;">250 Park Avenue, Suite 1800, New York, NY 10017</p>
 <p style="margin:4px 0 0;color:#9ca3af;font-size:11px;"><a href="tel:+15513263312" style="color:#9ca3af;text-decoration:none;">(551) 326-3312</a></p>
