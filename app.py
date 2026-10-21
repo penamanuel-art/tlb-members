@@ -1831,6 +1831,45 @@ def program_streak():
     return {"tipo": "W" if tipo == "WON" else "L", "n": n}
 
 
+def win_streak_days():
+    """Días ganadores seguidos del programa (franja bajo la barra superior
+    v2, pedido Alex 2026-10-21, referencia WGT). Cuenta hacia atrás desde
+    el día calificado más reciente de data/archive.json: un día cuenta si
+    TODAS sus jugadas oficiales están liquidadas (WON/LOST/PUSH) y su
+    resultado neto en unidades es > 0. El neto en unidades de cada jugada
+    se deriva de su profit real: profit × stake_unidades ÷ stake_monto.
+    Un día aún no calificado por completo no cuenta ni corta la racha;
+    el primer día calificado con neto <= 0 la corta. Sin datos: 0."""
+    n = 0
+    dias = sorted(load_archive(), key=lambda d: d.get("fecha") or "",
+                  reverse=True)
+    for d in dias:
+        jugadas = [j for j in (d.get("jugadas", []) or [])
+                   if not j.get("bloqueada")]
+        if not jugadas:
+            continue
+        if any(j.get("resultado") not in ("WON", "LOST", "PUSH")
+               for j in jugadas):
+            continue
+        neto = 0.0
+        ok = True
+        for j in jugadas:
+            p = j.get("profit")
+            sm = j.get("stake_monto") or 0
+            su = j.get("stake_unidades") or 0
+            if p is None or not sm or not su:
+                ok = False
+                break
+            neto += p * su / sm
+        if not ok:
+            continue
+        if neto > 0:
+            n += 1
+        else:
+            break
+    return n
+
+
 def performance_snapshot():
     """Snapshot de rendimiento para la sección 'Performance' del Dashboard.
 
@@ -3196,6 +3235,7 @@ def inject_user():
         "trial_dias_left": trial_dias_left,
         "past_due": past_due,
         "ticker_days": compute_ticker_days(),
+        "racha_dias": win_streak_days(),
         "asset_v": ASSET_V,
         "watermark_img": wm,
     }
