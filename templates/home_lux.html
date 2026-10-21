@@ -44,6 +44,79 @@ body.v2 .lux-rec-card::after{background:linear-gradient(90deg,#5eeaa0,#2ee6a8 55
 body.v2 .yw-won-t,body.v2 .yw-clv-pos{color:#2ee6a8}
 </style>
 {% endif %}
+{% if es_alex %}
+{# ═══ FASE 1B · HOME COMO PANEL — SOLO ALEX (2026-10-21, aprobado por él:
+   «Si» a la Fase 1B) ═══
+   Segunda capa sobre la Fase 1, de ESTRUCTURA y orden, no de pintura:
+   encabezado compacto, tarjetas de jugada con jerarquía más clara,
+   herramientas en cuadrícula, bankroll/alertas compactas y barras a
+   juego. La franja de récord (.f1b-rec) va en el cuerpo, justo tras la
+   sección de jugadas, y la sección completa «The documented record» más
+   la cola de venta (proceso, «What makes this different», FAQ) quedan
+   fuera de su variante con «if not es_alex». Este bloque SOLO se
+   renderiza para su cuenta (es_alex); para cualquier otro miembro no
+   existe en el HTML. REVERSIBLE: borrar este bloque, la franja .f1b-rec
+   y los «if not es_alex» de esta fase devuelve su Home al estado de
+   Fase 1. #}
+<style>
+/* FASE 1B · encabezado compacto: misma información, menos pantalla */
+body.v2 .lux-head{padding:14px 16px 13px;margin-top:8px}
+body.v2 .lux-head-date{font-size:10.5px}
+body.v2 .lux-head-hi{margin-top:6px;font-size:15px}
+body.v2 .lux-head-title{font-size:29px;margin-top:1px}
+body.v2 .lux-head-card{padding:11px 13px;margin-top:11px;gap:10px}
+body.v2 .lux-head-ico{width:38px;height:38px;border-radius:12px;font-size:19px}
+body.v2 .lux-head-card b{font-size:15.5px}
+body.v2 .lux-head-card p{font-size:12.5px}
+/* FASE 1B · tarjetas de jugada: pick y precio mandan, espacios parejos */
+body.v2 .v5c{margin:0 0 14px}
+body.v2 .v5c-topsec{padding:13px 16px 11px}
+body.v2 .v5c-title{font-size:19.5px;font-weight:700}
+body.v2 .v5c-sub{margin-top:4px}
+body.v2 .v5c-botsec{padding:0 16px 13px}
+body.v2 .v5c-nums{gap:30px;margin-top:10px}
+body.v2 .v5c-v{font-size:20px;font-weight:700}
+body.v2 .v5c-amt{color:#2ee6a8}
+body.v2 .v5c-track{background:#2ee6a8;border-color:#2ee6a8}
+body.v2 .v5c-matched{background:#2ee6a8}
+body.v2 .v5c-btns{gap:10px;margin-top:12px}
+body.v2 .v5c-btn{border-radius:14px}
+body.v2 .v5c-strip{border-radius:14px;margin-top:12px}
+/* FASE 1B · franja de récord (el récord arriba, una sola vez) */
+.f1b-rec{display:flex;align-items:center;gap:14px;background:linear-gradient(180deg,#111a3e,#0c1430);border-radius:20px;padding:13px 16px;margin:2px 0 6px;text-decoration:none;color:#eef1f7;position:relative;overflow:hidden}
+.f1b-rec::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:linear-gradient(90deg,#5eeaa0,#2ee6a8 55%,#12b76a)}
+.f1b-rec-main{flex:1;min-width:0;display:block}
+.f1b-rec-k{display:block;font-size:9.5px;font-weight:800;letter-spacing:1.8px;color:#e8c766}
+.f1b-rec-row{display:flex;align-items:baseline;gap:10px;margin-top:3px}
+.f1b-rec-n{font-size:24px;font-weight:800;letter-spacing:-.5px;color:#fff;line-height:1}
+.f1b-rec-u{font-size:15px;font-weight:800;color:#2ee6a8}
+.f1b-rec-u.neg{color:#ff7b7b}
+.f1b-rec-s{flex:none;text-align:right;font-size:11.5px;line-height:1.5;color:#9aa7b8}
+.f1b-rec-go{flex:none;font-size:22px;color:#e8c766;font-weight:700}
+/* FASE 1B · herramientas en cuadrícula 2 columnas, tarjetas grandes */
+body.v2 .hub{background:linear-gradient(180deg,#111a3e,#0c1430);border:none;border-radius:20px;padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+body.v2 .hub-g{grid-column:1/-1;margin:10px 2px 0;color:#e8c766}
+body.v2 .hub-g:first-child{margin-top:0}
+body.v2 .hub-row{flex-direction:column;align-items:flex-start;gap:7px;padding:12px;border-top:none;background:rgba(255,255,255,.04);border-radius:16px;position:relative;min-height:86px;box-sizing:border-box}
+body.v2 .hub-ico{width:38px;height:38px;border-radius:12px;background:rgba(46,230,168,.10);font-size:18px}
+body.v2 .hub-tx b{font-size:13.5px;line-height:1.25}
+body.v2 .hub-tx i{font-size:11px;line-height:1.35}
+body.v2 .hub-ch{display:none}
+body.v2 .hub-new,body.v2 .hub-plat{position:absolute;top:10px;right:10px}
+/* FASE 1B · bankroll y alertas compactas */
+body.v2 .v2-br{padding:14px 16px}
+body.v2 .v2-br-num{font-size:27px}
+body.v2 .v2-alerts{gap:8px}
+body.v2 .v2-alert-btn{padding:11px 10px;font-size:13px;border-radius:14px}
+/* FASE 1B · Academia compacta */
+body.v2 .v2-mc-feat{padding:14px 16px}
+body.v2 .v2-mc-feat h3{font-size:19px}
+body.v2 .v2-mc-open{margin-top:8px}
+/* FASE 1B · barras a juego (solo esta página: el estilo vive en home_lux) */
+body.v2 .v2-topbar{background:#0c1638}
+body.v2 .v2-bottomnav{background:#081029!important}
+</style>
+{% endif %}
 <style>
 /* ===== Diseño LUX del home (2026-10-12, aprobado por Alex con muestra v2) =====
    Negro premium + oro + cristal, tipografía grande, gráfica real del programa.
@@ -280,6 +353,21 @@ document.getElementById('nvX').addEventListener('click',function(){done();b.remo
   {% endif %}
 </section>
 
+{% if es_alex and record_stats %}
+{# FASE 1B (solo Alex): franja compacta de récord justo tras las jugadas —
+   su récord va arriba y una sola vez en todo el Home; la sección completa
+   «The documented record» de más abajo queda fuera de su variante. #}
+{% set _rg = record_stats.general %}
+<a class="f1b-rec" href="{{ url_for('official_tracker') }}">
+  <span class="f1b-rec-main">
+    <span class="f1b-rec-k">OFFICIAL RECORD</span>
+    <span class="f1b-rec-row"><span class="f1b-rec-n">{{ _rg.record }}</span><span class="f1b-rec-u{% if _rg.profit < 0 %} neg{% endif %}">{{ _rg.units_display }}</span></span>
+  </span>
+  <span class="f1b-rec-s">{{ _rg.win_rate }}% win rate<br>{{ _rg.roi }}% ROI</span>
+  <span class="f1b-rec-go">›</span>
+</a>
+{% endif %}
+
 <!-- RECENT GRADED TICKETS — diseño "Yesterday" (2026-10-16, aprobado por
      Alex tras ver muestras): encabezado por día, resumen por nivel SOLO
      PLATINUM y GOLD (sin fila de totales), tarjetas con el ticket
@@ -403,7 +491,10 @@ document.getElementById('nvX').addEventListener('click',function(){done();b.remo
 <!-- THE DOCUMENTED RECORD (2026-10-15, diseno aprobado por Alex):
      tarjetas grandes con el record oficial EN VIVO (official_tracker_full,
      los mismos numeros de /official-tracker). -->
-{% if record_stats %}
+{% if record_stats and not es_alex %}
+{# FASE 1B (solo Alex): la sección completa sale de su variante — su récord
+   ya va en la franja compacta .f1b-rec tras las jugadas, una sola vez.
+   Los demás miembros la siguen viendo igual que siempre. #}
 <section class="v2-sec lux-record">
   <h2 class="lux-rec-h">The documented <span>record</span>: every play, win or loss.</h2>
   <p class="lux-rec-sub">Every official play is posted before the game with its real ticket, then graded against the final score in public — win or loss, nothing hidden.</p>
@@ -551,6 +642,9 @@ document.getElementById('nvX').addEventListener('click',function(){done();b.remo
 })();
 </script>
 
+{% if not es_alex %}
+{# FASE 1B (solo Alex): la cola de venta sale de su Home-panel; para los
+   demás miembros queda intacta. #}
 <!-- THE PROCESS -->
 <section class="v2-sec">
   <div class="v2-process">
@@ -571,6 +665,7 @@ document.getElementById('nvX').addEventListener('click',function(){done();b.remo
     </div>
   </div>
 </section>
+{% endif %}
 
 <!-- MASTERCLASS -->
 <section class="v2-sec">
@@ -592,6 +687,8 @@ document.getElementById('nvX').addEventListener('click',function(){done();b.remo
   <a class="v2-mc-open" href="{{ url_for('masterclass') }}">🎓 Open Academy →</a>
 </section>
 
+{% if not es_alex %}
+{# FASE 1B (solo Alex): fuera de su variante; intacta para los demás. #}
 <section class="db-diff">
   <h2 class="db-diff-title">What makes this <span class="gold">different</span></h2>
   <div class="db-diff-card">
@@ -624,7 +721,11 @@ document.getElementById('nvX').addEventListener('click',function(){done();b.remo
     <div class="db-diff-them"><span class="xx">✕</span><span class="tx"><span class="who">TYPICAL</span>Locked in — good luck getting out.</span></div>
   </div>
 </section>
+{% endif %}
 
+{% if not es_alex %}
+{# FASE 1B (solo Alex): el FAQ de venta sale de su Home-panel; intacto
+   para los demás miembros. #}
 <section class="db-faq">
   <h2 class="db-faq-title">Questions, answered</h2>
   <details>
@@ -652,6 +753,7 @@ document.getElementById('nvX').addEventListener('click',function(){done();b.remo
     <div class="ans">One click from your account page. No lock-in, no calls, no hassle — and your free account stays free forever.</div>
   </details>
 </section>
+{% endif %}
 
 {# Barra dorada fija "Unlock Platinum" ELIMINADA (2026-10-13, orden de Alex): duplicaba el banner superior del $1 trial; queda solo el de arriba. #}
 
