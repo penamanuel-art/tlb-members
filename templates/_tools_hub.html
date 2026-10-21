@@ -27,11 +27,13 @@
     <span class="hub-tx"><b>Compare Prices</b><i>The best price for today's plays, across every book</i></span>
     <span class="hub-new">NEW</span><span class="hub-ch">›</span>
   </a>
+  {% if es_alex or es_admin %}
   <a class="hub-row" href="{{ url_for('values_page') }}">
     <span class="hub-ico">💎</span>
     <span class="hub-tx"><b>Value Plays</b><i>Extra value plays, tracked at $100 each</i></span>
     <span class="hub-ch">›</span>
   </a>
+  {% endif %}
   </div>
   <div class="hub-g">TRACK</div>
   <div class="hub-grid">
