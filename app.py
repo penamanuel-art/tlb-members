@@ -3977,6 +3977,40 @@ def _pais_visitante():
     return pais
 
 
+def _registro_semana():
+    """Récord REAL de los últimos 7 días (franja caliente de /registro,
+    2026-10-21): se calcula del archivo oficial en cada carga — si la
+    semana cambia, la franja cambia sola; sin jugadas, no se muestra."""
+    try:
+        hoy = datetime.now(TZ).date()
+        desde = (hoy - timedelta(days=7)).isoformat()
+        hasta = hoy.isoformat()
+        g = p = 0
+        profit = 0.0
+        for d in load_archive():
+            f = str(d.get("fecha") or "")[:10]
+            if not f or f < desde or f > hasta:
+                continue
+            for j in d.get("jugadas", []) or []:
+                if j.get("resultado") not in ("WON", "LOST") or j.get("bloqueada"):
+                    continue
+                if j["resultado"] == "WON":
+                    g += 1
+                else:
+                    p += 1
+                profit += float(j.get("profit") or 0.0)
+        total = g + p
+        if not total:
+            return None
+        return {
+            "ganadas": g, "perdidas": p, "total": total,
+            "win_rate": f"{g / total * 100:.1f}",
+            "profit_display": (f"+${profit:,.0f}" if profit >= 0 else f"-${abs(profit):,.0f}"),
+        }
+    except Exception:
+        return None
+
+
 @app.route("/registro", methods=["GET", "POST"])
 def register():
     if "user_id" in session:
@@ -4009,7 +4043,8 @@ def register():
     for _r in _recientes:
         _r["units_display"] = f"{float(_r.get('profit') or 0) / 25.0:+.2f}u"
     _drop = "1:00 PM ET"  # 2026-10-20, orden de Alex: la card sale a la 1:00 PM ET TODOS los dias (antes 2:00 PM, orden 2026-10-17)
-    _reg_ctx = {"gold": _gold, "stats": _stats, "ayer": _ayer,
+    _semana = _registro_semana()
+    _reg_ctx = {"gold": _gold, "stats": _stats, "ayer": _ayer, "semana": _semana,
                 "recientes": _recientes, "drop_time": _drop,
                 "turnstile_key": TURNSTILE_SITE_KEY}
     # Idioma de la landing (2026-10-14, pedido de Alex): manda ?lang=;
@@ -4052,8 +4087,7 @@ def register():
                        (_tok, exists["id"]))
             db.commit()
             send_activation_email(nombre, email, _tok, _lang)
-            flash("Ese correo ya estaba registrado pero sin activar — te reenviamos el correo de activación. Toca el enlace para entrar." if _lang == "es" else "That email was registered but never activated — we just re-sent the activation email. Tap the link inside to get in.", "success")
-            return render_template(_tpl, **_reg_ctx)
+            return render_template("confirmacion.html", email=email, nombre=nombre, lang=_lang, reenviado=True)
         # La cuenta nace SIN ACTIVAR (2026-10-18, orden de Alex): no hay
         # sesión, no hay mes gratis ni bienvenida hasta que el dueño toque
         # el enlace del correo de activación (/activar/<token>).
@@ -4065,11 +4099,40 @@ def register():
         )
         db.commit()
         send_activation_email(nombre, email, _tok, _lang)
-        flash("✅ ¡Ya casi! Te enviamos un correo de activación — toca el enlace para activar tu cuenta." if _lang == "es" else "✅ Almost there! We sent you an activation email — tap the link inside to activate your account.", "success")
-        return render_template(_tpl, **_reg_ctx)
+        return render_template("confirmacion.html", email=email, nombre=nombre, lang=_lang, reenviado=False)
     _resp = make_response(render_template(_tpl, **_reg_ctx))
     _resp.set_cookie("tst_lang", _lang, max_age=30 * 86400, samesite="Lax")
     return _resp
+
+
+@app.route("/reenviar-activacion", methods=["POST"])
+def reenviar_activacion():
+    """Reenvío del correo de activación desde la pantalla de
+    confirmación (2026-10-21): regenera el token y reenvía solo si la
+    cuenta existe y sigue sin verificar. La respuesta es idéntica en
+    todos los casos (no revela si el correo existe) y hay un freno de
+    60 segundos por sesión."""
+    email = (request.form.get("email") or "").strip().lower()
+    lang = (request.form.get("lang") or "en").strip().lower()
+    if lang not in ("es", "en"):
+        lang = "en"
+    try:
+        ultimo = float(session.get("resend_ts") or 0)
+    except (TypeError, ValueError):
+        ultimo = 0
+    if email and time.time() - ultimo >= 60:
+        try:
+            db = get_db()
+            u = db.execute("SELECT id, nombre, email_verified, lang FROM users WHERE email = ?", (email,)).fetchone()
+            if u and not u["email_verified"]:
+                _tok = secrets.token_urlsafe(32)
+                db.execute("UPDATE users SET activation_token = ? WHERE id = ?", (_tok, u["id"]))
+                db.commit()
+                send_activation_email(u["nombre"], email, _tok, u["lang"] or lang)
+            session["resend_ts"] = time.time()
+        except Exception:
+            pass
+    return render_template("confirmacion.html", email=email, lang=lang, reenviado=True)
 
 
 @app.route("/activar/<token>")
