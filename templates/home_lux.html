@@ -14,6 +14,36 @@ body.v2 .v5c-topsec{background:linear-gradient(180deg,#2b303a,#262a33);padding:2
 body.v2 .v5sheet-in{background:linear-gradient(180deg,#2b303a,#262a33)}
 </style>
 {% endif %}
+{% if es_alex %}
+{# ═══ FASE 1 · HOME UNIFICADO — SOLO ALEX (2026-10-21, aprobado por él:
+   «Aplícalo solo para mí, para yo ver si me gusta») ═══
+   Paleta ÚNICA de la muestra aprobada (fase1-home-moderno-2026-10-21):
+   fondo marino #05081a→#0c1638, dorado #e8c766, menta #2ee6a8/#5eeaa0,
+   tarjetas con el degradado único linear-gradient(180deg,#111a3e,#0c1430)
+   y radio 20px. Este bloque SOLO se renderiza para la cuenta personal
+   de Alex (es_alex = is_alex_member(user), pena.manuel@myyahoo.com);
+   para cualquier otro miembro no existe en el HTML y su Home queda
+   intacto. REVERSIBLE: borrar este bloque y los dos «if not es_alex»
+   de abajo (tarjetas de récord por nivel y tarjeta «The proof»)
+   devuelve el Home de Alex a su estado anterior. #}
+<style>
+/* Fondo marino único de la muestra (sustituye el fondo #161d29) */
+body.v2{background-color:#05081a;background-image:radial-gradient(640px 300px at 85% -60px,rgba(232,199,102,.13),transparent 60%),radial-gradient(520px 380px at -10% 40%,rgba(46,230,168,.06),transparent 60%),linear-gradient(180deg,#0c1638 0%,#081029 45%,#05081a 100%);background-attachment:fixed}
+/* Tarjeta única: mismo degradado y radio 20px en todo el Home */
+body.v2 .lux-head,body.v2 .lux-panel,body.v2 .lux-rec-card,body.v2 .v2-br,body.v2 .db-diff-card,body.v2 .yw-sum,body.v2 .yw-card,body.v2 .board-empty,body.v2 .v2-mc-feat,body.v2 .v2-process{background:linear-gradient(180deg,#111a3e,#0c1430);border-radius:20px}
+body.v2 .v5c{background:linear-gradient(180deg,#111a3e,#0c1430);border-radius:20px}
+body.v2 .lux-head-card{background:rgba(46,230,168,.08);border-radius:20px}
+/* Dorado único #e8c766 (fuera #f3cd6b y los demás dorados sueltos) */
+body.v2 .lux-rec-h span,body.v2 .lux-rec-ver,body.v2 .lux-rec-u,body.v2 .lux-hlabel{color:#e8c766}
+/* Menta única #2ee6a8 (fuera #2fe6a7) */
+body.v2 .lux-head-title span{color:#2ee6a8}
+body.v2 .lux-head-ico{background:#2ee6a8}
+body.v2 .lux-live{color:#2ee6a8}
+body.v2 .v2-bottomnav .v2-bnav-item.active{color:#2ee6a8;background:rgba(46,230,168,.15)}
+body.v2 .lux-rec-card::after{background:linear-gradient(90deg,#5eeaa0,#2ee6a8 55%,#12b76a)}
+body.v2 .yw-won-t,body.v2 .yw-clv-pos{color:#2ee6a8}
+</style>
+{% endif %}
 <style>
 /* ===== Diseño LUX del home (2026-10-12, aprobado por Alex con muestra v2) =====
    Negro premium + oro + cristal, tipografía grande, gráfica real del programa.
@@ -384,6 +414,9 @@ document.getElementById('nvX').addEventListener('click',function(){done();b.remo
     <p class="lux-rec-u{% if g.profit < 0 %} neg{% endif %}">{{ g.units_display }}</p>
     <p class="lux-rec-s">{{ g.win_rate }}% win rate · {{ g.roi }}% ROI · {{ "+$" if g.profit > 0 else "-$" }}{{ "%.2f"|format(g.profit|abs) }}</p>
   </a>
+  {% if not es_alex %}
+  {# Fase 1 (solo Alex): su récord sale UNA sola vez — la tarjeta general
+     de arriba; las tarjetas por nivel se quedan para los demás. #}
   <a class="lux-rec-card" href="{{ url_for('official_tracker', programa='platinum') }}">
     <div class="lux-rec-top"><p class="lux-rec-k">PLATINUM PLAYS</p><span class="lux-rec-ver">View plays &amp; tickets ›</span></div>
     <p class="lux-rec-n">{{ pl.record }}</p>
@@ -396,6 +429,7 @@ document.getElementById('nvX').addEventListener('click',function(){done();b.remo
     <p class="lux-rec-u{% if gd.profit < 0 %} neg{% endif %}">{{ gd.units_display }}</p>
     <p class="lux-rec-s">{{ gd.win_rate }}% win rate</p>
   </a>
+  {% endif %}
 </section>
 {% endif %}
 
@@ -575,11 +609,15 @@ document.getElementById('nvX').addEventListener('click',function(){done();b.remo
     <div class="db-diff-us"><span class="ck">✓</span><span class="tx"><span class="who">THE SHARP TEAM</span>$1 for your first week, then $15.99/week. That's it.</span></div>
     <div class="db-diff-them"><span class="xx">✕</span><span class="tx"><span class="who">TYPICAL</span>Hundreds upfront before you see a single pick.</span></div>
   </div>
+  {% if not es_alex %}
+  {# Fase 1 (solo Alex): esta tarjeta repite el récord que ya salió en su
+     único bloque de récord — fuera de su variante, intacta para los demás. #}
   <div class="db-diff-card">
     <div class="db-diff-cat">The proof</div>
     <div class="db-diff-us"><span class="ck">✓</span><span class="tx"><span class="who">THE SHARP TEAM</span>{{ res.ganadas }}-{{ res.perdidas }}, {{ "%+.1f"|format(res.roi) }}% ROI — every play documented and graded.</span></div>
     <div class="db-diff-them"><span class="xx">✕</span><span class="tx"><span class="who">TYPICAL</span>Big claims, no record to check.</span></div>
   </div>
+  {% endif %}
   <div class="db-diff-card">
     <div class="db-diff-cat">The exit</div>
     <div class="db-diff-us"><span class="ck">✓</span><span class="tx"><span class="who">THE SHARP TEAM</span>Cancel in one click from your account, anytime.</span></div>
