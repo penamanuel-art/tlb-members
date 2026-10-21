@@ -8880,7 +8880,95 @@ def admin_miembros():
         ).fetchall()
     except Exception:
         eventos = []
+    # ── 🔥 ACTIVE & VERIFIED (2026-10-20, pedido por Alex): miembros con el
+    # correo confirmado y actividad en 2+ días distintos, con TODO lo que
+    # el sistema sabe de ellos. La cuenta de Alex (dueño) no cuenta aquí.
+    activos = []
+    try:
+        filas = db.execute(
+            "SELECT u.id, u.nombre, u.email, u.activated_at, u.phone, "
+            "u.sms_optin, u.telegram_user_id, u.stripe_customer_id, "
+            "u.stripe_subscription_id, u.platinum_trial_ends, "
+            "COUNT(*) AS entradas, "
+            "COUNT(DISTINCT substr(a.created_at, 1, 10)) AS dias, "
+            "MAX(a.created_at) AS ultima "
+            "FROM users u JOIN member_activity a ON a.user_id = u.id "
+            "WHERE u.email_verified = 1 "
+            "AND LOWER(u.email) NOT IN ('thesharpteam8@gmail.com', "
+            "'system@value.local', 'pena.manuel@myyahoo.com') "
+            "GROUP BY u.id, u.nombre, u.email, u.activated_at, u.phone, "
+            "u.sms_optin, u.telegram_user_id, u.stripe_customer_id, "
+            "u.stripe_subscription_id, u.platinum_trial_ends "
+            "HAVING COUNT(DISTINCT substr(a.created_at, 1, 10)) >= 2 "
+            "ORDER BY entradas DESC"
+        ).fetchall()
+        _meses = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+        for f in filas:
+            d = dict(f)
+            d["confirmado_txt"] = ""
+            if d.get("activated_at"):
+                try:
+                    fa = datetime.fromisoformat(
+                        str(d["activated_at"]).replace("Z", "+00:00"))
+                    d["confirmado_txt"] = (
+                        f"{_meses[fa.month - 1]} {fa.day}, {fa.year}")
+                except Exception:
+                    d["confirmado_txt"] = str(d["activated_at"])[:10]
+            d["ultima_txt"] = ""
+            if d.get("ultima"):
+                try:
+                    fu = datetime.fromisoformat(
+                        str(d["ultima"]).replace("Z", "+00:00"))
+                    if fu.tzinfo is None:
+                        fu = fu.replace(tzinfo=timezone.utc)
+                    fe = fu.astimezone(ZoneInfo("America/New_York"))
+                    hora = fe.strftime("%I:%M %p").lstrip("0")
+                    d["ultima_txt"] = (
+                        f"{_meses[fe.month - 1]} {fe.day} · {hora}")
+                except Exception:
+                    d["ultima_txt"] = str(d["ultima"])[:10]
+            d["ciudad"] = ""
+            try:
+                act0 = db.execute(
+                    "SELECT ip FROM member_activity WHERE user_id = ?"
+                    " AND ip IS NOT NULL AND ip != ''"
+                    " ORDER BY created_at ASC LIMIT 1", (d["id"],)).fetchone()
+                if act0:
+                    ip0 = act0["ip"] if not isinstance(act0, dict) \
+                        else act0.get("ip")
+                    if ip0:
+                        d["ciudad"] = _ciudad_de_ip(db, ip0) or ""
+            except Exception:
+                d["ciudad"] = ""
+            try:
+                tr = db.execute(
+                    "SELECT COUNT(*) AS n FROM tracked_plays"
+                    " WHERE user_id = ?", (d["id"],)).fetchone()
+                d["tracked_n"] = (
+                    tr["n"] if not isinstance(tr, dict)
+                    else tr.get("n")) or 0
+            except Exception:
+                d["tracked_n"] = 0
+            if d.get("stripe_subscription_id") or d.get("stripe_customer_id"):
+                d["stripe_txt"] = "Customer · Paid"
+                d["stripe_gold"] = False
+            elif d.get("platinum_trial_ends"):
+                d["stripe_txt"] = (
+                    "No payment · Free month until "
+                    + str(d["platinum_trial_ends"])[:10])
+                d["stripe_gold"] = True
+            else:
+                d["stripe_txt"] = "No payment"
+                d["stripe_gold"] = False
+            d["sms_txt"] = "Yes" if d.get("sms_optin") else "No"
+            d["telegram_txt"] = (
+                "Linked" if d.get("telegram_user_id") else "Not linked")
+            activos.append(d)
+    except Exception:
+        activos = []
     return render_template("admin_miembros.html", miembros=lista,
+                           activos=activos,
                            eventos=[dict(e) for e in eventos])
 
 
