@@ -129,7 +129,12 @@
       <p class="upl-recon">Every claim reconciles to the public graded ledger.</p>
     </div>
     {% endif %}
-    {% if stripe_embed_ok %}
+    {% if anonimo %}
+    <div style="margin:14px 0 0;text-align:center;">
+      <a class="upl-cta" href="{{ url_for('login', next=url_for('desbloquear_platinum')) }}">Log in to unlock &rarr;</a>
+      <p style="margin:10px 0 0;font-size:12.5px;color:#a8b3cf;">New here? <a href="{{ url_for('register') }}" style="color:#7dd3fc;font-weight:800;">Create your free account</a> — it takes a minute — then tap Unlock Platinum to start your $1 week.</p>
+    </div>
+    {% elif stripe_embed_ok %}
     <div class="upl-embbox" id="upl-emb-box">
       <p class="upl-embload" id="upl-emb-loading">Loading secure checkout…</p>
       <div id="upl-emb"></div>
@@ -146,7 +151,7 @@
     <p class="upl-record">★ Official record {{ board.record }} ({{ board.win_rate }}%) · every ticket graded in public</p>
   </div>
 
-  {% if stripe_embed_ok %}
+  {% if stripe_embed_ok and not anonimo %}
   <script src="https://js.stripe.com/v3"></script>
   <script>
   (function(){
