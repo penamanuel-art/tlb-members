@@ -290,6 +290,12 @@ twq('config','rhgk7');
         <input id="f-email" type="email" name="email" required autocomplete="email" placeholder="you@email.com">
       </div>
       <div class="field">
+        <label for="f-phone">Your phone number</label>
+        <p class="hint">Optional — get the plays by text the moment they drop.</p>
+        <input id="f-phone" type="tel" name="phone" autocomplete="tel" placeholder="(555) 123-4567">
+        <label for="f-sms" style="display:flex;gap:8px;align-items:center;margin-top:10px;font-size:.85rem;color:#a8b3cf;cursor:pointer;"><input id="f-sms" type="checkbox" name="sms_optin" value="1" style="width:17px;height:17px;accent-color:#2fe6a7;"> Text me the plays when they go live</label>
+      </div>
+      <div class="field">
         <label for="f-password">Password</label>
         <input id="f-password" type="password" name="password" required minlength="6" autocomplete="new-password" placeholder="Minimum 6 characters">
       </div>
@@ -299,7 +305,6 @@ twq('config','rhgk7');
       {% endif %}
       <button class="btn" type="submit">Create my free account<small>then see today's plays →</small></button>
     </form>
-    <div class="later-note">📱 <b>Phone &amp; text alerts?</b> Optional — add them later in your account, only if you want them.</div>
     <div class="micro"><span><span class="mint">✓</span> No credit card</span><span><span class="mint">✓</span> No expiration</span><span><span class="mint">✓</span> Unsubscribe anytime</span></div>
     <p class="login-line">Already have an account? <a href="{{ url_for('login') }}">Log in here →</a></p>
   </div>
