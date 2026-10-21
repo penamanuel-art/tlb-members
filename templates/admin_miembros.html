@@ -12,6 +12,22 @@
   .mx-status.free{background:#22345c;color:#aebdd4;}
   .mx-status.adm{background:#22c55e;color:#08130c;}
   .mx-more{color:#7dd3fc;font-size:12.5px;font-weight:700;flex:none;white-space:nowrap;}
+  .av-head{display:flex;align-items:center;gap:10px;margin:26px 0 10px;}
+  .av-title{font-size:17px;font-weight:900;letter-spacing:1.5px;color:#ffffff;}
+  .av-count{margin-left:auto;background:#f59e0b;color:#1a1000;font-size:12px;font-weight:900;border-radius:999px;padding:4px 11px;}
+  .av-rule{font-size:12.5px;color:#8fa1bd;margin:0 0 14px;}
+  .av-card{background:linear-gradient(160deg,#101828,#0c1322);border:1px solid #1e2a45;border-radius:18px;padding:18px;margin-bottom:14px;}
+  .av-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;}
+  .av-name{font-size:19px;font-weight:800;color:#ffffff;line-height:1.2;}
+  .av-email{font-size:13px;color:#8fa1bd;margin-top:3px;word-break:break-all;}
+  .av-status{flex:none;font-size:11px;font-weight:800;letter-spacing:1px;padding:6px 12px;border-radius:999px;white-space:nowrap;background:linear-gradient(180deg,#ffd9a0,#f59e0b);color:#3a2200;}
+  .av-rows{margin-top:14px;border-top:1px solid #1e2a45;padding-top:12px;display:flex;flex-direction:column;gap:8px;}
+  .av-row{display:flex;justify-content:space-between;align-items:center;font-size:13.5px;gap:10px;}
+  .av-row .k{color:#8fa1bd;}
+  .av-row .v{color:#e6ecf5;font-weight:700;text-align:right;}
+  .av-row .v.gold{color:#f5c542;}
+  .av-row .v.green{color:#2fe6a7;}
+  .av-row .v.dim{color:#8fa1bd;font-weight:600;}
 </style>
 
 <section class="tracker-head">
@@ -20,6 +36,39 @@
     <h2>{{ miembros|length }} member{{ 's' if miembros|length != 1 }}</h2>
   </div>
 </section>
+
+{% if activos %}
+<div class="av-head">
+  <span style="font-size:22px">🔥</span>
+  <span class="av-title">ACTIVE &amp; VERIFIED</span>
+  <span class="av-count">{{ activos|length }}</span>
+</div>
+<p class="av-rule">Confirmed email + activity on 2 or more different days. Updates on its own: whoever stops coming drops off, whoever returns joins.</p>
+{% for a in activos %}
+<article class="av-card">
+  <div class="av-top">
+    <div>
+      <div class="av-name">{{ a.nombre }}</div>
+      <div class="av-email">{{ a.email }}</div>
+    </div>
+    <span class="av-status">🔥 ACTIVE</span>
+  </div>
+  <div class="av-rows">
+    <div class="av-row"><span class="k">✅ Confirmed</span><span class="v green">{{ a.confirmado_txt }}</span></div>
+    <div class="av-row"><span class="k">📧 Emails</span><span class="v">Receiving</span></div>
+    <div class="av-row"><span class="k">📊 Total entries</span><span class="v">{{ a.entradas }}</span></div>
+    <div class="av-row"><span class="k">📅 Active days</span><span class="v">{{ a.dias }}</span></div>
+    <div class="av-row"><span class="k">🕐 Last entry</span><span class="v">{{ a.ultima_txt }}</span></div>
+    {% if a.ciudad %}<div class="av-row"><span class="k">📍 City</span><span class="v">{{ a.ciudad }}</span></div>{% endif %}
+    <div class="av-row"><span class="k">📱 Phone</span><span class="v">{{ a.phone or '—' }}</span></div>
+    <div class="av-row"><span class="k">💬 SMS alerts</span><span class="v{% if a.sms_optin %} green{% else %} dim{% endif %}">{{ a.sms_txt }}</span></div>
+    <div class="av-row"><span class="k">✈️ Telegram</span><span class="v{% if a.telegram_user_id %} green{% else %} dim{% endif %}">{{ a.telegram_txt }}</span></div>
+    <div class="av-row"><span class="k">💳 Stripe</span><span class="v{% if a.stripe_gold %} gold{% endif %}">{{ a.stripe_txt }}</span></div>
+    <div class="av-row"><span class="k">🎯 Tracked plays</span><span class="v">{{ a.tracked_n }}</span></div>
+  </div>
+</article>
+{% endfor %}
+{% endif %}
 
 {% for m in miembros %}
 <a class="mx-item" href="{{ url_for('admin_miembro_detalle', user_id=m.id) }}">
