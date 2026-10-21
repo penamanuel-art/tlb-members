@@ -274,21 +274,29 @@ document.getElementById('nvX').addEventListener('click',function(){done();b.remo
    de la captura (radio 24px, padding 24/22, título 34px, sub-tarjeta de
    estado radio 18px con caja de icono de reloj). Solo esta página; el
    hub solo hereda colores, sin tocar su estructura. Acentos dorado
-   #e8c766 y menta #2ee6a8 intactos. Reversible: quitar este bloque. ═══ */
-body.v2{background-color:#030409;background-image:radial-gradient(640px 300px at 85% -60px,rgba(232,199,102,.07),transparent 60%),radial-gradient(520px 380px at -10% 40%,rgba(46,230,168,.035),transparent 60%),linear-gradient(180deg,#060913 0%,#04060d 45%,#030409 100%)}
-body.v2 .lux-head,body.v2 .lux-panel,body.v2 .lux-rec-card,body.v2 .v2-br,body.v2 .db-diff-card,body.v2 .yw-sum,body.v2 .yw-card,body.v2 .board-empty,body.v2 .v2-mc-feat,body.v2 .v2-process,body.v2 .v5c,body.v2 .hub,body.v2 .f1b-rec{background:linear-gradient(180deg,#151f38,#0e1626);border:1px solid rgba(255,255,255,.12)!important}
-body.v2 .lux-receipts .ticket-card,body.v2 .tstc,body.v2 .tk-card,body.v2 .lux-pill,body.v2 .lux-fulllink{border:1px solid rgba(255,255,255,.12)!important}
-body.v2 .hub-row{background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.06)!important}
-body.v2 .lux-head{padding:24px 22px 22px;margin-top:12px;border-radius:24px}
+   #e8c766 y menta #2ee6a8 intactos. Reversible: quitar este bloque.
+   ═══ 2ª PASADA (2026-10-21, Alex con captura de SU teléfono: «ni se
+   ven los bordes de las tarjetas»): tarjeta principal MÁS GRANDE
+   (padding 28px, radio 26px, título 39px, saludo 18px, sub-tarjeta
+   padding 20px e icono de 54px) y contraste DECISIVO verificado en
+   pantalla (Chromium 390px + muestreo de píxeles): fondo de página
+   prácticamente negro #04040a→#020203 sin brillos de color,
+   superficies #171f31→#111827 (un escalón claro sobre el fondo) y
+   borde fuerte rgba(255,255,255,.20) en todas las tarjetas. ═══ */
+body.v2{background-color:#020203;background-image:linear-gradient(180deg,#04040a 0%,#020203 100%)}
+body.v2 .lux-head,body.v2 .lux-panel,body.v2 .lux-rec-card,body.v2 .v2-br,body.v2 .db-diff-card,body.v2 .yw-sum,body.v2 .yw-card,body.v2 .board-empty,body.v2 .v2-mc-feat,body.v2 .v2-process,body.v2 .v5c,body.v2 .hub,body.v2 .f1b-rec{background:linear-gradient(180deg,#171f31,#111827);border:1px solid rgba(255,255,255,.20)!important}
+body.v2 .lux-receipts .ticket-card,body.v2 .tstc,body.v2 .tk-card,body.v2 .lux-pill,body.v2 .lux-fulllink{border:1px solid rgba(255,255,255,.20)!important}
+body.v2 .hub-row{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.18)!important}
+body.v2 .lux-head{padding:28px;margin-top:12px;border-radius:26px}
 body.v2 .lux-head-date{font-size:11.5px}
-body.v2 .lux-head-hi{margin-top:9px;font-size:17px}
-body.v2 .lux-head-title{font-size:34px;margin-top:2px}
-body.v2 .lux-head-card{padding:16px;margin-top:16px;gap:13px;border-radius:18px;border:1px solid rgba(255,255,255,.12)!important}
+body.v2 .lux-head-hi{margin-top:10px;font-size:18px}
+body.v2 .lux-head-title{font-size:39px;margin-top:3px}
+body.v2 .lux-head-card{padding:20px;margin-top:18px;gap:15px;border-radius:18px;border:1px solid rgba(255,255,255,.20)!important}
 body.v2 .lux-head-card.pend{background:#0a101f}
 body.v2 .lux-head-card.pend .lux-head-ico{background:rgba(232,199,102,.16);color:#e8c766}
-body.v2 .lux-head-ico{width:47px;height:47px;border-radius:14px;font-size:23px}
-body.v2 .lux-head-card b{font-size:16.5px}
-body.v2 .lux-head-card p{font-size:13px}
+body.v2 .lux-head-ico{width:54px;height:54px;border-radius:16px;font-size:26px}
+body.v2 .lux-head-card b{font-size:17px}
+body.v2 .lux-head-card p{font-size:13.5px}
 </style>
 <header class="lux-head">
   <p class="lux-head-date">{{ fecha }} &middot; ET</p>
