@@ -336,7 +336,8 @@ body.v2 .f1b-rec{margin:18px 0 0}
 {% set card_lux = true %}
 <!-- TODAY'S PLAYS · tarjetas con la paleta de la página (card_lux) -->
 <section class="v2-sec" id="plays" style="scroll-margin-top:70px;">
-  {% if not card_pendiente %}
+  {% set golds = plays | selectattr('nivel', 'equalto', 'GOLD') | list %}
+  {% if golds %}
   <div class="v2-sec-head">
     <div style="display:flex;align-items:baseline;gap:10px">
       <h2 class="v2-sec-title" style="font-size:20px">Your plays</h2>
@@ -349,7 +350,6 @@ body.v2 .f1b-rec{margin:18px 0 0}
   {# Estado vacío del board (Alex, 2026-10-20): sin título por fuera ni
      cuenta regresiva — solo la cajita «The board is not posted yet». #}
 
-  {% set golds = plays | selectattr('nivel', 'equalto', 'GOLD') | list %}
   {% if card_pendiente %}
   <style>
   .board-empty{background:linear-gradient(165deg,#26303f,#1c2431 60%,#1a222e);border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:18px 16px;text-align:center}
