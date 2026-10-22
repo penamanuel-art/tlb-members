@@ -401,21 +401,9 @@ body.v2 .f1b-rec{margin:18px 0 0}
   {% endif %}
 </section>
 
-{% if record_stats %}
-{# FASE 1B (para TODOS desde el 2026-10-21): franja compacta de récord
-   justo tras las jugadas — el récord va arriba y una sola vez en todo
-   el Home; la sección completa del récord quedó retirada del render
-   para todos (código preservado en comentario más abajo). #}
-{% set _rg = record_stats.general %}
-<a class="f1b-rec" href="{{ url_for('official_tracker') }}">
-  <span class="f1b-rec-main">
-    <span class="f1b-rec-k">OFFICIAL RECORD</span>
-    <span class="f1b-rec-row"><span class="f1b-rec-n">{{ _rg.record }}</span><span class="f1b-rec-u{% if _rg.profit < 0 %} neg{% endif %}">{{ _rg.units_display }}</span></span>
-  </span>
-  <span class="f1b-rec-s">{{ _rg.win_rate }}% win rate<br>{{ _rg.roi }}% ROI</span>
-  <span class="f1b-rec-go">›</span>
-</a>
-{% endif %}
+{# Franja «OFFICIAL RECORD» ELIMINADA del Home (2026-10-22, orden de
+   Alex: «elimina eso» — limpieza del Dashboard; el récord completo
+   sigue en el Official Tracker). #}
 
 {% if hot_cards %}
 <!-- RUNNING HOT (2026-10-22, pedido por Alex): franja deslizable de
