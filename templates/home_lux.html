@@ -339,7 +339,7 @@ body.v2 .f1b-rec{margin:18px 0 0}
   {% if not card_pendiente %}
   <div class="v2-sec-head">
     <div style="display:flex;align-items:baseline;gap:10px">
-      <h2 class="v2-sec-title">Your plays</h2>
+      <h2 class="v2-sec-title" style="font-size:20px">Your plays</h2>
       <span style="color:#8fa1c2;font-size:15px;font-weight:600">Gold</span>
     </div>
     {# Encabezado estilo «Your plays · Gold» (Alex, 2026-10-22): fuera el
@@ -381,7 +381,10 @@ body.v2 .f1b-rec{margin:18px 0 0}
      su carta abierta como siempre; sin card, no ve aviso. #}
   {% set plat = plays | selectattr('nivel', 'equalto', 'ELITE') | list %}
   {% if plat or locked_plays or not platinum_unlocked %}
-  <p class="v2-sec-eyebrow" style="margin:22px 0 10px;color:#e8c766">Today's Platinum Selection</p>
+  <div style="display:flex;align-items:baseline;gap:10px;margin:22px 0 10px">
+      <h2 class="v2-sec-title" style="font-size:20px">Your plays</h2>
+      <span style="color:#8fa1c2;font-size:15px;font-weight:600">Platinum</span>
+    </div>
   <div class="v2-plays">
     {% if platinum_unlocked %}
       {% for p in plat %}
