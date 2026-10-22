@@ -832,14 +832,70 @@ def _turnstile_ok() -> bool:
         return False
 
 
-_ACTIVATION_FOOTER = """<div style="text-align:center;padding:16px 18px 13px;">
-<img src="https://www.thesharpteam.bet/static/img/sharp-team-logo.png" alt="The Sharp Team" width="80" style="width:80px;height:auto;display:block;margin:0 auto;border:0;">
-<p style="margin:9px 0 0;color:#e8c766;font-size:11px;font-weight:800;letter-spacing:3px;">THE SHARP TEAM</p>
-<p style="margin:7px 0 0;color:#7e8db0;font-size:10px;">250 Park Avenue, Suite 1800, New York, NY 10017</p>
-<p style="margin:3px 0 0;color:#7e8db0;font-size:10px;"><a href="tel:+15513263312" style="color:#7e8db0;text-decoration:none;">(551) 326-3312</a></p>
-<p style="margin:10px 0 0;color:#7e8db0;font-size:9.5px;">21+. Play responsibly. If you or someone you know has a gambling problem, call or text <a href="tel:18004262537" style="color:#7e8db0;text-decoration:underline;">1-800-GAMBLER</a>.</p>
-<p style="margin:8px 0 0;color:#7e8db0;font-size:9.5px;">Don't want these emails anymore? <a href="{{{RESEND_UNSUBSCRIBE_URL}}}" style="color:#7e8db0;text-decoration:underline;">Unsubscribe</a> — one click, no questions asked.</p>
-<p style="margin:5px 0 0;color:#7e8db0;font-size:9.5px;">&copy; 2026 The Sharp Team</p></div>"""
+_ACTIVATION_FOOTER = """<tr><td style="background:#ffffff;border-top:1px solid #e2e8f0;border-radius:0 0 16px 16px;padding:22px 24px 20px;text-align:center;">
+<img src="https://www.thesharpteam.bet/static/img/sharp-team-logo.png" width="76" alt="The Sharp Team" style="display:block;margin:0 auto 8px;">
+<div style="font-size:15px;font-weight:800;color:#0f172a;letter-spacing:1.5px;">THE SHARP TEAM</div>
+<div style="font-size:12.5px;color:#64748b;margin-top:5px;">250 Park Avenue, Suite 1800, New York, NY 10017 &middot; (551) 326-3312</div>
+<div style="margin-top:12px;">
+<a href="https://www.instagram.com/the_sharp_team" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/instagram.png" width="30" height="30" alt="Instagram" style="border:0;margin:0 6px;"></a>
+<a href="https://x.com/thesharpteambet" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/x.png" width="30" height="30" alt="X" style="border:0;margin:0 6px;"></a>
+<a href="https://t.me/thesharpteam" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/telegram.png" width="30" height="30" alt="Telegram" style="border:0;margin:0 6px;"></a>
+</div>
+<div style="font-size:11.5px;color:#64748b;line-height:1.5;margin-top:12px;">21+. Play responsibly. If you or someone you know has a gambling problem, call or text 1-800-GAMBLER.</div>
+<div style="font-size:11.5px;color:#64748b;margin-top:8px;">Don't want these emails anymore? <a href="{{{RESEND_UNSUBSCRIBE_URL}}}" style="color:#64748b;text-decoration:underline;">Unsubscribe</a> — one click, no questions asked.</div>
+<div style="font-size:11.5px;margin-top:8px;"><a href="https://www.thesharpteam.bet/terms" style="color:#64748b;">Terms</a> &middot; <a href="https://www.thesharpteam.bet/privacy" style="color:#64748b;">Privacy Policy</a></div>
+<div style="font-size:11px;color:#94a3b8;margin-top:6px;">&copy; 2026 The Sharp Team. All rights reserved.</div>
+</td></tr>"""
+
+
+def _activation_shell(titulo, cuerpo, boton, nota, link, lang="en"):
+    """Carcasa de los emails de activación — Diseño D (2026-10-22,
+    aprobado por Alex: fondo claro, cero negro, línea verde 3D y el pie
+    universal claro con iconos). La usan la activación y su
+    recordatorio; los textos llegan de cada función."""
+    if lang == "es":
+        eyebrow = "UN ÚLTIMO PASO"
+        checks = ("Tus jugadas Gold se activan de inmediato",
+                  "Tu Dashboard se abre en cuanto activas tu cuenta",
+                  "Platinum empieza por $1 cuando quieras")
+        o_abre = "O abre este enlace:"
+    else:
+        eyebrow = "ONE LAST STEP"
+        checks = ("Your Gold plays go live right away",
+                  "Your Dashboard opens the moment you activate",
+                  "Platinum starts for $1 whenever you're ready")
+        o_abre = "Or open this link:"
+    checks_html = "".join(
+        f'<tr><td style="font-size:14.5px;color:#065f46;padding:3px 0;">&#10003;&nbsp; {c}</td></tr>'
+        for c in checks)
+    return f"""<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#f1f5f9;font-family:-apple-system,Helvetica,Arial,sans-serif;-webkit-text-size-adjust:100%;text-size-adjust:100%;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f1f5f9;">
+<tr><td align="center" style="padding:22px 12px 30px;">
+<table role="presentation" width="480" cellpadding="0" cellspacing="0" style="max-width:480px;width:100%;">
+  <tr><td style="background:#ffffff;border-radius:16px 16px 0 0;padding:24px 28px 0;text-align:center;">
+    <img src="https://www.thesharpteam.bet/static/img/sharp-team-logo.png" width="92" alt="The Sharp Team" style="display:block;margin:0 auto;border:0;">
+    <div style="font-size:13.5px;font-weight:800;color:#0f172a;letter-spacing:3px;margin-top:10px;">THE SHARP TEAM</div>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:16px 0 0;"><tr><td bgcolor="#9ff7d4" height="3" style="height:3px;font-size:0;line-height:0;border-top-left-radius:3px;border-top-right-radius:3px;">&nbsp;</td></tr><tr><td bgcolor="#2ee6a8" height="6" style="height:6px;font-size:0;line-height:0;">&nbsp;</td></tr><tr><td bgcolor="#0b8a5f" height="3" style="height:3px;font-size:0;line-height:0;border-bottom-left-radius:3px;border-bottom-right-radius:3px;">&nbsp;</td></tr></table>
+  </td></tr>
+  <tr><td style="background:#ffffff;padding:22px 28px 6px;text-align:center;">
+    <div style="color:#b45309;font-size:11.5px;font-weight:800;letter-spacing:2px;">{eyebrow}</div>
+    <div style="font-size:25px;font-weight:900;color:#0f172a;margin-top:8px;">{titulo}</div>
+    <p style="font-size:15px;line-height:1.6;color:#334155;margin:14px 0 0;">{cuerpo}</p>
+    <table role="presentation" cellpadding="0" cellspacing="0" align="center" style="margin:18px auto 2px;text-align:left;">
+      {checks_html}
+    </table>
+    <div style="padding:20px 0 4px;">
+      <a href="{link}" style="display:inline-block;background:#059669;color:#ffffff;font-size:15px;font-weight:800;padding:14px 36px;border-radius:999px;text-decoration:none;">{boton}</a>
+    </div>
+    <p style="font-size:12px;color:#64748b;margin:12px 0 0;">{o_abre}<br><a href="{link}" style="color:#2563eb;text-decoration:underline;">{link}</a></p>
+    <p style="font-size:11.5px;color:#94a3b8;line-height:1.5;margin:14px 0 0;">{nota}</p>
+  </td></tr>
+  {_ACTIVATION_FOOTER}
+</table>
+</td></tr></table>
+</body></html>"""
 
 
 def send_activation_email(nombre: str, email: str, token: str, lang: str = "en"):
@@ -878,22 +934,7 @@ def send_activation_email(nombre: str, email: str, token: str, lang: str = "en")
                  "when you activate, and Platinum starts for $1 whenever "
                  "you're ready. If you didn't create this "
                  "account, ignore this email.\n\nThe Sharp Team")
-    html = f"""<html><body style="margin:0;background:#070d1d;padding:24px 10px;font-family:Arial,Helvetica,sans-serif;">
-<div style="max-width:480px;margin:0 auto;background:#0e1730;border:1px solid #d4af37;border-radius:14px;overflow:hidden;">
-<div style="text-align:center;padding:22px 18px 4px;">
-<img src="https://www.thesharpteam.bet/static/img/sharp-team-logo.png" alt="The Sharp Team" width="110" style="width:110px;height:auto;border:0;">
-<p style="margin:12px 0 0;color:#e8c766;font-size:11px;font-weight:800;letter-spacing:3px;">THE SHARP TEAM</p>
-</div>
-<div style="padding:10px 26px 4px;text-align:center;">
-<p style="margin:0;color:#ffffff;font-size:21px;font-weight:800;">{titulo}</p>
-<p style="margin:10px 0 0;color:#a8b3cf;font-size:13.5px;line-height:1.6;">{cuerpo}</p>
-<div style="padding:18px 0 6px;">
-<a href="{link}" style="display:inline-block;background:#2f7bff;color:#ffffff;font-size:14px;font-weight:800;padding:13px 30px;border-radius:999px;text-decoration:none;">{boton}</a>
-</div>
-<p style="margin:8px 0 0;color:#7e8db0;font-size:11px;line-height:1.5;">{nota}</p>
-</div>
-{_ACTIVATION_FOOTER}
-</div></body></html>"""
+    html = _activation_shell(titulo, cuerpo, boton, nota, link, lang)
 
     def _send():
         try:
@@ -944,22 +985,7 @@ def send_activation_reminder_email(nombre: str, email: str, token: str, lang: st
                  "Your Gold plays go live when you confirm, and Platinum "
                  "starts for $1 whenever you're ready. If you "
                  "didn't create this account, ignore this email.\n\nThe Sharp Team")
-    html = f"""<html><body style="margin:0;background:#070d1d;padding:24px 10px;font-family:Arial,Helvetica,sans-serif;">
-<div style="max-width:480px;margin:0 auto;background:#0e1730;border:1px solid #d4af37;border-radius:14px;overflow:hidden;">
-<div style="text-align:center;padding:22px 18px 4px;">
-<img src="https://www.thesharpteam.bet/static/img/sharp-team-logo.png" alt="The Sharp Team" width="110" style="width:110px;height:auto;border:0;">
-<p style="margin:12px 0 0;color:#e8c766;font-size:11px;font-weight:800;letter-spacing:3px;">THE SHARP TEAM</p>
-</div>
-<div style="padding:10px 26px 4px;text-align:center;">
-<p style="margin:0;color:#ffffff;font-size:21px;font-weight:800;">{titulo}</p>
-<p style="margin:10px 0 0;color:#a8b3cf;font-size:13.5px;line-height:1.6;">{cuerpo}</p>
-<div style="padding:18px 0 6px;">
-<a href="{link}" style="display:inline-block;background:#2f7bff;color:#ffffff;font-size:14px;font-weight:800;padding:13px 30px;border-radius:999px;text-decoration:none;">{boton}</a>
-</div>
-<p style="margin:8px 0 0;color:#7e8db0;font-size:11px;line-height:1.5;">{nota}</p>
-</div>
-{_ACTIVATION_FOOTER}
-</div></body></html>"""
+    html = _activation_shell(titulo, cuerpo, boton, nota, link, lang)
     return _dispatch_email(email, subject, texto, html)
 
 
