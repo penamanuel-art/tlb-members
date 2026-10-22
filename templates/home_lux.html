@@ -420,8 +420,10 @@ body.v2 .f1b-rec{margin:18px 0 0}
 {% if hot_cards %}
 <!-- RUNNING HOT (2026-10-22, pedido por Alex): franja deslizable de
      rachas vigentes calculada desde las jugadas liquidadas (oficiales
-     por programa y por liga + VALUE del sistema). Solo aparece si al
-     menos una racha califica; cada tarjeta enlaza al Official Tracker. -->
+     por programa y por liga + VALUE del sistema). Cada tarjeta lleva
+     el color de SU programa (acento en borde, sello, puntos y enlace);
+     las derrotas son aros rojos vacíos. Solo aparece si al menos una
+     racha califica; cada tarjeta enlaza al Official Tracker. -->
 <style>
   .rh-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin:20px 0 0}
   .rh-title{font-size:21px;font-weight:800;letter-spacing:-.3px;color:#eef2f8}
@@ -429,17 +431,23 @@ body.v2 .f1b-rec{margin:18px 0 0}
   .rh-ledger{flex:none;background:#131e31;border:1px solid #24334d;color:#dbe4f2;font-size:12.5px;font-weight:600;padding:8px 12px;border-radius:10px;text-decoration:none}
   .rh-rail{display:flex;gap:10px;overflow-x:auto;padding:14px 2px 8px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none}
   .rh-rail::-webkit-scrollbar{display:none}
-  .rh-card{flex:0 0 78%;scroll-snap-align:start;background:linear-gradient(165deg,#131e31,#0d1626);border:1px solid rgba(46,230,168,.35);border-left:4px solid #2ee6a8;border-radius:16px;padding:14px;text-decoration:none;display:block}
-  .rh-badge{display:inline-block;font-size:10px;font-weight:800;letter-spacing:1.4px;color:#5eeaa0;background:rgba(46,230,168,.12);border:1px solid rgba(46,230,168,.4);padding:5px 9px;border-radius:8px}
+  .rh-card{flex:0 0 78%;scroll-snap-align:start;background:linear-gradient(165deg,#131e31,#0d1626);border:1px solid #24334d;border-left:4px solid var(--rhc);border-radius:16px;padding:14px;text-decoration:none;display:block}
+  .rh-badge{display:inline-block;font-size:10px;font-weight:800;letter-spacing:1.4px;color:var(--rhc);background:rgba(255,255,255,.05);border:1px solid var(--rhc);padding:5px 9px;border-radius:8px}
   .rh-tag{float:right;color:#c7d2e4;font-size:12px;font-weight:700;letter-spacing:.6px}
-  .rh-big{color:#fff;font-size:42px;font-weight:800;margin:12px 0 2px}
+  .rh-bigrow{display:flex;align-items:center;gap:10px;margin:12px 0 2px}
+  .rh-big{color:#fff;font-size:42px;font-weight:800}
+  .rh-pct{font-size:14px;font-weight:800;color:var(--rhc);background:rgba(255,255,255,.06);border:1px solid var(--rhc);padding:4px 8px;border-radius:8px}
   .rh-desc{color:#dbe4f2;font-size:14.5px}
-  .rh-dots{margin:12px 0 14px;display:flex;gap:5px}
-  .rh-dots i{width:11px;height:11px;border-radius:50%;background:#2ee6a8;display:block}
-  .rh-dots i.off{background:#33415c}
+  .rh-pill{display:inline-block;margin-top:10px;font-size:10px;font-weight:700;letter-spacing:1.2px;color:#8fa1c2;background:#131e31;border:1px solid #24334d;padding:4px 8px;border-radius:7px}
+  .rh-dots{margin:12px 0 14px;display:flex;gap:5px;flex-wrap:wrap}
+  .rh-dots i{width:11px;height:11px;border-radius:50%;background:var(--rhc);display:block}
+  .rh-dots i.off{background:transparent;border:2px solid #f26d6d;width:8px;height:8px;margin:1.5px}
   .rh-foot{display:flex;justify-content:space-between;align-items:center;color:#8fa1c2;font-size:12px}
-  .rh-see{color:#2ee6a8;font-weight:700;font-size:13.5px}
-  .rh-cap{color:#8fa1c2;font-size:12px;margin-top:2px}
+  .rh-see{color:var(--rhc);font-weight:700;font-size:13.5px}
+  .rh-pager{display:flex;gap:5px;justify-content:center;margin-top:2px}
+  .rh-pager i{width:6px;height:6px;border-radius:50%;background:#33415c;display:block}
+  .rh-pager i.on{background:#fff}
+  .rh-cap{color:#8fa1c2;font-size:12px;margin-top:6px}
 </style>
 <section>
   <div class="rh-head">
@@ -449,17 +457,24 @@ body.v2 .f1b-rec{margin:18px 0 0}
     </div>
     <a class="rh-ledger" href="{{ url_for('official_tracker') }}">Full record</a>
   </div>
-  <div class="rh-rail">
+  <div class="rh-rail" id="rhRail">
     {% for c in hot_cards %}
-    <a class="rh-card" href="{{ url_for('official_tracker') }}">
+    <a class="rh-card" style="--rhc:{{ c.color }}" href="{{ url_for('official_tracker') }}">
       <span class="rh-badge">{{ c.badge }}</span><span class="rh-tag">{{ c.tag }}</span>
-      <div class="rh-big">{{ c.big }}</div>
+      <div class="rh-bigrow"><span class="rh-big">{{ c.big }}</span>{% if c.pct %}<span class="rh-pct">{{ c.pct }}</span>{% endif %}</div>
       <div class="rh-desc">{{ c.desc }}</div>
+      <span class="rh-pill">{{ c.pill }}</span>
       <div class="rh-dots">{% for w in c.dots %}<i{% if not w %} class="off"{% endif %}></i>{% endfor %}</div>
       <div class="rh-foot"><span>Graded win or lose</span><span class="rh-see">See the plays ›</span></div>
     </a>
     {% endfor %}
   </div>
+  {% if hot_cards|length > 1 %}
+  <div class="rh-pager" id="rhPager">{% for c in hot_cards %}<i{% if loop.first %} class="on"{% endif %}></i>{% endfor %}</div>
+  <script>
+  (function(){var r=document.getElementById('rhRail'),p=document.getElementById('rhPager');if(!r||!p)return;var d=p.children;r.addEventListener('scroll',function(){var i=Math.round(r.scrollLeft/(r.scrollWidth-r.clientWidth||1)*(d.length-1));for(var k=0;k<d.length;k++){d[k].className=(k===i?'on':'');}},{passive:true});})();
+  </script>
+  {% endif %}
   <p class="rh-cap">Tap any run to see all its plays — wins and losses.</p>
 </section>
 {% endif %}
