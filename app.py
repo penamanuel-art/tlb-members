@@ -3720,6 +3720,87 @@ def admin_diseno_home():
     return redirect(url_for("home"))
 
 
+def hot_run_cards(value_rows):
+    """Franja «Running hot» del Home (2026-10-22, pedido por Alex):
+    tarjetas de rachas calculadas EN VIVO desde las jugadas liquidadas
+    (archivo oficial + tracker VALUE del sistema). Solo salen rachas
+    reales que califican: últimas 10 con 7+ ganadas, últimas 5 con 4+
+    ganadas, o racha ganadora vigente de 2+. Si ninguna califica, la
+    sección no se muestra — nunca relleno."""
+    def _card(badge, tag, seq, scope):
+        if not seq:
+            return None
+        streak = 0
+        for r in reversed(seq):
+            if r == "W":
+                streak += 1
+            else:
+                break
+        n = len(seq)
+        if n >= 10:
+            w = seq[-10:].count("W")
+            if w >= 7:
+                return {"badge": badge, "tag": tag, "big": f"{w}\u2013{10 - w}",
+                        "desc": f"Last 10 {scope} plays",
+                        "dots": [r == "W" for r in seq[-10:]]}
+        if n >= 5:
+            w = seq[-5:].count("W")
+            if w >= 4:
+                extra = f" \u00b7 won the last {streak}" if streak >= 3 else ""
+                return {"badge": badge, "tag": tag, "big": f"{w}\u2013{5 - w}",
+                        "desc": f"Last 5 {scope} plays{extra}",
+                        "dots": [r == "W" for r in seq[-5:]]}
+        if streak >= 2:
+            return {"badge": badge, "tag": tag, "big": f"{streak}\u20130",
+                    "desc": f"Won the last {streak} {scope} plays",
+                    "dots": [True] * streak}
+        return None
+
+    settled = []
+    for d in sorted(load_archive(), key=lambda x: x.get("fecha") or ""):
+        for j in d.get("jugadas", []) or []:
+            if j.get("resultado") in ("WON", "LOST") and not j.get("bloqueada"):
+                settled.append(j)
+
+    def seq_of(filtro):
+        return ["W" if j["resultado"] == "WON" else "L"
+                for j in settled if filtro(j)]
+
+    cards = []
+    for badge, tag, seq, scope in (
+        ("OFFICIAL PLAYS", "ALL", seq_of(lambda j: True), "official"),
+        ("PLATINUM", "ALL",
+         seq_of(lambda j: (j.get("nivel") or "").upper() in ("ELITE", "PLATINUM")),
+         "Platinum"),
+        ("GOLD", "ALL",
+         seq_of(lambda j: (j.get("nivel") or "").upper() == "GOLD"), "Gold"),
+    ):
+        c = _card(badge, tag, seq, scope)
+        if c:
+            cards.append(c)
+    vseq = ["W" if r.get("resultado") == "W" else "L"
+            for r in sorted(value_rows,
+                            key=lambda r: (r.get("fecha") or "", r.get("id") or 0))
+            if r.get("resultado") in ("W", "L")]
+    c = _card("VALUE", "ALL", vseq, "value")
+    if c:
+        cards.append(c)
+    ligas = {}
+    for j in settled:
+        lg = _league_of_archive_play(j) or ""
+        if lg:
+            ligas.setdefault(lg, []).append(
+                "W" if j["resultado"] == "WON" else "L")
+    league_cards = []
+    for lg, s in ligas.items():
+        c = _card("OFFICIAL PLAYS", lg, s, lg)
+        if c:
+            league_cards.append(c)
+    league_cards.sort(key=lambda c: -len(c["dots"]))
+    cards.extend(league_cards)
+    return cards[:6]
+
+
 @app.route("/home")
 @login_required
 def home():
@@ -3756,6 +3837,10 @@ def home():
         "SELECT * FROM tracked_plays WHERE user_id = ? AND nivel = 'VALUE'",
         (VALUE_SYSTEM_USER_ID,),
     ).fetchall()
+    try:
+        hot_cards = hot_run_cards([dict(r) for r in system_value_rows])
+    except Exception:
+        hot_cards = []
     tracked_ids = {r["play_id"] for r in tracked_rows}
     tstats = compute_stats([dict(r) for r in tracked_rows])
     # tlevels incluye VALUE del sistema para la sección VALUE
@@ -3915,6 +4000,7 @@ def home():
         hoy_iso=_hoy_iso,
         ayer_iso=_ayer_iso,
         recientes_value=recientes_value(),
+        hot_cards=hot_cards,
         record_stats=official_tracker_full(),
         last_elite_win=last_elite_win(),
         locked_ticket_url=locked_ticket_url,
