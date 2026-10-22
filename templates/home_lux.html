@@ -338,11 +338,12 @@ body.v2 .f1b-rec{margin:18px 0 0}
 <section class="v2-sec" id="plays" style="scroll-margin-top:70px;">
   {% if not card_pendiente %}
   <div class="v2-sec-head">
-    <div>
-      <h2 class="v2-sec-title">Today's plays</h2>
-      <p class="v2-sec-sub">Tap a card for the ticket + write-up</p>
+    <div style="display:flex;align-items:baseline;gap:10px">
+      <h2 class="v2-sec-title">Your plays</h2>
+      <span style="color:#8fa1c2;font-size:15px;font-weight:600">Gold</span>
     </div>
-    {# "View my tracker" eliminado (2026-10-12): el Tracker ya vive en el menú inferior. #}
+    {# Encabezado estilo «Your plays · Gold» (Alex, 2026-10-22): fuera el
+       título «Today's plays», el subtítulo y el «No free plays today.». #}
   </div>
   {% endif %}
   {# Estado vacío del board (Alex, 2026-10-20): sin título por fuera ni
@@ -360,14 +361,11 @@ body.v2 .f1b-rec{margin:18px 0 0}
     <p class="board-empty-s">Your plays show here the moment they are posted.</p>
   </div>
   {% elif golds %}
-  <p class="v2-sec-eyebrow" style="margin-bottom:10px">Today's Free Selections</p>
   <div class="v2-plays">
     {% for p in golds %}
       {% include "_play_card_v5.html" %}
     {% endfor %}
   </div>
-  {% else %}
-  <p class="muted">No free plays today.</p>
   {% endif %}
 
   {# Sección Platinum — diseño C «Emblema» (Alex, 2026-10-20; REEMPLAZA
