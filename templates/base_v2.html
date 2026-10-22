@@ -98,7 +98,7 @@ twq('config','rhgk7');
   <div class="v2-topbar-right">
     {% if session.get('user_id') %}
     {% if es_admin or cuenta_es %}<button id="langToggle" class="v2-lang-btn notranslate" title="Ver en español">🇺🇸 EN</button>{% endif %}
-    <a href="{{ url_for('home', splash='0') }}#plays" class="v2-view-plays">View plays →</a>
+    <a href="{{ url_for('home', splash='0') }}#plays" class="v2-view-plays" style="color:#000000;-webkit-text-fill-color:#000000">View plays →</a>
     <div class="v2-menu-wrap">
       <button class="v2-icon-btn" id="v2menuBtn" aria-label="Menu">☰</button>
       <div class="v2-menu-drop" id="v2menuDrop" hidden>
