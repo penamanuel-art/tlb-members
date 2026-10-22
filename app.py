@@ -560,13 +560,13 @@ def saludo_hoy() -> str:
 def record_checkin(db, user_id: int):
     if db.use_pg:
         db.execute(
-            "INSERT INTO checkins (user_id, fecha) VALUES (?, ?) ON CONFLICT DO NOTHING",
-            (user_id, today_iso()),
+            "INSERT INTO checkins (user_id, fecha) SELECT ?, ? WHERE EXISTS (SELECT 1 FROM users WHERE id = ?) ON CONFLICT DO NOTHING",
+            (user_id, today_iso(), user_id),
         )
     else:
         db.execute(
-            "INSERT OR IGNORE INTO checkins (user_id, fecha) VALUES (?, ?)",
-            (user_id, today_iso()),
+            "INSERT OR IGNORE INTO checkins (user_id, fecha) SELECT ?, ? WHERE EXISTS (SELECT 1 FROM users WHERE id = ?)",
+            (user_id, today_iso(), user_id),
         )
     db.commit()
 
@@ -601,6 +601,13 @@ def login_required(view):
     @wraps(view)
     def wrapper(*args, **kwargs):
         if "user_id" not in session:
+            flash("Log in to continue.", "warn")
+            return redirect(url_for("login", next=request.path))
+        if current_user() is None:
+            # Sesion fantasma: la cuenta ya no existe (p. ej. eliminada en una
+            # limpieza). Sin esto, vistas como /home reventaban con 500 al
+            # registrar el checkin (FK violation) — bug real 2026-10-21.
+            session.clear()
             flash("Log in to continue.", "warn")
             return redirect(url_for("login", next=request.path))
         return view(*args, **kwargs)
