@@ -3727,7 +3727,7 @@ def hot_run_cards(value_rows):
     reales que califican: últimas 10 con 7+ ganadas, últimas 5 con 4+
     ganadas, o racha ganadora vigente de 2+. Si ninguna califica, la
     sección no se muestra — nunca relleno."""
-    def _card(badge, tag, seq, scope):
+    def _card(badge, tag, seq, scope, color):
         if not seq:
             return None
         streak = 0
@@ -3740,19 +3740,24 @@ def hot_run_cards(value_rows):
         if n >= 10:
             w = seq[-10:].count("W")
             if w >= 7:
-                return {"badge": badge, "tag": tag, "big": f"{w}\u2013{10 - w}",
-                        "desc": f"Last 10 {scope} plays",
+                return {"badge": badge, "tag": tag, "color": color,
+                        "big": f"{w}\u2013{10 - w}", "pct": f"{round(w / 10 * 100)}%",
+                        "desc": f"in the last 10 {scope} plays",
+                        "pill": "LAST 10 PLAYS",
                         "dots": [r == "W" for r in seq[-10:]]}
         if n >= 5:
             w = seq[-5:].count("W")
             if w >= 4:
-                extra = f" \u00b7 won the last {streak}" if streak >= 3 else ""
-                return {"badge": badge, "tag": tag, "big": f"{w}\u2013{5 - w}",
-                        "desc": f"Last 5 {scope} plays{extra}",
+                return {"badge": badge, "tag": tag, "color": color,
+                        "big": f"{w}\u2013{5 - w}", "pct": f"{round(w / 5 * 100)}%",
+                        "desc": f"in the last 5 {scope} plays",
+                        "pill": "LAST 5 PLAYS",
                         "dots": [r == "W" for r in seq[-5:]]}
         if streak >= 2:
-            return {"badge": badge, "tag": tag, "big": f"{streak}\u20130",
-                    "desc": f"Won the last {streak} {scope} plays",
+            return {"badge": badge, "tag": tag, "color": color,
+                    "big": f"{streak} straight", "pct": "",
+                    "desc": f"wins in a row \u00b7 {scope}",
+                    "pill": "CURRENT STREAK",
                     "dots": [True] * streak}
         return None
 
@@ -3767,22 +3772,23 @@ def hot_run_cards(value_rows):
                 for j in settled if filtro(j)]
 
     cards = []
-    for badge, tag, seq, scope in (
-        ("OFFICIAL PLAYS", "ALL", seq_of(lambda j: True), "official"),
+    for badge, tag, seq, scope, color in (
+        ("OFFICIAL PLAYS", "ALL", seq_of(lambda j: True), "official", "#2ee6a8"),
         ("PLATINUM", "ALL",
          seq_of(lambda j: (j.get("nivel") or "").upper() in ("ELITE", "PLATINUM")),
-         "Platinum"),
+         "Platinum", "#e8c766"),
         ("GOLD", "ALL",
-         seq_of(lambda j: (j.get("nivel") or "").upper() == "GOLD"), "Gold"),
+         seq_of(lambda j: (j.get("nivel") or "").upper() == "GOLD"), "Gold",
+         "#aebdd4"),
     ):
-        c = _card(badge, tag, seq, scope)
+        c = _card(badge, tag, seq, scope, color)
         if c:
             cards.append(c)
     vseq = ["W" if r.get("resultado") == "W" else "L"
             for r in sorted(value_rows,
                             key=lambda r: (r.get("fecha") or "", r.get("id") or 0))
             if r.get("resultado") in ("W", "L")]
-    c = _card("VALUE", "ALL", vseq, "value")
+    c = _card("VALUE", "ALL", vseq, "value", "#58a6ff")
     if c:
         cards.append(c)
     ligas = {}
@@ -3793,7 +3799,7 @@ def hot_run_cards(value_rows):
                 "W" if j["resultado"] == "WON" else "L")
     league_cards = []
     for lg, s in ligas.items():
-        c = _card("OFFICIAL PLAYS", lg, s, lg)
+        c = _card("OFFICIAL PLAYS", lg, s, lg, "#2ee6a8")
         if c:
             league_cards.append(c)
     league_cards.sort(key=lambda c: -len(c["dots"]))
