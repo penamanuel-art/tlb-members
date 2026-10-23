@@ -3411,6 +3411,48 @@ def back(fallback="home"):
 init_db()  # idempotente: crea las tablas si no existen
 
 
+def _ensure_mybets_schema():
+    """Tablas de My Bets completo (2026-10-23, pedido por Alex: agregar
+    TODO lo del tracker de referencia): apuestas propias del miembro y
+    sus ajustes. Idempotente; dialecto según USE_PG."""
+    try:
+        conn = _raw_connect()
+        if USE_PG:
+            conn.execute("""CREATE TABLE IF NOT EXISTS own_bets (
+                id SERIAL PRIMARY KEY,
+                user_id INTEGER NOT NULL REFERENCES users(id),
+                fecha TEXT NOT NULL, liga TEXT, juego TEXT, mercado TEXT,
+                pick TEXT NOT NULL, cuota INTEGER NOT NULL,
+                stake_monto DOUBLE PRECISION NOT NULL DEFAULT 0,
+                casa TEXT, resultado TEXT, cierre INTEGER,
+                event_id TEXT, lado TEXT, punto DOUBLE PRECISION,
+                foto TEXT, settled_at TEXT, created_at TEXT NOT NULL)""")
+            conn.execute("""CREATE TABLE IF NOT EXISTS mybets_settings (
+                user_id INTEGER PRIMARY KEY, unit_monto DOUBLE PRECISION,
+                email_pref TEXT NOT NULL DEFAULT 'daily', updated_at TEXT)""")
+        else:
+            conn.execute("""CREATE TABLE IF NOT EXISTS own_bets (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL REFERENCES users(id),
+                fecha TEXT NOT NULL, liga TEXT, juego TEXT, mercado TEXT,
+                pick TEXT NOT NULL, cuota INTEGER NOT NULL,
+                stake_monto REAL NOT NULL DEFAULT 0,
+                casa TEXT, resultado TEXT, cierre INTEGER,
+                event_id TEXT, lado TEXT, punto REAL,
+                foto TEXT, settled_at TEXT, created_at TEXT NOT NULL)""")
+            conn.execute("""CREATE TABLE IF NOT EXISTS mybets_settings (
+                user_id INTEGER PRIMARY KEY, unit_monto REAL,
+                email_pref TEXT NOT NULL DEFAULT 'daily', updated_at TEXT)""")
+        conn.execute("CREATE INDEX IF NOT EXISTS idx_own_user ON own_bets(user_id)")
+        conn.commit()
+        conn.close()
+    except Exception:
+        pass
+
+
+_ensure_mybets_schema()
+
+
 def migrate_db():
     """Migración segura: agrega columnas si faltan (sin borrar datos)."""
     conn = _raw_connect()
@@ -5581,7 +5623,592 @@ def tracker_plays():
     if user is None or is_admin_for(user) or not platinum_unlocked_for(user):
         return redirect(url_for("tracker"))
     ctx = _tracker_context(user)
+    all_rows = [dict(r, source="official") for r in ctx["rows"]] + \
+        [dict(r, source="own") for r in ctx.get("own_rows", [])]
+    all_rows.sort(key=lambda r: (r["fecha"], r["id"]), reverse=True)
+    for _r in all_rows:
+        _r.setdefault("clv_pts", None)
+        _r.setdefault("foto", "")
+        _r.setdefault("juego", "")
+        _r.setdefault("mercado", "Moneyline")
+        _r.setdefault("liga", "")
+        _r.setdefault("cierre", None)
+    f = {k: (request.args.get(k) or "").strip()
+         for k in ("source", "result", "market", "book", "q")}
+    def _ok(r):
+        if f["source"] and r.get("source") != f["source"]:
+            return False
+        if f["result"]:
+            res = r.get("resultado") or "PENDING"
+            if res != f["result"]:
+                return False
+        if f["market"] and (r.get("mercado") or "Moneyline") != f["market"]:
+            return False
+        if f["book"] and (r.get("casa") or "") != f["book"]:
+            return False
+        if f["q"]:
+            q = f["q"].lower()
+            if q not in (r.get("pick") or "").lower() and \
+               q not in (r.get("juego") or "").lower():
+                return False
+        return True
+    rows_f = [r for r in all_rows if _ok(r)]
+    books = sorted({(r.get("casa") or "") for r in all_rows if r.get("casa")})
+    markets = sorted({(r.get("mercado") or "Moneyline") for r in all_rows})
+    ctx.update(
+        rows=rows_f, all_rows=all_rows, filters=f,
+        stats_f=_stats_from_rows(rows_f),
+        breakdowns=_mybets_breakdowns(all_rows),
+        coach=_coach_insights(all_rows, ctx.get("stats_all") or {}),
+        books=books, markets=markets,
+    )
     return render_template("tracker_plays.html", **ctx)
+
+
+# ==================== My Bets completo (2026-10-23) ====================
+# Apuestas propias del miembro: registro manual, por foto o desde un
+# juego del Game Center; CLV por apuesta; calificación manual o
+# automática (script HF vía API admin); correos de liquidación.
+
+def _imp_prob(a):
+    """Probabilidad implícita de una cuota americana."""
+    try:
+        a = float(a)
+    except (TypeError, ValueError):
+        return None
+    if a == 0:
+        return None
+    return 100.0 / (a + 100.0) if a > 0 else (-a) / ((-a) + 100.0)
+
+
+def _own_profit(b):
+    """Profit en $ de una apuesta propia (W/L/P)."""
+    r = b.get("resultado")
+    stake = float(b.get("stake_monto") or 0)
+    if r == "W":
+        return stake * american_profit_ratio(b["cuota"])
+    if r == "L":
+        return -stake
+    return 0.0
+
+
+def _own_clv_pts(b):
+    """CLV en puntos: implícita del cierre − implícita de tu precio."""
+    if b.get("cierre") is None:
+        return None
+    pc = _imp_prob(b["cierre"])
+    pt = _imp_prob(b["cuota"])
+    if pc is None or pt is None:
+        return None
+    return round((pc - pt) * 100.0, 2)
+
+
+def _mybets_settings(db, uid, user=None):
+    """Ajustes de My Bets del miembro (unidad en $ y correo)."""
+    row = None
+    try:
+        row = db.execute(
+            "SELECT * FROM mybets_settings WHERE user_id = ?", (uid,)
+        ).fetchone()
+    except Exception:
+        row = None
+    unit = None
+    pref = "daily"
+    if row:
+        unit = row["unit_monto"]
+        pref = row["email_pref"] or "daily"
+    if not unit:
+        br = None
+        if user is not None:
+            try:
+                br = user["bankroll"]
+            except Exception:
+                br = None
+        unit = round(float(br) * 0.01, 2) if br else 100.0
+    return {"unit_monto": float(unit), "email_pref": pref}
+
+
+def _own_row(b, settings=None):
+    """Fila de apuesta propia con la forma que usan las plantillas."""
+    unit = float((settings or {}).get("unit_monto") or 100.0)
+    f = (b.get("fecha") or "").strip()
+    try:
+        fecha_corta = datetime.strptime(f, "%Y-%m-%d").strftime("%d %b %Y").upper()
+    except (ValueError, TypeError):
+        fecha_corta = f
+    stake = float(b.get("stake_monto") or 0)
+    return {
+        "id": b["id"], "source": "own",
+        "fecha": f, "fecha_corta": fecha_corta,
+        "pick": b.get("pick") or "", "juego": b.get("juego") or "",
+        "liga": b.get("liga") or "", "mercado": b.get("mercado") or "Moneyline",
+        "cuota": b.get("cuota"), "cuota_txt": fmt_odds(b.get("cuota")),
+        "stake_monto": stake,
+        "stake_unidades": round(stake / unit, 2) if unit else 0,
+        "casa": b.get("casa") or "", "resultado": b.get("resultado") or "",
+        "profit": _own_profit(b), "clv_pts": _own_clv_pts(b),
+        "cierre": b.get("cierre"), "foto": b.get("foto") or "",
+        "event_id": b.get("event_id") or "", "lado": b.get("lado") or "",
+        "punto": b.get("punto"), "settled_at": b.get("settled_at") or "",
+        "nivel": "", "marcador": "", "comprobante": "",
+        "abbr": "", "logo": "", "sport_icon": "🎯",
+    }
+
+
+def _stats_from_rows(rows):
+    """Estadísticas combinadas desde filas ya enriquecidas (oficiales y
+    propias): récord, profit, ROI, racha, pushes y CLV promedio."""
+    graded = [r for r in rows if r.get("resultado") in ("W", "L", "P")]
+    wins = sum(1 for r in graded if r["resultado"] == "W")
+    losses = sum(1 for r in graded if r["resultado"] == "L")
+    pushes = sum(1 for r in graded if r["resultado"] == "P")
+    net = sum(float(r.get("profit") or 0) for r in graded)
+    risked = sum(float(r.get("stake_monto") or 0) for r in graded)
+    roi = (net / risked * 100.0) if risked else 0.0
+    clvs = []
+    for r in rows:
+        if r.get("clv_pts") is not None and r.get("resultado") in ("W", "L", "P"):
+            clvs.append(r["clv_pts"])
+    ordered = sorted(graded, key=lambda r: (r["fecha"], r["id"]))
+    streak = "—"
+    wl = [r for r in ordered if r["resultado"] in ("W", "L")]
+    if wl:
+        last = wl[-1]["resultado"]
+        n = 0
+        for r in reversed(wl):
+            if r["resultado"] == last:
+                n += 1
+            else:
+                break
+        streak = f"W{n}" if last == "W" else f"L{n}"
+    return {
+        "tracked": len(rows), "pending": len(rows) - len(graded),
+        "wins": wins, "losses": losses, "pushes": pushes,
+        "risked": risked, "record": f"{wins}-{losses}",
+        "net_dollars": net, "roi": roi, "streak": streak,
+        "clv_avg": (sum(clvs) / len(clvs)) if clvs else None,
+        "win_rate": (wins / (wins + losses) * 100.0) if (wins + losses) else 0.0,
+    }
+
+
+def _mybets_breakdowns(rows):
+    """Desgloses por fuente, nivel, mercado, casa y liga."""
+    def _agg(keyfn):
+        out = {}
+        for r in rows:
+            k = keyfn(r)
+            if not k:
+                continue
+            d = out.setdefault(k, {"w": 0, "l": 0, "p": 0, "profit": 0.0,
+                                   "risked": 0.0, "n": 0})
+            d["n"] += 1
+            if r.get("resultado") == "W":
+                d["w"] += 1
+            elif r.get("resultado") == "L":
+                d["l"] += 1
+            elif r.get("resultado") == "P":
+                d["p"] += 1
+            if r.get("resultado") in ("W", "L", "P"):
+                d["profit"] += float(r.get("profit") or 0)
+                d["risked"] += float(r.get("stake_monto") or 0)
+        for d in out.values():
+            d["roi"] = (d["profit"] / d["risked"] * 100.0) if d["risked"] else 0.0
+        return sorted(out.items(), key=lambda kv: -kv[1]["n"])
+    return {
+        "source": _agg(lambda r: "Program plays" if r.get("source") == "official" else "My own bets"),
+        "market": _agg(lambda r: r.get("mercado") or "Moneyline"),
+        "book": _agg(lambda r: r.get("casa") or ""),
+        "league": _agg(lambda r: r.get("liga") or ""),
+        "level": _agg(lambda r: (nivel_display(r.get("nivel")) if r.get("source") == "official" else "")),
+    }
+
+
+def _coach_insights(rows, stats):
+    """Coach de My Bets: lecturas directas de los números del miembro
+    (deterministas, sin IA externa)."""
+    out = []
+    graded = [r for r in rows if r.get("resultado") in ("W", "L", "P")]
+    if len(graded) < 10:
+        out.append("Log at least 10 settled bets and your coach notes unlock — best markets, leaks and CLV trends, read straight from your numbers.")
+        return out
+    bd = _mybets_breakdowns(rows)
+    for label, key in (("market", "market"), ("book", "book"), ("league", "league")):
+        cats = [(k, d) for k, d in bd[key] if (d["w"] + d["l"]) >= 5]
+        if not cats:
+            continue
+        best = max(cats, key=lambda kv: kv[1]["roi"])
+        worst = min(cats, key=lambda kv: kv[1]["roi"])
+        if best[1]["roi"] > 0:
+            out.append(f"Your strongest {label}: {best[0]} — {best[1]['w']}-{best[1]['l']}, ROI {best[1]['roi']:+.1f}%. That is where your edge shows up.")
+        if worst[1]["roi"] < 0 and worst[0] != best[0]:
+            out.append(f"Your biggest leak: {worst[0]} ({label}) — {worst[1]['w']}-{worst[1]['l']}, ROI {worst[1]['roi']:+.1f}%. Smaller stakes there, or skip it until it turns.")
+        break
+    clv = stats.get("clv_avg")
+    if clv is not None:
+        if clv > 0:
+            out.append(f"You beat the closing line by {clv:+.2f} points on average. Beating the close is the clearest sign of a real edge — keep shopping prices.")
+        elif clv < 0:
+            out.append(f"Your prices close worse than you take them ({clv:+.2f} pts on average). Betting earlier or shopping one more book would fix most of that.")
+    return out[:3]
+
+
+def _mybets_gate():
+    """Puerta de My Bets: sesión + Platinum (igual que /tracker/plays)."""
+    user = current_user()
+    if user is None or is_admin_for(user) or not platinum_unlocked_for(user):
+        return None
+    return user
+
+
+def _email_own_settled(user, bet):
+    """Correo inmediato de liquidación de una apuesta propia (si el
+    miembro eligió 'immediate' en sus ajustes de My Bets)."""
+    try:
+        db = get_db()
+        st = _mybets_settings(db, user["id"], user)
+        if st["email_pref"] != "immediate":
+            return
+        res = bet.get("resultado")
+        if res not in ("W", "L", "P"):
+            return
+        profit = _own_profit(bet)
+        word = {"W": "won", "L": "lost", "P": "pushed"}[res]
+        sign = "+" if profit > 0 else ""
+        subject = f"My Bets | {bet.get('pick')} — {word}"
+        text = (f"Your bet settled: {bet.get('pick')} ({fmt_odds(bet.get('cuota'))}) "
+                f"{word}. Profit: {sign}${profit:,.2f}. Open My Bets to see your updated numbers.")
+        html = (f"<div style='font-family:Arial,sans-serif;background:#0e1626;color:#eef2f8;"
+                f"padding:24px;border-radius:12px'><h2 style='margin:0 0 8px'>Bet settled</h2>"
+                f"<p style='font-size:16px'>{bet.get('pick')} ({fmt_odds(bet.get('cuota'))}) — <b>{word}</b></p>"
+                f"<p>Profit: <b>{sign}${profit:,.2f}</b></p>"
+                f"<p><a href='https://www.thesharpteam.bet/tracker/plays' style='color:#2ee6a8'>Open My Bets →</a></p></div>")
+        _dispatch_email(user["email"], subject, text, html)
+    except Exception:
+        pass
+
+
+def _parse_odds_txt(v):
+    try:
+        return int(float(str(v).replace("+", "").strip()))
+    except (TypeError, ValueError):
+        return None
+
+
+@app.route("/my-bets/add", methods=["GET", "POST"])
+@login_required
+def mybets_add():
+    user = _mybets_gate()
+    if user is None:
+        return redirect(url_for("tracker"))
+    db = get_db()
+    record_checkin(db, session["user_id"])
+    if request.method == "POST":
+        pick = (request.form.get("pick") or "").strip()
+        cuota = _parse_odds_txt(request.form.get("cuota"))
+        try:
+            stake = float(request.form.get("stake_monto") or 0)
+        except ValueError:
+            stake = 0.0
+        if not pick or cuota is None or stake <= 0:
+            flash("Add the pick, the odds and your stake.", "error")
+            return redirect(url_for("mybets_add"))
+        foto_data = ""
+        fup = request.files.get("foto")
+        if fup and fup.filename:
+            raw = fup.read(1600000)
+            if raw and (fup.mimetype or "").startswith("image/"):
+                import base64 as _b64
+                foto_data = "data:%s;base64,%s" % (
+                    fup.mimetype, _b64.b64encode(raw).decode())
+        punto = request.form.get("punto")
+        try:
+            punto = float(punto) if punto not in (None, "") else None
+        except ValueError:
+            punto = None
+        cierre = _parse_odds_txt(request.form.get("cierre"))
+        fecha = (request.form.get("fecha") or "").strip() or \
+            datetime.now(TZ).strftime("%Y-%m-%d")
+        db.execute(
+            "INSERT INTO own_bets (user_id, fecha, liga, juego, mercado, pick,"
+            " cuota, stake_monto, casa, cierre, event_id, lado, punto, foto,"
+            " created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+            (user["id"], fecha, (request.form.get("liga") or "").strip(),
+             (request.form.get("juego") or "").strip(),
+             (request.form.get("mercado") or "Moneyline").strip(),
+             pick, cuota, stake, (request.form.get("casa") or "").strip(),
+             cierre, (request.form.get("event_id") or "").strip() or None,
+             (request.form.get("lado") or "").strip() or None, punto,
+             foto_data, datetime.now(TZ).strftime("%Y-%m-%d %H:%M")))
+        db.commit()
+        flash("Bet added to My Bets.", "ok")
+        return redirect(url_for("tracker_plays"))
+    games = []
+    try:
+        games = [g for g in (load_gamecenter().get("games") or [])
+                 if not g.get("live")][:80]
+    except Exception:
+        games = []
+    return render_template("my_bets_form.html", games=games, bet=None,
+                           today=datetime.now(TZ).strftime("%Y-%m-%d"))
+
+
+@app.route("/my-bets/<int:bet_id>/edit", methods=["GET", "POST"])
+@login_required
+def mybets_edit(bet_id):
+    user = _mybets_gate()
+    if user is None:
+        return redirect(url_for("tracker"))
+    db = get_db()
+    row = db.execute("SELECT * FROM own_bets WHERE id = ? AND user_id = ?",
+                     (bet_id, user["id"])).fetchone()
+    if not row:
+        flash("Bet not found.", "error")
+        return redirect(url_for("tracker_plays"))
+    if request.method == "POST":
+        pick = (request.form.get("pick") or "").strip() or row["pick"]
+        cuota = _parse_odds_txt(request.form.get("cuota")) or row["cuota"]
+        try:
+            stake = float(request.form.get("stake_monto") or row["stake_monto"])
+        except ValueError:
+            stake = float(row["stake_monto"])
+        punto = request.form.get("punto")
+        try:
+            punto = float(punto) if punto not in (None, "") else None
+        except ValueError:
+            punto = row["punto"]
+        resultado = (request.form.get("resultado") or "").strip()
+        if resultado not in ("W", "L", "P"):
+            resultado = None
+        settled_at = row["settled_at"]
+        if resultado and not row["resultado"]:
+            settled_at = datetime.now(TZ).strftime("%Y-%m-%d %H:%M")
+        if not resultado:
+            settled_at = None
+        db.execute(
+            "UPDATE own_bets SET fecha = ?, liga = ?, juego = ?, mercado = ?,"
+            " pick = ?, cuota = ?, stake_monto = ?, casa = ?, cierre = ?,"
+            " resultado = ?, settled_at = ? WHERE id = ? AND user_id = ?",
+            ((request.form.get("fecha") or row["fecha"]).strip(),
+             (request.form.get("liga") or "").strip(),
+             (request.form.get("juego") or "").strip(),
+             (request.form.get("mercado") or "Moneyline").strip(),
+             pick, cuota, stake, (request.form.get("casa") or "").strip(),
+             _parse_odds_txt(request.form.get("cierre")), resultado,
+             settled_at, bet_id, user["id"]))
+        db.commit()
+        bet = dict(row)
+        bet.update({"pick": pick, "cuota": cuota, "stake_monto": stake,
+                    "resultado": resultado})
+        if resultado:
+            _email_own_settled(user, bet)
+        flash("Bet updated.", "ok")
+        return redirect(url_for("tracker_plays"))
+    return render_template("my_bets_form.html", games=[], bet=dict(row),
+                           today=datetime.now(TZ).strftime("%Y-%m-%d"))
+
+
+@app.route("/my-bets/<int:bet_id>/resultado", methods=["POST"])
+@login_required
+def mybets_resultado(bet_id):
+    user = _mybets_gate()
+    if user is None:
+        return redirect(url_for("tracker"))
+    resultado = (request.form.get("resultado") or "").strip()
+    if resultado not in ("W", "L", "P", ""):
+        flash("Invalid result.", "error")
+        return back("tracker_plays")
+    db = get_db()
+    row = db.execute("SELECT * FROM own_bets WHERE id = ? AND user_id = ?",
+                     (bet_id, user["id"])).fetchone()
+    if not row:
+        flash("Bet not found.", "error")
+        return back("tracker_plays")
+    settled_at = datetime.now(TZ).strftime("%Y-%m-%d %H:%M") if resultado else None
+    db.execute("UPDATE own_bets SET resultado = ?, settled_at = ? WHERE id = ?",
+               (resultado or None, settled_at, bet_id))
+    db.commit()
+    if resultado:
+        bet = dict(row)
+        bet["resultado"] = resultado
+        _email_own_settled(user, bet)
+    flash("Result updated.", "ok")
+    return back("tracker_plays")
+
+
+@app.route("/my-bets/<int:bet_id>/borrar", methods=["POST"])
+@login_required
+def mybets_borrar(bet_id):
+    user = _mybets_gate()
+    if user is None:
+        return redirect(url_for("tracker"))
+    db = get_db()
+    db.execute("DELETE FROM own_bets WHERE id = ? AND user_id = ?",
+               (bet_id, user["id"]))
+    db.commit()
+    flash("Bet removed from My Bets.", "ok")
+    return back("tracker_plays")
+
+
+@app.route("/my-bets/settings", methods=["POST"])
+@login_required
+def mybets_settings_save():
+    user = _mybets_gate()
+    if user is None:
+        return redirect(url_for("tracker"))
+    db = get_db()
+    try:
+        unit = float(request.form.get("unit_monto") or 0) or None
+    except ValueError:
+        unit = None
+    pref = (request.form.get("email_pref") or "daily").strip()
+    if pref not in ("daily", "immediate", "off"):
+        pref = "daily"
+    if USE_PG:
+        db.execute(
+            "INSERT INTO mybets_settings (user_id, unit_monto, email_pref, updated_at)"
+            " VALUES (?,?,?,?) ON CONFLICT (user_id) DO UPDATE SET"
+            " unit_monto = EXCLUDED.unit_monto, email_pref = EXCLUDED.email_pref,"
+            " updated_at = EXCLUDED.updated_at",
+            (user["id"], unit, pref, datetime.now(TZ).strftime("%Y-%m-%d %H:%M")))
+    else:
+        db.execute(
+            "INSERT OR REPLACE INTO mybets_settings (user_id, unit_monto,"
+            " email_pref, updated_at) VALUES (?,?,?,?)",
+            (user["id"], unit, pref, datetime.now(TZ).strftime("%Y-%m-%d %H:%M")))
+    db.commit()
+    flash("My Bets settings saved.", "ok")
+    return back("tracker_plays")
+
+
+@app.route("/my-bets/reset", methods=["POST"])
+@login_required
+def mybets_reset():
+    user = _mybets_gate()
+    if user is None:
+        return redirect(url_for("tracker"))
+    db = get_db()
+    db.execute("DELETE FROM own_bets WHERE user_id = ?", (user["id"],))
+    db.execute("DELETE FROM tracked_plays WHERE user_id = ?", (user["id"],))
+    db.commit()
+    flash("Your My Bets stats were reset.", "ok")
+    return redirect(url_for("tracker_plays"))
+
+
+@app.route("/my-bets/export.csv")
+@login_required
+def mybets_export():
+    user = _mybets_gate()
+    if user is None:
+        return redirect(url_for("tracker"))
+    import csv
+    import io
+    db = get_db()
+    out = io.StringIO()
+    w = csv.writer(out)
+    w.writerow(["date", "source", "league", "game", "market", "pick", "odds",
+                "stake", "book", "result", "profit", "closing_odds", "clv_pts"])
+    for t in db.execute("SELECT * FROM tracked_plays WHERE user_id = ?"
+                        " ORDER BY fecha, id", (user["id"],)).fetchall():
+        t = dict(t)
+        w.writerow([t["fecha"], "program", t.get("liga") or "", t.get("juego") or "",
+                    "Moneyline", t["pick"], t["cuota"], t["stake_monto"], "Novig",
+                    t["resultado"] or "PENDING", round(play_profit_dollars(t), 2), "", ""])
+    for b in db.execute("SELECT * FROM own_bets WHERE user_id = ?"
+                         " ORDER BY fecha, id", (user["id"],)).fetchall():
+        b = dict(b)
+        clv = _own_clv_pts(b)
+        w.writerow([b["fecha"], "own", b.get("liga") or "", b.get("juego") or "",
+                    b.get("mercado") or "", b["pick"], b["cuota"], b["stake_monto"],
+                    b.get("casa") or "", b["resultado"] or "PENDING",
+                    round(_own_profit(b), 2), b.get("cierre") or "",
+                    clv if clv is not None else ""])
+    from flask import Response
+    return Response(out.getvalue(), mimetype="text/csv", headers={
+        "Content-Disposition": "attachment; filename=my-bets.csv"})
+
+
+@app.route("/admin/api/own-bets/open")
+def api_own_bets_open():
+    if not _admin_api_autorizado():
+        return jsonify({"ok": False}), 403
+    db = get_db()
+    rows = db.execute(
+        "SELECT * FROM own_bets WHERE resultado IS NULL AND event_id IS NOT NULL"
+    ).fetchall()
+    return jsonify({"ok": True, "bets": [dict(r) for r in rows]})
+
+
+@app.route("/admin/api/own-bets/grade", methods=["POST"])
+def api_own_bets_grade():
+    if not _admin_api_autorizado():
+        return jsonify({"ok": False}), 403
+    data = request.get_json(silent=True) or {}
+    resultado = (data.get("resultado") or "").strip()
+    if resultado not in ("W", "L", "P"):
+        return jsonify({"ok": False, "error": "resultado"}), 400
+    db = get_db()
+    row = db.execute("SELECT * FROM own_bets WHERE id = ?",
+                     (data.get("id"),)).fetchone()
+    if not row:
+        return jsonify({"ok": False, "error": "not found"}), 404
+    cierre = data.get("cierre") or row["cierre"]
+    db.execute(
+        "UPDATE own_bets SET resultado = ?, cierre = ?, settled_at = ? WHERE id = ?",
+        (resultado, cierre, datetime.now(TZ).strftime("%Y-%m-%d %H:%M"), row["id"]))
+    db.commit()
+    owner = db.execute("SELECT * FROM users WHERE id = ?",
+                       (row["user_id"],)).fetchone()
+    if owner:
+        bet = dict(row)
+        bet.update({"resultado": resultado, "cierre": cierre})
+        _email_own_settled(owner, bet)
+    return jsonify({"ok": True})
+
+
+@app.route("/admin/api/own-bets/email-digests", methods=["POST"])
+def api_own_bets_digests():
+    """Resumen diario de liquidación de My Bets (lo dispara el cron HF)."""
+    if not _admin_api_autorizado():
+        return jsonify({"ok": False}), 403
+    db = get_db()
+    ayer = (datetime.now(TZ) - timedelta(days=1)).strftime("%Y-%m-%d")
+    sent = 0
+    users = db.execute(
+        "SELECT DISTINCT user_id FROM own_bets WHERE settled_at LIKE ?",
+        (ayer + "%",)).fetchall()
+    for u in users:
+        owner = db.execute("SELECT * FROM users WHERE id = ?",
+                           (u["user_id"],)).fetchone()
+        if not owner:
+            continue
+        st = _mybets_settings(db, owner["id"], owner)
+        if st["email_pref"] != "daily":
+            continue
+        bets = [dict(b) for b in db.execute(
+            "SELECT * FROM own_bets WHERE user_id = ? AND settled_at LIKE ?",
+            (owner["id"], ayer + "%")).fetchall()]
+        if not bets:
+            continue
+        w_ = sum(1 for b in bets if b["resultado"] == "W")
+        l_ = sum(1 for b in bets if b["resultado"] == "L")
+        profit = sum(_own_profit(b) for b in bets)
+        sign = "+" if profit > 0 else ""
+        lines = "".join(
+            f"<p style='margin:4px 0'>{b['pick']} ({fmt_odds(b['cuota'])}) — "
+            f"<b>{b['resultado']}</b> · {('+' if _own_profit(b) > 0 else '')}${_own_profit(b):,.2f}</p>"
+            for b in bets)
+        html = (f"<div style='font-family:Arial,sans-serif;background:#0e1626;color:#eef2f8;"
+                f"padding:24px;border-radius:12px'><h2 style='margin:0 0 8px'>Your daily settlement</h2>"
+                f"<p>{w_}-{l_} yesterday · Profit: <b>{sign}${profit:,.2f}</b></p>{lines}"
+                f"<p><a href='https://www.thesharpteam.bet/tracker/plays' style='color:#2ee6a8'>Open My Bets →</a></p></div>")
+        text = f"My Bets daily settlement: {w_}-{l_}, profit {sign}${profit:,.2f}. Open My Bets for the full picture."
+        try:
+            _dispatch_email(owner["email"], "My Bets | Your daily settlement",
+                            text, html)
+            sent += 1
+        except Exception:
+            pass
+    return jsonify({"ok": True, "sent": sent})
 
 
 _SPORT_ICONS = {"NFL": "🏈", "NCAAF": "🏈", "MLB": "⚾", "NHL": "🏒",
@@ -5690,6 +6317,27 @@ def _tracker_context(user):
             "logo": logo,
             "sport_icon": _sport_icon(t, off),
         })
+    # ---- My Bets completo: apuestas propias del miembro (2026-10-23) ----
+    mb_settings = _mybets_settings(db, uid, user)
+    own_rows = []
+    try:
+        _own_db = db.execute(
+            "SELECT * FROM own_bets WHERE user_id = ? ORDER BY fecha DESC, id DESC",
+            (uid,),
+        ).fetchall()
+        own_rows = [_own_row(dict(b), mb_settings) for b in _own_db]
+    except Exception:
+        own_rows = []
+    stats_all = _stats_from_rows(rows + own_rows)
+    _cron_all = sorted(
+        [r for r in rows + own_rows if r["resultado"] in ("W", "L", "P")],
+        key=lambda r: (r["fecha"], r["id"]))
+    _acc, _vals = 0.0, []
+    for _r in _cron_all:
+        _acc += float(_r["profit"] or 0)
+        _vals.append(round(_acc, 2))
+    curve_all = profit_curve_svg(_vals, w=320, h=90, pad=8)
+
     # Récord Platinum real del archivo oficial (para el upsell del tracker).
     _pw = _pl = 0
     for _d in load_archive():
@@ -5718,6 +6366,10 @@ def _tracker_context(user):
         recientes_value=recientes_value(),
         streak=program_streak(),
         resumen_ayer=resumen_ayer(),
+        own_rows=own_rows,
+        stats_all=stats_all,
+        curve_all=curve_all,
+        mb_settings=mb_settings,
         es_admin=is_admin_for(user),
     )
 
