@@ -245,7 +245,7 @@ function googleTranslateElementInit(){new google.translate.TranslateElement({pag
     <span class="v2-bnav-ico" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></span><span>Tools</span>
   </a>
   <a href="{{ url_for('tracker') }}" class="v2-bnav-item{% if request.endpoint == 'tracker' %} active{% endif %}">
-    <span class="v2-bnav-ico" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a3 3 0 0 0 0 6v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a3 3 0 0 0 0-6Z"/><path d="M13 5v2"/><path d="M13 11v2"/><path d="M13 17v2"/></svg></span><span style="white-space:nowrap;font-size:10px">Tracker</span>
+    <span class="v2-bnav-ico" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a3 3 0 0 0 0 6v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a3 3 0 0 0 0-6Z"/><path d="M13 5v2"/><path d="M13 11v2"/><path d="M13 17v2"/></svg></span><span style="white-space:nowrap;font-size:10px">My Bets</span>
   </a>
   {% if is_alex or es_admin %}
   {# Admin en el bottom nav solo para Alex (2026-10-12, pedido por Alex) #}
