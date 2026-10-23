@@ -173,6 +173,28 @@
   .tracker-box .wgt-card,
   .tracker-box .wgt-export-panel,
   .tracker-box .wgt-plays-link { background:linear-gradient(180deg,#111a3e,#0c1430); border:1px solid rgba(232,199,102,.14); border-radius:20px; }
+  .own-head { display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:4px; }
+  .own-h { color:#fff; font-size:16px; font-weight:800; margin:0; }
+  .own-sub { color:var(--muted); font-size:12px; text-align:right; }
+  .own-row { display:flex; gap:11px; padding:11px 0; border-top:1px solid var(--line); align-items:flex-start; }
+  .own-thumb { width:52px; height:52px; border-radius:10px; object-fit:cover; flex:none; }
+  .own-main { flex:1; min-width:0; }
+  .own-pick { color:#fff; font-weight:700; font-size:14.5px; }
+  .own-odds { color:#2ee6a8; }
+  .own-meta { color:var(--muted); font-size:12px; margin-top:2px; line-height:1.45; }
+  .own-clv { display:inline-block; margin-top:5px; font-size:11px; font-weight:800; border-radius:999px; padding:2px 8px; }
+  .own-clv.pos { color:#2fbf71; background:rgba(47,191,113,.12); border:1px solid rgba(47,191,113,.4); }
+  .own-clv.neg { color:#f87171; background:rgba(248,113,113,.10); border:1px solid rgba(248,113,113,.35); }
+  .own-side { text-align:right; flex:none; }
+  .own-res { font-size:11px; font-weight:800; letter-spacing:.6px; }
+  .own-res.w { color:#2fbf71; } .own-res.l { color:#f87171; } .own-res.p { color:#c8cede; } .own-res.pend { color:#e8c766; }
+  .own-actions { display:flex; gap:5px; margin-top:7px; justify-content:flex-end; align-items:center; }
+  .own-actions form { margin:0; }
+  .own-btn { border:1px solid var(--line); background:rgba(255,255,255,.05); color:#eef2f8; border-radius:8px; min-width:30px; height:26px; font-size:.85rem; cursor:pointer; }
+  .own-edit { color:#2ee6a8; font-size:12px; font-weight:700; text-decoration:none; }
+  .own-empty { color:var(--muted); font-size:13px; line-height:1.55; margin:6px 0 0; }
+  .own-tools { display:flex; flex-wrap:wrap; gap:8px; margin-top:13px; }
+  .own-more { display:inline-block; margin-top:9px; color:#2ee6a8; font-weight:700; font-size:13px; text-decoration:none; }
   .tracker-box .results-hero .stat { background:linear-gradient(180deg,#111a3e,#0c1430); border:1px solid rgba(232,199,102,.14); border-radius:20px; }
   .tracker-box .stat-value.pos { color:#2ee6a8; }
   .tracker-box .wgt-exp-go { background:#2ee6a8; border-color:#2ee6a8; color:#052e22; }
@@ -204,6 +226,7 @@
   <div class="trk-btns">
     <a class="trk-btn" href="{{ url_for('masterclass') }}">&#9654; Watch how it works</a>
     <a class="trk-btn" href="#wgtPills">&#9432; How it works</a>
+    <a class="trk-btn" href="{{ url_for('mybets_add') }}">+ Add a bet</a>
   </div>
 </section>
 
@@ -281,6 +304,47 @@
 {% else %}
 <p class="wgt-empty">You haven't tracked any plays yet. Tap <b>+ Track</b> on today's plays to log them here.</p>
 {% endif %}
+
+<section class="wgt-card">
+  <div class="own-head">
+    <h3 class="own-h">My own bets</h3>
+    <span class="own-sub">{{ own_rows|length }} bet{{ 's' if own_rows|length != 1 }}{% if own_rows %} · {{ fmt_money(own_rows|sum(attribute='profit')) }} graded{% endif %}</span>
+  </div>
+  {% if own_rows %}
+  {% for b in own_rows[:10] %}
+  <div class="own-row">
+    {% if b.foto %}<img class="own-thumb" src="{{ b.foto }}" alt="Ticket">{% endif %}
+    <div class="own-main">
+      <div class="own-pick">{{ b.pick }} <span class="own-odds">{{ fmt_odds(b.cuota) }}</span></div>
+      <div class="own-meta">{{ b.juego or b.mercado }}{% if b.liga %} · {{ b.liga }}{% endif %} · {{ fmt_money(b.stake_monto) }}{% if b.casa %} · {{ b.casa }}{% endif %} · {{ b.fecha }}</div>
+      {% if b.clv_pts is not none %}<span class="own-clv {{ 'pos' if b.clv_pts >= 0 else 'neg' }}">CLV {{ '%+.2f' % b.clv_pts }} pts{% if b.cierre %} · Closed {{ fmt_odds(b.cierre) }}{% endif %}</span>{% endif %}
+    </div>
+    <div class="own-side">
+      {% if b.resultado == 'W' %}<span class="own-res w">WON {{ fmt_money(b.profit) }}</span>
+      {% elif b.resultado == 'L' %}<span class="own-res l">LOST {{ fmt_money(b.profit) }}</span>
+      {% elif b.resultado == 'P' %}<span class="own-res p">PUSH</span>
+      {% else %}<span class="own-res pend">PENDING</span>{% endif %}
+      <div class="own-actions">
+        <form method="post" action="{{ url_for('mybets_resultado', bet_id=b.id) }}"><input type="hidden" name="resultado" value="W"><button class="own-btn" type="submit" title="Mark as won">✓</button></form>
+        <form method="post" action="{{ url_for('mybets_resultado', bet_id=b.id) }}"><input type="hidden" name="resultado" value="L"><button class="own-btn" type="submit" title="Mark as lost">✕</button></form>
+        <form method="post" action="{{ url_for('mybets_resultado', bet_id=b.id) }}"><input type="hidden" name="resultado" value="P"><button class="own-btn" type="submit" title="Mark as push">½</button></form>
+        <form method="post" action="{{ url_for('mybets_resultado', bet_id=b.id) }}"><input type="hidden" name="resultado" value=""><button class="own-btn" type="submit" title="Back to pending">↺</button></form>
+        <a class="own-edit" href="{{ url_for('mybets_edit', bet_id=b.id) }}">Edit</a>
+        <form method="post" action="{{ url_for('mybets_borrar', bet_id=b.id) }}" onsubmit="return confirm('Remove this bet from My Bets?');"><button class="own-btn" type="submit" title="Remove">🗑</button></form>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+  {% if own_rows|length > 10 %}<a class="own-more" href="{{ url_for('tracker_plays') }}">See all my bets &#8594;</a>{% endif %}
+  {% else %}
+  <p class="own-empty">Bets you place anywhere else — any book, any sport. Add them here, with a photo of the ticket if you have it, and they are graded with your CLV, just like the program's plays.</p>
+  {% endif %}
+  <div class="own-tools">
+    <a class="trk-btn" href="{{ url_for('mybets_add') }}">+ Add a bet</a>
+    <a class="trk-btn" href="{{ url_for('tracker_plays') }}">Breakdowns, Coach &amp; filters</a>
+    <a class="trk-btn" href="{{ url_for('mybets_export') }}">Export CSV</a>
+  </div>
+</section>
 </div>
 
 <script type="application/json" id="wgtRowsData">[{% for r in rows %}{"fecha": "{{ r.fecha }}", "profit": {{ '%.2f' % r.profit }}, "stake": {{ '%.2f' % r.stake_monto }}, "result": "{{ r.resultado }}"}{{ "," if not loop.last }}{% endfor %}]</script>
