@@ -2490,6 +2490,19 @@ def _gc_fmt(a):
     return ("+" if a > 0 else "") + str(a)
 
 
+def _gc_pt(p):
+    if p is None:
+        return "—"
+    p = float(p)
+    return str(int(p)) if p.is_integer() else str(p)
+
+
+def _gc_pt_signed(p):
+    if p is None:
+        return "—"
+    return ("+" if p > 0 else "") + _gc_pt(p)
+
+
 def _gc_updated(board):
     try:
         dt = datetime.fromisoformat(board.get("generated_at", ""))
@@ -2504,13 +2517,13 @@ def _gc_section(game, key, title):
         return None
     away, home = game["away"], game["home"]
     if key == "totals":
-        la = "Over " + _gc_fmt(blk.get("point")).replace("+", "")
-        lb = "Under " + _gc_fmt(blk.get("point")).replace("+", "")
+        la = "Over " + _gc_pt(blk.get("point"))
+        lb = "Under " + _gc_pt(blk.get("point"))
         sa, sb = "Over", "Under"
     elif key == "spreads":
         p = blk.get("point") or 0
-        la = away + " " + _gc_fmt(p)
-        lb = home + " " + _gc_fmt(-p)
+        la = away + " " + _gc_pt_signed(p)
+        lb = home + " " + _gc_pt_signed(-p)
         sa, sb = away.split()[-1], home.split()[-1]
     else:
         la, lb = away, home
@@ -9816,7 +9829,7 @@ def game_center_game(event_id):
         if sec:
             if key in ("spreads", "totals") and sec["rows"]:
                 pt = (game.get("markets") or {}).get(key, {}).get("point")
-                sec["title"] = title + " · " + _gc_fmt(pt).replace("+", "") if pt is not None else title
+                sec["title"] = title + " · " + _gc_pt(pt) if pt is not None else title
             sections.append(sec)
     h = (game.get("markets") or {}).get("h2h") or {}
     edge = h.get("edge") or {}
