@@ -2448,6 +2448,121 @@ def load_props_board():
     return data
 
 
+
+# Game Center: el JSON vive en la rama `data-board` (igual que el Props
+# Board); lo publica hidden_files/gamecenter-board.py cada hora.
+GAMECENTER_URL = (
+    "https://raw.githubusercontent.com/penamanuel-art/tlb-members"
+    "/data-board/data/gamecenter.json"
+)
+_gamecenter_cache = {"at": 0.0, "data": {}}
+
+
+def load_gamecenter():
+    import time
+    now = time.time()
+    if now - _gamecenter_cache["at"] < 300 and _gamecenter_cache["data"]:
+        return _gamecenter_cache["data"]
+    data = {}
+    try:
+        req = urllib.request.Request(GAMECENTER_URL, headers={"User-Agent": "tlb-members"})
+        with urllib.request.urlopen(req, timeout=10) as r:
+            data = json.load(r)
+    except Exception:
+        data = _gamecenter_cache["data"] or {}
+    _gamecenter_cache["at"] = now
+    _gamecenter_cache["data"] = data
+    return data
+
+
+_GC_SHORT = {"DraftKings": "DK", "FanDuel": "FD", "BetMGM": "MGM",
+             "Caesars": "CAES", "BetRivers": "BR", "Fanatics": "FAN",
+             "Bovada": "BOV", "BetOnline.ag": "BOL", "LowVig.ag": "LOWV",
+             "BetUS": "BUS", "theScore Bet": "SCORE", "Hard Rock Bet": "HR"}
+_GC_PREF = ["DraftKings", "FanDuel", "BetMGM", "Caesars", "BetRivers",
+            "Fanatics", "Bovada", "BetOnline.ag", "LowVig.ag", "BetUS"]
+
+
+def _gc_fmt(a):
+    if a is None:
+        return "—"
+    a = int(round(a))
+    return ("+" if a > 0 else "") + str(a)
+
+
+def _gc_updated(board):
+    try:
+        dt = datetime.fromisoformat(board.get("generated_at", ""))
+        return dt.strftime("%b %-d, %-I:%M %p ET")
+    except Exception:
+        return "today"
+
+
+def _gc_section(game, key, title):
+    blk = (game.get("markets") or {}).get(key)
+    if not blk:
+        return None
+    away, home = game["away"], game["home"]
+    if key == "totals":
+        la = "Over " + _gc_fmt(blk.get("point")).replace("+", "")
+        lb = "Under " + _gc_fmt(blk.get("point")).replace("+", "")
+        sa, sb = "Over", "Under"
+    elif key == "spreads":
+        p = blk.get("point") or 0
+        la = away + " " + _gc_fmt(p)
+        lb = home + " " + _gc_fmt(-p)
+        sa, sb = away.split()[-1], home.split()[-1]
+    else:
+        la, lb = away, home
+        sa, sb = away.split()[-1], home.split()[-1]
+    books = blk.get("books") or []
+    by_title = {b["book"]: b for b in books}
+    cols = [t for t in _GC_PREF if t in by_title][:7]
+    if not cols:
+        cols = [b["book"] for b in books][:7]
+
+    def cell(b, side):
+        if b is None:
+            return {"price": "—", "best": False}
+        price = b["a_price"] if side == "a" else b["b_price"]
+        point = b["a_point"] if side == "a" else b["b_point"]
+        if key in ("spreads", "totals") and point is not None:
+            want = blk.get("point") if (key == "totals" or side == "a") else -(blk.get("point") or 0)
+            if point != want:
+                return {"price": "—", "best": False}
+        best = (blk.get("best") or {}).get(side) or {}
+        return {"price": _gc_fmt(price),
+                "best": bool(price is not None and best.get("book") == b["book"] and best.get("price") == price)}
+
+    rows = [
+        {"label": la, "short": sa,
+         "cells": [cell(by_title.get(c), "a") for c in cols],
+         "fair": (blk.get("fair") or {}).get("a_price", "—")},
+        {"label": lb, "short": sb,
+         "cells": [cell(by_title.get(c), "b") for c in cols],
+         "fair": (blk.get("fair") or {}).get("b_price", "—")},
+    ]
+    fair = blk.get("fair") or {}
+    if key == "totals":
+        fair_note = "Over %s%% · Under %s%%." % (fair.get("a_prob"), fair.get("b_prob"))
+    else:
+        fair_note = "%s %s%% · %s %s%%." % (away, fair.get("a_prob"), home, fair.get("b_prob"))
+    edge = blk.get("edge") or {}
+    ba = (blk.get("best") or {}).get("a") or {}
+    bb = (blk.get("best") or {}).get("b") or {}
+    return {
+        "title": title, "cols": [_GC_SHORT.get(c, c[:4].upper()) for c in cols],
+        "rows": rows, "n_books": blk.get("n_books", len(books)),
+        "fair_note": fair_note,
+        "best_a_book": ba.get("book", ""), "best_a_price": _gc_fmt(ba.get("price")),
+        "best_b_book": bb.get("book", ""), "best_b_price": _gc_fmt(bb.get("price")),
+        "edge_a": edge.get("a"), "edge_b": edge.get("b"),
+        "edge_a_label": ("+" if (edge.get("a") or 0) > 0 else "") + (str(edge.get("a")) + "%" if edge.get("a") is not None else "—"),
+        "edge_b_label": ("+" if (edge.get("b") or 0) > 0 else "") + (str(edge.get("b")) + "%" if edge.get("b") is not None else "—"),
+        "vig_label": (str(blk.get("vig")) + "%") if blk.get("vig") is not None else "—",
+    }
+
+
 # Public free tools: Sharp Line Moves — el JSON vive en la rama `data-board`
 # (igual que el +EV Board: actualizar datos NO redespliega Render).
 # La página /tools/line-moves lo lee en vivo (desde el 2026-10-19 es Platinum).
@@ -9650,6 +9765,76 @@ def props():
     if not platinum_unlocked_for(current_user()):
         return redirect(url_for("desbloquear_platinum"))
     return render_template("props.html", board=load_props_board())
+
+
+@app.route("/game-center")
+@login_required
+def game_center():
+    """Game Center (Platinum, 2026-10-23, aprobado por Alex): lista de
+    juegos con el mejor precio por lado; cada juego abre su página con
+    precios por casa, línea justa, edge y vig."""
+    db = get_db()
+    record_checkin(db, session["user_id"])
+    if not platinum_unlocked_for(current_user()):
+        return redirect(url_for("desbloquear_platinum"))
+    board = load_gamecenter()
+    games = board.get("games") or []
+    order = ["NBA", "NHL", "NFL", "NCAAF", "MLB"]
+    by_league = {}
+    for g in games:
+        h = (g.get("markets") or {}).get("h2h") or {}
+        best = h.get("best") or {}
+        g["best_a_book"] = _GC_SHORT.get((best.get("a") or {}).get("book", ""), "")
+        g["best_a_price"] = _gc_fmt((best.get("a") or {}).get("price"))
+        g["best_b_book"] = _GC_SHORT.get((best.get("b") or {}).get("book", ""), "")
+        g["best_b_price"] = _gc_fmt((best.get("b") or {}).get("price"))
+        by_league.setdefault(g.get("league", ""), []).append(g)
+    groups = [(lg, by_league[lg]) for lg in order if lg in by_league]
+    groups += [(lg, gs) for lg, gs in by_league.items() if lg not in order]
+    total_books = max([g.get("books_count", 0) for g in games] or [0])
+    return render_template("gamecenter.html", groups=groups,
+                           updated_label=_gc_updated(board),
+                           total_books=total_books)
+
+
+@app.route("/game-center/<event_id>")
+@login_required
+def game_center_game(event_id):
+    """Página de un juego del Game Center: rejilla de precios por casa,
+    mejor precio, línea justa sin vig, edge y vig por mercado."""
+    db = get_db()
+    record_checkin(db, session["user_id"])
+    if not platinum_unlocked_for(current_user()):
+        return redirect(url_for("desbloquear_platinum"))
+    board = load_gamecenter()
+    game = next((g for g in (board.get("games") or []) if g.get("id") == event_id), None)
+    if game is None:
+        return redirect(url_for("game_center"))
+    sections = []
+    for key, title in (("h2h", "Moneyline"), ("spreads", "Spread"), ("totals", "Total")):
+        sec = _gc_section(game, key, title)
+        if sec:
+            if key in ("spreads", "totals") and sec["rows"]:
+                pt = (game.get("markets") or {}).get(key, {}).get("point")
+                sec["title"] = title + " · " + _gc_fmt(pt).replace("+", "") if pt is not None else title
+            sections.append(sec)
+    h = (game.get("markets") or {}).get("h2h") or {}
+    edge = h.get("edge") or {}
+    best = h.get("best") or {}
+    ea, eb = edge.get("a"), edge.get("b")
+    if (ea is not None and ea >= 3.5) or (eb is not None and eb >= 3.5):
+        if ea is not None and (eb is None or ea >= eb):
+            side, e, b = game["away"], ea, best.get("a") or {}
+        else:
+            side, e, b = game["home"], eb, best.get("b") or {}
+        verdict = {"cls": "value", "kicker": "VALUE SHOWING",
+                   "text": "%s at %s (%s) is %s%% above the fair line on this market. That is the kind of gap this page exists to catch — shop it before it moves." % (side, _gc_fmt(b.get("price")), b.get("book", "the best book"), e)}
+    else:
+        verdict = {"cls": "pass", "kicker": "STILL GOOD?",
+                   "text": "Not at these prices. Both sides sit at or under the fair line, so the read right now is pass and keep watching — if a book drifts or money moves the line, it shows here first."}
+    return render_template("gamecenter_game.html", game=game, sections=sections,
+                           verdict=verdict, updated_label=_gc_updated(board))
+
 
 
 # ----------------------------- Free public tools (no login) ----------------
