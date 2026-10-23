@@ -2895,7 +2895,51 @@ def _ensure_book_balances_table(db):
     db.commit()
 
 
-def bump_book_balance(db, user_id, book_name, delta):
+def _ensure_book_moves_table(db):
+    """Crea la tabla de movimientos de balance por casa si no existe
+    (desglose pedido por Alex 2026-10-23: qué se agregó, qué se retiró
+    y qué movieron las apuestas liquidadas, casa por casa)."""
+    if db.use_pg:
+        db.execute(
+            """CREATE TABLE IF NOT EXISTS book_balance_moves (
+                   id SERIAL PRIMARY KEY,
+                   user_id INTEGER NOT NULL REFERENCES users(id),
+                   book_name TEXT NOT NULL,
+                   delta DOUBLE PRECISION NOT NULL DEFAULT 0,
+                   concepto TEXT,
+                   created_at TEXT NOT NULL
+               )"""
+        )
+    else:
+        db.execute(
+            """CREATE TABLE IF NOT EXISTS book_balance_moves (
+                   id INTEGER PRIMARY KEY AUTOINCREMENT,
+                   user_id INTEGER NOT NULL REFERENCES users(id),
+                   book_name TEXT NOT NULL,
+                   delta REAL NOT NULL DEFAULT 0,
+                   concepto TEXT,
+                   created_at TEXT NOT NULL
+               )"""
+        )
+    db.commit()
+
+
+def _log_book_move(db, user_id, book_name, delta, concepto):
+    """Registra un movimiento en el desglose de balances. No hace
+    commit: lo hace quien llama, junto con el cambio de balance."""
+    try:
+        delta = round(float(delta or 0), 2)
+    except (TypeError, ValueError):
+        return
+    if not delta or not book_name or not user_id:
+        return
+    _ensure_book_moves_table(db)
+    db.execute(
+        "INSERT INTO book_balance_moves (user_id, book_name, delta, concepto, created_at) VALUES (?, ?, ?, ?, ?)",
+        (user_id, book_name, delta, (concepto or "")[:120],
+         datetime.now(TZ).strftime("%Y-%m-%d %H:%M:%S")),
+    )
+def bump_book_balance(db, user_id, book_name, delta, concepto="Program play settled"):
     """Suma delta (+/-) al balance de una casa de apuestas.
 
     Se llama al liquidarse una jugada trackeada: la ganancia o pérdida va a
@@ -2928,6 +2972,7 @@ def bump_book_balance(db, user_id, book_name, delta):
             "INSERT INTO book_balances (user_id, book_name, balance, updated_at) VALUES (?, ?, ?, ?)",
             (user_id, book_name, delta, now),
         )
+    _log_book_move(db, user_id, book_name, delta, concepto)
     db.commit()
 
 
@@ -5593,6 +5638,11 @@ def balances():
             monto = 0
         if book:
             now = datetime.now(TZ).strftime("%Y-%m-%d %H:%M:%S")
+            prev = db.execute(
+                "SELECT balance FROM book_balances WHERE user_id = ? AND book_name = ?",
+                (uid, book),
+            ).fetchone()
+            prev_bal = float(prev["balance"] or 0) if prev else None
             db.execute(
                 """INSERT INTO book_balances (user_id, book_name, balance, updated_at)
                    VALUES (?, ?, ?, ?)
@@ -5600,6 +5650,14 @@ def balances():
                    DO UPDATE SET balance = excluded.balance, updated_at = excluded.updated_at""",
                 (uid, book, monto, now),
             )
+            if prev_bal is None:
+                _log_book_move(db, uid, book, monto, "Initial balance")
+            else:
+                delta = round(monto - prev_bal, 2)
+                if delta > 0:
+                    _log_book_move(db, uid, book, delta, "Added")
+                elif delta < 0:
+                    _log_book_move(db, uid, book, delta, "Withdrawn")
             db.commit()
         return redirect(url_for("balances"))
     rows = db.execute(
@@ -5616,7 +5674,27 @@ def balances():
         for r in rows
     ]
     total = sum(float(r["balance"] or 0) for r in rows)
-    return render_template("balances.html", balances=balances, total=total)
+    moves = []
+    try:
+        _ensure_book_moves_table(db)
+        mrows = db.execute(
+            "SELECT book_name, delta, concepto, created_at FROM book_balance_moves "
+            "WHERE user_id = ? ORDER BY id DESC LIMIT 30",
+            (uid,),
+        ).fetchall()
+        moves = [
+            {
+                "book_name": r["book_name"],
+                "delta": float(r["delta"] or 0),
+                "concepto": r["concepto"] or "",
+                "created_at": r["created_at"] or "",
+            }
+            for r in mrows
+        ]
+    except Exception:
+        moves = []
+    return render_template("balances.html", balances=balances, total=total,
+                           moves=moves)
 
 
 @app.route("/tracker")
@@ -5792,10 +5870,16 @@ def _sync_own_bet_balance(db, old_bet, new_bet):
         uid = old_bet.get("user_id") or new_bet.get("user_id")
         if not uid:
             return
+        pick = (new_bet.get("pick") or old_bet.get("pick") or "Bet")[:80]
         if old_casa and old_p:
-            bump_book_balance(db, uid, old_casa, -old_p)
+            bump_book_balance(db, uid, old_casa, -old_p,
+                              concepto=f"Correction: {pick}")
         if new_casa and new_p:
-            bump_book_balance(db, uid, new_casa, new_p)
+            res = new_bet.get("resultado")
+            concepto = (f"Bet won: {pick}" if res == "W"
+                        else f"Bet lost: {pick}" if res == "L"
+                        else f"Bet settled: {pick}")
+            bump_book_balance(db, uid, new_casa, new_p, concepto=concepto)
     except Exception:
         pass
 
@@ -12256,7 +12340,7 @@ def api_set_balance_alex():
     _ensure_book_balances_table(db)
     now = datetime.now(TZ).strftime("%Y-%m-%d %H:%M:%S")
     ex = db.execute(
-        "SELECT id FROM book_balances WHERE user_id = ? AND book_name = ?",
+        "SELECT id, balance FROM book_balances WHERE user_id = ? AND book_name = ?",
         (row["id"], book),
     ).fetchone()
     if ex:
@@ -12265,12 +12349,16 @@ def api_set_balance_alex():
             (balance, now, ex["id"]),
         )
         action = "actualizado"
+        _log_book_move(db, row["id"], book,
+                       round(balance - float(ex["balance"] or 0), 2),
+                       "Adjustment")
     else:
         db.execute(
             "INSERT INTO book_balances (user_id, book_name, balance, updated_at) VALUES (?, ?, ?, ?)",
             (row["id"], book, balance, now),
         )
         action = "creado"
+        _log_book_move(db, row["id"], book, balance, "Initial balance")
     db.commit()
     return jsonify({"ok": True, "action": action, "book": book, "balance": balance})
 # Force redeploy Sat Oct 10 11:17:29 EDT 2026
