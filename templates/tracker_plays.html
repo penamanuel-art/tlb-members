@@ -58,8 +58,11 @@
   .mb-set { display:grid; grid-template-columns:1fr 1fr; gap:9px; }
   .mb-set label { font-size:10px; letter-spacing:1.2px; color:#8b98ad; font-weight:800; display:block; margin-bottom:5px; }
   .mb-set input, .mb-set select { width:100%; box-sizing:border-box; background:#131e31; border:1px solid #24334d; border-radius:10px; padding:10px; font-size:13px; color:#eef2f8; }
+  .ply-back { display:inline-block; color:#2ee6a8; font-weight:700; font-size:14px; text-decoration:none; margin:0 0 10px; }
   #mbCurve { width:100%; height:110px; display:block; }
 </style>
+
+<a class="ply-back" href="{{ url_for('tracker') }}">&#8592; Back to my tracker</a>
 
 <h1 class="ply-h">My Bets</h1>
 <p class="ply-sub">Every bet you track — the program's plays and your own, from any book — graded, with your CLV, your curve and your numbers by market and book.</p>
