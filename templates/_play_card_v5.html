@@ -88,6 +88,18 @@ body.v5-sheet-open .ticker-dock-bottom,body.v5-sheet-open .v2-bottomnav,body.v5-
 .v5share{display:block;text-align:center;margin-top:14px;font-size:13px;font-weight:500;color:#7dd3fc;text-decoration:none}
 .tstc-tracked{color:#2fe6a7}
 </style>
+{% if is_alex %}
+<style>
+/* Tono pizarra tipo WGT para las cartas - SOLO cuenta de Alex (2026-10-23):
+   prueba pedida por Alex en su Dashboard antes de decidir publicarlo. */
+.v5c{background:linear-gradient(180deg,#26303f,#1c2431 60%,#1a222e)}
+.v5c-topsec{background:transparent}
+.v5c-botsec{background:transparent}
+.v5c-notch{background:#161d29}
+.v5sheet-in{background:linear-gradient(180deg,#26303f,#1c2431 60%,#1a222e)}
+.v5shead{background:#26303f}
+</style>
+{% endif %}
 <div class="v5c">
   <div class="v5c-edge{% if not is_vip %} gold{% endif %}"></div>
   <div class="v5c-topsec">
@@ -98,7 +110,7 @@ body.v5-sheet-open .ticker-dock-bottom,body.v5-sheet-open .v2-bottomnav,body.v5-
   <div class="v5c-head">
     {% if _logo %}<img class="v5c-logo" src="{{ _logo }}" alt="{{ p.abbr }} logo" loading="lazy" onerror="this.remove()">{% endif %}
     <div style="flex:1;min-width:0">
-      <div class="v5c-title" data-v5-open="{{ p.id }}" style="cursor:pointer">{{ p.team_name or p.abbr }} {{ 'Moneyline' if p.bettype == 'Moneyline' else p.bettype }}</div>
+      <div class="v5c-title" data-v5-open="{{ p.id }}" style="cursor:pointer">{{ p.team_name or p.abbr }} {{ ('ML' if is_alex else 'Moneyline') if p.bettype == 'Moneyline' else p.bettype }}</div>
       <div class="v5c-sub" data-v5-open="{{ p.id }}" style="cursor:pointer">{{ p.abbr }} vs {{ p.opp_abbr }} &middot; {{ p.game_time_et or p.hora or '' }}</div>
     </div>
   </div>
@@ -139,13 +151,13 @@ body.v5-sheet-open .ticker-dock-bottom,body.v5-sheet-open .v2-bottomnav,body.v5-
     <div class="v5shead">
       <div style="flex:1;min-width:0">
         <div class="v5kick{% if not is_vip %} gold{% endif %}">{{ '💎 PLATINUM' if is_vip else ('💎 VALUE PLAY' if is_value else 'GOLD') }}</div>
-        <div class="v5stitle">{{ p.team_name or p.abbr }} {{ 'Moneyline' if p.bettype == 'Moneyline' else p.bettype }}</div>
+        <div class="v5stitle">{{ p.team_name or p.abbr }} {{ ('ML' if is_alex else 'Moneyline') if p.bettype == 'Moneyline' else p.bettype }}</div>
         <div class="v5ssub">{{ 'Platinum play' if is_vip else ('Value play' if is_value else 'Gold play') }} &middot; {{ p.liga or '' }}</div>
       </div>
       <button class="v5x" data-v5-close aria-label="Cerrar">&times;</button>
     </div>
     <div style="margin-top:10px">
-      <div class="v5row"><span class="v5row-k">Pick</span><span class="v5row-v"><b>{{ p.team_name or p.abbr }} {{ 'Moneyline' if p.bettype == 'Moneyline' else p.bettype }}</b></span></div>
+      <div class="v5row"><span class="v5row-k">Pick</span><span class="v5row-v"><b>{{ p.team_name or p.abbr }} {{ ('ML' if is_alex else 'Moneyline') if p.bettype == 'Moneyline' else p.bettype }}</b></span></div>
       <div class="v5row"><span class="v5row-k">Game</span><span class="v5row-v">{{ p.abbr }} vs {{ p.opp_abbr }}</span></div>
       <div class="v5row"><span class="v5row-k">Starts</span><span class="v5row-v">{{ p.game_time_et or p.hora or '' }}</span></div>
       {% if p.posted %}<div class="v5row"><span class="v5row-k">Posted</span><span class="v5row-v">{{ p.posted }}</span></div>{% endif %}
