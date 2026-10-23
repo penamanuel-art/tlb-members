@@ -1,5 +1,5 @@
 {% extends "base_v2.html" %}
-{% block title %}Bet Tracker — The Sharp Team{% endblock %}
+{% block title %}My Bets — The Sharp Team{% endblock %}
 {% block content %}
 <div class="tp"{% if public_mode %} style="padding-bottom:104px"{% endif %}>
 {% include "_tracker_sales_body.html" %}
@@ -12,7 +12,7 @@
 <nav class="tp-nav" aria-label="Primary">
   <a href="{{ url_for('index') }}"><span class="tp-nico" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9 21v-6h6v6"/></svg></span><span>Today</span></a>
   <a href="{{ url_for('tools') }}"><span class="tp-nico" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></span><span>Tools</span></a>
-  <a href="{{ url_for('tracker') }}" class="active"><span class="tp-nico" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a3 3 0 0 0 0 6v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a3 3 0 0 0 0-6Z"/><path d="M13 5v2"/><path d="M13 11v2"/><path d="M13 17v2"/></svg></span><span>Tracker</span></a>
+  <a href="{{ url_for('tracker') }}" class="active"><span class="tp-nico" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a3 3 0 0 0 0 6v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a3 3 0 0 0 0-6Z"/><path d="M13 5v2"/><path d="M13 11v2"/><path d="M13 17v2"/></svg></span><span>My Bets</span></a>
   <a href="{{ url_for('alertas') }}"><span class="tp-nico" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M13.7 20a2 2 0 0 1-3.4 0"/></svg></span><span>Alerts</span></a>
   <a href="{{ url_for('cuenta') }}"><span class="tp-nico" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-3.6 4.3-5.4 8-5.4s6.5 1.8 8 5.4"/></svg></span><span>Settings</span></a>
 </nav>
