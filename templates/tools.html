@@ -2,6 +2,7 @@
 {% block title %}All Tools — The Sharp Team{% endblock %}
 {% block content %}
 {% set tracker_href = '/tracker' if es_platinum else desbloquear_url %}
+{% set gc_href = '/game-center' if es_platinum else desbloquear_url %}
 {% set evboard_href = '/ev-board' if es_platinum else desbloquear_url %}
 {% set oddsboard_href = '/odds-board' if es_platinum else desbloquear_url %}
 {% set parlay_href = '/parlay-builder' if es_platinum else desbloquear_url %}
@@ -68,11 +69,17 @@ body.v2{background-color:#161d29;background-image:radial-gradient(560px 300px at
   </div>
 
   <div class="at-section">
-    <p class="at-sec">MY TOOLS <span class="at-count">3</span></p>
+    <p class="at-sec">MY TOOLS <span class="at-count">4</span></p>
     <div class="at-box">
       <a class="at-row at-item" href="{{ tracker_href }}" data-search="bet tracker profit roi clv my bets" data-recent='{"id":"tracker","label":"My Bets","href":"{{ tracker_href }}"}'>
         <span class="at-ico"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#2fe6a7" stroke-width="2"><path d="M3 9V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2.5 2.5 0 0 0 0 5v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2.5 2.5 0 0 0 0-5z"/><path d="M13 5v2M13 11v2M13 17v2"/></svg></span>
         <span class="at-info"><b>My Bets</b><span>Profit, ROI and CLV</span></span>
+        <span class="at-plat">&#128142; PLATINUM</span>
+        <span class="at-chev">›</span>
+      </a>
+      <a class="at-row at-item" href="{{ gc_href }}" data-search="game center live scores prices fair line edge books" data-recent='{"id":"gamecenter","label":"Game Center","href":"{{ gc_href }}"}'>
+        <span class="at-ico"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#2fe6a7" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="2.2"/><path d="M7.5 7.5a6.4 6.4 0 0 0 0 9"/><path d="M16.5 7.5a6.4 6.4 0 0 1 0 9"/><path d="M4.8 4.8a10.4 10.4 0 0 0 0 14.4"/><path d="M19.2 4.8a10.4 10.4 0 0 1 0 14.4"/></svg></span>
+        <span class="at-info"><b>Game Center</b><span>Every price, the fair line and the edge</span></span>
         <span class="at-plat">&#128142; PLATINUM</span>
         <span class="at-chev">›</span>
       </a>
