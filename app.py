@@ -3453,6 +3453,38 @@ def _ensure_mybets_schema():
 _ensure_mybets_schema()
 
 
+def _ensure_game_follows_schema():
+    """Tabla de juegos seguidos del Game Center (2026-10-23, idea de diseño
+    aprobada por Alex SOLO como prueba en su cuenta): Follow por usuario y
+    juego. Idempotente; dialecto según USE_PG."""
+    try:
+        conn = _raw_connect()
+        if USE_PG:
+            conn.execute("""CREATE TABLE IF NOT EXISTS game_follows (
+                id SERIAL PRIMARY KEY,
+                user_id INTEGER NOT NULL REFERENCES users(id),
+                event_id TEXT NOT NULL,
+                game_label TEXT, league TEXT, commence TEXT,
+                created_at TEXT NOT NULL,
+                UNIQUE(user_id, event_id))""")
+        else:
+            conn.execute("""CREATE TABLE IF NOT EXISTS game_follows (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL REFERENCES users(id),
+                event_id TEXT NOT NULL,
+                game_label TEXT, league TEXT, commence TEXT,
+                created_at TEXT NOT NULL,
+                UNIQUE(user_id, event_id))""")
+        conn.execute("CREATE INDEX IF NOT EXISTS idx_follows_user ON game_follows(user_id)")
+        conn.commit()
+        conn.close()
+    except Exception:
+        pass
+
+
+_ensure_game_follows_schema()
+
+
 def migrate_db():
     """Migración segura: agrega columnas si faltan (sin borrar datos)."""
     conn = _raw_connect()
@@ -4164,6 +4196,21 @@ def home():
         elif preview_locked and preview_locked_play:
             locked_plays.append(
                 _locked_play_view(preview_locked_play, locked_ticket_url))
+    # Franja «Your risk today» (2026-10-23, idea de diseño aprobada por Alex
+    # SOLO como prueba en su cuenta): total en riesgo hoy de SUS jugadas
+    # trackeadas aún sin liquidar, como % de su bankroll.
+    risk_hoy = None
+    if is_alex_member(user):
+        try:
+            _pend = [r for r in tracked_rows
+                     if (r["fecha"] or "") == _hoy_iso and not r["resultado"]]
+            _total = sum(float(r["stake_monto"] or 0) for r in _pend)
+            _br = float(user["bankroll"]) if user["bankroll"] else 10000.0
+            risk_hoy = {"total": round(_total, 2),
+                        "pct": round(_total / _br * 100, 1) if _br else 0.0,
+                        "n": len(_pend)}
+        except Exception:
+            risk_hoy = None
     return render_template(
         # Tema v2 (moderno) es el predeterminado desde 2026-10-02 (pedido Alex);
         # v1 (clásico) queda como reversión vía /theme/v1. Diseño lux
@@ -4198,6 +4245,7 @@ def home():
         streak=program_streak(),
         resumen_ayer=resumen_ayer(),
         recientes=recientes,
+        risk_hoy=risk_hoy,
         recientes_dias=recientes_dias,
         hoy_iso=_hoy_iso,
         ayer_iso=_ayer_iso,
@@ -8102,6 +8150,47 @@ def official_tracker():
                            libro_titulo=libro_titulo)
 
 
+@app.route("/official-tracker/export.csv")
+@login_required
+def official_tracker_export():
+    """CSV con TODAS las jugadas oficiales liquidadas (2026-10-23, idea de
+    diseño "Recalculate it yourself" aprobada por Alex SOLO como prueba en
+    su cuenta; al resto, 404). Exporta los campos TAL CUAL están en
+    data/archive.json — el mismo filtro que official_tracker_full()
+    (WON/LOST, sin bloqueadas): ningún número se recalcula ni se inventa."""
+    from flask import abort
+    if not is_alex_member(current_user()):
+        abort(404)
+    import csv
+    import io
+    out = io.StringIO()
+    w = csv.writer(out)
+    w.writerow(["date", "pick", "game", "league", "level", "odds",
+                "stake", "result", "profit"])
+    dias = sorted(load_archive(), key=lambda d: d.get("fecha") or "")
+    for d in dias:
+        for j in d.get("jugadas", []) or []:
+            if j.get("resultado") in ("WON", "LOST") and not j.get("bloqueada"):
+                game = ""
+                if j.get("team_name") and j.get("opp_name"):
+                    game = "%s vs %s" % (j["team_name"], j["opp_name"])
+                w.writerow([
+                    d.get("fecha") or "",
+                    j.get("pick") or "",
+                    game,
+                    _league_of_archive_play(j) or "",
+                    (j.get("nivel") or "").upper(),
+                    j.get("cuota") if j.get("cuota") is not None else "",
+                    float(j.get("stake_monto") or 0),
+                    j.get("resultado"),
+                    float(j.get("profit") or 0),
+                ])
+    resp = Response(out.getvalue(), mimetype="text/csv")
+    resp.headers["Content-Disposition"] = \
+        "attachment; filename=official-tracker.csv"
+    return resp
+
+
 @app.route("/admin/tracker-oficial")
 @login_required
 def admin_tracker_oficial():
@@ -10565,6 +10654,17 @@ def props():
     return render_template("props.html", board=load_props_board())
 
 
+def _mis_follows(db, user_id):
+    """Juegos seguidos por el usuario (Game Center Follow, 2026-10-23)."""
+    try:
+        return db.execute(
+            "SELECT * FROM game_follows WHERE user_id = ? ORDER BY created_at",
+            (user_id,),
+        ).fetchall()
+    except Exception:
+        return []
+
+
 @app.route("/game-center")
 @login_required
 def game_center():
@@ -10590,9 +10690,25 @@ def game_center():
     groups = [(lg, by_league[lg]) for lg in order if lg in by_league]
     groups += [(lg, gs) for lg, gs in by_league.items() if lg not in order]
     total_books = max([g.get("books_count", 0) for g in games] or [0])
+    follows = None
+    if is_alex_member(current_user()):
+        en_board = {g.get("id"): g for g in games}
+        follows = []
+        for f in _mis_follows(db, session["user_id"]):
+            g = en_board.get(f["event_id"])
+            follows.append({
+                "event_id": f["event_id"],
+                "label": f["game_label"] or "",
+                "league": f["league"] or "",
+                "commence": f["commence"] or "",
+                "en_board": g is not None,
+                "when": ((g.get("date_et", "") + " · " + g.get("time_et", ""))
+                         if g else ""),
+                "live": bool(g.get("live")) if g else False,
+            })
     return render_template("gamecenter.html", groups=groups,
                            updated_label=_gc_updated(board),
-                           total_books=total_books)
+                           total_books=total_books, follows=follows)
 
 
 @app.route("/game-center/<event_id>")
@@ -10631,9 +10747,47 @@ def game_center_game(event_id):
     else:
         verdict = {"cls": "pass", "kicker": "STILL GOOD?",
                    "text": "Not at these prices. Both sides sit at or under the fair line, so the read right now is pass and keep watching — if a book drifts or money moves the line, it shows here first."}
+    is_following = False
+    if is_alex_member(current_user()):
+        is_following = any(f["event_id"] == event_id
+                           for f in _mis_follows(db, session["user_id"]))
     return render_template("gamecenter_game.html", game=game, sections=sections,
-                           verdict=verdict, updated_label=_gc_updated(board))
+                           verdict=verdict, updated_label=_gc_updated(board),
+                           is_following=is_following)
 
+
+
+@app.route("/game-center/<event_id>/follow", methods=["POST"])
+@login_required
+def game_center_follow(event_id):
+    """Follow/Unfollow de un juego del Game Center (2026-10-23: prueba
+    privada SOLO para la cuenta de miembro de Alex; al resto, 404)."""
+    from flask import abort
+    if not is_alex_member(current_user()):
+        abort(404)
+    db = get_db()
+    row = db.execute(
+        "SELECT id FROM game_follows WHERE user_id = ? AND event_id = ?",
+        (session["user_id"], event_id),
+    ).fetchone()
+    if row:
+        db.execute("DELETE FROM game_follows WHERE id = ?", (row["id"],))
+        db.commit()
+        return jsonify({"ok": True, "following": False})
+    board = load_gamecenter()
+    game = next((g for g in (board.get("games") or [])
+                 if g.get("id") == event_id), None)
+    if game is None:
+        abort(404)
+    label = "%s @ %s" % (game.get("away", ""), game.get("home", ""))
+    db.execute(
+        "INSERT INTO game_follows (user_id, event_id, game_label, league,"
+        " commence, created_at) VALUES (?, ?, ?, ?, ?, ?)",
+        (session["user_id"], event_id, label, game.get("league", ""),
+         game.get("commence", ""), now_iso()),
+    )
+    db.commit()
+    return jsonify({"ok": True, "following": True})
 
 
 # ----------------------------- Free public tools (no login) ----------------
