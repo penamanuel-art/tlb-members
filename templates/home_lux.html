@@ -347,6 +347,18 @@ body.v2 .f1b-rec{margin:18px 0 0}
     <span style="color:#93a4bf;font-size:20px;">›</span>
   </a>
 </section>
+{% if is_alex and risk_hoy %}
+<section class="v2-sec" style="padding-top:0">
+  <div style="background:linear-gradient(180deg,#111a3e,#0c1430);border:1px solid #24334d;border-radius:20px;padding:15px 16px;">
+    <div style="font-size:11px;letter-spacing:2px;color:#e8c766;font-weight:800;">YOUR RISK TODAY</div>
+    {% if risk_hoy.n %}
+    <div style="font-size:16.5px;font-weight:800;color:#fff;margin-top:5px;">${{ '{:,.2f}'.format(risk_hoy.total) }} at risk today · {{ risk_hoy.pct }}% of your bankroll · {{ risk_hoy.n }} play{{ 's' if risk_hoy.n != 1 else '' }}</div>
+    {% else %}
+    <div style="font-size:16.5px;font-weight:800;color:#fff;margin-top:5px;">No plays tracked today — $0 at risk</div>
+    {% endif %}
+  </div>
+</section>
+{% endif %}
 <section class="v2-sec" id="plays" style="scroll-margin-top:70px;">
   {% set golds = plays | selectattr('nivel', 'equalto', 'GOLD') | list %}
   {% if golds %}
