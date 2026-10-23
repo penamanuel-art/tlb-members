@@ -2931,6 +2931,37 @@ def bump_book_balance(db, user_id, book_name, delta):
     db.commit()
 
 
+def _book_balance_total(db, user):
+    """Total de los balances por casa del usuario, para que el botón
+    Balance de la barra superior muestre la cantidad visible (pedido
+    Alex 2026-10-23). Devuelve el total o None si el usuario aún no
+    registró ninguna casa. La sesión admin cae en la cuenta personal
+    de Alex, igual que en /balances."""
+    if not user:
+        return None
+    try:
+        if is_admin_for(user) and not is_alex_member(user):
+            row = db.execute(
+                "SELECT id FROM users WHERE LOWER(email) = ?",
+                (ALEX_MEMBER_EMAIL,),
+            ).fetchone()
+            uid = row["id"] if row else user["id"]
+        else:
+            uid = user["id"]
+        sql = ("SELECT COUNT(*) AS n, COALESCE(SUM(balance), 0) AS t "
+               "FROM book_balances WHERE user_id = ?")
+        try:
+            r = db.execute(sql, (uid,)).fetchone()
+        except Exception:
+            _ensure_book_balances_table(db)
+            r = db.execute(sql, (uid,)).fetchone()
+        if not r or not int(r["n"] or 0):
+            return None
+        return round(float(r["t"] or 0), 2)
+    except Exception:
+        return None
+
+
 def auto_grado_tracked(db, user):
     """Liquida automáticamente las jugadas trackeadas pendientes usando los
     resultados oficiales del programa (data/archive.json).
@@ -3381,6 +3412,16 @@ def inject_user():
                     trial_dias_left = max(1, int(resto // 86400) + (1 if resto % 86400 > 0 else 0))
         except (KeyError, IndexError, TypeError):
             pass
+    balance_total = None
+    balance_total_txt = None
+    try:
+        if cu and session.get("user_id"):
+            balance_total = _book_balance_total(get_db(), cu)
+            if balance_total is not None:
+                balance_total_txt = f"${balance_total:,.2f}"
+    except Exception:
+        balance_total = None
+        balance_total_txt = None
     return {
         "nombre_corto": corto,
         "nombre_completo": nombre,
@@ -3393,6 +3434,8 @@ def inject_user():
         "is_alex": bool(cu and (cu["email"] or "").strip().lower() == ALEX_MEMBER_EMAIL),
         "miembro_platinum": platinum_unlocked_for(cu),
         "trial_dias_left": trial_dias_left,
+        "balance_total": balance_total,
+        "balance_total_txt": balance_total_txt,
         "past_due": past_due,
         "ticker_days": _seguro(compute_ticker_days, []),
         "racha_dias": _seguro(win_streak_days, 0),
