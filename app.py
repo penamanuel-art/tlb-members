@@ -6384,7 +6384,7 @@ def _ev_board_email_html(board):
     for e in board.get("events") or []:
         teams = ""
         for t in e.get("teams") or []:
-            tag = (" <span style='background:#e8c766;color:#111;font-size:10px;"
+            tag = (" <span style='background:#e8c766;color:#111;font-size:8px;"
                    "font-weight:800;border-radius:99px;padding:2px 8px'>OUR PLAY</span>"
                    if t.get("is_pick") else "")
             delta = t.get("delta") or "$0.00"
@@ -6393,32 +6393,32 @@ def _ev_board_email_html(board):
                      f"Same price at all {t.get('books_count', '')} books")
             teams += (
                 f"<div style='padding:9px 0;border-top:1px solid rgba(255,255,255,.07)'>"
-                f"<span style='font-size:14px;color:#fff'>{t.get('name', '')}</span>{tag}"
+                f"<span style='font-size:12px;color:#fff'>{t.get('name', '')}</span>{tag}"
                 f"<span style='float:right;text-align:right'><b style='color:#2ee6a8;"
-                f"font-size:17px'>{t.get('best_price', '')}</b><br>"
-                f"<span style='color:#8b94a7;font-size:11px'>best at {t.get('best_book', '')}</span></span>"
-                f"<div style='color:#2ee6a8;font-size:12px;margin-top:4px'>{dline}</div></div>")
+                f"font-size:14px'>{t.get('best_price', '')}</b><br>"
+                f"<span style='color:#8b94a7;font-size:9px'>best at {t.get('best_book', '')}</span></span>"
+                f"<div style='color:#2ee6a8;font-size:10px;margin-top:4px'>{dline}</div></div>")
         games += (
             f"<div style='background:#131f3a;border:1px solid #2a3c5f;border-radius:14px;"
             f"padding:14px 16px;margin:0 0 12px'>"
-            f"<div style='color:#c8cede;font-size:11px;letter-spacing:1.2px'>{e.get('league', '')}"
+            f"<div style='color:#c8cede;font-size:9px;letter-spacing:1.2px'>{e.get('league', '')}"
             f" · TODAY {e.get('time_label', '')}</div>"
-            f"<div style='color:#fff;font-size:16px;font-weight:700;margin-top:4px'>{e.get('label', '')}</div>"
+            f"<div style='color:#fff;font-size:13px;font-weight:700;margin-top:4px'>{e.get('label', '')}</div>"
             f"{teams}"
-            f"<div style='color:#8b94a7;font-size:12px;margin-top:8px'>Market vig "
+            f"<div style='color:#8b94a7;font-size:10px;margin-top:8px'>Market vig "
             f"<b style='color:#2ee6a8'>{e.get('vig', '')}</b></div></div>")
     return (
         "<div style='font-family:Arial,sans-serif;background:#0e1626;color:#eef2f8;"
         "padding:24px;border-radius:12px;max-width:560px'>"
-        "<div style='font-size:11px;letter-spacing:2px;color:#e8c766;font-weight:800'>THE SHARP TEAM</div>"
-        "<h2 style='margin:6px 0 4px;color:#fff'>Today's price board</h2>"
-        "<p style='color:#93a4bf;font-size:13px;margin:0 0 16px'>Every game on today's card, "
+        "<div style='font-size:9px;letter-spacing:2px;color:#e8c766;font-weight:800'>THE SHARP TEAM</div>"
+        "<h2 style='margin:6px 0 4px;color:#fff;font-size:20px'>Today's price board</h2>"
+        "<p style='color:#93a4bf;font-size:11px;margin:0 0 16px'>Every game on today's card, "
         "the best price for each team and where to bet it — the same board as your Dashboard.</p>"
         f"{games}"
         "<p style='margin:16px 0'><a href='https://www.thesharpteam.bet/ev-board' "
-        "style='background:#2ee6a8;color:#06301d;font-weight:800;text-decoration:none;"
+        "style='background:#2ee6a8;color:#06301d;font-weight:800;font-size:14px;text-decoration:none;"
         "border-radius:10px;padding:12px 20px;display:inline-block'>Open Compare Prices →</a></p>"
-        "<p style='color:#5f718f;font-size:11px;line-height:1.5'>You get this email because "
+        "<p style='color:#5f718f;font-size:9px;line-height:1.5'>You get this email because "
         "«Price board by email» is on in your Alerts. Turn it off any time there.<br>"
         "21+. Play responsibly. If you or someone you know has a gambling problem, call or "
         "text 1-800-GAMBLER. © 2026 The Sharp Team.</p></div>")
