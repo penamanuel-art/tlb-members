@@ -2,6 +2,19 @@
 {% block title %}Log in — The Sharp Team{% endblock %}
 {% block content %}
 <section class="auth-card">
+{% if sin_confirmar_email %}
+  <div style="border:2px solid #e8c766;background:rgba(251,191,36,.10);border-radius:16px;padding:20px 18px;text-align:center;margin-bottom:20px;">
+    <div style="color:#e8c766;font-size:11px;font-weight:900;letter-spacing:2px;">ONE STEP LEFT</div>
+    <div style="color:#ffffff;font-size:23px;font-weight:900;margin-top:6px;">Confirm your account first</div>
+    <p style="font-size:14.5px;line-height:1.6;color:#b9c4dc;margin:9px 0 0;">This account isn't active yet. We just re-sent the activation email to <b style="color:#ffffff;">{{ sin_confirmar_email }}</b> — open it and tap the link inside to get in. It takes five seconds.</p>
+    <form method="post" action="{{ url_for('reenviar_activacion') }}" style="margin-top:14px;">
+      <input type="hidden" name="email" value="{{ sin_confirmar_email }}">
+      <input type="hidden" name="lang" value="en">
+      <button class="btn btn-primary btn-block" type="submit">Resend activation email</button>
+    </form>
+    <p class="muted" style="font-size:12.5px;margin:10px 0 0;">Don't see it? Check your spam or promotions folder.</p>
+  </div>
+{% endif %}
   <h2>Log in to <span class="accent">your live Dashboard</span></h2>
   <form method="post" action="{{ url_for('login') }}{% if request.args.get('next') %}?next={{ request.args.get('next') }}{% endif %}">
     <label>Email
