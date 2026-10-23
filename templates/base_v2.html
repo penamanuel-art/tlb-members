@@ -477,7 +477,11 @@ function googleTranslateElementInit(){new google.translate.TranslateElement({pag
       .then(function(d){ if (d && d.v && d.v !== PAGE_V) show(); })
       .catch(function(){});
   }
-  document.getElementById('tst-nv-btn').addEventListener('click', function(){ location.reload(); });
+  document.getElementById('tst-nv-btn').addEventListener('click', function(){
+    if (window.location.search.indexOf('nvtest') > -1) { window.location.href = window.location.pathname; }
+    else { location.reload(); }
+  });
+  try { if (new URLSearchParams(window.location.search).has('nvtest')) { show(); } } catch(e) {}
   check();
   setInterval(check, 60000);
   document.addEventListener('visibilitychange', function(){ if (!document.hidden) check(); });
