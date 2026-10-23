@@ -4793,8 +4793,11 @@ def login():
             except Exception:
                 _ulang = "en"
             send_activation_email(user["nombre"], email, _tok, _ulang)
-            flash("Your account isn't activated yet — we just re-sent the activation email. Tap the link inside to get in.", "error")
-            return render_template("login.html"), 403
+            send_activation_email(user["nombre"], email, _tok, _ulang)
+            # Aviso GRANDE de confirmacion (2026-10-23, pedido de Alex:
+            # "la mas grande") - bloque propio en login.html en vez de
+            # la linea flash pequena.
+            return render_template("login.html", sin_confirmar_email=email), 403
         session["user_id"] = user["id"]
         session["nombre"] = user["nombre"]
         session["is_admin"] = es_admin
