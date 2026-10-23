@@ -3478,7 +3478,7 @@ def migrate_db():
             pending.append("ALTER TABLE users ADD COLUMN stake_mode TEXT NOT NULL DEFAULT 'units'")
         if "platinum_unlocked" not in cols:
             pending.append("ALTER TABLE users ADD COLUMN platinum_unlocked INTEGER NOT NULL DEFAULT 0")
-        for _col, _default in [("notif_plays", "1"), ("notif_graded", "1"), ("notif_live", "1"), ("notif_reminder", "1"), ("notif_ev", "1"), ("notif_price", "0"), ("notif_sharp", "1"), ("notif_masterclass", "1")]:
+        for _col, _default in [("notif_plays", "1"), ("notif_graded", "1"), ("notif_live", "1"), ("notif_reminder", "1"), ("notif_ev", "1"), ("notif_price", "0"), ("notif_sharp", "1"), ("notif_masterclass", "1"), ("ev_board_email", "1")]:
             if _col not in cols:
                 pending.append(f"ALTER TABLE users ADD COLUMN {_col} INTEGER NOT NULL DEFAULT {_default}")
         if "is_admin" not in cols:
@@ -5224,7 +5224,7 @@ def alertas():
     """Página de preferencias de notificaciones del miembro."""
     db = get_db()
     u = db.execute(
-        "SELECT notif_plays, notif_graded, notif_live, notif_reminder, notif_ev, notif_price, notif_sharp, notif_masterclass"
+        "SELECT notif_plays, notif_graded, notif_live, notif_reminder, notif_ev, notif_price, notif_sharp, notif_masterclass, ev_board_email"
         " FROM users WHERE id = ?", (session["user_id"],)
     ).fetchone()
     prefs = dict(u) if u else {}
@@ -5238,7 +5238,7 @@ def api_alertas():
     data = request.get_json(silent=True) or {}
     pref = data.get("pref", "")
     value = 1 if data.get("value") else 0
-    allowed = {"notif_plays", "notif_graded", "notif_live", "notif_reminder", "notif_ev", "notif_price", "notif_sharp", "notif_masterclass"}
+    allowed = {"notif_plays", "notif_graded", "notif_live", "notif_reminder", "notif_ev", "notif_price", "notif_sharp", "notif_masterclass", "ev_board_email"}
     if pref not in allowed:
         return jsonify({"ok": False, "error": "invalid pref"}), 400
     db = get_db()
@@ -6125,6 +6125,97 @@ def mybets_export():
     from flask import Response
     return Response(out.getvalue(), mimetype="text/csv", headers={
         "Content-Disposition": "attachment; filename=my-bets.csv"})
+
+
+def _ev_board_email_html(board):
+    """HTML del correo del tablero de precios (Compare Prices) del día."""
+    games = ""
+    for e in board.get("events") or []:
+        teams = ""
+        for t in e.get("teams") or []:
+            tag = (" <span style='background:#e8c766;color:#111;font-size:10px;"
+                   "font-weight:800;border-radius:99px;padding:2px 8px'>OUR PLAY</span>"
+                   if t.get("is_pick") else "")
+            delta = t.get("delta") or "$0.00"
+            dline = (f"▲ {delta} more than the worst price on a $100 bet"
+                     if delta != "$0.00" else
+                     f"Same price at all {t.get('books_count', '')} books")
+            teams += (
+                f"<div style='padding:9px 0;border-top:1px solid rgba(255,255,255,.07)'>"
+                f"<span style='font-size:14px;color:#fff'>{t.get('name', '')}</span>{tag}"
+                f"<span style='float:right;text-align:right'><b style='color:#2ee6a8;"
+                f"font-size:17px'>{t.get('best_price', '')}</b><br>"
+                f"<span style='color:#8b94a7;font-size:11px'>best at {t.get('best_book', '')}</span></span>"
+                f"<div style='color:#2ee6a8;font-size:12px;margin-top:4px'>{dline}</div></div>")
+        games += (
+            f"<div style='background:#131f3a;border:1px solid #2a3c5f;border-radius:14px;"
+            f"padding:14px 16px;margin:0 0 12px'>"
+            f"<div style='color:#c8cede;font-size:11px;letter-spacing:1.2px'>{e.get('league', '')}"
+            f" · TODAY {e.get('time_label', '')}</div>"
+            f"<div style='color:#fff;font-size:16px;font-weight:700;margin-top:4px'>{e.get('label', '')}</div>"
+            f"{teams}"
+            f"<div style='color:#8b94a7;font-size:12px;margin-top:8px'>Market vig "
+            f"<b style='color:#2ee6a8'>{e.get('vig', '')}</b></div></div>")
+    return (
+        "<div style='font-family:Arial,sans-serif;background:#0e1626;color:#eef2f8;"
+        "padding:24px;border-radius:12px;max-width:560px'>"
+        "<div style='font-size:11px;letter-spacing:2px;color:#e8c766;font-weight:800'>THE SHARP TEAM</div>"
+        "<h2 style='margin:6px 0 4px;color:#fff'>Today's price board</h2>"
+        "<p style='color:#93a4bf;font-size:13px;margin:0 0 16px'>Every game on today's card, "
+        "the best price for each team and where to bet it — the same board as your Dashboard.</p>"
+        f"{games}"
+        "<p style='margin:16px 0'><a href='https://www.thesharpteam.bet/ev-board' "
+        "style='background:#2ee6a8;color:#06301d;font-weight:800;text-decoration:none;"
+        "border-radius:10px;padding:12px 20px;display:inline-block'>Open Compare Prices →</a></p>"
+        "<p style='color:#5f718f;font-size:11px;line-height:1.5'>You get this email because "
+        "«Price board by email» is on in your Alerts. Turn it off any time there.<br>"
+        "21+. Play responsibly. If you or someone you know has a gambling problem, call or "
+        "text 1-800-GAMBLER. © 2026 The Sharp Team.</p></div>")
+
+
+@app.route("/admin/api/ev-board/email-digests", methods=["POST"])
+def api_ev_board_email_digests():
+    """Correo del tablero de precios a los miembros con el ajuste activo
+    (2026-10-23, aprobado por Alex, espejo del ajuste de referencia).
+    {"test": true} lo manda SOLO a la cuenta de Alex, sin deduplicar."""
+    if not _admin_api_autorizado():
+        return jsonify({"ok": False}), 403
+    data = request.get_json(silent=True) or {}
+    test = bool(data.get("test"))
+    board = load_ev_board()
+    events = board.get("events") or []
+    if not events:
+        return jsonify({"ok": True, "sent": 0, "reason": "empty board"})
+    today = datetime.now(TZ).strftime("%Y-%m-%d")
+    if not test and get_setting("ev_board_email_last", "") == today:
+        return jsonify({"ok": True, "sent": 0, "reason": "already sent"})
+    db = get_db()
+    if test:
+        rows = db.execute("SELECT * FROM users WHERE LOWER(email) = ?",
+                          (ALEX_MEMBER_EMAIL.lower(),)).fetchall()
+    else:
+        rows = db.execute(
+            "SELECT * FROM users WHERE ev_board_email = 1").fetchall()
+    html = _ev_board_email_html(board)
+    text = ("Today's price board is in your inbox and on your Dashboard: "
+            "every game on today's card with the best price for each team. "
+            "Open Compare Prices: https://www.thesharpteam.bet/ev-board")
+    sent = 0
+    for u in rows:
+        u = dict(u)
+        if not test and not platinum_unlocked_for(u):
+            continue
+        if not u.get("email"):
+            continue
+        try:
+            _dispatch_email(u["email"], "The Sharp Team | Today's price board",
+                            text, html)
+            sent += 1
+        except Exception:
+            pass
+    if not test and sent:
+        set_setting("ev_board_email_last", today)
+    return jsonify({"ok": True, "sent": sent, "test": test})
 
 
 @app.route("/admin/api/own-bets/open")
