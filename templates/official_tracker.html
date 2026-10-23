@@ -128,6 +128,9 @@ body{background-color:#161d29;background-image:radial-gradient(560px 300px at 50
   <a class="ot-back" href="/home">← Back to Dashboard</a>
   <h1>🏆 Official Tracker</h1>
   <div class="sub">The full official record — every stat. Updated live from the official archive.</div>
+  {% if is_alex %}
+  <a href="{{ url_for('official_tracker_export') }}" style="display:inline-block;background:#131e31;border:1px solid #e8c766;color:#e8c766;font-size:0.85rem;font-weight:800;border-radius:12px;padding:10px 16px;text-decoration:none;margin-bottom:18px;">⬇ Recalculate it yourself — download the full record (CSV)</a>
+  {% endif %}
 
   {% set g = t.general %}
   {# Encabezado de estadísticas: panel único (2026-10-20, aprobado por Alex).
