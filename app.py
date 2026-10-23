@@ -5503,7 +5503,7 @@ def track_value():
 def balances_delete(book_name):
     db = get_db()
     user = current_user()
-    if not (is_alex_member(user) or is_admin_for(user)):
+    if not user:
         return redirect(url_for("home"))
     if is_admin_for(user) and not is_alex_member(user):
         row = db.execute(
@@ -5523,12 +5523,15 @@ def balances_delete(book_name):
 @app.route("/balances", methods=["GET", "POST"])
 @login_required
 def balances():
-    """Balances por casa de apuesta (v1: solo cuenta personal de Alex, 2026-10-03).
-    Manual por ahora; a futuro se ajustan solos al liquidarse las jugadas."""
+    """Balances por casa de apuesta de cada miembro (v1: solo la cuenta
+    de Alex, 2026-10-03; ABIERTO a todos los miembros el 2026-10-23 por
+    orden de Alex: cada miembro lleva el balance que tiene en cada casa
+    y solo ve/edita los suyos; la sesión admin sigue cayendo en la
+    cuenta personal de Alex). Manual, y desde el 2026-10-23 las
+    apuestas propias liquidadas lo mueven solas vía
+    _sync_own_bet_balance (gana → se agrega, pierde → se rebaja)."""
     db = get_db()
     user = current_user()
-    if not (is_alex_member(user) or is_admin_for(user)):
-        return redirect(url_for("home"))
     # Los balances siempre viven en la cuenta personal de Alex (aunque entre como admin)
     if is_admin_for(user) and not is_alex_member(user):
         row = db.execute(
@@ -5728,6 +5731,30 @@ def _own_profit(b):
     if r == "L":
         return -stake
     return 0.0
+
+
+def _sync_own_bet_balance(db, old_bet, new_bet):
+    """Mueve solo el balance por casa del dueño de una apuesta propia
+    (pedido Alex 2026-10-23: cada miembro lleva su balance en cada casa
+    y se ajusta al liquidarse: si gana se le agrega el profit, si pierde
+    se le rebaja el monto apostado). Revierte el efecto del estado
+    anterior en su casa y aplica el del estado nuevo, así corregir un
+    resultado o desmarcarlo también cuadra. Sin casa registrada o sin
+    cambio de profit, no toca nada."""
+    try:
+        old_casa = (old_bet.get("casa") or "").strip()
+        new_casa = (new_bet.get("casa") or "").strip()
+        old_p = _own_profit(old_bet) if old_casa else 0.0
+        new_p = _own_profit(new_bet) if new_casa else 0.0
+        uid = old_bet.get("user_id") or new_bet.get("user_id")
+        if not uid:
+            return
+        if old_casa and old_p:
+            bump_book_balance(db, uid, old_casa, -old_p)
+        if new_casa and new_p:
+            bump_book_balance(db, uid, new_casa, new_p)
+    except Exception:
+        pass
 
 
 def _own_clv_pts(b):
@@ -6213,6 +6240,11 @@ def mybets_edit(bet_id):
              pick, cuota, stake, (request.form.get("casa") or "").strip(),
              _parse_odds_txt(request.form.get("cierre")), resultado,
              settled_at, bet_id, user["id"]))
+        _nb = dict(row)
+        _nb.update({"cuota": cuota, "stake_monto": stake,
+                    "casa": (request.form.get("casa") or "").strip(),
+                    "resultado": resultado})
+        _sync_own_bet_balance(db, dict(row), _nb)
         db.commit()
         bet = dict(row)
         bet.update({"pick": pick, "cuota": cuota, "stake_monto": stake,
@@ -6244,6 +6276,9 @@ def mybets_resultado(bet_id):
     settled_at = datetime.now(TZ).strftime("%Y-%m-%d %H:%M") if resultado else None
     db.execute("UPDATE own_bets SET resultado = ?, settled_at = ? WHERE id = ?",
                (resultado or None, settled_at, bet_id))
+    _nb = dict(row)
+    _nb["resultado"] = resultado or None
+    _sync_own_bet_balance(db, dict(row), _nb)
     db.commit()
     if resultado:
         bet = dict(row)
@@ -6465,6 +6500,9 @@ def api_own_bets_grade():
     db.execute(
         "UPDATE own_bets SET resultado = ?, cierre = ?, marcador = ?, settled_at = ? WHERE id = ?",
         (resultado, cierre, marcador, datetime.now(TZ).strftime("%Y-%m-%d %H:%M"), row["id"]))
+    _nb = dict(row)
+    _nb["resultado"] = resultado
+    _sync_own_bet_balance(db, dict(row), _nb)
     db.commit()
     owner = db.execute("SELECT * FROM users WHERE id = ?",
                        (row["user_id"],)).fetchone()
