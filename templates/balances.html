@@ -43,7 +43,7 @@
   {% set meses = {'01':'Jan','02':'Feb','03':'Mar','04':'Apr','05':'May','06':'Jun','07':'Jul','08':'Aug','09':'Sep','10':'Oct','11':'Nov','12':'Dec'} %}
   <p class="bbn-kicker">MY MONEY</p>
   <h2 class="bbn-h">Book balances</h2>
-  <p class="bbn-sub">Where your bankroll lives. Updated manually.</p>
+  <p class="bbn-sub">Where your bankroll lives — updated automatically when your bets settle.</p>
   <p class="bbn-how">How it works: add each book where you keep money and update its balance when it changes — deposits, withdrawals, settled bets. The total is your bankroll across every book.</p>
 
   <div class="bbn-total">
@@ -73,6 +73,21 @@
     <p class="bbn-empty">No books yet. Add your first one below.</p>
     {% endfor %}
   </div>
+
+  {% if moves %}
+  <div class="bbn-panel" style="flex:none;justify-content:flex-start">
+    <div class="bbn-ft" style="padding:10px 0 0">RECENT MOVEMENTS</div>
+    {% for m in moves %}
+    {% set f = (m["created_at"] or '') | string %}
+    {% set fc = (meses.get(f[5:7], '') ~ ' ' ~ (f[8:10] | int) ~ ' · ' ~ f[11:16]) if (f | length) >= 16 else f %}
+    <div class="bbn-row" style="padding:9px 0">
+      <span class="bbn-who"><span class="bbn-nm" style="font-size:14.5px;font-weight:600">{{ m["concepto"] }}</span><span class="bbn-up">{{ m["book_name"] }} · {{ fc }}</span></span>
+      <span style="font-size:16px;font-weight:700;color:{{ '#3ddc84' if m['delta'] > 0 else '#f26d6d' }}">${{ "%+.2f"|format(m["delta"]) }}</span>
+    </div>
+    {% if not loop.last %}<div class="bbn-gdiv"></div>{% endif %}
+    {% endfor %}
+  </div>
+  {% endif %}
 
   <form class="bbn-form" method="post" action="{{ url_for('balances') }}">
     <div class="bbn-ft">ADD / UPDATE A BOOK</div>
