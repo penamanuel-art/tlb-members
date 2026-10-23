@@ -2563,8 +2563,34 @@ def _gc_section(game, key, title):
     edge = blk.get("edge") or {}
     ba = (blk.get("best") or {}).get("a") or {}
     bb = (blk.get("best") or {}).get("b") or {}
+    def _imp(x):
+        if x is None:
+            return None
+        return 100.0 / (x + 100) if x > 0 else (-x) / ((-x) + 100.0)
+
+    besta = (blk.get("best") or {}).get("a") or {}
+    bestb = (blk.get("best") or {}).get("b") or {}
+    book_rows = []
+    for b in books:
+        ap, bp = b.get("a_price"), b.get("b_price")
+        if key in ("spreads", "totals"):
+            apt, bpt = b.get("a_point"), b.get("b_point")
+            want_b = blk.get("point") if key == "totals" else -(blk.get("point") or 0)
+            if apt != blk.get("point") or bpt != want_b:
+                continue
+        ia, ib = _imp(ap), _imp(bp)
+        vig_b = round((ia + ib - 1) * 100, 1) if ia is not None and ib is not None else None
+        book_rows.append({
+            "book": b["book"], "a_price": _gc_fmt(ap), "b_price": _gc_fmt(bp),
+            "a_best": bool(ap is not None and besta.get("book") == b["book"] and besta.get("price") == ap),
+            "b_best": bool(bp is not None and bestb.get("book") == b["book"] and bestb.get("price") == bp),
+            "vig": (str(vig_b) + "%") if vig_b is not None else "—",
+        })
+    book_rows.sort(key=lambda r: 0 if (r["a_best"] or r["b_best"]) else 1)
     return {
-        "title": title, "cols": [_GC_SHORT.get(c, c[:4].upper()) for c in cols],
+        "title": title, "book_rows": book_rows,
+        "side_a": sa, "side_b": sb,
+        "cols": [_GC_SHORT.get(c, c[:4].upper()) for c in cols],
         "rows": rows, "n_books": blk.get("n_books", len(books)),
         "fair_note": fair_note,
         "best_a_book": ba.get("book", ""), "best_a_price": _gc_fmt(ba.get("price")),
@@ -9827,6 +9853,7 @@ def game_center_game(event_id):
     for key, title in (("h2h", "Moneyline"), ("spreads", "Spread"), ("totals", "Total")):
         sec = _gc_section(game, key, title)
         if sec:
+            sec["tab"] = title
             if key in ("spreads", "totals") and sec["rows"]:
                 pt = (game.get("markets") or {}).get(key, {}).get("point")
                 sec["title"] = title + " · " + _gc_pt(pt) if pt is not None else title
