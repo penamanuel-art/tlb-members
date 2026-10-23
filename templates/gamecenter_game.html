@@ -7,25 +7,36 @@
 .gc-kick{font-size:11px;letter-spacing:2.5px;color:#e8c766;font-weight:800;margin-top:12px}
 .gc-h1{font-size:23px;font-weight:800;margin:5px 0 4px;color:#fff;line-height:1.2}
 .gc-sub{font-size:12.5px;color:#93a4bf;margin:0}
-.gc-sec{font-size:16px;font-weight:800;color:#fff;margin:22px 0 10px}
-.gc-gridbox{background:#131f3a;border:1px solid #2a3c5f;border-radius:14px;padding:12px;overflow-x:auto}
-.gc-grid{width:100%;border-collapse:collapse;font-size:12px}
-.gc-grid td{padding:7px 3px;text-align:center;color:#eef2f8}
-.gc-grid td.side{text-align:left;font-weight:700;color:#fff;white-space:nowrap}
-.gc-grid tr.hd td{color:#93a4bf;font-size:10px;letter-spacing:.5px}
-.gc-grid td.fair{color:#58a6ff;font-weight:700}
-.gc-grid td.bestc{background:#0d3527;border-radius:7px;color:#2ee6a8;font-weight:800}
-.gc-grid .bst{display:block;font-size:8px;letter-spacing:1px}
+.gc-tabs{display:flex;background:#0d1730;border:1px solid #2a3c5f;border-radius:12px;padding:4px;gap:4px;margin:18px 0 12px}
+.gc-tab{flex:1;background:transparent;border:0;color:#93a4bf;font-size:13px;font-weight:700;padding:9px 4px;border-radius:9px;cursor:pointer}
+.gc-tab.on{background:#22304f;color:#fff}
+.gc-panel{display:none}
+.gc-panel.on{display:block}
+.gc-secnote{font-size:12px;color:#93a4bf;margin:0 0 10px}
+.gc-books{background:#131f3a;border:1px solid #2a3c5f;border-radius:14px;overflow:hidden}
+.gc-bkhead,.gc-bkrow{display:grid;grid-template-columns:1.5fr 1fr 1fr .62fr;align-items:center;gap:6px;padding:10px 12px}
+.gc-bkhead{font-size:10px;letter-spacing:1px;color:#93a4bf;border-bottom:1px solid #2a3c5f}
+.gc-bkhead span:not(:first-child){text-align:center}
+.gc-bkrow{border-bottom:1px solid #1d2a4a}
+.gc-bkrow:last-child{border-bottom:0}
+.gc-bkname{font-size:13.5px;font-weight:700;color:#fff}
+.gc-bkname .st{color:#2ee6a8;font-size:11px}
+.gc-cell{text-align:center;font-size:14px;font-weight:700;color:#eef2f8;background:#0d1730;border-radius:9px;padding:8px 2px;position:relative}
+.gc-cell.best{background:#0d3527;color:#2ee6a8}
+.gc-cell .bst{position:absolute;top:-7px;left:50%;transform:translateX(-50%);background:#2ee6a8;color:#06301d;font-size:7.5px;font-weight:800;letter-spacing:.5px;border-radius:4px;padding:1px 4px}
+.gc-vig{text-align:center;font-size:12.5px;color:#93a4bf}
+.gc-fairrow{display:grid;grid-template-columns:1.5fr 1fr 1fr .62fr;align-items:center;gap:6px;padding:10px 12px;background:#0b1226;border-top:1px solid #2a3c5f}
+.gc-fairrow .fn{font-size:12.5px;font-weight:800;color:#58a6ff}
+.gc-fairrow .fc{text-align:center;font-size:13.5px;font-weight:800;color:#58a6ff}
 .gc-note{font-size:10.5px;color:#93a4bf;margin-top:8px;line-height:1.5}
-.gc-rows{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.gc-rows{display:flex;flex-direction:column;gap:8px;margin-top:12px}
 .gc-row2{background:#131f3a;border:1px solid #2a3c5f;border-radius:12px;padding:11px 13px;display:flex;justify-content:space-between;align-items:center;gap:10px}
 .gc-row2 .t{font-size:14px;font-weight:700;color:#fff}
 .gc-row2 .s{font-size:11px;color:#93a4bf}
 .gc-row2 .v{font-size:17px;font-weight:800;color:#fff;text-align:right;white-space:nowrap}
 .gc-row2 .v.green{color:#2ee6a8}
 .gc-row2 .v.red{color:#ff8589}
-.gc-row2 .v.blue{color:#58a6ff}
-.gc-verdict{margin-top:14px;border-radius:12px;padding:12px 14px;font-size:14px;line-height:1.5}
+.gc-verdict{margin-top:16px;border-radius:12px;padding:12px 14px;font-size:14px;line-height:1.5}
 .gc-verdict.pass{background:#241a08;border:1px solid #e8c766}
 .gc-verdict.value{background:#0d3527;border:1px solid #2ee6a8}
 .gc-verdict .k{font-size:11px;letter-spacing:1.5px;font-weight:800;margin-bottom:4px}
@@ -39,28 +50,37 @@
   <h1 class="gc-h1">{{ game.away }} @ {{ game.home }}</h1>
   <p class="gc-sub">{{ game.date_et }} · {{ game.time_et }} · {% if game.live %}Live now{% else %}Pregame{% endif %} · {{ game.books_count }} books · Updated {{ updated_label }}</p>
 
-  {% for sec in sections %}
-  <div class="gc-sec">{{ sec.title }}</div>
-  <div class="gc-gridbox">
-    <table class="gc-grid">
-      <tr class="hd"><td></td>{% for c in sec.cols %}<td>{{ c }}</td>{% endfor %}<td style="color:#58a6ff">FAIR</td></tr>
-      {% for row in sec.rows %}
-      <tr>
-        <td class="side">{{ row.label }}</td>
-        {% for cell in row.cells %}
-        <td class="{% if cell.best %}bestc{% endif %}">{{ cell.price }}{% if cell.best %}<span class="bst">BEST</span>{% endif %}</td>
-        {% endfor %}
-        <td class="fair">{{ row.fair }}</td>
-      </tr>
-      {% endfor %}
-    </table>
-    <div class="gc-note">Fair = the no-vig line: every book de-vigged, median of {{ sec.n_books }} books. {{ sec.fair_note }}</div>
+  <div class="gc-tabs">
+    {% for sec in sections %}<button type="button" class="gc-tab{% if loop.first %} on{% endif %}" data-tab="gc-p{{ loop.index }}" onclick="gcTab(this)">{{ sec.tab }}</button>{% endfor %}
   </div>
-  <div class="gc-rows">
-    <div class="gc-row2"><div><div class="t">Best price — {{ sec.rows[0].label }}</div><div class="s">{{ sec.best_a_book }}</div></div><div class="v green">{{ sec.best_a_price }}</div></div>
-    <div class="gc-row2"><div><div class="t">Best price — {{ sec.rows[1].label }}</div><div class="s">{{ sec.best_b_book }}</div></div><div class="v green">{{ sec.best_b_price }}</div></div>
-    <div class="gc-row2"><div><div class="t">Edge at the best price</div><div class="s">Best price vs the fair line</div></div><div><div class="v {% if sec.edge_a is not none and sec.edge_a >= 0 %}green{% else %}red{% endif %}" style="font-size:14px">{{ sec.rows[0].short }} {{ sec.edge_a_label }}</div><div class="v {% if sec.edge_b is not none and sec.edge_b >= 0 %}green{% else %}red{% endif %}" style="font-size:14px">{{ sec.rows[1].short }} {{ sec.edge_b_label }}</div></div></div>
-    <div class="gc-row2"><div><div class="t">Market vig at best prices</div><div class="s">What the books keep on this market</div></div><div class="v">{{ sec.vig_label }}</div></div>
+
+  {% for sec in sections %}
+  <div class="gc-panel{% if loop.first %} on{% endif %}" id="gc-p{{ loop.index }}">
+    <p class="gc-secnote"><b style="color:#fff">Every book</b> · {{ sec.title }} · {{ sec.book_rows|length }} books quoting</p>
+    <div class="gc-books">
+      <div class="gc-bkhead"><span>BOOK</span><span>{{ sec.side_a|upper }}</span><span>{{ sec.side_b|upper }}</span><span>VIG</span></div>
+      {% for r in sec.book_rows %}
+      <div class="gc-bkrow">
+        <div class="gc-bkname">{{ r.book }}{% if r.a_best or r.b_best %} <span class="st">★</span>{% endif %}</div>
+        <div class="gc-cell{% if r.a_best %} best{% endif %}">{% if r.a_best %}<span class="bst">BEST</span>{% endif %}{{ r.a_price }}</div>
+        <div class="gc-cell{% if r.b_best %} best{% endif %}">{% if r.b_best %}<span class="bst">BEST</span>{% endif %}{{ r.b_price }}</div>
+        <div class="gc-vig">{{ r.vig }}</div>
+      </div>
+      {% endfor %}
+      <div class="gc-fairrow">
+        <div class="fn">FAIR LINE (NO-VIG)</div>
+        <div class="fc">{{ sec.rows[0].fair }}</div>
+        <div class="fc">{{ sec.rows[1].fair }}</div>
+        <div class="gc-vig">0%</div>
+      </div>
+    </div>
+    <div class="gc-note">Fair = the no-vig line: every book de-vigged, median of {{ sec.n_books }} books. {{ sec.fair_note }} For spreads and totals, books are listed at the consensus line.</div>
+    <div class="gc-rows">
+      <div class="gc-row2"><div><div class="t">Best price — {{ sec.rows[0].label }}</div><div class="s">{{ sec.best_a_book }}</div></div><div class="v green">{{ sec.best_a_price }}</div></div>
+      <div class="gc-row2"><div><div class="t">Best price — {{ sec.rows[1].label }}</div><div class="s">{{ sec.best_b_book }}</div></div><div class="v green">{{ sec.best_b_price }}</div></div>
+      <div class="gc-row2"><div><div class="t">Edge at the best price</div><div class="s">Best price vs the fair line</div></div><div><div class="v {% if sec.edge_a is not none and sec.edge_a >= 0 %}green{% else %}red{% endif %}" style="font-size:14px">{{ sec.rows[0].short }} {{ sec.edge_a_label }}</div><div class="v {% if sec.edge_b is not none and sec.edge_b >= 0 %}green{% else %}red{% endif %}" style="font-size:14px">{{ sec.rows[1].short }} {{ sec.edge_b_label }}</div></div></div>
+      <div class="gc-row2"><div><div class="t">Market vig at best prices</div><div class="s">What the books keep on this market</div></div><div class="v">{{ sec.vig_label }}</div></div>
+    </div>
   </div>
   {% endfor %}
 
@@ -71,4 +91,7 @@
 
   <p class="gc-foot">Prices from The Odds API across the books we track, refreshed through the day. The fair line is an estimate from the market itself — a quote is not an accepted bet, and books can move or limit a price at any time.</p>
 </div>
+<script>
+function gcTab(btn){document.querySelectorAll('.gc-tab').forEach(function(b){b.classList.remove('on')});btn.classList.add('on');document.querySelectorAll('.gc-panel').forEach(function(p){p.classList.remove('on')});document.getElementById(btn.getAttribute('data-tab')).classList.add('on');}
+</script>
 {% endblock %}
