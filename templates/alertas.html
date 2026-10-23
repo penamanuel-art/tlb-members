@@ -142,6 +142,17 @@
 
     <div class="alert-row">
       <div class="alert-info">
+        <b>Price board by email</b>
+        <span>Today's Compare Prices board in your inbox on card days — the best price for each team, the vig and where to bet it.</span>
+      </div>
+      <label class="toggle">
+        <input type="checkbox" data-pref="ev_board_email" {% if prefs.ev_board_email %}checked{% endif %}>
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <div class="alert-row">
+      <div class="alert-info">
         <b>Price moved on today's plays</b>
         <span>When the line moves on a play from today's card.</span>
       </div>
