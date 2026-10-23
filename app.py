@@ -5603,25 +5603,18 @@ def tracker():
         )
     if is_alex and request.args.get("view") == "values":
         return values_page()
-    ctx = _tracker_context(user)
-    ctx["is_alex"] = is_alex
-    ctx["view"] = request.args.get("view", "personal")
-    return render_template("dashboard.html", **ctx)
+    # My Bets COMPLETO tambien aqui (2026-10-23, correccion de Alex:
+    # <<en el tracker de My Bets no veo los cambios / debe igual>>):
+    # la entrada My Bets del menu ES el centro completo, no la vista
+    # compacta vieja (dashboard.html).
+    return _my_bets_center(user)
 
 
-@app.route("/tracker/plays")
-def tracker_plays():
-    """Lista completa de jugadas trackeadas del miembro (2026-10-19,
-    refinamiento de Alex): la vista principal de /tracker queda compacta
-    en una sola pantalla y la lista vive en esta vista propia, enlazada
-    desde abajo del tracker. Misma puerta que /tracker: sin sesion, el
-    admin o quien no tenga Platinum activo caen a /tracker, que muestra
-    la pagina que corresponda (venta con candado u oficial). Las acciones
-    de calificacion (set_result/untrack) usan back(), asi que desde aqui
-    regresan solas a esta vista."""
-    user = current_user()
-    if user is None or is_admin_for(user) or not platinum_unlocked_for(user):
-        return redirect(url_for("tracker"))
+def _my_bets_center(user):
+    """Centro completo de My Bets (2026-10-23): stats combinadas,
+    curva, filtros tipo backtest, desgloses, Coach, apuestas propias
+    y oficiales. Lo sirven /tracker (la entrada «My Bets» del menu)
+    y /tracker/plays."""
     ctx = _tracker_context(user)
     all_rows = [dict(r, source="official") for r in ctx["rows"]] + \
         [dict(r, source="own") for r in ctx.get("own_rows", [])]
@@ -5663,6 +5656,22 @@ def tracker_plays():
         books=books, markets=markets,
     )
     return render_template("tracker_plays.html", **ctx)
+
+
+@app.route("/tracker/plays")
+def tracker_plays():
+    """Lista completa de jugadas trackeadas del miembro (2026-10-19,
+    refinamiento de Alex): la vista principal de /tracker queda compacta
+    en una sola pantalla y la lista vive en esta vista propia, enlazada
+    desde abajo del tracker. Misma puerta que /tracker: sin sesion, el
+    admin o quien no tenga Platinum activo caen a /tracker, que muestra
+    la pagina que corresponda (venta con candado u oficial). Las acciones
+    de calificacion (set_result/untrack) usan back(), asi que desde aqui
+    regresan solas a esta vista."""
+    user = current_user()
+    if user is None or is_admin_for(user) or not platinum_unlocked_for(user):
+        return redirect(url_for("tracker"))
+    return _my_bets_center(user)
 
 
 # ==================== My Bets completo (2026-10-23) ====================
