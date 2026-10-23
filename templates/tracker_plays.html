@@ -2,7 +2,6 @@
 {% block title %}My Bets — The Sharp Team{% endblock %}
 {% block content %}
 <style>
-  .ply-back { display:inline-flex; align-items:center; gap:6px; color:#2fe6a7; font-size:13px; font-weight:700; text-decoration:none; margin:4px 0 10px; }
   .ply-h { color:#fff; font-size:26px; font-weight:800; margin:0 0 4px; letter-spacing:-.3px; }
   .ply-sub { color:#9aa7b8; font-size:13.5px; margin:0 0 16px; line-height:1.5; }
   .mb-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:9px; margin:0 0 14px; }
@@ -62,7 +61,6 @@
   #mbCurve { width:100%; height:110px; display:block; }
 </style>
 
-<a class="ply-back" href="{{ url_for('tracker') }}">&#8592; Back to my tracker</a>
 <h1 class="ply-h">My Bets</h1>
 <p class="ply-sub">Every bet you track — the program's plays and your own, from any book — graded, with your CLV, your curve and your numbers by market and book.</p>
 
