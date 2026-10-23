@@ -3444,6 +3444,15 @@ def _ensure_mybets_schema():
                 user_id INTEGER PRIMARY KEY, unit_monto REAL,
                 email_pref TEXT NOT NULL DEFAULT 'daily', updated_at TEXT)""")
         conn.execute("CREATE INDEX IF NOT EXISTS idx_own_user ON own_bets(user_id)")
+        try:
+            if USE_PG:
+                conn.execute("ALTER TABLE own_bets ADD COLUMN IF NOT EXISTS marcador TEXT")
+            else:
+                _cols = [r[1] for r in conn.execute("PRAGMA table_info(own_bets)").fetchall()]
+                if "marcador" not in _cols:
+                    conn.execute("ALTER TABLE own_bets ADD COLUMN marcador TEXT")
+        except Exception:
+            pass
         conn.commit()
         conn.close()
     except Exception:
@@ -5924,9 +5933,191 @@ def _mybets_gate():
     return user
 
 
+def _settlement_stats_strip():
+    """Franja de estadísticas del correo de liquidación (diseño v5):
+    récord oficial EN VIVO desde data/archive.json vía program_stats()
+    — la misma fuente del Official Tracker. Nunca fijo; si no hay
+    datos, franja genérica sin números."""
+    try:
+        ps = program_stats()
+        w = int(ps.get("ganadas") or 0)
+        l = int(ps.get("perdidas") or 0)
+        if w + l:
+            wr = float(ps.get("win_rate") or 0.0)
+            return f"{w}-{l} RECORD · {wr:.1f}% WIN RATE · EVERY BET TRACKED"
+    except Exception:
+        pass
+    return "EVERY BET TRACKED · GRADED AUTOMATICALLY"
+
+
+def _settlement_pick_line(bet):
+    """Línea de la jugada (asunto y tarjeta): el pick del miembro más
+    su cuota, sin duplicarla si el texto ya la trae."""
+    pick_txt = (bet.get("pick") or "").strip()
+    odds_txt = fmt_odds(bet.get("cuota"))
+    if odds_txt != "—" and odds_txt not in pick_txt:
+        pick_txt = f"{pick_txt} {odds_txt}".strip()
+    return pick_txt
+
+
+def _settlement_subline(bet):
+    """Sublínea de la tarjeta: '<Mercado> · vs <Rival>'. El rival sale
+    del juego 'Away vs Home' y del lado elegido; si no se puede
+    determinar, se muestra el matchup completo."""
+    mercado = (bet.get("mercado") or "Moneyline").strip()
+    juego = (bet.get("juego") or "").strip()
+    away = home = ""
+    if " vs " in juego:
+        away, home = [x.strip() for x in juego.split(" vs ", 1)]
+    if away and home:
+        if mercado.lower().startswith("total"):
+            return f"{mercado} · {away} vs {home}"
+        lado = (bet.get("lado") or "").strip().lower()
+        pick_txt = (bet.get("pick") or "").strip().lower()
+        # Lado elegido: si el texto del pick nombra a UN solo equipo, ese
+        # manda; si no, el campo lado del formulario (el que usa el
+        # calificador automático para decidir W/L).
+        picked = ""
+        a_in = away.lower() in pick_txt
+        h_in = home.lower() in pick_txt
+        if a_in and not h_in:
+            picked = "away"
+        elif h_in and not a_in:
+            picked = "home"
+        elif lado in ("away", "home"):
+            picked = lado
+        if picked == "away":
+            return f"{mercado} · vs {home}"
+        if picked == "home":
+            return f"{mercado} · vs {away}"
+        return f"{mercado} · {away} vs {home}"
+    return mercado
+
+
+def _settlement_card_html(bet):
+    """Tarjeta de UNA apuesta liquidada (diseño v5 aprobado por Alex
+    el 2026-10-23): chip de liga + chip WON/LOST/PUSH, jugada a 16px
+    en UNA línea (15px si es larga), sublínea mercado · rival y fila
+    FINAL con el marcador cuando se conoce. SIN montos de ganancia
+    en ninguna parte — orden expresa de Alex."""
+    import html as _h
+    res = (bet.get("resultado") or "").upper()
+    if res == "W":
+        chip_txt, chip_css = "WON", "background:#2ee6a8;color:#0c1638;"
+    elif res == "L":
+        chip_txt, chip_css = "LOST", "background:#fdecec;color:#b3261e;"
+    else:
+        chip_txt, chip_css = "PUSH", "background:#eef2f9;color:#33415e;"
+    liga_raw = (bet.get("liga") or "").strip()
+    liga = _ODDS_KEY_LEAGUE.get(liga_raw, liga_raw).upper()
+    liga_chip = ""
+    if liga:
+        liga_chip = ("<span style=\"display:inline-block;border:1px solid #e3e8f2;"
+                     "background:#eef2f9;color:#33415e;font-size:10.5px;font-weight:800;"
+                     "letter-spacing:2px;padding:4px 10px;border-radius:999px;\">"
+                     + _h.escape(liga) + "</span>")
+    pick_line = _settlement_pick_line(bet)
+    pick_size = 16 if len(pick_line) <= 38 else 15
+    subline = _settlement_subline(bet)
+    marcador = (bet.get("marcador") or "").strip()
+    final_row = ""
+    if marcador:
+        final_row = ("<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" "
+                     "style=\"margin-top:12px;border-top:1px solid #e3e8f2;\"><tr>"
+                     "<td valign=\"middle\" style=\"padding-top:11px;\"><span style=\"color:#8494ad;"
+                     "font-size:11px;font-weight:800;letter-spacing:1.5px;\">FINAL</span>"
+                     "<span style=\"color:#0c1638;font-size:18px;font-weight:900;margin-left:10px;\">"
+                     + _h.escape(marcador) + "</span></td></tr></table>")
+    return ("<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" bgcolor=\"#ffffff\" "
+            "style=\"background:#ffffff;border:1px solid #e3e8f2;border-left:6px solid #2ee6a8;"
+            "border-radius:20px;box-shadow:0 2px 10px rgba(12,22,56,0.06);\">"
+            "<tr><td style=\"padding:14px 18px;\">"
+            "<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\"><tr>"
+            "<td valign=\"middle\">" + liga_chip + "</td>"
+            "<td align=\"right\" valign=\"middle\"><span style=\"display:inline-block;" + chip_css
+            + "font-size:10.5px;font-weight:900;letter-spacing:1.5px;padding:4px 10px;"
+            "border-radius:999px;\">" + chip_txt + "</span></td></tr></table>"
+            "<div style=\"color:#0c1638;font-size:" + str(pick_size) + "px;font-weight:900;margin-top:10px;"
+            "white-space:nowrap;\">" + _h.escape(pick_line) + "</div>"
+            "<div style=\"font-size:13px;color:#5b6b84;margin-top:3px;\">" + _h.escape(subline) + "</div>"
+            + final_row +
+            "</td></tr></table>")
+
+
+def _settlement_email_html(bets, single=None):
+    """Correo de liquidación de My Bets con el diseño v5 aprobado por
+    Alex el 2026-10-23: banda negra con franja de estadísticas reales
+    del programa, título 36px en dos líneas, tarjetas blancas, botón
+    a My Bets y pie universal claro. Sin montos en ninguna parte."""
+    import html as _h
+    bets = list(bets or [])
+    if single is None:
+        single = len(bets) == 1
+    strip = _settlement_stats_strip()
+    if single and bets:
+        word = {"W": "WON", "L": "LOST", "P": "PUSHED"}.get(
+            (bets[0].get("resultado") or "").upper(), "SETTLED")
+        preheader = ("Your tracked bet settled: " + _settlement_pick_line(bets[0])
+                     + " — " + word + ". Your full running record is on My Bets.")
+        title_txt = "Your tracked bet settled: " + _settlement_pick_line(bets[0])
+        intro = "This tracked bet graded automatically:"
+    else:
+        w_ = sum(1 for b in bets if (b.get("resultado") or "").upper() == "W")
+        l_ = sum(1 for b in bets if (b.get("resultado") or "").upper() == "L")
+        preheader = ("Your tracked bets settled: " + str(w_) + "-" + str(l_)
+                     + ". Your full running record is on My Bets.")
+        title_txt = "Your tracked bets settled"
+        intro = "These tracked bets graded automatically:"
+    spacer = "<div style=\"font-size:0;line-height:0;height:12px;\">&nbsp;</div>"
+    cards = spacer.join(_settlement_card_html(b) for b in bets)
+    now = datetime.now(TZ)
+    hora = now.strftime("%I:%M %p").lstrip("0")
+    ts = now.strftime("%b") + " " + str(now.day) + ", " + str(now.year) + " · " + hora + " ET"
+    return ("<!DOCTYPE html>\n"
+            "<html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">"
+            "<title>" + _h.escape(title_txt) + "</title></head>\n"
+            "<body style=\"margin:0;padding:0;background:#f7f9fc;font-family:-apple-system,Helvetica,Arial,sans-serif;-webkit-text-size-adjust:100%;text-size-adjust:100%;\">\n"
+            "<div style=\"display:none;font-size:1px;line-height:1px;max-height:0;overflow:hidden;\">" + _h.escape(preheader) + "</div>\n"
+            "<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#f7f9fc;-webkit-text-size-adjust:100%;text-size-adjust:100%;\">\n"
+            "<tr><td align=\"center\" style=\"padding:0;\">\n"
+            "<table role=\"presentation\" width=\"520\" cellpadding=\"0\" cellspacing=\"0\" style=\"max-width:520px;width:100%;background:#ffffff;-webkit-text-size-adjust:100%;text-size-adjust:100%;\">\n"
+            "  <tr><td style=\"background:#000000;padding:18px 24px 16px;text-align:center;\">\n"
+            "    <div style=\"color:#2ee6a8;font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;white-space:nowrap;\">" + _h.escape(strip) + "</div>\n"
+            "    <img src=\"https://www.thesharpteam.bet/static/img/sharp-team-logo.png\" width=\"64\" alt=\"The Sharp Team\" style=\"display:block;margin:12px auto 0;\">\n"
+            "    <div style=\"color:#ffffff;font-size:15px;font-weight:800;letter-spacing:3px;margin-top:8px;\">THE SHARP TEAM</div>\n"
+            "    <div style=\"color:#2ee6a8;font-size:10px;font-weight:800;letter-spacing:2.5px;margin-top:3px;\">MY BETS · SETTLEMENT</div>\n"
+            "  </td></tr>\n"
+            "  <tr><td style=\"background:#ffffff;padding:22px 24px 4px;text-align:center;\">\n"
+            "    <div style=\"color:#111111;font-size:36px;line-height:1.15;font-weight:900;text-align:center;\">Your tracker just<br><span style=\"color:#0e9f74;\">updated.</span></div>\n"
+            "    <p style=\"font-size:14px;line-height:1.55;color:#5b6b84;margin:9px 0 0;\">" + intro + "</p>\n"
+            "  </td></tr>\n"
+            "  <tr><td style=\"background:#ffffff;padding:14px 24px 0;\">\n"
+            "    <div style=\"border-top:1px solid #e3e8f2;font-size:0;line-height:0;margin:0 0 16px;\">&nbsp;</div>\n"
+            "    " + cards + "\n"
+            "    <p style=\"font-size:14px;line-height:1.55;color:#33415e;text-align:center;margin:16px 0 0;\">Your full running record is on <b style=\"color:#0c1638;\">My Bets</b> — every bet, graded automatically.</p>\n"
+            "    <div style=\"text-align:center;margin-top:14px;\"><a href=\"https://www.thesharpteam.bet/tracker\" style=\"display:inline-block;background:#2ee6a8;color:#0c1638;font-size:14px;font-weight:900;padding:12px 26px;border-radius:999px;text-decoration:none;\">OPEN MY BETS &rarr;</a></div>\n"
+            "    <p style=\"font-size:11.5px;line-height:1.55;color:#8494ad;text-align:center;margin:16px 0 0;\">Auto-graded from your tracked bets. Change frequency in My Bets &rarr; Settlement emails.</p>\n"
+            "    <div style=\"font-size:11px;color:#8494ad;text-align:center;margin-top:8px;\">" + ts + "</div>\n"
+            "  </td></tr>\n"
+            "  <tr><td style=\"background:#ffffff;border-top:1px solid #e3e8f2;padding:18px 24px 16px;text-align:center;\">\n"
+            "    <img src=\"https://www.thesharpteam.bet/static/img/sharp-team-logo.png\" width=\"44\" alt=\"The Sharp Team\" style=\"display:block;margin:0 auto 5px;\">\n"
+            "    <div style=\"font-size:11px;font-weight:800;color:#0c1638;letter-spacing:1px;\">THE SHARP TEAM</div>\n"
+            "    <div style=\"font-size:10.5px;color:#8494ad;margin-top:3px;\">250 Park Avenue, Suite 1800, New York, NY 10017 · (551) 326-3312</div>\n"
+            "    <div style=\"font-size:10.5px;color:#8494ad;margin-top:8px;\">Daily plays, results and receipts: <a href=\"https://t.me/thesharpteam\" style=\"color:#0e9f74;text-decoration:none;\">t.me/thesharpteam</a></div>\n"
+            "    <div style=\"font-size:10.5px;color:#8494ad;line-height:1.5;margin-top:10px;\">21+. Play responsibly. If you or someone you know has a gambling problem, call or text 1-800-GAMBLER.</div>\n"
+            "    <div style=\"font-size:10.5px;color:#8494ad;line-height:1.5;margin-top:6px;\">Must be 21+. The Sharp Team provides information and entertainment only and is not a sportsbook. Past results do not guarantee future performance. 1u = $100.</div>\n"
+            "    <div style=\"font-size:10.5px;color:#8494ad;margin-top:5px;\">&copy; 2026 The Sharp Team. All rights reserved.</div>\n"
+            "  </td></tr>\n"
+            "</table>\n"
+            "</td></tr></table>\n"
+            "</body></html>")
+
+
 def _email_own_settled(user, bet):
     """Correo inmediato de liquidación de una apuesta propia (si el
-    miembro eligió 'immediate' en sus ajustes de My Bets)."""
+    miembro eligió 'immediate' en sus ajustes de My Bets). Diseño v5
+    aprobado por Alex el 2026-10-23: solo si ganó o perdió, sin
+    montos de ganancia."""
     try:
         db = get_db()
         st = _mybets_settings(db, user["id"], user)
@@ -5935,17 +6126,13 @@ def _email_own_settled(user, bet):
         res = bet.get("resultado")
         if res not in ("W", "L", "P"):
             return
-        profit = _own_profit(bet)
         word = {"W": "won", "L": "lost", "P": "pushed"}[res]
-        sign = "+" if profit > 0 else ""
-        subject = f"My Bets | {bet.get('pick')} — {word}"
-        text = (f"Your bet settled: {bet.get('pick')} ({fmt_odds(bet.get('cuota'))}) "
-                f"{word}. Profit: {sign}${profit:,.2f}. Open My Bets to see your updated numbers.")
-        html = (f"<div style='font-family:Arial,sans-serif;background:#0e1626;color:#eef2f8;"
-                f"padding:24px;border-radius:12px'><h2 style='margin:0 0 8px'>Bet settled</h2>"
-                f"<p style='font-size:16px'>{bet.get('pick')} ({fmt_odds(bet.get('cuota'))}) — <b>{word}</b></p>"
-                f"<p>Profit: <b>{sign}${profit:,.2f}</b></p>"
-                f"<p><a href='https://www.thesharpteam.bet/tracker/plays' style='color:#2ee6a8'>Open My Bets →</a></p></div>")
+        pick_line = _settlement_pick_line(bet)
+        subject = f"Your tracked bet settled: {pick_line}"
+        text = (f"Your tracked bet settled: {pick_line} — {word}. "
+                f"Your full running record is on My Bets: "
+                f"https://www.thesharpteam.bet/tracker")
+        html = _settlement_email_html([bet], single=True)
         _dispatch_email(user["email"], subject, text, html)
     except Exception:
         pass
@@ -6307,25 +6494,59 @@ def api_own_bets_grade():
     if not row:
         return jsonify({"ok": False, "error": "not found"}), 404
     cierre = data.get("cierre") or row["cierre"]
+    marcador = (data.get("marcador") or "").strip() or None
     db.execute(
-        "UPDATE own_bets SET resultado = ?, cierre = ?, settled_at = ? WHERE id = ?",
-        (resultado, cierre, datetime.now(TZ).strftime("%Y-%m-%d %H:%M"), row["id"]))
+        "UPDATE own_bets SET resultado = ?, cierre = ?, marcador = ?, settled_at = ? WHERE id = ?",
+        (resultado, cierre, marcador, datetime.now(TZ).strftime("%Y-%m-%d %H:%M"), row["id"]))
     db.commit()
     owner = db.execute("SELECT * FROM users WHERE id = ?",
                        (row["user_id"],)).fetchone()
     if owner:
         bet = dict(row)
         bet.update({"resultado": resultado, "cierre": cierre})
+        if marcador:
+            bet["marcador"] = marcador
         _email_own_settled(owner, bet)
     return jsonify({"ok": True})
 
 
 @app.route("/admin/api/own-bets/email-digests", methods=["POST"])
 def api_own_bets_digests():
-    """Resumen diario de liquidación de My Bets (lo dispara el cron HF)."""
+    """Resumen diario de liquidación de My Bets (lo dispara el cron HF).
+    {"test": true} lo manda SOLO a la cuenta de Alex, con sus últimas
+    apuestas propias liquidadas (espejo del modo test de ev-board)."""
     if not _admin_api_autorizado():
         return jsonify({"ok": False}), 403
+    data = request.get_json(silent=True) or {}
     db = get_db()
+    if data.get("test"):
+        sent_t = 0
+        rows = db.execute("SELECT * FROM users WHERE LOWER(email) = ?",
+                          (ALEX_MEMBER_EMAIL.lower(),)).fetchall()
+        for owner in rows:
+            bets_t = [dict(b) for b in db.execute(
+                "SELECT * FROM own_bets WHERE user_id = ? AND resultado IS NOT NULL "
+                "ORDER BY settled_at DESC, id DESC LIMIT 5",
+                (owner["id"],)).fetchall()]
+            if not bets_t:
+                continue
+            bets_t.reverse()
+            if len(bets_t) == 1:
+                subject_t = f"Your tracked bet settled: {_settlement_pick_line(bets_t[0])}"
+            else:
+                wt = sum(1 for b in bets_t if b["resultado"] == "W")
+                lt = sum(1 for b in bets_t if b["resultado"] == "L")
+                subject_t = f"Your tracked bets settled: {wt}-{lt}"
+            try:
+                _dispatch_email(owner["email"], subject_t,
+                                "Your tracked bets settled. Your full running "
+                                "record is on My Bets: "
+                                "https://www.thesharpteam.bet/tracker",
+                                _settlement_email_html(bets_t, single=(len(bets_t) == 1)))
+                sent_t += 1
+            except Exception:
+                pass
+        return jsonify({"ok": True, "sent": sent_t, "test": True})
     ayer = (datetime.now(TZ) - timedelta(days=1)).strftime("%Y-%m-%d")
     sent = 0
     users = db.execute(
@@ -6344,22 +6565,18 @@ def api_own_bets_digests():
             (owner["id"], ayer + "%")).fetchall()]
         if not bets:
             continue
-        w_ = sum(1 for b in bets if b["resultado"] == "W")
-        l_ = sum(1 for b in bets if b["resultado"] == "L")
-        profit = sum(_own_profit(b) for b in bets)
-        sign = "+" if profit > 0 else ""
-        lines = "".join(
-            f"<p style='margin:4px 0'>{b['pick']} ({fmt_odds(b['cuota'])}) — "
-            f"<b>{b['resultado']}</b> · {('+' if _own_profit(b) > 0 else '')}${_own_profit(b):,.2f}</p>"
-            for b in bets)
-        html = (f"<div style='font-family:Arial,sans-serif;background:#0e1626;color:#eef2f8;"
-                f"padding:24px;border-radius:12px'><h2 style='margin:0 0 8px'>Your daily settlement</h2>"
-                f"<p>{w_}-{l_} yesterday · Profit: <b>{sign}${profit:,.2f}</b></p>{lines}"
-                f"<p><a href='https://www.thesharpteam.bet/tracker/plays' style='color:#2ee6a8'>Open My Bets →</a></p></div>")
-        text = f"My Bets daily settlement: {w_}-{l_}, profit {sign}${profit:,.2f}. Open My Bets for the full picture."
+        bets.sort(key=lambda b: (b.get("settled_at") or "", b.get("id") or 0))
+        if len(bets) == 1:
+            subject = f"Your tracked bet settled: {_settlement_pick_line(bets[0])}"
+        else:
+            w_ = sum(1 for b in bets if b["resultado"] == "W")
+            l_ = sum(1 for b in bets if b["resultado"] == "L")
+            subject = f"Your tracked bets settled: {w_}-{l_}"
+        html = _settlement_email_html(bets, single=(len(bets) == 1))
+        text = ("Your tracked bets settled yesterday. Your full running "
+                "record is on My Bets: https://www.thesharpteam.bet/tracker")
         try:
-            _dispatch_email(owner["email"], "My Bets | Your daily settlement",
-                            text, html)
+            _dispatch_email(owner["email"], subject, text, html)
             sent += 1
         except Exception:
             pass
