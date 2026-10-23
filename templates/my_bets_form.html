@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Edit bet' if bet else 'Add a bet' }} — My Bets{% endblock %}
+{% block content %}
+<style>
+.mbf-wrap{max-width:540px;margin:0 auto;color:#eef2f8;padding:20px 16px 48px}
+.mbf-back{color:#93a4bf;font-size:13px;text-decoration:none}
+.mbf-h1{font-size:24px;font-weight:800;color:#fff;margin:10px 0 4px}
+.mbf-sub{font-size:13px;color:#93a4bf;margin:0 0 16px;line-height:1.5}
+.mbf-card{background:#131f3a;border:1px solid #2a3c5f;border-radius:16px;padding:16px}
+.mbf-lab{display:block;font-size:11px;letter-spacing:1.2px;color:#93a4bf;font-weight:800;margin:14px 0 6px}
+.mbf-lab:first-child{margin-top:0}
+.mbf-in,.mbf-sel{width:100%;box-sizing:border-box;background:#0d1730;border:1px solid #2a3c5f;border-radius:10px;padding:11px 12px;font-size:14px;color:#eef2f8}
+.mbf-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mbf-btn{width:100%;background:#2ee6a8;color:#06301d;font-weight:800;font-size:15px;border:0;border-radius:12px;padding:13px;margin-top:18px;cursor:pointer}
+.mbf-note{font-size:11.5px;color:#93a4bf;line-height:1.5;margin-top:12px}
+.mbf-photo{width:100%;border-radius:12px;margin-top:8px;border:1px solid #2a3c5f}
+</style>
+<div class="mbf-wrap">
+  <a class="mbf-back" href="{{ url_for('tracker_plays') }}">← My Bets</a>
+  <h1 class="mbf-h1">{{ 'Edit bet' if bet else 'Add a bet' }}</h1>
+  <p class="mbf-sub">Log any bet you placed — from any book, any sport. Pick a game from today's board and the details fill themselves, or write it in by hand.</p>
+  <form class="mbf-card" method="post" enctype="multipart/form-data">
+    {% if not bet %}
+    <label class="mbf-lab">PICK A GAME (OPTIONAL)</label>
+    <select class="mbf-sel" id="mbfGame" onchange="mbfFill()">
+      <option value="">— Write it by hand —</option>
+      {% for g in games %}
+      <option value="{{ g.id }}" data-juego="{{ g.away }} vs {{ g.home }}" data-liga="{{ g.league }}">{{ g.league }} · {{ g.away }} @ {{ g.home }} · {{ g.time_et }}</option>
+      {% endfor %}
+    </select>
+    <input type="hidden" name="event_id" id="mbfEvent">
+    {% endif %}
+    <label class="mbf-lab">GAME / EVENT</label>
+    <input class="mbf-in" name="juego" id="mbfJuego" value="{{ bet.juego if bet else '' }}" placeholder="e.g. Knicks vs Celtics">
+    <div class="mbf-row">
+      <div><label class="mbf-lab">LEAGUE</label><input class="mbf-in" name="liga" id="mbfLiga" value="{{ bet.liga if bet else '' }}" placeholder="NBA"></div>
+      <div><label class="mbf-lab">DATE</label><input class="mbf-in" type="date" name="fecha" value="{{ bet.fecha if bet else today }}"></div>
+    </div>
+    <label class="mbf-lab">PICK *</label>
+    <input class="mbf-in" name="pick" required value="{{ bet.pick if bet else '' }}" placeholder="e.g. Knicks +2.5">
+    <div class="mbf-row">
+      <div><label class="mbf-lab">MARKET</label>
+        <select class="mbf-sel" name="mercado">
+          {% for m in ['Moneyline','Spread','Total','Player Prop','Parlay','Other'] %}
+          <option {% if bet and bet.mercado == m %}selected{% endif %}>{{ m }}</option>
+          {% endfor %}
+        </select></div>
+      <div><label class="mbf-lab">SIDE</label>
+        <select class="mbf-sel" name="lado">
+          <option value="">—</option>
+          {% for v, t in [('away','Away / Over'),('home','Home / Under')] %}
+          <option value="{{ v }}" {% if bet and bet.lado == v %}selected{% endif %}>{{ t }}</option>
+          {% endfor %}
+        </select></div>
+    </div>
+    <div class="mbf-row">
+      <div><label class="mbf-lab">LINE / POINT</label><input class="mbf-in" name="punto" value="{{ bet.punto if bet and bet.punto is not none else '' }}" placeholder="2.5"></div>
+      <div><label class="mbf-lab">ODDS (AMERICAN) *</label><input class="mbf-in" name="cuota" required value="{{ bet.cuota if bet else '' }}" placeholder="-110"></div>
+    </div>
+    <div class="mbf-row">
+      <div><label class="mbf-lab">STAKE ($) *</label><input class="mbf-in" name="stake_monto" required value="{{ bet.stake_monto if bet else '' }}" placeholder="50"></div>
+      <div><label class="mbf-lab">BOOK</label><input class="mbf-in" name="casa" value="{{ bet.casa if bet else '' }}" placeholder="Novig"></div>
+    </div>
+    <div class="mbf-row">
+      <div><label class="mbf-lab">CLOSING ODDS (FOR CLV)</label><input class="mbf-in" name="cierre" value="{{ bet.cierre if bet and bet.cierre else '' }}" placeholder="-115"></div>
+      {% if bet %}
+      <div><label class="mbf-lab">RESULT</label>
+        <select class="mbf-sel" name="resultado">
+          <option value="" {% if not bet.resultado %}selected{% endif %}>Pending</option>
+          <option value="W" {% if bet.resultado == 'W' %}selected{% endif %}>Won</option>
+          <option value="L" {% if bet.resultado == 'L' %}selected{% endif %}>Lost</option>
+          <option value="P" {% if bet.resultado == 'P' %}selected{% endif %}>Push</option>
+        </select></div>
+      {% endif %}
+    </div>
+    {% if not bet %}
+    <label class="mbf-lab">TICKET PHOTO (OPTIONAL)</label>
+    <input class="mbf-in" type="file" name="foto" accept="image/*">
+    <p class="mbf-note">The photo is attached to the bet so your receipt is always one tap away.</p>
+    {% elif bet.foto %}
+    <img class="mbf-photo" src="{{ bet.foto }}" alt="Ticket">
+    {% endif %}
+    <button class="mbf-btn" type="submit">{{ 'Save changes' if bet else 'Add to My Bets' }}</button>
+  </form>
+</div>
+<script>
+function mbfFill(){var o=document.getElementById('mbfGame').selectedOptions[0];if(!o||!o.value){document.getElementById('mbfEvent').value='';return;}document.getElementById('mbfEvent').value=o.value;document.getElementById('mbfJuego').value=o.getAttribute('data-juego');document.getElementById('mbfLiga').value=o.getAttribute('data-liga');}
+</script>
+{% endblock %}
