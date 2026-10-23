@@ -31,6 +31,24 @@
   <p class="gc-sub">Pick a game. Every price, the fair line, the edge and the vig for it, on one page.</p>
   <p class="gc-fresh"><i></i>Updated {{ updated_label }} · {{ total_books }} books tracked</p>
   <input class="gc-search" id="gcSearch" type="text" placeholder="Search teams" oninput="gcFilter(this.value)">
+  {% if is_alex and follows %}
+  <div class="gc-league"><b>⭐ Following</b><span>{{ follows|length }} game{{ 's' if follows|length != 1 else '' }}</span></div>
+  <div>
+  {% for f in follows %}
+    {% if f.en_board %}
+    <a class="gc-card" href="{{ url_for('game_center_game', event_id=f.event_id) }}">
+      <div class="gc-match">{{ f.label }}{% if f.live %}<span class="gc-live">LIVE</span>{% endif %}</div>
+      <div class="gc-when">{{ f.league }} · {{ f.when }}</div>
+    </a>
+    {% else %}
+    <div class="gc-card" style="opacity:.5">
+      <div class="gc-match">{{ f.label }}</div>
+      <div class="gc-when">{{ f.league }} · Off the board right now</div>
+    </div>
+    {% endif %}
+  {% endfor %}
+  </div>
+  {% endif %}
   {% for league, games in groups %}
   <div class="gc-league"><b>{{ league }}</b><span>{{ games|length }} games</span></div>
   <div>
