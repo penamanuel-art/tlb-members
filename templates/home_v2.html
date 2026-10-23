@@ -176,7 +176,7 @@
 
 <!-- 01 · TODAY'S PLAYS -->
 <section class="v2-sec" style="padding-top:0">
-  <a href="{{ url_for('game_center') }}" style="display:flex;align-items:center;gap:13px;background:#131f3a;border:1px solid #2a3c5f;border-radius:16px;padding:15px 16px;text-decoration:none;">
+  <a href="{{ url_for('game_center') }}" style="display:flex;align-items:center;gap:13px;background:linear-gradient(155deg,#26303f,#1c2431 60%,#1a222e);border:1px solid #2a3c5f;border-radius:16px;padding:15px 16px;text-decoration:none;">
     <span style="flex:0 0 auto;width:40px;height:40px;border-radius:12px;background:rgba(46,230,168,.12);display:flex;align-items:center;justify-content:center;">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2ee6a8" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="2.2" fill="#2ee6a8" stroke="none"/><path d="M7.5 7.5a6.4 6.4 0 0 0 0 9"/><path d="M16.5 7.5a6.4 6.4 0 0 1 0 9"/><path d="M4.8 4.8a10.4 10.4 0 0 0 0 14.4"/><path d="M19.2 4.8a10.4 10.4 0 0 1 0 14.4"/></svg>
     </span>
@@ -189,7 +189,7 @@
 </section>
 {% if is_alex and risk_hoy %}
 <section class="v2-sec" style="padding-top:0">
-  <div style="background:linear-gradient(180deg,#111a3e,#0c1430);border:1px solid #24334d;border-radius:20px;padding:15px 16px;">
+  <div style="background:linear-gradient(155deg,#26303f,#1c2431 60%,#1a222e);border:1px solid #24334d;border-radius:20px;padding:15px 16px;">
     <div style="font-size:11px;letter-spacing:2px;color:#e8c766;font-weight:800;">YOUR RISK TODAY</div>
     {% if risk_hoy.n %}
     <div style="font-size:16.5px;font-weight:800;color:#fff;margin-top:5px;">${{ '{:,.2f}'.format(risk_hoy.total) }} at risk today · {{ risk_hoy.pct }}% of your bankroll · {{ risk_hoy.n }} play{{ 's' if risk_hoy.n != 1 else '' }}</div>
