@@ -99,6 +99,7 @@ twq('config','rhgk7');
     {% if session.get('user_id') %}
     {% if es_admin or cuenta_es %}<button id="langToggle" class="v2-lang-btn notranslate" title="Ver en español">🇺🇸 EN</button>{% endif %}
     <a href="{{ url_for('home', splash='0') }}#plays" class="v2-view-plays" style="color:#000000;-webkit-text-fill-color:#000000">View plays →</a>
+    <a href="{{ url_for('balances') }}" style="display:inline-flex;align-items:center;gap:6px;background:#131c2b;border:1px solid rgba(94,234,160,.45);color:#5eeaa0;font-weight:800;font-size:13px;padding:11px 13px;border-radius:14px;text-decoration:none;white-space:nowrap">💰 Balance</a>
     <div class="v2-menu-wrap">
       <button class="v2-icon-btn" id="v2menuBtn" aria-label="Menu">☰</button>
       <div class="v2-menu-drop" id="v2menuDrop" hidden>
