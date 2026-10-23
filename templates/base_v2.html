@@ -99,7 +99,7 @@ twq('config','rhgk7');
     {% if session.get('user_id') %}
     {% if es_admin or cuenta_es %}<button id="langToggle" class="v2-lang-btn notranslate" title="Ver en español">🇺🇸 EN</button>{% endif %}
     <a href="{{ url_for('home', splash='0') }}#plays" class="v2-view-plays" style="color:#000000;-webkit-text-fill-color:#000000">View plays →</a>
-    <a href="{{ url_for('balances') }}" style="display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;background:#131c2b;border:1px solid rgba(94,234,160,.45);color:#5eeaa0;font-weight:800;font-size:12px;line-height:1.15;padding:7px 12px;border-radius:14px;text-decoration:none;white-space:nowrap">💰 Balance{% if balance_total_txt %}<span style="font-size:12.5px;color:#eafff5">{{ balance_total_txt }}</span>{% endif %}</a>
+    <a href="{{ url_for('balances') }}" style="display:inline-flex;align-items:center;gap:5px;background:#131c2b;border:1px solid rgba(94,234,160,.45);color:#5eeaa0;font-weight:400;font-size:11.5px;padding:10px 11px;border-radius:14px;text-decoration:none;white-space:nowrap">💰 Balance{% if balance_total_txt %}<span style="color:#eafff5;font-weight:500">{{ balance_total_txt }}</span>{% endif %}</a>
     <div class="v2-menu-wrap">
       <button class="v2-icon-btn" id="v2menuBtn" aria-label="Menu">☰</button>
       <div class="v2-menu-drop" id="v2menuDrop" hidden>
