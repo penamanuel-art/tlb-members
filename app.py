@@ -5577,9 +5577,9 @@ def balances():
 def tracker():
     # Visitante SIN sesión (2026-10-19, pedido de Alex): en vez del
     # rebote al login, ve la página PÚBLICA de venta del Tracker con la
-    # tarjeta WHAT MEMBERS GET — la misma que ve el miembro con sesión
-    # pero sin Platinum activo. La puerta de Platinum es
-    # platinum_unlocked_for() (mes gratis vigente cuenta como activo).
+    # tarjeta WHAT MEMBERS GET. Con sesión, el tracker personal es de
+    # TODA la membresía desde el 2026-10-23 (orden de Alex: la
+    # membresía gratis también tiene tracker).
     if current_user() is None:
         return render_template(
             "tracker_public.html",
@@ -5619,48 +5619,13 @@ def tracker():
     # Toggle Value Plays solo para Alex (2026-10-11, pedido por Alex)
     user = current_user()
     is_alex = (user["email"] or "").strip().lower() == ALEX_MEMBER_EMAIL
-    # Tracker personal SOLO para miembros que pagan (2026-10-15, orden
-    # de Alex): quien no paga ve la pagina de venta con candado. El
-    # admin ya salio arriba y la cuenta personal de Alex no se toca.
-    # La cuenta de MIEMBRO de Alex obedece la misma bandera que todos
-    # (2026-10-15, orden suya): asi puede quitarse el Platinum desde el
-    # panel y probar la vista de quien no paga. Su cuenta admin no se toca.
-    if not platinum_unlocked_for(user):
-        # Dos estados (2026-10-15, pedido por Alex con captura de WGT):
-        # (a) TUVO Platinum y se le vencio o le fallo el pago -> aviso
-        #     de actualizar la tarjeta (su historial sigue guardado);
-        # (b) NUNCA desbloqueo Platinum -> pagina de venta con candado.
-        try:
-            _vencido = bool(user["stripe_past_due"]) or bool(
-                (user["stripe_customer_id"] or "").strip()) or bool(
-                (user["stripe_subscription_id"] or "").strip())
-        except (KeyError, IndexError, TypeError):
-            _vencido = False
-        _pay_url = None
-        if _vencido:
-            try:
-                _pay_url = (_past_due_billing_info(user) or {}).get("pay_url")
-            except Exception:
-                _pay_url = None
-        if _vencido:
-            # Tuvo Platinum y el pago falló/venció la sub: aviso de
-            # actualizar la tarjeta (su historial sigue guardado).
-            return render_template(
-                "tracker_locked.html",
-                upsell_cta_url=url_for("desbloquear_platinum"),
-                past_due_mode=True,
-                update_card_url=url_for("desbloquear_platinum"),
-            )
-        # Sin Platinum activo (nunca lo activó o se le acabó el mes
-        # gratis): la página de venta con candado WHAT MEMBERS GET,
-        # la misma que ve el visitante sin sesión (2026-10-19).
-        return render_template(
-            "tracker_public.html",
-            public_mode=False,
-            cta_url=url_for("desbloquear_platinum"),
-            watch_url=url_for("masterclass"),
-            upsell_cta_url=url_for("desbloquear_platinum"),
-        )
+    # My Bets ABIERTO a toda la membresia (2026-10-23, orden de Alex:
+    # <<para la membresia gratis pon el tracker>>): el tracker personal
+    # ya no exige Platinum — cualquier miembro con sesion y cuenta
+    # verificada lo usa completo. (Entre 2026-10-15 y 2026-10-23 fue
+    # solo para miembros que pagan; esa compuerta quedo eliminada. El
+    # visitante sin sesion sigue viendo la pagina publica de venta y
+    # el admin sigue yendo al oficial, arriba.)
     if is_alex and request.args.get("view") == "values":
         return values_page()
     # Modelo anterior restaurado (2026-10-23, orden de Alex: <<yo
@@ -5727,13 +5692,13 @@ def tracker_plays():
     """Lista completa de jugadas trackeadas del miembro (2026-10-19,
     refinamiento de Alex): la vista principal de /tracker queda compacta
     en una sola pantalla y la lista vive en esta vista propia, enlazada
-    desde abajo del tracker. Misma puerta que /tracker: sin sesion, el
-    admin o quien no tenga Platinum activo caen a /tracker, que muestra
-    la pagina que corresponda (venta con candado u oficial). Las acciones
+    desde abajo del tracker. Misma puerta que /tracker: sin sesion o
+    el admin caen a /tracker; cualquier otro miembro con sesion entra
+    (My Bets abierto a toda la membresia el 2026-10-23). Las acciones
     de calificacion (set_result/untrack) usan back(), asi que desde aqui
     regresan solas a esta vista."""
     user = current_user()
-    if user is None or is_admin_for(user) or not platinum_unlocked_for(user):
+    if user is None or is_admin_for(user):
         return redirect(url_for("tracker"))
     return _my_bets_center(user)
 
@@ -5926,9 +5891,11 @@ def _coach_insights(rows, stats):
 
 
 def _mybets_gate():
-    """Puerta de My Bets: sesión + Platinum (igual que /tracker/plays)."""
+    """Puerta de My Bets: sesión de miembro (igual que /tracker/plays).
+    Sin Platinum desde el 2026-10-23: la membresía gratis también usa
+    My Bets completo (orden de Alex)."""
     user = current_user()
-    if user is None or is_admin_for(user) or not platinum_unlocked_for(user):
+    if user is None or is_admin_for(user):
         return None
     return user
 
@@ -6870,10 +6837,12 @@ def tracker_export():
     """
     if "user_id" not in session:
         return redirect(url_for("login"))
-    # Export del tracker personal: mismo candado de membresia (2026-10-15).
+    # Export del tracker personal: abierto a todo miembro con sesion
+    # (2026-10-23, My Bets abrio para la membresia gratis; el candado
+    # de membresia del 2026-10-15 quedo eliminado).
     _cu = current_user()
-    if not is_admin_for(_cu) and not platinum_unlocked_for(_cu):
-        return redirect(url_for("tracker"))
+    if _cu is None:
+        return redirect(url_for("login"))
     rng = (request.args.get("range") or "").strip().lower()
     f_from = (request.args.get("from") or "").strip()
     f_to = (request.args.get("to") or "").strip()
@@ -7039,13 +7008,10 @@ def track(play_id):
             return jsonify({"ok": False, "error": "Play not found."}), 404
         flash("Play not found.", "error")
         return redirect(url_for("home"))
-    # Tracker personal SOLO con membresia pagando (2026-10-15, orden
-    # de Alex): sin pago no se puede trackear — primero la membresia.
-    if not is_admin_for(_cu) and not platinum_unlocked_for(_cu):
-        if _is_ajax:
-            return jsonify({"ok": False, "error": "Your personal Tracker comes with a paid membership. Tap Tracker below to see how it works."}), 403
-        flash("Your personal Tracker comes with a paid membership.", "warn")
-        return redirect(url_for("tracker"))
+    # Trackear al tracker personal: abierto a toda la membresia desde
+    # el 2026-10-23 (orden de Alex: la membresia gratis tambien tiene
+    # tracker). El candado de abajo NO se toca: la jugada Platinum
+    # bloqueada sigue sin poder trackearse sin Platinum.
     # Track con o sin ticket (2026-10-10, orden de Alex: revierte la regla
     # anti-trampa del 2026-10-03; el botón "+ Track" ahora es visible siempre).
     # La Elite bloqueada no se puede trackear: no revela nada.
