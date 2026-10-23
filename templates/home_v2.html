@@ -175,6 +175,18 @@
    Your Tools y el botón Tools del menú inferior. #}
 
 <!-- 01 · TODAY'S PLAYS -->
+<section class="v2-sec" style="padding-top:0">
+  <a href="{{ url_for('game_center') }}" style="display:flex;align-items:center;gap:13px;background:#131f3a;border:1px solid #2a3c5f;border-radius:16px;padding:15px 16px;text-decoration:none;">
+    <span style="flex:0 0 auto;width:40px;height:40px;border-radius:12px;background:rgba(46,230,168,.12);display:flex;align-items:center;justify-content:center;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2ee6a8" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="2.2" fill="#2ee6a8" stroke="none"/><path d="M7.5 7.5a6.4 6.4 0 0 0 0 9"/><path d="M16.5 7.5a6.4 6.4 0 0 1 0 9"/><path d="M4.8 4.8a10.4 10.4 0 0 0 0 14.4"/><path d="M19.2 4.8a10.4 10.4 0 0 1 0 14.4"/></svg>
+    </span>
+    <span style="flex:1;min-width:0;">
+      <span style="display:block;font-size:16.5px;font-weight:800;color:#fff;">Game Center</span>
+      <span style="display:block;font-size:12.5px;color:#93a4bf;margin-top:1px;">Live scores and games — every price, the fair line and the edge</span>
+    </span>
+    <span style="color:#93a4bf;font-size:20px;">›</span>
+  </a>
+</section>
 <section class="v2-sec" id="plays" style="scroll-margin-top:70px;">
   {% if not card_pendiente %}
   <div class="v2-sec-head">
