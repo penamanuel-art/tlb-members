@@ -5603,11 +5603,15 @@ def tracker():
         )
     if is_alex and request.args.get("view") == "values":
         return values_page()
-    # My Bets COMPLETO tambien aqui (2026-10-23, correccion de Alex:
-    # <<en el tracker de My Bets no veo los cambios / debe igual>>):
-    # la entrada My Bets del menu ES el centro completo, no la vista
-    # compacta vieja (dashboard.html).
-    return _my_bets_center(user)
+    # Modelo anterior restaurado (2026-10-23, orden de Alex: <<yo
+    # seguiria el modelo de tracker que teniamos anteriormente, el
+    # personal>>): /tracker vuelve a la vista personal compacta de
+    # siempre (dashboard.html); el centro completo de My Bets queda
+    # en /tracker/plays, enlazado desde abajo, como antes.
+    ctx = _tracker_context(user)
+    ctx["is_alex"] = is_alex
+    ctx["view"] = request.args.get("view", "personal")
+    return render_template("dashboard.html", **ctx)
 
 
 def _my_bets_center(user):
