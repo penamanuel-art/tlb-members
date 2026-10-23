@@ -226,7 +226,7 @@ main.v2-wrap{padding-bottom:24px!important}
 <!-- ENCABEZADO COMPACTO (2026-10-15, orden de Alex: como el de su
      captura — fecha, saludo, titulo y estado de la card; chiquito
      y no largo. Reemplaza el saludo anterior y el heroe de unidades.) -->
-{% if miembro_platinum and trial_dias_left and not celebracion %}
+{% if miembro_platinum and trial_dias_left and not celebracion and not is_alex %}
 <style>
 @keyframes fa-in{from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:translateY(0);}}
 .fa-strip{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:1px;flex-wrap:nowrap;max-width:94vw;box-sizing:border-box;margin:12px auto 2px;max-width:560px;padding:8px 15px;border-radius:999px;background:linear-gradient(165deg, #151e36, #0a0f1d);border:1px solid rgba(255, 255, 255, 0.08);box-shadow:0 10px 26px rgba(0, 0, 0, 0.35);color:#fff;font-size:clamp(.74rem, 3.8vw, .9rem);font-weight:500;letter-spacing:.3px;text-align:center;transition:opacity .5s ease,transform .5s ease,margin .5s ease,padding .5s ease;animation:fa-in .35s ease-out;cursor:pointer;}
