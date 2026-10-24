@@ -5381,7 +5381,12 @@ def alertas():
         " FROM users WHERE id = ?", (session["user_id"],)
     ).fetchone()
     prefs = dict(u) if u else {}
-    return render_template("alertas.html", prefs=prefs)
+    pa_active, pa_recent = _mis_price_alerts(db, session["user_id"])
+    pa_limit = (PA_LIMIT_PLATINUM if platinum_unlocked_for(current_user())
+                else PA_LIMIT_FREE)
+    return render_template("alertas.html", prefs=prefs,
+                           pa_active=pa_active, pa_recent=pa_recent,
+                           pa_limit=pa_limit, pa_count=len(pa_active))
 
 
 @app.route("/api/alertas", methods=["POST"])
@@ -11209,6 +11214,306 @@ def game_center_follow(event_id):
     )
     db.commit()
     return jsonify({"ok": True, "following": True})
+
+
+# ----------------------------- Price Alerts (2026-10-24) ----------------
+# Herramienta pedida por Alex copiando la mecánica de la referencia
+# (estructura sí, textos nuestros): el miembro crea una alerta desde un
+# precio de la pantalla Odds y recibe UN push cuando se cumple la
+# condición elegida. Las vigila hidden_files/price-alerts-check.py cada
+# 15 min contra el gamecenter.json fresco. Toda alerta muere al empezar
+# el partido; el miembro puede detenerla antes desde /alertas.
+PA_LIMIT_FREE = 10
+PA_LIMIT_PLATINUM = 25
+_PA_CONDICIONES = ("target", "price_moves", "number_moves", "book_best")
+_PA_MERCADOS = ("h2h", "spreads", "totals")
+_PA_MERCADO_TXT = {"h2h": "Moneyline", "spreads": "Spread", "totals": "Total"}
+_PA_COND_TXT = {"target": "Price target", "price_moves": "Price moves",
+                "number_moves": "Number moves",
+                "book_best": "My book becomes best"}
+
+
+def _ensure_price_alerts_table(db):
+    """Crea la tabla de Price Alerts si no existe (fuera del DDL inicial
+    para no romper el deploy, mismo patrón que book_balances)."""
+    if db.use_pg:
+        db.execute(
+            """CREATE TABLE IF NOT EXISTS price_alerts (
+                   id SERIAL PRIMARY KEY,
+                   user_id INTEGER NOT NULL REFERENCES users(id),
+                   event_id TEXT NOT NULL,
+                   liga TEXT,
+                   juego TEXT,
+                   equipo TEXT,
+                   lado TEXT,
+                   mercado TEXT,
+                   casa_base TEXT,
+                   precio_base INTEGER,
+                   numero_base DOUBLE PRECISION,
+                   condicion TEXT NOT NULL,
+                   objetivo INTEGER,
+                   estado TEXT NOT NULL DEFAULT 'watching',
+                   creado_en TEXT NOT NULL,
+                   disparada_en TEXT
+               )"""
+        )
+    else:
+        db.execute(
+            """CREATE TABLE IF NOT EXISTS price_alerts (
+                   id INTEGER PRIMARY KEY AUTOINCREMENT,
+                   user_id INTEGER NOT NULL REFERENCES users(id),
+                   event_id TEXT NOT NULL,
+                   liga TEXT,
+                   juego TEXT,
+                   equipo TEXT,
+                   lado TEXT,
+                   mercado TEXT,
+                   casa_base TEXT,
+                   precio_base INTEGER,
+                   numero_base REAL,
+                   condicion TEXT NOT NULL,
+                   objetivo INTEGER,
+                   estado TEXT NOT NULL DEFAULT 'watching',
+                   creado_en TEXT NOT NULL,
+                   disparada_en TEXT
+               )"""
+        )
+    db.commit()
+
+
+def _pa_side_base(game, mercado, lado):
+    """Datos base de un lado de un mercado del tablero: equipo (texto),
+    casa del mejor precio, mejor precio y número de la línea (con signo
+    del lado en spreads; el total comparte número en ambos lados)."""
+    blk = (game.get("markets") or {}).get(mercado) or {}
+    best = (blk.get("best") or {}).get(lado) or {}
+    pt = blk.get("point")
+    if mercado == "totals":
+        equipo = "Over" if lado == "a" else "Under"
+        numero = pt
+    else:
+        equipo = game.get("away", "") if lado == "a" else game.get("home", "")
+        if mercado == "spreads":
+            numero = pt if lado == "a" else (-pt if pt is not None else None)
+        else:
+            numero = None
+    return equipo, best.get("book"), best.get("price"), numero
+
+
+def _pa_precio_ok(v):
+    """Valida una cuota americana: entera y |v| >= 100."""
+    try:
+        v = int(v)
+    except (TypeError, ValueError):
+        return None
+    if v == 0 or -100 < v < 100:
+        return None
+    return v
+
+
+def _mis_price_alerts(db, user_id):
+    """(activas, recientes) de Price Alerts del usuario, formateadas
+    para la página /alertas."""
+    _ensure_price_alerts_table(db)
+
+    def fmt(r):
+        d = dict(r)
+        cond = d.get("condicion")
+        if cond == "target":
+            detalle = "Target " + _gc_fmt(d.get("objetivo"))
+        elif cond == "price_moves":
+            detalle = "From " + _gc_fmt(d.get("precio_base"))
+        elif cond == "number_moves":
+            nb = d.get("numero_base")
+            detalle = "From " + (_gc_pt_signed(nb)
+                                 if d.get("mercado") == "spreads"
+                                 else _gc_pt(nb))
+        else:
+            detalle = "Watching your books"
+        return {
+            "id": d["id"], "juego": d.get("juego") or "",
+            "equipo": d.get("equipo") or "",
+            "mercado_txt": _PA_MERCADO_TXT.get(d.get("mercado"),
+                                               d.get("mercado") or ""),
+            "condicion_txt": _PA_COND_TXT.get(cond, cond or ""),
+            "detalle": detalle, "estado": d.get("estado"),
+        }
+
+    act = db.execute(
+        "SELECT * FROM price_alerts WHERE user_id = ? AND estado = 'watching'"
+        " ORDER BY id DESC", (user_id,)).fetchall()
+    rec = db.execute(
+        "SELECT * FROM price_alerts WHERE user_id = ? AND estado != 'watching'"
+        " ORDER BY id DESC LIMIT 5", (user_id,)).fetchall()
+    return [fmt(r) for r in act], [fmt(r) for r in rec]
+
+
+@app.route("/odds/<event_id>/alert", methods=["POST"])
+@login_required
+def price_alert_create(event_id):
+    """Crea una Price Alert desde un precio de la pantalla Odds.
+
+    Guarda el precio y el número base del momento de crearla; el revisor
+    externo compara contra el tablero fresco. Límite por nivel: 10
+    activas en gratis, 25 en Platinum (como la herramienta de
+    referencia)."""
+    user = current_user()
+    data = request.get_json(silent=True) or {}
+    mercado = data.get("mercado") or "h2h"
+    lado = data.get("lado") or "a"
+    condicion = data.get("condicion") or ""
+    if mercado not in _PA_MERCADOS or lado not in ("a", "b"):
+        return jsonify({"ok": False, "error": "Pick a side first."}), 400
+    if condicion not in _PA_CONDICIONES:
+        return jsonify({"ok": False,
+                        "error": "Pick what should trigger the alert."}), 400
+    if condicion == "number_moves" and mercado == "h2h":
+        return jsonify({"ok": False, "error": "The moneyline has no number "
+                        "to move — pick the spread or the total."}), 400
+    objetivo = None
+    if condicion == "target":
+        objetivo = _pa_precio_ok(data.get("objetivo"))
+        if objetivo is None:
+            return jsonify({"ok": False, "error": "Enter a target price "
+                            "(like +150 or -110)."}), 400
+    board = load_gamecenter()
+    game = next((g for g in (board.get("games") or [])
+                 if g.get("id") == event_id), None)
+    if game is None:
+        return jsonify({"ok": False,
+                        "error": "That game is no longer on the board."}), 404
+    if game.get("live"):
+        return jsonify({"ok": False, "error": "That game already started "
+                        "— alerts stop at game time."}), 400
+    blk = (game.get("markets") or {}).get(mercado) or {}
+    if not blk.get("books"):
+        return jsonify({"ok": False,
+                        "error": "No prices for that market right now."}), 400
+    equipo, casa_base, precio_base, numero_base = _pa_side_base(
+        game, mercado, lado)
+    if precio_base is None:
+        return jsonify({"ok": False,
+                        "error": "No price for that side right now."}), 400
+    db = get_db()
+    _ensure_price_alerts_table(db)
+    limite = PA_LIMIT_PLATINUM if platinum_unlocked_for(user) else PA_LIMIT_FREE
+    n = db.execute(
+        "SELECT COUNT(*) AS n FROM price_alerts"
+        " WHERE user_id = ? AND estado = 'watching'",
+        (session["user_id"],),
+    ).fetchone()["n"]
+    if int(n or 0) >= limite:
+        return jsonify({"ok": False, "error": "You already have %d active "
+                        "alerts — that's the limit on your plan. Stop one "
+                        "to add another." % limite}), 400
+    juego = "%s @ %s" % (game.get("away", ""), game.get("home", ""))
+    db.execute(
+        "INSERT INTO price_alerts (user_id, event_id, liga, juego, equipo,"
+        " lado, mercado, casa_base, precio_base, numero_base, condicion,"
+        " objetivo, estado, creado_en)"
+        " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'watching', ?)",
+        (session["user_id"], event_id, game.get("league", ""), juego,
+         equipo, lado, mercado, casa_base, precio_base, numero_base,
+         condicion, objetivo, now_iso()),
+    )
+    db.commit()
+    # Crear una alerta = querer el aviso: se enciende su preferencia de
+    # precios para que el push de la alerta sí le llegue.
+    db.execute(
+        "UPDATE users SET notif_price = 1 WHERE id = ? AND notif_price = 0",
+        (session["user_id"],),
+    )
+    db.commit()
+    return jsonify({"ok": True, "active": int(n or 0) + 1, "limit": limite})
+
+
+@app.route("/price-alerts/<int:alert_id>/stop", methods=["POST"])
+@login_required
+def price_alert_stop(alert_id):
+    """Detiene una Price Alert propia: queda 'ended' y no avisa más."""
+    db = get_db()
+    _ensure_price_alerts_table(db)
+    db.execute(
+        "UPDATE price_alerts SET estado = 'ended'"
+        " WHERE id = ? AND user_id = ? AND estado = 'watching'",
+        (alert_id, session["user_id"]),
+    )
+    db.commit()
+    return jsonify({"ok": True})
+
+
+def _pa_push_key_ok():
+    return bool(PUSH_TRIGGER_KEY) and secrets.compare_digest(
+        request.headers.get("X-Push-Key", ""), PUSH_TRIGGER_KEY)
+
+
+@app.route("/api/price-alerts/active")
+def api_price_alerts_active():
+    """Alertas 'watching' con el email y las casas con balance del dueño
+    (lo consume price-alerts-check.py). Protegido con X-Push-Key."""
+    if not _pa_push_key_ok():
+        return jsonify({"error": "forbidden"}), 403
+    db = get_db()
+    _ensure_price_alerts_table(db)
+    _ensure_book_balances_table(db)
+    rows = db.execute(
+        "SELECT pa.id, pa.user_id, pa.event_id, pa.liga, pa.juego,"
+        " pa.equipo, pa.lado, pa.mercado, pa.casa_base, pa.precio_base,"
+        " pa.numero_base, pa.condicion, pa.objetivo, pa.estado,"
+        " pa.creado_en, u.email AS email"
+        " FROM price_alerts pa JOIN users u ON u.id = pa.user_id"
+        " WHERE pa.estado = 'watching' ORDER BY pa.id ASC"
+    ).fetchall()
+    out = []
+    for r in rows:
+        d = dict(r)
+        if d.get("precio_base") is not None:
+            d["precio_base"] = int(float(d["precio_base"]))
+        if d.get("objetivo") is not None:
+            d["objetivo"] = int(float(d["objetivo"]))
+        if d.get("numero_base") is not None:
+            d["numero_base"] = float(d["numero_base"])
+        casas = db.execute(
+            "SELECT book_name FROM book_balances WHERE user_id = ?"
+            " ORDER BY book_name", (d["user_id"],),
+        ).fetchall()
+        d["books"] = [c["book_name"] for c in casas]
+        out.append(d)
+    return jsonify({"alerts": out})
+
+
+@app.route("/api/price-alerts/<int:alert_id>/fire", methods=["POST"])
+def api_price_alerts_fire(alert_id):
+    """Marca una alerta como disparada ('sent' + disparada_en). Solo si
+    sigue 'watching': el revisor nunca dispara dos veces la misma."""
+    if not _pa_push_key_ok():
+        return jsonify({"error": "forbidden"}), 403
+    db = get_db()
+    _ensure_price_alerts_table(db)
+    cur = db.execute(
+        "UPDATE price_alerts SET estado = 'sent', disparada_en = ?"
+        " WHERE id = ? AND estado = 'watching'",
+        (now_iso(), alert_id),
+    )
+    db.commit()
+    return jsonify({"ok": True, "changed": (cur.rowcount or 0) > 0})
+
+
+@app.route("/api/price-alerts/<int:alert_id>/end", methods=["POST"])
+def api_price_alerts_end(alert_id):
+    """Cierra una alerta sin aviso ('ended'): el partido empezó o salió
+    del tablero. Solo si sigue 'watching'."""
+    if not _pa_push_key_ok():
+        return jsonify({"error": "forbidden"}), 403
+    db = get_db()
+    _ensure_price_alerts_table(db)
+    cur = db.execute(
+        "UPDATE price_alerts SET estado = 'ended'"
+        " WHERE id = ? AND estado = 'watching'",
+        (alert_id,),
+    )
+    db.commit()
+    return jsonify({"ok": True, "changed": (cur.rowcount or 0) > 0})
 
 
 # ----------------------------- Free public tools (no login) ----------------
