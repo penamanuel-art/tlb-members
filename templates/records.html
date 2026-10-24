@@ -39,7 +39,7 @@
   <p class="rec-sub">This is the complete history of our official plays — each one posted before the game with its ticket, then graded win or loss against the final score. Nothing deleted, nothing rewritten. The numbers are what they are.</p>
 
   <div class="rec-box">
-    <p class="rec-box-eyebrow">OFFICIAL PLAYS (PLATINUM + GOLD)</p>
+    <p class="rec-box-eyebrow">OFFICIAL PLAYS (PLATINUM + SHARP PICKS FREE)</p>
     <p class="rec-big">{{ stats.W }}-{{ stats.L }}</p>
     <p class="rec-units{% if stats.units < 0 %} neg{% endif %}">{{ '+' if stats.units >= 0 else '' }}{{ '%.2f' % stats.units }}u</p>
     <p class="rec-meta">{{ '%.0f' % win_rate }}% win rate · {{ total }} plays graded</p>
@@ -51,7 +51,7 @@
     <p class="rec-meta">{{ '%.0f' % by_level.PLATINUM.wr }}% win rate · 1u per play</p>
   </div>
   <div class="rec-box gold">
-    <p class="rec-box-eyebrow" style="color:#ffd257;">● GOLD</p>
+    <p class="rec-box-eyebrow" style="color:#ffd257;">● SHARP PICKS FREE</p>
     <p class="rec-big">{{ by_level.GOLD.W }}-{{ by_level.GOLD.L }}</p>
     <p class="rec-units{% if by_level.GOLD.units < 0 %} neg{% endif %}">{{ '+' if by_level.GOLD.units >= 0 else '' }}{{ '%.2f' % by_level.GOLD.units }}u</p>
     <p class="rec-meta">{{ '%.0f' % by_level.GOLD.wr }}% win rate · 0.6u per play</p>
