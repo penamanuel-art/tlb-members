@@ -1011,6 +1011,8 @@ body.v2 .lux-head,body.v2 .lux-panel,body.v2 .lux-rec-card,body.v2 .v2-br,body.v
 body.v2 .v2-topbar{background:#0d1219 !important}
 body.v2 .v2-bottomnav{background:#0d1219 !important}
 body.v2 main.v2-wrap > section{margin-left:-8px !important;margin-right:-8px !important}
+/* Tarjetas de jugadas con aire lateral igual que el resto (Alex, 2026-10-24, con captura: se veían pegadas a los bordes): la sección #plays no hereda el -8px. */
+body.v2 main.v2-wrap > section#plays{margin-left:0 !important;margin-right:0 !important}
 body.v2 .lux-head-card{padding:10px 13px !important}
 body.v2 .lux-head-card p{line-height:1.38}
 </style>
