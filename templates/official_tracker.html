@@ -228,7 +228,7 @@ body{background-color:#161d29;background-image:radial-gradient(560px 300px at 50
 
   <div class="ot-section">
     <h2>{{ libro_titulo }} — the full ledger</h2>
-    <p class="ot-libro-stats"><b>{{ libro_stats.record }}</b> · {{ libro_stats.win_rate }}% win rate · <b>{{ libro_stats.units_display }}</b> · {{ libro_stats.profit_display }} · ROI {{ '+' if libro_stats.roi > 0 else '' }}{{ libro_stats.roi }}% · {{ libro|length }} plays, each with its original ticket.</p>
+    <p class="ot-libro-stats">{{ libro|length }} plays, each with its original ticket.</p>
     {% for x in libro %}{{ yw_play(x, x.resultado) }}{% endfor %}
   </div>
 
