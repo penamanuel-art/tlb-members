@@ -91,6 +91,7 @@ twq('config','rhgk7');
   <div class="v2-topbar-left">
     {% if session.get('user_id') %}
     <a href="{{ url_for('home', splash='0') }}" class="v2-brand" title="Home"><img src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team" style="height:56px;width:auto;"></a>
+    <a href="{{ url_for('alertas') }}" aria-label="Alerts" title="Alerts" style="display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:50%;background:#161c23;border:1px solid #2a3c5f;margin-left:10px;vertical-align:middle;"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#dbe4f2" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M13.7 20a2 2 0 0 1-3.4 0"/></svg></a>
     {% else %}
     <a class="v2-brand" href="{{ url_for('index') }}">
       <img src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team">
@@ -262,6 +263,9 @@ function googleTranslateElementInit(){new google.translate.TranslateElement({pag
   <a href="{{ url_for('home', splash='0') }}" class="v2-bnav-item{% if request.endpoint == 'home' %} active{% endif %}">
     <span class="v2-bnav-ico" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9 21v-6h6v6"/></svg></span><span>Today</span>
   </a>
+  <a href="{{ url_for('game_center') }}" class="v2-bnav-item{% if request.endpoint in ['game_center','game_center_game'] %} active{% endif %}">
+    <span class="v2-bnav-ico" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h11"/><path d="M9 12h11"/><path d="M9 18h11"/><path d="M4 6h.01"/><path d="M4 12h.01"/><path d="M4 18h.01"/></svg></span><span>Odds</span>
+  </a>
   <a href="{{ url_for('tools') }}" class="v2-bnav-item{% if request.endpoint in ['tools','odds_board','ev_board_results','tools_calculators','tools_line_moves'] %} active{% endif %}">
     <span class="v2-bnav-ico" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></span><span>Tools</span>
   </a>
@@ -274,9 +278,6 @@ function googleTranslateElementInit(){new google.translate.TranslateElement({pag
     <span class="v2-bnav-ico" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg></span><span>Admin</span>
   </a>
   {% else %}
-  <a href="{{ url_for('alertas') }}" class="v2-bnav-item{% if request.endpoint == 'alertas' %} active{% endif %}">
-    <span class="v2-bnav-ico" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M13.7 20a2 2 0 0 1-3.4 0"/></svg></span><span>Alerts</span>
-  </a>
   {% endif %}
   <a href="{{ url_for('cuenta') }}" class="v2-bnav-item{% if request.endpoint == 'cuenta' %} active{% endif %}">
     <span class="v2-bnav-ico" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-3.6 4.3-5.4 8-5.4s6.5 1.8 8 5.4"/></svg></span><span>Account</span>
