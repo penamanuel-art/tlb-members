@@ -2,6 +2,24 @@
 {% block title %}Archive — The Sharp Team{% endblock %}
 {% block content %}
 
+{# Archive compacto y fino (2026-10-24, pedido por Alex): cartas más
+   chicas y letra fina en las jugadas. Solo archive (reglas con
+   .archive-day), no toca otras páginas que usan .play-card. #}
+<style>
+.archive-day{margin-bottom:18px}
+.archive-day .day-head{margin-bottom:8px}
+.archive-day .plays{gap:10px}
+.archive-day .play-card{padding:13px 14px}
+.archive-day .play-pick{font-size:1.25rem;font-weight:300;margin:6px 0 2px}
+.archive-day .play-odds{font-size:1.05rem;font-weight:400}
+.archive-day .link-ticket{font-size:13px;font-weight:400}
+.archive-day .play-bet{margin-top:8px;font-size:.95rem}
+.archive-day .bet-label{font-weight:400}
+.archive-day .bet-amount{font-size:1.15rem;font-weight:400}
+.archive-day .badge{font-size:11px;font-weight:600;padding:5px 9px}
+.archive-day .play-card b{font-weight:600}
+</style>
+
 <section class="tracker-head">
   <div>
     <p class="kicker">ARCHIVE BOARD</p>
