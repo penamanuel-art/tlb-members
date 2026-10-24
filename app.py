@@ -7710,9 +7710,12 @@ def admin_api_lifecycle_dry_run():
     cuenta por la regla de Alex: días 8–14 último correo si nunca pagó y
     sin actividad; días 15–29 marcar INACTIVE si nunca pagó y sigue sin
     actividad; día 30+ eliminar solo si nunca pagó, sin actividad, sin
-    pagos pendientes ni suscripción activa. La verificación manual en
-    Stripe y la obligación legal/operativa NO se pueden decidir desde la
-    BD: todo candidato a eliminar sale con verificacion_manual_pendiente.
+    pagos pendientes ni suscripción activa. ACTIVIDAD = actividad en 2+
+    días distintos (la misma vara de la carpeta ACTIVE & VERIFIED): una
+    sola visita el día del registro no cuenta como uso real. La
+    verificación manual en Stripe y la obligación legal/operativa NO se
+    pueden decidir desde la BD: todo candidato a eliminar sale con
+    verificacion_manual_pendiente.
     Auth: sesión admin O X-Admin-Key (helper _admin_api_autorizado)."""
     if not _admin_api_autorizado():
         return jsonify({"error": "admin only"}), 403
@@ -7729,14 +7732,19 @@ def admin_api_lifecycle_dry_run():
     except Exception as e:
         return jsonify({"error": f"users: {e}"}), 500
     try:
-        act_rows = db.execute(
-            "SELECT user_id FROM member_activity "
-            "UNION SELECT user_id FROM checkins "
-            "UNION SELECT user_id FROM tracked_plays").fetchall()
-        act_ids = {(r["user_id"] if isinstance(r, dict) else r[0])
-                   for r in act_rows}
+        dia_rows = db.execute(
+            "SELECT user_id, substr(created_at, 1, 10) AS dia "
+            "FROM member_activity "
+            "UNION SELECT user_id, substr(fecha, 1, 10) FROM checkins "
+            "UNION SELECT user_id, substr(fecha, 1, 10) FROM tracked_plays"
+        ).fetchall()
+        dias_por_usuario = {}
+        for r in dia_rows:
+            uid = r["user_id"] if isinstance(r, dict) else r[0]
+            dia = r["dia"] if isinstance(r, dict) else r[1]
+            dias_por_usuario.setdefault(uid, set()).add(dia)
     except Exception:
-        act_ids = set()
+        dias_por_usuario = {}
     try:
         ev_rows = db.execute(
             "SELECT email FROM stripe_events WHERE email IS NOT NULL AND "
@@ -7760,6 +7768,7 @@ def admin_api_lifecycle_dry_run():
                ZoneInfo("America/New_York")).strftime("%Y-%m-%d"),
            "total_cuentas": len(users), "confirmadas": 0, "sin_confirmar": 0,
            "nunca_pagaron": 0, "con_actividad": 0, "sin_actividad": 0,
+           "cero_actividad": 0,
            "buckets": {"ultimo_correo_8_14": [],
                        "marcar_inactive_15_29": [],
                        "eliminaria_30_mas": []},
@@ -7778,18 +7787,23 @@ def admin_api_lifecycle_dry_run():
         tiene_stripe = bool(d.get("stripe_customer_id")) or bool(
             d.get("stripe_subscription_id")) or email in paid_emails
         pago_pendiente = bool(d.get("stripe_past_due"))
-        tiene_actividad = d.get("id") in act_ids
+        dias = dias_por_usuario.get(d.get("id"), set())
+        tiene_actividad = len(dias) >= 2
         if tiene_actividad:
             out["con_actividad"] += 1
         else:
             out["sin_actividad"] += 1
+        if not dias:
+            out["cero_actividad"] += 1
         if not tiene_stripe:
             out["nunca_pagaron"] += 1
         edad = _edad_dias(d.get("created_at"))
         base = {"email": d.get("email"), "nombre": d.get("nombre"),
                 "created_at": d.get("created_at"), "edad_dias": edad,
                 "es_trial": es_trial,
-                "sin_confirmar": not d.get("email_verified")}
+                "sin_confirmar": not d.get("email_verified"),
+                "dias_actividad": len(dias),
+                "ultima_actividad": max(dias) if dias else None}
         motivos = []
         if es_admin:
             motivos.append("cuenta admin / del dueño")
@@ -7798,7 +7812,7 @@ def admin_api_lifecycle_dry_run():
         if pago_pendiente:
             motivos.append("tiene pago pendiente (past due)")
         if tiene_actividad:
-            motivos.append("tiene actividad (usa la plataforma)")
+            motivos.append("tiene actividad real (2+ días distintos)")
         if edad is None:
             motivos.append("sin fecha de registro")
         elif edad < 8:
