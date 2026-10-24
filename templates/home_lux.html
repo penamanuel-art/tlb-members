@@ -307,7 +307,7 @@ body.v2 .f1b-rec{margin:18px 0 0}
     <span class="lux-head-ico">&#10003;</span>
     <div>
       <b>Today's card is posted</b>{% if hay_live %}<span class="lux-live-pill"><span class="lux-live-dot"></span>LIVE</span>{% elif esperando %}<span class="lux-pend-pill">&#9203; UPCOMING</span>{% endif %}
-      <p>{{ plays|length }} play{{ 's' if plays|length != 1 else '' }} today — {{ _np }} Platinum, {{ plays|length - _np }} Gold. Live on your Dashboard right now.</p>
+      <p>{{ plays|length }} play{{ 's' if plays|length != 1 else '' }} today — {{ _np }} Platinum, {{ plays|length - _np }} Sharp Picks Free. Live on your Dashboard right now.</p>
     </div>
   </div>
   {% endif %}
@@ -363,7 +363,7 @@ body.v2 .f1b-rec{margin:18px 0 0}
   <div class="v2-sec-head">
     <div style="display:flex;align-items:baseline;gap:10px">
       <h2 class="v2-sec-title" style="font-size:20px">Your plays</h2>
-      <span style="color:#8fa1c2;font-size:15px;font-weight:600">Gold</span>
+      <span style="color:#8fa1c2;font-size:15px;font-weight:600">Sharp Picks Free</span>
     </div>
     {# Encabezado estilo «Your plays · Gold» (Alex, 2026-10-22): fuera el
        título «Today's plays», el subtítulo y el «No free plays today.». #}
@@ -553,7 +553,7 @@ body.v2 .f1b-rec{margin:18px 0 0}
     <div class="yw-sum"><span class="yw-badge yw-b-plat">PLATINUM</span><span class="rec">{{ ns.pw }}-{{ ns.pl }}</span><span class="net">{{ '+' if ns.pu > 0 else '' }}{{ '%.2f' % ns.pu }}u</span><span class="graded">{{ ns.pw + ns.pl }} graded</span></div>
     {% endif %}
     {% if ns.gw + ns.gl > 0 %}
-    <div class="yw-sum"><span class="yw-badge yw-b-gold">GOLD</span><span class="rec">{{ ns.gw }}-{{ ns.gl }}</span><span class="net">{{ '+' if ns.gu > 0 else '' }}{{ '%.2f' % ns.gu }}u</span><span class="graded">{{ ns.gw + ns.gl }} graded</span></div>
+    <div class="yw-sum"><span class="yw-badge yw-b-gold">SHARP PICKS FREE</span><span class="rec">{{ ns.gw }}-{{ ns.gl }}</span><span class="net">{{ '+' if ns.gu > 0 else '' }}{{ '%.2f' % ns.gu }}u</span><span class="graded">{{ ns.gw + ns.gl }} graded</span></div>
     {% endif %}
     {% for r in g.plays %}
       {% set mc.n = mc.n + 1 %}
@@ -568,7 +568,7 @@ body.v2 .f1b-rec{margin:18px 0 0}
       <span class="yw-thumb-fallback">THE<br>SHARP<br>TEAM</span>
       {% endif %}
       <span class="yw-main">
-        <span class="yw-meta"><span class="yw-badge {{ 'yw-b-plat' if es_plat else 'yw-b-gold' }}">{{ 'PLATINUM' if es_plat else 'GOLD' }}</span><span class="yw-kind">{{ 'Platinum' if es_plat else 'Gold' }} play{% if r.liga %} · {{ r.liga }}{% endif %}</span></span>
+        <span class="yw-meta"><span class="yw-badge {{ 'yw-b-plat' if es_plat else 'yw-b-gold' }}">{{ 'PLATINUM' if es_plat else 'SHARP PICKS FREE' }}</span><span class="yw-kind">{{ 'Platinum' if es_plat else 'Sharp Picks Free' }} play{% if r.liga %} · {{ r.liga }}{% endif %}</span></span>
         <span class="yw-pick">{{ partes[0] }}</span>
         {% if r.abbr and r.opp_abbr %}<span class="yw-match">{{ r.abbr }} vs {{ r.opp_abbr }}</span>{% endif %}
         {% if r.cierre %}<span class="yw-clv">Closed {{ r.cierre }} · CLV <span class="{{ 'yw-clv-pos' if (r.clv or 0) >= 0 else 'yw-clv-neg' }}">{{ '%+.1f' % (r.clv or 0) }}%</span></span>{% endif %}
@@ -593,7 +593,7 @@ body.v2 .f1b-rec{margin:18px 0 0}
         <p class="ticket-pick">{{ r.pick }} {{ fmt_odds(r.cuota) }}</p>
         <div class="ticket-rows">
           <div><span>Date</span><b>{{ r.fecha }}</b></div>
-          <div><span>Level</span><b>{{ 'PLATINUM' if es_plat else 'GOLD' }}</b></div>
+          <div><span>Level</span><b>{{ 'PLATINUM' if es_plat else 'SHARP PICKS FREE' }}</b></div>
           <div><span>Result</span><b class="{{ 'pos' if won else 'neg' }}">{{ 'WON' if won else 'LOST' }} · {{ fmt_money(r.profit) }}</b></div>
         </div>
         <p class="ticket-note">Original receipt not uploaded for this play.</p>
@@ -646,7 +646,7 @@ body.v2 .f1b-rec{margin:18px 0 0}
     <p class="lux-rec-s">{{ pl.win_rate }}% win rate</p>
   </a>
   <a class="lux-rec-card" href="{{ url_for('official_tracker', programa='gold') }}">
-    <div class="lux-rec-top"><p class="lux-rec-k">GOLD PLAYS</p><span class="lux-rec-ver">View plays &amp; tickets ›</span></div>
+    <div class="lux-rec-top"><p class="lux-rec-k">SHARP PICKS FREE PLAYS</p><span class="lux-rec-ver">View plays &amp; tickets ›</span></div>
     <p class="lux-rec-n">{{ gd.record }}</p>
     <p class="lux-rec-u{% if gd.profit < 0 %} neg{% endif %}">{{ gd.units_display }}</p>
     <p class="lux-rec-s">{{ gd.win_rate }}% win rate</p>
@@ -700,7 +700,7 @@ body.v2 .f1b-rec{margin:18px 0 0}
       <p class="v2-modal-sub">Same edge, two ways to size it. Most members start with TST Units. Switch anytime.</p>
       <div class="v2-opt">
         <p class="v2-opt-title">TST Units — the disciplined way</p>
-        <p>Bet in units. <b>1 unit = 1% of your bankroll.</b> We size every play by its badge: ★ PLATINUM = 1u, GOLD = 0.6u. Small and steady, exactly how The Sharp Team plays it. Less swing, easy to follow.</p>
+        <p>Bet in units. <b>1 unit = 1% of your bankroll.</b> We size every play by its badge: ★ PLATINUM = 1u, SHARP PICKS FREE = 0.6u. Small and steady, exactly how The Sharp Team plays it. Less swing, easy to follow.</p>
         {% if bankroll %}
         <p class="v2-opt-ex">On your ${{ '%.0f' % bankroll }} bankroll, a 1u play is about ${{ '%.0f' % (bankroll / 100) }}.</p>
         {% endif %}
@@ -937,7 +937,7 @@ body.v2 .f1b-rec{margin:18px 0 0}
   </details>
   <details>
     <summary>How does The Sharp Team find its plays?<span class="pm">+</span></summary>
-    <div class="ans">Our Elo-based model prices every game in the NFL, NCAAF, MLB and NHL, and we compare it against Pinnacle's no-vig line plus 2–3 sportsbooks. We only post plays with a real edge, shop for the best price, and stake a flat 1u (1% of bankroll) on Platinum and 0.6u on Gold — never more, never chasing.</div>
+    <div class="ans">Our Elo-based model prices every game in the NFL, NCAAF, MLB and NHL, and we compare it against Pinnacle's no-vig line plus 2–3 sportsbooks. We only post plays with a real edge, shop for the best price, and stake a flat 1u (1% of bankroll) on Platinum and 0.6u on Sharp Picks Free — never more, never chasing.</div>
   </details>
   <details>
     <summary>Do you really bet every play yourself?<span class="pm">+</span></summary>
