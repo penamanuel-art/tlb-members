@@ -64,6 +64,12 @@
 .toggle input:checked + .slider:before{transform:translateX(18px)}
 .alerts-saved{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#101828;color:#2ee6a8;border:1px solid rgba(46,230,168,.5);font-weight:800;font-size:13px;padding:9px 18px;border-radius:999px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:100}
 .alerts-saved.show{opacity:1}
+.pa-row{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-top:1px solid rgba(255,255,255,.05);gap:10px}
+.pa-stop{flex:0 0 auto;background:transparent;border:1px solid #3a4356;color:#dbe4f2;border-radius:999px;padding:6px 13px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit}
+.pa-stop:disabled{opacity:.55;cursor:default}
+.pa-count{font-size:11px;color:#8b98ab;margin:0 0 2px}
+.pa-recent{font-size:11px;color:#8b98ab;line-height:1.55;border-top:1px solid rgba(255,255,255,.05);padding-top:6px;margin-top:2px}
+.pa-recent div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 </style>
 
 <div class="alerts-wrap">
@@ -190,6 +196,32 @@
       </label>
     </div>
   </div>
+
+  <div class="alerts-card">
+    <p class="alert-section" style="margin-top:0">PRICE ALERTS</p>
+    <p class="pa-count"><span id="paCount">{{ pa_count }}</span> of {{ pa_limit }} active</p>
+    <div id="paList">
+    {% for a in pa_active %}
+    <div class="pa-row" id="pa-row-{{ a.id }}">
+      <div class="alert-info">
+        <b>{{ a.juego }}</b>
+        <span>{{ a.equipo }} &middot; {{ a.mercado_txt }} &mdash; {{ a.condicion_txt }} &middot; {{ a.detalle }}</span>
+      </div>
+      <button type="button" class="pa-stop" onclick="paStop(this, {{ a.id }})">Stop</button>
+    </div>
+    {% endfor %}
+    </div>
+    {% if not pa_active %}
+    <p class="alerts-sub" id="paEmpty">No active price alerts. Set one from any price on the Odds screen and we&rsquo;ll message you when it hits.</p>
+    {% endif %}
+    {% if pa_recent %}
+    <div class="pa-recent">
+      {% for a in pa_recent %}
+      <div>{% if a.estado == 'sent' %}&check; Sent{% else %}Ended{% endif %} &mdash; {{ a.juego }} &middot; {{ a.equipo }} ({{ a.mercado_txt }})</div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
 </div>
 
 <div class="alerts-saved" id="alertsSaved">Saved ✓</div>
@@ -213,5 +245,20 @@ document.querySelectorAll('.toggle input').forEach(function(el) {
     });
   });
 });
+function paStop(btn, id) {
+  btn.disabled = true;
+  fetch('/price-alerts/' + id + '/stop', {method: 'POST'})
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (d.ok) {
+        var row = document.getElementById('pa-row-' + id);
+        if (row) { row.style.opacity = '.45'; }
+        btn.textContent = 'Ended';
+        var c = document.getElementById('paCount');
+        if (c) { c.textContent = Math.max(0, parseInt(c.textContent, 10) - 1); }
+        if (navigator.vibrate) { navigator.vibrate(12); }
+      } else { btn.disabled = false; }
+    }).catch(function() { btn.disabled = false; });
+}
 </script>
 {% endblock %}
