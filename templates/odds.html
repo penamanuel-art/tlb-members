@@ -39,6 +39,15 @@
 .od-vig{display:flex;justify-content:space-between;border-top:1px solid rgba(255,255,255,.07);margin-top:13px;padding-top:10px;font-size:12.5px;color:#8b98ab}
 .od-vig b{color:#2ee6a8;font-weight:700}
 .od-empty{border:2px dashed #24334d;border-radius:16px;padding:26px 18px;text-align:center;color:#93a4bf;margin-top:18px}
+.od-alertbtn{display:block;width:100%;text-align:center;background:transparent;border:1px dashed #33456a;border-radius:12px;color:#2ee6a8;font-size:13.5px;font-weight:700;padding:10px;margin-top:12px;cursor:pointer;font-family:inherit}
+.od-alertpanel{margin-top:11px;border-top:1px solid rgba(255,255,255,.07);padding-top:11px}
+.od-alertpanel label{display:block;font-size:11px;font-weight:800;letter-spacing:1.2px;color:#8b98ab;margin:0 0 4px}
+.od-alertpanel select,.od-alertpanel input{width:100%;box-sizing:border-box;background:#131e31;border:1px solid #24334d;border-radius:10px;padding:10px 11px;font-size:14px;color:#eef2f8;margin:0 0 10px;font-family:inherit}
+.od-alertpanel .pa-create{width:100%;background:#2ee6a8;border:0;border-radius:12px;color:#06281c;font-size:14.5px;font-weight:800;padding:12px;cursor:pointer;font-family:inherit}
+.od-alertpanel .pa-create:disabled{opacity:.5}
+.pa-msg{font-size:13px;margin-top:9px;min-height:16px;color:#93a4bf}
+.pa-msg.ok{color:#2ee6a8}
+.pa-msg.err{color:#ff8589}
 </style>
 <div class="od-wrap">
   <div class="od-kick">THE SHARP TEAM · ODDS</div>
@@ -88,6 +97,32 @@
         <a class="od-compare" href="{{ url_for('game_center_game', event_id=g.id) }}">Compare all {{ g.books_count }} books ›</a>
       </div>
       {% endfor %}
+      {% if g.markets and (g.markets.h2h or g.markets.spreads or g.markets.totals) %}
+      <button type="button" class="od-alertbtn" onclick="paToggle(this)">&#128276; Set alert</button>
+      <div class="od-alertpanel" style="display:none" data-eid="{{ g.id }}">
+        <label>MARKET</label>
+        <select class="pa-market" onchange="paMarket(this)">
+          {% if g.markets.h2h %}<option value="h2h">Moneyline</option>{% endif %}
+          {% if g.markets.spreads %}<option value="spreads">Spread</option>{% endif %}
+          {% if g.markets.totals %}<option value="totals">Total</option>{% endif %}
+        </select>
+        <label>SIDE</label>
+        <select class="pa-side" onchange="paSide(this)"></select>
+        <label>ALERT ME WHEN</label>
+        <select class="pa-cond" onchange="paCond(this)">
+          <option value="target">The price reaches my target</option>
+          <option value="price_moves">The price moves</option>
+          <option value="number_moves">The number moves</option>
+          <option value="book_best">My book becomes the best price</option>
+        </select>
+        <div class="pa-target-row">
+          <label>TARGET PRICE</label>
+          <input class="pa-target" type="text" inputmode="numeric" placeholder="+150">
+        </div>
+        <button type="button" class="pa-create" onclick="paCreate(this)">Create alert</button>
+        <div class="pa-msg"></div>
+      </div>
+      {% endif %}
       {% if g.vig_txt %}<div class="od-vig"><span>Market vig</span><b>{{ g.vig_txt }}</b></div>{% endif %}
     </div>
     {% endfor %}
@@ -121,6 +156,108 @@ function odApply() {
     }
     s.style.display = any ? '' : 'none';
   }
+}
+</script>
+<script>
+var OD_G = {};
+{% for league, games in groups %}{% for g in games %}
+OD_G[{{ g.id|tojson }}] = {away: {{ g.away|tojson }}, home: {{ g.home|tojson }}, markets: {{ (g.markets or {})|tojson }}};
+{% endfor %}{% endfor %}
+function paFmt(p) { if (p === null || p === undefined) { return ''; } p = parseInt(p, 10); return (p > 0 ? '+' : '') + p; }
+function paPt(p) { if (p === null || p === undefined) { return ''; } return (p % 1 === 0) ? String(parseInt(p, 10)) : String(p); }
+function paPtS(p) { if (p === null || p === undefined) { return ''; } return (p > 0 ? '+' : '') + paPt(p); }
+function paToggle(btn) {
+  var p = btn.parentNode.querySelector('.od-alertpanel');
+  var open = p.style.display !== 'none';
+  p.style.display = open ? 'none' : 'block';
+  if (!open && !p.getAttribute('data-init')) { p.setAttribute('data-init', '1'); paMarket(p.querySelector('.pa-market')); }
+}
+function paGame(panel) { return OD_G[panel.getAttribute('data-eid')] || {}; }
+function paFillSides(panel) {
+  var mk = panel.querySelector('.pa-market').value;
+  var g = paGame(panel);
+  var blk = (g.markets || {})[mk] || {};
+  var pt = blk.point;
+  var sides = [];
+  if (mk === 'totals') {
+    sides.push({v: 'a', t: 'Over ' + paPt(pt)});
+    sides.push({v: 'b', t: 'Under ' + paPt(pt)});
+  } else if (mk === 'spreads') {
+    sides.push({v: 'a', t: g.away + ' ' + paPtS(pt)});
+    sides.push({v: 'b', t: g.home + ' ' + paPtS(pt === null ? null : -pt)});
+  } else {
+    sides.push({v: 'a', t: g.away});
+    sides.push({v: 'b', t: g.home});
+  }
+  var sel = panel.querySelector('.pa-side');
+  sel.innerHTML = '';
+  for (var i = 0; i < sides.length; i++) {
+    var o = document.createElement('option');
+    o.value = sides[i].v;
+    o.textContent = sides[i].t;
+    sel.appendChild(o);
+  }
+  paPrefill(panel);
+}
+function paPrefill(panel) {
+  var mk = panel.querySelector('.pa-market').value;
+  var sd = panel.querySelector('.pa-side').value;
+  var g = paGame(panel);
+  var blk = (g.markets || {})[mk] || {};
+  var best = (blk.best || {})[sd] || {};
+  if (best.price !== undefined && best.price !== null) {
+    panel.querySelector('.pa-target').value = paFmt(best.price);
+  }
+}
+function paSyncCond(panel) {
+  var mk = panel.querySelector('.pa-market').value;
+  var cond = panel.querySelector('.pa-cond');
+  for (var i = 0; i < cond.options.length; i++) {
+    if (cond.options[i].value === 'number_moves') { cond.options[i].disabled = (mk === 'h2h'); }
+  }
+  if (mk === 'h2h' && cond.value === 'number_moves') { cond.value = 'price_moves'; }
+  panel.querySelector('.pa-target-row').style.display = (cond.value === 'target') ? 'block' : 'none';
+}
+function paMarket(sel) { var p = sel.closest('.od-alertpanel'); paFillSides(p); paSyncCond(p); }
+function paSide(sel) { paPrefill(sel.closest('.od-alertpanel')); }
+function paCond(sel) { paSyncCond(sel.closest('.od-alertpanel')); }
+function paCreate(btn) {
+  var p = btn.closest('.od-alertpanel');
+  var msg = p.querySelector('.pa-msg');
+  var cond = p.querySelector('.pa-cond').value;
+  var payload = {mercado: p.querySelector('.pa-market').value, lado: p.querySelector('.pa-side').value, condicion: cond};
+  if (cond === 'target') {
+    var raw = (p.querySelector('.pa-target').value || '').replace(/[^0-9+-]/g, '');
+    var v = parseInt(raw, 10);
+    if (isNaN(v) || v === 0 || (v > -100 && v < 100)) {
+      msg.className = 'pa-msg err';
+      msg.textContent = 'Enter a target price like +150 or -110.';
+      return;
+    }
+    payload.objetivo = v;
+  }
+  btn.disabled = true;
+  msg.className = 'pa-msg';
+  msg.textContent = 'Setting your alert\u2026';
+  fetch('/odds/' + encodeURIComponent(p.getAttribute('data-eid')) + '/alert', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(payload)
+  }).then(function(r) { return r.json(); }).then(function(d) {
+    btn.disabled = false;
+    if (d.ok) {
+      msg.className = 'pa-msg ok';
+      msg.textContent = "Alert set \u2014 we'll message you when it hits.";
+      btn.textContent = 'Alert set \u2713';
+    } else {
+      msg.className = 'pa-msg err';
+      msg.textContent = d.error || 'Something went wrong \u2014 try again.';
+    }
+  }).catch(function() {
+    btn.disabled = false;
+    msg.className = 'pa-msg err';
+    msg.textContent = 'Something went wrong \u2014 try again.';
+  });
 }
 </script>
 {% endblock %}
