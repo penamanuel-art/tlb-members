@@ -10535,17 +10535,22 @@ def admin_miembros():
             activos.append(d)
     except Exception:
         activos = []
-    # Miembros fuera de la carpeta de activos (sin duplicar): van a la
-    # carpeta plegable "OTHER MEMBERS" de la plantilla.
+    # 4 carpetas excluyentes (orden de Alex 2026-10-24: "haz 4 carpetas"):
+    # ACTIVE (tarjetas completas) > NEW (48 h) > PLATINUM > FREE.
     _ids_activos = {a["id"] for a in activos}
-    otros = [m for m in lista if m["id"] not in _ids_activos]
+    _resto = [m for m in lista if m["id"] not in _ids_activos]
+    nuevos = [m for m in _resto if m.get("es_nuevo")]
+    _resto2 = [m for m in _resto if not m.get("es_nuevo")]
+    platinums = [m for m in _resto2 if m.get("platinum_unlocked")]
+    frees = [m for m in _resto2 if not m.get("platinum_unlocked")]
     try:
         _ahora_et = ahora.astimezone(ZoneInfo("America/New_York"))
         ahora_txt = _ahora_et.strftime("%b %-d, %Y · %-I:%M %p ET")
     except Exception:
         ahora_txt = ""
     return render_template("admin_miembros.html", miembros=lista,
-                           activos=activos, otros=otros,
+                           activos=activos, nuevos=nuevos,
+                           platinums=platinums, frees=frees,
                            ahora_txt=ahora_txt,
                            eventos=[dict(e) for e in eventos])
 
