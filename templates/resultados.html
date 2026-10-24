@@ -123,7 +123,7 @@
       </div>
       <div class="mt-ringstats">
         <div class="rs"><span>Platinum</span><b>{{ ns.pw }}–{{ ns.pl }} · {{ fmt_money(ns.pp) }}</b></div>
-        <div class="rs"><span>Gold</span><b>{{ ns.gw }}–{{ ns.gl }} · {{ fmt_money(ns.gp) }}</b></div>
+        <div class="rs"><span>Sharp Picks Free</span><b>{{ ns.gw }}–{{ ns.gl }} · {{ fmt_money(ns.gp) }}</b></div>
         <div class="rs"><span>Ticket verified</span><b>{{ '%.0f' % vpct }}%</b></div>
       </div>
     </div>
@@ -132,7 +132,7 @@
   <div class="mt-stats">
     <div class="mt-stat"><div class="n">{{ fmt_money(ns.pp) }}</div><div class="l">PLATINUM NET</div></div>
     <div class="mt-stat"><div class="n">{{ '%+.1f' % proi }}%</div><div class="l">PLATINUM ROI</div></div>
-    <div class="mt-stat"><div class="n">{{ '%+.1f' % groi }}%</div><div class="l">GOLD ROI</div></div>
+    <div class="mt-stat"><div class="n">{{ '%+.1f' % groi }}%</div><div class="l">SHARP PICKS FREE ROI</div></div>
   </div>
 
   <h2 class="mt-h2">Breakdown by level</h2>
@@ -143,7 +143,7 @@
       <div class="lm">Win rate {{ '%.1f' % pwr }}% · Net <b class="{{ 'pos' if ns.pp > 0 else ('neg' if ns.pp < 0 else '') }}">{{ fmt_money(ns.pp) }}</b><br>ROI {{ '%+.1f' % proi }}% · {{ fmt_units(ns.pu) }}</div>
     </div>
     <div class="mt-lvlcard goldc">
-      <div class="lt">⚪ GOLD</div>
+      <div class="lt">⚪ SHARP PICKS FREE</div>
       <div class="lr">{{ ns.gw }}–{{ ns.gl }}</div>
       <div class="lm">Win rate {{ '%.1f' % gwr }}% · Net <b class="{{ 'pos' if ns.gp > 0 else ('neg' if ns.gp < 0 else '') }}">{{ fmt_money(ns.gp) }}</b><br>ROI {{ '%+.1f' % groi }}% · {{ fmt_units(ns.gu) }}</div>
     </div>
