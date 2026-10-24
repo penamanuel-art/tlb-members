@@ -49,15 +49,16 @@
   </div>
 </section>
 
-{% if activos %}
-<div class="av-head">
-  <span style="font-size:22px">🔥</span>
-  <span class="av-title">ACTIVE &amp; VERIFIED</span>
-  <span class="av-count">{{ activos|length }}</span>
-</div>
-<p class="av-rule">Confirmed email + activity on 2 or more different days. Updates on its own: whoever stops coming drops off, whoever returns joins.</p>
-{% for a in activos %}
-<article class="av-card">
+<details class="mx-folder" open>
+  <summary>
+    <span class="mx-ft">🔥 ACTIVE &amp; VERIFIED</span>
+    <span class="mx-fc">{{ activos|length }}</span>
+    <span class="mx-chev">›</span>
+  </summary>
+  <div class="mx-body">
+  <p class="av-rule">Confirmed email + activity on 2 or more different days. Updates on its own: whoever stops coming drops off, whoever returns joins.</p>
+  {% for a in activos %}
+  <article class="av-card">
   <div class="av-top">
     <div>
       <div class="av-name">{{ a.nombre }}</div>
@@ -79,17 +80,20 @@
     <div class="av-row"><span class="k">🎯 Tracked plays</span><span class="v">{{ a.tracked_n }}</span></div>
   </div>
 </article>
-{% endfor %}
-{% endif %}
+  {% else %}
+  <p class="muted">No active members yet.</p>
+  {% endfor %}
+  </div>
+</details>
 
 <details class="mx-folder">
   <summary>
-    <span class="mx-ft">📁 OTHER MEMBERS</span>
-    <span class="mx-fc">{{ otros|length }}</span>
+    <span class="mx-ft">🆕 NEW</span>
+    <span class="mx-fc">{{ nuevos|length }}</span>
     <span class="mx-chev">›</span>
   </summary>
   <div class="mx-body">
-  {% for m in otros %}
+  {% for m in nuevos %}
   <a class="mx-item" href="{{ url_for('admin_miembro_detalle', user_id=m.id) }}">
     <span class="mx-av">{{ (m.nombre or '?')[:1]|upper }}</span>
     <span class="mx-nm">{{ m.nombre }}{% if m.es_nuevo %} <span class="mx-new">● NEW</span>{% endif %}</span>
@@ -99,7 +103,51 @@
     <span class="mx-more">Ver más →</span>
   </a>
   {% else %}
-  <p class="muted">No other members.</p>
+  <p class="muted">No members in this group.</p>
+  {% endfor %}
+  </div>
+</details>
+
+<details class="mx-folder">
+  <summary>
+    <span class="mx-ft">★ PLATINUM</span>
+    <span class="mx-fc">{{ platinums|length }}</span>
+    <span class="mx-chev">›</span>
+  </summary>
+  <div class="mx-body">
+  {% for m in platinums %}
+  <a class="mx-item" href="{{ url_for('admin_miembro_detalle', user_id=m.id) }}">
+    <span class="mx-av">{{ (m.nombre or '?')[:1]|upper }}</span>
+    <span class="mx-nm">{{ m.nombre }}{% if m.es_nuevo %} <span class="mx-new">● NEW</span>{% endif %}</span>
+    {% if m.is_admin %}<span class="mx-status adm">ADMIN</span>
+    {% elif m.platinum_unlocked %}<span class="mx-status plat">★ PLATINUM</span>
+    {% else %}<span class="mx-status free">FREE</span>{% endif %}
+    <span class="mx-more">Ver más →</span>
+  </a>
+  {% else %}
+  <p class="muted">No members in this group.</p>
+  {% endfor %}
+  </div>
+</details>
+
+<details class="mx-folder">
+  <summary>
+    <span class="mx-ft">FREE</span>
+    <span class="mx-fc">{{ frees|length }}</span>
+    <span class="mx-chev">›</span>
+  </summary>
+  <div class="mx-body">
+  {% for m in frees %}
+  <a class="mx-item" href="{{ url_for('admin_miembro_detalle', user_id=m.id) }}">
+    <span class="mx-av">{{ (m.nombre or '?')[:1]|upper }}</span>
+    <span class="mx-nm">{{ m.nombre }}{% if m.es_nuevo %} <span class="mx-new">● NEW</span>{% endif %}</span>
+    {% if m.is_admin %}<span class="mx-status adm">ADMIN</span>
+    {% elif m.platinum_unlocked %}<span class="mx-status plat">★ PLATINUM</span>
+    {% else %}<span class="mx-status free">FREE</span>{% endif %}
+    <span class="mx-more">Ver más →</span>
+  </a>
+  {% else %}
+  <p class="muted">No members in this group.</p>
   {% endfor %}
   </div>
 </details>
