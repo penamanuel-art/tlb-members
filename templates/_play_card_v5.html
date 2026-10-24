@@ -9,14 +9,24 @@
 {% set _res = p.resultado if p.resultado is defined else None %}
 {% set _ncaa = {'KSU':2306,'KU':2305,'IU':84,'OSU':194,'CIN':2132,'WVU':277,'AF':2005,'UNLV':2439,'ALA':333,'UGA':61,'TEX':251,'MICH':130,'ND':87,'LSU':99,'TENN':2633,'PSU':213,'ORE':2483,'CLEM':228,'FLA':57,'AUB':2,'TAMU':245,'OU':201,'USC':30,'UCLA':26,'MIA':2390,'FSU':52,'UNC':153,'DUKE':150,'VT':259,'LOU':97,'NCST':152,'SYR':183,'BC':103,'PITT':221,'BAY':239,'TCU':2628,'TTU':2641,'OKST':197,'ISU':66,'UTAH':254,'BYU':252,'ARIZ':12,'ASU':9,'COL':38,'HOU':248,'UCF':2116,'MEM':235,'BSU':68,'SDSU':21,'FRES':278,'ARMY':349,'NAVY':2426,'MRSH':276,'LIB':2335,'JMU':256,'APP':2026,'CCU':324,'GASO':290,'TROY':2653,'ULL':309,'TULN':2655} %}
 {% set _mlb_slug = {'CHW':'cws','WSH':'was'} %}
+{% set _nhl_slug = {'TBL':'tb'} %}
 {% set _logo = p.logo_url if (p.logo_url is defined and p.logo_url) else '' %}
 {% if not _logo %}
   {% if p.liga == 'NCAAF' and _ncaa.get(p.abbr) %}{% set _logo = 'https://a.espncdn.com/i/teamlogos/ncaa/500/' ~ _ncaa[p.abbr] ~ '.png' %}
   {% elif p.liga == 'MLB' %}{% set _logo = 'https://a.espncdn.com/i/teamlogos/mlb/500/' ~ (_mlb_slug.get(p.abbr) or (p.abbr|lower)) ~ '.png' %}
   {% elif p.liga == 'NFL' %}{% set _logo = 'https://a.espncdn.com/i/teamlogos/nfl/500/' ~ (p.abbr|lower) ~ '.png' %}
-  {% elif p.liga == 'NHL' %}{% set _logo = 'https://a.espncdn.com/i/teamlogos/nhl/500/' ~ (p.abbr|lower) ~ '.png' %}
+  {% elif p.liga == 'NHL' %}{% set _logo = 'https://a.espncdn.com/i/teamlogos/nhl/500/' ~ (_nhl_slug.get(p.abbr) or (p.abbr|lower)) ~ '.png' %}
   {% elif p.liga == 'NBA' %}{% set _logo = 'https://a.espncdn.com/i/teamlogos/nba/500/' ~ (p.abbr|lower) ~ '.png' %}
   {% endif %}
+{% set _gt = p.game_time_et or p.hora or '' %}
+{% set _gt12 = _gt %}
+{% if _gt and ':' in _gt and 'M' not in _gt %}
+  {% set _hh = _gt.split(':')[0]|int %}
+  {% set _mm = _gt.split(':')[1][:2] %}
+  {% set _ap = 'AM' if _hh < 12 else 'PM' %}
+  {% set _h12 = _hh % 12 %}{% if _h12 == 0 %}{% set _h12 = 12 %}{% endif %}
+  {% set _gt12 = _h12 ~ ':' ~ _mm ~ ' ' ~ _ap %}
+{% endif %}
 {% endif %}
 <style>
 .v5c{position:relative;overflow:hidden;background:#0c1113;border:1px solid rgba(255,255,255,.09);border-radius:20px;padding:0;box-sizing:border-box;width:100%;max-width:100%;margin:0 0 12px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#eef1f7}
@@ -109,7 +119,7 @@ body.v2 .v5c{background:linear-gradient(180deg,#111a3e,#0c1430)}
     {% if _logo %}<img class="v5c-logo" src="{{ _logo }}" alt="{{ p.abbr }} logo" loading="lazy" onerror="this.remove()">{% endif %}
     <div style="flex:1;min-width:0">
       <div class="v5c-title" data-v5-open="{{ p.id }}" style="cursor:pointer">{{ p.team_name or p.abbr }} {{ ('ML' if is_alex else 'Moneyline') if p.bettype == 'Moneyline' else p.bettype }}</div>
-      <div class="v5c-sub" data-v5-open="{{ p.id }}" style="cursor:pointer">{{ p.abbr }} vs {{ p.opp_abbr }} &middot; {{ p.game_time_et or p.hora or '' }}</div>
+      <div class="v5c-sub" data-v5-open="{{ p.id }}" style="cursor:pointer">{{ p.abbr }} vs {{ p.opp_abbr }} &middot; {{ _gt12 }}</div>
     </div>
   </div>
   {% if p.posted %}<div class="v5c-posted">🕐 Posted {{ p.posted }}</div>{% endif %}
@@ -157,7 +167,7 @@ body.v2 .v5c{background:linear-gradient(180deg,#111a3e,#0c1430)}
     <div style="margin-top:10px">
       <div class="v5row"><span class="v5row-k">Pick</span><span class="v5row-v"><b>{{ p.team_name or p.abbr }} {{ ('ML' if is_alex else 'Moneyline') if p.bettype == 'Moneyline' else p.bettype }}</b></span></div>
       <div class="v5row"><span class="v5row-k">Game</span><span class="v5row-v">{{ p.abbr }} vs {{ p.opp_abbr }}</span></div>
-      <div class="v5row"><span class="v5row-k">Starts</span><span class="v5row-v">{{ p.game_time_et or p.hora or '' }}</span></div>
+      <div class="v5row"><span class="v5row-k">Starts</span><span class="v5row-v">{{ _gt12 }}</span></div>
       {% if p.posted %}<div class="v5row"><span class="v5row-k">Posted</span><span class="v5row-v">{{ p.posted }}</span></div>{% endif %}
       <div class="v5row"><span class="v5row-k">Price posted</span><span class="v5row-v"><b>{{ fmt_odds(p.cuota) }}</b></span></div>
       <div class="v5row"><span class="v5row-k">Stake</span><span class="v5row-v"><b>{{ '%g' % p.stake_unidades }}u</b> &middot; <span style="color:#e8c766;font-weight:600">${{ '%g' % p.stake_monto }}</span></span></div>
