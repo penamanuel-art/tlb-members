@@ -692,13 +692,37 @@ def _barrer_trials_vencidos(db):
     db.commit()
 
 
+def _acceso_programa(user) -> bool:
+    """True si el miembro tiene acceso vigente al programa (2026-10-24,
+    orden de Alex: el que no paga no tiene nada). Acceso vigente =
+    Platinum desbloqueado SIN reloj de trial (pago por Stripe — el
+    webhook borra el reloj — o activado a mano por Alex con el botón
+    de Platinum). El trial y el gratis ya no dan acceso. Alex y el
+    admin siempre tienen acceso."""
+    try:
+        if not user:
+            return False
+        if is_alex_member(user) or is_admin_for(user):
+            return True
+        if not user["platinum_unlocked"]:
+            return False
+        return not (user["platinum_trial_ends"] or "")
+    except Exception:
+        return False
+
+
 def platinum_unlocked_for(user) -> bool:
     """True si el miembro desbloqueó la jugada Elite (default: bloqueada).
     El mes gratis de plataforma vence solo: con el reloj pasado y sin
-    suscripción de Stripe, el acceso cuenta como apagado."""
+    suscripción de Stripe, el acceso cuenta como apagado.
+    (2026-10-24, orden de Alex: el que no paga no tiene nada — fuera
+    de Alex y del admin, solo el acceso vigente desbloquea: Platinum
+    SIN reloj de trial. El trial y el gratis ya no desbloquean nada.)"""
     try:
-        return bool(user and user["platinum_unlocked"]) and not _trial_vencido(user)
-    except (KeyError, IndexError, TypeError):
+        if is_alex_member(user) or is_admin_for(user):
+            return bool(user and user["platinum_unlocked"]) and not _trial_vencido(user)
+        return _acceso_programa(user)
+    except Exception:
         return False
 
 
@@ -4163,6 +4187,12 @@ def home():
         else:
             plays = []  # las de ayer no se muestran: la card de hoy aún no sale
     plays = personalizar_plays(plays, user)
+    # Paywall (2026-10-24, orden de Alex: el que no paga no tiene nada):
+    # sin acceso vigente no se muestra la card de hoy (tampoco como
+    # teasers bloqueados: locked_plays se construye desde plays).
+    _sin_acceso = not _acceso_programa(user)
+    if _sin_acceso:
+        plays = []
     tracked_rows = db.execute(
         "SELECT * FROM tracked_plays WHERE user_id = ?",
         (session["user_id"],),
@@ -4173,6 +4203,8 @@ def home():
         "SELECT * FROM tracked_plays WHERE user_id = ? AND nivel = 'VALUE'",
         (VALUE_SYSTEM_USER_ID,),
     ).fetchall()
+    if _sin_acceso:
+        system_value_rows = []  # Paywall 2026-10-24: sin VALUE del sistema
     try:
         hot_cards = hot_run_cards([dict(r) for r in system_value_rows])
     except Exception:
@@ -4193,7 +4225,8 @@ def home():
         _vals.append(round(_cum, 2))
     tcurve = profit_curve_svg(_vals)
     # Resultados recientes: jugadas liquidadas del archivo (sin bloqueadas).
-    recientes = recientes_oficiales(6)
+    # Paywall 2026-10-24: sin acceso vigente no se muestran.
+    recientes = [] if _sin_acceso else recientes_oficiales(6)
     # Fechas para el encabezado por día de Receipts (2026-10-16, diseño
     # "Yesterday" estilo WGT aprobado por Alex): la plantilla etiqueta
     # el día más reciente como Yesterday/Today según corresponda.
@@ -10427,6 +10460,10 @@ def admin_miembros():
         "FROM users "
         "WHERE LOWER(email) NOT IN ('thesharpteam8@gmail.com', 'system@value.local') "
         "AND email_verified = 1 "
+        # 2026-10-24, orden de Alex: el menú de miembros solo muestra
+        # miembros con acceso vigente (pago Stripe o activado a mano).
+        "AND platinum_unlocked = 1 "
+        "AND (platinum_trial_ends IS NULL OR platinum_trial_ends = '') "
         "ORDER BY created_at DESC"
     ).fetchall()
     ahora = datetime.now(timezone.utc)
@@ -10464,6 +10501,9 @@ def admin_miembros():
             "WHERE u.email_verified = 1 "
             "AND LOWER(u.email) NOT IN ('thesharpteam8@gmail.com', "
             "'system@value.local', 'pena.manuel@myyahoo.com') "
+            # 2026-10-24, orden de Alex: solo con acceso vigente.
+            "AND u.platinum_unlocked = 1 "
+            "AND (u.platinum_trial_ends IS NULL OR u.platinum_trial_ends = '') "
             "GROUP BY u.id, u.nombre, u.email, u.activated_at, u.phone, "
             "u.sms_optin, u.telegram_user_id, u.stripe_customer_id, "
             "u.stripe_subscription_id, u.platinum_trial_ends "
@@ -10713,6 +10753,10 @@ def resultados():
 def ev_board():
     db = get_db()
     record_checkin(db, session["user_id"])
+    # Paywall 2026-10-24: el tablero Compare Prices es contenido del
+    # programa — sin acceso vigente va a la página de desbloqueo.
+    if not platinum_unlocked_for(current_user()):
+        return redirect(url_for("desbloquear_platinum"))
     return render_template("ev_board.html", board=load_ev_board())
 
 
