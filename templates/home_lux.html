@@ -359,6 +359,31 @@ body.v2 .f1b-rec{margin:18px 0 0}
   </div>
 </section>
 {% endif %}
+<section class="v2-sec" style="padding-top:0">
+  <div style="background:#161c23;border:1px solid #24334d;border-radius:20px;padding:15px 16px;">
+    <div style="font-size:11px;letter-spacing:2px;color:#2ee6a8;font-weight:800;">NEW HERE?</div>
+    <div style="font-size:16.5px;font-weight:800;color:#fff;margin-top:5px;">Watch how it works</div>
+    <p style="font-size:12.5px;color:#93a4bf;margin:4px 0 12px;">A quick tour of your Dashboard &#8212; plays, verified tickets, tracker, prices and alerts.</p>
+    <div id="tst-vid-open" style="position:relative;border-radius:14px;overflow:hidden;cursor:pointer;">
+      <img src="{{ url_for('static', filename='img/video-dashboard-poster.jpg') }}" alt="Dashboard tutorial" style="width:100%;height:190px;object-fit:cover;object-position:top center;display:block;">
+      <span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(6,9,12,.25);">
+        <span style="width:64px;height:64px;border-radius:50%;background:#2ee6a8;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(0,0,0,.5);">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="#06251a"><path d="M8 5v14l11-7z"/></svg>
+        </span>
+      </span>
+      <span style="position:absolute;right:10px;bottom:10px;background:rgba(0,0,0,.65);color:#fff;font-size:11.5px;font-weight:700;padding:3px 8px;border-radius:8px;">3:45</span>
+    </div>
+  </div>
+</section>
+<div id="tst-vid-modal" style="display:none;position:fixed;inset:0;background:rgba(6,9,12,.96);z-index:100000;align-items:center;justify-content:center;padding:14px;box-sizing:border-box;">
+  <button id="tst-vid-close" aria-label="Close" style="position:absolute;top:calc(12px + env(safe-area-inset-top));right:14px;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.25);color:#fff;font-size:19px;cursor:pointer;z-index:2;">&#10005;</button>
+  <video id="tst-vid-player" controls playsinline preload="none" poster="{{ url_for('static', filename='img/video-dashboard-poster.jpg') }}" style="width:100%;max-width:430px;max-height:92dvh;border-radius:16px;background:#000;">
+    <source src="{{ url_for('static', filename='video/dashboard-tutorial.mp4') }}" type="video/mp4">
+  </video>
+</div>
+<script>
+(function(){var m=document.getElementById('tst-vid-modal'),v=document.getElementById('tst-vid-player'),o=document.getElementById('tst-vid-open'),c=document.getElementById('tst-vid-close');if(!m||!v||!o){return}function open(){m.style.display='flex';if(v.play){v.play()}}function close(){m.style.display='none';v.pause()}o.addEventListener('click',open);if(c){c.addEventListener('click',close)}m.addEventListener('click',function(e){if(e.target===m){close()}})})();
+</script>
 <section class="v2-sec" id="plays" style="scroll-margin-top:70px;">
   {% set golds = plays | selectattr('nivel', 'equalto', 'GOLD') | list %}
   {% if golds %}
