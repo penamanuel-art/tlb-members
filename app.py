@@ -4149,8 +4149,8 @@ def hot_run_cards(value_rows):
         ("PLATINUM", "ALL",
          seq_of(lambda j: (j.get("nivel") or "").upper() in ("ELITE", "PLATINUM")),
          "Platinum", "#e8c766"),
-        ("GOLD", "ALL",
-         seq_of(lambda j: (j.get("nivel") or "").upper() == "GOLD"), "Gold",
+        ("SHARP PICKS FREE", "ALL",
+         seq_of(lambda j: (j.get("nivel") or "").upper() == "GOLD"), "Sharp Picks Free",
          "#aebdd4"),
     ):
         c = _card(badge, tag, seq, scope, color)
