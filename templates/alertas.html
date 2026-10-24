@@ -23,6 +23,7 @@
   window.TLB_push.status().then(paint);
   btn.addEventListener('click', async function(){
     if (btn.disabled) return;
+    if (navigator.vibrate) { navigator.vibrate(12); }
     btn.disabled = true;
     var st = (current === 'granted') ? await window.TLB_push.disable() : await window.TLB_push.enable();
     paint(st);
@@ -196,6 +197,7 @@
 <script>
 document.querySelectorAll('.toggle input').forEach(function(el) {
   el.addEventListener('change', function() {
+    if (navigator.vibrate) { navigator.vibrate(12); }
     var pref = el.dataset.pref;
     var val = el.checked ? 1 : 0;
     fetch('/api/alertas', {
