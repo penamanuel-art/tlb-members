@@ -11018,12 +11018,62 @@ def _mis_follows(db, user_id):
         return []
 
 
-@app.route("/game-center")
+
+def _odds_profit100(price):
+    """Profit de una apuesta de $100 a cuota americana (para comparar
+    mejor vs peor precio como hace la pantalla Odds)."""
+    if price is None:
+        return None
+    if price > 0:
+        return float(price)
+    if price < 0:
+        return 10000.0 / abs(price)
+    return 0.0
+
+
+def _odds_sides(g, h):
+    """Lados de un juego para la pantalla Odds: mejor precio con su casa,
+    las siguientes casas, diferencia en $ contra el peor precio ($100),
+    edge contra la línea justa y precio justo."""
+    books = h.get("books") or []
+    best = h.get("best") or {}
+    fair = h.get("fair") or {}
+    edge = h.get("edge") or {}
+    sides = []
+    for side, team in (("a", g.get("away", "")), ("b", g.get("home", ""))):
+        key = side + "_price"
+        priced = [(bk.get("book", ""), bk.get(key)) for bk in books
+                  if bk.get(key) is not None]
+        priced.sort(key=lambda x: x[1], reverse=True)
+        bbest = best.get(side) or {}
+        chips = [{"book": _GC_SHORT.get(b, ""), "price": _gc_fmt(p)}
+                 for b, p in priced if b != bbest.get("book", "")][:3]
+        diff = None
+        if len(priced) >= 2 and bbest.get("price") is not None:
+            d = _odds_profit100(bbest["price"]) - _odds_profit100(priced[-1][1])
+            if d >= 1:
+                diff = int(round(d))
+        e = edge.get(side)
+        sides.append({
+            "team": team,
+            "best_book": _GC_SHORT.get(bbest.get("book", ""), ""),
+            "best_price": _gc_fmt(bbest.get("price")),
+            "chips": chips,
+            "diff": diff,
+            "edge": e if isinstance(e, (int, float)) else None,
+            "fair": fair.get(side + "_price") or "",
+        })
+    return sides
+
+
+@app.route("/odds")
 @login_required
 def game_center():
-    """Game Center (Platinum, 2026-10-23, aprobado por Alex): lista de
-    juegos con el mejor precio por lado; cada juego abre su página con
-    precios por casa, línea justa, edge y vig."""
+    """Odds (Platinum; unifica el Game Center y el Odds Board el
+    2026-10-24, orden de Alex): pantalla única de precios — pestañas por
+    liga, mejor precio por equipo con su casa, diferencia contra el peor
+    precio en $100, edge contra la línea justa, vig del mercado y el
+    detalle «Compare all books» por juego."""
     db = get_db()
     record_checkin(db, session["user_id"])
     if not platinum_unlocked_for(current_user()):
@@ -11039,6 +11089,9 @@ def game_center():
         g["best_a_price"] = _gc_fmt((best.get("a") or {}).get("price"))
         g["best_b_book"] = _GC_SHORT.get((best.get("b") or {}).get("book", ""), "")
         g["best_b_price"] = _gc_fmt((best.get("b") or {}).get("price"))
+        g["odds_sides"] = _odds_sides(g, h)
+        _v = h.get("vig")
+        g["vig_txt"] = ("%.1f%%" % _v) if isinstance(_v, (int, float)) else ""
         by_league.setdefault(g.get("league", ""), []).append(g)
     groups = [(lg, by_league[lg]) for lg in order if lg in by_league]
     groups += [(lg, gs) for lg, gs in by_league.items() if lg not in order]
@@ -11059,12 +11112,20 @@ def game_center():
                          if g else ""),
                 "live": bool(g.get("live")) if g else False,
             })
-    return render_template("gamecenter.html", groups=groups,
+    return render_template("odds.html", groups=groups,
+                           total_games=len(games),
                            updated_label=_gc_updated(board),
                            total_books=total_books, follows=follows)
 
 
-@app.route("/game-center/<event_id>")
+@app.route("/game-center")
+@login_required
+def game_center_legacy():
+    """La ruta vieja del Game Center lleva a la pantalla Odds."""
+    return redirect(url_for("game_center"))
+
+
+@app.route("/odds/<event_id>")
 @login_required
 def game_center_game(event_id):
     """Página de un juego del Game Center: rejilla de precios por casa,
@@ -11110,6 +11171,13 @@ def game_center_game(event_id):
 
 
 
+@app.route("/game-center/<event_id>")
+@login_required
+def game_center_game_legacy(event_id):
+    return redirect(url_for("game_center_game", event_id=event_id))
+
+
+@app.route("/odds/<event_id>/follow", methods=["POST"])
 @app.route("/game-center/<event_id>/follow", methods=["POST"])
 @login_required
 def game_center_follow(event_id):
@@ -11178,8 +11246,9 @@ def tools():
 @app.route("/odds-board")
 @login_required
 def odds_board():
-    """Odds Board (Platinum, 2026-10-19): juegos de hoy con el mejor
-    moneyline por lado y la casa que lo da. Datos de la rama data-board."""
+    """Odds Board (Platinum, 2026-10-19) — absorbido por la pantalla
+    Odds el 2026-10-24 (orden de Alex): redirige a /odds."""
+    return redirect(url_for("game_center"))
     db = get_db()
     record_checkin(db, session["user_id"])
     if not platinum_unlocked_for(current_user()):
