@@ -105,7 +105,7 @@
       <div style="position:absolute;inset:0;background:{% if _lux %}radial-gradient(420px 200px at 12% -10%,rgba(212,160,23,.18),transparent 60%){% else %}linear-gradient(180deg,rgba(3,5,4,.94),rgba(3,5,4,.98)){% endif %};border-radius:16px;"></div>
       <div style="position:relative;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-          <div style="font-size:16px;color:#fff;">{{ p.team_name or p.abbr }} {{ 'ML' if p.bettype == 'Moneyline' else p.bettype }} <span style="font-size:11px;color:#e3b93c;">&middot; {{ p.liga or '' }}</span> <span style="font-size:10px;letter-spacing:1px;color:#f5c518;background:#2a2113;padding:4px 10px;border-radius:999px;">{{ 'PLATINUM' if is_vip else 'GOLD' }}</span></div>
+          <div style="font-size:16px;color:#fff;">{{ p.team_name or p.abbr }} {{ 'ML' if p.bettype == 'Moneyline' else p.bettype }} <span style="font-size:11px;color:#e3b93c;">&middot; {{ p.liga or '' }}</span> <span style="font-size:10px;letter-spacing:1px;color:#f5c518;background:#2a2113;padding:4px 10px;border-radius:999px;">{{ 'PLATINUM' if is_vip else 'SHARP PICKS FREE' }}</span></div>
           <span style="color:{{ _mint }};font-size:14px;flex:none;margin-left:8px;">{{ fmt_odds(p.cuota) }}</span>
         </div>
         {% if p.writeup %}
@@ -131,7 +131,7 @@
         <div id="tstc-modal-{{ p.id }}" class="tstc-modal" onclick="if(event.target===this)this.style.display='none'">
           <div style="background:#141a2b;border-radius:24px;max-width:440px;width:100%;max-height:92vh;overflow-y:auto;padding:20px;position:relative;" onclick="event.stopPropagation()">
             <button onclick="document.getElementById('tstc-modal-{{ p.id }}').style.display='none'" style="position:absolute;top:12px;right:12px;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.08);border:none;color:#fff;font-size:20px;cursor:pointer;z-index:2;">&times;</button>
-            <span style="display:inline-block;font-size:11px;font-weight:800;letter-spacing:1.5px;padding:6px 14px;border-radius:999px;background:rgba(125,180,255,.15);color:#7db4ff;margin-bottom:12px;">{{ 'PLATINUM PLAY' if is_vip else 'GOLD PLAY' }}</span>
+            <span style="display:inline-block;font-size:11px;font-weight:800;letter-spacing:1.5px;padding:6px 14px;border-radius:999px;background:rgba(125,180,255,.15);color:#7db4ff;margin-bottom:12px;">{{ 'PLATINUM PLAY' if is_vip else 'SHARP PICKS FREE PLAY' }}</span>
             <div style="border-radius:16px;overflow:hidden;margin-bottom:16px;cursor:pointer;" onclick="window.open('{{ url_for('static', filename=p.comprobante) }}','_blank')">
               <img src="{{ url_for('static', filename=p.comprobante) }}" alt="Original ticket {{ p.abbr }} {{ p.bettype }}" style="width:100%;display:block;filter:brightness(1);max-height:none;">
             </div>
@@ -178,7 +178,7 @@
       <div style="position:absolute;inset:0;background:{% if _lux %}radial-gradient(420px 200px at 12% -10%,rgba(212,160,23,.18),transparent 60%){% else %}linear-gradient(180deg,rgba(3,5,4,.94),rgba(3,5,4,.98)){% endif %};border-radius:20px;"></div>
       <div style="position:relative;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-          {% if is_vip %}<span style="font-size:11px;letter-spacing:1.5px;padding:6px 14px;border-radius:999px;background:{{ _platbg }};color:{{ _platfg }};">PLATINUM</span>{% elif is_value %}<span style="font-size:11px;letter-spacing:1.5px;padding:6px 14px;border-radius:999px;background:{{ _platbg }};color:{{ _platfg }};">💎 VALUE PLAY</span>{% else %}<span style="font-size:11px;letter-spacing:1.5px;padding:6px 14px;border-radius:999px;background:rgba(201,162,39,.15);color:#e3b93c;">GOLD</span>{% endif %}
+          {% if is_vip %}<span style="font-size:11px;letter-spacing:1.5px;padding:6px 14px;border-radius:999px;background:{{ _platbg }};color:{{ _platfg }};">PLATINUM</span>{% elif is_value %}<span style="font-size:11px;letter-spacing:1.5px;padding:6px 14px;border-radius:999px;background:{{ _platbg }};color:{{ _platfg }};">💎 VALUE PLAY</span>{% else %}<span style="font-size:11px;letter-spacing:1.5px;padding:6px 14px;border-radius:999px;background:rgba(201,162,39,.15);color:#e3b93c;">SHARP PICKS FREE</span>{% endif %}
           {% if _res == 'W' %}<span style="font-size:10px;letter-spacing:1.5px;color:#4ade80;background:rgba(74,222,128,.1);padding:5px 12px;border-radius:999px;">WON</span>
           {% elif _res == 'L' %}<span style="font-size:10px;letter-spacing:1.5px;color:#f87171;background:rgba(248,113,113,.1);padding:5px 12px;border-radius:999px;">LOST</span>
           {% else %}<span style="font-size:10px;letter-spacing:1.5px;color:{{ _pendfg }};background:rgba(245,197,24,.08);padding:5px 12px;border-radius:999px;">PENDING</span>{% endif %}
