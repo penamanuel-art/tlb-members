@@ -101,7 +101,7 @@ twq('config','rhgk7');
     {% if session.get('user_id') %}
     {% if es_admin or cuenta_es %}<button id="langToggle" class="v2-lang-btn notranslate" title="Ver en español">🇺🇸 EN</button>{% endif %}
     <a href="{{ url_for('home', splash='0') }}#plays" class="v2-view-plays" style="color:#5eeaa0;-webkit-text-fill-color:#5eeaa0">View plays →</a>
-    <button id="tst-vid-open" type="button" style="display:inline-flex;align-items:center;gap:6px;background:#131c2b;border:1px solid rgba(94,234,160,.45);color:#fff;font-weight:600;font-size:11.5px;padding:10px 11px;border-radius:14px;cursor:pointer;white-space:nowrap"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#5eeaa0" stroke-width="2"/><path d="M10 8.2v7.6L16.2 12z" fill="#5eeaa0"/></svg>Watch how it works</button>
+    <a href="{{ url_for('balances') }}" style="display:inline-flex;align-items:center;gap:5px;background:#131c2b;border:1px solid rgba(94,234,160,.45);color:#5eeaa0;font-weight:400;font-size:11.5px;padding:10px 11px;border-radius:14px;text-decoration:none;white-space:nowrap">💰 Balance{% if balance_total_txt %}<span style="color:#eafff5;font-weight:500">{{ balance_total_txt }}</span>{% endif %}</a>
     <div class="v2-menu-wrap">
       <button class="v2-icon-btn" id="v2menuBtn" aria-label="Menu">☰</button>
       <div class="v2-menu-drop" id="v2menuDrop" hidden>
@@ -501,22 +501,5 @@ function googleTranslateElementInit(){new google.translate.TranslateElement({pag
 })();
 </script>
 {% endif %}
-<div id="tst-vid-modal" style="display:none;position:fixed;inset:0;background:rgba(6,9,12,.97);z-index:100000;flex-direction:column;align-items:center;justify-content:center;padding:calc(12px + env(safe-area-inset-top)) 14px 14px;box-sizing:border-box;">
-  <div style="position:relative;width:100%;max-width:430px;"><video id="tst-vid-player" controls playsinline webkit-playsinline preload="none" poster="{{ url_for('static', filename='img/video-dashboard-poster.jpg') }}" style="width:100%;max-width:430px;max-height:92dvh;border-radius:16px;background:#000;">
-    <source src="{{ url_for('static', filename='video/dashboard-tutorial.mp4') }}" type="video/mp4">
-  </video>
-    <button id="tst-vid-x" type="button" aria-label="Close" style="position:absolute;top:10px;right:10px;z-index:20;width:44px;height:44px;border-radius:50%;background:rgba(10,14,20,.85);border:2px solid #2ee6a8;color:#fff;font-size:20px;font-weight:800;cursor:pointer;line-height:1;">&#10005;</button>
-  </div>
-  <div id="tst-vid-end" style="display:none;width:100%;max-width:430px;margin-top:14px;flex-direction:column;align-items:center;gap:12px;">
-    <div style="color:#fff;font-size:16px;font-weight:700;">That is the full tour</div>
-    <div style="display:flex;gap:10px;">
-      <button id="tst-vid-again" type="button" style="background:#2ee6a8;color:#06281c;border:0;border-radius:999px;padding:13px 24px;font-size:16px;font-weight:800;cursor:pointer;">&#8635; Watch again</button>
-      <button id="tst-vid-endclose" type="button" style="background:#161c23;color:#fff;border:2px solid #2ee6a8;border-radius:999px;padding:12px 24px;font-size:16px;font-weight:800;cursor:pointer;">&#10005; Close</button>
-    </div>
-  </div>
-</div>
-<script>
-(function(){var m=document.getElementById('tst-vid-modal'),v=document.getElementById('tst-vid-player'),o=document.getElementById('tst-vid-open'),c=document.getElementById('tst-vid-close');if(!m||!v||!o){return}document.body.appendChild(m);function open(){m.style.display='flex';if(v.play){v.play()}}function close(){m.style.display='none';v.pause()}o.addEventListener('click',open);if(c){c.addEventListener('click',close)};var x=document.getElementById('tst-vid-x');if(x){x.addEventListener('click',close)}m.addEventListener('click',function(e){if(e.target===m){close()}});var eo=document.getElementById('tst-vid-end');v.addEventListener('ended',function(){try{if(v.webkitExitFullscreen){v.webkitExitFullscreen()}}catch(e){}try{if(document.fullscreenElement){document.exitFullscreen()}}catch(e){}if(eo){eo.style.display='flex'}});var ag=document.getElementById('tst-vid-again');if(ag){ag.addEventListener('click',function(){eo.style.display='none';v.currentTime=0;v.play()})}var ec=document.getElementById('tst-vid-endclose');if(ec){ec.addEventListener('click',function(){eo.style.display='none';close()})}o.addEventListener('click',function(){if(eo){eo.style.display='none'}});})();
-</script>
 </body>
 </html>
