@@ -1745,8 +1745,13 @@ def card_publicada_hoy() -> bool:
     Antes de la publicación diaria (11:05 AM ET) el archivo aún tiene la
     card de ayer: en ese caso el dashboard muestra 0 jugadas y el aviso
     de 'aún no publicada', nunca las jugadas de ayer.
+
+    REGLA DE ALEX (2026-10-24): el día del programa cierra a las 5:00 AM
+    ET, no a medianoche — la card de ayer se sigue mostrando hasta las
+    5:00 AM (los juegos que terminan de madrugada quedan visibles con
+    su card hasta esa hora).
     """
-    hoy = datetime.now(TZ).strftime("%Y-%m-%d")
+    hoy = (datetime.now(TZ) - timedelta(hours=5)).strftime("%Y-%m-%d")
     data = _json_remoto_o_local(PLAYS_RAW_URL, PLAYS_PATH)
     if isinstance(data, dict):
         fecha = data.get("fecha")
