@@ -7702,6 +7702,137 @@ def admin_api_members_emails():
     ])
 
 
+@app.route("/admin/api/lifecycle-dry-run")
+def admin_api_lifecycle_dry_run():
+    """Modo de prueba del ciclo de vida de cuentas (2026-10-24, pedido por Alex).
+    SOLO LEE: no borra cuentas, no marca INACTIVE, no envía emails y no
+    modifica ningún dato (tampoco barre trials vencidos). Clasifica cada
+    cuenta por la regla de Alex: días 8–14 último correo si nunca pagó y
+    sin actividad; días 15–29 marcar INACTIVE si nunca pagó y sigue sin
+    actividad; día 30+ eliminar solo si nunca pagó, sin actividad, sin
+    pagos pendientes ni suscripción activa. La verificación manual en
+    Stripe y la obligación legal/operativa NO se pueden decidir desde la
+    BD: todo candidato a eliminar sale con verificacion_manual_pendiente.
+    Auth: sesión admin O X-Admin-Key (helper _admin_api_autorizado)."""
+    if not _admin_api_autorizado():
+        return jsonify({"error": "admin only"}), 403
+    from datetime import datetime as _dt, timezone as _tz
+    db = get_db()
+    ahora = _dt.now(_tz.utc)
+    try:
+        users = db.execute(
+            "SELECT id, nombre, email, created_at, email_verified, is_admin, "
+            "platinum_unlocked, platinum_trial_ends, stripe_customer_id, "
+            "stripe_subscription_id, stripe_past_due "
+            "FROM users"
+        ).fetchall()
+    except Exception as e:
+        return jsonify({"error": f"users: {e}"}), 500
+    try:
+        act_rows = db.execute(
+            "SELECT user_id FROM member_activity "
+            "UNION SELECT user_id FROM checkins "
+            "UNION SELECT user_id FROM tracked_plays").fetchall()
+        act_ids = {(r["user_id"] if isinstance(r, dict) else r[0])
+                   for r in act_rows}
+    except Exception:
+        act_ids = set()
+    try:
+        ev_rows = db.execute(
+            "SELECT email FROM stripe_events WHERE email IS NOT NULL AND "
+            "tipo IN ('checkout.session.completed', 'invoice.paid', "
+            "'payment_intent.succeeded')").fetchall()
+        paid_emails = {(r["email"] if isinstance(r, dict) else r[0]).lower()
+                       for r in ev_rows}
+    except Exception:
+        paid_emails = set()
+
+    def _edad_dias(creado):
+        try:
+            d = _dt.fromisoformat(str(creado).replace("Z", "+00:00"))
+            if d.tzinfo is None:
+                d = d.replace(tzinfo=_tz.utc)
+            return (ahora - d).days
+        except Exception:
+            return None
+
+    out = {"fecha": ahora.astimezone(
+               ZoneInfo("America/New_York")).strftime("%Y-%m-%d"),
+           "total_cuentas": len(users), "confirmadas": 0, "sin_confirmar": 0,
+           "nunca_pagaron": 0, "con_actividad": 0, "sin_actividad": 0,
+           "buckets": {"ultimo_correo_8_14": [],
+                       "marcar_inactive_15_29": [],
+                       "eliminaria_30_mas": []},
+           "excluidas": [], "avisos": []}
+    for u in users:
+        d = dict(u)
+        email = (d.get("email") or "").lower()
+        es_admin = bool(d.get("is_admin")) or email in (
+            "pena.manuel@myyahoo.com", "thesharpteam8@gmail.com")
+        es_trial = bool(d.get("platinum_unlocked")) and bool(
+            d.get("platinum_trial_ends"))
+        if d.get("email_verified"):
+            out["confirmadas"] += 1
+        else:
+            out["sin_confirmar"] += 1
+        tiene_stripe = bool(d.get("stripe_customer_id")) or bool(
+            d.get("stripe_subscription_id")) or email in paid_emails
+        pago_pendiente = bool(d.get("stripe_past_due"))
+        tiene_actividad = d.get("id") in act_ids
+        if tiene_actividad:
+            out["con_actividad"] += 1
+        else:
+            out["sin_actividad"] += 1
+        if not tiene_stripe:
+            out["nunca_pagaron"] += 1
+        edad = _edad_dias(d.get("created_at"))
+        base = {"email": d.get("email"), "nombre": d.get("nombre"),
+                "created_at": d.get("created_at"), "edad_dias": edad,
+                "es_trial": es_trial,
+                "sin_confirmar": not d.get("email_verified")}
+        motivos = []
+        if es_admin:
+            motivos.append("cuenta admin / del dueño")
+        if tiene_stripe:
+            motivos.append("tiene registro de pago Stripe")
+        if pago_pendiente:
+            motivos.append("tiene pago pendiente (past due)")
+        if tiene_actividad:
+            motivos.append("tiene actividad (usa la plataforma)")
+        if edad is None:
+            motivos.append("sin fecha de registro")
+        elif edad < 8:
+            motivos.append("muy reciente (<8 días)")
+        if motivos:
+            out["excluidas"].append({**base, "motivos": motivos})
+            continue
+        if 8 <= edad <= 14:
+            out["buckets"]["ultimo_correo_8_14"].append(base)
+        elif 15 <= edad <= 29:
+            out["buckets"]["marcar_inactive_15_29"].append(base)
+        else:
+            out["buckets"]["eliminaria_30_mas"].append(
+                {**base, "verificacion_manual_pendiente":
+                 ["historial de pagos y suscripción en Stripe",
+                  "obligación legal / necesidad operativa"]})
+    n_trial = sum(1 for b in out["buckets"].values() for m in b
+                  if m["es_trial"])
+    n_sinconf = sum(1 for b in out["buckets"].values() for m in b
+                    if m["sin_confirmar"])
+    if n_trial:
+        out["avisos"].append(
+            f"{n_trial} cuentas en buckets son trial (mes gratis, sin pago). "
+            "Decidir si el trial se excluye de la eliminación automática "
+            "antes de activar: la ventana de conversión es 15–18 nov.")
+    if n_sinconf:
+        out["avisos"].append(
+            f"{n_sinconf} cuentas en buckets nunca confirmaron el correo.")
+    out["avisos"].append(
+        "Ningún candidato a eliminar es auto-eliminable solo con la BD: "
+        "antes de borrar hay que verificar Stripe y la obligación legal.")
+    return jsonify(out)
+
+
 @app.route("/admin/miembros/platinum", methods=["POST"])
 @login_required
 def admin_toggle_platinum():
