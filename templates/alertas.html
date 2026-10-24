@@ -32,53 +32,54 @@
 {% endblock %}
 {% block content %}
 <style>
-/* Alerts — estilo compacto moderno (2026-10-15, pedido de Alex: menos
-   espacio, más compacto) sobre el tema Midnight & Gold: fondo midnight,
-   dorado para título/secciones/toggles activos, verde solo semántico. */
-.alerts-wrap{max-width:560px;margin:0 auto;padding:12px 12px 8px}
-.alerts-title{font-size:21px;font-weight:800;color:#e8c766;margin:0 0 2px}
-.alerts-sub{color:#9a9ab5;font-size:12.5px;margin:0 0 10px}
-.alerts-card{background:linear-gradient(155deg,#26303f,#1c2431 60%,#1a222e);border:1px solid rgba(232,199,102,.35);border-radius:16px;padding:10px 14px 12px;margin-bottom:10px}
-.alerts-status{display:flex;align-items:center;gap:10px;margin-bottom:6px}
-.alerts-bell{width:36px;height:36px;border-radius:10px;background:rgba(47,191,113,.16);display:flex;align-items:center;justify-content:center;font-size:19px;flex:0 0 auto}
-.alerts-status b{font-size:15px;color:#fff;display:block}
-.alerts-status span{font-size:12px;color:#9a9ab5}
-.alert-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-top:1px solid rgba(255,255,255,.06);gap:10px}
-.alert-row:first-of-type{border-top:none}
-.alert-info b{font-size:14px;color:#fff;display:block;margin-bottom:1px}
-.alert-info span{font-size:12px;color:#9a9ab5;line-height:1.35;display:block}
-.alert-section{font-size:11px;font-weight:800;letter-spacing:1.2px;color:#e8c766;margin:12px 0 2px}
-.toggle{position:relative;width:46px;height:26px;flex:0 0 auto;cursor:pointer}
-.toggle input{opacity:0;width:0;height:0}
-.toggle .slider{position:absolute;inset:0;background:#3a3a4a;border-radius:999px;transition:.2s}
-.toggle .slider:before{content:"";position:absolute;width:18px;height:18px;left:4px;top:4px;background:#fff;border-radius:50%;transition:.2s}
-.toggle input:checked + .slider{background:#e8c766}
-.toggle input:checked + .slider:before{transform:translateX(20px)}
-.alerts-saved{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#101828;color:#e8c766;border:1px solid rgba(232,199,102,.5);font-weight:800;font-size:13px;padding:9px 18px;border-radius:999px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:100}
-.alerts-saved.show{opacity:1}
-.v2-alert-btn{display:block;width:100%;padding:12px;border-radius:14px;border:1px solid rgba(232,199,102,.5);font-size:14px;font-weight:800;cursor:pointer;text-align:center;font-family:inherit}
+/* Alerts — rediseño 2026-10-24 (orden de Alex): moderno y TODO en una
+   sola pantalla, sin deslizar. Misma lógica y mismos ids; solo cambia
+   la presentación: tarjeta sólida #161c23, filas compactas, toggles
+   verdes al activar, dorado solo en etiquetas de sección. */
+.alerts-wrap{max-width:560px;margin:0 auto;padding:10px 12px 6px}
+.alerts-title{font-size:19px;font-weight:800;color:#fff;margin:0}
+.alerts-title span{color:#2ee6a8}
+.alerts-sub{color:#8b98ab;font-size:11.5px;margin:2px 0 8px}
+.alerts-card{background:#161c23;border:1px solid #2a3c5f;border-radius:16px;padding:10px 13px 8px;margin-bottom:8px}
+.alerts-top{display:flex;align-items:center;gap:10px;padding-bottom:9px;border-bottom:1px solid rgba(255,255,255,.07)}
+.alerts-bell{width:34px;height:34px;border-radius:10px;background:rgba(46,230,168,.13);display:flex;align-items:center;justify-content:center;font-size:17px;flex:0 0 auto}
+.alerts-status{flex:1;min-width:0}
+.alerts-status b{font-size:13.5px;color:#fff;display:block}
+.alerts-status span{font-size:11px;color:#8b98ab;display:block;line-height:1.3}
+.alerts-push-wrap{flex:0 0 auto;text-align:right}
+.v2-alert-btn{display:inline-block;padding:9px 13px;border-radius:999px;border:1px solid rgba(232,199,102,.5);font-size:12.5px;font-weight:800;cursor:pointer;text-align:center;font-family:inherit;white-space:nowrap}
 .v2-alert-push{background:linear-gradient(180deg,#f3cd6b,#e8c766);color:#14100a}
 .v2-alert-push:disabled{opacity:.55;cursor:default}
-.alerts-push-wrap{margin:4px 0 2px}
-.alerts-push-hint{font-size:12px;color:#9a9ab5;margin:6px 0 0;text-align:center}
+.alerts-push-hint{font-size:10.5px;color:#8b98ab;margin:3px 0 0;max-width:160px;line-height:1.3}
+.alert-section{font-size:10.5px;font-weight:800;letter-spacing:1.4px;color:#e8c766;margin:9px 0 1px}
+.alert-row{display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-top:1px solid rgba(255,255,255,.05);gap:10px}
+.alert-info b{font-size:13.5px;color:#fff;display:block}
+.alert-info span{font-size:11px;color:#8b98ab;line-height:1.3;display:block}
+.toggle{position:relative;width:42px;height:24px;flex:0 0 auto;cursor:pointer}
+.toggle input{opacity:0;width:0;height:0}
+.toggle .slider{position:absolute;inset:0;background:#3a4356;border-radius:999px;transition:.2s}
+.toggle .slider:before{content:"";position:absolute;width:16px;height:16px;left:4px;top:4px;background:#fff;border-radius:50%;transition:.2s}
+.toggle input:checked + .slider{background:#2ee6a8}
+.toggle input:checked + .slider:before{transform:translateX(18px)}
+.alerts-saved{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#101828;color:#2ee6a8;border:1px solid rgba(46,230,168,.5);font-weight:800;font-size:13px;padding:9px 18px;border-radius:999px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:100}
+.alerts-saved.show{opacity:1}
 </style>
 
 <div class="alerts-wrap">
-  <h1 class="alerts-title">Alerts</h1>
-  <p class="alerts-sub">Choose what this device hears about: today's plays, results, reminders.</p>
+  <h1 class="alerts-title">Alerts <span>· notifications</span></h1>
+  <p class="alerts-sub">Choose what this device hears about.</p>
 
   <div class="alerts-card">
-    <div class="alerts-status">
+    <div class="alerts-top">
       <div class="alerts-bell">🔔</div>
-      <div>
+      <div class="alerts-status">
         <b>Notifications are on</b>
         <span>This device gets what is switched on below.</span>
       </div>
-    </div>
-
-    <div class="alerts-push-wrap">
-      <button id="alertsPushBtn" class="v2-alert-btn v2-alert-push" type="button">🔔 Push Notifications</button>
-      <p class="alerts-push-hint" id="alertsPushHint"></p>
+      <div class="alerts-push-wrap">
+        <button id="alertsPushBtn" class="v2-alert-btn v2-alert-push" type="button">🔔 Push Notifications</button>
+        <p class="alerts-push-hint" id="alertsPushHint"></p>
+      </div>
     </div>
 
     <p class="alert-section">PLAYS</p>
@@ -97,7 +98,7 @@
     <div class="alert-row">
       <div class="alert-info">
         <b>Play graded</b>
-        <span>When a play grades, win or lose. Several at once arrive as one.</span>
+        <span>When a play grades, win or lose.</span>
       </div>
       <label class="toggle">
         <input type="checkbox" data-pref="notif_graded" {% if prefs.notif_graded %}checked{% endif %}>
@@ -108,7 +109,7 @@
     <div class="alert-row">
       <div class="alert-info">
         <b>Live scores</b>
-        <span>Every score from today's official plays, right on your lock screen as it happens.</span>
+        <span>Every score from today's official plays, as it happens.</span>
       </div>
       <label class="toggle">
         <input type="checkbox" data-pref="notif_live" {% if prefs.notif_live %}checked{% endif %}>
@@ -143,7 +144,7 @@
     <div class="alert-row">
       <div class="alert-info">
         <b>Price board by email</b>
-        <span>Today's Compare Prices board in your inbox on card days — the best price for each team, the vig and where to bet it.</span>
+        <span>Today's best prices by email on card days.</span>
       </div>
       <label class="toggle">
         <input type="checkbox" data-pref="ev_board_email" {% if prefs.ev_board_email %}checked{% endif %}>
@@ -167,7 +168,7 @@
     <div class="alert-row">
       <div class="alert-info">
         <b>Sharp Money alerts</b>
-        <span>When the pros move a line 20&cent; or more on a game &mdash; learn to read the market.</span>
+        <span>When the pros move a line 20&cent; or more.</span>
       </div>
       <label class="toggle">
         <input type="checkbox" data-pref="notif_sharp" {% if prefs.notif_sharp %}checked{% endif %}>
