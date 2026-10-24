@@ -110,7 +110,7 @@ body{background-color:#161d29;background-image:radial-gradient(560px 300px at 50
     <span class="yw-thumb-fallback">THE<br>SHARP<br>TEAM</span>
     {% endif %}
     <span class="yw-main">
-      <span class="yw-meta"><span class="yw-badge {{ 'yw-b-plat' if es_plat else 'yw-b-gold' }}">{{ 'PLATINUM' if es_plat else 'GOLD' }}</span><span class="yw-kind">{{ 'Platinum' if es_plat else 'Gold' }} play{% if x.liga %} · {{ x.liga }}{% endif %}</span></span>
+      <span class="yw-meta"><span class="yw-badge {{ 'yw-b-plat' if es_plat else 'yw-b-gold' }}">{{ 'PLATINUM' if es_plat else 'SHARP PICKS FREE' }}</span><span class="yw-kind">{{ 'Platinum' if es_plat else 'Sharp Picks Free' }} play{% if x.liga %} · {{ x.liga }}{% endif %}</span></span>
       <span class="yw-pick">{{ partes[0] }}</span>
       <span class="yw-match">{% if x.abbr and x.opp_abbr %}{{ x.abbr }} vs {{ x.opp_abbr }} · {% endif %}{{ ftexto }}{% if x.cuota %} · {{ x.cuota }}{% endif %}</span>
       {% if x.cierre %}<span class="yw-clv">Closed {{ x.cierre }} · CLV <span class="{{ 'yw-clv-pos' if (x.clv or 0) >= 0 else 'yw-clv-neg' }}">{{ '%+.1f' % (x.clv or 0) }}%</span></span>{% endif %}
@@ -156,7 +156,7 @@ body{background-color:#161d29;background-image:radial-gradient(560px 300px at 50
 
   <div class="ot-section">
     <h2>By level</h2>
-    {% for key, nombre in [('ELITE', '⭐ PLATINUM'), ('GOLD', '⚪ GOLD')] %}
+    {% for key, nombre in [('ELITE', '⭐ PLATINUM'), ('GOLD', '⚪ SHARP PICKS FREE')] %}
     {% set s = t.por_nivel[key] %}
     <div class="ot-card">
       <div class="ttl">{{ nombre }}</div>
@@ -223,7 +223,7 @@ body{background-color:#161d29;background-image:radial-gradient(560px 300px at 50
   <div class="ot-tabs">
     <a class="ot-tab{% if programa == 'all' %} active{% endif %}" href="{{ url_for('official_tracker') }}">All plays</a>
     <a class="ot-tab{% if programa == 'platinum' %} active{% endif %}" href="{{ url_for('official_tracker', programa='platinum') }}">⭐ Platinum</a>
-    <a class="ot-tab{% if programa == 'gold' %} active{% endif %}" href="{{ url_for('official_tracker', programa='gold') }}">⚪ Gold</a>
+    <a class="ot-tab{% if programa == 'gold' %} active{% endif %}" href="{{ url_for('official_tracker', programa='gold') }}">⚪ Sharp Picks Free</a>
   </div>
 
   <div class="ot-section">
