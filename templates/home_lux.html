@@ -376,8 +376,8 @@ body.v2 .f1b-rec{margin:18px 0 0}
   </div>
 </section>
 <div id="tst-vid-modal" style="display:none;position:fixed;inset:0;background:rgba(6,9,12,.96);z-index:100000;align-items:center;justify-content:center;padding:14px;box-sizing:border-box;">
-  <button id="tst-vid-close" aria-label="Close" style="position:absolute;top:calc(12px + env(safe-area-inset-top));right:14px;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.25);color:#fff;font-size:19px;cursor:pointer;z-index:2;">&#10005;</button>
-  <video id="tst-vid-player" controls playsinline preload="none" poster="{{ url_for('static', filename='img/video-dashboard-poster.jpg') }}" style="width:100%;max-width:430px;max-height:92dvh;border-radius:16px;background:#000;">
+  <button id="tst-vid-close" aria-label="Close" style="position:absolute;top:calc(16px + env(safe-area-inset-top));right:16px;width:50px;height:50px;border-radius:50%;background:rgba(6,9,12,.92);border:2px solid #2ee6a8;color:#fff;font-size:24px;font-weight:700;line-height:1;cursor:pointer;z-index:5;box-shadow:0 6px 18px rgba(0,0,0,.55);">&#10005;</button>
+  <video id="tst-vid-player" controls playsinline webkit-playsinline preload="none" poster="{{ url_for('static', filename='img/video-dashboard-poster.jpg') }}" style="width:100%;max-width:430px;max-height:92dvh;border-radius:16px;background:#000;">
     <source src="{{ url_for('static', filename='video/dashboard-tutorial.mp4') }}" type="video/mp4">
   </video>
 </div>
