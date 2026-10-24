@@ -39,10 +39,10 @@
         <span class="bet-label">{{ 'Odds' if j.cuota_texto else 'Odds' }}</span>
         <b class="bet-amount">{{ j.cuota_texto if j.cuota_texto else fmt_odds(j.cuota) }}</b>
         <span class="muted">({{ j.stake_unidades }}u · ${{ '%.0f' % j.stake_monto }})</span>
-        {% if j.edge %}<span class="bet-edge">Edge <b class="pos">+{{ j.edge }}%</b></span>{% endif %}
+        {% if j.edge %}<span class="bet-edge">Edge <b class="pos">{% if j.edge is string %}{{ j.edge }}{% else %}{{ '%+.1f' % j.edge }}%{% endif %}</b></span>{% endif %}
       </div>
       <p class="muted">
-        {% if j.resultado %}<b class="{{ 'pos' if j.resultado == 'WON' else 'neg' }}">{{ j.resultado }}</b>{% if j.profit is not none %} {{ '+$%.2f' % j.profit }}{% endif %} · {% endif %}
+        {% if j.resultado %}<b class="{{ 'pos' if j.resultado == 'WON' else 'neg' }}">{{ j.resultado }}</b>{% if j.profit is not none %} {{ ('+$%.2f' % j.profit) if j.profit >= 0 else ('-$%.2f' % -j.profit) }}{% endif %} · {% endif %}
         {% if j.verificada %}📸 Verified · {% endif %}
         {{ j.estado if j.estado else '' }}
         {% if j.hora %}{{ j.hora }}{% endif %}
