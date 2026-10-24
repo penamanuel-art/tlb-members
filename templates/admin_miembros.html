@@ -28,12 +28,24 @@
   .av-row .v.gold{color:#f5c542;}
   .av-row .v.green{color:#2fe6a7;}
   .av-row .v.dim{color:#8fa1bd;font-weight:600;}
+  .mx-updated{font-size:12px;color:#8fa1bd;margin:6px 0 0;}
+  .mx-updated a{color:#7dd3fc;font-weight:700;text-decoration:none;}
+  .mx-folder{border:1px solid #1e2a45;border-radius:14px;background:linear-gradient(160deg,#101828,#0c1322);margin-top:26px;overflow:hidden;}
+  .mx-folder summary{list-style:none;display:flex;align-items:center;gap:10px;padding:14px 16px;cursor:pointer;}
+  .mx-folder summary::-webkit-details-marker{display:none;}
+  .mx-folder .mx-ft{flex:1;color:#ffffff;font-size:14px;font-weight:800;letter-spacing:1px;}
+  .mx-folder .mx-fc{background:#22345c;color:#aebdd4;font-size:12px;font-weight:900;border-radius:999px;padding:4px 11px;}
+  .mx-folder .mx-chev{color:#7dd3fc;font-size:14px;transition:transform .15s;}
+  .mx-folder[open] .mx-chev{transform:rotate(90deg);}
+  .mx-folder .mx-body{padding:0 10px 10px;}
+  .mx-folder .mx-item{margin-bottom:6px;}
 </style>
 
 <section class="tracker-head">
   <div>
     <p class="kicker">ADMIN</p>
     <h2>{{ miembros|length }} member{{ 's' if miembros|length != 1 }}</h2>
+    <p class="mx-updated">Updated {{ ahora_txt }} · <a href="{{ url_for('admin_miembros') }}">↻ Refresh</a></p>
   </div>
 </section>
 
@@ -70,18 +82,27 @@
 {% endfor %}
 {% endif %}
 
-{% for m in miembros %}
-<a class="mx-item" href="{{ url_for('admin_miembro_detalle', user_id=m.id) }}">
-  <span class="mx-av">{{ (m.nombre or '?')[:1]|upper }}</span>
-  <span class="mx-nm">{{ m.nombre }}{% if m.es_nuevo %} <span class="mx-new">● NEW</span>{% endif %}</span>
-  {% if m.is_admin %}<span class="mx-status adm">ADMIN</span>
-  {% elif m.platinum_unlocked %}<span class="mx-status plat">★ PLATINUM</span>
-  {% else %}<span class="mx-status free">FREE</span>{% endif %}
-  <span class="mx-more">Ver más →</span>
-</a>
-{% else %}
-<p class="muted">No registered members.</p>
-{% endfor %}
+<details class="mx-folder">
+  <summary>
+    <span class="mx-ft">📁 OTHER MEMBERS</span>
+    <span class="mx-fc">{{ otros|length }}</span>
+    <span class="mx-chev">›</span>
+  </summary>
+  <div class="mx-body">
+  {% for m in otros %}
+  <a class="mx-item" href="{{ url_for('admin_miembro_detalle', user_id=m.id) }}">
+    <span class="mx-av">{{ (m.nombre or '?')[:1]|upper }}</span>
+    <span class="mx-nm">{{ m.nombre }}{% if m.es_nuevo %} <span class="mx-new">● NEW</span>{% endif %}</span>
+    {% if m.is_admin %}<span class="mx-status adm">ADMIN</span>
+    {% elif m.platinum_unlocked %}<span class="mx-status plat">★ PLATINUM</span>
+    {% else %}<span class="mx-status free">FREE</span>{% endif %}
+    <span class="mx-more">Ver más →</span>
+  </a>
+  {% else %}
+  <p class="muted">No other members.</p>
+  {% endfor %}
+  </div>
+</details>
 
 <section class="tracker-head" style="margin-top:2.5rem">
   <div>
