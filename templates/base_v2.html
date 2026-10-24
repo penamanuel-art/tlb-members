@@ -14,8 +14,9 @@
 <script src="/static/js/push.js?v={{ asset_v }}"></script>
 <style>
 /* Barra superior v2 (2026-10-21, pedido Alex, referencia WGT): logo a la
-   izquierda; a la derecha el botón «View plays →» y el botón ☰. «Full
-   record» y «Academy» viven en el menú ☰. El 2026-10-23 Alex ordenó
+   izquierda; a la derecha el botón «View my balance», el botón «Full
+   record» (2026-10-24, pedido Alex: arriba en la barra, no solo en el
+   menú ☰) y el botón ☰. «Academy» vive en el menú ☰. El 2026-10-23 Alex ordenó
    que View plays lleve el MISMO estilo que el botón Balance: fondo
    pizarra #131c2b, borde menta fino, letras finas sin negrita. */
 .v2-view-plays{display:inline-flex;align-items:center;background:#131c2b;border:1px solid rgba(94,234,160,.45);color:#5eeaa0;font-weight:400;font-size:11.5px;line-height:1;padding:10px 11px;border-radius:14px;text-decoration:none;white-space:nowrap;flex:none}
@@ -103,6 +104,7 @@ twq('config','rhgk7');
     {% if es_admin or cuenta_es %}<button id="langToggle" class="v2-lang-btn notranslate" title="Ver en español">🇺🇸 EN</button>{% endif %}
     
     <a href="{{ url_for('balances') }}" style="display:inline-flex;align-items:center;gap:5px;background:#131c2b;border:1px solid rgba(94,234,160,.45);color:#5eeaa0;font-weight:400;font-size:11.5px;padding:10px 11px;border-radius:14px;text-decoration:none;white-space:nowrap">💰 View my balance{% if balance_total_txt %}<span style="color:#eafff5;font-weight:300">{{ balance_total_txt }}</span>{% endif %}</a>
+    <a href="{{ url_for('records') }}" class="v2-view-plays">Full record</a>
     <div class="v2-menu-wrap">
       <button class="v2-icon-btn" id="v2menuBtn" aria-label="Menu">☰</button>
       <div class="v2-menu-drop" id="v2menuDrop" hidden>
