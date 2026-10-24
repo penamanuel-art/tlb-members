@@ -1,36 +1,5 @@
 {% extends "base_v2.html" %}
-{% block title %}Alerts — The Sharp Team<script>
-(function(){
-  var btn = document.getElementById('alertsPushBtn');
-  var hint = document.getElementById('alertsPushHint');
-  if (!btn || !window.TLB_push) return;
-  var current = 'default';
-  function isIOS(){ return /iphone|ipad|ipod/i.test(navigator.userAgent || ''); }
-  function isStandalone(){ return (window.navigator && window.navigator.standalone) || (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches); }
-  function say(t){ if (hint) hint.textContent = t || ''; }
-  function paint(st){
-    current = st;
-    if (st === 'granted') { btn.textContent = '🔔 Push Notifications On'; btn.disabled = false; say('On \u2014 tap to turn off.'); }
-    else if (st === 'off') { btn.textContent = '🔔 Push Notifications Off'; btn.disabled = false; say('Off \u2014 tap to turn on.'); }
-    else if (st === 'unsubscribed') { btn.textContent = '🔔 Push Notifications Off'; btn.disabled = false; say('This device isn\u2019t connected \u2014 tap to turn on.'); }
-    else if (st === 'denied') { btn.textContent = '🔕 Push Blocked'; btn.disabled = true; say('Notifications are blocked \u2014 allow them in your browser settings, then come back.'); }
-    else if (st === 'unsupported') { btn.textContent = '🔔 Push Notifications'; btn.disabled = true;
-      if (isIOS() && !isStandalone()) say('On iPhone/iPad, alerts only work from the Home Screen app: tap Share \u2192 \u201cAdd to Home Screen\u201d, open The Sharp Team from there, then turn alerts on.');
-      else say('This browser doesn\u2019t support push notifications.'); }
-    else if (st === 'error') { btn.disabled = false; say('Something went wrong \u2014 tap to try again.'); window.TLB_push.status().then(function(s2){ if (s2 !== 'error') paint(s2); }); }
-    else { btn.textContent = '🔔 Push Notifications'; btn.disabled = false; say(''); }
-  }
-  window.TLB_push.status().then(paint);
-  btn.addEventListener('click', async function(){
-    if (btn.disabled) return;
-    if (navigator.vibrate) { navigator.vibrate(12); }
-    btn.disabled = true;
-    var st = (current === 'granted') ? await window.TLB_push.disable() : await window.TLB_push.enable();
-    paint(st);
-  });
-})();
-</script>
-{% endblock %}
+{% block title %}Alerts — The Sharp Team{% endblock %}
 {% block content %}
 <style>
 /* Alerts — rediseño 2026-10-24 (orden de Alex): moderno y TODO en una
@@ -260,5 +229,36 @@ function paStop(btn, id) {
       } else { btn.disabled = false; }
     }).catch(function() { btn.disabled = false; });
 }
+</script>
+<script>
+(function(){
+  var btn = document.getElementById('alertsPushBtn');
+  var hint = document.getElementById('alertsPushHint');
+  if (!btn || !window.TLB_push) return;
+  var current = 'default';
+  function isIOS(){ return /iphone|ipad|ipod/i.test(navigator.userAgent || ''); }
+  function isStandalone(){ return (window.navigator && window.navigator.standalone) || (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches); }
+  function say(t){ if (hint) hint.textContent = t || ''; }
+  function paint(st){
+    current = st;
+    if (st === 'granted') { btn.textContent = '🔔 Push Notifications On'; btn.disabled = false; say('On \u2014 tap to turn off.'); }
+    else if (st === 'off') { btn.textContent = '🔔 Push Notifications Off'; btn.disabled = false; say('Off \u2014 tap to turn on.'); }
+    else if (st === 'unsubscribed') { btn.textContent = '🔔 Push Notifications Off'; btn.disabled = false; say('This device isn\u2019t connected \u2014 tap to turn on.'); }
+    else if (st === 'denied') { btn.textContent = '🔕 Push Blocked'; btn.disabled = true; say('Notifications are blocked \u2014 allow them in your browser settings, then come back.'); }
+    else if (st === 'unsupported') { btn.textContent = '🔔 Push Notifications'; btn.disabled = true;
+      if (isIOS() && !isStandalone()) say('On iPhone/iPad, alerts only work from the Home Screen app: tap Share \u2192 \u201cAdd to Home Screen\u201d, open The Sharp Team from there, then turn alerts on.');
+      else say('This browser doesn\u2019t support push notifications.'); }
+    else if (st === 'error') { btn.disabled = false; say('Something went wrong \u2014 tap to try again.'); window.TLB_push.status().then(function(s2){ if (s2 !== 'error') paint(s2); }); }
+    else { btn.textContent = '🔔 Push Notifications'; btn.disabled = false; say(''); }
+  }
+  window.TLB_push.status().then(paint);
+  btn.addEventListener('click', async function(){
+    if (btn.disabled) return;
+    if (navigator.vibrate) { navigator.vibrate(12); }
+    btn.disabled = true;
+    var st = (current === 'granted') ? await window.TLB_push.disable() : await window.TLB_push.enable();
+    paint(st);
+  });
+})();
 </script>
 {% endblock %}
