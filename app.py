@@ -711,6 +711,24 @@ def _acceso_programa(user) -> bool:
         return False
 
 
+def _es_trial(user) -> bool:
+    """True si el miembro está en el mes gratis de prueba (2026-10-24,
+    ajuste mismo día de la orden de Alex: las gratis siguen igual y
+    visibles; SOLO el trial se corta con el paywall). Trial =
+    Platinum desbloqueado CON reloj de trial. Alex y el admin nunca
+    son trial."""
+    try:
+        if not user:
+            return False
+        if is_alex_member(user) or is_admin_for(user):
+            return False
+        if not user["platinum_unlocked"]:
+            return False
+        return bool(user["platinum_trial_ends"] or "")
+    except Exception:
+        return False
+
+
 def platinum_unlocked_for(user) -> bool:
     """True si el miembro desbloqueó la jugada Elite (default: bloqueada).
     El mes gratis de plataforma vence solo: con el reloj pasado y sin
@@ -4187,10 +4205,11 @@ def home():
         else:
             plays = []  # las de ayer no se muestran: la card de hoy aún no sale
     plays = personalizar_plays(plays, user)
-    # Paywall (2026-10-24, orden de Alex: el que no paga no tiene nada):
-    # sin acceso vigente no se muestra la card de hoy (tampoco como
-    # teasers bloqueados: locked_plays se construye desde plays).
-    _sin_acceso = not _acceso_programa(user)
+    # Paywall (2026-10-24, orden de Alex; ajuste mismo día: las gratis
+    # siguen igual y visibles — SOLO el trial se corta): el trial no
+    # ve la card de hoy (tampoco como teasers bloqueados:
+    # locked_plays se construye desde plays).
+    _sin_acceso = _es_trial(user)
     if _sin_acceso:
         plays = []
     tracked_rows = db.execute(
@@ -4204,7 +4223,7 @@ def home():
         (VALUE_SYSTEM_USER_ID,),
     ).fetchall()
     if _sin_acceso:
-        system_value_rows = []  # Paywall 2026-10-24: sin VALUE del sistema
+        system_value_rows = []  # Paywall 2026-10-24: el trial sin VALUE
     try:
         hot_cards = hot_run_cards([dict(r) for r in system_value_rows])
     except Exception:
@@ -10460,10 +10479,12 @@ def admin_miembros():
         "FROM users "
         "WHERE LOWER(email) NOT IN ('thesharpteam8@gmail.com', 'system@value.local') "
         "AND email_verified = 1 "
-        # 2026-10-24, orden de Alex: el menú de miembros solo muestra
-        # miembros con acceso vigente (pago Stripe o activado a mano).
-        "AND platinum_unlocked = 1 "
-        "AND (platinum_trial_ends IS NULL OR platinum_trial_ends = '') "
+        # 2026-10-24, orden de Alex (ajuste mismo día: las gratis
+        # siguen igual y visibles): el menú oculta SOLO al trial
+        # (Platinum con reloj); gratis y acceso vigente se ven.
+        "AND NOT (platinum_unlocked = 1 "
+        "AND platinum_trial_ends IS NOT NULL "
+        "AND platinum_trial_ends != '') "
         "ORDER BY created_at DESC"
     ).fetchall()
     ahora = datetime.now(timezone.utc)
@@ -10501,9 +10522,10 @@ def admin_miembros():
             "WHERE u.email_verified = 1 "
             "AND LOWER(u.email) NOT IN ('thesharpteam8@gmail.com', "
             "'system@value.local', 'pena.manuel@myyahoo.com') "
-            # 2026-10-24, orden de Alex: solo con acceso vigente.
-            "AND u.platinum_unlocked = 1 "
-            "AND (u.platinum_trial_ends IS NULL OR u.platinum_trial_ends = '') "
+            # 2026-10-24, ajuste mismo día: oculta solo al trial.
+            "AND NOT (u.platinum_unlocked = 1 "
+            "AND u.platinum_trial_ends IS NOT NULL "
+            "AND u.platinum_trial_ends != '') "
             "GROUP BY u.id, u.nombre, u.email, u.activated_at, u.phone, "
             "u.sms_optin, u.telegram_user_id, u.stripe_customer_id, "
             "u.stripe_subscription_id, u.platinum_trial_ends "
@@ -10753,9 +10775,10 @@ def resultados():
 def ev_board():
     db = get_db()
     record_checkin(db, session["user_id"])
-    # Paywall 2026-10-24: el tablero Compare Prices es contenido del
-    # programa — sin acceso vigente va a la página de desbloqueo.
-    if not platinum_unlocked_for(current_user()):
+    # Paywall 2026-10-24 (ajuste mismo día: las gratis siguen igual y
+    # visibles — el gratis accedía a Compare Prices antes): SOLO el
+    # trial va a la página de desbloqueo.
+    if _es_trial(current_user()):
         return redirect(url_for("desbloquear_platinum"))
     return render_template("ev_board.html", board=load_ev_board())
 
