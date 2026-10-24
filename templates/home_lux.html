@@ -423,6 +423,60 @@ body.v2 .f1b-rec{margin:18px 0 0}
   {% endif %}
 </section>
 
+{# CREED (2026-10-24, pedido por Alex con captura de referencia): tarjeta
+   manifiesto en el home, misma estructura de la muestra. Letra pequeña
+   y fina; cada opción abre su descripción (acordeón, sin salir de la
+   página). Visible para todos los miembros. #}
+<style>
+.tst-creed{background:#0a0a0c;border:1px solid rgba(232,199,102,.45);border-radius:24px;padding:20px 18px;margin:20px 0 0}
+.tst-creed-head{display:flex;gap:12px;align-items:flex-start}
+.tst-creed-icon{flex:none;width:44px;height:44px;border-radius:14px;background:linear-gradient(160deg,#f2d98a,#c9a227);display:flex;align-items:center;justify-content:center}
+.tst-creed-title{color:#fff;font-size:20px;font-weight:600;letter-spacing:-.3px;line-height:1.2;margin:0}
+.tst-creed-sub{color:#e8c766;font-size:10px;font-weight:600;letter-spacing:2.5px;margin-top:4px}
+.tst-creed-body{color:#e8eaf0;font-size:14px;font-weight:400;line-height:1.65;margin:18px 0 0}
+.tst-creed-body .hl{background:linear-gradient(transparent 62%,rgba(232,199,102,.45) 62%)}
+.tst-creed-opts{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.tst-creed-opt{background:#17171c;border:1px solid rgba(255,255,255,.14);color:#f2f4f8;font-size:13px;font-weight:400;padding:9px 13px;border-radius:999px;cursor:pointer}
+.tst-creed-opt i{font-style:normal;color:#e8c766;margin-right:6px}
+.tst-creed-desc{display:none;color:#c7ccd8;font-size:13px;font-weight:400;line-height:1.6;margin:12px 2px 0}
+.tst-creed-desc.open{display:block}
+.tst-creed-desc b{color:#fff;font-weight:600}
+.tst-creed-foot{display:flex;gap:10px;align-items:center;border-top:1px solid rgba(255,255,255,.1);margin-top:18px;padding-top:16px}
+.tst-creed-av{flex:none;width:44px;height:44px;border-radius:50%;background:linear-gradient(160deg,#e6ebf4,#9aa3b2);color:#14161c;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center}
+.tst-creed-brand{color:#fff;font-size:14px;font-weight:600;margin:0}
+.tst-creed-tag{color:#9aa3b8;font-size:13px;font-weight:400;margin:2px 0 0}
+</style>
+<section class="tst-creed">
+  <div class="tst-creed-head">
+    <div class="tst-creed-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#14161c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 3v6c0 5-3.5 9-8 11-4.5-2-8-6-8-11V5l8-3z"/><path d="M9 12l2 2 4-4"/></svg></div>
+    <div>
+      <p class="tst-creed-title">The Sharp Team Creed</p>
+      <p class="tst-creed-sub">OUR PROMISE TO YOU</p>
+    </div>
+  </div>
+  <p class="tst-creed-body">We play only what the <span class="hl">numbers qualify</span> — some days that is two or three plays, some days none. Same stakes, same plays for everyone. We don't chase losses or wins. <span class="hl">Discipline is the foundation</span> of success and profitability.</p>
+  <div class="tst-creed-opts">
+    <button type="button" class="tst-creed-opt" data-creed="selective"><i>◎</i>Selective</button>
+    <button type="button" class="tst-creed-opt" data-creed="equal"><i>⚖</i>Equal</button>
+    <button type="button" class="tst-creed-opt" data-creed="nochasing"><i>⊘</i>No chasing</button>
+    <button type="button" class="tst-creed-opt" data-creed="discipline"><i>↗</i>Discipline</button>
+  </div>
+  <p class="tst-creed-desc" id="tst-creed-selective"><b>Selective.</b> We only play when the numbers qualify. If the edge isn't there, there's no play — we never force volume to fill the card.</p>
+  <p class="tst-creed-desc" id="tst-creed-equal"><b>Equal.</b> Same stakes, same plays for everyone. Every member sees the same card — nobody gets a different version.</p>
+  <p class="tst-creed-desc" id="tst-creed-nochasing"><b>No chasing.</b> We never chase losses or wins. One result never changes the next stake — the plan stays the same after a win or a loss.</p>
+  <p class="tst-creed-desc" id="tst-creed-discipline"><b>Discipline.</b> The foundation of everything. The system works when it's followed every day — same rules, win or lose.</p>
+  <div class="tst-creed-foot">
+    <div class="tst-creed-av">ST</div>
+    <div>
+      <p class="tst-creed-brand">The Sharp Team</p>
+      <p class="tst-creed-tag">Same rules, every day</p>
+    </div>
+  </div>
+</section>
+<script>
+(function(){var btns=document.querySelectorAll('.tst-creed-opt');btns.forEach(function(b){b.addEventListener('click',function(){var id='tst-creed-'+b.getAttribute('data-creed');document.querySelectorAll('.tst-creed-desc').forEach(function(d){if(d.id!==id){d.classList.remove('open')}});var el=document.getElementById(id);if(el){el.classList.toggle('open')}})})})();
+</script>
+
 {# Franja «OFFICIAL RECORD» ELIMINADA del Home (2026-10-22, orden de
    Alex: «elimina eso» — limpieza del Dashboard; el récord completo
    sigue en el Official Tracker). #}
