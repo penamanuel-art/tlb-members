@@ -4,13 +4,13 @@
    Alex 2026-10-20, 11:47 ET: marca fina, no centro grande; sin titular
    decorativo añadido — la línea de invitación de abajo se queda tal
    cual se aprobó), «PLATINUM» espaciado,
-   matchup visible, meta de liga/hora, filas PRICE/STAKE/MODEL EDGE
+   sin matchup (nombres ocultos 2026-10-24), meta de liga/hora, filas PRICE/STAKE/MODEL EDGE
    tapadas, el ticket con el blur HORNEADO (locked-<fecha>.jpg) y la
    pastilla «PLATINUM PICK», la línea de invitación y el botón Unlock en
    pastilla menta. Las propiedades de seguridad son las de la carta
    bloqueada v5, IDÉNTICAS: el dict `p` viene SANITIZADO desde app.py
    (_locked_play_view): solo liga, hora, matchup y la URL del ticket
-   difuminado — el pick, la cuota, el stake, el edge, el write-up y la
+   difuminado — el matchup NO se renderiza (oculto 2026-10-24); el pick, la cuota, el stake, el edge, el write-up y la
    ruta del comprobante original NUNCA llegan a este HTML. Sin logo del
    equipo elegido (delataría el lado). Sin ticket, panel esmerilado
    «Platinum pick». Estilos propios (espejo de la variante C) para rendir
@@ -40,7 +40,6 @@
 <article class="ptl">
   <div class="ptl-emblem" aria-hidden="true">💎</div>
   <div class="ptl-word">PLATINUM</div>
-  <div class="ptl-match">{{ p.team_name or p.abbr }} vs {{ p.opp_name or p.opp_abbr }}</div>
   <div class="ptl-meta">{{ p.liga or '' }}{% if p.game_time_et or p.hora %} &middot; {{ p.game_time_et or p.hora }}{% endif %} &middot; Locked for free members</div>
   <div class="ptl-rows" aria-hidden="true">
     <div class="ptl-row"><span>PRICE</span><span>🔒 •••</span></div>
