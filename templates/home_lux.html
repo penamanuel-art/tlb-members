@@ -743,6 +743,45 @@ body.v2 .f1b-rec{margin:18px 0 0}
 (function(){var m=document.getElementById('v2-br-how-modal'),o=document.getElementById('v2-br-how-open'),c=document.getElementById('v2-br-how-close');if(o&&m){o.addEventListener('click',function(){m.hidden=false;});}if(c&&m){c.addEventListener('click',function(){m.hidden=true;});}if(m){m.addEventListener('click',function(e){if(e.target===m){m.hidden=true;}});}})();
 </script>
 
+<!-- YOUR CHANNELS · tres vias de notificacion (Alex, 2026-10-24) -->
+<section class="v2-sec" id="channels" style="scroll-margin-top:96px">
+  <div class="v2-sec-head">
+    <div>
+      <h2 class="v2-sec-title">Your channels</h2>
+    </div>
+  </div>
+  <div style="background:#161c23;border:1px solid #2a3c5f;border-radius:20px;padding:18px 16px;">
+    <div style="font-size:19px;font-weight:800;color:#fff;line-height:1.25;">Your plays, on every channel you use</div>
+    <p style="font-size:13.5px;color:#93a4bf;margin:8px 0 0;line-height:1.5;">Turn on a channel and your plays and alerts come to you there. Change it anytime from Alerts.</p>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-top:16px;">
+      <a href="{{ url_for('alertas') }}" style="display:flex;align-items:center;gap:12px;background:#0d1219;border:1px solid #2a3c5f;border-radius:14px;padding:13px 14px;text-decoration:none;">
+        <span style="font-size:20px;">🔔</span>
+        <span style="flex:1;min-width:0;">
+          <span style="display:block;font-size:15.5px;font-weight:800;color:#fff;">Push alerts</span>
+          <span style="display:block;font-size:12.5px;color:#93a4bf;margin-top:1px;">Plays and results, right on your phone</span>
+        </span>
+        <span style="color:#93a4bf;font-size:20px;">›</span>
+      </a>
+      <a href="https://t.me/thesharpteam" style="display:flex;align-items:center;gap:12px;background:#0d1219;border:1px solid #2a3c5f;border-radius:14px;padding:13px 14px;text-decoration:none;">
+        <span style="font-size:20px;">✈️</span>
+        <span style="flex:1;min-width:0;">
+          <span style="display:block;font-size:15.5px;font-weight:800;color:#fff;">Telegram</span>
+          <span style="display:block;font-size:12.5px;color:#93a4bf;margin-top:1px;">Every play in Public Card and Sharp Club</span>
+        </span>
+        <span style="color:#93a4bf;font-size:20px;">›</span>
+      </a>
+      <a href="{{ url_for('alertas') }}" style="display:flex;align-items:center;gap:12px;background:#0d1219;border:1px solid #2a3c5f;border-radius:14px;padding:13px 14px;text-decoration:none;">
+        <span style="font-size:20px;">✉️</span>
+        <span style="flex:1;min-width:0;">
+          <span style="display:block;font-size:15.5px;font-weight:800;color:#fff;">Email</span>
+          <span style="display:block;font-size:12.5px;color:#93a4bf;margin-top:1px;">The daily card and results in your inbox</span>
+        </span>
+        <span style="color:#93a4bf;font-size:20px;">›</span>
+      </a>
+    </div>
+  </div>
+</section>
+
 <!-- TOOLS -->
 <section class="v2-sec" id="tools" style="scroll-margin-top:96px">
   <div class="v2-sec-head">
