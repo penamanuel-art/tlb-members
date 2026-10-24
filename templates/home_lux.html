@@ -370,9 +370,16 @@ body.v2 .f1b-rec{margin:18px 0 0}
   <video id="tst-vid-player" controls playsinline webkit-playsinline preload="none" poster="{{ url_for('static', filename='img/video-dashboard-poster.jpg') }}" style="width:100%;max-width:430px;max-height:92dvh;border-radius:16px;background:#000;">
     <source src="{{ url_for('static', filename='video/dashboard-tutorial.mp4') }}" type="video/mp4">
   </video>
+  <div id="tst-vid-end" style="display:none;width:100%;max-width:430px;margin-top:14px;flex-direction:column;align-items:center;gap:12px;">
+    <div style="color:#fff;font-size:16px;font-weight:700;">That is the full tour</div>
+    <div style="display:flex;gap:10px;">
+      <button id="tst-vid-again" type="button" style="background:#2ee6a8;color:#06281c;border:0;border-radius:999px;padding:13px 24px;font-size:16px;font-weight:800;cursor:pointer;">&#8635; Watch again</button>
+      <button id="tst-vid-endclose" type="button" style="background:#161c23;color:#fff;border:2px solid #2ee6a8;border-radius:999px;padding:12px 24px;font-size:16px;font-weight:800;cursor:pointer;">&#10005; Close</button>
+    </div>
+  </div>
 </div>
 <script>
-(function(){var m=document.getElementById('tst-vid-modal'),v=document.getElementById('tst-vid-player'),o=document.getElementById('tst-vid-open'),c=document.getElementById('tst-vid-close');if(!m||!v||!o){return}function open(){m.style.display='flex';if(v.play){v.play()}}function close(){m.style.display='none';v.pause()}o.addEventListener('click',open);if(c){c.addEventListener('click',close)}m.addEventListener('click',function(e){if(e.target===m){close()}})})();
+(function(){var m=document.getElementById('tst-vid-modal'),v=document.getElementById('tst-vid-player'),o=document.getElementById('tst-vid-open'),c=document.getElementById('tst-vid-close');if(!m||!v||!o){return}function open(){m.style.display='flex';if(v.play){v.play()}}function close(){m.style.display='none';v.pause()}o.addEventListener('click',open);if(c){c.addEventListener('click',close)}m.addEventListener('click',function(e){if(e.target===m){close()}})var eo=document.getElementById('tst-vid-end');v.addEventListener('ended',function(){try{if(v.webkitExitFullscreen){v.webkitExitFullscreen()}}catch(e){}try{if(document.fullscreenElement){document.exitFullscreen()}}catch(e){}if(eo){eo.style.display='flex'}});var ag=document.getElementById('tst-vid-again');if(ag){ag.addEventListener('click',function(){eo.style.display='none';v.currentTime=0;v.play()})}var ec=document.getElementById('tst-vid-endclose');if(ec){ec.addEventListener('click',function(){eo.style.display='none';close()})}o.addEventListener('click',function(){if(eo){eo.style.display='none'}});})();
 </script>
 <section class="v2-sec" id="plays" style="scroll-margin-top:70px;">
   {% set golds = plays | selectattr('nivel', 'equalto', 'GOLD') | list %}
