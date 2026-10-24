@@ -290,7 +290,7 @@
       </span>
       <span class="wg-main">
         <span class="wg-topline">
-          <span class="wg-pill {{ 'plat' if r.nivel in ['ELITE','PLATINUM'] else 'gold' }}">{{ 'PLATINUM' if r.nivel in ['ELITE','PLATINUM'] else ('GOLD' if r.nivel == 'GOLD' else r.nivel) }}</span>
+          <span class="wg-pill {{ 'plat' if r.nivel in ['ELITE','PLATINUM'] else 'gold' }}">{{ 'PLATINUM' if r.nivel in ['ELITE','PLATINUM'] else ('SHARP PICKS FREE' if r.nivel == 'GOLD' else r.nivel) }}</span>
           <span class="wg-when">{{ r.fecha }}</span>
         </span>
         <span class="wg-pick">{{ r.pick }}</span>
@@ -316,7 +316,7 @@
         <p class="ticket-pick">{{ r.pick }} {{ fmt_odds(r.cuota) }}</p>
         <div class="ticket-rows">
           <div><span>Date</span><b>{{ r.fecha }}</b></div>
-          <div><span>Level</span><b>{{ 'PLATINUM' if r.nivel in ['ELITE','PLATINUM'] else ('GOLD' if r.nivel == 'GOLD' else r.nivel) }}</b></div>
+          <div><span>Level</span><b>{{ 'PLATINUM' if r.nivel in ['ELITE','PLATINUM'] else ('SHARP PICKS FREE' if r.nivel == 'GOLD' else r.nivel) }}</b></div>
           <div><span>Result</span><b class="{{ 'pos' if won else 'neg' }}">{{ 'WON' if won else 'LOST' }} · {{ fmt_money(r.profit) }}</b></div>
         </div>
         <p class="ticket-note">Original receipt not uploaded for this play.</p>
@@ -371,7 +371,7 @@
       <p class="v2-modal-sub">Same edge, two ways to size it. Most members start with TST Units. Switch anytime.</p>
       <div class="v2-opt">
         <p class="v2-opt-title">TST Units — the disciplined way</p>
-        <p>Bet in units. <b>1 unit = 1% of your bankroll.</b> We size every play by its badge: ★ PLATINUM = 1u, GOLD = 0.6u. Small and steady, exactly how The Sharp Team plays it. Less swing, easy to follow.</p>
+        <p>Bet in units. <b>1 unit = 1% of your bankroll.</b> We size every play by its badge: ★ PLATINUM = 1u, SHARP PICKS FREE = 0.6u. Small and steady, exactly how The Sharp Team plays it. Less swing, easy to follow.</p>
         {% if bankroll %}
         <p class="v2-opt-ex">On your ${{ '%.0f' % bankroll }} bankroll, a 1u play is about ${{ '%.0f' % (bankroll / 100) }}.</p>
         {% endif %}
@@ -553,7 +553,7 @@
   </details>
   <details>
     <summary>How does The Sharp Team find its plays?<span class="pm">+</span></summary>
-    <div class="ans">Our Elo-based model prices every game in the NFL, NCAAF, MLB and NHL, and we compare it against Pinnacle's no-vig line plus 2–3 sportsbooks. We only post plays with a real edge, shop for the best price, and stake a flat 1u (1% of bankroll) on Platinum and 0.6u on Gold — never more, never chasing.</div>
+    <div class="ans">Our Elo-based model prices every game in the NFL, NCAAF, MLB and NHL, and we compare it against Pinnacle's no-vig line plus 2–3 sportsbooks. We only post plays with a real edge, shop for the best price, and stake a flat 1u (1% of bankroll) on Platinum and 0.6u on Sharp Picks Free — never more, never chasing.</div>
   </details>
   <details>
     <summary>Do you really bet every play yourself?<span class="pm">+</span></summary>
