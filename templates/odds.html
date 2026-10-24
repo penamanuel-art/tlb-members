@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+{% block title %}Odds — The Sharp Team{% endblock %}
+{% block content %}
+<style>
+.od-wrap{max-width:560px;margin:0 auto;color:#eef2f8;padding:20px 16px 48px}
+.od-kick{font-size:11px;letter-spacing:2.5px;color:#e8c766;font-weight:800}
+.od-h1{font-size:27px;font-weight:800;margin:5px 0 4px;color:#fff}
+.od-h1 span{color:#2ee6a8}
+.od-sub{font-size:13px;color:#93a4bf;line-height:1.55;margin:0}
+.od-fresh{font-size:12px;color:#93a4bf;margin:14px 0 0}
+.od-fresh i{display:inline-block;width:8px;height:8px;border-radius:50%;background:#2ee6a8;margin-right:6px}
+.od-search{width:100%;box-sizing:border-box;background:#131e31;border:1px solid #24334d;border-radius:12px;padding:12px 14px;font-size:14px;color:#eef2f8;margin:14px 0 4px}
+.od-tabs{display:flex;gap:8px;overflow-x:auto;padding:12px 2px 4px;scrollbar-width:none}
+.od-tabs::-webkit-scrollbar{display:none}
+.od-tab{flex:0 0 auto;background:#161c23;border:1px solid #2a3c5f;color:#dbe4f2;font-size:13.5px;font-weight:700;border-radius:999px;padding:9px 15px;cursor:pointer}
+.od-tab b{color:#8b98ab;font-weight:700;margin-left:3px}
+.od-tab.on{background:#2ee6a8;border-color:#2ee6a8;color:#06281c}
+.od-tab.on b{color:#0a4a32}
+.od-sec-h{display:flex;justify-content:space-between;align-items:baseline;margin:20px 0 10px}
+.od-sec-h b{font-size:15px;color:#8b98ab;letter-spacing:1.5px}
+.od-sec-h span{font-size:12px;color:#93a4bf}
+.od-card{background:#161c23;border:1px solid #2a3c5f;border-radius:18px;padding:15px 15px 12px;margin:0 0 12px}
+.od-match{font-size:16.5px;font-weight:800;color:#fff;line-height:1.25}
+.od-when{font-size:12px;color:#93a4bf;margin-top:3px}
+.od-when .od-lg{background:#131e31;border:1px solid #24334d;border-radius:6px;padding:1px 7px;font-weight:700;color:#dbe4f2;margin-right:6px}
+.od-live{background:#3d1420;color:#ff8589;font-size:10px;font-weight:800;letter-spacing:1px;border-radius:999px;padding:2px 8px;margin-left:8px;vertical-align:2px}
+.od-team{border-top:1px solid rgba(255,255,255,.07);margin-top:13px;padding-top:12px}
+.od-tname{font-size:15px;font-weight:700;color:#fff}
+.od-bestrow{display:flex;align-items:center;gap:9px;margin-top:7px;flex-wrap:wrap}
+.od-bk{background:#131e31;border:1px solid #24334d;border-radius:6px;padding:3px 7px;font-size:10.5px;font-weight:700;color:#dbe4f2}
+.od-best{font-size:21px;font-weight:800;color:#2ee6a8}
+.od-edge{background:rgba(46,230,168,.13);border:1px solid rgba(46,230,168,.45);color:#2ee6a8;font-size:11px;font-weight:800;border-radius:999px;padding:3px 9px}
+.od-fair{font-size:11.5px;color:#8b98ab}
+.od-diff{font-size:12.5px;color:#2ee6a8;margin-top:7px}
+.od-chips{display:flex;gap:8px;margin-top:9px;flex-wrap:wrap}
+.od-chip{border:1px dashed #33456a;border-radius:10px;padding:7px 11px;font-size:13px;color:#aebdd2}
+.od-chip b{color:#eef2f8;font-weight:700}
+.od-compare{display:block;text-align:center;background:#1a2331;border:1px solid #24334d;border-radius:12px;color:#eef2f8;font-size:14px;font-weight:700;text-decoration:none;padding:11px;margin-top:11px}
+.od-vig{display:flex;justify-content:space-between;border-top:1px solid rgba(255,255,255,.07);margin-top:13px;padding-top:10px;font-size:12.5px;color:#8b98ab}
+.od-vig b{color:#2ee6a8;font-weight:700}
+.od-empty{border:2px dashed #24334d;border-radius:16px;padding:26px 18px;text-align:center;color:#93a4bf;margin-top:18px}
+</style>
+<div class="od-wrap">
+  <div class="od-kick">THE SHARP TEAM · ODDS</div>
+  <h1 class="od-h1">Odds <span>Screen</span></h1>
+  <p class="od-sub">Line shopping for the best number. Every book's price on the same game, side by side — the best price up top, the fair price with the bookmaker's cut removed, and the edge when a book drifts.</p>
+  <p class="od-fresh"><i></i>Updated {{ updated_label }} · {{ total_books }} books tracked</p>
+  <input class="od-search" id="odSearch" type="text" placeholder="Search teams" oninput="odApply()">
+  <div class="od-tabs">
+    <button type="button" class="od-tab on" onclick="odTab(this,'ALL')">All <b>{{ total_games }}</b></button>
+    {% for league, games in groups %}
+    <button type="button" class="od-tab" onclick="odTab(this,'{{ league }}')">{{ league }} <b>{{ games|length }}</b></button>
+    {% endfor %}
+  </div>
+  {% if is_alex and follows %}
+  <div class="od-sec-h"><b>⭐ FOLLOWING</b><span>{{ follows|length }} game{{ 's' if follows|length != 1 else '' }}</span></div>
+  {% for f in follows %}
+    {% if f.en_board %}
+    <a class="od-card" style="display:block;text-decoration:none" href="{{ url_for('game_center_game', event_id=f.event_id) }}">
+      <div class="od-match">{{ f.label }}{% if f.live %}<span class="od-live">LIVE</span>{% endif %}</div>
+      <div class="od-when">{{ f.league }} · {{ f.when }}</div>
+    </a>
+    {% endif %}
+  {% endfor %}
+  {% endif %}
+  {% for league, games in groups %}
+  <div class="od-sec" data-league="{{ league }}">
+    <div class="od-sec-h"><b>{{ league }}</b><span>{{ games|length }} game{{ 's' if games|length != 1 else '' }}</span></div>
+    {% for g in games %}
+    <div class="od-card" data-teams="{{ (g.away ~ ' ' ~ g.home)|lower }}">
+      <div class="od-match">{{ g.away }} @ {{ g.home }}{% if g.live %}<span class="od-live">LIVE</span>{% endif %}</div>
+      <div class="od-when"><span class="od-lg">{{ g.league }}</span>{{ g.date_et }} · {{ g.time_et }}</div>
+      {% for s in g.odds_sides %}
+      <div class="od-team">
+        <div class="od-tname">{{ s.team }}</div>
+        <div class="od-bestrow">
+          <span class="od-bk">{{ s.best_book }}</span>
+          <span class="od-best">{{ s.best_price }}</span>
+          {% if s.edge is not none and s.edge >= 3 %}<span class="od-edge">Edge +{{ '%.1f'|format(s.edge) }}%</span>{% endif %}
+          {% if s.fair %}<span class="od-fair">Fair {{ s.fair }}</span>{% endif %}
+        </div>
+        {% if s.diff %}<div class="od-diff">+${{ s.diff }} more than the worst price on a $100 bet</div>{% endif %}
+        {% if s.chips %}
+        <div class="od-chips">
+          {% for c in s.chips %}<span class="od-chip"><b>{{ c.book }}</b> {{ c.price }}</span>{% endfor %}
+        </div>
+        {% endif %}
+        <a class="od-compare" href="{{ url_for('game_center_game', event_id=g.id) }}">Compare all {{ g.books_count }} books ›</a>
+      </div>
+      {% endfor %}
+      {% if g.vig_txt %}<div class="od-vig"><span>Market vig</span><b>{{ g.vig_txt }}</b></div>{% endif %}
+    </div>
+    {% endfor %}
+  </div>
+  {% endfor %}
+  {% if not groups %}
+  <div class="od-empty">No games on the board right now. Prices refresh every hour.</div>
+  {% endif %}
+</div>
+<script>
+var OD_LG = 'ALL';
+function odTab(el, lg) {
+  OD_LG = lg;
+  var tabs = document.querySelectorAll('.od-tab');
+  for (var i = 0; i < tabs.length; i++) { tabs[i].classList.remove('on'); }
+  el.classList.add('on');
+  odApply();
+}
+function odApply() {
+  var q = (document.getElementById('odSearch').value || '').toLowerCase();
+  var secs = document.querySelectorAll('.od-sec');
+  for (var i = 0; i < secs.length; i++) {
+    var s = secs[i];
+    var lgOk = (OD_LG === 'ALL' || s.getAttribute('data-league') === OD_LG);
+    var any = false;
+    var cards = s.querySelectorAll('.od-card');
+    for (var j = 0; j < cards.length; j++) {
+      var ok = lgOk && (!q || cards[j].getAttribute('data-teams').indexOf(q) > -1);
+      cards[j].style.display = ok ? '' : 'none';
+      if (ok) { any = true; }
+    }
+    s.style.display = any ? '' : 'none';
+  }
+}
+</script>
+{% endblock %}
