@@ -2,22 +2,31 @@
 {% block title %}Archive — The Sharp Team{% endblock %}
 {% block content %}
 
-{# Archive compacto y fino (2026-10-24, pedido por Alex): cartas más
-   chicas y letra fina en las jugadas. Solo archive (reglas con
-   .archive-day), no toca otras páginas que usan .play-card. #}
+{# Tarjetas del archive = la carta del full record / Receipts del home
+   (2026-10-24, pedido por Alex: "igual que las del full record").
+   Copia exacta del diseño yw: miniatura del ticket, badge, pick,
+   matchup y WON/LOST con unidades; letra fina y pequeña. El toque de
+   la tarjeta abre el ticket en el modal (JS de base.html). #}
 <style>
-.archive-day{margin-bottom:18px}
-.archive-day .day-head{margin-bottom:8px}
-.archive-day .plays{gap:10px}
-.archive-day .play-card{padding:13px 14px}
-.archive-day .play-pick{font-size:1.25rem;font-weight:300;margin:6px 0 2px}
-.archive-day .play-odds{font-size:1.05rem;font-weight:400}
-.archive-day .link-ticket{font-size:13px;font-weight:400}
-.archive-day .play-bet{margin-top:8px;font-size:.95rem}
-.archive-day .bet-label{font-weight:400}
-.archive-day .bet-amount{font-size:1.15rem;font-weight:400}
-.archive-day .badge{font-size:11px;font-weight:600;padding:5px 9px}
-.archive-day .play-card b{font-weight:600}
+.archive-day .plays{display:grid;gap:0}
+.yw-badge{display:inline-block;font-size:10px;font-weight:300;letter-spacing:1.2px;padding:5px 9px;border-radius:8px;white-space:nowrap}
+.yw-b-plat{background:rgba(232,199,102,.13);color:#e8c766;border:1px solid rgba(232,199,102,.45)}
+.yw-b-gold{background:rgba(148,166,196,.12);color:#aebdd4;border:1px solid rgba(148,166,196,.35)}
+.yw-card{display:flex;gap:12px;width:100%;text-align:left;background:#0d1626;border:1px solid #1d2a42;border-radius:16px;padding:13px;margin-top:11px;align-items:center;cursor:pointer;font:inherit;color:#eef2f8;appearance:none;-webkit-appearance:none}
+.yw-card.won{border-color:rgba(47,191,113,.45)}
+.yw-thumb{width:60px;height:60px;border-radius:10px;object-fit:cover;flex:none;background:#16223a}
+.yw-thumb-fallback{width:60px;height:60px;border-radius:10px;flex:none;background:#16223a;color:#8b98ad;font-size:9px;font-weight:300;display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.5}
+.yw-main{flex:1;min-width:0;display:block}
+.yw-meta{display:flex;align-items:center;gap:8px;margin-bottom:5px}
+.yw-kind{color:#8b98ad;font-size:12px;font-weight:300}
+.yw-pick{font-size:15.5px;font-weight:300;line-height:1.25;display:block}
+.yw-match{color:#8b98ad;font-size:12.5px;font-weight:300;margin-top:4px;display:block}
+.yw-view{color:#7dd3fc;font-size:11.5px;font-weight:300;margin-top:5px;display:block}
+.yw-res{text-align:right;flex:none;display:block}
+.yw-res .st{font-size:11px;font-weight:300;letter-spacing:1.4px;display:block}
+.yw-res .u{font-size:16px;font-weight:300;margin-top:3px;display:block}
+.yw-won-t{color:#2fbf71}
+.yw-lost-t{color:#8b98ad}
 </style>
 
 <section class="tracker-head">
@@ -38,34 +47,47 @@
     {% if j.bloqueada %}
       {% include "_play_locked.html" %}
     {% else %}
-    <article class="play-card level-{{ j.nivel|lower }}">
-      <div class="play-top">
-        <span class="badge badge-{{ j.nivel|lower }}">{{ '★' if j.nivel in ['PLATINUM', 'ELITE'] else '●' }} {{ {'ELITE':'PLATINUM','GOLD':'GOLD','PLATINUM':'PLATINUM'}.get(j.nivel, j.nivel) }}</span>
-        <span class="play-odds">{{ fmt_odds(j.cuota) }}</span>
-      </div>
-      <h3 class="play-pick">{{ j.pick }}</h3>
+    {% set won = j.resultado == 'WON' %}
+    {% set es_plat = j.nivel in ['ELITE','PLATINUM'] %}
+    {% set partes = j.pick.split(' vs ') %}
+    {% if partes | length < 2 %}{% set partes = j.pick.split(' @ ') %}{% endif %}
+    {% set unidades = (j.profit / 100) if j.profit is not none else none %}
+    <button type="button" class="yw-card {{ 'won' if won else '' }}" data-ticket="arch-{{ d.fecha }}-{{ loop.index }}" aria-label="View receipt for {{ j.pick }}">
       {% if j.comprobante %}
-      <button type="button" class="link-ticket" data-ticket="foto-{{ d.fecha }}-{{ loop.index }}">View ticket →</button>
-      <div class="modal" id="foto-{{ d.fecha }}-{{ loop.index }}" hidden>
-        <div class="modal-card ticket-photo-card">
-          <button type="button" class="modal-close" data-close>✕</button>
-          <img class="ticket-photo" src="{{ url_for('static', filename=j.comprobante) }}" alt="Receipt for {{ j.pick }}">
-        </div>
-      </div>
+      <img class="yw-thumb" src="{{ url_for('static', filename=j.comprobante) }}" alt="Original receipt: {{ j.pick }}" loading="lazy">
+      {% else %}
+      <span class="yw-thumb-fallback">THE<br>SHARP<br>TEAM</span>
       {% endif %}
-      <div class="play-bet">
-        <span class="bet-label">{{ 'Odds' if j.cuota_texto else 'Odds' }}</span>
-        <b class="bet-amount">{{ j.cuota_texto if j.cuota_texto else fmt_odds(j.cuota) }}</b>
-        <span class="muted">({{ j.stake_unidades }}u · ${{ '%.0f' % j.stake_monto }})</span>
-        {% if j.edge %}<span class="bet-edge">Edge <b class="pos">{% if j.edge is string %}{{ j.edge }}{% else %}{{ '%+.1f' % j.edge }}%{% endif %}</b></span>{% endif %}
+      <span class="yw-main">
+        <span class="yw-meta"><span class="yw-badge {{ 'yw-b-plat' if es_plat else 'yw-b-gold' }}">{{ 'PLATINUM' if es_plat else 'SHARP PICKS FREE' }}</span><span class="yw-kind">{{ 'Platinum' if es_plat else 'Sharp Picks Free' }} play{% if j.liga %} · {{ j.liga }}{% endif %}</span></span>
+        <span class="yw-pick">{{ partes[0] }}</span>
+        {% if j.abbr and j.opp_abbr %}<span class="yw-match">{{ j.abbr }} vs {{ j.opp_abbr }}</span>{% endif %}
+        {% if j.comprobante %}<span class="yw-view">🎫 View ticket</span>{% endif %}
+      </span>
+      <span class="yw-res">
+        <span class="st {{ 'yw-won-t' if won else 'yw-lost-t' }}">{{ 'WON' if won else 'LOST' }}</span>
+        {% if unidades is not none %}
+        <span class="u {{ 'yw-won-t' if won else 'yw-lost-t' }}">{{ '+' if unidades > 0 else '' }}{{ '%.2f' % unidades }}u</span>
+        {% endif %}
+      </span>
+    </button>
+    <div class="modal" id="arch-{{ d.fecha }}-{{ loop.index }}" hidden>
+      <div class="modal-card ticket-photo-card">
+        <button type="button" class="modal-close" data-close>✕</button>
+        {% if j.comprobante %}
+        <img class="ticket-photo" src="{{ url_for('static', filename=j.comprobante) }}" alt="Original receipt: {{ j.pick }}">
+        {% else %}
+        <p class="ticket-brand">THE SHARP TEAM</p>
+        <p class="ticket-pick">{{ j.pick }} {{ fmt_odds(j.cuota) }}</p>
+        <div class="ticket-rows">
+          <div><span>Date</span><b>{{ d.fecha }}</b></div>
+          <div><span>Level</span><b>{{ 'PLATINUM' if es_plat else 'SHARP PICKS FREE' }}</b></div>
+          <div><span>Result</span><b class="{{ 'pos' if won else 'neg' }}">{{ 'WON' if won else 'LOST' }}{% if j.profit is not none %} · {{ ('+$%.2f' % j.profit) if j.profit >= 0 else ('-$%.2f' % -j.profit) }}{% endif %}</b></div>
+        </div>
+        <p class="ticket-note">Original receipt not uploaded for this play.</p>
+        {% endif %}
       </div>
-      <p class="muted">
-        {% if j.resultado %}<b class="{{ 'pos' if j.resultado == 'WON' else 'neg' }}">{{ j.resultado }}</b>{% if j.profit is not none %} {{ ('+$%.2f' % j.profit) if j.profit >= 0 else ('-$%.2f' % -j.profit) }}{% endif %} · {% endif %}
-        {% if j.verificada %}📸 Verified · {% endif %}
-        {{ j.estado if j.estado else '' }}
-        {% if j.hora %}{{ j.hora }}{% endif %}
-      </p>
-    </article>
+    </div>
     {% endif %}
   {% endfor %}
   </div>
