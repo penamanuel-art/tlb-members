@@ -115,7 +115,7 @@ body.v2 .v5c{background:linear-gradient(180deg,#111a3e,#0c1430)}
   <div class="v5c-edge{% if not is_vip %} gold{% endif %}"></div>
   <div class="v5c-topsec">
   <div class="v5c-top">
-    {% if is_vip %}<span class="v5c-pill plat">💎 PLATINUM</span><span class="v5c-kind">Platinum play</span>{% elif is_value %}<span class="v5c-pill gold">💎 VALUE PLAY</span><span class="v5c-kind">Value play</span>{% else %}<span class="v5c-pill gold">GOLD</span><span class="v5c-kind">Gold play</span>{% endif %}
+    {% if is_vip %}<span class="v5c-pill plat">💎 PLATINUM</span><span class="v5c-kind">Platinum play</span>{% elif is_value %}<span class="v5c-pill gold">💎 VALUE PLAY</span><span class="v5c-kind">Value play</span>{% else %}<span class="v5c-pill gold">SHARP PICKS FREE</span><span class="v5c-kind">Sharp Picks Free play</span>{% endif %}
     <span class="v5c-liga">{{ p.liga or '' }}</span>
   </div>
   <div class="v5c-head">
@@ -161,9 +161,9 @@ body.v2 .v5c{background:linear-gradient(180deg,#111a3e,#0c1430)}
     <div class="v5grab"></div>
     <div class="v5shead">
       <div style="flex:1;min-width:0">
-        <div class="v5kick{% if not is_vip %} gold{% endif %}">{{ '💎 PLATINUM' if is_vip else ('💎 VALUE PLAY' if is_value else 'GOLD') }}</div>
+        <div class="v5kick{% if not is_vip %} gold{% endif %}">{{ '💎 PLATINUM' if is_vip else ('💎 VALUE PLAY' if is_value else 'SHARP PICKS FREE') }}</div>
         <div class="v5stitle">{{ p.team_name or p.abbr }} {{ ('ML' if is_alex else 'Moneyline') if p.bettype == 'Moneyline' else p.bettype }}</div>
-        <div class="v5ssub">{{ 'Platinum play' if is_vip else ('Value play' if is_value else 'Gold play') }} &middot; {{ p.liga or '' }}</div>
+        <div class="v5ssub">{{ 'Platinum play' if is_vip else ('Value play' if is_value else 'Sharp Picks Free play') }} &middot; {{ p.liga or '' }}</div>
       </div>
       <button class="v5x" data-v5-close aria-label="Cerrar">&times;</button>
     </div>
