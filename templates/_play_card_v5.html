@@ -97,6 +97,9 @@ body.v5-sheet-open .ticker-dock-bottom,body.v5-sheet-open .v2-bottomnav,body.v5-
 .v5sbtns{display:flex;gap:9px;margin-top:9px}
 .v5share{display:block;text-align:center;margin-top:14px;font-size:13px;font-weight:500;color:#7dd3fc;text-decoration:none}
 .tstc-tracked{color:#2fe6a7}
+.tstc-bubble{position:fixed;z-index:100000;background:#232a38;border:1px solid rgba(255,255,255,.18);border-radius:12px;padding:8px 11px;font-size:12px;font-weight:300;line-height:1.45;color:#eef1f7;text-align:center;width:max-content;max-width:260px;pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,.45)}
+.tstc-bubble:after{content:'';position:absolute;top:100%;left:var(--tstc-tail,50%);transform:translateX(-50%);border:6px solid transparent;border-top-color:#232a38}
+.tstc-bubble.below:after{top:auto;bottom:100%;border-top-color:transparent;border-bottom-color:#232a38}
 </style>
 {% if is_alex %}
 <style>
@@ -259,6 +262,7 @@ body.v2 .v5c{background:linear-gradient(180deg,#111a3e,#0c1430)}
         s.innerHTML = '&check; Tracked';
         s.style.flex = '1';
         a.replaceWith(s);
+        showTrackBubble(s);
       } else {
         a.textContent = orig;
         delete a.dataset.busy;
@@ -270,5 +274,40 @@ body.v2 .v5c{background:linear-gradient(180deg,#111a3e,#0c1430)}
       alert('Could not track this play. Please try again.');
     });
   });
+  function showTrackBubble(anchorEl) {
+    var old = document.querySelector('.tstc-bubble');
+    if (old) old.remove();
+    var b = document.createElement('div');
+    b.className = 'tstc-bubble';
+    b.innerHTML = 'Tracked in My Bets.<br>&check; grades on its own when the game ends.';
+    b.style.visibility = 'hidden';
+    document.body.appendChild(b);
+    var r = anchorEl.getBoundingClientRect();
+    var bw = b.offsetWidth, bh = b.offsetHeight;
+    var vw = document.documentElement.clientWidth, vh = document.documentElement.clientHeight;
+    var below = false;
+    var top = r.top - bh - 9;
+    if (top < 8) { top = r.bottom + 9; below = true; }
+    if (top + bh > vh - 8) top = Math.max(8, vh - bh - 8);
+    var left = r.left + r.width / 2 - bw / 2;
+    if (left < 8) left = 8;
+    if (left + bw > vw - 8) left = Math.max(8, vw - bw - 8);
+    b.style.top = top + 'px';
+    b.style.left = left + 'px';
+    b.style.setProperty('--tstc-tail', (r.left + r.width / 2 - left) + 'px');
+    if (below) b.classList.add('below');
+    b.style.visibility = 'visible';
+    var done = false;
+    function dismiss() {
+      if (done) return;
+      done = true;
+      if (b.parentNode) b.parentNode.removeChild(b);
+      window.removeEventListener('scroll', dismiss, true);
+      window.removeEventListener('resize', dismiss);
+    }
+    setTimeout(dismiss, 5000);
+    window.addEventListener('scroll', dismiss, true);
+    window.addEventListener('resize', dismiss);
+  }
 })();
 </script>
