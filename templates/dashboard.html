@@ -225,7 +225,6 @@
   <div class="trk-dot"><i></i>Members-only tool</div>
   <div class="trk-btns">
     <a class="trk-btn" href="{{ url_for('masterclass') }}">&#9654; Watch how it works</a>
-    <a class="trk-btn" href="#wgtPills">&#9432; How it works</a>
     <a class="trk-btn" href="{{ url_for('mybets_add') }}">+ Add a bet</a>
   </div>
 </section>
@@ -335,13 +334,10 @@
     </div>
   </div>
   {% endfor %}
-  {% if own_rows|length > 10 %}<a class="own-more" href="{{ url_for('tracker_plays') }}">See all my bets &#8594;</a>{% endif %}
   {% else %}
   <p class="own-empty">Bets you place anywhere else — any book, any sport. Add them here, with a photo of the ticket if you have it, and they are graded with your CLV, just like the program's plays.</p>
   {% endif %}
   <div class="own-tools">
-    <a class="trk-btn" href="{{ url_for('mybets_add') }}">+ Add a bet</a>
-    <a class="trk-btn" href="{{ url_for('tracker_plays') }}">Breakdowns, Coach &amp; filters</a>
     <a class="trk-btn" href="{{ url_for('mybets_export') }}">Export CSV</a>
   </div>
 </section>
