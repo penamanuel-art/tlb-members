@@ -226,32 +226,6 @@ main.v2-wrap{padding-bottom:24px!important}
 <!-- ENCABEZADO COMPACTO (2026-10-15, orden de Alex: como el de su
      captura — fecha, saludo, titulo y estado de la card; chiquito
      y no largo. Reemplaza el saludo anterior y el heroe de unidades.) -->
-{% if miembro_platinum and trial_dias_left and not celebracion and not is_alex %}
-<style>
-@keyframes fa-in{from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:translateY(0);}}
-.fa-strip{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:1px;flex-wrap:nowrap;max-width:94vw;box-sizing:border-box;margin:12px auto 2px;max-width:560px;padding:8px 15px;border-radius:999px;background:linear-gradient(165deg, #151e36, #0a0f1d);border:1px solid rgba(255, 255, 255, 0.08);box-shadow:0 10px 26px rgba(0, 0, 0, 0.35);color:#fff;font-size:clamp(.74rem, 3.8vw, .9rem);font-weight:500;letter-spacing:.3px;text-align:center;transition:opacity .5s ease,transform .5s ease,margin .5s ease,padding .5s ease;animation:fa-in .35s ease-out;cursor:pointer;}
-.fa-strip .fa-star{color:#ffd93b;}
-.fa-strip .fa-days{color:#e8c766;font-weight:700;}
-.fa-strip b{font-weight:700;color:#ffffff;}
-.fa-strip .fa-l2{font-size:.84em;opacity:.94;}
-.fa-strip.fa-urgent{border-color:rgba(255,157,92,.75);}
-.fa-strip.fa-urgent .fa-days{color:#ffb27d;}
-.fa-strip.fa-out{opacity:0;transform:translateY(-6px);margin-top:0;margin-bottom:0;padding-top:0;padding-bottom:0;border-width:0;}
-.fa-strip{position:relative;overflow:hidden;}
-.fa-strip::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg, transparent 30%, rgba(255,255,255,.14) 50%, transparent 70%);transform:translateX(-120%);animation:fa-shine 2.8s ease-in-out infinite;pointer-events:none;}
-@keyframes fa-shine{0%{transform:translateX(-120%);}55%{transform:translateX(120%);}100%{transform:translateX(120%);}}
-</style>
-<div class="fa-strip{% if trial_dias_left and trial_dias_left <= 5 %} fa-urgent{% endif %}" id="faBubble" role="status"><span class="fa-l1"><span class="fa-star">&#11088;</span> <b>{% if cuenta_es %}ACCESO TOTAL ACTIVO{% else %}FULL ACCESS ACTIVE{% endif %}</b>{% if nombre_corto %}<span class="fa-nm">, {{ nombre_corto }}</span>{% endif %}</span>{% if trial_dias_left %}<span class="fa-l2">{% if cuenta_es %}Promo de bienvenida &middot; Platinum GRATIS &middot; te quedan <span class="fa-days">{{ trial_dias_left }} d&iacute;as</span>{% else %}Welcome promo &middot; Platinum FREE &middot; <span class="fa-days">{{ trial_dias_left }} days left</span>{% endif %}</span>{% else %}<span class="fa-l2">{% if cuenta_es %}Platinum desbloqueado{% else %}Platinum unlocked{% endif %}</span>{% endif %}</div>
-<script>
-(function(){
-  var b = document.getElementById('faBubble');
-  if (!b) return;
-  b.addEventListener('click', function(){ window.location.href = '/cuenta'; });
-  setTimeout(function(){ b.classList.add('fa-out'); }, 10000);
-  setTimeout(function(){ if (b.parentNode) b.remove(); }, 10600);
-})();
-</script>
-{% endif %}
 <div id="nvBubble" style="display:none;align-items:center;gap:8px;max-width:560px;margin:10px auto 0;padding:6px 7px 6px 14px;border-radius:999px;background:rgba(17,21,33,.92);border:1px solid rgba(232,199,102,.38);color:#dfe5f0;font-size:11.5px;font-weight:400;letter-spacing:.2px;box-shadow:0 6px 18px rgba(0,0,0,.3)">
   <span style="flex:1;min-width:0">&#10024; <b style="font-weight:600">{% if cuenta_es %}Nueva versi&oacute;n disponible{% else %}New version available{% endif %}</b> <span style="color:#8b94a7">{% if cuenta_es %}&middot; tarjetas nuevas y todas tus herramientas juntas{% else %}&middot; new cards &amp; all your tools in one place{% endif %}</span></span>
   <button id="nvBtn" type="button" style="flex:none;border:none;cursor:pointer;background:linear-gradient(135deg,#f3cd6b,#d9a92f);color:#0d1420;font-size:11px;font-weight:700;border-radius:999px;padding:5px 13px">{% if cuenta_es %}Actualizar{% else %}Refresh{% endif %}</button>
