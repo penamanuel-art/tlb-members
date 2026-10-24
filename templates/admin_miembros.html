@@ -44,11 +44,38 @@
 <section class="tracker-head">
   <div>
     <p class="kicker">ADMIN</p>
-    <h2>{{ miembros|length }} member{{ 's' if miembros|length != 1 }}</h2>
+    <h2>{{ pagando|length }} paying</h2>
     <p class="mx-updated">Updated {{ ahora_txt }} · <a href="{{ url_for('admin_miembros') }}">↻ Refresh</a></p>
   </div>
 </section>
 
+<details class="mx-folder" open>
+  <summary>
+    <span class="mx-ft">💰 PAYING</span>
+    <span class="mx-fc">{{ pagando|length }}</span>
+    <span class="mx-chev">›</span>
+  </summary>
+  <div class="mx-body">
+  {% for m in pagando %}
+  <a class="mx-item" href="{{ url_for('admin_miembro_detalle', user_id=m.id) }}">
+    <span class="mx-av">{{ (m.nombre or '?')[:1]|upper }}</span>
+    <span class="mx-nm">{{ m.nombre }}</span>
+    <span class="mx-status plat">★ PLATINUM</span>
+    <span class="mx-more">Ver más →</span>
+  </a>
+  {% else %}
+  <p class="muted">No paying subscribers yet.</p>
+  {% endfor %}
+  </div>
+</details>
+
+<details class="mx-folder">
+  <summary>
+    <span class="mx-ft">📁 ALL MEMBERS</span>
+    <span class="mx-fc">{{ miembros|length }}</span>
+    <span class="mx-chev">›</span>
+  </summary>
+  <div class="mx-body">
 <details class="mx-folder" open>
   <summary>
     <span class="mx-ft">🔥 ACTIVE &amp; VERIFIED</span>
@@ -149,6 +176,8 @@
   {% else %}
   <p class="muted">No members in this group.</p>
   {% endfor %}
+  </div>
+</details>
   </div>
 </details>
 
