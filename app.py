@@ -2502,6 +2502,27 @@ GAMECENTER_URL = (
     "https://raw.githubusercontent.com/penamanuel-art/tlb-members"
     "/data-board/data/gamecenter.json"
 )
+# Resultados en vivo para Running Hot: el JSON vive en la rama `data-board`
+# (igual que Game Center); lo publica hidden_files/live-graded-overlay.py
+# cada vez que un juego oficial termina. SOLO alimenta hot_run_cards():
+# el récord oficial sigue liquidándose en la noche. Fail-open: si no se
+# puede leer, la tarjeta usa solo el archivo.
+LIVE_GRADED_URL = (
+    "https://raw.githubusercontent.com/penamanuel-art/tlb-members"
+    "/data-board/data/live_graded.json"
+)
+
+
+def load_live_graded():
+    data = _json_remoto_o_local(
+        LIVE_GRADED_URL, os.path.join(BASE_DIR, "data", "live_graded.json"),
+        ttl=60)
+    if isinstance(data, dict):
+        res = data.get("results", []) or []
+    else:
+        res = []
+    return sorted([r for r in res if isinstance(r, dict)],
+                  key=lambda r: r.get("fecha") or "")
 _gamecenter_cache = {"at": 0.0, "data": {}}
 
 
@@ -4138,6 +4159,24 @@ def hot_run_cards(value_rows):
         for j in d.get("jugadas", []) or []:
             if j.get("resultado") in ("WON", "LOST") and not j.get("bloqueada"):
                 settled.append(j)
+
+    # En vivo (2026-10-24, pedido por Alex): las jugadas oficiales que ya
+    # terminaron entran a la tarjeta en cuanto acaban, sin esperar la
+    # liquidación. Dedupe por play_id: si la liquidación ya la puso en el
+    # archivo, el overlay se ignora (nunca se cuenta dos veces). Si el
+    # overlay falla, la tarjeta sigue con solo el archivo.
+    try:
+        _live_ids = {j.get("id") for j in settled}
+        for e in load_live_graded():
+            if e.get("play_id") in _live_ids:
+                continue
+            if e.get("resultado") in ("WON", "LOST"):
+                settled.append({"resultado": e["resultado"],
+                                "nivel": e.get("nivel") or "",
+                                "liga": e.get("liga") or "",
+                                "id": e.get("play_id")})
+    except Exception:
+        pass
 
     def seq_of(filtro):
         return ["W" if j["resultado"] == "WON" else "L"
