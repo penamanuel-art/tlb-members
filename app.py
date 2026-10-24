@@ -4116,11 +4116,14 @@ def admin_diseno_home():
 def hot_run_cards(value_rows):
     """Franja «Running hot» del Home (2026-10-22, pedido por Alex):
     tarjetas de rachas calculadas EN VIVO desde las jugadas liquidadas
-    (archivo oficial + tracker VALUE del sistema). Solo salen rachas
-    reales que califican: últimas 10 con 7+ ganadas, últimas 5 con 4+
+    (archivo oficial + tracker VALUE del sistema). Las tres tarjetas ALL
+    oficiales (OFFICIAL, PLATINUM, SHARP PICKS FREE) muestran SIEMPRE su
+    récord de últimos 10 cuando hay 10+ jugadas (2026-10-24, pedido por
+    Alex: «Que siempre se vea»); las tarjetas VALUE y por liga solo salen
+    con rachas que califican: últimas 10 con 7+ ganadas, últimas 5 con 4+
     ganadas, o racha ganadora vigente de 2+. Si ninguna califica, la
     sección no se muestra — nunca relleno."""
-    def _card(badge, tag, seq, scope, color):
+    def _card(badge, tag, seq, scope, color, always=False):
         if not seq:
             return None
         streak = 0
@@ -4132,7 +4135,7 @@ def hot_run_cards(value_rows):
         n = len(seq)
         if n >= 10:
             w = seq[-10:].count("W")
-            if w >= 7:
+            if w >= 7 or always:
                 return {"badge": badge, "tag": tag, "color": color,
                         "big": f"{w}\u2013{10 - w}", "pct": f"{round(w / 10 * 100)}%",
                         "desc": f"in the last 10 {scope} plays",
@@ -4183,16 +4186,16 @@ def hot_run_cards(value_rows):
                 for j in settled if filtro(j)]
 
     cards = []
-    for badge, tag, seq, scope, color in (
-        ("OFFICIAL PLAYS", "ALL", seq_of(lambda j: True), "official", "#2ee6a8"),
+    for badge, tag, seq, scope, color, always in (
+        ("OFFICIAL PLAYS", "ALL", seq_of(lambda j: True), "official", "#2ee6a8", True),
         ("PLATINUM", "ALL",
          seq_of(lambda j: (j.get("nivel") or "").upper() in ("ELITE", "PLATINUM")),
-         "Platinum", "#e8c766"),
+         "Platinum", "#e8c766", True),
         ("SHARP PICKS FREE", "ALL",
          seq_of(lambda j: (j.get("nivel") or "").upper() == "GOLD"), "Sharp Picks Free",
-         "#aebdd4"),
+         "#aebdd4", True),
     ):
-        c = _card(badge, tag, seq, scope, color)
+        c = _card(badge, tag, seq, scope, color, always)
         if c:
             cards.append(c)
     vseq = ["W" if r.get("resultado") == "W" else "L"
