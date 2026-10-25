@@ -134,6 +134,26 @@ details.adm-det summary { cursor: pointer; font-weight: 800; font-size: 0.95rem;
   </div>
 
   <div class="adm-section">
+    <h2>📲 Telegram</h2>
+    {% if telegram_counts and telegram_counts.channels %}
+    <p style="font-size:28px;font-weight:800;color:#2ee6a8;margin:0 0 10px;">{{ telegram_counts.total_reales }} miembros reales</p>
+    {% for key, ch in telegram_counts.channels.items() %}
+    <div class="mrow">
+      <span class="mn">{{ ch.nombre }}</span>
+      {% if ch.reales is defined %}
+      <span class="mb" style="color:#2ee6a8;border-color:#2ee6a8;">{{ ch.reales }} reales ({{ ch.total }} en total)</span>
+      {% else %}
+      <span class="mb" style="color:#8fa1c2;border-color:#8fa1c2;">no disponible</span>
+      {% endif %}
+    </div>
+    {% endfor %}
+    <p class="adm-muted">Solo clientes — sin el bot ni administradores. Actualizado {{ (telegram_counts.updated_at or '')[:16].replace('T', ' ') }}.</p>
+    {% else %}
+    <p class="adm-muted">Conteo de Telegram no disponible por ahora.</p>
+    {% endif %}
+  </div>
+
+  <div class="adm-section">
     <h2>👥 Todos los miembros</h2>
     <p class="adm-muted" style="margin:0 0 12px;">{{ conteo_miembros.total }} miembros · {{ conteo_miembros.plat }} Platinum · {{ conteo_miembros.trial }} en prueba · {{ conteo_miembros.free }} gratis.</p>
     {% for m in miembros_lista %}
