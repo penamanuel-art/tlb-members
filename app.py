@@ -7759,6 +7759,35 @@ def admin_api_members_emails():
     ])
 
 
+@app.route("/admin/api/members-telegram")
+def admin_api_members_telegram():
+    """Miembros con Telegram vinculado (2026-10-25, pedido de Alex):
+    nombres para la lista de Telegram del home del admin.
+    Retorna JSON: [{nombre, telegram_user_id}]. Sin las cuentas propias
+    de Alex. Auth: sesión admin O header X-Admin-Key == ADMIN_API_KEY
+    (para los crons)."""
+    api_key = os.environ.get("ADMIN_API_KEY", "")
+    header_key = request.headers.get("X-Admin-Key", "")
+    is_cron = api_key and header_key and hmac.compare_digest(header_key, api_key)
+    try:
+        is_admin = is_admin_for(current_user())
+    except Exception:
+        is_admin = False
+    if not (is_cron or is_admin):
+        return jsonify({"error": "admin only"}), 403
+    db = get_db()
+    rows = db.execute(
+        "SELECT nombre, telegram_user_id FROM users WHERE telegram_user_id IS NOT NULL"
+        " AND telegram_user_id != '' AND email_verified = 1 AND email NOT IN"
+        " ('thesharpteam8@gmail.com', 'system@value.local',"
+        " 'pena.manuel@myyahoo.com', 'alexpena1509@gmail.com')"
+    ).fetchall()
+    return jsonify([
+        {"nombre": r["nombre"] or "", "telegram_user_id": r["telegram_user_id"]}
+        for r in rows
+    ])
+
+
 @app.route("/admin/api/lifecycle-dry-run")
 def admin_api_lifecycle_dry_run():
     """Modo de prueba del ciclo de vida de cuentas (2026-10-24, pedido por Alex).
