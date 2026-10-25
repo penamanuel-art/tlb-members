@@ -10804,8 +10804,11 @@ def admin_miembros():
                     else tr.get("n")) or 0
             except Exception:
                 d["tracked_n"] = 0
-            if d.get("stripe_subscription_id") or d.get("stripe_customer_id"):
+            if d.get("stripe_subscription_id"):
                 d["stripe_txt"] = "Customer · Paid"
+                d["stripe_gold"] = False
+            elif d.get("stripe_customer_id"):
+                d["stripe_txt"] = "Customer · No subscription"
                 d["stripe_gold"] = False
             elif d.get("platinum_trial_ends"):
                 d["stripe_txt"] = (
@@ -10834,19 +10837,20 @@ def admin_miembros():
         ahora_txt = _ahora_et.strftime("%b %-d, %Y · %-I:%M %p ET")
     except Exception:
         ahora_txt = ""
-    # ── 💰 PAGANDO (2026-10-24, orden de Alex): la vista principal de
-    # Miembros muestra SOLO a los que pagan. Pagando = acceso vigente sin
-    # reloj (así es como la app sabe que alguien pagó: Stripe no avisa
-    # solo) sin contar la cuenta del dueño. Hoy: 0. El resto (gratis y
-    # trial) queda escondido en la carpeta ALL MEMBERS del template.
-    pagando = [m for m in lista
-               if m.get("platinum_unlocked")
-               and not m.get("platinum_trial_ends")
-               and m["email"].lower() != "pena.manuel@myyahoo.com"]
+    # ── 📁 CLIENTES PLATINUM (2026-10-25, orden de Alex): la vista principal
+    # de Miembros muestra SOLO a los que de verdad pagan la suscripción.
+    # Cliente Platinum = stripe_subscription_id presente (suscripción
+    # activa en Stripe: el webhook la borra al cancelar, así que un
+    # cancelado no aparece; un cliente con solo customer_id, como un pago
+    # rechazado, tampoco). Sin contar la cuenta del dueño. Hoy: 0. El
+    # resto queda en la carpeta ALL MEMBERS del template.
+    clientes_platinum = [m for m in lista
+                         if m.get("stripe_subscription_id")
+                         and m["email"].lower() != "pena.manuel@myyahoo.com"]
     return render_template("admin_miembros.html", miembros=lista,
                            activos=activos, nuevos=nuevos,
                            platinums=platinums, frees=frees,
-                           pagando=pagando,
+                           clientes_platinum=clientes_platinum,
                            ahora_txt=ahora_txt,
                            eventos=[dict(e) for e in eventos])
 
