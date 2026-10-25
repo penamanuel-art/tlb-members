@@ -39,6 +39,7 @@
         <span class="lv {% if p.nivel == 'ELITE' %}e{% else %}g{% endif %}">{% if p.nivel == 'ELITE' %}⭐ PLATINUM{% else %}⚪ GOLD{% endif %}</span>
       </div>
       <div class="mt">🏟 {{ p.deporte or p.liga or '' }}{% if p.game %} · {{ p.game }}{% endif %}{% if p.game_time_et %} · 🕐 {{ p.game_time_et }}{% endif %}{% if p.cuota %} · Cuota {{ p.cuota_texto or p.cuota }}{% endif %}</div>
+      {% if veredictos and veredictos.get(p.id|string) %}<div class="mt">🛡 Gate (aviso, estricto): {{ veredictos.get(p.id|string) }}</div>{% endif %}
     </div>
     {% endfor %}
     {% if not elegidas %}
