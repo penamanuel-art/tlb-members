@@ -121,6 +121,19 @@ details.adm-det summary { cursor: pointer; font-weight: 800; font-size: 0.95rem;
   </div>
 
   <div class="adm-section">
+    <h2>🔔 Gerenciales{% if sin_leer %} · {{ sin_leer }} sin leer{% endif %}</h2>
+    {% for n in gerenciales %}
+    <a class="mrow" href="/admin/notificaciones" style="{% if not n.leida %}border-left:3px solid #c9a227;{% endif %}">
+      <span class="mn">{% if n.tipo == 'miembro_nuevo' %}🎉{% elif n.tipo == 'ticket_subido' %}🎫{% elif n.tipo == 'platinum' %}💎{% elif n.tipo == 'cancelacion' %}⚠️{% elif n.tipo == 'pago' %}💳{% elif n.tipo == 'publish' %}🚀{% elif n.tipo == 'email' %}📧{% elif n.tipo == 'miembro' %}👤{% elif n.tipo == 'sugerencia' %}💡{% elif n.tipo == 'reporte_error' %}🐞{% elif n.tipo == 'admin_chat' %}💬{% else %}🔔{% endif %} {{ n.titulo }}</span>
+      <span class="mb" style="color:#8fa1c2;border-color:#8fa1c2;">{{ (n.created_at or '')[:16].replace('T', ' ') }}</span>
+    </a>
+    {% else %}
+    <p class="adm-muted">No hay notificaciones todavía.</p>
+    {% endfor %}
+    <p style="margin-top:10px;"><a href="/admin/notificaciones" style="color:#2ee6a8;font-weight:700;text-decoration:none;">Ver todas →</a></p>
+  </div>
+
+  <div class="adm-section">
     <h2>👥 Todos los miembros</h2>
     <p class="adm-muted" style="margin:0 0 12px;">{{ conteo_miembros.total }} miembros · {{ conteo_miembros.plat }} Platinum · {{ conteo_miembros.trial }} en prueba · {{ conteo_miembros.free }} gratis.</p>
     {% for m in miembros_lista %}
