@@ -313,6 +313,14 @@ body.v2 .f1b-rec{margin:18px 0 0}
   {% endif %}
 </header>
 
+<div class="tst-acad-notif" id="tst-acad-notif">
+  <p id="tst-acad-text"></p>
+  <button type="button" class="tst-acad-x" id="tst-acad-x" aria-label="Close">×</button>
+</div>
+<script>
+(function(){var q=["Discipline is the foundation. Everything else is noise.","We don't chase wins. We chase value, and value pays over time.","One bet doesn't make you. One hundred disciplined bets define you.","The numbers don't care about your feelings. That's why we trust them.","Patience is a strategy. Most people lose because they can't wait.","Bankroll management isn't boring. It's what keeps you in the game.","We post every play, win or lose. Transparency is the whole point.","No hype. No guarantees. Just data-driven decisions, every single day.","The long game rewards the disciplined and punishes the impatient.","Same rules, every day. That's the edge nobody can copy."];var k='tst-acad-idx';var i=0;try{var v=parseInt(localStorage.getItem(k),10);if(!isNaN(v)){i=v}localStorage.setItem(k,(i+1)%q.length)}catch(e){i=Math.floor(Math.random()*q.length)}var el=document.getElementById('tst-acad-text');if(el){el.textContent=q[i%q.length]}var x=document.getElementById('tst-acad-x');if(x){x.addEventListener('click',function(){var n=document.getElementById('tst-acad-notif');if(n){n.style.display='none'}})}})();
+</script>
+
 {% set card_lux = true %}
 <!-- TODAY'S PLAYS · tarjetas con la paleta de la página (card_lux) -->
 <section class="v2-sec" style="padding-top:0">
@@ -1070,5 +1078,9 @@ body.v2 main.v2-wrap > section{margin-left:-8px !important;margin-right:-8px !im
 body.v2 main.v2-wrap > section#plays,body.v2 main.v2-wrap > section.tst-creed{margin-left:0 !important;margin-right:0 !important}
 body.v2 .lux-head-card{padding:10px 13px !important}
 body.v2 .lux-head-card p{line-height:1.38}
+/* Notificación de la academia entre Today's card y Odds (Alex, 2026-10-24, con captura marcada): sin fondo, solo letra fina, con X para cerrar; una frase distinta por entrada. */
+.tst-acad-notif{position:relative;padding:6px 28px 6px 2px}
+.tst-acad-notif p{color:#f2f4f8;font-size:13px;font-weight:300;line-height:1.5;margin:0}
+.tst-acad-x{position:absolute;top:4px;right:2px;color:#9aa3b8;font-size:16px;font-weight:300;line-height:1;background:none;border:none;padding:0;cursor:pointer}
 </style>
 {% endblock %}
