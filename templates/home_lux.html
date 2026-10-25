@@ -1,6 +1,13 @@
 {% extends "base_v2.html" %}
 {% block title %}Today — The Sharp Team{% endblock %}
 {% block content %}
+<div class="tst-acad-ticker" id="tst-acad-ticker">
+  <div class="tst-acad-strip"><span id="tst-acad-text"></span></div>
+  <button type="button" class="tst-acad-x" id="tst-acad-x" aria-label="Close">×</button>
+</div>
+<script>
+(function(){var q=["Discipline is the foundation. Everything else is noise.","We don't chase wins. We chase value, and value pays over time.","One bet doesn't make you. One hundred disciplined bets define you.","The numbers don't care about your feelings. That's why we trust them.","Patience is a strategy. Most people lose because they can't wait.","Bankroll management isn't boring. It's what keeps you in the game.","We post every play, win or lose. Transparency is the whole point.","No hype. No guarantees. Just data-driven decisions, every single day.","The long game rewards the disciplined and punishes the impatient.","Same rules, every day. That's the edge nobody can copy."];var k='tst-acad-idx';var i=0;try{var v=parseInt(localStorage.getItem(k),10);if(!isNaN(v)){i=v}}catch(e){}var el=document.getElementById('tst-acad-text');function show(n){if(!el){return}el.classList.remove('tst-slide');void el.offsetWidth;el.textContent=q[n%q.length];el.classList.add('tst-slide');try{localStorage.setItem(k,(n+1)%q.length)}catch(e){}}show(i);var next=(i+1)%q.length;setInterval(function(){show(next);next=(next+1)%q.length},10000);var x=document.getElementById('tst-acad-x');if(x){x.addEventListener('click',function(){var n=document.getElementById('tst-acad-ticker');if(n){n.style.display='none'}document.body.classList.add('tst-acad-closed')})}})();
+</script>
 {% if es_alex %}
 {# Vista SOLO Alex (2026-10-20, tono aprobado por el en el chat): la zona
    superior de la tarjeta v5 mas clara y un poco mas alta, y la hoja de
@@ -312,14 +319,6 @@ body.v2 .f1b-rec{margin:18px 0 0}
   </div>
   {% endif %}
 </header>
-
-<div class="tst-acad-ticker" id="tst-acad-ticker">
-  <div class="tst-acad-strip"><span id="tst-acad-text"></span></div>
-  <button type="button" class="tst-acad-x" id="tst-acad-x" aria-label="Close">×</button>
-</div>
-<script>
-(function(){var q=["Discipline is the foundation. Everything else is noise.","We don't chase wins. We chase value, and value pays over time.","One bet doesn't make you. One hundred disciplined bets define you.","The numbers don't care about your feelings. That's why we trust them.","Patience is a strategy. Most people lose because they can't wait.","Bankroll management isn't boring. It's what keeps you in the game.","We post every play, win or lose. Transparency is the whole point.","No hype. No guarantees. Just data-driven decisions, every single day.","The long game rewards the disciplined and punishes the impatient.","Same rules, every day. That's the edge nobody can copy."];var k='tst-acad-idx';var i=0;try{var v=parseInt(localStorage.getItem(k),10);if(!isNaN(v)){i=v}}catch(e){}var el=document.getElementById('tst-acad-text');function show(n){if(!el){return}el.classList.remove('tst-slide');void el.offsetWidth;el.textContent=q[n%q.length];el.classList.add('tst-slide');try{localStorage.setItem(k,(n+1)%q.length)}catch(e){}}show(i);var next=(i+1)%q.length;setInterval(function(){show(next);next=(next+1)%q.length},10000);var x=document.getElementById('tst-acad-x');if(x){x.addEventListener('click',function(){var n=document.getElementById('tst-acad-ticker');if(n){n.style.display='none'}})}})();
-</script>
 
 {% set card_lux = true %}
 <!-- TODAY'S PLAYS · tarjetas con la paleta de la página (card_lux) -->
@@ -1078,12 +1077,14 @@ body.v2 main.v2-wrap > section{margin-left:-8px !important;margin-right:-8px !im
 body.v2 main.v2-wrap > section#plays,body.v2 main.v2-wrap > section.tst-creed{margin-left:0 !important;margin-right:0 !important}
 body.v2 .lux-head-card{padding:10px 13px !important}
 body.v2 .lux-head-card p{line-height:1.38}
-/* Tira corrediza de la academia entre Today's card y Odds (Alex, 2026-10-24, con captura marcada): sin fondo, letra fina en oro, con X para cerrar; una frase nueva cada 10 segundos. */
-.tst-acad-ticker{position:relative;padding:6px 28px 6px 2px}
+/* Tira corrediza FIJA arriba del menú (Alex, 2026-10-24: no se mueve al deslizar; el menú baja para hacerle espacio): sin fondo, letra fina en oro, con X para cerrar; una frase nueva cada 10 segundos. */
+.tst-acad-ticker{position:fixed;top:0;left:0;right:0;z-index:100;height:32px;box-sizing:border-box;padding:6px 28px 6px 12px}
 .tst-acad-strip{overflow:hidden}
 .tst-acad-strip span{display:inline-block;white-space:nowrap;color:#e8c766;font-size:13px;font-weight:300;line-height:1.5}
 .tst-acad-strip span.tst-slide{animation:tst-ticker-slide 10s linear forwards}
 @keyframes tst-ticker-slide{from{transform:translateX(100vw)}to{transform:translateX(-100%)}}
 .tst-acad-x{position:absolute;top:4px;right:2px;color:#9aa3b8;font-size:16px;font-weight:300;line-height:1;background:none;border:none;padding:0;cursor:pointer}
+body.v2 .v2-topbar{margin-top:32px !important;top:32px !important}
+body.v2.tst-acad-closed .v2-topbar{margin-top:0 !important;top:0 !important}
 </style>
 {% endblock %}
