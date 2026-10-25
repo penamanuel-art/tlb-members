@@ -2512,6 +2512,14 @@ LIVE_GRADED_URL = (
     "/data-board/data/live_graded.json"
 )
 
+# Miembros reales en Telegram (2026-10-25, pedido de Alex): el JSON lo
+# publica el cron telegram-members-count en la rama data-board (sin
+# redeploy). Fail-open: si no se puede leer, la sección no se muestra.
+TELEGRAM_MEMBERS_URL = (
+    "https://raw.githubusercontent.com/penamanuel-art/tlb-members"
+    "/data-board/data/telegram-members.json"
+)
+
 
 def load_live_graded():
     data = _json_remoto_o_local(
@@ -9292,6 +9300,16 @@ def admin_dashboard():
         sin_leer = sum(1 for n in gerenciales if not n.get("leida"))
     except Exception:
         gerenciales, sin_leer = [], 0
+    # Telegram (2026-10-25, pedido de Alex): conteo de miembros reales
+    # (sin bot ni administradores) publicado por el cron en data-board.
+    try:
+        _tg = _json_remoto_o_local(
+            TELEGRAM_MEMBERS_URL,
+            os.path.join(BASE_DIR, "data", "telegram-members.json"),
+            ttl=600)
+        telegram_counts = _tg if isinstance(_tg, dict) and _tg.get("ok") else None
+    except Exception:
+        telegram_counts = None
     return render_template("admin_dashboard.html",
                            stats={"miembros": miembros, "platinum": platinum,
                                   "jugadas_hoy": jugadas_hoy, "no_leidas": no_leidas},
@@ -9302,7 +9320,8 @@ def admin_dashboard():
                            miembros_lista=miembros_lista,
                            conteo_miembros=conteo_miembros,
                            gerenciales=gerenciales,
-                           sin_leer=sin_leer)
+                           sin_leer=sin_leer,
+                           telegram_counts=telegram_counts)
 
 
 # ============================================================
