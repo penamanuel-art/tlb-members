@@ -442,7 +442,8 @@ body.v2 .f1b-rec{margin:18px 0 0}
 .tst-creed-desc.open{display:block}
 .tst-creed-desc b{color:#fff;font-weight:600}
 .tst-creed-foot{display:flex;gap:10px;align-items:center;border-top:1px solid rgba(255,255,255,.1);margin-top:18px;padding-top:16px}
-.tst-creed-av{flex:none;width:44px;height:44px;border-radius:50%;background:linear-gradient(160deg,#e6ebf4,#9aa3b2);color:#14161c;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center}
+.tst-creed-av{flex:none;width:44px;height:44px;border-radius:50%;background:#000;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.tst-creed-av img{width:100%;height:100%;object-fit:cover;display:block;border-radius:50%}
 .tst-creed-brand{color:#fff;font-size:14px;font-weight:600;margin:0}
 .tst-creed-tag{color:#9aa3b8;font-size:13px;font-weight:400;margin:2px 0 0}
 </style>
@@ -466,7 +467,7 @@ body.v2 .f1b-rec{margin:18px 0 0}
   <p class="tst-creed-desc" id="tst-creed-nochasing"><b>No chasing.</b> We never chase losses or wins. One result never changes the next stake — the plan stays the same after a win or a loss.</p>
   <p class="tst-creed-desc" id="tst-creed-discipline"><b>Discipline.</b> The foundation of everything. The system works when it's followed every day — same rules, win or lose.</p>
   <div class="tst-creed-foot">
-    <div class="tst-creed-av">ST</div>
+    <div class="tst-creed-av"><img src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team"></div>
     <div>
       <p class="tst-creed-brand">The Sharp Team</p>
       <p class="tst-creed-tag">Same rules, every day</p>
