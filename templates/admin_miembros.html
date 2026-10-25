@@ -44,19 +44,19 @@
 <section class="tracker-head">
   <div>
     <p class="kicker">ADMIN</p>
-    <h2>{{ pagando|length }} paying</h2>
+    <h2>{{ clientes_platinum|length }} clientes Platinum</h2>
     <p class="mx-updated">Updated {{ ahora_txt }} · <a href="{{ url_for('admin_miembros') }}">↻ Refresh</a></p>
   </div>
 </section>
 
 <details class="mx-folder" open>
   <summary>
-    <span class="mx-ft">💰 PAYING</span>
-    <span class="mx-fc">{{ pagando|length }}</span>
+    <span class="mx-ft">📁 Clientes Platinum</span>
+    <span class="mx-fc">{{ clientes_platinum|length }}</span>
     <span class="mx-chev">›</span>
   </summary>
   <div class="mx-body">
-  {% for m in pagando %}
+  {% for m in clientes_platinum %}
   <a class="mx-item" href="{{ url_for('admin_miembro_detalle', user_id=m.id) }}">
     <span class="mx-av">{{ (m.nombre or '?')[:1]|upper }}</span>
     <span class="mx-nm">{{ m.nombre }}</span>
