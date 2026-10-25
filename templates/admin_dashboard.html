@@ -1,104 +1,74 @@
 {% extends "base_v2.html" %}
 {% block content %}
 <style>
-.adm-clean { max-width: 680px; margin: 0 auto; padding: 16px 12px 40px; font-family: -apple-system, 'SF Pro', Inter, system-ui, sans-serif; }
-.adm-clean h1 { font-size: 1.5rem; font-weight: 800; color: #fff; margin: 0 0 4px; }
-.adm-clean .sub { font-size: 0.85rem; color: #8fa1c2; margin-bottom: 20px; }
-.adm-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 24px; }
-.adm-stat { background: linear-gradient(165deg,#151e36,#0a0f1d); border: 1px solid rgba(255,255,255,.08); border-radius: 16px; padding: 16px; text-align: center; text-decoration: none; }
-.adm-stat .n { font-size: 1.8rem; font-weight: 800; color: #fff; }
-.adm-stat .l { font-size: 0.7rem; color: #8fa1c2; margin-top: 4px; font-weight: 700; letter-spacing: 1px; }
+.adm-clean { max-width: 680px; margin: 0 auto; padding: 20px 12px 48px; font-family: -apple-system, 'SF Pro', Inter, system-ui, sans-serif; }
+.adm-clean .kicker { color: #2ee6a8; font-size: 12px; font-weight: 800; letter-spacing: 4px; margin: 0; }
+.adm-clean h1 { font-size: 1.7rem; font-weight: 800; color: #fff; margin: 6px 0 4px; }
+.adm-total { display: flex; align-items: baseline; gap: 12px; margin: 0 0 22px; }
+.adm-total .tn { font-size: 2.4rem; font-weight: 800; color: #2ee6a8; }
+.adm-total .tl { font-size: 0.75rem; font-weight: 800; letter-spacing: 2px; color: #8fa1c2; }
+.adm-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 28px; }
+.adm-btn { display: block; text-decoration: none; color: #fff; text-align: center;
+  background: linear-gradient(165deg,#151e36,#0a0f1d);
+  border: 1px solid rgba(46,230,168,.35); border-radius: 18px; padding: 22px 10px 18px; }
+.adm-btn .ico { font-size: 1.9rem; display: block; margin-bottom: 8px; }
+.adm-btn .t { font-size: 1rem; font-weight: 800; display: block; }
+.adm-btn .s { font-size: 0.75rem; color: #8fa1c2; display: block; margin-top: 4px; }
 .adm-section { margin-bottom: 28px; }
 .adm-section h2 { font-size: 1.1rem; font-weight: 700; color: #fff; margin: 0 0 12px; }
-.adm-card { background: linear-gradient(165deg,#151e36,#0a0f1d); border: 1px solid rgba(255,255,255,.08); border-radius: 16px; padding: 16px; margin-bottom: 12px; }
-.send-btn { width: 100%; background: linear-gradient(180deg,#4da3ff,#2f7bff); color: #ffffff; border: none; border-radius: 14px; padding: 14px; font-weight: 800; font-size: 1rem; cursor: pointer; margin-top: 12px; display: block; }
+.adm-card { background: linear-gradient(165deg,#151e36,#0a0f1d); border: 1px solid rgba(255,255,255,.08); border-radius: 18px; padding: 16px; margin-bottom: 12px; }
+.adm-muted { color: #8fa1c2; font-size: 0.85rem; }
+.send-btn { width: 100%; background: #2ee6a8; color: #06130c; border: none; border-radius: 14px; padding: 14px; font-weight: 800; font-size: 1rem; cursor: pointer; margin-top: 12px; display: block; }
 .status-badge { display: inline-block; font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 999px; margin-bottom: 8px; }
 .status-pend { background: rgba(245,193,24,.15); color: #f5c518; border: 1px solid rgba(245,193,24,.3); }
-.status-sent { background: rgba(0,224,127,.15); color: #00e07f; border: 1px solid rgba(0,224,127,.3); }
+.status-sent { background: rgba(46,230,168,.15); color: #2ee6a8; border: 1px solid rgba(46,230,168,.3); }
 .ctl-t { font-weight: 800; color: #fff; margin-bottom: 10px; font-size: 0.95rem; }
 .ctl-in { width: 100%; box-sizing: border-box; background: #070d1d; border: 1px solid rgba(255,255,255,.14); border-radius: 12px; color: #fff; padding: 11px 12px; font-size: 0.9rem; margin-bottom: 8px; font-family: inherit; }
-.ctl-btn { width: 100%; background: linear-gradient(180deg,#4da3ff,#2f7bff); color: #fff; border: none; border-radius: 999px; padding: 11px; font-weight: 800; cursor: pointer; font-size: 0.9rem; }
-.ctl-btn.gold { background: linear-gradient(180deg,#ffe9a8,#e9bc45); color: #1c1400; }
+.ctl-btn { width: 100%; background: #2ee6a8; color: #06130c; border: none; border-radius: 999px; padding: 11px; font-weight: 800; cursor: pointer; font-size: 0.9rem; }
 .ctl-note { font-size: 0.75rem; color: #8fa1c2; margin-top: 8px; line-height: 1.5; }
+.mrow { display: flex; justify-content: space-between; align-items: center; gap: 10px;
+  text-decoration: none; color: #fff; padding: 11px 14px; border-radius: 12px;
+  background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.06); margin-bottom: 6px; }
+.mrow .mn { font-weight: 700; font-size: 0.92rem; }
+.mrow .mb { font-size: 0.68rem; font-weight: 800; letter-spacing: 1px;
+  border: 1px solid; border-radius: 999px; padding: 3px 10px; white-space: nowrap; }
+details.adm-det { border: 1px solid #1e2a45; border-radius: 14px; padding: 14px 16px; margin-top: 28px; }
+details.adm-det summary { cursor: pointer; font-weight: 800; font-size: 0.95rem; color: #fff; }
+.chat-fab { position: fixed; top: 14px; right: 14px; z-index: 99; width: 54px; height: 54px;
+  border-radius: 50%; background: #0a0f1d; border: 2px solid #2ee6a8;
+  box-shadow: 0 4px 18px rgba(0,0,0,.5); display: flex; align-items: center; justify-content: center; text-decoration: none; }
+.chat-fab img { width: 36px; height: 36px; object-fit: contain; display: block; }
 </style>
 
+<a class="chat-fab" href="https://muse.ai" target="_blank" rel="noopener" title="Abrir chat">
+  <img src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="Chat">
+</a>
+
 <div class="adm-clean">
-  <h1>Admin Dashboard</h1>
-  <div class="sub">{{ fecha_hora or '' }}</div>
+  <p class="kicker">ADMIN</p>
+  <h1>Panel</h1>
+  <div class="adm-total">
+    <span class="tn">{{ conteo_miembros.total }}</span>
+    <span class="tl">TOTAL MIEMBROS</span>
+  </div>
 
-  <div class="adm-stats">
-    <a class="adm-stat" href="/admin/miembros">
-      <div class="n">{{ stats.miembros }}</div>
-      <div class="l">MEMBERS</div>
-    </a>
-    <a class="adm-stat" href="/admin/miembros">
-      <div class="n">{{ stats.platinum }}</div>
-      <div class="l">PLATINUM</div>
-    </a>
-    <div class="adm-stat">
-      <div class="n">{{ stats.jugadas_hoy }}</div>
-      <div class="l">PLAYS TODAY</div>
-    </div>
-    <a class="adm-stat" href="/admin/notificaciones">
-      <div class="n">{{ stats.no_leidas }}</div>
-      <div class="l">ALERTS / REPORTS</div>
-    </a>
+  <div class="adm-grid">
+    <a class="adm-btn" href="/admin/miembros">
+      <span class="ico">👥</span><span class="t">Miembros</span><span class="s">Clientes y Platinum</span></a>
+    <a class="adm-btn" href="/admin/tracker-oficial">
+      <span class="ico">🏆</span><span class="t">Tracker oficial</span><span class="s">Récord y profit</span></a>
+    <a class="adm-btn" href="/admin/notificaciones">
+      <span class="ico">📩</span><span class="t">Notificaciones</span><span class="s">Alertas y reportes en vivo</span></a>
+    <a class="adm-btn" href="/admin/actividad">
+      <span class="ico">👁️</span><span class="t">Actividad</span><span class="s">Quién entra y cuándo</span></a>
+    <a class="adm-btn" href="/admin/subir-ticket">
+      <span class="ico">🎫</span><span class="t">Subir ticket</span><span class="s">Tickets de Novig</span></a>
+    <a class="adm-btn" href="/admin/trakeos">
+      <span class="ico">📊</span><span class="t">Trakeos</span><span class="s">Seguimiento</span></a>
   </div>
 
   <div class="adm-section">
-    <h2>🎛️ Control Manual</h2>
-    <div class="adm-card">
-      <div class="ctl-t">🔔 Push a los miembros</div>
-      <form method="POST" action="{{ url_for('admin_control_push') }}">
-        <input class="ctl-in" name="titulo" maxlength="80" placeholder="Título del push" required>
-        <input class="ctl-in" name="mensaje" maxlength="240" placeholder="Mensaje" required>
-        <button class="ctl-btn" type="submit">Enviar push</button>
-      </form>
-      <p class="ctl-note">Llega a los miembros con las alertas de jugadas activadas. Abre el Dashboard.</p>
-    </div>
-    <div class="adm-card">
-      <div class="ctl-t">📧 Email a los miembros</div>
-      <form method="POST" action="{{ url_for('admin_control_email') }}">
-        <input class="ctl-in" name="asunto" maxlength="120" placeholder="Asunto" required>
-        <textarea class="ctl-in" name="mensaje" rows="4" maxlength="4000" placeholder="Mensaje (en inglés, es para los miembros)" required></textarea>
-        <button class="ctl-btn" type="submit">Enviar email</button>
-      </form>
-      <p class="ctl-note">A todos los miembros reales (sin cuentas de prueba ni admin).</p>
-    </div>
-    <div class="adm-card">
-      <div class="ctl-t">🎁 Dar Platinum a un miembro</div>
-      <form method="POST" action="{{ url_for('admin_control_grant') }}">
-        <input class="ctl-in" name="email" type="email" placeholder="Email del miembro" required>
-        <input class="ctl-in" name="dias" type="number" min="1" max="3650" placeholder="Días (vacío = permanente)">
-        <button class="ctl-btn gold" type="submit">Activar Platinum</button>
-      </form>
-    </div>
-    <div class="adm-card">
-      <div class="ctl-t">⚡ Mes gratis para todos</div>
-      <form method="POST" action="{{ url_for('admin_control_trial_all') }}" onsubmit="return confirm('¿Activar/renovar el mes gratis de Platinum (30 días) para TODOS los miembros sin Stripe?');">
-        <button class="ctl-btn gold" type="submit">Activar mes gratis — 30 días</button>
-      </form>
-      <p class="ctl-note">No toca a los que ya pagan por Stripe ni a los regalos permanentes.</p>
-    </div>
-  </div>
-
-  {% if oficial %}
-  <div class="adm-section">
-    <h2>🏆 Official Tracker</h2>
-    <a href="/admin/tracker-oficial" style="text-decoration:none;">
-      <div class="adm-card" style="display:flex;justify-content:space-between;align-items:center;">
-        <div>
-          <div style="font-size:1.7rem;font-weight:800;color:{{ '#00e07f' if oficial.profit_cls == 'pos' else ('#ff5d5d' if oficial.profit_cls == 'neg' else '#fff') }};">{{ oficial.profit_display }}</div>
-          <div style="font-size:0.78rem;color:#93b3aa;margin-top:2px;">{{ oficial.ganadas }}–{{ oficial.perdidas }} · {{ oficial.win_rate }}% win rate · ROI {{ '+' if oficial.roi > 0 else '' }}{{ oficial.roi }}%</div>
-        </div>
-        <div style="color:#2fe6a7;font-size:0.85rem;font-weight:700;">Full tracker →</div>
-      </div>
-    </a>
-  </div>
-  {% endif %}
-
-  <div class="adm-section">
-    <h2>🎯 Today's Plays</h2>
+    <h2>🎯 Jugadas de hoy</h2>
     {% set force_pre = True %}
     <form method="POST" action="{{ url_for('admin_aprobar_jugadas') }}" id="sendForm">
       {% if selecciones %}
@@ -107,7 +77,7 @@
           <div style="margin-bottom:12px;">
             <span class="status-badge status-pend">⏳ PENDIENTE</span>
             <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
-              <input type="checkbox" name="play_ids" value="{{ pid }}" class="sel-check" style="width:22px;height:22px;accent-color:#00e07f;">
+              <input type="checkbox" name="play_ids" value="{{ pid }}" class="sel-check" style="width:22px;height:22px;accent-color:#2ee6a8;">
               <label style="color:#fff;font-size:0.9rem;font-weight:600;">Seleccionar</label>
             </div>
             {% include "_play_card.html" %}
@@ -151,262 +121,48 @@
   </div>
 
   <div class="adm-section">
-    <h2>🎫 Upload Tickets</h2>
-    <div class="adm-card" style="text-align:center;">
-      <p style="color:#8fa1c2;font-size:0.85rem;margin:0 0 12px;">Sube los tickets originales de Novig</p>
-      <label for="ticketUpload" style="display:inline-block;padding:12px 24px;background:#c9a227;color:#0b0e14;font-weight:800;border-radius:12px;cursor:pointer;">📤 Subir Tickets</label>
-      <input type="file" id="ticketUpload" accept="image/*" multiple style="display:none;">
-      <div id="uploadPreview" style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;justify-content:center;"></div>
-      <button id="sendTicketsBtn" onclick="sendTickets()" style="display:none;width:100%;margin-top:12px;background:#00e07f;color:#06130c;border:none;border-radius:12px;padding:12px;font-weight:800;cursor:pointer;">Enviar →</button>
-      <!-- Panel de procesamiento (2026-10-14: Alex pidió volver al diseño
-           compacto v2 — todo visible en UNA pantalla, sin scroll — con el
-           avatar un poco más grande y SIN recorte (object-fit: contain).
-           Avatar EN VIVO trabajando + checklist de 5 pasos con la rayita de
-           progreso. Los estados vienen del servidor (polling a
-           /admin/ticket-status/<batch>) — nunca se simulan en el cliente. -->
-      <style>
-        @keyframes tpPulse { 0% { box-shadow: 0 0 0 0 rgba(201,162,39,.55); } 70% { box-shadow: 0 0 0 9px rgba(201,162,39,0); } 100% { box-shadow: 0 0 0 0 rgba(201,162,39,0); } }
-        .tp-dot { width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:900;flex:0 0 26px; }
-        .tp-done { background:#00e07f;color:#06130c; }
-        .tp-working { border:2px solid #c9a227;color:#c9a227;animation:tpPulse 1.2s infinite; }
-        .tp-pending { border:2px solid #3a4358;color:#3a4358; }
-        .tp-error { background:#ff5f57;color:#fff; }
-      </style>
-      <div id="ticketPanel" style="display:none;margin-top:14px;text-align:left;background:#0a0f1a;border:1px solid rgba(201,162,39,.45);border-radius:16px;padding:14px;box-shadow:0 0 24px rgba(201,162,39,.15);">
-        <div style="display:flex;gap:12px;align-items:center;">
-          <div style="flex:0 0 104px;width:104px;height:104px;border-radius:16px;overflow:hidden;border:1px solid rgba(201,162,39,.6);box-shadow:0 0 16px rgba(201,162,39,.35);background:radial-gradient(circle at 50% 38%, #1a2a47 0%, #0a1120 72%);">
-            <video src="/static/img/sharp-working.mp4" autoplay loop muted playsinline style="width:100%;height:100%;object-fit:contain;display:block;"></video>
-          </div>
-          <div style="flex:1;min-width:0;">
-            <div id="tpTitle" style="font-weight:800;font-size:1.08rem;color:#fff;">Processing your ticket</div>
-            <div style="color:#8fa1c2;font-size:0.8rem;">The Sharp is on it</div>
-            <div id="tpChip" style="display:none;margin-top:6px;font-size:0.78rem;color:#0b0e14;background:linear-gradient(90deg,#c9a227,#e8c85a);border-radius:999px;padding:3px 10px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></div>
-          </div>
-          <div style="flex:0 0 auto;color:#ff5f57;font-size:0.72rem;font-weight:800;">● LIVE</div>
-        </div>
-        <div id="tpSteps" style="margin-top:12px;"></div>
-        <div style="margin-top:4px;background:#131a29;border-radius:999px;height:8px;overflow:hidden;">
-          <div id="tpBar" style="height:100%;width:0%;background:linear-gradient(90deg,#c9a227,#00e07f);border-radius:999px;transition:width .5s;"></div>
-        </div>
-        <div style="display:flex;justify-content:space-between;gap:8px;margin-top:6px;color:#8fa1c2;font-size:0.75rem;">
-          <span id="tpStepCount">Step 0 of 5</span><span>You can close this — processing continues.</span>
-        </div>
-      </div>
-    </div>
+    <h2>👥 Todos los miembros</h2>
+    <p class="adm-muted" style="margin:0 0 12px;">{{ conteo_miembros.total }} miembros · {{ conteo_miembros.plat }} Platinum · {{ conteo_miembros.trial }} en prueba · {{ conteo_miembros.free }} gratis.</p>
+    {% for m in miembros_lista %}
+    <a class="mrow" href="{{ url_for('admin_miembro_detalle', user_id=m.id) }}">
+      <span class="mn">{{ m.nombre or '?' }}</span>
+      {% if m.trial %}<span class="mb" style="color:#f5c518;border-color:#f5c518;">PRUEBA</span>
+      {% elif m.platinum %}<span class="mb" style="color:#2ee6a8;border-color:#2ee6a8;">★ PLATINUM</span>
+      {% else %}<span class="mb" style="color:#8fa1c2;border-color:#8fa1c2;">FREE</span>{% endif %}
+    </a>
+    {% else %}
+    <p class="adm-muted">No hay miembros todavía.</p>
+    {% endfor %}
   </div>
 
-  <div class="adm-section">
-    <h2>🔗 Accesos</h2>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-      <a href="/admin/miembros" class="adm-card" style="text-decoration:none;color:#fff;text-align:center;">👥 Members</a>
-      <a href="/admin/trakeos" class="adm-card" style="text-decoration:none;color:#fff;text-align:center;">📊 Trakeos</a>
-      <a href="{{ url_for('home', splash='0') }}" class="adm-card" style="text-decoration:none;color:#fff;text-align:center;">🏠 Home</a>
-      <a href="{{ url_for('ev_board') }}" class="adm-card" style="text-decoration:none;color:#fff;text-align:center;">⚡ EV Board</a>
-      <a href="/admin/tracker-oficial" class="adm-card" style="text-decoration:none;color:#fff;text-align:center;">🏆 Tracker oficial</a>
-      <a href="/admin/notificaciones" class="adm-card" style="text-decoration:none;color:#fff;text-align:center;">📩 Reportes</a>
-      <a href="/admin/actividad" class="adm-card" style="text-decoration:none;color:#fff;text-align:center;">👁️ Actividad</a>
+  <details class="adm-det">
+    <summary>⚙️ Controles manuales</summary>
+    <div style="margin-top:14px;">
+      <div class="ctl-t">🔔 Push a los miembros</div>
+      <form method="POST" action="{{ url_for('admin_control_push') }}">
+        <input class="ctl-in" name="titulo" maxlength="80" placeholder="Título del push" required>
+        <input class="ctl-in" name="mensaje" maxlength="240" placeholder="Mensaje" required>
+        <button class="ctl-btn" type="submit">Enviar push</button>
+      </form>
+      <p class="ctl-note">Llega a los miembros con las alertas de jugadas activadas. Abre el Dashboard.</p>
     </div>
-  </div>
+    <div style="margin-top:16px;">
+      <div class="ctl-t">📧 Email a los miembros</div>
+      <form method="POST" action="{{ url_for('admin_control_email') }}">
+        <input class="ctl-in" name="asunto" maxlength="120" placeholder="Asunto" required>
+        <textarea class="ctl-in" name="mensaje" rows="4" maxlength="4000" placeholder="Mensaje (en inglés, es para los miembros)" required></textarea>
+        <button class="ctl-btn" type="submit">Enviar email</button>
+      </form>
+      <p class="ctl-note">A todos los miembros reales (sin cuentas de prueba ni admin).</p>
+    </div>
+    <div style="margin-top:16px;">
+      <div class="ctl-t">🎁 Dar Platinum a un miembro</div>
+      <form method="POST" action="{{ url_for('admin_control_grant') }}">
+        <input class="ctl-in" name="email" type="email" placeholder="Email del miembro" required>
+        <input class="ctl-in" name="dias" type="number" min="1" max="3650" placeholder="Días (vacío = permanente)">
+        <button class="ctl-btn" type="submit">Activar Platinum</button>
+      </form>
+    </div>
+  </details>
 </div>
-
-<script>
-var ticketFiles = [];
-document.getElementById('ticketUpload').addEventListener('change', function(e) {
-  ticketFiles = Array.from(e.target.files);
-  var prev = document.getElementById('uploadPreview');
-  prev.innerHTML = '';
-  ticketFiles.forEach(function(f) {
-    var img = document.createElement('img');
-    img.src = URL.createObjectURL(f);
-    img.style.cssText = 'width:70px;height:70px;object-fit:cover;border-radius:10px;';
-    prev.appendChild(img);
-  });
-  document.getElementById('sendTicketsBtn').style.display = ticketFiles.length ? 'block' : 'none';
-});
-var uploadingTickets = false;
-// ── Panel de procesamiento: pasos y render desde el estado del servidor ──
-var TP_STEPS = [
-  ['received', 'Ticket received'],
-  ['verifying', 'Verifying price & stake'],
-  ['matched', 'Ticket matched to the play'],
-  ['dashboard', 'Dashboard updated'],
-  ['alerts', 'Telegram & alerts sent']
-];
-var TP_STATE_TXT = { done: 'Done', working: 'Working…', pending: 'Pending', error: 'Error' };
-var TP_STATE_CLR = { done: '#00e07f', working: '#c9a227', pending: '#5b6579', error: '#ff5f57' };
-var tpBatchId = null, tpPollTimer = null, tpPollCount = 0;
-function tpEsc(s) { var d = document.createElement('div'); d.textContent = s == null ? '' : String(s); return d.innerHTML; }
-function tpRender(batch) {
-  var panel = document.getElementById('ticketPanel');
-  if (!panel || !batch) return;
-  panel.style.display = 'block';
-  var steps = batch.steps || {};
-  var chip = document.getElementById('tpChip');
-  if (batch.plays && batch.plays.length) {
-    var p = batch.plays[0];
-    chip.textContent = p.pick + ' · ' + p.cuota_texto + ' · $' + p.stake_monto + (batch.plays.length > 1 ? ' +' + (batch.plays.length - 1) : '');
-    chip.style.display = 'block';
-  }
-  var done = 0, html = '';
-  TP_STEPS.forEach(function(s, idx) {
-    var st = steps[s[0]] || { state: 'pending' };
-    if (st.state === 'done') done++;
-    var dot = st.state === 'done' ? '<div class="tp-dot tp-done">✓</div>'
-      : st.state === 'working' ? '<div class="tp-dot tp-working">●</div>'
-      : st.state === 'error' ? '<div class="tp-dot tp-error">✗</div>'
-      : '<div class="tp-dot tp-pending"></div>';
-    var lineClr = st.state === 'done' ? '#00e07f' : st.state === 'working' ? '#c9a227' : '#2a3247';
-    var line = idx < TP_STEPS.length - 1 ? '<div style="width:2px;flex:1;min-height:12px;background:' + lineClr + ';"></div>' : '';
-    html += '<div style="display:flex;gap:10px;">'
-      + '<div style="display:flex;flex-direction:column;align-items:center;">' + dot + line + '</div>'
-      + '<div style="flex:1;min-width:0;padding-bottom:' + (idx < TP_STEPS.length - 1 ? '12' : '2') + 'px;">'
-      + '<div style="display:flex;justify-content:space-between;gap:8px;"><span style="font-weight:700;color:' + (st.state === 'pending' ? '#8fa1c2' : '#fff') + ';">' + s[1] + '</span>'
-      + '<span style="font-size:0.78rem;font-weight:800;color:' + (TP_STATE_CLR[st.state] || '#5b6579') + ';">' + (TP_STATE_TXT[st.state] || 'Pending') + '</span></div>'
-      + (st.detail ? '<div style="color:#8fa1c2;font-size:0.78rem;margin-top:2px;">' + tpEsc(st.detail) + '</div>' : '')
-      + '</div></div>';
-  });
-  document.getElementById('tpSteps').innerHTML = html;
-  document.getElementById('tpBar').style.width = (done / TP_STEPS.length * 100) + '%';
-  document.getElementById('tpStepCount').textContent = 'Step ' + done + ' of ' + TP_STEPS.length;
-  document.getElementById('tpTitle').textContent = done === TP_STEPS.length ? '✓ Ticket processed' : 'Processing your ticket';
-  if (done === TP_STEPS.length) tpStopPoll();
-}
-function tpStopPoll() { if (tpPollTimer) { clearInterval(tpPollTimer); tpPollTimer = null; } }
-var tpMiss = 0;
-function tpPoll() {
-  if (!tpBatchId) return;
-  tpPollCount++;
-  if (tpPollCount > 200) { tpStopPoll(); return; }
-  fetch('/admin/ticket-status/' + encodeURIComponent(tpBatchId))
-    .then(function(r) { return r.json(); })
-    .then(function(b) {
-      if (b && b.steps) { tpMiss = 0; tpRender(b); return; }
-      // Lote no encontrado (el servidor se reinicio): buscar el ultimo lote;
-      // si tampoco hay, ocultar el panel en vez de girar para siempre.
-      if (++tpMiss >= 3) {
-        tpStopPoll();
-        fetch('/admin/ticket-status/latest')
-          .then(function(r) { if (!r.ok) throw 0; return r.json(); })
-          .then(function(l) {
-            if (l && l.steps && l.id) { tpBatchId = l.id; tpRender(l); tpStartPoll(); }
-            else { var p = document.getElementById('ticketPanel'); if (p) p.style.display = 'none'; }
-          })
-          .catch(function() { var p = document.getElementById('ticketPanel'); if (p) p.style.display = 'none'; });
-      }
-    })
-    .catch(function() { /* reintenta en el siguiente ciclo */ });
-}
-function tpStartPoll() { tpStopPoll(); tpPollCount = 0; tpMiss = 0; tpPoll(); tpPollTimer = setInterval(tpPoll, 3000); }
-// Convierte la foto a JPEG (máx 1600px) antes de subir: las fotos de iPhone
-// pueden venir en HEIC y pesar 3-6 MB. Si la conversión falla, va el original.
-function fotoParaSubir(f) {
-  return new Promise(function(resolve) {
-    if (!/^image\//.test(f.type) || (f.type === 'image/jpeg' && f.size < 1500000)) { resolve(f); return; }
-    var url = URL.createObjectURL(f);
-    var img = new Image();
-    img.onload = function() {
-      try {
-        var esc = Math.min(1, 1600 / Math.max(img.width, img.height));
-        var c = document.createElement('canvas');
-        c.width = Math.round(img.width * esc);
-        c.height = Math.round(img.height * esc);
-        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
-        URL.revokeObjectURL(url);
-        c.toBlob(function(b) { resolve(b || f); }, 'image/jpeg', 0.9);
-      } catch (e) { resolve(f); }
-    };
-    img.onerror = function() { URL.revokeObjectURL(url); resolve(f); };
-    img.src = url;
-  });
-}
-// Subida REAL a /admin/chat-mensaje (el stub anterior llamaba a una función
-// inexistente — sendTicketsOriginal — y solo mostraba un alert: nunca salía
-// ninguna petición y el ticket jamás se guardaba. Bug del rediseño 2026-10-11,
-// corregido 2026-10-14). Al enviar, el panel muestra el paso 1 en curso (la
-// subida está ocurriendo de verdad) y después sigue el estado del servidor.
-async function sendTickets() {
-  if (uploadingTickets || !ticketFiles.length) return;
-  uploadingTickets = true;
-  var btn = document.getElementById('sendTicketsBtn');
-  btn.disabled = true;
-  btn.textContent = 'Subiendo…';
-  tpStopPoll();
-  tpRender({ plays: [], steps: { received: { state: 'working', detail: 'Uploading ' + ticketFiles.length + ' file(s)…' } } });
-  // Vigilante: si la respuesta de la subida se pierde o tarda demasiado,
-  // adoptar el lote desde el servidor en cuanto aparezca — nunca quedarse
-  // pegado en "Uploading…" (paso el 2026-10-15 con el ticket de Tampa).
-  var tpWatchdog = setInterval(function() {
-    if (tpBatchId) { clearInterval(tpWatchdog); return; }
-    fetch('/admin/ticket-status/latest')
-      .then(function(r) { if (!r.ok) throw 0; return r.json(); })
-      .then(function(l) {
-        if (l && l.steps && l.id && l.epoch && (Date.now() / 1000 - l.epoch) < 600) {
-          clearInterval(tpWatchdog);
-          tpBatchId = l.id;
-          tpRender(l);
-          tpStartPoll();
-        }
-      })
-      .catch(function() { });
-  }, 4000);
-  setTimeout(function() { clearInterval(tpWatchdog); }, 180000);
-  try {
-    var fd = new FormData();
-    fd.append('mensaje', '');
-    for (var i = 0; i < ticketFiles.length; i++) {
-      var f = await fotoParaSubir(ticketFiles[i]);
-      fd.append('tickets', f, 'ticket-' + Date.now() + '-' + i + '.jpg');
-    }
-    var ctrl = new AbortController();
-    var timer = setTimeout(function() { ctrl.abort(); }, 120000);
-    var r = await fetch('/admin/chat-mensaje', { method: 'POST', body: fd, signal: ctrl.signal });
-    clearTimeout(timer);
-    var dj = null;
-    try { dj = await r.json(); } catch (e) { /* respuesta no-JSON */ }
-    if (!r.ok || !dj || !dj.ok) {
-      throw new Error((dj && dj.error) ? dj.error : ('El servidor respondió ' + r.status + '. ¿Sesión expirada? Recarga la página.'));
-    }
-    ticketFiles = [];
-    document.getElementById('uploadPreview').innerHTML = '';
-    document.getElementById('ticketUpload').value = '';
-    btn.style.display = 'none';
-    if (dj.batch_id) {
-      tpBatchId = dj.batch_id;
-      tpStartPoll();
-    } else {
-      // Sin lote (deploy anterior): se refleja lo que devolvió el endpoint.
-      tpRender({ plays: [], steps: {
-        received: { state: 'done', detail: dj.tickets + ' archivo(s) en el servidor' },
-        matched: { state: dj.actualizadas > 0 ? 'done' : 'error', detail: '' }
-      } });
-    }
-  } catch (err) {
-    tpRender({ plays: [], steps: { received: { state: 'error',
-      detail: err.name === 'AbortError' ? 'La subida tardó demasiado — revisa tu conexión y reintenta' : err.message } } });
-    btn.disabled = false;
-    btn.textContent = 'Reintentar →';
-  } finally {
-    uploadingTickets = false;
-  }
-}
-// Al cargar el Admin: si hay un lote reciente sin terminar, el panel retoma
-// su estado real (no se pierde el hilo si Alex cierra y vuelve).
-(function() {
-  fetch('/admin/ticket-status/latest')
-    .then(function(r) { if (!r.ok) throw 0; return r.json(); })
-    .then(function(b) {
-      if (!b || !b.steps || !b.id) return;
-      var done = TP_STEPS.filter(function(s) { return (b.steps[s[0]] || {}).state === 'done'; }).length;
-      var ageMin = b.epoch ? (Date.now() / 1000 - b.epoch) / 60 : 9999;
-      if (done < TP_STEPS.length && ageMin < 120) {
-        tpBatchId = b.id;
-        tpRender(b);
-        tpStartPoll();
-      }
-    })
-    .catch(function() { /* sin lotes: el panel queda oculto */ });
-})();
-</script>
 {% endblock %}
-
-<!-- deploy ping 2026-10-14 v3 -->
