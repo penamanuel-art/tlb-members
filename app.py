@@ -9251,13 +9251,39 @@ def admin_dashboard():
     except Exception:
         jugadas_hoy = 0
         plays = []
+    # Lista de todos los miembros para el home rediseñado (2026-10-25,
+    # orden de Alex): verificados, sin cuentas propias ni de sistema,
+    # ordenados por nombre. Incluye pruebas (con su etiqueta PRUEBA).
+    try:
+        _mm = db.execute(
+            "SELECT id, nombre, platinum_unlocked, platinum_trial_ends "
+            "FROM users WHERE email_verified = 1 "
+            "AND LOWER(email) NOT IN ('thesharpteam8@gmail.com', "
+            "'system@value.local', 'pena.manuel@myyahoo.com', "
+            "'alexpena1509@gmail.com') "
+            "ORDER BY nombre ASC").fetchall()
+        miembros_lista = [{
+            "id": r["id"], "nombre": r["nombre"],
+            "platinum": bool(r["platinum_unlocked"]),
+            "trial": bool(r["platinum_trial_ends"] or ""),
+        } for r in _mm]
+    except Exception:
+        miembros_lista = []
+    conteo_miembros = {
+        "total": len(miembros_lista),
+        "plat": sum(1 for m in miembros_lista if m["platinum"] and not m["trial"]),
+        "trial": sum(1 for m in miembros_lista if m["trial"]),
+        "free": sum(1 for m in miembros_lista if not m["platinum"] and not m["trial"]),
+    }
     return render_template("admin_dashboard.html",
                            stats={"miembros": miembros, "platinum": platinum,
                                   "jugadas_hoy": jugadas_hoy, "no_leidas": no_leidas},
                            selecciones=selecciones,
                            plays_hoy=plays,
                            oficial=program_stats(),
-                           tracked_ids=[])
+                           tracked_ids=[],
+                           miembros_lista=miembros_lista,
+                           conteo_miembros=conteo_miembros)
 
 
 # ============================================================
