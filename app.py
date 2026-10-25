@@ -9748,15 +9748,52 @@ def admin_aprobar_jugadas():
         except Exception:
             pass
     nuevas = [str(p.get("id")) for p in elegidas if str(p.get("id")) not in ya_ids]
+    # Gate en AVISO (Fase A): evalua y registra el veredicto estricto;
+    # el INSERT procede igual que hoy aunque el estricto bloquee.
+    veredictos = {}
+    _gate_resumen = "AVISO"
+    _gate_motivos = ""
+    try:
+        import gate_publicacion as _gate
+        _ctx = {"modelos_aprobados": {}, "gates": {"MLB": 4.0, "NHL": 4.0, "NBA": 3.5, "NFL": 3.5, "NCAAF": 4.5},
+                "publicadas": [], "archivo": [], "excepciones": [],
+                "max_antiguedad_datos_dias": 7, "max_antiguedad_cuota_min": 60,
+                "frescura_aprobada": False, "fecha": _hoy}
+        _ahora = _dtB.now(timezone.utc)
+        _det = {}
+        for _p in elegidas:
+            _r = _gate.evaluar_candidata(_p, _ctx, _ahora)
+            _det[str(_p.get("id"))] = {"decision": _r["decision"], "motivos": _r["motivos"], "no_evaluado": _r["no_evaluado"]}
+            veredictos[str(_p.get("id"))] = _r["decision"]
+        _lote = [veredictos.get(i) for i in nuevas]
+        if "BLOQUEADA" in _lote:
+            _gate_resumen = "BLOQUEADA"
+        elif "REVISION_MANUAL" in _lote:
+            _gate_resumen = "REVISION_MANUAL"
+        elif _lote:
+            _gate_resumen = "APROBADA"
+        _gate_motivos = _jsonB.dumps(_det)
+    except Exception:
+        _gate_resumen = "NO_EVALUADO"
+        _gate_motivos = "error evaluacion"
+    _gate_evaluado = _dtB.now(timezone.utc).isoformat()
     if nuevas:
-        db.execute(
-            "INSERT INTO publish_requests (fecha, play_ids, status, created_at)"
-            " VALUES (?, ?, 'pending', ?)",
-            (_hoy, _jsonB.dumps(nuevas), _dtB.now(timezone.utc).isoformat()))
+        try:
+            db.execute(
+                "INSERT INTO publish_requests (fecha, play_ids, status, created_at, gate_veredicto, gate_motivos, gate_evaluado_en)"
+                " VALUES (?, ?, 'pending', ?, ?, ?, ?)",
+                (_hoy, _jsonB.dumps(nuevas), _dtB.now(timezone.utc).isoformat(), _gate_resumen, _gate_motivos, _gate_evaluado))
+        except Exception:
+            db.rollback()
+            db.execute(
+                "INSERT INTO publish_requests (fecha, play_ids, status, created_at)"
+                " VALUES (?, ?, 'pending', ?)",
+                (_hoy, _jsonB.dumps(nuevas), _dtB.now(timezone.utc).isoformat()))
         db.commit()
         _push_aviso_disparo_alex(len(nuevas))
     return render_template("admin_aprobar_confirm.html",
                            elegidas=elegidas,
+                           veredictos=veredictos,
                            n_clientes=0,
                            modo_prueba=False,
                            hoy=_hoy,
