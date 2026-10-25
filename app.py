@@ -5534,6 +5534,13 @@ def cuenta_cancelar():
             db.execute("UPDATE users SET cancel_requested_at = ? WHERE id = ?",
                        (now_iso(), session["user_id"]))
             db.commit()
+            # Gerenciales (2026-10-25, pedido de Alex): avisar que pidió cancelar.
+            try:
+                _nm = user["nombre"] or user["email"]
+                _em = user["email"]
+            except Exception:
+                _nm, _em = "?", ""
+            log_notificacion(db, "cancelacion", f"Miembro pidió cancelar: {_nm}", _em or "")
             flash("Your membership has been cancelled. No further charges.", "ok")
         return redirect(url_for("cuenta"))
     if user and user["cancel_requested_at"]:
@@ -9275,6 +9282,16 @@ def admin_dashboard():
         "trial": sum(1 for m in miembros_lista if m["trial"]),
         "free": sum(1 for m in miembros_lista if not m["platinum"] and not m["trial"]),
     }
+    # Gerenciales (2026-10-25, pedido de Alex): últimas notificaciones
+    # de la empresa para el home del admin, separadas de las de miembros.
+    try:
+        _not = db.execute(
+            "SELECT id, tipo, titulo, detalle, created_at, leida FROM notificaciones "
+            "ORDER BY created_at DESC LIMIT 10").fetchall()
+        gerenciales = [dict(r) for r in _not]
+        sin_leer = sum(1 for n in gerenciales if not n.get("leida"))
+    except Exception:
+        gerenciales, sin_leer = [], 0
     return render_template("admin_dashboard.html",
                            stats={"miembros": miembros, "platinum": platinum,
                                   "jugadas_hoy": jugadas_hoy, "no_leidas": no_leidas},
@@ -9283,7 +9300,9 @@ def admin_dashboard():
                            oficial=program_stats(),
                            tracked_ids=[],
                            miembros_lista=miembros_lista,
-                           conteo_miembros=conteo_miembros)
+                           conteo_miembros=conteo_miembros,
+                           gerenciales=gerenciales,
+                           sin_leer=sin_leer)
 
 
 # ============================================================
@@ -12564,10 +12583,10 @@ def stripe_webhook():
             cancel_at_end = bool(data.get("cancel_at_period_end"))
             row = None
             if sub_id:
-                row = db.execute("SELECT id, email FROM users WHERE stripe_subscription_id = ?",
+                row = db.execute("SELECT id, email, nombre FROM users WHERE stripe_subscription_id = ?",
                                  (sub_id,)).fetchone()
             if row is None and customer_id:
-                row = db.execute("SELECT id, email FROM users WHERE stripe_customer_id = ?",
+                row = db.execute("SELECT id, email, nombre FROM users WHERE stripe_customer_id = ?",
                                  (customer_id,)).fetchone()
             if row:
                 email = row["email"]
@@ -12583,6 +12602,9 @@ def stripe_webhook():
                         " WHERE id = ? AND telegram_user_id IS NOT NULL", (row["id"],))
                     db.commit()
                     _auditar(email, f"Elite desactivada ({etype}, status={status})")
+                    # Gerenciales (2026-10-25, pedido de Alex): avisar cancelación.
+                    _nm = (row["nombre"] or email) if "nombre" in row.keys() else email
+                    log_notificacion(db, "cancelacion", f"Cliente canceló: {_nm}", email)
                 else:
                     db.execute(
                         "UPDATE users SET stripe_subscription_id = ? WHERE id = ?",
@@ -12590,6 +12612,9 @@ def stripe_webhook():
                     db.commit()
                     nota = "cancelación al fin del período" if cancel_at_end else f"status={status}"
                     _auditar(email, f"suscripción actualizada: {nota}")
+                    if cancel_at_end:
+                        _nm = (row["nombre"] or email) if "nombre" in row.keys() else email
+                        log_notificacion(db, "cancelacion", f"Cliente programó cancelar: {_nm}", email)
             else:
                 _auditar("", f"{etype} sin miembro vinculado (sub {sub_id[:20] if sub_id else 'n/a'})")
         elif etype == "invoice.payment_failed":
