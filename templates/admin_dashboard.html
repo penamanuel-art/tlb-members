@@ -146,8 +146,11 @@ details.adm-det summary { cursor: pointer; font-weight: 800; font-size: 0.95rem;
       <span class="mb" style="color:#8fa1c2;border-color:#8fa1c2;">no disponible</span>
       {% endif %}
     </div>
+    {% if ch.miembros is defined %}
+    <p class="adm-muted" style="margin:-2px 0 10px 10px;">{% if ch.miembros %}👤 {{ ch.miembros | join(', ') }}{% else %}Ningún miembro vinculado detectado en este canal todavía.{% endif %}</p>
+    {% endif %}
     {% endfor %}
-    <p class="adm-muted">Solo clientes — sin el bot ni administradores. Actualizado {{ (telegram_counts.updated_at or '')[:16].replace('T', ' ') }}.</p>
+    <p class="adm-muted">Solo clientes — sin el bot ni administradores. Solo se muestran los miembros que vincularon su Telegram con su cuenta; Telegram no permite listar a los demás. Actualizado {{ (telegram_counts.updated_at or '')[:16].replace('T', ' ') }}.</p>
     {% else %}
     <p class="adm-muted">Conteo de Telegram no disponible por ahora.</p>
     {% endif %}
