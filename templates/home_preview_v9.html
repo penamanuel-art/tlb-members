@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Sharp Team — Home preview (admin only)</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;background:#050a16;color:#eaf2ff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  .phone{max-width:520px;margin:0 auto;padding:14px 14px 90px}
+  .sample{background:#3a2b00;border:1px solid #c9a227;color:#ffe9a8;text-align:center;font-size:12px;font-weight:700;letter-spacing:.08em;padding:8px;border-radius:10px;margin-bottom:14px}
+  a{color:inherit;text-decoration:none}
+  .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+  .brand{display:flex;align-items:center;gap:10px}
+  .fin{width:46px;height:46px;border-radius:12px;background:linear-gradient(135deg,#0e2a4a,#0a7a5c);display:flex;align-items:center;justify-content:center;font-size:26px;color:#2ee6a8;box-shadow:0 0 18px rgba(46,230,168,.45)}
+  .wordmark{line-height:1}
+  .wordmark b{display:block;font-size:11px;letter-spacing:.22em;color:#9db8dd}
+  .wordmark strong{display:block;font-size:22px;letter-spacing:.02em;font-style:italic}
+  .wordmark i{display:block;height:3px;background:linear-gradient(90deg,#2ee6a8,#1e6fff);margin-top:3px}
+  .topactions{display:flex;align-items:center;gap:8px}
+  .pill{display:flex;align-items:center;gap:7px;border:1px solid #24406b;background:#0b1526;border-radius:999px;padding:8px 13px;font-size:14px;font-weight:600}
+  .pill .crown{color:#f5c542}
+  .avatar{width:42px;height:42px;border-radius:50%;border:2px solid #2ee6a8;background:#0e2a4a;display:flex;align-items:center;justify-content:center;font-size:20px;color:#cfe6ff;font-weight:800}
+  .pillrow{display:flex;gap:9px;margin-bottom:12px}
+  .balance{flex:1;display:flex;align-items:center;justify-content:space-between;border:1px solid #2ee6a8;border-radius:999px;padding:11px 15px;background:#08131f;box-shadow:0 0 16px rgba(46,230,168,.35);font-weight:700;font-size:15px}
+  .balance b{color:#2ee6a8;font-size:18px}
+  .menubtn{width:46px;border:1px solid #24406b;background:#0b1526;border-radius:14px;color:#cfe6ff;font-size:20px}
+  .watch{display:inline-flex;align-items:center;gap:9px;border:1px solid #24406b;background:#0b1526;border-radius:999px;padding:11px 16px;color:#2ee6a8;font-weight:800;font-size:15px;margin-bottom:14px}
+  .hero{position:relative;overflow:hidden;border:1px solid #1d3a63;border-radius:20px;background:radial-gradient(120% 140% at 20% 0%,#123a5e 0%,#081426 55%,#050a16 100%);padding:20px 18px 0;box-shadow:0 0 26px rgba(46,230,168,.18)}
+  .hero .photo{position:absolute;right:-8px;top:0;bottom:0;width:46%;background:radial-gradient(80% 90% at 70% 30%,rgba(46,230,168,.55),rgba(30,111,255,.25) 55%,transparent 75%),linear-gradient(160deg,#0e3a34,#071a2e);opacity:.95}
+  .hero .inner{position:relative}
+  .dateline{font-size:12px;letter-spacing:.28em;color:#9db8dd;font-weight:700;margin-bottom:10px;text-transform:uppercase}
+  .greet{font-size:42px;line-height:1.02;font-weight:900;margin:0 0 8px;max-width:62%}
+  .greet span{color:#2ee6a8}
+  .tagline{color:#c3d4ee;font-size:15px;margin:0 0 18px;max-width:64%}
+  .status{position:relative;display:flex;gap:13px;align-items:center;background:rgba(4,16,30,.92);border:1px solid #1d5c47;border-left:6px solid #2ee6a8;border-radius:16px;padding:14px 15px;margin:0 0 16px}
+  .check{width:48px;height:48px;min-width:48px;border-radius:50%;background:#2ee6a8;color:#04140d;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;box-shadow:0 0 18px rgba(46,230,168,.6)}
+  .status b{display:block;font-size:17px}
+  .status span{color:#9db8dd;font-size:14px;line-height:1.45}
+  .status .arr{margin-left:auto;color:#9db8dd;font-size:22px}
+  .tiles{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:16px 0}
+  .tile{background:#0b1526;border:1px solid #1d3a63;border-radius:18px;padding:14px 12px}
+  .tile .ic{width:42px;height:42px;border-radius:12px;background:#0a2f22;border:1px solid #1d5c47;display:flex;align-items:center;justify-content:center;color:#2ee6a8;font-size:22px;margin-bottom:10px}
+  .tile b{display:block;font-size:16px;margin-bottom:4px}
+  .tile p{margin:0;color:#9db8dd;font-size:12.5px;line-height:1.45}
+  .tile .arr{color:#9db8dd;float:right;font-size:18px}
+  .risk{display:flex;gap:14px;border:1px solid #2ee6a8;border-radius:18px;padding:16px;background:linear-gradient(180deg,#0a2a20,#08131f);box-shadow:0 0 18px rgba(46,230,168,.25);margin-bottom:20px}
+  .risk .shield{font-size:38px;color:#2ee6a8}
+  .risk .left{flex:1}
+  .risk .label{font-size:12px;letter-spacing:.22em;color:#2ee6a8;font-weight:800}
+  .risk b{display:block;font-size:20px;margin:4px 0}
+  .risk span{color:#c3d4ee;font-size:13.5px}
+  .risk .right{border-left:1px solid #24406b;padding-left:14px;color:#2ee6a8;font-weight:700;font-size:14px;line-height:1.4;max-width:130px}
+  .sechead{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+  .sechead h2{margin:0;font-size:26px}
+  .lvpill{border:1px solid #2ee6a8;color:#2ee6a8;border-radius:999px;padding:6px 12px;font-size:13px;font-weight:800}
+  .viewall{margin-left:auto;color:#c3d4ee;font-size:14px}
+  .playcard{border:1px solid #1d3a63;border-radius:18px;background:#0b1526;padding:15px;margin-bottom:14px;box-shadow:0 0 16px rgba(46,230,168,.12)}
+  .playtop{display:flex;gap:12px;align-items:flex-start}
+  .logo{width:56px;height:56px;min-width:56px;border-radius:50%;border:2px solid #2ee6a8;background:radial-gradient(circle at 35% 30%,#1e5c8a,#0a2237);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:17px;color:#fff;overflow:hidden}
+  .logo img{width:100%;height:100%;object-fit:contain}
+  .playtop .meta{flex:1}
+  .chip{color:#2ee6a8;font-size:12px;font-weight:900;letter-spacing:.12em}
+  .playtop b{display:block;font-size:18px;margin:3px 0}
+  .playtop span{color:#9db8dd;font-size:14px}
+  .league{border:1px solid #24406b;border-radius:999px;padding:5px 11px;font-size:12px;color:#c3d4ee;white-space:nowrap}
+  .playfoot{display:flex;gap:10px;border-top:1px solid #1d3a63;margin-top:14px;padding-top:12px}
+  .stat{flex:1}
+  .stat small{display:block;color:#5f8fbf;font-size:11px;letter-spacing:.12em;font-weight:800}
+  .stat b{color:#2ee6a8;font-size:15px}
+  .playacts{display:flex;gap:8px;margin-top:12px}
+  .playacts a{flex:1;text-align:center;font-weight:800;font-size:13px;border-radius:12px;padding:11px 0}
+  .act-novig{background:#2ee6a8;color:#04140d}
+  .act-ticket{border:1.5px solid #2ee6a8;color:#2ee6a8}
+  .section{border:1px solid #1d3a63;border-radius:18px;background:#0b1526;padding:16px;margin-bottom:14px}
+  .section h3{margin:0 0 10px;font-size:19px}
+  .row{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-top:1px solid #16263f;font-size:15px}
+  .row:first-of-type{border-top:0}
+  .on{color:#2ee6a8;font-weight:800}
+  .join{border:1px solid #2ee6a8;color:#2ee6a8;border-radius:999px;padding:6px 13px;font-size:13px;font-weight:800}
+  .unlock{background:linear-gradient(180deg,#0a3a2a,#08131f);border:1px solid #2ee6a8;border-radius:18px;padding:20px;text-align:center;margin-bottom:14px;box-shadow:0 0 20px rgba(46,230,168,.3)}
+  .unlock b{display:block;font-size:21px;margin-bottom:6px}
+  .unlock p{margin:0 0 14px;color:#c3d4ee;font-size:14px;line-height:1.5}
+  .unlock .cta{display:inline-block;background:#2ee6a8;color:#04140d;font-weight:900;border-radius:999px;padding:12px 26px;font-size:15px}
+  .faq p{color:#9db8dd;font-size:14px;line-height:1.55;margin:6px 0 14px}
+  .footer{text-align:center;color:#7d95b8;font-size:12.5px;line-height:1.6;padding:6px 10px 0}
+  .nav{position:fixed;left:0;right:0;bottom:0;background:#070e1c;border-top:1px solid #1d3a63;display:flex;justify-content:space-around;padding:10px 6px 14px;max-width:520px;margin:0 auto}
+  .nav div{text-align:center;font-size:11px;color:#7d95b8}
+  .nav .active{color:#2ee6a8;font-weight:800}
+  .nav .ic2{font-size:22px;display:block;margin-bottom:2px}
+  .vid video{width:100%;border-radius:16px;background:#000}
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="sample">ADMIN PREVIEW — only admins can see this page. Members still see the current home.</div>
+
+  <div class="topbar">
+    <div class="brand">
+      <div class="fin">🦈</div>
+      <div class="wordmark"><b>THE</b><strong>SHARP TEAM</strong><i></i></div>
+    </div>
+    <div class="topactions">
+      <a class="pill" href="{{ url_for('desbloquear_platinum') }}"><span class="crown">♛</span> Platinum <span>›</span></a>
+      <a class="avatar" href="{{ url_for('cuenta') }}">{{ inicial }}</a>
+    </div>
+  </div>
+
+  <div class="pillrow">
+    <a class="balance" href="{{ url_for('cuenta') }}"><span>▣ View my balance</span><span><b>{% if balance_total_txt %}{{ balance_total_txt }}{% elif bankroll %}${{ '%.2f'|format(bankroll) }}{% else %}—{% endif %}</b> ›</span></a>
+    <a class="pill" href="{{ url_for('official_tracker') }}">▂ Full record ›</a>
+    <a class="menubtn" href="{{ url_for('tools') }}">☰</a>
+  </div>
+
+  <a class="watch" href="#how-it-works">▶ &nbsp;Watch how it works &nbsp;›</a>
+
+  <div class="hero">
+    <div class="photo"></div>
+    <div class="inner">
+      <div class="dateline">{{ fecha }} · ET</div>
+      <p class="greet">{{ saludo }}, <span>{{ nombre_corto }}</span></p>
+      <p class="tagline">Smart analysis. Real edges. Winning plays.</p>
+      <div class="status">
+        <div class="check">✓</div>
+        <div>
+          {% if card_pendiente %}
+          <b>Today's card is not posted yet</b><span>Check back when the card drops — with a push the moment it goes live.</span>
+          {% else %}
+          <b>Today's card is posted</b><span>{{ plays|length }} {% if plays|length == 1 %}play{% else %}plays{% endif %} today — {{ plays|selectattr('nivel','equalto','ELITE')|list|length }} Platinum, {{ plays|selectattr('nivel','equalto','GOLD')|list|length }} Gold.<br>Live on your Dashboard right now.</span>
+          {% endif %}
+        </div>
+        <div class="arr">›</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tiles">
+    <a class="tile" href="{{ url_for('game_center') }}"><div class="ic">◎</div><span class="arr">›</span><b>Odds</b><p>Live scores &amp; games, every price, the fair line and the edge.</p></a>
+    <a class="tile" href="{{ url_for('tracker') }}"><div class="ic">♛</div><span class="arr">›</span><b>My Bets</b><p>Track your plays, results and performance.</p></a>
+    <a class="tile" href="{{ url_for('tools') }}"><div class="ic">▂</div><span class="arr">›</span><b>Tools</b><p>The sharpest tools for smarter plays.</p></a>
+  </div>
+
+  <div class="risk">
+    <div class="shield">⬢</div>
+    <div class="left">
+      <div class="label">YOUR RISK TODAY</div>
+      {% if risk_hoy %}
+      <b>${{ '%.2f'|format(risk_hoy.total) }} at risk today</b>
+      <span>• {{ risk_hoy.pct }}% of your bankroll &nbsp;• {{ risk_hoy.n }} {% if risk_hoy.n == 1 %}play{% else %}plays{% endif %}</span>
+      {% else %}
+      <b>— at risk today</b>
+      <span>• —% of your bankroll &nbsp;• — plays</span>
+      {% endif %}
+    </div>
+    <div class="right">Discipline builds long-term profits. ↗</div>
+  </div>
+
+  <div class="sechead"><h2>Your plays</h2><span class="lvpill">Gold</span><a class="viewall" href="{{ url_for('official_tracker') }}">View all ›</a></div>
+
+  {% if not plays %}
+  <div class="playcard">
+    <div class="playtop">
+      <div class="meta">
+        <span class="chip">NO CARD YET</span>
+        <b>Today's card is not posted yet</b>
+        <span>Check back when the card drops.</span>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+  {% for p in plays %}
+  {% if p.nivel == 'ELITE' and not miembro_platinum %}
+  <div class="playcard">
+    <div class="playtop">
+      <div class="logo">🔒</div>
+      <div class="meta">
+        <span class="chip" style="color:#9db8dd">LOCKED</span>
+        <b>Platinum play — locked</b>
+        <span>Unlock Platinum to reveal this play</span>
+      </div>
+      <span class="league">{{ p.liga or '' }}</span>
+    </div>
+    <div class="playfoot">
+      <div class="stat"><small>⬢ SHARP EDGE</small><b>Locked</b></div>
+      <div class="stat"><small>▂ CONFIDENCE</small><b>Locked</b></div>
+      <div class="stat"><small>◎ RECORD</small><b>Locked</b></div>
+    </div>
+  </div>
+  {% else %}
+  <div class="playcard">
+    <div class="playtop">
+      <div class="logo">{% if p.logo_url %}<img src="{{ p.logo_url }}" alt="">{% else %}{{ p.abbr or '–' }}{% endif %}</div>
+      <div class="meta">
+        <span class="chip">{{ 'PLATINUM' if p.nivel == 'ELITE' else 'GOLD' }}</span>
+        <b>{{ p.team_name or p.abbr }} {{ 'ML' if p.bettype == 'Moneyline' else (p.bettype or '') }}</b>
+        <span>{% if p.abbr and p.opp_abbr %}{{ p.abbr }} vs {{ p.opp_abbr }} · {% endif %}{{ p.game_time_et or p.hora or '' }}</span>
+      </div>
+      <span class="league">{{ p.liga or '' }}</span>
+    </div>
+    <div class="playfoot">
+      <div class="stat"><small>⬢ SHARP EDGE</small><b>{% if p.writeup and p.writeup.edge %}{{ p.writeup.edge }}{% else %}—{% endif %}</b></div>
+      <div class="stat"><small>▂ CONFIDENCE</small><b>{% if p.writeup and p.writeup.model_prob %}{{ p.writeup.model_prob }}{% else %}—{% endif %}</b></div>
+      <div class="stat"><small>◎ RECORD</small><b>{% if p.nivel == 'ELITE' %}{{ res.niveles.ELITE.record }}{% else %}{{ res.niveles.GOLD.record }}{% endif %}</b></div>
+    </div>
+    <div class="playacts">
+      {% if p.novig_url %}<a class="act-novig" href="{{ p.novig_url }}">Place at Novig ↗</a>{% endif %}
+      {% if p.comprobante %}<a class="act-ticket" href="{{ url_for('ticket_view', play_id=p.id) }}">🎫 View ticket</a>{% endif %}
+    </div>
+  </div>
+  {% endif %}
+  {% endfor %}
+
+  <div class="section" id="how-it-works">
+    <h3>How it works</h3>
+    <div class="vid"><video controls playsinline preload="none" poster="{{ url_for('static', filename='img/video-dashboard-poster.jpg') }}"><source src="{{ url_for('static', filename='video/dashboard-tutorial.mp4') }}" type="video/mp4"></video></div>
+  </div>
+
+  <div class="section">
+    <h3>Get alerts</h3>
+    <div class="row"><span>Push notifications</span><a class="on" href="{{ url_for('alertas') }}">● ON ›</a></div>
+    <div class="row"><span>Telegram channel</span><a class="join" href="https://t.me/thesharpteam">JOIN →</a></div>
+    <div class="row"><span>Daily email</span><a class="on" href="{{ url_for('cuenta') }}">● ON ›</a></div>
+  </div>
+
+  <div class="section">
+    <h3>Academy</h3>
+    <div class="row"><span>Masterclass — the full course</span><a class="join" href="{{ url_for('masterclass') }}">OPEN →</a></div>
+  </div>
+
+  {% if not miembro_platinum %}
+  <div class="unlock">
+    <b>Unlock Platinum</b>
+    <p>Every play, every ticket, every tool — the full board, unlocked.</p>
+    <a class="cta" href="{{ url_for('desbloquear_platinum') }}">Unlock Platinum →</a>
+  </div>
+  {% endif %}
+
+  <div class="section faq">
+    <h3>FAQ</h3>
+    <b>What is a Gold play?</b>
+    <p>The free showcase play of the day, open to every member.</p>
+    <b>What does a verified ticket mean?</b>
+    <p>The play was placed for real, and the original ticket is attached.</p>
+    <b>When does the card go live?</b>
+    <p>Weekdays in the afternoon, weekends in the morning — with a push the moment it drops.</p>
+  </div>
+
+  <div class="footer">THE SHARP TEAM · No hype. No guarantees. Just data-driven analysis.<br>Gamble smart. Stay disciplined. Play the long game.</div>
+</div>
+
+<div class="nav">
+  <a href="{{ url_for('admin_home_preview') }}"><div class="active"><span class="ic2">⌂</span>Today</div></a>
+  <a href="{{ url_for('game_center') }}"><div><span class="ic2">◎</span>Odds</div></a>
+  <a href="{{ url_for('tools') }}"><div><span class="ic2">▦</span>Tools</div></a>
+  <a href="{{ url_for('tracker') }}"><div><span class="ic2">♛</span>My Bets</div></a>
+  <a href="{{ url_for('cuenta') }}"><div><span class="ic2">○</span>Account</div></a>
+</div>
+</body>
+</html>
