@@ -374,6 +374,20 @@
     <div class="row"><span>Daily email</span><a class="on" href="{{ url_for('cuenta') }}">● ON ›</a></div>
   </div>
 
+  <div style="background:linear-gradient(180deg,#1c2431,#161c23);border:1px solid #2a3c5f;border-radius:20px;padding:16px;margin:0 0 22px;">
+    <div style="display:flex;gap:12px;">
+      <span style="flex:0 0 auto;color:#2ee6a8;margin-top:2px;"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M13.7 20a2 2 0 0 1-3.4 0"/></svg></span>
+      <span style="flex:1;min-width:0;">
+        <span style="display:block;font-size:20px;font-weight:400;line-height:1.3;">Never miss a play, on the channels you use</span>
+        <span style="display:block;color:#93a4bf;font-size:13.5px;font-weight:300;line-height:1.5;margin-top:6px;">Turn it on once and today's card reaches you by push and on Telegram, along with your daily email.</span>
+      </span>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px;">
+      <a href="https://t.me/thesharpteam" style="display:block;background:#1a222e;border:1px solid #2a3c5f;border-radius:12px;padding:12px;text-align:center;color:#eef2f8;font-size:15px;font-weight:400;text-decoration:none;">Join Telegram</a>
+      <a href="{{ url_for('alertas') }}" style="display:block;background:#1a222e;border:1px solid #2a3c5f;border-radius:12px;padding:12px;text-align:center;color:#eef2f8;font-size:15px;font-weight:400;text-decoration:none;">Push alerts</a>
+    </div>
+  </div>
+
   <div class="section">
     <h3>Academy</h3>
     <div class="row"><span>Masterclass — the full course</span><a class="join" href="{{ url_for('masterclass') }}">OPEN →</a></div>
