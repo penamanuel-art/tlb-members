@@ -199,8 +199,8 @@
   .tst-result b.lost{color:#e65050}
   .tst-platwave{position:relative;overflow:hidden}
   .tst-platwave > *{position:relative;z-index:1}
-  .tst-platwave::before{content:"";position:absolute;left:-20%;right:-20%;top:-50%;height:200%;background:radial-gradient(ellipse at center,rgba(232,199,102,.16),transparent 60%);animation:plat-ola 14s ease-in-out infinite alternate;pointer-events:none}
-  @keyframes plat-ola{from{transform:translateX(-6%)}to{transform:translateX(6%)}}
+  .tst-platwave::before{content:"";position:absolute;left:-20%;right:-20%;top:-50%;height:200%;background:radial-gradient(ellipse at center,rgba(232,199,102,.32),transparent 60%);animation:plat-ola 8s ease-in-out infinite alternate;pointer-events:none}
+  @keyframes plat-ola{from{transform:translateX(-15%)}to{transform:translateX(15%)}}
   @media (prefers-reduced-motion:reduce){.tst-platwave::before{animation:none}}
 </style>
 </head>
