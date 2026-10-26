@@ -25,6 +25,20 @@
   .topactions .pill{height:32px;box-sizing:border-box}
   .pillrow .pill{height:40px;box-sizing:border-box}
   .avatar{width:32px;height:32px;min-width:32px;border-radius:50%;border:2px solid #2ee6a8;background:#2a3c5f;display:flex;align-items:center;justify-content:center;font-size:15px;color:#eef2f8;font-weight:800}
+  .bellbtn{width:32px;height:32px;min-width:32px;border-radius:50%;border:2px solid #2ee6a8;background:#2a3c5f;display:flex;align-items:center;justify-content:center;color:#eef2f8;cursor:pointer;padding:0}
+  .bellbtn svg{display:block;width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+  .notif-panel{border:1px solid #24334d;background:linear-gradient(180deg,#1c2431,#161c23);border-radius:16px;padding:14px;margin-bottom:14px}
+  .notif-panel h3{font-size:16px;margin-bottom:8px}
+  .notif-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid rgba(139,152,173,.15)}
+  .notif-item:first-of-type{border-top:0}
+  .notif-item .ni{width:30px;height:30px;min-width:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;background:rgba(46,230,168,.12)}
+  .notif-item .ni.red{background:rgba(230,80,80,.12)}
+  .notif-item .ni.blue{background:rgba(74,144,217,.12)}
+  .notif-item b{display:block;font-size:13px;line-height:1.3}
+  .notif-item span{color:#93a4bf;font-size:12px}
+  .notif-item .amt{margin-left:auto;font-size:13px;font-weight:800;white-space:nowrap}
+  .notif-item .amt.win{color:#2ee6a8}
+  .notif-item .amt.loss{color:#e65050}
   .pillrow{display:flex;align-items:center;gap:7px;margin-bottom:10px}
   .balance{flex:1 1 auto;min-width:0;display:flex;align-items:center;justify-content:space-between;gap:8px;height:40px;box-sizing:border-box;border:1px solid #24334d;border-radius:999px;padding:6px 10px;background:#1a222e;font-weight:700;font-size:12px;white-space:nowrap}
   .balance b{color:#2ee6a8;font-size:14px}
@@ -148,8 +162,37 @@
       <div class="wordmark"><b>THE</b><strong>SHARP TEAM</strong><i></i></div>
     </div>
     <div class="topactions">
-      <a class="avatar" href="{{ url_for('cuenta') }}">{{ inicial }}</a>
+      <button class="bellbtn" type="button" id="tst-bell" aria-label="Notifications"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M13.7 20a2 2 0 0 1-3.4 0"/></svg></button>
     </div>
+  </div>
+
+  <div id="tst-notif-panel" class="notif-panel" hidden>
+    <h3>Notifications</h3>
+    {% if dias is defined %}
+    {% set _ns = namespace(n=0) %}
+    {% for _d in dias[:3] %}
+      {% for _j in _d.jugadas %}
+        {% if _ns.n < 5 and _j.resultado in ('WON', 'LOST') %}
+    <div class="notif-item">
+      <span class="ni{% if _j.resultado == 'LOST' %} red{% endif %}">{% if _j.resultado == 'WON' %}✅{% else %}❌{% endif %}</span>
+      <span><b>{{ _j.pick }} {% if _j.resultado == 'WON' %}won{% else %}lost{% endif %}</b><span>{{ _d.fecha }} · {{ 'Platinum' if _j.nivel == 'ELITE' else 'Gold' }}</span></span>
+      <span class="amt {% if _j.profit >= 0 %}win{% else %}loss{% endif %}">{% if _j.profit >= 0 %}+{% else %}−{% endif %}${{ '%.2f'|format(_j.profit|abs) }}</span>
+    </div>
+          {% set _ns.n = _ns.n + 1 %}
+        {% endif %}
+      {% endfor %}
+    {% endfor %}
+    {% endif %}
+    <div class="notif-item">
+      <span class="ni blue">📰</span>
+      <span><b>New home design is live</b><span>News</span></span>
+    </div>
+    {% if plays %}
+    <div class="notif-item">
+      <span class="ni">🔔</span>
+      <span><b>Today's card is posted</b><span>Alert · {{ plays|length }} play{% if plays|length != 1 %}s{% endif %} today</span></span>
+    </div>
+    {% endif %}
   </div>
 
   <div class="pillrow">
@@ -350,6 +393,14 @@
     try{localStorage.setItem(K,v);}catch(e){}
     m.hidden=true;
   });
+}catch(e){}})();
+</script>
+<script>
+(function(){try{
+  var b=document.getElementById('tst-bell');
+  var p=document.getElementById('tst-notif-panel');
+  if(!b||!p)return;
+  b.addEventListener('click',function(){p.hidden=!p.hidden;});
 }catch(e){}})();
 </script>
 </body>
