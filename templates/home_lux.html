@@ -310,9 +310,9 @@
   </div>
 
   <div class="tiles">
-    <a class="tile" href="{{ url_for('ev_board') if miembro_platinum else url_for('desbloquear_platinum') }}"><div class="ic">⚡</div><span class="arr">›</span><b>+EV Board</b><p>Prices above fair, ranked.</p></a>
-    <a class="tile" href="{{ url_for('props') if miembro_platinum else url_for('desbloquear_platinum') }}"><div class="ic">🎯</div><span class="arr">›</span><b>Player Props</b><p>Prop edges, ranked.</p></a>
-    <a class="tile" href="{{ url_for('tools_line_moves') if miembro_platinum else url_for('desbloquear_platinum') }}"><div class="ic">↗</div><span class="arr">›</span><b>Line Movement</b><p>Sharp money, tracked live.</p></a>
+    <a class="tile" href="{{ url_for('ev_board') if miembro_platinum else url_for('desbloquear_platinum') }}"><div class="ic">⚡</div><span class="arr">›</span><b style="white-space:nowrap;font-size:14px;">+EV Board</b><p style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Ranked edges.</p></a>
+    <a class="tile" href="{{ url_for('props') if miembro_platinum else url_for('desbloquear_platinum') }}"><div class="ic">🎯</div><span class="arr">›</span><b style="white-space:nowrap;font-size:14px;">Player Props</b><p style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Prop edges.</p></a>
+    <a class="tile" href="{{ url_for('tools_line_moves') if miembro_platinum else url_for('desbloquear_platinum') }}"><div class="ic">↗</div><span class="arr">›</span><b style="white-space:nowrap;font-size:14px;">Line Moves</b><p style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Sharp money.</p></a>
   </div>
 
   <div class="risk">
