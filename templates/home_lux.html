@@ -196,6 +196,11 @@
   .tst-result b{display:block;font-size:16px;font-weight:400;margin-top:2px}
   .tst-result b.won{color:#2ee6a8}
   .tst-result b.lost{color:#e65050}
+  .tst-platwave{position:relative;overflow:hidden}
+  .tst-platwave > *{position:relative;z-index:1}
+  .tst-platwave::before{content:"";position:absolute;left:-20%;right:-20%;top:-50%;height:200%;background:radial-gradient(ellipse at center,rgba(232,199,102,.16),transparent 60%);animation:plat-ola 14s ease-in-out infinite alternate;pointer-events:none}
+  @keyframes plat-ola{from{transform:translateX(-6%)}to{transform:translateX(6%)}}
+  @media (prefers-reduced-motion:reduce){.tst-platwave::before{animation:none}}
 </style>
 </head>
 <body>
@@ -326,7 +331,7 @@
   {% endif %}
 
   {% if not miembro_platinum %}
-  <a href="{{ url_for('desbloquear_platinum') }}" style="display:block;background:linear-gradient(180deg,#1c2431,#161c23);border:1px solid #e8c766;border-radius:20px;padding:16px;margin:0 0 22px;text-decoration:none;color:#eef2f8;">
+  <a class="tst-platwave" href="{{ url_for('desbloquear_platinum') }}" style="display:block;background:linear-gradient(180deg,#1c2431,#161c23);border:1px solid #e8c766;border-radius:20px;padding:16px;margin:0 0 22px;text-decoration:none;color:#eef2f8;">
     <div style="display:flex;align-items:center;gap:10px;">
       <span style="font-size:28px;color:#e8c766;">&#9819;</span>
       <span style="font-size:19px;font-weight:400;color:#e8c766;">Unlock Platinum</span>
