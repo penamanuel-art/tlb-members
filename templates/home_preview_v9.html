@@ -59,6 +59,26 @@
   .unlock-txt b{display:block;font-size:18px;color:#e8c766}
   .unlock-txt p{margin:4px 0 0;font-size:13.5px;color:#93a4bf;line-height:1.45}
   .unlock-arr{font-size:26px;color:#e8c766}
+  .rh-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin:4px 0 0}
+  .rh-title{font-size:26px;font-weight:800;letter-spacing:-.3px;color:#eef2f8}
+  .rh-sub{color:#8fa1c2;font-size:13px;margin-top:3px}
+  .rh-ledger{flex:none;background:#131e31;border:1px solid #24334d;color:#dbe4f2;font-size:12.5px;font-weight:600;padding:8px 12px;border-radius:10px;text-decoration:none}
+  .rh-rail{display:flex;gap:10px;overflow-x:auto;padding:14px 2px 8px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .rh-rail::-webkit-scrollbar{display:none}
+  .rh-card{flex:0 0 88%;scroll-snap-align:start;background:linear-gradient(165deg,#131e31,#0d1626);border:1px solid var(--rhc);border-left:4px solid var(--rhc);border-radius:20px;padding:18px 16px 20px;text-decoration:none;display:block;box-shadow:0 0 22px color-mix(in srgb,var(--rhc) 30%,transparent)}
+  .rh-badge{display:inline-block;font-size:10px;font-weight:800;letter-spacing:1.4px;color:var(--rhc);background:rgba(255,255,255,.05);border:1px solid var(--rhc);padding:5px 9px;border-radius:8px}
+  .rh-bigrow{display:flex;align-items:center;gap:10px;margin:12px 0 2px}
+  .rh-big{color:#fff;font-size:42px;font-weight:800}
+  .rh-pct{font-size:14px;font-weight:800;color:var(--rhc);background:rgba(255,255,255,.06);border:1px solid var(--rhc);padding:4px 8px;border-radius:8px}
+  .rh-desc{color:#dbe4f2;font-size:14.5px}
+  .rh-dots{margin:12px 0 14px;display:flex;gap:5px;flex-wrap:wrap}
+  .rh-dots i{width:11px;height:11px;border-radius:50%;background:var(--rhc);display:block}
+  .rh-dots i.off{background:transparent;border:2px solid #f26d6d;width:8px;height:8px;margin:1.5px}
+  .rh-foot{display:flex;justify-content:space-between;align-items:center;color:#8fa1c2;font-size:12px}
+  .rh-see{color:var(--rhc);font-weight:700;font-size:13.5px}
+  .rh-pager{display:flex;gap:5px;justify-content:center;margin-top:2px;margin-bottom:20px}
+  .rh-pager i{width:6px;height:6px;border-radius:50%;background:#33415c;display:block}
+  .rh-pager i.on{background:#fff}
   .sechead{display:flex;align-items:center;gap:10px;margin-bottom:12px}
   .sechead h2{margin:0;font-size:26px}
   .lvpill{border:1px solid #2ee6a8;color:#2ee6a8;border-radius:999px;padding:6px 12px;font-size:13px;font-weight:800}
@@ -169,6 +189,35 @@
     <div class="unlock-txt"><b>Unlock Platinum</b><p>Every play, every ticket, every result — no locks.</p></div>
     <span class="unlock-arr">›</span>
   </a>
+
+  {% if hot_cards %}
+  <section>
+    <div class="rh-head">
+      <div>
+        <div class="rh-title">Hot right now</div>
+        <div class="rh-sub">Current winning runs, graded plays only</div>
+      </div>
+      <a class="rh-ledger" href="{{ url_for('official_tracker') }}">↗ Public ledger</a>
+    </div>
+    <div class="rh-rail" id="rhRail">
+      {% for c in hot_cards %}
+      <a class="rh-card" style="--rhc:{{ c.color }}" href="{{ url_for('official_tracker') }}">
+        <span class="rh-badge">{{ c.badge }}</span>
+        <div class="rh-bigrow"><span class="rh-big">{{ c.big }}</span>{% if c.pct %}<span class="rh-pct">{{ c.pct }}</span>{% endif %}</div>
+        <div class="rh-desc">{{ c.desc }}</div>
+        <div class="rh-dots">{% for w in c.dots %}<i{% if not w %} class="off"{% endif %}></i>{% endfor %}</div>
+        <div class="rh-foot"><span>Graded win or lose</span><span class="rh-see">See the plays ›</span></div>
+      </a>
+      {% endfor %}
+    </div>
+    {% if hot_cards|length > 1 %}
+    <div class="rh-pager" id="rhPager">{% for c in hot_cards %}<i{% if loop.first %} class="on"{% endif %}></i>{% endfor %}</div>
+    <script>
+    (function(){var r=document.getElementById('rhRail'),p=document.getElementById('rhPager');if(!r||!p)return;var d=p.children;r.addEventListener('scroll',function(){var i=Math.round(r.scrollLeft/(r.scrollWidth-r.clientWidth||1)*(d.length-1));for(var k=0;k<d.length;k++){d[k].className=(k===i?'on':'');}},{passive:true});})();
+    </script>
+    {% endif %}
+  </section>
+  {% endif %}
 
   <div class="section">
     <h3>Get alerts</h3>
