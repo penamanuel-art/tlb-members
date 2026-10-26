@@ -32,7 +32,7 @@
   .hero .photo{position:absolute;left:0;right:0;top:0;bottom:0;background:linear-gradient(90deg,rgba(5,8,26,.97),rgba(5,8,26,.92) 42%,rgba(5,8,26,.88) 72%,rgba(5,8,26,.85) 100%),url("{{ url_for('static', filename='img/hero-player.jpg') }}") center right/cover no-repeat;opacity:.95}
   .hero .inner{position:relative}
   .dateline{font-size:12px;letter-spacing:.28em;color:#93a4bf;font-weight:700;margin-bottom:10px;text-transform:uppercase}
-  .greet{font-size:42px;line-height:1.02;font-weight:900;margin:0 0 8px;max-width:62%}
+  .greet{font-size:clamp(30px,11vw,42px);line-height:1.02;font-weight:900;margin:0 0 8px;max-width:100%}
   .greet span{color:#2ee6a8}
   .tagline{color:#dbe4f2;font-size:15px;margin:0 0 18px;max-width:64%}
   .status{position:relative;display:flex;gap:13px;align-items:center;background:rgba(13,18,25,.92);border:1px solid #24334d;border-left:6px solid #2ee6a8;border-radius:16px;padding:14px 15px;margin:0 0 16px}
@@ -46,7 +46,7 @@
   .tile b{display:block;font-size:16px;margin-bottom:4px}
   .tile p{margin:0;color:#93a4bf;font-size:12.5px;line-height:1.45}
   .tile .arr{color:#93a4bf;float:right;font-size:18px}
-  .risk{display:flex;gap:14px;border:1px solid #2ee6a8;border-radius:18px;padding:16px;background:linear-gradient(180deg,#161c23,#161c23);box-shadow:0 0 18px rgba(46,230,168,.25);margin-bottom:20px}
+  .risk{display:flex;align-items:center;gap:14px;border:1px solid #2ee6a8;border-radius:18px;padding:16px;background:linear-gradient(180deg,#161c23,#161c23);box-shadow:0 0 18px rgba(46,230,168,.25);margin-bottom:20px}
   .risk .shield{font-size:38px;color:#2ee6a8}
   .risk .left{flex:1}
   .risk .label{font-size:12px;letter-spacing:.22em;color:#2ee6a8;font-weight:800}
@@ -104,7 +104,7 @@
     <div class="photo"></div>
     <div class="inner">
       <div class="dateline">{{ fecha }} · ET</div>
-      <p class="greet">{{ saludo }}, <span>{{ nombre_corto }}</span></p>
+      <p class="greet"><span style="white-space:nowrap">{{ saludo }},</span><br><span>{{ nombre_corto }}</span></p>
       <p class="tagline">Smart analysis. Real edges. Winning plays.</p>
       <div class="status">
         <div class="check">✓</div>
@@ -132,13 +132,13 @@
       <div class="label">YOUR RISK TODAY</div>
       {% if risk_hoy %}
       <b>${{ '%.2f'|format(risk_hoy.total) }} at risk today</b>
-      <span>• {{ risk_hoy.pct }}% of your bankroll &nbsp;• {{ risk_hoy.n }} {% if risk_hoy.n == 1 %}play{% else %}plays{% endif %}</span>
+      <span>• {{ risk_hoy.pct }}% of your bankroll <span style="white-space:nowrap">• {{ risk_hoy.n }} {% if risk_hoy.n == 1 %}play{% else %}plays{% endif %}</span></span>
       {% else %}
       <b>— at risk today</b>
-      <span>• —% of your bankroll &nbsp;• — plays</span>
+      <span>• —% of your bankroll <span style="white-space:nowrap">• — plays</span></span>
       {% endif %}
     </div>
-    <div class="right">Discipline builds long-term profits. ↗</div>
+    <div class="right">Discipline builds long‑term profits. ↗</div>
   </div>
 
   <div class="sechead"><h2>Your plays</h2><span class="lvpill">Gold</span><a class="viewall" href="{{ url_for('official_tracker') }}">View all ›</a></div>
