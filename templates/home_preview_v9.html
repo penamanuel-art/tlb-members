@@ -117,7 +117,7 @@
       <div class="wordmark"><b>THE</b><strong>SHARP TEAM</strong><i></i></div>
     </div>
     <div class="topactions">
-      <a class="pill" href="{{ url_for('desbloquear_platinum') }}"><span class="crown">♛</span> Platinum <span>›</span></a>
+      {% if not miembro_platinum %}<a class="pill" href="{{ url_for('desbloquear_platinum') }}"><span class="crown">♛</span> Unlock Platinum <span>›</span></a>{% endif %}
       <a class="avatar" href="{{ url_for('cuenta') }}">{{ inicial }}</a>
     </div>
   </div>
