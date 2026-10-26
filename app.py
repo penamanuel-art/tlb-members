@@ -4972,10 +4972,10 @@ def _notify_login_telegram(user):
     key = f"login:{_uget(user, 'id')}"
     if now - _last_login_notify.get(key, 0) < _LOGIN_NOTIFY_COOLDOWN_SEC:
         return False
-    # 2026-10-26 (orden de Alex): solo el nombre completo del cliente y
-    # que entró — sin email, sin nivel (Free/Platinum) y sin hora.
+    # 2026-10-26 (orden de Alex, diseño 2): solo "Miembro {nombre} entró
+    # al Dashboard" — sin email, sin nivel (Free/Platinum) y sin hora.
     nombre = _uget(user, "nombre") or "?"
-    text = f"👤 {nombre} entró al Dashboard"
+    text = f"👤 Miembro {nombre} entró al Dashboard"
     try:
         payload = json.dumps(
             {"chat_id": CLICK_NOTIFY_CHAT_ID, "text": text}
