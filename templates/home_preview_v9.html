@@ -312,6 +312,8 @@
     <a class="tile" href="{{ url_for('tools') }}"><div class="ic">▂</div><span class="arr">›</span><b>Tools</b><p>The sharpest tools for smarter plays.</p></a>
   </div>
 
+  <h2 style="margin:8px 0 2px;font-size:22px;font-weight:400;">Find Your Edge</h2>
+  <p style="margin:0 0 12px;color:#93a4bf;font-size:12.5px;font-weight:300;">Real edges, ranked daily.</p>
   <div class="tiles">
     <a class="tile" href="{{ url_for('ev_board') if miembro_platinum else url_for('desbloquear_platinum') }}"><div class="ic">⚡</div><span class="arr">›</span><b style="white-space:nowrap;font-size:14px;">+EV Board</b><p style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Ranked edges.</p></a>
     <a class="tile" href="{{ url_for('props') if miembro_platinum else url_for('desbloquear_platinum') }}"><div class="ic">🎯</div><span class="arr">›</span><b style="white-space:nowrap;font-size:14px;">Player Props</b><p style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Prop edges.</p></a>
