@@ -322,7 +322,7 @@
   </div>
 
 
-  {% if plays %}<div class="tst-playshead"><h2>Your plays</h2><span class="tst-lvpill{% if miembro_platinum %} plat{% endif %}">{% if miembro_platinum %}Platinum{% else %}Gold{% endif %}</span><button class="tst-refresh" type="button" onclick="location.reload()">↻ Refresh</button></div>{% endif %}
+  {% if plays %}<div class="tst-playshead"><h2>Your plays</h2><button class="tst-refresh" type="button" onclick="location.reload()">↻ Refresh</button></div>{% endif %}
   {% set tracked_ids = tracked_ids|default([]) %}
   {% set golds = plays|selectattr('nivel','equalto','GOLD')|list %}
   {% set plats = plays|rejectattr('nivel','equalto','GOLD')|rejectattr('nivel','equalto','VALUE')|list %}
