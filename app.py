@@ -4972,14 +4972,10 @@ def _notify_login_telegram(user):
     key = f"login:{_uget(user, 'id')}"
     if now - _last_login_notify.get(key, 0) < _LOGIN_NOTIFY_COOLDOWN_SEC:
         return False
-    nombre = _uget(user, "nombre") or _uget(user, "email") or "?"
-    email = _uget(user, "email") or ""
-    elite = "⭐ Platinum" if _uget(user, "platinum_unlocked") else "🟡 Free"
-    try:
-        hora = datetime.now(ZoneInfo("America/New_York")).strftime("%-I:%M %p ET")
-    except Exception:
-        hora = ""
-    text = f"👤 {nombre} ({elite}) entró al Dashboard\n{email}\n{hora}".strip()
+    # 2026-10-26 (orden de Alex): solo el nombre completo del cliente y
+    # que entró — sin email, sin nivel (Free/Platinum) y sin hora.
+    nombre = _uget(user, "nombre") or "?"
+    text = f"👤 {nombre} entró al Dashboard"
     try:
         payload = json.dumps(
             {"chat_id": CLICK_NOTIFY_CHAT_ID, "text": text}
