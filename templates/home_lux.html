@@ -58,6 +58,8 @@
   .unlock-txt b{display:block;font-size:18px;color:#e8c766}
   .unlock-txt p{margin:4px 0 0;font-size:13.5px;color:#93a4bf;line-height:1.45}
   .unlock-arr{font-size:26px;color:#e8c766}
+  .unlock-info{margin:8px 0 0;font-size:13px;color:#93a4bf;line-height:1.5}
+  .unlock-today{margin:6px 0 0;font-size:13px;color:#2ee6a8;font-weight:700}
   .rh-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin:4px 0 0}
   .rh-title{font-size:26px;font-weight:800;letter-spacing:-.3px;color:#eef2f8}
   .rh-sub{color:#8fa1c2;font-size:13px;margin-top:3px}
@@ -194,7 +196,9 @@
 
   <a class="unlock" href="{{ url_for('desbloquear_platinum') }}">
     <div class="unlock-crown">♛</div>
-    <div class="unlock-txt"><b>Unlock Platinum</b><p>Every play, every ticket, every result — no locks.</p></div>
+    <div class="unlock-txt"><b>Unlock Platinum</b><p>Every play, every ticket, every result — no locks.</p>
+    <p class="unlock-info">Platinum plays are our highest-conviction moneyline picks — selected by the model with strict value gates and posted before game time.</p>
+    {% if plats %}<p class="unlock-today">{{ plats|length }} Platinum {% if plats|length == 1 %}play{% else %}plays{% endif %} on today's card.</p>{% endif %}</div>
     <span class="unlock-arr">›</span>
   </a>
 
