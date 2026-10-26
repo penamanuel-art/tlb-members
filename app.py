@@ -4466,6 +4466,7 @@ def home():
         # miembro_platinum con preview: en ?preview=locked el banner de
         # invitación VIP también se muestra (pedido Alex 2026-10-02).
         miembro_platinum=(platinum_unlocked_for(user) and not preview_locked),
+        tst_version=os.environ.get("RENDER_GIT_COMMIT", ""),
     )
 
 
@@ -4536,6 +4537,7 @@ def admin_home_preview():
         risk_hoy=risk_hoy,
         tracked_ids=tracked_ids,
         hot_cards=hot_cards,
+        tst_version=os.environ.get("RENDER_GIT_COMMIT", ""),
     )
 
 
