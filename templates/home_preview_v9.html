@@ -369,6 +369,9 @@
   {% endif %}
   {% endfor %}
   {% endif %}
+  {% if plays %}
+  <p style="margin:2px 0 22px;color:#93a4bf;font-size:12.5px;font-weight:300;line-height:1.55;">Stakes are listed in units and in dollars. One unit equals 1% of your bankroll, so your dollar amount follows the bankroll you set. Tracking a play adds it to My Bets at your own size, and it is graded on its own. <a href="{{ url_for('cuenta') }}" style="color:#2ee6a8;text-decoration:underline;">Update your bankroll in Account</a>.</p>
+  {% endif %}
 
   {% if not miembro_platinum %}
   <a class="tst-platwave" href="{{ url_for('desbloquear_platinum') }}" style="display:block;background:linear-gradient(180deg,#1c2431,#161c23);border:1px solid #e8c766;border-radius:20px;padding:16px;margin:0 0 22px;text-decoration:none;color:#eef2f8;">
