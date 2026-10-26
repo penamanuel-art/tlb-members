@@ -2,6 +2,10 @@
 {% block content %}
 <style>
 .adm-clean { max-width: 680px; margin: 0 auto; padding: 20px 12px 48px; font-family: -apple-system, 'SF Pro', Inter, system-ui, sans-serif; }
+/* Menú de arriba fijo en el admin (2026-10-26, pedido Alex: se movía al bajar la página): sticky fallaba en Safari, pasa a fixed con espacio arriba. */
+.v2-topbar { position: fixed !important; top: 0; left: 0; right: 0; z-index: 100; }
+body.v2 { padding-top: 77px; }
+.chat-fab { top: 90px !important; }
 .adm-clean .kicker { color: #2ee6a8; font-size: 12px; font-weight: 800; letter-spacing: 4px; margin: 0; }
 .adm-clean h1 { font-size: 1.7rem; font-weight: 800; color: #fff; margin: 6px 0 4px; }
 .adm-total { display: flex; align-items: baseline; gap: 12px; margin: 0 0 22px; }
