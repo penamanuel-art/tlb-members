@@ -4490,6 +4490,15 @@ def admin_home_preview():
         else:
             plays = []
     plays = personalizar_plays(plays, user)
+    # Igual que /home: ids trakeados para que la card muestre ✓ Tracked
+    # en vez de + Track (boton por boton identica a la oficial).
+    try:
+        _tdb = get_db()
+        tracked_ids = {r["play_id"] for r in _tdb.execute(
+            "SELECT play_id FROM tracked_plays WHERE user_id = ?",
+            (session["user_id"],)).fetchall()}
+    except Exception:
+        tracked_ids = set()
     # Franja de riesgo: igual que /home, solo para la cuenta de Alex.
     risk_hoy = None
     if is_alex_member(user):
@@ -4516,6 +4525,7 @@ def admin_home_preview():
         bankroll=user["bankroll"] if user else None,
         res=program_stats(),
         risk_hoy=risk_hoy,
+        tracked_ids=tracked_ids,
     )
 
 
