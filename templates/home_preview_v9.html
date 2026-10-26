@@ -214,13 +214,6 @@
   {% endfor %}
   {% endif %}
 
-  <a class="unlock" href="{{ url_for('desbloquear_platinum') }}">
-    <div class="unlock-crown">♛</div>
-    <div class="unlock-txt"><b>Unlock Platinum</b><p>Every play, every ticket, every result — no locks.</p>
-    <p class="unlock-info">Platinum plays are our highest-conviction moneyline picks — selected by the model with strict value gates and posted before game time.</p>
-    {% if plats %}<p class="unlock-today">{{ plats|length }} Platinum {% if plats|length == 1 %}play{% else %}plays{% endif %} on today's card.</p>{% endif %}</div>
-    <span class="unlock-arr">›</span>
-  </a>
 
   {% if hot_cards %}
   <section>
