@@ -4537,6 +4537,7 @@ def admin_home_preview():
         risk_hoy=risk_hoy,
         tracked_ids=tracked_ids,
         hot_cards=hot_cards,
+        dias=load_archive(),
         tst_version=os.environ.get("RENDER_GIT_COMMIT", ""),
     )
 
