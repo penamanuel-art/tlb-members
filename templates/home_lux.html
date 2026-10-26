@@ -1,1090 +1,261 @@
-{% extends "base_v2.html" %}
-{% block title %}Today — The Sharp Team{% endblock %}
-{% block content %}
-<div class="tst-acad-ticker" id="tst-acad-ticker">
-  <div class="tst-acad-strip"><span id="tst-acad-text"></span></div>
-  <button type="button" class="tst-acad-x" id="tst-acad-x" aria-label="Close">×</button>
-</div>
-<script>
-(function(){var q=["Discipline is the foundation. Everything else is noise.", "We don't chase wins. We chase value, and value pays over time.", "One bet doesn't make you. One hundred disciplined bets define you.", "The numbers don't care about your feelings. That's why we trust them.", "Patience is a strategy. Most people lose because they can't wait.", "Bankroll management isn't boring. It's what keeps you in the game.", "We post every play, win or lose. Transparency is the whole point.", "No hype. No guarantees. Just data-driven decisions, every single day.", "The long game rewards the disciplined and punishes the impatient.", "Same rules, every day. That's the edge nobody can copy.", "Winners focus on the process. Losers focus on the payout.", "A good bet can lose. A bad bet can win. The process is what matters.", "We bet with numbers, not with gut feelings.", "Chasing losses is how bankrolls die.", "Small edges, repeated daily, build the whole record.", "If the price is wrong, we pass. Passing is also a decision.", "No one wins every day. The disciplined win over time.", "Your bankroll is your business. Protect it like one.", "We don't sell picks. We publish a record.", "Every play is posted before the game starts. No exceptions.", "Emotion is the enemy of the edge.", "The best bet of the day is sometimes no bet at all.", "Records don't lie. That's why we show all of them.", "We risk the same on every play. No favorites, no revenge bets.", "A 60% edge means 40% of the time it still loses. That's the game.", "Patience pays. The board always brings another day.", "We track everything, because what isn't tracked can't improve.", "Losing streaks happen. Quitting during one is the real loss.", "Trust the model, respect the variance, stay in the game.", "One day at a time, one edge at a time, every single day."];var k='tst-acad-idx';var i=0;try{var v=parseInt(localStorage.getItem(k),10);if(!isNaN(v)){i=v}}catch(e){}var el=document.getElementById('tst-acad-text');function show(n){if(!el){return}el.classList.remove('tst-slide');void el.offsetWidth;el.textContent=q[n%q.length];el.classList.add('tst-slide');try{localStorage.setItem(k,(n+1)%q.length)}catch(e){}}show(i);var next=(i+1)%q.length;setInterval(function(){show(next);next=(next+1)%q.length},10000);var x=document.getElementById('tst-acad-x');if(x){x.addEventListener('click',function(){var n=document.getElementById('tst-acad-ticker');if(n){n.style.display='none'}document.body.classList.add('tst-acad-closed')})}})();
-</script>
-{% if es_alex %}
-{# Vista SOLO Alex (2026-10-20, tono aprobado por el en el chat): la zona
-   superior de la tarjeta v5 mas clara y un poco mas alta, y la hoja de
-   detalle del Receipt (.v5sheet-in) con ese mismo degradado de fondo.
-   Este bloque solo se renderiza para su cuenta personal de miembro
-   (es_alex = is_alex_member(user), email pena.manuel@myyahoo.com); para
-   cualquier otro miembro o visitante no existe en el HTML. Reversible:
-   quitar este bloque devuelve la tarjeta a su estado original. #}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Sharp Team — Home preview (admin only)</title>
 <style>
-body.v2 .v5c-topsec{background:linear-gradient(180deg,#2b303a,#262a33);padding:22px 16px 20px}
-body.v2 .v5sheet-in{background:linear-gradient(180deg,#2b303a,#262a33)}
-</style>
-{% endif %}
-{# ═══ FASE 1 · HOME UNIFICADO — PARA TODOS LOS MIEMBROS (2026-10-21) ═══
-   Paleta ÚNICA de la muestra aprobada (fase1-home-moderno-2026-10-21):
-   fondo marino #05081a→#0c1638, dorado #e8c766, menta #2ee6a8/#5eeaa0,
-   tarjetas con el degradado único linear-gradient(180deg,#111a3e,#0c1430)
-   y radio 20px. Nació SOLO para la cuenta de Alex (2026-10-21:
-   «Aplícalo solo para mí, para yo ver si me gusta») y el mismo día,
-   ya probado, él ordenó abrirlo a TODOS los miembros: desde entonces
-   este bloque se renderiza siempre, sin compuerta. REVERSIBLE: volver
-   a envolver este bloque y el de la Fase 1B en una compuerta es_alex
-   y descomentar las secciones preservadas de abajo restaura el
-   comportamiento anterior (ver también commits 69bc2d8 y 499f717). #}
-<style>
-/* Fondo marino único de la muestra (sustituye el fondo #161d29) */
-body.v2{background-color:#05081a;background-image:radial-gradient(640px 300px at 85% -60px,rgba(232,199,102,.08),transparent 60%),radial-gradient(520px 380px at -10% 40%,rgba(46,230,168,.04),transparent 60%),linear-gradient(180deg,#0c1638 0%,#081029 45%,#05081a 100%);background-attachment:fixed}
-/* Tarjeta única: mismo degradado y radio 20px en todo el Home */
-body.v2 .lux-head,body.v2 .lux-panel,body.v2 .lux-rec-card,body.v2 .v2-br,body.v2 .db-diff-card,body.v2 .yw-sum,body.v2 .yw-card,body.v2 .board-empty,body.v2 .v2-mc-feat,body.v2 .v2-process{background:linear-gradient(180deg,#111a3e,#0c1430);border-radius:20px}
-body.v2 .v5c{background:linear-gradient(180deg,#111a3e,#0c1430);border-radius:20px}
-body.v2 .lux-head-card{background:rgba(46,230,168,.08);border-radius:20px}
-/* Dorado único #e8c766 (fuera #f3cd6b y los demás dorados sueltos) */
-body.v2 .lux-rec-h span,body.v2 .lux-rec-ver,body.v2 .lux-rec-u,body.v2 .lux-hlabel{color:#e8c766}
-/* Menta única #2ee6a8 (fuera #2fe6a7) */
-body.v2 .lux-head-title span{color:#2ee6a8}
-body.v2 .lux-head-ico{background:#2ee6a8}
-body.v2 .lux-live{color:#2ee6a8}
-body.v2 .v2-bottomnav .v2-bnav-item.active{color:#2ee6a8;background:rgba(46,230,168,.15)}
-body.v2 .lux-rec-card::after{background:linear-gradient(90deg,#5eeaa0,#2ee6a8 55%,#12b76a)}
-body.v2 .yw-won-t,body.v2 .yw-clv-pos{color:#2ee6a8}
-</style>
-{# ═══ FASE 1B · HOME COMO PANEL — PARA TODOS LOS MIEMBROS (2026-10-21) ═══
-   Segunda capa sobre la Fase 1, de ESTRUCTURA y orden, no de pintura:
-   encabezado compacto, tarjetas de jugada con jerarquía más clara,
-   herramientas en cuadrícula, bankroll/alertas compactas y barras a
-   juego. La franja de récord (.f1b-rec) va en el cuerpo, justo tras la
-   sección de jugadas, para TODOS. Nació solo para Alex y él ordenó
-   abrirla a todos el mismo 2026-10-21: este bloque ya no lleva
-   compuerta, y la sección completa del récord más la cola de venta
-   (proceso, «What makes this different», FAQ) quedaron retiradas del
-   render para todos, con su código preservado en comentarios más
-   abajo. REVERSIBLE: volver a envolver este bloque y el de la Fase 1
-   en una compuerta es_alex y descomentar las secciones preservadas
-   restaura el comportamiento anterior (commit 499f717). #}
-<style>
-/* FASE 1B · encabezado compacto: misma información, menos pantalla */
-body.v2 .lux-head{padding:14px 16px 13px;margin-top:8px}
-body.v2 .lux-head-date{font-size:10.5px}
-body.v2 .lux-head-hi{margin-top:6px;font-size:15px}
-body.v2 .lux-head-title{font-size:29px;margin-top:1px}
-body.v2 .lux-head-card{padding:11px 13px;margin-top:11px;gap:10px}
-body.v2 .lux-head-ico{width:38px;height:38px;border-radius:12px;font-size:19px}
-body.v2 .lux-head-card b{font-size:15.5px}
-body.v2 .lux-head-card p{font-size:12.5px}
-/* FASE 1B · tarjetas de jugada: pick y precio mandan, espacios parejos */
-body.v2 .v5c{margin:0 0 14px}
-body.v2 .v5c-topsec{padding:13px 16px 11px}
-body.v2 .v5c-title{font-size:19.5px;font-weight:700}
-body.v2 .v5c-sub{margin-top:4px}
-body.v2 .v5c-botsec{padding:0 16px 13px}
-body.v2 .v5c-nums{gap:30px;margin-top:10px}
-body.v2 .v5c-v{font-size:20px;font-weight:700}
-body.v2 .v5c-amt{color:#2ee6a8}
-body.v2 .v5c-track{background:#2ee6a8;border-color:#2ee6a8}
-body.v2 .v5c-matched{background:#2ee6a8}
-body.v2 .v5c-btns{gap:10px;margin-top:12px}
-body.v2 .v5c-btn{border-radius:14px}
-body.v2 .v5c-strip{border-radius:14px;margin-top:12px}
-/* FASE 1B · franja de récord (el récord arriba, una sola vez) */
-.f1b-rec{display:flex;align-items:center;gap:14px;background:linear-gradient(180deg,#111a3e,#0c1430);border-radius:20px;padding:13px 16px;margin:2px 0 6px;text-decoration:none;color:#eef1f7;position:relative;overflow:hidden}
-.f1b-rec::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:linear-gradient(90deg,#5eeaa0,#2ee6a8 55%,#12b76a)}
-.f1b-rec-main{flex:1;min-width:0;display:block}
-.f1b-rec-k{display:block;font-size:9.5px;font-weight:800;letter-spacing:1.8px;color:#e8c766}
-.f1b-rec-row{display:flex;align-items:baseline;gap:10px;margin-top:3px}
-.f1b-rec-n{font-size:24px;font-weight:800;letter-spacing:-.5px;color:#fff;line-height:1}
-.f1b-rec-u{font-size:15px;font-weight:800;color:#2ee6a8}
-.f1b-rec-u.neg{color:#ff7b7b}
-.f1b-rec-s{flex:none;text-align:right;font-size:11.5px;line-height:1.5;color:#9aa7b8}
-.f1b-rec-go{flex:none;font-size:22px;color:#e8c766;font-weight:700}
-/* FASE 1B · herramientas: FILAS compactas de una sola columna (cambio de
-   raíz 2026-10-21: la cuadrícula de tarjetas quedaba demasiado larga).
-   Cada .hub-row a ancho completo: icono 30px a la izquierda, título y
-   descripción a la derecha en la misma fila (descripción en una línea,
-   con elipsis si no cabe). Con filas no hay huecos posibles; .hub-grid
-   queda como contenedor neutro en columna. */
-body.v2 .hub{background:linear-gradient(180deg,#111a3e,#0c1430);border:none;border-radius:20px;padding:12px}
-body.v2 .hub-grid{display:flex;flex-direction:column;gap:8px;margin-top:10px}
-body.v2 .hub-g{margin:12px 2px 0;color:#e8c766}
-body.v2 .hub-g:first-child{margin-top:0}
-body.v2 .hub-row{flex-direction:row;align-items:center;gap:11px;padding:8px 12px;border-top:none;background:rgba(255,255,255,.04);border-radius:16px;position:relative;min-height:58px;box-sizing:border-box}
-body.v2 .hub-ico{width:30px;height:30px;border-radius:9px;background:rgba(46,230,168,.10);font-size:16px}
-body.v2 .hub-tx b{font-size:15px;line-height:1.25}
-body.v2 .hub-tx i{font-size:12.5px;line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-body.v2 .hub-ch{display:none}
-body.v2 .hub-new,body.v2 .hub-plat{position:static}
-/* FASE 1B · bankroll y alertas compactas */
-body.v2 .v2-br{padding:14px 16px}
-body.v2 .v2-br-num{font-size:27px}
-body.v2 .v2-alerts{gap:8px}
-body.v2 .v2-alert-btn{padding:11px 10px;font-size:13px;border-radius:14px}
-/* FASE 1B · Academia compacta */
-body.v2 .v2-mc-feat{padding:14px 16px}
-body.v2 .v2-mc-feat h3{font-size:19px}
-body.v2 .v2-mc-open{margin-top:8px}
-/* FASE 1B · barras a juego (solo esta página: el estilo vive en home_lux) */
-body.v2 .v2-topbar{background:#161d29}
-body.v2 .v2-bottomnav{background:#081029!important}
-</style>
-<style>
-/* ===== Diseño LUX del home (2026-10-12, aprobado por Alex con muestra v2) =====
-   Negro premium + oro + cristal, tipografía grande, gráfica real del programa.
-   Reversible desde el botón del admin (site_settings home_lux). */
-.lux-glow{position:relative}
-.lux-adminbar{display:flex;justify-content:flex-end;margin:10px 0 0}
-.lux-adminbar button{padding:8px 14px;border-radius:999px;border:1px solid rgba(243,205,107,.55);background:rgba(212,160,23,.14);color:#ffe9a8;font-weight:700;font-size:12.5px;cursor:pointer}
-.lux-hero{position:relative;margin-top:14px;padding:22px 18px 18px;border-radius:24px;overflow:hidden;background:linear-gradient(155deg,#26303f,#1c2431 60%,#1a222e);border:1px solid rgba(148,178,220,.16);box-shadow:0 16px 40px rgba(0,0,0,.45)}
-.lux-hero::before{content:"";position:absolute;inset:0;background:radial-gradient(420px 220px at 10% -8%,rgba(47,230,167,.12),transparent 62%),radial-gradient(420px 260px at 108% 30%,rgba(77,163,255,.16),transparent 60%),radial-gradient(340px 220px at 88% 112%,rgba(47,230,167,.10),transparent 62%);pointer-events:none}
-.lux-hero>*{position:relative}
-.lux-live{display:inline-flex;align-items:center;gap:6px;font-size:9.5px;font-weight:800;letter-spacing:1.6px;color:#2fe6a7;background:rgba(47,230,167,.10);border:1px solid rgba(47,230,167,.35);padding:5px 10px;border-radius:99px}
-.lux-live i{width:6px;height:6px;border-radius:50%;background:#2fe6a7;box-shadow:0 0 10px #2fe6a7}
-.lux-hlabel{font-size:10.5px;letter-spacing:3px;color:#f3cd6b;font-weight:800;margin-top:14px}
-.lux-units{font-size:64px;font-weight:800;letter-spacing:-2px;line-height:1.04;background:linear-gradient(92deg,#fdf3c4 0%,#f3cd6b 34%,#e8c766 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
-.lux-units.neg{background:linear-gradient(92deg,#ffd9d9,#ff7b7b);-webkit-background-clip:text;background-clip:text}
-.lux-hsub{font-size:13px;color:#b9c8da;margin-top:4px}
-.lux-hsub b{color:#e8c766}
-.lux-chart{margin-top:12px}
-.lux-pills{display:flex;gap:8px;margin-top:14px}
-.lux-pill{flex:1;background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.10);border-radius:14px;padding:10px 4px;text-align:center}
-.lux-pill b{display:block;font-size:15px;font-weight:800;color:#f2f5f9}
-.lux-pill span{display:block;font-size:8.5px;letter-spacing:1.6px;color:#93a5bd;margin-top:3px;font-weight:700}
-.lux-fulllink{display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding:13px 16px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid rgba(148,178,220,.28);color:#eef2f7;font-size:13.5px;font-weight:700;text-decoration:none}
-.lux-chiprow{display:flex;gap:10px;margin-top:16px;overflow-x:auto;padding-bottom:8px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
-.lux-chip{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:12px 18px;border-radius:999px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);font-size:13px;font-weight:600;white-space:nowrap;color:#fff;text-decoration:none}
-/* Barra inferior moderna estilo WGT: negra, pegada al borde y pastilla menta translúcida en el activo */
-body.v2 .v2-bottomnav{background:#0b0f14;backdrop-filter:none;-webkit-backdrop-filter:none;border:0;border-top:1px solid rgba(139,152,173,.16);border-radius:0;box-shadow:none}
-body.v2 .v2-bottomnav .v2-bnav-item.active{background:rgba(47,230,167,.15);color:#2fe6a7;border-radius:22px;font-weight:600}
-/* ===== Fondo casi negro + Receipts en panel + tarjetas de record
-   (2026-10-15, diseno aprobado por Alex con la referencia que envio:
-   fondo oscuro para que las tarjetas resalten; heroe intacto) ===== */
-body.v2{background-color:#161d29;background-image:radial-gradient(560px 300px at 50% -80px,rgba(47,230,167,.06),transparent 65%),radial-gradient(700px 500px at 110% 30%,rgba(77,163,255,.05),transparent 60%)}
-.lux-panel{background:radial-gradient(360px 180px at 110% -30px, rgba(87, 227, 137, 0.10), transparent 65%), linear-gradient(155deg, #26303f, #1c2431 60%, #1a222e);border:1px solid rgba(148, 178, 220, 0.16);border-radius:24px;padding:20px 16px 16px;box-shadow:0 18px 44px rgba(0,0,0,.45)}
-.lux-receipts .ticket-card{position:relative;background:#0b0f16;border-color:rgba(255,255,255,.08);border-radius:16px}
-.lux-receipts .ticket-img{aspect-ratio:4/4.6;border-radius:16px}
-.lux-receipts .ticket-pill{left:auto;right:8px}
-.lux-receipts .ticket-title{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:30px 12px 10px;color:#fff;font-size:13.5px;background:linear-gradient(transparent,rgba(0,0,0,.86) 62%);border-radius:0 0 16px 16px}
-.lux-receipts .ticket-title .muted{color:rgba(255,255,255,.75)}
-.lux-receipts .ticket-sub,.lux-receipts .ticket-view-link{display:none}
-.lux-record{margin-top:28px}
-.lux-rec-h{font-size:26px;font-weight:800;line-height:1.16;letter-spacing:-.4px;color:#f2f5f9}
-.lux-rec-h span{color:#f3cd6b}
-.lux-rec-sub{font-size:13.5px;color:#9aa7b8;line-height:1.5;margin-top:8px}
-.lux-rec-card{position:relative;overflow:hidden;background:radial-gradient(360px 180px at 110% -30px, rgba(87, 227, 137, 0.10), transparent 65%), linear-gradient(155deg, #26303f, #1c2431 60%, #1a222e);border:1px solid rgba(148, 178, 220, 0.16);border-radius:18px;padding:16px;margin-top:10px}
-/* Raya verde inferior en las tarjetas de record (orden Alex 2026-10-20):
-   el mismo degradado verde de la casa que luce la tarjeta de membresia. */
-.lux-rec-card::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:linear-gradient(90deg,#5eeaa0,#2fe6a7 55%,#12b76a)}
-a.lux-rec-card{display:block;text-decoration:none;color:inherit;transition:transform .15s ease}
-a.lux-rec-card:active{transform:scale(.985)}
-.lux-rec-top{display:flex;justify-content:space-between;align-items:center;gap:10px}
-.lux-rec-ver{font-size:11px;font-weight:800;letter-spacing:.4px;color:#e8c766;white-space:nowrap}
-.lux-rec-main{background:radial-gradient(360px 180px at 110% -30px, rgba(87, 227, 137, 0.10), transparent 65%), linear-gradient(155deg, #26303f, #1c2431 60%, #1a222e);border-color:rgba(148, 178, 220, 0.16);margin-top:16px}
-.lux-rec-k{font-size:10.5px;font-weight:700;letter-spacing:1.6px;color:#9aa7b8}
-.lux-rec-n{font-size:37px;font-weight:800;letter-spacing:-1px;color:#f2f5f9;margin-top:6px;line-height:1}
-.lux-rec-u{font-size:17px;font-weight:800;color:#e8c766;margin-top:3px}
-.lux-rec-u.neg{color:#ff7b7b}
-.lux-rec-s{font-size:12px;color:#9aa7b8;margin-top:5px}
-.lux-head{background:radial-gradient(360px 180px at 110% -30px, rgba(87, 227, 137, 0.10), transparent 65%), linear-gradient(155deg, #26303f, #1c2431 60%, #1a222e);border:1px solid rgba(148, 178, 220, 0.16);border-radius:24px;padding:20px 18px;margin:12px -8px 0}
-.lux-head-date{font-size:11.5px;font-weight:700;letter-spacing:2.2px;color:#8b98ab;text-transform:uppercase}
-.lux-head-hi{font-size:16.5px;font-weight:600;color:#eef2f7;margin-top:10px}
-.lux-head-title{font-size:37px;font-weight:800;letter-spacing:-.8px;color:#fff;margin-top:2px;line-height:1.08}
-.lux-head-title span{color:#2fe6a7}
-.lux-head-card{display:flex;gap:13px;align-items:center;background:rgba(47,230,167,.07);border:1px solid rgba(47,230,167,.45);border-radius:18px;padding:14px 15px;margin-top:16px;position:relative}
-/* El efecto de rayas verdes (franja izquierda + subrayado) se puso
-   el 2026-10-15 a pedido de Alex y se RETIRÓ la misma noche también
-   por orden suya ("los efecto de rayas siguen ahí"): la tarjeta de
-   estado queda limpia, sin franja ni subrayado. */
-.lux-head-card.pend{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.12)}
-.lux-head-ico{flex:0 0 auto;width:47px;height:47px;border-radius:14px;background:#2fe6a7;color:#04150a;font-size:23px;font-weight:800;display:flex;align-items:center;justify-content:center}
-.lux-head-card.pend .lux-head-ico{background:#39445a;color:#dbe4f0}
-.lux-head-card b{font-size:16.5px;color:#fff}
-.lux-head-card p{font-size:13px;color:#9aa7b8;line-height:1.45;margin-top:2px}
-/* SIN BORDES en las tarjetas del home (2026-10-15, orden de Alex:
-   "elimina todos los bordes de las card de home, no me gusta").
-   Marcos de tarjetas y paneles de ESTA página. (La franja y el
-   subrayado verde de la tarjeta de estado también se retiraron la
-   misma noche por orden suya.) */
-.lux-head,.lux-hero,.lux-panel,.lux-rec-card,.lux-head-card,.lux-pill,.lux-fulllink,.v2-linecard,.db-diff-card,.lux-receipts .ticket-card,.tstc,.tk-card{border:none!important}
-/* Espacio muerto tras el FAQ reducido (2026-10-18, orden de Alex: "ajusta ese espacio, se ve feo"):
-   FAQ 44px + wrap 90px + footer 48px = 182px de aire; queda un respiro corto. */
-.db-faq{padding-bottom:10px!important}
-main.v2-wrap{padding-bottom:24px!important}
-.v2-footer{margin-top:12px!important}
-.tstg{background:none!important;padding:0!important}
-/* Segunda pasada (Alex, con captura: "están ahí todavía"): también
-   fuera los bordes de la barra superior y sus botones, el menú, la
-   barra inferior, las píldoras LIVE/PENDING, el aviso VIP y las
-   insignias, cajas y botones dentro de las tarjetas — solo home. */
-.v2-topbar,.v2-icon-btn,.v2-track-link,.v2-lang-btn,.v2-menu-drop,.v2-vipinvite,.v2-pastdue,.v2-flash,.lux-live,.lux-live-pill,.lux-pend-pill,.tk-status,.tstg-st,.tstc-wu,.tstg-wu,.tstc-track,.tstg-track,.win-bubble{border:none!important}
-/* Rayita fina separadora bajo la barra superior (2026-10-16, pedido de
-   Alex): excepción puntual a la regla sin-bordes, solo para la topbar. */
-.v2-topbar{border-bottom:1px solid rgba(255,255,255,.09)!important}
-/* LIVE en movimiento + UPCOMING (2026-10-15, pedido de Alex; renombrado 2026-10-16: «PENDING» junto a «posted» se leía como card sin publicar) */
-.lux-live-pill{display:inline-flex;align-items:center;gap:5px;margin-left:8px;padding:2.5px 8px;border-radius:999px;background:rgba(239,68,68,.16);border:1px solid rgba(239,68,68,.55);color:#ff6b6b;font-size:10.5px;font-weight:800;letter-spacing:.8px;vertical-align:2px}
-.lux-live-dot{width:7px;height:7px;border-radius:50%;background:#ef4444;animation:luxpulse 1.1s ease-in-out infinite}
-@keyframes luxpulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.55);opacity:.55}}
-.lux-pend-pill{display:inline-flex;align-items:center;gap:4px;margin-left:8px;padding:2.5px 8px;border-radius:999px;background:rgba(232,199,102,.13);border:1px solid rgba(232,199,102,.45);color:#e8c766;font-size:10.5px;font-weight:800;letter-spacing:.8px;vertical-align:2px}
-
-</style>
-
-{# Botón "Revert design" ELIMINADO (2026-10-13, orden de Alex: "quita eso").
-   El diseño lux queda fijo; el endpoint /admin/diseno-home sigue existiendo
-   por si algún día se pide volver atrás desde el Admin. #}
-
-<!-- ENCABEZADO COMPACTO (2026-10-15, orden de Alex: como el de su
-     captura — fecha, saludo, titulo y estado de la card; chiquito
-     y no largo. Reemplaza el saludo anterior y el heroe de unidades.) -->
-<div id="nvBubble" style="display:none;align-items:center;gap:8px;max-width:560px;margin:10px auto 0;padding:6px 7px 6px 14px;border-radius:999px;background:rgba(17,21,33,.92);border:1px solid rgba(232,199,102,.38);color:#dfe5f0;font-size:11.5px;font-weight:400;letter-spacing:.2px;box-shadow:0 6px 18px rgba(0,0,0,.3)">
-  <span style="flex:1;min-width:0">&#10024; <b style="font-weight:600">{% if cuenta_es %}Nueva versi&oacute;n disponible{% else %}New version available{% endif %}</b> <span style="color:#8b94a7">{% if cuenta_es %}&middot; tarjetas nuevas y todas tus herramientas juntas{% else %}&middot; new cards &amp; all your tools in one place{% endif %}</span></span>
-  <button id="nvBtn" type="button" style="flex:none;border:none;cursor:pointer;background:linear-gradient(135deg,#f3cd6b,#d9a92f);color:#0d1420;font-size:11px;font-weight:700;border-radius:999px;padding:5px 13px">{% if cuenta_es %}Actualizar{% else %}Refresh{% endif %}</button>
-  <button id="nvX" type="button" aria-label="Dismiss" style="flex:none;border:none;cursor:pointer;background:transparent;color:#8b94a7;font-size:12px;padding:2px 6px 2px 0">&#10005;</button>
-</div>
-<script>
-(function(){var k='tst_nv_20261017';try{if(localStorage.getItem(k))return;}catch(e){}
-var b=document.getElementById('nvBubble');if(!b)return;b.style.display='flex';
-function done(){try{localStorage.setItem(k,'1');}catch(e){}}
-document.getElementById('nvBtn').addEventListener('click',function(){done();window.location.reload();});
-document.getElementById('nvX').addEventListener('click',function(){done();b.remove();});})();
-</script>
-<style>
-/* ═══ TARJETA PRINCIPAL GRANDE + CONTRASTE DE DOS COLORES (2026-10-21,
-   orden de Alex con captura de WGT: «ellos tienen dos colores: el color
-   de las cartas sobresale más y se ve; en el de nosotros, el color de
-   atrás como que interfiere y no se ven los bordes de las tarjetas»).
-   Fondo de página casi negro neutro; superficies un escalón más claras
-   con borde 1px visible; la tarjeta principal crece a las proporciones
-   de la captura (radio 24px, padding 24/22, título 34px, sub-tarjeta de
-   estado radio 18px con caja de icono de reloj). Solo esta página; el
-   hub solo hereda colores, sin tocar su estructura. Acentos dorado
-   #e8c766 y menta #2ee6a8 intactos. Reversible: quitar este bloque.
-   ═══ 2ª PASADA (2026-10-21, Alex con captura de SU teléfono: «ni se
-   ven los bordes de las tarjetas»): tarjeta principal MÁS GRANDE
-   (padding 28px, radio 26px, título 39px, saludo 18px, sub-tarjeta
-   padding 20px e icono de 54px) y contraste DECISIVO verificado en
-   pantalla (Chromium 390px + muestreo de píxeles): fondo de página
-   prácticamente negro #04040a→#020203 sin brillos de color,
-   superficies #171f31→#111827 (un escalón claro sobre el fondo) y
-   borde fuerte rgba(255,255,255,.20) en todas las tarjetas. ═══ */
-body.v2{background-color:#161d29;background-image:radial-gradient(560px 300px at 50% -80px,rgba(47,230,167,.06),transparent 65%),radial-gradient(700px 500px at 110% 30%,rgba(77,163,255,.05),transparent 60%)}
-body.v2 .lux-head,body.v2 .lux-panel,body.v2 .lux-rec-card,body.v2 .v2-br,body.v2 .db-diff-card,body.v2 .yw-sum,body.v2 .yw-card,body.v2 .board-empty,body.v2 .v2-mc-feat,body.v2 .v2-process,body.v2 .v5c,body.v2 .hub,body.v2 .f1b-rec{background:linear-gradient(155deg,#26303f,#1c2431 60%,#1a222e);border:1px solid rgba(255,255,255,.20)!important}
-body.v2 .lux-receipts .ticket-card,body.v2 .tstc,body.v2 .tk-card,body.v2 .lux-pill,body.v2 .lux-fulllink{border:1px solid rgba(255,255,255,.20)!important}
-body.v2 .hub-row{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.18)!important}
-body.v2 .lux-head{padding:28px;margin-top:16px;border-radius:26px}
-body.v2 .lux-head-date{font-size:11.5px}
-body.v2 .lux-head-hi{margin-top:10px;font-size:18px}
-body.v2 .lux-head-title{font-size:39px;margin-top:3px}
-body.v2 .lux-head-card{padding:20px;margin-top:20px;gap:15px;border-radius:18px;border:1px solid rgba(255,255,255,.20)!important}
-body.v2 .lux-head-card.pend{background:#0a101f}
-body.v2 .lux-head-card.pend .lux-head-ico{background:rgba(232,199,102,.16);color:#e8c766}
-body.v2 .lux-head-ico{width:54px;height:54px;border-radius:16px;font-size:26px}
-body.v2 .lux-head-card b{font-size:17px}
-body.v2 .lux-head-card p{font-size:13.5px}
-/* ═══ 3ª PASADA (2026-10-21, Alex con captura: las tarjetas «están muy
-   juntas, pegadas» y el fondo «muy oscuro… no así»): (1) FONDO SUBIDO a
-   azul-gris oscuro tipo WGT #0b1322→#0d1626 (negro puro prohibido) con
-   las superficies un escalón por encima #182238→#141d31 y el borde
-   fuerte .20 intacto — se mantiene el escalón fondo < superficie <
-   borde; (2) RITMO VERTICAL uniforme de aire entre bloques principales:
-   secciones a 20px y la franja de récord a 18px sobre el bloque
-   anterior (antes 2px: quedaba pegada al board). Sin tocar textos,
-   tamaños ni estructura. ═══ */
-body.v2 .v2-sec{margin-top:20px}
-body.v2 .f1b-rec{margin:18px 0 0}
-</style>
-<section class="v2-sec" style="margin-top:10px;padding-top:0">
-  <div id="tst-vid-open" style="display:inline-flex;align-items:center;gap:6px;background:#161c23;border:1px solid #2a3c5f;border-radius:999px;padding:6px 11px;cursor:pointer;">
-    <span style="color:#2ee6a8;font-size:10px;line-height:1;">&#9654;</span>
-    <span style="color:#2ee6a8;font-size:12px;font-weight:300;letter-spacing:.3px;">Watch how it works</span>
-  </div>
-</section>
-<header class="lux-head">
-  <p class="lux-head-date">{{ fecha }} &middot; ET</p>
-  <p class="lux-head-hi">{{ saludo }}, {{ nombre_corto }}</p>
-  <h1 class="lux-head-title">Today's <span>card</span></h1>
-  {% if card_pendiente %}
-  <div class="lux-head-card pend">
-    <span class="lux-head-ico">&#128336;</span>
-    <div>
-      <b>Today's card isn't up yet</b>
-      <p>New plays post at 1:00 PM ET every day. Every play public, win or loss.</p>
-    </div>
-  </div>
-  {% else %}
-  {% set _np = plays|selectattr('nivel', 'equalto', 'ELITE')|list|length %}
-  <div class="lux-head-card">
-    <span class="lux-head-ico">&#10003;</span>
-    <div>
-      <b>Today's card is posted</b>{% if hay_live %}<span class="lux-live-pill"><span class="lux-live-dot"></span>LIVE</span>{% elif esperando %}<span class="lux-pend-pill">&#9203; UPCOMING</span>{% endif %}
-      <p>{{ plays|length }} play{{ 's' if plays|length != 1 else '' }} today — {{ _np }} Platinum, {{ plays|length - _np }} Sharp Picks Free. Live on your Dashboard right now.</p>
-    </div>
-  </div>
-  {% endif %}
-</header>
-
-{% set card_lux = true %}
-<!-- TODAY'S PLAYS · tarjetas con la paleta de la página (card_lux) -->
-<section class="v2-sec" style="padding-top:0">
-  <a href="{{ url_for('game_center') }}" style="display:flex;align-items:center;gap:13px;background:#161c23;border:1px solid #2a3c5f;border-radius:20px;padding:15px 16px;text-decoration:none;">
-    <span style="flex:0 0 auto;width:40px;height:40px;border-radius:12px;background:rgba(46,230,168,.12);display:flex;align-items:center;justify-content:center;">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2ee6a8" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="2.2" fill="#2ee6a8" stroke="none"/><path d="M7.5 7.5a6.4 6.4 0 0 0 0 9"/><path d="M16.5 7.5a6.4 6.4 0 0 1 0 9"/><path d="M4.8 4.8a10.4 10.4 0 0 0 0 14.4"/><path d="M19.2 4.8a10.4 10.4 0 0 1 0 14.4"/></svg>
-    </span>
-    <span style="flex:1;min-width:0;">
-      <span style="display:block;font-size:16.5px;font-weight:800;color:#fff;">Odds</span>
-      <span style="display:block;font-size:12.5px;color:#93a4bf;margin-top:1px;">Live scores and games — every price, the fair line and the edge</span>
-    </span>
-    <span style="color:#93a4bf;font-size:20px;">›</span>
-  </a>
-</section>
-{% if is_alex and risk_hoy %}
-<section class="v2-sec" style="padding-top:0">
-  <div style="background:#161c23;border:1px solid #24334d;border-radius:20px;padding:15px 16px;">
-    <div style="font-size:11px;letter-spacing:2px;color:#e8c766;font-weight:800;">YOUR RISK TODAY</div>
-    {% if risk_hoy.n %}
-    <div style="font-size:16.5px;font-weight:800;color:#fff;margin-top:5px;">${{ '{:,.2f}'.format(risk_hoy.total) }} at risk today · {{ risk_hoy.pct }}% of your bankroll · {{ risk_hoy.n }} play{{ 's' if risk_hoy.n != 1 else '' }}</div>
-    {% else %}
-    <div style="font-size:16.5px;font-weight:800;color:#fff;margin-top:5px;">No plays tracked today — $0 at risk</div>
-    {% endif %}
-  </div>
-</section>
-{% endif %}
-
-<div id="tst-vid-modal" style="display:none;position:fixed;inset:0;background:rgba(6,9,12,.97);z-index:100000;flex-direction:column;align-items:center;justify-content:center;padding:calc(12px + env(safe-area-inset-top)) 14px 14px;box-sizing:border-box;">
-  <div style="position:relative;width:100%;max-width:430px;"><video id="tst-vid-player" controls playsinline webkit-playsinline preload="none" poster="{{ url_for('static', filename='img/video-dashboard-poster.jpg') }}" style="width:100%;max-width:430px;max-height:92dvh;border-radius:16px;background:#000;">
-    <source src="{{ url_for('static', filename='video/dashboard-tutorial.mp4') }}" type="video/mp4">
-  </video>
-    <button id="tst-vid-x" type="button" aria-label="Close" style="position:absolute;top:10px;right:10px;z-index:20;width:44px;height:44px;border-radius:50%;background:rgba(10,14,20,.85);border:2px solid #2ee6a8;color:#fff;font-size:20px;font-weight:800;cursor:pointer;line-height:1;">&#10005;</button>
-  </div>
-  <div id="tst-vid-end" style="display:none;width:100%;max-width:430px;margin-top:14px;flex-direction:column;align-items:center;gap:12px;">
-    <div style="color:#fff;font-size:16px;font-weight:700;">That is the full tour</div>
-    <div style="display:flex;gap:10px;">
-      <button id="tst-vid-again" type="button" style="background:#2ee6a8;color:#06281c;border:0;border-radius:999px;padding:13px 24px;font-size:16px;font-weight:800;cursor:pointer;">&#8635; Watch again</button>
-      <button id="tst-vid-endclose" type="button" style="background:#161c23;color:#fff;border:2px solid #2ee6a8;border-radius:999px;padding:12px 24px;font-size:16px;font-weight:800;cursor:pointer;">&#10005; Close</button>
-    </div>
-  </div>
-</div>
-<script>
-(function(){var m=document.getElementById('tst-vid-modal'),v=document.getElementById('tst-vid-player'),o=document.getElementById('tst-vid-open'),c=document.getElementById('tst-vid-close');if(!m||!v||!o){return}document.body.appendChild(m);function open(){m.style.display='flex';if(v.play){v.play()}}function close(){m.style.display='none';v.pause()}o.addEventListener('click',open);if(c){c.addEventListener('click',close)};var x=document.getElementById('tst-vid-x');if(x){x.addEventListener('click',close)}m.addEventListener('click',function(e){if(e.target===m){close()}});var eo=document.getElementById('tst-vid-end');v.addEventListener('ended',function(){try{if(v.webkitExitFullscreen){v.webkitExitFullscreen()}}catch(e){}try{if(document.fullscreenElement){document.exitFullscreen()}}catch(e){}if(eo){eo.style.display='flex'}});var ag=document.getElementById('tst-vid-again');if(ag){ag.addEventListener('click',function(){eo.style.display='none';v.currentTime=0;v.play()})}var ec=document.getElementById('tst-vid-endclose');if(ec){ec.addEventListener('click',function(){eo.style.display='none';close()})}o.addEventListener('click',function(){if(eo){eo.style.display='none'}});})();
-</script>
-<section class="v2-sec" id="plays" style="scroll-margin-top:70px;">
-  {% set golds = plays | selectattr('nivel', 'equalto', 'GOLD') | list %}
-  {% if golds %}
-  <div class="v2-sec-head">
-    <div style="display:flex;align-items:baseline;gap:10px">
-      <h2 class="v2-sec-title" style="font-size:20px">Your plays</h2>
-      <span style="color:#8fa1c2;font-size:15px;font-weight:600">Sharp Picks Free</span>
-    </div>
-    {# Encabezado estilo «Your plays · Gold» (Alex, 2026-10-22): fuera el
-       título «Today's plays», el subtítulo y el «No free plays today.». #}
-  </div>
-  {% endif %}
-  {# Estado vacío del board (Alex, 2026-10-20): sin título por fuera ni
-     cuenta regresiva — solo la cajita «The board is not posted yet». #}
-
-  {% if card_pendiente %}
-  <style>
-  .board-empty{background:linear-gradient(165deg,#26303f,#1c2431 60%,#1a222e);border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:18px 16px;text-align:center}
-  .board-empty-t{font-size:15px;font-weight:700;color:#eef2f7;margin:0}
-  .board-empty-s{font-size:12.5px;line-height:1.5;color:#8fa1c2;margin:6px 0 0}
-  </style>
-  <div class="board-empty">
-    <p class="board-empty-t">The board is not posted yet</p>
-    <p class="board-empty-s">Your plays show here the moment they are posted.</p>
-  </div>
-  {% elif golds %}
-  <div class="v2-plays">
-    {% for p in golds %}
-      {% include "_play_card_v5.html" %}
-    {% endfor %}
-  </div>
-  {% endif %}
-
-  {# Sección Platinum — diseño C «Emblema» (Alex, 2026-10-20; REEMPLAZA
-     el «no sale nada hasta publicar» de la mañana): quien NO tiene
-     Platinum ve (1) sin card publicada de verdad, la carta-aviso de
-     desbloqueo (_platinum_teaser: emblema, «Our most valuable play of
-     the day», botón Unlock — sin jugada, liga ni hora: el aviso no
-     anuncia ninguna jugada) y (2) con la card publicada, la carta real
-     bloqueada (_play_card_locked, datos sanitizados en app.py) con el
-     chrome del diseño C. locked_plays solo trae jugadas con
-     publicación real o, en la preview admin, el fallback de
-     verificación — nunca candidatas del Admin. Quien tiene Platinum ve
-     su carta abierta como siempre; sin card, no ve aviso. #}
-  {% set plat = plays | selectattr('nivel', 'equalto', 'ELITE') | list %}
-  {% if plat or locked_plays or not platinum_unlocked %}
-  <div style="display:flex;align-items:baseline;gap:10px;margin:22px 0 10px">
-      <h2 class="v2-sec-title" style="font-size:20px">Your plays</h2>
-      <span style="color:#8fa1c2;font-size:15px;font-weight:600">Platinum</span>
-    </div>
-  <div class="v2-plays">
-    {% if platinum_unlocked %}
-      {% for p in plat %}
-        {% include "_play_card_v5.html" %}
-      {% endfor %}
-    {% elif locked_plays %}
-      {% for p in locked_plays %}
-        {% include "_play_card_locked.html" %}
-      {% endfor %}
-    {% else %}
-      {% include "_platinum_teaser.html" %}
-    {% endif %}
-  </div>
-  {% endif %}
-</section>
-
-{# CREED (2026-10-24, pedido por Alex con captura de referencia): tarjeta
-   manifiesto en el home, misma estructura de la muestra. Letra pequeña
-   y fina; cada opción abre su descripción (acordeón, sin salir de la
-   página). Visible para todos los miembros. #}
-<style>
-.tst-creed{background:#161c23;border:1px solid rgba(232,199,102,.45);border-radius:24px;padding:20px 18px;margin:20px 0 0}
-.tst-creed-head{display:flex;gap:12px;align-items:flex-start}
-.tst-creed-icon{flex:none;width:44px;height:44px;border-radius:14px;background:linear-gradient(160deg,#f2d98a,#c9a227);display:flex;align-items:center;justify-content:center}
-.tst-creed-title{color:#fff;font-size:20px;font-weight:600;letter-spacing:-.3px;line-height:1.2;margin:0}
-.tst-creed-sub{color:#e8c766;font-size:10px;font-weight:600;letter-spacing:2.5px;margin-top:4px}
-.tst-creed-body{color:#e8eaf0;font-size:14px;font-weight:400;line-height:1.65;margin:18px 0 0}
-.tst-creed-body .hl{background:linear-gradient(transparent 62%,rgba(232,199,102,.45) 62%)}
-.tst-creed-opts{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
-.tst-creed-opt{background:#17171c;border:1px solid rgba(255,255,255,.14);color:#f2f4f8;font-size:13px;font-weight:400;padding:9px 13px;border-radius:999px;cursor:pointer}
-.tst-creed-opt i{font-style:normal;color:#e8c766;margin-right:6px}
-.tst-creed-desc{display:none;color:#c7ccd8;font-size:13px;font-weight:400;line-height:1.6;margin:12px 2px 0}
-.tst-creed-desc.open{display:block}
-.tst-creed-desc b{color:#fff;font-weight:600}
-.tst-creed-foot{display:flex;gap:10px;align-items:center;border-top:1px solid rgba(255,255,255,.1);margin-top:18px;padding-top:16px}
-.tst-creed-av{flex:none;width:44px;height:44px;border-radius:50%;background:#000;overflow:hidden;display:flex;align-items:center;justify-content:center}
-.tst-creed-av img{width:100%;height:100%;object-fit:cover;display:block;border-radius:50%}
-.tst-creed-brand{color:#fff;font-size:14px;font-weight:600;margin:0}
-.tst-creed-tag{color:#9aa3b8;font-size:13px;font-weight:400;margin:2px 0 0}
-</style>
-<section class="tst-creed">
-  <div class="tst-creed-head">
-    <div class="tst-creed-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#14161c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 3v6c0 5-3.5 9-8 11-4.5-2-8-6-8-11V5l8-3z"/><path d="M9 12l2 2 4-4"/></svg></div>
-    <div>
-      <p class="tst-creed-title">The Sharp Team Creed</p>
-      <p class="tst-creed-sub">OUR PROMISE TO YOU</p>
-    </div>
-  </div>
-  <p class="tst-creed-body">We play only what the <span class="hl">numbers qualify</span> — some days that is two or three plays, some days none. Same stakes, same plays for everyone. We don't chase losses or wins. <span class="hl">Discipline is the foundation</span> of success and profitability.</p>
-  <div class="tst-creed-opts">
-    <button type="button" class="tst-creed-opt" data-creed="selective"><i>◎</i>Selective</button>
-    <button type="button" class="tst-creed-opt" data-creed="equal"><i>⚖</i>Equal</button>
-    <button type="button" class="tst-creed-opt" data-creed="nochasing"><i>⊘</i>No chasing</button>
-    <button type="button" class="tst-creed-opt" data-creed="discipline"><i>↗</i>Discipline</button>
-  </div>
-  <p class="tst-creed-desc" id="tst-creed-selective"><b>Selective.</b> We only play when the numbers qualify. If the edge isn't there, there's no play — we never force volume to fill the card.</p>
-  <p class="tst-creed-desc" id="tst-creed-equal"><b>Equal.</b> Same stakes, same plays for everyone. Every member sees the same card — nobody gets a different version.</p>
-  <p class="tst-creed-desc" id="tst-creed-nochasing"><b>No chasing.</b> We never chase losses or wins. One result never changes the next stake — the plan stays the same after a win or a loss.</p>
-  <p class="tst-creed-desc" id="tst-creed-discipline"><b>Discipline.</b> The foundation of everything. The system works when it's followed every day — same rules, win or lose.</p>
-  <div class="tst-creed-foot">
-    <div class="tst-creed-av"><img src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team"></div>
-    <div>
-      <p class="tst-creed-brand">The Sharp Team</p>
-      <p class="tst-creed-tag">Same rules, every day</p>
-    </div>
-  </div>
-</section>
-<script>
-(function(){var btns=document.querySelectorAll('.tst-creed-opt');btns.forEach(function(b){b.addEventListener('click',function(){var id='tst-creed-'+b.getAttribute('data-creed');document.querySelectorAll('.tst-creed-desc').forEach(function(d){if(d.id!==id){d.classList.remove('open')}});var el=document.getElementById(id);if(el){el.classList.toggle('open')}})})})();
-</script>
-
-{# Franja «OFFICIAL RECORD» ELIMINADA del Home (2026-10-22, orden de
-   Alex: «elimina eso» — limpieza del Dashboard; el récord completo
-   sigue en el Official Tracker). #}
-
-{% if hot_cards %}
-<!-- RUNNING HOT (2026-10-22, pedido por Alex): franja deslizable de
-     rachas vigentes calculada desde las jugadas liquidadas (oficiales
-     por programa y por liga + VALUE del sistema). Cada tarjeta lleva
-     el color de SU programa (acento en borde, sello, puntos y enlace);
-     las derrotas son aros rojos vacíos. Solo aparece si al menos una
-     racha califica; cada tarjeta enlaza al Official Tracker. -->
-<style>
-  .rh-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin:20px 0 0}
-  .rh-title{font-size:21px;font-weight:800;letter-spacing:-.3px;color:#eef2f8}
-  .rh-sub{color:#8fa1c2;font-size:12.5px;margin-top:3px}
+  *{box-sizing:border-box}
+  body{margin:0;background:#05081a;color:#eef2f8;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;background:linear-gradient(rgba(5,8,26,.82),rgba(5,8,26,.90)),url("{{ url_for('static', filename='img/hero-player.jpg') }}") center 20%/cover no-repeat}
+  .phone{position:relative;z-index:1;max-width:520px;margin:0 auto;padding:14px 14px 90px}
+  a{color:inherit;text-decoration:none}
+  .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+  .brand{display:flex;align-items:center;gap:8px}
+  .fin{width:34px;height:34px;min-width:34px;border-radius:50%;object-fit:cover;box-shadow:0 0 14px rgba(46,230,168,.45)}
+  .wordmark{line-height:1}
+  .wordmark b{display:block;font-size:9px;letter-spacing:.22em;color:#93a4bf}
+  .wordmark strong{display:block;font-size:17px;letter-spacing:.02em;font-style:italic}
+  .wordmark i{display:block;height:3px;background:linear-gradient(90deg,#2ee6a8,#e8c766);margin-top:3px}
+  .topactions{display:flex;align-items:center;gap:6px}
+  .pill{display:flex;align-items:center;gap:6px;border:1px solid #24334d;background:#1a222e;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:600;white-space:nowrap}
+  .pill .crown{color:#e8c766}
+  .topactions .pill{height:32px;box-sizing:border-box}
+  .pillrow .pill{height:40px;box-sizing:border-box}
+  .avatar{width:32px;height:32px;min-width:32px;border-radius:50%;border:2px solid #2ee6a8;background:#2a3c5f;display:flex;align-items:center;justify-content:center;font-size:15px;color:#eef2f8;font-weight:800}
+  .pillrow{display:flex;align-items:center;gap:7px;margin-bottom:10px}
+  .balance{flex:1 1 auto;min-width:0;display:flex;align-items:center;justify-content:space-between;gap:8px;height:40px;box-sizing:border-box;border:1px solid #2ee6a8;border-radius:999px;padding:8px 12px;background:#161c23;box-shadow:0 0 16px rgba(46,230,168,.35);font-weight:700;font-size:12px;white-space:nowrap}
+  .balance b{color:#2ee6a8;font-size:14px}
+  .menubtn{width:40px;height:40px;min-width:40px;border:1px solid #24334d;background:#1a222e;border-radius:12px;color:#eef2f8;font-size:16px;display:flex;align-items:center;justify-content:center}
+  .hero{position:relative;overflow:hidden;border:1px solid #2a3c5f;border-radius:20px;background:radial-gradient(120% 140% at 20% 0%,#24334d 0%,#0d1626 55%,#05081a 100%);padding:20px 18px 0;box-shadow:0 0 26px rgba(46,230,168,.18)}
+  .hero .photo{position:absolute;left:0;right:0;top:0;bottom:0;background:linear-gradient(90deg,rgba(5,8,26,.97),rgba(5,8,26,.92) 42%,rgba(5,8,26,.88) 72%,rgba(5,8,26,.85) 100%),url("{{ url_for('static', filename='img/hero-player.jpg') }}") center right/cover no-repeat;opacity:.95}
+  .hero .inner{position:relative}
+  .dateline{font-size:12px;letter-spacing:.28em;color:#93a4bf;font-weight:700;margin-bottom:10px;text-transform:uppercase}
+  .greet{font-size:clamp(30px,11vw,42px);line-height:1.02;font-weight:900;margin:0 0 8px;max-width:100%}
+  .greet span{color:#2ee6a8}
+  .tagline{color:#dbe4f2;font-size:15px;margin:0 0 18px;max-width:64%}
+  .status{position:relative;display:flex;gap:13px;align-items:center;background:rgba(13,18,25,.92);border:1px solid #24334d;border-left:6px solid #2ee6a8;border-radius:16px;padding:14px 15px;margin:0 0 16px}
+  .check{width:48px;height:48px;min-width:48px;border-radius:50%;background:#2ee6a8;color:#161c23;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;box-shadow:0 0 18px rgba(46,230,168,.6)}
+  .status b{display:block;font-size:17px}
+  .status span{color:#93a4bf;font-size:14px;line-height:1.45}
+  .status .arr{margin-left:auto;color:#93a4bf;font-size:22px}
+  .tiles{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:16px 0}
+  .tile{background:linear-gradient(180deg,#1c2431,#161c23);border:1px solid #2a3c5f;border-radius:18px;padding:14px 12px}
+  .tile .ic{width:42px;height:42px;border-radius:12px;background:#1a222e;border:1px solid #24334d;display:flex;align-items:center;justify-content:center;color:#2ee6a8;font-size:22px;margin-bottom:10px}
+  .tile b{display:block;font-size:16px;margin-bottom:4px}
+  .tile p{margin:0;color:#93a4bf;font-size:12.5px;line-height:1.45}
+  .tile .arr{color:#93a4bf;float:right;font-size:18px}
+  .risk{display:flex;align-items:center;gap:14px;border:1px solid #2ee6a8;border-radius:18px;padding:16px;background:linear-gradient(180deg,#1c2431,#161c23);box-shadow:0 0 18px rgba(46,230,168,.25);margin-bottom:20px}
+  .risk .shield{font-size:38px;color:#2ee6a8}
+  .risk .left{flex:1}
+  .risk .label{font-size:12px;letter-spacing:.22em;color:#2ee6a8;font-weight:800}
+  .risk b{display:block;font-size:20px;margin:4px 0}
+  .risk span{color:#dbe4f2;font-size:13.5px}
+  .risk .right{border-left:1px solid #24334d;padding-left:14px;color:#2ee6a8;font-weight:700;font-size:14px;line-height:1.4;max-width:130px}
+  .unlock{display:flex;align-items:center;gap:12px;border:1px solid #e8c766;border-radius:18px;padding:16px;background:linear-gradient(180deg,#1c2431,#161c23);margin-bottom:20px;text-decoration:none;color:#eef2f8}
+  .unlock-crown{font-size:30px;color:#e8c766}
+  .unlock-txt{flex:1}
+  .unlock-txt b{display:block;font-size:18px;color:#e8c766}
+  .unlock-txt p{margin:4px 0 0;font-size:13.5px;color:#93a4bf;line-height:1.45}
+  .unlock-arr{font-size:26px;color:#e8c766}
+  .rh-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin:4px 0 0}
+  .rh-title{font-size:26px;font-weight:800;letter-spacing:-.3px;color:#eef2f8}
+  .rh-sub{color:#8fa1c2;font-size:13px;margin-top:3px}
   .rh-ledger{flex:none;background:#131e31;border:1px solid #24334d;color:#dbe4f2;font-size:12.5px;font-weight:600;padding:8px 12px;border-radius:10px;text-decoration:none}
   .rh-rail{display:flex;gap:10px;overflow-x:auto;padding:14px 2px 8px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none}
   .rh-rail::-webkit-scrollbar{display:none}
-  .rh-card{flex:0 0 90%;scroll-snap-align:start;background:linear-gradient(165deg,#131e31,#0d1626);border:1px solid #24334d;border-left:4px solid var(--rhc);border-radius:16px;padding:18px 16px 20px;text-decoration:none;display:block}
+  .rh-card{flex:0 0 88%;scroll-snap-align:start;background:linear-gradient(180deg,#1c2431,#161c23);border:1px solid var(--rhc);border-left:4px solid var(--rhc);border-radius:20px;padding:18px 16px 20px;text-decoration:none;display:block;box-shadow:0 0 22px color-mix(in srgb,var(--rhc) 30%,transparent)}
   .rh-badge{display:inline-block;font-size:10px;font-weight:800;letter-spacing:1.4px;color:var(--rhc);background:rgba(255,255,255,.05);border:1px solid var(--rhc);padding:5px 9px;border-radius:8px}
-  .rh-tag{float:right;color:#c7d2e4;font-size:12px;font-weight:700;letter-spacing:.6px}
   .rh-bigrow{display:flex;align-items:center;gap:10px;margin:12px 0 2px}
   .rh-big{color:#fff;font-size:42px;font-weight:800}
   .rh-pct{font-size:14px;font-weight:800;color:var(--rhc);background:rgba(255,255,255,.06);border:1px solid var(--rhc);padding:4px 8px;border-radius:8px}
   .rh-desc{color:#dbe4f2;font-size:14.5px}
-  .rh-pill{display:inline-block;margin-top:10px;font-size:10px;font-weight:700;letter-spacing:1.2px;color:#8fa1c2;background:#131e31;border:1px solid #24334d;padding:4px 8px;border-radius:7px}
   .rh-dots{margin:12px 0 14px;display:flex;gap:5px;flex-wrap:wrap}
   .rh-dots i{width:11px;height:11px;border-radius:50%;background:var(--rhc);display:block}
   .rh-dots i.off{background:transparent;border:2px solid #f26d6d;width:8px;height:8px;margin:1.5px}
   .rh-foot{display:flex;justify-content:space-between;align-items:center;color:#8fa1c2;font-size:12px}
   .rh-see{color:var(--rhc);font-weight:700;font-size:13.5px}
-  .rh-pager{display:flex;gap:5px;justify-content:center;margin-top:2px}
+  .rh-pager{display:flex;gap:5px;justify-content:center;margin-top:2px;margin-bottom:20px}
   .rh-pager i{width:6px;height:6px;border-radius:50%;background:#33415c;display:block}
   .rh-pager i.on{background:#fff}
-  .rh-cap{color:#8fa1c2;font-size:12px;margin-top:6px}
+  .sechead{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+  .sechead h2{margin:0;font-size:26px}
+  .lvpill{border:1px solid #2ee6a8;color:#2ee6a8;border-radius:999px;padding:6px 12px;font-size:13px;font-weight:800}
+  .viewall{margin-left:auto;color:#dbe4f2;font-size:14px}
+  .section{border:1px solid #2a3c5f;border-radius:18px;background:linear-gradient(180deg,#1c2431,#161c23);padding:16px;margin-bottom:14px}
+  .section h3{margin:0 0 10px;font-size:19px}
+  .row{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-top:1px solid #1c2431;font-size:15px}
+  .row:first-of-type{border-top:0}
+  .on{color:#2ee6a8;font-weight:800}
+  .join{border:1px solid #2ee6a8;color:#2ee6a8;border-radius:999px;padding:6px 13px;font-size:13px;font-weight:800}
+  .unlock{background:linear-gradient(180deg,#1c2431,#161c23);border:1px solid #2ee6a8;border-radius:18px;padding:20px;text-align:center;margin-bottom:14px;box-shadow:0 0 20px rgba(46,230,168,.3)}
+  .unlock b{display:block;font-size:21px;margin-bottom:6px}
+  .unlock p{margin:0 0 14px;color:#dbe4f2;font-size:14px;line-height:1.5}
+  .unlock .cta{display:inline-block;background:#2ee6a8;color:#161c23;font-weight:900;border-radius:999px;padding:12px 26px;font-size:15px}
+  .faq p{color:#93a4bf;font-size:14px;line-height:1.55;margin:6px 0 14px}
+  .footer{text-align:center;color:#8b98ad;font-size:12.5px;line-height:1.6;padding:6px 10px 0}
+  body.v5-sheet-open .nav{display:none!important}
+  .nav{position:fixed;left:0;right:0;bottom:0;z-index:2;background:#0d1219;border-top:1px solid #2a3c5f;display:flex;justify-content:space-around;padding:10px 6px 14px;max-width:520px;margin:0 auto}
+  .nav div{text-align:center;font-size:11px;color:#8b98ad}
+  .nav .active{color:#2ee6a8;font-weight:800}
+  .nav .ic2{font-size:22px;display:block;margin-bottom:2px}
+  .v5c,.v5c-topsec,.v5c-botsec,.ptl{background:linear-gradient(180deg,#1c2431,#161c23)!important}
+  .v5c-title,.v5stitle{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .vid video{width:100%;border-radius:16px;background:#000}
 </style>
-<section>
-  <div class="rh-head">
-    <div>
-      <div class="rh-title">Running hot</div>
-      <div class="rh-sub">Current runs — graded official plays only</div>
+</head>
+<body>
+<div class="phone">
+  <div class="topbar">
+    <div class="brand">
+      <img class="fin" src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team">
+      <div class="wordmark"><b>THE</b><strong>SHARP TEAM</strong><i></i></div>
     </div>
-    <a class="rh-ledger" href="{{ url_for('official_tracker') }}">Full record</a>
+    <div class="topactions">
+      <a class="pill" href="{{ url_for('desbloquear_platinum') }}"><span class="crown">♛</span> Platinum <span>›</span></a>
+      <a class="avatar" href="{{ url_for('cuenta') }}">{{ inicial }}</a>
+    </div>
   </div>
-  <div class="rh-rail" id="rhRail">
-    {% for c in hot_cards %}
-    <a class="rh-card" style="--rhc:{{ c.color }}" href="{{ url_for('official_tracker') }}">
-      <span class="rh-badge">{{ c.badge }}</span><span class="rh-tag">{{ c.tag }}</span>
-      <div class="rh-bigrow"><span class="rh-big">{{ c.big }}</span>{% if c.pct %}<span class="rh-pct">{{ c.pct }}</span>{% endif %}</div>
-      <div class="rh-desc">{{ c.desc }}</div>
-      <span class="rh-pill">{{ c.pill }}</span>
-      <div class="rh-dots">{% for w in c.dots %}<i{% if not w %} class="off"{% endif %}></i>{% endfor %}</div>
-      <div class="rh-foot"><span>Graded win or lose</span><span class="rh-see">See the plays ›</span></div>
-    </a>
-    {% endfor %}
-  </div>
-  {% if hot_cards|length > 1 %}
-  <div class="rh-pager" id="rhPager">{% for c in hot_cards %}<i{% if loop.first %} class="on"{% endif %}></i>{% endfor %}</div>
-  <script>
-  (function(){var r=document.getElementById('rhRail'),p=document.getElementById('rhPager');if(!r||!p)return;var d=p.children;r.addEventListener('scroll',function(){var i=Math.round(r.scrollLeft/(r.scrollWidth-r.clientWidth||1)*(d.length-1));for(var k=0;k<d.length;k++){d[k].className=(k===i?'on':'');}},{passive:true});})();
-  </script>
-  {% endif %}
-  <p class="rh-cap">Tap any run to see all its plays — wins and losses.</p>
-</section>
-{% endif %}
 
-<!-- RECENT GRADED TICKETS — diseño "Yesterday" (2026-10-16, aprobado por
-     Alex tras ver muestras): encabezado por día, resumen por nivel SOLO
-     PLATINUM y GOLD (sin fila de totales), tarjetas con el ticket
-     chiquito, WON/LOST y unidades — letra fina y pequeña en todo.
-     El toque de la tarjeta abre el ticket original en el modal. -->
-<style>
-  .yw-head { display:flex; align-items:center; justify-content:space-between; margin:2px 0 12px; }
-  .yw-title { font-size:21px; font-weight:300; letter-spacing:-.3px; color:#eef2f8; }
-  .yw-title span { color:#8b98ad; font-size:13px; font-weight:300; margin-left:8px; }
-  .yw-full { background:#131e31; border:1px solid #24334d; color:#dbe4f2; font-size:12px; font-weight:300; padding:8px 12px; border-radius:10px; text-decoration:none; }
-  .yw-sum { display:flex; align-items:center; gap:10px; background:#0d1626; border:1px solid #1d2a42; border-radius:14px; padding:11px 13px; margin-bottom:9px; color:#eef2f8; }
-  .yw-sum .rec { font-size:16px; font-weight:300; }
-  .yw-sum .net { font-size:14px; font-weight:300; color:#c7d2e4; }
-  .yw-sum .graded { margin-left:auto; color:#8b98ad; font-size:12px; font-weight:300; }
-  .yw-badge { display:inline-block; font-size:10px; font-weight:300; letter-spacing:1.2px; padding:5px 9px; border-radius:8px; white-space:nowrap; }
-  .yw-b-plat { background:rgba(232,199,102,.13); color:#e8c766; border:1px solid rgba(232,199,102,.45); }
-  .yw-b-gold { background:rgba(148,166,196,.12); color:#aebdd4; border:1px solid rgba(148,166,196,.35); }
-  .yw-card { display:flex; gap:12px; width:100%; text-align:left; background:#0d1626; border:1px solid #1d2a42; border-radius:16px; padding:13px; margin-top:11px; align-items:center; cursor:pointer; font:inherit; color:#eef2f8; appearance:none; -webkit-appearance:none; }
-  .yw-card.won { border-color:rgba(47,191,113,.45); }
-  .yw-thumb { width:60px; height:60px; border-radius:10px; object-fit:cover; flex:none; background:#16223a; }
-  .yw-thumb-fallback { width:60px; height:60px; border-radius:10px; flex:none; background:#16223a; color:#8b98ad; font-size:9px; font-weight:300; display:flex; align-items:center; justify-content:center; text-align:center; line-height:1.5; }
-  .yw-main { flex:1; min-width:0; display:block; }
-  .yw-meta { display:flex; align-items:center; gap:8px; margin-bottom:5px; }
-  .yw-kind { color:#8b98ad; font-size:12px; font-weight:300; }
-  .yw-pick { font-size:15.5px; font-weight:300; line-height:1.25; display:block; }
-  .yw-match { color:#8b98ad; font-size:12.5px; font-weight:300; margin-top:4px; display:block; }
-  .yw-clv { color:#8b98ad; font-size:11.5px; font-weight:300; margin-top:3px; display:block; }
-  .yw-clv-pos { color:#2fbf71; }
-  .yw-clv-neg { color:#ff8a8a; }
-  .yw-view { color:#7dd3fc; font-size:11.5px; font-weight:300; margin-top:5px; display:block; }
-  .yw-res { text-align:right; flex:none; display:block; }
-  .yw-res .st { font-size:11px; font-weight:300; letter-spacing:1.4px; display:block; }
-  .yw-res .u { font-size:16px; font-weight:300; margin-top:3px; display:block; }
-  .yw-won-t { color:#2fbf71; }
-  .yw-lost-t { color:#8b98ad; }
-  .yw-day + .yw-day { margin-top:22px; }
-</style>
-<section class="v2-sec lux-panel lux-receipts">
-  {% if recientes %}
-  {% set mc = namespace(n=0) %}
-  {% set meses = {'01':'Jan','02':'Feb','03':'Mar','04':'Apr','05':'May','06':'Jun','07':'Jul','08':'Aug','09':'Sep','10':'Oct','11':'Nov','12':'Dec'} %}
-  {% for g in recientes_dias[:1] %}
-    {% set iso = g.fecha_iso %}
-    {% set etiqueta = 'Yesterday' if iso == ayer_iso else ('Today' if iso == hoy_iso else (meses.get(iso[5:7], '') ~ ' ' ~ (iso[8:10] | int))) %}
-    {% set sub = meses.get(iso[5:7], '') ~ ' ' ~ (iso[8:10] | int) ~ ' card' %}
-    {% set ns = namespace(pw=0, pl=0, pu=0.0, gw=0, gl=0, gu=0.0) %}
-    {% for r in g.plays %}
-      {% if r.nivel in ['ELITE','PLATINUM'] %}
-        {% if r.resultado == 'WON' %}{% set ns.pw = ns.pw + 1 %}{% else %}{% set ns.pl = ns.pl + 1 %}{% endif %}
-        {% if r.unidades is not none %}{% set ns.pu = ns.pu + r.unidades %}{% endif %}
-      {% elif r.nivel == 'GOLD' %}
-        {% if r.resultado == 'WON' %}{% set ns.gw = ns.gw + 1 %}{% else %}{% set ns.gl = ns.gl + 1 %}{% endif %}
-        {% if r.unidades is not none %}{% set ns.gu = ns.gu + r.unidades %}{% endif %}
-      {% endif %}
-    {% endfor %}
-  <div class="yw-day">
-    <div class="yw-head">
-      <div class="yw-title">{{ etiqueta }} <span>{{ sub }}</span></div>
-      {% if loop.first %}<a class="yw-full" href="/official-tracker">&#8599; Full record</a>{% endif %}
-    </div>
-    {% if ns.pw + ns.pl > 0 %}
-    <div class="yw-sum"><span class="yw-badge yw-b-plat">PLATINUM</span><span class="rec">{{ ns.pw }}-{{ ns.pl }}</span><span class="net">{{ '+' if ns.pu > 0 else '' }}{{ '%.2f' % ns.pu }}u</span><span class="graded">{{ ns.pw + ns.pl }} graded</span></div>
-    {% endif %}
-    {% if ns.gw + ns.gl > 0 %}
-    <div class="yw-sum"><span class="yw-badge yw-b-gold">SHARP PICKS FREE</span><span class="rec">{{ ns.gw }}-{{ ns.gl }}</span><span class="net">{{ '+' if ns.gu > 0 else '' }}{{ '%.2f' % ns.gu }}u</span><span class="graded">{{ ns.gw + ns.gl }} graded</span></div>
-    {% endif %}
-    {% for r in g.plays %}
-      {% set mc.n = mc.n + 1 %}
-      {% set won = r.resultado == 'WON' %}
-      {% set es_plat = r.nivel in ['ELITE','PLATINUM'] %}
-      {% set partes = r.pick.split(' vs ') %}
-      {% if partes | length < 2 %}{% set partes = r.pick.split(' @ ') %}{% endif %}
-    <button type="button" class="yw-card {{ 'won' if won else '' }}" data-ticket="luxht-{{ mc.n }}" aria-label="View receipt for {{ r.pick }}">
-      {% if r.comprobante %}
-      <img class="yw-thumb" src="{{ url_for('static', filename=r.comprobante) }}" alt="Original receipt: {{ r.pick }}" loading="lazy">
-      {% else %}
-      <span class="yw-thumb-fallback">THE<br>SHARP<br>TEAM</span>
-      {% endif %}
-      <span class="yw-main">
-        <span class="yw-meta"><span class="yw-badge {{ 'yw-b-plat' if es_plat else 'yw-b-gold' }}">{{ 'PLATINUM' if es_plat else 'SHARP PICKS FREE' }}</span><span class="yw-kind">{{ 'Platinum' if es_plat else 'Sharp Picks Free' }} play{% if r.liga %} · {{ r.liga }}{% endif %}</span></span>
-        <span class="yw-pick">{{ partes[0] }}</span>
-        {% if r.abbr and r.opp_abbr %}<span class="yw-match">{{ r.abbr }} vs {{ r.opp_abbr }}</span>{% endif %}
-        {% if r.cierre %}<span class="yw-clv">Closed {{ r.cierre }} · CLV <span class="{{ 'yw-clv-pos' if (r.clv or 0) >= 0 else 'yw-clv-neg' }}">{{ '%+.1f' % (r.clv or 0) }}%</span></span>{% endif %}
-        {% if r.comprobante %}<span class="yw-view">🎫 View ticket</span>{% endif %}
-      </span>
-      <span class="yw-res">
-        <span class="st {{ 'yw-won-t' if won else 'yw-lost-t' }}">{{ 'WON' if won else 'LOST' }}</span>
-        {% if r.unidades is not none %}
-        <span class="u {{ 'yw-won-t' if won else 'yw-lost-t' }}">{{ '+' if r.unidades > 0 else '' }}{{ '%.2f' % r.unidades }}u</span>
-        {% else %}
-        <span class="u {{ 'yw-won-t' if won else 'yw-lost-t' }}">{{ fmt_money(r.profit) }}</span>
-        {% endif %}
-      </span>
-    </button>
-    <div class="modal" id="luxht-{{ mc.n }}" hidden>
-      <div class="modal-card ticket-photo-card">
-        <button type="button" class="modal-close" data-close>✕</button>
-        {% if r.comprobante %}
-        <img class="ticket-photo" src="{{ url_for('static', filename=r.comprobante) }}" alt="Original receipt: {{ r.pick }}">
-        {% else %}
-        <p class="ticket-brand">THE SHARP TEAM</p>
-        <p class="ticket-pick">{{ r.pick }} {{ fmt_odds(r.cuota) }}</p>
-        <div class="ticket-rows">
-          <div><span>Date</span><b>{{ r.fecha }}</b></div>
-          <div><span>Level</span><b>{{ 'PLATINUM' if es_plat else 'SHARP PICKS FREE' }}</b></div>
-          <div><span>Result</span><b class="{{ 'pos' if won else 'neg' }}">{{ 'WON' if won else 'LOST' }} · {{ fmt_money(r.profit) }}</b></div>
+  <div class="pillrow">
+    <a class="balance" href="{{ url_for('cuenta') }}"><span>View my balance</span><span><b>{% if balance_total_txt %}{{ balance_total_txt }}{% elif bankroll %}${{ '%.2f'|format(bankroll) }}{% else %}—{% endif %}</b> ›</span></a>
+    <a class="pill" href="{{ url_for('official_tracker') }}">Full record ›</a>
+    <a class="menubtn" href="{{ url_for('tools') }}">☰</a>
+  </div>
+
+
+  <div class="hero">
+    <div class="photo"></div>
+    <div class="inner">
+      <div class="dateline">{{ fecha }} · ET</div>
+      <p class="greet"><span style="white-space:nowrap;color:#eef2f8">{{ saludo }},</span><br><span>{{ nombre_corto }}</span></p>
+      <p class="tagline">Smart analysis. Real edges. Winning plays.</p>
+      <div class="status">
+        <div class="check">✓</div>
+        <div>
+          {% if card_pendiente %}
+          <b>Today's card is not posted yet</b><span>Check back when the card drops — with a push the moment it goes live.</span>
+          {% else %}
+          <b>Today's card is posted</b><span>{{ plays|length }} {% if plays|length == 1 %}play{% else %}plays{% endif %} today — {{ plays|selectattr('nivel','equalto','ELITE')|list|length }} Platinum, {{ plays|selectattr('nivel','equalto','GOLD')|list|length }} Gold.<br>Live on your Dashboard right now.</span>
+          {% endif %}
         </div>
-        <p class="ticket-note">Original receipt not uploaded for this play.</p>
-        {% endif %}
+        <div class="arr">›</div>
       </div>
     </div>
-    {% endfor %}
   </div>
-  {% endfor %}
+
+  <div class="tiles">
+    <a class="tile" href="{{ url_for('game_center') }}"><div class="ic">◎</div><span class="arr">›</span><b>Odds</b><p>Live scores &amp; games, every price, the fair line and the edge.</p></a>
+    <a class="tile" href="{{ url_for('tracker') }}"><div class="ic">♛</div><span class="arr">›</span><b>My Bets</b><p>Track your plays, results and performance.</p></a>
+    <a class="tile" href="{{ url_for('tools') }}"><div class="ic">▂</div><span class="arr">›</span><b>Tools</b><p>The sharpest tools for smarter plays.</p></a>
+  </div>
+
+  <div class="risk">
+    <div class="shield">⬢</div>
+    <div class="left">
+      <div class="label">YOUR RISK TODAY</div>
+      {% if risk_hoy %}
+      <b>${{ '%.2f'|format(risk_hoy.total) }} at risk today</b>
+      <span>• {{ risk_hoy.pct }}% of your bankroll <span style="white-space:nowrap">• {{ risk_hoy.n }} {% if risk_hoy.n == 1 %}play{% else %}plays{% endif %}</span></span>
+      {% else %}
+      <b>— at risk today</b>
+      <span>• —% of your bankroll <span style="white-space:nowrap">• — plays</span></span>
+      {% endif %}
+    </div>
+    <div class="right">Discipline builds long‑term profits. ↗</div>
+  </div>
+
+  <div class="sechead"><h2>Your plays</h2><span class="lvpill">Gold</span><a class="viewall" href="{{ url_for('official_tracker') }}">View all ›</a></div>
+
+  {% if not plays %}
+  <div class="section">
+    <h3>Today's card is not posted yet</h3>
+    <p style="color:#93a4bf;font-size:14px;line-height:1.55;margin:0">Check back when the card drops.</p>
+  </div>
+  {% endif %}
+  {% set tracked_ids = tracked_ids|default([]) %}
+  {% for p in plays %}
+  {% if p.nivel == 'ELITE' and not miembro_platinum %}
+  {% include "_play_card_locked.html" %}
   {% else %}
-  <p class="muted">No settled plays yet — tickets appear here as soon as the first plays are graded.</p>
+  {% include "_play_card_v5.html" %}
   {% endif %}
-</section>
+  {% endfor %}
 
-
-<!-- Sección grande de récord (2026-10-15): RETIRADA del render para
-     TODOS el 2026-10-21 (Home moderno Fase 1+1B abierto a todos por
-     orden de Alex). La franja compacta .f1b-rec tras las jugadas, con
-     su enlace a /official-tracker, la reemplaza. El código original
-     queda preservado en el comentario Jinja siguiente. -->
-{# ═══ CÓDIGO PRESERVADO — SECCIÓN GRANDE DE RÉCORD (2026-10-15) ═══
-   Para restaurarla: quita la marca de apertura de este comentario y
-   la de cierre tras el fin de la sección, y vuelve a poner sobre la
-   sección su compuerta original (record_stats sin es_alex = para
-   todos; con la variante solo-Alex era record_stats and not es_alex,
-   ver commit 499f717). Los dos comentarios internos van en HTML para
-   no cerrar este comentario envolvente.
-   ── INICIO DEL CÓDIGO PRESERVADO ──
-{% if record_stats and not es_alex %}
-<!-- FASE 1B (solo Alex): la sección completa salía de su variante — su
-   récord ya va en la franja compacta .f1b-rec tras las jugadas, una
-   sola vez. Los demás miembros la seguían viendo igual que siempre. -->
-<section class="v2-sec lux-record">
-  <h2 class="lux-rec-h">The documented <span>record</span>: every play, win or loss.</h2>
-  <p class="lux-rec-sub">Every official play is posted before the game with its real ticket, then graded against the final score in public — win or loss, nothing hidden.</p>
-  {% set g = record_stats.general %}{% set pl = record_stats.por_nivel.ELITE %}{% set gd = record_stats.por_nivel.GOLD %}
-  <a class="lux-rec-card lux-rec-main" href="{{ url_for('official_tracker') }}">
-    <div class="lux-rec-top"><p class="lux-rec-k">OFFICIAL PLAYS</p><span class="lux-rec-ver">View plays &amp; tickets ›</span></div>
-    <p class="lux-rec-n">{{ g.record }}</p>
-    <p class="lux-rec-u{% if g.profit < 0 %} neg{% endif %}">{{ g.units_display }}</p>
-    <p class="lux-rec-s">{{ g.win_rate }}% win rate · {{ g.roi }}% ROI · {{ "+$" if g.profit > 0 else "-$" }}{{ "%.2f"|format(g.profit|abs) }}</p>
+  <a class="unlock" href="{{ url_for('desbloquear_platinum') }}">
+    <div class="unlock-crown">♛</div>
+    <div class="unlock-txt"><b>Unlock Platinum</b><p>Every play, every ticket, every result — no locks.</p></div>
+    <span class="unlock-arr">›</span>
   </a>
-  {% if not es_alex %}
-  <!-- Fase 1 (solo Alex): su récord salía UNA sola vez — la tarjeta
-     general de arriba; las tarjetas por nivel se quedaban para los demás. -->
-  <a class="lux-rec-card" href="{{ url_for('official_tracker', programa='platinum') }}">
-    <div class="lux-rec-top"><p class="lux-rec-k">PLATINUM PLAYS</p><span class="lux-rec-ver">View plays &amp; tickets ›</span></div>
-    <p class="lux-rec-n">{{ pl.record }}</p>
-    <p class="lux-rec-u{% if pl.profit < 0 %} neg{% endif %}">{{ pl.units_display }}</p>
-    <p class="lux-rec-s">{{ pl.win_rate }}% win rate</p>
-  </a>
-  <a class="lux-rec-card" href="{{ url_for('official_tracker', programa='gold') }}">
-    <div class="lux-rec-top"><p class="lux-rec-k">SHARP PICKS FREE PLAYS</p><span class="lux-rec-ver">View plays &amp; tickets ›</span></div>
-    <p class="lux-rec-n">{{ gd.record }}</p>
-    <p class="lux-rec-u{% if gd.profit < 0 %} neg{% endif %}">{{ gd.units_display }}</p>
-    <p class="lux-rec-s">{{ gd.win_rate }}% win rate</p>
-  </a>
-  {% endif %}
-</section>
-{% endif %}
-   ── FIN DEL CÓDIGO PRESERVADO (sección grande de récord) ── #}
 
-{# Promo de tools + chips ELIMINADOS (2026-10-12, orden de Alex): repetían la
-   sección Your Tools de abajo y el botón Tools del menú inferior. #}
-
-{# Sección upsell del $1 ELIMINADA del Home (2026-10-20, orden de Alex:
-   limpieza general): la oferta vive solo en /desbloquear-platinum y el
-   Home ya trae su CTA en la tarjeta Platinum bloqueada — nada repetido. #}
-
-<!-- BANKROLL & STAKING -->
-<section class="v2-sec">
-  <div class="v2-sec-head">
-    <div>
-      <p class="v2-sec-eyebrow"><b>02</b> · Bankroll</p>
-      <h2 class="v2-sec-title">Bankroll &amp; staking</h2>
-    </div>
-  </div>
-  <div class="v2-br">
-    <div class="v2-br-top">
+  {% if hot_cards %}
+  <section>
+    <div class="rh-head">
       <div>
-        <p class="v2-eyebrow">Bankroll</p>
-        {% if bankroll %}
-        <p class="v2-br-num">${{ '%.2f' % bankroll }}</p>
-        {% else %}
-        <p class="v2-br-num muted" style="font-size:22px">not set</p>
-        {% endif %}
+        <div class="rh-title">Hot right now</div>
+        <div class="rh-sub">Current winning runs, graded plays only</div>
       </div>
-      <a class="v2-br-edit" href="{{ url_for('cuenta') }}">Edit</a>
+      <a class="rh-ledger" href="{{ url_for('official_tracker') }}">↗ Public ledger</a>
     </div>
-    <form method="post" action="{{ url_for('stake_mode') }}" class="v2-seg">
-      <input type="hidden" name="next" value="home">
-      <button type="submit" name="mode" value="units" class="{% if stake_mode == 'units' %}active{% endif %}">TST Units</button>
-      <button type="submit" name="mode" value="kelly" class="{% if stake_mode == 'kelly' %}active{% endif %}">Kelly $</button>
-    </form>
-    <button class="v2-br-how" id="v2-br-how-open" type="button">how much should I bet?</button>
-    <p style="font-size:12.5px;color:#8b94a7;line-height:1.55;margin:12px 0 0">Stakes are Sharp Team units (1 unit = 1% of your bankroll). Dollar amounts use your own unit size. Track saves the play to your tracker at your size, and it grades on its own. <a href="{{ url_for('cuenta') }}" style="color:#4da3ff">Change your unit</a></p>
-  </div>
-  {% if es_alex or es_admin %}
-  <a href="{{ url_for('balances') }}" class="v2-balances-link">💰 My book balances →</a>
+    <div class="rh-rail" id="rhRail">
+      {% for c in hot_cards %}
+      <a class="rh-card" style="--rhc:{{ c.color }}" href="{{ url_for('official_tracker') }}">
+        <span class="rh-badge">{{ c.badge }}</span>
+        <div class="rh-bigrow"><span class="rh-big">{{ c.big }}</span>{% if c.pct %}<span class="rh-pct">{{ c.pct }}</span>{% endif %}</div>
+        <div class="rh-desc">{{ c.desc }}</div>
+        <div class="rh-dots">{% for w in c.dots %}<i{% if not w %} class="off"{% endif %}></i>{% endfor %}</div>
+        <div class="rh-foot"><span>Graded win or lose</span><span class="rh-see">See the plays ›</span></div>
+      </a>
+      {% endfor %}
+    </div>
+    {% if hot_cards|length > 1 %}
+    <div class="rh-pager" id="rhPager">{% for c in hot_cards %}<i{% if loop.first %} class="on"{% endif %}></i>{% endfor %}</div>
+    <script>
+    (function(){var r=document.getElementById('rhRail'),p=document.getElementById('rhPager');if(!r||!p)return;var d=p.children;r.addEventListener('scroll',function(){var i=Math.round(r.scrollLeft/(r.scrollWidth-r.clientWidth||1)*(d.length-1));for(var k=0;k<d.length;k++){d[k].className=(k===i?'on':'');}},{passive:true});})();
+    </script>
+    {% endif %}
+  </section>
   {% endif %}
-  <div class="v2-modal" id="v2-br-how-modal" hidden>
-    <div class="v2-modal-card">
-      <h3>How much should I bet?</h3>
-      <p class="v2-modal-sub">Same edge, two ways to size it. Most members start with TST Units. Switch anytime.</p>
-      <div class="v2-opt">
-        <p class="v2-opt-title">TST Units — the disciplined way</p>
-        <p>Bet in units. <b>1 unit = 1% of your bankroll.</b> We size every play by its badge: ★ PLATINUM = 1u, SHARP PICKS FREE = 0.6u. Small and steady, exactly how The Sharp Team plays it. Less swing, easy to follow.</p>
-        {% if bankroll %}
-        <p class="v2-opt-ex">On your ${{ '%.0f' % bankroll }} bankroll, a 1u play is about ${{ '%.0f' % (bankroll / 100) }}.</p>
-        {% endif %}
-      </div>
-      <div class="v2-opt">
-        <p class="v2-opt-title">Kelly $ — the math-optimal way</p>
-        <p>Bet the exact dollars the math says is best. We use <b>quarter Kelly</b>, the model the sharpest bettors use: it stakes more on bigger edges, less on smaller ones. Higher long-run growth, bigger swings.</p>
-      </div>
-      <button class="v2-gotit" id="v2-br-how-close" type="button">Got it</button>
-    </div>
-  </div>
-</section>
-<script>
-(function(){var m=document.getElementById('v2-br-how-modal'),o=document.getElementById('v2-br-how-open'),c=document.getElementById('v2-br-how-close');if(o&&m){o.addEventListener('click',function(){m.hidden=false;});}if(c&&m){c.addEventListener('click',function(){m.hidden=true;});}if(m){m.addEventListener('click',function(e){if(e.target===m){m.hidden=true;}});}})();
-</script>
 
-<!-- YOUR CHANNELS · tres vias de notificacion (Alex, 2026-10-24) -->
-<section class="v2-sec" id="channels" style="scroll-margin-top:96px">
-  <div class="v2-sec-head">
-    <div>
-      <h2 class="v2-sec-title">Your channels</h2>
-    </div>
+  <div class="section">
+    <h3>Get alerts</h3>
+    <div class="row"><span>Push notifications</span><a class="on" href="{{ url_for('alertas') }}">● ON ›</a></div>
+    <div class="row"><span>Telegram channel</span><a class="join" href="https://t.me/thesharpteam">JOIN →</a></div>
+    <div class="row"><span>Daily email</span><a class="on" href="{{ url_for('cuenta') }}">● ON ›</a></div>
   </div>
-  <div style="background:#161c23;border:1px solid #2a3c5f;border-radius:20px;padding:18px 16px;">
-    <div style="font-size:19px;font-weight:800;color:#fff;line-height:1.25;">Your plays, on every channel you use</div>
-    <p style="font-size:13.5px;color:#93a4bf;margin:8px 0 0;line-height:1.5;">Turn on a channel and your plays and alerts come to you there. Change it anytime from Alerts.</p>
-    <div style="display:flex;flex-direction:column;gap:10px;margin-top:16px;">
-      <a href="{{ url_for('alertas') }}" style="display:flex;align-items:center;gap:12px;background:#0d1219;border:1px solid #2a3c5f;border-radius:14px;padding:13px 14px;text-decoration:none;">
-        <span style="font-size:20px;">🔔</span>
-        <span style="flex:1;min-width:0;">
-          <span style="display:block;font-size:15.5px;font-weight:800;color:#fff;">Push alerts</span>
-          <span style="display:block;font-size:12.5px;color:#93a4bf;margin-top:1px;">Plays and results, right on your phone</span>
-        </span>
-        <span style="color:#93a4bf;font-size:20px;">›</span>
-      </a>
-      <a href="https://t.me/thesharpteam" style="display:flex;align-items:center;gap:12px;background:#0d1219;border:1px solid #2a3c5f;border-radius:14px;padding:13px 14px;text-decoration:none;">
-        <span style="font-size:20px;">✈️</span>
-        <span style="flex:1;min-width:0;">
-          <span style="display:block;font-size:15.5px;font-weight:800;color:#fff;">Telegram</span>
-          <span style="display:block;font-size:12.5px;color:#93a4bf;margin-top:1px;">Every play in Public Card and Sharp Club</span>
-        </span>
-        <span style="color:#93a4bf;font-size:20px;">›</span>
-      </a>
-      <a href="{{ url_for('alertas') }}" style="display:flex;align-items:center;gap:12px;background:#0d1219;border:1px solid #2a3c5f;border-radius:14px;padding:13px 14px;text-decoration:none;">
-        <span style="font-size:20px;">✉️</span>
-        <span style="flex:1;min-width:0;">
-          <span style="display:block;font-size:15.5px;font-weight:800;color:#fff;">Email</span>
-          <span style="display:block;font-size:12.5px;color:#93a4bf;margin-top:1px;">The daily card and results in your inbox</span>
-        </span>
-        <span style="color:#93a4bf;font-size:20px;">›</span>
-      </a>
-    </div>
-  </div>
-</section>
 
-<!-- TOOLS -->
-<section class="v2-sec" id="tools" style="scroll-margin-top:96px">
-  <div class="v2-sec-head">
-    <div>
-      <p class="v2-sec-eyebrow"><b>03</b> · Toolkit</p>
-      <h2 class="v2-sec-title">Your tools</h2>
-    </div>
+  <div class="section">
+    <h3>Academy</h3>
+    <div class="row"><span>Masterclass — the full course</span><a class="join" href="{{ url_for('masterclass') }}">OPEN →</a></div>
   </div>
-  <div class="v2-tools-rule"></div>
-  {% include "_tools_hub.html" %}
-</section>
 
-{# ═══ CÓDIGO PRESERVADO — «GET ALERTS» (04 · ALERTS) ═══
-   Retirado del render para TODOS el 2026-10-21 (orden de Alex con
-   captura): Telegram y las notificaciones ya están en el hub de
-   herramientas (grupo STAY CONNECTED: filas «Telegram» y «Alerts»)
-   y esta sección las repetía debajo del hub. El interruptor de push
-   que vivía aquí (botón #alertsPushBtn) quedó en la página /alertas
-   (templates/alertas.html), junto a los toggles de preferencias —
-   la función no se pierde. Para restaurar esta sección: quita las
-   marcas de comentario que la envuelven.
-   ── INICIO DEL CÓDIGO PRESERVADO ──
-<!-- ALERTS -->
-<section class="v2-sec">
-  <div class="v2-sec-head">
-    <div>
-      <p class="v2-sec-eyebrow"><b>04</b> · Alerts</p>
-      <h2 class="v2-sec-title">Get alerts</h2>
-      <p class="v2-sec-sub">Never miss a play.</p>
-    </div>
-  </div>
-  <div class="v2-alerts">
-    <button id="alertsPushBtn" class="v2-alert-btn v2-alert-push" type="button">🔔 Push Notifications</button>
-    <a class="v2-alert-btn v2-alert-tg" href="https://t.me/thesharpteam" target="_blank" rel="noopener">✈️ Join Telegram</a>
-  </div>
-</section>
-<script>
-(function(){
-  var btn = document.getElementById('alertsPushBtn');
-  var hint = document.getElementById('alertsPushHint');
-  if (!btn || !window.TLB_push) return;
-  var current = 'default';
-  function isIOS(){ return /iphone|ipad|ipod/i.test(navigator.userAgent || ''); }
-  function isStandalone(){ return (window.navigator && window.navigator.standalone) || (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches); }
-  function say(t){ if (hint) hint.textContent = t || ''; }
-  function paint(st){
-    current = st;
-    if (st === 'granted') { btn.textContent = '🔔 Push Notifications On'; btn.disabled = false; say('On — tap to turn off.'); }
-    else if (st === 'off') { btn.textContent = '🔔 Push Notifications Off'; btn.disabled = false; say('Off — tap to turn on.'); }
-    else if (st === 'unsubscribed') { btn.textContent = '🔔 Push Notifications Off'; btn.disabled = false; say('This device isn\u2019t connected — tap to turn on.'); }
-    else if (st === 'denied') { btn.textContent = '🔕 Push Blocked'; btn.disabled = true; say('Notifications are blocked — allow them in your browser settings, then come back.'); }
-    else if (st === 'unsupported') { btn.textContent = '🔔 Push Notifications'; btn.disabled = true;
-      if (isIOS() && !isStandalone()) say('On iPhone/iPad, alerts only work from the Home Screen app: tap Share \u2192 \u201cAdd to Home Screen\u201d, open The Sharp Team from there, then turn alerts on.');
-      else say('This browser doesn\u2019t support push notifications.'); }
-    else if (st === 'error') { btn.disabled = false; say('Something went wrong — tap to try again.'); window.TLB_push.status().then(function(s2){ if (s2 !== 'error') paint(s2); }); }
-    else { btn.textContent = '🔔 Push Notifications'; btn.disabled = false; say(''); }
-  }
-  window.TLB_push.status().then(paint);
-  btn.addEventListener('click', async function(){
-    if (btn.disabled) return;
-    btn.disabled = true;
-    var st = (current === 'granted') ? await window.TLB_push.disable() : await window.TLB_push.enable();
-    paint(st);
-  });
-})();
-</script>
-   ── FIN DEL CÓDIGO PRESERVADO («GET ALERTS») ── #}
-
-{# ═══ CÓDIGO PRESERVADO — «THE PROCESS» ═══
-   Retirado del render para TODOS el 2026-10-21 (Home moderno abierto a
-   todos): era cola de venta dentro del panel del miembro. Para
-   restaurarlo: quita las marcas de comentario que envuelven la sección
-   y, si se quiere la compuerta anterior, vuelve a poner la condición
-   not es_alex sobre ella (estado anterior: commit 499f717).
-   ── INICIO DEL CÓDIGO PRESERVADO ──
-{% if not es_alex %}
-<!-- THE PROCESS -->
-<section class="v2-sec">
-  <div class="v2-process">
-    <p class="v2-eyebrow">The process</p>
-    <h2 class="v2-process-title">One system. Three filters.</h2>
-    <p class="v2-process-sub">Every published pick must pass the model, the market, and the staking rules.</p>
-    <div class="v2-prow">
-      <span class="v2-pnum">01</span>
-      <div><h3>FAIR LINE</h3><p>Estimated probability is calculated before deciding whether the available price is worth a bet.</p></div>
-    </div>
-    <div class="v2-prow">
-      <span class="v2-pnum">02</span>
-      <div><h3>REAL EDGE</h3><p>The fair line is compared with the best odds. Research can veto a pick; it never invents value.</p></div>
-    </div>
-    <div class="v2-prow">
-      <span class="v2-pnum">03</span>
-      <div><h3>FIXED STAKE</h3><p>The stake stays disciplined. Neither losses nor streaks change the amount.</p></div>
-    </div>
-  </div>
-</section>
-{% endif %}
-   ── FIN DEL CÓDIGO PRESERVADO («THE PROCESS») ── #}
-
-<!-- MASTERCLASS -->
-<section class="v2-sec">
-  <div class="v2-sec-head">
-    <div>
-      <p class="v2-sec-eyebrow"><b>05</b> · Education</p>
-      <h2 class="v2-sec-title">Academy</h2>
-      <p class="v2-sec-sub">30 lessons on discipline and value — one per day.</p>
-    </div>
-  </div>
-  {% if leccion.get('titulo') %}
-  <a class="v2-mc-feat" href="{{ url_for('masterclass') }}">
-    <p class="v2-mc-tag">TODAY'S LESSON · DAY {{ leccion.get('dia') }}</p>
-    <h3>{{ leccion.get('titulo') }}</h3>
-    <p>{{ leccion.get('resumen') }}</p>
-    <span class="v2-link">Read the full lesson →</span>
-  </a>
-  {% endif %}
-  <a class="v2-mc-open" href="{{ url_for('masterclass') }}">🎓 Open Academy →</a>
-</section>
-
-{# ═══ CÓDIGO PRESERVADO — «WHAT MAKES THIS DIFFERENT» ═══
-   Retirado del render para TODOS el 2026-10-21 (Home moderno abierto a
-   todos): era cola de venta dentro del panel del miembro. Para
-   restaurarlo: quita las marcas de comentario que envuelven la sección
-   y, si se quiere la compuerta anterior, vuelve a poner la condición
-   not es_alex sobre ella (estado anterior: commit 499f717). El
-   comentario interno de la tarjeta «The proof» va en HTML para no
-   cerrar este comentario envolvente.
-   ── INICIO DEL CÓDIGO PRESERVADO ──
-{% if not es_alex %}
-<section class="db-diff">
-  <h2 class="db-diff-title">What makes this <span class="gold">different</span></h2>
-  <div class="db-diff-card">
-    <div class="db-diff-cat">The record</div>
-    <div class="db-diff-us"><span class="ck">✓</span><span class="tx"><span class="who">THE SHARP TEAM</span>Every play posted before game time — wins and losses stay on the public record.</span></div>
-    <div class="db-diff-them"><span class="xx">✕</span><span class="tx"><span class="who">TYPICAL</span>Only the winning picks ever see the light.</span></div>
-  </div>
-  <div class="db-diff-card">
-    <div class="db-diff-cat">Real money</div>
-    <div class="db-diff-us"><span class="ck">✓</span><span class="tx"><span class="who">THE SHARP TEAM</span>Every play bet with real money — ticket photo to prove it.</span></div>
-    <div class="db-diff-them"><span class="xx">✕</span><span class="tx"><span class="who">TYPICAL</span>Paper picks with nothing on the line.</span></div>
-  </div>
-  <div class="db-diff-card">
-    <div class="db-diff-cat">The price</div>
-    <div class="db-diff-us"><span class="ck">✓</span><span class="tx"><span class="who">THE SHARP TEAM</span>$1 for your first week, then $15.99/week. That's it.</span></div>
-    <div class="db-diff-them"><span class="xx">✕</span><span class="tx"><span class="who">TYPICAL</span>Hundreds upfront before you see a single pick.</span></div>
-  </div>
-  {% if not es_alex %}
-  <!-- Fase 1 (solo Alex): esta tarjeta repetía el récord que ya salía
-     en su único bloque de récord — fuera de su variante, intacta para
-     los demás. -->
-  <div class="db-diff-card">
-    <div class="db-diff-cat">The proof</div>
-    <div class="db-diff-us"><span class="ck">✓</span><span class="tx"><span class="who">THE SHARP TEAM</span>{{ res.ganadas }}-{{ res.perdidas }}, {{ "%+.1f"|format(res.roi) }}% ROI — every play documented and graded.</span></div>
-    <div class="db-diff-them"><span class="xx">✕</span><span class="tx"><span class="who">TYPICAL</span>Big claims, no record to check.</span></div>
+  {% if not miembro_platinum %}
+  <div class="unlock">
+    <b>Unlock Platinum</b>
+    <p>Every play, every ticket, every tool — the full board, unlocked.</p>
+    <a class="cta" href="{{ url_for('desbloquear_platinum') }}">Unlock Platinum →</a>
   </div>
   {% endif %}
-  <div class="db-diff-card">
-    <div class="db-diff-cat">The exit</div>
-    <div class="db-diff-us"><span class="ck">✓</span><span class="tx"><span class="who">THE SHARP TEAM</span>Cancel in one click from your account, anytime.</span></div>
-    <div class="db-diff-them"><span class="xx">✕</span><span class="tx"><span class="who">TYPICAL</span>Locked in — good luck getting out.</span></div>
+
+  <div class="section faq">
+    <h3>FAQ</h3>
+    <b>What is a Gold play?</b>
+    <p>The free showcase play of the day, open to every member.</p>
+    <b>What does a verified ticket mean?</b>
+    <p>The play was placed for real, and the original ticket is attached.</p>
+    <b>When does the card go live?</b>
+    <p>Weekdays in the afternoon, weekends in the morning — with a push the moment it drops.</p>
   </div>
-</section>
-{% endif %}
-   ── FIN DEL CÓDIGO PRESERVADO («WHAT MAKES THIS DIFFERENT») ── #}
 
-{# ═══ CÓDIGO PRESERVADO — FAQ «QUESTIONS, ANSWERED» ═══
-   Retirado del render para TODOS el 2026-10-21 (Home moderno abierto a
-   todos): era cola de venta dentro del panel del miembro. Para
-   restaurarlo: quita las marcas de comentario que envuelven la sección
-   y, si se quiere la compuerta anterior, vuelve a poner la condición
-   not es_alex sobre ella (estado anterior: commit 499f717).
-   ── INICIO DEL CÓDIGO PRESERVADO ──
-{% if not es_alex %}
-<section class="db-faq">
-  <h2 class="db-faq-title">Questions, answered</h2>
-  <details>
-    <summary>Is sports betting actually profitable?<span class="pm">+</span></summary>
-    <div class="ans">It can be — but only with a real edge, strict bankroll management, and the discipline to follow the system every single day. Most bettors lose because they chase, overbet, or follow hunches. We publish every play before game time with a ticket photo and grade it win or loss on our public record ({{ res.ganadas }}-{{ res.perdidas }}, {{ "%+.1f"|format(res.roi) }}% ROI so far). No cherry-picking, ever.</div>
-  </details>
-  <details>
-    <summary>How does The Sharp Team find its plays?<span class="pm">+</span></summary>
-    <div class="ans">Our Elo-based model prices every game in the NFL, NCAAF, MLB and NHL, and we compare it against Pinnacle's no-vig line plus 2–3 sportsbooks. We only post plays with a real edge, shop for the best price, and stake a flat 1u (1% of bankroll) on Platinum and 0.6u on Sharp Picks Free — never more, never chasing.</div>
-  </details>
-  <details>
-    <summary>Do you really bet every play yourself?<span class="pm">+</span></summary>
-    <div class="ans">Yes. Alex places every official play with real money and posts the original ticket photo. If there's no ticket, it's not an official play.</div>
-  </details>
-  <details>
-    <summary>What does the $1 week include?<span class="pm">+</span></summary>
-    <div class="ans">The full Platinum board for a whole week: the daily Platinum play, the +EV board, line-shopping tools and the Academy. After your $1 week it's $15.99/week — cancel anytime from your account.</div>
-  </details>
-  <details>
-    <summary>What happens if I have a losing week?<span class="pm">+</span></summary>
-    <div class="ans">Losing weeks happen — variance is part of betting and we never hide it. What matters is the long run: flat stakes, no chasing, every result on the record. Our rules cap daily risk at 6% of bankroll, so no single week can damage the program.</div>
-  </details>
-  <details>
-    <summary>How do I cancel?<span class="pm">+</span></summary>
-    <div class="ans">One click from your account page. No lock-in, no calls, no hassle — and your free account stays free forever.</div>
-  </details>
-</section>
-{% endif %}
-   ── FIN DEL CÓDIGO PRESERVADO (FAQ) ── #}
+  <div class="footer">THE SHARP TEAM · No hype. No guarantees. Just data-driven analysis.<br>Gamble smart. Stay disciplined. Play the long game.</div>
+</div>
 
-{# Barra dorada fija "Unlock Platinum" ELIMINADA (2026-10-13, orden de Alex): duplicaba el banner superior del $1 trial; queda solo el de arriba. #}
-
-{# Cuenta regresiva ELIMINADA (2026-10-20, orden de Alex): el estado
-   vacío del board ya no lleva conteo — solo la cajita simple. #}
-
-{% if celebracion %}
-{# LLUVIA DE DINERO + BURBUJA (pedido de Alex 2026-10-13): al entrar al
-   dashboard llueve dinero en cada visita mientras dure la celebración
-   (ayer positivo, hasta el primer partido de hoy — lo corta el servidor).
-   La burbuja con los resultados del día desaparece a los 4 segundos. #}
-<style>
-.money-rain{position:fixed;top:-60px;z-index:9998;pointer-events:none;animation:moneyfall linear forwards;}
-@keyframes moneyfall{to{transform:translateY(110vh) rotate(360deg);}}
-@media (prefers-reduced-motion: reduce){ .money-rain{display:none;} }
-.win-bubble{position:fixed;top:calc(env(safe-area-inset-top, 0px) + 84px);left:50%;transform:translateX(-50%);z-index:9999;background:rgba(10,18,34,.92);border:1px solid rgba(243,205,107,.65);color:#fff;border-radius:999px;padding:11px 20px;font-size:.95rem;font-weight:700;white-space:nowrap;box-shadow:0 12px 34px rgba(0,0,0,.55);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);animation:wb-in .35s ease-out;transition:opacity .5s ease;}
-.win-bubble .wb-pos{color:#e8c766;font-weight:900;}
-.win-bubble.wb-out{opacity:0;}
-@keyframes wb-in{from{opacity:0;transform:translateX(-50%) translateY(-8px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}
-</style>
-<div class="win-bubble" id="winBubble">🎉 <b>WINNING DAY!</b>&nbsp; Yesterday: {{ celebracion.w }}–{{ celebracion.l }} · <span class="wb-pos">+${{ '%.2f' % celebracion.profit }}</span></div>
-<script>
-(function(){
-  var emojis = ['💵','💰','💸'];
-  for(var i = 0; i < 40; i++){
-    var s = document.createElement('span');
-    s.className = 'money-rain';
-    s.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-    s.style.left = Math.random() * 100 + 'vw';
-    s.style.fontSize = (20 + Math.random() * 24) + 'px';
-    s.style.animationDuration = (2.5 + Math.random() * 2.5) + 's';
-    s.style.animationDelay = (Math.random() * 2) + 's';
-    document.body.appendChild(s);
-    (function(el){ setTimeout(function(){ el.remove(); }, 7000); })(s);
-  }
-  var b = document.getElementById('winBubble');
-  if (b) {
-    setTimeout(function(){ b.classList.add('wb-out'); }, 4000);
-    setTimeout(function(){ if (b.parentNode) b.remove(); }, 4600);
-  }
-})();
-</script>
-{% endif %}
-
-
-
-<style>
-/* FONDO ESTILO WISE GUY TEAM (Alex, 2026-10-23): fondo negro azulado solido y tarjetas gris pizarra solido, como su Dashboard */
-body.v2{background:#0d1219 !important;background-color:#0d1219 !important;background-image:none !important}
-body.v2 .lux-head,body.v2 .lux-panel,body.v2 .lux-rec-card,body.v2 .v2-br,body.v2 .db-diff-card,body.v2 .yw-sum,body.v2 .yw-card,body.v2 .board-empty,body.v2 .v2-mc-feat,body.v2 .v2-process,body.v2 .hub,body.v2 .f1b-rec,body.v2 .lux-hero,body.v2 .v5c-topsec,body.v2 .v5sheet-in,body.v2 .v5c{background:#161c23 !important;background-image:none !important}
-body.v2 .v2-topbar{background:#0d1219 !important}
-body.v2 .v2-bottomnav{background:#0d1219 !important}
-body.v2 main.v2-wrap > section{margin-left:-8px !important;margin-right:-8px !important}
-/* Tarjetas de jugadas y tarjeta del Creed con aire lateral igual que el resto (Alex, 2026-10-24, con captura: se veían pegadas a los bordes): la sección #plays y la tarjeta del Creed no heredan el -8px. */
-body.v2 main.v2-wrap > section#plays,body.v2 main.v2-wrap > section.tst-creed{margin-left:0 !important;margin-right:0 !important}
-body.v2 .lux-head-card{padding:10px 13px !important}
-body.v2 .lux-head-card p{line-height:1.38}
-/* Tira corrediza FIJA arriba del menú (Alex, 2026-10-24: no se mueve al deslizar; el menú baja para hacerle espacio): fondo igual al color de la página #0d1219 para que solo se vean las letras, letras oro en negrita, línea divisora oro tenue debajo de la tira, con X para cerrar; una frase nueva cada 10 segundos. */
-.tst-acad-ticker{position:fixed;top:0;left:0;right:0;z-index:100;height:34px;box-sizing:border-box;padding:6px 28px 6px 12px;background:#0d1219;border-bottom:1px solid rgba(232,199,102,.12)}
-.tst-acad-strip{overflow:hidden}
-.tst-acad-strip span{display:inline-block;white-space:nowrap;color:#e8c766;font-size:14px;font-weight:700;line-height:1.5}
-.tst-acad-strip span.tst-slide{animation:tst-ticker-slide 10s linear forwards}
-@keyframes tst-ticker-slide{from{transform:translateX(100vw)}to{transform:translateX(-100%)}}
-.tst-acad-x{position:absolute;top:4px;right:2px;color:#9aa3b8;font-size:16px;font-weight:300;line-height:1;background:none;border:none;padding:0;cursor:pointer}
-body.v2 .v2-topbar{margin-top:34px !important;top:34px !important}
-body.v2.tst-acad-closed .v2-topbar{margin-top:0 !important;top:0 !important}
-</style>
-{% endblock %}
+<div class="nav">
+  <a href="{{ url_for('home') }}"><div class="active"><span class="ic2">⌂</span>Today</div></a>
+  <a href="{{ url_for('game_center') }}"><div><span class="ic2">◎</span>Odds</div></a>
+  <a href="{{ url_for('tools') }}"><div><span class="ic2">▦</span>Tools</div></a>
+  <a href="{{ url_for('tracker') }}"><div><span class="ic2">♛</span>My Bets</div></a>
+  <a href="{{ url_for('cuenta') }}"><div><span class="ic2">○</span>Account</div></a>
+</div>
+</body>
+</html>
