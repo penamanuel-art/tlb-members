@@ -1,805 +1,660 @@
 {
-  "updated_at": "2026-10-25T21:03:46-04:00",
-  "refresh_minutes": 15,
-  "fair_source": "Pinnacle no-vig",
-  "filters": {
-    "min_ev_pct": 3.0,
-    "markets": [
-      "h2h",
-      "spreads",
-      "totals"
-    ],
-    "min_odds": -200,
-    "max_odds": 1000,
-    "min_books": 2,
-    "max_edges": 10,
-    "live_included": true
+ "updated_at": "9:04 PM ET",
+ "events": [
+  {
+   "league": "NBA",
+   "label": "Toronto Raptors @ Minnesota Timberwolves",
+   "time_label": "7:10 PM ET",
+   "vig": "5.7%",
+   "novig_url": "",
+   "teams": [
+    {
+     "name": "Toronto Raptors",
+     "posted": null,
+     "is_pick": false,
+     "best_price": "+3300",
+     "best_book": "BetMGM",
+     "delta": "$1,900.00",
+     "books_count": 2,
+     "books": [
+      {
+       "book": "BetMGM",
+       "short": "MGM",
+       "price": "+3300"
+      },
+      {
+       "book": "ReBet",
+       "short": "RB",
+       "price": "+1400"
+      }
+     ]
+    },
+    {
+     "name": "Minnesota Timberwolves",
+     "posted": "-107",
+     "is_pick": true,
+     "best_price": "-10000",
+     "best_book": "ReBet",
+     "delta": "$0.00",
+     "books_count": 2,
+     "books": [
+      {
+       "book": "ReBet",
+       "short": "RB",
+       "price": "-10000"
+      },
+      {
+       "book": "BetMGM",
+       "short": "MGM",
+       "price": "-10000"
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "edges": [
+  {
+   "id": "4bdaabae0c074d48156aaa3e315a5c4d-h2h-None-Orlando Magic",
+   "skey": "4bdaabae0c074d48156aaa3e315a5c4d|h2h|None|Orlando Magic",
+   "sport": "NBA",
+   "game": "Orlando Magic @ New York Knicks",
+   "team": "Orlando Magic",
+   "market": "Moneyline",
+   "point": "",
+   "book": "theScore Bet",
+   "price": 1000,
+   "fair_prob_pct": 19.9,
+   "fair_american": 404,
+   "ev_pct": 118.4,
+   "books_count": 8,
+   "books": [
+    {
+     "book": "theScore Bet",
+     "price": 1000,
+     "ev_pct": 118.4,
+     "url": null
+    },
+    {
+     "book": "FanDuel",
+     "price": 900,
+     "ev_pct": 98.6,
+     "url": "https://sportsbook.fanduel.com"
+    },
+    {
+     "book": "Bovada",
+     "price": 800,
+     "ev_pct": 78.7,
+     "url": null
+    },
+    {
+     "book": "MyBookie.ag",
+     "price": 800,
+     "ev_pct": 78.7,
+     "url": null
+    },
+    {
+     "book": "Novig",
+     "price": 700,
+     "ev_pct": 58.8,
+     "url": "https://novig.com"
+    },
+    {
+     "book": "BetRivers",
+     "price": 700,
+     "ev_pct": 58.8,
+     "url": null
+    },
+    {
+     "book": "BetMGM",
+     "price": 700,
+     "ev_pct": 58.8,
+     "url": "https://sports.betmgm.com"
+    },
+    {
+     "book": "DraftKings",
+     "price": 650,
+     "ev_pct": 48.9,
+     "url": "https://sportsbook.draftkings.com"
+    }
+   ],
+   "also_at": [
+    "BetMGM",
+    "BetRivers",
+    "Bovada",
+    "DraftKings"
+   ],
+   "sharp": false,
+   "verified": true,
+   "edge_label": "Strong edge",
+   "rec_units": 1.0,
+   "rec_stake": 100,
+   "live": true,
+   "game_time": "LIVE now",
+   "commence_time": "2026-10-25T23:09:00Z",
+   "bet_url": "https://novig.com",
+   "novig_deep": false,
+   "stale": false,
+   "first_seen": "2026-10-26T00:04:07.692716+00:00"
   },
-  "edges": [
+  {
+   "id": "176d474ed8b2bbf1eb4d7e9c56b4bf22-h2h-None-Kansas City Chiefs",
+   "skey": "176d474ed8b2bbf1eb4d7e9c56b4bf22|h2h|None|Kansas City Chiefs",
+   "sport": "NFL",
+   "game": "Kansas City Chiefs @ Seattle Seahawks",
+   "team": "Kansas City Chiefs",
+   "market": "Moneyline",
+   "point": "",
+   "book": "MyBookie.ag",
+   "price": 220,
+   "fair_prob_pct": 40.0,
+   "fair_american": 150,
+   "ev_pct": 28.0,
+   "books_count": 6,
+   "books": [
     {
-      "id": "4bdaabae0c074d48156aaa3e315a5c4d-h2h-None-Orlando Magic",
-      "skey": "4bdaabae0c074d48156aaa3e315a5c4d|h2h|None|Orlando Magic",
-      "sport": "NBA",
-      "game": "Orlando Magic @ New York Knicks",
-      "team": "Orlando Magic",
-      "market": "Moneyline",
-      "point": "",
-      "book": "theScore Bet",
-      "price": 1000,
-      "fair_prob_pct": 19.9,
-      "fair_american": 404,
-      "ev_pct": 118.4,
-      "books_count": 8,
-      "books": [
-        {
-          "book": "theScore Bet",
-          "price": 1000,
-          "ev_pct": 118.4,
-          "url": null
-        },
-        {
-          "book": "FanDuel",
-          "price": 900,
-          "ev_pct": 98.6,
-          "url": "https://sportsbook.fanduel.com"
-        },
-        {
-          "book": "Bovada",
-          "price": 800,
-          "ev_pct": 78.7,
-          "url": null
-        },
-        {
-          "book": "MyBookie.ag",
-          "price": 800,
-          "ev_pct": 78.7,
-          "url": null
-        },
-        {
-          "book": "Novig",
-          "price": 700,
-          "ev_pct": 58.8,
-          "url": "https://novig.com"
-        },
-        {
-          "book": "BetRivers",
-          "price": 700,
-          "ev_pct": 58.8,
-          "url": null
-        },
-        {
-          "book": "BetMGM",
-          "price": 700,
-          "ev_pct": 58.8,
-          "url": "https://sports.betmgm.com"
-        },
-        {
-          "book": "DraftKings",
-          "price": 650,
-          "ev_pct": 48.9,
-          "url": "https://sportsbook.draftkings.com"
-        }
-      ],
-      "also_at": [
-        "BetMGM",
-        "BetRivers",
-        "Bovada",
-        "DraftKings"
-      ],
-      "sharp": false,
-      "verified": true,
-      "edge_label": "Strong edge",
-      "rec_units": 1.0,
-      "rec_stake": 100,
-      "live": true,
-      "game_time": "LIVE now",
-      "commence_time": "2026-10-25T23:09:00Z",
-      "bet_url": "https://novig.com",
-      "novig_deep": false,
-      "stale": false,
-      "first_seen": "2026-10-26T00:04:07.692716+00:00"
+     "book": "MyBookie.ag",
+     "price": 220,
+     "ev_pct": 28.0,
+     "url": null
     },
     {
-      "id": "176d474ed8b2bbf1eb4d7e9c56b4bf22-h2h-None-Kansas City Chiefs",
-      "skey": "176d474ed8b2bbf1eb4d7e9c56b4bf22|h2h|None|Kansas City Chiefs",
-      "sport": "NFL",
-      "game": "Kansas City Chiefs @ Seattle Seahawks",
-      "team": "Kansas City Chiefs",
-      "market": "Moneyline",
-      "point": "",
-      "book": "MyBookie.ag",
-      "price": 220,
-      "fair_prob_pct": 40.0,
-      "fair_american": 150,
-      "ev_pct": 28.0,
-      "books_count": 6,
-      "books": [
-        {
-          "book": "MyBookie.ag",
-          "price": 220,
-          "ev_pct": 28.0,
-          "url": null
-        },
-        {
-          "book": "Novig",
-          "price": 190,
-          "ev_pct": 16.0,
-          "url": "https://novig.com"
-        },
-        {
-          "book": "FanDuel",
-          "price": 180,
-          "ev_pct": 12.0,
-          "url": "https://sportsbook.fanduel.com"
-        },
-        {
-          "book": "theScore Bet",
-          "price": 170,
-          "ev_pct": 8.0,
-          "url": null
-        },
-        {
-          "book": "Bovada",
-          "price": 170,
-          "ev_pct": 8.0,
-          "url": null
-        },
-        {
-          "book": "BetMGM",
-          "price": 165,
-          "ev_pct": 6.0,
-          "url": "https://sports.betmgm.com"
-        }
-      ],
-      "also_at": [
-        "BetMGM",
-        "Bovada",
-        "FanDuel",
-        "Novig"
-      ],
-      "sharp": false,
-      "verified": true,
-      "edge_label": "Strong edge",
-      "rec_units": 1.0,
-      "rec_stake": 100,
-      "live": true,
-      "game_time": "LIVE now",
-      "commence_time": "2026-10-26T00:22:42Z",
-      "bet_url": "https://novig.com",
-      "novig_deep": false,
-      "stale": false,
-      "first_seen": "2026-10-26T00:33:45.324510+00:00"
+     "book": "Novig",
+     "price": 190,
+     "ev_pct": 16.0,
+     "url": "https://novig.com"
     },
     {
-      "id": "252f3af49fb5271bb040e95e0119f207-h2h-None-Philadelphia 76ers",
-      "skey": "252f3af49fb5271bb040e95e0119f207|h2h|None|Philadelphia 76ers",
-      "sport": "NBA",
-      "game": "Detroit Pistons @ Philadelphia 76ers",
-      "team": "Philadelphia 76ers",
-      "market": "Moneyline",
-      "point": "",
-      "book": "Novig",
-      "price": 326,
-      "fair_prob_pct": 25.0,
-      "fair_american": 299,
-      "ev_pct": 6.7,
-      "books_count": 2,
-      "books": [
-        {
-          "book": "Novig",
-          "price": 326,
-          "ev_pct": 6.7,
-          "url": "https://novig.com"
-        },
-        {
-          "book": "FanDuel",
-          "price": 320,
-          "ev_pct": 5.2,
-          "url": "https://sportsbook.fanduel.com"
-        }
-      ],
-      "also_at": [
-        "FanDuel"
-      ],
-      "sharp": false,
-      "verified": true,
-      "edge_label": "Strong edge",
-      "rec_units": 1.0,
-      "rec_stake": 100,
-      "live": true,
-      "game_time": "LIVE now",
-      "commence_time": "2026-10-25T23:41:00Z",
-      "bet_url": "https://novig.com",
-      "novig_deep": false,
-      "stale": false,
-      "first_seen": "2026-10-26T00:04:07.692716+00:00"
+     "book": "FanDuel",
+     "price": 180,
+     "ev_pct": 12.0,
+     "url": "https://sportsbook.fanduel.com"
     },
     {
-      "id": "b9f6f078c66480af12ca8bcc44969097-h2h-None-Toronto Raptors",
-      "skey": "b9f6f078c66480af12ca8bcc44969097|h2h|None|Toronto Raptors",
-      "sport": "NBA",
-      "game": "Toronto Raptors @ Minnesota Timberwolves",
-      "team": "Toronto Raptors",
-      "market": "Moneyline",
-      "point": "",
-      "book": "Novig",
-      "price": 567,
-      "fair_prob_pct": 25.5,
-      "fair_american": 292,
-      "ev_pct": 70.2,
-      "books_count": 7,
-      "books": [
-        {
-          "book": "Novig",
-          "price": 567,
-          "ev_pct": 70.2,
-          "url": "https://novig.com"
-        },
-        {
-          "book": "Bovada",
-          "price": 425,
-          "ev_pct": 33.9,
-          "url": null
-        },
-        {
-          "book": "BetMGM",
-          "price": 425,
-          "ev_pct": 33.9,
-          "url": "https://sports.betmgm.com"
-        },
-        {
-          "book": "BetRivers",
-          "price": 420,
-          "ev_pct": 32.7,
-          "url": null
-        },
-        {
-          "book": "FanDuel",
-          "price": 420,
-          "ev_pct": 32.7,
-          "url": "https://sportsbook.fanduel.com"
-        },
-        {
-          "book": "DraftKings",
-          "price": 390,
-          "ev_pct": 25.0,
-          "url": "https://sportsbook.draftkings.com"
-        },
-        {
-          "book": "theScore Bet",
-          "price": 380,
-          "ev_pct": 22.5,
-          "url": null
-        }
-      ],
-      "also_at": [
-        "BetMGM",
-        "BetRivers",
-        "Bovada",
-        "DraftKings"
-      ],
-      "sharp": true,
-      "verified": true,
-      "edge_label": "Strong edge",
-      "rec_units": 1.0,
-      "rec_stake": 100,
-      "live": true,
-      "game_time": "LIVE now",
-      "commence_time": "2026-10-25T23:14:09Z",
-      "bet_url": "https://novig.com",
-      "novig_deep": false,
-      "stale": true,
-      "first_seen": "2026-10-25T22:03:46.640765+00:00",
-      "stale_reason": "line moved below 3%"
+     "book": "theScore Bet",
+     "price": 170,
+     "ev_pct": 8.0,
+     "url": null
     },
     {
-      "id": "1e591733bae48534963359a9cff13701-h2h-None-Minnesota Golden G",
-      "skey": "1e591733bae48534963359a9cff13701|h2h|None|Minnesota Golden Gophers",
-      "sport": "NCAAF",
-      "game": "Minnesota Golden Gophers @ Indiana Hoosiers",
-      "team": "Minnesota Golden Gophers",
-      "market": "Moneyline",
-      "point": "",
-      "book": "theScore Bet",
-      "price": 1000,
-      "fair_prob_pct": 11.3,
-      "fair_american": 786,
-      "ev_pct": 24.2,
-      "books_count": 6,
-      "books": [
-        {
-          "book": "theScore Bet",
-          "price": 1000,
-          "ev_pct": 24.2,
-          "url": null
-        },
-        {
-          "book": "BetRivers",
-          "price": 900,
-          "ev_pct": 12.9,
-          "url": null
-        },
-        {
-          "book": "FanDuel",
-          "price": 860,
-          "ev_pct": 8.4,
-          "url": "https://sportsbook.fanduel.com"
-        },
-        {
-          "book": "Novig",
-          "price": 852,
-          "ev_pct": 7.5,
-          "url": "https://novig.com"
-        },
-        {
-          "book": "BetMGM",
-          "price": 850,
-          "ev_pct": 7.2,
-          "url": "https://sports.betmgm.com"
-        },
-        {
-          "book": "MyBookie.ag",
-          "price": 830,
-          "ev_pct": 5.0,
-          "url": null
-        }
-      ],
-      "also_at": [
-        "BetMGM",
-        "BetRivers",
-        "FanDuel",
-        "MyBookie.ag"
-      ],
-      "sharp": false,
-      "verified": true,
-      "edge_label": "Strong edge",
-      "rec_units": 1.0,
-      "rec_stake": 100,
-      "live": false,
-      "game_time": "Sat, Oct 31 \u00b7 3:30 PM ET",
-      "commence_time": "2026-10-31T19:30:00Z",
-      "bet_url": "https://novig.com",
-      "novig_deep": false,
-      "stale": false,
-      "first_seen": "2026-10-25T19:33:44.355229+00:00"
+     "book": "Bovada",
+     "price": 170,
+     "ev_pct": 8.0,
+     "url": null
     },
     {
-      "id": "0540f5758ac50f3bb60beb36755f7a1e-h2h-None-Troy Trojans",
-      "skey": "0540f5758ac50f3bb60beb36755f7a1e|h2h|None|Troy Trojans",
-      "sport": "NCAAF",
-      "game": "Troy Trojans @ James Madison Dukes",
-      "team": "Troy Trojans",
-      "market": "Moneyline",
-      "point": "",
-      "book": "Novig",
-      "price": 953,
-      "fair_prob_pct": 10.5,
-      "fair_american": 849,
-      "ev_pct": 11.0,
-      "books_count": 4,
-      "books": [
-        {
-          "book": "Novig",
-          "price": 953,
-          "ev_pct": 11.0,
-          "url": "https://novig.com"
-        },
-        {
-          "book": "BetRivers",
-          "price": 950,
-          "ev_pct": 10.7,
-          "url": null
-        },
-        {
-          "book": "BetMGM",
-          "price": 900,
-          "ev_pct": 5.4,
-          "url": "https://sports.betmgm.com"
-        },
-        {
-          "book": "FanDuel",
-          "price": 890,
-          "ev_pct": 4.3,
-          "url": "https://sportsbook.fanduel.com"
-        }
-      ],
-      "also_at": [
-        "BetMGM",
-        "BetRivers",
-        "FanDuel"
-      ],
-      "sharp": false,
-      "verified": true,
-      "edge_label": "Strong edge",
-      "rec_units": 1.0,
-      "rec_stake": 100,
-      "live": false,
-      "game_time": "Thu, Oct 29 \u00b7 7:30 PM ET",
-      "commence_time": "2026-10-29T23:30:00Z",
-      "bet_url": "https://novig.com",
-      "novig_deep": false,
-      "stale": false,
-      "first_seen": "2026-10-25T17:33:39.044196+00:00"
-    },
-    {
-      "id": "85b5947ccfe102a2fa2179d54c83ae31-h2h-None-North Carolina Tar",
-      "skey": "85b5947ccfe102a2fa2179d54c83ae31|h2h|None|North Carolina Tar Heels",
-      "sport": "NCAAF",
-      "game": "Miami Hurricanes @ North Carolina Tar Heels",
-      "team": "North Carolina Tar Heels",
-      "market": "Moneyline",
-      "point": "",
-      "book": "FanDuel",
-      "price": 580,
-      "fair_prob_pct": 16.3,
-      "fair_american": 513,
-      "ev_pct": 10.9,
-      "books_count": 2,
-      "books": [
-        {
-          "book": "FanDuel",
-          "price": 580,
-          "ev_pct": 10.9,
-          "url": "https://sportsbook.fanduel.com"
-        },
-        {
-          "book": "BetMGM",
-          "price": 550,
-          "ev_pct": 6.0,
-          "url": "https://sports.betmgm.com"
-        }
-      ],
-      "also_at": [
-        "BetMGM"
-      ],
-      "sharp": false,
-      "verified": true,
-      "edge_label": "Strong edge",
-      "rec_units": 1.0,
-      "rec_stake": 100,
-      "live": false,
-      "game_time": "Sat, Oct 31 \u00b7 7:30 PM ET",
-      "commence_time": "2026-10-31T23:30:00Z",
-      "bet_url": "https://novig.com",
-      "novig_deep": false,
-      "stale": false,
-      "first_seen": "2026-10-25T19:33:44.355229+00:00"
-    },
-    {
-      "id": "78b3d38cdfa28649fdd2ca92829569ce-h2h-None-Charlotte 49ers",
-      "skey": "78b3d38cdfa28649fdd2ca92829569ce|h2h|None|Charlotte 49ers",
-      "sport": "NCAAF",
-      "game": "Tulane Green Wave @ Charlotte 49ers",
-      "team": "Charlotte 49ers",
-      "market": "Moneyline",
-      "point": "",
-      "book": "BetRivers",
-      "price": 380,
-      "fair_prob_pct": 22.9,
-      "fair_american": 337,
-      "ev_pct": 9.9,
-      "books_count": 2,
-      "books": [
-        {
-          "book": "BetRivers",
-          "price": 380,
-          "ev_pct": 9.9,
-          "url": null
-        },
-        {
-          "book": "Novig",
-          "price": 365,
-          "ev_pct": 6.4,
-          "url": "https://novig.com"
-        }
-      ],
-      "also_at": [
-        "Novig"
-      ],
-      "sharp": false,
-      "verified": true,
-      "edge_label": "Strong edge",
-      "rec_units": 1.0,
-      "rec_stake": 100,
-      "live": false,
-      "game_time": "Fri, Oct 30 \u00b7 7:00 PM ET",
-      "commence_time": "2026-10-30T23:00:00Z",
-      "bet_url": "https://novig.com",
-      "novig_deep": false,
-      "stale": false,
-      "first_seen": "2026-10-25T18:33:38.461259+00:00"
-    },
-    {
-      "id": "32ac8b94cc41f272efa96f0cf993e07a-h2h-None-Chicago Bulls",
-      "skey": "32ac8b94cc41f272efa96f0cf993e07a|h2h|None|Chicago Bulls",
-      "sport": "NBA",
-      "game": "Chicago Bulls @ Boston Celtics",
-      "team": "Chicago Bulls",
-      "market": "Moneyline",
-      "point": "",
-      "book": "theScore Bet",
-      "price": 600,
-      "fair_prob_pct": 15.5,
-      "fair_american": 545,
-      "ev_pct": 8.6,
-      "books_count": 4,
-      "books": [
-        {
-          "book": "theScore Bet",
-          "price": 600,
-          "ev_pct": 8.6,
-          "url": null
-        },
-        {
-          "book": "Novig",
-          "price": 590,
-          "ev_pct": 7.0,
-          "url": "https://novig.com"
-        },
-        {
-          "book": "DraftKings",
-          "price": 575,
-          "ev_pct": 4.7,
-          "url": "https://sportsbook.draftkings.com"
-        },
-        {
-          "book": "FanDuel",
-          "price": 570,
-          "ev_pct": 3.9,
-          "url": "https://sportsbook.fanduel.com"
-        }
-      ],
-      "also_at": [
-        "DraftKings",
-        "FanDuel",
-        "Novig"
-      ],
-      "sharp": false,
-      "verified": true,
-      "edge_label": "Strong edge",
-      "rec_units": 1.0,
-      "rec_stake": 100,
-      "live": false,
-      "game_time": "Mon, Oct 26 \u00b7 7:30 PM ET",
-      "commence_time": "2026-10-26T23:30:00Z",
-      "bet_url": "https://novig.com",
-      "novig_deep": false,
-      "stale": false,
-      "first_seen": "2026-10-26T00:33:45.324510+00:00"
-    },
-    {
-      "id": "9c5d8f57e0ba0fbd9ef436c1f0898f99-h2h-None-Tennessee Titans",
-      "skey": "9c5d8f57e0ba0fbd9ef436c1f0898f99|h2h|None|Tennessee Titans",
-      "sport": "NFL",
-      "game": "Tennessee Titans @ Cincinnati Bengals",
-      "team": "Tennessee Titans",
-      "market": "Moneyline",
-      "point": "",
-      "book": "BetRivers",
-      "price": 475,
-      "fair_prob_pct": 18.5,
-      "fair_american": 441,
-      "ev_pct": 6.3,
-      "books_count": 3,
-      "books": [
-        {
-          "book": "BetRivers",
-          "price": 475,
-          "ev_pct": 6.3,
-          "url": null
-        },
-        {
-          "book": "theScore Bet",
-          "price": 475,
-          "ev_pct": 6.3,
-          "url": null
-        },
-        {
-          "book": "FanDuel",
-          "price": 460,
-          "ev_pct": 3.5,
-          "url": "https://sportsbook.fanduel.com"
-        }
-      ],
-      "also_at": [
-        "FanDuel",
-        "theScore Bet"
-      ],
-      "sharp": false,
-      "verified": true,
-      "edge_label": "Strong edge",
-      "rec_units": 1.0,
-      "rec_stake": 100,
-      "live": false,
-      "game_time": "Sun, Nov 01 \u00b7 2:00 PM ET",
-      "commence_time": "2026-11-01T18:00:00Z",
-      "bet_url": "https://novig.com",
-      "novig_deep": false,
-      "stale": false,
-      "first_seen": "2026-10-26T00:33:45.324510+00:00"
+     "book": "BetMGM",
+     "price": 165,
+     "ev_pct": 6.0,
+     "url": "https://sports.betmgm.com"
     }
-  ],
-  "events": [
+   ],
+   "also_at": [
+    "BetMGM",
+    "Bovada",
+    "FanDuel",
+    "Novig"
+   ],
+   "sharp": false,
+   "verified": true,
+   "edge_label": "Strong edge",
+   "rec_units": 1.0,
+   "rec_stake": 100,
+   "live": true,
+   "game_time": "LIVE now",
+   "commence_time": "2026-10-26T00:22:42Z",
+   "bet_url": "https://novig.com",
+   "novig_deep": false,
+   "stale": false,
+   "first_seen": "2026-10-26T00:33:45.324510+00:00"
+  },
+  {
+   "id": "252f3af49fb5271bb040e95e0119f207-h2h-None-Philadelphia 76ers",
+   "skey": "252f3af49fb5271bb040e95e0119f207|h2h|None|Philadelphia 76ers",
+   "sport": "NBA",
+   "game": "Detroit Pistons @ Philadelphia 76ers",
+   "team": "Philadelphia 76ers",
+   "market": "Moneyline",
+   "point": "",
+   "book": "Novig",
+   "price": 326,
+   "fair_prob_pct": 25.0,
+   "fair_american": 299,
+   "ev_pct": 6.7,
+   "books_count": 2,
+   "books": [
     {
-      "league": "NBA",
-      "label": "Toronto Raptors @ Minnesota Timberwolves",
-      "time_label": "7:10 PM ET",
-      "vig": "5.6%",
-      "novig_url": "",
-      "teams": [
-        {
-          "name": "Toronto Raptors",
-          "posted": null,
-          "is_pick": false,
-          "best_price": "+600",
-          "best_book": "Fliff",
-          "delta": "$150.00",
-          "books_count": 15,
-          "books": [
-            {
-              "book": "Fliff",
-              "short": "FL",
-              "price": "+600"
-            },
-            {
-              "book": "FanDuel",
-              "short": "FD",
-              "price": "+600"
-            },
-            {
-              "book": "Hard Rock Bet",
-              "short": "HA",
-              "price": "+575"
-            },
-            {
-              "book": "Caesars",
-              "short": "CZR",
-              "price": "+550"
-            },
-            {
-              "book": "betPARX",
-              "short": "BE",
-              "price": "+540"
-            },
-            {
-              "book": "ReBet",
-              "short": "RB",
-              "price": "+525"
-            },
-            {
-              "book": "MyBookie.ag",
-              "short": "MB",
-              "price": "+525"
-            },
-            {
-              "book": "DraftKings",
-              "short": "DK",
-              "price": "+475"
-            },
-            {
-              "book": "Bovada",
-              "short": "BO",
-              "price": "+475"
-            },
-            {
-              "book": "Courtside",
-              "short": "CO",
-              "price": "+475"
-            },
-            {
-              "book": "Bally Bet",
-              "short": "B",
-              "price": "+460"
-            },
-            {
-              "book": "BetRivers",
-              "short": "BR",
-              "price": "+460"
-            },
-            {
-              "book": "Fanatics",
-              "short": "FAN",
-              "price": "+460"
-            },
-            {
-              "book": "BetMGM",
-              "short": "MGM",
-              "price": "+450"
-            },
-            {
-              "book": "theScore Bet",
-              "short": "TS",
-              "price": "+450"
-            }
-          ]
-        },
-        {
-          "name": "Minnesota Timberwolves",
-          "posted": "-107",
-          "is_pick": true,
-          "best_price": "-700",
-          "best_book": "DraftKings",
-          "delta": "$5.19",
-          "books_count": 15,
-          "books": [
-            {
-              "book": "DraftKings",
-              "short": "DK",
-              "price": "-700"
-            },
-            {
-              "book": "Courtside",
-              "short": "CO",
-              "price": "-700"
-            },
-            {
-              "book": "BetMGM",
-              "short": "MGM",
-              "price": "-700"
-            },
-            {
-              "book": "BetRivers",
-              "short": "BR",
-              "price": "-715"
-            },
-            {
-              "book": "Fanatics",
-              "short": "FAN",
-              "price": "-750"
-            },
-            {
-              "book": "theScore Bet",
-              "short": "TS",
-              "price": "-750"
-            },
-            {
-              "book": "Bovada",
-              "short": "BO",
-              "price": "-800"
-            },
-            {
-              "book": "ReBet",
-              "short": "RB",
-              "price": "-833"
-            },
-            {
-              "book": "MyBookie.ag",
-              "short": "MB",
-              "price": "-833"
-            },
-            {
-              "book": "betPARX",
-              "short": "BE",
-              "price": "-835"
-            },
-            {
-              "book": "Bally Bet",
-              "short": "B",
-              "price": "-835"
-            },
-            {
-              "book": "Caesars",
-              "short": "CZR",
-              "price": "-900"
-            },
-            {
-              "book": "Hard Rock Bet",
-              "short": "HA",
-              "price": "-1000"
-            },
-            {
-              "book": "Fliff",
-              "short": "FL",
-              "price": "-1030"
-            },
-            {
-              "book": "FanDuel",
-              "short": "FD",
-              "price": "-1100"
-            }
-          ]
-        }
-      ]
+     "book": "Novig",
+     "price": 326,
+     "ev_pct": 6.7,
+     "url": "https://novig.com"
+    },
+    {
+     "book": "FanDuel",
+     "price": 320,
+     "ev_pct": 5.2,
+     "url": "https://sportsbook.fanduel.com"
     }
-  ]
+   ],
+   "also_at": [
+    "FanDuel"
+   ],
+   "sharp": false,
+   "verified": true,
+   "edge_label": "Strong edge",
+   "rec_units": 1.0,
+   "rec_stake": 100,
+   "live": true,
+   "game_time": "LIVE now",
+   "commence_time": "2026-10-25T23:41:00Z",
+   "bet_url": "https://novig.com",
+   "novig_deep": false,
+   "stale": false,
+   "first_seen": "2026-10-26T00:04:07.692716+00:00"
+  },
+  {
+   "id": "b9f6f078c66480af12ca8bcc44969097-h2h-None-Toronto Raptors",
+   "skey": "b9f6f078c66480af12ca8bcc44969097|h2h|None|Toronto Raptors",
+   "sport": "NBA",
+   "game": "Toronto Raptors @ Minnesota Timberwolves",
+   "team": "Toronto Raptors",
+   "market": "Moneyline",
+   "point": "",
+   "book": "Novig",
+   "price": 567,
+   "fair_prob_pct": 25.5,
+   "fair_american": 292,
+   "ev_pct": 70.2,
+   "books_count": 7,
+   "books": [
+    {
+     "book": "Novig",
+     "price": 567,
+     "ev_pct": 70.2,
+     "url": "https://novig.com"
+    },
+    {
+     "book": "Bovada",
+     "price": 425,
+     "ev_pct": 33.9,
+     "url": null
+    },
+    {
+     "book": "BetMGM",
+     "price": 425,
+     "ev_pct": 33.9,
+     "url": "https://sports.betmgm.com"
+    },
+    {
+     "book": "BetRivers",
+     "price": 420,
+     "ev_pct": 32.7,
+     "url": null
+    },
+    {
+     "book": "FanDuel",
+     "price": 420,
+     "ev_pct": 32.7,
+     "url": "https://sportsbook.fanduel.com"
+    },
+    {
+     "book": "DraftKings",
+     "price": 390,
+     "ev_pct": 25.0,
+     "url": "https://sportsbook.draftkings.com"
+    },
+    {
+     "book": "theScore Bet",
+     "price": 380,
+     "ev_pct": 22.5,
+     "url": null
+    }
+   ],
+   "also_at": [
+    "BetMGM",
+    "BetRivers",
+    "Bovada",
+    "DraftKings"
+   ],
+   "sharp": true,
+   "verified": true,
+   "edge_label": "Strong edge",
+   "rec_units": 1.0,
+   "rec_stake": 100,
+   "live": true,
+   "game_time": "LIVE now",
+   "commence_time": "2026-10-25T23:14:09Z",
+   "bet_url": "https://novig.com",
+   "novig_deep": false,
+   "stale": true,
+   "first_seen": "2026-10-25T22:03:46.640765+00:00",
+   "stale_reason": "line moved below 3%"
+  },
+  {
+   "id": "1e591733bae48534963359a9cff13701-h2h-None-Minnesota Golden G",
+   "skey": "1e591733bae48534963359a9cff13701|h2h|None|Minnesota Golden Gophers",
+   "sport": "NCAAF",
+   "game": "Minnesota Golden Gophers @ Indiana Hoosiers",
+   "team": "Minnesota Golden Gophers",
+   "market": "Moneyline",
+   "point": "",
+   "book": "theScore Bet",
+   "price": 1000,
+   "fair_prob_pct": 11.3,
+   "fair_american": 786,
+   "ev_pct": 24.2,
+   "books_count": 6,
+   "books": [
+    {
+     "book": "theScore Bet",
+     "price": 1000,
+     "ev_pct": 24.2,
+     "url": null
+    },
+    {
+     "book": "BetRivers",
+     "price": 900,
+     "ev_pct": 12.9,
+     "url": null
+    },
+    {
+     "book": "FanDuel",
+     "price": 860,
+     "ev_pct": 8.4,
+     "url": "https://sportsbook.fanduel.com"
+    },
+    {
+     "book": "Novig",
+     "price": 852,
+     "ev_pct": 7.5,
+     "url": "https://novig.com"
+    },
+    {
+     "book": "BetMGM",
+     "price": 850,
+     "ev_pct": 7.2,
+     "url": "https://sports.betmgm.com"
+    },
+    {
+     "book": "MyBookie.ag",
+     "price": 830,
+     "ev_pct": 5.0,
+     "url": null
+    }
+   ],
+   "also_at": [
+    "BetMGM",
+    "BetRivers",
+    "FanDuel",
+    "MyBookie.ag"
+   ],
+   "sharp": false,
+   "verified": true,
+   "edge_label": "Strong edge",
+   "rec_units": 1.0,
+   "rec_stake": 100,
+   "live": false,
+   "game_time": "Sat, Oct 31 · 3:30 PM ET",
+   "commence_time": "2026-10-31T19:30:00Z",
+   "bet_url": "https://novig.com",
+   "novig_deep": false,
+   "stale": false,
+   "first_seen": "2026-10-25T19:33:44.355229+00:00"
+  },
+  {
+   "id": "0540f5758ac50f3bb60beb36755f7a1e-h2h-None-Troy Trojans",
+   "skey": "0540f5758ac50f3bb60beb36755f7a1e|h2h|None|Troy Trojans",
+   "sport": "NCAAF",
+   "game": "Troy Trojans @ James Madison Dukes",
+   "team": "Troy Trojans",
+   "market": "Moneyline",
+   "point": "",
+   "book": "Novig",
+   "price": 953,
+   "fair_prob_pct": 10.5,
+   "fair_american": 849,
+   "ev_pct": 11.0,
+   "books_count": 4,
+   "books": [
+    {
+     "book": "Novig",
+     "price": 953,
+     "ev_pct": 11.0,
+     "url": "https://novig.com"
+    },
+    {
+     "book": "BetRivers",
+     "price": 950,
+     "ev_pct": 10.7,
+     "url": null
+    },
+    {
+     "book": "BetMGM",
+     "price": 900,
+     "ev_pct": 5.4,
+     "url": "https://sports.betmgm.com"
+    },
+    {
+     "book": "FanDuel",
+     "price": 890,
+     "ev_pct": 4.3,
+     "url": "https://sportsbook.fanduel.com"
+    }
+   ],
+   "also_at": [
+    "BetMGM",
+    "BetRivers",
+    "FanDuel"
+   ],
+   "sharp": false,
+   "verified": true,
+   "edge_label": "Strong edge",
+   "rec_units": 1.0,
+   "rec_stake": 100,
+   "live": false,
+   "game_time": "Thu, Oct 29 · 7:30 PM ET",
+   "commence_time": "2026-10-29T23:30:00Z",
+   "bet_url": "https://novig.com",
+   "novig_deep": false,
+   "stale": false,
+   "first_seen": "2026-10-25T17:33:39.044196+00:00"
+  },
+  {
+   "id": "85b5947ccfe102a2fa2179d54c83ae31-h2h-None-North Carolina Tar",
+   "skey": "85b5947ccfe102a2fa2179d54c83ae31|h2h|None|North Carolina Tar Heels",
+   "sport": "NCAAF",
+   "game": "Miami Hurricanes @ North Carolina Tar Heels",
+   "team": "North Carolina Tar Heels",
+   "market": "Moneyline",
+   "point": "",
+   "book": "FanDuel",
+   "price": 580,
+   "fair_prob_pct": 16.3,
+   "fair_american": 513,
+   "ev_pct": 10.9,
+   "books_count": 2,
+   "books": [
+    {
+     "book": "FanDuel",
+     "price": 580,
+     "ev_pct": 10.9,
+     "url": "https://sportsbook.fanduel.com"
+    },
+    {
+     "book": "BetMGM",
+     "price": 550,
+     "ev_pct": 6.0,
+     "url": "https://sports.betmgm.com"
+    }
+   ],
+   "also_at": [
+    "BetMGM"
+   ],
+   "sharp": false,
+   "verified": true,
+   "edge_label": "Strong edge",
+   "rec_units": 1.0,
+   "rec_stake": 100,
+   "live": false,
+   "game_time": "Sat, Oct 31 · 7:30 PM ET",
+   "commence_time": "2026-10-31T23:30:00Z",
+   "bet_url": "https://novig.com",
+   "novig_deep": false,
+   "stale": false,
+   "first_seen": "2026-10-25T19:33:44.355229+00:00"
+  },
+  {
+   "id": "78b3d38cdfa28649fdd2ca92829569ce-h2h-None-Charlotte 49ers",
+   "skey": "78b3d38cdfa28649fdd2ca92829569ce|h2h|None|Charlotte 49ers",
+   "sport": "NCAAF",
+   "game": "Tulane Green Wave @ Charlotte 49ers",
+   "team": "Charlotte 49ers",
+   "market": "Moneyline",
+   "point": "",
+   "book": "BetRivers",
+   "price": 380,
+   "fair_prob_pct": 22.9,
+   "fair_american": 337,
+   "ev_pct": 9.9,
+   "books_count": 2,
+   "books": [
+    {
+     "book": "BetRivers",
+     "price": 380,
+     "ev_pct": 9.9,
+     "url": null
+    },
+    {
+     "book": "Novig",
+     "price": 365,
+     "ev_pct": 6.4,
+     "url": "https://novig.com"
+    }
+   ],
+   "also_at": [
+    "Novig"
+   ],
+   "sharp": false,
+   "verified": true,
+   "edge_label": "Strong edge",
+   "rec_units": 1.0,
+   "rec_stake": 100,
+   "live": false,
+   "game_time": "Fri, Oct 30 · 7:00 PM ET",
+   "commence_time": "2026-10-30T23:00:00Z",
+   "bet_url": "https://novig.com",
+   "novig_deep": false,
+   "stale": false,
+   "first_seen": "2026-10-25T18:33:38.461259+00:00"
+  },
+  {
+   "id": "32ac8b94cc41f272efa96f0cf993e07a-h2h-None-Chicago Bulls",
+   "skey": "32ac8b94cc41f272efa96f0cf993e07a|h2h|None|Chicago Bulls",
+   "sport": "NBA",
+   "game": "Chicago Bulls @ Boston Celtics",
+   "team": "Chicago Bulls",
+   "market": "Moneyline",
+   "point": "",
+   "book": "theScore Bet",
+   "price": 600,
+   "fair_prob_pct": 15.5,
+   "fair_american": 545,
+   "ev_pct": 8.6,
+   "books_count": 4,
+   "books": [
+    {
+     "book": "theScore Bet",
+     "price": 600,
+     "ev_pct": 8.6,
+     "url": null
+    },
+    {
+     "book": "Novig",
+     "price": 590,
+     "ev_pct": 7.0,
+     "url": "https://novig.com"
+    },
+    {
+     "book": "DraftKings",
+     "price": 575,
+     "ev_pct": 4.7,
+     "url": "https://sportsbook.draftkings.com"
+    },
+    {
+     "book": "FanDuel",
+     "price": 570,
+     "ev_pct": 3.9,
+     "url": "https://sportsbook.fanduel.com"
+    }
+   ],
+   "also_at": [
+    "DraftKings",
+    "FanDuel",
+    "Novig"
+   ],
+   "sharp": false,
+   "verified": true,
+   "edge_label": "Strong edge",
+   "rec_units": 1.0,
+   "rec_stake": 100,
+   "live": false,
+   "game_time": "Mon, Oct 26 · 7:30 PM ET",
+   "commence_time": "2026-10-26T23:30:00Z",
+   "bet_url": "https://novig.com",
+   "novig_deep": false,
+   "stale": false,
+   "first_seen": "2026-10-26T00:33:45.324510+00:00"
+  },
+  {
+   "id": "9c5d8f57e0ba0fbd9ef436c1f0898f99-h2h-None-Tennessee Titans",
+   "skey": "9c5d8f57e0ba0fbd9ef436c1f0898f99|h2h|None|Tennessee Titans",
+   "sport": "NFL",
+   "game": "Tennessee Titans @ Cincinnati Bengals",
+   "team": "Tennessee Titans",
+   "market": "Moneyline",
+   "point": "",
+   "book": "BetRivers",
+   "price": 475,
+   "fair_prob_pct": 18.5,
+   "fair_american": 441,
+   "ev_pct": 6.3,
+   "books_count": 3,
+   "books": [
+    {
+     "book": "BetRivers",
+     "price": 475,
+     "ev_pct": 6.3,
+     "url": null
+    },
+    {
+     "book": "theScore Bet",
+     "price": 475,
+     "ev_pct": 6.3,
+     "url": null
+    },
+    {
+     "book": "FanDuel",
+     "price": 460,
+     "ev_pct": 3.5,
+     "url": "https://sportsbook.fanduel.com"
+    }
+   ],
+   "also_at": [
+    "FanDuel",
+    "theScore Bet"
+   ],
+   "sharp": false,
+   "verified": true,
+   "edge_label": "Strong edge",
+   "rec_units": 1.0,
+   "rec_stake": 100,
+   "live": false,
+   "game_time": "Sun, Nov 01 · 2:00 PM ET",
+   "commence_time": "2026-11-01T18:00:00Z",
+   "bet_url": "https://novig.com",
+   "novig_deep": false,
+   "stale": false,
+   "first_seen": "2026-10-26T00:33:45.324510+00:00"
+  }
+ ]
 }
