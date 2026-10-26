@@ -27,7 +27,7 @@
   .menubtn{width:46px;border:1px solid #24406b;background:#0b1526;border-radius:14px;color:#cfe6ff;font-size:20px}
   .watch{display:inline-flex;align-items:center;gap:9px;border:1px solid #24406b;background:#0b1526;border-radius:999px;padding:11px 16px;color:#2ee6a8;font-weight:800;font-size:15px;margin-bottom:14px}
   .hero{position:relative;overflow:hidden;border:1px solid #1d3a63;border-radius:20px;background:radial-gradient(120% 140% at 20% 0%,#123a5e 0%,#081426 55%,#050a16 100%);padding:20px 18px 0;box-shadow:0 0 26px rgba(46,230,168,.18)}
-  .hero .photo{position:absolute;right:-8px;top:0;bottom:0;width:46%;background:radial-gradient(80% 90% at 70% 30%,rgba(46,230,168,.55),rgba(30,111,255,.25) 55%,transparent 75%),linear-gradient(160deg,#0e3a34,#071a2e);opacity:.95}
+  .hero .photo{position:absolute;right:-8px;top:0;bottom:0;width:46%;background:linear-gradient(90deg,rgba(5,10,22,.55),rgba(5,10,22,0) 45%),url("{{ url_for('static', filename='img/hero-player.jpg') }}") center right/cover no-repeat;opacity:.95}
   .hero .inner{position:relative}
   .dateline{font-size:12px;letter-spacing:.28em;color:#9db8dd;font-weight:700;margin-bottom:10px;text-transform:uppercase}
   .greet{font-size:42px;line-height:1.02;font-weight:900;margin:0 0 8px;max-width:62%}
