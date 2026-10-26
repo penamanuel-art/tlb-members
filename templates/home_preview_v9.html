@@ -82,6 +82,7 @@
   .sechead{display:flex;align-items:center;gap:10px;margin-bottom:12px}
   .sechead h2{margin:0;font-size:26px}
   .lvpill{border:1px solid #2ee6a8;color:#2ee6a8;border-radius:999px;padding:6px 12px;font-size:13px;font-weight:800}
+  .lvpill.plat{border-color:#e8c766;color:#e8c766}
   .viewall{margin-left:auto;color:#dbe4f2;font-size:14px}
   .section{border:1px solid #2a3c5f;border-radius:18px;background:linear-gradient(180deg,#1c2431,#161c23);padding:16px;margin-bottom:14px}
   .section h3{margin:0 0 10px;font-size:19px}
@@ -168,8 +169,6 @@
     <div class="right">Discipline builds long‑term profits. ↗</div>
   </div>
 
-  <div class="sechead"><h2>Your plays</h2><span class="lvpill">Gold</span><a class="viewall" href="{{ url_for('official_tracker') }}">View all ›</a></div>
-
   {% if not plays %}
   <div class="section">
     <h3>Today's card is not posted yet</h3>
@@ -177,13 +176,24 @@
   </div>
   {% endif %}
   {% set tracked_ids = tracked_ids|default([]) %}
-  {% for p in plays %}
-  {% if p.nivel == 'ELITE' and not miembro_platinum %}
+  {% set golds = plays|selectattr('nivel','equalto','GOLD')|list %}
+  {% set plats = plays|rejectattr('nivel','equalto','GOLD')|rejectattr('nivel','equalto','VALUE')|list %}
+  {% if golds %}
+  <div class="sechead"><h2>Your plays</h2><span class="lvpill">Gold</span><a class="viewall" href="{{ url_for('official_tracker') }}">View all ›</a></div>
+  {% for p in golds %}
+  {% include "_play_card_v5.html" %}
+  {% endfor %}
+  {% endif %}
+  {% if plats %}
+  <div class="sechead"><h2>Your plays</h2><span class="lvpill plat">Platinum</span><a class="viewall" href="{{ url_for('official_tracker') }}">View all ›</a></div>
+  {% for p in plats %}
+  {% if p.nivel in ['ELITE','PLATINUM'] and not miembro_platinum %}
   {% include "_play_card_locked.html" %}
   {% else %}
   {% include "_play_card_v5.html" %}
   {% endif %}
   {% endfor %}
+  {% endif %}
 
   <a class="unlock" href="{{ url_for('desbloquear_platinum') }}">
     <div class="unlock-crown">♛</div>
