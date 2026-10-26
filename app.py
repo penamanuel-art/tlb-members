@@ -4939,7 +4939,10 @@ def _notify_click_telegram(slug):
 
 
 _last_login_notify = {}
-_LOGIN_NOTIFY_COOLDOWN_SEC = 10  # 10 seg por miembro (solo evita duplicados por doble-carga)
+# 2026-10-26 (orden de Alex): suena UNA sola vez al día por miembro.
+# Antes eran solo 10 seg, por eso cada vez que volvía al /home (otra
+# página, recarga) sonaba de nuevo siendo el mismo usuario.
+_LOGIN_NOTIFY_COOLDOWN_SEC = 86400  # 24 h por miembro, en memoria
 
 
 def _notify_login_telegram(user):
@@ -4950,8 +4953,9 @@ def _notify_login_telegram(user):
     CAMBIO 2026-10-10 (orden de Alex): la cuenta de miembro de Alex
     (pena.manuel@myyahoo.com) YA NO se notifica — solo avisa cuando
     OTROS miembros entran. Se excluyen logins de admin. No avisa
-    bots/crawlers. Cooldown de solo 60 seg por miembro (únicamente para
-    no duplicar por doble-carga de la página).
+    bots/crawlers. Cooldown de 24 h por miembro (2026-10-26, orden de
+    Alex): una sola notificación al día por usuario, aunque recargue
+    o navegue y vuelva al /home.
     Nunca bloquea la carga: timeout corto y todo error se traga en silencio.
     """
     if not TELEGRAM_BOT_TOKEN or not CLICK_NOTIFY_CHAT_ID:
