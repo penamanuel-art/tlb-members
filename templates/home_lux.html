@@ -148,6 +148,54 @@
   .v5c,.ptl{margin-bottom:20px!important}
   .v5c-title,.v5stitle{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .vid video{width:100%;border-radius:16px;background:#000}
+
+  /* 2026-10-26: Live + Your plays + Yesterday (v5 aprobada, letras finas, sin bold) */
+  .tst-livecard{display:flex;align-items:center;gap:12px;background:linear-gradient(180deg,#1c2431,#161c23);border:1px solid #2a3c5f;border-radius:20px;padding:18px 16px;margin-bottom:22px}
+  .tst-liveic{color:#2ee6a8;font-size:22px;font-weight:300;letter-spacing:-2px;white-space:nowrap}
+  .tst-livetxt{flex:1;min-width:0}
+  .tst-livetitle{display:block;font-size:19px;font-weight:400;line-height:1.25}
+  .tst-livesub{display:block;color:#93a4bf;font-size:13.5px;font-weight:300;line-height:1.45;margin-top:3px}
+  .tst-livearr{color:#93a4bf;font-size:22px;font-weight:300}
+  .tst-playshead{display:flex;align-items:center;gap:10px;margin:8px 0 14px}
+  .tst-playshead h2{margin:0;font-size:22px;font-weight:400}
+  .tst-lvpill{border:1px solid #2ee6a8;color:#2ee6a8;border-radius:999px;padding:6px 12px;font-size:13px;font-weight:400;white-space:nowrap}
+  .tst-lvpill.plat{border-color:#e8c766;color:#e8c766}
+  .tst-refresh{margin-left:auto;display:flex;align-items:center;gap:6px;background:#1a222e;border:1px solid #24334d;border-radius:12px;padding:9px 13px;color:#eef2f8;font-size:14px;font-weight:400;white-space:nowrap;cursor:pointer}
+  .tst-emptycard{background:linear-gradient(180deg,#1c2431,#161c23);border:1px solid #2a3c5f;border-radius:20px;padding:30px 18px;text-align:center;margin-bottom:28px}
+  .tst-emptytitle{display:block;font-size:20px;font-weight:400;line-height:1.3}
+  .tst-emptysub{display:block;color:#93a4bf;font-size:14px;font-weight:300;line-height:1.5;margin-top:8px}
+  .tst-ysec{margin-bottom:28px}
+  .tst-yhead{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:14px}
+  .tst-yhead h2{margin:0;font-size:24px;font-weight:400;line-height:1.1}
+  .tst-yhead h2 span{font-size:14px;font-weight:300;color:#93a4bf;margin-left:8px}
+  .tst-fullbtn{display:flex;align-items:center;gap:6px;background:#1a222e;border:1px solid #24334d;border-radius:12px;padding:10px 13px;color:#eef2f8;font-size:14px;font-weight:400;white-space:nowrap}
+  .tst-sumrow{display:flex;align-items:center;gap:12px;background:linear-gradient(180deg,#1c2431,#161c23);border:1px solid #2a3c5f;border-radius:16px;padding:14px 16px;margin-bottom:10px}
+  .tst-pill{border-radius:8px;padding:7px 10px;font-size:12px;font-weight:400;letter-spacing:.04em;white-space:nowrap}
+  .tst-pill.plat{border:1px solid #e8c766;color:#e8c766}
+  .tst-pill.gold{border:1px solid #2ee6a8;color:#2ee6a8}
+  .tst-rec{font-size:22px;font-weight:400}
+  .tst-units{font-size:16px;font-weight:400}
+  .tst-units.neg{color:#e65050}
+  .tst-units.pos{color:#2ee6a8}
+  .tst-graded{margin-left:auto;color:#93a4bf;font-size:13px;font-weight:300;white-space:nowrap}
+  .tst-playcard{display:flex;gap:12px;background:linear-gradient(180deg,#1c2431,#161c23);border:1px solid #2a3c5f;border-radius:20px;padding:16px;margin-bottom:12px}
+  .tst-ticketimg{width:64px;min-width:64px;height:80px;border-radius:12px;object-fit:cover;border:1px solid #24334d}
+  .tst-ticketph{width:64px;min-width:64px;height:80px;border-radius:12px;background:#1a222e;border:1px solid #24334d;display:flex;align-items:center;justify-content:center;color:#93a4bf;font-size:11px;font-weight:300;text-align:center;padding:4px}
+  .tst-playmain{flex:1;min-width:0}
+  .tst-playtop{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .tst-lvl{font-size:12px;font-weight:400;padding:5px 8px;border-radius:8px}
+  .tst-lvl.plat{border:1px solid #e8c766;color:#e8c766}
+  .tst-lvl.gold{border:1px solid #2ee6a8;color:#2ee6a8}
+  .tst-meta{color:#93a4bf;font-size:13px;font-weight:300}
+  .tst-pick{font-size:17px;font-weight:400;line-height:1.25;margin-top:10px}
+  .tst-match{color:#93a4bf;font-size:13.5px;font-weight:300;margin-top:4px}
+  .tst-result{text-align:right;white-space:nowrap}
+  .tst-result span{display:block;font-size:13px;font-weight:400}
+  .tst-result span.won{color:#2ee6a8}
+  .tst-result span.lost{color:#e65050}
+  .tst-result b{display:block;font-size:16px;font-weight:400;margin-top:2px}
+  .tst-result b.won{color:#2ee6a8}
+  .tst-result b.lost{color:#e65050}
 </style>
 </head>
 <body>
@@ -245,10 +293,16 @@
     <div class="right">Discipline builds long‑term profits. ↗</div>
   </div>
 
+  <a class="tst-livecard" href="{{ url_for('game_center') }}">
+    <span class="tst-liveic">((•))</span>
+    <span class="tst-livetxt"><span class="tst-livetitle">Live scores &amp; games</span><span class="tst-livesub">Every price, the fair line and the edge, for every game.</span></span>
+    <span class="tst-livearr">›</span>
+  </a>
+  <div class="tst-playshead"><h2>Your plays</h2><span class="tst-lvpill{% if miembro_platinum %} plat{% endif %}">{% if miembro_platinum %}Platinum{% else %}Gold{% endif %}</span><button class="tst-refresh" type="button" onclick="location.reload()">↻ Refresh</button></div>
   {% if not plays %}
-  <div class="section">
-    <h3>Today's card is not posted yet</h3>
-    <p style="color:#93a4bf;font-size:14px;line-height:1.55;margin:0">Check back when the card drops.</p>
+  <div class="tst-emptycard">
+    <span class="tst-emptytitle">Today's card is not posted yet</span>
+    <span class="tst-emptysub">Your plays will appear here as soon as today's card is live.</span>
   </div>
   {% endif %}
   {% set tracked_ids = tracked_ids|default([]) %}
@@ -272,6 +326,57 @@
   {% endif %}
 
 
+  {% set _ymm = {'01':'Jan','02':'Feb','03':'Mar','04':'Apr','05':'May','06':'Jun','07':'Jul','08':'Aug','09':'Sep','10':'Oct','11':'Nov','12':'Dec'} %}
+  {% set _yd = namespace(dia=None) %}
+  {% for _d in dias %}
+    {% if _d.fecha == ayer_iso %}
+      {% set _yd.dia = _d %}
+    {% endif %}
+  {% endfor %}
+  {% if _yd.dia and _yd.dia.jugadas %}
+  {% set _y = namespace(pw=0, pl=0, pu=0.0, pn=0, gw=0, gl=0, gu=0.0, gn=0) %}
+  {% for _j in _yd.dia.jugadas %}
+    {% if _j.resultado in ('WON','LOST','PUSH') and not _j.bloqueada %}
+      {% set _u = (_j.profit|float * _j.stake_unidades|float / _j.stake_monto|float) if _j.stake_monto and _j.stake_unidades else (_j.profit|float / 100) %}
+      {% if _j.nivel in ('ELITE','PLATINUM') %}
+        {% set _y.pn = _y.pn + 1 %}
+        {% set _y.pu = _y.pu + _u %}
+        {% if _j.resultado == 'WON' %}{% set _y.pw = _y.pw + 1 %}{% elif _j.resultado == 'LOST' %}{% set _y.pl = _y.pl + 1 %}{% endif %}
+      {% elif _j.nivel == 'GOLD' %}
+        {% set _y.gn = _y.gn + 1 %}
+        {% set _y.gu = _y.gu + _u %}
+        {% if _j.resultado == 'WON' %}{% set _y.gw = _y.gw + 1 %}{% elif _j.resultado == 'LOST' %}{% set _y.gl = _y.gl + 1 %}{% endif %}
+      {% endif %}
+    {% endif %}
+  {% endfor %}
+  {% if _y.pn > 0 or _y.gn > 0 %}
+  <div class="tst-ysec">
+    <div class="tst-yhead"><h2>Yesterday<span>{{ _ymm[ayer_iso[5:7]] }} {{ ayer_iso[8:10]|int }} card</span></h2><a class="tst-fullbtn" href="{{ url_for('official_tracker') }}">↗ Full record</a></div>
+    {% if _y.pn > 0 %}
+    <div class="tst-sumrow"><span class="tst-pill plat">PLATINUM</span><span class="tst-rec">{{ _y.pw }}-{{ _y.pl }}</span><span class="tst-units{% if _y.pu < 0 %} neg{% elif _y.pu > 0 %} pos{% endif %}">{{ '%+.2f'|format(_y.pu) }}u</span><span class="tst-graded">{{ _y.pn }} graded</span></div>
+    {% endif %}
+    {% if _y.gn > 0 %}
+    <div class="tst-sumrow"><span class="tst-pill gold">GOLD</span><span class="tst-rec">{{ _y.gw }}-{{ _y.gl }}</span><span class="tst-units{% if _y.gu < 0 %} neg{% elif _y.gu > 0 %} pos{% endif %}">{{ '%+.2f'|format(_y.gu) }}u</span><span class="tst-graded">{{ _y.gn }} graded</span></div>
+    {% endif %}
+    {% for _j in _yd.dia.jugadas %}
+      {% if _j.resultado in ('WON','LOST','PUSH') and not _j.bloqueada %}
+      {% set _u2 = (_j.profit|float * _j.stake_unidades|float / _j.stake_monto|float) if _j.stake_monto and _j.stake_unidades else (_j.profit|float / 100) %}
+      {% set _is_plat = _j.nivel in ('ELITE','PLATINUM') %}
+      {% set _nick = _j.team_name.split(' ')[-1] if _j.team_name else _j.abbr %}
+      <div class="tst-playcard">
+        {% if _j.comprobante %}<a href="{{ url_for('static', filename=_j.comprobante) }}" target="_blank" rel="noopener"><img class="tst-ticketimg" src="{{ url_for('static', filename=_j.comprobante) }}" alt="Original ticket" loading="lazy"></a>{% else %}<div class="tst-ticketph">Ticket</div>{% endif %}
+        <div class="tst-playmain">
+          <div class="tst-playtop"><span class="tst-lvl{% if _is_plat %} plat{% else %} gold{% endif %}">{% if _is_plat %}PLATINUM{% else %}GOLD{% endif %}</span><span class="tst-meta">{% if _is_plat %}Platinum{% else %}Gold{% endif %} play · {{ _j.liga }}</span></div>
+          <div class="tst-pick">{{ _nick }} {% if _j.bettype == 'Moneyline' %}ML{% else %}{{ _j.bettype }}{% endif %} ({{ _j.cuota_texto or _j.cuota }})</div>
+          <div class="tst-match">{{ _j.abbr }} vs {{ _j.opp_abbr }}</div>
+        </div>
+        <div class="tst-result"><span class="{% if _j.resultado == 'WON' %}won{% elif _j.resultado == 'LOST' %}lost{% endif %}">{% if _j.resultado == 'WON' %}WON{% elif _j.resultado == 'LOST' %}LOST{% else %}PUSH{% endif %}</span><b class="{% if _j.resultado == 'WON' %}won{% elif _j.resultado == 'LOST' %}lost{% endif %}">{{ '%+.2f'|format(_u2) }}u</b></div>
+      </div>
+      {% endif %}
+    {% endfor %}
+  </div>
+  {% endif %}
+  {% endif %}
   {% if hot_cards %}
   <section>
     <div class="rh-head">
