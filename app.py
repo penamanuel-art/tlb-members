@@ -4469,6 +4469,56 @@ def home():
     )
 
 
+@app.route("/admin/home-preview")
+@admin_required
+def admin_home_preview():
+    """Vista previa del rediseno v9 del home, SOLO para admin (2026-10-26,
+    pedido de Alex: lanzarla solo para el, que solo el la vea).
+    No toca /home ni ningun dato: solo LEE la misma card que /home
+    (sin checkin, sin aviso de login, sin auto-grado). Quien no es
+    admin rebota a /home por el decorador admin_required."""
+    user = current_user()
+    program, plays = load_data()
+    _card_publicada = card_publicada_hoy()
+    card_pendiente = not _card_publicada or not plays
+    if card_pendiente:
+        # Igual que /home: solo el admin ve la card pendiente.
+        pending = load_pending_plays() if is_admin_for(user) else []
+        if pending:
+            plays = pending
+            card_pendiente = False
+        else:
+            plays = []
+    plays = personalizar_plays(plays, user)
+    # Franja de riesgo: igual que /home, solo para la cuenta de Alex.
+    risk_hoy = None
+    if is_alex_member(user):
+        try:
+            db = get_db()
+            _hoy_iso = datetime.now(TZ).strftime("%Y-%m-%d")
+            _pend = [r for r in db.execute(
+                "SELECT * FROM tracked_plays WHERE user_id = ?",
+                (session["user_id"],)).fetchall()
+                if (r["fecha"] or "") == _hoy_iso and not r["resultado"]]
+            _total = sum(float(r["stake_monto"] or 0) for r in _pend)
+            _br = float(user["bankroll"]) if user["bankroll"] else 10000.0
+            risk_hoy = {"total": round(_total, 2),
+                        "pct": round(_total / _br * 100, 1) if _br else 0.0,
+                        "n": len(_pend)}
+        except Exception:
+            risk_hoy = None
+    return render_template(
+        "home_preview_v9.html",
+        plays=plays,
+        card_pendiente=card_pendiente,
+        fecha=fecha_larga(),
+        saludo=saludo_hoy(),
+        bankroll=user["bankroll"] if user else None,
+        res=program_stats(),
+        risk_hoy=risk_hoy,
+    )
+
+
 def _send_meta_capi_registration(email, event_id, ip, user_agent, fbp, fbc, source_url):
     """Conversions API de Meta (2026-10-14): envía el CompleteRegistration
     también desde el servidor, con el MISMO event_id que dispara el pixel
