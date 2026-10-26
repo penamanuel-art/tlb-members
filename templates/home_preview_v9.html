@@ -6,7 +6,7 @@
 <title>The Sharp Team — Home preview (admin only)</title>
 <style>
   *{box-sizing:border-box}
-  body{margin:0;background:#05081a;color:#eef2f8;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  body{margin:0;background-color:#05081a;background-image:radial-gradient(640px 300px at 85% -60px,rgba(232,199,102,.08),transparent 60%),radial-gradient(520px 380px at -10% 40%,rgba(46,230,168,.04),transparent 60%),linear-gradient(180deg,#0c1638 0%,#081029 45%,#05081a 100%);background-attachment:fixed;color:#eef2f8;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
   body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;background:linear-gradient(rgba(5,8,26,.82),rgba(5,8,26,.90)),url("{{ url_for('static', filename='img/hero-player.jpg') }}") center 20%/cover no-repeat}
   .phone{position:relative;z-index:1;max-width:520px;margin:0 auto;padding:14px 14px 90px}
   .sample{background:#3a2b00;border:1px solid #c9a227;color:#ffe9a8;text-align:center;font-size:12px;font-weight:700;letter-spacing:.08em;padding:8px;border-radius:10px;margin-bottom:14px}
@@ -41,19 +41,19 @@
   .status span{color:#93a4bf;font-size:14px;line-height:1.45}
   .status .arr{margin-left:auto;color:#93a4bf;font-size:22px}
   .tiles{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:16px 0}
-  .tile{background:linear-gradient(180deg,#1c2431,#161c23);border:1px solid #2a3c5f;border-radius:18px;padding:14px 12px}
+  .tile{background:linear-gradient(180deg,#111a3e,#0c1430);border:1px solid #2a3c5f;border-radius:18px;padding:14px 12px}
   .tile .ic{width:42px;height:42px;border-radius:12px;background:#1a222e;border:1px solid #24334d;display:flex;align-items:center;justify-content:center;color:#2ee6a8;font-size:22px;margin-bottom:10px}
   .tile b{display:block;font-size:16px;margin-bottom:4px}
   .tile p{margin:0;color:#93a4bf;font-size:12.5px;line-height:1.45}
   .tile .arr{color:#93a4bf;float:right;font-size:18px}
-  .risk{display:flex;align-items:center;gap:14px;border:1px solid #2ee6a8;border-radius:18px;padding:16px;background:linear-gradient(180deg,#1c2431,#161c23);box-shadow:0 0 18px rgba(46,230,168,.25);margin-bottom:20px}
+  .risk{display:flex;align-items:center;gap:14px;border:1px solid #2ee6a8;border-radius:18px;padding:16px;background:linear-gradient(180deg,#111a3e,#0c1430);box-shadow:0 0 18px rgba(46,230,168,.25);margin-bottom:20px}
   .risk .shield{font-size:38px;color:#2ee6a8}
   .risk .left{flex:1}
   .risk .label{font-size:12px;letter-spacing:.22em;color:#2ee6a8;font-weight:800}
   .risk b{display:block;font-size:20px;margin:4px 0}
   .risk span{color:#dbe4f2;font-size:13.5px}
   .risk .right{border-left:1px solid #24334d;padding-left:14px;color:#2ee6a8;font-weight:700;font-size:14px;line-height:1.4;max-width:130px}
-  .unlock{display:flex;align-items:center;gap:12px;border:1px solid #e8c766;border-radius:18px;padding:16px;background:linear-gradient(180deg,#1c2431,#161c23);margin-bottom:20px;text-decoration:none;color:#eef2f8}
+  .unlock{display:flex;align-items:center;gap:12px;border:1px solid #e8c766;border-radius:18px;padding:16px;background:linear-gradient(180deg,#111a3e,#0c1430);margin-bottom:20px;text-decoration:none;color:#eef2f8}
   .unlock-crown{font-size:30px;color:#e8c766}
   .unlock-txt{flex:1}
   .unlock-txt b{display:block;font-size:18px;color:#e8c766}
@@ -65,7 +65,7 @@
   .rh-ledger{flex:none;background:#131e31;border:1px solid #24334d;color:#dbe4f2;font-size:12.5px;font-weight:600;padding:8px 12px;border-radius:10px;text-decoration:none}
   .rh-rail{display:flex;gap:10px;overflow-x:auto;padding:14px 2px 8px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none}
   .rh-rail::-webkit-scrollbar{display:none}
-  .rh-card{flex:0 0 88%;scroll-snap-align:start;background:linear-gradient(180deg,#1c2431,#161c23);border:1px solid var(--rhc);border-left:4px solid var(--rhc);border-radius:20px;padding:18px 16px 20px;text-decoration:none;display:block;box-shadow:0 0 22px color-mix(in srgb,var(--rhc) 30%,transparent)}
+  .rh-card{flex:0 0 88%;scroll-snap-align:start;background:linear-gradient(180deg,#111a3e,#0c1430);border:1px solid var(--rhc);border-left:4px solid var(--rhc);border-radius:20px;padding:18px 16px 20px;text-decoration:none;display:block;box-shadow:0 0 22px color-mix(in srgb,var(--rhc) 30%,transparent)}
   .rh-badge{display:inline-block;font-size:10px;font-weight:800;letter-spacing:1.4px;color:var(--rhc);background:rgba(255,255,255,.05);border:1px solid var(--rhc);padding:5px 9px;border-radius:8px}
   .rh-bigrow{display:flex;align-items:center;gap:10px;margin:12px 0 2px}
   .rh-big{color:#fff;font-size:42px;font-weight:800}
@@ -83,13 +83,13 @@
   .sechead h2{margin:0;font-size:26px}
   .lvpill{border:1px solid #2ee6a8;color:#2ee6a8;border-radius:999px;padding:6px 12px;font-size:13px;font-weight:800}
   .viewall{margin-left:auto;color:#dbe4f2;font-size:14px}
-  .section{border:1px solid #2a3c5f;border-radius:18px;background:linear-gradient(180deg,#1c2431,#161c23);padding:16px;margin-bottom:14px}
+  .section{border:1px solid #2a3c5f;border-radius:18px;background:linear-gradient(180deg,#111a3e,#0c1430);padding:16px;margin-bottom:14px}
   .section h3{margin:0 0 10px;font-size:19px}
   .row{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-top:1px solid #1c2431;font-size:15px}
   .row:first-of-type{border-top:0}
   .on{color:#2ee6a8;font-weight:800}
   .join{border:1px solid #2ee6a8;color:#2ee6a8;border-radius:999px;padding:6px 13px;font-size:13px;font-weight:800}
-  .unlock{background:linear-gradient(180deg,#1c2431,#161c23);border:1px solid #2ee6a8;border-radius:18px;padding:20px;text-align:center;margin-bottom:14px;box-shadow:0 0 20px rgba(46,230,168,.3)}
+  .unlock{background:linear-gradient(180deg,#111a3e,#0c1430);border:1px solid #2ee6a8;border-radius:18px;padding:20px;text-align:center;margin-bottom:14px;box-shadow:0 0 20px rgba(46,230,168,.3)}
   .unlock b{display:block;font-size:21px;margin-bottom:6px}
   .unlock p{margin:0 0 14px;color:#dbe4f2;font-size:14px;line-height:1.5}
   .unlock .cta{display:inline-block;background:#2ee6a8;color:#161c23;font-weight:900;border-radius:999px;padding:12px 26px;font-size:15px}
@@ -100,7 +100,7 @@
   .nav div{text-align:center;font-size:11px;color:#8b98ad}
   .nav .active{color:#2ee6a8;font-weight:800}
   .nav .ic2{font-size:22px;display:block;margin-bottom:2px}
-  .v5c,.v5c-topsec,.v5c-botsec,.ptl{background:linear-gradient(180deg,#1c2431,#161c23)!important}
+  .v5c,.v5c-topsec,.v5c-botsec,.ptl{background:linear-gradient(180deg,#111a3e,#0c1430)!important}
   .v5c-title,.v5stitle{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .vid video{width:100%;border-radius:16px;background:#000}
 </style>
