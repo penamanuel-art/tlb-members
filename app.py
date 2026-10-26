@@ -4499,6 +4499,15 @@ def admin_home_preview():
             (session["user_id"],)).fetchall()}
     except Exception:
         tracked_ids = set()
+    # Seccion "Hot right now": mismas tarjetas de rachas que /home.
+    try:
+        _hdb = get_db()
+        _sys_rows = _hdb.execute(
+            "SELECT * FROM tracked_plays WHERE user_id = ? AND nivel = 'VALUE'",
+            (VALUE_SYSTEM_USER_ID,)).fetchall()
+        hot_cards = hot_run_cards([dict(r) for r in _sys_rows])
+    except Exception:
+        hot_cards = []
     # Franja de riesgo: igual que /home, solo para la cuenta de Alex.
     risk_hoy = None
     if is_alex_member(user):
@@ -4526,6 +4535,7 @@ def admin_home_preview():
         res=program_stats(),
         risk_hoy=risk_hoy,
         tracked_ids=tracked_ids,
+        hot_cards=hot_cards,
     )
 
 
