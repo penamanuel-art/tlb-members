@@ -267,6 +267,12 @@
     </div>
   </div>
 
+  {% if not plays %}
+  <div class="tst-emptycard">
+    <span class="tst-emptytitle">Today's card is not posted yet</span>
+    <span class="tst-emptysub">Your plays will appear here as soon as today's card is live.</span>
+  </div>
+  {% endif %}
   <div id="tst-vid-open" style="display:inline-flex;align-items:center;gap:6px;background:#161c23;border:1px solid #2a3c5f;border-radius:999px;padding:6px 11px;cursor:pointer;margin:12px 0 16px;">
     <span style="color:#2ee6a8;font-size:10px;line-height:1;">&#9654;</span>
     <span style="color:#2ee6a8;font-size:12px;font-weight:300;letter-spacing:.3px;">Watch how it works</span>
@@ -298,13 +304,7 @@
     <span class="tst-livetxt"><span class="tst-livetitle">Live scores &amp; games</span><span class="tst-livesub">Every price, the fair line and the edge, for every game.</span></span>
     <span class="tst-livearr">›</span>
   </a>
-  <div class="tst-playshead"><h2>Your plays</h2><span class="tst-lvpill{% if miembro_platinum %} plat{% endif %}">{% if miembro_platinum %}Platinum{% else %}Gold{% endif %}</span><button class="tst-refresh" type="button" onclick="location.reload()">↻ Refresh</button></div>
-  {% if not plays %}
-  <div class="tst-emptycard">
-    <span class="tst-emptytitle">Today's card is not posted yet</span>
-    <span class="tst-emptysub">Your plays will appear here as soon as today's card is live.</span>
-  </div>
-  {% endif %}
+  {% if plays %}<div class="tst-playshead"><h2>Your plays</h2><span class="tst-lvpill{% if miembro_platinum %} plat{% endif %}">{% if miembro_platinum %}Platinum{% else %}Gold{% endif %}</span><button class="tst-refresh" type="button" onclick="location.reload()">↻ Refresh</button></div>{% endif %}
   {% set tracked_ids = tracked_ids|default([]) %}
   {% set golds = plays|selectattr('nivel','equalto','GOLD')|list %}
   {% set plats = plays|rejectattr('nivel','equalto','GOLD')|rejectattr('nivel','equalto','VALUE')|list %}
