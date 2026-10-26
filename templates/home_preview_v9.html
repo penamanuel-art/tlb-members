@@ -53,6 +53,12 @@
   .risk b{display:block;font-size:20px;margin:4px 0}
   .risk span{color:#dbe4f2;font-size:13.5px}
   .risk .right{border-left:1px solid #24334d;padding-left:14px;color:#2ee6a8;font-weight:700;font-size:14px;line-height:1.4;max-width:130px}
+  .unlock{display:flex;align-items:center;gap:12px;border:1px solid #e8c766;border-radius:18px;padding:16px;background:linear-gradient(180deg,#1c2431,#161c23);margin-bottom:20px;text-decoration:none;color:#eef2f8}
+  .unlock-crown{font-size:30px;color:#e8c766}
+  .unlock-txt{flex:1}
+  .unlock-txt b{display:block;font-size:18px;color:#e8c766}
+  .unlock-txt p{margin:4px 0 0;font-size:13.5px;color:#93a4bf;line-height:1.45}
+  .unlock-arr{font-size:26px;color:#e8c766}
   .sechead{display:flex;align-items:center;gap:10px;margin-bottom:12px}
   .sechead h2{margin:0;font-size:26px}
   .lvpill{border:1px solid #2ee6a8;color:#2ee6a8;border-radius:999px;padding:6px 12px;font-size:13px;font-weight:800}
@@ -157,6 +163,12 @@
   {% include "_play_card_v5.html" %}
   {% endif %}
   {% endfor %}
+
+  <a class="unlock" href="{{ url_for('desbloquear_platinum') }}">
+    <div class="unlock-crown">♛</div>
+    <div class="unlock-txt"><b>Unlock Platinum</b><p>Every play, every ticket, every result — no locks.</p></div>
+    <span class="unlock-arr">›</span>
+  </a>
 
   <div class="section">
     <h3>Get alerts</h3>
