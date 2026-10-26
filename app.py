@@ -12664,7 +12664,21 @@ def stripe_webhook():
             # no se repite.
             # 2026-10-08 (pedido Alex): si se había cancelado y se vuelve a
             # suscribir, le llega el WELCOME BACK (distinto al de primera vez).
+            # 2026-10-26 (pedido Alex): el WELCOME BACK sale SIEMPRE al
+            # volver a Platinum: si ya recibió el Welcome antes y ahora
+            # activa Platinum de nuevo (era_nuevo), le llega Welcome Back,
+            # sin importar cómo perdió el acceso (cancelación marcada,
+            # trial vencido, pago fallido o activación manual). Solo quien
+            # nunca recibió el Welcome recibe el Welcome de primera vez.
+            # Las renovaciones (era_nuevo=False) siguen sin mandar email.
             if estaba_cancelado:
+                try:
+                    send_welcome_back_email(row["nombre"] or "", email)
+                    db.execute("UPDATE users SET welcome_email_sent = 1 WHERE id = ?", (uid,))
+                    db.commit()
+                except Exception:
+                    pass
+            elif era_nuevo and bool(row["welcome_email_sent"]):
                 try:
                     send_welcome_back_email(row["nombre"] or "", email)
                     db.execute("UPDATE users SET welcome_email_sent = 1 WHERE id = ?", (uid,))
