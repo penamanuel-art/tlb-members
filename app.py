@@ -4466,11 +4466,8 @@ def home():
         # miembro_platinum con preview: en ?preview=locked el banner de
         # invitación VIP también se muestra (pedido Alex 2026-10-02).
         miembro_platinum=(platinum_unlocked_for(user) and not preview_locked),
-        # Hero rotativo por visita (2026-10-26, pedido de Alex): un fondo
-        # por liga cubierta (MLB, NFL, NHL, NBA), elegido al azar en cada
-        # carga del Home. Fallback al hero original si algo falla.
-        hero_img=random.choice(["img/hero-mlb.jpg", "img/hero-nfl.jpg",
-                                "img/hero-nhl.jpg", "img/hero-nba.jpg"]),
+        # Hero fijo original (2026-10-26, reversión a pedido de Alex: solo
+        # el de fútbol con casco, sin rotación por ligas).
         tst_version=os.environ.get("RENDER_GIT_COMMIT", ""),
     )
 
@@ -4545,8 +4542,6 @@ def admin_home_preview():
         dias=load_archive(),
         hoy_iso=datetime.now(TZ).strftime("%Y-%m-%d"),
         ayer_iso=(datetime.now(TZ) - timedelta(days=1)).strftime("%Y-%m-%d"),
-        hero_img=random.choice(["img/hero-mlb.jpg", "img/hero-nfl.jpg",
-                                "img/hero-nhl.jpg", "img/hero-nba.jpg"]),
         tst_version=os.environ.get("RENDER_GIT_COMMIT", ""),
     )
 
