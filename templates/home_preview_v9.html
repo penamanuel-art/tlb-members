@@ -433,6 +433,18 @@
   {% endif %}
   {% endif %}
 
+  <div onclick="document.getElementById('tst-vid-open').click()" style="background:linear-gradient(180deg,#1c2431,#161c23);border:1px solid #2a3c5f;border-radius:20px;padding:16px;margin:0 0 22px;cursor:pointer;">
+    <img src="{{ url_for('static', filename='img/video-dashboard-poster.jpg') }}" alt="Watch how it works" style="width:100%;border-radius:12px;display:block;">
+    <div style="display:flex;align-items:center;gap:10px;margin-top:12px;">
+      <span style="width:36px;height:36px;min-width:36px;border-radius:50%;background:rgba(46,230,168,.12);color:#2ee6a8;display:flex;align-items:center;justify-content:center;font-size:16px;">&#9654;</span>
+      <span style="flex:1;min-width:0;">
+        <span style="display:block;font-size:17px;font-weight:400;">Watch how it works</span>
+        <span style="display:block;color:#93a4bf;font-size:12.5px;font-weight:300;margin-top:2px;">See how the Dashboard works, step by step.</span>
+      </span>
+      <span style="color:#93a4bf;font-size:20px;">&#8250;</span>
+    </div>
+  </div>
+
   <footer class="footer tst-foot">
     <div class="tst-foot-brand">
       <span class="tst-foot-name">THE SHARP TEAM</span>
