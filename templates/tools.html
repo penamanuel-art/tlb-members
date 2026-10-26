@@ -8,6 +8,7 @@
 {% set parlay_href = '/parlay-builder' if es_platinum else desbloquear_url %}
 {% set evresults_href = '/ev-board/results' if es_platinum else desbloquear_url %}
 {% set linemoves_href = '/tools/line-moves' if es_platinum else desbloquear_url %}
+{% set props_href = '/props' if es_platinum else desbloquear_url %}
 <style>
 body.v2{background-color:#161d29;background-image:radial-gradient(560px 300px at 50% -80px,rgba(47,230,167,.06),transparent 65%),radial-gradient(700px 500px at 110% 30%,rgba(77,163,255,.05),transparent 60%)}
 .at-wrap{max-width:560px;margin:0 auto;padding:18px 16px 8px;color:#eef2f8}
@@ -50,7 +51,7 @@ body.v2{background-color:#161d29;background-image:radial-gradient(560px 300px at
 
 <div class="at-wrap">
   <h1 class="at-title">All tools</h1>
-  <p class="at-sub">10 tools and 9 calculators. Tap one to open it.</p>
+  <p class="at-sub">11 tools and 9 calculators. Tap one to open it.</p>
 
   <div class="at-search">
     <span style="color:#8b98ad;font-size:13px">&#128269;</span>
@@ -96,11 +97,17 @@ body.v2{background-color:#161d29;background-image:radial-gradient(560px 300px at
   </div>
 
   <div class="at-section">
-    <p class="at-sec">MARKET DATA <span class="at-count">2</span></p>
+    <p class="at-sec">MARKET DATA <span class="at-count">3</span></p>
     <div class="at-box">
       <a class="at-row at-item" href="{{ evboard_href }}" data-search="ev board value edges prices fair ranked" data-recent='{"id":"evboard","label":"+EV Board","href":"{{ evboard_href }}"}'>
         <span class="at-ico"><svg width="17" height="17" viewBox="0 0 24 24" fill="#2fe6a7"><path d="M13 2 4.5 13.5H11L9.5 22 19 9.5h-6.5L13 2z"/></svg></span>
         <span class="at-info"><b>+EV Board</b><span>Prices above fair, ranked</span></span>
+        <span class="at-plat">&#128142; PLATINUM</span>
+        <span class="at-chev">›</span>
+      </a>
+      <a class="at-row at-item" href="{{ props_href }}" data-search="player props prop edges ranked over under" data-recent='{"id":"props","label":"Player Props","href":"{{ props_href }}"}'>
+        <span class="at-ico"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#2fe6a7" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.5 3-5.5 7-5.5s7 2 7 5.5"/></svg></span>
+        <span class="at-info"><b>Player Props</b><span>Prop edges, ranked</span></span>
         <span class="at-plat">&#128142; PLATINUM</span>
         <span class="at-chev">›</span>
       </a>
