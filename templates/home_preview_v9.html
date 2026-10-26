@@ -270,6 +270,11 @@
     </div>
   </div>
 
+  <a class="tst-livecard" href="{{ url_for('game_center') }}">
+    <span class="tst-liveic">((•))</span>
+    <span class="tst-livetxt"><span class="tst-livetitle">Live scores &amp; games</span><span class="tst-livesub">Every price, the fair line and the edge, for every game.</span></span>
+    <span class="tst-livearr">›</span>
+  </a>
   {% if not plays %}
   <div class="tst-emptycard">
     <span class="tst-emptytitle">Today's card is not posted yet</span>
@@ -302,11 +307,6 @@
     <div class="right">Discipline builds long‑term profits. ↗</div>
   </div>
 
-  <a class="tst-livecard" href="{{ url_for('game_center') }}">
-    <span class="tst-liveic">((•))</span>
-    <span class="tst-livetxt"><span class="tst-livetitle">Live scores &amp; games</span><span class="tst-livesub">Every price, the fair line and the edge, for every game.</span></span>
-    <span class="tst-livearr">›</span>
-  </a>
   {% if plays %}<div class="tst-playshead"><h2>Your plays</h2><span class="tst-lvpill{% if miembro_platinum %} plat{% endif %}">{% if miembro_platinum %}Platinum{% else %}Gold{% endif %}</span><button class="tst-refresh" type="button" onclick="location.reload()">↻ Refresh</button></div>{% endif %}
   {% set tracked_ids = tracked_ids|default([]) %}
   {% set golds = plays|selectattr('nivel','equalto','GOLD')|list %}
