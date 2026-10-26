@@ -18,6 +18,7 @@
   .wordmark i{display:block;height:3px;background:linear-gradient(90deg,#2ee6a8,#e8c766);margin-top:3px}
   .topactions{display:flex;align-items:center;gap:6px}
   .pill{display:flex;align-items:center;gap:6px;border:1px solid #24334d;background:#1a222e;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:600;white-space:nowrap}
+  .topstrip{display:flex;align-items:center;gap:6px;width:fit-content;margin:0 auto 12px;border:1px solid #e8c766;background:linear-gradient(180deg,#1c2431,#161c23);border-radius:999px;padding:8px 14px;font-size:12px;font-weight:700;color:#eef2f8;text-decoration:none;white-space:nowrap}
   .pill .crown{color:#e8c766}
   .topactions .pill{height:32px;box-sizing:border-box}
   .pillrow .pill{height:40px;box-sizing:border-box}
@@ -114,10 +115,10 @@
       <div class="wordmark"><b>THE</b><strong>SHARP TEAM</strong><i></i></div>
     </div>
     <div class="topactions">
-      {% if not miembro_platinum %}<a class="pill" href="{{ url_for('desbloquear_platinum') }}"><span class="crown">♛</span> Unlock Platinum <span>›</span></a>{% endif %}
       <a class="avatar" href="{{ url_for('cuenta') }}">{{ inicial }}</a>
     </div>
   </div>
+  {% if not miembro_platinum %}<a class="topstrip" href="{{ url_for('desbloquear_platinum') }}"><span class="crown">♛</span> Unlock Platinum · $1 first week <span>›</span></a>{% endif %}
 
   <div class="pillrow">
     <a class="balance" href="{{ url_for('cuenta') }}"><span>View my balance</span><span><b>{% if balance_total_txt %}{{ balance_total_txt }}{% elif bankroll %}${{ '%.2f'|format(bankroll) }}{% else %}—{% endif %}</b> ›</span></a>
