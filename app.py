@@ -4538,6 +4538,8 @@ def admin_home_preview():
         tracked_ids=tracked_ids,
         hot_cards=hot_cards,
         dias=load_archive(),
+        hoy_iso=datetime.now(TZ).strftime("%Y-%m-%d"),
+        ayer_iso=(datetime.now(TZ) - timedelta(days=1)).strftime("%Y-%m-%d"),
         tst_version=os.environ.get("RENDER_GIT_COMMIT", ""),
     )
 
