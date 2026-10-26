@@ -25,7 +25,7 @@
   .pillrow .pill{height:40px;box-sizing:border-box}
   .avatar{width:32px;height:32px;min-width:32px;border-radius:50%;border:2px solid #2ee6a8;background:#2a3c5f;display:flex;align-items:center;justify-content:center;font-size:15px;color:#eef2f8;font-weight:800}
   .pillrow{display:flex;align-items:center;gap:7px;margin-bottom:10px}
-  .balance{flex:1 1 auto;min-width:0;display:flex;align-items:center;justify-content:space-between;gap:8px;height:40px;box-sizing:border-box;border:1px solid #2ee6a8;border-radius:999px;padding:8px 12px;background:#161c23;box-shadow:0 0 16px rgba(46,230,168,.35);font-weight:700;font-size:12px;white-space:nowrap}
+  .balance{flex:1 1 auto;min-width:0;display:flex;align-items:center;justify-content:space-between;gap:8px;height:40px;box-sizing:border-box;border:1px solid #24334d;border-radius:999px;padding:6px 10px;background:#1a222e;font-weight:700;font-size:12px;white-space:nowrap}
   .balance b{color:#2ee6a8;font-size:14px}
   .menubtn{width:40px;height:40px;min-width:40px;border:1px solid #24334d;background:#1a222e;border-radius:12px;color:#eef2f8;font-size:16px;display:flex;align-items:center;justify-content:center}
   .hero{position:relative;overflow:hidden;border:1px solid #2a3c5f;border-radius:20px;background:radial-gradient(120% 140% at 20% 0%,#24334d 0%,#0d1626 55%,#05081a 100%);padding:20px 18px 0;box-shadow:0 0 26px rgba(46,230,168,.18)}
@@ -113,10 +113,12 @@
   .tst-foot .tst-foot-resp{font-size:11.5px;line-height:1.7;color:#94a3b8;margin:10px auto 0;max-width:620px}
   .tst-foot .tst-foot-resp a{color:#94a3b8}
   body.v5-sheet-open .nav{display:none!important}
-  .nav{position:fixed;left:0;right:0;bottom:0;z-index:2;background:rgba(13,18,25,.72);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-top:1px solid rgba(255,255,255,.12);display:flex;justify-content:space-around;padding:10px 6px 14px;max-width:520px;margin:0 auto}
-  .nav div{text-align:center;font-size:11px;color:#8b98ad}
-  .nav .active{color:#2ee6a8;font-weight:800;background:rgba(46,230,168,.15);border-radius:22px;padding:4px 12px}
-  .nav .ic2{font-size:22px;display:block;margin-bottom:2px}
+  .v2-bottomnav{position:fixed;left:0;right:0;bottom:0;z-index:1001;display:flex;justify-content:space-around;align-items:stretch;background:#0d1219;border-top:1px solid rgba(139,152,173,.16);padding:6px 6px calc(6px + env(safe-area-inset-bottom))}
+  .v2-bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 2px 6px;text-decoration:none;color:#8b98ad;font-size:10px;font-weight:500;letter-spacing:.01em;min-width:0;border-radius:22px;transition:background-color .2s ease,color .2s ease,transform .2s ease}
+  .v2-bnav-item:active{transform:scale(.95)}
+  .v2-bnav-item.active{color:#2fe6a7;background:rgba(47,230,167,.15);font-weight:600}
+  .v2-bnav-ico{display:flex;align-items:center;justify-content:center;width:22px;height:22px;font-size:20px;line-height:1}
+  .v2-bnav-ico svg{display:block;width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
   .v5c,.v5c-topsec,.v5c-botsec,.ptl{background:linear-gradient(180deg,#1c2431,#161c23)!important}
   .v5c,.ptl{margin-bottom:20px!important}
   .v5c-title,.v5stitle{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -284,13 +286,13 @@
   </footer>
 </div>
 
-<div class="nav">
-  <a href="{{ url_for('admin_home_preview') }}"><div class="active"><span class="ic2">⌂</span>Today</div></a>
-  <a href="{{ url_for('game_center') }}"><div><span class="ic2">◎</span>Odds</div></a>
-  <a href="{{ url_for('tools') }}"><div><span class="ic2">▦</span>Tools</div></a>
-  <a href="{{ url_for('tracker') }}"><div><span class="ic2">♛</span>My Bets</div></a>
-  <a href="{{ url_for('cuenta') }}"><div><span class="ic2">○</span>Account</div></a>
-</div>
+<nav class="nav v2-bottomnav" aria-label="Primary">
+  <a href="{{ url_for('admin_home_preview') }}" class="v2-bnav-item active"><span class="v2-bnav-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9 21v-6h6v6"/></svg></span><span>Today</span></a>
+  <a href="{{ url_for('game_center') }}" class="v2-bnav-item"><span class="v2-bnav-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="2.5"/></svg></span><span>Odds</span></a>
+  <a href="{{ url_for('tools') }}" class="v2-bnav-item"><span class="v2-bnav-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></span><span>Tools</span></a>
+  <a href="{{ url_for('tracker') }}" class="v2-bnav-item"><span class="v2-bnav-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a3 3 0 0 0 0 6v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a3 3 0 0 0 0-6Z"/><path d="M13 5v2"/><path d="M13 11v2"/><path d="M13 17v2"/></svg></span><span>My Bets</span></a>
+  <a href="{{ url_for('cuenta') }}" class="v2-bnav-item"><span class="v2-bnav-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/></svg></span><span>Account</span></a>
+</nav>
 <div id="tst-vid-modal" style="display:none;position:fixed;inset:0;background:rgba(6,9,12,.97);z-index:100000;flex-direction:column;align-items:center;justify-content:center;padding:calc(12px + env(safe-area-inset-top)) 14px 14px;box-sizing:border-box;">
   <div style="position:relative;width:100%;max-width:430px;"><video id="tst-vid-player" controls playsinline webkit-playsinline preload="none" poster="{{ url_for('static', filename='img/video-dashboard-poster.jpg') }}" style="width:100%;max-width:430px;max-height:92dvh;border-radius:16px;background:#000;">
     <source src="{{ url_for('static', filename='video/dashboard-tutorial.mp4') }}" type="video/mp4">
