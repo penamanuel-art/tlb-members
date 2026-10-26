@@ -57,23 +57,6 @@
   .sechead h2{margin:0;font-size:26px}
   .lvpill{border:1px solid #2ee6a8;color:#2ee6a8;border-radius:999px;padding:6px 12px;font-size:13px;font-weight:800}
   .viewall{margin-left:auto;color:#dbe4f2;font-size:14px}
-  .playcard{border:1px solid #2a3c5f;border-radius:18px;background:#1a222e;padding:15px;margin-bottom:14px;box-shadow:0 0 16px rgba(46,230,168,.12)}
-  .playtop{display:flex;gap:12px;align-items:flex-start}
-  .logo{width:56px;height:56px;min-width:56px;border-radius:50%;border:2px solid #2ee6a8;background:radial-gradient(circle at 35% 30%,#2a3c5f,#1a222e);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:17px;color:#fff;overflow:hidden}
-  .logo img{width:100%;height:100%;object-fit:contain}
-  .playtop .meta{flex:1}
-  .chip{color:#2ee6a8;font-size:12px;font-weight:900;letter-spacing:.12em}
-  .playtop b{display:block;font-size:18px;margin:3px 0}
-  .playtop span{color:#93a4bf;font-size:14px}
-  .league{border:1px solid #24334d;border-radius:999px;padding:5px 11px;font-size:12px;color:#dbe4f2;white-space:nowrap}
-  .playfoot{display:flex;gap:10px;border-top:1px solid #2a3c5f;margin-top:14px;padding-top:12px}
-  .stat{flex:1}
-  .stat small{display:block;color:#8fa1c2;font-size:11px;letter-spacing:.12em;font-weight:800}
-  .stat b{color:#2ee6a8;font-size:15px}
-  .playacts{display:flex;gap:8px;margin-top:12px}
-  .playacts a{flex:1;text-align:center;font-weight:800;font-size:13px;border-radius:12px;padding:11px 0}
-  .act-novig{background:#2ee6a8;color:#161c23}
-  .act-ticket{border:1.5px solid #2ee6a8;color:#2ee6a8}
   .section{border:1px solid #2a3c5f;border-radius:18px;background:#1a222e;padding:16px;margin-bottom:14px}
   .section h3{margin:0 0 10px;font-size:19px}
   .row{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-top:1px solid #1c2431;font-size:15px}
@@ -159,55 +142,17 @@
   <div class="sechead"><h2>Your plays</h2><span class="lvpill">Gold</span><a class="viewall" href="{{ url_for('official_tracker') }}">View all ›</a></div>
 
   {% if not plays %}
-  <div class="playcard">
-    <div class="playtop">
-      <div class="meta">
-        <span class="chip">NO CARD YET</span>
-        <b>Today's card is not posted yet</b>
-        <span>Check back when the card drops.</span>
-      </div>
-    </div>
+  <div class="section">
+    <h3>Today's card is not posted yet</h3>
+    <p style="color:#93a4bf;font-size:14px;line-height:1.55;margin:0">Check back when the card drops.</p>
   </div>
   {% endif %}
+  {% set tracked_ids = tracked_ids|default([]) %}
   {% for p in plays %}
   {% if p.nivel == 'ELITE' and not miembro_platinum %}
-  <div class="playcard">
-    <div class="playtop">
-      <div class="logo">🔒</div>
-      <div class="meta">
-        <span class="chip" style="color:#93a4bf">LOCKED</span>
-        <b>Platinum play — locked</b>
-        <span>Unlock Platinum to reveal this play</span>
-      </div>
-      <span class="league">{{ p.liga or '' }}</span>
-    </div>
-    <div class="playfoot">
-      <div class="stat"><small>⬢ SHARP EDGE</small><b>Locked</b></div>
-      <div class="stat"><small>▂ CONFIDENCE</small><b>Locked</b></div>
-      <div class="stat"><small>◎ RECORD</small><b>Locked</b></div>
-    </div>
-  </div>
+  {% include "_play_card_locked.html" %}
   {% else %}
-  <div class="playcard">
-    <div class="playtop">
-      <div class="logo">{% if p.logo_url %}<img src="{{ p.logo_url }}" alt="">{% else %}{{ p.abbr or '–' }}{% endif %}</div>
-      <div class="meta">
-        <span class="chip">{{ 'PLATINUM' if p.nivel == 'ELITE' else 'GOLD' }}</span>
-        <b>{{ p.team_name or p.abbr }} {{ 'ML' if p.bettype == 'Moneyline' else (p.bettype or '') }}</b>
-        <span>{% if p.abbr and p.opp_abbr %}{{ p.abbr }} vs {{ p.opp_abbr }} · {% endif %}{{ p.game_time_et or p.hora or '' }}</span>
-      </div>
-      <span class="league">{{ p.liga or '' }}</span>
-    </div>
-    <div class="playfoot">
-      <div class="stat"><small>⬢ SHARP EDGE</small><b>{% if p.writeup and p.writeup.edge %}{{ p.writeup.edge }}{% else %}—{% endif %}</b></div>
-      <div class="stat"><small>▂ CONFIDENCE</small><b>{% if p.writeup and p.writeup.model_prob %}{{ p.writeup.model_prob }}{% else %}—{% endif %}</b></div>
-      <div class="stat"><small>◎ RECORD</small><b>{% if p.nivel == 'ELITE' %}{{ res.niveles.ELITE.record }}{% else %}{{ res.niveles.GOLD.record }}{% endif %}</b></div>
-    </div>
-    <div class="playacts">
-      {% if p.novig_url %}<a class="act-novig" href="{{ p.novig_url }}">Place at Novig ↗</a>{% endif %}
-      {% if p.comprobante %}<a class="act-ticket" href="{{ url_for('ticket_view', play_id=p.id) }}">🎫 View ticket</a>{% endif %}
-    </div>
-  </div>
+  {% include "_play_card_preview_v5.html" %}
   {% endif %}
   {% endfor %}
 
