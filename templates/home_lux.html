@@ -109,6 +109,7 @@
 </head>
 <body>
 <div class="phone">
+  {% if not miembro_platinum %}<a class="topstrip" href="{{ url_for('desbloquear_platinum') }}"><span class="crown">♛</span> Unlock Platinum · $1 first week <span>›</span></a>{% endif %}
   <div class="topbar">
     <div class="brand">
       <img class="fin" src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team">
@@ -118,7 +119,6 @@
       <a class="avatar" href="{{ url_for('cuenta') }}">{{ inicial }}</a>
     </div>
   </div>
-  {% if not miembro_platinum %}<a class="topstrip" href="{{ url_for('desbloquear_platinum') }}"><span class="crown">♛</span> Unlock Platinum · $1 first week <span>›</span></a>{% endif %}
 
   <div class="pillrow">
     <a class="balance" href="{{ url_for('cuenta') }}"><span>View my balance</span><span><b>{% if balance_total_txt %}{{ balance_total_txt }}{% elif bankroll %}${{ '%.2f'|format(bankroll) }}{% else %}—{% endif %}</b> ›</span></a>
