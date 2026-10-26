@@ -147,6 +147,11 @@
     </div>
   </div>
 
+  <div id="tst-vid-open" style="display:inline-flex;align-items:center;gap:6px;background:#161c23;border:1px solid #2a3c5f;border-radius:999px;padding:6px 11px;cursor:pointer;margin-bottom:14px;">
+    <span style="color:#2ee6a8;font-size:10px;line-height:1;">&#9654;</span>
+    <span style="color:#2ee6a8;font-size:12px;font-weight:300;letter-spacing:.3px;">Watch how it works</span>
+  </div>
+
   <div class="tiles">
     <a class="tile" href="{{ url_for('game_center') }}"><div class="ic">◎</div><span class="arr">›</span><b>Odds</b><p>Live scores &amp; games, every price, the fair line and the edge.</p></a>
     <a class="tile" href="{{ url_for('tracker') }}"><div class="ic">♛</div><span class="arr">›</span><b>My Bets</b><p>Track your plays, results and performance.</p></a>
@@ -271,5 +276,22 @@
   <a href="{{ url_for('tracker') }}"><div><span class="ic2">♛</span>My Bets</div></a>
   <a href="{{ url_for('cuenta') }}"><div><span class="ic2">○</span>Account</div></a>
 </div>
+<div id="tst-vid-modal" style="display:none;position:fixed;inset:0;background:rgba(6,9,12,.97);z-index:100000;flex-direction:column;align-items:center;justify-content:center;padding:calc(12px + env(safe-area-inset-top)) 14px 14px;box-sizing:border-box;">
+  <div style="position:relative;width:100%;max-width:430px;"><video id="tst-vid-player" controls playsinline webkit-playsinline preload="none" poster="{{ url_for('static', filename='img/video-dashboard-poster.jpg') }}" style="width:100%;max-width:430px;max-height:92dvh;border-radius:16px;background:#000;">
+    <source src="{{ url_for('static', filename='video/dashboard-tutorial.mp4') }}" type="video/mp4">
+  </video>
+    <button id="tst-vid-x" type="button" aria-label="Close" style="position:absolute;top:10px;right:10px;z-index:20;width:44px;height:44px;border-radius:50%;background:rgba(10,14,20,.85);border:2px solid #2ee6a8;color:#fff;font-size:20px;font-weight:800;cursor:pointer;line-height:1;">&#10005;</button>
+  </div>
+  <div id="tst-vid-end" style="display:none;width:100%;max-width:430px;margin-top:14px;flex-direction:column;align-items:center;gap:12px;">
+    <div style="color:#fff;font-size:16px;font-weight:700;">That is the full tour</div>
+    <div style="display:flex;gap:10px;">
+      <button id="tst-vid-again" type="button" style="background:#2ee6a8;color:#06281c;border:0;border-radius:999px;padding:13px 24px;font-size:16px;font-weight:800;cursor:pointer;">&#8635; Watch again</button>
+      <button id="tst-vid-endclose" type="button" style="background:#161c23;color:#fff;border:2px solid #2ee6a8;border-radius:999px;padding:12px 24px;font-size:16px;font-weight:800;cursor:pointer;">&#10005; Close</button>
+    </div>
+  </div>
+</div>
+<script>
+(function(){var m=document.getElementById('tst-vid-modal'),v=document.getElementById('tst-vid-player'),o=document.getElementById('tst-vid-open'),c=document.getElementById('tst-vid-close');if(!m||!v||!o){return}document.body.appendChild(m);function open(){m.style.display='flex';if(v.play){v.play()}}function close(){m.style.display='none';v.pause()}o.addEventListener('click',open);if(c){c.addEventListener('click',close)};var x=document.getElementById('tst-vid-x');if(x){x.addEventListener('click',close)}m.addEventListener('click',function(e){if(e.target===m){close()}});var eo=document.getElementById('tst-vid-end');v.addEventListener('ended',function(){try{if(v.webkitExitFullscreen){v.webkitExitFullscreen()}}catch(e){}try{if(document.fullscreenElement){document.exitFullscreen()}}catch(e){}if(eo){eo.style.display='flex'}});var ag=document.getElementById('tst-vid-again');if(ag){ag.addEventListener('click',function(){eo.style.display='none';v.currentTime=0;v.play()})}var ec=document.getElementById('tst-vid-endclose');if(ec){ec.addEventListener('click',function(){eo.style.display='none';close()})}o.addEventListener('click',function(){if(eo){eo.style.display='none'}});})();
+</script>
 </body>
 </html>
