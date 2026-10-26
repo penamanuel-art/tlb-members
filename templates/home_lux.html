@@ -262,7 +262,7 @@
 
   <div class="pillrow">
     <a class="balance" href="{{ url_for('cuenta') }}"><span>View my balance</span><span><b>{% if balance_total_txt %}{{ balance_total_txt }}{% elif bankroll %}${{ '%.2f'|format(bankroll) }}{% else %}—{% endif %}</b> ›</span></a>
-    <a class="pill" href="{{ url_for('official_tracker') }}">Full record ›</a>
+    <a class="pill" href="{{ url_for('official_tracker') }}" style="font-size:10.5px;font-weight:300;">📊 Full record ›</a>
     <a class="menubtn" href="{{ url_for('tools') }}">☰</a>
   </div>
 
