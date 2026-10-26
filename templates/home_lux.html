@@ -42,7 +42,7 @@
   .balance{flex:1 1 auto;min-width:0;display:flex;align-items:center;justify-content:space-between;gap:8px;height:40px;box-sizing:border-box;border:1px solid #24334d;border-radius:999px;padding:6px 10px;background:#1a222e;font-weight:700;font-size:12px;white-space:nowrap}
   .balance b{color:#2ee6a8;font-size:14px}
   .menubtn{width:40px;height:40px;min-width:40px;border:1px solid #24334d;background:#1a222e;border-radius:12px;color:#eef2f8;font-size:16px;display:flex;align-items:center;justify-content:center}
-  .hero{position:relative;overflow:hidden;border:1px solid #2a3c5f;border-radius:20px;background:radial-gradient(120% 140% at 20% 0%,#24334d 0%,#0d1626 55%,#05081a 100%);padding:20px 18px 0;box-shadow:0 0 26px rgba(46,230,168,.18)}
+  .hero{position:relative;overflow:hidden;border:1px solid #2a3c5f;border-radius:20px;background:radial-gradient(120% 140% at 20% 0%,#24334d 0%,#0d1626 55%,#05081a 100%);padding:20px 18px 0;box-shadow:0 0 26px rgba(46,230,168,.18);margin-bottom:22px}
   .hero .photo{position:absolute;left:0;right:0;top:0;bottom:0;background:linear-gradient(90deg,rgba(5,8,26,.97),rgba(5,8,26,.90) 42%,rgba(5,8,26,.62) 72%,rgba(5,8,26,.45) 100%),url("{{ url_for('static', filename='img/hero-player.jpg') }}") center/cover no-repeat;opacity:.95;animation:hero-ola 16s ease-in-out infinite alternate}
   @keyframes hero-ola{from{background-position:0% 0%,20% center}to{background-position:0% 0%,80% center}}
   @media (prefers-reduced-motion:reduce){.hero .photo{animation:none}}
