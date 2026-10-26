@@ -15,8 +15,8 @@
   .brand{display:flex;align-items:center;gap:8px}
   .fin{width:34px;height:34px;min-width:34px;border-radius:50%;object-fit:cover;box-shadow:0 0 14px rgba(46,230,168,.45)}
   .wordmark{line-height:1}
-  .wordmark b{display:block;font-size:5px;letter-spacing:.22em;color:#e8c766;font-style:italic;font-weight:400}
-  .wordmark strong{display:block;font-size:8px;letter-spacing:.01em;font-style:italic;font-weight:900}
+  .wordmark b{display:block;font-size:4px;letter-spacing:.22em;color:#e8c766;font-style:italic;font-weight:400}
+  .wordmark strong{display:block;font-size:7px;letter-spacing:.01em;font-style:italic;font-weight:900}
   .wordmark i{display:block;height:1px;background:linear-gradient(90deg,#2ee6a8,#e8c766);margin-top:1px}
   .topactions{display:flex;align-items:center;gap:6px}
   .pill{display:flex;align-items:center;gap:6px;border:1px solid #24334d;background:#1a222e;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:600;white-space:nowrap}
@@ -226,8 +226,9 @@
   <div class="sample">ADMIN PREVIEW — only admins can see this page. Members still see the current home.</div>
 
   <div class="topbar">
-    <div class="brand" style="flex:1;min-width:0;">
-      <img src="{{ url_for('static', filename='img/the-sharp-team-name-logo.png') }}" alt="The Sharp Team" style="height:79px;width:auto;max-width:100%;display:block;border:1px solid #2a3c5f;border-radius:14px;">
+    <div class="brand">
+      <img class="fin" src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team" style="width:64px;height:64px;min-width:64px;">
+      <div class="wordmark"><b>THE</b><strong>SHARP TEAM</strong><i></i></div>
     </div>
     <div class="topactions">
       <button class="bellbtn" type="button" id="tst-bell" aria-label="Notifications"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M13.7 20a2 2 0 0 1-3.4 0"/></svg></button>
