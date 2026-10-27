@@ -12136,6 +12136,15 @@ def tools_calculators():
     return render_template("tools_calculators.html")
 
 
+@app.route("/leagues")
+@login_required
+def leagues():
+    """All Leagues menu (2026-10-27, pedido Alex): leagues we cover, organized by league, linking only to real existing pages. No invented data."""
+    db = get_db()
+    record_checkin(db, session["user_id"])
+    return render_template("leagues.html")
+
+
 @app.route("/tools")
 @login_required
 def tools():
