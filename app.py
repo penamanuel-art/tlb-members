@@ -10975,6 +10975,48 @@ def api_acciones_pendientes():
         return jsonify({"error": str(e)}), 500
 
 
+@app.route("/encuesta")
+def encuesta_semana_gratis():
+    """Encuesta Sharp Leads — ¿te gustaría una semana gratis? (2026-10-27, pedido Alex).
+    Pública (el link viene de un email, puede no tener sesión): registra respuesta, fecha y email si hay sesión.
+    NO activa nada gratis por sí sola: es solo interés, para leerlo en /admin/encuestas."""
+    r = (request.args.get("r") or "").strip().lower()
+    if r not in ("si_1", "si_2", "no", "no_interesa"):
+        r = "no"
+    email = ""
+    try:
+        u = current_user()
+        if u:
+            email = (u.get("email") or "").strip().lower()
+    except Exception:
+        email = ""
+    try:
+        db = get_db()
+        db.execute("CREATE TABLE IF NOT EXISTS encuesta_respuestas (id INTEGER PRIMARY KEY AUTOINCREMENT, respuesta TEXT, email TEXT, created_at TEXT)")
+        db.execute("INSERT INTO encuesta_respuestas (respuesta, email, created_at) VALUES (?, ?, ?)", (r, email, datetime.now(timezone.utc).isoformat()))
+        db.commit()
+    except Exception:
+        pass
+    textos = {"si_1": "Sí, 1 semana gratis", "si_2": "Sí, 2 semanas gratis", "no": "No", "no_interesa": "No me interesa"}
+    return render_template("encuesta_gracias.html", respuesta=textos[r])
+
+@app.route("/admin/encuestas")
+@login_required
+def admin_encuestas():
+    """Lectura de respuestas de la encuesta — solo Admin / cuenta Alex."""
+    user = current_user()
+    if not _admin_o_cuenta_alex(user):
+        flash("You don't have permission to view this page.", "error")
+        return redirect(url_for("home"))
+    try:
+        db = get_db()
+        db.execute("CREATE TABLE IF NOT EXISTS encuesta_respuestas (id INTEGER PRIMARY KEY AUTOINCREMENT, respuesta TEXT, email TEXT, created_at TEXT)")
+        filas = db.execute("SELECT respuesta, email, created_at FROM encuesta_respuestas ORDER BY id DESC LIMIT 200").fetchall()
+        respuestas = [dict(f) for f in filas]
+    except Exception:
+        respuestas = []
+    return render_template("admin_encuestas.html", respuestas=respuestas)
+
 @app.route("/admin/contactos")
 @login_required
 def admin_contactos():
