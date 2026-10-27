@@ -356,7 +356,7 @@
   </div>
 
 
-  {% if plays %}<div class="tst-playshead"><h2>Your plays</h2><span class="tst-playslevel">{% if miembro_platinum %}Platinum{% else %}Free Gold{% endif %}</span><button class="tst-refresh" type="button" style="margin-left:auto" onclick="location.reload()">↻ Refresh</button></div><div class="tst-officials"><span class="tst-officials-pill">OFFICIALS</span><span class="tst-officials-n">{% if miembro_platinum %}{{ plays|length }} {% if plays|length == 1 %}play{% else %}plays{% endif %}{% else %}{{ plays|selectattr('nivel','equalto','GOLD')|list|length }} {% if plays|selectattr('nivel','equalto','GOLD')|list|length == 1 %}play{% else %}plays{% endif %}{% endif %}</span></div>{% endif %}
+  {% if plays %}<div class="tst-playshead"><h2>Your plays</h2><span class="tst-playslevel">{% if miembro_platinum %}Platinum{% else %}Free{% endif %}</span><button class="tst-refresh" type="button" style="margin-left:auto" onclick="location.reload()">↻ Refresh</button></div><div class="tst-officials"><span class="tst-officials-pill">OFFICIALS</span><span class="tst-officials-n">{% if miembro_platinum %}{{ plays|length }} {% if plays|length == 1 %}play{% else %}plays{% endif %}{% else %}{{ plays|selectattr('nivel','equalto','GOLD')|list|length }} {% if plays|selectattr('nivel','equalto','GOLD')|list|length == 1 %}play{% else %}plays{% endif %}{% endif %}</span></div>{% endif %}
   {% set tracked_ids = tracked_ids|default([]) %}
   {% set golds = plays|selectattr('nivel','equalto','GOLD')|list %}
   {% set plats = plays|rejectattr('nivel','equalto','GOLD')|rejectattr('nivel','equalto','VALUE')|list %}
