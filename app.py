@@ -7920,6 +7920,35 @@ def admin_api_tracked_members():
     return jsonify([{"email": r["email"]} for r in rows])
 
 
+@app.route("/admin/api/tracked-plays")
+def admin_api_tracked_plays():
+    """Jugadas trakeadas por miembro (2026-10-27, para el email diario 11 AM): retorna filas de tracked_plays de nivel oficial (ELITE/GOLD) con el email del usuario. Filtro opcional ?fecha=YYYY-MM-DD. Auth igual que members-emails: sesión admin O header X-Admin-Key."""
+    admin_key = os.environ.get("ADMIN_API_KEY", "")
+    header_key = request.headers.get("X-Admin-Key", "")
+    is_cron = admin_key and header_key and hmac.compare_digest(header_key, admin_key)
+    try:
+        is_admin = is_admin_for(current_user())
+    except Exception:
+        is_admin = False
+    if not (is_cron or is_admin):
+        return jsonify({"error": "admin only"}), 403
+    db = get_db()
+    fecha = request.args.get("fecha", "")
+    if fecha:
+        rows = db.execute(
+            "SELECT u.email AS email, t.play_id AS play_id, t.fecha AS fecha, t.nivel AS nivel, t.pick AS pick, t.cuota AS cuota, t.stake_unidades AS stake_unidades, t.stake_monto AS stake_monto "
+            "FROM tracked_plays t JOIN users u ON u.id = t.user_id "
+            "WHERE t.nivel IN ('ELITE', 'GOLD') AND u.email IS NOT NULL AND u.email != '' AND u.email_verified = 1 AND t.fecha = ?", (fecha,)
+        ).fetchall()
+    else:
+        rows = db.execute(
+            "SELECT u.email AS email, t.play_id AS play_id, t.fecha AS fecha, t.nivel AS nivel, t.pick AS pick, t.cuota AS cuota, t.stake_unidades AS stake_unidades, t.stake_monto AS stake_monto "
+            "FROM tracked_plays t JOIN users u ON u.id = t.user_id "
+            "WHERE t.nivel IN ('ELITE', 'GOLD') AND u.email IS NOT NULL AND u.email != '' AND u.email_verified = 1"
+        ).fetchall()
+    return jsonify([{"email": r["email"], "play_id": r["play_id"], "fecha": r["fecha"], "nivel": r["nivel"], "pick": r["pick"], "cuota": r["cuota"], "stake_unidades": r["stake_unidades"], "stake_monto": r["stake_monto"]} for r in rows])
+
+
 @app.route("/admin/api/members-telegram")
 def admin_api_members_telegram():
     """Miembros con Telegram vinculado (2026-10-25, pedido de Alex):
