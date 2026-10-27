@@ -128,7 +128,7 @@ body.v2 .v5c{background:linear-gradient(180deg,#0A1117,#151F28)}
     {% if _logo %}<img class="v5c-logo" src="{{ _logo }}" alt="{{ p.abbr }} logo" loading="lazy" onerror="this.remove()">{% endif %}
     <div style="flex:1;min-width:0">
       <div class="v5c-title" data-v5-open="{{ p.id }}" style="cursor:pointer">{{ p.team_name or p.abbr }} {{ ('ML' if is_alex else 'Moneyline') if p.bettype == 'Moneyline' else p.bettype }}</div>
-      <div class="v5c-sub" data-v5-open="{{ p.id }}" style="cursor:pointer">{{ p.abbr }} vs {{ p.opp_abbr }} &middot; {{ _gt12 }}</div>
+      <div class="v5c-sub" data-v5-open="{{ p.id }}" style="cursor:pointer">{{ p.team_name or p.abbr }} @ {{ p.opp_name or p.opp_abbr }} &middot; {{ _gt12 }}</div>
     </div>
   </div>
   {% if p.posted %}<div class="v5c-posted">🕐 Posted {{ p.posted }}</div>{% endif %}
