@@ -1,0 +1,82 @@
+{% extends "base_v2.html" %}
+{% block title %}All Leagues — The Sharp Team{% endblock %}
+{% block content %}
+<style>
+body.v2{background-color:#161d29}
+.lg-wrap{max-width:560px;margin:0 auto;color:#eef2f8;padding:24px 16px 48px}
+.lg-kick{font-size:11px;letter-spacing:2.5px;color:#e8c766;font-weight:800}
+.lg-h1{font-size:27px;font-weight:800;margin:5px 0 4px;color:#fff}
+.lg-sub{font-size:13px;color:#93a4bf;line-height:1.55;margin:0 0 16px}
+.lg-allbox{border:1px solid #2ee6a8;border-radius:14px;padding:14px;background:#12291f;margin-bottom:20px}
+.lg-allbox a{color:#2ee6a8;font-weight:800;text-decoration:none}
+.lg-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.lg-league h3{margin:0 0 10px;font-size:12px;letter-spacing:1.5px;color:#8b98ab}
+.lg-league a{display:block;padding:8px 0;color:#eef2f8;text-decoration:none;font-size:15px}
+.lg-league a small{display:block;color:#93a4bf;font-size:11px}
+.lg-sec{border-top:1px solid #24334d;margin-top:24px;padding-top:16px}
+.lg-sec a{display:block;padding:10px 0;color:#eef2f8;text-decoration:none;font-size:15px}
+.lg-pill{display:inline-block;background:#12291f;border:1px solid #2ee6a8;color:#2ee6a8;border-radius:999px;padding:8px 14px;font-size:13px;font-weight:700}
+.lg-warn{color:#93a4bf;font-size:12px;line-height:1.5}
+</style>
+<div class="lg-wrap">
+  <div class="lg-kick">THE SHARP TEAM · BETTING LINES</div>
+  <h1 class="lg-h1">All Leagues</h1>
+  <p class="lg-sub">Every league we cover, with Picks, Odds, +EV Board, Line Moves and Player Props. Each link goes to a real page that already exists on the platform.</p>
+  <div class="lg-allbox">📊 <a href="{{ url_for('game_center') }}">All betting lines &amp; live odds →</a><br><span class="lg-warn">Odds: live prices by book, best price, fair price and edge.</span></div>
+  <div class="lg-grid">
+    <div class="lg-league"><h3>NFL</h3>
+      <a href="{{ url_for('official_tracker') }}">Picks</a>
+      <a href="{{ url_for('game_center') }}">Odds</a>
+      <a href="{{ url_for('ev_board') }}">+EV Board</a>
+      <a href="{{ url_for('tools_line_moves') }}">Line Moves</a>
+      <a href="{{ url_for('props') }}">Player Props</a>
+    </div>
+    <div class="lg-league"><h3>NBA</h3>
+      <a href="{{ url_for('official_tracker') }}">Picks</a>
+      <a href="{{ url_for('game_center') }}">Odds</a>
+      <a href="{{ url_for('ev_board') }}">+EV Board</a>
+      <a href="{{ url_for('tools_line_moves') }}">Line Moves</a>
+      <a href="{{ url_for('props') }}">Player Props</a>
+    </div>
+    <div class="lg-league"><h3>MLB</h3>
+      <a href="{{ url_for('official_tracker') }}">Picks</a>
+      <a href="{{ url_for('game_center') }}">Odds</a>
+      <a href="{{ url_for('ev_board') }}">+EV Board</a>
+      <a href="{{ url_for('tools_line_moves') }}">Line Moves</a>
+      <a href="{{ url_for('props') }}">Player Props</a>
+    </div>
+    <div class="lg-league"><h3>NHL</h3>
+      <a href="{{ url_for('official_tracker') }}">Picks</a>
+      <a href="{{ url_for('game_center') }}">Odds</a>
+      <a href="{{ url_for('ev_board') }}">+EV Board</a>
+      <a href="{{ url_for('tools_line_moves') }}">Line Moves</a>
+      <a href="{{ url_for('props') }}">Player Props</a>
+    </div>
+    <div class="lg-league"><h3>SOCCER</h3>
+      <a href="{{ url_for('official_tracker') }}">Picks<small>Specific matches only, not every league</small></a>
+      <a href="{{ url_for('game_center') }}">Odds</a>
+      <a href="{{ url_for('ev_board') }}">+EV Board</a>
+      <a href="{{ url_for('tools_line_moves') }}">Line Moves</a>
+    </div>
+    <div class="lg-league"><h3>NCAAF</h3>
+      <a href="{{ url_for('official_tracker') }}">Picks<small>Only with sufficient information and a clear edge</small></a>
+      <a href="{{ url_for('game_center') }}">Odds</a>
+      <a href="{{ url_for('ev_board') }}">+EV Board</a>
+      <a href="{{ url_for('tools_line_moves') }}">Line Moves</a>
+      <a href="{{ url_for('props') }}">Player Props</a>
+    </div>
+  </div>
+  <div class="lg-sec">
+    <a href="{{ url_for('ev_board_results') }}">+EV Board results — Model edges, graded win or lose</a>
+    <a href="{{ url_for('official_tracker') }}">Full Record</a>
+    <a href="{{ url_for('tools') }}">My Tools — All Tools</a>
+    <a href="{{ url_for('tracker') }}">My Bets</a>
+    <a href="{{ url_for('masterclass') }}">Education — Masterclass</a>
+    <a href="{{ url_for('about') }}">About</a>
+  </div>
+  <div class="lg-sec">
+    <span class="lg-pill">🔥 Official record: see Full Record for the live total</span>
+    <p class="lg-warn" style="margin-top:12px">Not built because there is no real source on the platform: Betting Splits % per game (tickets vs. handle), futures pages such as Super Bowl Odds, World Series Odds, Stanley Cup Odds, Heisman Odds, March Madness Odds and Grand Slams, and WNBA, Tennis, UFC / MMA and College Basketball leagues. WNBA is a goal for the 2027 season, not now. If they are added, they will use real data, never invented data.</p>
+  </div>
+</div>
+{% endblock %}
