@@ -9560,7 +9560,7 @@ def admin_control_push():
     if not HAVE_WEBPUSH or not VAPID_PRIVATE_KEY:
         flash("El push no está configurado en el servidor.", "error")
         return redirect(url_for("admin_dashboard"))
-    payload = json.dumps({"title": titulo, "body": mensaje, "url": "/home", "image": ""})
+    payload = json.dumps({"title": "The Sharp Team", "body": titulo + "\n" + mensaje, "url": "/home", "image": ""})
     db = get_db()
     subs = db.execute(
         "SELECT ps.id, ps.endpoint, ps.p256dh, ps.auth FROM push_subscriptions ps"
@@ -9952,8 +9952,8 @@ def _push_aviso_disparo_alex(n_jugadas):
         if not (HAVE_WEBPUSH and VAPID_PRIVATE_KEY and VAPID_PUBLIC_KEY and webpush):
             return
         payload = json.dumps({
-            "title": "🚀 Disparo recibido",
-            "body": ("Recibí tu envío (%d jugada%s). Publicando en el Dashboard…"
+            "title": "The Sharp Team",
+            "body": ("🚀 Disparo recibido — Recibí tu envío (%d jugada%s). Publicando en el Dashboard…"
                      % (n_jugadas, "s" if n_jugadas != 1 else "")),
             "url": "/admin",
             "image": "",
@@ -12270,13 +12270,18 @@ def api_push_edge():
     if not HAVE_WEBPUSH or not VAPID_PRIVATE_KEY or not VAPID_PUBLIC_KEY:
         return jsonify({"error": "push not configured"}), 503
     data = request.get_json(force=True, silent=True) or {}
-    # Un título "" explícito se respeta (alertas en vivo estilo Action:
-    # iOS pone el nombre de la app una sola vez; un título con la marca
-    # la duplica con su línea "from Sharp Team"). Solo si falta la
-    # clave o viene null se usa el default de la marca.
-    _t = data.get("title")
-    title = _t if _t is not None else "The Sharp Team"
+    # REGLA 2026-10-27 (orden de Alex, reemplaza la ley de push 2026-10-20):
+    # en TODAS las pushes el título es "The Sharp Team" y el contenido
+    # informativo va en el cuerpo. El título que mandaba el llamador se
+    # conserva al inicio del cuerpo (salvo vacío, marca repetida o que
+    # el cuerpo ya lo contenga), para no perder información. La línea
+    # "from Sharp Team" que iOS pone debajo es impuesta por iOS y no se
+    # puede quitar, así que la marca se verá dos veces en iPhone.
+    _t = (data.get("title") or "").strip()
+    title = "The Sharp Team"
     body = data.get("body") or "New +EV edge on the board."
+    if _t and _t != "The Sharp Team" and not body.startswith(_t):
+        body = _t + "\n" + body
     url = data.get("url") or "/ev-board"
     image = data.get("image") or ""
     # Filtro por preferencia (pedido Alex 2026-10-08, estilo WGT):
