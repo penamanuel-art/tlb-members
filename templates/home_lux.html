@@ -307,6 +307,7 @@
     <a href="{{ url_for('cuenta') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #1c2431;font-size:15px;">Account <span style="color:#93a4bf;">›</span></a>
     <a href="{{ url_for('ev_board') if miembro_platinum else url_for('desbloquear_platinum') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #1c2431;font-size:15px;">+EV Board <span style="color:#93a4bf;">›</span></a>
     <a href="{{ url_for('tools_line_moves') if miembro_platinum else url_for('desbloquear_platinum') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #1c2431;font-size:15px;">Line Moves <span style="color:#93a4bf;">›</span></a>
+    <a href="{{ url_for('leagues') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #1c2431;font-size:15px;">All Leagues <span style="color:#93a4bf;">›</span></a>
     {% if es_admin %}<a href="{{ url_for('admin_dashboard') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #1c2431;font-size:15px;">Admin <span style="color:#93a4bf;">›</span></a>{% endif %}
   </div>
   </div>
