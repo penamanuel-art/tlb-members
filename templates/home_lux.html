@@ -301,7 +301,7 @@
   <!-- Record by league (2026-10-26, pedido Alex: solo esta sección, con su icono por liga) -->
   {% if record_por_liga %}
   <section style="margin:0 0 22px;">
-    <div style="display:flex;align-items:center;margin:0 0 10px;"><h2 style="margin:0;font-size:22px;font-weight:400;">Record by league</h2><button class="tst-refresh" type="button" onclick="location.reload()">↻ Refresh</button></div>
+    <h2 style="margin:0 0 10px;font-size:22px;font-weight:400;">Record by league</h2>
     <div style="display:flex;gap:10px;overflow-x:auto;padding-bottom:4px;">
       {% for r in record_por_liga %}
       <div style="flex:0 0 128px;background:linear-gradient(180deg,#1c2431,#161c23);border:1px solid #2a3c5f;border-radius:16px;padding:16px 12px;text-align:center;">
@@ -315,9 +315,12 @@
   </section>
   {% endif %}
 
-  <div id="tst-vid-open" style="display:inline-flex;align-items:center;gap:6px;background:#161c23;border:1px solid #2a3c5f;border-radius:999px;padding:6px 11px;cursor:pointer;margin:12px 0 16px;">
+  <div style="display:flex;align-items:center;gap:10px;margin:12px 0 16px;">
+  <div id="tst-vid-open" style="display:inline-flex;align-items:center;gap:6px;background:#161c23;border:1px solid #2a3c5f;border-radius:999px;padding:6px 11px;cursor:pointer;">
     <span style="color:#2ee6a8;font-size:10px;line-height:1;">&#9654;</span>
     <span style="color:#2ee6a8;font-size:12px;font-weight:300;letter-spacing:.3px;">Watch how it works</span>
+  </div>
+  <button class="tst-refresh" type="button" onclick="location.reload()" style="margin-left:0;">↻ Refresh</button>
   </div>
 
   <h2 style="margin:8px 0 2px;font-size:22px;font-weight:400;">Find Your Edge</h2>
