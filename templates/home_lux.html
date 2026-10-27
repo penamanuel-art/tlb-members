@@ -361,13 +361,11 @@
   {% set golds = plays|selectattr('nivel','equalto','GOLD')|list %}
   {% set plats = plays|rejectattr('nivel','equalto','GOLD')|rejectattr('nivel','equalto','VALUE')|list %}
   {% if golds %}
-  <div class="sechead"><span class="lvpill">Gold</span><a class="viewall" href="{{ url_for('official_tracker') }}">View all ›</a></div>
   {% for p in golds %}
   {% include "_play_card_v5.html" %}
   {% endfor %}
   {% endif %}
   {% if plats %}
-  <div class="sechead"><span class="lvpill plat">Platinum</span><a class="viewall" href="{{ url_for('official_tracker') }}">View all ›</a></div>
   {% for p in plats %}
   {% if p.nivel in ['ELITE','PLATINUM'] and not miembro_platinum %}
   {% include "_play_card_locked.html" %}
