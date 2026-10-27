@@ -1,0 +1,15 @@
+{% extends "base_v2.html" %}
+{% block title %}Encuestas — The Sharp Team{% endblock %}
+{% block content %}
+<div style="max-width:680px;margin:0 auto;padding:20px 12px 48px;color:#eef2f8;">
+<h1 style="font-size:1.7rem;">Encuesta — semana gratis</h1>
+<p style="color:#8fa1c2;">Respuestas registradas, más recientes primero. Solo interés, no se activó nada gratis.</p>
+<table style="width:100%;border-collapse:collapse;font-size:.9rem;">
+<tr><th style="text-align:left;padding:8px 6px;border-bottom:1px solid rgba(120,140,180,.18);">RESPUESTA</th><th style="text-align:left;padding:8px 6px;border-bottom:1px solid rgba(120,140,180,.18);">EMAIL</th><th style="text-align:left;padding:8px 6px;border-bottom:1px solid rgba(120,140,180,.18);">FECHA</th></tr>
+{% for r in respuestas %}
+<tr><td style="padding:9px 6px;border-bottom:1px solid rgba(120,140,180,.08);">{{ r.respuesta }}</td><td style="padding:9px 6px;border-bottom:1px solid rgba(120,140,180,.08);word-break:break-all;">{{ r.email or '—' }}</td><td style="padding:9px 6px;border-bottom:1px solid rgba(120,140,180,.08);">{{ r.created_at }}</td></tr>
+{% endfor %}
+</table>
+<p style="margin-top:20px;"><a href="{{ url_for('admin_dashboard') }}" style="color:#2ee6a8;">← Volver al Admin</a></p>
+</div>
+{% endblock %}
