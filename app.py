@@ -11003,7 +11003,7 @@ def encuesta_semana_gratis():
             db.rollback()
         except Exception:
             pass
-    textos = {"si_1": "Sí, 1 semana gratis", "si_2": "Sí, 2 semanas gratis", "no": "No", "no_interesa": "No me interesa"}
+    textos = {"si_1": "Yes, 1 free week", "si_2": "Yes, 2 free weeks", "no": "No", "no_interesa": "Not interested"}
     return render_template("encuesta_gracias.html", respuesta=textos[r])
 
 @app.route("/admin/encuestas")
