@@ -263,7 +263,18 @@
   <div class="pillrow">
     <a class="balance" href="{{ url_for('cuenta') }}"><span>View my balance</span><span><b>{% if balance_total_txt %}{{ balance_total_txt }}{% elif bankroll %}${{ '%.2f'|format(bankroll) }}{% else %}—{% endif %}</b> ›</span></a>
     <a class="pill" href="{{ url_for('official_tracker') }}" style="font-size:10.5px;font-weight:300;">📊 Full record ›</a>
-    <a class="menubtn" href="{{ url_for('tools') }}">☰</a>
+    <button class="menubtn" type="button" id="tst-menubtn" aria-expanded="false" onclick="var m=document.getElementById('tst-menu-sheet');var o=m.hidden;m.hidden=!o;this.setAttribute('aria-expanded',o?'true':'false');" style="cursor:pointer;padding:0;">☰</button>
+  </div>
+
+  <div id="tst-menu-sheet" hidden style="background:linear-gradient(180deg,#1c2431,#161c23);border:1px solid #2a3c5f;border-radius:16px;padding:6px 14px;margin:0 0 16px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;"><b style="font-size:15px;">Menu</b><button type="button" onclick="document.getElementById('tst-menu-sheet').hidden=true;document.getElementById('tst-menubtn').setAttribute('aria-expanded','false');" style="background:none;border:0;color:#93a4bf;font-size:20px;cursor:pointer;padding:4px 8px;">✕</button></div>
+    <a href="{{ url_for('tools') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #1c2431;font-size:15px;">All Tools <span style="color:#93a4bf;">›</span></a>
+    <a href="{{ url_for('game_center') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #1c2431;font-size:15px;">Odds <span style="color:#93a4bf;">›</span></a>
+    <a href="{{ url_for('tracker') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #1c2431;font-size:15px;">My Bets <span style="color:#93a4bf;">›</span></a>
+    <a href="{{ url_for('official_tracker') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #1c2431;font-size:15px;">Full Record <span style="color:#93a4bf;">›</span></a>
+    <a href="{{ url_for('alertas') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #1c2431;font-size:15px;">Alerts <span style="color:#93a4bf;">›</span></a>
+    <a href="{{ url_for('masterclass') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #1c2431;font-size:15px;">Masterclass <span style="color:#93a4bf;">›</span></a>
+    <a href="{{ url_for('cuenta') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #1c2431;font-size:15px;">Account <span style="color:#93a4bf;">›</span></a>
   </div>
 
 
