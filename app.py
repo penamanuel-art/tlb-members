@@ -10992,11 +10992,17 @@ def encuesta_semana_gratis():
         email = ""
     try:
         db = get_db()
-        db.execute("CREATE TABLE IF NOT EXISTS encuesta_respuestas (id INTEGER PRIMARY KEY AUTOINCREMENT, respuesta TEXT, email TEXT, created_at TEXT)")
+        try:
+            db.execute("CREATE TABLE IF NOT EXISTS encuesta_respuestas (id SERIAL PRIMARY KEY, respuesta TEXT, email TEXT, created_at TEXT)")
+        except Exception:
+            db.execute("CREATE TABLE IF NOT EXISTS encuesta_respuestas (id INTEGER PRIMARY KEY AUTOINCREMENT, respuesta TEXT, email TEXT, created_at TEXT)")
         db.execute("INSERT INTO encuesta_respuestas (respuesta, email, created_at) VALUES (?, ?, ?)", (r, email, datetime.now(timezone.utc).isoformat()))
         db.commit()
     except Exception:
-        pass
+        try:
+            db.rollback()
+        except Exception:
+            pass
     textos = {"si_1": "Sí, 1 semana gratis", "si_2": "Sí, 2 semanas gratis", "no": "No", "no_interesa": "No me interesa"}
     return render_template("encuesta_gracias.html", respuesta=textos[r])
 
@@ -11010,7 +11016,10 @@ def admin_encuestas():
         return redirect(url_for("home"))
     try:
         db = get_db()
-        db.execute("CREATE TABLE IF NOT EXISTS encuesta_respuestas (id INTEGER PRIMARY KEY AUTOINCREMENT, respuesta TEXT, email TEXT, created_at TEXT)")
+        try:
+            db.execute("CREATE TABLE IF NOT EXISTS encuesta_respuestas (id SERIAL PRIMARY KEY, respuesta TEXT, email TEXT, created_at TEXT)")
+        except Exception:
+            db.execute("CREATE TABLE IF NOT EXISTS encuesta_respuestas (id INTEGER PRIMARY KEY AUTOINCREMENT, respuesta TEXT, email TEXT, created_at TEXT)")
         filas = db.execute("SELECT respuesta, email, created_at FROM encuesta_respuestas ORDER BY id DESC LIMIT 200").fetchall()
         respuestas = [dict(f) for f in filas]
     except Exception:
