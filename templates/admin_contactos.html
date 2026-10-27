@@ -1,0 +1,27 @@
+{% extends "base_v2.html" %}
+{% block title %}Contactos — The Sharp Team{% endblock %}
+{% block content %}
+<style>
+.adm-clean{max-width:680px;margin:0 auto;padding:20px 12px 48px;font-family:-apple-system,'SF Pro',Inter,system-ui,sans-serif}
+.adm-clean h1{font-size:1.7rem;font-weight:800;color:#fff;margin:6px 0 4px}
+.adm-total{display:flex;align-items:baseline;gap:12px;margin:0 0 22px}
+.adm-total .tn{font-size:2.4rem;font-weight:800;color:#2ee6a8}
+.adm-total .tl{font-size:.75rem;font-weight:800;letter-spacing:2px;color:#8fa1c2}
+.ct-table{width:100%;border-collapse:collapse;font-size:.9rem}
+.ct-table th{text-align:left;color:#93b3aa;font-size:.65rem;letter-spacing:1px;padding:8px 6px;border-bottom:1px solid rgba(120,140,180,.18)}
+.ct-table td{color:#e6eaf2;padding:9px 6px;border-bottom:1px solid rgba(120,140,180,.08);word-break:break-all}
+</style>
+<div class="adm-clean">
+<p style="color:#2ee6a8;font-size:12px;font-weight:800;letter-spacing:4px;margin:0;">ADMIN</p>
+<h1>Contactos</h1>
+<div class="adm-total"><span class="tn">{{ contactos|length }}</span><span class="tl">CONTACTOS</span></div>
+<p style="color:#8fa1c2;font-size:.85rem;margin:0 0 16px;">Solo nombre y email. Sin teléfono, sin plan, sin ningún otro dato.</p>
+<table class="ct-table">
+<tr><th>NOMBRE</th><th>EMAIL</th></tr>
+{% for c in contactos %}
+<tr><td>{{ c.nombre or '—' }}</td><td>{{ c.email }}</td></tr>
+{% endfor %}
+</table>
+<p style="margin-top:20px;"><a href="{{ url_for('admin_dashboard') }}" style="color:#2ee6a8;">← Volver al Admin</a></p>
+</div>
+{% endblock %}
