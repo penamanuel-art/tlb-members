@@ -7899,6 +7899,27 @@ def admin_api_members_emails():
     ])
 
 
+@app.route("/admin/api/tracked-members")
+def admin_api_tracked_members():
+    """Miembros que trakean jugadas oficiales desde el Dashboard (2026-10-27, para el email diario de resultados 11 AM): retorna los emails distintos de usuarios con al menos una fila en tracked_plays de nivel oficial (ELITE/GOLD, no VALUE). Auth igual que members-emails: sesión admin O header X-Admin-Key."""
+    admin_key = os.environ.get("ADMIN_API_KEY", "")
+    header_key = request.headers.get("X-Admin-Key", "")
+    is_cron = admin_key and header_key and hmac.compare_digest(header_key, admin_key)
+    try:
+        is_admin = is_admin_for(current_user())
+    except Exception:
+        is_admin = False
+    if not (is_cron or is_admin):
+        return jsonify({"error": "admin only"}), 403
+    db = get_db()
+    rows = db.execute(
+        "SELECT DISTINCT u.email AS email FROM tracked_plays t "
+        "JOIN users u ON u.id = t.user_id "
+        "WHERE t.nivel IN ('ELITE', 'GOLD') AND u.email IS NOT NULL AND u.email != '' AND u.email_verified = 1"
+    ).fetchall()
+    return jsonify([{"email": r["email"]} for r in rows])
+
+
 @app.route("/admin/api/members-telegram")
 def admin_api_members_telegram():
     """Miembros con Telegram vinculado (2026-10-25, pedido de Alex):
