@@ -8968,6 +8968,10 @@ def official_tracker():
     programa = (request.args.get("programa") or "all").strip().lower()
     if programa not in ("all", "platinum", "gold"):
         programa = "all"
+    # Filtro por liga (2026-10-27, pedido Alex: menu por liga organizado, cada liga abre su libro)
+    liga_filtro = (request.args.get("liga") or "").strip().upper()
+    if liga_filtro not in ("NFL", "NBA", "MLB", "NHL", "NCAAF"):
+        liga_filtro = ""
     if programa == "platinum":
         libro = [x for x in t["historial"] if x["nivel"] in ("ELITE", "PLATINUM")]
         libro_stats, libro_titulo = t["por_nivel"]["ELITE"], "Platinum plays"
@@ -8976,6 +8980,9 @@ def official_tracker():
         libro_stats, libro_titulo = t["por_nivel"]["GOLD"], "Gold plays"
     else:
         libro, libro_stats, libro_titulo = t["historial"], t["general"], "All official plays"
+    if liga_filtro:
+        libro = [x for x in libro if (x.get("liga") or "").upper() == liga_filtro]
+        libro_titulo = f"{liga_filtro} plays"
     return render_template("official_tracker.html", t=t, programa=programa,
                            libro=libro, libro_stats=libro_stats,
                            libro_titulo=libro_titulo)
