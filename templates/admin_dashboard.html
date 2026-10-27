@@ -84,7 +84,7 @@ details.adm-det summary { cursor: pointer; font-weight: 800; font-size: 0.95rem;
               <input type="checkbox" name="play_ids" value="{{ pid }}" class="sel-check" style="width:22px;height:22px;accent-color:#2ee6a8;">
               <label style="color:#fff;font-size:0.9rem;font-weight:600;">Seleccionar</label>
             </div>
-            {% include "_play_card.html" %}
+            {% include "_play_card_v5.html" %}
           </div>
         {% endfor %}
       {% endif %}
@@ -92,7 +92,7 @@ details.adm-det summary { cursor: pointer; font-weight: 800; font-size: 0.95rem;
         {% for p in plays_hoy %}
           <div style="margin-bottom:12px;">
             <span class="status-badge status-sent">✓ ENVIADA</span>
-            {% include "_play_card.html" %}
+            {% include "_play_card_v5.html" %}
           </div>
         {% endfor %}
       {% endif %}
