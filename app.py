@@ -10975,6 +10975,23 @@ def api_acciones_pendientes():
         return jsonify({"error": str(e)}), 500
 
 
+@app.route("/admin/contactos")
+@login_required
+def admin_contactos():
+    """Lista de contactos — solo nombre y email (2026-10-27, pedido Alex)."""
+    db = get_db()
+    user = current_user()
+    if not _admin_o_cuenta_alex(user):
+        flash("You don't have permission to view this page.", "error")
+        return redirect(url_for("home"))
+    contactos = db.execute(
+        "SELECT nombre, email FROM users "
+        "WHERE email_verified = 1 "
+        "AND LOWER(email) NOT IN ('thesharpteam8@gmail.com', 'system@value.local') "
+        "ORDER BY nombre ASC, email ASC"
+    ).fetchall()
+    return render_template("admin_contactos.html", contactos=[dict(c) for c in contactos])
+
 @app.route("/admin/miembros")
 @login_required
 def admin_miembros():
