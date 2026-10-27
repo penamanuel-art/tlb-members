@@ -1835,6 +1835,68 @@ def load_archive():
     return load_json_file(ARCHIVE_PATH).get("dias", [])
 
 
+def record_por_liga():
+    """Récord oficial por liga, en vivo desde data/archive.json
+    (2026-10-26, pedido de Alex: solo esta sección en el home, con su
+    icono por liga). Solo jugadas liquidadas WON/LOST, sin bloqueadas.
+    Las jugadas viejas sin campo 'liga' se infieren por el equipo del
+    pick, para que el total por liga cuadre con el récord oficial
+    (38-24 hasta 2026-10-25). Orden fijo: MLB, NFL, NBA, NHL, NCAAF.
+    Ante cualquier fallo devuelve [] y el home simplemente no muestra
+    la sección: nunca rompe la página."""
+    try:
+        orden = [("MLB", "⚾"), ("NFL", "🏈"), ("NBA", "🏀"),
+                 ("NHL", "🏒"), ("NCAAF", "🏈")]
+        _nhl = ("Sharks", "Flames", "Capitals", "Sabres")
+        _mlb = ("Braves", "Rays", "Brewers", "Padres", "Guardians",
+                "White Sox", "Dodgers", "Yankees", "Red Sox", "Astros",
+                "Marlins", "Diamondbacks", "Nationals", "Mets",
+                "Phillies", "Cubs")
+        _nfl = ("Saints", "Falcons", "Cowboys", "Texans", "49ers",
+                "Broncos", "Browns", "Steelers", "Bears", "Eagles",
+                "Cardinals", "Chargers", "Bills", "Raiders",
+                "Panthers", "Buccaneers", "Titans")
+        _ncaaf = ("Cougars", "Wildcats", "Penn State", "Northwestern")
+
+        def _liga(j):
+            lg = (j.get("liga") or "").upper()
+            if lg in ("MLB", "NFL", "NBA", "NHL", "NCAAF"):
+                return lg
+            texto = " ".join(str(j.get(k) or "") for k in
+                             ("pick", "team_name"))
+            for nombre, lg2 in ((_nhl, "NHL"), (_mlb, "MLB"),
+                                (_nfl, "NFL"), (_ncaaf, "NCAAF")):
+                if any(t in texto for t in nombre):
+                    return lg2
+            return None
+
+        agg = {lg: {"liga": lg, "icono": ic, "w": 0, "l": 0,
+                    "profit": 0.0} for lg, ic in orden}
+        for d in load_archive():
+            for j in d.get("jugadas", []) or []:
+                if j.get("resultado") not in ("WON", "LOST"):
+                    continue
+                if j.get("bloqueada"):
+                    continue
+                lg = _liga(j)
+                if lg not in agg:
+                    continue
+                if j["resultado"] == "WON":
+                    agg[lg]["w"] += 1
+                else:
+                    agg[lg]["l"] += 1
+                agg[lg]["profit"] += float(j.get("profit") or 0.0)
+        out = []
+        for lg, _ic in orden:
+            a = agg[lg]
+            if a["w"] + a["l"]:
+                a["profit"] = round(a["profit"], 2)
+                out.append(a)
+        return out
+    except Exception:
+        return []
+
+
 
 def program_streak():
     """Racha actual del programa (W/L) desde el archivo, la más reciente primero.
@@ -4456,6 +4518,7 @@ def home():
         recientes_value=recientes_value(),
         hot_cards=hot_cards,
         record_stats=official_tracker_full(),
+        record_por_liga=record_por_liga(),
         last_elite_win=last_elite_win(),
         locked_ticket_url=locked_ticket_url,
         locked_plays=locked_plays,
