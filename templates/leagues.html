@@ -25,29 +25,29 @@ body.v2{background-color:#161d29}
   <div class="lg-allbox">📊 <a href="{{ url_for('game_center') }}">All betting lines &amp; live odds →</a><br><span class="lg-warn">Odds: live prices by book, best price, fair price and edge.</span></div>
   <div class="lg-grid">
     <div class="lg-league"><h3>NFL</h3>
-      <a href="{{ url_for('official_tracker') }}">Picks</a>
-      <a href="{{ url_for('game_center') }}">Odds</a>
+      <a href="{{ url_for('official_tracker', liga='NFL') }}">Picks</a>
+      <a href="{{ url_for('game_center', liga='NFL') }}">Odds</a>
       <a href="{{ url_for('ev_board') }}">+EV Board</a>
       <a href="{{ url_for('tools_line_moves') }}">Line Moves</a>
       <a href="{{ url_for('props') }}">Player Props</a>
     </div>
     <div class="lg-league"><h3>NBA</h3>
-      <a href="{{ url_for('official_tracker') }}">Picks</a>
-      <a href="{{ url_for('game_center') }}">Odds</a>
+      <a href="{{ url_for('official_tracker', liga='NBA') }}">Picks</a>
+      <a href="{{ url_for('game_center', liga='NBA') }}">Odds</a>
       <a href="{{ url_for('ev_board') }}">+EV Board</a>
       <a href="{{ url_for('tools_line_moves') }}">Line Moves</a>
       <a href="{{ url_for('props') }}">Player Props</a>
     </div>
     <div class="lg-league"><h3>MLB</h3>
-      <a href="{{ url_for('official_tracker') }}">Picks</a>
-      <a href="{{ url_for('game_center') }}">Odds</a>
+      <a href="{{ url_for('official_tracker', liga='MLB') }}">Picks</a>
+      <a href="{{ url_for('game_center', liga='MLB') }}">Odds</a>
       <a href="{{ url_for('ev_board') }}">+EV Board</a>
       <a href="{{ url_for('tools_line_moves') }}">Line Moves</a>
       <a href="{{ url_for('props') }}">Player Props</a>
     </div>
     <div class="lg-league"><h3>NHL</h3>
-      <a href="{{ url_for('official_tracker') }}">Picks</a>
-      <a href="{{ url_for('game_center') }}">Odds</a>
+      <a href="{{ url_for('official_tracker', liga='NHL') }}">Picks</a>
+      <a href="{{ url_for('game_center', liga='NHL') }}">Odds</a>
       <a href="{{ url_for('ev_board') }}">+EV Board</a>
       <a href="{{ url_for('tools_line_moves') }}">Line Moves</a>
       <a href="{{ url_for('props') }}">Player Props</a>
@@ -59,8 +59,8 @@ body.v2{background-color:#161d29}
       <a href="{{ url_for('tools_line_moves') }}">Line Moves</a>
     </div>
     <div class="lg-league"><h3>NCAAF</h3>
-      <a href="{{ url_for('official_tracker') }}">Picks<small>Only with sufficient information and a clear edge</small></a>
-      <a href="{{ url_for('game_center') }}">Odds</a>
+      <a href="{{ url_for('official_tracker', liga='NCAAF') }}">Picks<small>Only with sufficient information and a clear edge</small></a>
+      <a href="{{ url_for('game_center', liga='NCAAF') }}">Odds</a>
       <a href="{{ url_for('ev_board') }}">+EV Board</a>
       <a href="{{ url_for('tools_line_moves') }}">Line Moves</a>
       <a href="{{ url_for('props') }}">Player Props</a>
