@@ -301,7 +301,7 @@
   <!-- Record by league (2026-10-26, pedido Alex: solo esta sección, con su icono por liga) -->
   {% if record_por_liga %}
   <section style="margin:0 0 22px;">
-    <h2 style="margin:0 0 10px;font-size:22px;font-weight:400;">Record by league</h2>
+    <div style="display:flex;align-items:center;margin:0 0 10px;"><h2 style="margin:0;font-size:22px;font-weight:400;">Record by league</h2><button class="tst-refresh" type="button" onclick="location.reload()">↻ Refresh</button></div>
     <div style="display:flex;gap:10px;overflow-x:auto;padding-bottom:4px;">
       {% for r in record_por_liga %}
       <div style="flex:0 0 128px;background:linear-gradient(180deg,#1c2431,#161c23);border:1px solid #2a3c5f;border-radius:16px;padding:16px 12px;text-align:center;">
