@@ -126,9 +126,9 @@
   .tst-foot .tst-foot-legal{font-size:11.5px;line-height:1.7;color:#66738c;margin:0 auto 8px;max-width:620px}
   .tst-foot .tst-foot-resp{font-size:11.5px;line-height:1.7;color:#94a3b8;margin:10px auto 0;max-width:620px}
   .tst-foot .tst-foot-resp a{color:#94a3b8}
-  .tst-foot-links{display:grid;grid-template-columns:1fr 1fr;gap:18px 16px;max-width:620px;margin:4px auto 16px;text-align:left}
-  .tst-foot-links h4{margin:0 0 6px;font-size:13px;font-weight:800;letter-spacing:.04em;color:#eef2f8}
-  .tst-foot-links a{display:block;color:#94a3b8;text-decoration:none;font-size:13.5px;line-height:1.5;padding:4px 0}
+  .tst-foot-links{display:grid;grid-template-columns:1fr 1fr;gap:8px 24px;align-items:start;max-width:620px;margin:0 auto;padding:20px 0 4px;border-top:1px solid #1e2c44;text-align:left}
+  .tst-foot-links h4{margin:0 0 10px;font-size:11.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#eef2f8}
+  .tst-foot-links a{display:block;color:#94a3b8;text-decoration:none;font-size:14px;line-height:1.5;padding:6px 0}
   body.v5-sheet-open .nav{display:none!important}
   .v2-bottomnav{position:fixed;left:0;right:0;bottom:0;z-index:1001;display:flex;justify-content:space-around;align-items:stretch;background:#0d1219;border-top:1px solid rgba(139,152,173,.16);padding:6px 6px calc(6px + env(safe-area-inset-bottom))}
   .v2-bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 2px 6px;text-decoration:none;color:#8b98ad;font-size:10px;font-weight:500;letter-spacing:.01em;min-width:0;border-radius:22px;transition:background-color .2s ease,color .2s ease,transform .2s ease}
@@ -540,6 +540,7 @@
         <a href="{{ url_for('tracker') }}">My Bets</a>
         <a href="{{ url_for('alertas') }}">Alerts</a>
         <a href="{{ url_for('cuenta') }}">Account</a>
+        <a href="{{ url_for('desbloquear_platinum') }}">Unlock Platinum</a>
       </div>
       <div>
         <h4>Tools &amp; Learning</h4>
