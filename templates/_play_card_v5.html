@@ -143,6 +143,7 @@ body.v2 .v5c{background:linear-gradient(180deg,#0A1117,#151F28)}
   </div>
   <div class="v5c-btns">
     <a class="v5c-btn" href="{{ _book_url }}" target="_blank" rel="noopener">↗ {{ _place_label }}</a>
+    <button class="v5c-btn" type="button" style="flex:0 0 48px;padding:10px 4px" aria-label="Share" onclick="(function(){var u=window.location.origin+'/home';if(navigator.share){navigator.share({title:'The Sharp Team',text:'{{ p.team_name or p.abbr }} {{ p.bettype }}',url:u}).catch(function(){});}else{navigator.clipboard&&navigator.clipboard.writeText(u);}})()">↗</button>
     {% if p.comprobante and not force_pre %}
       <a class="v5c-btn" href="javascript:void(0)" data-v5-open="{{ p.id }}">🎫 Receipt</a>
     {% endif %}
