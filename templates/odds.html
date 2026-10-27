@@ -157,6 +157,7 @@ function odApply() {
     s.style.display = any ? '' : 'none';
   }
 }
+(function(){try{var lg=new URLSearchParams(window.location.search).get('liga');if(lg){lg=lg.toUpperCase();var tabs=document.querySelectorAll('.od-tab');for(var i=0;i<tabs.length;i++){var oc=tabs[i].getAttribute('onclick')||'';if(oc.indexOf("'"+lg+"'")>-1){odTab(tabs[i],lg);break;}}}}catch(e){}})();
 </script>
 <script>
 var OD_G = {};
