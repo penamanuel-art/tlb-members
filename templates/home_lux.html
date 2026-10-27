@@ -498,6 +498,21 @@
   </div>
 
 
+  <!-- Betting Guides en el home (2026-10-27, pedido Alex, con los mismos colores de las demás cartas del home; enlaces a las guías ya existentes del 2026-10-06) -->
+  <section style="margin:0 0 22px;">
+    <h2 style="margin:0 0 2px;font-size:22px;font-weight:400;">Betting Guides</h2>
+    <p style="margin:0 0 14px;color:#93a4bf;font-size:13px;font-weight:300;">New to betting? Start here.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <a href="{{ url_for('guide_moneyline') }}" style="display:block;background:linear-gradient(180deg,#1c2431,#161c23);border:1px solid #2a3c5f;border-radius:16px;padding:16px;text-decoration:none;color:#eef2f8;"><b style="display:block;font-size:17px;font-weight:400;">Moneyline</b><span style="display:block;color:#93a4bf;font-size:13px;margin-top:4px;">What it is</span></a>
+      <a href="{{ url_for('guide_spread') }}" style="display:block;background:linear-gradient(180deg,#1c2431,#161c23);border:1px solid #2a3c5f;border-radius:16px;padding:16px;text-decoration:none;color:#eef2f8;"><b style="display:block;font-size:17px;font-weight:400;">Spread</b><span style="display:block;color:#93a4bf;font-size:13px;margin-top:4px;">What it is</span></a>
+      <a href="{{ url_for('guide_total') }}" style="display:block;background:linear-gradient(180deg,#1c2431,#161c23);border:1px solid #2a3c5f;border-radius:16px;padding:16px;text-decoration:none;color:#eef2f8;"><b style="display:block;font-size:17px;font-weight:400;">Total</b><span style="display:block;color:#93a4bf;font-size:13px;margin-top:4px;">Over/under</span></a>
+      <a href="{{ url_for('guide_american_odds') }}" style="display:block;background:linear-gradient(180deg,#1c2431,#161c23);border:1px solid #2a3c5f;border-radius:16px;padding:16px;text-decoration:none;color:#eef2f8;"><b style="display:block;font-size:17px;font-weight:400;">American odds</b><span style="display:block;color:#93a4bf;font-size:13px;margin-top:4px;">+150, -110...</span></a>
+      <a href="{{ url_for('guide_vig') }}" style="display:block;background:linear-gradient(180deg,#1c2431,#161c23);border:1px solid #2a3c5f;border-radius:16px;padding:16px;text-decoration:none;color:#eef2f8;"><b style="display:block;font-size:17px;font-weight:400;">The vig</b><span style="display:block;color:#93a4bf;font-size:13px;margin-top:4px;">Why it matters</span></a>
+      <a href="{{ url_for('guide_reading_card') }}" style="display:block;background:linear-gradient(180deg,#1c2431,#161c23);border:1px solid #2a3c5f;border-radius:16px;padding:16px;text-decoration:none;color:#eef2f8;"><b style="display:block;font-size:17px;font-weight:400;">Reading a card</b><span style="display:block;color:#93a4bf;font-size:13px;margin-top:4px;">Our picks</span></a>
+    </div>
+    <a href="{{ url_for('guide_glossary') }}" style="display:block;background:linear-gradient(180deg,#1c2431,#161c23);border:1px solid #2a3c5f;border-radius:16px;padding:16px;margin-top:10px;text-decoration:none;color:#eef2f8;"><b style="display:block;font-size:17px;font-weight:400;">📖 Betting glossary</b><span style="display:block;color:#93a4bf;font-size:13px;margin-top:4px;">Every term, plain English</span></a>
+  </section>
+
   <div class="section faq">
     <h3>FAQ</h3>
     <b>What is a Gold play?</b>
