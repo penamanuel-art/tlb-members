@@ -411,15 +411,22 @@
   {% endif %}
 
   {% if not miembro_platinum %}
-  <a class="tst-platwave" href="{{ url_for('desbloquear_platinum') }}" style="display:block;background:linear-gradient(180deg,#1c2431,#161c23);border:1px solid #e8c766;border-radius:20px;padding:16px;margin:0 0 22px;text-decoration:none;color:#eef2f8;">
-    <div style="display:flex;align-items:center;gap:10px;">
-      <span style="font-size:28px;color:#e8c766;">&#9819;</span>
-      <span style="font-size:19px;font-weight:400;color:#e8c766;">Unlock Platinum</span>
-      <span style="margin-left:auto;color:#e8c766;font-size:20px;">&#8250;</span>
+  {# Tarjetas bloqueadas anchas y cortas, aprobadas por Alex 2026-10-28: estilo de la prueba, texto propio, sin copiar a nadie. Solo para miembros sin Platinum. #}
+  {% if plats %}
+  <a href="{{ url_for('desbloquear_platinum') }}" style="display:block;background:#141a26;border:1px solid #c9a86a;border-radius:20px;padding:14px 16px;margin:0 0 14px;text-decoration:none;color:#eef2f8;">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span style="flex:0 0 48px;width:48px;height:48px;background:#2a2410;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;color:#e8c15a;">&#128275;</span>
+      <span><span style="display:block;font-size:18px;font-weight:700;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ plats|length }} Platinum {% if plats|length == 1 %}play{% else %}plays{% endif %} on today's card</span><span style="display:block;font-size:14px;line-height:1.35;color:#93a4bf;">Included with Platinum. Members only. $1 first week, then $15.99/week.</span></span>
     </div>
-    <span style="display:block;margin:10px 0 0;color:#dbe4f2;font-size:13.5px;font-weight:300;line-height:1.5;">Platinum is our highest-conviction level: moneyline picks selected by the model with strict value gates and posted before game time, with a transparent record, win or loss.</span>
-    <span style="display:block;margin:8px 0 0;color:#93a4bf;font-size:12.5px;font-weight:300;line-height:1.5;">Includes full access to Gold, the full record, and notifications. $1 for your first week, then $15.99/week.</span>
-    <span style="display:inline-block;margin-top:14px;background:#2ee6a8;color:#161c23;font-weight:700;border-radius:999px;padding:12px 26px;font-size:15px;">Unlock Platinum &#8250;</span>
+    <span style="display:block;text-align:center;background:#1c2431;border:1px solid #2a3c5f;border-radius:14px;padding:10px;margin-top:12px;font-size:15px;">Start your $1 trial &#8250;</span>
+  </a>
+  {% endif %}
+  <a href="{{ url_for('desbloquear_platinum') }}" style="display:block;background:#141a26;border:1px solid #c9a86a;border-radius:20px;padding:14px 16px;margin:0 0 22px;text-decoration:none;color:#eef2f8;">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span style="flex:0 0 48px;width:48px;height:48px;background:#2a2410;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;color:#e8c15a;">&#128275;</span>
+      <span><span style="display:block;font-size:18px;font-weight:700;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Player Props on today's card</span><span style="display:block;font-size:14px;line-height:1.35;color:#93a4bf;">Included with Platinum, separate from the main card.</span></span>
+    </div>
+    <span style="display:block;text-align:center;background:#1c2431;border:1px solid #2a3c5f;border-radius:14px;padding:10px;margin-top:12px;font-size:15px;">See Player Props &#8250;</span>
   </a>
   {% endif %}
 
