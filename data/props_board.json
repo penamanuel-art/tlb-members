@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-28T02:08:51-04:00",
+  "updated_at": "2026-10-28T03:08:52-04:00",
   "refresh_minutes": 60,
   "fair_source": "no-vig true line (median of implied, 2+ books)",
   "info_only": true,
@@ -12,5 +12,46 @@
     "max_events_per_run": 10,
     "horizon_hours": 30
   },
-  "props": []
+  "props": [
+    {
+      "id": "mlb-batter-total-bases-christian-yelich-over",
+      "sport": "MLB",
+      "market": "batter_total_bases",
+      "market_label": "Total Bases",
+      "player": "Christian Yelich",
+      "side": "Over",
+      "line": 0.5,
+      "line_fmt": "0.5",
+      "prop_label": "Over 0.5 Total Bases",
+      "true_line": 1.0,
+      "game": "Milwaukee Brewers @ Tampa Bay Rays",
+      "game_time": "Wed 8:00 PM ET",
+      "commence_time": "2026-10-29T00:00:00Z",
+      "book": "theScore Bet",
+      "price": -165,
+      "price_fmt": "-165",
+      "fair_prob_pct": 66.1,
+      "fair_american": -195,
+      "ev_pct": 6.2,
+      "books_count": 2,
+      "books": [
+        {
+          "book": "theScore Bet",
+          "line": "0.5",
+          "price": "-165",
+          "ev_pct": 6.2,
+          "url": null
+        },
+        {
+          "book": "BetOnline.ag",
+          "line": "1.5",
+          "price": "+178",
+          "ev_pct": -6.0,
+          "url": null
+        }
+      ],
+      "bet_url": "https://novig.com",
+      "headshot": "https://a.espn.com/i/headshots/mlb/players/full/31283.png"
+    }
+  ]
 }
