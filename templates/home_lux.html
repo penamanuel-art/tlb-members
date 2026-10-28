@@ -469,26 +469,6 @@
   </section>
   {% endif %}
 
-  <!-- +EV Board results en el home (2026-10-27, pedido Alex, con datos en vivo del tracker VALUE, no hardcodeados) -->
-  <section style="margin:0 0 22px;">
-    <h2 style="margin:0 0 2px;font-size:26px;font-weight:800;">+EV Board results <span style="font-size:14px;font-weight:400;color:#93a4bf;">Model edges, graded win or lose</span></h2>
-    <div style="background:linear-gradient(180deg,#1c2431,#161c23);border:1px solid #2a3c5f;border-radius:18px;padding:16px;margin-top:12px;">
-      <p style="margin:0 0 12px;font-size:15px;line-height:1.55;color:#eef2f8;">Every price the +EV Board flags is graded win or lose from the final score, after fees, one unit each. Members see the graded record and the latest winners.</p>
-      <p style="margin:0;font-size:13px;line-height:1.5;color:#93a4bf;">&#9432; These are The Sharp Team's own graded edges, not Wise Guy Team plays, and not part of our published record.</p>
-      {% if tlevels and tlevels.VALUE %}
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:16px 0;">
-        <div style="border:1px solid #2a3c5f;border-radius:12px;padding:10px;text-align:center;"><b style="font-size:16px;">{{ tlevels.VALUE.record }}</b><br><span style="color:#93a4bf;font-size:11px;">RECORD</span></div>
-        <div style="border:1px solid #2a3c5f;border-radius:12px;padding:10px;text-align:center;"><b style="font-size:16px;">{% if tlevels.VALUE.wins + tlevels.VALUE.losses > 0 %}{{ ((tlevels.VALUE.wins / (tlevels.VALUE.wins + tlevels.VALUE.losses)) * 100)|round|int }}%{% else %}0%{% endif %}</b><br><span style="color:#93a4bf;font-size:11px;">WIN RATE</span></div>
-        <div style="border:1px solid #2a3c5f;border-radius:12px;padding:10px;text-align:center;"><b style="font-size:16px;color:{% if tlevels.VALUE.net > 0 %}#2ee6a8{% elif tlevels.VALUE.net < 0 %}#ff5a5a{% else %}#eef2f8{% endif %};">{{ tlevels.VALUE.net_display }}</b><br><span style="color:#93a4bf;font-size:11px;">PROFIT</span></div>
-      </div>
-      {% endif %}
-      <div style="display:flex;gap:8px;flex-wrap:wrap;">
-        <a href="{{ url_for('desbloquear_platinum') }}" style="background:#2ee6a8;color:#161c23;font-weight:800;border-radius:999px;padding:10px 16px;font-size:14px;text-decoration:none;">Start your $1 trial</a>
-        <a href="{{ url_for('ev_board_results') if miembro_platinum else url_for('desbloquear_platinum') }}" style="border:1px solid #2a3c5f;border-radius:999px;padding:10px 16px;font-size:14px;color:#eef2f8;text-decoration:none;">How edges are graded</a>
-      </div>
-    </div>
-  </section>
-
   <div class="section">
     <h3>Get alerts</h3>
     <div class="row"><span>Push notifications</span><a class="on" href="{{ url_for('alertas') }}">● ON ›</a></div>
