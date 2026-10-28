@@ -291,6 +291,17 @@ def close_db(exc=None):
     if db is not None:
         db.close()
 
+@app.after_request
+def _static_cache(resp):
+    # PageSpeed 2026-10-28: cache eficiente solo para archivos estaticos,
+    # 7 dias, sin tocar paginas ni datos (que deben seguir frescos).
+    try:
+        if request.path.startswith("/static/"):
+            resp.headers["Cache-Control"] = "public, max-age=604800"
+    except Exception:
+        pass
+    return resp
+
 
 DDL_SQLITE = """
 CREATE TABLE IF NOT EXISTS users (
