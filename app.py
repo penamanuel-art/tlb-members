@@ -3612,7 +3612,14 @@ def inject_user():
         if cu and session.get("user_id"):
             balance_total = _book_balance_total(get_db(), cu)
             if balance_total is not None:
-                balance_total_txt = f"${balance_total:,.2f}"
+                # 2026-10-28, orden de Alex: en SU total del Dashboard solo
+                # va la ganancia, no el total (capital $500 + ganancia).
+                if is_alex_member(cu):
+                    _gan = round(float(balance_total) - 500.0, 2)
+                    _signo = "+" if _gan >= 0 else "-"
+                    balance_total_txt = f"{_signo}${abs(_gan):,.2f}"
+                else:
+                    balance_total_txt = f"${balance_total:,.2f}"
     except Exception:
         balance_total = None
         balance_total_txt = None
