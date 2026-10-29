@@ -7,7 +7,7 @@
 <title>The Sharp Team</title>
 <style>
   *{box-sizing:border-box}
-  body{margin:0;background-color:#161d29;background-image:radial-gradient(560px 300px at 50% -80px,rgba(47,230,167,.06),transparent 65%),radial-gradient(700px 500px at 110% 30%,rgba(77,163,255,.05),transparent 60%);color:#eef2f8;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  body{margin:0;background-color:#0B0D12;background-image:radial-gradient(560px 300px at 50% -80px,rgba(47,230,167,.06),transparent 65%),radial-gradient(700px 500px at 110% 30%,rgba(255,255,255,.025),transparent 60%);color:#F2F3F5;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
   .phone{position:relative;z-index:1;max-width:520px;margin:0 auto;padding:14px 14px 90px}
   a{color:inherit;text-decoration:none}
   .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
@@ -18,15 +18,15 @@
   .wordmark strong{display:block;font-size:15.2px;letter-spacing:.01em;font-style:italic;font-weight:900}
   .wordmark i{display:block;height:1.9px;background:linear-gradient(90deg,#2ee6a8,#e8c766);margin-top:1.9px}
   .topactions{display:flex;align-items:center;gap:6px}
-  .pill{display:flex;align-items:center;gap:6px;border:1px solid #24334d;background:#1a222e;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:600;white-space:nowrap}
-  .topstrip{display:flex;align-items:center;gap:6px;width:fit-content;margin:0 auto 12px;border:1px solid #e8c766;background:linear-gradient(180deg,#1c2431,#161c23);border-radius:999px;padding:8px 14px;font-size:12px;font-weight:700;color:#eef2f8;text-decoration:none;white-space:nowrap}
+  .pill{display:flex;align-items:center;gap:6px;border:1px solid #262C36;background:#1E222B;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:600;white-space:nowrap}
+  .topstrip{display:flex;align-items:center;gap:6px;width:fit-content;margin:0 auto 12px;border:1px solid #e8c766;background:linear-gradient(180deg,#20242E,#1B1F27);border-radius:999px;padding:8px 14px;font-size:12px;font-weight:700;color:#F2F3F5;text-decoration:none;white-space:nowrap}
   .pill .crown{color:#e8c766}
   .topactions .pill{height:32px;box-sizing:border-box}
   .pillrow .pill{height:40px;box-sizing:border-box}
-  .avatar{width:32px;height:32px;min-width:32px;border-radius:50%;border:2px solid #2ee6a8;background:#2a3c5f;display:flex;align-items:center;justify-content:center;font-size:15px;color:#eef2f8;font-weight:800}
-  .bellbtn{width:32px;height:32px;min-width:32px;border-radius:50%;border:2px solid #2ee6a8;background:#2a3c5f;display:flex;align-items:center;justify-content:center;color:#eef2f8;cursor:pointer;padding:0}
+  .avatar{width:32px;height:32px;min-width:32px;border-radius:50%;border:2px solid #2ee6a8;background:#343B47;display:flex;align-items:center;justify-content:center;font-size:15px;color:#F2F3F5;font-weight:800}
+  .bellbtn{width:32px;height:32px;min-width:32px;border-radius:50%;border:2px solid #2ee6a8;background:#343B47;display:flex;align-items:center;justify-content:center;color:#F2F3F5;cursor:pointer;padding:0}
   .bellbtn svg{display:block;width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
-  .notif-panel{border:1px solid #24334d;background:linear-gradient(180deg,#1c2431,#161c23);border-radius:16px;padding:14px;margin-bottom:14px}
+  .notif-panel{border:1px solid #262C36;background:linear-gradient(180deg,#20242E,#1B1F27);border-radius:16px;padding:14px;margin-bottom:14px}
   .notif-panel h3{font-size:16px;margin-bottom:8px}
   .notif-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid rgba(139,152,173,.15)}
   .notif-item:first-of-type{border-top:0}
@@ -34,65 +34,65 @@
   .notif-item .ni.red{background:rgba(230,80,80,.12)}
   .notif-item .ni.blue{background:rgba(74,144,217,.12)}
   .notif-item b{display:block;font-size:13px;line-height:1.3}
-  .notif-item span{color:#93a4bf;font-size:12px}
+  .notif-item span{color:#A3AAB6;font-size:12px}
   .notif-item .amt{margin-left:auto;font-size:13px;font-weight:800;white-space:nowrap}
   .notif-item .amt.win{color:#2ee6a8}
   .notif-item .amt.loss{color:#e65050}
   .pillrow{display:flex;align-items:center;gap:7px;margin-bottom:10px}
-  .balance{flex:1 1 auto;min-width:0;display:flex;align-items:center;justify-content:flex-start;gap:6px;height:40px;box-sizing:border-box;border:1px solid #24334d;border-radius:999px;padding:6px 10px;background:#1a222e;font-weight:300;font-size:10.5px;white-space:nowrap}
+  .balance{flex:1 1 auto;min-width:0;display:flex;align-items:center;justify-content:flex-start;gap:6px;height:40px;box-sizing:border-box;border:1px solid #262C36;border-radius:999px;padding:6px 10px;background:#1E222B;font-weight:300;font-size:10.5px;white-space:nowrap}
   .balance b{color:#2ee6a8;font-size:12px;font-weight:300}
-  .menubtn{width:40px;height:40px;min-width:40px;border:1px solid #24334d;background:#1a222e;border-radius:12px;color:#eef2f8;font-size:16px;display:flex;align-items:center;justify-content:center}
-  .hero{position:relative;overflow:hidden;border:1px solid #2a3c5f;border-radius:20px;background:radial-gradient(120% 140% at 20% 0%,#24334d 0%,#0d1626 55%,#05081a 100%);padding:20px 18px 0;box-shadow:0 0 26px rgba(46,230,168,.18);margin-bottom:22px}
+  .menubtn{width:40px;height:40px;min-width:40px;border:1px solid #262C36;background:#1E222B;border-radius:12px;color:#F2F3F5;font-size:16px;display:flex;align-items:center;justify-content:center}
+  .hero{position:relative;overflow:hidden;border:1px solid #343B47;border-radius:20px;background:radial-gradient(120% 140% at 20% 0%,#262C36 0%,#13161D 55%,#08090D 100%);padding:20px 18px 0;box-shadow:0 0 26px rgba(46,230,168,.18);margin-bottom:22px}
   .hero .photo{position:absolute;left:0;right:0;top:0;bottom:0;background:linear-gradient(90deg,rgba(5,8,26,.97),rgba(5,8,26,.90) 42%,rgba(5,8,26,.62) 72%,rgba(5,8,26,.45) 100%),url("{{ url_for('static', filename='img/hero-player.jpg') }}") center/cover no-repeat;opacity:.95;animation:none}
   @keyframes hero-ola{from{background-position:0% 0%,20% center}to{background-position:0% 0%,80% center}}
   @media (prefers-reduced-motion:reduce){.hero .photo{animation:none}}
   .hero .inner{position:relative}
-  .dateline{font-size:12px;letter-spacing:.28em;color:#93a4bf;font-weight:700;margin-bottom:10px;text-transform:uppercase}
+  .dateline{font-size:12px;letter-spacing:.28em;color:#A3AAB6;font-weight:700;margin-bottom:10px;text-transform:uppercase}
   .greet{font-size:clamp(30px,11vw,42px);line-height:1.02;font-weight:900;margin:0 0 8px;max-width:100%}
   .greet span{color:#2ee6a8}
-  .tagline{color:#dbe4f2;font-size:15px;margin:0 0 18px;max-width:64%}
+  .tagline{color:#E7E9ED;font-size:15px;margin:0 0 18px;max-width:64%}
   .status{position:relative;display:flex;gap:10px;align-items:center;background:rgba(13,18,25,.45);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.12);border-left:4px solid #2ee6a8;border-radius:14px;padding:11px 13px;margin:8px 0 12px}
-  .check{width:38px;height:38px;min-width:38px;border-radius:50%;background:#2ee6a8;color:#161c23;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;box-shadow:0 0 10px rgba(46,230,168,.35)}
+  .check{width:38px;height:38px;min-width:38px;border-radius:50%;background:#2ee6a8;color:#1B1F27;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;box-shadow:0 0 10px rgba(46,230,168,.35)}
   .status b{display:block;font-size:15px;font-weight:400}
-  .status span{color:#93a4bf;font-size:12.5px;font-weight:300;line-height:1.4}
-  .status .arr{margin-left:auto;color:#93a4bf;font-size:18px}
+  .status span{color:#A3AAB6;font-size:12.5px;font-weight:300;line-height:1.4}
+  .status .arr{margin-left:auto;color:#A3AAB6;font-size:18px}
   .tiles{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:20px 0}
-  .tile{background:linear-gradient(180deg,#1c2431,#161c23);border:1px solid #2a3c5f;border-radius:16px;padding:12px 10px}
-  .tile .ic{width:34px;height:34px;border-radius:10px;background:#1a222e;border:1px solid #24334d;display:flex;align-items:center;justify-content:center;color:#2ee6a8;font-size:18px;margin-bottom:8px}
+  .tile{background:linear-gradient(180deg,#20242E,#1B1F27);border:1px solid #343B47;border-radius:16px;padding:12px 10px}
+  .tile .ic{width:34px;height:34px;border-radius:10px;background:#1E222B;border:1px solid #262C36;display:flex;align-items:center;justify-content:center;color:#2ee6a8;font-size:18px;margin-bottom:8px}
   .tile b{display:block;font-size:15px;font-weight:400;margin-bottom:3px}
-  .tile p{margin:0;color:#93a4bf;font-size:12px;font-weight:300;line-height:1.4}
-  .tile .arr{color:#93a4bf;float:right;font-size:16px}
-  .risk{display:flex;align-items:center;gap:10px;border:1px solid #2a3c5f;border-radius:14px;padding:12px 14px;background:linear-gradient(180deg,#1c2431,#161c23);margin-bottom:22px}
+  .tile p{margin:0;color:#A3AAB6;font-size:12px;font-weight:300;line-height:1.4}
+  .tile .arr{color:#A3AAB6;float:right;font-size:16px}
+  .risk{display:flex;align-items:center;gap:10px;border:1px solid #343B47;border-radius:14px;padding:12px 14px;background:linear-gradient(180deg,#20242E,#1B1F27);margin-bottom:22px}
   .risk .shield{font-size:26px;color:#2ee6a8}
   .risk .left{flex:1}
   .risk .label{font-size:10.5px;letter-spacing:.18em;color:#2ee6a8;font-weight:400}
   .risk b{display:block;font-size:17px;font-weight:400;margin:2px 0}
-  .risk span{color:#dbe4f2;font-size:12px;font-weight:300}
-  .risk .right{border-left:1px solid #24334d;padding-left:12px;color:#2ee6a8;font-weight:400;font-size:12px;line-height:1.35;max-width:150px}
-  .unlock{display:flex;align-items:center;gap:12px;border:1px solid #e8c766;border-radius:18px;padding:16px;background:linear-gradient(180deg,#1c2431,#161c23);margin-top:8px;margin-bottom:20px;text-decoration:none;color:#eef2f8}
+  .risk span{color:#E7E9ED;font-size:12px;font-weight:300}
+  .risk .right{border-left:1px solid #262C36;padding-left:12px;color:#2ee6a8;font-weight:400;font-size:12px;line-height:1.35;max-width:150px}
+  .unlock{display:flex;align-items:center;gap:12px;border:1px solid #e8c766;border-radius:18px;padding:16px;background:linear-gradient(180deg,#20242E,#1B1F27);margin-top:8px;margin-bottom:20px;text-decoration:none;color:#F2F3F5}
   .unlock-crown{font-size:30px;color:#e8c766}
   .unlock-txt{flex:1}
   .unlock-txt b{display:block;font-size:18px;color:#e8c766}
-  .unlock-txt p{margin:4px 0 0;font-size:13.5px;color:#93a4bf;line-height:1.45}
+  .unlock-txt p{margin:4px 0 0;font-size:13.5px;color:#A3AAB6;line-height:1.45}
   .unlock-arr{font-size:26px;color:#e8c766}
-  .unlock-info{margin:8px 0 0;font-size:13px;color:#93a4bf;line-height:1.5}
+  .unlock-info{margin:8px 0 0;font-size:13px;color:#A3AAB6;line-height:1.5}
   .unlock-today{margin:6px 0 0;font-size:13px;color:#2ee6a8;font-weight:700}
   .rh-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin:4px 0 0}
-  .rh-title{font-size:26px;font-weight:800;letter-spacing:-.3px;color:#eef2f8}
-  .rh-sub{color:#8fa1c2;font-size:13px;margin-top:3px}
-  .rh-ledger{flex:none;background:#131e31;border:1px solid #24334d;color:#dbe4f2;font-size:12.5px;font-weight:600;padding:8px 12px;border-radius:10px;text-decoration:none}
+  .rh-title{font-size:26px;font-weight:800;letter-spacing:-.3px;color:#F2F3F5}
+  .rh-sub{color:#9AA3AF;font-size:13px;margin-top:3px}
+  .rh-ledger{flex:none;background:#131e31;border:1px solid #262C36;color:#E7E9ED;font-size:12.5px;font-weight:600;padding:8px 12px;border-radius:10px;text-decoration:none}
   .rh-rail{display:flex;gap:10px;overflow-x:auto;padding:14px 2px 8px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none}
   .rh-rail::-webkit-scrollbar{display:none}
-  .rh-card{flex:0 0 88%;scroll-snap-align:start;background:linear-gradient(180deg,#1c2431,#161c23);border:1px solid var(--rhc);border-left:4px solid var(--rhc);border-radius:20px;padding:18px 16px 20px;text-decoration:none;display:block;box-shadow:0 0 22px color-mix(in srgb,var(--rhc) 30%,transparent)}
+  .rh-card{flex:0 0 88%;scroll-snap-align:start;background:linear-gradient(180deg,#20242E,#1B1F27);border:1px solid var(--rhc);border-left:4px solid var(--rhc);border-radius:20px;padding:18px 16px 20px;text-decoration:none;display:block;box-shadow:0 0 22px color-mix(in srgb,var(--rhc) 30%,transparent)}
   .rh-badge{display:inline-block;font-size:10px;font-weight:800;letter-spacing:1.4px;color:var(--rhc);background:rgba(255,255,255,.05);border:1px solid var(--rhc);padding:5px 9px;border-radius:8px}
   .rh-bigrow{display:flex;align-items:center;gap:10px;margin:12px 0 2px}
   .rh-big{color:#fff;font-size:42px;font-weight:800}
   .rh-pct{font-size:14px;font-weight:800;color:var(--rhc);background:rgba(255,255,255,.06);border:1px solid var(--rhc);padding:4px 8px;border-radius:8px}
-  .rh-desc{color:#dbe4f2;font-size:14.5px}
+  .rh-desc{color:#E7E9ED;font-size:14.5px}
   .rh-dots{margin:12px 0 14px;display:flex;gap:5px;flex-wrap:wrap}
   .rh-dots i{width:11px;height:11px;border-radius:50%;background:var(--rhc);display:block}
   .rh-dots i.off{background:transparent;border:2px solid #f26d6d;width:8px;height:8px;margin:1.5px}
-  .rh-foot{display:flex;justify-content:space-between;align-items:center;color:#8fa1c2;font-size:12px}
+  .rh-foot{display:flex;justify-content:space-between;align-items:center;color:#9AA3AF;font-size:12px}
   .rh-see{color:var(--rhc);font-weight:700;font-size:13.5px}
   .rh-pager{display:flex;gap:5px;justify-content:center;margin-top:2px;margin-bottom:28px}
   .rh-pager i{width:6px;height:6px;border-radius:50%;background:#33415c;display:block}
@@ -101,37 +101,37 @@
   .sechead h2{margin:0;font-size:26px}
   .lvpill{border:1px solid #2ee6a8;color:#2ee6a8;border-radius:999px;padding:6px 12px;font-size:13px;font-weight:800}
   .lvpill.plat{border-color:#e8c766;color:#e8c766}
-  .viewall{margin-left:auto;color:#dbe4f2;font-size:14px}
-  .section{border:1px solid #2a3c5f;border-radius:18px;background:linear-gradient(180deg,#1c2431,#161c23);padding:16px;margin-bottom:22px}
+  .viewall{margin-left:auto;color:#E7E9ED;font-size:14px}
+  .section{border:1px solid #343B47;border-radius:18px;background:linear-gradient(180deg,#20242E,#1B1F27);padding:16px;margin-bottom:22px}
   .section h3{margin:0 0 10px;font-size:19px}
-  .row{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-top:1px solid #1c2431;font-size:15px}
+  .row{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-top:1px solid #20242E;font-size:15px}
   .row:first-of-type{border-top:0}
   .on{color:#2ee6a8;font-size:12px;font-weight:400}
   .join{border:1px solid #2ee6a8;color:#2ee6a8;border-radius:999px;padding:4px 10px;font-size:11px;font-weight:400}
-  .unlock{background:linear-gradient(180deg,#1c2431,#161c23);border:1px solid #2ee6a8;border-radius:18px;padding:20px;text-align:center;margin-bottom:22px;box-shadow:0 0 20px rgba(46,230,168,.3)}
+  .unlock{background:linear-gradient(180deg,#20242E,#1B1F27);border:1px solid #2ee6a8;border-radius:18px;padding:20px;text-align:center;margin-bottom:22px;box-shadow:0 0 20px rgba(46,230,168,.3)}
   .unlock b{display:block;font-size:21px;margin-bottom:6px}
-  .unlock p{margin:0 0 14px;color:#dbe4f2;font-size:14px;line-height:1.5}
-  .unlock .cta{display:inline-block;background:#2ee6a8;color:#161c23;font-weight:900;border-radius:999px;padding:12px 26px;font-size:15px}
-  .faq p{color:#93a4bf;font-size:14px;line-height:1.55;margin:6px 0 14px}
-  .footer{text-align:center;color:#8b98ad;font-size:12.5px;line-height:1.6;padding:6px 10px 0}
-  .tst-foot{border-top:1px solid #1e2c44;text-align:center;padding:30px 20px 34px}
+  .unlock p{margin:0 0 14px;color:#E7E9ED;font-size:14px;line-height:1.5}
+  .unlock .cta{display:inline-block;background:#2ee6a8;color:#1B1F27;font-weight:900;border-radius:999px;padding:12px 26px;font-size:15px}
+  .faq p{color:#A3AAB6;font-size:14px;line-height:1.55;margin:6px 0 14px}
+  .footer{text-align:center;color:#969EA9;font-size:12.5px;line-height:1.6;padding:6px 10px 0}
+  .tst-foot{border-top:1px solid #242933;text-align:center;padding:30px 20px 34px}
   .tst-foot .tst-foot-brand{display:flex;flex-direction:column;gap:3px;margin-bottom:12px}
   .tst-foot .tst-foot-name{font-size:13px;font-weight:800;letter-spacing:.22em;color:#f1f5f9}
   .tst-foot .tst-foot-tag{font-size:11.5px;letter-spacing:.04em;color:#fbbf24}
-  .tst-foot .tst-foot-contact{font-size:12.5px;line-height:1.9;color:#94a3b8;margin:0 auto 2px;max-width:620px}
-  .tst-foot .tst-foot-contact a{color:#94a3b8;text-decoration:none}
+  .tst-foot .tst-foot-contact{font-size:12.5px;line-height:1.9;color:#A0A8B4;margin:0 auto 2px;max-width:620px}
+  .tst-foot .tst-foot-contact a{color:#A0A8B4;text-decoration:none}
   .tst-foot .tst-foot-sep{margin:0 7px;opacity:.45}
-  .tst-foot .tst-foot-rule{height:1px;background:#1e2c44;max-width:620px;margin:14px auto}
-  .tst-foot .tst-foot-addr{font-size:11.5px;line-height:1.6;color:#94a3b8;margin:0 auto 10px;max-width:620px}
+  .tst-foot .tst-foot-rule{height:1px;background:#242933;max-width:620px;margin:14px auto}
+  .tst-foot .tst-foot-addr{font-size:11.5px;line-height:1.6;color:#A0A8B4;margin:0 auto 10px;max-width:620px}
   .tst-foot .tst-foot-legal{font-size:11.5px;line-height:1.7;color:#66738c;margin:0 auto 8px;max-width:620px}
-  .tst-foot .tst-foot-resp{font-size:11.5px;line-height:1.7;color:#94a3b8;margin:10px auto 0;max-width:620px}
-  .tst-foot .tst-foot-resp a{color:#94a3b8}
-  .tst-foot-links{display:grid;grid-template-columns:1fr 1fr;gap:8px 24px;align-items:start;max-width:620px;margin:0 auto;padding:20px 0 4px;border-top:1px solid #1e2c44;text-align:left}
-  .tst-foot-links h4{margin:0 0 10px;font-size:11.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#eef2f8}
-  .tst-foot-links a{display:block;color:#94a3b8;text-decoration:none;font-size:14px;line-height:1.5;padding:6px 0}
+  .tst-foot .tst-foot-resp{font-size:11.5px;line-height:1.7;color:#A0A8B4;margin:10px auto 0;max-width:620px}
+  .tst-foot .tst-foot-resp a{color:#A0A8B4}
+  .tst-foot-links{display:grid;grid-template-columns:1fr 1fr;gap:8px 24px;align-items:start;max-width:620px;margin:0 auto;padding:20px 0 4px;border-top:1px solid #242933;text-align:left}
+  .tst-foot-links h4{margin:0 0 10px;font-size:11.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#F2F3F5}
+  .tst-foot-links a{display:block;color:#A0A8B4;text-decoration:none;font-size:14px;line-height:1.5;padding:6px 0}
   body.v5-sheet-open .nav{display:none!important}
   .v2-bottomnav{position:fixed;left:0;right:0;bottom:0;z-index:1001;display:flex;justify-content:space-around;align-items:stretch;background:#0d1219;border-top:1px solid rgba(139,152,173,.16);padding:6px 6px calc(6px + env(safe-area-inset-bottom))}
-  .v2-bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 2px 6px;text-decoration:none;color:#8b98ad;font-size:10px;font-weight:500;letter-spacing:.01em;min-width:0;border-radius:22px;transition:background-color .2s ease,color .2s ease,transform .2s ease}
+  .v2-bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 2px 6px;text-decoration:none;color:#969EA9;font-size:10px;font-weight:500;letter-spacing:.01em;min-width:0;border-radius:22px;transition:background-color .2s ease,color .2s ease,transform .2s ease}
   .v2-bnav-item:active{transform:scale(.95)}
   .v2-bnav-item.active{color:#2fe6a7;background:rgba(47,230,167,.15);font-weight:600}
   .v2-bnav-ico{display:flex;align-items:center;justify-content:center;width:22px;height:22px;font-size:20px;line-height:1}
@@ -144,28 +144,28 @@
   .updatemenu .upd-txt span{color:#9aa7b8;font-size:11px;font-weight:300;line-height:1.35;display:block;margin-top:2px}
   .updatemenu .upd-btns{display:flex;justify-content:flex-end;gap:8px;margin-top:8px}
   .updatemenu .upd-btns button{border-radius:10px;padding:6px 12px;font-size:11.5px;font-weight:400}
-  .updatemenu .upd-later{background:#1a2230;color:#eef2f8;border:1px solid #2a3a52}
-  .updatemenu .upd-update{background:#2f7de1;color:#fff;border:1px solid #2f7de1}
+  .updatemenu .upd-later{background:#1a2230;color:#F2F3F5;border:1px solid #2a3a52}
+  .updatemenu .upd-update{background:#0E9E66;color:#fff;border:1px solid #0E9E66}
   body.v5-sheet-open .updatemenu{display:none!important}
   /* Tarjetas de jugadas más resaltadas del fondo (2026-10-26, pedido Alex: no tan apagadas, que se vea que hay tarjetas): fondo más claro, borde claro y sombra. */
-  .v5c,.v5c-topsec,.v5c-botsec,.ptl{background:linear-gradient(180deg,#0A1117,#151F28)!important}
-  .v5c,.ptl{margin-bottom:20px!important;border:1px solid #282C38!important;box-shadow:0 10px 28px rgba(0,0,0,.45)!important}
+  .v5c,.v5c-topsec,.v5c-botsec,.ptl{background:linear-gradient(180deg,#0B0E13,#1D2029)!important}
+  .v5c,.ptl{margin-bottom:20px!important;border:1px solid #2C313A!important;box-shadow:0 10px 28px rgba(0,0,0,.45)!important}
   /* Parte de arriba de la tarjeta dividida en dos: un poquitito más oscura, tirando a verde (2026-10-26, pedido Alex). */
-  .v5c-topsec{background:#0A1117!important}
+  .v5c-topsec{background:#0B0E13!important}
   /* Colores de la captura de Alex 2026-10-26: dos tonos, arriba más clarito, abajo más oscuro. */
-  .v5c-topsec{background:#0A1117!important}
-  .v5c-botsec{background:#151F28!important}
-  .v5c,.ptl{background:#151F28!important;border-color:#282C38!important}
+  .v5c-topsec{background:#0B0E13!important}
+  .v5c-botsec{background:#1D2029!important}
+  .v5c,.ptl{background:#1D2029!important;border-color:#2C313A!important}
   .v5c-title,.v5stitle{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .vid video{width:100%;border-radius:16px;background:#000}
 
   /* 2026-10-26: Live + Your plays + Yesterday (v5 aprobada, letras finas, sin bold) */
-  .tst-livecard{display:flex;align-items:center;gap:10px;background:linear-gradient(180deg,#1c2431,#161c23);border:1px solid #2a3c5f;border-radius:16px;padding:12px 14px;margin:0 0 22px}
+  .tst-livecard{display:flex;align-items:center;gap:10px;background:linear-gradient(180deg,#20242E,#1B1F27);border:1px solid #343B47;border-radius:16px;padding:12px 14px;margin:0 0 22px}
   .tst-liveic{color:#2ee6a8;font-size:20px;font-weight:300;letter-spacing:-2px;white-space:nowrap}
   .tst-livetxt{flex:1;min-width:0}
   .tst-livetitle{display:block;font-size:17px;font-weight:400;line-height:1.25}
-  .tst-livesub{display:block;color:#93a4bf;font-size:12.5px;font-weight:300;line-height:1.45;margin-top:2px}
-  .tst-livearr{color:#93a4bf;font-size:20px;font-weight:300}
+  .tst-livesub{display:block;color:#A3AAB6;font-size:12.5px;font-weight:300;line-height:1.45;margin-top:2px}
+  .tst-livearr{color:#A3AAB6;font-size:20px;font-weight:300}
   .tst-playshead{display:flex;align-items:center;gap:10px;margin:8px 0 14px}
   .tst-playslevel{font-size:14px;font-weight:400;color:#9CA0AC}
   .tst-officials{display:flex;align-items:center;gap:10px;margin:0 0 14px}
@@ -174,16 +174,16 @@
   .tst-playshead h2{margin:0;font-size:22px;font-weight:400}
   .tst-lvpill{border:1px solid #2ee6a8;color:#2ee6a8;border-radius:999px;padding:6px 12px;font-size:13px;font-weight:400;white-space:nowrap}
   .tst-lvpill.plat{border-color:#e8c766;color:#e8c766}
-  .tst-refresh{margin-left:auto;display:flex;align-items:center;gap:6px;background:#1a222e;border:1px solid #2a3c5f;border-radius:12px;padding:9px 13px;color:#eef2f8;font-size:14px;font-weight:400;white-space:nowrap;cursor:pointer}
-  .tst-emptycard{background:linear-gradient(180deg,#1c2431,#161c23);border:1px solid #2a3c5f;border-radius:16px;padding:18px 16px;text-align:center;margin:0 0 22px}
+  .tst-refresh{margin-left:auto;display:flex;align-items:center;gap:6px;background:#1E222B;border:1px solid #343B47;border-radius:12px;padding:9px 13px;color:#F2F3F5;font-size:14px;font-weight:400;white-space:nowrap;cursor:pointer}
+  .tst-emptycard{background:linear-gradient(180deg,#20242E,#1B1F27);border:1px solid #343B47;border-radius:16px;padding:18px 16px;text-align:center;margin:0 0 22px}
   .tst-emptytitle{display:block;font-size:17px;font-weight:400;line-height:1.3}
-  .tst-emptysub{display:block;color:#93a4bf;font-size:12.5px;font-weight:300;line-height:1.5;margin-top:6px}
+  .tst-emptysub{display:block;color:#A3AAB6;font-size:12.5px;font-weight:300;line-height:1.5;margin-top:6px}
   .tst-ysec{margin-bottom:28px}
   .tst-yhead{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin:0 0 14px}
   .tst-yhead h2{margin:0;font-size:24px;font-weight:400;line-height:1.1}
-  .tst-yhead h2 span{font-size:14px;font-weight:300;color:#93a4bf;margin-left:8px}
-  .tst-fullbtn{display:flex;align-items:center;gap:6px;background:#1a222e;border:1px solid #2a3c5f;border-radius:12px;padding:10px 13px;color:#eef2f8;font-size:14px;font-weight:400;white-space:nowrap}
-  .tst-sumrow{display:flex;align-items:center;gap:12px;background:linear-gradient(180deg,#1c2431,#161c23);border:1px solid #2a3c5f;border-radius:16px;padding:14px 16px;margin:0 0 10px}
+  .tst-yhead h2 span{font-size:14px;font-weight:300;color:#A3AAB6;margin-left:8px}
+  .tst-fullbtn{display:flex;align-items:center;gap:6px;background:#1E222B;border:1px solid #343B47;border-radius:12px;padding:10px 13px;color:#F2F3F5;font-size:14px;font-weight:400;white-space:nowrap}
+  .tst-sumrow{display:flex;align-items:center;gap:12px;background:linear-gradient(180deg,#20242E,#1B1F27);border:1px solid #343B47;border-radius:16px;padding:14px 16px;margin:0 0 10px}
   .tst-pill{border-radius:8px;padding:7px 10px;font-size:12px;font-weight:400;letter-spacing:.04em;white-space:nowrap}
   .tst-pill.plat{border:1px solid #e8c766;color:#e8c766}
   .tst-pill.gold{border:1px solid #2ee6a8;color:#2ee6a8}
@@ -191,18 +191,18 @@
   .tst-units{font-size:16px;font-weight:400}
   .tst-units.neg{color:#e65050}
   .tst-units.pos{color:#2ee6a8}
-  .tst-graded{margin-left:auto;color:#93a4bf;font-size:13px;font-weight:300;white-space:nowrap}
-  .tst-playcard{display:flex;gap:12px;background:linear-gradient(180deg,#1c2431,#161c23);border:1px solid #2a3c5f;border-radius:20px;padding:16px;margin:0 0 12px}
-  .tst-ticketimg{width:64px;min-width:64px;height:80px;border-radius:12px;object-fit:cover;border:1px solid #2a3c5f}
-  .tst-ticketph{width:64px;min-width:64px;height:80px;border-radius:12px;background:#1a222e;border:1px solid #2a3c5f;display:flex;align-items:center;justify-content:center;color:#93a4bf;font-size:11px;font-weight:300;text-align:center;padding:4px}
+  .tst-graded{margin-left:auto;color:#A3AAB6;font-size:13px;font-weight:300;white-space:nowrap}
+  .tst-playcard{display:flex;gap:12px;background:linear-gradient(180deg,#20242E,#1B1F27);border:1px solid #343B47;border-radius:20px;padding:16px;margin:0 0 12px}
+  .tst-ticketimg{width:64px;min-width:64px;height:80px;border-radius:12px;object-fit:cover;border:1px solid #343B47}
+  .tst-ticketph{width:64px;min-width:64px;height:80px;border-radius:12px;background:#1E222B;border:1px solid #343B47;display:flex;align-items:center;justify-content:center;color:#A3AAB6;font-size:11px;font-weight:300;text-align:center;padding:4px}
   .tst-playmain{flex:1;min-width:0}
   .tst-playtop{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
   .tst-lvl{font-size:12px;font-weight:400;padding:5px 8px;border-radius:8px}
   .tst-lvl.plat{border:1px solid #e8c766;color:#e8c766}
   .tst-lvl.gold{border:1px solid #2ee6a8;color:#2ee6a8}
-  .tst-meta{color:#93a4bf;font-size:13px;font-weight:300}
+  .tst-meta{color:#A3AAB6;font-size:13px;font-weight:300}
   .tst-pick{font-size:17px;font-weight:400;line-height:1.25;margin-top:10px}
-  .tst-match{color:#93a4bf;font-size:13.5px;font-weight:300;margin-top:4px}
+  .tst-match{color:#A3AAB6;font-size:13.5px;font-weight:300;margin-top:4px}
   .tst-result{text-align:right;white-space:nowrap}
   .tst-result span{display:block;font-size:13px;font-weight:400}
   .tst-result span.won{color:#2ee6a8}
@@ -236,7 +236,7 @@
   .tst-ysec .tst-ticketph{font-size:10px!important}
 
   /* 2026-10-27: barra superior fija (pedido Alex: la barra de arriba con los botones no se va al bajar) */
-  .tst-stickyhead{position:sticky;top:0;z-index:1003;background:#161d29;margin:0 -14px;padding:12px 14px 10px;border-bottom:1px solid #24334d}
+  .tst-stickyhead{position:sticky;top:0;z-index:1003;background:#0B0D12;margin:0 -14px;padding:12px 14px 10px;border-bottom:1px solid #262C36}
   .tst-stickyhead .topbar{margin-bottom:10px}
   .tst-stickyhead .notif-panel{margin-bottom:10px}
   .tst-stickyhead #tst-menu-sheet{margin-bottom:0}
@@ -244,7 +244,7 @@
 </head>
 <body>
 <div class="phone">
-  <a id="tst-phrase-strip" href="{{ url_for('masterclass') }}" style="display:flex;align-items:center;gap:8px;background:linear-gradient(180deg,#1c2431,#161c23);border:1px solid #2a3c5f;border-radius:14px;padding:10px 14px;margin:0 0 12px;text-decoration:none;color:#ffffff;overflow:hidden;">
+  <a id="tst-phrase-strip" href="{{ url_for('masterclass') }}" style="display:flex;align-items:center;gap:8px;background:linear-gradient(180deg,#20242E,#1B1F27);border:1px solid #343B47;border-radius:14px;padding:10px 14px;margin:0 0 12px;text-decoration:none;color:#ffffff;overflow:hidden;">
     <span style="flex:0 0 auto;">🎓</span>
     <span style="flex:1;min-width:0;overflow:hidden;white-space:nowrap;"><span id="tst-phrase" style="display:inline-block;white-space:nowrap;font-size:13px;font-weight:600;line-height:1.4;color:#ffffff;will-change:transform;backface-visibility:hidden;animation:tst-phrase-slide 8s linear infinite;">Three pillars: with the house, professional bankroll with units, and zero emotion.</span></span>
   </a>
@@ -296,23 +296,23 @@
     <button class="menubtn" type="button" id="tst-menubtn" aria-expanded="false" onclick="var m=document.getElementById('tst-menu-sheet');var o=m.hidden;m.hidden=!o;this.setAttribute('aria-expanded',o?'true':'false');document.body.style.overflow=o?'hidden':'';" style="cursor:pointer;padding:0;">☰</button>
   </div>
 
-  <div id="tst-menu-sheet" hidden style="position:fixed;inset:0;z-index:2000;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;background:#161d29;padding:14px 14px 40px;">
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;"><b style="font-size:15px;">Menu</b><button type="button" onclick="document.getElementById('tst-menu-sheet').hidden=true;document.getElementById('tst-menubtn').setAttribute('aria-expanded','false');document.body.style.overflow='';" style="background:none;border:0;color:#93a4bf;font-size:20px;cursor:pointer;padding:4px 8px;">✕</button></div>
-    <div style="padding:12px 0 2px;font-size:11px;letter-spacing:1.6px;color:#8b98ad;font-weight:700;">PICKS &amp; ODDS</div>
-    <a href="{{ url_for('leagues') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #1c2431;font-size:15px;">All Leagues <span style="color:#93a4bf;">›</span></a>
-    <a href="{{ url_for('official_tracker') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #1c2431;font-size:15px;">Full Record <span style="color:#93a4bf;">›</span></a>
-    <a href="{{ url_for('tracker') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #1c2431;font-size:15px;">My Bets <span style="color:#93a4bf;">›</span></a>
-    <div style="padding:12px 0 2px;font-size:11px;letter-spacing:1.6px;color:#8b98ad;font-weight:700;">TOOLS</div>
-    <a href="{{ url_for('tools') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #1c2431;font-size:15px;">All Tools <span style="color:#93a4bf;">›</span></a>
-    <a href="{{ url_for('game_center') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #1c2431;font-size:15px;">Odds <span style="color:#93a4bf;">›</span></a>
-    <a href="{{ url_for('ev_board') if miembro_platinum else url_for('desbloquear_platinum') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #1c2431;font-size:15px;">+EV Board <span style="color:#93a4bf;">›</span></a>
-    <a href="{{ url_for('tools_line_moves') if miembro_platinum else url_for('desbloquear_platinum') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #1c2431;font-size:15px;">Line Moves <span style="color:#93a4bf;">›</span></a>
-    <div style="padding:12px 0 2px;font-size:11px;letter-spacing:1.6px;color:#8b98ad;font-weight:700;">LEARN</div>
-    <a href="{{ url_for('masterclass') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #1c2431;font-size:15px;">Masterclass <span style="color:#93a4bf;">›</span></a>
-    <div style="padding:12px 0 2px;font-size:11px;letter-spacing:1.6px;color:#8b98ad;font-weight:700;">ACCOUNT</div>
-    <a href="{{ url_for('alertas') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #1c2431;font-size:15px;">Alerts <span style="color:#93a4bf;">›</span></a>
-    <a href="{{ url_for('cuenta') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #1c2431;font-size:15px;">Account <span style="color:#93a4bf;">›</span></a>
-    {% if es_admin or es_alex %}<a href="{{ url_for('admin_dashboard') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #1c2431;font-size:15px;">Admin <span style="color:#93a4bf;">›</span></a>{% endif %}
+  <div id="tst-menu-sheet" hidden style="position:fixed;inset:0;z-index:2000;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;background:#0B0D12;padding:14px 14px 40px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;"><b style="font-size:15px;">Menu</b><button type="button" onclick="document.getElementById('tst-menu-sheet').hidden=true;document.getElementById('tst-menubtn').setAttribute('aria-expanded','false');document.body.style.overflow='';" style="background:none;border:0;color:#A3AAB6;font-size:20px;cursor:pointer;padding:4px 8px;">✕</button></div>
+    <div style="padding:12px 0 2px;font-size:11px;letter-spacing:1.6px;color:#969EA9;font-weight:700;">PICKS &amp; ODDS</div>
+    <a href="{{ url_for('leagues') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:15px;">All Leagues <span style="color:#A3AAB6;">›</span></a>
+    <a href="{{ url_for('official_tracker') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:15px;">Full Record <span style="color:#A3AAB6;">›</span></a>
+    <a href="{{ url_for('tracker') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:15px;">My Bets <span style="color:#A3AAB6;">›</span></a>
+    <div style="padding:12px 0 2px;font-size:11px;letter-spacing:1.6px;color:#969EA9;font-weight:700;">TOOLS</div>
+    <a href="{{ url_for('tools') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:15px;">All Tools <span style="color:#A3AAB6;">›</span></a>
+    <a href="{{ url_for('game_center') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:15px;">Odds <span style="color:#A3AAB6;">›</span></a>
+    <a href="{{ url_for('ev_board') if miembro_platinum else url_for('desbloquear_platinum') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:15px;">+EV Board <span style="color:#A3AAB6;">›</span></a>
+    <a href="{{ url_for('tools_line_moves') if miembro_platinum else url_for('desbloquear_platinum') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:15px;">Line Moves <span style="color:#A3AAB6;">›</span></a>
+    <div style="padding:12px 0 2px;font-size:11px;letter-spacing:1.6px;color:#969EA9;font-weight:700;">LEARN</div>
+    <a href="{{ url_for('masterclass') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:15px;">Masterclass <span style="color:#A3AAB6;">›</span></a>
+    <div style="padding:12px 0 2px;font-size:11px;letter-spacing:1.6px;color:#969EA9;font-weight:700;">ACCOUNT</div>
+    <a href="{{ url_for('alertas') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:15px;">Alerts <span style="color:#A3AAB6;">›</span></a>
+    <a href="{{ url_for('cuenta') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:15px;">Account <span style="color:#A3AAB6;">›</span></a>
+    {% if es_admin or es_alex %}<a href="{{ url_for('admin_dashboard') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:15px;">Admin <span style="color:#A3AAB6;">›</span></a>{% endif %}
   </div>
   </div>
 
@@ -321,7 +321,7 @@
     <div class="photo"></div>
     <div class="inner">
       <div class="dateline">{{ fecha }} · ET</div>
-      <p class="greet"><span style="white-space:nowrap;color:#eef2f8">{{ saludo }},</span><br><span>{{ nombre_corto }}</span></p>
+      <p class="greet"><span style="white-space:nowrap;color:#F2F3F5">{{ saludo }},</span><br><span>{{ nombre_corto }}</span></p>
       <p class="tagline">Smart analysis. Real edges. Winning plays.</p>
       <div class="status">
         <div class="check">✓</div>
@@ -350,7 +350,7 @@
   {% endif %}
 
   <div style="display:flex;align-items:center;gap:10px;margin:12px 0 16px;">
-  <div id="tst-vid-open" style="display:inline-flex;align-items:center;gap:6px;background:#161c23;border:1px solid #2a3c5f;border-radius:999px;padding:6px 11px;cursor:pointer;">
+  <div id="tst-vid-open" style="display:inline-flex;align-items:center;gap:6px;background:#1B1F27;border:1px solid #343B47;border-radius:999px;padding:6px 11px;cursor:pointer;">
     <span style="color:#2ee6a8;font-size:10px;line-height:1;">&#9654;</span>
     <span style="color:#2ee6a8;font-size:12px;font-weight:300;letter-spacing:.3px;">Watch how it works</span>
   </div>
@@ -358,7 +358,7 @@
   </div>
 
   <h2 style="margin:8px 0 2px;font-size:22px;font-weight:400;">Find Your Edge</h2>
-  <p style="margin:0 0 12px;color:#93a4bf;font-size:12.5px;font-weight:300;">Real edges, ranked daily.</p>
+  <p style="margin:0 0 12px;color:#A3AAB6;font-size:12.5px;font-weight:300;">Real edges, ranked daily.</p>
   <div class="tiles">
     <a class="tile" href="{{ url_for('game_center') }}"><div class="ic">◎</div><span class="arr">›</span><b>Odds</b><p>Live scores &amp; games, every price, the fair line and the edge.</p></a>
     <a class="tile" href="{{ url_for('tracker') }}"><div class="ic">♛</div><span class="arr">›</span><b>My Bets</b><p>Track your plays, results and performance.</p></a>
@@ -407,26 +407,26 @@
   {% endfor %}
   {% endif %}
   {% if plays %}
-  <p style="margin:2px 0 22px;color:#93a4bf;font-size:12.5px;font-weight:300;line-height:1.55;">Stakes are listed in units and in dollars. One unit equals 1% of your bankroll, so your dollar amount follows the bankroll you set. Tracking a play adds it to My Bets at your own size, and it is graded on its own. <a href="{{ url_for('cuenta') }}" style="color:#2ee6a8;text-decoration:underline;">Update your bankroll in Account</a>.</p>
+  <p style="margin:2px 0 22px;color:#A3AAB6;font-size:12.5px;font-weight:300;line-height:1.55;">Stakes are listed in units and in dollars. One unit equals 1% of your bankroll, so your dollar amount follows the bankroll you set. Tracking a play adds it to My Bets at your own size, and it is graded on its own. <a href="{{ url_for('cuenta') }}" style="color:#2ee6a8;text-decoration:underline;">Update your bankroll in Account</a>.</p>
   {% endif %}
 
   {% if not miembro_platinum %}
   {# Tarjetas bloqueadas anchas y cortas, aprobadas por Alex 2026-10-28: estilo de la prueba, texto propio, sin copiar a nadie. Solo para miembros sin Platinum. #}
   {% if plats %}
-  <a href="{{ url_for('desbloquear_platinum') }}" style="display:block;background:#141a26;border:1px solid #c9a86a;border-radius:20px;padding:14px 16px;margin:0 0 14px;text-decoration:none;color:#eef2f8;">
+  <a href="{{ url_for('desbloquear_platinum') }}" style="display:block;background:#191D24;border:1px solid #c9a86a;border-radius:20px;padding:14px 16px;margin:0 0 14px;text-decoration:none;color:#F2F3F5;">
     <div style="display:flex;align-items:center;gap:12px;">
       <span style="flex:0 0 48px;width:48px;height:48px;background:#2a2410;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;color:#e8c15a;">&#128275;</span>
-      <span><span style="display:block;font-size:18px;font-weight:700;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ plats|length }} Platinum {% if plats|length == 1 %}play{% else %}plays{% endif %} on today's card</span><span style="display:block;font-size:14px;line-height:1.35;color:#93a4bf;">Included with Platinum. Members only. $1 first week, then $15.99/week.</span></span>
+      <span><span style="display:block;font-size:18px;font-weight:700;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ plats|length }} Platinum {% if plats|length == 1 %}play{% else %}plays{% endif %} on today's card</span><span style="display:block;font-size:14px;line-height:1.35;color:#A3AAB6;">Included with Platinum. Members only. $1 first week, then $15.99/week.</span></span>
     </div>
-    <span style="display:block;text-align:center;background:#1c2431;border:1px solid #2a3c5f;border-radius:14px;padding:10px;margin-top:12px;font-size:15px;">Start your $1 trial &#8250;</span>
+    <span style="display:block;text-align:center;background:#20242E;border:1px solid #343B47;border-radius:14px;padding:10px;margin-top:12px;font-size:15px;">Start your $1 trial &#8250;</span>
   </a>
   {% endif %}
-  <a href="{{ url_for('desbloquear_platinum') }}" style="display:block;background:#141a26;border:1px solid #c9a86a;border-radius:20px;padding:14px 16px;margin:0 0 22px;text-decoration:none;color:#eef2f8;">
+  <a href="{{ url_for('desbloquear_platinum') }}" style="display:block;background:#191D24;border:1px solid #c9a86a;border-radius:20px;padding:14px 16px;margin:0 0 22px;text-decoration:none;color:#F2F3F5;">
     <div style="display:flex;align-items:center;gap:12px;">
       <span style="flex:0 0 48px;width:48px;height:48px;background:#2a2410;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;color:#e8c15a;">&#128275;</span>
-      <span><span style="display:block;font-size:18px;font-weight:700;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Player Props on today's card</span><span style="display:block;font-size:14px;line-height:1.35;color:#93a4bf;">Included with Platinum, separate from the main card.</span></span>
+      <span><span style="display:block;font-size:18px;font-weight:700;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Player Props on today's card</span><span style="display:block;font-size:14px;line-height:1.35;color:#A3AAB6;">Included with Platinum, separate from the main card.</span></span>
     </div>
-    <span style="display:block;text-align:center;background:#1c2431;border:1px solid #2a3c5f;border-radius:14px;padding:10px;margin-top:12px;font-size:15px;">See Player Props &#8250;</span>
+    <span style="display:block;text-align:center;background:#20242E;border:1px solid #343B47;border-radius:14px;padding:10px;margin-top:12px;font-size:15px;">See Player Props &#8250;</span>
   </a>
   {% endif %}
 
@@ -465,11 +465,11 @@
     <h2 style="margin:0 0 10px;font-size:22px;font-weight:400;">Record by league</h2>
     <div style="display:flex;gap:10px;overflow-x:auto;padding-bottom:4px;">
       {% for r in record_por_liga %}
-      <div style="flex:0 0 108px;background:linear-gradient(180deg,#1c2431,#161c23);border:1px solid #2a3c5f;border-radius:16px;padding:12px 10px;text-align:center;">
+      <div style="flex:0 0 108px;background:linear-gradient(180deg,#20242E,#1B1F27);border:1px solid #343B47;border-radius:16px;padding:12px 10px;text-align:center;">
         <div style="font-size:20px;line-height:1;">{{ r.icono }}</div>
         <div style="font-size:13px;font-weight:800;letter-spacing:.06em;margin-top:8px;">{{ r.liga }}</div>
         <div style="font-size:17px;font-weight:800;color:#ffffff;margin-top:6px;">{{ r.w }}–{{ r.l }}</div>
-        <div style="font-size:15px;font-weight:800;margin-top:4px;color:{% if r.profit > 0 %}#2ee6a8{% elif r.profit < 0 %}#ff5a5a{% else %}#eef2f8{% endif %};">{% if r.profit > 0 %}+{% elif r.profit < 0 %}-{% endif %}${{ '%.2f'|format(r.profit|abs) }}</div>
+        <div style="font-size:15px;font-weight:800;margin-top:4px;color:{% if r.profit > 0 %}#2ee6a8{% elif r.profit < 0 %}#ff5a5a{% else %}#F2F3F5{% endif %};">{% if r.profit > 0 %}+{% elif r.profit < 0 %}-{% endif %}${{ '%.2f'|format(r.profit|abs) }}</div>
       </div>
       {% endfor %}
     </div>
@@ -492,16 +492,16 @@
   <!-- Betting Guides en el home (2026-10-27, pedido Alex, con los mismos colores de las demás cartas del home; enlaces a las guías ya existentes del 2026-10-06) -->
   <section style="margin:0 0 22px;">
     <h2 style="margin:0 0 2px;font-size:22px;font-weight:400;">Betting Guides</h2>
-    <p style="margin:0 0 14px;color:#93a4bf;font-size:13px;font-weight:300;">New to betting? Start here.</p>
+    <p style="margin:0 0 14px;color:#A3AAB6;font-size:13px;font-weight:300;">New to betting? Start here.</p>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-      <a href="{{ url_for('guide_moneyline') }}" style="display:block;background:linear-gradient(180deg,#1c2431,#161c23);border:1px solid #2a3c5f;border-radius:16px;padding:16px;text-decoration:none;color:#eef2f8;"><b style="display:block;font-size:17px;font-weight:400;">Moneyline</b><span style="display:block;color:#93a4bf;font-size:13px;margin-top:4px;">What it is</span></a>
-      <a href="{{ url_for('guide_spread') }}" style="display:block;background:linear-gradient(180deg,#1c2431,#161c23);border:1px solid #2a3c5f;border-radius:16px;padding:16px;text-decoration:none;color:#eef2f8;"><b style="display:block;font-size:17px;font-weight:400;">Spread</b><span style="display:block;color:#93a4bf;font-size:13px;margin-top:4px;">What it is</span></a>
-      <a href="{{ url_for('guide_total') }}" style="display:block;background:linear-gradient(180deg,#1c2431,#161c23);border:1px solid #2a3c5f;border-radius:16px;padding:16px;text-decoration:none;color:#eef2f8;"><b style="display:block;font-size:17px;font-weight:400;">Total</b><span style="display:block;color:#93a4bf;font-size:13px;margin-top:4px;">Over/under</span></a>
-      <a href="{{ url_for('guide_american_odds') }}" style="display:block;background:linear-gradient(180deg,#1c2431,#161c23);border:1px solid #2a3c5f;border-radius:16px;padding:16px;text-decoration:none;color:#eef2f8;"><b style="display:block;font-size:17px;font-weight:400;">American odds</b><span style="display:block;color:#93a4bf;font-size:13px;margin-top:4px;">+150, -110...</span></a>
-      <a href="{{ url_for('guide_vig') }}" style="display:block;background:linear-gradient(180deg,#1c2431,#161c23);border:1px solid #2a3c5f;border-radius:16px;padding:16px;text-decoration:none;color:#eef2f8;"><b style="display:block;font-size:17px;font-weight:400;">The vig</b><span style="display:block;color:#93a4bf;font-size:13px;margin-top:4px;">Why it matters</span></a>
-      <a href="{{ url_for('guide_reading_card') }}" style="display:block;background:linear-gradient(180deg,#1c2431,#161c23);border:1px solid #2a3c5f;border-radius:16px;padding:16px;text-decoration:none;color:#eef2f8;"><b style="display:block;font-size:17px;font-weight:400;">Reading a card</b><span style="display:block;color:#93a4bf;font-size:13px;margin-top:4px;">Our picks</span></a>
+      <a href="{{ url_for('guide_moneyline') }}" style="display:block;background:linear-gradient(180deg,#20242E,#1B1F27);border:1px solid #343B47;border-radius:16px;padding:16px;text-decoration:none;color:#F2F3F5;"><b style="display:block;font-size:17px;font-weight:400;">Moneyline</b><span style="display:block;color:#A3AAB6;font-size:13px;margin-top:4px;">What it is</span></a>
+      <a href="{{ url_for('guide_spread') }}" style="display:block;background:linear-gradient(180deg,#20242E,#1B1F27);border:1px solid #343B47;border-radius:16px;padding:16px;text-decoration:none;color:#F2F3F5;"><b style="display:block;font-size:17px;font-weight:400;">Spread</b><span style="display:block;color:#A3AAB6;font-size:13px;margin-top:4px;">What it is</span></a>
+      <a href="{{ url_for('guide_total') }}" style="display:block;background:linear-gradient(180deg,#20242E,#1B1F27);border:1px solid #343B47;border-radius:16px;padding:16px;text-decoration:none;color:#F2F3F5;"><b style="display:block;font-size:17px;font-weight:400;">Total</b><span style="display:block;color:#A3AAB6;font-size:13px;margin-top:4px;">Over/under</span></a>
+      <a href="{{ url_for('guide_american_odds') }}" style="display:block;background:linear-gradient(180deg,#20242E,#1B1F27);border:1px solid #343B47;border-radius:16px;padding:16px;text-decoration:none;color:#F2F3F5;"><b style="display:block;font-size:17px;font-weight:400;">American odds</b><span style="display:block;color:#A3AAB6;font-size:13px;margin-top:4px;">+150, -110...</span></a>
+      <a href="{{ url_for('guide_vig') }}" style="display:block;background:linear-gradient(180deg,#20242E,#1B1F27);border:1px solid #343B47;border-radius:16px;padding:16px;text-decoration:none;color:#F2F3F5;"><b style="display:block;font-size:17px;font-weight:400;">The vig</b><span style="display:block;color:#A3AAB6;font-size:13px;margin-top:4px;">Why it matters</span></a>
+      <a href="{{ url_for('guide_reading_card') }}" style="display:block;background:linear-gradient(180deg,#20242E,#1B1F27);border:1px solid #343B47;border-radius:16px;padding:16px;text-decoration:none;color:#F2F3F5;"><b style="display:block;font-size:17px;font-weight:400;">Reading a card</b><span style="display:block;color:#A3AAB6;font-size:13px;margin-top:4px;">Our picks</span></a>
     </div>
-    <a href="{{ url_for('guide_glossary') }}" style="display:block;background:linear-gradient(180deg,#1c2431,#161c23);border:1px solid #2a3c5f;border-radius:16px;padding:16px;margin-top:10px;text-decoration:none;color:#eef2f8;"><b style="display:block;font-size:17px;font-weight:400;">📖 Betting glossary</b><span style="display:block;color:#93a4bf;font-size:13px;margin-top:4px;">Every term, plain English</span></a>
+    <a href="{{ url_for('guide_glossary') }}" style="display:block;background:linear-gradient(180deg,#20242E,#1B1F27);border:1px solid #343B47;border-radius:16px;padding:16px;margin-top:10px;text-decoration:none;color:#F2F3F5;"><b style="display:block;font-size:17px;font-weight:400;">📖 Betting glossary</b><span style="display:block;color:#A3AAB6;font-size:13px;margin-top:4px;">Every term, plain English</span></a>
   </section>
 
   <div class="section faq">
@@ -567,16 +567,16 @@
   {% endif %}
 
   <div style="display:flex;align-items:center;gap:10px;margin:8px 0 14px;"><h2 style="margin:0;font-size:22px;font-weight:400;">Watch how it works</h2></div>
-  <div onclick="document.getElementById('tst-vid-open').click()" style="background:linear-gradient(180deg,#1c2431,#161c23);border:1px solid #2a3c5f;border-radius:20px;padding:16px;margin:0 0 22px;cursor:pointer;">
+  <div onclick="document.getElementById('tst-vid-open').click()" style="background:linear-gradient(180deg,#20242E,#1B1F27);border:1px solid #343B47;border-radius:20px;padding:16px;margin:0 0 22px;cursor:pointer;">
     <div style="position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;border-radius:12px;background:#000;">
       <img src="{{ url_for('static', filename='img/video-dashboard-poster.jpg') }}" alt="Watch how it works" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;">
       <span style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:64px;height:64px;border-radius:50%;background:#2ee6a8;color:#06281c;display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 4px 18px rgba(0,0,0,.5);">&#9654;</span>
     </div>
     <div style="display:flex;align-items:center;gap:10px;margin-top:12px;">
       <span style="flex:1;min-width:0;">
-        <span style="display:block;color:#93a4bf;font-size:12.5px;font-weight:300;margin-top:2px;">See how the Dashboard works, step by step.</span>
+        <span style="display:block;color:#A3AAB6;font-size:12.5px;font-weight:300;margin-top:2px;">See how the Dashboard works, step by step.</span>
       </span>
-      <span style="color:#93a4bf;font-size:20px;">&#8250;</span>
+      <span style="color:#A3AAB6;font-size:20px;">&#8250;</span>
     </div>
   </div>
 
@@ -643,7 +643,7 @@
     <div style="color:#fff;font-size:16px;font-weight:700;">That is the full tour</div>
     <div style="display:flex;gap:10px;">
       <button id="tst-vid-again" type="button" style="background:#2ee6a8;color:#06281c;border:0;border-radius:999px;padding:13px 24px;font-size:16px;font-weight:800;cursor:pointer;">&#8635; Watch again</button>
-      <button id="tst-vid-endclose" type="button" style="background:#161c23;color:#fff;border:2px solid #2ee6a8;border-radius:999px;padding:12px 24px;font-size:16px;font-weight:800;cursor:pointer;">&#10005; Close</button>
+      <button id="tst-vid-endclose" type="button" style="background:#1B1F27;color:#fff;border:2px solid #2ee6a8;border-radius:999px;padding:12px 24px;font-size:16px;font-weight:800;cursor:pointer;">&#10005; Close</button>
     </div>
   </div>
 </div>
