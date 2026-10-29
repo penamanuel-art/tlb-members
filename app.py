@@ -11531,7 +11531,8 @@ def parlay_builder():
 
 # ----------------------------- AI Assistant (Platinum only) -----------------------------
 # Rule-based assistant: answers from real program data only (no external LLM).
-# Intents: best plays, parlay suggestion, today's official plays, record, bankroll.
+# Intents: best plays, parlay suggestion, price check (explain a price vs the
+# fair line, with sizing), my-bets review, today's official plays, record, bankroll.
 
 def _ai_fmt_odds(price):
     try:
@@ -11662,6 +11663,214 @@ def _ai_answer(question, user):
         cards = [_edge_card(e) for e in edges]
         return (answer, cards)
 
+    # ---- price check: explain a price vs the fair line (2026-10-29) ----
+    # Coach-style: implied % of the quoted price, the fair line from real
+    # program data (+EV board Pinnacle no-vig, or the model probability of
+    # today's official plays), the EV with the math shown, a plain verdict,
+    # and a size in units / dollars from the member's own bankroll.
+    # Never invents a fair price: without a board/model match it only gives
+    # the break-even math of the quoted price and says so.
+    import re as _re_ai
+    _price_m = _re_ai.search(r"(?<![\d.])([+-]\d{2,4})(?![\d/])", q)
+    _price_kw = any(k in q for k in ("worth", "fair", "good price", "bad price",
+                                     "should i take", "explain a price", "price check"))
+    if _price_m or _price_kw:
+        quoted = None
+        if _price_m:
+            try:
+                quoted = int(_price_m.group(1))
+            except (TypeError, ValueError):
+                quoted = None
+            if quoted is not None and not (quoted >= 100 or quoted <= -100):
+                quoted = None
+
+        def _team_hit(name, text):
+            n = (name or "").lower().strip()
+            if not n:
+                return False
+            if n in text:
+                return True
+            words = [w for w in n.split() if len(w) > 2]
+            if len(words) >= 2 and " ".join(words[-2:]) in text:
+                return True
+            return bool(words) and words[-1] in text
+
+        def _implied(price):
+            dec = _ai_to_decimal(price)
+            if not dec:
+                return None
+            return 100.0 / dec
+
+        def _fair_american(prob_pct):
+            if not prob_pct or prob_pct <= 0 or prob_pct >= 100:
+                return "—"
+            dec = 100.0 / prob_pct
+            return _ai_to_american(dec)
+
+        edge_hit = None
+        for e in _ai_best_edges(50):
+            if _team_hit(e.get("team"), q):
+                edge_hit = e
+                break
+        play_hit = None
+        if edge_hit is None:
+            try:
+                _plays_ai = load_plays() or []
+            except Exception:
+                _plays_ai = []
+            for p in _plays_ai:
+                if _team_hit(p.get("team_name"), q) or _team_hit(p.get("pick"), q):
+                    play_hit = p
+                    break
+
+        team_name = None
+        fair_prob = None
+        fair_src = None
+        best_line = None
+        if edge_hit is not None:
+            team_name = edge_hit.get("team") or "That play"
+            try:
+                fair_prob = float(edge_hit.get("fair_prob_pct") or 0) or None
+            except (TypeError, ValueError):
+                fair_prob = None
+            fair_src = "the +EV Board fair line (Pinnacle no-vig)"
+            if quoted is None:
+                try:
+                    quoted = int(float(edge_hit.get("price")))
+                except (TypeError, ValueError):
+                    quoted = None
+            _books = edge_hit.get("books") or []
+            if _books:
+                _bb = max(_books, key=lambda b: float(b.get("price") or -99999))
+                best_line = (f"Best price on the board right now: "
+                             f"{_ai_fmt_odds(_bb.get('price'))} at {_bb.get('book', '—')}.")
+        elif play_hit is not None:
+            team_name = play_hit.get("pick") or play_hit.get("team_name") or "That play"
+            _mp = play_hit.get("prob_modelo")
+            if _mp is None and isinstance(play_hit.get("writeup"), dict):
+                _mp = play_hit["writeup"].get("model_prob")
+            try:
+                _mp = float(_mp)
+                fair_prob = _mp * 100.0 if _mp <= 1 else _mp
+            except (TypeError, ValueError):
+                fair_prob = None
+            fair_src = "today's official model"
+            if quoted is None:
+                try:
+                    quoted = int(float(play_hit.get("cuota")))
+                except (TypeError, ValueError):
+                    quoted = None
+
+        if quoted is None and fair_prob is None:
+            return ("Tell me the team and the price you see — for example "
+                    "\"Is Detroit Red Wings -166 worth it?\" — and I'll explain it "
+                    "against the fair line with the math shown.", [])
+        if quoted is None:
+            return (f"Give me the price you see for {team_name} and I'll grade it "
+                    f"against the fair line ({fair_prob:.1f}% from {fair_src}).", [])
+
+        imp = _implied(quoted)
+        _title_ai = f"{team_name} — price check" if team_name else "Price check"
+        lines = [_title_ai,
+                 f"• Your price: {_ai_fmt_odds(quoted)} → you need to win {imp:.1f}% of the time just to break even."]
+        if fair_prob is None:
+            lines.append("• I don't have a fair line for that game in the current board or today's model, "
+                         "so I won't guess one. Check the +EV Board or the Game Center for this game, "
+                         "or ask me about a team that is on today's card.")
+            return ("\n".join(lines), [])
+        dec_q = _ai_to_decimal(quoted)
+        ev = (fair_prob / 100.0) * dec_q - 1.0
+        ev_pct = ev * 100.0
+        lines.append(f"• Fair line: {fair_prob:.1f}% from {fair_src} → fair price {_fair_american(fair_prob)}.")
+        lines.append(f"• Edge at {_ai_fmt_odds(quoted)}: {ev_pct:+.1f}% EV.")
+        if ev_pct >= 5:
+            verdict, units = "a real edge — playable at full program size", 1.0
+        elif ev_pct >= 2:
+            verdict, units = "a thin edge — playable, one notch smaller", 0.6
+        elif ev_pct >= 0:
+            verdict, units = "basically the fair price — no real edge, pass", 0.0
+        else:
+            verdict, units = "below fair — pass, or shop for a better price", 0.0
+        lines.append(f"• Verdict: {verdict}.")
+        if best_line:
+            lines.append(f"• {best_line}")
+        try:
+            _br = float(user["bankroll"]) if user and user["bankroll"] else None
+        except (KeyError, IndexError, TypeError, ValueError):
+            _br = None
+        if units > 0:
+            if _br:
+                lines.append(f"• Size: {units:g}u = ${_br * 0.01 * units:,.2f} "
+                             f"(your bankroll ${_br:,.2f} · 1u = ${_br * 0.01:,.2f}).")
+            else:
+                lines.append(f"• Size: {units:g}u (1u = 1% of your bankroll — set it in Account "
+                             "and I'll show dollars too).")
+        return ("\n".join(lines), cards)
+
+    # ---- my bets review (2026-10-29) ----
+    if any(k in q for k in ("my bets", "my tracked", "review my", "my record",
+                            "how am i doing", "my plays", "my results")):
+        try:
+            _db_ai = get_db()
+            _rows_ai = [dict(r) for r in _db_ai.execute(
+                "SELECT * FROM tracked_plays WHERE user_id = ?", (user["id"],)).fetchall()]
+        except Exception:
+            _rows_ai = []
+        if not _rows_ai:
+            return ("You haven't tracked any plays yet. Tap Track on any play and I'll "
+                    "review your record, profit and leaks right here.", [])
+        _w = _l = _pend = 0
+        _profit = 0.0
+        _risked = 0.0
+        _by_league = {}
+        for r in _rows_ai:
+            try:
+                _stake = float(r.get("stake_monto") or 0)
+            except (TypeError, ValueError):
+                _stake = 0.0
+            _res = (r.get("resultado") or "").upper()
+            _lg = (r.get("liga") or "").replace("americanfootball_", "").replace("icehockey_", "").replace("baseball_", "").replace("basketball_", "").upper() or "—"
+            _d = _by_league.setdefault(_lg, {"w": 0, "l": 0, "profit": 0.0, "risked": 0.0})
+            if _res == "W":
+                _dec = _ai_to_decimal(r.get("cuota")) or 1.0
+                _p = _stake * (_dec - 1.0)
+                _w += 1
+                _profit += _p
+                _risked += _stake
+                _d["w"] += 1
+                _d["profit"] += _p
+                _d["risked"] += _stake
+            elif _res == "L":
+                _l += 1
+                _profit -= _stake
+                _risked += _stake
+                _d["l"] += 1
+                _d["profit"] -= _stake
+                _d["risked"] += _stake
+            else:
+                _pend += 1
+        _settled = _w + _l
+        if not _settled:
+            return (f"You have {len(_rows_ai)} tracked plays, all still pending. "
+                    "Once they settle I'll break down your record, profit and leaks.", [])
+        _wr = 100.0 * _w / _settled
+        _roi = 100.0 * _profit / _risked if _risked else 0.0
+        lines = [f"Your tracked bets: {_w}–{_l} ({_wr:.1f}% win rate), "
+                 f"${_profit:+,.2f} profit, {_roi:+.1f}% ROI"
+                 + (f", {_pend} still pending." if _pend else ".")]
+        _cats = [(k, v) for k, v in _by_league.items() if (v["w"] + v["l"]) >= 3 and v["risked"]]
+        if _cats:
+            _best = max(_cats, key=lambda kv: kv[1]["profit"] / kv[1]["risked"])
+            _worst = min(_cats, key=lambda kv: kv[1]["profit"] / kv[1]["risked"])
+            if _best[1]["profit"] > 0:
+                lines.append(f"• Your strongest league: {_best[0]} — {_best[1]['w']}–{_best[1]['l']}, "
+                             f"{100.0 * _best[1]['profit'] / _best[1]['risked']:+.1f}% ROI.")
+            if _worst[0] != _best[0] and _worst[1]["profit"] < 0:
+                lines.append(f"• Your biggest leak: {_worst[0]} — {_worst[1]['w']}–{_worst[1]['l']}, "
+                             f"{100.0 * _worst[1]['profit'] / _worst[1]['risked']:+.1f}% ROI. "
+                             "Smaller stakes there until it turns.")
+        return ("\n".join(lines), cards)
+
     # ---- today's official plays ----
     if any(k in q for k in ("today", "official", "card", "tonight", "plays")):
         try:
@@ -11707,13 +11916,16 @@ def _ai_answer(question, user):
         return ("I'm The Sharp Team assistant. Ask me for:\n"
                 "• \"best plays\" — top +EV edges right now\n"
                 "• \"build me a parlay\" — a 2–3 leg parlay from top edges\n"
+                "• \"Is Detroit Red Wings -166 worth it?\" — any price explained against the fair line, with the math and a size\n"
+                "• \"review my bets\" — your tracked record, profit and leaks\n"
                 "• \"today's plays\" — today's official card\n"
                 "• \"record\" — program record and profit\n"
                 "• \"bankroll\" — your bankroll and unit size", [])
 
     # ---- fallback ----
-    return ("I can help with: best plays, parlay suggestions, today's official plays, program record, and your bankroll. "
-            "What do you need?", [])
+    return ("I can help with: best plays, parlay suggestions, explaining any price against the fair line "
+            "(try \"Is Detroit Red Wings -166 worth it?\"), reviewing your tracked bets, today's official plays, "
+            "program record, and your bankroll. What do you need?", [])
 
 
 @app.route("/ai-assistant")
