@@ -2422,8 +2422,64 @@ def official_tracker_full():
 
     verif = sum(1 for _, j in settled if j.get("comprobante"))
     _clvs = [float(j["clv_pct"]) for _, j in settled if j.get("clv_pct") is not None]
+    # Galería de tickets ganadores + rachas por liga (cabecera estilo
+    # Full Record, 2026-10-29, pedido por Alex): solo datos reales del
+    # archivo — ganadas con comprobante, más nuevas primero.
+    tickets_ganadores = []
+    for f, j in reversed(settled):
+        if j.get("resultado") != "WON" or not (j.get("comprobante") or "").strip():
+            continue
+        _pick_g = (j.get("pick") or "")
+        for _sep in (" vs ", " @ "):
+            if _sep in _pick_g:
+                _pick_g = _pick_g.split(_sep)[0]
+                break
+        tickets_ganadores.append({
+            "fecha": f, "pick": _pick_g.strip(),
+            "profit": float(j.get("profit") or 0.0),
+            "profit_display": f"+${int(round(float(j.get('profit') or 0.0))):,}",
+            "comprobante": j.get("comprobante"),
+            "nivel": (j.get("nivel") or "").upper(),
+            "ticket_id": j.get("id") or _pid(f, j),
+        })
+        if len(tickets_ganadores) >= 8:
+            break
+    # Racha vigente por liga, con regla de días (como la referencia que
+    # trajo Alex): las jugadas del mismo día se califican juntas — un día
+    # con derrota en la liga corta la racha y ese día no cuenta.
+    _por_dia_liga = {}
+    for f, j in settled:
+        _Lr = _league_of_archive_play(j) or ""
+        if _Lr:
+            _por_dia_liga.setdefault(_Lr, {}).setdefault(f, []).append(j)
+    rachas_liga = []
+    for _Lr, _dias_l in _por_dia_liga.items():
+        _n_r = 0
+        _plays_r = []
+        for _f in sorted(_dias_l.keys(), reverse=True):
+            _js = _dias_l[_f]
+            if any(x.get("resultado") == "LOST" for x in _js):
+                break
+            _n_r += sum(1 for x in _js if x.get("resultado") == "WON")
+            for x in _js:
+                if x.get("resultado") != "WON":
+                    continue
+                _pk = (x.get("pick") or "")
+                for _sep in (" vs ", " @ "):
+                    if _sep in _pk:
+                        _pk = _pk.split(_sep)[0]
+                        break
+                _plays_r.append({"fecha": _f, "pick": _pk.strip(),
+                                 "abbr": x.get("abbr") or "",
+                                 "opp_abbr": x.get("opp_abbr") or ""})
+        if _n_r >= 3:
+            rachas_liga.append({"liga": _Lr, "n": _n_r, "plays": _plays_r})
+    rachas_liga.sort(key=lambda r: -r["n"])
+    rachas_liga = rachas_liga[:2]
+
     return {"general": general, "por_nivel": por_nivel, "por_banda": por_banda,
             "por_liga": por_liga,
+            "tickets_ganadores": tickets_ganadores, "rachas_liga": rachas_liga,
             "racha_actual": racha_actual, "mejor_racha_w": mejor_w, "peor_racha_l": peor_l,
             "ult7": ult7, "ult30": ult30, "mejor": mejor, "peor": peor,
             "ultimas": ultimas, "historial": historial, "verificadas": verif,
