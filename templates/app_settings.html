@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% block title %}App settings — The Sharp Team{% endblock %}
+{% block content %}
+<style>
+body{background-color:#0B0D12}
+.as-wrap{max-width:680px;margin:0 auto;padding:16px 0 8px;font-family:-apple-system,'SF Pro',Inter,system-ui,sans-serif}
+.as-back{display:inline-block;color:#11CB87;text-decoration:none;font-size:.9rem;margin-bottom:14px}
+.as-title{font-size:2.05rem;font-weight:800;letter-spacing:-.5px;color:#fff;margin:0 0 6px}
+.as-title span{color:#11CB87}
+.as-sub{font-size:.9rem;font-weight:300;color:#A3AAB6;margin:0 0 16px;line-height:1.5}
+.as-note{display:flex;gap:10px;background:#1D2029;border:1px solid #2C313A;border-radius:16px;padding:14px;margin-bottom:14px;font-size:.88rem;font-weight:300;line-height:1.55;color:#E7E9ED}
+.as-note .ic{flex:none;width:22px;height:22px;border-radius:50%;border:1.5px solid #7dd3fc;color:#7dd3fc;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700}
+.as-card{background:#1D2029;border:1px solid #2C313A;border-radius:20px;padding:20px 18px;margin-bottom:12px}
+.as-card-head{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,255,255,.05);padding-bottom:12px;margin-bottom:14px}
+.as-card-head h2{font-size:1.12rem;font-weight:700;color:#fff;margin:0}
+.as-tag{font-size:.72rem;font-weight:600;color:#7dd3fc;background:rgba(125,211,252,.10);padding:4px 8px;border-radius:6px}
+.as-plan{display:flex;gap:14px;align-items:flex-start}
+.as-plan-ic{flex:none;width:52px;height:52px;border-radius:14px;background:rgba(17,203,135,.12);display:flex;align-items:center;justify-content:center;font-size:1.35rem}
+.as-plan-name{font-size:1.45rem;font-weight:800;color:#fff;line-height:1.2}
+.as-plan-sub{font-size:.86rem;font-weight:300;color:#9AA3AF;margin-top:3px}
+.as-badge{display:inline-block;margin-top:12px;font-size:.68rem;font-weight:700;letter-spacing:1.6px;color:#11CB87;border:1px solid rgba(17,203,135,.45);background:rgba(17,203,135,.08);padding:6px 10px;border-radius:8px}
+.as-txt{font-size:.88rem;font-weight:300;line-height:1.55;color:#A3AAB6;margin:14px 0}
+.as-btn{display:inline-flex;align-items:center;gap:8px;background:#11CB87;color:#04150C;font-weight:700;font-size:.95rem;text-decoration:none;padding:13px 20px;border-radius:14px}
+.as-btn.ghost{background:none;border:1px solid #2C313A;color:#E7E9ED;font-weight:600}
+.as-chips{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.as-chip{display:flex;align-items:center;gap:10px;border:1px solid #2C313A;border-radius:14px;padding:13px 12px;font-size:.92rem;color:#E7E9ED}
+.as-chip .ic{font-size:1.05rem}
+.as-chip small{display:block;color:#9AA3AF;font-size:.72rem}
+.as-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;font-size:.92rem;color:#A3AAB6;font-weight:300}
+.as-row b{color:#fff;font-weight:600}
+.as-btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.as-appinner{display:flex;gap:14px;align-items:center;background:#22262F;border-radius:16px;padding:16px}
+.as-appinner img{width:56px;height:56px;border-radius:14px;object-fit:cover;background:#0B0E13}
+.as-appinner .t{font-size:1.15rem;font-weight:800;color:#fff}
+.as-appinner .s{font-size:.85rem;font-weight:300;color:#9AA3AF;line-height:1.45;margin-top:2px}
+.as-ok{display:flex;gap:10px;align-items:flex-start;color:#11CB87;font-size:.95rem;font-weight:600;line-height:1.5}
+.as-dev{font-size:.85rem;font-weight:300;color:#9AA3AF;margin-top:10px}
+</style>
+
+<div class="as-wrap">
+  <a class="as-back" href="/home">← Back to Dashboard</a>
+  <h1 class="as-title">App <span>settings</span></h1>
+  <p class="as-sub">Set up the app: notifications, stakes and books. Your plan and billing live on your Account page.</p>
+
+  <div class="as-note"><span class="ic">i</span><span>This page sets up the app on this device and on your account: notifications, stakes and books. Your plan, billing and cancelling are on your Account page.</span></div>
+
+  <div class="as-card">
+    <div class="as-card-head"><h2>Membership</h2></div>
+    <div class="as-plan">
+      <div class="as-plan-ic">👤</div>
+      <div>
+        <div class="as-plan-name">{{ plan_name }}</div>
+        <div class="as-plan-sub">{{ plan_sub }}</div>
+      </div>
+    </div>
+    <span class="as-badge">{{ 'PLATINUM PLAYS' if platinum else 'FREE PLAYS' }}</span>
+    <p class="as-txt">From your The Sharp Team account. Changes to a membership show here the next time the page loads.</p>
+    <a class="as-btn" href="{{ url_for('cuenta') }}?tab=subscriptions">👤 Manage membership</a>
+    <p class="as-txt" style="margin-bottom:0;">Your plan, billing, payments and cancelling are all on your Account page. This screen only sets up the app.</p>
+  </div>
+
+  <div class="as-card">
+    <div class="as-card-head"><h2>Stakes and books</h2><span class="as-tag">Your account</span></div>
+    <div class="as-chips">
+      <div class="as-chip"><span class="ic">💰</span><span>{% if bankroll %}${{ '{:,.0f}'.format(bankroll) }}{% else %}No bankroll set{% endif %}<small>{% if stake_mode == 'kelly' %}Kelly $ · quarter Kelly{% else %}TST Units · 1u = 1%{% endif %}</small></span></div>
+      <div class="as-chip"><span class="ic">📚</span><span>{{ n_books }} book{{ 's' if n_books != 1 else '' }}<small>{{ bet_state if bet_state else 'No state set' }}</small></span></div>
+    </div>
+    <p class="as-txt">Your bankroll, staking mode, state and books are saved to your account, so every device you sign in on uses them.</p>
+    <a class="as-btn ghost" href="{{ url_for('cuenta') }}?tab=preferences">Edit stakes &amp; books</a>
+  </div>
+
+  <div class="as-card">
+    <div class="as-card-head"><h2>On this device only</h2><span class="as-tag">This device</span></div>
+    <div class="as-row"><span>Tracked plays</span><b>{{ n_tracked }} play{{ 's' if n_tracked != 1 else '' }}</b></div>
+    <div class="as-row"><span>Recent tools</span><b id="asRecent">—</b></div>
+    <div class="as-row"><span>Board filters and sorts</span><b>kept per board</b></div>
+    <p class="as-txt">These live in this browser only and do not show on your other devices. Clearing this site's data removes them.</p>
+    <p class="as-txt"><b style="color:#E7E9ED;">Kept on your account:</b> the bets you log with a stake in My Bets, and your notification settings — they follow you to any device you sign in on.</p>
+    <div class="as-btnrow">
+      <a class="as-btn ghost" href="{{ url_for('tracker_plays') }}">🎫 My Bets</a>
+      <a class="as-btn ghost" href="{{ url_for('alertas') }}">🔔 Alerts</a>
+      <a class="as-btn ghost" href="/tools">🕐 Recent tools</a>
+    </div>
+  </div>
+
+  <div class="as-card">
+    <div class="as-card-head"><h2>The app</h2></div>
+    <div class="as-appinner">
+      <img src="{{ url_for('static', filename='img/the-sharp-team-name-logo-transparent.png') }}" alt="The Sharp Team">
+      <div>
+        <div class="t" id="asAppTitle">Checking…</div>
+        <div class="s" id="asAppSub"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="as-card">
+    <div class="as-card-head"><h2>Notifications</h2></div>
+    {% if notifs %}
+    <div class="as-ok"><span>✓</span><span>On for your account: {{ notifs|join(', ') }}.</span></div>
+    {% else %}
+    <div class="as-ok" style="color:#9AA3AF;"><span>—</span><span>All notification types are off for your account right now.</span></div>
+    {% endif %}
+    <div class="as-dev" id="asDevNotif"></div>
+    <div class="as-btnrow">
+      <a class="as-btn ghost" href="{{ url_for('cuenta') }}?tab=preferences">🔔 Notification settings ›</a>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  try {
+    var raw = localStorage.getItem('tst_recent_tools');
+    var n = 0;
+    if (raw) { var a = JSON.parse(raw); if (a && a.length) n = a.length; }
+    document.getElementById('asRecent').textContent = n ? String(n) : '—';
+  } catch(e) {}
+  var standalone = (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone;
+  var t = document.getElementById('asAppTitle'), s = document.getElementById('asAppSub');
+  if (standalone) {
+    t.textContent = 'You are in the app';
+    s.textContent = 'The Sharp Team is running from your home screen.';
+  } else {
+    t.textContent = 'You are on the web version';
+    s.textContent = 'Add The Sharp Team to your home screen to run it as an app: tap Share, then "Add to Home Screen".';
+  }
+  var d = document.getElementById('asDevNotif');
+  if ('Notification' in window) {
+    var p = Notification.permission;
+    d.textContent = 'This device: notifications ' + (p === 'granted' ? 'allowed' : (p === 'denied' ? 'blocked in the browser' : 'not turned on yet')) + '.';
+  }
+})();
+</script>
+{% endblock %}
