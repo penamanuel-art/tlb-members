@@ -163,9 +163,7 @@ body{background-color:#0B0D12;background-image:radial-gradient(560px 300px at 50
     <h1 class="fr-title">The full record: <span>every play</span>, win or loss.</h1>
     <p class="fr-sub">Every official play is posted before the game with its real ticket, then graded against the final score — win or loss, in public. Nothing is added, edited or removed after the fact.</p>
   </div>
-  {% if is_alex %}
-  <a href="{{ url_for('official_tracker_export') }}" style="display:inline-block;background:#131e31;border:1px solid #e8c766;color:#e8c766;font-size:0.85rem;font-weight:800;border-radius:12px;padding:10px 16px;text-decoration:none;margin-bottom:18px;">⬇ Recalculate it yourself — download the full record (CSV)</a>
-  {% endif %}
+
 
   {% set g = t.general %}
   <div class="fr-card hot">
