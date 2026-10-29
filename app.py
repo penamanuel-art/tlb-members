@@ -5671,6 +5671,64 @@ def cuenta_preferencias():
     return redirect(url_for("cuenta") + "?tab=preferences")
 
 
+@app.route("/app-settings")
+@login_required
+def app_settings():
+    """App settings (2026-10-29, pedido por Alex con referencia): hub de
+    ajustes del miembro — membresía, stakes y libros, este dispositivo,
+    la app y notificaciones — todo con datos reales de su cuenta y los
+    mismos formularios/endpoints de /cuenta (nada duplicado)."""
+    user = current_user()
+    db = get_db()
+    record_checkin(db, session["user_id"])
+    try:
+        _row = db.execute(
+            "SELECT COUNT(*) AS c FROM tracked_plays WHERE user_id = ?",
+            (session["user_id"],)).fetchone()
+        n_tracked = int(_row["c"]) if _row else 0
+    except Exception:
+        n_tracked = 0
+    try:
+        books_saved = json.loads(user["bet_books"] or "[]") if user else []
+        if not isinstance(books_saved, list):
+            books_saved = []
+    except Exception:
+        books_saved = []
+    plat = platinum_unlocked_for(user)
+
+    def _u(col):
+        try:
+            return user[col] if user else None
+        except Exception:
+            return None
+
+    trial_ends = _u("platinum_trial_ends")
+    if _u("stripe_subscription_id"):
+        plan_name, plan_sub = "Platinum", "Platinum plays · paid subscription"
+    elif plat and trial_ends:
+        plan_name = "Platinum trial"
+        plan_sub = f"Platinum plays · trial ends {str(trial_ends)[:10]}"
+    elif plat:
+        plan_name, plan_sub = "Platinum", "Platinum plays"
+    else:
+        plan_name, plan_sub = "Free", "Sharp Free plays"
+    notifs = []
+    if _u("notif_plays"):
+        notifs.append("Plays posted")
+    if _u("notif_graded"):
+        notifs.append("Play graded")
+    if _u("notif_reminder"):
+        notifs.append("Pre-game reminder")
+    if _u("sms_optin"):
+        notifs.append("Text alerts")
+    return render_template(
+        "app_settings.html", u=user, platinum=plat,
+        plan_name=plan_name, plan_sub=plan_sub,
+        bankroll=_u("bankroll"), stake_mode=_u("stake_mode") or "units",
+        bet_state=_u("bet_state") or "", n_books=len(books_saved),
+        n_tracked=n_tracked, notifs=notifs)
+
+
 @app.route("/cuenta/password", methods=["POST"])
 @login_required
 def cuenta_password():
