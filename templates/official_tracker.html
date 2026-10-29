@@ -3,21 +3,21 @@
 {% block content %}
 <style>
 /* Fondo de pagina identico al del Home (home_lux) - 2026-10-20, pedido por Alex:
-   mismo color base #161d29 y mismos brillos suaves menta/azul. */
-body{background-color:#161d29;background-image:radial-gradient(560px 300px at 50% -80px,rgba(47,230,167,.06),transparent 65%),radial-gradient(700px 500px at 110% 30%,rgba(77,163,255,.05),transparent 60%)}
+   mismo color base #0B0D12 y mismos brillos suaves menta/azul. */
+body{background-color:#0B0D12;background-image:radial-gradient(560px 300px at 50% -80px,rgba(255,255,255,.02),transparent 65%),radial-gradient(700px 500px at 110% 30%,rgba(255,255,255,.015),transparent 60%)}
 .ot-wrap { max-width: 680px; margin: 0 auto; padding: 16px 0 8px; font-family: -apple-system, 'SF Pro', Inter, system-ui, sans-serif; }
 .ot-wrap h1 { font-size: 1.5rem; font-weight: 800; color: #fff; margin: 0 0 4px; }
-.ot-wrap .sub { font-size: 0.85rem; color: #93b3aa; margin-bottom: 20px; }
-.ot-hero { background: linear-gradient(160deg, #26303f 0%, #1c2431 55%, #1a222e 100%); border: 1px solid rgba(245,193,24,.35); border-radius: 20px; padding: 22px 18px; text-align: center; margin-bottom: 14px; }
+.ot-wrap .sub { font-size: 0.85rem; color: #969EA9; margin-bottom: 20px; }
+.ot-hero { background: #1D2029; border: 1px solid rgba(245,193,24,.35); border-radius: 20px; padding: 22px 18px; text-align: center; margin-bottom: 14px; }
 .ot-hero .profit { font-size: 2.6rem; font-weight: 800; line-height: 1; }
-.ot-hero .lbl { font-size: 0.7rem; color: #93b3aa; font-weight: 700; letter-spacing: 2px; margin-top: 6px; }
+.ot-hero .lbl { font-size: 0.7rem; color: #969EA9; font-weight: 700; letter-spacing: 2px; margin-top: 6px; }
 .ot-hero .rec { font-size: 1.05rem; color: #fff; font-weight: 700; margin-top: 12px; }
-.ot-pos { color: #00e07f; } .ot-neg { color: #ff5d5d; }
+.ot-pos { color: #11CB87; } .ot-neg { color: #ff5d5d; }
 /* Encabezado de estadísticas — panel único integrado (2026-10-20, aprobado por Alex) */
-.oth-panel { position: relative; overflow: hidden; background: linear-gradient(160deg, #26303f 0%, #1c2431 55%, #1a222e 100%); border: 1px solid rgba(148,166,196,.16); border-radius: 22px; padding: 22px 18px 20px; box-shadow: 0 10px 28px rgba(0,0,0,.35); margin-bottom: 14px; }
-.oth-panel::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: linear-gradient(90deg, #5eeaa0, #2fe6a7 55%, #12b76a); }
+.oth-panel { position: relative; overflow: hidden; background: #1D2029; border: 1px solid rgba(148,166,196,.16); border-radius: 22px; padding: 22px 18px 20px; box-shadow: 0 10px 28px rgba(0,0,0,.35); margin-bottom: 14px; }
+.oth-panel::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: linear-gradient(90deg, #5eeaa0, #11CB87 55%, #12b76a); }
 .oth-hero { text-align: center; padding-bottom: 16px; }
-.oth-units { font-size: 2.55rem; font-weight: 800; letter-spacing: -.5px; line-height: 1; color: #2fe6a7; }
+.oth-units { font-size: 2.55rem; font-weight: 800; letter-spacing: -.5px; line-height: 1; color: #11CB87; }
 .oth-lbl { margin-top: 7px; font-size: .66rem; font-weight: 700; letter-spacing: 2.6px; color: #e8c766; }
 .oth-rec { margin-top: 13px; font-size: .92rem; font-weight: 600; color: #f2f5fa; line-height: 1.5; }
 .oth-rec .oth-dim { color: #9fb0c9; font-weight: 500; }
@@ -29,40 +29,40 @@ body{background-color:#161d29;background-image:radial-gradient(560px 300px at 50
 .oth-stats.has-clv .oth-stat:nth-child(n+4):nth-child(-n+6) { border-bottom: 1px solid rgba(148,166,196,.10); padding-bottom: 9px; }
 .oth-stats.has-clv .oth-stat:nth-child(7) { border-bottom: none; padding-bottom: 3px; }
 .oth-n { font-size: 1.18rem; font-weight: 700; color: #fff; line-height: 1.15; }
-.oth-n.mint { color: #2fe6a7; }
-.oth-l { margin-top: 4px; font-size: .56rem; font-weight: 700; letter-spacing: 1.6px; color: #8fa1c2; line-height: 1.45; }
+.oth-n.mint { color: #11CB87; }
+.oth-l { margin-top: 4px; font-size: .56rem; font-weight: 700; letter-spacing: 1.6px; color: #9AA3AF; line-height: 1.45; }
 .ot-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
 .ot-grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 14px; }
-.ot-stat { background: rgba(18,24,40,.72); border: 1px solid rgba(120,140,180,.14); border-radius: 16px; padding: 14px 10px; text-align: center; }
+.ot-stat { background: #1D2029; border: 1px solid #2C313A; border-radius: 16px; padding: 14px 10px; text-align: center; }
 .ot-stat .n { font-size: 1.35rem; font-weight: 800; color: #fff; }
-.ot-stat .l { font-size: 0.62rem; color: #93b3aa; margin-top: 4px; font-weight: 700; letter-spacing: 1px; }
+.ot-stat .l { font-size: 0.62rem; color: #969EA9; margin-top: 4px; font-weight: 700; letter-spacing: 1px; }
 .ot-section { margin-bottom: 22px; }
 .ot-section h2 { font-size: 1.05rem; font-weight: 700; color: #fff; margin: 0 0 10px; }
-.ot-card { background: rgba(18,24,40,.72); border: 1px solid rgba(120,140,180,.14); border-radius: 16px; padding: 16px; margin-bottom: 10px; }
+.ot-card { background: #1D2029; border: 1px solid #2C313A; border-radius: 16px; padding: 16px; margin-bottom: 10px; }
 .ot-card .ttl { font-size: 0.95rem; font-weight: 800; color: #fff; margin-bottom: 8px; }
 .ot-row { display: flex; justify-content: space-between; font-size: 0.85rem; color: #c7cede; padding: 3px 0; }
 .ot-row b { color: #fff; }
 .ot-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
-.ot-table th { text-align: left; color: #93b3aa; font-size: 0.65rem; letter-spacing: 1px; padding: 6px 4px; border-bottom: 1px solid rgba(120,140,180,.18); }
-.ot-table td { color: #e6eaf2; padding: 7px 4px; border-bottom: 1px solid rgba(120,140,180,.08); }
+.ot-table th { text-align: left; color: #969EA9; font-size: 0.65rem; letter-spacing: 1px; padding: 6px 4px; border-bottom: 1px solid #2C313A; }
+.ot-table td { color: #e6eaf2; padding: 7px 4px; border-bottom: 1px solid rgba(255,255,255,.05); }
 .ot-badge { display: inline-block; font-size: 10px; font-weight: 800; padding: 3px 9px; border-radius: 999px; }
-.ot-w { background: rgba(0,224,127,.15); color: #00e07f; border: 1px solid rgba(0,224,127,.35); }
+.ot-w { background: rgba(0,224,127,.15); color: #11CB87; border: 1px solid rgba(0,224,127,.35); }
 .ot-l { background: rgba(255,93,93,.13); color: #ff5d5d; border: 1px solid rgba(255,93,93,.3); }
 .ot-lvl { font-size: 10px; font-weight: 800; color: #f5c518; letter-spacing: 1px; }
-.ot-play { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px solid rgba(120,140,180,.08); font-size: 0.85rem; }
+.ot-play { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,.05); font-size: 0.85rem; }
 .ot-play:last-child { border-bottom: none; }
 .ot-play .pk { color: #fff; font-weight: 600; }
-.ot-play .dt { color: #93b3aa; font-size: 0.72rem; }
-.ot-play a { color: #2fe6a7; text-decoration: none; font-size: 0.75rem; }
-.ot-back { display: inline-block; color: #2fe6a7; text-decoration: none; font-size: 0.9rem; margin-bottom: 14px; }
+.ot-play .dt { color: #969EA9; font-size: 0.72rem; }
+.ot-play a { color: #11CB87; text-decoration: none; font-size: 0.75rem; }
+.ot-back { display: inline-block; color: #11CB87; text-decoration: none; font-size: 0.9rem; margin-bottom: 14px; }
 .ot-tabs { display: flex; gap: 8px; margin: 4px 0 16px; }
-.ot-tab { flex: 1; text-align: center; padding: 11px 6px; border-radius: 12px; border: 1px solid rgba(255,255,255,.14); background: rgba(18,24,40,.72); color: #c7cede; font-size: 0.82rem; font-weight: 800; text-decoration: none; }
+.ot-tab { flex: 1; text-align: center; padding: 11px 6px; border-radius: 12px; border: 1px solid rgba(255,255,255,.14); background: #1D2029; color: #c7cede; font-size: 0.82rem; font-weight: 800; text-decoration: none; }
 .ot-tab.active { background: linear-gradient(135deg, #e8c766, #8a6d2f); color: #1a1405; border-color: transparent; }
-.ot-libro-stats { font-size: 0.8rem; color: #93b3aa; margin: -4px 0 10px; }
+.ot-libro-stats { font-size: 0.8rem; color: #969EA9; margin: -4px 0 10px; }
 .ot-libro-stats b { color: #fff; }
 .ot-thumbwrap { position: relative; flex-shrink: 0; width: 46px; height: 58px; cursor: pointer; }
 .ot-thumb { width: 46px; height: 58px; object-fit: cover; border-radius: 8px; border: 1px solid rgba(140,240,205,.3); display: block; }
-.ot-zoom { position: absolute; right: -6px; bottom: -6px; background: #2fe6a7; color: #032117; font-size: 11px; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,.5); }
+.ot-zoom { position: absolute; right: -6px; bottom: -6px; background: #11CB87; color: #032117; font-size: 11px; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,.5); }
 #otModal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.92); z-index: 4000; align-items: center; justify-content: center; padding: 18px; }
 #otModal img { max-width: 100%; max-height: 92vh; border-radius: 14px; }
 #otModal .ot-x { position: absolute; top: 16px; right: 18px; color: #fff; font-size: 1.6rem; background: rgba(255,255,255,.12); border: none; width: 42px; height: 42px; border-radius: 50%; cursor: pointer; }
@@ -71,25 +71,58 @@ body{background-color:#161d29;background-image:radial-gradient(560px 300px at 50
 .yw-badge { display:inline-block; font-size:10px; font-weight:300; letter-spacing:1.2px; padding:5px 9px; border-radius:8px; white-space:nowrap; }
 .yw-b-plat { background:rgba(232,199,102,.13); color:#e8c766; border:1px solid rgba(232,199,102,.45); }
 .yw-b-gold { background:rgba(148,166,196,.12); color:#aebdd4; border:1px solid rgba(148,166,196,.35); }
-.yw-card { display:flex; gap:12px; width:100%; box-sizing:border-box; text-align:left; background:#0d1626; border:1px solid #1d2a42; border-radius:16px; padding:13px; margin-top:11px; align-items:center; color:#eef2f8; font-family:-apple-system,'SF Pro',Inter,system-ui,sans-serif; }
+.yw-card { display:flex; gap:12px; width:100%; box-sizing:border-box; text-align:left; background:#10131A; border:1px solid #262C36; border-radius:16px; padding:13px; margin-top:11px; align-items:center; color:#eef2f8; font-family:-apple-system,'SF Pro',Inter,system-ui,sans-serif; }
 .yw-card.won { border-color:rgba(47,191,113,.45); }
-.yw-thumb { width:60px; height:60px; border-radius:10px; object-fit:cover; flex:none; background:#16223a; }
-.yw-thumb-fallback { width:60px; height:60px; border-radius:10px; flex:none; background:#16223a; color:#8b98ad; font-size:9px; font-weight:300; display:flex; align-items:center; justify-content:center; text-align:center; line-height:1.5; }
+.yw-thumb { width:60px; height:60px; border-radius:10px; object-fit:cover; flex:none; background:#1B1F27; }
+.yw-thumb-fallback { width:60px; height:60px; border-radius:10px; flex:none; background:#1B1F27; color:#969EA9; font-size:9px; font-weight:300; display:flex; align-items:center; justify-content:center; text-align:center; line-height:1.5; }
 .yw-main { flex:1; min-width:0; display:block; }
 .yw-meta { display:flex; align-items:center; gap:8px; margin-bottom:5px; }
-.yw-kind { color:#8b98ad; font-size:12px; font-weight:300; }
+.yw-kind { color:#969EA9; font-size:12px; font-weight:300; }
 .yw-pick { font-size:15.5px; font-weight:300; line-height:1.25; display:block; color:#eef2f8; }
-.yw-match { color:#8b98ad; font-size:12.5px; font-weight:300; margin-top:4px; display:block; }
-.yw-clv { color:#8b98ad; font-size:11.5px; font-weight:300; margin-top:3px; display:block; }
-.yw-clv-pos { color:#2fbf71; }
+.yw-match { color:#969EA9; font-size:12.5px; font-weight:300; margin-top:4px; display:block; }
+.yw-clv { color:#969EA9; font-size:11.5px; font-weight:300; margin-top:3px; display:block; }
+.yw-clv-pos { color:#11CB87; }
 .yw-clv-neg { color:#ff8a8a; }
-.yw-share { color:#2fe6a7; font-size:12px; font-weight:300; text-decoration:none; display:inline-block; margin-top:5px; }
-.yw-view { color:#7dd3fc; font-size:11.5px; font-weight:300; display:block; margin-top:5px; }
+.yw-share { color:#11CB87; font-size:12px; font-weight:300; text-decoration:none; display:inline-block; margin-top:5px; }
+.yw-view { color:#11CB87; font-size:11.5px; font-weight:300; display:block; margin-top:5px; }
 .yw-res { text-align:right; flex:none; display:block; }
 .yw-res .st { font-size:11px; font-weight:300; letter-spacing:1.4px; display:block; }
 .yw-res .u { font-size:16px; font-weight:300; margin-top:3px; display:block; }
-.yw-won-t { color:#2fbf71; }
-.yw-lost-t { color:#8b98ad; }
+.yw-won-t { color:#11CB87; }
+.yw-lost-t { color:#969EA9; }
+
+/* Cabecera estilo Full Record (2026-10-29, pedido por Alex con referencia):
+   titular grande, tarjetas de programa con el récord en grande, píldoras
+   de racha, detalle de la racha y galería de tickets ganadores. */
+.fr-head { margin: 6px 0 18px; }
+.fr-title { font-size: 2.05rem; font-weight: 800; line-height: 1.12; letter-spacing: -.5px; color: #fff; margin: 0 0 10px; }
+.fr-title span { color: #11CB87; }
+.fr-sub { font-size: .92rem; font-weight: 300; line-height: 1.55; color: #A3AAB6; margin: 0; }
+.fr-card { background: #1D2029; border: 1px solid #2C313A; border-radius: 20px; padding: 20px 18px; margin-bottom: 12px; }
+.fr-card.hot { border-color: rgba(17,203,135,.45); background: linear-gradient(165deg, rgba(17,203,135,.10), #1D2029 55%); }
+.fr-kicker { font-size: .68rem; font-weight: 700; letter-spacing: 2.2px; color: #9AA3AF; margin-bottom: 8px; }
+.fr-big { font-size: 2.9rem; font-weight: 800; letter-spacing: -1.5px; line-height: 1; color: #fff; }
+.fr-units { font-size: 1.25rem; font-weight: 800; margin-top: 8px; }
+.fr-line { font-size: .82rem; font-weight: 300; color: #9AA3AF; margin-top: 6px; line-height: 1.5; }
+.fr-pills { display: flex; flex-direction: column; gap: 8px; margin: 14px 0 12px; }
+.fr-pill { display: inline-flex; align-items: center; gap: 8px; align-self: flex-start; background: rgba(17,203,135,.10); border: 1px solid rgba(17,203,135,.35); color: #E7E9ED; border-radius: 999px; padding: 9px 14px; font-size: .85rem; font-weight: 300; }
+.fr-pill b { font-weight: 700; color: #fff; }
+.fr-pill span { color: #9AA3AF; font-size: .78rem; }
+.fr-streak-title { font-size: 1.3rem; font-weight: 800; color: #fff; line-height: 1.25; margin-bottom: 8px; }
+.fr-streak-txt { font-size: .86rem; font-weight: 300; line-height: 1.55; color: #A3AAB6; margin: 0 0 6px; }
+.fr-wrow { display: flex; align-items: center; gap: 12px; padding: 11px 0; border-top: 1px solid rgba(255,255,255,.05); }
+.fr-wchip { flex: none; width: 34px; height: 34px; border-radius: 9px; background: rgba(17,203,135,.16); color: #11CB87; font-weight: 800; font-size: .85rem; display: flex; align-items: center; justify-content: center; }
+.fr-wdate { flex: none; width: 52px; font-size: .82rem; font-weight: 300; color: #9AA3AF; }
+.fr-wmain { display: block; min-width: 0; }
+.fr-wpick { display: block; font-size: .95rem; font-weight: 600; color: #fff; }
+.fr-wsub { display: block; font-size: .78rem; font-weight: 300; color: #9AA3AF; margin-top: 2px; }
+.fr-h2 { font-size: 1.45rem !important; font-weight: 800; letter-spacing: -.3px; }
+.fr-sub2 { font-size: .86rem; font-weight: 300; line-height: 1.5; color: #A3AAB6; margin: -4px 0 12px; }
+.fr-gal { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.fr-ticket { position: relative; margin: 0; border-radius: 16px; overflow: hidden; background: #1D2029; border: 1px solid #2C313A; cursor: pointer; }
+.fr-ticket img { width: 100%; height: 225px; object-fit: cover; object-position: top center; display: block; }
+.fr-badge { position: absolute; top: 8px; right: 8px; z-index: 2; background: #11CB87; color: #04150C; font-size: .8rem; font-weight: 800; padding: 5px 10px; border-radius: 999px; box-shadow: 0 3px 10px rgba(0,0,0,.45); }
+.fr-ticket figcaption { position: absolute; left: 0; right: 0; bottom: 0; padding: 22px 10px 9px; background: linear-gradient(transparent, rgba(4,8,6,.88)); color: #fff; font-size: .85rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 </style>
 
 {# Tarjeta de jugada — diseño nuevo aprobado por Alex (2026-10-16):
@@ -126,62 +159,92 @@ body{background-color:#161d29;background-image:radial-gradient(560px 300px at 50
 
 <div class="ot-wrap">
   <a class="ot-back" href="/home">← Back to Dashboard</a>
-  <h1>🏆 Official Tracker</h1>
-  <div class="sub">The full official record — every stat. Updated live from the official archive.</div>
+  <div class="fr-head">
+    <h1 class="fr-title">The full record: <span>every play</span>, win or loss.</h1>
+    <p class="fr-sub">Every official play is posted before the game with its real ticket, then graded against the final score — win or loss, in public. Nothing is added, edited or removed after the fact.</p>
+  </div>
   {% if is_alex %}
   <a href="{{ url_for('official_tracker_export') }}" style="display:inline-block;background:#131e31;border:1px solid #e8c766;color:#e8c766;font-size:0.85rem;font-weight:800;border-radius:12px;padding:10px 16px;text-decoration:none;margin-bottom:18px;">⬇ Recalculate it yourself — download the full record (CSV)</a>
   {% endif %}
 
   {% set g = t.general %}
-  {# Encabezado de estadísticas: panel único (2026-10-20, aprobado por Alex).
-     CURRENT STREAK lee t.racha_actual (nivel superior de t): el agregado
-     general (g) no trae esa clave y el tile salía vacío. #}
-  <div class="oth-panel">
-    <div class="oth-hero">
-      <div class="oth-units" style="color:{{ '#2fe6a7' if g.cls == 'pos' else ('#ff5d5d' if g.cls == 'neg' else '#fff') }};">{{ g.units_display }}</div>
-      <div class="oth-lbl">NET UNITS · ALL TIME</div>
-      <div class="oth-rec">{{ g.record }} <span class="oth-dim">·</span> {{ g.win_rate }}% win rate <span class="oth-dim">·</span> ROI {{ '+' if g.roi > 0 else '' }}{{ g.roi }}% <span class="oth-dim">·</span> {{ g.profit_display }} net profit</div>
-    </div>
-    <div class="oth-rule"></div>
-    <div class="oth-stats{% if t.clv_n and t.clv_n >= 3 %} has-clv{% endif %}">
-      <div class="oth-stat"><div class="oth-n">${{ '{:,.0f}'.format(g.risked) }}</div><div class="oth-l">TOTAL RISKED</div></div>
-      <div class="oth-stat"><div class="oth-n{% if (t.racha_actual or '')[:1] == 'W' %} mint{% endif %}">{{ t.racha_actual }}</div><div class="oth-l">CURRENT STREAK</div></div>
-      <div class="oth-stat"><div class="oth-n">{{ t.verificadas_pct }}%</div><div class="oth-l">TICKET VERIFIED</div></div>
-      {% if t.clv_n and t.clv_n >= 3 %}<div class="oth-stat"><div class="oth-n" style="color:{{ '#2fbf71' if t.clv_prom >= 0 else '#ff8a8a' }};">{{ '%+.1f' % t.clv_prom }}%</div><div class="oth-l">AVG CLV · {{ t.clv_n }} PLAYS</div></div>{% endif %}
-      <div class="oth-stat"><div class="oth-n">{{ '+' if g.avg_odds > 0 else '' }}{{ g.avg_odds }}</div><div class="oth-l">AVG ODDS</div></div>
-      <div class="oth-stat"><div class="oth-n">${{ g.avg_stake }}</div><div class="oth-l">AVG STAKE</div></div>
-      <div class="oth-stat"><div class="oth-n">W{{ t.mejor_racha_w }} / L{{ t.peor_racha_l }}</div><div class="oth-l">BEST / WORST RUN</div></div>
-    </div>
+  <div class="fr-card hot">
+    <div class="fr-kicker">OFFICIAL PLAYS</div>
+    <div class="fr-big">{{ g.record }}</div>
+    <div class="fr-units" style="color:{{ '#11CB87' if g.cls == 'pos' else ('#ff5d5d' if g.cls == 'neg' else '#fff') }};">{{ g.profit_display }} net</div>
+    <div class="fr-line">{{ g.win_rate }}% win rate · ROI {{ '+' if g.roi > 0 else '' }}{{ g.roi }}% · every play tracked</div>
+  </div>
+  {% set sp = t.por_nivel['ELITE'] %}
+  <div class="fr-card">
+    <div class="fr-kicker">⭐ PLATINUM PLAYS</div>
+    <div class="fr-big">{{ sp.record }}</div>
+    <div class="fr-units" style="color:{{ '#11CB87' if sp.cls == 'pos' else ('#ff5d5d' if sp.cls == 'neg' else '#fff') }};">{{ sp.profit_display }} net</div>
+    <div class="fr-line">{{ sp.win_rate }}% win rate · ROI {{ '+' if sp.roi > 0 else '' }}{{ sp.roi }}% · the full premium card, posted before every game</div>
+  </div>
+  {% set sg = t.por_nivel['GOLD'] %}
+  <div class="fr-card">
+    <div class="fr-kicker">⚪ SHARP FREE PLAYS</div>
+    <div class="fr-big">{{ sg.record }}</div>
+    <div class="fr-units" style="color:{{ '#11CB87' if sg.cls == 'pos' else ('#ff5d5d' if sg.cls == 'neg' else '#fff') }};">{{ sg.profit_display }} net</div>
+    <div class="fr-line">{{ sg.win_rate }}% win rate · ROI {{ '+' if sg.roi > 0 else '' }}{{ sg.roi }}% · the free showcase, posted and graded in public</div>
   </div>
 
-  <div class="ot-section">
-    <h2>By level</h2>
-    {% for key, nombre in [('ELITE', '⭐ PLATINUM'), ('GOLD', '⚪ SHARP PICKS FREE')] %}
-    {% set s = t.por_nivel[key] %}
-    <div class="ot-card">
-      <div class="ttl">{{ nombre }}</div>
-      <div class="ot-row"><span>Record</span><b>{{ s.record }} ({{ s.win_rate }}%)</b></div>
-      <div class="ot-row"><span>Net profit</span><b style="color:{{ '#00e07f' if s.cls == 'pos' else ('#ff5d5d' if s.cls == 'neg' else '#fff') }};">{{ s.profit_display }}</b></div>
-      <div class="ot-row"><span>ROI</span><b>{{ '+' if s.roi > 0 else '' }}{{ s.roi }}%</b></div>
-      <div class="ot-row"><span>Total risked</span><b>${{ '{:,.0f}'.format(s.risked) }}</b></div>
+  {% if t.rachas_liga %}
+  <div class="fr-pills">
+    {% for r in t.rachas_liga %}
+    <div class="fr-pill">🔥 <b>{{ r.n }} straight {{ r.liga }} wins</b><span>Official plays</span></div>
+    {% endfor %}
+  </div>
+  {% set r0 = t.rachas_liga[0] %}
+  <div class="fr-card">
+    <div class="fr-streak-title">🔥 {{ r0.liga }}: {{ r0.n }} straight wins</div>
+    <p class="fr-streak-txt">This streak counts one league only, and only these exact graded plays, newest game first. Plays posted on the same day are graded together — if that day had a loss in the league, none of it counts toward the run.</p>
+    {% for x in r0.plays %}
+    {% set f = x.fecha or '' %}
+    <div class="fr-wrow">
+      <span class="fr-wchip">W</span>
+      <span class="fr-wdate">{{ meses.get(f[5:7], '') }} {{ (f[8:10] | int) if (f | length) >= 10 else '' }}</span>
+      <span class="fr-wmain"><span class="fr-wpick">{{ x.pick }}</span><span class="fr-wsub">{% if x.abbr and x.opp_abbr %}{{ x.abbr }} vs {{ x.opp_abbr }} · {% endif %}{{ r0.liga }}</span></span>
     </div>
     {% endfor %}
   </div>
+  {% endif %}
+
+  <div class="oth-panel">
+    <div class="oth-stats{% if t.clv_n and t.clv_n >= 3 %} has-clv{% endif %}">
+      <div class="oth-stat"><div class="oth-n">${{ '{:,.0f}'.format(g.risked) }}</div><div class="oth-l">TOTAL RISKED</div></div>
+  </div>
+
+  {% if t.tickets_ganadores %}
+  <div class="ot-section">
+    <h2 class="fr-h2">Recent winning tickets</h2>
+    <p class="fr-sub2">Real graded tickets, each posted before the game and cashed. Tap any one to see it full size.</p>
+    <div class="fr-gal">
+      {% for x in t.tickets_ganadores %}
+      <figure class="fr-ticket" onclick="otZoom('{{ url_for('static', filename=x.comprobante) }}')">
+        <span class="fr-badge">✓ {{ x.profit_display }}</span>
+        <img src="{{ url_for('static', filename=x.comprobante) }}" alt="Winning ticket — {{ x.pick }}" loading="lazy">
+        <figcaption>{{ x.pick }}</figcaption>
+      </figure>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
 
   {% if t.por_liga %}
   <div class="ot-section">
     <h2>Record by league</h2>
     {% for L in t.por_liga %}
     <div class="ot-card">
-      <div class="ttl">{{ L.icon }} {{ L.liga }}<span style="float:right;color:{{ '#00e07f' if L.cls == 'pos' else ('#ff5d5d' if L.cls == 'neg' else '#fff') }};">{{ L.units_display }}</span></div>
+      <div class="ttl">{{ L.icon }} {{ L.liga }}<span style="float:right;color:{{ '#11CB87' if L.cls == 'pos' else ('#ff5d5d' if L.cls == 'neg' else '#fff') }};">{{ L.units_display }}</span></div>
       <div class="ot-row"><span>Record</span><b>{{ L.record }} · {{ L.n }} plays</b></div>
       <div class="ot-row"><span>Win rate</span><b>{{ L.win_rate }}%</b></div>
-      <div class="ot-row"><span>Net profit</span><b style="color:{{ '#00e07f' if L.cls == 'pos' else ('#ff5d5d' if L.cls == 'neg' else '#fff') }};">{{ L.profit_display }}</b></div>
+      <div class="ot-row"><span>Net profit</span><b style="color:{{ '#11CB87' if L.cls == 'pos' else ('#ff5d5d' if L.cls == 'neg' else '#fff') }};">{{ L.profit_display }}</b></div>
       <div class="ot-row"><span>ROI</span><b>{{ '+' if L.roi > 0 else '' }}{{ L.roi }}%</b></div>
       <div class="ot-row"><span>Avg odds</span><b>{{ L.avg_odds_display }}</b></div>
     </div>
     {% endfor %}
-    <p style="font-size:0.72rem;color:#77819e;text-align:center;line-height:1.55;margin-top:2px;">Units normalized at 1u = $25. Every play is posted before game time — then locked and graded against the final score.</p>
+    <p style="font-size:0.72rem;color:#7C8593;text-align:center;line-height:1.55;margin-top:2px;">Units normalized at 1u = $25. Every play is posted before game time — then locked and graded against the final score.</p>
   </div>
   {% endif %}
 
@@ -190,7 +253,7 @@ body{background-color:#161d29;background-image:radial-gradient(560px 300px at 50
     <div class="ot-grid">
       {% for s, nombre in [(t.ult7, 'LAST 7 DAYS'), (t.ult30, 'LAST 30 DAYS')] %}
       <div class="ot-stat">
-        <div class="n" style="color:{{ '#00e07f' if s.cls == 'pos' else ('#ff5d5d' if s.cls == 'neg' else '#fff') }};">{{ s.profit_display }}</div>
+        <div class="n" style="color:{{ '#11CB87' if s.cls == 'pos' else ('#ff5d5d' if s.cls == 'neg' else '#fff') }};">{{ s.profit_display }}</div>
         <div class="l">{{ nombre }}</div>
         <div style="font-size:0.75rem;color:#c7cede;margin-top:4px;">{{ s.record }} · {{ s.win_rate }}% · ROI {{ '+' if s.roi > 0 else '' }}{{ s.roi }}%</div>
       </div>
@@ -206,7 +269,7 @@ body{background-color:#161d29;background-image:radial-gradient(560px 300px at 50
         <tr><th>BAND</th><th>RECORD</th><th>WIN %</th><th>NET</th><th>ROI</th></tr>
         {% for nombre, s in t.por_banda.items() %}
         <tr><td>{{ nombre }}</td><td>{{ s.record }}</td><td>{{ s.win_rate }}%</td>
-          <td style="color:{{ '#00e07f' if s.cls == 'pos' else ('#ff5d5d' if s.cls == 'neg' else '#e6eaf2') }};">{{ s.profit_display }}</td>
+          <td style="color:{{ '#11CB87' if s.cls == 'pos' else ('#ff5d5d' if s.cls == 'neg' else '#e6eaf2') }};">{{ s.profit_display }}</td>
           <td>{{ '+' if s.roi > 0 else '' }}{{ s.roi }}%</td></tr>
         {% endfor %}
       </table>
