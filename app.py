@@ -4731,6 +4731,52 @@ def home():
                 break
     except Exception:
         last_plat = None
+    # Tirita de resultados del home (2026-10-30, orden de Alex: fuera la
+    # tirita de frases — manda la racha): si Platinum trae 2+ ganes
+    # corridos, la tirita anuncia esa racha el día siguiente a su último
+    # gane y la de días se pausa hasta el otro día; si no, sale la racha
+    # de días ganados del programa (2+). Sin racha, no sale tirita.
+    tira_home = None
+    try:
+        _dias_arch = load_archive()
+        _ultimo_dia = None
+        _plat_streak = 0
+        _plat_ultimo_gane = None
+        _plat_cerrada = False
+        for _d in _dias_arch:
+            _jug = [j for j in (_d.get("jugadas") or [])
+                    if j.get("resultado") in ("WON", "LOST")
+                    and not j.get("bloqueada")]
+            if _jug and _ultimo_dia is None:
+                _ultimo_dia = _d.get("fecha")
+            if not _plat_cerrada:
+                for _j in _jug:
+                    if (_j.get("nivel") or "").upper() in ("ELITE", "PLATINUM"):
+                        if _j["resultado"] == "WON":
+                            _plat_streak += 1
+                            if _plat_ultimo_gane is None:
+                                _plat_ultimo_gane = _d.get("fecha")
+                        else:
+                            _plat_cerrada = True
+                            break
+        _dias_streak = 0
+        for _d in _dias_arch:
+            _jug = [j for j in (_d.get("jugadas") or [])
+                    if j.get("resultado") in ("WON", "LOST")
+                    and not j.get("bloqueada")]
+            if not _jug:
+                continue
+            if sum(float(j.get("profit") or 0) for j in _jug) > 0:
+                _dias_streak += 1
+            else:
+                break
+        if (_plat_streak >= 2 and _plat_ultimo_gane
+                and _plat_ultimo_gane == _ultimo_dia):
+            tira_home = {"tipo": "plat", "n": _plat_streak}
+        elif _dias_streak >= 2:
+            tira_home = {"tipo": "dias", "n": _dias_streak}
+    except Exception:
+        tira_home = None
     preview_locked = is_admin_for(user) and request.args.get("preview") == "locked"
     # Lluvia de dinero (Alex 2026-10-13): SOLO cuando ayer quedó positivo,
     # con burbuja de resultados, hasta que empieza el primer partido de hoy
@@ -4890,6 +4936,7 @@ def home():
         risk_hoy=risk_hoy,
         recientes_dias=recientes_dias,
         last_plat=last_plat,
+        tira_home=tira_home,
         hoy_iso=_hoy_iso,
         ayer_iso=_ayer_iso,
         recientes_value=recientes_value(),
