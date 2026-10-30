@@ -780,5 +780,18 @@
 .tst-stickyhead .topbar{margin-bottom:7px}
 .pillrow{margin-bottom:6px}
 </style>
+{% if show_rate_bubble %}
+<div id="rate-bubble" style="display:none;position:fixed;right:14px;bottom:96px;z-index:1500;background:#151A26;border:1px solid #e8c766;border-radius:16px;padding:12px 14px;box-shadow:0 14px 34px rgba(0,0,0,.55);max-width:292px;">
+  <button type="button" id="rate-bubble-x" aria-label="Close" style="position:absolute;top:5px;right:9px;background:none;border:0;color:#A3AAB6;font-size:15px;cursor:pointer;padding:2px;">✕</button>
+  <div style="font-size:14px;color:#fff;padding-right:16px;">Enjoying The Sharp Team? <b style="color:#e8c766;">Rate us</b></div>
+  <div style="margin-top:6px;font-size:24px;letter-spacing:4px;line-height:1;">
+    <a href="/testimonials?rate=1" style="color:#e8c766;text-decoration:none;">★</a><a href="/testimonials?rate=2" style="color:#e8c766;text-decoration:none;">★</a><a href="/testimonials?rate=3" style="color:#e8c766;text-decoration:none;">★</a><a href="/testimonials?rate=4" style="color:#e8c766;text-decoration:none;">★</a><a href="/testimonials?rate=5" style="color:#e8c766;text-decoration:none;">★</a>
+  </div>
+  <div style="font-size:11.5px;color:#8b95a9;margin-top:6px;">Tap a star — takes 30 seconds.</div>
+</div>
+<script>
+(function(){var b=document.getElementById('rate-bubble');if(!b)return;try{var t=+localStorage.getItem('rate_bubble_x')||0;if(Date.now()-t>7*24*3600*1000){b.style.display='block';}document.getElementById('rate-bubble-x').addEventListener('click',function(){try{localStorage.setItem('rate_bubble_x',Date.now());}catch(e){}b.style.display='none';});}catch(e){b.style.display='block';}})();
+</script>
+{% endif %}
 </body>
 </html>
