@@ -73,10 +73,17 @@ twq('config','rhgk7');
 
 {% if false %}
 {% endif %}
+{# ═══ CÓDIGO PRESERVADO — leyenda «.cap» del ticket, copia duplicada ═══
+   Retirada del render el 2026-10-30 (auditoría diaria de páginas): el
+   mismo bloque <style> + <div class="cap"> ya se renderiza justo arriba
+   y esta segunda copia literal hacía que la leyenda del ticket
+   (equipo · tipo · liga · cuota) saliera dos veces en la página.
+   Para restaurarla: quita las marcas de comentario que la envuelven.
 {% if true %}
 <style>.ticket{padding:14px}.cap{width:100%;max-width:520px;text-align:center;margin-top:14px;font-size:13.5px;font-weight:400;color:#9aa3b8}</style>
 <div class="cap">{{ p.team_name or p.abbr }} {{ 'Moneyline' if p.bettype == 'Moneyline' else p.bettype }} &middot; {{ p.liga or '' }} &middot; {{ fmt_odds(p.cuota) if fmt_odds is defined else p.cuota }}</div>
 {% endif %}
+   ═══ FIN DEL CÓDIGO PRESERVADO ═══ #}
 
 <h1>{{ p.abbr }} {{ p.bettype }} (Winner)</h1>
 <div class="meta">{{ p.abbr }} vs {{ p.opp_abbr or '' }} · {{ p.liga or '' }} · {{ '+' if p.cuota is number and p.cuota > 0 else '' }}{{ p.cuota }} · Bet ${{ '%g' % p.stake_monto }} ({{ p.stake_unidades }}u)</div>
