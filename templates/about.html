@@ -1,40 +1,62 @@
-{% extends "base_v2.html" %}
-{% block title %}Our Story — The Sharp Team{% endblock %}
+{% extends "base.html" %}
+{% block title %}About Us — The Sharp Team{% endblock %}
 {% block content %}
 <style>
-.about-wrap{max-width:640px;margin:0 auto;padding:28px 20px 8px}
-.about-eyebrow{color:#2fd47e;font-size:11px;letter-spacing:3px;font-weight:800;margin-bottom:12px}
-.about-title{font-size:34px;font-weight:800;letter-spacing:-1px;line-height:1.15;margin:0 0 8px;color:#fff}
-.about-sub{color:#9aa3b8;font-size:15px;margin:0 0 28px}
-.about-story{background:#101a2c;border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:28px 24px}
-.about-story p{color:#d5dbe8;font-size:16px;line-height:1.75;margin:0 0 18px}
-.about-story p:last-child{margin-bottom:0}
-.about-story .pull{font-size:20px;font-weight:700;color:#fff;border-left:3px solid #2fd47e;padding-left:16px;margin:24px 0;font-style:italic;line-height:1.5}
-.about-story .promise{color:#2fd47e;font-weight:700}
-.about-sign{margin-top:28px;text-align:center}
-.about-sign img{width:72px;height:72px;border-radius:50%;margin-bottom:10px}
-.about-sign .name{color:#fff;font-weight:800;font-size:16px}
-.about-sign .role{color:#8a93a8;font-size:13px;margin-top:4px}
+.pg{max-width:760px;margin:0 auto;padding:30px 20px 52px}
+.pg-kicker{color:#e8c766;font-size:12px;letter-spacing:2.5px;font-weight:700}
+.pg h1{color:#fff;font-size:34px;line-height:1.15;margin:10px 0 14px;letter-spacing:-.5px}
+.pg h1 .gold{color:#e8c766}
+.pg p{color:#c7cede;font-size:16px;line-height:1.65;margin:0 0 14px}
+.pg h2{color:#fff;font-size:21px;margin:28px 0 10px}
+.rule-card{background:#101828;border:1px solid #1e2a45;border-left:4px solid #e8c766;border-radius:14px;padding:16px 18px;margin-bottom:10px}
+.rule-card h3{color:#fff;font-size:16px;margin:0 0 5px}
+.rule-card p{font-size:14.5px;margin:0}
+.get-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:560px){.get-grid{grid-template-columns:1fr}}
+.get-card{background:#0d1420;border:1px solid #1e2a45;border-radius:14px;padding:16px 18px}
+.get-card h3{color:#e8c766;font-size:15px;margin:0 0 8px;letter-spacing:.4px}
+.get-card p{font-size:14.5px;margin:0}
+.pg-cta{margin-top:30px;background:#0e2a1e;border:1px solid #11cb87;border-radius:16px;padding:20px;text-align:center}
+.pg-cta h3{color:#fff;margin:0 0 6px;font-size:19px}
+.pg-cta p{font-size:14.5px;margin:0 0 14px}
+.pg-cta a{display:inline-block;background:#0e9e66;color:#fff;font-weight:700;padding:12px 22px;border-radius:12px;text-decoration:none}
+.about-nav{display:flex;flex-wrap:wrap;gap:8px;margin:26px 0 4px}
+.about-nav a{color:#c7cede;border:1px solid #1e2a45;border-radius:999px;padding:7px 13px;font-size:13.5px;text-decoration:none}
+.about-nav a.on{color:#0b0d12;background:#e8c766;border-color:#e8c766;font-weight:700}
 </style>
-<div class="about-wrap">
-  <div class="about-eyebrow">THE SHARP TEAM</div>
-  <h1 class="about-title">The Promise</h1>
-  <p class="about-sub">Why this exists. Why every play is on the record.</p>
-  <div class="about-story">
-    <p>My father was a sportsbook man. The kind who walks in with a wrinkled ticket in his pocket and his hope intact, even when his pocket is empty.</p>
-    <p>He never owned a home. Not because he didn't work — he worked. But because every dollar he earned went back to the sportsbook, as if the sportsbook were a river and he was just passing the water through his hands. He was a common bettor: he played with his heart, with hunches, with &ldquo;today&rsquo;s the day.&rdquo; Nobody ever taught him there was a system. Nobody ever taught him how it really worked.</p>
-    <p>I saw it all. I saw the tickets. I saw the nights. I saw the house that never came.</p>
-    <p>And one day I made him a promise. Not the kind you say just to say it — the kind that marks you for life: <span class="promise">I&rsquo;m going to investigate this. I&rsquo;m going to study it like no one ever has. I&rsquo;m going to understand it completely. I&rsquo;m going to become a professional bettor. And in your honor, Dad, I&rsquo;m going to make the sportsbooks pay dearly for everything they took from you.</span></p>
-    <p>Not with anger. With discipline. With numbers. With a system that doesn&rsquo;t feel, doesn&rsquo;t panic, doesn&rsquo;t chase losses. Everything he never had, I was going to build.</p>
-    <div class="pull">That&rsquo;s why every play carries a real ticket. That&rsquo;s why every result stays on the record, win or lose. That&rsquo;s why the stake is dictated by the system and never by emotion.</div>
-    <p>Because this isn&rsquo;t revenge — it&rsquo;s the promise fulfilled: the common bettor&rsquo;s son who became what the sportsbook fears most.</p>
-    <p>A man with a system.</p>
-    <p>And every time the sportsbook pays, somewhere, my father smiles. Because the house he could never buy is being built play by play, with his name in the foundation.</p>
+<div class="pg">
+  <div class="pg-kicker">ABOUT US</div>
+  <h1>Built on proof,<br><span class="gold">not promises.</span></h1>
+  <p>The Sharp Team is a sports betting program with one simple idea: a play only counts if it was posted <strong style="color:#fff">before the game</strong>, at a <strong style="color:#fff">real price</strong>, with the <strong style="color:#fff">real ticket</strong> to prove it — and it stays in the record whether it wins or loses.</p>
+  <p>Every day our model compares prices across 12 sportsbooks, measures each line against the market's fair price, and publishes only the plays that clear our edge threshold. No filler, no "locks of the century", no deleted losers.</p>
+
+  <h2>Our three rules</h2>
+  <div class="rule-card"><h3>1 · Posted before the game</h3><p>Every official play is published on the Dashboard before start time, with the price and the book. If it wasn't posted in time, it doesn't count — for us or against us.</p></div>
+  <div class="rule-card"><h3>2 · The ticket is the receipt</h3><p>Published plays carry the real betting ticket. You see exactly what was played, at what price, for how much — not a screenshot cropped after the game.</p></div>
+  <div class="rule-card"><h3>3 · Every play counts</h3><p>Wins, losses and pushes all stay in the public record, graded play by play. Losing streaks are part of this game and we show them too. The numbers don't lie — so we don't hide them.</p></div>
+
+  <h2>How the program works</h2>
+  <p>Plays are released on the member Dashboard — weekdays at 2:00 PM ET, weekends at 11:00 AM ET — and also arrive by email and Telegram. Stakes are managed in units: 1 unit equals 1% of your bankroll, so the same play is sized right for every member. We cover NFL, NHL, NBA, college football and selected soccer matches.</p>
+
+  <div class="get-grid">
+    <div class="get-card"><h3>SHARP FREE</h3><p>Free plays every day on your Dashboard, with the same tracking and the same public record. Start free — no card required.</p></div>
+    <div class="get-card"><h3>💎 PLATINUM</h3><p>The complete card: every official play with verified tickets, the +EV Board across 12 books, player props, line moves, sharp money tools and a private Telegram channel.</p></div>
   </div>
-  <div class="about-sign">
-    <img src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team">
-    <div class="name">The Sharp Team</div>
-    <div class="role">Every play on the record.</div>
+
+  <div class="pg-cta">
+    <h3>See today's card</h3>
+    <p>Create a free account and watch the record work — every play, graded in public.</p>
+    <a href="/registro">Create a free account →</a>
   </div>
+
+  <nav class="about-nav">
+    <a class="on" href="/about">About Us</a>
+    <a href="/official-tracker">Results</a>
+    <a href="/official-tracker">Graded Picks Ledger</a>
+    <a href="/how-to-verify">How to Verify a Handicapper</a>
+    <a href="/testimonials">Testimonials</a>
+    <a href="/faqs">FAQs</a>
+    <a href="/contact">Contact</a>
+  </nav>
 </div>
 {% endblock %}
