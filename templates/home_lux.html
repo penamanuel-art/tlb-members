@@ -246,24 +246,25 @@
 <!-- TST DAILY CHECK-IN (variance, 6 rules, big headline) - shown on every Dashboard entry - 2026-10-29 -->
 <style>
 .ck-wrap{position:fixed;inset:0;z-index:99999;background:radial-gradient(120% 55% at 50% -10%,rgba(17,203,135,.14) 0%,rgba(17,203,135,0) 60%),#0B0D12;overflow-y:auto;display:flex;justify-content:center}
-.ck-in{width:100%;max-width:430px;padding:20px 20px 24px;display:flex;flex-direction:column;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:#F2F3F5}
+.ck-in{width:100%;max-width:430px;min-height:100dvh;padding:22px 20px calc(20px + env(safe-area-inset-bottom));display:flex;flex-direction:column;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:#F2F3F5}
 .ck-brand{display:flex;flex-direction:column;align-items:center}
-.ck-brand img{width:48px;height:48px;border-radius:50%;border:1px solid rgba(232,199,102,.55)}
-.ck-name{margin-top:6px;font-size:12px;letter-spacing:.3em;font-weight:800;text-indent:.3em}
+.ck-brand img{width:58px;height:58px;border-radius:50%;border:1px solid rgba(232,199,102,.55)}
+.ck-name{margin-top:7px;font-size:13px;letter-spacing:.3em;font-weight:800;text-indent:.3em}
 .ck-name em{font-style:normal;color:#E8C766}
 .ck-date{margin-top:4px;font-size:9.5px;letter-spacing:.24em;color:#969EA9;font-weight:700}
-.ck-welcome{text-align:center;font-size:16.5px;font-weight:600;color:#C6CBD4;margin-top:12px}
+.ck-welcome{text-align:center;font-size:18px;font-weight:600;color:#C6CBD4;margin-top:12px}
 .ck-welcome i{font-style:normal;color:#11CB87}
-.ck-h{text-align:center;font-size:32px;line-height:1.18;font-weight:800;margin:5px 0 0;letter-spacing:-.01em;color:#F2F3F5}
+.ck-h{text-align:center;font-size:36px;line-height:1.16;font-weight:800;margin:5px 0 0;letter-spacing:-.01em;color:#F2F3F5}
 .ck-h .serif{font-family:Georgia,"Times New Roman",serif;font-style:italic;font-weight:700;color:#11CB87}
-.ck-intro{text-align:center;font-size:12.8px;line-height:1.5;color:#B9BFC9;margin:8px 4px 0}
-.ck-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
-.ck-cell{background:#161A21;border:1px solid #262C36;border-radius:15px;padding:9px 10px;display:flex;gap:8px}
-.ck-n{flex:none;width:20px;height:20px;border-radius:50%;background:rgba(232,199,102,.16);border:1px solid rgba(232,199,102,.5);color:#E8C766;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;margin-top:1px}
-.ck-cell b{display:block;font-size:13px;line-height:1.2;margin-bottom:2px}
-.ck-cell span{font-size:10.8px;color:#969EA9;line-height:1.38;display:block}
-.ck-takes{text-align:center;font-size:11px;color:#6E7684;margin-top:13px}
-.ck-cta{display:block;width:100%;text-align:center;background:#0E9E66;color:#fff;border:none;font-size:15.5px;font-weight:700;padding:15px 10px;border-radius:999px;margin-top:7px;cursor:pointer;font-family:inherit}
+.ck-intro{text-align:center;font-size:14px;line-height:1.55;color:#B9BFC9;margin:10px 4px 0}
+.ck-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.ck-cell{background:#161A21;border:1px solid #262C36;border-radius:16px;padding:12px 11px;display:flex;gap:9px}
+.ck-n{flex:none;width:22px;height:22px;border-radius:50%;background:rgba(232,199,102,.16);border:1px solid rgba(232,199,102,.5);color:#E8C766;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.ck-cell b{display:block;font-size:14.5px;line-height:1.22;margin-bottom:3px}
+.ck-cell span{font-size:12px;color:#969EA9;line-height:1.42;display:block}
+.ck-takes{text-align:center;font-size:11.5px;color:#6E7684;margin-top:14px}
+.ck-spacer{flex:1;min-height:14px}
+.ck-cta{display:block;width:100%;text-align:center;background:#0E9E66;color:#fff;border:none;font-size:16.5px;font-weight:700;padding:17px 10px;border-radius:999px;margin-top:7px;cursor:pointer;font-family:inherit}
 </style>
 <div class="ck-wrap" id="ckWrap">
   <div class="ck-in">
@@ -283,6 +284,7 @@
       <div class="ck-cell"><div class="ck-n">5</div><div><b>Control your emotions</b><span>Never bet angry or chasing — that's how bankrolls die.</span></div></div>
       <div class="ck-cell"><div class="ck-n">6</div><div><b>Know when to stop</b><span>Set your limit before you start, and honor it.</span></div></div>
     </div>
+    <div class="ck-spacer"></div>
     <p class="ck-takes">No result is ever guaranteed.</p>
     <button class="ck-cta" id="ckEnter" type="button">Enter my Dashboard →</button>
   </div>
