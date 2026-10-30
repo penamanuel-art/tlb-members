@@ -1810,10 +1810,19 @@ def stake_personalizado(play, user):
             # solo aplica si el monto fijo es mayor que cero.
             _fijo_e = float(_uget(user, "stake_fijo_elite") or 0)
             _fijo_g = float(_uget(user, "stake_fijo_gold") or 0)
+            # El fijo es el monto del tamaño de referencia del nivel
+            # (ELITE 1u, GOLD 0.6u): escala por las unidades reales de la
+            # jugada (orden de Alex 2026-10-29: una Platinum de 0.5u con
+            # fijo $100 debe mostrar $50, no $100). Sin unidades válidas se
+            # devuelve el fijo tal cual (nunca $0 por esta vía).
+            try:
+                _u_fijo = float(play.get("stake_unidades") or 0)
+            except (TypeError, ValueError):
+                _u_fijo = 0
             if nivel == "ELITE" and _fijo_e > 0:
-                return round(_fijo_e, 2)
+                return round(_fijo_e * _u_fijo, 2) if _u_fijo > 0 else round(_fijo_e, 2)
             if nivel == "GOLD" and _fijo_g > 0:
-                return round(_fijo_g, 2)
+                return round(_fijo_g * _u_fijo / 0.6, 2) if _u_fijo > 0 else round(_fijo_g, 2)
         except (TypeError, ValueError):
             pass
     try:
