@@ -2,42 +2,50 @@
 {% block title %}Contact — The Sharp Team{% endblock %}
 {% block content %}
 <style>
-.legal-wrap{max-width:760px;margin:0 auto;padding:28px 20px 8px}
-.legal-wrap h1{font-size:32px;letter-spacing:-.5px;color:#fff;margin-bottom:6px}
-.legal-date{color:#8b94a7;font-size:14px;margin-bottom:28px}
-.legal-wrap h2{font-size:20px;color:#f5c542;margin:28px 0 10px}
-.legal-wrap p,.legal-wrap li{color:#c6cddc;font-size:15.5px;line-height:1.65}
-.legal-wrap a{color:#4ade80}
-.ct-card{background:#10182e;border:1px solid rgba(255,255,255,.09);border-radius:16px;padding:18px 20px;margin:14px 0}
-.ct-card b{color:#fff}
+.pg{max-width:760px;margin:0 auto;padding:30px 20px 52px}
+.pg-kicker{color:#e8c766;font-size:12px;letter-spacing:2.5px;font-weight:700}
+.pg h1{color:#fff;font-size:32px;line-height:1.18;margin:10px 0 14px;letter-spacing:-.5px}
+.pg h1 .gold{color:#e8c766}
+.pg p{color:#c7cede;font-size:16px;line-height:1.65;margin:0 0 14px}
+.c-card{background:#101828;border:1px solid #1e2a45;border-radius:16px;padding:20px;margin-bottom:12px}
+.c-card h3{color:#fff;font-size:17px;margin:0 0 6px}
+.c-card p{font-size:15px;margin:0 0 12px}
+.c-card a.btn{display:inline-block;background:#0e9e66;color:#fff;font-weight:700;padding:11px 20px;border-radius:12px;text-decoration:none}
+.c-card a.link{color:#11cb87}
+.about-nav{display:flex;flex-wrap:wrap;gap:8px;margin:26px 0 4px}
+.about-nav a{color:#c7cede;border:1px solid #1e2a45;border-radius:999px;padding:7px 13px;font-size:13.5px;text-decoration:none}
+.about-nav a.on{color:#0b0d12;background:#e8c766;border-color:#e8c766;font-weight:700}
 </style>
-<div class="legal-wrap">
-<h1>Contact</h1>
-<p class="legal-date">We read every message. Support replies within one business day — usually much faster on game days.</p>
+<div class="pg">
+  <div class="pg-kicker">CONTACT</div>
+  <h1>Talk to <span class="gold">the team</span></h1>
+  <p>Questions about your account, your subscription or a play? Write to us — a real person reads every message, every day of the year.</p>
 
-<div class="ct-card">
-<p style="margin:0"><b>Email</b><br>
-<a href="mailto:thesharpteam8@gmail.com">thesharpteam8@gmail.com</a><br>
-<span style="color:#8b94a7;font-size:14px">Best for account, billing and membership questions.</span></p>
-</div>
+  <div class="c-card">
+    <h3>✉️ Email us</h3>
+    <p><strong style="color:#fff">thesharpteam8@gmail.com</strong><br>Members: write from the email on your account so we can pull it up fast. Include your question and, if it's about a play, the date and the matchup.</p>
+    <a class="btn" href="mailto:thesharpteam8@gmail.com">Send an email →</a>
+  </div>
 
-<div class="ct-card">
-<p style="margin:0"><b>Telegram</b><br>
-<a href="https://t.me/thesharpteam" target="_blank" rel="noopener">t.me/thesharpteam</a><br>
-<span style="color:#8b94a7;font-size:14px">Every play is also posted on our Telegram channel.</span></p>
-</div>
+  <div class="c-card">
+    <h3>📲 Telegram channel</h3>
+    <p>Published plays and program updates also go out on our public Telegram channel.</p>
+    <a class="btn" href="https://t.me/thesharpteam" target="_blank" rel="noopener">Open the channel →</a>
+  </div>
 
-<div class="ct-card">
-<p style="margin:0"><b>Phone</b><br>
-(551) 326-3312<br>
-<span style="color:#8b94a7;font-size:14px">Mon–Sun, 10:00 AM – 10:00 PM ET.</span></p>
-</div>
+  <div class="c-card">
+    <h3>Before you write…</h3>
+    <p>Most questions are already answered: posting times, pricing, units and cancellations are in the <a class="link" href="/faqs">FAQs</a>, and every result lives in the <a class="link" href="/official-tracker">full record</a>.</p>
+  </div>
 
-<h2>Before you write</h2>
-<p>Today's plays post at <b>1:00 PM ET</b> every day on your Dashboard. If a play looks missing, refresh the Dashboard first — and if you just registered, your Gold plays are already live; Platinum starts for $1 whenever you're ready.</p>
-
-<p>The Sharp Team<br>
-250 Park Avenue, Suite 1800<br>
-New York, NY 10017</p>
+  <nav class="about-nav">
+    <a href="/about">About Us</a>
+    <a href="/official-tracker">Results</a>
+    <a href="/official-tracker">Graded Picks Ledger</a>
+    <a href="/how-to-verify">How to Verify a Handicapper</a>
+    <a href="/testimonials">Testimonials</a>
+    <a href="/faqs">FAQs</a>
+    <a class="on" href="/contact">Contact</a>
+  </nav>
 </div>
 {% endblock %}
