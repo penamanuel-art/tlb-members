@@ -460,6 +460,45 @@
   {% if plays %}
   <p style="margin:2px 0 22px;color:#A3AAB6;font-size:12.5px;font-weight:300;line-height:1.55;">Stakes are listed in units and in dollars. One unit equals 1% of your bankroll, so your dollar amount follows the bankroll you set. Tracking a play adds it to My Bets at your own size, and it is graded on its own. <a href="{{ url_for('cuenta') }}" style="color:#2ee6a8;text-decoration:underline;">Update your bankroll in Account</a>.</p>
   {% endif %}
+  {% if not miembro_platinum and plats %}
+  {# Tarjeta NUEVA de planes en el home (2026-10-29, orden de Alex): en el lugar de la tarjeta bloqueada eliminada, el miembro gratis ve la tarjeta Platinum nueva (oferta Unlock con beneficios). La de estado Sharp Free vive en /desbloquear-platinum. #}
+  <style>
+  .hpc-card{border-radius:20px;padding:24px 22px 20px;margin:0 0 14px;background:#101319;border:1.5px solid #e8c766}
+  .hpc-top{display:flex;justify-content:space-between;align-items:center}
+  .hpc-kick{font-size:12.5px;font-weight:800;letter-spacing:2.2px;color:#e8c766}
+  .hpc-badge{background:#e8c766;color:#111;font-size:11.5px;font-weight:900;letter-spacing:.6px;padding:6px 10px;border-radius:8px}
+  .hpc-price{font-size:44px;font-weight:900;color:#fff;margin:14px 0 2px}
+  .hpc-price small{font-size:15px;font-weight:600;color:#A3AAB6}
+  .hpc-tag{font-size:14.5px;color:#C6CBD6;line-height:1.45;margin:6px 0}
+  .hpc-list{list-style:none;margin:8px 0 0;padding:0}
+  .hpc-list li{font-size:14.5px;line-height:1.4;color:#EDEFF4;padding:11px 0 11px 30px;position:relative;border-top:1px solid rgba(255,255,255,.07)}
+  .hpc-list li::before{content:"✓";position:absolute;left:2px;top:10px;font-weight:900;color:#e8c766}
+  .hpc-cta{display:block;text-align:center;text-decoration:none;font-size:16.5px;font-weight:800;padding:15px;border-radius:12px;margin-top:18px;background:#0E9E66;color:#fff}
+  .hpc-fine{font-size:12.5px;color:#8B93A3;text-align:center;margin-top:12px;line-height:1.45}
+  </style>
+  <div class="hpc-card">
+    <div style="font-size:23px;font-weight:800;color:#ffffff;line-height:1.25;margin:0 0 14px;">Platinum is the complete card.</div>
+    <div class="hpc-top">
+      <span class="hpc-kick">PLATINUM · WEEKLY</span>
+      <span class="hpc-badge">FIRST WEEK $1</span>
+    </div>
+    <div class="hpc-price">$15.99 <small>/ week</small></div>
+    <p class="hpc-tag">Unlock the complete card — every official play and every tool we run, with nothing held back.</p>
+    <ul class="hpc-list">
+      <li>Every official Platinum play, posted before game time</li>
+      <li>The verified ticket on every play — the real slip, always</li>
+      <li>The full card: Platinum plays + the Sharp Free plays</li>
+      <li>+EV Board — best price across 12 books against the fair line</li>
+      <li>Player Props board — included in Platinum</li>
+      <li>AI Assistant — check any price and review your bets</li>
+      <li>Line Moves and Sharp Money boards</li>
+      <li>Private Telegram channel for Platinum members</li>
+      <li>The full record — every play counted, win or loss</li>
+    </ul>
+    <a class="hpc-cta" href="{{ url_for('desbloquear_platinum') }}">Unlock Platinum →</a>
+    <p class="hpc-fine">$1 for your first week, then $15.99/week. Cancel anytime.</p>
+  </div>
+  {% endif %}
 
 
   {# Tarjetas anchas bloqueadas (Platinum plays / Player Props) ELIMINADAS del home (orden de Alex 2026-10-29): el gratis no ve ninguna tarjeta de jugadas Platinum; la unica oferta es la tarjeta NUEVA de planes (hpc) y /desbloquear-platinum. #}
@@ -571,45 +610,6 @@
       {% endif %}
     {% endif %}
   {% endfor %}
-  {% if not miembro_platinum and plats %}
-  {# Tarjeta NUEVA de planes en el home (2026-10-29, orden de Alex): en el lugar de la tarjeta bloqueada eliminada, el miembro gratis ve la tarjeta Platinum nueva (oferta Unlock con beneficios). La de estado Sharp Free vive en /desbloquear-platinum. #}
-  <style>
-  .hpc-card{border-radius:20px;padding:24px 22px 20px;margin:0 0 14px;background:#101319;border:1.5px solid #e8c766}
-  .hpc-top{display:flex;justify-content:space-between;align-items:center}
-  .hpc-kick{font-size:12.5px;font-weight:800;letter-spacing:2.2px;color:#e8c766}
-  .hpc-badge{background:#e8c766;color:#111;font-size:11.5px;font-weight:900;letter-spacing:.6px;padding:6px 10px;border-radius:8px}
-  .hpc-price{font-size:44px;font-weight:900;color:#fff;margin:14px 0 2px}
-  .hpc-price small{font-size:15px;font-weight:600;color:#A3AAB6}
-  .hpc-tag{font-size:14.5px;color:#C6CBD6;line-height:1.45;margin:6px 0}
-  .hpc-list{list-style:none;margin:8px 0 0;padding:0}
-  .hpc-list li{font-size:14.5px;line-height:1.4;color:#EDEFF4;padding:11px 0 11px 30px;position:relative;border-top:1px solid rgba(255,255,255,.07)}
-  .hpc-list li::before{content:"✓";position:absolute;left:2px;top:10px;font-weight:900;color:#e8c766}
-  .hpc-cta{display:block;text-align:center;text-decoration:none;font-size:16.5px;font-weight:800;padding:15px;border-radius:12px;margin-top:18px;background:#0E9E66;color:#fff}
-  .hpc-fine{font-size:12.5px;color:#8B93A3;text-align:center;margin-top:12px;line-height:1.45}
-  </style>
-  <div class="hpc-card">
-    <div style="font-size:23px;font-weight:800;color:#ffffff;line-height:1.25;margin:0 0 14px;">Every play. Every tool. Nothing blurred.</div>
-    <div class="hpc-top">
-      <span class="hpc-kick">PLATINUM · WEEKLY</span>
-      <span class="hpc-badge">FIRST WEEK $1</span>
-    </div>
-    <div class="hpc-price">$15.99 <small>/ week</small></div>
-    <p class="hpc-tag">Unlock the complete card — every official play and every tool we run, with nothing held back.</p>
-    <ul class="hpc-list">
-      <li>Every official Platinum play, posted before game time</li>
-      <li>The verified ticket on every play — the real slip, always</li>
-      <li>The full card: Platinum plays + the Sharp Free plays</li>
-      <li>+EV Board — best price across 12 books against the fair line</li>
-      <li>Player Props board — included in Platinum</li>
-      <li>AI Assistant — check any price and review your bets</li>
-      <li>Line Moves and Sharp Money boards</li>
-      <li>Private Telegram channel for Platinum members</li>
-      <li>The full record — every play counted, win or loss</li>
-    </ul>
-    <a class="hpc-cta" href="{{ url_for('desbloquear_platinum') }}">Unlock Platinum →</a>
-    <p class="hpc-fine">$1 for your first week, then $15.99/week. Cancel anytime.</p>
-  </div>
-  {% endif %}
   {% if _y.pn > 0 or _y.gn > 0 %}
   <div class="tst-ysec">
     <div class="tst-yhead"><h2>Yesterday<span>{{ _ymm[ayer_iso[5:7]] }} {{ ayer_iso[8:10]|int }} card</span></h2><a class="tst-fullbtn" href="{{ url_for('official_tracker') }}">↗ Full record</a></div>
