@@ -1095,6 +1095,80 @@ def api_activation_reminders():
     return jsonify({"ok": True, "reminders_sent": enviados})
 
 
+@app.route("/api/purge-unconfirmed", methods=["POST"])
+def api_purge_unconfirmed():
+    """POLITICA DE ALEX (2026-10-29): a la cuenta sin confirmar se le envia el
+    email de confirmacion DOS veces (recordatorios ~3h y ~24h de
+    /api/activation-reminders). Si aun asi no confirma, su cuenta se ELIMINA
+    — solo si NO tiene suscripcion activa.
+    Protecciones (todas obligatorias): email_verified = 0, los 2 recordatorios
+    ya enviados, 30+ horas desde el registro, is_admin = 0, sin Platinum
+    (platinum_unlocked = 0 y sin trial vigente), sin jugadas trackeadas.
+    Una cuenta sin confirmar nunca pudo entrar, asi que tampoco pudo pagar
+    ni trackear: las guardas son doble seguro. Protegido con header
+    X-Push-Key == PUSH_TRIGGER_KEY. Modo seco: JSON {"dry": true} lista
+    los candidatos sin borrar nada."""
+    if not PUSH_TRIGGER_KEY or not secrets.compare_digest(
+        request.headers.get("X-Push-Key", ""), PUSH_TRIGGER_KEY
+    ):
+        return jsonify({"error": "forbidden"}), 403
+    dry = False
+    try:
+        dry = bool((request.get_json(silent=True) or {}).get("dry"))
+    except Exception:
+        dry = False
+    db = get_db()
+    ahora = datetime.now(timezone.utc)
+    rows = db.execute(
+        "SELECT id, nombre, email, created_at, activation_reminders, "
+        "platinum_unlocked, platinum_trial_ends FROM users "
+        "WHERE email_verified = 0 AND is_admin = 0 AND activation_reminders >= 2 "
+        "AND LOWER(email) != 'system@value.local'"
+    ).fetchall()
+    candidatos, eliminados = [], []
+    for r in rows:
+        d = dict(r) if not isinstance(r, dict) else r
+        try:
+            creado = datetime.fromisoformat(d["created_at"])
+            if creado.tzinfo is None:
+                creado = creado.replace(tzinfo=timezone.utc)
+        except Exception:
+            continue
+        if (ahora - creado).total_seconds() < 30 * 3600:
+            continue
+        if d.get("platinum_unlocked"):
+            continue
+        te = d.get("platinum_trial_ends")
+        if te:
+            try:
+                fin = datetime.fromisoformat(str(te))
+                if fin.tzinfo is None:
+                    fin = fin.replace(tzinfo=timezone.utc)
+                if fin > ahora:
+                    continue
+            except Exception:
+                continue
+        ntp = 0
+        try:
+            tp = db.execute("SELECT COUNT(*) AS c FROM tracked_plays WHERE user_id = ?",
+                            (d["id"],)).fetchone()
+            ntp = (tp["c"] if not isinstance(tp, dict) else tp.get("c")) or 0
+        except Exception:
+            ntp = 0
+        if ntp:
+            continue
+        info = {"id": d["id"], "nombre": d.get("nombre"),
+                "email": d.get("email"), "creado": d.get("created_at")}
+        candidatos.append(info)
+        if not dry:
+            db.execute("DELETE FROM users WHERE id = ? AND email_verified = 0",
+                       (d["id"],))
+            db.commit()
+            eliminados.append(info)
+    return jsonify({"ok": True, "dry": dry,
+                    "candidatos": candidatos, "eliminados": eliminados})
+
+
 def notify_new_member(nombre: str, email: str):
     """Avisa a Alex por email cuando alguien se registra.
 
