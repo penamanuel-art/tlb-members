@@ -345,7 +345,7 @@
         {% if _ns.n < 5 and _j.resultado in ('WON', 'LOST') %}
     <div class="notif-item">
       <span class="ni{% if _j.resultado == 'LOST' %} red{% endif %}">{% if _j.resultado == 'WON' %}✅{% else %}❌{% endif %}</span>
-      <span><b>{{ _j.pick }} {% if _j.resultado == 'WON' %}won{% else %}lost{% endif %}</b><span>{{ _d.fecha }} · {{ 'Platinum' if _j.nivel == 'ELITE' else 'Gold' }}</span></span>
+      <span><b>{{ _j.pick }} {% if _j.resultado == 'WON' %}won{% else %}lost{% endif %}</b><span>{{ _d.fecha }} · {{ 'Platinum' if _j.nivel == 'ELITE' else 'Sharp Free' }}</span></span>
       <span class="amt {% if _j.profit >= 0 %}win{% else %}loss{% endif %}">{% if _j.profit >= 0 %}+{% else %}−{% endif %}${{ '%.2f'|format(_j.profit|abs) }}</span>
     </div>
           {% set _ns.n = _ns.n + 1 %}
@@ -614,7 +614,7 @@
 
   <div class="section faq">
     <h3>FAQ</h3>
-    <b>What is a Gold play?</b>
+    <b>What is a Sharp Free play?</b>
     <p>The free showcase play of the day, open to every member.</p>
     <b>What does a verified ticket mean?</b>
     <p>The play was placed for real, and the original ticket is attached.</p>
@@ -662,7 +662,7 @@
       <div class="tst-playcard">
         {% if _j.comprobante %}<a href="{{ url_for('static', filename=_j.comprobante) }}" target="_blank" rel="noopener"><img class="tst-ticketimg" src="{{ url_for('static', filename=_j.comprobante) }}" alt="Original ticket" loading="lazy"></a>{% else %}<div class="tst-ticketph">Ticket</div>{% endif %}
         <div class="tst-playmain">
-          <div class="tst-playtop"><span class="tst-lvl{% if _is_plat %} plat{% else %} gold{% endif %}">{% if _is_plat %}PLATINUM{% else %}GOLD{% endif %}</span><span class="tst-meta">{% if _is_plat %}Platinum{% else %}Gold{% endif %} play · {{ _j.liga }}</span></div>
+          <div class="tst-playtop"><span class="tst-lvl{% if _is_plat %} plat{% else %} gold{% endif %}">{% if _is_plat %}PLATINUM{% else %}SHARP FREE{% endif %}</span><span class="tst-meta">{% if _is_plat %}Platinum{% else %}Sharp Free{% endif %} play · {{ _j.liga }}</span></div>
           <div class="tst-pick">{{ _nick }} {% if _j.bettype == 'Moneyline' %}ML{% else %}{{ _j.bettype }}{% endif %} ({{ _j.cuota_texto or _j.cuota }})</div>
           <div class="tst-match">{{ _j.abbr }} vs {{ _j.opp_abbr }}</div>
         </div>
