@@ -13558,6 +13558,32 @@ def stripe_webhook():
             db.commit()
             _auditar(email, f"Elite activada ({origen}, sub {(sub_id or 'n/a')[:20]})"
                      + (" [reproceso]" if duplicado else ""))
+            # Aviso al correo del negocio (pedido Alex 2026-10-30): cada
+            # activación Platinum NUEVA (cliente nuevo de Stripe) queda en el
+            # panel Gerenciales y le llega por email al ADMIN_EMAIL, igual
+            # que los miembros nuevos y las cancelaciones. Las renovaciones
+            # (era_nuevo=False) y los reprocesos de Stripe no avisan.
+            if era_nuevo and not duplicado:
+                try:
+                    log_notificacion(db, "platinum",
+                                     f"New Platinum: {row['nombre'] or email}", email)
+                except Exception:
+                    pass
+                _dest = admin_email()
+                if _dest:
+                    _subj = f"The Sharp Team: new Platinum — {row['nombre'] or email}"
+                    _txt = (f"A new Platinum subscription was activated:\n\n"
+                            f"Name: {row['nombre'] or ''}\n"
+                            f"Email: {email}\n"
+                            f"Via: {origen}\n"
+                            f"Date: {datetime.now(TZ).strftime('%Y-%m-%d %H:%M %Z')}\n")
+                    def _send_platinum_admin(_d=_dest, _s=_subj, _t=_txt):
+                        try:
+                            _dispatch_email(_d, _s, _t)
+                        except Exception:
+                            pass
+                    import threading
+                    threading.Thread(target=_send_platinum_admin, daemon=True).start()
             # Pedido Alex 2026-09-30: al pagar le llega el email bonito de
             # bienvenida (WELCOME_HTML: todo lo incluido en la membresía +
             # botones directos al Dashboard). Solo en activaciones nuevas.
