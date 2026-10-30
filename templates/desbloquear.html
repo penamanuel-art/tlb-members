@@ -136,7 +136,7 @@
     <div class="upl-value">Buying tools like these one by one adds up fast. Here it is one membership: <b>all of it — plays, boards and tracker — for $1 your first week.</b></div>
   </div>
 
-  <div class="upl-card">
+  <div class="upl-card" id="upl-buy">
     <span class="upl-pill">7-DAY FULL ACCESS</span>
     <p class="upl-price"><span class="big">$1</span> for your first 7 days</p>
     <p class="upl-then">Then $15.99/week · cancel anytime</p>
@@ -175,6 +175,84 @@
     <div class="upl-emailnote"><b>Important:</b> check out with the same email as your member account — that's how your Platinum access turns on automatically, today.</div>
     <p class="upl-record">★ Official record {{ board.record }} ({{ board.win_rate }}%) · every ticket graded in public</p>
   </div>
+
+  {# === Tarjetas de planes (2026-10-29, diseño aprobado por Alex) ===
+     Miembro gratis: ve las DOS (Platinum como oferta de desbloqueo +
+     Sharp Free como su estado). Con Platinum esta rama ni se renderiza
+     (arriba sale "Your Platinum access is active"). Anónimo: solo la
+     tarjeta Platinum; la de estado gratis exige sesión (not anonimo). #}
+  <style>
+  .pln-head{margin:26px 0 0;text-align:center}
+  .pln-head h2{margin:0;font-size:20px;font-weight:800;color:#fff}
+  .pln-head p{margin:6px 0 0;font-size:13px;color:#A3AAB6}
+  .pln-card{border-radius:20px;padding:24px 22px 20px;margin:18px 0 0}
+  .pln-plat{background:#101319;border:1.5px solid #e8c766}
+  .pln-free{background:#1D2029;border:1px solid #2C303C}
+  .pln-top{display:flex;justify-content:space-between;align-items:center}
+  .pln-kick{font-size:12.5px;font-weight:800;letter-spacing:2.2px;color:#A3AAB6}
+  .pln-plat .pln-kick{color:#e8c766}
+  .pln-badge{background:#e8c766;color:#111;font-size:11.5px;font-weight:900;letter-spacing:.6px;padding:6px 10px;border-radius:8px}
+  .pln-badge-free{background:#11CB87;color:#06281B}
+  .pln-price{font-size:44px;font-weight:900;color:#fff;margin:14px 0 2px}
+  .pln-price small{font-size:15px;font-weight:600;color:#A3AAB6}
+  .pln-tag{font-size:14.5px;color:#C6CBD6;line-height:1.45;margin:6px 0}
+  .pln-list{list-style:none;margin:8px 0 0;padding:0}
+  .pln-list li{font-size:14.5px;line-height:1.4;color:#EDEFF4;padding:11px 0 11px 30px;position:relative;border-top:1px solid rgba(255,255,255,.07)}
+  .pln-list li::before{content:"✓";position:absolute;left:2px;top:10px;font-weight:900;color:#11CB87}
+  .pln-plat .pln-list li::before{color:#e8c766}
+  .pln-cta{display:block;text-align:center;text-decoration:none;font-size:16.5px;font-weight:800;padding:15px;border-radius:12px;margin-top:18px}
+  .pln-cta-plat{background:#0E9E66;color:#fff}
+  .pln-status{background:#EDEFF4;color:#11141A;cursor:default}
+  .pln-fine{font-size:12.5px;color:#8B93A3;text-align:center;margin-top:12px;line-height:1.45}
+  </style>
+
+  <div class="pln-head">
+    <h2>Two ways to run with the Team</h2>
+    <p>Every play tracked. Every result public. Pick your level.</p>
+  </div>
+
+  <div class="pln-card pln-plat">
+    <div class="pln-top">
+      <span class="pln-kick">PLATINUM · WEEKLY</span>
+      <span class="pln-badge">FIRST WEEK $1</span>
+    </div>
+    <div class="pln-price">$15.99 <small>/ week</small></div>
+    <p class="pln-tag">Unlock the complete card — every official play and every tool we run, with nothing held back.</p>
+    <ul class="pln-list">
+      <li>Every official Platinum play, posted before game time</li>
+      <li>The verified ticket on every play — the real slip, always</li>
+      <li>The full card: Platinum plays + the Sharp Free plays</li>
+      <li>+EV Board — best price across 12 books against the fair line</li>
+      <li>Player Props board — included in Platinum</li>
+      <li>AI Assistant — check any price and review your bets</li>
+      <li>Line Moves and Sharp Money boards</li>
+      <li>Private Telegram channel for Platinum members</li>
+      <li>The full record — every play counted, win or loss</li>
+    </ul>
+    <a class="pln-cta pln-cta-plat" href="#upl-buy">Unlock Platinum →</a>
+    <p class="pln-fine">$1 for your first week, then $15.99/week. Cancel anytime.</p>
+  </div>
+
+  {% if not anonimo %}
+  <div class="pln-card pln-free">
+    <div class="pln-top">
+      <span class="pln-kick">SHARP FREE</span>
+      <span class="pln-badge pln-badge-free">$0 FOREVER</span>
+    </div>
+    <div class="pln-price">$0</div>
+    <p class="pln-tag">The daily showcase. Free plays on your Dashboard, on the days the board finds value.</p>
+    <ul class="pln-list">
+      <li>Sharp Free plays on your Dashboard</li>
+      <li>Free Telegram channel — the public card</li>
+      <li>The full record — every official play, tracked</li>
+      <li>Record by league, updated daily</li>
+      <li>Yesterday's results, win or loss</li>
+      <li>Daily Check-In and the Masterclass lessons</li>
+    </ul>
+    <div class="pln-cta pln-status">✓ You're on Sharp Free</div>
+    <p class="pln-fine">This is your plan — you already have access to everything on this card.</p>
+  </div>
+  {% endif %}
 
   {% if stripe_embed_ok and not anonimo %}
   <script src="https://js.stripe.com/v3"></script>
