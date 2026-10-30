@@ -408,7 +408,7 @@
           {% if card_pendiente %}
           <b>Today's card is not posted yet</b><span>Check back when the card drops — with a push the moment it goes live.</span>
           {% else %}
-          <b>Today's card is posted</b><span>{{ plays|length }} {% if plays|length == 1 %}play{% else %}plays{% endif %} today — {{ plays|selectattr('nivel','equalto','ELITE')|list|length }} Platinum, {{ plays|selectattr('nivel','equalto','GOLD')|list|length }} Sharp Free.<br>Live on your Dashboard right now.</span>
+          <b>Today's card is posted</b><span>{{ plays|length }} {% if plays|length == 1 %}play{% else %}plays{% endif %} today — {{ plays|selectattr('nivel','equalto','ELITE')|list|length }} Platinum, {{ plays|selectattr('nivel','equalto','GOLD')|list|length }} Sharp Free plays.<br>Live on your Dashboard right now.</span>
           {% endif %}
         </div>
         <div class="arr">›</div>
