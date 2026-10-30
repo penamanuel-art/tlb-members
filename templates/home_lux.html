@@ -451,7 +451,7 @@
   {% if plats %}
   {% for p in plats %}
   {% if p.nivel in ['ELITE','PLATINUM'] and not miembro_platinum %}
-  {% include "_play_card_locked.html" %}
+  {# Tarjeta bloqueada ELIMINADA del home (orden de Alex 2026-10-29): el miembro gratis solo ve sus jugadas gratis; la oferta Platinum queda en la tarjeta ancha de abajo y en /desbloquear-platinum con las tarjetas nuevas. #}
   {% else %}
   {% include "_play_card_v5.html" %}
   {% endif %}
