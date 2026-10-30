@@ -5692,6 +5692,45 @@ def _stripe_subscription_info(user):
         return None
 
 
+def _stripe_set_cancel_at_period_end(user, cancel=True):
+    """Aplica (o revierte) en Stripe la cancelación al final del período de
+    la suscripción del miembro (2026-10-30, orden de Alex: si el cliente
+    pide cancelar, no se le cobra más — sin que nadie tenga que procesarla
+    a mano). Nunca rompe: devuelve True solo si Stripe confirmó el cambio."""
+    if not stripe_configurado() or not user:
+        return False
+    sub_id = ""
+    try:
+        sub_id = (user["stripe_subscription_id"] or "").strip()
+    except Exception:
+        sub_id = ""
+    if not sub_id:
+        try:
+            customer_id = (user["stripe_customer_id"] or "").strip()
+        except Exception:
+            customer_id = ""
+        if not customer_id:
+            return False
+        try:
+            import stripe
+            stripe.api_key = STRIPE_SECRET_KEY
+            subs = stripe.Subscription.list(customer=customer_id, limit=1)
+            if not subs or not subs.data:
+                return False
+            sub_id = subs.data[0].get("id") or ""
+        except Exception:
+            return False
+    if not sub_id:
+        return False
+    try:
+        import stripe
+        stripe.api_key = STRIPE_SECRET_KEY
+        stripe.Subscription.modify(sub_id, cancel_at_period_end=bool(cancel))
+        return True
+    except Exception:
+        return False
+
+
 def _stripe_payment_history(user, limit=20):
     """Historial de pagos (facturas de Stripe) para la pestaña Payments de
     /cuenta (2026-10-12). Devuelve lista de dicts; [] ante cualquier fallo."""
@@ -6110,6 +6149,9 @@ def cuenta_cancelar():
             except Exception:
                 _nm, _em = "?", ""
             log_notificacion(db, "cancelacion", f"Miembro pidió cancelar: {_nm}", _em or "")
+            # Automático (2026-10-30, orden de Alex): la petición se aplica
+            # también en Stripe al final del período — no se le cobra más.
+            _stripe_set_cancel_at_period_end(user, True)
             flash("Your membership has been cancelled. No further charges.", "ok")
         return redirect(url_for("cuenta"))
     if user and user["cancel_requested_at"]:
@@ -6122,8 +6164,13 @@ def cuenta_cancelar():
 def cuenta_reactivar():
     """Deshace una cancelación solicitada por el propio miembro."""
     db = get_db()
+    user = current_user()
     db.execute("UPDATE users SET cancel_requested_at = NULL WHERE id = ?", (session["user_id"],))
     db.commit()
+    # Reversa automática en Stripe (2026-10-30): si la cancelación ya se
+    # había programado al final del período, se retira.
+    if user:
+        _stripe_set_cancel_at_period_end(user, False)
     flash("Welcome back — your membership is active again.", "ok")
     return redirect(url_for("cuenta"))
 
@@ -9812,6 +9859,28 @@ def log_notificacion(db, tipo, titulo, detalle=""):
         db.commit()
     except Exception:
         pass
+    # Email a Alex (2026-10-30, pedido de Alex): las cancelaciones también
+    # le llegan por email, no solo al panel Gerenciales. Hilo aparte y
+    # silencioso ante fallos, igual que notify_new_member.
+    if tipo == "cancelacion":
+        try:
+            dest = admin_email()
+            if dest:
+                subject = f"The Sharp Team: {titulo}"
+                text = (f"{titulo}\n\n"
+                        f"Member: {detalle}\n"
+                        f"Date: {datetime.now(TZ).strftime('%Y-%m-%d %H:%M %Z')}\n")
+
+                def _send_cancel_email():
+                    try:
+                        _dispatch_email(dest, subject, text)
+                    except Exception:
+                        pass
+
+                import threading
+                threading.Thread(target=_send_cancel_email, daemon=True).start()
+        except Exception:
+            pass
 
 
 def _value_stats_for_admin(db):
