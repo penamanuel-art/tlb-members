@@ -6199,23 +6199,51 @@ def send_cancellation_confirmed_email(nombre, email, fecha_fin_txt=None):
             f"If you change your mind before then, you can reactivate in "
             f"one tap from your Account page and everything stays the same.\n\n"
             f"- The Sharp Team\n")
+    acceso_caja = fecha_fin_txt if fecha_fin_txt else "End of your current period"
     html = (
-        '<div style="margin:0;padding:24px;background:#ffffff;'
+        '<div style="margin:0;padding:28px 16px;background:#ffffff;'
         'font-family:Arial,Helvetica,sans-serif;color:#10141f;">'
-        '<div style="max-width:480px;margin:0 auto;">'
-        '<p style="font-size:20px;font-weight:700;margin:0 0 12px;">'
+        '<div style="max-width:520px;margin:0 auto;border:1px solid #e3e6ec;'
+        'border-radius:14px;padding:28px 26px;">'
+        '<div style="text-align:center;margin:0 0 6px;">'
+        '<img src="https://www.thesharpteam.bet/static/img/sharp-team-logo.png" '
+        'alt="The Sharp Team" width="190" style="max-width:190px;height:auto;">'
+        '</div>'
+        '<div style="height:3px;background:#c9a227;border-radius:2px;'
+        'margin:14px 0 20px;"></div>'
+        '<p style="font-size:21px;font-weight:700;margin:0 0 12px;">'
         'Your cancellation is confirmed</p>'
         f'<p style="font-size:15px;line-height:1.55;margin:0 0 12px;">{saludo}</p>'
-        '<p style="font-size:15px;line-height:1.55;margin:0 0 12px;">'
+        '<p style="font-size:15px;line-height:1.55;margin:0 0 16px;">'
         f"We've processed your cancellation. Your Platinum subscription is "
         f"set to cancel{hasta}, and <b>you will not be charged again</b>.</p>"
-        f'<p style="font-size:15px;line-height:1.55;margin:0 0 12px;">{acceso}</p>'
-        '<p style="font-size:15px;line-height:1.55;margin:0 0 12px;">'
-        'If you change your mind before then, you can reactivate in one tap '
-        'from your <a href="https://www.thesharpteam.bet/cuenta">Account '
-        'page</a> and everything stays the same.</p>'
-        '<p style="color:#5b6472;font-size:13px;margin:16px 0 0;">'
-        '- The Sharp Team</p>'
+        '<div style="background:#f6f7f9;border:1px solid #e3e6ec;'
+        'border-radius:10px;padding:14px 16px;margin:0 0 16px;">'
+        '<p style="font-size:14px;line-height:1.5;margin:0 0 6px;">'
+        '<span style="color:#5b6472;">Plan:</span> <b>Platinum</b></p>'
+        '<p style="font-size:14px;line-height:1.5;margin:0 0 6px;">'
+        '<span style="color:#5b6472;">Status:</span> '
+        '<b>Cancellation scheduled</b></p>'
+        '<p style="font-size:14px;line-height:1.5;margin:0 0 6px;">'
+        f'<span style="color:#5b6472;">Access until:</span> <b>{acceso_caja}</b></p>'
+        '<p style="font-size:14px;line-height:1.5;margin:0;">'
+        '<span style="color:#5b6472;">Next charge:</span> <b>None</b></p>'
+        '</div>'
+        f'<p style="font-size:15px;line-height:1.55;margin:0 0 18px;">{acceso}</p>'
+        '<div style="text-align:center;margin:0 0 18px;">'
+        '<a href="https://www.thesharpteam.bet/cuenta" '
+        'style="display:inline-block;background:#0e9e66;color:#ffffff;'
+        'font-size:15px;font-weight:700;text-decoration:none;'
+        'padding:12px 26px;border-radius:9px;">Reactivate my membership</a>'
+        '</div>'
+        '<p style="font-size:14px;line-height:1.55;margin:0 0 4px;">'
+        'If you change your mind before your access ends, one tap on the '
+        'button above reactivates everything and nothing changes.</p>'
+        '<p style="color:#5b6472;font-size:12px;line-height:1.5;'
+        'margin:20px 0 0;border-top:1px solid #e3e6ec;padding-top:12px;">'
+        'The Sharp Team · thesharpteam.bet<br>'
+        "You're receiving this email because a cancellation was requested "
+        'on your account.</p>'
         '</div></div>')
 
     def _send():
