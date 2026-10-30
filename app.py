@@ -4137,13 +4137,10 @@ def _public_stats():
     return wins, losses, total, roi
 
 
-@app.route("/about")
-def about_page():
-    """Páginas públicas About (2026-10-29, pedido por Alex tras explorar el
-    About de WGT): estructura espejo, contenido y palabras 100% nuestras."""
-    return render_template("about.html")
-
-
+# Páginas públicas About (2026-10-29, pedido por Alex tras explorar el About
+# de WGT): /about y /contact YA existían (about() y contact_page()); aquí solo
+# van las rutas NUEVAS. Duplicar contact_page tumbó el deploy del 23:45 —
+# nunca redefinir un endpoint existente.
 @app.route("/how-to-verify")
 def verify_page():
     return render_template("verify.html")
@@ -4152,11 +4149,6 @@ def verify_page():
 @app.route("/faqs")
 def faqs_page():
     return render_template("faqs.html")
-
-
-@app.route("/contact")
-def contact_page():
-    return render_template("contact.html")
 
 
 @app.route("/testimonials")
