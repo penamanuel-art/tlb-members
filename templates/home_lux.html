@@ -290,7 +290,7 @@
   </div>
 </div>
 <script>
-(function(){var w=document.getElementById('ckWrap');if(!w)return;var today;try{today=new Intl.DateTimeFormat('en-CA',{timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());}catch(e){today=new Date().toDateString();}var seen=null;try{seen=localStorage.getItem('ck_last');}catch(e){}if(seen===today){w.style.display='none';return;}document.body.style.overflow='hidden';document.getElementById('ckEnter').addEventListener('click',function(){try{localStorage.setItem('ck_last',today);}catch(e){}w.style.display='none';document.body.style.overflow='';});})();
+(function(){var w=document.getElementById('ckWrap');if(!w)return;var seen=null;try{seen=sessionStorage.getItem('ck_seen');}catch(e){}if(seen){w.style.display='none';return;}document.body.style.overflow='hidden';document.getElementById('ckEnter').addEventListener('click',function(){try{sessionStorage.setItem('ck_seen','1');}catch(e){}w.style.display='none';document.body.style.overflow='';});})();
 </script>
 
 <div class="phone">
