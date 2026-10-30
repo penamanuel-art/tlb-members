@@ -779,6 +779,9 @@
 .tst-stickyhead{padding-top:8px;padding-bottom:8px}
 .tst-stickyhead .topbar{margin-bottom:7px}
 .pillrow{margin-bottom:6px}
+/* Panel de notificaciones con scroll propio (2026-10-30, reporte de Alex:
+   al abrirlo y deslizar, se movía el home de atrás y no el panel) */
+#tst-notif-panel{max-height:52dvh;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
 </style>
 {% if show_rate_bubble %}
 <div id="rate-bubble" style="display:none;position:fixed;right:14px;bottom:96px;z-index:1500;background:#151A26;border:1px solid #e8c766;border-radius:16px;padding:12px 14px;box-shadow:0 14px 34px rgba(0,0,0,.55);max-width:292px;">
