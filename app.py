@@ -930,13 +930,13 @@ def _activation_shell(titulo, cuerpo, boton, nota, link, lang="en"):
     recordatorio; los textos llegan de cada función."""
     if lang == "es":
         eyebrow = "UN ÚLTIMO PASO"
-        checks = ("Tus jugadas Gold se activan de inmediato",
+        checks = ("Tus jugadas Sharp Free se activan de inmediato",
                   "Tu Dashboard se abre en cuanto activas tu cuenta",
                   "Platinum empieza por $1 cuando quieras")
         o_abre = "O abre este enlace:"
     else:
         eyebrow = "ONE LAST STEP"
-        checks = ("Your Gold plays go live right away",
+        checks = ("Your Sharp Free plays go live right away",
                   "Your Dashboard opens the moment you activate",
                   "Platinum starts for $1 whenever you're ready")
         o_abre = "Or open this link:"
@@ -983,14 +983,14 @@ def send_activation_email(nombre: str, email: str, token: str, lang: str = "en")
         subject = "Activa tu cuenta de The Sharp Team"
         titulo = "Activa tu cuenta"
         cuerpo = (f"Hola {nombre} — toca el botón para activar tu cuenta de "
-                  "The Sharp Team. Tus jugadas Gold y tu Dashboard quedan "
+                  "The Sharp Team. Tus jugadas Sharp Free y tu Dashboard quedan "
                   "activos en el momento en que activas — y Platinum "
                   "empieza por $1 cuando quieras.")
         boton = "ACTIVAR MI CUENTA"
         nota = ("¿No se creó esta cuenta con tu correo? Ignora este mensaje "
                 "y la cuenta nunca se activará.")
         texto = (f"Hola {nombre},\n\nActiva tu cuenta de The Sharp Team "
-                 f"tocando este enlace:\n{link}\n\nTus jugadas Gold quedan "
+                 f"tocando este enlace:\n{link}\n\nTus jugadas Sharp Free quedan "
                  "activas al activar, y Platinum empieza por $1 cuando "
                  "quieras. Si no creaste esta cuenta, ignora "
                  "este mensaje.\n\nThe Sharp Team")
@@ -998,14 +998,14 @@ def send_activation_email(nombre: str, email: str, token: str, lang: str = "en")
         subject = "Activate your The Sharp Team account"
         titulo = "Activate your account"
         cuerpo = (f"Hi {nombre} — tap the button to activate your "
-                  "The Sharp Team account. Your Gold plays and your "
+                  "The Sharp Team account. Your Sharp Free plays and your "
                   "Dashboard go live the moment you activate — and "
                   "Platinum starts for $1 whenever you're ready.")
         boton = "ACTIVATE MY ACCOUNT"
         nota = ("Didn't create this account? Ignore this email and the "
                 "account will never be activated.")
         texto = (f"Hi {nombre},\n\nActivate your The Sharp Team account by "
-                 f"opening this link:\n{link}\n\nYour Gold plays go live "
+                 f"opening this link:\n{link}\n\nYour Sharp Free plays go live "
                  "when you activate, and Platinum starts for $1 whenever "
                  "you're ready. If you didn't create this "
                  "account, ignore this email.\n\nThe Sharp Team")
@@ -1035,14 +1035,14 @@ def send_activation_reminder_email(nombre: str, email: str, token: str, lang: st
         titulo = "Tu cuenta aún no está activa"
         cuerpo = (f"Hola {nombre} — creaste tu cuenta de The Sharp Team pero "
                   "todavía no la has confirmado. Toca el botón para confirmar "
-                  "tu correo y activar tu cuenta: tus jugadas Gold quedan "
+                  "tu correo y activar tu cuenta: tus jugadas Sharp Free quedan "
                   "activas en ese momento, y Platinum empieza por $1.")
         boton = "CONFIRMAR MI CUENTA"
         nota = ("¿No se creó esta cuenta con tu correo? Ignora este mensaje "
                 "y la cuenta nunca se activará.")
         texto = (f"Hola {nombre},\n\nCreaste tu cuenta de The Sharp Team pero "
                  f"todavía no la has confirmado. Confírmala aquí:\n{link}\n\n"
-                 "Tus jugadas Gold quedan activas al confirmar, y Platinum "
+                 "Tus jugadas Sharp Free quedan activas al confirmar, y Platinum "
                  "empieza por $1 cuando quieras. Si no "
                  "creaste esta cuenta, ignora este mensaje.\n\nThe Sharp Team")
     else:
@@ -1050,14 +1050,14 @@ def send_activation_reminder_email(nombre: str, email: str, token: str, lang: st
         titulo = "Your account is not active yet"
         cuerpo = (f"Hi {nombre} — you created your The Sharp Team account but "
                   "haven't confirmed it yet. Tap the button to confirm your "
-                  "email and activate your account: your Gold plays go "
+                  "email and activate your account: your Sharp Free plays go "
                   "live the moment you do, and Platinum starts for $1.")
         boton = "CONFIRM MY ACCOUNT"
         nota = ("Didn't create this account? Ignore this email and the "
                 "account will never be activated.")
         texto = (f"Hi {nombre},\n\nYou created your The Sharp Team account but "
                  f"haven't confirmed it yet. Confirm it here:\n{link}\n\n"
-                 "Your Gold plays go live when you confirm, and Platinum "
+                 "Your Sharp Free plays go live when you confirm, and Platinum "
                  "starts for $1 whenever you're ready. If you "
                  "didn't create this account, ignore this email.\n\nThe Sharp Team")
     html = _activation_shell(titulo, cuerpo, boton, nota, link, lang)
