@@ -914,17 +914,17 @@ def _turnstile_ok() -> bool:
 
 _ACTIVATION_FOOTER = """<tr><td style="background:#ffffff;border-top:1px solid #e2e8f0;border-radius:0 0 16px 16px;padding:22px 24px 20px;text-align:center;">
 <img src="https://www.thesharpteam.bet/static/img/sharp-team-logo.png" width="76" alt="The Sharp Team" style="display:block;margin:0 auto 8px;">
-<div style="font-size:13.5px;font-weight:800;color:#0f172a;letter-spacing:1.5px;">THE SHARP TEAM</div>
-<div style="font-size:11.2px;color:#64748b;margin-top:5px;">250 Park Avenue, Suite 1800, New York, NY 10017 &middot; (551) 326-3312</div>
+<div style="font-size:11.5px;font-weight:800;color:#0f172a;letter-spacing:1.5px;">THE SHARP TEAM</div>
+<div style="font-size:9.5px;color:#64748b;margin-top:5px;">250 Park Avenue, Suite 1800, New York, NY 10017 &middot; (551) 326-3312</div>
 <div style="margin-top:12px;">
 <a href="https://www.instagram.com/the_sharp_team" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/instagram.png" width="30" height="30" alt="Instagram" style="border:0;margin:0 6px;"></a>
 <a href="https://x.com/thesharpteambet" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/x.png" width="30" height="30" alt="X" style="border:0;margin:0 6px;"></a>
 <a href="https://t.me/thesharpteam" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/telegram.png" width="30" height="30" alt="Telegram" style="border:0;margin:0 6px;"></a>
 </div>
-<div style="font-size:10.3px;color:#64748b;line-height:1.5;margin-top:12px;">21+. Play responsibly. If you or someone you know has a gambling problem, call or text 1-800-GAMBLER.</div>
-<div style="font-size:10.3px;color:#64748b;margin-top:8px;">Don't want these emails anymore? <a href="{{{RESEND_UNSUBSCRIBE_URL}}}" style="color:#64748b;text-decoration:underline;">Unsubscribe</a> — one click, no questions asked.</div>
-<div style="font-size:10.3px;margin-top:8px;"><a href="https://www.thesharpteam.bet/terms" style="color:#64748b;">Terms</a> &middot; <a href="https://www.thesharpteam.bet/privacy" style="color:#64748b;">Privacy Policy</a></div>
-<div style="font-size:9.9px;color:#94a3b8;margin-top:6px;">&copy; 2026 The Sharp Team. All rights reserved.</div>
+<div style="font-size:8.8px;color:#64748b;line-height:1.5;margin-top:12px;">21+. Play responsibly. If you or someone you know has a gambling problem, call or text 1-800-GAMBLER.</div>
+<div style="font-size:8.8px;color:#64748b;margin-top:8px;">Don't want these emails anymore? <a href="{{{RESEND_UNSUBSCRIBE_URL}}}" style="color:#64748b;text-decoration:underline;">Unsubscribe</a> — one click, no questions asked.</div>
+<div style="font-size:8.8px;margin-top:8px;"><a href="https://www.thesharpteam.bet/terms" style="color:#64748b;">Terms</a> &middot; <a href="https://www.thesharpteam.bet/privacy" style="color:#64748b;">Privacy Policy</a></div>
+<div style="font-size:8.4px;color:#94a3b8;margin-top:6px;">&copy; 2026 The Sharp Team. All rights reserved.</div>
 </td></tr>"""
 
 
@@ -946,7 +946,7 @@ def _activation_shell(titulo, cuerpo, boton, nota, link, lang="en"):
                   "Platinum starts for $1 whenever you're ready")
         o_abre = "Or open this link:"
     checks_html = "".join(
-        f'<tr><td style="font-size:13.1px;color:#065f46;padding:3px 0;">&#10003;&nbsp; {c}</td></tr>'
+        f'<tr><td style="font-size:11.1px;color:#065f46;padding:3px 0;">&#10003;&nbsp; {c}</td></tr>'
         for c in checks)
     return f"""<!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
@@ -959,17 +959,17 @@ def _activation_shell(titulo, cuerpo, boton, nota, link, lang="en"):
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:16px 0 0;"><tr><td bgcolor="#9ff7d4" height="3" style="height:3px;font-size:0;line-height:0;border-top-left-radius:3px;border-top-right-radius:3px;">&nbsp;</td></tr><tr><td bgcolor="#2ee6a8" height="6" style="height:6px;font-size:0;line-height:0;">&nbsp;</td></tr><tr><td bgcolor="#0b8a5f" height="3" style="height:3px;font-size:0;line-height:0;border-bottom-left-radius:3px;border-bottom-right-radius:3px;">&nbsp;</td></tr></table>
   </td></tr>
   <tr><td style="background:#ffffff;padding:22px 28px 6px;text-align:center;">
-    <div style="color:#b45309;font-size:10.3px;font-weight:800;letter-spacing:2px;">{eyebrow}</div>
-    <div style="font-size:22.5px;font-weight:900;color:#0f172a;margin-top:8px;">{titulo}</div>
-    <p style="font-size:13.5px;line-height:1.6;color:#334155;margin:14px 0 0;">{cuerpo}</p>
+    <div style="color:#b45309;font-size:8.8px;font-weight:800;letter-spacing:2px;">{eyebrow}</div>
+    <div style="font-size:19.1px;font-weight:900;color:#0f172a;margin-top:8px;">{titulo}</div>
+    <p style="font-size:11.5px;line-height:1.6;color:#334155;margin:14px 0 0;">{cuerpo}</p>
     <table role="presentation" cellpadding="0" cellspacing="0" align="center" style="margin:18px auto 2px;text-align:left;">
       {checks_html}
     </table>
     <div style="padding:20px 0 4px;">
-      <a href="{link}" style="display:inline-block;background:#059669;color:#ffffff;font-size:13.5px;font-weight:800;padding:14px 36px;border-radius:999px;text-decoration:none;">{boton}</a>
+      <a href="{link}" style="display:inline-block;background:#059669;color:#ffffff;font-size:11.5px;font-weight:800;padding:14px 36px;border-radius:999px;text-decoration:none;">{boton}</a>
     </div>
-    <p style="font-size:10.8px;color:#64748b;margin:12px 0 0;">{o_abre}<br><a href="{link}" style="color:#2563eb;text-decoration:underline;">{link}</a></p>
-    <p style="font-size:10.3px;color:#94a3b8;line-height:1.5;margin:14px 0 0;">{nota}</p>
+    <p style="font-size:9.2px;color:#64748b;margin:12px 0 0;">{o_abre}<br><a href="{link}" style="color:#2563eb;text-decoration:underline;">{link}</a></p>
+    <p style="font-size:8.8px;color:#94a3b8;line-height:1.5;margin:14px 0 0;">{nota}</p>
   </td></tr>
   {_ACTIVATION_FOOTER}
 </table>
@@ -1266,44 +1266,44 @@ WELCOME_BACK_HTML = """<!DOCTYPE html>
 <div style="font-family:Arial,sans-serif;max-width:460px;margin:0 auto;background:#ffffff;">
 <img src="https://www.thesharpteam.bet/static/img/sharp-team-header.jpg" alt="The Sharp Team" width="460" style="width:100%;height:auto;display:block;border:0;">
 <div style="background:#ffffff;padding:14px 0 12px;text-align:center;">
-<p style="margin:0;font-size:11.7px;font-weight:800;letter-spacing:5px;color:#2e4053;">THE SHARP TEAM</p>
+<p style="margin:0;font-size:9.9px;font-weight:800;letter-spacing:5px;color:#2e4053;">THE SHARP TEAM</p>
 </div>
 <div style="background:#c9a227;padding:28px 24px;text-align:center;">
-<p style="margin:0;font-size:10.8px;font-weight:800;letter-spacing:3px;color:#0a0f1c;">WELCOME BACK</p>
-<h1 style="font-size:27px;font-weight:800;color:#0a0f1c;margin:10px 0 0;line-height:1.25;">Back on track.</h1>
+<p style="margin:0;font-size:9.2px;font-weight:800;letter-spacing:3px;color:#0a0f1c;">WELCOME BACK</p>
+<h1 style="font-size:22.9px;font-weight:800;color:#0a0f1c;margin:10px 0 0;line-height:1.25;">Back on track.</h1>
 </div>
 <div style="text-align:center;padding:16px 20px 0;">
-<p style="color:#555555;font-size:13.5px;line-height:1.6;margin:0;">Hi __NOMBRE__ &mdash; good to have you back. Your Platinum access is live again, right where you left it:</p>
+<p style="color:#555555;font-size:11.5px;line-height:1.6;margin:0;">Hi __NOMBRE__ &mdash; good to have you back. Your Platinum access is live again, right where you left it:</p>
 </div>
 <div style="padding:14px 20px 0;">
 <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 10px;background:#2e4053;border:1px solid #2e4053;border-radius:12px;"><tr>
-<td width="44" style="vertical-align:top;padding:14px 0 14px 16px;"><div style="font-size:21.6px;line-height:1.2;">🎯</div></td>
-<td style="vertical-align:top;padding:14px 16px 14px 4px;"><div style="font-size:12.6px;font-weight:800;color:#ffffff;letter-spacing:1px;">TODAY&rsquo;S CARD IS WAITING</div><div style="font-size:11.7px;color:#c8d0dc;line-height:1.6;margin-top:4px;">Today&rsquo;s official plays &mdash; Sharp Free plus the Platinum &mdash; are live on your dashboard now, each with its original ticket.</div></td>
+<td width="44" style="vertical-align:top;padding:14px 0 14px 16px;"><div style="font-size:18.4px;line-height:1.2;">🎯</div></td>
+<td style="vertical-align:top;padding:14px 16px 14px 4px;"><div style="font-size:10.7px;font-weight:800;color:#ffffff;letter-spacing:1px;">TODAY&rsquo;S CARD IS WAITING</div><div style="font-size:9.9px;color:#c8d0dc;line-height:1.6;margin-top:4px;">Today&rsquo;s official plays &mdash; Sharp Free plus the Platinum &mdash; are live on your dashboard now, each with its original ticket.</div></td>
 </tr></table>
 <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 10px;background:#2e4053;border:1px solid #2e4053;border-radius:12px;"><tr>
-<td width="44" style="vertical-align:top;padding:14px 0 14px 16px;"><div style="font-size:21.6px;line-height:1.2;">📊</div></td>
-<td style="vertical-align:top;padding:14px 16px 14px 4px;"><div style="font-size:12.6px;font-weight:800;color:#ffffff;letter-spacing:1px;">YOUR TRACKER IS INTACT</div><div style="font-size:11.7px;color:#c8d0dc;line-height:1.6;margin-top:4px;">Every play you tracked is still there &mdash; record, ROI and streaks picked up right where they stopped.</div></td>
+<td width="44" style="vertical-align:top;padding:14px 0 14px 16px;"><div style="font-size:18.4px;line-height:1.2;">📊</div></td>
+<td style="vertical-align:top;padding:14px 16px 14px 4px;"><div style="font-size:10.7px;font-weight:800;color:#ffffff;letter-spacing:1px;">YOUR TRACKER IS INTACT</div><div style="font-size:9.9px;color:#c8d0dc;line-height:1.6;margin-top:4px;">Every play you tracked is still there &mdash; record, ROI and streaks picked up right where they stopped.</div></td>
 </tr></table>
 <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 10px;background:#2e4053;border:1px solid #2e4053;border-radius:12px;"><tr>
-<td width="44" style="vertical-align:top;padding:14px 0 14px 16px;"><div style="font-size:21.6px;line-height:1.2;">⚡</div></td>
-<td style="vertical-align:top;padding:14px 16px 14px 4px;"><div style="font-size:12.6px;font-weight:800;color:#ffffff;letter-spacing:1px;">EVERYTHING RESUMES INSTANTLY</div><div style="font-size:11.7px;color:#c8d0dc;line-height:1.6;margin-top:4px;">Push alerts, Telegram channels, the +EV board and the Daily Academy &mdash; all back on, no setup needed.</div></td>
+<td width="44" style="vertical-align:top;padding:14px 0 14px 16px;"><div style="font-size:18.4px;line-height:1.2;">⚡</div></td>
+<td style="vertical-align:top;padding:14px 16px 14px 4px;"><div style="font-size:10.7px;font-weight:800;color:#ffffff;letter-spacing:1px;">EVERYTHING RESUMES INSTANTLY</div><div style="font-size:9.9px;color:#c8d0dc;line-height:1.6;margin-top:4px;">Push alerts, Telegram channels, the +EV board and the Daily Academy &mdash; all back on, no setup needed.</div></td>
 </tr></table>
 </div>
 <div style="margin:14px 20px 0;padding:14px 18px;border-left:3px solid #22c55e;">
-<p style="font-size:13.5px;font-style:italic;line-height:1.7;color:#555555;margin:0;">&ldquo;Every play is posted before game time &mdash; then locked and graded against the final score.&rdquo;</p>
+<p style="font-size:11.5px;font-style:italic;line-height:1.7;color:#555555;margin:0;">&ldquo;Every play is posted before game time &mdash; then locked and graded against the final score.&rdquo;</p>
 </div>
 <div style="text-align:center;padding:18px 20px 0;">
-<a href="https://www.thesharpteam.bet/home" style="display:inline-block;background:#22c55e;color:#111111;font-size:12.6px;font-weight:800;padding:11px 28px;border-radius:999px;text-decoration:none;">ENTER THE DASHBOARD</a>
-<p style="color:#555555;font-size:12.6px;line-height:1.7;margin:14px 0 0;">$1 for the first 7 days &mdash; then $15.99/week.<br>Cancel anytime.</p>
+<a href="https://www.thesharpteam.bet/home" style="display:inline-block;background:#22c55e;color:#111111;font-size:10.7px;font-weight:800;padding:11px 28px;border-radius:999px;text-decoration:none;">ENTER THE DASHBOARD</a>
+<p style="color:#555555;font-size:10.7px;line-height:1.7;margin:14px 0 0;">$1 for the first 7 days &mdash; then $15.99/week.<br>Cancel anytime.</p>
 </div>
 <div style="text-align:center;padding:20px 20px 14px;">
 <img src="https://www.thesharpteam.bet/static/img/sharp-team-logo.png" alt="The Sharp Team" width="110" style="width:110px;height:auto;display:block;margin:0 auto;border:0;">
-<p style="margin:10px 0 0;color:#111111;font-size:10.8px;font-weight:800;letter-spacing:3px;">THE SHARP TEAM</p>
-<p style="margin:8px 0 0;color:#9ca3af;font-size:9.9px;">250 Park Avenue, Suite 1800, New York, NY 10017</p>
-<p style="margin:4px 0 0;color:#9ca3af;font-size:9.9px;"><a href="tel:+15513263312" style="color:#9ca3af;text-decoration:none;">(551) 326-3312</a></p>
-<p style="margin:12px 0 0;color:#9ca3af;font-size:9px;">21+. Play responsibly. If you or someone you know has a gambling problem, call or text <a href="tel:18004262537" style="color:#9ca3af;text-decoration:underline;">1-800-GAMBLER</a>.</p>
-<p style="margin:8px 0 0;color:#9ca3af;font-size:9px;">Don't want these emails anymore? <a href="{{{RESEND_UNSUBSCRIBE_URL}}}" style="color:#9ca3af;text-decoration:underline;">Unsubscribe</a> — one click, no questions asked.</p>
-<p style="margin:6px 0 0;color:#9ca3af;font-size:9px;">&copy; 2026 The Sharp Team</p>
+<p style="margin:10px 0 0;color:#111111;font-size:9.2px;font-weight:800;letter-spacing:3px;">THE SHARP TEAM</p>
+<p style="margin:8px 0 0;color:#9ca3af;font-size:8.4px;">250 Park Avenue, Suite 1800, New York, NY 10017</p>
+<p style="margin:4px 0 0;color:#9ca3af;font-size:8.4px;"><a href="tel:+15513263312" style="color:#9ca3af;text-decoration:none;">(551) 326-3312</a></p>
+<p style="margin:12px 0 0;color:#9ca3af;font-size:7.6px;">21+. Play responsibly. If you or someone you know has a gambling problem, call or text <a href="tel:18004262537" style="color:#9ca3af;text-decoration:underline;">1-800-GAMBLER</a>.</p>
+<p style="margin:8px 0 0;color:#9ca3af;font-size:7.6px;">Don't want these emails anymore? <a href="{{{RESEND_UNSUBSCRIBE_URL}}}" style="color:#9ca3af;text-decoration:underline;">Unsubscribe</a> — one click, no questions asked.</p>
+<p style="margin:6px 0 0;color:#9ca3af;font-size:7.6px;">&copy; 2026 The Sharp Team</p>
 </div>
 </div>
 </div>
@@ -1372,7 +1372,7 @@ https://www.thesharpteam.bet/home
 Bet responsibly - 21+ - Gambling problem? Call 1-800-GAMBLER (1-800-426-2537): free and confidential help, 24/7.
 """
 
-WELCOME_HTML = '<!DOCTYPE html>\n<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Welcome to The Sharp Team</title></head>\n<body style="margin:0;padding:0;background:#f1f5f9;font-family:-apple-system,Helvetica,Arial,sans-serif;-webkit-text-size-adjust:100%;text-size-adjust:100%;">\n<div style="display:none;font-size:1px;line-height:1px;max-height:0;overflow:hidden;">Welcome to The Sharp Team — You\'re in. Here is how everything works and what to expect today.</div>\n<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f1f5f9;">\n<tr><td align="center" style="padding:0;">\n<table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">\n  <tr><td bgcolor="#ffffff" style="background:#ffffff;padding:26px 22px 8px;">\n    <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>\n      <td valign="middle"><img src="https://www.thesharpteam.bet/static/img/sharp-team-logo.png" width="46" alt="The Sharp Team" style="display:block;"></td>\n      <td valign="middle" style="padding-left:10px;"><div style="color:#0f172a;font-size:14px;font-weight:800;letter-spacing:2px;">THE SHARP TEAM</div><div style="color:#2ee6a8;font-size:9.5px;font-weight:800;letter-spacing:2px;margin-top:1px;">MEMBER DASHBOARD</div></td>\n      <td align="right" valign="middle"><span style="display:inline-block;background:#2ee6a8;color:#04241a;font-size:9px;font-weight:900;letter-spacing:1.5px;padding:5px 11px;border-radius:999px;">&#8226; ACTIVE</span></td>\n    </tr></table>\n    <div style="color:#0f172a;font-size:50.4px;line-height:1.15;font-weight:900;margin-top:22px;">You\'re in.</div>\n    <div style="color:#e8c766;font-size:14.8px;font-weight:700;margin-top:3px;">Welcome to the team.</div>\n    <p style="font-size:13.1px;line-height:1.6;color:#475569;margin:11px 0 0;">In the next few minutes we\'ll walk you through how everything works, what to expect today and where to find every tool, so you can get the most out of your membership from day one.</p>\n    <div style="margin-top:16px;"><a href="https://www.thesharpteam.bet/home" style="display:inline-block;background:#2ee6a8;color:#04241a;font-size:13.1px;font-weight:900;padding:13px 28px;border-radius:999px;text-decoration:none;">OPEN TODAY\'S CARD &rarr;</a></div>\n    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" bgcolor="#f8fafc" style="background:rgba(15,23,42,0.03);border:1px solid #e2e8f0;border-radius:20px;margin-top:20px;">\n      <tr>\n        <td width="33%" style="padding:13px 4px 11px;text-align:center;"><div style="color:#0f172a;font-size:18px;font-weight:900;white-space:nowrap;">__LAST_WEEK_RECORD__</div><div style="color:#64748b;font-size:9px;font-weight:700;letter-spacing:1.5px;margin-top:2px;">LAST WEEK</div></td>\n        <td width="34%" style="padding:13px 4px 11px;text-align:center;border-left:1px solid #e2e8f0;border-right:1px solid #e2e8f0;"><div style="color:#2ee6a8;font-size:18px;font-weight:900;white-space:nowrap;">__LAST_WEEK_UNITS__</div><div style="color:#64748b;font-size:9px;font-weight:700;letter-spacing:1.5px;margin-top:2px;">UNITS</div></td>\n        <td width="33%" style="padding:13px 4px 11px;text-align:center;"><div style="color:#0f172a;font-size:18px;font-weight:900;white-space:nowrap;">__LAST_WEEK_RATE__</div><div style="color:#64748b;font-size:9px;font-weight:700;letter-spacing:1.5px;margin-top:2px;">WIN RATE</div></td>\n      </tr>\n    </table>\n    <div style="font-size:10.3px;color:#64748b;margin-top:9px;">Program totals: __TOTAL_RECORD__ &middot; __TOTAL_UNITS__ &middot; __TOTAL_RATE__ win rate &middot; 1u = $100 &middot; Graded publicly. Past results do not guarantee future performance.</div>\n  </td></tr>\n  <tr><td bgcolor="#ffffff" style="background:#ffffff;padding:16px 22px 0;">\n    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" bgcolor="#f8fafc" style="background:rgba(15,23,42,0.03);border:1px solid #e2e8f0;border-radius:20px;">\n      <tr><td style="padding:16px 18px;">\n        <div style="color:#e8c766;font-size:9.9px;font-weight:800;letter-spacing:2.5px;">A NOTE FROM THE TEAM</div>\n        <div style="color:#0f172a;font-size:16.7px;font-weight:900;margin-top:6px;">Why we do everything in public</div>\n        <p style="font-size:13.1px;line-height:1.6;color:#475569;margin:9px 0 0;">Anyone can post winners after the fact. We built The Sharp Team around the opposite idea: every play is posted before game time, backed by a verified ticket, and graded in public, wins and losses alike.</p>\n        <p style="font-size:13.1px;line-height:1.6;color:#475569;margin:9px 0 0;">That means you never have to take our word for it. The full record is open, ticket by ticket. Your job is simple: read the card, compare prices, and decide what fits your plan.</p>\n        <div style="font-size:13.1px;color:#0f172a;margin-top:11px;"><b>&mdash; The Sharp Team</b></div>\n      </td></tr>\n    </table>\n  </td></tr>\n  <tr><td bgcolor="#ffffff" style="background:#ffffff;padding:18px 22px 0;">\n    <div style="color:#e8c766;font-size:9.9px;font-weight:800;letter-spacing:2.5px;">YOUR TOOLBOX</div>\n    <div style="color:#0f172a;font-size:18px;font-weight:900;margin-top:5px;">Everything you now have access to</div>\n    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:12px;">\n      <tr><td bgcolor="#f8fafc" style="background:rgba(15,23,42,0.03);border:1px solid #e2e8f0;border-left:6px solid #2ee6a8;border-radius:16px;padding:13px 16px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td width="44" valign="top"><span style="display:inline-block;background:#e8c766;color:#1a1405;font-size:11.2px;font-weight:900;padding:6px 9px;border-radius:9px;">01</span></td><td valign="top"><div style="font-size:14.4px;font-weight:900;color:#0f172a;">Today\'s Card</div><div style="font-size:12.2px;line-height:1.5;color:#475569;margin-top:3px;">Our official plays, posted every day at 1:00&zwnj; PM ET. The heart of your membership.</div></td></tr></table></td></tr>\n      <tr><td style="height:14px;line-height:14px;font-size:12.6px;mso-line-height-rule:exactly;">&nbsp;</td></tr>\n      <tr><td bgcolor="#f8fafc" style="background:rgba(15,23,42,0.03);border:1px solid #e2e8f0;border-left:6px solid #2ee6a8;border-radius:16px;padding:13px 16px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td width="44" valign="top"><span style="display:inline-block;background:#e8c766;color:#1a1405;font-size:11.2px;font-weight:900;padding:6px 9px;border-radius:9px;">02</span></td><td valign="top"><div style="font-size:14.4px;font-weight:900;color:#0f172a;">Compare Prices</div><div style="font-size:12.2px;line-height:1.5;color:#475569;margin-top:3px;">The best price for each of today\'s plays across every book, so you shop the line.</div></td></tr></table></td></tr>\n      <tr><td style="height:14px;line-height:14px;font-size:12.6px;mso-line-height-rule:exactly;">&nbsp;</td></tr>\n      <tr><td bgcolor="#f8fafc" style="background:rgba(15,23,42,0.03);border:1px solid #e2e8f0;border-left:6px solid #2ee6a8;border-radius:16px;padding:13px 16px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td width="44" valign="top"><span style="display:inline-block;background:#e8c766;color:#1a1405;font-size:11.2px;font-weight:900;padding:6px 9px;border-radius:9px;">03</span></td><td valign="top"><div style="font-size:14.4px;font-weight:900;color:#0f172a;">Value Plays</div><div style="font-size:12.2px;line-height:1.5;color:#475569;margin-top:3px;">Extra value plays beyond the main card, tracked at $100 each.</div></td></tr></table></td></tr>\n      <tr><td style="height:14px;line-height:14px;font-size:12.6px;mso-line-height-rule:exactly;">&nbsp;</td></tr>\n      <tr><td bgcolor="#f8fafc" style="background:rgba(15,23,42,0.03);border:1px solid #e2e8f0;border-left:6px solid #2ee6a8;border-radius:16px;padding:13px 16px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td width="44" valign="top"><span style="display:inline-block;background:#e8c766;color:#1a1405;font-size:11.2px;font-weight:900;padding:6px 9px;border-radius:9px;">04</span></td><td valign="top"><div style="font-size:14.4px;font-weight:900;color:#0f172a;">Official Tracker</div><div style="font-size:12.2px;line-height:1.5;color:#475569;margin-top:3px;">The program\'s complete record, ticket by ticket. No edits, no hiding.</div></td></tr></table></td></tr>\n      <tr><td style="height:14px;line-height:14px;font-size:12.6px;mso-line-height-rule:exactly;">&nbsp;</td></tr>\n      <tr><td bgcolor="#f8fafc" style="background:rgba(15,23,42,0.03);border:1px solid #e2e8f0;border-left:6px solid #2ee6a8;border-radius:16px;padding:13px 16px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td width="44" valign="top"><span style="display:inline-block;background:#e8c766;color:#1a1405;font-size:11.2px;font-weight:900;padding:6px 9px;border-radius:9px;">05</span></td><td valign="top"><div style="font-size:14.4px;font-weight:900;color:#0f172a;">My Bets</div><div style="font-size:12.2px;line-height:1.5;color:#475569;margin-top:3px;">Your personal record on the plays you choose to track, separate from ours.</div></td></tr></table></td></tr>\n      <tr><td style="height:14px;line-height:14px;font-size:12.6px;mso-line-height-rule:exactly;">&nbsp;</td></tr>\n      <tr><td bgcolor="#f8fafc" style="background:rgba(15,23,42,0.03);border:1px solid #e2e8f0;border-left:6px solid #2ee6a8;border-radius:16px;padding:13px 16px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td width="44" valign="top"><span style="display:inline-block;background:#e8c766;color:#1a1405;font-size:11.2px;font-weight:900;padding:6px 9px;border-radius:9px;">06</span></td><td valign="top"><div style="font-size:14.4px;font-weight:900;color:#0f172a;">Archive</div><div style="font-size:12.2px;line-height:1.5;color:#475569;margin-top:3px;">Every settled play, day by day. Perfect for reviewing what happened.</div></td></tr></table></td></tr>\n    </table>\n    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:16px 0 2px;"><tr><td bgcolor="#9ff7d4" height="3" style="height:3px;font-size:0;line-height:0;border-top-left-radius:3px;border-top-right-radius:3px;">&nbsp;</td></tr><tr><td bgcolor="#2ee6a8" height="6" style="height:6px;font-size:0;line-height:0;">&nbsp;</td></tr><tr><td bgcolor="#0b8a5f" height="3" style="height:3px;font-size:0;line-height:0;border-bottom-left-radius:3px;border-bottom-right-radius:3px;">&nbsp;</td></tr></table>\n  </td></tr>\n  <tr><td bgcolor="#ffffff" style="background:#ffffff;padding:18px 22px 0;">\n    <div style="color:#e8c766;font-size:9.9px;font-weight:800;letter-spacing:2.5px;">YOUR FIRST DAY</div>\n    <div style="color:#0f172a;font-size:18px;font-weight:900;margin-top:5px;">What to expect, hour by hour</div>\n    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:10px;">\n      <tr><td width="26" valign="top" style="padding-top:2px;"><span style="display:inline-block;width:11px;height:11px;border-radius:50%;background:#2ee6a8;"></span></td><td style="padding:0 0 12px;border-bottom:1px solid #e2e8f0;"><span style="color:#e8c766;font-size:9.5px;font-weight:800;letter-spacing:1.5px;">MORNING</span><div style="font-size:14px;font-weight:800;color:#0f172a;margin-top:3px;">Get set up</div><div style="font-size:12.6px;line-height:1.55;color:#475569;margin-top:2px;">Open the app and turn on Alerts so you know the moment the card is live.</div></td></tr>\n      <tr><td width="26" valign="top" style="padding-top:12px;"><span style="display:inline-block;width:11px;height:11px;border-radius:50%;background:#2ee6a8;"></span></td><td style="padding:10px 0 12px;border-bottom:1px solid #e2e8f0;"><span style="color:#e8c766;font-size:9.5px;font-weight:800;letter-spacing:1.5px;">1:00&zwnj; PM ET</span><div style="font-size:14px;font-weight:800;color:#0f172a;margin-top:3px;">The card posts</div><div style="font-size:12.6px;line-height:1.55;color:#475569;margin-top:2px;">Today\'s Card goes live with our official plays.</div></td></tr>\n      <tr><td width="26" valign="top" style="padding-top:12px;"><span style="display:inline-block;width:11px;height:11px;border-radius:50%;background:#2ee6a8;"></span></td><td style="padding:10px 0 12px;border-bottom:1px solid #e2e8f0;"><span style="color:#e8c766;font-size:9.5px;font-weight:800;letter-spacing:1.5px;">BEFORE GAME</span><div style="font-size:14px;font-weight:800;color:#0f172a;margin-top:3px;">Shop the price</div><div style="font-size:12.6px;line-height:1.55;color:#475569;margin-top:2px;">Use Compare Prices to find the best number across every book before you place anything.</div></td></tr>\n      <tr><td width="26" valign="top" style="padding-top:12px;"><span style="display:inline-block;width:11px;height:11px;border-radius:50%;background:#2ee6a8;"></span></td><td style="padding:10px 0 2px;"><span style="color:#e8c766;font-size:9.5px;font-weight:800;letter-spacing:1.5px;">AFTER GAMES</span><div style="font-size:14px;font-weight:800;color:#0f172a;margin-top:3px;">Results get graded</div><div style="font-size:12.6px;line-height:1.55;color:#475569;margin-top:2px;">Plays are settled publicly and added to the Official Tracker and Archive.</div></td></tr>\n    </table>\n  </td></tr>\n  <tr><td bgcolor="#ffffff" style="background:#ffffff;padding:18px 22px 0;">\n    <div style="color:#e8c766;font-size:9.9px;font-weight:800;letter-spacing:2.5px;">GLOSSARY</div>\n    <div style="color:#0f172a;font-size:18px;font-weight:900;margin-top:5px;">How to read our results</div>\n    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:8px;">\n      <tr><td style="padding:7px 0;border-bottom:1px solid #e2e8f0;font-size:13.1px;line-height:1.55;color:#475569;"><b style="color:#0f172a;">Unit (u)</b> &mdash; Our standard bet size. In our tracking 1u = $100, which keeps every result on the same scale.</td></tr>\n      <tr><td style="padding:7px 0;border-bottom:1px solid #e2e8f0;font-size:13.1px;line-height:1.55;color:#475569;"><b style="color:#0f172a;">Record</b> &mdash; Wins and losses across graded plays, like __LAST_WEEK_RECORD__ last week.</td></tr>\n      <tr><td style="padding:7px 0;border-bottom:1px solid #e2e8f0;font-size:13.1px;line-height:1.55;color:#475569;"><b style="color:#0f172a;">Win rate</b> &mdash; Wins divided by total graded plays: __LAST_WEEK_RATE__ last week, __TOTAL_RATE__ across the program.</td></tr>\n      <tr><td style="padding:7px 0;font-size:13.1px;line-height:1.55;color:#475569;"><b style="color:#0f172a;">Graded publicly</b> &mdash; Every play is settled in the open and appears in the Official Tracker. Nothing is deleted.</td></tr>\n    </table>\n  </td></tr>\n  <tr><td bgcolor="#ffffff" style="background:#ffffff;padding:18px 22px 0;">\n    <div style="color:#e8c766;font-size:9.9px;font-weight:800;letter-spacing:2.5px;">OUR STANDARDS</div>\n    <div style="color:#0f172a;font-size:18px;font-weight:900;margin-top:5px;">Three promises, every day</div>\n    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" bgcolor="#f8fafc" style="background:rgba(15,23,42,0.03);border:1px solid #1e5c46;border-left:6px solid #2ee6a8;border-radius:20px;margin-top:12px;">\n      <tr><td style="padding:14px 18px;">\n        <div style="font-size:13.1px;color:#2ee6a8;padding:3px 0;">&#10003;&nbsp; <b style="color:#0f172a;">Posted before game time</b> <span style="color:#475569;">&mdash; No after-the-fact picks.</span></div>\n        <div style="font-size:13.1px;color:#2ee6a8;padding:3px 0;">&#10003;&nbsp; <b style="color:#0f172a;">Verified ticket</b> <span style="color:#475569;">&mdash; A ticket on every play we post.</span></div>\n        <div style="font-size:13.1px;color:#2ee6a8;padding:3px 0;">&#10003;&nbsp; <b style="color:#0f172a;">Public record</b> <span style="color:#475569;">&mdash; Wins and losses in the open.</span></div>\n      </td></tr>\n    </table>\n  </td></tr>\n  <tr><td bgcolor="#ffffff" style="background:#ffffff;padding:18px 22px 0;">\n    <div style="color:#e8c766;font-size:9.9px;font-weight:800;letter-spacing:2.5px;">FAQ</div>\n    <div style="color:#0f172a;font-size:18px;font-weight:900;margin-top:5px;">Questions new members ask</div>\n    <div style="margin-top:12px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td bgcolor="#f8fafc" style="background:rgba(15,23,42,0.03);border:1px solid #e2e8f0;border-left:6px solid #2ee6a8;border-radius:16px;padding:13px 16px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td width="36" valign="top"><span style="display:inline-block;background:#2ee6a8;color:#04241a;font-size:13.5px;font-weight:900;width:25px;height:25px;line-height:25px;text-align:center;border-radius:50%;">+</span></td><td valign="top"><div style="font-size:14px;font-weight:800;color:#0f172a;">When do plays post?</div><div style="font-size:13.1px;line-height:1.55;color:#475569;margin-top:4px;">Every day at 1:00&zwnj; PM ET in Today\'s Card.</div></td></tr></table></td></tr></table><div style="height:10px;line-height:10px;font-size:9px;">&nbsp;</div><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td bgcolor="#f8fafc" style="background:rgba(15,23,42,0.03);border:1px solid #e2e8f0;border-left:6px solid #2ee6a8;border-radius:16px;padding:13px 16px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td width="36" valign="top"><span style="display:inline-block;background:#2ee6a8;color:#04241a;font-size:13.5px;font-weight:900;width:25px;height:25px;line-height:25px;text-align:center;border-radius:50%;">+</span></td><td valign="top"><div style="font-size:14px;font-weight:800;color:#0f172a;">Do I have to play everything?</div><div style="font-size:13.1px;line-height:1.55;color:#475569;margin-top:4px;">No. Our plays are information. Choose what fits your budget and plan, and bet only what you can afford to lose.</div></td></tr></table></td></tr></table><div style="height:10px;line-height:10px;font-size:9px;">&nbsp;</div><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td bgcolor="#f8fafc" style="background:rgba(15,23,42,0.03);border:1px solid #e2e8f0;border-left:6px solid #2ee6a8;border-radius:16px;padding:13px 16px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td width="36" valign="top"><span style="display:inline-block;background:#2ee6a8;color:#04241a;font-size:13.5px;font-weight:900;width:25px;height:25px;line-height:25px;text-align:center;border-radius:50%;">+</span></td><td valign="top"><div style="font-size:14px;font-weight:800;color:#0f172a;">What are Value Plays?</div><div style="font-size:13.1px;line-height:1.55;color:#475569;margin-top:4px;">Extra plays tracked at $100 each, listed separately from the main card.</div></td></tr></table></td></tr></table><div style="height:10px;line-height:10px;font-size:9px;">&nbsp;</div><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td bgcolor="#f8fafc" style="background:rgba(15,23,42,0.03);border:1px solid #e2e8f0;border-left:6px solid #2ee6a8;border-radius:16px;padding:13px 16px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td width="36" valign="top"><span style="display:inline-block;background:#2ee6a8;color:#04241a;font-size:13.5px;font-weight:900;width:25px;height:25px;line-height:25px;text-align:center;border-radius:50%;">+</span></td><td valign="top"><div style="font-size:14px;font-weight:800;color:#0f172a;">Where do I see past results?</div><div style="font-size:13.1px;line-height:1.55;color:#475569;margin-top:4px;">In the Official Tracker (complete record) and the Archive (every settled play).</div></td></tr></table></td></tr></table><div style="height:10px;line-height:10px;font-size:9px;">&nbsp;</div><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td bgcolor="#f8fafc" style="background:rgba(15,23,42,0.03);border:1px solid #e2e8f0;border-left:6px solid #2ee6a8;border-radius:16px;padding:13px 16px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td width="36" valign="top"><span style="display:inline-block;background:#2ee6a8;color:#04241a;font-size:13.5px;font-weight:900;width:25px;height:25px;line-height:25px;text-align:center;border-radius:50%;">+</span></td><td valign="top"><div style="font-size:14px;font-weight:800;color:#0f172a;">Can I track my own bets?</div><div style="font-size:13.1px;line-height:1.55;color:#475569;margin-top:4px;">Yes. My Bets keeps your personal record on the plays you track.</div></td></tr></table></td></tr></table></div>\n  </td></tr>\n  <tr><td bgcolor="#ffffff" style="background:#ffffff;padding:20px 22px 26px;">\n    <div style="color:#e8c766;font-size:9.9px;font-weight:800;letter-spacing:2.5px;">READY?</div>\n    <div style="color:#0f172a;font-size:19.8px;font-weight:900;margin-top:6px;">Your first card is waiting.</div>\n    <p style="font-size:13.1px;line-height:1.6;color:#475569;margin:10px 0 0;">Check today\'s plays, then take a look at the Academy, our 30-day course on how the Sharp Team works.</p>\n    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:16px;"><tr><td width="50%" valign="middle" bgcolor="#e8c766" style="background:#e8c766;border-radius:999px;"><a href="https://www.thesharpteam.bet/home" style="display:block;text-align:center;color:#1a1405;font-size:11.2px;font-weight:900;padding:13px 6px;text-decoration:none;">VIEW TODAY\'S CARD &rarr;</a></td><td width="10" style="font-size:0;line-height:0;">&nbsp;</td><td width="50%" valign="middle" bgcolor="#e8c766" style="background:#e8c766;border-radius:999px;"><a href="https://www.thesharpteam.bet/masterclass" style="display:block;text-align:center;color:#1a1405;font-size:11.2px;font-weight:900;padding:13px 6px;text-decoration:none;">Start the 30-Day Academy &rarr;</a></td></tr></table>\n    <p style="font-size:10.8px;line-height:1.55;color:#64748b;margin:18px 0 0;"><b style="color:#475569;">RESPONSIBLE PLAY</b> &mdash; Only bet what you can afford to lose and set limits that work for you. If you or someone you know has a gambling problem, call 1-800-GAMBLER or visit <a href="https://www.800gambler.org" style="color:#475569;text-decoration:underline;">800gambler.org</a>.</p>\n  </td></tr>\n  <tr><td bgcolor="#f1f5f9" style="background:#f1f5f9;border-radius:0 0 16px 16px;padding:20px 24px;text-align:center;">\n    <img src="https://www.thesharpteam.bet/static/img/sharp-team-logo.png" width="54" alt="The Sharp Team" style="display:block;margin:0 auto 6px;">\n    <div style="font-size:11.7px;font-weight:800;color:#0f172a;letter-spacing:1px;">THE SHARP TEAM</div>\n    <div style="font-size:10.8px;color:#94a3b8;margin-top:4px;">250 Park Avenue, Suite 1800, New York, NY 10017 &middot; (551) 326-3312</div>\n    <div style="margin-top:12px;">\n      <a href="https://www.instagram.com/the_sharp_team" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/instagram.png" width="30" height="30" alt="Instagram" style="border:0;margin:0 6px;"></a>\n      <a href="https://x.com/thesharpteambet" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/x.png" width="30" height="30" alt="X" style="border:0;margin:0 6px;"></a>\n      <a href="https://t.me/thesharpteam" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/telegram.png" width="30" height="30" alt="Telegram" style="border:0;margin:0 6px;"></a>\n    </div>\n    <div style="font-size:9.9px;color:#94a3b8;line-height:1.5;margin-top:10px;">21+. Play responsibly. If you or someone you know has a gambling problem, call or text 1-800-GAMBLER.</div>\n    <div style="font-size:9.9px;color:#94a3b8;margin-top:8px;">Don\'t want these emails anymore? <a href="{{{RESEND_UNSUBSCRIBE_URL}}}" style="color:#94a3b8;text-decoration:underline;">Unsubscribe</a> — one click, no questions asked.</div>\n    <div style="font-size:9.9px;margin-top:8px;"><a href="https://www.thesharpteam.bet/contact" style="color:#94a3b8;">Support</a> &middot; <a href="https://www.thesharpteam.bet/privacy" style="color:#94a3b8;">Privacy Policy</a></div>\n    <div style="font-size:9.9px;color:#64748b;line-height:1.5;margin-top:8px;">Must be 21+. The Sharp Team provides information and entertainment only and is not a sportsbook. Past results do not guarantee future performance. 1u = $100.</div>\n    <div style="font-size:9.9px;color:#64748b;margin-top:6px;">&copy; 2026 The Sharp Team. All rights reserved.</div>\n  </td></tr>\n</table>\n</td></tr></table>\n</body></html>\n'
+WELCOME_HTML = '<!DOCTYPE html>\n<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Welcome to The Sharp Team</title></head>\n<body style="margin:0;padding:0;background:#f1f5f9;font-family:-apple-system,Helvetica,Arial,sans-serif;-webkit-text-size-adjust:100%;text-size-adjust:100%;">\n<div style="display:none;font-size:0.8px;line-height:1px;max-height:0;overflow:hidden;">Welcome to The Sharp Team — You\'re in. Here is how everything works and what to expect today.</div>\n<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f1f5f9;">\n<tr><td align="center" style="padding:0;">\n<table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">\n  <tr><td bgcolor="#ffffff" style="background:#ffffff;padding:26px 22px 8px;">\n    <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>\n      <td valign="middle"><img src="https://www.thesharpteam.bet/static/img/sharp-team-logo.png" width="46" alt="The Sharp Team" style="display:block;"></td>\n      <td valign="middle" style="padding-left:10px;"><div style="color:#0f172a;font-size:11.9px;font-weight:800;letter-spacing:2px;">THE SHARP TEAM</div><div style="color:#2ee6a8;font-size:8.1px;font-weight:800;letter-spacing:2px;margin-top:1px;">MEMBER DASHBOARD</div></td>\n      <td align="right" valign="middle"><span style="display:inline-block;background:#2ee6a8;color:#04241a;font-size:7.6px;font-weight:900;letter-spacing:1.5px;padding:5px 11px;border-radius:999px;">&#8226; ACTIVE</span></td>\n    </tr></table>\n    <div style="color:#0f172a;font-size:42.8px;line-height:1.15;font-weight:900;margin-top:22px;">You\'re in.</div>\n    <div style="color:#e8c766;font-size:12.6px;font-weight:700;margin-top:3px;">Welcome to the team.</div>\n    <p style="font-size:11.1px;line-height:1.6;color:#475569;margin:11px 0 0;">In the next few minutes we\'ll walk you through how everything works, what to expect today and where to find every tool, so you can get the most out of your membership from day one.</p>\n    <div style="margin-top:16px;"><a href="https://www.thesharpteam.bet/home" style="display:inline-block;background:#2ee6a8;color:#04241a;font-size:11.1px;font-weight:900;padding:13px 28px;border-radius:999px;text-decoration:none;">OPEN TODAY\'S CARD &rarr;</a></div>\n    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" bgcolor="#f8fafc" style="background:rgba(15,23,42,0.03);border:1px solid #e2e8f0;border-radius:20px;margin-top:20px;">\n      <tr>\n        <td width="33%" style="padding:13px 4px 11px;text-align:center;"><div style="color:#0f172a;font-size:15.3px;font-weight:900;white-space:nowrap;">__LAST_WEEK_RECORD__</div><div style="color:#64748b;font-size:7.6px;font-weight:700;letter-spacing:1.5px;margin-top:2px;">LAST WEEK</div></td>\n        <td width="34%" style="padding:13px 4px 11px;text-align:center;border-left:1px solid #e2e8f0;border-right:1px solid #e2e8f0;"><div style="color:#2ee6a8;font-size:15.3px;font-weight:900;white-space:nowrap;">__LAST_WEEK_UNITS__</div><div style="color:#64748b;font-size:7.6px;font-weight:700;letter-spacing:1.5px;margin-top:2px;">UNITS</div></td>\n        <td width="33%" style="padding:13px 4px 11px;text-align:center;"><div style="color:#0f172a;font-size:15.3px;font-weight:900;white-space:nowrap;">__LAST_WEEK_RATE__</div><div style="color:#64748b;font-size:7.6px;font-weight:700;letter-spacing:1.5px;margin-top:2px;">WIN RATE</div></td>\n      </tr>\n    </table>\n    <div style="font-size:8.8px;color:#64748b;margin-top:9px;">Program totals: __TOTAL_RECORD__ &middot; __TOTAL_UNITS__ &middot; __TOTAL_RATE__ win rate &middot; 1u = $100 &middot; Graded publicly. Past results do not guarantee future performance.</div>\n  </td></tr>\n  <tr><td bgcolor="#ffffff" style="background:#ffffff;padding:16px 22px 0;">\n    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" bgcolor="#f8fafc" style="background:rgba(15,23,42,0.03);border:1px solid #e2e8f0;border-radius:20px;">\n      <tr><td style="padding:16px 18px;">\n        <div style="color:#e8c766;font-size:8.4px;font-weight:800;letter-spacing:2.5px;">A NOTE FROM THE TEAM</div>\n        <div style="color:#0f172a;font-size:14.2px;font-weight:900;margin-top:6px;">Why we do everything in public</div>\n        <p style="font-size:11.1px;line-height:1.6;color:#475569;margin:9px 0 0;">Anyone can post winners after the fact. We built The Sharp Team around the opposite idea: every play is posted before game time, backed by a verified ticket, and graded in public, wins and losses alike.</p>\n        <p style="font-size:11.1px;line-height:1.6;color:#475569;margin:9px 0 0;">That means you never have to take our word for it. The full record is open, ticket by ticket. Your job is simple: read the card, compare prices, and decide what fits your plan.</p>\n        <div style="font-size:11.1px;color:#0f172a;margin-top:11px;"><b>&mdash; The Sharp Team</b></div>\n      </td></tr>\n    </table>\n  </td></tr>\n  <tr><td bgcolor="#ffffff" style="background:#ffffff;padding:18px 22px 0;">\n    <div style="color:#e8c766;font-size:8.4px;font-weight:800;letter-spacing:2.5px;">YOUR TOOLBOX</div>\n    <div style="color:#0f172a;font-size:15.3px;font-weight:900;margin-top:5px;">Everything you now have access to</div>\n    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:12px;">\n      <tr><td bgcolor="#f8fafc" style="background:rgba(15,23,42,0.03);border:1px solid #e2e8f0;border-left:6px solid #2ee6a8;border-radius:16px;padding:13px 16px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td width="44" valign="top"><span style="display:inline-block;background:#e8c766;color:#1a1405;font-size:9.5px;font-weight:900;padding:6px 9px;border-radius:9px;">01</span></td><td valign="top"><div style="font-size:12.2px;font-weight:900;color:#0f172a;">Today\'s Card</div><div style="font-size:10.4px;line-height:1.5;color:#475569;margin-top:3px;">Our official plays, posted every day at 1:00&zwnj; PM ET. The heart of your membership.</div></td></tr></table></td></tr>\n      <tr><td style="height:14px;line-height:14px;font-size:10.7px;mso-line-height-rule:exactly;">&nbsp;</td></tr>\n      <tr><td bgcolor="#f8fafc" style="background:rgba(15,23,42,0.03);border:1px solid #e2e8f0;border-left:6px solid #2ee6a8;border-radius:16px;padding:13px 16px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td width="44" valign="top"><span style="display:inline-block;background:#e8c766;color:#1a1405;font-size:9.5px;font-weight:900;padding:6px 9px;border-radius:9px;">02</span></td><td valign="top"><div style="font-size:12.2px;font-weight:900;color:#0f172a;">Compare Prices</div><div style="font-size:10.4px;line-height:1.5;color:#475569;margin-top:3px;">The best price for each of today\'s plays across every book, so you shop the line.</div></td></tr></table></td></tr>\n      <tr><td style="height:14px;line-height:14px;font-size:10.7px;mso-line-height-rule:exactly;">&nbsp;</td></tr>\n      <tr><td bgcolor="#f8fafc" style="background:rgba(15,23,42,0.03);border:1px solid #e2e8f0;border-left:6px solid #2ee6a8;border-radius:16px;padding:13px 16px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td width="44" valign="top"><span style="display:inline-block;background:#e8c766;color:#1a1405;font-size:9.5px;font-weight:900;padding:6px 9px;border-radius:9px;">03</span></td><td valign="top"><div style="font-size:12.2px;font-weight:900;color:#0f172a;">Value Plays</div><div style="font-size:10.4px;line-height:1.5;color:#475569;margin-top:3px;">Extra value plays beyond the main card, tracked at $100 each.</div></td></tr></table></td></tr>\n      <tr><td style="height:14px;line-height:14px;font-size:10.7px;mso-line-height-rule:exactly;">&nbsp;</td></tr>\n      <tr><td bgcolor="#f8fafc" style="background:rgba(15,23,42,0.03);border:1px solid #e2e8f0;border-left:6px solid #2ee6a8;border-radius:16px;padding:13px 16px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td width="44" valign="top"><span style="display:inline-block;background:#e8c766;color:#1a1405;font-size:9.5px;font-weight:900;padding:6px 9px;border-radius:9px;">04</span></td><td valign="top"><div style="font-size:12.2px;font-weight:900;color:#0f172a;">Official Tracker</div><div style="font-size:10.4px;line-height:1.5;color:#475569;margin-top:3px;">The program\'s complete record, ticket by ticket. No edits, no hiding.</div></td></tr></table></td></tr>\n      <tr><td style="height:14px;line-height:14px;font-size:10.7px;mso-line-height-rule:exactly;">&nbsp;</td></tr>\n      <tr><td bgcolor="#f8fafc" style="background:rgba(15,23,42,0.03);border:1px solid #e2e8f0;border-left:6px solid #2ee6a8;border-radius:16px;padding:13px 16px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td width="44" valign="top"><span style="display:inline-block;background:#e8c766;color:#1a1405;font-size:9.5px;font-weight:900;padding:6px 9px;border-radius:9px;">05</span></td><td valign="top"><div style="font-size:12.2px;font-weight:900;color:#0f172a;">My Bets</div><div style="font-size:10.4px;line-height:1.5;color:#475569;margin-top:3px;">Your personal record on the plays you choose to track, separate from ours.</div></td></tr></table></td></tr>\n      <tr><td style="height:14px;line-height:14px;font-size:10.7px;mso-line-height-rule:exactly;">&nbsp;</td></tr>\n      <tr><td bgcolor="#f8fafc" style="background:rgba(15,23,42,0.03);border:1px solid #e2e8f0;border-left:6px solid #2ee6a8;border-radius:16px;padding:13px 16px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td width="44" valign="top"><span style="display:inline-block;background:#e8c766;color:#1a1405;font-size:9.5px;font-weight:900;padding:6px 9px;border-radius:9px;">06</span></td><td valign="top"><div style="font-size:12.2px;font-weight:900;color:#0f172a;">Archive</div><div style="font-size:10.4px;line-height:1.5;color:#475569;margin-top:3px;">Every settled play, day by day. Perfect for reviewing what happened.</div></td></tr></table></td></tr>\n    </table>\n    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:16px 0 2px;"><tr><td bgcolor="#9ff7d4" height="3" style="height:3px;font-size:0;line-height:0;border-top-left-radius:3px;border-top-right-radius:3px;">&nbsp;</td></tr><tr><td bgcolor="#2ee6a8" height="6" style="height:6px;font-size:0;line-height:0;">&nbsp;</td></tr><tr><td bgcolor="#0b8a5f" height="3" style="height:3px;font-size:0;line-height:0;border-bottom-left-radius:3px;border-bottom-right-radius:3px;">&nbsp;</td></tr></table>\n  </td></tr>\n  <tr><td bgcolor="#ffffff" style="background:#ffffff;padding:18px 22px 0;">\n    <div style="color:#e8c766;font-size:8.4px;font-weight:800;letter-spacing:2.5px;">YOUR FIRST DAY</div>\n    <div style="color:#0f172a;font-size:15.3px;font-weight:900;margin-top:5px;">What to expect, hour by hour</div>\n    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:10px;">\n      <tr><td width="26" valign="top" style="padding-top:2px;"><span style="display:inline-block;width:11px;height:11px;border-radius:50%;background:#2ee6a8;"></span></td><td style="padding:0 0 12px;border-bottom:1px solid #e2e8f0;"><span style="color:#e8c766;font-size:8.1px;font-weight:800;letter-spacing:1.5px;">MORNING</span><div style="font-size:11.9px;font-weight:800;color:#0f172a;margin-top:3px;">Get set up</div><div style="font-size:10.7px;line-height:1.55;color:#475569;margin-top:2px;">Open the app and turn on Alerts so you know the moment the card is live.</div></td></tr>\n      <tr><td width="26" valign="top" style="padding-top:12px;"><span style="display:inline-block;width:11px;height:11px;border-radius:50%;background:#2ee6a8;"></span></td><td style="padding:10px 0 12px;border-bottom:1px solid #e2e8f0;"><span style="color:#e8c766;font-size:8.1px;font-weight:800;letter-spacing:1.5px;">1:00&zwnj; PM ET</span><div style="font-size:11.9px;font-weight:800;color:#0f172a;margin-top:3px;">The card posts</div><div style="font-size:10.7px;line-height:1.55;color:#475569;margin-top:2px;">Today\'s Card goes live with our official plays.</div></td></tr>\n      <tr><td width="26" valign="top" style="padding-top:12px;"><span style="display:inline-block;width:11px;height:11px;border-radius:50%;background:#2ee6a8;"></span></td><td style="padding:10px 0 12px;border-bottom:1px solid #e2e8f0;"><span style="color:#e8c766;font-size:8.1px;font-weight:800;letter-spacing:1.5px;">BEFORE GAME</span><div style="font-size:11.9px;font-weight:800;color:#0f172a;margin-top:3px;">Shop the price</div><div style="font-size:10.7px;line-height:1.55;color:#475569;margin-top:2px;">Use Compare Prices to find the best number across every book before you place anything.</div></td></tr>\n      <tr><td width="26" valign="top" style="padding-top:12px;"><span style="display:inline-block;width:11px;height:11px;border-radius:50%;background:#2ee6a8;"></span></td><td style="padding:10px 0 2px;"><span style="color:#e8c766;font-size:8.1px;font-weight:800;letter-spacing:1.5px;">AFTER GAMES</span><div style="font-size:11.9px;font-weight:800;color:#0f172a;margin-top:3px;">Results get graded</div><div style="font-size:10.7px;line-height:1.55;color:#475569;margin-top:2px;">Plays are settled publicly and added to the Official Tracker and Archive.</div></td></tr>\n    </table>\n  </td></tr>\n  <tr><td bgcolor="#ffffff" style="background:#ffffff;padding:18px 22px 0;">\n    <div style="color:#e8c766;font-size:8.4px;font-weight:800;letter-spacing:2.5px;">GLOSSARY</div>\n    <div style="color:#0f172a;font-size:15.3px;font-weight:900;margin-top:5px;">How to read our results</div>\n    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:8px;">\n      <tr><td style="padding:7px 0;border-bottom:1px solid #e2e8f0;font-size:11.1px;line-height:1.55;color:#475569;"><b style="color:#0f172a;">Unit (u)</b> &mdash; Our standard bet size. In our tracking 1u = $100, which keeps every result on the same scale.</td></tr>\n      <tr><td style="padding:7px 0;border-bottom:1px solid #e2e8f0;font-size:11.1px;line-height:1.55;color:#475569;"><b style="color:#0f172a;">Record</b> &mdash; Wins and losses across graded plays, like __LAST_WEEK_RECORD__ last week.</td></tr>\n      <tr><td style="padding:7px 0;border-bottom:1px solid #e2e8f0;font-size:11.1px;line-height:1.55;color:#475569;"><b style="color:#0f172a;">Win rate</b> &mdash; Wins divided by total graded plays: __LAST_WEEK_RATE__ last week, __TOTAL_RATE__ across the program.</td></tr>\n      <tr><td style="padding:7px 0;font-size:11.1px;line-height:1.55;color:#475569;"><b style="color:#0f172a;">Graded publicly</b> &mdash; Every play is settled in the open and appears in the Official Tracker. Nothing is deleted.</td></tr>\n    </table>\n  </td></tr>\n  <tr><td bgcolor="#ffffff" style="background:#ffffff;padding:18px 22px 0;">\n    <div style="color:#e8c766;font-size:8.4px;font-weight:800;letter-spacing:2.5px;">OUR STANDARDS</div>\n    <div style="color:#0f172a;font-size:15.3px;font-weight:900;margin-top:5px;">Three promises, every day</div>\n    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" bgcolor="#f8fafc" style="background:rgba(15,23,42,0.03);border:1px solid #1e5c46;border-left:6px solid #2ee6a8;border-radius:20px;margin-top:12px;">\n      <tr><td style="padding:14px 18px;">\n        <div style="font-size:11.1px;color:#2ee6a8;padding:3px 0;">&#10003;&nbsp; <b style="color:#0f172a;">Posted before game time</b> <span style="color:#475569;">&mdash; No after-the-fact picks.</span></div>\n        <div style="font-size:11.1px;color:#2ee6a8;padding:3px 0;">&#10003;&nbsp; <b style="color:#0f172a;">Verified ticket</b> <span style="color:#475569;">&mdash; A ticket on every play we post.</span></div>\n        <div style="font-size:11.1px;color:#2ee6a8;padding:3px 0;">&#10003;&nbsp; <b style="color:#0f172a;">Public record</b> <span style="color:#475569;">&mdash; Wins and losses in the open.</span></div>\n      </td></tr>\n    </table>\n  </td></tr>\n  <tr><td bgcolor="#ffffff" style="background:#ffffff;padding:18px 22px 0;">\n    <div style="color:#e8c766;font-size:8.4px;font-weight:800;letter-spacing:2.5px;">FAQ</div>\n    <div style="color:#0f172a;font-size:15.3px;font-weight:900;margin-top:5px;">Questions new members ask</div>\n    <div style="margin-top:12px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td bgcolor="#f8fafc" style="background:rgba(15,23,42,0.03);border:1px solid #e2e8f0;border-left:6px solid #2ee6a8;border-radius:16px;padding:13px 16px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td width="36" valign="top"><span style="display:inline-block;background:#2ee6a8;color:#04241a;font-size:11.5px;font-weight:900;width:25px;height:25px;line-height:25px;text-align:center;border-radius:50%;">+</span></td><td valign="top"><div style="font-size:11.9px;font-weight:800;color:#0f172a;">When do plays post?</div><div style="font-size:11.1px;line-height:1.55;color:#475569;margin-top:4px;">Every day at 1:00&zwnj; PM ET in Today\'s Card.</div></td></tr></table></td></tr></table><div style="height:10px;line-height:10px;font-size:7.6px;">&nbsp;</div><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td bgcolor="#f8fafc" style="background:rgba(15,23,42,0.03);border:1px solid #e2e8f0;border-left:6px solid #2ee6a8;border-radius:16px;padding:13px 16px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td width="36" valign="top"><span style="display:inline-block;background:#2ee6a8;color:#04241a;font-size:11.5px;font-weight:900;width:25px;height:25px;line-height:25px;text-align:center;border-radius:50%;">+</span></td><td valign="top"><div style="font-size:11.9px;font-weight:800;color:#0f172a;">Do I have to play everything?</div><div style="font-size:11.1px;line-height:1.55;color:#475569;margin-top:4px;">No. Our plays are information. Choose what fits your budget and plan, and bet only what you can afford to lose.</div></td></tr></table></td></tr></table><div style="height:10px;line-height:10px;font-size:7.6px;">&nbsp;</div><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td bgcolor="#f8fafc" style="background:rgba(15,23,42,0.03);border:1px solid #e2e8f0;border-left:6px solid #2ee6a8;border-radius:16px;padding:13px 16px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td width="36" valign="top"><span style="display:inline-block;background:#2ee6a8;color:#04241a;font-size:11.5px;font-weight:900;width:25px;height:25px;line-height:25px;text-align:center;border-radius:50%;">+</span></td><td valign="top"><div style="font-size:11.9px;font-weight:800;color:#0f172a;">What are Value Plays?</div><div style="font-size:11.1px;line-height:1.55;color:#475569;margin-top:4px;">Extra plays tracked at $100 each, listed separately from the main card.</div></td></tr></table></td></tr></table><div style="height:10px;line-height:10px;font-size:7.6px;">&nbsp;</div><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td bgcolor="#f8fafc" style="background:rgba(15,23,42,0.03);border:1px solid #e2e8f0;border-left:6px solid #2ee6a8;border-radius:16px;padding:13px 16px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td width="36" valign="top"><span style="display:inline-block;background:#2ee6a8;color:#04241a;font-size:11.5px;font-weight:900;width:25px;height:25px;line-height:25px;text-align:center;border-radius:50%;">+</span></td><td valign="top"><div style="font-size:11.9px;font-weight:800;color:#0f172a;">Where do I see past results?</div><div style="font-size:11.1px;line-height:1.55;color:#475569;margin-top:4px;">In the Official Tracker (complete record) and the Archive (every settled play).</div></td></tr></table></td></tr></table><div style="height:10px;line-height:10px;font-size:7.6px;">&nbsp;</div><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td bgcolor="#f8fafc" style="background:rgba(15,23,42,0.03);border:1px solid #e2e8f0;border-left:6px solid #2ee6a8;border-radius:16px;padding:13px 16px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td width="36" valign="top"><span style="display:inline-block;background:#2ee6a8;color:#04241a;font-size:11.5px;font-weight:900;width:25px;height:25px;line-height:25px;text-align:center;border-radius:50%;">+</span></td><td valign="top"><div style="font-size:11.9px;font-weight:800;color:#0f172a;">Can I track my own bets?</div><div style="font-size:11.1px;line-height:1.55;color:#475569;margin-top:4px;">Yes. My Bets keeps your personal record on the plays you track.</div></td></tr></table></td></tr></table></div>\n  </td></tr>\n  <tr><td bgcolor="#ffffff" style="background:#ffffff;padding:20px 22px 26px;">\n    <div style="color:#e8c766;font-size:8.4px;font-weight:800;letter-spacing:2.5px;">READY?</div>\n    <div style="color:#0f172a;font-size:16.8px;font-weight:900;margin-top:6px;">Your first card is waiting.</div>\n    <p style="font-size:11.1px;line-height:1.6;color:#475569;margin:10px 0 0;">Check today\'s plays, then take a look at the Academy, our 30-day course on how the Sharp Team works.</p>\n    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:16px;"><tr><td width="50%" valign="middle" bgcolor="#e8c766" style="background:#e8c766;border-radius:999px;"><a href="https://www.thesharpteam.bet/home" style="display:block;text-align:center;color:#1a1405;font-size:9.5px;font-weight:900;padding:13px 6px;text-decoration:none;">VIEW TODAY\'S CARD &rarr;</a></td><td width="10" style="font-size:0;line-height:0;">&nbsp;</td><td width="50%" valign="middle" bgcolor="#e8c766" style="background:#e8c766;border-radius:999px;"><a href="https://www.thesharpteam.bet/masterclass" style="display:block;text-align:center;color:#1a1405;font-size:9.5px;font-weight:900;padding:13px 6px;text-decoration:none;">Start the 30-Day Academy &rarr;</a></td></tr></table>\n    <p style="font-size:9.2px;line-height:1.55;color:#64748b;margin:18px 0 0;"><b style="color:#475569;">RESPONSIBLE PLAY</b> &mdash; Only bet what you can afford to lose and set limits that work for you. If you or someone you know has a gambling problem, call 1-800-GAMBLER or visit <a href="https://www.800gambler.org" style="color:#475569;text-decoration:underline;">800gambler.org</a>.</p>\n  </td></tr>\n  <tr><td bgcolor="#f1f5f9" style="background:#f1f5f9;border-radius:0 0 16px 16px;padding:20px 24px;text-align:center;">\n    <img src="https://www.thesharpteam.bet/static/img/sharp-team-logo.png" width="54" alt="The Sharp Team" style="display:block;margin:0 auto 6px;">\n    <div style="font-size:9.9px;font-weight:800;color:#0f172a;letter-spacing:1px;">THE SHARP TEAM</div>\n    <div style="font-size:9.2px;color:#94a3b8;margin-top:4px;">250 Park Avenue, Suite 1800, New York, NY 10017 &middot; (551) 326-3312</div>\n    <div style="margin-top:12px;">\n      <a href="https://www.instagram.com/the_sharp_team" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/instagram.png" width="30" height="30" alt="Instagram" style="border:0;margin:0 6px;"></a>\n      <a href="https://x.com/thesharpteambet" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/x.png" width="30" height="30" alt="X" style="border:0;margin:0 6px;"></a>\n      <a href="https://t.me/thesharpteam" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/telegram.png" width="30" height="30" alt="Telegram" style="border:0;margin:0 6px;"></a>\n    </div>\n    <div style="font-size:8.4px;color:#94a3b8;line-height:1.5;margin-top:10px;">21+. Play responsibly. If you or someone you know has a gambling problem, call or text 1-800-GAMBLER.</div>\n    <div style="font-size:8.4px;color:#94a3b8;margin-top:8px;">Don\'t want these emails anymore? <a href="{{{RESEND_UNSUBSCRIBE_URL}}}" style="color:#94a3b8;text-decoration:underline;">Unsubscribe</a> — one click, no questions asked.</div>\n    <div style="font-size:8.4px;margin-top:8px;"><a href="https://www.thesharpteam.bet/contact" style="color:#94a3b8;">Support</a> &middot; <a href="https://www.thesharpteam.bet/privacy" style="color:#94a3b8;">Privacy Policy</a></div>\n    <div style="font-size:8.4px;color:#64748b;line-height:1.5;margin-top:8px;">Must be 21+. The Sharp Team provides information and entertainment only and is not a sportsbook. Past results do not guarantee future performance. 1u = $100.</div>\n    <div style="font-size:8.4px;color:#64748b;margin-top:6px;">&copy; 2026 The Sharp Team. All rights reserved.</div>\n  </td></tr>\n</table>\n</td></tr></table>\n</body></html>\n'
 
 
 def _welcome_stats():
@@ -1481,29 +1481,29 @@ Bet responsibly - 21+ - Gambling problem? Call 1-800-GAMBLER (1-800-426-2537): f
 
 DUNNING_HTML = """<div style="font-family:Arial,sans-serif;max-width:480px;margin:0 auto;background:#ffffff;">
 <img src="https://www.thesharpteam.bet/static/img/sharp-team-header.jpg" alt="The Sharp Team" width="480" style="width:100%;height:auto;display:block;border:0;">
-<div style="background:#ffffff;height:18px;line-height:18px;font-size:1px;">&nbsp;</div>
+<div style="background:#ffffff;height:18px;line-height:18px;font-size:0.8px;">&nbsp;</div>
 <div style="background:#2e4053;padding:28px 24px;text-align:center;">
-<p style="margin:0;font-size:10.8px;font-weight:800;letter-spacing:2px;color:#9aa3b8;">&#9888;&nbsp;PAYMENT ISSUE</p>
-<h1 style="font-size:27px;font-weight:800;color:#ffffff;margin:10px 0 0;line-height:1.25;">Today&apos;s card is set.<br><span style="color:#22c55e;">Your card isn&apos;t.</span></h1>
+<p style="margin:0;font-size:9.2px;font-weight:800;letter-spacing:2px;color:#9aa3b8;">&#9888;&nbsp;PAYMENT ISSUE</p>
+<h1 style="font-size:22.9px;font-weight:800;color:#ffffff;margin:10px 0 0;line-height:1.25;">Today&apos;s card is set.<br><span style="color:#22c55e;">Your card isn&apos;t.</span></h1>
 </div>
 <div style="margin:14px 24px 0;background:#ffffff;border:1px solid #e5e7eb;border-radius:12px;padding:18px;">
-<p style="margin:0;font-size:13.5px;font-weight:700;color:#111111;line-height:1.55;">Hi __NOMBRE__ &mdash; your last payment didn&apos;t go through, so your Platinum plays are on hold.</p>
-<p style="margin:10px 0 0;font-size:12.6px;color:#555555;line-height:1.6;">Nothing is canceled &mdash; cards just fail sometimes. Fix it now and everything switches back on instantly.</p>
+<p style="margin:0;font-size:11.5px;font-weight:700;color:#111111;line-height:1.55;">Hi __NOMBRE__ &mdash; your last payment didn&apos;t go through, so your Platinum plays are on hold.</p>
+<p style="margin:10px 0 0;font-size:10.7px;color:#555555;line-height:1.6;">Nothing is canceled &mdash; cards just fail sometimes. Fix it now and everything switches back on instantly.</p>
 </div>
 <div style="text-align:center;padding:16px 24px 0;">
-<a href="__PAY_URL__" style="display:inline-block;background:#22c55e;color:#111111;font-weight:800;font-size:14.4px;padding:14px 36px;border-radius:999px;text-decoration:none;">Fix my card in one tap &rarr;</a>
-<p style="margin:10px 0 0;font-size:11.7px;color:#6b7280;">Takes about 30 seconds &middot; Your Sharp Free plays stay yours either way.</p>
+<a href="__PAY_URL__" style="display:inline-block;background:#22c55e;color:#111111;font-weight:800;font-size:12.2px;padding:14px 36px;border-radius:999px;text-decoration:none;">Fix my card in one tap &rarr;</a>
+<p style="margin:10px 0 0;font-size:9.9px;color:#6b7280;">Takes about 30 seconds &middot; Your Sharp Free plays stay yours either way.</p>
 </div>
-<p style="font-size:11.7px;line-height:1.6;color:#6b7280;margin:16px 24px 0;text-align:center;">If anything looks off, just reply to this email and a real person will sort it.</p>
-<p style="text-align:center;font-size:10.8px;color:#9ca3af;margin:14px 0 0;">__FECHA__</p>
+<p style="font-size:9.9px;line-height:1.6;color:#6b7280;margin:16px 24px 0;text-align:center;">If anything looks off, just reply to this email and a real person will sort it.</p>
+<p style="text-align:center;font-size:9.2px;color:#9ca3af;margin:14px 0 0;">__FECHA__</p>
 <div style="text-align:center;padding:20px 20px 14px;">
 <img src="https://www.thesharpteam.bet/static/img/sharp-team-logo.png" alt="The Sharp Team" width="110" style="width:110px;height:auto;display:block;margin:0 auto;border:0;">
-<p style="margin:10px 0 0;color:#111111;font-size:10.8px;font-weight:800;letter-spacing:3px;">THE SHARP TEAM</p>
-<p style="margin:8px 0 0;color:#9ca3af;font-size:9.9px;">250 Park Avenue, Suite 1800, New York, NY 10017</p>
-<p style="margin:4px 0 0;color:#9ca3af;font-size:9.9px;"><a href="tel:+15513263312" style="color:#9ca3af;text-decoration:none;">(551) 326-3312</a></p>
-<p style="margin:12px 0 0;color:#9ca3af;font-size:9px;">21+. Play responsibly. If you or someone you know has a gambling problem, call or text <a href="tel:18004262537" style="color:#9ca3af;text-decoration:underline;">1-800-GAMBLER</a>.</p>
-<p style="margin:8px 0 0;color:#9ca3af;font-size:9px;">Don't want these emails anymore? <a href="{{{RESEND_UNSUBSCRIBE_URL}}}" style="color:#9ca3af;text-decoration:underline;">Unsubscribe</a> — one click, no questions asked.</p>
-<p style="margin:6px 0 0;color:#9ca3af;font-size:9px;">&copy; 2026 The Sharp Team</p>
+<p style="margin:10px 0 0;color:#111111;font-size:9.2px;font-weight:800;letter-spacing:3px;">THE SHARP TEAM</p>
+<p style="margin:8px 0 0;color:#9ca3af;font-size:8.4px;">250 Park Avenue, Suite 1800, New York, NY 10017</p>
+<p style="margin:4px 0 0;color:#9ca3af;font-size:8.4px;"><a href="tel:+15513263312" style="color:#9ca3af;text-decoration:none;">(551) 326-3312</a></p>
+<p style="margin:12px 0 0;color:#9ca3af;font-size:7.6px;">21+. Play responsibly. If you or someone you know has a gambling problem, call or text <a href="tel:18004262537" style="color:#9ca3af;text-decoration:underline;">1-800-GAMBLER</a>.</p>
+<p style="margin:8px 0 0;color:#9ca3af;font-size:7.6px;">Don't want these emails anymore? <a href="{{{RESEND_UNSUBSCRIBE_URL}}}" style="color:#9ca3af;text-decoration:underline;">Unsubscribe</a> — one click, no questions asked.</p>
+<p style="margin:6px 0 0;color:#9ca3af;font-size:7.6px;">&copy; 2026 The Sharp Team</p>
 </div>
 </div>"""
 
@@ -1563,64 +1563,64 @@ MONTHLY_HTML = """<!DOCTYPE html>
 <div style="font-family:Arial,sans-serif;max-width:460px;margin:0 auto;background:#ffffff;">
 <img src="https://www.thesharpteam.bet/static/img/sharp-team-header.jpg" alt="The Sharp Team" width="460" style="width:100%;height:auto;display:block;border:0;">
 <div style="background:#ffffff;padding:14px 0 12px;text-align:center;">
-<p style="margin:0;font-size:11.7px;font-weight:800;letter-spacing:5px;color:#2e4053;">THE SHARP TEAM</p>
+<p style="margin:0;font-size:9.9px;font-weight:800;letter-spacing:5px;color:#2e4053;">THE SHARP TEAM</p>
 </div>
 <div style="background:#c9a227;padding:28px 24px;text-align:center;">
-<p style="margin:0;font-size:10.8px;font-weight:800;letter-spacing:3px;color:#0a0f1c;">MONTHLY STATEMENT</p>
-<h1 style="font-size:27px;font-weight:800;color:#0a0f1c;margin:10px 0 0;line-height:1.25;">Your {mes} statement.</h1>
+<p style="margin:0;font-size:9.2px;font-weight:800;letter-spacing:3px;color:#0a0f1c;">MONTHLY STATEMENT</p>
+<h1 style="font-size:22.9px;font-weight:800;color:#0a0f1c;margin:10px 0 0;line-height:1.25;">Your {mes} statement.</h1>
 </div>
 <div style="text-align:center;padding:16px 20px 0;">
-<p style="color:#555555;font-size:13.5px;line-height:1.6;margin:0;">Hi __NOMBRE__ &mdash; here is how your {mes} closed. Every play graded, every dollar accounted.</p>
+<p style="color:#555555;font-size:11.5px;line-height:1.6;margin:0;">Hi __NOMBRE__ &mdash; here is how your {mes} closed. Every play graded, every dollar accounted.</p>
 </div>
 <div style="padding:14px 20px 0;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
 <td width="50%" style="padding:0 5px 10px 0;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:12px;"><tr><td style="padding:14px;text-align:center;">
-<p style="margin:0;font-size:9.9px;font-weight:800;letter-spacing:2px;color:#6b7280;">RECORD</p>
-<p style="margin:6px 0 0;font-size:19.8px;font-weight:800;color:#111111;">__RECORD__</p>
+<p style="margin:0;font-size:8.4px;font-weight:800;letter-spacing:2px;color:#6b7280;">RECORD</p>
+<p style="margin:6px 0 0;font-size:16.8px;font-weight:800;color:#111111;">__RECORD__</p>
 </td></tr></table>
 </td>
 <td width="50%" style="padding:0 0 10px 5px;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:12px;"><tr><td style="padding:14px;text-align:center;">
-<p style="margin:0;font-size:9.9px;font-weight:800;letter-spacing:2px;color:#6b7280;">WIN RATE</p>
-<p style="margin:6px 0 0;font-size:19.8px;font-weight:800;color:#111111;">__WINRATE__</p>
+<p style="margin:0;font-size:8.4px;font-weight:800;letter-spacing:2px;color:#6b7280;">WIN RATE</p>
+<p style="margin:6px 0 0;font-size:16.8px;font-weight:800;color:#111111;">__WINRATE__</p>
 </td></tr></table>
 </td>
 </tr><tr>
 <td width="50%" style="padding:0 5px 10px 0;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:12px;"><tr><td style="padding:14px;text-align:center;">
-<p style="margin:0;font-size:9.9px;font-weight:800;letter-spacing:2px;color:#6b7280;">NET PROFIT</p>
-<p style="margin:6px 0 0;font-size:19.8px;font-weight:800;color:__PROFIT_COLOR__;">__PROFIT__</p>
+<p style="margin:0;font-size:8.4px;font-weight:800;letter-spacing:2px;color:#6b7280;">NET PROFIT</p>
+<p style="margin:6px 0 0;font-size:16.8px;font-weight:800;color:__PROFIT_COLOR__;">__PROFIT__</p>
 </td></tr></table>
 </td>
 <td width="50%" style="padding:0 0 10px 5px;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:12px;"><tr><td style="padding:14px;text-align:center;">
-<p style="margin:0;font-size:9.9px;font-weight:800;letter-spacing:2px;color:#6b7280;">ROI</p>
-<p style="margin:6px 0 0;font-size:19.8px;font-weight:800;color:__PROFIT_COLOR__;">__ROI__</p>
+<p style="margin:0;font-size:8.4px;font-weight:800;letter-spacing:2px;color:#6b7280;">ROI</p>
+<p style="margin:6px 0 0;font-size:16.8px;font-weight:800;color:__PROFIT_COLOR__;">__ROI__</p>
 </td></tr></table>
 </td>
 </tr></table>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:2px 0 0;background:#ffffff;border:1px solid #e5e7eb;border-radius:12px;"><tr><td style="padding:14px 16px;">
-<p style="margin:0;font-size:9.9px;font-weight:800;letter-spacing:2px;color:#6b7280;">BY LEVEL</p>
-<p style="margin:8px 0 0;font-size:12.6px;color:#111111;">&#11088; <strong>Platinum</strong> &mdash; __PLATINUM__</p>
-<p style="margin:6px 0 0;font-size:12.6px;color:#111111;">&#9898; <strong>Sharp Free</strong> &mdash; __GOLD__</p>
+<p style="margin:0;font-size:8.4px;font-weight:800;letter-spacing:2px;color:#6b7280;">BY LEVEL</p>
+<p style="margin:8px 0 0;font-size:10.7px;color:#111111;">&#11088; <strong>Platinum</strong> &mdash; __PLATINUM__</p>
+<p style="margin:6px 0 0;font-size:10.7px;color:#111111;">&#9898; <strong>Sharp Free</strong> &mdash; __GOLD__</p>
 </td></tr></table>
 </div>
 <div style="padding:14px 20px 0;">
-<p style="margin:0 0 8px;font-size:9.9px;font-weight:800;letter-spacing:2px;color:#6b7280;">PLAY BY PLAY</p>
+<p style="margin:0 0 8px;font-size:8.4px;font-weight:800;letter-spacing:2px;color:#6b7280;">PLAY BY PLAY</p>
 __PLAYS_ROWS__
 </div>
 <div style="text-align:center;padding:18px 20px 0;">
-<a href="https://www.thesharpteam.bet/records" style="display:inline-block;background:#22c55e;color:#111111;font-size:12.6px;font-weight:800;padding:11px 28px;border-radius:999px;text-decoration:none;">View full record &rarr;</a>
+<a href="https://www.thesharpteam.bet/records" style="display:inline-block;background:#22c55e;color:#111111;font-size:10.7px;font-weight:800;padding:11px 28px;border-radius:999px;text-decoration:none;">View full record &rarr;</a>
 </div>
 <div style="text-align:center;padding:20px 20px 14px;">
 <img src="https://www.thesharpteam.bet/static/img/sharp-team-logo.png" alt="The Sharp Team" width="110" style="width:110px;height:auto;display:block;margin:0 auto;border:0;">
-<p style="margin:10px 0 0;color:#111111;font-size:10.8px;font-weight:800;letter-spacing:3px;">THE SHARP TEAM</p>
-<p style="margin:8px 0 0;color:#9ca3af;font-size:9.9px;">250 Park Avenue, Suite 1800, New York, NY 10017</p>
-<p style="margin:4px 0 0;color:#9ca3af;font-size:9.9px;"><a href="tel:+15513263312" style="color:#9ca3af;text-decoration:none;">(551) 326-3312</a></p>
-<p style="margin:12px 0 0;color:#9ca3af;font-size:9px;">21+. Play responsibly. If you or someone you know has a gambling problem, call or text <a href="tel:18004262537" style="color:#9ca3af;text-decoration:underline;">1-800-GAMBLER</a>.</p>
-<p style="margin:8px 0 0;color:#9ca3af;font-size:9px;">Don't want these emails anymore? <a href="{{{RESEND_UNSUBSCRIBE_URL}}}" style="color:#9ca3af;text-decoration:underline;">Unsubscribe</a> — one click, no questions asked.</p>
-<p style="margin:6px 0 0;color:#9ca3af;font-size:9px;">&copy; 2026 The Sharp Team</p>
+<p style="margin:10px 0 0;color:#111111;font-size:9.2px;font-weight:800;letter-spacing:3px;">THE SHARP TEAM</p>
+<p style="margin:8px 0 0;color:#9ca3af;font-size:8.4px;">250 Park Avenue, Suite 1800, New York, NY 10017</p>
+<p style="margin:4px 0 0;color:#9ca3af;font-size:8.4px;"><a href="tel:+15513263312" style="color:#9ca3af;text-decoration:none;">(551) 326-3312</a></p>
+<p style="margin:12px 0 0;color:#9ca3af;font-size:7.6px;">21+. Play responsibly. If you or someone you know has a gambling problem, call or text <a href="tel:18004262537" style="color:#9ca3af;text-decoration:underline;">1-800-GAMBLER</a>.</p>
+<p style="margin:8px 0 0;color:#9ca3af;font-size:7.6px;">Don't want these emails anymore? <a href="{{{RESEND_UNSUBSCRIBE_URL}}}" style="color:#9ca3af;text-decoration:underline;">Unsubscribe</a> — one click, no questions asked.</p>
+<p style="margin:6px 0 0;color:#9ca3af;font-size:7.6px;">&copy; 2026 The Sharp Team</p>
 </div>
 </div>
 </body>
@@ -1703,15 +1703,15 @@ def build_monthly_html(nombre: str, ym: str, st: dict) -> str:
             f'style="margin:0 0 8px;background:#ffffff;border:1px solid #e5e7eb;border-radius:10px;">'
             f'<tr><td style="padding:10px 14px;">'
             f'<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>'
-            f'<td><span style="font-size:12.6px;font-weight:800;color:#111111;">{t["pick"]}</span> '
-            f'<span style="font-size:10.8px;color:#6b7280;">{t["cuota"]:+d} &middot; {nivel}</span><br>'
-            f'<span style="font-size:10.8px;color:#6b7280;">{t["fecha"]}</span></td>'
-            f'<td align="right" style="font-size:12.6px;font-weight:800;color:{color};">{marca} '
+            f'<td><span style="font-size:10.7px;font-weight:800;color:#111111;">{t["pick"]}</span> '
+            f'<span style="font-size:9.2px;color:#6b7280;">{t["cuota"]:+d} &middot; {nivel}</span><br>'
+            f'<span style="font-size:9.2px;color:#6b7280;">{t["fecha"]}</span></td>'
+            f'<td align="right" style="font-size:10.7px;font-weight:800;color:{color};">{marca} '
             f'{"+" if p >= 0 else "-"}${abs(p):,.2f}</td>'
             f'</tr></table></td></tr></table>'
         )
     plays_html = "\n".join(rows) if rows else (
-        '<p style="font-size:12.6px;color:#6b7280;">No graded plays this month.</p>'
+        '<p style="font-size:10.7px;color:#6b7280;">No graded plays this month.</p>'
     )
     html = (MONTHLY_HTML
             .replace("{mes}", mes)
@@ -6262,64 +6262,64 @@ def send_cancellation_confirmed_email(nombre, email, fecha_fin_txt=None):
         'style="display:block;width:100%;height:auto;">'
         '<div style="padding:26px 30px 28px;">'
         '<div style="width:54px;height:54px;border:3px solid #1f9d66;'
-        'border-radius:50%;color:#1f9d66;font-size:26.1px;line-height:54px;'
+        'border-radius:50%;color:#1f9d66;font-size:22.2px;line-height:54px;'
         'text-align:center;margin:2px auto 12px;">&#10003;</div>'
-        '<p style="font-size:24.3px;font-weight:800;color:#0d1526;'
+        '<p style="font-size:20.7px;font-weight:800;color:#0d1526;'
         'text-align:center;margin:0 0 8px;">Cancellation Confirmed</p>'
-        '<p style="font-size:13.5px;color:#5b6472;text-align:center;'
+        '<p style="font-size:11.5px;color:#5b6472;text-align:center;'
         'line-height:1.5;margin:0 0 18px;">Your Platinum membership '
         'cancellation has been successfully processed.</p>'
         '<div style="height:1px;background:#e3e6ec;margin:0 0 20px;"></div>'
-        f'<p style="font-size:14.4px;margin:0 0 12px;">{saludo}</p>'
-        '<p style="font-size:14.4px;line-height:1.55;margin:0 0 12px;">'
+        f'<p style="font-size:12.2px;margin:0 0 12px;">{saludo}</p>'
+        '<p style="font-size:12.2px;line-height:1.55;margin:0 0 12px;">'
         "We've received and processed your request to cancel your "
         'Platinum membership.</p>'
-        f'<p style="font-size:14.4px;line-height:1.55;margin:0 0 20px;">{fin_txt}</p>'
+        f'<p style="font-size:12.2px;line-height:1.55;margin:0 0 20px;">{fin_txt}</p>'
         '<div style="background:#edf0f5;border-radius:12px;'
         'padding:18px 20px;margin:0 0 22px;">'
-        '<p style="font-size:15.3px;font-weight:700;margin:0 0 12px;">'
+        '<p style="font-size:13px;font-weight:700;margin:0 0 12px;">'
         'Membership Summary</p>'
         '<table width="100%" cellpadding="0" cellspacing="0">'
-        '<tr><td style="font-size:13.5px;color:#5b6472;padding:5px 0;">'
-        'Membership</td><td align="right" style="font-size:13.5px;'
+        '<tr><td style="font-size:11.5px;color:#5b6472;padding:5px 0;">'
+        'Membership</td><td align="right" style="font-size:11.5px;'
         'font-weight:700;padding:5px 0;">Platinum</td></tr>'
-        '<tr><td style="font-size:13.5px;color:#5b6472;padding:5px 0;">'
+        '<tr><td style="font-size:11.5px;color:#5b6472;padding:5px 0;">'
         'Status</td><td align="right" style="padding:5px 0;">'
-        '<span style="background:#d9f2e3;color:#0c7a3d;font-size:11.7px;'
+        '<span style="background:#d9f2e3;color:#0c7a3d;font-size:9.9px;'
         'font-weight:700;border-radius:999px;padding:4px 11px;">'
         'Cancellation Scheduled</span></td></tr>'
-        '<tr><td style="font-size:13.5px;color:#5b6472;padding:5px 0;">'
-        'Access Until</td><td align="right" style="font-size:13.5px;'
+        '<tr><td style="font-size:11.5px;color:#5b6472;padding:5px 0;">'
+        'Access Until</td><td align="right" style="font-size:11.5px;'
         f'font-weight:700;padding:5px 0;">{acceso_caja}</td></tr>'
-        '<tr><td style="font-size:13.5px;color:#5b6472;padding:5px 0;">'
-        'Future Charges</td><td align="right" style="font-size:13.5px;'
+        '<tr><td style="font-size:11.5px;color:#5b6472;padding:5px 0;">'
+        'Future Charges</td><td align="right" style="font-size:11.5px;'
         'font-weight:700;padding:5px 0;">$0.00</td></tr>'
         '</table></div>'
-        '<p style="font-size:17.1px;font-weight:700;margin:0 0 10px;">'
+        '<p style="font-size:14.5px;font-weight:700;margin:0 0 10px;">'
         'Changed your mind?</p>'
-        '<p style="font-size:14.4px;line-height:1.55;margin:0 0 18px;">'
+        '<p style="font-size:12.2px;line-height:1.55;margin:0 0 18px;">'
         "We'd love to have you stay. You can reactivate your Platinum "
         'membership anytime before your access expires.</p>'
         '<div style="background:#0d1526;border-radius:12px;'
         'padding:24px 20px;text-align:center;margin:0 0 20px;">'
-        '<p style="font-size:18.9px;font-weight:800;color:#ffffff;'
+        '<p style="font-size:16.1px;font-weight:800;color:#ffffff;'
         'margin:0 0 6px;">Your next winning opportunity awaits.</p>'
-        '<p style="font-size:12.6px;color:#a7b0c2;margin:0 0 16px;">'
+        '<p style="font-size:10.7px;color:#a7b0c2;margin:0 0 16px;">'
         "Come back whenever you're ready.</p>"
         '<a href="https://www.thesharpteam.bet/cuenta" '
         'style="display:inline-block;background:#d9a92c;color:#10141f;'
-        'font-size:13.5px;font-weight:800;letter-spacing:0.4px;'
+        'font-size:11.5px;font-weight:800;letter-spacing:0.4px;'
         'text-decoration:none;padding:13px 30px;border-radius:8px;">'
         'REACTIVATE MEMBERSHIP</a></div>'
-        '<p style="font-size:13.5px;line-height:1.55;color:#39415a;'
+        '<p style="font-size:11.5px;line-height:1.55;color:#39415a;'
         'margin:0 0 16px;">Thank you for being part of The Sharp Team. '
         'We appreciate your support and wish you the best.</p>'
-        '<p style="font-size:15.3px;font-weight:700;margin:0 0 6px;">'
+        '<p style="font-size:13px;font-weight:700;margin:0 0 6px;">'
         'The Sharp Team</p>'
-        '<p style="font-size:11.7px;color:#5b6472;margin:0;">Gamble smart. '
+        '<p style="font-size:9.9px;color:#5b6472;margin:0;">Gamble smart. '
         'Stay disciplined. Play the long game.</p>'
         '<div style="height:1px;background:#e3e6ec;margin:20px 0 16px;"></div>'
-        '<p style="text-align:center;font-size:11.2px;color:#5b6472;'
+        '<p style="text-align:center;font-size:9.5px;color:#5b6472;'
         'line-height:1.6;margin:0 0 12px;">250 Park Avenue, Suite 1800, '
         'New York, NY 10017 &middot; (551) 326-3312</p>'
         '<div style="text-align:center;margin:0 0 12px;">'
@@ -6339,16 +6339,16 @@ def send_cancellation_confirmed_email(nombre, email, fecha_fin_txt=None):
         'width="30" height="30" alt="Facebook" '
         'style="border:0;margin:0 7px;"></a>'
         '</div>'
-        '<p style="text-align:center;font-size:10.3px;color:#8a93a5;'
+        '<p style="text-align:center;font-size:8.8px;color:#8a93a5;'
         'line-height:1.55;margin:0 0 6px;">21+. Play responsibly. If you '
         'or someone you know has a gambling problem, call or text '
         '1-800-GAMBLER.</p>'
-        '<p style="text-align:center;font-size:10.3px;color:#8a93a5;'
+        '<p style="text-align:center;font-size:8.8px;color:#8a93a5;'
         'line-height:1.55;margin:0;">The Sharp Team provides information '
         'and entertainment only and is not a sportsbook. Past results do '
         'not guarantee future performance.</p>'
         '</div></div>'
-        f'<p style="text-align:center;font-size:10.8px;color:#8a93a5;'
+        f'<p style="text-align:center;font-size:9.2px;color:#8a93a5;'
         f'margin:14px 0 0;">&copy; {anio} The Sharp Team. All rights '
         'reserved.</p></div>')
 
@@ -7102,7 +7102,7 @@ def _settlement_card_html(bet):
     liga_chip = ""
     if liga:
         liga_chip = ("<span style=\"display:inline-block;border:1px solid #e3e8f2;"
-                     "background:#eef2f9;color:#33415e;font-size:10.5px;font-weight:800;"
+                     "background:#eef2f9;color:#33415e;font-size:8.9px;font-weight:800;"
                      "letter-spacing:2px;padding:4px 10px;border-radius:999px;\">"
                      + _h.escape(liga) + "</span>")
     pick_line = _settlement_pick_line(bet)
@@ -7114,8 +7114,8 @@ def _settlement_card_html(bet):
         final_row = ("<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" "
                      "style=\"margin-top:12px;border-top:1px solid #e3e8f2;\"><tr>"
                      "<td valign=\"middle\" style=\"padding-top:11px;\"><span style=\"color:#8494ad;"
-                     "font-size:11px;font-weight:800;letter-spacing:1.5px;\">FINAL</span>"
-                     "<span style=\"color:#0c1638;font-size:18px;font-weight:900;margin-left:10px;\">"
+                     "font-size:9.3px;font-weight:800;letter-spacing:1.5px;\">FINAL</span>"
+                     "<span style=\"color:#0c1638;font-size:15.3px;font-weight:900;margin-left:10px;\">"
                      + _h.escape(marcador) + "</span></td></tr></table>")
     return ("<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" bgcolor=\"#ffffff\" "
             "style=\"background:#ffffff;border:1px solid #e3e8f2;border-left:6px solid #2ee6a8;"
@@ -7124,11 +7124,11 @@ def _settlement_card_html(bet):
             "<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\"><tr>"
             "<td valign=\"middle\">" + liga_chip + "</td>"
             "<td align=\"right\" valign=\"middle\"><span style=\"display:inline-block;" + chip_css
-            + "font-size:10.5px;font-weight:900;letter-spacing:1.5px;padding:4px 10px;"
+            + "font-size:8.9px;font-weight:900;letter-spacing:1.5px;padding:4px 10px;"
             "border-radius:999px;\">" + chip_txt + "</span></td></tr></table>"
             "<div style=\"color:#0c1638;font-size:" + str(pick_size) + "px;font-weight:900;margin-top:10px;"
             "white-space:nowrap;\">" + _h.escape(pick_line) + "</div>"
-            "<div style=\"font-size:13px;color:#5b6b84;margin-top:3px;\">" + _h.escape(subline) + "</div>"
+            "<div style=\"font-size:11px;color:#5b6b84;margin-top:3px;\">" + _h.escape(subline) + "</div>"
             + final_row +
             "</td></tr></table>")
 
@@ -7166,35 +7166,35 @@ def _settlement_email_html(bets, single=None):
             "<html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">"
             "<title>" + _h.escape(title_txt) + "</title></head>\n"
             "<body style=\"margin:0;padding:0;background:#f7f9fc;font-family:-apple-system,Helvetica,Arial,sans-serif;-webkit-text-size-adjust:100%;text-size-adjust:100%;\">\n"
-            "<div style=\"display:none;font-size:1px;line-height:1px;max-height:0;overflow:hidden;\">" + _h.escape(preheader) + "</div>\n"
+            "<div style=\"display:none;font-size:0.8px;line-height:1px;max-height:0;overflow:hidden;\">" + _h.escape(preheader) + "</div>\n"
             "<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#f7f9fc;-webkit-text-size-adjust:100%;text-size-adjust:100%;\">\n"
             "<tr><td align=\"center\" style=\"padding:0;\">\n"
             "<table role=\"presentation\" width=\"520\" cellpadding=\"0\" cellspacing=\"0\" style=\"max-width:520px;width:100%;background:#ffffff;-webkit-text-size-adjust:100%;text-size-adjust:100%;\">\n"
             "  <tr><td style=\"background:#000000;padding:18px 24px 16px;text-align:center;\">\n"
-            "    <div style=\"color:#2ee6a8;font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;white-space:nowrap;\">" + _h.escape(strip) + "</div>\n"
+            "    <div style=\"color:#2ee6a8;font-size:7.6px;font-weight:800;letter-spacing:2px;text-transform:uppercase;white-space:nowrap;\">" + _h.escape(strip) + "</div>\n"
             "    <img src=\"https://www.thesharpteam.bet/static/img/sharp-team-header.jpg\" alt=\"The Sharp Team\" style=\"width:100%;height:auto;display:block;border:0;margin-top:12px;\">\n"
-            "    <div style=\"color:#2ee6a8;font-size:9px;font-weight:800;letter-spacing:2.5px;margin-top:3px;\">MY BETS · SETTLEMENT</div>\n"
+            "    <div style=\"color:#2ee6a8;font-size:7.6px;font-weight:800;letter-spacing:2.5px;margin-top:3px;\">MY BETS · SETTLEMENT</div>\n"
             "  </td></tr>\n"
             "  <tr><td style=\"background:#ffffff;padding:22px 24px 4px;text-align:center;\">\n"
-            "    <div style=\"color:#111111;font-size:32.4px;line-height:1.15;font-weight:900;text-align:center;\">Your tracker just<br><span style=\"color:#0e9f74;\">updated.</span></div>\n"
-            "    <p style=\"font-size:12.6px;line-height:1.55;color:#5b6b84;margin:9px 0 0;\">" + intro + "</p>\n"
+            "    <div style=\"color:#111111;font-size:27.5px;line-height:1.15;font-weight:900;text-align:center;\">Your tracker just<br><span style=\"color:#0e9f74;\">updated.</span></div>\n"
+            "    <p style=\"font-size:10.7px;line-height:1.55;color:#5b6b84;margin:9px 0 0;\">" + intro + "</p>\n"
             "  </td></tr>\n"
             "  <tr><td style=\"background:#ffffff;padding:14px 24px 0;\">\n"
             "    <div style=\"border-top:1px solid #e3e8f2;font-size:0;line-height:0;margin:0 0 16px;\">&nbsp;</div>\n"
             "    " + cards + "\n"
-            "    <p style=\"font-size:12.6px;line-height:1.55;color:#33415e;text-align:center;margin:16px 0 0;\">Your full running record is on <b style=\"color:#0c1638;\">My Bets</b> — every bet, graded automatically.</p>\n"
-            "    <div style=\"text-align:center;margin-top:14px;\"><a href=\"https://www.thesharpteam.bet/tracker\" style=\"display:inline-block;background:#2ee6a8;color:#0c1638;font-size:12.6px;font-weight:900;padding:12px 26px;border-radius:999px;text-decoration:none;\">OPEN MY BETS &rarr;</a></div>\n"
-            "    <p style=\"font-size:10.3px;line-height:1.55;color:#8494ad;text-align:center;margin:16px 0 0;\">Auto-graded from your tracked bets. Change frequency in My Bets &rarr; Settlement emails.</p>\n"
-            "    <div style=\"font-size:9.9px;color:#8494ad;text-align:center;margin-top:8px;\">" + ts + "</div>\n"
+            "    <p style=\"font-size:10.7px;line-height:1.55;color:#33415e;text-align:center;margin:16px 0 0;\">Your full running record is on <b style=\"color:#0c1638;\">My Bets</b> — every bet, graded automatically.</p>\n"
+            "    <div style=\"text-align:center;margin-top:14px;\"><a href=\"https://www.thesharpteam.bet/tracker\" style=\"display:inline-block;background:#2ee6a8;color:#0c1638;font-size:10.7px;font-weight:900;padding:12px 26px;border-radius:999px;text-decoration:none;\">OPEN MY BETS &rarr;</a></div>\n"
+            "    <p style=\"font-size:8.8px;line-height:1.55;color:#8494ad;text-align:center;margin:16px 0 0;\">Auto-graded from your tracked bets. Change frequency in My Bets &rarr; Settlement emails.</p>\n"
+            "    <div style=\"font-size:8.4px;color:#8494ad;text-align:center;margin-top:8px;\">" + ts + "</div>\n"
             "  </td></tr>\n"
             "  <tr><td style=\"background:#ffffff;border-top:1px solid #e3e8f2;padding:18px 24px 16px;text-align:center;\">\n"
             "    <img src=\"https://www.thesharpteam.bet/static/img/sharp-team-logo.png\" width=\"44\" alt=\"The Sharp Team\" style=\"display:block;margin:0 auto 5px;\">\n"
-            "    <div style=\"font-size:9.9px;font-weight:800;color:#0c1638;letter-spacing:1px;\">THE SHARP TEAM</div>\n"
-            "    <div style=\"font-size:9.5px;color:#8494ad;margin-top:3px;\">250 Park Avenue, Suite 1800, New York, NY 10017 · (551) 326-3312</div>\n"
-            "    <div style=\"font-size:9.5px;color:#8494ad;margin-top:8px;\">Daily plays, results and receipts: <a href=\"https://t.me/thesharpteam\" style=\"color:#0e9f74;text-decoration:none;\">t.me/thesharpteam</a></div>\n"
-            "    <div style=\"font-size:9.5px;color:#8494ad;line-height:1.5;margin-top:10px;\">21+. Play responsibly. If you or someone you know has a gambling problem, call or text 1-800-GAMBLER.</div>\n"
-            "    <div style=\"font-size:9.5px;color:#8494ad;line-height:1.5;margin-top:6px;\">Must be 21+. The Sharp Team provides information and entertainment only and is not a sportsbook. Past results do not guarantee future performance. 1u = $100.</div>\n"
-            "    <div style=\"font-size:9.5px;color:#8494ad;margin-top:5px;\">&copy; 2026 The Sharp Team. All rights reserved.</div>\n"
+            "    <div style=\"font-size:8.4px;font-weight:800;color:#0c1638;letter-spacing:1px;\">THE SHARP TEAM</div>\n"
+            "    <div style=\"font-size:8.1px;color:#8494ad;margin-top:3px;\">250 Park Avenue, Suite 1800, New York, NY 10017 · (551) 326-3312</div>\n"
+            "    <div style=\"font-size:8.1px;color:#8494ad;margin-top:8px;\">Daily plays, results and receipts: <a href=\"https://t.me/thesharpteam\" style=\"color:#0e9f74;text-decoration:none;\">t.me/thesharpteam</a></div>\n"
+            "    <div style=\"font-size:8.1px;color:#8494ad;line-height:1.5;margin-top:10px;\">21+. Play responsibly. If you or someone you know has a gambling problem, call or text 1-800-GAMBLER.</div>\n"
+            "    <div style=\"font-size:8.1px;color:#8494ad;line-height:1.5;margin-top:6px;\">Must be 21+. The Sharp Team provides information and entertainment only and is not a sportsbook. Past results do not guarantee future performance. 1u = $100.</div>\n"
+            "    <div style=\"font-size:8.1px;color:#8494ad;margin-top:5px;\">&copy; 2026 The Sharp Team. All rights reserved.</div>\n"
             "  </td></tr>\n"
             "</table>\n"
             "</td></tr></table>\n"
@@ -7480,7 +7480,7 @@ def _ev_board_email_html(board):
     for e in board.get("events") or []:
         teams = ""
         for t in e.get("teams") or []:
-            tag = (" <span style='background:#e8c766;color:#111;font-size:7.2px;"
+            tag = (" <span style='background:#e8c766;color:#111;font-size:6.1px;"
                    "font-weight:800;border-radius:99px;padding:2px 8px'>OUR PLAY</span>"
                    if t.get("is_pick") else "")
             delta = t.get("delta") or "$0.00"
@@ -7489,32 +7489,32 @@ def _ev_board_email_html(board):
                      f"Same price at all {t.get('books_count', '')} books")
             teams += (
                 f"<div style='padding:9px 0;border-top:1px solid rgba(255,255,255,.07)'>"
-                f"<span style='font-size:10.8px;color:#fff'>{t.get('name', '')}</span>{tag}"
+                f"<span style='font-size:9.2px;color:#fff'>{t.get('name', '')}</span>{tag}"
                 f"<span style='float:right;text-align:right'><b style='color:#2ee6a8;"
-                f"font-size:12.6px'>{t.get('best_price', '')}</b><br>"
-                f"<span style='color:#8b94a7;font-size:8.1px'>best at {t.get('best_book', '')}</span></span>"
-                f"<div style='color:#2ee6a8;font-size:9px;margin-top:4px'>{dline}</div></div>")
+                f"font-size:10.7px'>{t.get('best_price', '')}</b><br>"
+                f"<span style='color:#8b94a7;font-size:6.9px'>best at {t.get('best_book', '')}</span></span>"
+                f"<div style='color:#2ee6a8;font-size:7.6px;margin-top:4px'>{dline}</div></div>")
         games += (
             f"<div style='background:#131f3a;border:1px solid #2a3c5f;border-radius:14px;"
             f"padding:14px 16px;margin:0 0 12px'>"
-            f"<div style='color:#c8cede;font-size:8.1px;letter-spacing:1.2px'>{e.get('league', '')}"
+            f"<div style='color:#c8cede;font-size:6.9px;letter-spacing:1.2px'>{e.get('league', '')}"
             f" · TODAY {e.get('time_label', '')}</div>"
-            f"<div style='color:#fff;font-size:11.7px;font-weight:700;margin-top:4px'>{e.get('label', '')}</div>"
+            f"<div style='color:#fff;font-size:9.9px;font-weight:700;margin-top:4px'>{e.get('label', '')}</div>"
             f"{teams}"
-            f"<div style='color:#8b94a7;font-size:9px;margin-top:8px'>Market vig "
+            f"<div style='color:#8b94a7;font-size:7.6px;margin-top:8px'>Market vig "
             f"<b style='color:#2ee6a8'>{e.get('vig', '')}</b></div></div>")
     return (
         "<div style='font-family:Arial,sans-serif;background:#0e1626;color:#eef2f8;"
         "padding:24px;border-radius:12px;max-width:560px'>"
-        "<div style='font-size:8.1px;letter-spacing:2px;color:#e8c766;font-weight:800'>THE SHARP TEAM</div>"
-        "<h2 style='margin:6px 0 4px;color:#fff;font-size:18px'>Today's price board</h2>"
-        "<p style='color:#93a4bf;font-size:9.9px;margin:0 0 16px'>Every game on today's card, "
+        "<div style='font-size:6.9px;letter-spacing:2px;color:#e8c766;font-weight:800'>THE SHARP TEAM</div>"
+        "<h2 style='margin:6px 0 4px;color:#fff;font-size:15.3px'>Today's price board</h2>"
+        "<p style='color:#93a4bf;font-size:8.4px;margin:0 0 16px'>Every game on today's card, "
         "the best price for each team and where to bet it — the same board as your Dashboard.</p>"
         f"{games}"
         "<p style='margin:16px 0'><a href='https://www.thesharpteam.bet/ev-board' "
-        "style='background:#2ee6a8;color:#06301d;font-weight:800;font-size:12.6px;text-decoration:none;"
+        "style='background:#2ee6a8;color:#06301d;font-weight:800;font-size:10.7px;text-decoration:none;"
         "border-radius:10px;padding:12px 20px;display:inline-block'>Open Compare Prices →</a></p>"
-        "<p style='color:#5f718f;font-size:8.1px;line-height:1.5'>You get this email because "
+        "<p style='color:#5f718f;font-size:6.9px;line-height:1.5'>You get this email because "
         "«Price board by email» is on in your Alerts. Turn it off any time there.<br>"
         "21+. Play responsibly. If you or someone you know has a gambling problem, call or "
         "text 1-800-GAMBLER. © 2026 The Sharp Team.</p></div>")
@@ -9280,8 +9280,8 @@ def admin_email_directo():
         text_body = body  # versión texto plano
         html = f"""<div style="font-family:-apple-system,Helvetica,Arial,sans-serif;max-width:600px;margin:0 auto;background:#ffffff;">
 <img src="https://www.thesharpteam.bet/static/img/sharp-team-header.jpg" alt="The Sharp Team" style="width:100%;height:auto;display:block;border:0;">
-<div style="padding:24px 28px;"><p style="font-size:14.4px;color:#111;line-height:1.6;">{body}</p>
-<p style="font-size:12.6px;color:#6b7280;margin-top:20px;"><strong>The Sharp Team</strong></p></div></div>"""
+<div style="padding:24px 28px;"><p style="font-size:12.2px;color:#111;line-height:1.6;">{body}</p>
+<p style="font-size:10.7px;color:#6b7280;margin-top:20px;"><strong>The Sharp Team</strong></p></div></div>"""
         _dispatch_email(target["email"], subject, text_body, html_body=html)
         flash(f"Email enviado a {target['email']}.", "ok")
     except Exception as e:
@@ -10337,17 +10337,17 @@ def admin_control_email():
         return redirect(url_for("admin_dashboard"))
     import html as _html
     parrafos = "".join(
-        f'<p style="margin:0 0 10px;font-size:12.2px;line-height:1.65;color:#dbe4f5;">{_html.escape(p)}</p>'
+        f'<p style="margin:0 0 10px;font-size:10.4px;line-height:1.65;color:#dbe4f5;">{_html.escape(p)}</p>'
         for p in mensaje.split("\n") if p.strip()
     )
     html_body = (
         '<div style="background:#070d1d;padding:18px 12px;">'
         '<div style="font-family:Arial,sans-serif;max-width:440px;margin:0 auto;background:#0e1730;border-radius:14px;padding:22px 24px;">'
-        '<p style="margin:0 0 4px;font-size:9.9px;font-weight:800;letter-spacing:3px;color:#e8c766;">THE SHARP TEAM</p>'
-        f'<h1 style="font-family:Georgia,serif;font-size:17.1px;color:#ffffff;margin:6px 0 12px;">{_html.escape(asunto)}</h1>'
+        '<p style="margin:0 0 4px;font-size:8.4px;font-weight:800;letter-spacing:3px;color:#e8c766;">THE SHARP TEAM</p>'
+        f'<h1 style="font-family:Georgia,serif;font-size:14.5px;color:#ffffff;margin:6px 0 12px;">{_html.escape(asunto)}</h1>'
         + parrafos +
-        '<a href="https://www.thesharpteam.bet/home" style="display:inline-block;background:#2f7bff;color:#ffffff;font-size:11.2px;font-weight:800;padding:11px 22px;border-radius:999px;text-decoration:none;margin-top:8px;">OPEN MY DASHBOARD</a>'
-        '<p style="margin:16px 0 0;color:#7e8db0;font-size:8.6px;">21+. Play responsibly. If you or someone you know has a gambling problem, call or text 1-800-GAMBLER.</p>'
+        '<a href="https://www.thesharpteam.bet/home" style="display:inline-block;background:#2f7bff;color:#ffffff;font-size:9.5px;font-weight:800;padding:11px 22px;border-radius:999px;text-decoration:none;margin-top:8px;">OPEN MY DASHBOARD</a>'
+        '<p style="margin:16px 0 0;color:#7e8db0;font-size:7.3px;">21+. Play responsibly. If you or someone you know has a gambling problem, call or text 1-800-GAMBLER.</p>'
         '</div></div>'
     )
     db = get_db()
