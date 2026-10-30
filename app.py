@@ -6131,6 +6131,103 @@ def cuenta_telegram_unlink():
     return redirect(url_for("cuenta"))
 
 
+def _stripe_cancel_status(user):
+    """Estado de la cancelación del miembro en Stripe:
+    ("ok", fecha_txt) si la cancelación al fin del período ya está puesta;
+    ("sin_sub", None) si no tiene suscripción en Stripe (nada que cobrar);
+    ("error", None) si tiene suscripción pero no se pudo confirmar."""
+    if not user:
+        return ("sin_sub", None)
+    sub_id = ""
+    customer_id = ""
+    try:
+        sub_id = (user["stripe_subscription_id"] or "").strip()
+        customer_id = (user["stripe_customer_id"] or "").strip()
+    except Exception:
+        pass
+    if not sub_id and not customer_id:
+        return ("sin_sub", None)
+    if not stripe_configurado():
+        return ("error", None)
+    try:
+        import stripe
+        from datetime import datetime as _dt
+        stripe.api_key = STRIPE_SECRET_KEY
+        sub = None
+        if sub_id:
+            sub = stripe.Subscription.retrieve(sub_id)
+        else:
+            subs = stripe.Subscription.list(customer=customer_id, limit=1)
+            if subs and subs.data:
+                sub = subs.data[0]
+        if sub is None:
+            return ("sin_sub", None)
+        if not sub.get("cancel_at_period_end"):
+            return ("error", None)
+        ts = sub.get("cancel_at") or sub.get("current_period_end") or sub.get("trial_end")
+        if not ts:
+            items = (sub.get("items") or {}).get("data") or []
+            if items:
+                ts = items[0].get("current_period_end")
+        fecha = None
+        if ts:
+            fecha = _dt.fromtimestamp(int(ts), TZ).strftime("%B %d, %Y")
+        return ("ok", fecha)
+    except Exception:
+        return ("error", None)
+
+
+def send_cancellation_confirmed_email(nombre, email, fecha_fin_txt=None):
+    """Email AL MIEMBRO confirmando su cancelación (2026-10-30, hueco
+    detectado por Alex probando como cliente: el cliente no recibía
+    ninguna confirmación). Dice: cancelación procesada, no se le cobra
+    más y hasta cuándo conserva el acceso. Hilo aparte, fallo silencioso:
+    nunca rompe el flujo de cancelación."""
+    if not email:
+        return
+    nombre = (nombre or "").strip()
+    saludo = f"Hi {nombre}," if nombre else "Hi,"
+    hasta = f" on {fecha_fin_txt}" if fecha_fin_txt else ""
+    acceso = (f"You keep full Platinum access until {fecha_fin_txt}."
+              if fecha_fin_txt else
+              "You keep full Platinum access until the end of your current period.")
+    subject = "Your Platinum cancellation is confirmed"
+    text = (f"{saludo}\n\n"
+            f"We've processed your cancellation. Your Platinum subscription "
+            f"is set to cancel{hasta}, and you will not be charged again.\n\n"
+            f"{acceso}\n\n"
+            f"If you change your mind before then, you can reactivate in "
+            f"one tap from your Account page and everything stays the same.\n\n"
+            f"- The Sharp Team\n")
+    html = (
+        '<div style="margin:0;padding:24px;background:#ffffff;'
+        'font-family:Arial,Helvetica,sans-serif;color:#10141f;">'
+        '<div style="max-width:480px;margin:0 auto;">'
+        '<p style="font-size:20px;font-weight:700;margin:0 0 12px;">'
+        'Your cancellation is confirmed</p>'
+        f'<p style="font-size:15px;line-height:1.55;margin:0 0 12px;">{saludo}</p>'
+        '<p style="font-size:15px;line-height:1.55;margin:0 0 12px;">'
+        f"We've processed your cancellation. Your Platinum subscription is "
+        f"set to cancel{hasta}, and <b>you will not be charged again</b>.</p>"
+        f'<p style="font-size:15px;line-height:1.55;margin:0 0 12px;">{acceso}</p>'
+        '<p style="font-size:15px;line-height:1.55;margin:0 0 12px;">'
+        'If you change your mind before then, you can reactivate in one tap '
+        'from your <a href="https://www.thesharpteam.bet/cuenta">Account '
+        'page</a> and everything stays the same.</p>'
+        '<p style="color:#5b6472;font-size:13px;margin:16px 0 0;">'
+        '- The Sharp Team</p>'
+        '</div></div>')
+
+    def _send():
+        try:
+            _dispatch_email(email, subject, text, html)
+        except Exception:
+            pass
+
+    import threading
+    threading.Thread(target=_send, daemon=True).start()
+
+
 @app.route("/cuenta/cancelar", methods=["GET", "POST"])
 @login_required
 def cuenta_cancelar():
@@ -6152,6 +6249,16 @@ def cuenta_cancelar():
             # Automático (2026-10-30, orden de Alex): la petición se aplica
             # también en Stripe al final del período — no se le cobra más.
             _stripe_set_cancel_at_period_end(user, True)
+            # Confirmación AL MIEMBRO (2026-10-30): su email de cancelación
+            # confirmada, solo si Stripe confirma la cancelación programada
+            # o si no tiene suscripción (nada que cobrar). Si no se puede
+            # confirmar, no se promete nada por email.
+            try:
+                _st, _fin = _stripe_cancel_status(user)
+                if _st != "error":
+                    send_cancellation_confirmed_email(user["nombre"], user["email"], _fin)
+            except Exception:
+                pass
             flash("Your membership has been cancelled. No further charges.", "ok")
         return redirect(url_for("cuenta"))
     if user and user["cancel_requested_at"]:
@@ -13647,10 +13754,10 @@ def stripe_webhook():
             cancel_at_end = bool(data.get("cancel_at_period_end"))
             row = None
             if sub_id:
-                row = db.execute("SELECT id, email, nombre FROM users WHERE stripe_subscription_id = ?",
+                row = db.execute("SELECT id, email, nombre, cancel_requested_at FROM users WHERE stripe_subscription_id = ?",
                                  (sub_id,)).fetchone()
             if row is None and customer_id:
-                row = db.execute("SELECT id, email, nombre FROM users WHERE stripe_customer_id = ?",
+                row = db.execute("SELECT id, email, nombre, cancel_requested_at FROM users WHERE stripe_customer_id = ?",
                                  (customer_id,)).fetchone()
             if row:
                 email = row["email"]
@@ -13679,6 +13786,30 @@ def stripe_webhook():
                     if cancel_at_end:
                         _nm = (row["nombre"] or email) if "nombre" in row.keys() else email
                         log_notificacion(db, "cancelacion", f"Cliente programó cancelar: {_nm}", email)
+                        # Confirmación al miembro SOLO si la cancelación NO
+                        # vino de la página (ese flujo ya manda su email en
+                        # /cuenta/cancelar): así nadie recibe dos.
+                        try:
+                            _cr = row["cancel_requested_at"]
+                        except Exception:
+                            _cr = None
+                        if not _cr:
+                            _fin_ts = (data.get("cancel_at") or data.get("current_period_end")
+                                       or data.get("trial_end"))
+                            if not _fin_ts:
+                                _items = (data.get("items") or {}).get("data") or []
+                                if _items:
+                                    _fin_ts = _items[0].get("current_period_end")
+                            _fin_txt = None
+                            if _fin_ts:
+                                try:
+                                    _fin_txt = datetime.fromtimestamp(int(_fin_ts), TZ).strftime("%B %d, %Y")
+                                except Exception:
+                                    _fin_txt = None
+                            try:
+                                send_cancellation_confirmed_email(_nm, email, _fin_txt)
+                            except Exception:
+                                pass
             else:
                 _auditar("", f"{etype} sin miembro vinculado (sub {sub_id[:20] if sub_id else 'n/a'})")
         elif etype == "invoice.payment_failed":
