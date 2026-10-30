@@ -955,8 +955,7 @@ def _activation_shell(titulo, cuerpo, boton, nota, link, lang="en"):
 <tr><td align="center" style="padding:22px 12px 30px;">
 <table role="presentation" width="480" cellpadding="0" cellspacing="0" style="max-width:480px;width:100%;">
   <tr><td style="background:#ffffff;border-radius:16px 16px 0 0;padding:24px 28px 0;text-align:center;">
-    <img src="https://www.thesharpteam.bet/static/img/sharp-team-logo.png" width="92" alt="The Sharp Team" style="display:block;margin:0 auto;border:0;">
-    <div style="font-size:13.5px;font-weight:800;color:#0f172a;letter-spacing:3px;margin-top:10px;">THE SHARP TEAM</div>
+    <img src="https://www.thesharpteam.bet/static/img/sharp-team-header.jpg" alt="The Sharp Team" style="width:100%;height:auto;display:block;border:0;">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:16px 0 0;"><tr><td bgcolor="#9ff7d4" height="3" style="height:3px;font-size:0;line-height:0;border-top-left-radius:3px;border-top-right-radius:3px;">&nbsp;</td></tr><tr><td bgcolor="#2ee6a8" height="6" style="height:6px;font-size:0;line-height:0;">&nbsp;</td></tr><tr><td bgcolor="#0b8a5f" height="3" style="height:3px;font-size:0;line-height:0;border-bottom-left-radius:3px;border-bottom-right-radius:3px;">&nbsp;</td></tr></table>
   </td></tr>
   <tr><td style="background:#ffffff;padding:22px 28px 6px;text-align:center;">
@@ -7158,8 +7157,7 @@ def _settlement_email_html(bets, single=None):
             "<table role=\"presentation\" width=\"520\" cellpadding=\"0\" cellspacing=\"0\" style=\"max-width:520px;width:100%;background:#ffffff;-webkit-text-size-adjust:100%;text-size-adjust:100%;\">\n"
             "  <tr><td style=\"background:#000000;padding:18px 24px 16px;text-align:center;\">\n"
             "    <div style=\"color:#2ee6a8;font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;white-space:nowrap;\">" + _h.escape(strip) + "</div>\n"
-            "    <img src=\"https://www.thesharpteam.bet/static/img/sharp-team-logo.png\" width=\"64\" alt=\"The Sharp Team\" style=\"display:block;margin:12px auto 0;\">\n"
-            "    <div style=\"color:#ffffff;font-size:15px;font-weight:800;letter-spacing:3px;margin-top:8px;\">THE SHARP TEAM</div>\n"
+            "    <img src=\"https://www.thesharpteam.bet/static/img/sharp-team-header.jpg\" alt=\"The Sharp Team\" style=\"width:100%;height:auto;display:block;border:0;margin-top:12px;\">\n"
             "    <div style=\"color:#2ee6a8;font-size:10px;font-weight:800;letter-spacing:2.5px;margin-top:3px;\">MY BETS · SETTLEMENT</div>\n"
             "  </td></tr>\n"
             "  <tr><td style=\"background:#ffffff;padding:22px 24px 4px;text-align:center;\">\n"
