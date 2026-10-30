@@ -6226,7 +6226,16 @@ def send_cancellation_confirmed_email(nombre, email, fecha_fin_txt=None):
             "Thank you for being part of The Sharp Team. We appreciate "
             "your support and wish you the best.\n\n"
             "The Sharp Team\n"
-            "Gamble smart. Stay disciplined. Play the long game.\n")
+            "Gamble smart. Stay disciplined. Play the long game.\n\n"
+            "250 Park Avenue, Suite 1800, New York, NY 10017 · (551) 326-3312\n"
+            "Instagram: https://www.instagram.com/the_sharp_team/\n"
+            "Telegram: https://t.me/thesharpteam\n"
+            "Facebook: https://www.facebook.com/profile.php?id=61595131043413\n\n"
+            "21+. Play responsibly. If you or someone you know has a "
+            "gambling problem, call or text 1-800-GAMBLER.\n"
+            "The Sharp Team provides information and entertainment only "
+            "and is not a sportsbook. Past results do not guarantee "
+            "future performance.\n")
     from datetime import datetime as _dtn
     anio = _dtn.now(TZ).year
     html = (
@@ -6295,6 +6304,35 @@ def send_cancellation_confirmed_email(nombre, email, fecha_fin_txt=None):
         'The Sharp Team</p>'
         '<p style="font-size:13px;color:#5b6472;margin:0;">Gamble smart. '
         'Stay disciplined. Play the long game.</p>'
+        '<div style="height:1px;background:#e3e6ec;margin:20px 0 16px;"></div>'
+        '<p style="text-align:center;font-size:12.5px;color:#5b6472;'
+        'line-height:1.6;margin:0 0 12px;">250 Park Avenue, Suite 1800, '
+        'New York, NY 10017 &middot; (551) 326-3312</p>'
+        '<div style="text-align:center;margin:0 0 12px;">'
+        '<a href="https://www.instagram.com/the_sharp_team/" '
+        'style="text-decoration:none;"><img '
+        'src="https://www.thesharpteam.bet/static/img/icons/instagram.png" '
+        'width="30" height="30" alt="Instagram" '
+        'style="border:0;margin:0 7px;"></a>'
+        '<a href="https://t.me/thesharpteam" '
+        'style="text-decoration:none;"><img '
+        'src="https://www.thesharpteam.bet/static/img/icons/telegram.png" '
+        'width="30" height="30" alt="Telegram" '
+        'style="border:0;margin:0 7px;"></a>'
+        '<a href="https://www.facebook.com/profile.php?id=61595131043413" '
+        'style="text-decoration:none;"><img '
+        'src="https://www.thesharpteam.bet/static/img/icons/facebook.png" '
+        'width="30" height="30" alt="Facebook" '
+        'style="border:0;margin:0 7px;"></a>'
+        '</div>'
+        '<p style="text-align:center;font-size:11.5px;color:#8a93a5;'
+        'line-height:1.55;margin:0 0 6px;">21+. Play responsibly. If you '
+        'or someone you know has a gambling problem, call or text '
+        '1-800-GAMBLER.</p>'
+        '<p style="text-align:center;font-size:11.5px;color:#8a93a5;'
+        'line-height:1.55;margin:0;">The Sharp Team provides information '
+        'and entertainment only and is not a sportsbook. Past results do '
+        'not guarantee future performance.</p>'
         '</div></div>'
         f'<p style="text-align:center;font-size:12px;color:#8a93a5;'
         f'margin:14px 0 0;">&copy; {anio} The Sharp Team. All rights '
