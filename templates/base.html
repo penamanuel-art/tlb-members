@@ -136,6 +136,26 @@ twq('config','rhgk7');
   {% else %}
   <nav class="nav">
     {% if es_admin %}<button id="langToggle" class="lang-btn notranslate" title="Ver en español">🇺🇸 EN</button>{% endif %}
+    <style>
+    .about-dd{position:relative;display:inline-block}
+    .about-dd summary{list-style:none;cursor:pointer;color:#c7cede;font-size:15px;padding:6px 2px}
+    .about-dd summary::-webkit-details-marker{display:none}
+    .about-dd .dd-panel{position:absolute;right:0;top:calc(100% + 8px);background:#101828;border:1px solid #1e2a45;border-radius:14px;padding:8px;min-width:250px;z-index:300;box-shadow:0 16px 40px rgba(0,0,0,.5)}
+    .about-dd .dd-panel a{display:block;color:#e6ebf2;text-decoration:none;font-size:14.5px;padding:9px 12px;border-radius:9px;white-space:nowrap}
+    .about-dd .dd-panel a:hover{background:#1a2438}
+    </style>
+    <details class="about-dd">
+      <summary>About ▾</summary>
+      <div class="dd-panel">
+        <a href="/about">About Us</a>
+        <a href="/official-tracker">Results</a>
+        <a href="/official-tracker">Graded Picks Ledger</a>
+        <a href="/how-to-verify">How to Verify a Handicapper</a>
+        <a href="/testimonials">Testimonials</a>
+        <a href="/faqs">FAQs</a>
+        <a href="/contact">Contact</a>
+      </div>
+    </details>
     <a class="nav-link" href="{{ url_for('login') }}">Log in</a>
     <a class="btn btn-primary btn-sm" href="{{ url_for('register') }}">Sign up</a>
   </nav>
