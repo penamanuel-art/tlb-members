@@ -7,35 +7,97 @@
 .pg h1{color:#fff;font-size:32px;line-height:1.18;margin:10px 0 14px;letter-spacing:-.5px}
 .pg h1 .gold{color:#e8c766}
 .pg p{color:#c7cede;font-size:16px;line-height:1.65;margin:0 0 14px}
-.t-card{background:#101828;border:1px solid #1e2a45;border-left:4px solid #11cb87;border-radius:14px;padding:18px;margin-bottom:12px}
-.t-card p{font-size:15.5px;margin:0 0 8px;color:#e6ebf2}
-.t-card .who{color:#8b95a9;font-size:13.5px}
-.pg-cta{margin-top:24px;background:#0e2a1e;border:1px solid #11cb87;border-radius:16px;padding:20px;text-align:center}
-.pg-cta h3{color:#fff;margin:0 0 6px;font-size:19px}
-.pg-cta p{font-size:14.5px;margin:0 0 14px}
-.pg-cta a{display:inline-block;background:#0e9e66;color:#fff;font-weight:700;padding:12px 22px;border-radius:12px;text-decoration:none}
+.agg{display:flex;align-items:center;gap:10px;background:#101828;border:1px solid #1e2a45;border-radius:14px;padding:12px 15px;margin-bottom:14px}
+.agg .stars{color:#e8c766;font-size:19px;letter-spacing:2px}
+.agg .t{font-size:13.5px;color:#c7cede}
+.agg .t b{color:#fff}
+.ratebar{background:#151A26;border:1px solid #e8c766;border-radius:14px;margin-bottom:22px}
+.ratebar summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 15px;color:#fff;font-size:15px}
+.ratebar summary::-webkit-details-marker{display:none}
+.ratebar summary .rb-stars{color:#e8c766;letter-spacing:2px;font-size:16px}
+.ratebar .rb-body{border-top:1px solid #20242E;padding:14px 15px 16px}
+.ratebar .rb-body p{font-size:13.5px;margin:0 0 10px;color:#8b95a9}
+.rate-pick{display:flex;flex-direction:row-reverse;justify-content:center;gap:2px;margin:2px 0 10px}
+.rate-pick input{display:none}
+.rate-pick label{font-size:31px;color:#2c3444;cursor:pointer;line-height:1}
+.rate-pick input:checked~label{color:#e8c766}
+.rate-pick label:hover,.rate-pick label:hover~label{color:#e8c766}
+.rb label.f{display:block;font-size:12px;color:#969EA9;letter-spacing:.6px;margin:10px 0 5px;font-weight:600}
+.rb textarea,.rb input[type=text]{width:100%;background:#0d1420;border:1px solid #232b3d;border-radius:11px;color:#e6ebf2;font-size:14.5px;padding:10px 12px;font-family:inherit}
+.rb textarea{min-height:72px;resize:vertical}
+.rb .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.rb .check{display:flex;gap:9px;align-items:flex-start;margin:12px 0;color:#c7cede;font-size:13px;line-height:1.45}
+.rb .btn{width:100%;background:#0e9e66;color:#fff;font-weight:700;font-size:15px;border:0;border-radius:12px;padding:13px;cursor:pointer}
+.rb .login-btn{display:block;text-align:center;background:#0e9e66;color:#fff;font-weight:700;font-size:15px;border-radius:12px;padding:12px;text-decoration:none}
+.status-chip{display:inline-block;background:#241d08;border:1px solid #e8c766;color:#e8c766;font-size:11.5px;font-weight:700;padding:3px 10px;border-radius:999px;margin-bottom:10px}
+.status-chip.ok{background:#0e2a1e;border-color:#11cb87;color:#11cb87}
+.rev{background:#101828;border:1px solid #1e2a45;border-left:4px solid #11cb87;border-radius:14px;padding:15px 16px;margin-bottom:10px}
+.rev .stars{color:#e8c766;font-size:15px;letter-spacing:2px;margin-bottom:7px}
+.rev p{font-size:15px;margin:0 0 9px;color:#e6ebf2}
+.rev .who{color:#8b95a9;font-size:13px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.chip{background:#0e2a1e;border:1px solid #11cb87;color:#11cb87;font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:999px;letter-spacing:.4px}
+.empty{background:#101828;border:1px dashed #2a3444;border-radius:14px;padding:18px;text-align:center;color:#8b95a9;font-size:14.5px}
+.disc{color:#5f6875;font-size:11.5px;line-height:1.5;margin-top:16px;text-align:center}
 .about-nav{display:flex;flex-wrap:wrap;gap:8px;margin:26px 0 4px}
 .about-nav a{color:#c7cede;border:1px solid #1e2a45;border-radius:999px;padding:7px 13px;font-size:13.5px;text-decoration:none}
 .about-nav a.on{color:#0b0d12;background:#e8c766;border-color:#e8c766;font-weight:700}
 </style>
 <div class="pg">
   <div class="pg-kicker">TESTIMONIALS</div>
-  <h1>What members say — <span class="gold">and what the record says.</span></h1>
-  <p>We don't buy reviews and we don't script them. This page collects real messages from real members, posted with their permission. And because words are cheap in this industry, every testimonial here sits next to the only proof that can't be edited: our complete, graded public record.</p>
+  <h1>What members say — <span class="gold">in their own words.</span></h1>
+  <p>Real reviews from real members, published with their permission after a quick approval. We never pay for reviews and we never write them ourselves — and our full record, wins and losses, stays public either way.</p>
 
-  <div class="t-card">
-    <p>Member stories are being collected now and will appear here as members send them in — with first name and city, exactly as written.</p>
-    <div class="who">— The Sharp Team</div>
+  {% if reviews_count %}
+  <div class="agg">
+    <div class="stars">★★★★★</div>
+    <div class="t"><b>{{ reviews_avg }} average</b> · {{ reviews_count }} member review{{ 's' if reviews_count != 1 }}</div>
   </div>
+  {% endif %}
 
-  <h2 style="color:#fff;font-size:21px;margin:24px 0 10px">Meanwhile, audit the proof</h2>
-  <p>Every official play — posted before the game, with its real ticket, graded win or lose — lives in our full record and graded ledger. That's the testimonial that matters.</p>
+  <details class="ratebar" {% if mine or rate_hint %}open{% endif %}>
+    <summary><span>Enjoying The Sharp Team? <b style="color:#e8c766;">Rate us</b></span><span class="rb-stars">★★★★★</span></summary>
+    <div class="rb-body rb">
+      {% if session.get('user_id') %}
+        {% if mine and mine.status == 'pending' %}<span class="status-chip">⏳ Your review is awaiting approval — you can edit it below</span>
+        {% elif mine and mine.status == 'approved' %}<span class="status-chip ok">✓ Your review is published — thanks! You can update it below</span>
+        {% elif mine and mine.status == 'rejected' %}<span class="status-chip">Your last review wasn't published — you can send a new one below</span>{% endif %}
+        <form method="post" action="{{ url_for('review_submit') }}">
+          <div class="rate-pick">
+            {% for n in [5,4,3,2,1] %}
+            <input type="radio" id="st{{ n }}" name="stars" value="{{ n }}" {% if (mine and mine.stars == n) or (not mine and rate_hint and rate_hint|int == n) or (not mine and not rate_hint and n == 5) %}checked{% endif %}>
+            <label for="st{{ n }}">★</label>
+            {% endfor %}
+          </div>
+          <label class="f">YOUR EXPERIENCE</label>
+          <textarea name="body" maxlength="600" placeholder="How has the program worked for you?">{{ mine.body if mine else '' }}</textarea>
+          <div class="two">
+            <div><label class="f">DISPLAY NAME</label><input type="text" name="display_name" maxlength="40" placeholder="Mike R." value="{{ mine.display_name if mine else '' }}"></div>
+            <div><label class="f">CITY</label><input type="text" name="city" maxlength="60" placeholder="Houston, TX" value="{{ mine.city if mine else '' }}"></div>
+          </div>
+          <label class="check"><input type="checkbox" name="permission" value="1" style="margin-top:2px;"> I give The Sharp Team permission to publish this review on this page.</label>
+          <button class="btn" type="submit">Submit my review →</button>
+        </form>
+      {% else %}
+        <p>Members can leave a review here — it takes less than a minute and appears after a quick approval.</p>
+        <a class="login-btn" href="{{ url_for('login') }}">Log in to leave a review →</a>
+      {% endif %}
+    </div>
+  </details>
 
-  <div class="pg-cta">
-    <h3>Are you a member?</h3>
-    <p>Send us your experience at thesharpteam8@gmail.com and we'll post it here with your first name.</p>
-    <a href="mailto:thesharpteam8@gmail.com">Share your experience →</a>
-  </div>
+  <h2 style="color:#fff;font-size:21px;margin:6px 0 12px">What members are saying</h2>
+  {% if reviews %}
+    {% for r in reviews %}
+    <div class="rev">
+      <div class="stars">{{ '★' * r.stars }}{{ '☆' * (5 - r.stars) }}</div>
+      <p>"{{ r.body }}"</p>
+      <div class="who">{{ r.display_name }}{% if r.city %} · {{ r.city }}{% endif %} <span class="chip">VERIFIED MEMBER</span></div>
+    </div>
+    {% endfor %}
+  {% else %}
+    <div class="empty">No published reviews yet — be the first member to share your experience above.</div>
+  {% endif %}
+
+  <p class="disc">Results not typical. Reviews describe individual experiences; betting always carries risk and past results do not guarantee future performance.</p>
 
   <nav class="about-nav">
     <a href="/about">About Us</a>
