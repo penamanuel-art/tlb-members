@@ -1230,7 +1230,7 @@ WELCOME_BACK_TEXT = """Hi __NOMBRE__,
 
 Welcome back to The Sharp Team. Your Platinum access is live again, right where you left it.
 
-TODAY'S CARD IS WAITING - Today's official plays (Gold plus the Platinum) are live on your dashboard now, each with its original bet ticket.
+TODAY'S CARD IS WAITING - Today's official plays (Sharp Free plus the Platinum) are live on your dashboard now, each with its original bet ticket.
 
 YOUR TRACKER IS INTACT - Every play you tracked is still there. Record, ROI and streaks picked up right where they stopped.
 
@@ -1274,7 +1274,7 @@ WELCOME_BACK_HTML = """<!DOCTYPE html>
 <div style="padding:14px 20px 0;">
 <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 10px;background:#2e4053;border:1px solid #2e4053;border-radius:12px;"><tr>
 <td width="44" style="vertical-align:top;padding:14px 0 14px 16px;"><div style="font-size:24px;line-height:1.2;">🎯</div></td>
-<td style="vertical-align:top;padding:14px 16px 14px 4px;"><div style="font-size:14px;font-weight:800;color:#ffffff;letter-spacing:1px;">TODAY&rsquo;S CARD IS WAITING</div><div style="font-size:13px;color:#c8d0dc;line-height:1.6;margin-top:4px;">Today&rsquo;s official plays &mdash; Gold plus the Platinum &mdash; are live on your dashboard now, each with its original ticket.</div></td>
+<td style="vertical-align:top;padding:14px 16px 14px 4px;"><div style="font-size:14px;font-weight:800;color:#ffffff;letter-spacing:1px;">TODAY&rsquo;S CARD IS WAITING</div><div style="font-size:13px;color:#c8d0dc;line-height:1.6;margin-top:4px;">Today&rsquo;s official plays &mdash; Sharp Free plus the Platinum &mdash; are live on your dashboard now, each with its original ticket.</div></td>
 </tr></table>
 <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 10px;background:#2e4053;border:1px solid #2e4053;border-radius:12px;"><tr>
 <td width="44" style="vertical-align:top;padding:14px 0 14px 16px;"><div style="font-size:24px;line-height:1.2;">📊</div></td>
@@ -1340,14 +1340,14 @@ Welcome to The Sharp Team! Your dashboard is ready \u2014 and Platinum starts wi
 
 YOUR ACCESS, IN PLAIN WORDS:
 - PLATINUM plays: start for $1 \u2014 your first 7 days of full Platinum cost a single dollar (then $15.99/week only if you stay). Our most valuable play \u2014 the best pick of the day, every day.
-- GOLD plays: FREE FOR LIFE \u2014 no card, no expiration, yours forever.
+- SHARP FREE plays: FREE FOR LIFE \u2014 no card, no expiration, yours forever.
 
 EVERYTHING YOUR PLAN UNLOCKS
-1. THE DAILY CARD - Every day at 1:00 PM ET: the day's official plays (Gold plus the one Platinum), each with its original bet ticket. No filler, ever.
+1. THE DAILY CARD - Every day at 1:00 PM ET: the day's official plays (Sharp Free plus the one Platinum), each with its original bet ticket. No filler, ever.
 2. YOUR PERSONAL TRACKER - One-tap tracking: mark each play, log won or lost. Verified history, real record, net units, ROI and streak. No spreadsheets.
 3. LIVE +EV BOARD - Value edges updated around the clock, measured against Pinnacle's no-vig fair price, with sharp-confirmed badges.
 4. PUSH ALERTS - Alerts the moment the card drops and when new edges appear. Turn "Alerts on" in your dashboard.
-5. TELEGRAM CHANNELS - Gold plays in the "Gold" channel, Platinum plays in the private "Platinum" channel, each with the original ticket.
+5. TELEGRAM CHANNELS - Sharp Free plays in the "Sharp Free" channel, Platinum plays in the private "Platinum" channel, each with the original ticket.
 6. DAILY ACADEMY - One sharp betting lesson every morning: discipline, bankroll management, reading lines and edges.
 
 "Every play is posted before game time - then locked and graded against the final score."
@@ -1357,10 +1357,10 @@ __PAY_URL__
 Platinum is not automatic \u2014 it starts when you do. One dollar unlocks your first 7 days of full Platinum; after that it is $15.99/week. Cancel anytime. No questions asked.
 
 MAKE SURE YOU DON'T MISS A PLAY:
-- Join the Telegram channels: Gold (free plays) https://t.me/thesharpteam - Platinum (private) https://t.me/+_eNhcbD3k4RlNTk5
+- Join the Telegram channels: Sharp Free (free plays) https://t.me/thesharpteam - Platinum (private) https://t.me/+_eNhcbD3k4RlNTk5
 - Turn on push notifications: open your dashboard and tap "Alerts on".
 
-Your free Gold plays are already live on your dashboard:
+Your Sharp Free plays are already live on your dashboard:
 https://www.thesharpteam.bet/home
 
 - The Sharp Team
@@ -1466,7 +1466,7 @@ Nothing is canceled and nothing was missed on your end - cards just fail sometim
 Fix your card in one tap (takes about 30 seconds):
 __PAY_URL__
 
-Your Gold plays stay on while the card is sorted - that is part of every membership. Your Platinum plays unlock the moment the payment lands. If anything looks off, just reply to this email and a real person will sort it.
+Your Sharp Free plays stay on while the card is sorted - that is part of every membership. Your Platinum plays unlock the moment the payment lands. If anything looks off, just reply to this email and a real person will sort it.
 
 - The Sharp Team
 
@@ -1488,7 +1488,7 @@ DUNNING_HTML = """<div style="font-family:Arial,sans-serif;max-width:480px;margi
 </div>
 <div style="text-align:center;padding:16px 24px 0;">
 <a href="__PAY_URL__" style="display:inline-block;background:#22c55e;color:#111111;font-weight:800;font-size:16px;padding:14px 36px;border-radius:999px;text-decoration:none;">Fix my card in one tap &rarr;</a>
-<p style="margin:10px 0 0;font-size:13px;color:#6b7280;">Takes about 30 seconds &middot; Your Gold plays stay yours either way.</p>
+<p style="margin:10px 0 0;font-size:13px;color:#6b7280;">Takes about 30 seconds &middot; Your Sharp Free plays stay yours either way.</p>
 </div>
 <p style="font-size:13px;line-height:1.6;color:#6b7280;margin:16px 24px 0;text-align:center;">If anything looks off, just reply to this email and a real person will sort it.</p>
 <p style="text-align:center;font-size:12px;color:#9ca3af;margin:14px 0 0;">__FECHA__</p>
@@ -1599,7 +1599,7 @@ MONTHLY_HTML = """<!DOCTYPE html>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:2px 0 0;background:#ffffff;border:1px solid #e5e7eb;border-radius:12px;"><tr><td style="padding:14px 16px;">
 <p style="margin:0;font-size:11px;font-weight:800;letter-spacing:2px;color:#6b7280;">BY LEVEL</p>
 <p style="margin:8px 0 0;font-size:14px;color:#111111;">&#11088; <strong>Platinum</strong> &mdash; __PLATINUM__</p>
-<p style="margin:6px 0 0;font-size:14px;color:#111111;">&#9898; <strong>Gold</strong> &mdash; __GOLD__</p>
+<p style="margin:6px 0 0;font-size:14px;color:#111111;">&#9898; <strong>Sharp Free</strong> &mdash; __GOLD__</p>
 </td></tr></table>
 </div>
 <div style="padding:14px 20px 0;">
@@ -1630,7 +1630,7 @@ Net profit: __PROFIT__
 ROI: __ROI__
 
 Platinum: __PLATINUM__
-Gold: __GOLD__
+Sharp Free: __GOLD__
 
 View your full record: https://www.thesharpteam.bet/records
 
@@ -1662,7 +1662,7 @@ def monthly_member_stats(db, user_id: int, ym: str) -> dict:
         g = [t for t in graded if (t["nivel"] or "").upper() in (lvl, "PLATINUM" if lvl == "ELITE" else lvl)]
         w = sum(1 for t in g if t["resultado"] == "W")
         p = sum(play_profit_dollars(t) for t in g)
-        tag = "Platinum" if lvl == "ELITE" else "Gold"
+        tag = "Platinum" if lvl == "ELITE" else "Sharp Free"
         niveles[tag] = f"{w}-{len(g) - w}, {'+' if p >= 0 else '-'}$ {abs(p):,.2f}".replace("$-", "-$")
     win_rate = (base["wins"] / (base["wins"] + base["losses"]) * 100) if (base["wins"] + base["losses"]) else 0.0
     profit = base["net_dollars"]
@@ -1681,7 +1681,7 @@ def monthly_member_stats(db, user_id: int, ym: str) -> dict:
         "roi": f"{base['roi']:.1f}%",
         "risked": base["risked"],
         "platinum": niveles.get("Platinum", "0-0, $0.00"),
-        "gold": niveles.get("Gold", "0-0, $0.00"),
+        "gold": niveles.get("Sharp Free", "0-0, $0.00"),
     }
 
 
@@ -1693,7 +1693,7 @@ def build_monthly_html(nombre: str, ym: str, st: dict) -> str:
         p = t["_profit"] if "_profit" in t else play_profit_dollars(t)
         color = "#16a34a" if p >= 0 else "#dc2626"
         marca = "&#10003;" if t["resultado"] == "W" else "&#10007;"
-        nivel = "PLATINUM" if (t["nivel"] or "").upper() in ("ELITE", "PLATINUM") else "GOLD"
+        nivel = "PLATINUM" if (t["nivel"] or "").upper() in ("ELITE", "PLATINUM") else "SHARP FREE"
         rows.append(
             f'<table role="presentation" width="100%" cellpadding="0" cellspacing="0" '
             f'style="margin:0 0 8px;background:#ffffff;border:1px solid #e5e7eb;border-radius:10px;">'
@@ -4598,8 +4598,8 @@ def hot_run_cards(value_rows):
         ("PLATINUM", "ALL",
          seq_of(lambda j: (j.get("nivel") or "").upper() in ("ELITE", "PLATINUM")),
          "Platinum", "#e8c766", True),
-        ("SHARP PICKS FREE", "ALL",
-         seq_of(lambda j: (j.get("nivel") or "").upper() == "GOLD"), "Sharp Picks Free",
+        ("SHARP FREE PLAYS", "ALL",
+         seq_of(lambda j: (j.get("nivel") or "").upper() == "GOLD"), "Sharp Free plays",
          "#aebdd4", True),
     ):
         c = _card(badge, tag, seq, scope, color, always)
@@ -7747,7 +7747,7 @@ def tracker_export():
         off = oficiales.get((f, (t["pick"] or "").strip().lower()), {})
         res = t["resultado"] or ""
         nivel = (t["nivel"] or "").upper()
-        nivel_txt = "PLATINUM" if nivel in ("ELITE", "PLATINUM") else ("GOLD" if nivel == "GOLD" else nivel)
+        nivel_txt = "PLATINUM" if nivel in ("ELITE", "PLATINUM") else ("SHARP FREE" if nivel == "GOLD" else nivel)
         try:
             fecha_corta = datetime.strptime(f, "%Y-%m-%d").strftime("%b %d") if f else "—"
         except (ValueError, TypeError):
@@ -8047,7 +8047,7 @@ def records():
             nv = (j.get("nivel") or "").upper()
             if nv not in ("ELITE", "PLATINUM", "GOLD"):
                 continue
-            disp = "PLATINUM" if nv in ("ELITE", "PLATINUM") else "GOLD"
+            disp = "PLATINUM" if nv in ("ELITE", "PLATINUM") else "SHARP FREE"
             un = _units(j)
             won = j["resultado"] == "WON"
             stats["W" if won else "L"] += 1
@@ -9393,7 +9393,7 @@ def official_tracker():
         libro_stats, libro_titulo = t["por_nivel"]["ELITE"], "Platinum plays"
     elif programa == "gold":
         libro = [x for x in t["historial"] if x["nivel"] == "GOLD"]
-        libro_stats, libro_titulo = t["por_nivel"]["GOLD"], "Gold plays"
+        libro_stats, libro_titulo = t["por_nivel"]["GOLD"], "Sharp Free plays"
     else:
         libro, libro_stats, libro_titulo = t["historial"], t["general"], "All official plays"
     if liga_filtro:
@@ -10270,7 +10270,7 @@ def admin_actividad():
         elif m["platinum_unlocked"]:
             estado = "Platinum permanente"
         else:
-            estado = "Gratis (Gold)"
+            estado = "Gratis (Sharp Free)"
         datos.append({
             "nombre": m["nombre"], "email": m["email"],
             "platinum": bool(m["platinum_unlocked"]),
