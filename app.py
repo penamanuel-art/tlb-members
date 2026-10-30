@@ -398,6 +398,17 @@ CREATE TABLE IF NOT EXISTS notificaciones (  -- centro de notificaciones del adm
     created_at TEXT NOT NULL,
     leida INTEGER NOT NULL DEFAULT 0
 );
+CREATE TABLE IF NOT EXISTS reviews (  -- reseñas de miembros (2026-10-30): pendientes hasta aprobación del admin
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL REFERENCES users(id),
+    display_name TEXT NOT NULL,
+    city TEXT,
+    stars INTEGER NOT NULL,
+    body TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'pending',  -- pending | approved | rejected
+    created_at TEXT NOT NULL,
+    UNIQUE(user_id)
+);
 """
 
 DDL_PG = """
@@ -494,6 +505,17 @@ CREATE TABLE IF NOT EXISTS notificaciones (  -- centro de notificaciones del adm
     detalle TEXT,
     created_at TEXT NOT NULL,
     leida INTEGER NOT NULL DEFAULT 0
+);
+CREATE TABLE IF NOT EXISTS reviews (  -- reseñas de miembros (2026-10-30): pendientes hasta aprobación del admin
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES users(id),
+    display_name TEXT NOT NULL,
+    city TEXT,
+    stars INTEGER NOT NULL,
+    body TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'pending',  -- pending | approved | rejected
+    created_at TEXT NOT NULL,
+    UNIQUE(user_id)
 );
 """
 
@@ -4153,7 +4175,92 @@ def faqs_page():
 
 @app.route("/testimonials")
 def testimonials_page():
-    return render_template("testimonials.html")
+    """Testimonials (2026-10-30): reseñas REALES de miembros, aprobadas una a
+    una en el Admin antes de publicarse. Barra pequeña 'Enjoying The Sharp
+    Team? Rate us' (título elegido por Alex) que despliega el formulario."""
+    db = get_db()
+    agg = db.execute(
+        "SELECT COUNT(*) AS n, AVG(stars) AS a FROM reviews "
+        "WHERE status = 'approved'").fetchone()
+    rows = db.execute(
+        "SELECT display_name, city, stars, body FROM reviews "
+        "WHERE status = 'approved' ORDER BY created_at DESC LIMIT 60").fetchall()
+    mine = None
+    if "user_id" in session:
+        r = db.execute("SELECT * FROM reviews WHERE user_id = ?",
+                       (session["user_id"],)).fetchone()
+        mine = dict(r) if r else None
+    return render_template(
+        "testimonials.html",
+        reviews=[dict(r) for r in rows],
+        reviews_count=(agg["n"] or 0),
+        reviews_avg=round(agg["a"], 1) if agg and agg["a"] else 0,
+        mine=mine,
+        rate_hint=request.args.get("rate") or "")
+
+
+@app.route("/testimonials/review", methods=["POST"])
+@login_required
+def review_submit():
+    """Una reseña por miembro; al enviar (o editar) vuelve a 'pending' y solo
+    se publica cuando el Admin la aprueba. Nada se inventa ni se auto-publica."""
+    user = current_user()
+    try:
+        stars = int(request.form.get("stars", "5"))
+    except (TypeError, ValueError):
+        stars = 5
+    stars = max(1, min(5, stars))
+    body = (request.form.get("body") or "").strip()[:600]
+    name = (request.form.get("display_name") or "").strip()[:40]
+    city = (request.form.get("city") or "").strip()[:60]
+    if not request.form.get("permission") or len(body) < 10 or not name:
+        flash("Please add your name, a short review (10+ characters) and the "
+              "permission check.", "error")
+        return redirect(url_for("testimonials_page"))
+    db = get_db()
+    existing = db.execute("SELECT id FROM reviews WHERE user_id = ?",
+                          (user["id"],)).fetchone()
+    if existing:
+        db.execute(
+            "UPDATE reviews SET display_name = ?, city = ?, stars = ?, "
+            "body = ?, status = 'pending', created_at = ? WHERE user_id = ?",
+            (name, city, stars, body, now_iso(), user["id"]))
+    else:
+        db.execute(
+            "INSERT INTO reviews (user_id, display_name, city, stars, body, "
+            "status, created_at) VALUES (?, ?, ?, ?, ?, 'pending', ?)",
+            (user["id"], name, city, stars, body, now_iso()))
+    db.commit()
+    flash("Thanks! Your review was received — it will appear here after a "
+          "quick approval.", "success")
+    return redirect(url_for("testimonials_page"))
+
+
+@app.route("/admin/reviews")
+@admin_required
+def admin_reviews():
+    db = get_db()
+    pend = db.execute(
+        "SELECT r.*, u.email FROM reviews r JOIN users u ON u.id = r.user_id "
+        "WHERE r.status = 'pending' ORDER BY r.created_at").fetchall()
+    appr = db.execute(
+        "SELECT r.*, u.email FROM reviews r JOIN users u ON u.id = r.user_id "
+        "WHERE r.status = 'approved' ORDER BY r.created_at DESC LIMIT 50").fetchall()
+    return render_template("admin_reviews.html",
+                           pendientes=[dict(r) for r in pend],
+                           aprobadas=[dict(r) for r in appr])
+
+
+@app.route("/admin/reviews/<int:rid>/<accion>", methods=["POST"])
+@admin_required
+def admin_reviews_accion(rid, accion):
+    if accion in ("approve", "reject"):
+        db = get_db()
+        db.execute("UPDATE reviews SET status = ? WHERE id = ?",
+                   ("approved" if accion == "approve" else "rejected", rid))
+        db.commit()
+        flash("Review updated.", "success")
+    return redirect(url_for("admin_reviews"))
 
 
 @app.route("/")
@@ -4707,12 +4814,33 @@ def home():
                         "n": len(_pend)}
         except Exception:
             risk_hoy = None
+    # Burbuja de rating (2026-10-30, idea de Alex con reglas de respeto):
+    # solo si el miembro aún no reseñó; nunca tras un día oficial perdedor
+    # (si el último día liquidado del archivo cerró en negativo, se apaga);
+    # el cierre con ✕ lo maneja el cliente (localStorage, vuelve a los 7 días).
+    show_rate_bubble = False
+    try:
+        _ya_reseno = db.execute(
+            "SELECT 1 FROM reviews WHERE user_id = ?",
+            (session["user_id"],)).fetchone()
+        if not _ya_reseno:
+            show_rate_bubble = True
+            _dias_arch = load_archive()
+            if _dias_arch:
+                _ult_dia = max(_dias_arch, key=lambda x: x.get("fecha", ""))
+                _profit_ult = sum(float(j.get("profit") or 0)
+                                   for j in (_ult_dia.get("jugadas") or []))
+                if _profit_ult < 0:
+                    show_rate_bubble = False
+    except Exception:
+        show_rate_bubble = False
     return render_template(
         # Tema v2 (moderno) es el predeterminado desde 2026-10-02 (pedido Alex);
         # v1 (clásico) queda como reversión vía /theme/v1. Diseño lux
         # (2026-10-12): home premium salvo revert del admin (site_settings).
         "home.html" if session.get("theme") == "v1" else ("home_lux.html" if _lux else "home_v2.html"),
         plays=plays,
+        show_rate_bubble=show_rate_bubble,
         card_pendiente=card_pendiente,
         hay_live=hay_live,
         esperando=esperando,
