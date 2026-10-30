@@ -13300,6 +13300,33 @@ def api_push_edge():
         notif_type = "notif_ev"
     payload = json.dumps({"title": title, "body": body, "url": url, "image": image})
     db = get_db()
+    # Dedupe anti-repetición (2026-10-30, orden de Alex: «ponla una sola vez»):
+    # si el MISMO push (título+cuerpo+url+tipo+destinatarios) ya salió hace
+    # menos de 15 minutos, NO se reenvía. Esto hace seguro cualquier reintento
+    # tras un error de conexión ambiguo (el 2026-10-30 un RemoteDisconnected
+    # tras procesar el envío hizo que la free pick llegara 3 veces).
+    import hashlib as _hl, time as _tm
+    _sig_src = "|".join([
+        str(title), str(body), str(url), str(image), str(notif_type),
+        ",".join(sorted(str(e).lower() for e in (data.get("emails") or []))),
+        ",".join(sorted(str(e).lower() for e in (data.get("exclude_emails") or []))),
+    ])
+    _sig = _hl.sha256(_sig_src.encode("utf-8")).hexdigest()
+    try:
+        db.execute(
+            "CREATE TABLE IF NOT EXISTS push_dedupe (signature TEXT PRIMARY KEY,"
+            " sent INTEGER, failed INTEGER, created_at REAL)"
+        )
+        db.execute("DELETE FROM push_dedupe WHERE created_at < ?", (_tm.time() - 86400,))
+        _prev = db.execute(
+            "SELECT sent, failed, created_at FROM push_dedupe WHERE signature = ?",
+            (_sig,),
+        ).fetchone()
+        db.commit()
+        if _prev and (_tm.time() - float(_prev["created_at"])) < 900:
+            return jsonify({"sent": _prev["sent"], "failed": _prev["failed"], "deduped": True})
+    except Exception:
+        pass  # si el dedupe falla, el envío sigue (fail-open, como el resto)
     # Targeting opcional por email (2026-10-13): si el payload trae "emails",
     # el push va SOLO a esos miembros (ej. alertas en vivo solo para Alex).
     emails = data.get("emails") or []
@@ -13351,6 +13378,15 @@ def api_push_edge():
             failed += 1
         except Exception:
             failed += 1
+    try:
+        db.execute("DELETE FROM push_dedupe WHERE signature = ?", (_sig,))
+        db.execute(
+            "INSERT INTO push_dedupe (signature, sent, failed, created_at)"
+            " VALUES (?, ?, ?, ?)",
+            (_sig, sent, failed, _tm.time()),
+        )
+    except Exception:
+        pass
     db.commit()
     return jsonify({"sent": sent, "failed": failed})
 
