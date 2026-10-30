@@ -1,66 +1,25 @@
-{# Carta Platinum BLOQUEADA — ESTADO 2 del diseño C «Emblema» (aprobado
-   por Alex 2026-10-20): la carta real ya publicada, con el chrome del
-   diseño C — emblema 💎 CHICO en círculo fino dorado (refinamiento de
-   Alex 2026-10-20, 11:47 ET: marca fina, no centro grande; sin titular
-   decorativo añadido — la línea de invitación de abajo se queda tal
-   cual se aprobó), «PLATINUM» espaciado,
-   sin matchup (nombres ocultos 2026-10-24), meta de liga/hora, filas PRICE/STAKE/MODEL EDGE
-   tapadas, el ticket con el blur HORNEADO (locked-<fecha>.jpg) y la
-   pastilla «PLATINUM PICK», la línea de invitación y el botón Unlock en
-   pastilla menta. Las propiedades de seguridad son las de la carta
-   bloqueada v5, IDÉNTICAS: el dict `p` viene SANITIZADO desde app.py
-   (_locked_play_view): solo liga, hora, matchup y la URL del ticket
-   difuminado — el matchup NO se renderiza (oculto 2026-10-24); el pick, la cuota, el stake, el edge, el write-up y la
-   ruta del comprobante original NUNCA llegan a este HTML. Sin logo del
-   equipo elegido (delataría el lado). Sin ticket, panel esmerilado
-   «Platinum pick». Estilos propios (espejo de la variante C) para rendir
-   igual en lux/v2/v1. #}
-<style>
-.ptl{position:relative;overflow:hidden;background:linear-gradient(165deg,#0A1117,#151F28 60%,#151F28);border:1px solid rgba(255,255,255,.07);border-radius:18px;padding:24px 20px 18px;box-sizing:border-box;width:100%;max-width:100%;margin:0 0 12px;text-align:center;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#eef2f7}
-.ptl:after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:linear-gradient(90deg,#8CC260,#8CC260 55%,#8CC260)}
-.ptl-emblem{width:34px;height:34px;margin:0 auto;border:1px solid rgba(232,199,102,.45);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;background:radial-gradient(circle at 50% 35%,rgba(17,204,135,.14),rgba(17,204,135,0) 70%)}
-.ptl-word{font-size:12px;letter-spacing:.5em;font-weight:800;color:#eef2f7;margin:10px 0 0;padding-left:.5em}
-.ptl-match{font-size:15.5px;font-weight:800;margin-top:12px;line-height:1.3;color:#eef2f7}
-.ptl-meta{font-size:10px;letter-spacing:.22em;color:#8fa1c2;margin-top:5px;text-transform:uppercase}
-.ptl-rows{margin:10px 0 0;text-align:left}
-.ptl-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.07);font-size:11px;letter-spacing:.14em;color:#8fa1c2}
-.ptl-row:last-child{border-bottom:none}
-.ptl-row span:last-child{color:#5f6f86;letter-spacing:.05em;font-size:12px}
-.ptl-ticket{position:relative;border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,.08);background:#07090c;margin:12px 0 4px;box-shadow:0 12px 30px rgba(0,0,0,.42)}
-.ptl-ticket-img{display:block;width:100%;height:auto;max-height:380px;object-fit:contain}
-.ptl-pill{position:absolute;top:8px;right:8px;z-index:2;background:#8CC260;color:#151F28;font-size:9px;font-weight:800;letter-spacing:.12em;border-radius:999px;padding:3px 7px;white-space:nowrap}
-.ptl-panel{position:relative;overflow:hidden;display:flex;align-items:center;gap:11px;text-align:left;background:linear-gradient(155deg,rgba(17,204,135,.09),rgba(255,255,255,.03) 55%,rgba(232,199,102,.06));border:1px solid rgba(232,199,102,.30);border-radius:12px;padding:12px 13px;margin:12px 0 4px}
-.ptl-lock-ico{flex:none;width:34px;height:34px;border-radius:999px;background:rgba(232,199,102,.13);border:1px solid rgba(232,199,102,.45);display:flex;align-items:center;justify-content:center}
-.ptl-panel-t{font-size:13.5px;font-weight:600;color:#e8c766;letter-spacing:.2px}
-.ptl-panel-s{font-size:11.5px;color:#8b94a7;margin-top:1px}
-.ptl-mvp{font-size:10.5px;letter-spacing:.18em;color:#e8c766;text-transform:uppercase;margin:12px 0 14px;line-height:1.7}
-.ptl-cta,body.v2 .ptl-cta{display:inline-block;min-width:210px;background:#8CC260;color:#151F28;font-weight:800;font-size:14.5px;text-align:center;text-decoration:none;padding:12px 10px;border-radius:999px;box-shadow:0 8px 22px rgba(93,201,141,.30)}
-.ptl-terms{font-size:11px;color:#8fa1c2;text-align:center;margin-top:9px}
-</style>
-<article class="ptl">
-  <div class="ptl-emblem" aria-hidden="true">💎</div>
-  <div class="ptl-word">PLATINUM</div>
-  <div class="ptl-meta">{{ p.liga or '' }}{% if p.game_time_et or p.hora %} &middot; {{ p.game_time_et or p.hora }}{% endif %} &middot; Locked for free members</div>
-  <div class="ptl-rows" aria-hidden="true">
-    <div class="ptl-row"><span>PRICE</span><span>🔒 •••</span></div>
-    <div class="ptl-row"><span>STAKE</span><span>🔒 •••</span></div>
-    <div class="ptl-row"><span>MODEL EDGE</span><span>🔒 •••</span></div>
+{# Carta Platinum BLOQUEADA y BORROSA para miembros sin Platinum (diseno ordenado por Alex 2026-10-29): la jugada aparece con SU carta (matchup real), pero el pick va borroso y bloqueado. Solo usa la vista sanitizada (_locked_play_view): pick/cuota/stake/edge/writeup/comprobante original NUNCA llegan a este HTML. #}
+<div style="background:#151F28;border:1px solid #343B47;border-radius:20px;overflow:hidden;margin:0 0 14px;position:relative;">
+  <div style="background:#0A1117;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;">
+    <span style="font-size:12px;font-weight:700;letter-spacing:1.6px;color:#e8c766;">💎 PLATINUM</span>
+    <span style="font-size:12.5px;color:#A3AAB6;">{{ p.liga }}{% if p.hora %} · {{ p.hora }}{% elif p.game_time_et %} · {{ p.game_time_et }}{% endif %}</span>
+    <span style="font-size:11px;font-weight:800;letter-spacing:1px;color:#0B0D12;background:#e8c766;border-radius:999px;padding:4px 9px;">🔒 LOCKED</span>
   </div>
-  {% if p.ticket_url %}
-  <div class="ptl-ticket">
-    <img class="ptl-ticket-img" src="{{ p.ticket_url }}" alt="Members-only ticket" loading="lazy">
-    <span class="ptl-pill">PLATINUM PICK</span>
-  </div>
-  {% else %}
-  <div class="ptl-panel">
-    <span class="ptl-lock-ico" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e8c766" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span>
-    <div>
-      <div class="ptl-panel-t">Platinum pick</div>
-      <div class="ptl-panel-s">Members only</div>
+  <div style="padding:16px;">
+    {% if p.team_name %}
+    <div style="font-size:19px;font-weight:600;color:#F2F3F5;line-height:1.25;">{{ p.team_name }}{% if p.opp_name %} <span style="color:#8B93A3;font-weight:400;">vs</span> {{ p.opp_name }}{% endif %}</div>
+    {% endif %}
+    <div style="margin-top:14px;filter:blur(6px);-webkit-filter:blur(6px);opacity:.75;pointer-events:none;user-select:none;" aria-hidden="true">
+      <div style="height:22px;width:62%;background:#2A3038;border-radius:6px;margin-bottom:10px;"></div>
+      <div style="display:flex;gap:10px;">
+        <div style="height:15px;width:34%;background:#232830;border-radius:5px;"></div>
+        <div style="height:15px;width:26%;background:#232830;border-radius:5px;"></div>
+      </div>
+      {% if p.ticket_url %}
+      <img src="{{ p.ticket_url }}" alt="" style="width:100%;border-radius:12px;margin-top:14px;display:block;">
+      {% endif %}
     </div>
+    <p style="font-size:13.5px;color:#C6CBD6;line-height:1.45;margin:14px 0 0;">This play is for Platinum members. Unlock it to see the pick, the price and the verified ticket.</p>
+    <a href="{{ url_for('desbloquear_platinum') }}" style="display:block;text-align:center;text-decoration:none;font-size:16px;font-weight:800;padding:14px;border-radius:12px;margin-top:12px;background:#0E9E66;color:#fff;">Unlock Platinum →</a>
   </div>
-  {% endif %}
-  <div class="ptl-mvp">Platinum is our most valuable play of the day — the highest-confidence pick on the board</div>
-  <a class="ptl-cta" href="{{ url_for('desbloquear_platinum') }}">Unlock Platinum</a>
-  <div class="ptl-terms">$1 first week &middot; then $15.99/week &middot; cancel anytime</div>
-</article>
+</div>
