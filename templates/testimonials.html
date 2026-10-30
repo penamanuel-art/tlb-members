@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Testimonials — The Sharp Team{% endblock %}
+{% block content %}
+<style>
+.pg{max-width:760px;margin:0 auto;padding:30px 20px 52px}
+.pg-kicker{color:#e8c766;font-size:12px;letter-spacing:2.5px;font-weight:700}
+.pg h1{color:#fff;font-size:32px;line-height:1.18;margin:10px 0 14px;letter-spacing:-.5px}
+.pg h1 .gold{color:#e8c766}
+.pg p{color:#c7cede;font-size:16px;line-height:1.65;margin:0 0 14px}
+.t-card{background:#101828;border:1px solid #1e2a45;border-left:4px solid #11cb87;border-radius:14px;padding:18px;margin-bottom:12px}
+.t-card p{font-size:15.5px;margin:0 0 8px;color:#e6ebf2}
+.t-card .who{color:#8b95a9;font-size:13.5px}
+.pg-cta{margin-top:24px;background:#0e2a1e;border:1px solid #11cb87;border-radius:16px;padding:20px;text-align:center}
+.pg-cta h3{color:#fff;margin:0 0 6px;font-size:19px}
+.pg-cta p{font-size:14.5px;margin:0 0 14px}
+.pg-cta a{display:inline-block;background:#0e9e66;color:#fff;font-weight:700;padding:12px 22px;border-radius:12px;text-decoration:none}
+.about-nav{display:flex;flex-wrap:wrap;gap:8px;margin:26px 0 4px}
+.about-nav a{color:#c7cede;border:1px solid #1e2a45;border-radius:999px;padding:7px 13px;font-size:13.5px;text-decoration:none}
+.about-nav a.on{color:#0b0d12;background:#e8c766;border-color:#e8c766;font-weight:700}
+</style>
+<div class="pg">
+  <div class="pg-kicker">TESTIMONIALS</div>
+  <h1>What members say — <span class="gold">and what the record says.</span></h1>
+  <p>We don't buy reviews and we don't script them. This page collects real messages from real members, posted with their permission. And because words are cheap in this industry, every testimonial here sits next to the only proof that can't be edited: our complete, graded public record.</p>
+
+  <div class="t-card">
+    <p>Member stories are being collected now and will appear here as members send them in — with first name and city, exactly as written.</p>
+    <div class="who">— The Sharp Team</div>
+  </div>
+
+  <h2 style="color:#fff;font-size:21px;margin:24px 0 10px">Meanwhile, audit the proof</h2>
+  <p>Every official play — posted before the game, with its real ticket, graded win or lose — lives in our full record and graded ledger. That's the testimonial that matters.</p>
+
+  <div class="pg-cta">
+    <h3>Are you a member?</h3>
+    <p>Send us your experience at thesharpteam8@gmail.com and we'll post it here with your first name.</p>
+    <a href="mailto:thesharpteam8@gmail.com">Share your experience →</a>
+  </div>
+
+  <nav class="about-nav">
+    <a href="/about">About Us</a>
+    <a href="/official-tracker">Results</a>
+    <a href="/official-tracker">Graded Picks Ledger</a>
+    <a href="/how-to-verify">How to Verify a Handicapper</a>
+    <a class="on" href="/testimonials">Testimonials</a>
+    <a href="/faqs">FAQs</a>
+    <a href="/contact">Contact</a>
+  </nav>
+</div>
+{% endblock %}
