@@ -298,6 +298,11 @@ def _static_cache(resp):
     try:
         if request.path.startswith("/static/"):
             resp.headers["Cache-Control"] = "public, max-age=604800"
+        else:
+            # 2026-10-30: las paginas NUNCA se cachean — la copia vieja
+            # guardada en el telefono dejaba a Alex viendo una antesala
+            # antigua con el boton muerto.
+            resp.headers["Cache-Control"] = "no-store, must-revalidate"
     except Exception:
         pass
     return resp
