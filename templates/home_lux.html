@@ -499,25 +499,7 @@
   <p style="margin:2px 0 22px;color:#A3AAB6;font-size:12.5px;font-weight:300;line-height:1.55;">Stakes are listed in units and in dollars. One unit equals 1% of your bankroll, so your dollar amount follows the bankroll you set. Tracking a play adds it to My Bets at your own size, and it is graded on its own. <a href="{{ url_for('cuenta') }}" style="color:#2ee6a8;text-decoration:underline;">Update your bankroll in Account</a>.</p>
   {% endif %}
 
-  {% if not miembro_platinum %}
-  {# Tarjetas bloqueadas anchas y cortas, aprobadas por Alex 2026-10-28: estilo de la prueba, texto propio, sin copiar a nadie. Solo para miembros sin Platinum. #}
-  {% if plats %}
-  <a href="{{ url_for('desbloquear_platinum') }}" style="display:block;background:#191D24;border:1px solid #c9a86a;border-radius:20px;padding:14px 16px;margin:0 0 14px;text-decoration:none;color:#F2F3F5;">
-    <div style="display:flex;align-items:center;gap:12px;">
-      <span style="flex:0 0 48px;width:48px;height:48px;background:#2a2410;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;color:#e8c15a;">&#128275;</span>
-      <span><span style="display:block;font-size:18px;font-weight:700;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ plats|length }} Platinum {% if plats|length == 1 %}play{% else %}plays{% endif %} on today's card</span><span style="display:block;font-size:14px;line-height:1.35;color:#A3AAB6;">Included with Platinum. Members only. $1 first week, then $15.99/week.</span></span>
-    </div>
-    <span style="display:block;text-align:center;background:#20242E;border:1px solid #343B47;border-radius:14px;padding:10px;margin-top:12px;font-size:15px;">Start your $1 trial &#8250;</span>
-  </a>
-  {% endif %}
-  <a href="{{ url_for('desbloquear_platinum') }}" style="display:block;background:#191D24;border:1px solid #c9a86a;border-radius:20px;padding:14px 16px;margin:0 0 22px;text-decoration:none;color:#F2F3F5;">
-    <div style="display:flex;align-items:center;gap:12px;">
-      <span style="flex:0 0 48px;width:48px;height:48px;background:#2a2410;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;color:#e8c15a;">&#128275;</span>
-      <span><span style="display:block;font-size:18px;font-weight:700;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Player Props on today's card</span><span style="display:block;font-size:14px;line-height:1.35;color:#A3AAB6;">Included with Platinum, separate from the main card.</span></span>
-    </div>
-    <span style="display:block;text-align:center;background:#20242E;border:1px solid #343B47;border-radius:14px;padding:10px;margin-top:12px;font-size:15px;">See Player Props &#8250;</span>
-  </a>
-  {% endif %}
+  {# Tarjetas anchas bloqueadas (Platinum plays / Player Props) ELIMINADAS del home (orden de Alex 2026-10-29): el gratis no ve ninguna tarjeta de jugadas Platinum; la unica oferta es la tarjeta NUEVA de planes (hpc) y /desbloquear-platinum. #}
 
   {% if hot_cards %}
   <section>
