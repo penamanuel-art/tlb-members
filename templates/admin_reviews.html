@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Reviews — Admin{% endblock %}
+{% block content %}
+<style>
+.adm{max-width:820px;margin:0 auto;padding:26px 18px 50px}
+.adm h1{color:#fff;font-size:26px;margin:0 0 6px}
+.adm h2{color:#fff;font-size:19px;margin:26px 0 10px}
+.adm .sub{color:#8b95a9;font-size:14px;margin:0 0 16px}
+.rv{background:#101828;border:1px solid #1e2a45;border-radius:14px;padding:15px 16px;margin-bottom:10px}
+.rv .stars{color:#e8c766;letter-spacing:2px;margin-bottom:6px}
+.rv p{color:#e6ebf2;font-size:15px;line-height:1.55;margin:0 0 8px}
+.rv .meta{color:#8b95a9;font-size:13px;margin-bottom:10px}
+.rv form{display:inline-block;margin-right:8px}
+.rv .ok{background:#0e9e66;color:#fff;border:0;font-weight:700;padding:9px 16px;border-radius:10px;cursor:pointer}
+.rv .no{background:none;color:#ff9aa5;border:1px solid #5a232a;font-weight:600;padding:9px 16px;border-radius:10px;cursor:pointer}
+.none{color:#8b95a9;font-size:14.5px;background:#101828;border:1px dashed #2a3444;border-radius:14px;padding:16px;text-align:center}
+</style>
+<div class="adm">
+  <h1>⭐ Member reviews</h1>
+  <p class="sub">Nothing is published until you approve it here. Approving puts the review live on /testimonials with a Verified Member badge.</p>
+
+  <h2>Pending ({{ pendientes|length }})</h2>
+  {% if pendientes %}
+    {% for r in pendientes %}
+    <div class="rv">
+      <div class="stars">{{ '★' * r.stars }}{{ '☆' * (5 - r.stars) }}</div>
+      <p>"{{ r.body }}"</p>
+      <div class="meta">{{ r.display_name }}{% if r.city %} · {{ r.city }}{% endif %} — {{ r.email }} · {{ r.created_at }}</div>
+      <form method="post" action="{{ url_for('admin_reviews_accion', rid=r.id, accion='approve') }}"><button class="ok" type="submit">✓ Approve & publish</button></form>
+      <form method="post" action="{{ url_for('admin_reviews_accion', rid=r.id, accion='reject') }}"><button class="no" type="submit">Reject</button></form>
+    </div>
+    {% endfor %}
+  {% else %}
+    <div class="none">No reviews waiting. New member reviews will land here.</div>
+  {% endif %}
+
+  <h2>Published ({{ aprobadas|length }})</h2>
+  {% if aprobadas %}
+    {% for r in aprobadas %}
+    <div class="rv">
+      <div class="stars">{{ '★' * r.stars }}{{ '☆' * (5 - r.stars) }}</div>
+      <p>"{{ r.body }}"</p>
+      <div class="meta">{{ r.display_name }}{% if r.city %} · {{ r.city }}{% endif %} — {{ r.email }}</div>
+      <form method="post" action="{{ url_for('admin_reviews_accion', rid=r.id, accion='reject') }}"><button class="no" type="submit">Remove</button></form>
+    </div>
+    {% endfor %}
+  {% else %}
+    <div class="none">Nothing published yet.</div>
+  {% endif %}
+</div>
+{% endblock %}
