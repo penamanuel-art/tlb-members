@@ -1110,24 +1110,24 @@ body.v2 .tstc-novig:active, body.v2 .tstc-track:active { transform: scale(0.97);
   background: #0b0f14;
   border: 0; border-top: 1px solid rgba(139, 152, 173, 0.16);
   border-radius: 0;
-  padding: 6px 6px calc(6px + env(safe-area-inset-bottom));
+  padding: 8px 6px calc(8px + env(safe-area-inset-bottom));
   backdrop-filter: none; -webkit-backdrop-filter: none;
   box-shadow: none;
 }
 .v2-bnav-item {
-  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px;
-  padding: 7px 2px 6px; text-decoration: none; color: #8b98ad;
-  font-size: 10px; font-weight: 500; letter-spacing: 0.01em; min-width: 0; border-radius: 22px;
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px;
+  padding: 9px 2px 8px; text-decoration: none; color: #8b98ad;
+  font-size: 12px; font-weight: 500; letter-spacing: 0.01em; min-width: 0; border-radius: 22px;
   border: 0 solid transparent;
   transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
 }
 .v2-bnav-item:active { transform: scale(0.95); }
 .v2-bnav-ico {
   display: flex; align-items: center; justify-content: center;
-  width: 22px; height: 22px; font-size: 20px; line-height: 1;
+  width: 26px; height: 26px; font-size: 24px; line-height: 1;
 }
 .v2-bnav-ico svg {
-  display: block; width: 21px; height: 21px;
+  display: block; width: 25px; height: 25px;
   fill: none; stroke: currentColor; stroke-width: 1.7;
   stroke-linecap: round; stroke-linejoin: round;
 }
@@ -1139,7 +1139,7 @@ body.v2 .tstc-novig:active, body.v2 .tstc-track:active { transform: scale(0.97);
   font-weight: 600;
 }
 /* Espacio al final del body: barra inferior */
-body.v2.has-bottomnav { padding-bottom: calc(78px + env(safe-area-inset-bottom)); }
+body.v2.has-bottomnav { padding-bottom: calc(94px + env(safe-area-inset-bottom)); }
 
 /* ===== Receipts Ledger (2026-10-15, diseño aprobado por Alex: lista moderna
    con miniatura del ticket expandible; reemplaza la rejilla de fotos crudas) ===== */
