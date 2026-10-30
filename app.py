@@ -4717,6 +4717,20 @@ def home():
                                    "plays": [_r]})
     # Vista previa admin (pedido Alex 2026-09-30): ?preview=locked muestra el
     # home como lo ve un miembro sin Elite (teaser bloqueado + pancarta $1).
+    # Última Platinum liquidada (2026-10-30, pedido de Alex: línea de
+    # marketing en la tarjeta Platinum vacía — «Last Platinum play: … · Won»)
+    last_plat = None
+    try:
+        for _r in recientes_oficiales(40):
+            if (_r.get("nivel") or "").upper() in ("ELITE", "PLATINUM"):
+                _fd = datetime.strptime(_r["fecha_iso"], "%Y-%m-%d")
+                last_plat = {
+                    "fecha_txt": f"{_fd.strftime('%b')} {_fd.day}",
+                    "resultado": _r.get("resultado"),
+                }
+                break
+    except Exception:
+        last_plat = None
     preview_locked = is_admin_for(user) and request.args.get("preview") == "locked"
     # Lluvia de dinero (Alex 2026-10-13): SOLO cuando ayer quedó positivo,
     # con burbuja de resultados, hasta que empieza el primer partido de hoy
@@ -4875,6 +4889,7 @@ def home():
         recientes=recientes,
         risk_hoy=risk_hoy,
         recientes_dias=recientes_dias,
+        last_plat=last_plat,
         hoy_iso=_hoy_iso,
         ayer_iso=_ayer_iso,
         recientes_value=recientes_value(),
