@@ -299,7 +299,7 @@
     <button class="menubtn" type="button" id="tst-menubtn" aria-expanded="false" onclick="var m=document.getElementById('tst-menu-sheet');var o=m.hidden;m.hidden=!o;this.setAttribute('aria-expanded',o?'true':'false');document.body.style.overflow=o?'hidden':'';" style="cursor:pointer;padding:0;">☰</button>
   </div>
 
-  <div id="tst-menu-sheet" hidden style="position:fixed;inset:0;z-index:2000;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;background:#0B0D12;padding:14px 14px calc(120px + env(safe-area-inset-bottom));">
+  <div id="tst-menu-sheet" hidden style="position:fixed;inset:0;z-index:2000;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;background:#0B0D12;padding:14px 14px calc(200px + env(safe-area-inset-bottom));">
     <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;"><b style="font-size:15px;">Menu</b><button type="button" onclick="document.getElementById('tst-menu-sheet').hidden=true;document.getElementById('tst-menubtn').setAttribute('aria-expanded','false');document.body.style.overflow='';" style="background:none;border:0;color:#A3AAB6;font-size:20px;cursor:pointer;padding:4px 8px;">✕</button></div>
     <div style="padding:12px 0 2px;font-size:11px;letter-spacing:1.6px;color:#969EA9;font-weight:700;">PICKS &amp; ODDS</div>
     <a href="{{ url_for('leagues') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:15px;">All Leagues <span style="color:#A3AAB6;">›</span></a>
