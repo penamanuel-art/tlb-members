@@ -272,9 +272,65 @@ twq('config','rhgk7');
   footer .links{margin-top:10px;}
   footer .links a{color:var(--muted);text-decoration:none;font-weight:600;}
 
+/* ===== SKELETON DE CARGA (skl-) — aprobado por Alex 2026-10-31: sombras con ola de luz mientras la pagina carga ===== */
+#skl-overlay{position:fixed;inset:0;z-index:999999;overflow:hidden;opacity:1;transition:opacity .45s ease;animation:sklForceHide .6s ease 2.8s forwards;}
+#skl-overlay.skl-hide{opacity:0;pointer-events:none;}
+.skl-inner{width:100%;margin:0 auto;}
+.skl-bone{position:relative;overflow:hidden;background:#1D2029;}
+.skl-bone::after{content:"";position:absolute;top:-10%;bottom:-10%;left:0;width:55%;background:linear-gradient(100deg,rgba(42,47,58,0) 0%,rgba(42,47,58,.6) 32%,rgba(17,203,135,.08) 48%,rgba(232,199,102,.13) 52%,rgba(42,47,58,.6) 68%,rgba(42,47,58,0) 100%);transform:translateX(-140%) skewX(-8deg);animation:sklWave 1.35s ease-in-out infinite;}
+.skl-bone.d1::after{animation-delay:.14s;}
+.skl-bone.d2::after{animation-delay:.28s;}
+.skl-bone.d3::after{animation-delay:.42s;}
+.skl-plain{background:#262B38;}
+@keyframes sklWave{to{transform:translateX(280%) skewX(-8deg);}}
+@keyframes sklForceHide{to{opacity:0;visibility:hidden;}}
+@media (prefers-reduced-motion:reduce){
+.skl-bone::after{animation:none;display:none;}
+#skl-overlay{transition:none;animation:sklForceHide .3s ease .15s forwards;}
+}
+#skl-overlay{background:#0b0c10;}
+.skl-reg{max-width:430px;background:#14161d;min-height:100vh;padding-bottom:44px;box-shadow:0 0 40px rgba(0,0,0,.6);}
+.skl-step{border-radius:14px;padding:16px;margin-bottom:12px;display:flex;gap:12px;align-items:flex-start;}
 </style>
 </head>
 <body>
+
+<!-- ===== SKELETON DE CARGA (skl-) ===== -->
+<div id="skl-overlay" aria-hidden="true">
+  <div class="skl-inner skl-reg">
+    <div class="skl-bone" style="height:96px;"></div>
+    <div style="padding:20px 20px 0;">
+      <div class="skl-bone" style="width:250px;max-width:85%;height:24px;border-radius:999px;margin:0 auto 20px;"></div>
+      <div class="skl-bone d1" style="width:92%;height:34px;border-radius:10px;margin:0 auto 10px;"></div>
+      <div class="skl-bone d2" style="width:68%;height:34px;border-radius:10px;margin:0 auto 18px;"></div>
+      <div class="skl-bone d1" style="width:88%;height:13px;border-radius:7px;margin:0 auto 8px;"></div>
+      <div class="skl-bone d2" style="width:64%;height:13px;border-radius:7px;margin:0 auto 24px;"></div>
+      <div class="skl-bone d3" style="width:100%;height:52px;border-radius:999px;margin:0 auto 12px;"></div>
+      <div class="skl-bone d3" style="width:210px;max-width:70%;height:12px;border-radius:6px;margin:0 auto 30px;"></div>
+      <div class="skl-bone skl-step ">
+        <div class="skl-plain" style="width:30px;height:30px;border-radius:50%;flex:0 0 auto;"></div>
+        <div style="flex:1;">
+          <div class="skl-plain" style="width:55%;height:13px;border-radius:6px;margin-bottom:8px;"></div>
+          <div class="skl-plain" style="width:85%;height:10px;border-radius:5px;"></div>
+        </div>
+      </div>
+      <div class="skl-bone skl-step d1">
+        <div class="skl-plain" style="width:30px;height:30px;border-radius:50%;flex:0 0 auto;"></div>
+        <div style="flex:1;">
+          <div class="skl-plain" style="width:55%;height:13px;border-radius:6px;margin-bottom:8px;"></div>
+          <div class="skl-plain" style="width:85%;height:10px;border-radius:5px;"></div>
+        </div>
+      </div>
+      <div class="skl-bone skl-step d2">
+        <div class="skl-plain" style="width:30px;height:30px;border-radius:50%;flex:0 0 auto;"></div>
+        <div style="flex:1;">
+          <div class="skl-plain" style="width:55%;height:13px;border-radius:6px;margin-bottom:8px;"></div>
+          <div class="skl-plain" style="width:85%;height:10px;border-radius:5px;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 <div class="wrap">
 
   <!-- ===== LOGO OFICIAL ===== -->
@@ -679,5 +735,33 @@ twq('config','rhgk7');
   <a href="#signup">Empezar por $1 →</a>
 </div>
 
+
+<script>
+/* SKELETON DE CARGA (skl-): oculta la capa al cargar; la red CSS la quita a los 2.8s aunque este JS falle. */
+(function(){try{
+  var el=document.getElementById('skl-overlay');
+  if(!el)return;
+  var t0=Date.now(),done=false,reduced=false;
+  try{reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;}catch(e){}
+  function hide(){
+    if(done)return;done=true;
+    var target=reduced?60:1100;
+    var wait=Math.max(0,target-(Date.now()-t0));
+    setTimeout(function(){
+      try{
+        el.classList.add('skl-hide');
+        el.style.pointerEvents='none';
+        setTimeout(function(){try{el.style.display='none';}catch(e){}},550);
+      }catch(e){}
+    },wait);
+  }
+  if(document.readyState==='complete'){hide();}
+  else{
+    window.addEventListener('load',hide);
+    document.addEventListener('DOMContentLoaded',function(){setTimeout(hide,700);});
+    setTimeout(hide,1800);
+  }
+}catch(e){}})();
+</script>
 </body>
 </html>
