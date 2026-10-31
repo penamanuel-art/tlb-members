@@ -8215,6 +8215,32 @@ def preview_registro_nuevo():
     return render_template("registro_preview.html")
 
 
+@app.route("/preview/registro-nuevo")
+def preview_registro_produccion():
+    """VISTA PREVIA PRIVADA (2026-10-31, pedido por Alex): la landing de
+    PRODUCCIÓN ya construida (registro_nuevo.html / registro_nuevo_es.html,
+    con el formulario integrado) para verla tal cual saldría en vivo SIN
+    encender el interruptor REGISTRO_NUEVO. Misma puerta que
+    /preview/registro: solo sesión de admin o de la cuenta personal de
+    Alex; cualquier otro caso (sin sesión o miembro normal) devuelve 404.
+    Sin enlaces en plantillas ni menús: se entra solo por URL directa.
+    El idioma sigue el mismo criterio de register(): manda ?lang=; si no,
+    la cookie tst_lang; si no, SOLO República Dominicana (geo-IP) recibe
+    español. Es SOLO para verla (GET): el formulario se renderiza igual
+    que en producción, pero esta ruta no procesa registros."""
+    user = current_user()
+    if not (is_admin_for(user) or is_alex_member(user)):
+        from flask import abort
+        abort(404)
+    _lang = (request.args.get("lang") or "").strip().lower()
+    if _lang not in ("es", "en"):
+        _lang = (request.cookies.get("tst_lang") or "").strip().lower()
+    if _lang not in ("es", "en"):
+        _lang = "es" if _pais_visitante() == "DO" else "en"
+    _tpl = "registro_nuevo_es.html" if _lang == "es" else "registro_nuevo.html"
+    return render_template(_tpl, turnstile_key=TURNSTILE_SITE_KEY)
+
+
 @app.route("/free-plays")
 @login_required
 def free_plays():
