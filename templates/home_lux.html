@@ -271,7 +271,7 @@
         {% if _ns.n < 5 and _j.resultado in ('WON', 'LOST') %}
     <div class="notif-item">
       <span class="ni{% if _j.resultado == 'LOST' %} red{% endif %}">{% if _j.resultado == 'WON' %}✅{% else %}❌{% endif %}</span>
-      <span><b>{{ _j.pick }} {% if _j.resultado == 'WON' %}won{% else %}lost{% endif %}</b><span>{{ _d.fecha }} · {{ 'Platinum' if _j.nivel == 'ELITE' else 'Sharp Free' }}</span></span>
+      <span><b>{{ _j.pick }} {% if _j.resultado == 'WON' %}won{% else %}lost{% endif %}</b><span>{{ _d.fecha }} · {{ 'Platinum' if _j.nivel in ('ELITE','PLATINUM') else ('Gold' if _j.nivel == 'GOLD' else 'Free Pick') }}</span></span>
       <span class="amt {% if _j.profit >= 0 %}win{% else %}loss{% endif %}">{% if _j.profit >= 0 %}+{% else %}−{% endif %}${{ '%.2f'|format(_j.profit|abs) }}</span>
     </div>
           {% set _ns.n = _ns.n + 1 %}
@@ -338,7 +338,7 @@
           {% if card_pendiente %}
           <b>Today's card is not posted yet</b><span>Check back when the card drops — with a push the moment it goes live.</span>
           {% else %}
-          <b>Today's card is posted</b><span>{{ plays|length }} {% if plays|length == 1 %}play{% else %}plays{% endif %} today — {{ plays|selectattr('nivel','equalto','ELITE')|list|length }} Platinum, {{ plays|selectattr('nivel','equalto','GOLD')|list|length }} Sharp Free plays.<br>Live on your Dashboard right now.</span>
+          <b>Today's card is posted</b><span>{{ plays|length }} {% if plays|length == 1 %}play{% else %}plays{% endif %} today — {{ plays|selectattr('nivel','equalto','ELITE')|list|length }} Platinum, {{ plays|selectattr('nivel','equalto','GOLD')|list|length }} Gold, {{ plays|selectattr('nivel','equalto','FREE')|list|length }} Free Picks.<br>Live on your Dashboard right now.</span>
           {% endif %}
         </div>
         <div class="arr">›</div>
@@ -397,13 +397,23 @@
   </div>
 
 
-  {% if plays %}<div class="tst-playshead"><h2>Your plays</h2>{% set hay_gratis = plays|selectattr('nivel','equalto','GOLD')|list|length > 0 %}{% if miembro_platinum %}{% if hay_gratis %}<span class="tst-playslevel">Sharp Free</span>{% endif %}<span class="tst-playslevel">Platinum</span>{% elif hay_gratis %}<span class="tst-playslevel">Sharp Free</span>{% endif %}<button class="tst-refresh" type="button" style="margin-left:auto" onclick="location.reload()">↻ Refresh</button></div><div class="tst-officials"><span class="tst-officials-pill">OFFICIALS</span><span class="tst-officials-n">{% if miembro_platinum %}{{ plays|length }} {% if plays|length == 1 %}play{% else %}plays{% endif %}{% else %}{{ plays|selectattr('nivel','equalto','GOLD')|list|length }} {% if plays|selectattr('nivel','equalto','GOLD')|list|length == 1 %}play{% else %}plays{% endif %}{% endif %}</span></div>{% endif %}
+  {% if plays %}<div class="tst-playshead"><h2>Your plays</h2>{% set hay_gratis = plays|selectattr('nivel','equalto','FREE')|list|length > 0 %}{% set hay_gold = plays|selectattr('nivel','equalto','GOLD')|list|length > 0 %}{% if miembro_platinum %}{% if hay_gratis %}<span class="tst-playslevel">Free Picks</span>{% endif %}{% if hay_gold %}<span class="tst-playslevel">Gold</span>{% endif %}<span class="tst-playslevel">Platinum</span>{% elif hay_gratis %}<span class="tst-playslevel">Free Picks</span>{% endif %}<button class="tst-refresh" type="button" style="margin-left:auto" onclick="location.reload()">↻ Refresh</button></div><div class="tst-officials"><span class="tst-officials-pill">OFFICIALS</span><span class="tst-officials-n">{% if miembro_platinum %}{{ plays|length }} {% if plays|length == 1 %}play{% else %}plays{% endif %}{% else %}{{ plays|selectattr('nivel','equalto','FREE')|list|length }} {% if plays|selectattr('nivel','equalto','FREE')|list|length == 1 %}play{% else %}plays{% endif %}{% endif %}</span></div>{% endif %}
   {% set tracked_ids = tracked_ids|default([]) %}
+  {% set frees = plays|selectattr('nivel','equalto','FREE')|list %}
   {% set golds = plays|selectattr('nivel','equalto','GOLD')|list %}
-  {% set plats = plays|rejectattr('nivel','equalto','GOLD')|rejectattr('nivel','equalto','VALUE')|list %}
+  {% set plats = plays|rejectattr('nivel','equalto','GOLD')|rejectattr('nivel','equalto','FREE')|rejectattr('nivel','equalto','VALUE')|list %}
+  {% if frees %}
+  {% for p in frees %}
+  {% include "_play_card_v5.html" %}
+  {% endfor %}
+  {% endif %}
   {% if golds %}
   {% for p in golds %}
+  {% if not miembro_platinum %}
+  {% include "_play_card_locked.html" %}
+  {% else %}
   {% include "_play_card_v5.html" %}
+  {% endif %}
   {% endfor %}
   {% endif %}
   {% if plats %}
@@ -587,7 +597,7 @@
     {% endif %}
   {% endfor %}
   {% if _yd.dia and _yd.dia.jugadas %}
-  {% set _y = namespace(pw=0, pl=0, pu=0.0, pn=0, gw=0, gl=0, gu=0.0, gn=0) %}
+  {% set _y = namespace(pw=0, pl=0, pu=0.0, pn=0, gw=0, gl=0, gu=0.0, gn=0, fw=0, fl=0, fu=0.0, fn=0) %}
   {% for _j in _yd.dia.jugadas %}
     {% if _j.resultado in ('WON','LOST','PUSH') and not _j.bloqueada %}
       {% set _u = (_j.profit|float * _j.stake_unidades|float / _j.stake_monto|float) if _j.stake_monto and _j.stake_unidades else (_j.profit|float / 100) %}
@@ -599,10 +609,14 @@
         {% set _y.gn = _y.gn + 1 %}
         {% set _y.gu = _y.gu + _u %}
         {% if _j.resultado == 'WON' %}{% set _y.gw = _y.gw + 1 %}{% elif _j.resultado == 'LOST' %}{% set _y.gl = _y.gl + 1 %}{% endif %}
+      {% elif _j.nivel == 'FREE' %}
+        {% set _y.fn = _y.fn + 1 %}
+        {% set _y.fu = _y.fu + _u %}
+        {% if _j.resultado == 'WON' %}{% set _y.fw = _y.fw + 1 %}{% elif _j.resultado == 'LOST' %}{% set _y.fl = _y.fl + 1 %}{% endif %}
       {% endif %}
     {% endif %}
   {% endfor %}
-  {% if _y.pn > 0 or _y.gn > 0 %}
+  {% if _y.pn > 0 or _y.gn > 0 or _y.fn > 0 %}
   <div class="tst-ysec">
     <div class="tst-yhead"><h2>Yesterday<span>{{ _ymm[ayer_iso[5:7]] }} {{ ayer_iso[8:10]|int }} card</span></h2><a class="tst-fullbtn" href="{{ url_for('official_tracker') }}">↗ Full record</a></div>
     {% if _y.pn > 0 %}
@@ -610,6 +624,9 @@
     {% endif %}
     {% if _y.gn > 0 %}
     <div class="tst-sumrow"><span class="tst-pill gold">GOLD</span><span class="tst-rec">{{ _y.gw }}-{{ _y.gl }}</span><span class="tst-units{% if _y.gu < 0 %} neg{% elif _y.gu > 0 %} pos{% endif %}">{{ '%+.2f'|format(_y.gu) }}u</span><span class="tst-graded">{{ _y.gn }} graded</span></div>
+    {% endif %}
+    {% if _y.fn > 0 %}
+    <div class="tst-sumrow"><span class="tst-pill gold">FREE PICKS</span><span class="tst-rec">{{ _y.fw }}-{{ _y.fl }}</span><span class="tst-units{% if _y.fu < 0 %} neg{% elif _y.fu > 0 %} pos{% endif %}">{{ '%+.2f'|format(_y.fu) }}u</span><span class="tst-graded">{{ _y.fn }} graded</span></div>
     {% endif %}
     {% for _j in _yd.dia.jugadas %}
       {% if _j.resultado in ('WON','LOST','PUSH') and not _j.bloqueada %}
@@ -619,7 +636,7 @@
       <div class="tst-playcard">
         {% if _j.comprobante %}<a href="{{ url_for('static', filename=_j.comprobante) }}" target="_blank" rel="noopener"><img class="tst-ticketimg" src="{{ url_for('static', filename=_j.comprobante) }}" alt="Original ticket" loading="lazy"></a>{% else %}<div class="tst-ticketph">Ticket</div>{% endif %}
         <div class="tst-playmain">
-          <div class="tst-playtop"><span class="tst-lvl{% if _is_plat %} plat{% else %} gold{% endif %}">{% if _is_plat %}PLATINUM{% else %}SHARP FREE{% endif %}</span><span class="tst-meta">{% if _is_plat %}Platinum{% else %}Sharp Free{% endif %} play · {{ _j.liga }}</span></div>
+          <div class="tst-playtop"><span class="tst-lvl{% if _is_plat %} plat{% else %} gold{% endif %}">{% if _is_plat %}PLATINUM{% elif _j.nivel == 'GOLD' %}GOLD{% else %}FREE PICK{% endif %}</span><span class="tst-meta">{% if _is_plat %}Platinum{% elif _j.nivel == 'GOLD' %}Gold{% else %}Free Pick{% endif %} play · {{ _j.liga }}</span></div>
           <div class="tst-pick">{{ _nick }} {% if _j.bettype == 'Moneyline' %}ML{% else %}{{ _j.bettype }}{% endif %} ({{ _j.cuota_texto or _j.cuota }})</div>
           <div class="tst-match">{{ _j.abbr }} vs {{ _j.opp_abbr }}</div>
         </div>
