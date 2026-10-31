@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Sharp Team — Start today for $1</title>
+<meta name="theme-color" content="#0b0c10">
+<!-- Meta Pixel Code (mismo bloque que base.html — no tocar) -->
+<script>
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '1625430959036525');
+fbq('track', 'PageView');
+{% if fb_reg %}fbq('track', 'CompleteRegistration'{% if fb_event_id %}, {}, {eventID: '{{ fb_event_id }}'}{% endif %});{% endif %}
+</script>
+<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1625430959036525&ev=PageView&noscript=1"/></noscript>
+<!-- End Meta Pixel Code -->
+<!-- X conversion tracking base code -->
+<script>
+!function(e,t,n,s,u,a){e.twq||(s=e.twq=function(){s.exe?s.exe.apply(s,arguments):s.queue.push(arguments);},s.version='1.1',s.queue=[],u=t.createElement(n),u.async=!0,u.src='https://static.ads-twitter.com/uwt.js',a=t.getElementsByTagName(n)[0],a.parentNode.insertBefore(u,a))}(window,document,'script');
+twq('config','rhgk7');
+{% if fb_reg %}twq('event', 'tw-rhgk7-rhgkm', {});{% endif %}
+</script>
+<!-- End X conversion tracking base code -->
+<style>
+  html{scroll-behavior:smooth;}
+  :root{
+    --bg:#14161d;
+    --card:#1D2029;
+    --card2:#232733;
+    --mint:#11CB87;
+    --gold:#e8c766;
+    --red:#e06c5f;
+    --text:#f2f4f7;
+    --muted:#a7aebb;
+    --line:#2b3040;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    background:#0b0c10;
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:430px;margin:0 auto;background:var(--bg);min-height:100vh;box-shadow:0 0 40px rgba(0,0,0,.6);padding-bottom:78px;}
+  section{padding:38px 22px;}
+  h1{font-size:30px;line-height:1.18;font-weight:900;text-align:center;}
+  h1 .hl{color:var(--mint);}
+  h2{font-size:22px;font-weight:800;text-align:center;margin-bottom:8px;}
+  h2 .hl{color:var(--gold);}
+  .sub{text-align:center;color:var(--muted);font-size:15px;margin-top:10px;}
+  .cta{
+    display:block;text-align:center;background:var(--mint);color:#06231a;
+    font-weight:800;font-size:17px;padding:16px 20px;border-radius:12px;
+    text-decoration:none;margin:22px 0 8px;letter-spacing:.3px;
+    box-shadow:0 8px 22px rgba(17,203,135,.22);
+  }
+  .cta.gold{background:var(--gold);color:#2a2000;box-shadow:0 8px 22px rgba(232,199,102,.20);}
+  .micro{text-align:center;font-size:12.5px;color:var(--muted);}
+  .micro b{color:var(--text);}
+  .hero{
+    background:
+      radial-gradient(130% 95% at 50% -5%,rgba(232,199,102,.13) 0%,rgba(232,199,102,0) 55%),
+      radial-gradient(95% 75% at 50% 112%,rgba(17,203,135,.10) 0%,rgba(17,203,135,0) 60%);
+  }
+  /* ===== eyebrow (section headers) ===== */
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:7px;
+    font-size:11px;font-weight:800;letter-spacing:2.2px;text-transform:uppercase;color:var(--mint);
+  }
+  .eyebrow svg{width:14px;height:14px;}
+  .eyebrow.gold{color:var(--gold);}
+  .eyebrow.red{color:var(--red);}
+  .eyebrow + h2{margin-top:9px;}
+  /* ===== icon chips: one system, color = meaning ===== */
+  .icon-chip{
+    width:44px;height:44px;border-radius:13px;flex:0 0 44px;
+    display:flex;align-items:center;justify-content:center;
+    background:rgba(232,199,102,.10);border:1px solid rgba(232,199,102,.35);color:var(--gold);
+  }
+  .icon-chip.mint{background:rgba(17,203,135,.10);border-color:rgba(17,203,135,.35);color:var(--mint);}
+  .icon-chip.neutral{background:rgba(242,244,247,.06);border-color:rgba(242,244,247,.18);color:#dfe4ec;}
+  .icon-chip.red{background:rgba(224,108,95,.10);border-color:rgba(224,108,95,.40);color:var(--red);}
+  .icon-chip svg{width:22px;height:22px;}
+  .icon-chip.sm{width:40px;height:40px;flex-basis:40px;border-radius:12px;}
+  .icon-chip.sm svg{width:20px;height:20px;}
+  .chipwrap{position:relative;flex:0 0 44px;}
+  .chipwrap .num{
+    position:absolute;top:-9px;right:-9px;width:24px;height:24px;border-radius:50%;
+    background:var(--gold);color:#2a2000;font-size:12.5px;font-weight:900;
+    display:flex;align-items:center;justify-content:center;border:2px solid var(--card);
+  }
+  /* ===== trust row (under hero) ===== */
+  .trust{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:22px;padding-top:18px;border-top:1px solid var(--line);}
+  .trust .t{display:flex;flex-direction:column;align-items:center;gap:7px;text-align:center;font-size:11px;font-weight:700;color:var(--muted);line-height:1.35;}
+  /* ===== modern cards / steps ===== */
+  .steps{display:flex;flex-direction:column;gap:12px;margin-top:20px;}
+  .step{
+    background:linear-gradient(180deg,#20232e,#1D2029);border:1px solid var(--line);border-radius:16px;padding:16px 18px;
+    display:flex;gap:14px;align-items:flex-start;
+    box-shadow:0 1px 2px rgba(0,0,0,.30),0 12px 28px rgba(0,0,0,.35);
+  }
+  .step.bad .num{background:#3a3f4d;color:#dfe4ec;}
+  .step.good .num{background:var(--mint);color:#06231a;}
+  .step h3{font-size:16.5px;font-weight:800;}
+  .step p{font-size:14px;color:var(--muted);margin-top:2px;}
+  .errors{list-style:none;margin-top:16px;display:flex;flex-direction:column;gap:10px;}
+  .errors li{
+    background:var(--card);border:1px solid var(--line);border-left:4px solid var(--red);
+    border-radius:12px;padding:12px 14px;font-size:14.5px;font-weight:600;
+    box-shadow:0 6px 18px rgba(0,0,0,.25);
+  }
+  .cost{
+    background:linear-gradient(180deg,#20232e,#191c25);border:1px solid var(--line);
+    border-radius:18px;padding:22px;text-align:center;
+    box-shadow:0 1px 2px rgba(0,0,0,.30),0 14px 32px rgba(0,0,0,.38);
+  }
+  .cost .icon-chip{margin:0 auto 12px;}
+  .cost .big{font-size:20px;font-weight:800;line-height:1.35;}
+  .cost .big span{color:var(--gold);}
+  .cost p{color:var(--muted);font-size:14.5px;margin-top:8px;}
+  .ba{display:flex;flex-direction:column;gap:12px;margin-top:18px;}
+  .ba .col{border-radius:16px;padding:18px;border:1px solid var(--line);box-shadow:0 1px 2px rgba(0,0,0,.30),0 12px 28px rgba(0,0,0,.35);}
+  .ba .before{background:linear-gradient(180deg,#1e1a1e,#1a1c24);}
+  .ba .after{background:linear-gradient(180deg,#16281f,#14231d);border-color:rgba(17,203,135,.55);}
+  .ba .label{font-size:11px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;}
+  .ba .before .label{color:var(--red);}
+  .ba .after .label{color:var(--mint);}
+  .ba h3{font-size:18px;font-weight:800;margin:2px 0 4px;}
+  .ba p{font-size:14px;color:var(--muted);}
+  .ba .after p{color:#c9d4cf;}
+  .ba .bhead{display:flex;align-items:center;gap:12px;margin-bottom:8px;}
+  .tier{
+    background:linear-gradient(180deg,#20232e,#1D2029);border:1px solid var(--line);border-radius:18px;
+    padding:20px;margin-top:14px;position:relative;
+    box-shadow:0 1px 2px rgba(0,0,0,.30),0 12px 28px rgba(0,0,0,.35);
+  }
+  .tier.plat{
+    margin-top:24px;
+    border:1px solid transparent;
+    background:linear-gradient(#232533,#1D2029) padding-box,linear-gradient(160deg,#e8c766,rgba(232,199,102,.12)) border-box;
+    box-shadow:0 2px 4px rgba(0,0,0,.35),0 18px 40px rgba(0,0,0,.45),0 0 0 1px rgba(232,199,102,.08),0 10px 30px rgba(232,199,102,.07);
+  }
+  .seal{
+    position:absolute;top:-11px;right:16px;z-index:2;
+    background:linear-gradient(90deg,#f2d67c,#e8c766);color:#2a2000;
+    font-size:10px;font-weight:900;letter-spacing:1.6px;text-transform:uppercase;
+    padding:4px 11px;border-radius:999px;box-shadow:0 4px 14px rgba(232,199,102,.40);
+  }
+  .tier .thead{display:flex;align-items:center;gap:12px;}
+  .tier .tname{font-size:13px;font-weight:900;letter-spacing:2.5px;text-transform:uppercase;}
+  .tier.free .tname{color:var(--mint);}
+  .tier.gold .tname{color:var(--gold);}
+  .tier.plat .tname{color:var(--gold);}
+  .tier h3{font-size:19px;font-weight:800;margin:10px 0 4px;}
+  .tier p,.tier li{font-size:14px;color:var(--muted);}
+  .checklist{list-style:none;margin-top:10px;display:flex;flex-direction:column;gap:8px;}
+  .checklist li{position:relative;padding-left:29px;}
+  .checklist li::before{
+    content:"";position:absolute;left:0;top:1px;width:20px;height:20px;
+    background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2311CB87' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9' stroke-opacity='.45'/%3E%3Cpath d='M8.5 12.5l2.5 2.5 4.5-5' stroke-width='2.2'/%3E%3C/svg%3E") no-repeat center/contain;
+  }
+  .tier .price{font-size:15px;font-weight:800;color:var(--text);margin-top:12px;}
+  .filter{display:flex;flex-direction:column;gap:12px;margin-top:18px;}
+  .filter .box{border-radius:16px;padding:18px;border:1px solid var(--line);box-shadow:0 1px 2px rgba(0,0,0,.30),0 12px 28px rgba(0,0,0,.35);}
+  .filter .yes{background:linear-gradient(180deg,#16281f,#14231d);border-color:rgba(17,203,135,.55);}
+  .filter .no{background:linear-gradient(180deg,#241c1e,#221a1a);border-color:#5a3230;}
+  .filter .fhead{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
+  .filter h3{font-size:16px;font-weight:800;}
+  .filter .yes h3{color:var(--mint);}
+  .filter .no h3{color:var(--red);}
+  .filter ul{list-style:none;display:flex;flex-direction:column;gap:8px;}
+  .filter li{font-size:14px;color:var(--muted);position:relative;padding-left:29px;}
+  .filter .yes li::before{
+    content:"";position:absolute;left:0;top:1px;width:20px;height:20px;
+    background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2311CB87' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9' stroke-opacity='.45'/%3E%3Cpath d='M8.5 12.5l2.5 2.5 4.5-5' stroke-width='2.2'/%3E%3C/svg%3E") no-repeat center/contain;
+  }
+  .filter .no li::before{
+    content:"";position:absolute;left:0;top:1px;width:20px;height:20px;
+    background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23e06c5f' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9' stroke-opacity='.45'/%3E%3Cpath d='M9 9l6 6M15 9l-6 6' stroke-width='2.2'/%3E%3C/svg%3E") no-repeat center/contain;
+  }
+  .offer{
+    background:linear-gradient(180deg,#20232e,#1D2029);border:1px solid rgba(232,199,102,.45);border-radius:18px;padding:24px 20px;text-align:center;
+    box-shadow:0 2px 4px rgba(0,0,0,.35),0 16px 36px rgba(0,0,0,.40);
+  }
+  .offer .price-line{font-size:15px;color:var(--muted);margin-top:6px;}
+  .offer .price-line b{color:var(--text);}
+  .offer .bigprice{font-size:30px;font-weight:900;margin-top:16px;}
+  .offer .bigprice span{color:var(--gold);}
+  .osteps{display:flex;flex-direction:column;gap:12px;margin-top:18px;text-align:left;}
+  .ostep{
+    background:var(--card2);border:1px solid var(--line);border-radius:16px;padding:15px 16px;
+    display:flex;gap:14px;align-items:flex-start;
+    box-shadow:0 8px 20px rgba(0,0,0,.28);
+  }
+  .ostep h3{font-size:16px;font-weight:800;}
+  .ostep h3 span{color:var(--gold);}
+  .ostep p{font-size:13.5px;color:var(--muted);margin-top:2px;}
+  .faq{margin-top:6px;display:flex;flex-direction:column;gap:10px;}
+  .faq .item{
+    background:linear-gradient(180deg,#20232e,#1D2029);border:1px solid var(--line);border-radius:14px;
+    padding:15px 16px;box-shadow:0 8px 20px rgba(0,0,0,.26);
+  }
+  .faq .qhead{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
+  .faq .chev{flex:0 0 18px;width:18px;height:18px;color:var(--muted);margin-top:2px;}
+  .faq h3{font-size:15.5px;font-weight:800;}
+  .faq p{font-size:14px;color:var(--muted);margin-top:3px;}
+  footer{padding:26px 22px 40px;text-align:center;color:var(--muted);font-size:12.5px;border-top:1px solid var(--line);}
+  footer .dom{color:var(--gold);font-weight:800;letter-spacing:1px;font-size:14px;}
+  .divider{height:1px;background:var(--line);margin:0 22px;}
+  .pill{
+    display:inline-block;font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;
+    color:var(--mint);border:1px solid var(--mint);border-radius:999px;padding:5px 12px;margin-bottom:14px;
+  }
+  .pill.gold{color:var(--gold);border-color:var(--gold);}
+  .center{text-align:center;}
+  /* ===== sticky bottom CTA (mobile) ===== */
+  .stickybar{
+    position:fixed;left:50%;transform:translateX(-50%);bottom:0;z-index:998;
+    width:100%;max-width:430px;
+    background:rgba(13,14,18,.93);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+    border-top:1px solid var(--line);
+    padding:10px 16px calc(10px + env(safe-area-inset-bottom));
+    display:flex;align-items:center;gap:12px;
+  }
+  .stickybar .sb-text{font-size:11.5px;color:var(--muted);line-height:1.3;white-space:nowrap;}
+  .stickybar .sb-text b{display:block;color:var(--text);font-size:13.5px;}
+  .stickybar a{
+    flex:1;text-align:center;background:var(--mint);color:#06231a;
+    font-weight:800;font-size:15.5px;padding:13px 10px;border-radius:11px;text-decoration:none;
+    box-shadow:0 6px 18px rgba(17,203,135,.25);
+  }
+  /* ===== signup form (producción) ===== */
+  .formcard{
+    background:linear-gradient(180deg,#20232e,#1D2029);border:1px solid rgba(232,199,102,.45);border-radius:18px;
+    padding:24px 20px;box-shadow:0 2px 4px rgba(0,0,0,.35),0 16px 36px rgba(0,0,0,.40);
+  }
+  .field{margin-top:14px;text-align:left;}
+  .field label{display:block;font-size:13px;font-weight:700;margin-bottom:6px;}
+  .field .hint{font-size:12px;color:var(--muted);margin:-2px 0 6px;}
+  .field input[type=text],.field input[type=email],.field input[type=tel],.field input[type=password]{
+    width:100%;background:#12141b;border:1px solid var(--line);border-radius:11px;
+    padding:13px 14px;color:var(--text);font-size:15px;outline:none;font-family:inherit;
+  }
+  .field input:focus{border-color:var(--gold);}
+  .smsline{display:flex;gap:8px;align-items:center;margin-top:10px;font-size:13px;color:var(--muted);cursor:pointer;}
+  .smsline input{width:17px;height:17px;accent-color:var(--gold);flex:0 0 17px;}
+  .intent{display:flex;flex-direction:column;gap:10px;margin-top:16px;}
+  .intent-opt{
+    display:flex;gap:11px;align-items:flex-start;text-align:left;cursor:pointer;
+    background:var(--card2);border:1px solid var(--line);border-radius:14px;padding:13px 14px;
+  }
+  .intent-opt input{margin-top:3px;width:18px;height:18px;accent-color:var(--gold);flex:0 0 18px;}
+  .io-title{display:block;font-size:14.5px;font-weight:800;letter-spacing:.4px;}
+  .io-sub{display:block;font-size:12.5px;color:var(--muted);margin-top:2px;}
+  .flash{border-radius:11px;padding:11px 13px;font-size:13.5px;font-weight:600;margin-top:14px;text-align:left;}
+  .flash-error{background:rgba(224,108,95,.12);border:1px solid rgba(224,108,95,.5);color:#f0b8b1;}
+  .flash-success{background:rgba(17,203,135,.12);border:1px solid rgba(17,203,135,.5);color:#a9ecd2;}
+  .howsteps{list-style:none;margin-top:16px;display:flex;flex-direction:column;gap:7px;text-align:left;}
+  .howsteps li{font-size:13.5px;color:var(--muted);}
+  .howsteps b{color:var(--gold);}
+  .formnote{font-size:12.5px;color:var(--muted);text-align:left;margin-top:12px;line-height:1.55;}
+  .login-line{text-align:center;font-size:13.5px;color:var(--muted);margin-top:16px;}
+  .login-line a{color:var(--gold);font-weight:700;text-decoration:none;}
+  button.cta{font-family:inherit;width:100%;border:0;cursor:pointer;}
+  footer .links{margin-top:10px;}
+  footer .links a{color:var(--muted);text-decoration:none;font-weight:600;}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ===== LOGO OFICIAL ===== -->
+  <img src="{{ url_for('static', filename='img/sharp-team-header.jpg') }}" alt="The Sharp Team" style="display:block;width:100%;height:auto;">
+
+  <!-- ===== 1. HERO ===== -->
+  <section class="hero" style="padding-top:18px;">
+    <div class="center"><span class="pill gold">Start today for $1 — your first month of Platinum is FREE</span></div>
+    <h1>Stop betting blind.<br>Start betting with <span class="hl">a system behind every play.</span></h1>
+    <p class="sub">Daily plays priced by a real model, published before game time, and proven with the actual ticket — every single day.</p>
+    <a class="cta" href="#offer">Start for $1</a>
+    <p class="micro"><b>$1 today.</b> Then your first month of Platinum is FREE.</p>
+    <div class="trust">
+      <div class="t">
+        <div class="icon-chip sm mint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 5-3.5 8-7 10-3.5-2-7-5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg></div>
+        <span>Posted before game time</span>
+      </div>
+      <div class="t">
+        <div class="icon-chip sm neutral"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a3 3 0 0 0 0 6v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a3 3 0 0 0 0-6z"/><path d="M13 5v2M13 11v2M13 17v2"/></svg></div>
+        <span>Real ticket on every play</span>
+      </div>
+      <div class="t">
+        <div class="icon-chip sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg></div>
+        <span>Model-priced lines</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ===== 2. THE CYCLE ===== -->
+  <section>
+    <div class="center"><span class="eyebrow red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16.5h.01"/></svg>The Problem</span></div>
+    <h2>The cycle that <span class="hl">empties bankrolls</span></h2>
+    <p class="sub">Sound familiar?</p>
+    <div class="steps">
+      <div class="step bad">
+        <div class="chipwrap">
+          <div class="icon-chip neutral"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/></svg></div>
+          <span class="num">1</span>
+        </div>
+        <div>
+          <h3>You bet every day</h3>
+          <p>Games are on, so money goes down. Every day feels like it has to have action.</p>
+        </div>
+      </div>
+      <div class="step bad">
+        <div class="chipwrap">
+          <div class="icon-chip neutral"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg></div>
+          <span class="num">2</span>
+        </div>
+        <div>
+          <h3>You follow picks from everywhere</h3>
+          <p>A screenshot here, a "lock" there, a hot take from someone who never shows a ticket.</p>
+        </div>
+      </div>
+      <div class="step bad">
+        <div class="chipwrap">
+          <div class="icon-chip neutral"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.4 2.3c-.8.3-.9 1-.9 1.7"/><path d="M12 17h.01"/></svg></div>
+          <span class="num">3</span>
+        </div>
+        <div>
+          <h3>No record. No proof. No system.</h3>
+          <p>When it loses, there's nothing to check and nothing to learn. Just the next deposit.</p>
+        </div>
+      </div>
+    </div>
+    <h2 style="margin-top:28px;font-size:18px;">The mistakes that keep the cycle spinning</h2>
+    <ul class="errors">
+      <li>Betting without a model — just opinions and gut feelings</li>
+      <li>Chasing losses with bigger bets and worse prices</li>
+      <li>Following pick sellers with no verified record</li>
+      <li>Never knowing your real win rate or what a play is worth</li>
+    </ul>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ===== 3. THE COST ===== -->
+  <section>
+    <div class="cost">
+      <div class="icon-chip neutral"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+      <div class="big">The cost isn't just the money.<br><span>It's the time, the bankroll, and every blind decision in between.</span></div>
+      <p>Hours spent guessing. Slips placed at whatever price was in front of you. A bankroll that shrinks because nobody — including you — can prove what actually works.</p>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ===== 4. THE SYSTEM ===== -->
+  <section>
+    <div class="center"><span class="eyebrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>The System</span></div>
+    <h2>How <span class="hl">The Sharp Team</span> works</h2>
+    <div class="steps">
+      <div class="step good">
+        <div class="chipwrap">
+          <div class="icon-chip mint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="12" r="3.2"/></svg></div>
+          <span class="num">1</span>
+        </div>
+        <div>
+          <h3>A model prices every game</h3>
+          <p>Every matchup gets a real win probability before we ever look at the odds.</p>
+        </div>
+      </div>
+      <div class="step good">
+        <div class="chipwrap">
+          <div class="icon-chip mint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h18l-7 8v5l-4 2v-7z"/></svg></div>
+          <span class="num">2</span>
+        </div>
+        <div>
+          <h3>Only real edges get published</h3>
+          <p>If the model's number doesn't beat the price, there is no play. Every play is posted <b style="color:var(--text);">before game time</b> — never after.</p>
+        </div>
+      </div>
+      <div class="step good">
+        <div class="chipwrap">
+          <div class="icon-chip mint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a3 3 0 0 0 0 6v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a3 3 0 0 0 0-6z"/><path d="M13 5v2M13 11v2M13 17v2"/></svg></div>
+          <span class="num">3</span>
+        </div>
+        <div>
+          <h3>Every play carries the real ticket</h3>
+          <p>The actual Novig ticket goes on the card, and the result counts in the public record — win or lose.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ===== 5. BEFORE / AFTER ===== -->
+  <section>
+    <div class="center"><span class="eyebrow gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h13M13 3l4 4-4 4M20 17H7M11 13l-4 4 4 4"/></svg>The Difference</span></div>
+    <h2>Before <span class="hl">/</span> After</h2>
+    <div class="ba">
+      <div class="col before">
+        <div class="bhead">
+          <div class="icon-chip sm red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9 9l6 6M15 9l-6 6"/></svg></div>
+          <div class="label">Before</div>
+        </div>
+        <h3>Picks with no proof</h3>
+        <p>Someone posts a play, it loses, and it quietly disappears. The wins get screenshotted, the losses get buried, and you never see a real record.</p>
+      </div>
+      <div class="col after">
+        <div class="bhead">
+          <div class="icon-chip sm mint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8.5 12.5l2.5 2.5 4.5-5"/></svg></div>
+          <div class="label">After</div>
+        </div>
+        <h3>Every play, proven</h3>
+        <p>Each play shows the model probability, the price we took, and the real ticket. The full record stays public — the good weeks and the bad ones.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ===== 6. WHAT'S INSIDE ===== -->
+  <section>
+    <div class="center"><span class="eyebrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/></svg>What's Inside</span></div>
+    <h2>Three levels. <span class="hl">One standard of proof.</span></h2>
+
+    <div class="tier free">
+      <div class="thead">
+        <div class="icon-chip sm mint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11h16v9a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/><path d="M3 7h18v4H3z"/><path d="M12 7v14"/><path d="M12 7a3 3 0 1 1 3-3c0 2-3 3-3 3zM12 7a3 3 0 1 0-3-3c0 2 3 3 3 3z"/></svg></div>
+        <div class="tname">⚪ Free Picks</div>
+      </div>
+      <h3>Sharp Free — free forever</h3>
+      <p>Daily free picks, published and tracked like everything else.</p>
+      <ul class="checklist">
+        <li>Free plays every day</li>
+        <li>Public Telegram channel: The Sharp Team — Free Picks</li>
+        <li>Full public record</li>
+      </ul>
+      <div class="price">$0 — free forever</div>
+    </div>
+
+    <div class="tier gold">
+      <div class="thead">
+        <div class="icon-chip sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"/><path d="M8.5 14L7 22l5-3 5 3-1.5-8"/></svg></div>
+        <div class="tname">⚪ Gold</div>
+      </div>
+      <h3>Validated plays</h3>
+      <p>Plays that clear a higher bar: a validated mathematical edge, published with the same ticket-and-record standard.</p>
+      <ul class="checklist">
+        <li>Gold plays on your Dashboard</li>
+        <li>Model probability and value on every card</li>
+      </ul>
+    </div>
+
+    <div class="tier plat">
+      <span class="seal">Best Value</span>
+      <div class="thead">
+        <div class="icon-chip sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 8L7 12l5-6.5L17 12l4.5-4L20 19H4z"/><path d="M4 22h16"/></svg></div>
+        <div class="tname">⭐ Platinum</div>
+      </div>
+      <h3>Everything, unlocked</h3>
+      <ul class="checklist">
+        <li>Gold + Platinum plays — the strongest edges we find</li>
+        <li>+EV Board — live value across 12 sportsbooks</li>
+        <li>Player Props board</li>
+        <li>AI Assistant</li>
+        <li>Line Moves — see lines move in real time</li>
+        <li>Sharp Money — follow the professional money</li>
+        <li>Private Telegram channel</li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ===== 8. WHO IT'S FOR ===== -->
+  <section>
+    <div class="center"><span class="eyebrow gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/><path d="M16 5a3.5 3.5 0 0 1 0 6.5M21 20c0-2.8-1.9-4.8-4.5-5.3"/></svg>Who It's For</span></div>
+    <h2>Built for bettors who want <span class="hl">a system, not miracles</span></h2>
+    <div class="filter">
+      <div class="box yes">
+        <div class="fhead">
+          <div class="icon-chip sm mint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8.5 12.5l2.5 2.5 4.5-5"/></svg></div>
+          <h3>This is for you if…</h3>
+        </div>
+        <ul>
+          <li>You want every play backed by a model and a number</li>
+          <li>You want to see the ticket and check the record yourself</li>
+          <li>You'd rather bet fewer, better plays than chase action</li>
+        </ul>
+      </div>
+      <div class="box no">
+        <div class="fhead">
+          <div class="icon-chip sm red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9 9l6 6M15 9l-6 6"/></svg></div>
+          <h3>This is not for you if…</h3>
+        </div>
+        <ul>
+          <li>You're looking to get rich overnight</li>
+          <li>You want a "lock of the century" every night</li>
+          <li>You'd rather chase losses than follow a system</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ===== 9. THE OFFER ===== -->
+  <section id="offer">
+    <div class="offer">
+      <span class="pill gold">The Offer</span>
+      <h2>Start today for <span class="hl">$1</span></h2>
+      <p class="price-line">Here's exactly how it works — <b>no surprises</b>:</p>
+      <div class="osteps">
+        <div class="ostep">
+          <div class="chipwrap">
+            <div class="icon-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg></div>
+            <span class="num">1</span>
+          </div>
+          <div>
+            <h3>Today: <span>$1</span> to start</h3>
+            <p>One dollar today starts your membership and puts your card on file.</p>
+          </div>
+        </div>
+        <div class="ostep">
+          <div class="chipwrap">
+            <div class="icon-chip mint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/><path d="M9 15l2 2 4-4"/></svg></div>
+            <span class="num" style="background:var(--mint);color:#06231a;">2</span>
+          </div>
+          <div>
+            <h3>First month of Platinum: <span>FREE</span></h3>
+            <p>Every play and every tool, fully unlocked for a full month — on us.</p>
+          </div>
+        </div>
+        <div class="ostep">
+          <div class="chipwrap">
+            <div class="icon-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></svg></div>
+            <span class="num">3</span>
+          </div>
+          <div>
+            <h3>Then <span>$15.99/week</span></h3>
+            <p>After your free month, Platinum continues at $15.99/week. Cancel anytime from your account.</p>
+          </div>
+        </div>
+      </div>
+      <div class="bigprice">Start today for <span>$1</span></div>
+      <p class="price-line">Rather stay free? <b>Sharp Free stays free forever</b> — daily free picks, no card required.</p>
+      <a class="cta gold" href="#signup">Start for $1</a>
+      <p class="micro">$1 today · FREE first month · $15.99/week after. No surprises.</p>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ===== 9b. SIGNUP FORM ===== -->
+  <section id="signup" style="padding-top:26px;">
+    <div class="formcard">
+      <div class="center"><span class="eyebrow gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5"/></svg>Create Your Account</span></div>
+      <h2>Create your account</h2>
+      <p class="sub">Pick how you want to start — you can switch any time.</p>
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for cat, msg in messages %}
+            <div class="flash flash-{{ cat }}">{{ msg }}</div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+      <form method="post" action="{{ url_for('register') }}">
+        <div class="intent">
+          <label class="intent-opt">
+            <input type="radio" name="signup_intent" value="platinum" checked>
+            <span>
+              <span class="io-title">⭐ PLATINUM — Start for $1</span>
+              <span class="io-sub">$1 today · first month FREE · then $15.99/week</span>
+            </span>
+          </label>
+          <label class="intent-opt">
+            <input type="radio" name="signup_intent" value="free">
+            <span>
+              <span class="io-title">⚪ SHARP FREE — $0 forever</span>
+              <span class="io-sub">Daily free picks · no card required</span>
+            </span>
+          </label>
+        </div>
+        <div class="field">
+          <label for="f-nombre">Your name</label>
+          <input id="f-nombre" type="text" name="nombre" required autocomplete="name" placeholder="Your name">
+        </div>
+        <div class="field">
+          <label for="f-email">Your email address</label>
+          <p class="hint">We'll send your plays here every day before games go off.</p>
+          <input id="f-email" type="email" name="email" required autocomplete="email" placeholder="you@email.com">
+        </div>
+        <div class="field">
+          <label for="f-phone">Your phone number</label>
+          <p class="hint">Optional — get the plays by text the moment they drop.</p>
+          <input id="f-phone" type="tel" name="phone" autocomplete="tel" placeholder="(555) 123-4567">
+          <label class="smsline" for="f-sms"><input id="f-sms" type="checkbox" name="sms_optin" value="1"> Text me the plays when they go live</label>
+        </div>
+        <div class="field">
+          <label for="f-password">Password</label>
+          <input id="f-password" type="password" name="password" required minlength="6" autocomplete="new-password" placeholder="Minimum 6 characters">
+        </div>
+        {% if turnstile_key %}
+        <div class="cf-turnstile" data-sitekey="{{ turnstile_key }}" data-theme="dark" style="margin:12px 0 4px"></div>
+        <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+        {% endif %}
+        <button class="cta gold" type="submit" style="margin-top:18px;">Create my account</button>
+      </form>
+      <ol class="howsteps">
+        <li><b>1.</b> Create your account here.</li>
+        <li><b>2.</b> Tap the activation link we email you.</li>
+        <li><b>3.</b> Going Platinum? Confirm your $1 checkout — your free month starts the moment that payment completes, not when you fill out this form.</li>
+      </ol>
+      <p class="formnote">No card is charged on this form — Sharp Free never asks for one. Platinum's $1 is charged by Stripe on the next step, after you activate your account.</p>
+      <p class="login-line">Already have an account? <a href="{{ url_for('login') }}">Log in here →</a></p>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ===== 10. FAQ ===== -->
+  <section>
+    <div class="center"><span class="eyebrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.4 2.3c-.8.3-.9 1-.9 1.7"/><path d="M12 17h.01"/></svg>FAQ</span></div>
+    <h2>Quick <span class="hl">answers</span></h2>
+    <div class="faq">
+      <div class="item">
+        <div class="qhead"><h3>When do the plays come out?</h3><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></div>
+        <p>Weekdays at 2:00 PM ET and weekends at 11:00 AM ET. Every play is posted before its game starts.</p>
+      </div>
+      <div class="item">
+        <div class="qhead"><h3>Where do I see the plays?</h3><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></div>
+        <p>On your Dashboard, in the Telegram channels, and in your daily email — whichever you check first.</p>
+      </div>
+      <div class="item">
+        <div class="qhead"><h3>How much does Platinum cost?</h3><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></div>
+        <p>You start today for $1, your first month of Platinum is free, and after that it's $15.99/week. Sharp Free is always free.</p>
+      </div>
+      <div class="item">
+        <div class="qhead"><h3>Can I cancel whenever I want?</h3><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></div>
+        <p>Yes. You can cancel from your account at any time, and you keep the time you've already paid for.</p>
+      </div>
+      <div class="item">
+        <div class="qhead"><h3>How do I know the plays are real?</h3><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></div>
+        <p>Every play is posted before game time with its real ticket — nothing is edited after the fact.</p>
+      </div>
+    </div>
+    <a class="cta" href="#signup">Start for $1</a>
+    <p class="micro">Start today for $1 — your FREE Platinum month starts now.</p>
+  </section>
+
+  <!-- ===== 11. FOOTER ===== -->
+  <footer>
+    <div class="dom">thesharpteam.bet</div>
+    <p style="margin-top:8px;">The Sharp Team — model-driven plays, real tickets, a public record.<br>Free picks every day on Telegram: The Sharp Team — Free Picks.</p>
+    <p style="margin-top:14px;">Posted before game time. Locked. Graded.</p>
+    <p style="margin-top:8px;">All plays and information provided are for entertainment purposes only.<br>
+    <b style="color:#c9cfda;">21+ only.</b> Please play responsibly. Gambling problem? Call or text <b style="color:#c9cfda;">1-800-GAMBLER</b>.</p>
+    <div class="links"><a href="/terms">Terms of Use</a> · <a href="/privacy">Privacy Policy</a> · <a href="/legal">Disclaimer</a> · <a href="/contact">Contact</a></div>
+    <p style="margin-top:10px;">© 2026 The Sharp Team. All rights reserved.</p>
+  </footer>
+
+</div>
+
+<!-- ===== STICKY CTA BAR ===== -->
+<div class="stickybar">
+  <div class="sb-text"><b>$1 today</b>First month FREE</div>
+  <a href="#signup">Start for $1 →</a>
+</div>
+
+</body>
+</html>
