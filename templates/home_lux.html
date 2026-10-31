@@ -247,8 +247,8 @@
 <div class="phone">
   <div class="tst-stickyhead">
   {% if tira_home %}
-  <a href="{{ url_for('official_tracker') }}" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#20242E,#1B1F27);border:1px solid #343B47;border-radius:14px;padding:8px 14px;margin:0 0 8px;text-decoration:none;overflow:hidden;">
-    <span style="font-size:13.5px;font-weight:800;letter-spacing:.8px;color:#e8c766;white-space:nowrap;">{% if tira_home.tipo == 'plat' %}&#128142; PLATINUM &middot; {{ tira_home.n }} WINS IN A ROW{% else %}&#128293; {{ tira_home.n }} WINNING DAYS IN A ROW{% endif %}</span>
+  <a href="{{ url_for('official_tracker') }}" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#272D38,#191E26);border:1px solid rgba(232,199,102,.55);border-radius:14px;padding:11px 16px;margin:0 0 8px;text-decoration:none;overflow:hidden;box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 6px 16px rgba(0,0,0,.35);">
+    <span style="font-size:15.5px;font-weight:900;letter-spacing:.5px;color:#F0D47C;white-space:nowrap;text-shadow:0 1px 2px rgba(0,0,0,.45);">{% if tira_home.tipo == 'plat' %}&#128142; PLATINUM &middot; {{ tira_home.n }} WINS IN A ROW{% else %}&#128293; {{ tira_home.n }} WINNING DAYS IN A ROW{% endif %}</span>
   </a>
   {% endif %}
   <div class="topbar">
