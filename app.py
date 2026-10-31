@@ -6752,7 +6752,22 @@ def cuenta_cancelar():
             log_notificacion(db, "cancelacion", f"Miembro pidió cancelar: {_nm}", _em or "")
             # Automático (2026-10-30, orden de Alex): la petición se aplica
             # también en Stripe al final del período — no se le cobra más.
-            _stripe_set_cancel_at_period_end(user, True)
+            _ok_stripe = _stripe_set_cancel_at_period_end(user, True)
+            # Red de seguridad (2026-10-31, orden de Alex): si la llamada a
+            # Stripe falló HABIENDO suscripción/cliente que cancelar, la
+            # cancelación no puede quedar solo local en silencio — queda
+            # una alerta visible en Gerenciales para ejecutarla a mano.
+            if not _ok_stripe:
+                try:
+                    _tenia_stripe = ((user["stripe_subscription_id"] or "").strip()
+                                     or (user["stripe_customer_id"] or "").strip())
+                except Exception:
+                    _tenia_stripe = ""
+                if _tenia_stripe:
+                    log_notificacion(
+                        db, "cancelacion_fallida",
+                        f"⚠️ Stripe NO confirmó la cancelación de: {_nm}",
+                        _em or "")
             # Confirmación AL MIEMBRO (2026-10-30): su email de cancelación
             # confirmada, solo si Stripe confirma la cancelación programada
             # o si no tiene suscripción (nada que cobrar). Si no se puede
