@@ -214,7 +214,7 @@
   @media (prefers-reduced-motion:reduce){.tst-marquee{animation:none!important}}
 </style>
 </head>
-<body>
+<body class="pv-bgimg">
 <div class="phone">
   <a id="tst-phrase-strip" href="{{ url_for('masterclass') }}" style="display:flex;align-items:center;gap:8px;background:linear-gradient(180deg,#1c2431,#161c23);border:1px solid #2a3c5f;border-radius:14px;padding:10px 14px;margin:0 0 12px;text-decoration:none;color:#e8c766;overflow:hidden;">
     <span style="flex:0 0 auto;">🎓</span>
@@ -582,5 +582,8 @@
   b.addEventListener('click',function(){p.hidden=!p.hidden;});
 }catch(e){}})();
 </script>
+<style>
+  body.pv-bgimg::before{content:"";position:fixed;inset:0;background:url("{{ url_for('static', filename='img/bg-player.jpg') }}") center top/cover no-repeat;opacity:.12;pointer-events:none;z-index:-1}
+</style>
 </body>
 </html>
