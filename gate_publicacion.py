@@ -343,6 +343,14 @@ def evaluar_candidata(cand, ctx, ahora):
 
     # 10. Umbral de la doctrina (regla existente, no nueva).
     gate = ctx.get("gates", {}).get(cand.get("liga"))
+    # Umbral por nivel (Opción B, 2026-10-30): el gate efectivo es el
+    # MAYOR entre el de la liga y el mínimo de su piso — FREE >= 3.0 y
+    # GOLD >= 3.0 (su estándar propio), y piso universal +2.0 para todo
+    # nivel (calibración B2.1: ninguna oficial bajo +2.0, jamás).
+    _min_nivel = {"FREE": 3.0, "GOLD": 3.0}.get(
+        str(cand.get("nivel") or "").upper(), 2.0)
+    if gate is not None:
+        gate = max(gate, _min_nivel)
     fallo_umbral = False
     if metricas is not None and gate is not None:
         if metricas["edge_modelo_puntos"] < gate:
