@@ -164,6 +164,40 @@
   .hp-ostep h3{font-size:16px;font-weight:800;}
   .hp-ostep h3 span{color:var(--hp-gold);}
   .hp-ostep p{font-size:13.5px;color:var(--hp-muted);margin-top:2px;line-height:1.5;}
+  /* prueba: jugadas reales con su ticket (2026-10-31) */
+  .hp-proofs{display:grid;grid-template-columns:1fr;gap:14px;margin-top:20px;text-align:left;}
+  @media(min-width:560px){.hp-proofs{grid-template-columns:1fr 1fr;}}
+  .hp-proofcard{
+    background:linear-gradient(180deg,#20232e,#1D2029);border:1px solid var(--hp-line);border-radius:16px;
+    padding:16px 18px;box-shadow:0 1px 2px rgba(0,0,0,.30),0 12px 28px rgba(0,0,0,.35);
+  }
+  .hp-proofcard .meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  .hp-pdate{font-size:11px;font-weight:800;letter-spacing:1.6px;text-transform:uppercase;color:var(--hp-muted);}
+  .hp-ptag{
+    margin-left:auto;flex:0 0 auto;font-size:9.5px;font-weight:900;letter-spacing:1.4px;text-transform:uppercase;
+    padding:4px 9px;border-radius:999px;border:1px solid var(--hp-line);color:var(--hp-muted);
+  }
+  .hp-ptag.plat{color:var(--hp-gold);border-color:rgba(232,199,102,.45);}
+  .hp-ptag.free{color:var(--hp-mint);border-color:rgba(17,203,135,.45);}
+  .hp-pick{font-size:17.5px;font-weight:800;line-height:1.3;margin-top:10px;}
+  .hp-pick .odds{color:var(--hp-gold);font-weight:800;white-space:nowrap;}
+  .hp-pscore{font-size:13.5px;color:var(--hp-muted);margin-top:3px;}
+  .hp-presult{display:flex;align-items:center;gap:9px;margin-top:12px;}
+  .hp-pstamp{
+    font-size:10.5px;font-weight:900;letter-spacing:1.6px;text-transform:uppercase;
+    padding:4px 10px;border-radius:999px;border:1px solid;
+  }
+  .hp-pstamp.won{color:var(--hp-mint);border-color:rgba(17,203,135,.5);background:rgba(17,203,135,.08);}
+  .hp-pstamp.lost{color:var(--hp-red);border-color:rgba(224,108,95,.5);background:rgba(224,108,95,.08);}
+  .hp-pprofit{font-size:15px;font-weight:900;}
+  .hp-pprofit.won{color:var(--hp-mint);}
+  .hp-pprofit.lost{color:var(--hp-red);}
+  .hp-pticket{display:block;margin-top:13px;border:1px solid var(--hp-line);border-radius:12px;overflow:hidden;line-height:0;}
+  .hp-pticket img{width:100%;height:190px;object-fit:cover;object-position:top center;display:block;}
+  .hp-pticket .cap{
+    display:block;line-height:1.4;font-size:11.5px;font-weight:700;color:var(--hp-muted);
+    padding:8px 12px;background:var(--hp-card2);text-align:center;
+  }
   /* FAQ */
   .hp-faq details{background:#101828;border:1px solid #1e2a45;border-radius:16px;margin-bottom:12px;overflow:hidden;}
   .hp-faq summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:20px;font-weight:700;font-size:17px;color:#fff;}
@@ -243,6 +277,41 @@
   </section>
 
   <div class="hp-divider"></div>
+
+  <!-- ===== PROOF: REAL PLAYS, REAL TICKETS (2026-10-31, pedido de Alex) =====
+       Las 6 liquidadas con ticket más recientes del archivo (ganadas y
+       perdidas tal cual, datos vivos vía index() → _recent_ticket_plays).
+       SOLO jugadas individuales: ningún total agregado — la compuerta de
+       las 500 jugadas gobierna récord/ROI y aquí no se toca. -->
+  {% if recent_plays %}
+  <section>
+    <div class="center"><span class="eyebrow gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2a2.5 2.5 0 0 0 0 5v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2a2.5 2.5 0 0 0 0-5z"/><path d="M13 6v2M13 11v2M13 16v2"/></svg>The Proof</span></div>
+    <h2>Real plays. <span class="hl">Real tickets.</span></h2>
+    <p class="sub">Don't take our word for it — check the receipts. Every official play below was posted before game time, wins and losses alike. Tap any ticket to see it full size.</p>
+    <div class="hp-proofs">
+      {% for p in recent_plays %}
+      <div class="hp-proofcard">
+        <div class="meta">
+          <span class="hp-pdate">{{ p.fecha }} · {{ p.liga }}</span>
+          <span class="hp-ptag{% if p.nivel == 'PLATINUM' %} plat{% elif p.nivel == 'FREE' %} free{% endif %}">{{ p.nivel }}</span>
+        </div>
+        <div class="hp-pick">{{ p.pick }} <span class="odds">({{ p.cuota_txt }})</span></div>
+        {% if p.marcador %}<div class="hp-pscore">Final: {{ p.marcador }}</div>{% endif %}
+        <div class="hp-presult">
+          <span class="hp-pstamp {% if p.resultado == 'WON' %}won{% else %}lost{% endif %}">{{ p.resultado }}</span>
+          <span class="hp-pprofit {% if p.resultado == 'WON' %}won{% else %}lost{% endif %}">{{ p.profit_txt }}</span>
+        </div>
+        <a class="hp-pticket" href="{{ p.img }}" target="_blank" rel="noopener">
+          <img src="{{ p.img }}" alt="Betting ticket for {{ p.pick }}" loading="lazy">
+          <span class="cap">Tap to view the full ticket</span>
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <div class="hp-divider"></div>
+  {% endif %}
 
   <!-- ===== TODAY'S PLAYS: THREE LEVELS ===== -->
   <section>
