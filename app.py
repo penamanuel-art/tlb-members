@@ -1660,13 +1660,14 @@ def monthly_member_stats(db, user_id: int, ym: str) -> dict:
     tracked = [dict(r) for r in rows]
     graded = [t for t in tracked if t["resultado"] in ("W", "L")]
     base = compute_stats(tracked)
-    # Desglose por nivel
+    # Desglose por nivel (tres pisos desde la Opción B, 2026-10-30:
+    # FREE PICKS / GOLD / PLATINUM con sus nombres visibles propios)
     niveles = {}
-    for lvl in ("ELITE", "GOLD"):
+    for lvl, tag in (("ELITE", "Platinum"), ("GOLD", "Gold"),
+                     ("FREE", "Free Picks")):
         g = [t for t in graded if (t["nivel"] or "").upper() in (lvl, "PLATINUM" if lvl == "ELITE" else lvl)]
         w = sum(1 for t in g if t["resultado"] == "W")
         p = sum(play_profit_dollars(t) for t in g)
-        tag = "Platinum" if lvl == "ELITE" else "Sharp Free"
         niveles[tag] = f"{w}-{len(g) - w}, {'+' if p >= 0 else '-'}$ {abs(p):,.2f}".replace("$-", "-$")
     win_rate = (base["wins"] / (base["wins"] + base["losses"]) * 100) if (base["wins"] + base["losses"]) else 0.0
     profit = base["net_dollars"]
@@ -1685,7 +1686,8 @@ def monthly_member_stats(db, user_id: int, ym: str) -> dict:
         "roi": f"{base['roi']:.1f}%",
         "risked": base["risked"],
         "platinum": niveles.get("Platinum", "0-0, $0.00"),
-        "gold": niveles.get("Sharp Free", "0-0, $0.00"),
+        "gold": niveles.get("Gold", "0-0, $0.00"),
+        "free": niveles.get("Free Picks", "0-0, $0.00"),
     }
 
 
@@ -1697,7 +1699,9 @@ def build_monthly_html(nombre: str, ym: str, st: dict) -> str:
         p = t["_profit"] if "_profit" in t else play_profit_dollars(t)
         color = "#16a34a" if p >= 0 else "#dc2626"
         marca = "&#10003;" if t["resultado"] == "W" else "&#10007;"
-        nivel = "PLATINUM" if (t["nivel"] or "").upper() in ("ELITE", "PLATINUM") else "SHARP FREE"
+        _nv1700 = (t["nivel"] or "").upper()
+        nivel = ("PLATINUM" if _nv1700 in ("ELITE", "PLATINUM")
+                 else ("FREE PICK" if _nv1700 == "FREE" else "GOLD"))
         rows.append(
             f'<table role="presentation" width="100%" cellpadding="0" cellspacing="0" '
             f'style="margin:0 0 8px;background:#ffffff;border:1px solid #e5e7eb;border-radius:10px;">'
@@ -2386,7 +2390,7 @@ def official_tracker_full():
     general["progress_pct"] = min(100.0, round(general["n"] / 200 * 100, 1))
 
     por_nivel = {}
-    for nv in ("ELITE", "GOLD"):
+    for nv in ("ELITE", "GOLD", "FREE"):
         # PLATINUM = ELITE + las viejas con etiqueta PLATINUM del
         # pre-renombre (2026-10-15): asi Platinum + Gold = el total
         # oficial EXACTO y ningun libro deja jugadas fuera.
@@ -2608,6 +2612,7 @@ def program_stats():
     profit = risked = 0.0
     niveles = {"GOLD": {"ganadas": 0, "perdidas": 0, "profit": 0.0},
                "ELITE": {"ganadas": 0, "perdidas": 0, "profit": 0.0},
+               "FREE": {"ganadas": 0, "perdidas": 0, "profit": 0.0},
                "VALUE": {"ganadas": 0, "perdidas": 0, "profit": 0.0}}
     for d in load_archive():
         for j in d.get("jugadas", []) or []:
@@ -3190,11 +3195,11 @@ def program_curve():
 
 
 def stats_por_nivel(tracked):
-    """Ganadas/perdidas/profit por nivel (GOLD/ELITE/VALUE) para el bloque estilo WGT."""
+    """Ganadas/perdidas/profit por nivel (FREE/GOLD/ELITE/VALUE) para el bloque estilo WGT."""
     out = {}
     for t in tracked:
         lvl = (t.get("nivel") or "").upper()
-        if lvl not in ("GOLD", "ELITE", "VALUE"):
+        if lvl not in ("FREE", "GOLD", "ELITE", "VALUE"):
             continue
         s = out.setdefault(lvl, {"wins": 0, "losses": 0, "net": 0.0})
         if t.get("resultado") == "W":
@@ -3208,7 +3213,7 @@ def stats_por_nivel(tracked):
         s["net_display"] = ("+$" if _n > 0 else ("-$" if _n < 0 else "$")) + f"{abs(_n):,}"
         s["net_cls"] = "pos" if _n > 0 else ("neg" if _n < 0 else "")
         s["record"] = f"{s['wins']}–{s['losses']}"
-    for _lvl in ("GOLD", "ELITE", "VALUE"):
+    for _lvl in ("FREE", "GOLD", "ELITE", "VALUE"):
         out.setdefault(_lvl, {"wins": 0, "losses": 0, "net": 0.0,
                               "net_display": "$0", "net_cls": "", "record": "0–0"})
     return out
@@ -3574,7 +3579,11 @@ def _free_stake(nivel, stake_unidades):
     except (TypeError, ValueError):
         u = 0
     if u <= 0:
-        u = 1.0 if str(nivel or "").upper() == "ELITE" else 0.6
+        # Referencias por piso (Opción B, 2026-10-30): ELITE 1.0u;
+        # GOLD y FREE 0.4u (antes Gold 0.6u); cualquier otro nivel
+        # conserva el histórico 0.6.
+        _nv_t = str(nivel or "").upper()
+        u = 1.0 if _nv_t == "ELITE" else (0.4 if _nv_t in ("GOLD", "FREE") else 0.6)
     return u, round(FREE_TEST_BANKROLL * 0.01 * u, 2)
 
 
@@ -3708,7 +3717,11 @@ def nivel_display(nivel) -> str:
     2026-10-06). Solo capa de presentación — JSON, BD, crons y scripts
     siguen usando ELITE/GOLD como valores internos."""
     n = (nivel or "").upper()
-    return "PLATINUM" if n in ("ELITE", "PLATINUM") else n
+    if n in ("ELITE", "PLATINUM"):
+        return "PLATINUM"
+    if n == "FREE":
+        return "FREE PICK"
+    return n
 
 
 app.jinja_env.globals.update(nivel_display=nivel_display)
@@ -4381,8 +4394,9 @@ def ticket_view(play_id):
             pass
     if play is None:
         return render_template("404.html"), 404
-    # Sin pago no hay acceso: la jugada ELITE exige sesión y Elite activa.
-    if str(play.get("nivel") or "").upper() in ("ELITE", "PLATINUM"):
+    # Sin pago no hay acceso: las jugadas ELITE y GOLD (de pago desde la
+    # Opción B, 2026-10-30) exigen sesión y Platinum activa. FREE es abierta.
+    if str(play.get("nivel") or "").upper() in ("ELITE", "PLATINUM", "GOLD"):
         cu = current_user()
         if not platinum_unlocked_for(cu):
             if cu is None:
@@ -4433,17 +4447,24 @@ def platinum_reciente_con_ticket():
 
 
 def locked_ticket_url_for(play, fecha):
-    """URL pública de la copia DIFUMINADA del ticket Platinum de hoy.
+    """URL pública de la copia DIFUMINADA del ticket bloqueado de una jugada.
 
     Doctrina sellada (fuga real del 2026-10-15): el difuminado va HORNEADO
     en el archivo — pixelado fuerte (//22) + GaussianBlur(16), los mismos
-    parámetros del mecanismo del email free v2 — con nombre neutro
-    img/locked/locked-<fecha>.jpg. La carta bloqueada del home JAMÁS
-    sirve la foto original ni deja su nombre en el HTML. La copia se
-    genera una vez por fecha dentro de static/ y se reutiliza; si ya
-    existe (p. ej. la dejó el flujo del email), se usa tal cual. Falla
+    parámetros del mecanismo del email free v2. La carta bloqueada del home
+    JAMÁS sirve la foto original ni deja su nombre en el HTML. Falla
     cerrado: ante cualquier problema devuelve None y la carta sale sin
     foto, con su panel bloqueado.
+
+    Nombre POR JUGADA (Opción B, 2026-10-30 — Riesgo B del plan): desde
+    que GOLD también se bloquea, un mismo día puede tener una GOLD y una
+    ELITE bloqueadas con tickets distintos; el nombre por fecha
+    (locked-<fecha>.jpg) colisionaba. Resolución: (1) si existe la copia
+    por jugada img/locked/locked-<fecha>-<play_id>.jpg (la deja el flujo
+    post-tickets), se usa tal cual; (2) si no, compatibilidad histórica:
+    el archivo por fecha solo se reutiliza cuando la jugada ES la ELITE
+    de esa fecha (el uso para el que nació); (3) en cualquier otro caso
+    se genera la copia por jugada desde el comprobante de ESTA jugada.
     """
     try:
         comp = ((play or {}).get("comprobante") or "").strip()
@@ -4453,21 +4474,37 @@ def locked_ticket_url_for(play, fecha):
         if ".." in comp or comp.startswith(("/", "http")) \
                 or not comp.startswith("img/comprobantes/"):
             return None
+        pid = str((play or {}).get("id") or "").strip()
+        # El play_id entra en un nombre de archivo: solo [A-Za-z0-9_-].
+        pid = "".join(c for c in pid if c.isalnum() or c in "-_")
+        if pid:
+            rel_j = f"img/locked/locked-{fecha}-{pid}.jpg"
+            if os.path.exists(os.path.join(app.static_folder, rel_j)):
+                return url_for("static", filename=rel_j)
         rel = f"img/locked/locked-{fecha}.jpg"
         dest = os.path.join(app.static_folder, rel)
-        if not os.path.exists(dest):
-            src = os.path.join(app.static_folder, comp)
-            if not os.path.exists(src):
-                return None
-            from PIL import Image, ImageFilter
-            im = Image.open(src).convert("RGB")
-            w, h = im.size
-            im = im.resize((max(20, w // 22), max(20, h // 22)), Image.BOX)
-            im = im.resize((w, h), Image.BILINEAR)
-            im = im.filter(ImageFilter.GaussianBlur(16))
-            os.makedirs(os.path.dirname(dest), exist_ok=True)
-            im.save(dest, quality=82)
-        return url_for("static", filename=rel)
+        if os.path.exists(dest):
+            # Compat histórica: el archivo por fecha es el ticket ELITE
+            # del día; solo se sirve para jugadas ELITE/PLATINUM.
+            if str((play or {}).get("nivel") or "").upper() in ("ELITE", "PLATINUM"):
+                return url_for("static", filename=rel)
+            if not pid:
+                return url_for("static", filename=rel)
+        if not pid:
+            return None
+        src = os.path.join(app.static_folder, comp)
+        if not os.path.exists(src):
+            return None
+        dest_j = os.path.join(app.static_folder, rel_j)
+        from PIL import Image, ImageFilter
+        im = Image.open(src).convert("RGB")
+        w, h = im.size
+        im = im.resize((max(20, w // 22), max(20, h // 22)), Image.BOX)
+        im = im.resize((w, h), Image.BILINEAR)
+        im = im.filter(ImageFilter.GaussianBlur(16))
+        os.makedirs(os.path.dirname(dest_j), exist_ok=True)
+        im.save(dest_j, quality=82)
+        return url_for("static", filename=rel_j)
     except Exception:
         return None
 
@@ -4484,6 +4521,10 @@ def _locked_play_view(play, ticket_url):
     """
     play = play or {}
     return {
+        # El nivel NO es secreto: la carta bloqueada muestra su distintivo
+        # (PLATINUM / GOLD) — es el motor de conversión. Todo lo demás de
+        # la lista es lo único que viaja; pick/cuota/stake siguen fuera.
+        "nivel": (play.get("nivel") or "").upper(),
         "liga": play.get("liga") or "",
         "game_time_et": play.get("game_time_et") or "",
         "hora": play.get("hora") or "",
@@ -4602,9 +4643,12 @@ def hot_run_cards(value_rows):
         ("PLATINUM", "ALL",
          seq_of(lambda j: (j.get("nivel") or "").upper() in ("ELITE", "PLATINUM")),
          "Platinum", "#e8c766", True),
-        ("SHARP FREE PLAYS", "ALL",
-         seq_of(lambda j: (j.get("nivel") or "").upper() == "GOLD"), "Sharp Free plays",
+        ("GOLD", "ALL",
+         seq_of(lambda j: (j.get("nivel") or "").upper() == "GOLD"), "Gold plays",
          "#aebdd4", True),
+        ("FREE PICKS", "ALL",
+         seq_of(lambda j: (j.get("nivel") or "").upper() == "FREE"), "Free Picks",
+         "#7dd3a8", True),
     ):
         c = _card(badge, tag, seq, scope, color, always)
         if c:
@@ -4665,6 +4709,35 @@ def home():
     _sin_acceso = _es_trial(user)
     if _sin_acceso:
         plays = []
+    # Resultado EN la propia tarjeta (Opción B, 2026-10-30): en cuanto un
+    # juego de la card termina, su tarjeta muestra el chip WON/LOST +
+    # profit sin esperar a la liquidación — mismo merge que alimenta
+    # Running Hot: primero el overlay en vivo (live_graded) y el archivo
+    # manda cuando la liquidación ya existe (nunca se cuenta dos veces).
+    try:
+        _res_map = {}
+        for _e in load_live_graded():
+            if _e.get("resultado") in ("WON", "LOST") and _e.get("play_id"):
+                _res_map[_e["play_id"]] = _e["resultado"]
+        for _d in load_archive():
+            for _j in _d.get("jugadas", []) or []:
+                if _j.get("resultado") in ("WON", "LOST") and _j.get("id"):
+                    _res_map[_j["id"]] = _j["resultado"]
+        for _p in plays:
+            _r = _res_map.get(_p.get("id"))
+            if _r:
+                _p["resultado"] = "W" if _r == "WON" else "L"
+                try:
+                    _sm = float(_p.get("stake_monto") or 0)
+                    _cu = int(_p.get("cuota") or 0)
+                    _b = (100.0 / abs(_cu)) if _cu < 0 else (
+                        _cu / 100.0 if _cu > 0 else 0.0)
+                    _p["profit"] = (round(_sm * _b, 2) if _r == "WON"
+                                    else round(-_sm, 2))
+                except (TypeError, ValueError):
+                    pass
+    except Exception:
+        pass
     tracked_rows = db.execute(
         "SELECT * FROM tracked_plays WHERE user_id = ?",
         (session["user_id"],),
@@ -4856,9 +4929,16 @@ def home():
         if _card_publicada:
             _hoy_lock = datetime.now(TZ).strftime("%Y-%m-%d")
             for _p in plays:
-                if _p.get("nivel") == "ELITE":
+                if _p.get("nivel") in ("ELITE", "GOLD"):
                     _tk = (locked_ticket_url_for(_p, _hoy_lock)
                            if _p.get("comprobante") else None)
+                    # La plantilla lux incluye la carta bloqueada con la
+                    # jugada completa: se le anota la URL difuminada de SU
+                    # ticket (por jugada desde la Opción B) para que la
+                    # foto borrosa salga también ahí, como ordena la
+                    # regla del ticket bloqueado. La URL es de la copia
+                    # horneada — la original nunca se anota.
+                    _p["ticket_url"] = _tk
                     locked_plays.append(_locked_play_view(_p, _tk))
         elif preview_locked and preview_locked_play:
             locked_plays.append(
@@ -7911,7 +7991,9 @@ def preview_my_action():
     # Desglose por nivel para la pestaña Stats
     por_nivel = {}
     for r in rows:
-        niv = "Platinum" if (r["nivel"] or "").upper() in ("ELITE", "PLATINUM") else "Gold"
+        _nvp = (r["nivel"] or "").upper()
+        niv = ("Platinum" if _nvp in ("ELITE", "PLATINUM")
+               else ("Free Picks" if _nvp == "FREE" else "Gold"))
         d = por_nivel.setdefault(niv, {"w": 0, "l": 0, "profit": 0.0})
         if r["resultado"] == "W":
             d["w"] += 1
@@ -8086,7 +8168,8 @@ def tracker_export():
         off = oficiales.get((f, (t["pick"] or "").strip().lower()), {})
         res = t["resultado"] or ""
         nivel = (t["nivel"] or "").upper()
-        nivel_txt = "PLATINUM" if nivel in ("ELITE", "PLATINUM") else ("SHARP FREE" if nivel == "GOLD" else nivel)
+        nivel_txt = ("PLATINUM" if nivel in ("ELITE", "PLATINUM")
+                     else ("FREE PICK" if nivel == "FREE" else nivel))
         try:
             fecha_corta = datetime.strptime(f, "%Y-%m-%d").strftime("%b %d") if f else "—"
         except (ValueError, TypeError):
@@ -8198,6 +8281,14 @@ def track(play_id):
         if _is_ajax:
             return jsonify({"ok": False, "error": "The Platinum play is locked. Unlock it to track it."}), 403
         flash("The Platinum play is locked. Unlock it to track it.", "warn")
+        return redirect(url_for("desbloquear_platinum"))
+    # GOLD es de pago desde la Opción B (2026-10-30): tampoco se puede
+    # trackear sin Platinum — la carta sanitizada nunca expone su id,
+    # esto es la segunda puerta en el servidor.
+    if play.get("nivel") == "GOLD" and not platinum_unlocked_for(_cu):
+        if _is_ajax:
+            return jsonify({"ok": False, "error": "The Gold play is locked. Unlock Platinum to track it."}), 403
+        flash("The Gold play is locked. Unlock Platinum to track it.", "warn")
         return redirect(url_for("desbloquear_platinum"))
     db = get_db()
     try:
@@ -8670,7 +8761,7 @@ def admin_api_tracked_members():
     rows = db.execute(
         "SELECT DISTINCT u.email AS email FROM tracked_plays t "
         "JOIN users u ON u.id = t.user_id "
-        "WHERE t.nivel IN ('ELITE', 'GOLD') AND u.email IS NOT NULL AND u.email != '' AND u.email_verified = 1"
+        "WHERE t.nivel IN ('ELITE', 'GOLD', 'FREE') AND u.email IS NOT NULL AND u.email != '' AND u.email_verified = 1"
     ).fetchall()
     return jsonify([{"email": r["email"]} for r in rows])
 
@@ -8693,13 +8784,13 @@ def admin_api_tracked_plays():
         rows = db.execute(
             "SELECT u.email AS email, t.play_id AS play_id, t.fecha AS fecha, t.nivel AS nivel, t.pick AS pick, t.cuota AS cuota, t.stake_unidades AS stake_unidades, t.stake_monto AS stake_monto "
             "FROM tracked_plays t JOIN users u ON u.id = t.user_id "
-            "WHERE t.nivel IN ('ELITE', 'GOLD') AND u.email IS NOT NULL AND u.email != '' AND u.email_verified = 1 AND t.fecha = ?", (fecha,)
+            "WHERE t.nivel IN ('ELITE', 'GOLD', 'FREE') AND u.email IS NOT NULL AND u.email != '' AND u.email_verified = 1 AND t.fecha = ?", (fecha,)
         ).fetchall()
     else:
         rows = db.execute(
             "SELECT u.email AS email, t.play_id AS play_id, t.fecha AS fecha, t.nivel AS nivel, t.pick AS pick, t.cuota AS cuota, t.stake_unidades AS stake_unidades, t.stake_monto AS stake_monto "
             "FROM tracked_plays t JOIN users u ON u.id = t.user_id "
-            "WHERE t.nivel IN ('ELITE', 'GOLD') AND u.email IS NOT NULL AND u.email != '' AND u.email_verified = 1"
+            "WHERE t.nivel IN ('ELITE', 'GOLD', 'FREE') AND u.email IS NOT NULL AND u.email != '' AND u.email_verified = 1"
         ).fetchall()
     return jsonify([{"email": r["email"], "play_id": r["play_id"], "fecha": r["fecha"], "nivel": r["nivel"], "pick": r["pick"], "cuota": r["cuota"], "stake_unidades": r["stake_unidades"], "stake_monto": r["stake_monto"]} for r in rows])
 
@@ -9512,7 +9603,7 @@ def _share_data(fecha, j):
         "pick_short": _pick_short(j.get("pick") or ""),
         "odds": fmt_odds(j.get("cuota")),
         "nivel_label": "PLATINUM" if nv in ("ELITE", "PLATINUM")
-                       else (nv or "GOLD"),
+                       else ("FREE PICK" if nv == "FREE" else (nv or "GOLD")),
         "liga": liga,
         "la": la, "sa": int(m.group(2)), "sb": int(m.group(3)), "lb": lb,
         "profit": profit,
@@ -9721,7 +9812,7 @@ def official_tracker():
     # tarjeta del home (Official / Platinum / Gold) abre el libro de SU
     # programa: sus jugadas, cada una con su informacion y su ticket.
     programa = (request.args.get("programa") or "all").strip().lower()
-    if programa not in ("all", "platinum", "gold"):
+    if programa not in ("all", "platinum", "gold", "free"):
         programa = "all"
     # Filtro por liga (2026-10-27, pedido Alex: menu por liga organizado, cada liga abre su libro)
     liga_filtro = (request.args.get("liga") or "").strip().upper()
@@ -9732,7 +9823,10 @@ def official_tracker():
         libro_stats, libro_titulo = t["por_nivel"]["ELITE"], "Platinum plays"
     elif programa == "gold":
         libro = [x for x in t["historial"] if x["nivel"] == "GOLD"]
-        libro_stats, libro_titulo = t["por_nivel"]["GOLD"], "Sharp Free plays"
+        libro_stats, libro_titulo = t["por_nivel"]["GOLD"], "Gold plays"
+    elif programa == "free":
+        libro = [x for x in t["historial"] if x["nivel"] == "FREE"]
+        libro_stats, libro_titulo = t["por_nivel"]["FREE"], "Free Picks"
     else:
         libro, libro_stats, libro_titulo = t["historial"], t["general"], "All official plays"
     if liga_filtro:
@@ -10822,7 +10916,7 @@ def admin_aprobar_jugadas():
     _gate_motivos = ""
     try:
         import gate_publicacion as _gate
-        _ctx = {"modelos_aprobados": {}, "gates": {"MLB": 4.0, "NHL": 4.0, "NBA": 3.5, "NFL": 3.5, "NCAAF": 4.5},
+        _ctx = {"modelos_aprobados": {}, "gates": {"MLB": 4.0, "NHL": 6.0, "NBA": 5.0, "NFL": 3.5, "NCAAF": 4.5},
                 "publicadas": [], "archivo": [], "excepciones": [],
                 "max_antiguedad_datos_dias": 7, "max_antiguedad_cuota_min": 60,
                 "frescura_aprobada": False, "fecha": _hoy}
