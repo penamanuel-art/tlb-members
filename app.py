@@ -4225,6 +4225,58 @@ def _public_stats():
     return wins, losses, total, roi
 
 
+_NIVEL_PUBLICO = {"ELITE": "PLATINUM", "PLAT": "PLATINUM", "PLATINUM": "PLATINUM",
+                  "GOLD": "GOLD", "FREE": "FREE"}
+
+
+def _recent_ticket_plays(limit=6):
+    """Últimas jugadas oficiales liquidadas CON foto de ticket (sección de
+    prueba de la portada pública, 2026-10-31, pedido de Alex: que el visitante
+    revise los tickets reales ANTES de registrarse). Lee la MISMA fuente que
+    _public_stats() (data/archive.json, días newest-first); ganadas y perdidas
+    tal cual, sin escoger. Solo datos por jugada: NUNCA totales agregados
+    (la compuerta de las 500 jugadas gobierna récord/ROI, no esta sección)."""
+    plays = []
+    try:
+        with open(os.path.join(os.path.dirname(__file__), "data", "archive.json")) as f:
+            dias = json.load(f).get("dias", [])
+        for dia in dias:
+            try:
+                fecha = datetime.strptime(dia.get("fecha", ""), "%Y-%m-%d").strftime("%b %-d, %Y")
+            except Exception:
+                fecha = dia.get("fecha", "")
+            for j in dia.get("jugadas", []):
+                if len(plays) >= limit:
+                    return plays
+                r = j.get("resultado")
+                comp = (j.get("comprobante") or "").strip()
+                if r not in ("WON", "LOST") or not comp:
+                    continue
+                profit = float(j.get("profit") or 0)
+                cuota = j.get("cuota")
+                try:
+                    cuota = int(cuota)
+                    cuota_txt = f"+{cuota}" if cuota > 0 else str(cuota)
+                except (TypeError, ValueError):
+                    cuota_txt = str(j.get("cuota_texto") or cuota or "")
+                nivel = str(j.get("nivel") or "").upper()
+                plays.append({
+                    "fecha": fecha,
+                    "liga": j.get("liga") or "",
+                    "nivel": _NIVEL_PUBLICO.get(nivel, nivel),
+                    "pick": j.get("pick") or "",
+                    "cuota_txt": cuota_txt,
+                    "marcador": j.get("marcador") or "",
+                    "resultado": r,
+                    "profit_txt": (f"+${profit:,.2f}" if profit > 0 else
+                                   f"-${abs(profit):,.2f}" if profit < 0 else "$0.00"),
+                    "img": url_for("static", filename=comp),
+                })
+    except Exception:
+        pass
+    return plays
+
+
 # Páginas públicas About (2026-10-29, pedido por Alex tras explorar el About
 # de WGT): /about y /contact YA existían (about() y contact_page()); aquí solo
 # van las rutas NUEVAS. Duplicar contact_page tumbó el deploy del 23:45 —
@@ -4334,7 +4386,8 @@ def index():
     if "user_id" in session:
         return redirect(url_for("home"))
     wins, losses, total, roi = _public_stats()
-    return render_template("index.html", wins=wins, losses=losses, total=total, roi=roi)
+    return render_template("index.html", wins=wins, losses=losses, total=total, roi=roi,
+                           recent_plays=_recent_ticket_plays(6))
 
 
 @app.route("/privacy")
