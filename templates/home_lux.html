@@ -247,6 +247,42 @@
 </head>
 <body>
 
+<!-- ===== SKELETON DE CARGA (skl-) ===== -->
+<div id="skl-overlay" aria-hidden="true" style="position:fixed;inset:0;z-index:999999;background:#161d29;">
+  <div class="skl-inner skl-home">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+      <div class="skl-bone" style="width:172px;height:42px;border-radius:10px;"></div>
+      <div class="skl-bone d1" style="width:40px;height:40px;border-radius:50%;"></div>
+    </div>
+    <div class="skl-bone d1" style="height:98px;border-radius:16px;margin-bottom:20px;"></div>
+    <div class="skl-bone d2" style="width:38%;height:16px;border-radius:8px;margin-bottom:12px;"></div>
+    <div class="skl-bone skl-play ">
+      <div style="display:flex;justify-content:space-between;margin-bottom:12px;">
+        <div class="skl-plain" style="width:96px;height:16px;border-radius:8px;"></div>
+        <div class="skl-plain" style="width:58px;height:16px;border-radius:8px;"></div>
+      </div>
+      <div class="skl-plain" style="width:72%;height:20px;border-radius:9px;margin-bottom:10px;"></div>
+      <div class="skl-plain" style="width:48%;height:12px;border-radius:6px;"></div>
+    </div>
+    <div class="skl-bone skl-play d1">
+      <div style="display:flex;justify-content:space-between;margin-bottom:12px;">
+        <div class="skl-plain" style="width:96px;height:16px;border-radius:8px;"></div>
+        <div class="skl-plain" style="width:58px;height:16px;border-radius:8px;"></div>
+      </div>
+      <div class="skl-plain" style="width:72%;height:20px;border-radius:9px;margin-bottom:10px;"></div>
+      <div class="skl-plain" style="width:48%;height:12px;border-radius:6px;"></div>
+    </div>
+    <div class="skl-bone skl-play d2">
+      <div style="display:flex;justify-content:space-between;margin-bottom:12px;">
+        <div class="skl-plain" style="width:96px;height:16px;border-radius:8px;"></div>
+        <div class="skl-plain" style="width:58px;height:16px;border-radius:8px;"></div>
+      </div>
+      <div class="skl-plain" style="width:72%;height:20px;border-radius:9px;margin-bottom:10px;"></div>
+      <div class="skl-plain" style="width:48%;height:12px;border-radius:6px;"></div>
+    </div>
+  </div>
+</div>
+
 <div class="phone">
   <div class="tst-stickyhead">
   {% if tira_home %}
@@ -807,5 +843,56 @@
 (function(){var b=document.getElementById('rate-bubble');if(!b)return;try{var t=+localStorage.getItem('rate_bubble_x')||0;if(Date.now()-t>7*24*3600*1000){b.style.display='block';}document.getElementById('rate-bubble-x').addEventListener('click',function(){try{localStorage.setItem('rate_bubble_x',Date.now());}catch(e){}b.style.display='none';});}catch(e){b.style.display='block';}})();
 </script>
 {% endif %}
+
+<style>
+
+/* ===== SKELETON DE CARGA (skl-) — aprobado por Alex 2026-10-31: sombras con ola de luz mientras la pagina carga ===== */
+#skl-overlay{position:fixed;inset:0;z-index:999999;overflow:hidden;opacity:1;transition:opacity .45s ease;animation:sklForceHide .6s ease 2.8s forwards;}
+#skl-overlay.skl-hide{opacity:0;pointer-events:none;}
+.skl-inner{width:100%;margin:0 auto;}
+.skl-bone{position:relative;overflow:hidden;background:#1D2029;}
+.skl-bone::after{content:"";position:absolute;top:-10%;bottom:-10%;left:0;width:55%;background:linear-gradient(100deg,rgba(42,47,58,0) 0%,rgba(42,47,58,.6) 32%,rgba(17,203,135,.08) 48%,rgba(232,199,102,.13) 52%,rgba(42,47,58,.6) 68%,rgba(42,47,58,0) 100%);transform:translateX(-140%) skewX(-8deg);animation:sklWave 1.35s ease-in-out infinite;}
+.skl-bone.d1::after{animation-delay:.14s;}
+.skl-bone.d2::after{animation-delay:.28s;}
+.skl-bone.d3::after{animation-delay:.42s;}
+.skl-plain{background:#262B38;}
+@keyframes sklWave{to{transform:translateX(280%) skewX(-8deg);}}
+@keyframes sklForceHide{to{opacity:0;visibility:hidden;}}
+@media (prefers-reduced-motion:reduce){
+.skl-bone::after{animation:none;display:none;}
+#skl-overlay{transition:none;animation:sklForceHide .3s ease .15s forwards;}
+}
+#skl-overlay{background:#161d29;}
+.skl-home{max-width:520px;padding:14px 14px 48px;}
+.skl-play{border-radius:16px;padding:16px;margin-bottom:12px;}
+</style>
+
+<script>
+/* SKELETON DE CARGA (skl-): oculta la capa al cargar; la red CSS la quita a los 2.8s aunque este JS falle. */
+(function(){try{
+  var el=document.getElementById('skl-overlay');
+  if(!el)return;
+  var t0=Date.now(),done=false,reduced=false;
+  try{reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;}catch(e){}
+  function hide(){
+    if(done)return;done=true;
+    var target=reduced?60:1100;
+    var wait=Math.max(0,target-(Date.now()-t0));
+    setTimeout(function(){
+      try{
+        el.classList.add('skl-hide');
+        el.style.pointerEvents='none';
+        setTimeout(function(){try{el.style.display='none';}catch(e){}},550);
+      }catch(e){}
+    },wait);
+  }
+  if(document.readyState==='complete'){hide();}
+  else{
+    window.addEventListener('load',hide);
+    document.addEventListener('DOMContentLoaded',function(){setTimeout(hide,700);});
+    setTimeout(hide,1800);
+  }
+}catch(e){}})();
+</script>
 </body>
 </html>
