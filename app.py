@@ -12372,17 +12372,16 @@ def admin_miembros():
     miembros = db.execute(
         "SELECT id, nombre, email, created_at, platinum_unlocked, is_admin, "
         "stake_fijo_elite, stake_fijo_gold, cancel_requested_at, stripe_customer_id, "
-        "stripe_subscription_id, stripe_past_due, platinum_trial_ends, "
+        "stripe_subscription_id, stripe_subscription_status, stripe_past_due, "
+        "platinum_trial_ends, "
         "telegram_user_id, telegram_ban_pending, telegram_unban_pending "
         "FROM users "
+        # 2026-10-31, orden de Alex: ALL MEMBERS es UN SOLO TOTAL con
+        # TODOS los miembros — se quitan el filtro email_verified y el
+        # que ocultaba a los Platinum con reloj de prueba (regla del
+        # 2026-10-24, derogada para esta lista). Solo quedan fuera las
+        # 2 cuentas de la casa, que no son miembros.
         "WHERE LOWER(email) NOT IN ('thesharpteam8@gmail.com', 'system@value.local') "
-        "AND email_verified = 1 "
-        # 2026-10-24, orden de Alex (ajuste mismo día: las gratis
-        # siguen igual y visibles): el menú oculta SOLO al trial
-        # (Platinum con reloj); gratis y acceso vigente se ven.
-        "AND NOT (platinum_unlocked = 1 "
-        "AND platinum_trial_ends IS NOT NULL "
-        "AND platinum_trial_ends != '') "
         "ORDER BY created_at DESC"
     ).fetchall()
     ahora = datetime.now(timezone.utc)
@@ -12512,15 +12511,17 @@ def admin_miembros():
         ahora_txt = _ahora_et.strftime("%b %-d, %Y · %-I:%M %p ET")
     except Exception:
         ahora_txt = ""
-    # ── 📁 CLIENTES PLATINUM (2026-10-25, orden de Alex): la vista principal
-    # de Miembros muestra SOLO a los que de verdad pagan la suscripción.
-    # Cliente Platinum = stripe_subscription_id presente (suscripción
-    # activa en Stripe: el webhook la borra al cancelar, así que un
-    # cancelado no aparece; un cliente con solo customer_id, como un pago
-    # rechazado, tampoco). Sin contar la cuenta del dueño. Hoy: 0. El
-    # resto queda en la carpeta ALL MEMBERS del template.
+    # ── 📁 PLATINUM (2026-10-25, orden de Alex; ajuste 2026-10-31): la
+    # carpeta cuenta SOLO a los Platinum PAGANDO de verdad: suscripción
+    # de Stripe en estado active (cuota recurrente ya cobrándose), según
+    # stripe_subscription_status que mantiene el webhook. Trial NO
+    # cuenta; cancelada tampoco (el webhook además borra el id al
+    # cancelar). Sin contar la cuenta del dueño. Hoy: 0 — cuando las
+    # pruebas conviertan y el webhook marque active, caen aquí solos.
+    # El resto queda en la carpeta ALL MEMBERS del template.
     clientes_platinum = [m for m in lista
                          if m.get("stripe_subscription_id")
+                         and (m.get("stripe_subscription_status") or "") == "active"
                          and m["email"].lower() != "pena.manuel@myyahoo.com"]
     return render_template("admin_miembros.html", miembros=lista,
                            activos=activos, nuevos=nuevos,
