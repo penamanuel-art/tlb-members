@@ -18,7 +18,11 @@
   <h3>Platinum</h3>
   <ul>
     <li>The Platinum play is exclusive to Platinum members.</li>
+{% if offer_free_month %}
+    <li>Platinum starts at <strong>$1 today</strong>: your <strong>first month is free</strong>, then <strong>$15.99 per week</strong>. Start it any time from your dashboard — your Sharp Free plays are already live.</li>
+{% else %}
     <li>Platinum starts at <strong>$1 for your first 7 days</strong>, then <strong>$15.99 per week</strong>. Start it any time from your dashboard — your Sharp Free plays are already live.</li>
+{% endif %}
   </ul>
 
   <h3>Golden rules</h3>
