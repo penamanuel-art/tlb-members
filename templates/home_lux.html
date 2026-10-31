@@ -250,7 +250,7 @@
 <div class="phone">
   <div class="tst-stickyhead">
   {% if tira_home %}
-  <a href="{{ url_for('official_tracker') }}" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#272D38,#191E26);border:1px solid rgba(232,199,102,.9);border-radius:14px;padding:7px 16px;margin:0 0 8px;text-decoration:none;overflow:hidden;box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 6px 16px rgba(0,0,0,.35);">
+  <a href="{{ url_for('official_tracker') }}" style="display:flex;align-items:center;justify-content:center;background:#1E222B;border:1px solid #262C36;border-radius:14px;padding:7px 16px;margin:0 0 8px;text-decoration:none;overflow:hidden;box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 6px 16px rgba(0,0,0,.35);">
     <span style="font-size:13px;font-weight:400;letter-spacing:.4px;color:#F0D47C;white-space:nowrap;">{% if tira_home.tipo == 'plat' %}&#128142; PLATINUM &middot; {{ tira_home.n }} WINS IN A ROW{% else %}&#128293; {{ tira_home.n }} WINNING DAYS IN A ROW{% endif %}</span>
   </a>
   {% endif %}
