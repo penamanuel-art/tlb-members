@@ -9658,6 +9658,61 @@ def admin_api_platinum_trial_activate_all():
     return jsonify({"ok": True, "activados": cur.rowcount, "vence": vence})
 
 
+@app.route("/admin/api/members-revoke-platinum", methods=["POST"])
+def admin_api_members_revoke_platinum():
+    """Revoca el Platinum de una lista de miembros por API admin
+    (2026-10-31, orden de Alex: «nadie gratis de ahora pa'lante» — los
+    del mes gratis de registro empiezan desde cero como FREE; el mes
+    gratis queda SOLO para quien pague el $1 por el flujo nuevo).
+    Body JSON: {"emails": [...]}. Por cada email: platinum_unlocked = 0,
+    platinum_trial_ends = NULL y telegram_ban_pending = 1 (espejo del
+    toggle del panel /admin/miembros/platinum, que NO limpia el reloj;
+    este endpoint sí, para que el sistema T-3 quede sin destinatarios).
+    GUARDIA INTERNA: jamás procesa las cuentas propias (la admin, la del
+    sistema VALUE ni las dos cuentas de Alex) — si vienen en la lista se
+    saltan y se reportan en "excluidos". Auth: sesión admin O header
+    X-Admin-Key (mismo patrón que los demás members-set-*)."""
+    if not _admin_api_autorizado():
+        return jsonify({"error": "admin only"}), 403
+    data = request.get_json(silent=True) or {}
+    emails = data.get("emails")
+    if emails is None:
+        emails = request.form.getlist("emails")
+    if not isinstance(emails, list) or not emails:
+        return jsonify({"error": "emails list required"}), 400
+    protegidos = {
+        "thesharpteam8@gmail.com",
+        "system@value.local",
+        "pena.manuel@myyahoo.com",
+        "alexpena1509@gmail.com",
+    }
+    procesados, no_encontrados, excluidos = [], [], []
+    db = get_db()
+    for crudo in emails:
+        email = (str(crudo) or "").strip().lower()
+        if not email:
+            continue
+        if email in protegidos:
+            excluidos.append(email)
+            continue
+        target = db.execute("SELECT id, nombre FROM users WHERE email = ?",
+                            (email,)).fetchone()
+        if not target:
+            no_encontrados.append(email)
+            continue
+        db.execute(
+            "UPDATE users SET platinum_unlocked = 0, platinum_trial_ends = NULL, "
+            "telegram_ban_pending = 1, telegram_unban_pending = 0 WHERE id = ?",
+            (target["id"],),
+        )
+        log_notificacion(db, "platinum",
+                         f"Platinum removed: {target['nombre']}", email)
+        procesados.append(email)
+    db.commit()
+    return jsonify({"ok": True, "procesados": procesados,
+                    "no_encontrados": no_encontrados, "excluidos": excluidos})
+
+
 @app.route("/admin/api/members-set-stakes", methods=["POST"])
 def admin_api_members_set_stakes():
     """Fija los montos por jugada de un miembro (stake_fijo_elite /
