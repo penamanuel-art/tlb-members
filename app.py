@@ -127,6 +127,38 @@ STRIPE_PUBLISHABLE_KEY = os.environ.get(
 PLATINUM_PRICE_PRIMERA_SEMANA = "price_1USPJnRwCjFIsFzU4pYcIqnq"
 PLATINUM_PRICE_SEMANAL = "price_1USPJvRwCjFIsFzUH8rwj5K8"
 
+# Lanzamiento de la landing nueva (2026-10-31, aprobada por Alex): oferta
+# "$1 hoy + primer mes de Platinum GRATIS + $15.99/semana". "Primer mes" =
+# trial de 30 días exactos de Stripe tras el cargo de $1. La oferta vive
+# AISLADA por cohorte (users.signup_offer): solo la reciben los registros
+# nuevos que entren por las plantillas nuevas con el interruptor
+# REGISTRO_NUEVO activo. La oferta legacy ($1 + trial de 7 días) NO cambia
+# para nadie más. El trial de Stripe NUNCA se escribe en
+# platinum_trial_ends: ese reloj es de la plataforma y copiarlo ahí
+# rompería el acceso del miembro que pagó (paywall 2026-10-24).
+PLATINUM_TRIAL_DAYS_LEGACY = 7
+PLATINUM_TRIAL_DAYS_FREE_MONTH = 30
+PLATINUM_OFFER_FREE_MONTH = "platinum_1usd_free_month_v1"
+# Interruptor de lanzamiento: APAGADO por defecto. Se enciende con la env
+# var REGISTRO_NUEVO=1 en Render en la fase de lanzamiento; mientras esté
+# apagado, /registro sirve las plantillas de siempre (register.html /
+# register_es.html), ningún registro guarda la cohorte nueva y todo el
+# mundo sigue con el trial legacy de 7 días.
+REGISTRO_NUEVO_ACTIVO = os.environ.get("REGISTRO_NUEVO", "") == "1"
+# Payment Link de RESPALDO de la oferta nueva (el checkout principal sigue
+# siendo el incrustado de /desbloquear-platinum). Se define con la env var
+# STRIPE_PLATINUM_URL_FREE_MONTH en Render cuando el link exista; mientras
+# tanto queda vacío y la vista de desbloqueo cae al link vigente sin
+# romperse.
+STRIPE_PLATINUM_URL_FREE_MONTH = os.environ.get(
+    "STRIPE_PLATINUM_URL_FREE_MONTH", ""
+)
+if STRIPE_PLATINUM_URL_FREE_MONTH and "locale=" not in STRIPE_PLATINUM_URL_FREE_MONTH:
+    _sep_fm = "&" if "?" in STRIPE_PLATINUM_URL_FREE_MONTH else "?"
+    STRIPE_PLATINUM_URL_FREE_MONTH = (
+        f"{STRIPE_PLATINUM_URL_FREE_MONTH}{_sep_fm}locale=en"
+    )
+
 
 def stripe_configurado():
     return bool(STRIPE_SECRET_KEY and STRIPE_WEBHOOK_SECRET)
@@ -4010,6 +4042,23 @@ def migrate_db():
             pending.append("ALTER TABLE users ADD COLUMN stripe_past_due INTEGER NOT NULL DEFAULT 0")
         if "platinum_trial_ends" not in cols:
             pending.append("ALTER TABLE users ADD COLUMN platinum_trial_ends TEXT")
+        # Cohorte de la landing nueva (2026-10-31): columnas SEPARADAS del
+        # reloj de plataforma. signup_offer/signup_intent guardan la oferta
+        # y la intención declaradas al registrarse por la plantilla nueva;
+        # stripe_subscription_status/stripe_trial_ends guardan el estado y
+        # el fin del trial DE STRIPE (nunca en platinum_trial_ends);
+        # platinum_intro_used_at marca la introducción $1 + mes gratis ya
+        # usada por la cuenta (anti-repetición: una sola vez por cliente).
+        if "signup_offer" not in cols:
+            pending.append("ALTER TABLE users ADD COLUMN signup_offer TEXT")
+        if "signup_intent" not in cols:
+            pending.append("ALTER TABLE users ADD COLUMN signup_intent TEXT")
+        if "stripe_subscription_status" not in cols:
+            pending.append("ALTER TABLE users ADD COLUMN stripe_subscription_status TEXT")
+        if "stripe_trial_ends" not in cols:
+            pending.append("ALTER TABLE users ADD COLUMN stripe_trial_ends TEXT")
+        if "platinum_intro_used_at" not in cols:
+            pending.append("ALTER TABLE users ADD COLUMN platinum_intro_used_at TEXT")
         if "foto" not in cols:
             pending.append("ALTER TABLE users ADD COLUMN foto TEXT")
         if "telegram_user_id" not in cols:
@@ -5363,12 +5412,24 @@ def register():
     if _lang not in ("es", "en"):
         _lang = "es" if _pais_visitante() == "DO" else "en"
     _tpl = "register_es.html" if _lang == "es" else "register.html"
+    # Lanzamiento landing nueva (2026-10-31): SOLO con el interruptor
+    # activo se sirven las plantillas nuevas (landing aprobada con el
+    # formulario integrado). Apagado (default), se sirve lo de siempre y
+    # el rollback es inmediato apagando la env var.
+    if REGISTRO_NUEVO_ACTIVO:
+        _tpl = "registro_nuevo_es.html" if _lang == "es" else "registro_nuevo.html"
     if request.method == "POST":
         nombre = request.form.get("nombre", "").strip()
         email = request.form.get("email", "").strip().lower()
         password = request.form.get("password", "")
         phone = request.form.get("phone", "").strip()
         sms_optin = 1 if request.form.get("sms_optin") == "1" and phone else 0
+        # Intención declarada en la landing nueva (lista blanca estricta):
+        # solo se guarda cuando el interruptor de lanzamiento está activo;
+        # con el flujo de siempre el campo ni se lee ni se guarda.
+        _intent = (request.form.get("signup_intent") or "").strip().lower()
+        if _intent not in ("platinum", "free"):
+            _intent = None
         if not nombre or not email or len(password) < 6:
             flash("Escribe tu nombre, un correo válido y una contraseña de al menos 6 caracteres." if _lang == "es" else "Enter your name, a valid email and a password of at least 6 characters.", "error")
             return render_template(_tpl, **_reg_ctx), 400
@@ -5392,6 +5453,13 @@ def register():
             _tok = secrets.token_urlsafe(32)
             db.execute("UPDATE users SET activation_token = ? WHERE id = ?",
                        (_tok, exists["id"]))
+            # Si volvió por la landing nueva con el interruptor activo, su
+            # intento cuenta como registro de la cohorte nueva (nunca
+            # activó: a todos los efectos es un registro nuevo).
+            if REGISTRO_NUEVO_ACTIVO:
+                db.execute(
+                    "UPDATE users SET signup_offer = ?, signup_intent = ? WHERE id = ?",
+                    (PLATINUM_OFFER_FREE_MONTH, _intent, exists["id"]))
             db.commit()
             send_activation_email(nombre, email, _tok, _lang)
             return render_template("confirmacion.html", email=email, nombre=nombre, lang=_lang, reenviado=True)
@@ -5399,11 +5467,21 @@ def register():
         # sesión, no hay mes gratis ni bienvenida hasta que el dueño toque
         # el enlace del correo de activación (/activar/<token>).
         _tok = secrets.token_urlsafe(32)
-        insert_returning_id(
-            db,
-            "INSERT INTO users (nombre, email, password_hash, phone, sms_optin, created_at, lang, email_verified, activation_token) VALUES (?, ?, ?, ?, ?, ?, ?, 0, ?)",
-            (nombre, email, hash_password(password), phone or None, sms_optin, now_iso(), _lang, _tok),
-        )
+        if REGISTRO_NUEVO_ACTIVO:
+            # Cohorte nueva: la cuenta nace marcada con su oferta y su
+            # intención; la elegibilidad del trial de 30 días se decide
+            # después, en el servidor, al crear el checkout.
+            insert_returning_id(
+                db,
+                "INSERT INTO users (nombre, email, password_hash, phone, sms_optin, created_at, lang, email_verified, activation_token, signup_offer, signup_intent) VALUES (?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?)",
+                (nombre, email, hash_password(password), phone or None, sms_optin, now_iso(), _lang, _tok, PLATINUM_OFFER_FREE_MONTH, _intent),
+            )
+        else:
+            insert_returning_id(
+                db,
+                "INSERT INTO users (nombre, email, password_hash, phone, sms_optin, created_at, lang, email_verified, activation_token) VALUES (?, ?, ?, ?, ?, ?, ?, 0, ?)",
+                (nombre, email, hash_password(password), phone or None, sms_optin, now_iso(), _lang, _tok),
+            )
         db.commit()
         send_activation_email(nombre, email, _tok, _lang)
         return render_template("confirmacion.html", email=email, nombre=nombre, lang=_lang, reenviado=False)
@@ -5509,6 +5587,21 @@ def activar_cuenta(token):
         request.cookies.get("_fbc"),
         request.url,
     )
+    # Cohorte de la landing nueva (2026-10-31): quien declaró intención
+    # Platinum al registrarse va DIRECTO a /desbloquear-platinum a
+    # completar su checkout de $1 — su mes gratis arranca con el pago, no
+    # con el formulario. Quien eligió Sharp Free, y cualquier cuenta que
+    # no sea de la cohorte nueva, sigue a /bienvenida como siempre.
+    _intent = None
+    _offer = None
+    try:
+        _intent = user["signup_intent"]
+        _offer = user["signup_offer"]
+    except Exception:
+        _intent = None
+        _offer = None
+    if _offer == PLATINUM_OFFER_FREE_MONTH and _intent == "platinum":
+        return redirect(url_for("desbloquear_platinum"))
     return redirect(url_for("bienvenida"))
 
 
@@ -5714,7 +5807,16 @@ def bienvenida():
     evento CompleteRegistration del pixel de Meta (2026-10-14)."""
     fb_reg = bool(session.pop("fb_reg", None))
     fb_event_id = session.pop("fb_event_id", None)
-    return render_template("bienvenida.html", nombre=session.get("nombre", ""), fb_reg=fb_reg, fb_event_id=fb_event_id)
+    # Texto de la oferta según cohorte (2026-10-31): la plantilla muestra
+    # "$1 + mes gratis" solo a la cohorte nueva; los demás ven el texto
+    # legacy de siempre ("$1 for your first 7 days").
+    _fm = False
+    try:
+        _u = current_user()
+        _fm = bool(_u) and (_u["signup_offer"] or "") == PLATINUM_OFFER_FREE_MONTH
+    except Exception:
+        _fm = False
+    return render_template("bienvenida.html", nombre=session.get("nombre", ""), fb_reg=fb_reg, fb_event_id=fb_event_id, offer_free_month=_fm)
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -8756,11 +8858,24 @@ def desbloquear_platinum():
                 fb_purchase = "%.2f" % _pago["value"]
                 fb_purchase_eid = "purchase_" + (
                     _pago["invoice"] or request.args.get("session_id") or "")
+    # Cohorte de la landing nueva (2026-10-31): la página muestra la
+    # oferta "$1 + mes gratis" y usa su link de respaldo SOLO a quien se
+    # registró con esa oferta; todos los demás ven la página legacy
+    # exacta de siempre ($1 + 7 días, link vigente).
+    _fm = False
+    try:
+        _fm = bool(user) and (user["signup_offer"] or "") == PLATINUM_OFFER_FREE_MONTH
+    except Exception:
+        _fm = False
     return render_template(
         "desbloquear.html",
         ya_desbloqueada=platinum_unlocked_for(user),
         past_due=past_due,
-        stripe_url=STRIPE_PLATINUM_URL,
+        stripe_url=((STRIPE_PLATINUM_URL_FREE_MONTH or STRIPE_PLATINUM_URL)
+                    if _fm else STRIPE_PLATINUM_URL),
+        offer_free_month=_fm,
+        trial_days=(PLATINUM_TRIAL_DAYS_FREE_MONTH if _fm
+                    else PLATINUM_TRIAL_DAYS_LEGACY),
         stripe_pk=STRIPE_PUBLISHABLE_KEY,
         stripe_embed_ok=bool(STRIPE_SECRET_KEY and STRIPE_PUBLISHABLE_KEY),
         checkout_ok=checkout_ok,
@@ -8780,10 +8895,18 @@ def desbloquear_checkout_session():
     la Checkout Session en modo embedded y devuelve su client_secret; el
     formulario de Stripe se monta DENTRO de /desbloquear-platinum y el
     miembro paga sin salir del sitio. Cobro: $1 hoy (precio one-time) +
-    suscripción de $15.99/semana con 7 días de trial (el primer cobro
-    semanal cae al día 8) — los mismos precios del Payment Link hospedado,
-    que queda como respaldo. La activación la hace el webhook
-    checkout.session.completed de siempre (match por email)."""
+    suscripción de $15.99/semana con trial — los mismos precios del
+    Payment Link hospedado, que queda como respaldo. La activación la
+    hace el webhook checkout.session.completed de siempre (match por
+    email).
+
+    Trial por cohorte (2026-10-31): lo decide EL SERVIDOR desde
+    users.signup_offer, jamás un parámetro del navegador. Cohorte de la
+    landing nueva con la introducción sin usar: 30 días (el primer cobro
+    semanal cae al día 31). Todos los demás: 7 días legacy (primer cobro
+    al día 8). Anti-repetición: si platinum_intro_used_at ya está marcado
+    en la cuenta, la oferta nueva no vuelve a aplicar y rige el trial
+    legacy — cancelar y regresar no renueva el mes gratis."""
     if not STRIPE_SECRET_KEY:
         return jsonify({"error": "stripe not configured"}), 503
     user = current_user()
@@ -8794,6 +8917,19 @@ def desbloquear_checkout_session():
         customer_id = (user["stripe_customer_id"] or "").strip()
     except (KeyError, IndexError, TypeError):
         customer_id = ""
+    _trial_days = PLATINUM_TRIAL_DAYS_LEGACY
+    _offer_code = "legacy"
+    try:
+        _signup_offer = (user["signup_offer"] or "")
+    except (KeyError, IndexError, TypeError):
+        _signup_offer = ""
+    try:
+        _intro_used = (user["platinum_intro_used_at"] or "")
+    except (KeyError, IndexError, TypeError):
+        _intro_used = ""
+    if _signup_offer == PLATINUM_OFFER_FREE_MONTH and not _intro_used:
+        _trial_days = PLATINUM_TRIAL_DAYS_FREE_MONTH
+        _offer_code = PLATINUM_OFFER_FREE_MONTH
     try:
         import stripe
         stripe.api_key = STRIPE_SECRET_KEY
@@ -8807,7 +8943,16 @@ def desbloquear_checkout_session():
                 {"price": PLATINUM_PRICE_PRIMERA_SEMANA, "quantity": 1},
                 {"price": PLATINUM_PRICE_SEMANAL, "quantity": 1},
             ],
-            "subscription_data": {"trial_period_days": 7},
+            "subscription_data": {
+                "trial_period_days": _trial_days,
+                "metadata": {
+                    "member_email": email,
+                    "member_id": str(user["id"]),
+                    "access": "platinum",
+                    "plan": "platinum",
+                    "offer": _offer_code,
+                },
+            },
             # Solo Card + Apple Pay (orden de Alex 2026-10-20, espejo
             # del checkout de WGT): en la API basil que fija el SDK,
             # payment_method_types=['card'] deja fuera los metodos
@@ -8822,6 +8967,7 @@ def desbloquear_checkout_session():
                 "member_email": email,
                 "member_id": str(user["id"]),
                 "source": "desbloquear-embedded",
+                "offer": _offer_code,
             },
             "return_url": (
                 url_for("desbloquear_platinum", _external=True)
@@ -14151,7 +14297,7 @@ def stripe_webhook():
         except Exception:
             pass
 
-    def _activar_elite(email, customer_id, sub_id, origen):
+    def _activar_elite(email, customer_id, sub_id, origen, offer=""):
         """Activa Elite al miembro con ese email. Idempotente."""
         email = (email or "").strip().lower()
         if not email:
@@ -14183,6 +14329,20 @@ def stripe_webhook():
                     " WHERE id = ?", (uid,),
                 )
             db.commit()
+            # Anti-repetición de la oferta nueva (2026-10-31): si esta
+            # activación vino de un checkout con la oferta $1 + mes
+            # gratis, la introducción queda marcada como usada en la
+            # cuenta — una sola vez por cliente; cancelar y regresar no
+            # la renueva (el checkout vuelve al trial legacy de 7 días).
+            if offer == PLATINUM_OFFER_FREE_MONTH:
+                try:
+                    db.execute(
+                        "UPDATE users SET platinum_intro_used_at = ? WHERE id = ? "
+                        "AND (platinum_intro_used_at IS NULL OR platinum_intro_used_at = '')",
+                        (now_iso(), uid))
+                    db.commit()
+                except Exception:
+                    pass
             _auditar(email, f"Elite activada ({origen}, sub {(sub_id or 'n/a')[:20]})"
                      + (" [reproceso]" if duplicado else ""))
             # Aviso al correo del negocio (pedido Alex 2026-10-30): cada
@@ -14249,6 +14409,59 @@ def stripe_webhook():
         else:
             _auditar(email, "pago sin cuenta registrada: activar manual")
 
+    def _guardar_estado_suscripcion(obj):
+        """Guarda el estado y el fin del trial DE STRIPE en las columnas
+        nuevas (stripe_subscription_status / stripe_trial_ends),
+        separadas del reloj de plataforma platinum_trial_ends, que aquí
+        NO se toca. Localiza al miembro por suscripción, por cliente o
+        por el member_email de la metadata de la suscripción. También
+        marca la introducción usada si la suscripción trae la metadata
+        de la oferta nueva. No activa ni desactiva acceso: eso lo siguen
+        haciendo checkout.session.completed e invoice.paid."""
+        try:
+            sub_id = obj.get("id") or ""
+            customer_id = obj.get("customer") or ""
+            status = obj.get("status") or ""
+            trial_txt = None
+            if obj.get("trial_end"):
+                try:
+                    trial_txt = datetime.fromtimestamp(
+                        int(obj["trial_end"]), TZ).isoformat()
+                except Exception:
+                    trial_txt = None
+            row = None
+            if sub_id:
+                row = db.execute(
+                    "SELECT id FROM users WHERE stripe_subscription_id = ?",
+                    (sub_id,)).fetchone()
+            if row is None and customer_id:
+                row = db.execute(
+                    "SELECT id FROM users WHERE stripe_customer_id = ?",
+                    (customer_id,)).fetchone()
+            if row is None:
+                m_email = ((obj.get("metadata") or {}).get("member_email")
+                           or "").strip().lower()
+                if m_email:
+                    row = db.execute(
+                        "SELECT id FROM users WHERE email = ?",
+                        (m_email,)).fetchone()
+            if not row:
+                return
+            db.execute(
+                "UPDATE users SET stripe_subscription_id = "
+                "COALESCE(stripe_subscription_id, ?), "
+                "stripe_subscription_status = ?, stripe_trial_ends = ? "
+                "WHERE id = ?",
+                (sub_id or None, status or None, trial_txt, row["id"]))
+            if ((obj.get("metadata") or {}).get("offer") or "") == PLATINUM_OFFER_FREE_MONTH:
+                db.execute(
+                    "UPDATE users SET platinum_intro_used_at = ? WHERE id = ? "
+                    "AND (platinum_intro_used_at IS NULL OR platinum_intro_used_at = '')",
+                    (now_iso(), row["id"]))
+            db.commit()
+        except Exception:
+            pass
+
     try:
         if etype == "checkout.session.completed":
             # Pago completado: activar Elite al miembro con ese email.
@@ -14257,7 +14470,14 @@ def stripe_webhook():
                 data.get("customer") or "",
                 data.get("subscription") or "",
                 "checkout",
+                ((data.get("metadata") or {}).get("offer") or ""),
             )
+        elif etype == "customer.subscription.created":
+            # Solo se registra el estado/trial de Stripe en las columnas
+            # nuevas: la activación sigue llegando por
+            # checkout.session.completed / invoice.paid, como siempre.
+            _guardar_estado_suscripcion(data)
+            _auditar("", "suscripción creada: estado y trial de Stripe registrados")
         elif etype == "invoice.paid":
             # Factura de suscripción pagada (inicial o renovación): activar Elite.
             _activar_elite(
@@ -14305,7 +14525,9 @@ def stripe_webhook():
                         "canceled", "unpaid", "incomplete_expired"):
                     db.execute(
                         "UPDATE users SET platinum_unlocked = 0, stripe_subscription_id = NULL, "
-                        "cancel_requested_at = ? WHERE id = ?", (now_iso(), row["id"]))
+                        "stripe_subscription_status = ?, stripe_trial_ends = NULL, "
+                        "cancel_requested_at = ? WHERE id = ?",
+                        (status or "canceled", now_iso(), row["id"]))
                     # Sin pago no hay acceso: si tiene Telegram vinculado, el cron
                     # de la VM lo banea del canal privado Sharp Club.
                     db.execute(
@@ -14321,6 +14543,9 @@ def stripe_webhook():
                         "UPDATE users SET stripe_subscription_id = ? WHERE id = ?",
                         (sub_id or None, row["id"]))
                     db.commit()
+                    # Estado y fin de trial de Stripe a las columnas
+                    # nuevas (sin tocar platinum_trial_ends).
+                    _guardar_estado_suscripcion(data)
                     nota = "cancelación al fin del período" if cancel_at_end else f"status={status}"
                     _auditar(email, f"suscripción actualizada: {nota}")
                     if cancel_at_end:
