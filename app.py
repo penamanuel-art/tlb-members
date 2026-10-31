@@ -8826,7 +8826,7 @@ def admin_api_members_telegram():
     db = get_db()
     rows = db.execute(
         "SELECT nombre, telegram_user_id FROM users WHERE telegram_user_id IS NOT NULL"
-        " AND telegram_user_id != '' AND email_verified = 1 AND email NOT IN"
+        " AND telegram_user_id != '' AND email_verified = 1 AND cancel_requested_at IS NULL AND email NOT IN"
         " ('thesharpteam8@gmail.com', 'system@value.local',"
         " 'pena.manuel@myyahoo.com', 'alexpena1509@gmail.com')"
     ).fetchall()
