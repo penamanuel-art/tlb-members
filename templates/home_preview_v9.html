@@ -214,7 +214,7 @@
   @media (prefers-reduced-motion:reduce){.tst-marquee{animation:none!important}}
 </style>
 </head>
-<body class="pv-soft">
+<body>
 <div class="phone">
   <a id="tst-phrase-strip" href="{{ url_for('masterclass') }}" style="display:flex;align-items:center;gap:8px;background:linear-gradient(180deg,#1c2431,#161c23);border:1px solid #2a3c5f;border-radius:14px;padding:10px 14px;margin:0 0 12px;text-decoration:none;color:#e8c766;overflow:hidden;">
     <span style="flex:0 0 auto;">🎓</span>
@@ -582,54 +582,5 @@
   b.addEventListener('click',function(){p.hidden=!p.hidden;});
 }catch(e){}})();
 </script>
-
-<style>
-/* ============================================================
-   PRUEBA TIPOGRAFIA FINA — SOLO VISTA PREVIA ADMIN (2026-10-31)
-   Pedido de Alex: el Dashboard "se ve rustico con esas letras tan
-   gordas"; la referencia (WGT) usa "letras finas, letras suaves".
-   MISMA letra y MISMOS tamanos: solo se baja el PESO.
-   Tope general: nada por encima de 600.
-     titulares/encabezados 800-900 -> 600
-     etiquetas, pills y botones 700-800 -> 600 (maximo)
-     nombres/valores de tarjeta 700-800 -> 600
-   Este bloque va AL FINAL del documento a proposito: en esta
-   plantilla manda la ultima regla. El !important se usa SOLO
-   contra estilos inline (tarjeta bloqueada y modal de video),
-   que es la unica forma de ganarles desde una hoja de estilos.
-   NO esta en home_lux.html: el Dashboard de miembros no cambia
-   hasta que Alex apruebe esta prueba.
-   ============================================================ */
-body.pv-soft .wordmark strong{font-weight:600}
-body.pv-soft .greet{font-weight:600}
-body.pv-soft .unlock .cta{font-weight:600}
-body.pv-soft h2,body.pv-soft h3{font-weight:600}
-body.pv-soft b,body.pv-soft strong{font-weight:600}
-body.pv-soft .avatar{font-weight:600}
-body.pv-soft .notif-item .amt{font-weight:600}
-body.pv-soft .rh-title{font-weight:600}
-body.pv-soft .rh-badge{font-weight:600}
-body.pv-soft .rh-big{font-weight:600}
-body.pv-soft .rh-pct{font-weight:600}
-body.pv-soft .lvpill{font-weight:600}
-body.pv-soft .tst-foot .tst-foot-name{font-weight:600}
-body.pv-soft .sample{font-weight:600}
-body.pv-soft .topstrip{font-weight:600}
-body.pv-soft .dateline{font-weight:600}
-body.pv-soft .check{font-weight:600}
-body.pv-soft .unlock-today{font-weight:600}
-body.pv-soft .rh-see{font-weight:600}
-/* Tarjetas de jugada (include _play_card_v5.html, mismo documento) */
-body.pv-soft .v5c-matched{font-weight:600}
-body.pv-soft .v5c-res{font-weight:600}
-body.pv-soft .v5c-pend{font-weight:600}
-body.pv-soft .v5kick{font-weight:600}
-body.pv-soft .v5prog{font-weight:600}
-body.pv-soft .v5wu-h{font-weight:600}
-/* Estilos inline gordos (tarjeta bloqueada, modal de video, CTA Platinum): tope 600 */
-body.pv-soft [style*="font-weight:700"],body.pv-soft [style*="font-weight: 700"],
-body.pv-soft [style*="font-weight:800"],body.pv-soft [style*="font-weight: 800"],
-body.pv-soft [style*="font-weight:900"],body.pv-soft [style*="font-weight: 900"]{font-weight:600!important}
-</style>
 </body>
 </html>
