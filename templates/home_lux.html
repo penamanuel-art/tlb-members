@@ -777,7 +777,7 @@
   var m=document.getElementById('tst-update-menu');if(!m)return;
   var v=document.querySelector('meta[name="tst-version"]');
   v=v?v.getAttribute('content'):'';if(!v)return;
-  var K='tst-home-version';var seen=null;
+  var K='tst-home-release';var seen=null;
   try{seen=localStorage.getItem(K);}catch(e){}
   var force=window.location.search.indexOf('upd=1')!==-1;
   if(force||(seen&&seen!==v)){m.hidden=false;}
