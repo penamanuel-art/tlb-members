@@ -1,114 +1,516 @@
 {% extends "base.html" %}
 {% block title %}The Sharp Team — Plays with real value{% endblock %}
 {% block content %}
-<section class="hero">
-  <h1>BREAK THE LINE.<br><span class="accent">TRACK EVERYTHING.</span></h1>
-  <p class="hero-sub">
-    Daily plays with edge measured against the market.
-    Track every play, mark your results, and see your real record:
-    net units, ROI and streak.
-  </p>
-  <div class="hero-cta">
-    <a class="btn btn-primary btn-lg" href="{{ url_for('register') }}">Create a free account →</a>
-    <a class="btn btn-ghost btn-lg" href="{{ url_for('login') }}">I already have an account</a>
-  </div>
-</section>
-
-<section class="features">
-  <div class="feature">
-    <div class="feature-icon">🎯</div>
-    <h3>Plays of the day</h3>
-    <p>Only plays with a minimum 3-point edge over implied probability. No filler.</p>
-  </div>
-  <div class="feature">
-    <div class="feature-icon">✅</div>
-    <h3>One-tap tracking</h3>
-    <p>Mark each play as tracked and log whether it won or lost. Your history, no spreadsheets.</p>
-  </div>
-  <div class="feature">
-    <div class="feature-icon">📊</div>
-    <h3>Real metrics</h3>
-    <p>Record, net units, ROI and current streak. The truth of your numbers, always visible.</p>
-  </div>
-</section>
-
-<section class="diff-section">
 <style>
-.diff-section{max-width:720px;margin:8px auto 0;padding:0 20px 40px}
-.diff-title{font-size:32px;letter-spacing:-.5px;margin:10px 0 22px;color:#fff}
-.diff-title .gold{color:#f5c542}
-.diff-card{background:#101828;border:1px solid #1e2a45;border-left:4px solid #f5c542;border-radius:16px;padding:18px;margin-bottom:12px}
-.diff-cat{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#8b94a7;margin-bottom:12px;font-weight:700}
-.diff-us{display:flex;gap:10px;align-items:flex-start;margin-bottom:10px}
-.diff-us .ck{color:#4ade80;font-weight:900;font-size:18px;line-height:1.3}
-.diff-us .tx{color:#fff;font-weight:700;font-size:16px;line-height:1.45}
-.diff-us .who{display:block;font-size:10px;letter-spacing:1.5px;color:#f5c542;font-weight:800;margin-bottom:3px}
-.diff-them{display:flex;gap:10px;align-items:flex-start;opacity:.8}
-.diff-them .xx{color:#6b7488;font-weight:900;font-size:18px;line-height:1.3}
-.diff-them .tx{color:#9aa3b8;font-size:15px;line-height:1.45}
-.diff-them .who{display:block;font-size:10px;letter-spacing:1.5px;color:#6b7488;font-weight:800;margin-bottom:3px}
-.hm-faq{max-width:720px;margin:0 auto;padding:0 20px 48px}
-.hm-faq-title{font-size:32px;letter-spacing:-.5px;margin:10px 0 22px;color:#fff}
-.hm-faq details{background:#101828;border:1px solid #1e2a45;border-radius:16px;margin-bottom:12px;overflow:hidden}
-.hm-faq summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:20px;font-weight:700;font-size:17px;color:#fff}
-.hm-faq summary::-webkit-details-marker{display:none}
-.hm-faq summary .pm{color:#f5c542;font-size:24px;font-weight:900;flex-shrink:0;transition:transform .2s}
-.hm-faq details[open] summary .pm{transform:rotate(45deg)}
-.hm-faq .ans{padding:0 20px 20px;color:#9aa3b8;font-size:15.5px;line-height:1.65}
+  /* ===== Portada pública (rediseño 2026-10-31): sistema visual de la casa,
+     mismo lenguaje que registro_nuevo.html, con clases prefijadas hp- para
+     no interferir con base.html. Los números salen SIEMPRE de las variables
+     vivas que pasa index() (wins/losses/total/roi desde _public_stats). ===== */
+  .hp{
+    --hp-bg:#14161d; --hp-card:#1D2029; --hp-card2:#232733;
+    --hp-mint:#11CB87; --hp-gold:#e8c766; --hp-red:#e06c5f;
+    --hp-text:#f2f4f7; --hp-muted:#a7aebb; --hp-line:#2b3040;
+    color:var(--hp-text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .hp section{padding:30px 4px;}
+  .hp .center{text-align:center;}
+  .hp h1{font-size:32px;line-height:1.18;font-weight:900;text-align:center;letter-spacing:-.3px;}
+  .hp h1 .hl{color:var(--hp-mint);}
+  .hp h2{font-size:23px;font-weight:800;text-align:center;margin-bottom:8px;letter-spacing:-.2px;}
+  .hp h2 .hl{color:var(--hp-gold);}
+  .hp .sub{text-align:center;color:var(--hp-muted);font-size:15px;margin-top:10px;line-height:1.55;}
+  .hp .pill{
+    display:inline-block;font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;
+    color:var(--hp-mint);border:1px solid var(--hp-mint);border-radius:999px;padding:5px 12px;margin-bottom:14px;
+  }
+  .hp .pill.gold{color:var(--hp-gold);border-color:var(--hp-gold);}
+  .hp .eyebrow{
+    display:inline-flex;align-items:center;gap:7px;
+    font-size:11px;font-weight:800;letter-spacing:2.2px;text-transform:uppercase;color:var(--hp-mint);
+  }
+  .hp .eyebrow svg{width:14px;height:14px;}
+  .hp .eyebrow.gold{color:var(--hp-gold);}
+  .hp .eyebrow + h2{margin-top:9px;}
+  .hp .cta{
+    display:block;text-align:center;background:var(--hp-mint);color:#06231a;
+    font-weight:800;font-size:17px;padding:16px 20px;border-radius:12px;
+    text-decoration:none;margin:22px 0 8px;letter-spacing:.3px;
+    box-shadow:0 8px 22px rgba(17,203,135,.22);
+  }
+  .hp .cta.gold{background:var(--hp-gold);color:#2a2000;box-shadow:0 8px 22px rgba(232,199,102,.20);}
+  .hp .cta.ghost{
+    background:transparent;color:var(--hp-text);border:1px solid var(--hp-line);
+    box-shadow:none;font-size:15.5px;padding:14px 20px;margin-top:10px;
+  }
+  .hp .micro{text-align:center;font-size:12.5px;color:var(--hp-muted);}
+  .hp .micro b{color:var(--hp-text);}
+  /* icon chips: un sistema, el color dice el significado */
+  .hp .icon-chip{
+    width:44px;height:44px;border-radius:13px;flex:0 0 44px;
+    display:flex;align-items:center;justify-content:center;
+    background:rgba(232,199,102,.10);border:1px solid rgba(232,199,102,.35);color:var(--hp-gold);
+  }
+  .hp .icon-chip.mint{background:rgba(17,203,135,.10);border-color:rgba(17,203,135,.35);color:var(--hp-mint);}
+  .hp .icon-chip.neutral{background:rgba(242,244,247,.06);border-color:rgba(242,244,247,.18);color:#dfe4ec;}
+  .hp .icon-chip.red{background:rgba(224,108,95,.10);border-color:rgba(224,108,95,.40);color:var(--hp-red);}
+  .hp .icon-chip svg{width:22px;height:22px;}
+  .hp .icon-chip.sm{width:40px;height:40px;flex-basis:40px;border-radius:12px;}
+  .hp .icon-chip.sm svg{width:20px;height:20px;}
+  .hp .chipwrap{position:relative;flex:0 0 44px;}
+  .hp .chipwrap .num{
+    position:absolute;top:-9px;right:-9px;width:24px;height:24px;border-radius:50%;
+    background:var(--hp-gold);color:#2a2000;font-size:12.5px;font-weight:900;
+    display:flex;align-items:center;justify-content:center;border:2px solid var(--hp-card);
+  }
+  /* hero */
+  .hp-hero{
+    background:
+      radial-gradient(130% 95% at 50% -5%,rgba(232,199,102,.13) 0%,rgba(232,199,102,0) 55%),
+      radial-gradient(95% 75% at 50% 112%,rgba(17,203,135,.10) 0%,rgba(17,203,135,0) 60%);
+    border-radius:20px;
+  }
+  .hp-proof{
+    margin:20px auto 0;max-width:560px;text-align:center;
+    background:linear-gradient(180deg,#20232e,#1D2029);border:1px solid rgba(232,199,102,.45);
+    border-radius:14px;padding:13px 16px;font-size:14.5px;font-weight:700;line-height:1.5;
+    box-shadow:0 10px 24px rgba(0,0,0,.32);
+  }
+  .hp-proof b{color:var(--hp-gold);font-weight:900;}
+  .hp-trust{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:22px;padding-top:18px;border-top:1px solid var(--hp-line);}
+  .hp-trust .t{display:flex;flex-direction:column;align-items:center;gap:7px;text-align:center;font-size:11px;font-weight:700;color:var(--hp-muted);line-height:1.35;}
+  /* tarjetas de diferencia (nosotros vs el típico) */
+  .hp-diff{background:#101828;border:1px solid #1e2a45;border-left:4px solid #f5c542;border-radius:16px;padding:18px;margin-bottom:12px;}
+  .hp-diff-cat{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#8b94a7;margin-bottom:12px;font-weight:700;}
+  .hp-diff-us{display:flex;gap:10px;align-items:flex-start;margin-bottom:10px;}
+  .hp-diff-us .ck{color:#4ade80;font-weight:900;font-size:18px;line-height:1.3;}
+  .hp-diff-us .tx{color:#fff;font-weight:700;font-size:16px;line-height:1.45;}
+  .hp-diff-us .who{display:block;font-size:10px;letter-spacing:1.5px;color:#f5c542;font-weight:800;margin-bottom:3px;}
+  .hp-diff-them{display:flex;gap:10px;align-items:flex-start;opacity:.8;}
+  .hp-diff-them .xx{color:#6b7488;font-weight:900;font-size:18px;line-height:1.3;}
+  .hp-diff-them .tx{color:#9aa3b8;font-size:15px;line-height:1.45;}
+  .hp-diff-them .who{display:block;font-size:10px;letter-spacing:1.5px;color:#6b7488;font-weight:800;margin-bottom:3px;}
+  /* niveles / membresías */
+  .hp-tier{
+    background:linear-gradient(180deg,#20232e,#1D2029);border:1px solid var(--hp-line);border-radius:18px;
+    padding:20px;margin-top:14px;position:relative;
+    box-shadow:0 1px 2px rgba(0,0,0,.30),0 12px 28px rgba(0,0,0,.35);
+  }
+  .hp-tier.plat{
+    margin-top:24px;border:1px solid transparent;
+    background:linear-gradient(#232533,#1D2029) padding-box,linear-gradient(160deg,#e8c766,rgba(232,199,102,.12)) border-box;
+    box-shadow:0 2px 4px rgba(0,0,0,.35),0 18px 40px rgba(0,0,0,.45),0 0 0 1px rgba(232,199,102,.08),0 10px 30px rgba(232,199,102,.07);
+  }
+  .hp-seal{
+    position:absolute;top:-11px;right:16px;z-index:2;
+    background:linear-gradient(90deg,#f2d67c,#e8c766);color:#2a2000;
+    font-size:10px;font-weight:900;letter-spacing:1.6px;text-transform:uppercase;
+    padding:4px 11px;border-radius:999px;box-shadow:0 4px 14px rgba(232,199,102,.40);
+  }
+  .hp-tier .thead{display:flex;align-items:center;gap:12px;}
+  .hp-tier .tname{font-size:13px;font-weight:900;letter-spacing:2.5px;text-transform:uppercase;}
+  .hp-tier.free .tname{color:var(--hp-mint);}
+  .hp-tier.gold .tname{color:var(--hp-gold);}
+  .hp-tier.plat .tname{color:var(--hp-gold);}
+  .hp-tier h3{font-size:19px;font-weight:800;margin:10px 0 4px;}
+  .hp-tier p,.hp-tier li{font-size:14px;color:var(--hp-muted);}
+  .hp-checklist{list-style:none;margin-top:10px;display:flex;flex-direction:column;gap:8px;padding:0;}
+  .hp-checklist li{position:relative;padding-left:29px;}
+  .hp-checklist li::before{
+    content:"";position:absolute;left:0;top:1px;width:20px;height:20px;
+    background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2311CB87' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9' stroke-opacity='.45'/%3E%3Cpath d='M8.5 12.5l2.5 2.5 4.5-5' stroke-width='2.2'/%3E%3C/svg%3E") no-repeat center/contain;
+  }
+  .hp-tier .price{font-size:15px;font-weight:800;color:var(--hp-text);margin-top:12px;}
+  /* rejilla de herramientas */
+  .hp-tools{display:grid;grid-template-columns:1fr;gap:12px;margin-top:20px;}
+  @media(min-width:560px){.hp-tools{grid-template-columns:1fr 1fr;}}
+  .hp-tool{
+    background:linear-gradient(180deg,#20232e,#1D2029);border:1px solid var(--hp-line);border-radius:16px;padding:16px 18px;
+    box-shadow:0 1px 2px rgba(0,0,0,.30),0 12px 28px rgba(0,0,0,.35);
+  }
+  .hp-tool .thead{display:flex;align-items:center;gap:12px;}
+  .hp-tool h3{font-size:16px;font-weight:800;}
+  .hp-tool p{font-size:13.5px;color:var(--hp-muted);margin-top:8px;line-height:1.5;}
+  .hp-tag{
+    margin-left:auto;flex:0 0 auto;font-size:9.5px;font-weight:900;letter-spacing:1.4px;text-transform:uppercase;
+    padding:4px 9px;border-radius:999px;border:1px solid var(--hp-line);color:var(--hp-muted);
+  }
+  .hp-tag.free{color:var(--hp-mint);border-color:rgba(17,203,135,.45);}
+  .hp-tag.plat{color:var(--hp-gold);border-color:rgba(232,199,102,.45);}
+  /* pasos */
+  .hp-steps{display:flex;flex-direction:column;gap:12px;margin-top:20px;}
+  .hp-step{
+    background:linear-gradient(180deg,#20232e,#1D2029);border:1px solid var(--hp-line);border-radius:16px;padding:16px 18px;
+    display:flex;gap:14px;align-items:flex-start;
+    box-shadow:0 1px 2px rgba(0,0,0,.30),0 12px 28px rgba(0,0,0,.35);
+  }
+  .hp-step h3{font-size:16.5px;font-weight:800;}
+  .hp-step p{font-size:14px;color:var(--hp-muted);margin-top:2px;line-height:1.5;}
+  /* oferta */
+  .hp-offer{
+    background:linear-gradient(180deg,#20232e,#1D2029);border:1px solid rgba(232,199,102,.45);border-radius:18px;padding:24px 20px;text-align:center;
+    box-shadow:0 2px 4px rgba(0,0,0,.35),0 16px 36px rgba(0,0,0,.40);
+  }
+  .hp-offer .price-line{font-size:15px;color:var(--hp-muted);margin-top:6px;}
+  .hp-offer .price-line b{color:var(--hp-text);}
+  .hp-offer .bigprice{font-size:30px;font-weight:900;margin-top:16px;}
+  .hp-offer .bigprice span{color:var(--hp-gold);}
+  .hp-osteps{display:flex;flex-direction:column;gap:12px;margin-top:18px;text-align:left;}
+  .hp-ostep{
+    background:var(--hp-card2);border:1px solid var(--hp-line);border-radius:16px;padding:15px 16px;
+    display:flex;gap:14px;align-items:flex-start;box-shadow:0 8px 20px rgba(0,0,0,.28);
+  }
+  .hp-ostep h3{font-size:16px;font-weight:800;}
+  .hp-ostep h3 span{color:var(--hp-gold);}
+  .hp-ostep p{font-size:13.5px;color:var(--hp-muted);margin-top:2px;line-height:1.5;}
+  /* FAQ */
+  .hp-faq details{background:#101828;border:1px solid #1e2a45;border-radius:16px;margin-bottom:12px;overflow:hidden;}
+  .hp-faq summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:20px;font-weight:700;font-size:17px;color:#fff;}
+  .hp-faq summary::-webkit-details-marker{display:none;}
+  .hp-faq summary .pm{color:#f5c542;font-size:24px;font-weight:900;flex-shrink:0;transition:transform .2s;}
+  .hp-faq details[open] summary .pm{transform:rotate(45deg);}
+  .hp-faq .ans{padding:0 20px 20px;color:#9aa3b8;font-size:15.5px;line-height:1.65;}
+  .hp-divider{height:1px;background:var(--hp-line);margin:6px 4px;}
 </style>
-  <h2 class="diff-title">What makes this <span class="gold">different</span></h2>
-  <div class="diff-card">
-    <div class="diff-cat">The record</div>
-    <div class="diff-us"><span class="ck">✓</span><span class="tx"><span class="who">THE SHARP TEAM</span>Every play posted before game time — wins and losses stay on the public record.</span></div>
-    <div class="diff-them"><span class="xx">✕</span><span class="tx"><span class="who">TYPICAL</span>Only the winning picks ever see the light.</span></div>
-  </div>
-  <div class="diff-card">
-    <div class="diff-cat">Real money</div>
-    <div class="diff-us"><span class="ck">✓</span><span class="tx"><span class="who">THE SHARP TEAM</span>Every play bet with real money — ticket photo to prove it.</span></div>
-    <div class="diff-them"><span class="xx">✕</span><span class="tx"><span class="who">TYPICAL</span>Paper picks with nothing on the line.</span></div>
-  </div>
-  <div class="diff-card">
-    <div class="diff-cat">The price</div>
-    <div class="diff-us"><span class="ck">✓</span><span class="tx"><span class="who">THE SHARP TEAM</span>$1 for your first week, then $15.99/week. That's it.</span></div>
-    <div class="diff-them"><span class="xx">✕</span><span class="tx"><span class="who">TYPICAL</span>Hundreds upfront before you see a single pick.</span></div>
-  </div>
-  <div class="diff-card">
-    <div class="diff-cat">The proof</div>
-    <div class="diff-us"><span class="ck">✓</span><span class="tx"><span class="who">THE SHARP TEAM</span>{{ wins }}-{{ losses }}, +{{ "%.2f"|format(roi) }}% ROI — every play documented and graded.</span></div>
-    <div class="diff-them"><span class="xx">✕</span><span class="tx"><span class="who">TYPICAL</span>Big claims, no record to check.</span></div>
-  </div>
-  <div class="diff-card">
-    <div class="diff-cat">The exit</div>
-    <div class="diff-us"><span class="ck">✓</span><span class="tx"><span class="who">THE SHARP TEAM</span>Cancel in one click from your account, anytime.</span></div>
-    <div class="diff-them"><span class="xx">✕</span><span class="tx"><span class="who">TYPICAL</span>Locked in — good luck getting out.</span></div>
-  </div>
-</section>
 
-<section class="hm-faq">
-  <h2 class="hm-faq-title">Questions, answered</h2>
-  <details>
-    <summary>Is sports betting actually profitable?<span class="pm">+</span></summary>
-    <div class="ans">It can be — but only with a real edge, strict bankroll management, and the discipline to follow the system every single day. Most bettors lose because they chase, overbet, or follow hunches. We publish every play before game time with a ticket photo and grade it win or loss on our public record ({{ wins }}-{{ losses }}, +{{ "%.2f"|format(roi) }}% ROI so far). No cherry-picking, ever.</div>
-  </details>
-  <details>
-    <summary>How does The Sharp Team find its plays?<span class="pm">+</span></summary>
-    <div class="ans">Our Elo-based model prices every game in the NFL, NCAAF, MLB and NHL, and we compare it against Pinnacle's no-vig line plus 2–3 sportsbooks. We only post plays with a real edge, shop for the best price, and stake a flat 1u (1% of bankroll) on Platinum and 0.6u on Sharp Free — never more, never chasing.</div>
-  </details>
-  <details>
-    <summary>Do you really bet every play yourself?<span class="pm">+</span></summary>
-    <div class="ans">Yes. Alex places every official play with real money and posts the original ticket photo. If there's no ticket, it's not an official play.</div>
-  </details>
-  <details>
-    <summary>What does the $1 week include?<span class="pm">+</span></summary>
-    <div class="ans">The full Platinum board for a whole week: the daily Platinum play, the +EV board, line-shopping tools and the 30-day Academy. After your $1 week it's $15.99/week — cancel anytime from your account.</div>
-  </details>
-  <details>
-    <summary>What happens if I have a losing week?<span class="pm">+</span></summary>
-    <div class="ans">Losing weeks happen — variance is part of betting and we never hide it. What matters is the long run: flat stakes, no chasing, every result on the record. Our rules cap daily risk at 6% of bankroll, so no single week can damage the program.</div>
-  </details>
-  <details>
-    <summary>How do I cancel?<span class="pm">+</span></summary>
-    <div class="ans">One click from your account page. No lock-in, no calls, no hassle — and your free account stays free forever.</div>
-  </details>
-</section>
+<div class="hp">
+
+  <!-- ===== HERO ===== -->
+  <section class="hp-hero">
+    <div class="center"><span class="pill gold">Start today for $1 — your first month of Platinum is FREE</span></div>
+    <h1>Stop betting blind.<br>Start betting with <span class="hl">a system behind every play.</span></h1>
+    <p class="sub">Daily plays priced by a real model, published before game time, and proven with the actual ticket — every single day.</p>
+    <a class="cta" href="{{ url_for('register') }}">Start for $1</a>
+    <a class="cta ghost" href="{{ url_for('login') }}">I already have an account</a>
+    <p class="micro"><b>$1 today.</b> Then your first month of Platinum is FREE — after that, $15.99/week. Cancel anytime.</p>
+    <div class="hp-proof">
+      {% if total >= 500 %}
+      <b>{{ wins }}-{{ losses }}, {{ "%+.2f"|format(roi) }}% ROI</b> — every play documented and graded in public.
+      {% else %}
+      <b>{{ total }} plays documented and graded in public</b> — every one posted before game time.
+      {% endif %}
+    </div>
+    <div class="hp-trust">
+      <div class="t">
+        <div class="icon-chip sm mint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 5-3.5 8-7 10-3.5-2-7-5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg></div>
+        <span>Posted before game time</span>
+      </div>
+      <div class="t">
+        <div class="icon-chip sm neutral"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a3 3 0 0 0 0 6v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a3 3 0 0 0 0-6z"/><path d="M13 5v2M13 11v2M13 17v2"/></svg></div>
+        <span>Real ticket on every play</span>
+      </div>
+      <div class="t">
+        <div class="icon-chip sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg></div>
+        <span>Model-priced lines</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="hp-divider"></div>
+
+  <!-- ===== WHAT MAKES THIS DIFFERENT ===== -->
+  <section>
+    <div class="center"><span class="eyebrow gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h13M13 3l4 4-4 4M20 17H7M11 13l-4 4 4 4"/></svg>The Difference</span></div>
+    <h2>What makes this <span class="hl">different</span></h2>
+    <div style="margin-top:20px;">
+      <div class="hp-diff">
+        <div class="hp-diff-cat">The record</div>
+        <div class="hp-diff-us"><span class="ck">✓</span><span class="tx"><span class="who">THE SHARP TEAM</span>Every play posted before game time — wins and losses stay on the public record.</span></div>
+        <div class="hp-diff-them"><span class="xx">✕</span><span class="tx"><span class="who">TYPICAL</span>Only the winning picks ever see the light.</span></div>
+      </div>
+      <div class="hp-diff">
+        <div class="hp-diff-cat">Real money</div>
+        <div class="hp-diff-us"><span class="ck">✓</span><span class="tx"><span class="who">THE SHARP TEAM</span>Every play bet with real money — ticket photo to prove it.</span></div>
+        <div class="hp-diff-them"><span class="xx">✕</span><span class="tx"><span class="who">TYPICAL</span>Paper picks with nothing on the line.</span></div>
+      </div>
+      <div class="hp-diff">
+        <div class="hp-diff-cat">The price</div>
+        <div class="hp-diff-us"><span class="ck">✓</span><span class="tx"><span class="who">THE SHARP TEAM</span>$1 today, your first month of Platinum free, then $15.99/week. That's it.</span></div>
+        <div class="hp-diff-them"><span class="xx">✕</span><span class="tx"><span class="who">TYPICAL</span>Hundreds upfront before you see a single pick.</span></div>
+      </div>
+      <div class="hp-diff">
+        <div class="hp-diff-cat">The proof</div>
+        <div class="hp-diff-us"><span class="ck">✓</span><span class="tx"><span class="who">THE SHARP TEAM</span>{% if total >= 500 %}{{ wins }}-{{ losses }}, {{ "%+.2f"|format(roi) }}% ROI — every play documented and graded.{% else %}{{ total }} plays documented and graded in public — every one posted before game time, wins and losses alike.{% endif %}</span></div>
+        <div class="hp-diff-them"><span class="xx">✕</span><span class="tx"><span class="who">TYPICAL</span>Big claims, no record to check.</span></div>
+      </div>
+      <div class="hp-diff">
+        <div class="hp-diff-cat">The exit</div>
+        <div class="hp-diff-us"><span class="ck">✓</span><span class="tx"><span class="who">THE SHARP TEAM</span>Cancel in one click from your account, anytime.</span></div>
+        <div class="hp-diff-them"><span class="xx">✕</span><span class="tx"><span class="who">TYPICAL</span>Locked in — good luck getting out.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="hp-divider"></div>
+
+  <!-- ===== TODAY'S PLAYS: THREE LEVELS ===== -->
+  <section>
+    <div class="center"><span class="eyebrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/></svg>Today's Plays</span></div>
+    <h2>Three levels. <span class="hl">One standard of proof.</span></h2>
+    <p class="sub">Every level is published before game time, carries the real ticket, and counts on the same public record.</p>
+
+    <div class="hp-tier free">
+      <div class="thead">
+        <div class="icon-chip sm mint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11h16v9a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/><path d="M3 7h18v4H3z"/><path d="M12 7v14"/><path d="M12 7a3 3 0 1 1 3-3c0 2-3 3-3 3zM12 7a3 3 0 1 0-3-3c0 2 3 3 3 3z"/></svg></div>
+        <div class="tname">Free Picks</div>
+      </div>
+      <h3>Sharp Free — free forever</h3>
+      <p>Daily free picks, published and tracked like everything else.</p>
+      <ul class="hp-checklist">
+        <li>Free plays every day</li>
+        <li>Public Telegram channel: The Sharp Team — Free Picks</li>
+        <li>Full public record</li>
+      </ul>
+      <div class="price">$0 — free forever</div>
+    </div>
+
+    <div class="hp-tier gold">
+      <div class="thead">
+        <div class="icon-chip sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"/><path d="M8.5 14L7 22l5-3 5 3-1.5-8"/></svg></div>
+        <div class="tname">Gold</div>
+      </div>
+      <h3>Validated plays</h3>
+      <p>Plays that clear a higher bar: a validated mathematical edge, published with the same ticket-and-record standard.</p>
+      <ul class="hp-checklist">
+        <li>Gold plays on your Dashboard</li>
+        <li>Model probability and value on every card</li>
+      </ul>
+      <div class="price">Included with Platinum</div>
+    </div>
+
+    <div class="hp-tier plat">
+      <span class="hp-seal">Best Value</span>
+      <div class="thead">
+        <div class="icon-chip sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 8L7 12l5-6.5L17 12l4.5-4L20 19H4z"/><path d="M4 22h16"/></svg></div>
+        <div class="tname">Platinum</div>
+      </div>
+      <h3>Everything, unlocked</h3>
+      <ul class="hp-checklist">
+        <li>Gold + Platinum plays — the strongest edges we find</li>
+        <li>+EV Board — live value across 12 sportsbooks</li>
+        <li>Player Props board</li>
+        <li>AI Assistant</li>
+        <li>Line Moves — see lines move in real time</li>
+        <li>Sharp Money — follow the professional money</li>
+        <li>Private Telegram channel</li>
+        <li>30-Day Academy included</li>
+      </ul>
+      <div class="price">$1 today · first month FREE · then $15.99/week</div>
+    </div>
+  </section>
+
+  <div class="hp-divider"></div>
+
+  <!-- ===== INSIDE THE PLATFORM ===== -->
+  <section>
+    <div class="center"><span class="eyebrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>The Platform</span></div>
+    <h2>Everything inside <span class="hl">your Dashboard</span></h2>
+    <p class="sub">Not just picks — a full set of tools to price, track and grade every bet.</p>
+
+    <div class="hp-tools">
+      <div class="hp-tool">
+        <div class="thead">
+          <div class="icon-chip sm mint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/></svg></div>
+          <h3>Today's Plays</h3><span class="hp-tag free">Free + Platinum</span>
+        </div>
+        <p>The daily card in three levels — Free Picks for everyone, Gold and Platinum for members. Each play shows the model probability, the value and the real ticket.</p>
+      </div>
+      <div class="hp-tool">
+        <div class="thead">
+          <div class="icon-chip sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h7l-1 8 10-12h-7z"/></svg></div>
+          <h3>+EV Board</h3><span class="hp-tag plat">Platinum</span>
+        </div>
+        <p>Live expected-value plays found by comparing 12 sportsbooks against the fair price — refreshed all day, so you act while the edge is still there.</p>
+      </div>
+      <div class="hp-tool">
+        <div class="thead">
+          <div class="icon-chip sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3L4 7l4 4"/><path d="M4 7h16"/><path d="M16 21l4-4-4-4"/><path d="M20 17H4"/></svg></div>
+          <h3>Compare Prices</h3><span class="hp-tag plat">Platinum</span>
+        </div>
+        <p>The best available price for every play across every book we track, side by side — so you never leave money on the table with a worse number.</p>
+      </div>
+      <div class="hp-tool">
+        <div class="thead">
+          <div class="icon-chip sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5"/></svg></div>
+          <h3>Player Props</h3><span class="hp-tag plat">Platinum</span>
+        </div>
+        <p>Model-priced player props with the same standard: probability, fair price and value on every line before you bet it.</p>
+      </div>
+      <div class="hp-tool">
+        <div class="thead">
+          <div class="icon-chip sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+          <h3>Line Moves</h3><span class="hp-tag plat">Platinum</span>
+        </div>
+        <p>Watch lines move in real time and see where the market is going before it gets there — steam moves and reversals, as they happen.</p>
+      </div>
+      <div class="hp-tool">
+        <div class="thead">
+          <div class="icon-chip sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/></svg></div>
+          <h3>Sharp Money</h3><span class="hp-tag plat">Platinum</span>
+        </div>
+        <p>Follow the professional money: where the handle concentrates versus the bets, so you can tell a public favorite from a sharp one.</p>
+      </div>
+      <div class="hp-tool">
+        <div class="thead">
+          <div class="icon-chip sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="5" width="14" height="14" rx="2"/><rect x="9.5" y="9.5" width="5" height="5"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/></svg></div>
+          <h3>AI Assistant</h3><span class="hp-tag plat">Platinum</span>
+        </div>
+        <p>Ask about any game, line or play and get a model-backed answer in seconds — probabilities, context and what the number really means.</p>
+      </div>
+      <div class="hp-tool">
+        <div class="thead">
+          <div class="icon-chip sm mint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M9 12h6M9 16h4"/></svg></div>
+          <h3>Official Tracker</h3><span class="hp-tag free">Free</span>
+        </div>
+        <p>The complete public record — every official play ever posted, graded win or loss, ticket by ticket. Nothing edited, nothing hidden.</p>
+      </div>
+      <div class="hp-tool">
+        <div class="thead">
+          <div class="icon-chip sm mint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8.5 12.5l2.5 2.5 4.5-5"/></svg></div>
+          <h3>My Bets</h3><span class="hp-tag free">Free</span>
+        </div>
+        <p>One-tap tracking for your own bets: mark each play, log the result, and see your real record — net units, ROI and streak. No spreadsheets.</p>
+      </div>
+      <div class="hp-tool">
+        <div class="thead">
+          <div class="icon-chip sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 9L12 4 2 9l10 5 10-5z"/><path d="M6 11.5V16c0 1.7 2.7 3 6 3s6-1.3 6-3v-4.5"/><path d="M22 9v5"/></svg></div>
+          <h3>30-Day Academy</h3><span class="hp-tag plat">Platinum</span>
+        </div>
+        <p>The Masterclass: a 30-day course, one lesson a day, that teaches you the system — pricing, value, bankroll and discipline — from the inside.</p>
+      </div>
+      <div class="hp-tool">
+        <div class="thead">
+          <div class="icon-chip sm mint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4z"/></svg></div>
+          <h3>Telegram Channels</h3><span class="hp-tag free">Free + Platinum</span>
+        </div>
+        <p>Free Picks land on the public Telegram channel every day; Platinum members get the private channel with the full card the moment it posts.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="hp-divider"></div>
+
+  <!-- ===== HOW IT WORKS ===== -->
+  <section>
+    <div class="center"><span class="eyebrow gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>How It Works</span></div>
+    <h2>A system, <span class="hl">not hunches</span></h2>
+    <div class="hp-steps">
+      <div class="hp-step">
+        <div class="icon-chip mint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="12" r="3.2"/></svg></div>
+        <div>
+          <h3>We scan the market</h3>
+          <p>Our model prices every game and compares it against the market across 12 sportsbooks. If the model's number doesn't beat the price, there is no play.</p>
+        </div>
+      </div>
+      <div class="hp-step">
+        <div class="icon-chip mint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a3 3 0 0 0 0 6v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a3 3 0 0 0 0-6z"/><path d="M13 5v2M13 11v2M13 17v2"/></svg></div>
+        <div>
+          <h3>Every play carries the real ticket</h3>
+          <p>Plays are published before game time with the model probability, the price we took, and the actual ticket — and the result counts in the public record, win or lose.</p>
+        </div>
+      </div>
+      <div class="hp-step">
+        <div class="icon-chip mint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg></div>
+        <div>
+          <h3>You track everything</h3>
+          <p>Follow the plays you like with one tap, watch your own record build, and grade us on the same numbers we grade ourselves.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="hp-divider"></div>
+
+  <!-- ===== THE OFFER ===== -->
+  <section id="offer">
+    <div class="hp-offer">
+      <span class="pill gold">The Offer</span>
+      <h2>Start today for <span class="hl">$1</span></h2>
+      <p class="price-line">Here's exactly how it works — <b>no surprises</b>:</p>
+      <div class="hp-osteps">
+        <div class="hp-ostep">
+          <div class="chipwrap">
+            <div class="icon-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg></div>
+            <span class="num">1</span>
+          </div>
+          <div>
+            <h3>Today: <span>$1</span> to start</h3>
+            <p>One dollar today starts your membership and puts your card on file.</p>
+          </div>
+        </div>
+        <div class="hp-ostep">
+          <div class="chipwrap">
+            <div class="icon-chip mint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/><path d="M9 15l2 2 4-4"/></svg></div>
+            <span class="num" style="background:var(--hp-mint);color:#06231a;">2</span>
+          </div>
+          <div>
+            <h3>First month of Platinum: <span>FREE</span></h3>
+            <p>Every play and every tool, fully unlocked for a full month — on us.</p>
+          </div>
+        </div>
+        <div class="hp-ostep">
+          <div class="chipwrap">
+            <div class="icon-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></svg></div>
+            <span class="num">3</span>
+          </div>
+          <div>
+            <h3>Then <span>$15.99/week</span></h3>
+            <p>After your free month, Platinum continues at $15.99/week. Cancel anytime from your account.</p>
+          </div>
+        </div>
+      </div>
+      <div class="bigprice">Start today for <span>$1</span></div>
+      <p class="price-line">Rather stay free? <b>Sharp Free stays free forever</b> — daily free picks, no card required.</p>
+      <a class="cta gold" href="{{ url_for('register') }}">Start for $1</a>
+      <p class="micro">$1 today · FREE first month · $15.99/week after. No surprises.</p>
+    </div>
+  </section>
+
+  <div class="hp-divider"></div>
+
+  <!-- ===== FAQ ===== -->
+  <section class="hp-faq">
+    <h2 style="margin-bottom:22px;">Questions, answered</h2>
+    <details>
+      <summary>Is sports betting actually profitable?<span class="pm">+</span></summary>
+      <div class="ans">It can be — but only with a real edge, strict bankroll management, and the discipline to follow the system every single day. Most bettors lose because they chase, overbet, or follow hunches. We publish every play before game time with a ticket photo and grade it win or loss on our public record{% if total >= 500 %} ({{ wins }}-{{ losses }}, {{ "%+.2f"|format(roi) }}% ROI so far){% else %} ({{ total }} plays documented and graded so far){% endif %}. No cherry-picking, ever.</div>
+    </details>
+    <details>
+      <summary>How does The Sharp Team find its plays?<span class="pm">+</span></summary>
+      <div class="ans">Our model prices every game in the NFL, NCAAF, NBA, MLB and NHL, and we compare it against the market across 12 sportsbooks. We only post plays with a real edge, shop for the best price, and size every stake as a fixed percentage of bankroll — never more, never chasing.</div>
+    </details>
+    <details>
+      <summary>Do you really bet every play yourself?<span class="pm">+</span></summary>
+      <div class="ans">Yes. Every official play is placed with real money and the original ticket photo is posted with it. If there's no ticket, it's not an official play.</div>
+    </details>
+    <details>
+      <summary>What do I get with the $1 start?<span class="pm">+</span></summary>
+      <div class="ans">Everything Platinum includes, from day one: Gold + Platinum plays, the +EV Board across 12 sportsbooks, Player Props, Line Moves, Sharp Money, Compare Prices, the AI Assistant, the private Telegram channel and the 30-Day Academy. And your first full month of Platinum is free.</div>
+    </details>
+    <details>
+      <summary>What happens after my free month?<span class="pm">+</span></summary>
+      <div class="ans">Platinum continues at $15.99/week — that's the whole price, no tiers above it and no upsells. If you cancel, you keep access for the time you've already covered, and Sharp Free stays free forever either way.</div>
+    </details>
+    <details>
+      <summary>What happens if I have a losing week?<span class="pm">+</span></summary>
+      <div class="ans">Losing weeks happen — variance is part of betting and we never hide it. What matters is the long run: flat stakes, no chasing, every result on the record. Our rules cap daily risk, so no single week can damage the program.</div>
+    </details>
+    <details>
+      <summary>How do I cancel?<span class="pm">+</span></summary>
+      <div class="ans">One click from your account page. No lock-in, no calls, no hassle — and your free account stays free forever.</div>
+    </details>
+  </section>
+
+  <div class="hp-divider"></div>
+
+  <!-- ===== FINAL CTA ===== -->
+  <section>
+    <h2>Your first play is <span class="hl">waiting</span></h2>
+    <p class="sub">Create your free account in under a minute — or start Platinum today for $1 and get your first month free.</p>
+    <a class="cta" href="{{ url_for('register') }}">Create a free account →</a>
+    <p class="micro">Free forever · No card required for Sharp Free</p>
+  </section>
+
+</div>
 {% endblock %}
