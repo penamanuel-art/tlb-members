@@ -8865,6 +8865,77 @@ def admin_api_members_emails():
     ])
 
 
+@app.route("/admin/api/entradas-hoy")
+def admin_api_entradas_hoy():
+    """Miembros DISTINTOS con actividad HOY en el Dashboard (2026-10-31,
+    pedido por Alex: la carta horaria de entradas que llega al chat).
+    Lee member_activity con el mismo corte de día America/New_York que
+    admin_actividad. Retorna JSON:
+    [{nombre, email, vip, primera_entrada, entradas}] ordenado por
+    primera entrada. vip = Platinum desbloqueado O mes gratis vigente.
+    Fuera: admins, cuentas @value.local y cancelaciones pedidas (regla
+    de listas 2026-10-30). Auth: sesión admin O header X-Admin-Key ==
+    ADMIN_API_KEY (igual que members-emails)."""
+    api_key = os.environ.get("ADMIN_API_KEY", "")
+    header_key = request.headers.get("X-Admin-Key", "")
+    is_cron = api_key and header_key and hmac.compare_digest(header_key, api_key)
+    try:
+        is_admin = is_admin_for(current_user())
+    except Exception:
+        is_admin = False
+    if not (is_cron or is_admin):
+        return jsonify({"error": "admin only"}), 403
+    db = get_db()
+    db.execute("CREATE TABLE IF NOT EXISTS member_activity (user_id INTEGER, kind TEXT, ip TEXT, created_at TEXT)")
+    from datetime import datetime, timezone
+    try:
+        from zoneinfo import ZoneInfo
+        et = ZoneInfo("America/New_York")
+    except Exception:
+        et = timezone.utc
+    corte = datetime.now(et).replace(hour=0, minute=0, second=0, microsecond=0).astimezone(timezone.utc).isoformat()
+
+    def fmt_hora(ts):
+        try:
+            d = datetime.fromisoformat(str(ts).replace("Z", "+00:00"))
+            if d.tzinfo is None:
+                d = d.replace(tzinfo=timezone.utc)
+            s = d.astimezone(et).strftime("%I:%M %p")
+            return s[1:] if s.startswith("0") else s
+        except Exception:
+            return ""
+
+    def es_vip(platinum_unlocked, trial_ends):
+        if platinum_unlocked:
+            return True
+        if not trial_ends:
+            return False
+        try:
+            return datetime.fromisoformat(str(trial_ends)) > datetime.now()
+        except (ValueError, TypeError):
+            return False
+
+    rows = db.execute(
+        "SELECT u.nombre AS nombre, u.email AS email,"
+        " u.platinum_unlocked AS pu, u.platinum_trial_ends AS pte,"
+        " MIN(a.created_at) AS primera, COUNT(*) AS n"
+        " FROM member_activity a JOIN users u ON u.id = a.user_id"
+        " WHERE a.created_at >= ? AND COALESCE(u.is_admin, 0) = 0"
+        " AND u.email IS NOT NULL AND u.email != ''"
+        " AND u.email NOT LIKE ? AND u.cancel_requested_at IS NULL"
+        " GROUP BY a.user_id, u.nombre, u.email, u.platinum_unlocked, u.platinum_trial_ends"
+        " ORDER BY primera ASC",
+        (corte, "%@value.local"),
+    ).fetchall()
+    return jsonify([
+        {"nombre": r["nombre"] or "Miembro", "email": r["email"],
+         "vip": es_vip(r["pu"], r["pte"]),
+         "primera_entrada": fmt_hora(r["primera"]),
+         "entradas": r["n"]}
+        for r in rows
+    ])
+
+
 @app.route("/admin/api/tracked-members")
 def admin_api_tracked_members():
     """Miembros que trakean jugadas oficiales desde el Dashboard (2026-10-27, para el email diario de resultados 11 AM): retorna los emails distintos de usuarios con al menos una fila en tracked_plays de nivel oficial (ELITE/GOLD, no VALUE). Auth igual que members-emails: sesión admin O header X-Admin-Key."""
