@@ -270,7 +270,7 @@
   </div>
 
 
-  <div class="hero pv-head">
+  <div class="hero">
     <div class="photo"></div>
     <div class="inner">
       <div class="dateline">{{ fecha }} · ET</div>
@@ -582,34 +582,5 @@
   b.addEventListener('click',function(){p.hidden=!p.hidden;});
 }catch(e){}})();
 </script>
-
-<style>
-/* ============================================================
-   PRUEBA ENCABEZADO FINO — SOLO VISTA PREVIA ADMIN (2026-10-31)
-   Correccion de Alex: no era todo el Dashboard, es SOLO la carta
-   del encabezado (.hero). Referencia: la carta de WGT — fecha
-   pequena con espacio, saludo fino, titular grande pero limpio
-   (700, no 900) y contenido, subtitulo suave y caja de estado
-   con letras mas pequenas y finas.
-   Se reducen PESOS y TAMANOS, solo dentro de .pv-head:
-     fecha     12px/700  -> 11px/600
-     titular   clamp(30px,11vw,42px)/900 -> clamp(26px,9.5vw,36px)/700
-     saludo    (misma linea del titular) -> .5em/500
-     subtitulo 15px      -> 13.5px/400, color atenuado de la carta
-     estado b  15px/400  -> 14px/600
-     estado tx 12.5px/300 -> 12px/400
-     check     20px/700  -> 18px/600
-   Nada fuera de la carta del encabezado cambia. NO esta en
-   home_lux.html: el Dashboard de miembros no cambia hasta que
-   Alex apruebe esta prueba.
-   ============================================================ */
-.pv-head .dateline{font-size:11px;font-weight:600}
-.pv-head .greet{font-size:clamp(26px,9.5vw,36px);font-weight:700}
-.pv-head .greet span:first-child{font-size:.5em;font-weight:500}
-.pv-head .tagline{font-size:13.5px;font-weight:400;color:#93a4bf}
-.pv-head .status b{font-size:14px;font-weight:600}
-.pv-head .status span{font-size:12px;font-weight:400}
-.pv-head .check{font-size:18px;font-weight:600}
-</style>
 </body>
 </html>
