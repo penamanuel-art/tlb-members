@@ -5175,6 +5175,83 @@ def _send_meta_capi_registration(email, event_id, ip, user_agent, fbp, fbc, sour
         pass
 
 
+def _send_meta_capi_purchase(email, value, currency, event_id, event_time):
+    """Conversions API de Meta (2026-10-30): envía el Purchase desde el
+    servidor cuando Stripe confirma un pago REAL (webhook invoice.paid),
+    con el monto real cobrado. Es el evento que Meta pide para optimizar
+    la campaña por compradores (su recomendación de bajar el costo por
+    compra ~14%): el checkout es de Stripe, así que el evento confiable
+    nace aquí, no en el navegador.
+
+    El event_id es estable por factura ("purchase_<invoice_id>") y lo
+    comparte el pixel del navegador en la vuelta del checkout incrustado
+    (/desbloquear-platinum?checkout=ok), para que Meta deduplique
+    servidor vs navegador y un reintento de Stripe no duplique la venta.
+
+    No-op silencioso si no existe la env var META_CAPI_TOKEN (el mismo
+    token del CompleteRegistration server-side). Si existe la env var
+    META_CAPI_TEST_EVENT_CODE, el evento sale como PRUEBA (visible en
+    «Eventos de prueba» del Administrador de eventos, sin tocar datos
+    reales). El envío va SIEMPRE en un hilo de fondo con timeout corto y
+    try/except total: un fallo de Meta NUNCA puede romper el webhook.
+    El token jamás se loguea ni se imprime."""
+    token = os.environ.get("META_CAPI_TOKEN")
+    if not token or not email:
+        return
+    try:
+        monto = float(value)
+    except (TypeError, ValueError):
+        return
+    if monto <= 0:
+        return
+
+    def _go():
+        try:
+            evento = {
+                "event_name": "Purchase",
+                "event_time": int(event_time or time.time()),
+                "event_id": event_id,
+                "event_source_url": "https://www.thesharpteam.bet/desbloquear-platinum",
+                "action_source": "website",
+                "user_data": {
+                    "em": [hashlib.sha256(
+                        email.strip().lower().encode("utf-8")).hexdigest()],
+                },
+                "custom_data": {
+                    "value": monto,
+                    "currency": (currency or "USD").upper(),
+                    "content_name": "Platinum",
+                    "content_type": "product",
+                },
+            }
+            payload = {"data": [evento], "access_token": token}
+            test_code = os.environ.get("META_CAPI_TEST_EVENT_CODE")
+            if test_code:
+                payload["test_event_code"] = test_code
+            req = urllib.request.Request(
+                "https://graph.facebook.com/v21.0/1625430959036525/events",
+                data=json.dumps(payload).encode("utf-8"),
+                headers={
+                    "Content-Type": "application/json",
+                    "User-Agent": (
+                        "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) "
+                        "AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 "
+                        "Mobile/15E148 Safari/604.1"
+                    ),
+                },
+                method="POST",
+            )
+            with urllib.request.urlopen(req, timeout=4) as resp:
+                resp.read()
+        except Exception:
+            pass
+
+    try:
+        threading.Thread(target=_go, daemon=True).start()
+    except Exception:
+        pass
+
+
 _GEO_CACHE = {}
 
 
@@ -8591,25 +8668,41 @@ def _desbloquear_board():
     return board
 
 
-def _checkout_embed_confirmado(session_id, user):
-    """True si la Checkout Session `session_id` quedó COMPLETA y es del
-    miembro en sesión. Solo pinta el estado de éxito al volver del pago
-    incrustado — la activación real la hace el webhook de siempre."""
+def _checkout_embed_pago(session_id, user):
+    """Detalle del pago de una Checkout Session incrustada COMPLETA y del
+    miembro en sesión: {"value": monto real cobrado en USD, "invoice": id
+    de la factura de Stripe}. None si la sesión no está completa, no es
+    del miembro o Stripe no responde. Lo usa la vuelta del checkout para
+    pintar el éxito y para el evento Purchase del pixel de Meta con el
+    MISMO event_id que manda el CAPI del webhook (deduplicación)."""
     if not (session_id and user and STRIPE_SECRET_KEY):
-        return False
+        return None
     try:
         import stripe
         stripe.api_key = STRIPE_SECRET_KEY
         cs = stripe.checkout.Session.retrieve(session_id)
     except Exception:
-        return False
+        return None
     if (cs.get("status") or "") != "complete":
-        return False
+        return None
     meta = cs.get("metadata") or {}
     try:
-        return str(meta.get("member_id") or "") == str(user["id"])
+        if str(meta.get("member_id") or "") != str(user["id"]):
+            return None
     except (KeyError, IndexError, TypeError):
-        return False
+        return None
+    try:
+        monto = (cs.get("amount_total") or 0) / 100.0
+    except (TypeError, ValueError):
+        monto = 0.0
+    return {"value": monto, "invoice": cs.get("invoice") or ""}
+
+
+def _checkout_embed_confirmado(session_id, user):
+    """True si la Checkout Session `session_id` quedó COMPLETA y es del
+    miembro en sesión. Solo pinta el estado de éxito al volver del pago
+    incrustado — la activación real la hace el webhook de siempre."""
+    return _checkout_embed_pago(session_id, user) is not None
 
 
 @app.route("/desbloquear-platinum")
@@ -8632,9 +8725,22 @@ def desbloquear_platinum():
     # solo se muestra con la sesión de Stripe verificada como completa y
     # propia; el webhook activa en paralelo y la página tolera su retraso.
     checkout_ok = False
+    fb_purchase = None
+    fb_purchase_eid = None
     if request.args.get("checkout") == "ok" and request.args.get("session_id"):
-        checkout_ok = _checkout_embed_confirmado(
+        _pago = _checkout_embed_pago(
             request.args.get("session_id"), user)
+        if _pago is not None:
+            checkout_ok = True
+            # Pixel Purchase (2026-10-30): la vuelta del checkout incrustado
+            # reporta la compra en el navegador con el monto REAL cobrado y
+            # el event_id de la factura — el mismo que manda el CAPI del
+            # webhook invoice.paid, para que Meta cuente UNA sola venta.
+            # Recargar la página repite el MISMO event_id: Meta deduplica.
+            if _pago["value"] and _pago["value"] > 0:
+                fb_purchase = "%.2f" % _pago["value"]
+                fb_purchase_eid = "purchase_" + (
+                    _pago["invoice"] or request.args.get("session_id") or "")
     return render_template(
         "desbloquear.html",
         ya_desbloqueada=platinum_unlocked_for(user),
@@ -8643,6 +8749,8 @@ def desbloquear_platinum():
         stripe_pk=STRIPE_PUBLISHABLE_KEY,
         stripe_embed_ok=bool(STRIPE_SECRET_KEY and STRIPE_PUBLISHABLE_KEY),
         checkout_ok=checkout_ok,
+        fb_purchase=fb_purchase,
+        fb_purchase_eid=fb_purchase_eid,
         board=_desbloquear_board(),
         anonimo=(user is None),
         user_email=(user["email"] if user else ""),
@@ -14072,6 +14180,26 @@ def stripe_webhook():
                 data.get("subscription") or "",
                 "invoice.paid",
             )
+            # CAPI Purchase (2026-10-30): cada factura PAGADA es una compra
+            # real — se reporta a Meta con el monto real cobrado para que la
+            # campaña optimice por compradores. Solo en la primera entrega
+            # del evento (los reintentos de Stripe llegan con duplicado=True
+            # y no repiten la venta) y solo si hubo cobro (amount_paid > 0:
+            # las facturas de $0 de un trial no son compra). El event_id por
+            # factura deduplica además contra el pixel del navegador.
+            if not duplicado:
+                try:
+                    _amt_paid = int(data.get("amount_paid") or 0)
+                except (TypeError, ValueError):
+                    _amt_paid = 0
+                if _amt_paid > 0:
+                    _send_meta_capi_purchase(
+                        data.get("customer_email") or "",
+                        _amt_paid / 100.0,
+                        (data.get("currency") or "usd").upper(),
+                        "purchase_" + (data.get("id") or eid),
+                        int(data.get("created") or time.time()),
+                    )
         elif etype in ("customer.subscription.updated", "customer.subscription.deleted"):
             # Cancelación o cambio de estado: localizar por suscripción o cliente.
             sub_id = data.get("id") or ""
