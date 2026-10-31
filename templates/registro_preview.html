@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Sharp Team — Start Free</title>
+<style>
+  :root{
+    --bg:#14161d;
+    --card:#1D2029;
+    --card2:#232733;
+    --mint:#11CB87;
+    --gold:#e8c766;
+    --text:#f2f4f7;
+    --muted:#a7aebb;
+    --line:#2b3040;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    background:#0b0c10;
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:430px;margin:0 auto;background:var(--bg);min-height:100vh;box-shadow:0 0 40px rgba(0,0,0,.6);}
+  section{padding:34px 22px;}
+  .logo{text-align:center;padding:22px 0 4px;}
+  .logo .mark{font-size:30px;}
+  .logo .name{font-size:22px;font-weight:900;letter-spacing:2px;text-transform:uppercase;}
+  .logo .name span{color:var(--gold);}
+  .logo .tag{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-top:3px;}
+  h1{font-size:30px;line-height:1.18;font-weight:900;text-align:center;}
+  h1 .hl{color:var(--mint);}
+  h2{font-size:22px;font-weight:800;text-align:center;margin-bottom:8px;}
+  h2 .hl{color:var(--gold);}
+  .sub{text-align:center;color:var(--muted);font-size:15px;margin-top:10px;}
+  .cta{
+    display:block;text-align:center;background:var(--mint);color:#06231a;
+    font-weight:800;font-size:17px;padding:16px 20px;border-radius:12px;
+    text-decoration:none;margin:22px 0 8px;letter-spacing:.3px;
+  }
+  .cta.gold{background:var(--gold);color:#2a2000;}
+  .micro{text-align:center;font-size:12.5px;color:var(--muted);}
+  .micro b{color:var(--text);}
+  .steps{display:flex;flex-direction:column;gap:12px;margin-top:20px;}
+  .step{
+    background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;
+    display:flex;gap:14px;align-items:flex-start;
+  }
+  .step .n{
+    flex:0 0 34px;height:34px;border-radius:50%;background:var(--card2);
+    border:1px solid var(--gold);color:var(--gold);font-weight:800;
+    display:flex;align-items:center;justify-content:center;font-size:16px;
+  }
+  .step.bad .n{border-color:#e06c5f;color:#e06c5f;}
+  .step.good .n{border-color:var(--mint);color:var(--mint);}
+  .step h3{font-size:16.5px;font-weight:800;}
+  .step p{font-size:14px;color:var(--muted);margin-top:2px;}
+  .errors{list-style:none;margin-top:16px;display:flex;flex-direction:column;gap:10px;}
+  .errors li{
+    background:var(--card);border:1px solid var(--line);border-left:4px solid #e06c5f;
+    border-radius:10px;padding:12px 14px;font-size:14.5px;font-weight:600;
+  }
+  .cost{
+    background:linear-gradient(180deg,#1D2029,#191c25);border:1px solid var(--line);
+    border-radius:16px;padding:22px;text-align:center;
+  }
+  .cost .big{font-size:20px;font-weight:800;line-height:1.35;}
+  .cost .big span{color:var(--gold);}
+  .cost p{color:var(--muted);font-size:14.5px;margin-top:8px;}
+  .ba{display:flex;flex-direction:column;gap:12px;margin-top:18px;}
+  .ba .col{border-radius:14px;padding:18px;border:1px solid var(--line);}
+  .ba .before{background:#1a1c24;}
+  .ba .after{background:#14231d;border-color:var(--mint);}
+  .ba .label{font-size:11px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;}
+  .ba .before .label{color:#e06c5f;}
+  .ba .after .label{color:var(--mint);}
+  .ba h3{font-size:18px;font-weight:800;margin:6px 0 4px;}
+  .ba p{font-size:14px;color:var(--muted);}
+  .ba .after p{color:#c9d4cf;}
+  .tier{
+    background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:20px;margin-top:14px;
+  }
+  .tier.hero-tier{border-color:var(--gold);background:linear-gradient(180deg,#23252f,#1D2029);}
+  .tier .tname{font-size:13px;font-weight:900;letter-spacing:2.5px;text-transform:uppercase;}
+  .tier.free .tname{color:var(--mint);}
+  .tier.gold .tname{color:var(--gold);}
+  .tier.plat .tname{color:var(--gold);}
+  .tier h3{font-size:19px;font-weight:800;margin:5px 0 4px;}
+  .tier p,.tier li{font-size:14px;color:var(--muted);}
+  .tier ul{list-style:none;margin-top:10px;display:flex;flex-direction:column;gap:7px;}
+  .tier li::before{content:"✓ ";color:var(--mint);font-weight:800;}
+  .tier .price{font-size:15px;font-weight:800;color:var(--text);margin-top:10px;}
+  .record{
+    background:linear-gradient(180deg,#1D2029,#171a22);border:1px solid var(--gold);
+    border-radius:16px;padding:24px 20px;text-align:center;
+  }
+  .record .rlabel{font-size:11px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);}
+  .stats{display:flex;justify-content:space-around;margin:18px 0 6px;gap:8px;}
+  .stat .v{font-size:26px;font-weight:900;}
+  .stat .v.mint{color:var(--mint);}
+  .stat .v.gold{color:var(--gold);}
+  .stat .k{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-top:2px;}
+  .record p{font-size:14px;color:var(--muted);margin-top:10px;}
+  .record p b{color:var(--text);}
+  .filter{display:flex;flex-direction:column;gap:12px;margin-top:18px;}
+  .filter .box{border-radius:14px;padding:18px;border:1px solid var(--line);}
+  .filter .yes{background:#14231d;border-color:var(--mint);}
+  .filter .no{background:#221a1a;border-color:#5a3230;}
+  .filter h3{font-size:16px;font-weight:800;margin-bottom:8px;}
+  .filter .yes h3{color:var(--mint);}
+  .filter .no h3{color:#e06c5f;}
+  .filter ul{list-style:none;display:flex;flex-direction:column;gap:6px;}
+  .filter li{font-size:14px;color:var(--muted);}
+  .offer{
+    background:var(--card);border:1px solid var(--line);border-radius:16px;padding:24px 20px;text-align:center;
+  }
+  .offer .price-line{font-size:15px;color:var(--muted);margin-top:6px;}
+  .offer .price-line b{color:var(--text);}
+  .offer .bigprice{font-size:30px;font-weight:900;margin-top:10px;}
+  .offer .bigprice span{color:var(--gold);}
+  .faq{margin-top:6px;}
+  .faq .item{border-bottom:1px solid var(--line);padding:15px 2px;}
+  .faq .item:last-child{border-bottom:none;}
+  .faq h3{font-size:15.5px;font-weight:800;}
+  .faq p{font-size:14px;color:var(--muted);margin-top:3px;}
+  footer{padding:26px 22px 40px;text-align:center;color:var(--muted);font-size:12.5px;border-top:1px solid var(--line);}
+  footer .dom{color:var(--gold);font-weight:800;letter-spacing:1px;font-size:14px;}
+  .divider{height:1px;background:var(--line);margin:0 22px;}
+  .pill{
+    display:inline-block;font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;
+    color:var(--mint);border:1px solid var(--mint);border-radius:999px;padding:5px 12px;margin-bottom:14px;
+  }
+  .center{text-align:center;}
+  .preview-tag{
+    position:fixed;top:10px;right:10px;z-index:999;
+    background:rgba(20,22,29,.92);border:1px solid var(--gold);
+    color:var(--gold);font-size:10.5px;font-weight:800;
+    letter-spacing:1.5px;text-transform:uppercase;
+    padding:5px 10px;border-radius:999px;
+  }
+
+</style>
+</head>
+<body>
+<div class="preview-tag">Preview — solo admin</div>
+<div class="wrap">
+
+  <!-- ===== LOGO ===== -->
+  <div class="logo">
+    <div class="mark">🦈</div>
+    <div class="name">The <span>Sharp</span> Team</div>
+    <div class="tag">Model-Driven Sports Betting</div>
+  </div>
+
+  <!-- ===== 1. HERO ===== -->
+  <section style="padding-top:18px;">
+    <div class="center"><span class="pill">Free Picks Every Day</span></div>
+    <h1>Stop betting blind.<br>Start betting with <span class="hl">a system behind every play.</span></h1>
+    <p class="sub">Daily plays priced by a real model, published before game time, and proven with the actual ticket — every single day.</p>
+    <a class="cta" href="#offer">Start Free</a>
+    <p class="micro"><b>Free to join.</b> Your first month of Platinum is on us.</p>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ===== 2. THE CYCLE ===== -->
+  <section>
+    <h2>The cycle that <span class="hl">empties bankrolls</span></h2>
+    <p class="sub">Sound familiar?</p>
+    <div class="steps">
+      <div class="step bad">
+        <div class="n">1</div>
+        <div>
+          <h3>You bet every day</h3>
+          <p>Games are on, so money goes down. Every day feels like it has to have action.</p>
+        </div>
+      </div>
+      <div class="step bad">
+        <div class="n">2</div>
+        <div>
+          <h3>You follow picks from everywhere</h3>
+          <p>A screenshot here, a "lock" there, a hot take from someone who never shows a ticket.</p>
+        </div>
+      </div>
+      <div class="step bad">
+        <div class="n">3</div>
+        <div>
+          <h3>No record. No proof. No system.</h3>
+          <p>When it loses, there's nothing to check and nothing to learn. Just the next deposit.</p>
+        </div>
+      </div>
+    </div>
+    <h2 style="margin-top:28px;font-size:18px;">The mistakes that keep the cycle spinning</h2>
+    <ul class="errors">
+      <li>Betting without a model — just opinions and gut feelings</li>
+      <li>Chasing losses with bigger bets and worse prices</li>
+      <li>Following pick sellers with no verified record</li>
+      <li>Never knowing your real win rate or what a play is worth</li>
+    </ul>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ===== 3. THE COST ===== -->
+  <section>
+    <div class="cost">
+      <div class="big">The cost isn't just the money.<br><span>It's the time, the bankroll, and every blind decision in between.</span></div>
+      <p>Hours spent guessing. Slips placed at whatever price was in front of you. A bankroll that shrinks because nobody — including you — can prove what actually works.</p>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ===== 4. THE SYSTEM ===== -->
+  <section>
+    <div class="center"><span class="pill">The System</span></div>
+    <h2>How <span class="hl">The Sharp Team</span> works</h2>
+    <div class="steps">
+      <div class="step good">
+        <div class="n">1</div>
+        <div>
+          <h3>A model prices every game</h3>
+          <p>Every matchup gets a real win probability before we ever look at the odds.</p>
+        </div>
+      </div>
+      <div class="step good">
+        <div class="n">2</div>
+        <div>
+          <h3>Only real edges get published</h3>
+          <p>If the model's number doesn't beat the price, there is no play. Every play is posted <b style="color:var(--text);">before game time</b> — never after.</p>
+        </div>
+      </div>
+      <div class="step good">
+        <div class="n">3</div>
+        <div>
+          <h3>Every play carries the real ticket</h3>
+          <p>The actual Novig ticket goes on the card, and the result counts in the public record — win or lose.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ===== 5. BEFORE / AFTER ===== -->
+  <section>
+    <h2>Before <span class="hl">/</span> After</h2>
+    <div class="ba">
+      <div class="col before">
+        <div class="label">Before</div>
+        <h3>Picks with no proof</h3>
+        <p>Someone posts a play, it loses, and it quietly disappears. The wins get screenshotted, the losses get buried, and you never see a real record.</p>
+      </div>
+      <div class="col after">
+        <div class="label">After</div>
+        <h3>Every play, proven</h3>
+        <p>Each play shows the model probability, the price we took, and the real ticket. The full record stays public — the good weeks and the bad ones.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ===== 6. WHAT'S INSIDE ===== -->
+  <section>
+    <div class="center"><span class="pill">What's Inside</span></div>
+    <h2>Three levels. <span class="hl">One standard of proof.</span></h2>
+
+    <div class="tier free">
+      <div class="tname">⚪ Free Picks</div>
+      <h3>Sharp Free — free forever</h3>
+      <p>Daily free picks, published and tracked like everything else.</p>
+      <ul>
+        <li>Free plays every day</li>
+        <li>Public Telegram channel: The Sharp Team — Free Picks</li>
+        <li>Full public record</li>
+      </ul>
+      <div class="price">$0 — free forever</div>
+    </div>
+
+    <div class="tier gold">
+      <div class="tname">⚪ Gold</div>
+      <h3>Validated plays</h3>
+      <p>Plays that clear a higher bar: a validated mathematical edge, published with the same ticket-and-record standard.</p>
+      <ul>
+        <li>Gold plays on your Dashboard</li>
+        <li>Model probability and value on every card</li>
+      </ul>
+    </div>
+
+    <div class="tier plat hero-tier">
+      <div class="tname">⭐ Platinum</div>
+      <h3>Everything, unlocked</h3>
+      <ul>
+        <li>Gold + Platinum plays — the strongest edges we find</li>
+        <li>+EV Board — live value across 12 sportsbooks</li>
+        <li>Player Props board</li>
+        <li>AI Assistant</li>
+        <li>Line Moves — see lines move in real time</li>
+        <li>Sharp Money — follow the professional money</li>
+        <li>Private Telegram channel</li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ===== 7. THE RECORD ===== -->
+  <section>
+    <div class="record">
+      <div class="rlabel">Verified Program Record</div>
+      <div class="stats">
+        <div class="stat">
+          <div class="v">42–30</div>
+          <div class="k">Win – Loss</div>
+        </div>
+        <div class="stat">
+          <div class="v mint">58.3%</div>
+          <div class="k">Win Rate</div>
+        </div>
+      </div>
+      <div class="stats">
+        <div class="stat">
+          <div class="v mint">+$58.18</div>
+          <div class="k">Profit</div>
+        </div>
+        <div class="stat">
+          <div class="v gold">2.00%</div>
+          <div class="k">ROI</div>
+        </div>
+      </div>
+      <p><b>Every play is on the record — wins and losses.</b> Each one is posted before the game starts and carries the real Novig ticket, so the record can be checked play by play.</p>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ===== 8. WHO IT'S FOR ===== -->
+  <section>
+    <h2>Built for bettors who want <span class="hl">a system, not miracles</span></h2>
+    <div class="filter">
+      <div class="box yes">
+        <h3>✓ This is for you if…</h3>
+        <ul>
+          <li>You want every play backed by a model and a number</li>
+          <li>You want to see the ticket and check the record yourself</li>
+          <li>You'd rather bet fewer, better plays than chase action</li>
+        </ul>
+      </div>
+      <div class="box no">
+        <h3>✕ This is not for you if…</h3>
+        <ul>
+          <li>You're looking to get rich overnight</li>
+          <li>You want a "lock of the century" every night</li>
+          <li>You'd rather chase losses than follow a system</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ===== 9. THE OFFER ===== -->
+  <section id="offer">
+    <div class="offer">
+      <span class="pill">The Offer</span>
+      <h2>Start free.<br>See everything first.</h2>
+      <p class="price-line">Create your account today and your <b>first month of Platinum is free</b> — every play, every tool, the full record.</p>
+      <div class="bigprice">Then <span>$1</span> your first week</div>
+      <p class="price-line">After that, Platinum is <b>$15.99/week</b>. Cancel anytime from your account.<br>And <b>Sharp Free stays free forever</b> — daily free picks, no card required.</p>
+      <a class="cta gold" href="/registro">Create my free account</a>
+      <p class="micro">Free month first. $1 first week. $15.99/week after. No surprises.</p>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ===== 10. FAQ ===== -->
+  <section>
+    <h2>Quick <span class="hl">answers</span></h2>
+    <div class="faq">
+      <div class="item">
+        <h3>When do the plays come out?</h3>
+        <p>Weekdays at 2:00 PM ET and weekends at 11:00 AM ET. Every play is posted before its game starts.</p>
+      </div>
+      <div class="item">
+        <h3>Where do I see the plays?</h3>
+        <p>On your Dashboard, in the Telegram channels, and in your daily email — whichever you check first.</p>
+      </div>
+      <div class="item">
+        <h3>Can I cancel whenever I want?</h3>
+        <p>Yes. You can cancel from your account at any time, and you keep the time you've already paid for.</p>
+      </div>
+      <div class="item">
+        <h3>Is the record public?</h3>
+        <p>Yes. The full record — every win and every loss — is public on the registration page and in the Full Record section.</p>
+      </div>
+    </div>
+    <a class="cta" href="/registro">Create my free account</a>
+    <p class="micro">Join free today — your Platinum month starts now.</p>
+  </section>
+
+  <!-- ===== 11. FOOTER ===== -->
+  <footer>
+    <div class="dom">thesharpteam.bet</div>
+    <p style="margin-top:8px;">The Sharp Team — model-driven plays, real tickets, a public record.<br>Free picks every day on Telegram: The Sharp Team — Free Picks.</p>
+  </footer>
+
+</div>
+</body>
+</html>
