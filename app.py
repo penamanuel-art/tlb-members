@@ -1086,7 +1086,7 @@ def api_activation_reminders():
     rows = db.execute(
         "SELECT id, nombre, email, lang, created_at, activation_token, activation_reminders "
         "FROM users WHERE email_verified = 0 AND activation_token IS NOT NULL "
-        "AND is_admin = 0 AND activation_reminders < 2 "
+        "AND is_admin = 0 AND activation_reminders < 2 AND cancel_requested_at IS NULL "
         "AND LOWER(email) != 'system@value.local' "
         "ORDER BY created_at ASC LIMIT 20"
     ).fetchall()
@@ -7669,7 +7669,7 @@ def api_ev_board_email_digests():
                           (ALEX_MEMBER_EMAIL.lower(),)).fetchall()
     else:
         rows = db.execute(
-            "SELECT * FROM users WHERE ev_board_email = 1").fetchall()
+            "SELECT * FROM users WHERE ev_board_email = 1 AND cancel_requested_at IS NULL").fetchall()
     html = _ev_board_email_html(board)
     text = ("Today's price board is in your inbox and on your Dashboard: "
             "every game on today's card with the best price for each team. "
@@ -7783,6 +7783,13 @@ def api_own_bets_digests():
                            (u["user_id"],)).fetchone()
         if not owner:
             continue
+        # Regla 2026-10-30: con cancelación pedida, fuera de las
+        # audiencias de email de miembros (su cuenta sigue intacta).
+        try:
+            if owner["cancel_requested_at"]:
+                continue
+        except Exception:
+            pass
         st = _mybets_settings(db, owner["id"], owner)
         if st["email_pref"] != "daily":
             continue
@@ -8733,8 +8740,13 @@ def admin_api_members_emails():
         return jsonify({"error": "admin only"}), 403
     db = get_db()
     _barrer_trials_vencidos(db)
+    # Regla 2026-10-30 (orden de Alex): quien pidió cancelar sale DE UNA
+    # VEZ de todas las audiencias de email de miembros — su nombre no
+    # figura en la lista de clientes aunque conserve su acceso hasta
+    # la fecha pagada. Esta es la audiencia central: de aquí salen el
+    # email diario, la Masterclass, resultados 11 AM y motivación.
     rows = db.execute(
-        "SELECT email, nombre, platinum_unlocked, phone, sms_optin, lang, platinum_trial_ends FROM users WHERE email IS NOT NULL AND email != '' AND email_verified = 1"
+        "SELECT email, nombre, platinum_unlocked, phone, sms_optin, lang, platinum_trial_ends FROM users WHERE email IS NOT NULL AND email != '' AND email_verified = 1 AND cancel_requested_at IS NULL"
     ).fetchall()
     return jsonify([
         {"email": r["email"], "nombre": r["nombre"] or "there",
@@ -8761,7 +8773,7 @@ def admin_api_tracked_members():
     rows = db.execute(
         "SELECT DISTINCT u.email AS email FROM tracked_plays t "
         "JOIN users u ON u.id = t.user_id "
-        "WHERE t.nivel IN ('ELITE', 'GOLD', 'FREE') AND u.email IS NOT NULL AND u.email != '' AND u.email_verified = 1"
+        "WHERE t.nivel IN ('ELITE', 'GOLD', 'FREE') AND u.email IS NOT NULL AND u.email != '' AND u.email_verified = 1 AND u.cancel_requested_at IS NULL"
     ).fetchall()
     return jsonify([{"email": r["email"]} for r in rows])
 
@@ -8784,13 +8796,13 @@ def admin_api_tracked_plays():
         rows = db.execute(
             "SELECT u.email AS email, t.play_id AS play_id, t.fecha AS fecha, t.nivel AS nivel, t.pick AS pick, t.cuota AS cuota, t.stake_unidades AS stake_unidades, t.stake_monto AS stake_monto "
             "FROM tracked_plays t JOIN users u ON u.id = t.user_id "
-            "WHERE t.nivel IN ('ELITE', 'GOLD', 'FREE') AND u.email IS NOT NULL AND u.email != '' AND u.email_verified = 1 AND t.fecha = ?", (fecha,)
+            "WHERE t.nivel IN ('ELITE', 'GOLD', 'FREE') AND u.email IS NOT NULL AND u.email != '' AND u.email_verified = 1 AND u.cancel_requested_at IS NULL AND t.fecha = ?", (fecha,)
         ).fetchall()
     else:
         rows = db.execute(
             "SELECT u.email AS email, t.play_id AS play_id, t.fecha AS fecha, t.nivel AS nivel, t.pick AS pick, t.cuota AS cuota, t.stake_unidades AS stake_unidades, t.stake_monto AS stake_monto "
             "FROM tracked_plays t JOIN users u ON u.id = t.user_id "
-            "WHERE t.nivel IN ('ELITE', 'GOLD', 'FREE') AND u.email IS NOT NULL AND u.email != '' AND u.email_verified = 1"
+            "WHERE t.nivel IN ('ELITE', 'GOLD', 'FREE') AND u.email IS NOT NULL AND u.email != '' AND u.email_verified = 1 AND u.cancel_requested_at IS NULL"
         ).fetchall()
     return jsonify([{"email": r["email"], "play_id": r["play_id"], "fecha": r["fecha"], "nivel": r["nivel"], "pick": r["pick"], "cuota": r["cuota"], "stake_unidades": r["stake_unidades"], "stake_monto": r["stake_monto"]} for r in rows])
 
@@ -10321,11 +10333,11 @@ def admin_dashboard():
         flash("You don't have permission to view this page.", "error")
         return redirect(url_for("home"))
     try:
-        miembros = db.execute("SELECT COUNT(*) c FROM users").fetchone()["c"]
+        miembros = db.execute("SELECT COUNT(*) c FROM users WHERE cancel_requested_at IS NULL").fetchone()["c"]
     except Exception:
         miembros = 0
     try:
-        platinum = db.execute("SELECT COUNT(*) c FROM users WHERE platinum_unlocked=1").fetchone()["c"]
+        platinum = db.execute("SELECT COUNT(*) c FROM users WHERE platinum_unlocked=1 AND cancel_requested_at IS NULL").fetchone()["c"]
     except Exception:
         platinum = 0
     try:
@@ -11906,9 +11918,12 @@ def admin_contactos():
     if not _admin_o_cuenta_alex(user):
         flash("You don't have permission to view this page.", "error")
         return redirect(url_for("home"))
+    # Regla 2026-10-30 (orden de Alex): quien pidió cancelar sale de
+    # una vez de la lista de clientes — no se muestran nombres de
+    # clientes que ya no lo son, aunque su acceso siga hasta su fecha.
     contactos = db.execute(
         "SELECT nombre, email FROM users "
-        "WHERE email_verified = 1 "
+        "WHERE email_verified = 1 AND cancel_requested_at IS NULL "
         "AND LOWER(email) NOT IN ('thesharpteam8@gmail.com', 'system@value.local') "
         "ORDER BY nombre ASC, email ASC"
     ).fetchall()
@@ -11975,6 +11990,7 @@ def admin_miembros():
             "WHERE u.email_verified = 1 "
             "AND LOWER(u.email) NOT IN ('thesharpteam8@gmail.com', "
             "'system@value.local', 'pena.manuel@myyahoo.com') "
+            "AND u.cancel_requested_at IS NULL "
             # 2026-10-24, ajuste mismo día: oculta solo al trial.
             "AND NOT (u.platinum_unlocked = 1 "
             "AND u.platinum_trial_ends IS NOT NULL "
