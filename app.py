@@ -6564,9 +6564,12 @@ def _stripe_cancel_status(user):
 def send_cancellation_confirmed_email(nombre, email, fecha_fin_txt=None):
     """Email AL MIEMBRO confirmando su cancelación (2026-10-30, hueco
     detectado por Alex probando como cliente: el cliente no recibía
-    ninguna confirmación). Dice: cancelación procesada, no se le cobra
-    más y hasta cuándo conserva el acceso. Hilo aparte, fallo silencioso:
-    nunca rompe el flujo de cancelación."""
+    ninguna confirmación). Rediseño 2026-10-31 (aprobado por Alex con
+    capturas): fondo oscuro de la casa, banner oficial arriba, caja
+    MEMBERSHIP SUMMARY y UN solo botón dorado de reactivación. Dice:
+    cancelación procesada, no se le cobra más y hasta cuándo conserva
+    el acceso. Hilo aparte, fallo silencioso: nunca rompe el flujo de
+    cancelación."""
     if not email:
         return
     nombre = (nombre or "").strip()
@@ -6584,112 +6587,104 @@ def send_cancellation_confirmed_email(nombre, email, fecha_fin_txt=None):
             fecha_full = fecha_fin_txt
             fecha_corta = fecha_fin_txt
     if fecha_full:
-        fin_txt = (f"Your subscription will officially end on {fecha_full}. "
-                   "Until then, you'll continue to enjoy full access to all "
-                   "Platinum features and benefits.")
+        hasta_txt = fecha_full
         acceso_caja = fecha_corta
     else:
-        fin_txt = ("Your subscription will officially end at the end of "
-                   "your current period. Until then, you'll continue to "
-                   "enjoy full access to all Platinum features and benefits.")
+        hasta_txt = "the end of your current period"
         acceso_caja = "End of current period"
+    _unsub = "{{{RESEND_UNSUBSCRIBE_URL}}}"
     subject = "Your Platinum Cancellation Is Confirmed"
     text = (f"{saludo}\n\n"
-            "We've received and processed your request to cancel your "
-            "Platinum membership.\n\n"
-            f"{fin_txt}\n\n"
+            "We've processed your request. You'll keep full access to "
+            f"every Platinum benefit until {hasta_txt}. After that, "
+            "your plan ends and you won't be charged again.\n\n"
             "MEMBERSHIP SUMMARY\n"
-            "Membership: Platinum\n"
-            "Status: Cancellation Scheduled\n"
-            f"Access Until: {acceso_caja}\n"
-            "Future Charges: $0.00\n\n"
+            "Plan: Platinum\n"
+            "Status: Cancellation scheduled\n"
+            f"Access until: {acceso_caja}\n"
+            "Future charges: $0.00\n\n"
             "Changed your mind?\n"
-            "We'd love to have you stay. You can reactivate your Platinum "
-            "membership anytime before your access expires:\n"
+            "Reactivate anytime before your access ends and pick up "
+            "right where you left off:\n"
             "https://www.thesharpteam.bet/cuenta\n\n"
-            "Thank you for being part of The Sharp Team. We appreciate "
-            "your support and wish you the best.\n\n"
-            "The Sharp Team\n"
-            "Gamble smart. Stay disciplined. Play the long game.\n\n"
+            "Thank you for being part of The Sharp Team. We'd love "
+            "your feedback on how we can improve.\n"
+            "Need help? Reply to this email anytime.\n\n"
             "250 Park Avenue, Suite 1800, New York, NY 10017 · (551) 326-3312\n"
             "Instagram: https://www.instagram.com/the_sharp_team/\n"
             "Telegram: https://t.me/thesharpteam\n"
             "Facebook: https://www.facebook.com/profile.php?id=61595131043413\n\n"
-            "21+. Play responsibly. If you or someone you know has a "
-            "gambling problem, call or text 1-800-GAMBLER.\n"
+            f"21+ Play responsibly. Unsubscribe: {_unsub} · "
+            "Privacy policy: https://www.thesharpteam.bet/privacy\n"
+            "If you or someone you know has a gambling problem, call "
+            "or text 1-800-GAMBLER.\n"
             "The Sharp Team provides information and entertainment only "
             "and is not a sportsbook. Past results do not guarantee "
             "future performance.\n")
     from datetime import datetime as _dtn
     anio = _dtn.now(TZ).year
     html = (
-        '<div style="margin:0;padding:24px 12px;background:#eef1f6;'
-        'font-family:Arial,Helvetica,sans-serif;color:#10141f;">'
-        '<div style="max-width:560px;margin:0 auto;background:#ffffff;'
-        'border:1px solid #dfe3ea;border-radius:16px;overflow:hidden;">'
+        '<div style="margin:0;padding:24px 12px;background:#0d1117;'
+        'font-family:Arial,Helvetica,sans-serif;color:#f1f5f9;">'
+        '<div style="max-width:560px;margin:0 auto;background:#14161d;'
+        'border:1px solid #262c36;border-radius:16px;overflow:hidden;">'
         '<img src="https://www.thesharpteam.bet/static/img/sharp-team-header.jpg" '
         'alt="The Sharp Team" width="560" '
         'style="display:block;width:100%;height:auto;">'
         '<div style="padding:26px 30px 28px;">'
         '<div style="width:54px;height:54px;border:3px solid #1f9d66;'
-        'border-radius:50%;color:#1f9d66;font-size:22.2px;line-height:54px;'
+        'border-radius:50%;color:#11cb87;font-size:22.2px;line-height:54px;'
         'text-align:center;margin:2px auto 12px;">&#10003;</div>'
-        '<p style="font-size:20.7px;font-weight:800;color:#0d1526;'
-        'text-align:center;margin:0 0 8px;">Cancellation Confirmed</p>'
-        '<p style="font-size:11.5px;color:#5b6472;text-align:center;'
+        '<p style="font-size:20.7px;font-weight:800;color:#f1f5f9;'
+        'text-align:center;margin:0 0 8px;">Cancellation confirmed</p>'
+        '<p style="font-size:11.5px;color:#94a3b8;text-align:center;'
         'line-height:1.5;margin:0 0 18px;">Your Platinum membership '
-        'cancellation has been successfully processed.</p>'
-        '<div style="height:1px;background:#e3e6ec;margin:0 0 20px;"></div>'
+        'cancellation has been processed.</p>'
+        '<div style="height:1px;background:#262c36;margin:0 0 20px;"></div>'
         f'<p style="font-size:12.2px;margin:0 0 12px;">{saludo}</p>'
-        '<p style="font-size:12.2px;line-height:1.55;margin:0 0 12px;">'
-        "We've received and processed your request to cancel your "
-        'Platinum membership.</p>'
-        f'<p style="font-size:12.2px;line-height:1.55;margin:0 0 20px;">{fin_txt}</p>'
-        '<div style="background:#edf0f5;border-radius:12px;'
-        'padding:18px 20px;margin:0 0 22px;">'
-        '<p style="font-size:13px;font-weight:700;margin:0 0 12px;">'
-        'Membership Summary</p>'
+        '<p style="font-size:12.2px;line-height:1.55;margin:0 0 20px;">'
+        "We've processed your request. You'll keep full access to "
+        f'every Platinum benefit until <b>{hasta_txt}</b>. After that, '
+        "your plan ends and you won't be charged again.</p>"
+        '<div style="background:#1d2029;border:1px solid #262c36;'
+        'border-radius:12px;padding:18px 20px;margin:0 0 22px;">'
+        '<p style="font-size:13px;font-weight:700;letter-spacing:1.6px;'
+        'color:#e8c766;margin:0 0 12px;">MEMBERSHIP SUMMARY</p>'
         '<table width="100%" cellpadding="0" cellspacing="0">'
-        '<tr><td style="font-size:11.5px;color:#5b6472;padding:5px 0;">'
-        'Membership</td><td align="right" style="font-size:11.5px;'
-        'font-weight:700;padding:5px 0;">Platinum</td></tr>'
-        '<tr><td style="font-size:11.5px;color:#5b6472;padding:5px 0;">'
+        '<tr><td style="font-size:11.5px;color:#94a3b8;padding:5px 0;">'
+        'Plan</td><td align="right" style="font-size:11.5px;'
+        'font-weight:700;color:#f1f5f9;padding:5px 0;">Platinum</td></tr>'
+        '<tr><td style="font-size:11.5px;color:#94a3b8;padding:5px 0;">'
         'Status</td><td align="right" style="padding:5px 0;">'
-        '<span style="background:#d9f2e3;color:#0c7a3d;font-size:9.9px;'
+        '<span style="background:#0d3320;color:#11cb87;font-size:9.9px;'
         'font-weight:700;border-radius:999px;padding:4px 11px;">'
-        'Cancellation Scheduled</span></td></tr>'
-        '<tr><td style="font-size:11.5px;color:#5b6472;padding:5px 0;">'
-        'Access Until</td><td align="right" style="font-size:11.5px;'
-        f'font-weight:700;padding:5px 0;">{acceso_caja}</td></tr>'
-        '<tr><td style="font-size:11.5px;color:#5b6472;padding:5px 0;">'
-        'Future Charges</td><td align="right" style="font-size:11.5px;'
-        'font-weight:700;padding:5px 0;">$0.00</td></tr>'
+        'Cancellation scheduled</span></td></tr>'
+        '<tr><td style="font-size:11.5px;color:#94a3b8;padding:5px 0;">'
+        'Access until</td><td align="right" style="font-size:11.5px;'
+        f'font-weight:700;color:#f1f5f9;padding:5px 0;">{acceso_caja}</td></tr>'
+        '<tr><td style="font-size:11.5px;color:#94a3b8;padding:5px 0;">'
+        'Future charges</td><td align="right" style="font-size:11.5px;'
+        'font-weight:700;color:#f1f5f9;padding:5px 0;">$0.00</td></tr>'
         '</table></div>'
-        '<p style="font-size:14.5px;font-weight:700;margin:0 0 10px;">'
-        'Changed your mind?</p>'
-        '<p style="font-size:12.2px;line-height:1.55;margin:0 0 18px;">'
-        "We'd love to have you stay. You can reactivate your Platinum "
-        'membership anytime before your access expires.</p>'
-        '<div style="background:#0d1526;border-radius:12px;'
-        'padding:24px 20px;text-align:center;margin:0 0 20px;">'
-        '<p style="font-size:16.1px;font-weight:800;color:#ffffff;'
-        'margin:0 0 6px;">Your next winning opportunity awaits.</p>'
-        '<p style="font-size:10.7px;color:#a7b0c2;margin:0 0 16px;">'
-        "Come back whenever you're ready.</p>"
+        '<p style="font-size:14.5px;font-weight:700;color:#f1f5f9;'
+        'text-align:center;margin:0 0 10px;">Changed your mind?</p>'
+        '<p style="font-size:12.2px;line-height:1.55;color:#94a3b8;'
+        'text-align:center;margin:0 0 18px;">Reactivate anytime before '
+        'your access ends and pick up right where you left off.</p>'
+        '<div style="text-align:center;margin:0 0 22px;">'
         '<a href="https://www.thesharpteam.bet/cuenta" '
-        'style="display:inline-block;background:#d9a92c;color:#10141f;'
+        'style="display:inline-block;background:#e8c766;color:#10141f;'
         'font-size:11.5px;font-weight:800;letter-spacing:0.4px;'
         'text-decoration:none;padding:13px 30px;border-radius:8px;">'
-        'REACTIVATE MEMBERSHIP</a></div>'
-        '<p style="font-size:11.5px;line-height:1.55;color:#39415a;'
-        'margin:0 0 16px;">Thank you for being part of The Sharp Team. '
-        'We appreciate your support and wish you the best.</p>'
-        '<p style="font-size:13px;font-weight:700;margin:0 0 6px;">'
-        'The Sharp Team</p>'
-        '<p style="font-size:9.9px;color:#5b6472;margin:0;">Gamble smart. '
-        'Stay disciplined. Play the long game.</p>'
-        '<div style="height:1px;background:#e3e6ec;margin:20px 0 16px;"></div>'
-        '<p style="text-align:center;font-size:9.5px;color:#5b6472;'
+        'Reactivate membership</a></div>'
+        '<div style="height:1px;background:#262c36;margin:0 0 16px;"></div>'
+        '<p style="font-size:11.5px;line-height:1.55;color:#94a3b8;'
+        'text-align:center;margin:0 0 6px;">Thank you for being part of '
+        "The Sharp Team. We'd love your feedback on how we can improve.</p>"
+        '<p style="font-size:11.5px;line-height:1.55;color:#94a3b8;'
+        'text-align:center;margin:0 0 16px;">Need help? Reply to this '
+        'email anytime.</p>'
+        '<p style="text-align:center;font-size:9.5px;color:#8a93a5;'
         'line-height:1.6;margin:0 0 12px;">250 Park Avenue, Suite 1800, '
         'New York, NY 10017 &middot; (551) 326-3312</p>'
         '<div style="text-align:center;margin:0 0 12px;">'
@@ -6710,9 +6705,13 @@ def send_cancellation_confirmed_email(nombre, email, fecha_fin_txt=None):
         'style="border:0;margin:0 7px;"></a>'
         '</div>'
         '<p style="text-align:center;font-size:8.8px;color:#8a93a5;'
-        'line-height:1.55;margin:0 0 6px;">21+. Play responsibly. If you '
-        'or someone you know has a gambling problem, call or text '
-        '1-800-GAMBLER.</p>'
+        'line-height:1.55;margin:0 0 6px;">21+ Play responsibly. '
+        f'<a href="{_unsub}" style="color:#8a93a5;">Unsubscribe</a> '
+        '&middot; <a href="https://www.thesharpteam.bet/privacy" '
+        'style="color:#8a93a5;">Privacy policy</a></p>'
+        '<p style="text-align:center;font-size:8.8px;color:#8a93a5;'
+        'line-height:1.55;margin:0 0 6px;">If you or someone you know '
+        'has a gambling problem, call or text 1-800-GAMBLER.</p>'
         '<p style="text-align:center;font-size:8.8px;color:#8a93a5;'
         'line-height:1.55;margin:0;">The Sharp Team provides information '
         'and entertainment only and is not a sportsbook. Past results do '
@@ -6730,7 +6729,6 @@ def send_cancellation_confirmed_email(nombre, email, fecha_fin_txt=None):
 
     import threading
     threading.Thread(target=_send, daemon=True).start()
-
 
 @app.route("/cuenta/cancelar", methods=["GET", "POST"])
 @login_required
