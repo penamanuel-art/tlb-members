@@ -28,6 +28,7 @@
   <h2 class="v2-sec-title">You're in — Platinum is activating ✓</h2>
   <p class="v2-upsell-sub">Your $1 week just started and your access turns on automatically. If your plays don't look unlocked yet, give it a few seconds — this page reloads itself.</p>
   <a class="v2-upsell-cta" href="{{ url_for('home') }}">Go to my Dashboard →</a>
+  {% if fb_purchase %}<script>fbq('track', 'Purchase', {value: {{ fb_purchase }}, currency: 'USD'}{% if fb_purchase_eid %}, {eventID: '{{ fb_purchase_eid }}'}{% endif %});</script>{% endif %}
   <script>setTimeout(function(){window.location.replace("{{ url_for('desbloquear_platinum') }}");},10000);</script>
 </div>
 {% else %}
