@@ -8098,6 +8098,21 @@ def preview_my_action():
     )
 
 
+@app.route("/preview/registro")
+def preview_registro_nuevo():
+    """VISTA PREVIA PRIVADA (2026-10-31, pedido por Alex): propuesta de
+    rediseño de la página de registro (embudo). SOLO visible con la sesión
+    de admin o de la cuenta personal de Alex — los mismos flags del header
+    (es_admin or es_alex); cualquier otro caso (sin sesión o miembro
+    normal) devuelve 404. Sin enlaces en plantillas ni menús: se entra
+    solo por URL directa."""
+    user = current_user()
+    if not (is_admin_for(user) or is_alex_member(user)):
+        from flask import abort
+        abort(404)
+    return render_template("registro_preview.html")
+
+
 @app.route("/free-plays")
 @login_required
 def free_plays():
