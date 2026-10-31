@@ -289,7 +289,7 @@
     {% if plays %}
     <div class="notif-item">
       <span class="ni">🔔</span>
-      <span><b>Today's card is posted</b><span>Alert · {{ plays|length }} play{% if plays|length != 1 %}s{% endif %} today</span></span>
+      <span><b>Today's plays are posted</b><span>Alert · {{ plays|length }} play{% if plays|length != 1 %}s{% endif %} today</span></span>
     </div>
     {% endif %}
   </div>
@@ -339,9 +339,9 @@
         <div class="check">✓</div>
         <div>
           {% if card_pendiente %}
-          <b>Today's card is not posted yet</b><span>Check back when the card drops — with a push the moment it goes live.</span>
+          <b>Today's plays are not posted yet</b><span>Check back when the plays drop — with a push the moment it goes live.</span>
           {% else %}
-          <b>Today's card is posted</b><span><span class="cnt">{{ plays|length }} {% if plays|length == 1 %}play{% else %}plays{% endif %} today — {{ plays|selectattr('nivel','in',['ELITE','PLATINUM'])|list|length }} Platinum · {{ plays|selectattr('nivel','equalto','GOLD')|list|length }} Gold · {{ plays|selectattr('nivel','equalto','FREE')|list|length }} Free Pick</span><br>Live on your Dashboard right now.</span>
+          <b>Today's plays are posted</b><span><span class="cnt">{{ plays|length }} {% if plays|length == 1 %}play{% else %}plays{% endif %} today — {{ plays|selectattr('nivel','in',['ELITE','PLATINUM'])|list|length }} Platinum · {{ plays|selectattr('nivel','equalto','GOLD')|list|length }} Gold · {{ plays|selectattr('nivel','equalto','FREE')|list|length }} Free Pick</span><br>Live on your Dashboard right now.</span>
           {% endif %}
         </div>
         <div class="arr">›</div>
@@ -356,8 +356,8 @@
   </a>
   {% if not plays %}
   <div class="tst-emptycard">
-    <span class="tst-emptytitle">Today's card is not posted yet</span>
-    <span class="tst-emptysub">Your plays will appear here as soon as today's card is live.</span>
+    <span class="tst-emptytitle">Today's plays are not posted yet</span>
+    <span class="tst-emptysub">Your plays will appear here as soon as today's plays are live.</span>
   </div>
   {% endif %}
 
