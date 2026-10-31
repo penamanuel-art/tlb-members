@@ -65,6 +65,15 @@ def _asset_version():
 
 ASSET_V = _asset_version()
 
+# PUBLIC_RELEASE — the ONLY trigger for the member-facing "A new version is
+# available" banner on the Dashboard (served as the tst-version meta and
+# compared client-side against the last marker the member accepted).
+# Bump ONLY for a visible page/design/Dashboard release — never for data,
+# email or backend-only commits. Ordinary deploys (plays, tickets, email
+# tweaks, internal fixes) must NOT change this value, so members only see
+# the banner when there is a real release for them.
+PUBLIC_RELEASE = "2026-10-31"
+
 TZ = ZoneInfo("America/New_York")
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -5137,7 +5146,9 @@ def home():
         miembro_platinum=(platinum_unlocked_for(user) and not preview_locked),
         # Hero fijo original (2026-10-26, reversión a pedido de Alex: solo
         # el de fútbol con casco, sin rotación por ligas).
-        tst_version=os.environ.get("RENDER_GIT_COMMIT", ""),
+        # Banner gate (2026-10-31): the Dashboard "new version" banner keys
+        # off PUBLIC_RELEASE, never the deploy commit — see the constant.
+        tst_version=PUBLIC_RELEASE,
     )
 
 
@@ -5211,7 +5222,7 @@ def admin_home_preview():
         dias=load_archive(),
         hoy_iso=datetime.now(TZ).strftime("%Y-%m-%d"),
         ayer_iso=(datetime.now(TZ) - timedelta(days=1)).strftime("%Y-%m-%d"),
-        tst_version=os.environ.get("RENDER_GIT_COMMIT", ""),
+        tst_version=PUBLIC_RELEASE,
     )
 
 
