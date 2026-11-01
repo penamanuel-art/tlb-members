@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Sharp Team — Start today for $1</title>
+<title>The Sharp Team — Create your free account</title>
 <meta name="theme-color" content="#0b0c10">
 <!-- Meta Pixel Code (mismo bloque que base.html — no tocar) -->
 <script>
@@ -338,11 +338,11 @@ twq('config','rhgk7');
 
   <!-- ===== 1. HERO ===== -->
   <section class="hero" style="padding-top:18px;">
-    <div class="center"><span class="pill gold">Start today for $1 — your first month of Platinum is FREE</span></div>
-    <h1>Stop betting blind.<br>Start betting with <span class="hl">a system behind every play.</span></h1>
+    <div class="center"><span class="pill gold">Free plays every day — no card required</span></div>
+    <h1>Create your <span class="hl">free account.</span><br>Free plays, posted every day.</h1>
     <p class="sub">Daily plays priced by a real model, published before game time, and proven with the actual ticket — every single day.</p>
-    <a class="cta" href="#offer">Start for $1</a>
-    <p class="micro"><b>$1 today.</b> Then your first month of Platinum is FREE.</p>
+    <a class="cta" href="#signup">Create my free account</a>
+    <p class="micro"><b>Free forever.</b> No card required — Platinum is optional.</p>
     <div class="trust">
       <div class="t">
         <div class="icon-chip sm mint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 5-3.5 8-7 10-3.5-2-7-5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg></div>
@@ -575,9 +575,9 @@ twq('config','rhgk7');
   <!-- ===== 9. THE OFFER ===== -->
   <section id="offer">
     <div class="offer">
-      <span class="pill gold">The Offer</span>
-      <h2>Start today for <span class="hl">$1</span></h2>
-      <p class="price-line">Here's exactly how it works — <b>no surprises</b>:</p>
+      <span class="pill gold">Optional Upgrade</span>
+      <h2>Optional: <span class="hl">Go Platinum</span></h2>
+      <p class="price-line">$1 today unlocks Platinum: your first month is free, then $15.99/week. Cancel anytime. Or stay free — the free plays keep coming either way.</p>
       <div class="osteps">
         <div class="ostep">
           <div class="chipwrap">
@@ -610,9 +610,9 @@ twq('config','rhgk7');
           </div>
         </div>
       </div>
-      <div class="bigprice">Start today for <span>$1</span></div>
+      <div class="bigprice">Platinum: start for <span>$1</span></div>
       <p class="price-line">Rather stay free? <b>Sharp Free stays free forever</b> — daily free picks, no card required.</p>
-      <a class="cta gold" href="#signup">Start for $1</a>
+      <a class="cta gold" href="#signup">Start Platinum for $1</a>
       <p class="micro">$1 today · FREE first month · $15.99/week after. No surprises.</p>
     </div>
   </section>
@@ -635,17 +635,17 @@ twq('config','rhgk7');
       <form method="post" action="{{ url_for('register') }}">
         <div class="intent">
           <label class="intent-opt">
-            <input type="radio" name="signup_intent" value="platinum" checked>
-            <span>
-              <span class="io-title">⭐ PLATINUM — Start for $1</span>
-              <span class="io-sub">$1 today · first month FREE · then $15.99/week</span>
-            </span>
-          </label>
-          <label class="intent-opt">
-            <input type="radio" name="signup_intent" value="free">
+            <input type="radio" name="signup_intent" value="free" checked>
             <span>
               <span class="io-title">⚪ SHARP FREE — $0 forever</span>
               <span class="io-sub">Daily free picks · no card required</span>
+            </span>
+          </label>
+          <label class="intent-opt">
+            <input type="radio" name="signup_intent" value="platinum">
+            <span>
+              <span class="io-title">⭐ PLATINUM (optional) — Start for $1</span>
+              <span class="io-sub">$1 today · first month FREE · then $15.99/week</span>
             </span>
           </label>
         </div>
@@ -712,8 +712,8 @@ twq('config','rhgk7');
         <p>Every play is posted before game time with its real ticket — nothing is edited after the fact.</p>
       </div>
     </div>
-    <a class="cta" href="#signup">Start for $1</a>
-    <p class="micro">Start today for $1 — your FREE Platinum month starts now.</p>
+    <a class="cta" href="#signup">Create my free account</a>
+    <p class="micro">Free account, free plays every day. Platinum is optional — $1 if you want it.</p>
   </section>
 
   <!-- ===== 11. FOOTER ===== -->
@@ -731,8 +731,8 @@ twq('config','rhgk7');
 
 <!-- ===== STICKY CTA BAR ===== -->
 <div class="stickybar">
-  <div class="sb-text"><b>$1 today</b>First month FREE</div>
-  <a href="#signup">Start for $1 →</a>
+  <div class="sb-text"><b>Free account</b>Free plays every day</div>
+  <a href="#signup">Join free →</a>
 </div>
 
 
