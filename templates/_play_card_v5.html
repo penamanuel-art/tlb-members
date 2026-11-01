@@ -107,7 +107,7 @@ body.v5-sheet-open .ticker-dock-bottom,body.v5-sheet-open .v2-bottomnav,body.v5-
 .tstc-bubble{position:fixed;z-index:100000;background:#272D36;border:1px solid rgba(255,255,255,.18);border-radius:12px;padding:8px 11px;font-size:12px;font-weight:300;line-height:1.45;color:#eef1f7;text-align:center;width:max-content;max-width:260px;pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,.45)}
 .tstc-bubble:after{content:'';position:absolute;top:100%;left:var(--tstc-tail,50%);transform:translateX(-50%);border:6px solid transparent;border-top-color:#272D36}
 .tstc-bubble.below:after{top:auto;bottom:100%;border-top-color:transparent;border-bottom-color:#272D36}
-/* Tira inferior de track (2026-10-31): confirmación con Undo / Change stake / My Bets */
+/* Tira inferior de track (2026-10-31): confirmación con Change stake / My Bets (sin Undo desde el candado del 2026-11-01) */
 .tst-strip{position:fixed;left:10px;right:10px;bottom:86px;z-index:100001;background:linear-gradient(180deg,#D3DEEB,#BCCBDC);border:1px solid #8FA5BD;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.55);padding:10px 12px;display:flex;flex-direction:column;gap:8px;color:#101A29;font-size:13px;box-sizing:border-box}
 .tst-strip-txt{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tst-strip-txt b{color:#0B6B43}
@@ -345,9 +345,9 @@ body.v2 .v5c{background:linear-gradient(180deg,#0B0E13,#1D2029)}
     window.addEventListener('scroll', dismiss, true);
     window.addEventListener('resize', dismiss);
   }
-  /* Tira inferior de track (2026-10-31): Undo / Change stake / My Bets */
+  /* Tira inferior de track (2026-10-31): Change stake / My Bets — candado
+     2026-11-01: sin Undo; una jugada trackeada es final y no se revierte. */
   var tstStrip = null, tstStripTimer = null, tstState = null, tstSheet = null;
-  var TST_QUITAR_BASE = "{{ url_for('untrack', tracked_id=0) }}".replace(/0$/, '');
   var TST_STAKE_BASE = "{{ url_for('track_stake', tracked_id=0) }}".replace(/0$/, '');
   var TST_TRACKER_URL = "{{ url_for('tracker') }}";
   function tstMoney(n) {
@@ -381,7 +381,6 @@ body.v2 .v5c{background:linear-gradient(180deg,#0B0E13,#1D2029)}
     d.className = 'tst-strip';
     d.innerHTML = '<div class="tst-strip-txt">&check; Tracked &middot; <span class="tst-strip-pick"></span> &mdash; <b class="tst-strip-monto"></b></div>' +
       '<div class="tst-strip-btns">' +
-      '<button type="button" class="tst-strip-btn" data-act="undo">Undo</button>' +
       '<button type="button" class="tst-strip-btn gold" data-act="stake">Change stake</button>' +
       '<a class="tst-strip-btn" href="' + TST_TRACKER_URL + '">My Bets</a>' +
       '<button type="button" class="tst-strip-btn tst-strip-x" data-act="close" aria-label="Close">&times;</button></div>';
@@ -392,39 +391,11 @@ body.v2 .v5c{background:linear-gradient(180deg,#0B0E13,#1D2029)}
       if (!btn) return;
       var act = btn.getAttribute('data-act');
       if (act === 'close') hideTrackStrip();
-      else if (act === 'undo') tstUndo(btn);
       else if (act === 'stake') tstOpenSheet();
     });
     document.body.appendChild(d);
     tstStrip = d;
     tstArmTimer();
-  }
-  function tstUndo(btn) {
-    if (!tstState || btn.dataset.busy) return;
-    btn.dataset.busy = '1';
-    btn.textContent = '…';
-    fetch(TST_QUITAR_BASE + tstState.id, {
-      method: 'POST',
-      headers: {'X-Requested-With': 'XMLHttpRequest'},
-      credentials: 'same-origin'
-    }).then(function(r){
-      return r.json().then(function(j){ return {status: r.status, body: j}; });
-    }).then(function(res){
-      if (res.body && res.body.ok) {
-        var st = tstState;
-        closeSheet();
-        hideTrackStrip();
-        if (st && st.spanEl && st.spanEl.parentNode && st.origNode) st.spanEl.replaceWith(st.origNode);
-      } else {
-        delete btn.dataset.busy;
-        btn.textContent = 'Undo';
-        alert((res.body && res.body.error) || 'Could not undo the track.');
-      }
-    }).catch(function(){
-      delete btn.dataset.busy;
-      btn.textContent = 'Undo';
-      alert('Could not undo the track. Please try again.');
-    });
   }
   function tstOpenSheet() {
     if (!tstState) return;
