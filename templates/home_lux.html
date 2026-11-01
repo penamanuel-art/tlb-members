@@ -897,18 +897,22 @@
 
 <style>
 /* ===== EFECTO DE BALANCE (balfx-) — aprobado por Alex 2026-10-31 y
-   corregido por él el mismo día (21:35 ET): al entrar al Dashboard, si el
-   balance mostrado SUBIÓ desde la última visita en este dispositivo, la
-   monedita cae con el +$ y el número sube corriendo; y con el Dashboard
-   abierto y visible, un poll ligero celebra EN VIVO cada liquidación
-   juego a juego en cuanto el balance sube. ===== */
+   corregido por él el mismo día (21:35 ET y 21:49 ET): al entrar al
+   Dashboard, si el balance mostrado SUBIÓ desde la última visita en este
+   dispositivo, cae una LLUVIA de moneditas doradas sobre la píldora
+   MIENTRAS el número sube corriendo, con el sonido de monedas sonando
+   DURANTE la entrada del dinero; y con el Dashboard abierto y visible,
+   un poll ligero celebra EN VIVO cada liquidación juego a juego en
+   cuanto el balance sube. SIN burbujita (orden de Alex 21:49 ET: «Yo NO
+   quiero burbujita. Lo que quiero es moneditas amarillas de dinero
+   entrando a mi número MIENTRAS VA CRECIENDO»). ===== */
 .balance{position:relative}
-.balfx-bubble{position:absolute;right:8px;bottom:calc(100% + 4px);display:flex;align-items:center;gap:5px;background:#123527;border:1px solid #2ee6a8;color:#2ee6a8;font-size:12.5px;font-weight:700;letter-spacing:.2px;padding:4px 9px 4px 5px;border-radius:999px;pointer-events:none;white-space:nowrap;box-shadow:0 8px 22px rgba(0,0,0,.5);opacity:0;z-index:60;animation:balfxRise 2s ease-out forwards}
-.balfx-bubble img{width:22px;height:22px;display:block}
-@keyframes balfxRise{0%{opacity:0;transform:translateY(10px) scale(.9)}14%{opacity:1;transform:translateY(2px) scale(1)}30%{transform:translateY(-4px)}70%{opacity:1}100%{opacity:0;transform:translateY(-18px)}}
+.balfx-rain{position:absolute;left:0;right:0;top:0;height:0;pointer-events:none;z-index:60}
+.balfx-coin{position:absolute;top:0;display:block;pointer-events:none;opacity:0;animation-name:balfxFall;animation-timing-function:ease-in;animation-fill-mode:forwards;will-change:transform,opacity}
+@keyframes balfxFall{0%{opacity:0;transform:translate3d(0,-48px,0) rotate(0deg) scale(.85)}12%{opacity:1}55%{transform:translate3d(var(--sway,4px),-16px,0) rotate(160deg) scale(1)}82%{opacity:1;transform:translate3d(0,0,0) rotate(300deg) scale(1)}100%{opacity:0;transform:translate3d(0,8px,0) rotate(345deg) scale(.95)}}
 .balance.balfx-glow{border-color:#2ee6a8;box-shadow:0 0 0 1px rgba(46,230,168,.45),0 0 18px rgba(46,230,168,.25)}
 @media (prefers-reduced-motion:reduce){
-.balfx-bubble{animation:none;display:none}
+.balfx-rain{display:none}
 }
 </style>
 
@@ -917,17 +921,21 @@
    corregido por él el mismo día (21:35 ET: «que no es la una AM, es
    mientras se vayan liquidando... si una jugada se liquidó ya, al
    instante, cuando tú detectes que ya se acabó el juego, que ese efecto
-   ya salga»):
+   ya salga»; 21:49 ET: «Yo NO quiero burbujita. Lo que quiero es
+   moneditas amarillas de dinero entrando a mi número MIENTRAS VA
+   CRECIENDO» y el sonido DURANTE la entrada del dinero, no después):
    (1) AL ENTRAR: compara el balance mostrado contra la marca local de la
    última visita (tst-balance-seen). Primera vez: guarda la marca en
-   silencio. Si subió: burbujita con la moneda y el +$ exacto, conteo
-   corriendo del valor viejo al nuevo y sonido propio de monedas
-   (static/audio/coin.mp3).
+   silencio. Si subió: LLUVIA de moneditas doradas cayendo sobre la
+   píldora MIENTRAS el número sube corriendo del valor viejo al nuevo,
+   con el sonido propio de monedas (static/audio/coin.mp3) sonando
+   DURANTE ese mismo lapso — arranca en el mismo instante que la primera
+   moneda y el primer paso del conteo, nunca después.
    (2) CON EL DASHBOARD ABIERTO: poll ligero a /api/mi-balance cada ~40 s,
    SOLO con la página visible. Si el balance subió — porque una jugada se
    liquidó juego a juego vía /admin/api/settle-live — celebra EN VIVO con
-   la misma burbujita, el conteo corriendo y el sonidito. Si bajó o no
-   cambió: actualiza en silencio. Errores de red: silencio.
+   la misma lluvia, el conteo corriendo y el sonidito simultáneos. Si
+   bajó o no cambió: actualiza en silencio. Errores de red: silencio.
    La marca se actualiza SIEMPRE: cada subida celebra una sola vez por
    dispositivo. */
 (function(){try{
@@ -947,12 +955,20 @@
   var reduced=false;
   try{reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;}catch(e){}
   /* Sonido propio: se precarga y se desbloquea con el primer toque
-     (regla de iOS: ningún audio suena sin un gesto previo del usuario). */
-  var snd=null;
+     (regla de iOS: ningún audio suena sin un gesto previo del usuario).
+     CLAVE (bug que reportó Alex el 2026-10-31: «el sonido sale ya después
+     que el dinero cayó, como cinco segundos tarde»): si play() se llama
+     SIN desbloqueo previo, iOS lo deja PENDIENTE y lo suelta segundos
+     después, cuando el usuario toca otra cosa — el sonido fantasma
+     tardío. Por eso playSound() SOLO llama play() si el audio ya fue
+     desbloqueado por un gesto; si no, no llama nada (el visual corre
+     igual, sin sonido, y ningún sonido aparece después a destiempo). */
+  var snd=null,sndUnlocked=false;
   try{
     snd=new Audio(pill.getAttribute('data-balfx-audio'));
     snd.preload='auto';
     var unlock=function(){
+      sndUnlocked=true; /* el gesto en curso ES el desbloqueo */
       try{
         var p=snd.play();
         if(p&&p.then){p.then(function(){try{snd.pause();snd.currentTime=0;}catch(e){}}).catch(function(){});}
@@ -963,14 +979,18 @@
     document.addEventListener('pointerdown',unlock);
   }catch(e){snd=null;}
   function playSound(){
-    if(!snd)return;
+    if(!snd||!sndUnlocked)return;
     try{snd.currentTime=0;var p=snd.play();if(p&&p.catch){p.catch(function(){});}}catch(e){}
   }
   var busy=false;
-  /* La celebración (única, reutilizada por la entrada y por el poll):
-     burbujita con la moneda y el +$ exacto que subió, conteo corriendo
-     de fromVal a toVal y sonidito. Con movimiento reducido el número
-     sale directo, sin burbujita ni conteo. */
+  /* La celebración (única, reutilizada por la entrada y por el poll) —
+     diseño final de Alex (2026-10-31 21:49 ET), SIN burbujita: lluvia de
+     moneditas doradas cayendo de arriba y aterrizando sobre la píldora
+     DURANTE el conteo corriendo de fromVal a toVal, y el sonido sonando
+     DURANTE ese mismo lapso. TODO arranca en el mismo instante: la
+     primera moneda, el primer paso del conteo y play() se disparan en
+     el mismo bloque síncrono, sin esperas entre sí. Con movimiento
+     reducido el número sale directo, sin lluvia ni conteo ni sonido. */
   function celebrate(fromVal,toVal,delay){
     var delta=Math.round((toVal-fromVal)*100)/100;
     if(delta<0.01||reduced){try{numEl.textContent=fmt(toVal);}catch(e){}return;}
@@ -978,28 +998,45 @@
     numEl.textContent=fmt(fromVal);
     setTimeout(function(){
       try{
-        var bub=document.createElement('div');
-        bub.className='balfx-bubble';
-        var img=document.createElement('img');
-        img.src=pill.getAttribute('data-balfx-coin');
-        img.alt='';
-        var tx=document.createElement('span');
-        tx.textContent='+$'+fmtAbs(delta);
-        bub.appendChild(img);
-        bub.appendChild(tx);
-        pill.appendChild(bub);
+        /* — Arranque único: lluvia + resplandor + sonido + conteo — */
+        var rain=document.createElement('div');
+        rain.className='balfx-rain';
+        var NCOINS=18;
+        for(var i=0;i<NCOINS;i++){
+          var c=document.createElement('img');
+          c.className='balfx-coin';
+          c.src=pill.getAttribute('data-balfx-coin');
+          c.alt='';
+          var sz=12+Math.round(Math.random()*8); /* 12–20 px */
+          c.style.width=sz+'px';
+          c.style.height=sz+'px';
+          c.style.left=(2+Math.random()*88)+'%'; /* repartidas sobre la píldora */
+          try{c.style.setProperty('--sway',((Math.random()*14)-7).toFixed(1)+'px');}catch(e){}
+          c.style.animationDelay=(Math.random()*0.6).toFixed(2)+'s'; /* entrada escalonada 0–0.6 s */
+          c.style.animationDuration=(1.15+Math.random()*0.45).toFixed(2)+'s'; /* caída 1.15–1.6 s */
+          rain.appendChild(c);
+        }
+        pill.appendChild(rain);
         pill.classList.add('balfx-glow');
         playSound();
         var t0=null,DUR=1400;
         function step(ts){
           if(!t0)t0=ts;
           var t=(ts-t0)/DUR;
-          if(t>=1){numEl.textContent=fmt(toVal);setTimeout(function(){try{bub.remove();}catch(e){}try{pill.classList.remove('balfx-glow');}catch(e){}busy=false;},650);return;}
+          if(t>=1){numEl.textContent=fmt(toVal);return;}
           var e=1-Math.pow(1-t,3);
           numEl.textContent=fmt(fromVal+(toVal-fromVal)*e);
           requestAnimationFrame(step);
         }
         requestAnimationFrame(step);
+        /* Cierre: la última moneda termina ~2.2 s (0.6 de escalonado +
+           1.6 de caída); a los 2.4 s se retira la lluvia y el resplandor
+           y la píldora queda limpia, sin nodos ni bloqueos. */
+        setTimeout(function(){
+          try{rain.remove();}catch(e){}
+          try{pill.classList.remove('balfx-glow');}catch(e){}
+          busy=false;
+        },2400);
       }catch(e){busy=false;try{numEl.textContent=fmt(toVal);}catch(_){}}
     },delay);
   }
