@@ -8696,17 +8696,17 @@ def set_result(tracked_id):
 @app.route("/quitar/<int:tracked_id>", methods=["POST"])
 @login_required
 def untrack(tracked_id):
-    db = get_db()
-    db.execute(
-        "DELETE FROM tracked_plays WHERE id = ? AND user_id = ?",
-        (tracked_id, session["user_id"]),
-    )
-    db.commit()
-    # AJAX (botón Undo de la tira inferior, 2026-10-31): misma baja, sin
-    # redirect ni flash.
+    # Candado (2026-11-01, orden de Alex): una jugada DESPUÉS de darle
+    # track queda FINAL — no se puede des-trackear ni revertir. El
+    # endpoint queda cerrado para TODAS las filas de tracked_plays
+    # (cualquier miembro, cualquier jugada): NO borra nada y responde
+    # bloqueado. La ruta se conserva para que cualquier cliente viejo
+    # que aún la llame reciba el candado en vez de un 404.
     if request.headers.get("X-Requested-With") == "XMLHttpRequest":
-        return jsonify({"ok": True})
-    flash("Play removed from your tracker.", "ok")
+        return jsonify(
+            {"ok": False, "error": "This play is locked once tracked."}
+        ), 403
+    flash("This play is locked once tracked.", "warn")
     return back("tracker")
 
 
