@@ -7102,10 +7102,11 @@ def tracker():
             past_due_mode=True,
             update_card_url=url_for("desbloquear_platinum"),
         )
-    # El admin no usa tracker personal: ve el oficial con tickets (2026-10-03,
-    # orden de Alex). Su "Alex Owner Results" estaba vacío y no tenía sentido.
-    if is_admin_for(current_user()):
-        return redirect(url_for("resultados"))
+    # 2026-11-01 (orden de Alex: «My Bets debe ser el tracker de
+    # usuario»): el admin YA NO rebota al tracker oficial — la rama
+    # del 2026-10-03 que lo mandaba a resultados queda eliminada.
+    # «My Bets» abre el centro personal completo para TODA cuenta con
+    # sesión, admin incluido, igual que para cualquier miembro.
     # Toggle Value Plays solo para Alex (2026-10-11, pedido por Alex)
     user = current_user()
     is_alex = (user["email"] or "").strip().lower() == ALEX_MEMBER_EMAIL
@@ -7114,19 +7115,14 @@ def tracker():
     # ya no exige Platinum — cualquier miembro con sesion y cuenta
     # verificada lo usa completo. (Entre 2026-10-15 y 2026-10-23 fue
     # solo para miembros que pagan; esa compuerta quedo eliminada. El
-    # visitante sin sesion sigue viendo la pagina publica de venta y
-    # el admin sigue yendo al oficial, arriba.)
+    # visitante sin sesion sigue viendo la pagina publica de venta.)
     if is_alex and request.args.get("view") == "values":
         return values_page()
-    # Modelo anterior restaurado (2026-10-23, orden de Alex: <<yo
-    # seguiria el modelo de tracker que teniamos anteriormente, el
-    # personal>>): /tracker vuelve a la vista personal compacta de
-    # siempre (dashboard.html); el centro completo de My Bets queda
-    # en /tracker/plays, enlazado desde abajo, como antes.
-    ctx = _tracker_context(user)
-    ctx["is_alex"] = is_alex
-    ctx["view"] = request.args.get("view", "personal")
-    return render_template("dashboard.html", **ctx)
+    # Centro completo de My Bets (2026-11-01, orden de Alex): /tracker
+    # sirve el mismo centro personal que /tracker/plays
+    # (tracker_plays.html); la vista compacta dashboard.html queda sin
+    # uso por esta ruta.
+    return _my_bets_center(user)
 
 
 def _my_bets_center(user):
