@@ -331,7 +331,7 @@
   </div>
 
   <div class="pillrow">
-    {% if balance_total is not none and balance_total_txt %}{% set balfx_es_alex = (is_alex if is_alex is defined else false) %}{% set balfx_disp = (balance_total - 500) if balfx_es_alex else balance_total %}<a class="balance" href="{{ url_for('cuenta') }}" data-balfx-val="{{ '%.2f'|format(balfx_disp) }}" data-balfx-signed="{{ 1 if balfx_es_alex else 0 }}" data-balfx-coin="{{ url_for('static', filename='img/sharp-coin.png') }}" data-balfx-audio="{{ url_for('static', filename='audio/coin.mp3') }}">{% else %}<a class="balance" href="{{ url_for('cuenta') }}">{% endif %}<span>View my balance</span><span><b id="balfx-num">{% if balance_total_txt %}{{ balance_total_txt }}{% elif bankroll %}${{ '%.2f'|format(bankroll) }}{% else %}—{% endif %}</b> ›</span></a>
+    {% if balance_total is not none and balance_total_txt %}{% set balfx_es_alex = (is_alex if is_alex is defined else false) %}{% set balfx_disp = (balance_total - 500) if balfx_es_alex else balance_total %}<a class="balance" href="{{ url_for('cuenta') }}" data-balfx-val="{{ '%.2f'|format(balfx_disp) }}" data-balfx-signed="{{ 1 if balfx_es_alex else 0 }}" data-balfx-coin="{{ url_for('static', filename='img/sharp-coin.png') }}">{% else %}<a class="balance" href="{{ url_for('cuenta') }}">{% endif %}<span>View my balance</span><span><b id="balfx-num">{% if balance_total_txt %}{{ balance_total_txt }}{% elif bankroll %}${{ '%.2f'|format(bankroll) }}{% else %}—{% endif %}</b> ›</span></a>
     <a class="pill" href="{{ url_for('official_tracker') }}" style="font-size:10.5px;font-weight:300;">📊 Full record ›</a>
     <button class="menubtn" type="button" id="tst-menubtn" aria-expanded="false" onclick="var m=document.getElementById('tst-menu-sheet');var o=m.hidden;m.hidden=!o;this.setAttribute('aria-expanded',o?'true':'false');document.body.style.overflow=o?'hidden':'';" style="cursor:pointer;padding:0;">☰</button>
   </div>
@@ -900,8 +900,8 @@
    corregido por él el mismo día (21:35 ET y 21:49 ET): al entrar al
    Dashboard, si el balance mostrado SUBIÓ desde la última visita en este
    dispositivo, cae una LLUVIA de moneditas doradas sobre la píldora
-   MIENTRAS el número sube corriendo, con el sonido de monedas sonando
-   DURANTE la entrada del dinero; y con el Dashboard abierto y visible,
+   MIENTRAS el número sube corriendo; y con el Dashboard abierto y
+   visible,
    un poll ligero celebra EN VIVO cada liquidación juego a juego en
    cuanto el balance sube. SIN burbujita (orden de Alex 21:49 ET: «Yo NO
    quiero burbujita. Lo que quiero es moneditas amarillas de dinero
@@ -923,18 +923,18 @@
    instante, cuando tú detectes que ya se acabó el juego, que ese efecto
    ya salga»; 21:49 ET: «Yo NO quiero burbujita. Lo que quiero es
    moneditas amarillas de dinero entrando a mi número MIENTRAS VA
-   CRECIENDO» y el sonido DURANTE la entrada del dinero, no después):
+   CRECIENDO»):
    (1) AL ENTRAR: compara el balance mostrado contra la marca local de la
    última visita (tst-balance-seen). Primera vez: guarda la marca en
    silencio. Si subió: LLUVIA de moneditas doradas cayendo sobre la
-   píldora MIENTRAS el número sube corriendo del valor viejo al nuevo,
-   con el sonido propio de monedas (static/audio/coin.mp3) sonando
-   DURANTE ese mismo lapso — arranca en el mismo instante que la primera
-   moneda y el primer paso del conteo, nunca después.
+   píldora MIENTRAS el número sube corriendo del valor viejo al nuevo —
+   la primera moneda y el primer paso del conteo arrancan en el mismo
+   instante. Efecto SOLO VISUAL, sin sonido (orden de Alex 2026-10-31
+   22:03 ET: el sonido quedó cancelado definitivamente).
    (2) CON EL DASHBOARD ABIERTO: poll ligero a /api/mi-balance cada ~40 s,
    SOLO con la página visible. Si el balance subió — porque una jugada se
    liquidó juego a juego vía /admin/api/settle-live — celebra EN VIVO con
-   la misma lluvia, el conteo corriendo y el sonidito simultáneos. Si
+   la misma lluvia y el conteo corriendo. Si
    bajó o no cambió: actualiza en silencio. Errores de red: silencio.
    La marca se actualiza SIEMPRE: cada subida celebra una sola vez por
    dispositivo. */
@@ -954,43 +954,18 @@
   function setMark(v){try{localStorage.setItem(K,String(v));}catch(e){}}
   var reduced=false;
   try{reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;}catch(e){}
-  /* Sonido propio: se precarga y se desbloquea con el primer toque
-     (regla de iOS: ningún audio suena sin un gesto previo del usuario).
-     CLAVE (bug que reportó Alex el 2026-10-31: «el sonido sale ya después
-     que el dinero cayó, como cinco segundos tarde»): si play() se llama
-     SIN desbloqueo previo, iOS lo deja PENDIENTE y lo suelta segundos
-     después, cuando el usuario toca otra cosa — el sonido fantasma
-     tardío. Por eso playSound() SOLO llama play() si el audio ya fue
-     desbloqueado por un gesto; si no, no llama nada (el visual corre
-     igual, sin sonido, y ningún sonido aparece después a destiempo). */
-  var snd=null,sndUnlocked=false;
-  try{
-    snd=new Audio(pill.getAttribute('data-balfx-audio'));
-    snd.preload='auto';
-    var unlock=function(){
-      sndUnlocked=true; /* el gesto en curso ES el desbloqueo */
-      try{
-        var p=snd.play();
-        if(p&&p.then){p.then(function(){try{snd.pause();snd.currentTime=0;}catch(e){}}).catch(function(){});}
-        else{try{snd.pause();snd.currentTime=0;}catch(e){}}
-      }catch(e){}
-      document.removeEventListener('pointerdown',unlock);
-    };
-    document.addEventListener('pointerdown',unlock);
-  }catch(e){snd=null;}
-  function playSound(){
-    if(!snd||!sndUnlocked)return;
-    try{snd.currentTime=0;var p=snd.play();if(p&&p.catch){p.catch(function(){});}}catch(e){}
-  }
+  /* SIN SONIDO (orden de Alex 2026-10-31 22:03 ET): el efecto es solo
+     visual. Toda la ruta de reproducción que vivía aquí (el elemento de
+     sonido, su desbloqueo por gesto y la función que lo disparaba)
+     quedó eliminada; esta página no reproduce ningún sonido. */
   var busy=false;
   /* La celebración (única, reutilizada por la entrada y por el poll) —
      diseño final de Alex (2026-10-31 21:49 ET), SIN burbujita: lluvia de
      moneditas doradas cayendo de arriba y aterrizando sobre la píldora
-     DURANTE el conteo corriendo de fromVal a toVal, y el sonido sonando
-     DURANTE ese mismo lapso. TODO arranca en el mismo instante: la
-     primera moneda, el primer paso del conteo y play() se disparan en
-     el mismo bloque síncrono, sin esperas entre sí. Con movimiento
-     reducido el número sale directo, sin lluvia ni conteo ni sonido. */
+     DURANTE el conteo corriendo de fromVal a toVal. TODO arranca en el
+     mismo instante: la primera moneda y el primer paso del conteo se
+     disparan en el mismo bloque síncrono, sin esperas entre sí. Con
+     movimiento reducido el número sale directo, sin lluvia ni conteo. */
   function celebrate(fromVal,toVal,delay){
     var delta=Math.round((toVal-fromVal)*100)/100;
     if(delta<0.01||reduced){try{numEl.textContent=fmt(toVal);}catch(e){}return;}
@@ -998,7 +973,7 @@
     numEl.textContent=fmt(fromVal);
     setTimeout(function(){
       try{
-        /* — Arranque único: lluvia + resplandor + sonido + conteo — */
+        /* — Arranque único: lluvia + resplandor + conteo — */
         var rain=document.createElement('div');
         rain.className='balfx-rain';
         var NCOINS=18;
@@ -1018,7 +993,6 @@
         }
         pill.appendChild(rain);
         pill.classList.add('balfx-glow');
-        playSound();
         var t0=null,DUR=1400;
         function step(ts){
           if(!t0)t0=ts;
