@@ -8559,6 +8559,30 @@ def api_admin_autotrack():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+def _track_ajax_payload(db, play, already=False):
+    """Respuesta AJAX del track (tira inferior estilo 2026-10-31): incluye
+    la fila tracked del miembro (id, monto, cuota) para que la tarjeta
+    pinte la tira con Undo / Change stake sin una segunda llamada."""
+    payload = {"ok": True}
+    if already:
+        payload["already"] = True
+    try:
+        row = db.execute(
+            "SELECT id, stake_monto, cuota FROM tracked_plays "
+            "WHERE user_id = ? AND play_id = ?",
+            (session["user_id"], play["id"]),
+        ).fetchone()
+    except Exception:
+        row = None
+    if row:
+        payload["tracked_id"] = row["id"]
+        payload["pick"] = play.get("pick", "")
+        payload["cuota"] = int(row["cuota"])
+        # float(): en Postgres stake_monto puede llegar como Decimal.
+        payload["stake_monto"] = float(row["stake_monto"])
+    return payload
+
+
 @app.route("/track/<play_id>", methods=["GET", "POST"])
 @login_required
 def track(play_id):
@@ -8611,11 +8635,11 @@ def track(play_id):
         )
         db.commit()
         if _is_ajax:
-            return jsonify({"ok": True})
+            return jsonify(_track_ajax_payload(db, play))
         flash("Play added to your tracker.", "ok")
     except INTEGRITY_ERRORS:
         if _is_ajax:
-            return jsonify({"ok": True, "already": True})
+            return jsonify(_track_ajax_payload(db, play, already=True))
         flash("That play is already in your tracker.", "warn")
     except Exception:
         # Blindaje 2026-10-12: cualquier otro error de BD devuelve JSON al
@@ -8663,8 +8687,57 @@ def untrack(tracked_id):
         (tracked_id, session["user_id"]),
     )
     db.commit()
+    # AJAX (botón Undo de la tira inferior, 2026-10-31): misma baja, sin
+    # redirect ni flash.
+    if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+        return jsonify({"ok": True})
     flash("Play removed from your tracker.", "ok")
     return back("tracker")
+
+
+@app.route("/track-stake/<int:tracked_id>", methods=["POST"])
+@login_required
+def track_stake(tracked_id):
+    """Change stake de la tira inferior (2026-10-31): el miembro ajusta el
+    monto de SU jugada trackeada (solo suyas, solo pendientes). Las
+    unidades se reescalan con el mismo $/unidad con el que la fila nació
+    en track() (stake_monto / stake_unidades), igual que
+    stake_personalizado deriva el monto de las unidades del miembro."""
+    data = request.get_json(silent=True) or {}
+    try:
+        nuevo = float(data.get("stake_monto"))
+    except (TypeError, ValueError):
+        return jsonify({"ok": False, "error": "Enter a valid amount."}), 400
+    if not (0 < nuevo <= 100000):
+        return jsonify({"ok": False, "error": "Enter a valid amount."}), 400
+    db = get_db()
+    row = db.execute(
+        "SELECT * FROM tracked_plays WHERE id = ? AND user_id = ?",
+        (tracked_id, session["user_id"]),
+    ).fetchone()
+    if not row:
+        return jsonify({"ok": False, "error": "Play not found."}), 404
+    if row["resultado"]:
+        return jsonify({"ok": False, "error": "This play is already settled."}), 400
+    # float(): montos de Postgres pueden llegar como Decimal.
+    monto_viejo = float(row["stake_monto"])
+    unidades_viejas = float(row["stake_unidades"])
+    if monto_viejo > 0 and unidades_viejas > 0:
+        nuevas_unidades = round(nuevo * unidades_viejas / monto_viejo, 4)
+    else:
+        nuevas_unidades = unidades_viejas
+    db.execute(
+        "UPDATE tracked_plays SET stake_monto = ?, stake_unidades = ? "
+        "WHERE id = ?",
+        (round(nuevo, 2), nuevas_unidades, tracked_id),
+    )
+    db.commit()
+    return jsonify({
+        "ok": True,
+        "stake_monto": round(nuevo, 2),
+        "stake_unidades": nuevas_unidades,
+        "to_win": round(nuevo * american_profit_ratio(row["cuota"]), 2),
+    })
 
 
 @app.route("/masterclass")
