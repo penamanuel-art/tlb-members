@@ -52,6 +52,7 @@
   .wgt-actions form { margin:0; }
   .wgt-btn { border:1px solid #24334d; background:#131e31; color:#eef2f8; border-radius:8px; width:34px; height:28px; font-size:.9rem; cursor:pointer; }
   .wgt-btn.win { color:#4ade80; } .wgt-btn.loss { color:#f87171; } .wgt-btn.push { color:#e8c766; }
+  .wgt-locked { display:inline-flex; align-items:center; gap:5px; border:1px solid #24334d; background:#131e31; color:#8b98ad; border-radius:8px; height:28px; padding:0 10px; font-size:.78rem; font-weight:700; cursor:default; }
   .mb-edit { color:#2ee6a8; font-size:12.5px; font-weight:700; text-decoration:none; margin-left:4px; }
   .mb-foto { width:100%; border-radius:12px; margin-top:10px; border:1px solid rgba(255,255,255,.06); }
   .wgt-empty { text-align:center; color:#8b98ad; padding:28px 12px; line-height:1.6; }
@@ -198,7 +199,7 @@
       <form method="post" action="{{ url_for('set_result', tracked_id=r.id) }}"><input type="hidden" name="resultado" value="W"><button class="wgt-btn win" type="submit" title="Mark as won">✓</button></form>
       <form method="post" action="{{ url_for('set_result', tracked_id=r.id) }}"><input type="hidden" name="resultado" value="L"><button class="wgt-btn loss" type="submit" title="Mark as lost">✕</button></form>
       <form method="post" action="{{ url_for('set_result', tracked_id=r.id) }}"><input type="hidden" name="resultado" value=""><button class="wgt-btn" type="submit" title="Back to pending">↺</button></form>
-      <form class="tkc-remove" method="post" action="{{ url_for('untrack', tracked_id=r.id) }}"><button class="wgt-btn" type="submit" title="Remove">🗑</button></form>
+      <span class="wgt-locked" title="This play is locked once tracked.">🔒 Locked</span>
       {% endif %}
     </div>
   </article>
@@ -224,34 +225,4 @@
     <button class="mb-btn ghost" type="submit">Reset my stats</button>
   </form>
 </div>
-<script>
-// Remove de jugadas trackeadas (2026-10-31): el form clásico dependía del
-// confirm() nativo en onsubmit — en navegadores/webviews que suprimen los
-// diálogos JS el envío se cancelaba en silencio y la fila nunca se borraba.
-// Ahora va por fetch con X-Requested-With (untrack() responde {"ok": true})
-// y la fila se quita en vivo, igual que el Undo de la tira inferior. Sin JS,
-// el form sigue funcionando como POST normal con redirect.
-(function () {
-  document.querySelectorAll('form.tkc-remove').forEach(function (f) {
-    f.addEventListener('submit', function (e) {
-      e.preventDefault();
-      var btn = f.querySelector('button');
-      if (btn) btn.disabled = true;
-      fetch(f.action, {
-        method: 'POST',
-        headers: { 'X-Requested-With': 'XMLHttpRequest' },
-        credentials: 'same-origin'
-      }).then(function (r) { return r.json(); })
-        .then(function (d) {
-          if (d && d.ok) {
-            var row = f.closest('.wgt-row');
-            if (row) row.remove();
-            if (!document.querySelector('.wgt-row')) location.reload();
-          } else if (btn) { btn.disabled = false; }
-        })
-        .catch(function () { if (btn) btn.disabled = false; });
-    });
-  });
-})();
-</script>
 {% endblock %}
