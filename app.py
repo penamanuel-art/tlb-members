@@ -72,7 +72,7 @@ ASSET_V = _asset_version()
 # email or backend-only commits. Ordinary deploys (plays, tickets, email
 # tweaks, internal fixes) must NOT change this value, so members only see
 # the banner when there is a real release for them.
-PUBLIC_RELEASE = "2026-10-31"
+PUBLIC_RELEASE = "2026-11-01"
 
 TZ = ZoneInfo("America/New_York")
 
