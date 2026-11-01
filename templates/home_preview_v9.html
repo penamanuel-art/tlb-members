@@ -641,6 +641,55 @@
   [style*="background:#161c23"]{background:#1A252B!important}
   [style*="linear-gradient(180deg,#1c2431,#161c23)"]{background:#1A252B!important}
   [style*="background:#2e5a3a"]{background:#0B0E15!important}
+  /* === COMPLEMENTO PROBALYST (2026-11-01): tarjetas de jugada del parcial compartido
+     _play_card_v5.html y seccion "Hot right now". El parcial NO se toca (es compartido
+     con el home en vivo): todo se fuerza desde aqui con body.pv-bgimg + !important.
+     Los rojos de perdida (.v5c-res.lost, .rh-dots i.off) se quedan. === */
+  /* Tarjeta: borde izquierdo y fondos que faltaban */
+  body.pv-bgimg .v5c-edge,body.pv-bgimg .v5c-edge.gold{background:#F6FE5D!important}
+  body.pv-bgimg .v5c-notch{background:#0B0E15!important}
+  body.pv-bgimg .v5c-div{border-top-color:#2A363E!important}
+  body.pv-bgimg .v5c-liga{border-color:#2A363E!important}
+  body.pv-bgimg .v5c-strip{background:#0B0E15!important;border-color:#2A363E!important}
+  body.pv-bgimg .v5c-btn{border-color:#2A363E!important}
+  /* Tarjeta: pildoras de nivel FREE PICK / GOLD / VALUE / PLATINUM */
+  body.pv-bgimg .v5c-pill.plat,body.pv-bgimg .v5c-pill.gold{color:#F6FE5D!important;border-color:rgba(246,254,93,.5)!important;background:rgba(246,254,93,.10)!important}
+  /* Tarjeta: sello de ticket y estados (WON lima; LOST rojo intacto) */
+  body.pv-bgimg .v5c-matched{background:#F6FE5D!important;color:#0B0E15!important}
+  body.pv-bgimg .v5c-pend{color:#F6FE5D!important;border-color:rgba(246,254,93,.45)!important}
+  body.pv-bgimg .v5c-res.won{color:#F6FE5D!important;background:rgba(246,254,93,.12)!important}
+  body.pv-bgimg .v5c-res.pend{color:#F6FE5D!important;background:rgba(246,254,93,.08)!important}
+  /* Tarjeta: montos y boton Track */
+  body.pv-bgimg .v5c-amt{color:#F6FE5D!important}
+  body.pv-bgimg .v5c-strip-v{color:#F6FE5D!important}
+  body.pv-bgimg .v5c-track{background:#F6FE5D!important;border-color:#F6FE5D!important;color:#0B0E15!important}
+  body.pv-bgimg .v5c-tracked{color:#F6FE5D!important;border-color:rgba(246,254,93,.5)!important}
+  /* Hoja de detalle de la tarjeta (bottom sheet) */
+  body.pv-bgimg .v5sheet-in{background:#1A252B!important}
+  body.pv-bgimg .v5shead{background:#1A252B!important}
+  body.pv-bgimg .v5actions{background:#1A252B!important}
+  body.pv-bgimg .v5kick,body.pv-bgimg .v5kick.gold{color:#F6FE5D!important}
+  body.pv-bgimg .v5prog{color:#F6FE5D!important;border-color:rgba(246,254,93,.5)!important}
+  body.pv-bgimg .v5wu{border-color:rgba(246,254,93,.3)!important}
+  body.pv-bgimg .v5wu-h{color:#F6FE5D!important}
+  body.pv-bgimg .v5wu-p b{color:#F6FE5D!important}
+  body.pv-bgimg .v5big-track{color:#F6FE5D!important;background:rgba(246,254,93,.08)!important;border-color:rgba(246,254,93,.55)!important}
+  body.pv-bgimg .v5big-tracked{color:#F6FE5D!important;border-color:rgba(246,254,93,.5)!important}
+  body.pv-bgimg .v5share{color:#F6FE5D!important}
+  body.pv-bgimg .tstc-tracked{color:#F6FE5D!important}
+  body.pv-bgimg [style*="color:#2fe6a7"]{color:#F6FE5D!important}
+  /* Tira de track y hoja de stake (parcial compartido) */
+  body.pv-bgimg .tst-strip{background:#1A252B!important;border-color:rgba(246,254,93,.55)!important}
+  body.pv-bgimg .tst-strip-txt b{color:#F6FE5D!important}
+  body.pv-bgimg .tst-strip-btn.gold{background:#F6FE5D!important;border-color:#F6FE5D!important;color:#0B0E15!important}
+  body.pv-bgimg .tst-sheet{background:#1A252B!important;border-color:#2A363E!important}
+  body.pv-bgimg .tst-sheet-field{background:#0B0E15!important;border-color:#2A363E!important}
+  body.pv-bgimg .tst-sheet-towin b{color:#F6FE5D!important}
+  body.pv-bgimg .tst-sheet-link{color:#F6FE5D!important}
+  body.pv-bgimg .tst-sheet-btn.save{background:#F6FE5D!important;border-color:#F6FE5D!important;color:#0B0E15!important}
+  /* Hot right now: la variable --rhc (inline desde el servidor) manda en borde, badge,
+     porcentaje, puntos y enlace — se fuerza a lima de una sola vez */
+  body.pv-bgimg .rh-card{--rhc:#F6FE5D!important}
 </style>
 </body>
 </html>
