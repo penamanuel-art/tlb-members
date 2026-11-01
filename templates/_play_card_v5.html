@@ -107,6 +107,27 @@ body.v5-sheet-open .ticker-dock-bottom,body.v5-sheet-open .v2-bottomnav,body.v5-
 .tstc-bubble{position:fixed;z-index:100000;background:#272D36;border:1px solid rgba(255,255,255,.18);border-radius:12px;padding:8px 11px;font-size:12px;font-weight:300;line-height:1.45;color:#eef1f7;text-align:center;width:max-content;max-width:260px;pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,.45)}
 .tstc-bubble:after{content:'';position:absolute;top:100%;left:var(--tstc-tail,50%);transform:translateX(-50%);border:6px solid transparent;border-top-color:#272D36}
 .tstc-bubble.below:after{top:auto;bottom:100%;border-top-color:transparent;border-bottom-color:#272D36}
+/* Tira inferior de track (2026-10-31): confirmación con Undo / Change stake / My Bets */
+.tst-strip{position:fixed;left:10px;right:10px;bottom:86px;z-index:100001;background:#14161d;border:1px solid rgba(232,199,102,.55);border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.55);padding:10px 12px;display:flex;flex-direction:column;gap:8px;color:#eef1f7;font-size:13px;box-sizing:border-box}
+.tst-strip-txt{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tst-strip-txt b{color:#e8c766}
+.tst-strip-btns{display:flex;gap:8px;align-items:center}
+.tst-strip-btn{flex:1;text-align:center;font-size:12.5px;font-weight:600;border-radius:10px;padding:8px 4px;cursor:pointer;text-decoration:none;border:1px solid #262C36;background:#1D2029;color:#eef1f7;box-sizing:border-box}
+.tst-strip-btn.gold{background:#e8c766;border-color:#e8c766;color:#1D2029}
+.tst-strip-x{flex:0 0 auto;width:34px;font-weight:400;color:#A3AAB6}
+.tst-sheet-ov{position:fixed;inset:0;z-index:100002;background:rgba(4,6,10,.66);display:flex;align-items:flex-end;justify-content:center}
+.tst-sheet{background:#14161d;border:1px solid #262C36;border-bottom:none;border-radius:18px 18px 0 0;width:100%;max-width:430px;padding:18px 16px calc(16px + env(safe-area-inset-bottom));color:#eef1f7;box-sizing:border-box}
+.tst-sheet h3{margin:0 0 4px;font-size:16px;font-weight:700}
+.tst-sheet-sub{font-size:12.5px;color:#A3AAB6;margin:0 0 12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tst-sheet-field{display:flex;align-items:center;background:#1D2029;border:1px solid #262C36;border-radius:12px;padding:0 12px}
+.tst-sheet-field span{font-size:16px;color:#A3AAB6;margin-right:6px}
+.tst-sheet-field input{flex:1;background:transparent;border:none;outline:none;color:#eef1f7;font-size:17px;font-weight:600;padding:12px 0;min-width:0}
+.tst-sheet-towin{font-size:13px;color:#A3AAB6;margin:10px 2px 0}
+.tst-sheet-towin b{color:#2fe6a7}
+.tst-sheet-link{display:inline-block;margin-top:10px;font-size:13px;font-weight:600;color:#e8c766;background:none;border:none;padding:0;cursor:pointer}
+.tst-sheet-btns{display:flex;gap:9px;margin-top:16px}
+.tst-sheet-btn{flex:1;text-align:center;font-size:14px;font-weight:700;border-radius:12px;padding:12px 4px;cursor:pointer;border:1px solid #262C36;background:#1D2029;color:#eef1f7}
+.tst-sheet-btn.save{background:#11CB87;border-color:#11CB87;color:#04150d}
 </style>
 {% if is_alex %}
 <style>
@@ -258,12 +279,26 @@ body.v2 .v5c{background:linear-gradient(180deg,#0B0E13,#1D2029)}
       return r.json().then(function(j){ return {status: r.status, body: j}; });
     }).then(function(res){
       if (res.body && res.body.ok) {
+        var origNode = a.cloneNode(true);
+        origNode.removeAttribute('data-busy');
+        origNode.textContent = orig;
         var s = document.createElement('span');
         s.className = 'v5c-tracked';
         s.innerHTML = '&check; Tracked';
         s.style.flex = '1';
         a.replaceWith(s);
         showTrackBubble(s);
+        if (res.body.tracked_id) {
+          showTrackStrip({
+            id: res.body.tracked_id,
+            pick: res.body.pick || '',
+            cuota: res.body.cuota,
+            monto: res.body.stake_monto,
+            cardMonto: res.body.stake_monto,
+            spanEl: s,
+            origNode: origNode
+          });
+        }
       } else {
         a.textContent = orig;
         delete a.dataset.busy;
@@ -309,6 +344,156 @@ body.v2 .v5c{background:linear-gradient(180deg,#0B0E13,#1D2029)}
     setTimeout(dismiss, 5000);
     window.addEventListener('scroll', dismiss, true);
     window.addEventListener('resize', dismiss);
+  }
+  /* Tira inferior de track (2026-10-31): Undo / Change stake / My Bets */
+  var tstStrip = null, tstStripTimer = null, tstState = null, tstSheet = null;
+  var TST_QUITAR_BASE = "{{ url_for('untrack', tracked_id=0) }}".replace(/0$/, '');
+  var TST_STAKE_BASE = "{{ url_for('track_stake', tracked_id=0) }}".replace(/0$/, '');
+  var TST_TRACKER_URL = "{{ url_for('tracker') }}";
+  function tstMoney(n) {
+    n = Math.round(Number(n) * 100) / 100;
+    return '$' + (n % 1 === 0 ? String(n) : n.toFixed(2));
+  }
+  function tstRatio(c) {
+    c = parseInt(c, 10);
+    if (!c) return 0;
+    return c > 0 ? c / 100 : 100 / Math.abs(c);
+  }
+  function tstArmTimer() {
+    if (tstStripTimer) clearTimeout(tstStripTimer);
+    tstStripTimer = setTimeout(function(){ hideTrackStrip(); }, 15000);
+  }
+  function hideTrackStrip(keepState) {
+    if (tstStripTimer) { clearTimeout(tstStripTimer); tstStripTimer = null; }
+    if (tstStrip && tstStrip.parentNode) tstStrip.parentNode.removeChild(tstStrip);
+    tstStrip = null;
+    if (!keepState) tstState = null;
+  }
+  function closeSheet() {
+    if (tstSheet && tstSheet.parentNode) tstSheet.parentNode.removeChild(tstSheet);
+    tstSheet = null;
+  }
+  function showTrackStrip(st) {
+    tstState = st;
+    hideTrackStrip(true);
+    closeSheet();
+    var d = document.createElement('div');
+    d.className = 'tst-strip';
+    d.innerHTML = '<div class="tst-strip-txt">&check; Tracked &middot; <span class="tst-strip-pick"></span> &mdash; <b class="tst-strip-monto"></b></div>' +
+      '<div class="tst-strip-btns">' +
+      '<button type="button" class="tst-strip-btn" data-act="undo">Undo</button>' +
+      '<button type="button" class="tst-strip-btn gold" data-act="stake">Change stake</button>' +
+      '<a class="tst-strip-btn" href="' + TST_TRACKER_URL + '">My Bets</a>' +
+      '<button type="button" class="tst-strip-btn tst-strip-x" data-act="close" aria-label="Close">&times;</button></div>';
+    d.querySelector('.tst-strip-pick').textContent = st.pick;
+    d.querySelector('.tst-strip-monto').textContent = tstMoney(st.monto);
+    d.addEventListener('click', function(e){
+      var btn = e.target.closest('[data-act]');
+      if (!btn) return;
+      var act = btn.getAttribute('data-act');
+      if (act === 'close') hideTrackStrip();
+      else if (act === 'undo') tstUndo(btn);
+      else if (act === 'stake') tstOpenSheet();
+    });
+    document.body.appendChild(d);
+    tstStrip = d;
+    tstArmTimer();
+  }
+  function tstUndo(btn) {
+    if (!tstState || btn.dataset.busy) return;
+    btn.dataset.busy = '1';
+    btn.textContent = '…';
+    fetch(TST_QUITAR_BASE + tstState.id, {
+      method: 'POST',
+      headers: {'X-Requested-With': 'XMLHttpRequest'},
+      credentials: 'same-origin'
+    }).then(function(r){
+      return r.json().then(function(j){ return {status: r.status, body: j}; });
+    }).then(function(res){
+      if (res.body && res.body.ok) {
+        var st = tstState;
+        closeSheet();
+        hideTrackStrip();
+        if (st && st.spanEl && st.spanEl.parentNode && st.origNode) st.spanEl.replaceWith(st.origNode);
+      } else {
+        delete btn.dataset.busy;
+        btn.textContent = 'Undo';
+        alert((res.body && res.body.error) || 'Could not undo the track.');
+      }
+    }).catch(function(){
+      delete btn.dataset.busy;
+      btn.textContent = 'Undo';
+      alert('Could not undo the track. Please try again.');
+    });
+  }
+  function tstOpenSheet() {
+    if (!tstState) return;
+    closeSheet();
+    var st = tstState;
+    var ov = document.createElement('div');
+    ov.className = 'tst-sheet-ov';
+    ov.innerHTML = '<div class="tst-sheet">' +
+      '<h3>Your stake</h3>' +
+      '<p class="tst-sheet-sub"></p>' +
+      '<div class="tst-sheet-field"><span>$</span><input type="number" inputmode="decimal" min="1" step="any"></div>' +
+      '<p class="tst-sheet-towin"></p>' +
+      '<button type="button" class="tst-sheet-link">Use card amount (' + tstMoney(st.cardMonto) + ')</button>' +
+      '<div class="tst-sheet-btns"><button type="button" class="tst-sheet-btn" data-sact="cancel">Cancel</button>' +
+      '<button type="button" class="tst-sheet-btn save" data-sact="save">Save</button></div></div>';
+    ov.querySelector('.tst-sheet-sub').textContent = st.pick;
+    var input = ov.querySelector('input');
+    input.value = st.monto;
+    var towin = ov.querySelector('.tst-sheet-towin');
+    function upd() {
+      var v = parseFloat(input.value);
+      if (isFinite(v) && v > 0) {
+        towin.innerHTML = 'To win <b>' + tstMoney(v * tstRatio(st.cuota)) + '</b> if it hits.';
+      } else {
+        towin.textContent = 'Enter the amount you are putting on this play.';
+      }
+    }
+    input.addEventListener('input', upd);
+    upd();
+    ov.querySelector('.tst-sheet-link').addEventListener('click', function(){ input.value = st.cardMonto; upd(); });
+    ov.addEventListener('click', function(e){ if (e.target === ov) closeSheet(); });
+    ov.querySelector('[data-sact="cancel"]').addEventListener('click', closeSheet);
+    ov.querySelector('[data-sact="save"]').addEventListener('click', function(){ tstSaveStake(this, input); });
+    document.body.appendChild(ov);
+    tstSheet = ov;
+    tstArmTimer();
+  }
+  function tstSaveStake(btn, input) {
+    if (!tstState || btn.dataset.busy) return;
+    var v = parseFloat(input.value);
+    if (!isFinite(v) || v <= 0) { alert('Enter a valid amount.'); return; }
+    btn.dataset.busy = '1';
+    btn.textContent = 'Saving…';
+    fetch(TST_STAKE_BASE + tstState.id, {
+      method: 'POST',
+      headers: {'X-Requested-With': 'XMLHttpRequest', 'Content-Type': 'application/json'},
+      credentials: 'same-origin',
+      body: JSON.stringify({stake_monto: v})
+    }).then(function(r){
+      return r.json().then(function(j){ return {status: r.status, body: j}; });
+    }).then(function(res){
+      if (res.body && res.body.ok) {
+        tstState.monto = res.body.stake_monto;
+        if (tstStrip) {
+          var m = tstStrip.querySelector('.tst-strip-monto');
+          if (m) m.textContent = tstMoney(res.body.stake_monto);
+        }
+        closeSheet();
+        tstArmTimer();
+      } else {
+        delete btn.dataset.busy;
+        btn.textContent = 'Save';
+        alert((res.body && res.body.error) || 'Could not save the new stake.');
+      }
+    }).catch(function(){
+      delete btn.dataset.busy;
+      btn.textContent = 'Save';
+      alert('Could not save the new stake. Please try again.');
+    });
   }
 })();
 </script>
