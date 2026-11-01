@@ -169,12 +169,13 @@
   .tst-livetitle{display:block;font-size:17px;font-weight:400;line-height:1.25}
   .tst-livesub{display:block;color:#A3AAB6;font-size:12.5px;font-weight:300;line-height:1.45;margin-top:2px}
   .tst-livearr{color:#A3AAB6;font-size:20px;font-weight:300}
-  .tst-playshead{display:flex;align-items:center;gap:10px;margin:8px 0 14px}
-  .tst-playslevel{font-size:14px;font-weight:400;color:#9CA0AC}
+  .tst-playshead{display:flex;align-items:center;gap:10px;margin:8px 0 14px;flex-wrap:wrap}
+  .tst-playslevels{flex:0 0 100%;display:flex;gap:16px;align-items:center}
+  .tst-playslevel{font-size:14px;font-weight:400;color:#9CA0AC;white-space:nowrap}
   .tst-officials{display:flex;align-items:center;gap:10px;margin:0 0 14px}
   .tst-officials-pill{font-size:11px;font-weight:600;letter-spacing:1.4px;color:#8CC260;border:1px solid rgba(140,194,96,.5);background:rgba(140,194,96,.10);padding:6px 11px;border-radius:9px}
   .tst-officials-n{font-size:14px;font-weight:400;color:#9CA0AC}
-  .tst-playshead h2{margin:0;font-size:22px;font-weight:400}
+  .tst-playshead h2{margin:0;font-size:22px;font-weight:400;white-space:nowrap}
   .tst-lvpill{border:1px solid #2ee6a8;color:#2ee6a8;border-radius:999px;padding:6px 12px;font-size:13px;font-weight:400;white-space:nowrap}
   .tst-lvpill.plat{border-color:#e8c766;color:#e8c766}
   .tst-refresh{margin-left:auto;display:flex;align-items:center;gap:6px;background:#1E222B;border:1px solid #343B47;border-radius:12px;padding:9px 13px;color:#F2F3F5;font-size:14px;font-weight:400;white-space:nowrap;cursor:pointer}
@@ -438,7 +439,7 @@
   </div>
 
 
-  {% if plays %}<div class="tst-playshead"><h2>Your plays</h2><button class="tst-refresh" type="button" style="margin-left:auto" onclick="location.reload()">↻ Refresh</button></div><div class="tst-officials"><span class="tst-officials-pill">OFFICIALS</span><span class="tst-officials-n">{% if miembro_platinum %}{{ plays|length }} {% if plays|length == 1 %}play{% else %}plays{% endif %}{% else %}{{ plays|selectattr('nivel','equalto','FREE')|list|length }} {% if plays|selectattr('nivel','equalto','FREE')|list|length == 1 %}play{% else %}plays{% endif %}{% endif %}</span></div>{% endif %}
+  {% if plays %}<div class="tst-playshead"><h2>Your plays</h2><button class="tst-refresh" type="button" style="margin-left:auto" onclick="location.reload()">↻ Refresh</button>{% set hay_gratis = plays|selectattr('nivel','equalto','FREE')|list|length > 0 %}{% set hay_gold = plays|selectattr('nivel','equalto','GOLD')|list|length > 0 %}{% if miembro_platinum or hay_gratis %}<div class="tst-playslevels">{% if miembro_platinum %}{% if hay_gratis %}<span class="tst-playslevel">Free Picks</span>{% endif %}{% if hay_gold %}<span class="tst-playslevel">Gold</span>{% endif %}<span class="tst-playslevel">Platinum</span>{% elif hay_gratis %}<span class="tst-playslevel">Free Picks</span>{% endif %}</div>{% endif %}</div><div class="tst-officials"><span class="tst-officials-pill">OFFICIALS</span><span class="tst-officials-n">{% if miembro_platinum %}{{ plays|length }} {% if plays|length == 1 %}play{% else %}plays{% endif %}{% else %}{{ plays|selectattr('nivel','equalto','FREE')|list|length }} {% if plays|selectattr('nivel','equalto','FREE')|list|length == 1 %}play{% else %}plays{% endif %}{% endif %}</span></div>{% endif %}
   {% set tracked_ids = tracked_ids|default([]) %}
   {% set frees = plays|selectattr('nivel','equalto','FREE')|list %}
   {% set golds = plays|selectattr('nivel','equalto','GOLD')|list %}
