@@ -3421,6 +3421,21 @@ def _book_balance_total(db, user):
         return None
 
 
+def _balance_display_value(db, user):
+    """Valor NUMÉRICO que muestra la píldora de balance de ESTE miembro:
+    el total de _book_balance_total y, solo para la cuenta de miembro de
+    Alex, menos los $500 de capital (en su Dashboard solo va la ganancia).
+    Es la misma rama que inject_user usa para balance_total_txt; la
+    consume /api/mi-balance para el poll en vivo del efecto balfx.
+    Devuelve None si el miembro aún no registró ninguna casa."""
+    total = _book_balance_total(db, user)
+    if total is None:
+        return None
+    if is_alex_member(user):
+        return round(float(total) - 500.0, 2)
+    return round(float(total), 2)
+
+
 def auto_grado_tracked(db, user):
     """Liquida automáticamente las jugadas trackeadas pendientes usando los
     resultados oficiales del programa (data/archive.json).
@@ -9744,6 +9759,152 @@ def admin_api_platinum_trial_activate_all():
     return jsonify({"ok": True, "activados": cur.rowcount, "vence": vence})
 
 
+@app.route("/admin/api/settle-live", methods=["POST"])
+def admin_api_settle_live():
+    """Liquida AL MOMENTO las jugadas trackeadas de Alex cuando un juego
+    oficial termina (2026-10-31, orden de Alex: «que no es la una AM, es
+    mientras se vayan liquidando... si una jugada se liquidó ya, al
+    instante, cuando tú detectes que ya se acabó el juego, que ese efecto
+    ya salga»).
+
+    Lo dispara live-graded-overlay.py cuando el overlay marca una jugada
+    FINAL por primera vez. Replica el criterio EXACTO de
+    auto_grado_tracked, pero con el resultado que llega en el body en vez
+    del archivo oficial: solo filas tracked_plays PENDIENTES de las
+    cuentas que ya tienen auto-grado (la de miembro de Alex y la del
+    admin; los balances de ambas viven en la de miembro), sincronía de
+    cuota/montos/fecha desde la jugada oficial SOLO en las filas de su
+    cuenta de miembro (el branch solo_alex de auto_grado), profit con
+    play_profit_dollars y bump a su balance Novig con bump_book_balance.
+
+    IDEMPOTENTE: una fila ya marcada jamás se reescribe ni vuelve a
+    sumar (la misma regla de auto_grado: solo se completa el pendiente).
+    La liquidación oficial de la 1 AM NO se toca: el archivo se escribe
+    desde el registro, no desde estas filas, y auto_grado_tracked nunca
+    re-marca una fila ya liquidada — cuando el archivo incluya el día,
+    estas filas ya marcadas quedan fuera de su bump.
+
+    Body JSON: {"play_id": "...", "resultado": "W"|"L"}.
+    Auth: sesión admin O header X-Admin-Key (patrón _admin_api_autorizado).
+    """
+    if not _admin_api_autorizado():
+        return jsonify({"error": "admin only"}), 403
+    data = request.get_json(silent=True) or {}
+    play_id = (data.get("play_id") or "").strip()
+    res = (data.get("resultado") or "").strip().upper()
+    if not play_id or res not in ("W", "L"):
+        return jsonify({"error": "play_id y resultado W/L requeridos"}), 400
+    db = get_db()
+    alex = db.execute(
+        "SELECT * FROM users WHERE LOWER(email) = ?", (ALEX_MEMBER_EMAIL,)
+    ).fetchone()
+    if not alex:
+        return jsonify({"ok": True, "play_id": play_id, "resultado": res,
+                        "liquidadas": 0, "delta_total": 0.0,
+                        "detalle": "cuenta de miembro de Alex no encontrada"})
+    balance_uid = alex["id"]
+    # Cuentas con auto-grado: la de miembro de Alex y la(s) admin (los
+    # balances de ambas viven en la de miembro, igual que en
+    # auto_grado_tracked y _book_balance_total).
+    user_ids = [alex["id"]]
+    for a in db.execute("SELECT id FROM users WHERE is_admin = 1").fetchall():
+        if a["id"] not in user_ids:
+            user_ids.append(a["id"])
+    # Jugada oficial para la sincronía: primero el archivo (si la
+    # liquidación ya lo escribió) y si no, la card publicada.
+    oficial = None
+    fecha_of = ""
+    for d in load_archive():
+        for j in d.get("jugadas", []) or []:
+            if (j.get("id") or "").strip() == play_id:
+                oficial = j
+                fecha_of = (d.get("fecha") or "").strip()
+                break
+        if oficial is not None:
+            break
+    if oficial is None:
+        for p in load_plays():
+            if (p.get("id") or "").strip() == play_id:
+                oficial = p
+                _m = _RE_FECHA_PLAYID.match(play_id)
+                fecha_of = _m.group(1) if _m else ""
+                break
+    placeholders = ", ".join("?" for _ in user_ids)
+    rows = db.execute(
+        "SELECT id, user_id, play_id, fecha, pick, cuota, stake_monto, "
+        "stake_unidades, resultado FROM tracked_plays "
+        f"WHERE user_id IN ({placeholders}) AND play_id = ? "
+        "AND (resultado IS NULL OR resultado = '')",
+        (*user_ids, play_id),
+    ).fetchall()
+    liquidadas = 0
+    delta_total = 0.0
+    filas = []
+    for t in rows:
+        updates = {"resultado": res}
+        # Sincronía con el programa (solo filas de su cuenta de miembro,
+        # idéntico al branch solo_alex de auto_grado_tracked): cuota y
+        # montos reales del ticket para que el profit sea el oficial.
+        if t["user_id"] == balance_uid and oficial is not None:
+            try:
+                cuota_of = int(oficial.get("cuota") or 0)
+            except (TypeError, ValueError):
+                cuota_of = 0
+            if cuota_of and cuota_of != (t["cuota"] or 0):
+                updates["cuota"] = cuota_of
+            try:
+                monto_of = float(oficial.get("stake_monto") or 0)
+            except (TypeError, ValueError):
+                monto_of = 0
+            if monto_of > 0 and abs(monto_of - float(t["stake_monto"] or 0)) > 0.005:
+                updates["stake_monto"] = monto_of
+            try:
+                u_of = float(oficial.get("stake_unidades") or 0)
+            except (TypeError, ValueError):
+                u_of = 0
+            if u_of > 0 and abs(u_of - float(t["stake_unidades"] or 0)) > 0.001:
+                updates["stake_unidades"] = u_of
+            if fecha_of and fecha_of != (t["fecha"] or "").strip():
+                updates["fecha"] = fecha_of
+        set_clause = ", ".join("%s = ?" % k for k in updates)
+        db.execute(
+            "UPDATE tracked_plays SET %s WHERE id = ?" % set_clause,
+            (*updates.values(), t["id"]),
+        )
+        # Profit con los montos ya sincronizados y bump a Novig (misma
+        # fórmula y mismo orden que auto_grado_tracked; bump_book_balance
+        # redondea el delta a 2 decimales y commitea).
+        try:
+            profit = play_profit_dollars(
+                {
+                    "cuota": updates.get("cuota", t["cuota"]) or 0,
+                    "resultado": res,
+                    "stake_monto": float(
+                        updates.get("stake_monto", t["stake_monto"]) or 0
+                    ),
+                }
+            )
+        except (TypeError, ValueError):
+            profit = 0
+        if profit:
+            bump_book_balance(db, balance_uid, "Novig", profit)
+            delta_total += round(float(profit), 2)
+        liquidadas += 1
+        filas.append(t["id"])
+    if liquidadas:
+        db.commit()
+    return jsonify({
+        "ok": True,
+        "play_id": play_id,
+        "resultado": res,
+        "liquidadas": liquidadas,
+        "delta_total": round(delta_total, 2),
+        "filas": filas,
+        "balance_total": _book_balance_total(db, alex),
+        "balance_mostrado": _balance_display_value(db, alex),
+    })
+
+
 @app.route("/admin/api/members-revoke-platinum", methods=["POST"])
 def admin_api_members_revoke_platinum():
     """Revoca el Platinum de una lista de miembros por API admin
@@ -14131,6 +14292,22 @@ def api_push_edge():
         pass
     db.commit()
     return jsonify({"sent": sent, "failed": failed})
+
+
+@app.route("/api/mi-balance")
+@login_required
+def api_mi_balance():
+    """Balance actual de la píldora del miembro en sesión (JSON).
+
+    2026-10-31: lo consume el poll en vivo de home_lux (efecto balfx) —
+    cuando una jugada se liquida juego a juego vía
+    /admin/api/settle-live y el balance sube, el Dashboard abierto
+    celebra al instante sin recargar. Devuelve el mismo número que la
+    píldora ya muestra (helper _balance_display_value; la fórmula del
+    builder de /home no se duplica). Sin sesión, login_required redirige
+    al login y el poll lo ignora en silencio."""
+    val = _balance_display_value(get_db(), current_user())
+    return jsonify({"ok": True, "balance": val})
 
 
 @app.route("/api/version")
