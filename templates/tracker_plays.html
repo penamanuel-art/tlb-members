@@ -198,7 +198,7 @@
       <form method="post" action="{{ url_for('set_result', tracked_id=r.id) }}"><input type="hidden" name="resultado" value="W"><button class="wgt-btn win" type="submit" title="Mark as won">✓</button></form>
       <form method="post" action="{{ url_for('set_result', tracked_id=r.id) }}"><input type="hidden" name="resultado" value="L"><button class="wgt-btn loss" type="submit" title="Mark as lost">✕</button></form>
       <form method="post" action="{{ url_for('set_result', tracked_id=r.id) }}"><input type="hidden" name="resultado" value=""><button class="wgt-btn" type="submit" title="Back to pending">↺</button></form>
-      <form method="post" action="{{ url_for('untrack', tracked_id=r.id) }}" onsubmit="return confirm('Remove this play from your tracker?');"><button class="wgt-btn" type="submit" title="Remove">🗑</button></form>
+      <form class="tkc-remove" method="post" action="{{ url_for('untrack', tracked_id=r.id) }}"><button class="wgt-btn" type="submit" title="Remove">🗑</button></form>
       {% endif %}
     </div>
   </article>
@@ -224,4 +224,34 @@
     <button class="mb-btn ghost" type="submit">Reset my stats</button>
   </form>
 </div>
+<script>
+// Remove de jugadas trackeadas (2026-10-31): el form clásico dependía del
+// confirm() nativo en onsubmit — en navegadores/webviews que suprimen los
+// diálogos JS el envío se cancelaba en silencio y la fila nunca se borraba.
+// Ahora va por fetch con X-Requested-With (untrack() responde {"ok": true})
+// y la fila se quita en vivo, igual que el Undo de la tira inferior. Sin JS,
+// el form sigue funcionando como POST normal con redirect.
+(function () {
+  document.querySelectorAll('form.tkc-remove').forEach(function (f) {
+    f.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var btn = f.querySelector('button');
+      if (btn) btn.disabled = true;
+      fetch(f.action, {
+        method: 'POST',
+        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        credentials: 'same-origin'
+      }).then(function (r) { return r.json(); })
+        .then(function (d) {
+          if (d && d.ok) {
+            var row = f.closest('.wgt-row');
+            if (row) row.remove();
+            if (!document.querySelector('.wgt-row')) location.reload();
+          } else if (btn) { btn.disabled = false; }
+        })
+        .catch(function () { if (btn) btn.disabled = false; });
+    });
+  });
+})();
+</script>
 {% endblock %}
