@@ -585,5 +585,62 @@
 <style>
   body.pv-bgimg::before{content:"";position:fixed;inset:0;background:url("{{ url_for('static', filename='img/bg-player.jpg') }}") center top/cover no-repeat;opacity:.12;pointer-events:none;z-index:-1}
 </style>
+<style>
+  /* === PRUEBA DE PALETA "PROBALYST" (2026-11-01, orden de Alex — SOLO PREVIEW) ===
+     Fondo #0B0E15 · Cartas #1A252B · Acento lima #F6FE5D (reemplaza en la prueba al menta #2ee6a8 y al dorado #e8c766).
+     SOLO colores: no cambia estructura, textos, tamanos ni layout. La imagen pv-bgimg de arriba queda intacta. */
+  html{background:#0B0E15!important}
+  body{background:#0B0E15!important}
+  /* Fondos de cartas / paneles / tiles -> #1A252B con borde sutil mas claro */
+  .tile,.section,.notif-panel,.tst-livecard,.tst-emptycard,.tst-sumrow,.tst-playcard,.hero,.risk,.unlock,.rh-card{background:#1A252B!important}
+  .tile,.section,.notif-panel,.tst-livecard,.tst-emptycard,.tst-sumrow,.tst-playcard,.hero{border-color:#2A363E!important}
+  .v5c,.v5c-topsec,.v5c-botsec,.ptl{background:#1A252B!important;border-color:#2A363E!important}
+  .pill,.balance,.menubtn,.rh-ledger,.tst-refresh,.tst-fullbtn,.updatemenu{background:#1A252B!important;border-color:#2A363E!important}
+  .tile .ic,.tst-ticketph{background:#0B0E15!important;border-color:#2A363E!important}
+  .tst-ticketimg{border-color:#2A363E!important}
+  .v2-bottomnav{background:#0B0E15!important;border-top-color:#2A363E!important}
+  .updatemenu .upd-later{background:#0B0E15!important;border-color:#2A363E!important}
+  .sample{background:#1A252B!important;border-color:#F6FE5D!important;color:#F6FE5D!important}
+  .row{border-top-color:#2A363E!important}
+  .notif-item{border-top-color:rgba(255,255,255,.08)!important}
+  .risk .right{border-left-color:#2A363E!important}
+  .tst-foot{border-top-color:#2A363E!important}
+  .tst-foot .tst-foot-rule{background:#2A363E!important}
+  .rh-pager i{background:#2A363E!important}
+  /* Acento lima: textos */
+  .wordmark b,.pill .crown,.balance b,.greet span,.tile .ic,.risk .shield,.risk .label,.risk .right,.unlock-crown,.unlock-txt b,.unlock-arr,.unlock-today,.on,.tst-liveic,.tst-units.pos,.tst-result span.won,.tst-result b.won,.notif-item .amt.win,.tst-foot .tst-foot-tag,.updatemenu .upd-ic{color:#F6FE5D!important}
+  /* Acento lima: bordes */
+  .avatar,.bellbtn,.lvpill,.lvpill.plat,.join,.tst-lvpill,.tst-lvpill.plat,.tst-pill.plat,.tst-pill.gold,.tst-lvl.plat,.tst-lvl.gold,.risk,.unlock,.topstrip{border-color:#F6FE5D!important}
+  .status{border-left-color:#F6FE5D!important;background:rgba(11,14,21,.55)!important}
+  /* Acento lima: fondos solidos (texto oscuro #0B0E15 encima para que se lea) */
+  .check,.unlock .cta{background:#F6FE5D!important;color:#0B0E15!important}
+  .updatemenu .upd-update{background:#F6FE5D!important;border-color:#F6FE5D!important;color:#0B0E15!important}
+  .topstrip{background:#1A252B!important}
+  .wordmark i{background:#F6FE5D!important}
+  .fin{box-shadow:0 0 14px rgba(246,254,93,.45)!important}
+  .hero{box-shadow:0 0 26px rgba(246,254,93,.18)!important}
+  .check{box-shadow:0 0 10px rgba(246,254,93,.35)!important}
+  .risk,.unlock{box-shadow:0 0 10px rgba(246,254,93,.15)!important}
+  .notif-item .ni{background:rgba(246,254,93,.12)!important}
+  .notif-item .ni.red{background:rgba(230,80,80,.12)!important}
+  .notif-item .ni.blue{background:rgba(74,144,217,.12)!important}
+  .tst-platwave::before{background:radial-gradient(ellipse at center,rgba(246,254,93,.32),transparent 60%)!important}
+  .v2-bnav-item.active{color:#F6FE5D!important;background:rgba(246,254,93,.15)!important}
+  /* Bloques con estilos en linea (style=""): se recolorean por coincidencia de atributo */
+  #tst-phrase-strip{background:#1A252B!important;border-color:#2A363E!important;color:#F6FE5D!important}
+  #tst-phrase{color:#F6FE5D!important}
+  #tst-vid-open{background:#1A252B!important;border-color:#2A363E!important}
+  #tst-vid-open span{color:#F6FE5D!important}
+  [style*="color:#e8c766"]{color:#F6FE5D!important}
+  [style*="color:#2ee6a8"]{color:#F6FE5D!important}
+  [style*="background:#2ee6a8"]{background:#F6FE5D!important;color:#0B0E15!important}
+  [style*="border:1px solid #2ee6a8"],[style*="border:2px solid #2ee6a8"],[style*="border:1px solid #e8c766"]{border-color:#F6FE5D!important}
+  [style*="border:1px solid #2a3c5f"]{border-color:#2A363E!important}
+  [style*="#4a6fa5"]{border-color:#2A363E!important}
+  [style*="background:#1c2431"]{background:#1A252B!important}
+  [style*="background:#161c23"]{background:#1A252B!important}
+  [style*="linear-gradient(180deg,#1c2431,#161c23)"]{background:#1A252B!important}
+  [style*="background:#2e5a3a"]{background:#0B0E15!important}
+</style>
 </body>
 </html>
