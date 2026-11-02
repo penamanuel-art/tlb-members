@@ -15,16 +15,21 @@ body{background-color:#0B0D12;background-image:radial-gradient(560px 300px at 50
 .tr2-bignum{font-size:64px;font-weight:300;color:#F0D47C;line-height:1;letter-spacing:1px}
 .tr2-claim{margin-top:8px;font-size:14px;font-weight:500;color:#fff;letter-spacing:3.5px;white-space:nowrap}
 .tr2-sub{margin-top:9px;color:#9fb0c9;font-size:12px;font-weight:400;line-height:1.55}
-.tr2-row{display:flex;align-items:center;gap:14px;background:#171B25;border:1px solid rgba(148,166,196,.13);border-radius:20px;padding:17px 16px;margin-bottom:11px}
-.tr2-seq{flex:0 0 24px;text-align:center;font-size:17px;font-weight:300;color:#e8c766}
-.tr2-main{flex:1;min-width:0}
-.tr2-pick{display:block;color:#fff;font-size:18px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.tr2-meta{display:block;color:#8f9cae;font-size:13px;font-weight:400;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.tr2-right{flex:0 0 auto;text-align:right}
-.tr2-profit{display:block;color:#2ee6a8;font-size:16px;font-weight:700;white-space:nowrap}
-.tr2-thumb{width:94px;height:94px;object-fit:cover;border-radius:16px;border:1.5px solid rgba(232,199,102,.6);cursor:pointer;display:block;margin-top:6px}
-.tr2-view{display:block;margin-top:7px;font-size:10.5px;font-weight:400;letter-spacing:1.8px;color:#7ea6d8;white-space:nowrap;cursor:pointer}
-.tr2-badge{display:inline-block;margin-top:6px;font-size:10px;font-weight:400;letter-spacing:1.6px;color:#11CB87;border:1px solid rgba(17,203,135,.4);padding:3px 8px;border-radius:999px;white-space:nowrap}
+.tr2-row{display:flex;gap:15px;background:#171B25;border:1px solid rgba(148,166,196,.16);border-radius:22px;padding:16px;margin-bottom:12px}
+.tr2-thumb2{flex:0 0 88px;width:88px;height:148px;object-fit:cover;border-radius:14px;border:1px solid rgba(148,166,196,.25);cursor:pointer}
+.tr2-nothumb{flex:0 0 88px;width:88px;height:148px;border-radius:14px;border:1px dashed rgba(148,166,196,.3);display:flex;align-items:center;justify-content:center;color:#11CB87;font-size:12px;font-weight:700;letter-spacing:2px}
+.tr2-body{flex:1;min-width:0;display:flex;flex-direction:column}
+.tr2-top{display:flex;align-items:center;gap:9px}
+.tr2-chip{flex:0 0 auto;font-size:12.5px;font-weight:700;letter-spacing:.6px;color:#e8c766;border:1.5px solid rgba(232,199,102,.75);border-radius:999px;padding:5px 11px;white-space:nowrap;text-transform:uppercase}
+.tr2-kind{color:#969EA9;font-size:14px;font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tr2-res{margin-left:auto;text-align:right;flex:0 0 auto}
+.tr2-res-w{display:block;font-size:14.5px;font-weight:700;letter-spacing:.6px;color:#11CB87}
+.tr2-res-w.lost{color:#F0564A}
+.tr2-res-u{display:block;font-size:16.5px;font-weight:700;color:#11CB87;margin-top:2px}
+.tr2-res-u.lost{color:#F0564A}
+.tr2-pick2{display:block;color:#fff;font-size:20px;font-weight:800;margin-top:13px;line-height:1.25}
+.tr2-match2{display:block;color:#969EA9;font-size:15px;font-weight:400;margin-top:6px}
+.tr2-view2{display:inline-block;color:#11CB87;font-size:15.5px;font-weight:600;margin-top:auto;padding-top:12px;cursor:pointer;text-decoration:none}
 .tr2-foot{text-align:center;color:#77839a;font-size:11px;font-weight:400;letter-spacing:.6px;line-height:1.7;margin-top:18px}
 .tr2-empty{background:#171B25;border:1px solid rgba(148,166,196,.15);border-radius:18px;padding:22px 18px;color:#c7d0dd;font-size:14px;font-weight:400;text-align:center;line-height:1.6}
 .tr2-empty a{color:#7ea6d8;font-weight:400;text-decoration:none}
@@ -66,15 +71,18 @@ body{background-color:#0B0D12;background-image:radial-gradient(560px 300px at 50
   </div>
   {% for x in tira.plays %}
   {% set f = x.fecha or '' %}
+  {% set lost = (x.resultado == 'LOST') %}
   <div class="tr2-row">
-    <span class="tr2-seq">{{ loop.index }}</span>
-    <span class="tr2-main">
-      <span class="tr2-pick">{{ x.pick }}</span>
-      <span class="tr2-meta">{{ meses.get(f[5:7], '') }} {{ (f[8:10] | int) if (f | length) >= 10 else '' }}{% if x.abbr and x.opp_abbr %} &middot; {{ x.abbr }} vs {{ x.opp_abbr }}{% endif %} &middot; {{ x.liga }}{% if x.stake_display %} &middot; {{ x.stake_display }} staked{% endif %}</span>
-    </span>
-    <span class="tr2-right">
-      <span class="tr2-profit">{{ x.profit_display }}</span>
-      {% if x.comprobante %}<img class="tr2-thumb" src="{{ url_for('static', filename=x.comprobante) }}" alt="Ticket &mdash; {{ x.pick }}" loading="lazy" onclick="tiraZoom({{ loop.index0 }})"><span class="tr2-view" onclick="tiraZoom({{ loop.index0 }})">VIEW FULL TICKET &#8250;</span>{% else %}<span class="tr2-badge">{{ 'WON' if x.resultado == 'WON' else ('LOST' if x.resultado == 'LOST' else 'PUSH') }}</span>{% endif %}
+    {% if x.comprobante %}<img class="tr2-thumb2" src="{{ url_for('static', filename=x.comprobante) }}" alt="Ticket &mdash; {{ x.pick }}" loading="lazy" onclick="tiraZoom({{ loop.index0 }})">{% else %}<span class="tr2-nothumb">{{ 'WON' if x.resultado == 'WON' else ('LOST' if lost else 'PUSH') }}</span>{% endif %}
+    <span class="tr2-body">
+      <span class="tr2-top">
+        <span class="tr2-chip">{{ x.nivel_label }}{% if x.nivel_label != 'FREE PICKS' and x.nivel_label != 'FREE PICK' %} PLAY{% endif %}</span>
+        <span class="tr2-kind">{{ x.nivel_label | capitalize }} play &middot; {{ x.liga }}</span>
+        <span class="tr2-res"><span class="tr2-res-w{% if lost %} lost{% endif %}">{{ x.resultado }}</span><span class="tr2-res-u{% if lost %} lost{% endif %}">{{ x.profit_u }}</span></span>
+      </span>
+      <span class="tr2-pick2">{{ x.pick }}{% if x.cuota %} ({{ '+' if x.cuota > 0 else '' }}{{ x.cuota }}){% endif %}</span>
+      <span class="tr2-match2">{% if x.abbr and x.opp_abbr %}{{ x.abbr }} vs {{ x.opp_abbr }} &middot; {% endif %}{{ meses.get(f[5:7], '') }} {{ (f[8:10] | int) if (f | length) >= 10 else '' }}</span>
+      {% if x.comprobante %}<span class="tr2-view2" onclick="tiraZoom({{ loop.index0 }})">View ticket &#8250;</span>{% endif %}
     </span>
   </div>
   {% endfor %}
