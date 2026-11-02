@@ -6163,6 +6163,25 @@ def _past_due_billing_info(user):
                 info["pay_url"] = invs.data[0].get("hosted_invoice_url")
                 if invs.data[0].get("amount_due") is not None:
                     info["amount_due"] = invs.data[0]["amount_due"] / 100.0
+                # La tarjeta QUE FALLO sale de la propia factura abierta
+                # (2026-11-02): si el cliente no tiene tarjeta por defecto
+                # legible, se lee el metodo de pago del PaymentIntent de la
+                # factura fallida — esa es la tarjeta declinada exacta.
+                if not info["card_last4"]:
+                    try:
+                        pi_id = invs.data[0].get("payment_intent")
+                        if pi_id:
+                            pi = stripe.PaymentIntent.retrieve(pi_id)
+                            pm_id2 = pi.get("payment_method")
+                            if pm_id2:
+                                pm2 = stripe.PaymentMethod.retrieve(pm_id2)
+                                card2 = pm2.get("card") or {}
+                                info["card_brand"] = (card2.get("brand") or "").replace("_", " ").title() or info["card_brand"]
+                                info["card_last4"] = card2.get("last4")
+                                if card2.get("exp_month") and card2.get("exp_year"):
+                                    info["card_exp"] = "%02d/%d" % (card2["exp_month"], card2["exp_year"])
+                    except Exception:
+                        pass
         except Exception:
             pass
     except Exception:
