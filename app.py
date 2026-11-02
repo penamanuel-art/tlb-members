@@ -785,6 +785,12 @@ def _acceso_programa(user) -> bool:
             return True
         if not user["platinum_unlocked"]:
             return False
+        # Candado al primer fallo (2026-11-02, orden de Alex): pago fallido
+        # (stripe_past_due) = acceso Platinum bloqueado AL MOMENTO para el
+        # miembro normal. Al pagar, el webhook limpia el flag y el acceso
+        # vuelve solo. Alex y el admin conservan su pase (rama de arriba).
+        if user["stripe_past_due"]:
+            return False
         return not (user["platinum_trial_ends"] or "")
     except Exception:
         return False
