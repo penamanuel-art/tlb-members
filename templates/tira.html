@@ -53,6 +53,10 @@ body{background-color:#0B0D12;background-image:radial-gradient(560px 300px at 50
 .trs-bet-t{color:#11CB87;font-size:19px;font-weight:700}
 .trs-bet-s{color:#E6EBF2;font-size:15px;font-weight:400;margin-top:5px}
 .trs-bet-n{color:#969EA9;font-size:13.5px;font-weight:400;margin-top:5px;line-height:1.5}
+.trs-actions{margin-top:16px}
+.trs-main-btn{display:block;text-align:center;background:#11CB87;color:#06251A;font-size:16.5px;font-weight:700;border-radius:14px;padding:15px;text-decoration:none}
+.trs-row-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.trs-sec-btn{display:block;text-align:center;background:#1D2029;border:1px solid #2C313A;color:#E6EBF2;font-size:14px;font-weight:500;border-radius:14px;padding:13px 8px;text-decoration:none}
 </style>
 {% set meses = {'01':'Jan','02':'Feb','03':'Mar','04':'Apr','05':'May','06':'Jun','07':'Jul','08':'Aug','09':'Sep','10':'Oct','11':'Nov','12':'Dec'} %}
 <div class="tr2-wrap">
@@ -109,6 +113,13 @@ body{background-color:#0B0D12;background-image:radial-gradient(560px 300px at 50
       <div class="trs-bet-t" id="trsBetT"></div>
       <div class="trs-bet-s" id="trsBetS"></div>
       <div class="trs-bet-n">The official size for this play. Bet only what you can afford to lose.</div>
+    </div>
+    <div class="trs-actions">
+      <a class="trs-main-btn" href="{{ url_for('official_tracker') }}">Full official record &#8594;</a>
+      <div class="trs-row-btns">
+        <a class="trs-sec-btn" href="https://novig.com" target="_blank" rel="noopener">&#8599; Place at Novig</a>
+        <a class="trs-sec-btn" href="/ev-board">Line shop for a better price</a>
+      </div>
     </div>
   </div>
 </div>
