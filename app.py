@@ -10660,9 +10660,11 @@ def _tira_actual():
             else:
                 break
         if _plat_n >= 2 and _plat_last and _plat_last == _ultimo_dia_t:
-            return {"tipo": "plat", "n": _plat_n, "plays": _plat_plays}
+            return {"tipo": "plat", "n": _plat_n, "plays": _plat_plays,
+                    "dias_n": _dias_n, "dias_plays": _dias_plays}
         if _dias_n >= 2:
-            return {"tipo": "dias", "n": _dias_n, "plays": _dias_plays}
+            return {"tipo": "dias", "n": _dias_n, "plays": _dias_plays,
+                    "dias_n": _dias_n, "dias_plays": _dias_plays}
     except Exception:
         pass
     return None
@@ -10674,7 +10676,11 @@ def racha():
     """Pagina SOLO de la racha (2026-11-02, pedido expreso de Alex: el
     link View tickets de la tirita cae aqui y muestra UNICAMENTE las
     jugadas de esa racha con sus tickets — nada mas)."""
-    return render_template("tira.html", tira=_tira_actual())
+    try:
+        _ligas = official_tracker_full().get("rachas_liga") or []
+    except Exception:
+        _ligas = []
+    return render_template("tira.html", tira=_tira_actual(), ligas=_ligas)
 
 
 @app.route("/official-tracker")
