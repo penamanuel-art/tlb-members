@@ -355,6 +355,7 @@
     <div style="padding:12px 0 2px;font-size:11px;letter-spacing:1.6px;color:#969EA9;font-weight:700;">ACCOUNT</div>
     <a href="{{ url_for('cuenta') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:15px;">My account <span style="color:#A3AAB6;">›</span></a>
     <a href="{{ url_for('alertas') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:15px;">Alerts <span style="color:#A3AAB6;">›</span></a>
+    <a href="#" onclick="document.getElementById('tst-menu-sheet').hidden=true;var b=document.getElementById('tst-menubtn');if(b)b.setAttribute('aria-expanded','false');document.body.style.overflow='';if(window.tstStartTour)window.tstStartTour();return false;" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:15px;color:#e8c766;">Dashboard Tour <span style="color:#A3AAB6;">›</span></a>
     <a href="{{ url_for('desbloquear_platinum') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:15px;color:#e8c766;">Unlock Platinum <span style="color:#A3AAB6;">›</span></a>
     {% if es_admin or es_alex %}<a href="{{ url_for('admin_dashboard') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:15px;">Admin <span style="color:#A3AAB6;">›</span></a>{% endif %}
   </div>
@@ -409,7 +410,7 @@
   </div>
 
   <!-- 2026-11-01 PM: Find Your Edge encerrado en un solo cuadro (orden de Alex: «es AQUI») -->
-  <section style="margin:0 0 22px;background:linear-gradient(180deg,#20242E,#1B1F27);border:1px solid #343B47;border-radius:20px;padding:18px 16px;">
+  <section id="tour-edge" style="margin:0 0 22px;background:linear-gradient(180deg,#20242E,#1B1F27);border:1px solid #343B47;border-radius:20px;padding:18px 16px;">
   <h2 style="margin:0 0 2px;font-size:22px;font-weight:400;">Find Your Edge</h2>
   <p style="margin:0 0 12px;color:#A3AAB6;font-size:12.5px;font-weight:300;">Real edges, ranked daily.</p>
   <div class="tiles">
@@ -1084,5 +1085,110 @@ body{background-color:#131822!important;background-image:radial-gradient(560px 3
 #skl-overlay{background:#131822!important}
 .skl-plain{background:#202833!important}
 </style>
+<!-- ===== DASHBOARD TOUR (recorrido interactivo, prueba 2026-11-01) ===== -->
+<style>
+#tourDim{position:fixed;inset:0;background:rgba(4,8,16,.74);z-index:2900}
+#tourRing{position:fixed;z-index:2901;border:2px solid #e8c766;border-radius:14px;box-shadow:0 0 0 3px rgba(232,199,102,.25),0 0 24px rgba(232,199,102,.35);pointer-events:none;transition:top .3s ease,left .3s ease,width .3s ease,height .3s ease}
+#tourCard{position:fixed;z-index:2902;left:12px;right:12px;max-width:430px;margin:0 auto;background:#1c2431;border:1px solid #24334d;border-radius:16px;padding:16px 16px 13px;box-shadow:0 18px 40px rgba(0,0,0,.5);color:#eef2f8}
+#tourBar{height:4px;background:#24334d;border-radius:99px;overflow:hidden;margin-bottom:12px}
+#tourBarFill{height:100%;background:#e8c766;border-radius:99px;transition:width .3s ease}
+#tourCount{font-size:11px;letter-spacing:1.2px;color:#8b98ad;font-weight:700}
+#tourTitle{font-size:17px;font-weight:700;margin:5px 0 6px;color:#eef2f8}
+#tourBody{font-size:13.5px;line-height:1.55;color:#c7d0dd;font-weight:300}
+#tourBtns{display:flex;align-items:center;gap:10px;margin-top:14px}
+#tourNext{background:#e8c766;color:#131822;border:0;border-radius:10px;padding:10px 20px;font-size:14px;font-weight:700;cursor:pointer}
+#tourBack{background:none;color:#c7d0dd;border:1px solid #24334d;border-radius:10px;padding:10px 16px;font-size:14px;cursor:pointer}
+#tourSkip{margin-left:auto;background:none;border:0;color:#8b98ad;font-size:13px;cursor:pointer;padding:8px 2px}
+</style>
+<div id="tourRoot" hidden>
+  <div id="tourDim"></div>
+  <div id="tourRing" hidden></div>
+  <div id="tourCard">
+    <div id="tourBar"><div id="tourBarFill" style="width:0%"></div></div>
+    <div id="tourCount"></div>
+    <div id="tourTitle"></div>
+    <div id="tourBody"></div>
+    <div id="tourBtns">
+      <button id="tourBack" type="button">Back</button>
+      <button id="tourNext" type="button">Next</button>
+      <button id="tourSkip" type="button">Skip tour</button>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  var ALL=[
+    {sel:null,title:"Welcome to The Sharp Team",body:"This is your Dashboard — your plays, your tools and your results, all in one place. Tap Next and I will show you what each thing is for. It takes less than a minute."},
+    {sel:[".tst-playshead"],title:"Your plays",body:"Today's official plays live here. New plays post at 2:00 PM on weekdays and 11:00 AM on weekends, Eastern Time."},
+    {sel:[".tst-playslevels"],title:"Three levels",body:"Free Picks are for everyone. Gold and Platinum are the paid levels — Platinum members see every play, every day."},
+    {sel:[".v5c"],title:"A play card",body:"Each card is one play: the team, the price, the game and the start time. The percent is our model's chance of winning — an estimate, never a promise."},
+    {sel:[".v5wu"],title:"Why we like it",body:"This block shows the homework: our model's probability next to the probability implied by the price. When ours is higher, that gap is the edge we are playing."},
+    {sel:[".v5timg",".v5c-tk"],title:"The real ticket",body:"Every play carries the photo of our real betting receipt. Tap it to see it full size. If there is no ticket, it is not an official play."},
+    {sel:[".v5big-track",".v5c-track"],title:"Track the play",body:"Tap Track to save the play to your bets. You can set your own amount — once a play is tracked it locks in and counts in your My Bets."},
+    {sel:["a.balance"],title:"Your balance",body:"This pill is the money in your sportsbooks. Tap it to see your books, your membership and your account settings."},
+    {sel:["#rhRail",".rh-head"],title:"Hot right now",body:"How the program's last 10 graded plays went, by level. Win or lose, every result stays public — tap Public ledger for the full record."},
+    {sel:["#tour-edge"],title:"Find Your Edge",body:"Your toolbox: live odds and scores, the +EV Board, Player Props, Sharp Money, Line Moves, Compare Prices and the Parlay Builder. Some tools are Platinum only."},
+    {sel:[".tst-yhead"],title:"Yesterday",body:"Yesterday's plays with their final results and their tickets. Nothing gets deleted after a loss — the whole history stays up."},
+    {sel:["#tst-menubtn"],title:"The menu",body:"From this menu you reach My Bets, the Full Record, the Masterclass, your account and your alerts. You can replay this tour anytime from here: Dashboard Tour."},
+    {sel:null,title:"You are all set",body:"Your routine: check your plays when they post, track the ones you play, and review your results in My Bets. Play smart — and welcome to The Sharp Team."}
+  ];
+  var steps=[],idx=0,ringTimer=null;
+  var root=document.getElementById('tourRoot'),ring=document.getElementById('tourRing'),
+      card=document.getElementById('tourCard'),fill=document.getElementById('tourBarFill'),
+      count=document.getElementById('tourCount'),ttl=document.getElementById('tourTitle'),
+      body=document.getElementById('tourBody'),bNext=document.getElementById('tourNext'),
+      bBack=document.getElementById('tourBack'),bSkip=document.getElementById('tourSkip');
+  function findEl(sels){
+    if(!sels)return null;
+    for(var i=0;i<sels.length;i++){var e=document.querySelector(sels[i]);if(e)return e;}
+    return null;
+  }
+  function place(el){
+    var vh=window.innerHeight,vw=window.innerWidth;
+    if(!el){ring.hidden=true;card.style.top='auto';card.style.bottom='18px';return;}
+    var r=el.getBoundingClientRect();
+    ring.hidden=false;
+    ring.style.top=(r.top-6)+'px';ring.style.left=(r.left-6)+'px';
+    ring.style.width=(r.width+12)+'px';ring.style.height=(r.height+12)+'px';
+    var ch=card.offsetHeight||190;
+    if(r.bottom+ch+22<vh){card.style.top=(r.bottom+16)+'px';card.style.bottom='auto';}
+    else if(r.top-ch-22>0){card.style.top=(r.top-ch-16)+'px';card.style.bottom='auto';}
+    else{card.style.top='auto';card.style.bottom='18px';}
+  }
+  function show(i){
+    idx=i;var s=steps[i];if(!s){end();return;}
+    count.textContent='STEP '+(i+1)+' OF '+steps.length;
+    ttl.textContent=s.title;body.textContent=s.body;
+    fill.style.width=Math.round(((i+1)/steps.length)*100)+'%';
+    bBack.style.visibility=(i===0)?'hidden':'visible';
+    bNext.textContent=(i===steps.length-1)?'Done':'Next';
+    var el=findEl(s.sel);
+    if(el){el.scrollIntoView({behavior:'smooth',block:'center'});}
+    if(ringTimer)clearTimeout(ringTimer);
+    ringTimer=setTimeout(function(){place(findEl(s.sel));},420);
+    place(el);
+  }
+  function end(){
+    root.hidden=true;ring.hidden=true;
+    try{localStorage.setItem('tst_tour_done_v1','1');}catch(e){}
+    window.removeEventListener('resize',reposition);
+  }
+  function reposition(){var s=steps[idx];if(s)place(findEl(s.sel));}
+  function start(){
+    steps=[];
+    for(var i=0;i<ALL.length;i++){if(!ALL[i].sel||findEl(ALL[i].sel))steps.push(ALL[i]);}
+    var m=document.getElementById('tst-menu-sheet');if(m&&!m.hidden){m.hidden=true;document.body.style.overflow='';}
+    root.hidden=false;
+    window.addEventListener('resize',reposition);
+    show(0);
+  }
+  bNext.addEventListener('click',function(){if(idx>=steps.length-1)end();else show(idx+1);});
+  bBack.addEventListener('click',function(){if(idx>0)show(idx-1);});
+  bSkip.addEventListener('click',end);
+  window.tstStartTour=start;
+  if(/[?&]tour=1(&|$)/.test(location.search)){setTimeout(start,600);}
+})();
+</script>
+
 </body>
 </html>
