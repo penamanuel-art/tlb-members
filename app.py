@@ -5287,6 +5287,41 @@ def home():
     )
 
 
+@app.route("/preview/receipt")
+@login_required
+def preview_receipt():
+    """PRUEBA del panel de detalle de jugada (2026-11-02, pedido de Alex:
+    "deme una prueba primero"). NO es el Dashboard en vivo: lee la card
+    de hoy y la muestra con el panel tipo Slip aprobado en preview
+    (The Play -> Receipt -> Modelo -> Lesionados -> nota -> botones).
+    Solo lectura; no registra checkin ni toca datos."""
+    data = load_plays() or {}
+    plays = data.get("plays") or []
+    play = plays[0] if plays else {}
+    ticket_demo = {}
+    inj_demo = []
+    if play.get("id") == "play-2026-11-02-denver-nuggets":
+        # Datos REALES del ticket de hoy (verificados por Muse al cierre).
+        ticket_demo = {"precio": -160, "monto": "60.00", "paga": "97.56",
+                       "hora": "1:51 PM ET"}
+        inj_demo = [
+            {"team": "DENVER", "rows": [
+                {"who": "Nikola Jokic", "st": "AVAILABLE", "cls": "ok"},
+                {"who": "Jamal Murray", "st": "AVAILABLE", "cls": "ok"},
+                {"who": "Cameron Johnson", "st": "AVAILABLE", "cls": "ok"},
+                {"who": "J. Strawther · S. Jones", "st": "OUT", "cls": "out"},
+                {"who": "Diallo", "st": "GAME-TIME DECISION", "cls": "gtd"},
+            ]},
+            {"team": "PORTLAND", "rows": [
+                {"who": "Ja Morant — hamstring", "st": "OUT · 4+ WEEKS", "cls": "out"},
+                {"who": "Shaedon Sharpe — knee", "st": "OUT", "cls": "out"},
+            ]},
+        ]
+    return render_template("slip_preview.html", play=play,
+                           w=(play.get("writeup") or {}),
+                           ticket=ticket_demo, inj=inj_demo)
+
+
 @app.route("/admin/home-preview")
 @admin_required
 def admin_home_preview():
