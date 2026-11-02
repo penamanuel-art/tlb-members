@@ -6115,7 +6115,7 @@ def _past_due_billing_info(user):
     """
     info = {"card_brand": None, "card_last4": None, "card_exp": None,
             "plan_price": None, "plan_interval": None,
-            "next_billing": None, "pay_url": None}
+            "next_billing": None, "pay_url": None, "amount_due": None}
     if not stripe_configurado():
         return info
     customer_id = ""
@@ -6161,6 +6161,8 @@ def _past_due_billing_info(user):
             invs = stripe.Invoice.list(customer=customer_id, status="open", limit=1)
             if invs and invs.data:
                 info["pay_url"] = invs.data[0].get("hosted_invoice_url")
+                if invs.data[0].get("amount_due") is not None:
+                    info["amount_due"] = invs.data[0]["amount_due"] / 100.0
         except Exception:
             pass
     except Exception:
@@ -6321,6 +6323,39 @@ def reportar():
             db.commit()
             enviado = True
     return render_template("reportar.html", tipo=tipo, enviado=enviado)
+
+
+@app.route("/actualizar-tarjeta")
+@login_required
+def actualizar_tarjeta():
+    """Aterrizaje del email de pago fallido (2026-11-02, aprobado por Alex
+    tras ver el modelo en blanco): pagina dedicada que muestra el pago
+    fallido, la tarjeta que fallo (datos de Stripe via
+    _past_due_billing_info) y el boton "Update card & restore access" que
+    abre la factura hospedada de Stripe (actualiza la tarjeta y paga lo
+    pendiente; el acceso vuelve por webhook, sin crear otra suscripcion).
+    Si ya no hay factura abierta (la suscripcion cerro), la misma pagina
+    ofrece suscribirse de nuevo. Cuenta al dia: estado "good standing"."""
+    user = current_user()
+    billing = _past_due_billing_info(user) if user else {
+        "card_brand": None, "card_last4": None, "card_exp": None,
+        "plan_price": None, "plan_interval": None, "next_billing": None,
+        "pay_url": None, "amount_due": None}
+    past_due = bool(user and user["stripe_past_due"])
+    if billing.get("pay_url"):
+        estado = "hold"
+    elif past_due:
+        estado = "ended"
+    else:
+        estado = "good"
+    amount = billing.get("amount_due") or billing.get("plan_price")
+    amount_txt = ("$%.2f" % amount) if amount else None
+    intervalo = {"week": "weekly", "month": "monthly", "year": "yearly"}.get(
+        billing.get("plan_interval") or "week", "weekly")
+    nombre = ((user["nombre"] or "").strip().split(" ")[0] if user else "") or "there"
+    return render_template("actualizar_tarjeta.html", estado=estado,
+                           billing=billing, nombre=nombre,
+                           amount_txt=amount_txt, intervalo=intervalo)
 
 
 @app.route("/cuenta", methods=["GET", "POST"])
@@ -15136,10 +15171,11 @@ def stripe_webhook():
             # porque Stripe reintenta y manda payment_failed en cada intento).
             email = (data.get("customer_email") or "").strip().lower()
             invoice_id = data.get("id") or ""
-            # Todos los links de pago fallido llevan a /cuenta#past-due (pedido por Alex
-            # 2026-10-08): ahí está la sección past-due estilo WGT con el botón
-            # "Update card & restore access" que sí abre la ventana de pago de Stripe.
-            pay_url = "https://www.thesharpteam.bet/cuenta#past-due"
+            # Todos los links de pago fallido llevan a /actualizar-tarjeta
+            # (2026-11-02, pagina dedicada aprobada por Alex: muestra el pago
+            # fallido y la tarjeta que fallo, con el boton que abre la factura
+            # hospedada de Stripe; sustituye el /cuenta#past-due del 2026-10-08).
+            pay_url = "https://www.thesharpteam.bet/actualizar-tarjeta"
             nombre = ""
             if email:
                 r = db.execute("SELECT nombre FROM users WHERE email = ?",
