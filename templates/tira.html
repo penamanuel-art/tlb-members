@@ -23,6 +23,7 @@ body{background-color:#0B0D12;background-image:radial-gradient(560px 300px at 50
 .tr2-right{flex:0 0 auto;text-align:right}
 .tr2-profit{display:block;color:#2ee6a8;font-size:14px;font-weight:500;white-space:nowrap}
 .tr2-thumb{width:56px;height:56px;object-fit:cover;border-radius:12px;border:1px solid rgba(232,199,102,.45);cursor:pointer;display:block;margin-top:6px}
+.tr2-view{display:block;margin-top:6px;font-size:10px;font-weight:300;letter-spacing:1.8px;color:#7ea6d8;white-space:nowrap;cursor:pointer}
 .tr2-badge{display:inline-block;margin-top:6px;font-size:10px;font-weight:400;letter-spacing:1.6px;color:#11CB87;border:1px solid rgba(17,203,135,.4);padding:3px 8px;border-radius:999px;white-space:nowrap}
 .tr2-foot{text-align:center;color:#77839a;font-size:11px;font-weight:300;letter-spacing:.6px;line-height:1.7;margin-top:18px}
 .tr2-empty{background:#171B25;border:1px solid rgba(148,166,196,.15);border-radius:18px;padding:22px 18px;color:#c7d0dd;font-size:14px;font-weight:300;text-align:center;line-height:1.6}
@@ -55,7 +56,7 @@ body{background-color:#0B0D12;background-image:radial-gradient(560px 300px at 50
     </span>
     <span class="tr2-right">
       <span class="tr2-profit">{{ x.profit_display }}</span>
-      {% if x.comprobante %}<img class="tr2-thumb" src="{{ url_for('static', filename=x.comprobante) }}" alt="Ticket &mdash; {{ x.pick }}" loading="lazy" onclick="tiraZoom('{{ url_for('static', filename=x.comprobante) }}')">{% else %}<span class="tr2-badge">{{ 'WON' if x.resultado == 'WON' else ('LOST' if x.resultado == 'LOST' else 'PUSH') }}</span>{% endif %}
+      {% if x.comprobante %}<img class="tr2-thumb" src="{{ url_for('static', filename=x.comprobante) }}" alt="Ticket &mdash; {{ x.pick }}" loading="lazy" onclick="tiraZoom('{{ url_for('static', filename=x.comprobante) }}')"><span class="tr2-view" onclick="tiraZoom('{{ url_for('static', filename=x.comprobante) }}')">VIEW FULL TICKET &#8250;</span>{% else %}<span class="tr2-badge">{{ 'WON' if x.resultado == 'WON' else ('LOST' if x.resultado == 'LOST' else 'PUSH') }}</span>{% endif %}
     </span>
   </div>
   {% endfor %}
