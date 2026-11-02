@@ -1126,7 +1126,7 @@ body{background-color:#131822!important;background-image:radial-gradient(560px 3
     {sel:[".v5timg",".v5c-tk"],title:"The real ticket",body:"Every play carries the photo of our real betting receipt. Tap it to see it full size. If there is no ticket, it is not an official play."},
     {sel:[".v5big-track",".v5c-track"],title:"Track the play",body:"Tap Track to save the play to your bets. You can set your own amount — once a play is tracked it locks in and counts in your My Bets."},
     {sel:["a.balance"],title:"Your balance",body:"This pill is the money in your sportsbooks. Tap it to see your books, your membership and your account settings."},
-    {sel:["#rhRail",".rh-head"],title:"Hot right now",body:"How the program's last 10 graded plays went, by level. Win or lose, every result stays public — tap Public ledger for the full record."},
+    {sel:[".rh-head","#rhRail"],title:"Hot right now",body:"How the program's last 10 graded plays went, by level. Win or lose, every result stays public — tap Public ledger for the full record."},
     {sel:["#tour-edge"],title:"Find Your Edge",body:"Your toolbox: live odds and scores, the +EV Board, Player Props, Sharp Money, Line Moves, Compare Prices and the Parlay Builder. Some tools are Platinum only."},
     {sel:[".tst-yhead"],title:"Yesterday",body:"Yesterday's plays with their final results and their tickets. Nothing gets deleted after a loss — the whole history stays up."},
     {sel:["#tst-menubtn"],title:"The menu",body:"From this menu you reach My Bets, the Full Record, the Masterclass, your account and your alerts. You can replay this tour anytime from here: Dashboard Tour."},
@@ -1138,22 +1138,43 @@ body{background-color:#131822!important;background-image:radial-gradient(560px 3
       count=document.getElementById('tourCount'),ttl=document.getElementById('tourTitle'),
       body=document.getElementById('tourBody'),bNext=document.getElementById('tourNext'),
       bBack=document.getElementById('tourBack'),bSkip=document.getElementById('tourSkip');
+  function visible(e){
+    if(!e)return false;
+    var r=e.getBoundingClientRect();
+    if(r.width<2||r.height<2)return false;
+    var cs=window.getComputedStyle(e);
+    return cs.display!=='none'&&cs.visibility!=='hidden';
+  }
   function findEl(sels){
     if(!sels)return null;
-    for(var i=0;i<sels.length;i++){var e=document.querySelector(sels[i]);if(e)return e;}
+    for(var i=0;i<sels.length;i++){
+      var all=document.querySelectorAll(sels[i]);
+      for(var j=0;j<all.length;j++){if(visible(all[j]))return all[j];}
+    }
     return null;
   }
   function place(el){
-    var vh=window.innerHeight,vw=window.innerWidth;
-    if(!el){ring.hidden=true;card.style.top='auto';card.style.bottom='18px';return;}
+    var vh=window.innerHeight;
+    var ch=card.offsetHeight||190;
+    function sheet(){card.style.top='auto';card.style.bottom='14px';}
+    if(!el){ring.hidden=true;sheet();return;}
     var r=el.getBoundingClientRect();
+    if(r.bottom<0||r.top>vh){sheet();}
+    else{
+      var top;
+      if(r.bottom+ch+22<vh)top=r.bottom+16;
+      else if(r.top-ch-22>0)top=r.top-ch-16;
+      else top=-1;
+      if(top<0){sheet();}
+      else{
+        if(top<10)top=10;
+        if(top>vh-ch-10)top=vh-ch-10;
+        card.style.top=top+'px';card.style.bottom='auto';
+      }
+    }
     ring.hidden=false;
     ring.style.top=(r.top-6)+'px';ring.style.left=(r.left-6)+'px';
     ring.style.width=(r.width+12)+'px';ring.style.height=(r.height+12)+'px';
-    var ch=card.offsetHeight||190;
-    if(r.bottom+ch+22<vh){card.style.top=(r.bottom+16)+'px';card.style.bottom='auto';}
-    else if(r.top-ch-22>0){card.style.top=(r.top-ch-16)+'px';card.style.bottom='auto';}
-    else{card.style.top='auto';card.style.bottom='18px';}
   }
   function show(i){
     idx=i;var s=steps[i];if(!s){end();return;}
@@ -1164,14 +1185,19 @@ body{background-color:#131822!important;background-image:radial-gradient(560px 3
     bNext.textContent=(i===steps.length-1)?'Done':'Next';
     var el=findEl(s.sel);
     if(el){el.scrollIntoView({behavior:'smooth',block:'center'});}
-    if(ringTimer)clearTimeout(ringTimer);
-    ringTimer=setTimeout(function(){place(findEl(s.sel));},420);
+    if(ringTimer){for(var k=0;k<ringTimer.length;k++)clearTimeout(ringTimer[k]);}
     place(el);
+    var timers=[120,480,950];
+    ringTimer=[];
+    for(var t=0;t<timers.length;t++){
+      (function(ms){ringTimer.push(setTimeout(function(){place(findEl(s.sel));},ms));})(timers[t]);
+    }
   }
   function end(){
     root.hidden=true;ring.hidden=true;
     try{localStorage.setItem('tst_tour_done_v1','1');}catch(e){}
     window.removeEventListener('resize',reposition);
+    window.removeEventListener('scroll',reposition);
   }
   function reposition(){var s=steps[idx];if(s)place(findEl(s.sel));}
   function start(){
@@ -1180,6 +1206,7 @@ body{background-color:#131822!important;background-image:radial-gradient(560px 3
     var m=document.getElementById('tst-menu-sheet');if(m&&!m.hidden){m.hidden=true;document.body.style.overflow='';}
     root.hidden=false;
     window.addEventListener('resize',reposition);
+    window.addEventListener('scroll',reposition,{passive:true});
     show(0);
   }
   bNext.addEventListener('click',function(){if(idx>=steps.length-1)end();else show(idx+1);});
