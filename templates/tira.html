@@ -15,21 +15,20 @@ body{background-color:#0B0D12;background-image:radial-gradient(560px 300px at 50
 .tr2-bignum{font-size:64px;font-weight:300;color:#F0D47C;line-height:1;letter-spacing:1px}
 .tr2-claim{margin-top:8px;font-size:14px;font-weight:500;color:#fff;letter-spacing:3.5px;white-space:nowrap}
 .tr2-sub{margin-top:9px;color:#9fb0c9;font-size:12px;font-weight:400;line-height:1.55}
-.tr2-row{display:flex;gap:13px;background:#171B25;border:1px solid rgba(148,166,196,.16);border-radius:20px;padding:14px;margin-bottom:11px}
-.tr2-thumb2{flex:0 0 84px;width:84px;height:106px;object-fit:cover;object-position:top center;border-radius:13px;border:1px solid rgba(148,166,196,.25);cursor:pointer}
-.tr2-nothumb{flex:0 0 84px;width:84px;height:106px;border-radius:13px;border:1px dashed rgba(148,166,196,.3);display:flex;align-items:center;justify-content:center;color:#11CB87;font-size:12px;font-weight:700;letter-spacing:2px}
-.tr2-body{flex:1;min-width:0;display:flex;flex-direction:column}
-.tr2-top{display:flex;align-items:center;gap:9px}
-.tr2-chip{flex:0 0 auto;font-size:12.5px;font-weight:700;letter-spacing:.6px;color:#e8c766;border:1.5px solid rgba(232,199,102,.75);border-radius:999px;padding:5px 11px;white-space:nowrap;text-transform:uppercase}
-.tr2-kind{color:#969EA9;font-size:14px;font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.tr2-res{margin-left:auto;text-align:right;flex:0 0 auto}
-.tr2-res-w{display:block;font-size:14.5px;font-weight:700;letter-spacing:.6px;color:#11CB87}
-.tr2-res-w.lost{color:#F0564A}
-.tr2-res-u{display:block;font-size:15.5px;font-weight:700;color:#11CB87;margin-top:2px;white-space:nowrap}
-.tr2-res-u.lost{color:#F0564A}
-.tr2-pick2{display:block;color:#fff;font-size:18px;font-weight:800;margin-top:11px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.tr2-match2{display:block;color:#969EA9;font-size:14px;font-weight:400;margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.tr2-view2{display:inline-block;color:#11CB87;font-size:15px;font-weight:600;margin-top:auto;padding-top:10px;cursor:pointer;text-decoration:none}
+.fr-card{background:#1D2029;border:1px solid #2C313A;border-radius:20px;padding:20px 18px;margin-bottom:12px}
+.fr-kicker{font-size:.68rem;font-weight:700;letter-spacing:2.2px;color:#9AA3AF;margin-bottom:8px}
+.fr-big{font-size:2.9rem;font-weight:800;letter-spacing:-1.5px;line-height:1;color:#fff}
+.fr-streak-title{font-size:1.3rem;font-weight:800;color:#fff;line-height:1.25;margin:10px 0 8px}
+.fr-streak-txt{font-size:.86rem;font-weight:300;line-height:1.55;color:#A3AAB6;margin:0}
+.fr-wrow{display:flex;align-items:center;gap:12px;padding:11px 0;border-top:1px solid rgba(255,255,255,.05)}
+.fr-wrow.first{border-top:none}
+.fr-wchip{flex:none;width:34px;height:34px;border-radius:9px;background:rgba(17,203,135,.16);color:#11CB87;font-weight:800;font-size:.85rem;display:flex;align-items:center;justify-content:center}
+.fr-wchip.lost{background:rgba(240,86,74,.14);color:#F0564A}
+.fr-wdate{flex:none;width:52px;font-size:.82rem;font-weight:300;color:#9AA3AF}
+.fr-wmain{display:block;min-width:0;flex:1}
+.fr-wpick{display:block;font-size:.95rem;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fr-wsub{display:block;font-size:.78rem;font-weight:300;color:#9AA3AF;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fr-wthumb{flex:none;width:46px;height:46px;object-fit:cover;border-radius:9px;border:1px solid #343B47;cursor:pointer}
 .tr2-foot{text-align:center;color:#77839a;font-size:11px;font-weight:400;letter-spacing:.6px;line-height:1.7;margin-top:18px}
 .tr2-empty{background:#171B25;border:1px solid rgba(148,166,196,.15);border-radius:18px;padding:22px 18px;color:#c7d0dd;font-size:14px;font-weight:400;text-align:center;line-height:1.6}
 .tr2-empty a{color:#7ea6d8;font-weight:400;text-decoration:none}
@@ -68,27 +67,26 @@ body{background-color:#0B0D12;background-image:radial-gradient(560px 300px at 50
     <div class="tr2-rule"></div>
   </div>
   {% if tira and tira.plays %}
-  <div class="tr2-hero">
-    <div class="tr2-bignum">{{ tira.n }}</div>
-    <div class="tr2-claim">{% if tira.tipo == 'plat' %}PLATINUM WINS IN A ROW{% else %}WINNING DAYS IN A ROW{% endif %}</div>
-    <p class="tr2-sub">These are the exact plays behind the streak &mdash; nothing more, nothing less.<br>Tap a ticket to see it full size, with every detail.</p>
+  <div class="fr-card">
+    <div class="fr-kicker">CURRENT STREAK</div>
+    <div class="fr-big">{{ tira.n }}</div>
+    <div class="fr-streak-title">{% if tira.tipo == 'plat' %}Platinum wins in a row{% else %}Winning days in a row{% endif %}</div>
+    <p class="fr-streak-txt">These are the exact plays behind the streak &mdash; nothing more, nothing less. Tap a ticket to see it full size, with every detail.</p>
   </div>
-  {% for x in tira.plays %}
+  <div class="fr-card" style="padding-top:8px;padding-bottom:8px">
+{% for x in tira.plays %}
   {% set f = x.fecha or '' %}
-  {% set lost = (x.resultado == 'LOST') %}
-  <div class="tr2-row">
-    {% if x.comprobante %}<img class="tr2-thumb2" src="{{ url_for('static', filename=x.comprobante) }}" alt="Ticket &mdash; {{ x.pick }}" loading="lazy" onclick="tiraZoom({{ loop.index0 }})">{% else %}<span class="tr2-nothumb">{{ 'WON' if x.resultado == 'WON' else ('LOST' if lost else 'PUSH') }}</span>{% endif %}
-    <span class="tr2-body">
-      <span class="tr2-top">
-        <span class="tr2-chip">{% if x.nivel_label == 'FREE' %}FREE PICK{% else %}{{ x.nivel_label }} PLAY{% endif %}</span>
-        <span class="tr2-res"><span class="tr2-res-w{% if lost %} lost{% endif %}">{{ x.resultado }}</span><span class="tr2-res-u{% if lost %} lost{% endif %}">{{ x.profit_u }}</span></span>
-      </span>
-      <span class="tr2-pick2">{{ x.pick }}{% if x.cuota %} ({{ '+' if x.cuota > 0 else '' }}{{ x.cuota }}){% endif %}</span>
-      <span class="tr2-match2">{% if x.abbr and x.opp_abbr %}{{ x.abbr }} vs {{ x.opp_abbr }} &middot; {% endif %}{{ x.liga }} &middot; {{ meses.get(f[5:7], '') }} {{ (f[8:10] | int) if (f | length) >= 10 else '' }}</span>
-      {% if x.comprobante %}<span class="tr2-view2" onclick="tiraZoom({{ loop.index0 }})">View ticket &#8250;</span>{% endif %}
+  <div class="fr-wrow{% if loop.first %} first{% endif %}">
+    <span class="fr-wchip{% if x.resultado == 'LOST' %} lost{% endif %}">{{ 'W' if x.resultado == 'WON' else ('L' if x.resultado == 'LOST' else 'P') }}</span>
+    <span class="fr-wdate">{{ meses.get(f[5:7], '') }} {{ (f[8:10] | int) if (f | length) >= 10 else '' }}</span>
+    <span class="fr-wmain">
+      <span class="fr-wpick">{{ x.pick }}{% if x.cuota %} ({{ '+' if x.cuota > 0 else '' }}{{ x.cuota }}){% endif %}</span>
+      <span class="fr-wsub">{% if x.abbr and x.opp_abbr %}{{ x.abbr }} vs {{ x.opp_abbr }} &middot; {% endif %}{{ x.liga }}{% if x.stake_display %} &middot; {{ x.stake_display }} staked{% endif %} &middot; {{ x.profit_u }}</span>
     </span>
+    {% if x.comprobante %}<img class="fr-wthumb" src="{{ url_for('static', filename=x.comprobante) }}" alt="Ticket &mdash; {{ x.pick }}" loading="lazy" onclick="tiraZoom({{ loop.index0 }})">{% endif %}
   </div>
   {% endfor %}
+  </div>
   <div class="tr2-foot">Posted before every game &middot; graded in public<br>Win or lose &mdash; the record never hides a play.</div>
   {% else %}
   <div class="tr2-empty">No streak is running right now.<br>Every play &mdash; win or lose &mdash; is in the <a href="{{ url_for('official_tracker') }}">full official record</a>.</div>
