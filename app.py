@@ -10619,6 +10619,7 @@ def _tira_actual():
             return {"fecha": _f, "pick": _j.get("pick") or "",
                     "resultado": _j.get("resultado") or "",
                     "comprobante": _j.get("comprobante") or "",
+                    "cuota": _j.get("cuota") or 0,
                     "abbr": _j.get("abbr") or "",
                     "opp_abbr": _j.get("opp_abbr") or "",
                     "liga": (_j.get("liga") or "").upper(),
