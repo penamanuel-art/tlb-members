@@ -1286,6 +1286,11 @@ body{background-color:#131822!important;background-image:radial-gradient(560px 3
   var st=load();
   if(/[?&]tour=1(&|$)/.test(location.search)){save({ch:curCh,i:0});setTimeout(function(){start(0);},600);}
   else if(st&&st.ch===curCh){setTimeout(function(){start(st.i||0);},600);}
+  else if(curCh==='home'){
+    var doneFlag=false;
+    try{doneFlag=!!localStorage.getItem('tst_tour_done_v1');}catch(e){}
+    if(!doneFlag){setTimeout(function(){if(root.hidden)start(0);},1500);}
+  }
 })();
 </script>
 
