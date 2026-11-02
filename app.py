@@ -2625,15 +2625,76 @@ def official_tracker_full():
                         break
                 _plays_r.append({"fecha": _f, "pick": _pk.strip(),
                                  "abbr": x.get("abbr") or "",
-                                 "opp_abbr": x.get("opp_abbr") or ""})
+                                 "opp_abbr": x.get("opp_abbr") or "",
+                                 "comprobante": x.get("comprobante") or "",
+                                 "ticket_id": x.get("id") or _pid(_f, x)})
         if _n_r >= 3:
             rachas_liga.append({"liga": _Lr, "n": _n_r, "plays": _plays_r})
     rachas_liga.sort(key=lambda r: -r["n"])
     rachas_liga = rachas_liga[:2]
 
+    # Seccion TIRA (2026-11-02, pedido de Alex): la tirita del home
+    # ("PLATINUM - N WINS IN A ROW" / "N WINNING DAYS IN A ROW") enlaza
+    # aqui; esta seccion muestra EXACTAMENTE esas jugadas con su ticket.
+    # Misma logica que la tira del home (archivo, mas nuevo primero).
+    tira = None
+    try:
+        _dias_desc = list(reversed(dias))
+        def _tira_play(_f, _j):
+            _p = float(_j.get("profit") or 0.0)
+            _nv = (_j.get("nivel") or "").upper()
+            return {"fecha": _f, "pick": _j.get("pick") or "",
+                    "resultado": _j.get("resultado") or "",
+                    "comprobante": _j.get("comprobante") or "",
+                    "nivel_label": "PLATINUM" if _nv in ("ELITE", "PLATINUM") else (_nv or "FREE"),
+                    "profit_display": (("+$" if _p > 0 else ("-$" if _p < 0 else "$"))
+                                       + f"{abs(int(round(_p))):,}")}
+        _plat_n = 0
+        _plat_plays = []
+        _plat_last_win = None
+        _ultimo_dia_t = None
+        _cerrada = False
+        for _d in _dias_desc:
+            _jug = [j for j in (_d.get("jugadas") or [])
+                    if j.get("resultado") in ("WON", "LOST")
+                    and not j.get("bloqueada")]
+            if _jug and _ultimo_dia_t is None:
+                _ultimo_dia_t = _d.get("fecha")
+            if not _cerrada:
+                for _j in _jug:
+                    if (_j.get("nivel") or "").upper() in ("ELITE", "PLATINUM"):
+                        if _j["resultado"] == "WON":
+                            _plat_n += 1
+                            _plat_plays.append(_tira_play(_d.get("fecha") or "", _j))
+                            if _plat_last_win is None:
+                                _plat_last_win = _d.get("fecha")
+                        else:
+                            _cerrada = True
+                            break
+        _dias_n = 0
+        _dias_plays = []
+        for _d in _dias_desc:
+            _jug = [j for j in (_d.get("jugadas") or [])
+                    if j.get("resultado") in ("WON", "LOST")
+                    and not j.get("bloqueada")]
+            if not _jug:
+                continue
+            if sum(float(j.get("profit") or 0) for j in _jug) > 0:
+                _dias_n += 1
+                for _j in _jug:
+                    _dias_plays.append(_tira_play(_d.get("fecha") or "", _j))
+            else:
+                break
+        if _plat_n >= 2 and _plat_last_win and _plat_last_win == _ultimo_dia_t:
+            tira = {"tipo": "plat", "n": _plat_n, "plays": _plat_plays}
+        elif _dias_n >= 2:
+            tira = {"tipo": "dias", "n": _dias_n, "plays": _dias_plays}
+    except Exception:
+        tira = None
+
     return {"general": general, "por_nivel": por_nivel, "por_banda": por_banda,
             "por_liga": por_liga,
-            "tickets_ganadores": tickets_ganadores, "rachas_liga": rachas_liga,
+            "tickets_ganadores": tickets_ganadores, "rachas_liga": rachas_liga, "tira": tira,
             "racha_actual": racha_actual, "mejor_racha_w": mejor_w, "peor_racha_l": peor_l,
             "ult7": ult7, "ult30": ult30, "mejor": mejor, "peor": peor,
             "ultimas": ultimas, "historial": historial, "verificadas": verif,
