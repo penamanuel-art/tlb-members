@@ -113,7 +113,9 @@ body{background-color:#0B0D12;background-image:radial-gradient(560px 300px at 50
 .fr-wrow { display: flex; align-items: center; gap: 12px; padding: 11px 0; border-top: 1px solid rgba(255,255,255,.05); }
 .fr-wchip { flex: none; width: 34px; height: 34px; border-radius: 9px; background: rgba(17,203,135,.16); color: #11CB87; font-weight: 800; font-size: .85rem; display: flex; align-items: center; justify-content: center; }
 .fr-wdate { flex: none; width: 52px; font-size: .82rem; font-weight: 300; color: #9AA3AF; }
-.fr-wmain { display: block; min-width: 0; }
+.fr-wmain { display: block; min-width: 0; flex: 1; }
+.fr-wthumb { flex: none; width: 46px; height: 46px; object-fit: cover; border-radius: 9px; border: 1px solid #343B47; cursor: pointer; }
+a.fr-pill { text-decoration: none; cursor: pointer; }
 .fr-wpick { display: block; font-size: .95rem; font-weight: 600; color: #fff; }
 .fr-wsub { display: block; font-size: .78rem; font-weight: 300; color: #9AA3AF; margin-top: 2px; }
 .fr-h2 { font-size: 1.45rem !important; font-weight: 800; letter-spacing: -.3px; }
@@ -187,22 +189,44 @@ body{background-color:#0B0D12;background-image:radial-gradient(560px 300px at 50
     <div class="fr-line">{{ sg.win_rate }}% win rate · ROI {{ '+' if sg.roi > 0 else '' }}{{ sg.roi }}% · the free showcase, posted and graded in public</div>
   </div>
 
-  {% if t.rachas_liga %}
-  <div class="fr-pills">
-    {% for r in t.rachas_liga %}
-    <div class="fr-pill">🔥 <b>{{ r.n }} straight {{ r.liga }} wins</b><span>Official plays</span></div>
+  {% if t.tira and t.tira.plays %}
+  <div class="fr-card" id="tira">
+    <div class="fr-streak-title">{% if t.tira.tipo == 'plat' %}&#128142; PLATINUM &middot; {{ t.tira.n }} WINS IN A ROW{% else %}&#128293; {{ t.tira.n }} WINNING DAYS IN A ROW{% endif %}</div>
+    <p class="fr-streak-txt">These are the exact plays behind that streak — every one of them, with its real ticket. Tap a ticket to see it full size.</p>
+    {% for x in t.tira.plays %}
+    {% set f = x.fecha or '' %}
+    <div class="fr-wrow">
+      <span class="fr-wchip" style="{% if x.resultado == 'LOST' %}background:rgba(255,93,93,.14);color:#ff5d5d;{% elif x.resultado == 'PUSH' %}background:rgba(255,255,255,.08);color:#c7d0dd;{% endif %}">{{ 'W' if x.resultado == 'WON' else ('L' if x.resultado == 'LOST' else 'P') }}</span>
+      <span class="fr-wdate">{{ meses.get(f[5:7], '') }} {{ (f[8:10] | int) if (f | length) >= 10 else '' }}</span>
+      <span class="fr-wmain"><span class="fr-wpick">{{ x.pick }}</span><span class="fr-wsub">{{ x.nivel_label }} · {{ x.profit_display }}</span></span>
+      {% if x.comprobante %}<img class="fr-wthumb" src="{{ url_for('static', filename=x.comprobante) }}" alt="Ticket — {{ x.pick }}" loading="lazy" onclick="otZoom('{{ url_for('static', filename=x.comprobante) }}')">{% endif %}
+    </div>
     {% endfor %}
   </div>
-  {% set r0 = t.rachas_liga[0] %}
-  <div class="fr-card">
-    <div class="fr-streak-title">🔥 {{ r0.liga }}: {{ r0.n }} straight wins</div>
-    <p class="fr-streak-txt">This streak counts one league only, and only these exact graded plays, newest game first. Plays posted on the same day are graded together — if that day had a loss in the league, none of it counts toward the run.</p>
-    {% for x in r0.plays %}
+  {% endif %}
+
+  {% if t.rachas_liga %}
+  <div class="fr-pills" id="rachas">
+    {% for r in t.rachas_liga %}
+    <a class="fr-pill" href="#racha-{{ r.liga | lower | replace(' ', '-') }}">🔥 <b>{{ r.n }} straight {{ r.liga }} wins</b><span>See the plays &amp; tickets ›</span></a>
+    {% endfor %}
+  </div>
+  {% for r in t.rachas_liga %}
+  <div class="fr-card" id="racha-{{ r.liga | lower | replace(' ', '-') }}">
+    <div class="fr-streak-title">🔥 {{ r.liga }}: {{ r.n }} straight wins</div>
+    <p class="fr-streak-txt">This streak counts one league only, and only these exact graded plays, newest game first. Plays posted on the same day are graded together — if that day had a loss in the league, none of it counts toward the run. Tap a ticket to see it full size.</p>
+    {% for x in r.plays %}
     {% set f = x.fecha or '' %}
     <div class="fr-wrow">
       <span class="fr-wchip">W</span>
       <span class="fr-wdate">{{ meses.get(f[5:7], '') }} {{ (f[8:10] | int) if (f | length) >= 10 else '' }}</span>
-      <span class="fr-wmain"><span class="fr-wpick">{{ x.pick }}</span><span class="fr-wsub">{% if x.abbr and x.opp_abbr %}{{ x.abbr }} vs {{ x.opp_abbr }} · {% endif %}{{ r0.liga }}</span></span>
+      <span class="fr-wmain"><span class="fr-wpick">{{ x.pick }}</span><span class="fr-wsub">{% if x.abbr and x.opp_abbr %}{{ x.abbr }} vs {{ x.opp_abbr }} · {% endif %}{{ r.liga }}</span></span>
+      {% if x.comprobante %}<img class="fr-wthumb" src="{{ url_for('static', filename=x.comprobante) }}" alt="Ticket — {{ x.pick }}" loading="lazy" onclick="otZoom('{{ url_for('static', filename=x.comprobante) }}')">{% endif %}
+    </div>
+    {% endfor %}
+  </div>
+  {% endfor %}
+  {% endif %}{{ r0.liga }}</span></span>
     </div>
     {% endfor %}
   </div>
