@@ -7,23 +7,23 @@ body{background-color:#0B0D12;background-image:radial-gradient(560px 300px at 50
 .tr2-back{display:inline-block;color:#7ea6d8;text-decoration:none;font-size:13px;font-weight:400;letter-spacing:.4px;margin-bottom:20px}
 .tr2-head{text-align:center;margin-bottom:10px}
 .tr2-logo{width:36px;height:36px;border-radius:50%;object-fit:cover}
-.tr2-kicker{font-size:13px;font-weight:400;color:#e8ecf3;letter-spacing:4px;white-space:nowrap;margin-top:5px}
-.tr2-tag{color:#8b98ad;font-size:10.5px;font-weight:400;margin-top:3px;letter-spacing:.4px;white-space:nowrap}
+.tr2-kicker{font-size:14.5px;font-weight:400;color:#e8ecf3;letter-spacing:4px;white-space:nowrap;margin-top:5px}
+.tr2-tag{color:#8b98ad;font-size:11.5px;font-weight:400;margin-top:3px;letter-spacing:.4px;white-space:nowrap}
 .tr2-goldline{height:1px;background:linear-gradient(90deg,transparent,rgba(212,175,55,.55),transparent);margin:9px 24px 0}
 .tr2-banner{display:flex;align-items:center;gap:13px;background:#1D2029;border:1px solid #2C313A;border-left:3px solid #D4AF37;border-radius:16px;padding:12px 15px;margin-bottom:10px}
-.tr2-bignum{font-size:46px;font-weight:800;color:#fff;line-height:1;letter-spacing:-1px}
-.tr2-bt{font-size:19px;font-weight:800;color:#fff;line-height:1.2}
-.tr2-bs{font-size:12.5px;font-weight:300;color:#9AA3AF;margin-top:3px}
+.tr2-bignum{font-size:54px;font-weight:800;color:#fff;line-height:1;letter-spacing:-1px}
+.tr2-bt{font-size:21px;font-weight:800;color:#fff;line-height:1.2}
+.tr2-bs{font-size:13.5px;font-weight:300;color:#9AA3AF;margin-top:3px}
 .tr2-list{background:#1D2029;border:1px solid #2C313A;border-radius:16px;padding:6px 12px}
 .tr2-row{display:flex;align-items:center;gap:9px;padding:11px 0;border-top:1px solid rgba(255,255,255,.05)}
 .tr2-row.first{border-top:none}
-.tr2-wchip{flex:none;width:32px;height:32px;border-radius:8px;background:rgba(17,203,135,.16);color:#11CB87;font-weight:800;font-size:.92rem;display:flex;align-items:center;justify-content:center}
+.tr2-wchip{flex:none;width:34px;height:34px;border-radius:8px;background:rgba(17,203,135,.16);color:#11CB87;font-weight:800;font-size:1rem;display:flex;align-items:center;justify-content:center}
 .tr2-wchip.lost{background:rgba(255,90,90,.15);color:#FF6B6B}
 .tr2-main{display:block;min-width:0;flex:1}
-.tr2-pick{display:block;font-size:1.06rem;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.tr2-sub{display:block;font-size:.79rem;font-weight:300;color:#9AA3AF;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.tr2-thumb{flex:none;width:40px;height:40px;object-fit:cover;border-radius:8px;border:1px solid #343B47;cursor:pointer}
-.tr2-foot{text-align:center;color:#77808e;font-size:10.5px;font-weight:300;line-height:1.55;margin-top:11px}
+.tr2-pick{display:block;font-size:1.16rem;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tr2-sub{display:block;font-size:.86rem;font-weight:300;color:#9AA3AF;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tr2-thumb{flex:none;width:36px;height:36px;object-fit:cover;border-radius:8px;border:1px solid #343B47;cursor:pointer}
+.tr2-foot{text-align:center;color:#77808e;font-size:11.5px;font-weight:300;line-height:1.55;margin-top:11px}
 #tiraModal{display:none;position:fixed;inset:0;background:rgba(4,6,10,.94);z-index:9999;overflow-y:auto;padding:18px 14px 30px;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
 .trs-sheet{max-width:560px;margin:0 auto;background:#14161D;border:1px solid #262C36;border-radius:22px;padding:20px 18px 22px;position:relative}
 .trs-x{position:absolute;top:14px;right:14px;width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.25);color:#fff;font-size:16px;font-weight:300;display:flex;align-items:center;justify-content:center;cursor:pointer}
@@ -72,7 +72,7 @@ body{background-color:#0B0D12;background-image:radial-gradient(560px 300px at 50
     <span class="tr2-wchip{% if x.resultado == 'LOST' %} lost{% endif %}">{{ 'W' if x.resultado == 'WON' else ('L' if x.resultado == 'LOST' else 'P') }}</span>
     <span class="tr2-main">
       <span class="tr2-pick">{{ x.pick }}{% if x.cuota %} ({{ '+' if x.cuota > 0 else '' }}{{ x.cuota }}){% endif %}</span>
-      <span class="tr2-sub">{{ meses.get(f[5:7], '') }} {{ (f[8:10] | int) if (f | length) >= 10 else '' }}{% if x.abbr and x.opp_abbr %} &middot; {{ x.abbr }} vs {{ x.opp_abbr }}{% endif %} &middot; {{ x.liga }}{% if x.stake_display %} &middot; {{ x.stake_display }}{% endif %} &middot; {{ x.profit_u }}</span>
+      <span class="tr2-sub">{{ meses.get(f[5:7], '') }} {{ (f[8:10] | int) if (f | length) >= 10 else '' }}{% if x.abbr and x.opp_abbr %} &middot; {{ x.abbr }} vs {{ x.opp_abbr }}{% endif %} &middot;{{ x.liga }}{% if x.stake_display %} &middot;{{ x.stake_display }}{% endif %} &middot;{{ x.profit_u }}</span>
     </span>
     {% if x.comprobante %}<img class="tr2-thumb" src="{{ url_for('static', filename=x.comprobante) }}" alt="Ticket &mdash; {{ x.pick }}" loading="lazy" onclick="tiraZoom({{ loop.index0 }})">{% endif %}
   </div>
