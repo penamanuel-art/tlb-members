@@ -10601,6 +10601,82 @@ def share_play_image(play_id):
     return send_file(path, mimetype="image/png")
 
 
+def _tira_actual():
+    """La racha vigente de la tirita del home, con sus jugadas exactas
+    (2026-11-02): la misma logica de la tira (archivo, mas nuevo primero).
+    Devuelve {"tipo", "n", "plays"} o None si no hay racha."""
+    try:
+        dias = sorted(load_archive(), key=lambda d: d.get("fecha") or "")
+        dias_desc = list(reversed(dias))
+
+        def _tp(_f, _j):
+            _p = float(_j.get("profit") or 0.0)
+            _nv = (_j.get("nivel") or "").upper()
+            _sm = _j.get("stake_monto")
+            _stake = ""
+            if _sm:
+                _stake = "$" + format(int(round(float(_sm))), ",")
+            _signo = "-$" if _p < 0 else ("+$" if _p > 0 else "$")
+            return {"fecha": _f, "pick": _j.get("pick") or "",
+                    "resultado": _j.get("resultado") or "",
+                    "comprobante": _j.get("comprobante") or "",
+                    "abbr": _j.get("abbr") or "",
+                    "opp_abbr": _j.get("opp_abbr") or "",
+                    "liga": (_j.get("liga") or "").upper(),
+                    "nivel_label": "PLATINUM" if _nv in ("ELITE", "PLATINUM") else (_nv or "FREE"),
+                    "profit_display": _signo + format(abs(int(round(_p))), ","),
+                    "stake_display": _stake}
+
+        _plat_n, _plat_plays, _plat_last = 0, [], None
+        _ultimo_dia_t, _cerrada = None, False
+        for _d in dias_desc:
+            _jug = [j for j in (_d.get("jugadas") or [])
+                    if j.get("resultado") in ("WON", "LOST")
+                    and not j.get("bloqueada")]
+            if _jug and _ultimo_dia_t is None:
+                _ultimo_dia_t = _d.get("fecha")
+            if not _cerrada:
+                for _j in _jug:
+                    if (_j.get("nivel") or "").upper() in ("ELITE", "PLATINUM"):
+                        if _j["resultado"] == "WON":
+                            _plat_n += 1
+                            _plat_plays.append(_tp(_d.get("fecha") or "", _j))
+                            if _plat_last is None:
+                                _plat_last = _d.get("fecha")
+                        else:
+                            _cerrada = True
+                            break
+        _dias_n, _dias_plays = 0, []
+        for _d in dias_desc:
+            _jug = [j for j in (_d.get("jugadas") or [])
+                    if j.get("resultado") in ("WON", "LOST")
+                    and not j.get("bloqueada")]
+            if not _jug:
+                continue
+            if sum(float(j.get("profit") or 0) for j in _jug) > 0:
+                _dias_n += 1
+                for _j in _jug:
+                    _dias_plays.append(_tp(_d.get("fecha") or "", _j))
+            else:
+                break
+        if _plat_n >= 2 and _plat_last and _plat_last == _ultimo_dia_t:
+            return {"tipo": "plat", "n": _plat_n, "plays": _plat_plays}
+        if _dias_n >= 2:
+            return {"tipo": "dias", "n": _dias_n, "plays": _dias_plays}
+    except Exception:
+        pass
+    return None
+
+
+@app.route("/racha")
+@login_required
+def racha():
+    """Pagina SOLO de la racha (2026-11-02, pedido expreso de Alex: el
+    link View tickets de la tirita cae aqui y muestra UNICAMENTE las
+    jugadas de esa racha con sus tickets — nada mas)."""
+    return render_template("tira.html", tira=_tira_actual())
+
+
 @app.route("/official-tracker")
 @login_required
 def official_tracker():
