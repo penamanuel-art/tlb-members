@@ -3,7 +3,7 @@
 {% block content %}
 <style>
 body{background-color:#0B0D12;background-image:radial-gradient(560px 300px at 50% -80px,rgba(255,255,255,.02),transparent 65%),radial-gradient(700px 500px at 110% 30%,rgba(255,255,255,.015),transparent 60%)}
-.tr2-wrap{max-width:640px;margin:0 auto;padding:18px 16px 34px;font-family:-apple-system,'SF Pro',Inter,system-ui,sans-serif}
+.tr2-wrap{max-width:640px;margin:0 auto;padding:18px 16px 34px;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
 .tr2-back{display:inline-block;color:#7ea6d8;text-decoration:none;font-size:13px;font-weight:400;letter-spacing:.4px;margin-bottom:20px}
 .tr2-head{text-align:center;margin-bottom:20px}
 .tr2-head img{height:52px;width:auto;display:block;margin:0 auto 10px}
@@ -28,19 +28,26 @@ body{background-color:#0B0D12;background-image:radial-gradient(560px 300px at 50
 .tr2-foot{text-align:center;color:#77839a;font-size:11px;font-weight:400;letter-spacing:.6px;line-height:1.7;margin-top:18px}
 .tr2-empty{background:#171B25;border:1px solid rgba(148,166,196,.15);border-radius:18px;padding:22px 18px;color:#c7d0dd;font-size:14px;font-weight:400;text-align:center;line-height:1.6}
 .tr2-empty a{color:#7ea6d8;font-weight:400;text-decoration:none}
-/* Hoja del ticket (detalle estilo ficha, 2026-11-02) */
+/* Hoja del ticket (estructura de referencia de Alex, 2026-11-02) */
 #tiraModal{display:none;position:fixed;inset:0;background:rgba(4,6,10,.94);z-index:9999;overflow-y:auto;padding:18px 14px 30px}
 .trs-sheet{max-width:560px;margin:0 auto;background:#14161D;border:1px solid #262C36;border-radius:22px;padding:20px 18px 22px;position:relative}
 .trs-x{position:absolute;top:14px;right:14px;width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.25);color:#fff;font-size:16px;font-weight:300;display:flex;align-items:center;justify-content:center;cursor:pointer}
 .trs-kicker{font-size:12px;font-weight:700;letter-spacing:2.6px;color:#e8c766;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-right:44px}
-.trs-title{font-size:27px;font-weight:800;color:#fff;line-height:1.15;margin-top:7px}
+.trs-title{font-size:26px;font-weight:800;color:#fff;line-height:1.15;margin-top:7px}
 .trs-sub{color:#969EA9;font-size:14px;font-weight:400;margin-top:5px}
 .trs-img{width:100%;border-radius:16px;border:1px solid #2C313A;display:block;margin-top:16px}
-.trs-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.trs-match{background:#1D2029;border-radius:16px;padding:15px 16px;margin-top:14px}
+.trs-match-t{color:#fff;font-size:21px;font-weight:800}
+.trs-match-s{color:#969EA9;font-size:14.5px;font-weight:400;margin-top:5px}
+.trs-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
 .trs-box{background:#1D2029;border-radius:16px;padding:13px 14px}
-.trs-lbl{color:#969EA9;font-size:12.5px;font-weight:500}
-.trs-val{color:#fff;font-size:19px;font-weight:700;margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.trs-val small{display:block;color:#2ee6a8;font-size:13.5px;font-weight:600;margin-top:2px}
+.trs-lbl{color:#969EA9;font-size:13px;font-weight:500}
+.trs-val{color:#fff;font-size:20px;font-weight:700;margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.trs-val small{display:block;color:#2ee6a8;font-size:14px;font-weight:600;margin-top:2px}
+.trs-bet{margin-top:12px;background:rgba(17,203,135,.13);border:1px solid #11CB87;border-radius:16px;padding:15px 16px}
+.trs-bet-t{color:#11CB87;font-size:19px;font-weight:700}
+.trs-bet-s{color:#E6EBF2;font-size:15px;font-weight:400;margin-top:5px}
+.trs-bet-n{color:#969EA9;font-size:13.5px;font-weight:400;margin-top:5px;line-height:1.5}
 </style>
 {% set meses = {'01':'Jan','02':'Feb','03':'Mar','04':'Apr','05':'May','06':'Jun','07':'Jul','08':'Aug','09':'Sep','10':'Oct','11':'Nov','12':'Dec'} %}
 <div class="tr2-wrap">
@@ -83,13 +90,17 @@ body{background-color:#0B0D12;background-image:radial-gradient(560px 300px at 50
     <div class="trs-title" id="trsTitle"></div>
     <div class="trs-sub" id="trsSub"></div>
     <img class="trs-img" id="trsImg" src="" alt="Ticket full size">
+    <div class="trs-match"><div class="trs-match-t" id="trsMatch"></div><div class="trs-match-s" id="trsStarts"></div></div>
     <div class="trs-grid">
-      <div class="trs-box"><div class="trs-lbl">Matchup</div><div class="trs-val" id="trsMatch"></div></div>
       <div class="trs-box"><div class="trs-lbl">Price posted</div><div class="trs-val" id="trsPrice"></div></div>
       <div class="trs-box"><div class="trs-lbl">Stake</div><div class="trs-val" id="trsStake"></div></div>
       <div class="trs-box"><div class="trs-lbl">Result</div><div class="trs-val" id="trsResult"></div></div>
-      <div class="trs-box"><div class="trs-lbl">Game day</div><div class="trs-val" id="trsDay"></div></div>
-      <div class="trs-box"><div class="trs-lbl">Placed at</div><div class="trs-val">Novig</div></div>
+      <div class="trs-box"><div class="trs-lbl">Placed at</div><div class="trs-val" id="trsCasa"></div></div>
+    </div>
+    <div class="trs-bet">
+      <div class="trs-bet-t" id="trsBetT"></div>
+      <div class="trs-bet-s" id="trsBetS"></div>
+      <div class="trs-bet-n">The official size for this play. Bet only what you can afford to lose.</div>
     </div>
   </div>
 </div>
@@ -100,6 +111,7 @@ var TIRA_PLAYS = [
   {"pick": {{ x.pick | tojson }}, "nivel": {{ x.nivel_label | tojson }}, "liga": {{ x.liga | tojson }},
    "match": {{ ((x.abbr ~ ' vs ' ~ x.opp_abbr) if (x.abbr and x.opp_abbr) else '') | tojson }},
    "cuota": {{ x.cuota | tojson }}, "stake": {{ x.stake_display | tojson }}, "profit": {{ x.profit_display | tojson }},
+   "hora": {{ x.hora | tojson }}, "casa": {{ x.casa | tojson }}, "unidades": {{ x.unidades | tojson }},
    "resultado": {{ x.resultado | tojson }},
    "dia": {{ ((meses.get(f[5:7], '') ~ ' ' ~ ((f[8:10] | int) if (f | length) >= 10 else '') ~ ', ' ~ f[:4]) if f else '') | tojson }},
    "img": {{ (url_for('static', filename=x.comprobante) if x.comprobante else '') | tojson }}},
@@ -112,12 +124,18 @@ function tiraZoom(i){
   document.getElementById('trsSub').textContent = p.nivel.charAt(0) + p.nivel.slice(1).toLowerCase() + ' play \u00B7 ' + p.liga;
   document.getElementById('trsImg').src = p.img;
   document.getElementById('trsMatch').textContent = p.match || p.pick;
+  document.getElementById('trsStarts').textContent = p.hora ? ('Starts ' + p.hora + (p.dia ? ' \u00B7 ' + p.dia : '')) : (p.dia || '');
   var c = parseInt(p.cuota || 0, 10);
   document.getElementById('trsPrice').textContent = c ? (c > 0 ? '+' + c : '' + c) : '\u2014';
-  document.getElementById('trsStake').textContent = p.stake || '\u2014';
+  var u = parseFloat(p.unidades || 0);
+  var uTxt = u ? (u + 'u').replace('0.', '.').replace('.0u', 'u') : '';
+  if(u === 1) uTxt = '1u';
+  document.getElementById('trsStake').innerHTML = (uTxt || '\u2014') + '<small>' + (p.stake || '') + '</small>';
   var r = document.getElementById('trsResult');
   r.innerHTML = (p.resultado === 'WON' ? 'Won' : (p.resultado === 'LOST' ? 'Lost' : 'Push')) + '<small>' + p.profit + '</small>';
-  document.getElementById('trsDay').textContent = p.dia || '\u2014';
+  document.getElementById('trsCasa').textContent = p.casa || 'Novig';
+  document.getElementById('trsBetT').textContent = 'Bet ' + (p.stake || '');
+  document.getElementById('trsBetS').textContent = uTxt ? ('(' + uTxt + ' at the official $100 unit)') : '';
   var m = document.getElementById('tiraModal'); m.style.display = 'block'; m.scrollTop = 0;
 }
 document.getElementById('tiraModal').addEventListener('click', function(e){ if(e.target === this) this.style.display = 'none'; });
