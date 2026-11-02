@@ -1543,19 +1543,19 @@ DUNNING_HTML = """<div style="font-family:Arial,sans-serif;max-width:480px;margi
 <img src="https://www.thesharpteam.bet/static/img/sharp-team-header.jpg" alt="The Sharp Team" width="480" style="width:100%;height:auto;display:block;border:0;">
 <div style="background:#ffffff;height:18px;line-height:18px;font-size:0.8px;">&nbsp;</div>
 <div style="background:#2e4053;padding:28px 24px;text-align:center;">
-<p style="margin:0;font-size:9.2px;font-weight:800;letter-spacing:2px;color:#9aa3b8;">&#9888;&nbsp;PAYMENT ISSUE</p>
-<h1 style="font-size:22.9px;font-weight:800;color:#ffffff;margin:10px 0 0;line-height:1.25;">Today&apos;s card is set.<br><span style="color:#22c55e;">Your card isn&apos;t.</span></h1>
+<p style="margin:0;font-size:10.6px;font-weight:800;letter-spacing:2px;color:#9aa3b8;">&#9888;&nbsp;PAYMENT ISSUE</p>
+<h1 style="font-size:26.3px;font-weight:800;color:#ffffff;margin:10px 0 0;line-height:1.25;">Today&apos;s card is set.<br><span style="color:#22c55e;">Your card isn&apos;t.</span></h1>
 </div>
 <div style="margin:14px 24px 0;background:#ffffff;border:1px solid #e5e7eb;border-radius:12px;padding:18px;">
-<p style="margin:0;font-size:11.5px;font-weight:700;color:#111111;line-height:1.55;">Hi __NOMBRE__ &mdash; your last payment didn&apos;t go through, so your Platinum plays are on hold.</p>
-<p style="margin:10px 0 0;font-size:10.7px;color:#555555;line-height:1.6;">Nothing is canceled &mdash; cards just fail sometimes. Fix it now and everything switches back on instantly.</p>
+<p style="margin:0;font-size:13.2px;font-weight:700;color:#111111;line-height:1.55;">Hi __NOMBRE__ &mdash; your last payment didn&apos;t go through, so your Platinum plays are on hold.</p>
+<p style="margin:10px 0 0;font-size:12.3px;color:#555555;line-height:1.6;">Nothing is canceled &mdash; cards just fail sometimes. Fix it now and everything switches back on instantly.</p>
 </div>
 <div style="text-align:center;padding:16px 24px 0;">
-<a href="__PAY_URL__" style="display:inline-block;background:#22c55e;color:#111111;font-weight:800;font-size:12.2px;padding:14px 36px;border-radius:999px;text-decoration:none;">Fix my card in one tap &rarr;</a>
-<p style="margin:10px 0 0;font-size:9.9px;color:#6b7280;">Takes about 30 seconds &middot; Your Sharp Free plays stay yours either way.</p>
+<a href="__PAY_URL__" style="display:inline-block;background:#22c55e;color:#111111;font-weight:800;font-size:14.0px;padding:14px 36px;border-radius:999px;text-decoration:none;">Fix my card in one tap &rarr;</a>
+<p style="margin:10px 0 0;font-size:11.4px;color:#6b7280;">Takes about 30 seconds &middot; Your Sharp Free plays stay yours either way.</p>
 </div>
-<p style="font-size:9.9px;line-height:1.6;color:#6b7280;margin:16px 24px 0;text-align:center;">If anything looks off, just reply to this email and a real person will sort it.</p>
-<p style="text-align:center;font-size:9.2px;color:#9ca3af;margin:14px 0 0;">__FECHA__</p>
+<p style="font-size:11.4px;line-height:1.6;color:#6b7280;margin:16px 24px 0;text-align:center;">If anything looks off, just reply to this email and a real person will sort it.</p>
+<p style="text-align:center;font-size:10.6px;color:#9ca3af;margin:14px 0 0;">__FECHA__</p>
 <div style="text-align:center;padding:20px 20px 14px;">
 <img src="https://www.thesharpteam.bet/static/img/sharp-team-logo.png" alt="The Sharp Team" width="110" style="width:110px;height:auto;display:block;margin:0 auto;border:0;">
 <p style="margin:10px 0 0;color:#111111;font-size:9.2px;font-weight:800;letter-spacing:3px;">THE SHARP TEAM</p>
