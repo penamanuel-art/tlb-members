@@ -601,7 +601,7 @@
     <div class="row"><span>Daily email</span><a class="on" href="{{ url_for('cuenta') }}">● ON ›</a></div>
   </div>
 
-  <div class="section">
+  <div class="section" id="tour-academy">
     <h3>Academy</h3>
     <div class="row"><span>Masterclass — the full course</span><a class="join" href="{{ url_for('masterclass') }}">OPEN →</a></div>
   </div>
@@ -1124,10 +1124,12 @@ body{background-color:#131822!important;background-image:radial-gradient(560px 3
     {sel:[".v5c"],title:"A play card",body:"Each card is one play: the team, the price, the game and the start time. The percent is our model's chance of winning — an estimate, never a promise."},
     {sel:[".v5wu"],title:"Why we like it",body:"This block shows the homework: our model's probability next to the probability implied by the price. When ours is higher, that gap is the edge we are playing."},
     {sel:[".v5timg",".v5c-tk"],title:"The real ticket",body:"Every play carries the photo of our real betting receipt. Tap it to see it full size. If there is no ticket, it is not an official play."},
-    {sel:[".v5big-track",".v5c-track"],title:"Track the play",body:"Tap Track to save the play to your bets. You can set your own amount — once a play is tracked it locks in and counts in your My Bets."},
-    {sel:["a.balance"],title:"Your balance",body:"This pill is the money in your sportsbooks. Tap it to see your books, your membership and your account settings."},
+    {sel:[".v5big-track",".v5c-track"],title:"Track the play",body:"Tap Track to make the play yours. A strip appears with your amount — tap Change stake to set your own amount instead. Once tracked, the play locks in: it cannot be removed, and it grades itself in your My Bets when the game ends."},
+    {sel:["a.balance"],title:"Your bankroll",body:"This pill is your bankroll: the total across all your sportsbooks. Tap it to open your account — in App settings you choose which books you bet with and update each book's balance whenever it changes. Keep those balances current and this total is always your real money."},
     {sel:[".rh-head","#rhRail"],title:"Hot right now",body:"How the program's last 10 graded plays went, by level. Win or lose, every result stays public — tap Public ledger for the full record."},
     {sel:["#tour-edge"],title:"Find Your Edge",body:"Your toolbox: live odds and scores, the +EV Board, Player Props, Sharp Money, Line Moves, Compare Prices and the Parlay Builder. Some tools are Platinum only."},
+    {sel:["a.tile[href=\"/tracker\"]","a.tile[href$=\"/tracker\"]"],title:"My Bets — your tracker",body:"This is your personal record. Every play you track lands here with YOUR amount, and when each game ends it grades itself: your wins, your losses, your profit and your win rate. You can also add bets you placed on your own, so your whole history lives in one place."},
+    {sel:["#tour-academy"],title:"The Masterclass",body:"Your 30-day academy: one short lesson a day that teaches you how to read a play card, what the odds mean, how to manage your bankroll and how to use every tool here. Tap OPEN to start, or to pick up where you left off."},
     {sel:[".tst-yhead"],title:"Yesterday",body:"Yesterday's plays with their final results and their tickets. Nothing gets deleted after a loss — the whole history stays up."},
     {sel:["#tst-menubtn"],title:"The menu",body:"From this menu you reach My Bets, the Full Record, the Masterclass, your account and your alerts. You can replay this tour anytime from here: Dashboard Tour."},
     {sel:null,title:"You are all set",body:"Your routine: check your plays when they post, track the ones you play, and review your results in My Bets. Play smart — and welcome to The Sharp Team."}
