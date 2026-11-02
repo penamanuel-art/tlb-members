@@ -10677,19 +10677,6 @@ def _tira_actual():
     return None
 
 
-@app.route("/racha")
-@login_required
-def racha():
-    """Pagina SOLO de la racha (2026-11-02, pedido expreso de Alex: el
-    link View tickets de la tirita cae aqui y muestra UNICAMENTE las
-    jugadas de esa racha con sus tickets — nada mas)."""
-    try:
-        _ligas = official_tracker_full().get("rachas_liga") or []
-    except Exception:
-        _ligas = []
-    return render_template("tira.html", tira=_tira_actual(), ligas=_ligas)
-
-
 @app.route("/official-tracker")
 @login_required
 def official_tracker():
