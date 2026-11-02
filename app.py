@@ -2649,7 +2649,9 @@ def official_tracker_full():
                     "nivel_label": "PLATINUM" if _nv in ("ELITE", "PLATINUM") else (_nv or "FREE"),
                     "stake_display": ("$" + f"{int(round(float(_j.get('stake_monto') or 0))):,}") if _j.get("stake_monto") else "",
                     "profit_display": (("+$" if _p > 0 else ("-$" if _p < 0 else "$"))
-                                       + f"{abs(int(round(_p))):,}")}
+                                       + f"{abs(int(round(_p))):,}"),
+                    "profit_u": (("+" if _p > 0 else ("-" if _p < 0 else ""))
+                                 + f"{abs(_p) / 100.0:.2f}u")}
         _plat_n = 0
         _plat_plays = []
         _plat_last_win = None
