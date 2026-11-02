@@ -5295,8 +5295,7 @@ def preview_receipt():
     de hoy y la muestra con el panel tipo Slip aprobado en preview
     (The Play -> Receipt -> Modelo -> Lesionados -> nota -> botones).
     Solo lectura; no registra checkin ni toca datos."""
-    data = load_plays() or {}
-    plays = data.get("plays") or []
+    plays = load_plays() or []
     play = plays[0] if plays else {}
     ticket_demo = {}
     inj_demo = []
