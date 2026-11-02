@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Preview — Play detail · The Sharp Team</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#0a0e13; font-family:-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif; color:#e8ecef; padding:16px 10px 30px; }
+  .banner { max-width:392px; margin:0 auto 12px; background:#2a2110; border:1px solid #6b5518; color:#e8cf8a; font-size:9.5px; letter-spacing:.06em; padding:8px 11px; border-radius:8px; line-height:1.5; }
+  .card { max-width:392px; margin:0 auto; background:#101820; border:1px solid #232a33; border-left:3px solid #5eeaa0; border-radius:12px; padding:13px 14px 12px; }
+  .tags { display:flex; gap:5px; margin-bottom:7px; }
+  .tag { font-size:8px; letter-spacing:.14em; font-weight:800; padding:2.5px 6px; border-radius:4px; }
+  .tag.free { background:#e8ecef; color:#0c0f14; }
+  .tag.plat { background:#d8b45a; color:#0c0f14; }
+  .tag.gold { background:#8a6d1f; color:#fff; }
+  .tag.league { background:#1b2129; color:#aeb8c2; border:1px solid #2a333f; }
+  .pick { font-size:16.5px; font-weight:800; }
+  .sub { font-size:10px; color:#8b95a1; margin-top:3px; }
+  .price { display:flex; justify-content:space-between; margin-top:10px; font-size:10.5px; }
+  .price .k { color:#8b95a1; } .price .v { font-weight:700; }
+  .btns { display:flex; gap:6px; margin-top:12px; }
+  .btn { flex:1; text-align:center; font-size:10px; font-weight:800; letter-spacing:.05em; padding:9px 2px; border-radius:8px; border:none; cursor:pointer; font-family:inherit; }
+  .btn.go { background:#5eeaa0; color:#07271a; }
+  .btn.gold { background:#12161d; color:#d8b45a; border:1px solid #6b5518; }
+  .btn.ghost { background:#12161d; color:#c8d2dc; border:1px solid #2a333f; }
+  .wrap { display:none; position:fixed; inset:0; background:rgba(0,0,0,.72); z-index:50; align-items:flex-start; justify-content:center; overflow-y:auto; padding:14px 8px 26px; }
+  .panel { width:100%; max-width:392px; background:#0e1218; border:1px solid #232a33; border-radius:14px; overflow:hidden; }
+  .top { display:flex; justify-content:space-between; align-items:center; padding:10px 14px; border-bottom:1px solid #1b2129; }
+  .brand { font-size:9px; letter-spacing:.22em; color:#8b95a1; font-weight:700; }
+  .brand b { color:#d8b45a; }
+  .x { color:#8b95a1; font-size:14px; background:none; border:none; cursor:pointer; font-family:inherit; }
+  .head { padding:13px 14px 11px; border-left:3px solid #5eeaa0; background:linear-gradient(180deg,#101820,#0e1218); }
+  .sec { padding:11px 14px 12px; border-top:1px solid #1b2129; }
+  .sec h3 { font-size:8.5px; letter-spacing:.2em; color:#8b95a1; font-weight:800; margin-bottom:8px; }
+  .sec h3 .accent { color:#5eeaa0; }
+  .ticket { background:#f4f1ea; border-radius:9px; padding:8px; }
+  .ticket img { width:100%; display:block; border-radius:5px; }
+  .tcap { display:flex; justify-content:space-between; font-size:9px; color:#8b95a1; margin-top:7px; letter-spacing:.04em; }
+  .tcap b { color:#c8d2dc; font-weight:700; }
+  .row { display:flex; justify-content:space-between; align-items:baseline; padding:3.5px 0; font-size:10.5px; }
+  .row .k { color:#8b95a1; } .row .v { font-weight:700; } .row .v.mint { color:#5eeaa0; }
+  .stats { display:flex; gap:6px; }
+  .stat { flex:1; background:#12161d; border:1px solid #1f2630; border-radius:8px; padding:7px 4px; text-align:center; }
+  .stat .n { font-size:13px; font-weight:800; } .stat .l { font-size:7.5px; letter-spacing:.13em; color:#8b95a1; margin-top:2px; font-weight:700; }
+  .why { font-size:10.5px; line-height:1.55; color:#c8d2dc; }
+  .flag { display:inline-block; font-size:8px; letter-spacing:.12em; font-weight:800; color:#e8b4b8; background:#2a1518; border:1px solid #4a2027; padding:2.5px 6px; border-radius:4px; margin-bottom:7px; }
+  .inj { font-size:10.5px; padding:3px 0; display:flex; justify-content:space-between; }
+  .inj .who { color:#c8d2dc; } .inj .st { font-weight:800; font-size:9px; letter-spacing:.08em; }
+  .st.out { color:#e0656e; } .st.ok { color:#5eeaa0; } .st.gtd { color:#d8b45a; }
+  .teamline { font-size:8.5px; letter-spacing:.16em; color:#8b95a1; font-weight:800; margin:7px 0 2px; }
+  .pbtns { display:flex; gap:6px; padding:12px 14px 13px; border-top:1px solid #1b2129; }
+  .fine { text-align:center; font-size:8px; color:#5c6672; padding:0 16px 12px; line-height:1.5; }
+</style>
+</head>
+<body>
+<div class="banner">PREVIEW — proof page for Alex. The live Dashboard is untouched. Today's real card is below; tap <b>Receipt</b> to open the play detail panel.</div>
+
+<div class="card">
+  <div class="tags">
+    {% if play.nivel == 'ELITE' %}<span class="tag plat">💎 PLATINUM</span>{% elif play.nivel == 'GOLD' %}<span class="tag gold">⭐ GOLD</span>{% else %}<span class="tag free">⚪ FREE PICK</span>{% endif %}
+    <span class="tag league">{{ play.liga }}</span>
+  </div>
+  <div class="pick">{{ play.team_name }} Moneyline</div>
+  <div class="sub">{{ play.abbr }} vs {{ play.opp_abbr }} · {{ play.hora }}</div>
+  <div class="price"><span class="k">Price posted</span><span class="v">{{ play.cuota_texto }} · {{ play.casa }}</span></div>
+  <div class="price"><span class="k">Stake</span><span class="v">{{ play.stake_unidades }}u / ${{ play.stake_monto }}</span></div>
+  <div class="btns">
+    <button class="btn go" type="button">🎯 Place</button>
+    <button class="btn gold" type="button" id="openPanelBtn">🧾 Receipt</button>
+    <button class="btn ghost" type="button">+ Track</button>
+  </div>
+</div>
+
+<div class="wrap" id="panelWrap">
+  <div class="panel">
+    <div class="top">
+      <div class="brand">THE <b>SHARP</b> TEAM · PLAY DETAIL</div>
+      <button class="x" type="button" id="closePanelBtn">✕</button>
+    </div>
+    <div class="head">
+      <div class="tags">
+        {% if play.nivel == 'ELITE' %}<span class="tag plat">💎 PLATINUM</span>{% elif play.nivel == 'GOLD' %}<span class="tag gold">⭐ GOLD</span>{% else %}<span class="tag free">⚪ FREE PICK</span>{% endif %}
+        <span class="tag league">{{ play.liga }}</span>
+      </div>
+      <div class="pick">{{ play.team_name }} Moneyline</div>
+      <div class="sub">{{ play.abbr }} vs {{ play.opp_abbr }} · {{ play.hora }} · Posted today</div>
+    </div>
+
+    <div class="sec">
+      <h3>THE PLAY</h3>
+      <div class="row"><span class="k">Price posted</span><span class="v">{{ play.cuota_texto }} · {{ play.casa }}</span></div>
+      {% if ticket %}<div class="row"><span class="k">Placed at Novig</span><span class="v mint">{{ ticket.precio }}</span></div>{% endif %}
+      <div class="row"><span class="k">Stake</span><span class="v">{{ play.stake_unidades }}u / ${{ play.stake_monto }}</span></div>
+    </div>
+
+    {% if play.comprobante %}
+    <div class="sec">
+      <h3>🎫 <span class="accent">RECEIPT</span> — PLACED AT NOVIG</h3>
+      <div class="ticket"><img src="/static/{{ play.comprobante }}" alt="Ticket for this play"></div>
+      {% if ticket %}<div class="tcap"><span>Amount <b>${{ ticket.monto }}</b></span><span>To pay <b>${{ ticket.paga }}</b></span><span>Placed <b>{{ ticket.hora }}</b></span></div>{% endif %}
+    </div>
+    {% endif %}
+
+    {% if w and w.model_prob %}
+    <div class="sec">
+      <h3>📊 WHAT THE MODEL SAYS</h3>
+      <div class="stats">
+        <div class="stat"><div class="n">{{ (w.model_prob * 100) | round(1) }}%</div><div class="l">MODEL</div></div>
+        <div class="stat"><div class="n">{{ (w.implied_prob * 100) | round(1) }}%</div><div class="l">PRICE IMPLIES</div></div>
+        <div class="stat"><div class="n">{{ w.fair_price }}</div><div class="l">FAIR PRICE</div></div>
+        {% if play.prob_mercado_novig %}<div class="stat"><div class="n">{{ (play.prob_mercado_novig * 100) | round(1) }}%</div><div class="l">MARKET NO-VIG</div></div>{% endif %}
+      </div>
+      {% if w.key_factor %}<p class="why" style="margin-top:9px;">{{ w.key_factor[:260] }}…</p>{% endif %}
+    </div>
+    {% endif %}
+
+    {% if inj %}
+    <div class="sec">
+      <h3>🤕 INJURIES</h3>
+      {% for bloque in inj %}
+      <div class="teamline">{{ bloque.team }}</div>
+      {% for fila in bloque.rows %}
+      <div class="inj"><span class="who">{{ fila.who }}</span><span class="st {{ fila.cls }}">{{ fila.st }}</span></div>
+      {% endfor %}
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if play.segunda_pasada %}
+    <div class="sec">
+      <h3>⚠️ READ ON THIS ONE</h3>
+      <span class="flag">SECOND LOOK · LOW CONFIDENCE</span>
+      <p class="why">Second-pass play at the fixed stake for its level. The model's edge sits below the first-pass bar, so it runs at standard size with lineups re-checked before the game.</p>
+    </div>
+    {% endif %}
+
+    <div class="pbtns">
+      <button class="btn go" type="button">🎯 Bet on Novig</button>
+      <button class="btn ghost" type="button">🔍 Compare prices</button>
+      <button class="btn ghost" type="button">+ Track</button>
+    </div>
+    <div class="fine">Odds move — the price you see is the price at posting. Model numbers are intelligence, not a guarantee.</div>
+  </div>
+</div>
+
+<script>
+function openPanel(){document.getElementById('panelWrap').style.display='flex';}
+function closePanel(){document.getElementById('panelWrap').style.display='none';}
+document.getElementById('openPanelBtn').addEventListener('click', openPanel);
+document.getElementById('closePanelBtn').addEventListener('click', closePanel);
+document.getElementById('panelWrap').addEventListener('click', function(e){ if(e.target===this){ closePanel(); } });
+</script>
+</body>
+</html>
