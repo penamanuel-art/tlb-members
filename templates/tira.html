@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}The Streak — The Sharp Team{% endblock %}
+{% block content %}
+<style>
+body{background-color:#0B0D12;background-image:radial-gradient(560px 300px at 50% -80px,rgba(255,255,255,.02),transparent 65%),radial-gradient(700px 500px at 110% 30%,rgba(255,255,255,.015),transparent 60%)}
+.tr-wrap{max-width:680px;margin:0 auto;padding:16px 14px 30px;font-family:-apple-system,'SF Pro',Inter,system-ui,sans-serif}
+.tr-back{display:inline-block;color:#4da3ff;text-decoration:none;font-size:14px;font-weight:600;margin-bottom:14px}
+.tr-card{background:#1D2029;border:1px solid rgba(245,193,24,.35);border-radius:22px;padding:22px 18px;box-shadow:0 10px 28px rgba(0,0,0,.35)}
+.tr-title{font-size:19px;font-weight:800;color:#F0D47C;text-align:center;letter-spacing:.4px}
+.tr-txt{color:#9fb0c9;font-size:13.5px;line-height:1.55;text-align:center;margin:10px 0 8px}
+.tr-row{display:flex;align-items:center;gap:12px;padding:13px 2px;border-bottom:1px solid rgba(148,166,196,.12)}
+.tr-row:last-child{border-bottom:none}
+.tr-chip{flex:0 0 auto;width:44px;height:44px;border-radius:13px;background:rgba(17,203,135,.16);color:#11CB87;font-weight:800;font-size:19px;display:flex;align-items:center;justify-content:center}
+.tr-chip.lost{background:rgba(255,93,93,.14);color:#ff5d5d}
+.tr-chip.push{background:rgba(255,255,255,.08);color:#c7d0dd}
+.tr-date{flex:0 0 52px;color:#9AA3AF;font-size:14.5px}
+.tr-main{flex:1;min-width:0}
+.tr-pick{color:#fff;font-size:17.5px;font-weight:800;line-height:1.25}
+.tr-sub{color:#969EA9;font-size:13.5px;margin-top:2px}
+.tr-thumb{flex:0 0 auto;width:64px;height:64px;object-fit:cover;border-radius:12px;border:1px solid #2C313A;cursor:pointer}
+.tr-empty{color:#c7d0dd;font-size:15px;text-align:center;line-height:1.6}
+.tr-empty a{color:#4da3ff;font-weight:700;text-decoration:none}
+#tiraModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:9999;align-items:center;justify-content:center;padding:18px}
+#tiraModal img{max-width:100%;max-height:92vh;border-radius:12px}
+</style>
+{% set meses = {'01':'Jan','02':'Feb','03':'Mar','04':'Apr','05':'May','06':'Jun','07':'Jul','08':'Aug','09':'Sep','10':'Oct','11':'Nov','12':'Dec'} %}
+<div class="tr-wrap">
+  <a class="tr-back" href="{{ url_for('home') }}">&#8249; Back to Dashboard</a>
+  {% if tira and tira.plays %}
+  <div class="tr-card">
+    <div class="tr-title">{% if tira.tipo == 'plat' %}&#128142; PLATINUM &middot; {{ tira.n }} WINS IN A ROW{% else %}&#128293; {{ tira.n }} WINNING DAYS IN A ROW{% endif %}</div>
+    <p class="tr-txt">These are the exact plays behind that streak &mdash; nothing more, nothing less. Tap a ticket to see it full size.</p>
+    {% for x in tira.plays %}
+    {% set f = x.fecha or '' %}
+    <div class="tr-row">
+      <span class="tr-chip{% if x.resultado == 'LOST' %} lost{% elif x.resultado == 'PUSH' %} push{% endif %}">{{ 'W' if x.resultado == 'WON' else ('L' if x.resultado == 'LOST' else 'P') }}</span>
+      <span class="tr-date">{{ meses.get(f[5:7], '') }} {{ (f[8:10] | int) if (f | length) >= 10 else '' }}</span>
+      <span class="tr-main"><span class="tr-pick">{{ x.pick }}</span><span class="tr-sub" style="display:block;">{% if x.abbr and x.opp_abbr %}{{ x.abbr }} vs {{ x.opp_abbr }} &middot; {% endif %}{{ x.liga }}{% if x.stake_display %} &middot; {{ x.stake_display }}{% endif %}</span></span>
+      {% if x.comprobante %}<img class="tr-thumb" src="{{ url_for('static', filename=x.comprobante) }}" alt="Ticket &mdash; {{ x.pick }}" loading="lazy" onclick="tiraZoom('{{ url_for('static', filename=x.comprobante) }}')">{% endif %}
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="tr-card"><p class="tr-empty">No streak is running right now.<br>Every play &mdash; win or lose &mdash; is in the <a href="{{ url_for('official_tracker') }}">full official record</a>.</p></div>
+  {% endif %}
+</div>
+<div id="tiraModal" onclick="this.style.display='none'"><img id="tiraModalImg" src="" alt="Ticket full size"></div>
+<script>
+function tiraZoom(src){ var m=document.getElementById('tiraModal'); document.getElementById('tiraModalImg').src=src; m.style.display='flex'; }
+</script>
+{% endblock %}
