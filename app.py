@@ -6184,6 +6184,29 @@ def _past_due_billing_info(user):
                         pass
         except Exception:
             pass
+        # Respaldo final (2026-11-02): la tarjeta sale del ultimo cargo
+        # FALLIDO del cliente. En esta version de Stripe ni el cliente ni
+        # la factura abierta traen el metodo de pago, pero el cargo si
+        # (payment_method_details.card) — es la tarjeta declinada exacta.
+        if not info["card_last4"]:
+            try:
+                chs = stripe.Charge.list(customer=customer_id, limit=5)
+                elegido = None
+                for ch in (chs.data if chs else []):
+                    if ch.get("status") == "failed":
+                        elegido = ch
+                        break
+                if elegido is None and chs and chs.data:
+                    elegido = chs.data[0]
+                if elegido is not None:
+                    card3 = ((elegido.get("payment_method_details") or {}).get("card") or {})
+                    if card3.get("last4"):
+                        info["card_brand"] = (card3.get("brand") or "").replace("_", " ").title() or info["card_brand"]
+                        info["card_last4"] = card3.get("last4")
+                        if card3.get("exp_month") and card3.get("exp_year"):
+                            info["card_exp"] = "%02d/%d" % (card3["exp_month"], card3["exp_year"])
+            except Exception:
+                pass
     except Exception:
         pass
     return info
