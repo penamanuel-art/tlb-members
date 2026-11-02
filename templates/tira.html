@@ -76,7 +76,7 @@ body{background-color:#0B0D12;background-image:radial-gradient(560px 300px at 50
     {% if x.comprobante %}<img class="tr2-thumb2" src="{{ url_for('static', filename=x.comprobante) }}" alt="Ticket &mdash; {{ x.pick }}" loading="lazy" onclick="tiraZoom({{ loop.index0 }})">{% else %}<span class="tr2-nothumb">{{ 'WON' if x.resultado == 'WON' else ('LOST' if lost else 'PUSH') }}</span>{% endif %}
     <span class="tr2-body">
       <span class="tr2-top">
-        <span class="tr2-chip">{{ x.nivel_label }}{% if x.nivel_label != 'FREE PICKS' and x.nivel_label != 'FREE PICK' %} PLAY{% endif %}</span>
+        <span class="tr2-chip">{% if x.nivel_label == 'FREE' %}FREE PICK{% else %}{{ x.nivel_label }} PLAY{% endif %}</span>
         <span class="tr2-kind">{{ x.nivel_label | capitalize }} play &middot; {{ x.liga }}</span>
         <span class="tr2-res"><span class="tr2-res-w{% if lost %} lost{% endif %}">{{ x.resultado }}</span><span class="tr2-res-u{% if lost %} lost{% endif %}">{{ x.profit_u }}</span></span>
       </span>
