@@ -1,14 +1,15 @@
 {% extends "base.html" %}
-{% block title %}Compare Prices — The Sharp Team{% endblock %}
+{% block title %}+EV Board — The Sharp Team{% endblock %}
 {% block content %}
 <style>
-/* ===== Compare Prices · mismo diseño de las cards v5 del Dashboard (Alex 2026-10-17) ===== */
-.cmp-wrap{max-width:560px;margin:0 auto;padding:6px 2px 10px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#eef1f7}
+/* ===== +EV Board estilo WGT (2026-11-02): SOLO exhibición, sin récord ni trackeo.
+   Mismo diseño de las cards v5 del Dashboard / Compare Prices. ===== */
+.cmp-wrap{max-width:560px;margin:0 auto;padding:6px 2px 10px;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:#eef1f7}
 .cmp-h{font-size:18px;font-weight:600;letter-spacing:-.3px;margin:4px 0 2px}
-.cmp-sub{font-size:12.5px;font-weight:400;color:#8b94a7;margin:0 0 14px}
+.cmp-sub{font-size:12.5px;font-weight:400;color:#8b94a7;margin:0 0 14px;line-height:1.5}
 .cmp-card{position:relative;background:linear-gradient(180deg,#151822,#10131b);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:13px 15px 11px;margin:0 0 12px;overflow:hidden}
 .cmp-edge{position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,#f3cd6b,#b98c1e)}
-.cmp-top{display:flex;align-items:center;gap:8px}
+.cmp-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .cmp-liga{font-size:10px;font-weight:600;letter-spacing:1.4px;color:#c8cede;border:1px solid rgba(255,255,255,.18);border-radius:99px;padding:3px 9px}
 .cmp-time{margin-left:auto;font-size:12px;font-weight:400;color:#8b94a7}
 .cmp-game{font-size:14.5px;font-weight:600;letter-spacing:-.2px;margin-top:7px}
@@ -43,10 +44,67 @@
 .cmp-foot .k{font-size:12.5px;font-weight:400;color:#8b94a7}
 .cmp-foot .v{font-size:13px;font-weight:600;color:#2fe6a7}
 .cmp-empty{background:#12151d;border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:22px 18px;font-size:13.5px;font-weight:400;color:#9aa3b8;text-align:center;line-height:1.6}
+/* --- Edges (tablero +EV) --- */
+.ev-pick{display:flex;align-items:flex-start;gap:9px;padding:10px 0 2px}
+.ev-team{font-size:16.5px;font-weight:600;color:#fff;letter-spacing:-.2px;line-height:1.25}
+.ev-market{font-size:12px;font-weight:400;color:#8b94a7;margin-top:2px}
+.ev-right{margin-left:auto;text-align:right;flex-shrink:0}
+.ev-price{font-size:19px;font-weight:700;color:#2fe6a7;line-height:1}
+.ev-book{font-size:11px;font-weight:400;color:#8b94a7;margin-top:3px}
+.ev-pill{display:inline-block;font-size:11.5px;font-weight:700;color:#0d1420;background:linear-gradient(135deg,#2fe6a7,#17b985);border-radius:99px;padding:3px 10px;margin-top:7px}
+.ev-fair{font-size:11.5px;font-weight:400;color:#8b94a7;margin-top:6px}
+.ev-fair b{color:#c8cede;font-weight:600}
+.ev-live{font-size:10px;font-weight:700;letter-spacing:1px;color:#ff6b6b;border:1px solid rgba(255,107,107,.5);border-radius:99px;padding:3px 8px}
+.ev-sharp{font-size:10px;font-weight:700;letter-spacing:.6px;color:#e8c766;border:1px solid rgba(232,199,102,.55);border-radius:99px;padding:3px 8px}
+.ev-note{font-size:11.5px;font-weight:400;color:#8b94a7;text-align:center;line-height:1.55;margin:2px 0 16px}
 </style>
 <div class="cmp-wrap">
-  <h1 class="cmp-h">Compare Prices</h1>
-  <p class="cmp-sub">Only the games on today's official card{% if board and board.updated_at %} · Updated {{ board.updated_at }}{% endif %}</p>
+  <h1 class="cmp-h">+EV Board</h1>
+  <p class="cmp-sub">Positive-edge prices across 12 books, ranked by value. Fair price from Pinnacle with the vig removed. This is a price-finding tool — these are <b style="color:#c8cede">not official plays</b>.{% if board and board.updated_at %} · Updated {{ board.updated_at }}{% endif %}</p>
+
+  {% if board and board.edges %}
+    {% for e in board.edges %}
+    <div class="cmp-card">
+      <div class="cmp-edge"></div>
+      <div class="cmp-top">
+        <span class="cmp-liga">{{ e.sport }}</span>
+        {% if e.live %}<span class="ev-live">● LIVE</span>{% endif %}
+        {% if e.sharp %}<span class="ev-sharp">⚡ SHARP CONFIRMED</span>{% endif %}
+        <span class="cmp-time">{{ e.game_time }}</span>
+      </div>
+      <div class="cmp-game">{{ e.game }}</div>
+      <div class="cmp-div"><span class="cmp-notch l"></span><span class="cmp-notch r"></span></div>
+      <div class="ev-pick">
+        <div>
+          <div class="ev-team">{{ e.team }}{% if e.point %} {{ e.point }}{% endif %}</div>
+          <div class="ev-market">{{ e.market }} · {{ e.books_count }} books checked</div>
+          <span class="ev-pill">+{{ e.ev_pct }}% EV</span>
+          <div class="ev-fair">Fair price <b>{{ '+' ~ e.fair_american if e.fair_american > 0 else e.fair_american }}</b> · {{ e.fair_prob_pct }}% chance{% if e.edge_label %} · {{ e.edge_label }}{% endif %}</div>
+        </div>
+        <div class="ev-right">
+          <div class="ev-price">{{ '+' ~ e.price if e.price > 0 else e.price }}</div>
+          <div class="ev-book">best at {{ e.book }}</div>
+        </div>
+      </div>
+      {% if e.books %}
+      <div class="cmp-chips">
+        {% for b in e.books[:3] %}
+        <span class="cmp-chip{% if loop.first %} best{% endif %}">{{ b.book }} · {{ '+' ~ b.price if b.price > 0 else b.price }}</span>
+        {% endfor %}
+      </div>
+      {% endif %}
+      {% if e.bet_url %}
+      <a class="cmp-novig" href="{{ e.bet_url }}" target="_blank" rel="noopener">↗ Bet this game at Novig</a>
+      {% endif %}
+    </div>
+    {% endfor %}
+    <p class="ev-note">Edges refresh every hour, 9 AM – midnight ET. Prices move fast — always confirm the price at your book before betting.</p>
+  {% else %}
+    <div class="cmp-empty">No +EV edges right now.<br>The board refreshes every hour — check back soon.</div>
+  {% endif %}
+
+  <h1 class="cmp-h" style="margin-top:22px">Compare Prices</h1>
+  <p class="cmp-sub">Only the games on today's official card</p>
 
   {% if board and board.events %}
     {% for e in board.events %}
