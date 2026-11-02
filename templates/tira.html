@@ -44,36 +44,6 @@ body{background-color:#0B0D12;background-image:radial-gradient(560px 300px at 50
     </div>
     {% endfor %}
   </div>
-  {% if tira.tipo == 'plat' and tira.dias_n and tira.dias_n >= 2 and tira.dias_plays %}
-  <div class="tr-card" style="margin-top:14px;">
-    <div class="tr-title">&#128293; {{ tira.dias_n }} WINNING DAYS IN A ROW</div>
-    <p class="tr-txt">Every official play from those days &mdash; wins and losses, nothing hidden. Tap a ticket to see it full size.</p>
-    {% for x in tira.dias_plays %}
-    {% set f = x.fecha or '' %}
-    <div class="tr-row">
-      <span class="tr-chip{% if x.resultado == 'LOST' %} lost{% elif x.resultado == 'PUSH' %} push{% endif %}">{{ 'W' if x.resultado == 'WON' else ('L' if x.resultado == 'LOST' else 'P') }}</span>
-      <span class="tr-date">{{ meses.get(f[5:7], '') }} {{ (f[8:10] | int) if (f | length) >= 10 else '' }}</span>
-      <span class="tr-main"><span class="tr-pick">{{ x.pick }}</span><span class="tr-sub" style="display:block;">{% if x.abbr and x.opp_abbr %}{{ x.abbr }} vs {{ x.opp_abbr }} &middot; {% endif %}{{ x.liga }}{% if x.stake_display %} &middot; {{ x.stake_display }}{% endif %}</span></span>
-      {% if x.comprobante %}<img class="tr-thumb" src="{{ url_for('static', filename=x.comprobante) }}" alt="Ticket &mdash; {{ x.pick }}" loading="lazy" onclick="tiraZoom('{{ url_for('static', filename=x.comprobante) }}')">{% endif %}
-    </div>
-    {% endfor %}
-  </div>
-  {% endif %}
-  {% for r in ligas %}
-  <div class="tr-card" style="margin-top:14px;">
-    <div class="tr-title">&#128293; {{ r.liga }}: {{ r.n }} STRAIGHT WINS</div>
-    <p class="tr-txt">This streak counts one league only, and only these exact graded plays, newest game first. Tap a ticket to see it full size.</p>
-    {% for x in r.plays %}
-    {% set f = x.fecha or '' %}
-    <div class="tr-row">
-      <span class="tr-chip">W</span>
-      <span class="tr-date">{{ meses.get(f[5:7], '') }} {{ (f[8:10] | int) if (f | length) >= 10 else '' }}</span>
-      <span class="tr-main"><span class="tr-pick">{{ x.pick }}</span><span class="tr-sub" style="display:block;">{% if x.abbr and x.opp_abbr %}{{ x.abbr }} vs {{ x.opp_abbr }} &middot; {% endif %}{{ r.liga }}</span></span>
-      {% if x.comprobante %}<img class="tr-thumb" src="{{ url_for('static', filename=x.comprobante) }}" alt="Ticket &mdash; {{ x.pick }}" loading="lazy" onclick="tiraZoom('{{ url_for('static', filename=x.comprobante) }}')">{% endif %}
-    </div>
-    {% endfor %}
-  </div>
-  {% endfor %}
   {% else %}
   <div class="tr-card"><p class="tr-empty">No streak is running right now.<br>Every play &mdash; win or lose &mdash; is in the <a href="{{ url_for('official_tracker') }}">full official record</a>.</p></div>
   {% endif %}
