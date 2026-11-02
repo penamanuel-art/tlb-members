@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Update your card — The Sharp Team</title>
+</head>
+<body style="margin:0;padding:0;background:#f4f5f7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;-webkit-text-size-adjust:100%;">
+<div style="max-width:480px;margin:0 auto;background:#f4f5f7;padding:0 0 26px;">
+<img src="{{ url_for('static', filename='img/sharp-team-header.jpg') }}" alt="The Sharp Team" width="480" style="width:100%;height:auto;display:block;border:0;">
+<div style="background:#f4f5f7;height:18px;line-height:18px;font-size:1px;">&nbsp;</div>
+
+{% if estado == 'hold' %}
+<!-- Pago fallido, suscripción viva -->
+<div style="background:#2e4053;padding:28px 24px 24px;text-align:center;">
+<p style="margin:0;font-size:11px;font-weight:800;letter-spacing:2px;color:#f5b04c;">&#9888;&nbsp; PAYMENT FAILED</p>
+<h1 style="font-size:26px;font-weight:800;color:#ffffff;margin:10px 0 0;line-height:1.25;">Your Platinum is on hold</h1>
+<p style="margin:10px 0 0;font-size:13px;color:#c7d0dd;line-height:1.5;">Hi {{ nombre }} &mdash; your last payment didn&apos;t go through. Update your card below and your access comes back instantly.</p>
+</div>
+
+<div style="margin:14px 16px 0;background:#ffffff;border:1px solid #e5e7eb;border-radius:14px;padding:20px 18px;">
+{% if billing.card_last4 %}
+<table role="presentation" cellpadding="0" cellspacing="0" style="width:100%;background:#fdf1f1;border:1px solid #f3c2c2;border-radius:12px;">
+<tr>
+<td style="padding:14px 16px;">
+<p style="margin:0;font-size:10.6px;font-weight:800;letter-spacing:1.5px;color:#9c2b2b;">CARD THAT FAILED</p>
+<p style="margin:6px 0 0;font-size:15px;font-weight:800;color:#111111;">&#128179; {{ billing.card_brand or 'Card' }} &middot;&middot;&middot;&middot; {{ billing.card_last4 }}</p>
+{% if billing.card_exp %}<p style="margin:3px 0 0;font-size:11.4px;color:#6b7280;">Expires {{ billing.card_exp }}</p>{% endif %}
+</td>
+<td align="right" style="padding:14px 16px;vertical-align:top;">
+<span style="display:inline-block;background:#dc2626;color:#ffffff;font-size:10.6px;font-weight:800;letter-spacing:1px;padding:5px 10px;border-radius:999px;">DECLINED</span>
+</td>
+</tr>
+</table>
+{% endif %}
+{% if amount_txt %}
+<table role="presentation" cellpadding="0" cellspacing="0" style="width:100%;margin-top:12px;">
+<tr>
+<td style="padding:6px 0;font-size:13.2px;color:#333333;">Amount due &mdash; Platinum ({{ intervalo }})</td>
+<td align="right" style="padding:6px 0;font-size:15px;font-weight:800;color:#111111;">{{ amount_txt }}</td>
+</tr>
+</table>
+{% endif %}
+
+<div style="margin:14px 0 0;background:#fdf6ec;border:1px solid #f0dfba;border-radius:12px;padding:16px;">
+<p style="margin:0;font-size:11.4px;font-weight:800;letter-spacing:1.5px;color:#92600a;">&#128274; LOCKED WHILE YOU WAIT:</p>
+<table role="presentation" cellpadding="0" cellspacing="0" style="margin:8px 0 0;width:100%;">
+<tr><td style="padding:4px 0;font-size:12.3px;color:#333333;">&#128142; <strong>Today&apos;s Platinum plays</strong></td></tr>
+<tr><td style="padding:4px 0;font-size:12.3px;color:#333333;">&#11088; <strong>Gold plays</strong></td></tr>
+<tr><td style="padding:4px 0;font-size:12.3px;color:#333333;">&#128200; <strong>The +EV Board</strong></td></tr>
+<tr><td style="padding:4px 0;font-size:12.3px;color:#333333;">&#127919; <strong>Official Player Props</strong></td></tr>
+</table>
+</div>
+
+<div style="text-align:center;padding:20px 0 0;">
+<a href="{{ billing.pay_url }}" style="display:block;background:#22c55e;color:#111111;font-weight:800;font-size:15px;padding:15px 20px;border-radius:999px;text-decoration:none;">Update card &amp; restore access &rarr;</a>
+<p style="margin:9px 0 0;font-size:11.4px;color:#6b7280;">Opens Stripe&apos;s secure page &middot; takes about 30 seconds &middot; no new subscription, no double charge</p>
+</div>
+
+<table role="presentation" cellpadding="0" cellspacing="0" style="width:100%;margin-top:20px;">
+<tr><td style="border-top:1px solid #e5e7eb;"></td><td style="width:36px;text-align:center;font-size:11.4px;color:#9ca3af;">or</td><td style="border-top:1px solid #e5e7eb;"></td></tr>
+</table>
+
+<div style="text-align:center;padding:12px 0 2px;">
+<p style="margin:0;font-size:12.3px;color:#555555;">Prefer to start over?</p>
+<a href="{{ url_for('desbloquear_platinum') }}" style="display:inline-block;margin-top:9px;background:#ffffff;color:#111111;font-weight:800;font-size:13.2px;padding:11px 26px;border-radius:999px;text-decoration:none;border:2px solid #111111;">Subscribe again</a>
+<p style="margin:9px 0 0;font-size:11.4px;color:#6b7280;">$1 today &middot; first month free &middot; then $15.99/week</p>
+</div>
+</div>
+
+{% elif estado == 'ended' %}
+<!-- Suscripción ya cerrada -->
+<div style="background:#2e4053;padding:28px 24px 24px;text-align:center;">
+<p style="margin:0;font-size:11px;font-weight:800;letter-spacing:2px;color:#f5b04c;">&#9888;&nbsp; SUBSCRIPTION ENDED</p>
+<h1 style="font-size:26px;font-weight:800;color:#ffffff;margin:10px 0 0;line-height:1.25;">Your Platinum has ended</h1>
+<p style="margin:10px 0 0;font-size:13px;color:#c7d0dd;line-height:1.5;">Hi {{ nombre }} &mdash; after the missed payment, this subscription closed. The good news: you can be back on today&apos;s plays in about a minute.</p>
+</div>
+
+<div style="margin:14px 16px 0;background:#ffffff;border:1px solid #e5e7eb;border-radius:14px;padding:20px 18px;">
+<div style="background:#fdf6ec;border:1px solid #f0dfba;border-radius:12px;padding:16px;">
+<p style="margin:0;font-size:11.4px;font-weight:800;letter-spacing:1.5px;color:#92600a;">&#128274; YOU&apos;RE MISSING:</p>
+<table role="presentation" cellpadding="0" cellspacing="0" style="margin:8px 0 0;width:100%;">
+<tr><td style="padding:4px 0;font-size:12.3px;color:#333333;">&#128142; <strong>Today&apos;s Platinum plays</strong></td></tr>
+<tr><td style="padding:4px 0;font-size:12.3px;color:#333333;">&#11088; <strong>Gold plays</strong></td></tr>
+<tr><td style="padding:4px 0;font-size:12.3px;color:#333333;">&#128200; <strong>The +EV Board</strong></td></tr>
+<tr><td style="padding:4px 0;font-size:12.3px;color:#333333;">&#127919; <strong>Official Player Props</strong></td></tr>
+</table>
+</div>
+<div style="text-align:center;padding:20px 0 2px;">
+<a href="{{ url_for('desbloquear_platinum') }}" style="display:block;background:#22c55e;color:#111111;font-weight:800;font-size:15px;padding:15px 20px;border-radius:999px;text-decoration:none;">Subscribe again &rarr;</a>
+<p style="margin:9px 0 0;font-size:11.4px;color:#6b7280;">$1 today &middot; first month free &middot; then $15.99/week &middot; cancel anytime</p>
+</div>
+</div>
+
+{% else %}
+<!-- Cuenta al día -->
+<div style="background:#2e4053;padding:28px 24px 24px;text-align:center;">
+<p style="margin:0;font-size:26px;">&#9989;</p>
+<h1 style="font-size:26px;font-weight:800;color:#ffffff;margin:10px 0 0;line-height:1.25;">You&apos;re all set, {{ nombre }}</h1>
+<p style="margin:10px 0 0;font-size:13px;color:#c7d0dd;line-height:1.5;">Your account is in good standing &mdash; no payment is due and no action is needed.</p>
+</div>
+<div style="margin:14px 16px 0;background:#ffffff;border:1px solid #e5e7eb;border-radius:14px;padding:20px 18px;text-align:center;">
+<a href="{{ url_for('home') }}" style="display:inline-block;background:#22c55e;color:#111111;font-weight:800;font-size:15px;padding:14px 30px;border-radius:999px;text-decoration:none;">Go to the Dashboard &rarr;</a>
+</div>
+{% endif %}
+
+<p style="font-size:11.4px;line-height:1.6;color:#6b7280;margin:16px 24px 0;text-align:center;">Questions? Reply to any of our emails and a real person will sort it.</p>
+<p style="text-align:center;margin:12px 0 0;"><a href="{{ url_for('home') }}" style="font-size:11.4px;color:#6b7280;text-decoration:underline;">&larr; Back to the Dashboard</a></p>
+</div>
+</body>
+</html>
