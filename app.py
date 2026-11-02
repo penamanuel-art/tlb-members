@@ -65,6 +65,15 @@ def _asset_version():
 
 ASSET_V = _asset_version()
 
+# PUBLIC_RELEASE — the ONLY trigger for the member-facing "A new version is
+# available" banner on the Dashboard (served as the tst-version meta and
+# compared client-side against the last marker the member accepted).
+# Bump ONLY for a visible page/design/Dashboard release — never for data,
+# email or backend-only commits. Ordinary deploys (plays, tickets, email
+# tweaks, internal fixes) must NOT change this value, so members only see
+# the banner when there is a real release for them.
+PUBLIC_RELEASE = "2026-11-01"
+
 TZ = ZoneInfo("America/New_York")
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -74,10 +83,15 @@ os.makedirs(INSTANCE_DIR, exist_ok=True)
 DATABASE_URL = os.environ.get("DATABASE_URL")
 USE_PG = bool(DATABASE_URL)
 
-# Link de pago de Stripe para desbloquear Elite ($1 primera semana, luego $23/semana).
+# Link de PAGO de Stripe para Platinum (orden de Alex 2026-10-19): $1 la primera
+# semana (7 días de trial dentro del link) y luego $15.99/semana. El mes gratis
+# de plataforma MURIÓ: ya no se otorga platinum_trial_ends al registrarse ni al
+# activar la cuenta; los relojes ya vigentes corren hasta su fecha sin tocarse.
+# Link: plink_1USPKERwCjFIsFzUtk6yQ6kg = one-time $1 (price_1USPJnRwCjFIsFzU4pYcIqnq)
+# + recurrente $15.99/sem (price_1USPJvRwCjFIsFzUH8rwj5K8), trial_period_days=7.
 # Se cambia sin tocar código con la env var STRIPE_PLATINUM_URL en Render.
 STRIPE_PLATINUM_URL = os.environ.get(
-    "STRIPE_PLATINUM_URL", "https://buy.stripe.com/28E14p64MfDeeiybEQefC00"
+    "STRIPE_PLATINUM_URL", "https://buy.stripe.com/5kQdRbfFmgHideubEQefC07"
 )
 # Pedido Alex 2026-10-05: checkout de Stripe siempre en inglés. Stripe
 # localiza la página de pago según el navegador del cliente (si está en
@@ -105,6 +119,54 @@ FREE_PLAYS_GOAL = int(os.environ.get("FREE_PLAYS_GOAL", "200"))
 # (el flujo manual de Alex sigue funcionando igual).
 STRIPE_SECRET_KEY = os.environ.get("STRIPE_SECRET_KEY", "")
 STRIPE_WEBHOOK_SECRET = os.environ.get("STRIPE_WEBHOOK_SECRET", "")
+
+
+# Publishable key (pk_live) para Stripe.js en el checkout incrustado de
+# /desbloquear-platinum. Es pública por diseño, pero la API de Stripe NO la
+# devuelve: sale del Dashboard de Stripe (Developers -> API keys). Se lee de
+# la env var STRIPE_PUBLISHABLE_KEY; si está vacía, se usa como respaldo la
+# constante de abajo (la pk_live pública de la cuenta, entregada por Alex el
+# 2026-10-19) y la env var siempre manda cuando existe. Sin llave, la página
+# cae al link hospedado.
+STRIPE_PUBLISHABLE_KEY = os.environ.get(
+    "STRIPE_PUBLISHABLE_KEY", ""
+) or "pk_live_51UIyagRwCjFIsFzUW89rnPLseuYlxaUMrRIe2bIpPteTHAHefiUbYTrXE9rTDsGGDGrD3c7SofspGpmE4jcRdHEL00vCim5NrT"
+# Precios de la oferta vigente — los mismos del Payment Link hospedado:
+# $1 la primera semana (one-time) + $15.99/semana (recurrente).
+PLATINUM_PRICE_PRIMERA_SEMANA = "price_1USPJnRwCjFIsFzU4pYcIqnq"
+PLATINUM_PRICE_SEMANAL = "price_1USPJvRwCjFIsFzUH8rwj5K8"
+
+# Lanzamiento de la landing nueva (2026-10-31, aprobada por Alex): oferta
+# "$1 hoy + primer mes de Platinum GRATIS + $15.99/semana". "Primer mes" =
+# trial de 30 días exactos de Stripe tras el cargo de $1. La oferta vive
+# AISLADA por cohorte (users.signup_offer): solo la reciben los registros
+# nuevos que entren por las plantillas nuevas con el interruptor
+# REGISTRO_NUEVO activo. La oferta legacy ($1 + trial de 7 días) NO cambia
+# para nadie más. El trial de Stripe NUNCA se escribe en
+# platinum_trial_ends: ese reloj es de la plataforma y copiarlo ahí
+# rompería el acceso del miembro que pagó (paywall 2026-10-24).
+PLATINUM_TRIAL_DAYS_LEGACY = 7
+PLATINUM_TRIAL_DAYS_FREE_MONTH = 30
+PLATINUM_OFFER_FREE_MONTH = "platinum_1usd_free_month_v1"
+# Interruptor de lanzamiento: APAGADO por defecto. Se enciende con la env
+# var REGISTRO_NUEVO=1 en Render en la fase de lanzamiento; mientras esté
+# apagado, /registro sirve las plantillas de siempre (register.html /
+# register_es.html), ningún registro guarda la cohorte nueva y todo el
+# mundo sigue con el trial legacy de 7 días.
+REGISTRO_NUEVO_ACTIVO = os.environ.get("REGISTRO_NUEVO", "") == "1"
+# Payment Link de RESPALDO de la oferta nueva (el checkout principal sigue
+# siendo el incrustado de /desbloquear-platinum). Se define con la env var
+# STRIPE_PLATINUM_URL_FREE_MONTH en Render cuando el link exista; mientras
+# tanto queda vacío y la vista de desbloqueo cae al link vigente sin
+# romperse.
+STRIPE_PLATINUM_URL_FREE_MONTH = os.environ.get(
+    "STRIPE_PLATINUM_URL_FREE_MONTH", ""
+)
+if STRIPE_PLATINUM_URL_FREE_MONTH and "locale=" not in STRIPE_PLATINUM_URL_FREE_MONTH:
+    _sep_fm = "&" if "?" in STRIPE_PLATINUM_URL_FREE_MONTH else "?"
+    STRIPE_PLATINUM_URL_FREE_MONTH = (
+        f"{STRIPE_PLATINUM_URL_FREE_MONTH}{_sep_fm}locale=en"
+    )
 
 
 def stripe_configurado():
@@ -206,6 +268,15 @@ app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(days=30)
 DB_PATH = os.path.join(INSTANCE_DIR, "members.db")
 PLAYS_PATH = os.path.join(BASE_DIR, "data", "plays.json")
 PENDING_PLAYS_PATH = os.path.join(BASE_DIR, "data", "plays-pending.json")
+# Lectura fresca de datos (2026-10-15, pedido por Alex: que las jugadas
+# caigan al Dashboard en el menor tiempo posible tras su disparo): las
+# lecturas de plays/pendings van primero al raw de GitHub master — el dato
+# se publica por commit y así NO hay que esperar el redeploy de Render.
+PLAYS_RAW_URL = ("https://raw.githubusercontent.com/penamanuel-art/"
+                 "tlb-members/master/data/plays.json")
+PENDING_RAW_URL = ("https://raw.githubusercontent.com/penamanuel-art/"
+                   "tlb-members/master/data/plays-pending.json")
+_REMOTE_JSON_CACHE = {}
 # Cuenta personal de miembro de Alex (NO es la de administrador). Es la única
 # que ve la card pendiente (sin tickets) en /home — orden de Alex 2026-10-03.
 ALEX_MEMBER_EMAIL = "pena.manuel@myyahoo.com"
@@ -261,6 +332,22 @@ def close_db(exc=None):
     if db is not None:
         db.close()
 
+@app.after_request
+def _static_cache(resp):
+    # PageSpeed 2026-10-28: cache eficiente solo para archivos estaticos,
+    # 7 dias, sin tocar paginas ni datos (que deben seguir frescos).
+    try:
+        if request.path.startswith("/static/"):
+            resp.headers["Cache-Control"] = "public, max-age=604800"
+        else:
+            # 2026-10-30: las paginas NUNCA se cachean — la copia vieja
+            # guardada en el telefono dejaba a Alex viendo una antesala
+            # antigua con el boton muerto.
+            resp.headers["Cache-Control"] = "no-store, must-revalidate"
+    except Exception:
+        pass
+    return resp
+
 
 DDL_SQLITE = """
 CREATE TABLE IF NOT EXISTS users (
@@ -287,6 +374,8 @@ CREATE TABLE IF NOT EXISTS users (
     notif_reminder INTEGER NOT NULL DEFAULT 1,  -- 1 = recordatorio 15 min antes
     notif_ev INTEGER NOT NULL DEFAULT 1,        -- 1 = alertas +EV
     notif_price INTEGER NOT NULL DEFAULT 0,    -- 1 = alerta si se mueve el precio
+    notif_sharp INTEGER NOT NULL DEFAULT 1,     -- 1 = alertas sharp money / line movement (2026-10-19)
+    notif_masterclass INTEGER NOT NULL DEFAULT 1, -- 1 = aviso de la leccion diaria Masterclass (2026-10-19)
     created_at TEXT NOT NULL
 );
 CREATE TABLE IF NOT EXISTS tracked_plays (
@@ -355,6 +444,17 @@ CREATE TABLE IF NOT EXISTS notificaciones (  -- centro de notificaciones del adm
     created_at TEXT NOT NULL,
     leida INTEGER NOT NULL DEFAULT 0
 );
+CREATE TABLE IF NOT EXISTS reviews (  -- reseñas de miembros (2026-10-30): pendientes hasta aprobación del admin
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL REFERENCES users(id),
+    display_name TEXT NOT NULL,
+    city TEXT,
+    stars INTEGER NOT NULL,
+    body TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'pending',  -- pending | approved | rejected
+    created_at TEXT NOT NULL,
+    UNIQUE(user_id)
+);
 """
 
 DDL_PG = """
@@ -382,6 +482,8 @@ CREATE TABLE IF NOT EXISTS users (
     notif_reminder INTEGER NOT NULL DEFAULT 1,  -- 1 = recordatorio 15 min antes
     notif_ev INTEGER NOT NULL DEFAULT 1,        -- 1 = alertas +EV
     notif_price INTEGER NOT NULL DEFAULT 0,    -- 1 = alerta si se mueve el precio
+    notif_sharp INTEGER NOT NULL DEFAULT 1,     -- 1 = alertas sharp money / line movement (2026-10-19)
+    notif_masterclass INTEGER NOT NULL DEFAULT 1, -- 1 = aviso de la leccion diaria Masterclass (2026-10-19)
     created_at TEXT NOT NULL
 );
 CREATE TABLE IF NOT EXISTS tracked_plays (
@@ -449,6 +551,17 @@ CREATE TABLE IF NOT EXISTS notificaciones (  -- centro de notificaciones del adm
     detalle TEXT,
     created_at TEXT NOT NULL,
     leida INTEGER NOT NULL DEFAULT 0
+);
+CREATE TABLE IF NOT EXISTS reviews (  -- reseñas de miembros (2026-10-30): pendientes hasta aprobación del admin
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES users(id),
+    display_name TEXT NOT NULL,
+    city TEXT,
+    stars INTEGER NOT NULL,
+    body TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'pending',  -- pending | approved | rejected
+    created_at TEXT NOT NULL,
+    UNIQUE(user_id)
 );
 """
 
@@ -526,13 +639,13 @@ def saludo_hoy() -> str:
 def record_checkin(db, user_id: int):
     if db.use_pg:
         db.execute(
-            "INSERT INTO checkins (user_id, fecha) VALUES (?, ?) ON CONFLICT DO NOTHING",
-            (user_id, today_iso()),
+            "INSERT INTO checkins (user_id, fecha) SELECT ?, ? WHERE EXISTS (SELECT 1 FROM users WHERE id = ?) ON CONFLICT DO NOTHING",
+            (user_id, today_iso(), user_id),
         )
     else:
         db.execute(
-            "INSERT OR IGNORE INTO checkins (user_id, fecha) VALUES (?, ?)",
-            (user_id, today_iso()),
+            "INSERT OR IGNORE INTO checkins (user_id, fecha) SELECT ?, ? WHERE EXISTS (SELECT 1 FROM users WHERE id = ?)",
+            (user_id, today_iso(), user_id),
         )
     db.commit()
 
@@ -569,8 +682,26 @@ def login_required(view):
         if "user_id" not in session:
             flash("Log in to continue.", "warn")
             return redirect(url_for("login", next=request.path))
+        if current_user() is None:
+            # Sesion fantasma: la cuenta ya no existe (p. ej. eliminada en una
+            # limpieza). Sin esto, vistas como /home reventaban con 500 al
+            # registrar el checkin (FK violation) — bug real 2026-10-21.
+            session.clear()
+            flash("Log in to continue.", "warn")
+            return redirect(url_for("login", next=request.path))
         return view(*args, **kwargs)
     return wrapper
+
+
+def _admin_o_cuenta_alex(user) -> bool:
+    """Admin real O la cuenta de miembro de Alex (2026-10-17, pedido suyo:
+    entrar al Admin Dashboard sin salir de su cuenta de miembro)."""
+    if is_admin_for(user):
+        return True
+    try:
+        return bool(user) and (user["email"] or "").strip().lower() == ALEX_MEMBER_EMAIL.strip().lower()
+    except Exception:
+        return False
 
 
 def admin_required(view):
@@ -578,7 +709,7 @@ def admin_required(view):
     @wraps(view)
     @login_required
     def wrapper(*args, **kwargs):
-        if not is_admin_for(current_user()):
+        if not _admin_o_cuenta_alex(current_user()):
             flash("Admin access required.", "error")
             return redirect(url_for("home"))
         return view(*args, **kwargs)
@@ -589,14 +720,106 @@ def current_user():
     if "user_id" not in session:
         return None
     db = get_db()
-    return db.execute("SELECT * FROM users WHERE id = ?", (session["user_id"],)).fetchone()
+    row = db.execute("SELECT * FROM users WHERE id = ?", (session["user_id"],)).fetchone()
+    if row is not None and _apagar_trial_si_vencido(db, row):
+        row = db.execute("SELECT * FROM users WHERE id = ?", (session["user_id"],)).fetchone()
+    return row
+
+
+def _trial_vencido(user) -> bool:
+    """True si el mes gratis de plataforma (reloj interno, sin Stripe)
+    ya venció. Quien paga por Stripe no lleva reloj: manda su sub."""
+    try:
+        te = user["platinum_trial_ends"]
+        sub = user["stripe_subscription_id"]
+    except (KeyError, IndexError, TypeError):
+        return False
+    if not te or sub:
+        return False
+    try:
+        return datetime.now() > datetime.fromisoformat(te)
+    except (ValueError, TypeError):
+        return False
+
+
+def _apagar_trial_si_vencido(db, user) -> bool:
+    """Apaga el Platinum de UN usuario si su mes gratis venció."""
+    try:
+        if user and user["platinum_unlocked"] and _trial_vencido(user):
+            db.execute(
+                "UPDATE users SET platinum_unlocked = 0, platinum_trial_ends = NULL WHERE id = ?",
+                (user["id"],),
+            )
+            db.commit()
+            return True
+    except (KeyError, IndexError, TypeError):
+        pass
+    return False
+
+
+def _barrer_trials_vencidos(db):
+    """Apaga todos los Platinum cuyo mes gratis de plataforma venció
+    (sin suscripción de Stripe). Se llama al abrir el panel de miembros
+    y la API de miembros: lo que Alex ve siempre es la verdad."""
+    db.execute(
+        "UPDATE users SET platinum_unlocked = 0, platinum_trial_ends = NULL "
+        "WHERE platinum_unlocked = 1 AND platinum_trial_ends IS NOT NULL "
+        "AND platinum_trial_ends < ? "
+        "AND (stripe_subscription_id IS NULL OR stripe_subscription_id = '')",
+        (datetime.now().isoformat(),),
+    )
+    db.commit()
+
+
+def _acceso_programa(user) -> bool:
+    """True si el miembro tiene acceso vigente al programa (2026-10-24,
+    orden de Alex: el que no paga no tiene nada). Acceso vigente =
+    Platinum desbloqueado SIN reloj de trial (pago por Stripe — el
+    webhook borra el reloj — o activado a mano por Alex con el botón
+    de Platinum). El trial y el gratis ya no dan acceso. Alex y el
+    admin siempre tienen acceso."""
+    try:
+        if not user:
+            return False
+        if is_alex_member(user) or is_admin_for(user):
+            return True
+        if not user["platinum_unlocked"]:
+            return False
+        return not (user["platinum_trial_ends"] or "")
+    except Exception:
+        return False
+
+
+def _es_trial(user) -> bool:
+    """True si el miembro está en el mes gratis de prueba (2026-10-24,
+    ajuste mismo día de la orden de Alex: las gratis siguen igual y
+    visibles; SOLO el trial se corta con el paywall). Trial =
+    Platinum desbloqueado CON reloj de trial. Alex y el admin nunca
+    son trial."""
+    try:
+        if not user:
+            return False
+        if is_alex_member(user) or is_admin_for(user):
+            return False
+        if not user["platinum_unlocked"]:
+            return False
+        return bool(user["platinum_trial_ends"] or "")
+    except Exception:
+        return False
 
 
 def platinum_unlocked_for(user) -> bool:
-    """True si el miembro desbloqueó la jugada Elite (default: bloqueada)."""
+    """True si el miembro desbloqueó la jugada Elite (default: bloqueada).
+    El mes gratis de plataforma vence solo: con el reloj pasado y sin
+    suscripción de Stripe, el acceso cuenta como apagado.
+    (2026-10-24, orden de Alex: el que no paga no tiene nada — fuera
+    de Alex y del admin, solo el acceso vigente desbloquea: Platinum
+    SIN reloj de trial. El trial y el gratis ya no desbloquean nada.)"""
     try:
-        return bool(user and user["platinum_unlocked"])
-    except (KeyError, IndexError, TypeError):
+        if is_alex_member(user) or is_admin_for(user):
+            return bool(user and user["platinum_unlocked"]) and not _trial_vencido(user)
+        return _acceso_programa(user)
+    except Exception:
         return False
 
 
@@ -715,6 +938,323 @@ def send_email_sync(to: str, subject: str, text_body: str,
     return _dispatch_email(to, subject, text_body, html_body)
 
 
+# ---------- Activación por correo + captcha anti-robots (2026-10-18) ----------
+# Orden de Alex tras detectar registros basura de Meta: la cuenta nueva nace
+# SIN activar y solo se activa cuando el dueño toca el enlace que llega a su
+# correo (un correo inventado nunca se activa). La bienvenida arranca AL
+# ACTIVAR, no al llenar el formulario (el mes gratis de Platinum al activar
+# murió el 2026-10-19 — ver activar_cuenta). El captcha
+# de Cloudflare Turnstile frena los registros automáticos; sin llaves en el
+# entorno, el captcha queda dormido y el registro sigue funcionando.
+TURNSTILE_SITE_KEY = (os.environ.get("TURNSTILE_SITE_KEY") or "").strip()
+TURNSTILE_SECRET_KEY = (os.environ.get("TURNSTILE_SECRET_KEY") or "").strip()
+SITE_URL = "https://www.thesharpteam.bet"
+
+
+def _turnstile_ok() -> bool:
+    """Verifica el captcha Turnstile del formulario. Sin llave secreta
+    configurada devuelve True (no bloquea). Ante error de red: False."""
+    if not TURNSTILE_SECRET_KEY:
+        return True
+    token = (request.form.get("cf-turnstile-response") or "").strip()
+    if not token:
+        return False
+    try:
+        from urllib.parse import urlencode
+        data = urlencode({"secret": TURNSTILE_SECRET_KEY,
+                          "response": token}).encode()
+        req = urllib.request.Request(
+            "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+            data=data)
+        with urllib.request.urlopen(req, timeout=8) as r:
+            return bool(json.loads(r.read().decode("utf-8")).get("success"))
+    except Exception:
+        return False
+
+
+_ACTIVATION_FOOTER = """<tr><td style="background:#ffffff;border-top:1px solid #e2e8f0;border-radius:0 0 16px 16px;padding:22px 24px 20px;text-align:center;">
+<img src="https://www.thesharpteam.bet/static/img/sharp-team-logo.png" width="76" alt="The Sharp Team" style="display:block;margin:0 auto 8px;">
+<div style="font-size:11.5px;font-weight:800;color:#0f172a;letter-spacing:1.5px;">THE SHARP TEAM</div>
+<div style="font-size:9.5px;color:#64748b;margin-top:5px;">250 Park Avenue, Suite 1800, New York, NY 10017 &middot; (239) 376-8798</div>
+<div style="margin-top:12px;">
+<a href="https://www.instagram.com/the_sharp_team" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/instagram.png" width="30" height="30" alt="Instagram" style="border:0;margin:0 6px;"></a>
+<a href="https://x.com/thesharpteambet" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/x.png" width="30" height="30" alt="X" style="border:0;margin:0 6px;"></a>
+<a href="https://t.me/thesharpteam" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/telegram.png" width="30" height="30" alt="Telegram" style="border:0;margin:0 6px;"></a>
+</div>
+<div style="font-size:8.8px;color:#64748b;line-height:1.5;margin-top:12px;">21+. Play responsibly. If you or someone you know has a gambling problem, call or text 1-800-GAMBLER.</div>
+<div style="font-size:8.8px;color:#64748b;margin-top:8px;">Don't want these emails anymore? <a href="{{{RESEND_UNSUBSCRIBE_URL}}}" style="color:#64748b;text-decoration:underline;">Unsubscribe</a> — one click, no questions asked.</div>
+<div style="font-size:8.8px;margin-top:8px;"><a href="https://www.thesharpteam.bet/terms" style="color:#64748b;">Terms</a> &middot; <a href="https://www.thesharpteam.bet/privacy" style="color:#64748b;">Privacy Policy</a></div>
+<div style="font-size:8.4px;color:#94a3b8;margin-top:6px;">&copy; 2026 The Sharp Team. All rights reserved.</div>
+</td></tr>"""
+
+
+def _activation_shell(titulo, cuerpo, boton, nota, link, lang="en"):
+    """Carcasa de los emails de activación — Diseño D (2026-10-22,
+    aprobado por Alex: fondo claro, cero negro, línea verde 3D y el pie
+    universal claro con iconos). La usan la activación y su
+    recordatorio; los textos llegan de cada función."""
+    if lang == "es":
+        eyebrow = "UN ÚLTIMO PASO"
+        checks = ("Tus jugadas Sharp Free se activan de inmediato",
+                  "Tu Dashboard se abre en cuanto activas tu cuenta",
+                  "Platinum empieza por $1 cuando quieras")
+        o_abre = "O abre este enlace:"
+    else:
+        eyebrow = "ONE LAST STEP"
+        checks = ("Your Sharp Free plays go live right away",
+                  "Your Dashboard opens the moment you activate",
+                  "Platinum starts for $1 whenever you're ready")
+        o_abre = "Or open this link:"
+    checks_html = "".join(
+        f'<tr><td style="font-size:11.1px;color:#065f46;padding:3px 0;">&#10003;&nbsp; {c}</td></tr>'
+        for c in checks)
+    return f"""<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#f1f5f9;font-family:-apple-system,Helvetica,Arial,sans-serif;-webkit-text-size-adjust:100%;text-size-adjust:100%;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f1f5f9;">
+<tr><td align="center" style="padding:22px 12px 30px;">
+<table role="presentation" width="480" cellpadding="0" cellspacing="0" style="max-width:480px;width:100%;">
+  <tr><td style="background:#ffffff;border-radius:16px 16px 0 0;padding:24px 28px 0;text-align:center;">
+    <img src="https://www.thesharpteam.bet/static/img/sharp-team-header.jpg" alt="The Sharp Team" style="width:100%;height:auto;display:block;border:0;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:16px 0 0;"><tr><td bgcolor="#9ff7d4" height="3" style="height:3px;font-size:0;line-height:0;border-top-left-radius:3px;border-top-right-radius:3px;">&nbsp;</td></tr><tr><td bgcolor="#2ee6a8" height="6" style="height:6px;font-size:0;line-height:0;">&nbsp;</td></tr><tr><td bgcolor="#0b8a5f" height="3" style="height:3px;font-size:0;line-height:0;border-bottom-left-radius:3px;border-bottom-right-radius:3px;">&nbsp;</td></tr></table>
+  </td></tr>
+  <tr><td style="background:#ffffff;padding:22px 28px 6px;text-align:center;">
+    <div style="color:#b45309;font-size:8.8px;font-weight:800;letter-spacing:2px;">{eyebrow}</div>
+    <div style="font-size:19.1px;font-weight:900;color:#0f172a;margin-top:8px;">{titulo}</div>
+    <p style="font-size:11.5px;line-height:1.6;color:#334155;margin:14px 0 0;">{cuerpo}</p>
+    <table role="presentation" cellpadding="0" cellspacing="0" align="center" style="margin:18px auto 2px;text-align:left;">
+      {checks_html}
+    </table>
+    <div style="padding:20px 0 4px;">
+      <a href="{link}" style="display:inline-block;background:#059669;color:#ffffff;font-size:11.5px;font-weight:800;padding:14px 36px;border-radius:999px;text-decoration:none;">{boton}</a>
+    </div>
+    <p style="font-size:9.2px;color:#64748b;margin:12px 0 0;">{o_abre}<br><a href="{link}" style="color:#2563eb;text-decoration:underline;">{link}</a></p>
+    <p style="font-size:8.8px;color:#94a3b8;line-height:1.5;margin:14px 0 0;">{nota}</p>
+  </td></tr>
+  {_ACTIVATION_FOOTER}
+</table>
+</td></tr></table>
+</body></html>"""
+
+
+def send_activation_email(nombre: str, email: str, token: str, lang: str = "en"):
+    """Email de activación de cuenta (hilo aparte, nunca rompe el registro).
+
+    El enlace apunta a /activar/<token>. EN por defecto; ES si lang == 'es'.
+    """
+    link = f"{SITE_URL}/activar/{token}"
+    if lang == "es":
+        subject = "Activa tu cuenta de The Sharp Team"
+        titulo = "Activa tu cuenta"
+        cuerpo = (f"Hola {nombre} — toca el botón para activar tu cuenta de "
+                  "The Sharp Team. Tus jugadas Sharp Free y tu Dashboard quedan "
+                  "activos en el momento en que activas — y Platinum "
+                  "empieza por $1 cuando quieras.")
+        boton = "ACTIVAR MI CUENTA"
+        nota = ("¿No se creó esta cuenta con tu correo? Ignora este mensaje "
+                "y la cuenta nunca se activará.")
+        texto = (f"Hola {nombre},\n\nActiva tu cuenta de The Sharp Team "
+                 f"tocando este enlace:\n{link}\n\nTus jugadas Sharp Free quedan "
+                 "activas al activar, y Platinum empieza por $1 cuando "
+                 "quieras. Si no creaste esta cuenta, ignora "
+                 "este mensaje.\n\nThe Sharp Team")
+    else:
+        subject = "Activate your The Sharp Team account"
+        titulo = "Activate your account"
+        cuerpo = (f"Hi {nombre} — tap the button to activate your "
+                  "The Sharp Team account. Your Sharp Free plays and your "
+                  "Dashboard go live the moment you activate — and "
+                  "Platinum starts for $1 whenever you're ready.")
+        boton = "ACTIVATE MY ACCOUNT"
+        nota = ("Didn't create this account? Ignore this email and the "
+                "account will never be activated.")
+        texto = (f"Hi {nombre},\n\nActivate your The Sharp Team account by "
+                 f"opening this link:\n{link}\n\nYour Sharp Free plays go live "
+                 "when you activate, and Platinum starts for $1 whenever "
+                 "you're ready. If you didn't create this "
+                 "account, ignore this email.\n\nThe Sharp Team")
+    html = _activation_shell(titulo, cuerpo, boton, nota, link, lang)
+
+    def _send():
+        try:
+            _dispatch_email(email, subject, texto, html)
+        except Exception:
+            pass  # silencioso: nunca rompe el registro
+
+    import threading
+    threading.Thread(target=_send, daemon=True).start()
+
+
+def send_activation_reminder_email(nombre: str, email: str, token: str, lang: str = "en") -> tuple:
+    """Recordatorio de activación (2026-10-19, orden de Alex): quien se
+    registró pero no confirmó su cuenta recibe un aviso de que debe
+    confirmar para activarla (desde el 2026-10-19 activar ya no otorga
+    Platinum: el aviso dice que sus Gold quedan activas y que Platinum
+    empieza por $1).
+    Síncrono (devuelve el resultado real) porque lo dispara un endpoint
+    que debe contar solo los envíos que sí salieron."""
+    link = f"{SITE_URL}/activar/{token}"
+    if lang == "es":
+        subject = "Recordatorio: confirma tu cuenta de The Sharp Team"
+        titulo = "Tu cuenta aún no está activa"
+        cuerpo = (f"Hola {nombre} — creaste tu cuenta de The Sharp Team pero "
+                  "todavía no la has confirmado. Toca el botón para confirmar "
+                  "tu correo y activar tu cuenta: tus jugadas Sharp Free quedan "
+                  "activas en ese momento, y Platinum empieza por $1.")
+        boton = "CONFIRMAR MI CUENTA"
+        nota = ("¿No se creó esta cuenta con tu correo? Ignora este mensaje "
+                "y la cuenta nunca se activará.")
+        texto = (f"Hola {nombre},\n\nCreaste tu cuenta de The Sharp Team pero "
+                 f"todavía no la has confirmado. Confírmala aquí:\n{link}\n\n"
+                 "Tus jugadas Sharp Free quedan activas al confirmar, y Platinum "
+                 "empieza por $1 cuando quieras. Si no "
+                 "creaste esta cuenta, ignora este mensaje.\n\nThe Sharp Team")
+    else:
+        subject = "Reminder: confirm your The Sharp Team account"
+        titulo = "Your account is not active yet"
+        cuerpo = (f"Hi {nombre} — you created your The Sharp Team account but "
+                  "haven't confirmed it yet. Tap the button to confirm your "
+                  "email and activate your account: your Sharp Free plays go "
+                  "live the moment you do, and Platinum starts for $1.")
+        boton = "CONFIRM MY ACCOUNT"
+        nota = ("Didn't create this account? Ignore this email and the "
+                "account will never be activated.")
+        texto = (f"Hi {nombre},\n\nYou created your The Sharp Team account but "
+                 f"haven't confirmed it yet. Confirm it here:\n{link}\n\n"
+                 "Your Sharp Free plays go live when you confirm, and Platinum "
+                 "starts for $1 whenever you're ready. If you "
+                 "didn't create this account, ignore this email.\n\nThe Sharp Team")
+    html = _activation_shell(titulo, cuerpo, boton, nota, link, lang)
+    return _dispatch_email(email, subject, texto, html)
+
+
+@app.route("/api/activation-reminders", methods=["POST"])
+def api_activation_reminders():
+    """Dispara los recordatorios de activación (2026-10-19, orden de Alex).
+
+    A quien se registró pero NO confirmó su cuenta se le recuerda a las
+    ~3 horas del registro y otra vez a las ~24 horas (máximo 2). Sin
+    confirmar no es miembro: estos correos son el único contacto.
+    Protegido con header X-Push-Key == PUSH_TRIGGER_KEY.
+    """
+    if not PUSH_TRIGGER_KEY or not secrets.compare_digest(
+        request.headers.get("X-Push-Key", ""), PUSH_TRIGGER_KEY
+    ):
+        return jsonify({"error": "forbidden"}), 403
+    db = get_db()
+    ahora = datetime.now(timezone.utc)
+    rows = db.execute(
+        "SELECT id, nombre, email, lang, created_at, activation_token, activation_reminders "
+        "FROM users WHERE email_verified = 0 AND activation_token IS NOT NULL "
+        "AND is_admin = 0 AND activation_reminders < 2 AND cancel_requested_at IS NULL "
+        "AND LOWER(email) != 'system@value.local' "
+        "ORDER BY created_at ASC LIMIT 20"
+    ).fetchall()
+    enviados = []
+    for r in rows:
+        d = dict(r) if not isinstance(r, dict) else r
+        try:
+            creado = datetime.fromisoformat(d["created_at"])
+            if creado.tzinfo is None:
+                creado = creado.replace(tzinfo=timezone.utc)
+        except Exception:
+            continue
+        edad_h = (ahora - creado).total_seconds() / 3600.0
+        n = d.get("activation_reminders") or 0
+        if n == 0 and edad_h < 3:
+            continue
+        if n >= 1 and edad_h < 24:
+            continue
+        try:
+            ok, _det = send_activation_reminder_email(
+                d.get("nombre") or "there", d["email"],
+                d["activation_token"], d.get("lang") or "en")
+        except Exception:
+            ok = False
+        if ok:
+            db.execute(
+                "UPDATE users SET activation_reminders = ?, activation_reminder_last = ? WHERE id = ?",
+                (n + 1, ahora.isoformat(), d["id"]))
+            db.commit()
+            enviados.append({"nombre": d.get("nombre"), "email": d.get("email"),
+                             "recordatorio": n + 1})
+    return jsonify({"ok": True, "reminders_sent": enviados})
+
+
+@app.route("/api/purge-unconfirmed", methods=["POST"])
+def api_purge_unconfirmed():
+    """POLITICA DE ALEX (2026-10-29): a la cuenta sin confirmar se le envia el
+    email de confirmacion DOS veces (recordatorios ~3h y ~24h de
+    /api/activation-reminders). Si aun asi no confirma, su cuenta se ELIMINA
+    — solo si NO tiene suscripcion activa.
+    Protecciones (todas obligatorias): email_verified = 0, los 2 recordatorios
+    ya enviados, 30+ horas desde el registro, is_admin = 0, sin Platinum
+    (platinum_unlocked = 0 y sin trial vigente), sin jugadas trackeadas.
+    Una cuenta sin confirmar nunca pudo entrar, asi que tampoco pudo pagar
+    ni trackear: las guardas son doble seguro. Protegido con header
+    X-Push-Key == PUSH_TRIGGER_KEY. Modo seco: JSON {"dry": true} lista
+    los candidatos sin borrar nada."""
+    if not PUSH_TRIGGER_KEY or not secrets.compare_digest(
+        request.headers.get("X-Push-Key", ""), PUSH_TRIGGER_KEY
+    ):
+        return jsonify({"error": "forbidden"}), 403
+    dry = False
+    try:
+        dry = bool((request.get_json(silent=True) or {}).get("dry"))
+    except Exception:
+        dry = False
+    db = get_db()
+    ahora = datetime.now(timezone.utc)
+    rows = db.execute(
+        "SELECT id, nombre, email, created_at, activation_reminders, "
+        "platinum_unlocked, platinum_trial_ends FROM users "
+        "WHERE email_verified = 0 AND is_admin = 0 AND activation_reminders >= 2 "
+        "AND LOWER(email) != 'system@value.local'"
+    ).fetchall()
+    candidatos, eliminados = [], []
+    for r in rows:
+        d = dict(r) if not isinstance(r, dict) else r
+        try:
+            creado = datetime.fromisoformat(d["created_at"])
+            if creado.tzinfo is None:
+                creado = creado.replace(tzinfo=timezone.utc)
+        except Exception:
+            continue
+        if (ahora - creado).total_seconds() < 30 * 3600:
+            continue
+        if d.get("platinum_unlocked"):
+            continue
+        te = d.get("platinum_trial_ends")
+        if te:
+            try:
+                fin = datetime.fromisoformat(str(te))
+                if fin.tzinfo is None:
+                    fin = fin.replace(tzinfo=timezone.utc)
+                if fin > ahora:
+                    continue
+            except Exception:
+                continue
+        ntp = 0
+        try:
+            tp = db.execute("SELECT COUNT(*) AS c FROM tracked_plays WHERE user_id = ?",
+                            (d["id"],)).fetchone()
+            ntp = (tp["c"] if not isinstance(tp, dict) else tp.get("c")) or 0
+        except Exception:
+            ntp = 0
+        if ntp:
+            continue
+        info = {"id": d["id"], "nombre": d.get("nombre"),
+                "email": d.get("email"), "creado": d.get("created_at")}
+        candidatos.append(info)
+        if not dry:
+            db.execute("DELETE FROM users WHERE id = ? AND email_verified = 0",
+                       (d["id"],))
+            db.commit()
+            eliminados.append(info)
+    return jsonify({"ok": True, "dry": dry,
+                    "candidatos": candidatos, "eliminados": eliminados})
+
+
 def notify_new_member(nombre: str, email: str):
     """Avisa a Alex por email cuando alguien se registra.
 
@@ -754,7 +1294,7 @@ WELCOME_BACK_TEXT = """Hi __NOMBRE__,
 
 Welcome back to The Sharp Team. Your Platinum access is live again, right where you left it.
 
-TODAY'S CARD IS WAITING - Today's official plays (Gold plus the Platinum) are live on your dashboard now, each with its original bet ticket.
+TODAY'S CARD IS WAITING - Today's official plays (Sharp Free plus the Platinum) are live on your dashboard now, each with its original bet ticket.
 
 YOUR TRACKER IS INTACT - Every play you tracked is still there. Record, ROI and streaks picked up right where they stopped.
 
@@ -765,7 +1305,7 @@ EVERYTHING RESUMES INSTANTLY - Push alerts, Telegram channels, the +EV board and
 Enter your dashboard:
 https://www.thesharpteam.bet/home
 
-$23/week. Cancel anytime.
+$1 for the first 7 days, then $15.99/week. Cancel anytime.
 
 - The Sharp Team
 
@@ -784,45 +1324,46 @@ WELCOME_BACK_HTML = """<!DOCTYPE html>
 <body style="margin:0;padding:0;background:#ffffff;">
 <div style="display:none;max-height:0;overflow:hidden;opacity:0;">Welcome back to The Sharp Team. Your Platinum plays are live again.</div>
 <div style="font-family:Arial,sans-serif;max-width:460px;margin:0 auto;background:#ffffff;">
-<img src="https://www.thesharpteam.bet/static/img/sharp-team-banner.png" alt="The Sharp Team" width="460" style="width:100%;height:auto;display:block;border:0;">
+<img src="https://www.thesharpteam.bet/static/img/sharp-team-header.jpg" alt="The Sharp Team" width="460" style="width:100%;height:auto;display:block;border:0;">
 <div style="background:#ffffff;padding:14px 0 12px;text-align:center;">
-<p style="margin:0;font-size:13px;font-weight:800;letter-spacing:5px;color:#2e4053;">THE SHARP TEAM</p>
+<p style="margin:0;font-size:9.9px;font-weight:800;letter-spacing:5px;color:#2e4053;">THE SHARP TEAM</p>
 </div>
 <div style="background:#c9a227;padding:28px 24px;text-align:center;">
-<p style="margin:0;font-size:12px;font-weight:800;letter-spacing:3px;color:#0a0f1c;">WELCOME BACK</p>
-<h1 style="font-size:30px;font-weight:800;color:#0a0f1c;margin:10px 0 0;line-height:1.25;">Back on track.</h1>
+<p style="margin:0;font-size:9.2px;font-weight:800;letter-spacing:3px;color:#0a0f1c;">WELCOME BACK</p>
+<h1 style="font-size:22.9px;font-weight:800;color:#0a0f1c;margin:10px 0 0;line-height:1.25;">Back on track.</h1>
 </div>
 <div style="text-align:center;padding:16px 20px 0;">
-<p style="color:#555555;font-size:15px;line-height:1.6;margin:0;">Hi __NOMBRE__ &mdash; good to have you back. Your Platinum access is live again, right where you left it:</p>
+<p style="color:#555555;font-size:11.5px;line-height:1.6;margin:0;">Hi __NOMBRE__ &mdash; good to have you back. Your Platinum access is live again, right where you left it:</p>
 </div>
 <div style="padding:14px 20px 0;">
 <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 10px;background:#2e4053;border:1px solid #2e4053;border-radius:12px;"><tr>
-<td width="44" style="vertical-align:top;padding:14px 0 14px 16px;"><div style="font-size:24px;line-height:1.2;">🎯</div></td>
-<td style="vertical-align:top;padding:14px 16px 14px 4px;"><div style="font-size:14px;font-weight:800;color:#ffffff;letter-spacing:1px;">TODAY&rsquo;S CARD IS WAITING</div><div style="font-size:13px;color:#c8d0dc;line-height:1.6;margin-top:4px;">Today&rsquo;s official plays &mdash; Gold plus the Platinum &mdash; are live on your dashboard now, each with its original ticket.</div></td>
+<td width="44" style="vertical-align:top;padding:14px 0 14px 16px;"><div style="font-size:18.4px;line-height:1.2;">🎯</div></td>
+<td style="vertical-align:top;padding:14px 16px 14px 4px;"><div style="font-size:10.7px;font-weight:800;color:#ffffff;letter-spacing:1px;">TODAY&rsquo;S CARD IS WAITING</div><div style="font-size:9.9px;color:#c8d0dc;line-height:1.6;margin-top:4px;">Today&rsquo;s official plays &mdash; Sharp Free plus the Platinum &mdash; are live on your dashboard now, each with its original ticket.</div></td>
 </tr></table>
 <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 10px;background:#2e4053;border:1px solid #2e4053;border-radius:12px;"><tr>
-<td width="44" style="vertical-align:top;padding:14px 0 14px 16px;"><div style="font-size:24px;line-height:1.2;">📊</div></td>
-<td style="vertical-align:top;padding:14px 16px 14px 4px;"><div style="font-size:14px;font-weight:800;color:#ffffff;letter-spacing:1px;">YOUR TRACKER IS INTACT</div><div style="font-size:13px;color:#c8d0dc;line-height:1.6;margin-top:4px;">Every play you tracked is still there &mdash; record, ROI and streaks picked up right where they stopped.</div></td>
+<td width="44" style="vertical-align:top;padding:14px 0 14px 16px;"><div style="font-size:18.4px;line-height:1.2;">📊</div></td>
+<td style="vertical-align:top;padding:14px 16px 14px 4px;"><div style="font-size:10.7px;font-weight:800;color:#ffffff;letter-spacing:1px;">YOUR TRACKER IS INTACT</div><div style="font-size:9.9px;color:#c8d0dc;line-height:1.6;margin-top:4px;">Every play you tracked is still there &mdash; record, ROI and streaks picked up right where they stopped.</div></td>
 </tr></table>
 <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 10px;background:#2e4053;border:1px solid #2e4053;border-radius:12px;"><tr>
-<td width="44" style="vertical-align:top;padding:14px 0 14px 16px;"><div style="font-size:24px;line-height:1.2;">⚡</div></td>
-<td style="vertical-align:top;padding:14px 16px 14px 4px;"><div style="font-size:14px;font-weight:800;color:#ffffff;letter-spacing:1px;">EVERYTHING RESUMES INSTANTLY</div><div style="font-size:13px;color:#c8d0dc;line-height:1.6;margin-top:4px;">Push alerts, Telegram channels, the +EV board and the Daily Academy &mdash; all back on, no setup needed.</div></td>
+<td width="44" style="vertical-align:top;padding:14px 0 14px 16px;"><div style="font-size:18.4px;line-height:1.2;">⚡</div></td>
+<td style="vertical-align:top;padding:14px 16px 14px 4px;"><div style="font-size:10.7px;font-weight:800;color:#ffffff;letter-spacing:1px;">EVERYTHING RESUMES INSTANTLY</div><div style="font-size:9.9px;color:#c8d0dc;line-height:1.6;margin-top:4px;">Push alerts, Telegram channels, the +EV board and the Daily Academy &mdash; all back on, no setup needed.</div></td>
 </tr></table>
 </div>
 <div style="margin:14px 20px 0;padding:14px 18px;border-left:3px solid #22c55e;">
-<p style="font-size:15px;font-style:italic;line-height:1.7;color:#555555;margin:0;">&ldquo;Every play is posted before game time &mdash; then locked and graded against the final score.&rdquo;</p>
+<p style="font-size:11.5px;font-style:italic;line-height:1.7;color:#555555;margin:0;">&ldquo;Every play is posted before game time &mdash; then locked and graded against the final score.&rdquo;</p>
 </div>
 <div style="text-align:center;padding:18px 20px 0;">
-<a href="https://www.thesharpteam.bet/home" style="display:inline-block;background:#22c55e;color:#111111;font-size:14px;font-weight:800;padding:11px 28px;border-radius:999px;text-decoration:none;">ENTER THE DASHBOARD</a>
-<p style="color:#555555;font-size:14px;line-height:1.7;margin:14px 0 0;">$23/week.<br>Cancel anytime.</p>
+<a href="https://www.thesharpteam.bet/home" style="display:inline-block;background:#22c55e;color:#111111;font-size:10.7px;font-weight:800;padding:11px 28px;border-radius:999px;text-decoration:none;">ENTER THE DASHBOARD</a>
+<p style="color:#555555;font-size:10.7px;line-height:1.7;margin:14px 0 0;">$1 for the first 7 days &mdash; then $15.99/week.<br>Cancel anytime.</p>
 </div>
 <div style="text-align:center;padding:20px 20px 14px;">
-<img src="https://files.catbox.moe/74qot5.png" alt="The Sharp Team" width="110" style="width:110px;height:auto;display:block;margin:0 auto;border:0;">
-<p style="margin:10px 0 0;color:#111111;font-size:12px;font-weight:800;letter-spacing:3px;">THE SHARP TEAM</p>
-<p style="margin:8px 0 0;color:#9ca3af;font-size:11px;">250 Park Avenue, Suite 1800, New York, NY 10017</p>
-<p style="margin:4px 0 0;color:#9ca3af;font-size:11px;"><a href="tel:+15513263312" style="color:#9ca3af;text-decoration:none;">(551) 326-3312</a></p>
-<p style="margin:12px 0 0;color:#9ca3af;font-size:10px;">21+. Play responsibly. If you or someone you know has a gambling problem, call or text <a href="tel:18004262537" style="color:#9ca3af;text-decoration:underline;">1-800-GAMBLER</a>.</p>
-<p style="margin:6px 0 0;color:#9ca3af;font-size:10px;">&copy; 2026 The Sharp Team</p>
+<img src="https://www.thesharpteam.bet/static/img/sharp-team-logo.png" alt="The Sharp Team" width="110" style="width:110px;height:auto;display:block;margin:0 auto;border:0;">
+<p style="margin:10px 0 0;color:#111111;font-size:9.2px;font-weight:800;letter-spacing:3px;">THE SHARP TEAM</p>
+<p style="margin:8px 0 0;color:#9ca3af;font-size:8.4px;">250 Park Avenue, Suite 1800, New York, NY 10017</p>
+<p style="margin:4px 0 0;color:#9ca3af;font-size:8.4px;"><a href="tel:+12393768798" style="color:#9ca3af;text-decoration:none;">(239) 376-8798</a></p>
+<p style="margin:12px 0 0;color:#9ca3af;font-size:7.6px;">21+. Play responsibly. If you or someone you know has a gambling problem, call or text <a href="tel:18004262537" style="color:#9ca3af;text-decoration:underline;">1-800-GAMBLER</a>.</p>
+<p style="margin:8px 0 0;color:#9ca3af;font-size:7.6px;">Don't want these emails anymore? <a href="{{{RESEND_UNSUBSCRIBE_URL}}}" style="color:#9ca3af;text-decoration:underline;">Unsubscribe</a> — one click, no questions asked.</p>
+<p style="margin:6px 0 0;color:#9ca3af;font-size:7.6px;">&copy; 2026 The Sharp Team</p>
 </div>
 </div>
 </div>
@@ -855,101 +1396,93 @@ def send_welcome_back_email(nombre: str, email: str):
 
 
 # ------------------------------------------------------------- Plays ----
-WELCOME_SUBJECT = "Welcome to The Sharp Team \U0001F988"
+WELCOME_SUBJECT = "Welcome to The Sharp Team \U0001F988 \u2014 Platinum starts with a $1 week"
 
 WELCOME_TEXT = """Hi __NOMBRE__,
 
-Welcome to The Sharp Team! Your dashboard is ready.
+Welcome to The Sharp Team! Your dashboard is ready \u2014 and Platinum starts with a $1 first week.
+
+YOUR ACCESS, IN PLAIN WORDS:
+- PLATINUM plays: start for $1 \u2014 your first 7 days of full Platinum cost a single dollar (then $15.99/week only if you stay). Our most valuable play \u2014 the best pick of the day, every day.
+- SHARP FREE plays: FREE FOR LIFE \u2014 no card, no expiration, yours forever.
 
 EVERYTHING YOUR PLAN UNLOCKS
-1. THE DAILY CARD - Every day at 2:00 PM ET (11:00 AM ET on weekends): the day's official plays (Gold plus the one Platinum), each with its original bet ticket. No filler, ever.
+1. THE DAILY CARD - Every day at 1:00 PM ET: the day's official plays (Sharp Free plus the one Platinum), each with its original bet ticket. No filler, ever.
 2. YOUR PERSONAL TRACKER - One-tap tracking: mark each play, log won or lost. Verified history, real record, net units, ROI and streak. No spreadsheets.
 3. LIVE +EV BOARD - Value edges updated around the clock, measured against Pinnacle's no-vig fair price, with sharp-confirmed badges.
 4. PUSH ALERTS - Alerts the moment the card drops and when new edges appear. Turn "Alerts on" in your dashboard.
-5. TELEGRAM CHANNELS - Gold plays in the "Gold" channel, Platinum plays in the private "Platinum" channel, each with the original ticket.
+5. TELEGRAM CHANNELS - Sharp Free plays in the "Sharp Free" channel, Platinum plays in the private "Platinum" channel, each with the original ticket.
 6. DAILY ACADEMY - One sharp betting lesson every morning: discipline, bankroll management, reading lines and edges.
 
 "Every play is posted before game time - then locked and graded against the final score."
 
-Enter your dashboard:
-https://www.thesharpteam.bet/home
+START PLATINUM FOR $1:
+__PAY_URL__
+Platinum is not automatic \u2014 it starts when you do. One dollar unlocks your first 7 days of full Platinum; after that it is $15.99/week. Cancel anytime. No questions asked.
 
-Your first week is $1 - then $23/week. Cancel anytime. No questions asked.
+MAKE SURE YOU DON'T MISS A PLAY:
+- Join the Telegram channels: Sharp Free (free plays) https://t.me/thesharpteam - Platinum (private) https://t.me/+_eNhcbD3k4RlNTk5
+- Turn on push notifications: open your dashboard and tap "Alerts on".
+
+Your Sharp Free plays are already live on your dashboard:
+https://www.thesharpteam.bet/home
 
 - The Sharp Team
 
 Bet responsibly - 21+ - Gambling problem? Call 1-800-GAMBLER (1-800-426-2537): free and confidential help, 24/7.
 """
 
-WELCOME_HTML = """<!DOCTYPE html>
-<html>
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="color-scheme" content="light">
-<meta name="supported-color-schemes" content="light">
-<title>Welcome to The Sharp Team</title>
-</head>
-<body style="margin:0;padding:0;background:#ffffff;">
-<div style="display:none;max-height:0;overflow:hidden;opacity:0;">Welcome to The Sharp Team. Your Platinum plays are live &mdash; every pick tracked, every ticket verified.</div>
-<div style="font-family:Arial,sans-serif;max-width:460px;margin:0 auto;background:#ffffff;">
-<img src="https://www.thesharpteam.bet/static/img/sharp-team-banner.png" alt="The Sharp Team" width="460" style="width:100%;height:auto;display:block;border:0;">
-<div style="background:#ffffff;padding:14px 0 12px;text-align:center;">
-<p style="margin:0;font-size:13px;font-weight:800;letter-spacing:5px;color:#2e4053;">THE SHARP TEAM</p>
-</div>
-<div style="background:#c9a227;padding:28px 24px;text-align:center;">
-<p style="margin:0;font-size:12px;font-weight:800;letter-spacing:3px;color:#0a0f1c;">MEMBERSHIP CONFIRMED</p>
-<h1 style="font-size:30px;font-weight:800;color:#0a0f1c;margin:10px 0 0;line-height:1.25;">Welcome to the team.</h1>
-</div>
-<div style="text-align:center;padding:16px 20px 0;">
-<p style="color:#555555;font-size:15px;line-height:1.6;margin:0;">Hi __NOMBRE__ &mdash; your dashboard is ready. Here is everything waiting for you inside:</p>
-</div>
-<div style="padding:14px 20px 0;">
-<table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 10px;background:#2e4053;border:1px solid #2e4053;border-radius:12px;"><tr>
-<td width="44" style="vertical-align:top;padding:14px 0 14px 16px;"><div style="font-size:24px;line-height:1.2;">🎯</div></td>
-<td style="vertical-align:top;padding:14px 16px 14px 4px;"><div style="font-size:14px;font-weight:800;color:#ffffff;letter-spacing:1px;">THE DAILY CARD</div><div style="font-size:13px;color:#c8d0dc;line-height:1.6;margin-top:4px;">Every day at 2:00 PM ET (11:00 AM ET on weekends): the official plays &mdash; Gold plus the one Platinum &mdash; each with its original ticket.</div></td>
-</tr></table>
-<table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 10px;background:#2e4053;border:1px solid #2e4053;border-radius:12px;"><tr>
-<td width="44" style="vertical-align:top;padding:14px 0 14px 16px;"><div style="font-size:24px;line-height:1.2;">📊</div></td>
-<td style="vertical-align:top;padding:14px 16px 14px 4px;"><div style="font-size:14px;font-weight:800;color:#ffffff;letter-spacing:1px;">YOUR PERSONAL TRACKER</div><div style="font-size:13px;color:#c8d0dc;line-height:1.6;margin-top:4px;">One-tap tracking: mark each play, log won or lost. Real record, net units, ROI and streak.</div></td>
-</tr></table>
-<table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 10px;background:#2e4053;border:1px solid #2e4053;border-radius:12px;"><tr>
-<td width="44" style="vertical-align:top;padding:14px 0 14px 16px;"><div style="font-size:24px;line-height:1.2;">⚡</div></td>
-<td style="vertical-align:top;padding:14px 16px 14px 4px;"><div style="font-size:14px;font-weight:800;color:#ffffff;letter-spacing:1px;">LIVE +EV BOARD</div><div style="font-size:13px;color:#c8d0dc;line-height:1.6;margin-top:4px;">Value edges updated around the clock, measured against Pinnacle&apos;s no-vig fair price.</div></td>
-</tr></table>
-<table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 10px;background:#2e4053;border:1px solid #2e4053;border-radius:12px;"><tr>
-<td width="44" style="vertical-align:top;padding:14px 0 14px 16px;"><div style="font-size:24px;line-height:1.2;">📣</div></td>
-<td style="vertical-align:top;padding:14px 16px 14px 4px;"><div style="font-size:14px;font-weight:800;color:#ffffff;letter-spacing:1px;">PUSH ALERTS</div><div style="font-size:13px;color:#c8d0dc;line-height:1.6;margin-top:4px;">Alerts the moment the card drops. Turn &ldquo;Alerts on&rdquo; in your dashboard.</div></td>
-</tr></table>
-<table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 10px;background:#2e4053;border:1px solid #2e4053;border-radius:12px;"><tr>
-<td width="44" style="vertical-align:top;padding:14px 0 14px 16px;"><div style="font-size:24px;line-height:1.2;">✈️</div></td>
-<td style="vertical-align:top;padding:14px 16px 14px 4px;"><div style="font-size:14px;font-weight:800;color:#ffffff;letter-spacing:1px;">TELEGRAM CHANNELS</div><div style="font-size:13px;color:#c8d0dc;line-height:1.6;margin-top:4px;">Gold plays in the Gold channel, Platinum plays in the private Platinum channel.</div></td>
-</tr></table>
-<table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 10px;background:#2e4053;border:1px solid #2e4053;border-radius:12px;"><tr>
-<td width="44" style="vertical-align:top;padding:14px 0 14px 16px;"><div style="font-size:24px;line-height:1.2;">🎓</div></td>
-<td style="vertical-align:top;padding:14px 16px 14px 4px;"><div style="font-size:14px;font-weight:800;color:#ffffff;letter-spacing:1px;">DAILY ACADEMY</div><div style="font-size:13px;color:#c8d0dc;line-height:1.6;margin-top:4px;">One sharp betting lesson every morning &mdash; discipline, bankroll, reading lines.</div></td>
-</tr></table>
-</div>
-<div style="margin:14px 20px 0;padding:14px 18px;border-left:3px solid #22c55e;">
-<p style="font-size:15px;font-style:italic;line-height:1.7;color:#555555;margin:0;">&ldquo;Every play is posted before game time &mdash; then locked and graded against the final score.&rdquo;</p>
-</div>
-<div style="text-align:center;padding:18px 20px 0;">
-<a href="https://www.thesharpteam.bet/home" style="display:inline-block;background:#22c55e;color:#111111;font-size:14px;font-weight:800;padding:11px 28px;border-radius:999px;text-decoration:none;">ENTER THE DASHBOARD</a>
-<p style="color:#555555;font-size:14px;line-height:1.7;margin:14px 0 0;">Your first week is <strong style="color:#16a34a;">$1</strong> &mdash; then $23/week.<br>Cancel anytime.</p>
-</div>
-<div style="text-align:center;padding:20px 20px 14px;">
-<img src="https://files.catbox.moe/74qot5.png" alt="The Sharp Team" width="110" style="width:110px;height:auto;display:block;margin:0 auto;border:0;">
-<p style="margin:10px 0 0;color:#111111;font-size:12px;font-weight:800;letter-spacing:3px;">THE SHARP TEAM</p>
-<p style="margin:8px 0 0;color:#9ca3af;font-size:11px;">250 Park Avenue, Suite 1800, New York, NY 10017</p>
-<p style="margin:4px 0 0;color:#9ca3af;font-size:11px;"><a href="tel:+15513263312" style="color:#9ca3af;text-decoration:none;">(551) 326-3312</a></p>
-<p style="margin:12px 0 0;color:#9ca3af;font-size:10px;">21+. Play responsibly. If you or someone you know has a gambling problem, call or text <a href="tel:18004262537" style="color:#9ca3af;text-decoration:underline;">1-800-GAMBLER</a>.</p>
-<p style="margin:6px 0 0;color:#9ca3af;font-size:10px;">&copy; 2026 The Sharp Team</p>
-</div>
-</div>
-</div>
-</body>
-</html>
-"""
+WELCOME_HTML = '<!DOCTYPE html>\n<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Welcome to The Sharp Team</title></head>\n<body style="margin:0;padding:0;background:#000000;font-family:-apple-system,Helvetica,Arial,sans-serif;-webkit-text-size-adjust:100%;text-size-adjust:100%;">\n<div style="display:none;font-size:0.8px;line-height:1px;max-height:0;overflow:hidden;">Welcome to The Sharp Team \u2014 You\'re in. Here is how everything works and what to expect today.</div>\n<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#000000;">\n<tr><td align="center" style="padding:0;">\n<table role="presentation" width="600" cellpadding="0" cellspacing="0" bgcolor="#14161d" style="max-width:600px;width:100%;background:#14161d;">\n  <tr><td bgcolor="#000000" style="background:#000000;padding:0;font-size:12.5px;line-height:0;">\n    <div style="font-size:8.5px;line-height:0;"><img src="https://www.thesharpteam.bet/static/img/sharp-team-header.jpg" width="600" alt="The Sharp Team" style="display:block;width:100%;max-width:600px;height:auto;border:0;font-size:8.0px;"></div>\n  </td></tr>\n  <tr><td bgcolor="#14161d" style="background:#14161d;padding:22px 22px 8px;">\n    <div style="color:#f1f5f9;font-size:44.9px;line-height:1.15;font-weight:900;margin-top:22px;">You\'re in.</div>\n    <div style="color:#e8c766;font-size:13.2px;font-weight:700;margin-top:3px;">Welcome to the team.</div>\n    <p style="font-size:11.7px;line-height:1.6;color:#94a3b8;margin:11px 0 0;">In the next few minutes we\'ll walk you through how everything works, what to expect today and where to find every tool, so you can get the most out of your membership from day one.</p>\n    <div style="margin-top:16px;"><a href="https://www.thesharpteam.bet/home" style="display:inline-block;background:#0E9E66;color:#ffffff;font-size:11.7px;font-weight:900;padding:13px 28px;border-radius:999px;text-decoration:none;">OPEN TODAY\'S CARD &rarr;</a></div>\n    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" bgcolor="#1D2029" style="background:#1D2029;border:1px solid #262C36;border-radius:20px;margin-top:20px;">\n      <tr>\n        <td width="33%" style="padding:13px 4px 11px;text-align:center;"><div style="color:#F0D47C;font-size:16.1px;font-weight:900;white-space:nowrap;">__LAST_WEEK_RECORD__</div><div style="color:#94a3b8;font-size:8.0px;font-weight:700;letter-spacing:1.5px;margin-top:2px;">LAST WEEK</div></td>\n        <td width="34%" style="padding:13px 4px 11px;text-align:center;border-left:1px solid #262C36;border-right:1px solid #262C36;"><div style="color:#11CB87;font-size:16.1px;font-weight:900;white-space:nowrap;">__LAST_WEEK_UNITS__</div><div style="color:#94a3b8;font-size:8.0px;font-weight:700;letter-spacing:1.5px;margin-top:2px;">UNITS</div></td>\n        <td width="33%" style="padding:13px 4px 11px;text-align:center;"><div style="color:#F0D47C;font-size:16.1px;font-weight:900;white-space:nowrap;">__LAST_WEEK_RATE__</div><div style="color:#94a3b8;font-size:8.0px;font-weight:700;letter-spacing:1.5px;margin-top:2px;">WIN RATE</div></td>\n      </tr>\n    </table>\n    <div style="font-size:9.2px;color:#94a3b8;margin-top:9px;">Program totals: __TOTAL_RECORD__ &middot; __TOTAL_UNITS__ &middot; __TOTAL_RATE__ win rate &middot; 1u = $100 &middot; Graded publicly. Past results do not guarantee future performance.</div>\n  </td></tr>\n  <tr><td bgcolor="#14161d" style="background:#14161d;padding:16px 22px 0;">\n    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" bgcolor="#1D2029" style="background:#1D2029;border:1px solid #262C36;border-radius:20px;">\n      <tr><td style="padding:16px 18px;">\n        <div style="color:#e8c766;font-size:8.8px;font-weight:800;letter-spacing:2.5px;">A NOTE FROM THE TEAM</div>\n        <div style="color:#f1f5f9;font-size:14.9px;font-weight:900;margin-top:6px;">Why we do everything in public</div>\n        <p style="font-size:11.7px;line-height:1.6;color:#94a3b8;margin:9px 0 0;">Anyone can post winners after the fact. We built The Sharp Team around the opposite idea: every play is posted before game time, backed by a verified ticket, and graded in public, wins and losses alike.</p>\n        <p style="font-size:11.7px;line-height:1.6;color:#94a3b8;margin:9px 0 0;">That means you never have to take our word for it. The full record is open, ticket by ticket. Your job is simple: read the card, compare prices, and decide what fits your plan.</p>\n        <div style="font-size:11.7px;color:#f1f5f9;margin-top:11px;"><b>&mdash; The Sharp Team</b></div>\n      </td></tr>\n    </table>\n  </td></tr>\n  <tr><td bgcolor="#14161d" style="background:#14161d;padding:18px 22px 0;">\n    <div style="color:#e8c766;font-size:8.8px;font-weight:800;letter-spacing:2.5px;">YOUR TOOLBOX</div>\n    <div style="color:#f1f5f9;font-size:16.1px;font-weight:900;margin-top:5px;">Everything you now have access to</div>\n    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:12px;">\n      <tr><td bgcolor="#1D2029" style="background:#1D2029;border:1px solid #262C36;border-left:6px solid #11CB87;border-radius:16px;padding:13px 16px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td width="44" valign="top"><span style="display:inline-block;background:#e8c766;color:#1a1405;font-size:10.0px;font-weight:900;padding:6px 9px;border-radius:9px;">01</span></td><td valign="top"><div style="font-size:12.8px;font-weight:900;color:#f1f5f9;">Today\'s Card</div><div style="font-size:10.9px;line-height:1.5;color:#94a3b8;margin-top:3px;">Our official plays, posted every day at 1:00&zwnj; PM ET. The heart of your membership.</div></td></tr></table></td></tr>\n      <tr><td style="height:14px;line-height:14px;font-size:11.2px;mso-line-height-rule:exactly;">&nbsp;</td></tr>\n      <tr><td bgcolor="#1D2029" style="background:#1D2029;border:1px solid #262C36;border-left:6px solid #11CB87;border-radius:16px;padding:13px 16px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td width="44" valign="top"><span style="display:inline-block;background:#e8c766;color:#1a1405;font-size:10.0px;font-weight:900;padding:6px 9px;border-radius:9px;">02</span></td><td valign="top"><div style="font-size:12.8px;font-weight:900;color:#f1f5f9;">+EV Board</div><div style="font-size:10.9px;line-height:1.5;color:#94a3b8;margin-top:3px;">Every price for today\'s plays across 12 sportsbooks, ranked by expected value.</div></td></tr></table></td></tr>\n      <tr><td style="height:14px;line-height:14px;font-size:11.2px;mso-line-height-rule:exactly;">&nbsp;</td></tr>\n      <tr><td bgcolor="#1D2029" style="background:#1D2029;border:1px solid #262C36;border-left:6px solid #11CB87;border-radius:16px;padding:13px 16px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td width="44" valign="top"><span style="display:inline-block;background:#e8c766;color:#1a1405;font-size:10.0px;font-weight:900;padding:6px 9px;border-radius:9px;">03</span></td><td valign="top"><div style="font-size:12.8px;font-weight:900;color:#f1f5f9;">Player Props</div><div style="font-size:10.9px;line-height:1.5;color:#94a3b8;margin-top:3px;">Official player props, included with Platinum.</div></td></tr></table></td></tr>\n      <tr><td style="height:14px;line-height:14px;font-size:11.2px;mso-line-height-rule:exactly;">&nbsp;</td></tr>\n      <tr><td bgcolor="#1D2029" style="background:#1D2029;border:1px solid #262C36;border-left:6px solid #11CB87;border-radius:16px;padding:13px 16px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td width="44" valign="top"><span style="display:inline-block;background:#e8c766;color:#1a1405;font-size:10.0px;font-weight:900;padding:6px 9px;border-radius:9px;">04</span></td><td valign="top"><div style="font-size:12.8px;font-weight:900;color:#f1f5f9;">Line Moves</div><div style="font-size:10.9px;line-height:1.5;color:#94a3b8;margin-top:3px;">Watch how each line moves before game time &mdash; and why.</div></td></tr></table></td></tr>\n      <tr><td style="height:14px;line-height:14px;font-size:11.2px;mso-line-height-rule:exactly;">&nbsp;</td></tr>\n      <tr><td bgcolor="#1D2029" style="background:#1D2029;border:1px solid #262C36;border-left:6px solid #11CB87;border-radius:16px;padding:13px 16px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td width="44" valign="top"><span style="display:inline-block;background:#e8c766;color:#1a1405;font-size:10.0px;font-weight:900;padding:6px 9px;border-radius:9px;">05</span></td><td valign="top"><div style="font-size:12.8px;font-weight:900;color:#f1f5f9;">Sharp Money</div><div style="font-size:10.9px;line-height:1.5;color:#94a3b8;margin-top:3px;">See where the sharp money is landing on today\'s games.</div></td></tr></table></td></tr>\n      <tr><td style="height:14px;line-height:14px;font-size:11.2px;mso-line-height-rule:exactly;">&nbsp;</td></tr>\n      <tr><td bgcolor="#1D2029" style="background:#1D2029;border:1px solid #262C36;border-left:6px solid #11CB87;border-radius:16px;padding:13px 16px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td width="44" valign="top"><span style="display:inline-block;background:#e8c766;color:#1a1405;font-size:10.0px;font-weight:900;padding:6px 9px;border-radius:9px;">06</span></td><td valign="top"><div style="font-size:12.8px;font-weight:900;color:#f1f5f9;">AI Assistant</div><div style="font-size:10.9px;line-height:1.5;color:#94a3b8;margin-top:3px;">Your in-dashboard assistant for plays, prices and your account.</div></td></tr></table></td></tr>\n      <tr><td style="height:14px;line-height:14px;font-size:11.2px;mso-line-height-rule:exactly;">&nbsp;</td></tr>\n      <tr><td bgcolor="#1D2029" style="background:#1D2029;border:1px solid #262C36;border-left:6px solid #11CB87;border-radius:16px;padding:13px 16px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td width="44" valign="top"><span style="display:inline-block;background:#e8c766;color:#1a1405;font-size:10.0px;font-weight:900;padding:6px 9px;border-radius:9px;">07</span></td><td valign="top"><div style="font-size:12.8px;font-weight:900;color:#f1f5f9;">Compare Prices</div><div style="font-size:10.9px;line-height:1.5;color:#94a3b8;margin-top:3px;">The best price for each of today\'s plays across every book, so you shop the line.</div></td></tr></table></td></tr>\n      <tr><td style="height:14px;line-height:14px;font-size:11.2px;mso-line-height-rule:exactly;">&nbsp;</td></tr>\n      <tr><td bgcolor="#1D2029" style="background:#1D2029;border:1px solid #262C36;border-left:6px solid #11CB87;border-radius:16px;padding:13px 16px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td width="44" valign="top"><span style="display:inline-block;background:#e8c766;color:#1a1405;font-size:10.0px;font-weight:900;padding:6px 9px;border-radius:9px;">08</span></td><td valign="top"><div style="font-size:12.8px;font-weight:900;color:#f1f5f9;">Official Tracker</div><div style="font-size:10.9px;line-height:1.5;color:#94a3b8;margin-top:3px;">The program\'s complete record, ticket by ticket. No edits, no hiding.</div></td></tr></table></td></tr>\n      <tr><td style="height:14px;line-height:14px;font-size:11.2px;mso-line-height-rule:exactly;">&nbsp;</td></tr>\n      <tr><td bgcolor="#1D2029" style="background:#1D2029;border:1px solid #262C36;border-left:6px solid #11CB87;border-radius:16px;padding:13px 16px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td width="44" valign="top"><span style="display:inline-block;background:#e8c766;color:#1a1405;font-size:10.0px;font-weight:900;padding:6px 9px;border-radius:9px;">09</span></td><td valign="top"><div style="font-size:12.8px;font-weight:900;color:#f1f5f9;">My Bets</div><div style="font-size:10.9px;line-height:1.5;color:#94a3b8;margin-top:3px;">Your personal record on the plays you choose to track, separate from ours.</div></td></tr></table></td></tr>\n      <tr><td style="height:14px;line-height:14px;font-size:11.2px;mso-line-height-rule:exactly;">&nbsp;</td></tr>\n      <tr><td bgcolor="#1D2029" style="background:#1D2029;border:1px solid #262C36;border-left:6px solid #11CB87;border-radius:16px;padding:13px 16px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td width="44" valign="top"><span style="display:inline-block;background:#e8c766;color:#1a1405;font-size:10.0px;font-weight:900;padding:6px 9px;border-radius:9px;">10</span></td><td valign="top"><div style="font-size:12.8px;font-weight:900;color:#f1f5f9;">30-Day Academy</div><div style="font-size:10.9px;line-height:1.5;color:#94a3b8;margin-top:3px;">A daily lesson on how The Sharp Team works, from day one.</div></td></tr></table></td></tr>\n      <tr><td style="height:14px;line-height:14px;font-size:11.2px;mso-line-height-rule:exactly;">&nbsp;</td></tr>\n      <tr><td bgcolor="#1D2029" style="background:#1D2029;border:1px solid #262C36;border-left:6px solid #11CB87;border-radius:16px;padding:13px 16px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td width="44" valign="top"><span style="display:inline-block;background:#e8c766;color:#1a1405;font-size:10.0px;font-weight:900;padding:6px 9px;border-radius:9px;">11</span></td><td valign="top"><div style="font-size:12.8px;font-weight:900;color:#f1f5f9;">Telegram Channels</div><div style="font-size:10.9px;line-height:1.5;color:#94a3b8;margin-top:3px;">The plays also land on our private Telegram channels.</div></td></tr></table></td></tr>\n      <tr><td style="height:14px;line-height:14px;font-size:11.2px;mso-line-height-rule:exactly;">&nbsp;</td></tr>\n      <tr><td bgcolor="#1D2029" style="background:#1D2029;border:1px solid #262C36;border-left:6px solid #11CB87;border-radius:16px;padding:13px 16px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td width="44" valign="top"><span style="display:inline-block;background:#e8c766;color:#1a1405;font-size:10.0px;font-weight:900;padding:6px 9px;border-radius:9px;">12</span></td><td valign="top"><div style="font-size:12.8px;font-weight:900;color:#f1f5f9;">Archive</div><div style="font-size:10.9px;line-height:1.5;color:#94a3b8;margin-top:3px;">Every settled play, day by day. Perfect for reviewing what happened.</div></td></tr></table></td></tr>\n    </table>\n    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:16px 0 2px;"><tr><td bgcolor="#9ff7d4" height="3" style="height:3px;font-size:0;line-height:0;border-top-left-radius:3px;border-top-right-radius:3px;">&nbsp;</td></tr><tr><td bgcolor="#11CB87" height="6" style="height:6px;font-size:0;line-height:0;">&nbsp;</td></tr><tr><td bgcolor="#0E9E66" height="3" style="height:3px;font-size:0;line-height:0;border-bottom-left-radius:3px;border-bottom-right-radius:3px;">&nbsp;</td></tr></table>\n  </td></tr>\n  <tr><td bgcolor="#14161d" style="background:#14161d;padding:18px 22px 0;">\n    <div style="color:#e8c766;font-size:8.8px;font-weight:800;letter-spacing:2.5px;">YOUR FIRST DAY</div>\n    <div style="color:#f1f5f9;font-size:16.1px;font-weight:900;margin-top:5px;">What to expect, hour by hour</div>\n    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:10px;">\n      <tr><td width="26" valign="top" style="padding-top:2px;"><span style="display:inline-block;width:11px;height:11px;border-radius:50%;background:#11CB87;"></span></td><td style="padding:0 0 12px;border-bottom:1px solid #262C36;"><span style="color:#e8c766;font-size:8.5px;font-weight:800;letter-spacing:1.5px;">MORNING</span><div style="font-size:12.5px;font-weight:800;color:#f1f5f9;margin-top:3px;">Get set up</div><div style="font-size:11.2px;line-height:1.55;color:#94a3b8;margin-top:2px;">Open the app and turn on Alerts so you know the moment the card is live.</div></td></tr>\n      <tr><td width="26" valign="top" style="padding-top:12px;"><span style="display:inline-block;width:11px;height:11px;border-radius:50%;background:#11CB87;"></span></td><td style="padding:10px 0 12px;border-bottom:1px solid #262C36;"><span style="color:#e8c766;font-size:8.5px;font-weight:800;letter-spacing:1.5px;">1:00&zwnj; PM ET</span><div style="font-size:12.5px;font-weight:800;color:#f1f5f9;margin-top:3px;">The card posts</div><div style="font-size:11.2px;line-height:1.55;color:#94a3b8;margin-top:2px;">Today\'s Card goes live with our official plays.</div></td></tr>\n      <tr><td width="26" valign="top" style="padding-top:12px;"><span style="display:inline-block;width:11px;height:11px;border-radius:50%;background:#11CB87;"></span></td><td style="padding:10px 0 12px;border-bottom:1px solid #262C36;"><span style="color:#e8c766;font-size:8.5px;font-weight:800;letter-spacing:1.5px;">BEFORE GAME</span><div style="font-size:12.5px;font-weight:800;color:#f1f5f9;margin-top:3px;">Shop the price</div><div style="font-size:11.2px;line-height:1.55;color:#94a3b8;margin-top:2px;">Use Compare Prices to find the best number across every book before you place anything.</div></td></tr>\n      <tr><td width="26" valign="top" style="padding-top:12px;"><span style="display:inline-block;width:11px;height:11px;border-radius:50%;background:#11CB87;"></span></td><td style="padding:10px 0 2px;"><span style="color:#e8c766;font-size:8.5px;font-weight:800;letter-spacing:1.5px;">AFTER GAMES</span><div style="font-size:12.5px;font-weight:800;color:#f1f5f9;margin-top:3px;">Results get graded</div><div style="font-size:11.2px;line-height:1.55;color:#94a3b8;margin-top:2px;">Plays are settled publicly and added to the Official Tracker and Archive.</div></td></tr>\n    </table>\n  </td></tr>\n  <tr><td bgcolor="#14161d" style="background:#14161d;padding:18px 22px 0;">\n    <div style="color:#e8c766;font-size:8.8px;font-weight:800;letter-spacing:2.5px;">GLOSSARY</div>\n    <div style="color:#f1f5f9;font-size:16.1px;font-weight:900;margin-top:5px;">How to read our results</div>\n    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:8px;">\n      <tr><td style="padding:7px 0;border-bottom:1px solid #262C36;font-size:11.7px;line-height:1.55;color:#94a3b8;"><b style="color:#f1f5f9;">Unit (u)</b> &mdash; Our standard bet size. In our tracking 1u = $100, which keeps every result on the same scale.</td></tr>\n      <tr><td style="padding:7px 0;border-bottom:1px solid #262C36;font-size:11.7px;line-height:1.55;color:#94a3b8;"><b style="color:#f1f5f9;">Record</b> &mdash; Wins and losses across graded plays, like __LAST_WEEK_RECORD__ last week.</td></tr>\n      <tr><td style="padding:7px 0;border-bottom:1px solid #262C36;font-size:11.7px;line-height:1.55;color:#94a3b8;"><b style="color:#f1f5f9;">Win rate</b> &mdash; Wins divided by total graded plays: __LAST_WEEK_RATE__ last week, __TOTAL_RATE__ across the program.</td></tr>\n      <tr><td style="padding:7px 0;font-size:11.7px;line-height:1.55;color:#94a3b8;"><b style="color:#f1f5f9;">Graded publicly</b> &mdash; Every play is settled in the open and appears in the Official Tracker. Nothing is deleted.</td></tr>\n    </table>\n  </td></tr>\n  <tr><td bgcolor="#14161d" style="background:#14161d;padding:18px 22px 0;">\n    <div style="color:#e8c766;font-size:8.8px;font-weight:800;letter-spacing:2.5px;">OUR STANDARDS</div>\n    <div style="color:#f1f5f9;font-size:16.1px;font-weight:900;margin-top:5px;">Three promises, every day</div>\n    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" bgcolor="#1D2029" style="background:#1D2029;border:1px solid #262C36;border-left:6px solid #11CB87;border-radius:20px;margin-top:12px;">\n      <tr><td style="padding:14px 18px;">\n        <div style="font-size:11.7px;color:#11CB87;padding:3px 0;">&#10003;&nbsp; <b style="color:#f1f5f9;">Posted before game time</b> <span style="color:#94a3b8;">&mdash; No after-the-fact picks.</span></div>\n        <div style="font-size:11.7px;color:#11CB87;padding:3px 0;">&#10003;&nbsp; <b style="color:#f1f5f9;">Verified ticket</b> <span style="color:#94a3b8;">&mdash; A ticket on every play we post.</span></div>\n        <div style="font-size:11.7px;color:#11CB87;padding:3px 0;">&#10003;&nbsp; <b style="color:#f1f5f9;">Public record</b> <span style="color:#94a3b8;">&mdash; Wins and losses in the open.</span></div>\n      </td></tr>\n    </table>\n  </td></tr>\n  <tr><td bgcolor="#14161d" style="background:#14161d;padding:18px 22px 0;">\n    <div style="color:#e8c766;font-size:8.8px;font-weight:800;letter-spacing:2.5px;">FAQ</div>\n    <div style="color:#f1f5f9;font-size:16.1px;font-weight:900;margin-top:5px;">Questions new members ask</div>\n    <div style="margin-top:12px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td bgcolor="#1D2029" style="background:#1D2029;border:1px solid #262C36;border-left:6px solid #11CB87;border-radius:16px;padding:13px 16px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td width="36" valign="top"><span style="display:inline-block;background:#0E9E66;color:#ffffff;font-size:12.1px;font-weight:900;width:25px;height:25px;line-height:25px;text-align:center;border-radius:50%;">+</span></td><td valign="top"><div style="font-size:12.5px;font-weight:800;color:#f1f5f9;">When do plays post?</div><div style="font-size:11.7px;line-height:1.55;color:#94a3b8;margin-top:4px;">Every day at 1:00&zwnj; PM ET in Today\'s Card.</div></td></tr></table></td></tr></table><div style="height:10px;line-height:10px;font-size:8.0px;">&nbsp;</div><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td bgcolor="#1D2029" style="background:#1D2029;border:1px solid #262C36;border-left:6px solid #11CB87;border-radius:16px;padding:13px 16px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td width="36" valign="top"><span style="display:inline-block;background:#0E9E66;color:#ffffff;font-size:12.1px;font-weight:900;width:25px;height:25px;line-height:25px;text-align:center;border-radius:50%;">+</span></td><td valign="top"><div style="font-size:12.5px;font-weight:800;color:#f1f5f9;">Do I have to play everything?</div><div style="font-size:11.7px;line-height:1.55;color:#94a3b8;margin-top:4px;">No. Our plays are information. Choose what fits your budget and plan, and bet only what you can afford to lose.</div></td></tr></table></td></tr></table><div style="height:10px;line-height:10px;font-size:8.0px;">&nbsp;</div><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td bgcolor="#1D2029" style="background:#1D2029;border:1px solid #262C36;border-left:6px solid #11CB87;border-radius:16px;padding:13px 16px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td width="36" valign="top"><span style="display:inline-block;background:#0E9E66;color:#ffffff;font-size:12.1px;font-weight:900;width:25px;height:25px;line-height:25px;text-align:center;border-radius:50%;">+</span></td><td valign="top"><div style="font-size:12.5px;font-weight:800;color:#f1f5f9;">Where do I see past results?</div><div style="font-size:11.7px;line-height:1.55;color:#94a3b8;margin-top:4px;">In the Official Tracker (complete record) and the Archive (every settled play).</div></td></tr></table></td></tr></table><div style="height:10px;line-height:10px;font-size:8.0px;">&nbsp;</div><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td bgcolor="#1D2029" style="background:#1D2029;border:1px solid #262C36;border-left:6px solid #11CB87;border-radius:16px;padding:13px 16px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td width="36" valign="top"><span style="display:inline-block;background:#0E9E66;color:#ffffff;font-size:12.1px;font-weight:900;width:25px;height:25px;line-height:25px;text-align:center;border-radius:50%;">+</span></td><td valign="top"><div style="font-size:12.5px;font-weight:800;color:#f1f5f9;">Can I track my own bets?</div><div style="font-size:11.7px;line-height:1.55;color:#94a3b8;margin-top:4px;">Yes. My Bets keeps your personal record on the plays you track.</div></td></tr></table></td></tr></table></div>\n  </td></tr>\n  <tr><td bgcolor="#14161d" style="background:#14161d;padding:20px 22px 26px;">\n    <div style="color:#e8c766;font-size:8.8px;font-weight:800;letter-spacing:2.5px;">READY?</div>\n    <div style="color:#f1f5f9;font-size:17.6px;font-weight:900;margin-top:6px;">Your first card is waiting.</div>\n    <p style="font-size:11.7px;line-height:1.6;color:#94a3b8;margin:10px 0 0;">Check today\'s plays, then take a look at the Academy, our 30-day course on how the Sharp Team works.</p>\n    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:16px;"><tr><td bgcolor="#0E9E66" style="background:#0E9E66;border-radius:999px;"><a href="https://www.thesharpteam.bet/home" style="display:block;text-align:center;color:#ffffff;font-size:10.0px;font-weight:900;padding:13px 6px;text-decoration:none;white-space:nowrap;">VIEW TODAY\'S CARD &nbsp;&rarr;</a></td></tr><tr><td style="height:12px;line-height:12px;font-size:0;">&nbsp;</td></tr><tr><td bgcolor="#1D2029" style="background:#1D2029;border:1px solid #e8c766;border-radius:999px;"><a href="https://www.thesharpteam.bet/masterclass" style="display:block;text-align:center;color:#F0D47C;font-size:10.0px;font-weight:900;padding:13px 6px;text-decoration:none;white-space:nowrap;">Start the 30-Day Academy &nbsp;&rarr;</a></td></tr></table>\n    <p style="font-size:9.7px;line-height:1.55;color:#94a3b8;margin:18px 0 0;"><b style="color:#94a3b8;">RESPONSIBLE PLAY</b> &mdash; Only bet what you can afford to lose and set limits that work for you. If you or someone you know has a gambling problem, call 1-800-GAMBLER or visit <a href="https://www.800gambler.org" style="color:#94a3b8;text-decoration:underline;">800gambler.org</a>.</p>\n  </td></tr>\n  <tr><td bgcolor="#0d0d0d" style="background:#0d0d0d;border-radius:0 0 16px 16px;padding:20px 24px;text-align:center;">\n    <img src="https://www.thesharpteam.bet/static/img/sharp-team-logo.png" width="54" alt="The Sharp Team" style="display:block;margin:0 auto 6px;">\n    <div style="font-size:10.4px;font-weight:800;color:#f1f5f9;letter-spacing:1px;">THE SHARP TEAM</div>\n    <div style="font-size:9.7px;color:#94a3b8;margin-top:4px;">250 Park Avenue, Suite 1800, New York, NY 10017 &middot; (239) 376-8798</div>\n    <div style="margin-top:12px;">\n      <a href="https://www.instagram.com/the_sharp_team" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/instagram.png" width="30" height="30" alt="Instagram" style="border:0;margin:0 6px;"></a>\n      <a href="https://x.com/thesharpteambet" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/x.png" width="30" height="30" alt="X" style="border:0;margin:0 6px;"></a>\n      <a href="https://t.me/thesharpteam" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/telegram.png" width="30" height="30" alt="Telegram" style="border:0;margin:0 6px;"></a>\n    </div>\n    <div style="font-size:8.8px;color:#94a3b8;line-height:1.5;margin-top:10px;">21+. Play responsibly. If you or someone you know has a gambling problem, call or text 1-800-GAMBLER.</div>\n    <div style="font-size:8.8px;color:#94a3b8;margin-top:8px;">Don\'t want these emails anymore? <a href="{{{RESEND_UNSUBSCRIBE_URL}}}" style="color:#94a3b8;text-decoration:underline;">Unsubscribe</a> \u2014 one click, no questions asked.</div>\n    <div style="font-size:8.8px;margin-top:8px;"><a href="https://www.thesharpteam.bet/contact" style="color:#94a3b8;">Support</a> &middot; <a href="https://www.thesharpteam.bet/privacy" style="color:#94a3b8;">Privacy Policy</a></div>\n    <div style="font-size:8.8px;color:#94a3b8;line-height:1.5;margin-top:8px;">Must be 21+. The Sharp Team provides information and entertainment only and is not a sportsbook. Past results do not guarantee future performance. 1u = $100.</div>\n    <div style="font-size:8.8px;color:#94a3b8;margin-top:6px;">&copy; 2026 The Sharp Team. All rights reserved.</div>\n  </td></tr>\n</table>\n</td></tr></table>\n</body></html>\n'
+
+
+def _welcome_stats():
+    """Stats de bienvenida calculadas EN VIVO desde data/archive.json
+    (2026-10-28, aprobado por Alex: nada escrito a mano en el email).
+    Total: todo el archive liquidado. Ultima semana: ultimos 7 dias
+    calendario (hoy incluido). Unidades: profit $ / 100 (1u = $100).
+    Ante cualquier fallo devuelve 0-0 para no mandar numeros viejos.
+    """
+    try:
+        from datetime import datetime as _dt, timedelta as _td
+        _hoy = _dt.now(TZ).date()
+        _desde = _hoy - _td(days=6)
+        tw = tl = 0
+        tp = 0.0
+        lw = ll = 0
+        lp = 0.0
+        for _d in load_archive():
+            try:
+                _f = _dt.fromisoformat(str(_d.get("fecha"))).date()
+            except Exception:
+                continue
+            for _j in _d.get("jugadas", []) or []:
+                if _j.get("resultado") not in ("WON", "LOST") or _j.get("bloqueada"):
+                    continue
+                _p = float(_j.get("profit") or 0.0)
+                if _j["resultado"] == "WON":
+                    tw += 1
+                else:
+                    tl += 1
+                tp += _p
+                if _desde <= _f <= _hoy:
+                    if _j["resultado"] == "WON":
+                        lw += 1
+                    else:
+                        ll += 1
+                    lp += _p
+        _tn = tw + tl
+        _ln = lw + ll
+        return {
+            "total_record": f"{tw}\u2013{tl}",
+            "total_units": f"{tp / 100.0:+.2f}u",
+            "total_rate": f"{round(tw / _tn * 100, 1) if _tn else 0.0}%",
+            "week_record": f"{lw}\u2013{ll}",
+            "week_units": f"{lp / 100.0:+.2f}u",
+            "week_rate": f"{round(lw / _ln * 100, 1) if _ln else 0.0}%",
+        }
+    except Exception:
+        return {"total_record": "0\u20130", "total_units": "+0.00u", "total_rate": "0.0%",
+                "week_record": "0\u20130", "week_units": "+0.00u", "week_rate": "0.0%"}
 
 
 def send_welcome_email(nombre: str, email: str):
@@ -967,8 +1500,11 @@ def send_welcome_email(nombre: str, email: str):
         return
 
     subject = WELCOME_SUBJECT
-    text = WELCOME_TEXT.replace("__NOMBRE__", nombre)
-    html = WELCOME_HTML.replace("__NOMBRE__", nombre)
+    text = WELCOME_TEXT.replace("__NOMBRE__", nombre).replace("__PAY_URL__", STRIPE_PLATINUM_URL)
+    _ws = _welcome_stats()
+    html = (WELCOME_HTML.replace("__NOMBRE__", nombre).replace("__PAY_URL__", STRIPE_PLATINUM_URL)
+            .replace("__TOTAL_RECORD__", _ws["total_record"]).replace("__TOTAL_UNITS__", _ws["total_units"]).replace("__TOTAL_RATE__", _ws["total_rate"])
+            .replace("__LAST_WEEK_RECORD__", _ws["week_record"]).replace("__LAST_WEEK_UNITS__", _ws["week_units"]).replace("__LAST_WEEK_RATE__", _ws["week_rate"]))
 
     def _send():
         try:
@@ -994,7 +1530,7 @@ Nothing is canceled and nothing was missed on your end - cards just fail sometim
 Fix your card in one tap (takes about 30 seconds):
 __PAY_URL__
 
-Your Gold plays stay on while the card is sorted - that is part of every membership. Your Platinum plays unlock the moment the payment lands. If anything looks off, just reply to this email and a real person will sort it.
+Your Sharp Free plays stay on while the card is sorted - that is part of every membership. Your Platinum plays unlock the moment the payment lands. If anything looks off, just reply to this email and a real person will sort it.
 
 - The Sharp Team
 
@@ -1004,29 +1540,30 @@ Bet responsibly - 21+ - Gambling problem? Call 1-800-GAMBLER (1-800-426-2537): f
 """
 
 DUNNING_HTML = """<div style="font-family:Arial,sans-serif;max-width:480px;margin:0 auto;background:#ffffff;">
-<img src="https://www.thesharpteam.bet/static/img/sharp-team-banner.png" alt="The Sharp Team" width="480" style="width:100%;height:auto;display:block;border:0;">
-<div style="background:#ffffff;height:18px;line-height:18px;font-size:1px;">&nbsp;</div>
+<img src="https://www.thesharpteam.bet/static/img/sharp-team-header.jpg" alt="The Sharp Team" width="480" style="width:100%;height:auto;display:block;border:0;">
+<div style="background:#ffffff;height:18px;line-height:18px;font-size:0.8px;">&nbsp;</div>
 <div style="background:#2e4053;padding:28px 24px;text-align:center;">
-<p style="margin:0;font-size:12px;font-weight:800;letter-spacing:2px;color:#9aa3b8;">&#9888;&nbsp;PAYMENT ISSUE</p>
-<h1 style="font-size:30px;font-weight:800;color:#ffffff;margin:10px 0 0;line-height:1.25;">Today&apos;s card is set.<br><span style="color:#22c55e;">Your card isn&apos;t.</span></h1>
+<p style="margin:0;font-size:9.2px;font-weight:800;letter-spacing:2px;color:#9aa3b8;">&#9888;&nbsp;PAYMENT ISSUE</p>
+<h1 style="font-size:22.9px;font-weight:800;color:#ffffff;margin:10px 0 0;line-height:1.25;">Today&apos;s card is set.<br><span style="color:#22c55e;">Your card isn&apos;t.</span></h1>
 </div>
 <div style="margin:14px 24px 0;background:#ffffff;border:1px solid #e5e7eb;border-radius:12px;padding:18px;">
-<p style="margin:0;font-size:15px;font-weight:700;color:#111111;line-height:1.55;">Hi __NOMBRE__ &mdash; your last payment didn&apos;t go through, so your Platinum plays are on hold.</p>
-<p style="margin:10px 0 0;font-size:14px;color:#555555;line-height:1.6;">Nothing is canceled &mdash; cards just fail sometimes. Fix it now and everything switches back on instantly.</p>
+<p style="margin:0;font-size:11.5px;font-weight:700;color:#111111;line-height:1.55;">Hi __NOMBRE__ &mdash; your last payment didn&apos;t go through, so your Platinum plays are on hold.</p>
+<p style="margin:10px 0 0;font-size:10.7px;color:#555555;line-height:1.6;">Nothing is canceled &mdash; cards just fail sometimes. Fix it now and everything switches back on instantly.</p>
 </div>
 <div style="text-align:center;padding:16px 24px 0;">
-<a href="__PAY_URL__" style="display:inline-block;background:#22c55e;color:#111111;font-weight:800;font-size:16px;padding:14px 36px;border-radius:999px;text-decoration:none;">Fix my card in one tap &rarr;</a>
-<p style="margin:10px 0 0;font-size:13px;color:#6b7280;">Takes about 30 seconds &middot; Your Gold plays stay yours either way.</p>
+<a href="__PAY_URL__" style="display:inline-block;background:#22c55e;color:#111111;font-weight:800;font-size:12.2px;padding:14px 36px;border-radius:999px;text-decoration:none;">Fix my card in one tap &rarr;</a>
+<p style="margin:10px 0 0;font-size:9.9px;color:#6b7280;">Takes about 30 seconds &middot; Your Sharp Free plays stay yours either way.</p>
 </div>
-<p style="font-size:13px;line-height:1.6;color:#6b7280;margin:16px 24px 0;text-align:center;">If anything looks off, just reply to this email and a real person will sort it.</p>
-<p style="text-align:center;font-size:12px;color:#9ca3af;margin:14px 0 0;">__FECHA__</p>
+<p style="font-size:9.9px;line-height:1.6;color:#6b7280;margin:16px 24px 0;text-align:center;">If anything looks off, just reply to this email and a real person will sort it.</p>
+<p style="text-align:center;font-size:9.2px;color:#9ca3af;margin:14px 0 0;">__FECHA__</p>
 <div style="text-align:center;padding:20px 20px 14px;">
-<img src="https://files.catbox.moe/74qot5.png" alt="The Sharp Team" width="110" style="width:110px;height:auto;display:block;margin:0 auto;border:0;">
-<p style="margin:10px 0 0;color:#111111;font-size:12px;font-weight:800;letter-spacing:3px;">THE SHARP TEAM</p>
-<p style="margin:8px 0 0;color:#9ca3af;font-size:11px;">250 Park Avenue, Suite 1800, New York, NY 10017</p>
-<p style="margin:4px 0 0;color:#9ca3af;font-size:11px;"><a href="tel:+15513263312" style="color:#9ca3af;text-decoration:none;">(551) 326-3312</a></p>
-<p style="margin:12px 0 0;color:#9ca3af;font-size:10px;">21+. Play responsibly. If you or someone you know has a gambling problem, call or text <a href="tel:18004262537" style="color:#9ca3af;text-decoration:underline;">1-800-GAMBLER</a>.</p>
-<p style="margin:6px 0 0;color:#9ca3af;font-size:10px;">&copy; 2026 The Sharp Team</p>
+<img src="https://www.thesharpteam.bet/static/img/sharp-team-logo.png" alt="The Sharp Team" width="110" style="width:110px;height:auto;display:block;margin:0 auto;border:0;">
+<p style="margin:10px 0 0;color:#111111;font-size:9.2px;font-weight:800;letter-spacing:3px;">THE SHARP TEAM</p>
+<p style="margin:8px 0 0;color:#9ca3af;font-size:8.4px;">250 Park Avenue, Suite 1800, New York, NY 10017</p>
+<p style="margin:4px 0 0;color:#9ca3af;font-size:8.4px;"><a href="tel:+12393768798" style="color:#9ca3af;text-decoration:none;">(239) 376-8798</a></p>
+<p style="margin:12px 0 0;color:#9ca3af;font-size:7.6px;">21+. Play responsibly. If you or someone you know has a gambling problem, call or text <a href="tel:18004262537" style="color:#9ca3af;text-decoration:underline;">1-800-GAMBLER</a>.</p>
+<p style="margin:8px 0 0;color:#9ca3af;font-size:7.6px;">Don't want these emails anymore? <a href="{{{RESEND_UNSUBSCRIBE_URL}}}" style="color:#9ca3af;text-decoration:underline;">Unsubscribe</a> — one click, no questions asked.</p>
+<p style="margin:6px 0 0;color:#9ca3af;font-size:7.6px;">&copy; 2026 The Sharp Team</p>
 </div>
 </div>"""
 
@@ -1084,65 +1621,66 @@ MONTHLY_HTML = """<!DOCTYPE html>
 <body style="margin:0;padding:0;background:#ffffff;">
 <div style="display:none;max-height:0;overflow:hidden;opacity:0;">Your {mes} statement &mdash; every play graded, every dollar accounted.&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;</div>
 <div style="font-family:Arial,sans-serif;max-width:460px;margin:0 auto;background:#ffffff;">
-<img src="https://www.thesharpteam.bet/static/img/sharp-team-banner.png" alt="The Sharp Team" width="460" style="width:100%;height:auto;display:block;border:0;">
+<img src="https://www.thesharpteam.bet/static/img/sharp-team-header.jpg" alt="The Sharp Team" width="460" style="width:100%;height:auto;display:block;border:0;">
 <div style="background:#ffffff;padding:14px 0 12px;text-align:center;">
-<p style="margin:0;font-size:13px;font-weight:800;letter-spacing:5px;color:#2e4053;">THE SHARP TEAM</p>
+<p style="margin:0;font-size:9.9px;font-weight:800;letter-spacing:5px;color:#2e4053;">THE SHARP TEAM</p>
 </div>
 <div style="background:#c9a227;padding:28px 24px;text-align:center;">
-<p style="margin:0;font-size:12px;font-weight:800;letter-spacing:3px;color:#0a0f1c;">MONTHLY STATEMENT</p>
-<h1 style="font-size:30px;font-weight:800;color:#0a0f1c;margin:10px 0 0;line-height:1.25;">Your {mes} statement.</h1>
+<p style="margin:0;font-size:9.2px;font-weight:800;letter-spacing:3px;color:#0a0f1c;">MONTHLY STATEMENT</p>
+<h1 style="font-size:22.9px;font-weight:800;color:#0a0f1c;margin:10px 0 0;line-height:1.25;">Your {mes} statement.</h1>
 </div>
 <div style="text-align:center;padding:16px 20px 0;">
-<p style="color:#555555;font-size:15px;line-height:1.6;margin:0;">Hi __NOMBRE__ &mdash; here is how your {mes} closed. Every play graded, every dollar accounted.</p>
+<p style="color:#555555;font-size:11.5px;line-height:1.6;margin:0;">Hi __NOMBRE__ &mdash; here is how your {mes} closed. Every play graded, every dollar accounted.</p>
 </div>
 <div style="padding:14px 20px 0;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
 <td width="50%" style="padding:0 5px 10px 0;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:12px;"><tr><td style="padding:14px;text-align:center;">
-<p style="margin:0;font-size:11px;font-weight:800;letter-spacing:2px;color:#6b7280;">RECORD</p>
-<p style="margin:6px 0 0;font-size:22px;font-weight:800;color:#111111;">__RECORD__</p>
+<p style="margin:0;font-size:8.4px;font-weight:800;letter-spacing:2px;color:#6b7280;">RECORD</p>
+<p style="margin:6px 0 0;font-size:16.8px;font-weight:800;color:#111111;">__RECORD__</p>
 </td></tr></table>
 </td>
 <td width="50%" style="padding:0 0 10px 5px;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:12px;"><tr><td style="padding:14px;text-align:center;">
-<p style="margin:0;font-size:11px;font-weight:800;letter-spacing:2px;color:#6b7280;">WIN RATE</p>
-<p style="margin:6px 0 0;font-size:22px;font-weight:800;color:#111111;">__WINRATE__</p>
+<p style="margin:0;font-size:8.4px;font-weight:800;letter-spacing:2px;color:#6b7280;">WIN RATE</p>
+<p style="margin:6px 0 0;font-size:16.8px;font-weight:800;color:#111111;">__WINRATE__</p>
 </td></tr></table>
 </td>
 </tr><tr>
 <td width="50%" style="padding:0 5px 10px 0;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:12px;"><tr><td style="padding:14px;text-align:center;">
-<p style="margin:0;font-size:11px;font-weight:800;letter-spacing:2px;color:#6b7280;">NET PROFIT</p>
-<p style="margin:6px 0 0;font-size:22px;font-weight:800;color:__PROFIT_COLOR__;">__PROFIT__</p>
+<p style="margin:0;font-size:8.4px;font-weight:800;letter-spacing:2px;color:#6b7280;">NET PROFIT</p>
+<p style="margin:6px 0 0;font-size:16.8px;font-weight:800;color:__PROFIT_COLOR__;">__PROFIT__</p>
 </td></tr></table>
 </td>
 <td width="50%" style="padding:0 0 10px 5px;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:12px;"><tr><td style="padding:14px;text-align:center;">
-<p style="margin:0;font-size:11px;font-weight:800;letter-spacing:2px;color:#6b7280;">ROI</p>
-<p style="margin:6px 0 0;font-size:22px;font-weight:800;color:__PROFIT_COLOR__;">__ROI__</p>
+<p style="margin:0;font-size:8.4px;font-weight:800;letter-spacing:2px;color:#6b7280;">ROI</p>
+<p style="margin:6px 0 0;font-size:16.8px;font-weight:800;color:__PROFIT_COLOR__;">__ROI__</p>
 </td></tr></table>
 </td>
 </tr></table>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:2px 0 0;background:#ffffff;border:1px solid #e5e7eb;border-radius:12px;"><tr><td style="padding:14px 16px;">
-<p style="margin:0;font-size:11px;font-weight:800;letter-spacing:2px;color:#6b7280;">BY LEVEL</p>
-<p style="margin:8px 0 0;font-size:14px;color:#111111;">&#11088; <strong>Platinum</strong> &mdash; __PLATINUM__</p>
-<p style="margin:6px 0 0;font-size:14px;color:#111111;">&#9898; <strong>Gold</strong> &mdash; __GOLD__</p>
+<p style="margin:0;font-size:8.4px;font-weight:800;letter-spacing:2px;color:#6b7280;">BY LEVEL</p>
+<p style="margin:8px 0 0;font-size:10.7px;color:#111111;">&#11088; <strong>Platinum</strong> &mdash; __PLATINUM__</p>
+<p style="margin:6px 0 0;font-size:10.7px;color:#111111;">&#9898; <strong>Sharp Free</strong> &mdash; __GOLD__</p>
 </td></tr></table>
 </div>
 <div style="padding:14px 20px 0;">
-<p style="margin:0 0 8px;font-size:11px;font-weight:800;letter-spacing:2px;color:#6b7280;">PLAY BY PLAY</p>
+<p style="margin:0 0 8px;font-size:8.4px;font-weight:800;letter-spacing:2px;color:#6b7280;">PLAY BY PLAY</p>
 __PLAYS_ROWS__
 </div>
 <div style="text-align:center;padding:18px 20px 0;">
-<a href="https://www.thesharpteam.bet/records" style="display:inline-block;background:#22c55e;color:#111111;font-size:14px;font-weight:800;padding:11px 28px;border-radius:999px;text-decoration:none;">View full record &rarr;</a>
+<a href="https://www.thesharpteam.bet/records" style="display:inline-block;background:#22c55e;color:#111111;font-size:10.7px;font-weight:800;padding:11px 28px;border-radius:999px;text-decoration:none;">View full record &rarr;</a>
 </div>
 <div style="text-align:center;padding:20px 20px 14px;">
-<img src="https://files.catbox.moe/74qot5.png" alt="The Sharp Team" width="110" style="width:110px;height:auto;display:block;margin:0 auto;border:0;">
-<p style="margin:10px 0 0;color:#111111;font-size:12px;font-weight:800;letter-spacing:3px;">THE SHARP TEAM</p>
-<p style="margin:8px 0 0;color:#9ca3af;font-size:11px;">250 Park Avenue, Suite 1800, New York, NY 10017</p>
-<p style="margin:4px 0 0;color:#9ca3af;font-size:11px;"><a href="tel:+15513263312" style="color:#9ca3af;text-decoration:none;">(551) 326-3312</a></p>
-<p style="margin:12px 0 0;color:#9ca3af;font-size:10px;">21+. Play responsibly. If you or someone you know has a gambling problem, call or text <a href="tel:18004262537" style="color:#9ca3af;text-decoration:underline;">1-800-GAMBLER</a>.</p>
-<p style="margin:6px 0 0;color:#9ca3af;font-size:10px;">&copy; 2026 The Sharp Team</p>
+<img src="https://www.thesharpteam.bet/static/img/sharp-team-logo.png" alt="The Sharp Team" width="110" style="width:110px;height:auto;display:block;margin:0 auto;border:0;">
+<p style="margin:10px 0 0;color:#111111;font-size:9.2px;font-weight:800;letter-spacing:3px;">THE SHARP TEAM</p>
+<p style="margin:8px 0 0;color:#9ca3af;font-size:8.4px;">250 Park Avenue, Suite 1800, New York, NY 10017</p>
+<p style="margin:4px 0 0;color:#9ca3af;font-size:8.4px;"><a href="tel:+12393768798" style="color:#9ca3af;text-decoration:none;">(239) 376-8798</a></p>
+<p style="margin:12px 0 0;color:#9ca3af;font-size:7.6px;">21+. Play responsibly. If you or someone you know has a gambling problem, call or text <a href="tel:18004262537" style="color:#9ca3af;text-decoration:underline;">1-800-GAMBLER</a>.</p>
+<p style="margin:8px 0 0;color:#9ca3af;font-size:7.6px;">Don't want these emails anymore? <a href="{{{RESEND_UNSUBSCRIBE_URL}}}" style="color:#9ca3af;text-decoration:underline;">Unsubscribe</a> — one click, no questions asked.</p>
+<p style="margin:6px 0 0;color:#9ca3af;font-size:7.6px;">&copy; 2026 The Sharp Team</p>
 </div>
 </div>
 </body>
@@ -1156,7 +1694,7 @@ Net profit: __PROFIT__
 ROI: __ROI__
 
 Platinum: __PLATINUM__
-Gold: __GOLD__
+Sharp Free: __GOLD__
 
 View your full record: https://www.thesharpteam.bet/records
 
@@ -1182,13 +1720,14 @@ def monthly_member_stats(db, user_id: int, ym: str) -> dict:
     tracked = [dict(r) for r in rows]
     graded = [t for t in tracked if t["resultado"] in ("W", "L")]
     base = compute_stats(tracked)
-    # Desglose por nivel
+    # Desglose por nivel (tres pisos desde la Opción B, 2026-10-30:
+    # FREE PICKS / GOLD / PLATINUM con sus nombres visibles propios)
     niveles = {}
-    for lvl in ("ELITE", "GOLD"):
+    for lvl, tag in (("ELITE", "Platinum"), ("GOLD", "Gold"),
+                     ("FREE", "Free Picks")):
         g = [t for t in graded if (t["nivel"] or "").upper() in (lvl, "PLATINUM" if lvl == "ELITE" else lvl)]
         w = sum(1 for t in g if t["resultado"] == "W")
         p = sum(play_profit_dollars(t) for t in g)
-        tag = "Platinum" if lvl == "ELITE" else "Gold"
         niveles[tag] = f"{w}-{len(g) - w}, {'+' if p >= 0 else '-'}$ {abs(p):,.2f}".replace("$-", "-$")
     win_rate = (base["wins"] / (base["wins"] + base["losses"]) * 100) if (base["wins"] + base["losses"]) else 0.0
     profit = base["net_dollars"]
@@ -1208,6 +1747,7 @@ def monthly_member_stats(db, user_id: int, ym: str) -> dict:
         "risked": base["risked"],
         "platinum": niveles.get("Platinum", "0-0, $0.00"),
         "gold": niveles.get("Gold", "0-0, $0.00"),
+        "free": niveles.get("Free Picks", "0-0, $0.00"),
     }
 
 
@@ -1219,21 +1759,23 @@ def build_monthly_html(nombre: str, ym: str, st: dict) -> str:
         p = t["_profit"] if "_profit" in t else play_profit_dollars(t)
         color = "#16a34a" if p >= 0 else "#dc2626"
         marca = "&#10003;" if t["resultado"] == "W" else "&#10007;"
-        nivel = "PLATINUM" if (t["nivel"] or "").upper() in ("ELITE", "PLATINUM") else "GOLD"
+        _nv1700 = (t["nivel"] or "").upper()
+        nivel = ("PLATINUM" if _nv1700 in ("ELITE", "PLATINUM")
+                 else ("FREE PICK" if _nv1700 == "FREE" else "GOLD"))
         rows.append(
             f'<table role="presentation" width="100%" cellpadding="0" cellspacing="0" '
             f'style="margin:0 0 8px;background:#ffffff;border:1px solid #e5e7eb;border-radius:10px;">'
             f'<tr><td style="padding:10px 14px;">'
             f'<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>'
-            f'<td><span style="font-size:14px;font-weight:800;color:#111111;">{t["pick"]}</span> '
-            f'<span style="font-size:12px;color:#6b7280;">{t["cuota"]:+d} &middot; {nivel}</span><br>'
-            f'<span style="font-size:12px;color:#6b7280;">{t["fecha"]}</span></td>'
-            f'<td align="right" style="font-size:14px;font-weight:800;color:{color};">{marca} '
+            f'<td><span style="font-size:10.7px;font-weight:800;color:#111111;">{t["pick"]}</span> '
+            f'<span style="font-size:9.2px;color:#6b7280;">{t["cuota"]:+d} &middot; {nivel}</span><br>'
+            f'<span style="font-size:9.2px;color:#6b7280;">{t["fecha"]}</span></td>'
+            f'<td align="right" style="font-size:10.7px;font-weight:800;color:{color};">{marca} '
             f'{"+" if p >= 0 else "-"}${abs(p):,.2f}</td>'
             f'</tr></table></td></tr></table>'
         )
     plays_html = "\n".join(rows) if rows else (
-        '<p style="font-size:14px;color:#6b7280;">No graded plays this month.</p>'
+        '<p style="font-size:10.7px;color:#6b7280;">No graded plays this month.</p>'
     )
     html = (MONTHLY_HTML
             .replace("{mes}", mes)
@@ -1282,12 +1824,37 @@ def send_monthly_statement(email: str, ym: str) -> tuple:
 
 
 
+def _json_remoto_o_local(url, path, ttl=30):
+    """JSON de datos fresco: primero el raw de GitHub master (caché de
+    `ttl` s en memoria), y si la red falla, el archivo local del despliegue.
+    Los fallos se reintentan como máximo cada 10 s para no castigar las
+    cargas de página durante una caída de GitHub."""
+    slot = _REMOTE_JSON_CACHE.setdefault(
+        url, {"data": None, "ts": 0.0, "fail_ts": 0.0})
+    now = time.time()
+    if slot["data"] is not None and now - slot["ts"] < ttl:
+        return slot["data"]
+    if now - slot["fail_ts"] > 10:
+        try:
+            req = urllib.request.Request(
+                url, headers={"User-Agent": "Mozilla/5.0 (TheSharpTeam)"})
+            with urllib.request.urlopen(req, timeout=2.5) as resp:
+                data = json.loads(resp.read().decode("utf-8"))
+            if isinstance(data, (dict, list)):
+                slot["data"] = data
+                slot["ts"] = now
+                return data
+        except Exception:
+            slot["fail_ts"] = now
+    if slot["data"] is not None:
+        return slot["data"]
+    return load_json_file(path)
+
+
 def load_data():
     """Devuelve (program, plays). Soporta plays.json como lista (viejo) o dict (nuevo)."""
-    try:
-        with open(PLAYS_PATH, "r", encoding="utf-8") as f:
-            data = json.load(f)
-    except (OSError, json.JSONDecodeError):
+    data = _json_remoto_o_local(PLAYS_RAW_URL, PLAYS_PATH)
+    if data is None:
         data = []
     if isinstance(data, dict):
         program = data.get("program", {}) or {}
@@ -1316,11 +1883,7 @@ def load_pending_plays():
     demás miembros la ven: ellos solo la ven cuando él envía los tickets
     (flujo normal que publica plays.json verificado y limpia este archivo).
     """
-    try:
-        with open(PENDING_PLAYS_PATH, "r", encoding="utf-8") as f:
-            data = json.load(f)
-    except (OSError, json.JSONDecodeError):
-        return []
+    data = _json_remoto_o_local(PENDING_RAW_URL, PENDING_PLAYS_PATH)
     if not isinstance(data, dict):
         return []
     hoy = datetime.now(TZ).strftime("%Y-%m-%d")
@@ -1411,10 +1974,19 @@ def stake_personalizado(play, user):
             # solo aplica si el monto fijo es mayor que cero.
             _fijo_e = float(_uget(user, "stake_fijo_elite") or 0)
             _fijo_g = float(_uget(user, "stake_fijo_gold") or 0)
+            # El fijo es el monto del tamaño de referencia del nivel
+            # (ELITE 1u, GOLD 0.6u): escala por las unidades reales de la
+            # jugada (orden de Alex 2026-10-29: una Platinum de 0.5u con
+            # fijo $100 debe mostrar $50, no $100). Sin unidades válidas se
+            # devuelve el fijo tal cual (nunca $0 por esta vía).
+            try:
+                _u_fijo = float(play.get("stake_unidades") or 0)
+            except (TypeError, ValueError):
+                _u_fijo = 0
             if nivel == "ELITE" and _fijo_e > 0:
-                return round(_fijo_e, 2)
+                return round(_fijo_e * _u_fijo, 2) if _u_fijo > 0 else round(_fijo_e, 2)
             if nivel == "GOLD" and _fijo_g > 0:
-                return round(_fijo_g, 2)
+                return round(_fijo_g * _u_fijo / 0.6, 2) if _u_fijo > 0 else round(_fijo_g, 2)
         except (TypeError, ValueError):
             pass
     try:
@@ -1453,9 +2025,14 @@ def card_publicada_hoy() -> bool:
     Antes de la publicación diaria (11:05 AM ET) el archivo aún tiene la
     card de ayer: en ese caso el dashboard muestra 0 jugadas y el aviso
     de 'aún no publicada', nunca las jugadas de ayer.
+
+    REGLA DE ALEX (2026-10-24): el día del programa cierra a las 5:00 AM
+    ET, no a medianoche — la card de ayer se sigue mostrando hasta las
+    5:00 AM (los juegos que terminan de madrugada quedan visibles con
+    su card hasta esa hora).
     """
-    hoy = datetime.now(TZ).strftime("%Y-%m-%d")
-    data = load_json_file(PLAYS_PATH)
+    hoy = (datetime.now(TZ) - timedelta(hours=5)).strftime("%Y-%m-%d")
+    data = _json_remoto_o_local(PLAYS_RAW_URL, PLAYS_PATH)
     if isinstance(data, dict):
         fecha = data.get("fecha")
         if fecha:
@@ -1496,6 +2073,68 @@ def load_archive():
     return load_json_file(ARCHIVE_PATH).get("dias", [])
 
 
+def record_por_liga():
+    """Récord oficial por liga, en vivo desde data/archive.json
+    (2026-10-26, pedido de Alex: solo esta sección en el home, con su
+    icono por liga). Solo jugadas liquidadas WON/LOST, sin bloqueadas.
+    Las jugadas viejas sin campo 'liga' se infieren por el equipo del
+    pick, para que el total por liga cuadre con el récord oficial
+    (38-24 hasta 2026-10-25). Orden fijo: MLB, NFL, NBA, NHL, NCAAF.
+    Ante cualquier fallo devuelve [] y el home simplemente no muestra
+    la sección: nunca rompe la página."""
+    try:
+        orden = [("MLB", "⚾"), ("NFL", "🏈"), ("NBA", "🏀"),
+                 ("NHL", "🏒"), ("NCAAF", "🏈")]
+        _nhl = ("Sharks", "Flames", "Capitals", "Sabres")
+        _mlb = ("Braves", "Rays", "Brewers", "Padres", "Guardians",
+                "White Sox", "Dodgers", "Yankees", "Red Sox", "Astros",
+                "Marlins", "Diamondbacks", "Nationals", "Mets",
+                "Phillies", "Cubs")
+        _nfl = ("Saints", "Falcons", "Cowboys", "Texans", "49ers",
+                "Broncos", "Browns", "Steelers", "Bears", "Eagles",
+                "Cardinals", "Chargers", "Bills", "Raiders",
+                "Panthers", "Buccaneers", "Titans")
+        _ncaaf = ("Cougars", "Wildcats", "Penn State", "Northwestern")
+
+        def _liga(j):
+            lg = (j.get("liga") or "").upper()
+            if lg in ("MLB", "NFL", "NBA", "NHL", "NCAAF"):
+                return lg
+            texto = " ".join(str(j.get(k) or "") for k in
+                             ("pick", "team_name"))
+            for nombre, lg2 in ((_nhl, "NHL"), (_mlb, "MLB"),
+                                (_nfl, "NFL"), (_ncaaf, "NCAAF")):
+                if any(t in texto for t in nombre):
+                    return lg2
+            return None
+
+        agg = {lg: {"liga": lg, "icono": ic, "w": 0, "l": 0,
+                    "profit": 0.0} for lg, ic in orden}
+        for d in load_archive():
+            for j in d.get("jugadas", []) or []:
+                if j.get("resultado") not in ("WON", "LOST"):
+                    continue
+                if j.get("bloqueada"):
+                    continue
+                lg = _liga(j)
+                if lg not in agg:
+                    continue
+                if j["resultado"] == "WON":
+                    agg[lg]["w"] += 1
+                else:
+                    agg[lg]["l"] += 1
+                agg[lg]["profit"] += float(j.get("profit") or 0.0)
+        out = []
+        for lg, _ic in orden:
+            a = agg[lg]
+            if a["w"] + a["l"]:
+                a["profit"] = round(a["profit"], 2)
+                out.append(a)
+        return out
+    except Exception:
+        return []
+
+
 
 def program_streak():
     """Racha actual del programa (W/L) desde el archivo, la más reciente primero.
@@ -1515,6 +2154,58 @@ def program_streak():
         else:
             break
     return {"tipo": "W" if tipo == "WON" else "L", "n": n}
+
+
+def win_streak_days():
+    """Días ganadores seguidos del programa (franja bajo la barra superior
+    v2, pedido Alex 2026-10-21, referencia WGT). Cuenta hacia atrás desde
+    el día calificado más reciente de data/archive.json: un día cuenta si
+    TODAS sus jugadas oficiales están liquidadas (WON/LOST/PUSH) y su
+    resultado neto en unidades es > 0. El neto en unidades de cada jugada
+    se deriva de su profit real: profit × stake_unidades ÷ stake_monto.
+    Un día aún no calificado por completo no cuenta ni corta la racha;
+    el primer día calificado con neto <= 0 la corta. Sin datos: 0."""
+    n = 0
+    try:
+        dias = sorted(
+            (d for d in load_archive() if isinstance(d, dict)),
+            key=lambda d: d.get("fecha") or "", reverse=True)
+    except Exception:
+        return 0
+    for d in dias:
+        jugadas = [j for j in (d.get("jugadas", []) or [])
+                   if isinstance(j, dict) and not j.get("bloqueada")]
+        if not jugadas:
+            continue
+        if any(j.get("resultado") not in ("WON", "LOST", "PUSH")
+               for j in jugadas):
+            continue
+        neto = 0.0
+        ok = True
+        for j in jugadas:
+            # Coerción defensiva (2026-10-21): si un script escribe los
+            # montos como texto ("100"), float() los rescata; si no son
+            # números, el día se salta en vez de explotar — esta función
+            # corre en el context processor global y JAMÁS debe tumbar
+            # una página.
+            try:
+                p = float(j.get("profit"))
+                sm = float(j.get("stake_monto") or 0)
+                su = float(j.get("stake_unidades") or 0)
+            except (TypeError, ValueError):
+                ok = False
+                break
+            if not sm or not su:
+                ok = False
+                break
+            neto += p * su / sm
+        if not ok:
+            continue
+        if neto > 0:
+            n += 1
+        else:
+            break
+    return n
 
 
 def performance_snapshot():
@@ -1625,6 +2316,18 @@ def celebracion_hoy():
 
 
 # Ligas que cubrimos: clasificación del pick por equipo (desglose por liga).
+def _cierre_txt(j):
+    """Precio de cierre formateado (+120 / -107) desde cuota_cierre de la
+    jugada; cadena vacía si la jugada no tiene cierre verificado."""
+    c = j.get("cuota_cierre")
+    if c in (None, "", 0):
+        return ""
+    try:
+        return f"{int(float(c)):+d}"
+    except (TypeError, ValueError):
+        return ""
+
+
 def recientes_oficiales(n=6):
     """Jugadas liquidadas del archivo oficial (sin bloqueadas), más recientes primero."""
     recientes = []
@@ -1635,15 +2338,31 @@ def recientes_oficiales(n=6):
                 and not j.get("bloqueada")
                 and j.get("pick")
             ):
+                # Unidades de profit (2026-10-15): la fila de Receipts
+                # lidera con unidades estilo WGT (+1.56u) y el $ va debajo.
+                _su = j.get("stake_unidades")
+                _sm = j.get("stake_monto")
+                _unidades = None
+                try:
+                    if _su and _sm:
+                        _unidades = round(float(j.get("profit") or 0) * float(_su) / float(_sm), 2)
+                except (TypeError, ValueError):
+                    _unidades = None
                 recientes.append({
                     "id": j.get("id"),
                     "fecha": d.get("titulo") or d.get("fecha", ""),
+                    "fecha_iso": d.get("fecha", ""),
+                    "liga": j.get("liga", ""),
+                    "abbr": j.get("abbr", ""),
+                    "opp_abbr": j.get("opp_abbr", ""),
                     "nivel": j.get("nivel", ""),
                     "pick": j.get("pick", ""),
                     "cuota": j.get("cuota"),
                     "resultado": j.get("resultado"),
                     "profit": j.get("profit") if j.get("profit") is not None else 0.0,
-                    "comprobante": j.get("comprobante"),
+                    "comprobante": j.get("comprobante"), "cierre": _cierre_txt(j), "clv": j.get("clv_pct"),
+                    "stake_unidades": _su,
+                    "unidades": _unidades,
                 })
     return recientes[:n]
 
@@ -1731,9 +2450,13 @@ def official_tracker_full():
     general["progress_pct"] = min(100.0, round(general["n"] / 200 * 100, 1))
 
     por_nivel = {}
-    for nv in ("ELITE", "GOLD"):
+    for nv in ("ELITE", "GOLD", "FREE"):
+        # PLATINUM = ELITE + las viejas con etiqueta PLATINUM del
+        # pre-renombre (2026-10-15): asi Platinum + Gold = el total
+        # oficial EXACTO y ningun libro deja jugadas fuera.
+        _nvs = ("ELITE", "PLATINUM") if nv == "ELITE" else (nv,)
         por_nivel[nv] = _agg([it for it in settled
-                              if (it[1].get("nivel") or "").upper() == nv])
+                              if (it[1].get("nivel") or "").upper() in _nvs])
     bandas = {
         "Favorites (−110 o mejor)": [it for it in settled if int(it[1].get("cuota") or 0) <= -110],
         "Pick'em (−109 a +109)": [it for it in settled if -109 <= int(it[1].get("cuota") or 0) <= 109],
@@ -1778,16 +2501,36 @@ def official_tracker_full():
 
     peor = [{"fecha": f, "pick": j.get("pick"), "cuota": j.get("cuota_texto") or j.get("cuota"),
              "profit": float(j.get("profit") or 0.0), "nivel": (j.get("nivel") or "").upper(),
-             "comprobante": j.get("comprobante")} for f, j in ordenadas[:5]]
+             "comprobante": j.get("comprobante"), "cierre": _cierre_txt(j), "clv": j.get("clv_pct"),
+             "liga": _league_of_archive_play(j) or "",
+             "abbr": j.get("abbr") or "", "opp_abbr": j.get("opp_abbr") or "",
+             "unidades": round(float(j.get("profit") or 0.0) / 25.0, 2)} for f, j in ordenadas[:5]]
     mejor = [{"fecha": f, "pick": j.get("pick"), "cuota": j.get("cuota_texto") or j.get("cuota"),
               "profit": float(j.get("profit") or 0.0), "nivel": (j.get("nivel") or "").upper(),
-              "comprobante": j.get("comprobante"),
+              "comprobante": j.get("comprobante"), "cierre": _cierre_txt(j), "clv": j.get("clv_pct"),
+              "liga": _league_of_archive_play(j) or "",
+              "abbr": j.get("abbr") or "", "opp_abbr": j.get("opp_abbr") or "",
+              "unidades": round(float(j.get("profit") or 0.0) / 25.0, 2),
               "share_id": _share_id(f, j)} for f, j in reversed(ordenadas[-5:])]
     ultimas = [{"fecha": f, "pick": j.get("pick"), "cuota": j.get("cuota_texto") or j.get("cuota"),
                 "resultado": j.get("resultado"), "profit": float(j.get("profit") or 0.0),
                 "nivel": (j.get("nivel") or "").upper(),
-                "comprobante": j.get("comprobante"),
+                "comprobante": j.get("comprobante"), "cierre": _cierre_txt(j), "clv": j.get("clv_pct"),
+                "liga": _league_of_archive_play(j) or "",
+                "abbr": j.get("abbr") or "", "opp_abbr": j.get("opp_abbr") or "",
+                "unidades": round(float(j.get("profit") or 0.0) / 25.0, 2),
                 "share_id": _share_id(f, j)} for f, j in reversed(settled[-12:])]
+    # LIBRO COMPLETO (2026-10-15, pedido por Alex): TODAS las liquidadas,
+    # mas nuevas primero, para la contabilidad por programa del tracker
+    # (cada jugada con su informacion y su ticket al lado).
+    historial = [{"fecha": f, "pick": j.get("pick"), "cuota": j.get("cuota_texto") or j.get("cuota"),
+                  "resultado": j.get("resultado"), "profit": float(j.get("profit") or 0.0),
+                  "nivel": (j.get("nivel") or "").upper(),
+                  "comprobante": j.get("comprobante"), "cierre": _cierre_txt(j), "clv": j.get("clv_pct"),
+                  "liga": _league_of_archive_play(j) or "",
+                  "abbr": j.get("abbr") or "", "opp_abbr": j.get("opp_abbr") or "",
+                  "unidades": round(float(j.get("profit") or 0.0) / 25.0, 2),
+                  "share_id": _share_id(f, j)} for f, j in reversed(settled)]
     # Record por liga (2026-10-14, pedido por Alex) con PUERTA DE
     # RECONCILIACIÓN DURA: la sección solo existe si TODAS las jugadas
     # liquidadas tienen liga derivable (_league_of_archive_play: campo
@@ -1851,12 +2594,135 @@ def official_tracker_full():
                 })
 
     verif = sum(1 for _, j in settled if j.get("comprobante"))
+    _clvs = [float(j["clv_pct"]) for _, j in settled if j.get("clv_pct") is not None]
+    # Galería de tickets ganadores + rachas por liga (cabecera estilo
+    # Full Record, 2026-10-29, pedido por Alex): solo datos reales del
+    # archivo — ganadas con comprobante, más nuevas primero.
+    tickets_ganadores = []
+    for f, j in reversed(settled):
+        if j.get("resultado") != "WON" or not (j.get("comprobante") or "").strip():
+            continue
+        _pick_g = (j.get("pick") or "")
+        for _sep in (" vs ", " @ "):
+            if _sep in _pick_g:
+                _pick_g = _pick_g.split(_sep)[0]
+                break
+        tickets_ganadores.append({
+            "fecha": f, "pick": _pick_g.strip(),
+            "profit": float(j.get("profit") or 0.0),
+            "profit_display": f"+${int(round(float(j.get('profit') or 0.0))):,}",
+            "comprobante": j.get("comprobante"),
+            "nivel": (j.get("nivel") or "").upper(),
+            "ticket_id": j.get("id") or _pid(f, j),
+        })
+        if len(tickets_ganadores) >= 8:
+            break
+    # Racha vigente por liga, con regla de días (como la referencia que
+    # trajo Alex): las jugadas del mismo día se califican juntas — un día
+    # con derrota en la liga corta la racha y ese día no cuenta.
+    _por_dia_liga = {}
+    for f, j in settled:
+        _Lr = _league_of_archive_play(j) or ""
+        if _Lr:
+            _por_dia_liga.setdefault(_Lr, {}).setdefault(f, []).append(j)
+    rachas_liga = []
+    for _Lr, _dias_l in _por_dia_liga.items():
+        _n_r = 0
+        _plays_r = []
+        for _f in sorted(_dias_l.keys(), reverse=True):
+            _js = _dias_l[_f]
+            if any(x.get("resultado") == "LOST" for x in _js):
+                break
+            _n_r += sum(1 for x in _js if x.get("resultado") == "WON")
+            for x in _js:
+                if x.get("resultado") != "WON":
+                    continue
+                _pk = (x.get("pick") or "")
+                for _sep in (" vs ", " @ "):
+                    if _sep in _pk:
+                        _pk = _pk.split(_sep)[0]
+                        break
+                _plays_r.append({"fecha": _f, "pick": _pk.strip(),
+                                 "abbr": x.get("abbr") or "",
+                                 "opp_abbr": x.get("opp_abbr") or "",
+                                 "comprobante": x.get("comprobante") or "",
+                                 "ticket_id": x.get("id") or _pid(_f, x)})
+        if _n_r >= 3:
+            rachas_liga.append({"liga": _Lr, "n": _n_r, "plays": _plays_r})
+    rachas_liga.sort(key=lambda r: -r["n"])
+    rachas_liga = rachas_liga[:2]
+
+    # Seccion TIRA (2026-11-02, pedido de Alex): la tirita del home
+    # ("PLATINUM - N WINS IN A ROW" / "N WINNING DAYS IN A ROW") enlaza
+    # aqui; esta seccion muestra EXACTAMENTE esas jugadas con su ticket.
+    # Misma logica que la tira del home (archivo, mas nuevo primero).
+    tira = None
+    try:
+        _dias_desc = list(reversed(dias))
+        def _tira_play(_f, _j):
+            _p = float(_j.get("profit") or 0.0)
+            _nv = (_j.get("nivel") or "").upper()
+            return {"fecha": _f, "pick": _j.get("pick") or "",
+                    "resultado": _j.get("resultado") or "",
+                    "comprobante": _j.get("comprobante") or "",
+                    "nivel_label": "PLATINUM" if _nv in ("ELITE", "PLATINUM") else (_nv or "FREE"),
+                    "stake_display": ("$" + f"{int(round(float(_j.get('stake_monto') or 0))):,}") if _j.get("stake_monto") else "",
+                    "profit_display": (("+$" if _p > 0 else ("-$" if _p < 0 else "$"))
+                                       + f"{abs(int(round(_p))):,}"),
+                    "profit_u": (("+" if _p > 0 else ("-" if _p < 0 else ""))
+                                 + f"{abs(_p) / 100.0:.2f}u")}
+        _plat_n = 0
+        _plat_plays = []
+        _plat_last_win = None
+        _ultimo_dia_t = None
+        _cerrada = False
+        for _d in _dias_desc:
+            _jug = [j for j in (_d.get("jugadas") or [])
+                    if j.get("resultado") in ("WON", "LOST")
+                    and not j.get("bloqueada")]
+            if _jug and _ultimo_dia_t is None:
+                _ultimo_dia_t = _d.get("fecha")
+            if not _cerrada:
+                for _j in _jug:
+                    if (_j.get("nivel") or "").upper() in ("ELITE", "PLATINUM"):
+                        if _j["resultado"] == "WON":
+                            _plat_n += 1
+                            _plat_plays.append(_tira_play(_d.get("fecha") or "", _j))
+                            if _plat_last_win is None:
+                                _plat_last_win = _d.get("fecha")
+                        else:
+                            _cerrada = True
+                            break
+        _dias_n = 0
+        _dias_plays = []
+        for _d in _dias_desc:
+            _jug = [j for j in (_d.get("jugadas") or [])
+                    if j.get("resultado") in ("WON", "LOST")
+                    and not j.get("bloqueada")]
+            if not _jug:
+                continue
+            if sum(float(j.get("profit") or 0) for j in _jug) > 0:
+                _dias_n += 1
+                for _j in _jug:
+                    _dias_plays.append(_tira_play(_d.get("fecha") or "", _j))
+            else:
+                break
+        if _plat_n >= 2 and _plat_last_win:
+            tira = {"tipo": "plat", "n": _plat_n, "plays": _plat_plays}
+        elif _dias_n >= 2:
+            tira = {"tipo": "dias", "n": _dias_n, "plays": _dias_plays}
+    except Exception:
+        tira = None
+
     return {"general": general, "por_nivel": por_nivel, "por_banda": por_banda,
             "por_liga": por_liga,
+            "tickets_ganadores": tickets_ganadores, "rachas_liga": rachas_liga, "tira": tira,
             "racha_actual": racha_actual, "mejor_racha_w": mejor_w, "peor_racha_l": peor_l,
             "ult7": ult7, "ult30": ult30, "mejor": mejor, "peor": peor,
-            "ultimas": ultimas, "verificadas": verif,
-            "verificadas_pct": round(verif / general["n"] * 100) if general["n"] else 0}
+            "ultimas": ultimas, "historial": historial, "verificadas": verif,
+            "verificadas_pct": round(verif / general["n"] * 100) if general["n"] else 0,
+            "clv_n": len(_clvs),
+            "clv_prom": round(sum(_clvs) / len(_clvs), 2) if _clvs else None}
 
 
 def program_stats():
@@ -1870,6 +2736,7 @@ def program_stats():
     profit = risked = 0.0
     niveles = {"GOLD": {"ganadas": 0, "perdidas": 0, "profit": 0.0},
                "ELITE": {"ganadas": 0, "perdidas": 0, "profit": 0.0},
+               "FREE": {"ganadas": 0, "perdidas": 0, "profit": 0.0},
                "VALUE": {"ganadas": 0, "perdidas": 0, "profit": 0.0}}
     for d in load_archive():
         for j in d.get("jugadas", []) or []:
@@ -2049,9 +2916,192 @@ def load_props_board():
     return data
 
 
+
+# Game Center: el JSON vive en la rama `data-board` (igual que el Props
+# Board); lo publica hidden_files/gamecenter-board.py cada hora.
+GAMECENTER_URL = (
+    "https://raw.githubusercontent.com/penamanuel-art/tlb-members"
+    "/data-board/data/gamecenter.json"
+)
+# Resultados en vivo para Running Hot: el JSON vive en la rama `data-board`
+# (igual que Game Center); lo publica hidden_files/live-graded-overlay.py
+# cada vez que un juego oficial termina. SOLO alimenta hot_run_cards():
+# el récord oficial sigue liquidándose en la noche. Fail-open: si no se
+# puede leer, la tarjeta usa solo el archivo.
+LIVE_GRADED_URL = (
+    "https://raw.githubusercontent.com/penamanuel-art/tlb-members"
+    "/data-board/data/live_graded.json"
+)
+
+# Miembros reales en Telegram (2026-10-25, pedido de Alex): el JSON lo
+# publica el cron telegram-members-count en la rama data-board (sin
+# redeploy). Fail-open: si no se puede leer, la sección no se muestra.
+TELEGRAM_MEMBERS_URL = (
+    "https://raw.githubusercontent.com/penamanuel-art/tlb-members"
+    "/data-board/data/telegram-members.json"
+)
+
+
+def load_live_graded():
+    data = _json_remoto_o_local(
+        LIVE_GRADED_URL, os.path.join(BASE_DIR, "data", "live_graded.json"),
+        ttl=60)
+    if isinstance(data, dict):
+        res = data.get("results", []) or []
+    else:
+        res = []
+    return sorted([r for r in res if isinstance(r, dict)],
+                  key=lambda r: r.get("fecha") or "")
+_gamecenter_cache = {"at": 0.0, "data": {}}
+
+
+def load_gamecenter():
+    import time
+    now = time.time()
+    if now - _gamecenter_cache["at"] < 300 and _gamecenter_cache["data"]:
+        return _gamecenter_cache["data"]
+    data = {}
+    try:
+        req = urllib.request.Request(GAMECENTER_URL, headers={"User-Agent": "tlb-members"})
+        with urllib.request.urlopen(req, timeout=10) as r:
+            data = json.load(r)
+    except Exception:
+        data = _gamecenter_cache["data"] or {}
+    _gamecenter_cache["at"] = now
+    _gamecenter_cache["data"] = data
+    return data
+
+
+_GC_SHORT = {"DraftKings": "DK", "FanDuel": "FD", "BetMGM": "MGM",
+             "Caesars": "CAES", "BetRivers": "BR", "Fanatics": "FAN",
+             "Bovada": "BOV", "BetOnline.ag": "BOL", "LowVig.ag": "LOWV",
+             "BetUS": "BUS", "theScore Bet": "SCORE", "Hard Rock Bet": "HR"}
+_GC_PREF = ["DraftKings", "FanDuel", "BetMGM", "Caesars", "BetRivers",
+            "Fanatics", "Bovada", "BetOnline.ag", "LowVig.ag", "BetUS"]
+
+
+def _gc_fmt(a):
+    if a is None:
+        return "—"
+    a = int(round(a))
+    return ("+" if a > 0 else "") + str(a)
+
+
+def _gc_pt(p):
+    if p is None:
+        return "—"
+    p = float(p)
+    return str(int(p)) if p.is_integer() else str(p)
+
+
+def _gc_pt_signed(p):
+    if p is None:
+        return "—"
+    return ("+" if p > 0 else "") + _gc_pt(p)
+
+
+def _gc_updated(board):
+    try:
+        dt = datetime.fromisoformat(board.get("generated_at", ""))
+        return dt.strftime("%b %-d, %-I:%M %p ET")
+    except Exception:
+        return "today"
+
+
+def _gc_section(game, key, title):
+    blk = (game.get("markets") or {}).get(key)
+    if not blk:
+        return None
+    away, home = game["away"], game["home"]
+    if key == "totals":
+        la = "Over " + _gc_pt(blk.get("point"))
+        lb = "Under " + _gc_pt(blk.get("point"))
+        sa, sb = "Over", "Under"
+    elif key == "spreads":
+        p = blk.get("point") or 0
+        la = away + " " + _gc_pt_signed(p)
+        lb = home + " " + _gc_pt_signed(-p)
+        sa, sb = away.split()[-1], home.split()[-1]
+    else:
+        la, lb = away, home
+        sa, sb = away.split()[-1], home.split()[-1]
+    books = blk.get("books") or []
+    by_title = {b["book"]: b for b in books}
+    cols = [t for t in _GC_PREF if t in by_title][:7]
+    if not cols:
+        cols = [b["book"] for b in books][:7]
+
+    def cell(b, side):
+        if b is None:
+            return {"price": "—", "best": False}
+        price = b["a_price"] if side == "a" else b["b_price"]
+        point = b["a_point"] if side == "a" else b["b_point"]
+        if key in ("spreads", "totals") and point is not None:
+            want = blk.get("point") if (key == "totals" or side == "a") else -(blk.get("point") or 0)
+            if point != want:
+                return {"price": "—", "best": False}
+        best = (blk.get("best") or {}).get(side) or {}
+        return {"price": _gc_fmt(price),
+                "best": bool(price is not None and best.get("book") == b["book"] and best.get("price") == price)}
+
+    rows = [
+        {"label": la, "short": sa,
+         "cells": [cell(by_title.get(c), "a") for c in cols],
+         "fair": (blk.get("fair") or {}).get("a_price", "—")},
+        {"label": lb, "short": sb,
+         "cells": [cell(by_title.get(c), "b") for c in cols],
+         "fair": (blk.get("fair") or {}).get("b_price", "—")},
+    ]
+    fair = blk.get("fair") or {}
+    if key == "totals":
+        fair_note = "Over %s%% · Under %s%%." % (fair.get("a_prob"), fair.get("b_prob"))
+    else:
+        fair_note = "%s %s%% · %s %s%%." % (away, fair.get("a_prob"), home, fair.get("b_prob"))
+    edge = blk.get("edge") or {}
+    ba = (blk.get("best") or {}).get("a") or {}
+    bb = (blk.get("best") or {}).get("b") or {}
+    def _imp(x):
+        if x is None:
+            return None
+        return 100.0 / (x + 100) if x > 0 else (-x) / ((-x) + 100.0)
+
+    besta = (blk.get("best") or {}).get("a") or {}
+    bestb = (blk.get("best") or {}).get("b") or {}
+    book_rows = []
+    for b in books:
+        ap, bp = b.get("a_price"), b.get("b_price")
+        if key in ("spreads", "totals"):
+            apt, bpt = b.get("a_point"), b.get("b_point")
+            want_b = blk.get("point") if key == "totals" else -(blk.get("point") or 0)
+            if apt != blk.get("point") or bpt != want_b:
+                continue
+        ia, ib = _imp(ap), _imp(bp)
+        vig_b = round((ia + ib - 1) * 100, 1) if ia is not None and ib is not None else None
+        book_rows.append({
+            "book": b["book"], "a_price": _gc_fmt(ap), "b_price": _gc_fmt(bp),
+            "a_best": bool(ap is not None and besta.get("book") == b["book"] and besta.get("price") == ap),
+            "b_best": bool(bp is not None and bestb.get("book") == b["book"] and bestb.get("price") == bp),
+            "vig": (str(vig_b) + "%") if vig_b is not None else "—",
+        })
+    book_rows.sort(key=lambda r: 0 if (r["a_best"] or r["b_best"]) else 1)
+    return {
+        "title": title, "book_rows": book_rows,
+        "side_a": sa, "side_b": sb,
+        "cols": [_GC_SHORT.get(c, c[:4].upper()) for c in cols],
+        "rows": rows, "n_books": blk.get("n_books", len(books)),
+        "fair_note": fair_note,
+        "best_a_book": ba.get("book", ""), "best_a_price": _gc_fmt(ba.get("price")),
+        "best_b_book": bb.get("book", ""), "best_b_price": _gc_fmt(bb.get("price")),
+        "edge_a": edge.get("a"), "edge_b": edge.get("b"),
+        "edge_a_label": ("+" if (edge.get("a") or 0) > 0 else "") + (str(edge.get("a")) + "%" if edge.get("a") is not None else "—"),
+        "edge_b_label": ("+" if (edge.get("b") or 0) > 0 else "") + (str(edge.get("b")) + "%" if edge.get("b") is not None else "—"),
+        "vig_label": (str(blk.get("vig")) + "%") if blk.get("vig") is not None else "—",
+    }
+
+
 # Public free tools: Sharp Line Moves — el JSON vive en la rama `data-board`
 # (igual que el +EV Board: actualizar datos NO redespliega Render).
-# La página /tools/line-moves es pública (sin login) y lo lee en vivo.
+# La página /tools/line-moves lo lee en vivo (desde el 2026-10-19 es Platinum).
 LINE_MOVES_URL = (
     "https://raw.githubusercontent.com/penamanuel-art/tlb-members"
     "/data-board/data/line_moves.json"
@@ -2076,6 +3126,34 @@ def load_line_moves():
     return data
 
 
+# Odds Board (Platinum): juegos de hoy con el mejor moneyline por lado.
+# El JSON vive en la rama `data-board` (igual que line moves y el +EV
+# Board); lo publica hidden_files/publish-odds-board.py con datos de
+# The Odds API. Actualizar datos NO redespliega Render.
+ODDS_BOARD_URL = (
+    "https://raw.githubusercontent.com/penamanuel-art/tlb-members"
+    "/data-board/data/odds_board.json"
+)
+_odds_board_cache = {"at": 0.0, "data": {}}
+
+
+def load_odds_board():
+    import time
+    now = time.time()
+    if now - _odds_board_cache["at"] < 300 and _odds_board_cache["data"]:
+        return _odds_board_cache["data"]
+    data = {}
+    try:
+        req = urllib.request.Request(ODDS_BOARD_URL, headers={"User-Agent": "tlb-members"})
+        with urllib.request.urlopen(req, timeout=10) as r:
+            data = json.load(r)
+    except Exception:
+        data = _odds_board_cache["data"] or {}
+    _odds_board_cache["at"] = now
+    _odds_board_cache["data"] = data
+    return data
+
+
 def american_profit_ratio(odds) -> float:
     """Cuánto se gana por cada 1 apostado en cuota americana."""
     o = int(odds)
@@ -2085,20 +3163,25 @@ def american_profit_ratio(odds) -> float:
 
 
 def play_profit_units(tp) -> float:
+    # float() obligatorio (2026-10-21): en Postgres los montos pueden llegar
+    # como Decimal y Decimal * float lanza TypeError (500 en /home con
+    # sesión; en SQLite llegan float y el mismo código no fallaba).
     ratio = american_profit_ratio(tp["cuota"])
     if tp["resultado"] == "W":
-        return tp["stake_unidades"] * ratio
+        return float(tp["stake_unidades"]) * ratio
     if tp["resultado"] == "L":
-        return -tp["stake_unidades"]
+        return -float(tp["stake_unidades"])
     return 0.0
 
 
 def play_profit_dollars(tp) -> float:
+    # float() obligatorio: misma divergencia Decimal de Postgres que en
+    # play_profit_units (2026-10-21).
     ratio = american_profit_ratio(tp["cuota"])
     if tp["resultado"] == "W":
-        return tp["stake_monto"] * ratio
+        return float(tp["stake_monto"]) * ratio
     if tp["resultado"] == "L":
-        return -tp["stake_monto"]
+        return -float(tp["stake_monto"])
     return 0.0
 
 
@@ -2143,7 +3226,7 @@ def compute_stats(tracked):
     losses = sum(1 for t in graded if t["resultado"] == "L")
     net_units = sum(play_profit_units(t) for t in graded)
     net_dollars = sum(play_profit_dollars(t) for t in graded)
-    risked = sum(t["stake_monto"] for t in graded)
+    risked = sum(float(t["stake_monto"] or 0) for t in graded)
     roi = (net_dollars / risked * 100.0) if risked else 0.0
 
     # Racha: orden cronológico, racha actual desde la más reciente.
@@ -2236,11 +3319,11 @@ def program_curve():
 
 
 def stats_por_nivel(tracked):
-    """Ganadas/perdidas/profit por nivel (GOLD/ELITE/VALUE) para el bloque estilo WGT."""
+    """Ganadas/perdidas/profit por nivel (FREE/GOLD/ELITE/VALUE) para el bloque estilo WGT."""
     out = {}
     for t in tracked:
         lvl = (t.get("nivel") or "").upper()
-        if lvl not in ("GOLD", "ELITE", "VALUE"):
+        if lvl not in ("FREE", "GOLD", "ELITE", "VALUE"):
             continue
         s = out.setdefault(lvl, {"wins": 0, "losses": 0, "net": 0.0})
         if t.get("resultado") == "W":
@@ -2254,7 +3337,7 @@ def stats_por_nivel(tracked):
         s["net_display"] = ("+$" if _n > 0 else ("-$" if _n < 0 else "$")) + f"{abs(_n):,}"
         s["net_cls"] = "pos" if _n > 0 else ("neg" if _n < 0 else "")
         s["record"] = f"{s['wins']}–{s['losses']}"
-    for _lvl in ("GOLD", "ELITE", "VALUE"):
+    for _lvl in ("FREE", "GOLD", "ELITE", "VALUE"):
         out.setdefault(_lvl, {"wins": 0, "losses": 0, "net": 0.0,
                               "net_display": "$0", "net_cls": "", "record": "0–0"})
     return out
@@ -2309,7 +3392,51 @@ def _ensure_book_balances_table(db):
     db.commit()
 
 
-def bump_book_balance(db, user_id, book_name, delta):
+def _ensure_book_moves_table(db):
+    """Crea la tabla de movimientos de balance por casa si no existe
+    (desglose pedido por Alex 2026-10-23: qué se agregó, qué se retiró
+    y qué movieron las apuestas liquidadas, casa por casa)."""
+    if db.use_pg:
+        db.execute(
+            """CREATE TABLE IF NOT EXISTS book_balance_moves (
+                   id SERIAL PRIMARY KEY,
+                   user_id INTEGER NOT NULL REFERENCES users(id),
+                   book_name TEXT NOT NULL,
+                   delta DOUBLE PRECISION NOT NULL DEFAULT 0,
+                   concepto TEXT,
+                   created_at TEXT NOT NULL
+               )"""
+        )
+    else:
+        db.execute(
+            """CREATE TABLE IF NOT EXISTS book_balance_moves (
+                   id INTEGER PRIMARY KEY AUTOINCREMENT,
+                   user_id INTEGER NOT NULL REFERENCES users(id),
+                   book_name TEXT NOT NULL,
+                   delta REAL NOT NULL DEFAULT 0,
+                   concepto TEXT,
+                   created_at TEXT NOT NULL
+               )"""
+        )
+    db.commit()
+
+
+def _log_book_move(db, user_id, book_name, delta, concepto):
+    """Registra un movimiento en el desglose de balances. No hace
+    commit: lo hace quien llama, junto con el cambio de balance."""
+    try:
+        delta = round(float(delta or 0), 2)
+    except (TypeError, ValueError):
+        return
+    if not delta or not book_name or not user_id:
+        return
+    _ensure_book_moves_table(db)
+    db.execute(
+        "INSERT INTO book_balance_moves (user_id, book_name, delta, concepto, created_at) VALUES (?, ?, ?, ?, ?)",
+        (user_id, book_name, delta, (concepto or "")[:120],
+         datetime.now(TZ).strftime("%Y-%m-%d %H:%M:%S")),
+    )
+def bump_book_balance(db, user_id, book_name, delta, concepto="Program play settled"):
     """Suma delta (+/-) al balance de una casa de apuestas.
 
     Se llama al liquidarse una jugada trackeada: la ganancia o pérdida va a
@@ -2342,7 +3469,54 @@ def bump_book_balance(db, user_id, book_name, delta):
             "INSERT INTO book_balances (user_id, book_name, balance, updated_at) VALUES (?, ?, ?, ?)",
             (user_id, book_name, delta, now),
         )
+    _log_book_move(db, user_id, book_name, delta, concepto)
     db.commit()
+
+
+def _book_balance_total(db, user):
+    """Total de los balances por casa del usuario, para que el botón
+    Balance de la barra superior muestre la cantidad visible (pedido
+    Alex 2026-10-23). Devuelve el total o None si el usuario aún no
+    registró ninguna casa. La sesión admin cae en la cuenta personal
+    de Alex, igual que en /balances."""
+    if not user:
+        return None
+    try:
+        if is_admin_for(user) and not is_alex_member(user):
+            row = db.execute(
+                "SELECT id FROM users WHERE LOWER(email) = ?",
+                (ALEX_MEMBER_EMAIL,),
+            ).fetchone()
+            uid = row["id"] if row else user["id"]
+        else:
+            uid = user["id"]
+        sql = ("SELECT COUNT(*) AS n, COALESCE(SUM(balance), 0) AS t "
+               "FROM book_balances WHERE user_id = ?")
+        try:
+            r = db.execute(sql, (uid,)).fetchone()
+        except Exception:
+            _ensure_book_balances_table(db)
+            r = db.execute(sql, (uid,)).fetchone()
+        if not r or not int(r["n"] or 0):
+            return None
+        return round(float(r["t"] or 0), 2)
+    except Exception:
+        return None
+
+
+def _balance_display_value(db, user):
+    """Valor NUMÉRICO que muestra la píldora de balance de ESTE miembro:
+    el total de _book_balance_total y, solo para la cuenta de miembro de
+    Alex, menos los $500 de capital (en su Dashboard solo va la ganancia).
+    Es la misma rama que inject_user usa para balance_total_txt; la
+    consume /api/mi-balance para el poll en vivo del efecto balfx.
+    Devuelve None si el miembro aún no registró ninguna casa."""
+    total = _book_balance_total(db, user)
+    if total is None:
+        return None
+    if is_alex_member(user):
+        return round(float(total) - 500.0, 2)
+    return round(float(total), 2)
 
 
 def auto_grado_tracked(db, user):
@@ -2544,7 +3718,11 @@ def _free_stake(nivel, stake_unidades):
     except (TypeError, ValueError):
         u = 0
     if u <= 0:
-        u = 1.0 if str(nivel or "").upper() == "ELITE" else 0.6
+        # Referencias por piso (Opción B, 2026-10-30): ELITE 1.0u;
+        # GOLD y FREE 0.4u (antes Gold 0.6u); cualquier otro nivel
+        # conserva el histórico 0.6.
+        _nv_t = str(nivel or "").upper()
+        u = 1.0 if _nv_t == "ELITE" else (0.4 if _nv_t in ("GOLD", "FREE") else 0.6)
     return u, round(FREE_TEST_BANKROLL * 0.01 * u, 2)
 
 
@@ -2678,7 +3856,11 @@ def nivel_display(nivel) -> str:
     2026-10-06). Solo capa de presentación — JSON, BD, crons y scripts
     siguen usando ELITE/GOLD como valores internos."""
     n = (nivel or "").upper()
-    return "PLATINUM" if n in ("ELITE", "PLATINUM") else n
+    if n in ("ELITE", "PLATINUM"):
+        return "PLATINUM"
+    if n == "FREE":
+        return "FREE PICK"
+    return n
 
 
 app.jinja_env.globals.update(nivel_display=nivel_display)
@@ -2722,18 +3904,25 @@ app.jinja_env.globals.update(team_logo_url=team_logo_url)
 WATERMARKS = [
     "img/watermark-football.jpg",
     "img/watermark-baseball.jpg",
-    "img/watermark-basketball.jpg",
     "img/watermark-hockey.jpg",
 ]
 
 # Fondo por sección (2026-10-06, pedido por Alex): cada página muestra
 # el fondo de su deporte/tema correspondiente.
-WATERMARK_POR_RUTA = {
-    "home": "img/watermark-football.jpg",
-    "tracker": "img/watermark-baseball.jpg",
-    "ev_board": "img/watermark-basketball.jpg",
-    "records": "img/watermark-hockey.jpg",
-}
+# Fondos rotativos: TRES (2026-10-15, orden de Alex) — futbol
+# americano, beisbol y NHL, los tres deportes del programa.
+# Sin fondo fijo por ruta: rotan por sesion entre los tres.
+WATERMARK_POR_RUTA = {}
+
+
+def _seguro(fn, defecto):
+    """Context processor a prueba de fallos (2026-10-21): un cálculo
+    decorativo (racha, ticker) NUNCA puede tumbar el render de una
+    página; ante cualquier excepción devuelve el valor neutro."""
+    try:
+        return fn()
+    except Exception:
+        return defecto
 
 
 @app.context_processor
@@ -2741,11 +3930,11 @@ def inject_user():
     from flask import request as freq
     ruta = (freq.endpoint or "")
     wm = WATERMARK_POR_RUTA.get(ruta)
-    if not wm:
-        wm = session.get("watermark")
-        if wm not in WATERMARKS:
-            wm = random.choice(WATERMARKS)
-            session["watermark"] = wm
+    if wm is None:
+        # SIN marca de agua (2026-10-16, orden de Alex: "quítale esos
+        # fondos de futbolista, ponle un fondo normal"): ya no rotan las
+        # fotos de jugadores; la página usa su fondo normal.
+        wm = ""
     nombre = session.get("nombre", "")
     corto = primer_nombre(nombre)
     cu = current_user()
@@ -2763,6 +3952,48 @@ def inject_user():
         past_due = bool(cu and cu["stripe_past_due"])
     except (KeyError, IndexError, TypeError):
         past_due = False
+    try:
+        cuenta_es = bool(cu) and (cu["lang"] or "") == "es"
+    except (KeyError, IndexError, TypeError):
+        cuenta_es = False
+    trial_dias_left = None
+    try:
+        if cu and not (cu["stripe_subscription_id"] or ""):
+            te = cu["platinum_trial_ends"]
+            if te:
+                resto = (datetime.fromisoformat(te) - datetime.now()).total_seconds()
+                if resto > 0:
+                    trial_dias_left = max(1, int(resto // 86400) + (1 if resto % 86400 > 0 else 0))
+    except (KeyError, IndexError, TypeError, ValueError):
+        trial_dias_left = None
+    if trial_dias_left is None and cu and platinum_unlocked_for(cu):
+        # Vista previa de Alex (2026-10-17): su cuenta de miembro es pase de
+        # dueno sin reloj; su burbuja muestra los dias del grupo del mes
+        # gratis (vence 2026-11-15) para que vea el diseno como un miembro.
+        try:
+            if (cu["email"] or "").strip().lower() == ALEX_MEMBER_EMAIL:
+                resto = (datetime(2026, 11, 15, 23, 59) - datetime.now()).total_seconds()
+                if resto > 0:
+                    trial_dias_left = max(1, int(resto // 86400) + (1 if resto % 86400 > 0 else 0))
+        except (KeyError, IndexError, TypeError):
+            pass
+    balance_total = None
+    balance_total_txt = None
+    try:
+        if cu and session.get("user_id"):
+            balance_total = _book_balance_total(get_db(), cu)
+            if balance_total is not None:
+                # 2026-10-28, orden de Alex: en SU total del Dashboard solo
+                # va la ganancia, no el total (capital $500 + ganancia).
+                if is_alex_member(cu):
+                    _gan = round(float(balance_total) - 500.0, 2)
+                    _signo = "+" if _gan >= 0 else "-"
+                    balance_total_txt = f"{_signo}${abs(_gan):,.2f}"
+                else:
+                    balance_total_txt = f"${balance_total:,.2f}"
+    except Exception:
+        balance_total = None
+        balance_total_txt = None
     return {
         "nombre_corto": corto,
         "nombre_completo": nombre,
@@ -2771,12 +4002,17 @@ def inject_user():
         "dias_miembro": dias_miembro,
         "etiqueta_miembro": etiqueta,
         "es_admin": bool(session.get("is_admin")),
+        "cuenta_es": cuenta_es,
         "is_alex": bool(cu and (cu["email"] or "").strip().lower() == ALEX_MEMBER_EMAIL),
         "miembro_platinum": platinum_unlocked_for(cu),
+        "trial_dias_left": trial_dias_left,
+        "balance_total": balance_total,
+        "balance_total_txt": balance_total_txt,
         "past_due": past_due,
-        "ticker_days": compute_ticker_days(),
+        "ticker_days": _seguro(compute_ticker_days, []),
+        "racha_dias": _seguro(win_streak_days, 0),
         "asset_v": ASSET_V,
-        "watermark_img": session.get("watermark", WATERMARKS[0]),
+        "watermark_img": wm,
     }
 
 
@@ -2840,7 +4076,37 @@ def _ensure_mybets_schema():
 
 _ensure_mybets_schema()
 
-_ensure_mybets_schema()
+
+def _ensure_game_follows_schema():
+    """Tabla de juegos seguidos del Game Center (2026-10-23, idea de diseño
+    aprobada por Alex SOLO como prueba en su cuenta): Follow por usuario y
+    juego. Idempotente; dialecto según USE_PG."""
+    try:
+        conn = _raw_connect()
+        if USE_PG:
+            conn.execute("""CREATE TABLE IF NOT EXISTS game_follows (
+                id SERIAL PRIMARY KEY,
+                user_id INTEGER NOT NULL REFERENCES users(id),
+                event_id TEXT NOT NULL,
+                game_label TEXT, league TEXT, commence TEXT,
+                created_at TEXT NOT NULL,
+                UNIQUE(user_id, event_id))""")
+        else:
+            conn.execute("""CREATE TABLE IF NOT EXISTS game_follows (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL REFERENCES users(id),
+                event_id TEXT NOT NULL,
+                game_label TEXT, league TEXT, commence TEXT,
+                created_at TEXT NOT NULL,
+                UNIQUE(user_id, event_id))""")
+        conn.execute("CREATE INDEX IF NOT EXISTS idx_follows_user ON game_follows(user_id)")
+        conn.commit()
+        conn.close()
+    except Exception:
+        pass
+
+
+_ensure_game_follows_schema()
 
 
 def migrate_db():
@@ -2868,7 +4134,7 @@ def migrate_db():
             pending.append("ALTER TABLE users ADD COLUMN stake_mode TEXT NOT NULL DEFAULT 'units'")
         if "platinum_unlocked" not in cols:
             pending.append("ALTER TABLE users ADD COLUMN platinum_unlocked INTEGER NOT NULL DEFAULT 0")
-        for _col, _default in [("notif_plays", "1"), ("notif_graded", "1"), ("notif_live", "1"), ("notif_reminder", "1"), ("notif_ev", "1"), ("notif_price", "0")]:
+        for _col, _default in [("notif_plays", "1"), ("notif_graded", "1"), ("notif_live", "1"), ("notif_reminder", "1"), ("notif_ev", "1"), ("notif_price", "0"), ("notif_sharp", "1"), ("notif_masterclass", "1"), ("ev_board_email", "1")]:
             if _col not in cols:
                 pending.append(f"ALTER TABLE users ADD COLUMN {_col} INTEGER NOT NULL DEFAULT {_default}")
         if "is_admin" not in cols:
@@ -2881,6 +4147,25 @@ def migrate_db():
             pending.append("ALTER TABLE users ADD COLUMN stripe_subscription_id TEXT")
         if "stripe_past_due" not in cols:
             pending.append("ALTER TABLE users ADD COLUMN stripe_past_due INTEGER NOT NULL DEFAULT 0")
+        if "platinum_trial_ends" not in cols:
+            pending.append("ALTER TABLE users ADD COLUMN platinum_trial_ends TEXT")
+        # Cohorte de la landing nueva (2026-10-31): columnas SEPARADAS del
+        # reloj de plataforma. signup_offer/signup_intent guardan la oferta
+        # y la intención declaradas al registrarse por la plantilla nueva;
+        # stripe_subscription_status/stripe_trial_ends guardan el estado y
+        # el fin del trial DE STRIPE (nunca en platinum_trial_ends);
+        # platinum_intro_used_at marca la introducción $1 + mes gratis ya
+        # usada por la cuenta (anti-repetición: una sola vez por cliente).
+        if "signup_offer" not in cols:
+            pending.append("ALTER TABLE users ADD COLUMN signup_offer TEXT")
+        if "signup_intent" not in cols:
+            pending.append("ALTER TABLE users ADD COLUMN signup_intent TEXT")
+        if "stripe_subscription_status" not in cols:
+            pending.append("ALTER TABLE users ADD COLUMN stripe_subscription_status TEXT")
+        if "stripe_trial_ends" not in cols:
+            pending.append("ALTER TABLE users ADD COLUMN stripe_trial_ends TEXT")
+        if "platinum_intro_used_at" not in cols:
+            pending.append("ALTER TABLE users ADD COLUMN platinum_intro_used_at TEXT")
         if "foto" not in cols:
             pending.append("ALTER TABLE users ADD COLUMN foto TEXT")
         if "telegram_user_id" not in cols:
@@ -2895,6 +4180,29 @@ def migrate_db():
             pending.append("ALTER TABLE users ADD COLUMN sms_optin INTEGER NOT NULL DEFAULT 0")
         if "welcome_email_sent" not in cols:
             pending.append("ALTER TABLE users ADD COLUMN welcome_email_sent INTEGER NOT NULL DEFAULT 0")
+        if "lang" not in cols:
+            pending.append("ALTER TABLE users ADD COLUMN lang TEXT")
+        if "reset_token" not in cols:
+            pending.append("ALTER TABLE users ADD COLUMN reset_token TEXT")
+        if "reset_expires" not in cols:
+            pending.append("ALTER TABLE users ADD COLUMN reset_expires TEXT")
+        # Activación por correo (2026-10-18, orden de Alex): los miembros que
+        # ya existen quedan verificados (DEFAULT 1) — nadie pierde acceso;
+        # solo los registros NUEVOS nacen sin activar (email_verified = 0).
+        if "email_verified" not in cols:
+            pending.append("ALTER TABLE users ADD COLUMN email_verified INTEGER NOT NULL DEFAULT 1")
+        if "activation_token" not in cols:
+            pending.append("ALTER TABLE users ADD COLUMN activation_token TEXT")
+        # Sin verificar no es miembro (2026-10-19, orden de Alex): lo que
+        # manda es la ACTIVACIÓN — fecha en que confirmó su correo. Los ya
+        # verificados heredan su fecha de registro como fecha de activación.
+        if "activated_at" not in cols:
+            pending.append("ALTER TABLE users ADD COLUMN activated_at TEXT")
+            pending.append("UPDATE users SET activated_at = created_at WHERE email_verified = 1 AND activated_at IS NULL")
+        if "activation_reminders" not in cols:
+            pending.append("ALTER TABLE users ADD COLUMN activation_reminders INTEGER NOT NULL DEFAULT 0")
+        if "activation_reminder_last" not in cols:
+            pending.append("ALTER TABLE users ADD COLUMN activation_reminder_last TEXT")
         # Página Account estilo WGT (2026-10-12, pedido por Alex): dirección
         # postal del perfil + perfil de apuestas (estado y casas).
         for _col in ["addr_line1", "addr_line2", "addr_city", "addr_state",
@@ -3024,12 +4332,189 @@ def _public_stats():
     return wins, losses, total, roi
 
 
+_NIVEL_PUBLICO = {"ELITE": "PLATINUM", "PLAT": "PLATINUM", "PLATINUM": "PLATINUM",
+                  "GOLD": "GOLD", "FREE": "FREE"}
+
+
+def _recent_ticket_plays(limit=6):
+    """Últimas jugadas oficiales liquidadas CON foto de ticket (sección de
+    prueba de la portada pública, 2026-10-31, pedido de Alex: que el visitante
+    revise los tickets reales ANTES de registrarse). Lee la MISMA fuente que
+    _public_stats() (data/archive.json, días newest-first); ganadas y perdidas
+    tal cual, sin escoger. Solo datos por jugada: NUNCA totales agregados
+    (la compuerta de las 500 jugadas gobierna récord/ROI, no esta sección)."""
+    plays = []
+    try:
+        with open(os.path.join(os.path.dirname(__file__), "data", "archive.json")) as f:
+            dias = json.load(f).get("dias", [])
+        for dia in dias:
+            try:
+                fecha = datetime.strptime(dia.get("fecha", ""), "%Y-%m-%d").strftime("%b %-d, %Y")
+            except Exception:
+                fecha = dia.get("fecha", "")
+            for j in dia.get("jugadas", []):
+                if len(plays) >= limit:
+                    return plays
+                r = j.get("resultado")
+                comp = (j.get("comprobante") or "").strip()
+                if r not in ("WON", "LOST") or not comp:
+                    continue
+                profit = float(j.get("profit") or 0)
+                cuota = j.get("cuota")
+                try:
+                    cuota = int(cuota)
+                    cuota_txt = f"+{cuota}" if cuota > 0 else str(cuota)
+                except (TypeError, ValueError):
+                    cuota_txt = str(j.get("cuota_texto") or cuota or "")
+                nivel = str(j.get("nivel") or "").upper()
+                plays.append({
+                    "fecha": fecha,
+                    "liga": j.get("liga") or "",
+                    "nivel": _NIVEL_PUBLICO.get(nivel, nivel),
+                    "pick": j.get("pick") or "",
+                    "cuota_txt": cuota_txt,
+                    "marcador": j.get("marcador") or "",
+                    "resultado": r,
+                    "profit_txt": (f"+${profit:,.2f}" if profit > 0 else
+                                   f"-${abs(profit):,.2f}" if profit < 0 else "$0.00"),
+                    "img": url_for("static", filename=comp),
+                })
+    except Exception:
+        pass
+    return plays
+
+
+# Páginas públicas About (2026-10-29, pedido por Alex tras explorar el About
+# de WGT): /about y /contact YA existían (about() y contact_page()); aquí solo
+# van las rutas NUEVAS. Duplicar contact_page tumbó el deploy del 23:45 —
+# nunca redefinir un endpoint existente.
+@app.route("/how-to-verify")
+def verify_page():
+    return render_template("verify.html")
+
+
+@app.route("/faqs")
+def faqs_page():
+    return render_template("faqs.html")
+
+
+@app.route("/testimonials")
+def testimonials_page():
+    """Testimonials (2026-10-30): reseñas REALES de miembros, aprobadas una a
+    una en el Admin antes de publicarse. Barra pequeña 'Enjoying The Sharp
+    Team? Rate us' (título elegido por Alex) que despliega el formulario."""
+    db = get_db()
+    agg = db.execute(
+        "SELECT COUNT(*) AS n, AVG(stars) AS a FROM reviews "
+        "WHERE status = 'approved'").fetchone()
+    rows = db.execute(
+        "SELECT display_name, city, stars, body FROM reviews "
+        "WHERE status = 'approved' ORDER BY created_at DESC LIMIT 60").fetchall()
+    mine = None
+    if "user_id" in session:
+        r = db.execute("SELECT * FROM reviews WHERE user_id = ?",
+                       (session["user_id"],)).fetchone()
+        mine = dict(r) if r else None
+    return render_template(
+        "testimonials.html",
+        reviews=[dict(r) for r in rows],
+        reviews_count=(agg["n"] or 0),
+        reviews_avg=round(agg["a"], 1) if agg and agg["a"] else 0,
+        mine=mine,
+        rate_hint=request.args.get("rate") or "")
+
+
+@app.route("/testimonials/review", methods=["POST"])
+@login_required
+def review_submit():
+    """Una reseña por miembro; al enviar (o editar) vuelve a 'pending' y solo
+    se publica cuando el Admin la aprueba. Nada se inventa ni se auto-publica."""
+    user = current_user()
+    try:
+        stars = int(request.form.get("stars", "5"))
+    except (TypeError, ValueError):
+        stars = 5
+    stars = max(1, min(5, stars))
+    body = (request.form.get("body") or "").strip()[:600]
+    name = (request.form.get("display_name") or "").strip()[:40]
+    city = (request.form.get("city") or "").strip()[:60]
+    if not request.form.get("permission") or len(body) < 10 or not name:
+        flash("Please add your name, a short review (10+ characters) and the "
+              "permission check.", "error")
+        return redirect(url_for("testimonials_page"))
+    db = get_db()
+    existing = db.execute("SELECT id FROM reviews WHERE user_id = ?",
+                          (user["id"],)).fetchone()
+    if existing:
+        db.execute(
+            "UPDATE reviews SET display_name = ?, city = ?, stars = ?, "
+            "body = ?, status = 'pending', created_at = ? WHERE user_id = ?",
+            (name, city, stars, body, now_iso(), user["id"]))
+    else:
+        db.execute(
+            "INSERT INTO reviews (user_id, display_name, city, stars, body, "
+            "status, created_at) VALUES (?, ?, ?, ?, ?, 'pending', ?)",
+            (user["id"], name, city, stars, body, now_iso()))
+    db.commit()
+    flash("Thanks! Your review was received — it will appear here after a "
+          "quick approval.", "success")
+    return redirect(url_for("testimonials_page"))
+
+
+@app.route("/admin/reviews")
+@admin_required
+def admin_reviews():
+    db = get_db()
+    pend = db.execute(
+        "SELECT r.*, u.email FROM reviews r JOIN users u ON u.id = r.user_id "
+        "WHERE r.status = 'pending' ORDER BY r.created_at").fetchall()
+    appr = db.execute(
+        "SELECT r.*, u.email FROM reviews r JOIN users u ON u.id = r.user_id "
+        "WHERE r.status = 'approved' ORDER BY r.created_at DESC LIMIT 50").fetchall()
+    return render_template("admin_reviews.html",
+                           pendientes=[dict(r) for r in pend],
+                           aprobadas=[dict(r) for r in appr])
+
+
+@app.route("/admin/reviews/<int:rid>/<accion>", methods=["POST"])
+@admin_required
+def admin_reviews_accion(rid, accion):
+    if accion in ("approve", "reject"):
+        db = get_db()
+        db.execute("UPDATE reviews SET status = ? WHERE id = ?",
+                   ("approved" if accion == "approve" else "rejected", rid))
+        db.commit()
+        flash("Review updated.", "success")
+    return redirect(url_for("admin_reviews"))
+
+
 @app.route("/")
 def index():
     if "user_id" in session:
         return redirect(url_for("home"))
     wins, losses, total, roi = _public_stats()
-    return render_template("index.html", wins=wins, losses=losses, total=total, roi=roi)
+    return render_template("index.html", wins=wins, losses=losses, total=total, roi=roi,
+                           recent_plays=_recent_ticket_plays(6))
+
+
+@app.route("/privacy")
+def privacy_page():
+    return render_template("privacy.html")
+
+
+@app.route("/terms")
+def terms_page():
+    return render_template("terms.html")
+
+
+@app.route("/legal")
+def legal_page():
+    return render_template("legal.html")
+
+
+@app.route("/contact")
+def contact_page():
+    return render_template("contact.html")
 
 
 @app.route("/free")
@@ -3046,42 +4531,50 @@ def free_landing():
         losses=losses,
         total=total,
         roi=roi,
-        stripe_url=STRIPE_PLATINUM_URL,
+        stripe_url=url_for("register"),
     )
 
 
 def compute_ticker_days():
-    """Ticker de resultados (pedido por Alex 2026-09-26, refinado el mismo día):
-    UN solo día: el último día con jugadas liquidadas (el día anterior).
-    En vivo desde data/archive.json — se actualiza solo al liquidar.
-    Sin inventos: solo jugadas WON/LOST reales."""
-    ticker_days = []
+    """Ticker de resultados (pedido por Alex 2026-09-26; CORREGIDO el
+    2026-10-17 por orden de Alex: la franja dice YESTERDAY y debe ser el
+    dia calendario ANTERIOR siempre — antes tomaba el ultimo dia con
+    liquidadas y se quedaba pegada en un dia viejo cuando ayer no tuvo
+    resultados, p. ej. un juego pospuesto). En vivo desde
+    data/archive.json. Si ayer no tuvo jugadas liquidadas, la franja lo
+    dice ("NO SETTLED PLAYS") en vez de saltar a un dia mas viejo."""
+    ayer = datetime.now(TZ).date() - timedelta(days=1)
+    ayer_iso = ayer.isoformat()
+    etiqueta = ayer.strftime("%a %b %d").upper()
+    dia = None
     for d in load_archive():
-        fecha = d.get("fecha", "")
+        if d.get("fecha") == ayer_iso:
+            dia = d
+            break
+    jugadas = []
+    if dia is not None:
         jugadas = [
-            j for j in (d.get("jugadas", []) or [])
+            j for j in (dia.get("jugadas", []) or [])
             if j.get("resultado") in ("WON", "LOST") and not j.get("bloqueada")
         ]
-        if not jugadas:
-            continue
-        wins = sum(1 for j in jugadas if j.get("resultado") == "WON")
-        losses = len(jugadas) - wins
-        profit = sum(float(j.get("profit") or 0.0) for j in jugadas)
-        risked = sum(float(j.get("stake_monto") or 0.0) for j in jugadas)
-        roi = (profit / risked * 100.0) if risked else 0.0
-        try:
-            etiqueta = datetime.strptime(fecha, "%Y-%m-%d").strftime("%a %b %d").upper()
-        except (ValueError, TypeError):
-            etiqueta = (d.get("titulo") or fecha).upper()
-        ticker_days.append({
+    if not jugadas:
+        return [{
             "etiqueta": etiqueta,
-            "record": f"{wins}-{losses}",
-            "profit": profit,
-            "roi": roi,
-        })
-        if len(ticker_days) >= 1:
-            break
-    return ticker_days
+            "record": "NO SETTLED PLAYS",
+            "profit": 0.0,
+            "roi": 0.0,
+        }]
+    wins = sum(1 for j in jugadas if j.get("resultado") == "WON")
+    losses = len(jugadas) - wins
+    profit = sum(float(j.get("profit") or 0.0) for j in jugadas)
+    risked = sum(float(j.get("stake_monto") or 0.0) for j in jugadas)
+    roi = (profit / risked * 100.0) if risked else 0.0
+    return [{
+        "etiqueta": etiqueta,
+        "record": f"{wins}-{losses}",
+        "profit": profit,
+        "roi": roi,
+    }]
 
 
 @app.route("/ticket/<play_id>")
@@ -3110,14 +4603,20 @@ def ticket_view(play_id):
             pass
     if play is None:
         return render_template("404.html"), 404
-    # Sin pago no hay acceso: la jugada ELITE exige sesión y Elite activa.
-    if str(play.get("nivel") or "").upper() in ("ELITE", "PLATINUM"):
+    # Sin pago no hay acceso: las jugadas ELITE y GOLD (de pago desde la
+    # Opción B, 2026-10-30) exigen sesión y Platinum activa. FREE es abierta.
+    if str(play.get("nivel") or "").upper() in ("ELITE", "PLATINUM", "GOLD"):
         cu = current_user()
         if not platinum_unlocked_for(cu):
             if cu is None:
                 return redirect(url_for("login", next=url_for("ticket_view", play_id=play_id)))
             return redirect(url_for("desbloquear_platinum"))
-    return render_template("ticket.html", p=play)
+    # Fila de compartir (estilo referencia WGT, 2026-10-17): por ahora
+    # SOLO la ve Alex (admin o su cuenta de miembro) hasta que apruebe
+    # publicarla para todos.
+    return render_template(
+        "ticket.html", p=play, ver_compartir=_admin_o_cuenta_alex(current_user())
+    )
 
 
 def last_elite_win():
@@ -3132,6 +4631,118 @@ def last_elite_win():
             if j.get("nivel") == "ELITE" and j.get("resultado") == "WON" and j.get("profit") and not j.get("bloqueada"):
                 return int(round(j["profit"]))
     return None
+
+
+def platinum_reciente_con_ticket():
+    """(jugada, fecha) de la Platinum (ELITE) más reciente con comprobante
+    en el archivo, o (None, None) si no hay ninguna.
+
+    Fuente de la VISTA PREVIA admin de la carta bloqueada
+    (?preview=locked) cuando aún no hay card de hoy publicada: Alex
+    juzga la carta con un ticket real — hoy, el de Tampa Bay Rays ML
+    del 2026-10-19 (2026-10-20: «hazlo con la Platinum de Tampa, usa
+    ese recibo»). El flujo de miembros NO usa esta función.
+    """
+    try:
+        with open(ARCHIVE_PATH, encoding="utf-8") as f:
+            arch = json.load(f)
+    except Exception:
+        return None, None
+    for d in sorted(arch.get("dias", []), key=lambda x: x.get("fecha", ""), reverse=True):
+        for j in d.get("jugadas", []):
+            if j.get("nivel") == "ELITE" and (j.get("comprobante") or "").strip():
+                return j, d.get("fecha")
+    return None, None
+
+
+def locked_ticket_url_for(play, fecha):
+    """URL pública de la copia DIFUMINADA del ticket bloqueado de una jugada.
+
+    Doctrina sellada (fuga real del 2026-10-15): el difuminado va HORNEADO
+    en el archivo — pixelado fuerte (//22) + GaussianBlur(16), los mismos
+    parámetros del mecanismo del email free v2. La carta bloqueada del home
+    JAMÁS sirve la foto original ni deja su nombre en el HTML. Falla
+    cerrado: ante cualquier problema devuelve None y la carta sale sin
+    foto, con su panel bloqueado.
+
+    Nombre POR JUGADA (Opción B, 2026-10-30 — Riesgo B del plan): desde
+    que GOLD también se bloquea, un mismo día puede tener una GOLD y una
+    ELITE bloqueadas con tickets distintos; el nombre por fecha
+    (locked-<fecha>.jpg) colisionaba. Resolución: (1) si existe la copia
+    por jugada img/locked/locked-<fecha>-<play_id>.jpg (la deja el flujo
+    post-tickets), se usa tal cual; (2) si no, compatibilidad histórica:
+    el archivo por fecha solo se reutiliza cuando la jugada ES la ELITE
+    de esa fecha (el uso para el que nació); (3) en cualquier otro caso
+    se genera la copia por jugada desde el comprobante de ESTA jugada.
+    """
+    try:
+        comp = ((play or {}).get("comprobante") or "").strip()
+        if not comp or not fecha:
+            return None
+        # El comprobante debe ser una foto nuestra bajo static, sin escapes.
+        if ".." in comp or comp.startswith(("/", "http")) \
+                or not comp.startswith("img/comprobantes/"):
+            return None
+        pid = str((play or {}).get("id") or "").strip()
+        # El play_id entra en un nombre de archivo: solo [A-Za-z0-9_-].
+        pid = "".join(c for c in pid if c.isalnum() or c in "-_")
+        if pid:
+            rel_j = f"img/locked/locked-{fecha}-{pid}.jpg"
+            if os.path.exists(os.path.join(app.static_folder, rel_j)):
+                return url_for("static", filename=rel_j)
+        rel = f"img/locked/locked-{fecha}.jpg"
+        dest = os.path.join(app.static_folder, rel)
+        if os.path.exists(dest):
+            # Compat histórica: el archivo por fecha es el ticket ELITE
+            # del día; solo se sirve para jugadas ELITE/PLATINUM.
+            if str((play or {}).get("nivel") or "").upper() in ("ELITE", "PLATINUM"):
+                return url_for("static", filename=rel)
+            if not pid:
+                return url_for("static", filename=rel)
+        if not pid:
+            return None
+        src = os.path.join(app.static_folder, comp)
+        if not os.path.exists(src):
+            return None
+        dest_j = os.path.join(app.static_folder, rel_j)
+        from PIL import Image, ImageFilter
+        im = Image.open(src).convert("RGB")
+        w, h = im.size
+        im = im.resize((max(20, w // 22), max(20, h // 22)), Image.BOX)
+        im = im.resize((w, h), Image.BILINEAR)
+        im = im.filter(ImageFilter.GaussianBlur(16))
+        os.makedirs(os.path.dirname(dest_j), exist_ok=True)
+        im.save(dest_j, quality=82)
+        return url_for("static", filename=rel_j)
+    except Exception:
+        return None
+
+
+def _locked_play_view(play, ticket_url):
+    """Vista SANITIZADA de una jugada Platinum para la carta bloqueada.
+
+    La carta bloqueada del home (estados sellados por Alex, 2026-10-20)
+    es LA MISMA carta original en estado bloqueado: solo viajan liga,
+    hora, matchup y la URL del ticket difuminado. El pick, la cuota, el
+    stake, el edge, el write-up y la ruta del comprobante original NO
+    entran en este dict — así jamás pueden aparecer en el HTML de quien
+    no tiene Platinum, ni como texto, ni en atributos, ni en URLs.
+    """
+    play = play or {}
+    return {
+        # El nivel NO es secreto: la carta bloqueada muestra su distintivo
+        # (PLATINUM / GOLD) — es el motor de conversión. Todo lo demás de
+        # la lista es lo único que viaja; pick/cuota/stake siguen fuera.
+        "nivel": (play.get("nivel") or "").upper(),
+        "liga": play.get("liga") or "",
+        "game_time_et": play.get("game_time_et") or "",
+        "hora": play.get("hora") or "",
+        "team_name": play.get("team_name") or "",
+        "abbr": play.get("abbr") or "",
+        "opp_name": play.get("opp_name") or "",
+        "opp_abbr": play.get("opp_abbr") or "",
+        "ticket_url": ticket_url,
+    }
 
 
 @app.route("/theme/<name>")
@@ -3151,7 +4762,7 @@ def admin_diseno_home():
     el botón de revertir apaga el diseño lux para TODOS y vuelve al home
     anterior; el mismo botón lo vuelve a encender. Solo admin."""
     user = current_user()
-    if not (is_admin_for(user) or is_alex_member(user)):
+    if not _admin_o_cuenta_alex(user):
         flash("You don't have permission to do that.", "error")
         return redirect(url_for("home"))
     nuevo = "0" if home_lux_enabled() else "1"
@@ -3163,11 +4774,123 @@ def admin_diseno_home():
     return redirect(url_for("home"))
 
 
+def hot_run_cards(value_rows):
+    """Franja «Running hot» del Home (2026-10-22, pedido por Alex):
+    tarjetas de rachas calculadas EN VIVO desde las jugadas liquidadas
+    (archivo oficial + tracker VALUE del sistema). Las tres tarjetas ALL
+    oficiales (OFFICIAL, PLATINUM, SHARP PICKS FREE) muestran SIEMPRE su
+    récord de últimos 10 cuando hay 10+ jugadas (2026-10-24, pedido por
+    Alex: «Que siempre se vea»); las tarjetas VALUE y por liga solo salen
+    con rachas que califican: últimas 10 con 7+ ganadas, últimas 5 con 4+
+    ganadas, o racha ganadora vigente de 2+. Si ninguna califica, la
+    sección no se muestra — nunca relleno."""
+    def _card(badge, tag, seq, scope, color, always=False):
+        if not seq:
+            return None
+        streak = 0
+        for r in reversed(seq):
+            if r == "W":
+                streak += 1
+            else:
+                break
+        n = len(seq)
+        if n >= 10:
+            w = seq[-10:].count("W")
+            if w >= 7 or always:
+                return {"badge": badge, "tag": tag, "color": color,
+                        "big": f"{w}\u2013{10 - w}", "pct": f"{round(w / 10 * 100)}%",
+                        "desc": f"in the last 10 {scope} plays",
+                        "pill": "LAST 10 PLAYS",
+                        "dots": [r == "W" for r in seq[-10:]]}
+        if n >= 5:
+            w = seq[-5:].count("W")
+            if w >= 4:
+                return {"badge": badge, "tag": tag, "color": color,
+                        "big": f"{w}\u2013{5 - w}", "pct": f"{round(w / 5 * 100)}%",
+                        "desc": f"in the last 5 {scope} plays",
+                        "pill": "LAST 5 PLAYS",
+                        "dots": [r == "W" for r in seq[-5:]]}
+        if streak >= 2:
+            return {"badge": badge, "tag": tag, "color": color,
+                    "big": f"{streak} straight", "pct": "",
+                    "desc": f"wins in a row \u00b7 {scope}",
+                    "pill": "CURRENT STREAK",
+                    "dots": [True] * streak}
+        return None
+
+    settled = []
+    for d in sorted(load_archive(), key=lambda x: x.get("fecha") or ""):
+        for j in d.get("jugadas", []) or []:
+            if j.get("resultado") in ("WON", "LOST") and not j.get("bloqueada"):
+                settled.append(j)
+
+    # En vivo (2026-10-24, pedido por Alex): las jugadas oficiales que ya
+    # terminaron entran a la tarjeta en cuanto acaban, sin esperar la
+    # liquidación. Dedupe por play_id: si la liquidación ya la puso en el
+    # archivo, el overlay se ignora (nunca se cuenta dos veces). Si el
+    # overlay falla, la tarjeta sigue con solo el archivo.
+    try:
+        _live_ids = {j.get("id") for j in settled}
+        for e in load_live_graded():
+            if e.get("play_id") in _live_ids:
+                continue
+            if e.get("resultado") in ("WON", "LOST"):
+                settled.append({"resultado": e["resultado"],
+                                "nivel": e.get("nivel") or "",
+                                "liga": e.get("liga") or "",
+                                "id": e.get("play_id")})
+    except Exception:
+        pass
+
+    def seq_of(filtro):
+        return ["W" if j["resultado"] == "WON" else "L"
+                for j in settled if filtro(j)]
+
+    cards = []
+    for badge, tag, seq, scope, color, always in (
+        ("OFFICIAL PLAYS", "ALL", seq_of(lambda j: True), "official", "#2ee6a8", True),
+        ("PLATINUM", "ALL",
+         seq_of(lambda j: (j.get("nivel") or "").upper() in ("ELITE", "PLATINUM")),
+         "Platinum", "#e8c766", True),
+        ("GOLD", "ALL",
+         seq_of(lambda j: (j.get("nivel") or "").upper() == "GOLD"), "Gold plays",
+         "#aebdd4", True),
+        ("FREE PICKS", "ALL",
+         seq_of(lambda j: (j.get("nivel") or "").upper() == "FREE"), "Free Picks",
+         "#7dd3a8", True),
+    ):
+        c = _card(badge, tag, seq, scope, color, always)
+        if c:
+            cards.append(c)
+    vseq = ["W" if r.get("resultado") == "W" else "L"
+            for r in sorted(value_rows,
+                            key=lambda r: (r.get("fecha") or "", r.get("id") or 0))
+            if r.get("resultado") in ("W", "L")]
+    c = _card("VALUE", "ALL", vseq, "value", "#58a6ff")
+    if c:
+        cards.append(c)
+    ligas = {}
+    for j in settled:
+        lg = _league_of_archive_play(j) or ""
+        if lg:
+            ligas.setdefault(lg, []).append(
+                "W" if j["resultado"] == "WON" else "L")
+    league_cards = []
+    for lg, s in ligas.items():
+        c = _card("OFFICIAL PLAYS", lg, s, lg, "#2ee6a8")
+        if c:
+            league_cards.append(c)
+    league_cards.sort(key=lambda c: -len(c["dots"]))
+    cards.extend(league_cards)
+    return cards[:6]
+
+
 @app.route("/home")
 @login_required
 def home():
     db = get_db()
     record_checkin(db, session["user_id"])
+    _registrar_visita(current_user())
     try:
         _notify_login_telegram(current_user())  # 2026-10-05: aviso a Alex por Telegram en cada visita
     except Exception:
@@ -3175,7 +4898,8 @@ def home():
     auto_grado_tracked(db, current_user())
     program, plays = load_data()
     user = current_user()
-    card_pendiente = not card_publicada_hoy() or not plays
+    _card_publicada = card_publicada_hoy()
+    card_pendiente = not _card_publicada or not plays
     if card_pendiente:
         # Solo el administrador ve la card pendiente (2026-10-03, orden de Alex:
         # su cuenta personal de miembro es un miembro normal más y solo ve
@@ -3187,6 +4911,42 @@ def home():
         else:
             plays = []  # las de ayer no se muestran: la card de hoy aún no sale
     plays = personalizar_plays(plays, user)
+    # Paywall (2026-10-24, orden de Alex; ajuste mismo día: las gratis
+    # siguen igual y visibles — SOLO el trial se corta): el trial no
+    # ve la card de hoy (tampoco como teasers bloqueados:
+    # locked_plays se construye desde plays).
+    _sin_acceso = _es_trial(user)
+    if _sin_acceso:
+        plays = []
+    # Resultado EN la propia tarjeta (Opción B, 2026-10-30): en cuanto un
+    # juego de la card termina, su tarjeta muestra el chip WON/LOST +
+    # profit sin esperar a la liquidación — mismo merge que alimenta
+    # Running Hot: primero el overlay en vivo (live_graded) y el archivo
+    # manda cuando la liquidación ya existe (nunca se cuenta dos veces).
+    try:
+        _res_map = {}
+        for _e in load_live_graded():
+            if _e.get("resultado") in ("WON", "LOST") and _e.get("play_id"):
+                _res_map[_e["play_id"]] = _e["resultado"]
+        for _d in load_archive():
+            for _j in _d.get("jugadas", []) or []:
+                if _j.get("resultado") in ("WON", "LOST") and _j.get("id"):
+                    _res_map[_j["id"]] = _j["resultado"]
+        for _p in plays:
+            _r = _res_map.get(_p.get("id"))
+            if _r:
+                _p["resultado"] = "W" if _r == "WON" else "L"
+                try:
+                    _sm = float(_p.get("stake_monto") or 0)
+                    _cu = int(_p.get("cuota") or 0)
+                    _b = (100.0 / abs(_cu)) if _cu < 0 else (
+                        _cu / 100.0 if _cu > 0 else 0.0)
+                    _p["profit"] = (round(_sm * _b, 2) if _r == "WON"
+                                    else round(-_sm, 2))
+                except (TypeError, ValueError):
+                    pass
+    except Exception:
+        pass
     tracked_rows = db.execute(
         "SELECT * FROM tracked_plays WHERE user_id = ?",
         (session["user_id"],),
@@ -3197,6 +4957,12 @@ def home():
         "SELECT * FROM tracked_plays WHERE user_id = ? AND nivel = 'VALUE'",
         (VALUE_SYSTEM_USER_ID,),
     ).fetchall()
+    if _sin_acceso:
+        system_value_rows = []  # Paywall 2026-10-24: el trial sin VALUE
+    try:
+        hot_cards = hot_run_cards([dict(r) for r in system_value_rows])
+    except Exception:
+        hot_cards = []
     tracked_ids = {r["play_id"] for r in tracked_rows}
     tstats = compute_stats([dict(r) for r in tracked_rows])
     # tlevels incluye VALUE del sistema para la sección VALUE
@@ -3213,21 +4979,223 @@ def home():
         _vals.append(round(_cum, 2))
     tcurve = profit_curve_svg(_vals)
     # Resultados recientes: jugadas liquidadas del archivo (sin bloqueadas).
-    recientes = recientes_oficiales(6)
+    # Paywall 2026-10-24: sin acceso vigente no se muestran.
+    recientes = [] if _sin_acceso else recientes_oficiales(6)
+    # Fechas para el encabezado por día de Receipts (2026-10-16, diseño
+    # "Yesterday" estilo WGT aprobado por Alex): la plantilla etiqueta
+    # el día más reciente como Yesterday/Today según corresponda.
+    _hoy_iso = datetime.now(TZ).strftime("%Y-%m-%d")
+    _ayer_iso = (datetime.now(TZ) - timedelta(days=1)).strftime("%Y-%m-%d")
+    # Agrupado por día para Receipts conservando el orden del archivo
+    # (día más reciente primero): el groupby de Jinja ordena las claves
+    # y pondría el día más viejo arriba.
+    recientes_dias = []
+    for _r in recientes:
+        if recientes_dias and recientes_dias[-1]["fecha"] == _r.get("fecha"):
+            recientes_dias[-1]["plays"].append(_r)
+        else:
+            recientes_dias.append({"fecha": _r.get("fecha", ""),
+                                   "fecha_iso": _r.get("fecha_iso", ""),
+                                   "plays": [_r]})
     # Vista previa admin (pedido Alex 2026-09-30): ?preview=locked muestra el
     # home como lo ve un miembro sin Elite (teaser bloqueado + pancarta $1).
+    # Última Platinum liquidada (2026-10-30, pedido de Alex: línea de
+    # marketing en la tarjeta Platinum vacía — «Last Platinum play: … · Won»)
+    last_plat = None
+    try:
+        for _r in recientes_oficiales(40):
+            if (_r.get("nivel") or "").upper() in ("ELITE", "PLATINUM"):
+                _fd = datetime.strptime(_r["fecha_iso"], "%Y-%m-%d")
+                last_plat = {
+                    "fecha_txt": f"{_fd.strftime('%b')} {_fd.day}",
+                    "resultado": _r.get("resultado"),
+                }
+                break
+    except Exception:
+        last_plat = None
+    # Tirita de resultados del home (2026-10-30, orden de Alex: fuera la
+    # tirita de frases — manda la racha): si Platinum trae 2+ ganes
+    # corridos, la tirita anuncia esa racha el día siguiente a su último
+    # gane y la de días se pausa hasta el otro día; si no, sale la racha
+    # de días ganados del programa (2+). Sin racha, no sale tirita.
+    tira_home = None
+    try:
+        _dias_arch = load_archive()
+        _ultimo_dia = None
+        _plat_streak = 0
+        _plat_ultimo_gane = None
+        _plat_cerrada = False
+        for _d in _dias_arch:
+            _jug = [j for j in (_d.get("jugadas") or [])
+                    if j.get("resultado") in ("WON", "LOST")
+                    and not j.get("bloqueada")]
+            if _jug and _ultimo_dia is None:
+                _ultimo_dia = _d.get("fecha")
+            if not _plat_cerrada:
+                for _j in _jug:
+                    if (_j.get("nivel") or "").upper() in ("ELITE", "PLATINUM"):
+                        if _j["resultado"] == "WON":
+                            _plat_streak += 1
+                            if _plat_ultimo_gane is None:
+                                _plat_ultimo_gane = _d.get("fecha")
+                        else:
+                            _plat_cerrada = True
+                            break
+        _dias_streak = 0
+        for _d in _dias_arch:
+            _jug = [j for j in (_d.get("jugadas") or [])
+                    if j.get("resultado") in ("WON", "LOST")
+                    and not j.get("bloqueada")]
+            if not _jug:
+                continue
+            if sum(float(j.get("profit") or 0) for j in _jug) > 0:
+                _dias_streak += 1
+            else:
+                break
+        if _plat_streak >= 2 and _plat_ultimo_gane:
+            tira_home = {"tipo": "plat", "n": _plat_streak}
+        elif _dias_streak >= 2:
+            tira_home = {"tipo": "dias", "n": _dias_streak}
+    except Exception:
+        tira_home = None
     preview_locked = is_admin_for(user) and request.args.get("preview") == "locked"
     # Lluvia de dinero (Alex 2026-10-13): SOLO cuando ayer quedó positivo,
     # con burbuja de resultados, hasta que empieza el primer partido de hoy
     # — ver celebracion_hoy().
     _lux = home_lux_enabled()
+    # LIVE / PENDING en la tarjeta de estado (2026-10-15, pedido de Alex:
+    # "a la tarjeta métele un live en movimiento y un pendiente cuando no
+    # estén"): LIVE si alguna jugada de hoy ya empezó y sigue dentro de
+    # su ventana de juego (~3 h 45 m); PENDING si la card está publicada
+    # y ningún juego ha empezado. Nunca rompe el home: ante cualquier
+    # problema de parseo, ambos quedan en False.
+    hay_live = False
+    esperando = False
+    try:
+        _now = datetime.now(TZ)
+        _starts = []
+        for _p in plays:
+            _gt = (_p.get("game_time_et") or _p.get("hora") or "")
+            _gt = _gt.replace(" ET", "").strip()
+            if not _gt:
+                continue
+            try:
+                _t = datetime.strptime(_gt, "%I:%M %p")
+            except ValueError:
+                continue
+            _starts.append(datetime(_now.year, _now.month, _now.day,
+                                    _t.hour, _t.minute, tzinfo=TZ))
+        if _starts:
+            esperando = all(s > _now for s in _starts)
+            hay_live = any(s <= _now <= s + timedelta(hours=3, minutes=45)
+                           for s in _starts)
+    except Exception:
+        hay_live = False
+        esperando = False
+    # Carta bloqueada con el TICKET real difuminado (2026-10-20, pedido de
+    # Alex: «haz la jugada con su ticket, que se vea bloqueada»): quien no
+    # tiene Platinum ve la foto del ticket Platinum de hoy con el blur
+    # HORNEADO en la copia de nombre neutro (locked_ticket_url_for) — la
+    # foto original y su nombre nunca llegan a su HTML. Sin ticket o ante
+    # cualquier fallo: None y la carta sale con su panel bloqueado.
+    locked_ticket_url = None
+    if not card_pendiente and not (platinum_unlocked_for(user)
+                                   and not preview_locked):
+        _plat = next((p for p in plays
+                      if p.get("nivel") == "ELITE" and p.get("comprobante")),
+                     None)
+        if _plat:
+            locked_ticket_url = locked_ticket_url_for(
+                _plat, datetime.now(TZ).strftime("%Y-%m-%d"))
+    # Vista previa admin CON ticket real (2026-10-20, pedido de Alex:
+    # «hazlo con la Platinum de Tampa, usa ese recibo»): sin card de hoy
+    # publicada, la carta bloqueada de la preview se renderiza con la
+    # Platinum más reciente con comprobante del archivo y su imagen
+    # bloqueada (blur horneado con la fecha de ESA jugada). SOLO entra
+    # ?preview=locked (admin): las plantillas leen preview_locked_play
+    # únicamente en la rama sin jugada de hoy, y el flujo de miembros
+    # nunca lo recibe con valor — su estado pendiente no cambia.
+    preview_locked_play = None
+    if preview_locked and card_pendiente:
+        preview_locked_play, _prev_fecha = platinum_reciente_con_ticket()
+        if preview_locked_play:
+            locked_ticket_url = locked_ticket_url_for(
+                preview_locked_play, _prev_fecha)
+    # Estados sellados de la sección Platinum (Alex, 2026-10-20): para
+    # quien NO tiene Platinum, si la card de hoy NO está publicada de
+    # verdad, la sección NO existe (locked_plays vacío: la plantilla no
+    # renderiza ni el encabezado). Solo la publicación real — el mismo
+    # estado card_publicada_hoy() de siempre, nunca un anuncio, el
+    # horario, una preview ni una candidata del Admin — enciende la
+    # carta original bloqueada con las ELITE de hoy sanitizadas
+    # (_locked_play_view). La preview admin (?preview=locked) es solo la
+    # herramienta de verificación de Alex: sin card de hoy usa el
+    # fallback de la Platinum reciente con ticket (Tampa); el flujo de
+    # miembros jamás recibe ese fallback.
+    locked_plays = []
+    if not platinum_unlocked_for(user) or preview_locked:
+        if _card_publicada:
+            _hoy_lock = datetime.now(TZ).strftime("%Y-%m-%d")
+            for _p in plays:
+                if _p.get("nivel") in ("ELITE", "GOLD"):
+                    _tk = (locked_ticket_url_for(_p, _hoy_lock)
+                           if _p.get("comprobante") else None)
+                    # La plantilla lux incluye la carta bloqueada con la
+                    # jugada completa: se le anota la URL difuminada de SU
+                    # ticket (por jugada desde la Opción B) para que la
+                    # foto borrosa salga también ahí, como ordena la
+                    # regla del ticket bloqueado. La URL es de la copia
+                    # horneada — la original nunca se anota.
+                    _p["ticket_url"] = _tk
+                    locked_plays.append(_locked_play_view(_p, _tk))
+        elif preview_locked and preview_locked_play:
+            locked_plays.append(
+                _locked_play_view(preview_locked_play, locked_ticket_url))
+    # Franja «Your risk today» (2026-10-23, idea de diseño aprobada por Alex
+    # SOLO como prueba en su cuenta): total en riesgo hoy de SUS jugadas
+    # trackeadas aún sin liquidar, como % de su bankroll.
+    risk_hoy = None
+    if is_alex_member(user):
+        try:
+            _pend = [r for r in tracked_rows
+                     if (r["fecha"] or "") == _hoy_iso and not r["resultado"]]
+            _total = sum(float(r["stake_monto"] or 0) for r in _pend)
+            _br = float(user["bankroll"]) if user["bankroll"] else 10000.0
+            risk_hoy = {"total": round(_total, 2),
+                        "pct": round(_total / _br * 100, 1) if _br else 0.0,
+                        "n": len(_pend)}
+        except Exception:
+            risk_hoy = None
+    # Burbuja de rating (2026-10-30, idea de Alex con reglas de respeto):
+    # solo si el miembro aún no reseñó; nunca tras un día oficial perdedor
+    # (si el último día liquidado del archivo cerró en negativo, se apaga);
+    # el cierre con ✕ lo maneja el cliente (localStorage, vuelve a los 7 días).
+    show_rate_bubble = False
+    try:
+        _ya_reseno = db.execute(
+            "SELECT 1 FROM reviews WHERE user_id = ?",
+            (session["user_id"],)).fetchone()
+        if not _ya_reseno:
+            show_rate_bubble = True
+            _dias_arch = load_archive()
+            if _dias_arch:
+                _ult_dia = max(_dias_arch, key=lambda x: x.get("fecha", ""))
+                _profit_ult = sum(float(j.get("profit") or 0)
+                                   for j in (_ult_dia.get("jugadas") or []))
+                if _profit_ult < 0:
+                    show_rate_bubble = False
+    except Exception:
+        show_rate_bubble = False
     return render_template(
         # Tema v2 (moderno) es el predeterminado desde 2026-10-02 (pedido Alex);
         # v1 (clásico) queda como reversión vía /theme/v1. Diseño lux
         # (2026-10-12): home premium salvo revert del admin (site_settings).
         "home.html" if session.get("theme") == "v1" else ("home_lux.html" if _lux else "home_v2.html"),
         plays=plays,
+        show_rate_bubble=show_rate_bubble,
         card_pendiente=card_pendiente,
+        hay_live=hay_live,
+        esperando=esperando,
         tracked_ids=tracked_ids,
         program=program,
         fecha=fecha_larga(),
@@ -3253,14 +5221,105 @@ def home():
         streak=program_streak(),
         resumen_ayer=resumen_ayer(),
         recientes=recientes,
+        risk_hoy=risk_hoy,
+        recientes_dias=recientes_dias,
+        last_plat=last_plat,
+        tira_home=tira_home,
+        hoy_iso=_hoy_iso,
+        ayer_iso=_ayer_iso,
         recientes_value=recientes_value(),
+        hot_cards=hot_cards,
+        record_stats=official_tracker_full(),
+        record_por_liga=record_por_liga(),
         last_elite_win=last_elite_win(),
+        locked_ticket_url=locked_ticket_url,
+        locked_plays=locked_plays,
+        preview_locked_play=preview_locked_play,
         es_admin=is_admin_for(user),
         es_alex=is_alex_member(user),
         skip_splash=request.args.get("splash") == "0",
         # miembro_platinum con preview: en ?preview=locked el banner de
         # invitación VIP también se muestra (pedido Alex 2026-10-02).
         miembro_platinum=(platinum_unlocked_for(user) and not preview_locked),
+        # Hero fijo original (2026-10-26, reversión a pedido de Alex: solo
+        # el de fútbol con casco, sin rotación por ligas).
+        # Banner gate (2026-10-31): the Dashboard "new version" banner keys
+        # off PUBLIC_RELEASE, never the deploy commit — see the constant.
+        tst_version=PUBLIC_RELEASE,
+    )
+
+
+@app.route("/admin/home-preview")
+@admin_required
+def admin_home_preview():
+    """Vista previa del rediseno v9 del home, SOLO para admin (2026-10-26,
+    pedido de Alex: lanzarla solo para el, que solo el la vea).
+    No toca /home ni ningun dato: solo LEE la misma card que /home
+    (sin checkin, sin aviso de login, sin auto-grado). Quien no es
+    admin rebota a /home por el decorador admin_required."""
+    user = current_user()
+    program, plays = load_data()
+    _card_publicada = card_publicada_hoy()
+    card_pendiente = not _card_publicada or not plays
+    if card_pendiente:
+        # Igual que /home: solo el admin ve la card pendiente.
+        pending = load_pending_plays() if is_admin_for(user) else []
+        if pending:
+            plays = pending
+            card_pendiente = False
+        else:
+            plays = []
+    plays = personalizar_plays(plays, user)
+    # Igual que /home: ids trakeados para que la card muestre ✓ Tracked
+    # en vez de + Track (boton por boton identica a la oficial).
+    try:
+        _tdb = get_db()
+        tracked_ids = {r["play_id"] for r in _tdb.execute(
+            "SELECT play_id FROM tracked_plays WHERE user_id = ?",
+            (session["user_id"],)).fetchall()}
+    except Exception:
+        tracked_ids = set()
+    # Seccion "Hot right now": mismas tarjetas de rachas que /home.
+    try:
+        _hdb = get_db()
+        _sys_rows = _hdb.execute(
+            "SELECT * FROM tracked_plays WHERE user_id = ? AND nivel = 'VALUE'",
+            (VALUE_SYSTEM_USER_ID,)).fetchall()
+        hot_cards = hot_run_cards([dict(r) for r in _sys_rows])
+    except Exception:
+        hot_cards = []
+    # Franja de riesgo: igual que /home, solo para la cuenta de Alex.
+    risk_hoy = None
+    if is_alex_member(user):
+        try:
+            db = get_db()
+            _hoy_iso = datetime.now(TZ).strftime("%Y-%m-%d")
+            _pend = [r for r in db.execute(
+                "SELECT * FROM tracked_plays WHERE user_id = ?",
+                (session["user_id"],)).fetchall()
+                if (r["fecha"] or "") == _hoy_iso and not r["resultado"]]
+            _total = sum(float(r["stake_monto"] or 0) for r in _pend)
+            _br = float(user["bankroll"]) if user["bankroll"] else 10000.0
+            risk_hoy = {"total": round(_total, 2),
+                        "pct": round(_total / _br * 100, 1) if _br else 0.0,
+                        "n": len(_pend)}
+        except Exception:
+            risk_hoy = None
+    return render_template(
+        "home_preview_v9.html",
+        plays=plays,
+        card_pendiente=card_pendiente,
+        fecha=fecha_larga(),
+        saludo=saludo_hoy(),
+        bankroll=user["bankroll"] if user else None,
+        res=program_stats(),
+        risk_hoy=risk_hoy,
+        tracked_ids=tracked_ids,
+        hot_cards=hot_cards,
+        dias=load_archive(),
+        hoy_iso=datetime.now(TZ).strftime("%Y-%m-%d"),
+        ayer_iso=(datetime.now(TZ) - timedelta(days=1)).strftime("%Y-%m-%d"),
+        tst_version=PUBLIC_RELEASE,
     )
 
 
@@ -3326,6 +5385,83 @@ def _send_meta_capi_registration(email, event_id, ip, user_agent, fbp, fbc, sour
         pass
 
 
+def _send_meta_capi_purchase(email, value, currency, event_id, event_time):
+    """Conversions API de Meta (2026-10-30): envía el Purchase desde el
+    servidor cuando Stripe confirma un pago REAL (webhook invoice.paid),
+    con el monto real cobrado. Es el evento que Meta pide para optimizar
+    la campaña por compradores (su recomendación de bajar el costo por
+    compra ~14%): el checkout es de Stripe, así que el evento confiable
+    nace aquí, no en el navegador.
+
+    El event_id es estable por factura ("purchase_<invoice_id>") y lo
+    comparte el pixel del navegador en la vuelta del checkout incrustado
+    (/desbloquear-platinum?checkout=ok), para que Meta deduplique
+    servidor vs navegador y un reintento de Stripe no duplique la venta.
+
+    No-op silencioso si no existe la env var META_CAPI_TOKEN (el mismo
+    token del CompleteRegistration server-side). Si existe la env var
+    META_CAPI_TEST_EVENT_CODE, el evento sale como PRUEBA (visible en
+    «Eventos de prueba» del Administrador de eventos, sin tocar datos
+    reales). El envío va SIEMPRE en un hilo de fondo con timeout corto y
+    try/except total: un fallo de Meta NUNCA puede romper el webhook.
+    El token jamás se loguea ni se imprime."""
+    token = os.environ.get("META_CAPI_TOKEN")
+    if not token or not email:
+        return
+    try:
+        monto = float(value)
+    except (TypeError, ValueError):
+        return
+    if monto <= 0:
+        return
+
+    def _go():
+        try:
+            evento = {
+                "event_name": "Purchase",
+                "event_time": int(event_time or time.time()),
+                "event_id": event_id,
+                "event_source_url": "https://www.thesharpteam.bet/desbloquear-platinum",
+                "action_source": "website",
+                "user_data": {
+                    "em": [hashlib.sha256(
+                        email.strip().lower().encode("utf-8")).hexdigest()],
+                },
+                "custom_data": {
+                    "value": monto,
+                    "currency": (currency or "USD").upper(),
+                    "content_name": "Platinum",
+                    "content_type": "product",
+                },
+            }
+            payload = {"data": [evento], "access_token": token}
+            test_code = os.environ.get("META_CAPI_TEST_EVENT_CODE")
+            if test_code:
+                payload["test_event_code"] = test_code
+            req = urllib.request.Request(
+                "https://graph.facebook.com/v21.0/1625430959036525/events",
+                data=json.dumps(payload).encode("utf-8"),
+                headers={
+                    "Content-Type": "application/json",
+                    "User-Agent": (
+                        "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) "
+                        "AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 "
+                        "Mobile/15E148 Safari/604.1"
+                    ),
+                },
+                method="POST",
+            )
+            with urllib.request.urlopen(req, timeout=4) as resp:
+                resp.read()
+        except Exception:
+            pass
+
+    try:
+        threading.Thread(target=_go, daemon=True).start()
+    except Exception:
+        pass
+
+
 _GEO_CACHE = {}
 
 
@@ -3356,6 +5492,40 @@ def _pais_visitante():
         pais = ""
     _GEO_CACHE[ip] = (time.time(), pais)
     return pais
+
+
+def _registro_semana():
+    """Récord REAL de los últimos 7 días (franja caliente de /registro,
+    2026-10-21): se calcula del archivo oficial en cada carga — si la
+    semana cambia, la franja cambia sola; sin jugadas, no se muestra."""
+    try:
+        hoy = datetime.now(TZ).date()
+        desde = (hoy - timedelta(days=7)).isoformat()
+        hasta = hoy.isoformat()
+        g = p = 0
+        profit = 0.0
+        for d in load_archive():
+            f = str(d.get("fecha") or "")[:10]
+            if not f or f < desde or f > hasta:
+                continue
+            for j in d.get("jugadas", []) or []:
+                if j.get("resultado") not in ("WON", "LOST") or j.get("bloqueada"):
+                    continue
+                if j["resultado"] == "WON":
+                    g += 1
+                else:
+                    p += 1
+                profit += float(j.get("profit") or 0.0)
+        total = g + p
+        if not total:
+            return None
+        return {
+            "ganadas": g, "perdidas": p, "total": total,
+            "win_rate": f"{g / total * 100:.1f}",
+            "profit_display": (f"+${profit:,.0f}" if profit >= 0 else f"-${abs(profit):,.0f}"),
+        }
+    except Exception:
+        return None
 
 
 @app.route("/registro", methods=["GET", "POST"])
@@ -3389,9 +5559,11 @@ def register():
         _recientes = []
     for _r in _recientes:
         _r["units_display"] = f"{float(_r.get('profit') or 0) / 25.0:+.2f}u"
-    _drop = "11:00 AM ET" if datetime.now(TZ).weekday() >= 5 else "2:00 PM ET"
-    _reg_ctx = {"gold": _gold, "stats": _stats, "ayer": _ayer,
-                "recientes": _recientes, "drop_time": _drop}
+    _drop = "1:00 PM ET"  # 2026-10-20, orden de Alex: la card sale a la 1:00 PM ET TODOS los dias (antes 2:00 PM, orden 2026-10-17)
+    _semana = _registro_semana()
+    _reg_ctx = {"gold": _gold, "stats": _stats, "ayer": _ayer, "semana": _semana,
+                "recientes": _recientes, "drop_time": _drop,
+                "turnstile_key": TURNSTILE_SITE_KEY}
     # Idioma de la landing (2026-10-14, pedido de Alex): manda ?lang=;
     # si no, la cookie; si no, SOLO República Dominicana (geo-IP) recibe
     # español — cualquier otro país ve inglés, siempre.
@@ -3401,65 +5573,197 @@ def register():
     if _lang not in ("es", "en"):
         _lang = "es" if _pais_visitante() == "DO" else "en"
     _tpl = "register_es.html" if _lang == "es" else "register.html"
+    # Lanzamiento landing nueva (2026-10-31): SOLO con el interruptor
+    # activo se sirven las plantillas nuevas (landing aprobada con el
+    # formulario integrado). Apagado (default), se sirve lo de siempre y
+    # el rollback es inmediato apagando la env var.
+    if REGISTRO_NUEVO_ACTIVO:
+        _tpl = "registro_nuevo_es.html" if _lang == "es" else "registro_nuevo.html"
     if request.method == "POST":
         nombre = request.form.get("nombre", "").strip()
         email = request.form.get("email", "").strip().lower()
         password = request.form.get("password", "")
         phone = request.form.get("phone", "").strip()
         sms_optin = 1 if request.form.get("sms_optin") == "1" and phone else 0
+        # Intención declarada en la landing nueva (lista blanca estricta):
+        # solo se guarda cuando el interruptor de lanzamiento está activo;
+        # con el flujo de siempre el campo ni se lee ni se guarda.
+        _intent = (request.form.get("signup_intent") or "").strip().lower()
+        if _intent not in ("platinum", "free"):
+            _intent = None
         if not nombre or not email or len(password) < 6:
             flash("Escribe tu nombre, un correo válido y una contraseña de al menos 6 caracteres." if _lang == "es" else "Enter your name, a valid email and a password of at least 6 characters.", "error")
             return render_template(_tpl, **_reg_ctx), 400
-        db = get_db()
-        exists = db.execute("SELECT id FROM users WHERE email = ?", (email,)).fetchone()
-        if exists:
-            flash("Ese correo ya está registrado. Inicia sesión." if _lang == "es" else "That email is already registered. Log in.", "error")
+        # Captcha anti-robots (2026-10-18): sin pasar Turnstile no se crea
+        # ninguna cuenta. Sin llaves configuradas, _turnstile_ok() no bloquea.
+        if not _turnstile_ok():
+            flash("Completa la verificación «No soy un robot» e inténtalo de nuevo." if _lang == "es" else "Please complete the 'I'm not a robot' check and try again.", "error")
             return render_template(_tpl, **_reg_ctx), 400
-        new_id = insert_returning_id(
-            db,
-            "INSERT INTO users (nombre, email, password_hash, phone, sms_optin, created_at) VALUES (?, ?, ?, ?, ?, ?)",
-            (nombre, email, hash_password(password), phone or None, sms_optin, now_iso()),
-        )
+        db = get_db()
+        exists = db.execute("SELECT id, email_verified FROM users WHERE email = ?", (email,)).fetchone()
+        if exists:
+            _ya_verificado = 1
+            try:
+                _ya_verificado = exists["email_verified"]
+            except Exception:
+                _ya_verificado = 1
+            if _ya_verificado:
+                flash("Ese correo ya está registrado. Inicia sesión." if _lang == "es" else "That email is already registered. Log in.", "error")
+                return render_template(_tpl, **_reg_ctx), 400
+            # Se registró antes pero nunca activó: token nuevo y reenvío.
+            _tok = secrets.token_urlsafe(32)
+            db.execute("UPDATE users SET activation_token = ? WHERE id = ?",
+                       (_tok, exists["id"]))
+            # Si volvió por la landing nueva con el interruptor activo, su
+            # intento cuenta como registro de la cohorte nueva (nunca
+            # activó: a todos los efectos es un registro nuevo).
+            if REGISTRO_NUEVO_ACTIVO:
+                db.execute(
+                    "UPDATE users SET signup_offer = ?, signup_intent = ? WHERE id = ?",
+                    (PLATINUM_OFFER_FREE_MONTH, _intent, exists["id"]))
+            db.commit()
+            send_activation_email(nombre, email, _tok, _lang)
+            return render_template("confirmacion.html", email=email, nombre=nombre, lang=_lang, reenviado=True)
+        # La cuenta nace SIN ACTIVAR (2026-10-18, orden de Alex): no hay
+        # sesión, no hay mes gratis ni bienvenida hasta que el dueño toque
+        # el enlace del correo de activación (/activar/<token>).
+        _tok = secrets.token_urlsafe(32)
+        if REGISTRO_NUEVO_ACTIVO:
+            # Cohorte nueva: la cuenta nace marcada con su oferta y su
+            # intención; la elegibilidad del trial de 30 días se decide
+            # después, en el servidor, al crear el checkout.
+            insert_returning_id(
+                db,
+                "INSERT INTO users (nombre, email, password_hash, phone, sms_optin, created_at, lang, email_verified, activation_token, signup_offer, signup_intent) VALUES (?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?)",
+                (nombre, email, hash_password(password), phone or None, sms_optin, now_iso(), _lang, _tok, PLATINUM_OFFER_FREE_MONTH, _intent),
+            )
+        else:
+            insert_returning_id(
+                db,
+                "INSERT INTO users (nombre, email, password_hash, phone, sms_optin, created_at, lang, email_verified, activation_token) VALUES (?, ?, ?, ?, ?, ?, ?, 0, ?)",
+                (nombre, email, hash_password(password), phone or None, sms_optin, now_iso(), _lang, _tok),
+            )
         db.commit()
-        log_notificacion(db, "miembro_nuevo", f"New member: {nombre}", email)
-        # El email del admin (ADMIN_EMAIL) queda marcado automáticamente.
-        es_admin = bool(admin_email()) and email == admin_email()
-        if es_admin:
-            db.execute("UPDATE users SET is_admin = 1 WHERE id = ?", (new_id,))
-            db.commit()
-        session["user_id"] = new_id
-        session["nombre"] = nombre
-        session["is_admin"] = es_admin
-        notify_new_member(nombre, email)
-        # Pedido Alex 2026-10-05: el email de bienvenida llega a TODOS al
-        # registrarse, aunque sea cuenta gratis.
-        try:
-            send_welcome_email(nombre, email)
-            db.execute("UPDATE users SET welcome_email_sent = 1 WHERE id = ?", (new_id,))
-            db.commit()
-        except Exception:
-            pass
-        # Pixel de Meta: la bienvenida reporta el registro una sola vez.
-        # CAPI (2026-10-14): se genera UN event_id por registro y se
-        # comparte entre el envío del servidor (aquí) y el pixel del
-        # navegador (en /bienvenida) para que Meta deduplique el evento.
-        fb_event_id = uuid.uuid4().hex
-        session["fb_reg"] = 1
-        session["fb_event_id"] = fb_event_id
-        client_ip = (request.headers.get("X-Forwarded-For", "") or "").split(",")[0].strip() or request.remote_addr
-        _send_meta_capi_registration(
-            email,
-            fb_event_id,
-            client_ip,
-            request.user_agent.string if request.user_agent else "",
-            request.cookies.get("_fbp"),
-            request.cookies.get("_fbc"),
-            request.url,
-        )
-        return redirect(url_for("bienvenida"))
+        send_activation_email(nombre, email, _tok, _lang)
+        return render_template("confirmacion.html", email=email, nombre=nombre, lang=_lang, reenviado=False)
     _resp = make_response(render_template(_tpl, **_reg_ctx))
     _resp.set_cookie("tst_lang", _lang, max_age=30 * 86400, samesite="Lax")
     return _resp
+
+
+@app.route("/reenviar-activacion", methods=["POST"])
+def reenviar_activacion():
+    """Reenvío del correo de activación desde la pantalla de
+    confirmación (2026-10-21): regenera el token y reenvía solo si la
+    cuenta existe y sigue sin verificar. La respuesta es idéntica en
+    todos los casos (no revela si el correo existe) y hay un freno de
+    60 segundos por sesión."""
+    email = (request.form.get("email") or "").strip().lower()
+    lang = (request.form.get("lang") or "en").strip().lower()
+    if lang not in ("es", "en"):
+        lang = "en"
+    try:
+        ultimo = float(session.get("resend_ts") or 0)
+    except (TypeError, ValueError):
+        ultimo = 0
+    if email and time.time() - ultimo >= 60:
+        try:
+            db = get_db()
+            u = db.execute("SELECT id, nombre, email_verified, lang FROM users WHERE email = ?", (email,)).fetchone()
+            if u and not u["email_verified"]:
+                _tok = secrets.token_urlsafe(32)
+                db.execute("UPDATE users SET activation_token = ? WHERE id = ?", (_tok, u["id"]))
+                db.commit()
+                send_activation_email(u["nombre"], email, _tok, u["lang"] or lang)
+            session["resend_ts"] = time.time()
+        except Exception:
+            pass
+    return render_template("confirmacion.html", email=email, lang=lang, reenviado=True)
+
+
+@app.route("/activar/<token>")
+def activar_cuenta(token):
+    """Activa una cuenta nueva desde el enlace del correo (2026-10-18).
+
+    Al activar: se marca verificada, entra la sesión, sale la bienvenida
+    y el aviso de miembro nuevo, y se reporta el registro a Meta (pixel +
+    CAPI con el mismo event_id, como antes).
+
+    Desde 2026-10-19 (orden de Alex) activar YA NO otorga Platinum: el
+    mes gratis murió. Platinum arranca solo con el checkout de $1
+    (webhook checkout.session.completed). Las cuentas con reloj de mes
+    gratis ya vigente no se tocan: su platinum_trial_ends sigue corriendo
+    hasta su fecha.
+    """
+    db = get_db()
+    user = db.execute("SELECT * FROM users WHERE activation_token = ?",
+                      (token,)).fetchone()
+    if not user:
+        flash("That activation link is no longer valid. Log in or register again.", "error")
+        return redirect(url_for("login"))
+    uid = user["id"]
+    nombre = user["nombre"]
+    email = user["email"]
+    db.execute("UPDATE users SET email_verified = 1, activation_token = NULL, activated_at = ? WHERE id = ?",
+               (now_iso(), uid))
+    db.commit()
+    # Admin solo si la cuenta ya trae la marca en la BD (2026-10-18:
+    # ADMIN_EMAIL es el correo de avisos, no una identidad).
+    es_admin = is_admin_for(user)
+    if es_admin:
+        db.execute("UPDATE users SET is_admin = 1 WHERE id = ?", (uid,))
+        db.commit()
+    # Sin grant de Platinum al activar (2026-10-19): la cuenta queda en
+    # nivel Gold/free hasta que pague el checkout de $1. Nada que hacer
+    # aquí a propósito — platinum_unlocked y platinum_trial_ends se dejan
+    # exactamente como están.
+    log_notificacion(db, "miembro_nuevo", f"New member: {nombre}", email)
+    session["user_id"] = uid
+    session["nombre"] = nombre
+    session["is_admin"] = es_admin
+    session.permanent = True
+    _registrar_actividad(uid, "login")
+    notify_new_member(nombre, email)
+    # Pedido Alex 2026-10-05: el email de bienvenida llega a TODOS, y desde
+    # 2026-10-18 llega al ACTIVAR la cuenta (cuenta real, correo real).
+    try:
+        send_welcome_email(nombre, email)
+        db.execute("UPDATE users SET welcome_email_sent = 1 WHERE id = ?", (uid,))
+        db.commit()
+    except Exception:
+        pass
+    # Pixel de Meta: la bienvenida reporta el registro una sola vez.
+    # CAPI (2026-10-14): UN event_id compartido entre el servidor (aquí) y
+    # el pixel del navegador (en /bienvenida) para que Meta deduplique.
+    fb_event_id = uuid.uuid4().hex
+    session["fb_reg"] = 1
+    session["fb_event_id"] = fb_event_id
+    client_ip = (request.headers.get("X-Forwarded-For", "") or "").split(",")[0].strip() or request.remote_addr
+    _send_meta_capi_registration(
+        email,
+        fb_event_id,
+        client_ip,
+        request.user_agent.string if request.user_agent else "",
+        request.cookies.get("_fbp"),
+        request.cookies.get("_fbc"),
+        request.url,
+    )
+    # Cohorte de la landing nueva (2026-10-31): quien declaró intención
+    # Platinum al registrarse va DIRECTO a /desbloquear-platinum a
+    # completar su checkout de $1 — su mes gratis arranca con el pago, no
+    # con el formulario. Quien eligió Sharp Free, y cualquier cuenta que
+    # no sea de la cohorte nueva, sigue a /bienvenida como siempre.
+    _intent = None
+    _offer = None
+    try:
+        _intent = user["signup_intent"]
+        _offer = user["signup_offer"]
+    except Exception:
+        _intent = None
+        _offer = None
+    if _offer == PLATINUM_OFFER_FREE_MONTH and _intent == "platinum":
+        return redirect(url_for("desbloquear_platinum"))
+    return redirect(url_for("bienvenida"))
 
 
 # Links rastreados (pedido Alex 2026-10-02): cada clic se guarda en
@@ -3533,7 +5837,10 @@ def _notify_click_telegram(slug):
 
 
 _last_login_notify = {}
-_LOGIN_NOTIFY_COOLDOWN_SEC = 10  # 10 seg por miembro (solo evita duplicados por doble-carga)
+# 2026-10-26 (orden de Alex): suena UNA sola vez al día por miembro.
+# Antes eran solo 10 seg, por eso cada vez que volvía al /home (otra
+# página, recarga) sonaba de nuevo siendo el mismo usuario.
+_LOGIN_NOTIFY_COOLDOWN_SEC = 86400  # 24 h por miembro, en memoria
 
 
 def _notify_login_telegram(user):
@@ -3544,8 +5851,9 @@ def _notify_login_telegram(user):
     CAMBIO 2026-10-10 (orden de Alex): la cuenta de miembro de Alex
     (pena.manuel@myyahoo.com) YA NO se notifica — solo avisa cuando
     OTROS miembros entran. Se excluyen logins de admin. No avisa
-    bots/crawlers. Cooldown de solo 60 seg por miembro (únicamente para
-    no duplicar por doble-carga de la página).
+    bots/crawlers. Cooldown de 24 h por miembro (2026-10-26, orden de
+    Alex): una sola notificación al día por usuario, aunque recargue
+    o navegue y vuelva al /home.
     Nunca bloquea la carga: timeout corto y todo error se traga en silencio.
     """
     if not TELEGRAM_BOT_TOKEN or not CLICK_NOTIFY_CHAT_ID:
@@ -3566,14 +5874,10 @@ def _notify_login_telegram(user):
     key = f"login:{_uget(user, 'id')}"
     if now - _last_login_notify.get(key, 0) < _LOGIN_NOTIFY_COOLDOWN_SEC:
         return False
-    nombre = _uget(user, "nombre") or _uget(user, "email") or "?"
-    email = _uget(user, "email") or ""
-    elite = "⭐ Platinum" if _uget(user, "platinum_unlocked") else "🟡 Free"
-    try:
-        hora = datetime.now(ZoneInfo("America/New_York")).strftime("%-I:%M %p ET")
-    except Exception:
-        hora = ""
-    text = f"👤 {nombre} ({elite}) entró al Dashboard\n{email}\n{hora}".strip()
+    # 2026-10-26 (orden de Alex, diseño 2): solo "Miembro {nombre} entró
+    # al Dashboard" — sin email, sin nivel (Free/Platinum) y sin hora.
+    nombre = _uget(user, "nombre") or "?"
+    text = f"👤 Miembro {nombre} entró al Dashboard"
     try:
         payload = json.dumps(
             {"chat_id": CLICK_NOTIFY_CHAT_ID, "text": text}
@@ -3664,7 +5968,16 @@ def bienvenida():
     evento CompleteRegistration del pixel de Meta (2026-10-14)."""
     fb_reg = bool(session.pop("fb_reg", None))
     fb_event_id = session.pop("fb_event_id", None)
-    return render_template("bienvenida.html", nombre=session.get("nombre", ""), fb_reg=fb_reg, fb_event_id=fb_event_id)
+    # Texto de la oferta según cohorte (2026-10-31): la plantilla muestra
+    # "$1 + mes gratis" solo a la cohorte nueva; los demás ven el texto
+    # legacy de siempre ("$1 for your first 7 days").
+    _fm = False
+    try:
+        _u = current_user()
+        _fm = bool(_u) and (_u["signup_offer"] or "") == PLATINUM_OFFER_FREE_MONTH
+    except Exception:
+        _fm = False
+    return render_template("bienvenida.html", nombre=session.get("nombre", ""), fb_reg=fb_reg, fb_event_id=fb_event_id, offer_free_month=_fm)
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -3679,13 +5992,11 @@ def login():
         if not user or not check_password(password, user["password_hash"]):
             flash("Incorrect email or password.", "error")
             return render_template("login.html"), 401
-        # Marca admin automáticamente si el email coincide con ADMIN_EMAIL
-        # (cubre cuentas creadas antes de configurar la variable).
+        # is_admin sale SOLO de la base de datos (2026-10-18): ADMIN_EMAIL
+        # es el correo de AVISOS del admin (la cuenta personal de Alex),
+        # NO una marca de identidad: su cuenta de miembro usa ese mismo
+        # correo y debe verse como miembro normal.
         es_admin = is_admin_for(user)
-        if not es_admin and admin_email() and email == admin_email():
-            db.execute("UPDATE users SET is_admin = 1 WHERE id = ?", (user["id"],))
-            db.commit()
-            es_admin = True
         # Arranque: si todavía no existe ningún admin, el primero en entrar lo es.
         if not es_admin:
             fila = db.execute("SELECT COUNT(*) AS n FROM users WHERE is_admin = 1").fetchone()
@@ -3694,10 +6005,40 @@ def login():
                 db.execute("UPDATE users SET is_admin = 1 WHERE id = ?", (user["id"],))
                 db.commit()
                 es_admin = True
+        # Cuenta SIN ACTIVAR (2026-10-18): llenó el formulario pero nunca
+        # tocó el enlace del correo — no entra; se le reenvía la activación
+        # al momento (token nuevo). El admin nunca se bloquea a sí mismo.
+        _verificado = 1
+        try:
+            _verificado = user["email_verified"]
+        except Exception:
+            _verificado = 1
+        if not _verificado and es_admin:
+            db.execute("UPDATE users SET email_verified = 1, activation_token = NULL WHERE id = ?",
+                       (user["id"],))
+            db.commit()
+            _verificado = 1
+        if not _verificado:
+            _tok = secrets.token_urlsafe(32)
+            db.execute("UPDATE users SET activation_token = ? WHERE id = ?",
+                       (_tok, user["id"]))
+            db.commit()
+            _ulang = "en"
+            try:
+                _ulang = user["lang"] or "en"
+            except Exception:
+                _ulang = "en"
+            send_activation_email(user["nombre"], email, _tok, _ulang)
+            send_activation_email(user["nombre"], email, _tok, _ulang)
+            # Aviso GRANDE de confirmacion (2026-10-23, pedido de Alex:
+            # "la mas grande") - bloque propio en login.html en vez de
+            # la linea flash pequena.
+            return render_template("login.html", sin_confirmar_email=email), 403
         session["user_id"] = user["id"]
         session["nombre"] = user["nombre"]
         session["is_admin"] = es_admin
         session.permanent = True  # 2026-09-25: cookie persistente 30 días (antes iOS la borraba → logout)
+        _registrar_actividad(user["id"], "login")
         flash(f"Welcome back, {user['nombre']}!", "ok")
         next_url = request.args.get("next") or url_for("home")
         return redirect(next_url)
@@ -3832,6 +6173,45 @@ def _stripe_subscription_info(user):
         return None
 
 
+def _stripe_set_cancel_at_period_end(user, cancel=True):
+    """Aplica (o revierte) en Stripe la cancelación al final del período de
+    la suscripción del miembro (2026-10-30, orden de Alex: si el cliente
+    pide cancelar, no se le cobra más — sin que nadie tenga que procesarla
+    a mano). Nunca rompe: devuelve True solo si Stripe confirmó el cambio."""
+    if not stripe_configurado() or not user:
+        return False
+    sub_id = ""
+    try:
+        sub_id = (user["stripe_subscription_id"] or "").strip()
+    except Exception:
+        sub_id = ""
+    if not sub_id:
+        try:
+            customer_id = (user["stripe_customer_id"] or "").strip()
+        except Exception:
+            customer_id = ""
+        if not customer_id:
+            return False
+        try:
+            import stripe
+            stripe.api_key = STRIPE_SECRET_KEY
+            subs = stripe.Subscription.list(customer=customer_id, limit=1)
+            if not subs or not subs.data:
+                return False
+            sub_id = subs.data[0].get("id") or ""
+        except Exception:
+            return False
+    if not sub_id:
+        return False
+    try:
+        import stripe
+        stripe.api_key = STRIPE_SECRET_KEY
+        stripe.Subscription.modify(sub_id, cancel_at_period_end=bool(cancel))
+        return True
+    except Exception:
+        return False
+
+
 def _stripe_payment_history(user, limit=20):
     """Historial de pagos (facturas de Stripe) para la pestaña Payments de
     /cuenta (2026-10-12). Devuelve lista de dicts; [] ante cualquier fallo."""
@@ -3884,6 +6264,31 @@ def _stripe_force_english(customer_id):
         stripe.Customer.modify(str(customer_id), preferred_locales=["en"])
     except Exception:
         pass
+
+
+@app.route("/reportar", methods=["GET", "POST"])
+@login_required
+def reportar():
+    """Reporta un error o sugiere una mejora (2026-10-17, pedido de Alex):
+    llega al centro de notificaciones del admin con el email del miembro."""
+    user = current_user()
+    tipo = (request.args.get("tipo") or request.form.get("tipo") or "error").strip().lower()
+    if tipo not in ("error", "idea"):
+        tipo = "error"
+    enviado = False
+    if request.method == "POST":
+        mensaje = (request.form.get("mensaje") or "").strip()[:2000]
+        pagina = (request.form.get("pagina") or "").strip()[:200]
+        if mensaje:
+            db = get_db()
+            nombre = (user["nombre"] or "") if user else ""
+            email = (user["email"] or "") if user else ""
+            titulo = ("⚠️ Error reportado" if tipo == "error" else "💡 Sugerencia") + (f" — {nombre}" if nombre else "")
+            detalle = mensaje + f"\n— {email} · página: {pagina or '—'}"
+            log_notificacion(db, "reporte_error" if tipo == "error" else "sugerencia", titulo, detalle)
+            db.commit()
+            enviado = True
+    return render_template("reportar.html", tipo=tipo, enviado=enviado)
 
 
 @app.route("/cuenta", methods=["GET", "POST"])
@@ -4021,6 +6426,64 @@ def cuenta_preferencias():
     return redirect(url_for("cuenta") + "?tab=preferences")
 
 
+@app.route("/app-settings")
+@login_required
+def app_settings():
+    """App settings (2026-10-29, pedido por Alex con referencia): hub de
+    ajustes del miembro — membresía, stakes y libros, este dispositivo,
+    la app y notificaciones — todo con datos reales de su cuenta y los
+    mismos formularios/endpoints de /cuenta (nada duplicado)."""
+    user = current_user()
+    db = get_db()
+    record_checkin(db, session["user_id"])
+    try:
+        _row = db.execute(
+            "SELECT COUNT(*) AS c FROM tracked_plays WHERE user_id = ?",
+            (session["user_id"],)).fetchone()
+        n_tracked = int(_row["c"]) if _row else 0
+    except Exception:
+        n_tracked = 0
+    try:
+        books_saved = json.loads(user["bet_books"] or "[]") if user else []
+        if not isinstance(books_saved, list):
+            books_saved = []
+    except Exception:
+        books_saved = []
+    plat = platinum_unlocked_for(user)
+
+    def _u(col):
+        try:
+            return user[col] if user else None
+        except Exception:
+            return None
+
+    trial_ends = _u("platinum_trial_ends")
+    if _u("stripe_subscription_id"):
+        plan_name, plan_sub = "Platinum", "Platinum plays · paid subscription"
+    elif plat and trial_ends:
+        plan_name = "Platinum trial"
+        plan_sub = f"Platinum plays · trial ends {str(trial_ends)[:10]}"
+    elif plat:
+        plan_name, plan_sub = "Platinum", "Platinum plays"
+    else:
+        plan_name, plan_sub = "Free", "Sharp Free plays"
+    notifs = []
+    if _u("notif_plays"):
+        notifs.append("Plays posted")
+    if _u("notif_graded"):
+        notifs.append("Play graded")
+    if _u("notif_reminder"):
+        notifs.append("Pre-game reminder")
+    if _u("sms_optin"):
+        notifs.append("Text alerts")
+    return render_template(
+        "app_settings.html", u=user, platinum=plat,
+        plan_name=plan_name, plan_sub=plan_sub,
+        bankroll=_u("bankroll"), stake_mode=_u("stake_mode") or "units",
+        bet_state=_u("bet_state") or "", n_books=len(books_saved),
+        n_tracked=n_tracked, notifs=notifs)
+
+
 @app.route("/cuenta/password", methods=["POST"])
 @login_required
 def cuenta_password():
@@ -4045,6 +6508,41 @@ def cuenta_password():
     flash("Password updated.", "ok")
     return redirect(url_for("cuenta") + "?tab=security")
 
+@app.route("/reset/<token>", methods=["GET", "POST"])
+def reset_password_public(token):
+    """Página pública de restablecer contraseña con enlace de un solo
+    uso (2026-10-16). La plataforma no tenía flujo de 'olvidé mi
+    contraseña': el enlace lo genera el admin por API
+    (members-reset-link) y viaja solo en el email del miembro. El
+    token vence a las 24 horas y se borra al usarse."""
+    db = get_db()
+    row = db.execute("SELECT * FROM users WHERE reset_token = ?",
+                     (token,)).fetchone()
+    valido = False
+    if row:
+        try:
+            vence = datetime.fromisoformat(row["reset_expires"] or "")
+            valido = datetime.now() < vence
+        except (ValueError, TypeError, KeyError, IndexError):
+            valido = False
+    if not valido:
+        return render_template("reset_password.html", estado="invalido"), 400
+    if request.method == "POST":
+        nueva = request.form.get("new_password") or ""
+        confirma = request.form.get("confirm_password") or ""
+        if len(nueva) < 8:
+            return render_template("reset_password.html", estado="corta"), 400
+        if nueva != confirma:
+            return render_template("reset_password.html", estado="distinta"), 400
+        db.execute(
+            "UPDATE users SET password_hash = ?, reset_token = NULL,"
+            " reset_expires = NULL WHERE id = ?",
+            (hash_password(nueva), row["id"]))
+        db.commit()
+        return render_template("reset_password.html", estado="ok")
+    return render_template("reset_password.html", estado="form")
+
+
 @app.route("/cuenta/telegram-link", methods=["POST"])
 @login_required
 def cuenta_telegram_link():
@@ -4062,11 +6560,16 @@ def alertas():
     """Página de preferencias de notificaciones del miembro."""
     db = get_db()
     u = db.execute(
-        "SELECT notif_plays, notif_graded, notif_live, notif_reminder, notif_ev, notif_price"
+        "SELECT notif_plays, notif_graded, notif_live, notif_reminder, notif_ev, notif_price, notif_sharp, notif_masterclass, ev_board_email"
         " FROM users WHERE id = ?", (session["user_id"],)
     ).fetchone()
     prefs = dict(u) if u else {}
-    return render_template("alertas.html", prefs=prefs)
+    pa_active, pa_recent = _mis_price_alerts(db, session["user_id"])
+    pa_limit = (PA_LIMIT_PLATINUM if platinum_unlocked_for(current_user())
+                else PA_LIMIT_FREE)
+    return render_template("alertas.html", prefs=prefs,
+                           pa_active=pa_active, pa_recent=pa_recent,
+                           pa_limit=pa_limit, pa_count=len(pa_active))
 
 
 @app.route("/api/alertas", methods=["POST"])
@@ -4076,7 +6579,7 @@ def api_alertas():
     data = request.get_json(silent=True) or {}
     pref = data.get("pref", "")
     value = 1 if data.get("value") else 0
-    allowed = {"notif_plays", "notif_graded", "notif_live", "notif_reminder", "notif_ev", "notif_price"}
+    allowed = {"notif_plays", "notif_graded", "notif_live", "notif_reminder", "notif_ev", "notif_price", "notif_sharp", "notif_masterclass", "ev_board_email"}
     if pref not in allowed:
         return jsonify({"ok": False, "error": "invalid pref"}), 400
     db = get_db()
@@ -4109,6 +6612,221 @@ def cuenta_telegram_unlink():
     return redirect(url_for("cuenta"))
 
 
+def _stripe_cancel_status(user):
+    """Estado de la cancelación del miembro en Stripe:
+    ("ok", fecha_txt) si la cancelación al fin del período ya está puesta;
+    ("sin_sub", None) si no tiene suscripción en Stripe (nada que cobrar);
+    ("error", None) si tiene suscripción pero no se pudo confirmar."""
+    if not user:
+        return ("sin_sub", None)
+    sub_id = ""
+    customer_id = ""
+    try:
+        sub_id = (user["stripe_subscription_id"] or "").strip()
+        customer_id = (user["stripe_customer_id"] or "").strip()
+    except Exception:
+        pass
+    if not sub_id and not customer_id:
+        return ("sin_sub", None)
+    if not stripe_configurado():
+        return ("error", None)
+    try:
+        import stripe
+        from datetime import datetime as _dt
+        stripe.api_key = STRIPE_SECRET_KEY
+        sub = None
+        if sub_id:
+            sub = stripe.Subscription.retrieve(sub_id)
+        else:
+            subs = stripe.Subscription.list(customer=customer_id, limit=1)
+            if subs and subs.data:
+                sub = subs.data[0]
+        if sub is None:
+            return ("sin_sub", None)
+        if not sub.get("cancel_at_period_end"):
+            return ("error", None)
+        ts = sub.get("cancel_at") or sub.get("current_period_end") or sub.get("trial_end")
+        if not ts:
+            items = (sub.get("items") or {}).get("data") or []
+            if items:
+                ts = items[0].get("current_period_end")
+        fecha = None
+        if ts:
+            fecha = _dt.fromtimestamp(int(ts), TZ).strftime("%B %d, %Y")
+        return ("ok", fecha)
+    except Exception:
+        return ("error", None)
+
+
+def send_cancellation_confirmed_email(nombre, email, fecha_fin_txt=None):
+    """Email AL MIEMBRO confirmando su cancelación (2026-10-30, hueco
+    detectado por Alex probando como cliente: el cliente no recibía
+    ninguna confirmación). Rediseño 2026-10-31 (aprobado por Alex con
+    capturas): fondo oscuro de la casa, banner oficial arriba, caja
+    MEMBERSHIP SUMMARY y UN solo botón dorado de reactivación. Dice:
+    cancelación procesada, no se le cobra más y hasta cuándo conserva
+    el acceso. Hilo aparte, fallo silencioso: nunca rompe el flujo de
+    cancelación."""
+    if not email:
+        return
+    nombre = (nombre or "").strip()
+    primero = nombre.split()[0] if nombre else ""
+    saludo = f"Hi {primero}," if primero else "Hi,"
+    # Fechas: completa ("November 2, 2026") y corta ("Nov 2, 2026").
+    fecha_full = fecha_corta = None
+    if fecha_fin_txt:
+        try:
+            from datetime import datetime as _dt
+            _d = _dt.strptime(fecha_fin_txt, "%B %d, %Y")
+            fecha_full = _d.strftime("%B %-d, %Y")
+            fecha_corta = _d.strftime("%b %-d, %Y")
+        except Exception:
+            fecha_full = fecha_fin_txt
+            fecha_corta = fecha_fin_txt
+    if fecha_full:
+        hasta_txt = fecha_full
+        acceso_caja = fecha_corta
+    else:
+        hasta_txt = "the end of your current period"
+        acceso_caja = "End of current period"
+    _unsub = "{{{RESEND_UNSUBSCRIBE_URL}}}"
+    subject = "Your Platinum Cancellation Is Confirmed"
+    text = (f"{saludo}\n\n"
+            "We've processed your request. You'll keep full access to "
+            f"every Platinum benefit until {hasta_txt}. After that, "
+            "your plan ends and you won't be charged again.\n\n"
+            "MEMBERSHIP SUMMARY\n"
+            "Plan: Platinum\n"
+            "Status: Cancellation scheduled\n"
+            f"Access until: {acceso_caja}\n"
+            "Future charges: $0.00\n\n"
+            "Changed your mind?\n"
+            "Reactivate anytime before your access ends and pick up "
+            "right where you left off:\n"
+            "https://www.thesharpteam.bet/cuenta\n\n"
+            "Thank you for being part of The Sharp Team. We'd love "
+            "your feedback on how we can improve.\n"
+            "Need help? Reply to this email anytime.\n\n"
+            "250 Park Avenue, Suite 1800, New York, NY 10017 · (239) 376-8798\n"
+            "Instagram: https://www.instagram.com/the_sharp_team/\n"
+            "Telegram: https://t.me/thesharpteam\n"
+            "Facebook: https://www.facebook.com/profile.php?id=61595131043413\n\n"
+            f"21+ Play responsibly. Unsubscribe: {_unsub} · "
+            "Privacy policy: https://www.thesharpteam.bet/privacy\n"
+            "If you or someone you know has a gambling problem, call "
+            "or text 1-800-GAMBLER.\n"
+            "The Sharp Team provides information and entertainment only "
+            "and is not a sportsbook. Past results do not guarantee "
+            "future performance.\n")
+    from datetime import datetime as _dtn
+    anio = _dtn.now(TZ).year
+    html = (
+        '<div style="margin:0;padding:24px 12px;background:#0d1117;'
+        'font-family:Arial,Helvetica,sans-serif;color:#f1f5f9;">'
+        '<div style="max-width:560px;margin:0 auto;background:#14161d;'
+        'border:1px solid #262c36;border-radius:16px;overflow:hidden;">'
+        '<img src="https://www.thesharpteam.bet/static/img/sharp-team-header.jpg" '
+        'alt="The Sharp Team" width="560" '
+        'style="display:block;width:100%;height:auto;">'
+        '<div style="padding:26px 30px 28px;">'
+        '<div style="width:54px;height:54px;border:3px solid #1f9d66;'
+        'border-radius:50%;color:#11cb87;font-size:22.2px;line-height:54px;'
+        'text-align:center;margin:2px auto 12px;">&#10003;</div>'
+        '<p style="font-size:20.7px;font-weight:800;color:#f1f5f9;'
+        'text-align:center;margin:0 0 8px;">Cancellation confirmed</p>'
+        '<p style="font-size:11.5px;color:#94a3b8;text-align:center;'
+        'line-height:1.5;margin:0 0 18px;">Your Platinum membership '
+        'cancellation has been processed.</p>'
+        '<div style="height:1px;background:#262c36;margin:0 0 20px;"></div>'
+        f'<p style="font-size:12.2px;margin:0 0 12px;">{saludo}</p>'
+        '<p style="font-size:12.2px;line-height:1.55;margin:0 0 20px;">'
+        "We've processed your request. You'll keep full access to "
+        f'every Platinum benefit until <b>{hasta_txt}</b>. After that, '
+        "your plan ends and you won't be charged again.</p>"
+        '<div style="background:#1d2029;border:1px solid #262c36;'
+        'border-radius:12px;padding:18px 20px;margin:0 0 22px;">'
+        '<p style="font-size:13px;font-weight:700;letter-spacing:1.6px;'
+        'color:#e8c766;margin:0 0 12px;">MEMBERSHIP SUMMARY</p>'
+        '<table width="100%" cellpadding="0" cellspacing="0">'
+        '<tr><td style="font-size:11.5px;color:#94a3b8;padding:5px 0;">'
+        'Plan</td><td align="right" style="font-size:11.5px;'
+        'font-weight:700;color:#f1f5f9;padding:5px 0;">Platinum</td></tr>'
+        '<tr><td style="font-size:11.5px;color:#94a3b8;padding:5px 0;">'
+        'Status</td><td align="right" style="padding:5px 0;">'
+        '<span style="background:#0d3320;color:#11cb87;font-size:9.9px;'
+        'font-weight:700;border-radius:999px;padding:4px 11px;">'
+        'Cancellation scheduled</span></td></tr>'
+        '<tr><td style="font-size:11.5px;color:#94a3b8;padding:5px 0;">'
+        'Access until</td><td align="right" style="font-size:11.5px;'
+        f'font-weight:700;color:#f1f5f9;padding:5px 0;">{acceso_caja}</td></tr>'
+        '<tr><td style="font-size:11.5px;color:#94a3b8;padding:5px 0;">'
+        'Future charges</td><td align="right" style="font-size:11.5px;'
+        'font-weight:700;color:#f1f5f9;padding:5px 0;">$0.00</td></tr>'
+        '</table></div>'
+        '<p style="font-size:14.5px;font-weight:700;color:#f1f5f9;'
+        'text-align:center;margin:0 0 10px;">Changed your mind?</p>'
+        '<p style="font-size:12.2px;line-height:1.55;color:#94a3b8;'
+        'text-align:center;margin:0 0 18px;">Reactivate anytime before '
+        'your access ends and pick up right where you left off.</p>'
+        '<div style="text-align:center;margin:0 0 22px;">'
+        '<a href="https://www.thesharpteam.bet/cuenta" '
+        'style="display:inline-block;background:#e8c766;color:#10141f;'
+        'font-size:11.5px;font-weight:800;letter-spacing:0.4px;'
+        'text-decoration:none;padding:13px 30px;border-radius:8px;">'
+        'Reactivate membership</a></div>'
+        '<div style="height:1px;background:#262c36;margin:0 0 16px;"></div>'
+        '<p style="font-size:11.5px;line-height:1.55;color:#94a3b8;'
+        'text-align:center;margin:0 0 6px;">Thank you for being part of '
+        "The Sharp Team. We'd love your feedback on how we can improve.</p>"
+        '<p style="font-size:11.5px;line-height:1.55;color:#94a3b8;'
+        'text-align:center;margin:0 0 16px;">Need help? Reply to this '
+        'email anytime.</p>'
+        '<p style="text-align:center;font-size:9.5px;color:#8a93a5;'
+        'line-height:1.6;margin:0 0 12px;">250 Park Avenue, Suite 1800, '
+        'New York, NY 10017 &middot; (239) 376-8798</p>'
+        '<div style="text-align:center;margin:0 0 12px;">'
+        '<a href="https://www.instagram.com/the_sharp_team/" '
+        'style="text-decoration:none;"><img '
+        'src="https://www.thesharpteam.bet/static/img/icons/instagram.png" '
+        'width="30" height="30" alt="Instagram" '
+        'style="border:0;margin:0 7px;"></a>'
+        '<a href="https://t.me/thesharpteam" '
+        'style="text-decoration:none;"><img '
+        'src="https://www.thesharpteam.bet/static/img/icons/telegram.png" '
+        'width="30" height="30" alt="Telegram" '
+        'style="border:0;margin:0 7px;"></a>'
+        '<a href="https://www.facebook.com/profile.php?id=61595131043413" '
+        'style="text-decoration:none;"><img '
+        'src="https://www.thesharpteam.bet/static/img/icons/facebook.png" '
+        'width="30" height="30" alt="Facebook" '
+        'style="border:0;margin:0 7px;"></a>'
+        '</div>'
+        '<p style="text-align:center;font-size:8.8px;color:#8a93a5;'
+        'line-height:1.55;margin:0 0 6px;">21+ Play responsibly. '
+        f'<a href="{_unsub}" style="color:#8a93a5;">Unsubscribe</a> '
+        '&middot; <a href="https://www.thesharpteam.bet/privacy" '
+        'style="color:#8a93a5;">Privacy policy</a></p>'
+        '<p style="text-align:center;font-size:8.8px;color:#8a93a5;'
+        'line-height:1.55;margin:0 0 6px;">If you or someone you know '
+        'has a gambling problem, call or text 1-800-GAMBLER.</p>'
+        '<p style="text-align:center;font-size:8.8px;color:#8a93a5;'
+        'line-height:1.55;margin:0;">The Sharp Team provides information '
+        'and entertainment only and is not a sportsbook. Past results do '
+        'not guarantee future performance.</p>'
+        '</div></div>'
+        f'<p style="text-align:center;font-size:9.2px;color:#8a93a5;'
+        f'margin:14px 0 0;">&copy; {anio} The Sharp Team. All rights '
+        'reserved.</p></div>')
+
+    def _send():
+        try:
+            _dispatch_email(email, subject, text, html)
+        except Exception:
+            pass
+
+    import threading
+    threading.Thread(target=_send, daemon=True).start()
+
 @app.route("/cuenta/cancelar", methods=["GET", "POST"])
 @login_required
 def cuenta_cancelar():
@@ -4120,6 +6838,41 @@ def cuenta_cancelar():
             db.execute("UPDATE users SET cancel_requested_at = ? WHERE id = ?",
                        (now_iso(), session["user_id"]))
             db.commit()
+            # Gerenciales (2026-10-25, pedido de Alex): avisar que pidió cancelar.
+            try:
+                _nm = user["nombre"] or user["email"]
+                _em = user["email"]
+            except Exception:
+                _nm, _em = "?", ""
+            log_notificacion(db, "cancelacion", f"Miembro pidió cancelar: {_nm}", _em or "")
+            # Automático (2026-10-30, orden de Alex): la petición se aplica
+            # también en Stripe al final del período — no se le cobra más.
+            _ok_stripe = _stripe_set_cancel_at_period_end(user, True)
+            # Red de seguridad (2026-10-31, orden de Alex): si la llamada a
+            # Stripe falló HABIENDO suscripción/cliente que cancelar, la
+            # cancelación no puede quedar solo local en silencio — queda
+            # una alerta visible en Gerenciales para ejecutarla a mano.
+            if not _ok_stripe:
+                try:
+                    _tenia_stripe = ((user["stripe_subscription_id"] or "").strip()
+                                     or (user["stripe_customer_id"] or "").strip())
+                except Exception:
+                    _tenia_stripe = ""
+                if _tenia_stripe:
+                    log_notificacion(
+                        db, "cancelacion_fallida",
+                        f"⚠️ Stripe NO confirmó la cancelación de: {_nm}",
+                        _em or "")
+            # Confirmación AL MIEMBRO (2026-10-30): su email de cancelación
+            # confirmada, solo si Stripe confirma la cancelación programada
+            # o si no tiene suscripción (nada que cobrar). Si no se puede
+            # confirmar, no se promete nada por email.
+            try:
+                _st, _fin = _stripe_cancel_status(user)
+                if _st != "error":
+                    send_cancellation_confirmed_email(user["nombre"], user["email"], _fin)
+            except Exception:
+                pass
             flash("Your membership has been cancelled. No further charges.", "ok")
         return redirect(url_for("cuenta"))
     if user and user["cancel_requested_at"]:
@@ -4132,8 +6885,13 @@ def cuenta_cancelar():
 def cuenta_reactivar():
     """Deshace una cancelación solicitada por el propio miembro."""
     db = get_db()
+    user = current_user()
     db.execute("UPDATE users SET cancel_requested_at = NULL WHERE id = ?", (session["user_id"],))
     db.commit()
+    # Reversa automática en Stripe (2026-10-30): si la cancelación ya se
+    # había programado al final del período, se retira.
+    if user:
+        _stripe_set_cancel_at_period_end(user, False)
     flash("Welcome back — your membership is active again.", "ok")
     return redirect(url_for("cuenta"))
 
@@ -4281,7 +7039,7 @@ def track_value():
 def balances_delete(book_name):
     db = get_db()
     user = current_user()
-    if not (is_alex_member(user) or is_admin_for(user)):
+    if not user:
         return redirect(url_for("home"))
     if is_admin_for(user) and not is_alex_member(user):
         row = db.execute(
@@ -4301,12 +7059,15 @@ def balances_delete(book_name):
 @app.route("/balances", methods=["GET", "POST"])
 @login_required
 def balances():
-    """Balances por casa de apuesta (v1: solo cuenta personal de Alex, 2026-10-03).
-    Manual por ahora; a futuro se ajustan solos al liquidarse las jugadas."""
+    """Balances por casa de apuesta de cada miembro (v1: solo la cuenta
+    de Alex, 2026-10-03; ABIERTO a todos los miembros el 2026-10-23 por
+    orden de Alex: cada miembro lleva el balance que tiene en cada casa
+    y solo ve/edita los suyos; la sesión admin sigue cayendo en la
+    cuenta personal de Alex). Manual, y desde el 2026-10-23 las
+    apuestas propias liquidadas lo mueven solas vía
+    _sync_own_bet_balance (gana → se agrega, pierde → se rebaja)."""
     db = get_db()
     user = current_user()
-    if not (is_alex_member(user) or is_admin_for(user)):
-        return redirect(url_for("home"))
     # Los balances siempre viven en la cuenta personal de Alex (aunque entre como admin)
     if is_admin_for(user) and not is_alex_member(user):
         row = db.execute(
@@ -4325,6 +7086,11 @@ def balances():
             monto = 0
         if book:
             now = datetime.now(TZ).strftime("%Y-%m-%d %H:%M:%S")
+            prev = db.execute(
+                "SELECT balance FROM book_balances WHERE user_id = ? AND book_name = ?",
+                (uid, book),
+            ).fetchone()
+            prev_bal = float(prev["balance"] or 0) if prev else None
             db.execute(
                 """INSERT INTO book_balances (user_id, book_name, balance, updated_at)
                    VALUES (?, ?, ?, ?)
@@ -4332,6 +7098,14 @@ def balances():
                    DO UPDATE SET balance = excluded.balance, updated_at = excluded.updated_at""",
                 (uid, book, monto, now),
             )
+            if prev_bal is None:
+                _log_book_move(db, uid, book, monto, "Initial balance")
+            else:
+                delta = round(monto - prev_bal, 2)
+                if delta > 0:
+                    _log_book_move(db, uid, book, delta, "Added")
+                elif delta < 0:
+                    _log_book_move(db, uid, book, delta, "Withdrawn")
             db.commit()
         return redirect(url_for("balances"))
     rows = db.execute(
@@ -4348,27 +7122,1047 @@ def balances():
         for r in rows
     ]
     total = sum(float(r["balance"] or 0) for r in rows)
-    return render_template("balances.html", balances=balances, total=total)
+    moves = []
+    try:
+        _ensure_book_moves_table(db)
+        mrows = db.execute(
+            "SELECT book_name, delta, concepto, created_at FROM book_balance_moves "
+            "WHERE user_id = ? ORDER BY id DESC LIMIT 30",
+            (uid,),
+        ).fetchall()
+        moves = [
+            {
+                "book_name": r["book_name"],
+                "delta": float(r["delta"] or 0),
+                "concepto": r["concepto"] or "",
+                "created_at": r["created_at"] or "",
+            }
+            for r in mrows
+        ]
+    except Exception:
+        moves = []
+    return render_template("balances.html", balances=balances, total=total,
+                           moves=moves)
 
 
 @app.route("/tracker")
-@login_required
 def tracker():
+    # Visitante SIN sesión (2026-10-19, pedido de Alex): en vez del
+    # rebote al login, ve la página PÚBLICA de venta del Tracker con la
+    # tarjeta WHAT MEMBERS GET. Con sesión, el tracker personal es de
+    # TODA la membresía desde el 2026-10-23 (orden de Alex: la
+    # membresía gratis también tiene tracker).
+    if current_user() is None:
+        return render_template(
+            "tracker_public.html",
+            public_mode=True,
+            cta_url=url_for("register"),
+            watch_url=url_for("register"),
+            upsell_cta_url=url_for("register"),
+        )
     db = get_db()
     record_checkin(db, session["user_id"])
-    # El admin no usa tracker personal: ve el oficial con tickets (2026-10-03,
-    # orden de Alex). Su "Alex Owner Results" estaba vacío y no tenía sentido.
-    if is_admin_for(current_user()):
-        return redirect(url_for("resultados"))
+    # Vista previa del candado (2026-10-15, para que Alex lo pruebe):
+    # ?preview=locked muestra la pagina de membresia tal cual la ve
+    # quien no paga, aunque la cuenta tenga acceso (patron del home).
+    _u0 = current_user()
+    _pv = request.args.get("preview")
+    if _pv in ("locked", "vencido") and (
+            is_admin_for(_u0)
+            or (_u0["email"] or "").strip().lower() == ALEX_MEMBER_EMAIL):
+        if _pv == "locked":
+            return render_template(
+                "tracker_public.html",
+                public_mode=False,
+                cta_url=url_for("desbloquear_platinum"),
+                watch_url=url_for("masterclass"),
+                upsell_cta_url=url_for("desbloquear_platinum"),
+            )
+        return render_template(
+            "tracker_locked.html",
+            upsell_cta_url=url_for("desbloquear_platinum"),
+            past_due_mode=True,
+            update_card_url=url_for("desbloquear_platinum"),
+        )
+    # 2026-11-01 (orden de Alex: «My Bets debe ser el tracker de
+    # usuario»): el admin YA NO rebota al tracker oficial — la rama
+    # del 2026-10-03 que lo mandaba a resultados queda eliminada.
+    # «My Bets» abre el centro personal completo para TODA cuenta con
+    # sesión, admin incluido, igual que para cualquier miembro.
     # Toggle Value Plays solo para Alex (2026-10-11, pedido por Alex)
     user = current_user()
     is_alex = (user["email"] or "").strip().lower() == ALEX_MEMBER_EMAIL
+    # My Bets ABIERTO a toda la membresia (2026-10-23, orden de Alex:
+    # <<para la membresia gratis pon el tracker>>): el tracker personal
+    # ya no exige Platinum — cualquier miembro con sesion y cuenta
+    # verificada lo usa completo. (Entre 2026-10-15 y 2026-10-23 fue
+    # solo para miembros que pagan; esa compuerta quedo eliminada. El
+    # visitante sin sesion sigue viendo la pagina publica de venta.)
     if is_alex and request.args.get("view") == "values":
         return values_page()
+    # Centro completo de My Bets (2026-11-01, orden de Alex): /tracker
+    # sirve el mismo centro personal que /tracker/plays
+    # (tracker_plays.html); la vista compacta dashboard.html queda sin
+    # uso por esta ruta.
+    return _my_bets_center(user)
+
+
+def _my_bets_center(user):
+    """Centro completo de My Bets (2026-10-23): stats combinadas,
+    curva, filtros tipo backtest, desgloses, Coach, apuestas propias
+    y oficiales. Lo sirven /tracker (la entrada «My Bets» del menu)
+    y /tracker/plays."""
     ctx = _tracker_context(user)
-    ctx["is_alex"] = is_alex
-    ctx["view"] = request.args.get("view", "personal")
-    return render_template("dashboard.html", **ctx)
+    all_rows = [dict(r, source="official") for r in ctx["rows"]] + \
+        [dict(r, source="own") for r in ctx.get("own_rows", [])]
+    all_rows.sort(key=lambda r: (r["fecha"], r["id"]), reverse=True)
+    for _r in all_rows:
+        _r.setdefault("clv_pts", None)
+        _r.setdefault("foto", "")
+        _r.setdefault("juego", "")
+        _r.setdefault("mercado", "Moneyline")
+        _r.setdefault("liga", "")
+        _r.setdefault("cierre", None)
+    f = {k: (request.args.get(k) or "").strip()
+         for k in ("source", "result", "market", "book", "q")}
+    def _ok(r):
+        if f["source"] and r.get("source") != f["source"]:
+            return False
+        if f["result"]:
+            res = r.get("resultado") or "PENDING"
+            if res != f["result"]:
+                return False
+        if f["market"] and (r.get("mercado") or "Moneyline") != f["market"]:
+            return False
+        if f["book"] and (r.get("casa") or "") != f["book"]:
+            return False
+        if f["q"]:
+            q = f["q"].lower()
+            if q not in (r.get("pick") or "").lower() and \
+               q not in (r.get("juego") or "").lower():
+                return False
+        return True
+    rows_f = [r for r in all_rows if _ok(r)]
+    books = sorted({(r.get("casa") or "") for r in all_rows if r.get("casa")})
+    markets = sorted({(r.get("mercado") or "Moneyline") for r in all_rows})
+    ctx.update(
+        rows=rows_f, all_rows=all_rows, filters=f,
+        stats_f=_stats_from_rows(rows_f),
+        breakdowns=_mybets_breakdowns(all_rows),
+        coach=_coach_insights(all_rows, ctx.get("stats_all") or {}),
+        books=books, markets=markets,
+    )
+    return render_template("tracker_plays.html", **ctx)
+
+
+@app.route("/tracker/plays")
+def tracker_plays():
+    """Lista completa de jugadas trackeadas del miembro (2026-10-19,
+    refinamiento de Alex): la vista principal de /tracker queda compacta
+    en una sola pantalla y la lista vive en esta vista propia, enlazada
+    desde abajo del tracker. Misma puerta que /tracker: sin sesion o
+    el admin caen a /tracker; cualquier otro miembro con sesion entra
+    (My Bets abierto a toda la membresia el 2026-10-23). Las acciones
+    de calificacion (set_result/untrack) usan back(), asi que desde aqui
+    regresan solas a esta vista."""
+    user = current_user()
+    if user is None or is_admin_for(user):
+        return redirect(url_for("tracker"))
+    return _my_bets_center(user)
+
+
+# ==================== My Bets completo (2026-10-23) ====================
+# Apuestas propias del miembro: registro manual, por foto o desde un
+# juego del Game Center; CLV por apuesta; calificación manual o
+# automática (script HF vía API admin); correos de liquidación.
+
+def _imp_prob(a):
+    """Probabilidad implícita de una cuota americana."""
+    try:
+        a = float(a)
+    except (TypeError, ValueError):
+        return None
+    if a == 0:
+        return None
+    return 100.0 / (a + 100.0) if a > 0 else (-a) / ((-a) + 100.0)
+
+
+def _own_profit(b):
+    """Profit en $ de una apuesta propia (W/L/P)."""
+    r = b.get("resultado")
+    stake = float(b.get("stake_monto") or 0)
+    if r == "W":
+        return stake * american_profit_ratio(b["cuota"])
+    if r == "L":
+        return -stake
+    return 0.0
+
+
+def _sync_own_bet_balance(db, old_bet, new_bet):
+    """Mueve solo el balance por casa del dueño de una apuesta propia
+    (pedido Alex 2026-10-23: cada miembro lleva su balance en cada casa
+    y se ajusta al liquidarse: si gana se le agrega el profit, si pierde
+    se le rebaja el monto apostado). Revierte el efecto del estado
+    anterior en su casa y aplica el del estado nuevo, así corregir un
+    resultado o desmarcarlo también cuadra. Sin casa registrada o sin
+    cambio de profit, no toca nada."""
+    try:
+        old_casa = (old_bet.get("casa") or "").strip()
+        new_casa = (new_bet.get("casa") or "").strip()
+        old_p = _own_profit(old_bet) if old_casa else 0.0
+        new_p = _own_profit(new_bet) if new_casa else 0.0
+        uid = old_bet.get("user_id") or new_bet.get("user_id")
+        if not uid:
+            return
+        pick = (new_bet.get("pick") or old_bet.get("pick") or "Bet")[:80]
+        if old_casa and old_p:
+            bump_book_balance(db, uid, old_casa, -old_p,
+                              concepto=f"Correction: {pick}")
+        if new_casa and new_p:
+            res = new_bet.get("resultado")
+            concepto = (f"Bet won: {pick}" if res == "W"
+                        else f"Bet lost: {pick}" if res == "L"
+                        else f"Bet settled: {pick}")
+            bump_book_balance(db, uid, new_casa, new_p, concepto=concepto)
+    except Exception:
+        pass
+
+
+def _own_clv_pts(b):
+    """CLV en puntos: implícita del cierre − implícita de tu precio."""
+    if b.get("cierre") is None:
+        return None
+    pc = _imp_prob(b["cierre"])
+    pt = _imp_prob(b["cuota"])
+    if pc is None or pt is None:
+        return None
+    return round((pc - pt) * 100.0, 2)
+
+
+def _mybets_settings(db, uid, user=None):
+    """Ajustes de My Bets del miembro (unidad en $ y correo)."""
+    row = None
+    try:
+        row = db.execute(
+            "SELECT * FROM mybets_settings WHERE user_id = ?", (uid,)
+        ).fetchone()
+    except Exception:
+        row = None
+    unit = None
+    pref = "daily"
+    if row:
+        unit = row["unit_monto"]
+        pref = row["email_pref"] or "daily"
+    if not unit:
+        br = None
+        if user is not None:
+            try:
+                br = user["bankroll"]
+            except Exception:
+                br = None
+        unit = round(float(br) * 0.01, 2) if br else 100.0
+    return {"unit_monto": float(unit), "email_pref": pref}
+
+
+def _own_row(b, settings=None):
+    """Fila de apuesta propia con la forma que usan las plantillas."""
+    unit = float((settings or {}).get("unit_monto") or 100.0)
+    f = (b.get("fecha") or "").strip()
+    try:
+        fecha_corta = datetime.strptime(f, "%Y-%m-%d").strftime("%d %b %Y").upper()
+    except (ValueError, TypeError):
+        fecha_corta = f
+    stake = float(b.get("stake_monto") or 0)
+    return {
+        "id": b["id"], "source": "own",
+        "fecha": f, "fecha_corta": fecha_corta,
+        "pick": b.get("pick") or "", "juego": b.get("juego") or "",
+        "liga": b.get("liga") or "", "mercado": b.get("mercado") or "Moneyline",
+        "cuota": b.get("cuota"), "cuota_txt": fmt_odds(b.get("cuota")),
+        "stake_monto": stake,
+        "stake_unidades": round(stake / unit, 2) if unit else 0,
+        "casa": b.get("casa") or "", "resultado": b.get("resultado") or "",
+        "profit": _own_profit(b), "clv_pts": _own_clv_pts(b),
+        "cierre": b.get("cierre"), "foto": b.get("foto") or "",
+        "event_id": b.get("event_id") or "", "lado": b.get("lado") or "",
+        "punto": b.get("punto"), "settled_at": b.get("settled_at") or "",
+        "nivel": "", "marcador": "", "comprobante": "",
+        "abbr": "", "logo": "", "sport_icon": "🎯",
+    }
+
+
+def _stats_from_rows(rows):
+    """Estadísticas combinadas desde filas ya enriquecidas (oficiales y
+    propias): récord, profit, ROI, racha, pushes y CLV promedio."""
+    graded = [r for r in rows if r.get("resultado") in ("W", "L", "P")]
+    wins = sum(1 for r in graded if r["resultado"] == "W")
+    losses = sum(1 for r in graded if r["resultado"] == "L")
+    pushes = sum(1 for r in graded if r["resultado"] == "P")
+    net = sum(float(r.get("profit") or 0) for r in graded)
+    risked = sum(float(r.get("stake_monto") or 0) for r in graded)
+    roi = (net / risked * 100.0) if risked else 0.0
+    clvs = []
+    for r in rows:
+        if r.get("clv_pts") is not None and r.get("resultado") in ("W", "L", "P"):
+            clvs.append(r["clv_pts"])
+    ordered = sorted(graded, key=lambda r: (r["fecha"], r["id"]))
+    streak = "—"
+    wl = [r for r in ordered if r["resultado"] in ("W", "L")]
+    if wl:
+        last = wl[-1]["resultado"]
+        n = 0
+        for r in reversed(wl):
+            if r["resultado"] == last:
+                n += 1
+            else:
+                break
+        streak = f"W{n}" if last == "W" else f"L{n}"
+    return {
+        "tracked": len(rows), "pending": len(rows) - len(graded),
+        "wins": wins, "losses": losses, "pushes": pushes,
+        "risked": risked, "record": f"{wins}-{losses}",
+        "net_dollars": net, "roi": roi, "streak": streak,
+        "clv_avg": (sum(clvs) / len(clvs)) if clvs else None,
+        "win_rate": (wins / (wins + losses) * 100.0) if (wins + losses) else 0.0,
+    }
+
+
+def _mybets_breakdowns(rows):
+    """Desgloses por fuente, nivel, mercado, casa y liga."""
+    def _agg(keyfn):
+        out = {}
+        for r in rows:
+            k = keyfn(r)
+            if not k:
+                continue
+            d = out.setdefault(k, {"w": 0, "l": 0, "p": 0, "profit": 0.0,
+                                   "risked": 0.0, "n": 0})
+            d["n"] += 1
+            if r.get("resultado") == "W":
+                d["w"] += 1
+            elif r.get("resultado") == "L":
+                d["l"] += 1
+            elif r.get("resultado") == "P":
+                d["p"] += 1
+            if r.get("resultado") in ("W", "L", "P"):
+                d["profit"] += float(r.get("profit") or 0)
+                d["risked"] += float(r.get("stake_monto") or 0)
+        for d in out.values():
+            d["roi"] = (d["profit"] / d["risked"] * 100.0) if d["risked"] else 0.0
+        return sorted(out.items(), key=lambda kv: -kv[1]["n"])
+    return {
+        "source": _agg(lambda r: "Program plays" if r.get("source") == "official" else "My own bets"),
+        "market": _agg(lambda r: r.get("mercado") or "Moneyline"),
+        "book": _agg(lambda r: r.get("casa") or ""),
+        "league": _agg(lambda r: r.get("liga") or ""),
+        "level": _agg(lambda r: (nivel_display(r.get("nivel")) if r.get("source") == "official" else "")),
+    }
+
+
+def _coach_insights(rows, stats):
+    """Coach de My Bets: lecturas directas de los números del miembro
+    (deterministas, sin IA externa)."""
+    out = []
+    graded = [r for r in rows if r.get("resultado") in ("W", "L", "P")]
+    if len(graded) < 10:
+        out.append("Log at least 10 settled bets and your coach notes unlock — best markets, leaks and CLV trends, read straight from your numbers.")
+        return out
+    bd = _mybets_breakdowns(rows)
+    for label, key in (("market", "market"), ("book", "book"), ("league", "league")):
+        cats = [(k, d) for k, d in bd[key] if (d["w"] + d["l"]) >= 5]
+        if not cats:
+            continue
+        best = max(cats, key=lambda kv: kv[1]["roi"])
+        worst = min(cats, key=lambda kv: kv[1]["roi"])
+        if best[1]["roi"] > 0:
+            out.append(f"Your strongest {label}: {best[0]} — {best[1]['w']}-{best[1]['l']}, ROI {best[1]['roi']:+.1f}%. That is where your edge shows up.")
+        if worst[1]["roi"] < 0 and worst[0] != best[0]:
+            out.append(f"Your biggest leak: {worst[0]} ({label}) — {worst[1]['w']}-{worst[1]['l']}, ROI {worst[1]['roi']:+.1f}%. Smaller stakes there, or skip it until it turns.")
+        break
+    clv = stats.get("clv_avg")
+    if clv is not None:
+        if clv > 0:
+            out.append(f"You beat the closing line by {clv:+.2f} points on average. Beating the close is the clearest sign of a real edge — keep shopping prices.")
+        elif clv < 0:
+            out.append(f"Your prices close worse than you take them ({clv:+.2f} pts on average). Betting earlier or shopping one more book would fix most of that.")
+    return out[:3]
+
+
+def _mybets_gate():
+    """Puerta de My Bets: sesión de miembro (igual que /tracker/plays).
+    Sin Platinum desde el 2026-10-23: la membresía gratis también usa
+    My Bets completo (orden de Alex)."""
+    user = current_user()
+    if user is None or is_admin_for(user):
+        return None
+    return user
+
+
+def _settlement_stats_strip():
+    """Franja de estadísticas del correo de liquidación (diseño v5):
+    récord oficial EN VIVO desde data/archive.json vía program_stats()
+    — la misma fuente del Official Tracker. Nunca fijo; si no hay
+    datos, franja genérica sin números."""
+    try:
+        ps = program_stats()
+        w = int(ps.get("ganadas") or 0)
+        l = int(ps.get("perdidas") or 0)
+        if w + l:
+            wr = float(ps.get("win_rate") or 0.0)
+            return f"{w}-{l} RECORD · {wr:.1f}% WIN RATE · EVERY BET TRACKED"
+    except Exception:
+        pass
+    return "EVERY BET TRACKED · GRADED AUTOMATICALLY"
+
+
+def _settlement_pick_line(bet):
+    """Línea de la jugada (asunto y tarjeta): el pick del miembro más
+    su cuota, sin duplicarla si el texto ya la trae."""
+    pick_txt = (bet.get("pick") or "").strip()
+    odds_txt = fmt_odds(bet.get("cuota"))
+    if odds_txt != "—" and odds_txt not in pick_txt:
+        pick_txt = f"{pick_txt} {odds_txt}".strip()
+    return pick_txt
+
+
+def _settlement_subline(bet):
+    """Sublínea de la tarjeta: '<Mercado> · vs <Rival>'. El rival sale
+    del juego 'Away vs Home' y del lado elegido; si no se puede
+    determinar, se muestra el matchup completo."""
+    mercado = (bet.get("mercado") or "Moneyline").strip()
+    juego = (bet.get("juego") or "").strip()
+    away = home = ""
+    if " vs " in juego:
+        away, home = [x.strip() for x in juego.split(" vs ", 1)]
+    if away and home:
+        if mercado.lower().startswith("total"):
+            return f"{mercado} · {away} vs {home}"
+        lado = (bet.get("lado") or "").strip().lower()
+        pick_txt = (bet.get("pick") or "").strip().lower()
+        # Lado elegido: si el texto del pick nombra a UN solo equipo, ese
+        # manda; si no, el campo lado del formulario (el que usa el
+        # calificador automático para decidir W/L).
+        picked = ""
+        a_in = away.lower() in pick_txt
+        h_in = home.lower() in pick_txt
+        if a_in and not h_in:
+            picked = "away"
+        elif h_in and not a_in:
+            picked = "home"
+        elif lado in ("away", "home"):
+            picked = lado
+        if picked == "away":
+            return f"{mercado} · vs {home}"
+        if picked == "home":
+            return f"{mercado} · vs {away}"
+        return f"{mercado} · {away} vs {home}"
+    return mercado
+
+
+def _settlement_card_html(bet):
+    """Tarjeta de UNA apuesta liquidada (diseño v5 aprobado por Alex
+    el 2026-10-23): chip de liga + chip WON/LOST/PUSH, jugada a 16px
+    en UNA línea (15px si es larga), sublínea mercado · rival y fila
+    FINAL con el marcador cuando se conoce. SIN montos de ganancia
+    en ninguna parte — orden expresa de Alex."""
+    import html as _h
+    res = (bet.get("resultado") or "").upper()
+    if res == "W":
+        chip_txt, chip_css = "WON", "background:#2ee6a8;color:#0c1638;"
+    elif res == "L":
+        chip_txt, chip_css = "LOST", "background:#fdecec;color:#b3261e;"
+    else:
+        chip_txt, chip_css = "PUSH", "background:#eef2f9;color:#33415e;"
+    liga_raw = (bet.get("liga") or "").strip()
+    liga = _ODDS_KEY_LEAGUE.get(liga_raw, liga_raw).upper()
+    liga_chip = ""
+    if liga:
+        liga_chip = ("<span style=\"display:inline-block;border:1px solid #e3e8f2;"
+                     "background:#eef2f9;color:#33415e;font-size:8.9px;font-weight:800;"
+                     "letter-spacing:2px;padding:4px 10px;border-radius:999px;\">"
+                     + _h.escape(liga) + "</span>")
+    pick_line = _settlement_pick_line(bet)
+    pick_size = 16 if len(pick_line) <= 38 else 15
+    subline = _settlement_subline(bet)
+    marcador = (bet.get("marcador") or "").strip()
+    final_row = ""
+    if marcador:
+        final_row = ("<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" "
+                     "style=\"margin-top:12px;border-top:1px solid #e3e8f2;\"><tr>"
+                     "<td valign=\"middle\" style=\"padding-top:11px;\"><span style=\"color:#8494ad;"
+                     "font-size:9.3px;font-weight:800;letter-spacing:1.5px;\">FINAL</span>"
+                     "<span style=\"color:#0c1638;font-size:15.3px;font-weight:900;margin-left:10px;\">"
+                     + _h.escape(marcador) + "</span></td></tr></table>")
+    return ("<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" bgcolor=\"#ffffff\" "
+            "style=\"background:#ffffff;border:1px solid #e3e8f2;border-left:6px solid #2ee6a8;"
+            "border-radius:20px;box-shadow:0 2px 10px rgba(12,22,56,0.06);\">"
+            "<tr><td style=\"padding:14px 18px;\">"
+            "<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\"><tr>"
+            "<td valign=\"middle\">" + liga_chip + "</td>"
+            "<td align=\"right\" valign=\"middle\"><span style=\"display:inline-block;" + chip_css
+            + "font-size:8.9px;font-weight:900;letter-spacing:1.5px;padding:4px 10px;"
+            "border-radius:999px;\">" + chip_txt + "</span></td></tr></table>"
+            "<div style=\"color:#0c1638;font-size:" + str(pick_size) + "px;font-weight:900;margin-top:10px;"
+            "white-space:nowrap;\">" + _h.escape(pick_line) + "</div>"
+            "<div style=\"font-size:11px;color:#5b6b84;margin-top:3px;\">" + _h.escape(subline) + "</div>"
+            + final_row +
+            "</td></tr></table>")
+
+
+def _settlement_email_html(bets, single=None):
+    """Correo de liquidación de My Bets con el diseño v5 aprobado por
+    Alex el 2026-10-23: banda negra con franja de estadísticas reales
+    del programa, título 36px en dos líneas, tarjetas blancas, botón
+    a My Bets y pie universal claro. Sin montos en ninguna parte."""
+    import html as _h
+    bets = list(bets or [])
+    if single is None:
+        single = len(bets) == 1
+    strip = _settlement_stats_strip()
+    if single and bets:
+        word = {"W": "WON", "L": "LOST", "P": "PUSHED"}.get(
+            (bets[0].get("resultado") or "").upper(), "SETTLED")
+        preheader = ("Your tracked bet settled: " + _settlement_pick_line(bets[0])
+                     + " — " + word + ". Your full running record is on My Bets.")
+        title_txt = "Your tracked bet settled: " + _settlement_pick_line(bets[0])
+        intro = "This tracked bet graded automatically:"
+    else:
+        w_ = sum(1 for b in bets if (b.get("resultado") or "").upper() == "W")
+        l_ = sum(1 for b in bets if (b.get("resultado") or "").upper() == "L")
+        preheader = ("Your tracked bets settled: " + str(w_) + "-" + str(l_)
+                     + ". Your full running record is on My Bets.")
+        title_txt = "Your tracked bets settled"
+        intro = "These tracked bets graded automatically:"
+    spacer = "<div style=\"font-size:0;line-height:0;height:12px;\">&nbsp;</div>"
+    cards = spacer.join(_settlement_card_html(b) for b in bets)
+    now = datetime.now(TZ)
+    hora = now.strftime("%I:%M %p").lstrip("0")
+    ts = now.strftime("%b") + " " + str(now.day) + ", " + str(now.year) + " · " + hora + " ET"
+    return ("<!DOCTYPE html>\n"
+            "<html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">"
+            "<title>" + _h.escape(title_txt) + "</title></head>\n"
+            "<body style=\"margin:0;padding:0;background:#f7f9fc;font-family:-apple-system,Helvetica,Arial,sans-serif;-webkit-text-size-adjust:100%;text-size-adjust:100%;\">\n"
+            "<div style=\"display:none;font-size:0.8px;line-height:1px;max-height:0;overflow:hidden;\">" + _h.escape(preheader) + "</div>\n"
+            "<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#f7f9fc;-webkit-text-size-adjust:100%;text-size-adjust:100%;\">\n"
+            "<tr><td align=\"center\" style=\"padding:0;\">\n"
+            "<table role=\"presentation\" width=\"520\" cellpadding=\"0\" cellspacing=\"0\" style=\"max-width:520px;width:100%;background:#ffffff;-webkit-text-size-adjust:100%;text-size-adjust:100%;\">\n"
+            "  <tr><td style=\"background:#000000;padding:18px 24px 16px;text-align:center;\">\n"
+            "    <div style=\"color:#2ee6a8;font-size:7.6px;font-weight:800;letter-spacing:2px;text-transform:uppercase;white-space:nowrap;\">" + _h.escape(strip) + "</div>\n"
+            "    <img src=\"https://www.thesharpteam.bet/static/img/sharp-team-header.jpg\" alt=\"The Sharp Team\" style=\"width:100%;height:auto;display:block;border:0;margin-top:12px;\">\n"
+            "    <div style=\"color:#2ee6a8;font-size:7.6px;font-weight:800;letter-spacing:2.5px;margin-top:3px;\">MY BETS · SETTLEMENT</div>\n"
+            "  </td></tr>\n"
+            "  <tr><td style=\"background:#ffffff;padding:22px 24px 4px;text-align:center;\">\n"
+            "    <div style=\"color:#111111;font-size:27.5px;line-height:1.15;font-weight:900;text-align:center;\">Your tracker just<br><span style=\"color:#0e9f74;\">updated.</span></div>\n"
+            "    <p style=\"font-size:10.7px;line-height:1.55;color:#5b6b84;margin:9px 0 0;\">" + intro + "</p>\n"
+            "  </td></tr>\n"
+            "  <tr><td style=\"background:#ffffff;padding:14px 24px 0;\">\n"
+            "    <div style=\"border-top:1px solid #e3e8f2;font-size:0;line-height:0;margin:0 0 16px;\">&nbsp;</div>\n"
+            "    " + cards + "\n"
+            "    <p style=\"font-size:10.7px;line-height:1.55;color:#33415e;text-align:center;margin:16px 0 0;\">Your full running record is on <b style=\"color:#0c1638;\">My Bets</b> — every bet, graded automatically.</p>\n"
+            "    <div style=\"text-align:center;margin-top:14px;\"><a href=\"https://www.thesharpteam.bet/tracker\" style=\"display:inline-block;background:#2ee6a8;color:#0c1638;font-size:10.7px;font-weight:900;padding:12px 26px;border-radius:999px;text-decoration:none;\">OPEN MY BETS &rarr;</a></div>\n"
+            "    <p style=\"font-size:8.8px;line-height:1.55;color:#8494ad;text-align:center;margin:16px 0 0;\">Auto-graded from your tracked bets. Change frequency in My Bets &rarr; Settlement emails.</p>\n"
+            "    <div style=\"font-size:8.4px;color:#8494ad;text-align:center;margin-top:8px;\">" + ts + "</div>\n"
+            "  </td></tr>\n"
+            "  <tr><td style=\"background:#ffffff;border-top:1px solid #e3e8f2;padding:18px 24px 16px;text-align:center;\">\n"
+            "    <img src=\"https://www.thesharpteam.bet/static/img/sharp-team-logo.png\" width=\"44\" alt=\"The Sharp Team\" style=\"display:block;margin:0 auto 5px;\">\n"
+            "    <div style=\"font-size:8.4px;font-weight:800;color:#0c1638;letter-spacing:1px;\">THE SHARP TEAM</div>\n"
+            "    <div style=\"font-size:8.1px;color:#8494ad;margin-top:3px;\">250 Park Avenue, Suite 1800, New York, NY 10017 · (239) 376-8798</div>\n"
+            "    <div style=\"font-size:8.1px;color:#8494ad;margin-top:8px;\">Daily plays, results and receipts: <a href=\"https://t.me/thesharpteam\" style=\"color:#0e9f74;text-decoration:none;\">t.me/thesharpteam</a></div>\n"
+            "    <div style=\"font-size:8.1px;color:#8494ad;line-height:1.5;margin-top:10px;\">21+. Play responsibly. If you or someone you know has a gambling problem, call or text 1-800-GAMBLER.</div>\n"
+            "    <div style=\"font-size:8.1px;color:#8494ad;line-height:1.5;margin-top:6px;\">Must be 21+. The Sharp Team provides information and entertainment only and is not a sportsbook. Past results do not guarantee future performance. 1u = $100.</div>\n"
+            "    <div style=\"font-size:8.1px;color:#8494ad;margin-top:5px;\">&copy; 2026 The Sharp Team. All rights reserved.</div>\n"
+            "  </td></tr>\n"
+            "</table>\n"
+            "</td></tr></table>\n"
+            "</body></html>")
+
+
+def _email_own_settled(user, bet):
+    """Correo inmediato de liquidación de una apuesta propia (si el
+    miembro eligió 'immediate' en sus ajustes de My Bets). Diseño v5
+    aprobado por Alex el 2026-10-23: solo si ganó o perdió, sin
+    montos de ganancia."""
+    try:
+        db = get_db()
+        st = _mybets_settings(db, user["id"], user)
+        if st["email_pref"] != "immediate":
+            return
+        res = bet.get("resultado")
+        if res not in ("W", "L", "P"):
+            return
+        word = {"W": "won", "L": "lost", "P": "pushed"}[res]
+        pick_line = _settlement_pick_line(bet)
+        subject = f"Your tracked bet settled: {pick_line}"
+        text = (f"Your tracked bet settled: {pick_line} — {word}. "
+                f"Your full running record is on My Bets: "
+                f"https://www.thesharpteam.bet/tracker")
+        html = _settlement_email_html([bet], single=True)
+        _dispatch_email(user["email"], subject, text, html)
+    except Exception:
+        pass
+
+
+def _parse_odds_txt(v):
+    try:
+        return int(float(str(v).replace("+", "").strip()))
+    except (TypeError, ValueError):
+        return None
+
+
+@app.route("/my-bets/add", methods=["GET", "POST"])
+@login_required
+def mybets_add():
+    user = _mybets_gate()
+    if user is None:
+        return redirect(url_for("tracker"))
+    db = get_db()
+    record_checkin(db, session["user_id"])
+    if request.method == "POST":
+        pick = (request.form.get("pick") or "").strip()
+        cuota = _parse_odds_txt(request.form.get("cuota"))
+        try:
+            stake = float(request.form.get("stake_monto") or 0)
+        except ValueError:
+            stake = 0.0
+        if not pick or cuota is None or stake <= 0:
+            flash("Add the pick, the odds and your stake.", "error")
+            return redirect(url_for("mybets_add"))
+        foto_data = ""
+        fup = request.files.get("foto")
+        if fup and fup.filename:
+            raw = fup.read(1600000)
+            if raw and (fup.mimetype or "").startswith("image/"):
+                import base64 as _b64
+                foto_data = "data:%s;base64,%s" % (
+                    fup.mimetype, _b64.b64encode(raw).decode())
+        punto = request.form.get("punto")
+        try:
+            punto = float(punto) if punto not in (None, "") else None
+        except ValueError:
+            punto = None
+        cierre = _parse_odds_txt(request.form.get("cierre"))
+        fecha = (request.form.get("fecha") or "").strip() or \
+            datetime.now(TZ).strftime("%Y-%m-%d")
+        db.execute(
+            "INSERT INTO own_bets (user_id, fecha, liga, juego, mercado, pick,"
+            " cuota, stake_monto, casa, cierre, event_id, lado, punto, foto,"
+            " created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+            (user["id"], fecha, (request.form.get("liga") or "").strip(),
+             (request.form.get("juego") or "").strip(),
+             (request.form.get("mercado") or "Moneyline").strip(),
+             pick, cuota, stake, (request.form.get("casa") or "").strip(),
+             cierre, (request.form.get("event_id") or "").strip() or None,
+             (request.form.get("lado") or "").strip() or None, punto,
+             foto_data, datetime.now(TZ).strftime("%Y-%m-%d %H:%M")))
+        db.commit()
+        flash("Bet added to My Bets.", "ok")
+        return redirect(url_for("tracker_plays"))
+    games = []
+    try:
+        games = [g for g in (load_gamecenter().get("games") or [])
+                 if not g.get("live")][:80]
+    except Exception:
+        games = []
+    return render_template("my_bets_form.html", games=games, bet=None,
+                           today=datetime.now(TZ).strftime("%Y-%m-%d"))
+
+
+@app.route("/my-bets/<int:bet_id>/edit", methods=["GET", "POST"])
+@login_required
+def mybets_edit(bet_id):
+    user = _mybets_gate()
+    if user is None:
+        return redirect(url_for("tracker"))
+    db = get_db()
+    row = db.execute("SELECT * FROM own_bets WHERE id = ? AND user_id = ?",
+                     (bet_id, user["id"])).fetchone()
+    if not row:
+        flash("Bet not found.", "error")
+        return redirect(url_for("tracker_plays"))
+    if request.method == "POST":
+        pick = (request.form.get("pick") or "").strip() or row["pick"]
+        cuota = _parse_odds_txt(request.form.get("cuota")) or row["cuota"]
+        try:
+            stake = float(request.form.get("stake_monto") or row["stake_monto"])
+        except ValueError:
+            stake = float(row["stake_monto"])
+        punto = request.form.get("punto")
+        try:
+            punto = float(punto) if punto not in (None, "") else None
+        except ValueError:
+            punto = row["punto"]
+        resultado = (request.form.get("resultado") or "").strip()
+        if resultado not in ("W", "L", "P"):
+            resultado = None
+        settled_at = row["settled_at"]
+        if resultado and not row["resultado"]:
+            settled_at = datetime.now(TZ).strftime("%Y-%m-%d %H:%M")
+        if not resultado:
+            settled_at = None
+        db.execute(
+            "UPDATE own_bets SET fecha = ?, liga = ?, juego = ?, mercado = ?,"
+            " pick = ?, cuota = ?, stake_monto = ?, casa = ?, cierre = ?,"
+            " resultado = ?, settled_at = ? WHERE id = ? AND user_id = ?",
+            ((request.form.get("fecha") or row["fecha"]).strip(),
+             (request.form.get("liga") or "").strip(),
+             (request.form.get("juego") or "").strip(),
+             (request.form.get("mercado") or "Moneyline").strip(),
+             pick, cuota, stake, (request.form.get("casa") or "").strip(),
+             _parse_odds_txt(request.form.get("cierre")), resultado,
+             settled_at, bet_id, user["id"]))
+        _nb = dict(row)
+        _nb.update({"cuota": cuota, "stake_monto": stake,
+                    "casa": (request.form.get("casa") or "").strip(),
+                    "resultado": resultado})
+        _sync_own_bet_balance(db, dict(row), _nb)
+        db.commit()
+        bet = dict(row)
+        bet.update({"pick": pick, "cuota": cuota, "stake_monto": stake,
+                    "resultado": resultado})
+        if resultado:
+            _email_own_settled(user, bet)
+        flash("Bet updated.", "ok")
+        return redirect(url_for("tracker_plays"))
+    return render_template("my_bets_form.html", games=[], bet=dict(row),
+                           today=datetime.now(TZ).strftime("%Y-%m-%d"))
+
+
+@app.route("/my-bets/<int:bet_id>/resultado", methods=["POST"])
+@login_required
+def mybets_resultado(bet_id):
+    user = _mybets_gate()
+    if user is None:
+        return redirect(url_for("tracker"))
+    resultado = (request.form.get("resultado") or "").strip()
+    if resultado not in ("W", "L", "P", ""):
+        flash("Invalid result.", "error")
+        return back("tracker_plays")
+    db = get_db()
+    row = db.execute("SELECT * FROM own_bets WHERE id = ? AND user_id = ?",
+                     (bet_id, user["id"])).fetchone()
+    if not row:
+        flash("Bet not found.", "error")
+        return back("tracker_plays")
+    settled_at = datetime.now(TZ).strftime("%Y-%m-%d %H:%M") if resultado else None
+    db.execute("UPDATE own_bets SET resultado = ?, settled_at = ? WHERE id = ?",
+               (resultado or None, settled_at, bet_id))
+    _nb = dict(row)
+    _nb["resultado"] = resultado or None
+    _sync_own_bet_balance(db, dict(row), _nb)
+    db.commit()
+    if resultado:
+        bet = dict(row)
+        bet["resultado"] = resultado
+        _email_own_settled(user, bet)
+    flash("Result updated.", "ok")
+    return back("tracker_plays")
+
+
+@app.route("/my-bets/<int:bet_id>/borrar", methods=["POST"])
+@login_required
+def mybets_borrar(bet_id):
+    user = _mybets_gate()
+    if user is None:
+        return redirect(url_for("tracker"))
+    db = get_db()
+    db.execute("DELETE FROM own_bets WHERE id = ? AND user_id = ?",
+               (bet_id, user["id"]))
+    db.commit()
+    flash("Bet removed from My Bets.", "ok")
+    return back("tracker_plays")
+
+
+@app.route("/my-bets/settings", methods=["POST"])
+@login_required
+def mybets_settings_save():
+    user = _mybets_gate()
+    if user is None:
+        return redirect(url_for("tracker"))
+    db = get_db()
+    try:
+        unit = float(request.form.get("unit_monto") or 0) or None
+    except ValueError:
+        unit = None
+    pref = (request.form.get("email_pref") or "daily").strip()
+    if pref not in ("daily", "immediate", "off"):
+        pref = "daily"
+    if USE_PG:
+        db.execute(
+            "INSERT INTO mybets_settings (user_id, unit_monto, email_pref, updated_at)"
+            " VALUES (?,?,?,?) ON CONFLICT (user_id) DO UPDATE SET"
+            " unit_monto = EXCLUDED.unit_monto, email_pref = EXCLUDED.email_pref,"
+            " updated_at = EXCLUDED.updated_at",
+            (user["id"], unit, pref, datetime.now(TZ).strftime("%Y-%m-%d %H:%M")))
+    else:
+        db.execute(
+            "INSERT OR REPLACE INTO mybets_settings (user_id, unit_monto,"
+            " email_pref, updated_at) VALUES (?,?,?,?)",
+            (user["id"], unit, pref, datetime.now(TZ).strftime("%Y-%m-%d %H:%M")))
+    db.commit()
+    flash("My Bets settings saved.", "ok")
+    return back("tracker_plays")
+
+
+@app.route("/my-bets/reset", methods=["POST"])
+@login_required
+def mybets_reset():
+    user = _mybets_gate()
+    if user is None:
+        return redirect(url_for("tracker"))
+    db = get_db()
+    db.execute("DELETE FROM own_bets WHERE user_id = ?", (user["id"],))
+    db.execute("DELETE FROM tracked_plays WHERE user_id = ?", (user["id"],))
+    db.commit()
+    flash("Your My Bets stats were reset.", "ok")
+    return redirect(url_for("tracker_plays"))
+
+
+@app.route("/my-bets/export.csv")
+@login_required
+def mybets_export():
+    user = _mybets_gate()
+    if user is None:
+        return redirect(url_for("tracker"))
+    import csv
+    import io
+    db = get_db()
+    out = io.StringIO()
+    w = csv.writer(out)
+    w.writerow(["date", "source", "league", "game", "market", "pick", "odds",
+                "stake", "book", "result", "profit", "closing_odds", "clv_pts"])
+    for t in db.execute("SELECT * FROM tracked_plays WHERE user_id = ?"
+                        " ORDER BY fecha, id", (user["id"],)).fetchall():
+        t = dict(t)
+        w.writerow([t["fecha"], "program", t.get("liga") or "", t.get("juego") or "",
+                    "Moneyline", t["pick"], t["cuota"], t["stake_monto"], "Novig",
+                    t["resultado"] or "PENDING", round(play_profit_dollars(t), 2), "", ""])
+    for b in db.execute("SELECT * FROM own_bets WHERE user_id = ?"
+                         " ORDER BY fecha, id", (user["id"],)).fetchall():
+        b = dict(b)
+        clv = _own_clv_pts(b)
+        w.writerow([b["fecha"], "own", b.get("liga") or "", b.get("juego") or "",
+                    b.get("mercado") or "", b["pick"], b["cuota"], b["stake_monto"],
+                    b.get("casa") or "", b["resultado"] or "PENDING",
+                    round(_own_profit(b), 2), b.get("cierre") or "",
+                    clv if clv is not None else ""])
+    from flask import Response
+    return Response(out.getvalue(), mimetype="text/csv", headers={
+        "Content-Disposition": "attachment; filename=my-bets.csv"})
+
+
+def _ev_board_email_html(board):
+    """HTML del correo del tablero de precios (Compare Prices) del día."""
+    games = ""
+    for e in board.get("events") or []:
+        teams = ""
+        for t in e.get("teams") or []:
+            tag = (" <span style='background:#e8c766;color:#111;font-size:6.1px;"
+                   "font-weight:800;border-radius:99px;padding:2px 8px'>OUR PLAY</span>"
+                   if t.get("is_pick") else "")
+            delta = t.get("delta") or "$0.00"
+            dline = (f"▲ {delta} more than the worst price on a $100 bet"
+                     if delta != "$0.00" else
+                     f"Same price at all {t.get('books_count', '')} books")
+            teams += (
+                f"<div style='padding:9px 0;border-top:1px solid rgba(255,255,255,.07)'>"
+                f"<span style='font-size:9.2px;color:#fff'>{t.get('name', '')}</span>{tag}"
+                f"<span style='float:right;text-align:right'><b style='color:#2ee6a8;"
+                f"font-size:10.7px'>{t.get('best_price', '')}</b><br>"
+                f"<span style='color:#8b94a7;font-size:6.9px'>best at {t.get('best_book', '')}</span></span>"
+                f"<div style='color:#2ee6a8;font-size:7.6px;margin-top:4px'>{dline}</div></div>")
+        games += (
+            f"<div style='background:#131f3a;border:1px solid #2a3c5f;border-radius:14px;"
+            f"padding:14px 16px;margin:0 0 12px'>"
+            f"<div style='color:#c8cede;font-size:6.9px;letter-spacing:1.2px'>{e.get('league', '')}"
+            f" · TODAY {e.get('time_label', '')}</div>"
+            f"<div style='color:#fff;font-size:9.9px;font-weight:700;margin-top:4px'>{e.get('label', '')}</div>"
+            f"{teams}"
+            f"<div style='color:#8b94a7;font-size:7.6px;margin-top:8px'>Market vig "
+            f"<b style='color:#2ee6a8'>{e.get('vig', '')}</b></div></div>")
+    return (
+        "<div style='font-family:Arial,sans-serif;background:#0e1626;color:#eef2f8;"
+        "padding:24px;border-radius:12px;max-width:560px'>"
+        "<div style='font-size:6.9px;letter-spacing:2px;color:#e8c766;font-weight:800'>THE SHARP TEAM</div>"
+        "<h2 style='margin:6px 0 4px;color:#fff;font-size:15.3px'>Today's price board</h2>"
+        "<p style='color:#93a4bf;font-size:8.4px;margin:0 0 16px'>Every game on today's card, "
+        "the best price for each team and where to bet it — the same board as your Dashboard.</p>"
+        f"{games}"
+        "<p style='margin:16px 0'><a href='https://www.thesharpteam.bet/ev-board' "
+        "style='background:#2ee6a8;color:#06301d;font-weight:800;font-size:10.7px;text-decoration:none;"
+        "border-radius:10px;padding:12px 20px;display:inline-block'>Open Compare Prices →</a></p>"
+        "<p style='color:#5f718f;font-size:6.9px;line-height:1.5'>You get this email because "
+        "«Price board by email» is on in your Alerts. Turn it off any time there.<br>"
+        "21+. Play responsibly. If you or someone you know has a gambling problem, call or "
+        "text 1-800-GAMBLER. © 2026 The Sharp Team.</p></div>")
+
+
+@app.route("/admin/api/ev-board/email-digests", methods=["POST"])
+def api_ev_board_email_digests():
+    """Correo del tablero de precios a los miembros con el ajuste activo
+    (2026-10-23, aprobado por Alex, espejo del ajuste de referencia).
+    {"test": true} lo manda SOLO a la cuenta de Alex, sin deduplicar."""
+    if not _admin_api_autorizado():
+        return jsonify({"ok": False}), 403
+    data = request.get_json(silent=True) or {}
+    test = bool(data.get("test"))
+    board = load_ev_board()
+    events = board.get("events") or []
+    if not events:
+        return jsonify({"ok": True, "sent": 0, "reason": "empty board"})
+    today = datetime.now(TZ).strftime("%Y-%m-%d")
+    if not test and get_setting("ev_board_email_last", "") == today:
+        return jsonify({"ok": True, "sent": 0, "reason": "already sent"})
+    db = get_db()
+    if test:
+        rows = db.execute("SELECT * FROM users WHERE LOWER(email) = ?",
+                          (ALEX_MEMBER_EMAIL.lower(),)).fetchall()
+    else:
+        rows = db.execute(
+            "SELECT * FROM users WHERE ev_board_email = 1 AND cancel_requested_at IS NULL").fetchall()
+    html = _ev_board_email_html(board)
+    text = ("Today's price board is in your inbox and on your Dashboard: "
+            "every game on today's card with the best price for each team. "
+            "Open Compare Prices: https://www.thesharpteam.bet/ev-board")
+    sent = 0
+    for u in rows:
+        u = dict(u)
+        if not test and not platinum_unlocked_for(u):
+            continue
+        if not u.get("email"):
+            continue
+        try:
+            _dispatch_email(u["email"], "The Sharp Team | Today's price board",
+                            text, html)
+            sent += 1
+        except Exception:
+            pass
+    if not test and sent:
+        set_setting("ev_board_email_last", today)
+    return jsonify({"ok": True, "sent": sent, "test": test})
+
+
+@app.route("/admin/api/own-bets/open")
+def api_own_bets_open():
+    if not _admin_api_autorizado():
+        return jsonify({"ok": False}), 403
+    db = get_db()
+    rows = db.execute(
+        "SELECT * FROM own_bets WHERE resultado IS NULL AND event_id IS NOT NULL"
+    ).fetchall()
+    return jsonify({"ok": True, "bets": [dict(r) for r in rows]})
+
+
+@app.route("/admin/api/own-bets/grade", methods=["POST"])
+def api_own_bets_grade():
+    if not _admin_api_autorizado():
+        return jsonify({"ok": False}), 403
+    data = request.get_json(silent=True) or {}
+    resultado = (data.get("resultado") or "").strip()
+    if resultado not in ("W", "L", "P"):
+        return jsonify({"ok": False, "error": "resultado"}), 400
+    db = get_db()
+    row = db.execute("SELECT * FROM own_bets WHERE id = ?",
+                     (data.get("id"),)).fetchone()
+    if not row:
+        return jsonify({"ok": False, "error": "not found"}), 404
+    cierre = data.get("cierre") or row["cierre"]
+    marcador = (data.get("marcador") or "").strip() or None
+    db.execute(
+        "UPDATE own_bets SET resultado = ?, cierre = ?, marcador = ?, settled_at = ? WHERE id = ?",
+        (resultado, cierre, marcador, datetime.now(TZ).strftime("%Y-%m-%d %H:%M"), row["id"]))
+    _nb = dict(row)
+    _nb["resultado"] = resultado
+    _sync_own_bet_balance(db, dict(row), _nb)
+    db.commit()
+    owner = db.execute("SELECT * FROM users WHERE id = ?",
+                       (row["user_id"],)).fetchone()
+    if owner:
+        bet = dict(row)
+        bet.update({"resultado": resultado, "cierre": cierre})
+        if marcador:
+            bet["marcador"] = marcador
+        _email_own_settled(owner, bet)
+    return jsonify({"ok": True})
+
+
+@app.route("/admin/api/own-bets/email-digests", methods=["POST"])
+def api_own_bets_digests():
+    """Resumen diario de liquidación de My Bets (lo dispara el cron HF).
+    {"test": true} lo manda SOLO a la cuenta de Alex, con sus últimas
+    apuestas propias liquidadas (espejo del modo test de ev-board)."""
+    if not _admin_api_autorizado():
+        return jsonify({"ok": False}), 403
+    data = request.get_json(silent=True) or {}
+    db = get_db()
+    if data.get("test"):
+        sent_t = 0
+        rows = db.execute("SELECT * FROM users WHERE LOWER(email) = ?",
+                          (ALEX_MEMBER_EMAIL.lower(),)).fetchall()
+        for owner in rows:
+            bets_t = [dict(b) for b in db.execute(
+                "SELECT * FROM own_bets WHERE user_id = ? AND resultado IS NOT NULL "
+                "ORDER BY settled_at DESC, id DESC LIMIT 5",
+                (owner["id"],)).fetchall()]
+            if not bets_t:
+                continue
+            bets_t.reverse()
+            if len(bets_t) == 1:
+                subject_t = f"Your tracked bet settled: {_settlement_pick_line(bets_t[0])}"
+            else:
+                wt = sum(1 for b in bets_t if b["resultado"] == "W")
+                lt = sum(1 for b in bets_t if b["resultado"] == "L")
+                subject_t = f"Your tracked bets settled: {wt}-{lt}"
+            try:
+                _dispatch_email(owner["email"], subject_t,
+                                "Your tracked bets settled. Your full running "
+                                "record is on My Bets: "
+                                "https://www.thesharpteam.bet/tracker",
+                                _settlement_email_html(bets_t, single=(len(bets_t) == 1)))
+                sent_t += 1
+            except Exception:
+                pass
+        return jsonify({"ok": True, "sent": sent_t, "test": True})
+    ayer = (datetime.now(TZ) - timedelta(days=1)).strftime("%Y-%m-%d")
+    sent = 0
+    users = db.execute(
+        "SELECT DISTINCT user_id FROM own_bets WHERE settled_at LIKE ?",
+        (ayer + "%",)).fetchall()
+    for u in users:
+        owner = db.execute("SELECT * FROM users WHERE id = ?",
+                           (u["user_id"],)).fetchone()
+        if not owner:
+            continue
+        # Regla 2026-10-30: con cancelación pedida, fuera de las
+        # audiencias de email de miembros (su cuenta sigue intacta).
+        try:
+            if owner["cancel_requested_at"]:
+                continue
+        except Exception:
+            pass
+        st = _mybets_settings(db, owner["id"], owner)
+        if st["email_pref"] != "daily":
+            continue
+        bets = [dict(b) for b in db.execute(
+            "SELECT * FROM own_bets WHERE user_id = ? AND settled_at LIKE ?",
+            (owner["id"], ayer + "%")).fetchall()]
+        if not bets:
+            continue
+        bets.sort(key=lambda b: (b.get("settled_at") or "", b.get("id") or 0))
+        if len(bets) == 1:
+            subject = f"Your tracked bet settled: {_settlement_pick_line(bets[0])}"
+        else:
+            w_ = sum(1 for b in bets if b["resultado"] == "W")
+            l_ = sum(1 for b in bets if b["resultado"] == "L")
+            subject = f"Your tracked bets settled: {w_}-{l_}"
+        html = _settlement_email_html(bets, single=(len(bets) == 1))
+        text = ("Your tracked bets settled yesterday. Your full running "
+                "record is on My Bets: https://www.thesharpteam.bet/tracker")
+        try:
+            _dispatch_email(owner["email"], subject, text, html)
+            sent += 1
+        except Exception:
+            pass
+    return jsonify({"ok": True, "sent": sent})
 
 
 _SPORT_ICONS = {"NFL": "🏈", "NCAAF": "🏈", "MLB": "⚾", "NHL": "🏒",
@@ -4477,6 +8271,27 @@ def _tracker_context(user):
             "logo": logo,
             "sport_icon": _sport_icon(t, off),
         })
+    # ---- My Bets completo: apuestas propias del miembro (2026-10-23) ----
+    mb_settings = _mybets_settings(db, uid, user)
+    own_rows = []
+    try:
+        _own_db = db.execute(
+            "SELECT * FROM own_bets WHERE user_id = ? ORDER BY fecha DESC, id DESC",
+            (uid,),
+        ).fetchall()
+        own_rows = [_own_row(dict(b), mb_settings) for b in _own_db]
+    except Exception:
+        own_rows = []
+    stats_all = _stats_from_rows(rows + own_rows)
+    _cron_all = sorted(
+        [r for r in rows + own_rows if r["resultado"] in ("W", "L", "P")],
+        key=lambda r: (r["fecha"], r["id"]))
+    _acc, _vals = 0.0, []
+    for _r in _cron_all:
+        _acc += float(_r["profit"] or 0)
+        _vals.append(round(_acc, 2))
+    curve_all = profit_curve_svg(_vals, w=320, h=90, pad=8)
+
     # Récord Platinum real del archivo oficial (para el upsell del tracker).
     _pw = _pl = 0
     for _d in load_archive():
@@ -4505,6 +8320,10 @@ def _tracker_context(user):
         recientes_value=recientes_value(),
         streak=program_streak(),
         resumen_ayer=resumen_ayer(),
+        own_rows=own_rows,
+        stats_all=stats_all,
+        curve_all=curve_all,
+        mb_settings=mb_settings,
         es_admin=is_admin_for(user),
     )
 
@@ -4528,7 +8347,9 @@ def preview_my_action():
     # Desglose por nivel para la pestaña Stats
     por_nivel = {}
     for r in rows:
-        niv = "Platinum" if (r["nivel"] or "").upper() in ("ELITE", "PLATINUM") else "Gold"
+        _nvp = (r["nivel"] or "").upper()
+        niv = ("Platinum" if _nvp in ("ELITE", "PLATINUM")
+               else ("Free Picks" if _nvp == "FREE" else "Gold"))
         d = por_nivel.setdefault(niv, {"w": 0, "l": 0, "profit": 0.0})
         if r["resultado"] == "W":
             d["w"] += 1
@@ -4549,6 +8370,47 @@ def preview_my_action():
     )
 
 
+@app.route("/preview/registro")
+def preview_registro_nuevo():
+    """VISTA PREVIA PRIVADA (2026-10-31, pedido por Alex): propuesta de
+    rediseño de la página de registro (embudo). SOLO visible con la sesión
+    de admin o de la cuenta personal de Alex — los mismos flags del header
+    (es_admin or es_alex); cualquier otro caso (sin sesión o miembro
+    normal) devuelve 404. Sin enlaces en plantillas ni menús: se entra
+    solo por URL directa."""
+    user = current_user()
+    if not (is_admin_for(user) or is_alex_member(user)):
+        from flask import abort
+        abort(404)
+    return render_template("registro_preview.html")
+
+
+@app.route("/preview/registro-nuevo")
+def preview_registro_produccion():
+    """VISTA PREVIA PRIVADA (2026-10-31, pedido por Alex): la landing de
+    PRODUCCIÓN ya construida (registro_nuevo.html / registro_nuevo_es.html,
+    con el formulario integrado) para verla tal cual saldría en vivo SIN
+    encender el interruptor REGISTRO_NUEVO. Misma puerta que
+    /preview/registro: solo sesión de admin o de la cuenta personal de
+    Alex; cualquier otro caso (sin sesión o miembro normal) devuelve 404.
+    Sin enlaces en plantillas ni menús: se entra solo por URL directa.
+    El idioma sigue el mismo criterio de register(): manda ?lang=; si no,
+    la cookie tst_lang; si no, SOLO República Dominicana (geo-IP) recibe
+    español. Es SOLO para verla (GET): el formulario se renderiza igual
+    que en producción, pero esta ruta no procesa registros."""
+    user = current_user()
+    if not (is_admin_for(user) or is_alex_member(user)):
+        from flask import abort
+        abort(404)
+    _lang = (request.args.get("lang") or "").strip().lower()
+    if _lang not in ("es", "en"):
+        _lang = (request.cookies.get("tst_lang") or "").strip().lower()
+    if _lang not in ("es", "en"):
+        _lang = "es" if _pais_visitante() == "DO" else "en"
+    _tpl = "registro_nuevo_es.html" if _lang == "es" else "registro_nuevo.html"
+    return render_template(_tpl, turnstile_key=TURNSTILE_SITE_KEY)
+
+
 @app.route("/free-plays")
 @login_required
 def free_plays():
@@ -4564,7 +8426,7 @@ def admin_free_plays_clear():
     """Borra el tracker "Gold" (solo admin). No afecta tracked_plays
     ni el récord oficial del programa."""
     user = current_user()
-    if not (is_admin_for(user) or is_alex_member(user)):
+    if not _admin_o_cuenta_alex(user):
         return redirect(url_for("home"))
     db = get_db()
     db.execute("DELETE FROM free_plays")
@@ -4633,6 +8495,12 @@ def tracker_export():
     """
     if "user_id" not in session:
         return redirect(url_for("login"))
+    # Export del tracker personal: abierto a todo miembro con sesion
+    # (2026-10-23, My Bets abrio para la membresia gratis; el candado
+    # de membresia del 2026-10-15 quedo eliminado).
+    _cu = current_user()
+    if _cu is None:
+        return redirect(url_for("login"))
     rng = (request.args.get("range") or "").strip().lower()
     f_from = (request.args.get("from") or "").strip()
     f_to = (request.args.get("to") or "").strip()
@@ -4697,7 +8565,8 @@ def tracker_export():
         off = oficiales.get((f, (t["pick"] or "").strip().lower()), {})
         res = t["resultado"] or ""
         nivel = (t["nivel"] or "").upper()
-        nivel_txt = "PLATINUM" if nivel in ("ELITE", "PLATINUM") else ("GOLD" if nivel == "GOLD" else nivel)
+        nivel_txt = ("PLATINUM" if nivel in ("ELITE", "PLATINUM")
+                     else ("FREE PICK" if nivel == "FREE" else nivel))
         try:
             fecha_corta = datetime.strptime(f, "%Y-%m-%d").strftime("%b %d") if f else "—"
         except (ValueError, TypeError):
@@ -4783,6 +8652,30 @@ def api_admin_autotrack():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+def _track_ajax_payload(db, play, already=False):
+    """Respuesta AJAX del track (tira inferior estilo 2026-10-31): incluye
+    la fila tracked del miembro (id, monto, cuota) para que la tarjeta
+    pinte la tira con Undo / Change stake sin una segunda llamada."""
+    payload = {"ok": True}
+    if already:
+        payload["already"] = True
+    try:
+        row = db.execute(
+            "SELECT id, stake_monto, cuota FROM tracked_plays "
+            "WHERE user_id = ? AND play_id = ?",
+            (session["user_id"], play["id"]),
+        ).fetchone()
+    except Exception:
+        row = None
+    if row:
+        payload["tracked_id"] = row["id"]
+        payload["pick"] = play.get("pick", "")
+        payload["cuota"] = int(row["cuota"])
+        # float(): en Postgres stake_monto puede llegar como Decimal.
+        payload["stake_monto"] = float(row["stake_monto"])
+    return payload
+
+
 @app.route("/track/<play_id>", methods=["GET", "POST"])
 @login_required
 def track(play_id):
@@ -4798,6 +8691,10 @@ def track(play_id):
             return jsonify({"ok": False, "error": "Play not found."}), 404
         flash("Play not found.", "error")
         return redirect(url_for("home"))
+    # Trackear al tracker personal: abierto a toda la membresia desde
+    # el 2026-10-23 (orden de Alex: la membresia gratis tambien tiene
+    # tracker). El candado de abajo NO se toca: la jugada Platinum
+    # bloqueada sigue sin poder trackearse sin Platinum.
     # Track con o sin ticket (2026-10-10, orden de Alex: revierte la regla
     # anti-trampa del 2026-10-03; el botón "+ Track" ahora es visible siempre).
     # La Elite bloqueada no se puede trackear: no revela nada.
@@ -4805,6 +8702,14 @@ def track(play_id):
         if _is_ajax:
             return jsonify({"ok": False, "error": "The Platinum play is locked. Unlock it to track it."}), 403
         flash("The Platinum play is locked. Unlock it to track it.", "warn")
+        return redirect(url_for("desbloquear_platinum"))
+    # GOLD es de pago desde la Opción B (2026-10-30): tampoco se puede
+    # trackear sin Platinum — la carta sanitizada nunca expone su id,
+    # esto es la segunda puerta en el servidor.
+    if play.get("nivel") == "GOLD" and not platinum_unlocked_for(_cu):
+        if _is_ajax:
+            return jsonify({"ok": False, "error": "The Gold play is locked. Unlock Platinum to track it."}), 403
+        flash("The Gold play is locked. Unlock Platinum to track it.", "warn")
         return redirect(url_for("desbloquear_platinum"))
     db = get_db()
     try:
@@ -4823,11 +8728,11 @@ def track(play_id):
         )
         db.commit()
         if _is_ajax:
-            return jsonify({"ok": True})
+            return jsonify(_track_ajax_payload(db, play))
         flash("Play added to your tracker.", "ok")
     except INTEGRITY_ERRORS:
         if _is_ajax:
-            return jsonify({"ok": True, "already": True})
+            return jsonify(_track_ajax_payload(db, play, already=True))
         flash("That play is already in your tracker.", "warn")
     except Exception:
         # Blindaje 2026-10-12: cualquier otro error de BD devuelve JSON al
@@ -4869,14 +8774,63 @@ def set_result(tracked_id):
 @app.route("/quitar/<int:tracked_id>", methods=["POST"])
 @login_required
 def untrack(tracked_id):
+    # Candado (2026-11-01, orden de Alex): una jugada DESPUÉS de darle
+    # track queda FINAL — no se puede des-trackear ni revertir. El
+    # endpoint queda cerrado para TODAS las filas de tracked_plays
+    # (cualquier miembro, cualquier jugada): NO borra nada y responde
+    # bloqueado. La ruta se conserva para que cualquier cliente viejo
+    # que aún la llame reciba el candado en vez de un 404.
+    if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+        return jsonify(
+            {"ok": False, "error": "This play is locked once tracked."}
+        ), 403
+    flash("This play is locked once tracked.", "warn")
+    return back("tracker")
+
+
+@app.route("/track-stake/<int:tracked_id>", methods=["POST"])
+@login_required
+def track_stake(tracked_id):
+    """Change stake de la tira inferior (2026-10-31): el miembro ajusta el
+    monto de SU jugada trackeada (solo suyas, solo pendientes). Las
+    unidades se reescalan con el mismo $/unidad con el que la fila nació
+    en track() (stake_monto / stake_unidades), igual que
+    stake_personalizado deriva el monto de las unidades del miembro."""
+    data = request.get_json(silent=True) or {}
+    try:
+        nuevo = float(data.get("stake_monto"))
+    except (TypeError, ValueError):
+        return jsonify({"ok": False, "error": "Enter a valid amount."}), 400
+    if not (0 < nuevo <= 100000):
+        return jsonify({"ok": False, "error": "Enter a valid amount."}), 400
     db = get_db()
-    db.execute(
-        "DELETE FROM tracked_plays WHERE id = ? AND user_id = ?",
+    row = db.execute(
+        "SELECT * FROM tracked_plays WHERE id = ? AND user_id = ?",
         (tracked_id, session["user_id"]),
+    ).fetchone()
+    if not row:
+        return jsonify({"ok": False, "error": "Play not found."}), 404
+    if row["resultado"]:
+        return jsonify({"ok": False, "error": "This play is already settled."}), 400
+    # float(): montos de Postgres pueden llegar como Decimal.
+    monto_viejo = float(row["stake_monto"])
+    unidades_viejas = float(row["stake_unidades"])
+    if monto_viejo > 0 and unidades_viejas > 0:
+        nuevas_unidades = round(nuevo * unidades_viejas / monto_viejo, 4)
+    else:
+        nuevas_unidades = unidades_viejas
+    db.execute(
+        "UPDATE tracked_plays SET stake_monto = ?, stake_unidades = ? "
+        "WHERE id = ?",
+        (round(nuevo, 2), nuevas_unidades, tracked_id),
     )
     db.commit()
-    flash("Play removed from your tracker.", "ok")
-    return back("tracker")
+    return jsonify({
+        "ok": True,
+        "stake_monto": round(nuevo, 2),
+        "stake_unidades": nuevas_unidades,
+        "to_win": round(nuevo * american_profit_ratio(row["cuota"]), 2),
+    })
 
 
 @app.route("/masterclass")
@@ -4993,7 +8947,7 @@ def records():
             nv = (j.get("nivel") or "").upper()
             if nv not in ("ELITE", "PLATINUM", "GOLD"):
                 continue
-            disp = "PLATINUM" if nv in ("ELITE", "PLATINUM") else "GOLD"
+            disp = "PLATINUM" if nv in ("ELITE", "PLATINUM") else "SHARP FREE"
             un = _units(j)
             won = j["resultado"] == "WON"
             stats["W" if won else "L"] += 1
@@ -5025,29 +8979,293 @@ def about():
     return render_template("about.html")
 
 
+def _desbloquear_board():
+    """Datos REALES del programa para la página de desbloqueo (2026-10-19).
+
+    Récord oficial con el MISMO cálculo del Official Tracker
+    (official_tracker_full), teasers de las últimas jugadas liquidadas y
+    los tickets GANADORES recientes con su foto — todo desde
+    data/archive.json. Si algo falla, devuelve vacío y la página se
+    renderiza igual, sin esas piezas (nunca números inventados).
+    """
+    board = {"w": 0, "l": 0, "total": 0, "win_rate": 0.0,
+             "record": "0–0", "teasers": [], "tickets": []}
+    try:
+        g = official_tracker_full().get("general") or {}
+        board.update({"w": g.get("w", 0), "l": g.get("l", 0),
+                      "total": g.get("n", 0),
+                      "win_rate": g.get("win_rate", 0.0),
+                      "record": g.get("record", "0–0")})
+        dias = sorted(load_archive(), key=lambda d: d.get("fecha") or "")
+        settled = []
+        for d in dias:
+            for j in d.get("jugadas", []) or []:
+                if j.get("resultado") in ("WON", "LOST") and not j.get("bloqueada"):
+                    settled.append((d.get("fecha") or "", j))
+        newest = list(reversed(settled))
+
+        def _wl(items):
+            w = sum(1 for _, j in items if j["resultado"] == "WON")
+            return w, len(items) - w
+
+        teasers = []
+        if newest:
+            liga_top = _league_of_archive_play(newest[0][1])
+            if liga_top:
+                de_liga = [it for it in newest
+                           if _league_of_archive_play(it[1]) == liga_top][:5]
+                if len(de_liga) >= 3:
+                    w, l = _wl(de_liga)
+                    teasers.append({
+                        "texto": f"{w}–{l} in the last {len(de_liga)} {liga_top} plays",
+                        "sub": "Official plays · tap for the graded plays"})
+            ult10 = newest[:10]
+            if len(ult10) >= 5:
+                w, l = _wl(ult10)
+                teasers.append({
+                    "texto": f"{w}–{l} in the last {len(ult10)} official plays",
+                    "sub": "Every league · tap for the graded plays"})
+            ult5 = newest[:5]
+            if len(ult5) >= 3 and len(teasers) < 3:
+                w, l = _wl(ult5)
+                teasers.append({
+                    "texto": f"{w}–{l} in the last {len(ult5)} official plays",
+                    "sub": "Most recent · tap for the graded plays"})
+        board["teasers"] = teasers[:3]
+        tickets = []
+        for fecha, j in newest:
+            if j.get("resultado") == "WON" and j.get("comprobante"):
+                p = float(j.get("profit") or 0)
+                try:
+                    f_txt = datetime.strptime(fecha, "%Y-%m-%d").strftime("%b %d")
+                except Exception:
+                    f_txt = fecha
+                tickets.append({
+                    "img": j["comprobante"],
+                    "pick": j.get("pick") or "",
+                    "fecha": f_txt,
+                    "profit": ("+$" + (f"{p:,.0f}" if p == int(p) else f"{p:,.2f}")),
+                })
+            if len(tickets) >= 6:
+                break
+        board["tickets"] = tickets
+    except Exception:
+        pass
+    return board
+
+
+def _checkout_embed_pago(session_id, user):
+    """Detalle del pago de una Checkout Session incrustada COMPLETA y del
+    miembro en sesión: {"value": monto real cobrado en USD, "invoice": id
+    de la factura de Stripe}. None si la sesión no está completa, no es
+    del miembro o Stripe no responde. Lo usa la vuelta del checkout para
+    pintar el éxito y para el evento Purchase del pixel de Meta con el
+    MISMO event_id que manda el CAPI del webhook (deduplicación)."""
+    if not (session_id and user and STRIPE_SECRET_KEY):
+        return None
+    try:
+        import stripe
+        stripe.api_key = STRIPE_SECRET_KEY
+        cs = stripe.checkout.Session.retrieve(session_id)
+    except Exception:
+        return None
+    if (cs.get("status") or "") != "complete":
+        return None
+    meta = cs.get("metadata") or {}
+    try:
+        if str(meta.get("member_id") or "") != str(user["id"]):
+            return None
+    except (KeyError, IndexError, TypeError):
+        return None
+    try:
+        monto = (cs.get("amount_total") or 0) / 100.0
+    except (TypeError, ValueError):
+        monto = 0.0
+    return {"value": monto, "invoice": cs.get("invoice") or ""}
+
+
+def _checkout_embed_confirmado(session_id, user):
+    """True si la Checkout Session `session_id` quedó COMPLETA y es del
+    miembro en sesión. Solo pinta el estado de éxito al volver del pago
+    incrustado — la activación real la hace el webhook de siempre."""
+    return _checkout_embed_pago(session_id, user) is not None
+
+
 @app.route("/desbloquear-platinum")
-@login_required
 def desbloquear_platinum():
+    # PUBLICA por diseno (2026-10-20, orden de Alex): el boton de los
+    # correos debe aterrizar en la oferta sin sesion — los navegadores
+    # internos de los correos no traen la cookie y el rebote al login se
+    # veia como link roto. Solo la OFERTA es publica: crear el cobro
+    # sigue exigiendo sesion (endpoint con @login_required) y la
+    # activacion la sigue haciendo el webhook tras un pago real.
     db = get_db()
-    record_checkin(db, session["user_id"])
+    if session.get("user_id"):
+        record_checkin(db, session["user_id"])
     user = current_user()
     try:
         past_due = bool(user and user["stripe_past_due"])
     except (KeyError, IndexError, TypeError):
         past_due = False
+    # Vuelta del checkout incrustado (?checkout=ok&session_id=...): el éxito
+    # solo se muestra con la sesión de Stripe verificada como completa y
+    # propia; el webhook activa en paralelo y la página tolera su retraso.
+    checkout_ok = False
+    fb_purchase = None
+    fb_purchase_eid = None
+    if request.args.get("checkout") == "ok" and request.args.get("session_id"):
+        _pago = _checkout_embed_pago(
+            request.args.get("session_id"), user)
+        if _pago is not None:
+            checkout_ok = True
+            # Pixel Purchase (2026-10-30): la vuelta del checkout incrustado
+            # reporta la compra en el navegador con el monto REAL cobrado y
+            # el event_id de la factura — el mismo que manda el CAPI del
+            # webhook invoice.paid, para que Meta cuente UNA sola venta.
+            # Recargar la página repite el MISMO event_id: Meta deduplica.
+            if _pago["value"] and _pago["value"] > 0:
+                fb_purchase = "%.2f" % _pago["value"]
+                fb_purchase_eid = "purchase_" + (
+                    _pago["invoice"] or request.args.get("session_id") or "")
+    # Cohorte de la landing nueva (2026-10-31): la página muestra la
+    # oferta "$1 + mes gratis" y usa su link de respaldo SOLO a quien se
+    # registró con esa oferta; todos los demás ven la página legacy
+    # exacta de siempre ($1 + 7 días, link vigente).
+    _fm = False
+    try:
+        _fm = bool(user) and (user["signup_offer"] or "") == PLATINUM_OFFER_FREE_MONTH
+    except Exception:
+        _fm = False
     return render_template(
         "desbloquear.html",
         ya_desbloqueada=platinum_unlocked_for(user),
         past_due=past_due,
-        stripe_url=STRIPE_PLATINUM_URL,
+        stripe_url=((STRIPE_PLATINUM_URL_FREE_MONTH or STRIPE_PLATINUM_URL)
+                    if _fm else STRIPE_PLATINUM_URL),
+        offer_free_month=_fm,
+        trial_days=(PLATINUM_TRIAL_DAYS_FREE_MONTH if _fm
+                    else PLATINUM_TRIAL_DAYS_LEGACY),
+        stripe_pk=STRIPE_PUBLISHABLE_KEY,
+        stripe_embed_ok=bool(STRIPE_SECRET_KEY and STRIPE_PUBLISHABLE_KEY),
+        checkout_ok=checkout_ok,
+        fb_purchase=fb_purchase,
+        fb_purchase_eid=fb_purchase_eid,
+        board=_desbloquear_board(),
+        anonimo=(user is None),
+        user_email=(user["email"] if user else ""),
+        user_nombre=(user["nombre"] if user else ""),
     )
+
+
+@app.route("/api/desbloquear/checkout-session", methods=["POST"])
+@login_required
+def desbloquear_checkout_session():
+    """Checkout INCRUSTADO de la oferta $1 (espejo WGT, 2026-10-19): crea
+    la Checkout Session en modo embedded y devuelve su client_secret; el
+    formulario de Stripe se monta DENTRO de /desbloquear-platinum y el
+    miembro paga sin salir del sitio. Cobro: $1 hoy (precio one-time) +
+    suscripción de $15.99/semana con trial — los mismos precios del
+    Payment Link hospedado, que queda como respaldo. La activación la
+    hace el webhook checkout.session.completed de siempre (match por
+    email).
+
+    Trial por cohorte (2026-10-31): lo decide EL SERVIDOR desde
+    users.signup_offer, jamás un parámetro del navegador. Cohorte de la
+    landing nueva con la introducción sin usar: 30 días (el primer cobro
+    semanal cae al día 31). Todos los demás: 7 días legacy (primer cobro
+    al día 8). Anti-repetición: si platinum_intro_used_at ya está marcado
+    en la cuenta, la oferta nueva no vuelve a aplicar y rige el trial
+    legacy — cancelar y regresar no renueva el mes gratis."""
+    if not STRIPE_SECRET_KEY:
+        return jsonify({"error": "stripe not configured"}), 503
+    user = current_user()
+    if user is None:
+        return jsonify({"error": "login required"}), 401
+    email = (user["email"] or "").strip()
+    try:
+        customer_id = (user["stripe_customer_id"] or "").strip()
+    except (KeyError, IndexError, TypeError):
+        customer_id = ""
+    _trial_days = PLATINUM_TRIAL_DAYS_LEGACY
+    _offer_code = "legacy"
+    try:
+        _signup_offer = (user["signup_offer"] or "")
+    except (KeyError, IndexError, TypeError):
+        _signup_offer = ""
+    try:
+        _intro_used = (user["platinum_intro_used_at"] or "")
+    except (KeyError, IndexError, TypeError):
+        _intro_used = ""
+    if _signup_offer == PLATINUM_OFFER_FREE_MONTH and not _intro_used:
+        _trial_days = PLATINUM_TRIAL_DAYS_FREE_MONTH
+        _offer_code = PLATINUM_OFFER_FREE_MONTH
+    try:
+        import stripe
+        stripe.api_key = STRIPE_SECRET_KEY
+        params = {
+            # El SDK del servidor (stripe 12.5.0) fija la API
+            # 2025-08-27.basil: ahí el modo incrustado se llama "embedded"
+            # (en la API más nueva de la cuenta es "embedded_page").
+            "ui_mode": "embedded",
+            "mode": "subscription",
+            "line_items": [
+                {"price": PLATINUM_PRICE_PRIMERA_SEMANA, "quantity": 1},
+                {"price": PLATINUM_PRICE_SEMANAL, "quantity": 1},
+            ],
+            "subscription_data": {
+                "trial_period_days": _trial_days,
+                "metadata": {
+                    "member_email": email,
+                    "member_id": str(user["id"]),
+                    "access": "platinum",
+                    "plan": "platinum",
+                    "offer": _offer_code,
+                },
+            },
+            # Solo Card + Apple Pay (orden de Alex 2026-10-20, espejo
+            # del checkout de WGT): en la API basil que fija el SDK,
+            # payment_method_types=['card'] deja fuera los metodos
+            # dinamicos extra (Klarna, Cash App, Amazon Pay y Link) y
+            # Apple Pay viaja dentro de 'card' (los dominios
+            # thesharpteam.bet ya estan registrados en Stripe). Link
+            # queda apagado del todo con wallet_options: el formulario
+            # abre directo en el pago, sin su aviso de codigo.
+            "payment_method_types": ["card"],
+            "wallet_options": {"link": {"display": "never"}},
+            "metadata": {
+                "member_email": email,
+                "member_id": str(user["id"]),
+                "source": "desbloquear-embedded",
+                "offer": _offer_code,
+            },
+            "return_url": (
+                url_for("desbloquear_platinum", _external=True)
+                + "?checkout=ok&session_id={CHECKOUT_SESSION_ID}"
+            ),
+        }
+        if customer_id:
+            params["customer"] = customer_id
+        else:
+            params["customer_email"] = email
+        try:
+            cs = stripe.checkout.Session.create(**params)
+        except Exception:
+            # Si la API rechazara algun dia los parametros de metodos
+            # de pago, se reintenta con los parametros de siempre: el
+            # checkout nunca se cae por este ajuste.
+            params.pop("payment_method_types", None)
+            params.pop("wallet_options", None)
+            cs = stripe.checkout.Session.create(**params)
+    except Exception:
+        return jsonify({"error": "could not create checkout session"}), 502
+    return jsonify({"clientSecret": cs.get("client_secret") or ""})
 
 
 @app.route("/admin/api/members-emails")
 def admin_api_members_emails():
     """Lista de miembros para emails personalizados (2026-10-07, pedido por Alex):
     los emails de motivación salen con sección de upsell solo para no-Platinum.
-    Retorna JSON: [{email, nombre, platinum}].
+    Retorna JSON: [{email, nombre, platinum, phone, sms_optin, lang, platinum_trial_ends}].
     Auth: sesión admin O header X-Admin-Key == ADMIN_API_KEY (para los crons)."""
     api_key = os.environ.get("ADMIN_API_KEY", "")
     header_key = request.headers.get("X-Admin-Key", "")
@@ -5059,19 +9277,119 @@ def admin_api_members_emails():
     if not (is_cron or is_admin):
         return jsonify({"error": "admin only"}), 403
     db = get_db()
+    _barrer_trials_vencidos(db)
+    # Regla 2026-10-30 (orden de Alex): quien pidió cancelar sale DE UNA
+    # VEZ de todas las audiencias de email de miembros — su nombre no
+    # figura en la lista de clientes aunque conserve su acceso hasta
+    # la fecha pagada. Esta es la audiencia central: de aquí salen el
+    # email diario, la Masterclass, resultados 11 AM y motivación.
     rows = db.execute(
-        "SELECT email, nombre, platinum_unlocked FROM users WHERE email IS NOT NULL AND email != ''"
+        "SELECT email, nombre, platinum_unlocked, phone, sms_optin, lang, platinum_trial_ends FROM users WHERE email IS NOT NULL AND email != '' AND email_verified = 1 AND cancel_requested_at IS NULL"
     ).fetchall()
     return jsonify([
         {"email": r["email"], "nombre": r["nombre"] or "there",
-         "platinum": bool(r["platinum_unlocked"])}
+         "platinum": bool(r["platinum_unlocked"]),
+         "phone": r["phone"] or "", "sms_optin": bool(r["sms_optin"]),
+         "lang": r["lang"] or "en", "platinum_trial_ends": r["platinum_trial_ends"]}
         for r in rows
     ])
 
 
+@app.route("/admin/api/entradas-hoy")
+def admin_api_entradas_hoy():
+    """Miembros DISTINTOS con actividad HOY en el Dashboard (2026-10-31,
+    pedido por Alex: la carta horaria de entradas que llega al chat).
+    Lee member_activity con el mismo corte de día America/New_York que
+    admin_actividad. Retorna JSON:
+    [{nombre, email, vip, primera_entrada, entradas}] ordenado por
+    primera entrada. vip = Platinum desbloqueado O mes gratis vigente.
+    Fuera: admins, cuentas @value.local y cancelaciones pedidas (regla
+    de listas 2026-10-30). Auth: sesión admin O header X-Admin-Key ==
+    ADMIN_API_KEY (igual que members-emails)."""
+    api_key = os.environ.get("ADMIN_API_KEY", "")
+    header_key = request.headers.get("X-Admin-Key", "")
+    is_cron = api_key and header_key and hmac.compare_digest(header_key, api_key)
+    try:
+        is_admin = is_admin_for(current_user())
+    except Exception:
+        is_admin = False
+    if not (is_cron or is_admin):
+        return jsonify({"error": "admin only"}), 403
+    db = get_db()
+    db.execute("CREATE TABLE IF NOT EXISTS member_activity (user_id INTEGER, kind TEXT, ip TEXT, created_at TEXT)")
+    from datetime import datetime, timezone
+    try:
+        from zoneinfo import ZoneInfo
+        et = ZoneInfo("America/New_York")
+    except Exception:
+        et = timezone.utc
+    corte = datetime.now(et).replace(hour=0, minute=0, second=0, microsecond=0).astimezone(timezone.utc).isoformat()
+
+    def fmt_hora(ts):
+        try:
+            d = datetime.fromisoformat(str(ts).replace("Z", "+00:00"))
+            if d.tzinfo is None:
+                d = d.replace(tzinfo=timezone.utc)
+            s = d.astimezone(et).strftime("%I:%M %p")
+            return s[1:] if s.startswith("0") else s
+        except Exception:
+            return ""
+
+    def es_vip(platinum_unlocked, trial_ends):
+        if platinum_unlocked:
+            return True
+        if not trial_ends:
+            return False
+        try:
+            return datetime.fromisoformat(str(trial_ends)) > datetime.now()
+        except (ValueError, TypeError):
+            return False
+
+    rows = db.execute(
+        "SELECT u.nombre AS nombre, u.email AS email,"
+        " u.platinum_unlocked AS pu, u.platinum_trial_ends AS pte,"
+        " MIN(a.created_at) AS primera, COUNT(*) AS n"
+        " FROM member_activity a JOIN users u ON u.id = a.user_id"
+        " WHERE a.created_at >= ? AND COALESCE(u.is_admin, 0) = 0"
+        " AND u.email IS NOT NULL AND u.email != ''"
+        " AND u.email NOT LIKE ? AND u.cancel_requested_at IS NULL"
+        " GROUP BY a.user_id, u.nombre, u.email, u.platinum_unlocked, u.platinum_trial_ends"
+        " ORDER BY primera ASC",
+        (corte, "%@value.local"),
+    ).fetchall()
+    return jsonify([
+        {"nombre": r["nombre"] or "Miembro", "email": r["email"],
+         "vip": es_vip(r["pu"], r["pte"]),
+         "primera_entrada": fmt_hora(r["primera"]),
+         "entradas": r["n"]}
+        for r in rows
+    ])
+
+
+@app.route("/admin/api/tracked-members")
+def admin_api_tracked_members():
+    """Miembros que trakean jugadas oficiales desde el Dashboard (2026-10-27, para el email diario de resultados 11 AM): retorna los emails distintos de usuarios con al menos una fila en tracked_plays de nivel oficial (ELITE/GOLD, no VALUE). Auth igual que members-emails: sesión admin O header X-Admin-Key."""
+    admin_key = os.environ.get("ADMIN_API_KEY", "")
+    header_key = request.headers.get("X-Admin-Key", "")
+    is_cron = admin_key and header_key and hmac.compare_digest(header_key, admin_key)
+    try:
+        is_admin = is_admin_for(current_user())
+    except Exception:
+        is_admin = False
+    if not (is_cron or is_admin):
+        return jsonify({"error": "admin only"}), 403
+    db = get_db()
+    rows = db.execute(
+        "SELECT DISTINCT u.email AS email FROM tracked_plays t "
+        "JOIN users u ON u.id = t.user_id "
+        "WHERE t.nivel IN ('ELITE', 'GOLD', 'FREE') AND u.email IS NOT NULL AND u.email != '' AND u.email_verified = 1 AND u.cancel_requested_at IS NULL"
+    ).fetchall()
+    return jsonify([{"email": r["email"]} for r in rows])
+
+
 @app.route("/admin/api/tracked-plays")
 def admin_api_tracked_plays():
-    """Jugadas trakeadas por miembro (2026-10-27, para el email diario 11 AM): retorna filas de tracked_plays de nivel oficial (ELITE/GOLD) con el email del usuario. Filtro opcional ?fecha=YYYY-MM-DD. Auth igual que members-emails: sesión admin O header X-Admin-Key. (Restaurado 2026-11-02: la ruta se había perdido; implementación original del commit 6d864857, con float() en los montos por la regla Decimal/Postgres.)"""
+    """Jugadas trakeadas por miembro (2026-10-27, para el email diario 11 AM): retorna filas de tracked_plays de nivel oficial (ELITE/GOLD) con el email del usuario. Filtro opcional ?fecha=YYYY-MM-DD. Auth igual que members-emails: sesión admin O header X-Admin-Key."""
     admin_key = os.environ.get("ADMIN_API_KEY", "")
     header_key = request.headers.get("X-Admin-Key", "")
     is_cron = admin_key and header_key and hmac.compare_digest(header_key, admin_key)
@@ -5087,259 +9405,189 @@ def admin_api_tracked_plays():
         rows = db.execute(
             "SELECT u.email AS email, t.play_id AS play_id, t.fecha AS fecha, t.nivel AS nivel, t.pick AS pick, t.cuota AS cuota, t.stake_unidades AS stake_unidades, t.stake_monto AS stake_monto "
             "FROM tracked_plays t JOIN users u ON u.id = t.user_id "
-            "WHERE t.nivel IN ('ELITE', 'GOLD') AND u.email IS NOT NULL AND u.email != '' AND u.email_verified = 1 AND t.fecha = ?", (fecha,)
+            "WHERE t.nivel IN ('ELITE', 'GOLD', 'FREE') AND u.email IS NOT NULL AND u.email != '' AND u.email_verified = 1 AND u.cancel_requested_at IS NULL AND t.fecha = ?", (fecha,)
         ).fetchall()
     else:
         rows = db.execute(
             "SELECT u.email AS email, t.play_id AS play_id, t.fecha AS fecha, t.nivel AS nivel, t.pick AS pick, t.cuota AS cuota, t.stake_unidades AS stake_unidades, t.stake_monto AS stake_monto "
             "FROM tracked_plays t JOIN users u ON u.id = t.user_id "
-            "WHERE t.nivel IN ('ELITE', 'GOLD') AND u.email IS NOT NULL AND u.email != '' AND u.email_verified = 1"
+            "WHERE t.nivel IN ('ELITE', 'GOLD', 'FREE') AND u.email IS NOT NULL AND u.email != '' AND u.email_verified = 1 AND u.cancel_requested_at IS NULL"
         ).fetchall()
-    return jsonify([{"email": r["email"], "play_id": r["play_id"], "fecha": r["fecha"], "nivel": r["nivel"], "pick": r["pick"], "cuota": r["cuota"], "stake_unidades": float(r["stake_unidades"] or 0), "stake_monto": float(r["stake_monto"] or 0)} for r in rows])
+    return jsonify([{"email": r["email"], "play_id": r["play_id"], "fecha": r["fecha"], "nivel": r["nivel"], "pick": r["pick"], "cuota": r["cuota"], "stake_unidades": r["stake_unidades"], "stake_monto": r["stake_monto"]} for r in rows])
 
 
-# --- My Bets: API admin de apuestas propias (restaurado 2026-11-02:
-# las rutas se habían perdido en una limpieza; implementación original
-# del commit 6b5a6be9, última versión en d5d2f251, con float() en los
-# montos del GET por la regla Decimal/Postgres). ---
-
-
-def _own_profit(b):
-    """Profit en $ de una apuesta propia (W/L/P)."""
-    r = b.get("resultado")
-    stake = float(b.get("stake_monto") or 0)
-    if r == "W":
-        return stake * american_profit_ratio(b["cuota"])
-    if r == "L":
-        return -stake
-    return 0.0
-
-
-def _sync_own_bet_balance(db, old_bet, new_bet):
-    """Mueve solo el balance por casa del dueño de una apuesta propia
-    (pedido Alex 2026-10-23: cada miembro lleva su balance en cada casa
-    y se ajusta al liquidarse: si gana se le agrega el profit, si pierde
-    se le rebaja el monto apostado). Revierte el efecto del estado
-    anterior en su casa y aplica el del estado nuevo, así corregir un
-    resultado o desmarcarlo también cuadra. Sin casa registrada o sin
-    cambio de profit, no toca nada."""
+@app.route("/admin/api/members-telegram")
+def admin_api_members_telegram():
+    """Miembros con Telegram vinculado (2026-10-25, pedido de Alex):
+    nombres para la lista de Telegram del home del admin.
+    Retorna JSON: [{nombre, telegram_user_id}]. Sin las cuentas propias
+    de Alex. Auth: sesión admin O header X-Admin-Key == ADMIN_API_KEY
+    (para los crons)."""
+    api_key = os.environ.get("ADMIN_API_KEY", "")
+    header_key = request.headers.get("X-Admin-Key", "")
+    is_cron = api_key and header_key and hmac.compare_digest(header_key, api_key)
     try:
-        old_casa = (old_bet.get("casa") or "").strip()
-        new_casa = (new_bet.get("casa") or "").strip()
-        old_p = _own_profit(old_bet) if old_casa else 0.0
-        new_p = _own_profit(new_bet) if new_casa else 0.0
-        uid = old_bet.get("user_id") or new_bet.get("user_id")
-        if not uid:
-            return
-        pick = (new_bet.get("pick") or old_bet.get("pick") or "Bet")[:80]
-        if old_casa and old_p:
-            bump_book_balance(db, uid, old_casa, -old_p,
-                              concepto=f"Correction: {pick}")
-        if new_casa and new_p:
-            res = new_bet.get("resultado")
-            concepto = (f"Bet won: {pick}" if res == "W"
-                        else f"Bet lost: {pick}" if res == "L"
-                        else f"Bet settled: {pick}")
-            bump_book_balance(db, uid, new_casa, new_p, concepto=concepto)
+        is_admin = is_admin_for(current_user())
     except Exception:
-        pass
-
-
-def _mybets_settings(db, uid, user=None):
-    """Ajustes de My Bets del miembro (unidad en $ y correo)."""
-    row = None
-    try:
-        row = db.execute(
-            "SELECT * FROM mybets_settings WHERE user_id = ?", (uid,)
-        ).fetchone()
-    except Exception:
-        row = None
-    unit = None
-    pref = "daily"
-    if row:
-        unit = row["unit_monto"]
-        pref = row["email_pref"] or "daily"
-    if not unit:
-        br = None
-        if user is not None:
-            try:
-                br = user["bankroll"]
-            except Exception:
-                br = None
-        unit = round(float(br) * 0.01, 2) if br else 100.0
-    return {"unit_monto": float(unit), "email_pref": pref}
-
-
-def _settlement_pick_line(bet):
-    """Línea de la jugada (asunto y tarjeta): el pick del miembro más
-    su cuota, sin duplicarla si el texto ya la trae."""
-    pick_txt = (bet.get("pick") or "").strip()
-    odds_txt = fmt_odds(bet.get("cuota"))
-    if odds_txt != "—" and odds_txt not in pick_txt:
-        pick_txt = f"{pick_txt} {odds_txt}".strip()
-    return pick_txt
-
-
-def _settlement_stats_strip():
-    """Franja de estadísticas del correo de liquidación (diseño v5):
-    récord oficial EN VIVO desde data/archive.json vía program_stats()
-    — la misma fuente del Official Tracker. Nunca fijo; si no hay
-    datos, franja genérica sin números."""
-    try:
-        ps = program_stats()
-        w = int(ps.get("ganadas") or 0)
-        l = int(ps.get("perdidas") or 0)
-        if w + l:
-            wr = float(ps.get("win_rate") or 0.0)
-            return f"{w}-{l} RECORD · {wr:.1f}% WIN RATE · EVERY BET TRACKED"
-    except Exception:
-        pass
-    return "EVERY BET TRACKED · GRADED AUTOMATICALLY"
-
-
-def _settlement_email_html(bets, single=None):
-    """Correo de liquidación de My Bets con el diseño v5 aprobado por
-    Alex el 2026-10-23: banda negra con franja de estadísticas reales
-    del programa, título 36px en dos líneas, tarjetas blancas, botón
-    a My Bets y pie universal claro. Sin montos en ninguna parte."""
-    import html as _h
-    bets = list(bets or [])
-    if single is None:
-        single = len(bets) == 1
-    strip = _settlement_stats_strip()
-    if single and bets:
-        word = {"W": "WON", "L": "LOST", "P": "PUSHED"}.get(
-            (bets[0].get("resultado") or "").upper(), "SETTLED")
-        preheader = ("Your tracked bet settled: " + _settlement_pick_line(bets[0])
-                     + " — " + word + ". Your full running record is on My Bets.")
-        title_txt = "Your tracked bet settled: " + _settlement_pick_line(bets[0])
-        intro = "This tracked bet graded automatically:"
-    else:
-        w_ = sum(1 for b in bets if (b.get("resultado") or "").upper() == "W")
-        l_ = sum(1 for b in bets if (b.get("resultado") or "").upper() == "L")
-        preheader = ("Your tracked bets settled: " + str(w_) + "-" + str(l_)
-                     + ". Your full running record is on My Bets.")
-        title_txt = "Your tracked bets settled"
-        intro = "These tracked bets graded automatically:"
-    spacer = "<div style=\"font-size:0;line-height:0;height:12px;\">&nbsp;</div>"
-    cards = spacer.join(_settlement_card_html(b) for b in bets)
-    now = datetime.now(TZ)
-    hora = now.strftime("%I:%M %p").lstrip("0")
-    ts = now.strftime("%b") + " " + str(now.day) + ", " + str(now.year) + " · " + hora + " ET"
-    return ("<!DOCTYPE html>\n"
-            "<html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">"
-            "<title>" + _h.escape(title_txt) + "</title></head>\n"
-            "<body style=\"margin:0;padding:0;background:#f7f9fc;font-family:-apple-system,Helvetica,Arial,sans-serif;-webkit-text-size-adjust:100%;text-size-adjust:100%;\">\n"
-            "<div style=\"display:none;font-size:0.8px;line-height:1px;max-height:0;overflow:hidden;\">" + _h.escape(preheader) + "</div>\n"
-            "<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#f7f9fc;-webkit-text-size-adjust:100%;text-size-adjust:100%;\">\n"
-            "<tr><td align=\"center\" style=\"padding:0;\">\n"
-            "<table role=\"presentation\" width=\"520\" cellpadding=\"0\" cellspacing=\"0\" style=\"max-width:520px;width:100%;background:#ffffff;-webkit-text-size-adjust:100%;text-size-adjust:100%;\">\n"
-            "  <tr><td style=\"background:#000000;padding:18px 24px 16px;text-align:center;\">\n"
-            "    <div style=\"color:#2ee6a8;font-size:7.6px;font-weight:800;letter-spacing:2px;text-transform:uppercase;white-space:nowrap;\">" + _h.escape(strip) + "</div>\n"
-            "    <img src=\"https://www.thesharpteam.bet/static/img/sharp-team-header.jpg\" alt=\"The Sharp Team\" style=\"width:100%;height:auto;display:block;border:0;margin-top:12px;\">\n"
-            "    <div style=\"color:#2ee6a8;font-size:7.6px;font-weight:800;letter-spacing:2.5px;margin-top:3px;\">MY BETS · SETTLEMENT</div>\n"
-            "  </td></tr>\n"
-            "  <tr><td style=\"background:#ffffff;padding:22px 24px 4px;text-align:center;\">\n"
-            "    <div style=\"color:#111111;font-size:27.5px;line-height:1.15;font-weight:900;text-align:center;\">Your tracker just<br><span style=\"color:#0e9f74;\">updated.</span></div>\n"
-            "    <p style=\"font-size:10.7px;line-height:1.55;color:#5b6b84;margin:9px 0 0;\">" + intro + "</p>\n"
-            "  </td></tr>\n"
-            "  <tr><td style=\"background:#ffffff;padding:14px 24px 0;\">\n"
-            "    <div style=\"border-top:1px solid #e3e8f2;font-size:0;line-height:0;margin:0 0 16px;\">&nbsp;</div>\n"
-            "    " + cards + "\n"
-            "    <p style=\"font-size:10.7px;line-height:1.55;color:#33415e;text-align:center;margin:16px 0 0;\">Your full running record is on <b style=\"color:#0c1638;\">My Bets</b> — every bet, graded automatically.</p>\n"
-            "    <div style=\"text-align:center;margin-top:14px;\"><a href=\"https://www.thesharpteam.bet/tracker\" style=\"display:inline-block;background:#2ee6a8;color:#0c1638;font-size:10.7px;font-weight:900;padding:12px 26px;border-radius:999px;text-decoration:none;\">OPEN MY BETS &rarr;</a></div>\n"
-            "    <p style=\"font-size:8.8px;line-height:1.55;color:#8494ad;text-align:center;margin:16px 0 0;\">Auto-graded from your tracked bets. Change frequency in My Bets &rarr; Settlement emails.</p>\n"
-            "    <div style=\"font-size:8.4px;color:#8494ad;text-align:center;margin-top:8px;\">" + ts + "</div>\n"
-            "  </td></tr>\n"
-            "  <tr><td style=\"background:#ffffff;border-top:1px solid #e3e8f2;padding:18px 24px 16px;text-align:center;\">\n"
-            "    <img src=\"https://www.thesharpteam.bet/static/img/sharp-team-logo.png\" width=\"44\" alt=\"The Sharp Team\" style=\"display:block;margin:0 auto 5px;\">\n"
-            "    <div style=\"font-size:8.4px;font-weight:800;color:#0c1638;letter-spacing:1px;\">THE SHARP TEAM</div>\n"
-            "    <div style=\"font-size:8.1px;color:#8494ad;margin-top:3px;\">250 Park Avenue, Suite 1800, New York, NY 10017 · (551) 326-3312</div>\n"
-            "    <div style=\"font-size:8.1px;color:#8494ad;margin-top:8px;\">Daily plays, results and receipts: <a href=\"https://t.me/thesharpteam\" style=\"color:#0e9f74;text-decoration:none;\">t.me/thesharpteam</a></div>\n"
-            "    <div style=\"font-size:8.1px;color:#8494ad;line-height:1.5;margin-top:10px;\">21+. Play responsibly. If you or someone you know has a gambling problem, call or text 1-800-GAMBLER.</div>\n"
-            "    <div style=\"font-size:8.1px;color:#8494ad;line-height:1.5;margin-top:6px;\">Must be 21+. The Sharp Team provides information and entertainment only and is not a sportsbook. Past results do not guarantee future performance. 1u = $100.</div>\n"
-            "    <div style=\"font-size:8.1px;color:#8494ad;margin-top:5px;\">&copy; 2026 The Sharp Team. All rights reserved.</div>\n"
-            "  </td></tr>\n"
-            "</table>\n"
-            "</td></tr></table>\n"
-            "</body></html>")
-
-
-def _email_own_settled(user, bet):
-    """Correo inmediato de liquidación de una apuesta propia (si el
-    miembro eligió 'immediate' en sus ajustes de My Bets). Diseño v5
-    aprobado por Alex el 2026-10-23: solo si ganó o perdió, sin
-    montos de ganancia."""
-    try:
-        db = get_db()
-        st = _mybets_settings(db, user["id"], user)
-        if st["email_pref"] != "immediate":
-            return
-        res = bet.get("resultado")
-        if res not in ("W", "L", "P"):
-            return
-        word = {"W": "won", "L": "lost", "P": "pushed"}[res]
-        pick_line = _settlement_pick_line(bet)
-        subject = f"Your tracked bet settled: {pick_line}"
-        text = (f"Your tracked bet settled: {pick_line} — {word}. "
-                f"Your full running record is on My Bets: "
-                f"https://www.thesharpteam.bet/tracker")
-        html = _settlement_email_html([bet], single=True)
-        _dispatch_email(user["email"], subject, text, html)
-    except Exception:
-        pass
-
-
-@app.route("/admin/api/own-bets/open")
-def api_own_bets_open():
-    if not _admin_api_autorizado():
-        return jsonify({"ok": False}), 403
+        is_admin = False
+    if not (is_cron or is_admin):
+        return jsonify({"error": "admin only"}), 403
     db = get_db()
     rows = db.execute(
-        "SELECT * FROM own_bets WHERE resultado IS NULL AND event_id IS NOT NULL"
+        "SELECT nombre, telegram_user_id FROM users WHERE telegram_user_id IS NOT NULL"
+        " AND telegram_user_id != '' AND email_verified = 1 AND cancel_requested_at IS NULL AND email NOT IN"
+        " ('thesharpteam8@gmail.com', 'system@value.local',"
+        " 'pena.manuel@myyahoo.com', 'alexpena1509@gmail.com')"
     ).fetchall()
-    from decimal import Decimal
-    bets = []
-    for r in rows:
-        d = dict(r)
-        for k, v in d.items():
-            if isinstance(v, Decimal):
-                d[k] = float(v)
-        bets.append(d)
-    return jsonify({"ok": True, "bets": bets})
+    return jsonify([
+        {"nombre": r["nombre"] or "", "telegram_user_id": r["telegram_user_id"]}
+        for r in rows
+    ])
 
 
-@app.route("/admin/api/own-bets/grade", methods=["POST"])
-def api_own_bets_grade():
+@app.route("/admin/api/lifecycle-dry-run")
+def admin_api_lifecycle_dry_run():
+    """Modo de prueba del ciclo de vida de cuentas (2026-10-24, pedido por Alex).
+    SOLO LEE: no borra cuentas, no marca INACTIVE, no envía emails y no
+    modifica ningún dato (tampoco barre trials vencidos). Clasifica cada
+    cuenta por la regla de Alex: días 8–14 último correo si nunca pagó y
+    sin actividad; días 15–29 marcar INACTIVE si nunca pagó y sigue sin
+    actividad; día 30+ eliminar solo si nunca pagó, sin actividad, sin
+    pagos pendientes ni suscripción activa. ACTIVIDAD = actividad en 2+
+    días distintos (la misma vara de la carpeta ACTIVE & VERIFIED): una
+    sola visita el día del registro no cuenta como uso real. La
+    verificación manual en Stripe y la obligación legal/operativa NO se
+    pueden decidir desde la BD: todo candidato a eliminar sale con
+    verificacion_manual_pendiente.
+    Auth: sesión admin O X-Admin-Key (helper _admin_api_autorizado)."""
     if not _admin_api_autorizado():
-        return jsonify({"ok": False}), 403
-    data = request.get_json(silent=True) or {}
-    resultado = (data.get("resultado") or "").strip()
-    if resultado not in ("W", "L", "P"):
-        return jsonify({"ok": False, "error": "resultado"}), 400
+        return jsonify({"error": "admin only"}), 403
+    from datetime import datetime as _dt, timezone as _tz
     db = get_db()
-    row = db.execute("SELECT * FROM own_bets WHERE id = ?",
-                     (data.get("id"),)).fetchone()
-    if not row:
-        return jsonify({"ok": False, "error": "not found"}), 404
-    cierre = data.get("cierre") or row["cierre"]
-    marcador = (data.get("marcador") or "").strip() or None
-    db.execute(
-        "UPDATE own_bets SET resultado = ?, cierre = ?, marcador = ?, settled_at = ? WHERE id = ?",
-        (resultado, cierre, marcador, datetime.now(TZ).strftime("%Y-%m-%d %H:%M"), row["id"]))
-    _nb = dict(row)
-    _nb["resultado"] = resultado
-    _sync_own_bet_balance(db, dict(row), _nb)
-    db.commit()
-    owner = db.execute("SELECT * FROM users WHERE id = ?",
-                       (row["user_id"],)).fetchone()
-    if owner:
-        bet = dict(row)
-        bet.update({"resultado": resultado, "cierre": cierre})
-        if marcador:
-            bet["marcador"] = marcador
-        _email_own_settled(owner, bet)
-    return jsonify({"ok": True})
+    ahora = _dt.now(_tz.utc)
+    try:
+        users = db.execute(
+            "SELECT id, nombre, email, created_at, email_verified, is_admin, "
+            "platinum_unlocked, platinum_trial_ends, stripe_customer_id, "
+            "stripe_subscription_id, stripe_past_due "
+            "FROM users"
+        ).fetchall()
+    except Exception as e:
+        return jsonify({"error": f"users: {e}"}), 500
+    try:
+        dia_rows = db.execute(
+            "SELECT user_id, substr(created_at, 1, 10) AS dia "
+            "FROM member_activity "
+            "UNION SELECT user_id, substr(fecha, 1, 10) FROM checkins "
+            "UNION SELECT user_id, substr(fecha, 1, 10) FROM tracked_plays"
+        ).fetchall()
+        dias_por_usuario = {}
+        for r in dia_rows:
+            uid = r["user_id"] if isinstance(r, dict) else r[0]
+            dia = r["dia"] if isinstance(r, dict) else r[1]
+            dias_por_usuario.setdefault(uid, set()).add(dia)
+    except Exception:
+        dias_por_usuario = {}
+    try:
+        ev_rows = db.execute(
+            "SELECT email FROM stripe_events WHERE email IS NOT NULL AND "
+            "tipo IN ('checkout.session.completed', 'invoice.paid', "
+            "'payment_intent.succeeded')").fetchall()
+        paid_emails = {(r["email"] if isinstance(r, dict) else r[0]).lower()
+                       for r in ev_rows}
+    except Exception:
+        paid_emails = set()
+
+    def _edad_dias(creado):
+        try:
+            d = _dt.fromisoformat(str(creado).replace("Z", "+00:00"))
+            if d.tzinfo is None:
+                d = d.replace(tzinfo=_tz.utc)
+            return (ahora - d).days
+        except Exception:
+            return None
+
+    out = {"fecha": ahora.astimezone(
+               ZoneInfo("America/New_York")).strftime("%Y-%m-%d"),
+           "total_cuentas": len(users), "confirmadas": 0, "sin_confirmar": 0,
+           "nunca_pagaron": 0, "con_actividad": 0, "sin_actividad": 0,
+           "cero_actividad": 0,
+           "buckets": {"ultimo_correo_8_14": [],
+                       "marcar_inactive_15_29": [],
+                       "eliminaria_30_mas": []},
+           "excluidas": [], "avisos": []}
+    for u in users:
+        d = dict(u)
+        email = (d.get("email") or "").lower()
+        es_admin = bool(d.get("is_admin")) or email in (
+            "pena.manuel@myyahoo.com", "thesharpteam8@gmail.com")
+        es_trial = bool(d.get("platinum_unlocked")) and bool(
+            d.get("platinum_trial_ends"))
+        if d.get("email_verified"):
+            out["confirmadas"] += 1
+        else:
+            out["sin_confirmar"] += 1
+        tiene_stripe = bool(d.get("stripe_customer_id")) or bool(
+            d.get("stripe_subscription_id")) or email in paid_emails
+        pago_pendiente = bool(d.get("stripe_past_due"))
+        dias = dias_por_usuario.get(d.get("id"), set())
+        tiene_actividad = len(dias) >= 2
+        if tiene_actividad:
+            out["con_actividad"] += 1
+        else:
+            out["sin_actividad"] += 1
+        if not dias:
+            out["cero_actividad"] += 1
+        if not tiene_stripe:
+            out["nunca_pagaron"] += 1
+        edad = _edad_dias(d.get("created_at"))
+        base = {"email": d.get("email"), "nombre": d.get("nombre"),
+                "created_at": d.get("created_at"), "edad_dias": edad,
+                "es_trial": es_trial,
+                "sin_confirmar": not d.get("email_verified"),
+                "dias_actividad": len(dias),
+                "ultima_actividad": max(dias) if dias else None}
+        motivos = []
+        if es_admin:
+            motivos.append("cuenta admin / del dueño")
+        if tiene_stripe:
+            motivos.append("tiene registro de pago Stripe")
+        if pago_pendiente:
+            motivos.append("tiene pago pendiente (past due)")
+        if tiene_actividad:
+            motivos.append("tiene actividad real (2+ días distintos)")
+        if edad is None:
+            motivos.append("sin fecha de registro")
+        elif edad < 8:
+            motivos.append("muy reciente (<8 días)")
+        if motivos:
+            out["excluidas"].append({**base, "motivos": motivos})
+            continue
+        if 8 <= edad <= 14:
+            out["buckets"]["ultimo_correo_8_14"].append(base)
+        elif 15 <= edad <= 29:
+            out["buckets"]["marcar_inactive_15_29"].append(base)
+        else:
+            out["buckets"]["eliminaria_30_mas"].append(
+                {**base, "verificacion_manual_pendiente":
+                 ["historial de pagos y suscripción en Stripe",
+                  "obligación legal / necesidad operativa"]})
+    n_trial = sum(1 for b in out["buckets"].values() for m in b
+                  if m["es_trial"])
+    n_sinconf = sum(1 for b in out["buckets"].values() for m in b
+                    if m["sin_confirmar"])
+    if n_trial:
+        out["avisos"].append(
+            f"{n_trial} cuentas en buckets son trial (mes gratis, sin pago). "
+            "Decidir si el trial se excluye de la eliminación automática "
+            "antes de activar: la ventana de conversión es 15–18 nov.")
+    if n_sinconf:
+        out["avisos"].append(
+            f"{n_sinconf} cuentas en buckets nunca confirmaron el correo.")
+    out["avisos"].append(
+        "Ningún candidato a eliminar es auto-eliminable solo con la BD: "
+        "antes de borrar hay que verificar Stripe y la obligación legal.")
+    return jsonify(out)
 
 
 @app.route("/admin/miembros/platinum", methods=["POST"])
@@ -5351,7 +9599,7 @@ def admin_toggle_platinum():
     la notificación de pago Alex activa el acceso aquí con un toque.
     """
     db = get_db()
-    if not is_admin_for(current_user()):
+    if not _admin_o_cuenta_alex(current_user()):
         flash("You don't have permission.", "error")
         return redirect(url_for("home"))
     user_id = request.form.get("user_id")
@@ -5450,6 +9698,376 @@ def admin_api_members_delete():
     return jsonify({"ok": True, "deleted": email})
 
 
+@app.route("/admin/api/members-set-admin", methods=["POST"])
+def admin_api_members_set_admin():
+    """Quita o pone la bandera is_admin de una cuenta por API admin
+    (2026-10-15, pedido por Alex: su cuenta de miembro queda como
+    miembro normal, sin admin; el admin vive solo en su cuenta admin).
+    Auth: sesión admin O header X-Admin-Key. Protecciones: nunca
+    degradar la cuenta admin real (thesharpteam8@gmail.com) ni dejar
+    el sistema sin ningún admin."""
+    if not _admin_api_autorizado():
+        return jsonify({"error": "admin only"}), 403
+    data = request.get_json(silent=True) or {}
+    email = (data.get("email") or request.form.get("email") or "").strip().lower()
+    val = data.get("is_admin")
+    if not email or val is None:
+        return jsonify({"error": "email and is_admin required"}), 400
+    db = get_db()
+    target = db.execute("SELECT * FROM users WHERE email = ?", (email,)).fetchone()
+    if not target:
+        return jsonify({"error": "not found"}), 404
+    nuevo = 1 if val in (True, 1, "1", "true") else 0
+    if nuevo == 0 and is_admin_for(target):
+        if email == "thesharpteam8@gmail.com":
+            return jsonify({"error": "protected account"}), 403
+        fila = db.execute(
+            "SELECT COUNT(*) AS n FROM users WHERE is_admin = 1").fetchone()
+        n_admin = fila["n"] if isinstance(fila, dict) else fila[0]
+        if n_admin <= 1:
+            return jsonify({"error": "cannot remove the last admin"}), 403
+    db.execute("UPDATE users SET is_admin = ? WHERE id = ?",
+               (nuevo, target["id"]))
+    db.commit()
+    return jsonify({"ok": True, "email": email, "is_admin": nuevo})
+
+
+@app.route("/admin/api/members-set-name", methods=["POST"])
+def admin_api_members_set_name():
+    """Corrige el nombre (campo `nombre`) de un miembro por API admin
+    (2026-10-15, pedido por Alex: su hermano se registró poniendo su
+    número de teléfono en vez de su nombre y hubo que corregirlo sin
+    depender de la sesión del miembro). Auth: sesión admin O header
+    X-Admin-Key (mismo patrón que members-set-admin)."""
+    if not _admin_api_autorizado():
+        return jsonify({"error": "admin only"}), 403
+    data = request.get_json(silent=True) or {}
+    email = (data.get("email") or request.form.get("email") or "").strip().lower()
+    nombre = (data.get("nombre") or data.get("name") or
+              request.form.get("nombre") or "").strip()[:120]
+    if not email or not nombre:
+        return jsonify({"error": "email and nombre required"}), 400
+    db = get_db()
+    target = db.execute("SELECT * FROM users WHERE email = ?",
+                        (email,)).fetchone()
+    if not target:
+        return jsonify({"error": "not found"}), 404
+    db.execute("UPDATE users SET nombre = ? WHERE id = ?",
+               (nombre, target["id"]))
+    db.commit()
+    return jsonify({"ok": True, "email": email, "nombre": nombre})
+
+
+@app.route("/admin/api/members-set-lang", methods=["POST"])
+def admin_api_members_set_lang():
+    """Fija el idioma de la interfaz de un miembro ('en' o 'es')
+    (2026-10-16, pedido por Alex: la cuenta de su hermano Johan queda
+    en español porque no entiende inglés). Con lang='es', base_v2 le
+    muestra el botón de idioma y el traductor se activa solo al
+    entrar. Auth: sesión admin O header X-Admin-Key (mismo patrón
+    que members-set-name)."""
+    if not _admin_api_autorizado():
+        return jsonify({"error": "admin only"}), 403
+    data = request.get_json(silent=True) or {}
+    email = (data.get("email") or request.form.get("email") or "").strip().lower()
+    lang = (data.get("lang") or request.form.get("lang") or "").strip().lower()
+    if not email or lang not in ("en", "es"):
+        return jsonify({"error": "email and lang (en|es) required"}), 400
+    db = get_db()
+    target = db.execute("SELECT * FROM users WHERE email = ?",
+                        (email,)).fetchone()
+    if not target:
+        return jsonify({"error": "not found"}), 404
+    db.execute("UPDATE users SET lang = ? WHERE id = ?",
+               (lang, target["id"]))
+    db.commit()
+    return jsonify({"ok": True, "email": email, "lang": lang})
+
+
+@app.route("/admin/api/members-reset-link", methods=["POST"])
+def admin_api_members_reset_link():
+    """Genera un enlace de un solo uso para que un miembro cree una
+    contraseña nueva (2026-10-16, pedido por Alex para su hermano
+    Johan, que olvidó la suya y la plataforma no tenía flujo de
+    recuperación). La URL se devuelve SOLO en la respuesta de esta
+    API: viaja únicamente en el email del miembro, nunca en el chat
+    ni en logs. Auth: sesión admin O header X-Admin-Key."""
+    if not _admin_api_autorizado():
+        return jsonify({"error": "admin only"}), 403
+    data = request.get_json(silent=True) or {}
+    email = (data.get("email") or request.form.get("email") or "").strip().lower()
+    if not email:
+        return jsonify({"error": "email required"}), 400
+    db = get_db()
+    target = db.execute("SELECT * FROM users WHERE email = ?",
+                        (email,)).fetchone()
+    if not target:
+        return jsonify({"error": "not found"}), 404
+    token = secrets.token_urlsafe(32)
+    vence = (datetime.now() + timedelta(hours=24)).isoformat()
+    db.execute("UPDATE users SET reset_token = ?, reset_expires = ?"
+               " WHERE id = ?", (token, vence, target["id"]))
+    db.commit()
+    return jsonify({"ok": True, "email": email,
+                    "url": f"https://www.thesharpteam.bet/reset/{token}",
+                    "expira": vence})
+
+
+@app.route("/admin/api/platinum-trial-activate-all", methods=["POST"])
+def admin_api_platinum_trial_activate_all():
+    """Activa el mes gratis de Platinum (30 días, reloj interno) a todos
+    los miembros sin Platinum y sin suscripción de Stripe (orden de Alex
+    2026-10-16: todos activos; al vencer los 30 días se apaga solo).
+    NO toca: cuentas admin, la cuenta del sistema, miembros con sub de
+    Stripe (manda Stripe) ni grants ya activos sin reloj (manuales)."""
+    if not _admin_api_autorizado():
+        return jsonify({"error": "admin only"}), 403
+    db = get_db()
+    vence = (datetime.now() + timedelta(days=30)).isoformat()
+    cur = db.execute(
+        "UPDATE users SET platinum_unlocked = 1, platinum_trial_ends = ?, "
+        "telegram_unban_pending = CASE WHEN telegram_user_id IS NOT NULL "
+        "THEN 1 ELSE telegram_unban_pending END "
+        "WHERE platinum_unlocked = 0 AND is_admin = 0 "
+        "AND (stripe_subscription_id IS NULL OR stripe_subscription_id = '') "
+        "AND email != 'system@value.local'",
+        (vence,),
+    )
+    db.commit()
+    return jsonify({"ok": True, "activados": cur.rowcount, "vence": vence})
+
+
+@app.route("/admin/api/settle-live", methods=["POST"])
+def admin_api_settle_live():
+    """Liquida AL MOMENTO las jugadas trackeadas de Alex cuando un juego
+    oficial termina (2026-10-31, orden de Alex: «que no es la una AM, es
+    mientras se vayan liquidando... si una jugada se liquidó ya, al
+    instante, cuando tú detectes que ya se acabó el juego, que ese efecto
+    ya salga»).
+
+    Lo dispara live-graded-overlay.py cuando el overlay marca una jugada
+    FINAL por primera vez. Replica el criterio EXACTO de
+    auto_grado_tracked, pero con el resultado que llega en el body en vez
+    del archivo oficial: solo filas tracked_plays PENDIENTES de las
+    cuentas que ya tienen auto-grado (la de miembro de Alex y la del
+    admin; los balances de ambas viven en la de miembro), sincronía de
+    cuota/montos/fecha desde la jugada oficial SOLO en las filas de su
+    cuenta de miembro (el branch solo_alex de auto_grado), profit con
+    play_profit_dollars y bump a su balance Novig con bump_book_balance.
+
+    IDEMPOTENTE: una fila ya marcada jamás se reescribe ni vuelve a
+    sumar (la misma regla de auto_grado: solo se completa el pendiente).
+    La liquidación oficial de la 1 AM NO se toca: el archivo se escribe
+    desde el registro, no desde estas filas, y auto_grado_tracked nunca
+    re-marca una fila ya liquidada — cuando el archivo incluya el día,
+    estas filas ya marcadas quedan fuera de su bump.
+
+    Body JSON: {"play_id": "...", "resultado": "W"|"L"}.
+    Auth: sesión admin O header X-Admin-Key (patrón _admin_api_autorizado).
+    """
+    if not _admin_api_autorizado():
+        return jsonify({"error": "admin only"}), 403
+    data = request.get_json(silent=True) or {}
+    play_id = (data.get("play_id") or "").strip()
+    res = (data.get("resultado") or "").strip().upper()
+    if not play_id or res not in ("W", "L"):
+        return jsonify({"error": "play_id y resultado W/L requeridos"}), 400
+    db = get_db()
+    alex = db.execute(
+        "SELECT * FROM users WHERE LOWER(email) = ?", (ALEX_MEMBER_EMAIL,)
+    ).fetchone()
+    if not alex:
+        return jsonify({"ok": True, "play_id": play_id, "resultado": res,
+                        "liquidadas": 0, "delta_total": 0.0,
+                        "detalle": "cuenta de miembro de Alex no encontrada"})
+    balance_uid = alex["id"]
+    # Cuentas con auto-grado: la de miembro de Alex y la(s) admin (los
+    # balances de ambas viven en la de miembro, igual que en
+    # auto_grado_tracked y _book_balance_total).
+    user_ids = [alex["id"]]
+    for a in db.execute("SELECT id FROM users WHERE is_admin = 1").fetchall():
+        if a["id"] not in user_ids:
+            user_ids.append(a["id"])
+    # Jugada oficial para la sincronía: primero el archivo (si la
+    # liquidación ya lo escribió) y si no, la card publicada.
+    oficial = None
+    fecha_of = ""
+    for d in load_archive():
+        for j in d.get("jugadas", []) or []:
+            if (j.get("id") or "").strip() == play_id:
+                oficial = j
+                fecha_of = (d.get("fecha") or "").strip()
+                break
+        if oficial is not None:
+            break
+    if oficial is None:
+        for p in load_plays():
+            if (p.get("id") or "").strip() == play_id:
+                oficial = p
+                _m = _RE_FECHA_PLAYID.match(play_id)
+                fecha_of = _m.group(1) if _m else ""
+                break
+    placeholders = ", ".join("?" for _ in user_ids)
+    rows = db.execute(
+        "SELECT id, user_id, play_id, fecha, pick, cuota, stake_monto, "
+        "stake_unidades, resultado FROM tracked_plays "
+        f"WHERE user_id IN ({placeholders}) AND play_id = ? "
+        "AND (resultado IS NULL OR resultado = '')",
+        (*user_ids, play_id),
+    ).fetchall()
+    liquidadas = 0
+    delta_total = 0.0
+    filas = []
+    for t in rows:
+        updates = {"resultado": res}
+        # Sincronía con el programa (solo filas de su cuenta de miembro,
+        # idéntico al branch solo_alex de auto_grado_tracked): cuota y
+        # montos reales del ticket para que el profit sea el oficial.
+        if t["user_id"] == balance_uid and oficial is not None:
+            try:
+                cuota_of = int(oficial.get("cuota") or 0)
+            except (TypeError, ValueError):
+                cuota_of = 0
+            if cuota_of and cuota_of != (t["cuota"] or 0):
+                updates["cuota"] = cuota_of
+            try:
+                monto_of = float(oficial.get("stake_monto") or 0)
+            except (TypeError, ValueError):
+                monto_of = 0
+            if monto_of > 0 and abs(monto_of - float(t["stake_monto"] or 0)) > 0.005:
+                updates["stake_monto"] = monto_of
+            try:
+                u_of = float(oficial.get("stake_unidades") or 0)
+            except (TypeError, ValueError):
+                u_of = 0
+            if u_of > 0 and abs(u_of - float(t["stake_unidades"] or 0)) > 0.001:
+                updates["stake_unidades"] = u_of
+            if fecha_of and fecha_of != (t["fecha"] or "").strip():
+                updates["fecha"] = fecha_of
+        set_clause = ", ".join("%s = ?" % k for k in updates)
+        db.execute(
+            "UPDATE tracked_plays SET %s WHERE id = ?" % set_clause,
+            (*updates.values(), t["id"]),
+        )
+        # Profit con los montos ya sincronizados y bump a Novig (misma
+        # fórmula y mismo orden que auto_grado_tracked; bump_book_balance
+        # redondea el delta a 2 decimales y commitea).
+        try:
+            profit = play_profit_dollars(
+                {
+                    "cuota": updates.get("cuota", t["cuota"]) or 0,
+                    "resultado": res,
+                    "stake_monto": float(
+                        updates.get("stake_monto", t["stake_monto"]) or 0
+                    ),
+                }
+            )
+        except (TypeError, ValueError):
+            profit = 0
+        if profit:
+            bump_book_balance(db, balance_uid, "Novig", profit)
+            delta_total += round(float(profit), 2)
+        liquidadas += 1
+        filas.append(t["id"])
+    if liquidadas:
+        db.commit()
+    return jsonify({
+        "ok": True,
+        "play_id": play_id,
+        "resultado": res,
+        "liquidadas": liquidadas,
+        "delta_total": round(delta_total, 2),
+        "filas": filas,
+        "balance_total": _book_balance_total(db, alex),
+        "balance_mostrado": _balance_display_value(db, alex),
+    })
+
+
+@app.route("/admin/api/members-revoke-platinum", methods=["POST"])
+def admin_api_members_revoke_platinum():
+    """Revoca el Platinum de una lista de miembros por API admin
+    (2026-10-31, orden de Alex: «nadie gratis de ahora pa'lante» — los
+    del mes gratis de registro empiezan desde cero como FREE; el mes
+    gratis queda SOLO para quien pague el $1 por el flujo nuevo).
+    Body JSON: {"emails": [...]}. Por cada email: platinum_unlocked = 0,
+    platinum_trial_ends = NULL y telegram_ban_pending = 1 (espejo del
+    toggle del panel /admin/miembros/platinum, que NO limpia el reloj;
+    este endpoint sí, para que el sistema T-3 quede sin destinatarios).
+    GUARDIA INTERNA: jamás procesa las cuentas propias (la admin, la del
+    sistema VALUE ni las dos cuentas de Alex) — si vienen en la lista se
+    saltan y se reportan en "excluidos". Auth: sesión admin O header
+    X-Admin-Key (mismo patrón que los demás members-set-*)."""
+    if not _admin_api_autorizado():
+        return jsonify({"error": "admin only"}), 403
+    data = request.get_json(silent=True) or {}
+    emails = data.get("emails")
+    if emails is None:
+        emails = request.form.getlist("emails")
+    if not isinstance(emails, list) or not emails:
+        return jsonify({"error": "emails list required"}), 400
+    protegidos = {
+        "thesharpteam8@gmail.com",
+        "system@value.local",
+        "pena.manuel@myyahoo.com",
+        "alexpena1509@gmail.com",
+    }
+    procesados, no_encontrados, excluidos = [], [], []
+    db = get_db()
+    for crudo in emails:
+        email = (str(crudo) or "").strip().lower()
+        if not email:
+            continue
+        if email in protegidos:
+            excluidos.append(email)
+            continue
+        target = db.execute("SELECT id, nombre FROM users WHERE email = ?",
+                            (email,)).fetchone()
+        if not target:
+            no_encontrados.append(email)
+            continue
+        db.execute(
+            "UPDATE users SET platinum_unlocked = 0, platinum_trial_ends = NULL, "
+            "telegram_ban_pending = 1, telegram_unban_pending = 0 WHERE id = ?",
+            (target["id"],),
+        )
+        log_notificacion(db, "platinum",
+                         f"Platinum removed: {target['nombre']}", email)
+        procesados.append(email)
+    db.commit()
+    return jsonify({"ok": True, "procesados": procesados,
+                    "no_encontrados": no_encontrados, "excluidos": excluidos})
+
+
+@app.route("/admin/api/members-set-stakes", methods=["POST"])
+def admin_api_members_set_stakes():
+    """Fija los montos por jugada de un miembro (stake_fijo_elite /
+    stake_fijo_gold), que anulan la fórmula del 1% de su bankroll
+    (2026-10-16, pedido por Alex para su hermano Johan: Platinum $25
+    y Gold $15 fijos). Auth: sesión admin O header X-Admin-Key
+    (mismo patrón que los demás members-set-*)."""
+    if not _admin_api_autorizado():
+        return jsonify({"error": "admin only"}), 403
+    data = request.get_json(silent=True) or {}
+    email = (data.get("email") or request.form.get("email") or "").strip().lower()
+    try:
+        plat = float(data.get("platinum"))
+        gold = float(data.get("gold"))
+    except (TypeError, ValueError):
+        return jsonify({"error": "platinum and gold amounts required"}), 400
+    if not email or plat < 0 or gold < 0:
+        return jsonify({"error": "invalid amounts"}), 400
+    db = get_db()
+    target = db.execute("SELECT * FROM users WHERE email = ?",
+                        (email,)).fetchone()
+    if not target:
+        return jsonify({"error": "not found"}), 404
+    db.execute("UPDATE users SET stake_fijo_elite = ?, stake_fijo_gold = ?"
+               " WHERE id = ?", (plat, gold, target["id"]))
+    db.commit()
+    return jsonify({"ok": True, "email": email,
+                    "stake_fijo_elite": plat, "stake_fijo_gold": gold})
+
+
 @app.route("/admin/test-clear-past-due", methods=["POST"])
 def admin_test_clear_past_due():
     """TEMPORAL para pruebas de Alex: quita SOLO el flag stripe_past_due,
@@ -5493,7 +10111,7 @@ def admin_test_simulate_cancel():
     """TEMPORAL para pruebas de Alex: simula lo que hace el webhook de Stripe
     al cancelar (customer.subscription.deleted). Solo admin."""
     me = current_user()
-    if not is_admin_for(me):
+    if not _admin_o_cuenta_alex(me):
         flash("You don't have permission.", "error")
         return redirect(url_for("home"))
     db = get_db()
@@ -5518,7 +10136,7 @@ def admin_test_simulate_reactivate():
     """TEMPORAL para pruebas de Alex: simula lo que hace el webhook de Stripe
     al reactivar/pagar (invoice.paid). Solo admin."""
     me = current_user()
-    if not is_admin_for(me):
+    if not _admin_o_cuenta_alex(me):
         flash("You don't have permission.", "error")
         return redirect(url_for("home"))
     db = get_db()
@@ -5542,7 +10160,7 @@ def admin_test_simulate_reactivate():
 def admin_eliminar_miembro():
     """Elimina una cuenta de miembro (solo admin). No permite borrarse a sí mismo ni a otro admin."""
     me = current_user()
-    if not is_admin_for(me):
+    if not _admin_o_cuenta_alex(me):
         flash("You don't have permission.", "error")
         return redirect(url_for("home"))
     user_id = request.form.get("user_id", type=int)
@@ -5573,7 +10191,7 @@ def admin_telegram_ban():
     """Banea o desbanea a un miembro del canal Sharp Club de Telegram (solo admin).
     Marca el flag pendiente; el cron lo procesa."""
     me = current_user()
-    if not is_admin_for(me):
+    if not _admin_o_cuenta_alex(me):
         flash("You don't have permission.", "error")
         return redirect(url_for("home"))
     user_id = request.form.get("user_id", type=int)
@@ -5604,7 +10222,7 @@ def admin_telegram_ban():
 def admin_email_directo():
     """Envía un email directo a un miembro específico (solo admin)."""
     me = current_user()
-    if not is_admin_for(me):
+    if not _admin_o_cuenta_alex(me):
         flash("You don't have permission.", "error")
         return redirect(url_for("home"))
     user_id = request.form.get("user_id", type=int)
@@ -5621,9 +10239,9 @@ def admin_email_directo():
     try:
         text_body = body  # versión texto plano
         html = f"""<div style="font-family:-apple-system,Helvetica,Arial,sans-serif;max-width:600px;margin:0 auto;background:#ffffff;">
-<img src="https://www.thesharpteam.bet/static/img/sharp-team-banner.png" alt="The Sharp Team" style="width:100%;height:auto;display:block;border:0;">
-<div style="padding:24px 28px;"><p style="font-size:16px;color:#111;line-height:1.6;">{body}</p>
-<p style="font-size:14px;color:#6b7280;margin-top:20px;"><strong>The Sharp Team</strong></p></div></div>"""
+<img src="https://www.thesharpteam.bet/static/img/sharp-team-header.jpg" alt="The Sharp Team" style="width:100%;height:auto;display:block;border:0;">
+<div style="padding:24px 28px;"><p style="font-size:12.2px;color:#111;line-height:1.6;">{body}</p>
+<p style="font-size:10.7px;color:#6b7280;margin-top:20px;"><strong>The Sharp Team</strong></p></div></div>"""
         _dispatch_email(target["email"], subject, text_body, html_body=html)
         flash(f"Email enviado a {target['email']}.", "ok")
     except Exception as e:
@@ -5636,7 +10254,7 @@ def admin_email_directo():
 def admin_ver_tracker(user_id):
     """Ve el tracker personal de un miembro (solo admin)."""
     me = current_user()
-    if not is_admin_for(me):
+    if not _admin_o_cuenta_alex(me):
         flash("You don't have permission.", "error")
         return redirect(url_for("home"))
     db = get_db()
@@ -5807,7 +10425,7 @@ def _share_data(fecha, j):
         "pick_short": _pick_short(j.get("pick") or ""),
         "odds": fmt_odds(j.get("cuota")),
         "nivel_label": "PLATINUM" if nv in ("ELITE", "PLATINUM")
-                       else (nv or "GOLD"),
+                       else ("FREE PICK" if nv == "FREE" else (nv or "GOLD")),
         "liga": liga,
         "la": la, "sa": int(m.group(2)), "sb": int(m.group(3)), "lb": lb,
         "profit": profit,
@@ -6003,6 +10621,81 @@ def share_play_image(play_id):
     return send_file(path, mimetype="image/png")
 
 
+def _tira_actual():
+    """La racha vigente de la tirita del home, con sus jugadas exactas
+    (2026-11-02): la misma logica de la tira (archivo, mas nuevo primero).
+    Devuelve {"tipo", "n", "plays"} o None si no hay racha."""
+    try:
+        dias = sorted(load_archive(), key=lambda d: d.get("fecha") or "")
+        dias_desc = list(reversed(dias))
+
+        def _tp(_f, _j):
+            _p = float(_j.get("profit") or 0.0)
+            _nv = (_j.get("nivel") or "").upper()
+            _sm = _j.get("stake_monto")
+            _stake = ""
+            if _sm:
+                _stake = "$" + format(int(round(float(_sm))), ",")
+            _signo = "-$" if _p < 0 else ("+$" if _p > 0 else "$")
+            return {"fecha": _f, "pick": _j.get("pick") or "",
+                    "resultado": _j.get("resultado") or "",
+                    "comprobante": _j.get("comprobante") or "",
+                    "cuota": _j.get("cuota") or 0,
+                    "hora": _j.get("hora") or "",
+                    "casa": _j.get("casa") or "",
+                    "unidades": _j.get("stake_unidades") or 0,
+                    "abbr": _j.get("abbr") or "",
+                    "opp_abbr": _j.get("opp_abbr") or "",
+                    "liga": (_j.get("liga") or "").upper(),
+                    "nivel_label": "PLATINUM" if _nv in ("ELITE", "PLATINUM") else (_nv or "FREE"),
+                    "profit_display": _signo + format(abs(int(round(_p))), ","),
+                    "profit_u": (("+" if _p > 0 else ("-" if _p < 0 else ""))
+                                 + f"{abs(_p) / 100.0:.2f}u"),
+                    "stake_display": _stake}
+
+        _plat_n, _plat_plays, _plat_last = 0, [], None
+        _ultimo_dia_t, _cerrada = None, False
+        for _d in dias_desc:
+            _jug = [j for j in (_d.get("jugadas") or [])
+                    if j.get("resultado") in ("WON", "LOST")
+                    and not j.get("bloqueada")]
+            if _jug and _ultimo_dia_t is None:
+                _ultimo_dia_t = _d.get("fecha")
+            if not _cerrada:
+                for _j in _jug:
+                    if (_j.get("nivel") or "").upper() in ("ELITE", "PLATINUM"):
+                        if _j["resultado"] == "WON":
+                            _plat_n += 1
+                            _plat_plays.append(_tp(_d.get("fecha") or "", _j))
+                            if _plat_last is None:
+                                _plat_last = _d.get("fecha")
+                        else:
+                            _cerrada = True
+                            break
+        _dias_n, _dias_plays = 0, []
+        for _d in dias_desc:
+            _jug = [j for j in (_d.get("jugadas") or [])
+                    if j.get("resultado") in ("WON", "LOST")
+                    and not j.get("bloqueada")]
+            if not _jug:
+                continue
+            if sum(float(j.get("profit") or 0) for j in _jug) > 0:
+                _dias_n += 1
+                for _j in _jug:
+                    _dias_plays.append(_tp(_d.get("fecha") or "", _j))
+            else:
+                break
+        if _plat_n >= 2 and _plat_last:
+            return {"tipo": "plat", "n": _plat_n, "plays": _plat_plays,
+                    "dias_n": _dias_n, "dias_plays": _dias_plays}
+        if _dias_n >= 2:
+            return {"tipo": "dias", "n": _dias_n, "plays": _dias_plays,
+                    "dias_n": _dias_n, "dias_plays": _dias_plays}
+    except Exception:
+        pass
+    return None
+
+
 @app.route("/official-tracker")
 @login_required
 def official_tracker():
@@ -6011,7 +10704,75 @@ def official_tracker():
     completas que la versión del Admin. El tracker clásico de miembros
     (/resultados) queda igual. El link bajo la tarjeta de números del home
     apunta aquí."""
-    return render_template("official_tracker.html", t=official_tracker_full())
+    t = official_tracker_full()
+    # Contabilidad por programa (2026-10-15, pedido por Alex): cada
+    # tarjeta del home (Official / Platinum / Gold) abre el libro de SU
+    # programa: sus jugadas, cada una con su informacion y su ticket.
+    programa = (request.args.get("programa") or "all").strip().lower()
+    if programa not in ("all", "platinum", "gold", "free"):
+        programa = "all"
+    # Filtro por liga (2026-10-27, pedido Alex: menu por liga organizado, cada liga abre su libro)
+    liga_filtro = (request.args.get("liga") or "").strip().upper()
+    if liga_filtro not in ("NFL", "NBA", "MLB", "NHL", "NCAAF"):
+        liga_filtro = ""
+    if programa == "platinum":
+        libro = [x for x in t["historial"] if x["nivel"] in ("ELITE", "PLATINUM")]
+        libro_stats, libro_titulo = t["por_nivel"]["ELITE"], "Platinum plays"
+    elif programa == "gold":
+        libro = [x for x in t["historial"] if x["nivel"] == "GOLD"]
+        libro_stats, libro_titulo = t["por_nivel"]["GOLD"], "Gold plays"
+    elif programa == "free":
+        libro = [x for x in t["historial"] if x["nivel"] == "FREE"]
+        libro_stats, libro_titulo = t["por_nivel"]["FREE"], "Free Picks"
+    else:
+        libro, libro_stats, libro_titulo = t["historial"], t["general"], "All official plays"
+    if liga_filtro:
+        libro = [x for x in libro if (x.get("liga") or "").upper() == liga_filtro]
+        libro_titulo = f"{liga_filtro} plays"
+    return render_template("official_tracker.html", t=t, programa=programa,
+                           libro=libro, libro_stats=libro_stats,
+                           libro_titulo=libro_titulo)
+
+
+@app.route("/official-tracker/export.csv")
+@login_required
+def official_tracker_export():
+    """CSV con TODAS las jugadas oficiales liquidadas (2026-10-23, idea de
+    diseño "Recalculate it yourself" aprobada por Alex SOLO como prueba en
+    su cuenta; al resto, 404). Exporta los campos TAL CUAL están en
+    data/archive.json — el mismo filtro que official_tracker_full()
+    (WON/LOST, sin bloqueadas): ningún número se recalcula ni se inventa."""
+    from flask import abort
+    if not is_alex_member(current_user()):
+        abort(404)
+    import csv
+    import io
+    out = io.StringIO()
+    w = csv.writer(out)
+    w.writerow(["date", "pick", "game", "league", "level", "odds",
+                "stake", "result", "profit"])
+    dias = sorted(load_archive(), key=lambda d: d.get("fecha") or "")
+    for d in dias:
+        for j in d.get("jugadas", []) or []:
+            if j.get("resultado") in ("WON", "LOST") and not j.get("bloqueada"):
+                game = ""
+                if j.get("team_name") and j.get("opp_name"):
+                    game = "%s vs %s" % (j["team_name"], j["opp_name"])
+                w.writerow([
+                    d.get("fecha") or "",
+                    j.get("pick") or "",
+                    game,
+                    _league_of_archive_play(j) or "",
+                    (j.get("nivel") or "").upper(),
+                    j.get("cuota") if j.get("cuota") is not None else "",
+                    float(j.get("stake_monto") or 0),
+                    j.get("resultado"),
+                    float(j.get("profit") or 0),
+                ])
+    resp = Response(out.getvalue(), mimetype="text/csv")
+    resp.headers["Content-Disposition"] = \
+        "attachment; filename=official-tracker.csv"
+    return resp
 
 
 @app.route("/admin/tracker-oficial")
@@ -6021,7 +10782,7 @@ def admin_tracker_oficial():
     más estadísticas y más profesional que el del Dashboard de miembro.
     Solo admin o la cuenta de miembro de Alex, igual que /admin."""
     user = current_user()
-    if not (is_admin_for(user) or is_alex_member(user)):
+    if not _admin_o_cuenta_alex(user):
         flash("You don't have permission to view this page.", "error")
         return redirect(url_for("home"))
     return render_template("admin_tracker_oficial.html", t=official_tracker_full())
@@ -6032,7 +10793,7 @@ def admin_tracker_oficial():
 def admin_cambiar_email():
     """Cambia el email de una cuenta de miembro (solo admin). Valida unicidad."""
     me = current_user()
-    if not is_admin_for(me):
+    if not _admin_o_cuenta_alex(me):
         flash("You don't have permission.", "error")
         return redirect(url_for("home"))
     user_id = request.form.get("user_id", type=int)
@@ -6062,7 +10823,7 @@ def admin_migrar_track():
     """Migra el historial de trackeo (jugadas + checkins + bankroll) de una
     cuenta a otra. Solo admin. No toca is_admin, platinum_unlocked ni datos de Stripe."""
     me = current_user()
-    if not is_admin_for(me):
+    if not _admin_o_cuenta_alex(me):
         flash("You don't have permission.", "error")
         return redirect(url_for("home"))
     db = get_db()
@@ -6139,7 +10900,7 @@ def admin_stake_fijo():
     """
     db = get_db()
     user = current_user()
-    if not (is_admin_for(user) or is_alex_member(user)):
+    if not _admin_o_cuenta_alex(user):
         flash("You don't have permission.", "error")
         return redirect(url_for("home"))
     uid = request.form.get("user_id")
@@ -6330,7 +11091,7 @@ def admin_seed_tracker():
     """Importa una sola vez las jugadas liquidadas del programa al tracker personal del admin."""
     db = get_db()
     user = current_user()
-    if not (is_admin_for(user) or is_alex_member(user)):
+    if not _admin_o_cuenta_alex(user):
         flash("You don't have permission to view this page.", "error")
         return redirect(url_for("home"))
     added = 0
@@ -6376,6 +11137,28 @@ def log_notificacion(db, tipo, titulo, detalle=""):
         db.commit()
     except Exception:
         pass
+    # Email a Alex (2026-10-30, pedido de Alex): las cancelaciones también
+    # le llegan por email, no solo al panel Gerenciales. Hilo aparte y
+    # silencioso ante fallos, igual que notify_new_member.
+    if tipo == "cancelacion":
+        try:
+            dest = admin_email()
+            if dest:
+                subject = f"The Sharp Team: {titulo}"
+                text = (f"{titulo}\n\n"
+                        f"Member: {detalle}\n"
+                        f"Date: {datetime.now(TZ).strftime('%Y-%m-%d %H:%M %Z')}\n")
+
+                def _send_cancel_email():
+                    try:
+                        _dispatch_email(dest, subject, text)
+                    except Exception:
+                        pass
+
+                import threading
+                threading.Thread(target=_send_cancel_email, daemon=True).start()
+        except Exception:
+            pass
 
 
 def _value_stats_for_admin(db):
@@ -6426,18 +11209,20 @@ def _value_stats_for_admin(db):
 @app.route("/admin")
 @login_required
 def admin_dashboard():
-    """Panel central del administrador — para Alex (is_admin=1 o su cuenta de miembro)."""
+    """Panel central del administrador — SOLO cuentas con is_admin=1
+    (2026-10-15, orden de Alex: su cuenta de miembro es un miembro
+    normal, sin acceso admin; el admin vive solo en su cuenta admin)."""
     db = get_db()
     user = current_user()
-    if not (is_admin_for(user) or is_alex_member(user)):
+    if not _admin_o_cuenta_alex(user):
         flash("You don't have permission to view this page.", "error")
         return redirect(url_for("home"))
     try:
-        miembros = db.execute("SELECT COUNT(*) c FROM users").fetchone()["c"]
+        miembros = db.execute("SELECT COUNT(*) c FROM users WHERE cancel_requested_at IS NULL").fetchone()["c"]
     except Exception:
         miembros = 0
     try:
-        platinum = db.execute("SELECT COUNT(*) c FROM users WHERE platinum_unlocked=1").fetchone()["c"]
+        platinum = db.execute("SELECT COUNT(*) c FROM users WHERE platinum_unlocked=1 AND cancel_requested_at IS NULL").fetchone()["c"]
     except Exception:
         platinum = 0
     try:
@@ -6457,19 +11242,14 @@ def admin_dashboard():
     _hoy = _dt2.now().strftime("%Y-%m-%d")
     selecciones = []
     try:
-        pp = _os2.path.join(_os2.path.dirname(__file__), "data", "plays-pending.json")
-        with open(pp) as _f:
-            _data = _json2.load(_f)
-            if isinstance(_data, dict) and _data.get("fecha") == _hoy:
-                selecciones = _data.get("plays", [])
+        _data = _json_remoto_o_local(PENDING_RAW_URL, PENDING_PLAYS_PATH)
+        if isinstance(_data, dict) and _data.get("fecha") == _hoy:
+            selecciones = _data.get("plays", [])
     except Exception:
         selecciones = []
     # plays_hoy también solo de hoy — la fecha está en la raíz del JSON, no en cada jugada
     try:
-        import json as _json3, os as _os3
-        _pp = _os3.path.join(_os3.path.dirname(__file__), "data", "plays.json")
-        with open(_pp) as _ff:
-            _d = _json3.load(_ff)
+        _d = _json_remoto_o_local(PLAYS_RAW_URL, PLAYS_PATH)
         _root_fecha = str(_d.get("fecha", ""))[:10] if isinstance(_d, dict) else ""
         _, _plays_all = load_data()
         if _root_fecha == _hoy:
@@ -6480,13 +11260,398 @@ def admin_dashboard():
     except Exception:
         jugadas_hoy = 0
         plays = []
+    # Lista de todos los miembros para el home rediseñado (2026-10-25,
+    # orden de Alex): verificados, sin cuentas propias ni de sistema,
+    # ordenados por nombre. Incluye pruebas (con su etiqueta PRUEBA).
+    try:
+        _mm = db.execute(
+            "SELECT id, nombre, platinum_unlocked, platinum_trial_ends "
+            "FROM users WHERE email_verified = 1 "
+            "AND LOWER(email) NOT IN ('thesharpteam8@gmail.com', "
+            "'system@value.local', 'pena.manuel@myyahoo.com', "
+            "'alexpena1509@gmail.com') "
+            "ORDER BY nombre ASC").fetchall()
+        miembros_lista = [{
+            "id": r["id"], "nombre": r["nombre"],
+            "platinum": bool(r["platinum_unlocked"]),
+            "trial": bool(r["platinum_trial_ends"] or ""),
+        } for r in _mm]
+    except Exception:
+        miembros_lista = []
+    conteo_miembros = {
+        "total": len(miembros_lista),
+        "plat": sum(1 for m in miembros_lista if m["platinum"] and not m["trial"]),
+        "trial": sum(1 for m in miembros_lista if m["trial"]),
+        "free": sum(1 for m in miembros_lista if not m["platinum"] and not m["trial"]),
+    }
+    # Gerenciales (2026-10-25, pedido de Alex): últimas notificaciones
+    # de la empresa para el home del admin, separadas de las de miembros.
+    try:
+        _not = db.execute(
+            "SELECT id, tipo, titulo, detalle, created_at, leida FROM notificaciones "
+            "ORDER BY created_at DESC LIMIT 10").fetchall()
+        gerenciales = [dict(r) for r in _not]
+        sin_leer = sum(1 for n in gerenciales if not n.get("leida"))
+    except Exception:
+        gerenciales, sin_leer = [], 0
+    # Telegram (2026-10-25, pedido de Alex): conteo de miembros reales
+    # (sin bot ni administradores) publicado por el cron en data-board.
+    try:
+        _tg = _json_remoto_o_local(
+            TELEGRAM_MEMBERS_URL,
+            os.path.join(BASE_DIR, "data", "telegram-members.json"),
+            ttl=600)
+        telegram_counts = _tg if isinstance(_tg, dict) and _tg.get("ok") else None
+    except Exception:
+        telegram_counts = None
     return render_template("admin_dashboard.html",
                            stats={"miembros": miembros, "platinum": platinum,
                                   "jugadas_hoy": jugadas_hoy, "no_leidas": no_leidas},
                            selecciones=selecciones,
                            plays_hoy=plays,
                            oficial=program_stats(),
-                           tracked_ids=[])
+                           tracked_ids=[],
+                           miembros_lista=miembros_lista,
+                           conteo_miembros=conteo_miembros,
+                           gerenciales=gerenciales,
+                           sin_leer=sin_leer,
+                           telegram_counts=telegram_counts)
+
+
+# ============================================================
+#  CONTROL MANUAL DEL ADMIN (2026-10-17, pedido de Alex:
+#  "métele potencia, más manera de controlar manualmente")
+# ============================================================
+
+@app.route("/admin/control/push", methods=["POST"])
+@admin_required
+def admin_control_push():
+    """Push manual a todos los miembros suscritos (respeta notif_plays)."""
+    titulo = (request.form.get("titulo") or "").strip()[:80]
+    mensaje = (request.form.get("mensaje") or "").strip()[:240]
+    if not titulo or not mensaje:
+        flash("Push: falta el título o el mensaje.", "error")
+        return redirect(url_for("admin_dashboard"))
+    if not HAVE_WEBPUSH or not VAPID_PRIVATE_KEY:
+        flash("El push no está configurado en el servidor.", "error")
+        return redirect(url_for("admin_dashboard"))
+    payload = json.dumps({"title": titulo, "body": mensaje, "url": "/home", "image": ""})
+    db = get_db()
+    subs = db.execute(
+        "SELECT ps.id, ps.endpoint, ps.p256dh, ps.auth FROM push_subscriptions ps"
+        " JOIN users u ON u.id = ps.member_id WHERE u.notif_plays = 1"
+    ).fetchall()
+    sent = failed = 0
+    for sub in subs:
+        try:
+            webpush(
+                subscription_info={"endpoint": sub["endpoint"],
+                                   "keys": {"p256dh": sub["p256dh"], "auth": sub["auth"]}},
+                data=payload,
+                vapid_private_key=VAPID_PRIVATE_KEY,
+                vapid_claims={"sub": VAPID_CLAIM_EMAIL},
+            )
+            sent += 1
+        except WebPushException as ex:
+            code = getattr(getattr(ex, "response", None), "status_code", None)
+            if code in (404, 410):
+                db.execute("DELETE FROM push_subscriptions WHERE id = ?", (sub["id"],))
+            failed += 1
+        except Exception:
+            failed += 1
+    db.commit()
+    flash(f"🔔 Push enviado: {sent} entregados, {failed} fallidos.", "success")
+    return redirect(url_for("admin_dashboard"))
+
+
+@app.route("/admin/control/email", methods=["POST"])
+@admin_required
+def admin_control_email():
+    """Email de anuncio manual a todos los miembros reales."""
+    asunto = (request.form.get("asunto") or "").strip()[:120]
+    mensaje = (request.form.get("mensaje") or "").strip()[:4000]
+    if not asunto or not mensaje:
+        flash("Email: falta el asunto o el mensaje.", "error")
+        return redirect(url_for("admin_dashboard"))
+    import html as _html
+    parrafos = "".join(
+        f'<p style="margin:0 0 10px;font-size:10.4px;line-height:1.65;color:#dbe4f5;">{_html.escape(p)}</p>'
+        for p in mensaje.split("\n") if p.strip()
+    )
+    html_body = (
+        '<div style="background:#070d1d;padding:18px 12px;">'
+        '<div style="font-family:Arial,sans-serif;max-width:440px;margin:0 auto;background:#0e1730;border-radius:14px;padding:22px 24px;">'
+        '<p style="margin:0 0 4px;font-size:8.4px;font-weight:800;letter-spacing:3px;color:#e8c766;">THE SHARP TEAM</p>'
+        f'<h1 style="font-family:Georgia,serif;font-size:14.5px;color:#ffffff;margin:6px 0 12px;">{_html.escape(asunto)}</h1>'
+        + parrafos +
+        '<a href="https://www.thesharpteam.bet/home" style="display:inline-block;background:#2f7bff;color:#ffffff;font-size:9.5px;font-weight:800;padding:11px 22px;border-radius:999px;text-decoration:none;margin-top:8px;">OPEN MY DASHBOARD</a>'
+        '<p style="margin:16px 0 0;color:#7e8db0;font-size:7.3px;">21+. Play responsibly. If you or someone you know has a gambling problem, call or text 1-800-GAMBLER.</p>'
+        '</div></div>'
+    )
+    db = get_db()
+    filas = db.execute("SELECT email FROM users WHERE is_admin = 0").fetchall()
+    sent = 0
+    for f in filas:
+        email = (f["email"] or "").strip()
+        if not email or "@value.local" in email:
+            continue
+        ok, _det = _dispatch_email(email, asunto, mensaje, html_body)
+        if ok:
+            sent += 1
+    flash(f"📧 Email enviado a {sent} miembros.", "success")
+    return redirect(url_for("admin_dashboard"))
+
+
+@app.route("/admin/control/grant", methods=["POST"])
+@admin_required
+def admin_control_grant():
+    """Dar Platinum a un miembro por email (días vacío = permanente)."""
+    email = (request.form.get("email") or "").strip().lower()
+    dias_raw = (request.form.get("dias") or "").strip()
+    db = get_db()
+    u = db.execute("SELECT * FROM users WHERE lower(email) = ?", (email,)).fetchone()
+    if not u:
+        flash(f"No existe un miembro con el email {email}.", "error")
+        return redirect(url_for("admin_dashboard"))
+    if dias_raw:
+        try:
+            dias = max(1, int(dias_raw))
+        except ValueError:
+            dias = 30
+        from datetime import datetime as _dt3, timedelta as _td3, timezone as _tz3
+        fin = (_dt3.now(_tz3.utc) + _td3(days=dias)).isoformat()
+        db.execute("UPDATE users SET platinum_unlocked = 1, platinum_trial_ends = ? WHERE id = ?",
+                   (fin, u["id"]))
+        detalle = f"Platinum activo hasta el {fin[:10]}"
+    else:
+        db.execute("UPDATE users SET platinum_unlocked = 1, platinum_trial_ends = NULL WHERE id = ?",
+                   (u["id"],))
+        detalle = "Platinum permanente (sin reloj)"
+    db.commit()
+    flash(f"🎁 {email}: {detalle}.", "success")
+    return redirect(url_for("admin_dashboard"))
+
+
+@app.route("/admin/control/trial-all", methods=["POST"])
+@admin_required
+def admin_control_trial_all():
+    """Mes gratis de Platinum para todos los miembros sin Stripe.
+    No toca: cuentas que ya pagan, ni regalos permanentes (sin reloj)."""
+    from datetime import datetime as _dt4, timedelta as _td4, timezone as _tz4
+    fin = (_dt4.now(_tz4.utc) + _td4(days=30)).isoformat()
+    db = get_db()
+    cur = db.execute(
+        "UPDATE users SET platinum_unlocked = 1, platinum_trial_ends = ?"
+        " WHERE is_admin = 0 AND (stripe_subscription_id IS NULL OR stripe_subscription_id = '')"
+        " AND email NOT LIKE ?"
+        " AND (platinum_unlocked = 0 OR platinum_trial_ends IS NOT NULL)",
+        (fin, "%@value.local"),
+    )
+    db.commit()
+    n = cur.rowcount if cur.rowcount is not None else 0
+    flash(f"⚡ Mes gratis activado/renovado para {n} miembros (vence {fin[:10]}).", "success")
+    return redirect(url_for("admin_dashboard"))
+
+
+
+# ============================================================
+#  ACTIVIDAD DE MIEMBROS (2026-10-17, pedido de Alex): quien
+#  entra al Dashboard, cuantas veces al dia y desde que ciudad.
+# ============================================================
+_ultima_visita = {}
+
+
+def _ip_cliente():
+    try:
+        xff = (request.headers.get("X-Forwarded-For") or "").split(",")[0].strip()
+        return xff or (request.remote_addr or "")
+    except Exception:
+        return ""
+
+
+def _registrar_actividad(user_id, kind):
+    try:
+        db = get_db()
+        db.execute("CREATE TABLE IF NOT EXISTS member_activity (user_id INTEGER, kind TEXT, ip TEXT, created_at TEXT)")
+        from datetime import datetime as _dta, timezone as _tza
+        db.execute(
+            "INSERT INTO member_activity (user_id, kind, ip, created_at) VALUES (?, ?, ?, ?)",
+            (user_id, kind, _ip_cliente(), _dta.now(_tza.utc).isoformat()),
+        )
+        db.commit()
+    except Exception:
+        pass
+
+
+def _registrar_visita(user):
+    """Visita al Dashboard con freno de 30 min por miembro (cuenta sesiones)."""
+    try:
+        if not user:
+            return
+        import time as _tm
+        uid = user["id"]
+        ahora = _tm.time()
+        if ahora - _ultima_visita.get(uid, 0) < 1800:
+            return
+        _ultima_visita[uid] = ahora
+        _registrar_actividad(uid, "visit")
+    except Exception:
+        pass
+
+
+def _ciudad_de_ip(db, ip):
+    if not ip:
+        return ""
+    g = db.execute("SELECT city, region, country FROM geo_cache WHERE ip = ?", (ip,)).fetchone()
+    if g:
+        return ", ".join([x for x in [g["city"], g["region"]] if x]) or (g["country"] or "")
+    city = region = country = ""
+    if not ip.startswith(("10.", "192.168.", "172.16.", "172.17.", "172.18.", "172.19.", "172.2", "172.30.", "172.31.", "127.", "::1")):
+        try:
+            import urllib.request as _ur, json as _js
+            req = _ur.Request(
+                f"http://ip-api.com/json/{ip}?fields=status,city,regionName,country",
+                headers={"User-Agent": "Mozilla/5.0"},
+            )
+            with _ur.urlopen(req, timeout=3) as r:
+                d = _js.loads(r.read().decode("utf-8", "ignore"))
+            if d.get("status") == "success":
+                city, region, country = d.get("city") or "", d.get("regionName") or "", d.get("country") or ""
+        except Exception:
+            pass
+    try:
+        db.execute(
+            "INSERT INTO geo_cache (ip, city, region, country) VALUES (?, ?, ?, ?) ON CONFLICT(ip) DO NOTHING",
+            (ip, city, region, country),
+        )
+        db.commit()
+    except Exception:
+        pass
+    return ", ".join([x for x in [city, region] if x]) or country
+
+
+@app.route("/admin/actividad")
+@admin_required
+def admin_actividad():
+    """Panel de actividad de miembros: entradas, sesiones y trackeos."""
+    db = get_db()
+    db.execute("CREATE TABLE IF NOT EXISTS member_activity (user_id INTEGER, kind TEXT, ip TEXT, created_at TEXT)")
+    db.execute("CREATE TABLE IF NOT EXISTS geo_cache (ip TEXT PRIMARY KEY, city TEXT, region TEXT, country TEXT)")
+    db.commit()
+    from datetime import datetime, timezone
+    try:
+        from zoneinfo import ZoneInfo
+        et = ZoneInfo("America/New_York")
+    except Exception:
+        et = timezone.utc
+    corte = datetime.now(et).replace(hour=0, minute=0, second=0, microsecond=0).astimezone(timezone.utc).isoformat()
+
+    def fmt(ts):
+        if not ts:
+            return "—"
+        try:
+            d = datetime.fromisoformat(str(ts).replace("Z", "+00:00"))
+            if d.tzinfo is None:
+                d = d.replace(tzinfo=timezone.utc)
+            return d.astimezone(et).strftime("%b %d, %I:%M %p")
+        except Exception:
+            return str(ts)[:16]
+
+    miembros = db.execute(
+        "SELECT id, nombre, email, platinum_unlocked, phone, lang, created_at,"
+        " bankroll, stake_mode, stake_fijo_elite, stake_fijo_gold,"
+        " stripe_subscription_id, stripe_customer_id, cancel_requested_at,"
+        " telegram_user_id, platinum_trial_ends, sms_optin FROM users"
+        " WHERE is_admin = 0 AND email NOT LIKE ? ORDER BY nombre",
+        ("%@value.local",),
+    ).fetchall()
+    datos = []
+    for m in miembros:
+        uid = m["id"]
+        ult = db.execute(
+            "SELECT created_at, ip FROM member_activity WHERE user_id = ? ORDER BY created_at DESC LIMIT 1",
+            (uid,),
+        ).fetchone()
+        entradas_hoy = db.execute(
+            "SELECT COUNT(*) c FROM member_activity WHERE user_id = ? AND created_at >= ?",
+            (uid, corte),
+        ).fetchone()["c"]
+        logins_hoy = db.execute(
+            "SELECT COUNT(*) c FROM member_activity WHERE user_id = ? AND kind = 'login' AND created_at >= ?",
+            (uid, corte),
+        ).fetchone()["c"]
+        tracks = db.execute(
+            "SELECT pick, nivel, fecha, resultado FROM tracked_plays WHERE user_id = ? ORDER BY created_at DESC LIMIT 5",
+            (uid,),
+        ).fetchall()
+        total_tracks = db.execute(
+            "SELECT COUNT(*) c FROM tracked_plays WHERE user_id = ?", (uid,)
+        ).fetchone()["c"]
+        # --- Expediente completo del miembro (2026-10-17) ---
+        tot_entradas = db.execute(
+            "SELECT COUNT(*) c FROM member_activity WHERE user_id = ?", (uid,)
+        ).fetchone()["c"]
+        dias_activo = db.execute(
+            "SELECT COUNT(*) c FROM checkins WHERE user_id = ?", (uid,)
+        ).fetchone()["c"]
+        dispositivos = db.execute(
+            "SELECT COUNT(*) c FROM push_subscriptions WHERE member_id = ?", (uid,)
+        ).fetchone()["c"]
+        wl = db.execute(
+            "SELECT resultado, COUNT(*) c FROM tracked_plays WHERE user_id = ?"
+            " AND resultado IN ('W', 'L') GROUP BY resultado", (uid,)
+        ).fetchall()
+        wins = sum(r["c"] for r in wl if r["resultado"] == "W")
+        losses = sum(r["c"] for r in wl if r["resultado"] == "L")
+        liquidadas = db.execute(
+            "SELECT cuota, stake_monto, resultado FROM tracked_plays"
+            " WHERE user_id = ? AND resultado IN ('W', 'L')", (uid,)
+        ).fetchall()
+        profit = 0.0
+        for t in liquidadas:
+            monto = float(t["stake_monto"] or 0)
+            if t["resultado"] == "W":
+                q = t["cuota"] or 0
+                profit += monto * (q / 100.0) if q > 0 else monto * (100.0 / abs(q)) if q else 0
+            else:
+                profit -= monto
+        if m["stripe_subscription_id"]:
+            estado = "Pagando por Stripe"
+        elif m["platinum_trial_ends"]:
+            estado = "Mes gratis hasta " + str(m["platinum_trial_ends"])[:10]
+        elif m["platinum_unlocked"]:
+            estado = "Platinum permanente"
+        else:
+            estado = "Gratis (Sharp Free)"
+        datos.append({
+            "nombre": m["nombre"], "email": m["email"],
+            "platinum": bool(m["platinum_unlocked"]),
+            "ultima": fmt(ult["created_at"]) if ult else "Sin registro aún",
+            "con_registro": bool(ult),
+            "ciudad": _ciudad_de_ip(db, ult["ip"]) if ult else "",
+            "entradas_hoy": entradas_hoy, "logins_hoy": logins_hoy,
+            "tracks": [{"pick": t["pick"], "nivel": t["nivel"], "fecha": t["fecha"],
+                        "resultado": t["resultado"]} for t in tracks],
+            "total_tracks": total_tracks,
+            "telefono": m["phone"] or "—",
+            "idioma": "Español" if (m["lang"] or "en") == "es" else "English",
+            "desde": fmt(m["created_at"]),
+            "bankroll": ("$" + format(m["bankroll"], ",.2f")) if m["bankroll"] else "Sin configurar",
+            "stake": ("Fijo P $" + str(m["stake_fijo_elite"]) + " / G $" + str(m["stake_fijo_gold"]))
+                     if m["stake_fijo_elite"] else ("1% de su bankroll (" + (m["stake_mode"] or "units") + ")"),
+            "estado": estado,
+            "cancel_pedida": bool(m["cancel_requested_at"]),
+            "telegram": "Vinculado" if m["telegram_user_id"] else "Sin vincular",
+            "push": f"Activado ({dispositivos} disp.)" if dispositivos else "No activado",
+            "sms": "Aceptó SMS" if m["sms_optin"] else "Sin SMS",
+            "tot_entradas": tot_entradas, "dias_activo": dias_activo,
+            "record": f"{wins}–{losses}",
+            "profit": (("+$" if profit >= 0 else "−$") + format(abs(profit), ",.2f")),
+            "profit_pos": profit >= 0,
+        })
+    datos.sort(key=lambda d: (not d["con_registro"], d["nombre"]))
+    return render_template("admin_actividad.html", datos=datos)
+
 
 
 def _tg_send_message(chat_id, text):
@@ -6610,7 +11775,7 @@ def admin_aprobar_jugadas():
     quedan en plays-pending.json hasta que la publicación se confirma.
     """
     user = current_user()
-    if not (is_admin_for(user) or is_alex_member(user)):
+    if not _admin_o_cuenta_alex(user):
         flash("You don't have permission to view this page.", "error")
         return redirect(url_for("home"))
     import json as _jsonB
@@ -6621,10 +11786,9 @@ def admin_aprobar_jugadas():
     sel_ids = [str(s) for s in request.form.getlist("play_ids")]
     pendientes = []
     try:
-        with open(_osB.path.join(_base, "data", "plays-pending.json"), encoding="utf-8") as _f:
-            _d = _jsonB.load(_f)
-            if isinstance(_d, dict) and _d.get("fecha") == _hoy:
-                pendientes = _d.get("plays", []) or []
+        _d = _json_remoto_o_local(PENDING_RAW_URL, PENDING_PLAYS_PATH)
+        if isinstance(_d, dict) and _d.get("fecha") == _hoy:
+            pendientes = _d.get("plays", []) or []
     except Exception:
         pendientes = []
     elegidas = [p for p in pendientes if str(p.get("id")) in sel_ids]
@@ -6642,15 +11806,52 @@ def admin_aprobar_jugadas():
         except Exception:
             pass
     nuevas = [str(p.get("id")) for p in elegidas if str(p.get("id")) not in ya_ids]
+    # Gate en AVISO (Fase A): evalua y registra el veredicto estricto;
+    # el INSERT procede igual que hoy aunque el estricto bloquee.
+    veredictos = {}
+    _gate_resumen = "AVISO"
+    _gate_motivos = ""
+    try:
+        import gate_publicacion as _gate
+        _ctx = {"modelos_aprobados": {}, "gates": {"MLB": 4.0, "NHL": 6.0, "NBA": 5.0, "NFL": 3.5, "NCAAF": 4.5},
+                "publicadas": [], "archivo": [], "excepciones": [],
+                "max_antiguedad_datos_dias": 7, "max_antiguedad_cuota_min": 60,
+                "frescura_aprobada": False, "fecha": _hoy}
+        _ahora = _dtB.now(timezone.utc)
+        _det = {}
+        for _p in elegidas:
+            _r = _gate.evaluar_candidata(_p, _ctx, _ahora)
+            _det[str(_p.get("id"))] = {"decision": _r["decision"], "motivos": _r["motivos"], "no_evaluado": _r["no_evaluado"]}
+            veredictos[str(_p.get("id"))] = _r["decision"]
+        _lote = [veredictos.get(i) for i in nuevas]
+        if "BLOQUEADA" in _lote:
+            _gate_resumen = "BLOQUEADA"
+        elif "REVISION_MANUAL" in _lote:
+            _gate_resumen = "REVISION_MANUAL"
+        elif _lote:
+            _gate_resumen = "APROBADA"
+        _gate_motivos = _jsonB.dumps(_det)
+    except Exception:
+        _gate_resumen = "NO_EVALUADO"
+        _gate_motivos = "error evaluacion"
+    _gate_evaluado = _dtB.now(timezone.utc).isoformat()
     if nuevas:
-        db.execute(
-            "INSERT INTO publish_requests (fecha, play_ids, status, created_at)"
-            " VALUES (?, ?, 'pending', ?)",
-            (_hoy, _jsonB.dumps(nuevas), _dtB.now(timezone.utc).isoformat()))
+        try:
+            db.execute(
+                "INSERT INTO publish_requests (fecha, play_ids, status, created_at, gate_veredicto, gate_motivos, gate_evaluado_en)"
+                " VALUES (?, ?, 'pending', ?, ?, ?, ?)",
+                (_hoy, _jsonB.dumps(nuevas), _dtB.now(timezone.utc).isoformat(), _gate_resumen, _gate_motivos, _gate_evaluado))
+        except Exception:
+            db.rollback()
+            db.execute(
+                "INSERT INTO publish_requests (fecha, play_ids, status, created_at)"
+                " VALUES (?, ?, 'pending', ?)",
+                (_hoy, _jsonB.dumps(nuevas), _dtB.now(timezone.utc).isoformat()))
         db.commit()
         _push_aviso_disparo_alex(len(nuevas))
     return render_template("admin_aprobar_confirm.html",
                            elegidas=elegidas,
+                           veredictos=veredictos,
                            n_clientes=0,
                            modo_prueba=False,
                            hoy=_hoy,
@@ -6710,7 +11911,7 @@ def admin_ticket_por_jugada():
     encuentre y lo envíe. Devuelve JSON."""
     from flask import jsonify
     user = current_user()
-    if not (is_admin_for(user) or is_alex_member(user)):
+    if not _admin_o_cuenta_alex(user):
         return jsonify({"ok": False, "error": "sin permiso"}), 403
     import json as _jsonT, os as _osT, re as _reT
     from datetime import datetime as _dtT
@@ -6785,7 +11986,7 @@ def admin_ticket_por_jugada():
 def admin_wgt_tracker():
     """Tracker privado de WGT (5 meses) — solo Alex, en el Admin Dashboard."""
     user = current_user()
-    if not (is_admin_for(user) or is_alex_member(user)):
+    if not _admin_o_cuenta_alex(user):
         flash("You don't have permission to view this page.", "error")
         return redirect(url_for("home"))
     return render_template("admin_wgt_tracker.html")
@@ -6798,7 +11999,7 @@ def admin_subir_ticket():
     from werkzeug.utils import secure_filename
     db = get_db()
     user = current_user()
-    if not (is_admin_for(user) or is_alex_member(user)):
+    if not _admin_o_cuenta_alex(user):
         flash("You don't have permission to view this page.", "error")
         return redirect(url_for("home"))
 
@@ -7097,7 +12298,7 @@ def api_values_record():
         return jsonify({"error": str(e)}), 500
 
 @app.route("/values")
-@login_required
+@admin_required
 def values_page():
     """Página del Value Tracker (2026-10-11, pedido por Alex: verlo en el Dashboard cuando quiera)."""
     db = get_db()
@@ -7114,7 +12315,7 @@ def values_page():
     for r in rows:
         d = dict(r)
         # Stake real de cada jugada (2026-10-12, Alex: $100 desde el 11-oct, $50 antes)
-        stake = d["stake_monto"] or 100.0
+        stake = float(d["stake_monto"] or 100.0)
         p = play_profit_dollars({"cuota": d["cuota"], "stake_monto": stake,
                                  "resultado": d["resultado"]})
         cuota = d["cuota"] or 0
@@ -7156,7 +12357,7 @@ def values_page():
 
 
 @app.route("/values/all")
-@login_required
+@admin_required
 def values_all():
     """Todas las jugadas VALUE registradas (2026-10-12, pedido por Alex: link 'View all')."""
     db = get_db()
@@ -7187,7 +12388,7 @@ def admin_chat_mensaje():
     from werkzeug.utils import secure_filename
     db = get_db()
     user = current_user()
-    if not (is_admin_for(user) or is_alex_member(user)):
+    if not _admin_o_cuenta_alex(user):
         return jsonify({"ok": False, "error": "no autorizado"}), 403
     mensaje = request.form.get("mensaje", "").strip()
     hoy = datetime.now().strftime("%Y-%m-%d")
@@ -7340,20 +12541,12 @@ def admin_chat_mensaje():
                         "alerts": {"state": "pending"},
                     },
                 }
-                _sp = os.path.join(chat_dir, "ticket-status.json")
-                try:
-                    with open(_sp) as _sf:
-                        _all = _json.load(_sf)
-                    if not isinstance(_all, dict):
-                        _all = {}
-                except Exception:
-                    _all = {}
+                _all = _ticket_status_todos()
                 _all[_batch_id] = _batch
                 if len(_all) > 20:
                     for _k in sorted(_all.keys())[:len(_all) - 20]:
                         _all.pop(_k, None)
-                with open(_sp, "w") as _sf:
-                    _json.dump(_all, _sf, indent=2)
+                _ticket_status_guardar(_all)
             except Exception:
                 _batch_id = None
     return jsonify({"ok": True, "tickets": len(guardados),
@@ -7368,11 +12561,47 @@ def _ticket_status_file():
 def _ticket_status_todos():
     import json as _json
     try:
+        db = get_db()
+        db.execute("CREATE TABLE IF NOT EXISTS ticket_status_kv "
+                   "(id INTEGER PRIMARY KEY CHECK (id = 1), data TEXT)")
+        row = db.execute(
+            "SELECT data FROM ticket_status_kv WHERE id = 1").fetchone()
+        if row and row["data"]:
+            _d = _json.loads(row["data"])
+            if isinstance(_d, dict) and _d:
+                return _d
+    except Exception:
+        pass
+    try:
         with open(_ticket_status_file()) as _f:
             _d = _json.load(_f)
         return _d if isinstance(_d, dict) else {}
     except Exception:
         return {}
+
+
+def _ticket_status_guardar(_all):
+    # Persiste en la BD (sobrevive redeploys); el archivo queda como espejo.
+    import json as _json
+    ok = False
+    try:
+        db = get_db()
+        db.execute("CREATE TABLE IF NOT EXISTS ticket_status_kv "
+                   "(id INTEGER PRIMARY KEY CHECK (id = 1), data TEXT)")
+        db.execute("INSERT INTO ticket_status_kv (id, data) VALUES (1, ?) "
+                   "ON CONFLICT(id) DO UPDATE SET data = excluded.data",
+                   (_json.dumps(_all),))
+        db.commit()
+        ok = True
+    except Exception:
+        pass
+    try:
+        with open(_ticket_status_file(), "w") as _f:
+            _json.dump(_all, _f, indent=2)
+        ok = True
+    except Exception:
+        pass
+    return ok
 
 
 @app.route("/admin/ticket-status/latest")
@@ -7428,11 +12657,8 @@ def admin_ticket_status_update():
         "detail": (_d.get("detail") or "")[:200],
         "at": _dtS.now().strftime("%Y-%m-%d %H:%M:%S"),
     }
-    try:
-        with open(_ticket_status_file(), "w") as _f:
-            _json.dump(_all, _f, indent=2)
-    except Exception as _e:
-        return jsonify({"error": "no se pudo guardar: %s" % str(_e)[:100]}), 500
+    if not _ticket_status_guardar(_all):
+        return jsonify({"error": "no se pudo guardar el estado"}), 500
     return jsonify({"ok": True, "batch_id": _bid, "step": _step, "state": _state})
 
 @login_required
@@ -7441,7 +12667,7 @@ def admin_accion(accion):
     import json as _json, os, time
     db = get_db()
     user = current_user()
-    if not (is_admin_for(user) or is_alex_member(user)):
+    if not _admin_o_cuenta_alex(user):
         return jsonify({"error": "unauthorized"}), 401
     validas = {"email-jugadas", "telegram", "publicar-todo", "publish-plays"}
     if accion not in validas:
@@ -7517,20 +12743,101 @@ def api_acciones_pendientes():
         return jsonify({"error": str(e)}), 500
 
 
+@app.route("/encuesta")
+def encuesta_semana_gratis():
+    """Encuesta Sharp Leads — ¿te gustaría una semana gratis? (2026-10-27, pedido Alex).
+    Pública (el link viene de un email, puede no tener sesión): registra respuesta, fecha y email si hay sesión.
+    NO activa nada gratis por sí sola: es solo interés, para leerlo en /admin/encuestas."""
+    r = (request.args.get("r") or "").strip().lower()
+    if r not in ("si_1", "si_2", "no", "no_interesa"):
+        r = "no"
+    email = ""
+    try:
+        u = current_user()
+        if u:
+            email = (u.get("email") or "").strip().lower()
+    except Exception:
+        email = ""
+    try:
+        db = get_db()
+        try:
+            db.execute("CREATE TABLE IF NOT EXISTS encuesta_respuestas (id SERIAL PRIMARY KEY, respuesta TEXT, email TEXT, created_at TEXT)")
+        except Exception:
+            db.execute("CREATE TABLE IF NOT EXISTS encuesta_respuestas (id INTEGER PRIMARY KEY AUTOINCREMENT, respuesta TEXT, email TEXT, created_at TEXT)")
+        db.execute("INSERT INTO encuesta_respuestas (respuesta, email, created_at) VALUES (?, ?, ?)", (r, email, datetime.now(timezone.utc).isoformat()))
+        db.commit()
+    except Exception:
+        try:
+            db.rollback()
+        except Exception:
+            pass
+    textos = {"si_1": "Yes, 1 free week", "si_2": "Yes, 2 free weeks", "no": "No", "no_interesa": "Not interested"}
+    return render_template("encuesta_gracias.html", respuesta=textos[r])
+
+@app.route("/admin/encuestas")
+@login_required
+def admin_encuestas():
+    """Lectura de respuestas de la encuesta — solo Admin / cuenta Alex."""
+    user = current_user()
+    if not _admin_o_cuenta_alex(user):
+        flash("You don't have permission to view this page.", "error")
+        return redirect(url_for("home"))
+    try:
+        db = get_db()
+        try:
+            db.execute("CREATE TABLE IF NOT EXISTS encuesta_respuestas (id SERIAL PRIMARY KEY, respuesta TEXT, email TEXT, created_at TEXT)")
+        except Exception:
+            db.execute("CREATE TABLE IF NOT EXISTS encuesta_respuestas (id INTEGER PRIMARY KEY AUTOINCREMENT, respuesta TEXT, email TEXT, created_at TEXT)")
+        filas = db.execute("SELECT respuesta, email, created_at FROM encuesta_respuestas ORDER BY id DESC LIMIT 200").fetchall()
+        respuestas = [dict(f) for f in filas]
+    except Exception:
+        respuestas = []
+    return render_template("admin_encuestas.html", respuestas=respuestas)
+
+@app.route("/admin/contactos")
+@login_required
+def admin_contactos():
+    """Lista de contactos — solo nombre y email (2026-10-27, pedido Alex)."""
+    db = get_db()
+    user = current_user()
+    if not _admin_o_cuenta_alex(user):
+        flash("You don't have permission to view this page.", "error")
+        return redirect(url_for("home"))
+    # Regla 2026-10-30 (orden de Alex): quien pidió cancelar sale de
+    # una vez de la lista de clientes — no se muestran nombres de
+    # clientes que ya no lo son, aunque su acceso siga hasta su fecha.
+    contactos = db.execute(
+        "SELECT nombre, email FROM users "
+        "WHERE email_verified = 1 AND cancel_requested_at IS NULL "
+        "AND LOWER(email) NOT IN ('thesharpteam8@gmail.com', 'system@value.local') "
+        "ORDER BY nombre ASC, email ASC"
+    ).fetchall()
+    return render_template("admin_contactos.html", contactos=[dict(c) for c in contactos])
+
 @app.route("/admin/miembros")
 @login_required
 def admin_miembros():
     """Lista privada de miembros — solo para Alex (is_admin=1)."""
     db = get_db()
     user = current_user()
-    if not (is_admin_for(user) or is_alex_member(user)):
+    if not _admin_o_cuenta_alex(user):
         flash("You don't have permission to view this page.", "error")
         return redirect(url_for("home"))
+    _barrer_trials_vencidos(db)
     miembros = db.execute(
         "SELECT id, nombre, email, created_at, platinum_unlocked, is_admin, "
         "stake_fijo_elite, stake_fijo_gold, cancel_requested_at, stripe_customer_id, "
+        "stripe_subscription_id, stripe_subscription_status, stripe_past_due, "
+        "platinum_trial_ends, "
         "telegram_user_id, telegram_ban_pending, telegram_unban_pending "
-        "FROM users ORDER BY created_at DESC"
+        "FROM users "
+        # 2026-10-31, orden de Alex: ALL MEMBERS es UN SOLO TOTAL con
+        # TODOS los miembros — se quitan el filtro email_verified y el
+        # que ocultaba a los Platinum con reloj de prueba (regla del
+        # 2026-10-24, derogada para esta lista). Solo quedan fuera las
+        # 2 cuentas de la casa, que no son miembros.
+        "WHERE LOWER(email) NOT IN ('thesharpteam8@gmail.com', 'system@value.local') "
+        "ORDER BY created_at DESC"
     ).fetchall()
     ahora = datetime.now(timezone.utc)
     lista = []
@@ -7551,8 +12858,198 @@ def admin_miembros():
         ).fetchall()
     except Exception:
         eventos = []
+    # ── 🔥 ACTIVE & VERIFIED (2026-10-20, pedido por Alex): miembros con el
+    # correo confirmado y actividad en 2+ días distintos, con TODO lo que
+    # el sistema sabe de ellos. La cuenta de Alex (dueño) no cuenta aquí.
+    activos = []
+    try:
+        filas = db.execute(
+            "SELECT u.id, u.nombre, u.email, u.activated_at, u.phone, "
+            "u.sms_optin, u.telegram_user_id, u.stripe_customer_id, "
+            "u.stripe_subscription_id, u.platinum_trial_ends, "
+            "COUNT(*) AS entradas, "
+            "COUNT(DISTINCT substr(a.created_at, 1, 10)) AS dias, "
+            "MAX(a.created_at) AS ultima "
+            "FROM users u JOIN member_activity a ON a.user_id = u.id "
+            "WHERE u.email_verified = 1 "
+            "AND LOWER(u.email) NOT IN ('thesharpteam8@gmail.com', "
+            "'system@value.local', 'pena.manuel@myyahoo.com') "
+            "AND u.cancel_requested_at IS NULL "
+            # 2026-10-24, ajuste mismo día: oculta solo al trial.
+            "AND NOT (u.platinum_unlocked = 1 "
+            "AND u.platinum_trial_ends IS NOT NULL "
+            "AND u.platinum_trial_ends != '') "
+            "GROUP BY u.id, u.nombre, u.email, u.activated_at, u.phone, "
+            "u.sms_optin, u.telegram_user_id, u.stripe_customer_id, "
+            "u.stripe_subscription_id, u.platinum_trial_ends "
+            "HAVING COUNT(DISTINCT substr(a.created_at, 1, 10)) >= 2 "
+            "ORDER BY entradas DESC"
+        ).fetchall()
+        _meses = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+        for f in filas:
+            d = dict(f)
+            d["confirmado_txt"] = ""
+            if d.get("activated_at"):
+                try:
+                    fa = datetime.fromisoformat(
+                        str(d["activated_at"]).replace("Z", "+00:00"))
+                    d["confirmado_txt"] = (
+                        f"{_meses[fa.month - 1]} {fa.day}, {fa.year}")
+                except Exception:
+                    d["confirmado_txt"] = str(d["activated_at"])[:10]
+            d["ultima_txt"] = ""
+            if d.get("ultima"):
+                try:
+                    fu = datetime.fromisoformat(
+                        str(d["ultima"]).replace("Z", "+00:00"))
+                    if fu.tzinfo is None:
+                        fu = fu.replace(tzinfo=timezone.utc)
+                    fe = fu.astimezone(ZoneInfo("America/New_York"))
+                    hora = fe.strftime("%I:%M %p").lstrip("0")
+                    d["ultima_txt"] = (
+                        f"{_meses[fe.month - 1]} {fe.day} · {hora}")
+                except Exception:
+                    d["ultima_txt"] = str(d["ultima"])[:10]
+            d["ciudad"] = ""
+            try:
+                act0 = db.execute(
+                    "SELECT ip FROM member_activity WHERE user_id = ?"
+                    " AND ip IS NOT NULL AND ip != ''"
+                    " ORDER BY created_at ASC LIMIT 1", (d["id"],)).fetchone()
+                if act0:
+                    ip0 = act0["ip"] if not isinstance(act0, dict) \
+                        else act0.get("ip")
+                    if ip0:
+                        d["ciudad"] = _ciudad_de_ip(db, ip0) or ""
+            except Exception:
+                d["ciudad"] = ""
+            try:
+                tr = db.execute(
+                    "SELECT COUNT(*) AS n FROM tracked_plays"
+                    " WHERE user_id = ?", (d["id"],)).fetchone()
+                d["tracked_n"] = (
+                    tr["n"] if not isinstance(tr, dict)
+                    else tr.get("n")) or 0
+            except Exception:
+                d["tracked_n"] = 0
+            if d.get("stripe_subscription_id"):
+                d["stripe_txt"] = "Customer · Paid"
+                d["stripe_gold"] = False
+            elif d.get("stripe_customer_id"):
+                d["stripe_txt"] = "Customer · No subscription"
+                d["stripe_gold"] = False
+            elif d.get("platinum_trial_ends"):
+                d["stripe_txt"] = (
+                    "No payment · Free month until "
+                    + str(d["platinum_trial_ends"])[:10])
+                d["stripe_gold"] = True
+            else:
+                d["stripe_txt"] = "No payment"
+                d["stripe_gold"] = False
+            d["sms_txt"] = "Yes" if d.get("sms_optin") else "No"
+            d["telegram_txt"] = (
+                "Linked" if d.get("telegram_user_id") else "Not linked")
+            activos.append(d)
+    except Exception:
+        activos = []
+    # 4 carpetas excluyentes (orden de Alex 2026-10-24: "haz 4 carpetas"):
+    # ACTIVE (tarjetas completas) > NEW (48 h) > PLATINUM > FREE.
+    _ids_activos = {a["id"] for a in activos}
+    _resto = [m for m in lista if m["id"] not in _ids_activos]
+    nuevos = [m for m in _resto if m.get("es_nuevo")]
+    _resto2 = [m for m in _resto if not m.get("es_nuevo")]
+    platinums = [m for m in _resto2 if m.get("platinum_unlocked")]
+    frees = [m for m in _resto2 if not m.get("platinum_unlocked")]
+    try:
+        _ahora_et = ahora.astimezone(ZoneInfo("America/New_York"))
+        ahora_txt = _ahora_et.strftime("%b %-d, %Y · %-I:%M %p ET")
+    except Exception:
+        ahora_txt = ""
+    # ── 📁 PLATINUM (2026-10-25, orden de Alex; ajuste 2026-10-31): la
+    # carpeta cuenta SOLO a los Platinum PAGANDO de verdad: suscripción
+    # de Stripe en estado active (cuota recurrente ya cobrándose), según
+    # stripe_subscription_status que mantiene el webhook. Trial NO
+    # cuenta; cancelada tampoco (el webhook además borra el id al
+    # cancelar). Sin contar la cuenta del dueño. Hoy: 0 — cuando las
+    # pruebas conviertan y el webhook marque active, caen aquí solos.
+    # El resto queda en la carpeta ALL MEMBERS del template.
+    clientes_platinum = [m for m in lista
+                         if m.get("stripe_subscription_id")
+                         and (m.get("stripe_subscription_status") or "") == "active"
+                         and m["email"].lower() != "pena.manuel@myyahoo.com"]
     return render_template("admin_miembros.html", miembros=lista,
+                           activos=activos, nuevos=nuevos,
+                           platinums=platinums, frees=frees,
+                           clientes_platinum=clientes_platinum,
+                           ahora_txt=ahora_txt,
                            eventos=[dict(e) for e in eventos])
+
+
+@app.route("/admin/miembros/<int:user_id>")
+@login_required
+def admin_miembro_detalle(user_id):
+    """Ficha completa de un miembro (2026-10-19, pedido por Alex): el panel
+    /admin/miembros es solo la lista de nombres con «Ver más»; toda la
+    información del miembro y su actividad en el programa vive aquí."""
+    me = current_user()
+    if not _admin_o_cuenta_alex(me):
+        flash("You don't have permission to view this page.", "error")
+        return redirect(url_for("home"))
+    db = get_db()
+    _barrer_trials_vencidos(db)
+    row = db.execute("SELECT * FROM users WHERE id = ?", (user_id,)).fetchone()
+    if not row:
+        flash("That account no longer exists.", "error")
+        return redirect(url_for("admin_miembros"))
+    m = dict(row)
+    # Ciudad de registro: primera IP de actividad (mismo criterio que
+    # /api/new-members).
+    ciudad = ""
+    try:
+        act0 = db.execute(
+            "SELECT ip FROM member_activity WHERE user_id = ?"
+            " AND ip IS NOT NULL AND ip != ''"
+            " ORDER BY created_at ASC LIMIT 1", (user_id,)).fetchone()
+        if act0:
+            ip0 = act0["ip"] if not isinstance(act0, dict) else act0.get("ip")
+            if ip0:
+                ciudad = _ciudad_de_ip(db, ip0) or ""
+    except Exception:
+        ciudad = ""
+    # Días que entró al Dashboard (checkins) + actividad reciente.
+    dias_dashboard = 0
+    ultimo_dia = ""
+    try:
+        ck = db.execute(
+            "SELECT COUNT(*) AS n, MAX(fecha) AS u FROM checkins WHERE user_id = ?",
+            (user_id,)).fetchone()
+        if ck:
+            dias_dashboard = ck["n"] if not isinstance(ck, dict) else (ck.get("n") or 0)
+            ultimo_dia = (ck["u"] if not isinstance(ck, dict) else ck.get("u")) or ""
+    except Exception:
+        pass
+    try:
+        actividad = [dict(r) for r in db.execute(
+            "SELECT kind, created_at FROM member_activity WHERE user_id = ?"
+            " ORDER BY created_at DESC LIMIT 20", (user_id,)).fetchall()]
+    except Exception:
+        actividad = []
+    # Tracker personal: resumen + últimas jugadas con su profit.
+    trows = db.execute(
+        "SELECT * FROM tracked_plays WHERE user_id = ? ORDER BY fecha DESC, id DESC LIMIT 100",
+        (user_id,)).fetchall()
+    tracked = [dict(r) for r in trows]
+    for r in tracked:
+        try:
+            r["profit"] = play_profit_dollars(r)
+        except Exception:
+            r["profit"] = 0.0
+    stats = compute_stats(tracked) if tracked else {}
+    return render_template(
+        "admin_miembro_detalle.html", m=m, ciudad=ciudad,
+        dias_dashboard=dias_dashboard, ultimo_dia=ultimo_dia,
+        actividad=actividad, tracked=tracked[:10], stats=stats)
 
 
 @app.route("/admin/notificaciones/limpiar", methods=["POST"])
@@ -7561,7 +13058,7 @@ def admin_notificaciones_limpiar():
     """Limpia todas las notificaciones (solo Alex/admin)."""
     db = get_db()
     user = current_user()
-    if not (is_admin_for(user) or is_alex_member(user)):
+    if not _admin_o_cuenta_alex(user):
         flash("You don't have permission.", "error")
         return redirect(url_for("home"))
     try:
@@ -7580,7 +13077,7 @@ def admin_notificaciones():
     todo lo que pasa — miembros nuevos, tickets, pagos."""
     db = get_db()
     user = current_user()
-    if not (is_admin_for(user) or is_alex_member(user)):
+    if not _admin_o_cuenta_alex(user):
         flash("You don't have permission to view this page.", "error")
         return redirect(url_for("home"))
     try:
@@ -7607,7 +13104,7 @@ def admin_trakeos():
     """Quién trakeó cada jugada publicada — solo para Alex (2026-10-05, pedido por Alex)."""
     db = get_db()
     user = current_user()
-    if not (is_admin_for(user) or is_alex_member(user)):
+    if not _admin_o_cuenta_alex(user):
         flash("You don't have permission to view this page.", "error")
         return redirect(url_for("home"))
     rows = db.execute(
@@ -7647,7 +13144,22 @@ def resultados():
 def ev_board():
     db = get_db()
     record_checkin(db, session["user_id"])
+    # +EV Board estilo WGT (2026-11-02, orden de Alex: «móntalo como
+    # ellos»): herramienta SOLO de exhibición para Platinum — el board
+    # muestra edges en vivo contra el precio justo de Pinnacle; NO hay
+    # récord simulado, NO hay página de resultados y NO se trackea nada.
+    # El programa VALUE (simulador) sigue ELIMINADO.
+    if not platinum_unlocked_for(current_user()):
+        return redirect(url_for("desbloquear_platinum"))
     return render_template("ev_board.html", board=load_ev_board())
+
+
+@app.route("/ev-board/results")
+@login_required
+def ev_board_results():
+    # PROGRAMA VALUE ELIMINADO (2026-11-02, orden de Alex): la página de
+    # resultados VALUE se retira; todo link viejo aterriza en el home.
+    return redirect(url_for("home"))
 
 
 @app.route("/sharp")
@@ -7674,7 +13186,8 @@ def parlay_builder():
 
 # ----------------------------- AI Assistant (Platinum only) -----------------------------
 # Rule-based assistant: answers from real program data only (no external LLM).
-# Intents: best plays, parlay suggestion, today's official plays, record, bankroll.
+# Intents: best plays, parlay suggestion, price check (explain a price vs the
+# fair line, with sizing), my-bets review, today's official plays, record, bankroll.
 
 def _ai_fmt_odds(price):
     try:
@@ -7805,6 +13318,214 @@ def _ai_answer(question, user):
         cards = [_edge_card(e) for e in edges]
         return (answer, cards)
 
+    # ---- price check: explain a price vs the fair line (2026-10-29) ----
+    # Coach-style: implied % of the quoted price, the fair line from real
+    # program data (+EV board Pinnacle no-vig, or the model probability of
+    # today's official plays), the EV with the math shown, a plain verdict,
+    # and a size in units / dollars from the member's own bankroll.
+    # Never invents a fair price: without a board/model match it only gives
+    # the break-even math of the quoted price and says so.
+    import re as _re_ai
+    _price_m = _re_ai.search(r"(?<![\d.])([+-]\d{2,4})(?![\d/])", q)
+    _price_kw = any(k in q for k in ("worth", "fair", "good price", "bad price",
+                                     "should i take", "explain a price", "price check"))
+    if _price_m or _price_kw:
+        quoted = None
+        if _price_m:
+            try:
+                quoted = int(_price_m.group(1))
+            except (TypeError, ValueError):
+                quoted = None
+            if quoted is not None and not (quoted >= 100 or quoted <= -100):
+                quoted = None
+
+        def _team_hit(name, text):
+            n = (name or "").lower().strip()
+            if not n:
+                return False
+            if n in text:
+                return True
+            words = [w for w in n.split() if len(w) > 2]
+            if len(words) >= 2 and " ".join(words[-2:]) in text:
+                return True
+            return bool(words) and words[-1] in text
+
+        def _implied(price):
+            dec = _ai_to_decimal(price)
+            if not dec:
+                return None
+            return 100.0 / dec
+
+        def _fair_american(prob_pct):
+            if not prob_pct or prob_pct <= 0 or prob_pct >= 100:
+                return "—"
+            dec = 100.0 / prob_pct
+            return _ai_to_american(dec)
+
+        edge_hit = None
+        for e in _ai_best_edges(50):
+            if _team_hit(e.get("team"), q):
+                edge_hit = e
+                break
+        play_hit = None
+        if edge_hit is None:
+            try:
+                _plays_ai = load_plays() or []
+            except Exception:
+                _plays_ai = []
+            for p in _plays_ai:
+                if _team_hit(p.get("team_name"), q) or _team_hit(p.get("pick"), q):
+                    play_hit = p
+                    break
+
+        team_name = None
+        fair_prob = None
+        fair_src = None
+        best_line = None
+        if edge_hit is not None:
+            team_name = edge_hit.get("team") or "That play"
+            try:
+                fair_prob = float(edge_hit.get("fair_prob_pct") or 0) or None
+            except (TypeError, ValueError):
+                fair_prob = None
+            fair_src = "the +EV Board fair line (Pinnacle no-vig)"
+            if quoted is None:
+                try:
+                    quoted = int(float(edge_hit.get("price")))
+                except (TypeError, ValueError):
+                    quoted = None
+            _books = edge_hit.get("books") or []
+            if _books:
+                _bb = max(_books, key=lambda b: float(b.get("price") or -99999))
+                best_line = (f"Best price on the board right now: "
+                             f"{_ai_fmt_odds(_bb.get('price'))} at {_bb.get('book', '—')}.")
+        elif play_hit is not None:
+            team_name = play_hit.get("pick") or play_hit.get("team_name") or "That play"
+            _mp = play_hit.get("prob_modelo")
+            if _mp is None and isinstance(play_hit.get("writeup"), dict):
+                _mp = play_hit["writeup"].get("model_prob")
+            try:
+                _mp = float(_mp)
+                fair_prob = _mp * 100.0 if _mp <= 1 else _mp
+            except (TypeError, ValueError):
+                fair_prob = None
+            fair_src = "today's official model"
+            if quoted is None:
+                try:
+                    quoted = int(float(play_hit.get("cuota")))
+                except (TypeError, ValueError):
+                    quoted = None
+
+        if quoted is None and fair_prob is None:
+            return ("Tell me the team and the price you see — for example "
+                    "\"Is Detroit Red Wings -166 worth it?\" — and I'll explain it "
+                    "against the fair line with the math shown.", [])
+        if quoted is None:
+            return (f"Give me the price you see for {team_name} and I'll grade it "
+                    f"against the fair line ({fair_prob:.1f}% from {fair_src}).", [])
+
+        imp = _implied(quoted)
+        _title_ai = f"{team_name} — price check" if team_name else "Price check"
+        lines = [_title_ai,
+                 f"• Your price: {_ai_fmt_odds(quoted)} → you need to win {imp:.1f}% of the time just to break even."]
+        if fair_prob is None:
+            lines.append("• I don't have a fair line for that game in the current board or today's model, "
+                         "so I won't guess one. Check the +EV Board or the Game Center for this game, "
+                         "or ask me about a team that is on today's card.")
+            return ("\n".join(lines), [])
+        dec_q = _ai_to_decimal(quoted)
+        ev = (fair_prob / 100.0) * dec_q - 1.0
+        ev_pct = ev * 100.0
+        lines.append(f"• Fair line: {fair_prob:.1f}% from {fair_src} → fair price {_fair_american(fair_prob)}.")
+        lines.append(f"• Edge at {_ai_fmt_odds(quoted)}: {ev_pct:+.1f}% EV.")
+        if ev_pct >= 5:
+            verdict, units = "a real edge — playable at full program size", 1.0
+        elif ev_pct >= 2:
+            verdict, units = "a thin edge — playable, one notch smaller", 0.6
+        elif ev_pct >= 0:
+            verdict, units = "basically the fair price — no real edge, pass", 0.0
+        else:
+            verdict, units = "below fair — pass, or shop for a better price", 0.0
+        lines.append(f"• Verdict: {verdict}.")
+        if best_line:
+            lines.append(f"• {best_line}")
+        try:
+            _br = float(user["bankroll"]) if user and user["bankroll"] else None
+        except (KeyError, IndexError, TypeError, ValueError):
+            _br = None
+        if units > 0:
+            if _br:
+                lines.append(f"• Size: {units:g}u = ${_br * 0.01 * units:,.2f} "
+                             f"(your bankroll ${_br:,.2f} · 1u = ${_br * 0.01:,.2f}).")
+            else:
+                lines.append(f"• Size: {units:g}u (1u = 1% of your bankroll — set it in Account "
+                             "and I'll show dollars too).")
+        return ("\n".join(lines), cards)
+
+    # ---- my bets review (2026-10-29) ----
+    if any(k in q for k in ("my bets", "my tracked", "review my", "my record",
+                            "how am i doing", "my plays", "my results")):
+        try:
+            _db_ai = get_db()
+            _rows_ai = [dict(r) for r in _db_ai.execute(
+                "SELECT * FROM tracked_plays WHERE user_id = ?", (user["id"],)).fetchall()]
+        except Exception:
+            _rows_ai = []
+        if not _rows_ai:
+            return ("You haven't tracked any plays yet. Tap Track on any play and I'll "
+                    "review your record, profit and leaks right here.", [])
+        _w = _l = _pend = 0
+        _profit = 0.0
+        _risked = 0.0
+        _by_league = {}
+        for r in _rows_ai:
+            try:
+                _stake = float(r.get("stake_monto") or 0)
+            except (TypeError, ValueError):
+                _stake = 0.0
+            _res = (r.get("resultado") or "").upper()
+            _lg = (r.get("liga") or "").replace("americanfootball_", "").replace("icehockey_", "").replace("baseball_", "").replace("basketball_", "").upper() or "—"
+            _d = _by_league.setdefault(_lg, {"w": 0, "l": 0, "profit": 0.0, "risked": 0.0})
+            if _res == "W":
+                _dec = _ai_to_decimal(r.get("cuota")) or 1.0
+                _p = _stake * (_dec - 1.0)
+                _w += 1
+                _profit += _p
+                _risked += _stake
+                _d["w"] += 1
+                _d["profit"] += _p
+                _d["risked"] += _stake
+            elif _res == "L":
+                _l += 1
+                _profit -= _stake
+                _risked += _stake
+                _d["l"] += 1
+                _d["profit"] -= _stake
+                _d["risked"] += _stake
+            else:
+                _pend += 1
+        _settled = _w + _l
+        if not _settled:
+            return (f"You have {len(_rows_ai)} tracked plays, all still pending. "
+                    "Once they settle I'll break down your record, profit and leaks.", [])
+        _wr = 100.0 * _w / _settled
+        _roi = 100.0 * _profit / _risked if _risked else 0.0
+        lines = [f"Your tracked bets: {_w}–{_l} ({_wr:.1f}% win rate), "
+                 f"${_profit:+,.2f} profit, {_roi:+.1f}% ROI"
+                 + (f", {_pend} still pending." if _pend else ".")]
+        _cats = [(k, v) for k, v in _by_league.items() if (v["w"] + v["l"]) >= 3 and v["risked"]]
+        if _cats:
+            _best = max(_cats, key=lambda kv: kv[1]["profit"] / kv[1]["risked"])
+            _worst = min(_cats, key=lambda kv: kv[1]["profit"] / kv[1]["risked"])
+            if _best[1]["profit"] > 0:
+                lines.append(f"• Your strongest league: {_best[0]} — {_best[1]['w']}–{_best[1]['l']}, "
+                             f"{100.0 * _best[1]['profit'] / _best[1]['risked']:+.1f}% ROI.")
+            if _worst[0] != _best[0] and _worst[1]["profit"] < 0:
+                lines.append(f"• Your biggest leak: {_worst[0]} — {_worst[1]['w']}–{_worst[1]['l']}, "
+                             f"{100.0 * _worst[1]['profit'] / _worst[1]['risked']:+.1f}% ROI. "
+                             "Smaller stakes there until it turns.")
+        return ("\n".join(lines), cards)
+
     # ---- today's official plays ----
     if any(k in q for k in ("today", "official", "card", "tonight", "plays")):
         try:
@@ -7850,13 +13571,16 @@ def _ai_answer(question, user):
         return ("I'm The Sharp Team assistant. Ask me for:\n"
                 "• \"best plays\" — top +EV edges right now\n"
                 "• \"build me a parlay\" — a 2–3 leg parlay from top edges\n"
+                "• \"Is Detroit Red Wings -166 worth it?\" — any price explained against the fair line, with the math and a size\n"
+                "• \"review my bets\" — your tracked record, profit and leaks\n"
                 "• \"today's plays\" — today's official card\n"
                 "• \"record\" — program record and profit\n"
                 "• \"bankroll\" — your bankroll and unit size", [])
 
     # ---- fallback ----
-    return ("I can help with: best plays, parlay suggestions, today's official plays, program record, and your bankroll. "
-            "What do you need?", [])
+    return ("I can help with: best plays, parlay suggestions, explaining any price against the fair line "
+            "(try \"Is Detroit Red Wings -166 worth it?\"), reviewing your tracked bets, today's official plays, "
+            "program record, and your bankroll. What do you need?", [])
 
 
 @app.route("/ai-assistant")
@@ -7896,9 +13620,517 @@ def api_ai_ask():
 @app.route("/props")
 @login_required
 def props():
+    """Player Props Board (Platinum, 2026-10-19): sin Platinum activo,
+    el miembro cae en la página de desbloqueo."""
     db = get_db()
     record_checkin(db, session["user_id"])
+    if not platinum_unlocked_for(current_user()):
+        return redirect(url_for("desbloquear_platinum"))
     return render_template("props.html", board=load_props_board())
+
+
+def _mis_follows(db, user_id):
+    """Juegos seguidos por el usuario (Game Center Follow, 2026-10-23)."""
+    try:
+        return db.execute(
+            "SELECT * FROM game_follows WHERE user_id = ? ORDER BY created_at",
+            (user_id,),
+        ).fetchall()
+    except Exception:
+        return []
+
+
+
+def _odds_profit100(price):
+    """Profit de una apuesta de $100 a cuota americana (para comparar
+    mejor vs peor precio como hace la pantalla Odds)."""
+    if price is None:
+        return None
+    if price > 0:
+        return float(price)
+    if price < 0:
+        return 10000.0 / abs(price)
+    return 0.0
+
+
+def _odds_sides(g, h):
+    """Lados de un juego para la pantalla Odds: mejor precio con su casa,
+    las siguientes casas, diferencia en $ contra el peor precio ($100),
+    edge contra la línea justa y precio justo."""
+    books = h.get("books") or []
+    best = h.get("best") or {}
+    fair = h.get("fair") or {}
+    edge = h.get("edge") or {}
+    sides = []
+    for side, team in (("a", g.get("away", "")), ("b", g.get("home", ""))):
+        key = side + "_price"
+        priced = [(bk.get("book", ""), bk.get(key)) for bk in books
+                  if bk.get(key) is not None]
+        priced.sort(key=lambda x: x[1], reverse=True)
+        bbest = best.get(side) or {}
+        chips = [{"book": _GC_SHORT.get(b, ""), "price": _gc_fmt(p)}
+                 for b, p in priced if b != bbest.get("book", "")][:3]
+        diff = None
+        if len(priced) >= 2 and bbest.get("price") is not None:
+            d = _odds_profit100(bbest["price"]) - _odds_profit100(priced[-1][1])
+            if d >= 1:
+                diff = int(round(d))
+        e = edge.get(side)
+        sides.append({
+            "team": team,
+            "best_book": _GC_SHORT.get(bbest.get("book", ""), ""),
+            "best_price": _gc_fmt(bbest.get("price")),
+            "chips": chips,
+            "diff": diff,
+            "edge": e if isinstance(e, (int, float)) else None,
+            "fair": fair.get(side + "_price") or "",
+        })
+    return sides
+
+
+@app.route("/odds")
+@login_required
+def game_center():
+    """Odds (Platinum; unifica el Game Center y el Odds Board el
+    2026-10-24, orden de Alex): pantalla única de precios — pestañas por
+    liga, mejor precio por equipo con su casa, diferencia contra el peor
+    precio en $100, edge contra la línea justa, vig del mercado y el
+    detalle «Compare all books» por juego."""
+    db = get_db()
+    record_checkin(db, session["user_id"])
+    if not platinum_unlocked_for(current_user()):
+        return redirect(url_for("desbloquear_platinum"))
+    board = load_gamecenter()
+    games = board.get("games") or []
+    order = ["NBA", "NHL", "NFL", "NCAAF", "MLB"]
+    by_league = {}
+    for g in games:
+        h = (g.get("markets") or {}).get("h2h") or {}
+        best = h.get("best") or {}
+        g["best_a_book"] = _GC_SHORT.get((best.get("a") or {}).get("book", ""), "")
+        g["best_a_price"] = _gc_fmt((best.get("a") or {}).get("price"))
+        g["best_b_book"] = _GC_SHORT.get((best.get("b") or {}).get("book", ""), "")
+        g["best_b_price"] = _gc_fmt((best.get("b") or {}).get("price"))
+        g["odds_sides"] = _odds_sides(g, h)
+        _v = h.get("vig")
+        g["vig_txt"] = ("%.1f%%" % _v) if isinstance(_v, (int, float)) else ""
+        by_league.setdefault(g.get("league", ""), []).append(g)
+    groups = [(lg, by_league[lg]) for lg in order if lg in by_league]
+    groups += [(lg, gs) for lg, gs in by_league.items() if lg not in order]
+    total_books = max([g.get("books_count", 0) for g in games] or [0])
+    follows = None
+    if is_alex_member(current_user()):
+        en_board = {g.get("id"): g for g in games}
+        follows = []
+        for f in _mis_follows(db, session["user_id"]):
+            g = en_board.get(f["event_id"])
+            follows.append({
+                "event_id": f["event_id"],
+                "label": f["game_label"] or "",
+                "league": f["league"] or "",
+                "commence": f["commence"] or "",
+                "en_board": g is not None,
+                "when": ((g.get("date_et", "") + " · " + g.get("time_et", ""))
+                         if g else ""),
+                "live": bool(g.get("live")) if g else False,
+            })
+    return render_template("odds.html", groups=groups,
+                           total_games=len(games),
+                           updated_label=_gc_updated(board),
+                           total_books=total_books, follows=follows)
+
+
+@app.route("/game-center")
+@login_required
+def game_center_legacy():
+    """La ruta vieja del Game Center lleva a la pantalla Odds."""
+    return redirect(url_for("game_center"))
+
+
+@app.route("/odds/<event_id>")
+@login_required
+def game_center_game(event_id):
+    """Página de un juego del Game Center: rejilla de precios por casa,
+    mejor precio, línea justa sin vig, edge y vig por mercado."""
+    db = get_db()
+    record_checkin(db, session["user_id"])
+    if not platinum_unlocked_for(current_user()):
+        return redirect(url_for("desbloquear_platinum"))
+    board = load_gamecenter()
+    game = next((g for g in (board.get("games") or []) if g.get("id") == event_id), None)
+    if game is None:
+        return redirect(url_for("game_center"))
+    sections = []
+    for key, title in (("h2h", "Moneyline"), ("spreads", "Spread"), ("totals", "Total")):
+        sec = _gc_section(game, key, title)
+        if sec:
+            sec["tab"] = title
+            if key in ("spreads", "totals") and sec["rows"]:
+                pt = (game.get("markets") or {}).get(key, {}).get("point")
+                sec["title"] = title + " · " + _gc_pt(pt) if pt is not None else title
+            sections.append(sec)
+    h = (game.get("markets") or {}).get("h2h") or {}
+    edge = h.get("edge") or {}
+    best = h.get("best") or {}
+    ea, eb = edge.get("a"), edge.get("b")
+    if (ea is not None and ea >= 3.5) or (eb is not None and eb >= 3.5):
+        if ea is not None and (eb is None or ea >= eb):
+            side, e, b = game["away"], ea, best.get("a") or {}
+        else:
+            side, e, b = game["home"], eb, best.get("b") or {}
+        verdict = {"cls": "value", "kicker": "VALUE SHOWING",
+                   "text": "%s at %s (%s) is %s%% above the fair line on this market. That is the kind of gap this page exists to catch — shop it before it moves." % (side, _gc_fmt(b.get("price")), b.get("book", "the best book"), e)}
+    else:
+        verdict = {"cls": "pass", "kicker": "STILL GOOD?",
+                   "text": "Not at these prices. Both sides sit at or under the fair line, so the read right now is pass and keep watching — if a book drifts or money moves the line, it shows here first."}
+    is_following = False
+    if is_alex_member(current_user()):
+        is_following = any(f["event_id"] == event_id
+                           for f in _mis_follows(db, session["user_id"]))
+    return render_template("gamecenter_game.html", game=game, sections=sections,
+                           verdict=verdict, updated_label=_gc_updated(board),
+                           is_following=is_following)
+
+
+
+@app.route("/game-center/<event_id>")
+@login_required
+def game_center_game_legacy(event_id):
+    return redirect(url_for("game_center_game", event_id=event_id))
+
+
+@app.route("/odds/<event_id>/follow", methods=["POST"])
+@app.route("/game-center/<event_id>/follow", methods=["POST"])
+@login_required
+def game_center_follow(event_id):
+    """Follow/Unfollow de un juego del Game Center (2026-10-23: prueba
+    privada SOLO para la cuenta de miembro de Alex; al resto, 404)."""
+    from flask import abort
+    if not is_alex_member(current_user()):
+        abort(404)
+    db = get_db()
+    row = db.execute(
+        "SELECT id FROM game_follows WHERE user_id = ? AND event_id = ?",
+        (session["user_id"], event_id),
+    ).fetchone()
+    if row:
+        db.execute("DELETE FROM game_follows WHERE id = ?", (row["id"],))
+        db.commit()
+        return jsonify({"ok": True, "following": False})
+    board = load_gamecenter()
+    game = next((g for g in (board.get("games") or [])
+                 if g.get("id") == event_id), None)
+    if game is None:
+        abort(404)
+    label = "%s @ %s" % (game.get("away", ""), game.get("home", ""))
+    db.execute(
+        "INSERT INTO game_follows (user_id, event_id, game_label, league,"
+        " commence, created_at) VALUES (?, ?, ?, ?, ?, ?)",
+        (session["user_id"], event_id, label, game.get("league", ""),
+         game.get("commence", ""), now_iso()),
+    )
+    db.commit()
+    return jsonify({"ok": True, "following": True})
+
+
+# ----------------------------- Price Alerts (2026-10-24) ----------------
+# Herramienta pedida por Alex copiando la mecánica de la referencia
+# (estructura sí, textos nuestros): el miembro crea una alerta desde un
+# precio de la pantalla Odds y recibe UN push cuando se cumple la
+# condición elegida. Las vigila hidden_files/price-alerts-check.py cada
+# 15 min contra el gamecenter.json fresco. Toda alerta muere al empezar
+# el partido; el miembro puede detenerla antes desde /alertas.
+PA_LIMIT_FREE = 10
+PA_LIMIT_PLATINUM = 25
+_PA_CONDICIONES = ("target", "price_moves", "number_moves", "book_best")
+_PA_MERCADOS = ("h2h", "spreads", "totals")
+_PA_MERCADO_TXT = {"h2h": "Moneyline", "spreads": "Spread", "totals": "Total"}
+_PA_COND_TXT = {"target": "Price target", "price_moves": "Price moves",
+                "number_moves": "Number moves",
+                "book_best": "My book becomes best"}
+
+
+def _ensure_price_alerts_table(db):
+    """Crea la tabla de Price Alerts si no existe (fuera del DDL inicial
+    para no romper el deploy, mismo patrón que book_balances)."""
+    if db.use_pg:
+        db.execute(
+            """CREATE TABLE IF NOT EXISTS price_alerts (
+                   id SERIAL PRIMARY KEY,
+                   user_id INTEGER NOT NULL REFERENCES users(id),
+                   event_id TEXT NOT NULL,
+                   liga TEXT,
+                   juego TEXT,
+                   equipo TEXT,
+                   lado TEXT,
+                   mercado TEXT,
+                   casa_base TEXT,
+                   precio_base INTEGER,
+                   numero_base DOUBLE PRECISION,
+                   condicion TEXT NOT NULL,
+                   objetivo INTEGER,
+                   estado TEXT NOT NULL DEFAULT 'watching',
+                   creado_en TEXT NOT NULL,
+                   disparada_en TEXT
+               )"""
+        )
+    else:
+        db.execute(
+            """CREATE TABLE IF NOT EXISTS price_alerts (
+                   id INTEGER PRIMARY KEY AUTOINCREMENT,
+                   user_id INTEGER NOT NULL REFERENCES users(id),
+                   event_id TEXT NOT NULL,
+                   liga TEXT,
+                   juego TEXT,
+                   equipo TEXT,
+                   lado TEXT,
+                   mercado TEXT,
+                   casa_base TEXT,
+                   precio_base INTEGER,
+                   numero_base REAL,
+                   condicion TEXT NOT NULL,
+                   objetivo INTEGER,
+                   estado TEXT NOT NULL DEFAULT 'watching',
+                   creado_en TEXT NOT NULL,
+                   disparada_en TEXT
+               )"""
+        )
+    db.commit()
+
+
+def _pa_side_base(game, mercado, lado):
+    """Datos base de un lado de un mercado del tablero: equipo (texto),
+    casa del mejor precio, mejor precio y número de la línea (con signo
+    del lado en spreads; el total comparte número en ambos lados)."""
+    blk = (game.get("markets") or {}).get(mercado) or {}
+    best = (blk.get("best") or {}).get(lado) or {}
+    pt = blk.get("point")
+    if mercado == "totals":
+        equipo = "Over" if lado == "a" else "Under"
+        numero = pt
+    else:
+        equipo = game.get("away", "") if lado == "a" else game.get("home", "")
+        if mercado == "spreads":
+            numero = pt if lado == "a" else (-pt if pt is not None else None)
+        else:
+            numero = None
+    return equipo, best.get("book"), best.get("price"), numero
+
+
+def _pa_precio_ok(v):
+    """Valida una cuota americana: entera y |v| >= 100."""
+    try:
+        v = int(v)
+    except (TypeError, ValueError):
+        return None
+    if v == 0 or -100 < v < 100:
+        return None
+    return v
+
+
+def _mis_price_alerts(db, user_id):
+    """(activas, recientes) de Price Alerts del usuario, formateadas
+    para la página /alertas."""
+    _ensure_price_alerts_table(db)
+
+    def fmt(r):
+        d = dict(r)
+        cond = d.get("condicion")
+        if cond == "target":
+            detalle = "Target " + _gc_fmt(d.get("objetivo"))
+        elif cond == "price_moves":
+            detalle = "From " + _gc_fmt(d.get("precio_base"))
+        elif cond == "number_moves":
+            nb = d.get("numero_base")
+            detalle = "From " + (_gc_pt_signed(nb)
+                                 if d.get("mercado") == "spreads"
+                                 else _gc_pt(nb))
+        else:
+            detalle = "Watching your books"
+        return {
+            "id": d["id"], "juego": d.get("juego") or "",
+            "equipo": d.get("equipo") or "",
+            "mercado_txt": _PA_MERCADO_TXT.get(d.get("mercado"),
+                                               d.get("mercado") or ""),
+            "condicion_txt": _PA_COND_TXT.get(cond, cond or ""),
+            "detalle": detalle, "estado": d.get("estado"),
+        }
+
+    act = db.execute(
+        "SELECT * FROM price_alerts WHERE user_id = ? AND estado = 'watching'"
+        " ORDER BY id DESC", (user_id,)).fetchall()
+    rec = db.execute(
+        "SELECT * FROM price_alerts WHERE user_id = ? AND estado != 'watching'"
+        " ORDER BY id DESC LIMIT 5", (user_id,)).fetchall()
+    return [fmt(r) for r in act], [fmt(r) for r in rec]
+
+
+@app.route("/odds/<event_id>/alert", methods=["POST"])
+@login_required
+def price_alert_create(event_id):
+    """Crea una Price Alert desde un precio de la pantalla Odds.
+
+    Guarda el precio y el número base del momento de crearla; el revisor
+    externo compara contra el tablero fresco. Límite por nivel: 10
+    activas en gratis, 25 en Platinum (como la herramienta de
+    referencia)."""
+    user = current_user()
+    data = request.get_json(silent=True) or {}
+    mercado = data.get("mercado") or "h2h"
+    lado = data.get("lado") or "a"
+    condicion = data.get("condicion") or ""
+    if mercado not in _PA_MERCADOS or lado not in ("a", "b"):
+        return jsonify({"ok": False, "error": "Pick a side first."}), 400
+    if condicion not in _PA_CONDICIONES:
+        return jsonify({"ok": False,
+                        "error": "Pick what should trigger the alert."}), 400
+    if condicion == "number_moves" and mercado == "h2h":
+        return jsonify({"ok": False, "error": "The moneyline has no number "
+                        "to move — pick the spread or the total."}), 400
+    objetivo = None
+    if condicion == "target":
+        objetivo = _pa_precio_ok(data.get("objetivo"))
+        if objetivo is None:
+            return jsonify({"ok": False, "error": "Enter a target price "
+                            "(like +150 or -110)."}), 400
+    board = load_gamecenter()
+    game = next((g for g in (board.get("games") or [])
+                 if g.get("id") == event_id), None)
+    if game is None:
+        return jsonify({"ok": False,
+                        "error": "That game is no longer on the board."}), 404
+    if game.get("live"):
+        return jsonify({"ok": False, "error": "That game already started "
+                        "— alerts stop at game time."}), 400
+    blk = (game.get("markets") or {}).get(mercado) or {}
+    if not blk.get("books"):
+        return jsonify({"ok": False,
+                        "error": "No prices for that market right now."}), 400
+    equipo, casa_base, precio_base, numero_base = _pa_side_base(
+        game, mercado, lado)
+    if precio_base is None:
+        return jsonify({"ok": False,
+                        "error": "No price for that side right now."}), 400
+    db = get_db()
+    _ensure_price_alerts_table(db)
+    limite = PA_LIMIT_PLATINUM if platinum_unlocked_for(user) else PA_LIMIT_FREE
+    n = db.execute(
+        "SELECT COUNT(*) AS n FROM price_alerts"
+        " WHERE user_id = ? AND estado = 'watching'",
+        (session["user_id"],),
+    ).fetchone()["n"]
+    if int(n or 0) >= limite:
+        return jsonify({"ok": False, "error": "You already have %d active "
+                        "alerts — that's the limit on your plan. Stop one "
+                        "to add another." % limite}), 400
+    juego = "%s @ %s" % (game.get("away", ""), game.get("home", ""))
+    db.execute(
+        "INSERT INTO price_alerts (user_id, event_id, liga, juego, equipo,"
+        " lado, mercado, casa_base, precio_base, numero_base, condicion,"
+        " objetivo, estado, creado_en)"
+        " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'watching', ?)",
+        (session["user_id"], event_id, game.get("league", ""), juego,
+         equipo, lado, mercado, casa_base, precio_base, numero_base,
+         condicion, objetivo, now_iso()),
+    )
+    db.commit()
+    # Crear una alerta = querer el aviso: se enciende su preferencia de
+    # precios para que el push de la alerta sí le llegue.
+    db.execute(
+        "UPDATE users SET notif_price = 1 WHERE id = ? AND notif_price = 0",
+        (session["user_id"],),
+    )
+    db.commit()
+    return jsonify({"ok": True, "active": int(n or 0) + 1, "limit": limite})
+
+
+@app.route("/price-alerts/<int:alert_id>/stop", methods=["POST"])
+@login_required
+def price_alert_stop(alert_id):
+    """Detiene una Price Alert propia: queda 'ended' y no avisa más."""
+    db = get_db()
+    _ensure_price_alerts_table(db)
+    db.execute(
+        "UPDATE price_alerts SET estado = 'ended'"
+        " WHERE id = ? AND user_id = ? AND estado = 'watching'",
+        (alert_id, session["user_id"]),
+    )
+    db.commit()
+    return jsonify({"ok": True})
+
+
+def _pa_push_key_ok():
+    return bool(PUSH_TRIGGER_KEY) and secrets.compare_digest(
+        request.headers.get("X-Push-Key", ""), PUSH_TRIGGER_KEY)
+
+
+@app.route("/api/price-alerts/active")
+def api_price_alerts_active():
+    """Alertas 'watching' con el email y las casas con balance del dueño
+    (lo consume price-alerts-check.py). Protegido con X-Push-Key."""
+    if not _pa_push_key_ok():
+        return jsonify({"error": "forbidden"}), 403
+    db = get_db()
+    _ensure_price_alerts_table(db)
+    _ensure_book_balances_table(db)
+    rows = db.execute(
+        "SELECT pa.id, pa.user_id, pa.event_id, pa.liga, pa.juego,"
+        " pa.equipo, pa.lado, pa.mercado, pa.casa_base, pa.precio_base,"
+        " pa.numero_base, pa.condicion, pa.objetivo, pa.estado,"
+        " pa.creado_en, u.email AS email"
+        " FROM price_alerts pa JOIN users u ON u.id = pa.user_id"
+        " WHERE pa.estado = 'watching' ORDER BY pa.id ASC"
+    ).fetchall()
+    out = []
+    for r in rows:
+        d = dict(r)
+        if d.get("precio_base") is not None:
+            d["precio_base"] = int(float(d["precio_base"]))
+        if d.get("objetivo") is not None:
+            d["objetivo"] = int(float(d["objetivo"]))
+        if d.get("numero_base") is not None:
+            d["numero_base"] = float(d["numero_base"])
+        casas = db.execute(
+            "SELECT book_name FROM book_balances WHERE user_id = ?"
+            " ORDER BY book_name", (d["user_id"],),
+        ).fetchall()
+        d["books"] = [c["book_name"] for c in casas]
+        out.append(d)
+    return jsonify({"alerts": out})
+
+
+@app.route("/api/price-alerts/<int:alert_id>/fire", methods=["POST"])
+def api_price_alerts_fire(alert_id):
+    """Marca una alerta como disparada ('sent' + disparada_en). Solo si
+    sigue 'watching': el revisor nunca dispara dos veces la misma."""
+    if not _pa_push_key_ok():
+        return jsonify({"error": "forbidden"}), 403
+    db = get_db()
+    _ensure_price_alerts_table(db)
+    cur = db.execute(
+        "UPDATE price_alerts SET estado = 'sent', disparada_en = ?"
+        " WHERE id = ? AND estado = 'watching'",
+        (now_iso(), alert_id),
+    )
+    db.commit()
+    return jsonify({"ok": True, "changed": (cur.rowcount or 0) > 0})
+
+
+@app.route("/api/price-alerts/<int:alert_id>/end", methods=["POST"])
+def api_price_alerts_end(alert_id):
+    """Cierra una alerta sin aviso ('ended'): el partido empezó o salió
+    del tablero. Solo si sigue 'watching'."""
+    if not _pa_push_key_ok():
+        return jsonify({"error": "forbidden"}), 403
+    db = get_db()
+    _ensure_price_alerts_table(db)
+    cur = db.execute(
+        "UPDATE price_alerts SET estado = 'ended'"
+        " WHERE id = ? AND estado = 'watching'",
+        (alert_id,),
+    )
+    db.commit()
+    return jsonify({"ok": True, "changed": (cur.rowcount or 0) > 0})
 
 
 # ----------------------------- Free public tools (no login) ----------------
@@ -7910,19 +14142,67 @@ def tools_parlay_calculator():
 
 @app.route("/tools/calculators")
 def tools_calculators():
+    """Hub público de calculadoras: conversor, no-vig, Kelly, hedge y parlay.
+
+    100% del lado del cliente, sin login (innovación aprobada por Alex
+    2026-10-16 del inventario de herramientas de referencia).
+    """
     return render_template("tools_calculators.html")
+
+
+@app.route("/leagues")
+@login_required
+def leagues():
+    """All Leagues menu (2026-10-27, pedido Alex): leagues we cover, organized by league, linking only to real existing pages. No invented data."""
+    db = get_db()
+    record_checkin(db, session["user_id"])
+    return render_template("leagues.html")
 
 
 @app.route("/tools")
 @login_required
 def tools():
-    """Hub de herramientas (pedido Alex 2026-10-08, estilo WGT)."""
-    return render_template("tools.html")
+    """Panel All Tools (2026-10-19, diseno aprobado por Alex estilo
+    sheet): buscador, recientes del dispositivo (localStorage) y
+    candado Platinum en las herramientas de pago."""
+    db = get_db()
+    record_checkin(db, session["user_id"])
+    return render_template(
+        "tools.html",
+        es_platinum=platinum_unlocked_for(current_user()),
+        desbloquear_url=url_for("desbloquear_platinum"),
+    )
+
+
+@app.route("/odds-board")
+@login_required
+def odds_board():
+    """Odds Board (Platinum, 2026-10-19) — absorbido por la pantalla
+    Odds el 2026-10-24 (orden de Alex): redirige a /odds."""
+    return redirect(url_for("game_center"))
+    db = get_db()
+    record_checkin(db, session["user_id"])
+    if not platinum_unlocked_for(current_user()):
+        return render_template(
+            "odds_board_locked.html",
+            upsell_cta_url=url_for("desbloquear_platinum"),
+        )
+    board = load_odds_board()
+    return render_template("odds_board.html",
+                           games=board.get("games", []),
+                           updated_at=board.get("updated_at", ""))
 
 
 @app.route("/tools/line-moves")
+@login_required
 def tools_line_moves():
-    """Movimientos sharp recientes. Pública, sin login; datos de la rama data-board."""
+    """Sharp Line Movement (Platinum, 2026-10-19): sin sesión cae en
+    login; sin Platinum activo, en la página de desbloqueo. Datos de
+    la rama data-board."""
+    db = get_db()
+    record_checkin(db, session["user_id"])
+    if not platinum_unlocked_for(current_user()):
+        return redirect(url_for("desbloquear_platinum"))
     board = load_line_moves()
     return render_template("tools_line_moves.html",
                            moves=board.get("moves", []),
@@ -8025,11 +14305,38 @@ def api_push_edge():
     # Filtro por preferencia (pedido Alex 2026-10-08, estilo WGT):
     # notif_type mapea al campo notif_* del usuario.
     notif_type = data.get("notif_type") or "notif_ev"
-    allowed_types = {"notif_plays", "notif_graded", "notif_live", "notif_reminder", "notif_ev", "notif_price"}
+    allowed_types = {"notif_plays", "notif_graded", "notif_live", "notif_reminder", "notif_ev", "notif_price", "notif_sharp", "notif_masterclass"}
     if notif_type not in allowed_types:
         notif_type = "notif_ev"
     payload = json.dumps({"title": title, "body": body, "url": url, "image": image})
     db = get_db()
+    # Dedupe anti-repetición (2026-10-30, orden de Alex: «ponla una sola vez»):
+    # si el MISMO push (título+cuerpo+url+tipo+destinatarios) ya salió hace
+    # menos de 15 minutos, NO se reenvía. Esto hace seguro cualquier reintento
+    # tras un error de conexión ambiguo (el 2026-10-30 un RemoteDisconnected
+    # tras procesar el envío hizo que la free pick llegara 3 veces).
+    import hashlib as _hl, time as _tm
+    _sig_src = "|".join([
+        str(title), str(body), str(url), str(image), str(notif_type),
+        ",".join(sorted(str(e).lower() for e in (data.get("emails") or []))),
+        ",".join(sorted(str(e).lower() for e in (data.get("exclude_emails") or []))),
+    ])
+    _sig = _hl.sha256(_sig_src.encode("utf-8")).hexdigest()
+    try:
+        db.execute(
+            "CREATE TABLE IF NOT EXISTS push_dedupe (signature TEXT PRIMARY KEY,"
+            " sent INTEGER, failed INTEGER, created_at REAL)"
+        )
+        db.execute("DELETE FROM push_dedupe WHERE created_at < ?", (_tm.time() - 86400,))
+        _prev = db.execute(
+            "SELECT sent, failed, created_at FROM push_dedupe WHERE signature = ?",
+            (_sig,),
+        ).fetchone()
+        db.commit()
+        if _prev and (_tm.time() - float(_prev["created_at"])) < 900:
+            return jsonify({"sent": _prev["sent"], "failed": _prev["failed"], "deduped": True})
+    except Exception:
+        pass  # si el dedupe falla, el envío sigue (fail-open, como el resto)
     # Targeting opcional por email (2026-10-13): si el payload trae "emails",
     # el push va SOLO a esos miembros (ej. alertas en vivo solo para Alex).
     emails = data.get("emails") or []
@@ -8081,8 +14388,33 @@ def api_push_edge():
             failed += 1
         except Exception:
             failed += 1
+    try:
+        db.execute("DELETE FROM push_dedupe WHERE signature = ?", (_sig,))
+        db.execute(
+            "INSERT INTO push_dedupe (signature, sent, failed, created_at)"
+            " VALUES (?, ?, ?, ?)",
+            (_sig, sent, failed, _tm.time()),
+        )
+    except Exception:
+        pass
     db.commit()
     return jsonify({"sent": sent, "failed": failed})
+
+
+@app.route("/api/mi-balance")
+@login_required
+def api_mi_balance():
+    """Balance actual de la píldora del miembro en sesión (JSON).
+
+    2026-10-31: lo consume el poll en vivo de home_lux (efecto balfx) —
+    cuando una jugada se liquida juego a juego vía
+    /admin/api/settle-live y el balance sube, el Dashboard abierto
+    celebra al instante sin recargar. Devuelve el mismo número que la
+    píldora ya muestra (helper _balance_display_value; la fórmula del
+    builder de /home no se duplica). Sin sesión, login_required redirige
+    al login y el poll lo ignora en silencio."""
+    val = _balance_display_value(get_db(), current_user())
+    return jsonify({"ok": True, "balance": val})
 
 
 @app.route("/api/version")
@@ -8292,10 +14624,13 @@ def api_telegram_pending_ack():
 
 @app.route("/api/new-members", methods=["GET"])
 def api_new_members():
-    """Miembros registrados. ?since=ISO (created_at) filtra desde esa marca.
+    """Miembros CONFIRMADOS. ?since=ISO (created_at) filtra desde esa marca.
 
-    Lo lee el cron de la VM cada 10 min para avisar a Alex en el chat
-    cada vez que alguien crea su cuenta. Protegido con
+    Sin verificar no es miembro (2026-10-19, orden de Alex): esta lista
+    solo incluye cuentas con el correo confirmado (email_verified = 1) y
+    ordena por la fecha de ACTIVACIÓN — el aviso de miembro nuevo llega
+    cuando la persona confirma, no cuando llena el formulario.
+    Lo lee el cron de la VM cada 10 min. Protegido con
     header X-Push-Key == PUSH_TRIGGER_KEY.
     """
     if not PUSH_TRIGGER_KEY or not secrets.compare_digest(
@@ -8306,25 +14641,46 @@ def api_new_members():
     db = get_db()
     if since:
         rows = db.execute(
-            "SELECT id, nombre, email, created_at, platinum_unlocked FROM users"
-            " WHERE created_at >= ? ORDER BY created_at ASC, id ASC",
+            "SELECT id, nombre, email, created_at, activated_at, platinum_unlocked FROM users"
+            " WHERE email_verified = 1 AND created_at >= ? ORDER BY COALESCE(activated_at, created_at) ASC, id ASC",
             (since,),
         ).fetchall()
     else:
         rows = db.execute(
-            "SELECT id, nombre, email, created_at, platinum_unlocked FROM users"
-            " ORDER BY created_at DESC, id DESC LIMIT 20"
+            "SELECT id, nombre, email, created_at, activated_at, platinum_unlocked FROM users"
+            " WHERE email_verified = 1"
+            " ORDER BY COALESCE(activated_at, created_at) DESC, id DESC LIMIT 500"
         ).fetchall()
     members = []
     for r in rows:
         d = dict(r) if not isinstance(r, dict) else r
+        # Ciudad de registro (pedido de Alex 2026-10-17: la tarjeta de
+        # nuevo miembro lleva la ciudad de donde se registro): se toma la
+        # IP de su primera actividad (el login automatico al registrarse)
+        # y se resuelve con el geo-cache de la plataforma.
+        ciudad = ""
+        try:
+            act = db.execute(
+                "SELECT ip FROM member_activity WHERE user_id = ?"
+                " AND ip IS NOT NULL AND ip != ''"
+                " ORDER BY created_at ASC LIMIT 1",
+                (d["id"],),
+            ).fetchone()
+            if act:
+                ip0 = act["ip"] if not isinstance(act, dict) else act.get("ip")
+                if ip0:
+                    ciudad = _ciudad_de_ip(db, ip0) or ""
+        except Exception:
+            ciudad = ""
         members.append(
             {
                 "id": d["id"],
                 "nombre": d.get("nombre"),
                 "email": d.get("email"),
                 "created_at": d.get("created_at"),
+                "activated_at": d.get("activated_at") or d.get("created_at"),
                 "elite": bool(d.get("platinum_unlocked")),
+                "ciudad": ciudad,
             }
         )
     return jsonify({"members": members})
@@ -8457,22 +14813,30 @@ def stripe_webhook():
         except Exception:
             pass
 
-    def _activar_elite(email, customer_id, sub_id, origen):
+    def _activar_elite(email, customer_id, sub_id, origen, offer=""):
         """Activa Elite al miembro con ese email. Idempotente."""
         email = (email or "").strip().lower()
         if not email:
             _auditar("", f"{origen} sin email")
             return
-        row = db.execute("SELECT id, nombre, platinum_unlocked, cancel_requested_at, telegram_user_id, welcome_email_sent FROM users WHERE email = ?",
+        row = db.execute("SELECT id, nombre, platinum_unlocked, cancel_requested_at, telegram_user_id, welcome_email_sent, stripe_subscription_id, platinum_intro_used_at FROM users WHERE email = ?",
                          (email,)).fetchone()
         if row:
             uid = row["id"]
             era_nuevo = not bool(row["platinum_unlocked"])
             estaba_cancelado = bool(row["cancel_requested_at"])
             tiene_tg = bool(row["telegram_user_id"])
+            # Retorno genuino (FIX 2026-10-31): se calcula ANTES del UPDATE
+            # de abajo, que sobrescribe stripe_subscription_id con la sub
+            # nueva. Solo es "regreso" si pidió cancelación alguna vez o si
+            # la cuenta YA tenía una suscripción de Stripe antes de esta
+            # activación. La marca welcome_email_sent NO sirve como señal:
+            # solo prueba que recibió la bienvenida al activar la cuenta.
+            tenia_sub_stripe = bool((row["stripe_subscription_id"] or "").strip())
+            es_retorno_genuino = estaba_cancelado or tenia_sub_stripe
             db.execute(
-                "UPDATE users SET platinum_unlocked = 1, stripe_customer_id = ?, "
-                "stripe_subscription_id = ?, stripe_past_due = 0, cancel_requested_at = NULL WHERE id = ?",
+                "UPDATE users SET platinum_unlocked = 1, email_verified = 1, activation_token = NULL, stripe_customer_id = ?, "
+                "stripe_subscription_id = ?, stripe_past_due = 0, cancel_requested_at = NULL, platinum_trial_ends = NULL WHERE id = ?",
                 (customer_id or None, sub_id or None, uid),
             )
             # Inglés forzado en las páginas de Stripe del miembro.
@@ -8489,8 +14853,48 @@ def stripe_webhook():
                     " WHERE id = ?", (uid,),
                 )
             db.commit()
+            # Anti-repetición de la oferta nueva (2026-10-31): si esta
+            # activación vino de un checkout con la oferta $1 + mes
+            # gratis, la introducción queda marcada como usada en la
+            # cuenta — una sola vez por cliente; cancelar y regresar no
+            # la renueva (el checkout vuelve al trial legacy de 7 días).
+            if offer == PLATINUM_OFFER_FREE_MONTH:
+                try:
+                    db.execute(
+                        "UPDATE users SET platinum_intro_used_at = ? WHERE id = ? "
+                        "AND (platinum_intro_used_at IS NULL OR platinum_intro_used_at = '')",
+                        (now_iso(), uid))
+                    db.commit()
+                except Exception:
+                    pass
             _auditar(email, f"Elite activada ({origen}, sub {(sub_id or 'n/a')[:20]})"
                      + (" [reproceso]" if duplicado else ""))
+            # Aviso al correo del negocio (pedido Alex 2026-10-30): cada
+            # activación Platinum NUEVA (cliente nuevo de Stripe) queda en el
+            # panel Gerenciales y le llega por email al ADMIN_EMAIL, igual
+            # que los miembros nuevos y las cancelaciones. Las renovaciones
+            # (era_nuevo=False) y los reprocesos de Stripe no avisan.
+            if era_nuevo and not duplicado:
+                try:
+                    log_notificacion(db, "platinum",
+                                     f"New Platinum: {row['nombre'] or email}", email)
+                except Exception:
+                    pass
+                _dest = admin_email()
+                if _dest:
+                    _subj = f"The Sharp Team: new Platinum — {row['nombre'] or email}"
+                    _txt = (f"A new Platinum subscription was activated:\n\n"
+                            f"Name: {row['nombre'] or ''}\n"
+                            f"Email: {email}\n"
+                            f"Via: {origen}\n"
+                            f"Date: {datetime.now(TZ).strftime('%Y-%m-%d %H:%M %Z')}\n")
+                    def _send_platinum_admin(_d=_dest, _s=_subj, _t=_txt):
+                        try:
+                            _dispatch_email(_d, _s, _t)
+                        except Exception:
+                            pass
+                    import threading
+                    threading.Thread(target=_send_platinum_admin, daemon=True).start()
             # Pedido Alex 2026-09-30: al pagar le llega el email bonito de
             # bienvenida (WELCOME_HTML: todo lo incluido en la membresía +
             # botones directos al Dashboard). Solo en activaciones nuevas.
@@ -8498,7 +14902,19 @@ def stripe_webhook():
             # no se repite.
             # 2026-10-08 (pedido Alex): si se había cancelado y se vuelve a
             # suscribir, le llega el WELCOME BACK (distinto al de primera vez).
-            if estaba_cancelado:
+            # FIX 2026-10-31 (bug cazado por Alex con la cuenta de prueba del
+            # lanzamiento): la regla del 2026-10-26 usaba welcome_email_sent
+            # como señal de regreso y clasificaba mal a los nuevos — esa
+            # marca solo prueba que la cuenta recibió la bienvenida al
+            # ACTIVARSE, no que haya tenido Platinum antes, así que TODO
+            # primer comprador recibía el Welcome Back. Regla correcta:
+            # Welcome Back SOLO en retorno genuino (es_retorno_genuino:
+            # pidió cancelación o ya tenía suscripción de Stripe previa).
+            # Primera vez (era_nuevo, sin retorno genuino): si nunca recibió
+            # la bienvenida (welcome_email_sent=0) se le envía el Welcome;
+            # si ya la recibió al activar, NO se envía nada.
+            # Las renovaciones (era_nuevo=False) siguen sin mandar email.
+            if es_retorno_genuino:
                 try:
                     send_welcome_back_email(row["nombre"] or "", email)
                     db.execute("UPDATE users SET welcome_email_sent = 1 WHERE id = ?", (uid,))
@@ -8515,6 +14931,59 @@ def stripe_webhook():
         else:
             _auditar(email, "pago sin cuenta registrada: activar manual")
 
+    def _guardar_estado_suscripcion(obj):
+        """Guarda el estado y el fin del trial DE STRIPE en las columnas
+        nuevas (stripe_subscription_status / stripe_trial_ends),
+        separadas del reloj de plataforma platinum_trial_ends, que aquí
+        NO se toca. Localiza al miembro por suscripción, por cliente o
+        por el member_email de la metadata de la suscripción. También
+        marca la introducción usada si la suscripción trae la metadata
+        de la oferta nueva. No activa ni desactiva acceso: eso lo siguen
+        haciendo checkout.session.completed e invoice.paid."""
+        try:
+            sub_id = obj.get("id") or ""
+            customer_id = obj.get("customer") or ""
+            status = obj.get("status") or ""
+            trial_txt = None
+            if obj.get("trial_end"):
+                try:
+                    trial_txt = datetime.fromtimestamp(
+                        int(obj["trial_end"]), TZ).isoformat()
+                except Exception:
+                    trial_txt = None
+            row = None
+            if sub_id:
+                row = db.execute(
+                    "SELECT id FROM users WHERE stripe_subscription_id = ?",
+                    (sub_id,)).fetchone()
+            if row is None and customer_id:
+                row = db.execute(
+                    "SELECT id FROM users WHERE stripe_customer_id = ?",
+                    (customer_id,)).fetchone()
+            if row is None:
+                m_email = ((obj.get("metadata") or {}).get("member_email")
+                           or "").strip().lower()
+                if m_email:
+                    row = db.execute(
+                        "SELECT id FROM users WHERE email = ?",
+                        (m_email,)).fetchone()
+            if not row:
+                return
+            db.execute(
+                "UPDATE users SET stripe_subscription_id = "
+                "COALESCE(stripe_subscription_id, ?), "
+                "stripe_subscription_status = ?, stripe_trial_ends = ? "
+                "WHERE id = ?",
+                (sub_id or None, status or None, trial_txt, row["id"]))
+            if ((obj.get("metadata") or {}).get("offer") or "") == PLATINUM_OFFER_FREE_MONTH:
+                db.execute(
+                    "UPDATE users SET platinum_intro_used_at = ? WHERE id = ? "
+                    "AND (platinum_intro_used_at IS NULL OR platinum_intro_used_at = '')",
+                    (now_iso(), row["id"]))
+            db.commit()
+        except Exception:
+            pass
+
     try:
         if etype == "checkout.session.completed":
             # Pago completado: activar Elite al miembro con ese email.
@@ -8523,7 +14992,14 @@ def stripe_webhook():
                 data.get("customer") or "",
                 data.get("subscription") or "",
                 "checkout",
+                ((data.get("metadata") or {}).get("offer") or ""),
             )
+        elif etype == "customer.subscription.created":
+            # Solo se registra el estado/trial de Stripe en las columnas
+            # nuevas: la activación sigue llegando por
+            # checkout.session.completed / invoice.paid, como siempre.
+            _guardar_estado_suscripcion(data)
+            _auditar("", "suscripción creada: estado y trial de Stripe registrados")
         elif etype == "invoice.paid":
             # Factura de suscripción pagada (inicial o renovación): activar Elite.
             _activar_elite(
@@ -8532,6 +15008,26 @@ def stripe_webhook():
                 data.get("subscription") or "",
                 "invoice.paid",
             )
+            # CAPI Purchase (2026-10-30): cada factura PAGADA es una compra
+            # real — se reporta a Meta con el monto real cobrado para que la
+            # campaña optimice por compradores. Solo en la primera entrega
+            # del evento (los reintentos de Stripe llegan con duplicado=True
+            # y no repiten la venta) y solo si hubo cobro (amount_paid > 0:
+            # las facturas de $0 de un trial no son compra). El event_id por
+            # factura deduplica además contra el pixel del navegador.
+            if not duplicado:
+                try:
+                    _amt_paid = int(data.get("amount_paid") or 0)
+                except (TypeError, ValueError):
+                    _amt_paid = 0
+                if _amt_paid > 0:
+                    _send_meta_capi_purchase(
+                        data.get("customer_email") or "",
+                        _amt_paid / 100.0,
+                        (data.get("currency") or "usd").upper(),
+                        "purchase_" + (data.get("id") or eid),
+                        int(data.get("created") or time.time()),
+                    )
         elif etype in ("customer.subscription.updated", "customer.subscription.deleted"):
             # Cancelación o cambio de estado: localizar por suscripción o cliente.
             sub_id = data.get("id") or ""
@@ -8540,10 +15036,10 @@ def stripe_webhook():
             cancel_at_end = bool(data.get("cancel_at_period_end"))
             row = None
             if sub_id:
-                row = db.execute("SELECT id, email FROM users WHERE stripe_subscription_id = ?",
+                row = db.execute("SELECT id, email, nombre, cancel_requested_at FROM users WHERE stripe_subscription_id = ?",
                                  (sub_id,)).fetchone()
             if row is None and customer_id:
-                row = db.execute("SELECT id, email FROM users WHERE stripe_customer_id = ?",
+                row = db.execute("SELECT id, email, nombre, cancel_requested_at FROM users WHERE stripe_customer_id = ?",
                                  (customer_id,)).fetchone()
             if row:
                 email = row["email"]
@@ -8551,7 +15047,9 @@ def stripe_webhook():
                         "canceled", "unpaid", "incomplete_expired"):
                     db.execute(
                         "UPDATE users SET platinum_unlocked = 0, stripe_subscription_id = NULL, "
-                        "cancel_requested_at = ? WHERE id = ?", (now_iso(), row["id"]))
+                        "stripe_subscription_status = ?, stripe_trial_ends = NULL, "
+                        "cancel_requested_at = ? WHERE id = ?",
+                        (status or "canceled", now_iso(), row["id"]))
                     # Sin pago no hay acceso: si tiene Telegram vinculado, el cron
                     # de la VM lo banea del canal privado Sharp Club.
                     db.execute(
@@ -8559,13 +15057,46 @@ def stripe_webhook():
                         " WHERE id = ? AND telegram_user_id IS NOT NULL", (row["id"],))
                     db.commit()
                     _auditar(email, f"Elite desactivada ({etype}, status={status})")
+                    # Gerenciales (2026-10-25, pedido de Alex): avisar cancelación.
+                    _nm = (row["nombre"] or email) if "nombre" in row.keys() else email
+                    log_notificacion(db, "cancelacion", f"Cliente canceló: {_nm}", email)
                 else:
                     db.execute(
                         "UPDATE users SET stripe_subscription_id = ? WHERE id = ?",
                         (sub_id or None, row["id"]))
                     db.commit()
+                    # Estado y fin de trial de Stripe a las columnas
+                    # nuevas (sin tocar platinum_trial_ends).
+                    _guardar_estado_suscripcion(data)
                     nota = "cancelación al fin del período" if cancel_at_end else f"status={status}"
                     _auditar(email, f"suscripción actualizada: {nota}")
+                    if cancel_at_end:
+                        _nm = (row["nombre"] or email) if "nombre" in row.keys() else email
+                        log_notificacion(db, "cancelacion", f"Cliente programó cancelar: {_nm}", email)
+                        # Confirmación al miembro SOLO si la cancelación NO
+                        # vino de la página (ese flujo ya manda su email en
+                        # /cuenta/cancelar): así nadie recibe dos.
+                        try:
+                            _cr = row["cancel_requested_at"]
+                        except Exception:
+                            _cr = None
+                        if not _cr:
+                            _fin_ts = (data.get("cancel_at") or data.get("current_period_end")
+                                       or data.get("trial_end"))
+                            if not _fin_ts:
+                                _items = (data.get("items") or {}).get("data") or []
+                                if _items:
+                                    _fin_ts = _items[0].get("current_period_end")
+                            _fin_txt = None
+                            if _fin_ts:
+                                try:
+                                    _fin_txt = datetime.fromtimestamp(int(_fin_ts), TZ).strftime("%B %d, %Y")
+                                except Exception:
+                                    _fin_txt = None
+                            try:
+                                send_cancellation_confirmed_email(_nm, email, _fin_txt)
+                            except Exception:
+                                pass
             else:
                 _auditar("", f"{etype} sin miembro vinculado (sub {sub_id[:20] if sub_id else 'n/a'})")
         elif etype == "invoice.payment_failed":
@@ -8680,6 +15211,9 @@ def track_value_auto():
     """
     from flask import Response, request
     import os
+    # PROGRAMA VALUE ELIMINADO (2026-11-02, orden de Alex): no se trackea
+    # ninguna VALUE más, venga de donde venga.
+    return Response("VALUE program eliminated.", status=410, mimetype="text/plain")
     # Auth: X-Push-Key (crons) o sesión admin
     push_key = request.headers.get("X-Push-Key", "")
     key_ok = push_key and push_key == os.environ.get("PUSH_TRIGGER_KEY", "")
@@ -8761,6 +15295,10 @@ def value_pending():
         (VALUE_SYSTEM_USER_ID,),
     ).fetchall()
     data = [dict(r) for r in rows]
+    for _d in data:
+        # Decimal de Postgres no es serializable a JSON (2026-10-21).
+        if _d.get("stake_monto") is not None:
+            _d["stake_monto"] = float(_d["stake_monto"])
     return Response(_json.dumps({"pending": data}, ensure_ascii=False),
                     mimetype="application/json")
 
@@ -8789,6 +15327,51 @@ def value_result():
     return Response(f"Sin cambios (no pendiente o no existe): {play_id}", mimetype="text/plain")
 
 
+@app.route("/admin/value-export", methods=["GET"])
+def value_export():
+    """Respaldo completo de las filas VALUE del sistema (user_id=0).
+    Auth: X-Push-Key (crons) o sesión admin."""
+    from flask import Response
+    import json as _json
+    if not _value_cron_auth():
+        return Response("Admin access required.", status=403, mimetype="text/plain")
+    db = get_db()
+    rows = db.execute(
+        "SELECT * FROM tracked_plays WHERE user_id = ? AND nivel = 'VALUE' "
+        "ORDER BY id",
+        (VALUE_SYSTEM_USER_ID,),
+    ).fetchall()
+    data = []
+    for r in rows:
+        d = dict(r)
+        for k, v in list(d.items()):
+            if v is not None and not isinstance(v, (str, int, float, bool)):
+                d[k] = float(v) if hasattr(v, "__float__") else str(v)
+        data.append(d)
+    return Response(_json.dumps({"count": len(data), "rows": data},
+                                ensure_ascii=False),
+                    mimetype="application/json")
+
+
+@app.route("/admin/value-purge", methods=["POST"])
+def value_purge():
+    """Borra TODAS las filas VALUE del sistema (user_id=0).
+    PROGRAMA VALUE ELIMINADO (2026-11-02, orden de Alex).
+    Auth: X-Push-Key (crons) o sesión admin."""
+    from flask import Response
+    import json as _json
+    if not _value_cron_auth():
+        return Response("Admin access required.", status=403, mimetype="text/plain")
+    db = get_db()
+    cur = db.execute(
+        "DELETE FROM tracked_plays WHERE user_id = ? AND nivel = 'VALUE'",
+        (VALUE_SYSTEM_USER_ID,),
+    )
+    db.commit()
+    return Response(_json.dumps({"deleted": cur.rowcount}),
+                    mimetype="application/json")
+
+
 @app.route("/admin/value-system-stats")
 @admin_required
 def value_system_stats():
@@ -8800,6 +15383,12 @@ def value_system_stats():
         (VALUE_SYSTEM_USER_ID,)
     ).fetchall()
     data = [dict(r) for r in rows]
+    for _d in data:
+        # Decimal de Postgres: ni la aritmética ni json.dumps lo aceptan
+        # mezclado con float (2026-10-21).
+        for _k in ("stake_monto", "stake_unidades", "edge"):
+            if _d.get(_k) is not None:
+                _d[_k] = float(_d[_k])
     stats = stats_por_nivel(data)
     out = {
         "total": len(data),
@@ -9031,7 +15620,7 @@ def api_set_balance_alex():
     _ensure_book_balances_table(db)
     now = datetime.now(TZ).strftime("%Y-%m-%d %H:%M:%S")
     ex = db.execute(
-        "SELECT id FROM book_balances WHERE user_id = ? AND book_name = ?",
+        "SELECT id, balance FROM book_balances WHERE user_id = ? AND book_name = ?",
         (row["id"], book),
     ).fetchone()
     if ex:
@@ -9040,12 +15629,16 @@ def api_set_balance_alex():
             (balance, now, ex["id"]),
         )
         action = "actualizado"
+        _log_book_move(db, row["id"], book,
+                       round(balance - float(ex["balance"] or 0), 2),
+                       "Adjustment")
     else:
         db.execute(
             "INSERT INTO book_balances (user_id, book_name, balance, updated_at) VALUES (?, ?, ?, ?)",
             (row["id"], book, balance, now),
         )
         action = "creado"
+        _log_book_move(db, row["id"], book, balance, "Initial balance")
     db.commit()
     return jsonify({"ok": True, "action": action, "book": book, "balance": balance})
 # Force redeploy Sat Oct 10 11:17:29 EDT 2026
