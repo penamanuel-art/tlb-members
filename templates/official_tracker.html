@@ -193,15 +193,15 @@ a.fr-pill { text-decoration: none; cursor: pointer; }
   <div class="fr-card" id="tira">
     <div class="fr-streak-title">{% if t.tira.tipo == 'plat' %}&#128142; PLATINUM &middot; {{ t.tira.n }} WINS IN A ROW{% else %}&#128293; {{ t.tira.n }} WINNING DAYS IN A ROW{% endif %}</div>
     <p class="fr-streak-txt">These are the exact winning plays behind that streak — nothing more, nothing less. Tap any ticket to see it full size.</p>
-    <div class="fr-gal">
+    <div>
       {% for x in t.tira.plays %}
-      {% if x.resultado == 'WON' and x.comprobante %}
-      <figure class="fr-ticket" onclick="otZoom('{{ url_for('static', filename=x.comprobante) }}')">
-        <span class="fr-badge">✓ {{ x.profit_display }}</span>
-        <img src="{{ url_for('static', filename=x.comprobante) }}" alt="Winning ticket — {{ x.pick }}" loading="lazy">
-        <figcaption>{{ x.pick }}{% if x.stake_display %} · {{ x.stake_display }}{% endif %}</figcaption>
-      </figure>
-      {% endif %}
+      {% set f = x.fecha or '' %}
+      <div class="fr-wrow">
+        <span class="fr-wchip" style="{% if x.resultado == 'LOST' %}background:rgba(255,93,93,.14);color:#ff5d5d;{% elif x.resultado == 'PUSH' %}background:rgba(255,255,255,.08);color:#c7d0dd;{% endif %}">{{ 'W' if x.resultado == 'WON' else ('L' if x.resultado == 'LOST' else 'P') }}</span>
+        <span class="fr-wdate">{{ meses.get(f[5:7], '') }} {{ (f[8:10] | int) if (f | length) >= 10 else '' }}</span>
+        <span class="fr-wmain"><span class="fr-wpick">{{ x.pick }}</span><span class="fr-wsub">{{ x.nivel_label }} \u00b7 {{ x.profit_display }}{% if x.stake_display %} \u00b7 {{ x.stake_display }}{% endif %}</span></span>
+        {% if x.comprobante %}<img class="fr-wthumb" src="{{ url_for('static', filename=x.comprobante) }}" alt="Ticket \u2014 {{ x.pick }}" loading="lazy" onclick="otZoom('{{ url_for('static', filename=x.comprobante) }}')">{% endif %}
+      </div>
       {% endfor %}
     </div>
   </div>
