@@ -84,7 +84,7 @@ body{background-color:#0B0D12;background-image:radial-gradient(560px 300px at 50
         <span class="tr2-res"><span class="tr2-res-w{% if lost %} lost{% endif %}">{{ x.resultado }}</span><span class="tr2-res-u{% if lost %} lost{% endif %}">{{ x.profit_u }}</span></span>
       </span>
       <span class="tr2-pick2">{{ x.pick }}{% if x.cuota %} ({{ '+' if x.cuota > 0 else '' }}{{ x.cuota }}){% endif %}</span>
-      <span class="tr2-match2">{% if x.abbr and x.opp_abbr %}{{ x.abbr }} vs {{ x.opp_abbr }} &middot; {% endif %}{{ meses.get(f[5:7], '') }} {{ (f[8:10] | int) if (f | length) >= 10 else '' }}</span>
+      <span class="tr2-match2">{% if x.abbr and x.opp_abbr %}{{ x.abbr }} vs {{ x.opp_abbr }} &middot; {% endif %}{{ x.liga }} &middot; {{ meses.get(f[5:7], '') }} {{ (f[8:10] | int) if (f | length) >= 10 else '' }}</span>
       {% if x.comprobante %}<span class="tr2-view2" onclick="tiraZoom({{ loop.index0 }})">View ticket &#8250;</span>{% endif %}
     </span>
   </div>
