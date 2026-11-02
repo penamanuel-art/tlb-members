@@ -13123,70 +13123,17 @@ def resultados():
 @app.route("/ev-board")
 @login_required
 def ev_board():
-    db = get_db()
-    record_checkin(db, session["user_id"])
-    # Paywall 2026-10-24 (ajuste mismo día: las gratis siguen igual y
-    # visibles — el gratis accedía a Compare Prices antes): SOLO el
-    # trial va a la página de desbloqueo.
-    if _es_trial(current_user()):
-        return redirect(url_for("desbloquear_platinum"))
-    return render_template("ev_board.html", board=load_ev_board())
+    # PROGRAMA VALUE ELIMINADO (2026-11-02, orden de Alex): el +EV Board
+    # se retira; todo link viejo aterriza en el home.
+    return redirect(url_for("home"))
 
 
 @app.route("/ev-board/results")
 @login_required
 def ev_board_results():
-    """EV Board Results (Platinum, 2026-10-19): los edges del board que el
-    sistema auto-trackea (nivel VALUE) ya calificados: record, profit y
-    ROI reales del tracker del sistema, sin numeros inventados."""
-    db = get_db()
-    record_checkin(db, session["user_id"])
-    if not platinum_unlocked_for(current_user()):
-        return render_template(
-            "ev_board_results_locked.html",
-            upsell_cta_url=url_for("desbloquear_platinum"),
-        )
-    rows = db.execute(
-        "SELECT pick, cuota, fecha, resultado, stake_monto FROM tracked_plays "
-        "WHERE user_id = ? AND nivel = 'VALUE' ORDER BY fecha DESC, id DESC",
-        (VALUE_SYSTEM_USER_ID,),
-    ).fetchall()
-    wins = losses = 0
-    profit = 0.0
-    risked = 0.0
-    plays = []
-    for r in rows:
-        d = dict(r)
-        stake = float(d["stake_monto"] or 100.0)
-        p = play_profit_dollars({"cuota": d["cuota"], "stake_monto": stake,
-                                 "resultado": d["resultado"]})
-        cuota = d["cuota"] or 0
-        cuota_str = f"+{cuota}" if cuota > 0 else str(cuota)
-        res = d["resultado"]
-        if res == "W":
-            wins += 1
-            profit += p
-            risked += stake
-        elif res == "L":
-            losses += 1
-            profit += p
-            risked += stake
-        plays.append({"pick": d["pick"], "cuota_str": cuota_str,
-                      "fecha": d["fecha"], "resultado": res,
-                      "profit_str": fmt_money(p) if res in ("W", "L") else ""})
-    settled = wins + losses
-    win_rate = round(wins / settled * 100) if settled else 0
-    roi = (profit / risked * 100) if risked else 0
-    return render_template(
-        "ev_board_results.html",
-        wins=wins, losses=losses, settled=settled,
-        pending=len(plays) - settled,
-        win_rate=win_rate,
-        profit_str=fmt_money(profit),
-        profit_positive=profit >= 0,
-        roi_str=f"{roi:+.1f}%",
-        plays=plays[:100],
-    )
+    # PROGRAMA VALUE ELIMINADO (2026-11-02, orden de Alex): la página de
+    # resultados VALUE se retira; todo link viejo aterriza en el home.
+    return redirect(url_for("home"))
 
 
 @app.route("/sharp")
@@ -15238,6 +15185,9 @@ def track_value_auto():
     """
     from flask import Response, request
     import os
+    # PROGRAMA VALUE ELIMINADO (2026-11-02, orden de Alex): no se trackea
+    # ninguna VALUE más, venga de donde venga.
+    return Response("VALUE program eliminated.", status=410, mimetype="text/plain")
     # Auth: X-Push-Key (crons) o sesión admin
     push_key = request.headers.get("X-Push-Key", "")
     key_ok = push_key and push_key == os.environ.get("PUSH_TRIGGER_KEY", "")
@@ -15349,6 +15299,51 @@ def value_result():
     if cur.rowcount:
         return Response(f"Actualizada: {play_id} = {res}", mimetype="text/plain")
     return Response(f"Sin cambios (no pendiente o no existe): {play_id}", mimetype="text/plain")
+
+
+@app.route("/admin/value-export", methods=["GET"])
+def value_export():
+    """Respaldo completo de las filas VALUE del sistema (user_id=0).
+    Auth: X-Push-Key (crons) o sesión admin."""
+    from flask import Response
+    import json as _json
+    if not _value_cron_auth():
+        return Response("Admin access required.", status=403, mimetype="text/plain")
+    db = get_db()
+    rows = db.execute(
+        "SELECT * FROM tracked_plays WHERE user_id = ? AND nivel = 'VALUE' "
+        "ORDER BY id",
+        (VALUE_SYSTEM_USER_ID,),
+    ).fetchall()
+    data = []
+    for r in rows:
+        d = dict(r)
+        for k, v in list(d.items()):
+            if v is not None and not isinstance(v, (str, int, float, bool)):
+                d[k] = float(v) if hasattr(v, "__float__") else str(v)
+        data.append(d)
+    return Response(_json.dumps({"count": len(data), "rows": data},
+                                ensure_ascii=False),
+                    mimetype="application/json")
+
+
+@app.route("/admin/value-purge", methods=["POST"])
+def value_purge():
+    """Borra TODAS las filas VALUE del sistema (user_id=0).
+    PROGRAMA VALUE ELIMINADO (2026-11-02, orden de Alex).
+    Auth: X-Push-Key (crons) o sesión admin."""
+    from flask import Response
+    import json as _json
+    if not _value_cron_auth():
+        return Response("Admin access required.", status=403, mimetype="text/plain")
+    db = get_db()
+    cur = db.execute(
+        "DELETE FROM tracked_plays WHERE user_id = ? AND nivel = 'VALUE'",
+        (VALUE_SYSTEM_USER_ID,),
+    )
+    db.commit()
+    return Response(_json.dumps({"deleted": cur.rowcount}),
+                    mimetype="application/json")
 
 
 @app.route("/admin/value-system-stats")
