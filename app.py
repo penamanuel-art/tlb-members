@@ -2686,7 +2686,7 @@ def official_tracker_full():
                     _dias_plays.append(_tira_play(_d.get("fecha") or "", _j))
             else:
                 break
-        if _plat_n >= 2 and _plat_last_win and _plat_last_win == _ultimo_dia_t:
+        if _plat_n >= 2 and _plat_last_win:
             tira = {"tipo": "plat", "n": _plat_n, "plays": _plat_plays}
         elif _dias_n >= 2:
             tira = {"tipo": "dias", "n": _dias_n, "plays": _dias_plays}
@@ -5031,8 +5031,7 @@ def home():
                 _dias_streak += 1
             else:
                 break
-        if (_plat_streak >= 2 and _plat_ultimo_gane
-                and _plat_ultimo_gane == _ultimo_dia):
+        if _plat_streak >= 2 and _plat_ultimo_gane:
             tira_home = {"tipo": "plat", "n": _plat_streak}
         elif _dias_streak >= 2:
             tira_home = {"tipo": "dias", "n": _dias_streak}
@@ -10659,7 +10658,7 @@ def _tira_actual():
                     _dias_plays.append(_tp(_d.get("fecha") or "", _j))
             else:
                 break
-        if _plat_n >= 2 and _plat_last and _plat_last == _ultimo_dia_t:
+        if _plat_n >= 2 and _plat_last:
             return {"tipo": "plat", "n": _plat_n, "plays": _plat_plays,
                     "dias_n": _dias_n, "dias_plays": _dias_plays}
         if _dias_n >= 2:
