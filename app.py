@@ -2647,6 +2647,7 @@ def official_tracker_full():
                     "resultado": _j.get("resultado") or "",
                     "comprobante": _j.get("comprobante") or "",
                     "nivel_label": "PLATINUM" if _nv in ("ELITE", "PLATINUM") else (_nv or "FREE"),
+                    "stake_display": ("$" + f"{int(round(float(_j.get('stake_monto') or 0))):,}") if _j.get("stake_monto") else "",
                     "profit_display": (("+$" if _p > 0 else ("-$" if _p < 0 else "$"))
                                        + f"{abs(int(round(_p))):,}")}
         _plat_n = 0
