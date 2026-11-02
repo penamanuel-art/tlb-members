@@ -594,7 +594,7 @@
   </section>
   {% endif %}
 
-  <div class="section">
+  <div class="section" id="tour-alerts">
     <h3>Get alerts</h3>
     <div class="row"><span>Push notifications</span><a class="on" href="{{ url_for('alertas') }}">● ON ›</a></div>
     <div class="row"><span>Telegram channel</span><a class="join" href="https://t.me/thesharpteam">JOIN →</a></div>
@@ -1085,10 +1085,10 @@ body{background-color:#131822!important;background-image:radial-gradient(560px 3
 #skl-overlay{background:#131822!important}
 .skl-plain{background:#202833!important}
 </style>
-<!-- ===== DASHBOARD TOUR (recorrido interactivo, prueba 2026-11-01) ===== -->
+<!-- ===== DASHBOARD TOUR v4 (recorrido completo multipagina, 2026-11-02) ===== -->
 <style>
 #tourDim{position:fixed;inset:0;background:rgba(4,8,16,.74);z-index:2900}
-#tourRing{position:fixed;z-index:2901;border:2px solid #e8c766;border-radius:14px;box-shadow:0 0 0 3px rgba(232,199,102,.25),0 0 24px rgba(232,199,102,.35);pointer-events:none;transition:top .3s ease,left .3s ease,width .3s ease,height .3s ease}
+#tourRing{position:fixed;z-index:2901;border:2px solid #e8c766;border-radius:14px;box-shadow:0 0 0 3px rgba(232,199,102,.25),0 0 24px rgba(232,199,102,.35);pointer-events:none;transition:top .2s ease,left .2s ease,width .2s ease,height .2s ease}
 #tourCard{position:fixed;z-index:2902;left:12px;right:12px;max-width:430px;margin:0 auto;background:#1c2431;border:1px solid #24334d;border-radius:16px;padding:16px 16px 13px;box-shadow:0 18px 40px rgba(0,0,0,.5);color:#eef2f8}
 #tourBar{height:4px;background:#24334d;border-radius:99px;overflow:hidden;margin-bottom:12px}
 #tourBarFill{height:100%;background:#e8c766;border-radius:99px;transition:width .3s ease}
@@ -1117,29 +1117,52 @@ body{background-color:#131822!important;background-image:radial-gradient(560px 3
 </div>
 <script>
 (function(){
-  var ALL=[
-    {sel:null,title:"Welcome to The Sharp Team",body:"This is your Dashboard — your plays, your tools and your results, all in one place. Tap Next and I will show you what each thing is for. It takes less than a minute."},
-    {sel:[".tst-playshead"],title:"Your plays",body:"Today's official plays live here. New plays post at 2:00 PM on weekdays and 11:00 AM on weekends, Eastern Time."},
-    {sel:[".tst-playslevels"],title:"Three levels",body:"Free Picks are for everyone. Gold and Platinum are the paid levels — Platinum members see every play, every day."},
-    {sel:[".v5c"],title:"A play card",body:"Each card is one play: the team, the price, the game and the start time. The percent is our model's chance of winning — an estimate, never a promise."},
-    {sel:[".v5wu"],title:"Why we like it",body:"This block shows the homework: our model's probability next to the probability implied by the price. When ours is higher, that gap is the edge we are playing."},
-    {sel:[".v5timg",".v5c-tk"],title:"The real ticket",body:"Every play carries the photo of our real betting receipt. Tap it to see it full size. If there is no ticket, it is not an official play."},
-    {sel:[".v5big-track",".v5c-track"],title:"Track the play",body:"Tap Track to make the play yours. A strip appears with your amount — tap Change stake to set your own amount instead. Once tracked, the play locks in: it cannot be removed, and it grades itself in your My Bets when the game ends."},
-    {sel:["a.balance"],title:"Your bankroll",body:"This pill is your bankroll: the total across all your sportsbooks. Tap it to open your account — in App settings you choose which books you bet with and update each book's balance whenever it changes. Keep those balances current and this total is always your real money."},
-    {sel:[".rh-head","#rhRail"],title:"Hot right now",body:"How the program's last 10 graded plays went, by level. Win or lose, every result stays public — tap Public ledger for the full record."},
-    {sel:["#tour-edge"],title:"Find Your Edge",body:"Your toolbox: live odds and scores, the +EV Board, Player Props, Sharp Money, Line Moves, Compare Prices and the Parlay Builder. Some tools are Platinum only."},
-    {sel:["a.tile[href=\"/tracker\"]","a.tile[href$=\"/tracker\"]"],title:"My Bets — your tracker",body:"This is your personal record. Every play you track lands here with YOUR amount, and when each game ends it grades itself: your wins, your losses, your profit and your win rate. You can also add bets you placed on your own, so your whole history lives in one place."},
-    {sel:["#tour-academy"],title:"The Masterclass",body:"Your 30-day academy: one short lesson a day that teaches you how to read a play card, what the odds mean, how to manage your bankroll and how to use every tool here. Tap OPEN to start, or to pick up where you left off."},
-    {sel:[".tst-yhead"],title:"Yesterday",body:"Yesterday's plays with their final results and their tickets. Nothing gets deleted after a loss — the whole history stays up."},
-    {sel:["#tst-menubtn"],title:"The menu",body:"From this menu you reach My Bets, the Full Record, the Masterclass, your account and your alerts. You can replay this tour anytime from here: Dashboard Tour."},
-    {sel:null,title:"You are all set",body:"Your routine: check your plays when they post, track the ones you play, and review your results in My Bets. Play smart — and welcome to The Sharp Team."}
+  var CHAPTERS=[
+    {id:'home',url:'/home',label:'YOUR DASHBOARD'},
+    {id:'account',url:'/cuenta',label:'YOUR ACCOUNT'},
+    {id:'bets',url:'/tracker',label:'MY BETS'},
+    {id:'record',url:'/official-tracker',label:'THE FULL RECORD'}
   ];
-  var steps=[],idx=0,ringTimer=null;
+  var ALL=[
+    {ch:'home',sel:null,title:"Welcome to The Sharp Team",body:"This tour walks your WHOLE system: your plays, how to set your capital, your personal tracker and our full record. Keep tapping Next — I will take you page by page."},
+    {ch:'home',sel:[".tst-playshead"],title:"Your plays",body:"Today's official plays live here. New plays post at 2:00 PM on weekdays and 11:00 AM on weekends, Eastern Time."},
+    {ch:'home',sel:[".tst-playslevels"],title:"Three levels",body:"Free Picks are for everyone. Gold and Platinum are the paid levels — Platinum members see every play, every day."},
+    {ch:'home',sel:[".v5c"],title:"A play card",body:"Each card is one play: the team, the price, the game and the start time. The percent is our model's chance of winning — an estimate, never a promise."},
+    {ch:'home',sel:[".v5wu"],title:"Why we like it",body:"This block shows the homework: our model's probability next to the probability implied by the price. When ours is higher, that gap is the edge we are playing."},
+    {ch:'home',sel:[".v5timg",".v5c-tk"],title:"The real ticket",body:"Every play carries the photo of our real betting receipt. Tap it to see it full size. If there is no ticket, it is not an official play."},
+    {ch:'home',sel:[".v5c a.v5c-btn[target=\"_blank\"]"],title:"Bet it where we bet it",body:"This button takes you to place the play at the book and price on the card — the same place we bet it. Always take the best price you can: a few cents better on every play adds up over a season."},
+    {ch:'home',sel:[".v5big-track",".v5c-track"],title:"Track the play",body:"Tap Track to make the play yours. A strip appears with your amount — tap Change stake to set your own amount instead. Once tracked, the play locks in: it cannot be removed, and it grades itself in your My Bets when the game ends."},
+    {ch:'home',sel:["a.balance"],title:"Your bankroll",body:"This pill is your money: the total across your sportsbooks. In a moment I will take you to your account to set your capital — the number every stake is sized from."},
+    {ch:'home',sel:[".rh-head","#rhRail"],title:"Hot right now",body:"How the program's last 10 graded plays went, by level. Win or lose, every result stays public — later in this tour I will show you the full record page."},
+    {ch:'home',sel:["#tour-edge"],title:"Find Your Edge",body:"Your toolbox. Odds compares every book's live price so you never overpay. The +EV Board, Player Props, Sharp Money and Line Moves find value the market missed. Some tools are Platinum only."},
+    {ch:'home',sel:["#tour-alerts"],title:"Turn on your alerts",body:"Plays and results can come straight to your phone. Switch push notifications on for this device, join the Telegram channel and keep the daily email on — and you will never miss a play."},
+    {ch:'home',sel:["#tour-academy"],title:"The Masterclass",body:"Your 30-day academy: one short lesson a day that teaches you how to read a play card, what the odds mean, how to manage your bankroll and how to use every tool here. Tap OPEN to start, or to pick up where you left off."},
+    {ch:'home',sel:[".tst-yhead"],title:"Yesterday",body:"Yesterday's plays with their final results and their tickets. Nothing gets deleted after a loss — the whole history stays up."},
+    {ch:'home',sel:["#tst-menubtn"],title:"The menu",body:"Everything lives here too: My Bets, the Full Record, your account and your alerts — and you can replay this tour anytime from here: Dashboard Tour. Tap Next and let's set up your money."},
+    {ch:'account',pane:'overview',sel:["input[name=\"bankroll\"]"],title:"Set your capital",body:"HERE is where you put your capital: the total money you play with. Type the amount and tap Save bankroll. From this number comes your unit — 1 unit = 1% of your capital — and every stake on your cards is sized from it. When your capital changes, update it right here."},
+    {ch:'account',pane:'overview',sel:[".br-toggle"],title:"How your stakes are sized",body:"Two ways to size every play. TST Units: every stake is a percent of your capital. Kelly $: stakes follow the model's edge. Pick one — you can switch anytime."},
+    {ch:'account',pane:'preferences',sel:["input[name=\"bet_books\"]"],title:"Your sportsbooks",body:"Check the sportsbooks you bet with. Your bankroll pill on the Dashboard adds up your money across your books, so keep this list honest."},
+    {ch:'account',sel:null,title:"Your money is set",body:"Capital set, sizing chosen, books picked. Tap Next — now your tracker, where every play you follow grades itself."},
+    {ch:'bets',sel:[".mb-stats"],title:"Your scoreboard",body:"This is the member tracker — YOUR numbers: how many plays you tracked, your record, your profit and your win rate. Always with your amounts, not ours."},
+    {ch:'bets',sel:[".wgt-list"],title:"Your tracked plays",body:"Each row is one of your plays: the pick, your amount, and its result the moment the game ends. Plays you track from the program are locked — they cannot be deleted, so your record stays honest."},
+    {ch:'bets',sel:["a.mb-btn[href$=\"/my-bets/add\"]"],title:"Add your own bets",body:"Placed a bet on your own, outside the program? Add it here and it lives with the rest — your whole betting history in one place."},
+    {ch:'record',sel:[".fr-card",".fr-title"],title:"Our full record",body:"And this is the business tracker: every official play The Sharp Team has published, with its real result. Wins and losses — nothing edited, nothing hidden."},
+    {ch:'record',sel:[".yw-thumb"],title:"Winning tickets",body:"The most recent winning tickets, with the real receipts behind them. Tap any ticket to see it up close."},
+    {ch:'record',sel:[".ot-section"],title:"The full ledger",body:"Every official play by day, level and league — with its price and its closing line value. This page is our proof. Check us anytime."},
+    {ch:'record',sel:null,title:"You are all set",body:"Now you know the whole system: the plays, your capital, your tracker and our full record. Plays post at 2:00 PM on weekdays and 11:00 AM on weekends. Play smart — and welcome to The Sharp Team."}
+  ];
+  var path=location.pathname.replace(/\/+$/,'')||'/';
+  var curCh=(path==='/home')?'home':(path==='/cuenta')?'account':(path==='/tracker')?'bets':(path==='/official-tracker')?'record':null;
+  if(!curCh)return;
   var root=document.getElementById('tourRoot'),ring=document.getElementById('tourRing'),
       card=document.getElementById('tourCard'),fill=document.getElementById('tourBarFill'),
       count=document.getElementById('tourCount'),ttl=document.getElementById('tourTitle'),
       body=document.getElementById('tourBody'),bNext=document.getElementById('tourNext'),
       bBack=document.getElementById('tourBack'),bSkip=document.getElementById('tourSkip');
+  function chIdx(id){for(var i=0;i<CHAPTERS.length;i++)if(CHAPTERS[i].id===id)return i;return -1;}
+  function save(st){try{st.ts=Date.now();sessionStorage.setItem('tst_tour',JSON.stringify(st));}catch(e){}}
+  function load(){try{var s=sessionStorage.getItem('tst_tour');if(!s)return null;var st=JSON.parse(s);if(!st||(Date.now()-(st.ts||0))>30*60*1000)return null;return st;}catch(e){return null;}}
+  function clear(){try{sessionStorage.removeItem('tst_tour');}catch(e){}}
   function visible(e){
     if(!e)return false;
     var r=e.getBoundingClientRect();
@@ -1154,6 +1177,32 @@ body{background-color:#131822!important;background-image:radial-gradient(560px 3
       for(var j=0;j<all.length;j++){if(visible(all[j]))return all[j];}
     }
     return null;
+  }
+  function activatePane(id){
+    var panes=document.querySelectorAll('.acct-pane');
+    for(var i=0;i<panes.length;i++){panes[i].classList.toggle('on',panes[i].id==='pane-'+id);}
+  }
+  var steps=[],idx=0,timers=[];
+  function buildSteps(){
+    steps=[];
+    for(var i=0;i<ALL.length;i++){
+      var s=ALL[i];
+      if(s.ch!==curCh)continue;
+      if(s.pane)continue; /* las de panel se evaluan al llegar */
+      if(!s.sel||findEl(s.sel))steps.push(s);
+    }
+    /* pasos con panel: se incluyen si su elemento existe tras activar el panel */
+    for(var j=0;j<ALL.length;j++){
+      var p=ALL[j];
+      if(p.ch!==curCh||!p.pane)continue;
+      activatePane(p.pane);
+      if(findEl(p.sel)){
+        var pos=0;
+        for(var k=0;k<ALL.length;k++){if(ALL[k]===p)break;if(ALL[k].ch===curCh&&steps.indexOf(ALL[k])>=0)pos++;}
+        steps.splice(pos,0,p);
+      }
+    }
+    if(curCh==='account')activatePane('overview');
   }
   function place(el){
     var vh=window.innerHeight;
@@ -1178,44 +1227,65 @@ body{background-color:#131822!important;background-image:radial-gradient(560px 3
     ring.style.top=(r.top-6)+'px';ring.style.left=(r.left-6)+'px';
     ring.style.width=(r.width+12)+'px';ring.style.height=(r.height+12)+'px';
   }
+  function reposition(){var s=steps[idx];if(s)place(findEl(s.sel));}
   function show(i){
-    idx=i;var s=steps[i];if(!s){end();return;}
-    count.textContent='STEP '+(i+1)+' OF '+steps.length;
+    idx=i;var s=steps[i];if(!s){advance();return;}
+    save({ch:curCh,i:idx});
+    if(s.pane)activatePane(s.pane);
+    var chLabel='';
+    for(var c=0;c<CHAPTERS.length;c++)if(CHAPTERS[c].id===curCh)chLabel=CHAPTERS[c].label;
+    count.textContent=chLabel+' · STEP '+(i+1)+' OF '+steps.length;
     ttl.textContent=s.title;body.textContent=s.body;
-    fill.style.width=Math.round(((i+1)/steps.length)*100)+'%';
-    bBack.style.visibility=(i===0)?'hidden':'visible';
-    bNext.textContent=(i===steps.length-1)?'Done':'Next';
+    var globalPos=0,globalN=0;
+    for(var g=0;g<ALL.length;g++){if(ALL[g].ch===curCh&&steps.indexOf(ALL[g])>=0){globalN++;if(ALL[g]===s)globalPos=globalN;}}
+    fill.style.width=Math.round(((chIdx(curCh)+ (globalPos/Math.max(globalN,1)))/CHAPTERS.length)*100)+'%';
+    bBack.style.visibility=(chIdx(curCh)===0&&i===0)?'hidden':'visible';
+    var lastChapter=(chIdx(curCh)===CHAPTERS.length-1);
+    bNext.textContent=(lastChapter&&i===steps.length-1)?'Done':'Next';
     var el=findEl(s.sel);
     if(el){el.scrollIntoView({behavior:'smooth',block:'center'});}
-    if(ringTimer){for(var k=0;k<ringTimer.length;k++)clearTimeout(ringTimer[k]);}
+    for(var t=0;t<timers.length;t++)clearTimeout(timers[t]);
+    timers=[];
     place(el);
-    var timers=[120,480,950];
-    ringTimer=[];
-    for(var t=0;t<timers.length;t++){
-      (function(ms){ringTimer.push(setTimeout(function(){place(findEl(s.sel));},ms));})(timers[t]);
-    }
+    var ms=[120,480,950];
+    for(var u=0;u<ms.length;u++){(function(m){timers.push(setTimeout(function(){place(findEl(s.sel));},m));})(ms[u]);}
   }
   function end(){
-    root.hidden=true;ring.hidden=true;
+    root.hidden=true;ring.hidden=true;clear();
     try{localStorage.setItem('tst_tour_done_v1','1');}catch(e){}
     window.removeEventListener('resize',reposition);
     window.removeEventListener('scroll',reposition);
   }
-  function reposition(){var s=steps[idx];if(s)place(findEl(s.sel));}
-  function start(){
-    steps=[];
-    for(var i=0;i<ALL.length;i++){if(!ALL[i].sel||findEl(ALL[i].sel))steps.push(ALL[i]);}
+  function advance(){
+    var n=chIdx(curCh)+1;
+    if(n>=CHAPTERS.length){end();return;}
+    save({ch:CHAPTERS[n].id,i:0});
+    location.href=CHAPTERS[n].url;
+  }
+  function retreat(){
+    var p=chIdx(curCh)-1;
+    if(p<0)return;
+    save({ch:CHAPTERS[p].id,i:999});
+    location.href=CHAPTERS[p].url;
+  }
+  function start(i){
+    buildSteps();
+    if(!steps.length){advance();return;}
     var m=document.getElementById('tst-menu-sheet');if(m&&!m.hidden){m.hidden=true;document.body.style.overflow='';}
     root.hidden=false;
     window.addEventListener('resize',reposition);
     window.addEventListener('scroll',reposition,{passive:true});
-    show(0);
+    if(i===999)i=steps.length-1;
+    if(i<0)i=0;if(i>=steps.length)i=steps.length-1;
+    show(i);
   }
-  bNext.addEventListener('click',function(){if(idx>=steps.length-1)end();else show(idx+1);});
-  bBack.addEventListener('click',function(){if(idx>0)show(idx-1);});
+  bNext.addEventListener('click',function(){if(idx>=steps.length-1)advance();else show(idx+1);});
+  bBack.addEventListener('click',function(){if(idx>0)show(idx-1);else retreat();});
   bSkip.addEventListener('click',end);
-  window.tstStartTour=start;
-  if(/[?&]tour=1(&|$)/.test(location.search)){setTimeout(start,600);}
+  window.tstStartTour=function(){save({ch:'home',i:0});if(curCh==='home')start(0);else location.href='/home';};
+  var st=load();
+  if(/[?&]tour=1(&|$)/.test(location.search)){save({ch:curCh,i:0});setTimeout(function(){start(0);},600);}
+  else if(st&&st.ch===curCh){setTimeout(function(){start(st.i||0);},600);}
 })();
 </script>
 
