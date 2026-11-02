@@ -192,6 +192,20 @@ a.fr-pill { text-decoration: none; cursor: pointer; }
   {% if t.tira and t.tira.plays %}
   <div class="fr-card" id="tira">
     <div class="fr-streak-title">{% if t.tira.tipo == 'plat' %}&#128142; PLATINUM &middot; {{ t.tira.n }} WINS IN A ROW{% else %}&#128293; {{ t.tira.n }} WINNING DAYS IN A ROW{% endif %}</div>
+    <p class="fr-streak-txt">These are the exact winning plays behind that streak — nothing more, nothing less. Tap any ticket to see it full size.</p>
+    <div class="fr-gal">
+      {% for x in t.tira.plays %}
+      {% if x.resultado == 'WON' and x.comprobante %}
+      <figure class="fr-ticket" onclick="otZoom('{{ url_for('static', filename=x.comprobante) }}')">
+        <span class="fr-badge">✓ {{ x.profit_display }}</span>
+        <img src="{{ url_for('static', filename=x.comprobante) }}" alt="Winning ticket — {{ x.pick }}" loading="lazy">
+        <figcaption>{{ x.pick }}</figcaption>
+      </figure>
+      {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}</div>
     <p class="fr-streak-txt">These are the exact plays behind that streak — every one of them, with its real ticket. Tap a ticket to see it full size.</p>
     {% for x in t.tira.plays %}
     {% set f = x.fecha or '' %}
