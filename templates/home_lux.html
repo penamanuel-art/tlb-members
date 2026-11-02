@@ -334,7 +334,7 @@
   </div>
 
   <div class="pillrow">
-    <button type="button" onclick="try{localStorage.removeItem('tst-tour-done');}catch(e){} tstStartTour(); return false;" style="flex:1 1 auto;min-width:0;height:40px;box-sizing:border-box;background:#151D17;border:1px solid rgba(190,242,160,.25);border-radius:999px;padding:6px 10px;cursor:pointer;color:#C4DFB0;font-size:13px;font-weight:300;letter-spacing:.2px;white-space:nowrap;">Take the quick tour ↗</button>
+    <button type="button" onclick="try{localStorage.removeItem('tst-tour-done');}catch(e){} tstStartTour(); return false;" style="flex:0 0 auto;height:30px;box-sizing:border-box;background:#151D17;border:1px solid rgba(190,242,160,.25);border-radius:999px;padding:3px 11px;cursor:pointer;color:#C4DFB0;font-size:11.5px;font-weight:300;letter-spacing:.2px;white-space:nowrap;">Take the quick tour ↗</button>
     <a class="pill" href="{{ url_for('official_tracker') }}" style="font-size:10.5px;font-weight:300;">📊 Full record ›</a>
     <button class="menubtn" type="button" id="tst-menubtn" aria-expanded="false" onclick="var m=document.getElementById('tst-menu-sheet');var o=m.hidden;m.hidden=!o;this.setAttribute('aria-expanded',o?'true':'false');document.body.style.overflow=o?'hidden':'';" style="cursor:pointer;padding:0;">☰</button>
   </div>
