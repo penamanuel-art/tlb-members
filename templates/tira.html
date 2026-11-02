@@ -95,29 +95,8 @@ body{background-color:#0B0D12;background-image:radial-gradient(560px 300px at 50
 <div id="tiraModal">
   <div class="trs-sheet">
     <span class="trs-x" onclick="document.getElementById('tiraModal').style.display='none'">&#10005;</span>
-    <div class="trs-kicker" id="trsKicker"></div>
     <div class="trs-title" id="trsTitle"></div>
-    <div class="trs-sub" id="trsSub"></div>
     <img class="trs-img" id="trsImg" src="" alt="Ticket full size">
-    <div class="trs-match"><div class="trs-match-t" id="trsMatch"></div><div class="trs-match-s" id="trsStarts"></div></div>
-    <div class="trs-grid">
-      <div class="trs-box"><div class="trs-lbl">Price posted</div><div class="trs-val" id="trsPrice"></div></div>
-      <div class="trs-box"><div class="trs-lbl">Stake</div><div class="trs-val" id="trsStake"></div></div>
-      <div class="trs-box"><div class="trs-lbl">Result</div><div class="trs-val" id="trsResult"></div></div>
-      <div class="trs-box"><div class="trs-lbl">Placed at</div><div class="trs-val" id="trsCasa"></div></div>
-    </div>
-    <div class="trs-bet">
-      <div class="trs-bet-t" id="trsBetT"></div>
-      <div class="trs-bet-s" id="trsBetS"></div>
-      <div class="trs-bet-n">The official size for this play. Bet only what you can afford to lose.</div>
-    </div>
-    <div class="trs-actions">
-      <a class="trs-main-btn" href="{{ url_for('official_tracker') }}">Full official record &#8594;</a>
-      <div class="trs-row-btns">
-        <a class="trs-sec-btn" href="https://novig.com" target="_blank" rel="noopener">&#8599; Place at Novig</a>
-        <a class="trs-sec-btn" href="/ev-board">Line shop for a better price</a>
-      </div>
-    </div>
   </div>
 </div>
 <script>
@@ -135,23 +114,8 @@ var TIRA_PLAYS = [
 ];
 function tiraZoom(i){
   var p = TIRA_PLAYS[i]; if(!p) return;
-  document.getElementById('trsKicker').textContent = (p.nivel === 'PLATINUM' ? '\u{1F48E} ' : '') + p.nivel + ' PLAY';
   document.getElementById('trsTitle').textContent = p.pick;
-  document.getElementById('trsSub').textContent = p.nivel.charAt(0) + p.nivel.slice(1).toLowerCase() + ' play \u00B7 ' + p.liga;
   document.getElementById('trsImg').src = p.img;
-  document.getElementById('trsMatch').textContent = p.match || p.pick;
-  document.getElementById('trsStarts').textContent = p.hora ? ('Starts ' + p.hora + (p.dia ? ' \u00B7 ' + p.dia : '')) : (p.dia || '');
-  var c = parseInt(p.cuota || 0, 10);
-  document.getElementById('trsPrice').textContent = c ? (c > 0 ? '+' + c : '' + c) : '\u2014';
-  var u = parseFloat(p.unidades || 0);
-  var uTxt = u ? (u + 'u').replace('0.', '.').replace('.0u', 'u') : '';
-  if(u === 1) uTxt = '1u';
-  document.getElementById('trsStake').innerHTML = (uTxt || '\u2014') + '<small>' + (p.stake || '') + '</small>';
-  var r = document.getElementById('trsResult');
-  r.innerHTML = (p.resultado === 'WON' ? 'Won' : (p.resultado === 'LOST' ? 'Lost' : 'Push')) + '<small>' + p.profit + '</small>';
-  document.getElementById('trsCasa').textContent = p.casa || 'Novig';
-  document.getElementById('trsBetT').textContent = 'Bet ' + (p.stake || '');
-  document.getElementById('trsBetS').textContent = uTxt ? ('(' + uTxt + ' at the official $100 unit)') : '';
   var m = document.getElementById('tiraModal'); m.style.display = 'block'; m.scrollTop = 0;
 }
 document.getElementById('tiraModal').addEventListener('click', function(e){ if(e.target === this) this.style.display = 'none'; });
