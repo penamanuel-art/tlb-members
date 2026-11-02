@@ -350,6 +350,7 @@
     <a href="{{ url_for('official_tracker') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:15px;">Full Record <span style="color:#A3AAB6;">›</span></a>
     <div style="padding:12px 0 2px;font-size:11px;letter-spacing:1.6px;color:#969EA9;font-weight:700;">TOOLS</div>
     <a href="{{ url_for('tools_line_moves') if miembro_platinum else url_for('desbloquear_platinum') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:15px;">Line Moves <span style="color:#A3AAB6;">›</span></a>
+    <a href="{{ url_for('ev_board') if miembro_platinum else url_for('desbloquear_platinum') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:15px;">+EV Board <span style="color:#A3AAB6;">›</span></a>
     <a href="{{ url_for('props') if miembro_platinum else url_for('desbloquear_platinum') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:15px;">Player Props <span style="color:#A3AAB6;">›</span></a>
     <div style="padding:12px 0 2px;font-size:11px;letter-spacing:1.6px;color:#969EA9;font-weight:700;">ACCOUNT</div>
     <a href="{{ url_for('cuenta') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:15px;">My account <span style="color:#A3AAB6;">›</span></a>
@@ -416,6 +417,7 @@
   </div>
 
   <div class="tiles">
+    <a class="tile" href="{{ url_for('ev_board') if miembro_platinum else url_for('desbloquear_platinum') }}"><div class="ic">⚡</div><span class="arr">›</span><b>+EV Board</b><p>Positive-edge plays, ranked by value daily.</p></a>
     <a class="tile" href="{{ url_for('props') if miembro_platinum else url_for('desbloquear_platinum') }}"><div class="ic">🎯</div><span class="arr">›</span><b>Player Props</b><p>Prop edges on players across every book.</p></a>
     <a class="tile" href="{{ url_for('tools_line_moves') if miembro_platinum else url_for('desbloquear_platinum') }}"><div class="ic">↗</div><span class="arr">›</span><b>Line Moves</b><p>Sharp money and line moves, tracked live.</p></a>
   </div>
@@ -515,7 +517,7 @@
   </style>
   <div style="margin:24px 0 12px;">
     <div style="font-size:24px;font-weight:800;color:#ffffff;line-height:1.25;">Our highest-value plan.</div>
-    <p style="font-size:14.5px;color:#C6CBD6;line-height:1.5;margin:6px 0 0;">Every official play with verified tickets, Props, AI Assistant, Line Moves, Sharp Money and a private Telegram channel. The complete card.</p>
+    <p style="font-size:14.5px;color:#C6CBD6;line-height:1.5;margin:6px 0 0;">Every official play with verified tickets, +EV Board across 12 books, Props, AI Assistant, Line Moves, Sharp Money and a private Telegram channel. The complete card.</p>
   </div>
   <div class="hpc-card">
     <div class="hpc-top">
@@ -528,6 +530,7 @@
       <li>Every official Platinum play, posted before game time</li>
       <li>The verified ticket on every play — the real slip, always</li>
       <li>The full card: Platinum plays + the Sharp Free plays</li>
+      <li>+EV Board — best price across 12 books against the fair line</li>
       <li>Player Props board — included in Platinum</li>
       <li>AI Assistant — check any price and review your bets</li>
       <li>Line Moves and Sharp Money boards</li>
@@ -719,6 +722,7 @@
         <h4>Tools &amp; Learning</h4>
         <a href="{{ url_for('tools') }}">All Tools</a>
         <a href="{{ url_for('game_center') }}">Odds</a>
+        <a href="{{ url_for('ev_board') if miembro_platinum else url_for('desbloquear_platinum') }}">+EV Board</a>
         <a href="{{ url_for('props') if miembro_platinum else url_for('desbloquear_platinum') }}">Player Props</a>
         <a href="{{ url_for('tools_line_moves') if miembro_platinum else url_for('desbloquear_platinum') }}">Line Moves</a>
         <a href="{{ url_for('masterclass') }}">Masterclass</a>
@@ -1108,7 +1112,7 @@ body{background-color:#131822!important;background-image:radial-gradient(560px 3
     {ch:'home',sel:[".v5big-track",".v5c-track"],title:"Track the play",body:"Tap Track to make the play yours. A strip appears with your amount — tap Change stake to set your own amount instead. Once tracked, the play locks in: it cannot be removed, and it grades itself in your My Bets when the game ends."},
     {ch:'home',sel:["a.balance"],title:"Your bankroll",body:"This pill is your money: the total across your sportsbooks. In a moment I will take you to your account to set your capital — the number every stake is sized from."},
     {ch:'home',sel:[".rh-head","#rhRail"],title:"Hot right now",body:"How the program's last 10 graded plays went, by level. Win or lose, every result stays public — later in this tour I will show you the full record page."},
-    {ch:'home',sel:["#tour-edge"],title:"Find Your Edge",body:"Your toolbox. Odds compares every book's live price so you never overpay. Player Props, Sharp Money and Line Moves find value the market missed. Some tools are Platinum only."},
+    {ch:'home',sel:["#tour-edge"],title:"Find Your Edge",body:"Your toolbox. Odds compares every book's live price so you never overpay. The +EV Board, Player Props, Sharp Money and Line Moves find value the market missed. Some tools are Platinum only."},
     {ch:'home',sel:["#tour-alerts"],title:"Turn on your alerts",body:"Plays and results can come straight to your phone. Switch push notifications on for this device, join the Telegram channel and keep the daily email on — and you will never miss a play."},
     {ch:'home',sel:["#tour-academy"],title:"The Masterclass",body:"Your 30-day academy: one short lesson a day that teaches you how to read a play card, what the odds mean, how to manage your bankroll and how to use every tool here. Tap OPEN to start, or to pick up where you left off."},
     {ch:'home',sel:[".tst-yhead"],title:"Yesterday",body:"Yesterday's plays with their final results and their tickets. Nothing gets deleted after a loss — the whole history stays up."},
