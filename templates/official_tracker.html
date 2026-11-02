@@ -215,7 +215,7 @@ body{background-color:#0B0D12;background-image:radial-gradient(560px 300px at 50
 
   {% if t.tickets_ganadores %}
   <div class="ot-section">
-    <h2 class="fr-h2">Recent winning tickets</h2>
+    <h2 class="fr-h2" id="recent-tickets">Recent winning tickets</h2>
     <p class="fr-sub2">Real graded tickets, each posted before the game and cashed. Tap any one to see it full size.</p>
     <div class="fr-gal">
       {% for x in t.tickets_ganadores %}
