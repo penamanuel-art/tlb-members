@@ -1539,31 +1539,63 @@ Service notice about your membership billing.
 Bet responsibly - 21+ - Gambling problem? Call 1-800-GAMBLER (1-800-426-2537): free and confidential help, 24/7.
 """
 
-DUNNING_HTML = """<div style="font-family:Arial,sans-serif;max-width:480px;margin:0 auto;background:#ffffff;">
+DUNNING_HTML = """<div style="font-family:Arial,sans-serif;max-width:480px;margin:0 auto;background:#f4f5f7;padding:0 0 24px;">
 <img src="https://www.thesharpteam.bet/static/img/sharp-team-header.jpg" alt="The Sharp Team" width="480" style="width:100%;height:auto;display:block;border:0;">
-<div style="background:#ffffff;height:18px;line-height:18px;font-size:0.8px;">&nbsp;</div>
-<div style="background:#2e4053;padding:28px 24px;text-align:center;">
-<p style="margin:0;font-size:10.6px;font-weight:800;letter-spacing:2px;color:#9aa3b8;">&#9888;&nbsp;PAYMENT ISSUE</p>
+<div style="background:#f4f5f7;height:18px;line-height:18px;font-size:1px;">&nbsp;</div>
+
+<!-- Banda principal -->
+<div style="background:#2e4053;padding:30px 24px 26px;text-align:center;">
+<p style="margin:0;font-size:10.6px;font-weight:800;letter-spacing:2px;color:#9aa3b8;">&#9888;&nbsp; PAYMENT ISSUE</p>
 <h1 style="font-size:26.3px;font-weight:800;color:#ffffff;margin:10px 0 0;line-height:1.25;">Today&apos;s card is set.<br><span style="color:#22c55e;">Your card isn&apos;t.</span></h1>
+<p style="margin:12px 0 0;font-size:12.3px;color:#c7d0dd;line-height:1.5;">Your last payment was <strong style="color:#ffffff;">declined</strong> &mdash; so your Platinum access is now <strong style="color:#ffffff;">on hold</strong>.</p>
 </div>
-<div style="margin:14px 24px 0;background:#ffffff;border:1px solid #e5e7eb;border-radius:12px;padding:18px;">
-<p style="margin:0;font-size:13.2px;font-weight:700;color:#111111;line-height:1.55;">Hi __NOMBRE__ &mdash; your last payment didn&apos;t go through, so your Platinum plays are on hold.</p>
+
+<!-- Tarjeta principal -->
+<div style="margin:14px 16px 0;background:#ffffff;border:1px solid #e5e7eb;border-radius:14px;padding:20px 18px;">
+<p style="margin:0;font-size:13.2px;font-weight:700;color:#111111;line-height:1.55;">Hi __NOMBRE__ &mdash; your card was declined, so your Platinum plays are paused.</p>
 <p style="margin:10px 0 0;font-size:12.3px;color:#555555;line-height:1.6;">Nothing is canceled &mdash; cards just fail sometimes. Fix it now and everything switches back on instantly.</p>
+
+<!-- Lo que se pierde -->
+<div style="margin:18px 0 0;background:#fdf6ec;border:1px solid #f0dfba;border-radius:12px;padding:16px;">
+<p style="margin:0;font-size:11.4px;font-weight:800;letter-spacing:1.5px;color:#92600a;">&#128274; WHILE YOUR ACCESS IS ON HOLD, YOU&apos;RE MISSING:</p>
+<table role="presentation" cellpadding="0" cellspacing="0" style="margin:10px 0 0;width:100%;">
+<tr><td style="padding:5px 0;font-size:12.3px;color:#333333;line-height:1.5;">&#128142; <strong>Today&apos;s Platinum plays</strong> &mdash; posted daily, locked until you&apos;re back</td></tr>
+<tr><td style="padding:5px 0;font-size:12.3px;color:#333333;line-height:1.5;">&#11088; <strong>Gold plays</strong> &mdash; visible to Platinum members only</td></tr>
+<tr><td style="padding:5px 0;font-size:12.3px;color:#333333;line-height:1.5;">&#128200; <strong>The +EV Board</strong> &mdash; live edges against Pinnacle&apos;s fair price</td></tr>
+<tr><td style="padding:5px 0;font-size:12.3px;color:#333333;line-height:1.5;">&#127919; <strong>Official Player Props</strong> &mdash; included with Platinum</td></tr>
+<tr><td style="padding:5px 0;font-size:12.3px;color:#333333;line-height:1.5;">&#128203; <strong>Every new card</strong> &mdash; plays keep posting every day while you wait</td></tr>
+</table>
 </div>
-<div style="text-align:center;padding:16px 24px 0;">
+
+<!-- Botón -->
+<div style="text-align:center;padding:20px 0 0;">
 <a href="__PAY_URL__" style="display:inline-block;background:#22c55e;color:#111111;font-weight:800;font-size:14.0px;padding:14px 36px;border-radius:999px;text-decoration:none;">Fix my card in one tap &rarr;</a>
 <p style="margin:10px 0 0;font-size:11.4px;color:#6b7280;">Takes about 30 seconds &middot; Your Sharp Free plays stay yours either way.</p>
 </div>
+</div>
+
 <p style="font-size:11.4px;line-height:1.6;color:#6b7280;margin:16px 24px 0;text-align:center;">If anything looks off, just reply to this email and a real person will sort it.</p>
 <p style="text-align:center;font-size:10.6px;color:#9ca3af;margin:14px 0 0;">__FECHA__</p>
-<div style="text-align:center;padding:20px 20px 14px;">
-<img src="https://www.thesharpteam.bet/static/img/sharp-team-logo.png" alt="The Sharp Team" width="110" style="width:110px;height:auto;display:block;margin:0 auto;border:0;">
-<p style="margin:10px 0 0;color:#111111;font-size:9.2px;font-weight:800;letter-spacing:3px;">THE SHARP TEAM</p>
-<p style="margin:8px 0 0;color:#9ca3af;font-size:8.4px;">250 Park Avenue, Suite 1800, New York, NY 10017</p>
-<p style="margin:4px 0 0;color:#9ca3af;font-size:8.4px;"><a href="tel:+12393768798" style="color:#9ca3af;text-decoration:none;">(239) 376-8798</a></p>
-<p style="margin:12px 0 0;color:#9ca3af;font-size:7.6px;">21+. Play responsibly. If you or someone you know has a gambling problem, call or text <a href="tel:18004262537" style="color:#9ca3af;text-decoration:underline;">1-800-GAMBLER</a>.</p>
-<p style="margin:8px 0 0;color:#9ca3af;font-size:7.6px;">Don't want these emails anymore? <a href="{{{RESEND_UNSUBSCRIBE_URL}}}" style="color:#9ca3af;text-decoration:underline;">Unsubscribe</a> — one click, no questions asked.</p>
-<p style="margin:6px 0 0;color:#9ca3af;font-size:7.6px;">&copy; 2026 The Sharp Team</p>
+
+<!-- Pie como el de los otros emails: bloque de marca + banda negra con íconos -->
+<div style="background:#ffffff;padding:28px 32px 32px;text-align:center;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-top:1px solid #dde2ec;">
+<tr><td align="center" style="padding-top:22px;">
+<p style="margin:0;font-size:14.5px;font-weight:800;color:#14213d;">The Sharp Team</p>
+<p style="margin:6px 0 0;font-size:10.7px;color:#5b6784;"><a href="https://www.thesharpteam.bet" style="color:#19a86b;font-weight:700;">thesharpteam.bet</a></p>
+<p style="margin:6px 0 0;font-size:10.7px;color:#5b6784;">Daily results and official plays: follow <a href="https://x.com/thesharpteambet" style="color:#19a86b;font-weight:700;">@thesharpteambet on X</a></p>
+</td></tr>
+</table>
+</div>
+<div style="padding:24px 32px;background:#000000;border-radius:0 0 14px 14px;text-align:center;">
+<div>
+<a href="https://www.instagram.com/the_sharp_team" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/instagram.png" width="30" height="30" alt="Instagram" style="border:0;margin:0 6px;"></a>
+<a href="https://x.com/thesharpteambet" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/x.png" width="30" height="30" alt="X" style="border:0;margin:0 6px;"></a>
+<a href="https://t.me/thesharpteam" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/telegram.png" width="30" height="30" alt="Telegram" style="border:0;margin:0 6px;"></a>
+</div>
+<p style="margin:14px 0 0;font-size:9.9px;line-height:1.6;color:#9ca0ac;">21+. Please bet responsibly. Gambling problem? Call <span style="color:#a78bfa;text-decoration:underline;">1-800-GAMBLER</span>.</p>
+<p style="margin:10px 0 0;font-size:9.9px;line-height:1.6;color:#9ca0ac;">The Sharp Team &middot; 250 Park Avenue, Suite 1800, New York, NY 10017</p>
+<p style="margin:10px 0 0;font-size:9.9px;color:#9ca0ac;"><span style="text-decoration:underline;">Disclaimer</span> &middot; <span style="text-decoration:underline;">Terms</span> &middot; <a href="{{{RESEND_UNSUBSCRIBE_URL}}}" style="color:#9ca0ac;text-decoration:underline;">Unsubscribe</a></p>
 </div>
 </div>"""
 
