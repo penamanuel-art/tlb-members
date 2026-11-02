@@ -10630,6 +10630,8 @@ def _tira_actual():
                     "liga": (_j.get("liga") or "").upper(),
                     "nivel_label": "PLATINUM" if _nv in ("ELITE", "PLATINUM") else (_nv or "FREE"),
                     "profit_display": _signo + format(abs(int(round(_p))), ","),
+                    "profit_u": (("+" if _p > 0 else ("-" if _p < 0 else ""))
+                                 + f"{abs(_p) / 100.0:.2f}u"),
                     "stake_display": _stake}
 
         _plat_n, _plat_plays, _plat_last = 0, [], None
