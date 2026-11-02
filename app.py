@@ -13123,9 +13123,16 @@ def resultados():
 @app.route("/ev-board")
 @login_required
 def ev_board():
-    # PROGRAMA VALUE ELIMINADO (2026-11-02, orden de Alex): el +EV Board
-    # se retira; todo link viejo aterriza en el home.
-    return redirect(url_for("home"))
+    db = get_db()
+    record_checkin(db, session["user_id"])
+    # +EV Board estilo WGT (2026-11-02, orden de Alex: «móntalo como
+    # ellos»): herramienta SOLO de exhibición para Platinum — el board
+    # muestra edges en vivo contra el precio justo de Pinnacle; NO hay
+    # récord simulado, NO hay página de resultados y NO se trackea nada.
+    # El programa VALUE (simulador) sigue ELIMINADO.
+    if not platinum_unlocked_for(current_user()):
+        return redirect(url_for("desbloquear_platinum"))
+    return render_template("ev_board.html", board=load_ev_board())
 
 
 @app.route("/ev-board/results")
