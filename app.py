@@ -2790,6 +2790,59 @@ def back(fallback="home"):
 init_db()  # idempotente: crea las tablas si no existen
 
 
+def _ensure_mybets_schema():
+    """Tablas de My Bets completo (2026-10-23, pedido por Alex: agregar
+    TODO lo del tracker de referencia): apuestas propias del miembro y
+    sus ajustes. Idempotente; dialecto según USE_PG."""
+    try:
+        conn = _raw_connect()
+        if USE_PG:
+            conn.execute("""CREATE TABLE IF NOT EXISTS own_bets (
+                id SERIAL PRIMARY KEY,
+                user_id INTEGER NOT NULL REFERENCES users(id),
+                fecha TEXT NOT NULL, liga TEXT, juego TEXT, mercado TEXT,
+                pick TEXT NOT NULL, cuota INTEGER NOT NULL,
+                stake_monto DOUBLE PRECISION NOT NULL DEFAULT 0,
+                casa TEXT, resultado TEXT, cierre INTEGER,
+                event_id TEXT, lado TEXT, punto DOUBLE PRECISION,
+                foto TEXT, settled_at TEXT, created_at TEXT NOT NULL)""")
+            conn.execute("""CREATE TABLE IF NOT EXISTS mybets_settings (
+                user_id INTEGER PRIMARY KEY, unit_monto DOUBLE PRECISION,
+                email_pref TEXT NOT NULL DEFAULT 'daily', updated_at TEXT)""")
+        else:
+            conn.execute("""CREATE TABLE IF NOT EXISTS own_bets (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL REFERENCES users(id),
+                fecha TEXT NOT NULL, liga TEXT, juego TEXT, mercado TEXT,
+                pick TEXT NOT NULL, cuota INTEGER NOT NULL,
+                stake_monto REAL NOT NULL DEFAULT 0,
+                casa TEXT, resultado TEXT, cierre INTEGER,
+                event_id TEXT, lado TEXT, punto REAL,
+                foto TEXT, settled_at TEXT, created_at TEXT NOT NULL)""")
+            conn.execute("""CREATE TABLE IF NOT EXISTS mybets_settings (
+                user_id INTEGER PRIMARY KEY, unit_monto REAL,
+                email_pref TEXT NOT NULL DEFAULT 'daily', updated_at TEXT)""")
+        conn.execute("CREATE INDEX IF NOT EXISTS idx_own_user ON own_bets(user_id)")
+        try:
+            if USE_PG:
+                conn.execute("ALTER TABLE own_bets ADD COLUMN IF NOT EXISTS marcador TEXT")
+            else:
+                _cols = [r[1] for r in conn.execute("PRAGMA table_info(own_bets)").fetchall()]
+                if "marcador" not in _cols:
+                    conn.execute("ALTER TABLE own_bets ADD COLUMN marcador TEXT")
+        except Exception:
+            pass
+        conn.commit()
+        conn.close()
+    except Exception:
+        pass
+
+
+_ensure_mybets_schema()
+
+_ensure_mybets_schema()
+
+
 def migrate_db():
     """Migración segura: agrega columnas si faltan (sin borrar datos)."""
     conn = _raw_connect()
@@ -5043,6 +5096,250 @@ def admin_api_tracked_plays():
             "WHERE t.nivel IN ('ELITE', 'GOLD') AND u.email IS NOT NULL AND u.email != '' AND u.email_verified = 1"
         ).fetchall()
     return jsonify([{"email": r["email"], "play_id": r["play_id"], "fecha": r["fecha"], "nivel": r["nivel"], "pick": r["pick"], "cuota": r["cuota"], "stake_unidades": float(r["stake_unidades"] or 0), "stake_monto": float(r["stake_monto"] or 0)} for r in rows])
+
+
+# --- My Bets: API admin de apuestas propias (restaurado 2026-11-02:
+# las rutas se habían perdido en una limpieza; implementación original
+# del commit 6b5a6be9, última versión en d5d2f251, con float() en los
+# montos del GET por la regla Decimal/Postgres). ---
+
+
+def _own_profit(b):
+    """Profit en $ de una apuesta propia (W/L/P)."""
+    r = b.get("resultado")
+    stake = float(b.get("stake_monto") or 0)
+    if r == "W":
+        return stake * american_profit_ratio(b["cuota"])
+    if r == "L":
+        return -stake
+    return 0.0
+
+
+def _sync_own_bet_balance(db, old_bet, new_bet):
+    """Mueve solo el balance por casa del dueño de una apuesta propia
+    (pedido Alex 2026-10-23: cada miembro lleva su balance en cada casa
+    y se ajusta al liquidarse: si gana se le agrega el profit, si pierde
+    se le rebaja el monto apostado). Revierte el efecto del estado
+    anterior en su casa y aplica el del estado nuevo, así corregir un
+    resultado o desmarcarlo también cuadra. Sin casa registrada o sin
+    cambio de profit, no toca nada."""
+    try:
+        old_casa = (old_bet.get("casa") or "").strip()
+        new_casa = (new_bet.get("casa") or "").strip()
+        old_p = _own_profit(old_bet) if old_casa else 0.0
+        new_p = _own_profit(new_bet) if new_casa else 0.0
+        uid = old_bet.get("user_id") or new_bet.get("user_id")
+        if not uid:
+            return
+        pick = (new_bet.get("pick") or old_bet.get("pick") or "Bet")[:80]
+        if old_casa and old_p:
+            bump_book_balance(db, uid, old_casa, -old_p,
+                              concepto=f"Correction: {pick}")
+        if new_casa and new_p:
+            res = new_bet.get("resultado")
+            concepto = (f"Bet won: {pick}" if res == "W"
+                        else f"Bet lost: {pick}" if res == "L"
+                        else f"Bet settled: {pick}")
+            bump_book_balance(db, uid, new_casa, new_p, concepto=concepto)
+    except Exception:
+        pass
+
+
+def _mybets_settings(db, uid, user=None):
+    """Ajustes de My Bets del miembro (unidad en $ y correo)."""
+    row = None
+    try:
+        row = db.execute(
+            "SELECT * FROM mybets_settings WHERE user_id = ?", (uid,)
+        ).fetchone()
+    except Exception:
+        row = None
+    unit = None
+    pref = "daily"
+    if row:
+        unit = row["unit_monto"]
+        pref = row["email_pref"] or "daily"
+    if not unit:
+        br = None
+        if user is not None:
+            try:
+                br = user["bankroll"]
+            except Exception:
+                br = None
+        unit = round(float(br) * 0.01, 2) if br else 100.0
+    return {"unit_monto": float(unit), "email_pref": pref}
+
+
+def _settlement_pick_line(bet):
+    """Línea de la jugada (asunto y tarjeta): el pick del miembro más
+    su cuota, sin duplicarla si el texto ya la trae."""
+    pick_txt = (bet.get("pick") or "").strip()
+    odds_txt = fmt_odds(bet.get("cuota"))
+    if odds_txt != "—" and odds_txt not in pick_txt:
+        pick_txt = f"{pick_txt} {odds_txt}".strip()
+    return pick_txt
+
+
+def _settlement_stats_strip():
+    """Franja de estadísticas del correo de liquidación (diseño v5):
+    récord oficial EN VIVO desde data/archive.json vía program_stats()
+    — la misma fuente del Official Tracker. Nunca fijo; si no hay
+    datos, franja genérica sin números."""
+    try:
+        ps = program_stats()
+        w = int(ps.get("ganadas") or 0)
+        l = int(ps.get("perdidas") or 0)
+        if w + l:
+            wr = float(ps.get("win_rate") or 0.0)
+            return f"{w}-{l} RECORD · {wr:.1f}% WIN RATE · EVERY BET TRACKED"
+    except Exception:
+        pass
+    return "EVERY BET TRACKED · GRADED AUTOMATICALLY"
+
+
+def _settlement_email_html(bets, single=None):
+    """Correo de liquidación de My Bets con el diseño v5 aprobado por
+    Alex el 2026-10-23: banda negra con franja de estadísticas reales
+    del programa, título 36px en dos líneas, tarjetas blancas, botón
+    a My Bets y pie universal claro. Sin montos en ninguna parte."""
+    import html as _h
+    bets = list(bets or [])
+    if single is None:
+        single = len(bets) == 1
+    strip = _settlement_stats_strip()
+    if single and bets:
+        word = {"W": "WON", "L": "LOST", "P": "PUSHED"}.get(
+            (bets[0].get("resultado") or "").upper(), "SETTLED")
+        preheader = ("Your tracked bet settled: " + _settlement_pick_line(bets[0])
+                     + " — " + word + ". Your full running record is on My Bets.")
+        title_txt = "Your tracked bet settled: " + _settlement_pick_line(bets[0])
+        intro = "This tracked bet graded automatically:"
+    else:
+        w_ = sum(1 for b in bets if (b.get("resultado") or "").upper() == "W")
+        l_ = sum(1 for b in bets if (b.get("resultado") or "").upper() == "L")
+        preheader = ("Your tracked bets settled: " + str(w_) + "-" + str(l_)
+                     + ". Your full running record is on My Bets.")
+        title_txt = "Your tracked bets settled"
+        intro = "These tracked bets graded automatically:"
+    spacer = "<div style=\"font-size:0;line-height:0;height:12px;\">&nbsp;</div>"
+    cards = spacer.join(_settlement_card_html(b) for b in bets)
+    now = datetime.now(TZ)
+    hora = now.strftime("%I:%M %p").lstrip("0")
+    ts = now.strftime("%b") + " " + str(now.day) + ", " + str(now.year) + " · " + hora + " ET"
+    return ("<!DOCTYPE html>\n"
+            "<html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">"
+            "<title>" + _h.escape(title_txt) + "</title></head>\n"
+            "<body style=\"margin:0;padding:0;background:#f7f9fc;font-family:-apple-system,Helvetica,Arial,sans-serif;-webkit-text-size-adjust:100%;text-size-adjust:100%;\">\n"
+            "<div style=\"display:none;font-size:0.8px;line-height:1px;max-height:0;overflow:hidden;\">" + _h.escape(preheader) + "</div>\n"
+            "<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#f7f9fc;-webkit-text-size-adjust:100%;text-size-adjust:100%;\">\n"
+            "<tr><td align=\"center\" style=\"padding:0;\">\n"
+            "<table role=\"presentation\" width=\"520\" cellpadding=\"0\" cellspacing=\"0\" style=\"max-width:520px;width:100%;background:#ffffff;-webkit-text-size-adjust:100%;text-size-adjust:100%;\">\n"
+            "  <tr><td style=\"background:#000000;padding:18px 24px 16px;text-align:center;\">\n"
+            "    <div style=\"color:#2ee6a8;font-size:7.6px;font-weight:800;letter-spacing:2px;text-transform:uppercase;white-space:nowrap;\">" + _h.escape(strip) + "</div>\n"
+            "    <img src=\"https://www.thesharpteam.bet/static/img/sharp-team-header.jpg\" alt=\"The Sharp Team\" style=\"width:100%;height:auto;display:block;border:0;margin-top:12px;\">\n"
+            "    <div style=\"color:#2ee6a8;font-size:7.6px;font-weight:800;letter-spacing:2.5px;margin-top:3px;\">MY BETS · SETTLEMENT</div>\n"
+            "  </td></tr>\n"
+            "  <tr><td style=\"background:#ffffff;padding:22px 24px 4px;text-align:center;\">\n"
+            "    <div style=\"color:#111111;font-size:27.5px;line-height:1.15;font-weight:900;text-align:center;\">Your tracker just<br><span style=\"color:#0e9f74;\">updated.</span></div>\n"
+            "    <p style=\"font-size:10.7px;line-height:1.55;color:#5b6b84;margin:9px 0 0;\">" + intro + "</p>\n"
+            "  </td></tr>\n"
+            "  <tr><td style=\"background:#ffffff;padding:14px 24px 0;\">\n"
+            "    <div style=\"border-top:1px solid #e3e8f2;font-size:0;line-height:0;margin:0 0 16px;\">&nbsp;</div>\n"
+            "    " + cards + "\n"
+            "    <p style=\"font-size:10.7px;line-height:1.55;color:#33415e;text-align:center;margin:16px 0 0;\">Your full running record is on <b style=\"color:#0c1638;\">My Bets</b> — every bet, graded automatically.</p>\n"
+            "    <div style=\"text-align:center;margin-top:14px;\"><a href=\"https://www.thesharpteam.bet/tracker\" style=\"display:inline-block;background:#2ee6a8;color:#0c1638;font-size:10.7px;font-weight:900;padding:12px 26px;border-radius:999px;text-decoration:none;\">OPEN MY BETS &rarr;</a></div>\n"
+            "    <p style=\"font-size:8.8px;line-height:1.55;color:#8494ad;text-align:center;margin:16px 0 0;\">Auto-graded from your tracked bets. Change frequency in My Bets &rarr; Settlement emails.</p>\n"
+            "    <div style=\"font-size:8.4px;color:#8494ad;text-align:center;margin-top:8px;\">" + ts + "</div>\n"
+            "  </td></tr>\n"
+            "  <tr><td style=\"background:#ffffff;border-top:1px solid #e3e8f2;padding:18px 24px 16px;text-align:center;\">\n"
+            "    <img src=\"https://www.thesharpteam.bet/static/img/sharp-team-logo.png\" width=\"44\" alt=\"The Sharp Team\" style=\"display:block;margin:0 auto 5px;\">\n"
+            "    <div style=\"font-size:8.4px;font-weight:800;color:#0c1638;letter-spacing:1px;\">THE SHARP TEAM</div>\n"
+            "    <div style=\"font-size:8.1px;color:#8494ad;margin-top:3px;\">250 Park Avenue, Suite 1800, New York, NY 10017 · (551) 326-3312</div>\n"
+            "    <div style=\"font-size:8.1px;color:#8494ad;margin-top:8px;\">Daily plays, results and receipts: <a href=\"https://t.me/thesharpteam\" style=\"color:#0e9f74;text-decoration:none;\">t.me/thesharpteam</a></div>\n"
+            "    <div style=\"font-size:8.1px;color:#8494ad;line-height:1.5;margin-top:10px;\">21+. Play responsibly. If you or someone you know has a gambling problem, call or text 1-800-GAMBLER.</div>\n"
+            "    <div style=\"font-size:8.1px;color:#8494ad;line-height:1.5;margin-top:6px;\">Must be 21+. The Sharp Team provides information and entertainment only and is not a sportsbook. Past results do not guarantee future performance. 1u = $100.</div>\n"
+            "    <div style=\"font-size:8.1px;color:#8494ad;margin-top:5px;\">&copy; 2026 The Sharp Team. All rights reserved.</div>\n"
+            "  </td></tr>\n"
+            "</table>\n"
+            "</td></tr></table>\n"
+            "</body></html>")
+
+
+def _email_own_settled(user, bet):
+    """Correo inmediato de liquidación de una apuesta propia (si el
+    miembro eligió 'immediate' en sus ajustes de My Bets). Diseño v5
+    aprobado por Alex el 2026-10-23: solo si ganó o perdió, sin
+    montos de ganancia."""
+    try:
+        db = get_db()
+        st = _mybets_settings(db, user["id"], user)
+        if st["email_pref"] != "immediate":
+            return
+        res = bet.get("resultado")
+        if res not in ("W", "L", "P"):
+            return
+        word = {"W": "won", "L": "lost", "P": "pushed"}[res]
+        pick_line = _settlement_pick_line(bet)
+        subject = f"Your tracked bet settled: {pick_line}"
+        text = (f"Your tracked bet settled: {pick_line} — {word}. "
+                f"Your full running record is on My Bets: "
+                f"https://www.thesharpteam.bet/tracker")
+        html = _settlement_email_html([bet], single=True)
+        _dispatch_email(user["email"], subject, text, html)
+    except Exception:
+        pass
+
+
+@app.route("/admin/api/own-bets/open")
+def api_own_bets_open():
+    if not _admin_api_autorizado():
+        return jsonify({"ok": False}), 403
+    db = get_db()
+    rows = db.execute(
+        "SELECT * FROM own_bets WHERE resultado IS NULL AND event_id IS NOT NULL"
+    ).fetchall()
+    from decimal import Decimal
+    bets = []
+    for r in rows:
+        d = dict(r)
+        for k, v in d.items():
+            if isinstance(v, Decimal):
+                d[k] = float(v)
+        bets.append(d)
+    return jsonify({"ok": True, "bets": bets})
+
+
+@app.route("/admin/api/own-bets/grade", methods=["POST"])
+def api_own_bets_grade():
+    if not _admin_api_autorizado():
+        return jsonify({"ok": False}), 403
+    data = request.get_json(silent=True) or {}
+    resultado = (data.get("resultado") or "").strip()
+    if resultado not in ("W", "L", "P"):
+        return jsonify({"ok": False, "error": "resultado"}), 400
+    db = get_db()
+    row = db.execute("SELECT * FROM own_bets WHERE id = ?",
+                     (data.get("id"),)).fetchone()
+    if not row:
+        return jsonify({"ok": False, "error": "not found"}), 404
+    cierre = data.get("cierre") or row["cierre"]
+    marcador = (data.get("marcador") or "").strip() or None
+    db.execute(
+        "UPDATE own_bets SET resultado = ?, cierre = ?, marcador = ?, settled_at = ? WHERE id = ?",
+        (resultado, cierre, marcador, datetime.now(TZ).strftime("%Y-%m-%d %H:%M"), row["id"]))
+    _nb = dict(row)
+    _nb["resultado"] = resultado
+    _sync_own_bet_balance(db, dict(row), _nb)
+    db.commit()
+    owner = db.execute("SELECT * FROM users WHERE id = ?",
+                       (row["user_id"],)).fetchone()
+    if owner:
+        bet = dict(row)
+        bet.update({"resultado": resultado, "cierre": cierre})
+        if marcador:
+            bet["marcador"] = marcador
+        _email_own_settled(owner, bet)
+    return jsonify({"ok": True})
 
 
 @app.route("/admin/miembros/platinum", methods=["POST"])
