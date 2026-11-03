@@ -369,6 +369,14 @@
      con los TRES pisos nuevos: Platinum, Gold y Free Pick plays. El resto
      de la implementación de la noche (pisos, menú reducido, tiles
      uniformes) NO se toca. #}
+  {# Aviso de pago fallido SOBRE la bienvenida (2026-11-03, orden de Alex): el mismo banner de base_v2,
+     con la misma condicion past_due (context processor, stripe_past_due=1). En las vistas de Admin ya no sale. #}
+  {% if past_due %}
+  <div class="tst-pastdue" role="alert">
+    <p>⚠️ Your last payment didn't go through, so your membership is past due and access is paused.</p>
+    <a href="{{ url_for('actualizar_tarjeta') }}">Update your card to restore it →</a>
+  </div>
+  {% endif %}
   <div class="hero">
     <div class="photo"></div>
     <div class="inner">
@@ -1101,6 +1109,13 @@ body{background-color:#0B0E13!important;background-image:radial-gradient(560px 3
 .hero{background:#1F232E!important}
 /* Saludo de bienvenida UN POCO mas grueso (orden de Alex 2026-11-03: «ponle las letras del saludo un poco mas gorditas»): el titular del saludo (.phone .greet y el span del nombre) sube UN paso, de 300 (light, fijado el 2026-11-02) a 400. Solo font-weight del saludo: tamano, colores, tagline, tarjeta de estado y el fondo #1F232E quedan intactos. */
 .phone .greet,.phone .greet span{font-weight:400!important}
+/* Aviso de pago fallido EN EL DASHBOARD (2026-11-03, orden de Alex: «ese mensaje debe salir en el Dashboard de miembro y no en su Admin»):
+   el MISMO banner amarillo/marron de base_v2 — estilos copiados tal cual de style-v2.css (.v2-pastdue, con sus vars resueltas:
+   --v2-gold=#f5c542, --v2-shadow-sm=0 2px 12px rgba(0,0,0,.35)) — y la MISMA condicion past_due del context processor.
+   margin-bottom 8px + el margin-top 14px propio de .hero = los 22px de separacion que el banner tiene en las demas paginas. */
+.tst-pastdue{background:linear-gradient(180deg,#3a2a12,#2b2010);border:1px solid rgba(245,197,66,.4);border-radius:20px;padding:19px 20px;margin:0 0 8px;box-shadow:0 2px 12px rgba(0,0,0,.35)}
+.tst-pastdue p{margin:0;font-size:15.5px;font-weight:700;color:#ffe1a1;line-height:1.5}
+.tst-pastdue a{display:inline-block;margin-top:10px;color:#f5c542;font-weight:800;font-size:16px}
 .tst-stickyhead{background:#0B0E13!important}
 #tst-menu-sheet{background:#0B0E13!important}
 .v2-bottomnav{background:#0B0E13!important}
