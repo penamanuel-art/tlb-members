@@ -11,6 +11,7 @@
   .mx-status.plat{background:linear-gradient(180deg,#cdf3ff,#63cbf5);color:#07304a;}
   .mx-status.free{background:#22345c;color:#aebdd4;}
   .mx-status.adm{background:#22c55e;color:#08130c;}
+  .mx-status.due{background:#7f1d1d;color:#fecaca;}
   .mx-more{color:#7dd3fc;font-size:12.5px;font-weight:700;flex:none;white-space:nowrap;}
   .av-head{display:flex;align-items:center;gap:10px;margin:26px 0 10px;}
   .av-title{font-size:17px;font-weight:900;letter-spacing:1.5px;color:#ffffff;}
@@ -123,6 +124,7 @@
     <span class="mx-av">{{ (m.nombre or '?')[:1]|upper }}</span>
     <span class="mx-nm">{{ m.nombre }}{% if m.es_nuevo %} <span class="mx-new">● NEW</span>{% endif %}</span>
     {% if m.is_admin %}<span class="mx-status adm">ADMIN</span>
+    {% elif m.stripe_past_due %}<span class="mx-status due">⚠ PAST DUE</span>
     {% elif m.platinum_unlocked %}<span class="mx-status plat">★ PLATINUM</span>
     {% else %}<span class="mx-status free">FREE</span>{% endif %}
     <span class="mx-more">Ver más →</span>
@@ -145,6 +147,7 @@
     <span class="mx-av">{{ (m.nombre or '?')[:1]|upper }}</span>
     <span class="mx-nm">{{ m.nombre }}{% if m.es_nuevo %} <span class="mx-new">● NEW</span>{% endif %}</span>
     {% if m.is_admin %}<span class="mx-status adm">ADMIN</span>
+    {% elif m.stripe_past_due %}<span class="mx-status due">⚠ PAST DUE</span>
     {% elif m.platinum_unlocked %}<span class="mx-status plat">★ PLATINUM</span>
     {% else %}<span class="mx-status free">FREE</span>{% endif %}
     <span class="mx-more">Ver más →</span>
@@ -167,6 +170,7 @@
     <span class="mx-av">{{ (m.nombre or '?')[:1]|upper }}</span>
     <span class="mx-nm">{{ m.nombre }}{% if m.es_nuevo %} <span class="mx-new">● NEW</span>{% endif %}</span>
     {% if m.is_admin %}<span class="mx-status adm">ADMIN</span>
+    {% elif m.stripe_past_due %}<span class="mx-status due">⚠ PAST DUE</span>
     {% elif m.platinum_unlocked %}<span class="mx-status plat">★ PLATINUM</span>
     {% else %}<span class="mx-status free">FREE</span>{% endif %}
     <span class="mx-more">Ver más →</span>
