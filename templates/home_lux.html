@@ -288,7 +288,15 @@
 
 <div class="phone">
   <div class="tst-stickyhead">
-  {% if tira_home %}
+  {# Slot superior de tirita (2026-11-03, orden de Alex: «Ponla arriba donde dice Platinum, cuatro seguidos»): UNA sola tirita a la vez.
+     Si el miembro esta past_due, en este slot sale el AVISO de pago fallido (precedencia sobre la racha); si no, sale la racha
+     (tira_home) con su logica y condicion originales, intactas. El aviso conserva sus colores y su tamano fino (.tst-pastdue). #}
+  {% if past_due %}
+  <div class="tst-pastdue" role="alert">
+    <p>⚠️ Your last payment didn't go through, so your membership is past due and access is paused.</p>
+    <a href="{{ url_for('actualizar_tarjeta') }}">Update your card to restore it →</a>
+  </div>
+  {% elif tira_home %}
   <div style="display:flex;align-items:center;justify-content:center;background:#1E222B;border:1px solid #262C36;border-radius:14px;padding:7px 16px;margin:0 0 8px;overflow:hidden;box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 6px 16px rgba(0,0,0,.35);">
     <span style="font-size:13px;font-weight:400;letter-spacing:.4px;color:#F0D47C;white-space:nowrap;flex:1;text-align:center;">{% if tira_home.tipo == 'plat' %}&#128142; PLATINUM &middot; {{ tira_home.n }} WINS IN A ROW{% else %}&#128293; {{ tira_home.n }} WINNING DAYS IN A ROW{% endif %}</span>
   </div>
@@ -776,16 +784,7 @@
     <p class="tst-foot-legal">Odds and data come from third-party sources and may move or be delayed.</p>
     <p class="tst-foot-resp">Play responsibly · 21+ · If you or someone you know has a gambling problem, call <a href="tel:1800426537">1-800-GAMBLER</a> (1-800-426-2537), free and confidential help, 24/7. · <a href="/terms">Terms</a> · <a href="/privacy">Privacy</a></p>
   </footer>
-  {# Aviso de pago fallido FIJO Y PERMANENTE encima de la barra de navegacion inferior (2026-11-03 4:00 PM, correccion de Alex:
-     «que quede permanente por encima de los botones del menu de abajo» — el placement anterior al final scrolleable de la pagina
-     quedo SUPERADO porque no se veia). La clase .tst-pastdue (bloque <style> final) lo fija con position:fixed sobre .v2-bottomnav;
-     su posicion en el DOM es indiferente. Misma condicion past_due (context processor, stripe_past_due=1). En Admin no sale. #}
-  {% if past_due %}
-  <div class="tst-pastdue" role="alert">
-    <p>⚠️ Your last payment didn't go through, so your membership is past due and access is paused.</p>
-    <a href="{{ url_for('actualizar_tarjeta') }}">Update your card to restore it →</a>
-  </div>
-  {% endif %}
+  {# El aviso de pago fallido (.tst-pastdue) se renderiza ARRIBA, en el slot de la tirita de racha dentro de .tst-stickyhead. #}
 </div>
 
 <div id="tst-update-menu" class="updatemenu" hidden>
@@ -1118,14 +1117,15 @@ body{background-color:#0B0E13!important;background-image:radial-gradient(560px 3
    2026-11-03 (tarde): version COMPACTA y con LETRAS FINAS por orden de Alex («lo mas chiquito, letras finas, nada negrita») —
    padding 7px 12px, radio 10px, letra 13px, font-weight 400 en texto y enlace; el mismo ajuste se aplico a .v2-pastdue en style-v2.css.
    2026-11-03 (4:00 PM): FIJO Y PERMANENTE encima de la barra inferior por correccion de Alex («que quede permanente por encima
-   de los botones del menu de abajo» + «mas pequeno»): position:fixed anclado sobre .v2-bottomnav (alto real de la barra: ~63px +
-   safe-area; z-index 1001 -> el aviso va en 1002), bottom = 63px + 7px de margen + safe-area; tamano minimo: letra 11.5px,
-   padding 5px 10px, radio 8px, texto y enlace en una misma linea de flujo (display:inline). Solo con past_due, .phone gana
-   padding-bottom extra (132px + safe-area) para que el aviso fijo + la barra no tapen el final del contenido. */
-.tst-pastdue{position:fixed;left:10px;right:10px;bottom:calc(70px + env(safe-area-inset-bottom));z-index:1002;background:linear-gradient(180deg,#3a2a12,#2b2010);border:1px solid rgba(245,197,66,.4);border-radius:8px;padding:5px 10px;margin:0;box-shadow:0 2px 12px rgba(0,0,0,.35)}
+   de los botones del menu de abajo» + «mas pequeno»): tamano minimo: letra 11.5px, padding 5px 10px, radio 8px, texto y
+   enlace en una misma linea de flujo (display:inline).
+   2026-11-03 (4:02 PM): el aviso se muda al SLOT DE LA TIRITA DE RACHA, arriba de todo (orden de Alex: «Ponla arriba donde
+   dice Platinum, cuatro seguidos») — este placement SUPERSEDE el fijo sobre la barra inferior (commit bc9fda2): se retiran
+   position:fixed/bottom/z-index y el padding-bottom condicional de .phone (vuelve a su padding normal de 90px de la regla
+   base). En el slot el aviso lleva margin 0 0 8px, el mismo del div de la racha al que sustituye cuando hay past_due. */
+.tst-pastdue{background:linear-gradient(180deg,#3a2a12,#2b2010);border:1px solid rgba(245,197,66,.4);border-radius:8px;padding:5px 10px;margin:0 0 8px;box-shadow:0 2px 12px rgba(0,0,0,.35)}
 .tst-pastdue p{display:inline;margin:0;font-size:11.5px;font-weight:400;color:#ffe1a1;line-height:1.3}
 .tst-pastdue a{display:inline;margin:0;color:#f5c542;font-weight:400;font-size:11.5px}
-{% if past_due %}.phone{padding-bottom:calc(132px + env(safe-area-inset-bottom))}{% endif %}
 .tst-stickyhead{background:#0B0E13!important}
 #tst-menu-sheet{background:#0B0E13!important}
 .v2-bottomnav{background:#0B0E13!important}
