@@ -52,7 +52,7 @@
 <div class="acct-pane" id="pane-overview">
   <div class="acct-card">
     <p class="acct-k">YOUR PLAN</p>
-    {% if platinum %}<span class="acct-badge">PLATINUM</span>{% else %}<span class="acct-badge-gold">SHARP FREE</span>{% endif %}
+    {% if past_due %}<span class="acct-badge" style="background:rgba(220,38,38,.18);color:#f87171;">PAST DUE</span>{% elif platinum %}<span class="acct-badge">PLATINUM</span>{% else %}<span class="acct-badge-gold">SHARP FREE</span>{% endif %}
     <p class="acct-k" style="margin-top:18px;">WHAT YOU HAVE ACCESS TO</p>
     {% if platinum %}
     <p style="font-size:15px;color:#d1d5db;margin:4px 0;"><span style="color:#22c55e;">●</span>&nbsp; Platinum Plays — every official play, every day</p>
