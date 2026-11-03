@@ -1112,10 +1112,12 @@ body{background-color:#0B0E13!important;background-image:radial-gradient(560px 3
 /* Aviso de pago fallido EN EL DASHBOARD (2026-11-03, orden de Alex: «ese mensaje debe salir en el Dashboard de miembro y no en su Admin»):
    el MISMO banner amarillo/marron de base_v2 — estilos copiados tal cual de style-v2.css (.v2-pastdue, con sus vars resueltas:
    --v2-gold=#f5c542, --v2-shadow-sm=0 2px 12px rgba(0,0,0,.35)) — y la MISMA condicion past_due del context processor.
-   margin-bottom 8px + el margin-top 14px propio de .hero = los 22px de separacion que el banner tiene en las demas paginas. */
-.tst-pastdue{background:linear-gradient(180deg,#3a2a12,#2b2010);border:1px solid rgba(245,197,66,.4);border-radius:20px;padding:19px 20px;margin:0 0 8px;box-shadow:0 2px 12px rgba(0,0,0,.35)}
-.tst-pastdue p{margin:0;font-size:15.5px;font-weight:700;color:#ffe1a1;line-height:1.5}
-.tst-pastdue a{display:inline-block;margin-top:10px;color:#f5c542;font-weight:800;font-size:16px}
+   margin-bottom 8px + el margin-top 14px propio de .hero = los 22px de separacion que el banner tiene en las demas paginas.
+   2026-11-03 (tarde): version COMPACTA y con LETRAS FINAS por orden de Alex («lo mas chiquito, letras finas, nada negrita») —
+   padding 7px 12px, radio 10px, letra 13px, font-weight 400 en texto y enlace; el mismo ajuste se aplico a .v2-pastdue en style-v2.css. */
+.tst-pastdue{background:linear-gradient(180deg,#3a2a12,#2b2010);border:1px solid rgba(245,197,66,.4);border-radius:10px;padding:7px 12px;margin:0 0 8px;box-shadow:0 2px 12px rgba(0,0,0,.35)}
+.tst-pastdue p{margin:0;font-size:13px;font-weight:400;color:#ffe1a1;line-height:1.35}
+.tst-pastdue a{display:inline-block;margin-top:2px;color:#f5c542;font-weight:400;font-size:13px}
 .tst-stickyhead{background:#0B0E13!important}
 #tst-menu-sheet{background:#0B0E13!important}
 .v2-bottomnav{background:#0B0E13!important}
