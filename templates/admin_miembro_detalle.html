@@ -12,6 +12,7 @@
   .mx-status.plat{background:linear-gradient(180deg,#cdf3ff,#63cbf5);color:#07304a;}
   .mx-status.free{background:#22345c;color:#aebdd4;}
   .mx-status.adm{background:#22c55e;color:#08130c;}
+  .mx-status.due{background:#7f1d1d;color:#fecaca;}
   .mx-rows{margin-top:14px;border-top:1px solid #1e2a45;padding-top:12px;display:flex;flex-direction:column;gap:8px;}
   .mx-row{display:flex;justify-content:space-between;align-items:center;font-size:13.5px;gap:10px;}
   .mx-row .k{color:#8fa1bd;}
@@ -42,6 +43,7 @@
       <div class="mx-email">{{ m.email }}</div>
     </div>
     {% if m.is_admin %}<span class="mx-status adm">ADMIN</span>
+    {% elif m.stripe_past_due %}<span class="mx-status due">⚠ PAST DUE</span>
     {% elif m.platinum_unlocked %}<span class="mx-status plat">★ PLATINUM</span>
     {% else %}<span class="mx-status free">FREE</span>{% endif %}
   </div>
@@ -60,7 +62,8 @@
   <div class="mx-rows" style="margin-top:0;border-top:none;padding-top:0;">
     {% if m.platinum_unlocked %}
     <div class="mx-row"><span class="k">💎 Platinum</span>
-      {% if m.platinum_trial_ends %}<span class="v gold">Free month · Until {{ m.platinum_trial_ends[:10] }}</span>
+      {% if m.stripe_past_due %}<span class="v red">On hold · Past due</span>
+      {% elif m.platinum_trial_ends %}<span class="v gold">Free month · Until {{ m.platinum_trial_ends[:10] }}</span>
       {% elif m.stripe_subscription_id %}<span class="v gold">Active · Stripe</span>
       {% else %}<span class="v gold">Active · No expiry</span>{% endif %}
     </div>
