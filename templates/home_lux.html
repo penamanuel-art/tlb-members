@@ -401,44 +401,7 @@
   </div>
   {% endif %}
 
-  <div style="display:flex;align-items:center;gap:10px;margin:12px 0 16px;">
-  <div id="tst-tour-open" onclick="if(window.tstStartTour)window.tstStartTour()" style="flex:0 0 auto;background:#151D17;border:1px solid rgba(190,242,160,.16);border-radius:10px;padding:6px 11px;cursor:pointer;color:#C4DFB0;font-size:12.5px;font-weight:300;letter-spacing:.2px;white-space:nowrap;">Take the quick tour <span style="font-weight:800;">↗</span></div>
-  <button class="tst-refresh" type="button" onclick="location.reload()">↻ Refresh</button>
-  </div>
-
-  <!-- 2026-11-01 PM: Find Your Edge encerrado en un solo cuadro (orden de Alex: «es AQUI») -->
-  <section id="tour-edge" style="margin:0 0 22px;background:linear-gradient(180deg,#20242E,#1B1F27);border:1px solid #343B47;border-radius:20px;padding:18px 16px;">
-  <h2 style="margin:0 0 2px;font-size:22px;font-weight:400;">Find Your Edge</h2>
-  <p style="margin:0 0 12px;color:#A3AAB6;font-size:12.5px;font-weight:300;">Real edges, ranked daily.</p>
-  <div class="tiles">
-    <a class="tile" href="{{ url_for('game_center') }}"><div class="ic">◎</div><span class="arr">›</span><b>Odds</b><p>Live scores, every price, the fair line and the edge.</p></a>
-    <a class="tile" href="{{ url_for('tracker') }}"><div class="ic">♛</div><span class="arr">›</span><b>My Bets</b><p>Track your plays, results and your performance.</p></a>
-    <a class="tile" href="{{ url_for('tools') }}"><div class="ic">▂</div><span class="arr">›</span><b>Tools</b><p>The sharpest tools for smarter plays.</p></a>
-  </div>
-
-  <div class="tiles">
-    <a class="tile" href="{{ url_for('ev_board') if miembro_platinum else url_for('desbloquear_platinum') }}"><div class="ic">⚡</div><span class="arr">›</span><b>+EV Board</b><p>Positive-edge plays, ranked by value daily.</p></a>
-    <a class="tile" href="{{ url_for('props') if miembro_platinum else url_for('desbloquear_platinum') }}"><div class="ic">🎯</div><span class="arr">›</span><b>Player Props</b><p>Prop edges on players across every book.</p></a>
-    <a class="tile" href="{{ url_for('tools_line_moves') if miembro_platinum else url_for('desbloquear_platinum') }}"><div class="ic">↗</div><span class="arr">›</span><b>Line Moves</b><p>Sharp money and line moves, tracked live.</p></a>
-  </div>
-  </section>
-
-  <div class="risk">
-    <div class="shield">⬢</div>
-    <div class="left">
-      <div class="label">YOUR RISK TODAY</div>
-      {% if risk_hoy %}
-      <b>${{ '%.2f'|format(risk_hoy.total) }} at risk today</b>
-      <span>• {{ risk_hoy.pct }}% of your bankroll <span style="white-space:nowrap">• {{ risk_hoy.n }} {% if risk_hoy.n == 1 %}play{% else %}plays{% endif %}</span></span>
-      {% else %}
-      <b>— at risk today</b>
-      <span>• —% of your bankroll <span style="white-space:nowrap">• — plays</span></span>
-      {% endif %}
-    </div>
-    <div class="right">Discipline builds long‑term profits. ↗</div>
-  </div>
-
-
+  {# 2026-11-03: «Your plays» vive AQUI — justo despues de Live scores y antes de Find Your Edge (orden de Alex). Antes estaba despues de YOUR RISK TODAY. Sin cambios de ids/clases/JS: todo se busca por selector. #}
   {% if plays %}<div class="tst-playshead"><h2>Your plays</h2><button class="tst-refresh" type="button" style="margin-left:auto" onclick="location.reload()">↻ Refresh</button>{% set hay_gratis = plays|selectattr('nivel','equalto','FREE')|list|length > 0 %}{% set hay_gold = plays|selectattr('nivel','equalto','GOLD')|list|length > 0 %}{% if miembro_platinum or hay_gratis %}<div class="tst-playslevels">{% if miembro_platinum %}{% if hay_gratis %}<span class="tst-playslevel">Free Picks</span>{% endif %}{% if hay_gold %}<span class="tst-playslevel">Gold</span>{% endif %}<span class="tst-playslevel">Platinum</span>{% elif hay_gratis %}<span class="tst-playslevel">Free Picks</span>{% endif %}</div>{% endif %}</div><div class="tst-officials"><span class="tst-officials-pill">OFFICIALS</span><span class="tst-officials-n">{% if miembro_platinum %}{{ plays|length }} {% if plays|length == 1 %}play{% else %}plays{% endif %}{% else %}{{ plays|selectattr('nivel','equalto','FREE')|list|length }} {% if plays|selectattr('nivel','equalto','FREE')|list|length == 1 %}play{% else %}plays{% endif %}{% endif %}</span></div>{% endif %}
   {% set tracked_ids = tracked_ids|default([]) %}
   {% set frees = plays|selectattr('nivel','equalto','FREE')|list %}
@@ -541,6 +504,45 @@
     <p class="hpc-fine">$1 for your first week, then $15.99/week. Cancel anytime.</p>
   </div>
   {% endif %}
+
+  <div style="display:flex;align-items:center;gap:10px;margin:12px 0 16px;">
+  <div id="tst-tour-open" onclick="if(window.tstStartTour)window.tstStartTour()" style="flex:0 0 auto;background:#151D17;border:1px solid rgba(190,242,160,.16);border-radius:10px;padding:6px 11px;cursor:pointer;color:#C4DFB0;font-size:12.5px;font-weight:300;letter-spacing:.2px;white-space:nowrap;">Take the quick tour <span style="font-weight:800;">↗</span></div>
+  <button class="tst-refresh" type="button" onclick="location.reload()">↻ Refresh</button>
+  </div>
+
+  <!-- 2026-11-01 PM: Find Your Edge encerrado en un solo cuadro (orden de Alex: «es AQUI») -->
+  <section id="tour-edge" style="margin:0 0 22px;background:linear-gradient(180deg,#20242E,#1B1F27);border:1px solid #343B47;border-radius:20px;padding:18px 16px;">
+  <h2 style="margin:0 0 2px;font-size:22px;font-weight:400;">Find Your Edge</h2>
+  <p style="margin:0 0 12px;color:#A3AAB6;font-size:12.5px;font-weight:300;">Real edges, ranked daily.</p>
+  <div class="tiles">
+    <a class="tile" href="{{ url_for('game_center') }}"><div class="ic">◎</div><span class="arr">›</span><b>Odds</b><p>Live scores, every price, the fair line and the edge.</p></a>
+    <a class="tile" href="{{ url_for('tracker') }}"><div class="ic">♛</div><span class="arr">›</span><b>My Bets</b><p>Track your plays, results and your performance.</p></a>
+    <a class="tile" href="{{ url_for('tools') }}"><div class="ic">▂</div><span class="arr">›</span><b>Tools</b><p>The sharpest tools for smarter plays.</p></a>
+  </div>
+
+  <div class="tiles">
+    <a class="tile" href="{{ url_for('ev_board') if miembro_platinum else url_for('desbloquear_platinum') }}"><div class="ic">⚡</div><span class="arr">›</span><b>+EV Board</b><p>Positive-edge plays, ranked by value daily.</p></a>
+    <a class="tile" href="{{ url_for('props') if miembro_platinum else url_for('desbloquear_platinum') }}"><div class="ic">🎯</div><span class="arr">›</span><b>Player Props</b><p>Prop edges on players across every book.</p></a>
+    <a class="tile" href="{{ url_for('tools_line_moves') if miembro_platinum else url_for('desbloquear_platinum') }}"><div class="ic">↗</div><span class="arr">›</span><b>Line Moves</b><p>Sharp money and line moves, tracked live.</p></a>
+  </div>
+  </section>
+
+  <div class="risk">
+    <div class="shield">⬢</div>
+    <div class="left">
+      <div class="label">YOUR RISK TODAY</div>
+      {% if risk_hoy %}
+      <b>${{ '%.2f'|format(risk_hoy.total) }} at risk today</b>
+      <span>• {{ risk_hoy.pct }}% of your bankroll <span style="white-space:nowrap">• {{ risk_hoy.n }} {% if risk_hoy.n == 1 %}play{% else %}plays{% endif %}</span></span>
+      {% else %}
+      <b>— at risk today</b>
+      <span>• —% of your bankroll <span style="white-space:nowrap">• — plays</span></span>
+      {% endif %}
+    </div>
+    <div class="right">Discipline builds long‑term profits. ↗</div>
+  </div>
+
+
 
 
   {# Tarjetas anchas bloqueadas (Platinum plays / Player Props) ELIMINADAS del home (orden de Alex 2026-10-29): el gratis no ve ninguna tarjeta de jugadas Platinum; la unica oferta es la tarjeta NUEVA de planes (hpc) y /desbloquear-platinum. #}
