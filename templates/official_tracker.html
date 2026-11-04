@@ -125,6 +125,14 @@ a.fr-pill { text-decoration: none; cursor: pointer; }
 .fr-ticket img { width: 100%; height: 225px; object-fit: cover; object-position: top center; display: block; }
 .fr-badge { position: absolute; top: 8px; right: 8px; z-index: 2; background: #11CB87; color: #04150C; font-size: .8rem; font-weight: 800; padding: 5px 10px; border-radius: 999px; box-shadow: 0 3px 10px rgba(0,0,0,.45); }
 .fr-ticket figcaption { position: absolute; left: 0; right: 0; bottom: 0; padding: 22px 10px 9px; background: linear-gradient(transparent, rgba(4,8,6,.88)); color: #fff; font-size: .85rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ot-filters { margin: 2px 0 16px; }
+.ot-fgroup { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+.ot-fgroup:last-child { margin-bottom: 0; }
+.ot-flabel { font-size: 0.62rem; font-weight: 800; letter-spacing: 1.2px; color: #969EA9; flex: 0 0 54px; }
+.ot-chip { border: 1px solid rgba(255,255,255,.16); background: #1D2029; color: #c7cede; font-size: 0.78rem; font-weight: 700; padding: 7px 13px; border-radius: 999px; cursor: pointer; font-family: inherit; }
+.ot-chip.active { background: linear-gradient(135deg, #e8c766, #8a6d2f); color: #1a1405; border-color: transparent; }
+.ot-lrow { display: block; }
+#otFEmpty { display: none; text-align: center; color: #969EA9; font-size: 0.85rem; padding: 22px 10px; border: 1px dashed #2C313A; border-radius: 16px; }
 </style>
 
 {# Tarjeta de jugada — diseño nuevo aprobado por Alex (2026-10-16):
@@ -303,16 +311,36 @@ a.fr-pill { text-decoration: none; cursor: pointer; }
     {% for x in t.peor %}{{ yw_play(x, 'LOST') }}{% endfor %}
   </div>
 
-  <div class="ot-tabs">
-    <a class="ot-tab{% if programa == 'all' %} active{% endif %}" href="{{ url_for('official_tracker') }}">All plays</a>
-    <a class="ot-tab{% if programa == 'platinum' %} active{% endif %}" href="{{ url_for('official_tracker', programa='platinum') }}">⭐ Platinum</a>
-    <a class="ot-tab{% if programa == 'gold' %} active{% endif %}" href="{{ url_for('official_tracker', programa='gold') }}">⚪ Sharp Picks Free</a>
-  </div>
-
   <div class="ot-section">
-    <h2>{{ libro_titulo }} — the full ledger</h2>
-    <p class="ot-libro-stats">{{ libro|length }} plays, each with its original ticket.</p>
-    {% for x in libro %}{{ yw_play(x, x.resultado) }}{% endfor %}
+    <h2><span id="otFTitle">{{ libro_titulo }}</span> — the full ledger</h2>
+    <p class="ot-libro-stats">{{ t.historial|length }} plays, each with its original ticket. <span id="otFCount"></span></p>
+    <div class="ot-filters" id="otFilters">
+      <div class="ot-fgroup">
+        <span class="ot-flabel">LEVEL</span>
+        <button type="button" class="ot-chip" data-f="level" data-v="all">All</button>
+        <button type="button" class="ot-chip" data-f="level" data-v="platinum">Platinum</button>
+        <button type="button" class="ot-chip" data-f="level" data-v="gold">Gold</button>
+        <button type="button" class="ot-chip" data-f="level" data-v="free">Free Picks</button>
+      </div>
+      <div class="ot-fgroup">
+        <span class="ot-flabel">SPORT</span>
+        <button type="button" class="ot-chip" data-f="sport" data-v="all">All</button>
+        {% for _lg in t.historial|map(attribute='liga')|unique|list %}{% if _lg %}<button type="button" class="ot-chip" data-f="sport" data-v="{{ _lg|upper }}">{{ _lg }}</button>{% endif %}{% endfor %}
+      </div>
+      <div class="ot-fgroup">
+        <span class="ot-flabel">RESULT</span>
+        <button type="button" class="ot-chip" data-f="result" data-v="all">All</button>
+        <button type="button" class="ot-chip" data-f="result" data-v="WON">Won</button>
+        <button type="button" class="ot-chip" data-f="result" data-v="LOST">Lost</button>
+        <button type="button" class="ot-chip" data-f="result" data-v="PUSH">Push</button>
+      </div>
+    </div>
+    <div id="otLedger">
+    {% for x in t.historial %}
+    <div class="ot-lrow" data-level="{{ 'platinum' if x.nivel in ['ELITE','PLATINUM'] else ('gold' if x.nivel == 'GOLD' else ('free' if x.nivel == 'FREE' else 'other')) }}" data-sport="{{ (x.liga or '')|upper }}" data-result="{{ x.resultado }}">{{ yw_play(x, x.resultado) }}</div>
+    {% endfor %}
+    </div>
+    <div id="otFEmpty">No plays match these filters yet.</div>
   </div>
 
 </div>
@@ -324,6 +352,45 @@ a.fr-pill { text-decoration: none; cursor: pointer; }
 <script>
 function otZoom(src){ var m=document.getElementById('otModal'); document.getElementById('otModalImg').src=src; m.style.display='flex'; }
 function otClose(){ document.getElementById('otModal').style.display='none'; }
+(function(){
+  var rows=[].slice.call(document.querySelectorAll('#otLedger .ot-lrow'));
+  var bar=document.getElementById('otFilters'); if(!rows.length||!bar) return;
+  var state={level:'all',sport:'all',result:'all'};
+  var titles={all:'All official plays',platinum:'Platinum plays',gold:'Gold plays',free:'Free Picks'};
+  function counts(attr){ var c={}; rows.forEach(function(r){ var v=r.getAttribute(attr); c[v]=(c[v]||0)+1; }); return c; }
+  var cRes=counts('data-result'), cSport=counts('data-sport');
+  bar.querySelectorAll('.ot-chip').forEach(function(ch){
+    var f=ch.getAttribute('data-f'), v=ch.getAttribute('data-v');
+    if(v==='all') return;
+    if(f==='result' && !cRes[v]) ch.style.display='none';
+    if(f==='sport' && !cSport[v]) ch.style.display='none';
+  });
+  function apply(){
+    var n=0;
+    rows.forEach(function(r){
+      var ok=(state.level==='all'||r.getAttribute('data-level')===state.level)
+        &&(state.sport==='all'||r.getAttribute('data-sport')===state.sport)
+        &&(state.result==='all'||r.getAttribute('data-result')===state.result);
+      r.style.display=ok?'':'none'; if(ok)n++;
+    });
+    var c=document.getElementById('otFCount'); if(c) c.textContent=(n===rows.length)?'':'· Showing '+n+' of '+rows.length;
+    var e=document.getElementById('otFEmpty'); if(e) e.style.display=n?'none':'block';
+    bar.querySelectorAll('.ot-chip').forEach(function(ch){
+      ch.classList.toggle('active', state[ch.getAttribute('data-f')]===ch.getAttribute('data-v'));
+    });
+    var t=document.getElementById('otFTitle'); if(t&&titles[state.level]) t.textContent=titles[state.level];
+  }
+  bar.addEventListener('click',function(ev){
+    var ch=ev.target.closest('.ot-chip'); if(!ch) return;
+    state[ch.getAttribute('data-f')]=ch.getAttribute('data-v'); apply();
+  });
+  try{
+    var q=new URLSearchParams(location.search);
+    var p=(q.get('programa')||'').toLowerCase(); if(titles[p]) state.level=p;
+    var l=(q.get('liga')||'').toUpperCase(); if(l&&cSport[l]) state.sport=l;
+  }catch(e){}
+  apply();
+})();
 </script>
 <!-- ===== DASHBOARD TOUR v4 (recorrido completo multipagina, 2026-11-02) ===== -->
 <style>
