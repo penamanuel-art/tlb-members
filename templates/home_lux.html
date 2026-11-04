@@ -653,21 +653,24 @@
     {% endif %}
   {% endfor %}
   {% if _yd.dia and _yd.dia.jugadas %}
-  {% set _y = namespace(pw=0, pl=0, pu=0.0, pn=0, gw=0, gl=0, gu=0.0, gn=0, fw=0, fl=0, fu=0.0, fn=0) %}
+  {% set _y = namespace(pw=0, pl=0, pu=0.0, pn=0, gw=0, gl=0, gu=0.0, gn=0, fw=0, fl=0, fu=0.0, fn=0, pd=0.0, gd=0.0, fd=0.0) %}
   {% for _j in _yd.dia.jugadas %}
     {% if _j.resultado in ('WON','LOST','PUSH') and not _j.bloqueada %}
       {% set _u = (_j.profit|float * _j.stake_unidades|float / _j.stake_monto|float) if _j.stake_monto and _j.stake_unidades else (_j.profit|float / 100) %}
       {% if _j.nivel in ('ELITE','PLATINUM') %}
         {% set _y.pn = _y.pn + 1 %}
         {% set _y.pu = _y.pu + _u %}
+        {% set _y.pd = _y.pd + _j.profit|float %}
         {% if _j.resultado == 'WON' %}{% set _y.pw = _y.pw + 1 %}{% elif _j.resultado == 'LOST' %}{% set _y.pl = _y.pl + 1 %}{% endif %}
       {% elif _j.nivel == 'GOLD' %}
         {% set _y.gn = _y.gn + 1 %}
         {% set _y.gu = _y.gu + _u %}
+        {% set _y.gd = _y.gd + _j.profit|float %}
         {% if _j.resultado == 'WON' %}{% set _y.gw = _y.gw + 1 %}{% elif _j.resultado == 'LOST' %}{% set _y.gl = _y.gl + 1 %}{% endif %}
       {% elif _j.nivel == 'FREE' %}
         {% set _y.fn = _y.fn + 1 %}
         {% set _y.fu = _y.fu + _u %}
+        {% set _y.fd = _y.fd + _j.profit|float %}
         {% if _j.resultado == 'WON' %}{% set _y.fw = _y.fw + 1 %}{% elif _j.resultado == 'LOST' %}{% set _y.fl = _y.fl + 1 %}{% endif %}
       {% endif %}
     {% endif %}
@@ -676,17 +679,16 @@
   <div class="tst-ysec">
     <div class="tst-yhead"><h2>Yesterday<span>{{ _ymm[ayer_iso[5:7]] }} {{ ayer_iso[8:10]|int }} card</span></h2><a class="tst-fullbtn" href="{{ url_for('official_tracker') }}">↗ Full record</a></div>
     {% if _y.pn > 0 %}
-    <div class="tst-sumrow"><span class="tst-pill plat">PLATINUM</span><span class="tst-rec">{{ _y.pw }}-{{ _y.pl }}</span><span class="tst-units{% if _y.pu < 0 %} neg{% elif _y.pu > 0 %} pos{% endif %}">{{ '%+.2f'|format(_y.pu) }}u</span><span class="tst-graded">{{ _y.pn }} graded</span></div>
+    <div class="tst-sumrow"><span class="tst-pill plat">PLATINUM</span><span class="tst-rec">{{ _y.pw }}-{{ _y.pl }}</span><span class="tst-units{% if _y.pd < 0 %} neg{% elif _y.pd > 0 %} pos{% endif %}">{{ '+' if _y.pd > 0 else ('-' if _y.pd < 0 else '') }}${{ '%.2f'|format(_y.pd|abs) }}</span><span class="tst-graded">{{ _y.pn }} graded</span></div>
     {% endif %}
     {% if _y.gn > 0 %}
-    <div class="tst-sumrow"><span class="tst-pill gold">GOLD</span><span class="tst-rec">{{ _y.gw }}-{{ _y.gl }}</span><span class="tst-units{% if _y.gu < 0 %} neg{% elif _y.gu > 0 %} pos{% endif %}">{{ '%+.2f'|format(_y.gu) }}u</span><span class="tst-graded">{{ _y.gn }} graded</span></div>
+    <div class="tst-sumrow"><span class="tst-pill gold">GOLD</span><span class="tst-rec">{{ _y.gw }}-{{ _y.gl }}</span><span class="tst-units{% if _y.gd < 0 %} neg{% elif _y.gd > 0 %} pos{% endif %}">{{ '+' if _y.gd > 0 else ('-' if _y.gd < 0 else '') }}${{ '%.2f'|format(_y.gd|abs) }}</span><span class="tst-graded">{{ _y.gn }} graded</span></div>
     {% endif %}
     {% if _y.fn > 0 %}
-    <div class="tst-sumrow"><span class="tst-pill gold">FREE PICKS</span><span class="tst-rec">{{ _y.fw }}-{{ _y.fl }}</span><span class="tst-units{% if _y.fu < 0 %} neg{% elif _y.fu > 0 %} pos{% endif %}">{{ '%+.2f'|format(_y.fu) }}u</span><span class="tst-graded">{{ _y.fn }} graded</span></div>
+    <div class="tst-sumrow"><span class="tst-pill gold">FREE PICKS</span><span class="tst-rec">{{ _y.fw }}-{{ _y.fl }}</span><span class="tst-units{% if _y.fd < 0 %} neg{% elif _y.fd > 0 %} pos{% endif %}">{{ '+' if _y.fd > 0 else ('-' if _y.fd < 0 else '') }}${{ '%.2f'|format(_y.fd|abs) }}</span><span class="tst-graded">{{ _y.fn }} graded</span></div>
     {% endif %}
     {% for _j in _yd.dia.jugadas %}
       {% if _j.resultado in ('WON','LOST','PUSH') and not _j.bloqueada %}
-      {% set _u2 = (_j.profit|float * _j.stake_unidades|float / _j.stake_monto|float) if _j.stake_monto and _j.stake_unidades else (_j.profit|float / 100) %}
       {% set _is_plat = _j.nivel in ('ELITE','PLATINUM') %}
       {% set _nick = _j.team_name.split(' ')[-1] if _j.team_name else _j.abbr %}
       <div class="tst-playcard">
@@ -697,7 +699,7 @@
           <div class="tst-match">{{ _j.abbr }} vs {{ _j.opp_abbr }}</div>
           {% if _j.id and _j.comprobante %}<a class="tst-viewticket" href="{{ url_for('ticket_view', play_id=_j.id) }}">View ticket ›</a>{% endif %}
         </div>
-        <div class="tst-result"><span class="{% if _j.resultado == 'WON' %}won{% elif _j.resultado == 'LOST' %}lost{% endif %}">{% if _j.resultado == 'WON' %}WON{% elif _j.resultado == 'LOST' %}LOST{% else %}PUSH{% endif %}</span><b class="{% if _j.resultado == 'WON' %}won{% elif _j.resultado == 'LOST' %}lost{% endif %}">{{ '%+.2f'|format(_u2) }}u</b></div>
+        <div class="tst-result"><span class="{% if _j.resultado == 'WON' %}won{% elif _j.resultado == 'LOST' %}lost{% endif %}">{% if _j.resultado == 'WON' %}WON{% elif _j.resultado == 'LOST' %}LOST{% else %}PUSH{% endif %}</span><b class="{% if _j.resultado == 'WON' %}won{% elif _j.resultado == 'LOST' %}lost{% endif %}">{{ '+' if _j.profit|float > 0 else ('-' if _j.profit|float < 0 else '') }}${{ '%.2f'|format(_j.profit|float|abs) }}</b></div>
       </div>
       {% endif %}
     {% endfor %}
