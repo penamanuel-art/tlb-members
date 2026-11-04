@@ -3990,6 +3990,12 @@ def inject_user():
         past_due = bool(cu and cu["stripe_past_due"])
     except (KeyError, IndexError, TypeError):
         past_due = False
+    # Cuenta del dueño (2026-11-03, orden de Alex: «Yo no quiero past
+    # due»): su flag sigue vivo en Stripe para la prueba del ciclo,
+    # pero SU pantalla no muestra la presentación past-due. A los
+    # miembros normales les sale todo igual.
+    if past_due and is_alex_member(cu):
+        past_due = False
     try:
         cuenta_es = bool(cu) and (cu["lang"] or "") == "es"
     except (KeyError, IndexError, TypeError):
@@ -6462,6 +6468,10 @@ def cuenta():
     tg_linked = bool(user and user["telegram_user_id"])
     # Estado past-due (modelo WGT): datos de facturación desde Stripe.
     past_due = bool(user and user["stripe_past_due"])
+    # Cuenta del dueño (2026-11-03): no ver PAST DUE en su pantalla;
+    # el flag y el ciclo de Stripe siguen intactos (ver inject_user).
+    if past_due and is_alex_member(user):
+        past_due = False
     billing = _past_due_billing_info(user) if past_due else None
     # Página Account con pestañas (2026-10-12, estilo WGT pedido por Alex):
     # suscripción e historial desde Stripe + perfil de apuestas guardado.
