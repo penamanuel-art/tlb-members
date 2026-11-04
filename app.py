@@ -2111,6 +2111,39 @@ def load_archive():
     return load_json_file(ARCHIVE_PATH).get("dias", [])
 
 
+def racha_platinum():
+    """Tirita de racha del Dashboard (2026-11-04, orden de Alex, estilo
+    el «Owner Selections» de WGT pero con SU nivel top): últimas 6
+    jugadas liquidadas del nivel Platinum en el archivo (WON/LOST,
+    sin PUSH, en orden cronológico global). OJO al dato: en el
+    archive el nivel Platinum se guarda como "ELITE" y hay 3 jugadas
+    viejas de septiembre guardadas como "PLATINUM" — ambos valores
+    son el mismo nivel Platinum. La tirita solo sale con 5+ ganadas
+    de las 6; si no califica, devuelve None y NO se renderiza.
+    Números siempre reales del archive, nunca totales del programa.
+    Ante cualquier fallo devuelve None: la tirita nunca rompe el
+    home."""
+    try:
+        dias = sorted(load_archive(), key=lambda d: d.get("fecha") or "")
+        seq = []
+        for d in dias:
+            for j in d.get("jugadas") or []:
+                if j.get("resultado") not in ("WON", "LOST"):
+                    continue
+                if (j.get("nivel") or "").upper() not in ("ELITE", "PLATINUM"):
+                    continue
+                seq.append(j["resultado"])
+        ult6 = seq[-6:]
+        if len(ult6) < 6:
+            return None
+        w = sum(1 for r in ult6 if r == "WON")
+        if w < 5:
+            return None
+        return {"w": w, "l": 6 - w}
+    except Exception:
+        return None
+
+
 def record_por_liga():
     """Récord oficial por liga, en vivo desde data/archive.json
     (2026-10-26, pedido de Alex: solo esta sección en el home, con su
@@ -5232,6 +5265,12 @@ def home():
                     show_rate_bubble = False
     except Exception:
         show_rate_bubble = False
+    # Tirita de racha Platinum (2026-11-04, orden de Alex): ver
+    # racha_platinum(); si el nivel no califica, None y no se renderiza.
+    try:
+        racha_platinum = racha_platinum()
+    except Exception:
+        racha_platinum = None
     return render_template(
         # Tema v2 (moderno) es el predeterminado desde 2026-10-02 (pedido Alex);
         # v1 (clásico) queda como reversión vía /theme/v1. Diseño lux
@@ -5271,6 +5310,7 @@ def home():
         recientes_dias=recientes_dias,
         last_plat=last_plat,
         tira_home=tira_home,
+        racha_platinum=racha_platinum,
         hoy_iso=_hoy_iso,
         ayer_iso=_ayer_iso,
         recientes_value=recientes_value(),
