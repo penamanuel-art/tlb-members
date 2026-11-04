@@ -5267,10 +5267,13 @@ def home():
         show_rate_bubble = False
     # Tirita de racha Platinum (2026-11-04, orden de Alex): ver
     # racha_platinum(); si el nivel no califica, None y no se renderiza.
+    # OJO: la variable local NO puede llamarse racha_platinum — eso
+    # sombrea la función dentro de home() y la llamada revienta con
+    # UnboundLocalError (bug real 2026-11-04: la tirita nunca salía).
     try:
-        racha_platinum = racha_platinum()
+        _racha_plat = racha_platinum()
     except Exception:
-        racha_platinum = None
+        _racha_plat = None
     return render_template(
         # Tema v2 (moderno) es el predeterminado desde 2026-10-02 (pedido Alex);
         # v1 (clásico) queda como reversión vía /theme/v1. Diseño lux
@@ -5310,7 +5313,7 @@ def home():
         recientes_dias=recientes_dias,
         last_plat=last_plat,
         tira_home=tira_home,
-        racha_platinum=racha_platinum,
+        racha_platinum=_racha_plat,
         hoy_iso=_hoy_iso,
         ayer_iso=_ayer_iso,
         recientes_value=recientes_value(),
