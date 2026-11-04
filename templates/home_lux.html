@@ -288,18 +288,20 @@
 
 <div class="phone">
   <div class="tst-stickyhead">
-  {# Slot superior de tirita (2026-11-03, orden de Alex: «Ponla arriba donde dice Platinum, cuatro seguidos»): UNA sola tirita a la vez.
-     Si el miembro esta past_due, en este slot sale el AVISO de pago fallido (precedencia sobre la racha); si no, sale la racha
-     (tira_home) con su logica y condicion originales, intactas. El aviso conserva sus colores y su tamano fino (.tst-pastdue). #}
+  {# Slot superior de tirita: UNA sola tirita a la vez. Si el miembro esta past_due, en este slot sale el AVISO de
+     pago fallido (precedencia sobre la racha, logica intacta); si no, sale la tirita de racha Platinum del fuego
+     (racha_platinum en app.py, numeros reales del archive: ELITE y PLATINUM cuentan como el mismo nivel; sale SOLO
+     si el nivel Platinum trae 5+ ganadas en sus ultimas 6 liquidadas). 2026-11-04, orden de Alex: «Ponga la del
+     fuego arriba y quita la que está» — la pildora vieja de las victorias seguidas salio por completo
+     y la tirita del fuego subio de encima de la bienvenida a este slot. Estilos INLINE a proposito: este archivo
+     tiene estilos en capas y la cascada no manda aqui. El aviso conserva sus colores y su tamano fino (.tst-pastdue). #}
   {% if past_due %}
   <div class="tst-pastdue" role="alert">
     <p>⚠️ Your last payment didn't go through, so your membership is past due and access is paused.</p>
     <a href="{{ url_for('actualizar_tarjeta') }}">Update your card to restore it →</a>
   </div>
-  {% elif tira_home %}
-  <div style="display:flex;align-items:center;justify-content:center;background:#1E222B;border:1px solid #262C36;border-radius:14px;padding:7px 16px;margin:0 0 8px;overflow:hidden;box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 6px 16px rgba(0,0,0,.35);">
-    <span style="font-size:13px;font-weight:400;letter-spacing:.4px;color:#F0D47C;white-space:nowrap;flex:1;text-align:center;">{% if tira_home.tipo == 'plat' %}&#128142; PLATINUM &middot; {{ tira_home.n }} WINS IN A ROW{% else %}&#128293; {{ tira_home.n }} WINNING DAYS IN A ROW{% endif %}</span>
-  </div>
+  {% elif racha_platinum %}
+  <div style="background:linear-gradient(90deg,#06231f 0%,#0b3d35 55%,#0e463c 100%);border-radius:10px;padding:8px 10px;text-align:center;white-space:nowrap;overflow:hidden;margin:0 0 8px;font-family:-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;"><span style="font-size:11px;vertical-align:1px;">🔥</span> <span style="color:#41e6ab;font-size:14px;font-weight:300;letter-spacing:.3px;">Platinum Plays: {{ racha_platinum.w }}-{{ racha_platinum.l }} in the last 6 Platinum plays</span></div>
   {% endif %}
   <div class="topbar">
     <div class="brand" style="flex:1;min-width:0;display:flex;align-items:center;gap:3px;">
@@ -377,17 +379,7 @@
      con los TRES pisos nuevos: Platinum, Gold y Free Pick plays. El resto
      de la implementación de la noche (pisos, menú reducido, tiles
      uniformes) NO se toca. #}
-  {# Tirita de racha (2026-11-04, orden de Alex, estilo el «Owner
-     Selections» de WGT pero con SU nivel top): UNA sola línea, letras
-     finas, llama pequeña, fondo verde oscuro. Sale SOLO si el nivel
-     Platinum trae 5+ ganadas en sus últimas 6 liquidadas
-     (racha_platinum en app.py, números reales del archive: ELITE y
-     PLATINUM cuentan como el mismo nivel); si no califica, no se
-     renderiza. Estilos INLINE a propósito: este archivo tiene
-     estilos en capas y la cascada no manda aquí. #}
-  {% if racha_platinum %}
-  <div style="background:linear-gradient(90deg,#06231f 0%,#0b3d35 55%,#0e463c 100%);border-radius:10px;padding:8px 10px;text-align:center;white-space:nowrap;overflow:hidden;margin:12px 0 10px;font-family:-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;"><span style="font-size:11px;vertical-align:1px;">🔥</span> <span style="color:#41e6ab;font-size:14px;font-weight:300;letter-spacing:.3px;">Platinum Plays: {{ racha_platinum.w }}-{{ racha_platinum.l }} in the last 6 Platinum plays</span></div>
-  {% endif %}
+  {# La tirita de racha Platinum del fuego vive ARRIBA, en el slot de .tst-stickyhead (movida el 2026-11-04, orden de Alex). #}
   <div class="hero">
     <div class="photo"></div>
     <div class="inner">
