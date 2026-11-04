@@ -60,7 +60,7 @@
   .mb-set label { font-size:10px; letter-spacing:1.2px; color:#8b98ad; font-weight:800; display:block; margin-bottom:5px; }
   .mb-set input, .mb-set select { width:100%; box-sizing:border-box; background:#131e31; border:1px solid #24334d; border-radius:10px; padding:10px; font-size:13px; color:#eef2f8; }
   .ply-back { display:inline-block; color:#2ee6a8; font-weight:700; font-size:14px; text-decoration:none; margin:0 0 10px; }
-  #mbCurve { width:100%; height:110px; display:block; }
+  #mbCurve { width:100%; height:132px; display:block; }
   .mb-period { display:flex; align-items:center; gap:7px; flex-wrap:wrap; margin:0 0 12px; }
   .mb-period .plabel { font-size:10px; letter-spacing:1.2px; color:#8b98ad; font-weight:800; margin-right:2px; }
   .mb-pchip { border:1px solid #24334d; background:#131e31; color:#c7cede; font-size:12.5px; font-weight:700; padding:7px 13px; border-radius:999px; cursor:pointer; font-family:inherit; }
@@ -68,12 +68,50 @@
   .mb-miles { display:flex; gap:8px; flex-wrap:wrap; margin:0 0 14px; }
   .mb-mile { background:#131e31; border:1px solid #24334d; border-radius:999px; padding:7px 12px; font-size:12.5px; color:#c7cede; font-weight:600; }
   .mb-mile b { color:#fff; }
+  /* ===== HERO tracker (reconstrucción 2026-11-04) ===== */
+  .tk-hero { position:relative; overflow:hidden; border-radius:22px; padding:20px 18px 14px; margin:0 0 14px; background:radial-gradient(130% 150% at 18% -10%, #1d2c47 0%, #111b2e 52%, #0b1322 100%); border:1px solid rgba(232,199,102,.28); box-shadow:0 14px 34px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.05); }
+  .tk-hero::before { content:""; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg, transparent, #e8c766 30%, #e8c766 70%, transparent); opacity:.85; }
+  .tk-hero-top { display:flex; align-items:center; gap:14px; }
+  .tk-hero-main { flex:1; min-width:0; }
+  .tk-kicker { font-size:10.5px; letter-spacing:2.2px; color:#e8c766; font-weight:800; }
+  .tk-net { font-size:clamp(42px,12.5vw,60px); line-height:1.02; font-weight:800; letter-spacing:-1.5px; color:#fff; margin:4px 0 6px; }
+  .tk-net.pos { color:#2fbf71; text-shadow:0 0 30px rgba(47,191,113,.45); }
+  .tk-net.neg { color:#f87171; text-shadow:0 0 30px rgba(248,113,113,.40); }
+  .tk-hero-sub { color:#9aa7b8; font-size:12.5px; font-weight:600; }
+  .tk-hero-sub b { color:#eef2f8; }
+  .tk-ring-wrap { position:relative; width:92px; height:92px; flex:none; }
+  .tk-ring { width:92px; height:92px; transform:rotate(-90deg); display:block; }
+  .tk-ring circle { fill:none; stroke-width:7; }
+  .tk-ring-bg { stroke:rgba(255,255,255,.09); }
+  .tk-ring-fg { stroke:#e8c766; stroke-linecap:round; filter:drop-shadow(0 0 6px rgba(232,199,102,.45)); transition:stroke-dasharray .45s ease; }
+  .tk-ring-c { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+  .tk-ring-c span { font-size:20px; font-weight:800; color:#fff; line-height:1; }
+  .tk-ring-c small { font-size:7.5px; letter-spacing:1.4px; color:#8b98ad; font-weight:800; margin-top:3px; }
+  .tk-curve-wrap { margin-top:12px; }
+  .tk-hero-foot { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-top:8px; }
+  .tk-hero-foot .note-l { color:#8b98ad; font-size:11.5px; }
+  .tk-period-name { color:#e8c766; font-size:11px; font-weight:800; letter-spacing:1.2px; white-space:nowrap; }
+  .tk-curve-empty { color:#8b98ad; font-size:12.5px; padding:26px 0 18px; text-align:center; margin:0; }
+  .mb-bd td.pos { color:#2fbf71; font-weight:700; }
+  .mb-bd td.neg { color:#f87171; font-weight:700; }
+  .bd-t { margin-top:10px; }
+  .tkc-thumbbtn { padding:0; border:0; background:none; cursor:pointer; flex:none; border-radius:10px; line-height:0; }
+  .tkc-thumbbtn:focus-visible { outline:2px solid #e8c766; }
+  .tk-modal { position:fixed; inset:0; z-index:3200; background:rgba(3,6,12,.88); display:flex; align-items:center; justify-content:center; padding:18px; box-sizing:border-box; }
+  .tk-modal[hidden] { display:none; }
+  .tk-modal img { max-width:94vw; max-height:86vh; border-radius:14px; border:1px solid rgba(232,199,102,.35); box-shadow:0 24px 60px rgba(0,0,0,.6); background:#0b1322; }
+  .tk-modal-x { position:absolute; top:14px; right:14px; width:40px; height:40px; border-radius:50%; border:1px solid #24334d; background:#131e31; color:#eef2f8; font-size:17px; cursor:pointer; }
+  .tk-empty { text-align:center; padding:30px 20px 26px; }
+  .tk-empty .ic { font-size:40px; margin-bottom:8px; }
+  .tk-empty h3 { font-size:19px; margin:0 0 8px; }
+  .tk-empty p { color:#9aa7b8; font-size:13.5px; line-height:1.6; max-width:520px; margin:0 auto 16px; }
+  .tk-empty .row { display:flex; gap:9px; justify-content:center; flex-wrap:wrap; }
 </style>
 
 <a class="ply-back" href="{{ url_for('tracker') }}">&#8592; Back to my tracker</a>
 
-<h1 class="ply-h">My Bets</h1>
-<p class="ply-sub">Every bet you track — the program's plays and your own, from any book — graded, with your CLV, your curve and your numbers by market and book.</p>
+<h1 class="ply-h">Your tracker</h1>
+<p class="ply-sub">Every bet you track — the program's plays and your own, from any book — graded, with your profit curve, your win rate and your numbers by league, level, market and book.</p>
 
 {% if rows %}
 <div class="mb-period" id="mbPeriod">
@@ -85,16 +123,49 @@
 </div>
 {% endif %}
 
+{% if all_rows %}
+<div class="tk-hero">
+  <div class="tk-hero-top">
+    <div class="tk-hero-main">
+      <div class="tk-kicker">NET PROFIT</div>
+      <div class="tk-net {% if stats_all.net_dollars > 0 %}pos{% elif stats_all.net_dollars < 0 %}neg{% endif %}" id="mbStNet">{{ fmt_money(stats_all.net_dollars) }}</div>
+      <div class="tk-hero-sub" id="tkHeroSub"><b>{{ stats_all.tracked }}</b> tracked &middot; <b>{{ stats_all.pending }}</b> pending &middot; <b>{{ fmt_money(stats_all.risked) }}</b> risked</div>
+    </div>
+    <div class="tk-ring-wrap">
+      <svg class="tk-ring" viewBox="0 0 84 84" aria-hidden="true">
+        <circle class="tk-ring-bg" cx="42" cy="42" r="34"></circle>
+        <circle class="tk-ring-fg" id="tkRingFg" cx="42" cy="42" r="34" stroke-dasharray="{{ (stats_all.win_rate * 2.1363)|round(1) }} 213.6"></circle>
+      </svg>
+      <div class="tk-ring-c"><span id="mbStWr">{{ '%.0f%%' % stats_all.win_rate }}</span><small>WIN RATE</small></div>
+    </div>
+  </div>
+  <div class="tk-curve-wrap">
+    {% if curve_all %}
+    <svg id="mbCurve" viewBox="0 0 {{ curve_all.w }} {{ curve_all.h }}" preserveAspectRatio="none">
+      <path id="tkAreaPath" d="{{ curve_all.area }}" fill="{{ 'rgba(47,191,113,.15)' if curve_all.up else 'rgba(248,113,113,.15)' }}"></path>
+      <line id="tkZero" x1="0" y1="-10" x2="{{ curve_all.w }}" y2="-10" stroke="rgba(255,255,255,.25)" stroke-width="1" stroke-dasharray="4 4"></line>
+      <path id="tkLinePath" d="{{ curve_all.line }}" fill="none" stroke="{{ '#2fbf71' if curve_all.up else '#f87171' }}" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"></path>
+    </svg>
+    <p class="tk-curve-empty" id="tkCurveEmpty" hidden>No settled bets in this period yet — your curve picks up with the next graded bet.</p>
+    {% else %}
+    <p class="tk-curve-empty" id="tkCurveEmpty">Your curve starts with your first settled bet.</p>
+    {% endif %}
+  </div>
+  <div class="tk-hero-foot">
+    <span class="note-l">Cumulative profit, bet by bet, in the order your bets settled.</span>
+    <span class="tk-period-name" id="tkPeriodName">ALL TIME</span>
+  </div>
+</div>
+
 <div class="mb-stats">
   <div class="mb-stat"><div class="k">RECORD</div><div class="v" id="mbStRecord">{{ stats_all.record }}{% if stats_all.pushes %} · {{ stats_all.pushes }}P{% endif %}</div></div>
-  <div class="mb-stat"><div class="k">NET PROFIT</div><div class="v {% if stats_all.net_dollars > 0 %}green{% elif stats_all.net_dollars < 0 %}red{% endif %}" id="mbStNet">{{ fmt_money(stats_all.net_dollars) }}</div></div>
   <div class="mb-stat"><div class="k">ROI</div><div class="v" id="mbStRoi">{{ '%+.1f%%' % stats_all.roi }}</div></div>
-  <div class="mb-stat"><div class="k">WIN RATE</div><div class="v" id="mbStWr">{{ '%.0f%%' % stats_all.win_rate }}</div></div>
   <div class="mb-stat"><div class="k">STREAK</div><div class="v" id="mbStStreak">{{ stats_all.streak }}</div></div>
+  <div class="mb-stat"><div class="k">TRACKED</div><div class="v" id="mbStTracked">{{ stats_all.tracked }}</div></div>
+  <div class="mb-stat"><div class="k">PENDING</div><div class="v" id="mbStPending">{{ stats_all.pending }}</div></div>
   <div class="mb-stat"><div class="k">AVG CLV</div><div class="v {% if stats_all.clv_avg is not none and stats_all.clv_avg > 0 %}blue{% endif %}" id="mbStClv">{{ ('%+.2f pts' % stats_all.clv_avg) if stats_all.clv_avg is not none else '—' }}</div></div>
 </div>
 
-{% if all_rows %}
 {% set _mg = namespace(best=0, run=0) %}
 {% for r in all_rows|reverse %}
   {% if r.resultado == 'W' %}{% set _mg.run = _mg.run + 1 %}{% if _mg.run > _mg.best %}{% set _mg.best = _mg.run %}{% endif %}{% elif r.resultado == 'L' %}{% set _mg.run = 0 %}{% endif %}
@@ -103,20 +174,6 @@
   <span class="mb-mile">🎯 <b>{{ all_rows|length }}</b> bets tracked</span>
   {% if stats_all.streak and stats_all.streak != '—' %}<span class="mb-mile">🔥 Current streak <b>{{ stats_all.streak }}</b></span>{% endif %}
   {% if _mg.best >= 2 %}<span class="mb-mile">🏆 Best win streak <b>{{ _mg.best }}</b></span>{% endif %}
-</div>
-{% endif %}
-
-<div class="mb-card">
-  <h3>Profit curve</h3>
-  {% if curve_all %}
-  <svg id="mbCurve" viewBox="0 0 {{ curve_all.w }} {{ curve_all.h }}" preserveAspectRatio="none">
-    <path d="{{ curve_all.area }}" fill="{{ 'rgba(47,191,113,.15)' if curve_all.up else 'rgba(248,113,113,.15)' }}"></path>
-    <path d="{{ curve_all.line }}" fill="none" stroke="{{ '#2fbf71' if curve_all.up else '#f87171' }}" stroke-width="2.5"></path>
-  </svg>
-  <p class="note">Cumulative profit across every settled bet in My Bets. {{ stats_all.pending }} still open · {{ fmt_money(stats_all.risked) }} risked so far.</p>
-  {% else %}
-  <p class="note">Your curve starts with your first settled bet.</p>
-  {% endif %}
 </div>
 
 <div class="mb-actions">
@@ -161,30 +218,31 @@
 </div>
 {% endif %}
 
-{% if all_rows %}
 <div class="mb-card">
   <h3>Breakdowns</h3>
+  <div id="bdBody">
   {% for title, key in [('By source','source'), ('By market','market'), ('By book','book'), ('By league','league'), ('By level','level')] %}
   {% if breakdowns[key] %}
-  <p class="note" style="margin-top:8px"><b style="color:#fff">{{ title }}</b></p>
+  <p class="note bd-t"><b style="color:#fff">{{ title }}</b></p>
   <table class="mb-bd">
     <tr><th></th><th>W-L</th><th>PROFIT</th><th>ROI</th></tr>
     {% for name, d in breakdowns[key] %}
-    <tr><td>{{ name }}</td><td>{{ d.w }}-{{ d.l }}{% if d.p %} · {{ d.p }}P{% endif %}</td><td>{{ fmt_money(d.profit) }}</td><td>{{ '%+.1f%%' % d.roi }}</td></tr>
+    <tr><td>{{ name }}</td><td>{{ d.w }}-{{ d.l }}{% if d.p %} · {{ d.p }}P{% endif %}</td><td class="{% if d.profit > 0 %}pos{% elif d.profit < 0 %}neg{% endif %}">{{ fmt_money(d.profit) }}</td><td>{{ '%+.1f%%' % d.roi }}</td></tr>
     {% endfor %}
   </table>
   {% endif %}
   {% endfor %}
+  </div>
 </div>
-{% endif %}
 
 {% if rows %}
 <div class="wgt-list">
   {% for r in rows %}
-  <article class="wgt-row {{ 'won' if r.resultado == 'W' else '' }}" data-fecha="{{ r.fecha or '' }}" data-res="{{ r.resultado or '' }}" data-profit="{{ r.profit if r.profit is not none else 0 }}" data-stake="{{ r.stake_monto or 0 }}" data-clv="{{ r.clv_pts if r.clv_pts is not none else '' }}">
+  <article class="wgt-row {{ 'won' if r.resultado == 'W' else '' }}" data-fecha="{{ r.fecha or '' }}" data-res="{{ r.resultado or '' }}" data-profit="{{ r.profit if r.profit is not none else 0 }}" data-stake="{{ r.stake_monto or 0 }}" data-clv="{{ r.clv_pts if r.clv_pts is not none else '' }}" data-source="{{ r.source or '' }}" data-league="{{ r.liga or '' }}" data-level="{{ nivel_display(r.nivel) if r.source != 'own' else '' }}" data-market="{{ r.mercado or 'Moneyline' }}" data-book="{{ r.casa or '' }}">
     <div class="tkc-top">
-      {% if r.foto %}
-      <img class="tkc-thumb" src="{{ r.foto }}" alt="Ticket">
+      {% set _tk = r.foto or (url_for('static', filename=r.comprobante) if r.comprobante else '') %}
+      {% if _tk %}
+      <button type="button" class="tkc-thumbbtn" data-full="{{ _tk }}" title="View ticket"><img class="tkc-thumb" src="{{ _tk }}" alt="Ticket"></button>
       {% elif r.logo %}
       <img class="tkc-thumb tkc-logo" src="{{ r.logo }}" alt="{{ r.abbr }}" loading="lazy">
       {% else %}
@@ -215,7 +273,6 @@
         {% endif %}
       </div>
     </div>
-    {% if r.foto %}<img class="mb-foto" src="{{ r.foto }}" alt="Ticket">{% endif %}
     <div class="wgt-actions">
       {% if r.source == 'own' %}
       <form method="post" action="{{ url_for('mybets_resultado', bet_id=r.id) }}"><input type="hidden" name="resultado" value="W"><button class="wgt-btn win" type="submit" title="Mark as won">✓</button></form>
@@ -235,8 +292,40 @@
   {% endfor %}
 </div>
 {% else %}
-<p class="wgt-empty">Nothing here yet. Track a program play from Today's board, or tap <b>+ Add a bet</b> to log your own — from any book.</p>
+<p class="wgt-empty">No bets match these filters. <a href="{{ url_for('tracker_plays') }}" style="color:#2ee6a8">Clear them</a> to see your full tracker.</p>
 {% endif %}
+
+{% else %}
+<div class="mb-card tk-empty">
+  <div class="ic">📈</div>
+  <h3>Your tracker starts with your first tracked play</h3>
+  <p>Tap <b style="color:#eef2f8">+ Track</b> on any play card on today's board and it lands here, locked in. From then on this page builds your net profit, your profit curve, your win-rate ring and your record — bet by bet, always with your own amounts. You can also log bets you placed on your own, from any book.</p>
+  <div class="row">
+    <a class="mb-btn" href="{{ url_for('home') }}">See today's plays</a>
+    <a class="mb-btn ghost" href="{{ url_for('mybets_add') }}">+ Add a bet</a>
+  </div>
+</div>
+{% endif %}
+
+<div id="tkModal" class="tk-modal" hidden>
+  <button type="button" class="tk-modal-x" id="tkModalX" aria-label="Close">&#10005;</button>
+  <img id="tkModalImg" src="" alt="Ticket">
+</div>
+<script>
+(function(){
+  var modal=document.getElementById('tkModal'), img=document.getElementById('tkModalImg');
+  if(!modal||!img) return;
+  function open(src){ img.src=src; modal.hidden=false; document.body.style.overflow='hidden'; }
+  function close(){ modal.hidden=true; img.src=''; document.body.style.overflow=''; }
+  document.addEventListener('click', function(e){
+    var b=e.target.closest ? e.target.closest('.tkc-thumbbtn') : null;
+    if(b){ open(b.getAttribute('data-full')); return; }
+    if(e.target===modal) close();
+  });
+  document.getElementById('tkModalX').addEventListener('click', close);
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape'&&!modal.hidden) close(); });
+})();
+</script>
 
 <div class="mb-card" style="margin-top:14px">
   <h3>My Bets settings</h3>
@@ -463,19 +552,85 @@
 <script>
 (function(){
   var chips=[].slice.call(document.querySelectorAll('#mbPeriod .mb-pchip'));
-  if(!chips.length) return;
   var rows=[].slice.call(document.querySelectorAll('.wgt-row'));
   function isoDaysAgo(n){ var d=new Date(); d.setDate(d.getDate()-(n-1)); var m=('0'+(d.getMonth()+1)).slice(-2), dd=('0'+d.getDate()).slice(-2); return d.getFullYear()+'-'+m+'-'+dd; }
   function money(v){ var s=v>0?'+':(v<0?'-':''); var a=Math.abs(v).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,','); return s+'$'+a; }
-  function setV(id, txt, cls){ var e=document.getElementById(id); if(!e) return; e.textContent=txt; if(cls!==undefined){ e.classList.remove('green','red','blue'); if(cls) e.classList.add(cls); } }
+  function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+  function setV(id, txt, cls, pool){ var e=document.getElementById(id); if(!e) return; e.textContent=txt; if(cls!==undefined){ (pool||['green','red','blue']).forEach(function(c){ e.classList.remove(c); }); if(cls) e.classList.add(cls); } }
+  var CIRC=213.6;
+  function drawCurve(vals){
+    var svg=document.getElementById('mbCurve'); if(!svg) return;
+    var area=document.getElementById('tkAreaPath'), line=document.getElementById('tkLinePath'),
+        zero=document.getElementById('tkZero'), empty=document.getElementById('tkCurveEmpty');
+    if(!vals.length){
+      if(area) area.setAttribute('d','');
+      if(line) line.setAttribute('d','');
+      if(zero){ zero.setAttribute('y1','-10'); zero.setAttribute('y2','-10'); }
+      svg.style.display='none'; if(empty) empty.hidden=false; return;
+    }
+    svg.style.display=''; if(empty) empty.hidden=true;
+    var W=320, H=90, PAD=8, n=vals.length;
+    var lo=Math.min.apply(null,vals.concat([0])), hi=Math.max.apply(null,vals.concat([0])), span=(hi-lo)||1;
+    function X(i){ return PAD + i*(W-2*PAD)/Math.max(n-1,1); }
+    function Y(v){ return PAD + (1-(v-lo)/span)*(H-2*PAD); }
+    var d='M'+vals.map(function(v,i){ return X(i).toFixed(1)+','+Y(v).toFixed(1); }).join(' L');
+    var up=vals[n-1]>=0, col=up?'#2fbf71':'#f87171';
+    line.setAttribute('d',d); line.setAttribute('stroke',col);
+    area.setAttribute('d', d+' L'+X(n-1).toFixed(1)+','+H+' L'+X(0).toFixed(1)+','+H+' Z');
+    area.setAttribute('fill', up?'rgba(47,191,113,.15)':'rgba(248,113,113,.15)');
+    if(zero){
+      if(lo<0&&hi>0){ var zy=Y(0).toFixed(1); zero.setAttribute('x1','0'); zero.setAttribute('x2',String(W)); zero.setAttribute('y1',zy); zero.setAttribute('y2',zy); }
+      else { zero.setAttribute('y1','-10'); zero.setAttribute('y2','-10'); }
+    }
+  }
+  function bdAgg(attr, labelFn){
+    var out={}, order=[];
+    rows.forEach(function(r){
+      if(r.style.display==='none') return;
+      var raw=r.getAttribute(attr)||'';
+      var k=labelFn? labelFn(raw, r) : raw;
+      if(!k) return;
+      if(!out[k]){ out[k]={w:0,l:0,p:0,profit:0,risked:0,n:0}; order.push(k); }
+      var d=out[k]; d.n++;
+      var res=r.getAttribute('data-res')||'';
+      if(res==='W') d.w++; else if(res==='L') d.l++; else if(res==='P') d.p++;
+      if(res==='W'||res==='L'||res==='P'){
+        d.profit+=parseFloat(r.getAttribute('data-profit')||'0')||0;
+        d.risked+=parseFloat(r.getAttribute('data-stake')||'0')||0;
+      }
+    });
+    order.sort(function(a,b){ return out[b].n-out[a].n; });
+    return order.map(function(k){ return [k,out[k]]; });
+  }
+  function bdHTML(title, pairs){
+    if(!pairs.length) return '';
+    var h='<p class="note bd-t"><b style="color:#fff">'+title+'</b></p><table class="mb-bd"><tr><th></th><th>W-L</th><th>PROFIT</th><th>ROI</th></tr>';
+    pairs.forEach(function(pr){
+      var d=pr[1], roi=d.risked?(d.profit/d.risked*100):0;
+      h+='<tr><td>'+esc(pr[0])+'</td><td>'+d.w+'-'+d.l+(d.p?' · '+d.p+'P':'')+'</td><td class="'+(d.profit>0?'pos':(d.profit<0?'neg':''))+'">'+money(d.profit)+'</td><td>'+(roi>=0?'+':'')+roi.toFixed(1)+'%</td></tr>';
+    });
+    return h+'</table>';
+  }
+  function drawBreakdowns(){
+    var body=document.getElementById('bdBody'); if(!body) return;
+    var h='';
+    h+=bdHTML('By source', bdAgg('data-source', function(v){ return v==='official'?'Program plays':(v==='own'?'My own bets':''); }));
+    h+=bdHTML('By market', bdAgg('data-market'));
+    h+=bdHTML('By book', bdAgg('data-book'));
+    h+=bdHTML('By league', bdAgg('data-league'));
+    h+=bdHTML('By level', bdAgg('data-level'));
+    body.innerHTML=h;
+  }
+  var PNAMES={0:'ALL TIME',7:'LAST 7 DAYS',30:'LAST 30 DAYS',90:'LAST 90 DAYS'};
   function apply(days){
     var co = days? isoDaysAgo(days) : '';
-    var W=0,L=0,P=0,net=0,risk=0,clvs=[],seq=[];
+    var W=0,L=0,P=0,net=0,risk=0,clvs=[],seq=[],tracked=0,pending=0,chrono=[];
     rows.forEach(function(r){
       var f=r.getAttribute('data-fecha')||'';
       var ok=!co || (f && f>=co);
       r.style.display=ok?'':'none';
       if(!ok) return;
+      tracked++;
       var res=r.getAttribute('data-res')||'';
       if(res==='W'||res==='L'||res==='P'){
         if(res==='W')W++; else if(res==='L')L++; else P++;
@@ -483,18 +638,36 @@
         risk+=parseFloat(r.getAttribute('data-stake')||'0')||0;
         var c=r.getAttribute('data-clv'); if(c!==''&&c!==null) clvs.push(parseFloat(c)||0);
         if(res==='W'||res==='L') seq.push(res);
-      }
+      } else pending++;
     });
+    for(var i=rows.length-1;i>=0;i--){
+      var r=rows[i]; if(r.style.display==='none') continue;
+      var res=r.getAttribute('data-res')||'';
+      if(res==='W'||res==='L'||res==='P') chrono.push(parseFloat(r.getAttribute('data-profit')||'0')||0);
+    }
+    var acc=0, vals=[0];
+    chrono.forEach(function(p){ acc+=p; vals.push(Math.round(acc*100)/100); });
     setV('mbStRecord', W+'-'+L+(P?' · '+P+'P':''));
-    setV('mbStNet', money(net), net>0?'green':(net<0?'red':''));
+    setV('mbStNet', money(net), net>0?'pos':(net<0?'neg':''), ['pos','neg']);
     var roi = risk? (net/risk*100) : 0;
     setV('mbStRoi', (roi>=0?'+':'')+roi.toFixed(1)+'%');
-    setV('mbStWr', ((W+L)? Math.round(W/(W+L)*100):0)+'%');
+    var wr = (W+L)? (W/(W+L)*100) : 0;
+    setV('mbStWr', Math.round(wr)+'%');
+    var ring=document.getElementById('tkRingFg');
+    if(ring) ring.setAttribute('stroke-dasharray', (wr/100*CIRC).toFixed(1)+' '+CIRC);
     var st='—';
-    if(seq.length){ var f0=seq[0], n=0; for(var i=0;i<seq.length;i++){ if(seq[i]===f0) n++; else break; } st=f0+n; }
+    if(seq.length){ var f0=seq[0], n=0; for(var j=0;j<seq.length;j++){ if(seq[j]===f0) n++; else break; } st=f0+n; }
     setV('mbStStreak', st);
+    setV('mbStTracked', String(tracked));
+    setV('mbStPending', String(pending));
     if(clvs.length){ var s=0; clvs.forEach(function(x){s+=x;}); var avg=s/clvs.length; setV('mbStClv', (avg>=0?'+':'')+avg.toFixed(2)+' pts', avg>0?'blue':''); }
     else setV('mbStClv', '—', '');
+    var sub=document.getElementById('tkHeroSub');
+    if(sub) sub.innerHTML='<b>'+tracked+'</b> tracked &middot; <b>'+pending+'</b> pending &middot; <b>'+money(risk)+'</b> risked';
+    var pn=document.getElementById('tkPeriodName');
+    if(pn) pn.textContent=PNAMES[days]||'ALL TIME';
+    drawCurve(chrono.length? vals : []);
+    drawBreakdowns();
     chips.forEach(function(ch){ ch.classList.toggle('active', (parseInt(ch.getAttribute('data-days'),10)||0)===days); });
   }
   chips.forEach(function(ch){ ch.addEventListener('click', function(){ apply(parseInt(ch.getAttribute('data-days'),10)||0); }); });
