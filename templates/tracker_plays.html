@@ -61,6 +61,13 @@
   .mb-set input, .mb-set select { width:100%; box-sizing:border-box; background:#131e31; border:1px solid #24334d; border-radius:10px; padding:10px; font-size:13px; color:#eef2f8; }
   .ply-back { display:inline-block; color:#2ee6a8; font-weight:700; font-size:14px; text-decoration:none; margin:0 0 10px; }
   #mbCurve { width:100%; height:110px; display:block; }
+  .mb-period { display:flex; align-items:center; gap:7px; flex-wrap:wrap; margin:0 0 12px; }
+  .mb-period .plabel { font-size:10px; letter-spacing:1.2px; color:#8b98ad; font-weight:800; margin-right:2px; }
+  .mb-pchip { border:1px solid #24334d; background:#131e31; color:#c7cede; font-size:12.5px; font-weight:700; padding:7px 13px; border-radius:999px; cursor:pointer; font-family:inherit; }
+  .mb-pchip.active { background:linear-gradient(135deg,#e8c766,#8a6d2f); color:#1a1405; border-color:transparent; }
+  .mb-miles { display:flex; gap:8px; flex-wrap:wrap; margin:0 0 14px; }
+  .mb-mile { background:#131e31; border:1px solid #24334d; border-radius:999px; padding:7px 12px; font-size:12.5px; color:#c7cede; font-weight:600; }
+  .mb-mile b { color:#fff; }
 </style>
 
 <a class="ply-back" href="{{ url_for('tracker') }}">&#8592; Back to my tracker</a>
@@ -68,14 +75,36 @@
 <h1 class="ply-h">My Bets</h1>
 <p class="ply-sub">Every bet you track — the program's plays and your own, from any book — graded, with your CLV, your curve and your numbers by market and book.</p>
 
-<div class="mb-stats">
-  <div class="mb-stat"><div class="k">RECORD</div><div class="v">{{ stats_all.record }}{% if stats_all.pushes %} · {{ stats_all.pushes }}P{% endif %}</div></div>
-  <div class="mb-stat"><div class="k">NET PROFIT</div><div class="v {% if stats_all.net_dollars > 0 %}green{% elif stats_all.net_dollars < 0 %}red{% endif %}">{{ fmt_money(stats_all.net_dollars) }}</div></div>
-  <div class="mb-stat"><div class="k">ROI</div><div class="v">{{ '%+.1f%%' % stats_all.roi }}</div></div>
-  <div class="mb-stat"><div class="k">WIN RATE</div><div class="v">{{ '%.0f%%' % stats_all.win_rate }}</div></div>
-  <div class="mb-stat"><div class="k">STREAK</div><div class="v">{{ stats_all.streak }}</div></div>
-  <div class="mb-stat"><div class="k">AVG CLV</div><div class="v {% if stats_all.clv_avg is not none and stats_all.clv_avg > 0 %}blue{% endif %}">{{ ('%+.2f pts' % stats_all.clv_avg) if stats_all.clv_avg is not none else '—' }}</div></div>
+{% if rows %}
+<div class="mb-period" id="mbPeriod">
+  <span class="plabel">PERIOD</span>
+  <button type="button" class="mb-pchip active" data-days="0">All time</button>
+  <button type="button" class="mb-pchip" data-days="7">7D</button>
+  <button type="button" class="mb-pchip" data-days="30">30D</button>
+  <button type="button" class="mb-pchip" data-days="90">90D</button>
 </div>
+{% endif %}
+
+<div class="mb-stats">
+  <div class="mb-stat"><div class="k">RECORD</div><div class="v" id="mbStRecord">{{ stats_all.record }}{% if stats_all.pushes %} · {{ stats_all.pushes }}P{% endif %}</div></div>
+  <div class="mb-stat"><div class="k">NET PROFIT</div><div class="v {% if stats_all.net_dollars > 0 %}green{% elif stats_all.net_dollars < 0 %}red{% endif %}" id="mbStNet">{{ fmt_money(stats_all.net_dollars) }}</div></div>
+  <div class="mb-stat"><div class="k">ROI</div><div class="v" id="mbStRoi">{{ '%+.1f%%' % stats_all.roi }}</div></div>
+  <div class="mb-stat"><div class="k">WIN RATE</div><div class="v" id="mbStWr">{{ '%.0f%%' % stats_all.win_rate }}</div></div>
+  <div class="mb-stat"><div class="k">STREAK</div><div class="v" id="mbStStreak">{{ stats_all.streak }}</div></div>
+  <div class="mb-stat"><div class="k">AVG CLV</div><div class="v {% if stats_all.clv_avg is not none and stats_all.clv_avg > 0 %}blue{% endif %}" id="mbStClv">{{ ('%+.2f pts' % stats_all.clv_avg) if stats_all.clv_avg is not none else '—' }}</div></div>
+</div>
+
+{% if all_rows %}
+{% set _mg = namespace(best=0, run=0) %}
+{% for r in all_rows|reverse %}
+  {% if r.resultado == 'W' %}{% set _mg.run = _mg.run + 1 %}{% if _mg.run > _mg.best %}{% set _mg.best = _mg.run %}{% endif %}{% elif r.resultado == 'L' %}{% set _mg.run = 0 %}{% endif %}
+{% endfor %}
+<div class="mb-miles">
+  <span class="mb-mile">🎯 <b>{{ all_rows|length }}</b> bets tracked</span>
+  {% if stats_all.streak and stats_all.streak != '—' %}<span class="mb-mile">🔥 Current streak <b>{{ stats_all.streak }}</b></span>{% endif %}
+  {% if _mg.best >= 2 %}<span class="mb-mile">🏆 Best win streak <b>{{ _mg.best }}</b></span>{% endif %}
+</div>
+{% endif %}
 
 <div class="mb-card">
   <h3>Profit curve</h3>
@@ -152,7 +181,7 @@
 {% if rows %}
 <div class="wgt-list">
   {% for r in rows %}
-  <article class="wgt-row {{ 'won' if r.resultado == 'W' else '' }}">
+  <article class="wgt-row {{ 'won' if r.resultado == 'W' else '' }}" data-fecha="{{ r.fecha or '' }}" data-res="{{ r.resultado or '' }}" data-profit="{{ r.profit if r.profit is not none else 0 }}" data-stake="{{ r.stake_monto or 0 }}" data-clv="{{ r.clv_pts if r.clv_pts is not none else '' }}">
     <div class="tkc-top">
       {% if r.foto %}
       <img class="tkc-thumb" src="{{ r.foto }}" alt="Ticket">
@@ -431,4 +460,44 @@
 })();
 </script>
 
+<script>
+(function(){
+  var chips=[].slice.call(document.querySelectorAll('#mbPeriod .mb-pchip'));
+  if(!chips.length) return;
+  var rows=[].slice.call(document.querySelectorAll('.wgt-row'));
+  function isoDaysAgo(n){ var d=new Date(); d.setDate(d.getDate()-(n-1)); var m=('0'+(d.getMonth()+1)).slice(-2), dd=('0'+d.getDate()).slice(-2); return d.getFullYear()+'-'+m+'-'+dd; }
+  function money(v){ var s=v>0?'+':(v<0?'-':''); var a=Math.abs(v).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,','); return s+'$'+a; }
+  function setV(id, txt, cls){ var e=document.getElementById(id); if(!e) return; e.textContent=txt; if(cls!==undefined){ e.classList.remove('green','red','blue'); if(cls) e.classList.add(cls); } }
+  function apply(days){
+    var co = days? isoDaysAgo(days) : '';
+    var W=0,L=0,P=0,net=0,risk=0,clvs=[],seq=[];
+    rows.forEach(function(r){
+      var f=r.getAttribute('data-fecha')||'';
+      var ok=!co || (f && f>=co);
+      r.style.display=ok?'':'none';
+      if(!ok) return;
+      var res=r.getAttribute('data-res')||'';
+      if(res==='W'||res==='L'||res==='P'){
+        if(res==='W')W++; else if(res==='L')L++; else P++;
+        net+=parseFloat(r.getAttribute('data-profit')||'0')||0;
+        risk+=parseFloat(r.getAttribute('data-stake')||'0')||0;
+        var c=r.getAttribute('data-clv'); if(c!==''&&c!==null) clvs.push(parseFloat(c)||0);
+        if(res==='W'||res==='L') seq.push(res);
+      }
+    });
+    setV('mbStRecord', W+'-'+L+(P?' · '+P+'P':''));
+    setV('mbStNet', money(net), net>0?'green':(net<0?'red':''));
+    var roi = risk? (net/risk*100) : 0;
+    setV('mbStRoi', (roi>=0?'+':'')+roi.toFixed(1)+'%');
+    setV('mbStWr', ((W+L)? Math.round(W/(W+L)*100):0)+'%');
+    var st='—';
+    if(seq.length){ var f0=seq[0], n=0; for(var i=0;i<seq.length;i++){ if(seq[i]===f0) n++; else break; } st=f0+n; }
+    setV('mbStStreak', st);
+    if(clvs.length){ var s=0; clvs.forEach(function(x){s+=x;}); var avg=s/clvs.length; setV('mbStClv', (avg>=0?'+':'')+avg.toFixed(2)+' pts', avg>0?'blue':''); }
+    else setV('mbStClv', '—', '');
+    chips.forEach(function(ch){ ch.classList.toggle('active', (parseInt(ch.getAttribute('data-days'),10)||0)===days); });
+  }
+  chips.forEach(function(ch){ ch.addEventListener('click', function(){ apply(parseInt(ch.getAttribute('data-days'),10)||0); }); });
+})();
+</script>
 {% endblock %}
