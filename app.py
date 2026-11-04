@@ -4191,6 +4191,8 @@ def migrate_db():
             pending.append("ALTER TABLE users ADD COLUMN stripe_subscription_id TEXT")
         if "stripe_past_due" not in cols:
             pending.append("ALTER TABLE users ADD COLUMN stripe_past_due INTEGER NOT NULL DEFAULT 0")
+        if "stripe_past_due_since" not in cols:
+            pending.append("ALTER TABLE users ADD COLUMN stripe_past_due_since TEXT")
         if "platinum_trial_ends" not in cols:
             pending.append("ALTER TABLE users ADD COLUMN platinum_trial_ends TEXT")
         # Cohorte de la landing nueva (2026-10-31): columnas SEPARADAS del
@@ -10227,6 +10229,104 @@ def admin_api_members_set_stakes():
                     "stake_fijo_elite": plat, "stake_fijo_gold": gold})
 
 
+@app.route("/admin/api/past-due-cutoff", methods=["POST"])
+def admin_api_past_due_cutoff():
+    """Corte por falta de pago a los 10 días (regla de Alex, 2026-11-03):
+    el acceso se corta AL MOMENTO del primer cobro fallido (candado
+    stripe_past_due en _acceso_programa); si el miembro dura 10 días
+    sin pagar, su suscripción se CANCELA en Stripe y la factura abierta
+    se anula. El día que vuelva y pague se crea una suscripción NUEVA
+    cuyo ciclo corre desde ese día (flujo de re-suscripción de
+    /actualizar-tarjeta). Lo corre el cron diario corte-past-due-10-dias;
+    con ?dry=1 solo reporta, no corta. Auth: sesión admin O X-Admin-Key."""
+    if not _admin_api_autorizado():
+        return jsonify({"error": "admin only"}), 403
+    dry = (request.args.get("dry") or "") == "1"
+    db = get_db()
+    rows = db.execute(
+        "SELECT id, email, nombre, stripe_customer_id, "
+        "stripe_subscription_id, stripe_past_due_since FROM users "
+        "WHERE stripe_past_due = 1").fetchall()
+    ahora = datetime.now(TZ)
+    reporte, cortados, errores = [], [], []
+    for r in rows:
+        desde_txt = r["stripe_past_due_since"]
+        if not desde_txt:
+            # Respaldo: primer pago fallido en la auditoría de Stripe.
+            _ev = db.execute(
+                "SELECT created_at FROM stripe_events WHERE "
+                "tipo = 'invoice.payment_failed' AND email = ? "
+                "ORDER BY created_at ASC LIMIT 1",
+                (r["email"],)).fetchone()
+            desde_txt = _ev["created_at"] if _ev else None
+            if desde_txt and not dry:
+                db.execute("UPDATE users SET stripe_past_due_since = ? "
+                           "WHERE id = ?", (desde_txt, r["id"]))
+                db.commit()
+        if not desde_txt:
+            reporte.append({"email": r["email"], "dias": None,
+                            "nota": "sin fecha de inicio registrada"})
+            continue
+        try:
+            desde = datetime.fromisoformat(
+                str(desde_txt).replace("Z", "+00:00"))
+            if desde.tzinfo is None:
+                desde = desde.replace(tzinfo=TZ)
+            dias = (ahora - desde.astimezone(TZ)).days
+        except Exception:
+            reporte.append({"email": r["email"], "dias": None,
+                            "nota": "fecha ilegible"})
+            continue
+        item = {"email": r["email"], "dias": dias,
+                "desde": str(desde_txt)[:10]}
+        reporte.append(item)
+        if dias < 10 or dry:
+            continue
+        # Corte real: cancelar la suscripción en Stripe y anular la
+        # factura abierta. El webhook subscription.deleted hace el
+        # resto del estado (Platinum fuera, aviso al negocio).
+        try:
+            import stripe
+            stripe.api_key = STRIPE_SECRET_KEY
+            sub_id = r["stripe_subscription_id"]
+            if not sub_id and r["stripe_customer_id"]:
+                _subs = stripe.Subscription.list(
+                    customer=r["stripe_customer_id"], limit=1)
+                if _subs and _subs.data:
+                    sub_id = _subs.data[0].id
+            if sub_id:
+                try:
+                    stripe.Subscription.cancel(sub_id)
+                except AttributeError:
+                    stripe.Subscription.delete(sub_id)
+            if r["stripe_customer_id"]:
+                for _inv in stripe.Invoice.list(
+                        customer=r["stripe_customer_id"],
+                        status="open", limit=10).data:
+                    try:
+                        stripe.Invoice.void_invoice(_inv.id)
+                    except Exception:
+                        pass
+            db.execute("UPDATE users SET stripe_past_due = 0, "
+                       "stripe_past_due_since = NULL WHERE id = ?",
+                       (r["id"],))
+            db.commit()
+            try:
+                log_notificacion(
+                    db, "cancelacion",
+                    "Corte por falta de pago (10 días): "
+                    + (r["nombre"] or r["email"]), r["email"])
+            except Exception:
+                pass
+            item["cortado"] = True
+            cortados.append(item)
+        except Exception as exc:
+            errores.append({"email": r["email"],
+                            "error": type(exc).__name__})
+    return jsonify({"ok": True, "dry": dry, "past_due": reporte,
+                    "cortados": cortados, "errores": errores})
+
+
 @app.route("/admin/test-clear-past-due", methods=["POST"])
 def admin_test_clear_past_due():
     """TEMPORAL para pruebas de Alex: quita SOLO el flag stripe_past_due,
@@ -14995,7 +15095,7 @@ def stripe_webhook():
             es_retorno_genuino = estaba_cancelado or tenia_sub_stripe
             db.execute(
                 "UPDATE users SET platinum_unlocked = 1, email_verified = 1, activation_token = NULL, stripe_customer_id = ?, "
-                "stripe_subscription_id = ?, stripe_past_due = 0, cancel_requested_at = NULL, platinum_trial_ends = NULL WHERE id = ?",
+                "stripe_subscription_id = ?, stripe_past_due = 0, stripe_past_due_since = NULL, cancel_requested_at = NULL, platinum_trial_ends = NULL WHERE id = ?",
                 (customer_id or None, sub_id or None, uid),
             )
             # Inglés forzado en las páginas de Stripe del miembro.
@@ -15276,8 +15376,19 @@ def stripe_webhook():
                     nombre = r["nombre"] or ""
                     # Marca past_due para el banner de dunning en /desbloquear-platinum
                     # (pedido Alex 2026-10-02, idea del ejemplo que envió).
-                    db.execute("UPDATE users SET stripe_past_due = 1 WHERE email = ?",
-                               (email,))
+                    # Fecha de inicio del past-due (regla de los 10 días,
+                    # Alex 2026-11-03): el PRIMER pago fallido registrado
+                    # en stripe_events para este miembro; si no hay
+                    # registro previo, hoy. La usa el corte automático.
+                    _ev = db.execute(
+                        "SELECT created_at FROM stripe_events WHERE "
+                        "tipo = 'invoice.payment_failed' AND email = ? "
+                        "ORDER BY created_at ASC LIMIT 1", (email,)).fetchone()
+                    _desde = (_ev["created_at"] if _ev else now_iso())
+                    db.execute("UPDATE users SET stripe_past_due = 1, "
+                               "stripe_past_due_since = COALESCE("
+                               "stripe_past_due_since, ?) WHERE email = ?",
+                               (_desde, email))
                     db.commit()
             ya_notificado = False
             if invoice_id:
