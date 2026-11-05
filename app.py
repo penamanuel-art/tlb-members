@@ -7454,6 +7454,9 @@ def _my_bets_center(user):
         _r.setdefault("mercado", "Moneyline")
         _r.setdefault("liga", "")
         _r.setdefault("cierre", None)
+        _r.setdefault("matchup", "")
+        if not _r.get("mercado_base"):
+            _r["mercado_base"] = _mercado_base(_r.get("mercado"))
     f = {k: (request.args.get(k) or "").strip()
          for k in ("source", "result", "market", "book", "q")}
     def _ok(r):
@@ -7603,6 +7606,29 @@ def _mybets_settings(db, uid, user=None):
                 br = None
         unit = round(float(br) * 0.01, 2) if br else 100.0
     return {"unit_monto": float(unit), "email_pref": pref}
+
+
+def _mercado_base(txt):
+    """Mercado base para filtros y sub-líneas: Moneyline / Spread / Total.
+
+    El archivo oficial guarda cosas como "Spread +14.5" o "moneyline";
+    las apuestas propias guardan el texto del formulario. Todo se
+    normaliza aquí a la familia del mercado."""
+    m = (txt or "").strip().lower()
+    if m.startswith("spread") or " spread" in m:
+        return "Spread"
+    if m.startswith(("total", "over", "under")):
+        return "Total"
+    return "Moneyline"
+
+
+def _matchup_txt(off):
+    """Matchup corto estilo "AKR vs OHIO" desde el registro oficial."""
+    a = ((off or {}).get("abbr") or "").strip()
+    b = ((off or {}).get("opp_abbr") or "").strip()
+    if a and b:
+        return f"{a} vs {b}"
+    return ""
 
 
 def _own_row(b, settings=None):
@@ -8554,6 +8580,11 @@ def _tracker_context(user):
             "abbr": abbr,
             "logo": logo,
             "sport_icon": _sport_icon(t, off),
+            "liga": (off.get("liga") or ""),
+            "juego": (off.get("juego") or ""),
+            "matchup": _matchup_txt(off),
+            "mercado_base": _mercado_base(
+                off.get("mercado") or off.get("bettype") or ""),
         })
     # ---- My Bets completo: apuestas propias del miembro (2026-10-23) ----
     mb_settings = _mybets_settings(db, uid, user)
