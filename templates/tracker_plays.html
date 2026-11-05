@@ -195,8 +195,9 @@
   .hist-chip.active { background:linear-gradient(135deg,#e8c766,#8a6d2f); color:#1a1405; border-color:transparent; }
   .hist-chip.active .n { color:#1a1405; }
   .hist-dates { display:grid; grid-template-columns:1fr 1fr 1.2fr; gap:9px; margin:0 0 12px; }
-  .hist-dates label { font-size:10px; letter-spacing:1.2px; color:#8b98ad; font-weight:800; display:block; }
-  .hist-dates input, .hist-dates select { width:100%; box-sizing:border-box; background:#131e31; border:1px solid #24334d; border-radius:10px; padding:9px 10px; font-size:13px; color:#eef2f8; margin-top:5px; font-family:inherit; color-scheme:dark; }
+  .hist-dates label { font-size:10px; letter-spacing:1.2px; color:#8b98ad; font-weight:800; display:block; min-width:0; width:100%; box-sizing:border-box; }
+  .hist-dates input, .hist-dates select { width:100%; min-width:0; box-sizing:border-box; background:#131e31; border:1px solid #24334d; border-radius:10px; padding:9px 10px; font-size:13px; color:#eef2f8; margin-top:5px; font-family:inherit; color-scheme:dark; }
+  @media (max-width:560px){ .hist-dates { grid-template-columns:1fr; } }
   .hist-fbar { display:flex; align-items:center; gap:8px; flex-wrap:wrap; background:rgba(232,199,102,.07); border:1px solid rgba(232,199,102,.35); border-radius:14px; padding:10px 12px; margin:0 0 12px; }
   .hist-fbar-k { color:#9aa7b8; font-size:12.5px; font-weight:700; }
   .hist-fchip { display:inline-flex; align-items:center; gap:7px; background:#131e31; border:1px solid rgba(232,199,102,.5); color:#eef2f8; font-size:12.5px; font-weight:700; border-radius:999px; padding:6px 8px 6px 12px; }
