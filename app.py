@@ -4154,6 +4154,33 @@ def _ensure_mybets_schema():
 _ensure_mybets_schema()
 
 
+def _ensure_tracker_goals_schema():
+    """Meta personal del tracker (2026-11-04, fase 2): una fila por
+    miembro con su meta de unidades netas y el período (week/month).
+    Tabla pequeña e independiente de mybets_settings para no pisar los
+    ajustes al guardar. Idempotente; dialecto según USE_PG; cualquier
+    fallo se traga: la página nunca depende de esta tabla."""
+    try:
+        conn = _raw_connect()
+        if USE_PG:
+            conn.execute("""CREATE TABLE IF NOT EXISTS tracker_goals (
+                user_id INTEGER PRIMARY KEY REFERENCES users(id),
+                target_units DOUBLE PRECISION NOT NULL,
+                period TEXT NOT NULL DEFAULT 'month', updated_at TEXT)""")
+        else:
+            conn.execute("""CREATE TABLE IF NOT EXISTS tracker_goals (
+                user_id INTEGER PRIMARY KEY REFERENCES users(id),
+                target_units REAL NOT NULL,
+                period TEXT NOT NULL DEFAULT 'month', updated_at TEXT)""")
+        conn.commit()
+        conn.close()
+    except Exception:
+        pass
+
+
+_ensure_tracker_goals_schema()
+
+
 def _ensure_game_follows_schema():
     """Tabla de juegos seguidos del Game Center (2026-10-23, idea de diseño
     aprobada por Alex SOLO como prueba en su cuenta): Follow por usuario y
@@ -7449,12 +7476,22 @@ def _my_bets_center(user):
     rows_f = [r for r in all_rows if _ok(r)]
     books = sorted({(r.get("casa") or "") for r in all_rows if r.get("casa")})
     markets = sorted({(r.get("mercado") or "Moneyline") for r in all_rows})
+    _tk_goal = None
+    try:
+        _grow = get_db().execute(
+            "SELECT target_units, period FROM tracker_goals"
+            " WHERE user_id = ?", (user["id"],)).fetchone()
+        if _grow:
+            _tk_goal = {"target_units": float(_grow["target_units"] or 0),
+                        "period": _grow["period"] or "month"}
+    except Exception:
+        _tk_goal = None
     ctx.update(
         rows=rows_f, all_rows=all_rows, filters=f,
         stats_f=_stats_from_rows(rows_f),
         breakdowns=_mybets_breakdowns(all_rows),
         coach=_coach_insights(all_rows, ctx.get("stats_all") or {}),
-        books=books, markets=markets,
+        books=books, markets=markets, tk_goal=_tk_goal,
     )
     return render_template("tracker_plays.html", **ctx)
 
@@ -8104,6 +8141,49 @@ def mybets_settings_save():
             (user["id"], unit, pref, datetime.now(TZ).strftime("%Y-%m-%d %H:%M")))
     db.commit()
     flash("My Bets settings saved.", "ok")
+    return back("tracker_plays")
+
+
+@app.route("/my-bets/goal", methods=["POST"])
+@login_required
+def mybets_goal_save():
+    """Guarda o limpia la meta personal de unidades netas del tracker
+    (fase 2, 2026-11-04). Target vacío o <= 0 limpia la meta. Solo toca
+    la tabla tracker_goals del propio miembro."""
+    user = _mybets_gate()
+    if user is None:
+        return redirect(url_for("tracker"))
+    _ensure_tracker_goals_schema()
+    db = get_db()
+    period = (request.form.get("goal_period") or "month").strip()
+    if period not in ("week", "month"):
+        period = "month"
+    try:
+        target = float((request.form.get("goal_target") or "").strip() or 0)
+    except ValueError:
+        target = 0.0
+    if target <= 0:
+        db.execute("DELETE FROM tracker_goals WHERE user_id = ?",
+                   (user["id"],))
+        db.commit()
+        flash("Goal cleared.", "ok")
+        return back("tracker_plays")
+    target = min(target, 100000.0)
+    now = datetime.now(TZ).strftime("%Y-%m-%d %H:%M")
+    if USE_PG:
+        db.execute(
+            "INSERT INTO tracker_goals (user_id, target_units, period,"
+            " updated_at) VALUES (?,?,?,?) ON CONFLICT (user_id) DO"
+            " UPDATE SET target_units = EXCLUDED.target_units,"
+            " period = EXCLUDED.period, updated_at = EXCLUDED.updated_at",
+            (user["id"], target, period, now))
+    else:
+        db.execute(
+            "INSERT OR REPLACE INTO tracker_goals (user_id, target_units,"
+            " period, updated_at) VALUES (?,?,?,?)",
+            (user["id"], target, period, now))
+    db.commit()
+    flash("Goal saved.", "ok")
     return back("tracker_plays")
 
 
