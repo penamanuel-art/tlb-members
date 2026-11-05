@@ -1,0 +1,120 @@
+{% extends "base_v2.html" %}
+{% block content %}
+<style>
+.v2-topbar { position: fixed !important; top: 0; left: 0; right: 0; z-index: 100; }
+body.v2 { padding-top: 77px; }
+.chat-fab { top: 90px !important; }
+.cp-wrap { max-width: 680px; margin: 0 auto; padding: 20px 12px 48px; font-family: -apple-system, 'SF Pro', Inter, system-ui, sans-serif; color: #fff; }
+.cp-back { display: inline-block; color: #e8c766; font-weight: 700; font-size: 0.9rem; text-decoration: none; margin-bottom: 14px; }
+.cp-kicker { color: #e8c766; font-size: 12px; font-weight: 800; letter-spacing: 4px; margin: 0; }
+.cp-wrap h1 { font-size: 1.7rem; font-weight: 800; color: #fff; margin: 6px 0 4px; }
+.cp-sub { color: #8fa1c2; font-size: 0.9rem; margin: 0 0 22px; line-height: 1.5; }
+.cp-card { background: linear-gradient(165deg,#151e36,#0a0f1d); border: 1px solid rgba(232,199,102,.35); border-radius: 18px; padding: 18px 16px; margin-bottom: 18px; }
+.cp-label { display: block; font-weight: 800; font-size: 0.85rem; letter-spacing: 1px; color: #e8c766; margin: 0 0 8px; text-transform: uppercase; }
+.cp-in { width: 100%; box-sizing: border-box; background: #070d1d; border: 1px solid rgba(255,255,255,.14); border-radius: 12px; color: #fff; padding: 12px; font-size: 1rem; font-family: inherit; margin-bottom: 4px; }
+.cp-in:focus { outline: none; border-color: #e8c766; }
+.cp-count { text-align: right; font-size: 0.72rem; color: #8fa1c2; margin: 0 0 14px; }
+.cp-aud { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+.cp-aud label { display: block; text-align: center; border: 1px solid rgba(255,255,255,.16); border-radius: 12px; padding: 12px 8px; cursor: pointer; font-weight: 700; font-size: 0.95rem; background: #070d1d; }
+.cp-aud label small { display: block; font-weight: 400; color: #8fa1c2; font-size: 0.72rem; margin-top: 3px; }
+.cp-aud input { position: absolute; opacity: 0; pointer-events: none; }
+.cp-aud label:has(input:checked) { border-color: #e8c766; background: rgba(232,199,102,.12); color: #e8c766; }
+.cp-note { font-size: 0.78rem; color: #8fa1c2; line-height: 1.55; margin: 0 0 4px; }
+.cp-btn { width: 100%; background: linear-gradient(165deg,#f2d57e,#e8c766); color: #231a02; border: none; border-radius: 14px; padding: 15px; font-weight: 800; font-size: 1.05rem; cursor: pointer; margin-top: 10px; }
+.cp-btn:disabled { opacity: .55; cursor: default; }
+.cp-result { border-radius: 14px; padding: 14px 16px; margin-bottom: 18px; font-size: 0.95rem; line-height: 1.5; }
+.cp-result.ok { background: rgba(232,199,102,.12); border: 1px solid rgba(232,199,102,.5); color: #fff; }
+.cp-result.err { background: rgba(255,90,90,.12); border: 1px solid rgba(255,90,90,.5); color: #fff; }
+/* Vista previa estilo notificación de teléfono */
+.pv-phone { background: #0B0E13; border: 1px solid rgba(255,255,255,.12); border-radius: 24px; padding: 16px 12px; }
+.pv-time { text-align: center; color: #fff; font-size: 1.6rem; font-weight: 700; margin: 2px 0 12px; }
+.pv-notif { display: flex; gap: 10px; background: rgba(38,44,56,.92); border-radius: 20px; padding: 12px 14px; align-items: flex-start; }
+.pv-notif img { width: 38px; height: 38px; border-radius: 9px; object-fit: cover; flex: none; }
+.pv-body { min-width: 0; }
+.pv-title { font-weight: 700; font-size: 0.95rem; color: #fff; line-height: 1.3; word-wrap: break-word; }
+.pv-from { font-size: 0.82rem; color: #d5dbe7; margin-top: 1px; }
+.pv-text { font-size: 0.88rem; color: #eef1f7; line-height: 1.4; margin-top: 2px; word-wrap: break-word; }
+.pv-when { margin-left: auto; font-size: 0.72rem; color: #9aa4b5; flex: none; }
+</style>
+
+<div class="cp-wrap">
+  <a class="cp-back" href="/admin">← Panel</a>
+  <p class="cp-kicker">ADMIN</p>
+  <h1>📲 Crear push</h1>
+  <p class="cp-sub">Escribe la notificación y mira a la derecha (abajo en el teléfono) cómo se va a ver antes de enviarla. Sale por el mismo sistema del push manual de siempre.</p>
+
+  {% if resultado %}
+    {% if resultado.ok %}
+    <div class="cp-result ok">✅ <strong>Push enviado:</strong> {{ resultado.sent }} entregados · {{ resultado.failed }} fallidos · audiencia: {% if resultado.audiencia == 'solo_yo' %}Solo yo{% else %}Miembros{% endif %}.</div>
+    {% else %}
+    <div class="cp-result err">⚠️ {{ resultado.error }}</div>
+    {% endif %}
+  {% endif %}
+
+  <form method="POST" action="{{ url_for('admin_crear_push') }}" id="cpForm">
+    <div class="cp-card">
+      <label class="cp-label" for="cpTitulo">Título</label>
+      <input class="cp-in" id="cpTitulo" name="titulo" maxlength="80" placeholder="Ej.: Today's card is ready" value="{{ form.titulo }}" required>
+      <p class="cp-count"><span id="cntTitulo">0</span>/80</p>
+
+      <label class="cp-label" for="cpMensaje">Mensaje</label>
+      <textarea class="cp-in" id="cpMensaje" name="mensaje" rows="3" maxlength="240" placeholder="Ej.: FREE Rangers -140 · GOLD Montréal +110 · In your Admin" required>{{ form.mensaje }}</textarea>
+      <p class="cp-count"><span id="cntMensaje">0</span>/240</p>
+
+      <span class="cp-label">Audiencia</span>
+      <div class="cp-aud">
+        <label><input type="radio" name="audiencia" value="miembros" {% if form.audiencia != 'solo_yo' %}checked{% endif %}>👥 Miembros<small>Con alertas de jugadas activadas</small></label>
+        <label><input type="radio" name="audiencia" value="solo_yo" {% if form.audiencia == 'solo_yo' %}checked{% endif %}>🔒 Solo yo<small>Solo al admin (pruebas)</small></label>
+      </div>
+
+      <label class="cp-label" for="cpUrl">Al tocarla, abre</label>
+      <input class="cp-in" id="cpUrl" name="url" value="{{ form.url or '/home' }}" placeholder="/home">
+      <p class="cp-note">Ruta dentro de la página (default: <strong>/home</strong>, el Dashboard).</p>
+    </div>
+
+    <div class="cp-card">
+      <span class="cp-label">Vista previa</span>
+      <div class="pv-phone">
+        <div class="pv-time">2:45</div>
+        <div class="pv-notif">
+          <img src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="">
+          <div class="pv-body">
+            <div class="pv-title" id="pvTitulo">Título del push</div>
+            <div class="pv-from">from The Sharp</div>
+            <div class="pv-text" id="pvMensaje">El mensaje se ve aquí, tal como le llega al teléfono.</div>
+          </div>
+          <span class="pv-when">now</span>
+        </div>
+      </div>
+      <p class="cp-note" style="margin-top:12px;">⚖️ <strong>Ley de la casa:</strong> no escribas la marca en el título ni en el mensaje — el teléfono ya la pone una sola vez («from The Sharp»).</p>
+    </div>
+
+    <button class="cp-btn" type="submit" id="cpSend">📲 Enviar push</button>
+  </form>
+</div>
+
+<script>
+(function() {
+  var t = document.getElementById('cpTitulo'),
+      m = document.getElementById('cpMensaje'),
+      ct = document.getElementById('cntTitulo'),
+      cm = document.getElementById('cntMensaje'),
+      pt = document.getElementById('pvTitulo'),
+      pm = document.getElementById('pvMensaje');
+  function upd() {
+    ct.textContent = t.value.length;
+    cm.textContent = m.value.length;
+    pt.textContent = t.value.trim() || 'Título del push';
+    pm.textContent = m.value.trim() || 'El mensaje se ve aquí, tal como le llega al teléfono.';
+  }
+  t.addEventListener('input', upd);
+  m.addEventListener('input', upd);
+  upd();
+  var form = document.getElementById('cpForm'), btn = document.getElementById('cpSend');
+  form.addEventListener('submit', function() {
+    btn.disabled = true;
+    btn.textContent = 'Enviando…';
+  });
+})();
+</script>
+{% endblock %}
