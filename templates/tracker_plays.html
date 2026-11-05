@@ -182,6 +182,59 @@
   .tk-secttl { display:flex; justify-content:space-between; align-items:baseline; gap:10px; }
   .tk-secttl .tot { font-size:19px; font-weight:800; }
   .tk-secttl .tot.pos { color:#2fbf71; } .tk-secttl .tot.neg { color:#f87171; }
+  /* ===== HISTORY (reconstrucción estilo WGT, 2026-11-05) ===== */
+  .hist-settled { color:#9aa7b8; font-size:13.5px; margin:0 0 12px; display:flex; align-items:center; gap:7px; }
+  .hist-settled .ok { color:#2fbf71; font-weight:800; }
+  .hist-settled b { color:#eef2f8; }
+  .hist-q { width:100%; box-sizing:border-box; background:#131e31; border:1px solid #24334d; border-radius:11px; padding:11px 13px; font-size:14px; color:#eef2f8; margin:0 0 10px; font-family:inherit; }
+  .hist-q::placeholder { color:#66788f; }
+  .hist-chiprow { display:flex; gap:7px; flex-wrap:wrap; margin:0 0 9px; align-items:center; }
+  .hist-chiprow .plabel { font-size:10px; letter-spacing:1.2px; color:#8b98ad; font-weight:800; margin-right:2px; }
+  .hist-chip { border:1px solid #24334d; background:#131e31; color:#c7cede; font-size:12.5px; font-weight:700; padding:7px 13px; border-radius:999px; cursor:pointer; font-family:inherit; }
+  .hist-chip .n { color:#8b98ad; font-weight:800; margin-left:5px; }
+  .hist-chip.active { background:linear-gradient(135deg,#e8c766,#8a6d2f); color:#1a1405; border-color:transparent; }
+  .hist-chip.active .n { color:#1a1405; }
+  .hist-dates { display:grid; grid-template-columns:1fr 1fr 1.2fr; gap:9px; margin:0 0 12px; }
+  .hist-dates label { font-size:10px; letter-spacing:1.2px; color:#8b98ad; font-weight:800; display:block; }
+  .hist-dates input, .hist-dates select { width:100%; box-sizing:border-box; background:#131e31; border:1px solid #24334d; border-radius:10px; padding:9px 10px; font-size:13px; color:#eef2f8; margin-top:5px; font-family:inherit; color-scheme:dark; }
+  .hist-fbar { display:flex; align-items:center; gap:8px; flex-wrap:wrap; background:rgba(232,199,102,.07); border:1px solid rgba(232,199,102,.35); border-radius:14px; padding:10px 12px; margin:0 0 12px; }
+  .hist-fbar-k { color:#9aa7b8; font-size:12.5px; font-weight:700; }
+  .hist-fchip { display:inline-flex; align-items:center; gap:7px; background:#131e31; border:1px solid rgba(232,199,102,.5); color:#eef2f8; font-size:12.5px; font-weight:700; border-radius:999px; padding:6px 8px 6px 12px; }
+  .hist-fchip button { background:none; border:0; color:#e8c766; font-size:14px; font-weight:800; cursor:pointer; padding:0 3px; line-height:1; font-family:inherit; }
+  .hist-clear { margin-left:auto; background:#131e31; border:1px solid #24334d; color:#eef2f8; font-size:12.5px; font-weight:700; border-radius:999px; padding:7px 13px; cursor:pointer; font-family:inherit; }
+  .hist-strip { display:grid; grid-template-columns:repeat(5,1fr); background:linear-gradient(155deg,#26303f,#1c2431 60%,#1a222e); border:1px solid rgba(255,255,255,.06); border-radius:16px; padding:13px 4px; margin:0 0 12px; }
+  @media (max-width:560px){ .hist-strip { grid-template-columns:repeat(3,1fr); row-gap:13px; } }
+  .hist-stat { padding:0 10px; min-width:0; }
+  .hist-stat .k { font-size:9.5px; letter-spacing:1.1px; color:#8b98ad; font-weight:800; }
+  .hist-stat .v { font-size:17px; font-weight:800; color:#fff; margin-top:3px; white-space:nowrap; }
+  .hist-stat .v.pos { color:#2fbf71; } .hist-stat .v.neg { color:#f87171; }
+  .hist-stat .s { font-size:11.5px; color:#9aa7b8; margin-top:1px; white-space:nowrap; }
+  .hist-export { margin:0 0 8px; }
+  .hist-day { display:flex; justify-content:space-between; align-items:baseline; gap:10px; padding:12px 4px 2px; margin-top:8px; }
+  .hist-day .d { color:#eef2f8; font-weight:800; font-size:14.5px; }
+  .hist-day .r { color:#9aa7b8; font-size:13px; font-weight:700; white-space:nowrap; }
+  .hist-day .r .pos { color:#2fbf71; } .hist-day .r .neg { color:#f87171; }
+  .hist-row { display:flex; gap:12px; align-items:center; background:linear-gradient(155deg,#26303f,#1c2431 60%,#1a222e); border:1px solid rgba(255,255,255,.06); border-left:4px solid #3a465a; border-radius:14px; padding:12px 13px; margin-top:9px; }
+  .hist-row.won { border-left-color:#2fbf71; }
+  .hist-row.lost { border-left-color:#f87171; }
+  .hist-row.push { border-left-color:#e8c766; }
+  .hist-main { flex:1; min-width:0; }
+  .hist-pick { font-size:15.5px; font-weight:800; color:#fff; margin:0; line-height:1.25; }
+  .hist-sub { color:#9aa7b8; font-size:12.5px; margin:4px 0 0; }
+  .hist-det { color:#8b98ad; font-size:12px; margin:4px 0 0; display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+  .hist-det .srcdot { width:7px; height:7px; border-radius:50%; background:#e8c766; display:inline-block; flex:none; }
+  .hist-det .srcdot.own { background:#5b6b82; }
+  .hist-res { text-align:right; flex:none; }
+  .hist-profit { font-size:16px; font-weight:800; display:block; }
+  .hist-profit.pos { color:#2fbf71; } .hist-profit.neg { color:#f87171; } .hist-profit.flat { color:#9aa7b8; }
+  .hist-towin { font-size:12px; color:#9aa7b8; display:block; }
+  .hist-towin b { color:#2fbf71; font-weight:700; }
+  .hist-pill { display:inline-block; margin-top:5px; font-size:11px; font-weight:800; letter-spacing:.4px; border-radius:7px; padding:4px 10px; }
+  .hist-pill.won { color:#2fbf71; background:rgba(47,191,113,.13); }
+  .hist-pill.lost { color:#f87171; background:rgba(248,113,113,.12); }
+  .hist-pill.pend { color:#c7cede; background:#24334d; }
+  .hist-pill.push { color:#e8c766; background:rgba(232,199,102,.13); }
+  .hist-thumbbtn img { width:44px; height:44px; }
 </style>
 
 <a class="ply-back" href="{{ url_for('tracker') }}">&#8592; Back to my tracker</a>
@@ -289,7 +342,7 @@
 {% for r in all_rows|reverse %}
   {% if r.resultado == 'W' %}{% set _mg.run = _mg.run + 1 %}{% if _mg.run > _mg.best %}{% set _mg.best = _mg.run %}{% endif %}{% elif r.resultado == 'L' %}{% set _mg.run = 0 %}{% endif %}
 {% endfor %}
-<div class="mb-miles" data-tabs="overview history">
+<div class="mb-miles" data-tabs="overview">
   <span class="mb-mile">🎯 <b>{{ all_rows|length }}</b> bets tracked</span>
   {% if stats_all.streak and stats_all.streak != '—' %}<span class="mb-mile">🔥 Current streak <b>{{ stats_all.streak }}</b></span>{% endif %}
   {% if _mg.best >= 2 %}<span class="mb-mile">🏆 Best win streak <b>{{ _mg.best }}</b></span>{% endif %}
@@ -408,9 +461,9 @@
 </div>
 
 {% if rows %}
-<div class="wgt-list" data-tabs="overview open history">
+<div class="wgt-list" data-tabs="overview open">
   {% for r in rows %}
-  <article class="wgt-row {{ 'won' if r.resultado == 'W' else '' }}" data-fecha="{{ r.fecha or '' }}" data-res="{{ r.resultado or '' }}" data-profit="{{ r.profit if r.profit is not none else 0 }}" data-stake="{{ r.stake_monto or 0 }}" data-clv="{{ r.clv_pts if r.clv_pts is not none else '' }}" data-source="{{ r.source or '' }}" data-league="{{ r.liga or '' }}" data-level="{{ nivel_display(r.nivel) if r.source != 'own' else '' }}" data-market="{{ r.mercado or 'Moneyline' }}" data-book="{{ r.casa or '' }}" data-odds="{{ r.cuota if r.cuota is not none else '' }}">
+  <article class="wgt-row {{ 'won' if r.resultado == 'W' else '' }}" data-fecha="{{ r.fecha or '' }}" data-res="{{ r.resultado or '' }}" data-profit="{{ r.profit if r.profit is not none else 0 }}" data-stake="{{ r.stake_monto or 0 }}" data-clv="{{ r.clv_pts if r.clv_pts is not none else '' }}" data-source="{{ r.source or '' }}" data-league="{{ r.liga or '' }}" data-level="{{ nivel_display(r.nivel) if r.source != 'own' else '' }}" data-market="{{ r.mercado or 'Moneyline' }}" data-book="{{ r.casa or '' }}" data-odds="{{ r.cuota if r.cuota is not none else '' }}" data-mbase="{{ r.mercado_base or 'Moneyline' }}" data-matchup="{{ r.matchup or '' }}">
     <div class="tkc-top">
       {% set _tk = r.foto or (url_for('static', filename=r.comprobante) if r.comprobante else '') %}
       {% if _tk %}
@@ -467,6 +520,28 @@
 {% else %}
 <p class="wgt-empty">No bets match these filters. <a href="{{ url_for('tracker_plays') }}" style="color:#2ee6a8">Clear them</a> to see your full tracker.</p>
 {% endif %}
+
+<div id="tkHistory" data-tabs="history" style="display:none">
+  <p class="hist-settled" id="histSettledLine"></p>
+  <input type="search" class="hist-q" id="histQ" placeholder="Search a team or pick" autocomplete="off">
+  <div class="hist-chiprow" id="histStatus"></div>
+  <div class="hist-chiprow" id="histLeagues"></div>
+  <div class="hist-chiprow" id="histMarkets"></div>
+  <div class="hist-dates">
+    <label>FROM<input type="date" id="histFrom"></label>
+    <label>TO<input type="date" id="histTo"></label>
+    <label>BOOK<select id="histBook"><option value="">All books</option></select></label>
+  </div>
+  <div class="hist-fbar" id="histFbar" style="display:none">
+    <span class="hist-fbar-k">&#9783; Filtered by</span>
+    <span id="histFchips"></span>
+    <button type="button" class="hist-clear" id="histClear">Clear all</button>
+  </div>
+  <div class="hist-strip" id="histStrip"></div>
+  <div class="hist-export"><a class="mb-btn ghost" href="{{ url_for('mybets_export') }}">&#11015; Export every bet</a></div>
+  <div id="histList"></div>
+  <p class="wgt-empty" id="histEmpty" style="display:none">No bets match these filters.</p>
+</div>
 
 {% else %}
 <div class="mb-card tk-empty">
@@ -866,7 +941,8 @@
       if(ok) vis++;
     });
     var le=document.getElementById('tkListEmpty');
-    if(le){
+    if(le && TK.tab==='history') le.style.display='none';
+    if(le && TK.tab!=='history'){
       if(vis===0 && rows.length && TK.tab!=='performance'){
         le.style.display='';
         var hiddenBySrc=0;
@@ -1078,8 +1154,8 @@
     list.innerHTML=items.map(function(i){ return '<div class="tk-need"><span class="ic">'+i.ic+'</span><span><span class="t">'+i.t+'</span><div class="s">'+i.s+'</div></span><span class="n">'+i.n+'</span></div>'; }).join('');
   }
   function computeTabCounts(){
-    var list=rows.filter(passesPeriod), open=0, hist=0;
-    list.forEach(function(r){ if(isSettled(r)) hist++; else open++; });
+    var list=rows.filter(passesPeriod), open=0, hist=list.length;
+    list.forEach(function(r){ if(!isSettled(r)) open++; });
     var o=document.getElementById('tkTabOpen'), h=document.getElementById('tkTabHist');
     if(o) o.textContent=open;
     if(h) h.textContent=hist;
@@ -1101,6 +1177,287 @@
     computeQuad(); computeStats5(); computeInsights(); computeSources();
     computeWeek(); computeLastWeek(); computeDays(); computeGoal();
     computeNeeds(); computeTabCounts(); refreshDynamic();
+    renderHistory();
+  }
+  /* ===== HISTORY estilo WGT (2026-11-05): resumen, filtros y lista por día ===== */
+  var HIST={q:'', st:'', lg:'', mk:'', bk:'', from:'', to:''};
+  var HISTBUILT=false;
+  var LGNAMES={americanfootball_nfl:'NFL', americanfootball_ncaaf:'NCAAF', basketball_nba:'NBA', basketball_ncaab:'NCAAB', basketball_wnba:'WNBA', icehockey_nhl:'NHL', baseball_mlb:'MLB'};
+  function leagueLabel(raw){ if(!raw) return ''; if(LGNAMES[raw]) return LGNAMES[raw]; if(raw.indexOf('soccer')===0) return 'Soccer'; return raw; }
+  function hMbase(r){
+    var mb=r.getAttribute('data-mbase')||'';
+    if(mb) return mb;
+    var m=(r.getAttribute('data-market')||'Moneyline').toLowerCase();
+    if(m.indexOf('spread')>=0) return 'Spread';
+    if(m.indexOf('total')>=0||m.indexOf('over')>=0||m.indexOf('under')>=0) return 'Total';
+    return 'Moneyline';
+  }
+  function pickTxt(r){ var e=r.querySelector('.tkc-pick'); return e? e.textContent.trim() : ''; }
+  function hOddsTxt(r){ var o=parseFloat(r.getAttribute('data-odds')||''); if(isNaN(o)||o===0) return ''; var v=Math.round(o*100)/100; return (v>0?'+':'')+v; }
+  function hStakeTxt(r){ var s=stake(r); return '$'+(s%1? s.toFixed(2) : s.toFixed(0)); }
+  function histBase(){ return rows.filter(function(r){ return passesPeriod(r)&&passesSrc(r); }); }
+  function histPass(r){
+    if(HIST.st){
+      var x=res(r);
+      if(HIST.st==='OPEN'){ if(isSettled(r)) return false; }
+      else if(x!==HIST.st) return false;
+    }
+    if(HIST.lg && leagueLabel(r.getAttribute('data-league')||'')!==HIST.lg) return false;
+    if(HIST.mk && hMbase(r)!==HIST.mk) return false;
+    if(HIST.bk && (r.getAttribute('data-book')||'')!==HIST.bk) return false;
+    if(HIST.from && fecha(r)<HIST.from) return false;
+    if(HIST.to && fecha(r)>HIST.to) return false;
+    if(HIST.q){
+      var hay=(pickTxt(r)+' '+(r.getAttribute('data-matchup')||'')+' '+leagueLabel(r.getAttribute('data-league')||'')+' '+(r.getAttribute('data-book')||'')).toLowerCase();
+      if(hay.indexOf(HIST.q.toLowerCase())<0) return false;
+    }
+    return true;
+  }
+  function histTitle(r){
+    var t=pickTxt(r), mb=hMbase(r);
+    if(mb==='Spread' && !/spread/i.test(t) && !/\bML\b/.test(t)) t+=' Spread';
+    else if(mb==='Total' && !/(total|over|under)/i.test(t)) t+=' Total';
+    return t;
+  }
+  function buildHistControls(){
+    if(HISTBUILT) return;
+    var stBox=document.getElementById('histStatus');
+    if(!stBox) return;
+    HISTBUILT=true;
+    var sts=[['','All'],['W','Won'],['L','Lost'],['OPEN','Open'],['P','Push / void']];
+    stBox.innerHTML='<span class="plabel">RESULT</span>'+sts.map(function(s){
+      return '<button type="button" class="hist-chip" data-st="'+s[0]+'">'+s[1]+'</button>';
+    }).join('');
+    var bkSel=document.getElementById('histBook');
+    if(bkSel){
+      var seen={}, books=[];
+      rows.forEach(function(r){ var b=r.getAttribute('data-book')||''; if(b&&!seen[b]){ seen[b]=1; books.push(b); } });
+      books.sort();
+      bkSel.innerHTML='<option value="">All books</option>'+books.map(function(b){ return '<option value="'+esc(b)+'">'+esc(b)+'</option>'; }).join('');
+    }
+    var q=document.getElementById('histQ');
+    if(q) q.addEventListener('input', function(){ HIST.q=q.value.trim(); renderHistory(); });
+    var fEl=document.getElementById('histFrom'), tEl=document.getElementById('histTo');
+    if(fEl) fEl.addEventListener('change', function(){ HIST.from=fEl.value||''; renderHistory(); });
+    if(tEl) tEl.addEventListener('change', function(){ HIST.to=tEl.value||''; renderHistory(); });
+    if(bkSel) bkSel.addEventListener('change', function(){ HIST.bk=bkSel.value||''; renderHistory(); });
+    stBox.addEventListener('click', function(e){
+      var b=e.target.closest? e.target.closest('[data-st]') : null;
+      if(!b) return;
+      HIST.st=b.getAttribute('data-st')||''; renderHistory();
+    });
+    var lgBox=document.getElementById('histLeagues');
+    if(lgBox) lgBox.addEventListener('click', function(e){
+      var b=e.target.closest? e.target.closest('[data-lg]') : null;
+      if(!b) return;
+      var v=b.getAttribute('data-lg')||'';
+      HIST.lg=(HIST.lg===v)? '' : v; renderHistory();
+    });
+    var mkBox=document.getElementById('histMarkets');
+    if(mkBox) mkBox.addEventListener('click', function(e){
+      var b=e.target.closest? e.target.closest('[data-mk]') : null;
+      if(!b) return;
+      var v=b.getAttribute('data-mk')||'';
+      HIST.mk=(HIST.mk===v)? '' : v; renderHistory();
+    });
+    var clr=document.getElementById('histClear');
+    if(clr) clr.addEventListener('click', function(){ histReset(); });
+    var fc=document.getElementById('histFchips');
+    if(fc) fc.addEventListener('click', function(e){
+      var b=e.target.closest? e.target.closest('[data-hclear]') : null;
+      if(!b) return;
+      histClearKey(b.getAttribute('data-hclear'));
+    });
+  }
+  function histClearKey(k){
+    if(k==='q'){ HIST.q=''; var q=document.getElementById('histQ'); if(q) q.value=''; }
+    else if(k==='from'){ HIST.from=''; var f=document.getElementById('histFrom'); if(f) f.value=''; }
+    else if(k==='to'){ HIST.to=''; var t=document.getElementById('histTo'); if(t) t.value=''; }
+    else if(k==='bk'){ HIST.bk=''; var s=document.getElementById('histBook'); if(s) s.value=''; }
+    else if(k==='st') HIST.st='';
+    else if(k==='lg') HIST.lg='';
+    else if(k==='mk') HIST.mk='';
+    renderHistory();
+  }
+  function histReset(){
+    HIST={q:'', st:'', lg:'', mk:'', bk:'', from:'', to:''};
+    var q=document.getElementById('histQ'); if(q) q.value='';
+    var f=document.getElementById('histFrom'); if(f) f.value='';
+    var t=document.getElementById('histTo'); if(t) t.value='';
+    var s=document.getElementById('histBook'); if(s) s.value='';
+    renderHistory();
+  }
+  function histAnyFilter(){ return !!(HIST.q||HIST.st||HIST.lg||HIST.mk||HIST.bk||HIST.from||HIST.to); }
+  function renderHistory(){
+    var sec=document.getElementById('tkHistory');
+    if(!sec) return;
+    buildHistControls();
+    var base=histBase();
+    if(HIST.lg && !base.some(function(r){ return leagueLabel(r.getAttribute('data-league')||'')===HIST.lg; })) HIST.lg='';
+    if(HIST.mk && !base.some(function(r){ return hMbase(r)===HIST.mk; })) HIST.mk='';
+    var view=base.filter(histPass);
+    /* Línea de liquidadas (sin % de auto-grado: no hay marca fiable de quién liquidó) */
+    var sl=document.getElementById('histSettledLine');
+    if(sl){
+      var sn=0;
+      base.forEach(function(r){ if(isSettled(r)) sn++; });
+      var on=base.length-sn;
+      sl.innerHTML='<span class="ok">\u2713</span><span><b>'+sn+' of '+base.length+'</b> bets settled'+(on? ' &middot; '+on+' still open':'')+'</span>';
+    }
+    /* Chips de estado */
+    var stBox=document.getElementById('histStatus');
+    if(stBox){
+      [].slice.call(stBox.querySelectorAll('[data-st]')).forEach(function(b){
+        b.classList.toggle('active', (b.getAttribute('data-st')||'')===HIST.st);
+      });
+    }
+    /* Chips de liga con conteo */
+    var lgBox=document.getElementById('histLeagues');
+    if(lgBox){
+      var counts={}, order=[];
+      base.forEach(function(r){
+        var L=leagueLabel(r.getAttribute('data-league')||'');
+        if(!L) return;
+        if(!counts[L]){ counts[L]=0; order.push(L); }
+        counts[L]++;
+      });
+      order.sort(function(a,b){ return counts[b]-counts[a]; });
+      if(order.length){
+        lgBox.style.display='';
+        lgBox.innerHTML='<span class="plabel">LEAGUE</span>'
+          +'<button type="button" class="hist-chip'+(HIST.lg===''?' active':'')+'" data-lg="">All leagues</button>'
+          +order.map(function(L){ return '<button type="button" class="hist-chip'+(HIST.lg===L?' active':'')+'" data-lg="'+esc(L)+'">'+esc(L)+'<span class="n">'+counts[L]+'</span></button>'; }).join('');
+      } else lgBox.style.display='none';
+    }
+    /* Chips de mercado con conteo */
+    var mkBox=document.getElementById('histMarkets');
+    if(mkBox){
+      var mc={};
+      base.forEach(function(r){ var m=hMbase(r); mc[m]=(mc[m]||0)+1; });
+      var morder=['Moneyline','Spread','Total'].filter(function(m){ return mc[m]; });
+      if(morder.length>1){
+        mkBox.style.display='';
+        mkBox.innerHTML='<span class="plabel">MARKET</span>'
+          +'<button type="button" class="hist-chip'+(HIST.mk===''?' active':'')+'" data-mk="">All markets</button>'
+          +morder.map(function(m){ return '<button type="button" class="hist-chip'+(HIST.mk===m?' active':'')+'" data-mk="'+m+'">'+m+'<span class="n">'+mc[m]+'</span></button>'; }).join('');
+      } else mkBox.style.display='none';
+    }
+    /* Barra Filtered by */
+    var fbar=document.getElementById('histFbar'), fch=document.getElementById('histFchips');
+    if(fbar&&fch){
+      if(histAnyFilter()){
+        var items=[];
+        if(HIST.st) items.push(['st','Result: '+({'W':'Won','L':'Lost','OPEN':'Open','P':'Push / void'})[HIST.st]]);
+        if(HIST.lg) items.push(['lg','League: '+HIST.lg]);
+        if(HIST.mk) items.push(['mk','Market: '+HIST.mk]);
+        if(HIST.bk) items.push(['bk','Book: '+HIST.bk]);
+        if(HIST.from) items.push(['from','From '+HIST.from]);
+        if(HIST.to) items.push(['to','To '+HIST.to]);
+        if(HIST.q) items.push(['q','Search: '+HIST.q]);
+        fch.innerHTML=items.map(function(it){
+          return '<span class="hist-fchip">'+esc(it[1])+'<button type="button" data-hclear="'+it[0]+'" aria-label="Remove filter">\u2715</button></span>';
+        }).join('');
+        fbar.style.display='';
+      } else fbar.style.display='none';
+    }
+    /* Tira de resumen de la vista filtrada */
+    var strip=document.getElementById('histStrip');
+    if(strip){
+      var W=0,L=0,P=0,net=0,risk=0,bcT=0,bcB=0;
+      view.forEach(function(r){
+        var c=r.getAttribute('data-clv');
+        if(c!==''&&c!==null){ bcT++; if((parseFloat(c)||0)>0) bcB++; }
+        if(!isSettled(r)) return;
+        var x=res(r);
+        if(x==='W')W++; else if(x==='L')L++; else P++;
+        net+=profit(r); risk+=stake(r);
+      });
+      var roi=risk? (net/risk*100) : 0;
+      var uTxt='';
+      if(TKUNIT>0){ var u=net/TKUNIT; uTxt=(u>=0?'+':'')+u.toFixed(1)+'u'; }
+      strip.innerHTML=''
+        +'<div class="hist-stat"><div class="k">BETS</div><div class="v">'+view.length+'</div><div class="s">'+(W+L+P)+' settled</div></div>'
+        +'<div class="hist-stat"><div class="k">NET</div><div class="v '+(net>0?'pos':(net<0?'neg':''))+'">'+(uTxt||money(net))+'</div><div class="s">'+money(net)+'</div></div>'
+        +'<div class="hist-stat"><div class="k">ROI</div><div class="v '+(roi>0?'pos':(roi<0?'neg':''))+'">'+(roi>=0?'+':'')+roi.toFixed(1)+'%</div><div class="s">on settled bets</div></div>'
+        +'<div class="hist-stat"><div class="k">RECORD</div><div class="v">'+W+'-'+L+'</div><div class="s">'+(P? P+' push'+(P===1?'':'es') : 'no pushes')+'</div></div>'
+        +'<div class="hist-stat"><div class="k">BEAT CLOSE</div><div class="v">'+(bcT? (bcB+' of '+bcT) : 'n/a')+'</div><div class="s">'+(bcT? 'beat the close' : 'of 0 recorded')+'</div></div>';
+    }
+    /* Lista agrupada por día */
+    var list=document.getElementById('histList'), emp=document.getElementById('histEmpty');
+    if(list){
+      var groups=[], gmap={};
+      view.forEach(function(r){
+        var f=fecha(r)||'';
+        if(!gmap[f]){ gmap[f]={f:f, rows:[], w:0, l:0, p:0, net:0, open:0}; groups.push(gmap[f]); }
+        var g=gmap[f];
+        g.rows.push(r);
+        var x=res(r);
+        if(x==='W'){ g.w++; g.net+=profit(r); }
+        else if(x==='L'){ g.l++; g.net+=profit(r); }
+        else if(x==='P'){ g.p++; }
+        else g.open++;
+      });
+      var h='';
+      groups.forEach(function(g){
+        var label='No date recorded';
+        if(g.f){
+          try{ var d=parseDate(g.f); label=DOW[d.getDay()]+', '+MON[d.getMonth()]+' '+d.getDate(); }catch(e){ label=g.f; }
+        }
+        var settledN=g.w+g.l+g.p;
+        var right='';
+        if(settledN) right=(g.w+'-'+g.l+(g.p? ' &middot; '+g.p+'P':'')+' &middot; <span class="'+(g.net>0?'pos':(g.net<0?'neg':''))+'">'+money(g.net)+'</span>');
+        if(g.open) right+=(right? ' &middot; ' : '')+g.open+' open';
+        h+='<div class="hist-day"><span class="d">'+esc(label)+'</span><span class="r">'+right+'</span></div>';
+        g.rows.forEach(function(r){
+          var x=res(r), cls='open', pill='<span class="hist-pill pend">Pending</span>', rightHtml='';
+          var pf=profit(r);
+          if(x==='W'){ cls='won'; rightHtml='<span class="hist-profit pos">'+money(pf)+'</span>'; pill='<span class="hist-pill won">Won</span>'; }
+          else if(x==='L'){ cls='lost'; rightHtml='<span class="hist-profit neg">'+money(pf)+'</span>'; pill='<span class="hist-pill lost">Lost</span>'; }
+          else if(x==='P'){ cls='push'; rightHtml='<span class="hist-profit flat">$0.00</span>'; pill='<span class="hist-pill push">Push</span>'; }
+          else {
+            var rt=amRatio(parseFloat(r.getAttribute('data-odds')||''));
+            rightHtml= rt!==null
+              ? '<span class="hist-towin">to win <b>'+money(stake(r)*rt)+'</b></span>'
+              : '<span class="hist-towin">'+esc(hOddsTxt(r))+'</span>';
+          }
+          var parts=[];
+          var lg=leagueLabel(r.getAttribute('data-league')||'');
+          if(lg) parts.push(esc(lg));
+          parts.push(esc(hMbase(r)));
+          var mp=r.getAttribute('data-matchup')||'';
+          if(mp) parts.push(esc(mp));
+          else if(g.f){ try{ var dd=parseDate(g.f); parts.push(fmtDay(dd)+', '+dd.getFullYear()); }catch(e){} }
+          var own=(r.getAttribute('data-source')||'')==='own';
+          var det=[];
+          var ot=hOddsTxt(r); if(ot) det.push(ot);
+          det.push(hStakeTxt(r));
+          var bk=r.getAttribute('data-book')||''; if(bk) det.push(esc(bk));
+          var thumb='';
+          var tb=r.querySelector('.tkc-thumbbtn');
+          if(tb){
+            var full=tb.getAttribute('data-full')||'';
+            var im=tb.querySelector('img');
+            var tsrc=im? (im.getAttribute('src')||'') : '';
+            if(full) thumb='<button type="button" class="tkc-thumbbtn hist-thumbbtn" data-full="'+esc(full)+'" title="View ticket"><img src="'+esc(tsrc||full)+'" alt="Ticket" loading="lazy"></button>';
+          }
+          h+='<article class="hist-row '+cls+'">'
+            + thumb
+            +'<div class="hist-main"><p class="hist-pick">'+esc(histTitle(r))+'</p>'
+            +'<p class="hist-sub">'+parts.join(' &middot; ')+'</p>'
+            +'<p class="hist-det">'+det.join(' &middot; ')+' &middot; <span class="srcdot'+(own?' own':'')+'"></span>'+(own?'My own bets':'Program plays')+'</p></div>'
+            +'<div class="hist-res">'+rightHtml+pill+'</div>'
+            +'</article>';
+        });
+      });
+      list.innerHTML=h;
+      if(emp){
+        if(!view.length){
+          emp.style.display='';
+          emp.textContent= histAnyFilter()? 'No bets match these filters.'
+            : 'Nothing in this period yet \u2014 widen the period or clear the source filter.';
+        } else emp.style.display='none';
+      }
+    }
   }
   function setTab(t){
     TK.tab=t;
@@ -1111,6 +1468,7 @@
     });
     applyRows();
     refreshDynamic();
+    if(t==='history') renderHistory();
   }
   chips.forEach(function(ch){ ch.addEventListener('click', function(){ TK.days=parseInt(ch.getAttribute('data-days'),10)||0; applyHero(); applyRows(); applyP2(); }); });
   srcChips.forEach(function(ch){ ch.addEventListener('click', function(){ TK.src=ch.getAttribute('data-src')||''; applyHero(); applyRows(); applyP2(); }); });
