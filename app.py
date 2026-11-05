@@ -9066,7 +9066,7 @@ def track(play_id):
 @login_required
 def set_result(tracked_id):
     resultado = request.form.get("resultado")
-    if resultado not in ("W", "L", ""):
+    if resultado not in ("W", "L", "P", ""):
         flash("Invalid result.", "error")
         return redirect(url_for("home"))
     db = get_db()
