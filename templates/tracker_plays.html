@@ -106,12 +106,98 @@
   .tk-empty h3 { font-size:19px; margin:0 0 8px; }
   .tk-empty p { color:#9aa7b8; font-size:13.5px; line-height:1.6; max-width:520px; margin:0 auto 16px; }
   .tk-empty .row { display:flex; gap:9px; justify-content:center; flex-wrap:wrap; }
+  /* ===== FASE 2 tracker (2026-11-04) ===== */
+  .tk-unitpill { display:inline-flex; align-items:center; gap:7px; background:#131e31; border:1px solid rgba(232,199,102,.35); color:#c7cede; border-radius:999px; padding:6px 13px; font-size:12.5px; font-weight:600; margin:0 0 14px; }
+  .tk-unitpill b { color:#e8c766; font-weight:800; }
+  .tk-tabs { display:flex; gap:4px; overflow-x:auto; border-bottom:1px solid rgba(255,255,255,.08); margin:0 0 14px; scrollbar-width:none; }
+  .tk-tabs::-webkit-scrollbar { display:none; }
+  .tk-tab { background:none; border:0; border-bottom:2px solid transparent; color:#9aa7b8; font-size:14.5px; font-weight:700; padding:9px 10px; cursor:pointer; font-family:inherit; white-space:nowrap; display:inline-flex; align-items:center; gap:7px; }
+  .tk-tab.active { color:#fff; border-bottom-color:#e8c766; }
+  .tk-badge { background:#24334d; color:#c7cede; font-size:11px; font-weight:800; border-radius:999px; padding:2px 8px; }
+  .tk-tab.active .tk-badge { background:rgba(232,199,102,.2); color:#e8c766; }
+  .tk-quad { display:grid; grid-template-columns:1fr 1fr; gap:9px; margin:0 0 14px; }
+  .tk-panel { background:linear-gradient(155deg,#26303f,#1c2431 60%,#1a222e); border:1px solid rgba(255,255,255,.06); border-radius:16px; padding:13px 14px; }
+  .tk-panel .k { font-size:10px; letter-spacing:1.2px; color:#8b98ad; font-weight:800; display:flex; align-items:center; gap:6px; }
+  .tk-panel .big { font-size:22px; font-weight:800; color:#fff; margin-top:5px; line-height:1.1; }
+  .tk-panel .big.pos { color:#2fbf71; } .tk-panel .big.neg { color:#f87171; }
+  .tk-panel .sub { color:#8b98ad; font-size:12px; margin-top:5px; line-height:1.5; }
+  .tk-panel .sub b { color:#eef2f8; }
+  .tk-panel .sub .g { color:#2fbf71; font-weight:700; }
+  .tk-stats5 { display:grid; grid-template-columns:repeat(5,1fr); gap:9px; margin:0 0 14px; }
+  @media (max-width:560px){ .tk-stats5 { grid-template-columns:repeat(3,1fr); } }
+  .tk-stat5 { background:linear-gradient(155deg,#26303f,#1c2431 60%,#1a222e); border:1px solid rgba(255,255,255,.06); border-radius:16px; padding:11px 12px; }
+  .tk-stat5 .k { font-size:9.5px; letter-spacing:1.1px; color:#8b98ad; font-weight:800; }
+  .tk-stat5 .v { font-size:17px; font-weight:800; color:#fff; margin-top:3px; }
+  .tk-stat5 .v.pos { color:#2fbf71; } .tk-stat5 .v.neg { color:#f87171; }
+  .tk-insights { display:grid; gap:9px; margin:0 0 14px; }
+  .tk-insight { display:flex; align-items:center; gap:12px; background:linear-gradient(155deg,#26303f,#1c2431 60%,#1a222e); border:1px solid rgba(255,255,255,.06); border-radius:16px; padding:13px 14px; font-size:14px; color:#eef2f8; line-height:1.45; }
+  .tk-insight .ic { width:38px; height:38px; flex:none; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:17px; background:rgba(47,191,113,.13); color:#2fbf71; }
+  .tk-insight.warn .ic { background:rgba(248,113,113,.12); color:#f87171; }
+  .tk-insight b.pos { color:#2fbf71; } .tk-insight b.neg { color:#f87171; }
+  .tk-insight .dim { color:#8b98ad; }
+  .tk-src-share { display:flex; height:10px; border-radius:99px; overflow:hidden; background:#131e31; margin:10px 0 6px; }
+  .tk-src-share i { display:block; height:100%; }
+  .tk-src-legend { display:flex; gap:16px; flex-wrap:wrap; color:#8b98ad; font-size:12px; margin:0 0 6px; }
+  .tk-src-legend .dot { display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:6px; }
+  .tk-srcrow { padding:11px 0 4px; border-top:1px solid rgba(255,255,255,.06); }
+  .tk-srcrow .top { display:flex; justify-content:space-between; align-items:baseline; gap:10px; }
+  .tk-srcrow .nm { color:#fff; font-weight:800; font-size:14.5px; }
+  .tk-srcrow .net { font-size:17px; font-weight:800; }
+  .tk-srcrow .net.pos { color:#2fbf71; } .tk-srcrow .net.neg { color:#f87171; }
+  .tk-srcbar { height:7px; border-radius:99px; background:#131e31; margin:8px 0 7px; overflow:hidden; }
+  .tk-srcbar i { display:block; height:100%; border-radius:99px; }
+  .tk-srcrow .meta { display:flex; justify-content:space-between; color:#8b98ad; font-size:12px; }
+  .tk-week { display:flex; align-items:stretch; gap:6px; min-height:118px; margin-top:8px; }
+  .tk-wday { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; gap:5px; min-width:0; }
+  .tk-wday .val { font-size:10.5px; font-weight:700; color:#8b98ad; white-space:nowrap; }
+  .tk-wday .val.pos { color:#2fbf71; } .tk-wday .val.neg { color:#f87171; }
+  .tk-wbar { width:100%; max-width:44px; border-radius:6px 6px 3px 3px; background:#24334d; min-height:3px; }
+  .tk-wbar.pos { background:#2fbf71; } .tk-wbar.neg { background:#f87171; }
+  .tk-wday .dl { font-size:11px; color:#8b98ad; font-weight:700; }
+  .tk-lw-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px 14px; margin-top:10px; }
+  .tk-lw-grid .k { font-size:10px; letter-spacing:1.2px; color:#8b98ad; font-weight:800; }
+  .tk-lw-grid .v { font-size:21px; font-weight:800; color:#fff; margin-top:2px; }
+  .tk-lw-grid .v.pos { color:#2fbf71; } .tk-lw-grid .v.neg { color:#f87171; }
+  .tk-share { width:100%; margin-top:14px; background:#131e31; border:1px solid #24334d; color:#eef2f8; border-radius:11px; padding:11px; font-size:13.5px; font-weight:700; cursor:pointer; font-family:inherit; }
+  .tk-days-grid { display:grid; grid-template-columns:30px repeat(18,1fr); gap:3px; align-items:center; margin-top:10px; }
+  .tk-days-grid .mlab { font-size:10px; color:#8b98ad; font-weight:700; white-space:nowrap; }
+  .tk-days-grid .dlab { font-size:10px; color:#8b98ad; font-weight:700; }
+  .tk-day { aspect-ratio:1; border-radius:3px; background:#1a2436; display:block; }
+  .tk-day.g1 { background:rgba(47,191,113,.45); } .tk-day.g2 { background:#2fbf71; }
+  .tk-day.r1 { background:rgba(248,113,113,.45); } .tk-day.r2 { background:#f87171; }
+  .tk-day.flat { background:#2a3648; }
+  .tk-day.future { visibility:hidden; }
+  .tk-days-legend { display:flex; align-items:center; gap:5px; justify-content:flex-end; color:#8b98ad; font-size:11px; margin-top:9px; }
+  .tk-days-legend i { width:11px; height:11px; border-radius:3px; display:inline-block; }
+  .tk-need { display:flex; align-items:center; gap:12px; padding:10px 0; border-top:1px solid rgba(255,255,255,.06); }
+  .tk-need .ic { width:40px; height:40px; flex:none; border-radius:11px; background:rgba(232,199,102,.12); display:flex; align-items:center; justify-content:center; font-size:18px; }
+  .tk-need .t { color:#fff; font-weight:700; font-size:14px; }
+  .tk-need .s { color:#8b98ad; font-size:12px; margin-top:1px; }
+  .tk-need .n { margin-left:auto; font-size:19px; font-weight:800; color:#e8c766; }
+  .tk-goalbar { height:9px; border-radius:99px; background:#131e31; overflow:hidden; margin:9px 0 7px; }
+  .tk-goalbar i { display:block; height:100%; background:linear-gradient(90deg,#8a6d2f,#e8c766); border-radius:99px; }
+  .tk-goal-form { display:grid; grid-template-columns:1fr 1fr; gap:9px; margin-top:11px; }
+  .tk-goal-form label { font-size:10px; letter-spacing:1.2px; color:#8b98ad; font-weight:800; display:block; margin-bottom:5px; }
+  .tk-goal-form input, .tk-goal-form select { width:100%; box-sizing:border-box; background:#131e31; border:1px solid #24334d; border-radius:10px; padding:10px; font-size:13px; color:#eef2f8; }
+  .tk-secttl { display:flex; justify-content:space-between; align-items:baseline; gap:10px; }
+  .tk-secttl .tot { font-size:19px; font-weight:800; }
+  .tk-secttl .tot.pos { color:#2fbf71; } .tk-secttl .tot.neg { color:#f87171; }
 </style>
 
 <a class="ply-back" href="{{ url_for('tracker') }}">&#8592; Back to my tracker</a>
 
-<h1 class="ply-h">Your tracker</h1>
+<h1 class="ply-h">Your bets</h1>
 <p class="ply-sub">Every bet you track — the program's plays and your own, from any book — graded, with your profit curve, your win rate and your numbers by league, level, market and book.</p>
+
+{% if all_rows %}
+<div class="tk-unitpill">🎯 <span>1u = <b>${{ '%g' % mb_settings.unit_monto }}</b> · your unit size</span></div>
+<div class="tk-tabs" id="tkTabs" role="tablist">
+  <button type="button" class="tk-tab active" data-tab="overview">Overview</button>
+  <button type="button" class="tk-tab" data-tab="open">Open &amp; live <span class="tk-badge" id="tkTabOpen">0</span></button>
+  <button type="button" class="tk-tab" data-tab="history">History <span class="tk-badge" id="tkTabHist">0</span></button>
+  <button type="button" class="tk-tab" data-tab="performance">Performance</button>
+</div>
+{% endif %}
 
 {% if rows %}
 <div class="mb-period" id="mbPeriod">
@@ -124,7 +210,14 @@
 {% endif %}
 
 {% if all_rows %}
-<div class="tk-hero">
+<div class="mb-period" id="mbSource">
+  <span class="plabel">SOURCE</span>
+  <button type="button" class="mb-pchip active" data-src="">All sources</button>
+  <button type="button" class="mb-pchip" data-src="official">Program plays<span id="tkSrcOff"></span></button>
+  <button type="button" class="mb-pchip" data-src="own">My own bets<span id="tkSrcOwn"></span></button>
+</div>
+
+<div class="tk-hero" data-tabs="overview">
   <div class="tk-hero-top">
     <div class="tk-hero-main">
       <div class="tk-kicker">NET PROFIT</div>
@@ -157,7 +250,7 @@
   </div>
 </div>
 
-<div class="mb-stats">
+<div class="mb-stats" data-tabs="overview">
   <div class="mb-stat"><div class="k">RECORD</div><div class="v" id="mbStRecord">{{ stats_all.record }}{% if stats_all.pushes %} · {{ stats_all.pushes }}P{% endif %}</div></div>
   <div class="mb-stat"><div class="k">ROI</div><div class="v" id="mbStRoi">{{ '%+.1f%%' % stats_all.roi }}</div></div>
   <div class="mb-stat"><div class="k">STREAK</div><div class="v" id="mbStStreak">{{ stats_all.streak }}</div></div>
@@ -166,22 +259,66 @@
   <div class="mb-stat"><div class="k">AVG CLV</div><div class="v {% if stats_all.clv_avg is not none and stats_all.clv_avg > 0 %}blue{% endif %}" id="mbStClv">{{ ('%+.2f pts' % stats_all.clv_avg) if stats_all.clv_avg is not none else '—' }}</div></div>
 </div>
 
+<div class="tk-quad" data-tabs="overview open">
+  <div class="tk-panel">
+    <div class="k">🎯 BEAT THE CLOSE</div>
+    <div class="big" id="tkClvBig">&mdash;</div>
+    <div class="sub" id="tkClvSub">Reading your recorded closes&hellip;</div>
+  </div>
+  <div class="tk-panel">
+    <div class="k">⏳ AT RISK NOW</div>
+    <div class="big" id="tkRiskBig">$0</div>
+    <div class="sub" id="tkRiskSub">0 open &middot; to win <span class="g">$0</span></div>
+  </div>
+</div>
+
+<div data-tabs="overview performance">
+  <p class="note" style="margin:0 0 7px"><b style="color:#fff">PROFIT OVER TIME</b> &middot; your settled bets in the order they settled</p>
+  <div class="tk-stats5">
+    <div class="tk-stat5"><div class="k">PEAK</div><div class="v" id="tkStatPeak">&mdash;</div></div>
+    <div class="tk-stat5"><div class="k">BIGGEST DROP</div><div class="v" id="tkStatDrop">&mdash;</div></div>
+    <div class="tk-stat5"><div class="k">BEST WIN RUN</div><div class="v" id="tkStatBestRun">&mdash;</div></div>
+    <div class="tk-stat5"><div class="k">CURRENT RUN</div><div class="v" id="tkStatCurRun">&mdash;</div></div>
+    <div class="tk-stat5"><div class="k">AVG ODDS</div><div class="v" id="tkStatAvgOdds">&mdash;</div></div>
+  </div>
+</div>
+
+<div class="tk-insights" id="tkInsights" data-tabs="overview performance" data-dyn="1" style="display:none"></div>
+
 {% set _mg = namespace(best=0, run=0) %}
 {% for r in all_rows|reverse %}
   {% if r.resultado == 'W' %}{% set _mg.run = _mg.run + 1 %}{% if _mg.run > _mg.best %}{% set _mg.best = _mg.run %}{% endif %}{% elif r.resultado == 'L' %}{% set _mg.run = 0 %}{% endif %}
 {% endfor %}
-<div class="mb-miles">
+<div class="mb-miles" data-tabs="overview history">
   <span class="mb-mile">🎯 <b>{{ all_rows|length }}</b> bets tracked</span>
   {% if stats_all.streak and stats_all.streak != '—' %}<span class="mb-mile">🔥 Current streak <b>{{ stats_all.streak }}</b></span>{% endif %}
   {% if _mg.best >= 2 %}<span class="mb-mile">🏆 Best win streak <b>{{ _mg.best }}</b></span>{% endif %}
 </div>
 
-<div class="mb-actions">
+<div class="mb-actions" data-tabs="overview open">
   <a class="mb-btn" href="{{ url_for('mybets_add') }}">+ Add a bet</a>
   <a class="mb-btn ghost" href="{{ url_for('mybets_export') }}">Export CSV</a>
 </div>
 
-<div class="mb-card">
+<div class="mb-card" id="tkNeeds" data-tabs="overview open" data-dyn="1" style="display:none">
+  <h3>Needs you</h3>
+  <p class="note" id="tkNeedsCount" style="margin:0"></p>
+  <div id="tkNeedsList"></div>
+</div>
+
+<div class="mb-card" id="tkLastWeek" data-tabs="overview performance" data-dyn="1" style="display:none">
+  <div class="tk-kicker">LAST WEEK</div>
+  <h3 id="tkLwRange" style="margin-top:4px">&mdash;</h3>
+  <div class="tk-lw-grid">
+    <div><div class="k">RESULT</div><div class="v" id="tkLwResult">&mdash;</div></div>
+    <div><div class="k">RECORD</div><div class="v" id="tkLwRecord">&mdash;</div></div>
+    <div><div class="k">ROI</div><div class="v" id="tkLwRoi">&mdash;</div></div>
+    <div><div class="k">VS THE PRIOR WEEK</div><div class="v" id="tkLwVs">&mdash;</div></div>
+  </div>
+  <button type="button" class="tk-share" id="tkLwShare">Share recap</button>
+</div>
+
+<div class="mb-card" data-tabs="overview">
   <h3>Run your numbers</h3>
   <form class="mb-filters" method="get" action="{{ url_for('tracker_plays') }}">
     <select name="source">
@@ -212,13 +349,13 @@
 </div>
 
 {% if coach %}
-<div class="mb-card mb-coach">
+<div class="mb-card mb-coach" data-tabs="overview performance">
   <h3>🎯 Coach</h3>
   {% for c in coach %}<p>{{ c }}</p>{% endfor %}
 </div>
 {% endif %}
 
-<div class="mb-card">
+<div class="mb-card" data-tabs="overview performance">
   <h3>Breakdowns</h3>
   <div id="bdBody">
   {% for title, key in [('By source','source'), ('By market','market'), ('By book','book'), ('By league','league'), ('By level','level')] %}
@@ -235,10 +372,45 @@
   </div>
 </div>
 
+<div class="mb-card" data-tabs="overview performance">
+  <h3>Where your profit comes from</h3>
+  <p class="note">Program plays vs your own picks &mdash; same wallet, two very different stories.</p>
+  <div id="tkSources"></div>
+</div>
+
+<div class="mb-card" data-tabs="overview performance">
+  <div class="tk-secttl"><h3 style="margin:0">This week</h3><span class="tot" id="tkWeekTotal">&mdash;</span></div>
+  <p class="note">Last 7 days, by the day on each bet.</p>
+  <div class="tk-week" id="tkWeekBars"></div>
+</div>
+
+<div class="mb-card" data-tabs="overview performance">
+  <h3>Your days</h3>
+  <p class="note" id="tkDaysLine">&mdash;</p>
+  <div class="tk-days-grid" id="tkDaysGrid"></div>
+  <div class="tk-days-legend">Down <i style="background:#f87171"></i><i style="background:rgba(248,113,113,.45)"></i><i style="background:#1a2436"></i><i style="background:rgba(47,191,113,.45)"></i><i style="background:#2fbf71"></i> Up</div>
+</div>
+
+<div class="mb-card" data-tabs="overview performance">
+  <h3>Your goal</h3>
+  <p class="note">Set a net-units target and watch the bar fill as your settled bets come in.</p>
+  <div id="tkGoalProg"></div>
+  <form class="tk-goal-form" method="post" action="/my-bets/goal">
+    <div><label>METRIC</label><select disabled><option>Net units</option></select></div>
+    <div><label>TARGET (UNITS)</label><input name="goal_target" type="number" step="0.5" min="0" placeholder="e.g. 10" value="{{ ('%g' % tk_goal.target_units) if tk_goal else '' }}"></div>
+    <div><label>PERIOD</label><select name="goal_period">
+      <option value="week" {% if tk_goal and tk_goal.period == 'week' %}selected{% endif %}>This week</option>
+      <option value="month" {% if not tk_goal or tk_goal.period == 'month' %}selected{% endif %}>This month</option>
+    </select></div>
+    <div><label>&nbsp;</label><button class="mb-btn" type="submit" style="justify-content:center;width:100%">Set goal</button></div>
+  </form>
+  <p class="note" style="margin-top:10px">Leave the target empty and save to clear it. A goal is a plan you set for yourself &mdash; never a promise of profit.</p>
+</div>
+
 {% if rows %}
-<div class="wgt-list">
+<div class="wgt-list" data-tabs="overview open history">
   {% for r in rows %}
-  <article class="wgt-row {{ 'won' if r.resultado == 'W' else '' }}" data-fecha="{{ r.fecha or '' }}" data-res="{{ r.resultado or '' }}" data-profit="{{ r.profit if r.profit is not none else 0 }}" data-stake="{{ r.stake_monto or 0 }}" data-clv="{{ r.clv_pts if r.clv_pts is not none else '' }}" data-source="{{ r.source or '' }}" data-league="{{ r.liga or '' }}" data-level="{{ nivel_display(r.nivel) if r.source != 'own' else '' }}" data-market="{{ r.mercado or 'Moneyline' }}" data-book="{{ r.casa or '' }}">
+  <article class="wgt-row {{ 'won' if r.resultado == 'W' else '' }}" data-fecha="{{ r.fecha or '' }}" data-res="{{ r.resultado or '' }}" data-profit="{{ r.profit if r.profit is not none else 0 }}" data-stake="{{ r.stake_monto or 0 }}" data-clv="{{ r.clv_pts if r.clv_pts is not none else '' }}" data-source="{{ r.source or '' }}" data-league="{{ r.liga or '' }}" data-level="{{ nivel_display(r.nivel) if r.source != 'own' else '' }}" data-market="{{ r.mercado or 'Moneyline' }}" data-book="{{ r.casa or '' }}" data-odds="{{ r.cuota if r.cuota is not none else '' }}">
     <div class="tkc-top">
       {% set _tk = r.foto or (url_for('static', filename=r.comprobante) if r.comprobante else '') %}
       {% if _tk %}
@@ -291,6 +463,7 @@
   </article>
   {% endfor %}
 </div>
+<p class="wgt-empty" id="tkListEmpty" style="display:none"></p>
 {% else %}
 <p class="wgt-empty">No bets match these filters. <a href="{{ url_for('tracker_plays') }}" style="color:#2ee6a8">Clear them</a> to see your full tracker.</p>
 {% endif %}
@@ -552,12 +725,38 @@
 <script>
 (function(){
   var chips=[].slice.call(document.querySelectorAll('#mbPeriod .mb-pchip'));
+  var srcChips=[].slice.call(document.querySelectorAll('#mbSource .mb-pchip'));
+  var tabBtns=[].slice.call(document.querySelectorAll('#tkTabs .tk-tab'));
   var rows=[].slice.call(document.querySelectorAll('.wgt-row'));
-  function isoDaysAgo(n){ var d=new Date(); d.setDate(d.getDate()-(n-1)); var m=('0'+(d.getMonth()+1)).slice(-2), dd=('0'+d.getDate()).slice(-2); return d.getFullYear()+'-'+m+'-'+dd; }
+  var TK={days:0, src:'', tab:'overview', needsHas:false, lwHas:false, insHas:false, lwText:''};
+  var TKGOAL = {% if tk_goal %}{ target: {{ tk_goal.target_units|tojson }}, period: {{ tk_goal.period|tojson }} }{% else %}null{% endif %};
+  var TKUNIT = {{ (mb_settings.unit_monto or 100)|tojson }};
+  var CIRC=213.6;
+  var PNAMES={0:'ALL TIME',7:'LAST 7 DAYS',30:'LAST 30 DAYS',90:'LAST 90 DAYS'};
+  var MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var DOW=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  function pad2(n){ return ('0'+n).slice(-2); }
+  function dstr(d){ return d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate()); }
+  function todayD(){ var n=new Date(); return new Date(n.getFullYear(), n.getMonth(), n.getDate()); }
+  function addDays(d, n){ var x=new Date(d.getFullYear(), d.getMonth(), d.getDate()); x.setDate(x.getDate()+n); return x; }
+  function parseDate(k){ var p=String(k).split('-'); return new Date(+p[0], (+p[1])-1, +p[2]); }
+  function mondayOf(d){ var x=new Date(d.getFullYear(), d.getMonth(), d.getDate()); var dow=(x.getDay()+6)%7; x.setDate(x.getDate()-dow); return x; }
+  function fmtDay(d){ return MON[d.getMonth()]+' '+d.getDate(); }
+  function isoDaysAgo(n){ return dstr(addDays(todayD(), -(n-1))); }
   function money(v){ var s=v>0?'+':(v<0?'-':''); var a=Math.abs(v).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,','); return s+'$'+a; }
+  function moneyShort(v){ if(!v) return ''; var a=Math.abs(v), s=v<0?'-':'+'; if(a>=1000) return s+'$'+(a/1000).toFixed(1).replace(/\.0$/,'')+'k'; return s+'$'+(a%1? a.toFixed(2) : a.toFixed(0)); }
   function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
   function setV(id, txt, cls, pool){ var e=document.getElementById(id); if(!e) return; e.textContent=txt; if(cls!==undefined){ (pool||['green','red','blue']).forEach(function(c){ e.classList.remove(c); }); if(cls) e.classList.add(cls); } }
-  var CIRC=213.6;
+  function res(r){ return r.getAttribute('data-res')||''; }
+  function isSettled(r){ var x=res(r); return x==='W'||x==='L'||x==='P'; }
+  function profit(r){ return parseFloat(r.getAttribute('data-profit')||'0')||0; }
+  function stake(r){ return parseFloat(r.getAttribute('data-stake')||'0')||0; }
+  function fecha(r){ return r.getAttribute('data-fecha')||''; }
+  function passesPeriod(r){ if(!TK.days) return true; var f=fecha(r); return !!f && f>=isoDaysAgo(TK.days); }
+  function passesSrc(r){ return !TK.src || (r.getAttribute('data-source')||'')===TK.src; }
+  function viewRows(){ return rows.filter(function(r){ return passesPeriod(r)&&passesSrc(r); }); }
+  function srcRows(){ return rows.filter(passesSrc); }
+  function amRatio(o){ if(isNaN(o)||o===0) return null; return o>0 ? o/100 : 100/(-o); }
   function drawCurve(vals){
     var svg=document.getElementById('mbCurve'); if(!svg) return;
     var area=document.getElementById('tkAreaPath'), line=document.getElementById('tkLinePath'),
@@ -583,21 +782,17 @@
       else { zero.setAttribute('y1','-10'); zero.setAttribute('y2','-10'); }
     }
   }
-  function bdAgg(attr, labelFn){
+  function bdAgg(list, attr, labelFn){
     var out={}, order=[];
-    rows.forEach(function(r){
-      if(r.style.display==='none') return;
+    list.forEach(function(r){
       var raw=r.getAttribute(attr)||'';
       var k=labelFn? labelFn(raw, r) : raw;
       if(!k) return;
       if(!out[k]){ out[k]={w:0,l:0,p:0,profit:0,risked:0,n:0}; order.push(k); }
       var d=out[k]; d.n++;
-      var res=r.getAttribute('data-res')||'';
-      if(res==='W') d.w++; else if(res==='L') d.l++; else if(res==='P') d.p++;
-      if(res==='W'||res==='L'||res==='P'){
-        d.profit+=parseFloat(r.getAttribute('data-profit')||'0')||0;
-        d.risked+=parseFloat(r.getAttribute('data-stake')||'0')||0;
-      }
+      var x=res(r);
+      if(x==='W') d.w++; else if(x==='L') d.l++; else if(x==='P') d.p++;
+      if(x==='W'||x==='L'||x==='P'){ d.profit+=profit(r); d.risked+=stake(r); }
     });
     order.sort(function(a,b){ return out[b].n-out[a].n; });
     return order.map(function(k){ return [k,out[k]]; });
@@ -611,42 +806,32 @@
     });
     return h+'</table>';
   }
-  function drawBreakdowns(){
+  function drawBreakdowns(list){
     var body=document.getElementById('bdBody'); if(!body) return;
     var h='';
-    h+=bdHTML('By source', bdAgg('data-source', function(v){ return v==='official'?'Program plays':(v==='own'?'My own bets':''); }));
-    h+=bdHTML('By market', bdAgg('data-market'));
-    h+=bdHTML('By book', bdAgg('data-book'));
-    h+=bdHTML('By league', bdAgg('data-league'));
-    h+=bdHTML('By level', bdAgg('data-level'));
+    h+=bdHTML('By source', bdAgg(list, 'data-source', function(v){ return v==='official'?'Program plays':(v==='own'?'My own bets':''); }));
+    h+=bdHTML('By market', bdAgg(list, 'data-market'));
+    h+=bdHTML('By book', bdAgg(list, 'data-book'));
+    h+=bdHTML('By league', bdAgg(list, 'data-league'));
+    h+=bdHTML('By level', bdAgg(list, 'data-level'));
     body.innerHTML=h;
   }
-  var PNAMES={0:'ALL TIME',7:'LAST 7 DAYS',30:'LAST 30 DAYS',90:'LAST 90 DAYS'};
-  function apply(days){
-    var co = days? isoDaysAgo(days) : '';
-    var W=0,L=0,P=0,net=0,risk=0,clvs=[],seq=[],tracked=0,pending=0,chrono=[];
-    rows.forEach(function(r){
-      var f=r.getAttribute('data-fecha')||'';
-      var ok=!co || (f && f>=co);
-      r.style.display=ok?'':'none';
-      if(!ok) return;
-      tracked++;
-      var res=r.getAttribute('data-res')||'';
-      if(res==='W'||res==='L'||res==='P'){
-        if(res==='W')W++; else if(res==='L')L++; else P++;
-        net+=parseFloat(r.getAttribute('data-profit')||'0')||0;
-        risk+=parseFloat(r.getAttribute('data-stake')||'0')||0;
+  function applyHero(){
+    var view=viewRows();
+    var W=0,L=0,P=0,net=0,risk=0,clvs=[],seq=[],chrono=[];
+    view.forEach(function(r){
+      if(isSettled(r)){
+        var x=res(r);
+        if(x==='W')W++; else if(x==='L')L++; else P++;
+        net+=profit(r); risk+=stake(r);
         var c=r.getAttribute('data-clv'); if(c!==''&&c!==null) clvs.push(parseFloat(c)||0);
-        if(res==='W'||res==='L') seq.push(res);
-      } else pending++;
+        if(x==='W'||x==='L') seq.push(x);
+      }
     });
-    for(var i=rows.length-1;i>=0;i--){
-      var r=rows[i]; if(r.style.display==='none') continue;
-      var res=r.getAttribute('data-res')||'';
-      if(res==='W'||res==='L'||res==='P') chrono.push(parseFloat(r.getAttribute('data-profit')||'0')||0);
-    }
+    for(var i=view.length-1;i>=0;i--){ if(isSettled(view[i])) chrono.push(profit(view[i])); }
     var acc=0, vals=[0];
     chrono.forEach(function(p){ acc+=p; vals.push(Math.round(acc*100)/100); });
+    var tracked=view.length, pending=tracked-(W+L+P);
     setV('mbStRecord', W+'-'+L+(P?' · '+P+'P':''));
     setV('mbStNet', money(net), net>0?'pos':(net<0?'neg':''), ['pos','neg']);
     var roi = risk? (net/risk*100) : 0;
@@ -665,12 +850,271 @@
     var sub=document.getElementById('tkHeroSub');
     if(sub) sub.innerHTML='<b>'+tracked+'</b> tracked &middot; <b>'+pending+'</b> pending &middot; <b>'+money(risk)+'</b> risked';
     var pn=document.getElementById('tkPeriodName');
-    if(pn) pn.textContent=PNAMES[days]||'ALL TIME';
+    if(pn) pn.textContent=PNAMES[TK.days]||'ALL TIME';
     drawCurve(chrono.length? vals : []);
-    drawBreakdowns();
-    chips.forEach(function(ch){ ch.classList.toggle('active', (parseInt(ch.getAttribute('data-days'),10)||0)===days); });
+    drawBreakdowns(view);
+    chips.forEach(function(ch){ ch.classList.toggle('active', (parseInt(ch.getAttribute('data-days'),10)||0)===TK.days); });
+    srcChips.forEach(function(ch){ ch.classList.toggle('active', (ch.getAttribute('data-src')||'')===TK.src); });
   }
-  chips.forEach(function(ch){ ch.addEventListener('click', function(){ apply(parseInt(ch.getAttribute('data-days'),10)||0); }); });
+  function applyRows(){
+    var vis=0;
+    rows.forEach(function(r){
+      var ok=passesPeriod(r)&&passesSrc(r);
+      if(ok && TK.tab==='open') ok=!isSettled(r);
+      if(ok && TK.tab==='history') ok=isSettled(r);
+      r.style.display=ok?'':'none';
+      if(ok) vis++;
+    });
+    var le=document.getElementById('tkListEmpty');
+    if(le){
+      if(vis===0 && rows.length && TK.tab!=='performance'){
+        le.style.display='';
+        le.textContent = TK.tab==='open' ? 'No open bets right now. Track a play from today\u2019s board and it will wait here until it settles.'
+          : TK.tab==='history' ? 'Nothing settled in this view yet \u2014 change the period or the source filter.'
+          : 'No bets match this view \u2014 widen the period or clear the source filter.';
+      } else le.style.display='none';
+    }
+  }
+  function computeQuad(){
+    var view=viewRows(), withC=[], beat=0;
+    view.forEach(function(r){ var c=r.getAttribute('data-clv'); if(c!==''&&c!==null){ var v=parseFloat(c)||0; withC.push(v); if(v>0) beat++; } });
+    var big=document.getElementById('tkClvBig'), sub=document.getElementById('tkClvSub');
+    if(big&&sub){
+      if(withC.length){
+        var s=0; withC.forEach(function(x){s+=x;}); var avg=s/withC.length;
+        big.textContent=(avg>=0?'+':'')+avg.toFixed(2)+' pts avg';
+        big.className='big '+(avg>0?'pos':(avg<0?'neg':''));
+        sub.innerHTML='Beat the close on <b>'+beat+' of '+withC.length+'</b> bets with a recorded close · '+withC.length+' of '+view.length+' bets have a close';
+      } else {
+        big.textContent='No closes yet'; big.className='big';
+        sub.textContent='A close is recorded when one of your bets carries the closing line. None of the bets in this view has one yet.';
+      }
+    }
+    var open=srcRows().filter(function(r){ return !isSettled(r); });
+    var risk=0, toWin=0;
+    open.forEach(function(r){ var st=stake(r); risk+=st; var rt=amRatio(parseFloat(r.getAttribute('data-odds')||'')); if(rt!==null) toWin+=st*rt; });
+    var rb=document.getElementById('tkRiskBig'), rs=document.getElementById('tkRiskSub');
+    if(rb&&rs){ rb.textContent=money(risk).replace(/^\+/,''); rs.innerHTML=open.length+' open · to win <span class="g">'+money(toWin)+'</span>'; }
+  }
+  function computeStats5(){
+    var view=viewRows(), seq=[];
+    for(var i=view.length-1;i>=0;i--){ var r=view[i]; if(isSettled(r)) seq.push({x:res(r), p:profit(r), o:parseFloat(r.getAttribute('data-odds')||'')}); }
+    if(!seq.length){
+      setV('tkStatPeak','—'); setV('tkStatDrop','—'); setV('tkStatBestRun','—'); setV('tkStatCurRun','—'); setV('tkStatAvgOdds','—');
+      return;
+    }
+    var acc=0, peak=0, maxdd=0;
+    seq.forEach(function(s){ acc+=s.p; if(acc>peak)peak=acc; if(peak-acc>maxdd)maxdd=peak-acc; });
+    var wl=seq.filter(function(s){ return s.x==='W'||s.x==='L'; });
+    var best=0, run=0;
+    wl.forEach(function(s){ if(s.x==='W'){ run++; if(run>best)best=run; } else run=0; });
+    var cur='—', curCls='';
+    if(wl.length){ var last=wl[wl.length-1].x, n=0; for(var j=wl.length-1;j>=0;j--){ if(wl[j].x===last)n++; else break; } cur=n+last; curCls= last==='W'?'pos':'neg'; }
+    var osum=0, on=0;
+    seq.forEach(function(s){ if(!isNaN(s.o)&&s.o!==0){ osum+=s.o; on++; } });
+    var avgTxt='—'; if(on){ var av=Math.round(osum/on); avgTxt=(av>0?'+':'')+av; }
+    setV('tkStatPeak', money(peak), peak>0?'pos':'', ['pos','neg']);
+    setV('tkStatDrop', maxdd>0? money(-maxdd):'$0.00', maxdd>0?'neg':'', ['pos','neg']);
+    setV('tkStatBestRun', String(best));
+    setV('tkStatCurRun', cur, curCls, ['pos','neg']);
+    setV('tkStatAvgOdds', avgTxt);
+  }
+  function groupBy(list, keyFn){
+    var m={}, order=[];
+    list.forEach(function(r){ var k=keyFn(r); if(!k) return; if(!m[k]){ m[k]={n:0, profit:0}; order.push(k); } m[k].n++; m[k].profit+=profit(r); });
+    return order.map(function(k){ return {k:k, n:m[k].n, profit:m[k].profit}; });
+  }
+  function computeInsights(){
+    var box=document.getElementById('tkInsights'); if(!box) return;
+    var settled=viewRows().filter(isSettled);
+    var out=[];
+    var byM=groupBy(settled, function(r){ return r.getAttribute('data-market')||''; })
+      .filter(function(g){ return g.n>=10&&g.profit>0; }).sort(function(a,b){ return b.profit-a.profit; });
+    if(byM.length) out.push({warn:false, html:'You\u2019re <b class="pos">'+money(byM[0].profit)+'</b> on '+esc(byM[0].k)+' <span class="dim">('+byM[0].n+' bets)</span>'});
+    var byL=groupBy(settled, function(r){ return r.getAttribute('data-league')||''; })
+      .filter(function(g){ return g.n>=10&&g.profit>0; }).sort(function(a,b){ return b.profit-a.profit; });
+    if(byL.length) out.push({warn:false, html:'You\u2019re <b class="pos">'+money(byL[0].profit)+'</b> on '+esc(byL[0].k)+' <span class="dim">('+byL[0].n+' bets)</span>'});
+    var worst=groupBy(settled, function(r){ var lg=r.getAttribute('data-league')||''; var mk=r.getAttribute('data-market')||''; return (lg? lg+' ':'')+mk; })
+      .filter(function(g){ return g.n>=10&&g.profit<0; }).sort(function(a,b){ return a.profit-b.profit; });
+    if(worst.length) out.push({warn:true, html:'<b>'+esc(worst[0].k)+'</b>: <b class="neg">'+money(worst[0].profit)+'</b> over '+worst[0].n+' bets \u2014 your coldest spot'});
+    box.innerHTML=out.map(function(o){ return '<div class="tk-insight'+(o.warn?' warn':'')+'"><span class="ic">'+(o.warn?'\u26A0':'\u2197')+'</span><span>'+o.html+'</span></div>'; }).join('');
+    TK.insHas=out.length>0;
+  }
+  function computeSources(){
+    var box=document.getElementById('tkSources'); if(!box) return;
+    var list=rows.filter(passesPeriod);
+    var defs=[{src:'official', name:'Program plays', color:'#e8c766'}, {src:'own', name:'My own bets', color:'#5b6b82'}];
+    var gs=defs.map(function(d){
+      var g={def:d, n:0, w:0, l:0, p:0, profit:0, risked:0};
+      list.forEach(function(r){
+        if((r.getAttribute('data-source')||'')!==d.src || !isSettled(r)) return;
+        g.n++; var x=res(r);
+        if(x==='W')g.w++; else if(x==='L')g.l++; else g.p++;
+        g.profit+=profit(r); g.risked+=stake(r);
+      });
+      return g;
+    });
+    var tot=gs.reduce(function(a,g){ return a+g.n; }, 0);
+    if(!tot){ box.innerHTML='<p class="note">No settled bets in this period yet \u2014 your by-source split appears with your first graded bet.</p>'; return; }
+    var maxAbs=0; gs.forEach(function(g){ if(Math.abs(g.profit)>maxAbs) maxAbs=Math.abs(g.profit); });
+    var h='<div class="tk-src-share">'+gs.map(function(g){ return '<i style="width:'+(g.n/tot*100).toFixed(1)+'%;background:'+g.def.color+'"></i>'; }).join('')+'</div>';
+    h+='<div class="tk-src-legend">'+gs.map(function(g){ return '<span><span class="dot" style="background:'+g.def.color+'"></span>'+g.def.name+' '+Math.round(g.n/tot*100)+'%</span>'; }).join('')+'</div>';
+    gs.forEach(function(g){
+      var roi=g.risked? (g.profit/g.risked*100):0;
+      var bw=g.profit&&maxAbs? Math.max(3, Math.abs(g.profit)/maxAbs*100):0;
+      h+='<div class="tk-srcrow"><div class="top"><span class="nm">'+g.def.name+'</span><span class="net '+(g.profit>0?'pos':(g.profit<0?'neg':''))+'">'+money(g.profit)+'</span></div>'
+        +'<div class="tk-srcbar"><i style="width:'+bw.toFixed(1)+'%;background:'+(g.profit<0?'#f87171':'#2fbf71')+'"></i></div>'
+        +'<div class="meta"><span>'+g.n+' bets · '+g.w+'-'+g.l+(g.p?' · '+g.p+'P':'')+'</span><span>'+(roi>=0?'+':'')+roi.toFixed(1)+'% ROI</span></div></div>';
+    });
+    box.innerHTML=h;
+  }
+  function computeWeek(){
+    var bars=document.getElementById('tkWeekBars'), tot=document.getElementById('tkWeekTotal');
+    if(!bars||!tot) return;
+    var list=srcRows().filter(isSettled);
+    var days=[], total=0, maxAbs=0, any=false;
+    for(var i=6;i>=0;i--){
+      var d=addDays(todayD(), -i), k=dstr(d), sum=0;
+      list.forEach(function(r){ if(fecha(r)===k){ sum+=profit(r); any=true; } });
+      days.push({dow:DOW[d.getDay()], sum:sum});
+      total+=sum; if(Math.abs(sum)>maxAbs)maxAbs=Math.abs(sum);
+    }
+    tot.textContent=money(total); tot.className='tot '+(total>0?'pos':(total<0?'neg':''));
+    if(!any){ bars.innerHTML='<p class="note">No settled bets in the last 7 days.</p>'; return; }
+    bars.innerHTML=days.map(function(d){
+      var hgt=d.sum? Math.max(6, Math.round(Math.abs(d.sum)/maxAbs*74)) : 3;
+      return '<div class="tk-wday"><span class="val '+(d.sum>0?'pos':(d.sum<0?'neg':''))+'">'+(d.sum? moneyShort(d.sum):'')+'</span><div class="tk-wbar '+(d.sum>0?'pos':(d.sum<0?'neg':''))+'" style="height:'+hgt+'px"></div><span class="dl">'+d.dow+'</span></div>';
+    }).join('');
+  }
+  function computeLastWeek(){
+    var card=document.getElementById('tkLastWeek'); if(!card) return;
+    var list=srcRows().filter(isSettled);
+    var tm=mondayOf(todayD());
+    var lwS=addDays(tm,-7), lwE=addDays(tm,-1), pwS=addDays(tm,-14), pwE=addDays(tm,-8);
+    function agg(a,b){
+      var g={n:0,w:0,l:0,p:0,net:0,risk:0};
+      list.forEach(function(r){ var f=fecha(r); if(f>=dstr(a)&&f<=dstr(b)){ g.n++; var x=res(r); if(x==='W')g.w++; else if(x==='L')g.l++; else g.p++; g.net+=profit(r); g.risk+=stake(r); } });
+      return g;
+    }
+    var lw=agg(lwS,lwE), pw=agg(pwS,pwE);
+    TK.lwHas=lw.n>0;
+    if(!TK.lwHas) return;
+    var roi=lw.risk? lw.net/lw.risk*100:0;
+    var vs=lw.net-pw.net;
+    setV('tkLwRange', fmtDay(lwS)+' to '+fmtDay(lwE));
+    var r1=document.getElementById('tkLwResult'); if(r1){ r1.textContent=money(lw.net); r1.className='v '+(lw.net>0?'pos':(lw.net<0?'neg':'')); }
+    setV('tkLwRecord', lw.w+'-'+lw.l+(lw.p?' · '+lw.p+'P':''));
+    var r3=document.getElementById('tkLwRoi'); if(r3){ r3.textContent=(roi>=0?'+':'')+roi.toFixed(1)+'%'; r3.className='v '+(roi>0?'pos':(roi<0?'neg':'')); }
+    var r4=document.getElementById('tkLwVs'); if(r4){ r4.textContent=money(vs); r4.className='v '+(vs>0?'pos':(vs<0?'neg':'')); }
+    TK.lwText='My last week with The Sharp Team ('+fmtDay(lwS)+' to '+fmtDay(lwE)+'): '+lw.w+'-'+lw.l+' · '+money(lw.net)+' · ROI '+(roi>=0?'+':'')+roi.toFixed(1)+'%.';
+  }
+  function computeDays(){
+    var grid=document.getElementById('tkDaysGrid'), line=document.getElementById('tkDaysLine');
+    if(!grid||!line) return;
+    var list=srcRows().filter(isSettled);
+    var byDate={};
+    list.forEach(function(r){ var f=fecha(r); if(!f) return; if(!byDate[f]) byDate[f]={net:0,n:0}; byDate[f].net+=profit(r); byDate[f].n++; });
+    var start=addDays(mondayOf(todayD()), -17*7), today=todayD();
+    var maxAbs=0;
+    Object.keys(byDate).forEach(function(k){ var d=parseDate(k); if(d>=start&&d<=today){ var a=Math.abs(byDate[k].net); if(a>maxAbs)maxAbs=a; } });
+    var up=0, withRes=0;
+    var h='<span></span>';
+    var prevMonth=-1;
+    for(var c=0;c<18;c++){ var mon=addDays(start, c*7); var m=mon.getMonth(); h+='<span class="mlab">'+(m!==prevMonth? MON[m]:'')+'</span>'; prevMonth=m; }
+    var labels=['Mon','','Wed','','Fri','',''];
+    for(var dow=0; dow<7; dow++){
+      h+='<span class="dlab">'+labels[dow]+'</span>';
+      for(var c2=0;c2<18;c2++){
+        var d=addDays(start, c2*7+dow), k=dstr(d);
+        if(d>today){ h+='<span class="tk-day future"></span>'; continue; }
+        var e=byDate[k];
+        if(!e){ h+='<span class="tk-day"></span>'; continue; }
+        withRes++; if(e.net>0) up++;
+        var cls='flat';
+        if(e.net>0) cls=(maxAbs&&e.net/maxAbs>0.55)? 'g2':'g1';
+        else if(e.net<0) cls=(maxAbs&&(-e.net)/maxAbs>0.55)? 'r2':'r1';
+        h+='<span class="tk-day '+cls+'" title="'+fmtDay(d)+' · '+money(e.net)+' · '+e.n+' bet'+(e.n===1?'':'s')+'"></span>';
+      }
+    }
+    grid.innerHTML=h;
+    line.textContent=up+' up days of '+withRes+' with results · last 18 weeks';
+  }
+  function computeGoal(){
+    var box=document.getElementById('tkGoalProg'); if(!box) return;
+    if(!TKGOAL||!TKGOAL.target){ box.innerHTML='<p class="note" style="margin:0">No goal set yet \u2014 pick a target below and this bar starts tracking it.</p>'; return; }
+    var t=todayD(), a;
+    if(TKGOAL.period==='week') a=mondayOf(t); else a=new Date(t.getFullYear(), t.getMonth(), 1);
+    var net=0;
+    rows.forEach(function(r){ if(!isSettled(r)) return; var f=fecha(r); if(f>=dstr(a)&&f<=dstr(t)) net+=profit(r); });
+    var unit=TKUNIT>0? TKUNIT:100;
+    var cur=net/unit;
+    var pct=Math.max(0, Math.min(100, cur/TKGOAL.target*100));
+    box.innerHTML='<p class="note" style="margin:0"><b style="color:#fff">'+cur.toFixed(1)+'u</b> of '+String(TKGOAL.target)+'u this '+(TKGOAL.period==='week'?'week':'month')+' · '+money(net)+' net so far</p>'
+      +'<div class="tk-goalbar"><i style="width:'+pct.toFixed(1)+'%"></i></div>'
+      +'<p class="note" style="margin:0">'+pct.toFixed(0)+'% of the way there</p>';
+  }
+  function computeNeeds(){
+    var list=document.getElementById('tkNeedsList'), cnt=document.getElementById('tkNeedsCount');
+    if(!list) return;
+    var own=rows.filter(function(r){ return (r.getAttribute('data-source')||'')==='own'; });
+    var noBook=own.filter(function(r){ return !(r.getAttribute('data-book')||''); });
+    var items=[];
+    if(noBook.length) items.push({ic:'\uD83C\uDFE6', t:'Add the book', s:'Unlocks your by-book breakdown', n:noBook.length});
+    TK.needsHas=items.length>0;
+    var totalN=items.reduce(function(a,i){ return a+i.n; }, 0);
+    if(cnt) cnt.textContent=items.length? totalN+' item'+(totalN===1?'':'s')+' to complete':'';
+    list.innerHTML=items.map(function(i){ return '<div class="tk-need"><span class="ic">'+i.ic+'</span><span><span class="t">'+i.t+'</span><div class="s">'+i.s+'</div></span><span class="n">'+i.n+'</span></div>'; }).join('');
+  }
+  function computeTabCounts(){
+    var list=srcRows(), open=0, hist=0;
+    list.forEach(function(r){ if(isSettled(r)) hist++; else open++; });
+    var o=document.getElementById('tkTabOpen'), h=document.getElementById('tkTabHist');
+    if(o) o.textContent=open;
+    if(h) h.textContent=hist;
+    var so=rows.filter(function(r){ return (r.getAttribute('data-source')||'')==='official'; }).length;
+    var sw=rows.length-so;
+    var e1=document.getElementById('tkSrcOff'), e2=document.getElementById('tkSrcOwn');
+    if(e1) e1.textContent=so? ' '+so : '';
+    if(e2) e2.textContent=sw? ' '+sw : '';
+  }
+  function refreshDynamic(){
+    var needs=document.getElementById('tkNeeds');
+    if(needs) needs.style.display=(TK.needsHas&&(TK.tab==='overview'||TK.tab==='open'))?'':'none';
+    var lw=document.getElementById('tkLastWeek');
+    if(lw) lw.style.display=(TK.lwHas&&(TK.tab==='overview'||TK.tab==='performance'))?'':'none';
+    var ins=document.getElementById('tkInsights');
+    if(ins) ins.style.display=(TK.insHas&&(TK.tab==='overview'||TK.tab==='performance'))?'':'none';
+  }
+  function applyP2(){
+    computeQuad(); computeStats5(); computeInsights(); computeSources();
+    computeWeek(); computeLastWeek(); computeDays(); computeGoal();
+    computeNeeds(); computeTabCounts(); refreshDynamic();
+  }
+  function setTab(t){
+    TK.tab=t;
+    tabBtns.forEach(function(b){ b.classList.toggle('active', b.getAttribute('data-tab')===t); });
+    document.querySelectorAll('[data-tabs]').forEach(function(el){
+      if(el.getAttribute('data-dyn')) return;
+      el.style.display=el.getAttribute('data-tabs').split(' ').indexOf(t)>=0?'':'none';
+    });
+    applyRows();
+    refreshDynamic();
+  }
+  chips.forEach(function(ch){ ch.addEventListener('click', function(){ TK.days=parseInt(ch.getAttribute('data-days'),10)||0; applyHero(); applyRows(); applyP2(); }); });
+  srcChips.forEach(function(ch){ ch.addEventListener('click', function(){ TK.src=ch.getAttribute('data-src')||''; applyHero(); applyRows(); applyP2(); }); });
+  tabBtns.forEach(function(b){ b.addEventListener('click', function(){ setTab(b.getAttribute('data-tab')); }); });
+  var sh=document.getElementById('tkLwShare');
+  if(sh) sh.addEventListener('click', function(){
+    if(!TK.lwText) return;
+    if(navigator.share){ navigator.share({text:TK.lwText}).catch(function(){}); }
+    else if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(TK.lwText);
+      var old=sh.textContent; sh.textContent='Copied \u2713';
+      setTimeout(function(){ sh.textContent=old; }, 1800);
+    }
+  });
+  applyRows();
+  applyP2();
 })();
 </script>
 {% endblock %}
