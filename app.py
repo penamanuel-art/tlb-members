@@ -11785,8 +11785,10 @@ def admin_crear_push():
     vista previa. El ENVÍO reutiliza el mismo mecanismo del push manual
     de Controles manuales (admin_control_push): mismas suscripciones
     (notif_plays = 1), mismo payload y mismo webpush. La audiencia
-    «Solo yo» agrega el filtro is_admin = 1, el mismo camino del aviso
-    «🚀 Disparo recibido» (_push_aviso_disparo_alex). El resultado real
+    «Solo yo» apunta a las cuentas del dueño con el criterio de
+    _admin_o_cuenta_alex (is_admin = 1 O su cuenta de miembro,
+    ALEX_MEMBER_EMAIL) — sus dispositivos están suscritos desde su
+    cuenta de miembro, sin flag de admin. El resultado real
     (entregados/fallidos) se muestra en la misma página."""
     resultado = None
     form = {"titulo": "", "mensaje": "", "audiencia": "miembros", "url": "/home"}
@@ -11814,9 +11816,17 @@ def admin_crear_push():
                    " FROM push_subscriptions ps"
                    " JOIN users u ON u.id = ps.member_id"
                    " WHERE u.notif_plays = 1")
+            params = []
             if audiencia == "solo_yo":
-                sql += " AND u.is_admin = 1"
-            subs = db.execute(sql).fetchall()
+                # Criterio del dueño = el de _admin_o_cuenta_alex:
+                # is_admin O la cuenta de miembro de Alex
+                # (ALEX_MEMBER_EMAIL). Solo con is_admin daba 0
+                # (bug 2026-11-05): las únicas suscripciones push
+                # del sistema cuelgan de su cuenta de miembro, que
+                # no tiene el flag de admin.
+                sql += " AND (u.is_admin = 1 OR lower(u.email) = ?)"
+                params.append(ALEX_MEMBER_EMAIL.strip().lower())
+            subs = db.execute(sql, params).fetchall()
             sent = failed = 0
             for sub in subs:
                 try:
