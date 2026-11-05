@@ -11777,6 +11777,75 @@ def admin_control_push():
     return redirect(url_for("admin_dashboard"))
 
 
+@app.route("/admin/crear-push", methods=["GET", "POST"])
+@admin_required
+def admin_crear_push():
+    """Compositor profesional de push (2026-11-05, pedido de Alex:
+    «Créalo más profesional»). Cuadrito en el Panel + página propia con
+    vista previa. El ENVÍO reutiliza el mismo mecanismo del push manual
+    de Controles manuales (admin_control_push): mismas suscripciones
+    (notif_plays = 1), mismo payload y mismo webpush. La audiencia
+    «Solo yo» agrega el filtro is_admin = 1, el mismo camino del aviso
+    «🚀 Disparo recibido» (_push_aviso_disparo_alex). El resultado real
+    (entregados/fallidos) se muestra en la misma página."""
+    resultado = None
+    form = {"titulo": "", "mensaje": "", "audiencia": "miembros", "url": "/home"}
+    if request.method == "POST":
+        titulo = (request.form.get("titulo") or "").strip()[:80]
+        mensaje = (request.form.get("mensaje") or "").strip()[:240]
+        audiencia = (request.form.get("audiencia") or "miembros").strip()
+        if audiencia not in ("miembros", "solo_yo"):
+            audiencia = "miembros"
+        url = (request.form.get("url") or "/home").strip() or "/home"
+        if not url.startswith("/") or url.startswith("//"):
+            url = "/home"
+        form = {"titulo": titulo, "mensaje": mensaje,
+                "audiencia": audiencia, "url": url}
+        if not titulo or not mensaje:
+            resultado = {"ok": False, "error": "Falta el título o el mensaje."}
+        elif not HAVE_WEBPUSH or not VAPID_PRIVATE_KEY:
+            resultado = {"ok": False,
+                         "error": "El push no está configurado en el servidor."}
+        else:
+            payload = json.dumps({"title": titulo, "body": mensaje,
+                                  "url": url, "image": ""})
+            db = get_db()
+            sql = ("SELECT ps.id, ps.endpoint, ps.p256dh, ps.auth"
+                   " FROM push_subscriptions ps"
+                   " JOIN users u ON u.id = ps.member_id"
+                   " WHERE u.notif_plays = 1")
+            if audiencia == "solo_yo":
+                sql += " AND u.is_admin = 1"
+            subs = db.execute(sql).fetchall()
+            sent = failed = 0
+            for sub in subs:
+                try:
+                    webpush(
+                        subscription_info={"endpoint": sub["endpoint"],
+                                           "keys": {"p256dh": sub["p256dh"],
+                                                    "auth": sub["auth"]}},
+                        data=payload,
+                        vapid_private_key=VAPID_PRIVATE_KEY,
+                        vapid_claims={"sub": VAPID_CLAIM_EMAIL},
+                    )
+                    sent += 1
+                except WebPushException as ex:
+                    code = getattr(getattr(ex, "response", None),
+                                   "status_code", None)
+                    if code in (404, 410):
+                        db.execute(
+                            "DELETE FROM push_subscriptions WHERE id = ?",
+                            (sub["id"],))
+                    failed += 1
+                except Exception:
+                    failed += 1
+            db.commit()
+            resultado = {"ok": True, "sent": sent, "failed": failed,
+                         "audiencia": audiencia}
+    return render_template("admin_crear_push.html",
+                           resultado=resultado, form=form)
+
+
 @app.route("/admin/control/email", methods=["POST"])
 @admin_required
 def admin_control_email():
