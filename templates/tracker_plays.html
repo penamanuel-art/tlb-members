@@ -869,7 +869,19 @@
     if(le){
       if(vis===0 && rows.length && TK.tab!=='performance'){
         le.style.display='';
-        le.textContent = TK.tab==='open' ? 'No open bets right now. Track a play from today\u2019s board and it will wait here until it settles.'
+        var hiddenBySrc=0;
+        if(TK.src){
+          rows.forEach(function(r){
+            if(!passesPeriod(r)||passesSrc(r)) return;
+            if(TK.tab==='open' && isSettled(r)) return;
+            if(TK.tab==='history' && !isSettled(r)) return;
+            hiddenBySrc++;
+          });
+        }
+        if(hiddenBySrc>0){
+          le.textContent='Nothing here under '+(TK.src==='own'?'My own bets':'Program plays')+' \u2014 switch to All sources to see '+(TK.src==='own'?'your program plays':'your own bets')+'.';
+        }
+        else le.textContent = TK.tab==='open' ? 'No open bets right now. Track a play from today\u2019s board and it will wait here until it settles.'
           : TK.tab==='history' ? 'Nothing settled in this view yet \u2014 change the period or the source filter.'
           : 'No bets match this view \u2014 widen the period or clear the source filter.';
       } else le.style.display='none';
@@ -890,7 +902,7 @@
         sub.textContent='A close is recorded when one of your bets carries the closing line. None of the bets in this view has one yet.';
       }
     }
-    var open=srcRows().filter(function(r){ return !isSettled(r); });
+    var open=rows.filter(function(r){ return !isSettled(r); });
     var risk=0, toWin=0;
     open.forEach(function(r){ var st=stake(r); risk+=st; var rt=amRatio(parseFloat(r.getAttribute('data-odds')||'')); if(rt!==null) toWin+=st*rt; });
     var rb=document.getElementById('tkRiskBig'), rs=document.getElementById('tkRiskSub');
@@ -1066,7 +1078,7 @@
     list.innerHTML=items.map(function(i){ return '<div class="tk-need"><span class="ic">'+i.ic+'</span><span><span class="t">'+i.t+'</span><div class="s">'+i.s+'</div></span><span class="n">'+i.n+'</span></div>'; }).join('');
   }
   function computeTabCounts(){
-    var list=srcRows(), open=0, hist=0;
+    var list=rows.filter(passesPeriod), open=0, hist=0;
     list.forEach(function(r){ if(isSettled(r)) hist++; else open++; });
     var o=document.getElementById('tkTabOpen'), h=document.getElementById('tkTabHist');
     if(o) o.textContent=open;
@@ -1113,6 +1125,8 @@
       setTimeout(function(){ sh.textContent=old; }, 1800);
     }
   });
+  TK.src='';
+  srcChips.forEach(function(ch){ ch.classList.toggle('active', (ch.getAttribute('data-src')||'')===TK.src); });
   applyRows();
   applyP2();
 })();
