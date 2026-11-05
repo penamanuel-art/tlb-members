@@ -509,6 +509,7 @@
       {% else %}
       <form method="post" action="{{ url_for('set_result', tracked_id=r.id) }}"><input type="hidden" name="resultado" value="W"><button class="wgt-btn win" type="submit" title="Mark as won">✓</button></form>
       <form method="post" action="{{ url_for('set_result', tracked_id=r.id) }}"><input type="hidden" name="resultado" value="L"><button class="wgt-btn loss" type="submit" title="Mark as lost">✕</button></form>
+      <form method="post" action="{{ url_for('set_result', tracked_id=r.id) }}"><input type="hidden" name="resultado" value="P"><button class="wgt-btn push" type="submit" title="Mark as push">½</button></form>
       <form method="post" action="{{ url_for('set_result', tracked_id=r.id) }}"><input type="hidden" name="resultado" value=""><button class="wgt-btn" type="submit" title="Back to pending">↺</button></form>
       <span class="wgt-locked" title="This play is locked once tracked.">🔒 Locked</span>
       {% endif %}
