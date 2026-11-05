@@ -779,19 +779,23 @@
 
   <style>
 /* Footer reorganizado v2 — gana sobre el CSS base .tst-foot de home_lux */
-.tst-foot.tst-foot-v2{padding:34px 22px 48px}
-.tst-foot-v2 .tst-foot-brand{margin-bottom:16px}
-.tst-foot-v2 .tst-foot-tag{color:#e8c766}
-.tst-foot-v2 .tst-foot-social{display:flex;justify-content:center;gap:12px;margin:0 0 18px}
-.tst-foot-v2 .tst-foot-social a,.tst-foot-v2 .tst-foot-social span{width:42px;height:42px;border-radius:50%;background:#10141d;border:1px solid #232936;display:flex;align-items:center;justify-content:center}
-.tst-foot-v2 .tst-foot-social img,.tst-foot-v2 .tst-foot-social svg{width:26px;height:26px;border-radius:50%;display:block}
-.tst-foot-v2 .tst-foot-contact2{display:flex;flex-direction:column;align-items:center;gap:5px;margin:0}
-.tst-foot-v2 .tst-foot-mail{color:#e8c766;font-size:14.5px;font-weight:700;text-decoration:none}
-.tst-foot-v2 .tst-foot-tel{color:#C7CDD6;font-size:13.5px;font-weight:600;text-decoration:none}
+/* 2026-11-05 PM: rediseno profesional aprobado por Alex — todo en dorado de marca, contacto tranquilo, alineado a la izquierda */
+.tst-foot.tst-foot-v2{padding:34px 22px 48px;text-align:left}
+.tst-foot-v2 .tst-foot-brand{display:flex;flex-direction:row;align-items:center;gap:12px;margin-bottom:16px}
+.tst-foot-v2 .tst-foot-brandtxt{display:flex;flex-direction:column;gap:3px}
+.tst-foot-v2 .tst-foot-tag{color:#8b93a5}
+.tst-foot-v2 .tst-foot-social{display:flex;justify-content:flex-start;gap:10px;margin:0 0 18px}
+.tst-foot-v2 .tst-foot-social a,.tst-foot-v2 .tst-foot-social span{width:38px;height:38px;border-radius:12px;background:#161b28;border:1px solid #2b3247;display:flex;align-items:center;justify-content:center}
+.tst-foot-v2 .tst-foot-social svg{width:18px;height:18px;stroke:#e8c766;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;display:block}
+.tst-foot-v2 .tst-foot-contact2{display:flex;flex-direction:column;align-items:flex-start;gap:9px;margin:0}
+.tst-foot-v2 .tst-foot-mail{color:#c9cfdb;font-size:13.5px;font-weight:400;text-decoration:none;display:flex;align-items:center;gap:10px}
+.tst-foot-v2 .tst-foot-tel{color:#c9cfdb;font-size:13.5px;font-weight:400;text-decoration:none;display:flex;align-items:center;gap:10px}
+.tst-foot-v2 .tst-foot-contact2 svg{width:16px;height:16px;stroke:#e8c766;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
 .tst-foot-v2 .tst-foot-links{margin-top:20px;padding:22px 2px 4px}
+.tst-foot-v2 .tst-foot-links h4{color:#a78f4e}
 .tst-foot-v2 .tst-foot-links a{font-size:13.5px;padding:5px 0}
-.tst-foot-v2 .tst-foot-links a.tst-foot-cta{color:#e8c766;font-weight:700}
-.tst-foot-v2 .tst-foot-more{margin:12px 0 0;font-size:12.5px;color:#969EA9}
+.tst-foot-v2 .tst-foot-links a.tst-foot-cta{color:#A0A8B4;font-weight:400}
+.tst-foot-v2 .tst-foot-more{margin:12px 0 0;font-size:12.5px;color:#969EA9;text-align:center}
 .tst-foot-v2 .tst-foot-more a{color:#969EA9;text-decoration:none}
 .tst-foot-v2 .tst-foot-rule{margin:18px auto 14px}
 .tst-foot-v2 .tst-foot-addr{margin-bottom:2px}
@@ -804,13 +808,16 @@
 
 <footer class="footer tst-foot tst-foot-v2">
     <div class="tst-foot-brand">
-      <span class="tst-foot-name">THE SHARP TEAM</span>
-      <span class="tst-foot-tag">Measurable value. Total discipline.</span>
+      <img src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team" style="width:42px;height:42px;border-radius:50%;flex:none;">
+      <div class="tst-foot-brandtxt">
+        <span class="tst-foot-name">THE SHARP TEAM</span>
+        <span class="tst-foot-tag">Measurable value. Total discipline.</span>
+      </div>
     </div>
-    <div class="tst-foot-social"><span title="Facebook"><svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg"><circle cx="120" cy="120" r="120" fill="#1877f2"/><text x="120" y="168" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="150" font-weight="bold" fill="#ffffff">f</text></svg></span><a href="https://t.me/thesharpteam" target="_blank" rel="noopener" title="Telegram"><img src="{{ url_for('static', filename='img/icons/telegram.png') }}" loading="lazy" alt="Telegram"></a><a href="https://www.instagram.com/the_sharp_team/" target="_blank" rel="noopener" title="Instagram"><img src="{{ url_for('static', filename='img/icons/instagram.png') }}" loading="lazy" alt="Instagram"></a><a href="https://x.com/thesharpteambet" target="_blank" rel="noopener" title="X"><img src="{{ url_for('static', filename='img/icons/x.png') }}" loading="lazy" alt="X"></a></div>
+    <div class="tst-foot-social"><span title="Facebook"><svg viewBox="0 0 24 24"><path d="M14.5 8.5H17V5h-2.5A3.5 3.5 0 0 0 11 8.5V11H8.5v3H11v7h3v-7h2.6l.4-3H14V8.7c0-.1.2-.2.5-.2z"/></svg></span><a href="https://t.me/thesharpteam" target="_blank" rel="noopener" title="Telegram"><svg viewBox="0 0 24 24"><path d="M20.5 4.5 3.8 11l5.2 2 2 5.4 2.8-3.6 4.9 3.7 1.8-14z"/><path d="M9 13l11.5-8.5"/></svg></a><a href="https://www.instagram.com/the_sharp_team/" target="_blank" rel="noopener" title="Instagram"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4.5"/><circle cx="12" cy="12" r="3.6"/><circle cx="17" cy="7" r=".6" fill="#e8c766"/></svg></a><a href="https://x.com/thesharpteambet" target="_blank" rel="noopener" title="X"><svg viewBox="0 0 24 24"><path d="M4.5 4.5l15 15M19.5 4.5l-15 15"/></svg></a></div>
     <div class="tst-foot-contact2">
-      <a class="tst-foot-mail" href="mailto:thesharpteam8@gmail.com">thesharpteam8@gmail.com</a>
-      <a class="tst-foot-tel" href="tel:+12393768798">(239) 376-8798</a>
+      <a class="tst-foot-mail" href="mailto:thesharpteam8@gmail.com"><svg viewBox="0 0 24 24"><rect x="3.5" y="5.5" width="17" height="13" rx="2"/><path d="m4 7 8 6 8-6"/></svg>thesharpteam8@gmail.com</a>
+      <a class="tst-foot-tel" href="tel:+12393768798"><svg viewBox="0 0 24 24"><path d="M7.3 4.2 9.4 4l1.5 3.6-1.8 1.4a12.4 12.4 0 0 0 5.1 5.1l1.4-1.8 3.6 1.5-.2 2.1a1.9 1.9 0 0 1-2 1.7C10.7 17 7 13.3 6.4 7a1.9 1.9 0 0 1 .9-2.8z" transform="translate(1.4 1.4) scale(.9)"/></svg>(239) 376-8798</a>
     </div>
     <div class="tst-foot-links">
       <div>
