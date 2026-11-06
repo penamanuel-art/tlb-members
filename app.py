@@ -8375,6 +8375,47 @@ def api_own_bets_open():
     return jsonify({"ok": True, "bets": [dict(r) for r in rows]})
 
 
+@app.route("/admin/api/own-bets/add", methods=["POST"])
+def api_own_bets_add():
+    """Inserta una apuesta propia en el My Bets de un miembro (2026-11-06:
+    registra las señales Sharp Money confirmadas en dinero en el tracker
+    personal de Alex, user 6, como apuestas propias). Auth: sesión admin
+    o X-Admin-Key. Mismo INSERT que el formulario /my-bets/add."""
+    if not _admin_api_autorizado():
+        return jsonify({"ok": False}), 403
+    data = request.get_json(silent=True) or {}
+    pick = (data.get("pick") or "").strip()
+    try:
+        user_id = int(data.get("user_id") or 0)
+        cuota = int(data.get("cuota"))
+        stake = float(data.get("stake_monto") or 0)
+    except (TypeError, ValueError):
+        return jsonify({"ok": False, "error": "datos"}), 400
+    fecha = (data.get("fecha") or "").strip() or \
+        datetime.now(TZ).strftime("%Y-%m-%d")
+    if not user_id or not pick or stake <= 0:
+        return jsonify({"ok": False, "error": "datos"}), 400
+    db = get_db()
+    owner = db.execute("SELECT id FROM users WHERE id = ?",
+                       (user_id,)).fetchone()
+    if not owner:
+        return jsonify({"ok": False, "error": "user"}), 404
+    new_id = insert_returning_id(
+        db,
+        "INSERT INTO own_bets (user_id, fecha, liga, juego, mercado, pick,"
+        " cuota, stake_monto, casa, cierre, event_id, lado, punto, foto,"
+        " created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+        (user_id, fecha, (data.get("liga") or "").strip(),
+         (data.get("juego") or "").strip(),
+         (data.get("mercado") or "Moneyline").strip(),
+         pick, cuota, stake, (data.get("casa") or "").strip(),
+         data.get("cierre"), (data.get("event_id") or "").strip() or None,
+         (data.get("lado") or "").strip() or None, data.get("punto"),
+         "", datetime.now(TZ).strftime("%Y-%m-%d %H:%M")))
+    db.commit()
+    return jsonify({"ok": True, "id": new_id})
+
+
 @app.route("/admin/api/own-bets/grade", methods=["POST"])
 def api_own_bets_grade():
     if not _admin_api_autorizado():
