@@ -55,6 +55,17 @@
   .wgt-locked { display:inline-flex; align-items:center; gap:5px; border:1px solid #24334d; background:#131e31; color:#8b98ad; border-radius:8px; height:28px; padding:0 10px; font-size:.78rem; font-weight:700; cursor:default; }
   .mb-edit { color:#2ee6a8; font-size:12.5px; font-weight:700; text-decoration:none; margin-left:4px; }
   .mb-foto { width:100%; border-radius:12px; margin-top:10px; border:1px solid rgba(255,255,255,.06); }
+  .smc { background:#12161F; border:1px solid #232A3A; border-left:3px solid #5eeaa0; border-radius:12px; padding:9px 11px 8px; }
+  .smc-top { display:flex; align-items:baseline; gap:7px; }
+  .smc-tag { color:#5eeaa0; font-size:9.5px; font-weight:800; letter-spacing:.1em; white-space:nowrap; }
+  .smc-pick { font-size:14.5px; font-weight:700; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .smc-pick .price { color:#e8c766; }
+  .smc-pend { margin-left:auto; color:#e8c766; font-size:10px; font-weight:700; letter-spacing:.05em; white-space:nowrap; }
+  .smc-pend.won { color:#2fbf71; } .smc-pend.lost { color:#f87171; }
+  .smc-game { color:#8A93A6; font-size:11px; margin-top:2px; }
+  .smc-desg { border-top:1px solid #232A3A; margin-top:7px; padding-top:6px; font-size:11px; color:#A7B0C2; line-height:1.5; }
+  .smc-desg b { color:#E8EBF1; font-weight:600; }
+  .smc-desg .up { color:#5eeaa0; font-weight:700; }
   .wgt-empty { text-align:center; color:#8b98ad; padding:28px 12px; line-height:1.6; }
   .mb-set { display:grid; grid-template-columns:1fr 1fr; gap:9px; }
   .mb-set label { font-size:10px; letter-spacing:1.2px; color:#8b98ad; font-weight:800; display:block; margin-bottom:5px; }
@@ -465,6 +476,13 @@
 <div class="wgt-list" data-tabs="overview open">
   {% for r in rows %}
   <article class="wgt-row {{ 'won' if r.resultado == 'W' else '' }}" data-fecha="{{ r.fecha or '' }}" data-res="{{ r.resultado or '' }}" data-profit="{{ r.profit if r.profit is not none else 0 }}" data-stake="{{ r.stake_monto or 0 }}" data-clv="{{ r.clv_pts if r.clv_pts is not none else '' }}" data-source="{{ r.source or '' }}" data-league="{{ r.liga or '' }}" data-level="{{ nivel_display(r.nivel) if r.source != 'own' else '' }}" data-market="{{ r.mercado or 'Moneyline' }}" data-book="{{ r.casa or '' }}" data-odds="{{ r.cuota if r.cuota is not none else '' }}" data-mbase="{{ r.mercado_base or 'Moneyline' }}" data-matchup="{{ r.matchup or '' }}">
+    {% if r.sharp %}
+    <div class="smc">
+      <div class="smc-top"><span class="smc-tag">🔥 SHARP</span><span class="smc-pick">{{ r.sharp.team }} ML <span class="price">{{ r.cuota_txt }}</span></span>{% if r.resultado == 'W' %}<span class="smc-pend won">WON · {{ fmt_money(r.profit) }}</span>{% elif r.resultado == 'L' %}<span class="smc-pend lost">LOST · {{ fmt_money(r.profit) }}</span>{% elif r.resultado == 'P' %}<span class="smc-pend">PUSH · $0</span>{% else %}<span class="smc-pend">PENDING · ${{ '%.0f' % r.stake_monto }}</span>{% endif %}</div>
+      <div class="smc-game">vs {{ r.sharp.opp_short }} · {{ r.liga }} · {{ r.sharp.when }}</div>
+      <div class="smc-desg">{{ fmt_odds(r.sharp.open) }} → <b>{{ fmt_odds(r.sharp.price) }}</b> · prob {{ r.sharp.prob_before|round|int }}% → <b>{{ r.sharp.prob_after|round|int }}%</b> <span class="up">({{ '%+.1f' % r.sharp.prob_pts }})</span> · {{ r.sharp.strength }} · Books <b>{{ r.sharp.books_for }}/{{ r.sharp.books_total }}</b><br>{{ r.sharp.exchange }}: <span class="up">{{ r.sharp.money_pct|round|int }}% del dinero</span> con {{ r.sharp.team_short }} · Vol <b>${{ r.sharp.volume_txt }}</b></div>
+    </div>
+    {% else %}
     <div class="tkc-top">
       {% set _tk = r.foto or (url_for('static', filename=r.comprobante) if r.comprobante else '') %}
       {% if _tk %}
@@ -499,6 +517,7 @@
         {% endif %}
       </div>
     </div>
+    {% endif %}
     <div class="wgt-actions">
       {% if r.source == 'own' %}
       <form method="post" action="{{ url_for('mybets_resultado', bet_id=r.id) }}"><input type="hidden" name="resultado" value="W"><button class="wgt-btn win" type="submit" title="Mark as won">✓</button></form>
