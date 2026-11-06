@@ -4158,6 +4158,15 @@ def _ensure_mybets_schema():
                     conn.execute("ALTER TABLE own_bets ADD COLUMN marcador TEXT")
         except Exception:
             pass
+        try:
+            if USE_PG:
+                conn.execute("ALTER TABLE own_bets ADD COLUMN IF NOT EXISTS meta TEXT")
+            else:
+                _cols = [r[1] for r in conn.execute("PRAGMA table_info(own_bets)").fetchall()]
+                if "meta" not in _cols:
+                    conn.execute("ALTER TABLE own_bets ADD COLUMN meta TEXT")
+        except Exception:
+            pass
         conn.commit()
         conn.close()
     except Exception:
@@ -7462,6 +7471,7 @@ def _my_bets_center(user):
     all_rows.sort(key=lambda r: (r["fecha"], r["id"]), reverse=True)
     for _r in all_rows:
         _r.setdefault("clv_pts", None)
+        _r.setdefault("sharp", None)
         _r.setdefault("foto", "")
         _r.setdefault("juego", "")
         _r.setdefault("mercado", "Moneyline")
@@ -7653,8 +7663,18 @@ def _own_row(b, settings=None):
     except (ValueError, TypeError):
         fecha_corta = f
     stake = float(b.get("stake_monto") or 0)
+    sharp = None
+    _raw_meta = b.get("meta")
+    if _raw_meta:
+        try:
+            _mj = json.loads(_raw_meta) if isinstance(_raw_meta, str) \
+                else _raw_meta
+            if isinstance(_mj, dict) and _mj.get("kind") == "sharp_money":
+                sharp = _mj
+        except Exception:
+            sharp = None
     return {
-        "id": b["id"], "source": "own",
+        "id": b["id"], "source": "own", "sharp": sharp,
         "fecha": f, "fecha_corta": fecha_corta,
         "pick": b.get("pick") or "", "juego": b.get("juego") or "",
         "liga": b.get("liga") or "", "mercado": b.get("mercado") or "Moneyline",
@@ -8400,18 +8420,23 @@ def api_own_bets_add():
                        (user_id,)).fetchone()
     if not owner:
         return jsonify({"ok": False, "error": "user"}), 404
+    _meta = data.get("meta")
+    if isinstance(_meta, dict):
+        _meta = json.dumps(_meta, ensure_ascii=False)
+    elif _meta is not None:
+        _meta = str(_meta)
     new_id = insert_returning_id(
         db,
         "INSERT INTO own_bets (user_id, fecha, liga, juego, mercado, pick,"
         " cuota, stake_monto, casa, cierre, event_id, lado, punto, foto,"
-        " created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+        " meta, created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
         (user_id, fecha, (data.get("liga") or "").strip(),
          (data.get("juego") or "").strip(),
          (data.get("mercado") or "Moneyline").strip(),
          pick, cuota, stake, (data.get("casa") or "").strip(),
          data.get("cierre"), (data.get("event_id") or "").strip() or None,
          (data.get("lado") or "").strip() or None, data.get("punto"),
-         "", datetime.now(TZ).strftime("%Y-%m-%d %H:%M")))
+         "", _meta, datetime.now(TZ).strftime("%Y-%m-%d %H:%M")))
     db.commit()
     return jsonify({"ok": True, "id": new_id})
 
