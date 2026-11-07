@@ -928,11 +928,24 @@ def _destino_email_permitido(to: str) -> bool:
 
 
 def _dispatch_email(to: str, subject: str, text_body: str, html_body=None,
-                    from_header=None) -> tuple:
+                    from_header=None, activation_token: str = None) -> tuple:
     """Despacha un email: Resend si hay API key (producción en Render),
     si no SMTP Gmail (desarrollo local). Devuelve (ok, detalle)."""
     if not _destino_email_permitido(to):
-        return False, "bloqueado: regla de Alex 2026-11-02 (solo emails a Alex)"
+        # Excepción ESTRECHA (2026-11-06, orden de Alex: «sin confirmar la
+        # cuenta, que no se active la cuenta»): el correo de ACTIVACIÓN sí
+        # sale al correo del propio registrante — sin ese correo ninguna
+        # cuenta nueva puede activarse. Solo pasa cuando el llamante
+        # entrega el token de activación de ESA cuenta (send_activation_
+        # email / send_activation_reminder_email lo toman de la fila del
+        # propio usuario al registrarse o reenviar) y el enlace con ese
+        # token va en el cuerpo: ningún otro contenido ni destino puede
+        # colarse por esta puerta. Todo lo demás sigue bloqueado.
+        _link_act = (f"{SITE_URL}/activar/{activation_token}"
+                     if activation_token else "")
+        if not _link_act or (_link_act not in (text_body or "")
+                             and _link_act not in (html_body or "")):
+            return False, "bloqueado: regla de Alex 2026-11-02 (solo emails a Alex)"
     if (os.environ.get("RESEND_API_KEY") or "").strip():
         return _resend_send(to, subject, text_body, html_body)
     return _smtp_send(to, subject, text_body, html_body, from_header)
@@ -1043,47 +1056,146 @@ def _activation_shell(titulo, cuerpo, boton, nota, link, lang="en"):
 </body></html>"""
 
 
+# ---------- Email de activación MODERNO (workflow nuevo, 2026-11-06) ----
+# Hermano de la bienvenida MODERNO (commit 4b940b4): fondo oscuro #0B0E13,
+# tarjeta #10141D, dorado #e8c766, pie estándar (banner oficial chico
+# centrado, iconos sociales en colores originales, «The Sharp Team ·
+# Wallington, NJ», línea de recepción, Unsubscribe). Inglés 100% (regla
+# de Alex 2026-10-19: todas las superficies de miembros en inglés).
+# Plantilla espejo: hidden_files/email-activacion-MODERNO-2026-11-06.html
+# Placeholders: __NOMBRE__, __TITULO__, __CUERPO__, __BOTON__, __LINK__.
+ACTIVATION_SUBJECT = "Activate your The Sharp Team account"
+ACTIVATION_HTML = """<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark">
+<title>Activate your The Sharp Team account</title>
+</head>
+<body style="margin:0;padding:0;background-color:#0B0E13;-webkit-text-size-adjust:100%;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#0B0E13;">
+<tr>
+<td align="center" style="padding:28px 12px 36px 12px;">
+
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;background-color:#10141D;border:1px solid rgba(255,255,255,.06);border-radius:16px;overflow:hidden;">
+
+  <!-- HEADER BANNER -->
+  <tr>
+    <td style="padding:0;line-height:0;">
+      <img src="https://www.thesharpteam.bet/static/img/sharp-team-header.jpg" alt="The Sharp Team" width="600" style="display:block;width:100%;max-width:600px;height:auto;border:0;">
+    </td>
+  </tr>
+
+  <!-- TITLE BLOCK -->
+  <tr>
+    <td style="padding:30px 24px 4px 24px;font-family:Arial,Helvetica,sans-serif;">
+      <div style="font-size:10.5px;line-height:14px;font-weight:700;color:#e8c766;letter-spacing:2.2px;"><span style="display:inline-block;width:14px;height:3px;background-color:#2EE6A8;border-radius:2px;vertical-align:middle;margin-right:9px;font-size:0;line-height:0;">&nbsp;</span>ONE LAST STEP</div>
+      <div style="font-size:21px;line-height:27px;font-weight:700;color:#ffffff;letter-spacing:.3px;margin-top:16px;">__TITULO__</div>
+      <div style="font-size:14px;line-height:24px;color:#e8eaf2;margin-top:18px;">Hi __NOMBRE__,</div>
+      <div style="font-size:13.5px;line-height:20px;color:#c3c9e0;margin-top:8px;">__CUERPO__</div>
+    </td>
+  </tr>
+
+  <!-- CTA BUTTON -->
+  <tr>
+    <td align="center" style="padding:24px 24px 6px 24px;font-family:Arial,Helvetica,sans-serif;">
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td align="center" style="background-color:#e8c766;border-radius:999px;">
+            <a href="__LINK__" style="display:inline-block;padding:14px 36px;font-family:Arial,Helvetica,sans-serif;font-size:14px;font-weight:700;color:#0B0E13;text-decoration:none;letter-spacing:.8px;">__BOTON__</a>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+
+  <!-- NOT ACTIVE YET -->
+  <tr>
+    <td style="padding:22px 24px 4px 24px;font-family:Arial,Helvetica,sans-serif;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#12161F;border:1px solid rgba(232,199,102,.40);border-radius:16px;">
+        <tr>
+          <td style="padding:16px 18px;font-size:13.5px;line-height:20px;color:#c3c9e0;">
+            <span style="color:#ffffff;font-weight:700;">Your account is not active yet.</span> Until you confirm, you can't log in and nothing is unlocked &mdash; no Dashboard, no plays. If you didn't create this account, just ignore this email: without confirmation, the account will never be activated.
+          </td>
+        </tr>
+      </table>
+      <div style="font-size:12.5px;line-height:18px;color:#8b93a9;margin-top:16px;">Or open this link:<br><a href="__LINK__" style="color:#e8c766;text-decoration:underline;word-break:break-all;">__LINK__</a></div>
+    </td>
+  </tr>
+
+  <!-- FOOTER -->
+  <tr>
+    <td style="padding:26px 24px 32px 24px;border-top:1px solid rgba(255,255,255,.10);font-family:Arial,Helvetica,sans-serif;" align="center">
+      <img src="https://www.thesharpteam.bet/static/img/sharp-team-header.jpg" alt="The Sharp Team" width="220" style="display:block;width:220px;max-width:220px;height:auto;border:0;margin:0 auto;">
+
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin:20px auto 6px auto;">
+        <tr>
+          <td style="padding:0 6px;"><a href="https://www.instagram.com/thesharp_team" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/instagram.png" alt="Instagram" width="22" height="22" style="display:block;width:22px;height:22px;border:0;"></a></td>
+          <td style="padding:0 6px;"><a href="https://www.facebook.com/thesharpteam" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/facebook.png" alt="Facebook" width="22" height="22" style="display:block;width:22px;height:22px;border:0;"></a></td>
+          <td style="padding:0 6px;"><a href="https://www.thesharpteam.bet/home" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/telegram.png" alt="Telegram" width="22" height="22" style="display:block;width:22px;height:22px;border:0;"></a></td>
+          <td style="padding:0 6px;"><a href="https://www.thesharpteam.bet/home" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/social-x-white.png" alt="X" width="22" height="22" style="display:block;width:22px;height:22px;border:0;"></a></td>
+        </tr>
+      </table>
+
+      <div style="font-size:10.5px;line-height:15px;color:#8b93a9;margin-top:16px;">The Sharp Team &middot; Wallington, NJ</div>
+      <div style="font-size:10.5px;line-height:15px;color:#8b93a9;margin-top:6px;">You are receiving this email because this address was used to sign up for The Sharp Team.</div>
+      <div style="font-size:10.5px;line-height:15px;margin-top:8px;"><a href="{{{RESEND_UNSUBSCRIBE_URL}}}" style="color:#8b93a9;text-decoration:underline;">Unsubscribe</a></div>
+    </td>
+  </tr>
+
+</table>
+
+</td>
+</tr>
+</table>
+</body>
+</html>"""
+
+
+def _activation_moderno_html(nombre, titulo, cuerpo, boton, link):
+    """HTML del correo de activación/recordatorio: rellena la plantilla
+    MODERNO del workflow nuevo (2026-11-06)."""
+    return (ACTIVATION_HTML.replace("__NOMBRE__", nombre)
+            .replace("__TITULO__", titulo)
+            .replace("__CUERPO__", cuerpo)
+            .replace("__BOTON__", boton)
+            .replace("__LINK__", link))
+
+
 def send_activation_email(nombre: str, email: str, token: str, lang: str = "en"):
     """Email de activación de cuenta (hilo aparte, nunca rompe el registro).
 
-    El enlace apunta a /activar/<token>. EN por defecto; ES si lang == 'es'.
+    Plantilla MODERNO del workflow nuevo (2026-11-06), inglés 100%. El
+    enlace apunta a /activar/<token>. Sale al correo del propio
+    registrante por la excepción estrecha de _dispatch_email
+    (activation_token): sin confirmar el correo, la cuenta NO se activa
+    (orden de Alex 2026-11-06).
     """
     link = f"{SITE_URL}/activar/{token}"
-    if lang == "es":
-        subject = "Activa tu cuenta de The Sharp Team"
-        titulo = "Activa tu cuenta"
-        cuerpo = (f"Hola {nombre} — toca el botón para activar tu cuenta de "
-                  "The Sharp Team. Tus jugadas Sharp Free y tu Dashboard quedan "
-                  "activos en el momento en que activas — y Platinum "
-                  "empieza por $1 cuando quieras.")
-        boton = "ACTIVAR MI CUENTA"
-        nota = ("¿No se creó esta cuenta con tu correo? Ignora este mensaje "
-                "y la cuenta nunca se activará.")
-        texto = (f"Hola {nombre},\n\nActiva tu cuenta de The Sharp Team "
-                 f"tocando este enlace:\n{link}\n\nTus jugadas Sharp Free quedan "
-                 "activas al activar, y Platinum empieza por $1 cuando "
-                 "quieras. Si no creaste esta cuenta, ignora "
-                 "este mensaje.\n\nThe Sharp Team")
-    else:
-        subject = "Activate your The Sharp Team account"
-        titulo = "Activate your account"
-        cuerpo = (f"Hi {nombre} — tap the button to activate your "
-                  "The Sharp Team account. Your Sharp Free plays and your "
-                  "Dashboard go live the moment you activate — and "
-                  "Platinum starts for $1 whenever you're ready.")
-        boton = "ACTIVATE MY ACCOUNT"
-        nota = ("Didn't create this account? Ignore this email and the "
-                "account will never be activated.")
-        texto = (f"Hi {nombre},\n\nActivate your The Sharp Team account by "
-                 f"opening this link:\n{link}\n\nYour Sharp Free plays go live "
-                 "when you activate, and Platinum starts for $1 whenever "
-                 "you're ready. If you didn't create this "
-                 "account, ignore this email.\n\nThe Sharp Team")
-    html = _activation_shell(titulo, cuerpo, boton, nota, link, lang)
+    subject = ACTIVATION_SUBJECT
+    titulo = "Activate your account"
+    cuerpo = ("You just created your The Sharp Team account — welcome "
+              "aboard. One step left: confirm this email address to "
+              "activate your account. Tap the button and you're in: your "
+              "Dashboard opens and your Sharp Free plays go live right "
+              "away.")
+    boton = "ACTIVATE MY ACCOUNT"
+    texto = (f"Hi {nombre},\n\n"
+             "You just created your The Sharp Team account. One step "
+             "left: confirm this email address to activate your account "
+             f"by opening this link:\n{link}\n\n"
+             "Your account is NOT active yet: until you confirm, you "
+             "can't log in and nothing is unlocked. If you didn't "
+             "create this account, ignore this email — without "
+             "confirmation the account will never be activated.\n\n"
+             "The Sharp Team")
+    html = _activation_moderno_html(nombre, titulo, cuerpo, boton, link)
 
     def _send():
         try:
-            _dispatch_email(email, subject, texto, html)
+            _dispatch_email(email, subject, texto, html,
+                            activation_token=token)
         except Exception:
             pass  # silencioso: nunca rompe el registro
 
@@ -1094,44 +1206,30 @@ def send_activation_email(nombre: str, email: str, token: str, lang: str = "en")
 def send_activation_reminder_email(nombre: str, email: str, token: str, lang: str = "en") -> tuple:
     """Recordatorio de activación (2026-10-19, orden de Alex): quien se
     registró pero no confirmó su cuenta recibe un aviso de que debe
-    confirmar para activarla (desde el 2026-10-19 activar ya no otorga
-    Platinum: el aviso dice que sus Gold quedan activas y que Platinum
-    empieza por $1).
+    confirmar para activarla. Desde el 2026-11-06 usa la plantilla
+    MODERNO del workflow nuevo (inglés 100%) y sale al correo del propio
+    registrante por la misma excepción estrecha de _dispatch_email.
     Síncrono (devuelve el resultado real) porque lo dispara un endpoint
     que debe contar solo los envíos que sí salieron."""
     link = f"{SITE_URL}/activar/{token}"
-    if lang == "es":
-        subject = "Recordatorio: confirma tu cuenta de The Sharp Team"
-        titulo = "Tu cuenta aún no está activa"
-        cuerpo = (f"Hola {nombre} — creaste tu cuenta de The Sharp Team pero "
-                  "todavía no la has confirmado. Toca el botón para confirmar "
-                  "tu correo y activar tu cuenta: tus jugadas Sharp Free quedan "
-                  "activas en ese momento, y Platinum empieza por $1.")
-        boton = "CONFIRMAR MI CUENTA"
-        nota = ("¿No se creó esta cuenta con tu correo? Ignora este mensaje "
-                "y la cuenta nunca se activará.")
-        texto = (f"Hola {nombre},\n\nCreaste tu cuenta de The Sharp Team pero "
-                 f"todavía no la has confirmado. Confírmala aquí:\n{link}\n\n"
-                 "Tus jugadas Sharp Free quedan activas al confirmar, y Platinum "
-                 "empieza por $1 cuando quieras. Si no "
-                 "creaste esta cuenta, ignora este mensaje.\n\nThe Sharp Team")
-    else:
-        subject = "Reminder: confirm your The Sharp Team account"
-        titulo = "Your account is not active yet"
-        cuerpo = (f"Hi {nombre} — you created your The Sharp Team account but "
-                  "haven't confirmed it yet. Tap the button to confirm your "
-                  "email and activate your account: your Sharp Free plays go "
-                  "live the moment you do, and Platinum starts for $1.")
-        boton = "CONFIRM MY ACCOUNT"
-        nota = ("Didn't create this account? Ignore this email and the "
-                "account will never be activated.")
-        texto = (f"Hi {nombre},\n\nYou created your The Sharp Team account but "
-                 f"haven't confirmed it yet. Confirm it here:\n{link}\n\n"
-                 "Your Sharp Free plays go live when you confirm, and Platinum "
-                 "starts for $1 whenever you're ready. If you "
-                 "didn't create this account, ignore this email.\n\nThe Sharp Team")
-    html = _activation_shell(titulo, cuerpo, boton, nota, link, lang)
-    return _dispatch_email(email, subject, texto, html)
+    subject = "Reminder: confirm your The Sharp Team account"
+    titulo = "Your account is not active yet"
+    cuerpo = ("You created your The Sharp Team account but haven't "
+              "confirmed your email yet, so your account is still "
+              "inactive. Tap the button to confirm and activate it — "
+              "your Dashboard opens and your Sharp Free plays go live "
+              "the moment you do.")
+    boton = "CONFIRM MY ACCOUNT"
+    texto = (f"Hi {nombre},\n\n"
+             "You created your The Sharp Team account but haven't "
+             "confirmed your email yet, so your account is still "
+             f"inactive. Confirm it here:\n{link}\n\n"
+             "Your Sharp Free plays go live when you confirm. If you "
+             "didn't create this account, ignore this email.\n\n"
+             "The Sharp Team")
+    html = _activation_moderno_html(nombre, titulo, cuerpo, boton, link)
+    return _dispatch_email(email, subject, texto, html,
+                           activation_token=token)
 
 
 @app.route("/api/activation-reminders", methods=["POST"])
@@ -6200,7 +6298,6 @@ def login():
                 _ulang = user["lang"] or "en"
             except Exception:
                 _ulang = "en"
-            send_activation_email(user["nombre"], email, _tok, _ulang)
             send_activation_email(user["nombre"], email, _tok, _ulang)
             # Aviso GRANDE de confirmacion (2026-10-23, pedido de Alex:
             # "la mas grande") - bloque propio en login.html en vez de
