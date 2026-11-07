@@ -78,7 +78,7 @@ body.v2{background-color:#161d29;background-image:radial-gradient(560px 300px at
   {% if not past_due_mode %}
   <div class="tp-promo" id="tp-promo">
     <span class="tp-flame" aria-hidden="true">🔥</span>
-    <span class="tp-ptext">Today's plays are live &middot; your first month of Platinum is <b>FREE</b></span>
+    <span class="tp-ptext">Today's plays are live &middot; start Platinum for $1 — first week covered</span>
     <a class="tp-start" href="{{ cta_url }}">Start</a>
     <button class="tp-x" type="button" aria-label="Dismiss" onclick="try{localStorage.setItem('tst_tracker_promo_off','1')}catch(e){}document.getElementById('tp-promo').style.display='none'">&#10005;</button>
   </div>
@@ -100,8 +100,8 @@ body.v2{background-color:#161d29;background-image:radial-gradient(560px 300px at
       </ul>
     </div>
     {% if past_due_mode %}<a class="tp-cta" href="{{ update_card_url }}">Update your card &rarr;</a>
-    <p class="tp-fine">Access restores automatically as soon as the payment goes through &mdash; nothing is lost.</p>{% else %}<a class="tp-cta" href="{{ cta_url }}">Start your free month &rarr;</a>
-    <p class="tp-fine">First month of Platinum is free &middot; then $49.99/month &middot; cancel anytime</p>{% endif %}
+    <p class="tp-fine">Access restores automatically as soon as the payment goes through &mdash; nothing is lost.</p>{% else %}<a class="tp-cta" href="{{ cta_url }}">Start for $1 &rarr;</a>
+    <p class="tp-fine">First week $1 &middot; then $15.99/week &middot; cancel anytime</p>{% endif %}
     <a class="tp-unlock" href="{% if past_due_mode %}{{ update_card_url }}{% else %}{{ cta_url }}{% endif %}">Unlock Platinum &rarr;</a>
   </div>
 
@@ -188,6 +188,6 @@ body.v2{background-color:#161d29;background-image:radial-gradient(560px 300px at
   <div class="tp-endcta">
     <p class="tp-endq">Ready to have every play you make scored for you?</p>
     {% if past_due_mode %}<a class="tp-cta" href="{{ update_card_url }}">Update your card &rarr;</a>
-    <p class="tp-fine">Access restores automatically as soon as the payment goes through &mdash; nothing is lost.</p>{% else %}<a class="tp-cta" href="{{ cta_url }}">Start your free month &rarr;</a>
-    <p class="tp-fine">First month of Platinum is free &middot; then $49.99/month &middot; cancel anytime</p>{% endif %}
+    <p class="tp-fine">Access restores automatically as soon as the payment goes through &mdash; nothing is lost.</p>{% else %}<a class="tp-cta" href="{{ cta_url }}">Start for $1 &rarr;</a>
+    <p class="tp-fine">First week $1 &middot; then $15.99/week &middot; cancel anytime</p>{% endif %}
   </div>
