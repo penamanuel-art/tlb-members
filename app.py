@@ -1324,32 +1324,32 @@ ACTIVATION_HTML = """<!DOCTYPE html>
 <tr>
 <td align="center" style="padding:28px 12px 36px 12px;">
 
-<table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;background-color:#10141D;border:1px solid rgba(255,255,255,.06);border-radius:16px;overflow:hidden;">
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:540px;background-color:#10141D;border:1px solid rgba(255,255,255,.06);border-radius:14.4px;overflow:hidden;">
 
   <!-- HEADER BANNER -->
   <tr>
     <td style="padding:0;line-height:0;">
-      <img src="https://www.thesharpteam.bet/static/img/sharp-team-header.jpg" alt="The Sharp Team" width="600" style="display:block;width:100%;max-width:600px;height:auto;border:0;">
+      <img src="https://www.thesharpteam.bet/static/img/sharp-team-header.jpg" alt="The Sharp Team" width="600" style="display:block;width:100%;max-width:540px;height:auto;border:0;">
     </td>
   </tr>
 
   <!-- TITLE BLOCK -->
   <tr>
-    <td style="padding:30px 24px 4px 24px;font-family:Arial,Helvetica,sans-serif;">
-      <div style="font-size:10.5px;line-height:14px;font-weight:700;color:#e8c766;letter-spacing:2.2px;"><span style="display:inline-block;width:14px;height:3px;background-color:#2EE6A8;border-radius:2px;vertical-align:middle;margin-right:9px;font-size:0;line-height:0;">&nbsp;</span>ONE LAST STEP</div>
-      <div style="font-size:21px;line-height:27px;font-weight:700;color:#ffffff;letter-spacing:.3px;margin-top:16px;">__TITULO__</div>
-      <div style="font-size:13.5px;line-height:20px;color:#e8eaf2;margin-top:18px;">Hi __NOMBRE__,</div>
-      <div style="font-size:13.5px;line-height:20px;color:#c3c9e0;margin-top:8px;">__CUERPO__</div>
+    <td style="padding:27px 21.6px 3.6px 21.6px;font-family:Arial,Helvetica,sans-serif;">
+      <div style="font-size:9.5px;line-height:12.6px;font-weight:700;color:#e8c766;letter-spacing:2px;"><span style="display:inline-block;width:12.6px;height:2.7px;background-color:#2EE6A8;border-radius:1.8px;vertical-align:middle;margin-right:8.1px;font-size:0;line-height:0;">&nbsp;</span>ONE LAST STEP</div>
+      <div style="font-size:18.9px;line-height:24.3px;font-weight:700;color:#ffffff;letter-spacing:.2.7px;margin-top:14.4px;">__TITULO__</div>
+      <div style="font-size:12.2px;line-height:18px;color:#e8eaf2;margin-top:16.2px;">Hi __NOMBRE__,</div>
+      <div style="font-size:12.2px;line-height:18px;color:#c3c9e0;margin-top:7.2px;">__CUERPO__</div>
     </td>
   </tr>
 
   <!-- CTA BUTTON -->
   <tr>
-    <td align="center" style="padding:24px 24px 6px 24px;font-family:Arial,Helvetica,sans-serif;">
+    <td align="center" style="padding:21.6px 21.6px 5.4px 21.6px;font-family:Arial,Helvetica,sans-serif;">
       <table role="presentation" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td align="center" style="background-color:#e8c766;border-radius:999px;">
-            <a href="__LINK__" style="display:inline-block;padding:14px 36px;font-family:Arial,Helvetica,sans-serif;font-size:14px;font-weight:700;color:#0B0E13;text-decoration:none;letter-spacing:.8px;">__BOTON__</a>
+          <td align="center" style="background-color:#e8c766;border-radius:899.1px;">
+            <a href="__LINK__" style="display:inline-block;padding:12.6px 32.4px;font-family:Arial,Helvetica,sans-serif;font-size:12.6px;font-weight:700;color:#0B0E13;text-decoration:none;letter-spacing:.7.2px;">__BOTON__</a>
           </td>
         </tr>
       </table>
@@ -1358,37 +1358,37 @@ ACTIVATION_HTML = """<!DOCTYPE html>
 
   <!-- NOT ACTIVE YET -->
   <tr>
-    <td style="padding:22px 24px 4px 24px;font-family:Arial,Helvetica,sans-serif;">
-      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#12161F;border:1px solid rgba(232,199,102,.40);border-radius:16px;">
+    <td style="padding:19.8px 21.6px 3.6px 21.6px;font-family:Arial,Helvetica,sans-serif;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#12161F;border:1px solid rgba(232,199,102,.40);border-radius:14.4px;">
         <tr>
-          <td style="padding:16px 18px;">
-            <div style="font-size:15.5px;line-height:21px;font-weight:700;color:#ffffff;">Your account is not active yet.</div>
-            <div style="font-size:13.5px;line-height:20px;color:#c3c9e0;margin-top:8px;">Until you confirm, you can't log in and nothing is unlocked &mdash; no Dashboard, no plays.</div>
-            <div style="font-size:13.5px;line-height:20px;color:#c3c9e0;margin-top:10px;">Didn't create this account? Just ignore this email &mdash; without confirmation, the account will never be activated.</div>
+          <td style="padding:14.4px 16.2px;">
+            <div style="font-size:14px;line-height:18.9px;font-weight:700;color:#ffffff;">Your account is not active yet.</div>
+            <div style="font-size:12.2px;line-height:18px;color:#c3c9e0;margin-top:7.2px;">Until you confirm, you can't log in and nothing is unlocked &mdash; no Dashboard, no plays.</div>
+            <div style="font-size:12.2px;line-height:18px;color:#c3c9e0;margin-top:9px;">Didn't create this account? Just ignore this email &mdash; without confirmation, the account will never be activated.</div>
           </td>
         </tr>
       </table>
-      <div style="font-size:12.5px;line-height:18px;color:#8b93a9;margin-top:16px;">Or open this link:<br><a href="__LINK__" style="color:#e8c766;text-decoration:underline;word-break:break-all;">__LINK__</a></div>
+      <div style="font-size:11.2px;line-height:16.2px;color:#8b93a9;margin-top:14.4px;">Or open this link:<br><a href="__LINK__" style="color:#e8c766;text-decoration:underline;word-break:break-all;">__LINK__</a></div>
     </td>
   </tr>
 
   <!-- FOOTER -->
   <tr>
-    <td style="padding:26px 24px 32px 24px;border-top:1px solid rgba(255,255,255,.10);font-family:Arial,Helvetica,sans-serif;" align="center">
-      <img src="https://www.thesharpteam.bet/static/img/sharp-team-header.jpg" alt="The Sharp Team" width="220" style="display:block;width:220px;max-width:220px;height:auto;border:0;margin:0 auto;">
+    <td style="padding:23.4px 21.6px 28.8px 21.6px;border-top:1px solid rgba(255,255,255,.10);font-family:Arial,Helvetica,sans-serif;" align="center">
+      <img src="https://www.thesharpteam.bet/static/img/sharp-team-header.jpg" alt="The Sharp Team" width="220" style="display:block;width:198px;max-width:198px;height:auto;border:0;margin:0 auto;">
 
-      <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin:20px auto 6px auto;">
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin:18px auto 5.4px auto;">
         <tr>
-          <td style="padding:0 6px;"><a href="https://www.instagram.com/thesharp_team" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/instagram.png" alt="Instagram" width="22" height="22" style="display:block;width:22px;height:22px;border:0;"></a></td>
-          <td style="padding:0 6px;"><a href="https://www.facebook.com/thesharpteam" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/facebook.png" alt="Facebook" width="22" height="22" style="display:block;width:22px;height:22px;border:0;"></a></td>
-          <td style="padding:0 6px;"><a href="https://www.thesharpteam.bet/home" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/telegram.png" alt="Telegram" width="22" height="22" style="display:block;width:22px;height:22px;border:0;"></a></td>
-          <td style="padding:0 6px;"><a href="https://www.thesharpteam.bet/home" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/social-x-white.png" alt="X" width="22" height="22" style="display:block;width:22px;height:22px;border:0;"></a></td>
+          <td style="padding:0 5.4px;"><a href="https://www.instagram.com/thesharp_team" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/instagram.png" alt="Instagram" width="22" height="22" style="display:block;width:19.8px;height:19.8px;border:0;"></a></td>
+          <td style="padding:0 5.4px;"><a href="https://www.facebook.com/thesharpteam" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/facebook.png" alt="Facebook" width="22" height="22" style="display:block;width:19.8px;height:19.8px;border:0;"></a></td>
+          <td style="padding:0 5.4px;"><a href="https://www.thesharpteam.bet/home" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/telegram.png" alt="Telegram" width="22" height="22" style="display:block;width:19.8px;height:19.8px;border:0;"></a></td>
+          <td style="padding:0 5.4px;"><a href="https://www.thesharpteam.bet/home" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/social-x-white.png" alt="X" width="22" height="22" style="display:block;width:19.8px;height:19.8px;border:0;"></a></td>
         </tr>
       </table>
 
-      <div style="font-size:10.5px;line-height:15px;color:#8b93a9;margin-top:16px;">The Sharp Team &middot; Wallington, NJ</div>
-      <div style="font-size:10.5px;line-height:15px;color:#8b93a9;margin-top:6px;">You are receiving this email because this address was used to sign up for The Sharp Team.</div>
-      <div style="font-size:10.5px;line-height:15px;margin-top:8px;"><a href="{{{RESEND_UNSUBSCRIBE_URL}}}" style="color:#8b93a9;text-decoration:underline;">Unsubscribe</a></div>
+      <div style="font-size:9.5px;line-height:13.5px;color:#8b93a9;margin-top:14.4px;">The Sharp Team &middot; Wallington, NJ</div>
+      <div style="font-size:9.5px;line-height:13.5px;color:#8b93a9;margin-top:5.4px;">You are receiving this email because this address was used to sign up for The Sharp Team.</div>
+      <div style="font-size:9.5px;line-height:13.5px;margin-top:7.2px;"><a href="{{{RESEND_UNSUBSCRIBE_URL}}}" style="color:#8b93a9;text-decoration:underline;">Unsubscribe</a></div>
     </td>
   </tr>
 
@@ -1398,7 +1398,8 @@ ACTIVATION_HTML = """<!DOCTYPE html>
 </tr>
 </table>
 </body>
-</html>"""
+</html>
+"""
 
 
 def _activation_moderno_html(nombre, titulo, cuerpo, boton, link):
