@@ -6166,7 +6166,32 @@ def admin_home_preview():
     )
 
 
-def _send_meta_capi_registration(email, event_id, ip, user_agent, fbp, fbc, source_url):
+def _meta_phone_hash(phone):
+    """Teléfono para user_data de Meta (2026-11-07): solo dígitos con
+    código de país (el de EE. UU. de 10 dígitos lleva el 1 delante),
+    hasheado SHA-256. None si no hay un teléfono usable."""
+    digitos = re.sub(r"\D", "", phone or "")
+    if len(digitos) == 10:
+        digitos = "1" + digitos
+    if len(digitos) < 11:
+        return None
+    return hashlib.sha256(digitos.encode("utf-8")).hexdigest()
+
+
+def _meta_nombre_hash(nombre):
+    """(fn, ln) hasheados desde el nombre completo (2026-11-07):
+    minúsculas y solo letras a-z, como pide Meta. (None, None) si no
+    hay nombre usable."""
+    partes = [p for p in re.split(r"\s+", (nombre or "").strip().lower()) if p]
+    if not partes:
+        return None, None
+    fn = re.sub(r"[^a-z]", "", partes[0])
+    ln = re.sub(r"[^a-z]", "", "".join(partes[1:])) if len(partes) > 1 else ""
+    return (hashlib.sha256(fn.encode("utf-8")).hexdigest() if fn else None,
+            hashlib.sha256(ln.encode("utf-8")).hexdigest() if ln else None)
+
+
+def _send_meta_capi_registration(email, event_id, ip, user_agent, fbp, fbc, source_url, phone=None, user_id=None, nombre=None):
     """Conversions API de Meta (2026-10-14): envía el CompleteRegistration
     también desde el servidor, con el MISMO event_id que dispara el pixel
     del navegador en /bienvenida, para que Meta deduplique el evento y
@@ -6185,6 +6210,21 @@ def _send_meta_capi_registration(email, event_id, ip, user_agent, fbp, fbc, sour
             user_data = {
                 "em": [hashlib.sha256(email.strip().lower().encode("utf-8")).hexdigest()],
             }
+            # Calidad de coincidencias (2026-11-07, recomendación de
+            # Meta): teléfono hasheado, external_id y nombre/apellido
+            # viajan cuando la cuenta los tiene — el teléfono es la
+            # señal de coincidencia que faltaba en TODOS los eventos.
+            if phone:
+                _ph = _meta_phone_hash(phone)
+                if _ph:
+                    user_data["ph"] = [_ph]
+            if user_id:
+                user_data["external_id"] = str(user_id)
+            _fn, _ln = _meta_nombre_hash(nombre)
+            if _fn:
+                user_data["fn"] = [_fn]
+            if _ln:
+                user_data["ln"] = [_ln]
             if ip:
                 user_data["client_ip_address"] = ip
             if user_agent:
@@ -6204,6 +6244,9 @@ def _send_meta_capi_registration(email, event_id, ip, user_agent, fbp, fbc, sour
                 }],
                 "access_token": token,
             }
+            test_code = os.environ.get("META_CAPI_TEST_EVENT_CODE")
+            if test_code:
+                payload["test_event_code"] = test_code
             req = urllib.request.Request(
                 "https://graph.facebook.com/v21.0/1625430959036525/events",
                 data=json.dumps(payload).encode("utf-8"),
@@ -6228,7 +6271,7 @@ def _send_meta_capi_registration(email, event_id, ip, user_agent, fbp, fbc, sour
         pass
 
 
-def _send_meta_capi_purchase(email, value, currency, event_id, event_time):
+def _send_meta_capi_purchase(email, value, currency, event_id, event_time, phone=None, user_id=None):
     """Conversions API de Meta (2026-10-30): envía el Purchase desde el
     servidor cuando Stripe confirma un pago REAL (webhook invoice.paid),
     con el monto real cobrado. Es el evento que Meta pide para optimizar
@@ -6260,16 +6303,26 @@ def _send_meta_capi_purchase(email, value, currency, event_id, event_time):
 
     def _go():
         try:
+            # Calidad de coincidencias (2026-11-07, recomendación de
+            # Meta): además del email, el teléfono hasheado y el
+            # external_id cuando la cuenta los tiene.
+            _ud = {
+                "em": [hashlib.sha256(
+                    email.strip().lower().encode("utf-8")).hexdigest()],
+            }
+            if phone:
+                _ph = _meta_phone_hash(phone)
+                if _ph:
+                    _ud["ph"] = [_ph]
+            if user_id:
+                _ud["external_id"] = str(user_id)
             evento = {
                 "event_name": "Purchase",
                 "event_time": int(event_time or time.time()),
                 "event_id": event_id,
                 "event_source_url": "https://www.thesharpteam.bet/desbloquear-platinum",
                 "action_source": "website",
-                "user_data": {
-                    "em": [hashlib.sha256(
-                        email.strip().lower().encode("utf-8")).hexdigest()],
-                },
+                "user_data": _ud,
                 "custom_data": {
                     "value": monto,
                     "currency": (currency or "USD").upper(),
@@ -6599,6 +6652,9 @@ def activar_cuenta(token):
         request.cookies.get("_fbp"),
         request.cookies.get("_fbc"),
         request.url,
+        phone=(user["phone"] if "phone" in user.keys() else None),
+        user_id=uid,
+        nombre=nombre,
     )
     # Cohorte de la landing nueva (2026-10-31): quien declaró intención
     # Platinum al registrarse va DIRECTO a /desbloquear-platinum a
@@ -16521,12 +16577,29 @@ def stripe_webhook():
                 except (TypeError, ValueError):
                     _amt_paid = 0
                 if _amt_paid > 0:
+                    # Calidad de coincidencias (2026-11-07): el teléfono
+                    # y el id del miembro se buscan por su email para que
+                    # el Purchase viaje con la misma data que el registro.
+                    _capi_uid = None
+                    _capi_phone = None
+                    try:
+                        _urow = db.execute(
+                            "SELECT id, phone FROM users WHERE email = ?",
+                            ((data.get("customer_email") or "").strip().lower(),)).fetchone()
+                        if _urow:
+                            _capi_uid = _urow["id"]
+                            _capi_phone = (_urow["phone"]
+                                           if "phone" in _urow.keys() else None)
+                    except Exception:
+                        pass
                     _send_meta_capi_purchase(
                         data.get("customer_email") or "",
                         _amt_paid / 100.0,
                         (data.get("currency") or "usd").upper(),
                         "purchase_" + (data.get("id") or eid),
                         int(data.get("created") or time.time()),
+                        phone=_capi_phone,
+                        user_id=_capi_uid,
                     )
         elif etype in ("customer.subscription.updated", "customer.subscription.deleted"):
             # Cancelación o cambio de estado: localizar por suscripción o cliente.
