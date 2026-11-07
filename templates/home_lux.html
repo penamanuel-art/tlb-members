@@ -438,7 +438,7 @@
   {% endif %}
 
   {# 2026-11-03: «Your plays» vive AQUI — justo despues de Live scores y antes de Find Your Edge (orden de Alex). Antes estaba despues de YOUR RISK TODAY. Sin cambios de ids/clases/JS: todo se busca por selector. #}
-  {% if plays %}<div class="tst-playshead"><h2>Your plays</h2><button class="tst-refresh" type="button" style="margin-left:auto" onclick="location.reload()">↻ Refresh</button>{% set hay_gratis = plays|selectattr('nivel','equalto','FREE')|list|length > 0 %}{% set hay_gold = plays|selectattr('nivel','equalto','GOLD')|list|length > 0 %}{% if miembro_platinum or hay_gratis %}<div class="tst-playslevels">{% if miembro_platinum %}{% if hay_gratis %}<span class="tst-playslevel">Free Picks</span>{% endif %}{% if hay_gold %}<span class="tst-playslevel">Gold</span>{% endif %}<span class="tst-playslevel">Platinum</span>{% elif hay_gratis %}<span class="tst-playslevel">Free Picks</span>{% endif %}</div>{% endif %}</div><div class="tst-officials"><span class="tst-officials-pill">OFFICIALS</span><span class="tst-officials-n">{% if miembro_platinum %}{{ plays|length }} {% if plays|length == 1 %}play{% else %}plays{% endif %}{% else %}{{ plays|selectattr('nivel','equalto','FREE')|list|length }} {% if plays|selectattr('nivel','equalto','FREE')|list|length == 1 %}play{% else %}plays{% endif %}{% endif %}</span></div>{% endif %}
+  {% if plays %}<div class="tst-playshead"><h2>Your plays</h2><button class="tst-refresh" type="button" style="margin-left:auto" onclick="location.reload()">↻ Refresh</button>{% set hay_gratis = plays|selectattr('nivel','equalto','FREE')|list|length > 0 %}{% set hay_gold = plays|selectattr('nivel','equalto','GOLD')|list|length > 0 %}{% if miembro_platinum or hay_gratis or hay_gold %}<div class="tst-playslevels">{% if miembro_platinum %}{% if hay_gratis %}<span class="tst-playslevel">Free Picks</span>{% endif %}{% if hay_gold %}<span class="tst-playslevel">Gold</span>{% endif %}<span class="tst-playslevel">Platinum</span>{% else %}{% if hay_gratis %}<span class="tst-playslevel">Free Picks</span>{% endif %}{% if hay_gold %}<span class="tst-playslevel">Gold</span>{% endif %}{% endif %}</div>{% endif %}</div><div class="tst-officials"><span class="tst-officials-pill">OFFICIALS</span><span class="tst-officials-n">{% if miembro_platinum %}{{ plays|length }} {% if plays|length == 1 %}play{% else %}plays{% endif %}{% else %}{{ (plays|selectattr('nivel','equalto','FREE')|list|length) + (plays|selectattr('nivel','equalto','GOLD')|list|length) }} {% if ((plays|selectattr('nivel','equalto','FREE')|list|length) + (plays|selectattr('nivel','equalto','GOLD')|list|length)) == 1 %}play{% else %}plays{% endif %}{% endif %}</span></div>{% endif %}
   {% set tracked_ids = tracked_ids|default([]) %}
   {% set frees = plays|selectattr('nivel','equalto','FREE')|list %}
   {% set golds = plays|selectattr('nivel','equalto','GOLD')|list %}
@@ -450,11 +450,7 @@
   {% endif %}
   {% if golds %}
   {% for p in golds %}
-  {% if not miembro_platinum %}
-  {% include "_play_card_locked.html" %}
-  {% else %}
   {% include "_play_card_v5.html" %}
-  {% endif %}
   {% endfor %}
   {% endif %}
   {% if plats %}
