@@ -970,9 +970,136 @@ def _bienvenida_activacion_ok(to: str, subject: str, welcome_token) -> bool:
         return False
 
 
+
+# ---------------------------------------------------------------------------
+# COHORTE NUEVA + PUERTAS DE COBRO (2026-11-06 22:17 ET, orden de Alex:
+# «Actívame todos los emails a todos los clientes que se registren de
+# ahora en adelante. Todos.»). La cohorte son SOLO las cuentas con fecha
+# de ACTIVACIÓN (ET) >= 2026-11-06; los miembros anteriores no reciben
+# nada nuevo por esta orden. Cada email de cobro pasa por su propia
+# puerta estrecha en _dispatch_email, gemela de la de activación: asunto
+# exacto + token del evento que solo el flujo legítimo tiene en la mano
+# + la BD confirma el estado de la cuenta. Fail-closed en todo.
+COHORTE_EMAILS_DESDE = "2026-11-06"
+
+
+def _activacion_cohorte_nueva(activated_at, created_at) -> bool:
+    """True si la cuenta pertenece a la cohorte nueva: su fecha de
+    activación en ET (activated_at; si falta, created_at) es >=
+    COHORTE_EMAILS_DESDE. Los timestamps de la BD son ISO en UTC."""
+    ts = activated_at or created_at
+    if not ts:
+        return False
+    try:
+        if isinstance(ts, str):
+            ts = datetime.fromisoformat(ts.replace("Z", "+00:00"))
+        if ts.tzinfo is None:
+            ts = ts.replace(tzinfo=timezone.utc)
+        return ts.astimezone(TZ).date().isoformat() >= COHORTE_EMAILS_DESDE
+    except Exception:
+        return False
+
+
+def _email_es_cohorte_nueva(email: str) -> bool:
+    """Cohorte nueva según la BD, leída con conexión directa (sirve
+    dentro y fuera del contexto de la petición, p. ej. en hilos)."""
+    try:
+        dest = (email or "").strip().lower()
+        if not dest:
+            return False
+        _conn = DBConnection(_raw_connect(), USE_PG)
+        try:
+            _row = _conn.execute(
+                "SELECT activated_at, created_at FROM users "
+                "WHERE lower(email) = ?", (dest,)).fetchone()
+        finally:
+            _conn.close()
+        if not _row:
+            return False
+        return _activacion_cohorte_nueva(_row["activated_at"],
+                                         _row["created_at"])
+    except Exception:
+        return False
+
+
+def _pago_rechazado_ok(to: str, subject: str, billing_token) -> bool:
+    """Puerta ESTRECHA del email #4 PAGO RECHAZADO (2026-11-06): solo
+    pasa si (1) el llamador aporta billing_token — el id de la factura
+    que falló, que solo el webhook de Stripe tiene en la mano al
+    procesar invoice.payment_failed; (2) el asunto es EXACTAMENTE
+    DUNNING_SUBJECT; (3) la BD confirma que la cuenta de ESE correo está
+    marcada stripe_past_due = 1 y que el evento de ESA factura quedó
+    registrado en stripe_events (el detalle con el invoice id lo escribe
+    la pre-auditoría del webhook antes de notificar) en los últimos
+    60 minutos. Fail-closed ante cualquier desviación o error."""
+    try:
+        if not billing_token:
+            return False
+        if (subject or "") != DUNNING_SUBJECT:
+            return False
+        dest = (to or "").strip().lower()
+        if not dest:
+            return False
+        _conn = DBConnection(_raw_connect(), USE_PG)
+        try:
+            _row = _conn.execute(
+                "SELECT stripe_past_due FROM users WHERE lower(email) = ?",
+                (dest,)).fetchone()
+            if not _row or not _row["stripe_past_due"]:
+                return False
+            _ev = _conn.execute(
+                "SELECT created_at FROM stripe_events WHERE "
+                "tipo = 'invoice.payment_failed' AND lower(email) = ? "
+                "AND detalle LIKE ? ORDER BY created_at DESC LIMIT 1",
+                (dest, f"%{billing_token}%")).fetchone()
+        finally:
+            _conn.close()
+        if not _ev:
+            return False
+        _ts = _ev["created_at"]
+        if isinstance(_ts, str):
+            _ts = datetime.fromisoformat(_ts.replace("Z", "+00:00"))
+        if _ts.tzinfo is None:
+            _ts = _ts.replace(tzinfo=timezone.utc)
+        return (datetime.now(timezone.utc) - _ts) <= timedelta(minutes=60)
+    except Exception:
+        return False
+
+
+def _bienvenida_vuelta_ok(to: str, subject: str, back_token) -> bool:
+    """Puerta ESTRECHA del email #5 BIENVENIDA DE VUELTA (2026-11-06):
+    solo pasa si (1) el llamador aporta back_token — el id de la
+    suscripción de Stripe que el flujo de activación (_activar_elite)
+    acaba de procesar para ESA cuenta; (2) el asunto es EXACTAMENTE
+    WELCOME_BACK_SUBJECT; (3) la BD confirma que la cuenta de ESE correo
+    tiene platinum_unlocked = 1 y que su stripe_subscription_id actual
+    ES ese token (la restauración del acceso acaba de ocurrir en ese
+    mismo flujo). Fail-closed ante cualquier desviación o error."""
+    try:
+        if not back_token:
+            return False
+        if (subject or "") != WELCOME_BACK_SUBJECT:
+            return False
+        dest = (to or "").strip().lower()
+        if not dest:
+            return False
+        _conn = DBConnection(_raw_connect(), USE_PG)
+        try:
+            _row = _conn.execute(
+                "SELECT platinum_unlocked, stripe_subscription_id FROM "
+                "users WHERE lower(email) = ?", (dest,)).fetchone()
+        finally:
+            _conn.close()
+        if not _row or not _row["platinum_unlocked"]:
+            return False
+        return ((_row["stripe_subscription_id"] or "").strip()
+                == str(back_token).strip())
+    except Exception:
+        return False
+
 def _dispatch_email(to: str, subject: str, text_body: str, html_body=None,
                     from_header=None, activation_token: str = None,
-                    welcome_token: str = None) -> tuple:
+                    welcome_token: str = None, billing_token: str = None, back_token: str = None) -> tuple:
     """Despacha un email: Resend si hay API key (producción en Render),
     si no SMTP Gmail (desarrollo local). Devuelve (ok, detalle)."""
     if not _destino_email_permitido(to):
@@ -996,7 +1123,16 @@ def _dispatch_email(to: str, subject: str, text_body: str, html_body=None,
         # miembros se abre con esto.
         if not _pasa_act and not _bienvenida_activacion_ok(to, subject,
                                                            welcome_token):
-            return False, "bloqueado: regla de Alex 2026-11-02 (solo emails a Alex)"
+            # Excepciones gemelas de COBRO (2026-11-06, orden de Alex:
+            # «actívame todos los emails» para la cohorte nueva): el #4
+            # de pago rechazado y el #5 de bienvenida de vuelta solo
+            # pasan al correo de la PROPIA cuenta, en su evento real de
+            # Stripe, con su asunto exacto y su token de evento (ver
+            # _pago_rechazado_ok y _bienvenida_vuelta_ok). Nada más se
+            # abre con esto; todo lo demás sigue bloqueado.
+            if not (_pago_rechazado_ok(to, subject, billing_token)
+                    or _bienvenida_vuelta_ok(to, subject, back_token)):
+                return False, "bloqueado: regla de Alex 2026-11-02 (solo emails a Alex)"
     if (os.environ.get("RESEND_API_KEY") or "").strip():
         return _resend_send(to, subject, text_body, html_body)
     return _smtp_send(to, subject, text_body, html_body, from_header)
@@ -1445,97 +1581,207 @@ def notify_new_member(nombre: str, email: str):
 
 
 # ----------------- Welcome back (re-suscripción, pedido Alex 2026-10-08) ----
-WELCOME_BACK_SUBJECT = "Welcome back. You're back on track."
+WELCOME_BACK_SUBJECT = "Welcome Back \u2014 You're Platinum Again"
 
-WELCOME_BACK_TEXT = """Hi __NOMBRE__,
+WELCOME_BACK_TEXT = """Welcome back \u2014 you're Platinum again.
 
-Welcome back to The Sharp Team. Your Platinum access is live again, right where you left it.
+Your payment went through and your Platinum access is fully restored. Everything is right where you left it.
 
-TODAY'S CARD IS WAITING - Today's official plays (Sharp Free plus the Platinum) are live on your dashboard now, each with its original bet ticket.
+YOUR STATUS
+Payment: $15.99 \u2014 confirmed
+Plan: Platinum \u2014 active
+Dashboard access: Restored
 
-YOUR TRACKER IS INTACT - Every play you tracked is still there. Record, ROI and streaks picked up right where they stopped.
+WHAT'S BACK
+- The full card every day \u2014 Platinum, Gold and Free plays with their original tickets.
+- The +EV Board, fully unlocked again.
+- My Bets, with your full history untouched \u2014 exactly as you left it.
 
-EVERYTHING RESUMES INSTANTLY - Push alerts, Telegram channels, the +EV board and the Daily Academy. All back on, no setup needed.
-
-"Every play is posted before game time - then locked and graded against the final score."
-
-Enter your dashboard:
+Open my dashboard:
 https://www.thesharpteam.bet/home
 
-$1 for the first 7 days, then $15.99/week. Cancel anytime.
+Stay sharp. Stay disciplined. Play the long game.
+THE SHARP TEAM \u2014 Data-Driven Sports Betting Picks
 
-- The Sharp Team
-
-Bet responsibly - 21+ - Gambling problem? Call 1-800-GAMBLER (1-800-426-2537): free and confidential help, 24/7.
+Bet responsibly \u2014 21+ \u2014 Gambling problem? Call 1-800-GAMBLER (1-800-426-2537): free and confidential help, 24/7.
 """
 
 WELCOME_BACK_HTML = """<!DOCTYPE html>
-<html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="color-scheme" content="light">
-<meta name="supported-color-schemes" content="light">
-<title>Welcome back to The Sharp Team</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark">
+<title>Welcome Back — You're Platinum Again — The Sharp Team</title>
 </head>
-<body style="margin:0;padding:0;background:#ffffff;">
-<div style="display:none;max-height:0;overflow:hidden;opacity:0;">Welcome back to The Sharp Team. Your Platinum plays are live again.</div>
-<div style="font-family:Arial,sans-serif;max-width:460px;margin:0 auto;background:#ffffff;">
-<img src="https://www.thesharpteam.bet/static/img/sharp-team-header.jpg" alt="The Sharp Team" width="460" style="width:100%;height:auto;display:block;border:0;">
-<div style="background:#ffffff;padding:14px 0 12px;text-align:center;">
-<p style="margin:0;font-size:9.9px;font-weight:800;letter-spacing:5px;color:#2e4053;">THE SHARP TEAM</p>
-</div>
-<div style="background:#c9a227;padding:28px 24px;text-align:center;">
-<p style="margin:0;font-size:9.2px;font-weight:800;letter-spacing:3px;color:#0a0f1c;">WELCOME BACK</p>
-<h1 style="font-size:22.9px;font-weight:800;color:#0a0f1c;margin:10px 0 0;line-height:1.25;">Back on track.</h1>
-</div>
-<div style="text-align:center;padding:16px 20px 0;">
-<p style="color:#555555;font-size:11.5px;line-height:1.6;margin:0;">Hi __NOMBRE__ &mdash; good to have you back. Your Platinum access is live again, right where you left it:</p>
-</div>
-<div style="padding:14px 20px 0;">
-<table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 10px;background:#2e4053;border:1px solid #2e4053;border-radius:12px;"><tr>
-<td width="44" style="vertical-align:top;padding:14px 0 14px 16px;"><div style="font-size:18.4px;line-height:1.2;">🎯</div></td>
-<td style="vertical-align:top;padding:14px 16px 14px 4px;"><div style="font-size:10.7px;font-weight:800;color:#ffffff;letter-spacing:1px;">TODAY&rsquo;S CARD IS WAITING</div><div style="font-size:9.9px;color:#c8d0dc;line-height:1.6;margin-top:4px;">Today&rsquo;s official plays &mdash; Sharp Free plus the Platinum &mdash; are live on your dashboard now, each with its original ticket.</div></td>
-</tr></table>
-<table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 10px;background:#2e4053;border:1px solid #2e4053;border-radius:12px;"><tr>
-<td width="44" style="vertical-align:top;padding:14px 0 14px 16px;"><div style="font-size:18.4px;line-height:1.2;">📊</div></td>
-<td style="vertical-align:top;padding:14px 16px 14px 4px;"><div style="font-size:10.7px;font-weight:800;color:#ffffff;letter-spacing:1px;">YOUR TRACKER IS INTACT</div><div style="font-size:9.9px;color:#c8d0dc;line-height:1.6;margin-top:4px;">Every play you tracked is still there &mdash; record, ROI and streaks picked up right where they stopped.</div></td>
-</tr></table>
-<table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 10px;background:#2e4053;border:1px solid #2e4053;border-radius:12px;"><tr>
-<td width="44" style="vertical-align:top;padding:14px 0 14px 16px;"><div style="font-size:18.4px;line-height:1.2;">⚡</div></td>
-<td style="vertical-align:top;padding:14px 16px 14px 4px;"><div style="font-size:10.7px;font-weight:800;color:#ffffff;letter-spacing:1px;">EVERYTHING RESUMES INSTANTLY</div><div style="font-size:9.9px;color:#c8d0dc;line-height:1.6;margin-top:4px;">Push alerts, Telegram channels, the +EV board and the Daily Academy &mdash; all back on, no setup needed.</div></td>
-</tr></table>
-</div>
-<div style="margin:14px 20px 0;padding:14px 18px;border-left:3px solid #22c55e;">
-<p style="font-size:11.5px;font-style:italic;line-height:1.7;color:#555555;margin:0;">&ldquo;Every play is posted before game time &mdash; then locked and graded against the final score.&rdquo;</p>
-</div>
-<div style="text-align:center;padding:18px 20px 0;">
-<a href="https://www.thesharpteam.bet/home" style="display:inline-block;background:#22c55e;color:#111111;font-size:10.7px;font-weight:800;padding:11px 28px;border-radius:999px;text-decoration:none;">ENTER THE DASHBOARD</a>
-<p style="color:#555555;font-size:10.7px;line-height:1.7;margin:14px 0 0;">$1 for the first 7 days &mdash; then $15.99/week.<br>Cancel anytime.</p>
-</div>
-<div style="text-align:center;padding:20px 20px 14px;">
-<img src="https://www.thesharpteam.bet/static/img/sharp-team-logo.png" alt="The Sharp Team" width="110" style="width:110px;height:auto;display:block;margin:0 auto;border:0;">
-<p style="margin:10px 0 0;color:#111111;font-size:9.2px;font-weight:800;letter-spacing:3px;">THE SHARP TEAM</p>
-<p style="margin:8px 0 0;color:#9ca3af;font-size:8.4px;">250 Park Avenue, Suite 1800, New York, NY 10017</p>
-<p style="margin:4px 0 0;color:#9ca3af;font-size:8.4px;"><a href="tel:+12393768798" style="color:#9ca3af;text-decoration:none;">(239) 376-8798</a></p>
-<p style="margin:12px 0 0;color:#9ca3af;font-size:7.6px;">21+. Play responsibly. If you or someone you know has a gambling problem, call or text <a href="tel:18004262537" style="color:#9ca3af;text-decoration:underline;">1-800-GAMBLER</a>.</p>
-<p style="margin:8px 0 0;color:#9ca3af;font-size:7.6px;">Don't want these emails anymore? <a href="{{{RESEND_UNSUBSCRIBE_URL}}}" style="color:#9ca3af;text-decoration:underline;">Unsubscribe</a> — one click, no questions asked.</p>
-<p style="margin:6px 0 0;color:#9ca3af;font-size:7.6px;">&copy; 2026 The Sharp Team</p>
-</div>
-</div>
-</div>
+<body style="margin:0;padding:0;background-color:#0B0E13;-webkit-text-size-adjust:100%;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#0B0E13;">
+<tr>
+<td align="center" style="padding:28px 12px 36px 12px;">
+
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;background-color:#10141D;border:1px solid rgba(255,255,255,.06);border-radius:16px;overflow:hidden;">
+
+  <!-- HEADER BANNER -->
+  <tr>
+    <td style="padding:0;line-height:0;">
+      <img src="https://www.thesharpteam.bet/static/img/sharp-team-header.jpg" alt="The Sharp Team" width="600" style="display:block;width:100%;max-width:600px;height:auto;border:0;">
+    </td>
+  </tr>
+
+  <!-- HERO -->
+  <tr>
+    <td align="center" style="padding:36px 24px 4px 24px;font-family:Arial,Helvetica,sans-serif;">
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center">
+        <tr>
+          <td align="center" valign="middle" width="64" height="64" style="width:64px;height:64px;background-color:rgba(46,230,168,.12);border:2px solid #2EE6A8;border-radius:50%;font-family:Arial,Helvetica,sans-serif;font-size:30px;line-height:64px;color:#2EE6A8;font-weight:700;">&#10003;</td>
+        </tr>
+      </table>
+      <div style="font-size:24px;line-height:31px;font-weight:700;color:#e8c766;letter-spacing:.3px;margin-top:20px;">Welcome Back &#8212; You&#8217;re Platinum Again</div>
+      <div style="font-size:14px;line-height:24px;color:#c3c9e0;margin-top:14px;">Your payment went through and your Platinum access is fully restored. Everything is right where you left it.</div>
+    </td>
+  </tr>
+
+  <!-- STATUS -->
+  <tr>
+    <td style="padding:26px 24px 4px 24px;font-family:Arial,Helvetica,sans-serif;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#12161F;border:1px solid rgba(232,199,102,.40);border-radius:16px;">
+        <tr>
+          <td style="padding:18px 20px 4px 20px;">
+            <div style="font-size:10.5px;line-height:14px;font-weight:700;color:#e8c766;letter-spacing:2.2px;"><span style="display:inline-block;width:14px;height:3px;background-color:#2EE6A8;border-radius:2px;vertical-align:middle;margin-right:9px;font-size:0;line-height:0;">&nbsp;</span>YOUR STATUS</div>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:4px 20px 18px 20px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td style="font-size:13.5px;line-height:20px;color:#c3c9e0;padding:7px 0;">Payment</td>
+                <td align="right" style="font-size:13.5px;line-height:20px;color:#2EE6A8;font-weight:700;padding:7px 0;">$15.99 &#8212; confirmed</td>
+              </tr>
+              <tr>
+                <td style="font-size:13.5px;line-height:20px;color:#c3c9e0;padding:7px 0;border-top:1px solid rgba(255,255,255,.10);">Plan</td>
+                <td align="right" style="font-size:13.5px;line-height:20px;color:#e8c766;font-weight:700;padding:7px 0;border-top:1px solid rgba(255,255,255,.10);">Platinum &#8212; active</td>
+              </tr>
+              <tr>
+                <td style="font-size:13.5px;line-height:20px;color:#c3c9e0;padding:7px 0;border-top:1px solid rgba(255,255,255,.10);">Dashboard access</td>
+                <td align="right" style="font-size:13.5px;line-height:20px;color:#2EE6A8;font-weight:700;padding:7px 0;border-top:1px solid rgba(255,255,255,.10);">Restored</td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+
+  <!-- WHAT'S BACK -->
+  <tr>
+    <td style="padding:26px 24px 4px 24px;font-family:Arial,Helvetica,sans-serif;">
+      <div style="font-size:10.5px;line-height:14px;font-weight:700;color:#e8c766;letter-spacing:2.2px;"><span style="display:inline-block;width:14px;height:3px;background-color:#2EE6A8;border-radius:2px;vertical-align:middle;margin-right:9px;font-size:0;line-height:0;">&nbsp;</span>WHAT&#8217;S BACK</div>
+
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:16px;">
+        <tr>
+          <td style="background-color:#12161F;border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:16px 18px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td valign="top" width="24" style="font-size:12.5px;line-height:20px;color:#e8c766;">&#9733;</td>
+                <td style="font-size:13.5px;line-height:20px;color:#c3c9e0;">The full card every day &#8212; Platinum, Gold and Free plays with their original tickets.</td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr><td style="height:14px;line-height:14px;font-size:0;">&nbsp;</td></tr>
+        <tr>
+          <td style="background-color:#12161F;border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:16px 18px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td valign="top" width="24" style="font-size:12.5px;line-height:20px;color:#e8c766;">&#8599;</td>
+                <td style="font-size:13.5px;line-height:20px;color:#c3c9e0;">The +EV Board, fully unlocked again.</td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr><td style="height:14px;line-height:14px;font-size:0;">&nbsp;</td></tr>
+        <tr>
+          <td style="background-color:#12161F;border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:16px 18px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td valign="top" width="24" style="font-size:12.5px;line-height:20px;color:#e8c766;">&#10003;</td>
+                <td style="font-size:13.5px;line-height:20px;color:#c3c9e0;">My Bets, with your full history untouched &#8212; exactly as you left it.</td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+
+  <!-- CTA BUTTON -->
+  <tr>
+    <td align="center" style="padding:26px 24px 6px 24px;font-family:Arial,Helvetica,sans-serif;">
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td align="center" style="background-color:#e8c766;border-radius:999px;">
+            <a href="https://www.thesharpteam.bet/home" style="display:inline-block;padding:11px 26px;font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:700;color:#0B0E13;text-decoration:none;letter-spacing:.8px;white-space:nowrap;">OPEN MY DASHBOARD</a>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+
+  <!-- SIGNING -->
+  <tr>
+    <td style="padding:26px 24px 30px 24px;font-family:Arial,Helvetica,sans-serif;">
+      <div style="font-size:13.5px;line-height:20px;color:#e8eaf2;">Stay sharp. Stay disciplined. Play the long game.</div>
+      <div style="font-size:12.5px;line-height:17px;color:#e8c766;font-weight:700;letter-spacing:1.2px;margin-top:14px;">THE SHARP TEAM</div>
+      <div style="font-size:11.5px;line-height:15px;color:#8b93a9;margin-top:2px;">Data-Driven Sports Betting Picks</div>
+    </td>
+  </tr>
+
+  <!-- FOOTER -->
+  <tr>
+    <td style="padding:26px 24px 32px 24px;border-top:1px solid rgba(255,255,255,.10);font-family:Arial,Helvetica,sans-serif;" align="center">
+      <img src="https://www.thesharpteam.bet/static/img/sharp-team-header.jpg" alt="The Sharp Team" width="220" style="display:block;width:220px;max-width:220px;height:auto;border:0;margin:0 auto;">
+
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin:20px auto 6px auto;">
+        <tr>
+          <td style="padding:0 6px;"><a href="https://www.instagram.com/thesharp_team" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/instagram.png" alt="Instagram" width="22" height="22" style="display:block;width:22px;height:22px;border:0;"></a></td>
+          <td style="padding:0 6px;"><a href="https://www.facebook.com/thesharpteam" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/facebook.png" alt="Facebook" width="22" height="22" style="display:block;width:22px;height:22px;border:0;"></a></td>
+          <td style="padding:0 6px;"><a href="https://www.thesharpteam.bet/home" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/telegram.png" alt="Telegram" width="22" height="22" style="display:block;width:22px;height:22px;border:0;"></a></td>
+          <td style="padding:0 6px;"><a href="https://www.thesharpteam.bet/home" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/social-x-white.png" alt="X" width="22" height="22" style="display:block;width:22px;height:22px;border:0;"></a></td>
+        </tr>
+      </table>
+
+      <div style="font-size:10.5px;line-height:15px;color:#8b93a9;margin-top:16px;">The Sharp Team &middot; Wallington, NJ</div>
+      <div style="font-size:10.5px;line-height:15px;color:#8b93a9;margin-top:6px;">You are receiving this email because you created an account with The Sharp Team.</div>
+      <div style="font-size:10.5px;line-height:15px;margin-top:8px;"><a href="{{{RESEND_UNSUBSCRIBE_URL}}}" style="color:#8b93a9;text-decoration:underline;">Unsubscribe</a></div>
+    </td>
+  </tr>
+
+</table>
+
+</td>
+</tr>
+</table>
 </body>
 </html>
 """
 
 
-def send_welcome_back_email(nombre: str, email: str):
-    """Email de bienvenida para miembros que se RE-suscriben (pedido Alex 2026-10-08).
-    Tono distinto al de primera vez: más corto, "back on track"."""
+def send_welcome_back_email(nombre: str, email: str, back_token: str = None):
+    """Email #5 BIENVENIDA DE VUELTA (diseño PREMIUM oscuro aprobado por
+    Alex el 2026-11-06; cableado 2026-11-06 22:17 ET por su orden
+    «actívame todos los emails»): sale cuando un pago exitoso RESTAURA
+    el acceso tras un cobro fallido (o un regreso genuino), SOLO para la
+    cohorte nueva (activación ET >= 2026-11-06) y SOLO al correo de la
+    propia cuenta. Sin back_token (la suscripción que _activar_elite
+    acaba de procesar) o fuera de cohorte: no se envía nada
+    (fail-closed); la puerta de _dispatch_email (_bienvenida_vuelta_ok)
+    re-verifica asunto exacto + suscripción actual de la cuenta."""
     resend_ok = bool((os.environ.get("RESEND_API_KEY") or "").strip())
     user = (os.environ.get("EMAIL_USER") or "").strip()
     pwd = os.environ.get("EMAIL_PASS") or ""
     if not (resend_ok or (user and pwd)):
+        return
+    if not back_token or not _email_es_cohorte_nueva(email):
         return
 
     subject = WELCOME_BACK_SUBJECT
@@ -1544,7 +1790,8 @@ def send_welcome_back_email(nombre: str, email: str):
 
     def _send():
         try:
-            _dispatch_email(email, subject, text, html)
+            _dispatch_email(email, subject, text, html,
+                            back_token=back_token)
         except Exception:
             pass  # silencioso: nunca rompe la activación
 
@@ -1694,120 +1941,229 @@ def send_welcome_email(nombre: str, email: str, activation_token: str = None):
 
 
 # --------------------------------- Dunning (pago fallido) ----
-DUNNING_SUBJECT = "Today's card is set. Your card isn't."
+DUNNING_SUBJECT = "Your Payment Didn't Go Through"
 
-DUNNING_TEXT = """Hi __NOMBRE__,
+DUNNING_TEXT = """Your payment didn't go through.
 
-Today's card is set. Your card isn't.
+Your Platinum payment was declined, so your access is paused for now. Fix it in one minute and you're right back in.
 
-Your last membership payment did not go through, so your Platinum plays are paused.
+PAYMENT DETAIL
+Amount due: __AMOUNT_DUE__
+__CARD_LINE__Plan: Platinum \u2014 $15.99/week
 
-Nothing is canceled and nothing was missed on your end - cards just fail sometimes. Today's card is posted and waiting. Fix the card and everything switches back on instantly, usually within a couple of minutes.
+WHAT HAPPENS NEXT
+- Your Platinum access stays paused while the payment is open.
+- Update your card within 10 days \u2014 after that, the subscription is cancelled and you'd start a new one.
+- As soon as your card is updated, your access comes back right away \u2014 no new signup, no lost history.
 
-Fix your card in one tap (takes about 30 seconds):
+UPDATE MY CARD:
 __PAY_URL__
 
-Your Sharp Free plays stay on while the card is sorted - that is part of every membership. Your Platinum plays unlock the moment the payment lands. If anything looks off, just reply to this email and a real person will sort it.
+It takes about a minute. Your plays and history stay right where you left them.
 
-- The Sharp Team
+Stay sharp. Stay disciplined. Play the long game.
+THE SHARP TEAM \u2014 Data-Driven Sports Betting Picks
 
-Service notice about your membership billing.
-
-Bet responsibly - 21+ - Gambling problem? Call 1-800-GAMBLER (1-800-426-2537): free and confidential help, 24/7.
+Bet responsibly \u2014 21+ \u2014 Gambling problem? Call 1-800-GAMBLER (1-800-426-2537): free and confidential help, 24/7.
 """
 
-DUNNING_HTML = """<div style="font-family:Arial,sans-serif;max-width:480px;margin:0 auto;background:#f4f5f7;padding:0 0 24px;">
-<img src="https://www.thesharpteam.bet/static/img/sharp-team-header.jpg" alt="The Sharp Team" width="480" style="width:100%;height:auto;display:block;border:0;">
-<div style="background:#f4f5f7;height:18px;line-height:18px;font-size:1px;">&nbsp;</div>
+DUNNING_HTML = """<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>Your Payment Didn't Go Through — The Sharp Team</title>
+</head>
+<body style="margin:0;padding:0;background-color:#FFFFFF;-webkit-text-size-adjust:100%;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#FFFFFF;">
+<tr>
+<td align="center" style="padding:28px 12px 36px 12px;">
 
-<!-- Banda principal -->
-<div style="background:#2e4053;padding:30px 24px 26px;text-align:center;">
-<p style="margin:0;font-size:10.6px;font-weight:800;letter-spacing:2px;color:#9aa3b8;">&#9888;&nbsp; PAYMENT ISSUE</p>
-<h1 style="font-size:26.3px;font-weight:800;color:#ffffff;margin:10px 0 0;line-height:1.25;">Today&apos;s card is set.<br><span style="color:#22c55e;">Your card isn&apos;t.</span></h1>
-<p style="margin:12px 0 0;font-size:12.3px;color:#c7d0dd;line-height:1.5;">Your last payment was <strong style="color:#ffffff;">declined</strong> &mdash; so your Platinum access is now <strong style="color:#ffffff;">on hold</strong>.</p>
-</div>
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;background-color:#FFFFFF;border:1px solid #E5E7EB;border-radius:16px;overflow:hidden;">
 
-<!-- Tarjeta principal -->
-<div style="margin:14px 16px 0;background:#ffffff;border:1px solid #e5e7eb;border-radius:14px;padding:20px 18px;">
-<p style="margin:0;font-size:13.2px;font-weight:700;color:#111111;line-height:1.55;">Hi __NOMBRE__ &mdash; your card was declined, so your Platinum plays are paused.</p>
-<p style="margin:10px 0 0;font-size:12.3px;color:#555555;line-height:1.6;">Nothing is canceled &mdash; cards just fail sometimes. Fix it now and everything switches back on instantly.</p>
+  <!-- HEADER BANNER -->
+  <tr>
+    <td style="padding:0;line-height:0;">
+      <img src="https://www.thesharpteam.bet/static/img/sharp-team-header.jpg" alt="The Sharp Team" width="600" style="display:block;width:100%;max-width:600px;height:auto;border:0;">
+    </td>
+  </tr>
 
-<!-- Lo que se pierde -->
-<div style="margin:18px 0 0;background:#fdf6ec;border:1px solid #f0dfba;border-radius:12px;padding:16px;">
-<p style="margin:0;font-size:11.4px;font-weight:800;letter-spacing:1.5px;color:#92600a;">&#128274; WHILE YOUR ACCESS IS ON HOLD, YOU&apos;RE MISSING:</p>
-<table role="presentation" cellpadding="0" cellspacing="0" style="margin:10px 0 0;width:100%;">
-<tr><td style="padding:5px 0;font-size:12.3px;color:#333333;line-height:1.5;">&#128142; <strong>Today&apos;s Platinum plays</strong> &mdash; posted daily, locked until you&apos;re back</td></tr>
-<tr><td style="padding:5px 0;font-size:12.3px;color:#333333;line-height:1.5;">&#11088; <strong>Gold plays</strong> &mdash; visible to Platinum members only</td></tr>
-<tr><td style="padding:5px 0;font-size:12.3px;color:#333333;line-height:1.5;">&#128200; <strong>The +EV Board</strong> &mdash; live edges against Pinnacle&apos;s fair price</td></tr>
-<tr><td style="padding:5px 0;font-size:12.3px;color:#333333;line-height:1.5;">&#127919; <strong>Official Player Props</strong> &mdash; included with Platinum</td></tr>
-<tr><td style="padding:5px 0;font-size:12.3px;color:#333333;line-height:1.5;">&#128203; <strong>Every new card</strong> &mdash; plays keep posting every day while you wait</td></tr>
+  <!-- TITLE BLOCK -->
+  <tr>
+    <td align="center" style="padding:32px 24px 4px 24px;font-family:Arial,Helvetica,sans-serif;">
+      <div style="font-size:23px;line-height:29.5px;font-weight:700;color:#14181F;letter-spacing:.3px;">Your Payment Didn&#8217;t Go Through</div>
+      <div style="font-size:14px;line-height:24px;color:#3D4454;margin-top:18px;">Your Platinum payment was declined, so your access is paused for now. Fix it in one minute and you&#8217;re right back in.</div>
+    </td>
+  </tr>
+
+  <!-- PAYMENT DETAIL -->
+  <tr>
+    <td style="padding:26px 24px 4px 24px;font-family:Arial,Helvetica,sans-serif;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#FDF9EA;border:1px solid rgba(232,199,102,.55);border-radius:16px;">
+        <tr>
+          <td style="padding:20px 18px;font-family:Arial,Helvetica,sans-serif;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td style="font-size:13.5px;line-height:19px;color:#3D4454;padding:4px 0;">Amount due</td>
+                <td align="right" style="font-size:13.5px;line-height:19px;font-weight:700;color:#14181F;padding:4px 0;">__AMOUNT_DUE__</td>
+              </tr>
+__CARD_ROW__              <tr>
+                <td style="font-size:13.5px;line-height:19px;color:#3D4454;padding:4px 0;">Plan</td>
+                <td align="right" style="font-size:13.5px;line-height:19px;font-weight:700;color:#14181F;padding:4px 0;">Platinum &#8212; $15.99/week</td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+
+  <!-- WHAT HAPPENS NEXT -->
+  <tr>
+    <td style="padding:26px 24px 4px 24px;font-family:Arial,Helvetica,sans-serif;">
+      <div style="font-size:10.5px;line-height:14px;font-weight:700;color:#B8912E;letter-spacing:2.2px;"><span style="display:inline-block;width:14px;height:3px;background-color:#2EE6A8;border-radius:2px;vertical-align:middle;margin-right:9px;font-size:0;line-height:0;">&nbsp;</span>WHAT HAPPENS NEXT</div>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:16px;">
+        <tr>
+          <td style="background-color:#F7F8FA;border:1px solid #E5E7EB;border-radius:16px;padding:16px 18px;font-family:Arial,Helvetica,sans-serif;">
+            <div style="font-size:13.5px;line-height:20px;color:#3D4454;">Your Platinum access stays paused while the payment is open.</div>
+            <div style="font-size:13.5px;line-height:20px;color:#3D4454;margin-top:10px;">Update your card within 10 days &#8212; after that, the subscription is cancelled and you&#8217;d start a new one.</div>
+            <div style="font-size:13.5px;line-height:20px;color:#3D4454;margin-top:10px;">As soon as your card is updated, your access comes back right away &#8212; no new signup, no lost history.</div>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+
+  <!-- CTA BUTTON -->
+  <tr>
+    <td align="center" style="padding:24px 24px 6px 24px;font-family:Arial,Helvetica,sans-serif;">
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td align="center" style="background-color:#e8c766;border-radius:999px;">
+            <a href="__PAY_URL__" style="display:inline-block;padding:11px 26px;font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:700;color:#14181F;text-decoration:none;letter-spacing:.8px;white-space:nowrap;">UPDATE MY CARD</a>
+          </td>
+        </tr>
+      </table>
+      <div style="font-size:12.5px;line-height:18px;color:#6B7280;margin-top:14px;">It takes about a minute. Your plays and history stay right where you left them.</div>
+    </td>
+  </tr>
+
+  <!-- SIGNING -->
+  <tr>
+    <td align="center" style="padding:26px 24px 30px 24px;font-family:Arial,Helvetica,sans-serif;">
+      <div style="font-size:13.5px;line-height:20px;color:#14181F;">Stay sharp. Stay disciplined. Play the long game.</div>
+      <div style="font-size:12.5px;line-height:17px;color:#B8912E;font-weight:700;letter-spacing:1.2px;margin-top:14px;">THE SHARP TEAM</div>
+      <div style="font-size:11.5px;line-height:15px;color:#6B7280;margin-top:2px;">Data-Driven Sports Betting Picks</div>
+    </td>
+  </tr>
+
+  <!-- FOOTER -->
+  <tr>
+    <td style="padding:26px 24px 32px 24px;background-color:#10141D;border-top:1px solid rgba(255,255,255,.10);font-family:Arial,Helvetica,sans-serif;" align="center">
+      <img src="https://www.thesharpteam.bet/static/img/sharp-team-header.jpg" alt="The Sharp Team" width="220" style="display:block;width:220px;max-width:220px;height:auto;border:0;margin:0 auto;">
+
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin:20px auto 6px auto;">
+        <tr>
+          <td style="padding:0 6px;"><a href="https://www.instagram.com/thesharp_team" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/instagram.png" alt="Instagram" width="22" height="22" style="display:block;width:22px;height:22px;border:0;"></a></td>
+          <td style="padding:0 6px;"><a href="https://www.facebook.com/thesharpteam" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/facebook.png" alt="Facebook" width="22" height="22" style="display:block;width:22px;height:22px;border:0;"></a></td>
+          <td style="padding:0 6px;"><a href="https://www.thesharpteam.bet/home" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/telegram.png" alt="Telegram" width="22" height="22" style="display:block;width:22px;height:22px;border:0;"></a></td>
+          <td style="padding:0 6px;"><a href="https://www.thesharpteam.bet/home" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/social-x-white.png" alt="X" width="22" height="22" style="display:block;width:22px;height:22px;border:0;"></a></td>
+        </tr>
+      </table>
+
+      <div style="font-size:10.5px;line-height:15px;color:#6B7280;margin-top:16px;">The Sharp Team &middot; Wallington, NJ</div>
+      <div style="font-size:10.5px;line-height:15px;color:#6B7280;margin-top:6px;">You are receiving this email because you created an account with The Sharp Team.</div>
+      <div style="font-size:10.5px;line-height:15px;margin-top:8px;"><a href="{{{RESEND_UNSUBSCRIBE_URL}}}" style="color:#6B7280;text-decoration:underline;">Unsubscribe</a></div>
+    </td>
+  </tr>
+
 </table>
-</div>
 
-<!-- Botón -->
-<div style="text-align:center;padding:20px 0 0;">
-<a href="__PAY_URL__" style="display:inline-block;background:#22c55e;color:#111111;font-weight:800;font-size:14.0px;padding:14px 36px;border-radius:999px;text-decoration:none;">Fix my card in one tap &rarr;</a>
-<p style="margin:10px 0 0;font-size:11.4px;color:#6b7280;">Takes about 30 seconds &middot; Your Sharp Free plays stay yours either way.</p>
-</div>
-</div>
-
-<p style="font-size:11.4px;line-height:1.6;color:#6b7280;margin:16px 24px 0;text-align:center;">If anything looks off, just reply to this email and a real person will sort it.</p>
-<p style="text-align:center;font-size:10.6px;color:#9ca3af;margin:14px 0 0;">__FECHA__</p>
-
-<!-- Pie como el de los otros emails: bloque de marca + banda negra con íconos -->
-<div style="background:#ffffff;padding:28px 32px 32px;text-align:center;">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-top:1px solid #dde2ec;">
-<tr><td align="center" style="padding-top:22px;">
-<p style="margin:0;font-size:14.5px;font-weight:800;color:#14213d;">The Sharp Team</p>
-<p style="margin:6px 0 0;font-size:10.7px;color:#5b6784;"><a href="https://www.thesharpteam.bet" style="color:#19a86b;font-weight:700;">thesharpteam.bet</a></p>
-<p style="margin:6px 0 0;font-size:10.7px;color:#5b6784;">Daily results and official plays: follow <a href="https://x.com/thesharpteambet" style="color:#19a86b;font-weight:700;">@thesharpteambet on X</a></p>
-</td></tr>
+</td>
+</tr>
 </table>
-</div>
-<div style="padding:24px 32px;background:#000000;border-radius:0 0 14px 14px;text-align:center;">
-<div>
-<a href="https://www.instagram.com/the_sharp_team" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/instagram.png" width="30" height="30" alt="Instagram" style="border:0;margin:0 6px;"></a>
-<a href="https://x.com/thesharpteambet" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/x.png" width="30" height="30" alt="X" style="border:0;margin:0 6px;"></a>
-<a href="https://t.me/thesharpteam" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/telegram.png" width="30" height="30" alt="Telegram" style="border:0;margin:0 6px;"></a>
-</div>
-<p style="margin:14px 0 0;font-size:9.9px;line-height:1.6;color:#9ca0ac;">21+. Please bet responsibly. Gambling problem? Call <span style="color:#a78bfa;text-decoration:underline;">1-800-GAMBLER</span>.</p>
-<p style="margin:10px 0 0;font-size:9.9px;line-height:1.6;color:#9ca0ac;">The Sharp Team &middot; 250 Park Avenue, Suite 1800, New York, NY 10017</p>
-<p style="margin:10px 0 0;font-size:9.9px;color:#9ca0ac;"><span style="text-decoration:underline;">Disclaimer</span> &middot; <span style="text-decoration:underline;">Terms</span> &middot; <a href="{{{RESEND_UNSUBSCRIBE_URL}}}" style="color:#9ca0ac;text-decoration:underline;">Unsubscribe</a></p>
-</div>
-</div>"""
+</body>
+</html>
+"""
 
 
-def send_payment_failed_email(nombre: str, email: str, pay_url: str) -> bool:
-    """Dunning estilo WGT: al fallar un cobro (invoice.payment_failed).
-
-    Email al miembro con el botón "Fix my card in one tap" que apunta a la
-    hosted_invoice_url de Stripe (paga esa factura / actualiza la tarjeta).
-    Se envía UNA vez por factura (el webhook deduplica por invoice id, porque
-    Stripe reintenta el cobro y manda payment_failed en cada intento).
-
-    Usa Resend (RESEND_API_KEY) en producción; SMTP Gmail como fallback
-    local. Si no está configurado o el envío falla, no hace nada y devuelve
-    False (el webhook lo audita).
-    Se ejecuta en un hilo aparte para no retrasar la respuesta al webhook.
-    """
+def send_payment_failed_email(nombre: str, email: str, pay_url: str,
+                              invoice_id: str = None, amount_due=None) -> bool:
+    """Email #4 PAGO RECHAZADO (diseño BLANCO aprobado por Alex el
+    2026-11-06; cableado 2026-11-06 22:17 ET por su orden «actívame
+    todos los emails»): al fallar un cobro (invoice.payment_failed), UNA
+    vez por factura (el webhook deduplica por invoice id). SOLO cohorte
+    nueva (activación ET >= 2026-11-06) y solo al correo de la propia
+    cuenta. El detalle es REAL: el monto sale de la factura que falló y
+    la tarjeta que falló se lee de Stripe (_past_due_billing_info); si
+    la tarjeta no se puede leer, su fila se OMITE — nunca se inventa.
+    Sin invoice_id, sin monto o fuera de cohorte: no se envía nada y
+    devuelve False (fail-closed). La puerta de _dispatch_email
+    (_pago_rechazado_ok) re-verifica asunto exacto + cuenta past_due +
+    evento de esa factura registrado. La lectura de Stripe va ANTES del
+    hilo para no perder el contexto; el hilo es solo el despacho."""
     resend_ok = bool((os.environ.get("RESEND_API_KEY") or "").strip())
     user = (os.environ.get("EMAIL_USER") or "").strip()
     pwd = os.environ.get("EMAIL_PASS") or ""
-    if not (email and pay_url and (resend_ok or (user and pwd))):
+    if not (email and pay_url and invoice_id
+            and (resend_ok or (user and pwd))):
+        return False
+    if not _email_es_cohorte_nueva(email):
         return False
 
-    fecha = datetime.now(TZ).strftime("%b %-d, %-I:%M:%S %p %Z")
+    card_label = ""
+    monto = amount_due
+    try:
+        _conn = DBConnection(_raw_connect(), USE_PG)
+        try:
+            _u = _conn.execute(
+                "SELECT stripe_customer_id FROM users "
+                "WHERE lower(email) = ?",
+                ((email or "").strip().lower(),)).fetchone()
+        finally:
+            _conn.close()
+        if _u:
+            _info = _past_due_billing_info(
+                {"stripe_customer_id": _u["stripe_customer_id"]})
+            if _info.get("card_brand") and _info.get("card_last4"):
+                card_label = (f"{_info['card_brand']} \u2022\u2022\u2022\u2022 "
+                              f"{_info['card_last4']}")
+            if monto is None and _info.get("amount_due") is not None:
+                monto = int(round(float(_info["amount_due"]) * 100))
+    except Exception:
+        pass
+    if monto is None:
+        return False
+    try:
+        amount_txt = f"${float(monto) / 100:,.2f}"
+    except (TypeError, ValueError):
+        return False
+
+    if card_label:
+        card_row = (
+            '              <tr>\n'
+            '                <td style="font-size:13.5px;line-height:19px;color:#3D4454;padding:4px 0;">Card that failed</td>\n'
+            '                <td align="right" style="font-size:13.5px;line-height:19px;font-weight:700;color:#14181F;padding:4px 0;">'
+            + card_label + '</td>\n'
+            '              </tr>\n')
+        card_line = f"Card that failed: {card_label}\n"
+    else:
+        card_row = ""
+        card_line = ""
     html = (DUNNING_HTML
-            .replace("__NOMBRE__", nombre or "there")
-            .replace("__PAY_URL__", pay_url)
-            .replace("__FECHA__", fecha))
+            .replace("__AMOUNT_DUE__", amount_txt)
+            .replace("__CARD_ROW__", card_row)
+            .replace("__PAY_URL__", pay_url))
     text = (DUNNING_TEXT
-            .replace("__NOMBRE__", nombre or "there")
+            .replace("__AMOUNT_DUE__", amount_txt)
+            .replace("__CARD_LINE__", card_line)
             .replace("__PAY_URL__", pay_url))
 
     def _send():
         try:
-            _dispatch_email(email, DUNNING_SUBJECT, text, html)
+            _dispatch_email(email, DUNNING_SUBJECT, text, html,
+                            billing_token=invoice_id)
         except Exception:
             pass  # silencioso: nunca rompe el webhook
 
@@ -15422,13 +15778,13 @@ def api_new_members():
     db = get_db()
     if since:
         rows = db.execute(
-            "SELECT id, nombre, email, created_at, activated_at, platinum_unlocked FROM users"
+            "SELECT id, nombre, email, created_at, activated_at, platinum_unlocked, stripe_subscription_id, platinum_intro_used_at, EXISTS(SELECT 1 FROM stripe_events se WHERE lower(se.email) = lower(users.email) AND se.tipo IN ('checkout.session.completed', 'invoice.paid')) AS tuvo_suscripcion FROM users"
             " WHERE email_verified = 1 AND created_at >= ? ORDER BY COALESCE(activated_at, created_at) ASC, id ASC",
             (since,),
         ).fetchall()
     else:
         rows = db.execute(
-            "SELECT id, nombre, email, created_at, activated_at, platinum_unlocked FROM users"
+            "SELECT id, nombre, email, created_at, activated_at, platinum_unlocked, stripe_subscription_id, platinum_intro_used_at, EXISTS(SELECT 1 FROM stripe_events se WHERE lower(se.email) = lower(users.email) AND se.tipo IN ('checkout.session.completed', 'invoice.paid')) AS tuvo_suscripcion FROM users"
             " WHERE email_verified = 1"
             " ORDER BY COALESCE(activated_at, created_at) DESC, id DESC LIMIT 500"
         ).fetchall()
@@ -15461,6 +15817,9 @@ def api_new_members():
                 "created_at": d.get("created_at"),
                 "activated_at": d.get("activated_at") or d.get("created_at"),
                 "elite": bool(d.get("platinum_unlocked")),
+                "tuvo_suscripcion": bool(d.get("tuvo_suscripcion")
+                                         or (d.get("stripe_subscription_id") or "").strip()
+                                         or (d.get("platinum_intro_used_at") or "").strip()),
                 "ciudad": ciudad,
             }
         )
@@ -15600,12 +15959,13 @@ def stripe_webhook():
         if not email:
             _auditar("", f"{origen} sin email")
             return
-        row = db.execute("SELECT id, nombre, platinum_unlocked, cancel_requested_at, telegram_user_id, welcome_email_sent, stripe_subscription_id, platinum_intro_used_at FROM users WHERE email = ?",
+        row = db.execute("SELECT id, nombre, platinum_unlocked, cancel_requested_at, telegram_user_id, welcome_email_sent, stripe_subscription_id, platinum_intro_used_at, stripe_past_due, activated_at, created_at FROM users WHERE email = ?",
                          (email,)).fetchone()
         if row:
             uid = row["id"]
             era_nuevo = not bool(row["platinum_unlocked"])
             estaba_cancelado = bool(row["cancel_requested_at"])
+            estaba_past_due = bool(row["stripe_past_due"])
             tiene_tg = bool(row["telegram_user_id"])
             # Retorno genuino (FIX 2026-10-31): se calcula ANTES del UPDATE
             # de abajo, que sobrescribe stripe_subscription_id con la sub
@@ -15695,9 +16055,25 @@ def stripe_webhook():
             # la bienvenida (welcome_email_sent=0) se le envía el Welcome;
             # si ya la recibió al activar, NO se envía nada.
             # Las renovaciones (era_nuevo=False) siguen sin mandar email.
-            if es_retorno_genuino:
+            # Email #5 BIENVENIDA DE VUELTA (2026-11-06, orden de
+            # Alex): sale SOLO cuando este pago RESTAURA el acceso —
+            # venía past-due, o cancelado, o con Platinum apagado
+            # teniendo ya suscripción — y SOLO a la cohorte nueva
+            # (activación ET >= 2026-11-06). Una renovación normal NO la
+            # dispara: con la regla vieja (es_retorno_genuino = tenía
+            # sub previa) habría salido en CADA cobro semanal de un
+            # miembro al día; queda corregido aquí. La cohorte se
+            # re-verifica dentro de send_welcome_back_email y la puerta
+            # de _dispatch_email exige asunto exacto + que la
+            # suscripción procesada sea la actual de la cuenta.
+            es_restauracion = (estaba_past_due or estaba_cancelado
+                               or (era_nuevo and tenia_sub_stripe))
+            if (es_restauracion
+                    and _activacion_cohorte_nueva(row["activated_at"],
+                                                  row["created_at"])):
                 try:
-                    send_welcome_back_email(row["nombre"] or "", email)
+                    send_welcome_back_email(row["nombre"] or "", email,
+                                            back_token=sub_id)
                     db.execute("UPDATE users SET welcome_email_sent = 1 WHERE id = ?", (uid,))
                     db.commit()
                 except Exception:
@@ -15923,10 +16299,17 @@ def stripe_webhook():
             else:
                 # Inglés forzado en las páginas de Stripe del miembro.
                 _stripe_force_english(data.get("customer"))
-                ok = send_payment_failed_email(nombre, email, pay_url)
+                # Pre-auditoría ANTES de notificar: la puerta estrecha
+                # del email #4 verifica en BD, al momento de despachar,
+                # el evento de ESTA factura ya registrado con su detalle.
+                _auditar(email, f"pago fallido invoice {invoice_id}: "
+                                "notificando al miembro")
+                ok = send_payment_failed_email(
+                    nombre, email, pay_url, invoice_id=invoice_id,
+                    amount_due=data.get("amount_due"))
                 _auditar(email, f"pago fallido invoice {invoice_id}: "
                                 + ("dunning enviado" if ok
-                                   else "dunning NO enviado (falta EMAIL_USER/EMAIL_PASS en Render)"))
+                                   else "dunning NO enviado (fuera de cohorte, sin factura o sin config de email)"))
         else:
             _auditar("", f"evento no procesado: {etype}")
     except Exception as exc:  # nunca 500: Stripe reintentaría sin parar
