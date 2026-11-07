@@ -13837,6 +13837,8 @@ def ev_board_results():
 def sharp():
     db = get_db()
     record_checkin(db, session["user_id"])
+    if not platinum_unlocked_for(current_user()):
+        return redirect(url_for("desbloquear_platinum"))
     return render_template("sharp.html", board=load_sharp_board())
 
 
