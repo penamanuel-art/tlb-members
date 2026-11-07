@@ -3,7 +3,13 @@
 {% block content %}
 
 <style>
-  .mx-item{display:flex;align-items:center;gap:11px;background:linear-gradient(160deg,#101828,#0c1322);border:1px solid #1e2a45;border-radius:14px;padding:11px 13px;margin-bottom:8px;text-decoration:none;}
+  .mx-item{display:flex;align-items:center;flex-wrap:wrap;gap:11px;background:linear-gradient(160deg,#101828,#0c1322);border:1px solid #1e2a45;border-radius:14px;padding:11px 13px;margin-bottom:8px;text-decoration:none;}
+  .tourline{display:flex;align-items:center;gap:8px;border-top:1px solid #1e2a45;color:#C7CEDA;font-size:12.5px;padding-top:10px;margin-top:12px;}
+  .tourline .when{margin-left:auto;color:#8fa1bd;font-size:11.5px;white-space:nowrap;}
+  .tourline b.tour-ok{color:#2ECC71;}
+  .tourline b.tour-skip{color:#e8c766;}
+  .tourline b.tour-none{color:#8fa1bd;font-weight:600;}
+  .mx-item .tourline{flex:0 0 100%;margin-top:10px;padding-top:9px;}
   .mx-av{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#d4af37,#8a6d1c);color:#111;font-weight:900;font-size:15px;display:flex;align-items:center;justify-content:center;flex:none;}
   .mx-nm{flex:1;min-width:0;color:#ffffff;font-size:15px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .mx-new{font-size:10px;font-weight:800;color:#f5c542;letter-spacing:1px;}
@@ -63,6 +69,7 @@
     <span class="mx-nm">{{ m.nombre }}</span>
     <span class="mx-status plat">★ PLATINUM</span>
     <span class="mx-more">Ver más →</span>
+    <span class="tourline"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e8c766" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="flex:none" aria-hidden="true"><path d="M22 9.5 12 4 2 9.5l10 5.5 10-5.5Z"/><path d="M6.5 12.2v4c0 1.4 2.5 2.8 5.5 2.8s5.5-1.4 5.5-2.8v-4"/><path d="M22 9.5v5"/></svg><span>Tour del Dashboard: <b class="{{ m.tour_cls }}">{{ m.tour_label }}</b></span><span class="when">{{ m.tour_when }}</span></span>
   </a>
   {% endfor %}
   </div>
@@ -105,6 +112,7 @@
     <div class="av-row"><span class="k">💳 Stripe</span><span class="v{% if a.stripe_gold %} gold{% endif %}">{{ a.stripe_txt }}</span></div>
     <div class="av-row"><span class="k">🎯 Tracked plays</span><span class="v">{{ a.tracked_n }}</span></div>
   </div>
+  <div class="tourline"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e8c766" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="flex:none" aria-hidden="true"><path d="M22 9.5 12 4 2 9.5l10 5.5 10-5.5Z"/><path d="M6.5 12.2v4c0 1.4 2.5 2.8 5.5 2.8s5.5-1.4 5.5-2.8v-4"/><path d="M22 9.5v5"/></svg><span>Tour del Dashboard: <b class="{{ a.tour_cls }}">{{ a.tour_label }}</b></span><span class="when">{{ a.tour_when }}</span></div>
 </article>
   {% else %}
   <p class="muted">No active members yet.</p>
@@ -128,6 +136,7 @@
     {% elif m.platinum_unlocked %}<span class="mx-status plat">★ PLATINUM</span>
     {% else %}<span class="mx-status free">FREE</span>{% endif %}
     <span class="mx-more">Ver más →</span>
+    <span class="tourline"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e8c766" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="flex:none" aria-hidden="true"><path d="M22 9.5 12 4 2 9.5l10 5.5 10-5.5Z"/><path d="M6.5 12.2v4c0 1.4 2.5 2.8 5.5 2.8s5.5-1.4 5.5-2.8v-4"/><path d="M22 9.5v5"/></svg><span>Tour del Dashboard: <b class="{{ m.tour_cls }}">{{ m.tour_label }}</b></span><span class="when">{{ m.tour_when }}</span></span>
   </a>
   {% else %}
   <p class="muted">No members in this group.</p>
@@ -151,6 +160,7 @@
     {% elif m.platinum_unlocked %}<span class="mx-status plat">★ PLATINUM</span>
     {% else %}<span class="mx-status free">FREE</span>{% endif %}
     <span class="mx-more">Ver más →</span>
+    <span class="tourline"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e8c766" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="flex:none" aria-hidden="true"><path d="M22 9.5 12 4 2 9.5l10 5.5 10-5.5Z"/><path d="M6.5 12.2v4c0 1.4 2.5 2.8 5.5 2.8s5.5-1.4 5.5-2.8v-4"/><path d="M22 9.5v5"/></svg><span>Tour del Dashboard: <b class="{{ m.tour_cls }}">{{ m.tour_label }}</b></span><span class="when">{{ m.tour_when }}</span></span>
   </a>
   {% else %}
   <p class="muted">No members in this group.</p>
@@ -174,6 +184,7 @@
     {% elif m.platinum_unlocked %}<span class="mx-status plat">★ PLATINUM</span>
     {% else %}<span class="mx-status free">FREE</span>{% endif %}
     <span class="mx-more">Ver más →</span>
+    <span class="tourline"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e8c766" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="flex:none" aria-hidden="true"><path d="M22 9.5 12 4 2 9.5l10 5.5 10-5.5Z"/><path d="M6.5 12.2v4c0 1.4 2.5 2.8 5.5 2.8s5.5-1.4 5.5-2.8v-4"/><path d="M22 9.5v5"/></svg><span>Tour del Dashboard: <b class="{{ m.tour_cls }}">{{ m.tour_label }}</b></span><span class="when">{{ m.tour_when }}</span></span>
   </a>
   {% else %}
   <p class="muted">No members in this group.</p>
