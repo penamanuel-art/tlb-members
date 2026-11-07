@@ -4845,6 +4845,15 @@ def migrate_db():
             pending.append("ALTER TABLE users ADD COLUMN activation_reminders INTEGER NOT NULL DEFAULT 0")
         if "activation_reminder_last" not in cols:
             pending.append("ALTER TABLE users ADD COLUMN activation_reminder_last TEXT")
+        # Registro del tour del Dashboard (2026-11-06, orden de Alex):
+        # hasta hoy la marca de «tour visto» vivía solo en el navegador
+        # del miembro (localStorage) y el sistema no sabía quién lo
+        # terminó. tour_status = 'completed'/'skipped' del ÚLTIMO
+        # evento; tour_at = su hora (ISO UTC, como el resto).
+        if "tour_status" not in cols:
+            pending.append("ALTER TABLE users ADD COLUMN tour_status TEXT")
+        if "tour_at" not in cols:
+            pending.append("ALTER TABLE users ADD COLUMN tour_at TEXT")
         # Página Account estilo WGT (2026-10-12, pedido por Alex): dirección
         # postal del perfil + perfil de apuestas (estado y casas).
         for _col in ["addr_line1", "addr_line2", "addr_city", "addr_state",
@@ -13907,6 +13916,34 @@ def admin_contactos():
     ).fetchall()
     return render_template("admin_contactos.html", contactos=[dict(c) for c in contactos])
 
+def _tour_display(status, at_iso):
+    """Línea del tour para la ficha del Admin (2026-11-06, diseño
+    aprobado por Alex): devuelve (etiqueta, clase_css, cuando).
+    La hora guardada es ISO UTC; aquí sale en ET — «hoy · hora» si es
+    de hoy, «ayer · hora» si fue ayer, si no «Mon D · hora»."""
+    if status not in ("completed", "skipped"):
+        return ("Sin hacer", "tour-none", "—")
+    etiqueta = "Completado" if status == "completed" else "Lo saltó"
+    clase = "tour-ok" if status == "completed" else "tour-skip"
+    cuando = ""
+    try:
+        f = datetime.fromisoformat(str(at_iso).replace("Z", "+00:00"))
+        if f.tzinfo is None:
+            f = f.replace(tzinfo=timezone.utc)
+        fe = f.astimezone(TZ)
+        hoy = datetime.now(TZ).date()
+        hora = fe.strftime("%-I:%M %p")
+        if fe.date() == hoy:
+            cuando = f"hoy · {hora}"
+        elif fe.date() == hoy - timedelta(days=1):
+            cuando = f"ayer · {hora}"
+        else:
+            cuando = f"{fe.strftime('%b')} {fe.day} · {hora}"
+    except Exception:
+        cuando = ""
+    return (etiqueta, clase, cuando)
+
+
 @app.route("/admin/miembros")
 @login_required
 def admin_miembros():
@@ -13922,7 +13959,8 @@ def admin_miembros():
         "stake_fijo_elite, stake_fijo_gold, cancel_requested_at, stripe_customer_id, "
         "stripe_subscription_id, stripe_subscription_status, stripe_past_due, "
         "platinum_trial_ends, "
-        "telegram_user_id, telegram_ban_pending, telegram_unban_pending "
+        "telegram_user_id, telegram_ban_pending, telegram_unban_pending, "
+        "tour_status, tour_at "
         "FROM users "
         # 2026-10-31, orden de Alex: ALL MEMBERS es UN SOLO TOTAL con
         # TODOS los miembros — se quitan el filtro email_verified y el
@@ -13943,6 +13981,9 @@ def admin_miembros():
             d["es_nuevo"] = (ahora - creado) < timedelta(hours=48)
         except Exception:
             d["es_nuevo"] = False
+        (d["tour_label"], d["tour_cls"],
+         d["tour_when"]) = _tour_display(d.get("tour_status"),
+                                         d.get("tour_at"))
         lista.append(d)
     try:
         eventos = db.execute(
@@ -13960,6 +14001,7 @@ def admin_miembros():
             "SELECT u.id, u.nombre, u.email, u.activated_at, u.phone, "
             "u.sms_optin, u.telegram_user_id, u.stripe_customer_id, "
             "u.stripe_subscription_id, u.platinum_trial_ends, "
+            "u.tour_status, u.tour_at, "
             "COUNT(*) AS entradas, "
             "COUNT(DISTINCT substr(a.created_at, 1, 10)) AS dias, "
             "MAX(a.created_at) AS ultima "
@@ -13974,7 +14016,8 @@ def admin_miembros():
             "AND u.platinum_trial_ends != '') "
             "GROUP BY u.id, u.nombre, u.email, u.activated_at, u.phone, "
             "u.sms_optin, u.telegram_user_id, u.stripe_customer_id, "
-            "u.stripe_subscription_id, u.platinum_trial_ends "
+            "u.stripe_subscription_id, u.platinum_trial_ends, "
+            "u.tour_status, u.tour_at "
             "HAVING COUNT(DISTINCT substr(a.created_at, 1, 10)) >= 2 "
             "ORDER BY entradas DESC"
         ).fetchall()
@@ -14043,6 +14086,9 @@ def admin_miembros():
             d["sms_txt"] = "Yes" if d.get("sms_optin") else "No"
             d["telegram_txt"] = (
                 "Linked" if d.get("telegram_user_id") else "Not linked")
+            (d["tour_label"], d["tour_cls"],
+             d["tour_when"]) = _tour_display(d.get("tour_status"),
+                                             d.get("tour_at"))
             activos.append(d)
     except Exception:
         activos = []
@@ -15759,6 +15805,45 @@ def api_telegram_pending_ack():
     return jsonify({"ok": True})
 
 
+@app.route("/api/tour-event", methods=["POST"])
+@login_required
+def api_tour_event():
+    """Registra el cierre del tour del Dashboard (2026-11-06, orden de Alex).
+
+    El tour marcaba «visto» solo en el navegador del miembro
+    (localStorage tst_tour_done_v1) y el sistema no sabía nada: ni
+    quién lo terminó, ni quién lo saltó. Al cerrar, la página avisa
+    aquí con status 'completed' (llegó al último paso) o 'skipped'
+    (botón Skip tour). Se guarda el ÚLTIMO evento con su hora; un
+    'completed' manda: un 'skipped' posterior NUNCA lo baja.
+    El aviso del cliente es fire-and-forget: si algo falla aquí, la
+    página ni se entera (su marca local se puso igual que siempre).
+    """
+    data = request.get_json(silent=True) or {}
+    status = data.get("status")
+    if status not in ("completed", "skipped"):
+        return jsonify({"ok": False, "error": "invalid status"}), 400
+    try:
+        db = get_db()
+        uid = session.get("user_id")
+        row = db.execute(
+            "SELECT tour_status FROM users WHERE id = ?", (uid,)
+        ).fetchone()
+        actual = None
+        if row is not None:
+            d = dict(row) if not isinstance(row, dict) else row
+            actual = d.get("tour_status")
+        if not (actual == "completed" and status == "skipped"):
+            db.execute(
+                "UPDATE users SET tour_status = ?, tour_at = ? WHERE id = ?",
+                (status, now_iso(), uid),
+            )
+            db.commit()
+    except Exception:
+        pass
+    return jsonify({"ok": True})
+
+
 @app.route("/api/new-members", methods=["GET"])
 def api_new_members():
     """Miembros CONFIRMADOS. ?since=ISO (created_at) filtra desde esa marca.
@@ -15778,13 +15863,13 @@ def api_new_members():
     db = get_db()
     if since:
         rows = db.execute(
-            "SELECT id, nombre, email, created_at, activated_at, platinum_unlocked, stripe_subscription_id, platinum_intro_used_at, EXISTS(SELECT 1 FROM stripe_events se WHERE lower(se.email) = lower(users.email) AND se.tipo IN ('checkout.session.completed', 'invoice.paid')) AS tuvo_suscripcion FROM users"
+            "SELECT id, nombre, email, created_at, activated_at, platinum_unlocked, stripe_subscription_id, platinum_intro_used_at, tour_status, tour_at, EXISTS(SELECT 1 FROM stripe_events se WHERE lower(se.email) = lower(users.email) AND se.tipo IN ('checkout.session.completed', 'invoice.paid')) AS tuvo_suscripcion FROM users"
             " WHERE email_verified = 1 AND created_at >= ? ORDER BY COALESCE(activated_at, created_at) ASC, id ASC",
             (since,),
         ).fetchall()
     else:
         rows = db.execute(
-            "SELECT id, nombre, email, created_at, activated_at, platinum_unlocked, stripe_subscription_id, platinum_intro_used_at, EXISTS(SELECT 1 FROM stripe_events se WHERE lower(se.email) = lower(users.email) AND se.tipo IN ('checkout.session.completed', 'invoice.paid')) AS tuvo_suscripcion FROM users"
+            "SELECT id, nombre, email, created_at, activated_at, platinum_unlocked, stripe_subscription_id, platinum_intro_used_at, tour_status, tour_at, EXISTS(SELECT 1 FROM stripe_events se WHERE lower(se.email) = lower(users.email) AND se.tipo IN ('checkout.session.completed', 'invoice.paid')) AS tuvo_suscripcion FROM users"
             " WHERE email_verified = 1"
             " ORDER BY COALESCE(activated_at, created_at) DESC, id DESC LIMIT 500"
         ).fetchall()
@@ -15820,6 +15905,10 @@ def api_new_members():
                 "tuvo_suscripcion": bool(d.get("tuvo_suscripcion")
                                          or (d.get("stripe_subscription_id") or "").strip()
                                          or (d.get("platinum_intro_used_at") or "").strip()),
+                # Tour del Dashboard (2026-11-06): lo consume el vigía
+                # del chat y la ficha del Admin; null = sin hacer.
+                "tour_status": d.get("tour_status") or None,
+                "tour_at": d.get("tour_at") or None,
                 "ciudad": ciudad,
             }
         )
