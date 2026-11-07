@@ -927,8 +927,52 @@ def _destino_email_permitido(to: str) -> bool:
     return dest in permitidos
 
 
+def _bienvenida_activacion_ok(to: str, subject: str, welcome_token) -> bool:
+    """Puerta ESTRECHA de la BIENVENIDA (2026-11-06, orden de Alex):
+    gemela de la de activación. La bienvenida MODERNO solo puede salir al
+    correo de la cuenta que se ACABA de activar, disparada por
+    send_welcome_email desde activar_cuenta. Pasa SOLO si se cumplen
+    TODAS: (1) el llamador aporta welcome_token — el token de activación
+    de ESA cuenta, que solo activar_cuenta tiene en la mano tras
+    validarlo contra la BD en esa misma petición; (2) el asunto es
+    EXACTAMENTE WELCOME_SUBJECT; (3) la BD confirma que la cuenta de ESE
+    correo está verificada y su activated_at es de hace menos de 30
+    minutos (la activación acaba de ocurrir). Fail-closed: sin token,
+    asunto distinto, destinatario que no es la cuenta recién activada,
+    cuenta no encontrada o cualquier error de BD devuelve False y el
+    email se bloquea como cualquier otro correo a miembros. Se lee la BD
+    con conexión directa porque la bienvenida se despacha en un hilo,
+    fuera del contexto de la petición."""
+    try:
+        if not welcome_token:
+            return False
+        if (subject or "") != WELCOME_SUBJECT:
+            return False
+        dest = (to or "").strip().lower()
+        if not dest:
+            return False
+        _conn = DBConnection(_raw_connect(), USE_PG)
+        try:
+            _row = _conn.execute(
+                "SELECT email_verified, activated_at FROM users "
+                "WHERE lower(email) = ?", (dest,)).fetchone()
+        finally:
+            _conn.close()
+        if not _row or not _row["email_verified"] or not _row["activated_at"]:
+            return False
+        _act = _row["activated_at"]
+        if isinstance(_act, str):
+            _act = datetime.fromisoformat(_act.replace("Z", "+00:00"))
+        if _act.tzinfo is None:
+            _act = _act.replace(tzinfo=timezone.utc)
+        return (datetime.now(timezone.utc) - _act) <= timedelta(minutes=30)
+    except Exception:
+        return False
+
+
 def _dispatch_email(to: str, subject: str, text_body: str, html_body=None,
-                    from_header=None, activation_token: str = None) -> tuple:
+                    from_header=None, activation_token: str = None,
+                    welcome_token: str = None) -> tuple:
     """Despacha un email: Resend si hay API key (producción en Render),
     si no SMTP Gmail (desarrollo local). Devuelve (ok, detalle)."""
     if not _destino_email_permitido(to):
@@ -943,8 +987,15 @@ def _dispatch_email(to: str, subject: str, text_body: str, html_body=None,
         # colarse por esta puerta. Todo lo demás sigue bloqueado.
         _link_act = (f"{SITE_URL}/activar/{activation_token}"
                      if activation_token else "")
-        if not _link_act or (_link_act not in (text_body or "")
-                             and _link_act not in (html_body or "")):
+        _pasa_act = bool(_link_act) and (_link_act in (text_body or "")
+                                         or _link_act in (html_body or ""))
+        # Excepción gemela BIENVENIDA (2026-11-06, orden de Alex): la
+        # bienvenida disparada AL ACTIVAR pasa solo al correo de la
+        # cuenta recién activada, con su token y su asunto exacto
+        # (ver _bienvenida_activacion_ok). Ningún otro correo a
+        # miembros se abre con esto.
+        if not _pasa_act and not _bienvenida_activacion_ok(to, subject,
+                                                           welcome_token):
             return False, "bloqueado: regla de Alex 2026-11-02 (solo emails a Alex)"
     if (os.environ.get("RESEND_API_KEY") or "").strip():
         return _resend_send(to, subject, text_body, html_body)
@@ -1603,13 +1654,20 @@ def _welcome_stats():
                 "week_record": "0\u20130", "week_units": "+0.00u", "week_rate": "0.0%"}
 
 
-def send_welcome_email(nombre: str, email: str):
+def send_welcome_email(nombre: str, email: str, activation_token: str = None):
     """Email de bienvenida al nuevo miembro (HTML profesional + texto plano).
 
     Resend (RESEND_API_KEY) en producción; SMTP Gmail como fallback local.
     Si no está configurado o el envío falla, no hace nada: el registro sigue
     funcionando y el miembro ve la página de bienvenida en pantalla.
     Se ejecuta en un hilo aparte para no retrasar la respuesta.
+
+    Candado 2026-11-02: a un miembro SOLO le llega si activar_cuenta
+    pasa su token de activación (activation_token) — la puerta estrecha
+    de _dispatch_email (_bienvenida_activacion_ok) verifica además en
+    la BD que esa cuenta se acaba de activar. Los demás llamadores
+    (reenvío admin, webhook de Stripe) no aportan token y su envío a
+    miembros sigue bloqueado, como hasta ahora.
     """
     resend_ok = bool((os.environ.get("RESEND_API_KEY") or "").strip())
     user = (os.environ.get("EMAIL_USER") or "").strip()
@@ -1626,7 +1684,8 @@ def send_welcome_email(nombre: str, email: str):
 
     def _send():
         try:
-            _dispatch_email(email, subject, text, html)
+            _dispatch_email(email, subject, text, html,
+                            welcome_token=activation_token)
         except Exception:
             pass  # silencioso: nunca rompe el registro
 
@@ -6003,8 +6062,11 @@ def activar_cuenta(token):
     notify_new_member(nombre, email)
     # Pedido Alex 2026-10-05: el email de bienvenida llega a TODOS, y desde
     # 2026-10-18 llega al ACTIVAR la cuenta (cuenta real, correo real).
+    # Se pasa el token de activación de ESTA cuenta: es el marcador que
+    # abre la puerta estrecha de la bienvenida en _dispatch_email
+    # (excepción gemela de activación, 2026-11-06).
     try:
-        send_welcome_email(nombre, email)
+        send_welcome_email(nombre, email, activation_token=token)
         db.execute("UPDATE users SET welcome_email_sent = 1 WHERE id = ?", (uid,))
         db.commit()
     except Exception:
