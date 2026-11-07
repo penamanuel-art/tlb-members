@@ -996,6 +996,11 @@ a.avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
   background: #0b0f14;
   border-top: 1px solid rgba(139, 152, 173, 0.16);
   padding: 6px 6px calc(6px + env(safe-area-inset-bottom));
+  /* Estabilidad iOS (2026-11-07): la barra va en su propia capa de
+     composición para que Safari no la arrastre al hacer scroll. */
+  transform: translateZ(0); -webkit-transform: translateZ(0);
+  will-change: transform;
+  backface-visibility: hidden; -webkit-backface-visibility: hidden;
 }
 .v2-bnav-item {
   flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px;
