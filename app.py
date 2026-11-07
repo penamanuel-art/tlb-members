@@ -1097,9 +1097,65 @@ def _bienvenida_vuelta_ok(to: str, subject: str, back_token) -> bool:
     except Exception:
         return False
 
+
+def _cancelacion_ok(to: str, subject: str, cancel_token) -> bool:
+    """Puerta ESTRECHA del email #7 CANCELACIÓN (2026-11-07): solo pasa
+    si (1) el llamador aporta cancel_token — el id de la suscripción de
+    Stripe que el webhook acaba de procesar en la rama que apaga el
+    acceso (customer.subscription.deleted o status canceled/unpaid/
+    incomplete_expired); (2) el asunto es EXACTAMENTE
+    CANCELLATION_SUBJECT; (3) la BD confirma que el Platinum de la
+    cuenta de ESE correo ya quedó apagado (platinum_unlocked = 0) y que
+    la desactivación de ESA suscripción quedó registrada en
+    stripe_events para ese correo en los últimos 60 minutos (la
+    pre-auditoría del webhook escribe el detalle con el sub id antes de
+    notificar; users.stripe_subscription_id ya va en NULL para
+    entonces, por eso — igual que el #4 con su factura — la prueba vive
+    en stripe_events); (4) la cuenta es de la cohorte nueva (activación
+    ET >= 2026-11-06) o el destino es de Alex/admin (que siempre puede
+    recibir el suyo). Fail-closed ante cualquier desviación o error."""
+    try:
+        if not cancel_token:
+            return False
+        if (subject or "") != CANCELLATION_SUBJECT:
+            return False
+        dest = (to or "").strip().lower()
+        if not dest:
+            return False
+        if not (_destino_email_permitido(dest)
+                or _email_es_cohorte_nueva(dest)):
+            return False
+        _conn = DBConnection(_raw_connect(), USE_PG)
+        try:
+            _row = _conn.execute(
+                "SELECT platinum_unlocked FROM users "
+                "WHERE lower(email) = ?", (dest,)).fetchone()
+            if not _row or _row["platinum_unlocked"]:
+                return False
+            _ev = _conn.execute(
+                "SELECT created_at FROM stripe_events WHERE "
+                "tipo IN ('customer.subscription.deleted', "
+                "'customer.subscription.updated') AND lower(email) = ? "
+                "AND detalle LIKE ? AND detalle LIKE ? "
+                "ORDER BY created_at DESC LIMIT 1",
+                (dest, "%Elite desactivada%",
+                 f"%{cancel_token}%")).fetchone()
+        finally:
+            _conn.close()
+        if not _ev:
+            return False
+        _ts = _ev["created_at"]
+        if isinstance(_ts, str):
+            _ts = datetime.fromisoformat(_ts.replace("Z", "+00:00"))
+        if _ts.tzinfo is None:
+            _ts = _ts.replace(tzinfo=timezone.utc)
+        return (datetime.now(timezone.utc) - _ts) <= timedelta(minutes=60)
+    except Exception:
+        return False
+
 def _dispatch_email(to: str, subject: str, text_body: str, html_body=None,
                     from_header=None, activation_token: str = None,
-                    welcome_token: str = None, billing_token: str = None, back_token: str = None) -> tuple:
+                    welcome_token: str = None, billing_token: str = None, back_token: str = None, cancel_token: str = None) -> tuple:
     """Despacha un email: Resend si hay API key (producción en Render),
     si no SMTP Gmail (desarrollo local). Devuelve (ok, detalle)."""
     if not _destino_email_permitido(to):
@@ -1128,10 +1184,13 @@ def _dispatch_email(to: str, subject: str, text_body: str, html_body=None,
             # de pago rechazado y el #5 de bienvenida de vuelta solo
             # pasan al correo de la PROPIA cuenta, en su evento real de
             # Stripe, con su asunto exacto y su token de evento (ver
-            # _pago_rechazado_ok y _bienvenida_vuelta_ok). Nada más se
-            # abre con esto; todo lo demás sigue bloqueado.
+            # _pago_rechazado_ok y _bienvenida_vuelta_ok). El #7 de
+            # cancelación (2026-11-07) entra por la misma vía con su
+            # puerta _cancelacion_ok. Nada más se abre con esto; todo
+            # lo demás sigue bloqueado.
             if not (_pago_rechazado_ok(to, subject, billing_token)
-                    or _bienvenida_vuelta_ok(to, subject, back_token)):
+                    or _bienvenida_vuelta_ok(to, subject, back_token)
+                    or _cancelacion_ok(to, subject, cancel_token)):
                 return False, "bloqueado: regla de Alex 2026-11-02 (solo emails a Alex)"
     if (os.environ.get("RESEND_API_KEY") or "").strip():
         return _resend_send(to, subject, text_body, html_body)
@@ -2086,6 +2145,256 @@ __CARD_ROW__              <tr>
 </body>
 </html>
 """
+
+
+# ------------------------------------------------- Email #7: cancelación ----
+# Diseño OSCURO PREMIUM aprobado por Alex el 2026-11-07 («deja ese»):
+# espejo en hidden_files/email-cancelacion-OSCURO-2026-11-06.html.
+CANCELLATION_SUBJECT = "Your Platinum Membership Has Been Cancelled"
+
+CANCELLATION_TEXT = """Your Platinum Membership Has Been Cancelled
+
+Hi __NOMBRE__,
+
+This confirms your cancellation. Your Platinum membership is cancelled as of today. Your Platinum access has ended, and no further charges will be made. The Platinum plays, tools and the Sharp Club are now closed on your account.
+
+MEMBERSHIP SUMMARY
+Membership: Platinum
+Status: Cancelled
+Platinum access: Ended
+Your account: Free \u2014 still active
+Future charges: $0.00
+
+WHAT YOU KEEP
+- Your free account stays active \u2014 nothing is deleted.
+- You keep the Dashboard with the daily FREE and GOLD plays.
+- You keep My Bets, your personal tracker and your full history.
+
+REJOIN PLATINUM
+Whenever you\u2019re ready: $1 for your first week, then $15.99/week. No pressure either way.
+https://buy.stripe.com/5kQdRbfFmgHideubEQefC07
+
+Stay sharp. Stay disciplined. Play the long game.
+THE SHARP TEAM \u2014 Data-Driven Sports Betting Picks
+"""
+
+CANCELLATION_HTML = """<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark">
+<title>Your Platinum Membership Has Been Cancelled — The Sharp Team</title>
+</head>
+<body style="margin:0;padding:0;background-color:#0B0E13;-webkit-text-size-adjust:100%;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#0B0E13;">
+<tr>
+<td align="center" style="padding:28px 12px 36px 12px;">
+
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;background-color:#10141D;border:1px solid rgba(255,255,255,.06);border-radius:16px;overflow:hidden;">
+
+  <!-- HEADER BANNER -->
+  <tr>
+    <td style="padding:0;line-height:0;">
+      <img src="https://www.thesharpteam.bet/static/img/sharp-team-header.jpg" alt="The Sharp Team" width="600" style="display:block;width:100%;max-width:600px;height:auto;border:0;">
+    </td>
+  </tr>
+
+  <!-- HERO -->
+  <tr>
+    <td align="center" style="padding:36px 24px 4px 24px;font-family:Arial,Helvetica,sans-serif;">
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="border-collapse:collapse;mso-table-lspace:0pt;mso-table-rspace:0pt;">
+        <tr>
+          <td align="center" valign="middle" width="60" height="60" style="width:60px;height:60px;background-color:#e8c766;border-radius:50%;font-family:Arial,Helvetica,sans-serif;font-size:26px;line-height:60px;mso-line-height-rule:exactly;color:#0B0E13;font-weight:700;">&#10005;</td>
+        </tr>
+      </table>
+      <div style="font-size:31px;line-height:39px;font-weight:800;color:#e8c766;letter-spacing:.3px;margin-top:20px;">Your Platinum Membership Has Been Cancelled</div>
+      <div style="font-size:14px;line-height:24px;color:#c3c9e0;margin-top:14px;">This confirms your cancellation. Your Platinum access has ended, and no further charges will be made.</div>
+    </td>
+  </tr>
+
+  <!-- GREETING -->
+  <tr>
+    <td style="padding:20px 24px 0 24px;font-family:Arial,Helvetica,sans-serif;">
+      <div style="font-size:13.5px;line-height:20px;color:#c3c9e0;">Hi __NOMBRE__, your Platinum membership is cancelled as of today. The Platinum plays, tools and the Sharp Club are now closed on your account.</div>
+    </td>
+  </tr>
+
+  <!-- MEMBERSHIP SUMMARY -->
+  <tr>
+    <td style="padding:26px 24px 4px 24px;font-family:Arial,Helvetica,sans-serif;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#12161F;border:1px solid rgba(232,199,102,.40);border-radius:16px;">
+        <tr>
+          <td style="padding:18px 20px 4px 20px;">
+            <div style="font-size:10.5px;line-height:14px;font-weight:700;color:#e8c766;letter-spacing:2.2px;"><span style="display:inline-block;width:14px;height:3px;background-color:#2EE6A8;border-radius:2px;vertical-align:middle;margin-right:9px;font-size:0;line-height:0;">&nbsp;</span>MEMBERSHIP SUMMARY</div>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:4px 20px 18px 20px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td style="font-size:13.5px;line-height:20px;color:#c3c9e0;padding:7px 0;">Membership</td>
+                <td align="right" style="font-size:13.5px;line-height:20px;color:#e8c766;font-weight:700;padding:7px 0;">Platinum</td>
+              </tr>
+              <tr>
+                <td style="font-size:13.5px;line-height:20px;color:#c3c9e0;padding:7px 0;border-top:1px solid rgba(255,255,255,.10);">Status</td>
+                <td align="right" style="font-size:13.5px;line-height:20px;color:#e8eaf2;font-weight:700;padding:7px 0;border-top:1px solid rgba(255,255,255,.10);">Cancelled</td>
+              </tr>
+              <tr>
+                <td style="font-size:13.5px;line-height:20px;color:#c3c9e0;padding:7px 0;border-top:1px solid rgba(255,255,255,.10);">Platinum access</td>
+                <td align="right" style="font-size:13.5px;line-height:20px;color:#e8eaf2;font-weight:700;padding:7px 0;border-top:1px solid rgba(255,255,255,.10);">Ended</td>
+              </tr>
+              <tr>
+                <td style="font-size:13.5px;line-height:20px;color:#c3c9e0;padding:7px 0;border-top:1px solid rgba(255,255,255,.10);">Your account</td>
+                <td align="right" style="font-size:13.5px;line-height:20px;color:#2EE6A8;font-weight:700;padding:7px 0;border-top:1px solid rgba(255,255,255,.10);">Free &#8212; still active</td>
+              </tr>
+              <tr>
+                <td style="font-size:13.5px;line-height:20px;color:#c3c9e0;padding:7px 0;border-top:1px solid rgba(255,255,255,.10);">Future charges</td>
+                <td align="right" style="font-size:13.5px;line-height:20px;color:#e8eaf2;font-weight:700;padding:7px 0;border-top:1px solid rgba(255,255,255,.10);">$0.00</td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+
+  <!-- WHAT YOU KEEP -->
+  <tr>
+    <td style="padding:26px 24px 4px 24px;font-family:Arial,Helvetica,sans-serif;">
+      <div style="font-size:10.5px;line-height:14px;font-weight:700;color:#e8c766;letter-spacing:2.2px;"><span style="display:inline-block;width:14px;height:3px;background-color:#2EE6A8;border-radius:2px;vertical-align:middle;margin-right:9px;font-size:0;line-height:0;">&nbsp;</span>WHAT YOU KEEP</div>
+
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:16px;">
+        <tr>
+          <td style="background-color:#12161F;border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:16px 18px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td valign="top" width="24" style="font-size:12.5px;line-height:20px;color:#e8c766;">&#10003;</td>
+                <td style="font-size:13.5px;line-height:20px;color:#c3c9e0;">Your free account stays active &#8212; nothing is deleted.</td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr><td style="height:14px;line-height:14px;font-size:0;">&nbsp;</td></tr>
+        <tr>
+          <td style="background-color:#12161F;border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:16px 18px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td valign="top" width="24" style="font-size:12.5px;line-height:20px;color:#e8c766;">&#9733;</td>
+                <td style="font-size:13.5px;line-height:20px;color:#c3c9e0;">You keep the Dashboard with the daily FREE and GOLD plays.</td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr><td style="height:14px;line-height:14px;font-size:0;">&nbsp;</td></tr>
+        <tr>
+          <td style="background-color:#12161F;border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:16px 18px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td valign="top" width="24" style="font-size:12.5px;line-height:20px;color:#e8c766;">&#8599;</td>
+                <td style="font-size:13.5px;line-height:20px;color:#c3c9e0;">You keep My Bets, your personal tracker and your full history.</td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+
+  <!-- CTA BUTTON -->
+  <tr>
+    <td align="center" style="padding:26px 24px 6px 24px;font-family:Arial,Helvetica,sans-serif;">
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td align="center" style="background-color:#e8c766;border-radius:999px;">
+            <a href="https://buy.stripe.com/5kQdRbfFmgHideubEQefC07" style="display:inline-block;padding:11px 26px;font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:700;color:#0B0E13;text-decoration:none;letter-spacing:.8px;white-space:nowrap;">REJOIN PLATINUM</a>
+          </td>
+        </tr>
+      </table>
+      <div style="font-size:12.5px;line-height:18px;color:#8b93a9;margin-top:14px;">Whenever you&#8217;re ready: $1 for your first week, then $15.99/week. No pressure either way.</div>
+    </td>
+  </tr>
+
+  <!-- SIGNING -->
+  <tr>
+    <td style="padding:26px 24px 30px 24px;font-family:Arial,Helvetica,sans-serif;">
+      <div style="font-size:13.5px;line-height:20px;color:#e8eaf2;">Stay sharp. Stay disciplined. Play the long game.</div>
+      <div style="font-size:12.5px;line-height:17px;color:#e8c766;font-weight:700;letter-spacing:1.2px;margin-top:14px;">THE SHARP TEAM</div>
+      <div style="font-size:11.5px;line-height:15px;color:#8b93a9;margin-top:2px;">Data-Driven Sports Betting Picks</div>
+    </td>
+  </tr>
+
+  <!-- FOOTER -->
+  <tr>
+    <td style="padding:26px 24px 32px 24px;border-top:1px solid rgba(255,255,255,.10);font-family:Arial,Helvetica,sans-serif;" align="center">
+      <img src="https://www.thesharpteam.bet/static/img/sharp-team-header.jpg" alt="The Sharp Team" width="220" style="display:block;width:220px;max-width:220px;height:auto;border:0;margin:0 auto;">
+
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin:20px auto 6px auto;">
+        <tr>
+          <td style="padding:0 6px;"><a href="https://www.instagram.com/thesharp_team" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/instagram.png" alt="Instagram" width="22" height="22" style="display:block;width:22px;height:22px;border:0;"></a></td>
+          <td style="padding:0 6px;"><a href="https://www.facebook.com/thesharpteam" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/facebook.png" alt="Facebook" width="22" height="22" style="display:block;width:22px;height:22px;border:0;"></a></td>
+          <td style="padding:0 6px;"><a href="https://www.thesharpteam.bet/home" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/telegram.png" alt="Telegram" width="22" height="22" style="display:block;width:22px;height:22px;border:0;"></a></td>
+          <td style="padding:0 6px;"><a href="https://www.thesharpteam.bet/home" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/social-x-white.png" alt="X" width="22" height="22" style="display:block;width:22px;height:22px;border:0;"></a></td>
+        </tr>
+      </table>
+
+      <div style="font-size:10.5px;line-height:15px;color:#8b93a9;margin-top:16px;">The Sharp Team &middot; Wallington, NJ</div>
+      <div style="font-size:10.5px;line-height:15px;color:#8b93a9;margin-top:6px;">You are receiving this email because you created an account with The Sharp Team.</div>
+      <div style="font-size:10.5px;line-height:15px;margin-top:8px;"><a href="{{{RESEND_UNSUBSCRIBE_URL}}}" style="color:#8b93a9;text-decoration:underline;">Unsubscribe</a></div>
+    </td>
+  </tr>
+
+</table>
+
+</td>
+</tr>
+</table>
+</body>
+</html>
+"""
+
+
+def send_cancellation_email(nombre: str, email: str,
+                            cancel_token: str = None):
+    """Email #7 CANCELACIÓN (diseño OSCURO PREMIUM aprobado por Alex el
+    2026-11-07; cableado el mismo día): sale SOLO cuando el webhook de
+    Stripe procesa la cancelación REAL de la suscripción en la rama que
+    apaga el acceso Platinum (customer.subscription.deleted o status
+    canceled/unpaid/incomplete_expired), SOLO en la transición real
+    on→off, SOLO para la cohorte nueva (activación ET >= 2026-11-06;
+    Alex/admin siempre pueden recibir el suyo) y SOLO al correo de la
+    propia cuenta. Sin cancel_token (la suscripción que el webhook
+    acaba de desactivar) o fuera de cohorte: no se envía nada
+    (fail-closed); la puerta de _dispatch_email (_cancelacion_ok)
+    re-verifica asunto exacto + Platinum apagado + el evento de esa
+    suscripción registrado en stripe_events."""
+    resend_ok = bool((os.environ.get("RESEND_API_KEY") or "").strip())
+    user = (os.environ.get("EMAIL_USER") or "").strip()
+    pwd = os.environ.get("EMAIL_PASS") or ""
+    if not (resend_ok or (user and pwd)):
+        return
+    if not cancel_token:
+        return
+    dest = (email or "").strip().lower()
+    if not dest:
+        return
+    if not (_destino_email_permitido(dest)
+            or _email_es_cohorte_nueva(dest)):
+        return
+
+    subject = CANCELLATION_SUBJECT
+    text = CANCELLATION_TEXT.replace("__NOMBRE__", nombre)
+    html = CANCELLATION_HTML.replace("__NOMBRE__", nombre)
+
+    def _send():
+        try:
+            _dispatch_email(email, subject, text, html,
+                            cancel_token=cancel_token)
+        except Exception:
+            pass  # silencioso: nunca rompe el webhook
+
+    import threading
+    threading.Thread(target=_send, daemon=True).start()
 
 
 def send_payment_failed_email(nombre: str, email: str, pay_url: str,
@@ -16282,15 +16591,20 @@ def stripe_webhook():
             cancel_at_end = bool(data.get("cancel_at_period_end"))
             row = None
             if sub_id:
-                row = db.execute("SELECT id, email, nombre, cancel_requested_at FROM users WHERE stripe_subscription_id = ?",
+                row = db.execute("SELECT id, email, nombre, cancel_requested_at, platinum_unlocked FROM users WHERE stripe_subscription_id = ?",
                                  (sub_id,)).fetchone()
             if row is None and customer_id:
-                row = db.execute("SELECT id, email, nombre, cancel_requested_at FROM users WHERE stripe_customer_id = ?",
+                row = db.execute("SELECT id, email, nombre, cancel_requested_at, platinum_unlocked FROM users WHERE stripe_customer_id = ?",
                                  (customer_id,)).fetchone()
             if row:
                 email = row["email"]
                 if etype == "customer.subscription.deleted" or status in (
                         "canceled", "unpaid", "incomplete_expired"):
+                    _tenia_platinum = False
+                    try:
+                        _tenia_platinum = bool(row["platinum_unlocked"])
+                    except Exception:
+                        _tenia_platinum = False
                     db.execute(
                         "UPDATE users SET platinum_unlocked = 0, stripe_subscription_id = NULL, "
                         "stripe_subscription_status = ?, stripe_trial_ends = NULL, "
@@ -16302,10 +16616,21 @@ def stripe_webhook():
                         "UPDATE users SET telegram_ban_pending = 1, telegram_unban_pending = 0"
                         " WHERE id = ? AND telegram_user_id IS NOT NULL", (row["id"],))
                     db.commit()
-                    _auditar(email, f"Elite desactivada ({etype}, status={status})")
+                    _auditar(email, f"Elite desactivada ({etype}, status={status}, sub {sub_id or 'n/a'})")
                     # Gerenciales (2026-10-25, pedido de Alex): avisar cancelación.
                     _nm = (row["nombre"] or email) if "nombre" in row.keys() else email
                     log_notificacion(db, "cancelacion", f"Cliente canceló: {_nm}", email)
+                    # Email #7 CANCELACIÓN (2026-11-07): confirmación al
+                    # miembro SOLO en la transición real Platinum on→off
+                    # de ESTE evento; el sender y la puerta
+                    # (_cancelacion_ok) re-verifican cohorte, asunto
+                    # exacto y el evento de esta suscripción en
+                    # stripe_events. Fail-closed en todo.
+                    if _tenia_platinum and sub_id:
+                        try:
+                            send_cancellation_email(_nm, email, sub_id)
+                        except Exception:
+                            pass
                 else:
                     db.execute(
                         "UPDATE users SET stripe_subscription_id = ? WHERE id = ?",
