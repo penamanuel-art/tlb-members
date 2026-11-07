@@ -779,15 +779,16 @@
     var ms=[120,480,950];
     for(var u=0;u<ms.length;u++){(function(m){timers.push(setTimeout(function(){place(findEl(s.sel));},m));})(ms[u]);}
   }
-  function end(){
+  function end(status){
     root.hidden=true;ring.hidden=true;clear();
     try{localStorage.setItem('tst_tour_done_v1','1');}catch(e){}
+    try{fetch('/api/tour-event',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({status:(status==='skipped')?'skipped':'completed'}),keepalive:true}).catch(function(){});}catch(e){}
     window.removeEventListener('resize',reposition);
     window.removeEventListener('scroll',reposition);
   }
   function advance(){
     var n=chIdx(curCh)+1;
-    if(n>=CHAPTERS.length){end();return;}
+    if(n>=CHAPTERS.length){end('completed');return;}
     save({ch:CHAPTERS[n].id,i:0});
     location.href=CHAPTERS[n].url;
   }
@@ -810,7 +811,7 @@
   }
   bNext.addEventListener('click',function(){if(idx>=steps.length-1)advance();else show(idx+1);});
   bBack.addEventListener('click',function(){if(idx>0)show(idx-1);else retreat();});
-  bSkip.addEventListener('click',end);
+  bSkip.addEventListener('click',function(){end('skipped');});
   window.tstStartTour=function(){save({ch:'home',i:0});if(curCh==='home')start(0);else location.href='/home';};
   var st=load();
   if(/[?&]tour=1(&|$)/.test(location.search)){save({ch:curCh,i:0});setTimeout(function(){start(0);},600);}
