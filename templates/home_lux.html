@@ -466,6 +466,22 @@
   {% endif %}
   {% endfor %}
   {% endif %}
+  {% if not miembro_platinum and plats %}
+  {# Tarjeta resumen Platinum bloqueada estilo WGT (2026-11-07, aprobada por Alex): dice la suscripción bloqueada con el conteo real del día. Solo la ve quien NO tiene Platinum y solo cuando hay jugadas Platinum hoy. #}
+  <div style="background:#12151d;border:1px solid #6b5a1e;border-radius:14px;padding:14px 16px;margin:0 0 14px;">
+    <div style="display:flex;gap:12px;align-items:flex-start;">
+      <div style="background:#2a230f;width:44px;height:44px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex:0 0 auto;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="5" y="10" width="14" height="10" rx="2" fill="#e8c766"/><path d="M8 10V7a4 4 0 0 1 8 0v3" stroke="#e8c766" stroke-width="2.4"/></svg>
+      </div>
+      <div>
+        <div style="color:#ffffff;font-size:15px;font-weight:600;line-height:1.25;">{{ plats|length }} Platinum {% if plats|length == 1 %}play{% else %}plays{% endif %} on today's board</div>
+        <div style="color:#a7b0c0;font-size:12.5px;line-height:1.45;margin-top:3px;">Included with a Platinum membership. Platinum members only.</div>
+        <div style="color:#a7b0c0;font-size:12.5px;margin-top:4px;text-decoration:underline;">First week $1, then $15.99/week</div>
+      </div>
+    </div>
+    <a href="{{ url_for('desbloquear_platinum') }}" style="display:block;background:#1b2030;color:#ffffff;text-align:center;font-size:13.5px;font-weight:500;border-radius:10px;padding:11px 10px;margin-top:12px;text-decoration:none;">Start today for $1&nbsp;&nbsp;→</a>
+  </div>
+  {% endif %}
   {% if plays and not plats %}
   {# Sin Platinum hoy: la tarjeta Platinum APARECE igual, vacía, con EL MISMO DISEÑO de las demás (botón y fila de botones abajo); solo el medio lleva el mensaje (órdenes de Alex 2026-10-30) #}
   {% set _dest = url_for('desbloquear_platinum') if not miembro_platinum else '/home' %}
