@@ -1092,7 +1092,7 @@ ACTIVATION_HTML = """<!DOCTYPE html>
     <td style="padding:30px 24px 4px 24px;font-family:Arial,Helvetica,sans-serif;">
       <div style="font-size:10.5px;line-height:14px;font-weight:700;color:#e8c766;letter-spacing:2.2px;"><span style="display:inline-block;width:14px;height:3px;background-color:#2EE6A8;border-radius:2px;vertical-align:middle;margin-right:9px;font-size:0;line-height:0;">&nbsp;</span>ONE LAST STEP</div>
       <div style="font-size:21px;line-height:27px;font-weight:700;color:#ffffff;letter-spacing:.3px;margin-top:16px;">__TITULO__</div>
-      <div style="font-size:14px;line-height:24px;color:#e8eaf2;margin-top:18px;">Hi __NOMBRE__,</div>
+      <div style="font-size:13.5px;line-height:20px;color:#e8eaf2;margin-top:18px;">Hi __NOMBRE__,</div>
       <div style="font-size:13.5px;line-height:20px;color:#c3c9e0;margin-top:8px;">__CUERPO__</div>
     </td>
   </tr>
@@ -1115,8 +1115,10 @@ ACTIVATION_HTML = """<!DOCTYPE html>
     <td style="padding:22px 24px 4px 24px;font-family:Arial,Helvetica,sans-serif;">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#12161F;border:1px solid rgba(232,199,102,.40);border-radius:16px;">
         <tr>
-          <td style="padding:16px 18px;font-size:13.5px;line-height:20px;color:#c3c9e0;">
-            <span style="color:#ffffff;font-weight:700;">Your account is not active yet.</span> Until you confirm, you can't log in and nothing is unlocked &mdash; no Dashboard, no plays. If you didn't create this account, just ignore this email: without confirmation, the account will never be activated.
+          <td style="padding:16px 18px;">
+            <div style="font-size:15.5px;line-height:21px;font-weight:700;color:#ffffff;">Your account is not active yet.</div>
+            <div style="font-size:13.5px;line-height:20px;color:#c3c9e0;margin-top:8px;">Until you confirm, you can't log in and nothing is unlocked &mdash; no Dashboard, no plays.</div>
+            <div style="font-size:13.5px;line-height:20px;color:#c3c9e0;margin-top:10px;">Didn't create this account? Just ignore this email &mdash; without confirmation, the account will never be activated.</div>
           </td>
         </tr>
       </table>
