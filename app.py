@@ -1240,7 +1240,7 @@ def _turnstile_ok() -> bool:
 _ACTIVATION_FOOTER = """<tr><td style="background:#ffffff;border-top:1px solid #e2e8f0;border-radius:0 0 16px 16px;padding:22px 24px 20px;text-align:center;">
 <img src="https://www.thesharpteam.bet/static/img/sharp-team-logo.png" width="76" alt="The Sharp Team" style="display:block;margin:0 auto 8px;">
 <div style="font-size:11.5px;font-weight:800;color:#0f172a;letter-spacing:1.5px;">THE SHARP TEAM</div>
-<div style="font-size:9.5px;color:#64748b;margin-top:5px;">250 Park Avenue, Suite 1800, New York, NY 10017 &middot; (239) 376-8798</div>
+<div style="font-size:9.5px;color:#64748b;margin-top:5px;">Wallington, NJ</div>
 <div style="margin-top:12px;">
 <a href="https://www.instagram.com/the_sharp_team" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/instagram.png" width="30" height="30" alt="Instagram" style="border:0;margin:0 6px;"></a>
 <a href="https://x.com/thesharpteambet" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/x.png" width="30" height="30" alt="X" style="border:0;margin:0 6px;"></a>
@@ -2389,7 +2389,7 @@ __PLAYS_ROWS__
 <div style="text-align:center;padding:20px 20px 14px;">
 <img src="https://www.thesharpteam.bet/static/img/sharp-team-logo.png" alt="The Sharp Team" width="110" style="width:110px;height:auto;display:block;margin:0 auto;border:0;">
 <p style="margin:10px 0 0;color:#111111;font-size:9.2px;font-weight:800;letter-spacing:3px;">THE SHARP TEAM</p>
-<p style="margin:8px 0 0;color:#9ca3af;font-size:8.4px;">250 Park Avenue, Suite 1800, New York, NY 10017</p>
+<p style="margin:8px 0 0;color:#9ca3af;font-size:8.4px;">Wallington, NJ</p>
 <p style="margin:4px 0 0;color:#9ca3af;font-size:8.4px;"><a href="tel:+12393768798" style="color:#9ca3af;text-decoration:none;">(239) 376-8798</a></p>
 <p style="margin:12px 0 0;color:#9ca3af;font-size:7.6px;">21+. Play responsibly. If you or someone you know has a gambling problem, call or text <a href="tel:18004262537" style="color:#9ca3af;text-decoration:underline;">1-800-GAMBLER</a>.</p>
 <p style="margin:8px 0 0;color:#9ca3af;font-size:7.6px;">Don't want these emails anymore? <a href="{{{RESEND_UNSUBSCRIBE_URL}}}" style="color:#9ca3af;text-decoration:underline;">Unsubscribe</a> — one click, no questions asked.</p>
@@ -7639,7 +7639,7 @@ def send_cancellation_confirmed_email(nombre, email, fecha_fin_txt=None):
             "Thank you for being part of The Sharp Team. We'd love "
             "your feedback on how we can improve.\n"
             "Need help? Reply to this email anytime.\n\n"
-            "250 Park Avenue, Suite 1800, New York, NY 10017 · (239) 376-8798\n"
+            "The Sharp Team · Wallington, NJ\n"
             "Instagram: https://www.instagram.com/the_sharp_team/\n"
             "Telegram: https://t.me/thesharpteam\n"
             "Facebook: https://www.facebook.com/profile.php?id=61595131043413\n\n"
@@ -7714,8 +7714,7 @@ def send_cancellation_confirmed_email(nombre, email, fecha_fin_txt=None):
         'text-align:center;margin:0 0 16px;">Need help? Reply to this '
         'email anytime.</p>'
         '<p style="text-align:center;font-size:9.5px;color:#8a93a5;'
-        'line-height:1.6;margin:0 0 12px;">250 Park Avenue, Suite 1800, '
-        'New York, NY 10017 &middot; (239) 376-8798</p>'
+        'line-height:1.6;margin:0 0 12px;">The Sharp Team &middot; Wallington, NJ</p>'
         '<div style="text-align:center;margin:0 0 12px;">'
         '<a href="https://www.instagram.com/the_sharp_team/" '
         'style="text-decoration:none;"><img '
@@ -8645,7 +8644,7 @@ def _settlement_email_html(bets, single=None):
             "  <tr><td style=\"background:#ffffff;border-top:1px solid #e3e8f2;padding:18px 24px 16px;text-align:center;\">\n"
             "    <img src=\"https://www.thesharpteam.bet/static/img/sharp-team-logo.png\" width=\"44\" alt=\"The Sharp Team\" style=\"display:block;margin:0 auto 5px;\">\n"
             "    <div style=\"font-size:8.4px;font-weight:800;color:#0c1638;letter-spacing:1px;\">THE SHARP TEAM</div>\n"
-            "    <div style=\"font-size:8.1px;color:#8494ad;margin-top:3px;\">250 Park Avenue, Suite 1800, New York, NY 10017 · (239) 376-8798</div>\n"
+            "    <div style=\"font-size:8.1px;color:#8494ad;margin-top:3px;\">Wallington, NJ</div>\n"
             "    <div style=\"font-size:8.1px;color:#8494ad;margin-top:8px;\">Daily plays, results and receipts: <a href=\"https://t.me/thesharpteam\" style=\"color:#0e9f74;text-decoration:none;\">t.me/thesharpteam</a></div>\n"
             "    <div style=\"font-size:8.1px;color:#8494ad;line-height:1.5;margin-top:10px;\">21+. Play responsibly. If you or someone you know has a gambling problem, call or text 1-800-GAMBLER.</div>\n"
             "    <div style=\"font-size:8.1px;color:#8494ad;line-height:1.5;margin-top:6px;\">Must be 21+. The Sharp Team provides information and entertainment only and is not a sportsbook. Past results do not guarantee future performance. 1u = $100.</div>\n"
