@@ -274,12 +274,12 @@
 
   <!-- ===== HERO ===== -->
   <section class="hp-hero">
-    <div class="center"><span class="pill gold">Start today for $1 — your first month of Platinum is FREE</span></div>
+    <div class="center"><span class="pill gold">Start today for $1 — your first week of Platinum, then $15.99/week</span></div>
     <h1>Stop betting blind.<br>Start betting with <span class="hl">a system behind every play.</span></h1>
     <p class="sub">Daily plays priced by a real model, published before game time, and proven with the actual ticket — every single day.</p>
     <a class="cta" href="{{ url_for('register') }}">Start for $1</a>
     <a class="cta ghost" href="{{ url_for('login') }}">I already have an account</a>
-    <p class="micro"><b>$1 today.</b> Then your first month of Platinum is FREE — after that, $15.99/week. Cancel anytime.</p>
+    <p class="micro"><b>$1 today.</b> That covers your first week of Platinum — after that, $15.99/week. Cancel anytime.</p>
     <div class="hp-proof">
       {% if total >= 500 %}
       <b>{{ wins }}-{{ losses }}, {{ "%+.2f"|format(roi) }}% ROI</b> — every play documented and graded in public.
@@ -322,7 +322,7 @@
       </div>
       <div class="hp-diff">
         <div class="hp-diff-cat">The price</div>
-        <div class="hp-diff-us"><span class="ck">✓</span><span class="tx"><span class="who">THE SHARP TEAM</span>$1 today, your first month of Platinum free, then $15.99/week. That's it.</span></div>
+        <div class="hp-diff-us"><span class="ck">✓</span><span class="tx"><span class="who">THE SHARP TEAM</span>$1 for your first week, then $15.99/week. That's it.</span></div>
         <div class="hp-diff-them"><span class="xx">✕</span><span class="tx"><span class="who">TYPICAL</span>Hundreds upfront before you see a single pick.</span></div>
       </div>
       <div class="hp-diff">
@@ -427,7 +427,7 @@
         <li>Private Telegram channel</li>
         <li>30-Day Academy included</li>
       </ul>
-      <div class="price">$1 today · first month FREE · then $15.99/week</div>
+      <div class="price">$1 for your first week · then $15.99/week</div>
     </div>
   </section>
 
@@ -576,8 +576,8 @@
             <span class="num" style="background:var(--hp-mint);color:#06231a;">2</span>
           </div>
           <div>
-            <h3>First month of Platinum: <span>FREE</span></h3>
-            <p>Every play and every tool, fully unlocked for a full month — on us.</p>
+            <h3>First week of Platinum: <span>$1</span></h3>
+            <p>Every play and every tool, fully unlocked for your whole first week.</p>
           </div>
         </div>
         <div class="hp-ostep">
@@ -587,14 +587,14 @@
           </div>
           <div>
             <h3>Then <span>$15.99/week</span></h3>
-            <p>After your free month, Platinum continues at $15.99/week. Cancel anytime from your account.</p>
+            <p>After your first week, Platinum continues at $15.99/week. Cancel anytime from your account.</p>
           </div>
         </div>
       </div>
       <div class="bigprice">Start today for <span>$1</span></div>
       <p class="price-line">Rather stay free? <b>Sharp Free stays free forever</b> — daily free picks, no card required.</p>
       <a class="cta gold" href="{{ url_for('register') }}">Start for $1</a>
-      <p class="micro">$1 today · FREE first month · $15.99/week after. No surprises.</p>
+      <p class="micro">$1 today · first week covered · $15.99/week after. No surprises.</p>
     </div>
   </section>
 
@@ -617,10 +617,10 @@
     </details>
     <details>
       <summary>What do I get with the $1 start?<span class="pm">+</span></summary>
-      <div class="ans">Everything Platinum includes, from day one: Gold + Platinum plays, the +EV Board across 12 sportsbooks, Player Props, Line Moves, Sharp Money, Compare Prices, the AI Assistant, the private Telegram channel and the 30-Day Academy. And your first full month of Platinum is free.</div>
+      <div class="ans">Everything Platinum includes, from day one: Gold + Platinum plays, the +EV Board across 12 sportsbooks, Player Props, Line Moves, Sharp Money, Compare Prices, the AI Assistant, the private Telegram channel and the 30-Day Academy. And your first week of Platinum starts for just $1.</div>
     </details>
     <details>
-      <summary>What happens after my free month?<span class="pm">+</span></summary>
+      <summary>What happens after my first week?<span class="pm">+</span></summary>
       <div class="ans">Platinum continues at $15.99/week — that's the whole price, no tiers above it and no upsells. If you cancel, you keep access for the time you've already covered, and Sharp Free stays free forever either way.</div>
     </details>
     <details>
@@ -638,7 +638,7 @@
   <!-- ===== FINAL CTA ===== -->
   <section>
     <h2>Your first play is <span class="hl">waiting</span></h2>
-    <p class="sub">Create your free account in under a minute — or start Platinum today for $1 and get your first month free.</p>
+    <p class="sub">Create your free account in under a minute — or start Platinum today for $1.</p>
     <a class="cta" href="{{ url_for('register') }}">Create a free account →</a>
     <p class="micro">Free forever · No card required for Sharp Free</p>
   </section>
