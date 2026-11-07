@@ -2208,7 +2208,7 @@ CANCELLATION_HTML = """<!DOCTYPE html>
           <td align="center" valign="middle" width="60" height="60" style="width:60px;height:60px;background-color:#e8c766;border-radius:50%;font-family:Arial,Helvetica,sans-serif;font-size:26px;line-height:60px;mso-line-height-rule:exactly;color:#0B0E13;font-weight:700;">&#10005;</td>
         </tr>
       </table>
-      <div style="font-size:31px;line-height:39px;font-weight:800;color:#e8c766;letter-spacing:.3px;margin-top:20px;">Your Platinum Membership Has Been Cancelled</div>
+      <div style="font-size:26px;line-height:33px;font-weight:800;color:#ffffff;text-align:left;border-left:4px solid #e8c766;padding-left:14px;margin-top:20px;">Your Platinum Membership Has Been Cancelled</div>
       <div style="font-size:14px;line-height:24px;color:#c3c9e0;margin-top:14px;">This confirms your cancellation. Your Platinum access has ended, and no further charges will be made.</div>
     </td>
   </tr>
