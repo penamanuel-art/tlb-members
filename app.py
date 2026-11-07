@@ -12296,6 +12296,113 @@ def admin_seed_tracker():
     return redirect(url_for("tracker"))
 
 
+@app.route("/admin/api/seed-tracker-alex", methods=["GET", "POST"])
+def admin_api_seed_tracker_alex():
+    """Auto-importa las jugadas oficiales liquidadas al tracker personal de
+    Alex (cuenta de miembro, ALEX_MEMBER_EMAIL) — 2026-11-07, orden de Alex:
+    las oficiales entran solas a SU tracker al liquidarse, con precio y monto
+    del archivo oficial, tenga o no ticket (su regla vieja era solo-con-ticket
+    y el 2026-11-06 su My Bets quedó sin las oficiales del día).
+
+    Es la versión API de /admin/seed-tracker, con dos diferencias clave:
+    (1) apunta siempre a la cuenta de miembro de Alex, sin depender de la
+    sesión; (2) deduplica por (fecha, pick normalizado) contra TODAS sus
+    filas existentes — así nunca duplica una jugada que él trackeó a mano
+    desde la card (esas llevan el play_id oficial, no el formato hist-).
+    Las filas entran ya calificadas (W/L) con los números del archive, igual
+    que el seed manual. Idempotente: correrlo dos veces no agrega nada.
+    Auth: sesión admin o X-Admin-Key. Lo llama la liquidación nocturna tras
+    actualizar el archive. GET ?fecha=YYYY-MM-DD devuelve sus filas (con
+    resultado) para verificación."""
+    if not _admin_api_autorizado():
+        return jsonify({"ok": False}), 403
+    db = get_db()
+    u = db.execute(
+        "SELECT id FROM users WHERE LOWER(email) = ?", (ALEX_MEMBER_EMAIL,)
+    ).fetchone()
+    if not u:
+        return jsonify({"ok": False, "error": "user"}), 404
+    uid = u["id"] if isinstance(u, dict) or hasattr(u, "keys") else u[0]
+    if request.method == "GET":
+        fecha = (request.args.get("fecha") or "").strip()
+        if fecha:
+            rows = db.execute(
+                "SELECT play_id, fecha, nivel, pick, cuota, stake_unidades, "
+                "stake_monto, resultado FROM tracked_plays "
+                "WHERE user_id = ? AND fecha = ? ORDER BY id",
+                (uid, fecha),
+            ).fetchall()
+        else:
+            rows = db.execute(
+                "SELECT play_id, fecha, nivel, pick, cuota, stake_unidades, "
+                "stake_monto, resultado FROM tracked_plays "
+                "WHERE user_id = ? ORDER BY fecha DESC, id DESC LIMIT 500",
+                (uid,),
+            ).fetchall()
+        return jsonify({
+            "ok": True, "user_id": uid,
+            "rows": [{
+                "play_id": r["play_id"], "fecha": r["fecha"],
+                "nivel": r["nivel"], "pick": r["pick"],
+                "cuota": r["cuota"],
+                "stake_unidades": float(r["stake_unidades"] or 0),
+                "stake_monto": float(r["stake_monto"] or 0),
+                "resultado": r["resultado"],
+            } for r in rows],
+        })
+    existing = db.execute(
+        "SELECT fecha, pick FROM tracked_plays WHERE user_id = ?", (uid,)
+    ).fetchall()
+    seen = {
+        ((r["fecha"] or "").strip(), _norm_free_pick(r["pick"] or "").lower())
+        for r in existing
+    }
+    added = []
+    settled = 0
+    for d in load_archive():
+        fecha = (d.get("fecha") or "").strip()
+        for j in d.get("jugadas", []) or []:
+            if j.get("resultado") not in ("WON", "LOST") or not j.get("pick"):
+                continue
+            settled += 1
+            key = (fecha, _norm_free_pick(j["pick"]).lower())
+            if key in seen:
+                continue
+            slug = "".join(c if c.isalnum() else "-" for c in j["pick"].lower())
+            slug = "-".join(s for s in slug.split("-") if s)
+            play_id = f"hist-{fecha}-{slug}"
+            try:
+                db.execute(
+                    """INSERT INTO tracked_plays
+                       (user_id, play_id, fecha, nivel, pick, cuota, stake_unidades,
+                        stake_monto, edge, resultado, created_at)
+                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                    (
+                        uid, play_id, fecha,
+                        j.get("nivel", ""), j.get("pick", ""),
+                        int(j.get("cuota", 0) or 0),
+                        float(j.get("stake_unidades", 0) or 0),
+                        float(j.get("stake_monto", 0) or 0),
+                        _edge_num(j.get("edge")),
+                        "W" if j.get("resultado") == "WON" else "L",
+                        now_iso(),
+                    ),
+                )
+                seen.add(key)
+                added.append({
+                    "fecha": fecha, "pick": j.get("pick"),
+                    "nivel": j.get("nivel"),
+                    "resultado": "W" if j.get("resultado") == "WON" else "L",
+                })
+            except INTEGRITY_ERRORS:
+                pass
+    db.commit()
+    return jsonify({
+        "ok": True, "user_id": uid, "added": len(added),
+        "settled_total": settled, "added_rows": added,
+    })
+
+
 def log_notificacion(db, tipo, titulo, detalle=""):
     """Registra una notificación en el centro del admin (2026-10-07)."""
     try:
