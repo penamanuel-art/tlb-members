@@ -14512,7 +14512,7 @@ def game_center_follow(event_id):
 # condición elegida. Las vigila hidden_files/price-alerts-check.py cada
 # 15 min contra el gamecenter.json fresco. Toda alerta muere al empezar
 # el partido; el miembro puede detenerla antes desde /alertas.
-PA_LIMIT_FREE = 10
+PA_LIMIT_FREE = 0
 PA_LIMIT_PLATINUM = 25
 _PA_CONDICIONES = ("target", "price_moves", "number_moves", "book_best")
 _PA_MERCADOS = ("h2h", "spreads", "totals")
@@ -14879,6 +14879,48 @@ def tools_line_moves():
     return render_template("tools_line_moves.html",
                            moves=board.get("moves", []),
                            updated_at=board.get("updated_at", ""))
+
+
+# ----------------- Datos de herramientas vía la app (2026-11-06) -------
+# Los JSON de las herramientas (rama data-board) se sirven TAMBIÉN por
+# estas rutas, con el MISMO candado Platinum de cada página: sin sesión,
+# login; miembro FREE, fuera (página de desbloqueo); Platinum/Alex, el
+# JSON. El contenido se lee del lado del servidor con los loaders de
+# siempre (caché en memoria); ninguna plantilla pide la URL raw.
+def _tool_data_response(loader):
+    if not platinum_unlocked_for(current_user()):
+        return redirect(url_for("desbloquear_platinum"))
+    return jsonify(loader())
+
+
+@app.route("/api/data/props-board")
+@login_required
+def api_data_props_board():
+    return _tool_data_response(load_props_board)
+
+
+@app.route("/api/data/sharp-board")
+@login_required
+def api_data_sharp_board():
+    return _tool_data_response(load_sharp_board)
+
+
+@app.route("/api/data/ev-board")
+@login_required
+def api_data_ev_board():
+    return _tool_data_response(load_ev_board)
+
+
+@app.route("/api/data/gamecenter")
+@login_required
+def api_data_gamecenter():
+    return _tool_data_response(load_gamecenter)
+
+
+@app.route("/api/data/line-moves")
+@login_required
+def api_data_line_moves():
+    return _tool_data_response(load_line_moves)
 
 
 # ------------------------------------------------------- Web Push ----
