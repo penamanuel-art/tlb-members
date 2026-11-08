@@ -1465,5 +1465,24 @@ body{background-color:#0B0E13!important;background-image:radial-gradient(560px 3
 })();
 </script>
 
+{% if session.get('user_id') %}
+<script>
+/* Latido de presencia (2026-11-08): avisa al servidor que el miembro
+   sigue dentro del Dashboard; alimenta el globo en vivo del Admin. */
+(function(){
+  function latido(){
+    if(document.visibilityState!=='visible'){return;}
+    try{
+      fetch('/api/presencia',{method:'POST',credentials:'same-origin',keepalive:true}).catch(function(){});
+    }catch(e){}
+  }
+  latido();
+  setInterval(latido,60000);
+  document.addEventListener('visibilitychange',function(){
+    if(document.visibilityState==='visible'){latido();}
+  });
+})();
+</script>
+{% endif %}
 </body>
 </html>
