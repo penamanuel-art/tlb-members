@@ -48,8 +48,8 @@ twq('config','rhgk7');
     line-height:1.5;
     -webkit-font-smoothing:antialiased;
   }
-  .wrap{max-width:430px;margin:0 auto;background:var(--bg);min-height:100vh;box-shadow:0 0 40px rgba(0,0,0,.6);padding-bottom:78px;}
-  section{padding:38px 22px;}
+  .wrap{max-width:470px;margin:0 auto;background:var(--bg);min-height:100vh;box-shadow:0 0 40px rgba(0,0,0,.6);padding-bottom:78px;}
+  section{padding:30px 16px;}
   h1{font-size:30px;line-height:1.18;font-weight:900;text-align:center;}
   h1 .hl{color:var(--mint);}
   h2{font-size:22px;font-weight:800;text-align:center;margin-bottom:8px;}
@@ -117,14 +117,26 @@ twq('config','rhgk7');
     box-shadow:0 6px 18px rgba(0,0,0,.25);
   }
   .cost{
-    background:linear-gradient(180deg,#20232e,#191c25);border:1px solid var(--line);
-    border-radius:18px;padding:22px;text-align:center;
-    box-shadow:0 1px 2px rgba(0,0,0,.30),0 14px 32px rgba(0,0,0,.38);
+    position:relative;overflow:hidden;
+    background:linear-gradient(180deg,#20232e,#1D2029);border:1px solid rgba(232,199,102,.45);
+    border-radius:18px;padding:20px 18px;text-align:left;
+    box-shadow:0 1px 2px rgba(0,0,0,.30),0 12px 28px rgba(0,0,0,.35),0 0 26px rgba(232,199,102,.07);
   }
-  .cost .icon-chip{margin:0 auto 12px;}
-  .cost .big{font-size:20px;font-weight:800;line-height:1.35;}
+  .cost::before{
+    content:"";position:absolute;top:0;left:0;right:0;height:3px;
+    background:linear-gradient(90deg,rgba(232,199,102,0),var(--gold),rgba(232,199,102,0));
+  }
+  .cost .icon-chip{margin:0 0 12px;}
+  .icon-chip.gold{background:rgba(232,199,102,.12);border-color:rgba(232,199,102,.50);color:var(--gold);}
+  .cost .big{font-size:21px;font-weight:800;line-height:1.35;}
   .cost .big span{color:var(--gold);}
-  .cost p{color:var(--muted);font-size:14.5px;margin-top:8px;}
+  .cost p{color:var(--muted);font-size:14.5px;margin-top:10px;line-height:1.55;}
+  .cost .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;}
+  .cost .chips span{
+    font-size:12px;font-weight:700;letter-spacing:.4px;color:#eadfc2;
+    background:rgba(232,199,102,.06);border:1px solid rgba(232,199,102,.35);
+    border-radius:999px;padding:6px 11px;
+  }
   .ba{display:flex;flex-direction:column;gap:12px;margin-top:18px;}
   .ba .col{border-radius:16px;padding:18px;border:1px solid var(--line);box-shadow:0 1px 2px rgba(0,0,0,.30),0 12px 28px rgba(0,0,0,.35);}
   .ba .before{background:linear-gradient(180deg,#1e1a1e,#1a1c24);}
@@ -213,7 +225,7 @@ twq('config','rhgk7');
   .faq p{font-size:14px;color:var(--muted);margin-top:3px;}
   footer{padding:26px 22px 40px;text-align:center;color:var(--muted);font-size:12.5px;border-top:1px solid var(--line);}
   footer .dom{color:var(--gold);font-weight:800;letter-spacing:1px;font-size:14px;}
-  .divider{height:1px;background:var(--line);margin:0 22px;}
+  .divider{height:1px;background:var(--line);margin:0 16px;}
   .pill{
     display:inline-block;font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;
     color:var(--mint);border:1px solid var(--mint);border-radius:999px;padding:5px 12px;margin-bottom:14px;
@@ -398,7 +410,7 @@ twq('config','rhgk7');
         </div>
       </div>
     </div>
-    <h2 style="margin-top:28px;font-size:18px;">The mistakes that keep the cycle spinning</h2>
+    <h2 style="margin-top:24px;font-size:18px;">The mistakes that keep the cycle spinning</h2>
     <ul class="errors">
       <li>Betting without a model — just opinions and gut feelings</li>
       <li>Chasing losses with bigger bets and worse prices</li>
@@ -412,9 +424,10 @@ twq('config','rhgk7');
   <!-- ===== 3. THE COST ===== -->
   <section>
     <div class="cost">
-      <div class="icon-chip neutral"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+      <div class="icon-chip gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
       <div class="big">The cost isn't just the money.<br><span>It's the time, the bankroll, and every blind decision in between.</span></div>
       <p>Hours spent guessing. Slips placed at whatever price was in front of you. A bankroll that shrinks because nobody — including you — can prove what actually works.</p>
+      <div class="chips"><span>Time</span><span>Bankroll</span><span>Blind decisions</span></div>
     </div>
   </section>
 
