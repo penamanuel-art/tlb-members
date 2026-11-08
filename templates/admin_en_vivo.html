@@ -1,0 +1,157 @@
+{% extends "base_v2.html" %}
+{% block title %}En vivo — The Sharp Team{% endblock %}
+{% block content %}
+<style>
+  .ev-wrap { max-width: 680px; margin: 0 auto; padding: 16px 12px 40px; }
+  .ev-card { background: #ffffff; border-radius: 22px; padding: 20px 18px 16px; box-shadow: 0 10px 34px rgba(0,0,0,.35); }
+  .ev-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+  .ev-title { font-size: 1.25rem; font-weight: 800; color: #16283f; margin: 0; }
+  .ev-countbox { text-align: right; }
+  .ev-count { font-size: 2rem; font-weight: 800; color: #C9920E; line-height: 1; }
+  .ev-countlabel { font-size: .68rem; font-weight: 800; letter-spacing: 1.2px; color: #5b7292; }
+  .ev-stage { position: relative; margin-top: 8px; }
+  #globe { width: 100%; height: auto; display: block; touch-action: none; cursor: grab; }
+  #globe:active { cursor: grabbing; }
+  .ev-zoom { position: absolute; right: 6px; top: 6px; display: flex; flex-direction: column; gap: 6px; z-index: 3; }
+  .ev-zoom button { width: 34px; height: 34px; border-radius: 10px; border: 1px solid #aec3da; background: rgba(255,255,255,.94); color: #16283f; font-size: 18px; font-weight: 700; line-height: 1; cursor: pointer; }
+  .ev-info { min-height: 20px; font-size: .85rem; color: #16283f; padding: 8px 2px 0; }
+  .ev-info b { color: #C9920E; }
+  .ev-hint { font-size: .75rem; color: #5b7292; padding: 2px 2px 0; }
+  .ev-list { margin-top: 14px; border-top: 1px solid #e7edf5; }
+  .ev-row { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding: 9px 2px; border-bottom: 1px solid #e7edf5; }
+  .ev-name { font-weight: 800; color: #16283f; font-size: .92rem; }
+  .ev-city { color: #5b7292; font-size: .82rem; flex: 1; }
+  .ev-when { color: #C9920E; font-weight: 700; font-size: .8rem; white-space: nowrap; }
+  .ev-empty { padding: 14px 2px; color: #5b7292; font-size: .88rem; }
+  .ev-foot { font-size: .72rem; color: #5b7292; margin-top: 12px; }
+</style>
+<div class="ev-wrap">
+  <div class="ev-card">
+    <div class="ev-head">
+      <h1 class="ev-title">🌍 En vivo — quién está dentro ahora</h1>
+      <div class="ev-countbox">
+        <div class="ev-count" id="ev-count">–</div>
+        <div class="ev-countlabel">DENTRO AHORA</div>
+      </div>
+    </div>
+    <div class="ev-stage">
+      <svg id="globe" viewBox="0 0 360 360" aria-label="Globo terráqueo con los miembros dentro del Dashboard"></svg>
+      <div class="ev-zoom"><button type="button" id="evzin">+</button><button type="button" id="evzout">−</button></div>
+    </div>
+    <div class="ev-info" id="ev-info">Gira solo, como el de Shopify. Toca un punto dorado para ver quién es.</div>
+    <div class="ev-hint">Arrastra para girar la tierra · pellizca o usa + / − para acercar y alejar. Se actualiza solo cada 20 segundos: quien sale, desaparece.</div>
+    <div class="ev-list" id="ev-list"><div class="ev-empty">Cargando…</div></div>
+    <div class="ev-foot">Presencia = página del Dashboard abierta con latido cada 60s (ventana de 150s). Las ciudades salen de la IP de cada miembro, como en el panel de actividad.</div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
+<script>
+(function(){
+  var members=[], pts=[], geocache={};
+  var W=360, H=360, BASE=166, k=1, rot=[100,-32], land=null, idle=0;
+  var svg=d3.select('#globe');
+  var defs=svg.append('defs');
+  var grad=defs.append('radialGradient').attr('id','gshade').attr('cx','38%').attr('cy','32%').attr('r','80%');
+  grad.append('stop').attr('offset','0%').attr('stop-color','#ffffff');
+  grad.append('stop').attr('offset','70%').attr('stop-color','#eef3f9');
+  grad.append('stop').attr('offset','100%').attr('stop-color','#e7edf5');
+  var proj=d3.geoOrthographic().translate([W/2,H/2]).scale(BASE).rotate(rot).clipAngle(90).precision(.4);
+  var path=d3.geoPath(proj);
+  var gS=svg.append('path').datum({type:'Sphere'}).attr('fill','url(#gshade)').attr('stroke','#aec3da').attr('stroke-width',.8);
+  var gG=svg.append('path').datum(d3.geoGraticule10()).attr('fill','none').attr('stroke','rgba(90,120,160,.15)').attr('stroke-width',.5);
+  var gL=svg.append('g');
+  var gP=svg.append('g');
+  var info=document.getElementById('ev-info');
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(ch){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch];});}
+  function render(){
+    proj.rotate(rot).scale(BASE*k);
+    gS.attr('d',path); gG.attr('d',path);
+    if(land){ gL.selectAll('path').data(land.features).join('path').attr('d',path).attr('fill','#d7e2f0').attr('stroke','#aec3da').attr('stroke-width',.35); }
+    var center=[-rot[0],-rot[1]];
+    var sel=gP.selectAll('g.pt').data(pts).join('g').attr('class','pt');
+    sel.each(function(p){
+      var vis=d3.geoDistance([p.lon,p.lat],center)<Math.PI/2-.03;
+      var xy=proj([p.lon,p.lat]);
+      var el=d3.select(this);
+      el.style('display',vis?'':'none');
+      if(vis&&xy){ el.attr('transform','translate('+xy[0]+','+xy[1]+')'); }
+    });
+    sel.html('');
+    sel.append('circle').attr('r',8.5).attr('fill','rgba(201,146,14,.25)');
+    sel.append('circle').attr('r',3.6).attr('fill','#C9920E').attr('stroke','#ffffff').attr('stroke-width',1.4);
+    sel.style('cursor','pointer').on('click',function(ev,p){
+      var hace=p.s<60?('hace '+p.s+'s'):('hace '+Math.round(p.s/60)+' min');
+      info.innerHTML='<b>'+esc(p.n)+'</b> — '+esc(p.c)+' · activo '+hace;
+      idle=0;
+    });
+  }
+  render();
+  d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json').then(function(w){
+    land=topojson.feature(w,w.objects.countries); render();
+  }).catch(function(){});
+  var drag=d3.drag().on('drag',function(ev){
+    idle=0;
+    var s=90/(BASE*k);
+    rot[0]+=ev.dx*s; rot[1]-=ev.dy*s;
+    rot[1]=Math.max(-90,Math.min(90,rot[1]));
+    render();
+  });
+  svg.call(drag);
+  var zoom=d3.zoom().scaleExtent([1,3.4]).filter(function(ev){
+    return ev.type==='wheel'||(ev.touches&&ev.touches.length>1)||ev.type==='dblclick';
+  }).on('zoom',function(ev){ k=ev.transform.k; idle=0; render(); });
+  svg.call(zoom).on('dblclick.zoom',null);
+  function setk(nk){ k=Math.max(1,Math.min(3.4,nk)); svg.property('__zoom',d3.zoomIdentity.scale(k)); render(); }
+  document.getElementById('evzin').addEventListener('click',function(){ setk(k*1.3); });
+  document.getElementById('evzout').addEventListener('click',function(){ setk(k/1.3); });
+  d3.timer(function(el){
+    idle+=el;
+    if(idle>2600){ rot[0]+=0.14; render(); }
+  });
+  function geocode(ciudad, cb){
+    if(!ciudad){ cb(null); return; }
+    if(ciudad in geocache){ cb(geocache[ciudad]); return; }
+    var city=ciudad.split(',')[0].trim();
+    var region=(ciudad.split(',')[1]||'').trim().toLowerCase();
+    fetch('https://geocoding-api.open-meteo.com/v1/search?name='+encodeURIComponent(city)+'&count=10&language=en&format=json')
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        var res=(d&&d.results)||[];
+        var pick=null, i;
+        for(i=0;i<res.length;i++){ if(res[i].country_code==='US'&&region&&(res[i].admin1||'').toLowerCase()===region){ pick=res[i]; break; } }
+        if(!pick){ for(i=0;i<res.length;i++){ if(res[i].country_code==='US'){ pick=res[i]; break; } } }
+        if(!pick&&res.length){ pick=res[0]; }
+        var out=pick?{lat:pick.latitude,lon:pick.longitude}:null;
+        geocache[ciudad]=out; cb(out);
+      }).catch(function(){ geocache[ciudad]=null; cb(null); });
+  }
+  function refrescar(){
+    fetch('/admin/api/en-vivo',{credentials:'same-origin'})
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        members=d.dentro||[];
+        document.getElementById('ev-count').textContent=d.total;
+        var html='';
+        members.forEach(function(m){
+          var hace=m.segundos<60?('hace '+m.segundos+'s'):('hace '+Math.round(m.segundos/60)+' min');
+          html+='<div class="ev-row"><span class="ev-name">'+esc(m.nombre)+'</span><span class="ev-city">'+esc(m.ciudad||'—')+'</span><span class="ev-when">'+hace+'</span></div>';
+        });
+        if(!members.length){ html='<div class="ev-empty">Nadie dentro ahora mismo.</div>'; }
+        document.getElementById('ev-list').innerHTML=html;
+        pts=[];
+        var pend=members.length;
+        if(!pend){ render(); return; }
+        members.forEach(function(m){
+          geocode(m.ciudad, function(g){
+            if(g){ pts.push({n:m.nombre, c:m.ciudad||'', s:m.segundos, lat:g.lat, lon:g.lon}); }
+            if(--pend===0){ render(); }
+          });
+        });
+      }).catch(function(){});
+  }
+  refrescar();
+  setInterval(refrescar,20000);
+})();
+</script>
+{% endblock %}
