@@ -10724,6 +10724,76 @@ def admin_api_entradas_hoy():
     ])
 
 
+
+@app.route("/admin/api/en-vivo")
+def admin_api_en_vivo():
+    """Quien esta DENTRO del Dashboard ahora mismo (2026-11-08, globo
+    en vivo estilo Shopify pedido por Alex). 'Dentro' = latido de
+    presencia de los ultimos 150 segundos (el Dashboard late cada 60s
+    con la pestana visible; al cerrar o salir, el punto desaparece).
+    Retorna {dentro: [{nombre, email, ciudad, ultimo_et, segundos}],
+    total}. Fuera: admins, cuentas @value.local y cancelaciones
+    pedidas (regla de listas 2026-10-30). Auth: sesion admin O header
+    X-Admin-Key == ADMIN_API_KEY (igual que entradas-hoy)."""
+    api_key = os.environ.get("ADMIN_API_KEY", "")
+    header_key = request.headers.get("X-Admin-Key", "")
+    is_cron = api_key and header_key and hmac.compare_digest(header_key, api_key)
+    try:
+        is_admin = is_admin_for(current_user())
+    except Exception:
+        is_admin = False
+    if not (is_cron or is_admin):
+        return jsonify({"error": "admin only"}), 403
+    db = get_db()
+    db.execute("CREATE TABLE IF NOT EXISTS presencia (user_id INTEGER PRIMARY KEY, ultimo TEXT, ip TEXT)")
+    db.execute("CREATE TABLE IF NOT EXISTS geo_cache (ip TEXT PRIMARY KEY, city TEXT, region TEXT, country TEXT)")
+    from datetime import datetime, timezone, timedelta
+    try:
+        from zoneinfo import ZoneInfo
+        et = ZoneInfo("America/New_York")
+    except Exception:
+        et = timezone.utc
+    ahora = datetime.now(timezone.utc)
+    corte = (ahora - timedelta(seconds=150)).isoformat(timespec="seconds")
+
+    def fmt_hora(ts):
+        try:
+            d = datetime.fromisoformat(str(ts).replace("Z", "+00:00"))
+            if d.tzinfo is None:
+                d = d.replace(tzinfo=timezone.utc)
+            s = d.astimezone(et).strftime("%I:%M %p")
+            return s[1:] if s.startswith("0") else s
+        except Exception:
+            return ""
+
+    rows = db.execute(
+        "SELECT u.nombre AS nombre, u.email AS email, p.ultimo AS ultimo, p.ip AS ip"
+        " FROM presencia p JOIN users u ON u.id = p.user_id"
+        " WHERE p.ultimo >= ? AND COALESCE(u.is_admin, 0) = 0"
+        " AND u.email IS NOT NULL AND u.email != ''"
+        " AND u.email NOT LIKE ? AND u.cancel_requested_at IS NULL"
+        " ORDER BY p.ultimo DESC",
+        (corte, "%@value.local"),
+    ).fetchall()
+    dentro = []
+    for r in rows:
+        try:
+            d = datetime.fromisoformat(str(r["ultimo"]).replace("Z", "+00:00"))
+            if d.tzinfo is None:
+                d = d.replace(tzinfo=timezone.utc)
+            segs = int((ahora - d).total_seconds())
+        except Exception:
+            segs = 0
+        dentro.append({
+            "nombre": r["nombre"] or "Miembro",
+            "email": r["email"],
+            "ciudad": _ciudad_de_ip(db, r["ip"] or ""),
+            "ultimo_et": fmt_hora(r["ultimo"]),
+            "segundos": segs,
+        })
+    return jsonify({"dentro": dentro, "total": len(dentro)})
+
+
 @app.route("/admin/api/tracked-members")
 def admin_api_tracked_members():
     """Miembros que trakean jugadas oficiales desde el Dashboard (2026-10-27, para el email diario de resultados 11 AM): retorna los emails distintos de usuarios con al menos una fila en tracked_plays de nivel oficial (ELITE/GOLD, no VALUE). Auth igual que members-emails: sesión admin O header X-Admin-Key."""
@@ -13141,6 +13211,34 @@ def _registrar_visita(user):
         pass
 
 
+
+@app.route("/api/presencia", methods=["POST"])
+@login_required
+def api_presencia():
+    """Latido de presencia (2026-11-08, pedido de Alex): el Dashboard
+    avisa al cargar y cada 60s que el miembro sigue dentro (solo con la
+    pestana visible). /admin/api/en-vivo lee esta tabla para el globo
+    en vivo estilo Shopify: solo aparece quien esta dentro AHORA."""
+    db = get_db()
+    db.execute("CREATE TABLE IF NOT EXISTS presencia (user_id INTEGER PRIMARY KEY, ultimo TEXT, ip TEXT)")
+    ahora = now_iso()
+    ip = _ip_cliente()
+    uid = session["user_id"]
+    if USE_PG:
+        db.execute(
+            "INSERT INTO presencia (user_id, ultimo, ip) VALUES (?, ?, ?)"
+            " ON CONFLICT (user_id) DO UPDATE SET ultimo = EXCLUDED.ultimo, ip = EXCLUDED.ip",
+            (uid, ahora, ip),
+        )
+    else:
+        db.execute(
+            "INSERT OR REPLACE INTO presencia (user_id, ultimo, ip) VALUES (?, ?, ?)",
+            (uid, ahora, ip),
+        )
+    db.commit()
+    return jsonify({"ok": True})
+
+
 def _ciudad_de_ip(db, ip):
     if not ip:
         return ""
@@ -13170,6 +13268,17 @@ def _ciudad_de_ip(db, ip):
     except Exception:
         pass
     return ", ".join([x for x in [city, region] if x]) or country
+
+
+
+@app.route("/admin/en-vivo")
+@admin_required
+def admin_en_vivo():
+    """Globo en vivo estilo Shopify (2026-11-08, pedido de Alex):
+    quien esta dentro del Dashboard ahora mismo. La pagina consulta
+    /admin/api/en-vivo cada 20s y re-dibuja los puntos; quien sale de
+    la ventana de presencia (150s) desaparece del globo."""
+    return render_template("admin_en_vivo.html")
 
 
 @app.route("/admin/actividad")
