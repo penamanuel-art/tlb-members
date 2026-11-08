@@ -9530,6 +9530,23 @@ def api_own_bets_digests():
     return jsonify({"ok": True, "sent": sent})
 
 
+@app.route("/admin/api/own-bets/tmp-delete-5606", methods=["POST"])
+def api_own_bets_tmp_delete_5606():
+    """SCAFFOLD TEMPORAL (2026-11-08): borra SOLO los own_bets ids 5 y 6
+    de user_id 6 (orden directa de Alex: las re-sube el mismo con la
+    funcion de pegar tickets; el boton Remove de su tracker no respondio
+    en el navegador). Se revierte de app.py en cuanto cumple su unico
+    uso. Auth: X-Admin-Key / sesion admin, igual que el resto de la
+    familia /admin/api/own-bets."""
+    if not _admin_api_autorizado():
+        return jsonify({"ok": False}), 403
+    db = get_db()
+    cur = db.execute(
+        "DELETE FROM own_bets WHERE id IN (5, 6) AND user_id = 6")
+    db.commit()
+    return jsonify({"ok": True, "deleted": cur.rowcount})
+
+
 _SPORT_ICONS = {"NFL": "🏈", "NCAAF": "🏈", "MLB": "⚾", "NHL": "🏒",
                 "NBA": "🏀"}
 _ODDS_KEY_LEAGUE = {"americanfootball_nfl": "NFL",
