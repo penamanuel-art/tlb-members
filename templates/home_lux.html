@@ -430,6 +430,13 @@
     <span class="tst-livetxt"><span class="tst-livetitle">Live scores &amp; games</span><span class="tst-livesub">Every price, the fair line and the edge, for every game.</span></span>
     <span class="tst-livearr">›</span>
   </a>
+  {% if setup_pendiente %}
+  {# Banner de completar la cuenta (2026-11-07, espejo WGT): solo entra quien llegó con el registro de un solo campo y aún no verificó su correo o no fijó su contraseña propia. Estilos propios en línea: no pisa ninguna capa de CSS del home. #}
+  <a href="{{ url_for('bienvenida') }}" style="display:flex;align-items:center;gap:10px;background:rgba(232,199,102,.10);border:1px solid rgba(232,199,102,.55);border-radius:14px;padding:12px 14px;margin:14px 0 0;text-decoration:none;">
+    <span style="font-size:15px;flex:0 0 auto;">🔐</span>
+    <span style="color:#e8c766;font-size:13.5px;font-weight:700;line-height:1.4;">Confirm your email and set your password to keep your access →</span>
+  </a>
+  {% endif %}
   {% if not plays %}
   <div class="tst-emptycard">
     <span class="tst-emptytitle">Today's plays</span>
@@ -445,12 +452,12 @@
   {% set plats = plays|rejectattr('nivel','equalto','GOLD')|rejectattr('nivel','equalto','FREE')|rejectattr('nivel','equalto','VALUE')|list %}
   {% if frees %}
   {% for p in frees %}
-  {% include "_play_card_v5.html" %}
+  {% if miembro_platinum %}{% include "_play_card_v5.html" %}{% else %}{% include "_play_card_locked.html" %}{% endif %}
   {% endfor %}
   {% endif %}
   {% if golds %}
   {% for p in golds %}
-  {% include "_play_card_v5.html" %}
+  {% if miembro_platinum %}{% include "_play_card_v5.html" %}{% else %}{% include "_play_card_locked.html" %}{% endif %}
   {% endfor %}
   {% endif %}
   {% if plats %}
