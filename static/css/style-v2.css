@@ -166,10 +166,10 @@ body.v2::before {
 .v2-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .v2-nav { display: flex; align-items: center; gap: 10px; }
 .v2-nav-link { font-size: 14px; font-weight: 600; text-decoration: none; color: var(--v2-muted); }
-.v2-btn-sm {
+body.v2 .v2-btn-sm {
   font-size: 12px; font-weight: 600;
   font-size: 12px; font-weight: 600; text-decoration: none;
-  padding: 10px 17px; border-radius: var(--v2-radius-sm); color: #04120a;
+  padding: 10px 17px; border-radius: var(--v2-radius-sm); color: #04120a !important;
   background: linear-gradient(135deg, #f3d98b, var(--v2-green));
   box-shadow: 0 8px 26px rgba(232, 199, 102, 0.45);
   transition: transform .18s var(--v2-ease), box-shadow .18s var(--v2-ease);
