@@ -312,7 +312,7 @@
       <img src="{{ url_for('static', filename='img/sharp-letters.png') }}" alt="The Sharp Team" style="height:44px;width:auto;max-width:100%;display:block;">
     </div>
     <div class="topactions">
-      {% if es_admin or es_alex %}<a href="{{ url_for('admin_dashboard') }}" style="display:inline-flex;align-items:center;color:#e8c766;font-size:16px;font-weight:400;letter-spacing:.4px;text-decoration:none;padding:0 2px;">Admin</a>{% endif %}
+      {% if es_admin or es_alex %}<a href="{{ url_for('admin_dashboard') }}" style="display:inline-flex;align-items:center;color:#e8c766;font-size:16px;font-weight:400;letter-spacing:.4px;text-decoration:none;padding:0 2px;">Admin</a><a href="/admin/en-vivo" style="display:inline-flex;align-items:center;color:#e8c766;font-size:16px;font-weight:400;letter-spacing:.4px;text-decoration:none;padding:0 2px;">🌍 Globo</a>{% endif %}
       <button class="bellbtn" type="button" id="tst-bell" aria-label="Notifications"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M13.7 20a2 2 0 0 1-3.4 0"/></svg></button>
       <button class="menubtn" type="button" id="tst-menubtn" aria-expanded="false" onclick="var m=document.getElementById('tst-menu-sheet');var o=m.hidden;m.hidden=!o;this.setAttribute('aria-expanded',o?'true':'false');document.body.style.overflow=o?'hidden':'';" style="cursor:pointer;padding:0;">☰</button>
     </div>
