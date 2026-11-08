@@ -4997,6 +4997,13 @@ def migrate_db():
         if "activated_at" not in cols:
             pending.append("ALTER TABLE users ADD COLUMN activated_at TEXT")
             pending.append("UPDATE users SET activated_at = created_at WHERE email_verified = 1 AND activated_at IS NULL")
+        # Registro de un solo campo (2026-11-07, espejo WGT): marca si la
+        # cuenta ya fijó SU contraseña. Las cuentas que ya existen eligieron
+        # su contraseña al registrarse (DEFAULT 1); solo las cuentas del
+        # registro rápido nacen con 0 (contraseña temporal aleatoria) hasta
+        # que la fijen en /bienvenida → /cuenta/completar.
+        if "password_propia" not in cols:
+            pending.append("ALTER TABLE users ADD COLUMN password_propia INTEGER NOT NULL DEFAULT 1")
         if "activation_reminders" not in cols:
             pending.append("ALTER TABLE users ADD COLUMN activation_reminders INTEGER NOT NULL DEFAULT 0")
         if "activation_reminder_last" not in cols:
@@ -6002,6 +6009,17 @@ def home():
         _racha_plat = racha_platinum()
     except Exception:
         _racha_plat = None
+    # Banner de completar la cuenta (2026-11-07, espejo WGT): solo para
+    # quien entró con el registro de un solo campo y aún no verificó su
+    # correo o no fijó su contraseña propia. Las cuentas de siempre
+    # (verificadas y con su contraseña) nunca lo ven.
+    _setup_pend = False
+    try:
+        if user:
+            _setup_pend = (not user["email_verified"]) or \
+                (not user["password_propia"])
+    except Exception:
+        _setup_pend = False
     return render_template(
         # Tema v2 (moderno) es el predeterminado desde 2026-10-02 (pedido Alex);
         # v1 (clásico) queda como reversión vía /theme/v1. Diseño lux
@@ -6051,6 +6069,7 @@ def home():
         last_elite_win=last_elite_win(),
         locked_ticket_url=locked_ticket_url,
         locked_plays=locked_plays,
+        setup_pendiente=_setup_pend,
         preview_locked_play=preview_locked_play,
         es_admin=is_admin_for(user),
         es_alex=is_alex_member(user),
@@ -6432,6 +6451,11 @@ def _registro_semana():
         return None
 
 
+# Freno anti-abuso del registro rápido (2026-11-07): conteo en memoria
+# por IP, mismo patrón que los avisos de clic (_last_click_notify).
+_REGISTRO_RAPIDO_IP = {}
+
+
 @app.route("/registro", methods=["GET", "POST"])
 def register():
     if "user_id" in session:
@@ -6484,78 +6508,77 @@ def register():
     if REGISTRO_NUEVO_ACTIVO:
         _tpl = "registro_nuevo_es.html" if _lang == "es" else "registro_nuevo.html"
     if request.method == "POST":
-        nombre = request.form.get("nombre", "").strip()
+        # Entrada de UN SOLO CAMPO (2026-11-07, orden de Alex: espejo del
+        # embudo de WGT): el registro pide SOLO el correo (+ la intención
+        # declarada, lista blanca) y la cuenta entra AL INSTANTE con la
+        # sesión abierta. Nombre, teléfono y contraseña se piden DENTRO,
+        # en /bienvenida («Finish setting up your account»). La cuenta
+        # nace SIN verificar: la sesión de entrada es la única vía de
+        # estar dentro sin verificar — el login normal sigue exigiendo
+        # la activación y CompleteRegistration de Meta sigue saliendo
+        # SOLO al activar (activar_cuenta), como siempre.
         email = request.form.get("email", "").strip().lower()
-        password = request.form.get("password", "")
-        phone = request.form.get("phone", "").strip()
-        sms_optin = 1 if request.form.get("sms_optin") == "1" and phone else 0
-        # Intención declarada en la landing nueva (lista blanca estricta):
-        # solo se guarda cuando el interruptor de lanzamiento está activo;
-        # con el flujo de siempre el campo ni se lee ni se guarda.
         _intent = (request.form.get("signup_intent") or "").strip().lower()
         if _intent not in ("platinum", "free"):
             _intent = None
-        if not nombre or not email or len(password) < 6:
-            flash("Escribe tu nombre, un correo válido y una contraseña de al menos 6 caracteres." if _lang == "es" else "Enter your name, a valid email and a password of at least 6 characters.", "error")
+        _email_ok = ("@" in email and "." in email.rsplit("@", 1)[-1]
+                     and " " not in email and len(email) <= 254)
+        if not _email_ok:
+            flash("Escribe un correo válido para entrar." if _lang == "es" else "Enter a valid email to continue.", "error")
             return render_template(_tpl, **_reg_ctx), 400
+        # Freno anti-abuso por IP: máx. 5 registros por IP en una hora,
+        # para que nadie cree cuentas en ráfaga con el formulario corto.
+        _ip = (request.headers.get("X-Forwarded-For", "") or "").split(",")[0].strip() or (request.remote_addr or "")
+        _ahora = time.time()
+        _ventana = [t for t in _REGISTRO_RAPIDO_IP.get(_ip, []) if _ahora - t < 3600]
+        if len(_ventana) >= 5:
+            flash("Demasiados intentos. Espera un poco e inténtalo de nuevo." if _lang == "es" else "Too many attempts. Wait a bit and try again.", "error")
+            return render_template(_tpl, **_reg_ctx), 429
+        _ventana.append(_ahora)
+        _REGISTRO_RAPIDO_IP[_ip] = _ventana
         # Captcha anti-robots (2026-10-18): sin pasar Turnstile no se crea
         # ninguna cuenta. Sin llaves configuradas, _turnstile_ok() no bloquea.
         if not _turnstile_ok():
             flash("Completa la verificación «No soy un robot» e inténtalo de nuevo." if _lang == "es" else "Please complete the 'I'm not a robot' check and try again.", "error")
             return render_template(_tpl, **_reg_ctx), 400
         db = get_db()
-        exists = db.execute("SELECT id, email_verified FROM users WHERE email = ?", (email,)).fetchone()
+        exists = db.execute("SELECT id FROM users WHERE email = ?", (email,)).fetchone()
         if exists:
-            _ya_verificado = 1
-            try:
-                _ya_verificado = exists["email_verified"]
-            except Exception:
-                _ya_verificado = 1
-            if _ya_verificado:
-                flash("Ese correo ya está registrado. Inicia sesión." if _lang == "es" else "That email is already registered. Log in.", "error")
-                return render_template(_tpl, **_reg_ctx), 400
-            # Se registró antes pero nunca activó: token nuevo y reenvío.
-            _tok = secrets.token_urlsafe(32)
-            db.execute("UPDATE users SET activation_token = ? WHERE id = ?",
-                       (_tok, exists["id"]))
-            # Si volvió por la landing nueva con el interruptor activo, se
-            # guarda su intención. La oferta NO se reasigna (2026-11-06,
-            # orden de Alex: cohorte del mes gratis APAGADA para registros
-            # nuevos): quien ya traía la marca la conserva intacta y a
-            # quien no la traía no se le pone.
-            if REGISTRO_NUEVO_ACTIVO:
-                db.execute(
-                    "UPDATE users SET signup_intent = ? WHERE id = ?",
-                    (_intent, exists["id"]))
-            db.commit()
-            send_activation_email(nombre, email, _tok, _lang)
-            return render_template("confirmacion.html", email=email, nombre=nombre, lang=_lang, reenviado=True)
-        # La cuenta nace SIN ACTIVAR (2026-10-18, orden de Alex): no hay
-        # sesión, no hay mes gratis ni bienvenida hasta que el dueño toque
-        # el enlace del correo de activación (/activar/<token>).
+            # Correo ya conocido: NO se crea duplicado ni se revela si la
+            # cuenta está verificada o no. El login normal resuelve cada
+            # caso — si nunca activó, al intentar entrar con su contraseña
+            # el propio login le reenvía la activación, como siempre.
+            flash("Ese correo ya tiene una cuenta. Inicia sesión." if _lang == "es" else "That email already has an account — log in.", "error")
+            return redirect(url_for("login"))
+        # La cuenta nace SIN VERIFICAR pero ENTRA al instante (espejo
+        # WGT, 2026-11-07): nombre provisional = parte local del correo
+        # (la columna nombre es NOT NULL), contraseña temporal aleatoria
+        # hasheada (password_propia = 0 hasta que la fije dentro) y
+        # sesión abierta en el acto. signup_offer queda NULL: todo
+        # registro nuevo entra con la oferta vigente ($1 la primera
+        # semana, luego $15.99/semana). El correo de activación sale por
+        # la vía de siempre SIN bloquear la entrada; activar sigue
+        # siendo lo que convierte la cuenta en miembro confirmado.
         _tok = secrets.token_urlsafe(32)
-        if REGISTRO_NUEVO_ACTIVO:
-            # La cuenta nace con su intención declarada, pero SIN la marca
-            # de la cohorte del mes gratis (2026-11-06, orden de Alex: la
-            # cohorte quedó APAGADA para registros nuevos; todo registro
-            # nuevo entra con la oferta vigente, $1 la primera semana y
-            # luego $15.99/semana). signup_offer queda NULL, igual que el
-            # flujo de siempre. Los usuarios YA marcados antes de hoy no
-            # se tocan: su oferta se les honra.
-            insert_returning_id(
-                db,
-                "INSERT INTO users (nombre, email, password_hash, phone, sms_optin, created_at, lang, email_verified, activation_token, signup_offer, signup_intent) VALUES (?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?)",
-                (nombre, email, hash_password(password), phone or None, sms_optin, now_iso(), _lang, _tok, None, _intent),
-            )
-        else:
-            insert_returning_id(
-                db,
-                "INSERT INTO users (nombre, email, password_hash, phone, sms_optin, created_at, lang, email_verified, activation_token) VALUES (?, ?, ?, ?, ?, ?, ?, 0, ?)",
-                (nombre, email, hash_password(password), phone or None, sms_optin, now_iso(), _lang, _tok),
-            )
+        _local = email.split("@", 1)[0].strip(" ._-") or "Member"
+        nombre = _local[:60]
+        _nuevo_id = insert_returning_id(
+            db,
+            "INSERT INTO users (nombre, email, password_hash, phone, sms_optin, created_at, lang, email_verified, activation_token, signup_offer, signup_intent, password_propia) VALUES (?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?, 0)",
+            (nombre, email, hash_password(secrets.token_urlsafe(32)), None, 0, now_iso(), _lang, _tok, None, _intent),
+        )
         db.commit()
         send_activation_email(nombre, email, _tok, _lang)
-        return render_template("confirmacion.html", email=email, nombre=nombre, lang=_lang, reenviado=False)
+        session["user_id"] = _nuevo_id
+        session["nombre"] = nombre
+        session["is_admin"] = False
+        session.permanent = True
+        _registrar_actividad(_nuevo_id, "login")
+        # Puente del embudo (el mismo de activar_cuenta): quien declaró
+        # intención Platinum cae directo en la página de desbloqueo.
+        if _intent == "platinum":
+            return redirect(url_for("desbloquear_platinum"))
+        return redirect(url_for("bienvenida"))
     _resp = make_response(render_template(_tpl, **_reg_ctx))
     _resp.set_cookie("tst_lang", _lang, max_age=30 * 86400, samesite="Lax")
     return _resp
@@ -6902,7 +6925,79 @@ def bienvenida():
         _fm = bool(_u) and (_u["signup_offer"] or "") == PLATINUM_OFFER_FREE_MONTH
     except Exception:
         _fm = False
-    return render_template("bienvenida.html", nombre=session.get("nombre", ""), fb_reg=fb_reg, fb_event_id=fb_event_id, offer_free_month=_fm)
+    # Estado de «completar la cuenta» (2026-11-07, onboarding espejo del
+    # /welcome de WGT): la tarjeta «Finish setting up your account» solo
+    # aparece si a la cuenta le falta algo — correo sin verificar,
+    # contraseña propia sin fijar, nombre provisional (la parte local
+    # del correo) o teléfono sin registrar.
+    _setup = None
+    try:
+        _u2 = current_user()
+        if _u2:
+            def _col(_row, _k, _def=None):
+                try:
+                    _v = _row[_k]
+                    return _def if _v is None else _v
+                except Exception:
+                    return _def
+            _verificado = bool(_col(_u2, "email_verified", 1))
+            _propia = bool(_col(_u2, "password_propia", 1))
+            _tel = _col(_u2, "phone", "") or ""
+            _local = (_u2["email"] or "").split("@", 1)[0]
+            _nombre_prov = (not (_u2["nombre"] or "").strip()) or \
+                ((_u2["nombre"] or "").strip().lower() == _local.lower())
+            _setup = {
+                "verificado": _verificado,
+                "propia": _propia,
+                "telefono": _tel,
+                "nombre_prov": _nombre_prov,
+                "email": _u2["email"],
+                "falta": (not _verificado) or (not _propia)
+                         or (not _tel) or _nombre_prov,
+            }
+    except Exception:
+        _setup = None
+    return render_template("bienvenida.html", nombre=session.get("nombre", ""), fb_reg=fb_reg, fb_event_id=fb_event_id, offer_free_month=_fm, setup=_setup)
+
+
+@app.route("/cuenta/completar", methods=["POST"])
+@login_required
+def cuenta_completar():
+    """Onboarding dentro de la cuenta (2026-11-07, espejo del /welcome
+    de WGT): guarda nombre, teléfono (+SMS) y la contraseña PROPIA de
+    quien entró con el registro de un solo campo. Nada bloquea: quien
+    no lo completa sigue navegando con su sesión de entrada."""
+    user = current_user()
+    db = get_db()
+    nombre = (request.form.get("nombre") or "").strip()
+    phone = (request.form.get("phone") or "").strip()
+    sms_optin = 1 if request.form.get("sms_optin") == "1" else 0
+    password = request.form.get("password") or ""
+    if password and len(password) < 6:
+        flash("Your password needs at least 6 characters.", "error")
+        return redirect(url_for("bienvenida"))
+    _sets, _params = [], []
+    if nombre:
+        _sets.append("nombre = ?")
+        _params.append(nombre[:80])
+    if phone:
+        _sets.append("phone = ?")
+        _params.append(phone)
+        _sets.append("sms_optin = ?")
+        _params.append(sms_optin)
+    if password:
+        _sets.append("password_hash = ?")
+        _params.append(hash_password(password))
+        _sets.append("password_propia = 1")
+    if _sets:
+        _params.append(user["id"])
+        db.execute(f"UPDATE users SET {', '.join(_sets)} WHERE id = ?",
+                   tuple(_params))
+        db.commit()
+        if nombre:
+            session["nombre"] = nombre
+    flash("Saved — your account setup is updated.", "ok")
+    return redirect(url_for("bienvenida"))
 
 
 @app.route("/login", methods=["GET", "POST"])
