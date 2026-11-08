@@ -13,6 +13,7 @@
 {% set _place_label = 'Place at ' ~ _casa if _casa else 'Place at Novig' %}
 {% set is_value = p.nivel == 'VALUE' %}
 {% set is_free = p.nivel == 'FREE' %}
+{% set is_vault = p.nivel == 'VAULT' %}
 {% set _res = p.resultado if p.resultado is defined else None %}
 {% set _ncaa = {'KSU':2306,'KU':2305,'IU':84,'OSU':194,'CIN':2132,'WVU':277,'AF':2005,'UNLV':2439,'ALA':333,'UGA':61,'TEX':251,'MICH':130,'ND':87,'LSU':99,'TENN':2633,'PSU':213,'ORE':2483,'CLEM':228,'FLA':57,'AUB':2,'TAMU':245,'OU':201,'USC':30,'UCLA':26,'MIA':2390,'FSU':52,'UNC':153,'DUKE':150,'VT':259,'LOU':97,'NCST':152,'SYR':183,'BC':103,'PITT':221,'BAY':239,'TCU':2628,'TTU':2641,'OKST':197,'ISU':66,'UTAH':254,'BYU':252,'ARIZ':12,'ASU':9,'COL':38,'HOU':248,'UCF':2116,'MEM':235,'BSU':68,'SDSU':21,'FRES':278,'ARMY':349,'NAVY':2426,'MRSH':276,'LIB':2335,'JMU':256,'APP':2026,'CCU':324,'GASO':290,'TROY':2653,'ULL':309,'TULN':2655} %}
 {% set _mlb_slug = {'CHW':'cws','WSH':'was'} %}
@@ -155,10 +156,10 @@ body.v2 .v5c{background:linear-gradient(180deg,#0B0E13,#1D2029)}
 </style>
 {% endif %}
 <div class="v5c">
-  <div class="v5c-edge{% if not is_vip %} gold{% endif %}"></div>
+  <div class="v5c-edge{% if not is_vip and not is_vault %} gold{% endif %}"></div>
   <div class="v5c-topsec">
   <div class="v5c-top">
-    {% if is_vip %}<span class="v5c-pill plat">💎 PLATINUM</span><span class="v5c-kind">Platinum play</span>{% elif is_value %}<span class="v5c-pill gold">💎 VALUE PLAY</span><span class="v5c-kind">Value play</span>{% elif is_free %}<span class="v5c-pill gold">FREE PICK</span><span class="v5c-kind">Free Pick play</span>{% else %}<span class="v5c-pill gold">GOLD</span><span class="v5c-kind">Gold play</span>{% endif %}
+    {% if is_vip %}<span class="v5c-pill plat">💎 PLATINUM</span><span class="v5c-kind">Platinum play</span>{% elif is_value %}<span class="v5c-pill gold">💎 VALUE PLAY</span><span class="v5c-kind">Value play</span>{% elif is_free %}<span class="v5c-pill gold">FREE PICK</span><span class="v5c-kind">Free Pick play</span>{% elif is_vault %}<span class="v5c-pill plat">🔒 THE VAULT PLAY</span><span class="v5c-kind">Vault play</span>{% else %}<span class="v5c-pill gold">GOLD</span><span class="v5c-kind">Gold play</span>{% endif %}
     <span class="v5c-liga">{{ p.liga or '' }}</span>
   </div>
   <div class="v5c-head">
@@ -201,9 +202,9 @@ body.v2 .v5c{background:linear-gradient(180deg,#0B0E13,#1D2029)}
     <div class="v5grab"></div>
     <div class="v5shead">
       <div style="flex:1;min-width:0">
-        <div class="v5kick{% if not is_vip %} gold{% endif %}">{{ '💎 PLATINUM' if is_vip else ('💎 VALUE PLAY' if is_value else ('FREE PICK' if is_free else 'GOLD')) }}</div>
+        <div class="v5kick{% if not is_vip and not is_vault %} gold{% endif %}">{{ '💎 PLATINUM' if is_vip else ('🔒 THE VAULT PLAY' if is_vault else ('💎 VALUE PLAY' if is_value else ('FREE PICK' if is_free else 'GOLD'))) }}</div>
         <div class="v5stitle">{{ p.team_name or p.abbr }} {{ _bt_label }}</div>
-        <div class="v5ssub">{{ 'Platinum play' if is_vip else ('Value play' if is_value else ('Free Pick play' if is_free else 'Gold play')) }} &middot; {{ p.liga or '' }}</div>
+        <div class="v5ssub">{{ 'Platinum play' if is_vip else ('Vault play' if is_vault else ('Value play' if is_value else ('Free Pick play' if is_free else 'Gold play'))) }} &middot; {{ p.liga or '' }}</div>
       </div>
       <button class="v5x" data-v5-close aria-label="Cerrar">&times;</button>
     </div>
