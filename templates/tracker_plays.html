@@ -1214,7 +1214,7 @@
     if(m.indexOf('total')>=0||m.indexOf('over')>=0||m.indexOf('under')>=0) return 'Total';
     return 'Moneyline';
   }
-  function pickTxt(r){ var e=r.querySelector('.tkc-pick'); return e? e.textContent.trim() : ''; }
+  function pickTxt(r){ var e=r.querySelector('.tkc-pick'); if(e) return e.textContent.trim(); var sp=r.querySelector('.smc-pick'); if(sp){ var pr=sp.querySelector('.price'); var t=sp.textContent.trim(); if(pr){ var pv=pr.textContent.trim(); if(pv && t.slice(-pv.length)===pv) t=t.slice(0, t.length-pv.length).trim(); } return t; } return ''; }
   function hOddsTxt(r){ var o=parseFloat(r.getAttribute('data-odds')||''); if(isNaN(o)||o===0) return ''; var v=Math.round(o*100)/100; return (v>0?'+':'')+v; }
   function hStakeTxt(r){ var s=stake(r); return '$'+(s%1? s.toFixed(2) : s.toFixed(0)); }
   function histBase(){ return rows.filter(function(r){ return passesPeriod(r)&&passesSrc(r); }); }
@@ -1454,14 +1454,6 @@
           var ot=hOddsTxt(r); if(ot) det.push(ot);
           det.push(hStakeTxt(r));
           var bk=r.getAttribute('data-book')||''; if(bk) det.push(esc(bk));
-          var thumb='';
-          var tb=r.querySelector('.tkc-thumbbtn');
-          if(tb){
-            var full=tb.getAttribute('data-full')||'';
-            var im=tb.querySelector('img');
-            var tsrc=im? (im.getAttribute('src')||'') : '';
-            if(full) thumb='<button type="button" class="tkc-thumbbtn hist-thumbbtn" data-full="'+esc(full)+'" title="View ticket"><img src="'+esc(tsrc||full)+'" alt="Ticket" loading="lazy"></button>';
-          }
           h+='<article class="hist-row '+cls+'">'
             + thumb
             +'<div class="hist-main"><p class="hist-pick">'+esc(histTitle(r))+'</p>'
