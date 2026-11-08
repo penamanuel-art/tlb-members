@@ -134,8 +134,8 @@
   .tst-foot-links a{display:block;color:#A0A8B4;text-decoration:none;font-size:14px;line-height:1.5;padding:6px 0}
   body.v5-sheet-open .nav{display:none!important}
   .v2-bottomnav{position:fixed;left:0;right:0;bottom:0;z-index:1001;display:flex;justify-content:space-around;align-items:stretch;background:#0d1219;border-top:1px solid rgba(139,152,173,.16);padding:6px 6px calc(6px + env(safe-area-inset-bottom))}
-  /* Barra inferior compacta + iconos un poco mas grandes (2026-11-08, pedido de Alex: la barra se veia alta, con demasiado aire; se conserva intacta el area segura del iPhone). Gana sobre style-v2.css: este bloque va despues en el documento. */
-  .v2-bottomnav{padding:2px 6px calc(2px + env(safe-area-inset-bottom))}
+  /* Barra inferior compacta + iconos un poco mas grandes (2026-11-08, pedido de Alex: la barra se veia alta, con demasiado aire). ACTUALIZADO 2026-11-08 15:23 ET: Alex pidio la barra un poco MAS arriba — el area segura del iPhone se CAPA a 13px con min() (antes se aplicaba completa, ~34px): el colchon efectivo bajo los textos queda en ~16px (3px del item + 13px capados) y la raya blanca del home indicator no se monta sobre los botones. Gana sobre style-v2.css: este bloque va despues en el documento. */
+  .v2-bottomnav{padding:2px 6px calc(2px + min(env(safe-area-inset-bottom),13px))}
   .v2-bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 2px 3px;text-decoration:none;color:#969EA9;font-size:10px;font-weight:500;letter-spacing:.01em;min-width:0;border-radius:22px;transition:background-color .2s ease,color .2s ease,transform .2s ease}
   .v2-bnav-item:active{transform:scale(.95)}
   .v2-bnav-item.active{color:#2fe6a7;background:rgba(47,230,167,.15);font-weight:600}
