@@ -264,8 +264,8 @@ twq('config','rhgk7');
   </div>
 
   <div class="card signup" id="signup">
-    <h2>Crea tu cuenta gratis</h2>
-    <p class="lead">La card de hoy sale a las {{ drop_time }}. Cada jugada se publica en el momento en que sale — antes del juego, y queda bloqueada.</p>
+    <h2>Entra solo con tu correo</h2>
+    <p class="lead">Un solo campo, sin tarjeta — tu cuenta abre al instante. La card de hoy sale a las {{ drop_time }}; tu contraseña y tu perfil los fijas dentro, en segundos.</p>
     <span class="pill10">✓ Sin tarjeta, nunca &nbsp;·&nbsp; ⏱ 10 segundos</span>
     <ul class="ben">
       <li><span class="ck">✓</span><span>Una jugada Gold gratis en tu panel cada día — con el ticket original</span></li>
@@ -281,29 +281,25 @@ twq('config','rhgk7');
     {% endwith %}
     <form method="post" action="{{ url_for('register', lang='es') }}">
       <div class="field">
-        <label for="f-nombre">Tu nombre</label>
-        <input id="f-nombre" type="text" name="nombre" required autocomplete="name" placeholder="Tu nombre">
+        <label style="display:flex;gap:10px;align-items:flex-start;background:#05081a;border:1.5px solid rgba(232,199,102,.35);border-radius:14px;padding:13px 15px;cursor:pointer;font-weight:600;">
+          <input type="radio" name="signup_intent" value="free" checked style="width:18px;height:18px;margin-top:2px;accent-color:#2fe6a7;flex:0 0 18px;">
+          <span>⚪ SHARP FREE — $0 para siempre<small style="display:block;color:#9aa7c7;font-weight:400;font-size:13px;margin-top:2px;">Jugadas gratis diarias · sin tarjeta</small></span>
+        </label>
+        <label style="display:flex;gap:10px;align-items:flex-start;background:#05081a;border:1.5px solid rgba(232,199,102,.35);border-radius:14px;padding:13px 15px;cursor:pointer;font-weight:600;margin-top:10px;">
+          <input type="radio" name="signup_intent" value="platinum" style="width:18px;height:18px;margin-top:2px;accent-color:#2fe6a7;flex:0 0 18px;">
+          <span>⭐ PLATINUM (opcional) — Empieza con $1<small style="display:block;color:#9aa7c7;font-weight:400;font-size:13px;margin-top:2px;">$1 por tu primera semana · después $15.99/semana</small></span>
+        </label>
       </div>
       <div class="field">
         <label for="f-email">Tu correo electrónico</label>
-        <p class="hint">Aquí te enviaremos las jugadas todos los días antes de los juegos.</p>
+        <p class="hint">Es el único campo. Aquí te enviaremos las jugadas todos los días antes de los juegos.</p>
         <input id="f-email" type="email" name="email" required autocomplete="email" placeholder="tu@correo.com">
-      </div>
-      <div class="field">
-        <label for="f-phone">Tu n&uacute;mero de tel&eacute;fono</label>
-        <p class="hint">Opcional — recibe las jugadas por texto en cuanto salgan.</p>
-        <input id="f-phone" type="tel" name="phone" autocomplete="tel" placeholder="(555) 123-4567">
-        <label for="f-sms" style="display:flex;gap:8px;align-items:center;margin-top:10px;font-size:.85rem;color:#a8b3cf;cursor:pointer;"><input id="f-sms" type="checkbox" name="sms_optin" value="1" style="width:17px;height:17px;accent-color:#2fe6a7;"> Env&iacute;ame las jugadas por texto en cuanto salgan</label>
-      </div>
-      <div class="field">
-        <label for="f-password">Contraseña</label>
-        <input id="f-password" type="password" name="password" required minlength="6" autocomplete="new-password" placeholder="Mínimo 6 caracteres">
       </div>
       {% if turnstile_key %}
       <div class="cf-turnstile" data-sitekey="{{ turnstile_key }}" data-theme="dark" style="margin:12px 0 4px"></div>
       <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
       {% endif %}
-      <button class="btn" type="submit">Crear mi cuenta gratis<small>y ver las jugadas de hoy →</small></button>
+      <button class="btn" type="submit">Crear mi cuenta gratis<small>entras al instante →</small></button>
     </form>
     <div class="micro"><span><span class="mint">✓</span> Sin tarjeta de crédito</span><span><span class="mint">✓</span> Sin vencimiento</span><span><span class="mint">✓</span> Cancela cuando quieras</span></div>
     <p class="login-line">¿Ya tienes cuenta? <a href="{{ url_for('login') }}">Inicia sesión aquí →</a></p>
