@@ -475,7 +475,7 @@
 {% if rows %}
 <div class="wgt-list" data-tabs="overview open">
   {% for r in rows %}
-  <article class="wgt-row {{ 'won' if r.resultado == 'W' else '' }}" data-fecha="{{ r.fecha or '' }}" data-res="{{ r.resultado or '' }}" data-profit="{{ r.profit if r.profit is not none else 0 }}" data-stake="{{ r.stake_monto or 0 }}" data-clv="{{ r.clv_pts if r.clv_pts is not none else '' }}" data-source="{{ r.source or '' }}" data-league="{{ r.liga or '' }}" data-level="{{ nivel_display(r.nivel) if r.source != 'own' else '' }}" data-market="{{ r.mercado or 'Moneyline' }}" data-book="{{ r.casa or '' }}" data-odds="{{ r.cuota if r.cuota is not none else '' }}" data-mbase="{{ r.mercado_base or 'Moneyline' }}" data-matchup="{{ r.matchup or '' }}">
+  <article class="wgt-row {{ 'won' if r.resultado == 'W' else '' }}" data-fecha="{{ r.fecha or '' }}" data-res="{{ r.resultado or '' }}" data-profit="{{ r.profit if r.profit is not none else 0 }}" data-stake="{{ r.stake_monto or 0 }}" data-clv="{{ r.clv_pts if r.clv_pts is not none else '' }}" data-source="{{ r.source or '' }}" data-sharp="{{ '1' if r.sharp else '' }}" data-league="{{ r.liga or '' }}" data-level="{{ nivel_display(r.nivel) if r.source != 'own' else '' }}" data-market="{{ r.mercado or 'Moneyline' }}" data-book="{{ r.casa or '' }}" data-odds="{{ r.cuota if r.cuota is not none else '' }}" data-mbase="{{ r.mercado_base or 'Moneyline' }}" data-matchup="{{ r.matchup or '' }}">
     {% if r.sharp %}
     <div class="smc">
       <div class="smc-top"><span class="smc-tag">🔥 SHARP</span><span class="smc-pick">{{ r.sharp.team }} ML <span class="price">{{ r.cuota_txt }}</span></span>{% if r.resultado == 'W' %}<span class="smc-pend won">WON · {{ fmt_money(r.profit) }}</span>{% elif r.resultado == 'L' %}<span class="smc-pend lost">LOST · {{ fmt_money(r.profit) }}</span>{% elif r.resultado == 'P' %}<span class="smc-pend">PUSH · $0</span>{% else %}<span class="smc-pend">PENDING · ${{ '%.0f' % r.stake_monto }}</span>{% endif %}</div>
@@ -957,7 +957,8 @@
     var vis=0;
     rows.forEach(function(r){
       var ok=passesPeriod(r)&&passesSrc(r);
-      if(ok && (TK.tab==='open'||TK.tab==='overview')) ok=!isSettled(r);
+      if(ok && TK.tab==='open') ok=!isSettled(r);
+      if(ok && TK.tab==='overview') ok=(!isSettled(r))||(r.getAttribute('data-sharp')==='1');
       if(ok && TK.tab==='history') ok=isSettled(r);
       r.style.display=ok?'':'none';
       if(ok) vis++;
