@@ -370,11 +370,84 @@
 <div class="mb-actions" data-tabs="overview open">
   <a class="mb-btn" href="{{ url_for('mybets_add') }}">+ Add a bet</a>
   <a class="mb-btn ghost" href="{{ url_for('mybets_export') }}">Export CSV</a>
-  <form method="post" action="{{ url_for('mybets_upload_ticket') }}" enctype="multipart/form-data" style="display:contents">
-    <label class="mb-btn ghost" for="tkTicketFile">📸 Upload a ticket</label>
+  <form id="tkUploadForm" method="post" action="{{ url_for('mybets_upload_ticket') }}" enctype="multipart/form-data" style="display:contents">
+    <label class="mb-btn ghost" for="tkTicketFile">📸 Upload or paste a ticket</label>
     <input id="tkTicketFile" type="file" name="ticket" accept="image/*" style="display:none" onchange="this.form.submit()">
   </form>
 </div>
+<p class="note" id="tkPasteHint" data-tabs="overview open" style="margin:2px 0 0;cursor:pointer">📋 Tap here to paste a copied ticket</p>
+<script>
+(function(){
+  var form=document.getElementById('tkUploadForm');
+  var input=document.getElementById('tkTicketFile');
+  var hint=document.getElementById('tkPasteHint');
+  if(!form||!input) return;
+  var busy=false;
+  function sendFile(file){
+    if(busy||!file) return false;
+    busy=true;
+    var sent=false;
+    try{
+      var dt=new DataTransfer();
+      dt.items.add(file);
+      input.files=dt.files;
+      if(input.files&&input.files.length){ form.submit(); sent=true; }
+    }catch(e){}
+    if(!sent){
+      var fd=new FormData();
+      fd.append(input.name||'ticket',file);
+      fetch(form.action,{method:'POST',body:fd,credentials:'same-origin'})
+        .then(function(){ location.reload(); })
+        .catch(function(){ busy=false; failMsg(); });
+    }
+    return true;
+  }
+  function failMsg(){
+    if(hint){ hint.textContent="Couldn't read the clipboard — pick the photo instead."; }
+    input.click();
+  }
+  function handleItems(list){
+    if(!list) return false;
+    for(var i=0;i<list.length;i++){
+      var it=list[i];
+      if(!it||!it.type||it.type.indexOf('image/')!==0) continue;
+      var f=it.getAsFile?it.getAsFile():it;
+      if(f&&sendFile(f)) return true;
+    }
+    return false;
+  }
+  document.addEventListener('paste',function(ev){
+    var t=ev.target;
+    if(t&&(t.tagName==='INPUT'||t.tagName==='TEXTAREA'||t.isContentEditable)) return;
+    var cd=ev.clipboardData||window.clipboardData;
+    if(cd&&handleItems(cd.items||cd.files)){ ev.preventDefault(); }
+  });
+  if(hint){
+    hint.addEventListener('click',function(){
+      if(navigator.clipboard&&navigator.clipboard.read){
+        navigator.clipboard.read().then(function(items){
+          for(var i=0;i<items.length;i++){
+            var types=items[i].types||[];
+            for(var j=0;j<types.length;j++){
+              if(types[j].indexOf('image/')===0){
+                (function(it,ty){
+                  it.getType(ty).then(function(blob){
+                    sendFile(new File([blob],'ticket-paste.'+(ty.split('/')[1]||'png'),{type:ty}));
+                  }).catch(failMsg);
+                })(items[i],types[j]);
+                return;
+              }
+            }
+          }
+          failMsg();
+        }).catch(failMsg);
+      }else{
+        failMsg();
+      }
+    });
+  }
+})();
+</script>
 
 <div class="mb-card" id="tkNeeds" data-tabs="overview open" data-dyn="1" style="display:none">
   <h3>Needs you</h3>
