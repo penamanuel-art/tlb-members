@@ -1330,9 +1330,9 @@ ACTIVATION_HTML = """<!DOCTYPE html>
 <body style="margin:0;padding:0;background-color:#0B0E13;-webkit-text-size-adjust:100%;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#0B0E13;">
 <tr>
-<td align="center" style="padding:28px 12px 36px 12px;">
+<td align="center" style="padding:30.8px 13.2px 39.6px 13.2px;">
 
-<table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;background-color:#10141D;border:1px solid rgba(255,255,255,.06);border-radius:16px;overflow:hidden;">
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;background-color:#10141D;border:1.1px solid rgba(255,255,255,.06);border-radius:17.6px;overflow:hidden;">
 
   <!-- HEADER BANNER -->
   <tr>
@@ -1343,21 +1343,21 @@ ACTIVATION_HTML = """<!DOCTYPE html>
 
   <!-- TITLE BLOCK -->
   <tr>
-    <td style="padding:30px 24px 4px 24px;font-family:Arial,Helvetica,sans-serif;">
-      <div style="font-size:10.5px;line-height:14px;font-weight:700;color:#e8c766;letter-spacing:2.2px;"><span style="display:inline-block;width:14px;height:3px;background-color:#2EE6A8;border-radius:2px;vertical-align:middle;margin-right:9px;font-size:0;line-height:0;">&nbsp;</span>ONE LAST STEP</div>
-      <div style="font-size:21px;line-height:27px;font-weight:700;color:#ffffff;letter-spacing:.3px;margin-top:16px;">__TITULO__</div>
-      <div style="font-size:13.5px;line-height:20px;color:#e8eaf2;margin-top:18px;">Hi __NOMBRE__,</div>
-      <div style="font-size:13.5px;line-height:20px;color:#c3c9e0;margin-top:8px;">__CUERPO__</div>
+    <td style="padding:33px 26.4px 4.4px 26.4px;font-family:Arial,Helvetica,sans-serif;">
+      <div style="font-size:11.6px;line-height:15.4px;font-weight:700;color:#e8c766;letter-spacing:2.4px;"><span style="display:inline-block;width:15.4px;height:3.3px;background-color:#2EE6A8;border-radius:2.2px;vertical-align:middle;margin-right:9.9px;font-size:0;line-height:0;">&nbsp;</span>ONE LAST STEP</div>
+      <div style="font-size:23.1px;line-height:29.7px;font-weight:700;color:#ffffff;letter-spacing:.3px;margin-top:17.6px;">__TITULO__</div>
+      <div style="font-size:14.9px;line-height:22px;color:#e8eaf2;margin-top:19.8px;">Hi __NOMBRE__,</div>
+      <div style="font-size:14.9px;line-height:22px;color:#c3c9e0;margin-top:8.8px;">__CUERPO__</div>
     </td>
   </tr>
 
   <!-- CTA BUTTON -->
   <tr>
-    <td align="center" style="padding:24px 24px 6px 24px;font-family:Arial,Helvetica,sans-serif;">
+    <td align="center" style="padding:26.4px 26.4px 6.6px 26.4px;font-family:Arial,Helvetica,sans-serif;">
       <table role="presentation" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td align="center" style="background-color:#e8c766;border-radius:999px;">
-            <a href="__LINK__" style="display:inline-block;padding:14px 36px;font-family:Arial,Helvetica,sans-serif;font-size:14px;font-weight:700;color:#0B0E13;text-decoration:none;letter-spacing:.8px;">__BOTON__</a>
+          <td align="center" style="background-color:#e8c766;border-radius:1098.9px;">
+            <a href="__LINK__" style="display:inline-block;padding:15.4px 39.6px;font-family:Arial,Helvetica,sans-serif;font-size:15.4px;font-weight:700;color:#0B0E13;text-decoration:none;letter-spacing:.8px;">__BOTON__</a>
           </td>
         </tr>
       </table>
@@ -1366,37 +1366,37 @@ ACTIVATION_HTML = """<!DOCTYPE html>
 
   <!-- NOT ACTIVE YET -->
   <tr>
-    <td style="padding:22px 24px 4px 24px;font-family:Arial,Helvetica,sans-serif;">
-      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#12161F;border:1px solid rgba(232,199,102,.40);border-radius:16px;">
+    <td style="padding:24.2px 26.4px 4.4px 26.4px;font-family:Arial,Helvetica,sans-serif;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#12161F;border:1.1px solid rgba(232,199,102,.40);border-radius:17.6px;">
         <tr>
-          <td style="padding:16px 18px;">
-            <div style="font-size:15.5px;line-height:21px;font-weight:700;color:#ffffff;">Your account is not active yet.</div>
-            <div style="font-size:13.5px;line-height:20px;color:#c3c9e0;margin-top:8px;">Until you confirm, you can't log in and nothing is unlocked &mdash; no Dashboard, no plays.</div>
-            <div style="font-size:13.5px;line-height:20px;color:#c3c9e0;margin-top:10px;">Didn't create this account? Just ignore this email &mdash; without confirmation, the account will never be activated.</div>
+          <td style="padding:17.6px 19.8px;">
+            <div style="font-size:17.1px;line-height:23.1px;font-weight:700;color:#ffffff;">Your account is not active yet.</div>
+            <div style="font-size:14.9px;line-height:22px;color:#c3c9e0;margin-top:8.8px;">Until you confirm, you can't log in and nothing is unlocked &mdash; no Dashboard, no plays.</div>
+            <div style="font-size:14.9px;line-height:22px;color:#c3c9e0;margin-top:11px;">Didn't create this account? Just ignore this email &mdash; without confirmation, the account will never be activated.</div>
           </td>
         </tr>
       </table>
-      <div style="font-size:12.5px;line-height:18px;color:#8b93a9;margin-top:16px;">Or open this link:<br><a href="__LINK__" style="color:#e8c766;text-decoration:underline;word-break:break-all;">__LINK__</a></div>
+      <div style="font-size:13.8px;line-height:19.8px;color:#8b93a9;margin-top:17.6px;">Or open this link:<br><a href="__LINK__" style="color:#e8c766;text-decoration:underline;word-break:break-all;">__LINK__</a></div>
     </td>
   </tr>
 
   <!-- FOOTER -->
   <tr>
-    <td style="padding:26px 24px 32px 24px;border-top:1px solid rgba(255,255,255,.10);font-family:Arial,Helvetica,sans-serif;" align="center">
-      <img src="https://www.thesharpteam.bet/static/img/sharp-team-header.jpg" alt="The Sharp Team" width="220" style="display:block;width:220px;max-width:220px;height:auto;border:0;margin:0 auto;">
+    <td style="padding:28.6px 26.4px 35.2px 26.4px;border-top:1.1px solid rgba(255,255,255,.10);font-family:Arial,Helvetica,sans-serif;" align="center">
+      <img src="https://www.thesharpteam.bet/static/img/sharp-team-header.jpg" alt="The Sharp Team" width="220" style="display:block;width:242px;max-width:242px;height:auto;border:0;margin:0 auto;">
 
-      <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin:20px auto 6px auto;">
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin:22px auto 6.6px auto;">
         <tr>
-          <td style="padding:0 6px;"><a href="https://www.instagram.com/thesharp_team" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/instagram.png" alt="Instagram" width="22" height="22" style="display:block;width:22px;height:22px;border:0;"></a></td>
-          <td style="padding:0 6px;"><a href="https://www.facebook.com/thesharpteam" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/facebook.png" alt="Facebook" width="22" height="22" style="display:block;width:22px;height:22px;border:0;"></a></td>
-          <td style="padding:0 6px;"><a href="https://www.thesharpteam.bet/home" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/telegram.png" alt="Telegram" width="22" height="22" style="display:block;width:22px;height:22px;border:0;"></a></td>
-          <td style="padding:0 6px;"><a href="https://www.thesharpteam.bet/home" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/social-x-white.png" alt="X" width="22" height="22" style="display:block;width:22px;height:22px;border:0;"></a></td>
+          <td style="padding:0 6.6px;"><a href="https://www.instagram.com/thesharp_team" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/instagram.png" alt="Instagram" width="22" height="22" style="display:block;width:24.2px;height:24.2px;border:0;"></a></td>
+          <td style="padding:0 6.6px;"><a href="https://www.facebook.com/thesharpteam" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/facebook.png" alt="Facebook" width="22" height="22" style="display:block;width:24.2px;height:24.2px;border:0;"></a></td>
+          <td style="padding:0 6.6px;"><a href="https://www.thesharpteam.bet/home" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/telegram.png" alt="Telegram" width="22" height="22" style="display:block;width:24.2px;height:24.2px;border:0;"></a></td>
+          <td style="padding:0 6.6px;"><a href="https://www.thesharpteam.bet/home" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/social-x-white.png" alt="X" width="22" height="22" style="display:block;width:24.2px;height:24.2px;border:0;"></a></td>
         </tr>
       </table>
 
-      <div style="font-size:10.5px;line-height:15px;color:#8b93a9;margin-top:16px;">The Sharp Team &middot; Wallington, NJ</div>
-      <div style="font-size:10.5px;line-height:15px;color:#8b93a9;margin-top:6px;">You are receiving this email because this address was used to sign up for The Sharp Team.</div>
-      <div style="font-size:10.5px;line-height:15px;margin-top:8px;"><a href="{{{RESEND_UNSUBSCRIBE_URL}}}" style="color:#8b93a9;text-decoration:underline;">Unsubscribe</a></div>
+      <div style="font-size:11.6px;line-height:16.5px;color:#8b93a9;margin-top:17.6px;">The Sharp Team &middot; Wallington, NJ</div>
+      <div style="font-size:11.6px;line-height:16.5px;color:#8b93a9;margin-top:6.6px;">You are receiving this email because this address was used to sign up for The Sharp Team.</div>
+      <div style="font-size:11.6px;line-height:16.5px;margin-top:8.8px;"><a href="{{{RESEND_UNSUBSCRIBE_URL}}}" style="color:#8b93a9;text-decoration:underline;">Unsubscribe</a></div>
     </td>
   </tr>
 
@@ -1684,9 +1684,9 @@ WELCOME_BACK_HTML = """<!DOCTYPE html>
 <body style="margin:0;padding:0;background-color:#0B0E13;-webkit-text-size-adjust:100%;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#0B0E13;">
 <tr>
-<td align="center" style="padding:28px 12px 36px 12px;">
+<td align="center" style="padding:30.8px 13.2px 39.6px 13.2px;">
 
-<table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;background-color:#10141D;border:1px solid rgba(255,255,255,.06);border-radius:16px;overflow:hidden;">
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;background-color:#10141D;border:1.1px solid rgba(255,255,255,.06);border-radius:17.6px;overflow:hidden;">
 
   <!-- HEADER BANNER -->
   <tr>
@@ -1697,40 +1697,40 @@ WELCOME_BACK_HTML = """<!DOCTYPE html>
 
   <!-- HERO -->
   <tr>
-    <td align="center" style="padding:36px 24px 4px 24px;font-family:Arial,Helvetica,sans-serif;">
+    <td align="center" style="padding:39.6px 26.4px 4.4px 26.4px;font-family:Arial,Helvetica,sans-serif;">
       <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center">
         <tr>
-          <td align="center" valign="middle" width="64" height="64" style="width:64px;height:64px;background-color:rgba(46,230,168,.12);border:2px solid #2EE6A8;border-radius:50%;font-family:Arial,Helvetica,sans-serif;font-size:30px;line-height:64px;color:#2EE6A8;font-weight:700;">&#10003;</td>
+          <td align="center" valign="middle" width="64" height="64" style="width:70.4px;height:70.4px;background-color:rgba(46,230,168,.12);border:2.2px solid #2EE6A8;border-radius:50%;font-family:Arial,Helvetica,sans-serif;font-size:33px;line-height:70.4px;color:#2EE6A8;font-weight:700;">&#10003;</td>
         </tr>
       </table>
-      <div style="font-size:24px;line-height:31px;font-weight:700;color:#e8c766;letter-spacing:.3px;margin-top:20px;">Welcome Back &#8212; You&#8217;re Platinum Again</div>
-      <div style="font-size:14px;line-height:24px;color:#c3c9e0;margin-top:14px;">Your payment went through and your Platinum access is fully restored. Everything is right where you left it.</div>
+      <div style="font-size:26.4px;line-height:34.1px;font-weight:700;color:#e8c766;letter-spacing:.3px;margin-top:22px;">Welcome Back &#8212; You&#8217;re Platinum Again</div>
+      <div style="font-size:15.4px;line-height:26.4px;color:#c3c9e0;margin-top:15.4px;">Your payment went through and your Platinum access is fully restored. Everything is right where you left it.</div>
     </td>
   </tr>
 
   <!-- STATUS -->
   <tr>
-    <td style="padding:26px 24px 4px 24px;font-family:Arial,Helvetica,sans-serif;">
-      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#12161F;border:1px solid rgba(232,199,102,.40);border-radius:16px;">
+    <td style="padding:28.6px 26.4px 4.4px 26.4px;font-family:Arial,Helvetica,sans-serif;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#12161F;border:1.1px solid rgba(232,199,102,.40);border-radius:17.6px;">
         <tr>
-          <td style="padding:18px 20px 4px 20px;">
-            <div style="font-size:10.5px;line-height:14px;font-weight:700;color:#e8c766;letter-spacing:2.2px;"><span style="display:inline-block;width:14px;height:3px;background-color:#2EE6A8;border-radius:2px;vertical-align:middle;margin-right:9px;font-size:0;line-height:0;">&nbsp;</span>YOUR STATUS</div>
+          <td style="padding:19.8px 22px 4.4px 22px;">
+            <div style="font-size:11.6px;line-height:15.4px;font-weight:700;color:#e8c766;letter-spacing:2.4px;"><span style="display:inline-block;width:15.4px;height:3.3px;background-color:#2EE6A8;border-radius:2.2px;vertical-align:middle;margin-right:9.9px;font-size:0;line-height:0;">&nbsp;</span>YOUR STATUS</div>
           </td>
         </tr>
         <tr>
-          <td style="padding:4px 20px 18px 20px;">
+          <td style="padding:4.4px 22px 19.8px 22px;">
             <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
               <tr>
-                <td style="font-size:13.5px;line-height:20px;color:#c3c9e0;padding:7px 0;">Payment</td>
-                <td align="right" style="font-size:13.5px;line-height:20px;color:#2EE6A8;font-weight:700;padding:7px 0;">$15.99 &#8212; confirmed</td>
+                <td style="font-size:14.9px;line-height:22px;color:#c3c9e0;padding:7.7px 0;">Payment</td>
+                <td align="right" style="font-size:14.9px;line-height:22px;color:#2EE6A8;font-weight:700;padding:7.7px 0;">$15.99 &#8212; confirmed</td>
               </tr>
               <tr>
-                <td style="font-size:13.5px;line-height:20px;color:#c3c9e0;padding:7px 0;border-top:1px solid rgba(255,255,255,.10);">Plan</td>
-                <td align="right" style="font-size:13.5px;line-height:20px;color:#e8c766;font-weight:700;padding:7px 0;border-top:1px solid rgba(255,255,255,.10);">Platinum &#8212; active</td>
+                <td style="font-size:14.9px;line-height:22px;color:#c3c9e0;padding:7.7px 0;border-top:1.1px solid rgba(255,255,255,.10);">Plan</td>
+                <td align="right" style="font-size:14.9px;line-height:22px;color:#e8c766;font-weight:700;padding:7.7px 0;border-top:1.1px solid rgba(255,255,255,.10);">Platinum &#8212; active</td>
               </tr>
               <tr>
-                <td style="font-size:13.5px;line-height:20px;color:#c3c9e0;padding:7px 0;border-top:1px solid rgba(255,255,255,.10);">Dashboard access</td>
-                <td align="right" style="font-size:13.5px;line-height:20px;color:#2EE6A8;font-weight:700;padding:7px 0;border-top:1px solid rgba(255,255,255,.10);">Restored</td>
+                <td style="font-size:14.9px;line-height:22px;color:#c3c9e0;padding:7.7px 0;border-top:1.1px solid rgba(255,255,255,.10);">Dashboard access</td>
+                <td align="right" style="font-size:14.9px;line-height:22px;color:#2EE6A8;font-weight:700;padding:7.7px 0;border-top:1.1px solid rgba(255,255,255,.10);">Restored</td>
               </tr>
             </table>
           </td>
@@ -1741,38 +1741,38 @@ WELCOME_BACK_HTML = """<!DOCTYPE html>
 
   <!-- WHAT'S BACK -->
   <tr>
-    <td style="padding:26px 24px 4px 24px;font-family:Arial,Helvetica,sans-serif;">
-      <div style="font-size:10.5px;line-height:14px;font-weight:700;color:#e8c766;letter-spacing:2.2px;"><span style="display:inline-block;width:14px;height:3px;background-color:#2EE6A8;border-radius:2px;vertical-align:middle;margin-right:9px;font-size:0;line-height:0;">&nbsp;</span>WHAT&#8217;S BACK</div>
+    <td style="padding:28.6px 26.4px 4.4px 26.4px;font-family:Arial,Helvetica,sans-serif;">
+      <div style="font-size:11.6px;line-height:15.4px;font-weight:700;color:#e8c766;letter-spacing:2.4px;"><span style="display:inline-block;width:15.4px;height:3.3px;background-color:#2EE6A8;border-radius:2.2px;vertical-align:middle;margin-right:9.9px;font-size:0;line-height:0;">&nbsp;</span>WHAT&#8217;S BACK</div>
 
-      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:16px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:17.6px;">
         <tr>
-          <td style="background-color:#12161F;border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:16px 18px;">
+          <td style="background-color:#12161F;border:1.1px solid rgba(255,255,255,.06);border-radius:17.6px;padding:17.6px 19.8px;">
             <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
               <tr>
-                <td valign="top" width="24" style="font-size:12.5px;line-height:20px;color:#e8c766;">&#9733;</td>
-                <td style="font-size:13.5px;line-height:20px;color:#c3c9e0;">The full card every day &#8212; Platinum, Gold and Free plays with their original tickets.</td>
+                <td valign="top" width="24" style="font-size:13.8px;line-height:22px;color:#e8c766;">&#9733;</td>
+                <td style="font-size:14.9px;line-height:22px;color:#c3c9e0;">The full card every day &#8212; Platinum, Gold and Free plays with their original tickets.</td>
               </tr>
             </table>
           </td>
         </tr>
-        <tr><td style="height:14px;line-height:14px;font-size:0;">&nbsp;</td></tr>
+        <tr><td style="height:15.4px;line-height:15.4px;font-size:0;">&nbsp;</td></tr>
         <tr>
-          <td style="background-color:#12161F;border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:16px 18px;">
+          <td style="background-color:#12161F;border:1.1px solid rgba(255,255,255,.06);border-radius:17.6px;padding:17.6px 19.8px;">
             <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
               <tr>
-                <td valign="top" width="24" style="font-size:12.5px;line-height:20px;color:#e8c766;">&#8599;</td>
-                <td style="font-size:13.5px;line-height:20px;color:#c3c9e0;">The +EV Board, fully unlocked again.</td>
+                <td valign="top" width="24" style="font-size:13.8px;line-height:22px;color:#e8c766;">&#8599;</td>
+                <td style="font-size:14.9px;line-height:22px;color:#c3c9e0;">The +EV Board, fully unlocked again.</td>
               </tr>
             </table>
           </td>
         </tr>
-        <tr><td style="height:14px;line-height:14px;font-size:0;">&nbsp;</td></tr>
+        <tr><td style="height:15.4px;line-height:15.4px;font-size:0;">&nbsp;</td></tr>
         <tr>
-          <td style="background-color:#12161F;border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:16px 18px;">
+          <td style="background-color:#12161F;border:1.1px solid rgba(255,255,255,.06);border-radius:17.6px;padding:17.6px 19.8px;">
             <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
               <tr>
-                <td valign="top" width="24" style="font-size:12.5px;line-height:20px;color:#e8c766;">&#10003;</td>
-                <td style="font-size:13.5px;line-height:20px;color:#c3c9e0;">My Bets, with your full history untouched &#8212; exactly as you left it.</td>
+                <td valign="top" width="24" style="font-size:13.8px;line-height:22px;color:#e8c766;">&#10003;</td>
+                <td style="font-size:14.9px;line-height:22px;color:#c3c9e0;">My Bets, with your full history untouched &#8212; exactly as you left it.</td>
               </tr>
             </table>
           </td>
@@ -1783,11 +1783,11 @@ WELCOME_BACK_HTML = """<!DOCTYPE html>
 
   <!-- CTA BUTTON -->
   <tr>
-    <td align="center" style="padding:26px 24px 6px 24px;font-family:Arial,Helvetica,sans-serif;">
+    <td align="center" style="padding:28.6px 26.4px 6.6px 26.4px;font-family:Arial,Helvetica,sans-serif;">
       <table role="presentation" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td align="center" style="background-color:#e8c766;border-radius:999px;">
-            <a href="https://www.thesharpteam.bet/home" style="display:inline-block;padding:11px 26px;font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:700;color:#0B0E13;text-decoration:none;letter-spacing:.8px;white-space:nowrap;">OPEN MY DASHBOARD</a>
+          <td align="center" style="background-color:#e8c766;border-radius:1098.9px;">
+            <a href="https://www.thesharpteam.bet/home" style="display:inline-block;padding:12.1px 28.6px;font-family:Arial,Helvetica,sans-serif;font-size:14.3px;font-weight:700;color:#0B0E13;text-decoration:none;letter-spacing:.8px;white-space:nowrap;">OPEN MY DASHBOARD</a>
           </td>
         </tr>
       </table>
@@ -1796,30 +1796,30 @@ WELCOME_BACK_HTML = """<!DOCTYPE html>
 
   <!-- SIGNING -->
   <tr>
-    <td style="padding:26px 24px 30px 24px;font-family:Arial,Helvetica,sans-serif;">
-      <div style="font-size:13.5px;line-height:20px;color:#e8eaf2;">Stay sharp. Stay disciplined. Play the long game.</div>
-      <div style="font-size:12.5px;line-height:17px;color:#e8c766;font-weight:700;letter-spacing:1.2px;margin-top:14px;">THE SHARP TEAM</div>
-      <div style="font-size:11.5px;line-height:15px;color:#8b93a9;margin-top:2px;">Data-Driven Sports Betting Picks</div>
+    <td style="padding:28.6px 26.4px 33px 26.4px;font-family:Arial,Helvetica,sans-serif;">
+      <div style="font-size:14.9px;line-height:22px;color:#e8eaf2;">Stay sharp. Stay disciplined. Play the long game.</div>
+      <div style="font-size:13.8px;line-height:18.7px;color:#e8c766;font-weight:700;letter-spacing:1.3px;margin-top:15.4px;">THE SHARP TEAM</div>
+      <div style="font-size:12.7px;line-height:16.5px;color:#8b93a9;margin-top:2.2px;">Data-Driven Sports Betting Picks</div>
     </td>
   </tr>
 
   <!-- FOOTER -->
   <tr>
-    <td style="padding:26px 24px 32px 24px;border-top:1px solid rgba(255,255,255,.10);font-family:Arial,Helvetica,sans-serif;" align="center">
-      <img src="https://www.thesharpteam.bet/static/img/sharp-team-header.jpg" alt="The Sharp Team" width="220" style="display:block;width:220px;max-width:220px;height:auto;border:0;margin:0 auto;">
+    <td style="padding:28.6px 26.4px 35.2px 26.4px;border-top:1.1px solid rgba(255,255,255,.10);font-family:Arial,Helvetica,sans-serif;" align="center">
+      <img src="https://www.thesharpteam.bet/static/img/sharp-team-header.jpg" alt="The Sharp Team" width="220" style="display:block;width:242px;max-width:242px;height:auto;border:0;margin:0 auto;">
 
-      <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin:20px auto 6px auto;">
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin:22px auto 6.6px auto;">
         <tr>
-          <td style="padding:0 6px;"><a href="https://www.instagram.com/thesharp_team" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/instagram.png" alt="Instagram" width="22" height="22" style="display:block;width:22px;height:22px;border:0;"></a></td>
-          <td style="padding:0 6px;"><a href="https://www.facebook.com/thesharpteam" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/facebook.png" alt="Facebook" width="22" height="22" style="display:block;width:22px;height:22px;border:0;"></a></td>
-          <td style="padding:0 6px;"><a href="https://www.thesharpteam.bet/home" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/telegram.png" alt="Telegram" width="22" height="22" style="display:block;width:22px;height:22px;border:0;"></a></td>
-          <td style="padding:0 6px;"><a href="https://www.thesharpteam.bet/home" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/social-x-white.png" alt="X" width="22" height="22" style="display:block;width:22px;height:22px;border:0;"></a></td>
+          <td style="padding:0 6.6px;"><a href="https://www.instagram.com/thesharp_team" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/instagram.png" alt="Instagram" width="22" height="22" style="display:block;width:24.2px;height:24.2px;border:0;"></a></td>
+          <td style="padding:0 6.6px;"><a href="https://www.facebook.com/thesharpteam" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/facebook.png" alt="Facebook" width="22" height="22" style="display:block;width:24.2px;height:24.2px;border:0;"></a></td>
+          <td style="padding:0 6.6px;"><a href="https://www.thesharpteam.bet/home" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/telegram.png" alt="Telegram" width="22" height="22" style="display:block;width:24.2px;height:24.2px;border:0;"></a></td>
+          <td style="padding:0 6.6px;"><a href="https://www.thesharpteam.bet/home" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/social-x-white.png" alt="X" width="22" height="22" style="display:block;width:24.2px;height:24.2px;border:0;"></a></td>
         </tr>
       </table>
 
-      <div style="font-size:10.5px;line-height:15px;color:#8b93a9;margin-top:16px;">The Sharp Team &middot; Wallington, NJ</div>
-      <div style="font-size:10.5px;line-height:15px;color:#8b93a9;margin-top:6px;">You are receiving this email because you created an account with The Sharp Team.</div>
-      <div style="font-size:10.5px;line-height:15px;margin-top:8px;"><a href="{{{RESEND_UNSUBSCRIBE_URL}}}" style="color:#8b93a9;text-decoration:underline;">Unsubscribe</a></div>
+      <div style="font-size:11.6px;line-height:16.5px;color:#8b93a9;margin-top:17.6px;">The Sharp Team &middot; Wallington, NJ</div>
+      <div style="font-size:11.6px;line-height:16.5px;color:#8b93a9;margin-top:6.6px;">You are receiving this email because you created an account with The Sharp Team.</div>
+      <div style="font-size:11.6px;line-height:16.5px;margin-top:8.8px;"><a href="{{{RESEND_UNSUBSCRIBE_URL}}}" style="color:#8b93a9;text-decoration:underline;">Unsubscribe</a></div>
     </td>
   </tr>
 
@@ -1915,7 +1915,7 @@ You are receiving this email because you created an account with The Sharp Team.
 Unsubscribe: {{{RESEND_UNSUBSCRIBE_URL}}}
 """
 
-WELCOME_HTML = '<!DOCTYPE html>\n<html lang="en" xmlns="http://www.w3.org/1999/xhtml">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1.0">\n<meta name="color-scheme" content="dark">\n<title>Welcome to The Sharp Team</title>\n</head>\n<body style="margin:0;padding:0;background-color:#0B0E13;-webkit-text-size-adjust:100%;">\n<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#0B0E13;">\n<tr>\n<td align="center" style="padding:28px 12px 36px 12px;">\n\n<table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:540px;background-color:#10141D;border:1px solid rgba(255,255,255,.06);border-radius:14.4px;overflow:hidden;">\n\n  <!-- HEADER BANNER -->\n  <tr>\n    <td style="padding:0;line-height:0;">\n      <img src="https://www.thesharpteam.bet/static/img/sharp-team-header.jpg" alt="The Sharp Team" width="600" style="display:block;width:100%;max-width:540px;height:auto;border:0;">\n    </td>\n  </tr>\n\n  <!-- TITLE BLOCK -->\n  <tr>\n    <td style="padding:27px 21.6px 3.6px 21.6px;font-family:Arial,Helvetica,sans-serif;">\n      <div style="font-size:20.7px;line-height:26.6px;font-weight:700;color:#ffffff;letter-spacing:.2.7px;">Welcome to The Sharp Team</div>\n      <div style="font-size:12.6px;line-height:21.6px;color:#e8eaf2;margin-top:16.2px;">Hi __NOMBRE__,</div>\n      <div style="font-size:12.6px;line-height:21.6px;color:#c3c9e0;margin-top:7.2px;">Your account is ready. Everything lives in your member Dashboard &mdash; your plays, your tracker and your tools, all in one place.</div>\n    </td>\n  </tr>\n\n  <!-- CTA BUTTON -->\n  <tr>\n    <td align="center" style="padding:21.6px 21.6px 5.4px 21.6px;font-family:Arial,Helvetica,sans-serif;">\n      <table role="presentation" cellpadding="0" cellspacing="0" border="0">\n        <tr>\n          <td align="center" style="background-color:#e8c766;border-radius:899.1px;">\n            <a href="https://www.thesharpteam.bet/home" style="display:inline-block;padding:12.6px 32.4px;font-family:Arial,Helvetica,sans-serif;font-size:12.6px;font-weight:700;color:#0B0E13;text-decoration:none;letter-spacing:.7.2px;">OPEN MY DASHBOARD</a>\n          </td>\n        </tr>\n      </table>\n    </td>\n  </tr>\n\n  <!-- HOW IT WORKS -->\n  <tr>\n    <td style="padding:23.4px 21.6px 3.6px 21.6px;font-family:Arial,Helvetica,sans-serif;">\n      <div style="font-size:9.5px;line-height:12.6px;font-weight:700;color:#e8c766;letter-spacing:2px;"><span style="display:inline-block;width:12.6px;height:2.7px;background-color:#2EE6A8;border-radius:1.8px;vertical-align:middle;margin-right:8.1px;font-size:0;line-height:0;">&nbsp;</span>HOW IT WORKS</div>\n\n      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:14.4px;">\n        <tr>\n          <td style="background-color:#12161F;border:1px solid rgba(255,255,255,.06);border-radius:14.4px;padding:14.4px 16.2px;">\n            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">\n              <tr>\n                <td valign="top" width="26" style="font-size:12.2px;line-height:18px;font-weight:700;color:#e8c766;">1.</td>\n                <td style="font-size:12.2px;line-height:18px;color:#c3c9e0;">We post the day\'s card on your Dashboard before game time &mdash; weekdays 2:00 PM ET, weekends 11:00 AM ET.</td>\n              </tr>\n            </table>\n          </td>\n        </tr>\n        <tr><td style="height:12.6px;line-height:12.6px;font-size:0;">&nbsp;</td></tr>\n        <tr>\n          <td style="background-color:#12161F;border:1px solid rgba(255,255,255,.06);border-radius:14.4px;padding:14.4px 16.2px;">\n            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">\n              <tr>\n                <td valign="top" width="26" style="font-size:12.2px;line-height:18px;font-weight:700;color:#e8c766;">2.</td>\n                <td style="font-size:12.2px;line-height:18px;color:#c3c9e0;">Every play carries its original bet ticket &mdash; the real ticket, never a screenshot of odds.</td>\n              </tr>\n            </table>\n          </td>\n        </tr>\n        <tr><td style="height:12.6px;line-height:12.6px;font-size:0;">&nbsp;</td></tr>\n        <tr>\n          <td style="background-color:#12161F;border:1px solid rgba(255,255,255,.06);border-radius:14.4px;padding:14.4px 16.2px;">\n            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">\n              <tr>\n                <td valign="top" width="26" style="font-size:12.2px;line-height:18px;font-weight:700;color:#e8c766;">3.</td>\n                <td style="font-size:12.2px;line-height:18px;color:#c3c9e0;">Track the plays in My Bets and follow the results as they settle.</td>\n              </tr>\n            </table>\n          </td>\n        </tr>\n      </table>\n    </td>\n  </tr>\n\n  <!-- INSIDE YOUR DASHBOARD -->\n  <tr>\n    <td style="padding:23.4px 21.6px 3.6px 21.6px;font-family:Arial,Helvetica,sans-serif;">\n      <div style="font-size:9.5px;line-height:12.6px;font-weight:700;color:#e8c766;letter-spacing:2px;"><span style="display:inline-block;width:12.6px;height:2.7px;background-color:#2EE6A8;border-radius:1.8px;vertical-align:middle;margin-right:8.1px;font-size:0;line-height:0;">&nbsp;</span>INSIDE YOUR DASHBOARD</div>\n\n      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:14.4px;">\n        <tr>\n          <td style="background-color:#12161F;border:1px solid rgba(255,255,255,.06);border-radius:14.4px;padding:14.4px 16.2px;">\n            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">\n              <tr>\n                <td valign="top" width="24" style="font-size:11.2px;line-height:14.4px;color:#e8c766;">&#9733;</td>\n                <td style="font-size:10.4px;line-height:14.4px;color:#c3c9e0;">\n                  <span style="color:#ffffff;font-weight:700;">The Daily Card</span> &mdash; Gold plays plus the &#9733; Elite play, each with its original bet ticket, posted before game time.\n                </td>\n              </tr>\n            </table>\n          </td>\n        </tr>\n        <tr><td style="height:12.6px;line-height:12.6px;font-size:0;">&nbsp;</td></tr>\n        <tr>\n          <td style="background-color:#12161F;border:1px solid rgba(255,255,255,.06);border-radius:14.4px;padding:14.4px 16.2px;">\n            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">\n              <tr>\n                <td valign="top" width="24" style="font-size:11.2px;line-height:14.4px;color:#e8c766;">&#10003;</td>\n                <td style="font-size:10.4px;line-height:14.4px;color:#c3c9e0;">\n                  <span style="color:#ffffff;font-weight:700;">My Bets</span> &mdash; your personal tracker: log your bets in one tap and follow your own record.\n                </td>\n              </tr>\n            </table>\n          </td>\n        </tr>\n        <tr><td style="height:12.6px;line-height:12.6px;font-size:0;">&nbsp;</td></tr>\n        <tr>\n          <td style="background-color:#12161F;border:1px solid rgba(255,255,255,.06);border-radius:14.4px;padding:14.4px 16.2px;">\n            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">\n              <tr>\n                <td valign="top" width="24" style="font-size:11.2px;line-height:14.4px;color:#e8c766;">&#9874;</td>\n                <td style="font-size:10.4px;line-height:14.4px;color:#c3c9e0;">\n                  <span style="color:#ffffff;font-weight:700;">Tools</span> &mdash; Game Center, line moves and price comparison in one place.\n                </td>\n              </tr>\n            </table>\n          </td>\n        </tr>\n        <tr><td style="height:12.6px;line-height:12.6px;font-size:0;">&nbsp;</td></tr>\n        <tr>\n          <td style="background-color:#12161F;border:1px solid rgba(255,255,255,.06);border-radius:14.4px;padding:14.4px 16.2px;">\n            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">\n              <tr>\n                <td valign="top" width="24" style="font-size:11.2px;line-height:14.4px;color:#e8c766;">&#8599;</td>\n                <td style="font-size:10.4px;line-height:14.4px;color:#c3c9e0;">\n                  <span style="color:#ffffff;font-weight:700;">+EV Board</span> &mdash; the day\'s best prices across books, Platinum only.\n                </td>\n              </tr>\n            </table>\n          </td>\n        </tr>\n      </table>\n    </td>\n  </tr>\n\n  <!-- THE LEVELS -->\n  <tr>\n    <td style="padding:23.4px 21.6px 3.6px 21.6px;font-family:Arial,Helvetica,sans-serif;">\n      <div style="font-size:9.5px;line-height:12.6px;font-weight:700;color:#e8c766;letter-spacing:2px;"><span style="display:inline-block;width:12.6px;height:2.7px;background-color:#2EE6A8;border-radius:1.8px;vertical-align:middle;margin-right:8.1px;font-size:0;line-height:0;">&nbsp;</span>THE LEVELS</div>\n\n      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:14.4px;">\n        <tr>\n          <td style="background-color:#12161F;border:1px solid rgba(255,255,255,.06);border-radius:14.4px;padding:14.4px 16.2px;font-size:12.2px;line-height:18px;color:#c3c9e0;"><span style="color:#ffffff;font-weight:700;">FREE</span> &mdash; free forever: the free plays, every day, on your Dashboard.</td>\n        </tr>\n        <tr><td style="height:12.6px;line-height:12.6px;font-size:0;">&nbsp;</td></tr>\n        <tr>\n          <td style="background-color:#12161F;border:1px solid rgba(255,255,255,.06);border-radius:14.4px;padding:14.4px 16.2px;font-size:12.2px;line-height:18px;color:#c3c9e0;"><span style="color:#e8c766;font-weight:700;">PLATINUM</span> &mdash; everything: Gold plays + the &#9733; Elite play, the +EV Board and the full toolbox.</td>\n        </tr>\n      </table>\n    </td>\n  </tr>\n\n  <!-- YOUR PLAN -->\n  <tr>\n    <td style="padding:23.4px 21.6px 3.6px 21.6px;font-family:Arial,Helvetica,sans-serif;">\n      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#12161F;border:1px solid rgba(232,199,102,.40);border-radius:14.4px;">\n        <tr>\n          <td style="padding:16.2px 18px 3.6px 18px;">\n            <div style="font-size:9.5px;line-height:12.6px;font-weight:700;color:#e8c766;letter-spacing:2px;"><span style="display:inline-block;width:12.6px;height:2.7px;background-color:#2EE6A8;border-radius:1.8px;vertical-align:middle;margin-right:8.1px;font-size:0;line-height:0;">&nbsp;</span>YOUR PLAN</div>\n          </td>\n        </tr>\n        <tr>\n          <td style="padding:3.6px 18px 16.2px 18px;">\n            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">\n              <tr>\n                <td style="font-size:12.2px;line-height:18px;color:#c3c9e0;padding:6.3px 0;">First week</td>\n                <td align="right" style="font-size:12.2px;line-height:18px;color:#ffffff;font-weight:700;padding:6.3px 0;">$1.00</td>\n              </tr>\n              <tr>\n                <td style="font-size:12.2px;line-height:18px;color:#c3c9e0;padding:6.3px 0;border-top:1px solid rgba(255,255,255,.10);">Then</td>\n                <td align="right" style="font-size:12.2px;line-height:18px;color:#ffffff;font-weight:700;padding:6.3px 0;border-top:1px solid rgba(255,255,255,.10);">$15.99/week</td>\n              </tr>\n              <tr>\n                <td colspan="2" style="font-size:11.2px;line-height:16.2px;color:#8b93a9;padding:8.1px 0 0 0;border-top:1px solid rgba(255,255,255,.10);">Cancel anytime.</td>\n              </tr>\n            </table>\n          </td>\n        </tr>\n      </table>\n    </td>\n  </tr>\n\n  <!-- OFFICIAL STAKES -->\n  <tr>\n    <td style="padding:23.4px 21.6px 3.6px 21.6px;font-family:Arial,Helvetica,sans-serif;">\n      <div style="font-size:9.5px;line-height:12.6px;font-weight:700;color:#e8c766;letter-spacing:2px;"><span style="display:inline-block;width:12.6px;height:2.7px;background-color:#2EE6A8;border-radius:1.8px;vertical-align:middle;margin-right:8.1px;font-size:0;line-height:0;">&nbsp;</span>OFFICIAL STAKES</div>\n      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:14.4px;">\n        <tr>\n          <td style="background-color:#12161F;border:1px solid rgba(255,255,255,.06);border-radius:14.4px;padding:14.4px 16.2px;font-size:12.2px;line-height:18px;color:#c3c9e0;">Platinum plays are $100 (1 unit). Gold and Free plays are $60. Your tracker runs the same card with your own bankroll.</td>\n        </tr>\n      </table>\n    </td>\n  </tr>\n\n  <!-- NEVER MISS A CARD -->\n  <tr>\n    <td style="padding:23.4px 21.6px 3.6px 21.6px;font-family:Arial,Helvetica,sans-serif;">\n      <div style="font-size:9.5px;line-height:12.6px;font-weight:700;color:#e8c766;letter-spacing:2px;"><span style="display:inline-block;width:12.6px;height:2.7px;background-color:#2EE6A8;border-radius:1.8px;vertical-align:middle;margin-right:8.1px;font-size:0;line-height:0;">&nbsp;</span>NEVER MISS A CARD</div>\n      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:14.4px;">\n        <tr>\n          <td style="background-color:#12161F;border:1px solid rgba(255,255,255,.06);border-radius:14.4px;padding:14.4px 16.2px;font-size:12.2px;line-height:18px;color:#c3c9e0;">Turn on Dashboard notifications after you log in, and join the Telegram channels from your Dashboard.</td>\n        </tr>\n      </table>\n    </td>\n  </tr>\n\n  <!-- QUESTIONS -->\n  <tr>\n    <td style="padding:23.4px 21.6px 3.6px 21.6px;font-family:Arial,Helvetica,sans-serif;">\n      <div style="font-size:9.5px;line-height:12.6px;font-weight:700;color:#e8c766;letter-spacing:2px;"><span style="display:inline-block;width:12.6px;height:2.7px;background-color:#2EE6A8;border-radius:1.8px;vertical-align:middle;margin-right:8.1px;font-size:0;line-height:0;">&nbsp;</span>QUESTIONS?</div>\n      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:14.4px;">\n        <tr>\n          <td style="background-color:#12161F;border:1px solid rgba(255,255,255,.06);border-radius:14.4px;padding:14.4px 16.2px;font-size:12.2px;line-height:18px;color:#c3c9e0;">Just reply to this email and we\'ll take care of you.</td>\n        </tr>\n      </table>\n    </td>\n  </tr>\n\n  <!-- SIGNING -->\n  <tr>\n    <td style="padding:23.4px 21.6px 27px 21.6px;font-family:Arial,Helvetica,sans-serif;">\n      <div style="font-size:12.2px;line-height:18px;color:#e8eaf2;">Stay sharp. Stay disciplined. Play the long game.</div>\n      <div style="font-size:11.2px;line-height:15.3px;color:#e8c766;font-weight:700;letter-spacing:1.1px;margin-top:12.6px;">THE SHARP TEAM</div>\n      <div style="font-size:10.4px;line-height:13.5px;color:#8b93a9;margin-top:1.8px;">Data-Driven Sports Betting Picks</div>\n    </td>\n  </tr>\n\n  <!-- FOOTER -->\n  <tr>\n    <td style="padding:23.4px 21.6px 28.8px 21.6px;border-top:1px solid rgba(255,255,255,.10);font-family:Arial,Helvetica,sans-serif;" align="center">\n      <img src="https://www.thesharpteam.bet/static/img/sharp-team-header.jpg" alt="The Sharp Team" width="220" style="display:block;width:198px;max-width:198px;height:auto;border:0;margin:0 auto;">\n\n      <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin:18px auto 5.4px auto;">\n        <tr>\n          <td style="padding:0 5.4px;"><a href="https://www.instagram.com/thesharp_team" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/instagram.png" alt="Instagram" width="22" height="22" style="display:block;width:19.8px;height:19.8px;border:0;"></a></td>\n          <td style="padding:0 5.4px;"><a href="https://www.facebook.com/thesharpteam" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/facebook.png" alt="Facebook" width="22" height="22" style="display:block;width:19.8px;height:19.8px;border:0;"></a></td>\n          <td style="padding:0 5.4px;"><a href="https://www.thesharpteam.bet/home" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/telegram.png" alt="Telegram" width="22" height="22" style="display:block;width:19.8px;height:19.8px;border:0;"></a></td>\n          <td style="padding:0 5.4px;"><a href="https://www.thesharpteam.bet/home" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/social-x-white.png" alt="X" width="22" height="22" style="display:block;width:19.8px;height:19.8px;border:0;"></a></td>\n        </tr>\n      </table>\n\n      <div style="font-size:9.5px;line-height:13.5px;color:#8b93a9;margin-top:14.4px;">The Sharp Team &middot; Wallington, NJ</div>\n      <div style="font-size:9.5px;line-height:13.5px;color:#8b93a9;margin-top:5.4px;">You are receiving this email because you created an account with The Sharp Team.</div>\n      <div style="font-size:9.5px;line-height:13.5px;margin-top:7.2px;"><a href="{{{RESEND_UNSUBSCRIBE_URL}}}" style="color:#8b93a9;text-decoration:underline;">Unsubscribe</a></div>\n    </td>\n  </tr>\n\n</table>\n\n</td>\n</tr>\n</table>\n</body>\n</html>\n'
+WELCOME_HTML = '<!DOCTYPE html>\n<html lang="en" xmlns="http://www.w3.org/1999/xhtml">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1.0">\n<meta name="color-scheme" content="dark">\n<title>Welcome to The Sharp Team</title>\n</head>\n<body style="margin:0;padding:0;background-color:#0B0E13;-webkit-text-size-adjust:100%;">\n<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#0B0E13;">\n<tr>\n<td align="center" style="padding:30.8px 13.2px 39.6px 13.2px;">\n\n<table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:594px;background-color:#10141D;border:1.1px solid rgba(255,255,255,.06);border-radius:15.8px;overflow:hidden;">\n\n  <!-- HEADER BANNER -->\n  <tr>\n    <td style="padding:0;line-height:0;">\n      <img src="https://www.thesharpteam.bet/static/img/sharp-team-header.jpg" alt="The Sharp Team" width="600" style="display:block;width:100%;max-width:594px;height:auto;border:0;">\n    </td>\n  </tr>\n\n  <!-- TITLE BLOCK -->\n  <tr>\n    <td style="padding:29.7px 23.8px 4px 23.8px;font-family:Arial,Helvetica,sans-serif;">\n      <div style="font-size:22.8px;line-height:29.3px;font-weight:700;color:#ffffff;letter-spacing:.2.7px;">Welcome to The Sharp Team</div>\n      <div style="font-size:13.9px;line-height:23.8px;color:#e8eaf2;margin-top:17.8px;">Hi __NOMBRE__,</div>\n      <div style="font-size:13.9px;line-height:23.8px;color:#c3c9e0;margin-top:7.9px;">Your account is ready. Everything lives in your member Dashboard &mdash; your plays, your tracker and your tools, all in one place.</div>\n    </td>\n  </tr>\n\n  <!-- CTA BUTTON -->\n  <tr>\n    <td align="center" style="padding:23.8px 23.8px 5.9px 23.8px;font-family:Arial,Helvetica,sans-serif;">\n      <table role="presentation" cellpadding="0" cellspacing="0" border="0">\n        <tr>\n          <td align="center" style="background-color:#e8c766;border-radius:989px;">\n            <a href="https://www.thesharpteam.bet/home" style="display:inline-block;padding:13.9px 35.6px;font-family:Arial,Helvetica,sans-serif;font-size:13.9px;font-weight:700;color:#0B0E13;text-decoration:none;letter-spacing:.7.2px;">OPEN MY DASHBOARD</a>\n          </td>\n        </tr>\n      </table>\n    </td>\n  </tr>\n\n  <!-- HOW IT WORKS -->\n  <tr>\n    <td style="padding:25.7px 23.8px 4px 23.8px;font-family:Arial,Helvetica,sans-serif;">\n      <div style="font-size:10.5px;line-height:13.9px;font-weight:700;color:#e8c766;letter-spacing:2.2px;"><span style="display:inline-block;width:13.9px;height:3px;background-color:#2EE6A8;border-radius:2px;vertical-align:middle;margin-right:8.9px;font-size:0;line-height:0;">&nbsp;</span>HOW IT WORKS</div>\n\n      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:15.8px;">\n        <tr>\n          <td style="background-color:#12161F;border:1.1px solid rgba(255,255,255,.06);border-radius:15.8px;padding:15.8px 17.8px;">\n            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">\n              <tr>\n                <td valign="top" width="26" style="font-size:13.4px;line-height:19.8px;font-weight:700;color:#e8c766;">1.</td>\n                <td style="font-size:13.4px;line-height:19.8px;color:#c3c9e0;">We post the day\'s card on your Dashboard before game time &mdash; weekdays 2:00 PM ET, weekends 11:00 AM ET.</td>\n              </tr>\n            </table>\n          </td>\n        </tr>\n        <tr><td style="height:13.9px;line-height:13.9px;font-size:0;">&nbsp;</td></tr>\n        <tr>\n          <td style="background-color:#12161F;border:1.1px solid rgba(255,255,255,.06);border-radius:15.8px;padding:15.8px 17.8px;">\n            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">\n              <tr>\n                <td valign="top" width="26" style="font-size:13.4px;line-height:19.8px;font-weight:700;color:#e8c766;">2.</td>\n                <td style="font-size:13.4px;line-height:19.8px;color:#c3c9e0;">Every play carries its original bet ticket &mdash; the real ticket, never a screenshot of odds.</td>\n              </tr>\n            </table>\n          </td>\n        </tr>\n        <tr><td style="height:13.9px;line-height:13.9px;font-size:0;">&nbsp;</td></tr>\n        <tr>\n          <td style="background-color:#12161F;border:1.1px solid rgba(255,255,255,.06);border-radius:15.8px;padding:15.8px 17.8px;">\n            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">\n              <tr>\n                <td valign="top" width="26" style="font-size:13.4px;line-height:19.8px;font-weight:700;color:#e8c766;">3.</td>\n                <td style="font-size:13.4px;line-height:19.8px;color:#c3c9e0;">Track the plays in My Bets and follow the results as they settle.</td>\n              </tr>\n            </table>\n          </td>\n        </tr>\n      </table>\n    </td>\n  </tr>\n\n  <!-- INSIDE YOUR DASHBOARD -->\n  <tr>\n    <td style="padding:25.7px 23.8px 4px 23.8px;font-family:Arial,Helvetica,sans-serif;">\n      <div style="font-size:10.5px;line-height:13.9px;font-weight:700;color:#e8c766;letter-spacing:2.2px;"><span style="display:inline-block;width:13.9px;height:3px;background-color:#2EE6A8;border-radius:2px;vertical-align:middle;margin-right:8.9px;font-size:0;line-height:0;">&nbsp;</span>INSIDE YOUR DASHBOARD</div>\n\n      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:15.8px;">\n        <tr>\n          <td style="background-color:#12161F;border:1.1px solid rgba(255,255,255,.06);border-radius:15.8px;padding:15.8px 17.8px;">\n            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">\n              <tr>\n                <td valign="top" width="24" style="font-size:12.3px;line-height:15.8px;color:#e8c766;">&#9733;</td>\n                <td style="font-size:11.4px;line-height:15.8px;color:#c3c9e0;">\n                  <span style="color:#ffffff;font-weight:700;">The Daily Card</span> &mdash; Gold plays plus the &#9733; Elite play, each with its original bet ticket, posted before game time.\n                </td>\n              </tr>\n            </table>\n          </td>\n        </tr>\n        <tr><td style="height:13.9px;line-height:13.9px;font-size:0;">&nbsp;</td></tr>\n        <tr>\n          <td style="background-color:#12161F;border:1.1px solid rgba(255,255,255,.06);border-radius:15.8px;padding:15.8px 17.8px;">\n            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">\n              <tr>\n                <td valign="top" width="24" style="font-size:12.3px;line-height:15.8px;color:#e8c766;">&#10003;</td>\n                <td style="font-size:11.4px;line-height:15.8px;color:#c3c9e0;">\n                  <span style="color:#ffffff;font-weight:700;">My Bets</span> &mdash; your personal tracker: log your bets in one tap and follow your own record.\n                </td>\n              </tr>\n            </table>\n          </td>\n        </tr>\n        <tr><td style="height:13.9px;line-height:13.9px;font-size:0;">&nbsp;</td></tr>\n        <tr>\n          <td style="background-color:#12161F;border:1.1px solid rgba(255,255,255,.06);border-radius:15.8px;padding:15.8px 17.8px;">\n            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">\n              <tr>\n                <td valign="top" width="24" style="font-size:12.3px;line-height:15.8px;color:#e8c766;">&#9874;</td>\n                <td style="font-size:11.4px;line-height:15.8px;color:#c3c9e0;">\n                  <span style="color:#ffffff;font-weight:700;">Tools</span> &mdash; Game Center, line moves and price comparison in one place.\n                </td>\n              </tr>\n            </table>\n          </td>\n        </tr>\n        <tr><td style="height:13.9px;line-height:13.9px;font-size:0;">&nbsp;</td></tr>\n        <tr>\n          <td style="background-color:#12161F;border:1.1px solid rgba(255,255,255,.06);border-radius:15.8px;padding:15.8px 17.8px;">\n            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">\n              <tr>\n                <td valign="top" width="24" style="font-size:12.3px;line-height:15.8px;color:#e8c766;">&#8599;</td>\n                <td style="font-size:11.4px;line-height:15.8px;color:#c3c9e0;">\n                  <span style="color:#ffffff;font-weight:700;">+EV Board</span> &mdash; the day\'s best prices across books, Platinum only.\n                </td>\n              </tr>\n            </table>\n          </td>\n        </tr>\n      </table>\n    </td>\n  </tr>\n\n  <!-- THE LEVELS -->\n  <tr>\n    <td style="padding:25.7px 23.8px 4px 23.8px;font-family:Arial,Helvetica,sans-serif;">\n      <div style="font-size:10.5px;line-height:13.9px;font-weight:700;color:#e8c766;letter-spacing:2.2px;"><span style="display:inline-block;width:13.9px;height:3px;background-color:#2EE6A8;border-radius:2px;vertical-align:middle;margin-right:8.9px;font-size:0;line-height:0;">&nbsp;</span>THE LEVELS</div>\n\n      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:15.8px;">\n        <tr>\n          <td style="background-color:#12161F;border:1.1px solid rgba(255,255,255,.06);border-radius:15.8px;padding:15.8px 17.8px;font-size:13.4px;line-height:19.8px;color:#c3c9e0;"><span style="color:#ffffff;font-weight:700;">FREE</span> &mdash; free forever: the free plays, every day, on your Dashboard.</td>\n        </tr>\n        <tr><td style="height:13.9px;line-height:13.9px;font-size:0;">&nbsp;</td></tr>\n        <tr>\n          <td style="background-color:#12161F;border:1.1px solid rgba(255,255,255,.06);border-radius:15.8px;padding:15.8px 17.8px;font-size:13.4px;line-height:19.8px;color:#c3c9e0;"><span style="color:#e8c766;font-weight:700;">PLATINUM</span> &mdash; everything: Gold plays + the &#9733; Elite play, the +EV Board and the full toolbox.</td>\n        </tr>\n      </table>\n    </td>\n  </tr>\n\n  <!-- YOUR PLAN -->\n  <tr>\n    <td style="padding:25.7px 23.8px 4px 23.8px;font-family:Arial,Helvetica,sans-serif;">\n      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#12161F;border:1.1px solid rgba(232,199,102,.40);border-radius:15.8px;">\n        <tr>\n          <td style="padding:17.8px 19.8px 4px 19.8px;">\n            <div style="font-size:10.5px;line-height:13.9px;font-weight:700;color:#e8c766;letter-spacing:2.2px;"><span style="display:inline-block;width:13.9px;height:3px;background-color:#2EE6A8;border-radius:2px;vertical-align:middle;margin-right:8.9px;font-size:0;line-height:0;">&nbsp;</span>YOUR PLAN</div>\n          </td>\n        </tr>\n        <tr>\n          <td style="padding:4px 19.8px 17.8px 19.8px;">\n            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">\n              <tr>\n                <td style="font-size:13.4px;line-height:19.8px;color:#c3c9e0;padding:6.9px 0;">First week</td>\n                <td align="right" style="font-size:13.4px;line-height:19.8px;color:#ffffff;font-weight:700;padding:6.9px 0;">$1.00</td>\n              </tr>\n              <tr>\n                <td style="font-size:13.4px;line-height:19.8px;color:#c3c9e0;padding:6.9px 0;border-top:1.1px solid rgba(255,255,255,.10);">Then</td>\n                <td align="right" style="font-size:13.4px;line-height:19.8px;color:#ffffff;font-weight:700;padding:6.9px 0;border-top:1.1px solid rgba(255,255,255,.10);">$15.99/week</td>\n              </tr>\n              <tr>\n                <td colspan="2" style="font-size:12.3px;line-height:17.8px;color:#8b93a9;padding:8.9px 0 0 0;border-top:1.1px solid rgba(255,255,255,.10);">Cancel anytime.</td>\n              </tr>\n            </table>\n          </td>\n        </tr>\n      </table>\n    </td>\n  </tr>\n\n  <!-- OFFICIAL STAKES -->\n  <tr>\n    <td style="padding:25.7px 23.8px 4px 23.8px;font-family:Arial,Helvetica,sans-serif;">\n      <div style="font-size:10.5px;line-height:13.9px;font-weight:700;color:#e8c766;letter-spacing:2.2px;"><span style="display:inline-block;width:13.9px;height:3px;background-color:#2EE6A8;border-radius:2px;vertical-align:middle;margin-right:8.9px;font-size:0;line-height:0;">&nbsp;</span>OFFICIAL STAKES</div>\n      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:15.8px;">\n        <tr>\n          <td style="background-color:#12161F;border:1.1px solid rgba(255,255,255,.06);border-radius:15.8px;padding:15.8px 17.8px;font-size:13.4px;line-height:19.8px;color:#c3c9e0;">Platinum plays are $100 (1 unit). Gold and Free plays are $60. Your tracker runs the same card with your own bankroll.</td>\n        </tr>\n      </table>\n    </td>\n  </tr>\n\n  <!-- NEVER MISS A CARD -->\n  <tr>\n    <td style="padding:25.7px 23.8px 4px 23.8px;font-family:Arial,Helvetica,sans-serif;">\n      <div style="font-size:10.5px;line-height:13.9px;font-weight:700;color:#e8c766;letter-spacing:2.2px;"><span style="display:inline-block;width:13.9px;height:3px;background-color:#2EE6A8;border-radius:2px;vertical-align:middle;margin-right:8.9px;font-size:0;line-height:0;">&nbsp;</span>NEVER MISS A CARD</div>\n      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:15.8px;">\n        <tr>\n          <td style="background-color:#12161F;border:1.1px solid rgba(255,255,255,.06);border-radius:15.8px;padding:15.8px 17.8px;font-size:13.4px;line-height:19.8px;color:#c3c9e0;">Turn on Dashboard notifications after you log in, and join the Telegram channels from your Dashboard.</td>\n        </tr>\n      </table>\n    </td>\n  </tr>\n\n  <!-- QUESTIONS -->\n  <tr>\n    <td style="padding:25.7px 23.8px 4px 23.8px;font-family:Arial,Helvetica,sans-serif;">\n      <div style="font-size:10.5px;line-height:13.9px;font-weight:700;color:#e8c766;letter-spacing:2.2px;"><span style="display:inline-block;width:13.9px;height:3px;background-color:#2EE6A8;border-radius:2px;vertical-align:middle;margin-right:8.9px;font-size:0;line-height:0;">&nbsp;</span>QUESTIONS?</div>\n      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:15.8px;">\n        <tr>\n          <td style="background-color:#12161F;border:1.1px solid rgba(255,255,255,.06);border-radius:15.8px;padding:15.8px 17.8px;font-size:13.4px;line-height:19.8px;color:#c3c9e0;">Just reply to this email and we\'ll take care of you.</td>\n        </tr>\n      </table>\n    </td>\n  </tr>\n\n  <!-- SIGNING -->\n  <tr>\n    <td style="padding:25.7px 23.8px 29.7px 23.8px;font-family:Arial,Helvetica,sans-serif;">\n      <div style="font-size:13.4px;line-height:19.8px;color:#e8eaf2;">Stay sharp. Stay disciplined. Play the long game.</div>\n      <div style="font-size:12.3px;line-height:16.8px;color:#e8c766;font-weight:700;letter-spacing:1.2px;margin-top:13.9px;">THE SHARP TEAM</div>\n      <div style="font-size:11.4px;line-height:14.9px;color:#8b93a9;margin-top:2px;">Data-Driven Sports Betting Picks</div>\n    </td>\n  </tr>\n\n  <!-- FOOTER -->\n  <tr>\n    <td style="padding:25.7px 23.8px 31.7px 23.8px;border-top:1.1px solid rgba(255,255,255,.10);font-family:Arial,Helvetica,sans-serif;" align="center">\n      <img src="https://www.thesharpteam.bet/static/img/sharp-team-header.jpg" alt="The Sharp Team" width="220" style="display:block;width:217.8px;max-width:217.8px;height:auto;border:0;margin:0 auto;">\n\n      <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin:19.8px auto 5.9px auto;">\n        <tr>\n          <td style="padding:0 5.9px;"><a href="https://www.instagram.com/thesharp_team" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/instagram.png" alt="Instagram" width="22" height="22" style="display:block;width:21.8px;height:21.8px;border:0;"></a></td>\n          <td style="padding:0 5.9px;"><a href="https://www.facebook.com/thesharpteam" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/facebook.png" alt="Facebook" width="22" height="22" style="display:block;width:21.8px;height:21.8px;border:0;"></a></td>\n          <td style="padding:0 5.9px;"><a href="https://www.thesharpteam.bet/home" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/telegram.png" alt="Telegram" width="22" height="22" style="display:block;width:21.8px;height:21.8px;border:0;"></a></td>\n          <td style="padding:0 5.9px;"><a href="https://www.thesharpteam.bet/home" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/social-x-white.png" alt="X" width="22" height="22" style="display:block;width:21.8px;height:21.8px;border:0;"></a></td>\n        </tr>\n      </table>\n\n      <div style="font-size:10.5px;line-height:14.9px;color:#8b93a9;margin-top:15.8px;">The Sharp Team &middot; Wallington, NJ</div>\n      <div style="font-size:10.5px;line-height:14.9px;color:#8b93a9;margin-top:5.9px;">You are receiving this email because you created an account with The Sharp Team.</div>\n      <div style="font-size:10.5px;line-height:14.9px;margin-top:7.9px;"><a href="{{{RESEND_UNSUBSCRIBE_URL}}}" style="color:#8b93a9;text-decoration:underline;">Unsubscribe</a></div>\n    </td>\n  </tr>\n\n</table>\n\n</td>\n</tr>\n</table>\n</body>\n</html>\n'
 
 
 def _welcome_stats():
@@ -2045,9 +2045,9 @@ DUNNING_HTML = """<!DOCTYPE html>
 <body style="margin:0;padding:0;background-color:#FFFFFF;-webkit-text-size-adjust:100%;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#FFFFFF;">
 <tr>
-<td align="center" style="padding:28px 12px 36px 12px;">
+<td align="center" style="padding:30.8px 13.2px 39.6px 13.2px;">
 
-<table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;background-color:#FFFFFF;border:1px solid #E5E7EB;border-radius:16px;overflow:hidden;">
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;background-color:#FFFFFF;border:1.1px solid #E5E7EB;border-radius:17.6px;overflow:hidden;">
 
   <!-- HEADER BANNER -->
   <tr>
@@ -2058,26 +2058,26 @@ DUNNING_HTML = """<!DOCTYPE html>
 
   <!-- TITLE BLOCK -->
   <tr>
-    <td align="center" style="padding:32px 24px 4px 24px;font-family:Arial,Helvetica,sans-serif;">
-      <div style="font-size:23px;line-height:29.5px;font-weight:700;color:#14181F;letter-spacing:.3px;">Your Payment Didn&#8217;t Go Through</div>
-      <div style="font-size:14px;line-height:24px;color:#3D4454;margin-top:18px;">Your Platinum payment was declined, so your access is paused for now. Fix it in one minute and you&#8217;re right back in.</div>
+    <td align="center" style="padding:35.2px 26.4px 4.4px 26.4px;font-family:Arial,Helvetica,sans-serif;">
+      <div style="font-size:25.3px;line-height:32.5px;font-weight:700;color:#14181F;letter-spacing:.3px;">Your Payment Didn&#8217;t Go Through</div>
+      <div style="font-size:15.4px;line-height:26.4px;color:#3D4454;margin-top:19.8px;">Your Platinum payment was declined, so your access is paused for now. Fix it in one minute and you&#8217;re right back in.</div>
     </td>
   </tr>
 
   <!-- PAYMENT DETAIL -->
   <tr>
-    <td style="padding:26px 24px 4px 24px;font-family:Arial,Helvetica,sans-serif;">
-      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#FDF9EA;border:1px solid rgba(232,199,102,.55);border-radius:16px;">
+    <td style="padding:28.6px 26.4px 4.4px 26.4px;font-family:Arial,Helvetica,sans-serif;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#FDF9EA;border:1.1px solid rgba(232,199,102,.55);border-radius:17.6px;">
         <tr>
-          <td style="padding:20px 18px;font-family:Arial,Helvetica,sans-serif;">
+          <td style="padding:22px 19.8px;font-family:Arial,Helvetica,sans-serif;">
             <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
               <tr>
-                <td style="font-size:13.5px;line-height:19px;color:#3D4454;padding:4px 0;">Amount due</td>
-                <td align="right" style="font-size:13.5px;line-height:19px;font-weight:700;color:#14181F;padding:4px 0;">__AMOUNT_DUE__</td>
+                <td style="font-size:14.9px;line-height:20.9px;color:#3D4454;padding:4.4px 0;">Amount due</td>
+                <td align="right" style="font-size:14.9px;line-height:20.9px;font-weight:700;color:#14181F;padding:4.4px 0;">__AMOUNT_DUE__</td>
               </tr>
 __CARD_ROW__              <tr>
-                <td style="font-size:13.5px;line-height:19px;color:#3D4454;padding:4px 0;">Plan</td>
-                <td align="right" style="font-size:13.5px;line-height:19px;font-weight:700;color:#14181F;padding:4px 0;">Platinum &#8212; $15.99/week</td>
+                <td style="font-size:14.9px;line-height:20.9px;color:#3D4454;padding:4.4px 0;">Plan</td>
+                <td align="right" style="font-size:14.9px;line-height:20.9px;font-weight:700;color:#14181F;padding:4.4px 0;">Platinum &#8212; $15.99/week</td>
               </tr>
             </table>
           </td>
@@ -2088,14 +2088,14 @@ __CARD_ROW__              <tr>
 
   <!-- WHAT HAPPENS NEXT -->
   <tr>
-    <td style="padding:26px 24px 4px 24px;font-family:Arial,Helvetica,sans-serif;">
-      <div style="font-size:10.5px;line-height:14px;font-weight:700;color:#B8912E;letter-spacing:2.2px;"><span style="display:inline-block;width:14px;height:3px;background-color:#2EE6A8;border-radius:2px;vertical-align:middle;margin-right:9px;font-size:0;line-height:0;">&nbsp;</span>WHAT HAPPENS NEXT</div>
-      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:16px;">
+    <td style="padding:28.6px 26.4px 4.4px 26.4px;font-family:Arial,Helvetica,sans-serif;">
+      <div style="font-size:11.6px;line-height:15.4px;font-weight:700;color:#B8912E;letter-spacing:2.4px;"><span style="display:inline-block;width:15.4px;height:3.3px;background-color:#2EE6A8;border-radius:2.2px;vertical-align:middle;margin-right:9.9px;font-size:0;line-height:0;">&nbsp;</span>WHAT HAPPENS NEXT</div>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:17.6px;">
         <tr>
-          <td style="background-color:#F7F8FA;border:1px solid #E5E7EB;border-radius:16px;padding:16px 18px;font-family:Arial,Helvetica,sans-serif;">
-            <div style="font-size:13.5px;line-height:20px;color:#3D4454;">Your Platinum access stays paused while the payment is open.</div>
-            <div style="font-size:13.5px;line-height:20px;color:#3D4454;margin-top:10px;">Update your card within 10 days &#8212; after that, the subscription is cancelled and you&#8217;d start a new one.</div>
-            <div style="font-size:13.5px;line-height:20px;color:#3D4454;margin-top:10px;">As soon as your card is updated, your access comes back right away &#8212; no new signup, no lost history.</div>
+          <td style="background-color:#F7F8FA;border:1.1px solid #E5E7EB;border-radius:17.6px;padding:17.6px 19.8px;font-family:Arial,Helvetica,sans-serif;">
+            <div style="font-size:14.9px;line-height:22px;color:#3D4454;">Your Platinum access stays paused while the payment is open.</div>
+            <div style="font-size:14.9px;line-height:22px;color:#3D4454;margin-top:11px;">Update your card within 10 days &#8212; after that, the subscription is cancelled and you&#8217;d start a new one.</div>
+            <div style="font-size:14.9px;line-height:22px;color:#3D4454;margin-top:11px;">As soon as your card is updated, your access comes back right away &#8212; no new signup, no lost history.</div>
           </td>
         </tr>
       </table>
@@ -2104,44 +2104,44 @@ __CARD_ROW__              <tr>
 
   <!-- CTA BUTTON -->
   <tr>
-    <td align="center" style="padding:24px 24px 6px 24px;font-family:Arial,Helvetica,sans-serif;">
+    <td align="center" style="padding:26.4px 26.4px 6.6px 26.4px;font-family:Arial,Helvetica,sans-serif;">
       <table role="presentation" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td align="center" style="background-color:#e8c766;border-radius:999px;">
-            <a href="__PAY_URL__" style="display:inline-block;padding:11px 26px;font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:700;color:#14181F;text-decoration:none;letter-spacing:.8px;white-space:nowrap;">UPDATE MY CARD</a>
+          <td align="center" style="background-color:#e8c766;border-radius:1098.9px;">
+            <a href="__PAY_URL__" style="display:inline-block;padding:12.1px 28.6px;font-family:Arial,Helvetica,sans-serif;font-size:14.3px;font-weight:700;color:#14181F;text-decoration:none;letter-spacing:.8px;white-space:nowrap;">UPDATE MY CARD</a>
           </td>
         </tr>
       </table>
-      <div style="font-size:12.5px;line-height:18px;color:#6B7280;margin-top:14px;">It takes about a minute. Your plays and history stay right where you left them.</div>
+      <div style="font-size:13.8px;line-height:19.8px;color:#6B7280;margin-top:15.4px;">It takes about a minute. Your plays and history stay right where you left them.</div>
     </td>
   </tr>
 
   <!-- SIGNING -->
   <tr>
-    <td align="center" style="padding:26px 24px 30px 24px;font-family:Arial,Helvetica,sans-serif;">
-      <div style="font-size:13.5px;line-height:20px;color:#14181F;">Stay sharp. Stay disciplined. Play the long game.</div>
-      <div style="font-size:12.5px;line-height:17px;color:#B8912E;font-weight:700;letter-spacing:1.2px;margin-top:14px;">THE SHARP TEAM</div>
-      <div style="font-size:11.5px;line-height:15px;color:#6B7280;margin-top:2px;">Data-Driven Sports Betting Picks</div>
+    <td align="center" style="padding:28.6px 26.4px 33px 26.4px;font-family:Arial,Helvetica,sans-serif;">
+      <div style="font-size:14.9px;line-height:22px;color:#14181F;">Stay sharp. Stay disciplined. Play the long game.</div>
+      <div style="font-size:13.8px;line-height:18.7px;color:#B8912E;font-weight:700;letter-spacing:1.3px;margin-top:15.4px;">THE SHARP TEAM</div>
+      <div style="font-size:12.7px;line-height:16.5px;color:#6B7280;margin-top:2.2px;">Data-Driven Sports Betting Picks</div>
     </td>
   </tr>
 
   <!-- FOOTER -->
   <tr>
-    <td style="padding:26px 24px 32px 24px;background-color:#10141D;border-top:1px solid rgba(255,255,255,.10);font-family:Arial,Helvetica,sans-serif;" align="center">
-      <img src="https://www.thesharpteam.bet/static/img/sharp-team-header.jpg" alt="The Sharp Team" width="220" style="display:block;width:220px;max-width:220px;height:auto;border:0;margin:0 auto;">
+    <td style="padding:28.6px 26.4px 35.2px 26.4px;background-color:#10141D;border-top:1.1px solid rgba(255,255,255,.10);font-family:Arial,Helvetica,sans-serif;" align="center">
+      <img src="https://www.thesharpteam.bet/static/img/sharp-team-header.jpg" alt="The Sharp Team" width="220" style="display:block;width:242px;max-width:242px;height:auto;border:0;margin:0 auto;">
 
-      <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin:20px auto 6px auto;">
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin:22px auto 6.6px auto;">
         <tr>
-          <td style="padding:0 6px;"><a href="https://www.instagram.com/thesharp_team" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/instagram.png" alt="Instagram" width="22" height="22" style="display:block;width:22px;height:22px;border:0;"></a></td>
-          <td style="padding:0 6px;"><a href="https://www.facebook.com/thesharpteam" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/facebook.png" alt="Facebook" width="22" height="22" style="display:block;width:22px;height:22px;border:0;"></a></td>
-          <td style="padding:0 6px;"><a href="https://www.thesharpteam.bet/home" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/telegram.png" alt="Telegram" width="22" height="22" style="display:block;width:22px;height:22px;border:0;"></a></td>
-          <td style="padding:0 6px;"><a href="https://www.thesharpteam.bet/home" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/social-x-white.png" alt="X" width="22" height="22" style="display:block;width:22px;height:22px;border:0;"></a></td>
+          <td style="padding:0 6.6px;"><a href="https://www.instagram.com/thesharp_team" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/instagram.png" alt="Instagram" width="22" height="22" style="display:block;width:24.2px;height:24.2px;border:0;"></a></td>
+          <td style="padding:0 6.6px;"><a href="https://www.facebook.com/thesharpteam" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/facebook.png" alt="Facebook" width="22" height="22" style="display:block;width:24.2px;height:24.2px;border:0;"></a></td>
+          <td style="padding:0 6.6px;"><a href="https://www.thesharpteam.bet/home" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/telegram.png" alt="Telegram" width="22" height="22" style="display:block;width:24.2px;height:24.2px;border:0;"></a></td>
+          <td style="padding:0 6.6px;"><a href="https://www.thesharpteam.bet/home" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/social-x-white.png" alt="X" width="22" height="22" style="display:block;width:24.2px;height:24.2px;border:0;"></a></td>
         </tr>
       </table>
 
-      <div style="font-size:10.5px;line-height:15px;color:#6B7280;margin-top:16px;">The Sharp Team &middot; Wallington, NJ</div>
-      <div style="font-size:10.5px;line-height:15px;color:#6B7280;margin-top:6px;">You are receiving this email because you created an account with The Sharp Team.</div>
-      <div style="font-size:10.5px;line-height:15px;margin-top:8px;"><a href="{{{RESEND_UNSUBSCRIBE_URL}}}" style="color:#6B7280;text-decoration:underline;">Unsubscribe</a></div>
+      <div style="font-size:11.6px;line-height:16.5px;color:#6B7280;margin-top:17.6px;">The Sharp Team &middot; Wallington, NJ</div>
+      <div style="font-size:11.6px;line-height:16.5px;color:#6B7280;margin-top:6.6px;">You are receiving this email because you created an account with The Sharp Team.</div>
+      <div style="font-size:11.6px;line-height:16.5px;margin-top:8.8px;"><a href="{{{RESEND_UNSUBSCRIBE_URL}}}" style="color:#6B7280;text-decoration:underline;">Unsubscribe</a></div>
     </td>
   </tr>
 
@@ -2195,7 +2195,7 @@ CANCELLATION_HTML = """<!DOCTYPE html>
 <title>Your Platinum Membership Has Been Cancelled — The Sharp Team</title>
 </head>
 <body style="margin:0;padding:0;background-color:#eef1f6;-webkit-text-size-adjust:100%;">
-<div style="margin:0;padding:21.6px 10.8px;background:#eef1f6;font-family:Arial,Helvetica,sans-serif;color:#10141f;"><div style="max-width:504px;margin:0 auto;background:#ffffff;border:1px solid #dfe3ea;border-radius:14.4px;overflow:hidden;"><img src="https://www.thesharpteam.bet/static/img/sharp-team-header.jpg" alt="The Sharp Team" width="560" style="display:block;width:100%;height:auto;"><div style="padding:23.4px 27px 25.2px;"><div style="width:48.6px;height:48.6px;border:2.7px solid #1f9d66;border-radius:45%;color:#1f9d66;font-size:23.5px;line-height:48.6px;text-align:center;margin:1.8px auto 10.8px;">&#10003;</div><p style="font-size:27px;font-weight:800;color:#0d1526;text-align:center;margin:0 0 7.2px;">Cancellation Confirmed</p><p style="font-size:12.2px;color:#5b6472;text-align:center;line-height:1.5;margin:0 0 16.2px;">Your Platinum membership cancellation has been successfully processed.</p><div style="height:1px;background:#e3e6ec;margin:0 0 18px;"></div><p style="font-size:13px;margin:0 0 10.8px;">Hi __NOMBRE__,</p><p style="font-size:13px;line-height:1.55;margin:0 0 10.8px;">We've received and processed your request to cancel your Platinum membership.</p><p style="font-size:13px;line-height:1.55;margin:0 0 18px;">Your Platinum access has now ended, and you will not be charged again.</p><div style="background:#edf0f5;border-radius:10.8px;padding:16.2px 18px;margin:0 0 19.8px;"><p style="font-size:13.8px;font-weight:700;margin:0 0 10.8px;">Membership Summary</p><table width="100%" cellpadding="0" cellspacing="0"><tr><td style="font-size:12.2px;color:#5b6472;padding:4.5px 0;">Membership</td><td align="right" style="font-size:12.2px;font-weight:700;padding:4.5px 0;">Platinum</td></tr><tr><td style="font-size:12.2px;color:#5b6472;padding:4.5px 0;">Status</td><td align="right" style="padding:4.5px 0;"><span style="background:#d9f2e3;color:#0c7a3d;font-size:10.5px;font-weight:700;border-radius:899.1px;padding:3.6px 9.9px;">Cancelled</span></td></tr><tr><td style="font-size:12.2px;color:#5b6472;padding:4.5px 0;">Platinum Access</td><td align="right" style="font-size:12.2px;font-weight:700;padding:4.5px 0;">Ended</td></tr><tr><td style="font-size:12.2px;color:#5b6472;padding:4.5px 0;">Future Charges</td><td align="right" style="font-size:12.2px;font-weight:700;padding:4.5px 0;">$0.00</td></tr></table></div><p style="font-size:15.4px;font-weight:700;margin:0 0 9px;">Changed your mind?</p><p style="font-size:13px;line-height:1.55;margin:0 0 16.2px;">We'd love to have you stay. You can reactivate your Platinum membership anytime.</p><div style="background:#0d1526;border-radius:10.8px;padding:21.6px 18px;text-align:center;margin:0 0 18px;"><p style="font-size:17px;font-weight:800;color:#ffffff;margin:0 0 5.4px;">Your next winning opportunity awaits.</p><p style="font-size:11.3px;color:#a7b0c2;margin:0 0 14.4px;">Come back whenever you're ready.</p><a href="https://www.thesharpteam.bet/cuenta" style="display:inline-block;background:#d9a92c;color:#10141f;font-size:12.2px;font-weight:800;letter-spacing:0.4px;text-decoration:none;padding:11.7px 27px;border-radius:7.2px;">REACTIVATE MEMBERSHIP</a></div><p style="font-size:12.2px;line-height:1.55;color:#39415a;margin:0 0 14.4px;">Thank you for being part of The Sharp Team. We appreciate your support and wish you the best.</p><p style="font-size:13.8px;font-weight:700;margin:0 0 5.4px;">The Sharp Team</p><p style="font-size:10.5px;color:#5b6472;margin:0;">Gamble smart. Stay disciplined. Play the long game.</p><div style="height:1px;background:#e3e6ec;margin:18px 0 14.4px;"></div><p style="text-align:center;font-size:9.3px;color:#8a93a5;line-height:1.55;margin:0 0 5.4px;">21+. Play responsibly. If you or someone you know has a gambling problem, call or text 1-800-GAMBLER.</p><p style="text-align:center;font-size:9.3px;color:#8a93a5;line-height:1.55;margin:0;">The Sharp Team provides information and entertainment only and is not a sportsbook. Past results do not guarantee future performance.</p></div><div style="background:#10141D;padding:23.4px 21.6px 28.8px;text-align:center;font-family:Arial,Helvetica,sans-serif;"><img src="https://www.thesharpteam.bet/static/img/sharp-team-header.jpg" alt="The Sharp Team" width="220" style="display:block;width:198px;max-width:198px;height:auto;border:0;margin:0 auto;"><table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin:18px auto 5.4px auto;"><tr><td style="padding:0 5.4px;"><a href="https://www.instagram.com/thesharp_team" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/instagram.png" alt="Instagram" width="22" height="22" style="display:block;width:19.8px;height:19.8px;border:0;"></a></td><td style="padding:0 5.4px;"><a href="https://www.facebook.com/thesharpteam" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/facebook.png" alt="Facebook" width="22" height="22" style="display:block;width:19.8px;height:19.8px;border:0;"></a></td><td style="padding:0 5.4px;"><a href="https://www.thesharpteam.bet/home" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/telegram.png" alt="Telegram" width="22" height="22" style="display:block;width:19.8px;height:19.8px;border:0;"></a></td><td style="padding:0 5.4px;"><a href="https://www.thesharpteam.bet/home" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/social-x-white.png" alt="X" width="22" height="22" style="display:block;width:19.8px;height:19.8px;border:0;"></a></td></tr></table><div style="font-size:9.5px;line-height:13.5px;color:#8b93a9;margin-top:14.4px;">The Sharp Team &middot; Wallington, NJ</div><div style="font-size:9.5px;line-height:13.5px;color:#8b93a9;margin-top:5.4px;">You are receiving this email because you created an account with The Sharp Team.</div><div style="font-size:9.5px;line-height:13.5px;margin-top:7.2px;"><a href="{{{RESEND_UNSUBSCRIBE_URL}}}" style="color:#8b93a9;text-decoration:underline;">Unsubscribe</a></div></div></div><p style="text-align:center;font-size:9.7px;color:#8a93a5;margin:12.6px 0 0;">&copy; 2026 The Sharp Team. All rights reserved.</p></div>
+<div style="margin:0;padding:23.8px 11.9px;background:#eef1f6;font-family:Arial,Helvetica,sans-serif;color:#10141f;"><div style="max-width:554.4px;margin:0 auto;background:#ffffff;border:1.1px solid #dfe3ea;border-radius:15.8px;overflow:hidden;"><img src="https://www.thesharpteam.bet/static/img/sharp-team-header.jpg" alt="The Sharp Team" width="560" style="display:block;width:100%;height:auto;"><div style="padding:25.7px 29.7px 27.7px;"><div style="width:53.5px;height:53.5px;border:3px solid #1f9d66;border-radius:45%;color:#1f9d66;font-size:25.9px;line-height:53.5px;text-align:center;margin:2px auto 11.9px;">&#10003;</div><p style="font-size:29.7px;font-weight:800;color:#0d1526;text-align:center;margin:0 0 7.9px;">Cancellation Confirmed</p><p style="font-size:13.4px;color:#5b6472;text-align:center;line-height:1.5;margin:0 0 17.8px;">Your Platinum membership cancellation has been successfully processed.</p><div style="height:1.1px;background:#e3e6ec;margin:0 0 19.8px;"></div><p style="font-size:14.3px;margin:0 0 11.9px;">Hi __NOMBRE__,</p><p style="font-size:14.3px;line-height:1.55;margin:0 0 11.9px;">We've received and processed your request to cancel your Platinum membership.</p><p style="font-size:14.3px;line-height:1.55;margin:0 0 19.8px;">Your Platinum access has now ended, and you will not be charged again.</p><div style="background:#edf0f5;border-radius:11.9px;padding:17.8px 19.8px;margin:0 0 21.8px;"><p style="font-size:15.2px;font-weight:700;margin:0 0 11.9px;">Membership Summary</p><table width="100%" cellpadding="0" cellspacing="0"><tr><td style="font-size:13.4px;color:#5b6472;padding:5px 0;">Membership</td><td align="right" style="font-size:13.4px;font-weight:700;padding:5px 0;">Platinum</td></tr><tr><td style="font-size:13.4px;color:#5b6472;padding:5px 0;">Status</td><td align="right" style="padding:5px 0;"><span style="background:#d9f2e3;color:#0c7a3d;font-size:11.6px;font-weight:700;border-radius:989px;padding:4px 10.9px;">Cancelled</span></td></tr><tr><td style="font-size:13.4px;color:#5b6472;padding:5px 0;">Platinum Access</td><td align="right" style="font-size:13.4px;font-weight:700;padding:5px 0;">Ended</td></tr><tr><td style="font-size:13.4px;color:#5b6472;padding:5px 0;">Future Charges</td><td align="right" style="font-size:13.4px;font-weight:700;padding:5px 0;">$0.00</td></tr></table></div><p style="font-size:16.9px;font-weight:700;margin:0 0 9.9px;">Changed your mind?</p><p style="font-size:14.3px;line-height:1.55;margin:0 0 17.8px;">We'd love to have you stay. You can reactivate your Platinum membership anytime.</p><div style="background:#0d1526;border-radius:11.9px;padding:23.8px 19.8px;text-align:center;margin:0 0 19.8px;"><p style="font-size:18.7px;font-weight:800;color:#ffffff;margin:0 0 5.9px;">Your next winning opportunity awaits.</p><p style="font-size:12.4px;color:#a7b0c2;margin:0 0 15.8px;">Come back whenever you're ready.</p><a href="https://www.thesharpteam.bet/cuenta" style="display:inline-block;background:#d9a92c;color:#10141f;font-size:13.4px;font-weight:800;letter-spacing:0.4px;text-decoration:none;padding:12.9px 29.7px;border-radius:7.9px;">REACTIVATE MEMBERSHIP</a></div><p style="font-size:13.4px;line-height:1.55;color:#39415a;margin:0 0 15.8px;">Thank you for being part of The Sharp Team. We appreciate your support and wish you the best.</p><p style="font-size:15.2px;font-weight:700;margin:0 0 5.9px;">The Sharp Team</p><p style="font-size:11.6px;color:#5b6472;margin:0;">Gamble smart. Stay disciplined. Play the long game.</p><div style="height:1.1px;background:#e3e6ec;margin:19.8px 0 15.8px;"></div><p style="text-align:center;font-size:10.2px;color:#8a93a5;line-height:1.55;margin:0 0 5.9px;">21+. Play responsibly. If you or someone you know has a gambling problem, call or text 1-800-GAMBLER.</p><p style="text-align:center;font-size:10.2px;color:#8a93a5;line-height:1.55;margin:0;">The Sharp Team provides information and entertainment only and is not a sportsbook. Past results do not guarantee future performance.</p></div><div style="background:#10141D;padding:25.7px 23.8px 31.7px;text-align:center;font-family:Arial,Helvetica,sans-serif;"><img src="https://www.thesharpteam.bet/static/img/sharp-team-header.jpg" alt="The Sharp Team" width="220" style="display:block;width:217.8px;max-width:217.8px;height:auto;border:0;margin:0 auto;"><table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin:19.8px auto 5.9px auto;"><tr><td style="padding:0 5.9px;"><a href="https://www.instagram.com/thesharp_team" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/instagram.png" alt="Instagram" width="22" height="22" style="display:block;width:21.8px;height:21.8px;border:0;"></a></td><td style="padding:0 5.9px;"><a href="https://www.facebook.com/thesharpteam" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/facebook.png" alt="Facebook" width="22" height="22" style="display:block;width:21.8px;height:21.8px;border:0;"></a></td><td style="padding:0 5.9px;"><a href="https://www.thesharpteam.bet/home" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/telegram.png" alt="Telegram" width="22" height="22" style="display:block;width:21.8px;height:21.8px;border:0;"></a></td><td style="padding:0 5.9px;"><a href="https://www.thesharpteam.bet/home" style="text-decoration:none;"><img src="https://www.thesharpteam.bet/static/img/icons/social-x-white.png" alt="X" width="22" height="22" style="display:block;width:21.8px;height:21.8px;border:0;"></a></td></tr></table><div style="font-size:10.5px;line-height:14.9px;color:#8b93a9;margin-top:15.8px;">The Sharp Team &middot; Wallington, NJ</div><div style="font-size:10.5px;line-height:14.9px;color:#8b93a9;margin-top:5.9px;">You are receiving this email because you created an account with The Sharp Team.</div><div style="font-size:10.5px;line-height:14.9px;margin-top:7.9px;"><a href="{{{RESEND_UNSUBSCRIBE_URL}}}" style="color:#8b93a9;text-decoration:underline;">Unsubscribe</a></div></div></div><p style="text-align:center;font-size:10.7px;color:#8a93a5;margin:13.9px 0 0;">&copy; 2026 The Sharp Team. All rights reserved.</p></div>
 </body>
 </html>
 """
@@ -2299,8 +2299,8 @@ def send_payment_failed_email(nombre: str, email: str, pay_url: str,
     if card_label:
         card_row = (
             '              <tr>\n'
-            '                <td style="font-size:13.5px;line-height:19px;color:#3D4454;padding:4px 0;">Card that failed</td>\n'
-            '                <td align="right" style="font-size:13.5px;line-height:19px;font-weight:700;color:#14181F;padding:4px 0;">'
+            '                <td style="font-size:14.9px;line-height:20.9px;color:#3D4454;padding:4.4px 0;">Card that failed</td>\n'
+            '                <td align="right" style="font-size:14.9px;line-height:20.9px;font-weight:700;color:#14181F;padding:4.4px 0;">'
             + card_label + '</td>\n'
             '              </tr>\n')
         card_line = f"Card that failed: {card_label}\n"
@@ -2341,67 +2341,67 @@ MONTHLY_HTML = """<!DOCTYPE html>
 </head>
 <body style="margin:0;padding:0;background:#ffffff;">
 <div style="display:none;max-height:0;overflow:hidden;opacity:0;">Your {mes} statement &mdash; every play graded, every dollar accounted.&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;</div>
-<div style="font-family:Arial,sans-serif;max-width:460px;margin:0 auto;background:#ffffff;">
+<div style="font-family:Arial,sans-serif;max-width:506px;margin:0 auto;background:#ffffff;">
 <img src="https://www.thesharpteam.bet/static/img/sharp-team-header.jpg" alt="The Sharp Team" width="460" style="width:100%;height:auto;display:block;border:0;">
-<div style="background:#ffffff;padding:14px 0 12px;text-align:center;">
-<p style="margin:0;font-size:9.9px;font-weight:800;letter-spacing:5px;color:#2e4053;">THE SHARP TEAM</p>
+<div style="background:#ffffff;padding:15.4px 0 13.2px;text-align:center;">
+<p style="margin:0;font-size:10.9px;font-weight:800;letter-spacing:5.5px;color:#2e4053;">THE SHARP TEAM</p>
 </div>
-<div style="background:#c9a227;padding:28px 24px;text-align:center;">
-<p style="margin:0;font-size:9.2px;font-weight:800;letter-spacing:3px;color:#0a0f1c;">MONTHLY STATEMENT</p>
-<h1 style="font-size:22.9px;font-weight:800;color:#0a0f1c;margin:10px 0 0;line-height:1.25;">Your {mes} statement.</h1>
+<div style="background:#c9a227;padding:30.8px 26.4px;text-align:center;">
+<p style="margin:0;font-size:10.1px;font-weight:800;letter-spacing:3.3px;color:#0a0f1c;">MONTHLY STATEMENT</p>
+<h1 style="font-size:25.2px;font-weight:800;color:#0a0f1c;margin:11px 0 0;line-height:1.25;">Your {mes} statement.</h1>
 </div>
-<div style="text-align:center;padding:16px 20px 0;">
-<p style="color:#555555;font-size:11.5px;line-height:1.6;margin:0;">Hi __NOMBRE__ &mdash; here is how your {mes} closed. Every play graded, every dollar accounted.</p>
+<div style="text-align:center;padding:17.6px 22px 0;">
+<p style="color:#555555;font-size:12.7px;line-height:1.6;margin:0;">Hi __NOMBRE__ &mdash; here is how your {mes} closed. Every play graded, every dollar accounted.</p>
 </div>
-<div style="padding:14px 20px 0;">
+<div style="padding:15.4px 22px 0;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
-<td width="50%" style="padding:0 5px 10px 0;">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:12px;"><tr><td style="padding:14px;text-align:center;">
-<p style="margin:0;font-size:8.4px;font-weight:800;letter-spacing:2px;color:#6b7280;">RECORD</p>
-<p style="margin:6px 0 0;font-size:16.8px;font-weight:800;color:#111111;">__RECORD__</p>
+<td width="50%" style="padding:0 5.5px 11px 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f8fafc;border:1.1px solid #e5e7eb;border-radius:13.2px;"><tr><td style="padding:15.4px;text-align:center;">
+<p style="margin:0;font-size:9.2px;font-weight:800;letter-spacing:2.2px;color:#6b7280;">RECORD</p>
+<p style="margin:6.6px 0 0;font-size:18.5px;font-weight:800;color:#111111;">__RECORD__</p>
 </td></tr></table>
 </td>
-<td width="50%" style="padding:0 0 10px 5px;">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:12px;"><tr><td style="padding:14px;text-align:center;">
-<p style="margin:0;font-size:8.4px;font-weight:800;letter-spacing:2px;color:#6b7280;">WIN RATE</p>
-<p style="margin:6px 0 0;font-size:16.8px;font-weight:800;color:#111111;">__WINRATE__</p>
+<td width="50%" style="padding:0 0 11px 5.5px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f8fafc;border:1.1px solid #e5e7eb;border-radius:13.2px;"><tr><td style="padding:15.4px;text-align:center;">
+<p style="margin:0;font-size:9.2px;font-weight:800;letter-spacing:2.2px;color:#6b7280;">WIN RATE</p>
+<p style="margin:6.6px 0 0;font-size:18.5px;font-weight:800;color:#111111;">__WINRATE__</p>
 </td></tr></table>
 </td>
 </tr><tr>
-<td width="50%" style="padding:0 5px 10px 0;">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:12px;"><tr><td style="padding:14px;text-align:center;">
-<p style="margin:0;font-size:8.4px;font-weight:800;letter-spacing:2px;color:#6b7280;">NET PROFIT</p>
-<p style="margin:6px 0 0;font-size:16.8px;font-weight:800;color:__PROFIT_COLOR__;">__PROFIT__</p>
+<td width="50%" style="padding:0 5.5px 11px 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f8fafc;border:1.1px solid #e5e7eb;border-radius:13.2px;"><tr><td style="padding:15.4px;text-align:center;">
+<p style="margin:0;font-size:9.2px;font-weight:800;letter-spacing:2.2px;color:#6b7280;">NET PROFIT</p>
+<p style="margin:6.6px 0 0;font-size:18.5px;font-weight:800;color:__PROFIT_COLOR__;">__PROFIT__</p>
 </td></tr></table>
 </td>
-<td width="50%" style="padding:0 0 10px 5px;">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:12px;"><tr><td style="padding:14px;text-align:center;">
-<p style="margin:0;font-size:8.4px;font-weight:800;letter-spacing:2px;color:#6b7280;">ROI</p>
-<p style="margin:6px 0 0;font-size:16.8px;font-weight:800;color:__PROFIT_COLOR__;">__ROI__</p>
+<td width="50%" style="padding:0 0 11px 5.5px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f8fafc;border:1.1px solid #e5e7eb;border-radius:13.2px;"><tr><td style="padding:15.4px;text-align:center;">
+<p style="margin:0;font-size:9.2px;font-weight:800;letter-spacing:2.2px;color:#6b7280;">ROI</p>
+<p style="margin:6.6px 0 0;font-size:18.5px;font-weight:800;color:__PROFIT_COLOR__;">__ROI__</p>
 </td></tr></table>
 </td>
 </tr></table>
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:2px 0 0;background:#ffffff;border:1px solid #e5e7eb;border-radius:12px;"><tr><td style="padding:14px 16px;">
-<p style="margin:0;font-size:8.4px;font-weight:800;letter-spacing:2px;color:#6b7280;">BY LEVEL</p>
-<p style="margin:8px 0 0;font-size:10.7px;color:#111111;">&#11088; <strong>Platinum</strong> &mdash; __PLATINUM__</p>
-<p style="margin:6px 0 0;font-size:10.7px;color:#111111;">&#9898; <strong>Sharp Free</strong> &mdash; __GOLD__</p>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:2.2px 0 0;background:#ffffff;border:1.1px solid #e5e7eb;border-radius:13.2px;"><tr><td style="padding:15.4px 17.6px;">
+<p style="margin:0;font-size:9.2px;font-weight:800;letter-spacing:2.2px;color:#6b7280;">BY LEVEL</p>
+<p style="margin:8.8px 0 0;font-size:11.8px;color:#111111;">&#11088; <strong>Platinum</strong> &mdash; __PLATINUM__</p>
+<p style="margin:6.6px 0 0;font-size:11.8px;color:#111111;">&#9898; <strong>Sharp Free</strong> &mdash; __GOLD__</p>
 </td></tr></table>
 </div>
-<div style="padding:14px 20px 0;">
-<p style="margin:0 0 8px;font-size:8.4px;font-weight:800;letter-spacing:2px;color:#6b7280;">PLAY BY PLAY</p>
+<div style="padding:15.4px 22px 0;">
+<p style="margin:0 0 8.8px;font-size:9.2px;font-weight:800;letter-spacing:2.2px;color:#6b7280;">PLAY BY PLAY</p>
 __PLAYS_ROWS__
 </div>
-<div style="text-align:center;padding:18px 20px 0;">
-<a href="https://www.thesharpteam.bet/records" style="display:inline-block;background:#22c55e;color:#111111;font-size:10.7px;font-weight:800;padding:11px 28px;border-radius:999px;text-decoration:none;">View full record &rarr;</a>
+<div style="text-align:center;padding:19.8px 22px 0;">
+<a href="https://www.thesharpteam.bet/records" style="display:inline-block;background:#22c55e;color:#111111;font-size:11.8px;font-weight:800;padding:12.1px 30.8px;border-radius:1098.9px;text-decoration:none;">View full record &rarr;</a>
 </div>
-<div style="text-align:center;padding:20px 20px 14px;">
-<img src="https://www.thesharpteam.bet/static/img/sharp-team-logo.png" alt="The Sharp Team" width="110" style="width:110px;height:auto;display:block;margin:0 auto;border:0;">
-<p style="margin:10px 0 0;color:#111111;font-size:9.2px;font-weight:800;letter-spacing:3px;">THE SHARP TEAM</p>
-<p style="margin:8px 0 0;color:#9ca3af;font-size:8.4px;">Wallington, NJ</p>
-<p style="margin:4px 0 0;color:#9ca3af;font-size:8.4px;"><a href="tel:+12393768798" style="color:#9ca3af;text-decoration:none;">(239) 376-8798</a></p>
-<p style="margin:12px 0 0;color:#9ca3af;font-size:7.6px;">21+. Play responsibly. If you or someone you know has a gambling problem, call or text <a href="tel:18004262537" style="color:#9ca3af;text-decoration:underline;">1-800-GAMBLER</a>.</p>
-<p style="margin:8px 0 0;color:#9ca3af;font-size:7.6px;">Don't want these emails anymore? <a href="{{{RESEND_UNSUBSCRIBE_URL}}}" style="color:#9ca3af;text-decoration:underline;">Unsubscribe</a> — one click, no questions asked.</p>
-<p style="margin:6px 0 0;color:#9ca3af;font-size:7.6px;">&copy; 2026 The Sharp Team</p>
+<div style="text-align:center;padding:22px 22px 15.4px;">
+<img src="https://www.thesharpteam.bet/static/img/sharp-team-logo.png" alt="The Sharp Team" width="110" style="width:121px;height:auto;display:block;margin:0 auto;border:0;">
+<p style="margin:11px 0 0;color:#111111;font-size:10.1px;font-weight:800;letter-spacing:3.3px;">THE SHARP TEAM</p>
+<p style="margin:8.8px 0 0;color:#9ca3af;font-size:9.2px;">Wallington, NJ</p>
+<p style="margin:4.4px 0 0;color:#9ca3af;font-size:9.2px;"><a href="tel:+12393768798" style="color:#9ca3af;text-decoration:none;">(239) 376-8798</a></p>
+<p style="margin:13.2px 0 0;color:#9ca3af;font-size:8.4px;">21+. Play responsibly. If you or someone you know has a gambling problem, call or text <a href="tel:18004262537" style="color:#9ca3af;text-decoration:underline;">1-800-GAMBLER</a>.</p>
+<p style="margin:8.8px 0 0;color:#9ca3af;font-size:8.4px;">Don't want these emails anymore? <a href="{{{RESEND_UNSUBSCRIBE_URL}}}" style="color:#9ca3af;text-decoration:underline;">Unsubscribe</a> — one click, no questions asked.</p>
+<p style="margin:6.6px 0 0;color:#9ca3af;font-size:8.4px;">&copy; 2026 The Sharp Team</p>
 </div>
 </div>
 </body>
@@ -2485,18 +2485,18 @@ def build_monthly_html(nombre: str, ym: str, st: dict) -> str:
                  else ("FREE PICK" if _nv1700 == "FREE" else "GOLD"))
         rows.append(
             f'<table role="presentation" width="100%" cellpadding="0" cellspacing="0" '
-            f'style="margin:0 0 8px;background:#ffffff;border:1px solid #e5e7eb;border-radius:10px;">'
-            f'<tr><td style="padding:10px 14px;">'
+            f'style="margin:0 0 8.8px;background:#ffffff;border:1.1px solid #e5e7eb;border-radius:11px;">'
+            f'<tr><td style="padding:11px 15.4px;">'
             f'<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>'
-            f'<td><span style="font-size:10.7px;font-weight:800;color:#111111;">{t["pick"]}</span> '
-            f'<span style="font-size:9.2px;color:#6b7280;">{t["cuota"]:+d} &middot; {nivel}</span><br>'
-            f'<span style="font-size:9.2px;color:#6b7280;">{t["fecha"]}</span></td>'
-            f'<td align="right" style="font-size:10.7px;font-weight:800;color:{color};">{marca} '
+            f'<td><span style="font-size:11.8px;font-weight:800;color:#111111;">{t["pick"]}</span> '
+            f'<span style="font-size:10.1px;color:#6b7280;">{t["cuota"]:+d} &middot; {nivel}</span><br>'
+            f'<span style="font-size:10.1px;color:#6b7280;">{t["fecha"]}</span></td>'
+            f'<td align="right" style="font-size:11.8px;font-weight:800;color:{color};">{marca} '
             f'{"+" if p >= 0 else "-"}${abs(p):,.2f}</td>'
             f'</tr></table></td></tr></table>'
         )
     plays_html = "\n".join(rows) if rows else (
-        '<p style="font-size:10.7px;color:#6b7280;">No graded plays this month.</p>'
+        '<p style="font-size:11.8px;color:#6b7280;">No graded plays this month.</p>'
     )
     html = (MONTHLY_HTML
             .replace("{mes}", mes)
