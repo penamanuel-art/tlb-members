@@ -136,6 +136,14 @@ STRIPE_PUBLISHABLE_KEY = os.environ.get(
 PLATINUM_PRICE_PRIMERA_SEMANA = "price_1USPJnRwCjFIsFzU4pYcIqnq"
 PLATINUM_PRICE_SEMANAL = "price_1USPJvRwCjFIsFzUH8rwj5K8"
 
+# RETIRADA 2026-11-07 (orden de Alex: «quita el mes gratis para
+# TODOS»): la oferta "$1 + primer mes gratis" dejó de existir en página,
+# checkout y registro. Las constantes PLATINUM_OFFER_FREE_MONTH /
+# PLATINUM_TRIAL_DAYS_FREE_MONTH quedan SOLO como referencia histórica
+# (webhooks y panel admin de suscripciones viejas); ningún flujo vivo
+# las otorga ni las aplica. La oferta única vigente es $1 la primera
+# semana (trial de 7 días) y luego $15.99/semana.
+#
 # Lanzamiento de la landing nueva (2026-10-31, aprobada por Alex): oferta
 # "$1 hoy + primer mes de Platinum GRATIS + $15.99/semana". "Primer mes" =
 # trial de 30 días exactos de Stripe tras el cargo de $1. La oferta vive
@@ -10264,24 +10272,18 @@ def desbloquear_platinum():
                 fb_purchase = "%.2f" % _pago["value"]
                 fb_purchase_eid = "purchase_" + (
                     _pago["invoice"] or request.args.get("session_id") or "")
-    # Cohorte de la landing nueva (2026-10-31): la página muestra la
-    # oferta "$1 + mes gratis" y usa su link de respaldo SOLO a quien se
-    # registró con esa oferta; todos los demás ven la página legacy
-    # exacta de siempre ($1 + 7 días, link vigente).
-    _fm = False
-    try:
-        _fm = bool(user) and (user["signup_offer"] or "") == PLATINUM_OFFER_FREE_MONTH
-    except Exception:
-        _fm = False
+    # Oferta ÚNICA (2026-11-07, orden de Alex «quita el mes gratis para
+    # todos»): el signup_offer histórico de la BD ya NO cambia ni los
+    # textos ni el link de esta página. Todo el mundo — cuenta vieja o
+    # nueva, con la marca que traiga — ve la misma oferta: $1 la primera
+    # semana (7 días) y luego $15.99/semana, con el link vigente.
     return render_template(
         "desbloquear.html",
         ya_desbloqueada=platinum_unlocked_for(user),
         past_due=past_due,
-        stripe_url=((STRIPE_PLATINUM_URL_FREE_MONTH or STRIPE_PLATINUM_URL)
-                    if _fm else STRIPE_PLATINUM_URL),
-        offer_free_month=_fm,
-        trial_days=(PLATINUM_TRIAL_DAYS_FREE_MONTH if _fm
-                    else PLATINUM_TRIAL_DAYS_LEGACY),
+        stripe_url=STRIPE_PLATINUM_URL,
+        offer_free_month=False,
+        trial_days=PLATINUM_TRIAL_DAYS_LEGACY,
         stripe_pk=STRIPE_PUBLISHABLE_KEY,
         stripe_embed_ok=bool(STRIPE_SECRET_KEY and STRIPE_PUBLISHABLE_KEY),
         checkout_ok=checkout_ok,
@@ -10306,13 +10308,10 @@ def desbloquear_checkout_session():
     hace el webhook checkout.session.completed de siempre (match por
     email).
 
-    Trial por cohorte (2026-10-31): lo decide EL SERVIDOR desde
-    users.signup_offer, jamás un parámetro del navegador. Cohorte de la
-    landing nueva con la introducción sin usar: 30 días (el primer cobro
-    semanal cae al día 31). Todos los demás: 7 días legacy (primer cobro
-    al día 8). Anti-repetición: si platinum_intro_used_at ya está marcado
-    en la cuenta, la oferta nueva no vuelve a aplicar y rige el trial
-    legacy — cancelar y regresar no renueva el mes gratis."""
+    Trial ÚNICO (2026-11-07, orden de Alex): 7 días para TODOS (el
+    primer cobro semanal cae al día 8). La rama de 30 días de la
+    cohorte «$1 + mes gratis» (2026-10-31) quedó eliminada: el
+    signup_offer histórico ya no se consulta para el trial."""
     if not STRIPE_SECRET_KEY:
         return jsonify({"error": "stripe not configured"}), 503
     user = current_user()
@@ -10333,9 +10332,10 @@ def desbloquear_checkout_session():
         _intro_used = (user["platinum_intro_used_at"] or "")
     except (KeyError, IndexError, TypeError):
         _intro_used = ""
-    if _signup_offer == PLATINUM_OFFER_FREE_MONTH and not _intro_used:
-        _trial_days = PLATINUM_TRIAL_DAYS_FREE_MONTH
-        _offer_code = PLATINUM_OFFER_FREE_MONTH
+    # (2026-11-07: la rama que daba 30 días a la cohorte del mes gratis
+    # quedó ELIMINADA por orden de Alex — mes gratis para nadie. Toda
+    # sesión nace con el trial legacy de 7 días y offer="legacy", tenga
+    # la cuenta el signup_offer que tenga.)
     try:
         import stripe
         stripe.api_key = STRIPE_SECRET_KEY
