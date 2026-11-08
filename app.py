@@ -8365,6 +8365,18 @@ def _my_bets_center(user):
         coach=_coach_insights(all_rows, ctx.get("stats_all") or {}),
         books=books, markets=markets, tk_goal=_tk_goal,
     )
+    # Titulares del Overview 100% POR FUENTE (2026-11-08, orden de
+    # Alex: «estas son jugadas apartes mías por fuera» — nada de
+    # mezclar personales con las oficiales del programa ni siquiera
+    # en los números grandes). La vista por defecto es el PROGRAMA:
+    # stats_all/curve_all de esta página pasan a ser las del bucket
+    # oficial, y la plantilla cambia de bucket con sus chips usando
+    # las filas ya separadas por data-source. El desglose «By source»
+    # se queda: ya es separado por definición.
+    _off_rows = [r for r in all_rows if r.get("source") == "official"]
+    ctx["official_rows"] = _off_rows
+    ctx["stats_all"] = _stats_from_rows(_off_rows)
+    ctx["curve_all"] = _curve_from_rows(_off_rows)
     return render_template("tracker_plays.html", **ctx)
 
 
@@ -8571,6 +8583,20 @@ def _stats_from_rows(rows):
         "clv_avg": (sum(clvs) / len(clvs)) if clvs else None,
         "win_rate": (wins / (wins + losses) * 100.0) if (wins + losses) else 0.0,
     }
+
+
+def _curve_from_rows(rows):
+    """Curva SVG del profit acumulado de UN conjunto de filas (una
+    sola fuente), en el orden en que liquidaron. Misma construcción
+    que la curva combinada de _tracker_context."""
+    _cron = sorted(
+        [r for r in rows if r.get("resultado") in ("W", "L", "P")],
+        key=lambda r: (r["fecha"], r["id"]))
+    _acc, _vals = 0.0, []
+    for _r in _cron:
+        _acc += float(_r["profit"] or 0)
+        _vals.append(round(_acc, 2))
+    return profit_curve_svg(_vals, w=320, h=90, pad=8)
 
 
 def _mybets_breakdowns(rows):
@@ -8911,6 +8937,58 @@ def mybets_add():
         games = []
     return render_template("my_bets_form.html", games=games, bet=None,
                            today=datetime.now(TZ).strftime("%Y-%m-%d"))
+
+
+@app.route("/my-bets/upload-ticket", methods=["POST"])
+@login_required
+def mybets_upload_ticket():
+    """El miembro sube SOLO la foto de un ticket propio (2026-11-08,
+    orden de Alex: que la jugada se agregue sola, sin teclear nada).
+    La foto se guarda PRIMERO en static/img/own-tickets-pending/
+    <user_id>-<epoch>.<ext> y se registra en
+    data/own-tickets-pendientes.json (mismo patrón que la cola de
+    tickets oficiales); el vigía vigia-own-bets la lee, crea la
+    apuesta en own_bets con la foto adjunta y la deja contando en el
+    tracker personal del miembro. Ningún campo es obligatorio: sin
+    foto válida no se guarda nada."""
+    import os, time
+    from werkzeug.utils import secure_filename
+    user = _mybets_gate()
+    if user is None:
+        return redirect(url_for("tracker"))
+    f = request.files.get("ticket")
+    if not f or not f.filename:
+        flash("Choose the ticket photo first.", "error")
+        return redirect(url_for("tracker_plays"))
+    ext = os.path.splitext(secure_filename(f.filename))[1].lower()
+    if ext not in (".jpg", ".jpeg", ".png", ".webp"):
+        flash("That file is not a ticket photo (JPG, PNG or WEBP).",
+              "error")
+        return redirect(url_for("tracker_plays"))
+    pending_dir = os.path.join(app.static_folder, "img",
+                               "own-tickets-pending")
+    os.makedirs(pending_dir, exist_ok=True)
+    fname = f"{user['id']}-{int(time.time())}{ext}"
+    f.save(os.path.join(pending_dir, fname))
+    try:
+        import json as _json
+        log_path = os.path.join(os.path.dirname(__file__), "data",
+                                "own-tickets-pendientes.json")
+        try:
+            with open(log_path) as _f:
+                _log = _json.load(_f)
+        except Exception:
+            _log = []
+        _log.append({"archivo": fname,
+                     "user_id": user["id"],
+                     "subido_en": time.strftime("%Y-%m-%d %H:%M:%S"),
+                     "procesado": False})
+        with open(log_path, "w") as _f:
+            _json.dump(_log, _f, indent=2)
+    except Exception:
+        pass
+    flash("Ticket received — it will appear in your bets shortly.", "ok")
+    return redirect(url_for("tracker_plays"))
 
 
 @app.route("/my-bets/<int:bet_id>/edit", methods=["GET", "POST"])
@@ -9271,6 +9349,13 @@ def api_own_bets_add():
         _meta = json.dumps(_meta, ensure_ascii=False)
     elif _meta is not None:
         _meta = str(_meta)
+    # Foto del ticket (2026-11-08): data-URI base64 opcional, mismo
+    # formato y tope que el formulario de miembro (~1.6 MB de imagen).
+    # Sin foto válida, la columna queda vacía como hasta ahora.
+    _foto = data.get("foto")
+    if not isinstance(_foto, str) or not _foto.startswith("data:image/") \
+            or ";base64," not in _foto[:64] or len(_foto) > 2200000:
+        _foto = ""
     new_id = insert_returning_id(
         db,
         "INSERT INTO own_bets (user_id, fecha, liga, juego, mercado, pick,"
@@ -9282,9 +9367,33 @@ def api_own_bets_add():
          pick, cuota, stake, (data.get("casa") or "").strip(),
          data.get("cierre"), (data.get("event_id") or "").strip() or None,
          (data.get("lado") or "").strip() or None, data.get("punto"),
-         "", _meta, datetime.now(TZ).strftime("%Y-%m-%d %H:%M")))
+         _foto, _meta, datetime.now(TZ).strftime("%Y-%m-%d %H:%M")))
     db.commit()
     return jsonify({"ok": True, "id": new_id})
+
+
+@app.route("/admin/api/own-bets/list")
+def api_own_bets_list():
+    """Lista las apuestas propias de un miembro (2026-11-08: lo usa el
+    vigía de tickets de My Own Bets para VERIFICAR que una fila creada
+    vía /admin/api/own-bets/add quedó guardada, con su foto). Auth:
+    sesión admin o X-Admin-Key. La foto no viaja: solo su largo."""
+    if not _admin_api_autorizado():
+        return jsonify({"ok": False}), 403
+    try:
+        user_id = int(request.args.get("user_id") or 0)
+    except (TypeError, ValueError):
+        user_id = 0
+    if not user_id:
+        return jsonify({"ok": False, "error": "user_id"}), 400
+    db = get_db()
+    rows = db.execute(
+        "SELECT id, fecha, liga, juego, mercado, pick, cuota,"
+        " stake_monto, casa, resultado, event_id,"
+        " COALESCE(LENGTH(foto), 0) AS foto_len, created_at"
+        " FROM own_bets WHERE user_id = ? ORDER BY id DESC LIMIT 200",
+        (user_id,)).fetchall()
+    return jsonify({"ok": True, "bets": [dict(r) for r in rows]})
 
 
 @app.route("/admin/api/own-bets/grade", methods=["POST"])
@@ -13594,6 +13703,27 @@ def api_tickets_pendientes():
     try:
         log_path = os.path.join(os.path.dirname(__file__), "data",
                                 "tickets-pendientes.json")
+        if os.path.exists(log_path):
+            with open(log_path) as _f:
+                _log = _json.load(_f)
+            return jsonify({"pendientes": [t for t in _log if not t.get("procesado")]})
+        return jsonify({"pendientes": []})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/own-tickets-pendientes")
+def api_own_tickets_pendientes():
+    """Cola de tickets propios subidos por miembros desde My Bets
+    (para el vigía vigia-own-bets). Igual que /api/tickets-pendientes:
+    la cola nunca marca procesado en el servidor; el dedupe del
+    vigía es local, por nombre de archivo."""
+    import json as _json, os
+    if request.headers.get("X-Push-Key") != os.environ.get("PUSH_TRIGGER_KEY", ""):
+        return jsonify({"error": "unauthorized"}), 401
+    try:
+        log_path = os.path.join(os.path.dirname(__file__), "data",
+                                "own-tickets-pendientes.json")
         if os.path.exists(log_path):
             with open(log_path) as _f:
                 _log = _json.load(_f)
