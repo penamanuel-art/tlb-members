@@ -323,7 +323,7 @@
         {% if _ns.n < 5 and _j.resultado in ('WON', 'LOST') %}
     <div class="notif-item">
       <span class="ni{% if _j.resultado == 'LOST' %} red{% endif %}">{% if _j.resultado == 'WON' %}✅{% else %}❌{% endif %}</span>
-      <span><b>{{ _j.pick }} {% if _j.resultado == 'WON' %}won{% else %}lost{% endif %}</b><span>{{ _d.fecha }} · {{ 'Platinum' if _j.nivel in ('ELITE','PLATINUM') else ('Gold' if _j.nivel == 'GOLD' else 'Free Pick') }}</span></span>
+      <span><b>{{ _j.pick }} {% if _j.resultado == 'WON' %}won{% else %}lost{% endif %}</b><span>{{ _d.fecha }} · {{ 'Platinum' if _j.nivel in ('ELITE','PLATINUM') else ('Vault' if _j.nivel == 'VAULT' else ('Gold' if _j.nivel == 'GOLD' else 'Free Pick')) }}</span></span>
       <span class="amt {% if _j.profit >= 0 %}win{% else %}loss{% endif %}">{% if _j.profit >= 0 %}+{% else %}−{% endif %}${{ '%.2f'|format(_j.profit|abs) }}</span>
     </div>
           {% set _ns.n = _ns.n + 1 %}
@@ -408,10 +408,12 @@
       </div>
       {% else %}
       {% set n_plat = plays|selectattr('nivel','in',['ELITE','PLATINUM'])|list|length %}
+      {% set n_vault = plays|selectattr('nivel','equalto','VAULT')|list|length %}
       {% set n_gold = plays|selectattr('nivel','equalto','GOLD')|list|length %}
       {% set n_free = plays|selectattr('nivel','equalto','FREE')|list|length %}
       {% set partes = [] %}
       {% if n_plat %}{% set _ = partes.append(n_plat ~ ' Platinum') %}{% endif %}
+      {% if n_vault %}{% set _ = partes.append(n_vault ~ ' Vault') %}{% endif %}
       {% if n_gold %}{% set _ = partes.append(n_gold ~ ' Gold') %}{% endif %}
       {% if n_free %}{% set _ = partes.append(n_free ~ ' Free') %}{% endif %}
       <div class="bd-status">
@@ -455,14 +457,15 @@
   {% if miembro_platinum %}{% include "_play_card_v5.html" %}{% else %}{% include "_play_card_locked.html" %}{% endif %}
   {% endfor %}
   {% endif %}
+  {# GOLD ABIERTO (2026-11-08, orden de Alex): la jugada GOLD se ve COMPLETA para TODOS los miembros, tengan Platinum o no — exactamente igual que la ve un miembro Platinum. Bloqueados para el no-Platinum quedan SOLO ELITE/PLATINUM y VAULT. #}
   {% if golds %}
   {% for p in golds %}
-  {% if miembro_platinum %}{% include "_play_card_v5.html" %}{% else %}{% include "_play_card_locked.html" %}{% endif %}
+  {% include "_play_card_v5.html" %}
   {% endfor %}
   {% endif %}
   {% if plats %}
   {% for p in plats %}
-  {% if p.nivel in ['ELITE','PLATINUM'] and not miembro_platinum %}
+  {% if p.nivel in ['ELITE','PLATINUM','VAULT'] and not miembro_platinum %}
   {% include "_play_card_locked.html" %}
   {% else %}
   {% include "_play_card_v5.html" %}
@@ -724,7 +727,7 @@
   {% for _j in _yd.dia.jugadas %}
     {% if _j.resultado in ('WON','LOST','PUSH') and not _j.bloqueada %}
       {% set _u = (_j.profit|float * _j.stake_unidades|float / _j.stake_monto|float) if _j.stake_monto and _j.stake_unidades else (_j.profit|float / 100) %}
-      {% if _j.nivel in ('ELITE','PLATINUM') %}
+      {% if _j.nivel in ('ELITE','PLATINUM','VAULT') %}
         {% set _y.pn = _y.pn + 1 %}
         {% set _y.pu = _y.pu + _u %}
         {% set _y.pd = _y.pd + _j.profit|float %}
@@ -756,12 +759,12 @@
     {% endif %}
     {% for _j in _yd.dia.jugadas %}
       {% if _j.resultado in ('WON','LOST','PUSH') and not _j.bloqueada %}
-      {% set _is_plat = _j.nivel in ('ELITE','PLATINUM') %}
+      {% set _is_plat = _j.nivel in ('ELITE','PLATINUM','VAULT') %}
       {% set _nick = _j.team_name.split(' ')[-1] if _j.team_name else _j.abbr %}
       <div class="tst-playcard">
         {% if _j.comprobante %}<a href="{% if _j.id %}{{ url_for('ticket_view', play_id=_j.id) }}{% else %}{{ url_for('static', filename=_j.comprobante) }}{% endif %}"{% if not _j.id %} target="_blank" rel="noopener"{% endif %}><img class="tst-ticketimg" src="{{ url_for('static', filename=_j.comprobante) }}" alt="Original ticket" loading="lazy"></a>{% else %}<div class="tst-ticketph">Ticket</div>{% endif %}
         <div class="tst-playmain">
-          <div class="tst-playtop"><span class="tst-lvl{% if _is_plat %} plat{% else %} gold{% endif %}">{% if _is_plat %}PLATINUM{% elif _j.nivel == 'GOLD' %}GOLD{% else %}FREE PICK{% endif %}</span><span class="tst-meta">{% if _is_plat %}Platinum{% elif _j.nivel == 'GOLD' %}Gold{% else %}Free Pick{% endif %} play · {{ _j.liga }}</span></div>
+          <div class="tst-playtop"><span class="tst-lvl{% if _is_plat %} plat{% else %} gold{% endif %}">{% if _j.nivel in ('ELITE','PLATINUM') %}PLATINUM{% elif _j.nivel == 'VAULT' %}VAULT{% elif _j.nivel == 'GOLD' %}GOLD{% else %}FREE PICK{% endif %}</span><span class="tst-meta">{% if _j.nivel in ('ELITE','PLATINUM') %}Platinum{% elif _j.nivel == 'VAULT' %}Vault{% elif _j.nivel == 'GOLD' %}Gold{% else %}Free Pick{% endif %} play · {{ _j.liga }}</span></div>
           <div class="tst-pick">{{ _nick }} {% if _j.bettype == 'Moneyline' %}ML{% else %}{{ _j.bettype }}{% endif %} ({{ _j.cuota_texto or _j.cuota }})</div>
           <div class="tst-match">{{ _j.abbr }} vs {{ _j.opp_abbr }}</div>
           {% if _j.id and _j.comprobante %}<a class="tst-viewticket" href="{{ url_for('ticket_view', play_id=_j.id) }}">View ticket ›</a>{% endif %}
