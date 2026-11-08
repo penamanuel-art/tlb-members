@@ -80,6 +80,9 @@
   .mb-mile { background:#131e31; border:1px solid #24334d; border-radius:999px; padding:7px 12px; font-size:12.5px; color:#c7cede; font-weight:600; }
   .mb-mile b { color:#fff; }
   /* ===== HERO tracker (reconstrucción 2026-11-04) ===== */
+  .tk-ownbanner { border-radius:18px; padding:16px 18px 14px; margin:0 0 14px; background:#131e31; border:1px solid #24334d; }
+  .tk-ownbanner-t { color:#fff; font-size:24px; font-weight:800; letter-spacing:-.3px; line-height:1.15; }
+  .tk-ownbanner-s { color:#9aa7b8; font-size:13px; font-weight:600; margin-top:4px; }
   .tk-hero { position:relative; overflow:hidden; border-radius:22px; padding:20px 18px 14px; margin:0 0 14px; background:radial-gradient(130% 150% at 18% -10%, #1d2c47 0%, #111b2e 52%, #0b1322 100%); border:1px solid rgba(232,199,102,.28); box-shadow:0 14px 34px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.05); }
   .tk-hero::before { content:""; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg, transparent, #e8c766 30%, #e8c766 70%, transparent); opacity:.85; }
   .tk-hero-top { display:flex; align-items:center; gap:14px; }
@@ -279,6 +282,11 @@
   <span class="plabel">SOURCE</span>
   <button type="button" class="mb-pchip active" data-src="official">Program plays<span id="tkSrcOff"></span></button>
   <button type="button" class="mb-pchip" data-src="own">My own bets<span id="tkSrcOwn"></span></button>
+</div>
+
+<div class="tk-ownbanner" id="tkOwnBanner" style="display:none;">
+  <div class="tk-ownbanner-t">PERSONAL BETS ONLY</div>
+  <div class="tk-ownbanner-s">Your own plays, tracked separately &mdash; they never count toward the official program record.</div>
 </div>
 
 <div class="tk-hero" data-tabs="overview">
@@ -962,6 +970,8 @@
     drawBreakdowns(view);
     chips.forEach(function(ch){ ch.classList.toggle('active', (parseInt(ch.getAttribute('data-days'),10)||0)===TK.days); });
     srcChips.forEach(function(ch){ ch.classList.toggle('active', (ch.getAttribute('data-src')||'')===TK.src); });
+    var ob=document.getElementById('tkOwnBanner');
+    if(ob) ob.style.display=(TK.src==='own')?'':'none';
   }
   function applyRows(){
     var vis=0;
