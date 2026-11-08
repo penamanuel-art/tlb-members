@@ -83,10 +83,6 @@
   .tk-ownbanner { border-radius:18px; padding:16px 18px 14px; margin:0 0 14px; background:#131e31; border:1px solid #24334d; }
   .tk-ownbanner-t { color:#fff; font-size:24px; font-weight:800; letter-spacing:-.3px; line-height:1.15; }
   .tk-ownbanner-s { color:#9aa7b8; font-size:13px; font-weight:600; margin-top:4px; }
-  /* ===== Caja de pegado de ticket (iOS: toque + mantener + Paste del sistema) ===== */
-  .tk-pastebox { border:1.5px dashed #3a4f73; background:#0e1626; border-radius:12px; padding:12px 14px; margin:0 0 4px; color:#9aa7b8; font-size:12.5px; line-height:1.5; outline:none; cursor:text; -webkit-user-select:text; user-select:text; -webkit-tap-highlight-color:transparent; }
-  .tk-pastebox:focus { border-color:#2ee6a8; color:#c7d2e0; }
-  .tk-pastebox b { color:#eef2f8; }
   .tk-hero { position:relative; overflow:hidden; border-radius:22px; padding:20px 18px 14px; margin:0 0 14px; background:radial-gradient(130% 150% at 18% -10%, #1d2c47 0%, #111b2e 52%, #0b1322 100%); border:1px solid rgba(232,199,102,.28); box-shadow:0 14px 34px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.05); }
   .tk-hero::before { content:""; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg, transparent, #e8c766 30%, #e8c766 70%, transparent); opacity:.85; }
   .tk-hero-top { display:flex; align-items:center; gap:14px; }
@@ -374,114 +370,11 @@
 <div class="mb-actions" data-tabs="overview open">
   <a class="mb-btn" href="{{ url_for('mybets_add') }}">+ Add a bet</a>
   <a class="mb-btn ghost" href="{{ url_for('mybets_export') }}">Export CSV</a>
-  <form id="tkUploadForm" method="post" action="{{ url_for('mybets_upload_ticket') }}" enctype="multipart/form-data" style="display:contents">
-    <label class="mb-btn ghost" for="tkTicketFile">📸 Upload or paste a ticket</label>
+  <form method="post" action="{{ url_for('mybets_upload_ticket') }}" enctype="multipart/form-data" style="display:contents">
+    <label class="mb-btn ghost" for="tkTicketFile">📸 Upload a ticket</label>
     <input id="tkTicketFile" type="file" name="ticket" accept="image/*" style="display:none" onchange="this.form.submit()">
   </form>
 </div>
-<div id="tkPasteBox" class="tk-pastebox" data-tabs="overview open" contenteditable="true" role="textbox" aria-label="Paste a copied ticket photo" spellcheck="false" autocapitalize="off">📋 Tap here, press &amp; hold, then tap <b>Paste</b> to drop in your copied ticket</div>
-<p class="note" id="tkPasteHint" data-tabs="overview open" style="margin:2px 0 0;cursor:pointer">First copy the ticket at your book — or tap here to paste it automatically</p>
-<script>
-(function(){
-  var form=document.getElementById('tkUploadForm');
-  var input=document.getElementById('tkTicketFile');
-  var hint=document.getElementById('tkPasteHint');
-  var box=document.getElementById('tkPasteBox');
-  if(!form||!input) return;
-  var busy=false;
-  var GUIDE=box?box.innerHTML:'';
-  function resetBox(){ if(box){ box.innerHTML=GUIDE; } }
-  function sendFile(file){
-    if(busy||!file) return false;
-    busy=true;
-    var sent=false;
-    try{
-      var dt=new DataTransfer();
-      dt.items.add(file);
-      input.files=dt.files;
-      if(input.files&&input.files.length){ form.submit(); sent=true; }
-    }catch(e){}
-    if(!sent){
-      var fd=new FormData();
-      fd.append(input.name||'ticket',file);
-      fetch(form.action,{method:'POST',body:fd,credentials:'same-origin'})
-        .then(function(){ location.reload(); })
-        .catch(function(){
-          busy=false;
-          if(hint){ hint.textContent="That upload didn't go through — please try again."; }
-        });
-    }
-    return true;
-  }
-  function manualMsg(){
-    if(hint){ hint.textContent="Automatic paste isn't available here — tap the box above, press & hold, then tap Paste."; }
-    if(box){ try{ box.focus(); }catch(e){} }
-  }
-  function handleItems(list){
-    if(!list) return false;
-    for(var i=0;i<list.length;i++){
-      var it=list[i];
-      if(!it||!it.type||it.type.indexOf('image/')!==0) continue;
-      var f=it.getAsFile?it.getAsFile():it;
-      if(f&&sendFile(f)) return true;
-    }
-    return false;
-  }
-  function grabImage(cd){
-    if(!cd) return false;
-    if(cd.items&&handleItems(cd.items)) return true;
-    if(cd.files&&handleItems(cd.files)) return true;
-    return false;
-  }
-  /* iOS: el gesto real de pegar ocurre DENTRO de la caja editable —
-     el usuario toca, mantiene presionado y elige «Paste» en el menú
-     del sistema; ese evento paste SÍ trae la imagen en clipboardData. */
-  if(box){
-    box.addEventListener('paste',function(ev){
-      ev.preventDefault();
-      ev.stopPropagation();
-      grabImage(ev.clipboardData||window.clipboardData);
-      resetBox();
-      setTimeout(resetBox,60);
-    });
-    box.addEventListener('blur',function(){ if(!busy) resetBox(); });
-  }
-  document.addEventListener('paste',function(ev){
-    var t=ev.target;
-    if(box&&(t===box||(box.contains&&box.contains(t)))) return;
-    if(t&&(t.tagName==='INPUT'||t.tagName==='TEXTAREA'||t.isContentEditable)) return;
-    var cd=ev.clipboardData||window.clipboardData;
-    if(cd&&grabImage(cd)){ ev.preventDefault(); }
-  });
-  /* Vía extra (Chrome/Android/desktop): pegado programático al tocar la línea.
-     En iOS Safari esto se bloquea — sin error feo ni secuestro al selector:
-     solo enfoca la caja para el gesto manual. */
-  if(hint){
-    hint.addEventListener('click',function(){
-      if(navigator.clipboard&&navigator.clipboard.read){
-        navigator.clipboard.read().then(function(items){
-          for(var i=0;i<items.length;i++){
-            var types=items[i].types||[];
-            for(var j=0;j<types.length;j++){
-              if(types[j].indexOf('image/')===0){
-                (function(it,ty){
-                  it.getType(ty).then(function(blob){
-                    sendFile(new File([blob],'ticket-paste.'+(ty.split('/')[1]||'png'),{type:ty}));
-                  }).catch(manualMsg);
-                })(items[i],types[j]);
-                return;
-              }
-            }
-          }
-          manualMsg();
-        }).catch(manualMsg);
-      }else{
-        manualMsg();
-      }
-    });
-  }
-})();
-</script>
 
 <div class="mb-card" id="tkNeeds" data-tabs="overview open" data-dyn="1" style="display:none">
   <h3>Needs you</h3>
