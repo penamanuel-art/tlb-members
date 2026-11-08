@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="tst-version" content="{{ tst_version }}">
 <title>The Sharp Team</title>
 <style>
@@ -134,7 +134,7 @@
   .tst-foot-links a{display:block;color:#A0A8B4;text-decoration:none;font-size:14px;line-height:1.5;padding:6px 0}
   body.v5-sheet-open .nav{display:none!important}
   .v2-bottomnav{position:fixed;left:0;right:0;bottom:0;z-index:1001;display:flex;justify-content:space-around;align-items:stretch;background:#0d1219;border-top:1px solid rgba(139,152,173,.16);padding:6px 6px calc(6px + env(safe-area-inset-bottom))}
-  /* Barra inferior compacta + iconos un poco mas grandes (2026-11-08, pedido de Alex: la barra se veia alta, con demasiado aire). CORRECCION 2026-11-08 15:40 ET: capar el area segura con min() BAJO los botones en vez de subirlos (Alex lo noto comparando con My Bets, donde se ven mas arriba). Ahora el Home usa el MISMO colchon inferior que las demas paginas (style.css): 6px + env(safe-area-inset-bottom) completo en el contenedor y 6px bajo el texto del item — los botones quedan a la misma altura que en el resto del sitio. Gana sobre style-v2.css: este bloque va despues en el documento. */
+  /* Barra inferior compacta + iconos un poco mas grandes (2026-11-08, pedido de Alex: la barra se veia alta, con demasiado aire). CORRECCION 2026-11-08 15:40 ET: capar el area segura con min() BAJO los botones en vez de subirlos (Alex lo noto comparando con My Bets, donde se ven mas arriba). Ahora el Home usa el MISMO colchon inferior que las demas paginas (style.css): 6px + env(safe-area-inset-bottom) completo en el contenedor y 6px bajo el texto del item. CAUSA RAIZ FINAL (2026-11-08 15:58 ET, captura de Alex): ni asi subia en su iPhone — el meta viewport del Home NO traia viewport-fit=cover (base.html si), y sin el, iOS devuelve env(safe-area-inset-bottom)=0: el colchon real era ~12px contra ~46px en las demas paginas. Agregado viewport-fit=cover al meta + padding-top con env(safe-area-inset-top) en .tst-stickyhead y en el menu sheet para que el contenido no se monte sobre la hora/la isla. Gana sobre style-v2.css: este bloque va despues en el documento. */
   .v2-bottomnav{padding:2px 6px calc(6px + env(safe-area-inset-bottom))}
   .v2-bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 2px 6px;text-decoration:none;color:#969EA9;font-size:10px;font-weight:500;letter-spacing:.01em;min-width:0;border-radius:22px;transition:background-color .2s ease,color .2s ease,transform .2s ease}
   .v2-bnav-item:active{transform:scale(.95)}
@@ -349,7 +349,7 @@
 
   {# Fila de pildoras ELIMINADA (2026-11-08, ordenes de Alex): primero salieron las pildoras del balance («View my balance») y de «Full record» — era SOLO por fuera; el Full Record SIGUE dentro del menu, que es la garantia del programa — y despues el boton ☰ subio a la fila de arriba, junto a Admin y la campana, para que el encabezado quede corto, en una sola fila de botones. El script balfx se apaga solo sin la pildora (if(!pill)return) y su paso del tour se retiro. #}
 
-  <div id="tst-menu-sheet" hidden style="position:fixed;inset:0;z-index:2000;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;background:#0B0D12;padding:14px 14px calc(200px + env(safe-area-inset-bottom));">
+  <div id="tst-menu-sheet" hidden style="position:fixed;inset:0;z-index:2000;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;background:#0B0D12;padding:calc(14px + env(safe-area-inset-top)) 14px calc(200px + env(safe-area-inset-bottom));">
     <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;"><span style="display:flex;align-items:center;gap:8px;font-size:15px;font-weight:800;font-style:italic;"><img src="{{ url_for('static', filename='img/apple-touch-icon-v2.png') }}" alt="" style="width:30px;height:30px;border-radius:50%;display:block;">THE <span style="color:#11CB87;">SHARP</span> TEAM</span><button type="button" onclick="document.getElementById('tst-menu-sheet').hidden=true;document.getElementById('tst-menubtn').setAttribute('aria-expanded','false');document.body.style.overflow='';" style="background:none;border:0;color:#A3AAB6;font-size:20px;cursor:pointer;padding:4px 8px;">✕</button></div>
     {# Menú LIMPIO (2026-10-30, orden de Alex): tres grupos cortos y nada
        más. La sección ABOUT salió del menú — About/FAQs/Contact viven
@@ -947,7 +947,7 @@
 
 <style>
 /* Header tightening 2026-10-29 (Alex: logo mas pequeno, menos espacios) */
-.tst-stickyhead{padding-top:8px;padding-bottom:8px}
+.tst-stickyhead{padding-top:calc(8px + env(safe-area-inset-top));padding-bottom:8px}
 .tst-stickyhead .topbar{margin-bottom:7px}
 .pillrow{margin-bottom:6px;justify-content:flex-end}
 /* Panel de notificaciones con scroll propio (2026-10-30, reporte de Alex:
