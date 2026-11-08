@@ -5,13 +5,11 @@
    estructura espejo de la página de WGT que Alex envió, textos 100%
    propios y SOLO números reales del programa (board viene de
    _desbloquear_board() en app.py, calculado desde data/archive.json).
-   Ofertas por cohorte (2026-10-31): legacy = $1 la primera semana
-   (7 días), luego $15.99/semana; cohorte de la landing nueva
-   (offer_free_month) = $1 hoy + primer mes gratis (trial de 30 días),
-   luego $15.99/semana. La vista elige los textos con la variable
-   offer_free_month que pasa desbloquear_platinum() desde
-   users.signup_offer; sin esa marca se renderiza la vista legacy
-   EXACTA de siempre.
+   Oferta ÚNICA para todos (2026-11-07, orden de Alex «quita el mes
+   gratis para todos»): $1 la primera semana (7 días), luego
+   $15.99/semana. La variante «$1 + primer mes gratis» de la cohorte
+   2026-10-31 quedó ELIMINADA de esta plantilla y del checkout: el
+   signup_offer histórico de la BD ya no tiene efecto aquí.
    El pago va INCRUSTADO en esta misma página (Stripe Checkout en modo
    embedded, espejo WGT 2026-10-19): el servidor crea la sesión vía
    /api/desbloquear/checkout-session y el formulario de Stripe se monta
@@ -32,7 +30,7 @@
 <div class="v2-upsell-done">
   <p class="v2-upsell-kicker">PLATINUM MEMBERSHIP</p>
   <h2 class="v2-sec-title">You're in — Platinum is activating ✓</h2>
-  <p class="v2-upsell-sub">{% if offer_free_month %}Your free month of Platinum just started — your $1 start is in and your access turns on automatically.{% else %}Your $1 week just started and your access turns on automatically.{% endif %} If your plays don't look unlocked yet, give it a few seconds — this page reloads itself.</p>
+  <p class="v2-upsell-sub">Your $1 week just started and your access turns on automatically. If your plays don't look unlocked yet, give it a few seconds — this page reloads itself.</p>
   <a class="v2-upsell-cta" href="{{ url_for('home') }}">Go to my Dashboard →</a>
   {% if fb_purchase %}<script>fbq('track', 'Purchase', {value: {{ fb_purchase }}, currency: 'USD'}{% if fb_purchase_eid %}, {eventID: '{{ fb_purchase_eid }}'}{% endif %});</script>{% endif %}
   <script>setTimeout(function(){window.location.replace("{{ url_for('desbloquear_platinum') }}");},10000);</script>
@@ -128,7 +126,7 @@
     <img src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team">
     <p class="upl-kicker">THE SHARP TEAM · PLATINUM</p>
     <h1 class="upl-h1">Every Platinum play, with its real ticket — for <span class="dollar">$1</span></h1>
-    <p class="upl-sub">{% if offer_free_month %}A full month of Platinum free after your $1 start: every official play with the real ticket, posted the same day — before game time, and graded in public, win or loss.{% else %}Seven days of full Platinum: every official play with the real ticket, posted the same day — before game time, and graded in public, win or loss.{% endif %}</p>
+    <p class="upl-sub">Seven days of full Platinum: every official play with the real ticket, posted the same day — before game time, and graded in public, win or loss.</p>
   </div>
 
   <div class="upl-tiles">
@@ -139,15 +137,11 @@
   <p class="upl-graded">✓ Graded against the final score · every result posted, win or loss</p>
 
   <div class="upl-card" id="upl-buy">
-    {% if offer_free_month %}
-    <span class="upl-pill">FIRST MONTH FREE</span>
-    <p class="upl-price"><span class="big">$1</span> today — then a full month free</p>
-    <p class="upl-then">Then $15.99/week after your free month · cancel anytime</p>
-    {% else %}
+    
     <span class="upl-pill">7-DAY FULL ACCESS</span>
     <p class="upl-price"><span class="big">$1</span> for your first 7 days</p>
     <p class="upl-then">Then $15.99/week · cancel anytime</p>
-    {% endif %}
+    
     <p class="upl-trust" style="margin-top:9px;">🔒 256-bit SSL · Powered by Stripe · PCI compliant</p>
     <p class="upl-live"><span class="dot">●</span> Live now — today's +EV board is updating in real time</p>
     {% if user_email %}<div class="upl-as"><div class="t">COMPLETING PURCHASE AS</div><div class="e">✓ {{ user_email }}</div><div class="o">Not you? <a href="{{ url_for('logout') }}">Log out</a></div></div>{% endif %}
@@ -164,38 +158,33 @@
     </div>
     {% endif %}
     {# Garantía pegada al checkout (arreglo del embudo 2026-11-07, aprobado por Alex): la misma garantía que cierra esta tarjeta, repetida AQUÍ, justo encima del formulario de Stripe, para que se vea sin bajar hasta el final del formulario. #}
-    {% if offer_free_month %}
-    <p class="upl-under" style="margin-top:12px;">Cancel any time during your free month and you only ever pay the $1.</p>
-    {% else %}
+    
     <p class="upl-under" style="margin-top:12px;">Cancel before day 8 and you only ever pay $1.</p>
-    {% endif %}
+    
     {% if anonimo %}
     <div style="margin:14px 0 0;text-align:center;">
       <a class="upl-cta" href="{{ url_for('login', next=url_for('desbloquear_platinum')) }}">Log in to unlock &rarr;</a>
-      <p style="margin:10px 0 0;font-size:12.5px;color:#a8b3cf;">New here? <a href="{{ url_for('register') }}" style="color:#7dd3fc;font-weight:800;">Create your free account</a> — it takes a minute — then tap Unlock Platinum to {% if offer_free_month %}start for $1 — your first month is free.{% else %}start your $1 week.{% endif %}</p>
+      <p style="margin:10px 0 0;font-size:12.5px;color:#a8b3cf;">New here? <a href="{{ url_for('register') }}" style="color:#7dd3fc;font-weight:800;">Create your free account</a> — it takes a minute — then tap Unlock Platinum to start your $1 week.</p>
     </div>
     {% elif stripe_embed_ok %}
     <div class="upl-embbox" id="upl-emb-box">
       <p class="upl-embload" id="upl-emb-loading">Loading secure checkout…</p>
       <div id="upl-emb"></div>
     </div>
-    <a class="upl-cta" id="upl-emb-fallback" href="{{ stripe_url }}" target="_blank" rel="noopener" style="display:none">{% if offer_free_month %}Start for $1 →{% else %}Start my $1 week →{% endif %}</a>
-    <noscript><a class="upl-cta" href="{{ stripe_url }}" target="_blank" rel="noopener">{% if offer_free_month %}Start for $1 →{% else %}Start my $1 week →{% endif %}</a></noscript>
+    <a class="upl-cta" id="upl-emb-fallback" href="{{ stripe_url }}" target="_blank" rel="noopener" style="display:none">Start my $1 week →</a>
+    <noscript><a class="upl-cta" href="{{ stripe_url }}" target="_blank" rel="noopener">Start my $1 week →</a></noscript>
     {% else %}
-    <a class="upl-cta" href="{{ stripe_url }}" target="_blank" rel="noopener">{% if offer_free_month %}Start for $1 →{% else %}Start my $1 week →{% endif %}</a>
+    <a class="upl-cta" href="{{ stripe_url }}" target="_blank" rel="noopener">Start my $1 week →</a>
     {% endif %}
     {% if not anonimo %}
-    <p class="upl-under" style="margin-top:12px;">{% if offer_free_month %}✓ $1 today, then your first month free · Cancel anytime{% else %}✓ $1 for your first week, then $15.99/week · Cancel anytime{% endif %}</p>
+    <p class="upl-under" style="margin-top:12px;">✓ $1 for your first week, then $15.99/week · Cancel anytime</p>
     <div style="margin:11px 0 0;background:#10151d;border:1px solid #33415566;border-radius:10px;padding:10px 12px;font-size:12px;line-height:1.6;color:#a8b3cf;"><b style="color:#fff;">What happens next:</b> the moment your payment clears, your Platinum turns on automatically — every official play lands on your Dashboard before game time, with its real ticket, starting today.</div>
     <p class="upl-trust">🔒 256-bit SSL · Stripe secured · Cancel anytime</p>
     {% endif %}
-    {% if offer_free_month %}
-    <p class="upl-under">Cancel any time during your free month and you only ever pay the $1.</p>
-    <p class="upl-fine">One $1 + free-month intro per customer. $1 today, your first month of Platinum free, then $15.99/week — your price is shown at checkout before you pay. Cancel anytime — no calls, no retention scripts.<br>Your card is held by Stripe — we never see or store your card number.</p>
-    {% else %}
+    
     <p class="upl-under">Cancel before day 8 and you only ever pay $1.</p>
     <p class="upl-fine">One $1 first week per customer. Your weekly price is shown at checkout before you pay. Cancel anytime — no calls, no retention scripts.<br>Your card is held by Stripe — we never see or store your card number.</p>
-    {% endif %}
+    
     <div class="upl-emailnote"><b>Important:</b> check out with the same email as your member account — that's how your Platinum access turns on automatically, today.</div>
   </div>
 
@@ -241,7 +230,7 @@
   <div class="pln-card pln-plat">
     <div class="pln-top">
       <span class="pln-kick">PLATINUM · WEEKLY</span>
-      <span class="pln-badge">{% if offer_free_month %}FIRST MONTH FREE{% else %}FIRST WEEK $1{% endif %}</span>
+      <span class="pln-badge">FIRST WEEK $1</span>
     </div>
     <div class="pln-price">$15.99 <small>/ week</small></div>
     <p class="pln-tag">Unlock the complete card — every official play and every tool we run, with nothing held back.</p>
@@ -257,7 +246,7 @@
       <li>The full record — every play counted, win or loss</li>
     </ul>
     <a class="pln-cta pln-cta-plat" href="#upl-buy">Unlock Platinum →</a>
-    <p class="pln-fine">{% if offer_free_month %}$1 today, your first month free, then $15.99/week. Cancel anytime.{% else %}$1 for your first week, then $15.99/week. Cancel anytime.{% endif %}</p>
+    <p class="pln-fine">$1 for your first week, then $15.99/week. Cancel anytime.</p>
   </div>
 
   {% if not anonimo %}
@@ -336,7 +325,7 @@
       <li><span class="ck">✓</span>Private Telegram channel for Platinum members</li>
       <li><span class="ck">✓</span>Bet Tracker, auto-graded — and every result posted, win or loss</li>
     </ul>
-    <div class="upl-value">Buying tools like these one by one adds up fast. Here it is one membership: <b>all of it — plays, boards and tools — {% if offer_free_month %}for $1 today, with your first month free.{% else %}for $1 your first week.{% endif %}</b></div>
+    <div class="upl-value">Buying tools like these one by one adds up fast. Here it is one membership: <b>all of it — plays, boards and tools — for $1 your first week.</b></div>
   </div>
 
   <div class="upl-sec">
@@ -344,7 +333,7 @@
     <ul class="upl-how">
       <li><span class="n">1</span><span><b>Start for $1 today.</b> Your Platinum turns on automatically the moment your payment clears — no waiting, no setup call.</span></li>
       <li><span class="n">2</span><span><b>Plays before game time.</b> Every official play is posted on your Dashboard and sent in the plays email the same day, before the game starts — each one with its real ticket.</span></li>
-      <li><span class="n">3</span><span><b>Cancel anytime.</b> From your account, in two clicks — no phone calls, no retention scripts. {% if offer_free_month %}Cancel during your free month and you only ever pay the $1.{% else %}Cancel before day 8 and you only ever pay $1.{% endif %}</span></li>
+      <li><span class="n">3</span><span><b>Cancel anytime.</b> From your account, in two clicks — no phone calls, no retention scripts. Cancel before day 8 and you only ever pay $1.</span></li>
     </ul>
   </div>
 
@@ -375,20 +364,17 @@
         <p>From your account page, in two clicks — no phone calls, no chat with retention agents. Cancellation stops future charges; any week already paid stays active to its end.</p>
       </details>
       <details>
-        {% if offer_free_month %}
-        <summary>When am I charged?</summary>
-        <p>$1 today. Then your first month of Platinum is free (30 days). If you don't cancel, $15.99/week billing by Stripe starts after your free month, billed weekly until you cancel.</p>
-        {% else %}
+        
         <summary>When am I charged?</summary>
         <p>$1 today, for your first 7 days of Platinum. If you don't cancel, $15.99/week starts on day 8, billed weekly by Stripe until you cancel. Cancel before day 8 and you only ever pay the $1.</p>
-        {% endif %}
+        
       </details>
     </div>
   </div>
 
-  <p class="upl-legal">{% if offer_free_month %}$1 today, then your first month of Platinum free (30 days), then $15.99/week billed weekly until cancelled.{% else %}$1 for the first 7 days, then $15.99/week billed weekly until cancelled.{% endif %} Recurring weekly subscription — cancel anytime from your account, no contracts. All prices in USD. Must be 21+. For informational and entertainment purposes only; nothing here is financial advice and no outcome is guaranteed. Past results do not guarantee future results. Please bet responsibly. Gambling problem? Call 1-800-GAMBLER.<br>© 2026 The Sharp Team.</p>
+  <p class="upl-legal">$1 for the first 7 days, then $15.99/week billed weekly until cancelled. Recurring weekly subscription — cancel anytime from your account, no contracts. All prices in USD. Must be 21+. For informational and entertainment purposes only; nothing here is financial advice and no outcome is guaranteed. Past results do not guarantee future results. Please bet responsibly. Gambling problem? Call 1-800-GAMBLER.<br>© 2026 The Sharp Team.</p>
 
-  <div class="upl-sticky"><div class="upl-sticky-in"><span class="upl-sticky-t">{% if offer_free_month %}<b>$1 today</b> · first month free · then $15.99/week · cancel anytime{% else %}<b>$1 first week</b> · then $15.99/week · cancel anytime{% endif %}</span><a class="upl-sticky-btn" href="#upl-buy">Get access →</a></div></div>
+  <div class="upl-sticky"><div class="upl-sticky-in"><span class="upl-sticky-t"><b>$1 first week</b> · then $15.99/week · cancel anytime</span><a class="upl-sticky-btn" href="#upl-buy">Get access →</a></div></div>
 </div>
 
 {# Barra fija inferior (2026-11-07, orden de Alex «desde el dash debe ir a
