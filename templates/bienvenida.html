@@ -5,6 +5,46 @@
   <h2>Welcome, <span class="accent">{{ nombre }}</span></h2>
   <p class="muted">Your account is ready. This is a sports betting program built on numbers, discipline and value. No hunches.</p>
 
+  {% if setup and setup.falta %}
+  {# Onboarding dentro de la cuenta (2026-11-07, espejo del /welcome de WGT): quien entró con el registro de un solo campo completa aquí su contraseña, nombre y teléfono, y ve el estado de su confirmación. #}
+  <div style="background:rgba(232,199,102,.07);border:1.5px solid rgba(232,199,102,.5);border-radius:16px;padding:18px;margin:18px 0 6px;">
+    <h3 style="margin-top:0;">Finish setting up your account</h3>
+    <p class="muted">You're in — this takes 10 seconds and keeps your access safe.</p>
+    <ul style="list-style:none;padding:0;margin:12px 0;">
+      <li style="padding:4px 0;">{% if setup.verificado %}<span style="color:#2ee6a8;font-weight:800;">✓</span> Email confirmed{% else %}<span style="color:#e8c766;font-weight:800;">○</span> Confirm your email — we sent the link to <strong>{{ setup.email }}</strong>{% endif %}</li>
+      <li style="padding:4px 0;">{% if setup.propia %}<span style="color:#2ee6a8;font-weight:800;">✓</span> Password set{% else %}<span style="color:#e8c766;font-weight:800;">○</span> Set your password{% endif %}</li>
+      <li style="padding:4px 0;">{% if not setup.nombre_prov %}<span style="color:#2ee6a8;font-weight:800;">✓</span> Name saved{% else %}<span style="color:#e8c766;font-weight:800;">○</span> Add your name{% endif %}</li>
+      <li style="padding:4px 0;">{% if setup.telefono %}<span style="color:#2ee6a8;font-weight:800;">✓</span> Phone saved{% else %}<span style="color:#e8c766;font-weight:800;">○</span> Add your phone (for text alerts){% endif %}</li>
+    </ul>
+    <form method="post" action="{{ url_for('cuenta_completar') }}">
+      <div style="margin-top:10px;">
+        <label for="s-nombre" style="display:block;font-weight:700;font-size:14px;">Your name</label>
+        <input id="s-nombre" type="text" name="nombre" autocomplete="name" placeholder="Your name" value="{{ '' if setup.nombre_prov else nombre }}" style="width:100%;margin-top:6px;background:#05081a;border:1.5px solid rgba(232,199,102,.35);border-radius:12px;padding:13px;color:#eef1fb;font-size:16px;">
+      </div>
+      <div style="margin-top:12px;">
+        <label for="s-phone" style="display:block;font-weight:700;font-size:14px;">Your phone number</label>
+        <input id="s-phone" type="tel" name="phone" autocomplete="tel" placeholder="(555) 123-4567" value="{{ setup.telefono }}" style="width:100%;margin-top:6px;background:#05081a;border:1.5px solid rgba(232,199,102,.35);border-radius:12px;padding:13px;color:#eef1fb;font-size:16px;">
+        <label for="s-sms" style="display:flex;gap:8px;align-items:center;margin-top:9px;font-size:.85rem;color:#a8b3cf;cursor:pointer;"><input id="s-sms" type="checkbox" name="sms_optin" value="1" style="width:17px;height:17px;accent-color:#e8c766;"> Text me the plays when they go live</label>
+      </div>
+      {% if not setup.propia %}
+      <div style="margin-top:12px;">
+        <label for="s-password" style="display:block;font-weight:700;font-size:14px;">Set your password</label>
+        <input id="s-password" type="password" name="password" minlength="6" autocomplete="new-password" placeholder="Minimum 6 characters" style="width:100%;margin-top:6px;background:#05081a;border:1.5px solid rgba(232,199,102,.35);border-radius:12px;padding:13px;color:#eef1fb;font-size:16px;">
+      </div>
+      {% endif %}
+      <button class="btn btn-primary btn-block" type="submit" style="margin-top:16px;">Save my setup →</button>
+    </form>
+    {% if not setup.verificado %}
+    <form method="post" action="{{ url_for('reenviar_activacion') }}" style="margin-top:10px;">
+      <input type="hidden" name="email" value="{{ setup.email }}">
+      <input type="hidden" name="lang" value="en">
+      <button type="submit" style="display:block;width:100%;text-align:center;background:transparent;border:1.5px solid rgba(232,199,102,.45);color:#e8c766;border-radius:12px;padding:12px;font-size:15px;font-weight:700;cursor:pointer;">Resend my confirmation email</button>
+    </form>
+    {% endif %}
+    <p style="text-align:center;margin-top:12px;"><a href="{{ url_for('home') }}" style="color:#9aa7c7;">Skip for now →</a></p>
+  </div>
+  {% endif %}
+
   <h3>Your member dashboard</h3>
   <p>The day's plays post here every day at 1:00 PM ET.</p>
   <a class="btn btn-primary btn-block" href="{{ url_for('home') }}">Go to my dashboard →</a>
