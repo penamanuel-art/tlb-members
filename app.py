@@ -2727,10 +2727,12 @@ def stake_personalizado(play, user):
 
 def personalizar_plays(plays, user):
     """Devuelve copias de las jugadas con stake_monto personalizado."""
+    card_info = load_card_info()
     out = []
     for p in plays:
         p = dict(p)
         p["stake_monto"] = stake_personalizado(p, user)
+        p["card_info"] = (card_info.get(p.get("id")) or {})
         out.append(p)
     return out
 
@@ -3694,6 +3696,25 @@ TELEGRAM_MEMBERS_URL = (
     "https://raw.githubusercontent.com/penamanuel-art/tlb-members"
     "/data-board/data/telegram-members.json"
 )
+
+
+CARD_INFO_URL = (
+    "https://raw.githubusercontent.com/penamanuel-art/tlb-members"
+    "/data-board/data/card_info.json"
+)
+
+
+def load_card_info():
+    """Overlay data-board (chips de la tarjeta v5): map play_id -> dict con
+    injuries / weather / lines. Lo publica hidden_files/card-info-board.py
+    (cron card-info-refresh, cada hora). Fail-open {}: sin overlay, la
+    tarjeta simplemente no muestra chips."""
+    data = _json_remoto_o_local(
+        CARD_INFO_URL, os.path.join(BASE_DIR, "data", "card_info.json"),
+        ttl=60)
+    if isinstance(data, dict):
+        return data.get("games") or {}
+    return {}
 
 
 def load_live_graded():
