@@ -168,6 +168,12 @@
       <p class="upl-recon">Every claim reconciles to the public graded ledger.</p>
     </div>
     {% endif %}
+    {# Garantía pegada al checkout (arreglo del embudo 2026-11-07, aprobado por Alex): la misma garantía que cierra esta tarjeta, repetida AQUÍ, justo encima del formulario de Stripe, para que se vea sin bajar hasta el final del formulario. #}
+    {% if offer_free_month %}
+    <p class="upl-under" style="margin-top:12px;">Cancel any time during your free month and you only ever pay the $1.</p>
+    {% else %}
+    <p class="upl-under" style="margin-top:12px;">Cancel before day 8 and you only ever pay $1.</p>
+    {% endif %}
     {% if anonimo %}
     <div style="margin:14px 0 0;text-align:center;">
       <a class="upl-cta" href="{{ url_for('login', next=url_for('desbloquear_platinum')) }}">Log in to unlock &rarr;</a>
