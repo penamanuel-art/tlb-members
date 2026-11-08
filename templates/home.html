@@ -155,7 +155,7 @@
   <p class="board-empty-t">The board is not posted yet</p>
   <p class="board-empty-s">Your plays show here the moment they are posted.</p>
 </div>
-{% elif golds %}
+{% elif golds and platinum_unlocked %}
 <div class="section-head title-flush">
   <h2 class="section-title">Today's Free Selections</h2>
 </div>
@@ -164,6 +164,9 @@
     {% include "_play_card.html" %}
   {% endfor %}
 </div>
+{% elif golds %}
+{# Espejo WGT (2026-11-07): sin Platinum, la Gold de hoy NO se abre en el Dashboard — su carta bloqueada sale abajo, en la sección de cartas bloqueadas (locked_plays). #}
+<p class="muted">🔒 Today's Gold {{ 'play is' if golds|length == 1 else 'plays are' }} locked — <a href="{{ url_for('desbloquear_platinum') }}">unlock Platinum</a> to see {{ 'it' if golds|length == 1 else 'them' }}. Yesterday's results are below.</p>
 {% else %}
 <p class="muted">No free plays today.</p>
 {% endif %}
