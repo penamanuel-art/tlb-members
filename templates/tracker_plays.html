@@ -957,7 +957,7 @@
     var vis=0;
     rows.forEach(function(r){
       var ok=passesPeriod(r)&&passesSrc(r);
-      if(ok && TK.tab==='open') ok=!isSettled(r);
+      if(ok && (TK.tab==='open'||TK.tab==='overview')) ok=!isSettled(r);
       if(ok && TK.tab==='history') ok=isSettled(r);
       r.style.display=ok?'':'none';
       if(ok) vis++;
@@ -972,6 +972,7 @@
           rows.forEach(function(r){
             if(!passesPeriod(r)||passesSrc(r)) return;
             if(TK.tab==='open' && isSettled(r)) return;
+            if(TK.tab==='overview' && isSettled(r)) return;
             if(TK.tab==='history' && !isSettled(r)) return;
             hiddenBySrc++;
           });
@@ -980,6 +981,7 @@
           le.textContent='Nothing here under '+(TK.src==='own'?'My own bets':'Program plays')+' \u2014 switch to All sources to see '+(TK.src==='own'?'your program plays':'your own bets')+'.';
         }
         else le.textContent = TK.tab==='open' ? 'No open bets right now. Track a play from today\u2019s board and it will wait here until it settles.'
+          : TK.tab==='overview' ? 'No open bets right now \u2014 your settled plays live in the History tab.'
           : TK.tab==='history' ? 'Nothing settled in this view yet \u2014 change the period or the source filter.'
           : 'No bets match this view \u2014 widen the period or clear the source filter.';
       } else le.style.display='none';
