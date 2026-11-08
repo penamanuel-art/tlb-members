@@ -314,6 +314,7 @@
     <div class="topactions">
       {% if es_admin or es_alex %}<a href="{{ url_for('admin_dashboard') }}" style="display:inline-flex;align-items:center;color:#e8c766;font-size:16px;font-weight:400;letter-spacing:.4px;text-decoration:none;padding:0 2px;">Admin</a>{% endif %}
       <button class="bellbtn" type="button" id="tst-bell" aria-label="Notifications"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M13.7 20a2 2 0 0 1-3.4 0"/></svg></button>
+      <button class="menubtn" type="button" id="tst-menubtn" aria-expanded="false" onclick="var m=document.getElementById('tst-menu-sheet');var o=m.hidden;m.hidden=!o;this.setAttribute('aria-expanded',o?'true':'false');document.body.style.overflow=o?'hidden':'';" style="cursor:pointer;padding:0;">☰</button>
     </div>
   </div>
 
@@ -346,10 +347,7 @@
     {% endif %}
   </div>
 
-  <div class="pillrow">
-    {# Encabezado LIMPIO (2026-11-08, orden de Alex: «Quitale el dinero y el full record»): fuera la pildora del balance («View my balance») y la de «Full record» de esta fila — el balance vive en Account y el record en el pie de pagina. Queda solo el boton del menu. El script balfx se apaga solo sin la pildora (if(!pill)return) y su paso del tour se retiro. #}
-    <button class="menubtn" type="button" id="tst-menubtn" aria-expanded="false" onclick="var m=document.getElementById('tst-menu-sheet');var o=m.hidden;m.hidden=!o;this.setAttribute('aria-expanded',o?'true':'false');document.body.style.overflow=o?'hidden':'';" style="cursor:pointer;padding:0;">☰</button>
-  </div>
+  {# Fila de pildoras ELIMINADA (2026-11-08, ordenes de Alex): primero salieron las pildoras del balance («View my balance») y de «Full record» — era SOLO por fuera; el Full Record SIGUE dentro del menu, que es la garantia del programa — y despues el boton ☰ subio a la fila de arriba, junto a Admin y la campana, para que el encabezado quede corto, en una sola fila de botones. El script balfx se apaga solo sin la pildora (if(!pill)return) y su paso del tour se retiro. #}
 
   <div id="tst-menu-sheet" hidden style="position:fixed;inset:0;z-index:2000;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;background:#0B0D12;padding:14px 14px calc(200px + env(safe-area-inset-bottom));">
     <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;"><span style="display:flex;align-items:center;gap:8px;font-size:15px;font-weight:800;font-style:italic;"><img src="{{ url_for('static', filename='img/apple-touch-icon-v2.png') }}" alt="" style="width:30px;height:30px;border-radius:50%;display:block;">THE <span style="color:#11CB87;">SHARP</span> TEAM</span><button type="button" onclick="document.getElementById('tst-menu-sheet').hidden=true;document.getElementById('tst-menubtn').setAttribute('aria-expanded','false');document.body.style.overflow='';" style="background:none;border:0;color:#A3AAB6;font-size:20px;cursor:pointer;padding:4px 8px;">✕</button></div>
