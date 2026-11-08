@@ -6669,7 +6669,16 @@ def activar_cuenta(token):
     except Exception:
         _intent = None
         _offer = None
-    if _offer == PLATINUM_OFFER_FREE_MONTH and _intent == "platinum":
+    # Puente del embudo (arreglo 2026-11-07, aprobado por Alex): la
+    # condición vieja exigía TAMBIÉN la marca de la cohorte del mes
+    # gratis, pero desde el 2026-11-06 los registros nuevos nacen con
+    # signup_offer NULL — el 100% caía en /bienvenida aunque hubiera
+    # marcado Platinum. Desde hoy manda la INTENCIÓN declarada: quien
+    # marcó Platinum va directo a /desbloquear-platinum; la condición
+    # vieja se conserva como OR para no romper a su cohorte.
+    _puente_viejo = (_offer == PLATINUM_OFFER_FREE_MONTH
+                     and _intent == "platinum")
+    if _intent == "platinum" or _puente_viejo:
         return redirect(url_for("desbloquear_platinum"))
     return redirect(url_for("bienvenida"))
 
