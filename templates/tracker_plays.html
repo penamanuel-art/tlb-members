@@ -1455,7 +1455,6 @@
           det.push(hStakeTxt(r));
           var bk=r.getAttribute('data-book')||''; if(bk) det.push(esc(bk));
           h+='<article class="hist-row '+cls+'">'
-            + thumb
             +'<div class="hist-main"><p class="hist-pick">'+esc(histTitle(r))+'</p>'
             +'<p class="hist-sub">'+parts.join(' &middot; ')+'</p>'
             +'<p class="hist-det">'+det.join(' &middot; ')+' &middot; <span class="srcdot'+(own?' own':'')+'"></span>'+(own?'My own bets':'Program plays')+'</p></div>'
