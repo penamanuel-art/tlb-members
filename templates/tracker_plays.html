@@ -277,8 +277,7 @@
 {% if all_rows %}
 <div class="mb-period" id="mbSource">
   <span class="plabel">SOURCE</span>
-  <button type="button" class="mb-pchip active" data-src="">All sources</button>
-  <button type="button" class="mb-pchip" data-src="official">Program plays<span id="tkSrcOff"></span></button>
+  <button type="button" class="mb-pchip active" data-src="official">Program plays<span id="tkSrcOff"></span></button>
   <button type="button" class="mb-pchip" data-src="own">My own bets<span id="tkSrcOwn"></span></button>
 </div>
 
@@ -351,18 +350,22 @@
 <div class="tk-insights" id="tkInsights" data-tabs="overview performance" data-dyn="1" style="display:none"></div>
 
 {% set _mg = namespace(best=0, run=0) %}
-{% for r in all_rows|reverse %}
+{% for r in official_rows|reverse %}
   {% if r.resultado == 'W' %}{% set _mg.run = _mg.run + 1 %}{% if _mg.run > _mg.best %}{% set _mg.best = _mg.run %}{% endif %}{% elif r.resultado == 'L' %}{% set _mg.run = 0 %}{% endif %}
 {% endfor %}
 <div class="mb-miles" data-tabs="overview">
-  <span class="mb-mile">🎯 <b>{{ all_rows|length }}</b> bets tracked</span>
-  {% if stats_all.streak and stats_all.streak != '—' %}<span class="mb-mile">🔥 Current streak <b>{{ stats_all.streak }}</b></span>{% endif %}
-  {% if _mg.best >= 2 %}<span class="mb-mile">🏆 Best win streak <b>{{ _mg.best }}</b></span>{% endif %}
+  <span class="mb-mile">🎯 <b id="mbMileTracked">{{ official_rows|length }}</b> bets tracked</span>
+  <span class="mb-mile" id="mbMileStreak"{% if not (stats_all.streak and stats_all.streak != '—') %} style="display:none"{% endif %}>🔥 Current streak <b>{{ stats_all.streak }}</b></span>
+  <span class="mb-mile" id="mbMileBest"{% if _mg.best < 2 %} style="display:none"{% endif %}>🏆 Best win streak <b>{{ _mg.best }}</b></span>
 </div>
 
 <div class="mb-actions" data-tabs="overview open">
   <a class="mb-btn" href="{{ url_for('mybets_add') }}">+ Add a bet</a>
   <a class="mb-btn ghost" href="{{ url_for('mybets_export') }}">Export CSV</a>
+  <form method="post" action="{{ url_for('mybets_upload_ticket') }}" enctype="multipart/form-data" style="display:contents">
+    <label class="mb-btn ghost" for="tkTicketFile">📸 Upload a ticket</label>
+    <input id="tkTicketFile" type="file" name="ticket" accept="image/*" style="display:none" onchange="this.form.submit()">
+  </form>
 </div>
 
 <div class="mb-card" id="tkNeeds" data-tabs="overview open" data-dyn="1" style="display:none">
@@ -825,7 +828,7 @@
   var srcChips=[].slice.call(document.querySelectorAll('#mbSource .mb-pchip'));
   var tabBtns=[].slice.call(document.querySelectorAll('#tkTabs .tk-tab'));
   var rows=[].slice.call(document.querySelectorAll('.wgt-row'));
-  var TK={days:0, src:'', tab:'overview', needsHas:false, lwHas:false, insHas:false, lwText:''};
+  var TK={days:0, src:'official', tab:'overview', needsHas:false, lwHas:false, insHas:false, lwText:''};
   var TKGOAL = {% if tk_goal %}{ target: {{ tk_goal.target_units|tojson }}, period: {{ tk_goal.period|tojson }} }{% else %}null{% endif %};
   var TKUNIT = {{ (mb_settings.unit_monto or 100)|tojson }};
   var CIRC=213.6;
@@ -946,6 +949,13 @@
     else setV('mbStClv', '—', '');
     var sub=document.getElementById('tkHeroSub');
     if(sub) sub.innerHTML='<b>'+tracked+'</b> tracked &middot; <b>'+pending+'</b> pending &middot; <b>'+money(risk)+'</b> risked';
+    var srows=srcRows(), sSeq=[];
+    srows.forEach(function(r){ if(isSettled(r)){ var x=res(r); if(x==='W'||x==='L') sSeq.push(x); } });
+    var mt=document.getElementById('mbMileTracked'); if(mt) mt.textContent=String(srows.length);
+    var ms=document.getElementById('mbMileStreak');
+    if(ms){ if(sSeq.length){ var f1=sSeq[0], n1=0; for(var a1=0;a1<sSeq.length;a1++){ if(sSeq[a1]===f1) n1++; else break; } ms.style.display=''; var mb1=ms.querySelector('b'); if(mb1) mb1.textContent=f1+n1; } else ms.style.display='none'; }
+    var mbe=document.getElementById('mbMileBest');
+    if(mbe){ var br=0, rn=0; sSeq.forEach(function(x){ if(x==='W'){ rn++; if(rn>br) br=rn; } else rn=0; }); if(br>=2){ mbe.style.display=''; var bb1=mbe.querySelector('b'); if(bb1) bb1.textContent=String(br); } else mbe.style.display='none'; }
     var pn=document.getElementById('tkPeriodName');
     if(pn) pn.textContent=PNAMES[TK.days]||'ALL TIME';
     drawCurve(chrono.length? vals : []);
@@ -978,7 +988,7 @@
           });
         }
         if(hiddenBySrc>0){
-          le.textContent='Nothing here under '+(TK.src==='own'?'My own bets':'Program plays')+' \u2014 switch to All sources to see '+(TK.src==='own'?'your program plays':'your own bets')+'.';
+          le.textContent='Nothing here under '+(TK.src==='own'?'My own bets':'Program plays')+' \u2014 switch to '+(TK.src==='own'?'Program plays':'My own bets')+' to see '+(TK.src==='own'?'your program plays':'your own bets')+'.';
         }
         else le.textContent = TK.tab==='open' ? 'No open bets right now. Track a play from today\u2019s board and it will wait here until it settles.'
           : TK.tab==='overview' ? 'No open bets right now \u2014 your settled plays live in the History tab.'
@@ -1002,7 +1012,7 @@
         sub.textContent='A close is recorded when one of your bets carries the closing line. None of the bets in this view has one yet.';
       }
     }
-    var open=rows.filter(function(r){ return !isSettled(r); });
+    var open=rows.filter(function(r){ return !isSettled(r)&&passesSrc(r); });
     var risk=0, toWin=0;
     open.forEach(function(r){ var st=stake(r); risk+=st; var rt=amRatio(parseFloat(r.getAttribute('data-odds')||'')); if(rt!==null) toWin+=st*rt; });
     var rb=document.getElementById('tkRiskBig'), rs=document.getElementById('tkRiskSub');
@@ -1157,7 +1167,7 @@
     var t=todayD(), a;
     if(TKGOAL.period==='week') a=mondayOf(t); else a=new Date(t.getFullYear(), t.getMonth(), 1);
     var net=0;
-    rows.forEach(function(r){ if(!isSettled(r)) return; var f=fecha(r); if(f>=dstr(a)&&f<=dstr(t)) net+=profit(r); });
+    srcRows().forEach(function(r){ if(!isSettled(r)) return; var f=fecha(r); if(f>=dstr(a)&&f<=dstr(t)) net+=profit(r); });
     var unit=TKUNIT>0? TKUNIT:100;
     var cur=net/unit;
     var pct=Math.max(0, Math.min(100, cur/TKGOAL.target*100));
@@ -1178,7 +1188,7 @@
     list.innerHTML=items.map(function(i){ return '<div class="tk-need"><span class="ic">'+i.ic+'</span><span><span class="t">'+i.t+'</span><div class="s">'+i.s+'</div></span><span class="n">'+i.n+'</span></div>'; }).join('');
   }
   function computeTabCounts(){
-    var list=rows.filter(passesPeriod), open=0, hist=list.length;
+    var list=rows.filter(function(r){ return passesPeriod(r)&&passesSrc(r); }), open=0, hist=list.length;
     list.forEach(function(r){ if(!isSettled(r)) open++; });
     var o=document.getElementById('tkTabOpen'), h=document.getElementById('tkTabHist');
     if(o) o.textContent=open;
@@ -1498,8 +1508,9 @@
       setTimeout(function(){ sh.textContent=old; }, 1800);
     }
   });
-  TK.src='';
+  TK.src='official';
   srcChips.forEach(function(ch){ ch.classList.toggle('active', (ch.getAttribute('data-src')||'')===TK.src); });
+  applyHero();
   applyRows();
   applyP2();
 })();
