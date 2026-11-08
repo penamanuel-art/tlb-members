@@ -9938,19 +9938,15 @@ def track(play_id):
     # Track con o sin ticket (2026-10-10, orden de Alex: revierte la regla
     # anti-trampa del 2026-10-03; el botón "+ Track" ahora es visible siempre).
     # La Elite bloqueada no se puede trackear: no revela nada.
-    if play.get("nivel") in ("PLATINUM", "ELITE") and not platinum_unlocked_for(_cu):
+    if play.get("nivel") in ("PLATINUM", "ELITE", "VAULT") and not platinum_unlocked_for(_cu):
         if _is_ajax:
             return jsonify({"ok": False, "error": "The Platinum play is locked. Unlock it to track it."}), 403
         flash("The Platinum play is locked. Unlock it to track it.", "warn")
         return redirect(url_for("desbloquear_platinum"))
-    # GOLD es de pago desde la Opción B (2026-10-30): tampoco se puede
-    # trackear sin Platinum — la carta sanitizada nunca expone su id,
-    # esto es la segunda puerta en el servidor.
-    if play.get("nivel") == "GOLD" and not platinum_unlocked_for(_cu):
-        if _is_ajax:
-            return jsonify({"ok": False, "error": "The Gold play is locked. Unlock Platinum to track it."}), 403
-        flash("The Gold play is locked. Unlock Platinum to track it.", "warn")
-        return redirect(url_for("desbloquear_platinum"))
+    # GOLD ABIERTA (2026-11-08, orden de Alex): la jugada GOLD se ve y se
+    # trackea con CUALQUIER cuenta, free incluida — el candado de tracking
+    # de la Opción B (2026-10-30) quedó derogado; GOLD nunca cae en la
+    # rama de candado de arriba.
     db = get_db()
     try:
         db.execute(
