@@ -5951,7 +5951,7 @@ def home():
         if _card_publicada:
             _hoy_lock = datetime.now(TZ).strftime("%Y-%m-%d")
             for _p in plays:
-                if _p.get("nivel") in ("ELITE", "GOLD"):
+                if _p.get("nivel") in ("ELITE", "GOLD", "VAULT"):
                     _tk = (locked_ticket_url_for(_p, _hoy_lock)
                            if _p.get("comprobante") else None)
                     # La plantilla lux incluye la carta bloqueada con la
