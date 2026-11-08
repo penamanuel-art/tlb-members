@@ -159,7 +159,8 @@
   .v5c-topsec{background:#182636!important}
   .v5c-botsec{background:#1D2029!important}
   .v5c,.ptl{background:#1D2029!important;border-color:#2C313A!important}
-  .v5c-title,.v5stitle{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  /* 2026-11-08 (queja de Alex: se cortaba la hora y la info): el titulo de la jugada y la linea de matchup/hora NUNCA se cortan — envuelven a una segunda linea si hace falta. */
+  .v5c-title,.v5stitle{white-space:normal;overflow:visible;text-overflow:clip}
   .vid video{width:100%;border-radius:16px;background:#000}
 
   /* 2026-10-26: Live + Your plays + Yesterday (v5 aprobada, letras finas, sin bold) */
