@@ -634,8 +634,8 @@ twq('config','rhgk7');
   <section id="signup" style="padding-top:26px;">
     <div class="formcard">
       <div class="center"><span class="eyebrow gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5"/></svg>Crea Tu Cuenta</span></div>
-      <h2>Crea tu cuenta</h2>
-      <p class="sub">Elige cómo quieres empezar — puedes cambiar cuando quieras.</p>
+      <h2>Entra solo con tu correo</h2>
+      <p class="sub">Un solo campo, sin tarjeta — tu cuenta abre al instante. Elige cómo quieres empezar; tu contraseña, tu nombre y tu teléfono van después, ya dentro.</p>
       {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
           {% for cat, msg in messages %}
@@ -662,23 +662,9 @@ twq('config','rhgk7');
           </label>
         </div>
         <div class="field">
-          <label for="f-nombre">Tu nombre</label>
-          <input id="f-nombre" type="text" name="nombre" required autocomplete="name" placeholder="Tu nombre">
-        </div>
-        <div class="field">
           <label for="f-email">Tu correo electrónico</label>
-          <p class="hint">Aquí te enviamos tus jugadas todos los días antes de los juegos.</p>
+          <p class="hint">Es el único campo. Aquí te enviamos tus jugadas todos los días antes de los juegos.</p>
           <input id="f-email" type="email" name="email" required autocomplete="email" placeholder="you@email.com">
-        </div>
-        <div class="field">
-          <label for="f-phone">Tu número de teléfono</label>
-          <p class="hint">Opcional — recibe las jugadas por texto en cuanto salen.</p>
-          <input id="f-phone" type="tel" name="phone" autocomplete="tel" placeholder="(555) 123-4567">
-          <label class="smsline" for="f-sms"><input id="f-sms" type="checkbox" name="sms_optin" value="1"> Envíame las jugadas por texto cuando salgan</label>
-        </div>
-        <div class="field">
-          <label for="f-password">Contraseña</label>
-          <input id="f-password" type="password" name="password" required minlength="6" autocomplete="new-password" placeholder="Mínimo 6 caracteres">
         </div>
         {% if turnstile_key %}
         <div class="cf-turnstile" data-sitekey="{{ turnstile_key }}" data-theme="dark" style="margin:12px 0 4px"></div>
@@ -687,11 +673,11 @@ twq('config','rhgk7');
         <button class="cta gold" type="submit" style="margin-top:18px;">Crear mi cuenta</button>
       </form>
       <ol class="howsteps">
-        <li><b>1.</b> Crea tu cuenta aquí.</li>
-        <li><b>2.</b> Toca el enlace de activación que te enviamos por correo.</li>
+        <li><b>1.</b> Escribe tu correo — tu cuenta abre al instante, sin esperar confirmación.</li>
+        <li><b>2.</b> Ya dentro, terminas de configurar: tu contraseña, tu nombre y tu teléfono. Toma 10 segundos, y te enviamos un enlace de activación para confirmar tu correo de una vez.</li>
         <li><b>3.</b> ¿Vas con Platinum? Confirma tu pago de $1 — tu primera semana empieza en el momento en que ese pago se completa, no cuando llenas este formulario.</li>
       </ol>
-      <p class="formnote">En este formulario no se cobra ninguna tarjeta — Sharp Free nunca pide una. El $1 de Platinum lo cobra Stripe en el paso siguiente, después de que actives tu cuenta.</p>
+      <p class="formnote">En este formulario no se cobra ninguna tarjeta — Sharp Free nunca pide una. El $1 de Platinum lo cobra Stripe en el paso siguiente.</p>
       <p class="login-line">¿Ya tienes una cuenta? <a href="{{ url_for('login') }}">Inicia sesión aquí →</a></p>
     </div>
   </section>
