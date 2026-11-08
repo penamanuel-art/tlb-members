@@ -347,8 +347,7 @@
   </div>
 
   <div class="pillrow">
-    {% if balance_total is not none and balance_total_txt %}{% set balfx_es_alex = (is_alex if is_alex is defined else false) %}{% set balfx_disp = (balance_total - 500) if balfx_es_alex else balance_total %}<a class="balance" href="{{ url_for('cuenta') }}" data-balfx-val="{{ '%.2f'|format(balfx_disp) }}" data-balfx-signed="{{ 1 if balfx_es_alex else 0 }}" data-balfx-coin="{{ url_for('static', filename='img/sharp-coin.png') }}">{% else %}<a class="balance" href="{{ url_for('cuenta') }}">{% endif %}<span>View my balance</span><span><b id="balfx-num">{% if balance_total_txt %}{{ balance_total_txt }}{% elif bankroll %}${{ '%.2f'|format(bankroll) }}{% else %}—{% endif %}</b> ›</span></a>
-    <a class="pill" href="{{ url_for('official_tracker') }}" style="font-size:10.5px;font-weight:300;">📊 Full record ›</a>
+    {# Encabezado LIMPIO (2026-11-08, orden de Alex: «Quitale el dinero y el full record»): fuera la pildora del balance («View my balance») y la de «Full record» de esta fila — el balance vive en Account y el record en el pie de pagina. Queda solo el boton del menu. El script balfx se apaga solo sin la pildora (if(!pill)return) y su paso del tour se retiro. #}
     <button class="menubtn" type="button" id="tst-menubtn" aria-expanded="false" onclick="var m=document.getElementById('tst-menu-sheet');var o=m.hidden;m.hidden=!o;this.setAttribute('aria-expanded',o?'true':'false');document.body.style.overflow=o?'hidden':'';" style="cursor:pointer;padding:0;">☰</button>
   </div>
 
@@ -951,7 +950,7 @@
 /* Header tightening 2026-10-29 (Alex: logo mas pequeno, menos espacios) */
 .tst-stickyhead{padding-top:8px;padding-bottom:8px}
 .tst-stickyhead .topbar{margin-bottom:7px}
-.pillrow{margin-bottom:6px}
+.pillrow{margin-bottom:6px;justify-content:flex-end}
 /* Panel de notificaciones con scroll propio (2026-10-30, reporte de Alex:
    al abrirlo y deslizar, se movía el home de atrás y no el panel) */
 #tst-notif-panel{max-height:52dvh;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
@@ -1305,7 +1304,6 @@ body{background-color:#0B0E13!important;background-image:radial-gradient(560px 3
     {ch:'home',sel:[".v5timg",".v5c-tk"],title:"The real ticket",body:"Every play carries the photo of our real betting receipt. Tap it to see it full size. If there is no ticket, it is not an official play."},
     {ch:'home',sel:[".v5c a.v5c-btn[target=\"_blank\"]"],title:"Bet it where we bet it",body:"This button takes you to place the play at the book and price on the card — the same place we bet it. Always take the best price you can: a few cents better on every play adds up over a season."},
     {ch:'home',sel:[".v5big-track",".v5c-track"],title:"Track the play",body:"Tap Track to make the play yours. A strip appears with your amount — tap Change stake to set your own amount instead. Once tracked, the play locks in: it cannot be removed, and it grades itself in your My Bets when the game ends."},
-    {ch:'home',sel:["a.balance"],title:"Your bankroll",body:"This pill is your money: the total across your sportsbooks. In a moment I will take you to your account to set your capital — the number every stake is sized from."},
     {ch:'home',sel:[".rh-head","#rhRail"],title:"Hot right now",body:"How the program's last 10 graded plays went, by level. Win or lose, every result stays public — later in this tour I will show you the full record page."},
     {ch:'home',sel:["#tour-edge"],title:"Find Your Edge",body:"Your toolbox. Odds compares every book's live price so you never overpay. The +EV Board, Player Props, Sharp Money and Line Moves find value the market missed. Some tools are Platinum only."},
     {ch:'home',sel:["#tour-alerts"],title:"Turn on your alerts",body:"Plays and results can come straight to your phone. Switch push notifications on for this device, join the Telegram channel and keep the daily email on — and you will never miss a play."},
@@ -1314,7 +1312,7 @@ body{background-color:#0B0E13!important;background-image:radial-gradient(560px 3
     {ch:'home',sel:["#tst-menubtn"],title:"The menu",body:"Everything lives here too: My Bets, your account and your alerts — and you can replay this tour anytime from here: Dashboard Tour. Tap Next and let's set up your money."},
     {ch:'account',pane:'overview',sel:["input[name=\"bankroll\"]"],title:"Set your capital",body:"HERE is where you put your capital: the total money you play with. Type the amount and tap Save bankroll. From this number comes your unit — 1 unit = 1% of your capital — and every stake on your cards is sized from it. When your capital changes, update it right here."},
     {ch:'account',pane:'overview',sel:[".br-toggle"],title:"How your stakes are sized",body:"Two ways to size every play. TST Units: every stake is a percent of your capital. Kelly $: stakes follow the model's edge. Pick one — you can switch anytime."},
-    {ch:'account',pane:'preferences',sel:["input[name=\"bet_books\"]"],title:"Your sportsbooks",body:"Check the sportsbooks you bet with. Your bankroll pill on the Dashboard adds up your money across your books, so keep this list honest."},
+    {ch:'account',pane:'preferences',sel:["input[name=\"bet_books\"]"],title:"Your sportsbooks",body:"Check the sportsbooks you bet with. Your account adds up your money across your books, so keep this list honest."},
     {ch:'account',sel:null,title:"Your money is set",body:"Capital set, sizing chosen, books picked. Tap Next — now your tracker, where every play you follow grades itself."},
     {ch:'bets',sel:[".mb-stats"],title:"Your scoreboard",body:"This is the member tracker — YOUR numbers: how many plays you tracked, your record, your profit and your win rate. Always with your amounts, not ours."},
     {ch:'bets',sel:[".wgt-list"],title:"Your tracked plays",body:"Each row is one of your plays: the pick, your amount, and its result the moment the game ends. Plays you track from the program are locked — they cannot be deleted, so your record stays honest."},
