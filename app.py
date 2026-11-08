@@ -6687,7 +6687,7 @@ def activar_cuenta(token):
 # link_clicks y redirige al destino. Un watcher en la VM lee
 # /api/clicks-feed y avisa a Alex por Telegram al instante.
 TRACKED_LINKS = {
-    "ig": "/registro",  # link del anuncio de Instagram/Facebook
+    "ig": "/desbloquear-platinum",  # link del anuncio IG/FB: aterriza en la página de venta Platinum (orden Alex 2026-11-07); el registro gratis sigue como puerta secundaria dentro de esa página
 }
 
 
