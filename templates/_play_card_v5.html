@@ -227,8 +227,10 @@ body.v2 .v5c{background:linear-gradient(180deg,#0B0E13,#1D2029)}
 .v5m-chip-poly .v5m-poly-ico{color:#8b919e;font-size:13px;line-height:1}
 .v5m-chip-poly b{color:#FFFFFF;font-weight:700}
 .v5m-posted{font-size:12px;font-weight:400;color:#8b919e}
-.v5m-btns{display:flex;gap:6px;margin-top:14px}
+.v5m-btns{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
 .v5m-btn{flex:1 1 0;min-width:0;text-align:center;font-size:12.5px;font-weight:400;white-space:nowrap;overflow:hidden;color:#DCDCE1;background:#1C202B;border:1px solid #2A2C39;border-radius:10px;padding:11px 4px;text-decoration:none;box-sizing:border-box;cursor:pointer;font-family:inherit}
+/* Place at (2026-11-09, queja de Alex: «Place at Novig» se cortaba): el boton se dimensiona por su contenido — la etiqueta completa SIEMPRE dentro, sin recorte; si la fila no cabe, envuelve (flex-wrap en .v5m-btns) en vez de cortar el texto. */
+.v5m-place{flex:1 1 auto;min-width:max-content;overflow:visible;padding:11px 12px}
 .v5m-share{flex:0 0 46px;font-size:13px}
 .v5m-track{flex:1.15 1 0;display:flex;align-items:center;justify-content:center;text-align:center;font-size:12.5px;font-weight:400;white-space:nowrap;color:#DCDCE1;background:#1C202B;border:1px solid #2A2C39;border-radius:10px;padding:11px 4px;text-decoration:none;box-sizing:border-box;cursor:pointer}
 .v5m-tracked{flex:1.15 1 0;display:flex;align-items:center;justify-content:center;text-align:center;font-size:12.5px;font-weight:400;white-space:nowrap;color:#A0A1A5;background:#1C202B;border:1px solid #2A2C39;border-radius:10px;padding:11px 4px;box-sizing:border-box}
@@ -289,8 +291,9 @@ body.v2 .v5c{background:linear-gradient(180deg,#0B0E13,#1D2029)}
     {% if p.posted %}<span class="v5m-posted">Posted {{ p.posted }}</span>{% endif %}
   </div>
   {% endif %}
+  {% if p.place_book is defined and p.place_book %}{% set _m_place_label = 'Place at ' ~ p.place_book %}{% set _m_book_url = _book_urls.get(p.place_book) or _book_urls.get(p.place_book|lower) or _book_url %}{% else %}{% set _m_place_label = _place_label %}{% set _m_book_url = _book_url %}{% endif %}
   <div class="v5m-btns">
-    <a class="v5m-btn" href="{{ _book_url }}" target="_blank" rel="noopener">↗ {{ _place_label }}</a>
+    <a class="v5m-btn v5m-place" href="{{ _m_book_url }}" target="_blank" rel="noopener">↗ {{ _m_place_label }}</a>
     <button class="v5m-btn v5m-share" type="button" aria-label="Share" onclick="(function(){var u=window.location.origin+'/home';if(navigator.share){navigator.share({title:'The Sharp Team',text:'{{ p.team_name or p.abbr }} {{ p.bettype }}',url:u}).catch(function(){});}else{navigator.clipboard&&navigator.clipboard.writeText(u);}})()">↗</button>
     {% if p.comprobante and not force_pre %}
       <a class="v5m-btn" href="javascript:void(0)" data-v5-open="{{ p.id }}">🎫 Receipt</a>
