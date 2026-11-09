@@ -293,9 +293,10 @@ body.v2 .v5c{background:linear-gradient(180deg,#0B0E13,#1D2029)}
     {% if p.posted %}<span class="v5m-posted">Posted {{ p.posted }}</span>{% endif %}
   </div>
   {% endif %}
-{# 2026-11-09: Alex ordeno dejar el boton SOLO en Novig — se revierte el uso de p.place_book (mejor cuota del mercado) en la cara .v5m; la etiqueta vuelve a la logica original de cabecera (_place_label/_book_url). #}
+{# 2026-11-09: Alex ordeno dejar el boton SOLO en Novig — se revierte el uso de p.place_book (mejor cuota del mercado) en la cara .v5m; la etiqueta vuelve a la logica original de cabecera (_place_label/_book_url). Y el enlace abre LA PAGINA DEL JUEGO en Novig cuando el play trae p.place_url verificado al publicar; sin el campo, cae a la portada de Novig (_book_url). #}
+  {% set _m_href = p.place_url if (p.place_url is defined and p.place_url) else _book_url %}
   <div class="v5m-btns">
-    <a class="v5m-btn v5m-place" href="{{ _book_url }}" target="_blank" rel="noopener">↗ {{ _place_label }}</a>
+    <a class="v5m-btn v5m-place" href="{{ _m_href }}" target="_blank" rel="noopener">↗ {{ _place_label }}</a>
     <button class="v5m-btn v5m-share" type="button" aria-label="Share" onclick="(function(){var u=window.location.origin+'/home';if(navigator.share){navigator.share({title:'The Sharp Team',text:'{{ p.team_name or p.abbr }} {{ p.bettype }}',url:u}).catch(function(){});}else{navigator.clipboard&&navigator.clipboard.writeText(u);}})()">↗</button>
     {% if p.comprobante and not force_pre %}
       <a class="v5m-btn v5m-receipt" href="javascript:void(0)" data-v5-open="{{ p.id }}">🎫 Receipt</a>
