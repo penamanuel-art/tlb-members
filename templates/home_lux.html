@@ -291,20 +291,14 @@
 
 <div class="phone">
   <div class="tst-stickyhead">
-  {# Slot superior de tirita: UNA sola tirita a la vez. Si el miembro esta past_due, en este slot sale el AVISO de
-     pago fallido (precedencia sobre la racha, logica intacta); si no, sale la tirita de racha Platinum del fuego
-     (racha_platinum en app.py, numeros reales del archive: ELITE y PLATINUM cuentan como el mismo nivel; sale SOLO
-     si el nivel Platinum trae 5+ ganadas en sus ultimas 6 liquidadas). 2026-11-04, orden de Alex: «Ponga la del
-     fuego arriba y quita la que está» — la pildora vieja de las victorias seguidas salio por completo
-     y la tirita del fuego subio de encima de la bienvenida a este slot. Estilos INLINE a proposito: este archivo
-     tiene estilos en capas y la cascada no manda aqui. El aviso conserva sus colores y su tamano fino (.tst-pastdue). #}
+  {# Slot superior: si el miembro esta past_due, aqui sale el AVISO de pago fallido (.tst-pastdue).
+     La tirita de racha Platinum del fuego («Platinum Plays: W-L in the last 6 Platinum plays») vivio en este
+     slot desde el 2026-11-04 y fue ELIMINADA el 2026-11-08 por orden de Alex («Elimina eso»). #}
   {% if past_due %}
   <div class="tst-pastdue" role="alert">
     <p>⚠️ Your last payment didn't go through, so your membership is past due and access is paused.</p>
     <a href="{{ url_for('actualizar_tarjeta') }}">Update your card to restore it →</a>
   </div>
-  {% elif racha_platinum %}
-  <div style="background:linear-gradient(90deg,#06231f 0%,#0b3d35 55%,#0e463c 100%);border-radius:10px;padding:8px 10px;text-align:center;white-space:nowrap;overflow:hidden;margin:0 0 8px;font-family:-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;"><span style="font-size:11px;vertical-align:1px;">🔥</span> <span style="color:#41e6ab;font-size:14px;font-weight:300;letter-spacing:.3px;">Platinum Plays: {{ racha_platinum.w }}-{{ racha_platinum.l }} in the last 6 Platinum plays</span></div>
   {% endif %}
   <div class="topbar">
     <div class="brand" style="flex:1;min-width:0;display:flex;align-items:center;gap:3px;">
@@ -380,7 +374,7 @@
      con los TRES pisos nuevos: Platinum, Gold y Free Pick plays. El resto
      de la implementación de la noche (pisos, menú reducido, tiles
      uniformes) NO se toca. #}
-  {# La tirita de racha Platinum del fuego vive ARRIBA, en el slot de .tst-stickyhead (movida el 2026-11-04, orden de Alex). #}
+  {# La tirita de racha Platinum fue eliminada el 2026-11-08 por orden de Alex. #}
   {# Tarjeta de bienvenida NUEVA estilo WGT (2026-11-05, aprobada por Alex
      con captura y prueba previa): mismo slot del .hero, diseno Midnight &
      Gold. Fecha, saludo y nombre salen de las mismas variables de siempre;
