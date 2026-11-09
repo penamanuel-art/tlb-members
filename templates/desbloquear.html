@@ -164,7 +164,7 @@
     {% if anonimo %}
     <div style="margin:14px 0 0;text-align:center;">
       <a class="upl-cta" href="{{ url_for('login', next=url_for('desbloquear_platinum')) }}">Log in to unlock &rarr;</a>
-      <p style="margin:10px 0 0;font-size:12.5px;color:#a8b3cf;">New here? <a href="{{ url_for('register') }}" style="color:#7dd3fc;font-weight:800;">Create your free account</a> — it takes a minute — then tap Unlock Platinum to start your $1 week.</p>
+      <p style="margin:10px 0 0;font-size:12.5px;color:#a8b3cf;">New here? <a href="{{ url_for('register', next=url_for('desbloquear_platinum')) }}" style="color:#7dd3fc;font-weight:800;">Create your free account</a> — it takes a minute — then tap Unlock Platinum to start your $1 week.</p>
     </div>
     {% elif stripe_embed_ok %}
     <div class="upl-embbox" id="upl-emb-box">
@@ -252,20 +252,20 @@
   {% if not anonimo %}
   <div class="pln-card pln-free">
     <div class="pln-top">
-      <span class="pln-kick">SHARP FREE</span>
+      <span class="pln-kick">GOLD</span>
       <span class="pln-badge pln-badge-free">$0 FOREVER</span>
     </div>
     <div class="pln-price">$0</div>
     <p class="pln-tag">The daily showcase. Free plays on your Dashboard, on the days the board finds value.</p>
     <ul class="pln-list">
-      <li>Sharp Free plays on your Dashboard</li>
+      <li>Gold plays on your Dashboard</li>
       <li>Free Telegram channel — the public card</li>
       <li>The full record — every official play, tracked</li>
       <li>Record by league, updated daily</li>
       <li>Yesterday's results, win or loss</li>
       <li>Daily Check-In and the Masterclass lessons</li>
     </ul>
-    <div class="pln-cta pln-status">✓ You're on Sharp Free</div>
+    <div class="pln-cta pln-status">✓ You're on GOLD</div>
     <p class="pln-fine">This is your plan — you already have access to everything on this card.</p>
   </div>
   {% endif %}
