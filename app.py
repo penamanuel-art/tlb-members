@@ -4798,6 +4798,24 @@ def inject_user():
     except Exception:
         balance_total = None
         balance_total_txt = None
+    # Return-to del encabezado (2026-11-09, arreglo del embudo): en las
+    # páginas públicas del embudo — la oferta /desbloquear-platinum y la
+    # venta pública de /tracker — el «Log in» y el «Sign up» del
+    # encabezado llevan next=<esta misma página>: el miembro que llega
+    # desde su correo SIN sesión (el botón OPEN YOUR TRACKER del email
+    # de resultados abre /tracker en el navegador del correo, sin la
+    # cookie) vuelve EXACTAMENTE a la página donde estaba, ya con su
+    # vista de miembro — antes el encabezado mandaba al login pelado y
+    # tras entrar caía en el Dashboard, perdiendo su tracker personal.
+    # En el resto de páginas los enlaces van limpios, como siempre. El
+    # destino lo valida _next_interno al consumirse (login) o al
+    # guardarse en sesión (registro): solo rutas internas.
+    if ruta in ("tracker", "desbloquear_platinum"):
+        login_url = url_for("login", next=freq.path)
+        signup_url = url_for("register", next=freq.path)
+    else:
+        login_url = url_for("login")
+        signup_url = url_for("register")
     return {
         "nombre_corto": corto,
         "nombre_completo": nombre,
@@ -4817,6 +4835,8 @@ def inject_user():
         "racha_dias": _seguro(win_streak_days, 0),
         "asset_v": ASSET_V,
         "watermark_img": wm,
+        "login_url": login_url,
+        "signup_url": signup_url,
     }
 
 
@@ -6609,6 +6629,13 @@ def register():
             # caso — si nunca activó, al intentar entrar con su contraseña
             # el propio login le reenvía la activación, como siempre.
             flash("Ese correo ya tiene una cuenta. Inicia sesión." if _lang == "es" else "That email already has an account — log in.", "error")
+            # Return-to (2026-11-09): si el registro se abrió con destino
+            # (p. ej. desde la venta pública de /tracker o la oferta), el
+            # salto al login lo lleva puesto — tras entrar, el miembro
+            # aterriza en su destino, no en el Dashboard.
+            _reg_next_ex = session.pop("reg_next", None)
+            if _reg_next_ex:
+                return redirect(url_for("login", next=_reg_next_ex))
             return redirect(url_for("login"))
         # La cuenta nace SIN VERIFICAR pero ENTRA al instante (espejo
         # WGT, 2026-11-07): nombre provisional = parte local del correo
@@ -7148,7 +7175,14 @@ def login():
         session.permanent = True  # 2026-09-25: cookie persistente 30 días (antes iOS la borraba → logout)
         _registrar_actividad(user["id"], "login")
         flash(f"Welcome back, {user['nombre']}!", "ok")
-        next_url = _next_interno(request.args.get("next")) or url_for("home")
+        # Return-to (2026-11-09): manda el next validado de la URL; si
+        # no viene (p. ej. el enlace «Log in» de la propia página de
+        # registro, que no lleva next), cae al destino guardado en sesión
+        # al abrir el registro con next — también validado. Sin ninguno
+        # de los dos, el Dashboard de siempre.
+        next_url = (_next_interno(request.args.get("next"))
+                    or _next_interno(session.pop("reg_next", None))
+                    or url_for("home"))
         return redirect(next_url)
     return render_template("login.html")
 
@@ -8341,12 +8375,16 @@ def tracker():
     # TODA la membresía desde el 2026-10-23 (orden de Alex: la
     # membresía gratis también tiene tracker).
     if current_user() is None:
+        # Return-to (2026-11-09, arreglo del embudo): los botones de la
+        # venta pública llevan next=/tracker — quien se registra (o
+        # descubre que ya tiene cuenta y entra) vuelve a /tracker ya con
+        # su vista personal, no al Dashboard.
         return render_template(
             "tracker_public.html",
             public_mode=True,
-            cta_url=url_for("register"),
-            watch_url=url_for("register"),
-            upsell_cta_url=url_for("register"),
+            cta_url=url_for("register", next=url_for("tracker")),
+            watch_url=url_for("register", next=url_for("tracker")),
+            upsell_cta_url=url_for("register", next=url_for("tracker")),
         )
     db = get_db()
     record_checkin(db, session["user_id"])
