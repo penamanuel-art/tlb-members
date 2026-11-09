@@ -189,6 +189,9 @@ body.v2 .v5c{background:linear-gradient(180deg,#0B0E13,#1D2029)}
    nivel (grada #8a6d1f -> #e8c766 -> #8a6d1f, texto oscuro #14100a) y
    tipografia fina de Alex: 800 SOLO en el nombre del equipo; todo lo demas
    en 300-600. Los demas miembros no reciben ninguna de estas reglas. */
+.v5m-strip{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;margin-top:14px;padding:8px 2px 0;border:none;border-top:1px solid #23262e;background:none;cursor:pointer;font-family:inherit;text-align:left}
+.v5m-strip-t{font-size:11px;font-weight:500;letter-spacing:.8px;color:#9aa7b8;white-space:nowrap}
+.v5m-strip-n{font-size:11.5px;font-weight:400;color:#2fe6a7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .v5m-sep{height:1px;margin:0 10% 19px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.25) 25%,rgba(255,255,255,.25) 75%,transparent)}
 .v5m{position:relative;overflow:hidden;background:#101318;border:1px solid #23262e;border-radius:14px;padding:0;box-sizing:border-box;width:100%;max-width:100%;margin:0 0 20px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#FFFFFF}
 .v5m-band{display:flex;align-items:center;gap:8px;background:#1C202B;border-bottom:1px solid #2A2C39;padding:8px 16px}
@@ -295,6 +298,7 @@ body.v2 .v5c{background:linear-gradient(180deg,#0B0E13,#1D2029)}
     {% endif %}
   </div>
   </div>
+{% if p.writeup and p.writeup.model_prob %}<button type="button" class="v5m-strip" data-v5-chip="why" data-play="{{ p.id }}"><span class="v5m-strip-t">\U0001F4CA WHY WE LIKE IT</span><span class="v5m-strip-n">Model {{ p.writeup.model_prob }} &middot; Edge {{ p.writeup.edge }}{% if p.writeup.ev is defined and p.writeup.ev is not none and p.writeup.ev != '' %} &middot; EV {% if p.writeup.ev is number %}{{ '%+.1f%%'|format(p.writeup.ev * 100) }}{% else %}{{ p.writeup.ev }}{% endif %}{% endif %}</span></button>{% endif %}
 </div>
 <div class="v5m-sep"></div>
 {% else %}
@@ -356,6 +360,7 @@ body.v2 .v5c{background:linear-gradient(180deg,#0B0E13,#1D2029)}
   </div>
 </div>
 <script type="application/json" id="v5-ci-{{ p.id }}">{{ _ci|tojson }}</script>
+{% if is_alex and p.writeup %}<script type="application/json" id="v5-wu-{{ p.id }}">{{ p.writeup|tojson }}</script>{% endif %}
 {% endif %}
 
 {# Hoja de detalle (bottom sheet) #}
@@ -460,6 +465,23 @@ body.v2 .v5c{background:linear-gradient(180deg,#0B0E13,#1D2029)}
       var note = document.createElement('div'); note.className = 'v5pop-note';
       note.textContent = 'Open: first price we captured today · Now: latest across ' + ci.lines.books + ' books (Game Center).';
       body.appendChild(note);
+    } else if (kind === 'why') {
+      var wuEl = document.getElementById('v5-wu-' + pid);
+      if (!wuEl) return;
+      var wu = {};
+      try { wu = JSON.parse(wuEl.textContent); } catch (err) { return; }
+      title.textContent = '\uD83D\uDCCA WHY WE LIKE IT';
+      if (wu.model_prob) v5Row(body, 'Model win probability', wu.model_prob);
+      if (wu.implied_prob) v5Row(body, 'Implied by the price', wu.implied_prob);
+      if (wu.fair_price) v5Row(body, 'Fair price (model)', wu.fair_price);
+      if (wu.edge) v5Row(body, 'Edge', wu.edge);
+      if (wu.ev != null && wu.ev !== '') { var evv = (typeof wu.ev === 'number') ? ((wu.ev >= 0 ? '+' : '') + (wu.ev * 100).toFixed(1) + '%') : wu.ev; v5Row(body, 'EV', evv); }
+      if (wu.key_factor) { var kf = document.createElement('div'); kf.className = 'v5pop-note'; kf.textContent = 'Key factor: ' + wu.key_factor; body.appendChild(kf); }
+      if (wu.risk) { var rk = document.createElement('div'); rk.className = 'v5pop-note'; rk.textContent = 'The risk: ' + wu.risk; body.appendChild(rk); }
+      if (ci.injuries || ci.weather || ci.lines) { var gd = document.createElement('div'); gd.className = 'v5pop-note'; gd.textContent = '\u2014 Game data \u2014'; body.appendChild(gd); }
+      if (ci.injuries) v5Row(body, 'Injuries', ci.injuries.total + ' listed \u00B7 ' + ci.injuries.out_ir + ' out or on IR');
+      if (ci.weather) { var w2 = ci.weather; if (w2.temp_f != null) v5Row(body, 'Temperature', w2.temp_f + '\u00B0F'); if (w2.wind_mph != null) v5Row(body, 'Wind', w2.wind_mph + ' mph'); if (w2.rain_pct != null) v5Row(body, 'Rain chance', w2.rain_pct + '%'); if (w2.indoor) v5Row(body, 'Roof', 'Indoor'); if (w2.venue) v5Row(body, 'Venue', w2.venue); }
+      if (ci.lines) v5Row(body, 'Line move', ci.lines.open + ' \u2192 ' + ci.lines.now);
     } else {
       return;
     }
