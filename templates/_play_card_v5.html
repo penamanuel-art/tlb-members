@@ -504,7 +504,7 @@ body.v2 .v5c{background:linear-gradient(180deg,#0B0E13,#1D2029)}
     var opener = e.target.closest('[data-v5-open]');
     if (opener) {
       var sh = document.getElementById('v5-sheet-' + opener.getAttribute('data-v5-open'));
-      if (sh) { sh.style.display = 'flex'; document.body.classList.add('v5-sheet-open'); if (opener.getAttribute('data-v5-why')) { var wu = sh.querySelector('details.v5wu'); if (wu) { wu.open = true; setTimeout(function(){ wu.scrollIntoView({block:'start'}); }, 90); } } }
+      if (sh) { sh.style.display = 'flex'; document.body.classList.add('v5-sheet-open'); if (opener.getAttribute('data-v5-why')) { var wu = sh.querySelector('details.v5wu'); if (wu) { wu.open = true; } var sc = sh.querySelector('.v5sheet-in'); if (sc) { sc.scrollTop = 0; } } }
       return;
     }
     if (e.target.closest('[data-v5-close]')) {
