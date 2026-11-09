@@ -231,9 +231,11 @@ body.v2 .v5c{background:linear-gradient(180deg,#0B0E13,#1D2029)}
 .v5m-btn{flex:1 1 0;min-width:0;text-align:center;font-size:12.5px;font-weight:400;white-space:nowrap;overflow:hidden;color:#DCDCE1;background:#1C202B;border:1px solid #2A2C39;border-radius:10px;padding:11px 4px;text-decoration:none;box-sizing:border-box;cursor:pointer;font-family:inherit}
 /* Place at (2026-11-09, queja de Alex: «Place at Novig» se cortaba): el boton se dimensiona por su contenido — la etiqueta completa SIEMPRE dentro, sin recorte; si la fila no cabe, envuelve (flex-wrap en .v5m-btns) en vez de cortar el texto. */
 .v5m-place{flex:1 1 auto;min-width:max-content;overflow:visible;padding:11px 12px}
+/* Boton del recibo «🎫 Receipt» (2026-11-09, captura de Alex 5:19 PM: se cortaba a «Re…»): usaba SOLO la clase base .v5m-btn (flex:1 1 0 + min-width:0 + overflow:hidden), que puede encogerse bajo su contenido y recorta el texto. Recibe el mismo tratamiento que Place: se dimensiona por su contenido y nunca se corta; la fila envuelve si no cabe. Track/Tracked igual: min-width:max-content. */
+.v5m-receipt{flex:1 1 auto;min-width:max-content;overflow:visible;padding:11px 10px}
 .v5m-share{flex:0 0 46px;font-size:13px}
-.v5m-track{flex:1.15 1 0;display:flex;align-items:center;justify-content:center;text-align:center;font-size:12.5px;font-weight:400;white-space:nowrap;color:#DCDCE1;background:#1C202B;border:1px solid #2A2C39;border-radius:10px;padding:11px 4px;text-decoration:none;box-sizing:border-box;cursor:pointer}
-.v5m-tracked{flex:1.15 1 0;display:flex;align-items:center;justify-content:center;text-align:center;font-size:12.5px;font-weight:400;white-space:nowrap;color:#A0A1A5;background:#1C202B;border:1px solid #2A2C39;border-radius:10px;padding:11px 4px;box-sizing:border-box}
+.v5m-track{flex:1.15 1 0;min-width:max-content;overflow:visible;display:flex;align-items:center;justify-content:center;text-align:center;font-size:12.5px;font-weight:400;white-space:nowrap;color:#DCDCE1;background:#1C202B;border:1px solid #2A2C39;border-radius:10px;padding:11px 4px;text-decoration:none;box-sizing:border-box;cursor:pointer}
+.v5m-tracked{flex:1.15 1 0;min-width:max-content;overflow:visible;display:flex;align-items:center;justify-content:center;text-align:center;font-size:12.5px;font-weight:400;white-space:nowrap;color:#A0A1A5;background:#1C202B;border:1px solid #2A2C39;border-radius:10px;padding:11px 4px;box-sizing:border-box}
 /* Hoja de detalle y popup en la misma familia Minimal, SOLO en la vista de
    Alex: titulo de la hoja = nombre del equipo en 800, resto fino (<=500),
    fondos #101318. Sin cambios de estructura, ids ni clases JS. */
@@ -291,12 +293,12 @@ body.v2 .v5c{background:linear-gradient(180deg,#0B0E13,#1D2029)}
     {% if p.posted %}<span class="v5m-posted">Posted {{ p.posted }}</span>{% endif %}
   </div>
   {% endif %}
-  {% if p.place_book is defined and p.place_book %}{% set _m_place_label = 'Place at ' ~ p.place_book %}{% set _m_book_url = _book_urls.get(p.place_book) or _book_urls.get(p.place_book|lower) or _book_url %}{% else %}{% set _m_place_label = _place_label %}{% set _m_book_url = _book_url %}{% endif %}
+{# 2026-11-09: Alex ordeno dejar el boton SOLO en Novig — se revierte el uso de p.place_book (mejor cuota del mercado) en la cara .v5m; la etiqueta vuelve a la logica original de cabecera (_place_label/_book_url). #}
   <div class="v5m-btns">
-    <a class="v5m-btn v5m-place" href="{{ _m_book_url }}" target="_blank" rel="noopener">↗ {{ _m_place_label }}</a>
+    <a class="v5m-btn v5m-place" href="{{ _book_url }}" target="_blank" rel="noopener">↗ {{ _place_label }}</a>
     <button class="v5m-btn v5m-share" type="button" aria-label="Share" onclick="(function(){var u=window.location.origin+'/home';if(navigator.share){navigator.share({title:'The Sharp Team',text:'{{ p.team_name or p.abbr }} {{ p.bettype }}',url:u}).catch(function(){});}else{navigator.clipboard&&navigator.clipboard.writeText(u);}})()">↗</button>
     {% if p.comprobante and not force_pre %}
-      <a class="v5m-btn" href="javascript:void(0)" data-v5-open="{{ p.id }}">🎫 Receipt</a>
+      <a class="v5m-btn v5m-receipt" href="javascript:void(0)" data-v5-open="{{ p.id }}">🎫 Receipt</a>
     {% endif %}
     {% if p.nivel != 'VALUE' %}
       {% if p.id in tracked_ids %}
