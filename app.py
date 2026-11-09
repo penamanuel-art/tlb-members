@@ -684,6 +684,29 @@ def check_password(password: str, password_hash: str) -> bool:
     return bcrypt.checkpw(password.encode("utf-8"), password_hash.encode("utf-8"))
 
 
+def _next_interno(valor):
+    """Destino post-login SEGURO (2026-11-09, arreglo del embudo): el
+    parámetro `next` viaja en la URL y solo se honra si es una ruta
+    INTERNA de la propia app (empieza por «/», sin dominio, sin esquema,
+    sin «//» ni barras invertidas). Sin este filtro, cualquier enlace
+    con ?next=https://otro-dominio mandaba al miembro, ya logueado, a
+    un sitio externo (open redirect — verificado en vivo el 2026-11-09).
+    Devuelve la ruta si es interna; si no, None."""
+    if not valor or not isinstance(valor, str):
+        return None
+    v = valor.strip()
+    if not v.startswith("/") or v.startswith("//") or "\\" in v:
+        return None
+    try:
+        from urllib.parse import urlsplit
+        partes = urlsplit(v)
+    except Exception:
+        return None
+    if partes.scheme or partes.netloc:
+        return None
+    return v
+
+
 def login_required(view):
     @wraps(view)
     def wrapper(*args, **kwargs):
@@ -5029,6 +5052,14 @@ def migrate_db():
             pending.append("ALTER TABLE users ADD COLUMN activation_reminders INTEGER NOT NULL DEFAULT 0")
         if "activation_reminder_last" not in cols:
             pending.append("ALTER TABLE users ADD COLUMN activation_reminder_last TEXT")
+        # Aterrizaje en la oferta tras activar (2026-11-09, arreglo del
+        # embudo): marca si la cuenta ya tuvo su PRIMER aterrizaje en
+        # /desbloquear-platinum al confirmar el correo (activar_cuenta lo
+        # pone en 1 y redirige ahí una sola vez). DEFAULT 0: solo lo
+        # viven las cuentas que activan desde hoy; las ya verificadas
+        # nunca vuelven a pasar por activar_cuenta.
+        if "unlock_offer_seen" not in cols:
+            pending.append("ALTER TABLE users ADD COLUMN unlock_offer_seen INTEGER NOT NULL DEFAULT 0")
         # Registro del tour del Dashboard (2026-11-06, orden de Alex):
         # hasta hoy la marca de «tour visto» vivía solo en el navegador
         # del miembro (localStorage) y el sistema no sabía quién lo
@@ -6481,6 +6512,14 @@ _REGISTRO_RAPIDO_IP = {}
 def register():
     if "user_id" in session:
         return redirect(url_for("home"))
+    # Return-to (2026-11-09, arreglo del embudo): quien llega desde un
+    # enlace con destino interno (p. ej. «Create your free account» en
+    # /desbloquear-platinum) lo guarda en sesión y vuelve ahí al terminar
+    # el registro, en vez de perder el rumbo en /bienvenida. Solo rutas
+    # internas validadas (_next_interno) — nada de open redirect.
+    _nxt_reg = _next_interno(request.args.get("next"))
+    if _nxt_reg:
+        session["reg_next"] = _nxt_reg
     # Prueba social EN VIVO para la landing de registro (todo desde el
     # archivo oficial; rediseño de conversión aprobado por Alex 2026-10-13:
     # unidades al frente, récord completo, resultados recientes, fondo de
@@ -6599,6 +6638,12 @@ def register():
         # intención Platinum cae directo en la página de desbloqueo.
         if _intent == "platinum":
             return redirect(url_for("desbloquear_platinum"))
+        # Return-to guardado al abrir el registro (2026-11-09): si vino
+        # con destino interno (p. ej. desde /desbloquear-platinum), el
+        # registro termina AHÍ, no en /bienvenida.
+        _reg_next = session.pop("reg_next", None)
+        if _reg_next:
+            return redirect(_reg_next)
         return redirect(url_for("bienvenida"))
     _resp = make_response(render_template(_tpl, **_reg_ctx))
     _resp.set_cookie("tst_lang", _lang, max_age=30 * 86400, samesite="Lax")
@@ -6730,7 +6775,30 @@ def activar_cuenta(token):
     # vieja se conserva como OR para no romper a su cohorte.
     _puente_viejo = (_offer == PLATINUM_OFFER_FREE_MONTH
                      and _intent == "platinum")
-    if _intent == "platinum" or _puente_viejo:
+    # Aterrizaje en la oferta UNA SOLA VEZ (2026-11-09, orden de Alex —
+    # arreglo del embudo): el PRIMER aterrizaje tras confirmar el correo
+    # es /desbloquear-platinum, donde el formulario del $1 ya se monta
+    # solo — antes TODO el que no declaró intención Platinum caía en
+    # /bienvenida y la oferta nunca se veía (de 24 confirmados desde el
+    # 2026-11-06, solo 8 cargaron la página de desbloqueo y 1 pagó). La
+    # marca unlock_offer_seen en la BD garantiza que pase una sola vez
+    # por cuenta; las activaciones siguientes y los logins normales
+    # siguen su camino de siempre. Si la marca no se puede leer o
+    # guardar, se conserva el comportamiento anterior (fail-safe).
+    _vio_oferta = 1
+    try:
+        _vio_oferta = user["unlock_offer_seen"]
+    except Exception:
+        _vio_oferta = 1
+    _primera_vez = not _vio_oferta
+    if _primera_vez:
+        try:
+            db.execute("UPDATE users SET unlock_offer_seen = 1 WHERE id = ?",
+                       (uid,))
+            db.commit()
+        except Exception:
+            _primera_vez = False
+    if _primera_vez or _intent == "platinum" or _puente_viejo:
         return redirect(url_for("desbloquear_platinum"))
     return redirect(url_for("bienvenida"))
 
@@ -7080,7 +7148,7 @@ def login():
         session.permanent = True  # 2026-09-25: cookie persistente 30 días (antes iOS la borraba → logout)
         _registrar_actividad(user["id"], "login")
         flash(f"Welcome back, {user['nombre']}!", "ok")
-        next_url = request.args.get("next") or url_for("home")
+        next_url = _next_interno(request.args.get("next")) or url_for("home")
         return redirect(next_url)
     return render_template("login.html")
 
