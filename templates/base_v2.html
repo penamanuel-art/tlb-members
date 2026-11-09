@@ -131,8 +131,8 @@ twq('config','rhgk7');
     {% else %}
     <nav class="v2-nav">
       {% if es_admin %}<button id="langToggle" class="v2-lang-btn notranslate" title="Ver en español">🇺🇸 EN</button>{% endif %}
-      <a class="v2-nav-link" href="{{ url_for('login') }}">Log in</a>
-      <a class="v2-btn-sm" href="{{ url_for('register') }}">Sign up</a>
+      <a class="v2-nav-link" href="{{ login_url }}">Log in</a>
+      <a class="v2-btn-sm" href="{{ signup_url }}">Sign up</a>
     </nav>
     {% endif %}
   </div>
