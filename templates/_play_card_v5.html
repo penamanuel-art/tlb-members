@@ -209,6 +209,8 @@ body.v2 .v5c{background:linear-gradient(180deg,#0B0E13,#1D2029)}
 .v5m-nums{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;margin-top:18px;padding-top:16px;background:linear-gradient(90deg,transparent,rgba(232,199,102,.55) 25%,rgba(232,199,102,.55) 75%,transparent) top/100% 1px no-repeat}
 .v5m-k{font-size:9px;font-weight:500;letter-spacing:1.8px;color:#6b7280}
 .v5m-price{font-size:31px;font-weight:300;color:#FFFFFF;line-height:1.05;margin-top:3px}
+.v5m-priceline{display:flex;align-items:flex-end;gap:9px}
+.v5m-priceline .v5m-chip{padding-bottom:6px;font-size:13px}
 .v5m-right{text-align:right;flex:none}
 .v5m-stake{font-size:16px;font-weight:400;color:#FFFFFF;line-height:1.3;margin-top:3px}
 .v5m-tok{font-size:11px;font-weight:500;color:#2ee6a8;margin-top:2px}
@@ -267,13 +269,13 @@ body.v2 .v5c{background:linear-gradient(180deg,#0B0E13,#1D2029)}
   </div>
   {% if _res == 'W' %}<span class="v5m-res won">WON{% if p.profit is defined and p.profit is not none %} &middot; +${{ '%.2f'|format(p.profit) }}{% endif %}</span>{% elif _res == 'L' %}<span class="v5m-res lost">LOST{% if p.profit is defined and p.profit is not none %} &middot; -${{ '%.2f'|format(p.profit|abs) }}{% endif %}</span>{% endif %}
   <div class="v5m-nums" data-v5-open="{{ p.id }}" style="cursor:pointer">
-    <div><div class="v5m-k">PRICE POSTED</div><div class="v5m-price">{{ fmt_odds(p.cuota) }}</div></div>
+    <div><div class="v5m-k">PRICE POSTED</div><div class="v5m-priceline"><div class="v5m-price">{{ fmt_odds(p.cuota) }}</div>{% if _ci.get('injuries') %}<button type="button" class="v5m-chip v5m-chip-inj" data-v5-chip="injuries" data-play="{{ p.id }}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#EE8CA5" stroke-width="3.4" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 3.5h5V9.5h6v5h-6v6h-5v-6h-6v-5h6z"/></svg> {{ _ci.injuries.total }}</button>{% endif %}</div></div>
     <div class="v5m-right"><div class="v5m-k">STAKE</div><div class="v5m-stake">{{ '%g' % p.stake_unidades }}u &middot; ${{ '%g' % p.stake_monto }}</div>{% if p.comprobante %}<div class="v5m-tok">✓ Ticket matched</div>{% else %}<div class="v5m-tpend">Ticket pending</div>{% endif %}</div>
   </div>
-  {% if p.posted or _ci.get('lines') or _ci.get('injuries') or _ci.get('weather') %}
+  {% if p.posted or _ci.get('lines') or _ci.get('weather') %}
   <div class="v5m-meta">
     {% if _ci.get('lines') %}<button type="button" class="v5m-chip" data-v5-chip="lines" data-play="{{ p.id }}">↗ {{ _ci.lines.chip }}</button>{% endif %}
-    {% if _ci.get('injuries') %}<button type="button" class="v5m-chip v5m-chip-inj" data-v5-chip="injuries" data-play="{{ p.id }}"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#EE8CA5" stroke-width="2.4" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 3.5h5V9.5h6v5h-6v6h-5v-6h-6v-5h6z"/></svg> {{ _ci.injuries.total }}</button>{% endif %}
+    
     {% if _ci.get('weather') %}{% if _ci.weather.temp_f is defined and _ci.weather.temp_f is not none %}<button type="button" class="v5m-chip" data-v5-chip="weather" data-play="{{ p.id }}">🌡 {{ _ci.weather.temp_f }}°</button>{% elif _ci.weather.indoor %}<button type="button" class="v5m-chip" data-v5-chip="weather" data-play="{{ p.id }}">🏟 {{ _ci.weather.venue }}</button>{% endif %}{% endif %}
     {% if p.posted %}<span class="v5m-posted">Posted {{ p.posted }}</span>{% endif %}
   </div>
