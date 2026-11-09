@@ -264,25 +264,25 @@ body.v2 .v5c{background:linear-gradient(180deg,#0B0E13,#1D2029)}
   {% if _res == 'W' %}<span class="v5m-res won">WON{% if p.profit is defined and p.profit is not none %} &middot; +${{ '%.2f'|format(p.profit) }}{% endif %}</span>{% elif _res == 'L' %}<span class="v5m-res lost">LOST{% if p.profit is defined and p.profit is not none %} &middot; -${{ '%.2f'|format(p.profit|abs) }}{% endif %}</span>{% endif %}
   <div class="v5m-nums" data-v5-open="{{ p.id }}" style="cursor:pointer">
     <div><div class="v5m-k">PRICE POSTED</div><div class="v5m-price">{{ fmt_odds(p.cuota) }}</div></div>
-    <div class="v5m-right"><div class="v5m-k">STAKE</div><div class="v5m-stake">{{ '%g' % p.stake_unidades }}u &middot; ${{ '%g' % p.stake_monto }}</div>{% if p.comprobante %}<div class="v5m-tok">\u2713 Ticket matched</div>{% else %}<div class="v5m-tpend">Ticket pending</div>{% endif %}</div>
+    <div class="v5m-right"><div class="v5m-k">STAKE</div><div class="v5m-stake">{{ '%g' % p.stake_unidades }}u &middot; ${{ '%g' % p.stake_monto }}</div>{% if p.comprobante %}<div class="v5m-tok">✓ Ticket matched</div>{% else %}<div class="v5m-tpend">Ticket pending</div>{% endif %}</div>
   </div>
   {% if p.posted or _ci.get('lines') or _ci.get('injuries') or _ci.get('weather') %}
   <div class="v5m-meta">
-    {% if _ci.get('lines') %}<button type="button" class="v5m-chip" data-v5-chip="lines" data-play="{{ p.id }}">\u2197 {{ _ci.lines.chip }}</button>{% endif %}
+    {% if _ci.get('lines') %}<button type="button" class="v5m-chip" data-v5-chip="lines" data-play="{{ p.id }}">↗ {{ _ci.lines.chip }}</button>{% endif %}
     {% if _ci.get('injuries') %}<button type="button" class="v5m-chip v5m-chip-inj" data-v5-chip="injuries" data-play="{{ p.id }}"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#EE8CA5" stroke-width="2.4" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 3.5h5V9.5h6v5h-6v6h-5v-6h-6v-5h6z"/></svg> {{ _ci.injuries.total }}</button>{% endif %}
-    {% if _ci.get('weather') %}{% if _ci.weather.temp_f is defined and _ci.weather.temp_f is not none %}<button type="button" class="v5m-chip" data-v5-chip="weather" data-play="{{ p.id }}">\U0001F321 {{ _ci.weather.temp_f }}\u00b0</button>{% elif _ci.weather.indoor %}<button type="button" class="v5m-chip" data-v5-chip="weather" data-play="{{ p.id }}">\U0001F3DF {{ _ci.weather.venue }}</button>{% endif %}{% endif %}
+    {% if _ci.get('weather') %}{% if _ci.weather.temp_f is defined and _ci.weather.temp_f is not none %}<button type="button" class="v5m-chip" data-v5-chip="weather" data-play="{{ p.id }}">🌡 {{ _ci.weather.temp_f }}°</button>{% elif _ci.weather.indoor %}<button type="button" class="v5m-chip" data-v5-chip="weather" data-play="{{ p.id }}">🏟 {{ _ci.weather.venue }}</button>{% endif %}{% endif %}
     {% if p.posted %}<span class="v5m-posted">Posted {{ p.posted }}</span>{% endif %}
   </div>
   {% endif %}
   <div class="v5m-btns">
-    <a class="v5m-btn" href="{{ _book_url }}" target="_blank" rel="noopener">\u2197 {{ _place_label }}</a>
-    <button class="v5m-btn v5m-share" type="button" aria-label="Share" onclick="(function(){var u=window.location.origin+'/home';if(navigator.share){navigator.share({title:'The Sharp Team',text:'{{ p.team_name or p.abbr }} {{ p.bettype }}',url:u}).catch(function(){});}else{navigator.clipboard&&navigator.clipboard.writeText(u);}})()">\u2197</button>
+    <a class="v5m-btn" href="{{ _book_url }}" target="_blank" rel="noopener">↗ {{ _place_label }}</a>
+    <button class="v5m-btn v5m-share" type="button" aria-label="Share" onclick="(function(){var u=window.location.origin+'/home';if(navigator.share){navigator.share({title:'The Sharp Team',text:'{{ p.team_name or p.abbr }} {{ p.bettype }}',url:u}).catch(function(){});}else{navigator.clipboard&&navigator.clipboard.writeText(u);}})()">↗</button>
     {% if p.comprobante and not force_pre %}
-      <a class="v5m-btn" href="javascript:void(0)" data-v5-open="{{ p.id }}">\U0001F3AB Receipt</a>
+      <a class="v5m-btn" href="javascript:void(0)" data-v5-open="{{ p.id }}">🎫 Receipt</a>
     {% endif %}
     {% if p.nivel != 'VALUE' %}
       {% if p.id in tracked_ids %}
-        <span class="v5m-tracked">\u2713 Tracked</span>
+        <span class="v5m-tracked">✓ Tracked</span>
       {% else %}
         <a class="v5m-track tstc-track" href="{{ url_for('track', play_id=p.id) }}" data-track-url="{{ url_for('track', play_id=p.id) }}">+ Track</a>
       {% endif %}
