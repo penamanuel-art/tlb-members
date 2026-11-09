@@ -958,7 +958,25 @@ def _destino_email_permitido(to: str) -> bool:
     return dest in permitidos
 
 
-def _bienvenida_activacion_ok(to: str, subject: str, welcome_token) -> bool:
+def _bienvenida_admin_token(email: str) -> str:
+    """Credencial del REENVÍO ADMIN de la bienvenida (2026-11-09):
+    HMAC-SHA256 del correo de la cuenta con la SECRET_KEY del servidor,
+    con prefijo «adm1:». Solo el código del servidor puede acuñarla (la
+    ruta /admin/resend-welcome, tras su autorización admin) y la puerta
+    _bienvenida_activacion_ok la recomputa pa' el correo destino: queda
+    atada a ESA cuenta y no depende de cuándo se activó. Sin SECRET_KEY
+    no hay credencial (cadena vacía) y la puerta la rechaza."""
+    try:
+        _key = str(app.config.get("SECRET_KEY") or "").encode()
+        if not _key:
+            return ""
+        _msg = f"bienvenida-admin:{(email or '').strip().lower()}".encode()
+        return "adm1:" + hmac.new(_key, _msg, hashlib.sha256).hexdigest()
+    except Exception:
+        return ""
+
+
+def _bienvenida_activacion_ok(to: str, subject: str, welcome_token, sub_token=None, admin_token=None) -> bool:
     """Puerta ESTRECHA de la BIENVENIDA (2026-11-06, orden de Alex):
     gemela de la de activación. La bienvenida MODERNO solo puede salir al
     correo de la cuenta que se ACABA de activar, disparada por
@@ -973,19 +991,40 @@ def _bienvenida_activacion_ok(to: str, subject: str, welcome_token) -> bool:
     cuenta no encontrada o cualquier error de BD devuelve False y el
     email se bloquea como cualquier otro correo a miembros. Se lee la BD
     con conexión directa porque la bienvenida se despacha en un hilo,
-    fuera del contexto de la petición."""
+    fuera del contexto de la petición.
+
+    Dos caminos más, igual de estrechos (2026-11-09, caso Brittney
+    Moore — pagó antes de activar por el enlace y su bienvenida nunca
+    salió): (WEBHOOK) si el llamador aporta sub_token — el id de la
+    suscripción de Stripe que el webhook acaba de procesar — la BD
+    debe confirmar que esa suscripción es la actual de la cuenta,
+    además de la verificación y la ventana de 30 minutos (el webhook
+    escribe activated_at al verificar la cuenta); (ADMIN) si aporta
+    admin_token, debe ser EXACTAMENTE el HMAC de esa cuenta
+    (_bienvenida_admin_token) — sin ventana de tiempo, porque la
+    autorización es la sesión admin que lo acuña en la ruta de
+    reenvío. Todo lo demás: bloqueado."""
     try:
-        if not welcome_token:
-            return False
         if (subject or "") != WELCOME_SUBJECT:
             return False
         dest = (to or "").strip().lower()
         if not dest:
             return False
+        # Camino ADMIN (2026-11-09): el reenvío manual trae la
+        # credencial HMAC de ESTA cuenta; la autorización es la sesión
+        # admin que la acuña y NO se exige la ventana de 30 minutos —
+        # el reenvío remedia activaciones de hace horas. Sin
+        # coincidencia exacta: bloqueado.
+        if admin_token:
+            _esperado = _bienvenida_admin_token(dest)
+            return bool(_esperado) and hmac.compare_digest(
+                str(admin_token), _esperado)
+        if not welcome_token and not sub_token:
+            return False
         _conn = DBConnection(_raw_connect(), USE_PG)
         try:
             _row = _conn.execute(
-                "SELECT email_verified, activated_at FROM users "
+                "SELECT email_verified, activated_at, stripe_subscription_id FROM users "
                 "WHERE lower(email) = ?", (dest,)).fetchone()
         finally:
             _conn.close()
@@ -996,7 +1035,19 @@ def _bienvenida_activacion_ok(to: str, subject: str, welcome_token) -> bool:
             _act = datetime.fromisoformat(_act.replace("Z", "+00:00"))
         if _act.tzinfo is None:
             _act = _act.replace(tzinfo=timezone.utc)
-        return (datetime.now(timezone.utc) - _act) <= timedelta(minutes=30)
+        if (datetime.now(timezone.utc) - _act) > timedelta(minutes=30):
+            return False
+        # Camino WEBHOOK (2026-11-09): la credencial es el id de la
+        # suscripción de Stripe que el webhook acaba de procesar; la BD
+        # debe confirmar que ESA suscripción es la actual de la cuenta
+        # (espejo de la puerta del #5 con su back_token). Sin
+        # coincidencia exacta: bloqueado.
+        if sub_token:
+            return bool(str(sub_token).strip()) and (
+                (_row["stripe_subscription_id"] or "").strip()
+                == str(sub_token).strip())
+        # Camino ACTIVACIÓN (original): token de activación presente.
+        return bool(welcome_token)
     except Exception:
         return False
 
@@ -1186,7 +1237,7 @@ def _cancelacion_ok(to: str, subject: str, cancel_token) -> bool:
 
 def _dispatch_email(to: str, subject: str, text_body: str, html_body=None,
                     from_header=None, activation_token: str = None,
-                    welcome_token: str = None, billing_token: str = None, back_token: str = None, cancel_token: str = None) -> tuple:
+                    welcome_token: str = None, welcome_sub_token: str = None, welcome_admin_token: str = None, billing_token: str = None, back_token: str = None, cancel_token: str = None) -> tuple:
     """Despacha un email: Resend si hay API key (producción en Render),
     si no SMTP Gmail (desarrollo local). Devuelve (ok, detalle)."""
     if not _destino_email_permitido(to):
@@ -1208,8 +1259,10 @@ def _dispatch_email(to: str, subject: str, text_body: str, html_body=None,
         # cuenta recién activada, con su token y su asunto exacto
         # (ver _bienvenida_activacion_ok). Ningún otro correo a
         # miembros se abre con esto.
-        if not _pasa_act and not _bienvenida_activacion_ok(to, subject,
-                                                           welcome_token):
+        if not _pasa_act and not _bienvenida_activacion_ok(
+                to, subject, welcome_token,
+                sub_token=welcome_sub_token,
+                admin_token=welcome_admin_token):
             # Excepciones gemelas de COBRO (2026-11-06, orden de Alex:
             # «actívame todos los emails» para la cohorte nueva): el #4
             # de pago rechazado y el #5 de bienvenida de vuelta solo
@@ -1978,7 +2031,7 @@ def _welcome_stats():
                 "week_record": "0\u20130", "week_units": "+0.00u", "week_rate": "0.0%"}
 
 
-def send_welcome_email(nombre: str, email: str, activation_token: str = None):
+def send_welcome_email(nombre: str, email: str, activation_token: str = None, sub_token: str = None, admin_token: str = None, sync: bool = False):
     """Email de bienvenida al nuevo miembro (HTML profesional + texto plano).
 
     Resend (RESEND_API_KEY) en producción; SMTP Gmail como fallback local.
@@ -1986,17 +2039,27 @@ def send_welcome_email(nombre: str, email: str, activation_token: str = None):
     funcionando y el miembro ve la página de bienvenida en pantalla.
     Se ejecuta en un hilo aparte para no retrasar la respuesta.
 
-    Candado 2026-11-02: a un miembro SOLO le llega si activar_cuenta
-    pasa su token de activación (activation_token) — la puerta estrecha
-    de _dispatch_email (_bienvenida_activacion_ok) verifica además en
-    la BD que esa cuenta se acaba de activar. Los demás llamadores
-    (reenvío admin, webhook de Stripe) no aportan token y su envío a
-    miembros sigue bloqueado, como hasta ahora.
+    Candado 2026-11-02: a un miembro SOLO le llega con una credencial
+    verificable atada a su cuenta — la puerta estrecha de
+    _dispatch_email (_bienvenida_activacion_ok) decide: (a)
+    activar_cuenta pasa su token de activación (activation_token) y la
+    BD confirma la activación reciente; (b) el webhook de Stripe pasa
+    sub_token (el id de la suscripción procesada) y la BD confirma que
+    es la suscripción actual de la cuenta; (c) el reenvío admin pasa
+    admin_token (el HMAC de la cuenta, acuñado tras la auth admin).
+    Sin credencial válida: bloqueada en silencio, como siempre.
+
+    Con sync=True despacha en el acto y devuelve (ok, detalle) — quien
+    estampa welcome_email_sent (webhook, reenvío admin) SOLO marca
+    cuando ok es True (FIX 2026-11-09). Sin sync se envía en un hilo,
+    como siempre, y devuelve None.
     """
     resend_ok = bool((os.environ.get("RESEND_API_KEY") or "").strip())
     user = (os.environ.get("EMAIL_USER") or "").strip()
     pwd = os.environ.get("EMAIL_PASS") or ""
     if not (resend_ok or (user and pwd)):
+        if sync:
+            return False, "sin transporte de email configurado"
         return
 
     subject = WELCOME_SUBJECT
@@ -2008,11 +2071,15 @@ def send_welcome_email(nombre: str, email: str, activation_token: str = None):
 
     def _send():
         try:
-            _dispatch_email(email, subject, text, html,
-                            welcome_token=activation_token)
-        except Exception:
-            pass  # silencioso: nunca rompe el registro
+            return _dispatch_email(email, subject, text, html,
+                                   welcome_token=activation_token,
+                                   welcome_sub_token=sub_token,
+                                   welcome_admin_token=admin_token)
+        except Exception as e:
+            return False, f"{type(e).__name__}: {e}"
 
+    if sync:
+        return _send()
     import threading
     threading.Thread(target=_send, daemon=True).start()
 
@@ -12572,7 +12639,13 @@ def diag_tracker():
 def admin_resend_welcome():
     """Reenvía el email de bienvenida a un miembro.
     Auth: sesión admin O header X-Admin-Key.
-    Resetea welcome_email_sent y lo envía de inmediato."""
+    FIX 2026-11-09: el reenvío va con la credencial admin atada a la
+    cuenta (_bienvenida_admin_token — la autorización es esta sesión
+    admin) y en síncrono: welcome_email_sent SOLO se estampa si el
+    despacho devolvió OK; si la puerta lo bloquea o el envío falla se
+    responde ERROR con el detalle — nunca un «reenviado» falso (antes
+    esta ruta enviaba sin credencial, la puerta bloqueaba en silencio
+    y aun así respondía 200 y estampaba la marca)."""
     if not _admin_api_autorizado():
         return "admin only", 403
     from flask import request
@@ -12584,12 +12657,16 @@ def admin_resend_welcome():
     if not row:
         return f"No existe cuenta con {email}", 404
     try:
-        send_welcome_email(row["nombre"] or "", email)
-        db.execute("UPDATE users SET welcome_email_sent = 1 WHERE id = ?", (row["id"],))
-        db.commit()
-        return f"Email de bienvenida reenviado a {email}", 200
+        ok_w, det_w = send_welcome_email(
+            row["nombre"] or "", email,
+            admin_token=_bienvenida_admin_token(email), sync=True)
     except Exception as e:
         return f"Error: {e}", 500
+    if not ok_w:
+        return f"Bienvenida NO enviada a {email}: {det_w}", 502
+    db.execute("UPDATE users SET welcome_email_sent = 1 WHERE id = ?", (row["id"],))
+    db.commit()
+    return f"Email de bienvenida reenviado a {email}", 200
 
 @app.route("/admin/send-monthly", methods=["GET", "POST"])
 @admin_required
@@ -16818,7 +16895,7 @@ def stripe_webhook():
         if not email:
             _auditar("", f"{origen} sin email")
             return
-        row = db.execute("SELECT id, nombre, platinum_unlocked, cancel_requested_at, telegram_user_id, welcome_email_sent, stripe_subscription_id, platinum_intro_used_at, stripe_past_due, activated_at, created_at FROM users WHERE email = ?",
+        row = db.execute("SELECT id, nombre, email_verified, platinum_unlocked, cancel_requested_at, telegram_user_id, welcome_email_sent, stripe_subscription_id, platinum_intro_used_at, stripe_past_due, activated_at, created_at FROM users WHERE email = ?",
                          (email,)).fetchone()
         if row:
             uid = row["id"]
@@ -16834,10 +16911,20 @@ def stripe_webhook():
             # solo prueba que recibió la bienvenida al activar la cuenta.
             tenia_sub_stripe = bool((row["stripe_subscription_id"] or "").strip())
             es_retorno_genuino = estaba_cancelado or tenia_sub_stripe
+            # FIX 2026-11-09 (caso Brittney Moore): si ESTE webhook es
+            # quien verifica la cuenta (venía sin verificar — pagó antes
+            # de activar por el enlace), el UPDATE también escribe
+            # activated_at: sin esa marca la puerta de la bienvenida no
+            # puede confirmar la activación reciente y la bienvenida del
+            # pago quedaba bloqueada en silencio pa' siempre.
+            verificaba_ahora = not bool(row["email_verified"])
+            _set_act = ", activated_at = ?" if verificaba_ahora else ""
+            _params_act = (now_iso(),) if verificaba_ahora else ()
             db.execute(
-                "UPDATE users SET platinum_unlocked = 1, email_verified = 1, activation_token = NULL, stripe_customer_id = ?, "
+                "UPDATE users SET platinum_unlocked = 1, email_verified = 1, activation_token = NULL"
+                + _set_act + ", stripe_customer_id = ?, "
                 "stripe_subscription_id = ?, stripe_past_due = 0, stripe_past_due_since = NULL, cancel_requested_at = NULL, platinum_trial_ends = NULL WHERE id = ?",
-                (customer_id or None, sub_id or None, uid),
+                _params_act + (customer_id or None, sub_id or None, uid),
             )
             # Inglés forzado en las páginas de Stripe del miembro.
             _stripe_force_english(customer_id)
@@ -16938,12 +17025,24 @@ def stripe_webhook():
                 except Exception:
                     pass
             elif era_nuevo and not bool(row["welcome_email_sent"]):
+                # FIX 2026-11-09 (caso Brittney Moore): la bienvenida
+                # del pago sale con la credencial de ESTA suscripción
+                # (sub_token) y en síncrono: la marca welcome_email_sent
+                # SOLO se estampa si el despacho devolvió OK. Si la
+                # puerta lo bloquea o el envío falla, NO se marca —
+                # queda el rastro en la auditoría del evento y el
+                # reenvío admin puede remediarlo después.
                 try:
-                    send_welcome_email(row["nombre"] or "", email)
+                    _ok_w, _det_w = send_welcome_email(
+                        row["nombre"] or "", email,
+                        sub_token=sub_id, sync=True)
+                except Exception as _e_w:
+                    _ok_w, _det_w = False, f"{type(_e_w).__name__}: {_e_w}"
+                if _ok_w:
                     db.execute("UPDATE users SET welcome_email_sent = 1 WHERE id = ?", (uid,))
                     db.commit()
-                except Exception:
-                    pass
+                else:
+                    _auditar(email, f"Bienvenida NO enviada tras el pago: {_det_w}")
         else:
             _auditar(email, "pago sin cuenta registrada: activar manual")
 
