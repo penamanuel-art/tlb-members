@@ -38,6 +38,17 @@
 .bbn-back{text-align:center;padding:12px 0 4px;margin:0;}
 .bbn-back a{color:#7dd3fc;font-size:14px;text-decoration:none;}
 .bbn-empty{color:#8fa1c2;font-size:12px;font-weight:300;text-align:center;padding:18px 0;}
+.bbn-row[data-book]{cursor:pointer;}
+.bbn-modal{position:fixed;inset:0;z-index:999;display:flex;align-items:center;justify-content:center;}
+.bbn-modal[hidden]{display:none;}
+.bbn-mback{position:absolute;inset:0;background:rgba(3,6,12,.72);}
+.bbn-mbox{position:relative;background:#0d1830;border:1px solid rgba(232,199,102,.35);border-radius:18px;padding:20px 18px 16px;width:min(92vw,360px);box-shadow:0 18px 50px rgba(0,0,0,.55);}
+.bbn-mt{font-size:21px;font-weight:400;color:#eef2f8;}
+.bbn-msub{color:#8fa1c2;font-size:13.5px;font-weight:300;margin:5px 0 14px;line-height:1.45;}
+.bbn-min{width:100%;box-sizing:border-box;font-size:19px;padding:13px 12px;}
+.bbn-mrow{display:flex;gap:8px;margin-top:14px;}
+.bbn-mcancel{flex:1;background:none;border:1px solid #22314f;color:#a9b8d0;font-size:15px;border-radius:10px;padding:12px;cursor:pointer;}
+.bbn-mrow .bbn-save{flex:1.4;}
 </style>
 <div class="bbn-wrap">
   {% set meses = {'01':'Jan','02':'Feb','03':'Mar','04':'Apr','05':'May','06':'Jun','07':'Jul','08':'Aug','09':'Sep','10':'Oct','11':'Nov','12':'Dec'} %}
@@ -55,13 +66,13 @@
     {% for b in balances %}
     {% set f = (b["updated_at"] or '') | string %}
     {% set fc = (meses.get(f[5:7], '') ~ ' ' ~ (f[8:10] | int)) if (f | length) >= 10 else f %}
-    <div class="bbn-row">
+    <div class="bbn-row" data-book="{{ b['book_name'] }}" data-balance="{{ '%.2f'|format(b['balance']|float) }}">
       {% if b["logo"] %}
       <img class="bbn-chipimg" src="{{ url_for('static', filename='img/' + b['logo']) }}" alt="{{ b['book_name'] }}">
       {% else %}
       <span class="bbn-chip">{{ b["book_name"][0]|upper }}</span>
       {% endif %}
-      <span class="bbn-who"><span class="bbn-nm">{{ b["book_name"] }}</span><span class="bbn-up">Updated {{ fc }}</span></span>
+      <span class="bbn-who"><span class="bbn-nm">{{ b["book_name"] }}</span><span class="bbn-up">Updated {{ fc }} · Tap to update</span></span>
       <span class="bbn-bal{{ ' zero' if (b['balance']|float) == 0 else '' }}">${{ "%.2f"|format(b["balance"]|float) }}</span>
       <form class="bbn-delform" method="post" action="{{ url_for('balances_delete', book_name=b['book_name']) }}"
             onsubmit="return confirm('Remove {{ b['book_name'] }}?');">
@@ -99,5 +110,40 @@
   </form>
 
   <p class="bbn-back"><a href="{{ url_for('home') }}">← Back to Dashboard</a></p>
+
+  <div class="bbn-modal" id="bbnModal" hidden>
+    <div class="bbn-mback" data-close></div>
+    <form class="bbn-mbox" method="post" action="{{ url_for('balances') }}">
+      <div class="bbn-mt" id="bbnMName">Book</div>
+      <p class="bbn-msub">Type the balance you have at this book right now and save. The difference is logged in your movements.</p>
+      <input type="hidden" name="book_name" id="bbnMBook">
+      <input class="bbn-in bbn-min" type="number" name="balance" id="bbnMAmount" step="0.01" min="0" inputmode="decimal" placeholder="Balance ($)" required>
+      <div class="bbn-mrow">
+        <button type="button" class="bbn-mcancel" data-close>Cancel</button>
+        <button type="submit" class="bbn-save">Save</button>
+      </div>
+    </form>
+  </div>
 </div>
+<script>
+(function(){
+  var modal=document.getElementById('bbnModal'), nameEl=document.getElementById('bbnMName'),
+      bookEl=document.getElementById('bbnMBook'), amtEl=document.getElementById('bbnMAmount');
+  if(!modal) return;
+  function open(book, bal){
+    nameEl.textContent=book; bookEl.value=book; amtEl.value=bal;
+    modal.hidden=false;
+    setTimeout(function(){ try{ amtEl.focus(); amtEl.select(); }catch(e){} },60);
+  }
+  function close(){ modal.hidden=true; }
+  document.querySelectorAll('.bbn-row[data-book]').forEach(function(row){
+    row.addEventListener('click', function(e){
+      if(e.target.closest('.bbn-delform')) return;
+      open(row.getAttribute('data-book'), row.getAttribute('data-balance'));
+    });
+  });
+  modal.querySelectorAll('[data-close]').forEach(function(el){ el.addEventListener('click', close); });
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape') close(); });
+})();
+</script>
 {% endblock %}
