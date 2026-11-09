@@ -6146,6 +6146,30 @@ def home():
                 (not user["password_propia"])
     except Exception:
         _setup_pend = False
+    # Mis casas en el Home (2026-11-09, pedido de Alex): lista compacta de
+    # book_balances del miembro pa' la tirita «MY BOOKS» de home_lux.
+    _my_books = []
+    try:
+        if user:
+            _uid_b = session["user_id"]
+            if is_admin_for(user) and not is_alex_member(user):
+                _row_b = db.execute(
+                    "SELECT id FROM users WHERE LOWER(email) = ?",
+                    (ALEX_MEMBER_EMAIL,),
+                ).fetchone()
+                _uid_b = _row_b["id"] if _row_b else _uid_b
+            _ensure_book_balances_table(db)
+            _my_books = [
+                {"book_name": r["book_name"],
+                 "balance": float(r["balance"] or 0),
+                 "logo": book_logo(r["book_name"])}
+                for r in db.execute(
+                    "SELECT book_name, balance FROM book_balances "
+                    "WHERE user_id = ? ORDER BY book_name", (_uid_b,)
+                ).fetchall()
+            ]
+    except Exception:
+        _my_books = []
     return render_template(
         # Tema v2 (moderno) es el predeterminado desde 2026-10-02 (pedido Alex);
         # v1 (clásico) queda como reversión vía /theme/v1. Diseño lux
@@ -6196,6 +6220,7 @@ def home():
         locked_ticket_url=locked_ticket_url,
         locked_plays=locked_plays,
         setup_pendiente=_setup_pend,
+        my_books=_my_books,
         preview_locked_play=preview_locked_play,
         es_admin=is_admin_for(user),
         es_alex=is_alex_member(user),
