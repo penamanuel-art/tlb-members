@@ -4,6 +4,14 @@
    variables, mismas condiciones y mismos comportamientos que _play_card.
    En produccion se incluye UNICAMENTE para la cuenta de Alex (is_alex en
    home_lux) hasta que el apruebe publicarla para todos. #}
+{# PRUEBA DISENO MINIMAL (2026-11-08, orden de Alex: «de prueba — nada
+   confirmado»): SOLO la cuenta de Alex (is_alex) ve la cara nueva de esta
+   tarjeta — Minimal fondo #101318 + banda dorada superior estilo Diseno 3 —
+   mediante la rama {% if is_alex %} de la cara y su bloque <style> propio.
+   TODOS los demas miembros ven la cara v5 de siempre, SIN cambios (rama
+   {% else %}, intacta). Popup de chips, hoja de detalle y scripts son
+   compartidos y no se tocaron. Reversion en un paso si Alex la rechaza:
+   borrar la rama is_alex de la cara y el <style> «PRUEBA MINIMAL». #}
 {% set is_vip = p.nivel in ['PLATINUM', 'ELITE'] %}
 {# Place SOLO en las 11 casas de Alex (2026-10-26, pedido de Alex): prioridad 1) p.place_casa (mejor entre sus 11, calculada al publicar); 2) p.casa si esta en sus 11; 3) Novig (su casa de tickets). Nunca una casa fuera de sus 11. #}
 {% set _alex_books = ['theScore Bet', 'Polymarket', 'DraftKings', 'bet365', 'Hard Rock Bet', 'Fanatics', 'Fanatics Sportsbook', 'BetMGM', 'BetRivers', 'FanDuel', 'Bally Bet', 'Kalshi'] %}
@@ -173,6 +181,115 @@ body.v2 .v5c{background:linear-gradient(180deg,#0B0E13,#1D2029)}
 .v5c-notch{background:#0c0f16}
 </style>
 {% endif %}
+{% if is_alex %}
+<style>
+/* ===== PRUEBA MINIMAL (2026-11-08) — SOLO cuenta de Alex (is_alex) =====
+   Cara nueva de la tarjeta: fondo plano #101318, borde #23262e, lineas de 1px
+   (sin divisor de muescas ni barra lateral), banda dorada superior con el
+   nivel (grada #8a6d1f -> #e8c766 -> #8a6d1f, texto oscuro #14100a) y
+   tipografia fina de Alex: 800 SOLO en el nombre del equipo; todo lo demas
+   en 300-600. Los demas miembros no reciben ninguna de estas reglas. */
+.v5m{position:relative;overflow:hidden;background:#101318;border:1px solid #23262e;border-radius:14px;padding:0;box-sizing:border-box;width:100%;max-width:100%;margin:0 0 12px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#FFFFFF}
+.v5m-band{display:flex;align-items:center;gap:8px;background:linear-gradient(90deg,#8a6d1f,#e8c766 55%,#8a6d1f);padding:8px 16px}
+.v5m-band-t{font-size:11px;font-weight:600;letter-spacing:2.4px;color:#14100a;white-space:nowrap}
+.v5m-band-l{margin-left:auto;flex:none;font-size:10.5px;font-weight:500;letter-spacing:1.4px;color:#14100a;white-space:nowrap}
+.v5m-body{padding:16px 18px}
+.v5m-head{display:flex;gap:11px;align-items:flex-start}
+.v5m-logo{width:44px;height:44px;object-fit:contain;flex:none;margin-top:2px}
+.v5m-title{font-size:23px;font-weight:800;color:#FFFFFF;letter-spacing:-.4px;line-height:1.15}
+.v5m-sub{font-size:12.5px;font-weight:400;color:#8b919e;margin-top:6px;line-height:1.45}
+.v5m-res{display:inline-block;font-size:10px;font-weight:500;letter-spacing:1.4px;padding:4px 10px;border-radius:999px;margin-top:10px}
+.v5m-res.won{color:#2ee6a8;background:rgba(46,230,168,.12)}
+.v5m-res.lost{color:#f87171;background:rgba(248,113,113,.1)}
+.v5m-nums{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;margin-top:18px;padding-top:16px;border-top:1px solid #23262e}
+.v5m-k{font-size:9px;font-weight:500;letter-spacing:1.8px;color:#6b7280}
+.v5m-price{font-size:31px;font-weight:300;color:#FFFFFF;line-height:1.05;margin-top:3px}
+.v5m-right{text-align:right;flex:none}
+.v5m-stake{font-size:16px;font-weight:400;color:#FFFFFF;line-height:1.3;margin-top:3px}
+.v5m-tok{font-size:11px;font-weight:500;color:#2ee6a8;margin-top:2px}
+.v5m-tpend{font-size:11px;font-weight:500;color:#8b919e;margin-top:2px}
+.v5m-meta{display:flex;gap:16px;flex-wrap:wrap;align-items:center;margin-top:14px}
+.v5m-chip{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:400;color:#8b919e;background:none;border:none;padding:2px 0;cursor:pointer;font-family:inherit}
+.v5m-chip-inj{color:#EE8CA5}
+.v5m-posted{font-size:12px;font-weight:400;color:#8b919e}
+.v5m-btns{display:flex;gap:6px;margin-top:14px}
+.v5m-btn{flex:1 1 0;min-width:0;text-align:center;font-size:12.5px;font-weight:400;white-space:nowrap;overflow:hidden;color:#DCDCE1;background:#1C202B;border:1px solid #2A2C39;border-radius:10px;padding:11px 4px;text-decoration:none;box-sizing:border-box;cursor:pointer;font-family:inherit}
+.v5m-share{flex:0 0 46px;font-size:13px}
+.v5m-track{flex:1.15 1 0;display:flex;align-items:center;justify-content:center;text-align:center;font-size:12.5px;font-weight:400;white-space:nowrap;color:#DCDCE1;background:#1C202B;border:1px solid #2A2C39;border-radius:10px;padding:11px 4px;text-decoration:none;box-sizing:border-box;cursor:pointer}
+.v5m-tracked{flex:1.15 1 0;display:flex;align-items:center;justify-content:center;text-align:center;font-size:12.5px;font-weight:400;white-space:nowrap;color:#A0A1A5;background:#1C202B;border:1px solid #2A2C39;border-radius:10px;padding:11px 4px;box-sizing:border-box}
+/* Hoja de detalle y popup en la misma familia Minimal, SOLO en la vista de
+   Alex: titulo de la hoja = nombre del equipo en 800, resto fino (<=500),
+   fondos #101318. Sin cambios de estructura, ids ni clases JS. */
+.v5stitle{font-weight:800}
+.v5kick{font-weight:500}
+.v5prog{font-weight:500}
+.v5row-v b{font-weight:500}
+.v5wu-h{font-weight:500}
+.v5wu-row b{font-weight:500}
+.v5wu-p b{font-weight:500}
+.v5big-track{font-weight:400}
+.v5big-tracked{font-weight:400}
+.v5pop-t{font-weight:500}
+.v5pop-nm{font-weight:500}
+.v5pop-st{font-weight:500}
+.v5c-matched{font-weight:500}
+.v5c-tracked{font-weight:400;font-size:12.5px;border-radius:10px}
+.v5sheet-in{background:#101318}
+.v5shead{background:#101318}
+.v5actions{background:#101318}
+.v5timg{background:#101318}
+.v5pop-in{background:#101318;border-color:#23262e}
+</style>
+{% endif %}
+{% if is_alex %}
+{# Cara MINIMAL de prueba — SOLO Alex (ver nota de cabecera). Banda dorada =
+   encabezado de nivel (sustituye a la pildora interna para no duplicar);
+   liga a la derecha de la banda. Mismos datos, handlers y botones que la
+   cara de siempre: data-v5-open abre la hoja, data-v5-chip abre el popup,
+   tstc-track trackea. Sin barra lateral, sin divisor de muescas: lineas 1px. #}
+<div class="v5m">
+  <div class="v5m-band">
+    <span class="v5m-band-t">{% if is_vip %}PLATINUM{% elif is_value %}VALUE PLAY{% elif is_free %}FREE PICK{% elif is_vault %}THE VAULT PLAY{% else %}GOLD PLAY{% endif %}</span>
+    <span class="v5m-band-l">{{ p.liga or '' }}</span>
+  </div>
+  <div class="v5m-body">
+  <div class="v5m-head">
+    {% if _logo %}<img class="v5m-logo" src="{{ _logo }}" alt="{{ p.abbr }} logo" loading="lazy" onerror="this.remove()">{% endif %}
+    <div style="flex:1;min-width:0">
+      <div class="v5m-title" data-v5-open="{{ p.id }}" style="cursor:pointer">{{ p.team_name or p.abbr }} {{ _bt_label }}</div>
+      <div class="v5m-sub" data-v5-open="{{ p.id }}" style="cursor:pointer">{{ p.team_name or p.abbr }} @ {{ p.opp_name or p.opp_abbr }} &middot; {{ _gt12 }}</div>
+    </div>
+  </div>
+  {% if _res == 'W' %}<span class="v5m-res won">WON{% if p.profit is defined and p.profit is not none %} &middot; +${{ '%.2f'|format(p.profit) }}{% endif %}</span>{% elif _res == 'L' %}<span class="v5m-res lost">LOST{% if p.profit is defined and p.profit is not none %} &middot; -${{ '%.2f'|format(p.profit|abs) }}{% endif %}</span>{% endif %}
+  <div class="v5m-nums" data-v5-open="{{ p.id }}" style="cursor:pointer">
+    <div><div class="v5m-k">PRICE POSTED</div><div class="v5m-price">{{ fmt_odds(p.cuota) }}</div></div>
+    <div class="v5m-right"><div class="v5m-k">STAKE</div><div class="v5m-stake">{{ '%g' % p.stake_unidades }}u &middot; ${{ '%g' % p.stake_monto }}</div>{% if p.comprobante %}<div class="v5m-tok">\u2713 Ticket matched</div>{% else %}<div class="v5m-tpend">Ticket pending</div>{% endif %}</div>
+  </div>
+  {% if p.posted or _ci.get('lines') or _ci.get('injuries') or _ci.get('weather') %}
+  <div class="v5m-meta">
+    {% if _ci.get('lines') %}<button type="button" class="v5m-chip" data-v5-chip="lines" data-play="{{ p.id }}">\u2197 {{ _ci.lines.chip }}</button>{% endif %}
+    {% if _ci.get('injuries') %}<button type="button" class="v5m-chip v5m-chip-inj" data-v5-chip="injuries" data-play="{{ p.id }}"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#EE8CA5" stroke-width="2.4" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 3.5h5V9.5h6v5h-6v6h-5v-6h-6v-5h6z"/></svg> {{ _ci.injuries.total }}</button>{% endif %}
+    {% if _ci.get('weather') %}{% if _ci.weather.temp_f is defined and _ci.weather.temp_f is not none %}<button type="button" class="v5m-chip" data-v5-chip="weather" data-play="{{ p.id }}">\U0001F321 {{ _ci.weather.temp_f }}\u00b0</button>{% elif _ci.weather.indoor %}<button type="button" class="v5m-chip" data-v5-chip="weather" data-play="{{ p.id }}">\U0001F3DF {{ _ci.weather.venue }}</button>{% endif %}{% endif %}
+    {% if p.posted %}<span class="v5m-posted">Posted {{ p.posted }}</span>{% endif %}
+  </div>
+  {% endif %}
+  <div class="v5m-btns">
+    <a class="v5m-btn" href="{{ _book_url }}" target="_blank" rel="noopener">\u2197 {{ _place_label }}</a>
+    <button class="v5m-btn v5m-share" type="button" aria-label="Share" onclick="(function(){var u=window.location.origin+'/home';if(navigator.share){navigator.share({title:'The Sharp Team',text:'{{ p.team_name or p.abbr }} {{ p.bettype }}',url:u}).catch(function(){});}else{navigator.clipboard&&navigator.clipboard.writeText(u);}})()">\u2197</button>
+    {% if p.comprobante and not force_pre %}
+      <a class="v5m-btn" href="javascript:void(0)" data-v5-open="{{ p.id }}">\U0001F3AB Receipt</a>
+    {% endif %}
+    {% if p.nivel != 'VALUE' %}
+      {% if p.id in tracked_ids %}
+        <span class="v5m-tracked">\u2713 Tracked</span>
+      {% else %}
+        <a class="v5m-track tstc-track" href="{{ url_for('track', play_id=p.id) }}" data-track-url="{{ url_for('track', play_id=p.id) }}">+ Track</a>
+      {% endif %}
+    {% endif %}
+  </div>
+  </div>
+</div>
+{% else %}
 <div class="v5c">
   <div class="v5c-edge{% if not is_vip and not is_vault %} gold{% endif %}"></div>
   <div class="v5c-topsec">
@@ -220,6 +337,7 @@ body.v2 .v5c{background:linear-gradient(180deg,#0B0E13,#1D2029)}
   </div>
   </div>
 </div>
+{% endif %}
 
 {# Popup de chips (lesionados / clima / línea) — datos del overlay card_info #}
 {% if _ci %}
