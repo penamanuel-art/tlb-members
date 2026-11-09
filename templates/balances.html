@@ -18,15 +18,17 @@
 .bbn-tv{display:block;color:#e8c766;font-size:32px;font-weight:300;letter-spacing:-.4px;padding-top:2px;}
 .bbn-cnt{background:rgba(232,199,102,.14);border:1px solid rgba(232,199,102,.4);color:#e8c766;font-size:11px;font-weight:300;letter-spacing:1px;padding:6px 10px;border-radius:999px;white-space:nowrap;}
 .bbn-panel{background:rgba(13,22,38,.72);border:1px solid rgba(255,255,255,.08);border-radius:16px;margin-top:12px;padding:4px 16px;flex:1;display:flex;flex-direction:column;justify-content:space-evenly;}
+.bbn-list{display:flex;flex-direction:column;gap:11px;margin-top:14px;flex:1;justify-content:flex-start;}
 .bbn-row{display:flex;align-items:center;gap:12px;padding:12px 0;}
+.bbn-list .bbn-row{background:rgba(13,22,38,.78);border:1px solid rgba(255,255,255,.09);border-radius:18px;padding:15px 16px;gap:14px;box-shadow:0 6px 18px rgba(0,0,0,.25);}
 .bbn-gdiv{height:1px;background:linear-gradient(90deg, transparent, rgba(47,230,167,.6) 30%, rgba(47,230,167,.6) 70%, transparent);box-shadow:0 0 7px rgba(47,230,167,.35);}
-.bbn-chip{width:38px;height:38px;border-radius:11px;background:#16223a;color:#e8edf5;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;flex:none;box-shadow:inset 0 0 0 1px rgba(255,255,255,.14);}
-.bbn-chipimg{height:38px;width:auto;max-width:110px;border-radius:8px;object-fit:contain;background:#fff;padding:3px 6px;flex:none;box-shadow:inset 0 0 0 1px rgba(255,255,255,.14);}
+.bbn-chip{width:54px;height:54px;border-radius:14px;background:#16223a;color:#e8edf5;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;flex:none;box-shadow:inset 0 0 0 1px rgba(255,255,255,.14);}
+.bbn-chipimg{width:54px;height:54px;border-radius:14px;object-fit:contain;background:#fff;padding:7px;box-sizing:border-box;flex:none;box-shadow:inset 0 0 0 1px rgba(255,255,255,.14);}
 .bbn-who{flex:1;min-width:0;display:block;}
-.bbn-nm{display:block;font-size:17px;font-weight:300;color:#eef2f8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.bbn-up{display:block;color:#71809a;font-size:12.5px;font-weight:300;padding-top:2px;}
-.bbn-bal{font-size:27px;font-weight:300;color:#ffffff;}
-.bbn-bal.zero{color:#5f718e;font-weight:300;}
+.bbn-nm{display:block;font-size:18px;font-weight:500;color:#eef2f8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.bbn-up{display:block;color:#71809a;font-size:12.5px;font-weight:300;padding-top:3px;}
+.bbn-bal{font-size:25px;font-weight:500;color:#ffffff;white-space:nowrap;}
+.bbn-bal.zero{color:#5f718e;font-weight:400;}
 .bbn-delform{margin:0;flex:none;}
 .bbn-del{background:none;border:none;color:#54637c;font-size:18px;cursor:pointer;padding:4px 0 4px 2px;}
 .bbn-form{background:rgba(13,22,38,.72);border:1px solid rgba(255,255,255,.08);border-radius:16px;margin-top:12px;padding:12px 14px;}
@@ -62,7 +64,7 @@
     <span class="bbn-cnt">{{ balances|length }} BOOKS</span>
   </div>
 
-  <div class="bbn-panel">
+  <div class="bbn-list">
     {% for b in balances %}
     {% set f = (b["updated_at"] or '') | string %}
     {% set fc = (meses.get(f[5:7], '') ~ ' ' ~ (f[8:10] | int)) if (f | length) >= 10 else f %}
@@ -79,7 +81,6 @@
         <button type="submit" class="bbn-del" aria-label="Remove">🗑</button>
       </form>
     </div>
-    {% if not loop.last %}<div class="bbn-gdiv"></div>{% endif %}
     {% else %}
     <p class="bbn-empty">No books yet. Add your first one below.</p>
     {% endfor %}
