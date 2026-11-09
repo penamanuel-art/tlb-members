@@ -299,7 +299,7 @@ body.v2 .v5c{background:linear-gradient(180deg,#0B0E13,#1D2029)}
     {% endif %}
   </div>
   </div>
-{% if p.writeup and p.writeup.model_prob %}<button type="button" class="v5m-strip" data-v5-chip="why" data-play="{{ p.id }}"><span class="v5m-strip-t">\U0001F4CA WHY WE LIKE IT</span><span class="v5m-strip-n">Model {{ p.writeup.model_prob }} &middot; Edge {{ p.writeup.edge }}{% if p.writeup.ev is defined and p.writeup.ev is not none and p.writeup.ev != '' %} &middot; EV {% if p.writeup.ev is number %}{{ '%+.1f%%'|format(p.writeup.ev * 100) }}{% else %}{{ p.writeup.ev }}{% endif %}{% endif %}</span><span class="v5m-strip-hint">Tap to expand ▾</span></button>{% endif %}
+{% if p.writeup and p.writeup.model_prob %}<button type="button" class="v5m-strip" data-v5-chip="why" data-play="{{ p.id }}"><span class="v5m-strip-t">WHY WE LIKE IT</span><span class="v5m-strip-n">Model {{ p.writeup.model_prob }} &middot; Edge {{ p.writeup.edge }}{% if p.writeup.ev is defined and p.writeup.ev is not none and p.writeup.ev != '' %} &middot; EV {% if p.writeup.ev is number %}{{ '%+.1f%%'|format(p.writeup.ev * 100) }}{% else %}{{ p.writeup.ev }}{% endif %}{% endif %}</span><span class="v5m-strip-hint">Tap to expand ▾</span></button>{% endif %}
 </div>
 <div class="v5m-sep"></div>
 {% else %}
