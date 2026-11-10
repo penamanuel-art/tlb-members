@@ -40,6 +40,7 @@
     </div>
     <div class="ev-info" id="ev-info">Gira solo, como el de Shopify. Toca un punto dorado para ver quién es.</div>
     <div class="ev-hint">Arrastra para girar la tierra · pellizca o usa + / − para acercar y alejar. Se actualiza solo cada 20 segundos: quien sale, desaparece.</div>
+    <div class="ev-hint">🟡 Estado con miembros registrados · 🔴 parpadeando: alguien dentro ahora en ese estado.</div>
     <div class="ev-list" id="ev-list"><div class="ev-empty">Cargando…</div></div>
     <div class="ev-foot">Presencia = página del Dashboard abierta con latido cada 60s (ventana de 150s). Las ciudades salen de la IP de cada miembro, como en el panel de actividad.</div>
   </div>
@@ -61,9 +62,46 @@
   var gS=svg.append('path').datum({type:'Sphere'}).attr('fill','url(#gshade)').attr('stroke','#aec3da').attr('stroke-width',.8);
   var gG=svg.append('path').datum(d3.geoGraticule10()).attr('fill','none').attr('stroke','rgba(90,120,160,.15)').attr('stroke-width',.5);
   var gL=svg.append('g');
+  var gSt=svg.append('g');
   var gP=svg.append('g');
   var info=document.getElementById('ev-info');
   function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(ch){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch];});}
+  /* Puntos por ESTADO (2026-11-09, pedido de Alex): amarillo = estado con
+     miembros registrados; rojo parpadeando = alguien dentro ahora ahi. */
+  var STATES={'Alabama':[32.78,-86.83],'Alaska':[64.20,-152.49],'Arizona':[34.29,-111.66],'Arkansas':[34.90,-92.44],'California':[37.20,-119.61],'Colorado':[39.00,-105.55],'Connecticut':[41.62,-72.65],'Delaware':[38.99,-75.50],'District of Columbia':[38.91,-77.01],'Florida':[27.83,-81.72],'Georgia':[32.64,-83.43],'Hawaii':[20.90,-156.37],'Idaho':[44.39,-114.66],'Illinois':[40.10,-89.20],'Indiana':[39.90,-86.28],'Iowa':[42.08,-93.50],'Kansas':[38.49,-98.38],'Kentucky':[37.53,-84.90],'Louisiana':[31.05,-91.99],'Maine':[45.37,-68.97],'Maryland':[38.99,-76.79],'Massachusetts':[42.26,-71.81],'Michigan':[44.35,-85.57],'Minnesota':[46.39,-94.64],'Mississippi':[32.74,-89.67],'Missouri':[38.36,-92.46],'Montana':[47.05,-110.04],'Nebraska':[41.54,-99.80],'Nevada':[39.33,-116.63],'New Hampshire':[43.68,-71.58],'New Jersey':[40.19,-74.67],'New Mexico':[34.43,-106.11],'New York':[43.00,-75.50],'North Carolina':[35.54,-79.39],'North Dakota':[47.45,-100.47],'Ohio':[40.29,-82.79],'Oklahoma':[35.59,-97.51],'Oregon':[43.94,-120.56],'Pennsylvania':[40.88,-77.80],'Rhode Island':[41.68,-71.52],'South Carolina':[33.92,-80.90],'South Dakota':[44.44,-100.23],'Tennessee':[35.86,-86.35],'Texas':[31.48,-99.33],'Utah':[39.31,-111.67],'Vermont':[44.07,-72.67],'Virginia':[37.52,-78.66],'Washington':[47.38,-120.45],'West Virginia':[38.64,-80.62],'Wisconsin':[44.63,-89.99],'Wyoming':[42.99,-107.55],'Puerto Rico':[18.22,-66.45]};
+  var regStates=[], liveStates={}, stKey='';
+  function renderStates(center){
+    var items=[], seen={};
+    regStates.forEach(function(r){ if(STATES[r.estado]){ items.push({name:r.estado,n:r.n,live:liveStates[r.estado]||0,lat:STATES[r.estado][0],lon:STATES[r.estado][1]}); seen[r.estado]=1; } });
+    Object.keys(liveStates).forEach(function(k){ if(!seen[k]&&STATES[k]){ items.push({name:k,n:0,live:liveStates[k],lat:STATES[k][0],lon:STATES[k][1]}); } });
+    var key=JSON.stringify(items);
+    var sel=gSt.selectAll('g.st').data(items,function(d){return d.name;}).join('g').attr('class','st');
+    if(key!==stKey){
+      stKey=key;
+      sel.each(function(d){
+        var el=d3.select(this); el.html('');
+        if(d.live>0){
+          var halo=el.append('circle').attr('r',6).attr('fill','#FF3B30').attr('opacity','.55');
+          halo.append('animate').attr('attributeName','r').attr('from','6').attr('to','18').attr('dur','1.6s').attr('repeatCount','indefinite');
+          halo.append('animate').attr('attributeName','opacity').attr('from','.55').attr('to','0').attr('dur','1.6s').attr('repeatCount','indefinite');
+          el.append('circle').attr('r',5.2).attr('fill','#FF3B30').attr('stroke','#ffffff').attr('stroke-width',1.5);
+        } else {
+          el.append('circle').attr('r',4.4).attr('fill','#FFC933').attr('stroke','rgba(120,90,0,.55)').attr('stroke-width',1);
+        }
+        el.style('cursor','pointer').on('click',function(){
+          info.innerHTML='<b>'+esc(d.name)+'</b> — '+d.n+' registrado'+(d.n===1?'':'s')+(d.live?(' · <b>'+d.live+' dentro ahora</b>'):'');
+          idle=0;
+        });
+      });
+    }
+    sel.each(function(d){
+      var vis=d3.geoDistance([d.lon,d.lat],center)<Math.PI/2-.03;
+      var xy=proj([d.lon,d.lat]);
+      var el=d3.select(this);
+      el.style('display',vis?'':'none');
+      if(vis&&xy){ el.attr('transform','translate('+xy[0]+','+xy[1]+')'); }
+    });
+  }
   function render(){
     proj.rotate(rot).scale(BASE*k);
     gS.attr('d',path); gG.attr('d',path);
@@ -85,6 +123,7 @@
       info.innerHTML='<b>'+esc(p.n)+'</b> — '+esc(p.c)+' · activo '+hace;
       idle=0;
     });
+    renderStates(center);
   }
   render();
   d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json').then(function(w){
@@ -131,6 +170,9 @@
       .then(function(r){ return r.json(); })
       .then(function(d){
         members=d.dentro||[];
+        regStates=d.registrados||[];
+        liveStates={};
+        members.forEach(function(m){ var reg=(m.ciudad||'').split(', ').pop(); if(reg){ liveStates[reg]=(liveStates[reg]||0)+1; } });
         document.getElementById('ev-count').textContent=d.total;
         var html='';
         members.forEach(function(m){
