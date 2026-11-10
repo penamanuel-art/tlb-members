@@ -230,6 +230,10 @@ footer .copy{font-size:12.5px;color:var(--dim);margin-top:8px}
   .about-panel{grid-template-columns:.9fr 1.1fr}
   section{padding:72px 0}
 }
+
+/* Marco lateral estilo WGT (2026-11-10, orden de Alex): la página como hoja enmarcada, con el fondo viéndose a los lados */
+body{background:#080a10}
+.pagepanel{width:calc(100% - 28px);max-width:1280px;margin:14px auto 16px;background:var(--bg);border:1px solid rgba(255,255,255,.08);border-radius:20px;overflow:hidden}
 </style>
 </head>
 <body>
@@ -251,6 +255,8 @@ footer .copy{font-size:12.5px;color:var(--dim);margin-top:8px}
     <a class="btn sm" href="#join">Join free</a>
   </div>
 </header>
+
+<div class="pagepanel">
 
 <!-- 2 · TICKER -->
 <div class="ticker">
@@ -712,6 +718,7 @@ footer .copy{font-size:12.5px;color:var(--dim);margin-top:8px}
     <p class="copy">© 2026 The Sharp Team · Wallington, NJ. All rights reserved.</p>
   </div>
 </footer>
+</div><!-- /.pagepanel -->
 
 <!-- 16 · STICKY BAR -->
 <div class="stickybar">
