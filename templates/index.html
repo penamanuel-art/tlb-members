@@ -164,7 +164,7 @@ fbq('track', 'PageView');
     <a class="cta" href="{{ url_for('register') }}">Create my free account</a>
     <p class="micro">Email only · Gold plays free forever · Platinum free your first month — no card</p>
     <div class="stats">
-      <div class="stat"><div class="v">{{ total }}</div><div class="k">Plays documented</div></div>
+      <div class="stat"><div class="v">Daily</div><div class="k">Fresh card posted</div></div>
       <div class="stat"><div class="v">100%</div><div class="k">Posted pre-game</div></div>
       <div class="stat"><div class="v">Every play</div><div class="k">Shows its ticket</div></div>
     </div>
@@ -198,7 +198,7 @@ fbq('track', 'PageView');
     {% if total >= 500 %}
     <p class="honest">Documented record: <strong>{{ wins }}–{{ losses }}</strong> · ROI <strong>{{ roi }}%</strong> — every play counted.</p>
     {% else %}
-    <p class="honest">Every official play is documented and counted — {{ total }} so far, on the way to a fully public record.</p>
+    <p class="honest">Every official play is graded and stays on the record — wins and losses.</p>
     {% endif %}
   </div>
 </section>
