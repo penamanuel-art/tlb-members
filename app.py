@@ -11090,29 +11090,8 @@ def admin_api_en_vivo():
                        sorted(conteo.items(), key=lambda kv: -kv[1])]
     except Exception:
         registrados = []
-    # Diagnostico temporal (2026-11-09): estado crudo de la tabla
-    # presencia y, con ?uid=, la fila y las banderas de un usuario.
-    debug = {}
-    try:
-        debug["filas_presencia"] = db.execute(
-            "SELECT COUNT(*) c FROM presencia").fetchone()["c"]
-        debug["ultimo_max"] = db.execute(
-            "SELECT MAX(ultimo) u FROM presencia").fetchone()["u"]
-        uid_q = request.args.get("uid", type=int)
-        if uid_q:
-            pr = db.execute("SELECT ultimo FROM presencia WHERE user_id = ?",
-                            (uid_q,)).fetchone()
-            ur = db.execute(
-                "SELECT is_admin, cancel_requested_at FROM users WHERE id = ?",
-                (uid_q,)).fetchone()
-            debug["uid"] = uid_q
-            debug["presencia_ultimo"] = pr["ultimo"] if pr else None
-            debug["is_admin"] = ur["is_admin"] if ur else None
-            debug["cancel_requested_at"] = ur["cancel_requested_at"] if ur else None
-    except Exception as e:
-        debug["error"] = str(e)[:120]
     return jsonify({"dentro": dentro, "total": len(dentro),
-                    "registrados": registrados, "debug": debug})
+                    "registrados": registrados})
 
 
 @app.route("/admin/api/tracked-members")
@@ -11479,6 +11458,31 @@ def admin_api_members_set_admin():
                (nuevo, target["id"]))
     db.commit()
     return jsonify({"ok": True, "email": email, "is_admin": nuevo})
+
+
+@app.route("/admin/api/members-clear-cancel", methods=["POST"])
+def admin_api_members_clear_cancel():
+    """Quita el sello cancel_requested_at de un miembro (2026-11-09):
+    si volvió a pagar y su suscripción está activa, el sello de «pidió
+    cancelar» queda viejo y lo esconde de las listas del Admin (globo
+    en vivo, entradas, miembros que trackean). Auth: sesión admin O
+    header X-Admin-Key (mismo patrón que members-set-name)."""
+    if not _admin_api_autorizado():
+        return jsonify({"error": "admin only"}), 403
+    data = request.get_json(silent=True) or {}
+    email = (data.get("email") or request.form.get("email") or "").strip().lower()
+    if not email:
+        return jsonify({"error": "email required"}), 400
+    db = get_db()
+    target = db.execute("SELECT * FROM users WHERE email = ?",
+                        (email,)).fetchone()
+    if not target:
+        return jsonify({"error": "not found"}), 404
+    tenia = bool(target["cancel_requested_at"])
+    db.execute("UPDATE users SET cancel_requested_at = NULL WHERE id = ?",
+               (target["id"],))
+    db.commit()
+    return jsonify({"ok": True, "email": email, "cleared": tenia})
 
 
 @app.route("/admin/api/members-set-name", methods=["POST"])
@@ -17170,6 +17174,18 @@ def stripe_webhook():
             # suscripción procesada sea la actual de la cuenta.
             es_restauracion = (estaba_past_due or estaba_cancelado
                                or (era_nuevo and tenia_sub_stripe))
+            # 2026-11-09: quien vuelve a pagar queda activo de verdad —
+            # fuera el sello de «pidió cancelar»; si no, seguía
+            # invisible en las listas del Admin (globo en vivo,
+            # entradas, miembros que trackean) aunque estuviera al día.
+            if es_restauracion and row["cancel_requested_at"]:
+                try:
+                    db.execute(
+                        "UPDATE users SET cancel_requested_at = NULL"
+                        " WHERE id = ?", (uid,))
+                    db.commit()
+                except Exception:
+                    pass
             if (es_restauracion
                     and _activacion_cohorte_nueva(row["activated_at"],
                                                   row["created_at"])):
