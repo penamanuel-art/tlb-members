@@ -11055,43 +11055,79 @@ def admin_api_en_vivo():
             "segundos": segs,
         })
     # Estados con miembros registrados (2026-11-09, pedido de Alex: el
-    # puntico amarillo del globo): por miembro, la region de su IP mas
-    # antigua en member_activity (la de su registro / primera entrada).
+    # puntico amarillo del globo). Cuenta TODOS los registros reales
+    # (sin el filtro de cancelación de las listas de contacto: quien se
+    # registró, se registró, aunque un día pidiera cancelar). Por
+    # miembro se busca su estado en la IP de su registro / primera
+    # entrada; si esa no localiza, la última IP conocida o la de
+    # presencia.
     registrados = []
+    registrados_meta = {"miembros": 0, "con_estado": 0}
     try:
         db.execute("CREATE TABLE IF NOT EXISTS member_activity (user_id INTEGER, kind TEXT, ip TEXT, created_at TEXT)")
         miembros = db.execute(
             "SELECT u.id AS id FROM users u"
             " WHERE COALESCE(u.is_admin, 0) = 0"
             " AND u.email IS NOT NULL AND u.email != ''"
-            " AND u.email NOT LIKE ? AND u.cancel_requested_at IS NULL",
+            " AND u.email NOT LIKE ?",
             ("%@value.local",),
         ).fetchall()
+        registrados_meta["miembros"] = len(miembros)
+
+        def _region_de(ip):
+            if not ip:
+                return ""
+            g = db.execute("SELECT region FROM geo_cache WHERE ip = ?",
+                           (ip,)).fetchone()
+            region = (g["region"] or "") if g else ""
+            if not region:
+                _ciudad_de_ip(db, ip)
+                g = db.execute(
+                    "SELECT region FROM geo_cache WHERE ip = ?",
+                    (ip,)).fetchone()
+                region = (g["region"] or "") if g else ""
+            return region
+
         conteo = {}
+        con_estado = 0
         for m in miembros:
-            act = db.execute(
+            ips = []
+            a1 = db.execute(
                 "SELECT ip FROM member_activity WHERE user_id = ?"
                 " AND ip IS NOT NULL AND ip != ''"
                 " ORDER BY created_at ASC LIMIT 1",
                 (m["id"],),
             ).fetchone()
-            ip = (act["ip"] if act else "") or ""
-            if not ip:
-                continue
-            g = db.execute("SELECT region FROM geo_cache WHERE ip = ?", (ip,)).fetchone()
-            region = (g["region"] or "") if g else ""
-            if not region:
-                _ciudad_de_ip(db, ip)
-                g = db.execute("SELECT region FROM geo_cache WHERE ip = ?", (ip,)).fetchone()
-                region = (g["region"] or "") if g else ""
+            if a1 and a1["ip"]:
+                ips.append(a1["ip"])
+            a2 = db.execute(
+                "SELECT ip FROM member_activity WHERE user_id = ?"
+                " AND ip IS NOT NULL AND ip != ''"
+                " ORDER BY created_at DESC LIMIT 1",
+                (m["id"],),
+            ).fetchone()
+            if a2 and a2["ip"] and a2["ip"] not in ips:
+                ips.append(a2["ip"])
+            pr = db.execute("SELECT ip FROM presencia WHERE user_id = ?",
+                            (m["id"],)).fetchone()
+            if pr and pr["ip"] and pr["ip"] not in ips:
+                ips.append(pr["ip"])
+            region = ""
+            for ip in ips:
+                region = _region_de(ip)
+                if region:
+                    break
             if region:
                 conteo[region] = conteo.get(region, 0) + 1
+                con_estado += 1
+        registrados_meta["con_estado"] = con_estado
         registrados = [{"estado": k, "n": v} for k, v in
                        sorted(conteo.items(), key=lambda kv: -kv[1])]
     except Exception:
         registrados = []
     return jsonify({"dentro": dentro, "total": len(dentro),
-                    "registrados": registrados})
+                    "registrados": registrados,
+                    "registrados_meta": registrados_meta})
 
 
 @app.route("/admin/api/tracked-members")
