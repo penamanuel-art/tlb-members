@@ -362,7 +362,6 @@
     <a href="#" onclick="document.getElementById('tst-menu-sheet').hidden=true;var b=document.getElementById('tst-menubtn');if(b)b.setAttribute('aria-expanded','false');document.body.style.overflow='';if(window.tstStartTour)window.tstStartTour();return false;" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:15px;color:#e8c766;">Dashboard Tour <span style="color:#A3AAB6;">›</span></a>
     <a href="{{ url_for('desbloquear_platinum') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:15px;color:#e8c766;">Unlock Platinum <span style="color:#A3AAB6;">›</span></a>
     {% if es_admin or es_alex %}<a href="{{ url_for('admin_dashboard') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:15px;">Admin <span style="color:#A3AAB6;">›</span></a>{% endif %}
-    {% if es_admin or es_alex %}<a href="/admin/en-vivo" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:15px;">🌍 Globo en vivo <span style="color:#A3AAB6;">›</span></a>{% endif %}
   </div>
   </div>
 
