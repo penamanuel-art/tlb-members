@@ -279,7 +279,7 @@
     <p class="sub">Daily plays priced by a real model, published before game time, and proven with the actual ticket — every single day.</p>
     <a class="cta" href="{{ url_for('register') }}">Get today's free plays</a>
     <a class="cta ghost" href="{{ url_for('login') }}">I already have an account</a>
-    <p class="micro"><b>Free account.</b> Gold plays are free every day. Want everything? Platinum is $1 for your first week, then $15.99/week. Cancel anytime.</p>
+    <p class="micro"><b>Free account.</b> Gold plays are free every day — and your first month of Platinum is free too, no card. Then $15.99/week only if you decide to keep it.</p>
     <div class="hp-proof">
       {% if total >= 500 %}
       <b>{{ wins }}-{{ losses }}, {{ "%+.2f"|format(roi) }}% ROI</b> — every play documented and graded in public.
@@ -322,7 +322,7 @@
       </div>
       <div class="hp-diff">
         <div class="hp-diff-cat">The price</div>
-        <div class="hp-diff-us"><span class="ck">✓</span><span class="tx"><span class="who">THE SHARP TEAM</span>$1 for your first week, then $15.99/week. That's it.</span></div>
+        <div class="hp-diff-us"><span class="ck">✓</span><span class="tx"><span class="who">THE SHARP TEAM</span>Your first month of Platinum is free — no card. Then $15.99/week if you stay. That's it.</span></div>
         <div class="hp-diff-them"><span class="xx">✕</span><span class="tx"><span class="who">TYPICAL</span>Hundreds upfront before you see a single pick.</span></div>
       </div>
       <div class="hp-diff">
@@ -427,7 +427,7 @@
         <li>Private Telegram channel</li>
         <li>30-Day Academy included</li>
       </ul>
-      <div class="price">$1 for your first week · then $15.99/week</div>
+      <div class="price">First month FREE · then $15.99/week</div>
     </div>
   </section>
 
@@ -557,7 +557,7 @@
   <section id="offer">
     <div class="hp-offer">
       <span class="pill gold">The Offer</span>
-      <h2>Start today for <span class="hl">$1</span></h2>
+      <h2>Start today for <span class="hl">FREE</span></h2>
       <p class="price-line">Here's exactly how it works — <b>no surprises</b>:</p>
       <div class="hp-osteps">
         <div class="hp-ostep">
@@ -566,8 +566,8 @@
             <span class="num">1</span>
           </div>
           <div>
-            <h3>Today: <span>$1</span> to start</h3>
-            <p>One dollar today starts your membership and puts your card on file.</p>
+            <h3>Today: <span>$0</span> to start</h3>
+            <p>Create your free account — email only. No card anywhere, not today, not during your free month.</p>
           </div>
         </div>
         <div class="hp-ostep">
@@ -576,8 +576,8 @@
             <span class="num" style="background:var(--hp-mint);color:#06231a;">2</span>
           </div>
           <div>
-            <h3>First week of Platinum: <span>$1</span></h3>
-            <p>Every play and every tool, fully unlocked for your whole first week.</p>
+            <h3>First month of Platinum: <span>FREE</span></h3>
+            <p>Every play and every tool, fully unlocked for 30 days — the real thing, not a teaser.</p>
           </div>
         </div>
         <div class="hp-ostep">
@@ -586,15 +586,15 @@
             <span class="num">3</span>
           </div>
           <div>
-            <h3>Then <span>$15.99/week</span></h3>
-            <p>After your first week, Platinum continues at $15.99/week. Cancel anytime from your account.</p>
+            <h3>Then <span>$15.99/week</span> — only if you stay</h3>
+            <p>After your free month, Platinum is $15.99/week if you decide to keep it. Nothing renews on its own — and the free plays never stop.</p>
           </div>
         </div>
       </div>
-      <div class="bigprice">Start today for <span>$1</span></div>
+      <div class="bigprice">Your first month is <span>FREE</span></div>
       <p class="price-line">Rather stay free? <b>Sharp Free stays free forever</b> — daily free picks, no card required.</p>
-      <a class="cta gold" href="{{ url_for('register') }}">Start for $1</a>
-      <p class="micro">$1 today · first week covered · $15.99/week after. No surprises.</p>
+      <a class="cta gold" href="{{ url_for('register') }}">Start free</a>
+      <p class="micro">Free month · no card · $15.99/week after, only if you stay. No surprises.</p>
     </div>
   </section>
 
@@ -616,12 +616,12 @@
       <div class="ans">Yes. Every official play is placed with real money and the original ticket photo is posted with it. If there's no ticket, it's not an official play.</div>
     </details>
     <details>
-      <summary>What do I get with the $1 start?<span class="pm">+</span></summary>
-      <div class="ans">Everything Platinum includes, from day one: Gold + Platinum plays, the +EV Board across 12 sportsbooks, Player Props, Line Moves, Sharp Money, Compare Prices, the AI Assistant, the private Telegram channel and the 30-Day Academy. And your first week of Platinum starts for just $1.</div>
+      <summary>What do I get with my free month?<span class="pm">+</span></summary>
+      <div class="ans">Everything Platinum includes, from day one: Gold + Platinum plays, the +EV Board across 12 sportsbooks, Player Props, Line Moves, Sharp Money, Compare Prices, the AI Assistant, the private Telegram channel and the 30-Day Academy. And it's all free for your first month.</div>
     </details>
     <details>
-      <summary>What happens after my first week?<span class="pm">+</span></summary>
-      <div class="ans">Platinum continues at $15.99/week — that's the whole price, no tiers above it and no upsells. If you cancel, you keep access for the time you've already covered, and Sharp Free stays free forever either way.</div>
+      <summary>What happens after my free month?<span class="pm">+</span></summary>
+      <div class="ans">Only what you choose: keep Platinum at $15.99/week — that's the whole price, no tiers above it and no upsells — or let it end and simply go back to the free plays. Nothing is charged on its own, and the free plays stay free forever either way.</div>
     </details>
     <details>
       <summary>What happens if I have a losing week?<span class="pm">+</span></summary>
@@ -638,7 +638,7 @@
   <!-- ===== FINAL CTA ===== -->
   <section>
     <h2>Your first play is <span class="hl">waiting</span></h2>
-    <p class="sub">Create your free account in under a minute — or start Platinum today for $1.</p>
+    <p class="sub">Create your free account in under a minute — your first month of Platinum is on us.</p>
     <a class="cta" href="{{ url_for('register') }}">Create a free account →</a>
     <p class="micro">Free forever · No card required for Sharp Free</p>
   </section>
