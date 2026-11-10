@@ -36,7 +36,7 @@ section{padding:64px 0}
 .btn.dark:hover{background:#0a2417}
 
 /* ---------- header ---------- */
-header{position:sticky;top:0;z-index:60;background:rgba(10,12,18,.96);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+header{position:sticky;top:0;z-index:60;background:rgba(10,12,18,.96);backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.14)}
 .hbar{display:flex;align-items:center;gap:18px;padding:12px 0}
 .hbar img{height:38px;width:auto;border-radius:6px;flex:none}
 .hnav{display:none;gap:22px;font-size:14.5px;font-weight:600;color:var(--mut);margin-left:8px}
@@ -226,7 +226,7 @@ footer .rg{font-size:13.5px;color:var(--mut);max-width:760px;line-height:1.55}
 footer .copy{font-size:12.5px;color:var(--dim);margin-top:8px}
 
 /* ---------- sticky bar ---------- */
-.stickybar{position:fixed;left:12px;right:12px;bottom:calc(10px + env(safe-area-inset-bottom));border-radius:14px;z-index:70;background:var(--grn);color:#04150d;padding:10px 16px}
+.stickybar{position:fixed;left:12px;right:12px;bottom:calc(10px + env(safe-area-inset-bottom));border-radius:14px;border:1px solid rgba(4,21,13,.35);z-index:70;background:var(--grn);color:#04150d;padding:10px 16px}
 .stickybar-in{max-width:1120px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:14px}
 .stickybar .msg{font-weight:600;font-size:14.5px;line-height:1.35}
 .stickybar .msg span{font-weight:600;font-size:13px;display:block}
