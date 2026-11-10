@@ -11054,7 +11054,44 @@ def admin_api_en_vivo():
             "ultimo_et": fmt_hora(r["ultimo"]),
             "segundos": segs,
         })
-    return jsonify({"dentro": dentro, "total": len(dentro)})
+    # Estados con miembros registrados (2026-11-09, pedido de Alex: el
+    # puntico amarillo del globo): por miembro, la region de su IP mas
+    # antigua en member_activity (la de su registro / primera entrada).
+    registrados = []
+    try:
+        db.execute("CREATE TABLE IF NOT EXISTS member_activity (user_id INTEGER, kind TEXT, ip TEXT, created_at TEXT)")
+        miembros = db.execute(
+            "SELECT u.id AS id FROM users u"
+            " WHERE COALESCE(u.is_admin, 0) = 0"
+            " AND u.email IS NOT NULL AND u.email != ''"
+            " AND u.email NOT LIKE ? AND u.cancel_requested_at IS NULL",
+            ("%@value.local",),
+        ).fetchall()
+        conteo = {}
+        for m in miembros:
+            act = db.execute(
+                "SELECT ip FROM member_activity WHERE user_id = ?"
+                " AND ip IS NOT NULL AND ip != ''"
+                " ORDER BY created_at ASC LIMIT 1",
+                (m["id"],),
+            ).fetchone()
+            ip = (act["ip"] if act else "") or ""
+            if not ip:
+                continue
+            g = db.execute("SELECT region FROM geo_cache WHERE ip = ?", (ip,)).fetchone()
+            region = (g["region"] or "") if g else ""
+            if not region:
+                _ciudad_de_ip(db, ip)
+                g = db.execute("SELECT region FROM geo_cache WHERE ip = ?", (ip,)).fetchone()
+                region = (g["region"] or "") if g else ""
+            if region:
+                conteo[region] = conteo.get(region, 0) + 1
+        registrados = [{"estado": k, "n": v} for k, v in
+                       sorted(conteo.items(), key=lambda kv: -kv[1])]
+    except Exception:
+        registrados = []
+    return jsonify({"dentro": dentro, "total": len(dentro),
+                    "registrados": registrados})
 
 
 @app.route("/admin/api/tracked-members")
