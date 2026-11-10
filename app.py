@@ -4304,10 +4304,14 @@ def bump_book_balance(db, user_id, book_name, delta, concepto="Program play sett
     _ensure_book_balances_table(db)
     now = datetime.now(TZ).strftime("%Y-%m-%d %H:%M:%S")
     row = db.execute(
-        "SELECT balance FROM book_balances WHERE user_id = ? AND book_name = ?",
+        "SELECT book_name, balance FROM book_balances "
+        "WHERE user_id = ? AND LOWER(book_name) = LOWER(?)",
         (user_id, book_name),
     ).fetchone()
     if row:
+        # Se respeta la forma exacta del nombre ya registrado (p. ej.
+        # «Kalshi»): nunca se abre una segunda fila por mayúsculas.
+        book_name = row["book_name"]
         try:
             nuevo = round(float(row["balance"] or 0) + delta, 2)
         except (TypeError, ValueError):
@@ -4480,10 +4484,12 @@ def auto_grado_tracked(db, user):
             "UPDATE tracked_plays SET %s WHERE id = ?" % set_clause,
             (*updates.values(), tid),
         )
-        # Balance automático de la casa (2026-10-05, pedido por Alex):
-        # todo lo de Alex se apuesta en Novig; la ganancia/pérdida de la
-        # jugada actualiza ese balance en cuanto se liquida (solo al pasar
-        # de pendiente a W/L, con los montos ya sincronizados; no se repite).
+        # Balance automático de la casa (2026-10-05, pedido por Alex;
+        # corrección 2026-11-09): la ganancia/pérdida va a la casa DEL
+        # TICKET de la jugada (j["casa"]) — antes se asumía Novig porque
+        # todo se apostaba ahí, pero la Edmonton del 2026-11-09 se jugó
+        # en Kalshi y su dinero se mueve en Kalshi. Solo al pasar de
+        # pendiente a W/L, con los montos ya sincronizados; no se repite.
         if era_pendiente:
             try:
                 profit = play_profit_dollars(
@@ -4498,7 +4504,8 @@ def auto_grado_tracked(db, user):
             except (TypeError, ValueError):
                 profit = 0
             if profit:
-                bump_book_balance(db, balance_uid, "Novig", profit)
+                bump_book_balance(db, balance_uid,
+                                  (j.get("casa") or "Novig"), profit)
         n += 1
     if n:
         db.commit()
@@ -11593,9 +11600,10 @@ def admin_api_settle_live():
             "UPDATE tracked_plays SET %s WHERE id = ?" % set_clause,
             (*updates.values(), t["id"]),
         )
-        # Profit con los montos ya sincronizados y bump a Novig (misma
-        # fórmula y mismo orden que auto_grado_tracked; bump_book_balance
-        # redondea el delta a 2 decimales y commitea).
+        # Profit con los montos ya sincronizados y bump a la casa del
+        # ticket (oficial["casa"], default Novig — corrección 2026-11-09,
+        # misma regla que auto_grado_tracked; bump_book_balance redondea
+        # el delta a 2 decimales y commitea).
         try:
             profit = play_profit_dollars(
                 {
@@ -11609,7 +11617,8 @@ def admin_api_settle_live():
         except (TypeError, ValueError):
             profit = 0
         if profit:
-            bump_book_balance(db, balance_uid, "Novig", profit)
+            bump_book_balance(db, balance_uid,
+                              ((oficial or {}).get("casa") or "Novig"), profit)
             delta_total += round(float(profit), 2)
         liquidadas += 1
         filas.append(t["id"])
