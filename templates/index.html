@@ -2,70 +2,79 @@
 {% block title %}The Sharp Team — Picks with the real ticket{% endblock %}
 {% block content %}
 <style>
-  /* ===== Portada pública NUEVA (2026-11-10, orden de Alex: página desde cero,
-     estructura tipo Wise Guy — video arriba, cómo funciona ANTES de cualquier
-     precio, nada que asuste: primero se enseña, el registro es gratis). ===== */
-  .wg{
-    --wg-bg:#0d1017; --wg-card:#171c28; --wg-card2:#1e2534;
-    --wg-mint:#2bd98f; --wg-gold:#e8c766; --wg-red:#e06c5f;
-    --wg-text:#f2f4f7; --wg-muted:#a9b2c3; --wg-line:#2a3040;
-    color:var(--wg-text);
+  /* ===== Portada pública — DISEÑO NUEVO (2026-11-10, orden de Alex:
+     fondo más oscuro, otro tipo de fondo, colores llamativos). Negro profundo
+     con brillos dorado/menta vivos. Sin video. El orden no cambia: primero
+     cómo funciona, los precios al final. ===== */
+  body{background:#04060a !important;}
+  main.container{background:transparent !important;}
+  .nv{
+    --nv-gold:#ffc400; --nv-gold2:#ff9d00; --nv-mint:#00e68c; --nv-red:#ff5a4e;
+    --nv-blue:#39c2ff; --nv-text:#ffffff; --nv-muted:#b9c2d4;
+    --nv-card:#0c1017; --nv-card2:#111826; --nv-line:#232c3f;
+    color:var(--nv-text);
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     -webkit-font-smoothing:antialiased;
+    background:
+      radial-gradient(560px 300px at 50% -60px, rgba(255,196,0,.20), transparent 65%),
+      radial-gradient(420px 260px at 105% 22%, rgba(0,230,140,.10), transparent 60%),
+      radial-gradient(420px 300px at -10% 68%, rgba(57,194,255,.08), transparent 60%),
+      linear-gradient(180deg,#04060a 0%, #070b13 55%, #04060a 100%);
+    border-radius:18px;
+    padding:6px 14px 10px;
   }
-  .wg section{padding:34px 2px;}
-  .wg .center{text-align:center;}
-  .wg h1{font-size:33px;line-height:1.16;font-weight:900;text-align:center;letter-spacing:-.3px;margin:0;}
-  .wg h1 .hl{color:var(--wg-mint);}
-  .wg h2{font-size:24px;font-weight:800;text-align:center;margin:0 0 10px;letter-spacing:-.2px;}
-  .wg h2 .hl{color:var(--wg-gold);}
-  .wg .sub{text-align:center;color:var(--wg-muted);font-size:15.5px;margin-top:12px;line-height:1.6;}
-  .wg .pill{display:inline-block;font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--wg-mint);border:1px solid var(--wg-mint);border-radius:999px;padding:6px 13px;margin-bottom:16px;}
-  .wg .pill.gold{color:var(--wg-gold);border-color:var(--wg-gold);}
-  .wg .cta{display:block;background:linear-gradient(180deg,#f3d67c,#dfba4e);color:#191204;font-weight:900;font-size:17px;text-align:center;text-decoration:none;border-radius:14px;padding:16px 18px;margin:22px auto 0;max-width:420px;box-shadow:0 8px 24px rgba(232,199,102,.25);}
-  .wg .micro{text-align:center;color:var(--wg-muted);font-size:13px;margin-top:12px;line-height:1.55;}
-  .wg .video-wrap{max-width:330px;margin:26px auto 0;border-radius:22px;overflow:hidden;border:1px solid var(--wg-line);box-shadow:0 18px 50px rgba(0,0,0,.5);background:#000;}
-  .wg .video-wrap video{display:block;width:100%;height:auto;}
-  .wg .steps{display:grid;gap:12px;max-width:560px;margin:20px auto 0;}
-  .wg .step{display:flex;gap:14px;background:var(--wg-card);border:1px solid var(--wg-line);border-radius:16px;padding:16px;}
-  .wg .step .n{flex:0 0 38px;width:38px;height:38px;border-radius:50%;background:var(--wg-card2);border:1px solid var(--wg-gold);color:var(--wg-gold);font-weight:900;font-size:17px;display:flex;align-items:center;justify-content:center;}
-  .wg .step h3{margin:0 0 4px;font-size:16.5px;}
-  .wg .step p{margin:0;color:var(--wg-muted);font-size:14px;line-height:1.55;}
-  .wg .proof{max-width:560px;margin:18px auto 0;display:grid;gap:10px;}
-  .wg .prow{display:flex;align-items:center;gap:12px;background:var(--wg-card);border:1px solid var(--wg-line);border-radius:14px;padding:12px 14px;}
-  .wg .prow img{width:52px;height:52px;object-fit:cover;border-radius:9px;flex:0 0 52px;}
-  .wg .prow .pk{font-weight:800;font-size:14.5px;line-height:1.3;}
-  .wg .prow .gm{color:var(--wg-muted);font-size:12.5px;margin-top:2px;}
-  .wg .prow .rs{margin-left:auto;text-align:right;flex:0 0 auto;}
-  .wg .chip{display:inline-block;font-size:11px;font-weight:900;letter-spacing:1px;border-radius:7px;padding:4px 8px;}
-  .wg .chip.won{background:rgba(43,217,143,.14);color:var(--wg-mint);border:1px solid var(--wg-mint);}
-  .wg .chip.lost{background:rgba(224,108,95,.12);color:var(--wg-red);border:1px solid var(--wg-red);}
-  .wg .prow .pf{font-weight:900;font-size:14px;margin-top:4px;}
-  .wg .pf.won{color:var(--wg-mint);} .wg .pf.lost{color:var(--wg-red);}
-  .wg .tag{font-size:10.5px;font-weight:900;letter-spacing:1.2px;color:var(--wg-gold);}
-  .wg .tag.free{color:var(--wg-mint);}
-  .wg .plans{display:grid;gap:14px;max-width:560px;margin:20px auto 0;}
-  .wg .plan{background:var(--wg-card);border:1px solid var(--wg-line);border-radius:18px;padding:20px;}
-  .wg .plan.hot{border-color:var(--wg-gold);}
-  .wg .plan h3{margin:0;font-size:19px;}
-  .wg .plan .price{font-size:15px;color:var(--wg-gold);font-weight:800;margin-top:4px;}
-  .wg .plan ul{margin:12px 0 0;padding-left:18px;color:var(--wg-muted);font-size:14.5px;line-height:1.65;}
-  .wg .faq{max-width:560px;margin:16px auto 0;display:grid;gap:10px;}
-  .wg .faq details{background:var(--wg-card);border:1px solid var(--wg-line);border-radius:14px;padding:14px 16px;}
-  .wg .faq summary{font-weight:800;font-size:15px;cursor:pointer;}
-  .wg .faq p{color:var(--wg-muted);font-size:14px;line-height:1.6;margin:8px 0 0;}
-  .wg .honest{text-align:center;color:var(--wg-muted);font-size:13.5px;margin-top:16px;line-height:1.6;}
+  .nv section{padding:32px 0;}
+  .nv .center{text-align:center;}
+  .nv h1{font-size:39px;line-height:1.1;font-weight:900;text-align:center;letter-spacing:-.5px;margin:0;}
+  .nv h1 .hl{background:linear-gradient(92deg,#ffe066,#ffc400 55%,#ff9d00);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .nv h2{font-size:25px;font-weight:900;text-align:center;margin:0 0 10px;letter-spacing:-.2px;}
+  .nv h2 .hl{color:var(--nv-gold);}
+  .nv .sub{text-align:center;color:var(--nv-muted);font-size:15.5px;margin-top:12px;line-height:1.6;}
+  .nv .pill{display:inline-block;font-size:11.5px;font-weight:900;letter-spacing:2px;text-transform:uppercase;color:#04120a;background:linear-gradient(92deg,#2bff9e,#00e68c);border-radius:999px;padding:7px 14px;margin-bottom:18px;box-shadow:0 4px 18px rgba(0,230,140,.35);}
+  .nv .pill.gold{color:#1a1200;background:linear-gradient(92deg,#ffe066,#ffc400);box-shadow:0 4px 18px rgba(255,196,0,.35);}
+  .nv .cta{display:block;background:linear-gradient(92deg,#ffe066,#ffc400 60%,#ff9d00);color:#1a1200;font-weight:900;font-size:18px;text-align:center;text-decoration:none;border-radius:15px;padding:17px 18px;margin:24px auto 0;max-width:430px;box-shadow:0 10px 32px rgba(255,196,0,.40);}
+  .nv .micro{text-align:center;color:var(--nv-muted);font-size:13px;margin-top:12px;line-height:1.55;}
+  .nv .steps{display:grid;gap:12px;max-width:560px;margin:22px auto 0;}
+  .nv .step{display:flex;gap:14px;background:linear-gradient(160deg,var(--nv-card2),var(--nv-card));border:1px solid var(--nv-line);border-radius:16px;padding:17px;}
+  .nv .step .n{flex:0 0 40px;width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#ffe066,#ff9d00);color:#1a1200;font-weight:900;font-size:18px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(255,196,0,.35);}
+  .nv .step h3{margin:0 0 4px;font-size:16.5px;}
+  .nv .step p{margin:0;color:var(--nv-muted);font-size:14px;line-height:1.55;}
+  .nv .proof{max-width:560px;margin:18px auto 0;display:grid;gap:10px;}
+  .nv .prow{display:flex;align-items:center;gap:12px;background:linear-gradient(160deg,var(--nv-card2),var(--nv-card));border:1px solid var(--nv-line);border-radius:14px;padding:12px 14px;}
+  .nv .prow img{width:52px;height:52px;object-fit:cover;border-radius:9px;flex:0 0 52px;}
+  .nv .prow .pk{font-weight:800;font-size:14.5px;line-height:1.3;}
+  .nv .prow .gm{color:var(--nv-muted);font-size:12.5px;margin-top:2px;}
+  .nv .prow .rs{margin-left:auto;text-align:right;flex:0 0 auto;}
+  .nv .chip{display:inline-block;font-size:11px;font-weight:900;letter-spacing:1px;border-radius:7px;padding:4px 9px;}
+  .nv .chip.won{background:var(--nv-mint);color:#04120a;}
+  .nv .chip.lost{background:var(--nv-red);color:#1c0503;}
+  .nv .prow .pf{font-weight:900;font-size:14px;margin-top:4px;}
+  .nv .pf.won{color:var(--nv-mint);} .nv .pf.lost{color:var(--nv-red);}
+  .nv .tag{font-size:10.5px;font-weight:900;letter-spacing:1.2px;color:var(--nv-gold);}
+  .nv .tag.free{color:var(--nv-mint);}
+  .nv .plans{display:grid;gap:14px;max-width:560px;margin:20px auto 0;}
+  .nv .plan{background:linear-gradient(165deg,var(--nv-card2),var(--nv-card));border:1px solid var(--nv-line);border-radius:18px;padding:20px;}
+  .nv .plan.mint{border-color:rgba(0,230,140,.55);box-shadow:0 0 26px rgba(0,230,140,.10);}
+  .nv .plan.hot{border:1.5px solid var(--nv-gold);box-shadow:0 0 30px rgba(255,196,0,.16);}
+  .nv .plan h3{margin:0;font-size:19px;}
+  .nv .plan .price{font-size:15.5px;font-weight:900;margin-top:5px;}
+  .nv .plan .price.m{color:var(--nv-mint);} .nv .plan .price.g{color:var(--nv-gold);}
+  .nv .plan ul{margin:12px 0 0;padding-left:18px;color:var(--nv-muted);font-size:14.5px;line-height:1.65;}
+  .nv .faq{max-width:560px;margin:16px auto 0;display:grid;gap:10px;}
+  .nv .faq details{background:var(--nv-card);border:1px solid var(--nv-line);border-radius:14px;padding:14px 16px;}
+  .nv .faq summary{font-weight:800;font-size:15px;cursor:pointer;}
+  .nv .faq p{color:var(--nv-muted);font-size:14px;line-height:1.6;margin:8px 0 0;}
+  .nv .honest{text-align:center;color:var(--nv-muted);font-size:13.5px;margin-top:16px;line-height:1.6;}
 </style>
 
-<div class="wg">
+<div class="nv">
 
-  <!-- HERO: video primero, como la de ellos — sin pedir nada -->
+  <!-- HERO — sin video, sin pedir nada -->
   <section class="center">
     <span class="pill">Free plays every day · Real ticket</span>
     <h1>Sports picks with the <span class="hl">ticket to prove it.</span></h1>
     <p class="sub">Every play is posted <strong>before game time</strong>, with the real bet slip.<br>
     Win or lose, every result is graded in public. Nothing hidden, nothing edited.</p>
-
     <a class="cta" href="{{ url_for('register') }}">Create my free account</a>
     <p class="micro">Free account — email only, 30 seconds.<br>
     Gold plays are free forever · Platinum is free your whole first month. No card.</p>
@@ -100,7 +109,7 @@
         {% if p.img %}<img src="{{ p.img }}" alt="Betting ticket for {{ p.pick }}" loading="lazy">{% endif %}
         <div>
           <span class="tag{% if p.nivel == 'FREE' or p.nivel == 'GOLD' %} free{% endif %}">{{ 'GOLD' if p.nivel == 'FREE' else p.nivel }}</span>
-          <div class="pk">{{ p.pick }} <span style="color:var(--wg-muted);font-weight:600;">({{ p.cuota_txt }})</span></div>
+          <div class="pk">{{ p.pick }} <span style="color:var(--nv-muted);font-weight:600;">({{ p.cuota_txt }})</span></div>
           {% if p.juego %}<div class="gm">{{ p.juego }}</div>{% endif %}
         </div>
         <div class="rs">
@@ -111,7 +120,7 @@
       {% endfor %}
     </div>
     {% if total >= 500 %}
-    <p class="honest">Documented record: <strong style="color:var(--wg-text);">{{ wins }}-{{ losses }}</strong> · ROI <strong style="color:var(--wg-text);">{{ roi }}%</strong> — every play counted.</p>
+    <p class="honest">Documented record: <strong style="color:var(--nv-text);">{{ wins }}-{{ losses }}</strong> · ROI <strong style="color:var(--nv-text);">{{ roi }}%</strong> — every play counted.</p>
     {% else %}
     <p class="honest">Every official play is documented and counted — {{ total }} so far, on the way to a fully public record.</p>
     {% endif %}
@@ -123,9 +132,9 @@
     <div class="center"><span class="pill gold">What you get</span></div>
     <h2>Start free. <span class="hl">Decide later.</span></h2>
     <div class="plans">
-      <div class="plan">
+      <div class="plan mint">
         <h3>🆓 Gold — free forever</h3>
-        <div class="price">$0 — always</div>
+        <div class="price m">$0 — always</div>
         <ul>
           <li>Daily Gold plays, open to everyone</li>
           <li>Every play with its real ticket</li>
@@ -135,14 +144,14 @@
       </div>
       <div class="plan hot">
         <h3>⭐ Platinum — everything</h3>
-        <div class="price">Your first month: FREE — no card</div>
+        <div class="price g">Your first month: FREE — no card</div>
         <ul>
           <li>Every Platinum play, with its real ticket</li>
           <li>The Vault play</li>
           <li>+EV Board, Player Props, Line Moves and Sharp Money</li>
           <li>The private Telegram channel</li>
         </ul>
-        <p style="color:var(--wg-muted);font-size:13.5px;line-height:1.6;margin:14px 0 0;">After your free month, keeping Platinum is $15.99/week — only if you decide it's worth it. If you don't, your free Gold plays never stop.</p>
+        <p style="color:var(--nv-muted);font-size:13.5px;line-height:1.6;margin:14px 0 0;">After your free month, keeping Platinum is $15.99/week — only if you decide it's worth it. If you don't, your free Gold plays never stop.</p>
       </div>
     </div>
     <a class="cta" href="{{ url_for('register') }}">Create my free account</a>
@@ -169,7 +178,7 @@
     <h2>See today's plays — <span class="hl">free.</span></h2>
     <p class="sub">The card is on the Dashboard, with the real tickets.</p>
     <a class="cta" href="{{ url_for('register') }}">Create my free account</a>
-    <p class="micro">Already a member? <a href="{{ url_for('login') }}" style="color:var(--wg-gold);">Log in</a></p>
+    <p class="micro">Already a member? <a href="{{ url_for('login') }}" style="color:var(--nv-gold);">Log in</a></p>
   </section>
 
 </div>
