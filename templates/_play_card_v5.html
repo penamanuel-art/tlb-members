@@ -2,16 +2,13 @@
    esqueleto tipo WGT con tipografia FINA y pequena, ticket de frente via
    Slip y hoja de detalle al tocar la tarjeta. SOLO cambia el look: mismas
    variables, mismas condiciones y mismos comportamientos que _play_card.
-   En produccion se incluye UNICAMENTE para la cuenta de Alex (is_alex en
-   home_lux) hasta que el apruebe publicarla para todos. #}
-{# PRUEBA DISENO MINIMAL (2026-11-08, orden de Alex: «de prueba — nada
-   confirmado»): SOLO la cuenta de Alex (is_alex) ve la cara nueva de esta
-   tarjeta — Minimal fondo #101318 + banda dorada superior estilo Diseno 3 —
-   mediante la rama {% if is_alex %} de la cara y su bloque <style> propio.
-   TODOS los demas miembros ven la cara v5 de siempre, SIN cambios (rama
-   {% else %}, intacta). Popup de chips, hoja de detalle y scripts son
-   compartidos y no se tocaron. Reversion en un paso si Alex la rechaza:
-   borrar la rama is_alex de la cara y el <style> «PRUEBA MINIMAL». #}
+   Alex aprobo publicarla para todos el 2026-11-09 (ver la nota
+   siguiente). #}
+{# DISENO MINIMAL — APROBADO Y PUBLICADO PARA TODOS (2026-11-09, Alex:
+   «Me gusta, pasalo a todos»): la cara .v5m, probada solo en su cuenta
+   desde el 2026-11-08, es ahora la UNICA cara de la tarjeta para todos
+   los miembros; la cara .v5c anterior se retiro en esta misma edicion.
+   Popup de chips, hoja de detalle y scripts siguen compartidos. #}
 {% set is_vip = p.nivel in ['PLATINUM', 'ELITE'] %}
 {# Place SOLO en las 11 casas de Alex (2026-10-26, pedido de Alex): prioridad 1) p.place_casa (mejor entre sus 11, calculada al publicar); 2) p.casa si esta en sus 11; 3) Novig (su casa de tickets). Nunca una casa fuera de sus 11. #}
 {% set _alex_books = ['theScore Bet', 'Polymarket', 'DraftKings', 'bet365', 'Hard Rock Bet', 'Fanatics', 'Fanatics Sportsbook', 'BetMGM', 'BetRivers', 'FanDuel', 'Bally Bet', 'Kalshi'] %}
@@ -47,7 +44,7 @@
 {% endif %}
 {# Titular con la linea en Spread/Total (2026-11-03, queja de Alex: la cara decia solo «Spread» y el +14.5 no salia).
    La linea se compone del dato guardado: mercado primero, con respaldo en pick. Moneyline NO cambia. #}
-{% set _bt_label = ('ML' if is_alex else 'Moneyline') if p.bettype == 'Moneyline' else p.bettype %}
+{% set _bt_label = 'ML' if p.bettype == 'Moneyline' else p.bettype %}
 {% if p.bettype in ['Spread', 'Total'] %}
 {% set _ns = namespace(label='', prev='') %}
 {% for _tok in ((p.mercado or '') ~ ' ' ~ (p.pick or '')).split() %}
@@ -171,19 +168,8 @@ body.v5-sheet-open .ticker-dock-bottom,body.v5-sheet-open .v2-bottomnav,body.v5-
 .tst-sheet-btn{flex:1;text-align:center;font-size:14px;font-weight:700;border-radius:12px;padding:12px 4px;cursor:pointer;border:1px solid #262C36;background:#1D2029;color:#eef1f7}
 .tst-sheet-btn.save{background:#11CB87;border-color:#11CB87;color:#04150d}
 </style>
-{% if is_alex %}
 <style>
-/* Cartas con el MISMO fondo azul marino del Home - SOLO cuenta de Alex (2026-10-23):
-   prueba pedida por Alex en su Dashboard antes de decidir publicarlo. */
-body.v2 .v5c{background:linear-gradient(180deg,#0B0E13,#1D2029)}
-.v5c-topsec{background:transparent}
-.v5c-botsec{background:transparent}
-.v5c-notch{background:#0c0f16}
-</style>
-{% endif %}
-{% if is_alex %}
-<style>
-/* ===== PRUEBA MINIMAL (2026-11-08) — SOLO cuenta de Alex (is_alex) =====
+/* ===== DISENO MINIMAL (2026-11-08; publicado para todos el 2026-11-09) =====
    Cara nueva de la tarjeta: fondo plano #101318, borde #23262e, lineas de 1px
    (sin divisor de muescas ni barra lateral), banda dorada superior con el
    nivel (grada #8a6d1f -> #e8c766 -> #8a6d1f, texto oscuro #14100a) y
@@ -259,9 +245,7 @@ body.v2 .v5c{background:linear-gradient(180deg,#0B0E13,#1D2029)}
 .v5timg{background:#101318}
 .v5pop-in{background:#101318;border-color:#23262e}
 </style>
-{% endif %}
-{% if is_alex %}
-{# Cara MINIMAL de prueba — SOLO Alex (ver nota de cabecera). Banda dorada =
+{# Cara MINIMAL (ver nota de cabecera). Banda dorada =
    encabezado de nivel (sustituye a la pildora interna para no duplicar);
    liga a la derecha de la banda. Mismos datos, handlers y botones que la
    cara de siempre: data-v5-open abre la hoja, data-v5-chip abre el popup,
@@ -312,55 +296,7 @@ body.v2 .v5c{background:linear-gradient(180deg,#0B0E13,#1D2029)}
   </div>
 {% if p.writeup and p.writeup.model_prob %}<button type="button" class="v5m-strip" data-v5-open="{{ p.id }}" data-v5-why="1"><span class="v5m-strip-t">WHY WE LIKE IT</span><span class="v5m-strip-n">Model {% if p.writeup.model_prob is number %}{{ '%.1f%%'|format(p.writeup.model_prob * 100) }}{% else %}{{ p.writeup.model_prob }}{% endif %} &middot; Edge {{ p.writeup.edge }}{% if p.writeup.ev is defined and p.writeup.ev is not none and p.writeup.ev != '' %} &middot; EV {% if p.writeup.ev is number %}{{ '%+.1f%%'|format(p.writeup.ev * 100) }}{% else %}{{ p.writeup.ev }}{% endif %}{% endif %}</span><span class="v5m-strip-hint">Tap to expand full data ▾</span></button>{% endif %}
 </div>
-{% else %}
-<div class="v5c">
-  <div class="v5c-edge{% if not is_vip and not is_vault %} gold{% endif %}"></div>
-  <div class="v5c-topsec">
-  <div class="v5c-top">
-    {% if is_vip %}<span class="v5c-pill plat">💎 PLATINUM</span><span class="v5c-kind">Platinum play</span>{% elif is_value %}<span class="v5c-pill gold">💎 VALUE PLAY</span><span class="v5c-kind">Value play</span>{% elif is_free %}<span class="v5c-pill gold">FREE PICK</span><span class="v5c-kind">Free Pick play</span>{% elif is_vault %}<span class="v5c-pill plat">🔒 THE VAULT PLAY</span><span class="v5c-kind">Vault play</span>{% else %}<span class="v5c-pill gold">GOLD</span><span class="v5c-kind">Gold play</span>{% endif %}
-    <span class="v5c-liga">{{ p.liga or '' }}</span>
-  </div>
-  <div class="v5c-head">
-    {% if _logo %}<img class="v5c-logo" src="{{ _logo }}" alt="{{ p.abbr }} logo" loading="lazy" onerror="this.remove()">{% endif %}
-    <div style="flex:1;min-width:0">
-      <div class="v5c-title" data-v5-open="{{ p.id }}" style="cursor:pointer">{{ p.team_name or p.abbr }} {{ _bt_label }}</div>
-      <div class="v5c-sub" data-v5-open="{{ p.id }}" style="cursor:pointer">{{ p.team_name or p.abbr }} @ {{ p.opp_name or p.opp_abbr }} &middot; {{ _gt12 }}</div>
-    </div>
-  </div>
-  {% if p.posted %}<div class="v5c-posted">🕐 Posted {{ p.posted }}</div>{% endif %}
-  {% if _res == 'W' %}<span class="v5c-res won">WON{% if p.profit is defined and p.profit is not none %} &middot; +${{ '%.2f'|format(p.profit) }}{% endif %}</span>{% elif _res == 'L' %}<span class="v5c-res lost">LOST{% if p.profit is defined and p.profit is not none %} &middot; -${{ '%.2f'|format(p.profit|abs) }}{% endif %}</span>{% endif %}
-  {% if _ci.get('lines') or _ci.get('injuries') or _ci.get('weather') %}
-  <div class="v5c-chips">
-    {% if _ci.get('lines') %}<button type="button" class="v5c-chip" data-v5-chip="lines" data-play="{{ p.id }}">↗ {{ _ci.lines.chip }}</button>{% endif %}
-    {% if _ci.get('injuries') %}<button type="button" class="v5c-chip v5c-chip-inj" data-v5-chip="injuries" data-play="{{ p.id }}"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#EE8CA5" stroke-width="2.4" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 3.5h5V9.5h6v5h-6v6h-5v-6h-6v-5h6z"/></svg> {{ _ci.injuries.total }}</button>{% endif %}
-    {% if _ci.get('weather') %}{% if _ci.weather.temp_f is defined and _ci.weather.temp_f is not none %}<button type="button" class="v5c-chip" data-v5-chip="weather" data-play="{{ p.id }}">🌡 {{ _ci.weather.temp_f }}°</button>{% elif _ci.weather.indoor %}<button type="button" class="v5c-chip" data-v5-chip="weather" data-play="{{ p.id }}">🏟 {{ _ci.weather.venue }}</button>{% endif %}{% endif %}
-  </div>
-  {% endif %}
-  </div>
-  <div class="v5c-botsec">
-  <div class="v5c-div"><span class="v5c-notch l"></span><span class="v5c-notch r"></span></div>
-  <div class="v5c-nums" data-v5-open="{{ p.id }}" style="cursor:pointer">
-    <div><div class="v5c-k">PRICE POSTED</div><div class="v5c-v">{{ fmt_odds(p.cuota) }}</div></div>
-    <div><div class="v5c-k">STAKE</div><div class="v5c-v">{{ '%g' % p.stake_unidades }}u</div><div class="v5c-amt">${{ '%g' % p.stake_monto }}</div></div>
-    <div class="v5c-tk"><div class="v5c-k">TICKET</div>{% if p.comprobante %}<span class="v5c-matched">✓ MATCHED</span>{% else %}<span class="v5c-pend">PENDING</span>{% endif %}</div>
-  </div>
-  <div class="v5c-btns">
-    <a class="v5c-btn" href="{{ _book_url }}" target="_blank" rel="noopener">↗ {{ _place_label }}</a>
-    <button class="v5c-btn" type="button" style="flex:0 0 48px;padding:10px 4px" aria-label="Share" onclick="(function(){var u=window.location.origin+'/home';if(navigator.share){navigator.share({title:'The Sharp Team',text:'{{ p.team_name or p.abbr }} {{ p.bettype }}',url:u}).catch(function(){});}else{navigator.clipboard&&navigator.clipboard.writeText(u);}})()">↗</button>
-    {% if p.comprobante and not force_pre %}
-      <a class="v5c-btn" href="javascript:void(0)" data-v5-open="{{ p.id }}">🎫 Receipt</a>
-    {% endif %}
-    {% if p.nivel != 'VALUE' %}
-      {% if p.id in tracked_ids %}
-        <span class="v5c-tracked">✓ Tracked</span>
-      {% else %}
-        <a class="v5c-track tstc-track" style="flex:1.15 1 0;padding:10px 4px;color:#DCDCE1" href="{{ url_for('track', play_id=p.id) }}" data-track-url="{{ url_for('track', play_id=p.id) }}">+ Track</a>
-      {% endif %}
-    {% endif %}
-  </div>
-  </div>
-</div>
-{% endif %}
+
 
 {# Popup de chips (lesionados / clima / línea) — datos del overlay card_info #}
 {% if _ci %}
@@ -371,7 +307,7 @@ body.v2 .v5c{background:linear-gradient(180deg,#0B0E13,#1D2029)}
   </div>
 </div>
 <script type="application/json" id="v5-ci-{{ p.id }}">{{ _ci|tojson }}</script>
-{% if is_alex and p.writeup %}<script type="application/json" id="v5-wu-{{ p.id }}">{{ p.writeup|tojson }}</script>{% endif %}
+{% if p.writeup %}<script type="application/json" id="v5-wu-{{ p.id }}">{{ p.writeup|tojson }}</script>{% endif %}
 {% endif %}
 
 {# Hoja de detalle (bottom sheet) #}
