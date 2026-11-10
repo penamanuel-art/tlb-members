@@ -47,13 +47,6 @@ fbq('track', 'PageView');
   .hauth{margin-left:auto;display:flex;align-items:center;gap:14px;}
   .hauth .login{color:#fff;text-decoration:none;font-size:14px;font-weight:600;}
   .btn{display:inline-block;background:var(--grn);color:var(--grnd);text-decoration:none;font-weight:800;font-size:14px;border-radius:10px;padding:10px 18px;}
-  /* Tira de resultados (su ticker) */
-  .ticker{border-bottom:1px solid var(--line);background:var(--panel2);overflow-x:auto;scrollbar-width:none;}
-  .ticker::-webkit-scrollbar{display:none;}
-  .trow{display:flex;gap:10px;padding:10px 20px;width:max-content;margin:0 auto;}
-  .tchip{display:flex;align-items:center;gap:8px;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:6px 13px;font-size:12.5px;font-weight:600;white-space:nowrap;color:var(--tx);}
-  .tchip .r{font-weight:900;font-size:11px;letter-spacing:.6px;}
-  .tchip .r.w{color:var(--grn2);} .tchip .r.l{color:var(--red);}
   /* Hero */
   .hero{padding:58px 0 8px;text-align:center;}
   .eyebrow{font-size:11px;font-weight:800;letter-spacing:2.6px;text-transform:uppercase;color:var(--grn2);}
@@ -162,20 +155,11 @@ fbq('track', 'PageView');
   </div>
 </header>
 
-{% if recent_plays %}
-<div class="ticker"><div class="trow">
-  {% for p in recent_plays %}
-  <span class="tchip">{{ p.pick }} <span class="r {% if p.resultado == 'WON' %}w{% else %}l{% endif %}">{{ p.resultado }}</span></span>
-  {% endfor %}
-</div></div>
-{% endif %}
-
 <div class="hero">
   <div class="wrap">
     <div class="eyebrow">Sports handicapping · The Sharp Team</div>
     <h1>Every pick backed by a<br><span class="hl">real ticket.</span> Graded in public.</h1>
     <p class="sub">Expert sports picks from a disciplined handicapping system. Every play is posted before game time with the actual bet slip — and every result is graded in public, win or lose. No ghost picks, no cherry-picked screenshots.</p>
-    <a class="cta" href="#join">Start free →</a>
     <p class="micro">Gold plays free forever · Platinum free your first month — no card</p>
     <div class="stats">
       <div class="stat"><div class="v">100<span>%</span></div><div class="k">Posted pre-game</div></div>
@@ -286,10 +270,6 @@ fbq('track', 'PageView');
         <p class="note">After your free month, keeping Platinum is $15.99/week — only if you decide it has earned it. We never took your card, so nothing is ever charged on its own.</p>
       </div>
     </div>
-    <div class="center">
-      <a class="cta" href="#join" style="margin-top:32px;">Create my free account</a>
-      <p class="honest">No card. No charge. Just your email.</p>
-    </div>
   </div>
 </section>
 
@@ -341,7 +321,6 @@ fbq('track', 'PageView');
         <h4>Members</h4>
         <ul>
           <li><a href="{{ url_for('login') }}">Log in</a></li>
-          <li><a href="#join">Create free account</a></li>
           <li><a href="#membership">Membership</a></li>
           <li><a href="#picks">Graded picks</a></li>
         </ul>
