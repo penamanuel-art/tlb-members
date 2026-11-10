@@ -9609,6 +9609,30 @@ def api_own_bets_list():
     return jsonify({"ok": True, "bets": [dict(r) for r in rows]})
 
 
+@app.route("/admin/api/own-bets/delete", methods=["POST"])
+def api_own_bets_delete():
+    """Elimina una apuesta propia por id (2026-11-09: corregir filas
+    creadas en el bucket equivocado, por orden del dueño de la cuenta).
+    Auth: sesión admin o X-Admin-Key, igual que add/grade."""
+    if not _admin_api_autorizado():
+        return jsonify({"ok": False}), 403
+    data = request.get_json(silent=True) or {}
+    try:
+        bet_id = int(data.get("id") or 0)
+    except (TypeError, ValueError):
+        bet_id = 0
+    if not bet_id:
+        return jsonify({"ok": False, "error": "id"}), 400
+    db = get_db()
+    row = db.execute("SELECT id FROM own_bets WHERE id = ?",
+                     (bet_id,)).fetchone()
+    if not row:
+        return jsonify({"ok": False, "error": "not found"}), 404
+    db.execute("DELETE FROM own_bets WHERE id = ?", (bet_id,))
+    db.commit()
+    return jsonify({"ok": True, "deleted": bet_id})
+
+
 @app.route("/admin/api/own-bets/grade", methods=["POST"])
 def api_own_bets_grade():
     if not _admin_api_autorizado():
