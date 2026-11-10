@@ -5467,7 +5467,7 @@ def index():
         return redirect(url_for("home"))
     wins, losses, total, roi = _public_stats()
     return render_template("index.html", wins=wins, losses=losses, total=total, roi=roi,
-                           recent_plays=_recent_ticket_plays(6))
+                           recent_plays=_recent_ticket_plays(10))
 
 
 @app.route("/privacy")
