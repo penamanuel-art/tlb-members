@@ -57,10 +57,10 @@ header{position:sticky;top:0;z-index:60;background:rgba(9,11,16,.94);backdrop-fi
 .ticker .dot{color:var(--grn)}
 .ticker .post{margin-left:auto;color:var(--mut);font-weight:600;padding-left:14px}
 
-/* ---------- results strip (static, single line) ---------- */
-.rticker{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:7px 0;margin-bottom:30px;text-align:center}
-.rt-line{font-size:12.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--mut)}
-.rt-line .rt-lab{color:var(--grn)}
+/* ---------- results band (static, single line, full width) ---------- */
+.rticker{background:#0B3D2E;border-top:1px solid rgba(62,207,142,.45);border-bottom:1px solid rgba(62,207,142,.45);padding:11px 0;margin-bottom:30px;text-align:center;width:100vw;margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw)}
+.rt-line{font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--grn2)}
+.rt-line .rt-lab{color:var(--grn2)}
 
 /* ---------- hero ---------- */
 .hero{padding:34px 0 56px;background:radial-gradient(760px 360px at 50% -60px,rgba(16,204,135,.13),transparent 65%),var(--bg);border-bottom:1px solid var(--line)}
