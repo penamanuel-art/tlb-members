@@ -11005,14 +11005,7 @@ def admin_api_en_vivo():
     total}. Fuera: admins, cuentas @value.local y cancelaciones
     pedidas (regla de listas 2026-10-30). Auth: sesion admin O header
     X-Admin-Key == ADMIN_API_KEY (igual que entradas-hoy)."""
-    api_key = os.environ.get("ADMIN_API_KEY", "")
-    header_key = request.headers.get("X-Admin-Key", "")
-    is_cron = api_key and header_key and hmac.compare_digest(header_key, api_key)
-    try:
-        is_admin = is_admin_for(current_user())
-    except Exception:
-        is_admin = False
-    if not (is_cron or is_admin):
+    if not _admin_api_autorizado():
         return jsonify({"error": "admin only"}), 403
     db = get_db()
     db.execute("CREATE TABLE IF NOT EXISTS presencia (user_id INTEGER PRIMARY KEY, ultimo TEXT, ip TEXT)")
@@ -11339,7 +11332,7 @@ def _admin_api_autorizado():
     if api_key and header_key and hmac.compare_digest(header_key, api_key):
         return True
     try:
-        return bool(is_admin_for(current_user()))
+        return bool(_admin_o_cuenta_alex(current_user()))
     except Exception:
         return False
 
