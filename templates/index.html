@@ -274,12 +274,12 @@
 
   <!-- ===== HERO ===== -->
   <section class="hp-hero">
-    <div class="center"><span class="pill gold">Start today for $1 — your first week of Platinum, then $15.99/week</span></div>
+    <div class="center"><span class="pill gold">Today's Gold plays are FREE — posted with the real ticket</span></div>
     <h1>Stop betting blind.<br>Start betting with <span class="hl">a system behind every play.</span></h1>
     <p class="sub">Daily plays priced by a real model, published before game time, and proven with the actual ticket — every single day.</p>
-    <a class="cta" href="{{ url_for('register') }}">Start for $1</a>
+    <a class="cta" href="{{ url_for('register') }}">Get today's free plays</a>
     <a class="cta ghost" href="{{ url_for('login') }}">I already have an account</a>
-    <p class="micro"><b>$1 today.</b> That covers your first week of Platinum — after that, $15.99/week. Cancel anytime.</p>
+    <p class="micro"><b>Free account.</b> Gold plays are free every day. Want everything? Platinum is $1 for your first week, then $15.99/week. Cancel anytime.</p>
     <div class="hp-proof">
       {% if total >= 500 %}
       <b>{{ wins }}-{{ losses }}, {{ "%+.2f"|format(roi) }}% ROI</b> — every play documented and graded in public.
