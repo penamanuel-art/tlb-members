@@ -43,7 +43,7 @@ fbq('track', 'PageView');
   header{position:sticky;top:0;z-index:50;background:rgba(10,14,21,.96);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);}
   .hrow{display:flex;align-items:center;gap:14px;height:64px;}
   .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:#fff;}
-  .brand img{width:36px;height:36px;object-fit:contain;}
+  .brand img{height:42px;width:auto;display:block;}
   .brand b{font-size:16.5px;font-weight:800;letter-spacing:-.2px;}
   nav{display:none;gap:26px;margin-left:26px;}
   nav a{color:var(--tx2);text-decoration:none;font-size:14px;font-weight:600;}
@@ -55,7 +55,7 @@ fbq('track', 'PageView');
   /* Hero */
   .hero{background:linear-gradient(180deg,var(--ink) 0%,var(--ink2) 100%);color:var(--txd);}
   .hero-in{padding:56px 0 0;text-align:center;}
-  .hero .crest{width:78px;height:78px;object-fit:contain;}
+  .hero .herologo{width:min(330px,82vw);height:auto;display:block;margin:0 auto;}
   .eyebrow{font-size:11px;font-weight:800;letter-spacing:2.6px;text-transform:uppercase;color:var(--gold);margin-top:16px;}
   h1{font-size:39px;line-height:1.12;font-weight:900;letter-spacing:-1px;margin-top:14px;}
   h1 .hl{color:var(--gold);}
@@ -140,7 +140,7 @@ fbq('track', 'PageView');
 
 <header>
   <div class="wrap hrow">
-    <a class="brand" href="{{ url_for('index') }}"><img src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team logo"><b>The Sharp Team</b></a>
+    <a class="brand" href="{ url_for('index') }"><img src="{{ url_for('static', filename='img/sharp-team-header.jpg') }}" alt="The Sharp Team"></a>
     <nav>
       <a href="#picks">Graded picks</a>
       <a href="#how">How it works</a>
@@ -156,7 +156,7 @@ fbq('track', 'PageView');
 
 <div class="hero">
   <div class="wrap hero-in">
-    <img class="crest" src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team">
+    <img class="herologo" src="{ url_for('static', filename='img/sharp-team-header.jpg') }" alt="The Sharp Team">
     <div class="eyebrow">Sports handicapping · Est. 2026</div>
     <h1>Sports picks with the <span class="hl">real ticket</span><br>to prove it.</h1>
     <p class="sub">Every play is posted before game time, with the actual bet slip.
@@ -295,7 +295,7 @@ fbq('track', 'PageView');
   <div class="wrap">
     <div class="frow">
       <div>
-        <a class="brand" href="{{ url_for('index') }}"><img src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team logo"><b>The Sharp Team</b></a>
+        <a class="brand" href="{ url_for('index') }"><img src="{{ url_for('static', filename='img/sharp-team-header.jpg') }}" alt="The Sharp Team"></a>
         <p>Sports handicapping with proof: every play posted before game time, with its real ticket, and graded in public — win or lose.</p>
       </div>
       <div>
