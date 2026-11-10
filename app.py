@@ -5492,20 +5492,11 @@ def contact_page():
 
 @app.route("/free")
 def free_landing():
-    """Landing pública estilo WGT para la membresía gratuita (pedido por Alex 2026-10-03).
-
-    OJO: /free-plays es el tracker admin de jugadas simuladas — esta página usa /free.
-    Stats en vivo desde data/archive.json (verificado 2026-10-03: 15-5, +52.08% ROI, 20 jugadas).
-    """
-    wins, losses, total, roi = _public_stats()
-    return render_template(
-        "free_landing.html",
-        wins=wins,
-        losses=losses,
-        total=total,
-        roi=roi,
-        stripe_url=url_for("register"),
-    )
+    """Redirige a la portada nueva (2026-11-10, orden de Alex): la landing
+    vieja de /free quedó retirada — traía datos vencidos (hora 1:00 PM,
+    «Platinum starts at $1») que contradicen la doctrina vigente. Todo el
+    tráfico público entra por la portada aprobada (/)."""
+    return redirect("/", code=302)
 
 
 def compute_ticker_days():
@@ -6957,7 +6948,7 @@ def activar_cuenta(token):
 # link_clicks y redirige al destino. Un watcher en la VM lee
 # /api/clicks-feed y avisa a Alex por Telegram al instante.
 TRACKED_LINKS = {
-    "ig": "/registro",  # link del anuncio IG/FB: aterriza en el REGISTRO gratis (orden Alex 2026-11-09: el anuncio dice gratis y el click caía en la página de pago — «la gente se va corriendo»); la venta va después, dentro
+    "ig": "/",  # link de Instagram: aterriza en la PORTADA NUEVA aprobada (2026-11-10, orden de Alex: /go/ig seguía cayendo en la landing vieja de registro y Alex lo cazó en vivo — «todavía veo la misma página»); el registro sigue a un toque desde la portada
 }
 
 
