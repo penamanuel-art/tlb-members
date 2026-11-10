@@ -54,8 +54,21 @@ header{position:sticky;top:0;z-index:60;background:rgba(9,11,16,.94);backdrop-fi
 .ticker .dot{color:var(--grn)}
 .ticker .post{margin-left:auto;color:var(--mut);font-weight:600;padding-left:14px}
 
+/* ---------- results ticker ---------- */
+.rticker{overflow:hidden;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:8px 0;margin-bottom:30px;-webkit-mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent);mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent)}
+.rticker-track{display:flex;width:max-content;animation:rtick 45s linear infinite}
+.rticker:hover .rticker-track{animation-play-state:paused}
+.rticker-set{display:flex;align-items:center;white-space:nowrap;font-size:12.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mut)}
+.rticker-set>span{margin:0 10px}
+.rticker-set .rt-lab{color:var(--grn)}
+.rticker-set .rt-dot{color:var(--grn);margin:0 2px}
+.rticker-set .win{color:var(--grn2)}
+.rticker-set .lost{color:var(--red)}
+@keyframes rtick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@media (prefers-reduced-motion:reduce){.rticker-track{animation:none}}
+
 /* ---------- hero ---------- */
-.hero{padding:68px 0 56px;background:radial-gradient(760px 360px at 50% -60px,rgba(16,204,135,.13),transparent 65%),var(--bg);border-bottom:1px solid var(--line)}
+.hero{padding:34px 0 56px;background:radial-gradient(760px 360px at 50% -60px,rgba(16,204,135,.13),transparent 65%),var(--bg);border-bottom:1px solid var(--line)}
 .hero-grid{text-align:left}
 .hero h1{font-size:clamp(36px,11vw,84px);line-height:1.16;font-weight:900;letter-spacing:-.02em;margin:16px 0 18px;text-align:left}
 .hero h1 .l{display:block}
@@ -271,6 +284,38 @@ footer .copy{font-size:12.5px;color:var(--dim);margin-top:8px}
 <!-- 3 · HERO -->
 <div class="hero">
   <div class="wrap">
+    <div class="rticker" aria-label="Latest results">
+      <div class="rticker-track">
+        <div class="rticker-set">
+          <span><span class="rt-lab">Last 5 plays</span> · 4-1 · <span class="win">+$143.51</span></span>
+          <span class="rt-dot">•</span>
+          <span>Edmonton Oilers ML — <span class="win">Won +$35.71</span></span>
+          <span class="rt-dot">•</span>
+          <span>Dallas Mavericks ML — <span class="win">Won +$40.00</span></span>
+          <span class="rt-dot">•</span>
+          <span>Los Angeles Clippers ML — <span class="win">Won +$64.20</span></span>
+          <span class="rt-dot">•</span>
+          <span>Calgary Flames ML — <span class="win">Won +$63.60</span></span>
+          <span class="rt-dot">•</span>
+          <span>Toronto Raptors ML — <span class="lost">Lost −$60.00</span></span>
+          <span class="rt-dot">•</span>
+        </div>
+        <div class="rticker-set" aria-hidden="true">
+          <span><span class="rt-lab">Last 5 plays</span> · 4-1 · <span class="win">+$143.51</span></span>
+          <span class="rt-dot">•</span>
+          <span>Edmonton Oilers ML — <span class="win">Won +$35.71</span></span>
+          <span class="rt-dot">•</span>
+          <span>Dallas Mavericks ML — <span class="win">Won +$40.00</span></span>
+          <span class="rt-dot">•</span>
+          <span>Los Angeles Clippers ML — <span class="win">Won +$64.20</span></span>
+          <span class="rt-dot">•</span>
+          <span>Calgary Flames ML — <span class="win">Won +$63.60</span></span>
+          <span class="rt-dot">•</span>
+          <span>Toronto Raptors ML — <span class="lost">Lost −$60.00</span></span>
+          <span class="rt-dot">•</span>
+        </div>
+      </div>
+    </div>
     <div class="hero-grid">
       <div>
         <div class="eyebrow">Sports handicapping · The Sharp Team</div>
