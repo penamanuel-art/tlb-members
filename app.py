@@ -156,6 +156,15 @@ PLATINUM_PRICE_SEMANAL = "price_1USPJvRwCjFIsFzUH8rwj5K8"
 PLATINUM_TRIAL_DAYS_LEGACY = 7
 PLATINUM_TRIAL_DAYS_FREE_MONTH = 30
 PLATINUM_OFFER_FREE_MONTH = "platinum_1usd_free_month_v1"
+# MES GRATIS DE REGISTRO (2026-11-09, orden de Alex — revierte la retirada
+# del 2026-11-07 SOLO para registros nuevos): todo el que se registra
+# recibe Platinum de plataforma por 30 días, SIN tarjeta; el registro no
+# habla de pagos y la venta ocurre dentro del Dashboard y por email
+# DESPUÉS del mes. Al vencer el reloj, el checkout del graduado es directo
+# a $15.99/semana (sin $1 y sin segundo trial). Marca durable en
+# users.signup_offer; el reloj vive en platinum_trial_ends, como siempre.
+OFERTA_MES_GRATIS = "mes_gratis_registro_v2"
+MES_GRATIS_DIAS = 30
 # Interruptor de lanzamiento: APAGADO por defecto. Se enciende con la env
 # var REGISTRO_NUEVO=1 en Render en la fase de lanzamiento; mientras esté
 # apagado, /registro sirve las plantillas de siempre (register.html /
@@ -822,7 +831,12 @@ def _acceso_programa(user) -> bool:
         # vuelve solo. Alex y el admin conservan su pase (rama de arriba).
         if user["stripe_past_due"]:
             return False
-        return not (user["platinum_trial_ends"] or "")
+        # 2026-11-09 (orden de Alex, mes gratis de registro): el reloj de
+        # trial VIVO vuelve a abrir Platinum — probar el mes exige acceso
+        # real; al vencer, _trial_vencido lo apaga. Verificado antes del
+        # cambio: CERO trials de plataforma vigentes (nadie existente se
+        # afecta). Sustituye la regla 2026-10-24 para este reloj.
+        return not _trial_vencido(user)
     except Exception:
         return False
 
@@ -843,6 +857,18 @@ def _es_trial(user) -> bool:
         return bool(user["platinum_trial_ends"] or "")
     except Exception:
         return False
+
+
+def _mes_gratis_hasta(user) -> str:
+    """Fecha legible (p. ej. 'Dec 10') en que termina el mes gratis del
+    miembro; '' si no tiene reloj de trial."""
+    try:
+        te = (user["platinum_trial_ends"] or "") if user else ""
+        if not te:
+            return ""
+        return datetime.fromisoformat(te).strftime("%b %d")
+    except Exception:
+        return ""
 
 
 def platinum_unlocked_for(user) -> bool:
@@ -2256,7 +2282,7 @@ WHAT YOU KEEP
 - You keep My Bets, your personal tracker and your full history.
 
 REJOIN PLATINUM
-Whenever you\u2019re ready: $1 for your first week, then $15.99/week. No pressure either way.
+Your Platinum is already ON \u2014 free for your first month, starting today. Every play, every tool: it\u2019s all open on your Dashboard.
 https://buy.stripe.com/5kQdRbfFmgHideubEQefC07
 
 Stay sharp. Stay disciplined. Play the long game.
@@ -6235,6 +6261,8 @@ def home():
         # miembro_platinum con preview: en ?preview=locked el banner de
         # invitación VIP también se muestra (pedido Alex 2026-10-02).
         miembro_platinum=(platinum_unlocked_for(user) and not preview_locked),
+        en_mes_gratis=(_es_trial(user) and not _trial_vencido(user)),
+        mes_gratis_hasta=_mes_gratis_hasta(user),
         # Hero fijo original (2026-10-26, reversión a pedido de Alex: solo
         # el de fútbol con casco, sin rotación por ligas).
         # Banner gate (2026-10-31): the Dashboard "new version" banner keys
@@ -6727,9 +6755,11 @@ def register():
         # WGT, 2026-11-07): nombre provisional = parte local del correo
         # (la columna nombre es NOT NULL), contraseña temporal aleatoria
         # hasheada (password_propia = 0 hasta que la fije dentro) y
-        # sesión abierta en el acto. signup_offer queda NULL: todo
-        # registro nuevo entra con la oferta vigente ($1 la primera
-        # semana, luego $15.99/semana). El correo de activación sale por
+        # sesión abierta en el acto. signup_offer = OFERTA_MES_GRATIS y
+        # la cuenta nace con Platinum de plataforma por 30 días SIN
+        # tarjeta (orden de Alex 2026-11-09): el registro no habla de
+        # pagos; la venta va después, dentro del Dashboard y por email.
+        # El correo de activación sale por
         # la vía de siempre SIN bloquear la entrada; activar sigue
         # siendo lo que convierte la cuenta en miembro confirmado.
         _tok = secrets.token_urlsafe(32)
@@ -6737,8 +6767,8 @@ def register():
         nombre = _local[:60]
         _nuevo_id = insert_returning_id(
             db,
-            "INSERT INTO users (nombre, email, password_hash, phone, sms_optin, created_at, lang, email_verified, activation_token, signup_offer, signup_intent, password_propia) VALUES (?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?, 0)",
-            (nombre, email, hash_password(secrets.token_urlsafe(32)), None, 0, now_iso(), _lang, _tok, None, _intent),
+            "INSERT INTO users (nombre, email, password_hash, phone, sms_optin, created_at, lang, email_verified, activation_token, signup_offer, signup_intent, password_propia, platinum_unlocked, platinum_trial_ends) VALUES (?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?, 0, 1, ?)",
+            (nombre, email, hash_password(secrets.token_urlsafe(32)), None, 0, now_iso(), _lang, _tok, OFERTA_MES_GRATIS, _intent, (datetime.now() + timedelta(days=MES_GRATIS_DIAS)).isoformat()),
         )
         db.commit()
         send_activation_email(nombre, email, _tok, _lang)
@@ -6747,10 +6777,11 @@ def register():
         session["is_admin"] = False
         session.permanent = True
         _registrar_actividad(_nuevo_id, "login")
-        # Puente del embudo (el mismo de activar_cuenta): quien declaró
-        # intención Platinum cae directo en la página de desbloqueo.
-        if _intent == "platinum":
-            return redirect(url_for("desbloquear_platinum"))
+        # 2026-11-09 (mes gratis): el puente a /desbloquear-platinum al
+        # registrarse MURIÓ — nadie cae en la página de pago al entrar;
+        # su Platinum ya está encendido por el mes gratis y la venta va
+        # después, dentro del Dashboard y por email. La intención se
+        # sigue guardando como dato, sin efecto de ruta.
         # Return-to guardado al abrir el registro (2026-11-09): si vino
         # con destino interno (p. ej. desde /desbloquear-platinum), el
         # registro termina AHÍ, no en /bienvenida.
@@ -6906,10 +6937,9 @@ def activar_cuenta(token):
             db.commit()
         except Exception:
             _primera_vez = False
-    # Quien declaró intención Platinum va directo a /desbloquear-
-    # platinum a completar su checkout de $1: eso pidió al registrarse.
-    if _intent == "platinum" or _puente_viejo:
-        return redirect(url_for("desbloquear_platinum"))
+    # 2026-11-09 (mes gratis): el aterrizaje en /desbloquear-platinum al
+    # activar MURIÓ parejo — el confirmado cae en el Dashboard (valor
+    # primero); su mes gratis ya corre desde el registro.
     # VALOR PRIMERO (2026-11-09, orden de Alex — «Haga lo que recomienda
     # ChatGPT»): el primer aterrizaje del confirmado que NO pidió
     # Platinum es el DASHBOARD (/home), con las jugadas GOLD abiertas
@@ -6927,7 +6957,7 @@ def activar_cuenta(token):
 # link_clicks y redirige al destino. Un watcher en la VM lee
 # /api/clicks-feed y avisa a Alex por Telegram al instante.
 TRACKED_LINKS = {
-    "ig": "/desbloquear-platinum",  # link del anuncio IG/FB: aterriza en la página de venta Platinum (orden Alex 2026-11-07); el registro gratis sigue como puerta secundaria dentro de esa página
+    "ig": "/registro",  # link del anuncio IG/FB: aterriza en el REGISTRO gratis (orden Alex 2026-11-09: el anuncio dice gratis y el click caía en la página de pago — «la gente se va corriendo»); la venta va después, dentro
 }
 
 
@@ -10774,6 +10804,9 @@ def desbloquear_platinum():
         past_due=past_due,
         stripe_url=STRIPE_PLATINUM_URL,
         offer_free_month=False,
+        post_mes_gratis=bool(
+            user and (user["signup_offer"] or "") == OFERTA_MES_GRATIS
+            and not platinum_unlocked_for(user)),
         trial_days=PLATINUM_TRIAL_DAYS_LEGACY,
         stripe_pk=STRIPE_PUBLISHABLE_KEY,
         stripe_embed_ok=bool(STRIPE_SECRET_KEY and STRIPE_PUBLISHABLE_KEY),
@@ -10815,6 +10848,15 @@ def desbloquear_checkout_session():
         customer_id = ""
     _trial_days = PLATINUM_TRIAL_DAYS_LEGACY
     _offer_code = "legacy"
+    # Graduado del mes gratis (2026-11-09): ya probó su mes completo —
+    # su checkout es SOLO el precio semanal, sin $1 y sin trial.
+    try:
+        _post_mes = (user["signup_offer"] or "") == OFERTA_MES_GRATIS
+    except (KeyError, IndexError, TypeError):
+        _post_mes = False
+    if _post_mes:
+        _trial_days = 0
+        _offer_code = "post_mes_gratis"
     try:
         _signup_offer = (user["signup_offer"] or "")
     except (KeyError, IndexError, TypeError):
@@ -10836,10 +10878,13 @@ def desbloquear_checkout_session():
             # (en la API más nueva de la cuenta es "embedded_page").
             "ui_mode": "embedded",
             "mode": "subscription",
-            "line_items": [
-                {"price": PLATINUM_PRICE_PRIMERA_SEMANA, "quantity": 1},
-                {"price": PLATINUM_PRICE_SEMANAL, "quantity": 1},
-            ],
+            "line_items": (
+                [{"price": PLATINUM_PRICE_SEMANAL, "quantity": 1}]
+                if _post_mes else [
+                    {"price": PLATINUM_PRICE_PRIMERA_SEMANA, "quantity": 1},
+                    {"price": PLATINUM_PRICE_SEMANAL, "quantity": 1},
+                ]
+            ),
             "subscription_data": {
                 "trial_period_days": _trial_days,
                 "metadata": {
@@ -10871,6 +10916,8 @@ def desbloquear_checkout_session():
                 + "?checkout=ok&session_id={CHECKOUT_SESSION_ID}"
             ),
         }
+        if _post_mes:
+            params["subscription_data"].pop("trial_period_days", None)
         if customer_id:
             params["customer"] = customer_id
         else:
