@@ -48,24 +48,23 @@ header{position:sticky;top:0;z-index:60;background:rgba(9,11,16,.94);backdrop-fi
 
 /* ---------- ticker ---------- */
 .ticker{border-bottom:1px solid var(--line);background:var(--bg2);overflow:hidden}
-.ticker-in{display:flex;align-items:center;gap:10px;padding:9px 0;font-size:12.5px;color:var(--dim);white-space:nowrap;overflow-x:auto;scrollbar-width:none}
-.ticker-in::-webkit-scrollbar{display:none}
+.ticker-track{display:flex;width:max-content;animation:ltick 30s linear infinite}
+.ticker:hover .ticker-track{animation-play-state:paused}
+.ticker-set{display:flex;align-items:center;gap:10px;padding:9px 28px 9px 20px;font-size:12.5px;color:var(--dim);white-space:nowrap}
+@keyframes ltick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@media (prefers-reduced-motion:reduce){.ticker-track{animation:none}}
 .ticker .sport{font-weight:800;letter-spacing:.08em;color:var(--mut)}
 .ticker .dot{color:var(--grn)}
 .ticker .post{margin-left:auto;color:var(--mut);font-weight:600;padding-left:14px}
 
-/* ---------- results ticker ---------- */
-.rticker{overflow:hidden;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:8px 0;margin-bottom:30px;-webkit-mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent);mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent)}
-.rticker-track{display:flex;width:max-content;animation:rtick 45s linear infinite}
-.rticker:hover .rticker-track{animation-play-state:paused}
-.rticker-set{display:flex;align-items:center;white-space:nowrap;font-size:12.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mut)}
-.rticker-set>span{margin:0 10px}
+/* ---------- results strip (static) ---------- */
+.rticker{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:9px 0;margin-bottom:30px}
+.rticker-set{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;row-gap:4px;font-size:12.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mut)}
+.rticker-set>span{margin:0 10px;white-space:nowrap}
 .rticker-set .rt-lab{color:var(--grn)}
 .rticker-set .rt-dot{color:var(--grn);margin:0 2px}
 .rticker-set .win{color:var(--grn2)}
 .rticker-set .lost{color:var(--red)}
-@keyframes rtick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-@media (prefers-reduced-motion:reduce){.rticker-track{animation:none}}
 
 /* ---------- hero ---------- */
 .hero{padding:34px 0 56px;background:radial-gradient(760px 360px at 50% -60px,rgba(16,204,135,.13),transparent 65%),var(--bg);border-bottom:1px solid var(--line)}
@@ -278,14 +277,25 @@ footer .copy{font-size:12.5px;color:var(--dim);margin-top:8px}
 
 <!-- 2 · TICKER -->
 <div class="ticker">
-  <div class="wrap ticker-in">
-    <span class="sport">ALL</span><span class="dot">•</span>
-    <span class="sport">NBA</span><span class="dot">•</span>
-    <span class="sport">NHL</span><span class="dot">•</span>
-    <span class="sport">NFL</span><span class="dot">•</span>
-    <span class="sport">NCAAF</span><span class="dot">•</span>
-    <span class="sport">MLB</span>
-    <span class="post">Plays post 2:00 PM ET weekdays · 11:00 AM ET weekends</span>
+  <div class="ticker-track">
+    <div class="ticker-set">
+      <span class="sport">ALL</span><span class="dot">•</span>
+      <span class="sport">NBA</span><span class="dot">•</span>
+      <span class="sport">NHL</span><span class="dot">•</span>
+      <span class="sport">NFL</span><span class="dot">•</span>
+      <span class="sport">NCAAF</span><span class="dot">•</span>
+      <span class="sport">MLB</span><span class="dot">•</span>
+      <span class="post">Plays post 2:00 PM ET weekdays · 11:00 AM ET weekends</span>
+    </div>
+    <div class="ticker-set" aria-hidden="true">
+      <span class="sport">ALL</span><span class="dot">•</span>
+      <span class="sport">NBA</span><span class="dot">•</span>
+      <span class="sport">NHL</span><span class="dot">•</span>
+      <span class="sport">NFL</span><span class="dot">•</span>
+      <span class="sport">NCAAF</span><span class="dot">•</span>
+      <span class="sport">MLB</span><span class="dot">•</span>
+      <span class="post">Plays post 2:00 PM ET weekdays · 11:00 AM ET weekends</span>
+    </div>
   </div>
 </div>
 
@@ -293,35 +303,18 @@ footer .copy{font-size:12.5px;color:var(--dim);margin-top:8px}
 <div class="hero">
   <div class="wrap">
     <div class="rticker" aria-label="Latest results">
-      <div class="rticker-track">
-        <div class="rticker-set">
-          <span><span class="rt-lab">Last 5 plays</span> · 4-1 · <span class="win">+$143.51</span></span>
-          <span class="rt-dot">•</span>
-          <span>Edmonton Oilers ML — <span class="win">Won +$35.71</span></span>
-          <span class="rt-dot">•</span>
-          <span>Dallas Mavericks ML — <span class="win">Won +$40.00</span></span>
-          <span class="rt-dot">•</span>
-          <span>Los Angeles Clippers ML — <span class="win">Won +$64.20</span></span>
-          <span class="rt-dot">•</span>
-          <span>Calgary Flames ML — <span class="win">Won +$63.60</span></span>
-          <span class="rt-dot">•</span>
-          <span>Toronto Raptors ML — <span class="lost">Lost −$60.00</span></span>
-          <span class="rt-dot">•</span>
-        </div>
-        <div class="rticker-set" aria-hidden="true">
-          <span><span class="rt-lab">Last 5 plays</span> · 4-1 · <span class="win">+$143.51</span></span>
-          <span class="rt-dot">•</span>
-          <span>Edmonton Oilers ML — <span class="win">Won +$35.71</span></span>
-          <span class="rt-dot">•</span>
-          <span>Dallas Mavericks ML — <span class="win">Won +$40.00</span></span>
-          <span class="rt-dot">•</span>
-          <span>Los Angeles Clippers ML — <span class="win">Won +$64.20</span></span>
-          <span class="rt-dot">•</span>
-          <span>Calgary Flames ML — <span class="win">Won +$63.60</span></span>
-          <span class="rt-dot">•</span>
-          <span>Toronto Raptors ML — <span class="lost">Lost −$60.00</span></span>
-          <span class="rt-dot">•</span>
-        </div>
+      <div class="rticker-set">
+        <span>🔥 <span class="rt-lab">Last 5 plays</span> · 4-1 · <span class="win">+$143.51</span></span>
+        <span class="rt-dot">•</span>
+        <span>Edmonton Oilers ML — <span class="win">Won +$35.71</span></span>
+        <span class="rt-dot">•</span>
+        <span>Dallas Mavericks ML — <span class="win">Won +$40.00</span></span>
+        <span class="rt-dot">•</span>
+        <span>Los Angeles Clippers ML — <span class="win">Won +$64.20</span></span>
+        <span class="rt-dot">•</span>
+        <span>Calgary Flames ML — <span class="win">Won +$63.60</span></span>
+        <span class="rt-dot">•</span>
+        <span>Toronto Raptors ML — <span class="lost">Lost −$60.00</span></span>
       </div>
     </div>
     <div class="hero-grid">
