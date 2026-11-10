@@ -58,9 +58,10 @@ header{position:sticky;top:0;z-index:60;background:rgba(9,11,16,.94);backdrop-fi
 .ticker .post{margin-left:auto;color:var(--mut);font-weight:600;padding-left:14px}
 
 /* ---------- results band (static, single line, full width) ---------- */
-.rticker{background:#0B3D2E;border-top:1px solid rgba(62,207,142,.45);border-bottom:1px solid rgba(62,207,142,.45);padding:6px 0;text-align:center}
+.rticker{background:#0B3D2E;border-top:1px solid rgba(62,207,142,.45);border-bottom:1px solid rgba(62,207,142,.45);padding:6px 0;text-align:center;margin:10px 20px 0;border-radius:10px}
 .rt-line{font-size:clamp(10px,2.7vw,12.5px);font-weight:700;letter-spacing:.02em;color:var(--grn2);white-space:nowrap}
 .rt-line .rt-lab{color:var(--grn2)}
+@media(min-width:1160px){.rticker{max-width:1120px;margin-left:auto;margin-right:auto}}
 
 /* ---------- hero ---------- */
 .hero{padding:34px 0 56px;background:radial-gradient(760px 360px at 50% -60px,rgba(16,204,135,.13),transparent 65%),var(--bg);border-bottom:1px solid var(--line)}
