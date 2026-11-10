@@ -17,10 +17,10 @@
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--txt);font-family:'Inter',system-ui,-apple-system,sans-serif;font-size:15px;line-height:1.65;-webkit-font-smoothing:antialiased;padding-bottom:74px}
+body{background:var(--bg);color:var(--txt);font-family:'Inter',system-ui,-apple-system,sans-serif;font-size:15px;line-height:1.65;-webkit-font-smoothing:antialiased;padding-bottom:88px}
 img{display:block;max-width:100%}
 a{color:inherit;text-decoration:none}
-.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
 section{padding:64px 0}
 .eyebrow{font-size:12px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--grn)}
 .sec-title{font-size:23.5px;font-weight:600;line-height:1.25;letter-spacing:-.01em;margin:12px 0 10px}
@@ -47,7 +47,7 @@ header{position:sticky;top:0;z-index:60;background:rgba(10,12,18,.96);backdrop-f
 .login:hover{color:var(--txt)}
 
 /* ---------- ticker ---------- */
-.ticker{border-bottom:1px solid var(--line);background:var(--bg2);overflow:hidden}
+.ticker{margin:10px 20px 0;border:1px solid var(--line);border-radius:10px;background:var(--bg2);overflow:hidden}
 .ticker-track{display:flex;width:max-content;animation:ltick 30s linear infinite}
 .ticker:hover .ticker-track{animation-play-state:paused}
 .ticker-set{display:flex;align-items:center;gap:10px;padding:9px 28px 9px 20px;font-size:12.5px;color:var(--dim);white-space:nowrap}
@@ -226,7 +226,7 @@ footer .rg{font-size:13.5px;color:var(--mut);max-width:760px;line-height:1.55}
 footer .copy{font-size:12.5px;color:var(--dim);margin-top:8px}
 
 /* ---------- sticky bar ---------- */
-.stickybar{position:fixed;left:0;right:0;bottom:0;z-index:70;background:var(--grn);color:#04150d;padding:10px 16px calc(10px + env(safe-area-inset-bottom))}
+.stickybar{position:fixed;left:12px;right:12px;bottom:calc(10px + env(safe-area-inset-bottom));border-radius:14px;z-index:70;background:var(--grn);color:#04150d;padding:10px 16px}
 .stickybar-in{max-width:1120px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:14px}
 .stickybar .msg{font-weight:600;font-size:14.5px;line-height:1.35}
 .stickybar .msg span{font-weight:600;font-size:13px;display:block}
