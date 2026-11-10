@@ -56,13 +56,13 @@ header{position:sticky;top:0;z-index:60;background:rgba(9,11,16,.94);backdrop-fi
 
 /* ---------- hero ---------- */
 .hero{padding:68px 0 56px;background:radial-gradient(760px 360px at 50% -60px,rgba(16,204,135,.13),transparent 65%),var(--bg);border-bottom:1px solid var(--line)}
-.hero-grid{max-width:780px;margin:0 auto;text-align:center}
-.hero h1{font-size:36px;line-height:1.16;font-weight:900;letter-spacing:-.02em;margin:16px 0 18px}
+.hero-grid{text-align:left}
+.hero h1{font-size:clamp(36px,11vw,84px);line-height:1.16;font-weight:900;letter-spacing:-.02em;margin:16px 0 18px;text-align:left}
 .hero h1 .l{display:block}
 .hero h1 .grn{color:var(--grn2)}
-.hero .sub{color:var(--mut);font-size:17px;line-height:1.7;max-width:560px;margin:0 auto 28px}
+.hero .sub{color:var(--mut);font-size:17px;line-height:1.7;max-width:560px;margin:0 auto 28px;text-align:center}
 .cta-row{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
-.hero-note{margin-top:15px;font-size:13.5px;color:var(--dim)}
+.hero-note{margin-top:15px;font-size:13.5px;color:var(--dim);text-align:center}
 .stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:36px}
 .stat{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px}
 .stat .big{font-size:19px;font-weight:900;line-height:1.3}
@@ -217,7 +217,6 @@ footer .copy{font-size:12.5px;color:var(--dim);margin-top:8px}
 
 @media(min-width:640px){
   form.cap{flex-direction:row}
-  .hero h1{font-size:46px}
   .stats{grid-template-columns:repeat(4,1fr)}
   .fcols{grid-template-columns:repeat(3,1fr)}
 }
