@@ -1,85 +1,163 @@
-{% extends "base.html" %}
-{% block title %}The Sharp Team — Picks with the real ticket{% endblock %}
-{% block content %}
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Sharp Team — Sports picks with the real ticket</title>
+<meta name="description" content="Sports picks posted before game time, with the real bet slip. Gold plays free forever. Your first month of Platinum is free — no card.">
+<link rel="icon" href="{{ url_for('static', filename='img/sharp-team-logo.png') }}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<!-- Meta Pixel Code (2026-10-14: el anuncio mide visitas y registros) -->
+<script>
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '1625430959036525');
+fbq('track', 'PageView');
+{% if fb_reg %}fbq('track', 'CompleteRegistration'{% if fb_event_id %}, {}, {eventID: '{{ fb_event_id }}'}{% endif %});{% endif %}
+</script>
+<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1625430959036525&ev=PageView&noscript=1"/></noscript>
 <style>
-  /* ===== Portada — MODELO DE REFERENCIA (2026-11-10, método ordenado por Alex:
-     investigar páginas que funcionan y copiar su modelo). Referencias medidas:
-     Covers (Inter, bandas alternas ink/claro, tarjetas de picks estructuradas)
-     y Action Network (ink #1d1d25, verde de acción, secciones de producto).
-     Nada inventado: tipografía Inter, tarjetas uniformes, bandas organizadas. ===== */
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
-  body{background:#0d1117 !important;}
-  main.container{background:transparent !important;max-width:1060px;}
-  .rf{font-family:'Inter',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;-webkit-font-smoothing:antialiased;color:#eef1f6;}
-  .rf *{box-sizing:border-box;}
-  .rf .band-dark{background:linear-gradient(180deg,#101623 0%,#0d1117 100%);border-radius:20px;padding:40px 22px;}
-  .rf .band-light{background:#f4f5f7;border-radius:20px;padding:36px 22px;color:#131a26;margin-top:18px;}
-  .rf .band-mid{background:#131a29;border:1px solid #232d42;border-radius:20px;padding:36px 22px;margin-top:18px;}
-  .rf .center{text-align:center;}
-  .rf .crest{display:block;width:74px;height:74px;object-fit:contain;margin:0 auto 14px;}
-  .rf .eyebrow{font-size:11px;font-weight:800;letter-spacing:2.6px;text-transform:uppercase;color:#e8c766;text-align:center;}
-  .rf .band-light .eyebrow{color:#b98a00;}
-  .rf h1{font-size:37px;line-height:1.12;font-weight:900;letter-spacing:-.8px;text-align:center;margin:14px 0 0;}
-  .rf h1 .hl{color:#e8c766;}
-  .rf h2{font-size:25px;font-weight:800;letter-spacing:-.4px;text-align:center;margin:10px 0 0;}
-  .rf .band-light h2{color:#101623;}
-  .rf .sub{text-align:center;color:#9aa5b8;font-size:15.5px;line-height:1.65;margin:14px auto 0;max-width:540px;font-weight:500;}
-  .rf .band-light .sub{color:#5a6577;}
-  .rf .cta{display:block;background:#e8c766;color:#14100a;font-weight:800;font-size:16.5px;text-align:center;text-decoration:none;border-radius:12px;padding:16px 20px;margin:26px auto 0;max-width:400px;}
-  .rf .cta.dark{background:#101623;color:#fff;}
-  .rf .micro{text-align:center;color:#8b96ab;font-size:13px;margin-top:13px;line-height:1.6;}
-  .rf .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:640px;margin:30px auto 0;}
-  .rf .stat{background:#171f30;border:1px solid #26314a;border-radius:14px;padding:16px 8px;text-align:center;}
-  .rf .stat .v{font-size:21px;font-weight:900;color:#fff;}
-  .rf .stat .k{font-size:10.5px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:#8b96ab;margin-top:5px;line-height:1.5;}
-  .rf .cards{display:grid;gap:12px;max-width:680px;margin:24px auto 0;}
-  @media(min-width:760px){.rf .cards{grid-template-columns:1fr 1fr;}}
-  .rf .pcard{background:#fff;border:1px solid #e3e6ec;border-radius:16px;padding:15px 16px;box-shadow:0 2px 10px rgba(16,22,35,.06);display:flex;gap:13px;align-items:center;}
-  .rf .pcard .tix{width:58px;height:58px;object-fit:cover;border-radius:10px;flex:0 0 58px;border:1px solid #e3e6ec;}
-  .rf .pcard .mid{flex:1;min-width:0;}
-  .rf .pcard .top{display:flex;align-items:center;gap:8px;}
-  .rf .pcard .tag{font-size:10px;font-weight:800;letter-spacing:1.6px;color:#8a6d00;background:#fdf3d0;border-radius:6px;padding:3px 7px;text-transform:uppercase;}
-  .rf .pcard .tag.free{color:#0a6b3c;background:#d9f5e5;}
-  .rf .pcard .badge{margin-left:auto;font-size:10.5px;font-weight:900;letter-spacing:1px;border-radius:6px;padding:4px 8px;}
-  .rf .pcard .badge.won{background:#0aa657;color:#fff;}
-  .rf .pcard .badge.lost{background:#e5484d;color:#fff;}
-  .rf .pcard .pick{font-size:16px;font-weight:800;color:#101623;margin-top:7px;line-height:1.3;}
-  .rf .pcard .pick .odds{color:#68738a;font-weight:600;font-size:13.5px;}
-  .rf .pcard .game{font-size:12.5px;color:#68738a;margin-top:3px;}
-  .rf .pcard .pf{font-size:15px;font-weight:900;white-space:nowrap;}
-  .rf .pf.won{color:#0aa657;} .rf .pf.lost{color:#e5484d;}
-  .rf .honest{text-align:center;color:#68738a;font-size:13px;margin-top:20px;line-height:1.65;}
-  .rf .steps{display:grid;gap:12px;max-width:680px;margin:24px auto 0;}
-  @media(min-width:760px){.rf .steps{grid-template-columns:repeat(3,1fr);}}
-  .rf .step{background:#171f30;border:1px solid #26314a;border-radius:16px;padding:20px 18px;}
-  .rf .step .n{display:inline-flex;width:34px;height:34px;border-radius:50%;background:#e8c766;color:#14100a;font-weight:900;font-size:15.5px;align-items:center;justify-content:center;}
-  .rf .step h3{margin:13px 0 6px;font-size:16px;font-weight:800;}
-  .rf .step p{margin:0;color:#9aa5b8;font-size:13.8px;line-height:1.6;}
-  .rf .plans{display:grid;gap:14px;max-width:680px;margin:24px auto 0;}
-  @media(min-width:760px){.rf .plans{grid-template-columns:1fr 1fr;}}
-  .rf .plan{background:#fff;border:1px solid #e3e6ec;border-radius:18px;padding:24px 22px;box-shadow:0 2px 10px rgba(16,22,35,.06);position:relative;}
-  .rf .plan.hot{border:2px solid #e8c766;}
-  .rf .plan .ribbon{position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:#e8c766;color:#14100a;font-size:10.5px;font-weight:900;letter-spacing:1.6px;border-radius:999px;padding:5px 12px;white-space:nowrap;}
-  .rf .plan .pname{font-size:12px;font-weight:800;letter-spacing:2.2px;text-transform:uppercase;color:#68738a;}
-  .rf .plan .price{font-size:29px;font-weight:900;color:#101623;margin-top:8px;letter-spacing:-.5px;}
-  .rf .plan .price .per{font-size:13.5px;color:#68738a;font-weight:600;}
-  .rf .plan ul{list-style:none;margin:16px 0 0;padding:0;}
-  .rf .plan li{font-size:14.5px;color:#333f55;padding:7px 0 7px 26px;position:relative;border-top:1px solid #eef0f4;line-height:1.5;}
-  .rf .plan li:first-child{border-top:none;}
-  .rf .plan li::before{content:"✓";position:absolute;left:2px;color:#0aa657;font-weight:900;}
-  .rf .plan .note{color:#68738a;font-size:13px;line-height:1.65;margin:14px 0 0;}
-  .rf .faq{max-width:680px;margin:22px auto 0;display:grid;gap:10px;}
-  .rf .faq details{background:#171f30;border:1px solid #26314a;border-radius:14px;padding:16px 18px;}
-  .rf .faq summary{font-weight:700;font-size:15px;cursor:pointer;color:#eef1f6;}
-  .rf .faq p{color:#9aa5b8;font-size:14px;line-height:1.65;margin:9px 0 0;}
+  /* ===== THE SHARP TEAM — sistema de diseño profesional v1 (2026-11-10).
+     Página completa propia (sin base.html): cabecera, bandas y pie de un solo
+     sistema. Referencias: Covers / Action Network / producto SaaS.
+     Escala de espaciado 8pt, radio 14, un acento dorado, Inter. ===== */
+  :root{
+    --ink:#0e1524; --ink2:#131e33; --gold:#e3b93c; --gold-d:#c39a1e;
+    --bg:#f6f7f9; --card:#ffffff; --line:#e4e7ee; --line-d:#26334d;
+    --tx:#131a26; --tx2:#55617a; --txd:#e9edf5; --txd2:#9fadc4;
+    --green:#0aa657; --red:#e5484d;
+    --rad:14px; --maxw:1080px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{font-family:'Inter',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--tx);-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 20px;}
+  /* Header */
+  header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.96);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);}
+  .hrow{display:flex;align-items:center;gap:14px;height:64px;}
+  .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--tx);}
+  .brand img{width:36px;height:36px;object-fit:contain;}
+  .brand b{font-size:16.5px;font-weight:800;letter-spacing:-.2px;}
+  nav{display:none;gap:26px;margin-left:26px;}
+  nav a{color:var(--tx2);text-decoration:none;font-size:14px;font-weight:600;}
+  @media(min-width:820px){nav{display:flex;}}
+  .hauth{margin-left:auto;display:flex;align-items:center;gap:14px;}
+  .hauth .login{color:var(--tx);text-decoration:none;font-size:14px;font-weight:600;}
+  .btn{display:inline-block;background:var(--ink);color:#fff;text-decoration:none;font-weight:700;font-size:14px;border-radius:10px;padding:10px 18px;}
+  .btn.gold{background:var(--gold);color:#171106;}
+  /* Hero */
+  .hero{background:linear-gradient(180deg,var(--ink) 0%,var(--ink2) 100%);color:var(--txd);}
+  .hero-in{padding:56px 0 0;text-align:center;}
+  .hero .crest{width:78px;height:78px;object-fit:contain;}
+  .eyebrow{font-size:11px;font-weight:800;letter-spacing:2.6px;text-transform:uppercase;color:var(--gold);margin-top:16px;}
+  h1{font-size:39px;line-height:1.12;font-weight:900;letter-spacing:-1px;margin-top:14px;}
+  h1 .hl{color:var(--gold);}
+  .hero .sub{color:var(--txd2);font-size:16px;line-height:1.65;max-width:560px;margin:16px auto 0;font-weight:500;}
+  .cta{display:inline-block;background:var(--gold);color:#171106;font-weight:800;font-size:16.5px;text-decoration:none;border-radius:12px;padding:16px 34px;margin-top:28px;}
+  .hero .micro{color:var(--txd2);font-size:13px;margin-top:14px;line-height:1.6;}
+  .stats{margin:38px auto 0;border-top:1px solid var(--line-d);display:grid;grid-template-columns:repeat(3,1fr);max-width:720px;}
+  .stat{padding:20px 8px 26px;text-align:center;}
+  .stat + .stat{border-left:1px solid var(--line-d);}
+  .stat .v{font-size:22px;font-weight:900;color:#fff;}
+  .stat .k{font-size:10.5px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:var(--txd2);margin-top:5px;}
+  /* Secciones */
+  section{padding:64px 0;}
+  section.alt{background:#fff;border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
+  .shead{text-align:center;max-width:620px;margin:0 auto;}
+  .shead .eyebrow{color:var(--gold-d);margin-top:0;}
+  .hero .eyebrow, .darkband .eyebrow{color:var(--gold);}
+  h2{font-size:27px;font-weight:800;letter-spacing:-.5px;margin-top:10px;}
+  .shead p{color:var(--tx2);font-size:15.5px;line-height:1.65;margin-top:12px;}
+  /* Tarjetas de picks */
+  .cards{display:grid;gap:12px;max-width:760px;margin:34px auto 0;}
+  @media(min-width:820px){.cards{grid-template-columns:1fr 1fr;max-width:960px;}}
+  .pcard{background:var(--card);border:1px solid var(--line);border-radius:var(--rad);padding:16px;display:flex;gap:14px;align-items:center;box-shadow:0 1px 3px rgba(14,21,36,.05);}
+  .pcard .tix{width:58px;height:58px;object-fit:cover;border-radius:10px;flex:0 0 58px;border:1px solid var(--line);}
+  .pcard .mid{flex:1;min-width:0;}
+  .pcard .top{display:flex;align-items:center;gap:8px;}
+  .tag{font-size:10px;font-weight:800;letter-spacing:1.6px;text-transform:uppercase;border-radius:6px;padding:3px 8px;background:#fdf3d0;color:#8a6d00;}
+  .tag.free{background:#d9f5e5;color:#0a6b3c;}
+  .badge{margin-left:auto;font-size:10.5px;font-weight:900;letter-spacing:1px;border-radius:6px;padding:4px 8px;color:#fff;}
+  .badge.won{background:var(--green);} .badge.lost{background:var(--red);}
+  .pick{font-size:16px;font-weight:800;margin-top:8px;line-height:1.3;letter-spacing:-.2px;}
+  .pick .odds{color:var(--tx2);font-weight:600;font-size:13.5px;}
+  .game{font-size:12.5px;color:var(--tx2);margin-top:3px;}
+  .pf{font-size:15.5px;font-weight:900;white-space:nowrap;}
+  .pf.won{color:var(--green);} .pf.lost{color:var(--red);}
+  .honest{text-align:center;color:var(--tx2);font-size:13.5px;margin-top:24px;}
+  /* Pasos */
+  .steps{display:grid;gap:14px;max-width:960px;margin:34px auto 0;}
+  @media(min-width:820px){.steps{grid-template-columns:repeat(3,1fr);}}
+  .step{background:var(--card);border:1px solid var(--line);border-radius:var(--rad);padding:24px 22px;box-shadow:0 1px 3px rgba(14,21,36,.05);}
+  .step .n{display:inline-flex;width:36px;height:36px;border-radius:50%;background:var(--ink);color:#fff;font-weight:800;font-size:16px;align-items:center;justify-content:center;}
+  .step h3{margin:15px 0 7px;font-size:16.5px;font-weight:800;letter-spacing:-.2px;}
+  .step p{color:var(--tx2);font-size:14.5px;line-height:1.65;}
+  /* Planes */
+  .plans{display:grid;gap:16px;max-width:820px;margin:38px auto 0;}
+  @media(min-width:820px){.plans{grid-template-columns:1fr 1fr;}}
+  .plan{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:28px 26px;position:relative;box-shadow:0 1px 3px rgba(14,21,36,.05);}
+  .plan.hot{border:2px solid var(--gold);}
+  .ribbon{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--gold);color:#171106;font-size:10.5px;font-weight:900;letter-spacing:1.6px;border-radius:999px;padding:5px 13px;white-space:nowrap;}
+  .pname{font-size:12px;font-weight:800;letter-spacing:2.2px;text-transform:uppercase;color:var(--tx2);}
+  .price{font-size:31px;font-weight:900;letter-spacing:-.6px;margin-top:9px;}
+  .price .per{font-size:14px;color:var(--tx2);font-weight:600;}
+  .plan ul{list-style:none;margin-top:18px;}
+  .plan li{font-size:14.5px;color:#333f55;padding:8px 0 8px 27px;position:relative;border-top:1px solid #eef0f4;line-height:1.5;}
+  .plan li:first-child{border-top:none;}
+  .plan li::before{content:"✓";position:absolute;left:2px;color:var(--green);font-weight:900;}
+  .plan .note{color:var(--tx2);font-size:13px;line-height:1.65;margin-top:14px;}
+  .center{text-align:center;}
+  /* FAQ */
+  .faq{max-width:760px;margin:30px auto 0;}
+  .faq details{background:var(--card);border:1px solid var(--line);border-radius:var(--rad);padding:18px 20px;margin-top:10px;}
+  .faq summary{font-weight:700;font-size:15.5px;cursor:pointer;}
+  .faq p{color:var(--tx2);font-size:14.5px;line-height:1.7;margin-top:9px;}
+  /* Banda final */
+  .darkband{background:var(--ink);color:var(--txd);border-radius:20px;padding:48px 24px;text-align:center;max-width:var(--maxw);}
+  .darkband h2{color:#fff;}
+  .darkband p{color:var(--txd2);font-size:15.5px;margin-top:12px;}
+  /* Footer */
+  footer{background:var(--ink);color:var(--txd2);margin-top:64px;}
+  .frow{display:grid;gap:28px;padding:44px 0 30px;}
+  @media(min-width:820px){.frow{grid-template-columns:1.4fr 1fr 1fr;}}
+  footer .brand b{color:#fff;}
+  footer p{font-size:13.5px;line-height:1.7;margin-top:12px;max-width:420px;}
+  footer h4{color:#fff;font-size:12px;letter-spacing:2px;text-transform:uppercase;margin-bottom:13px;}
+  footer ul{list-style:none;}
+  footer li{margin-top:9px;}
+  footer a{color:var(--txd2);text-decoration:none;font-size:14px;}
+  .legal{border-top:1px solid var(--line-d);padding:20px 0 28px;font-size:12px;line-height:1.7;}
 </style>
+</head>
+<body>
 
-<div class="rf">
+<header>
+  <div class="wrap hrow">
+    <a class="brand" href="{{ url_for('index') }}"><img src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team logo"><b>The Sharp Team</b></a>
+    <nav>
+      <a href="#picks">Graded picks</a>
+      <a href="#how">How it works</a>
+      <a href="#membership">Membership</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <div class="hauth">
+      <a class="login" href="{{ url_for('login') }}">Log in</a>
+      <a class="btn gold" href="{{ url_for('register') }}">Join free</a>
+    </div>
+  </div>
+</header>
 
-  <!-- HERO + BANDA DE DATOS (modelo Covers/Action: titular, CTA, stats) -->
-  <div class="band-dark">
+<div class="hero">
+  <div class="wrap hero-in">
     <img class="crest" src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team">
-    <div class="eyebrow">The Sharp Team</div>
+    <div class="eyebrow">Sports handicapping · Est. 2026</div>
     <h1>Sports picks with the <span class="hl">real ticket</span><br>to prove it.</h1>
     <p class="sub">Every play is posted before game time, with the actual bet slip.
     Win or lose, every result is graded in public — nothing hidden, nothing edited.</p>
@@ -88,16 +166,19 @@
     <div class="stats">
       <div class="stat"><div class="v">{{ total }}</div><div class="k">Plays documented</div></div>
       <div class="stat"><div class="v">100%</div><div class="k">Posted pre-game</div></div>
-      <div class="stat"><div class="v">Every</div><div class="k">Play has its ticket</div></div>
+      <div class="stat"><div class="v">Every play</div><div class="k">Shows its ticket</div></div>
     </div>
   </div>
+</div>
 
-  {% if recent_plays %}
-  <!-- PICKS CALIFICADOS: tarjetas de producto uniformes (modelo Covers "Expert Picks") -->
-  <div class="band-light">
-    <div class="eyebrow">Expert picks · Graded</div>
-    <h2>Latest graded picks</h2>
-    <p class="sub">Real plays, real tickets, graded the next morning — wins and losses.</p>
+{% if recent_plays %}
+<section id="picks">
+  <div class="wrap">
+    <div class="shead">
+      <div class="eyebrow">Graded in public</div>
+      <h2>Latest graded picks</h2>
+      <p>Real plays, real tickets, graded the next morning — the wins and the losses.</p>
+    </div>
     <div class="cards">
       {% for p in recent_plays %}
       <div class="pcard">
@@ -120,29 +201,37 @@
     <p class="honest">Every official play is documented and counted — {{ total }} so far, on the way to a fully public record.</p>
     {% endif %}
   </div>
-  {% endif %}
+</section>
+{% endif %}
 
-  <!-- CÓMO FUNCIONA: tarjetas de pasos (antes que los planes) -->
-  <div class="band-mid">
-    <div class="eyebrow">How it works</div>
-    <h2>Three steps. <span style="color:#e8c766;">No surprises.</span></h2>
+<section class="alt" id="how">
+  <div class="wrap">
+    <div class="shead">
+      <div class="eyebrow">How it works</div>
+      <h2>Three steps. No surprises.</h2>
+      <p>The whole system, in the open — before any talk of plans or prices.</p>
+    </div>
     <div class="steps">
       <div class="step"><span class="n">1</span>
         <h3>Create your free account</h3>
         <p>Just your email. Your account opens instantly, and Platinum turns on free for your first month — everything open, from day one.</p></div>
       <div class="step"><span class="n">2</span>
         <h3>Get today's plays</h3>
-        <p>A small daily card on your Dashboard — 2:00 PM ET weekdays, 11:00 AM ET weekends. Always before game time, always with the real ticket.</p></div>
+        <p>A small daily card on your Dashboard — 2:00 PM ET on weekdays, 11:00 AM ET on weekends. Always before game time, always with the real ticket.</p></div>
       <div class="step"><span class="n">3</span>
         <h3>Watch the results</h3>
-        <p>Every play graded the next morning, in public — wins and losses alike. The tickets and the record speak for themselves.</p></div>
+        <p>Every play is graded the next morning, in public — wins and losses alike. The tickets and the record speak for themselves.</p></div>
     </div>
   </div>
+</section>
 
-  <!-- MEMBRESÍA: tabla de precios tipo producto (después de explicar) -->
-  <div class="band-light">
-    <div class="eyebrow">Membership</div>
-    <h2>Start free. Decide later.</h2>
+<section id="membership">
+  <div class="wrap">
+    <div class="shead">
+      <div class="eyebrow">Membership</div>
+      <h2>Start free. Decide later.</h2>
+      <p>Prove the work first. That has always been the deal.</p>
+    </div>
     <div class="plans">
       <div class="plan">
         <div class="pname">Gold</div>
@@ -155,7 +244,7 @@
         </ul>
       </div>
       <div class="plan hot">
-        <div class="ribbon">FIRST MONTH FREE</div>
+        <div class="ribbon">First month free</div>
         <div class="pname">Platinum</div>
         <div class="price">$0 <span class="per">/ first month</span></div>
         <ul>
@@ -167,14 +256,19 @@
         <p class="note">After your free month, keeping Platinum is $15.99/week — only if you decide it has earned it. We never took your card, so nothing is ever charged on its own.</p>
       </div>
     </div>
-    <a class="cta dark" href="{{ url_for('register') }}">Create my free account</a>
-    <p class="micro" style="color:#68738a;">No card. No charge. Just your email.</p>
+    <div class="center">
+      <a class="cta" href="{{ url_for('register') }}" style="margin-top:34px;">Create my free account</a>
+      <p class="honest">No card. No charge. Just your email.</p>
+    </div>
   </div>
+</section>
 
-  <!-- FAQ + CIERRE -->
-  <div class="band-mid">
-    <div class="eyebrow">Questions</div>
-    <h2>Fair questions</h2>
+<section class="alt" id="faq">
+  <div class="wrap">
+    <div class="shead">
+      <div class="eyebrow">FAQ</div>
+      <h2>Fair questions</h2>
+    </div>
     <div class="faq">
       <details><summary>Is it really free?</summary>
         <p>Yes. Gold plays are free forever, and your first month of Platinum is free when you register — no card, no charge. We would rather prove the work first and let you decide.</p></details>
@@ -185,9 +279,50 @@
       <details><summary>What happens when my free month ends?</summary>
         <p>Platinum closes and your free Gold plays continue. Nothing is charged — we never took your card. If you wish to keep Platinum, it is $15.99/week, and you may cancel at any time.</p></details>
     </div>
-    <a class="cta" href="{{ url_for('register') }}">Create my free account</a>
-    <p class="micro">Already a member? <a href="{{ url_for('login') }}" style="color:#e8c766;">Log in</a></p>
   </div>
+</section>
 
+<div class="wrap">
+  <div class="darkband">
+    <div class="eyebrow">Today's card</div>
+    <h2>See today's plays — free.</h2>
+    <p>The card is on the Dashboard, with the real tickets.</p>
+    <a class="cta" href="{{ url_for('register') }}">Create my free account</a>
+  </div>
 </div>
-{% endblock %}
+
+<footer>
+  <div class="wrap">
+    <div class="frow">
+      <div>
+        <a class="brand" href="{{ url_for('index') }}"><img src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team logo"><b>The Sharp Team</b></a>
+        <p>Sports handicapping with proof: every play posted before game time, with its real ticket, and graded in public — win or lose.</p>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <ul>
+          <li><a href="/about">About us</a></li>
+          <li><a href="/how-to-verify">How to verify</a></li>
+          <li><a href="/faqs">FAQs</a></li>
+          <li><a href="/contact">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Members</h4>
+        <ul>
+          <li><a href="{{ url_for('login') }}">Log in</a></li>
+          <li><a href="{{ url_for('register') }}">Create free account</a></li>
+          <li><a href="#membership">Membership</a></li>
+          <li><a href="#picks">Graded picks</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="legal">
+      You must be 21+ (or of legal wagering age where you live) to use this service. The Sharp Team is a sports handicapping information and analytics service — not a sportsbook. We do not accept or place wagers, and no result is ever guaranteed. Every play, tool and line is published for entertainment and educational purposes only and is not betting or financial advice. Gambling problem? Call 1-800-GAMBLER — free, confidential, 24/7.<br>
+      © 2026 The Sharp Team. All rights reserved.
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
