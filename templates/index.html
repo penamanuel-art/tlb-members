@@ -2,146 +2,151 @@
 {% block title %}The Sharp Team — Picks with the real ticket{% endblock %}
 {% block content %}
 <style>
-  /* ===== Portada pública — DISEÑO ELEGANTE (2026-11-10, orden de Alex:
-     "no son los colores, es el diseño… no hay estilo, elegancia… parece un
-     periódico de ayer"). Lenguaje de lujo editorial: negro carbón, marfil,
-     dorado fino, serif de display, mucho aire, líneas de un pelo, nada de
-     cajas gritonas ni neón. ===== */
-  body{background:#0a0a0b !important;}
-  main.container{background:transparent !important;}
-  .el{
-    --el-bg:#0a0a0b; --el-ivory:#f4efe4; --el-dim:#a79f8d; --el-gold:#c9a227;
-    --el-gold-soft:rgba(201,162,39,.45); --el-line:rgba(244,239,228,.14);
-    --el-mint:#7fd6a4; --el-red:#d98a80;
-    color:var(--el-ivory);
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-    -webkit-font-smoothing:antialiased;
-    padding:10px 6px 0;
-  }
-  .el .serif{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
-  .el section{padding:44px 0;}
-  .el .center{text-align:center;}
-  .el .crest{display:block;width:86px;height:86px;object-fit:contain;margin:6px auto 20px;}
-  .el .eyebrow{font-size:11px;font-weight:600;letter-spacing:4.5px;text-transform:uppercase;color:var(--el-gold);text-align:center;}
-  .el .rule{width:44px;height:1px;background:var(--el-gold);margin:20px auto;}
-  .el h1{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;font-size:42px;line-height:1.12;font-weight:800;text-align:center;margin:16px 0 0;letter-spacing:-.3px;}
-  .el h1 em{font-style:normal;color:var(--el-gold);}
-  .el h2{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;font-size:29px;font-weight:800;text-align:center;margin:12px 0 0;}
-  .el h2 em{font-style:normal;color:var(--el-gold);}
-  .el .sub{text-align:center;color:var(--el-dim);font-size:15.5px;line-height:1.75;margin:18px auto 0;max-width:520px;font-weight:300;}
-  .el .cta{display:block;background:var(--el-ivory);color:#0a0a0b;font-weight:600;font-size:13.5px;letter-spacing:2.5px;text-transform:uppercase;text-align:center;text-decoration:none;border-radius:999px;padding:17px 22px;margin:34px auto 0;max-width:400px;}
-  .el .cta.gold{background:var(--el-gold);color:#141000;}
-  .el .micro{text-align:center;color:var(--el-dim);font-size:13px;margin-top:16px;line-height:1.7;font-weight:300;}
-  .el .hairline{border:none;border-top:1px solid var(--el-line);margin:0;}
-  .el .steps{max-width:520px;margin:36px auto 0;}
-  .el .step{display:flex;gap:22px;padding:24px 0;border-top:1px solid var(--el-line);}
-  .el .step:first-child{border-top:none;padding-top:6px;}
-  .el .step .n{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;font-style:normal;font-weight:700;font-size:30px;color:var(--el-gold);line-height:1;flex:0 0 44px;text-align:center;}
-  .el .step h3{margin:0 0 6px;font-size:16.5px;font-weight:600;letter-spacing:.3px;}
-  .el .step p{margin:0;color:var(--el-dim);font-size:14.5px;line-height:1.7;font-weight:300;}
-  .el .ledger{max-width:540px;margin:30px auto 0;}
-  .el .lrow{display:flex;align-items:center;gap:14px;padding:15px 2px;border-top:1px solid var(--el-line);}
-  .el .lrow:first-child{border-top:none;}
-  .el .lrow .tix{width:54px;height:54px;object-fit:cover;border-radius:9px;flex:0 0 54px;border:1px solid var(--el-line);}
-  .el .lrow .pk{font-size:15px;font-weight:600;}
-  .el .lrow .gm{color:var(--el-dim);font-size:12.5px;font-weight:300;}
-  .el .lrow .tag{font-size:10px;letter-spacing:2.5px;color:var(--el-gold);text-transform:uppercase;}
-  .el .lrow .rs{margin-left:auto;text-align:right;white-space:nowrap;}
-  .el .lrow .st{font-size:11px;letter-spacing:2px;font-weight:700;}
-  .el .lrow .st.won{color:var(--el-mint);} .el .lrow .st.lost{color:var(--el-red);}
-  .el .lrow .pf{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;font-size:16px;margin-top:2px;}
-  .el .pf.won{color:var(--el-mint);} .el .pf.lost{color:var(--el-red);}
-  .el .honest{text-align:center;color:var(--el-dim);font-size:13px;margin-top:22px;line-height:1.7;font-weight:300;font-style:italic;}
-  .el .plans{max-width:540px;margin:34px auto 0;display:grid;gap:0;}
-  .el .plan{padding:30px 6px;border-top:1px solid var(--el-line);text-align:center;}
-  .el .plan:first-child{border-top:none;padding-top:8px;}
-  .el .plan .pname{font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--el-dim);}
-  .el .plan .price{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;font-size:30px;margin-top:10px;}
-  .el .plan .price .per{font-size:14px;color:var(--el-dim);font-style:italic;}
-  .el .plan ul{list-style:none;margin:18px 0 0;padding:0;color:var(--el-dim);font-size:14.5px;line-height:2.05;font-weight:300;}
-  .el .plan.hot .pname{color:var(--el-gold);}
-  .el .plan .note{color:var(--el-dim);font-size:13px;line-height:1.7;margin:16px auto 0;max-width:420px;font-weight:300;}
-  .el .faq{max-width:540px;margin:26px auto 0;}
-  .el .faq details{border-top:1px solid var(--el-line);padding:18px 2px;}
-  .el .faq details:last-child{border-bottom:1px solid var(--el-line);}
-  .el .faq summary{font-size:15.5px;font-weight:600;cursor:pointer;list-style:none;}
-  .el .faq p{color:var(--el-dim);font-size:14px;line-height:1.75;margin:10px 0 0;font-weight:300;}
+  /* ===== Portada — MODELO DE REFERENCIA (2026-11-10, método ordenado por Alex:
+     investigar páginas que funcionan y copiar su modelo). Referencias medidas:
+     Covers (Inter, bandas alternas ink/claro, tarjetas de picks estructuradas)
+     y Action Network (ink #1d1d25, verde de acción, secciones de producto).
+     Nada inventado: tipografía Inter, tarjetas uniformes, bandas organizadas. ===== */
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+  body{background:#0d1117 !important;}
+  main.container{background:transparent !important;max-width:1060px;}
+  .rf{font-family:'Inter',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;-webkit-font-smoothing:antialiased;color:#eef1f6;}
+  .rf *{box-sizing:border-box;}
+  .rf .band-dark{background:linear-gradient(180deg,#101623 0%,#0d1117 100%);border-radius:20px;padding:40px 22px;}
+  .rf .band-light{background:#f4f5f7;border-radius:20px;padding:36px 22px;color:#131a26;margin-top:18px;}
+  .rf .band-mid{background:#131a29;border:1px solid #232d42;border-radius:20px;padding:36px 22px;margin-top:18px;}
+  .rf .center{text-align:center;}
+  .rf .crest{display:block;width:74px;height:74px;object-fit:contain;margin:0 auto 14px;}
+  .rf .eyebrow{font-size:11px;font-weight:800;letter-spacing:2.6px;text-transform:uppercase;color:#e8c766;text-align:center;}
+  .rf .band-light .eyebrow{color:#b98a00;}
+  .rf h1{font-size:37px;line-height:1.12;font-weight:900;letter-spacing:-.8px;text-align:center;margin:14px 0 0;}
+  .rf h1 .hl{color:#e8c766;}
+  .rf h2{font-size:25px;font-weight:800;letter-spacing:-.4px;text-align:center;margin:10px 0 0;}
+  .rf .band-light h2{color:#101623;}
+  .rf .sub{text-align:center;color:#9aa5b8;font-size:15.5px;line-height:1.65;margin:14px auto 0;max-width:540px;font-weight:500;}
+  .rf .band-light .sub{color:#5a6577;}
+  .rf .cta{display:block;background:#e8c766;color:#14100a;font-weight:800;font-size:16.5px;text-align:center;text-decoration:none;border-radius:12px;padding:16px 20px;margin:26px auto 0;max-width:400px;}
+  .rf .cta.dark{background:#101623;color:#fff;}
+  .rf .micro{text-align:center;color:#8b96ab;font-size:13px;margin-top:13px;line-height:1.6;}
+  .rf .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:640px;margin:30px auto 0;}
+  .rf .stat{background:#171f30;border:1px solid #26314a;border-radius:14px;padding:16px 8px;text-align:center;}
+  .rf .stat .v{font-size:21px;font-weight:900;color:#fff;}
+  .rf .stat .k{font-size:10.5px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:#8b96ab;margin-top:5px;line-height:1.5;}
+  .rf .cards{display:grid;gap:12px;max-width:680px;margin:24px auto 0;}
+  @media(min-width:760px){.rf .cards{grid-template-columns:1fr 1fr;}}
+  .rf .pcard{background:#fff;border:1px solid #e3e6ec;border-radius:16px;padding:15px 16px;box-shadow:0 2px 10px rgba(16,22,35,.06);display:flex;gap:13px;align-items:center;}
+  .rf .pcard .tix{width:58px;height:58px;object-fit:cover;border-radius:10px;flex:0 0 58px;border:1px solid #e3e6ec;}
+  .rf .pcard .mid{flex:1;min-width:0;}
+  .rf .pcard .top{display:flex;align-items:center;gap:8px;}
+  .rf .pcard .tag{font-size:10px;font-weight:800;letter-spacing:1.6px;color:#8a6d00;background:#fdf3d0;border-radius:6px;padding:3px 7px;text-transform:uppercase;}
+  .rf .pcard .tag.free{color:#0a6b3c;background:#d9f5e5;}
+  .rf .pcard .badge{margin-left:auto;font-size:10.5px;font-weight:900;letter-spacing:1px;border-radius:6px;padding:4px 8px;}
+  .rf .pcard .badge.won{background:#0aa657;color:#fff;}
+  .rf .pcard .badge.lost{background:#e5484d;color:#fff;}
+  .rf .pcard .pick{font-size:16px;font-weight:800;color:#101623;margin-top:7px;line-height:1.3;}
+  .rf .pcard .pick .odds{color:#68738a;font-weight:600;font-size:13.5px;}
+  .rf .pcard .game{font-size:12.5px;color:#68738a;margin-top:3px;}
+  .rf .pcard .pf{font-size:15px;font-weight:900;white-space:nowrap;}
+  .rf .pf.won{color:#0aa657;} .rf .pf.lost{color:#e5484d;}
+  .rf .honest{text-align:center;color:#68738a;font-size:13px;margin-top:20px;line-height:1.65;}
+  .rf .steps{display:grid;gap:12px;max-width:680px;margin:24px auto 0;}
+  @media(min-width:760px){.rf .steps{grid-template-columns:repeat(3,1fr);}}
+  .rf .step{background:#171f30;border:1px solid #26314a;border-radius:16px;padding:20px 18px;}
+  .rf .step .n{display:inline-flex;width:34px;height:34px;border-radius:50%;background:#e8c766;color:#14100a;font-weight:900;font-size:15.5px;align-items:center;justify-content:center;}
+  .rf .step h3{margin:13px 0 6px;font-size:16px;font-weight:800;}
+  .rf .step p{margin:0;color:#9aa5b8;font-size:13.8px;line-height:1.6;}
+  .rf .plans{display:grid;gap:14px;max-width:680px;margin:24px auto 0;}
+  @media(min-width:760px){.rf .plans{grid-template-columns:1fr 1fr;}}
+  .rf .plan{background:#fff;border:1px solid #e3e6ec;border-radius:18px;padding:24px 22px;box-shadow:0 2px 10px rgba(16,22,35,.06);position:relative;}
+  .rf .plan.hot{border:2px solid #e8c766;}
+  .rf .plan .ribbon{position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:#e8c766;color:#14100a;font-size:10.5px;font-weight:900;letter-spacing:1.6px;border-radius:999px;padding:5px 12px;white-space:nowrap;}
+  .rf .plan .pname{font-size:12px;font-weight:800;letter-spacing:2.2px;text-transform:uppercase;color:#68738a;}
+  .rf .plan .price{font-size:29px;font-weight:900;color:#101623;margin-top:8px;letter-spacing:-.5px;}
+  .rf .plan .price .per{font-size:13.5px;color:#68738a;font-weight:600;}
+  .rf .plan ul{list-style:none;margin:16px 0 0;padding:0;}
+  .rf .plan li{font-size:14.5px;color:#333f55;padding:7px 0 7px 26px;position:relative;border-top:1px solid #eef0f4;line-height:1.5;}
+  .rf .plan li:first-child{border-top:none;}
+  .rf .plan li::before{content:"✓";position:absolute;left:2px;color:#0aa657;font-weight:900;}
+  .rf .plan .note{color:#68738a;font-size:13px;line-height:1.65;margin:14px 0 0;}
+  .rf .faq{max-width:680px;margin:22px auto 0;display:grid;gap:10px;}
+  .rf .faq details{background:#171f30;border:1px solid #26314a;border-radius:14px;padding:16px 18px;}
+  .rf .faq summary{font-weight:700;font-size:15px;cursor:pointer;color:#eef1f6;}
+  .rf .faq p{color:#9aa5b8;font-size:14px;line-height:1.65;margin:9px 0 0;}
 </style>
 
-<div class="el">
+<div class="rf">
 
-  <!-- HERO — el escudo, un titular, aire -->
-  <section class="center">
+  <!-- HERO + BANDA DE DATOS (modelo Covers/Action: titular, CTA, stats) -->
+  <div class="band-dark">
     <img class="crest" src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team">
     <div class="eyebrow">The Sharp Team</div>
-    <h1>Picks with the <em>real ticket</em><br>to prove it.</h1>
-    <div class="rule"></div>
+    <h1>Sports picks with the <span class="hl">real ticket</span><br>to prove it.</h1>
     <p class="sub">Every play is posted before game time, with the actual bet slip.
     Win or lose, every result is graded in public — nothing hidden, nothing edited.</p>
     <a class="cta" href="{{ url_for('register') }}">Create my free account</a>
-    <p class="micro">Email only · Gold plays are free forever<br>
-    Platinum is free for your entire first month — no card.</p>
-  </section>
-
-  <hr class="hairline">
-
-  <!-- CÓMO FUNCIONA — antes que cualquier precio -->
-  <section>
-    <div class="eyebrow">How it works</div>
-    <h2>Simple, <em>by design</em></h2>
-    <div class="steps">
-      <div class="step"><div class="n">1</div>
-        <div><h3>Create your free account</h3>
-        <p>Just your email. Your account opens instantly, and Platinum turns on free for your first month — everything open, from day one.</p></div></div>
-      <div class="step"><div class="n">2</div>
-        <div><h3>Receive today's plays</h3>
-        <p>A small daily card on your Dashboard — 2:00 PM ET on weekdays, 11:00 AM ET on weekends. Always before game time, always with the real ticket.</p></div></div>
-      <div class="step"><div class="n">3</div>
-        <div><h3>See the results</h3>
-        <p>Every play is graded the next morning, in public — wins and losses alike. The tickets and the record speak for themselves.</p></div></div>
+    <p class="micro">Email only · Gold plays free forever · Platinum free your first month — no card</p>
+    <div class="stats">
+      <div class="stat"><div class="v">{{ total }}</div><div class="k">Plays documented</div></div>
+      <div class="stat"><div class="v">100%</div><div class="k">Posted pre-game</div></div>
+      <div class="stat"><div class="v">Every</div><div class="k">Play has its ticket</div></div>
     </div>
-  </section>
+  </div>
 
   {% if recent_plays %}
-  <hr class="hairline">
-  <!-- PRUEBA — un libro limpio, no un periódico -->
-  <section>
-    <div class="eyebrow">Graded in public</div>
-    <h2>Recent plays, <em>graded</em></h2>
-    <div class="ledger">
+  <!-- PICKS CALIFICADOS: tarjetas de producto uniformes (modelo Covers "Expert Picks") -->
+  <div class="band-light">
+    <div class="eyebrow">Expert picks · Graded</div>
+    <h2>Latest graded picks</h2>
+    <p class="sub">Real plays, real tickets, graded the next morning — wins and losses.</p>
+    <div class="cards">
       {% for p in recent_plays %}
-      <div class="lrow">
+      <div class="pcard">
         {% if p.img %}<img class="tix" src="{{ p.img }}" alt="Ticket for {{ p.pick }}" loading="lazy">{% endif %}
-        <div>
-          <span class="tag">{{ 'Gold' if p.nivel == 'FREE' else p.nivel }}</span>
-          <div class="pk">{{ p.pick }} <span style="color:var(--el-dim);font-weight:300;">· {{ p.cuota_txt }}</span></div>
-          {% if p.juego %}<div class="gm">{{ p.juego }}</div>{% endif %}
+        <div class="mid">
+          <div class="top">
+            <span class="tag{% if p.nivel == 'FREE' or p.nivel == 'GOLD' %} free{% endif %}">{{ 'Gold' if p.nivel == 'FREE' else p.nivel }}</span>
+            <span class="badge {% if p.resultado == 'WON' %}won{% else %}lost{% endif %}">{{ p.resultado }}</span>
+          </div>
+          <div class="pick">{{ p.pick }} <span class="odds">({{ p.cuota_txt }})</span></div>
+          {% if p.juego %}<div class="game">{{ p.juego }}</div>{% endif %}
         </div>
-        <div class="rs">
-          <div class="st {% if p.resultado == 'WON' %}won{% else %}lost{% endif %}">{{ p.resultado }}</div>
-          <div class="pf {% if p.resultado == 'WON' %}won{% else %}lost{% endif %}">{{ p.profit_txt }}</div>
-        </div>
+        <div class="pf {% if p.resultado == 'WON' %}won{% else %}lost{% endif %}">{{ p.profit_txt }}</div>
       </div>
       {% endfor %}
     </div>
     {% if total >= 500 %}
-    <p class="honest">Documented record: {{ wins }}–{{ losses }} · ROI {{ roi }}% — every play counted.</p>
+    <p class="honest">Documented record: <strong>{{ wins }}–{{ losses }}</strong> · ROI <strong>{{ roi }}%</strong> — every play counted.</p>
     {% else %}
     <p class="honest">Every official play is documented and counted — {{ total }} so far, on the way to a fully public record.</p>
     {% endif %}
-  </section>
+  </div>
   {% endif %}
 
-  <hr class="hairline">
+  <!-- CÓMO FUNCIONA: tarjetas de pasos (antes que los planes) -->
+  <div class="band-mid">
+    <div class="eyebrow">How it works</div>
+    <h2>Three steps. <span style="color:#e8c766;">No surprises.</span></h2>
+    <div class="steps">
+      <div class="step"><span class="n">1</span>
+        <h3>Create your free account</h3>
+        <p>Just your email. Your account opens instantly, and Platinum turns on free for your first month — everything open, from day one.</p></div>
+      <div class="step"><span class="n">2</span>
+        <h3>Get today's plays</h3>
+        <p>A small daily card on your Dashboard — 2:00 PM ET weekdays, 11:00 AM ET weekends. Always before game time, always with the real ticket.</p></div>
+      <div class="step"><span class="n">3</span>
+        <h3>Watch the results</h3>
+        <p>Every play graded the next morning, in public — wins and losses alike. The tickets and the record speak for themselves.</p></div>
+    </div>
+  </div>
 
-  <!-- PLANES — después de explicar, con calma -->
-  <section>
+  <!-- MEMBRESÍA: tabla de precios tipo producto (después de explicar) -->
+  <div class="band-light">
     <div class="eyebrow">Membership</div>
-    <h2>Start free. <em>Decide later.</em></h2>
+    <h2>Start free. Decide later.</h2>
     <div class="plans">
       <div class="plan">
-        <div class="pname">Gold — Free forever</div>
-        <div class="price">$0 <span class="per">always</span></div>
+        <div class="pname">Gold</div>
+        <div class="price">$0 <span class="per">/ forever</span></div>
         <ul>
           <li>Daily Gold plays, open to everyone</li>
           <li>Every play with its real ticket</li>
@@ -150,27 +155,26 @@
         </ul>
       </div>
       <div class="plan hot">
-        <div class="pname">Platinum — Everything</div>
-        <div class="price">Free <span class="per">for your first month</span></div>
+        <div class="ribbon">FIRST MONTH FREE</div>
+        <div class="pname">Platinum</div>
+        <div class="price">$0 <span class="per">/ first month</span></div>
         <ul>
           <li>Every Platinum play, with its real ticket</li>
           <li>The Vault play</li>
           <li>+EV Board · Player Props · Line Moves · Sharp Money</li>
           <li>The private Telegram channel</li>
         </ul>
-        <p class="note">After your free month, keeping Platinum is $15.99 a week — only if you decide it has earned it. If not, your Gold plays never stop, and nothing is ever charged: we never took your card.</p>
+        <p class="note">After your free month, keeping Platinum is $15.99/week — only if you decide it has earned it. We never took your card, so nothing is ever charged on its own.</p>
       </div>
     </div>
-    <a class="cta gold" href="{{ url_for('register') }}">Create my free account</a>
-    <p class="micro">No card. No charge. Just your email.</p>
-  </section>
+    <a class="cta dark" href="{{ url_for('register') }}">Create my free account</a>
+    <p class="micro" style="color:#68738a;">No card. No charge. Just your email.</p>
+  </div>
 
-  <hr class="hairline">
-
-  <!-- FAQ -->
-  <section>
+  <!-- FAQ + CIERRE -->
+  <div class="band-mid">
     <div class="eyebrow">Questions</div>
-    <h2>Fair <em>questions</em></h2>
+    <h2>Fair questions</h2>
     <div class="faq">
       <details><summary>Is it really free?</summary>
         <p>Yes. Gold plays are free forever, and your first month of Platinum is free when you register — no card, no charge. We would rather prove the work first and let you decide.</p></details>
@@ -179,20 +183,11 @@
       <details><summary>Do you post the losers too?</summary>
         <p>Every single one. Each official play is graded the next morning, win or lose, and stays on the public record. That is the entire point of The Sharp Team.</p></details>
       <details><summary>What happens when my free month ends?</summary>
-        <p>Platinum closes and your free Gold plays continue. Nothing is charged — we never took your card. If you wish to keep Platinum, it is $15.99 a week, and you may cancel at any time.</p></details>
+        <p>Platinum closes and your free Gold plays continue. Nothing is charged — we never took your card. If you wish to keep Platinum, it is $15.99/week, and you may cancel at any time.</p></details>
     </div>
-  </section>
-
-  <hr class="hairline">
-
-  <!-- CIERRE -->
-  <section class="center">
-    <div class="eyebrow">Today's card</div>
-    <h2>See today's plays — <em>free.</em></h2>
-    <p class="sub">The card is on the Dashboard, with the real tickets.</p>
     <a class="cta" href="{{ url_for('register') }}">Create my free account</a>
-    <p class="micro">Already a member? <a href="{{ url_for('login') }}" style="color:var(--el-gold);text-decoration:none;">Log in</a></p>
-  </section>
+    <p class="micro">Already a member? <a href="{{ url_for('login') }}" style="color:#e8c766;">Log in</a></p>
+  </div>
 
 </div>
 {% endblock %}
