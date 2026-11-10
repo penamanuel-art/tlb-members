@@ -114,29 +114,32 @@ form.cap input::placeholder{color:var(--dim)}
 .level ul{list-style:none;margin:16px 0 22px}
 .level li{display:flex;gap:11px;padding:8px 0;font-size:15px;border-bottom:1px solid rgba(42,46,58,.55)}
 .level li:last-child{border-bottom:none}
-.level li::before{content:"✓";color:var(--grn);font-weight:900;flex:none}
+.level li::before{content:"";width:17px;height:17px;margin-top:4px;flex:none;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2310cc87' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4.5 12.6l5 5L19.5 7'/%3E%3C/svg%3E") center/contain no-repeat}
 .level .btn{margin-top:auto}
 .level.plat{border-color:rgba(212,175,55,.5)}
 .level.vault{border-color:rgba(160,120,255,.4)}
 
 /* ---------- steps ---------- */
-.steps{display:grid;gap:14px;margin-top:34px}
-.step{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:26px 24px}
-.step .num{width:38px;height:38px;border-radius:50%;background:rgba(16,204,135,.14);border:1px solid rgba(16,204,135,.45);color:var(--grn2);font-weight:900;display:flex;align-items:center;justify-content:center;font-size:16px;margin-bottom:14px}
+.steps{display:grid;gap:12px;margin-top:24px}
+.step{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:18px}
+.step .num{position:relative;width:34px;height:34px;border-radius:50%;background:rgba(16,204,135,.14);border:1px solid rgba(16,204,135,.45);color:var(--grn2);display:flex;align-items:center;justify-content:center;margin-bottom:10px}
+.step .num svg{width:19px;height:19px}
+.step .num b{position:absolute;top:-6px;right:-7px;width:16px;height:16px;border-radius:50%;background:var(--grn);color:#04150d;font-size:10px;font-weight:900;display:flex;align-items:center;justify-content:center;border:2px solid var(--panel)}
+#how{padding-bottom:44px}
 .step h3{font-size:18px;font-weight:800;margin-bottom:6px}
 .step p{color:var(--mut);font-size:15px}
 
 /* ---------- comparison ---------- */
 .vs-sec{background:var(--bg2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
-.vs{display:grid;gap:16px;margin-top:34px}
-.plan{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:30px 26px}
+.vs{display:grid;gap:16px;margin-top:28px}
+.plan{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:26px 24px}
 .plan .pname{font-size:13px;font-weight:900;letter-spacing:.16em;color:var(--mut)}
 .plan .price{font-size:30px;font-weight:900;margin:10px 0 2px}
 .plan .per{color:var(--dim);font-size:14px;margin-bottom:20px}
 .plan ul{list-style:none}
 .plan li{display:flex;gap:11px;padding:9px 0;font-size:15px;color:var(--txt);border-bottom:1px solid rgba(42,46,58,.55)}
 .plan li:last-child{border-bottom:none}
-.plan li::before{content:"✓";color:var(--grn);font-weight:900;flex:none}
+.plan li::before{content:"";width:17px;height:17px;margin-top:4px;flex:none;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2310cc87' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4.5 12.6l5 5L19.5 7'/%3E%3C/svg%3E") center/contain no-repeat}
 .plan li.dim{color:var(--mut)}
 .plan.plat{border:1px solid rgba(16,204,135,.6);background:linear-gradient(180deg,#14231c,var(--panel));box-shadow:0 0 0 1px rgba(16,204,135,.2),0 22px 50px rgba(0,0,0,.45);position:relative}
 .plan.plat .pname{color:var(--grn2)}
@@ -145,9 +148,10 @@ form.cap input::placeholder{color:var(--dim)}
 .plan .fine{margin-top:16px;font-size:13px;color:var(--dim)}
 
 /* ---------- proof band ---------- */
-.proofs{display:grid;gap:14px;margin-top:34px}
-.proof{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:26px 24px}
-.proof .ic{font-size:24px;margin-bottom:12px}
+.proofs{display:grid;gap:12px;margin-top:26px}
+.proof{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:20px}
+.proof .ic{width:38px;height:38px;border-radius:11px;background:rgba(16,204,135,.12);border:1px solid rgba(16,204,135,.4);color:var(--grn2);display:flex;align-items:center;justify-content:center;margin-bottom:10px}
+.proof .ic svg{width:20px;height:20px}
 .proof h3{font-size:18px;font-weight:800;margin-bottom:6px}
 .proof p{color:var(--mut);font-size:15px}
 
@@ -158,8 +162,8 @@ form.cap input::placeholder{color:var(--dim)}
 .about-panel p b{color:var(--txt)}
 
 /* ---------- toolkit ---------- */
-.tools{display:grid;gap:14px;margin-top:34px}
-.tool{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:24px 22px}
+.tools{display:grid;gap:12px;margin-top:28px}
+.tool{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:20px}
 .tool .ttop{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
 .tool h3{font-size:17px;font-weight:800}
 .mtag{font-size:10.5px;font-weight:900;letter-spacing:.09em;border-radius:6px;padding:4px 9px;background:rgba(212,175,55,.13);color:var(--gold2);border:1px solid rgba(212,175,55,.4);white-space:nowrap}
@@ -186,8 +190,8 @@ form.cap input::placeholder{color:var(--dim)}
 details{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);margin-top:12px;padding:4px 22px}
 summary{cursor:pointer;font-weight:700;font-size:16.5px;padding:16px 0;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:14px}
 summary::-webkit-details-marker{display:none}
-summary::after{content:"+";color:var(--grn);font-size:22px;font-weight:800;flex:none}
-details[open ] summary::after{content:"–"}
+summary::after{content:"";width:18px;height:18px;flex:none;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2310cc87' stroke-width='2.6' stroke-linecap='round'%3E%3Cpath d='M12 5v14M5 12h14'/%3E%3C/svg%3E") center/contain no-repeat}
+details[open ] summary::after{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2310cc87' stroke-width='2.6' stroke-linecap='round'%3E%3Cpath d='M5 12h14'/%3E%3C/svg%3E")}
 details p{color:var(--mut);font-size:15px;padding:0 0 18px}
 
 /* ---------- footer ---------- */
@@ -309,10 +313,10 @@ footer .copy{font-size:12.5px;color:var(--dim);margin-top:8px}
 <section class="results-sec" style="padding-top:48px">
   <div class="wrap">
     <div class="chips">
-      <span class="chip"><i>🎟</i> Ticket shown on every pick</span>
-      <span class="chip"><i>✓</i> Posted before game time</span>
-      <span class="chip"><i>✓</i> Graded in public</span>
-      <span class="chip"><i>✓</i> No card for your first month</span>
+      <span class="chip"><i><svg viewBox="0 0 24 24" width="15" height="15" style="vertical-align:-2px" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8.5A1.5 1.5 0 0 1 5.5 7h13A1.5 1.5 0 0 1 20 8.5v2a2.5 2.5 0 0 0 0 5v2a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 17.5v-2a2.5 2.5 0 0 0 0-5z"/><path d="M13.5 9.2h.01M13.5 12h.01M13.5 14.8h.01" stroke-width="2.6"/></svg></i> Ticket shown on every pick</span>
+      <span class="chip"><i><svg viewBox="0 0 24 24" width="14" height="14" style="vertical-align:-2px" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12.6l5 5L19.5 7"/></svg></i> Posted before game time</span>
+      <span class="chip"><i><svg viewBox="0 0 24 24" width="14" height="14" style="vertical-align:-2px" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12.6l5 5L19.5 7"/></svg></i> Graded in public</span>
+      <span class="chip"><i><svg viewBox="0 0 24 24" width="14" height="14" style="vertical-align:-2px" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12.6l5 5L19.5 7"/></svg></i> No card for your first month</span>
     </div>
     <div style="margin-top:52px">
       <div class="eyebrow">Documented · Win or loss</div>
@@ -470,22 +474,22 @@ footer .copy{font-size:12.5px;color:var(--dim);margin-top:8px}
   <div class="wrap">
     <div class="eyebrow">How it works</div>
     <h2 class="sec-title">How it works — simple</h2>
-    <p class="sec-sub">Three steps between you and a card you can actually verify.</p>
+    <p class="sec-sub">Three steps between you and a card you can actually verify. Registration takes an email and under a minute — and today's card is waiting on your Dashboard the same day.</p>
     <div class="steps">
       <div class="step">
-        <div class="num">1</div>
+        <div class="num"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10" cy="8" r="3.6"/><path d="M4.5 19.5c.6-3 2.8-4.5 5.5-4.5 1.5 0 2.8.5 3.8 1.4"/><path d="M18.5 8v6M15.5 11h6"/></svg><b>1</b></div>
         <h3>Join free</h3>
-        <p>Email only — your account opens instantly, and Platinum is on for your first month. No card.</p>
+        <p>Email only — your account opens instantly, and Platinum is on for your first month, free. We never ask for a card up front, so nothing is ever charged on its own. When the free month ends, keeping Platinum is $15.99/week — your call, and you can cancel anytime.</p>
       </div>
       <div class="step">
-        <div class="num">2</div>
+        <div class="num"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8.5A1.5 1.5 0 0 1 5.5 7h13A1.5 1.5 0 0 1 20 8.5v2a2.5 2.5 0 0 0 0 5v2a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 17.5v-2a2.5 2.5 0 0 0 0-5z"/><path d="M13.5 9.2h.01M13.5 12h.01M13.5 14.8h.01" stroke-width="2.6"/></svg><b>2</b></div>
         <h3>Get today's card</h3>
-        <p>Plays post on your Dashboard at 2:00 PM ET on weekdays and 11:00 AM ET on weekends — always before game time.</p>
+        <p>Plays post on your Dashboard at 2:00 PM ET on weekdays and 11:00 AM ET on weekends — always before game time. Every card shows the pick, the model probability, and the real ticket we placed at the real price, so you can check the work yourself. Gold plays are free every day; Platinum adds the strongest edges and The Vault.</p>
       </div>
       <div class="step">
-        <div class="num">3</div>
+        <div class="num"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4v15.5a.5.5 0 0 0 .5.5H20"/><path d="M7.5 15.5l3.8-4.2 3 2.4 4.2-5.2"/><path d="M15.2 8.3h3.3v3.3"/></svg><b>3</b></div>
         <h3>Follow and track</h3>
-        <p>Every result is graded in public the next morning. Your tracker shows the full picture — wins and losses.</p>
+        <p>Every result is graded in public the next morning — wins and losses, nothing edited, nothing deleted. Your personal tracker keeps every play organized by day, so over time you see exactly how the program performs. Judge us on the full record, not on a hot week.</p>
       </div>
     </div>
   </div>
@@ -544,17 +548,17 @@ footer .copy{font-size:12.5px;color:var(--dim);margin-top:8px}
     </div>
     <div class="proofs">
       <div class="proof">
-        <div class="ic">🕑</div>
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.2"/><path d="M12 7.5V12l3 2"/></svg></div>
         <h3>Posted before game time</h3>
         <p>Every play goes up before the game starts — never after, never edited once it's live.</p>
       </div>
       <div class="proof">
-        <div class="ic">🎟</div>
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8.5A1.5 1.5 0 0 1 5.5 7h13A1.5 1.5 0 0 1 20 8.5v2a2.5 2.5 0 0 0 0 5v2a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 17.5v-2a2.5 2.5 0 0 0 0-5z"/><path d="M13.5 9.2h.01M13.5 12h.01M13.5 14.8h.01" stroke-width="2.6"/></svg></div>
         <h3>The real ticket, every time</h3>
         <p>Each card shows the actual bet we placed, at the real price we got — not a mock-up.</p>
       </div>
       <div class="proof">
-        <div class="ic">📋</div>
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4.8H7.5A1.5 1.5 0 0 0 6 6.3v12.2A1.5 1.5 0 0 0 7.5 20h9a1.5 1.5 0 0 0 1.5-1.5V6.3a1.5 1.5 0 0 0-1.5-1.5H15"/><rect x="9" y="3.5" width="6" height="3.6" rx="1"/><path d="M9.2 12.5h5.6M9.2 16h5.6"/></svg></div>
         <h3>Losers stay on the record</h3>
         <p>Wins and losses are graded in public the next morning. Your tracker shows every result.</p>
       </div>
