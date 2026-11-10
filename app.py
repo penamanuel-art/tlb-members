@@ -11090,8 +11090,29 @@ def admin_api_en_vivo():
                        sorted(conteo.items(), key=lambda kv: -kv[1])]
     except Exception:
         registrados = []
+    # Diagnostico temporal (2026-11-09): estado crudo de la tabla
+    # presencia y, con ?uid=, la fila y las banderas de un usuario.
+    debug = {}
+    try:
+        debug["filas_presencia"] = db.execute(
+            "SELECT COUNT(*) c FROM presencia").fetchone()["c"]
+        debug["ultimo_max"] = db.execute(
+            "SELECT MAX(ultimo) u FROM presencia").fetchone()["u"]
+        uid_q = request.args.get("uid", type=int)
+        if uid_q:
+            pr = db.execute("SELECT ultimo FROM presencia WHERE user_id = ?",
+                            (uid_q,)).fetchone()
+            ur = db.execute(
+                "SELECT is_admin, cancel_requested_at FROM users WHERE id = ?",
+                (uid_q,)).fetchone()
+            debug["uid"] = uid_q
+            debug["presencia_ultimo"] = pr["ultimo"] if pr else None
+            debug["is_admin"] = ur["is_admin"] if ur else None
+            debug["cancel_requested_at"] = ur["cancel_requested_at"] if ur else None
+    except Exception as e:
+        debug["error"] = str(e)[:120]
     return jsonify({"dentro": dentro, "total": len(dentro),
-                    "registrados": registrados})
+                    "registrados": registrados, "debug": debug})
 
 
 @app.route("/admin/api/tracked-members")
