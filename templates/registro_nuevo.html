@@ -354,7 +354,7 @@ twq('config','rhgk7');
     <h1>Create your <span class="hl">free account.</span><br>Free plays, posted every day.</h1>
     <p class="sub">Daily plays priced by a real model, published before game time, and proven with the actual ticket — every single day.</p>
     <a class="cta" href="#signup">Create my free account</a>
-    <p class="micro"><b>Free forever.</b> No card required — Platinum is optional.</p>
+    <p class="micro"><b>Your first month of Platinum is FREE.</b> No card required — it turns on the moment you register.</p>
     <div class="trust">
       <div class="t">
         <div class="icon-chip sm mint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 5-3.5 8-7 10-3.5-2-7-5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg></div>
@@ -548,6 +548,7 @@ twq('config','rhgk7');
         <li>Sharp Money — follow the professional money</li>
         <li>Private Telegram channel</li>
       </ul>
+      <div class="price">Your first month: FREE — included when you join</div>
     </div>
   </section>
 
@@ -588,9 +589,9 @@ twq('config','rhgk7');
   <!-- ===== 9. THE OFFER ===== -->
   <section id="offer">
     <div class="offer">
-      <span class="pill gold">Optional Upgrade</span>
-      <h2>Optional: <span class="hl">Go Platinum</span></h2>
-      <p class="price-line">$1 today unlocks Platinum for your first week, then $15.99/week. Cancel anytime. Or stay free — the free plays keep coming either way.</p>
+      <span class="pill gold">Included When You Join</span>
+      <h2>Your first month of <span class="hl">Platinum is FREE</span></h2>
+      <p class="price-line">Every new account starts with a full month of Platinum — every play, every tool — on us. No card, no charge. When your month ends, you decide if it's worth keeping. The free plays never stop either way.</p>
       <ul class="checklist" style="text-align:left;max-width:440px;margin:16px auto 2px;font-size:14px;color:var(--muted);">
         <li>The Platinum play — our top play of the day</li>
         <li>Every Gold play</li>
@@ -609,8 +610,8 @@ twq('config','rhgk7');
             <span class="num">1</span>
           </div>
           <div>
-            <h3>Today: <span>$1</span> to start</h3>
-            <p>One dollar today starts your membership and puts your card on file.</p>
+            <h3>Today: <span>$0</span> to start</h3>
+            <p>Create your free account — email only. It opens instantly, no card anywhere.</p>
           </div>
         </div>
         <div class="ostep">
@@ -619,8 +620,8 @@ twq('config','rhgk7');
             <span class="num" style="background:var(--mint);color:#06231a;">2</span>
           </div>
           <div>
-            <h3>First week of Platinum: <span>$1</span></h3>
-            <p>Every play and every tool, fully unlocked for your whole first week.</p>
+            <h3>Your first month of Platinum: <span>FREE</span></h3>
+            <p>Every play and every tool, fully unlocked for 30 days — the real thing, not a teaser.</p>
           </div>
         </div>
         <div class="ostep">
@@ -629,15 +630,15 @@ twq('config','rhgk7');
             <span class="num">3</span>
           </div>
           <div>
-            <h3>Then <span>$15.99/week</span></h3>
-            <p>After your first week, Platinum continues at $15.99/week. Cancel anytime from your account.</p>
+            <h3>After your month: <span>your call</span></h3>
+            <p>Nothing is charged and nothing renews on its own. If Platinum earned its keep, you can keep it — if not, you simply go back to the free plays.</p>
           </div>
         </div>
       </div>
-      <div class="bigprice">Platinum: start for <span>$1</span></div>
-      <p class="price-line">Rather stay free? <b>Sharp Free stays free forever</b> — daily free picks, no card required.</p>
-      <a class="cta gold" href="#signup">Start Platinum for $1</a>
-      <p class="micro">$1 today · first week covered · $15.99/week after. No surprises.</p>
+      <div class="bigprice">Platinum: your first month <span>FREE</span></div>
+      <p class="price-line">And the free plays? <b>They stay free forever</b> — daily free picks, no card required, month or no month.</p>
+      <a class="cta gold" href="#signup">Create my free account</a>
+      <p class="micro">Free month · no card · no surprises.</p>
     </div>
   </section>
 
@@ -648,7 +649,7 @@ twq('config','rhgk7');
     <div class="formcard">
       <div class="center"><span class="eyebrow gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5"/></svg>Create Your Account</span></div>
       <h2>You're in with just your email</h2>
-      <p class="sub">One field, no card — your account opens instantly. Pick how you want to start; your password, name and phone come after, once you're in.</p>
+      <p class="sub">One field, no card — your account opens instantly, with your free month of Platinum already on. Your password, name and phone come after, once you're in.</p>
       {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
           {% for cat, msg in messages %}
@@ -658,21 +659,14 @@ twq('config','rhgk7');
       {% endwith %}
       <form method="post" action="{{ url_for('register') }}">
         <div class="intent">
-          <label class="intent-opt">
-            <input type="radio" name="signup_intent" value="free" checked>
+          <div class="intent-opt" style="cursor:default;">
+            <span style="font-size:20px;line-height:1.2;">⭐</span>
             <span>
-              <span class="io-title">⚪ SHARP FREE — $0 forever</span>
-              <span class="io-sub">Daily free picks · no card required</span>
+              <span class="io-title">PLATINUM — YOUR FIRST MONTH IS FREE</span>
+              <span class="io-sub">It turns on the moment your account opens: every play, every tool, no card required.</span>
+              <span class="io-sub">And the daily free plays are yours forever, month or no month.</span>
             </span>
-          </label>
-          <label class="intent-opt">
-            <input type="radio" name="signup_intent" value="platinum">
-            <span>
-              <span class="io-title">⭐ PLATINUM (optional) — Start for $1</span>
-              <span class="io-sub">$1 for your first week · then $15.99/week</span>
-              <span class="io-sub">Includes the Platinum play, every Gold play, Value plays and all the tools.</span>
-            </span>
-          </label>
+          </div>
         </div>
         <div class="field">
           <label for="f-email">Your email address</label>
@@ -688,9 +682,9 @@ twq('config','rhgk7');
       <ol class="howsteps">
         <li><b>1.</b> Enter your email — your account opens instantly, no confirmation wait.</li>
         <li><b>2.</b> Inside, finish setting up: your password, name and phone. It takes 10 seconds, and we email you an activation link to confirm your address for good.</li>
-        <li><b>3.</b> Going Platinum? Confirm your $1 checkout — your first week starts the moment that payment completes, not when you fill out this form.</li>
+        <li><b>3.</b> Your Platinum is already on — free for your first month. Open your Dashboard and see today's full card.</li>
       </ol>
-      <p class="formnote">No card is charged on this form — Sharp Free never asks for one. Platinum's $1 is charged by Stripe on the next step.</p>
+      <p class="formnote">No card on this form, ever. Your free month needs no payment — and if you never pay a cent, the free plays keep coming.</p>
       <p class="login-line">Already have an account? <a href="{{ url_for('login') }}">Log in here →</a></p>
     </div>
   </section>
@@ -712,7 +706,7 @@ twq('config','rhgk7');
       </div>
       <div class="item">
         <div class="qhead"><h3>How much does Platinum cost?</h3><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></div>
-        <p>You start today for $1 — that covers your first week of Platinum — and after that it's $15.99/week. Sharp Free is always free.</p>
+        <p>Your first month of Platinum is free — it comes with your account, no card required. After that, keeping it is up to you. The free plays are always free.</p>
       </div>
       <div class="item">
         <div class="qhead"><h3>Can I cancel whenever I want?</h3><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></div>
@@ -724,7 +718,7 @@ twq('config','rhgk7');
       </div>
     </div>
     <a class="cta" href="#signup">Create my free account</a>
-    <p class="micro">Free account, free plays every day. Platinum is optional — $1 if you want it.</p>
+    <p class="micro">Free account, free plays every day — and your first month of Platinum is on us.</p>
   </section>
 
   <!-- ===== 11. FOOTER ===== -->
