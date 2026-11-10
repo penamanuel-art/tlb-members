@@ -9640,6 +9640,53 @@ def api_own_bets_delete():
     return jsonify({"ok": True, "deleted": bet_id})
 
 
+@app.route("/admin/api/book-balances/rename", methods=["POST"])
+def api_book_balances_rename():
+    """Renombra una casa en Book balances (2026-11-09: corregir el
+    «Kaslshy» que Alex tecleó al registrar su casa, por «Kalshi»,
+    para que la liquidación automática caiga en su fila y no abra
+    otra). Auth: sesión admin o X-Admin-Key."""
+    if not _admin_api_autorizado():
+        return jsonify({"ok": False}), 403
+    data = request.get_json(silent=True) or {}
+    try:
+        user_id = int(data.get("user_id") or 0)
+    except (TypeError, ValueError):
+        user_id = 0
+    de = (data.get("from") or "").strip()
+    a = (data.get("to") or "").strip()
+    if not user_id or not de or not a or de == a:
+        return jsonify({"ok": False, "error": "datos"}), 400
+    db = get_db()
+    _ensure_book_balances_table(db)
+    row = db.execute(
+        "SELECT id FROM book_balances WHERE user_id = ? AND book_name = ?",
+        (user_id, de)).fetchone()
+    if not row:
+        return jsonify({"ok": False, "error": "not found"}), 404
+    clash = db.execute(
+        "SELECT id FROM book_balances WHERE user_id = ? AND book_name = ?",
+        (user_id, a)).fetchone()
+    if clash:
+        return jsonify({"ok": False, "error": "target exists"}), 409
+    db.execute(
+        "UPDATE book_balances SET book_name = ? "
+        "WHERE user_id = ? AND book_name = ?", (a, user_id, de))
+    try:
+        _ensure_book_moves_table(db)
+        db.execute(
+            "UPDATE book_balance_moves SET book_name = ? "
+            "WHERE user_id = ? AND book_name = ?", (a, user_id, de))
+    except Exception:
+        pass
+    db.commit()
+    out = db.execute(
+        "SELECT book_name, balance FROM book_balances "
+        "WHERE user_id = ? AND book_name = ?", (user_id, a)).fetchone()
+    return jsonify({"ok": True,
+                    "book": dict(out) if out else None})
+
+
 @app.route("/admin/api/own-bets/grade", methods=["POST"])
 def api_own_bets_grade():
     if not _admin_api_autorizado():
