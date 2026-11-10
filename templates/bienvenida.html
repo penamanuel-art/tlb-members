@@ -1,7 +1,22 @@
 {% extends "base.html" %}
 {% block title %}Welcome — The Sharp Team{% endblock %}
 {% block content %}
-<section class="auth-card">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+/* Bienvenida (2026-11-10): tipografía normalizada a Inter y secciones en
+   paneles con aire — solo presentación, mismo contenido y mismos botones. */
+.bv{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased;}
+.bv h2{margin:0 0 8px;font-size:1.55rem;font-weight:800;letter-spacing:-.01em;line-height:1.25;}
+.bv p{line-height:1.65;}
+.bv-panel{background:var(--card-2);border:1px solid var(--line);border-radius:16px;padding:20px;margin:20px 0;}
+.bv-panel h3{margin:0 0 10px;font-size:1.12rem;font-weight:700;line-height:1.35;}
+.bv-panel p{margin:0 0 6px;}
+.bv-panel ul,.bv-panel ol{margin:0;padding-left:20px;}
+.bv-panel li{line-height:1.65;margin:0 0 12px;}
+.bv-panel li:last-child{margin-bottom:0;}
+.bv-panel .btn{margin-top:16px;}
+</style>
+<section class="auth-card bv">
   <h2>Welcome, <span class="accent">{{ nombre }}</span></h2>
   <p class="muted">Your account is ready. This is a sports betting program built on numbers, discipline and value. No hunches.</p>
 
@@ -46,31 +61,37 @@
   </div>
   {% endif %}
 
-  <h3>Your member dashboard</h3>
-  <p>The day's plays post here every day at 1:00 PM ET.</p>
-  <a class="btn btn-primary btn-block" href="{{ url_for('home') }}">Go to my dashboard →</a>
+  <div class="bv-panel">
+    <h3>Your member dashboard</h3>
+    <p>The day's plays post here every day at 1:00 PM ET.</p>
+    <a class="btn btn-primary btn-block" href="{{ url_for('home') }}">Go to my dashboard →</a>
+  </div>
 
-  <h3>How it works</h3>
-  <ul>
-    <li>We publish a maximum of 3 plays per day, and only when the model detects real value. If there's no value, there's no play: discipline also means not betting.</li>
-    <li>Each play shows its level: <strong>Platinum</strong>, the day's top play (edge over 5%), or <strong>Sharp Free</strong> (edge between 3% and 5%), always with its odds, stake and explanation.</li>
-  </ul>
+  <div class="bv-panel">
+    <h3>How it works</h3>
+    <ul>
+      <li>We publish a maximum of 3 plays per day, and only when the model detects real value. If there's no value, there's no play: discipline also means not betting.</li>
+      <li>Each play shows its level: <strong>Platinum</strong>, the day's top play (edge over 5%), or <strong>Gold</strong> (edge between 3% and 5%), always with its odds, stake and explanation.</li>
+    </ul>
+  </div>
 
-  <h3>Platinum</h3>
-  <ul>
-    <li><strong>Your Platinum is already ON</strong> — free for your first month, starting today. Every play and every tool on your dashboard is open.</li>
+  <div class="bv-panel">
+    <h3>Platinum</h3>
+    <ul>
+      <li><strong>Your Platinum is already ON</strong> — free for your first month, starting today. Every play and every tool on your dashboard is open.</li>
+      <li>No card, no charge for your month. When it ends, you decide if it is worth keeping — and your free plays never stop either way.</li>
+    </ul>
+    <a class="btn btn-primary btn-block" href="{{ url_for('home') }}">See the full card on my dashboard →</a>
+  </div>
 
-    <li>No card, no charge for your month. When it ends, you decide if it is worth keeping — and your free plays never stop either way.</li>
-
-  </ul>
-  <a class="btn btn-primary btn-block" href="{{ url_for('home') }}">See the full card on my dashboard →</a>
-
-  <h3>Golden rules</h3>
-  <ol>
-    <li>Bet exactly the indicated amount: no more, no less.</li>
-    <li>Never chase losses or wins.</li>
-    <li>Only numbers and value. No team favoritism.</li>
-  </ol>
+  <div class="bv-panel">
+    <h3>Golden rules</h3>
+    <ol>
+      <li>Bet exactly the indicated amount: no more, no less.</li>
+      <li>Never chase losses or wins.</li>
+      <li>Only numbers and value. No team favoritism.</li>
+    </ol>
+  </div>
 
   <p class="muted">See you tomorrow at 1:00 PM ET with the first plays.</p>
   <p class="muted" style="margin-top:1rem;font-size:.85rem">Play responsibly · 21+ · Gambling problem? Call 1-800-GAMBLER (1-800-426-2537): free and confidential help, 24/7.</p>
