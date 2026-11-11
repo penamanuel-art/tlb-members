@@ -7218,6 +7218,35 @@ def bienvenida():
     return render_template("bienvenida.html", nombre=session.get("nombre", ""), fb_reg=fb_reg, fb_event_id=fb_event_id, offer_free_month=_fm, setup=_setup)
 
 
+@app.route("/bienvenida-previa")
+def bienvenida_previa():
+    """VISTA PREVIA pa' Alex de la NUEVA /bienvenida (2026-11-11): la
+    previa vive en el propio sitio porque los links de archivos no le
+    abren en su telefono (precedente 2026-10-31: la previa de registro
+    se monto en vivo visible solo con SU sesion; miembros o sin sesion
+    recibian 404). Candado: admin real o la cuenta de miembro de Alex
+    (_admin_o_cuenta_alex, el mismo helper de las paginas /admin/*);
+    cualquier otro recibe 404, como si la ruta no existiera. NO toca
+    la /bienvenida real ni ningun dato: solo renderiza la plantilla
+    nueva (bienvenida_nueva.html) con un contexto de EJEMPLO de
+    miembro recien registrado sin confirmar, pa' que Alex vea la
+    pagina completa, incluida la tarjeta de setup. Sin checkin."""
+    from flask import abort
+    if not _admin_o_cuenta_alex(current_user()):
+        abort(404)
+    _setup_demo = {
+        "verificado": False,
+        "propia": False,
+        "telefono": "",
+        "nombre_prov": True,
+        "email": "you@email.com",
+        "falta": True,
+    }
+    return render_template("bienvenida_nueva.html", nombre="Alex",
+                           fb_reg=False, fb_event_id=None,
+                           offer_free_month=True, setup=_setup_demo)
+
+
 @app.route("/cuenta/completar", methods=["POST"])
 @login_required
 def cuenta_completar():
