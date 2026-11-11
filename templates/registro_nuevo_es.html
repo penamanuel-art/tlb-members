@@ -2,9 +2,9 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>The Sharp Team — Crea tu cuenta gratis</title>
-<meta name="theme-color" content="#0b0c10">
+<meta name="theme-color" content="#0c0f16">
 <!-- Meta Pixel Code (mismo bloque que base.html — no tocar) -->
 <script>
 !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -27,298 +27,289 @@ twq('config','rhgk7');
 {% if fb_reg %}twq('event', 'tw-rhgk7-rhgkm', {});{% endif %}
 </script>
 <!-- End X conversion tracking base code -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800&family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@500;600&display=swap" rel="stylesheet">
 <style>
-  html{scroll-behavior:smooth;}
-  :root{
-    --bg:#14161d;
-    --card:#1D2029;
-    --card2:#232733;
-    --mint:#11CB87;
-    --gold:#e8c766;
-    --red:#e06c5f;
-    --text:#f2f4f7;
-    --muted:#a7aebb;
-    --line:#2b3040;
-  }
-  *{margin:0;padding:0;box-sizing:border-box;}
-  body{
-    background:#0b0c10;
-    color:var(--text);
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-    line-height:1.5;
-    -webkit-font-smoothing:antialiased;
-  }
-  .wrap{max-width:470px;margin:0 auto;background:var(--bg);min-height:100vh;box-shadow:0 0 40px rgba(0,0,0,.6);padding-bottom:calc(96px + env(safe-area-inset-bottom));}
-  section{padding:30px 16px;}
-  h1{font-size:30px;line-height:1.18;font-weight:900;text-align:center;}
-  h1 .hl{color:var(--mint);}
-  h2{font-size:22px;font-weight:800;text-align:center;margin-bottom:8px;}
-  h2 .hl{color:var(--gold);}
-  .sub{text-align:center;color:var(--muted);font-size:15px;margin-top:10px;}
-  .cta{
-    display:block;text-align:center;background:var(--mint);color:#06231a;
-    font-weight:800;font-size:17px;padding:16px 20px;border-radius:12px;
-    text-decoration:none;margin:22px 0 8px;letter-spacing:.3px;
-    box-shadow:0 8px 22px rgba(17,203,135,.22);
-  }
-  .cta.gold{background:var(--gold);color:#2a2000;box-shadow:0 8px 22px rgba(232,199,102,.20);}
-  .micro{text-align:center;font-size:12.5px;color:var(--muted);}
-  .micro b{color:var(--text);}
-  .hero{
-    background:
-      radial-gradient(130% 95% at 50% -5%,rgba(232,199,102,.13) 0%,rgba(232,199,102,0) 55%),
-      radial-gradient(95% 75% at 50% 112%,rgba(17,203,135,.10) 0%,rgba(17,203,135,0) 60%);
-  }
-  /* ===== eyebrow (section headers) ===== */
-  .eyebrow{
-    display:inline-flex;align-items:center;gap:7px;
-    font-size:11px;font-weight:800;letter-spacing:2.2px;text-transform:uppercase;color:var(--mint);
-  }
-  .eyebrow svg{width:14px;height:14px;}
-  .eyebrow.gold{color:var(--gold);}
-  .eyebrow.red{color:var(--red);}
-  .eyebrow + h2{margin-top:9px;}
-  /* ===== icon chips: one system, color = meaning ===== */
-  .icon-chip{
-    width:44px;height:44px;border-radius:13px;flex:0 0 44px;
-    display:flex;align-items:center;justify-content:center;
-    background:rgba(232,199,102,.10);border:1px solid rgba(232,199,102,.35);color:var(--gold);
-  }
-  .icon-chip.mint{background:rgba(17,203,135,.10);border-color:rgba(17,203,135,.35);color:var(--mint);}
-  .icon-chip.neutral{background:rgba(242,244,247,.06);border-color:rgba(242,244,247,.18);color:#dfe4ec;}
-  .icon-chip.red{background:rgba(224,108,95,.10);border-color:rgba(224,108,95,.40);color:var(--red);}
-  .icon-chip svg{width:22px;height:22px;}
-  .icon-chip.sm{width:40px;height:40px;flex-basis:40px;border-radius:12px;}
-  .icon-chip.sm svg{width:20px;height:20px;}
-  .chipwrap{position:relative;flex:0 0 44px;}
-  .chipwrap .num{
-    position:absolute;top:-9px;right:-9px;width:24px;height:24px;border-radius:50%;
-    background:var(--gold);color:#2a2000;font-size:12.5px;font-weight:900;
-    display:flex;align-items:center;justify-content:center;border:2px solid var(--card);
-  }
-  /* ===== trust row (under hero) ===== */
-  .trust{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:22px;padding-top:18px;border-top:1px solid var(--line);}
-  .trust .t{display:flex;flex-direction:column;align-items:center;gap:7px;text-align:center;font-size:11px;font-weight:700;color:var(--muted);line-height:1.35;}
-  /* ===== modern cards / steps ===== */
-  .steps{display:flex;flex-direction:column;gap:12px;margin-top:20px;}
-  .step{
-    background:linear-gradient(180deg,#20232e,#1D2029);border:1px solid var(--line);border-radius:16px;padding:16px 18px;
-    display:flex;gap:14px;align-items:flex-start;
-    box-shadow:0 1px 2px rgba(0,0,0,.30),0 12px 28px rgba(0,0,0,.35);
-  }
-  .step.bad .num{background:#3a3f4d;color:#dfe4ec;}
-  .step.good .num{background:var(--mint);color:#06231a;}
-  .step h3{font-size:17px;font-weight:800;}
-  .step p{font-size:14px;color:var(--muted);margin-top:2px;}
-  .errors{list-style:none;margin-top:16px;display:flex;flex-direction:column;gap:10px;}
-  .errors li{
-    background:linear-gradient(180deg,#20232e,#1D2029);border:1px solid var(--line);border-left:4px solid var(--red);
-    border-radius:16px;padding:14px 18px;font-size:14.5px;font-weight:600;
-    box-shadow:0 1px 2px rgba(0,0,0,.30),0 12px 28px rgba(0,0,0,.35);
-  }
-  .cost{
-    position:relative;overflow:hidden;
-    background:linear-gradient(180deg,#20232e,#1D2029);border:1px solid rgba(232,199,102,.45);
-    border-radius:16px;padding:20px 18px;text-align:left;
-    box-shadow:0 1px 2px rgba(0,0,0,.30),0 12px 28px rgba(0,0,0,.35),0 0 26px rgba(232,199,102,.07);
-  }
-  .cost::before{
-    content:"";position:absolute;top:0;left:0;right:0;height:3px;
-    background:linear-gradient(90deg,rgba(232,199,102,0),var(--gold),rgba(232,199,102,0));
-  }
-  .cost .icon-chip{margin:0 0 12px;}
-  .icon-chip.gold{background:rgba(232,199,102,.12);border-color:rgba(232,199,102,.50);color:var(--gold);}
-  .cost .big{font-size:21px;font-weight:800;line-height:1.35;}
-  .cost .big span{color:var(--gold);}
-  .cost p{color:var(--muted);font-size:14.5px;margin-top:10px;line-height:1.55;}
-  .cost .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;}
-  .cost .chips span{
-    font-size:12px;font-weight:700;letter-spacing:.4px;color:#eadfc2;
-    background:rgba(232,199,102,.06);border:1px solid rgba(232,199,102,.35);
-    border-radius:999px;padding:6px 11px;
-  }
-  .ba{display:flex;flex-direction:column;gap:12px;margin-top:18px;}
-  .ba .col{border-radius:16px;padding:18px;border:1px solid var(--line);box-shadow:0 1px 2px rgba(0,0,0,.30),0 12px 28px rgba(0,0,0,.35);}
-  .ba .before{background:linear-gradient(180deg,#1e1a1e,#1a1c24);}
-  .ba .after{background:linear-gradient(180deg,#16281f,#14231d);border-color:rgba(17,203,135,.55);}
-  .ba .label{font-size:11px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;}
-  .ba .before .label{color:var(--red);}
-  .ba .after .label{color:var(--mint);}
-  .ba h3{font-size:17px;font-weight:800;margin:2px 0 4px;}
-  .ba p{font-size:14px;color:var(--muted);}
-  .ba .after p{color:#c9d4cf;}
-  .ba .bhead{display:flex;align-items:center;gap:12px;margin-bottom:8px;}
-  .tier{
-    background:linear-gradient(180deg,#20232e,#1D2029);border:1px solid var(--line);border-radius:16px;
-    padding:18px;margin-top:14px;position:relative;
-    box-shadow:0 1px 2px rgba(0,0,0,.30),0 12px 28px rgba(0,0,0,.35);
-  }
-  .tier.plat{
-    margin-top:24px;
-    border:1px solid transparent;
-    background:linear-gradient(#232533,#1D2029) padding-box,linear-gradient(160deg,#e8c766,rgba(232,199,102,.12)) border-box;
-    box-shadow:0 2px 4px rgba(0,0,0,.35),0 18px 40px rgba(0,0,0,.45),0 0 0 1px rgba(232,199,102,.08),0 10px 30px rgba(232,199,102,.07);
-  }
-  .seal{
-    position:absolute;top:-11px;right:16px;z-index:2;
-    background:linear-gradient(90deg,#f2d67c,#e8c766);color:#2a2000;
-    font-size:10px;font-weight:900;letter-spacing:1.6px;text-transform:uppercase;
-    padding:4px 11px;border-radius:999px;box-shadow:0 4px 14px rgba(232,199,102,.40);
-  }
-  .tier .thead{display:flex;align-items:center;gap:12px;}
-  .tier .tname{font-size:13px;font-weight:900;letter-spacing:2.5px;text-transform:uppercase;}
-  .tier.free .tname{color:var(--mint);}
-  .tier.gold .tname{color:var(--gold);}
-  .tier.plat .tname{color:var(--gold);}
-  .tier h3{font-size:17px;font-weight:800;margin:10px 0 4px;}
-  .tier p,.tier li{font-size:14px;color:var(--muted);}
-  .checklist{list-style:none;margin-top:10px;display:flex;flex-direction:column;gap:8px;}
-  .checklist li{position:relative;padding-left:29px;}
-  .checklist li::before{
-    content:"";position:absolute;left:0;top:1px;width:20px;height:20px;
-    background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2311CB87' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9' stroke-opacity='.45'/%3E%3Cpath d='M8.5 12.5l2.5 2.5 4.5-5' stroke-width='2.2'/%3E%3C/svg%3E") no-repeat center/contain;
-  }
-  .tier .price{font-size:15px;font-weight:800;color:var(--text);margin-top:12px;}
-  .filter{display:flex;flex-direction:column;gap:12px;margin-top:18px;}
-  .filter .box{border-radius:16px;padding:18px;border:1px solid var(--line);box-shadow:0 1px 2px rgba(0,0,0,.30),0 12px 28px rgba(0,0,0,.35);}
-  .filter .yes{background:linear-gradient(180deg,#16281f,#14231d);border-color:rgba(17,203,135,.55);}
-  .filter .no{background:linear-gradient(180deg,#241c1e,#221a1a);border-color:#5a3230;}
-  .filter .fhead{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
-  .filter h3{font-size:17px;font-weight:800;}
-  .filter .yes h3{color:var(--mint);}
-  .filter .no h3{color:var(--red);}
-  .filter ul{list-style:none;display:flex;flex-direction:column;gap:8px;}
-  .filter li{font-size:14px;color:var(--muted);position:relative;padding-left:29px;}
-  .filter .yes li::before{
-    content:"";position:absolute;left:0;top:1px;width:20px;height:20px;
-    background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2311CB87' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9' stroke-opacity='.45'/%3E%3Cpath d='M8.5 12.5l2.5 2.5 4.5-5' stroke-width='2.2'/%3E%3C/svg%3E") no-repeat center/contain;
-  }
-  .filter .no li::before{
-    content:"";position:absolute;left:0;top:1px;width:20px;height:20px;
-    background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23e06c5f' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9' stroke-opacity='.45'/%3E%3Cpath d='M9 9l6 6M15 9l-6 6' stroke-width='2.2'/%3E%3C/svg%3E") no-repeat center/contain;
-  }
-  .offer{
-    background:linear-gradient(180deg,#20232e,#1D2029);border:1px solid rgba(232,199,102,.45);border-radius:16px;padding:20px 18px;text-align:center;
-    box-shadow:0 1px 2px rgba(0,0,0,.30),0 12px 28px rgba(0,0,0,.35),0 0 26px rgba(232,199,102,.07);
-  }
-  .offer .price-line{font-size:15px;color:var(--muted);margin-top:6px;}
-  .offer .price-line b{color:var(--text);}
-  .offer .bigprice{font-size:30px;font-weight:900;margin-top:16px;}
-  .offer .bigprice span{color:var(--gold);}
-  .osteps{display:flex;flex-direction:column;gap:12px;margin-top:18px;text-align:left;}
-  .ostep{
-    background:linear-gradient(180deg,#20232e,#1D2029);border:1px solid var(--line);border-radius:16px;padding:16px 18px;
-    display:flex;gap:14px;align-items:flex-start;
-    box-shadow:0 1px 2px rgba(0,0,0,.30),0 12px 28px rgba(0,0,0,.35);
-  }
-  .ostep h3{font-size:17px;font-weight:800;}
-  .ostep h3 span{color:var(--gold);}
-  .ostep p{font-size:14px;color:var(--muted);margin-top:2px;}
-  .faq{margin-top:6px;display:flex;flex-direction:column;gap:10px;}
-  .faq .item{
-    background:linear-gradient(180deg,#20232e,#1D2029);border:1px solid var(--line);border-radius:16px;
-    padding:16px 18px;box-shadow:0 1px 2px rgba(0,0,0,.30),0 12px 28px rgba(0,0,0,.35);
-  }
-  .faq .qhead{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
-  .faq .chev{flex:0 0 18px;width:18px;height:18px;color:var(--muted);margin-top:2px;}
-  .faq h3{font-size:16px;font-weight:800;}
-  .faq p{font-size:14px;color:var(--muted);margin-top:3px;}
-  footer{padding:26px 16px 40px;text-align:center;color:var(--muted);font-size:12.5px;border-top:1px solid var(--line);}
-  footer .dom{color:var(--gold);font-weight:800;letter-spacing:1px;font-size:14px;}
-  .divider{height:1px;background:var(--line);margin:0 16px;}
-  .pill{
-    display:inline-block;font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;
-    color:var(--mint);border:1px solid var(--mint);border-radius:999px;padding:5px 12px;margin-bottom:14px;
-  }
-  .pill.gold{color:var(--gold);border-color:var(--gold);}
-  .center{text-align:center;}
-  /* ===== sticky bottom CTA (mobile) ===== */
-  .stickybar{
-    position:fixed;left:50%;transform:translateX(-50%);bottom:0;z-index:998;
-    width:100%;max-width:470px;
-    background:rgba(13,14,18,.93);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
-    border-top:1px solid var(--line);
-    padding:10px 16px calc(10px + env(safe-area-inset-bottom));
-    display:flex;align-items:center;gap:12px;
-  }
-  .stickybar .sb-text{font-size:11.5px;color:var(--muted);line-height:1.3;white-space:nowrap;}
-  .stickybar .sb-text b{display:block;color:var(--text);font-size:13.5px;}
-  .stickybar a{
-    flex:1;text-align:center;background:var(--mint);color:#06231a;
-    font-weight:800;font-size:15.5px;padding:13px 10px;border-radius:12px;text-decoration:none;
-    box-shadow:0 6px 18px rgba(17,203,135,.25);
-  }
-  /* ===== signup form (producción) ===== */
-  .formcard{
-    background:linear-gradient(180deg,#20232e,#1D2029);border:1px solid rgba(232,199,102,.45);border-radius:16px;
-    padding:20px 18px;box-shadow:0 1px 2px rgba(0,0,0,.30),0 12px 28px rgba(0,0,0,.35),0 0 26px rgba(232,199,102,.07);
-  }
-  .field{margin-top:14px;text-align:left;}
-  .field label{display:block;font-size:13px;font-weight:700;margin-bottom:6px;}
-  .field .hint{font-size:12px;color:var(--muted);margin:-2px 0 6px;}
-  .field input[type=text],.field input[type=email],.field input[type=tel],.field input[type=password]{
-    width:100%;background:#12141b;border:1px solid var(--line);border-radius:11px;
-    padding:13px 14px;color:var(--text);font-size:15px;outline:none;font-family:inherit;
-  }
-  .field input:focus{border-color:var(--gold);}
-  .smsline{display:flex;gap:8px;align-items:center;margin-top:10px;font-size:13px;color:var(--muted);cursor:pointer;}
-  .smsline input{width:17px;height:17px;accent-color:var(--gold);flex:0 0 17px;}
-  .intent{display:flex;flex-direction:column;gap:10px;margin-top:16px;}
-  .intent-opt{
-    display:flex;gap:11px;align-items:flex-start;text-align:left;cursor:pointer;
-    background:var(--card2);border:1px solid var(--line);border-radius:16px;padding:14px 16px;
-  }
-  .intent-opt input{margin-top:3px;width:18px;height:18px;accent-color:var(--gold);flex:0 0 18px;}
-  .io-title{display:block;font-size:14.5px;font-weight:800;letter-spacing:.4px;}
-  .io-sub{display:block;font-size:12.5px;color:var(--muted);margin-top:2px;}
-  .flash{border-radius:11px;padding:11px 13px;font-size:13.5px;font-weight:600;margin-top:14px;text-align:left;}
-  .flash-error{background:rgba(224,108,95,.12);border:1px solid rgba(224,108,95,.5);color:#f0b8b1;}
-  .flash-success{background:rgba(17,203,135,.12);border:1px solid rgba(17,203,135,.5);color:#a9ecd2;}
-  .howsteps{list-style:none;margin-top:16px;display:flex;flex-direction:column;gap:7px;text-align:left;}
-  .howsteps li{font-size:13.5px;color:var(--muted);}
-  .howsteps b{color:var(--gold);}
-  .formnote{font-size:12.5px;color:var(--muted);text-align:left;margin-top:12px;line-height:1.55;}
-  .login-line{text-align:center;font-size:13.5px;color:var(--muted);margin-top:16px;}
-  .login-line a{color:var(--gold);font-weight:700;text-decoration:none;}
-  button.cta{font-family:inherit;width:100%;border:0;cursor:pointer;}
-  footer .links{margin-top:10px;}
-  footer .links a{color:var(--muted);text-decoration:none;font-weight:600;}
+/* ============ Diseño nuevo (el de la home publicada, commit 2c025a6) ============
+   container 1120px / pad 22px (16 mobile) · surfaces #1D2029/#232730/#2a2e3a
+   borders #2a2e3a / strong #404555 · text #fff/#DDDDDD/#a3a8b3/#6b7280
+   radius 14 / lg 20 · headings 'Unbounded' 700 · body 'Roboto'
+   mint #2EE6A8 · gold #C9A227 */
+:root{
+  --bg-deep:#0c0f16;--surface:#1D2029;--surface-2:#232730;--surface-3:#2a2e3a;
+  --border:#2a2e3a;--border-hover:#353a47;--border-strong:#404555;
+  --text:#fff;--text-2:#DDDDDD;--text-3:#a3a8b3;--text-4:#6b7280;
+  --mint:#2EE6A8;--mint-2:#5FF0BF;--mint-soft:rgba(46,230,168,.13);--mint-tint:rgba(46,230,168,.24);--mint-glow:rgba(46,230,168,.45);
+  --gold:#C9A227;--gold-2:#E3BC3F;--gold-soft:rgba(201,162,39,.14);--gold-tint:rgba(201,162,39,.30);
+  --danger:#e5486c;--danger-soft:rgba(213,19,68,.14);
+  --radius:14px;--radius-lg:20px;
+  --fdisp:'Unbounded',sans-serif;--fbody:'Roboto',sans-serif;--fmono:'Roboto Mono',monospace;
+  --shadow-mint:0 14px 34px rgba(46,230,168,.16);--shadow-gold:0 14px 34px rgba(201,162,39,.14);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:radial-gradient(1100px 560px at 72% -8%,rgba(46,230,168,.08),transparent 60%),var(--bg-deep);
+  color:var(--text);font-family:var(--fbody);font-size:15px;line-height:1.5;
+  -webkit-font-smoothing:antialiased;padding-bottom:96px;
+}
+h1,h2,h3,h4{font-family:var(--fdisp);font-weight:700;letter-spacing:-.01em;line-height:1.15}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1120px;margin:0 auto;padding:0 22px}
+.sec{padding:32px 0 4px}
+.sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.sec-head h2{font-size:24px}
+.sec-head .meta{font-size:12px;color:var(--text-3)}
+.sec-head.col{flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:6px}
+.sec-eyebrow{font-size:11px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--mint-2)}
+.sec-eyebrow.red{color:#ff8fab}
+.sec-eyebrow.gold{color:var(--gold-2)}
+.sec-sub{font-size:14.5px;color:var(--text-3);line-height:1.55}
+.acc{color:var(--mint)}
+.accg{color:var(--gold-2)}
 
-/* ===== SKELETON DE CARGA (skl-) — aprobado por Alex 2026-10-31: sombras con ola de luz mientras la pagina carga ===== */
-#skl-overlay{position:fixed;inset:0;z-index:999999;overflow:hidden;opacity:1;transition:opacity .45s ease;animation:sklForceHide .6s ease 2.8s forwards;}
+/* buttons — spec de la home */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--mint);color:#04241a;font-weight:700;
+  padding:11px 20px;border-radius:11px;font-size:14px;border:0;cursor:pointer;box-shadow:0 8px 24px var(--mint-glow);
+  font-family:var(--fbody);transition:transform .15s,box-shadow .15s}
+.btn:hover{transform:translateY(-1px)}
+.btn.sm{padding:8px 15px;font-size:13px}
+.btn.ghost{background:rgba(255,255,255,.07);color:var(--text);border:1px solid var(--border-strong);box-shadow:none}
+.btn.ghost:hover{background:rgba(255,255,255,.12);border-color:var(--text-3)}
+.btn.gold{background:var(--gold);color:#241a00;box-shadow:0 8px 22px var(--gold-tint)}
+.btn.head-cta{padding:9px 12px;font-weight:800;font-size:13.5px;white-space:nowrap;flex-shrink:0;background:var(--mint);color:#000;box-shadow:0 10px 28px var(--mint-glow)}
+
+/* topbar — spec de la home: sticky 62px, blur, borde inferior */
+.topbar{position:sticky;top:0;z-index:50;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  background:rgba(12,15,22,.82);border-bottom:1px solid var(--border)}
+.topbar .wrap{display:flex;align-items:center;justify-content:space-between;height:62px;gap:8px}
+.lockup{height:clamp(30px,8.33vw,36px);width:auto;display:block}
+.fbrand .lockup{height:36px}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}
+.nav-actions{display:flex;align-items:center;gap:8px}
+.login{font-size:13px;font-weight:500;color:var(--text-2);padding:8px 3px;white-space:nowrap}
+.login:hover{color:#fff}
+
+/* ===== Registro: titular corto + FORMULARIO PRIMERO (orden de Alex) ===== */
+.reg-col{max-width:660px;margin:0 auto}
+.reg-head{text-align:center;padding:30px 0 20px}
+.pill{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--gold-2);border:1px solid var(--gold-tint);border-radius:999px;padding:6px 14px}
+.reg-head h1{font-size:32px;line-height:1.12;font-weight:800;margin-top:16px}
+.reg-head .sub{font-size:15.5px;color:var(--text-2);margin-top:12px;line-height:1.55}
+.signup{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px}
+.signup h2{font-size:22px;margin-top:8px}
+.signup .sg-sub{font-size:14.5px;color:var(--text-3);margin:8px 0 6px;line-height:1.55}
+.intent-box{display:flex;gap:12px;align-items:flex-start;background:var(--gold-soft);border:1px solid var(--gold-tint);
+  border-radius:var(--radius);padding:14px 16px;margin-top:14px;text-align:left}
+.intent-box .star{font-size:20px;line-height:1.2}
+.io-title{display:block;font-size:14px;font-weight:800;letter-spacing:.03em;color:var(--text)}
+.io-sub{display:block;font-size:12.5px;color:var(--text-3);margin-top:3px;line-height:1.5}
+.field{margin-top:16px;text-align:left}
+.field label{display:block;font-size:13.5px;font-weight:700;margin-bottom:6px;color:var(--text)}
+.field .hint{font-size:12.5px;color:var(--text-3);margin:-2px 0 8px;line-height:1.5}
+.field input{width:100%;background:var(--surface-2);border:1px solid var(--border-strong);border-radius:11px;
+  padding:12px 16px;font-size:15px;color:var(--text);font-family:var(--fbody);outline:none}
+.field input::placeholder{color:var(--text-4)}
+.field input:focus{border-color:var(--mint)}
+.flash{border-radius:11px;padding:11px 14px;font-size:13.5px;font-weight:600;margin-top:14px;text-align:left;line-height:1.5}
+.flash-error{background:var(--danger-soft);border:1px solid rgba(213,19,68,.4);color:#ffb3c2}
+.flash-success{background:var(--mint-soft);border:1px solid var(--mint-tint);color:var(--mint-2)}
+.btn.submit{width:100%;padding:14px 20px;font-size:15px;margin-top:18px}
+.howsteps{list-style:none;margin-top:18px;display:flex;flex-direction:column;gap:8px;text-align:left}
+.howsteps li{font-size:13.5px;color:var(--text-3);line-height:1.55}
+.howsteps b{color:var(--gold-2)}
+.formnote{font-size:12.5px;color:var(--text-4);text-align:left;margin-top:12px;line-height:1.55}
+.login-line{text-align:center;font-size:13.5px;color:var(--text-3);margin-top:16px}
+.login-line a{color:var(--mint-2);font-weight:700}
+.micro{text-align:center;font-size:13px;color:var(--text-3);margin-top:16px;line-height:1.55}
+.micro b{color:var(--text)}
+
+/* fila de confianza (bajo el formulario) */
+.trust3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:18px}
+.t3{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 10px;
+  display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;
+  font-size:11.5px;font-weight:700;color:var(--text-2);line-height:1.35}
+.ticon{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;flex:none}
+.ticon svg{width:20px;height:20px}
+.ticon.mint{background:var(--mint-soft);border:1px solid var(--mint-tint);color:var(--mint-2)}
+.ticon.neutral{background:var(--surface-2);border:1px solid var(--border-strong);color:var(--text-2)}
+.ticon.gold{background:var(--gold-soft);border:1px solid var(--gold-tint);color:var(--gold-2)}
+
+/* pasos (problema / sistema / oferta) */
+.how{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.howstep{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px}
+.howstep .n{width:34px;height:34px;border-radius:10px;background:var(--mint-soft);color:var(--mint-2);
+  font-family:var(--fdisp);font-weight:800;display:grid;place-items:center;font-size:16px;margin-bottom:13px}
+.howstep.bad .n{background:var(--surface-3);color:var(--text-2)}
+.howstep h4{font-size:16px;margin-bottom:6px}
+.howstep p{font-size:13px;color:var(--text-3);line-height:1.55}
+.howstep p b{color:var(--text)}
+.errors{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.errors li{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--danger);
+  border-radius:var(--radius);padding:14px 16px;font-size:14px;font-weight:600;color:var(--text-2);line-height:1.5}
+
+/* costo */
+.cost{background:linear-gradient(180deg,var(--gold-soft),var(--surface));border:1px solid var(--gold-tint);
+  border-radius:var(--radius-lg);padding:24px}
+.cost .big{font-family:var(--fdisp);font-size:20px;font-weight:700;line-height:1.4}
+.cost .big span{color:var(--gold-2)}
+.cost p{color:var(--text-3);font-size:14.5px;margin-top:10px;line-height:1.6}
+.cost .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.cost .chips span{font-size:12px;font-weight:700;color:var(--gold-2);background:var(--gold-soft);
+  border:1px solid var(--gold-tint);border-radius:999px;padding:6px 12px}
+
+/* paneles dobles (antes/despúes · para quién) */
+.ba2{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:stretch}
+.bapanel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px}
+.bapanel.after{border-color:var(--mint-tint);background:linear-gradient(180deg,var(--mint-soft),var(--surface))}
+.bapanel .blabel{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
+.bapanel.before .blabel{color:#ff8fab}
+.bapanel.after .blabel{color:var(--mint-2)}
+.bapanel.yes .blabel{color:var(--mint-2)}
+.bapanel.no .blabel{color:#ff8fab}
+.bapanel h3{font-size:17px;margin:8px 0 6px}
+.bapanel p{font-size:14px;color:var(--text-3);line-height:1.6}
+
+/* listas con check */
+.checklist{list-style:none;margin:0}
+.checklist li{position:relative;padding:7px 0 7px 26px;font-size:13.5px;color:var(--text-2);border-bottom:1px solid var(--border);line-height:1.5}
+.checklist li:last-child{border:0}
+.checklist li::before{content:'✓';position:absolute;left:2px;top:7px;color:var(--mint);font-weight:700;font-size:13px}
+.checklist.gold li::before{color:var(--gold-2)}
+.checklist.nb li{border:0;padding-top:5px;padding-bottom:5px}
+.checklist.nb li::before{top:5px}
+.checklist.no li::before{content:'✕';color:#ff8fab}
+
+/* niveles — .valuecard de la home */
+.plans3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:stretch}
+.valuecard{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px;position:relative;display:flex;flex-direction:column}
+.valuecard.paid{border-color:var(--gold);background:linear-gradient(180deg,var(--gold-soft),var(--surface));box-shadow:var(--shadow-gold)}
+.vc-badge{position:absolute;top:-11px;left:24px;background:var(--gold);color:#241a00;font-size:10px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;padding:4px 10px;border-radius:999px}
+.vc-tier{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-4);font-weight:700}
+.valuecard h3{font-size:18px;margin-top:10px}
+.vc-sub{font-size:13px;color:var(--text-3);margin:6px 0 14px;line-height:1.55}
+.valuecard ul{list-style:none;margin:0 0 18px}
+.valuecard li{position:relative;padding:7px 0 7px 26px;font-size:13.5px;color:var(--text-2);border-bottom:1px solid var(--border);line-height:1.5}
+.valuecard li:last-child{border:0}
+.valuecard li::before{content:'✓';position:absolute;left:2px;top:7px;color:var(--mint);font-weight:700;font-size:13px}
+.valuecard.paid li::before{color:var(--gold-2)}
+.tier-price{margin-top:auto;padding-top:12px;font-size:14.5px;font-weight:800;color:var(--text)}
+
+/* oferta */
+.offerpanel{background:linear-gradient(180deg,var(--gold-soft),var(--surface));border:1px solid var(--gold);
+  border-radius:var(--radius-lg);padding:28px 24px;box-shadow:var(--shadow-gold);text-align:center}
+.offerpanel h2{font-size:24px;margin-top:14px}
+.offerpanel .price-line{font-size:14.5px;color:var(--text-3);margin-top:8px;line-height:1.6}
+.offerpanel .price-line b{color:var(--text)}
+.offerpanel .checklist{text-align:left;max-width:460px;margin:18px auto 4px}
+.osteps{display:flex;flex-direction:column;gap:12px;margin-top:20px;text-align:left}
+.pstep{display:flex;gap:14px;align-items:flex-start;background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);padding:18px}
+.pstep .n{width:34px;height:34px;flex:none;border-radius:10px;background:var(--gold-soft);color:var(--gold-2);
+  font-family:var(--fdisp);font-weight:800;display:grid;place-items:center;font-size:16px}
+.pstep.mint .n{background:var(--mint-soft);color:var(--mint-2)}
+.pstep h3{font-size:16px;margin-bottom:4px}
+.pstep h3 span{color:var(--gold-2)}
+.pstep p{font-size:13.5px;color:var(--text-3);line-height:1.55}
+.bigprice{font-family:var(--fdisp);font-size:27px;font-weight:800;margin-top:20px}
+.bigprice span{color:var(--gold-2)}
+.center-cta{display:flex;flex-direction:column;align-items:center;margin-top:18px}
+
+/* faq — spec de la home */
+.faqwrap{display:grid;grid-template-columns:1fr 1fr;gap:11px;align-items:start}
+.faqi{border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--surface);transition:border-color .15s}
+.faqi:hover{border-color:var(--border-strong)}
+.faqi.open{border-color:var(--mint-tint);background:linear-gradient(180deg,var(--mint-soft),var(--surface))}
+.faqq{padding:16px 18px;font-weight:700;font-size:14.5px;cursor:pointer;display:flex;justify-content:space-between;gap:12px;align-items:center;color:var(--text);width:100%;background:none;border:0;text-align:left;font-family:var(--fbody)}
+.faqq:after{content:'+';color:var(--mint-2);font-size:22px;line-height:1;font-weight:400;flex-shrink:0}
+.faqi.open .faqq:after{content:'−'}
+.faqa{max-height:0;overflow:hidden;transition:max-height .25s;color:var(--text-3);font-size:13.5px;line-height:1.65}
+.faqa div{padding:0 18px 16px}
+.faqi.open .faqa{max-height:420px}
+
+/* footer — spec de la home */
+.site-footer{border-top:1px solid var(--border);background:var(--bg-deep);margin-top:42px;padding:26px 0 8px}
+.site-footer .wrap{display:flex;flex-direction:column;gap:10px;align-items:flex-start}
+.site-footer .fbrand{display:flex;align-items:center;gap:10px}
+.site-footer p{font-size:12.5px;color:var(--text-4);line-height:1.6}
+.site-footer .legal{font-size:11.5px}
+.site-footer .fsocials{display:flex;gap:18px;justify-content:center;width:100%;margin:2px 0}
+.site-footer .fsocials a{display:inline-flex}
+.site-footer .fsocials svg{width:22px;height:22px;display:block}
+.site-footer .flinks{display:flex;flex-wrap:wrap;gap:6px 10px;justify-content:center;align-items:center;width:100%}
+.site-footer .flinks a{font-size:12.5px;color:var(--text-3);text-decoration:none}
+.site-footer .flinks a:hover{color:var(--mint)}
+.site-footer .flinks .sep{color:var(--text-4);font-size:11px}
+.site-footer .copy{font-size:11.5px}
+
+/* sticky bottom bar — spec de la home: barra menta, botón oscuro */
+.stickybar{position:fixed;left:0;right:0;bottom:0;z-index:60;background:var(--mint);color:#04241a;
+  padding:11px 22px calc(11px + env(safe-area-inset-bottom));display:flex;align-items:center;justify-content:space-between;gap:12px;
+  box-shadow:0 -8px 30px rgba(0,0,0,.45)}
+.stickybar .st-txt{font-size:13px;line-height:1.4}
+.stickybar .st-txt b{font-weight:800}
+.stickybar .btn{background:#0c0f16;color:var(--mint);box-shadow:none;white-space:nowrap;flex-shrink:0}
+.stickybar .btn:hover{background:#161b26}
+
+@media (max-width:900px){
+  .plans3{grid-template-columns:1fr}
+  .ba2{grid-template-columns:1fr}
+  .how{grid-template-columns:1fr}
+}
+@media (max-width:768px){
+  .wrap{padding:0 16px}
+  .sec{padding:24px 0 2px}
+  .sec-head h2{font-size:21px}
+  .faqwrap{grid-template-columns:1fr}
+  .errors{grid-template-columns:1fr}
+  body{padding-bottom:86px}
+}
+@media (max-width:480px){
+  .sec-head h2{font-size:19px}
+  .reg-head h1{font-size:27px}
+  .reg-head{padding-top:22px}
+  .signup{padding:20px 18px}
+  .stickybar{padding-left:16px;padding-right:16px}
+  .stickybar .st-txt{font-size:12px}
+  .bigprice{font-size:23px}
+}
+
+/* ===== SKELETON DE CARGA (skl-) — misma mecánica, colores del diseño nuevo ===== */
+#skl-overlay{position:fixed;inset:0;z-index:999999;overflow:hidden;opacity:1;transition:opacity .45s ease;animation:sklForceHide .6s ease 2.8s forwards;background:var(--bg-deep);}
 #skl-overlay.skl-hide{opacity:0;pointer-events:none;}
 .skl-inner{width:100%;margin:0 auto;}
-.skl-bone{position:relative;overflow:hidden;background:#1D2029;}
-.skl-bone::after{content:"";position:absolute;top:-10%;bottom:-10%;left:0;width:55%;background:linear-gradient(100deg,rgba(42,47,58,0) 0%,rgba(42,47,58,.6) 32%,rgba(17,203,135,.08) 48%,rgba(232,199,102,.13) 52%,rgba(42,47,58,.6) 68%,rgba(42,47,58,0) 100%);transform:translateX(-140%) skewX(-8deg);animation:sklWave 1.35s ease-in-out infinite;}
+.skl-bone{position:relative;overflow:hidden;background:var(--surface);}
+.skl-bone::after{content:"";position:absolute;top:-10%;bottom:-10%;left:0;width:55%;background:linear-gradient(100deg,rgba(42,46,58,0) 0%,rgba(42,46,58,.6) 32%,rgba(46,230,168,.08) 48%,rgba(201,162,39,.13) 52%,rgba(42,46,58,.6) 68%,rgba(42,46,58,0) 100%);transform:translateX(-140%) skewX(-8deg);animation:sklWave 1.35s ease-in-out infinite;}
 .skl-bone.d1::after{animation-delay:.14s;}
 .skl-bone.d2::after{animation-delay:.28s;}
 .skl-bone.d3::after{animation-delay:.42s;}
-.skl-plain{background:#262B38;}
+.skl-plain{background:var(--surface-3);}
 @keyframes sklWave{to{transform:translateX(280%) skewX(-8deg);}}
 @keyframes sklForceHide{to{opacity:0;visibility:hidden;}}
 @media (prefers-reduced-motion:reduce){
 .skl-bone::after{animation:none;display:none;}
 #skl-overlay{transition:none;animation:sklForceHide .3s ease .15s forwards;}
 }
-#skl-overlay{background:#0b0c10;}
-.skl-reg{max-width:470px;background:#14161d;min-height:100vh;padding-bottom:44px;box-shadow:0 0 40px rgba(0,0,0,.6);}
+.skl-reg{max-width:660px;margin:0 auto;padding-bottom:44px;}
 .skl-step{border-radius:14px;padding:16px;margin-bottom:12px;display:flex;gap:12px;align-items:flex-start;}
+
 </style>
 </head>
 <body>
 
 <!-- ===== SKELETON DE CARGA (skl-) ===== -->
 <div id="skl-overlay" aria-hidden="true">
-  <div class="skl-inner skl-reg">
-    <div class="skl-bone" style="height:96px;"></div>
-    <div style="padding:20px 20px 0;">
+  <div class="skl-inner">
+    <div class="skl-bone" style="height:62px;"></div>
+    <div class="skl-reg" style="padding:26px 22px 0;">
       <div class="skl-bone" style="width:250px;max-width:85%;height:24px;border-radius:999px;margin:0 auto 20px;"></div>
       <div class="skl-bone d1" style="width:92%;height:34px;border-radius:10px;margin:0 auto 10px;"></div>
       <div class="skl-bone d2" style="width:68%;height:34px;border-radius:10px;margin:0 auto 18px;"></div>
       <div class="skl-bone d1" style="width:88%;height:13px;border-radius:7px;margin:0 auto 8px;"></div>
       <div class="skl-bone d2" style="width:64%;height:13px;border-radius:7px;margin:0 auto 24px;"></div>
-      <div class="skl-bone d3" style="width:100%;height:52px;border-radius:999px;margin:0 auto 12px;"></div>
-      <div class="skl-bone d3" style="width:210px;max-width:70%;height:12px;border-radius:6px;margin:0 auto 30px;"></div>
+      <div class="skl-bone d3" style="width:100%;height:190px;border-radius:20px;margin:0 auto 12px;"></div>
       <div class="skl-bone skl-step ">
         <div class="skl-plain" style="width:30px;height:30px;border-radius:50%;flex:0 0 auto;"></div>
         <div style="flex:1;">
@@ -333,84 +324,92 @@ twq('config','rhgk7');
           <div class="skl-plain" style="width:85%;height:10px;border-radius:5px;"></div>
         </div>
       </div>
-      <div class="skl-bone skl-step d2">
-        <div class="skl-plain" style="width:30px;height:30px;border-radius:50%;flex:0 0 auto;"></div>
-        <div style="flex:1;">
-          <div class="skl-plain" style="width:55%;height:13px;border-radius:6px;margin-bottom:8px;"></div>
-          <div class="skl-plain" style="width:85%;height:10px;border-radius:5px;"></div>
-        </div>
-      </div>
     </div>
   </div>
 </div>
-<div class="wrap">
 
-  <!-- ===== LOGO OFICIAL ===== -->
-  <img src="{{ url_for('static', filename='img/sharp-team-header.jpg') }}" alt="The Sharp Team" style="display:block;width:100%;height:auto;">
+<header class="topbar">
+  <div class="wrap">
+    <a class="brand" href="/" aria-label="The Sharp Team">
+      <img class="lockup" src="{{ url_for('static', filename='img/sharp-team-header.jpg') }}" alt="The Sharp Team">
+    </a>
+    <div class="nav-actions">
+      <a class="login" href="{{ url_for('login') }}">Iniciar sesión</a>
+      <a class="btn head-cta" href="#signup">Crear cuenta gratis</a>
+    </div>
+  </div>
+</header>
 
-  <!-- ===== 1. HERO ===== -->
-  <section class="hero" style="padding-top:18px;">
-    <div class="center"><span class="pill gold">Jugadas gratis todos los días — sin tarjeta</span></div>
-    <h1>Crea tu <span class="hl">cuenta gratis.</span><br>Jugadas gratis, publicadas todos los días.</h1>
-    <p class="sub">Jugadas diarias con precio de un modelo real, publicadas antes del juego y probadas con el ticket verdadero — todos los días.</p>
-    <a class="cta" href="#signup">Crear mi cuenta gratis</a>
+<main class="wrap">
+
+  <!-- ===== REGISTRO: titular corto + FORMULARIO PRIMERO ===== -->
+  <div class="reg-col">
+    <div class="reg-head">
+      <span class="pill">Jugadas gratis todos los días — sin tarjeta</span>
+      <h1>Crea tu <span class="acc">cuenta gratis.</span><br>Jugadas gratis, publicadas todos los días.</h1>
+      <p class="sub">Jugadas diarias con precio de un modelo real, publicadas antes del juego y probadas con el ticket verdadero — todos los días.</p>
+    </div>
+
+    <section id="signup">
+      <div class="signup">
+        <span class="sec-eyebrow gold">Crea tu cuenta</span>
+        <h2>Entra solo con tu correo</h2>
+        <p class="sg-sub">Un solo campo, sin tarjeta — tu cuenta abre al instante, con tu mes gratis de Platinum ya activo. Tu contraseña, tu nombre y tu teléfono van después, ya dentro.</p>
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for cat, msg in messages %}
+            <div class="flash flash-{{ cat }}">{{ msg }}</div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+        <form method="post" action="{{ url_for('register') }}">
+          <div class="intent-box">
+            <span class="star">⭐</span>
+            <span>
+              <span class="io-title">PLATINUM — TU PRIMER MES ES GRATIS</span>
+              <span class="io-sub">Se activa en el momento en que tu cuenta abre: cada jugada, cada herramienta, sin tarjeta.</span>
+              <span class="io-sub">Y las jugadas gratis diarias son tuyas para siempre, con mes o sin mes.</span>
+            </span>
+          </div>
+          <div class="field">
+            <label for="f-email">Tu correo electrónico</label>
+            <p class="hint">Es el único campo. Aquí te enviamos tus jugadas todos los días antes de los juegos.</p>
+            <input id="f-email" type="email" name="email" required autocomplete="email" placeholder="you@email.com">
+          </div>
+        {% if turnstile_key %}
+        <div class="cf-turnstile" data-sitekey="{{ turnstile_key }}" data-theme="dark" style="margin:12px 0 4px"></div>
+        <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+        {% endif %}
+          <button class="btn submit" type="submit">Crear mi cuenta</button>
+        </form>
+        <ol class="howsteps">
+          <li><b>1.</b> Escribe tu correo — tu cuenta abre al instante, sin esperar confirmación.</li>
+          <li><b>2.</b> Ya dentro, terminas de configurar: tu contraseña, tu nombre y tu teléfono. Toma 10 segundos, y te enviamos un enlace de activación para confirmar tu correo de una vez.</li>
+          <li><b>3.</b> Tu Platinum ya está activo — gratis por tu primer mes. Abre tu Dashboard y mira la tarjeta completa de hoy.</li>
+        </ol>
+        <p class="formnote">En este formulario no va ninguna tarjeta, nunca. Tu mes gratis no necesita pago — y si nunca pagas un centavo, las jugadas gratis siguen llegando.</p>
+        <p class="login-line">¿Ya tienes una cuenta? <a href="{{ url_for('login') }}">Inicia sesión aquí →</a></p>
+      </div>
+    </section>
+
     <p class="micro"><b>Tu primer mes de Platinum es GRATIS.</b> Sin tarjeta — se activa en el momento en que te registras.</p>
-    <div class="trust">
-      <div class="t">
-        <div class="icon-chip sm mint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 5-3.5 8-7 10-3.5-2-7-5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg></div>
-        <span>Publicado antes del juego</span>
-      </div>
-      <div class="t">
-        <div class="icon-chip sm neutral"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a3 3 0 0 0 0 6v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a3 3 0 0 0 0-6z"/><path d="M13 5v2M13 11v2M13 17v2"/></svg></div>
-        <span>Ticket real en cada jugada</span>
-      </div>
-      <div class="t">
-        <div class="icon-chip sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg></div>
-        <span>Líneas con precio de modelo</span>
-      </div>
-    </div>
-  </section>
 
-  <div class="divider"></div>
-
-  <!-- ===== 2. THE CYCLE ===== -->
-  <section>
-    <div class="center"><span class="eyebrow red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16.5h.01"/></svg>El Problema</span></div>
-    <h2>El ciclo que <span class="hl">vacía bankrolls</span></h2>
-    <p class="sub">¿Te suena familiar?</p>
-    <div class="steps">
-      <div class="step bad">
-        <div class="chipwrap">
-          <div class="icon-chip neutral"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/></svg></div>
-          <span class="num">1</span>
-        </div>
-        <div>
-          <h3>Apuestas todos los días</h3>
-          <p>Hay juegos, así que el dinero baja. Cada día se siente como que tiene que haber acción.</p>
-        </div>
-      </div>
-      <div class="step bad">
-        <div class="chipwrap">
-          <div class="icon-chip neutral"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg></div>
-          <span class="num">2</span>
-        </div>
-        <div>
-          <h3>Sigues jugadas de todas partes</h3>
-          <p>Una captura aquí, un «seguro» allá, la opinión de alguien que nunca muestra un ticket.</p>
-        </div>
-      </div>
-      <div class="step bad">
-        <div class="chipwrap">
-          <div class="icon-chip neutral"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.4 2.3c-.8.3-.9 1-.9 1.7"/><path d="M12 17h.01"/></svg></div>
-          <span class="num">3</span>
-        </div>
-        <div>
-          <h3>Sin récord. Sin prueba. Sin sistema.</h3>
-          <p>Cuando pierde, no hay nada que revisar ni nada que aprender. Solo el próximo depósito.</p>
-        </div>
-      </div>
+    <div class="trust3">
+      <div class="t3"><div class="ticon mint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 5-3.5 8-7 10-3.5-2-7-5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg></div><span>Publicado antes del juego</span></div>
+      <div class="t3"><div class="ticon neutral"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a3 3 0 0 0 0 6v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a3 3 0 0 0 0-6z"/><path d="M13 5v2M13 11v2M13 17v2"/></svg></div><span>Ticket real en cada jugada</span></div>
+      <div class="t3"><div class="ticon gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg></div><span>Líneas con precio de modelo</span></div>
     </div>
-    <h2 style="margin-top:24px;font-size:18px;">Los errores que mantienen el ciclo girando</h2>
+  </div>
+
+  <!-- ===== EL PROBLEMA ===== -->
+  <section class="sec">
+    <div class="sec-head col"><span class="sec-eyebrow red">El Problema</span><h2>El ciclo que <span class="accg">vacía bankrolls</span></h2><span class="sec-sub">¿Te suena familiar?</span></div>
+    <div class="how">
+      <div class="howstep bad"><div class="n">1</div><h4>Apuestas todos los días</h4><p>Hay juegos, así que el dinero baja. Cada día se siente como que tiene que haber acción.</p></div>
+      <div class="howstep bad"><div class="n">2</div><h4>Sigues jugadas de todas partes</h4><p>Una captura aquí, un «seguro» allá, la opinión de alguien que nunca muestra un ticket.</p></div>
+      <div class="howstep bad"><div class="n">3</div><h4>Sin récord. Sin prueba. Sin sistema.</h4><p>Cuando pierde, no hay nada que revisar ni nada que aprender. Solo el próximo depósito.</p></div>
+    </div>
+    <h3 style="font-size:18px;margin-top:26px;">Los errores que mantienen el ciclo girando</h3>
     <ul class="errors">
       <li>Apostar sin un modelo — solo opiniones e impulsos</li>
       <li>Perseguir pérdidas con apuestas más grandes y peores precios</li>
@@ -419,163 +418,99 @@ twq('config','rhgk7');
     </ul>
   </section>
 
-  <div class="divider"></div>
-
-  <!-- ===== 3. THE COST ===== -->
-  <section>
+  <!-- ===== EL COSTO ===== -->
+  <section class="sec">
     <div class="cost">
-      <div class="icon-chip gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
       <div class="big">El costo no es solo el dinero.<br><span>Es el tiempo, el bankroll y cada decisión a ciegas en el medio.</span></div>
       <p>Horas adivinando. Apuestas colocadas al precio que tuvieras enfrente. Un bankroll que se encoge porque nadie — ni tú — puede probar qué funciona de verdad.</p>
       <div class="chips"><span>Tiempo</span><span>Bankroll</span><span>Decisiones a ciegas</span></div>
     </div>
   </section>
 
-  <div class="divider"></div>
-
-  <!-- ===== 4. THE SYSTEM ===== -->
-  <section>
-    <div class="center"><span class="eyebrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>El Sistema</span></div>
-    <h2>Cómo funciona <span class="hl">The Sharp Team</span></h2>
-    <div class="steps">
-      <div class="step good">
-        <div class="chipwrap">
-          <div class="icon-chip mint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="12" r="3.2"/></svg></div>
-          <span class="num">1</span>
-        </div>
-        <div>
-          <h3>Un modelo le pone precio a cada juego</h3>
-          <p>Cada enfrentamiento recibe una probabilidad real de ganar antes de que miremos las cuotas.</p>
-        </div>
-      </div>
-      <div class="step good">
-        <div class="chipwrap">
-          <div class="icon-chip mint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h18l-7 8v5l-4 2v-7z"/></svg></div>
-          <span class="num">2</span>
-        </div>
-        <div>
-          <h3>Solo se publican ventajas reales</h3>
-          <p>Si el número del modelo no le gana al precio, no hay jugada. Cada jugada se publica <b style="color:var(--text);">antes de la hora del juego</b> — nunca después.</p>
-        </div>
-      </div>
-      <div class="step good">
-        <div class="chipwrap">
-          <div class="icon-chip mint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a3 3 0 0 0 0 6v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a3 3 0 0 0 0-6z"/><path d="M13 5v2M13 11v2M13 17v2"/></svg></div>
-          <span class="num">3</span>
-        </div>
-        <div>
-          <h3>Cada jugada lleva el ticket real</h3>
-          <p>El ticket verdadero de Novig va en la tarjeta, y el resultado cuenta en el récord público — se gane o se pierda.</p>
-        </div>
-      </div>
+  <!-- ===== EL SISTEMA ===== -->
+  <section class="sec">
+    <div class="sec-head col"><span class="sec-eyebrow">El Sistema</span><h2>Cómo funciona <span class="accg">The Sharp Team</span></h2></div>
+    <div class="how">
+      <div class="howstep"><div class="n">1</div><h4>Un modelo le pone precio a cada juego</h4><p>Cada enfrentamiento recibe una probabilidad real de ganar antes de que miremos las cuotas.</p></div>
+      <div class="howstep"><div class="n">2</div><h4>Solo se publican ventajas reales</h4><p>Si el número del modelo no le gana al precio, no hay jugada. Cada jugada se publica <b>antes de la hora del juego</b> — nunca después.</p></div>
+      <div class="howstep"><div class="n">3</div><h4>Cada jugada lleva el ticket real</h4><p>El ticket verdadero de Novig va en la tarjeta, y el resultado cuenta en el récord público — se gane o se pierda.</p></div>
     </div>
   </section>
 
-  <div class="divider"></div>
-
-  <!-- ===== 5. BEFORE / AFTER ===== -->
-  <section>
-    <div class="center"><span class="eyebrow gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h13M13 3l4 4-4 4M20 17H7M11 13l-4 4 4 4"/></svg>La Diferencia</span></div>
-    <h2>Antes <span class="hl">/</span> Después</h2>
-    <div class="ba">
-      <div class="col before">
-        <div class="bhead">
-          <div class="icon-chip sm red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9 9l6 6M15 9l-6 6"/></svg></div>
-          <div class="label">Antes</div>
-        </div>
+  <!-- ===== ANTES / DESPUÉS ===== -->
+  <section class="sec">
+    <div class="sec-head col"><span class="sec-eyebrow gold">La Diferencia</span><h2>Antes <span class="accg">/</span> Después</h2></div>
+    <div class="ba2">
+      <div class="bapanel before">
+        <div class="blabel">Antes</div>
         <h3>Jugadas sin prueba</h3>
         <p>Alguien publica una jugada, pierde y desaparece en silencio. Las victorias se capturan, las derrotas se entierran, y nunca ves un récord real.</p>
       </div>
-      <div class="col after">
-        <div class="bhead">
-          <div class="icon-chip sm mint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8.5 12.5l2.5 2.5 4.5-5"/></svg></div>
-          <div class="label">Después</div>
-        </div>
+      <div class="bapanel after">
+        <div class="blabel">Después</div>
         <h3>Cada jugada, probada</h3>
         <p>Cada jugada muestra la probabilidad del modelo, el precio que tomamos y el ticket real. El récord completo se queda público — las semanas buenas y las malas.</p>
       </div>
     </div>
   </section>
 
-  <div class="divider"></div>
-
-  <!-- ===== 6. WHAT'S INSIDE ===== -->
-  <section>
-    <div class="center"><span class="eyebrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/></svg>Qué Incluye</span></div>
-    <h2>Tres niveles. <span class="hl">Un mismo estándar de prueba.</span></h2>
-
-    <div class="tier free">
-      <div class="thead">
-        <div class="icon-chip sm mint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11h16v9a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/><path d="M3 7h18v4H3z"/><path d="M12 7v14"/><path d="M12 7a3 3 0 1 1 3-3c0 2-3 3-3 3zM12 7a3 3 0 1 0-3-3c0 2 3 3 3 3z"/></svg></div>
-        <div class="tname">⚪ Jugadas Gratis</div>
+  <!-- ===== QUÉ INCLUYE ===== -->
+  <section class="sec">
+    <div class="sec-head col"><span class="sec-eyebrow">Qué Incluye</span><h2>Tres niveles. <span class="accg">Un mismo estándar de prueba.</span></h2></div>
+    <div class="plans3">
+      <div class="valuecard">
+        <span class="vc-tier">⚪ Jugadas Gratis</span>
+        <h3>Sharp Free — gratis para siempre</h3>
+        <p class="vc-sub">Jugadas gratis diarias, publicadas y registradas como todo lo demás.</p>
+        <ul>
+          <li>Jugadas gratis todos los días</li>
+          <li>Canal público de Telegram: The Sharp Team — Free Picks</li>
+          <li>Récord público completo</li>
+        </ul>
+        <div class="tier-price">$0 — gratis para siempre</div>
       </div>
-      <h3>Sharp Free — gratis para siempre</h3>
-      <p>Jugadas gratis diarias, publicadas y registradas como todo lo demás.</p>
-      <ul class="checklist">
-        <li>Jugadas gratis todos los días</li>
-        <li>Canal público de Telegram: The Sharp Team — Free Picks</li>
-        <li>Récord público completo</li>
-      </ul>
-      <div class="price">$0 — gratis para siempre</div>
-    </div>
-
-    <div class="tier gold">
-      <div class="thead">
-        <div class="icon-chip sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"/><path d="M8.5 14L7 22l5-3 5 3-1.5-8"/></svg></div>
-        <div class="tname">⚪ Gold</div>
+      <div class="valuecard">
+        <span class="vc-tier">⚪ Gold</span>
+        <h3>Jugadas validadas</h3>
+        <p class="vc-sub">Jugadas que superan una vara más alta: una ventaja matemática validada, publicadas con el mismo estándar de ticket y récord.</p>
+        <ul>
+          <li>Jugadas Gold en tu Dashboard</li>
+          <li>Probabilidad del modelo y valor en cada tarjeta</li>
+        </ul>
       </div>
-      <h3>Jugadas validadas</h3>
-      <p>Jugadas que superan una vara más alta: una ventaja matemática validada, publicadas con el mismo estándar de ticket y récord.</p>
-      <ul class="checklist">
-        <li>Jugadas Gold en tu Dashboard</li>
-        <li>Probabilidad del modelo y valor en cada tarjeta</li>
-      </ul>
-    </div>
-
-    <div class="tier plat">
-      <span class="seal">Mejor Valor</span>
-      <div class="thead">
-        <div class="icon-chip sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 8L7 12l5-6.5L17 12l4.5-4L20 19H4z"/><path d="M4 22h16"/></svg></div>
-        <div class="tname">⭐ Platinum</div>
+      <div class="valuecard paid">
+        <span class="vc-badge">Mejor Valor</span>
+        <span class="vc-tier">⭐ Platinum</span>
+        <h3>Todo, desbloqueado</h3>
+        <ul>
+          <li>Jugadas Gold + Platinum — las ventajas más fuertes que encontramos</li>
+          <li>Tablero +EV — valor en vivo en 12 casas de apuestas</li>
+          <li>Tablero de Player Props</li>
+          <li>Asistente con IA</li>
+          <li>Movimientos de línea — mira las líneas moverse en tiempo real</li>
+          <li>Dinero Sharp — sigue el dinero profesional</li>
+          <li>Canal privado de Telegram</li>
+        </ul>
+        <div class="tier-price">Tu primer mes: GRATIS — incluido al registrarte</div>
       </div>
-      <h3>Todo, desbloqueado</h3>
-      <ul class="checklist">
-        <li>Jugadas Gold + Platinum — las ventajas más fuertes que encontramos</li>
-        <li>Tablero +EV — valor en vivo en 12 casas de apuestas</li>
-        <li>Tablero de Player Props</li>
-        <li>Asistente con IA</li>
-        <li>Movimientos de línea — mira las líneas moverse en tiempo real</li>
-        <li>Dinero Sharp — sigue el dinero profesional</li>
-        <li>Canal privado de Telegram</li>
-      </ul>
-      <div class="price">Tu primer mes: GRATIS — incluido al registrarte</div>
     </div>
   </section>
 
-  <div class="divider"></div>
-
-  <!-- ===== 8. WHO IT'S FOR ===== -->
-  <section>
-    <div class="center"><span class="eyebrow gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/><path d="M16 5a3.5 3.5 0 0 1 0 6.5M21 20c0-2.8-1.9-4.8-4.5-5.3"/></svg>Para Quién Es</span></div>
-    <h2>Hecho para apostadores que quieren <span class="hl">un sistema, no milagros</span></h2>
-    <div class="filter">
-      <div class="box yes">
-        <div class="fhead">
-          <div class="icon-chip sm mint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8.5 12.5l2.5 2.5 4.5-5"/></svg></div>
-          <h3>Esto es para ti si…</h3>
-        </div>
-        <ul>
+  <!-- ===== PARA QUIÉN ES ===== -->
+  <section class="sec">
+    <div class="sec-head col"><span class="sec-eyebrow gold">Para Quién Es</span><h2>Hecho para apostadores que quieren <span class="accg">un sistema, no milagros</span></h2></div>
+    <div class="ba2">
+      <div class="bapanel yes">
+        <div class="blabel">Esto es para ti si…</div>
+        <ul class="checklist nb" style="margin-top:12px">
           <li>Quieres cada jugada respaldada por un modelo y un número</li>
           <li>Quieres ver el ticket y revisar el récord tú mismo</li>
           <li>Prefieres apostar menos jugadas, pero mejores, que perseguir acción</li>
         </ul>
       </div>
-      <div class="box no">
-        <div class="fhead">
-          <div class="icon-chip sm red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9 9l6 6M15 9l-6 6"/></svg></div>
-          <h3>Esto no es para ti si…</h3>
-        </div>
-        <ul>
+      <div class="bapanel no">
+        <div class="blabel">Esto no es para ti si…</div>
+        <ul class="checklist nb no" style="margin-top:12px">
           <li>Buscas hacerte rico de la noche a la mañana</li>
           <li>Quieres un «seguro del siglo» cada noche</li>
           <li>Prefieres perseguir pérdidas que seguir un sistema</li>
@@ -584,15 +519,13 @@ twq('config','rhgk7');
     </div>
   </section>
 
-  <div class="divider"></div>
-
-  <!-- ===== 9. THE OFFER ===== -->
-  <section id="offer">
-    <div class="offer">
-      <span class="pill gold">Incluido al registrarte</span>
-      <h2>Tu primer mes de <span class="hl">Platinum es GRATIS</span></h2>
+  <!-- ===== LA OFERTA ===== -->
+  <section class="sec" id="offer">
+    <div class="offerpanel">
+      <span class="pill">Incluido al registrarte</span>
+      <h2>Tu primer mes de <span class="accg">Platinum es GRATIS</span></h2>
       <p class="price-line">Toda cuenta nueva arranca con un mes completo de Platinum — cada jugada, cada herramienta — por nuestra cuenta. Sin tarjeta, sin cargo. Cuando tu mes termine, tú decides si vale la pena quedártelo. Las jugadas gratis nunca paran, pase lo que pase.</p>
-      <ul class="checklist" style="text-align:left;max-width:440px;margin:16px auto 2px;font-size:14px;color:var(--muted);">
+      <ul class="checklist gold">
         <li>La jugada Platinum — nuestra mejor jugada del día</li>
         <li>Todas las jugadas Gold</li>
         <li>Jugadas Value en el +EV Board</li>
@@ -604,141 +537,70 @@ twq('config','rhgk7');
         <li>Canales privados de Telegram</li>
       </ul>
       <div class="osteps">
-        <div class="ostep">
-          <div class="chipwrap">
-            <div class="icon-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg></div>
-            <span class="num">1</span>
-          </div>
-          <div>
-            <h3>Hoy: <span>$0</span> para empezar</h3>
-            <p>Crea tu cuenta gratis — solo tu correo. Abre al instante, sin tarjeta en ninguna parte.</p>
-          </div>
-        </div>
-        <div class="ostep">
-          <div class="chipwrap">
-            <div class="icon-chip mint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/><path d="M9 15l2 2 4-4"/></svg></div>
-            <span class="num" style="background:var(--mint);color:#06231a;">2</span>
-          </div>
-          <div>
-            <h3>Tu primer mes de Platinum: <span>GRATIS</span></h3>
-            <p>Cada jugada y cada herramienta, totalmente desbloqueadas por 30 días — lo verdadero, no una probadita.</p>
-          </div>
-        </div>
-        <div class="ostep">
-          <div class="chipwrap">
-            <div class="icon-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></svg></div>
-            <span class="num">3</span>
-          </div>
-          <div>
-            <h3>Después de tu mes: <span>tú decides</span></h3>
-            <p>No se cobra nada ni se renueva solo. Si Platinum se ganó su puesto, te lo puedes quedar — si no, simplemente vuelves a las jugadas gratis.</p>
-          </div>
-        </div>
+        <div class="pstep"><div class="n">1</div><div><h3>Hoy: <span>$0</span> para empezar</h3><p>Crea tu cuenta gratis — solo tu correo. Abre al instante, sin tarjeta en ninguna parte.</p></div></div>
+        <div class="pstep mint"><div class="n">2</div><div><h3>Tu primer mes de Platinum: <span>GRATIS</span></h3><p>Cada jugada y cada herramienta, totalmente desbloqueadas por 30 días — lo verdadero, no una probadita.</p></div></div>
+        <div class="pstep"><div class="n">3</div><div><h3>Después de tu mes: <span>tú decides</span></h3><p>No se cobra nada ni se renueva solo. Si Platinum se ganó su puesto, te lo puedes quedar — si no, simplemente vuelves a las jugadas gratis.</p></div></div>
       </div>
       <div class="bigprice">Platinum: tu primer mes <span>GRATIS</span></div>
       <p class="price-line">¿Y las jugadas gratis? <b>Son gratis para siempre</b> — jugadas gratis diarias, sin tarjeta, con mes o sin mes.</p>
-      <a class="cta gold" href="#signup">Crear mi cuenta gratis</a>
+      <div class="center-cta"><a class="btn gold" href="#signup">Crear mi cuenta gratis</a></div>
       <p class="micro">Mes gratis · sin tarjeta · sin sorpresas.</p>
     </div>
   </section>
 
-  <div class="divider"></div>
-
-  <!-- ===== 9b. SIGNUP FORM ===== -->
-  <section id="signup" style="padding-top:26px;">
-    <div class="formcard">
-      <div class="center"><span class="eyebrow gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5"/></svg>Crea Tu Cuenta</span></div>
-      <h2>Entra solo con tu correo</h2>
-      <p class="sub">Un solo campo, sin tarjeta — tu cuenta abre al instante, con tu mes gratis de Platinum ya activo. Tu contraseña, tu nombre y tu teléfono van después, ya dentro.</p>
-      {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-          {% for cat, msg in messages %}
-            <div class="flash flash-{{ cat }}">{{ msg }}</div>
-          {% endfor %}
-        {% endif %}
-      {% endwith %}
-      <form method="post" action="{{ url_for('register') }}">
-        <div class="intent">
-          <div class="intent-opt" style="cursor:default;">
-            <span style="font-size:20px;line-height:1.2;">⭐</span>
-            <span>
-              <span class="io-title">PLATINUM — TU PRIMER MES ES GRATIS</span>
-              <span class="io-sub">Se activa en el momento en que tu cuenta abre: cada jugada, cada herramienta, sin tarjeta.</span>
-              <span class="io-sub">Y las jugadas gratis diarias son tuyas para siempre, con mes o sin mes.</span>
-            </span>
-          </div>
-        </div>
-        <div class="field">
-          <label for="f-email">Tu correo electrónico</label>
-          <p class="hint">Es el único campo. Aquí te enviamos tus jugadas todos los días antes de los juegos.</p>
-          <input id="f-email" type="email" name="email" required autocomplete="email" placeholder="you@email.com">
-        </div>
-        {% if turnstile_key %}
-        <div class="cf-turnstile" data-sitekey="{{ turnstile_key }}" data-theme="dark" style="margin:12px 0 4px"></div>
-        <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
-        {% endif %}
-        <button class="cta gold" type="submit" style="margin-top:18px;">Crear mi cuenta</button>
-      </form>
-      <ol class="howsteps">
-        <li><b>1.</b> Escribe tu correo — tu cuenta abre al instante, sin esperar confirmación.</li>
-        <li><b>2.</b> Ya dentro, terminas de configurar: tu contraseña, tu nombre y tu teléfono. Toma 10 segundos, y te enviamos un enlace de activación para confirmar tu correo de una vez.</li>
-        <li><b>3.</b> Tu Platinum ya está activo — gratis por tu primer mes. Abre tu Dashboard y mira la tarjeta completa de hoy.</li>
-      </ol>
-      <p class="formnote">En este formulario no va ninguna tarjeta, nunca. Tu mes gratis no necesita pago — y si nunca pagas un centavo, las jugadas gratis siguen llegando.</p>
-      <p class="login-line">¿Ya tienes una cuenta? <a href="{{ url_for('login') }}">Inicia sesión aquí →</a></p>
+  <!-- ===== PREGUNTAS ===== -->
+  <section class="sec">
+    <div class="sec-head col"><span class="sec-eyebrow">Preguntas</span><h2>Respuestas <span class="accg">rápidas</span></h2></div>
+    <div class="faqwrap">
+      <div class="faqi"><button class="faqq" type="button">¿Cuándo salen las jugadas?</button><div class="faqa"><div>Entre semana a las 2:00 PM ET y fines de semana a las 11:00 AM ET. Cada jugada se publica antes de que empiece su juego.</div></div></div>
+      <div class="faqi"><button class="faqq" type="button">¿Dónde veo las jugadas?</button><div class="faqa"><div>En tu Dashboard, en los canales de Telegram y en tu correo diario — lo que revises primero.</div></div></div>
+      <div class="faqi"><button class="faqq" type="button">¿Cuánto cuesta Platinum?</button><div class="faqa"><div>Tu primer mes de Platinum es gratis — viene con tu cuenta, sin tarjeta. Después, quedártelo depende de ti. Las jugadas gratis siempre son gratis.</div></div></div>
+      <div class="faqi"><button class="faqq" type="button">¿Puedo cancelar cuando quiera?</button><div class="faqa"><div>Sí. Puedes cancelar desde tu cuenta en cualquier momento, y conservas el tiempo que ya pagaste.</div></div></div>
+      <div class="faqi"><button class="faqq" type="button">¿Cómo sé que las jugadas son reales?</button><div class="faqa"><div>Cada jugada se publica antes del juego con su ticket real — nada se edita después de los hechos.</div></div></div>
     </div>
-  </section>
-
-  <div class="divider"></div>
-
-  <!-- ===== 10. FAQ ===== -->
-  <section>
-    <div class="center"><span class="eyebrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.4 2.3c-.8.3-.9 1-.9 1.7"/><path d="M12 17h.01"/></svg>Preguntas</span></div>
-    <h2>Respuestas <span class="hl">rápidas</span></h2>
-    <div class="faq">
-      <div class="item">
-        <div class="qhead"><h3>¿Cuándo salen las jugadas?</h3><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></div>
-        <p>Entre semana a las 2:00 PM ET y fines de semana a las 11:00 AM ET. Cada jugada se publica antes de que empiece su juego.</p>
-      </div>
-      <div class="item">
-        <div class="qhead"><h3>¿Dónde veo las jugadas?</h3><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></div>
-        <p>En tu Dashboard, en los canales de Telegram y en tu correo diario — lo que revises primero.</p>
-      </div>
-      <div class="item">
-        <div class="qhead"><h3>¿Cuánto cuesta Platinum?</h3><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></div>
-        <p>Tu primer mes de Platinum es gratis — viene con tu cuenta, sin tarjeta. Después, quedártelo depende de ti. Las jugadas gratis siempre son gratis.</p>
-      </div>
-      <div class="item">
-        <div class="qhead"><h3>¿Puedo cancelar cuando quiera?</h3><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></div>
-        <p>Sí. Puedes cancelar desde tu cuenta en cualquier momento, y conservas el tiempo que ya pagaste.</p>
-      </div>
-      <div class="item">
-        <div class="qhead"><h3>¿Cómo sé que las jugadas son reales?</h3><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></div>
-        <p>Cada jugada se publica antes del juego con su ticket real — nada se edita después de los hechos.</p>
-      </div>
-    </div>
-    <a class="cta" href="#signup">Crear mi cuenta gratis</a>
+    <div class="center-cta"><a class="btn" href="#signup">Crear mi cuenta gratis</a></div>
     <p class="micro">Cuenta gratis, jugadas gratis todos los días — y tu primer mes de Platinum va por nuestra cuenta.</p>
   </section>
 
-  <!-- ===== 11. FOOTER ===== -->
-  <footer>
-    <div class="dom">thesharpteam.bet</div>
-    <p style="margin-top:8px;">The Sharp Team — jugadas con modelo, tickets reales, un récord público.<br>Jugadas gratis todos los días en Telegram: The Sharp Team — Free Picks.</p>
-    <p style="margin-top:14px;">Publicado antes del juego. Bloqueado. Calificado.</p>
-    <p style="margin-top:8px;">Todas las jugadas e información se ofrecen solo con fines de entretenimiento.<br>
-    <b style="color:#c9cfda;">Mayores de 21 años solamente.</b> Juega con responsabilidad. ¿Problemas con el juego? Llama o textea <b style="color:#c9cfda;">1-800-GAMBLER</b>.</p>
-    <div class="links"><a href="/terms">Términos de Uso</a> · <a href="/privacy">Privacidad</a> · <a href="/legal">Aviso Legal</a> · <a href="/contact">Contacto</a></div>
-    <p style="margin-top:10px;">© 2026 The Sharp Team. Todos los derechos reservados.</p>
-  </footer>
+</main>
 
-</div>
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="fbrand"><img class="lockup" src="{{ url_for('static', filename='img/sharp-team-header.jpg') }}" alt="The Sharp Team"></div>
+    <p>The Sharp Team · New York, NY</p>
+    <div class="fsocials">
+      <a href="https://x.com/thesharpteambet" target="_blank" rel="noopener" aria-label="X"><svg viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H4.64l4.713 6.231 5.891-6.231zm-1.161 17.52h1.833L7.084 4.126H5.117l11.966 15.644z"/></svg></a>
+      <a href="https://www.instagram.com/the_sharp_team" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><defs><linearGradient id="ig-g" x1="0%" y1="100%" x2="100%" y2="0%"><stop offset="0%" stop-color="#feda75"/><stop offset="35%" stop-color="#fa7e1e"/><stop offset="60%" stop-color="#d62976"/><stop offset="85%" stop-color="#962fbf"/><stop offset="100%" stop-color="#4f5bd5"/></linearGradient></defs><rect x="2.5" y="2.5" width="19" height="19" rx="5.5" stroke="url(#ig-g)" stroke-width="2"/><circle cx="12" cy="12" r="4.2" stroke="url(#ig-g)" stroke-width="2"/><circle cx="17.4" cy="6.6" r="1.3" fill="url(#ig-g)"/></svg></a>
+      <a href="https://www.facebook.com/thesharpteam" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="#1877F2" aria-hidden="true"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047v-2.66c0-3.025 1.792-4.697 4.533-4.697 1.313 0 2.686.236 2.686.236v2.971H15.83c-1.491 0-1.956.93-1.956 1.886v2.264h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg></a>
+      <a href="https://t.me/thesharpteam" target="_blank" rel="noopener" aria-label="Telegram"><svg viewBox="0 0 24 24" fill="#229ED9" aria-hidden="true"><path d="M21.884 4.37l-3.107 14.652c-.235 1.036-.856 1.29-1.735.803l-4.798-3.538-2.316 2.228c-.256.257-.471.471-.966.471l.346-4.904 8.928-8.067c.388-.346-.084-.538-.604-.192L6.654 13.197l-4.75-1.485c-1.033-.323-1.053-1.033.216-1.529l18.572-7.16c.86-.323 1.612.192 1.192 1.347z"/></svg></a>
+    </div>
+    <nav class="flinks">
+      <a href="https://www.thesharpteam.bet/about">About</a><span class="sep">·</span>
+      <a href="https://www.thesharpteam.bet/faqs">FAQs</a><span class="sep">·</span>
+      <a href="https://www.thesharpteam.bet/contact">Contact</a><span class="sep">·</span>
+      <a href="https://www.thesharpteam.bet/privacy">Privacy Policy</a><span class="sep">·</span>
+      <a href="https://www.thesharpteam.bet/terms">Terms of Service</a>
+    </nav>
+    <p class="legal">21+. If gambling stops being fun, call 1-800-GAMBLER. Plays are opinions based on model analysis — no outcome is guaranteed, and past performance does not promise future results.</p>
+    <p class="copy">© 2026 The Sharp Team · New York, NY. All rights reserved.</p>
+  </div>
+</footer>
 
-<!-- ===== STICKY CTA BAR ===== -->
 <div class="stickybar">
-  <div class="sb-text"><b>Cuenta gratis</b>Jugadas gratis todos los días</div>
-  <a href="#signup">Únete gratis →</a>
+  <div class="st-txt"><b>Cuenta gratis</b> · Jugadas gratis todos los días</div>
+  <a class="btn sm" href="#signup">Únete gratis →</a>
 </div>
+
+
+<script>
+document.querySelectorAll('.faqq').forEach(function(b){
+  b.addEventListener('click',function(){
+    var item=b.parentElement, was=item.classList.contains('open');
+    document.querySelectorAll('.faqi.open').forEach(function(i){i.classList.remove('open')});
+    if(!was) item.classList.add('open');
+  });
+});
+</script>
 
 
 <script>
