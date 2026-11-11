@@ -859,29 +859,6 @@ def _es_trial(user) -> bool:
         return False
 
 
-def _mes_gratis_visible(user) -> bool:
-    """True si la tira fina del mes gratis se dibuja en el Dashboard.
-
-    Regla base: miembro en su mes gratis vivo (_es_trial sin vencer).
-    Vista de Alex (2026-11-11, orden suya: «muéstrala también en mi
-    cuenta, como si fuera otro regular»): la cuenta de Alex también la
-    ve cuando SU reloj de mes gratis está puesto y vivo, pa' que pueda
-    revisar el Dashboard como un miembro más. SOLO gobierna esta tira:
-    _es_trial, el acceso y el paywall no cambian."""
-    try:
-        if not user:
-            return False
-        if _trial_vencido(user):
-            return False
-        if _es_trial(user):
-            return True
-        if is_alex_member(user):
-            return bool(user["platinum_unlocked"]) and bool(user["platinum_trial_ends"] or "")
-        return False
-    except Exception:
-        return False
-
-
 def _mes_gratis_hasta(user) -> str:
     """Fecha legible (p. ej. 'Dec 10') en que termina el mes gratis del
     miembro; '' si no tiene reloj de trial."""
@@ -907,6 +884,27 @@ def _mes_gratis_dias(user):
         return max(0, (fin - datetime.now().date()).days)
     except Exception:
         return None
+
+
+def _en_mes_gratis_vista(user) -> bool:
+    """Flag SOLO DE VISTA pa' la tirita del mes gratis en el Dashboard
+    (2026-11-11, orden de Alex: la tirita también se ve en SU cuenta,
+    tratada como un miembro regular solo pa' esa vista). A diferencia de
+    _es_trial, NO excluye a Alex ni al admin: basta Platinum desbloqueado
+    con el reloj de trial puesto y sin vencer. NO cambia ninguna regla de
+    acceso ni de pago (_es_trial, _acceso_programa y platinum_unlocked_for
+    quedan intactos); pa' miembros regulares el resultado es idéntico al
+    de (_es_trial(user) and not _trial_vencido(user))."""
+    try:
+        if not user:
+            return False
+        if not user["platinum_unlocked"]:
+            return False
+        if not (user["platinum_trial_ends"] or ""):
+            return False
+        return not _trial_vencido(user)
+    except Exception:
+        return False
 
 
 def platinum_unlocked_for(user) -> bool:
@@ -6281,7 +6279,7 @@ def home():
         # miembro_platinum con preview: en ?preview=locked el banner de
         # invitación VIP también se muestra (pedido Alex 2026-10-02).
         miembro_platinum=(platinum_unlocked_for(user) and not preview_locked),
-        en_mes_gratis=_mes_gratis_visible(user),
+        en_mes_gratis=_en_mes_gratis_vista(user),
         mes_gratis_hasta=_mes_gratis_hasta(user),
         mes_gratis_dias=_mes_gratis_dias(user),
         # Hero fijo original (2026-10-26, reversión a pedido de Alex: solo
