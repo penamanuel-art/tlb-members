@@ -39,22 +39,28 @@
 <style>
 .upl-wrap{max-width:520px;margin:0 auto;padding:6px 2px calc(158px + env(safe-area-inset-bottom));color:#e6edf7}
 .upl-hero{text-align:center;padding:10px 6px 4px}
-.upl-hero img{width:104px;height:auto}
+.upl-hero img{width:min(330px,88%);height:auto;border-radius:10px}
+.upl-chips{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin:16px 0 0}
+.upl-chip{display:inline-block;background:#14161c;border:1px solid #2c313a;border-radius:999px;padding:7px 11px;font-size:10.5px;font-weight:800;letter-spacing:.4px;color:#e6edf7}
+.upl-chip.fire{border-color:#e8c76688;color:#e8c766}
+.upl-disc{margin:12px 0 0;background:#0d1017;border:1px dashed #3a4152;border-radius:10px;padding:10px 12px;font-size:11px;line-height:1.6;color:#8b98ad}
+.upl-disc b{color:#e6edf7}
+.upl-billed{margin:9px 0 0;font-size:11.5px;font-weight:800;letter-spacing:.6px;color:#e8c766}
 .upl-kicker{margin:10px 0 0;font-size:10.5px;font-weight:800;letter-spacing:3px;color:#e8c766}
 .upl-h1{margin:8px 0 0;font-size:27px;line-height:1.18;font-weight:900;color:#fff}
 .upl-h1 .dollar{color:#2fe6a7}
 .upl-sub{margin:10px auto 0;max-width:430px;font-size:13px;line-height:1.6;color:#a8b3cf}
 .upl-tiles{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:16px 0 0}
-.upl-tile{background:linear-gradient(180deg,#26303f,#1a222e);border:1px solid #33415555;border-radius:12px;padding:11px 4px;text-align:center}
+.upl-tile{background:linear-gradient(180deg,#171a21,#12151c);border:1px solid #33415555;border-radius:12px;padding:11px 4px;text-align:center}
 .upl-tile b{display:block;font-size:19px;color:#fff;font-weight:900}
 .upl-tile span{display:block;margin-top:2px;font-size:9.5px;letter-spacing:1.2px;color:#8b98ad;font-weight:700}
 .upl-graded{margin:10px 0 0;text-align:center;font-size:11px;color:#2fe6a7;font-weight:700}
-.upl-what{margin:16px 0 0;background:linear-gradient(180deg,#232d3d,#1a222e);border:1px solid #e8c76655;border-radius:16px;padding:16px 15px 14px}
+.upl-what{margin:16px 0 0;background:linear-gradient(180deg,#171a21,#12151c);border:1px solid #e8c76655;border-radius:16px;padding:16px 15px 14px}
 .upl-what h2{margin:0;font-size:19px;font-weight:900;color:#fff}
 .upl-what .lead{margin:8px 0 0;font-size:13.5px;line-height:1.6;color:#c6d2e8}
 .upl-what .note{margin:12px 0 0;font-size:12.5px;line-height:1.6;color:#8b98ad}
 .upl-what .note b{color:#e8c766}
-.upl-card{margin:16px 0 0;background:linear-gradient(180deg,#26303f,#1c2431 60%,#1a222e);border:1px solid #e8c76655;border-radius:16px;padding:16px 15px 14px}
+.upl-card{margin:16px 0 0;background:linear-gradient(180deg,#171a21,#12151c 60%,#10131a);border:1px solid #e8c76655;border-radius:16px;padding:16px 15px 14px}
 .upl-pill{display:inline-block;background:#e8c766;color:#161d29;font-size:10px;font-weight:900;letter-spacing:1.6px;padding:4px 10px;border-radius:999px}
 .upl-price{margin:10px 0 0;font-size:17px;font-weight:800;color:#fff}
 .upl-price .big{font-size:46px;font-weight:900;vertical-align:-9px;margin-right:3px}
@@ -104,7 +110,7 @@
 .upl-dont .x{color:#f87171;font-weight:900}
 .upl-dont .ok{color:#2fe6a7;font-weight:900}
 .upl-faq{margin:12px 0 0}
-.upl-faq details{background:linear-gradient(180deg,#26303f,#1a222e);border:1px solid #33415555;border-radius:11px;padding:11px 13px;margin:0 0 8px}
+.upl-faq details{background:linear-gradient(180deg,#171a21,#12151c);border:1px solid #33415555;border-radius:11px;padding:11px 13px;margin:0 0 8px}
 .upl-faq summary{font-size:13px;font-weight:800;color:#fff;cursor:pointer;list-style:none}
 .upl-faq p{margin:8px 0 0;font-size:12.5px;line-height:1.6;color:#a8b3cf}
 .upl-legal{margin:18px 0 0;text-align:center;font-size:10.5px;line-height:1.6;color:#8b98ad}
@@ -123,41 +129,45 @@
 
 <div class="upl-wrap">
   <div class="upl-hero">
-    <img src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team">
-    <p class="upl-kicker">THE SHARP TEAM · PLATINUM</p>
+    <img src="{{ url_for('static', filename='img/sharp-team-header.jpg') }}" alt="The Sharp Team">
+    <p class="upl-kicker">💎 THE SHARP TEAM · PLATINUM</p>
     {% if anonimo %}
     <h1 class="upl-h1">Every Platinum play, with its real ticket — <span class="dollar">FREE</span> for your first month</h1>
     <p class="upl-sub">Create a free account and your first month of Platinum is on us: every official play with the real ticket, posted before game time, and graded in public, win or loss. No card required.</p>
     {% elif post_mes_gratis %}
-    <h1 class="upl-h1">Keep every Platinum play, with its real ticket</h1>
+    <h1 class="upl-h1">Every Platinum play, for <span class="dollar">$15.99</span> a week.</h1>
     <p class="upl-sub">Your free month showed you the full card. Keep it all going: every official play with the real ticket, posted before game time, and graded in public, win or loss.</p>
     {% else %}
-    <h1 class="upl-h1">Every Platinum play, with its real ticket — for <span class="dollar">$1</span></h1>
-    <p class="upl-sub">Seven days of full Platinum: every official play with the real ticket, posted the same day — before game time, and graded in public, win or loss.</p>
+    <h1 class="upl-h1">Every Platinum play, for <span class="dollar">$15.99</span> a week.</h1>
+    <p class="upl-sub">Start with $1 for your first 7 days of full Platinum: every official play with the real ticket, posted the same day — before game time, and graded in public, win or loss. Then $15.99/week, cancel anytime.</p>
     {% endif %}
   </div>
 
-  <div class="upl-tiles">
-    <div class="upl-tile"><span class="ck">✓</span><span>100% OF PLAYS POSTED BEFORE GAME TIME</span></div>
-    <div class="upl-tile"><span class="ck">✓</span><span>EVERY PLAY CARRIES ITS REAL TICKET</span></div>
-    <div class="upl-tile"><span class="ck">✓</span><span>WIN OR LOSS — EVERY RESULT POSTED</span></div>
+  <div class="upl-chips">
+    <span class="upl-chip fire">🔥 Platinum Plays: 20-10 in the last 30</span>
+    <span class="upl-chip">✓ Every play posted before game time</span>
+    <span class="upl-chip">✓ Real ticket on every official play</span>
+    <span class="upl-chip">✓ Win or loss — every result posted</span>
   </div>
   <p class="upl-graded">✓ Graded against the final score · every result posted, win or loss</p>
 
   <div class="upl-card" id="upl-buy">
     
     {% if anonimo %}
-    <span class="upl-pill">YOUR FIRST MONTH — FREE</span>
+    <span class="upl-pill">💎 PLATINUM · WEEKLY PLAN</span>
     <p class="upl-price"><span class="big">FREE</span> your first month of Platinum</p>
     <p class="upl-then">No card · nothing charged · free plays are yours forever either way</p>
+    <p class="upl-billed">FIRST MONTH FREE · NO CARD REQUIRED</p>
     {% elif post_mes_gratis %}
-    <span class="upl-pill">KEEP PLATINUM</span>
+    <span class="upl-pill">💎 PLATINUM · WEEKLY PLAN</span>
     <p class="upl-price"><span class="big">$15.99</span> per week</p>
     <p class="upl-then">Your free month has ended · cancel anytime</p>
+    <p class="upl-billed">BILLED WEEKLY · CANCEL ANYTIME · NO CONTRACTS</p>
     {% else %}
-    <span class="upl-pill">7-DAY FULL ACCESS</span>
+    <span class="upl-pill">💎 PLATINUM · WEEKLY PLAN</span>
     <p class="upl-price"><span class="big">$1</span> for your first 7 days</p>
     <p class="upl-then">Then $15.99/week · cancel anytime</p>
+    <p class="upl-billed">BILLED WEEKLY · CANCEL ANYTIME · NO CONTRACTS</p>
     {% endif %}
     
     <p class="upl-trust" style="margin-top:9px;">🔒 256-bit SSL · Powered by Stripe · PCI compliant</p>
@@ -174,6 +184,9 @@
       {% endfor %}
       <p class="upl-recon">Every claim reconciles to the public graded ledger.</p>
     </div>
+    {% endif %}
+    {% if not anonimo %}
+    <div class="upl-disc"><b>Recurring billing disclosure:</b> {% if post_mes_gratis %}Platinum is $15.99/week, charged today and renewing automatically every week until you cancel.{% else %}You pay $1 today for your first 7 days; unless you cancel before day 8, Platinum continues at $15.99/week, renewing automatically until you cancel.{% endif %} Cancel anytime from your account — no contracts, no cancellation fees. Payments are processed securely by Stripe.</div>
     {% endif %}
     {# Garantía pegada al checkout (arreglo del embudo 2026-11-07, aprobado por Alex): la misma garantía que cierra esta tarjeta, repetida AQUÍ, justo encima del formulario de Stripe, para que se vea sin bajar hasta el final del formulario. #}
     
@@ -267,6 +280,7 @@
     <p class="pln-tag">Unlock the complete card — every official play and every tool we run, with nothing held back.</p>
     <ul class="pln-list">
       <li>Every official Platinum play, posted before game time</li>
+      <li>The Vault Play — our highest-conviction play of the day</li>
       <li>The verified ticket on every play — the real slip, always</li>
       <li>The full card: Platinum plays + the Sharp Free plays</li>
       <li>+EV Board — best price across 12 books against the fair line</li>
@@ -348,12 +362,17 @@
     <p class="lead">Platinum is full access to The Sharp Team — every official play, every board and every tool, with nothing locked. Gold members see the Gold plays only; <b style="color:#e8c766;">Platinum unlocks everything.</b></p>
     <ul class="upl-bens">
       <li><span class="ck">✓</span>Every official play with its verified real ticket — the Platinum plays plus the Gold plays, all in one card</li>
+      <li><span class="ck">✓</span>The Vault Play — our single highest-conviction play of the day, Platinum only</li>
       <li><span class="ck">✓</span>+EV Board — the best price across 12 books against the fair line</li>
+      <li><span class="ck">✓</span>Game Center — every game, every line, in one place</li>
+      <li><span class="ck">✓</span>Price Alerts — set your price and get pinged when the line gets there</li>
       <li><span class="ck">✓</span>Player Props board — included in Platinum</li>
       <li><span class="ck">✓</span>AI Assistant — check any price and review your bets</li>
       <li><span class="ck">✓</span>Line Moves board — see the price move before the crowd does</li>
       <li><span class="ck">✓</span>Sharp Money board — follow the verified sharp flow</li>
       <li><span class="ck">✓</span>Private Telegram channel for Platinum members</li>
+      <li><span class="ck">✓</span>Official Tracker — the full public record, every play graded</li>
+      <li><span class="ck">✓</span>The Masterclass — the 30-lesson course for paying members</li>
       <li><span class="ck">✓</span>Bet Tracker, auto-graded — and every result posted, win or loss</li>
     </ul>
     <div class="upl-value">Buying tools like these one by one adds up fast. Here it is one membership: <b>{% if anonimo %}all of it — plays, boards and tools — free for your first month.{% elif post_mes_gratis %}all of it — plays, boards and tools — for $15.99/week.{% else %}all of it — plays, boards and tools — for $1 your first week.{% endif %}</b></div>
@@ -374,7 +393,7 @@
       <li><span class="x">✗</span><span><b>We don't promise wins.</b> No honest service can. We publish a process and a public ledger — you judge both.</span></li>
       <li><span class="x">✗</span><span><b>We don't hide losses.</b> Every official play stays posted, win or loss, graded against the final score.</span></li>
       <li><span class="x">✗</span><span><b>We don't post plays after the game starts.</b> If it wasn't up before game time, it doesn't count as an official play — ever.</span></li>
-      <li><span class="x">✗</span><span><b>We don't trap you.</b> Cancel in two clicks from your account, whenever you want.</span></li>
+      <li><span class="x">✗</span><span><b>We don't trap you.</b> No contracts, no lock-in — cancel in two clicks from your account, whenever you want.</span></li>
       <li><span class="ok">✓</span><span><b>What we do:</b> we bet our own money on every official play and post the real ticket — you see exactly what we played, every day, in plain English.</span></li>
     </ul>
   </div>
@@ -416,11 +435,12 @@
   {% elif post_mes_gratis %}
   <div class="upl-sticky"><div class="upl-sticky-in"><span class="upl-sticky-t"><b>$15.99/week</b> · cancel anytime</span><a class="upl-sticky-btn" href="#upl-buy">Keep access →</a></div></div>
   {% else %}
-  <div class="upl-sticky"><div class="upl-sticky-in"><span class="upl-sticky-t"><b>$1 first week</b> · then $15.99/week · cancel anytime</span><a class="upl-sticky-btn" href="#upl-buy">Get access →</a></div></div>
+  <div class="upl-sticky"><div class="upl-sticky-in"><span class="upl-sticky-t"><b>$1 first week</b> · then $15.99/week · cancel anytime</span><a class="upl-sticky-btn" href="#upl-buy">Unlock Platinum →</a></div></div>
   {% endif %}
 </div>
 
-{# Barra fija inferior (2026-11-07, orden de Alex «desde el dash debe ir a
+{# Rediseño 2026-11-11 (orden de Alex): densidad y estructura de la página «Owner's Selection» de WGT aplicada a ESTA página interna — logo oficial sharp-team-header.jpg, titular con el precio semanal, chips de prueba (incl. la única cifra pública aprobada «20-10 in the last 30»), tarjeta PLATINUM · WEEKLY PLAN, caja de disclosure de cobro recurrente y checkout incrustado INTACTO. Sin testimonios (no hay aprobados en el repo) y sin récord de carrera (regla de las 500 jugadas).
+   Barra fija inferior (2026-11-07, orden de Alex «desde el dash debe ir a
    una página como la de ellos — así mismo móntalo»): la página se reconstruyó
    al nivel de la página de venta de WGT — hero sin récord acumulado (regla de
    las 500: fuera tiles de win rate y la línea «Official record»), tarjeta del
