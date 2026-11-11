@@ -1,11 +1,17 @@
 {% extends "base.html" %}
 {% block title %}Welcome — The Sharp Team{% endblock %}
 {% block content %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800&family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@500;600&display=swap" rel="stylesheet">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
-/* Bienvenida (2026-11-10): tipografía normalizada a Inter y secciones en
-   paneles con aire — solo presentación, mismo contenido y mismos botones. */
-.bv{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased;}
+/* Bienvenida (2026-11-10): secciones en paneles con aire — solo presentación,
+   mismo contenido y mismos botones.
+   Tipografía (2026-11-11, orden de Alex): la misma letra de todo el sitio —
+   Roboto pa'l cuerpo y Unbounded pa' los títulos, como la portada y el Dashboard. */
+.bv{font-family:'Roboto',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased;}
+.bv h1,.bv h2,.bv h3,.bv h4{font-family:'Unbounded',sans-serif;}
+.bv button,.bv input{font-family:inherit;}
 .bv h2{margin:0 0 8px;font-size:1.55rem;font-weight:800;letter-spacing:-.01em;line-height:1.25;}
 .bv p{line-height:1.65;}
 .bv-panel{background:var(--card-2);border:1px solid var(--line);border-radius:16px;padding:20px;margin:20px 0;}
