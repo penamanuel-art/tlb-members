@@ -40,10 +40,14 @@
 .upl-wrap{max-width:520px;margin:0 auto;padding:6px 2px calc(158px + env(safe-area-inset-bottom));color:#e6edf7}
 .upl-hero{position:relative;text-align:center;padding:26px 6px 8px}
 .upl-hero::before{content:"";position:absolute;left:0;right:0;top:-6px;height:250px;background:radial-gradient(ellipse 72% 92% at 50% 0%,rgba(232,199,102,.10),rgba(232,199,102,0) 70%);pointer-events:none}
-.upl-hero img{position:relative;width:min(300px,84%);height:auto;border-radius:12px;box-shadow:0 12px 36px rgba(0,0,0,.45)}
-.upl-chips{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:18px 0 0}
-.upl-chip{display:flex;align-items:center;justify-content:center;text-align:center;background:#14161c;border:1px solid #2c313a;border-radius:12px;padding:12px 10px;min-height:58px;font-size:11px;font-weight:800;letter-spacing:.3px;line-height:1.45;color:#e6edf7}
-.upl-chip.fire{border-color:#e8c76688;color:#e8c766;background:linear-gradient(180deg,#181b23,#14161c)}
+.upl-avatar{position:relative;display:block;margin:4px auto 0;width:158px;height:158px;border-radius:50%;object-fit:cover;border:3px solid #39415a;box-shadow:0 0 0 7px rgba(148,163,184,.07),0 16px 38px rgba(0,0,0,.5)}
+.upl-who{position:relative;margin:15px 0 0;font-size:13px;color:#8b98ad}
+.upl-who b{color:#fff;font-weight:800}
+.upl-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:18px 0 0}
+.upl-stat{display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(180deg,#171a21,#12151c);border:1px solid #2c313a;border-radius:14px;padding:13px 4px 11px;min-height:78px;text-align:center}
+.upl-stat b{display:block;font-size:24px;line-height:1.1;font-weight:900;color:#2fe6a7}
+.upl-stat.plain b{color:#fff;font-size:18px}
+.upl-stat span{display:block;margin-top:4px;font-size:9.5px;letter-spacing:.4px;line-height:1.35;color:#8b98ad;font-weight:700}
 .upl-disc{margin:12px 0 0;background:#0d1017;border:1px dashed #3a4152;border-radius:10px;padding:10px 12px;font-size:11px;line-height:1.6;color:#8b98ad}
 .upl-disc b{color:#e6edf7}
 .upl-billed{margin:9px 0 0;font-size:11.5px;font-weight:800;letter-spacing:.6px;color:#e8c766}
@@ -55,7 +59,8 @@
 .upl-tile{background:linear-gradient(180deg,#171a21,#12151c);border:1px solid #33415555;border-radius:12px;padding:11px 4px;text-align:center}
 .upl-tile b{display:block;font-size:19px;color:#fff;font-weight:900}
 .upl-tile span{display:block;margin-top:2px;font-size:9.5px;letter-spacing:1.2px;color:#8b98ad;font-weight:700}
-.upl-graded{margin:10px 0 0;text-align:center;font-size:11px;color:#2fe6a7;font-weight:700}
+.upl-graded{margin:12px 0 0;text-align:center;font-size:11.5px;color:#a8b3cf;font-weight:700}
+.upl-graded .cg{color:#2fe6a7;font-weight:800}
 .upl-what{margin:16px 0 0;background:linear-gradient(180deg,#171a21,#12151c);border:1px solid #e8c76655;border-radius:16px;padding:16px 15px 14px}
 .upl-what h2{margin:0;font-size:19px;font-weight:900;color:#fff}
 .upl-what .lead{margin:8px 0 0;font-size:13.5px;line-height:1.6;color:#c6d2e8}
@@ -130,27 +135,29 @@
 
 <div class="upl-wrap">
   <div class="upl-hero">
-    <img src="{{ url_for('static', filename='img/sharp-team-header.jpg') }}" alt="The Sharp Team">
+    {# CÍRCULO DEL HERO (primera pantalla estilo Owner's Selection de WGT, orden de Alex 2026-11-11): lleva la moneda oficial — el logo redondo del tiburón, el mismo del topbar. La FOTO DE ALEX va en este círculo cuando la entregue: sustituir SOLO el src de .upl-avatar por su foto (cuadrada, ≥400px), sin tocar nada más del hero. #}
+    <img class="upl-avatar" src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team">
     <p class="upl-kicker">💎 THE SHARP TEAM · PLATINUM</p>
     {% if anonimo %}
     <h1 class="upl-h1">Every Platinum play, with its real ticket — <span class="dollar">FREE</span> for your first month</h1>
     <p class="upl-sub">Create a free account and your first month of Platinum is on us: every official play with the real ticket, posted before game time, and graded in public, win or loss. No card required.</p>
     {% elif post_mes_gratis %}
-    <h1 class="upl-h1">Every Platinum play, for <span class="dollar">$15.99</span> a week.</h1>
-    <p class="upl-sub">Every official play with the real ticket, posted before game time, and graded in public, win or loss — plus every board and every tool, all in one membership.</p>
+    <h1 class="upl-h1">Every Platinum play, for <span class="dollar">$15.99 a week.</span></h1>
+    <p class="upl-sub">Every official Platinum play, the same day it drops. Our highest-conviction plays — The Vault Play included. Real money on every ticket, posted before game time and graded in public, win or loss.</p>
     {% else %}
-    <h1 class="upl-h1">Every Platinum play, for <span class="dollar">$15.99</span> a week.</h1>
+    <h1 class="upl-h1">Every Platinum play, for <span class="dollar">$1 your first week.</span></h1>
     <p class="upl-sub">Start with $1 for your first 7 days of full Platinum: every official play with the real ticket, posted the same day — before game time, and graded in public, win or loss. Then $15.99/week, cancel anytime.</p>
     {% endif %}
+    <p class="upl-who"><b>Alex Peña</b> · Founder &amp; Head Handicapper</p>
   </div>
 
-  <div class="upl-chips">
-    <span class="upl-chip fire">🔥 Platinum Plays: 20-10 in the last 30</span>
-    <span class="upl-chip">✓ Every play posted before game time</span>
-    <span class="upl-chip">✓ Real ticket on every official play</span>
-    <span class="upl-chip">✓ Win or loss — every result posted</span>
+  {# Tarjetas de prueba del hero (formato WGT, números NUESTROS): la 3ª se alimenta SOLA de board — win_rate y record del ledger oficial que _desbloquear_board() calcula desde data/archive.json; NADA hardcodeado (decisión expresa de Alex 2026-11-11: «lo que vaya con nuestro número de verdad, que se vaya actualizando solo»). La tira «20-10 in the last 30» salió del hero: ese dato sigue vivo en ON THE BOARD. #}
+  <div class="upl-stats">
+    <div class="upl-stat"><b>100%</b><span>results posted</span></div>
+    <div class="upl-stat plain"><b>Every slip</b><span>posted, win &amp; loss</span></div>
+    {% if board.total %}<div class="upl-stat"><b>{{ board.win_rate|round(0)|int }}%</b><span>career · {{ board.record }}</span></div>{% endif %}
   </div>
-  <p class="upl-graded">✓ Graded against the final score · every result posted, win or loss</p>
+  <p class="upl-graded">✓ Graded against the final score · <span class="cg">cancel anytime, no hassle</span></p>
 
   <div class="upl-card" id="upl-buy">
     
@@ -451,6 +458,16 @@
    tickets ganadores, Everything inside Platinum, How this works, What we
    don't do, Common questions, pie legal y barra sticky dorada propia
    (.upl-sticky) con ancla a #upl-buy. La eliminación del 2026-10-19 quedó
-   sustituida por esta orden nueva. #}
+   sustituida por esta orden nueva.
+   Primera impresión rehecha el 2026-11-11 (orden de Alex, espejo de la
+   primera pantalla de Owner's Selection de WGT): círculo con la moneda
+   del tiburón (.upl-avatar; la foto de Alex va ahí cuando la entregue),
+   titular con el precio completo en color, línea «Alex Peña · Founder &
+   Head Handicapper», 3 tarjetas de stats (.upl-stats: «100% results
+   posted» · «Every slip — posted, win & loss» · % de carrera REAL
+   dinámico desde board con el récord G-P debajo — decisión expresa de
+   Alex, excepción interna a la regla de las 500 jugadas) y línea check
+   «cancel anytime, no hassle». La fila de chips 2×2 y la tira «20-10 in
+   the last 30» salieron del hero. #}
 {% endif %}
 {% endblock %}
