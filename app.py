@@ -871,6 +871,21 @@ def _mes_gratis_hasta(user) -> str:
         return ""
 
 
+def _mes_gratis_dias(user):
+    """Días calendario que le quedan al mes gratis (0 = vence hoy);
+    None si el miembro no tiene reloj de trial. Alimenta la tira fina
+    del tope del Dashboard (2026-11-11, orden de Alex: la tarjeta grande
+    del mes gratis se convierte en tirita con cuenta regresiva)."""
+    try:
+        te = (user["platinum_trial_ends"] or "") if user else ""
+        if not te:
+            return None
+        fin = datetime.fromisoformat(te).date()
+        return max(0, (fin - datetime.now().date()).days)
+    except Exception:
+        return None
+
+
 def platinum_unlocked_for(user) -> bool:
     """True si el miembro desbloqueó la jugada Elite (default: bloqueada).
     El mes gratis de plataforma vence solo: con el reloj pasado y sin
@@ -6245,6 +6260,7 @@ def home():
         miembro_platinum=(platinum_unlocked_for(user) and not preview_locked),
         en_mes_gratis=(_es_trial(user) and not _trial_vencido(user)),
         mes_gratis_hasta=_mes_gratis_hasta(user),
+        mes_gratis_dias=_mes_gratis_dias(user),
         # Hero fijo original (2026-10-26, reversión a pedido de Alex: solo
         # el de fútbol con casco, sin rotación por ligas).
         # Banner gate (2026-10-31): the Dashboard "new version" banner keys
