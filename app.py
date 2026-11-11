@@ -859,6 +859,29 @@ def _es_trial(user) -> bool:
         return False
 
 
+def _mes_gratis_visible(user) -> bool:
+    """True si la tira fina del mes gratis se dibuja en el Dashboard.
+
+    Regla base: miembro en su mes gratis vivo (_es_trial sin vencer).
+    Vista de Alex (2026-11-11, orden suya: «muéstrala también en mi
+    cuenta, como si fuera otro regular»): la cuenta de Alex también la
+    ve cuando SU reloj de mes gratis está puesto y vivo, pa' que pueda
+    revisar el Dashboard como un miembro más. SOLO gobierna esta tira:
+    _es_trial, el acceso y el paywall no cambian."""
+    try:
+        if not user:
+            return False
+        if _trial_vencido(user):
+            return False
+        if _es_trial(user):
+            return True
+        if is_alex_member(user):
+            return bool(user["platinum_unlocked"]) and bool(user["platinum_trial_ends"] or "")
+        return False
+    except Exception:
+        return False
+
+
 def _mes_gratis_hasta(user) -> str:
     """Fecha legible (p. ej. 'Dec 10') en que termina el mes gratis del
     miembro; '' si no tiene reloj de trial."""
@@ -6258,7 +6281,7 @@ def home():
         # miembro_platinum con preview: en ?preview=locked el banner de
         # invitación VIP también se muestra (pedido Alex 2026-10-02).
         miembro_platinum=(platinum_unlocked_for(user) and not preview_locked),
-        en_mes_gratis=(_es_trial(user) and not _trial_vencido(user)),
+        en_mes_gratis=_mes_gratis_visible(user),
         mes_gratis_hasta=_mes_gratis_hasta(user),
         mes_gratis_dias=_mes_gratis_dias(user),
         # Hero fijo original (2026-10-26, reversión a pedido de Alex: solo
