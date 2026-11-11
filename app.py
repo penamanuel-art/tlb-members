@@ -5490,15 +5490,6 @@ def contact_page():
     return render_template("contact.html")
 
 
-@app.route("/free")
-def free_landing():
-    """Redirige a la portada nueva (2026-11-10, orden de Alex): la landing
-    vieja de /free quedó retirada — traía datos vencidos (hora 1:00 PM,
-    «Platinum starts at $1») que contradicen la doctrina vigente. Todo el
-    tráfico público entra por la portada aprobada (/)."""
-    return redirect("/", code=302)
-
-
 def compute_ticker_days():
     """Ticker de resultados (pedido por Alex 2026-09-26; CORREGIDO el
     2026-10-17 por orden de Alex: la franja dice YESTERDAY y debe ser el
