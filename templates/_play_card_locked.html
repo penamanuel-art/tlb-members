@@ -1,9 +1,9 @@
 {# Carta Platinum BLOQUEADA y BORROSA para miembros sin Platinum (diseno ordenado por Alex 2026-10-29): la jugada aparece con SU carta (matchup real), pero el pick va borroso y bloqueado. Solo usa la vista sanitizada (_locked_play_view): pick/cuota/stake/edge/writeup/comprobante original NUNCA llegan a este HTML. #}
 <div style="background:#151F28;border:1px solid #343B47;border-radius:20px;overflow:hidden;margin:0 0 14px;position:relative;">
-  <div style="background:#0A1117;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;">
-    <span style="font-size:12px;font-weight:700;letter-spacing:1.6px;color:#e8c766;">{% if p.nivel == 'VAULT' %}🔒 THE VAULT PLAY{% elif p.nivel in ('GOLD', 'FREE') %}GOLD{% else %}💎 PLATINUM{% endif %}</span>
-    <span style="font-size:12.5px;color:#A3AAB6;">{{ p.liga }}{% if p.hora %} · {{ p.hora }}{% elif p.game_time_et %} · {{ p.game_time_et }}{% endif %}</span>
-    <span style="font-size:11px;font-weight:800;letter-spacing:1px;color:#0B0D12;background:#e8c766;border-radius:999px;padding:4px 9px;">🔒 LOCKED</span>
+  <div style="background:#0A1117;padding:12px 8px;display:flex;align-items:center;justify-content:space-between;gap:6px;">
+    <span style="font-size:clamp(9px,2.65vw,10.5px);font-weight:700;letter-spacing:.8px;line-height:1.15;color:#e8c766;white-space:nowrap;flex:none;">{% if p.nivel == 'VAULT' %}🔒 THE VAULT PLAY{% elif p.nivel in ('GOLD', 'FREE') %}GOLD{% else %}💎 PLATINUM{% endif %}</span>
+    <span style="font-size:clamp(8.5px,2.55vw,10px);line-height:1.15;color:#A3AAB6;white-space:nowrap;flex:none;">{{ p.liga }}{% if p.hora %} · {{ p.hora }}{% elif p.game_time_et %} · {{ p.game_time_et }}{% endif %}</span>
+    <span style="font-size:clamp(8.5px,2.45vw,9.5px);font-weight:800;letter-spacing:.8px;line-height:1.15;color:#0B0D12;background:#e8c766;border-radius:999px;padding:3px 6px;white-space:nowrap;flex:none;">🔒 LOCKED</span>
   </div>
   <div style="padding:16px;">
     <div style="margin-top:14px;filter:blur(6px);-webkit-filter:blur(6px);opacity:.75;pointer-events:none;user-select:none;" aria-hidden="true">
