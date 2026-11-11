@@ -305,9 +305,9 @@
   {% endif %}
   {% if en_mes_gratis %}
   {# Tira fina del MES GRATIS (2026-11-11, orden de Alex en llamada: «bien chiquita, hasta arriba»): reemplaza la tarjeta GRANDE de beneficios del mes gratis que vivía bajo Live scores. Vive en este slot superior del encabezado fijo — lo primero que se ve en el teléfono — como el aviso past-due: diamante azul oficial de Platinum, fecha de vencimiento y cuenta regresiva de días (mes_gratis_dias, calculado en el handler). Estilos en línea propios: ninguna capa de CSS del home la puede engordar. #}
-  <div style="display:flex;align-items:center;gap:6px;background:#1A2233;border:1px solid rgba(232,199,102,.40);border-radius:8px;padding:5px 10px;margin:0 0 8px;">
+  <div style="display:flex;align-items:center;justify-content:center;gap:6px;background:#1A2233;border:1px solid rgba(232,199,102,.40);border-radius:8px;padding:5px 10px;margin:0 0 8px;">
     <span style="font-size:11px;line-height:1;">💎</span>
-    <span style="color:#E6EDF7;font-size:11px;font-weight:600;line-height:1.3;">Your Platinum{% if mes_gratis_hasta %} — on us until {{ mes_gratis_hasta }}{% endif %}{% if mes_gratis_dias is not none %} · {% if mes_gratis_dias == 0 %}ends today{% elif mes_gratis_dias == 1 %}1 day left{% else %}{{ mes_gratis_dias }} days left{% endif %}{% endif %}</span>
+    <span style="color:#E8C766;font-size:11px;font-weight:600;line-height:1.3;text-align:center;">Your Platinum{% if mes_gratis_hasta %} — on us until {{ mes_gratis_hasta }}{% endif %}{% if mes_gratis_dias is not none %} · {% if mes_gratis_dias == 0 %}ends today{% elif mes_gratis_dias == 1 %}1 day left{% else %}{{ mes_gratis_dias }} days left{% endif %}{% endif %}</span>
   </div>
   {% endif %}
   <div class="topbar">
