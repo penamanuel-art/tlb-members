@@ -10989,6 +10989,158 @@ def admin_api_members_emails():
     ])
 
 
+
+_active_opens_cache = {"ts": 0.0, "opens": None}
+
+
+def _resend_opens_recientes(corte_iso):
+    """Mapa {email: created_at ISO} del email abierto/clickeado más reciente
+    por destinatario, entre los emails enviados desde corte_iso, según la
+    lista de la API de Resend (paginada, máx 10 páginas). La API no da la
+    hora exacta de la apertura en la lista: si el email se envió dentro de
+    la ventana y su last_event es opened/clicked, la apertura también cayó
+    en la ventana. Devuelve None si Resend falla (fail-soft). Cache en
+    memoria de 10 minutos pa' no pegarle a Resend en cada carga."""
+    import time as _time
+    ahora_ts = _time.time()
+    cach = _active_opens_cache
+    if cach["opens"] is not None and ahora_ts - cach["ts"] < 600:
+        return cach["opens"]
+    key = (os.environ.get("RESEND_API_KEY") or "").strip()
+    if not key:
+        return None
+    import urllib.request
+    import urllib.parse
+    opens = {}
+    after = None
+    try:
+        for _ in range(10):
+            url = "https://api.resend.com/emails?limit=100"
+            if after:
+                url += "&after=" + urllib.parse.quote(str(after))
+            req = urllib.request.Request(
+                url,
+                headers={"Authorization": f"Bearer {key}",
+                         "Accept": "application/json",
+                         # Cloudflare bloquea el UA por defecto de urllib.
+                         "User-Agent": ("Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 "
+                                        "like Mac OS X) AppleWebKit/605.1.15")},
+                method="GET")
+            with urllib.request.urlopen(req, timeout=20) as r:
+                data = json.loads(r.read().decode("utf-8", "replace"))
+            items = data.get("data") or []
+            if not items:
+                break
+            for it in items:
+                creado = it.get("created_at") or ""
+                if not creado or creado < corte_iso:
+                    continue
+                if (it.get("last_event") or "") not in ("opened", "clicked"):
+                    continue
+                for dest in (it.get("to") or []):
+                    em = str(dest).strip().lower()
+                    if em and creado > opens.get(em, ""):
+                        opens[em] = creado
+            after = items[-1].get("id")
+            if not data.get("has_more") or not after:
+                break
+            if (items[-1].get("created_at") or "") < corte_iso:
+                break
+    except Exception:
+        return None
+    cach["ts"] = ahora_ts
+    cach["opens"] = opens
+    return opens
+
+
+@app.route("/admin/api/active-members")
+def admin_api_active_members():
+    """Miembros ACTIVOS (2026-11-11, pedido por Alex): entró al Dashboard
+    en los últimos 10 días O abrió un email en los últimos 10 días —
+    Platinum y gratis por igual. La actividad de Dashboard usa la misma
+    vara que lifecycle-dry-run (member_activity + checkins + tracked_plays).
+    Las aperturas salen de la API de Resend y son fail-soft: si Resend no
+    responde, se contesta solo con la señal de Dashboard y
+    "email_data": false. Fuera: Alex, la casa y system@value.local.
+    Auth: sesión admin O X-Admin-Key (helper _admin_api_autorizado)."""
+    if not _admin_api_autorizado():
+        return jsonify({"error": "admin only"}), 403
+    from datetime import datetime as _dt, timezone as _tz, timedelta as _td
+    from zoneinfo import ZoneInfo as _ZI
+    et = _ZI("America/New_York")
+    ahora = _dt.now(_tz.utc)
+    corte_iso = (ahora - _td(days=10)).strftime("%Y-%m-%dT%H:%M:%SZ")
+    corte_fecha = (ahora.astimezone(et) - _td(days=10)).date()
+    db = get_db()
+    usuarios = db.execute(
+        "SELECT id, nombre, email, platinum_unlocked FROM users "
+        "WHERE email IS NOT NULL AND email != '' AND email_verified = 1 "
+        "AND cancel_requested_at IS NULL"
+    ).fetchall()
+    actividad = {}
+
+    def _anota(uid, valor):
+        if uid is None or not valor:
+            return
+        v = str(valor)
+        clave = v if len(v) > 10 else v + "T00:00:00"
+        if uid not in actividad or clave > actividad[uid][0]:
+            actividad[uid] = (clave, v)
+
+    for tabla, col in (("member_activity", "created_at"),
+                       ("checkins", "fecha"),
+                       ("tracked_plays", "fecha")):
+        try:
+            for r in db.execute(
+                    f"SELECT user_id, MAX({col}) AS ult FROM {tabla} "
+                    "GROUP BY user_id").fetchall():
+                _anota(r["user_id"], r["ult"])
+        except Exception:
+            pass
+    opens = _resend_opens_recientes(corte_iso)
+    email_data = opens is not None
+    if opens is None:
+        opens = {}
+    excluidos = {"pena.manuel@myyahoo.com", "thesharpteam8@gmail.com",
+                 "system@value.local"}
+    miembros = []
+    for u in usuarios:
+        d = dict(u)
+        email = (d.get("email") or "").strip()
+        if not email or email.lower() in excluidos:
+            continue
+        ult_clave, ult_valor = actividad.get(d.get("id"), ("", None))
+        activo_dash = False
+        if ult_valor:
+            try:
+                f = _dt.fromisoformat(str(ult_valor).replace("Z", "+00:00"))
+                if f.tzinfo is None:
+                    f = f.replace(tzinfo=et)
+                activo_dash = f.astimezone(et).date() >= corte_fecha
+            except Exception:
+                activo_dash = str(ult_valor)[:10] >= corte_fecha.isoformat()
+        ultimo_open = opens.get(email.lower())
+        if ultimo_open and ultimo_open < corte_iso:
+            ultimo_open = None
+        abrio = bool(ultimo_open)
+        if not (activo_dash or abrio):
+            continue
+        miembros.append({
+            "email": email,
+            "nombre": d.get("nombre") or "",
+            "platinum": bool(d.get("platinum_unlocked")),
+            "ultima_actividad": ult_valor,
+            "abrio_email": abrio,
+            "ultimo_open": ultimo_open,
+            "_orden": max(ult_clave, ultimo_open or ""),
+        })
+    miembros.sort(key=lambda m: m["_orden"], reverse=True)
+    for m in miembros:
+        m.pop("_orden", None)
+    return jsonify({"ok": True, "total_activos": len(miembros),
+                    "email_data": email_data, "miembros": miembros})
+
+
 @app.route("/admin/api/entradas-hoy")
 def admin_api_entradas_hoy():
     """Miembros DISTINTOS con actividad HOY en el Dashboard (2026-10-31,
