@@ -56,10 +56,12 @@
 </div>
 {% else %}
 <style>
-.upl-wrap{max-width:520px;margin:0 auto;padding:6px 2px 20px;color:#e6edf7}
-.upl-trusttop{margin:4px 0 10px;text-align:center;font-size:11px;line-height:1.55;color:#8b98ad}
+.upl-wrap{max-width:520px;margin:0 auto;padding:6px 2px 0;color:#e6edf7}
+.upl-trusttop{margin:4px 0 2px;text-align:center;font-size:11px;line-height:1.55;color:#8b98ad}
 .upl-trusttop b{color:#e6edf7}
 .upl-hero{position:relative;text-align:center;padding:26px 6px 8px}
+/* Línea de confianza CENTRADA en su franja (2026-11-11, orden de Alex: «está chocando con la línea de abajo, súbelo más para el medio»): arriba quedan ~10px (padding-top del wrap 6 + margen 4) y abajo la línea aportaba 10 de margen + 26 de padding-top del héroe + 4 del avatar = ~40px medidos en navegador. Con sesión el héroe usa .upl-hero-up (padding-top 8) y la línea margen inferior 2: hueco inferior = 2+8+4 = 14px, parejo con el superior. La variante anónima no lleva la línea y conserva el héroe con sus 26px. */
+.upl-hero.upl-hero-up{padding-top:8px}
 .upl-hero::before{content:"";position:absolute;left:0;right:0;top:-6px;height:250px;background:radial-gradient(ellipse 72% 92% at 50% 0%,rgba(232,199,102,.10),rgba(232,199,102,0) 70%);pointer-events:none}
 .upl-avatar{position:relative;display:block;margin:4px auto 0;width:158px;height:158px;border-radius:50%;object-fit:cover;border:3px solid #39415a;box-shadow:0 0 0 7px rgba(148,163,184,.07),0 16px 38px rgba(0,0,0,.5)}
 .upl-who{position:relative;margin:15px 0 0;font-size:13px;color:#8b98ad}
@@ -169,13 +171,16 @@ button.upl-cta[disabled]{opacity:.65;cursor:wait}
 .upl-as .o{margin-top:0;white-space:nowrap}
 .upl-as-in{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
 .upl-board-out{margin:16px 0 0}
+/* Cierre inferior SIN banda vacía (2026-11-11, orden de Alex: «demasiado espacio»): entre la línea legal y el pie se apilaban .upl-wrap padding-bottom 20 + main.v2-wrap padding-bottom 24 + .v2-footer margin-top 16 + .tst-foot padding-top 30 = ~90px medidos en navegador. Se neutralizan SOLO en esta página las tres primeras capas; tras la línea legal queda únicamente el padding-top propio del pie (30px). El despeje global TRAS el pie (body.has-bottomnav + el ajuste por JS de base_v2) queda intacto. */
+main.v2-wrap{padding-bottom:0}
+.v2-footer{margin-top:0}
 </style>
 
 <div class="upl-wrap">
   {% if not anonimo %}
   <p class="upl-trusttop">Every Platinum play posted before game time · <b>Real bet slips posted after</b> · Cancel anytime in two clicks</p>
   {% endif %}
-  <div class="upl-hero">
+  <div class="upl-hero{% if not anonimo %} upl-hero-up{% endif %}">
     {# CÍRCULO DEL HERO (primera pantalla estilo Owner's Selection de WGT, orden de Alex 2026-11-11): lleva la moneda oficial — el logo redondo del tiburón, el mismo del topbar. La FOTO DE ALEX va en este círculo cuando la entregue: sustituir SOLO el src de .upl-avatar por su foto (cuadrada, ≥400px), sin tocar nada más del hero. #}
     <img class="upl-avatar" src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team">
     <p class="upl-kicker">💎 THE SHARP TEAM · PLATINUM</p>
@@ -614,9 +619,9 @@ button.upl-cta[disabled]{opacity:.65;cursor:wait}
   {% endif %}
 
   {% if anonimo %}
-  <div class="upl-sticky"><div class="upl-sticky-in"><span class="upl-sticky-t"><b>First month FREE</b> · no card · free plays forever</span><a class="upl-sticky-btn" href="{{ url_for('register') }}">Start free →</a></div></div>
+  <div class="upl-sticky v2-sticky"><div class="upl-sticky-in"><span class="upl-sticky-t"><b>First month FREE</b> · no card · free plays forever</span><a class="upl-sticky-btn" href="{{ url_for('register') }}">Start free →</a></div></div>
   {% else %}
-  <div class="upl-sticky"><div class="upl-sticky-in"><span class="upl-sticky-t"><b>$15.99/week</b> · cancel anytime</span><a class="upl-sticky-btn" href="#upl-buy">Unlock Platinum →</a></div></div>
+  <div class="upl-sticky v2-sticky"><div class="upl-sticky-in"><span class="upl-sticky-t"><b>$15.99/week</b> · cancel anytime</span><a class="upl-sticky-btn" href="#upl-buy">Unlock Platinum →</a></div></div>
   {% endif %}
 </div>
 
