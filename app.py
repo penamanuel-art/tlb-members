@@ -6731,14 +6731,11 @@ def register():
         # embudo de WGT): el registro pide SOLO el correo (+ la intención
         # declarada, lista blanca) y la cuenta entra AL INSTANTE con la
         # sesión abierta. Nombre, teléfono y contraseña se piden DENTRO,
-        # en /bienvenida («Finish setting up your account»).
-        # SIN CONFIRMACIÓN DE CUENTA (2026-11-11, orden de Alex — revierte
-        # la regla dura del 2026-11-06/07): la cuenta nace ACTIVA y
-        # verificada (email_verified = 1, activated_at = ahora); ningún
-        # paso del flujo pide confirmar el correo ni bloquea por ello;
-        # la bienvenida y CompleteRegistration de Meta salen AL REGISTRAR
-        # (abajo), no al activar. El enlace /activar/<token> queda como
-        # infraestructura opcional, sin candado.
+        # en /bienvenida («Finish setting up your account»). La cuenta
+        # nace SIN verificar: la sesión de entrada es la única vía de
+        # estar dentro sin verificar — el login normal sigue exigiendo
+        # la activación y CompleteRegistration de Meta sigue saliendo
+        # SOLO al activar (activar_cuenta), como siempre.
         email = request.form.get("email", "").strip().lower()
         _intent = (request.form.get("signup_intent") or "").strip().lower()
         if _intent not in ("platinum", "free"):
@@ -6768,8 +6765,8 @@ def register():
         if exists:
             # Correo ya conocido: NO se crea duplicado ni se revela si la
             # cuenta está verificada o no. El login normal resuelve cada
-            # caso (desde el 2026-11-11 entrar con la contraseña basta:
-            # la confirmación de correo ya no es candado de nada).
+            # caso — si nunca activó, al intentar entrar con su contraseña
+            # el propio login le reenvía la activación, como siempre.
             flash("Ese correo ya tiene una cuenta. Inicia sesión." if _lang == "es" else "That email already has an account — log in.", "error")
             # Return-to (2026-11-09): si el registro se abrió con destino
             # (p. ej. desde la venta pública de /tracker o la oferta), el
@@ -6779,68 +6776,32 @@ def register():
             if _reg_next_ex:
                 return redirect(url_for("login", next=_reg_next_ex))
             return redirect(url_for("login"))
-        # La cuenta nace ACTIVA y VERIFICADA (2026-11-11: sin
-        # confirmación de cuenta, orden de Alex) y ENTRA al instante
-        # (espejo WGT, 2026-11-07): nombre provisional = parte local del
-        # correo (la columna nombre es NOT NULL), contraseña temporal
-        # aleatoria hasheada (password_propia = 0 hasta que la fije
-        # dentro) y sesión abierta en el acto. signup_offer =
-        # OFERTA_MES_GRATIS y la cuenta nace con Platinum de plataforma
-        # por 30 días SIN tarjeta (orden de Alex 2026-11-09): el registro
-        # no habla de pagos; la venta va después, dentro del Dashboard y
-        # por email. NO sale correo de activación: el único email del
-        # registro es la BIENVENIDA (abajo), y el aviso de miembro nuevo
-        # y CompleteRegistration de Meta también se disparan aquí. El
-        # token se sigue guardando pa' que /activar/<token> exista como
-        # puerta opcional, sin que nada dependa de él.
+        # La cuenta nace SIN VERIFICAR pero ENTRA al instante (espejo
+        # WGT, 2026-11-07): nombre provisional = parte local del correo
+        # (la columna nombre es NOT NULL), contraseña temporal aleatoria
+        # hasheada (password_propia = 0 hasta que la fije dentro) y
+        # sesión abierta en el acto. signup_offer = OFERTA_MES_GRATIS y
+        # la cuenta nace con Platinum de plataforma por 30 días SIN
+        # tarjeta (orden de Alex 2026-11-09): el registro no habla de
+        # pagos; la venta va después, dentro del Dashboard y por email.
+        # El correo de activación sale por
+        # la vía de siempre SIN bloquear la entrada; activar sigue
+        # siendo lo que convierte la cuenta en miembro confirmado.
         _tok = secrets.token_urlsafe(32)
         _local = email.split("@", 1)[0].strip(" ._-") or "Member"
         nombre = _local[:60]
         _nuevo_id = insert_returning_id(
             db,
-            "INSERT INTO users (nombre, email, password_hash, phone, sms_optin, created_at, lang, email_verified, activated_at, activation_token, signup_offer, signup_intent, password_propia, platinum_unlocked, platinum_trial_ends) VALUES (?, ?, ?, ?, ?, ?, ?, 1, ?, ?, ?, ?, 0, 1, ?)",
-            (nombre, email, hash_password(secrets.token_urlsafe(32)), None, 0, now_iso(), _lang, now_iso(), _tok, OFERTA_MES_GRATIS, _intent, (datetime.now() + timedelta(days=MES_GRATIS_DIAS)).isoformat()),
+            "INSERT INTO users (nombre, email, password_hash, phone, sms_optin, created_at, lang, email_verified, activation_token, signup_offer, signup_intent, password_propia, platinum_unlocked, platinum_trial_ends) VALUES (?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?, 0, 1, ?)",
+            (nombre, email, hash_password(secrets.token_urlsafe(32)), None, 0, now_iso(), _lang, _tok, OFERTA_MES_GRATIS, _intent, (datetime.now() + timedelta(days=MES_GRATIS_DIAS)).isoformat()),
         )
         db.commit()
+        send_activation_email(nombre, email, _tok, _lang)
         session["user_id"] = _nuevo_id
         session["nombre"] = nombre
         session["is_admin"] = False
         session.permanent = True
         _registrar_actividad(_nuevo_id, "login")
-        # SIN CONFIRMACIÓN (2026-11-11): lo que antes solo pasaba al
-        # ACTIVAR pasa ahora AL REGISTRAR — aviso de miembro nuevo a
-        # Alex, email de bienvenida (su puerta estrecha acepta el token
-        # de esta cuenta con activated_at recién estampado) y
-        # CompleteRegistration de Meta (CAPI con el mismo event_id que
-        # el pixel de /bienvenida, pa' deduplicar). Nada de esto puede
-        # romper el registro: todo va envuelto.
-        log_notificacion(db, "miembro_nuevo", f"New member: {nombre}", email)
-        try:
-            notify_new_member(nombre, email)
-        except Exception:
-            pass
-        try:
-            send_welcome_email(nombre, email, activation_token=_tok)
-            db.execute("UPDATE users SET welcome_email_sent = 1 WHERE id = ?", (_nuevo_id,))
-            db.commit()
-        except Exception:
-            pass
-        _fb_event_id = uuid.uuid4().hex
-        session["fb_reg"] = 1
-        session["fb_event_id"] = _fb_event_id
-        _client_ip = (request.headers.get("X-Forwarded-For", "") or "").split(",")[0].strip() or request.remote_addr
-        _send_meta_capi_registration(
-            email,
-            _fb_event_id,
-            _client_ip,
-            request.user_agent.string if request.user_agent else "",
-            request.cookies.get("_fbp"),
-            request.cookies.get("_fbc"),
-            request.url,
-            phone=None,
-            user_id=_nuevo_id,
-            nombre=nombre,
-        )
         # 2026-11-09 (mes gratis): el puente a /desbloquear-platinum al
         # registrarse MURIÓ — nadie cae en la página de pago al entrar;
         # su Platinum ya está encendido por el mes gratis y la venta va
@@ -6896,13 +6857,6 @@ def activar_cuenta(token):
     y el aviso de miembro nuevo, y se reporta el registro a Meta (pixel +
     CAPI con el mismo event_id, como antes).
 
-    Desde el 2026-11-11 (SIN CONFIRMACIÓN, orden de Alex) los registros
-    nuevos ya nacen verificados: pa' ellos este enlace es solo una
-    puerta de entrada más — entra la sesión y NO se repite bienvenida,
-    aviso ni evento de Meta (todo eso ya salió al registrarse). El
-    camino completo de abajo queda pa' las cuentas viejas sin confirmar
-    que aún tengan su enlace.
-
     Desde 2026-10-19 (orden de Alex) activar YA NO otorga Platinum: el
     mes gratis murió. Platinum arranca solo con el checkout de $1
     (webhook checkout.session.completed). Las cuentas con reloj de mes
@@ -6918,21 +6872,6 @@ def activar_cuenta(token):
     uid = user["id"]
     nombre = user["nombre"]
     email = user["email"]
-    if user["email_verified"]:
-        # Ya verificada (registro nuevo desde el 2026-11-11 o clic
-        # repetido): entra la sesión, se consume el token y a /home —
-        # sin repetir ningún efecto de la activación.
-        _es_admin_ya = is_admin_for(user)
-        if _es_admin_ya:
-            db.execute("UPDATE users SET is_admin = 1 WHERE id = ?", (uid,))
-        db.execute("UPDATE users SET activation_token = NULL WHERE id = ?", (uid,))
-        db.commit()
-        session["user_id"] = uid
-        session["nombre"] = nombre
-        session["is_admin"] = _es_admin_ya
-        session.permanent = True
-        _registrar_actividad(uid, "login")
-        return redirect(url_for("home"))
     db.execute("UPDATE users SET email_verified = 1, activation_token = NULL, activated_at = ? WHERE id = ?",
                (now_iso(), uid))
     db.commit()
@@ -7375,15 +7314,9 @@ def cuenta_completar():
     phone = (request.form.get("phone") or "").strip()
     sms_optin = 1 if request.form.get("sms_optin") == "1" else 0
     password = request.form.get("password") or ""
-    # Flujo /setup (2026-11-11): el formulario de la página de setup
-    # trae además libros y rango de bankroll, y al guardar aterriza en
-    # el Dashboard («Save & continue»). Sin la marca setup_flow, el
-    # comportamiento es el de siempre (vuelve a /bienvenida).
-    _desde_setup = request.form.get("setup_flow") == "1"
     if password and len(password) < 6:
         flash("Your password needs at least 6 characters.", "error")
-        return redirect(url_for("setup_page") if _desde_setup
-                        else url_for("bienvenida"))
+        return redirect(url_for("bienvenida"))
     _sets, _params = [], []
     if nombre:
         _sets.append("nombre = ?")
@@ -7397,25 +7330,6 @@ def cuenta_completar():
         _sets.append("password_hash = ?")
         _params.append(hash_password(password))
         _sets.append("password_propia = 1")
-    if _desde_setup:
-        # Libros del paso 3: validados contra BET_BOOKS (trae Novig y
-        # Kalshi). «None yet» solo vale como respuesta ÚNICA (todavía
-        # sin libros) y queda guardada como tal; si marcó libros de
-        # verdad, la marca se descarta. Se guarda en users.bet_books
-        # (JSON) — la misma columna del perfil de apuestas de /cuenta,
-        # una sola fuente de verdad.
-        _books_raw = request.form.getlist("bet_books")
-        _books = [b for b in _books_raw if b in BET_BOOKS]
-        if not _books and SETUP_BOOK_NONE in _books_raw:
-            _books = [SETUP_BOOK_NONE]
-        _sets.append("bet_books = ?")
-        _params.append(json.dumps(_books))
-        # Bankroll del paso 4: solo etiquetas de la lista cerrada; si
-        # no eligió ninguna, la columna no se toca.
-        _br = (request.form.get("bankroll_range") or "").strip()
-        if _br in BANKROLL_RANGES:
-            _sets.append("bankroll_range = ?")
-            _params.append(_br)
     if _sets:
         _params.append(user["id"])
         db.execute(f"UPDATE users SET {', '.join(_sets)} WHERE id = ?",
@@ -7424,8 +7338,7 @@ def cuenta_completar():
         if nombre:
             session["nombre"] = nombre
     flash("Saved — your account setup is updated.", "ok")
-    return redirect(url_for("home") if _desde_setup
-                    else url_for("bienvenida"))
+    return redirect(url_for("bienvenida"))
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -7453,22 +7366,34 @@ def login():
                 db.execute("UPDATE users SET is_admin = 1 WHERE id = ?", (user["id"],))
                 db.commit()
                 es_admin = True
-        # SIN CONFIRMACIÓN DE CUENTA (2026-11-11, orden de Alex — revierte
-        # el candado del 2026-10-18): el login ya NO bloquea a la cuenta
-        # sin verificar ni le reenvía la activación. Quien entra con su
-        # contraseña correcta queda verificado en el acto: auto-sana las
-        # cuentas viejas que nunca confirmaron (su activated_at se
-        # estampa si estaba vacío) y ninguna cuenta queda fuera por un
-        # correo que no llegó o traía typo.
+        # Cuenta SIN ACTIVAR (2026-10-18): llenó el formulario pero nunca
+        # tocó el enlace del correo — no entra; se le reenvía la activación
+        # al momento (token nuevo). El admin nunca se bloquea a sí mismo.
+        _verificado = 1
         try:
-            if not user["email_verified"]:
-                db.execute(
-                    "UPDATE users SET email_verified = 1, activation_token = NULL, "
-                    "activated_at = COALESCE(activated_at, ?) WHERE id = ?",
-                    (now_iso(), user["id"]))
-                db.commit()
+            _verificado = user["email_verified"]
         except Exception:
-            pass
+            _verificado = 1
+        if not _verificado and es_admin:
+            db.execute("UPDATE users SET email_verified = 1, activation_token = NULL WHERE id = ?",
+                       (user["id"],))
+            db.commit()
+            _verificado = 1
+        if not _verificado:
+            _tok = secrets.token_urlsafe(32)
+            db.execute("UPDATE users SET activation_token = ? WHERE id = ?",
+                       (_tok, user["id"]))
+            db.commit()
+            _ulang = "en"
+            try:
+                _ulang = user["lang"] or "en"
+            except Exception:
+                _ulang = "en"
+            send_activation_email(user["nombre"], email, _tok, _ulang)
+            # Aviso GRANDE de confirmacion (2026-10-23, pedido de Alex:
+            # "la mas grande") - bloque propio en login.html en vez de
+            # la linea flash pequena.
+            return render_template("login.html", sin_confirmar_email=email), 403
         session["user_id"] = user["id"]
         session["nombre"] = user["nombre"]
         session["is_admin"] = es_admin
