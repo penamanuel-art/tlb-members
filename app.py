@@ -722,13 +722,32 @@ def login_required(view):
         if "user_id" not in session:
             flash("Log in to continue.", "warn")
             return redirect(url_for("login", next=request.path))
-        if current_user() is None:
+        _u_gate = current_user()
+        if _u_gate is None:
             # Sesion fantasma: la cuenta ya no existe (p. ej. eliminada en una
             # limpieza). Sin esto, vistas como /home reventaban con 500 al
             # registrar el checkin (FK violation) — bug real 2026-10-21.
             session.clear()
             flash("Log in to continue.", "warn")
             return redirect(url_for("login", next=request.path))
+        # Puerta de confirmación (2026-11-11, orden de Alex): la cuenta
+        # SIN confirmar no ve NINGUNA página de miembro — ni siquiera con
+        # la sesión recién registrada, que antes entraba al Dashboard
+        # completo sin confirmar. Cae en /bienvenida (la pantalla de
+        # confirmación pendiente) hasta que el clic en el email la
+        # active. Excepciones: la propia /bienvenida y /cuenta/completar
+        # (fijar sus datos/contraseña antes de confirmar), y la cuenta
+        # de Alex / admin (_admin_o_cuenta_alex).
+        if not _admin_o_cuenta_alex(_u_gate):
+            try:
+                _verif_gate = bool(_u_gate["email_verified"])
+            except (KeyError, IndexError, TypeError):
+                _verif_gate = False
+            if not _verif_gate and request.endpoint not in (
+                    "bienvenida", "cuenta_completar"):
+                flash("Confirm your email to open your Dashboard — "
+                      "we emailed you the link.", "warn")
+                return redirect(url_for("bienvenida"))
         return view(*args, **kwargs)
     return wrapper
 
