@@ -188,6 +188,15 @@
     {% if past_due %}
     <div class="upl-duenote">⚠ Your Platinum is paused — a card payment failed. <a href="{{ url_for('cuenta') }}">Update your card in your account</a> to restore access, or start fresh below.</div>
     {% endif %}
+    {% if board.teasers %}
+    <div class="upl-board">
+      <h3>ON THE BOARD RIGHT NOW</h3>
+      {% for t in board.teasers %}
+      <a class="upl-teaser" href="{{ url_for('official_tracker') }}"><span><span class="t">{{ t.texto }}</span><div class="s">{{ t.sub }}</div></span><span class="arr">›</span></a>
+      {% endfor %}
+      <p class="upl-recon">Every claim reconciles to the public graded ledger.</p>
+    </div>
+    {% endif %}
     {% if anonimo %}
     <p class="upl-under" style="margin-top:12px;">No card, no charge — your free month starts with your free account.</p>
     {% endif %}
@@ -220,16 +229,6 @@
     <p class="upl-fine">The free plays stay free forever. After your free month, keeping Platinum is your choice — nothing is ever charged on its own.</p>
     {% endif %}
   </div>
-
-  {% if board.teasers %}
-  <div class="upl-board upl-board-out">
-    <h3>ON THE BOARD RIGHT NOW</h3>
-    {% for t in board.teasers %}
-    <a class="upl-teaser" href="{{ url_for('official_tracker') }}"><span><span class="t">{{ t.texto }}</span><div class="s">{{ t.sub }}</div></span><span class="arr">›</span></a>
-    {% endfor %}
-    <p class="upl-recon">Every claim reconciles to the public graded ledger.</p>
-  </div>
-  {% endif %}
 
   {# === Tarjetas de planes (2026-10-29, diseño aprobado por Alex) ===
      Miembro gratis: ve las DOS (Platinum como oferta de desbloqueo +
