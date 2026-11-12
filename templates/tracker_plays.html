@@ -2,7 +2,8 @@
 {% block title %}My Bets — The Sharp Team{% endblock %}
 {% block content %}
 <style>
-  .ply-h { color:#fff; font-size:26px; font-weight:800; margin:0 0 4px; letter-spacing:-.3px; }
+  .ply-h { font-family:'Unbounded',sans-serif; color:#fff; font-size:clamp(27px,7.6vw,38px); font-weight:800; line-height:1.18; margin:0 0 8px; letter-spacing:-.3px; }
+  .ply-h .mint { color:#11cb87; }
   .ply-sub { color:#9aa7b8; font-size:13.5px; margin:0 0 16px; line-height:1.5; }
   .mb-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:9px; margin:0 0 14px; }
   .mb-stat { background:linear-gradient(155deg,#26303f,#1c2431 60%,#1a222e); border:1px solid rgba(255,255,255,.06); border-radius:16px; padding:11px 12px; }
@@ -255,7 +256,8 @@
 
 <a class="ply-back" href="{{ url_for('tracker') }}">&#8592; Back to my tracker</a>
 
-<h1 class="ply-h">Your bets</h1>
+<h1 class="ply-h">Bet Tracker: <span class="mint">Your Bets, Tracked and Graded</span></h1>
+<p class="ply-sub">Every play you log, tracked and graded in one place &mdash; your real record, your profit, and whether you're beating the closing line.</p>
 
 {% if all_rows %}
 <div class="tk-unitpill">🎯 <span>1u = <b>${{ '%g' % mb_settings.unit_monto }}</b> · your unit size</span></div>
