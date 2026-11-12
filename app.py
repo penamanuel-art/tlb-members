@@ -1431,13 +1431,13 @@ def _activation_shell(titulo, cuerpo, boton, nota, link, lang="en"):
         eyebrow = "UN ÚLTIMO PASO"
         checks = ("Tus jugadas Sharp Free se activan de inmediato",
                   "Tu Dashboard se abre en cuanto activas tu cuenta",
-                  "Platinum empieza por $1 cuando quieras")
+                  "Platinum es $15.99/semana cuando quieras")
         o_abre = "O abre este enlace:"
     else:
         eyebrow = "ONE LAST STEP"
         checks = ("Your Sharp Free plays go live right away",
                   "Your Dashboard opens the moment you activate",
-                  "Platinum starts for $1 whenever you're ready")
+                  "Platinum is $15.99/week whenever you're ready")
         o_abre = "Or open this link:"
     checks_html = "".join(
         f'<tr><td style="font-size:11.1px;color:#065f46;padding:3px 0;">&#10003;&nbsp; {c}</td></tr>'
