@@ -479,10 +479,10 @@
       <div>
         <div style="color:#ffffff;font-size:13.5px;font-weight:700;line-height:1.3;">Platinum plays on today's board</div>
         <div style="color:#a7b0c0;font-size:11px;line-height:1.5;margin-top:4px;">Included with a Platinum membership. Platinum members only.</div>
-        <div style="color:#c6cbd6;font-size:11px;margin-top:8px;text-decoration:underline;">First week $1, then $15.99/week</div>
+        <div style="color:#c6cbd6;font-size:11px;margin-top:8px;text-decoration:underline;">$15.99/week · cancel anytime</div>
       </div>
     </div>
-    <a href="{{ url_for('desbloquear_platinum') }}" style="display:block;background:#1b2030;border:1px solid #2c313a;color:#ffffff;text-align:center;font-size:12.5px;font-weight:600;border-radius:12px;padding:13px 10px;margin-top:16px;text-decoration:none;">Start today for $1&nbsp;&nbsp;↗</a>
+    <a href="{{ url_for('desbloquear_platinum') }}" style="display:block;background:#1b2030;border:1px solid #2c313a;color:#ffffff;text-align:center;font-size:12.5px;font-weight:600;border-radius:12px;padding:13px 10px;margin-top:16px;text-decoration:none;">Unlock Platinum&nbsp;&nbsp;↗</a>
   </div>
   {% endif %}
   {% if plays and not plats %}
@@ -540,7 +540,6 @@
   <div class="hpc-card">
     <div class="hpc-top">
       <span class="hpc-kick">PLATINUM · WEEKLY</span>
-      <span class="hpc-badge">FIRST WEEK $1</span>
     </div>
     <div class="hpc-price">$15.99 <small>/ week</small></div>
     <p class="hpc-tag">Unlock the complete card — every official play and every tool we run, with nothing held back.</p>
@@ -556,7 +555,7 @@
       <li>The full record — every play counted, win or loss</li>
     </ul>
     <a class="hpc-cta" href="{{ url_for('desbloquear_platinum') }}">Unlock Platinum →</a>
-    <p class="hpc-fine">$1 for your first week, then $15.99/week. Cancel anytime.</p>
+    <p class="hpc-fine">$15.99/week. Cancel anytime.</p>
   </div>
   {% endif %}
 
