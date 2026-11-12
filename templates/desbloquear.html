@@ -37,7 +37,7 @@
 </div>
 {% else %}
 <style>
-.upl-wrap{max-width:520px;margin:0 auto;padding:6px 2px 72px;color:#e6edf7}
+.upl-wrap{max-width:520px;margin:0 auto;padding:6px 2px 84px;color:#e6edf7}
 .upl-hero{position:relative;text-align:center;padding:26px 6px 8px}
 .upl-hero::before{content:"";position:absolute;left:0;right:0;top:-6px;height:250px;background:radial-gradient(ellipse 72% 92% at 50% 0%,rgba(232,199,102,.10),rgba(232,199,102,0) 70%);pointer-events:none}
 .upl-avatar{position:relative;display:block;margin:4px auto 0;width:158px;height:158px;border-radius:50%;object-fit:cover;border:3px solid #39415a;box-shadow:0 0 0 7px rgba(148,163,184,.07),0 16px 38px rgba(0,0,0,.5)}
@@ -127,9 +127,10 @@
 .upl-how .n{flex:0 0 26px;width:26px;height:26px;border-radius:50%;background:#e8c766;color:#161d29;font-weight:900;font-size:13.5px;display:flex;align-items:center;justify-content:center}
 .upl-how b{color:#fff}
 .upl-sticky{position:fixed;left:0;right:0;bottom:0;z-index:80;background:#0d1118;border-top:1px solid #e8c76666;box-shadow:0 -6px 24px rgba(0,0,0,.45)}
-.upl-sticky-in{max-width:520px;margin:0 auto;padding:7px 12px calc(7px + env(safe-area-inset-bottom));text-align:center}
-.upl-sticky-t{font-size:11.5px;line-height:1.25;color:#c3cbdd;white-space:nowrap}
+.upl-sticky-in{max-width:520px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:7px 12px calc(7px + env(safe-area-inset-bottom))}
+.upl-sticky-t{font-size:11.5px;line-height:1.25;color:#c3cbdd;white-space:nowrap;min-width:0;overflow:hidden;text-overflow:ellipsis}
 .upl-sticky-t b{color:#fff;font-size:12px}
+.upl-sticky-btn{background:#e8c766;color:#1a1405 !important;font-size:13px;font-weight:800;white-space:nowrap;padding:8px 14px;line-height:1.2;border-radius:999px;text-decoration:none;text-align:center;flex:none}
 </style>
 
 <div class="upl-wrap">
@@ -438,11 +439,11 @@
   <p class="upl-legal">{% if anonimo %}Your first month of Platinum is free with a free account — no card required. After the free month, Platinum is $15.99/week only for members who choose to subscribe, billed weekly until cancelled.{% elif post_mes_gratis %}$15.99/week billed weekly until cancelled.{% else %}$1 for the first 7 days, then $15.99/week billed weekly until cancelled.{% endif %} Recurring weekly subscription — cancel anytime from your account, no contracts. All prices in USD.</p>
 
   {% if anonimo %}
-  <div class="upl-sticky"><div class="upl-sticky-in"><span class="upl-sticky-t"><b>First month FREE</b> · no card · free plays forever</span></div></div>
+  <div class="upl-sticky"><div class="upl-sticky-in"><span class="upl-sticky-t"><b>First month FREE</b> · no card · free plays forever</span><a class="upl-sticky-btn" href="{{ url_for('register') }}">Start free →</a></div></div>
   {% elif post_mes_gratis %}
-  <div class="upl-sticky"><div class="upl-sticky-in"><span class="upl-sticky-t"><b>$15.99/week</b> · cancel anytime</span></div></div>
+  <div class="upl-sticky"><div class="upl-sticky-in"><span class="upl-sticky-t"><b>$15.99/week</b> · cancel anytime</span><a class="upl-sticky-btn" href="#upl-buy">Keep access →</a></div></div>
   {% else %}
-  <div class="upl-sticky"><div class="upl-sticky-in"><span class="upl-sticky-t"><b>$1 first week</b> · then $15.99/week · cancel anytime</span></div></div>
+  <div class="upl-sticky"><div class="upl-sticky-in"><span class="upl-sticky-t"><b>$1 first week</b> · then $15.99/week · cancel anytime</span><a class="upl-sticky-btn" href="#upl-buy">Unlock Platinum →</a></div></div>
   {% endif %}
 </div>
 
