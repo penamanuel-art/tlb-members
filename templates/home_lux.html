@@ -357,21 +357,32 @@
 
   <div id="tst-menu-sheet" hidden style="position:fixed;inset:0;z-index:2000;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;background:#0B0D12;padding:calc(14px + env(safe-area-inset-top)) 14px calc(200px + env(safe-area-inset-bottom));">
     <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;"><span style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:800;font-style:italic;"><img src="{{ url_for('static', filename='img/apple-touch-icon-v2.png') }}" alt="" style="width:30px;height:30px;border-radius:50%;display:block;">THE <span style="color:#11CB87;">SHARP</span> TEAM</span><button type="button" onclick="document.getElementById('tst-menu-sheet').hidden=true;document.getElementById('tst-menubtn').setAttribute('aria-expanded','false');document.body.style.overflow='';" style="background:none;border:0;color:#A3AAB6;font-size:17px;cursor:pointer;padding:4px 8px;">✕</button></div>
-    {# Menú LIMPIO (2026-10-30, orden de Alex): tres grupos cortos y nada
-       más. La sección ABOUT salió del menú — About/FAQs/Contact viven
-       en el pie de la página. Destinos y reglas Platinum intactos. #}
-    <div style="padding:12px 0 2px;font-size:11px;letter-spacing:1.6px;color:#969EA9;font-weight:700;">PLAYS</div>
+    {# Menú REESTRUCTURADO (2026-11-12, orden de Alex en llamada: «pon el
+       menú así mismo como está el de ellos»): grupos y orden del menú de
+       miembro de Wise Guy Team (WORKSPACE / LEARN / RESEARCH / MARKET
+       DATA / MY TOOLS), SOLO con destinos reales de nuestra plataforma
+       (cero enlaces inventados). Sin «Admin» (salió por orden de Alex el
+       mismo día). Al final se conservan Full Record y Unlock Platinum,
+       que son nuestros. Destinos y reglas Platinum intactos. #}
+    <div style="padding:12px 0 2px;font-size:11px;letter-spacing:1.6px;color:#969EA9;font-weight:700;">WORKSPACE</div>
     <a href="{{ url_for('home') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:13px;">Today's plays <span style="color:#A3AAB6;">›</span></a>
-    <a href="{{ url_for('tracker') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:13px;">My Bets <span style="color:#A3AAB6;">›</span></a>
-    <a href="{{ url_for('official_tracker') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:13px;">Full Record <span style="color:#A3AAB6;">›</span></a>
-    <div style="padding:12px 0 2px;font-size:11px;letter-spacing:1.6px;color:#969EA9;font-weight:700;">TOOLS</div>
-    <a href="{{ url_for('tools_line_moves') if miembro_platinum else url_for('desbloquear_platinum') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:13px;">Line Moves <span style="color:#A3AAB6;">›</span></a>
-    <a href="{{ url_for('ev_board') if miembro_platinum else url_for('desbloquear_platinum') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:13px;">+EV Board <span style="color:#A3AAB6;">›</span></a>
-    <a href="{{ url_for('props') if miembro_platinum else url_for('desbloquear_platinum') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:13px;">Player Props <span style="color:#A3AAB6;">›</span></a>
-    <div style="padding:12px 0 2px;font-size:11px;letter-spacing:1.6px;color:#969EA9;font-weight:700;">ACCOUNT</div>
+    <a href="{{ url_for('tools') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:13px;">All tools <span style="color:#A3AAB6;">›</span></a>
     <a href="{{ url_for('cuenta') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:13px;">My account <span style="color:#A3AAB6;">›</span></a>
-    <a href="{{ url_for('alertas') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:13px;">Alerts <span style="color:#A3AAB6;">›</span></a>
+    <div style="padding:12px 0 2px;font-size:11px;letter-spacing:1.6px;color:#969EA9;font-weight:700;">LEARN</div>
     <a href="#" onclick="document.getElementById('tst-menu-sheet').hidden=true;var b=document.getElementById('tst-menubtn');if(b)b.setAttribute('aria-expanded','false');document.body.style.overflow='';if(window.tstStartTour)window.tstStartTour();return false;" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:13px;color:#e8c766;">Dashboard Tour <span style="color:#A3AAB6;">›</span></a>
+    <a href="{{ url_for('masterclass') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:13px;">Masterclass <span style="color:#A3AAB6;">›</span></a>
+    <div style="padding:12px 0 2px;font-size:11px;letter-spacing:1.6px;color:#969EA9;font-weight:700;">RESEARCH</div>
+    <a href="{{ url_for('ev_board') if miembro_platinum else url_for('desbloquear_platinum') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:13px;">+EV Board <span style="color:#A3AAB6;">›</span></a>
+    <a href="{{ url_for('game_center') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:13px;">Game Center <span style="color:#A3AAB6;">›</span></a>
+    <a href="{{ url_for('props') if miembro_platinum else url_for('desbloquear_platinum') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:13px;">Player Props <span style="color:#A3AAB6;">›</span></a>
+    <div style="padding:12px 0 2px;font-size:11px;letter-spacing:1.6px;color:#969EA9;font-weight:700;">MARKET DATA</div>
+    <a href="{{ url_for('sharp') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:13px;">Sharp Money <span style="color:#A3AAB6;">›</span></a>
+    <a href="{{ url_for('tools_line_moves') if miembro_platinum else url_for('desbloquear_platinum') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:13px;">Line Moves <span style="color:#A3AAB6;">›</span></a>
+    <div style="padding:12px 0 2px;font-size:11px;letter-spacing:1.6px;color:#969EA9;font-weight:700;">MY TOOLS</div>
+    <a href="{{ url_for('tracker') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:13px;">My Bets <span style="color:#A3AAB6;">›</span></a>
+    <a href="{{ url_for('alertas') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:13px;">Alerts <span style="color:#A3AAB6;">›</span></a>
+    <a href="{{ url_for('ai_assistant') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:13px;">AI Assistant <span style="color:#A3AAB6;">›</span></a>
+    <a href="{{ url_for('official_tracker') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:13px;">Full Record <span style="color:#A3AAB6;">›</span></a>
     <a href="{{ url_for('desbloquear_platinum') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:13px;color:#e8c766;">Unlock Platinum <span style="color:#A3AAB6;">›</span></a>
     {# Entrada «Admin» ELIMINADA del menú ☰ (2026-11-12, orden de Alex en llamada: «quita el admin de ahí que yo lo voy a poner en otro sitio»). La ruta /admin y el enlace Admin de la barra superior NO se tocan. #}
   </div>
