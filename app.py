@@ -10893,6 +10893,39 @@ def _checkout_embed_confirmado(session_id, user):
     return _checkout_embed_pago(session_id, user) is not None
 
 
+def _payment_intent_pago(pi_id, user):
+    """Detalle del pago del Payment Element de /desbloquear-platinum:
+    {"value": monto real cobrado en USD, "invoice": id de la factura}.
+    None si el PaymentIntent no quedó cobrado (succeeded/processing),
+    no es del cliente de Stripe del miembro en sesión o Stripe no
+    responde. Solo pinta el estado de éxito al volver del pago y
+    alimenta el pixel Purchase con el MISMO event_id que manda el CAPI
+    del webhook invoice.paid (deduplicación) — la activación real la
+    hace el webhook de siempre."""
+    if not (pi_id and user and STRIPE_SECRET_KEY):
+        return None
+    try:
+        import stripe
+        stripe.api_key = STRIPE_SECRET_KEY
+        pi = stripe.PaymentIntent.retrieve(pi_id)
+    except Exception:
+        return None
+    if (pi.get("status") or "") not in ("succeeded", "processing"):
+        return None
+    try:
+        propio = bool(pi.get("customer")) and (
+            pi.get("customer") == (user["stripe_customer_id"] or "").strip())
+    except (KeyError, IndexError, TypeError):
+        propio = False
+    if not propio:
+        return None
+    try:
+        monto = (pi.get("amount_received") or pi.get("amount") or 0) / 100.0
+    except (TypeError, ValueError):
+        monto = 0.0
+    return {"value": monto, "invoice": pi.get("invoice") or ""}
+
+
 @app.route("/desbloquear-platinum")
 def desbloquear_platinum():
     # PUBLICA por diseno (2026-10-20, orden de Alex): el boton de los
@@ -10929,6 +10962,20 @@ def desbloquear_platinum():
                 fb_purchase = "%.2f" % _pago["value"]
                 fb_purchase_eid = "purchase_" + (
                     _pago["invoice"] or request.args.get("session_id") or "")
+    # Vuelta del Payment Element (?checkout=pi&payment_intent=...): el
+    # éxito solo se pinta con el PaymentIntent verificado en Stripe como
+    # cobrado y del miembro en sesión; el webhook invoice.paid activa en
+    # paralelo y la página tolera su retraso (se recarga sola).
+    if request.args.get("checkout") == "pi" and request.args.get("payment_intent"):
+        _pago_pi = _payment_intent_pago(
+            request.args.get("payment_intent"), user)
+        if _pago_pi is not None:
+            checkout_ok = True
+            if _pago_pi["value"] and _pago_pi["value"] > 0:
+                fb_purchase = "%.2f" % _pago_pi["value"]
+                fb_purchase_eid = "purchase_" + (
+                    _pago_pi["invoice"]
+                    or request.args.get("payment_intent") or "")
     # Oferta ÚNICA (2026-11-11, orden de Alex): como todo el mundo
     # entra con 30 días gratis al registrarse, esta página de pago NO
     # ofrece semana gratis ni semana de $1 a NADIE — la plantilla ya no
@@ -10956,6 +11003,126 @@ def desbloquear_platinum():
     )
 
 
+def _invoice_payment_intent(inv):
+    """PaymentIntent (dict con client_secret) de una factura de
+    suscripción. En la API basil que fija el SDK, la factura ya NO trae
+    payment_intent directo: el intent vive en
+    inv.payments.data[i].payment.payment_intent (id u objeto). En APIs
+    viejas era inv.payment_intent. Devuelve {} si no se encuentra."""
+    if not inv:
+        return {}
+    try:
+        import stripe
+        stripe.api_key = STRIPE_SECRET_KEY
+        pi = inv.get("payment_intent")
+        if isinstance(pi, dict) and pi.get("client_secret"):
+            return pi
+        if isinstance(pi, str) and pi:
+            return stripe.PaymentIntent.retrieve(pi) or {}
+        pays = ((inv.get("payments") or {}).get("data")) or []
+        for p in pays:
+            pi2 = (p.get("payment") or {}).get("payment_intent")
+            if isinstance(pi2, dict) and pi2.get("client_secret"):
+                return pi2
+            if isinstance(pi2, str) and pi2:
+                try:
+                    return stripe.PaymentIntent.retrieve(pi2) or {}
+                except Exception:
+                    continue
+    except Exception:
+        pass
+    return {}
+
+
+def _desbloquear_subscription_intent(user, email, customer_id):
+    """Payment Element de /desbloquear-platinum (2026-11-11, orden de
+    Alex: formulario corto tipo WGT, SOLO tarjeta, sin Apple Pay): crea
+    la suscripción Platinum EN EL SERVIDOR con SOLO el precio semanal
+    de $15.99 (sin trial, sin $1; payment_behavior default_incomplete;
+    payment_method_types=['card']) y devuelve el client_secret del
+    PaymentIntent de su primera factura, que la página monta con el
+    Payment Element de Stripe.js. El cliente de Stripe del miembro se
+    crea una sola vez y queda guardado en su cuenta; una suscripción
+    incomplete viva de ese cliente con el precio semanal se REUTILIZA
+    (recargar la página no siembra suscripciones basura). La activación
+    llega por el webhook invoice.paid de siempre (match por el
+    customer_email del cliente y la metadata de la suscripción): el
+    estado final es el MISMO que con el flujo de Checkout."""
+    try:
+        import stripe
+        stripe.api_key = STRIPE_SECRET_KEY
+        db = get_db()
+        if not customer_id:
+            cu = stripe.Customer.create(
+                email=email,
+                metadata={"member_id": str(user["id"]),
+                          "member_email": email},
+            )
+            customer_id = cu.get("id") or ""
+            if customer_id:
+                db.execute(
+                    "UPDATE users SET stripe_customer_id = ? WHERE id = ?",
+                    (customer_id, user["id"]))
+                db.commit()
+        if not customer_id:
+            return jsonify({"error": "could not create customer"}), 502
+        # Reusar una suscripción incomplete viva de este cliente con el
+        # precio semanal: su PaymentIntent sigue válido para pagar.
+        try:
+            subs = stripe.Subscription.list(
+                customer=customer_id, status="incomplete", limit=10)
+            for s in (subs.get("data") or []):
+                items = ((s.get("items") or {}).get("data")) or []
+                if not any((it.get("price") or {}).get("id")
+                           == PLATINUM_PRICE_SEMANAL for it in items):
+                    continue
+                inv_id = s.get("latest_invoice")
+                if isinstance(inv_id, dict):
+                    inv_id = inv_id.get("id")
+                if not inv_id:
+                    continue
+                inv = stripe.Invoice.retrieve(inv_id, expand=["payments"])
+                pi = _invoice_payment_intent(inv)
+                if (pi.get("status") or "") in (
+                        "requires_payment_method", "requires_confirmation",
+                        "requires_action"):
+                    secret = pi.get("client_secret") or ""
+                    if secret:
+                        return jsonify({"clientSecret": secret,
+                                        "flow": "payment_element"})
+        except Exception:
+            pass
+        sub = stripe.Subscription.create(
+            customer=customer_id,
+            items=[{"price": PLATINUM_PRICE_SEMANAL}],
+            payment_behavior="default_incomplete",
+            payment_settings={
+                "payment_method_types": ["card"],
+                "save_default_payment_method": "on_subscription",
+            },
+            expand=["latest_invoice"],
+            metadata={
+                "member_email": email,
+                "member_id": str(user["id"]),
+                "access": "platinum",
+                "plan": "platinum",
+                "offer": "directo_1599",
+                "source": "desbloquear-payment-element",
+            },
+        )
+        inv = sub.get("latest_invoice") or {}
+        inv_id = inv.get("id") if isinstance(inv, dict) else inv
+        if inv_id:
+            inv = stripe.Invoice.retrieve(inv_id, expand=["payments"])
+        pi = _invoice_payment_intent(inv)
+        secret = pi.get("client_secret") or ""
+        if not secret:
+            return jsonify({"error": "could not create payment intent"}), 502
+        return jsonify({"clientSecret": secret, "flow": "payment_element"})
+    except Exception:
+        return jsonify({"error": "could not create subscription"}), 502
+
+
 @app.route("/api/desbloquear/checkout-session", methods=["POST"])
 @login_required
 def desbloquear_checkout_session():
@@ -10980,6 +11147,14 @@ def desbloquear_checkout_session():
         customer_id = (user["stripe_customer_id"] or "").strip()
     except (KeyError, IndexError, TypeError):
         customer_id = ""
+    # Payment Element (2026-11-11): con {"flow": "payment_element"} este
+    # MISMO endpoint devuelve el client_secret del PaymentIntent de la
+    # suscripción creada en el servidor (formulario corto de la página,
+    # solo tarjeta). Sin ese parámetro el comportamiento es el de
+    # siempre: la Checkout Session incrustada.
+    _body = request.get_json(silent=True) or {}
+    if (_body.get("flow") or "") == "payment_element":
+        return _desbloquear_subscription_intent(user, email, customer_id)
     # Sin rama legacy: directo a $15.99/semana para TODOS (2026-11-11).
     _trial_days = 0
     _offer_code = "directo_1599"
