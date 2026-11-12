@@ -399,7 +399,7 @@ body{padding-bottom:calc(8px + env(safe-area-inset-bottom))!important}
     // el botón de pagar: ahí elements.submit() valida el formulario y
     // el POST al endpoint crea la suscripción y devuelve el
     // client_secret (ver el handler del botón, más abajo).
-    elements=stripe.elements({mode:"subscription",amount:1599,currency:"usd",paymentMethodTypes:["card"],appearance:{theme:"stripe"}});
+    elements=stripe.elements({mode:"subscription",amount:1599,currency:"usd",locale:"en",paymentMethodTypes:["card"],appearance:{theme:"stripe"}});
     var pe=elements.create("payment",{
           layout:{type:"tabs",defaultCollapsed:false},
           // Apple Pay EN AUTO (2026-11-11, orden de Alex por voz ~10:26 PM
