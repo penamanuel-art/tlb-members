@@ -14,9 +14,12 @@
    El pago va INCRUSTADO en esta misma página: desde el 2026-11-11 es
    el Payment Element de Stripe dentro de NUESTRA tarjeta (espejo del
    formulario de WGT — blanco, compacto, SOLO tarjeta, sin Apple Pay
-   por orden expresa de Alex): el servidor crea la suscripción vía
-   /api/desbloquear/checkout-session (flow=payment_element) y la
-   página monta el formulario con Stripe.js — el miembro paga sin
+   por orden expresa de Alex): la página monta el formulario con
+   Stripe.js en modo DIFERIDO — al cargar NO se crea nada en Stripe
+   (orden de Alex: «solo quiero clientes en Stripe cuando paguen») —
+   y el servidor crea la suscripción vía
+   /api/desbloquear/checkout-session (flow=payment_element) SOLO
+   cuando el miembro pulsa el botón de pagar; el miembro paga sin
    salir del sitio. (Antes fue Stripe Checkout en modo embedded; ese
    endpoint sigue vivo en app.py aunque esta página ya no lo usa.)
    REHECHA DESDE CERO (2026-11-11, orden de Alex «hágalo de nuevo,
@@ -385,16 +388,16 @@ body{padding-bottom:calc(60px + env(safe-area-inset-bottom))!important}
     var stripe=Stripe({{ stripe_pk|tojson }}),
         elements=null,
         clientSecret=null;
-    fetch("{{ url_for('desbloquear_checkout_session') }}",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({flow:"payment_element"}),credentials:"same-origin"})
-      .then(function(r){
-        if(!r.ok){console.error("[upl-pe] endpoint HTTP "+r.status);throw new Error("intent");}
-        return r.json();
-      })
-      .then(function(d){
-        if(!d.clientSecret){console.error("[upl-pe] endpoint sin clientSecret");throw new Error("secret");}
-        clientSecret=d.clientSecret;
-        elements=stripe.elements({clientSecret:clientSecret,appearance:{theme:"stripe"}});
-        var pe=elements.create("payment",{
+    // CREACIÓN DIFERIDA (2026-11-11, orden de Alex: «solo quiero
+    // clientes en Stripe cuando paguen»): el formulario monta en modo
+    // diferido (mode subscription, $15.99) SIN llamar a ningún
+    // endpoint — cargar esta página NO crea NADA en Stripe. El
+    // Customer y la Subscription nacen SOLO cuando el miembro pulsa
+    // el botón de pagar: ahí elements.submit() valida el formulario y
+    // el POST al endpoint crea la suscripción y devuelve el
+    // client_secret (ver el handler del botón, más abajo).
+    elements=stripe.elements({mode:"subscription",amount:1599,currency:"usd",paymentMethodTypes:["card"],appearance:{theme:"stripe"}});
+    var pe=elements.create("payment",{
           layout:{type:"tabs",defaultCollapsed:false},
           // Apple Pay EN AUTO (2026-11-11, orden de Alex por voz ~10:26 PM
           // ET — revierte su orden de las 9:37 PM de quitarlo): la
@@ -407,24 +410,22 @@ body{padding-bottom:calc(60px + env(safe-area-inset-bottom))!important}
           fields:{billingDetails:{name:"never",email:"never",phone:"never",
             address:{country:"auto",postalCode:"auto",line1:"never",line2:"never",city:"never",state:"never"}}}
         });
-        var listo=false;
-        pe.on("ready",function(){
-          listo=true;
-          if(load){load.style.display='none';}
-          btn.style.display='block';
-        });
-        pe.on("loaderror",function(ev){
-          console.error("[upl-pe] loaderror: "+((ev&&ev.error&&ev.error.message)||"unknown"));
-          showErr("The secure payment form could not load. Please refresh the page.");
-        });
-        pe.mount("#upl-pe-form");
-        setTimeout(function(){
-          if(!listo){console.error("[upl-pe] timeout sin ready en 20s");fallback();}
-        },20000);
-      })
-      .catch(function(e){console.error("[upl-pe] fallo el arranque: "+((e&&e.message)||e));fallback();});
+    var listo=false;
+    pe.on("ready",function(){
+      listo=true;
+      if(load){load.style.display='none';}
+      btn.style.display='block';
+    });
+    pe.on("loaderror",function(ev){
+      console.error("[upl-pe] loaderror: "+((ev&&ev.error&&ev.error.message)||"unknown"));
+      showErr("The secure payment form could not load. Please refresh the page.");
+    });
+    pe.mount("#upl-pe-form");
+    setTimeout(function(){
+      if(!listo){console.error("[upl-pe] timeout sin ready en 20s");fallback();}
+    },20000);
     btn.addEventListener("click",function(){
-      if(!elements||!clientSecret||btn.disabled){return;}
+      if(!elements||btn.disabled){return;}
       btn.disabled=true;
       var original=btn.textContent;
       btn.textContent="Processing\u2026";
@@ -432,6 +433,16 @@ body{padding-bottom:calc(60px + env(safe-area-inset-bottom))!important}
       var submitPromise=elements.submit?elements.submit():Promise.resolve({});
       submitPromise.then(function(sub){
         if(sub&&sub.error){throw sub.error;}
+        // RECIÉN AQUÍ — con el formulario ya validado por
+        // elements.submit() — el servidor crea el Customer y la
+        // Subscription en Stripe y devuelve el client_secret.
+        return fetch("{{ url_for('desbloquear_checkout_session') }}",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({flow:"payment_element"}),credentials:"same-origin"});
+      }).then(function(r){
+        if(!r.ok){console.error("[upl-pe] endpoint HTTP "+r.status);throw new Error("We could not start your payment. Please try again.");}
+        return r.json();
+      }).then(function(d){
+        if(!d.clientSecret){console.error("[upl-pe] endpoint sin clientSecret");throw new Error("We could not start your payment. Please try again.");}
+        clientSecret=d.clientSecret;
         return stripe.confirmPayment({
           elements:elements,
           clientSecret:clientSecret,
