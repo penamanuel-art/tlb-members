@@ -1574,11 +1574,11 @@ def send_activation_email(nombre: str, email: str, token: str, lang: str = "en")
               "activate your account. Tap the button and you're in: your "
               "Dashboard opens and your Sharp Free plays go live right "
               "away.")
-    boton = "ACTIVATE MY ACCOUNT"
+    boton = "Open your dashboard"
     texto = (f"Hi {nombre},\n\n"
              "You just created your The Sharp Team account. One step "
              "left: confirm this email address to activate your account "
-             f"by opening this link:\n{link}\n\n"
+             f"— open your dashboard here:\n{link}\n\n"
              "Your account is NOT active yet: until you confirm, you "
              "can't log in and nothing is unlocked. If you didn't "
              "create this account, ignore this email — without "
@@ -1613,11 +1613,11 @@ def send_activation_reminder_email(nombre: str, email: str, token: str, lang: st
               "inactive. Tap the button to confirm and activate it — "
               "your Dashboard opens and your Sharp Free plays go live "
               "the moment you do.")
-    boton = "CONFIRM MY ACCOUNT"
+    boton = "Open your dashboard"
     texto = (f"Hi {nombre},\n\n"
              "You created your The Sharp Team account but haven't "
              "confirmed your email yet, so your account is still "
-             f"inactive. Confirm it here:\n{link}\n\n"
+             f"inactive. Open your dashboard here:\n{link}\n\n"
              "Your Sharp Free plays go live when you confirm. If you "
              "didn't create this account, ignore this email.\n\n"
              "The Sharp Team")
