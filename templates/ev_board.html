@@ -8,6 +8,7 @@
 .cmp-h{font-size:18px;font-weight:600;letter-spacing:-.3px;margin:4px 0 2px}
 .cmp-sub{font-size:12.5px;font-weight:400;color:#8b94a7;margin:0 0 14px;line-height:1.5}
 .cmp-card{position:relative;background:linear-gradient(180deg,#151822,#10131b);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:13px 15px 11px;margin:0 0 12px;overflow:hidden}
+.cmp-card.is-stale{opacity:.58}
 .cmp-edge{position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,#f3cd6b,#b98c1e)}
 .cmp-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .cmp-liga{font-size:10px;font-weight:600;letter-spacing:1.4px;color:#c8cede;border:1px solid rgba(255,255,255,.18);border-radius:99px;padding:3px 9px}
@@ -55,21 +56,23 @@
 .ev-fair{font-size:11.5px;font-weight:400;color:#8b94a7;margin-top:6px}
 .ev-fair b{color:#c8cede;font-weight:600}
 .ev-live{font-size:10px;font-weight:700;letter-spacing:1px;color:#ff6b6b;border:1px solid rgba(255,107,107,.5);border-radius:99px;padding:3px 8px}
+.ev-stale{font-size:10px;font-weight:700;letter-spacing:1px;color:#e8c766;border:1px solid rgba(232,199,102,.55);border-radius:99px;padding:3px 8px;background:rgba(232,199,102,.08)}
 .ev-sharp{font-size:10px;font-weight:700;letter-spacing:.6px;color:#e8c766;border:1px solid rgba(232,199,102,.55);border-radius:99px;padding:3px 8px}
 .ev-note{font-size:11.5px;font-weight:400;color:#8b94a7;text-align:center;line-height:1.55;margin:2px 0 16px}
 </style>
 <div class="cmp-wrap">
   <h1 class="cmp-h">+EV Board</h1>
-  <p class="cmp-sub">Positive-edge prices across 12 books, ranked by value. Fair price from Pinnacle with the vig removed. This is a price-finding tool — these are <b style="color:#c8cede">not official plays</b>.{% if board and board.updated_at %} · Updated {{ board.updated_at }}{% endif %}</p>
+  <p class="cmp-sub">Positive-edge prices across 12 books, ranked by value. Fair price from Pinnacle with the vig removed. This is a price-finding tool — these are <b style="color:#c8cede">not official plays</b>.{% if board and board.updated_at %} · Updated {{ board.updated_at }}{% endif %}{% if board %} · {{ board.fresh_edges_count or 0 }} fresh edges{% if board.stale_edges_count %} · {{ board.stale_edges_count }} stale shown last{% endif %}{% endif %}</p>
 
   {% if board and board.edges %}
     {% for e in board.edges %}
-    <div class="cmp-card">
+    <div class="cmp-card{% if e.stale %} is-stale{% endif %}">
       <div class="cmp-edge"></div>
       <div class="cmp-top">
         <span class="cmp-liga">{{ e.sport }}</span>
         {% if e.live %}<span class="ev-live">● LIVE</span>{% endif %}
         {% if e.sharp %}<span class="ev-sharp">⚡ SHARP CONFIRMED</span>{% endif %}
+        {% if e.stale %}<span class="ev-stale">Stale</span>{% endif %}
         <span class="cmp-time">{{ e.game_time }}</span>
       </div>
       <div class="cmp-game">{{ e.game }}</div>
