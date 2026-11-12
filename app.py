@@ -17062,6 +17062,15 @@ def manifest():
     return Response(body, mimetype="application/manifest+json")
 
 
+@app.route("/favicon.ico")
+def favicon():
+    """Favicon en la raíz: los navegadores lo piden por defecto."""
+    path = os.path.join(app.static_folder, "img", "favicon.ico")
+    with open(path, "rb") as f:
+        body = f.read()
+    return Response(body, mimetype="image/vnd.microsoft.icon")
+
+
 @app.route("/api/push-edge", methods=["POST"])
 def api_push_edge():
     """Envía un push a todos los miembros suscritos.
