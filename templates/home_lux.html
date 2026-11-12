@@ -373,7 +373,7 @@
     <a href="{{ url_for('alertas') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:13px;">Alerts <span style="color:#A3AAB6;">›</span></a>
     <a href="#" onclick="document.getElementById('tst-menu-sheet').hidden=true;var b=document.getElementById('tst-menubtn');if(b)b.setAttribute('aria-expanded','false');document.body.style.overflow='';if(window.tstStartTour)window.tstStartTour();return false;" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:13px;color:#e8c766;">Dashboard Tour <span style="color:#A3AAB6;">›</span></a>
     <a href="{{ url_for('desbloquear_platinum') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:13px;color:#e8c766;">Unlock Platinum <span style="color:#A3AAB6;">›</span></a>
-    {% if es_admin or es_alex %}<a href="{{ url_for('admin_dashboard') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:13px;">Admin <span style="color:#A3AAB6;">›</span></a>{% endif %}
+    {# Entrada «Admin» ELIMINADA del menú ☰ (2026-11-12, orden de Alex en llamada: «quita el admin de ahí que yo lo voy a poner en otro sitio»). La ruta /admin y el enlace Admin de la barra superior NO se tocan. #}
   </div>
   </div>
 
@@ -396,6 +396,7 @@
      del .hero. El tagline viejo y la pastilla .status menta salen. #}
   <div class="hero tst-board">
     <div class="inner">
+      <div class="bd-brand">The Sharp Team</div>
       <div class="bd-date">{{ fecha }} · ET</div>
       <p class="bd-greet">{{ saludo }}, {{ nombre_corto }}</p>
       <div class="bd-title">Today's <span class="bd-accent">board</span></div>
@@ -409,7 +410,7 @@
         <div class="bd-clock">◷</div>
         <div>
           <h2>Not posted yet</h2>
-          <p>{% if fecha.startswith('Saturday') or fecha.startswith('Sunday') %}Officials drop at 11:00 AM ET.{% else %}Officials drop at 2:00 PM ET.{% endif %}</p>
+          <p>The Sharp Team posts the board by 4 PM ET on weekdays and by 11 AM ET on weekends.</p>
         </div>
       </div>
       {% else %}
@@ -1533,6 +1534,8 @@ h1,h2,h3,h4{font-family:'Unbounded','Roboto',sans-serif}
 .phone h1{font-size:20px !important}
 .phone h2{font-size:16px !important}
 .phone .hero.tst-board .bd-status h2{font-size:16px !important}
+/* Titulito de marca «The Sharp Team» sobre la fecha del board (2026-11-12, orden de Alex en llamada, espejo del titulito de WGT): label discreto en el dorado de la casa, mismo tamaño de label que la fecha (11px). Ningún tamaño existente cambia. */
+.phone .hero.tst-board .bd-brand{color:#e8c766;font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;margin:0 0 6px}
 </style>
 {% if not miembro_platinum %}
 {# Hoja «Continue in your browser» (2026-11-11, orden de Alex con la foto de WGT): al tocar cualquier entrada de desbloquear Platinum del Dashboard NO se navega directo — primero se abre esta hoja inferior; «Continue» lleva a /desbloquear-platinum y «Not now» la cierra sin navegar. Solo se renderiza para miembros SIN Platinum (a un Platinum estas entradas ni le salen o apuntan a la herramienta). La URL directa /desbloquear-platinum y los enlaces desde otras páginas o emails NO pasan por esta hoja. #}
