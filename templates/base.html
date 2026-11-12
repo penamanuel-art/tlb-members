@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>{% block title %}The Sharp Team{% endblock %}</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v={{ asset_v }}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800&family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@500;600&display=swap" rel="stylesheet">
 <link rel="manifest" href="/manifest.json">
 <link rel="apple-touch-icon" href="/static/img/apple-touch-icon-v2.png">
 <meta name="mobile-web-app-capable" content="yes">
@@ -298,7 +301,7 @@ function googleTranslateElementInit(){new google.translate.TranslateElement({pag
       box.id = 'tstSubNotif';
       box.innerHTML =
         '<style>' +
-        '.tst-sub-notif{position:fixed;bottom:18px;left:16px;right:16px;z-index:3000;background:#111827;border:1px solid #22c55e;border-radius:16px;padding:16px;box-shadow:0 8px 30px rgba(0,0,0,.65);animation:tstSubUp .45s ease-out;max-width:420px;margin:0 auto;font-family:-apple-system,Helvetica,Arial,sans-serif;}' +
+        '.tst-sub-notif{position:fixed;bottom:18px;left:16px;right:16px;z-index:3000;background:#111827;border:1px solid #22c55e;border-radius:16px;padding:16px;box-shadow:0 8px 30px rgba(0,0,0,.65);animation:tstSubUp .45s ease-out;max-width:420px;margin:0 auto;font-family:'Roboto',-apple-system,Helvetica,Arial,sans-serif;}' +
         '@keyframes tstSubUp{from{transform:translateY(120%);opacity:0}to{transform:translateY(0);opacity:1}}' +
         '.tst-sub-notif .tst-sub-head{display:flex;align-items:center;gap:10px;margin-bottom:10px;}' +
         '.tst-sub-notif .tst-sub-ico{font-size:26px;}' +
@@ -352,7 +355,7 @@ function googleTranslateElementInit(){new google.translate.TranslateElement({pag
         '.tst-result-toast{position:fixed;top:70px;left:16px;right:16px;z-index:3000;max-width:420px;margin:0 auto;' +
         'background:' + (win ? '#052e16' : '#2a0a0a') + ';border:1px solid ' + (win ? '#22c55e' : '#ef4444') + ';' +
         'border-radius:16px;padding:14px 16px;box-shadow:0 8px 30px rgba(0,0,0,.65);' +
-        'font-family:-apple-system,Helvetica,Arial,sans-serif;animation:tstToastIn .4s ease-out;}' +
+        'font-family:'Roboto',-apple-system,Helvetica,Arial,sans-serif;animation:tstToastIn .4s ease-out;}' +
         '@keyframes tstToastIn{from{transform:translateY(-120%);opacity:0}to{transform:translateY(0);opacity:1}}' +
         '.tst-result-toast.out{transition:opacity .5s,transform .5s;opacity:0;transform:translateY(-120%);}' +
         '.tst-result-toast .tst-rt-row{display:flex;align-items:center;gap:10px;}' +
