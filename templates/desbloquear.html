@@ -11,17 +11,12 @@
    Platinum se cobra directo a $15.99/semana desde hoy, en el texto
    y en el cobro. La semana de $1 murió para todas las audiencias
    (sustituye la regla del 2026-11-09 que la dejaba viva pa' legacy).
-   El pago va INCRUSTADO en esta misma página: desde el 2026-11-11 es
-   el Payment Element de Stripe dentro de NUESTRA tarjeta (espejo del
-   formulario de WGT — blanco, compacto, SOLO tarjeta, sin Apple Pay
-   por orden expresa de Alex): el servidor crea la suscripción vía
-   /api/desbloquear/checkout-session (flow=payment_element) y la
-   página monta el formulario con Stripe.js — el miembro paga sin
-   salir del sitio. (Antes fue Stripe Checkout en modo embedded; ese
-   endpoint sigue vivo en app.py aunque esta página ya no lo usa.) Si
-   el modo incrustado no está disponible (sin llaves o fallo de
-   Stripe.js), la página cae al botón con el link hospedado
-   (stripe_url). La página
+   El pago va INCRUSTADO en esta misma página (Stripe Checkout en modo
+   embedded, espejo WGT 2026-10-19): el servidor crea la sesión vía
+   /api/desbloquear/checkout-session y el formulario de Stripe se monta
+   dentro de la tarjeta — el miembro paga sin salir del sitio. Si el
+   modo incrustado no está disponible (sin llaves o fallo de Stripe.js),
+   la página cae al botón con el link hospedado (stripe_url). La página
    del Tracker bloqueado (_tracker_sales_body) lleva a esta ruta para
    miembros con sesión. #}
 
@@ -105,10 +100,6 @@
 .upl-brand.disc{color:#f48120}
 .upl-brand.amex{background:#2e77bc;color:#ffffff}
 .upl-embload{margin:6px 0;text-align:center;font-size:12.5px;font-weight:700;color:#525f7f}
-#upl-pe-form{padding:12px}
-.upl-pe-err{display:none;margin:0 12px 12px;font-size:12.5px;line-height:1.5;color:#b91c1c;font-weight:700}
-button.upl-cta{width:100%;border:0;cursor:pointer;font-family:inherit}
-button.upl-cta[disabled]{opacity:.65;cursor:wait}
 .upl-under{margin:9px 0 0;text-align:center;font-size:12px;color:#e6edf7;font-weight:700}
 .upl-fine{margin:7px 0 0;text-align:center;font-size:10.5px;line-height:1.55;color:#8b98ad}
 .upl-trust{margin:11px 0 0;text-align:center;font-size:10.5px;color:#8b98ad}
@@ -217,11 +208,9 @@ button.upl-cta[disabled]{opacity:.65;cursor:wait}
     {% elif stripe_embed_ok %}
     <div class="upl-brands"><span class="upl-brand visa">VISA</span><span class="upl-brand mc"><i>●</i><b>●</b>&nbsp;MasterCard</span><span class="upl-brand disc">DISCOVER</span><span class="upl-brand amex">AMEX</span></div>
     <div class="upl-embbox" id="upl-emb-box">
-      <p class="upl-embload" id="upl-emb-loading">Loading secure payment form…</p>
-      <div id="upl-pe-form"></div>
-      <p class="upl-pe-err" id="upl-pe-error"></p>
+      <p class="upl-embload" id="upl-emb-loading">Loading secure checkout…</p>
+      <div id="upl-emb"></div>
     </div>
-    <button class="upl-cta" id="upl-pay-btn" type="button" style="display:none">Start Platinum - $15.99/week →</button>
     <a class="upl-cta" id="upl-emb-fallback" href="{{ stripe_url }}" target="_blank" rel="noopener" style="display:none">Start Platinum - $15.99/week →</a>
     <noscript><a class="upl-cta" href="{{ stripe_url }}" target="_blank" rel="noopener">Start Platinum - $15.99/week →</a></noscript>
     {% else %}
@@ -330,73 +319,23 @@ button.upl-cta[disabled]{opacity:.65;cursor:wait}
   (function(){
     var box=document.getElementById('upl-emb-box'),
         fb=document.getElementById('upl-emb-fallback'),
-        load=document.getElementById('upl-emb-loading'),
-        btn=document.getElementById('upl-pay-btn'),
-        err=document.getElementById('upl-pe-error'),
-        pagoUrl="{{ url_for('desbloquear_platinum') }}";
+        load=document.getElementById('upl-emb-loading');
     function fallback(){
       if(box){box.style.display='none';}
-      if(btn){btn.style.display='none';}
       if(fb){fb.style.display='block';}
     }
-    function showErr(msg){
-      if(err){err.textContent=msg;err.style.display='block';}
-    }
-    if(!window.Stripe||!btn){fallback();return;}
-    var stripe=Stripe({{ stripe_pk|tojson }}),
-        elements=null,
-        clientSecret=null;
-    fetch("{{ url_for('desbloquear_checkout_session') }}",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({flow:"payment_element"}),credentials:"same-origin"})
-      .then(function(r){if(!r.ok){throw new Error("intent");}return r.json();})
+    if(!window.Stripe){fallback();return;}
+    fetch("{{ url_for('desbloquear_checkout_session') }}",{method:"POST",headers:{"Content-Type":"application/json"},body:"{}",credentials:"same-origin"})
+      .then(function(r){if(!r.ok){throw new Error("session");}return r.json();})
       .then(function(d){
         if(!d.clientSecret){throw new Error("secret");}
-        clientSecret=d.clientSecret;
-        elements=stripe.elements({clientSecret:clientSecret,appearance:{theme:"stripe"}});
-        var pe=elements.create("payment",{
-          layout:{type:"tabs",defaultCollapsed:false},
-          wallets:{applePay:"never",googlePay:"never"},
-          fields:{billingDetails:{name:"never",email:"never",phone:"never",
-            address:{country:"auto",postalCode:"auto",line1:"never",line2:"never",city:"never",state:"never"}}}
-        });
-        var listo=false;
-        pe.on("ready",function(){
-          listo=true;
-          if(load){load.style.display='none';}
-          btn.style.display='block';
-        });
-        pe.mount("#upl-pe-form");
-        setTimeout(function(){if(!listo){fallback();}},8000);
+        return Stripe({{ stripe_pk|tojson }}).initEmbeddedCheckout({clientSecret:d.clientSecret});
+      })
+      .then(function(checkout){
+        if(load){load.style.display='none';}
+        checkout.mount('#upl-emb');
       })
       .catch(function(){fallback();});
-    btn.addEventListener("click",function(){
-      if(!elements||!clientSecret||btn.disabled){return;}
-      btn.disabled=true;
-      var original=btn.textContent;
-      btn.textContent="Processing…";
-      if(err){err.style.display='none';}
-      var submitPromise=elements.submit?elements.submit():Promise.resolve({});
-      submitPromise.then(function(sub){
-        if(sub&&sub.error){throw sub.error;}
-        return stripe.confirmPayment({
-          elements:elements,
-          clientSecret:clientSecret,
-          confirmParams:{return_url:window.location.origin+pagoUrl+"?checkout=pi"},
-          redirect:"if_required"
-        });
-      }).then(function(res){
-        if(res&&res.error){throw res.error;}
-        var pi=res&&res.paymentIntent;
-        if(pi&&(pi.status==="succeeded"||pi.status==="processing")){
-          window.location.replace(pagoUrl+"?checkout=pi&payment_intent="+pi.id+"&redirect_status="+pi.status);
-          return;
-        }
-        throw new Error("Your payment was not completed. Please try again.");
-      }).catch(function(e){
-        btn.disabled=false;
-        btn.textContent=original;
-        showErr((e&&e.message)||"Your payment could not be completed. Please check your card and try again.");
-      });
-    });
   })();
   </script>
   {% endif %}
