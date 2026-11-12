@@ -83,10 +83,12 @@ os.makedirs(INSTANCE_DIR, exist_ok=True)
 DATABASE_URL = os.environ.get("DATABASE_URL")
 USE_PG = bool(DATABASE_URL)
 
-# Link de PAGO de Stripe para Platinum (orden de Alex 2026-10-19): $1 la primera
-# semana (7 días de trial dentro del link) y luego $15.99/semana. El mes gratis
-# de plataforma MURIÓ: ya no se otorga platinum_trial_ends al registrarse ni al
-# activar la cuenta; los relojes ya vigentes corren hasta su fecha sin tocarse.
+# Link de PAGO de Stripe para Platinum: RESPALDO histórico del checkout
+# incrustado (el link hospedado nació con la oferta vieja de $1; el cobro
+# vivo de /desbloquear-platinum es el incrustado, directo a $15.99/semana
+# desde el 2026-11-11 — ver desbloquear_checkout_session). El mes gratis
+# de plataforma sigue vivo SOLO como mes gratis de registro (30 días sin
+# tarjeta); los relojes ya vigentes corren hasta su fecha sin tocarse.
 # Link: plink_1USPKERwCjFIsFzUtk6yQ6kg = one-time $1 (price_1USPJnRwCjFIsFzU4pYcIqnq)
 # + recurrente $15.99/sem (price_1USPJvRwCjFIsFzUH8rwj5K8), trial_period_days=7.
 # Se cambia sin tocar código con la env var STRIPE_PLATINUM_URL en Render.
@@ -131,8 +133,10 @@ STRIPE_WEBHOOK_SECRET = os.environ.get("STRIPE_WEBHOOK_SECRET", "")
 STRIPE_PUBLISHABLE_KEY = os.environ.get(
     "STRIPE_PUBLISHABLE_KEY", ""
 ) or "pk_live_51UIyagRwCjFIsFzUW89rnPLseuYlxaUMrRIe2bIpPteTHAHefiUbYTrXE9rTDsGGDGrD3c7SofspGpmE4jcRdHEL00vCim5NrT"
-# Precios de la oferta vigente — los mismos del Payment Link hospedado:
-# $1 la primera semana (one-time) + $15.99/semana (recurrente).
+# Precios: el checkout VIVO de /desbloquear-platinum usa SOLO el semanal
+# ($15.99/semana, sin trial) desde el 2026-11-11. El precio de la primera
+# semana ($1, one-time) queda como referencia histórica de suscripciones
+# y del Payment Link viejo; ningún flujo vivo lo cobra ya.
 PLATINUM_PRICE_PRIMERA_SEMANA = "price_1USPJnRwCjFIsFzU4pYcIqnq"
 PLATINUM_PRICE_SEMANAL = "price_1USPJvRwCjFIsFzUH8rwj5K8"
 
@@ -10925,21 +10929,21 @@ def desbloquear_platinum():
                 fb_purchase = "%.2f" % _pago["value"]
                 fb_purchase_eid = "purchase_" + (
                     _pago["invoice"] or request.args.get("session_id") or "")
-    # Oferta ÚNICA (2026-11-07, orden de Alex «quita el mes gratis para
-    # todos»): el signup_offer histórico de la BD ya NO cambia ni los
-    # textos ni el link de esta página. Todo el mundo — cuenta vieja o
-    # nueva, con la marca que traiga — ve la misma oferta: $1 la primera
-    # semana (7 días) y luego $15.99/semana, con el link vigente.
+    # Oferta ÚNICA (2026-11-11, orden de Alex): como todo el mundo
+    # entra con 30 días gratis al registrarse, esta página de pago NO
+    # ofrece semana gratis ni semana de $1 a NADIE — la plantilla ya no
+    # distingue audiencias de pago: todo usuario con sesión ve la
+    # variante directa de $15.99/semana (el anónimo conserva el funnel
+    # del mes gratis). post_mes_gratis queda como flag informativo sin
+    # efecto en textos ni en cobro.
     return render_template(
         "desbloquear.html",
         ya_desbloqueada=platinum_unlocked_for(user),
         past_due=past_due,
         stripe_url=STRIPE_PLATINUM_URL,
         offer_free_month=False,
-        post_mes_gratis=bool(
-            user and (user["signup_offer"] or "") == OFERTA_MES_GRATIS
-            and (past_due or not platinum_unlocked_for(user))),
-        trial_days=PLATINUM_TRIAL_DAYS_LEGACY,
+        post_mes_gratis=bool(user),
+        trial_days=0,
         stripe_pk=STRIPE_PUBLISHABLE_KEY,
         stripe_embed_ok=bool(STRIPE_SECRET_KEY and STRIPE_PUBLISHABLE_KEY),
         checkout_ok=checkout_ok,
@@ -10955,19 +10959,17 @@ def desbloquear_platinum():
 @app.route("/api/desbloquear/checkout-session", methods=["POST"])
 @login_required
 def desbloquear_checkout_session():
-    """Checkout INCRUSTADO de la oferta $1 (espejo WGT, 2026-10-19): crea
+    """Checkout INCRUSTADO de Platinum (espejo WGT, 2026-10-19): crea
     la Checkout Session en modo embedded y devuelve su client_secret; el
     formulario de Stripe se monta DENTRO de /desbloquear-platinum y el
-    miembro paga sin salir del sitio. Cobro: $1 hoy (precio one-time) +
-    suscripción de $15.99/semana con trial — los mismos precios del
-    Payment Link hospedado, que queda como respaldo. La activación la
-    hace el webhook checkout.session.completed de siempre (match por
-    email).
+    miembro paga sin salir del sitio. La activación la hace el webhook
+    checkout.session.completed de siempre (match por email).
 
-    Trial ÚNICO (2026-11-07, orden de Alex): 7 días para TODOS (el
-    primer cobro semanal cae al día 8). La rama de 30 días de la
-    cohorte «$1 + mes gratis» (2026-10-31) quedó eliminada: el
-    signup_offer histórico ya no se consulta para el trial."""
+    $15.99 DIRECTO PA' TODOS (2026-11-11, orden de Alex): la semana de
+    $1 murió en texto y en cobro — toda sesión nueva de esta página
+    nace con SOLO el precio semanal de $15.99, sin precio de $1 y sin
+    trial, tenga la cuenta la marca que tenga. Las suscripciones ya
+    creadas en Stripe NO se tocan."""
     if not STRIPE_SECRET_KEY:
         return jsonify({"error": "stripe not configured"}), 503
     user = current_user()
@@ -10978,29 +10980,10 @@ def desbloquear_checkout_session():
         customer_id = (user["stripe_customer_id"] or "").strip()
     except (KeyError, IndexError, TypeError):
         customer_id = ""
-    _trial_days = PLATINUM_TRIAL_DAYS_LEGACY
-    _offer_code = "legacy"
-    # Graduado del mes gratis (2026-11-09): ya probó su mes completo —
-    # su checkout es SOLO el precio semanal, sin $1 y sin trial.
-    try:
-        _post_mes = (user["signup_offer"] or "") == OFERTA_MES_GRATIS
-    except (KeyError, IndexError, TypeError):
-        _post_mes = False
-    if _post_mes:
-        _trial_days = 0
-        _offer_code = "post_mes_gratis"
-    try:
-        _signup_offer = (user["signup_offer"] or "")
-    except (KeyError, IndexError, TypeError):
-        _signup_offer = ""
-    try:
-        _intro_used = (user["platinum_intro_used_at"] or "")
-    except (KeyError, IndexError, TypeError):
-        _intro_used = ""
-    # (2026-11-07: la rama que daba 30 días a la cohorte del mes gratis
-    # quedó ELIMINADA por orden de Alex — mes gratis para nadie. Toda
-    # sesión nace con el trial legacy de 7 días y offer="legacy", tenga
-    # la cuenta el signup_offer que tenga.)
+    # Sin rama legacy: directo a $15.99/semana para TODOS (2026-11-11).
+    _trial_days = 0
+    _offer_code = "directo_1599"
+    _post_mes = True
     try:
         import stripe
         stripe.api_key = STRIPE_SECRET_KEY
@@ -11010,13 +10993,9 @@ def desbloquear_checkout_session():
             # (en la API más nueva de la cuenta es "embedded_page").
             "ui_mode": "embedded",
             "mode": "subscription",
-            "line_items": (
-                [{"price": PLATINUM_PRICE_SEMANAL, "quantity": 1}]
-                if _post_mes else [
-                    {"price": PLATINUM_PRICE_PRIMERA_SEMANA, "quantity": 1},
-                    {"price": PLATINUM_PRICE_SEMANAL, "quantity": 1},
-                ]
-            ),
+            "line_items": [
+                {"price": PLATINUM_PRICE_SEMANAL, "quantity": 1}
+            ],
             "subscription_data": {
                 "trial_period_days": _trial_days,
                 "metadata": {
@@ -11048,7 +11027,7 @@ def desbloquear_checkout_session():
                 + "?checkout=ok&session_id={CHECKOUT_SESSION_ID}"
             ),
         }
-        if _post_mes:
+        if not _trial_days:
             params["subscription_data"].pop("trial_period_days", None)
         if customer_id:
             params["customer"] = customer_id
