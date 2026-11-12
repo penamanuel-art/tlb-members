@@ -45,9 +45,10 @@
   <p class="shm-eyebrow">SHARP MONEY · LINE MOVEMENT</p>
   <h1 class="shm-title">Where the pros are betting</h1>
   {% set games = board.get('games', []) %}
-  <p class="shm-sub">{% if board.get('updated_at') %}Updated {{ board.updated_at.replace('T', ' ')[:16] }} ET · {% endif %}{{ games|length }} games tracked{% if board.get('signals_today') %} · {{ board.signals_today }} signals today{% endif %}</p>
+  {% set sharp_moves = games | selectattr('sharp_slot') | list %}
+  <p class="shm-sub">{% if board.get('updated_at') %}Updated {{ board.updated_at.replace('T', ' ')[:16] }} ET · {% endif %}{{ games|length }} games tracked{% if sharp_moves %} · {{ sharp_moves|length }} sharp moves today{% endif %}</p>
 
-  {% set confirmados = games | selectattr('signal_confirmed') | list %}
+  {% set confirmados = sharp_moves %}
   {% if confirmados %}
     {% set puntero = confirmados | sort(attribute='pp_gain', reverse=true) | first %}
   {% elif games and (games | max(attribute='pp_gain')).pp_gain > 0 %}
@@ -74,10 +75,10 @@
 
   {% if games %}
     {% for g in games | sort(attribute='pp_gain', reverse=true) %}
-    <article class="shm-card" data-sport="{{ g.sport }}" data-signal="{{ '1' if g.signal_confirmed else '0' }}">
+    <article class="shm-card" data-sport="{{ g.sport }}" data-signal="{{ '1' if g.sharp_slot else '0' }}">
       <div class="shm-card-top">
         <span class="shm-kicker">{{ g.sport }} · MONEYLINE</span>
-        {% if g.alerted %}<span class="shm-badge sig">✓ SIGNAL</span>{% endif %}
+        {% if g.sharp_slot %}<span class="shm-badge sig">✓ SIGNAL</span>{% endif %}
       </div>
       <h3 class="shm-game">{{ g.game }}</h3>
       <p class="shm-kick">{{ g.kickoff_et }} ET</p>
