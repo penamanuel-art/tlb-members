@@ -56,7 +56,7 @@
 </div>
 {% else %}
 <style>
-.upl-wrap{max-width:520px;margin:0 auto;padding:6px 2px 84px;color:#e6edf7}
+.upl-wrap{max-width:520px;margin:0 auto;padding:6px 2px 20px;color:#e6edf7}
 .upl-trusttop{margin:8px 0 0;text-align:center;font-size:11px;line-height:1.55;color:#8b98ad}
 .upl-trusttop b{color:#e6edf7}
 .upl-hero{position:relative;text-align:center;padding:26px 6px 8px}
@@ -380,7 +380,14 @@ button.upl-cta[disabled]{opacity:.65;cursor:wait}
         elements=stripe.elements({clientSecret:clientSecret,appearance:{theme:"stripe"}});
         var pe=elements.create("payment",{
           layout:{type:"tabs",defaultCollapsed:false},
-          wallets:{applePay:"never",googlePay:"never"},
+          // Apple Pay EN AUTO (2026-11-11, orden de Alex por voz ~10:26 PM
+          // ET — revierte su orden de las 9:37 PM de quitarlo): la
+          // pestaña «Apple Pay» sale junto a «Card» como en el formulario
+          // de WGT, en dispositivos Apple con wallet. Los dominios
+          // thesharpteam.bet y www.thesharpteam.bet están registrados en
+          // Stripe con apple_pay ACTIVE (verificado vía API). Google Pay
+          // sigue apagado: la foto de referencia solo trae Card/Apple Pay.
+          wallets:{applePay:"auto",googlePay:"never"},
           fields:{billingDetails:{name:"never",email:"never",phone:"never",
             address:{country:"auto",postalCode:"auto",line1:"never",line2:"never",city:"never",state:"never"}}}
         });
