@@ -36,7 +36,43 @@
   --v2-shadow-md: 0 10px 32px rgba(0, 0, 0, 0.45);
   --v2-shadow-lg: 0 22px 60px rgba(0, 0, 0, 0.55);
   --v2-ease: cubic-bezier(.22, .61, .36, 1);
-  --v2-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --v2-mono: 'Roboto Mono', ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  /* === SISTEMA DE DISEÑO TST · tokens (Auditoría UI/UX 2026-11-12, Fase 0 · Fundación) ===
+     Misma letra de marca (Roboto cuerpo / Unbounded títulos / Roboto Mono números) y
+     mismos colores. Pesos oficiales: 400 · 500 · 700 · 800. Breakpoints del sistema:
+     480 · 768 · 1024 (+1400 XL opcional). --mx: 16px móvil · 24px ≥768 · 32px ≥1024.
+     --sec: 24px móvil · 32px desktop. --w-app: 720px → 1200px (--w-app-wide) a ≥1024.
+     En esta fase los tokens solo se DECLARAN como base documentada pa' las fases
+     siguientes: ninguna medida existente cambia todavía. */
+  --fbody: 'Roboto', sans-serif;
+  --fdisp: 'Unbounded', sans-serif;
+  --fmono: 'Roboto Mono', monospace;
+  --fs-display: 30px; --lh-display: 1.15;
+  --fs-h1: 28px; --lh-h1: 1.2;
+  --fs-h2: 22px; --lh-h2: 1.25;
+  --fs-card: 17px; --lh-card: 1.3;
+  --fs-body: 15px; --lh-body: 1.5;
+  --fs-sub: 13px; --lh-sub: 1.55;
+  --fs-tag: 11px; --lh-tag: 1.35;
+  --fs-btn: 15px; --lh-btn: 1.2;
+  --mx: 16px;
+  --sec: 24px;
+  --pad-card: 16px;
+  --gap: 8px;
+  --gap-lg: 12px;
+  --r-card: 12px;
+  --r-btn: 12px;
+  --r-input: 12px;
+  --r-pill: 999px;
+  --r-sheet: 16px;
+  --btn-h: 46px;
+  --btn-h-sm: 44px;
+  --btn-h-pill: 36px;
+  --w-public: 1200px;
+  --w-app: 720px;
+  --w-app-wide: 1200px;
+  --w-read: 760px;
+  --w-form: 520px;
 
   /* legacy vars (aliases kept for older partials) */
   --card: #06060c;
@@ -56,7 +92,7 @@ html, body { overflow-x: clip; }
 }
 
 body.v2 {
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Inter, sans-serif;
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
   /* Fondo de PÁGINA = el de la app de Wise Guy Team (captura que Alex
      envió el 2026-10-16): base #0C0F16 (gris azulado, se le ve el tono;
      NO el negro cerrado #06060a anterior) + UN brillo azul suave arriba
