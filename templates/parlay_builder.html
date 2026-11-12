@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Parlay Builder — The Sharp Team{% endblock %}
+{% block title %}+EV Parlay Builder — The Sharp Team{% endblock %}
 {% block content %}
 <style>
 .pb-wrap{max-width:640px;margin:0 auto;color:#fff}
@@ -54,14 +54,24 @@
 .pb-copy{width:100%;background:#1c1c28;border:1.5px solid #3a3a4a;color:#e8e8f2;font-weight:800;font-size:15px;border-radius:12px;padding:12px;cursor:pointer;margin-top:12px}
 .pb-copy:active{transform:scale(.98)}
 .pb-note{color:#9a9ab5;font-size:12px;text-align:center;line-height:1.6;margin:14px 0 0}
+.pb-team .fr{display:block;font-size:11px;font-weight:600;color:#9a9ab5;margin-top:3px}
+.pb-leg-fair{font-size:11.5px;margin-top:2px;font-weight:600}
+.pb-leg-fair.pos{color:#2fe6a7}
+.pb-leg-fair.neg{color:#f87171}
+.pb-leg-fair.none{color:#9a9ab5;font-weight:400}
+.pb-ev-title{font-size:12px;font-weight:800;letter-spacing:1.5px;color:#d4af37;margin:16px 0 8px}
+.pb-ev-pill{display:inline-block;font-size:12px;font-weight:800;color:#0d1420;background:linear-gradient(135deg,#2fe6a7,#17b985);border-radius:99px;padding:4px 12px;margin:0 0 10px}
+.pb-ev-pill.hidden{display:none}
+.pb-ev-note{color:#fbbf24;font-size:12px;margin:8px 0 0;line-height:1.5}
+.pb-ticket-ev{text-align:center;color:#9a9ab5;font-size:12.5px;margin-top:10px;line-height:1.5}
 .pb-empty{color:#9a9ab5;font-size:14px;text-align:center;padding:14px 0}
 .pb-stale{color:#fbbf24;font-size:12px;text-align:center;margin:0 0 12px}
 </style>
 
 <div class="pb-wrap">
   <p class="kicker">PLATINUM TOOL</p>
-  <h2>Parlay Builder</h2>
-  <p class="muted">Tap a team to add it as a moneyline leg. Add 2 to 10 legs, set your stake, then generate your slip.</p>
+  <h2>+EV Parlay Builder</h2>
+  <p class="muted">Tap a team to add it as a moneyline leg. Every leg is graded against the fair line (Pinnacle, vig removed) — add 2 to 10 legs, set your stake, and see the true probability and EV of the whole parlay.</p>
   {% if not games %}
   <p class="pb-empty">No games available right now — check back soon.</p>
   {% else %}
@@ -75,12 +85,12 @@
     <div class="pb-game" data-game-id="{{ g.id }}">
       <div class="pb-game-meta">{{ g.game }} · {{ g.kickoff }}</div>
       <div class="pb-teams">
-        <button type="button" class="pb-team" data-game="{{ g.id }}" data-team="{{ g.away }}" data-odds="{{ g.away_odds }}" data-matchup="{{ g.game }}">
-          <span class="nm">{{ g.away }}</span><span class="od">{{ "%+d"|format(g.away_odds) }}</span>
+        <button type="button" class="pb-team" data-game="{{ g.id }}" data-team="{{ g.away }}" data-odds="{{ g.away_odds }}" data-matchup="{{ g.game }}" data-fair-prob="{{ g.away_fair_prob if g.away_fair_prob is not none else '' }}" data-fair-odds="{{ g.away_fair_odds if g.away_fair_odds is not none else '' }}">
+          <span class="nm">{{ g.away }}</span><span class="od">{{ "%+d"|format(g.away_odds) }}</span>{% if g.away_fair_odds is not none %}<span class="fr">Fair {{ "%+d"|format(g.away_fair_odds) }}</span>{% endif %}
         </button>
         <span class="pb-vs">vs</span>
-        <button type="button" class="pb-team" data-game="{{ g.id }}" data-team="{{ g.home }}" data-odds="{{ g.home_odds }}" data-matchup="{{ g.game }}">
-          <span class="nm">{{ g.home }}</span><span class="od">{{ "%+d"|format(g.home_odds) }}</span>
+        <button type="button" class="pb-team" data-game="{{ g.id }}" data-team="{{ g.home }}" data-odds="{{ g.home_odds }}" data-matchup="{{ g.game }}" data-fair-prob="{{ g.home_fair_prob if g.home_fair_prob is not none else '' }}" data-fair-odds="{{ g.home_fair_odds if g.home_fair_odds is not none else '' }}">
+          <span class="nm">{{ g.home }}</span><span class="od">{{ "%+d"|format(g.home_odds) }}</span>{% if g.home_fair_odds is not none %}<span class="fr">Fair {{ "%+d"|format(g.home_fair_odds) }}</span>{% endif %}
         </button>
       </div>
     </div>
@@ -105,6 +115,14 @@
       <div class="pb-stat"><div class="v" id="resPayout">—</div><div class="l">Total payout</div></div>
       <div class="pb-stat"><div class="v" id="resProfit">—</div><div class="l">Profit</div></div>
     </div>
+    <div class="pb-ev-title">AGAINST THE FAIR LINE</div>
+    <div><span id="evBadge" class="pb-ev-pill hidden">+EV PARLAY</span></div>
+    <div class="pb-nums" style="margin-top:0">
+      <div class="pb-stat"><div class="v" id="resTrue">—</div><div class="l" id="lblTrue">True probability</div></div>
+      <div class="pb-stat"><div class="v" id="resFair">—</div><div class="l" id="lblFair">Fair combined odds</div></div>
+      <div class="pb-stat"><div class="v" id="resEv">—</div><div class="l" id="lblEv">Parlay EV</div></div>
+    </div>
+    <p id="evNote" class="pb-ev-note" hidden></p>
     <button id="genBtn" class="pb-gen" type="button" disabled>Generate parlay slip</button>
   </div>
 
@@ -113,6 +131,7 @@
     <p class="tsub">The Sharp Team · generated just now</p>
     <div id="ticketLegs"></div>
     <div class="pb-ticket-total"><span id="ticketMeta">—</span><span class="pay" id="ticketPay">—</span></div>
+    <div id="ticketEv" class="pb-ticket-ev"></div>
     <button id="copyBtn" class="pb-copy" type="button">Copy slip</button>
   </div>
 
@@ -122,7 +141,7 @@
 <script>
 (function(){
   var MAX_LEGS = 10, MIN_LEGS = 2;
-  var legs = []; // {game, team, odds, matchup}
+  var legs = []; // {game, team, odds, matchup, fairProb (%), fairOdds}
   var slipEl = document.getElementById('slip');
   var legsEl = document.getElementById('legs');
   var errEl = document.getElementById('err');
@@ -167,6 +186,16 @@
         '<button type="button" class="pb-rm" data-i="' + i + '">✕</button>';
       row.querySelector('.pb-leg-team').textContent = l.team + ' ML';
       row.querySelector('.pb-leg-game').textContent = l.matchup;
+      var fl = document.createElement('div');
+      if(isFinite(l.fairProb)){
+        var lev = (l.fairProb / 100) * toDecimal(l.odds) - 1;
+        fl.className = 'pb-leg-fair ' + (lev >= 0 ? 'pos' : 'neg');
+        fl.textContent = 'Fair ' + fmtOdds(l.fairOdds) + ' · ' + l.fairProb.toFixed(1) + '% true · EV ' + (lev >= 0 ? '+' : '') + (lev * 100).toFixed(1) + '%';
+      } else {
+        fl.className = 'pb-leg-fair none';
+        fl.textContent = 'No fair line for this game yet';
+      }
+      row.querySelector('.pb-leg-info').appendChild(fl);
       legsEl.appendChild(row);
     });
     legsEl.querySelectorAll('.pb-rm').forEach(function(b){
@@ -179,13 +208,11 @@
   }
   function calc(){
     showErr('');
-    var decs = [], ok = true;
-    legs.forEach(function(l){
-      var d = toDecimal(l.odds);
-      if(!isFinite(d)){ ok = false; } else { decs.push(d); }
-    });
+    var decs = legs.map(function(l){ return toDecimal(l.odds); });
+    var ok = decs.every(function(d){ return isFinite(d); });
     if(!ok || legs.length === 0){
       setNums('—','—','—','—');
+      setEv(decs);
       genBtn.disabled = true;
       return;
     }
@@ -197,8 +224,52 @@
             (100/comb).toFixed(1) + '%',
             isFinite(payout) ? money(payout) : '—',
             isFinite(payout) ? money(payout - stake) : '—');
+    setEv(decs);
     genBtn.disabled = legs.length < MIN_LEGS;
     if(legs.length >= 1 && legs.length < MIN_LEGS) showErr('Add at least ' + MIN_LEGS + ' legs to generate your slip.');
+  }
+  function setEv(decs){
+    var badge = document.getElementById('evBadge');
+    var note = document.getElementById('evNote');
+    var evEl = document.getElementById('resEv');
+    var priced = [], missing = 0;
+    legs.forEach(function(l, i){
+      if(isFinite(l.fairProb)){ priced.push(i); } else { missing++; }
+    });
+    document.getElementById('lblTrue').textContent = 'True probability';
+    document.getElementById('lblFair').textContent = 'Fair combined odds';
+    document.getElementById('lblEv').textContent = 'Parlay EV';
+    if(priced.some(function(i){ return !isFinite(decs[i]); })) priced = [];
+    if(priced.length === 0){
+      document.getElementById('resTrue').textContent = '—';
+      document.getElementById('resFair').textContent = '—';
+      evEl.textContent = '—'; evEl.style.color = '';
+      badge.classList.add('hidden');
+      note.hidden = legs.length === 0;
+      note.textContent = 'No fair line available for these legs yet — EV is never guessed.';
+      return;
+    }
+    var trueProb = 1, combPriced = 1;
+    priced.forEach(function(i){
+      trueProb *= legs[i].fairProb / 100;
+      combPriced *= decs[i];
+    });
+    var ev = trueProb * combPriced - 1;
+    var complete = missing === 0;
+    document.getElementById('resTrue').textContent = (trueProb * 100).toFixed(1) + '%';
+    document.getElementById('resFair').textContent = fmtOdds(toAmerican(1 / trueProb));
+    evEl.textContent = (ev >= 0 ? '+' : '') + (ev * 100).toFixed(1) + '%';
+    evEl.style.color = ev >= 0 ? '#2fe6a7' : '#f87171';
+    badge.classList.toggle('hidden', !(complete && ev > 0));
+    if(complete){
+      note.hidden = true; note.textContent = '';
+    } else {
+      document.getElementById('lblTrue').textContent = 'True probability (partial)';
+      document.getElementById('lblFair').textContent = 'Fair combined odds (partial)';
+      document.getElementById('lblEv').textContent = 'Parlay EV (partial)';
+      note.hidden = false;
+      note.textContent = 'Partial — no fair line on ' + missing + ' of ' + legs.length + ' leg(s). These numbers cover the ' + priced.length + ' priced leg(s) only, so this parlay is not graded +EV.';
+    }
   }
   function setNums(o, p, pay, prof){
     document.getElementById('resOdds').textContent = o;
@@ -215,7 +286,9 @@
         return;
       }
       if(legs.length >= MAX_LEGS){ showErr('Maximum ' + MAX_LEGS + ' legs.'); return; }
-      legs.push({ game: game, team: team, odds: parseFloat(b.dataset.odds), matchup: b.dataset.matchup });
+      var fp = parseFloat(b.dataset.fairProb), fo = parseFloat(b.dataset.fairOdds);
+      legs.push({ game: game, team: team, odds: parseFloat(b.dataset.odds), matchup: b.dataset.matchup,
+                  fairProb: isFinite(fp) ? fp : NaN, fairOdds: isFinite(fo) ? fo : NaN });
       ticketEl.classList.add('hidden');
       render();
     });
@@ -239,6 +312,15 @@
       legs.length + '-leg parlay · ' + document.getElementById('resOdds').textContent;
     document.getElementById('ticketPay').textContent =
       'Stake ' + money(parseFloat(stakeEl.value) || 0) + ' → ' + document.getElementById('resPayout').textContent;
+    var tev = document.getElementById('ticketEv');
+    var miss = legs.filter(function(l){ return !isFinite(l.fairProb); }).length;
+    if(miss === 0){
+      tev.textContent = 'True chance ' + document.getElementById('resTrue').textContent +
+        ' · Fair odds ' + document.getElementById('resFair').textContent +
+        ' · Parlay EV ' + document.getElementById('resEv').textContent;
+    } else {
+      tev.textContent = 'EV not graded — no fair line on ' + miss + ' leg(s)';
+    }
     ticketEl.classList.remove('hidden');
     ticketEl.scrollIntoView({behavior:'smooth', block:'center'});
   });
@@ -247,6 +329,8 @@
     legs.forEach(function(l){ lines.push(l.team + ' ML (' + fmtOdds(l.odds) + ')'); });
     lines.push(document.getElementById('ticketMeta').textContent);
     lines.push(document.getElementById('ticketPay').textContent);
+    var tevTxt = document.getElementById('ticketEv').textContent;
+    if(tevTxt) lines.push(tevTxt);
     var txt = lines.join('\n');
     function done(){ var b = document.getElementById('copyBtn'); b.textContent = 'Copied ✓'; setTimeout(function(){ b.textContent = 'Copy slip'; }, 1500); }
     if(navigator.clipboard && navigator.clipboard.writeText){
