@@ -11004,21 +11004,33 @@ def desbloquear_platinum():
 
 
 def _invoice_payment_intent(inv):
-    """PaymentIntent (dict con client_secret) de una factura de
-    suscripción. En la API basil que fija el SDK, la factura ya NO trae
-    payment_intent directo: el intent vive en
-    inv.payments.data[i].payment.payment_intent (id u objeto). En APIs
-    viejas era inv.payment_intent. Devuelve {} si no se encuentra."""
+    """PaymentIntent (dict con client_secret y status) de la primera
+    factura de una suscripción, en la API basil (2025-08-27) que fija el
+    SDK stripe 12.5.0. AHÍ ESTUVO EL BUG DEL PRIMER INTENTO (2026-11-11
+    21:42): la factura ya NO trae `payment_intent` — pedir
+    latest_invoice.payment_intent devolvía None, el endpoint contestaba
+    502 sin client_secret y el formulario NUNCA montaba (la página caía
+    al botón hospedado). En basil el intent vive en
+    inv.payments.data[i].payment.payment_intent. Esta función camina
+    esa ruta y, si el intent llega como id, lo baja completo. Se le
+    puede pasar la factura ya expandida o solo su id (la baja fresca
+    con la expansión anidada completa). Devuelve {} si no hay intent
+    utilizable."""
     if not inv:
         return {}
     try:
         import stripe
         stripe.api_key = STRIPE_SECRET_KEY
+        if isinstance(inv, str):
+            inv = stripe.Invoice.retrieve(
+                inv, expand=["payments.data.payment.payment_intent"])
         pi = inv.get("payment_intent")
         if isinstance(pi, dict) and pi.get("client_secret"):
             return pi
         if isinstance(pi, str) and pi:
-            return stripe.PaymentIntent.retrieve(pi) or {}
+            got = stripe.PaymentIntent.retrieve(pi)
+            if got:
+                return got
         pays = ((inv.get("payments") or {}).get("data")) or []
         for p in pays:
             pi2 = (p.get("payment") or {}).get("payment_intent")
@@ -11026,9 +11038,11 @@ def _invoice_payment_intent(inv):
                 return pi2
             if isinstance(pi2, str) and pi2:
                 try:
-                    return stripe.PaymentIntent.retrieve(pi2) or {}
+                    got = stripe.PaymentIntent.retrieve(pi2)
                 except Exception:
                     continue
+                if got:
+                    return got
     except Exception:
         pass
     return {}
@@ -11046,8 +11060,8 @@ def _desbloquear_subscription_intent(user, email, customer_id):
     incomplete viva de ese cliente con el precio semanal se REUTILIZA
     (recargar la página no siembra suscripciones basura). La activación
     llega por el webhook invoice.paid de siempre (match por el
-    customer_email del cliente y la metadata de la suscripción): el
-    estado final es el MISMO que con el flujo de Checkout."""
+    customer_email de la factura): el estado final es el MISMO que con
+    el flujo de Checkout."""
     try:
         import stripe
         stripe.api_key = STRIPE_SECRET_KEY
@@ -11081,8 +11095,7 @@ def _desbloquear_subscription_intent(user, email, customer_id):
                     inv_id = inv_id.get("id")
                 if not inv_id:
                     continue
-                inv = stripe.Invoice.retrieve(inv_id, expand=["payments"])
-                pi = _invoice_payment_intent(inv)
+                pi = _invoice_payment_intent(inv_id)
                 if (pi.get("status") or "") in (
                         "requires_payment_method", "requires_confirmation",
                         "requires_action"):
@@ -11112,14 +11125,16 @@ def _desbloquear_subscription_intent(user, email, customer_id):
         )
         inv = sub.get("latest_invoice") or {}
         inv_id = inv.get("id") if isinstance(inv, dict) else inv
-        if inv_id:
-            inv = stripe.Invoice.retrieve(inv_id, expand=["payments"])
-        pi = _invoice_payment_intent(inv)
+        pi = _invoice_payment_intent(inv_id) if inv_id else {}
         secret = pi.get("client_secret") or ""
         if not secret:
+            print("[desbloquear-pe] SIN client_secret: sub=%s inv=%s pi=%s"
+                  % (sub.get("id"), inv_id, pi.get("id")), flush=True)
             return jsonify({"error": "could not create payment intent"}), 502
         return jsonify({"clientSecret": secret, "flow": "payment_element"})
-    except Exception:
+    except Exception as _e:
+        print("[desbloquear-pe] error creando suscripcion: %r" % (_e,),
+              flush=True)
         return jsonify({"error": "could not create subscription"}), 502
 
 
