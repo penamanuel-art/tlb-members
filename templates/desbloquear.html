@@ -433,6 +433,91 @@ button.upl-cta[disabled]{opacity:.65;cursor:wait}
   </script>
   {% endif %}
 
+  {% if not anonimo %}
+  {# === Secciones bajo la tarjeta — variante de pago (2026-11-11, orden de Alex con las 5 fotos completas de la página de WGT: «Crea eso, organízalo» / «con mi información y número»): la página NO termina en el formulario. Tras la tarjeta van, en este orden: tickets ganadores reales (mismo mecanismo board.tickets del ledger calificado que la variante anónima), beneficios, cómo funciona, lo que NO hacemos (en caja, como la foto) y preguntas frecuentes, todo con textos y datos NUESTROS. La sección «What members say»/testimonios de la página de ellos NO se crea: no hay testimonios reales del programa y no se inventa ninguno. === #}
+  <style>
+  .upl-dontbox{margin:12px 0 0;background:linear-gradient(180deg,#171a21,#12151c);border:1px solid #33415555;border-radius:14px;padding:4px 14px}
+  .upl-dontbox .upl-dont{margin:0}
+  .upl-dontbox .upl-dont li{border-bottom:1px solid #33415533;padding:9px 0}
+  .upl-dontbox .upl-dont li:last-child{border-bottom:0}
+  </style>
+  {% if board.tickets %}
+  <div class="upl-sec">
+    <h2>Recent winning tickets</h2>
+    <p class="lead">Pulled live from the graded board. Every result, win and loss, is posted.</p>
+    <div class="upl-tix">
+      {% for tk in board.tickets %}
+      <figure>
+        <div class="ph"><img src="{{ url_for('static', filename=tk.img) }}" alt="Winning ticket — {{ tk.pick }}" loading="lazy"><span class="upl-won">WON</span></div>
+        <figcaption>{{ tk.pick }}<br>{{ tk.fecha }} · <b>{{ tk.profit }}</b></figcaption>
+      </figure>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="upl-sec">
+    <h2>Everything inside Platinum</h2>
+    <ul class="upl-bens">
+      <li><span class="ck">✓</span>Every official Platinum play, posted before game time</li>
+      <li><span class="ck">✓</span>The verified ticket on every play — the real slip, always</li>
+      <li><span class="ck">✓</span>The full card: Platinum plays + the Gold plays</li>
+      <li><span class="ck">✓</span>+EV Board — best price across 12 books against the fair line</li>
+      <li><span class="ck">✓</span>Player Props board — included in Platinum</li>
+      <li><span class="ck">✓</span>AI Assistant — check any price and review your bets</li>
+      <li><span class="ck">✓</span>Line Moves and Sharp Money boards</li>
+      <li><span class="ck">✓</span>Private Telegram channel for Platinum members</li>
+      <li><span class="ck">✓</span>The full record — every play counted, win or loss</li>
+    </ul>
+  </div>
+
+  <div class="upl-sec">
+    <h2>How this works</h2>
+    <ul class="upl-how">
+      <li><span class="n">1</span><span><b>Unlock Platinum.</b> Your access turns on the moment your payment clears — no waiting, no setup call.</span></li>
+      <li><span class="n">2</span><span><b>Plays before game time.</b> Every official play lands on your Dashboard before the game starts, each one with its real ticket.</span></li>
+      <li><span class="n">3</span><span><b>Every sport, all year.</b> Plays across the NFL, NBA, MLB, NHL and college sports — whatever is in season. Year-round action while you're subscribed.</span></li>
+    </ul>
+  </div>
+
+  <div class="upl-sec">
+    <h2>What we don't do</h2>
+    <div class="upl-dontbox">
+      <ul class="upl-dont">
+        <li><span class="x">✗</span><span><b>We don't promise wins.</b> Nobody can guarantee a win — anyone who does is lying. We play for long-term edge, and our public record shows exactly how it's going.</span></li>
+        <li><span class="x">✗</span><span><b>We don't hide losses.</b> Every result, win and loss, is posted and graded against the official box score — with the real ticket attached.</span></li>
+        <li><span class="x">✗</span><span><b>We don't DM picks.</b> No play is ever sent by private message. Every play lives on your Dashboard, posted before game time; alerts go out by Telegram and email so you never miss one.</span></li>
+        <li><span class="x">✗</span><span><b>We don't trap you.</b> Cancel in two clicks from your account, anytime. No phone calls, no retention push.</span></li>
+        <li><span class="ok">✓</span><span><b>What we do:</b> we bet our own real money on every play — and show you the ticket. That's it.</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="upl-sec">
+    <h2>Common questions</h2>
+    <div class="upl-faq">
+      <details>
+        <summary>What makes Platinum different from the free Gold plays?</summary>
+        <p>The Gold plays are free for every member, right on your Dashboard. Platinum is the full card: every official Platinum play — our highest-conviction plays of the day — on top of the Gold plays, each with its verified real ticket, plus every board and tool: the +EV Board, Player Props, AI Assistant, Line Moves, Sharp Money and the private Telegram channel.</p>
+      </details>
+      <details>
+        <summary>How do I cancel?</summary>
+        <p>From your account page, in two clicks — no phone calls, no retention team. Cancelling stops future charges; the week you've already paid stays active until its end.</p>
+      </details>
+      <details>
+        <summary>How are Platinum plays delivered?</summary>
+        <p>On your Dashboard, the same day and always before game time, each one with its real ticket. They're also in the plays email, and Platinum members get the private Telegram channel.</p>
+      </details>
+      <details>
+        <summary>What do I pay with?</summary>
+        <p>A card, processed securely by Stripe — we never see or store your card number. Platinum is $15.99/week, charged directly: there's no trial week, because every new account already gets its first month of Platinum free at signup.</p>
+      </details>
+    </div>
+  </div>
+
+  <p class="upl-legal">Recurring $15.99/week billed weekly until cancelled. Cancel anytime from your account.</p>
+  {% endif %}
+
   {% if anonimo %}
   {% if board.tickets %}
   <div class="upl-sec">
