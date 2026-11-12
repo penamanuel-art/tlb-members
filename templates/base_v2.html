@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{% block title %}The Sharp Team{% endblock %}</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='css/style-v2.css') }}?v={{ asset_v }}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800&family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@500;600&display=swap" rel="stylesheet">
 <link rel="manifest" href="/manifest.json">
 <link rel="apple-touch-icon" href="/static/img/apple-touch-icon-v2.png">
 <meta name="mobile-web-app-capable" content="yes">
@@ -304,7 +307,7 @@ function googleTranslateElementInit(){new google.translate.TranslateElement({pag
       box.id = 'tstSubNotif';
       box.innerHTML =
         '<style>' +
-        '.tst-sub-notif{position:fixed;bottom:18px;left:16px;right:16px;z-index:3000;background:#111827;border:1px solid #22c55e;border-radius:16px;padding:16px;box-shadow:0 8px 30px rgba(0,0,0,.65);animation:tstSubUp .45s ease-out;max-width:420px;margin:0 auto;font-family:-apple-system,Helvetica,Arial,sans-serif;}' +
+        '.tst-sub-notif{position:fixed;bottom:18px;left:16px;right:16px;z-index:3000;background:#111827;border:1px solid #22c55e;border-radius:16px;padding:16px;box-shadow:0 8px 30px rgba(0,0,0,.65);animation:tstSubUp .45s ease-out;max-width:420px;margin:0 auto;font-family:'Roboto',-apple-system,Helvetica,Arial,sans-serif;}' +
         '@keyframes tstSubUp{from{transform:translateY(120%);opacity:0}to{transform:translateY(0);opacity:1}}' +
         '.tst-sub-notif .tst-sub-head{display:flex;align-items:center;gap:10px;margin-bottom:10px;}' +
         '.tst-sub-notif .tst-sub-ico{font-size:26px;}' +
@@ -358,7 +361,7 @@ function googleTranslateElementInit(){new google.translate.TranslateElement({pag
         '.tst-result-toast{position:fixed;top:70px;left:16px;right:16px;z-index:3000;max-width:420px;margin:0 auto;' +
         'background:' + (win ? '#052e16' : '#2a0a0a') + ';border:1px solid ' + (win ? '#22c55e' : '#ef4444') + ';' +
         'border-radius:16px;padding:14px 16px;box-shadow:0 8px 30px rgba(0,0,0,.65);' +
-        'font-family:-apple-system,Helvetica,Arial,sans-serif;animation:tstToastIn .4s ease-out;}' +
+        'font-family:'Roboto',-apple-system,Helvetica,Arial,sans-serif;animation:tstToastIn .4s ease-out;}' +
         '@keyframes tstToastIn{from{transform:translateY(-120%);opacity:0}to{transform:translateY(0);opacity:1}}' +
         '.tst-result-toast.out{transition:opacity .5s,transform .5s;opacity:0;transform:translateY(-120%);}' +
         '.tst-result-toast .tst-rt-row{display:flex;align-items:center;gap:10px;}' +
@@ -472,7 +475,7 @@ function googleTranslateElementInit(){new google.translate.TranslateElement({pag
    con botón Update cuando el deploy cambia. SOLO la cuenta de Alex por
    ahora; cuando él lo apruebe se abre a todos quitando esta compuerta.
    La versión de la página (asset_v) se compara contra /api/version. #}
-<div id="tst-nv" style="display:none;position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:99990;max-width:520px;margin:0 auto;background:linear-gradient(180deg,#26303f,#1a222e);border:1px solid rgba(94,234,160,.5);border-radius:13px;padding:8px 10px;box-shadow:0 10px 26px rgba(0,0,0,.55);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;align-items:center;gap:9px;box-sizing:border-box">
+<div id="tst-nv" style="display:none;position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:99990;max-width:520px;margin:0 auto;background:linear-gradient(180deg,#26303f,#1a222e);border:1px solid rgba(94,234,160,.5);border-radius:13px;padding:8px 10px;box-shadow:0 10px 26px rgba(0,0,0,.55);font-family:'Roboto',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;align-items:center;gap:9px;box-sizing:border-box">
   <span style="width:26px;height:26px;border-radius:8px;background:rgba(94,234,160,.14);display:flex;align-items:center;justify-content:center;flex:none">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5eeaa0" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>
   </span>
