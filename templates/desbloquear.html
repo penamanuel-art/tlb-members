@@ -37,7 +37,7 @@
 </div>
 {% else %}
 <style>
-.upl-wrap{max-width:520px;margin:0 auto;padding:6px 2px 150px;color:#e6edf7}
+.upl-wrap{max-width:520px;margin:0 auto;padding:6px 2px 88px;color:#e6edf7}
 .upl-hero{position:relative;text-align:center;padding:26px 6px 8px}
 .upl-hero::before{content:"";position:absolute;left:0;right:0;top:-6px;height:250px;background:radial-gradient(ellipse 72% 92% at 50% 0%,rgba(232,199,102,.10),rgba(232,199,102,0) 70%);pointer-events:none}
 .upl-avatar{position:relative;display:block;margin:4px auto 0;width:158px;height:158px;border-radius:50%;object-fit:cover;border:3px solid #39415a;box-shadow:0 0 0 7px rgba(148,163,184,.07),0 16px 38px rgba(0,0,0,.5)}
@@ -126,11 +126,12 @@
 .upl-how li:last-child{border-bottom:0}
 .upl-how .n{flex:0 0 26px;width:26px;height:26px;border-radius:50%;background:#e8c766;color:#161d29;font-weight:900;font-size:13.5px;display:flex;align-items:center;justify-content:center}
 .upl-how b{color:#fff}
-.upl-sticky{position:fixed;left:0;right:0;bottom:0;height:auto;z-index:1100;background:#0B0D12;border-top:1px solid #e8c76666;box-shadow:0 -6px 24px rgba(0,0,0,.45)}
-.upl-sticky-in{max-width:520px;margin:0 auto;display:flex;flex-direction:column;align-items:stretch;gap:6px;padding:8px 12px calc(10px + env(safe-area-inset-bottom))}
-.upl-sticky-t{font-size:12px;line-height:1.25;color:#c3cbdd;text-align:center;white-space:nowrap}
-.upl-sticky-t b{color:#fff;font-size:12.5px}
-.upl-sticky-btn{background:#e8c766;color:#1a1405 !important;font-size:15px;font-weight:800;white-space:nowrap;padding:11px 16px;border-radius:10px;text-decoration:none;text-align:center}
+.upl-sticky{position:fixed;left:0;right:0;bottom:calc(82px + env(safe-area-inset-bottom));height:auto;z-index:80;background:rgba(13,17,24,.98);border-top:1px solid #e8c76666;box-shadow:0 -6px 24px rgba(0,0,0,.45)}
+body:not(.has-bottomnav) .upl-sticky{bottom:0}
+.upl-sticky-in{max-width:520px;margin:0 auto;display:flex;flex-direction:column;align-items:stretch;gap:5px;padding:7px 12px}
+.upl-sticky-t{font-size:11.5px;line-height:1.25;color:#c3cbdd;text-align:center;white-space:nowrap}
+.upl-sticky-t b{color:#fff;font-size:12px}
+.upl-sticky-btn{background:#e8c766;color:#1a1405 !important;font-size:15px;font-weight:800;white-space:nowrap;padding:11px 18px;line-height:1.2;border-radius:10px;text-decoration:none;text-align:center}
 </style>
 
 <div class="upl-wrap">
@@ -445,6 +446,27 @@
   {% else %}
   <div class="upl-sticky"><div class="upl-sticky-in"><span class="upl-sticky-t"><b>$1 first week</b> · then $15.99/week · cancel anytime</span><a class="upl-sticky-btn" href="#upl-buy">Unlock Platinum →</a></div></div>
   {% endif %}
+  <script>
+  /* Barra .upl-sticky PEGADA a la navegación inferior (2026-11-11, orden
+     de Alex con captura: «ponla más finita y más pa' abajo, pegada pegada
+     pegada abajo en los botones»): se MIDE la altura real de .v2-bottomnav
+     en el teléfono y la barra se sienta justo encima, sin hueco — mismo
+     patrón «medir, no asumir» del fit() de base_v2. Sin navegación
+     (variante anónima) la regla CSS bottom:0 manda y no se toca nada. */
+  (function(){
+    function peg(){
+      var nav=document.querySelector('.v2-bottomnav'), st=document.querySelector('.upl-sticky');
+      if(!nav||!st||!document.body.classList.contains('has-bottomnav')){ return; }
+      var r=nav.getBoundingClientRect();
+      var nh=(window.innerHeight-r.top);
+      if(nh>0){ st.style.bottom=nh+'px'; }
+    }
+    window.addEventListener('load',peg);
+    window.addEventListener('resize',peg);
+    if(document.readyState!=='loading'){ peg(); }
+    setTimeout(peg,300); setTimeout(peg,1200);
+  })();
+  </script>
 </div>
 
 {# Rediseño 2026-11-11 (orden de Alex): densidad y estructura de la página «Owner's Selection» de WGT aplicada a ESTA página interna — logo oficial sharp-team-header.jpg, titular con el precio semanal, chips de prueba (incl. la única cifra pública aprobada «20-10 in the last 30»), tarjeta PLATINUM · WEEKLY PLAN, caja de disclosure de cobro recurrente y checkout incrustado INTACTO. Sin testimonios (no hay aprobados en el repo) y sin récord de carrera (regla de las 500 jugadas).
@@ -468,6 +490,13 @@
    dinámico desde board con el récord G-P debajo — decisión expresa de
    Alex, excepción interna a la regla de las 500 jugadas) y línea check
    «cancel anytime, no hassle». La fila de chips 2×2 y la tira «20-10 in
-   the last 30» salieron del hero. #}
+   the last 30» salieron del hero.
+   Barra sticky afinada y pegada (2026-11-11, orden de Alex con captura:
+   la barra se veía «muy arriba y muy grande»): .upl-sticky-in sin la
+   franja muerta inferior (padding-bottom calc(16px+env) → 7px), botón
+   13px → 11px de padding vertical (~40px táctil), texto de precio
+   12.5px → 11.5px, y script propio que mide .v2-bottomnav y sienta la
+   barra justo encima sin hueco. Solo geometría: textos, precios,
+   audiencia y checkout intactos. #}
 {% endif %}
 {% endblock %}
