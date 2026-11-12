@@ -6,7 +6,6 @@
 {% set evboard_href = '/ev-board' if es_platinum else desbloquear_url %}
 {% set oddsboard_href = '/odds-board' if es_platinum else desbloquear_url %}
 {% set parlay_href = '/parlay-builder' if es_platinum else desbloquear_url %}
-{% set evresults_href = '/ev-board/results' if es_platinum else desbloquear_url %}
 {% set linemoves_href = '/tools/line-moves' if es_platinum else desbloquear_url %}
 {% set props_href = '/props' if es_platinum else desbloquear_url %}
 <style>
@@ -51,7 +50,7 @@ body.v2{background-color:#161d29;background-image:radial-gradient(560px 300px at
 
 <div class="at-wrap">
   <h1 class="at-title">All tools</h1>
-  <p class="at-sub">11 tools and 9 calculators. Tap one to open it.</p>
+  <p class="at-sub">10 tools and 9 calculators. Tap one to open it.</p>
 
   <div class="at-search">
     <span style="color:#8b98ad;font-size:13px">&#128269;</span>
@@ -121,17 +120,11 @@ body.v2{background-color:#161d29;background-image:radial-gradient(560px 300px at
   </div>
 
   <div class="at-section">
-    <p class="at-sec">RESEARCH <span class="at-count">2</span></p>
+    <p class="at-sec">RESEARCH <span class="at-count">1</span></p>
     <div class="at-box">
       <a class="at-row at-item" href="{{ parlay_href }}" data-search="parlay builder legs slip combined" data-recent='{"id":"parlay","label":"Parlay Builder","href":"{{ parlay_href }}"}'>
         <span class="at-ico"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#2fe6a7" stroke-width="2"><path d="M12 2 3 7l9 5 9-5-9-5z"/><path d="M3 12l9 5 9-5"/><path d="M3 17l9 5 9-5"/></svg></span>
         <span class="at-info"><b>Parlay Builder</b><span>Parlays built from +EV legs</span></span>
-        <span class="at-plat">&#128142; PLATINUM</span>
-        <span class="at-chev">›</span>
-      </a>
-      <a class="at-row at-item" href="{{ evresults_href }}" data-search="ev board results graded edges record profit" data-recent='{"id":"evresults","label":"EV Board Results","href":"{{ evresults_href }}"}'>
-        <span class="at-ico"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#2fe6a7" stroke-width="2"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg></span>
-        <span class="at-info"><b>EV Board Results</b><span>Board edges, graded</span></span>
         <span class="at-plat">&#128142; PLATINUM</span>
         <span class="at-chev">›</span>
       </a>
@@ -202,7 +195,7 @@ body.v2{background-color:#161d29;background-image:radial-gradient(560px 300px at
     });
   }
   var row = document.getElementById('atRecentRow');
-  var stored = loadRecents();
+  var stored = (loadRecents() || []).filter(function(it){ return it && it.id !== 'evresults'; });
   if(row && stored && stored.length){
     row.innerHTML = '';
     stored.slice(0, 6).forEach(function(it){
