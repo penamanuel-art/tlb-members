@@ -691,7 +691,8 @@
        Reemplaza la lista numerada de la mañana del 2026-11-12, que Alex rechazó. -->
   {% if record_por_liga %}
   <section style="margin:0 0 22px;">
-    <h2 style="margin:0 0 10px;font-size:18.5px;font-weight:400;">Record by league</h2>
+    <h2 style="margin:0 0 4px;font-size:21px;font-weight:600;">Record by league</h2>
+    <p style="margin:0 0 12px;font-size:13px;font-weight:300;color:#A3AAB6;">Every official play counts — wins and losses, by league.</p>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
       {% for lg in ['MLB','NFL','NCAAF','NHL','NBA'] %}
       {% for r in record_por_liga if r.liga == lg %}
