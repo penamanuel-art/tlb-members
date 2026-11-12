@@ -8,9 +8,12 @@
 /* Bienvenida (2026-11-11): rediseño espejo de la página post-registro de WGT
    pedida por Alex — misma estructura (píldora, titular, tarjeta principal,
    pasos 1–4), con NUESTRA marca, textos y oferta real (Platinum gratis
-   30 días sin tarjeta; al vencer, $15.99/semana). Solo presentación:
-   mismas variables, mismos formularios y mismos endpoints.
-   Tipografía: la de todo el sitio — Roboto cuerpo, Unbounded títulos. */
+   30 días sin tarjeta; al vencer, $15.99/semana).
+   Cambio del mismo día: el formulario de setup ya NO va incrustado —
+   tras el hero va solo la tarjeta CTA a /setup (página de pasos espejo
+   del /welcome de WGT); el formulario vive allá y sigue posteando a
+   /cuenta/completar. Tipografía: la de todo el sitio — Roboto cuerpo,
+   Unbounded títulos. */
 .bv{font-family:'Roboto',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased;}
 .bv h1,.bv h2,.bv h3,.bv h4{font-family:'Unbounded',sans-serif;}
 .bv button,.bv input{font-family:inherit;}
@@ -60,43 +63,21 @@
   <p class="bv-sub">Your account is ready. Here's exactly where to go and what to expect in your first days. <strong>It takes about two minutes to get the most out of it.</strong></p>
 
   {% if setup and setup.falta %}
-  {# Onboarding dentro de la cuenta (2026-11-07, espejo del /welcome de WGT): quien entró con el registro de un solo campo completa aquí su contraseña, nombre y teléfono, y ve el estado de su confirmación. #}
-  <div style="background:rgba(232,199,102,.07);border:1.5px solid rgba(232,199,102,.5);border-radius:16px;padding:22px;margin:18px 0 6px;">
-    <h3 style="margin-top:0;">Finish setting up your account</h3>
-    <p class="muted" style="line-height:1.55;margin-top:8px;">You're in — this takes 10 seconds and keeps your access safe.</p>
-    <ul style="list-style:none;padding:0;margin:14px 0;">
-      <li style="padding:6px 0;">{% if setup.verificado %}<span style="color:#2ee6a8;font-weight:800;">✓</span> Email confirmed{% else %}<span style="color:#e8c766;font-weight:800;">○</span> Confirm your email — we sent the link to <strong>{{ setup.email }}</strong>{% endif %}</li>
-      <li style="padding:6px 0;">{% if setup.propia %}<span style="color:#2ee6a8;font-weight:800;">✓</span> Password set{% else %}<span style="color:#e8c766;font-weight:800;">○</span> Set your password{% endif %}</li>
-      <li style="padding:6px 0;">{% if not setup.nombre_prov %}<span style="color:#2ee6a8;font-weight:800;">✓</span> Name saved{% else %}<span style="color:#e8c766;font-weight:800;">○</span> Add your name{% endif %}</li>
-      <li style="padding:6px 0;">{% if setup.telefono %}<span style="color:#2ee6a8;font-weight:800;">✓</span> Phone saved{% else %}<span style="color:#e8c766;font-weight:800;">○</span> Add your phone (for text alerts){% endif %}</li>
-    </ul>
-    <form method="post" action="{{ url_for('cuenta_completar') }}">
-      <div style="margin-top:14px;">
-        <label for="s-nombre" style="display:block;font-weight:700;font-size:14px;">Your name</label>
-        <input id="s-nombre" type="text" name="nombre" autocomplete="name" placeholder="Your name" value="{{ '' if setup.nombre_prov else nombre }}" style="width:100%;margin-top:8px;background:#05081a;border:1.5px solid rgba(232,199,102,.35);border-radius:12px;padding:13px;color:#eef1fb;font-size:16px;">
+  {# Setup en página propia (2026-11-11): la tarjeta incrustada con el
+     formulario salió de /bienvenida — aquí solo va el CTA a /setup,
+     visible solo si a la cuenta le falta algo (el mismo dict setup de
+     siempre: sin verificar, sin contraseña propia, nombre provisional
+     o sin teléfono). El formulario vive en templates/setup.html y
+     sigue posteando a /cuenta/completar. #}
+  <div class="bv-card" style="border-color:rgba(232,199,102,.55);background:rgba(232,199,102,.05);">
+    <div class="bv-card-head">
+      <span class="bv-ico" style="background:#e8c766;color:#171106;">✓</span>
+      <div>
+        <h3>Finish setting up your account</h3>
+        <p>You're in — this takes 10 seconds and keeps your access safe: set your password, add your name and phone, and tell us where you bet.</p>
       </div>
-      <div style="margin-top:16px;">
-        <label for="s-phone" style="display:block;font-weight:700;font-size:14px;">Your phone number</label>
-        <input id="s-phone" type="tel" name="phone" autocomplete="tel" placeholder="(555) 123-4567" value="{{ setup.telefono }}" style="width:100%;margin-top:8px;background:#05081a;border:1.5px solid rgba(232,199,102,.35);border-radius:12px;padding:13px;color:#eef1fb;font-size:16px;">
-        <label for="s-sms" style="display:flex;gap:8px;align-items:center;margin-top:11px;font-size:.85rem;color:#a8b3cf;cursor:pointer;"><input id="s-sms" type="checkbox" name="sms_optin" value="1" style="width:17px;height:17px;accent-color:#e8c766;"> Text me the plays when they go live</label>
-      </div>
-      {% if not setup.propia %}
-      <div style="margin-top:16px;">
-        <label for="s-password" style="display:block;font-weight:700;font-size:14px;">Set your password</label>
-        <input id="s-password" type="password" name="password" minlength="6" autocomplete="new-password" placeholder="Minimum 6 characters" style="width:100%;margin-top:8px;background:#05081a;border:1.5px solid rgba(232,199,102,.35);border-radius:12px;padding:13px;color:#eef1fb;font-size:16px;">
-        <button type="button" id="s-pw-toggle" onclick="var p=document.getElementById('s-password');var show=p.type==='password';p.type=show?'text':'password';this.textContent=show?'Hide password':'Show password';" style="background:none;border:none;color:#e8c766;font-size:13px;font-weight:700;cursor:pointer;padding:8px 2px 0;">Show password</button>
-      </div>
-      {% endif %}
-      <button class="btn btn-primary btn-block" type="submit" style="margin-top:20px;">Save my setup →</button>
-    </form>
-    {% if not setup.verificado %}
-    <form method="post" action="{{ url_for('reenviar_activacion') }}" style="margin-top:14px;">
-      <input type="hidden" name="email" value="{{ setup.email }}">
-      <input type="hidden" name="lang" value="en">
-      <button type="submit" style="display:block;width:100%;text-align:center;background:transparent;border:1.5px solid rgba(232,199,102,.45);color:#e8c766;border-radius:12px;padding:12px;font-size:15px;font-weight:700;cursor:pointer;">Resend my confirmation email</button>
-    </form>
-    {% endif %}
-    <p style="text-align:center;margin-top:16px;"><a href="{{ url_for('home') }}" style="color:#9aa7c7;">Skip for now →</a></p>
+    </div>
+    <a class="btn btn-primary btn-block" href="{{ url_for('setup_page') }}" style="margin-top:16px;">Set up my account →</a>
   </div>
   {% endif %}
 
