@@ -452,6 +452,21 @@
     <span class="tst-livetxt"><span class="tst-livetitle">Live scores &amp; games</span><span class="tst-livesub">Every price, the fair line and the edge, for every game.</span></span>
     <span class="tst-livearr">›</span>
   </a>
+
+  <div class="risk">
+    <div class="shield">⬢</div>
+    <div class="left">
+      <div class="label">YOUR RISK TODAY</div>
+      {% if risk_hoy %}
+      <b>${{ '%.2f'|format(risk_hoy.total) }} at risk today</b>
+      <span>• {{ risk_hoy.pct }}% of your bankroll <span style="white-space:nowrap">• {{ risk_hoy.n }} {% if risk_hoy.n == 1 %}play{% else %}plays{% endif %}</span></span>
+      {% else %}
+      <b>— at risk today</b>
+      <span>• —% of your bankroll <span style="white-space:nowrap">• — plays</span></span>
+      {% endif %}
+    </div>
+    <div class="right">Discipline builds long‑term profits. ↗</div>
+  </div>
   {% if not plays %}
   <div class="tst-emptycard">
     <span class="tst-emptytitle">Today's plays</span>
@@ -459,7 +474,7 @@
   </div>
   {% endif %}
 
-  {# 2026-11-03: «Your plays» vive AQUI — justo despues de Live scores y antes de Find Your Edge (orden de Alex). Antes estaba despues de YOUR RISK TODAY. Sin cambios de ids/clases/JS: todo se busca por selector. #}
+  {# Orden de Alex: Live scores → YOUR RISK TODAY (movida aqui el 2026-11-12, justo debajo de Live scores) → «Your plays» → Find Your Edge. Sin cambios de ids/clases/JS: todo se busca por selector. #}
   {% if plays %}<div class="tst-playshead"><h2>Your plays</h2><button class="tst-refresh" type="button" style="margin-left:auto" onclick="location.reload()">↻ Refresh</button>{% set hay_gratis = plays|selectattr('nivel','equalto','FREE')|list|length > 0 %}{% set hay_gold = plays|selectattr('nivel','equalto','GOLD')|list|length > 0 %}{% if miembro_platinum or hay_gratis or hay_gold %}<div class="tst-playslevels">{% if miembro_platinum %}{% if hay_gratis %}<span class="tst-playslevel">Free Picks</span>{% endif %}{% if hay_gold %}<span class="tst-playslevel">Gold</span>{% endif %}<span class="tst-playslevel">Platinum</span>{% else %}{% if hay_gratis %}<span class="tst-playslevel">Free Picks</span>{% endif %}{% if hay_gold %}<span class="tst-playslevel">Gold</span>{% endif %}{% endif %}</div>{% endif %}</div><div class="tst-officials"><span class="tst-officials-pill">OFFICIALS</span><span class="tst-officials-n">{% if miembro_platinum %}{{ plays|length }} {% if plays|length == 1 %}play{% else %}plays{% endif %}{% else %}{{ (plays|selectattr('nivel','equalto','FREE')|list|length) + (plays|selectattr('nivel','equalto','GOLD')|list|length) }} {% if ((plays|selectattr('nivel','equalto','FREE')|list|length) + (plays|selectattr('nivel','equalto','GOLD')|list|length)) == 1 %}play{% else %}plays{% endif %}{% endif %}</span></div>{% endif %}
   {% set tracked_ids = tracked_ids|default([]) %}
   {% set frees = plays|selectattr('nivel','equalto','FREE')|list %}
@@ -601,23 +616,6 @@
     <a class="edge-pill" href="{{ url_for('tools_line_moves') if miembro_platinum else url_for('desbloquear_platinum') }}"><span class="edge-chip"><svg viewBox="0 0 24 24"><path d="M4 19.5 9.4 13l3.4 3.4L19.6 8M14.8 8h4.8v4.8"/></svg></span><span class="edge-label">Line Moves</span></a>
   </div>
   </section>
-
-  <div class="risk">
-    <div class="shield">⬢</div>
-    <div class="left">
-      <div class="label">YOUR RISK TODAY</div>
-      {% if risk_hoy %}
-      <b>${{ '%.2f'|format(risk_hoy.total) }} at risk today</b>
-      <span>• {{ risk_hoy.pct }}% of your bankroll <span style="white-space:nowrap">• {{ risk_hoy.n }} {% if risk_hoy.n == 1 %}play{% else %}plays{% endif %}</span></span>
-      {% else %}
-      <b>— at risk today</b>
-      <span>• —% of your bankroll <span style="white-space:nowrap">• — plays</span></span>
-      {% endif %}
-    </div>
-    <div class="right">Discipline builds long‑term profits. ↗</div>
-  </div>
-
-
 
 
   {# Tarjetas anchas bloqueadas (Platinum plays / Player Props) ELIMINADAS del home (orden de Alex 2026-10-29): el gratis no ve ninguna tarjeta de jugadas Platinum; la unica oferta es la tarjeta NUEVA de planes (hpc) y /desbloquear-platinum. #}
