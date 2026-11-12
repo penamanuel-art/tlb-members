@@ -3777,6 +3777,39 @@ def load_sharp_board():
 _parlay_games_cache = {"at": 0.0, "data": []}
 
 
+def _parlay_fair_map():
+    """Fair moneyline prices (Pinnacle no-vig) from the +EV Board feed.
+
+    Same source and numbers the +EV Board and the AI Assistant price check
+    use. Keyed by (team, opponent) so either side of a matchup resolves.
+    Returns {} when the board is unavailable — legs then show no fair line
+    instead of an invented one.
+    """
+    fmap = {}
+    try:
+        board = load_ev_board() or {}
+        for e in board.get("edges", []) or []:
+            if not isinstance(e, dict):
+                continue
+            if (e.get("market") or "") != "Moneyline":
+                continue
+            team = e.get("team") or ""
+            parts = [p.strip() for p in (e.get("game") or "").split(" @ ")]
+            if not team or len(parts) != 2 or team not in parts:
+                continue
+            opp = parts[1] if parts[0] == team else parts[0]
+            try:
+                fp = float(e.get("fair_prob_pct") or 0) or None
+                fa = int(float(e.get("fair_american")))
+            except (TypeError, ValueError):
+                continue
+            if fp:
+                fmap[(team, opp)] = {"fair_prob": fp, "fair_odds": fa}
+    except Exception:
+        return {}
+    return fmap
+
+
 def load_parlay_games():
     import time
     now = time.time()
@@ -3784,6 +3817,7 @@ def load_parlay_games():
         return _parlay_games_cache["data"]
     games = []
     try:
+        fmap = _parlay_fair_map()
         board = load_sharp_board()
         for g in board.get("games", []):
             line = g.get("line", {}) or {}
@@ -3791,6 +3825,8 @@ def load_parlay_games():
             home = (line.get("home") or {}).get("now")
             if away is None or home is None:
                 continue
+            af = fmap.get((g.get("away") or "", g.get("home") or ""), {})
+            hf = fmap.get((g.get("home") or "", g.get("away") or ""), {})
             games.append({
                 "id": g.get("id"),
                 "sport": g.get("sport") or "",
@@ -3799,6 +3835,10 @@ def load_parlay_games():
                 "home": g.get("home") or "",
                 "away_odds": int(round(away)),
                 "home_odds": int(round(home)),
+                "away_fair_prob": af.get("fair_prob"),
+                "away_fair_odds": af.get("fair_odds"),
+                "home_fair_prob": hf.get("fair_prob"),
+                "home_fair_odds": hf.get("fair_odds"),
                 "kickoff": g.get("kickoff_et") or "",
             })
     except Exception:
