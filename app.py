@@ -5212,6 +5212,12 @@ def migrate_db():
             pending.append("ALTER TABLE users ADD COLUMN tour_status TEXT")
         if "tour_at" not in cols:
             pending.append("ALTER TABLE users ADD COLUMN tour_at TEXT")
+        # Página /setup (2026-11-11, espejo del /welcome de WGT): rango
+        # de bankroll DECLARADO por el miembro al completar su cuenta.
+        # Es una ETIQUETA (p. ej. «$500–$999»), no un monto: la columna
+        # bankroll numérica es del sizing del tracker y no se mezcla.
+        if "bankroll_range" not in cols:
+            pending.append("ALTER TABLE users ADD COLUMN bankroll_range TEXT")
         # Página Account estilo WGT (2026-10-12, pedido por Alex): dirección
         # postal del perfil + perfil de apuestas (estado y casas).
         for _col in ["addr_line1", "addr_line2", "addr_city", "addr_state",
@@ -7166,31 +7172,14 @@ def api_clicks_feed():
     )
 
 
-@app.route("/bienvenida")
-@login_required
-def bienvenida():
-    """Página de bienvenida tras el registro: explica el programa.
-    Si el miembro acaba de registrarse, la base dispara una sola vez el
-    evento CompleteRegistration del pixel de Meta (2026-10-14)."""
-    fb_reg = bool(session.pop("fb_reg", None))
-    fb_event_id = session.pop("fb_event_id", None)
-    # Texto de la oferta según cohorte (2026-10-31): la plantilla muestra
-    # "$1 + mes gratis" solo a la cohorte nueva; los demás ven el texto
-    # legacy de siempre ("$1 for your first 7 days").
-    _fm = False
-    try:
-        _u = current_user()
-        _fm = bool(_u) and (_u["signup_offer"] or "") == PLATINUM_OFFER_FREE_MONTH
-    except Exception:
-        _fm = False
-    # Estado de «completar la cuenta» (2026-11-07, onboarding espejo del
-    # /welcome de WGT): la tarjeta «Finish setting up your account» solo
-    # aparece si a la cuenta le falta algo — correo sin verificar,
-    # contraseña propia sin fijar, nombre provisional (la parte local
-    # del correo) o teléfono sin registrar.
+def _setup_estado(_u2):
+    """Estado «Finish setting up your account» de una cuenta: qué le
+    falta por completar — correo sin verificar, contraseña propia sin
+    fijar, nombre provisional (la parte local del correo) o teléfono
+    sin registrar. Lo comparten /bienvenida (tarjeta CTA) y /setup
+    (la página de pasos), pa' que el criterio sea uno solo."""
     _setup = None
     try:
-        _u2 = current_user()
         if _u2:
             def _col(_row, _k, _def=None):
                 try:
@@ -7215,6 +7204,32 @@ def bienvenida():
             }
     except Exception:
         _setup = None
+    return _setup
+
+
+@app.route("/bienvenida")
+@login_required
+def bienvenida():
+    """Página de bienvenida tras el registro: explica el programa.
+    Si el miembro acaba de registrarse, la base dispara una sola vez el
+    evento CompleteRegistration del pixel de Meta (2026-10-14)."""
+    fb_reg = bool(session.pop("fb_reg", None))
+    fb_event_id = session.pop("fb_event_id", None)
+    # Texto de la oferta según cohorte (2026-10-31): la plantilla muestra
+    # "$1 + mes gratis" solo a la cohorte nueva; los demás ven el texto
+    # legacy de siempre ("$1 for your first 7 days").
+    _fm = False
+    try:
+        _u = current_user()
+        _fm = bool(_u) and (_u["signup_offer"] or "") == PLATINUM_OFFER_FREE_MONTH
+    except Exception:
+        _fm = False
+    # Estado de «completar la cuenta» (2026-11-07, onboarding espejo del
+    # /welcome de WGT): la tarjeta «Finish setting up your account» solo
+    # aparece si a la cuenta le falta algo — correo sin verificar,
+    # contraseña propia sin fijar, nombre provisional (la parte local
+    # del correo) o teléfono sin registrar.
+    _setup = _setup_estado(current_user())
     return render_template("bienvenida.html", nombre=session.get("nombre", ""), fb_reg=fb_reg, fb_event_id=fb_event_id, offer_free_month=_fm, setup=_setup)
 
 
@@ -7247,6 +7262,45 @@ def bienvenida_previa():
                            offer_free_month=True, setup=_setup_demo)
 
 
+@app.route("/setup")
+@login_required
+def setup_page():
+    """Página de setup post-registro (2026-11-11, espejo del /welcome
+    de WGT aprobado por Alex): los pasos en página PROPIA — 1) nombre +
+    contraseña, 2) teléfono + SMS, 3) sportsbooks, 4) bankroll — todo
+    saltable («Skip for now» cae directo en el Dashboard). El formulario
+    postea a /cuenta/completar con setup_flow=1: nombre/teléfono/SMS/
+    contraseña se guardan como siempre; libros quedan en
+    users.bet_books (JSON, la columna del perfil de apuestas) y el
+    rango en users.bankroll_range. Si la cuenta ya está completa
+    (el mismo criterio `falta` de /bienvenida), /setup redirige a
+    /home. El reenvío de la confirmación de correo vive en esta página
+    (form a reenviar_activacion), porque la bienvenida nueva ya no
+    trae el formulario incrustado."""
+    user = current_user()
+    _setup = _setup_estado(user)
+    if not _setup or not _setup.get("falta"):
+        return redirect(url_for("home"))
+    try:
+        _books_saved = json.loads(user["bet_books"] or "[]") if user else []
+        if not isinstance(_books_saved, list):
+            _books_saved = []
+    except Exception:
+        _books_saved = []
+    try:
+        _br_saved = (user["bankroll_range"] or "") if user else ""
+    except Exception:
+        _br_saved = ""
+    return render_template(
+        "setup.html",
+        setup=_setup,
+        nombre=(user["nombre"] or "") if user else "",
+        books_all=SETUP_BOOKS + [SETUP_BOOK_NONE],
+        books_saved=_books_saved,
+        bankroll_ranges=BANKROLL_RANGES, bankroll_saved=_br_saved,
+    )
+
+
 @app.route("/cuenta/completar", methods=["POST"])
 @login_required
 def cuenta_completar():
@@ -7260,9 +7314,15 @@ def cuenta_completar():
     phone = (request.form.get("phone") or "").strip()
     sms_optin = 1 if request.form.get("sms_optin") == "1" else 0
     password = request.form.get("password") or ""
+    # Flujo /setup (2026-11-11): el formulario de la página de setup
+    # trae además libros y rango de bankroll, y al guardar aterriza en
+    # el Dashboard («Save & continue»). Sin la marca setup_flow, el
+    # comportamiento es el de siempre (vuelve a /bienvenida).
+    _desde_setup = request.form.get("setup_flow") == "1"
     if password and len(password) < 6:
         flash("Your password needs at least 6 characters.", "error")
-        return redirect(url_for("bienvenida"))
+        return redirect(url_for("setup_page") if _desde_setup
+                        else url_for("bienvenida"))
     _sets, _params = [], []
     if nombre:
         _sets.append("nombre = ?")
@@ -7276,6 +7336,25 @@ def cuenta_completar():
         _sets.append("password_hash = ?")
         _params.append(hash_password(password))
         _sets.append("password_propia = 1")
+    if _desde_setup:
+        # Libros del paso 3: validados contra BET_BOOKS (trae Novig y
+        # Kalshi). «None yet» solo vale como respuesta ÚNICA (todavía
+        # sin libros) y queda guardada como tal; si marcó libros de
+        # verdad, la marca se descarta. Se guarda en users.bet_books
+        # (JSON) — la misma columna del perfil de apuestas de /cuenta,
+        # una sola fuente de verdad.
+        _books_raw = request.form.getlist("bet_books")
+        _books = [b for b in _books_raw if b in BET_BOOKS]
+        if not _books and SETUP_BOOK_NONE in _books_raw:
+            _books = [SETUP_BOOK_NONE]
+        _sets.append("bet_books = ?")
+        _params.append(json.dumps(_books))
+        # Bankroll del paso 4: solo etiquetas de la lista cerrada; si
+        # no eligió ninguna, la columna no se toca.
+        _br = (request.form.get("bankroll_range") or "").strip()
+        if _br in BANKROLL_RANGES:
+            _sets.append("bankroll_range = ?")
+            _params.append(_br)
     if _sets:
         _params.append(user["id"])
         db.execute(f"UPDATE users SET {', '.join(_sets)} WHERE id = ?",
@@ -7284,7 +7363,8 @@ def cuenta_completar():
         if nombre:
             session["nombre"] = nombre
     flash("Saved — your account setup is updated.", "ok")
-    return redirect(url_for("bienvenida"))
+    return redirect(url_for("home") if _desde_setup
+                    else url_for("bienvenida"))
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -7757,7 +7837,18 @@ def cuenta():
 # Libros del perfil de apuestas (pestaña Preferences, 2026-10-12).
 BET_BOOKS = ["DraftKings", "FanDuel", "BetMGM", "Caesars", "ESPN BET",
              "Fanatics", "BetRivers", "Hard Rock Bet", "bet365", "Fliff",
-             "Novig", "ProphetX"]
+             "Novig", "ProphetX", "Kalshi"]
+
+# Página /setup (2026-11-11): libros que el miembro marca al completar
+# su cuenta — orden de la página (Novig primero: es la casa del
+# programa). La validación usa BET_BOOKS (ya trae Novig y Kalshi) más
+# la marca SETUP_BOOK_NONE; lo marcado se guarda en users.bet_books.
+SETUP_BOOKS = ["Novig", "Kalshi", "DraftKings", "FanDuel", "BetMGM",
+               "Caesars", "Fanatics"]
+SETUP_BOOK_NONE = "None yet"
+# Rangos de bankroll del paso 4 de /setup: se guarda la ETIQUETA en
+# users.bankroll_range (TEXT) — nunca en la columna bankroll numérica.
+BANKROLL_RANGES = ["Under $500", "$500–$999", "$1,000–$2,499", "$2,500+"]
 BET_STATES = ["Arizona", "Arkansas", "Colorado", "Connecticut", "Delaware",
               "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky",
               "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan",
