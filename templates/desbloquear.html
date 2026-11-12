@@ -7,9 +7,9 @@
    _desbloquear_board() en app.py, calculado desde data/archive.json).
    Oferta ÚNICA para todos (2026-11-11, orden de Alex): como todo el
    mundo entra con 30 días gratis al registrarse, en esta página de
-   pago NO se habla de semana gratis ni de semana de $1 PA' NADIE:
-   Platinum se cobra directo a $15.99/semana desde hoy, en el texto
-   y en el cobro. La semana de $1 murió para todas las audiencias
+   pago NO se habla de semana gratis ni de semana de un dólar PA'
+   NADIE: Platinum se cobra directo a $15.99/semana desde hoy, en el
+   texto y en el cobro. La semana de un dólar murió pa' toda audiencia
    (sustituye la regla del 2026-11-09 que la dejaba viva pa' legacy).
    El pago va INCRUSTADO en esta misma página: desde el 2026-11-11 es
    el Payment Element de Stripe dentro de NUESTRA tarjeta (espejo del
@@ -18,7 +18,15 @@
    /api/desbloquear/checkout-session (flow=payment_element) y la
    página monta el formulario con Stripe.js — el miembro paga sin
    salir del sitio. (Antes fue Stripe Checkout en modo embedded; ese
-   endpoint sigue vivo en app.py aunque esta página ya no lo usa.) Si
+   endpoint sigue vivo en app.py aunque esta página ya no lo usa.)
+   REHECHA DESDE CERO (2026-11-11, orden de Alex «hágalo de nuevo,
+   igual, no meta cosas que no van»): la variante de pago con sesión
+   es SOLO la tarjeta, en el orden exacto de las fotos de WGT —
+   píldora, precio, identidad en una línea, ON THE BOARD con UNA
+   placa, marcas, formulario Payment Element, botón, reglita, What
+   happens next, sellos, disclosure y barra inferior. Hero, stats,
+   tarjetas de planes, tickets, beneficios, FAQ y legal quedan SOLO
+   para la variante anónima (embudo del mes gratis). Si
    el modo incrustado no está disponible (sin llaves o fallo de
    Stripe.js), la página cae al botón con el link hospedado
    (stripe_url). La página
@@ -157,6 +165,7 @@ button.upl-cta[disabled]{opacity:.65;cursor:wait}
 </style>
 
 <div class="upl-wrap">
+  {% if anonimo %}
   <div class="upl-hero">
     {# CÍRCULO DEL HERO (primera pantalla estilo Owner's Selection de WGT, orden de Alex 2026-11-11): lleva la moneda oficial — el logo redondo del tiburón, el mismo del topbar. La FOTO DE ALEX va en este círculo cuando la entregue: sustituir SOLO el src de .upl-avatar por su foto (cuadrada, ≥400px), sin tocar nada más del hero. #}
     <img class="upl-avatar" src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team">
@@ -178,6 +187,7 @@ button.upl-cta[disabled]{opacity:.65;cursor:wait}
     {% if board.total %}<div class="upl-stat"><b>{{ board.win_rate|round(0)|int }}%</b><span>career · {{ board.record }}</span></div>{% endif %}
   </div>
   <p class="upl-graded">✓ Graded against the final score · <span class="cg">cancel anytime, no hassle</span></p>
+  {% endif %}
 
   <div class="upl-card" id="upl-buy">
     
@@ -200,9 +210,8 @@ button.upl-cta[disabled]{opacity:.65;cursor:wait}
     {% if board.teasers %}
     <div class="upl-board">
       <h3>ON THE BOARD RIGHT NOW</h3>
-      {% for t in board.teasers %}
+      {% set t = board.teasers[0] %}
       <a class="upl-teaser" href="{{ url_for('official_tracker') }}"><span><span class="t">{{ t.texto }}</span><div class="s">{{ t.sub }}</div></span><span class="arr">›</span></a>
-      {% endfor %}
       <p class="upl-recon">Every claim reconciles to the public graded ledger.</p>
     </div>
     {% endif %}
@@ -233,7 +242,6 @@ button.upl-cta[disabled]{opacity:.65;cursor:wait}
     <div style="margin:11px 0 0;background:#10151d;border:1px solid #33415566;border-radius:10px;padding:10px 12px;font-size:12px;line-height:1.6;color:#a8b3cf;"><b style="color:#fff;">What happens next:</b> the moment your payment clears, your Platinum turns on automatically — every official play lands on your Dashboard before game time, with its real ticket, starting today.</div>
     <p class="upl-trust">🔒 256-bit SSL · Stripe secured · Cancel anytime</p>
     <div class="upl-disc"><b>Recurring billing disclosure:</b> You pay $15.99 today; Platinum continues at $15.99/week, renewing automatically every week until you cancel. Cancel anytime from your account — no contracts, no cancellation fees. $15.99/week is the whole price, shown at checkout before you pay — no calls, no retention scripts. Payments are processed securely by Stripe; your card is held by Stripe — we never see or store your card number.</div>
-    <div class="upl-emailnote"><b>Important:</b> check out with the same email as your member account — that's how your Platinum access turns on automatically, today.</div>
     {% endif %}
     {% if anonimo %}
     <p class="upl-under">Your free month needs no card and no checkout — it starts with your free account.</p>
@@ -241,6 +249,7 @@ button.upl-cta[disabled]{opacity:.65;cursor:wait}
     {% endif %}
   </div>
 
+  {% if anonimo %}
   {# === Tarjetas de planes (2026-10-29, diseño aprobado por Alex) ===
      Miembro gratis: ve las DOS (Platinum como oferta de desbloqueo +
      Sharp Free como su estado). Con Platinum esta rama ni se renderiza
@@ -322,6 +331,7 @@ button.upl-cta[disabled]{opacity:.65;cursor:wait}
     <div class="pln-cta pln-status">✓ You're on GOLD</div>
     <p class="pln-fine">This is your plan — you already have access to everything on this card.</p>
   </div>
+  {% endif %}
   {% endif %}
 
   {% if stripe_embed_ok and not anonimo %}
@@ -410,6 +420,7 @@ button.upl-cta[disabled]{opacity:.65;cursor:wait}
   </script>
   {% endif %}
 
+  {% if anonimo %}
   {% if board.tickets %}
   <div class="upl-sec">
     <h2>Recent winning tickets</h2>
@@ -495,6 +506,7 @@ button.upl-cta[disabled]{opacity:.65;cursor:wait}
   </div>
 
   <p class="upl-legal">{% if anonimo %}Your first month of Platinum is free with a free account — no card required. After the free month, Platinum is $15.99/week only for members who choose to subscribe, billed weekly until cancelled.{% else %}$15.99/week billed weekly until cancelled.{% endif %} Recurring weekly subscription — cancel anytime from your account, no contracts. All prices in USD.</p>
+  {% endif %}
 
   {% if anonimo %}
   <div class="upl-sticky"><div class="upl-sticky-in"><span class="upl-sticky-t"><b>First month FREE</b> · no card · free plays forever</span><a class="upl-sticky-btn" href="{{ url_for('register') }}">Start free →</a></div></div>
