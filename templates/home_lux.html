@@ -1539,12 +1539,12 @@ h1,h2,h3,h4{font-family:'Unbounded','Roboto',sans-serif}
 <style>
 .upl-sheet-ov{display:none;position:fixed;inset:0;z-index:2000;background:rgba(3,6,12,.66)}
 .upl-sheet-ov.open{display:block}
-.upl-sheet{position:absolute;left:0;right:0;bottom:0;max-width:520px;margin:0 auto;background:#171b24;border-radius:22px 22px 0 0;padding:24px 20px calc(20px + env(safe-area-inset-bottom));box-shadow:0 -12px 40px rgba(0,0,0,.55);animation:uplSheetUp .22s ease-out}
+.upl-sheet{position:absolute;left:0;right:0;bottom:0;height:auto;min-height:0;max-width:520px;margin:0 auto;background:#171b24;border-radius:22px 22px 0 0;padding:18px 20px calc(14px + env(safe-area-inset-bottom));box-shadow:0 -12px 40px rgba(0,0,0,.55);animation:uplSheetUp .22s ease-out}
 @keyframes uplSheetUp{from{transform:translateY(26px);opacity:.5}to{transform:translateY(0);opacity:1}}
 .upl-sheet h3{margin:0;font-family:'Roboto',-apple-system,BlinkMacSystemFont,sans-serif;font-size:20px;font-weight:800;color:#fff;letter-spacing:0}
 .upl-sheet p{margin:10px 0 0;font-size:14.5px;line-height:1.55;color:#c3cbdd}
-.upl-sheet-go{display:block;width:100%;margin:20px 0 0;background:#2ee6a8;color:#05281b;border:0;border-radius:12px;padding:15px;font-family:inherit;font-size:16.5px;font-weight:800;cursor:pointer}
-.upl-sheet-no{display:block;width:100%;margin:8px 0 0;background:none;border:0;color:#e6edf7;font-family:inherit;font-size:15px;font-weight:600;padding:10px;cursor:pointer}
+.upl-sheet-go{display:block;width:100%;margin:14px 0 0;background:#2ee6a8;color:#05281b;border:0;border-radius:12px;padding:14px;font-family:inherit;font-size:16.5px;font-weight:800;cursor:pointer}
+.upl-sheet-no{display:block;width:100%;margin:4px 0 0;background:none;border:0;color:#e6edf7;font-family:inherit;font-size:15px;font-weight:600;padding:8px;cursor:pointer}
 </style>
 <div class="upl-sheet-ov" id="uplSheetOv">
   <div class="upl-sheet" role="dialog" aria-modal="true" aria-label="Continue in your browser">
