@@ -10938,6 +10938,17 @@ def desbloquear_platinum():
     if session.get("user_id"):
         record_checkin(db, session["user_id"])
     user = current_user()
+    if user is None:
+        # SIN variante anónima (2026-11-11, orden de Alex por llamada de
+        # voz ~10:23 PM ET): la versión de visitante con el «FREE your
+        # first month» gigante DESAPARECE de esta URL — esta página es
+        # la que se abre con el link de DENTRO del Dashboard que lleva
+        # a pagar, no una oferta pública. Sin sesión: al login, y el
+        # login devuelve al miembro aquí con la variante de pago (el
+        # `next` interno validado por _next_interno, el mismo mecanismo
+        # que usa login_required en todo el sitio). Esto revierte el
+        # diseño público del 2026-10-20 citado arriba.
+        return redirect(url_for("login", next=request.path))
     try:
         past_due = bool(user and user["stripe_past_due"])
     except (KeyError, IndexError, TypeError):
