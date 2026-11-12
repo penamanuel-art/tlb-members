@@ -22,7 +22,6 @@
 .bv h1 .accent{color:var(--green-bright);}
 .bv-sub{color:var(--muted);margin:0 0 4px;}
 .bv-sub strong{color:var(--text);}
-.bv-plays-link{display:inline-block;margin-top:10px;color:#2ee6a8;font-weight:700;text-decoration:none;}
 .bv-card{background:var(--card-2);border:1px solid var(--line);border-radius:16px;padding:20px;margin:20px 0;}
 .bv-card-head{display:flex;gap:14px;align-items:flex-start;}
 .bv-num{flex:0 0 34px;width:34px;height:34px;border-radius:50%;background:#2ee6a8;color:#04120a;font-weight:800;font-size:1rem;display:flex;align-items:center;justify-content:center;font-family:'Unbounded',sans-serif;}
@@ -54,7 +53,6 @@
   <span class="bv-pill"><span class="dot"></span> Your account is active</span>
   <h1>Welcome in. <span class="accent">Let's set you up.</span></h1>
   <p class="bv-sub">Four quick steps and you're done — <strong>everything here is skippable</strong>, and your plays are already waiting on your dashboard.</p>
-  <a class="bv-plays-link" href="{{ url_for('home') }}">View today's plays →</a>
 
   {% if setup and not setup.verificado %}
   {# Confirmación de correo (2026-11-11): el reenvío vivía en la tarjeta
