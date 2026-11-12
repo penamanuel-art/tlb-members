@@ -180,9 +180,14 @@ main.v2-wrap{padding-bottom:0}
 .v2-bottomnav{display:none!important}
 .upl-sticky{bottom:0!important}
 body{padding-bottom:calc(60px + env(safe-area-inset-bottom))!important}
+/* SALIDA DISCRETA (2026-11-11, orden de Alex: «¿cómo sale de esa página?» / «Pon la salida discreta arriba»): la página standalone no trae chrome del sitio, así que un cliente que no quiere pagar quedaba atrapado. Lleva su propia ✕ fija en la esquina superior DERECHA que devuelve al Dashboard (/home): círculo oscuro semitransparente de 34px, ✕ en gris claro, z-index sobre todo el contenido de la página pero sin competir con el diseño. La línea de confianza (centrada) recibe aire lateral (padding 0 46px) pa' que su texto nunca corra debajo del botón. Solo esta plantilla. */
+.upl-exit{position:fixed;top:calc(10px + env(safe-area-inset-top));right:12px;z-index:200;width:34px;height:34px;border-radius:50%;background:rgba(13,17,24,.72);border:1px solid rgba(139,152,173,.35);color:#c3cbdd;font-size:15px;line-height:1;display:flex;align-items:center;justify-content:center;text-decoration:none;-webkit-tap-highlight-color:transparent}
+.upl-exit:active{background:rgba(13,17,24,.92);color:#fff}
+.upl-trusttop{padding:0 46px}
 </style>
 
 <div class="upl-wrap">
+  <a class="upl-exit" href="{{ url_for('home') }}" aria-label="Back to dashboard">✕</a>
   {% if not anonimo %}
   <p class="upl-trusttop">Every Platinum play posted before game time · <b>Real bet slips posted after</b> · Cancel anytime in two clicks</p>
   {% endif %}
