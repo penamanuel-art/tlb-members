@@ -347,9 +347,12 @@ button.upl-cta[disabled]{opacity:.65;cursor:wait}
         elements=null,
         clientSecret=null;
     fetch("{{ url_for('desbloquear_checkout_session') }}",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({flow:"payment_element"}),credentials:"same-origin"})
-      .then(function(r){if(!r.ok){throw new Error("intent");}return r.json();})
+      .then(function(r){
+        if(!r.ok){console.error("[upl-pe] endpoint HTTP "+r.status);throw new Error("intent");}
+        return r.json();
+      })
       .then(function(d){
-        if(!d.clientSecret){throw new Error("secret");}
+        if(!d.clientSecret){console.error("[upl-pe] endpoint sin clientSecret");throw new Error("secret");}
         clientSecret=d.clientSecret;
         elements=stripe.elements({clientSecret:clientSecret,appearance:{theme:"stripe"}});
         var pe=elements.create("payment",{
@@ -364,15 +367,21 @@ button.upl-cta[disabled]{opacity:.65;cursor:wait}
           if(load){load.style.display='none';}
           btn.style.display='block';
         });
+        pe.on("loaderror",function(ev){
+          console.error("[upl-pe] loaderror: "+((ev&&ev.error&&ev.error.message)||"unknown"));
+          showErr("The secure payment form could not load. Please refresh the page.");
+        });
         pe.mount("#upl-pe-form");
-        setTimeout(function(){if(!listo){fallback();}},8000);
+        setTimeout(function(){
+          if(!listo){console.error("[upl-pe] timeout sin ready en 20s");fallback();}
+        },20000);
       })
-      .catch(function(){fallback();});
+      .catch(function(e){console.error("[upl-pe] fallo el arranque: "+((e&&e.message)||e));fallback();});
     btn.addEventListener("click",function(){
       if(!elements||!clientSecret||btn.disabled){return;}
       btn.disabled=true;
       var original=btn.textContent;
-      btn.textContent="Processing…";
+      btn.textContent="Processing\u2026";
       if(err){err.style.display='none';}
       var submitPromise=elements.submit?elements.submit():Promise.resolve({});
       submitPromise.then(function(sub){
