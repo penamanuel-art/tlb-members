@@ -15884,7 +15884,14 @@ def ev_board():
     # El programa VALUE (simulador) sigue ELIMINADO.
     if not platinum_unlocked_for(current_user()):
         return redirect(url_for("desbloquear_platinum"))
-    return render_template("ev_board.html", board=load_ev_board())
+    board = dict(load_ev_board() or {})
+    edges = board.get("edges") or []
+    fresh_edges = [e for e in edges if not (isinstance(e, dict) and e.get("stale"))]
+    stale_edges = [e for e in edges if isinstance(e, dict) and e.get("stale")]
+    board["edges"] = fresh_edges + stale_edges
+    board["fresh_edges_count"] = len(fresh_edges)
+    board["stale_edges_count"] = len(stale_edges)
+    return render_template("ev_board.html", board=board)
 
 
 @app.route("/ev-board/results")
