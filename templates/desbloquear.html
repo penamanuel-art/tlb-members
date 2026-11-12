@@ -90,7 +90,15 @@
 .upl-teaser .arr{color:#2fe6a7;font-size:15px}
 .upl-recon{margin:8px 0 0;font-size:10.5px;color:#8b98ad;font-style:italic}
 .upl-cta{display:block;margin:14px 0 0;background:linear-gradient(180deg,#35f0b0,#1fc98d);color:#06281c !important;text-align:center;font-size:17px;font-weight:900;padding:14px 12px;border-radius:12px;text-decoration:none}
-.upl-embbox{margin:14px 0 0;background:#ffffff;border-radius:12px;padding:10px 8px}
+.upl-embbox{margin:8px 0 0;background:#ffffff;border-radius:12px;padding:0;overflow:hidden}
+.upl-brands{display:flex;gap:6px;margin:14px 0 0}
+.upl-brand{flex:1;display:flex;align-items:center;justify-content:center;background:#ffffff;border-radius:6px;padding:5px 2px;font-size:9.5px;font-weight:900;letter-spacing:.3px;line-height:1}
+.upl-brand.visa{color:#1a1f71;font-style:italic}
+.upl-brand.mc{color:#222222}
+.upl-brand.mc i{font-style:normal;color:#eb001b}
+.upl-brand.mc b{color:#f79e1b;font-weight:900}
+.upl-brand.disc{color:#f48120}
+.upl-brand.amex{background:#2e77bc;color:#ffffff}
 .upl-embload{margin:6px 0;text-align:center;font-size:12.5px;font-weight:700;color:#525f7f}
 .upl-under{margin:9px 0 0;text-align:center;font-size:12px;color:#e6edf7;font-weight:700}
 .upl-fine{margin:7px 0 0;text-align:center;font-size:10.5px;line-height:1.55;color:#8b98ad}
@@ -189,17 +197,19 @@
       <p style="margin:10px 0 0;font-size:12.5px;color:#a8b3cf;">It takes a minute — and your free month of Platinum turns on the moment your account opens. Already a member? <a href="{{ url_for('login', next=url_for('desbloquear_platinum')) }}" style="color:#7dd3fc;font-weight:800;">Log in</a></p>
     </div>
     {% elif stripe_embed_ok %}
+    <div class="upl-brands"><span class="upl-brand visa">VISA</span><span class="upl-brand mc"><i>●</i><b>●</b>&nbsp;MasterCard</span><span class="upl-brand disc">DISCOVER</span><span class="upl-brand amex">AMEX</span></div>
     <div class="upl-embbox" id="upl-emb-box">
       <p class="upl-embload" id="upl-emb-loading">Loading secure checkout…</p>
       <div id="upl-emb"></div>
     </div>
-    <a class="upl-cta" id="upl-emb-fallback" href="{{ stripe_url }}" target="_blank" rel="noopener" style="display:none">Start Platinum →</a>
-    <noscript><a class="upl-cta" href="{{ stripe_url }}" target="_blank" rel="noopener">Start Platinum →</a></noscript>
+    <a class="upl-cta" id="upl-emb-fallback" href="{{ stripe_url }}" target="_blank" rel="noopener" style="display:none">Start Platinum - $15.99/week →</a>
+    <noscript><a class="upl-cta" href="{{ stripe_url }}" target="_blank" rel="noopener">Start Platinum - $15.99/week →</a></noscript>
     {% else %}
-    <a class="upl-cta" href="{{ stripe_url }}" target="_blank" rel="noopener">Start Platinum →</a>
+    <div class="upl-brands"><span class="upl-brand visa">VISA</span><span class="upl-brand mc"><i>●</i><b>●</b>&nbsp;MasterCard</span><span class="upl-brand disc">DISCOVER</span><span class="upl-brand amex">AMEX</span></div>
+    <a class="upl-cta" href="{{ stripe_url }}" target="_blank" rel="noopener">Start Platinum - $15.99/week →</a>
     {% endif %}
     {% if not anonimo %}
-    <p style="margin:9px 0 0;text-align:center;font-size:11px;line-height:1.5;color:#8b98ad;">✓ $15.99/week · Cancel anytime — two clicks from your account, no retention team.</p>
+    <p style="margin:9px 0 0;text-align:center;font-size:11px;line-height:1.5;color:#8b98ad;">✓ $15.99/week, cancel anytime. Two clicks from your account, no retention team, no guilt.</p>
     <div style="margin:11px 0 0;background:#10151d;border:1px solid #33415566;border-radius:10px;padding:10px 12px;font-size:12px;line-height:1.6;color:#a8b3cf;"><b style="color:#fff;">What happens next:</b> the moment your payment clears, your Platinum turns on automatically — every official play lands on your Dashboard before game time, with its real ticket, starting today.</div>
     <p class="upl-trust">🔒 256-bit SSL · Stripe secured · Cancel anytime</p>
     <div class="upl-disc"><b>Recurring billing disclosure:</b> You pay $15.99 today; Platinum continues at $15.99/week, renewing automatically every week until you cancel. Cancel anytime from your account — no contracts, no cancellation fees. $15.99/week is the whole price, shown at checkout before you pay — no calls, no retention scripts. Payments are processed securely by Stripe; your card is held by Stripe — we never see or store your card number.</div>
