@@ -671,17 +671,21 @@
   </section>
   {% endif %}
 
-  <!-- Record by league (2026-10-26, pedido Alex: solo esta sección, con su icono por liga) -->
+  <!-- Record by league (2026-10-26, pedido Alex: solo esta sección, con su icono por liga.
+       FORMATO NUEVO 2026-11-12, orden de Alex en llamada espejo de WGT: lista vertical con las
+       ligas NUMERADAS (1, 2, 3…), W–L y win% en vivo de record_por_liga(); sin dinero en esta
+       sección. Reemplaza las tarjetitas horizontales — es la MISMA sección, no una segunda. -->
   {% if record_por_liga %}
   <section style="margin:0 0 22px;">
     <h2 style="margin:0 0 10px;font-size:18.5px;font-weight:400;">Record by league</h2>
-    <div style="display:flex;gap:10px;overflow-x:auto;padding-bottom:4px;">
+    <div>
       {% for r in record_por_liga %}
-      <div style="flex:0 0 108px;background:linear-gradient(180deg,#20242E,#1B1F27);border:1px solid #343B47;border-radius:16px;padding:12px 10px;text-align:center;">
-        <div style="font-size:17px;line-height:1;">{{ r.icono }}</div>
-        <div style="font-size:11px;font-weight:800;letter-spacing:.06em;margin-top:8px;">{{ r.liga }}</div>
-        <div style="font-size:14.5px;font-weight:800;color:#ffffff;margin-top:6px;">{{ r.w }}–{{ r.l }}</div>
-        <div style="font-size:13px;font-weight:800;margin-top:4px;color:{% if r.profit > 0 %}#2ee6a8{% elif r.profit < 0 %}#ff5a5a{% else %}#F2F3F5{% endif %};">{% if r.profit > 0 %}+{% elif r.profit < 0 %}-{% endif %}${{ '%.2f'|format(r.profit|abs) }}</div>
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid #20242E;">
+        <span style="flex:0 0 22px;color:#e8c766;font-size:13px;font-weight:800;">{{ loop.index }}.</span>
+        <span style="font-size:16px;line-height:1;">{{ r.icono }}</span>
+        <span style="flex:1;font-size:13.5px;font-weight:700;color:#ffffff;">{{ r.liga }}</span>
+        <span style="font-size:14.5px;font-weight:800;color:#ffffff;">{{ r.w }}–{{ r.l }}</span>
+        <span style="flex:0 0 44px;text-align:right;font-size:12.5px;font-weight:700;color:#A3AAB6;">{{ '%.0f'|format(100 * r.w / (r.w + r.l)) }}%</span>
       </div>
       {% endfor %}
     </div>
