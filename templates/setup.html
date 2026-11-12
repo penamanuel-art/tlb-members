@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+{% block title %}Set up your account — The Sharp Team{% endblock %}
+{% block content %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800&family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+/* Setup (2026-11-11): página de pasos post-registro espejo del /welcome
+   de WGT pedida por Alex — mismo sistema visual de la bienvenida nueva
+   (píldora, titular, tarjetas numeradas) y el MISMO formulario de
+   siempre: postea a /cuenta/completar con setup_flow=1, que guarda
+   nombre/teléfono/SMS/contraseña como siempre y además los libros en
+   users.bet_books y el rango en users.bankroll_range.
+   Tipografía: la de todo el sitio — Roboto cuerpo, Unbounded títulos. */
+.bv{font-family:'Roboto',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased;}
+.bv h1,.bv h2,.bv h3,.bv h4{font-family:'Unbounded',sans-serif;}
+.bv button,.bv input{font-family:inherit;}
+.bv p{line-height:1.65;}
+.bv-pill{display:inline-flex;align-items:center;gap:8px;background:var(--green-dim);border:1px solid rgba(34,197,94,.45);color:var(--green-bright);font-weight:700;font-size:.85rem;padding:7px 14px;border-radius:999px;}
+.bv-pill .dot{width:8px;height:8px;border-radius:50%;background:#2ee6a8;display:inline-block;}
+.bv h1{font-size:2rem;font-weight:800;line-height:1.2;letter-spacing:-.01em;margin:16px 0 10px;}
+.bv h1 .accent{color:var(--green-bright);}
+.bv-sub{color:var(--muted);margin:0 0 4px;}
+.bv-sub strong{color:var(--text);}
+.bv-plays-link{display:inline-block;margin-top:10px;color:#2ee6a8;font-weight:700;text-decoration:none;}
+.bv-card{background:var(--card-2);border:1px solid var(--line);border-radius:16px;padding:20px;margin:20px 0;}
+.bv-card-head{display:flex;gap:14px;align-items:flex-start;}
+.bv-num{flex:0 0 34px;width:34px;height:34px;border-radius:50%;background:#2ee6a8;color:#04120a;font-weight:800;font-size:1rem;display:flex;align-items:center;justify-content:center;font-family:'Unbounded',sans-serif;}
+.bv-ico{flex:0 0 34px;width:34px;height:34px;border-radius:50%;background:#2ee6a8;color:#04120a;font-weight:800;font-size:1.05rem;display:flex;align-items:center;justify-content:center;}
+.bv-card h2,.bv-card h3{margin:2px 0 8px;font-size:1.3rem;font-weight:800;line-height:1.3;}
+.bv-card p{margin:0 0 6px;color:var(--muted);}
+.bv-card p strong{color:var(--text);}
+.bv-btn-outline{display:block;text-align:center;background:transparent;border:1.5px solid rgba(46,230,168,.6);color:#2ee6a8;border-radius:12px;padding:13px;font-size:1rem;font-weight:700;text-decoration:none;margin-top:16px;}
+.bv-foot{text-align:center;margin:28px 0 4px;}
+.bv-foot img{max-width:250px;width:70%;height:auto;display:block;margin:0 auto 10px;}
+.bv-foot .bv-tag{color:var(--text);font-weight:700;font-size:.92rem;margin:0 0 8px;}
+.bv-foot .bv-legal{color:var(--muted);font-size:.8rem;line-height:1.6;margin:0;}
+.st-field{margin-top:16px;}
+.st-lab{display:block;font-weight:700;font-size:14px;margin-bottom:8px;}
+.st-input{width:100%;box-sizing:border-box;background:#05081a;border:1.5px solid rgba(232,199,102,.35);border-radius:12px;padding:13px;color:#eef1fb;font-size:16px;}
+.st-sms{display:flex;gap:8px;align-items:center;margin-top:11px;font-size:.85rem;color:#a8b3cf;cursor:pointer;}
+.st-sms input{width:17px;height:17px;accent-color:#e8c766;}
+.st-pwtoggle{background:none;border:none;color:#e8c766;font-size:13px;font-weight:700;cursor:pointer;padding:8px 2px 0;}
+.st-done{color:#2ee6a8;font-weight:700;margin:14px 0 0;}
+.st-checks{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px;}
+.st-check{position:relative;display:inline-block;}
+.st-check input{position:absolute;opacity:0;pointer-events:none;}
+.st-check span{display:inline-block;border:1.5px solid var(--line);border-radius:999px;padding:9px 16px;font-size:.95rem;color:var(--muted);cursor:pointer;background:#0d1017;}
+.st-check input:checked + span{border-color:#2ee6a8;color:#2ee6a8;background:rgba(46,230,168,.1);font-weight:700;}
+.st-check input:focus-visible + span{outline:2px solid #2ee6a8;outline-offset:2px;}
+.st-note{font-size:.85rem;color:#a8b3cf;margin-top:12px;}
+</style>
+<section class="auth-card bv">
+  <span class="bv-pill"><span class="dot"></span> Your account is active</span>
+  <h1>Welcome in. <span class="accent">Let's set you up.</span></h1>
+  <p class="bv-sub">Four quick steps and you're done — <strong>everything here is skippable</strong>, and your plays are already waiting on your dashboard.</p>
+  <a class="bv-plays-link" href="{{ url_for('home') }}">View today's plays →</a>
+
+  {% if setup and not setup.verificado %}
+  {# Confirmación de correo (2026-11-11): el reenvío vivía en la tarjeta
+     incrustada de /bienvenida; al salir el formulario de ahí, el
+     reenvío vive aquí — mismo endpoint reenviar_activacion. #}
+  <div class="bv-card" style="border-color:rgba(232,199,102,.55);background:rgba(232,199,102,.05);">
+    <div class="bv-card-head">
+      <span class="bv-ico" style="background:#e8c766;color:#171106;">✉</span>
+      <div>
+        <h3>Confirm your email</h3>
+        <p>We sent the confirmation link to <strong>{{ setup.email }}</strong>. Confirming makes your account a full member account — until then, this session is your only way in.</p>
+      </div>
+    </div>
+    <form method="post" action="{{ url_for('reenviar_activacion') }}">
+      <input type="hidden" name="email" value="{{ setup.email }}">
+      <input type="hidden" name="lang" value="en">
+      <button type="submit" class="bv-btn-outline" style="width:100%;cursor:pointer;margin-top:14px;">Resend my confirmation email</button>
+    </form>
+  </div>
+  {% endif %}
+
+  <form method="post" action="{{ url_for('cuenta_completar') }}">
+    <input type="hidden" name="setup_flow" value="1">
+
+    <div class="bv-card">
+      <div class="bv-card-head">
+        <span class="bv-num">1</span>
+        <div>
+          <h3>Your name &amp; password</h3>
+          <p>Your name is how we greet you. Your password is what keeps your account — and your plays — yours.</p>
+        </div>
+      </div>
+      <div class="st-field">
+        <label class="st-lab" for="s-nombre">Your name</label>
+        <input class="st-input" id="s-nombre" type="text" name="nombre" autocomplete="name" placeholder="Your name" value="{{ '' if setup.nombre_prov else nombre }}">
+      </div>
+      {% if not setup.propia %}
+      <div class="st-field">
+        <label class="st-lab" for="s-password">Set your password</label>
+        <input class="st-input" id="s-password" type="password" name="password" minlength="6" autocomplete="new-password" placeholder="Minimum 6 characters">
+        <button type="button" class="st-pwtoggle" onclick="var p=document.getElementById('s-password');var show=p.type==='password';p.type=show?'text':'password';this.textContent=show?'Hide password':'Show password';">Show password</button>
+      </div>
+      {% else %}
+      <p class="st-done">✓ Password set</p>
+      {% endif %}
+    </div>
+
+    <div class="bv-card">
+      <div class="bv-card-head">
+        <span class="bv-num">2</span>
+        <div>
+          <h3>Your phone</h3>
+          <p><strong>Optional.</strong> Only if you want the plays texted to you the second they post — no spam, ever.</p>
+        </div>
+      </div>
+      <div class="st-field">
+        <label class="st-lab" for="s-phone">Your phone number</label>
+        <input class="st-input" id="s-phone" type="tel" name="phone" autocomplete="tel" placeholder="(555) 123-4567" value="{{ setup.telefono }}">
+        <label class="st-sms" for="s-sms"><input id="s-sms" type="checkbox" name="sms_optin" value="1"> Text me the plays when they go live</label>
+      </div>
+    </div>
+
+    <div class="bv-card">
+      <div class="bv-card-head">
+        <span class="bv-num">3</span>
+        <div>
+          <h3>Your sportsbooks</h3>
+          <p>Check every book you bet with. We grade our plays against real lines — knowing your books helps us point you at the best price.</p>
+        </div>
+      </div>
+      <div class="st-checks" id="st-books">
+        {% for b in books_all %}
+        <label class="st-check"><input type="checkbox" name="bet_books" value="{{ b }}"{% if b in books_saved %} checked{% endif %}><span>{{ b }}</span></label>
+        {% endfor %}
+      </div>
+      <p class="st-note">No book yet? Check <strong style="color:var(--text);">None yet</strong> — you can update this anytime in your account.</p>
+    </div>
+
+    <div class="bv-card">
+      <div class="bv-card-head">
+        <span class="bv-num">4</span>
+        <div>
+          <h3>Your bankroll</h3>
+          <p><strong>Optional.</strong> A rough range is fine — it helps us talk stakes in dollars that make sense for you. It never changes what you pay.</p>
+        </div>
+      </div>
+      <div class="st-checks">
+        {% for r in bankroll_ranges %}
+        <label class="st-check"><input type="radio" name="bankroll_range" value="{{ r }}"{% if bankroll_saved == r %} checked{% endif %}><span>{{ r }}</span></label>
+        {% endfor %}
+      </div>
+      <p class="st-note">Prefer not to say? Just leave this step blank.</p>
+    </div>
+
+    <button class="btn btn-primary btn-block" type="submit">Save &amp; continue →</button>
+  </form>
+  <p style="text-align:center;margin-top:16px;"><a href="{{ url_for('home') }}" style="color:#9aa7c7;">Skip for now →</a></p>
+
+  <div class="bv-foot">
+    <img src="{{ url_for('static', filename='img/sharp-team-header.jpg') }}" alt="The Sharp Team">
+    <p class="bv-tag">Posted before game time. Every ticket shown.</p>
+    <p class="bv-legal">All picks and information are for entertainment purposes only. Gambling problem? Call 1-800-GAMBLER.</p>
+  </div>
+</section>
+<script>
+// «None yet» es excluyente (2026-11-11): si se marca, se desmarcan los
+// libros; si se marca un libro, «None yet» se desmarca. El servidor
+// aplica la misma regla al guardar — esto es solo comodidad visual.
+(function(){
+  var box = document.getElementById('st-books');
+  if (!box) return;
+  var inputs = box.querySelectorAll('input[name="bet_books"]');
+  function find(label){ for (var i=0;i<inputs.length;i++){ if (inputs[i].value===label) return inputs[i]; } return null; }
+  var none = find('None yet');
+  box.addEventListener('change', function(e){
+    if (!none) return;
+    if (e.target === none && none.checked) {
+      for (var i=0;i<inputs.length;i++){ if (inputs[i] !== none) inputs[i].checked = false; }
+    } else if (e.target !== none && e.target.checked) {
+      none.checked = false;
+    }
+  });
+})();
+</script>
+{% endblock %}
