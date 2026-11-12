@@ -331,18 +331,6 @@ body{padding-bottom:calc(8px + env(safe-area-inset-bottom))!important}
     </div>
     <div class="pln-price">$15.99 <small>/ week</small></div>
     <p class="pln-tag">Unlock the complete card — every official play and every tool we run, with nothing held back.</p>
-    <ul class="pln-list">
-      <li>Every official Platinum play, posted before game time</li>
-      <li>The Vault Play — our highest-conviction play of the day</li>
-      <li>The verified ticket on every play — the real slip, always</li>
-      <li>The full card: Platinum plays + the {% if anonimo %}Sharp Free{% else %}Gold{% endif %} plays</li>
-      <li>+EV Board — best price across 12 books against the fair line</li>
-      <li>Player Props board — included in Platinum</li>
-      <li>AI Assistant — check any price and review your bets</li>
-      <li>Line Moves and Sharp Money boards</li>
-      <li>Private Telegram channel for Platinum members</li>
-      <li>The full record — every play counted, win or loss</li>
-    </ul>
     <a class="pln-cta pln-cta-plat" href="{% if anonimo %}{{ url_for('register') }}{% else %}#upl-buy{% endif %}">{% if anonimo %}Start free →{% else %}Unlock Platinum →{% endif %}</a>
     <p class="pln-fine">{% if anonimo %}Your first month is free with your free account — no card.{% else %}$15.99/week. Cancel anytime.{% endif %}</p>
   </div>
