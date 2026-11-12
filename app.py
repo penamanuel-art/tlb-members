@@ -10919,7 +10919,7 @@ def desbloquear_platinum():
         offer_free_month=False,
         post_mes_gratis=bool(
             user and (user["signup_offer"] or "") == OFERTA_MES_GRATIS
-            and not platinum_unlocked_for(user)),
+            and not _acceso_programa(user)),
         trial_days=PLATINUM_TRIAL_DAYS_LEGACY,
         stripe_pk=STRIPE_PUBLISHABLE_KEY,
         stripe_embed_ok=bool(STRIPE_SECRET_KEY and STRIPE_PUBLISHABLE_KEY),
