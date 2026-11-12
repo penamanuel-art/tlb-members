@@ -11003,37 +11003,6 @@ def desbloquear_platinum():
     )
 
 
-def _invoice_payment_intent(inv):
-    """PaymentIntent (dict con client_secret) de una factura de
-    suscripción. En la API basil que fija el SDK, la factura ya NO trae
-    payment_intent directo: el intent vive en
-    inv.payments.data[i].payment.payment_intent (id u objeto). En APIs
-    viejas era inv.payment_intent. Devuelve {} si no se encuentra."""
-    if not inv:
-        return {}
-    try:
-        import stripe
-        stripe.api_key = STRIPE_SECRET_KEY
-        pi = inv.get("payment_intent")
-        if isinstance(pi, dict) and pi.get("client_secret"):
-            return pi
-        if isinstance(pi, str) and pi:
-            return stripe.PaymentIntent.retrieve(pi) or {}
-        pays = ((inv.get("payments") or {}).get("data")) or []
-        for p in pays:
-            pi2 = (p.get("payment") or {}).get("payment_intent")
-            if isinstance(pi2, dict) and pi2.get("client_secret"):
-                return pi2
-            if isinstance(pi2, str) and pi2:
-                try:
-                    return stripe.PaymentIntent.retrieve(pi2) or {}
-                except Exception:
-                    continue
-    except Exception:
-        pass
-    return {}
-
-
 def _desbloquear_subscription_intent(user, email, customer_id):
     """Payment Element de /desbloquear-platinum (2026-11-11, orden de
     Alex: formulario corto tipo WGT, SOLO tarjeta, sin Apple Pay): crea
@@ -11077,12 +11046,11 @@ def _desbloquear_subscription_intent(user, email, customer_id):
                            == PLATINUM_PRICE_SEMANAL for it in items):
                     continue
                 inv_id = s.get("latest_invoice")
-                if isinstance(inv_id, dict):
-                    inv_id = inv_id.get("id")
                 if not inv_id:
                     continue
-                inv = stripe.Invoice.retrieve(inv_id, expand=["payments"])
-                pi = _invoice_payment_intent(inv)
+                inv = stripe.Invoice.retrieve(
+                    inv_id, expand=["payment_intent"])
+                pi = inv.get("payment_intent") or {}
                 if (pi.get("status") or "") in (
                         "requires_payment_method", "requires_confirmation",
                         "requires_action"):
@@ -11100,7 +11068,7 @@ def _desbloquear_subscription_intent(user, email, customer_id):
                 "payment_method_types": ["card"],
                 "save_default_payment_method": "on_subscription",
             },
-            expand=["latest_invoice"],
+            expand=["latest_invoice.payment_intent"],
             metadata={
                 "member_email": email,
                 "member_id": str(user["id"]),
@@ -11110,11 +11078,7 @@ def _desbloquear_subscription_intent(user, email, customer_id):
                 "source": "desbloquear-payment-element",
             },
         )
-        inv = sub.get("latest_invoice") or {}
-        inv_id = inv.get("id") if isinstance(inv, dict) else inv
-        if inv_id:
-            inv = stripe.Invoice.retrieve(inv_id, expand=["payments"])
-        pi = _invoice_payment_intent(inv)
+        pi = ((sub.get("latest_invoice") or {}).get("payment_intent")) or {}
         secret = pi.get("client_secret") or ""
         if not secret:
             return jsonify({"error": "could not create payment intent"}), 502
