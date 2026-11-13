@@ -363,21 +363,28 @@
   </script>
   <div id="tst-menu-sheet" hidden style="position:fixed;inset:0;z-index:2000;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;background:#0B0D12;padding:calc(14px + env(safe-area-inset-top)) 14px calc(200px + env(safe-area-inset-bottom));">
     <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;"><span style="display:flex;align-items:center;gap:8px;font-size:14.3px;font-weight:800;font-style:italic;"><img src="{{ url_for('static', filename='img/apple-touch-icon-v2.png') }}" alt="" style="width:30px;height:30px;border-radius:50%;display:block;">THE <span style="color:#11CB87;">SHARP</span> TEAM</span><button type="button" onclick="document.getElementById('tst-menu-sheet').hidden=true;document.getElementById('tst-menubtn').setAttribute('aria-expanded','false');document.body.style.overflow='';" style="background:none;border:0;color:#A3AAB6;font-size:18.7px;cursor:pointer;padding:4px 8px;">✕</button></div>
-    {# MENÚ ÚNICO Y CORTO (2026-11-13, orden final de Alex: «todo lo que
-       es herramienta va dentro de Tools, no regado por el menú» y «el
-       menú tiene demasiadas cosas abiertas»): una sola lista corta,
-       idéntica en home_lux.html, base.html y base_v2.html — si se
-       cambia una, se cambian las tres. Las herramientas (Game Center,
-       +EV Board, Props, Sharp Money, Line Moves, Parlay…) viven en la
-       página All tools, a la que lleva «My Tools». Sin «Admin» (orden
-       de Alex 2026-11-12). #}
-    <a href="{{ url_for('home') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:14.3px;">Today <span style="color:#A3AAB6;">›</span></a>
-    <a href="{{ url_for('tools') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:14.3px;">My Tools <span style="color:#A3AAB6;">›</span></a>
-    <a href="{{ url_for('cuenta') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:14.3px;">Account <span style="color:#A3AAB6;">›</span></a>
-    <a href="{{ url_for('masterclass') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:14.3px;">Masterclass <span style="color:#A3AAB6;">›</span></a>
-    <a href="{{ url_for('official_tracker') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:14.3px;">Full Record <span style="color:#A3AAB6;">›</span></a>
-    {% if miembro_platinum %}<div style="display:flex;padding:12px 0;border-top:1px solid #20242E;font-size:14.3px;color:#e8c766;">💎 Platinum Active</div>{% else %}<a href="{{ url_for('desbloquear_platinum') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:14.3px;color:#e8c766;">Unlock Platinum <span style="color:#A3AAB6;">›</span></a>{% endif %}
-    <a href="{{ url_for('logout') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:14.3px;">Log out <span style="color:#A3AAB6;">›</span></a>
+    {# MENÚ — ESTRUCTURA DE LA FOTO DE WISE GUY (2026-11-13, Alex mandó la
+       foto del menú de WGT: «Eso es un menú, configuración profesional»):
+       lista plana, texto grande, sin grupos ni flechas — en este orden:
+       Unlock Platinum (menta) · Betting Lines · Sportsbooks ·
+       Masterclass · About · pill de racha (solo si hay racha real de
+       2+ días) · My Tools · My Bets · Account · botón grande menta
+       «View picks →» · Log out. Idéntico en home_lux.html, base.html
+       y base_v2.html: si se cambia uno, se cambian los tres. Las
+       herramientas viven dentro de «My Tools» (página All tools),
+       nunca regadas en el menú. Sin «Admin» (orden 2026-11-12). #}
+
+    {% if miembro_platinum %}<div style="display:flex;padding:15px 0;font-size:16.5px;font-weight:600;color:#e8c766;">💎 Platinum Active</div>{% else %}    <a href="{{ url_for('desbloquear_platinum') }}" style="display:flex;padding:15px 0;font-size:16.5px;font-weight:600;color:#11cb87;">Unlock Platinum</a>{% endif %}
+    <a href="{{ url_for('odds') }}" style="display:flex;padding:15px 0;border-top:1px solid #20242E;font-size:16.5px;">Betting Lines</a>
+    <a href="{{ url_for('compare_books') }}" style="display:flex;padding:15px 0;border-top:1px solid #20242E;font-size:16.5px;">Sportsbooks</a>
+    <a href="{{ url_for('masterclass') }}" style="display:flex;padding:15px 0;border-top:1px solid #20242E;font-size:16.5px;">Masterclass</a>
+    <a href="{{ url_for('about') }}" style="display:flex;padding:15px 0;border-top:1px solid #20242E;font-size:16.5px;">About</a>
+    {% if racha_dias and racha_dias >= 2 %}<div style="padding:13px 0;border-top:1px solid #20242E;"><span style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border:1px solid rgba(17,203,135,.45);border-radius:999px;color:#11cb87;font-size:13.8px;font-weight:600;">🔥 {{ racha_dias }}-day win streak</span></div>{% endif %}
+    <a href="{{ url_for('tools') }}" style="display:flex;padding:15px 0;border-top:1px solid #20242E;font-size:16.5px;">My Tools</a>
+    <a href="{{ url_for('my_bets') }}" style="display:flex;padding:15px 0;border-top:1px solid #20242E;font-size:16.5px;">My Bets</a>
+    <a href="{{ url_for('cuenta') }}" style="display:flex;padding:15px 0;border-top:1px solid #20242E;font-size:16.5px;">Account</a>
+    <a href="{{ url_for('home') }}" style="display:block;text-align:center;background:#11cb87;color:#0B0D12;font-weight:700;font-size:16.5px;padding:15px;border-radius:14px;margin-top:18px;text-decoration:none;">View picks →</a>
+    <a href="{{ url_for('logout') }}" style="display:flex;padding:13px 0;margin-top:6px;font-size:14.3px;color:#A3AAB6;">Log out</a>
     {# Entrada «Admin» ELIMINADA del menú ☰ (2026-11-12, orden de Alex en llamada: «quita el admin de ahí que yo lo voy a poner en otro sitio»). La ruta /admin y el enlace Admin de la barra superior NO se tocan. #}
   </div>
   </div>
