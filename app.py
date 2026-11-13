@@ -8387,6 +8387,57 @@ def cuenta_cancelar():
             except Exception:
                 _nm, _em = "?", ""
             log_notificacion(db, "cancelacion", f"Miembro pidió cancelar: {_nm}", _em or "")
+            # Aviso INMEDIATO a Alex por email (2026-11-13, orden de Alex:
+            # «que me llegue notificación por email y por aquí cuando
+            # alguien le dé a borrar cuenta o lo que hizo ella hoy»): el
+            # caso Rebekah Spurgin (2026-11-13) estampó su cancelación sin
+            # que ningún aviso llegara a Alex. Fail-safe total: va en hilo
+            # aparte y dentro de try/except — si el email falla, la
+            # cancelación del miembro NO se bloquea ni revienta.
+            try:
+                try:
+                    _sub_a = (user["stripe_subscription_id"] or "").strip()
+                except Exception:
+                    _sub_a = ""
+                try:
+                    _trial_a = (user["platinum_trial_ends"] or "").strip()
+                except Exception:
+                    _trial_a = ""
+                if _sub_a:
+                    _estado_a = "Paying member (Stripe subscription)"
+                elif _trial_a:
+                    _estado_a = ("Free month — Platinum trial until "
+                                 f"{_trial_a[:10]} (never paid)")
+                else:
+                    _estado_a = "Free account (no subscription)"
+                try:
+                    _cuando_a = datetime.now(
+                        ZoneInfo("America/New_York")).strftime(
+                            "%b %d, %Y · %I:%M %p ET")
+                except Exception:
+                    _cuando_a = now_iso()
+                _subj_a = f"🔔 Member requested cancellation — {_nm}"
+                _body_a = (
+                    "A member just requested cancellation from their own "
+                    "account page (/cuenta/cancelar).\n\n"
+                    f"Member: {_nm}\n"
+                    f"Email: {_em}\n"
+                    f"Status: {_estado_a}\n"
+                    f"When: {_cuando_a}\n\n"
+                    "The cancel_requested_at stamp is set. If they have a "
+                    "Stripe subscription, it was set to cancel at period "
+                    "end automatically."
+                )
+
+                def _aviso_cancel_a():
+                    try:
+                        _dispatch_email(ALEX_MEMBER_EMAIL, _subj_a, _body_a)
+                    except Exception:
+                        pass
+
+                threading.Thread(target=_aviso_cancel_a, daemon=True).start()
+            except Exception:
+                pass
             # Automático (2026-10-30, orden de Alex): la petición se aplica
             # también en Stripe al final del período — no se le cobra más.
             _ok_stripe = _stripe_set_cancel_at_period_end(user, True)
@@ -12091,6 +12142,44 @@ def admin_api_members_clear_cancel():
                (target["id"],))
     db.commit()
     return jsonify({"ok": True, "email": email, "cleared": tenia})
+
+
+@app.route("/admin/api/cancelaciones")
+def admin_api_cancelaciones():
+    """Miembros con cancelación PEDIDA por ellos mismos (sello
+    cancel_requested_at puesto), SIN el filtro que los esconde de las
+    demás listas (2026-11-13, orden de Alex: aviso inmediato cuando
+    alguien pide cancelar — el caso Rebekah estampó el sello sin que
+    ningún aviso llegara a Alex, porque active-members, members-emails
+    y entradas-hoy filtran `cancel_requested_at IS NULL` y
+    lifecycle-dry-run ni siquiera selecciona la columna). Es la fuente
+    del vigía vigia-cancelaciones.py de la VM. SOLO LEE: no modifica
+    nada. Auth: sesión admin O header X-Admin-Key (helper
+    _admin_api_autorizado, mismo patrón que members-clear-cancel)."""
+    if not _admin_api_autorizado():
+        return jsonify({"error": "admin only"}), 403
+    db = get_db()
+    rows = db.execute(
+        "SELECT id, nombre, email, cancel_requested_at, platinum_unlocked,"
+        " platinum_trial_ends, stripe_subscription_id, stripe_customer_id"
+        " FROM users WHERE cancel_requested_at IS NOT NULL"
+        " AND COALESCE(is_admin, 0) = 0 ORDER BY cancel_requested_at ASC"
+    ).fetchall()
+    out = []
+    for r in rows:
+        d = dict(r)
+        _sub_c = (d.get("stripe_subscription_id") or "").strip()
+        out.append({
+            "id": d["id"],
+            "nombre": d["nombre"],
+            "email": d["email"],
+            "cancel_requested_at": d["cancel_requested_at"],
+            "pagaba": bool(_sub_c
+                           or (d.get("stripe_customer_id") or "").strip()),
+            "mes_gratis": bool(d.get("platinum_trial_ends")) and not _sub_c,
+            "trial_ends": d.get("platinum_trial_ends"),
+        })
+    return jsonify({"cancelaciones": out})
 
 
 @app.route("/admin/api/members-set-name", methods=["POST"])
