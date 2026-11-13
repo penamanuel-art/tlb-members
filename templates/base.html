@@ -118,14 +118,18 @@ twq('config','rhgk7');
     <div class="menu-wrap">
       <button class="icon-btn" id="menuBtn" aria-label="Menu" aria-expanded="false" aria-haspopup="true" style="cursor:pointer;display:flex;align-items:center;justify-content:center;">☰</button>
       <div class="menu-drop" id="menuDrop" hidden style="left:auto;right:0;">
-        {# MENÚ ÚNICO Y CORTO (2026-11-13, orden final de Alex: «todo lo que es herramienta va dentro de Tools, no regado por el menú»): lista idéntica en home_lux.html, base.html y base_v2.html. Las herramientas viven en la página All tools. #}
-        <a href="{{ url_for('home') }}">Today</a>
-        <a href="{{ url_for('tools') }}">My Tools</a>
-        <a href="{{ url_for('cuenta') }}">Account</a>
-        <a href="{{ url_for('masterclass') }}">Masterclass</a>
-        <a href="{{ url_for('official_tracker') }}">Full Record</a>
-        {% if miembro_platinum %}<div style="padding:10px 12px;color:#e8c766;font-weight:600;">💎 Platinum Active</div>{% else %}<a href="{{ url_for('desbloquear_platinum') }}" style="color:#e8c766;">Unlock Platinum</a>{% endif %}
-        <a href="{{ url_for('logout') }}">Log out</a>
+        {# MENÚ — estructura de la foto de Wise Guy (2026-11-13): lista plana, sin grupos. Idéntico en home_lux.html, base.html y base_v2.html. Las herramientas viven dentro de «My Tools». #}
+        {% if miembro_platinum %}<div style="padding:10px 12px;font-size:15px;font-weight:600;color:#e8c766;">💎 Platinum Active</div>{% else %}        <a href="{{ url_for('desbloquear_platinum') }}" style="font-size:15px;font-weight:600;color:#11cb87;">Unlock Platinum</a>{% endif %}
+        <a href="{{ url_for('odds') }}" style="font-size:15px;">Betting Lines</a>
+        <a href="{{ url_for('compare_books') }}" style="font-size:15px;">Sportsbooks</a>
+        <a href="{{ url_for('masterclass') }}" style="font-size:15px;">Masterclass</a>
+        <a href="{{ url_for('about') }}" style="font-size:15px;">About</a>
+        {% if racha_dias and racha_dias >= 2 %}<div style="padding:6px 12px;"><span style="display:inline-flex;align-items:center;gap:5px;padding:6px 11px;border:1px solid rgba(17,203,135,.45);border-radius:999px;color:#11cb87;font-size:12.5px;font-weight:600;">🔥 {{ racha_dias }}-day win streak</span></div>{% endif %}
+        <a href="{{ url_for('tools') }}" style="font-size:15px;">My Tools</a>
+        <a href="{{ url_for('my_bets') }}" style="font-size:15px;">My Bets</a>
+        <a href="{{ url_for('cuenta') }}" style="font-size:15px;">Account</a>
+        <a href="{{ url_for('home') }}" style="display:block;text-align:center;background:#11cb87;color:#0B0D12;font-weight:700;font-size:15px;padding:11px;border-radius:12px;margin:8px 0 4px;">View picks →</a>
+        <a href="{{ url_for('logout') }}" style="font-size:13.5px;color:#A3AAB6;">Log out</a>
       </div>
     </div>
   </div>
