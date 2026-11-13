@@ -444,6 +444,9 @@
         </div>
       </div>
       {% endif %}
+      {% if members_live_now is not none %}
+      <div class="bd-live"><span class="bd-livedot"></span>Members live now&nbsp;·&nbsp;<b>{{ members_live_now }}</b></div>
+      {% endif %}
     </div>
   </div>
 
@@ -1319,6 +1322,9 @@ body{background-color:#0B0E13!important;background-image:radial-gradient(560px 3
 .hero.tst-board .bd-status p{color:#aeb9c8;font-size:11px;line-height:1.3;margin:3px 0 0}
 .hero.tst-board .bd-status.bd-pend{border-color:rgba(255,255,255,.14);background:rgba(255,255,255,.02)}
 .hero.tst-board .bd-clock{flex:0 0 auto;width:28px;height:28px;border-radius:12px;background:rgba(255,255,255,.08);color:#aeb9c8;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.hero.tst-board .bd-live{display:flex;align-items:center;gap:6px;margin-top:12px;color:#9aa7ba;font-size:11px;font-weight:600;letter-spacing:.05em}
+.hero.tst-board .bd-live .bd-livedot{flex:0 0 auto;width:7px;height:7px;border-radius:50%;background:#2ee6a8;box-shadow:0 0 6px rgba(46,230,168,.85)}
+.hero.tst-board .bd-live b{color:#fff;font-weight:800}
 </style>
 <div id="tourRoot" hidden>
   <div id="tourDim"></div>
