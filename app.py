@@ -6290,6 +6290,26 @@ def home():
             ]
     except Exception:
         _my_books = []
+    # Indicador «Members live now» en la primera tarjeta del Dashboard
+    # (2026-11-13, pedido de Alex): MISMA definición de presencia que
+    # /admin/api/en-vivo — latido de /api/presencia dentro de los últimos
+    # 150 segundos, fuera admins, cuentas @value.local y cancelaciones
+    # pedidas. Si el conteo falla, None y la plantilla no muestra nada
+    # (nunca un número decorativo ni inventado).
+    _members_live = None
+    try:
+        db.execute("CREATE TABLE IF NOT EXISTS presencia (user_id INTEGER PRIMARY KEY, ultimo TEXT, ip TEXT)")
+        _corte_live = (datetime.now(timezone.utc) - timedelta(seconds=150)).isoformat(timespec="seconds")
+        _row_live = db.execute(
+            "SELECT COUNT(*) AS c FROM presencia p JOIN users u ON u.id = p.user_id"
+            " WHERE p.ultimo >= ? AND COALESCE(u.is_admin, 0) = 0"
+            " AND u.email IS NOT NULL AND u.email != ''"
+            " AND u.email NOT LIKE ? AND u.cancel_requested_at IS NULL",
+            (_corte_live, "%@value.local"),
+        ).fetchone()
+        _members_live = int(_row_live["c"]) if _row_live else 0
+    except Exception:
+        _members_live = None
     return render_template(
         # Tema v2 (moderno) es el predeterminado desde 2026-10-02 (pedido Alex);
         # v1 (clásico) queda como reversión vía /theme/v1. Diseño lux
@@ -6341,6 +6361,7 @@ def home():
         locked_plays=locked_plays,
         setup_pendiente=_setup_pend,
         my_books=_my_books,
+        members_live_now=_members_live,
         preview_locked_play=preview_locked_play,
         es_admin=is_admin_for(user),
         es_alex=is_alex_member(user),
