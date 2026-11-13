@@ -375,13 +375,13 @@
        nunca regadas en el menú. Sin «Admin» (orden 2026-11-12). #}
 
     {% if not miembro_platinum %}<a href="{{ url_for('desbloquear_platinum') }}" style="display:flex;padding:15px 0;border-bottom:1px solid #20242E;font-size:16.5px;font-weight:600;color:#11cb87;">Unlock Platinum</a>{% endif %}
-    <a href="{{ url_for('odds') }}" style="display:flex;padding:15px 0;font-size:16.5px;">Betting Lines</a>
-    <a href="{{ url_for('compare_books') }}" style="display:flex;padding:15px 0;border-top:1px solid #20242E;font-size:16.5px;">Sportsbooks</a>
+    <a href="{{ url_for('game_center') }}" style="display:flex;padding:15px 0;font-size:16.5px;">Betting Lines</a>
+    <a href="{{ url_for('balances') }}" style="display:flex;padding:15px 0;border-top:1px solid #20242E;font-size:16.5px;">Sportsbooks</a>
     <a href="{{ url_for('masterclass') }}" style="display:flex;padding:15px 0;border-top:1px solid #20242E;font-size:16.5px;">Masterclass</a>
     <a href="{{ url_for('about') }}" style="display:flex;padding:15px 0;border-top:1px solid #20242E;font-size:16.5px;">About</a>
     {% if racha_dias and racha_dias >= 2 %}<div style="padding:13px 0;border-top:1px solid #20242E;"><span style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border:1px solid rgba(17,203,135,.45);border-radius:999px;color:#11cb87;font-size:13.8px;font-weight:600;">🔥 {{ racha_dias }}-day win streak</span></div>{% endif %}
     <a href="{{ url_for('tools') }}" style="display:flex;padding:15px 0;border-top:1px solid #20242E;font-size:16.5px;">My Tools</a>
-    <a href="{{ url_for('my_bets') }}" style="display:flex;padding:15px 0;border-top:1px solid #20242E;font-size:16.5px;">My Bets</a>
+    <a href="{{ url_for('tracker_plays') }}" style="display:flex;padding:15px 0;border-top:1px solid #20242E;font-size:16.5px;">My Bets</a>
     <a href="{{ url_for('cuenta') }}" style="display:flex;padding:15px 0;border-top:1px solid #20242E;font-size:16.5px;">Account</a>
     <a href="{{ url_for('home') }}" style="display:block;text-align:center;background:#11cb87;color:#0B0D12;font-weight:700;font-size:16.5px;padding:15px;border-radius:14px;margin-top:18px;text-decoration:none;">View picks →</a>
     <a href="{{ url_for('logout') }}" style="display:flex;padding:13px 0;margin-top:6px;font-size:14.3px;color:#A3AAB6;">Log out</a>
