@@ -119,7 +119,7 @@ twq('config','rhgk7');
       <button class="icon-btn" id="menuBtn" aria-label="Menu" aria-expanded="false" aria-haspopup="true" style="cursor:pointer;display:flex;align-items:center;justify-content:center;">☰</button>
       <div class="menu-drop" id="menuDrop" hidden style="left:auto;right:0;">
         {# MENÚ — estructura de la foto de Wise Guy (2026-11-13): lista plana, sin grupos. Idéntico en home_lux.html, base.html y base_v2.html. Las herramientas viven dentro de «My Tools». #}
-        {% if miembro_platinum %}<div style="padding:10px 12px;font-size:15px;font-weight:600;color:#e8c766;">💎 Platinum Active</div>{% else %}        <a href="{{ url_for('desbloquear_platinum') }}" style="font-size:15px;font-weight:600;color:#11cb87;">Unlock Platinum</a>{% endif %}
+        {% if not miembro_platinum %}        <a href="{{ url_for('desbloquear_platinum') }}" style="font-size:15px;font-weight:600;color:#11cb87;">Unlock Platinum</a>{% endif %}
         <a href="{{ url_for('odds') }}" style="font-size:15px;">Betting Lines</a>
         <a href="{{ url_for('compare_books') }}" style="font-size:15px;">Sportsbooks</a>
         <a href="{{ url_for('masterclass') }}" style="font-size:15px;">Masterclass</a>
