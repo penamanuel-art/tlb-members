@@ -122,6 +122,7 @@ twq('config','rhgk7');
         <a href="{{ url_for('tools') }}" style="font-size:15px;">My Tools</a>
         <a href="{{ url_for('tracker_plays') }}" style="font-size:15px;">My Bets</a>
         <a href="{{ url_for('cuenta') }}" style="font-size:15px;">Account</a>
+        {% if is_alex %}<a href="{{ url_for('admin_dashboard') }}" style="font-size:15px;">Admin</a>{% endif %}
         <a href="{{ url_for('home') }}" style="display:block;text-align:center;background:#11cb87;color:#0B0D12;font-weight:700;font-size:15px;padding:11px;border-radius:12px;margin:8px 0 4px;">View picks →</a>
         <a href="{{ url_for('logout') }}" style="font-size:13.5px;color:#A3AAB6;">Log out</a>
       </div>
