@@ -383,6 +383,7 @@
     <a href="{{ url_for('tools') }}" style="display:flex;padding:15px 0;border-top:1px solid #20242E;font-size:16.5px;">My Tools</a>
     <a href="{{ url_for('tracker_plays') }}" style="display:flex;padding:15px 0;border-top:1px solid #20242E;font-size:16.5px;">My Bets</a>
     <a href="{{ url_for('cuenta') }}" style="display:flex;padding:15px 0;border-top:1px solid #20242E;font-size:16.5px;">Account</a>
+    {% if is_alex %}<a href="{{ url_for('admin_dashboard') }}" style="display:flex;padding:15px 0;border-top:1px solid #20242E;font-size:16.5px;">Admin</a>{% endif %}
     <a href="{{ url_for('home') }}" style="display:block;text-align:center;background:#11cb87;color:#0B0D12;font-weight:700;font-size:16.5px;padding:15px;border-radius:14px;margin-top:18px;text-decoration:none;">View picks →</a>
     <a href="{{ url_for('logout') }}" style="display:flex;padding:13px 0;margin-top:6px;font-size:14.3px;color:#A3AAB6;">Log out</a>
     {# Entrada «Admin» ELIMINADA del menú ☰ (2026-11-12, orden de Alex en llamada: «quita el admin de ahí que yo lo voy a poner en otro sitio»). La ruta /admin y el enlace Admin de la barra superior NO se tocan. #}
