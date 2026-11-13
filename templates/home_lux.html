@@ -369,13 +369,14 @@
        DATA / MY TOOLS), SOLO con destinos reales de nuestra plataforma
        (cero enlaces inventados). Sin «Admin» (salió por orden de Alex el
        mismo día). Al final se conservan Full Record y Unlock Platinum,
-       que son nuestros. Destinos y reglas Platinum intactos. #}
-    <button type="button" class="tst-acc-head" aria-expanded="false" onclick="tstAcc(this)"><span>Workspace</span><span class="tst-acc-chev">›</span></button>
-    <div class="tst-acc-panel" aria-hidden="true">
-    <a href="{{ url_for('home') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:13px;">Today's plays <span style="color:#A3AAB6;">›</span></a>
-    <a href="{{ url_for('tools') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:13px;">All tools <span style="color:#A3AAB6;">›</span></a>
-    <a href="{{ url_for('cuenta') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:13px;">My account <span style="color:#A3AAB6;">›</span></a>
-    </div>
+       que son nuestros. Destinos y reglas Platinum intactos.
+       DEDUP (2026-11-13, orden de Alex: «que no haya nada repetido, todo
+       organizado, fácil de navegar»): salen del menú «Today's plays»,
+       «All tools» y «My account» (el grupo Workspace entero desaparece)
+       y «My Bets» (de My Tools), porque esos 4 destinos ya viven en la
+       barra inferior (Today / Tools / Account / My Bets). La barra NO
+       se toca. Quedan: Learn, Research, Market Data, My Tools (Alerts,
+       AI Assistant), Full Record y Unlock Platinum. #}
     <button type="button" class="tst-acc-head" aria-expanded="false" onclick="tstAcc(this)"><span>Learn</span><span class="tst-acc-chev">›</span></button>
     <div class="tst-acc-panel" aria-hidden="true">
     <a href="#" onclick="document.getElementById('tst-menu-sheet').hidden=true;var b=document.getElementById('tst-menubtn');if(b)b.setAttribute('aria-expanded','false');document.body.style.overflow='';if(window.tstStartTour)window.tstStartTour();return false;" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:13px;color:#e8c766;">Dashboard Tour <span style="color:#A3AAB6;">›</span></a>
@@ -394,7 +395,6 @@
     </div>
     <button type="button" class="tst-acc-head" aria-expanded="false" onclick="tstAcc(this)"><span>My Tools</span><span class="tst-acc-chev">›</span></button>
     <div class="tst-acc-panel" aria-hidden="true">
-    <a href="{{ url_for('tracker') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:13px;">My Bets <span style="color:#A3AAB6;">›</span></a>
     <a href="{{ url_for('alertas') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:13px;">Alerts <span style="color:#A3AAB6;">›</span></a>
     <a href="{{ url_for('ai_assistant') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:13px;">AI Assistant <span style="color:#A3AAB6;">›</span></a>
     </div>
