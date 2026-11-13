@@ -444,7 +444,7 @@
       </div>
       {% endif %}
       {% if members_live_now is not none %}
-      <div class="bd-live"><span class="bd-livedot"></span>Members live now&nbsp;·&nbsp;<b>{{ members_live_now }}</b></div>
+      {% if is_alex %}<div class="bd-live"><span class="bd-livedot"></span>Members live now&nbsp;·&nbsp;<b>{{ members_live_now }}</b></div>{% endif %}
       {% endif %}
     </div>
   </div>
