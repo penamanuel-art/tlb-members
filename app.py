@@ -12584,6 +12584,48 @@ def admin_api_members_grant_platinum():
                     "no_encontrados": no_encontrados})
 
 
+@app.route("/admin/api/members-set-mes-gratis", methods=["POST"])
+def admin_api_members_set_mes_gratis():
+    """Pone la cuenta EXACTAMENTE como nace un registro nuevo (2026-11-13,
+    orden de Alex pa' su propia cuenta: «pónmela igual — el mes gratis como
+    normal para todo el mundo»): platinum_unlocked = 1,
+    platinum_trial_ends = ahora + MES_GRATIS_DIAS días y
+    signup_offer = OFERTA_MES_GRATIS — la misma semántica del INSERT del
+    registro. NO toca el sello cancel_requested_at ni ningún campo de
+    Stripe. Body JSON: {"emails": [...]}. Auth: sesión admin O header
+    X-Admin-Key (mismo patrón que members-grant-platinum)."""
+    if not _admin_api_autorizado():
+        return jsonify({"error": "admin only"}), 403
+    data = request.get_json(silent=True) or {}
+    emails = data.get("emails")
+    if emails is None:
+        emails = request.form.getlist("emails")
+    if not isinstance(emails, list) or not emails:
+        return jsonify({"error": "emails list required"}), 400
+    procesados, no_encontrados = [], []
+    db = get_db()
+    _fin = (datetime.now() + timedelta(days=MES_GRATIS_DIAS)).isoformat()
+    for crudo in emails:
+        email = (str(crudo) or "").strip().lower()
+        if not email:
+            continue
+        target = db.execute("SELECT id, nombre FROM users WHERE email = ?",
+                            (email,)).fetchone()
+        if not target:
+            no_encontrados.append(email)
+            continue
+        db.execute(
+            "UPDATE users SET platinum_unlocked = 1, platinum_trial_ends = ?, "
+            "signup_offer = ? WHERE id = ?",
+            (_fin, OFERTA_MES_GRATIS, target["id"]),
+        )
+        procesados.append(email)
+    db.commit()
+    return jsonify({"ok": True, "procesados": procesados,
+                    "no_encontrados": no_encontrados,
+                    "platinum_trial_ends": _fin})
+
+
 @app.route("/admin/api/members-set-stakes", methods=["POST"])
 def admin_api_members_set_stakes():
     """Fija los montos por jugada de un miembro (stake_fijo_elite /
