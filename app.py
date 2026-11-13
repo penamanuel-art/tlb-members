@@ -2993,16 +2993,18 @@ def racha_platinum():
 
 def tirita_record10():
     """Tirita superior del Dashboard (2026-11-13, orden de Alex): récord
-    del PROGRAMA (todos los niveles) en las últimas 10 jugadas liquidadas
-    del archivo. SOLO sale cuando el récord es positivo (más ganadas que
-    perdidas); si no, devuelve None y la tirita no se renderiza. Números
-    siempre reales del archive; ante cualquier fallo, None."""
+    del nivel PLATINUM (en el archivo: ELITE + PLATINUM) en sus últimas 10
+    jugadas liquidadas, across all sports. SOLO sale cuando ese récord va
+    positivo (más ganadas que perdidas); si no, devuelve None y la tirita
+    no se renderiza. Números siempre reales del archive; ante cualquier
+    fallo, None."""
     try:
         dias = sorted(load_archive(), key=lambda d: d.get("fecha") or "")
         seq = []
         for d in dias:
             for j in d.get("jugadas") or []:
-                if j.get("resultado") in ("WON", "LOST"):
+                if j.get("resultado") in ("WON", "LOST") and \
+                        (j.get("nivel") or "").upper() in ("ELITE", "PLATINUM"):
                     seq.append(j["resultado"])
         ult = seq[-10:]
         if len(ult) < 10:
