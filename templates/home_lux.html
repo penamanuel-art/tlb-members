@@ -407,6 +407,7 @@
     <a href="{{ url_for('tools') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:14.3px;">My Tools <span style="color:#A3AAB6;">›</span></a>
     <a href="{{ url_for('official_tracker') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:14.3px;">Full Record <span style="color:#A3AAB6;">›</span></a>
     {% if miembro_platinum %}<div style="display:flex;padding:12px 0;border-top:1px solid #20242E;font-size:14.3px;color:#e8c766;">💎 Platinum Active</div>{% else %}<a href="{{ url_for('desbloquear_platinum') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:14.3px;color:#e8c766;">Unlock Platinum <span style="color:#A3AAB6;">›</span></a>{% endif %}
+    <a href="{{ url_for('logout') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:14.3px;">Log out <span style="color:#A3AAB6;">›</span></a>
     {# Entrada «Admin» ELIMINADA del menú ☰ (2026-11-12, orden de Alex en llamada: «quita el admin de ahí que yo lo voy a poner en otro sitio»). La ruta /admin y el enlace Admin de la barra superior NO se tocan. #}
   </div>
   </div>
