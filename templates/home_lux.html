@@ -393,11 +393,12 @@
     <a href="{{ url_for('sharp') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:14.3px;">Sharp Money <span style="color:#A3AAB6;">›</span></a>
     <a href="{{ url_for('tools_line_moves') if miembro_platinum else url_for('desbloquear_platinum') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:14.3px;">Line Moves <span style="color:#A3AAB6;">›</span></a>
     </div>
-    <button type="button" class="tst-acc-head" aria-expanded="false" onclick="tstAcc(this)"><span>My Tools</span><span class="tst-acc-chev">›</span></button>
-    <div class="tst-acc-panel" aria-hidden="true">
-    <a href="{{ url_for('alertas') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:14.3px;">Alerts <span style="color:#A3AAB6;">›</span></a>
-    <a href="{{ url_for('ai_assistant') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:14.3px;">AI Assistant <span style="color:#A3AAB6;">›</span></a>
-    </div>
+    {# My Tools = ENLACE DIRECTO a la página All tools (2026-11-13, orden
+       de Alex en llamada: el acordeón con solo Alerts + AI Assistant se
+       veía vacío y el Full Record pegado debajo parecía parte del grupo;
+       «desde el menú, a mis herramientas tiene que llevarte a esa
+       página»). Alerts y AI Assistant viven en la página de Tools. #}
+    <a href="{{ url_for('tools') }}" class="tst-acc-head" style="text-decoration:none;"><span>My Tools</span><span class="tst-acc-chev">›</span></a>
     <a href="{{ url_for('official_tracker') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:14.3px;">Full Record <span style="color:#A3AAB6;">›</span></a>
     {% if miembro_platinum %}<div style="display:flex;padding:12px 0;border-top:1px solid #20242E;font-size:14.3px;color:#e8c766;">💎 Platinum Active</div>{% else %}<a href="{{ url_for('desbloquear_platinum') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:14.3px;color:#e8c766;">Unlock Platinum <span style="color:#A3AAB6;">›</span></a>{% endif %}
     {# Entrada «Admin» ELIMINADA del menú ☰ (2026-11-12, orden de Alex en llamada: «quita el admin de ahí que yo lo voy a poner en otro sitio»). La ruta /admin y el enlace Admin de la barra superior NO se tocan. #}
