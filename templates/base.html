@@ -118,23 +118,11 @@ twq('config','rhgk7');
     <div class="menu-wrap">
       <button class="icon-btn" id="menuBtn" aria-label="Menu" aria-expanded="false" aria-haspopup="true" style="cursor:pointer;display:flex;align-items:center;justify-content:center;">☰</button>
       <div class="menu-drop" id="menuDrop" hidden style="left:auto;right:0;">
-        {# MENÚ ÚNICO (2026-11-13, orden de Alex: «¿por qué dos menú diferente?»): este menú es ESPEJO del menú ☰ del Dashboard (home_lux.html) — mismos grupos, mismos nombres, mismo orden y mismos destinos. Si se cambia uno, se cambian todos: home_lux.html, base.html y base_v2.html. #}
-        <div style="padding:8px 12px 2px;font-size:10.5px;font-weight:700;letter-spacing:.14em;color:#11cb87;">WORKSPACE</div>
+        {# MENÚ ÚNICO Y CORTO (2026-11-13, orden final de Alex: «todo lo que es herramienta va dentro de Tools, no regado por el menú»): lista idéntica en home_lux.html, base.html y base_v2.html. Las herramientas viven en la página All tools. #}
         <a href="{{ url_for('home') }}">Today</a>
-        <a href="{{ url_for('tools') }}">All tools</a>
-        <a href="{{ url_for('cuenta') }}">Account</a>
-        <div style="padding:12px 12px 2px;font-size:10.5px;font-weight:700;letter-spacing:.14em;color:#11cb87;">LEARN</div>
-        <a href="{{ url_for('home') }}?tour=1">Dashboard Tour</a>
-        <a href="{{ url_for('masterclass') }}">Masterclass</a>
-        <div style="padding:12px 12px 2px;font-size:10.5px;font-weight:700;letter-spacing:.14em;color:#11cb87;">RESEARCH</div>
-        <a href="{{ url_for('ev_board') if miembro_platinum else url_for('desbloquear_platinum') }}">+EV Board</a>
-        <a href="{{ url_for('game_center') }}">Game Center</a>
-        <a href="{{ url_for('props') if miembro_platinum else url_for('desbloquear_platinum') }}">Player Props</a>
-        <a href="{{ url_for('parlay_builder') }}">+EV Parlay Builder</a>
-        <div style="padding:12px 12px 2px;font-size:10.5px;font-weight:700;letter-spacing:.14em;color:#11cb87;">MARKET DATA</div>
-        <a href="{{ url_for('sharp') }}">Sharp Money</a>
-        <a href="{{ url_for('tools_line_moves') if miembro_platinum else url_for('desbloquear_platinum') }}">Line Moves</a>
         <a href="{{ url_for('tools') }}">My Tools</a>
+        <a href="{{ url_for('cuenta') }}">Account</a>
+        <a href="{{ url_for('masterclass') }}">Masterclass</a>
         <a href="{{ url_for('official_tracker') }}">Full Record</a>
         {% if miembro_platinum %}<div style="padding:10px 12px;color:#e8c766;font-weight:600;">💎 Platinum Active</div>{% else %}<a href="{{ url_for('desbloquear_platinum') }}" style="color:#e8c766;">Unlock Platinum</a>{% endif %}
         <a href="{{ url_for('logout') }}">Log out</a>
