@@ -889,7 +889,7 @@ def _mes_gratis_hasta(user) -> str:
         te = (user["platinum_trial_ends"] or "") if user else ""
         if not te:
             return ""
-        return datetime.fromisoformat(te).strftime("%b %d")
+        return datetime.fromisoformat(te).strftime("%B %d")
     except Exception:
         return ""
 
