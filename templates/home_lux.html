@@ -374,8 +374,8 @@
        herramientas viven dentro de «My Tools» (página All tools),
        nunca regadas en el menú. Sin «Admin» (orden 2026-11-12). #}
 
-    {% if miembro_platinum %}<div style="display:flex;padding:15px 0;font-size:16.5px;font-weight:600;color:#e8c766;">💎 Platinum Active</div>{% else %}    <a href="{{ url_for('desbloquear_platinum') }}" style="display:flex;padding:15px 0;font-size:16.5px;font-weight:600;color:#11cb87;">Unlock Platinum</a>{% endif %}
-    <a href="{{ url_for('odds') }}" style="display:flex;padding:15px 0;border-top:1px solid #20242E;font-size:16.5px;">Betting Lines</a>
+    {% if not miembro_platinum %}<a href="{{ url_for('desbloquear_platinum') }}" style="display:flex;padding:15px 0;border-bottom:1px solid #20242E;font-size:16.5px;font-weight:600;color:#11cb87;">Unlock Platinum</a>{% endif %}
+    <a href="{{ url_for('odds') }}" style="display:flex;padding:15px 0;font-size:16.5px;">Betting Lines</a>
     <a href="{{ url_for('compare_books') }}" style="display:flex;padding:15px 0;border-top:1px solid #20242E;font-size:16.5px;">Sportsbooks</a>
     <a href="{{ url_for('masterclass') }}" style="display:flex;padding:15px 0;border-top:1px solid #20242E;font-size:16.5px;">Masterclass</a>
     <a href="{{ url_for('about') }}" style="display:flex;padding:15px 0;border-top:1px solid #20242E;font-size:16.5px;">About</a>
