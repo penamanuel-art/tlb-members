@@ -16,6 +16,7 @@
 .acct-k{font-size:12px;letter-spacing:1.5px;color:#8b93a7;margin:0 0 12px;font-weight:700;}
 .acct-input{width:100%;box-sizing:border-box;background:#131c2e;border:1px solid #26334d;border-radius:12px;padding:13px 14px;font-size:15px;color:#fff;margin-bottom:14px;font-family:inherit;}
 .acct-btn{display:inline-block;background:#22c55e;color:#06240f;font-weight:800;font-size:15px;padding:12px 22px;border-radius:12px;border:none;cursor:pointer;text-decoration:none;text-align:center;}
+.acct-btn-danger{display:block;width:100%;box-sizing:border-box;background:rgba(220,38,38,.16);border:1px solid #b91c1c;color:#f87171;font-weight:800;font-size:16px;min-height:46px;padding:13px 22px;border-radius:12px;cursor:pointer;text-decoration:none;text-align:center;font-family:inherit;}
 .acct-btn-block{display:block;width:100%;box-sizing:border-box;}
 .acct-badge{display:inline-block;background:rgba(59,130,246,.15);color:#7db4ff;font-weight:800;font-size:13px;letter-spacing:1px;padding:7px 16px;border-radius:999px;}
 .acct-badge-gold{display:inline-block;background:rgba(201,162,39,.15);color:#e3b93c;font-weight:800;font-size:13px;letter-spacing:1px;padding:7px 16px;border-radius:999px;}
@@ -40,6 +41,7 @@
 
 <div class="acct-tabs" id="acctTabs">
   <button type="button" class="acct-tab" data-tab="overview">Overview</button>
+  <button type="button" class="acct-tab" data-tab="membership">Membership</button>
   <button type="button" class="acct-tab" data-tab="subscriptions">Subscriptions</button>
   <button type="button" class="acct-tab" data-tab="preferences">Preferences</button>
   <button type="button" class="acct-tab" data-tab="payments">Payments</button>
@@ -81,21 +83,7 @@
 
   <div class="acct-card">
     <p class="acct-k">MANAGE MEMBERSHIP</p>
-    {% if past_due %}
-    <p class="acct-muted" style="margin:0 0 14px;">Update your card to restore your Platinum access right away.</p>
-    <a href="{{ (billing.pay_url if billing else None) or url_for('desbloquear_platinum') }}" class="acct-btn acct-btn-block">Update card &amp; restore access →</a>
-    {% elif cancel_at %}
-    <p class="acct-muted" style="margin:0 0 14px;">Changed your mind? Keep your membership and nothing changes.</p>
-    <form method="post" action="{{ url_for('cuenta_reactivar') }}">
-      <button class="acct-btn acct-btn-block" type="submit">Keep my membership</button>
-    </form>
-    {% elif platinum %}
-    <p class="acct-muted" style="margin:0 0 14px;">Need a break? You can cancel anytime — your access stays active until the end of your current term.</p>
-    <a href="{{ url_for('cuenta_cancelar') }}" style="border:1px solid #2a3648;border-radius:12px;padding:10px 18px;font-size:14px;color:#f87171;text-decoration:none;display:inline-block;">Cancel membership</a>
-    {% else %}
-    <p class="acct-muted" style="margin:0 0 14px;">Get every Platinum play, the EV Board, the Parlay Builder and Brain.</p>
-    <a href="{{ url_for('desbloquear_platinum') }}" class="acct-btn acct-btn-block">Unlock Platinum →</a>
-    {% endif %}
+    <p class="acct-muted" style="margin:0;">Your plan and cancellation live in one place. <a href="{{ url_for('cuenta') }}?tab=membership" style="color:#4ade80;font-weight:700;text-decoration:none;">Manage membership →</a></p>
   </div>
 
   <div class="acct-card">
@@ -117,6 +105,36 @@
       <button type="submit" name="mode" value="units" class="br-pill{% if stake_mode == 'units' %} active{% endif %}">TST Units</button>
       <button type="submit" name="mode" value="kelly" class="br-pill{% if stake_mode == 'kelly' %} active{% endif %}">Kelly $</button>
     </form>
+  </div>
+</div>
+
+{# ============ MEMBERSHIP ============ #}
+<div class="acct-pane" id="pane-membership">
+  <div class="acct-card">
+    <p class="acct-k">YOUR MEMBERSHIP</p>
+    {% if past_due %}
+    <span class="acct-badge" style="background:rgba(220,38,38,.18);color:#f87171;">PAST DUE</span>
+    <p style="font-size:15px;color:#d1d5db;margin:12px 0 14px;">Your last payment didn't go through and your Platinum access is paused. Update your card to restore it right away.</p>
+    <a href="{{ (billing.pay_url if billing else None) or url_for('desbloquear_platinum') }}" class="acct-btn acct-btn-block">Update card &amp; restore access →</a>
+    {% elif cancel_at %}
+    <p style="font-size:15px;color:#d1d5db;margin:0 0 14px;">Your membership is cancelled. You keep full access until the end of your current period — you won't be charged again.</p>
+    <p class="acct-muted" style="margin:0 0 14px;">Changed your mind? Keep your membership and nothing changes.</p>
+    <form method="post" action="{{ url_for('cuenta_reactivar') }}">
+      <button class="acct-btn acct-btn-block" type="submit">Keep my membership</button>
+    </form>
+    {% elif platinum %}
+    <span class="acct-badge">PLATINUM</span>
+    {% if u and u.platinum_trial_ends %}
+    <p style="font-size:15px;color:#d1d5db;margin:12px 0 14px;">Your free month is active — Platinum is on us until {{ u.platinum_trial_ends[:10] }}.</p>
+    {% else %}
+    <p style="font-size:15px;color:#d1d5db;margin:12px 0 14px;">You're paid up — your plan renews automatically.</p>
+    {% endif %}
+    <a href="{{ url_for('cuenta_cancelar') }}" class="acct-btn-danger">Cancel membership</a>
+    {% else %}
+    <span class="acct-badge-gold">SHARP FREE</span>
+    <p style="font-size:15px;color:#d1d5db;margin:12px 0 14px;">You're on the free plan. Unlock Platinum — $15.99/week.</p>
+    <a href="{{ url_for('desbloquear_platinum') }}" class="acct-btn acct-btn-block">Unlock Platinum →</a>
+    {% endif %}
   </div>
 </div>
 
@@ -362,7 +380,7 @@
   }
   tabs.forEach(function(b){ b.addEventListener('click', function(){ show(b.getAttribute('data-tab')); }); });
   var want = new URLSearchParams(location.search).get('tab') || 'overview';
-  var valid = ['overview','subscriptions','preferences','payments','profile','security'];
+  var valid = ['overview','membership','subscriptions','preferences','payments','profile','security'];
   show(valid.indexOf(want) >= 0 ? want : 'overview');
 })();
 </script>
