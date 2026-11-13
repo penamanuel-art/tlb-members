@@ -6488,6 +6488,15 @@ def admin_home_preview():
     )
 
 
+@app.route("/admin/ideas-preview")
+@admin_required
+def admin_ideas_preview():
+    """Previa de las 3 ideas de diseno de la ronda 14 (2026-11-13,
+    pedido de Alex: verlas en diseno). SOLO admin/Alex via
+    admin_required; plantilla estatica, no toca ningun dato."""
+    return render_template("ideas_preview.html")
+
+
 def _meta_phone_hash(phone):
     """Teléfono para user_data de Meta (2026-11-07): solo dígitos con
     código de país (el de EE. UU. de 10 dígitos lleva el 1 delante),
