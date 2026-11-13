@@ -25,7 +25,7 @@
   .wordmark b{display:block;font-size:8.4px;letter-spacing:.22em;color:#e8c766;font-style:italic;font-weight:400}
   .wordmark strong{display:block;font-size:14.3px;letter-spacing:.01em;font-style:italic;font-weight:900}
   .wordmark i{display:block;height:1.9px;background:linear-gradient(90deg,#2ee6a8,#e8c766);margin-top:1.9px}
-  .topactions{display:flex;align-items:center;gap:6px}
+  .topactions{display:flex;align-items:center;gap:12px}
   .pill{display:flex;align-items:center;gap:6px;border:1px solid #262C36;background:#1E222B;border-radius:999px;padding:6px 10px;font-size:12.1px;font-weight:600;white-space:nowrap}
   .topstrip{display:flex;align-items:center;gap:6px;width:fit-content;margin:0 auto 12px;border:1px solid #e8c766;background:linear-gradient(180deg,#20242E,#1B1F27);border-radius:999px;padding:8px 14px;font-size:12.1px;font-weight:700;color:#F2F3F5;text-decoration:none;white-space:nowrap}
   .pill .crown{color:#e8c766}
@@ -49,7 +49,7 @@
   .pillrow{display:flex;align-items:center;gap:7px;margin-bottom:10px}
   .balance{flex:1 1 auto;min-width:0;display:flex;align-items:center;justify-content:flex-start;gap:6px;height:40px;box-sizing:border-box;border:1px solid #262C36;border-radius:999px;padding:6px 10px;background:#1E222B;font-weight:300;font-size:11.6px;white-space:nowrap}
   .balance b{color:#2ee6a8;font-size:12.1px;font-weight:300}
-  .menubtn{width:40px;height:40px;min-width:40px;border:1px solid #262C36;background:#1E222B;border-radius:12px;color:#F2F3F5;font-size:14.9px;display:flex;align-items:center;justify-content:center}
+  .menubtn{width:44px;height:44px;min-width:44px;border:1px solid #262C36;background:#1E222B;border-radius:12px;color:#F2F3F5;font-size:16.4px;display:flex;align-items:center;justify-content:center}
   .hero{position:relative;overflow:hidden;border:1px solid #343B47;border-radius:20px;background:radial-gradient(120% 140% at 20% 0%,#262C36 0%,#13161D 55%,#08090D 100%);padding:20px 18px 0;box-shadow:0 0 26px rgba(46,230,168,.18);margin-top:14px;margin-bottom:22px}
   .hero .photo{position:absolute;left:0;right:0;top:0;bottom:0;background:none;opacity:1;animation:none}
   @keyframes hero-ola{from{background-position:0% 0%,20% center}to{background-position:0% 0%,80% center}}
@@ -399,7 +399,7 @@
     <a href="{{ url_for('ai_assistant') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:14.3px;">AI Assistant <span style="color:#A3AAB6;">›</span></a>
     </div>
     <a href="{{ url_for('official_tracker') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:14.3px;">Full Record <span style="color:#A3AAB6;">›</span></a>
-    <a href="{{ url_for('desbloquear_platinum') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:14.3px;color:#e8c766;">Unlock Platinum <span style="color:#A3AAB6;">›</span></a>
+    {% if miembro_platinum %}<div style="display:flex;padding:12px 0;border-top:1px solid #20242E;font-size:14.3px;color:#e8c766;">💎 Platinum Active</div>{% else %}<a href="{{ url_for('desbloquear_platinum') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:14.3px;color:#e8c766;">Unlock Platinum <span style="color:#A3AAB6;">›</span></a>{% endif %}
     {# Entrada «Admin» ELIMINADA del menú ☰ (2026-11-12, orden de Alex en llamada: «quita el admin de ahí que yo lo voy a poner en otro sitio»). La ruta /admin y el enlace Admin de la barra superior NO se tocan. #}
   </div>
   </div>
