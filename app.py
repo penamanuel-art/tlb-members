@@ -2991,6 +2991,30 @@ def racha_platinum():
         return None
 
 
+def tirita_record10():
+    """Tirita superior del Dashboard (2026-11-13, orden de Alex): récord
+    del PROGRAMA (todos los niveles) en las últimas 10 jugadas liquidadas
+    del archivo. SOLO sale cuando el récord es positivo (más ganadas que
+    perdidas); si no, devuelve None y la tirita no se renderiza. Números
+    siempre reales del archive; ante cualquier fallo, None."""
+    try:
+        dias = sorted(load_archive(), key=lambda d: d.get("fecha") or "")
+        seq = []
+        for d in dias:
+            for j in d.get("jugadas") or []:
+                if j.get("resultado") in ("WON", "LOST"):
+                    seq.append(j["resultado"])
+        ult = seq[-10:]
+        if len(ult) < 10:
+            return None
+        w = sum(1 for r in ult if r == "WON")
+        if w <= len(ult) - w:
+            return None
+        return {"w": w, "l": len(ult) - w}
+    except Exception:
+        return None
+
+
 def record_por_liga():
     """Récord oficial por liga, en vivo desde data/archive.json
     (2026-10-26, pedido de Alex: solo esta sección en el home, con su
@@ -6255,6 +6279,10 @@ def home():
         _racha_plat = racha_platinum()
     except Exception:
         _racha_plat = None
+    try:
+        _tirita10 = tirita_record10()
+    except Exception:
+        _tirita10 = None
     # Banner de completar la cuenta (2026-11-07, espejo WGT): solo para
     # quien entró con el registro de un solo campo y aún no verificó su
     # correo o no fijó su contraseña propia. Las cuentas de siempre
@@ -6350,6 +6378,7 @@ def home():
         last_plat=last_plat,
         tira_home=tira_home,
         racha_platinum=_racha_plat,
+        tirita_record10=_tirita10,
         hoy_iso=_hoy_iso,
         ayer_iso=_ayer_iso,
         recientes_value=recientes_value(),
