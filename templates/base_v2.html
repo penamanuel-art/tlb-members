@@ -112,24 +112,25 @@ twq('config','rhgk7');
     <div class="v2-menu-wrap">
       <button class="v2-icon-btn" id="v2menuBtn" aria-label="Menu">☰</button>
       <div class="v2-menu-drop" id="v2menuDrop" hidden>
-        <a href="{{ url_for('home', splash='0') }}">🏠 Home</a>
-        <a href="{{ url_for('records') }}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px" aria-hidden="true"><path d="M4 20v-4"/><path d="M8 20v-7"/><path d="M12 20v-5"/><path d="M16 20v-8"/><path d="M20 20V8"/><path d="M3 12l5-4 3.5 2.5L17 5"/><path d="M14.5 5H17v2.5"/></svg> Full record</a>
-        {% if is_alex and not es_admin %}<a href="{{ url_for('values_page') }}">💎 Value Plays</a>{% endif %}
-        <a href="{{ url_for('masterclass') }}">🎓 Academy</a>
-        <a href="{{ url_for('guide_moneyline') }}">📚 Betting Guides</a>
-        <a href="{{ url_for('about') }}">📖 Our story</a>
-        {# "📊 Results" eliminado del menú (2026-10-12): duplicaba "<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px" aria-hidden="true"><path d="M4 20v-4"/><path d="M8 20v-7"/><path d="M12 20v-5"/><path d="M16 20v-8"/><path d="M20 20V8"/><path d="M3 12l5-4 3.5 2.5L17 5"/><path d="M14.5 5H17v2.5"/></svg> Full record" — ambos llegan al tracker ejecutivo. #}
-        <a href="{{ url_for('ev_board') }}">⚡ +EV Board</a>
-        <a href="{{ url_for('sharp') }}">🔪 Sharp Money</a>
-        <a href="{{ url_for('programa') }}">📘 Program</a>
-        <a href="{{ url_for('archivo') }}">🗂️ Archive</a>
-        {% if es_admin %}<a href="{{ url_for('admin_miembros') }}">👥 Members</a>{% endif %}
-        {% if is_alex and not es_admin %}<a href="{{ url_for('admin_dashboard') }}">⚙️ Admin Dashboard</a>{% endif %}
-        
-        {% if es_admin %}<a href="{{ url_for('admin_migrar_track') }}">🔀 Migrate track</a>{% endif %}
-        <a href="{{ url_for('reportar', tipo='error') }}">⚠️ Report a problem</a>
-        <a href="{{ url_for('reportar', tipo='idea') }}">💡 Suggest a feature</a>
-        <a href="{{ url_for('cuenta') }}">💰 My account</a>
+        {# MENÚ ÚNICO (2026-11-13, orden de Alex: «¿por qué dos menú diferente?»): este menú es ESPEJO del menú ☰ del Dashboard (home_lux.html) — mismos grupos, mismos nombres, mismo orden y mismos destinos. Si se cambia uno, se cambian todos: home_lux.html, base.html y base_v2.html. #}
+        <div style="padding:8px 12px 2px;font-size:10.5px;font-weight:700;letter-spacing:.14em;color:#11cb87;">WORKSPACE</div>
+        <a href="{{ url_for('home') }}">Today</a>
+        <a href="{{ url_for('tools') }}">All tools</a>
+        <a href="{{ url_for('cuenta') }}">Account</a>
+        <div style="padding:12px 12px 2px;font-size:10.5px;font-weight:700;letter-spacing:.14em;color:#11cb87;">LEARN</div>
+        <a href="{{ url_for('home') }}?tour=1">Dashboard Tour</a>
+        <a href="{{ url_for('masterclass') }}">Masterclass</a>
+        <div style="padding:12px 12px 2px;font-size:10.5px;font-weight:700;letter-spacing:.14em;color:#11cb87;">RESEARCH</div>
+        <a href="{{ url_for('ev_board') if miembro_platinum else url_for('desbloquear_platinum') }}">+EV Board</a>
+        <a href="{{ url_for('game_center') }}">Game Center</a>
+        <a href="{{ url_for('props') if miembro_platinum else url_for('desbloquear_platinum') }}">Player Props</a>
+        <a href="{{ url_for('parlay_builder') }}">+EV Parlay Builder</a>
+        <div style="padding:12px 12px 2px;font-size:10.5px;font-weight:700;letter-spacing:.14em;color:#11cb87;">MARKET DATA</div>
+        <a href="{{ url_for('sharp') }}">Sharp Money</a>
+        <a href="{{ url_for('tools_line_moves') if miembro_platinum else url_for('desbloquear_platinum') }}">Line Moves</a>
+        <a href="{{ url_for('tools') }}">My Tools</a>
+        <a href="{{ url_for('official_tracker') }}">Full Record</a>
+        {% if miembro_platinum %}<div style="padding:10px 12px;color:#e8c766;font-weight:600;">💎 Platinum Active</div>{% else %}<a href="{{ url_for('desbloquear_platinum') }}" style="color:#e8c766;">Unlock Platinum</a>{% endif %}
         <a href="{{ url_for('logout') }}">Log out</a>
       </div>
     </div>
