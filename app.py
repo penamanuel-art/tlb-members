@@ -12380,6 +12380,51 @@ def admin_api_members_revoke_platinum():
                     "no_encontrados": no_encontrados, "excluidos": excluidos})
 
 
+@app.route("/admin/api/members-grant-platinum", methods=["POST"])
+def admin_api_members_grant_platinum():
+    """Otorga Platinum permanente a una lista de miembros por API admin
+    (2026-11-12): espejo de members-revoke-platinum, con la semántica del
+    grant permanente del panel (/admin/control/grant sin días):
+    platinum_unlocked = 1, platinum_trial_ends = NULL y
+    telegram_unban_pending = 1. Nació porque ningún endpoint con
+    X-Admin-Key podía restaurar el flag de UN miembro (el toggle del
+    panel exige sesión) y hizo falta para restaurar la cuenta de Alex
+    tras la cancelación fantasma del 2026-11-12. NO toca el sello
+    cancel_requested_at (eso es members-clear-cancel).
+    Body JSON: {"emails": [...]}. Auth: sesión admin O header
+    X-Admin-Key (mismo patrón que los demás members-set-*)."""
+    if not _admin_api_autorizado():
+        return jsonify({"error": "admin only"}), 403
+    data = request.get_json(silent=True) or {}
+    emails = data.get("emails")
+    if emails is None:
+        emails = request.form.getlist("emails")
+    if not isinstance(emails, list) or not emails:
+        return jsonify({"error": "emails list required"}), 400
+    procesados, no_encontrados = [], []
+    db = get_db()
+    for crudo in emails:
+        email = (str(crudo) or "").strip().lower()
+        if not email:
+            continue
+        target = db.execute("SELECT id, nombre FROM users WHERE email = ?",
+                            (email,)).fetchone()
+        if not target:
+            no_encontrados.append(email)
+            continue
+        db.execute(
+            "UPDATE users SET platinum_unlocked = 1, platinum_trial_ends = NULL, "
+            "telegram_unban_pending = 1, telegram_ban_pending = 0 WHERE id = ?",
+            (target["id"],),
+        )
+        log_notificacion(db, "platinum",
+                         f"Platinum activated: {target['nombre']}", email)
+        procesados.append(email)
+    db.commit()
+    return jsonify({"ok": True, "procesados": procesados,
+                    "no_encontrados": no_encontrados})
+
+
 @app.route("/admin/api/members-set-stakes", methods=["POST"])
 def admin_api_members_set_stakes():
     """Fija los montos por jugada de un miembro (stake_fijo_elite /
@@ -17936,32 +17981,40 @@ def stripe_webhook():
                         user_id=_capi_uid,
                     )
         elif etype in ("customer.subscription.updated", "customer.subscription.deleted"):
-            # Cancelación o cambio de estado: localizar por suscripción o cliente.
+            # Cambio de estado de la suscripción VIVA del miembro.
+            # REGLA 2026-11-12 (orden de Alex: «que no se le cancele a
+            # nadie si no lo ha pedido»): el sello cancel_requested_at y
+            # el email de cancelación nacen SOLO del POST del miembro en
+            # /cuenta/cancelar — ningún evento de Stripe los produce. Y
+            # esta rama SOLO localiza por el stripe_subscription_id
+            # guardado en la fila: un evento de otra suscripción del
+            # mismo cliente (pruebas de /desbloquear-platinum, subs
+            # incomplete ajenas) se ignora por completo, sin tocar
+            # flags ni mandar emails. Bug que lo motivó: el 2026-11-12
+            # las subs de prueba expiraron (incomplete_expired) y el
+            # webhook «canceló» a Alex sin que nadie lo pidiera.
             sub_id = data.get("id") or ""
-            customer_id = data.get("customer") or ""
             status = data.get("status") or ""
             cancel_at_end = bool(data.get("cancel_at_period_end"))
             row = None
             if sub_id:
                 row = db.execute("SELECT id, email, nombre, cancel_requested_at, platinum_unlocked FROM users WHERE stripe_subscription_id = ?",
                                  (sub_id,)).fetchone()
-            if row is None and customer_id:
-                row = db.execute("SELECT id, email, nombre, cancel_requested_at, platinum_unlocked FROM users WHERE stripe_customer_id = ?",
-                                 (customer_id,)).fetchone()
             if row:
                 email = row["email"]
                 if etype == "customer.subscription.deleted" or status in (
                         "canceled", "unpaid", "incomplete_expired"):
-                    _tenia_platinum = False
-                    try:
-                        _tenia_platinum = bool(row["platinum_unlocked"])
-                    except Exception:
-                        _tenia_platinum = False
+                    # La suscripción VIVA terminó: solo se apaga el
+                    # acceso Platinum (regla 2026-11-12). SIN sello
+                    # cancel_requested_at y SIN email de cancelación:
+                    # si el miembro pidió cancelar, el sello y su email
+                    # ya salieron de /cuenta/cancelar; si no lo pidió,
+                    # nadie lo marca cancelado.
                     db.execute(
                         "UPDATE users SET platinum_unlocked = 0, stripe_subscription_id = NULL, "
-                        "stripe_subscription_status = ?, stripe_trial_ends = NULL, "
-                        "cancel_requested_at = ? WHERE id = ?",
-                        (status or "canceled", now_iso(), row["id"]))
+                        "stripe_subscription_status = ?, stripe_trial_ends = NULL "
+                        "WHERE id = ?",
+                        (status or "canceled", row["id"]))
                     # Sin pago no hay acceso: si tiene Telegram vinculado, el cron
                     # de la VM lo banea del canal privado Sharp Club.
                     db.execute(
@@ -17969,20 +18022,11 @@ def stripe_webhook():
                         " WHERE id = ? AND telegram_user_id IS NOT NULL", (row["id"],))
                     db.commit()
                     _auditar(email, f"Elite desactivada ({etype}, status={status}, sub {sub_id or 'n/a'})")
-                    # Gerenciales (2026-10-25, pedido de Alex): avisar cancelación.
+                    # Gerenciales (2026-10-25): aviso INTERNO de que la
+                    # suscripción terminó (no afirma que el cliente
+                    # canceló: pudo vencer, expirar o quedar unpaid).
                     _nm = (row["nombre"] or email) if "nombre" in row.keys() else email
-                    log_notificacion(db, "cancelacion", f"Cliente canceló: {_nm}", email)
-                    # Email #7 CANCELACIÓN (2026-11-07): confirmación al
-                    # miembro SOLO en la transición real Platinum on→off
-                    # de ESTE evento; el sender y la puerta
-                    # (_cancelacion_ok) re-verifican cohorte, asunto
-                    # exacto y el evento de esta suscripción en
-                    # stripe_events. Fail-closed en todo.
-                    if _tenia_platinum and sub_id:
-                        try:
-                            send_cancellation_email(_nm, email, sub_id)
-                        except Exception:
-                            pass
+                    log_notificacion(db, "cancelacion", f"Suscripción terminada: {_nm} ({status or 'deleted'})", email)
                 else:
                     db.execute(
                         "UPDATE users SET stripe_subscription_id = ? WHERE id = ?",
@@ -17996,30 +18040,10 @@ def stripe_webhook():
                     if cancel_at_end:
                         _nm = (row["nombre"] or email) if "nombre" in row.keys() else email
                         log_notificacion(db, "cancelacion", f"Cliente programó cancelar: {_nm}", email)
-                        # Confirmación al miembro SOLO si la cancelación NO
-                        # vino de la página (ese flujo ya manda su email en
-                        # /cuenta/cancelar): así nadie recibe dos.
-                        try:
-                            _cr = row["cancel_requested_at"]
-                        except Exception:
-                            _cr = None
-                        if not _cr:
-                            _fin_ts = (data.get("cancel_at") or data.get("current_period_end")
-                                       or data.get("trial_end"))
-                            if not _fin_ts:
-                                _items = (data.get("items") or {}).get("data") or []
-                                if _items:
-                                    _fin_ts = _items[0].get("current_period_end")
-                            _fin_txt = None
-                            if _fin_ts:
-                                try:
-                                    _fin_txt = datetime.fromtimestamp(int(_fin_ts), TZ).strftime("%B %d, %Y")
-                                except Exception:
-                                    _fin_txt = None
-                            try:
-                                send_cancellation_confirmed_email(_nm, email, _fin_txt)
-                            except Exception:
-                                pass
+                        # SIN email al miembro desde el webhook (regla
+                        # 2026-11-12): la confirmación de cancelación la
+                        # manda SOLO el flujo del propio miembro en
+                        # /cuenta/cancelar, que es donde nace la petición.
             else:
                 _auditar("", f"{etype} sin miembro vinculado (sub {sub_id[:20] if sub_id else 'n/a'})")
         elif etype == "invoice.payment_failed":
