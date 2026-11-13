@@ -42,9 +42,7 @@
 <div class="acct-tabs" id="acctTabs">
   <button type="button" class="acct-tab" data-tab="overview">Overview</button>
   <button type="button" class="acct-tab" data-tab="membership">Membership</button>
-  <button type="button" class="acct-tab" data-tab="subscriptions">Subscriptions</button>
   <button type="button" class="acct-tab" data-tab="preferences">Preferences</button>
-  <button type="button" class="acct-tab" data-tab="payments">Payments</button>
   <button type="button" class="acct-tab" data-tab="profile">Profile</button>
   <button type="button" class="acct-tab" data-tab="security">Security</button>
 </div>
@@ -136,10 +134,7 @@
     <a href="{{ url_for('desbloquear_platinum') }}" class="acct-btn acct-btn-block">Unlock Platinum →</a>
     {% endif %}
   </div>
-</div>
-
-{# ============ SUBSCRIPTIONS ============ #}
-<div class="acct-pane" id="pane-subscriptions">
+  {# Todo lo de pagos/suscripcion vive ahora dentro de Membership (2026-11-13, orden de Alex: membresia y suscripcion son lo mismo pa'l miembro) #}
   <div class="acct-card">
     <p class="acct-k">YOUR SUBSCRIPTIONS</p>
     <p class="acct-muted" style="margin:0 0 14px;">Everything you're currently subscribed to. Recurring plans can be cancelled here.</p>
@@ -177,6 +172,19 @@
     <a href="{{ billing.pay_url or url_for('desbloquear_platinum') }}" class="acct-btn acct-btn-block" style="margin-top:14px;">Update card &amp; invoices</a>
   </div>
   {% endif %}
+  <div class="acct-card">
+    <p class="acct-k">PAYMENT HISTORY</p>
+    {% if payments %}
+      {% for p in payments %}
+      <div class="acct-row">
+        <div><div style="color:#fff;">{{ p.desc }}</div><div style="font-size:13px;color:#8b93a7;">{{ p.fecha }}</div></div>
+        <div style="text-align:right;"><div style="color:#fff;">${{ '%.2f' % p.amount }}</div>{% if p.status == 'Complete' %}<span class="acct-ok">Complete</span>{% elif p.status == 'Pending' %}<span class="acct-fail">Pending</span>{% else %}<span class="acct-fail">Failed</span>{% endif %}</div>
+      </div>
+      {% endfor %}
+    {% else %}
+    <p class="acct-muted" style="margin:0;">No payments yet. When you subscribe, your payment history will show up here.</p>
+    {% endif %}
+  </div>
 </div>
 
 {# ============ PREFERENCES ============ #}
@@ -289,23 +297,6 @@
   </div>
 </div>
 
-{# ============ PAYMENTS ============ #}
-<div class="acct-pane" id="pane-payments">
-  <div class="acct-card">
-    <p class="acct-k">PAYMENT HISTORY</p>
-    {% if payments %}
-      {% for p in payments %}
-      <div class="acct-row">
-        <div><div style="color:#fff;">{{ p.desc }}</div><div style="font-size:13px;color:#8b93a7;">{{ p.fecha }}</div></div>
-        <div style="text-align:right;"><div style="color:#fff;">${{ '%.2f' % p.amount }}</div>{% if p.status == 'Complete' %}<span class="acct-ok">Complete</span>{% elif p.status == 'Pending' %}<span class="acct-fail">Pending</span>{% else %}<span class="acct-fail">Failed</span>{% endif %}</div>
-      </div>
-      {% endfor %}
-    {% else %}
-    <p class="acct-muted" style="margin:0;">No payments yet. When you subscribe, your payment history will show up here.</p>
-    {% endif %}
-  </div>
-</div>
-
 {# ============ PROFILE ============ #}
 <div class="acct-pane" id="pane-profile">
   <div class="acct-card">
@@ -380,7 +371,8 @@
   }
   tabs.forEach(function(b){ b.addEventListener('click', function(){ show(b.getAttribute('data-tab')); }); });
   var want = new URLSearchParams(location.search).get('tab') || 'overview';
-  var valid = ['overview','membership','subscriptions','preferences','payments','profile','security'];
+  if (want === 'subscriptions' || want === 'payments') want = 'membership';
+  var valid = ['overview','membership','preferences','profile','security'];
   show(valid.indexOf(want) >= 0 ? want : 'overview');
 })();
 </script>
