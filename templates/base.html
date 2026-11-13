@@ -102,11 +102,22 @@ twq('config','rhgk7');
 <header class="topbar">
   <div class="topbar-left">
     {% if session.get('user_id') %}
-    <a href="{{ url_for('home', splash='0') }}" class="qa-btn qa-primary qa-home{% if request.endpoint == 'home' %} active{% endif %}" title="Home"><span class="qa-ico">🏠</span><span class="qa-txt">Home</span></a>
-    <a href="{{ url_for('ai_assistant') }}" class="qa-btn qa-brain{% if request.endpoint == 'ai_assistant' %} active{% endif %}" title="Brain"><span class="qa-ico">🧠</span><span class="qa-txt">Brain</span></a>
+    <a href="{{ url_for('home', splash='0') }}" title="Home"><img src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team" style="height:56px;width:auto;display:block;"></a>
+    {% else %}
+    <a class="brand" href="{{ url_for('index') }}">
+      <img src="{{ url_for('static', filename='img/sharp-team-logo.png') }}?v=3" alt="The Sharp Team" class="brand-logo">
+    </a>
+    {% endif %}
+  </div>
+  {% if session.get('user_id') %}
+  {# ENCABEZADO ÚNICO (2026-11-13, orden de Alex: la barra de arriba de base.html era «como otro menú»): espejo del encabezado de base_v2.html — logo moneda a la izquierda; a la derecha, en este orden: balance, Full record y el ☰ con el menú único. Fuera las píldoras Home/Brain y el avatar. #}
+  <div style="display:flex;align-items:center;gap:8px;">
+  {% if es_admin %}<button id="langToggle" class="lang-btn notranslate" title="Ver en español">🇺🇸 EN</button>{% endif %}
+  <a href="{{ url_for('balances') }}" style="display:inline-flex;align-items:center;gap:5px;background:#131c2b;border:1px solid rgba(94,234,160,.45);color:#5eeaa0;font-weight:400;font-size:11px;padding:8px 9px;border-radius:14px;text-decoration:none;white-space:nowrap">💰 View my balance{% if balance_total_txt %}<span style="color:#eafff5;font-weight:300">{{ balance_total_txt }}</span>{% endif %}</a>
+  <a href="{{ url_for('records') }}" style="display:inline-flex;align-items:center;background:#131c2b;border:1px solid #2c313a;color:#e6ebf2;font-weight:400;font-size:11px;padding:8px 9px;border-radius:14px;text-decoration:none;white-space:nowrap"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:5px" aria-hidden="true"><path d="M4 20v-4"/><path d="M8 20v-7"/><path d="M12 20v-5"/><path d="M16 20v-8"/><path d="M20 20V8"/><path d="M3 12l5-4 3.5 2.5L17 5"/><path d="M14.5 5H17v2.5"/></svg>Full record</a>
     <div class="menu-wrap">
       <button class="icon-btn" id="menuBtn" aria-label="Menu" aria-expanded="false" aria-haspopup="true" style="cursor:pointer;display:flex;align-items:center;justify-content:center;">☰</button>
-      <div class="menu-drop" id="menuDrop" hidden>
+      <div class="menu-drop" id="menuDrop" hidden style="left:auto;right:0;">
         {# MENÚ ÚNICO (2026-11-13, orden de Alex: «¿por qué dos menú diferente?»): este menú es ESPEJO del menú ☰ del Dashboard (home_lux.html) — mismos grupos, mismos nombres, mismo orden y mismos destinos. Si se cambia uno, se cambian todos: home_lux.html, base.html y base_v2.html. #}
         <div style="padding:8px 12px 2px;font-size:10.5px;font-weight:700;letter-spacing:.14em;color:#11cb87;">WORKSPACE</div>
         <a href="{{ url_for('home') }}">Today</a>
@@ -129,18 +140,7 @@ twq('config','rhgk7');
         <a href="{{ url_for('logout') }}">Log out</a>
       </div>
     </div>
-    <div class="quick-actions">
-      <a href="{{ url_for('records') }}" class="qa-btn qa-records{% if request.endpoint == 'records' %} active{% endif %}" title="Full record"><span class="qa-ico">📜</span><span class="qa-txt">Full record</span></a>
-    </div>
-    {% else %}
-    <a class="brand" href="{{ url_for('index') }}">
-      <img src="{{ url_for('static', filename='img/sharp-team-logo.png') }}?v=3" alt="The Sharp Team" class="brand-logo">
-    </a>
-    {% endif %}
   </div>
-  {% if session.get('user_id') %}
-  {% if es_admin %}<button id="langToggle" class="lang-btn notranslate" title="Ver en español">🇺🇸 EN</button>{% endif %}
-  <a class="avatar" href="{{ url_for('cuenta') }}" title="{{ nombre_corto }} — My account">{% if foto_perfil %}<img src="{{ foto_perfil }}" alt="{{ nombre_corto }}">{% else %}{{ inicial }}{% endif %}</a>
   {% else %}
   <nav class="nav">
     {% if es_admin %}<button id="langToggle" class="lang-btn notranslate" title="Ver en español">🇺🇸 EN</button>{% endif %}
