@@ -376,29 +376,35 @@
        y «My Bets» (de My Tools), porque esos 4 destinos ya viven en la
        barra inferior (Today / Tools / Account / My Bets). La barra NO
        se toca. Quedan: Learn, Research, Market Data, My Tools (Alerts,
-       AI Assistant), Full Record y Unlock Platinum. #}
-    <button type="button" class="tst-acc-head" aria-expanded="false" onclick="tstAcc(this)"><span>Learn</span><span class="tst-acc-chev">›</span></button>
-    <div class="tst-acc-panel" aria-hidden="true">
+       AI Assistant), Full Record y Unlock Platinum.
+       REORGANIZACIÓN (2026-11-13, orden de Alex en llamada: «organízalo
+       así mismo [como el de ellos]»): menú espejo del de Wise Guy,
+       verificado EN VIVO ese día — grupos Workspace / Learn / Research /
+       Market Data, TODOS expandidos en una sola lista (sin acordeón),
+       solo destinos reales nuestros. My Tools queda como enlace directo
+       a la página All tools (orden expresa de Alex en la misma llamada).
+       Se conservan Full Record y la fila Platinum al final. #}
+    <div style="padding:2px 0 2px;font-size:11.7px;font-weight:700;letter-spacing:.14em;color:#11cb87;">WORKSPACE</div>
+    <a href="{{ url_for('home') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:14.3px;">Today <span style="color:#A3AAB6;">›</span></a>
+    <a href="{{ url_for('tools') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:14.3px;">All tools <span style="color:#A3AAB6;">›</span></a>
+    <a href="{{ url_for('cuenta') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:14.3px;">Account <span style="color:#A3AAB6;">›</span></a>
+    <div style="padding:16px 0 2px;font-size:11.7px;font-weight:700;letter-spacing:.14em;color:#11cb87;">LEARN</div>
     <a href="#" onclick="document.getElementById('tst-menu-sheet').hidden=true;var b=document.getElementById('tst-menubtn');if(b)b.setAttribute('aria-expanded','false');document.body.style.overflow='';if(window.tstStartTour)window.tstStartTour();return false;" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:14.3px;color:#e8c766;">Dashboard Tour <span style="color:#A3AAB6;">›</span></a>
     <a href="{{ url_for('masterclass') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:14.3px;">Masterclass <span style="color:#A3AAB6;">›</span></a>
-    </div>
-    <button type="button" class="tst-acc-head" aria-expanded="false" onclick="tstAcc(this)"><span>Research</span><span class="tst-acc-chev">›</span></button>
-    <div class="tst-acc-panel" aria-hidden="true">
+    <div style="padding:16px 0 2px;font-size:11.7px;font-weight:700;letter-spacing:.14em;color:#11cb87;">RESEARCH</div>
     <a href="{{ url_for('ev_board') if miembro_platinum else url_for('desbloquear_platinum') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:14.3px;">+EV Board <span style="color:#A3AAB6;">›</span></a>
     <a href="{{ url_for('game_center') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:14.3px;">Game Center <span style="color:#A3AAB6;">›</span></a>
     <a href="{{ url_for('props') if miembro_platinum else url_for('desbloquear_platinum') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:14.3px;">Player Props <span style="color:#A3AAB6;">›</span></a>
-    </div>
-    <button type="button" class="tst-acc-head" aria-expanded="false" onclick="tstAcc(this)"><span>Market Data</span><span class="tst-acc-chev">›</span></button>
-    <div class="tst-acc-panel" aria-hidden="true">
+    <a href="{{ url_for('parlay_builder') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:14.3px;">+EV Parlay Builder <span style="color:#A3AAB6;">›</span></a>
+    <div style="padding:16px 0 2px;font-size:11.7px;font-weight:700;letter-spacing:.14em;color:#11cb87;">MARKET DATA</div>
     <a href="{{ url_for('sharp') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:14.3px;">Sharp Money <span style="color:#A3AAB6;">›</span></a>
     <a href="{{ url_for('tools_line_moves') if miembro_platinum else url_for('desbloquear_platinum') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:14.3px;">Line Moves <span style="color:#A3AAB6;">›</span></a>
-    </div>
     {# My Tools = ENLACE DIRECTO a la página All tools (2026-11-13, orden
        de Alex en llamada: el acordeón con solo Alerts + AI Assistant se
        veía vacío y el Full Record pegado debajo parecía parte del grupo;
        «desde el menú, a mis herramientas tiene que llevarte a esa
        página»). Alerts y AI Assistant viven en la página de Tools. #}
-    <a href="{{ url_for('tools') }}" class="tst-acc-head" style="text-decoration:none;"><span>My Tools</span><span class="tst-acc-chev">›</span></a>
+    <a href="{{ url_for('tools') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:14.3px;">My Tools <span style="color:#A3AAB6;">›</span></a>
     <a href="{{ url_for('official_tracker') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:14.3px;">Full Record <span style="color:#A3AAB6;">›</span></a>
     {% if miembro_platinum %}<div style="display:flex;padding:12px 0;border-top:1px solid #20242E;font-size:14.3px;color:#e8c766;">💎 Platinum Active</div>{% else %}<a href="{{ url_for('desbloquear_platinum') }}" style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #20242E;font-size:14.3px;color:#e8c766;">Unlock Platinum <span style="color:#A3AAB6;">›</span></a>{% endif %}
     {# Entrada «Admin» ELIMINADA del menú ☰ (2026-11-12, orden de Alex en llamada: «quita el admin de ahí que yo lo voy a poner en otro sitio»). La ruta /admin y el enlace Admin de la barra superior NO se tocan. #}
