@@ -2992,27 +2992,36 @@ def racha_platinum():
 
 
 def tirita_record10():
-    """Tirita superior del Dashboard (2026-11-13, orden de Alex): récord
-    del nivel PLATINUM (en el archivo: ELITE + PLATINUM) en sus últimas 10
-    jugadas liquidadas, across all sports. SOLO sale cuando ese récord va
-    positivo (más ganadas que perdidas); si no, devuelve None y la tirita
-    no se renderiza. Números siempre reales del archive; ante cualquier
-    fallo, None."""
+    """Tirita superior del Dashboard (2026-11-13, orden de Alex, en
+    cascada): primero se mira el nivel PLATINUM (en el archivo: ELITE +
+    PLATINUM) en sus últimas 10 jugadas liquidadas across all sports; si
+    ese récord va positivo, la tirita sale como «Platinum Plays: W-L».
+    Si Platinum NO va positivo, se miran TODAS las jugadas oficiales
+    (Platinum + Gold + Vault) en sus últimas 10 across all sports; si ese
+    total va positivo, la tirita sale como «All Plays: W-L». Si ninguno
+    va positivo, devuelve None y la tirita no se renderiza. Números
+    siempre reales del archive; ante cualquier fallo, None."""
     try:
         dias = sorted(load_archive(), key=lambda d: d.get("fecha") or "")
-        seq = []
+        seq_plat, seq_all = [], []
         for d in dias:
             for j in d.get("jugadas") or []:
-                if j.get("resultado") in ("WON", "LOST") and \
-                        (j.get("nivel") or "").upper() in ("ELITE", "PLATINUM"):
-                    seq.append(j["resultado"])
-        ult = seq[-10:]
-        if len(ult) < 10:
-            return None
-        w = sum(1 for r in ult if r == "WON")
-        if w <= len(ult) - w:
-            return None
-        return {"w": w, "l": len(ult) - w}
+                if j.get("resultado") not in ("WON", "LOST"):
+                    continue
+                seq_all.append(j["resultado"])
+                if (j.get("nivel") or "").upper() in ("ELITE", "PLATINUM"):
+                    seq_plat.append(j["resultado"])
+
+        def _positivo(seq, etiqueta):
+            ult = seq[-10:]
+            if len(ult) < 10:
+                return None
+            w = sum(1 for r in ult if r == "WON")
+            if w <= len(ult) - w:
+                return None
+            return {"w": w, "l": len(ult) - w, "etiqueta": etiqueta}
+
+        return _positivo(seq_plat, "Platinum Plays") or _positivo(seq_all, "All Plays")
     except Exception:
         return None
 
