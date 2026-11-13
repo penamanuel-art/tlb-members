@@ -23,13 +23,14 @@
 {% set _ncaa = {'KSU':2306,'KU':2305,'IU':84,'OSU':194,'CIN':2132,'WVU':277,'AF':2005,'UNLV':2439,'ALA':333,'UGA':61,'TEX':251,'MICH':130,'ND':87,'LSU':99,'TENN':2633,'PSU':213,'ORE':2483,'CLEM':228,'FLA':57,'AUB':2,'TAMU':245,'OU':201,'USC':30,'UCLA':26,'MIA':2390,'FSU':52,'UNC':153,'DUKE':150,'VT':259,'LOU':97,'NCST':152,'SYR':183,'BC':103,'PITT':221,'BAY':239,'TCU':2628,'TTU':2641,'OKST':197,'ISU':66,'UTAH':254,'BYU':252,'ARIZ':12,'ASU':9,'COL':38,'HOU':248,'UCF':2116,'MEM':235,'BSU':68,'SDSU':21,'FRES':278,'ARMY':349,'NAVY':2426,'MRSH':276,'LIB':2335,'JMU':256,'APP':2026,'CCU':324,'GASO':290,'TROY':2653,'ULL':309,'TULN':2655} %}
 {% set _mlb_slug = {'CHW':'cws','WSH':'was'} %}
 {% set _nhl_slug = {'TBL':'tb'} %}
+{% set _nba_slug = {'NOP':'no','UTA':'utah'} %}
 {% set _logo = p.logo_url if (p.logo_url is defined and p.logo_url) else '' %}
 {% if not _logo %}
   {% if p.liga == 'NCAAF' and _ncaa.get(p.abbr) %}{% set _logo = 'https://a.espncdn.com/i/teamlogos/ncaa/500/' ~ _ncaa[p.abbr] ~ '.png' %}
   {% elif p.liga == 'MLB' %}{% set _logo = 'https://a.espncdn.com/i/teamlogos/mlb/500/' ~ (_mlb_slug.get(p.abbr) or (p.abbr|lower)) ~ '.png' %}
   {% elif p.liga == 'NFL' %}{% set _logo = 'https://a.espncdn.com/i/teamlogos/nfl/500/' ~ (p.abbr|lower) ~ '.png' %}
   {% elif p.liga == 'NHL' %}{% set _logo = 'https://a.espncdn.com/i/teamlogos/nhl/500/' ~ (_nhl_slug.get(p.abbr) or (p.abbr|lower)) ~ '.png' %}
-  {% elif p.liga == 'NBA' %}{% set _logo = 'https://a.espncdn.com/i/teamlogos/nba/500/' ~ (p.abbr|lower) ~ '.png' %}
+  {% elif p.liga == 'NBA' %}{% set _logo = 'https://a.espncdn.com/i/teamlogos/nba/500/' ~ (_nba_slug.get(p.abbr) or (p.abbr|lower)) ~ '.png' %}
   {% endif %}
 {% set _ci = p.card_info if p.card_info is defined and p.card_info else {} %}
 {% set _gt = p.game_time_et or p.hora or '' %}
