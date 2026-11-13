@@ -143,7 +143,7 @@
   body.v5-sheet-open .nav{display:none!important}
   .v2-bottomnav{position:fixed;left:0;right:0;bottom:0;z-index:1001;display:flex;flex-wrap:wrap;justify-content:space-around;align-items:stretch;background:#0d1219;border-top:1px solid rgba(139,152,173,.16);padding:6px 6px calc(6px + env(safe-area-inset-bottom))}
   /* Barra inferior compacta + iconos un poco mas grandes (2026-11-08, pedido de Alex: la barra se veia alta, con demasiado aire). CORRECCION 2026-11-08 15:40 ET: capar el area segura con min() BAJO los botones en vez de subirlos (Alex lo noto comparando con My Bets, donde se ven mas arriba). Ahora el Home usa el MISMO colchon inferior que las demas paginas (style.css): 6px + env(safe-area-inset-bottom) completo en el contenedor y 6px bajo el texto del item. CAUSA RAIZ FINAL (2026-11-08 15:58 ET, captura de Alex): ni asi subia en su iPhone — el meta viewport del Home NO traia viewport-fit=cover (base.html si), y sin el, iOS devuelve env(safe-area-inset-bottom)=0: el colchon real era ~12px contra ~46px en las demas paginas. Agregado viewport-fit=cover al meta + padding-top con env(safe-area-inset-top) en .tst-stickyhead y en el menu sheet para que el contenido no se monte sobre la hora/la isla. Gana sobre style-v2.css: este bloque va despues en el documento. */
-  .v2-bottomnav{padding:2px 6px calc(6px + env(safe-area-inset-bottom))}
+  .v2-bottomnav{padding:2px 6px calc(2px + env(safe-area-inset-bottom))}
   .v2-bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 2px 6px;text-decoration:none;color:#969EA9;font-size:11px;font-weight:500;letter-spacing:.01em;min-width:0;border-radius:22px;transition:background-color .2s ease,color .2s ease,transform .2s ease}
   .v2-bnav-item:active{transform:scale(.95)}
   .v2-bnav-item.active{color:#2fe6a7;background:rgba(47,230,167,.15);font-weight:600}
@@ -956,12 +956,16 @@
   <a href="{{ url_for('tools') }}" class="v2-bnav-item"><span class="v2-bnav-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></span><span>Tools</span></a>
   <a href="{{ url_for('tracker') }}" class="v2-bnav-item"><span class="v2-bnav-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a3 3 0 0 0 0 6v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a3 3 0 0 0 0-6Z"/><path d="M13 5v2"/><path d="M13 11v2"/><path d="M13 17v2"/></svg></span><span>My Bets</span></a>
   <a href="{{ url_for('cuenta') }}" class="v2-bnav-item"><span class="v2-bnav-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/></svg></span><span>Account</span></a>
-  {% if en_mes_gratis or is_alex %}
-  <div style="flex:0 0 100%;text-align:center;padding-top:2px;">
-    <span style="color:#E8C766;font-size:10.5px;font-weight:600;">💎 Your Platinum — on us{% if mes_gratis_hasta %} until {{ mes_gratis_hasta }}{% endif %}{% if mes_gratis_dias is not none %} &middot; {% if mes_gratis_dias == 0 %}ends today{% elif mes_gratis_dias == 1 %}1 day left{% else %}{{ mes_gratis_dias }} days left{% endif %}{% endif %}</span>
-  </div>
-  {% endif %}
 </nav>
+{% if en_mes_gratis or is_alex %}
+<div id="tst-plat-bubble" style="position:fixed;left:50%;transform:translateX(-50%);bottom:calc(74px + env(safe-area-inset-bottom));z-index:1002;display:flex;align-items:center;gap:8px;background:rgba(13,18,25,.96);border:1px solid rgba(232,199,102,.55);border-radius:999px;padding:7px 8px 7px 14px;box-shadow:0 6px 18px rgba(0,0,0,.45);max-width:92vw;">
+  <span style="color:#E8C766;font-size:12.1px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">💎 Your Platinum — on us{% if mes_gratis_hasta %} until {{ mes_gratis_hasta }}{% endif %}{% if mes_gratis_dias is not none %} &middot; {% if mes_gratis_dias == 0 %}ends today{% elif mes_gratis_dias == 1 %}1 day left{% else %}{{ mes_gratis_dias }} days left{% endif %}{% endif %}</span>
+  <button type="button" aria-label="Close" onclick="try{localStorage.setItem('tstPlatBubble','{{ mes_gratis_hasta }}');}catch(e){}document.getElementById('tst-plat-bubble').style.display='none';" style="flex:0 0 auto;width:22px;height:22px;border-radius:50%;border:1px solid rgba(232,199,102,.55);background:transparent;color:#E8C766;font-size:13px;line-height:1;cursor:pointer;padding:0;">✕</button>
+</div>
+<script>
+(function(){try{if(localStorage.getItem('tstPlatBubble')==='{{ mes_gratis_hasta }}'){var b=document.getElementById('tst-plat-bubble');if(b)b.style.display='none';}}catch(e){}})();
+</script>
+{% endif %}
 
 <script>
 (function(){try{
