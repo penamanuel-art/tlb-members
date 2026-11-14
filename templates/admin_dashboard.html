@@ -98,6 +98,8 @@ details.adm-det summary { cursor: pointer; font-weight: 800; font-size: 0.95rem;
   </div>
   </div>
 
+<nav class="adm-nav"><a href="{{ url_for('admin_dashboard') }}">Panel</a><a href="/admin/miembros">Miembros</a><a href="/admin/notificaciones">Notificaciones</a><a href="/admin/tracker-oficial">Tracker</a><a href="/admin/actividad">Actividad</a><a href="/admin/en-vivo">En vivo</a><a href="/admin/subir-ticket">Subir ticket</a><a href="/admin/trakeos">Trakeos</a><a href="/admin/crear-push">Push</a></nav>
+
   <div class="adm-folder">
     <button type="button" class="adm-fold-head" onclick="var b=this.nextElementSibling;b.style.display=(b.style.display==='block')?'none':'block';">💰 Ingresos<span style="display:flex;align-items:center;gap:8px;"><span class="adm-fold-count">{{ '$%.2f'|format(ingresos.mes) if ingresos else '—' }}</span><span class="adm-fold-chev">›</span></span></button>
     <div class="adm-fold-body">{% if ingresos %}
