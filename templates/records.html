@@ -1,83 +1,151 @@
 {% extends "base.html" %}
-{% block title %}Records — The Sharp Team{% endblock %}
+{% block title %}Graded plays ledger — The Sharp Team{% endblock %}
 {% block content %}
 <style>
-.rec-wrap{max-width:640px;margin:0 auto;padding:20px 0 8px}
-.rec-crumb{color:#8a93a8;font-size:14px;margin-bottom:14px}
-.rec-crumb a{color:#8a93a8;text-decoration:none}
-.rec-hero{font-size:40px;font-weight:800;letter-spacing:-1px;line-height:1.1;margin:0 0 12px;color:#fff}
-.rec-hero em{font-style:normal;color:#2f9dff}
-.rec-sub{color:#9aa3b8;font-size:15px;line-height:1.6;margin:0 0 24px}
-.rec-box{position:relative;overflow:hidden;background:#101a2c;border:1px solid rgba(47,212,126,.25);border-radius:20px;padding:22px;margin-bottom:14px}
-/* Raya verde inferior (orden Alex 2026-10-20): mismo degradado verde de la casa. */
-.rec-box::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:linear-gradient(90deg,#5eeaa0,#2fe6a7 55%,#12b76a)}
-.rec-box.plat{border-color:rgba(245,197,66,.3)}
-.rec-box.gold{border-color:rgba(47,212,126,.25)}
-.rec-box-eyebrow{color:#8a93a8;font-size:11px;letter-spacing:2px;font-weight:700;margin-bottom:10px}
-.rec-big{font-size:44px;font-weight:800;letter-spacing:-1px;color:#fff;margin:0}
-.rec-units{color:#2fd47e;font-size:22px;font-weight:800;margin:6px 0 4px}
-.rec-units.neg{color:#ff6b6b}
-.rec-meta{color:#8a93a8;font-size:14px}
-.rec-list{margin-top:28px}
-.rec-row{display:flex;gap:12px;align-items:center;background:#0f1729;border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:12px;margin-bottom:10px}
-.rec-thumb{width:56px;height:56px;border-radius:12px;object-fit:cover;flex:none;background:#1a2438}
-.rec-thumb-ph{width:56px;height:56px;border-radius:12px;flex:none;background:#1a2438;display:flex;align-items:center;justify-content:center;font-size:22px}
-.rec-main{flex:1;min-width:0}
-.rec-lvl{font-size:11px;font-weight:800;letter-spacing:1px;margin-bottom:4px;display:flex;align-items:center;gap:6px}
-.rec-lvl.plat{color:#2f9dff}.rec-lvl.gold{color:#ffd257}
-.rec-lvl img{width:16px;height:16px;border-radius:50%}
-.rec-pick{font-size:16px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.rec-sub2{color:#8a93a8;font-size:13px;margin-top:2px}
-.rec-res{text-align:right;flex:none}
-.rec-res .w{color:#2fd47e;font-weight:800;font-size:13px;letter-spacing:1px}
-.rec-res .l{color:#ff6b6b;font-weight:800;font-size:13px;letter-spacing:1px}
-.rec-res .u{font-size:17px;font-weight:800;color:#fff;margin-top:2px}
+.led{max-width:760px;margin:0 auto;padding:18px 16px 30px}
+.led-crumb{font-size:.85rem;color:#8fa1c2;margin-bottom:14px}
+.led-crumb a{color:#dbe6f5;text-decoration:none;font-weight:600}
+.led-crumb .sep{margin:0 7px;color:#5b6b8c}
+.led h1{font-family:'Unbounded',sans-serif;font-weight:800;font-size:2.05rem;line-height:1.12;margin:0 0 10px;color:#fff}
+.led h1 .mint{color:#2ee6a8}
+.led .sub{font-size:1.06rem;font-weight:700;color:#fff;margin:0 0 12px;line-height:1.45}
+.led .intro{color:#aebdd4;font-size:.95rem;line-height:1.65;margin:0 0 14px}
+.led .countline{color:#aebdd4;font-size:.95rem;margin:0 0 6px}
+.led .countline b{color:#fff}
+.led .career{color:#2ee6a8;font-weight:700;font-size:.95rem;text-decoration:none;display:inline-block;margin-bottom:8px}
+.led .flabel{font-size:.72rem;letter-spacing:2.5px;color:#8fa1c2;font-weight:700;margin:16px 0 8px}
+.led .pills{display:flex;flex-wrap:wrap;gap:8px}
+.led .pill{border:1px solid #2a3550;background:#131b2e;color:#dbe6f5;border-radius:999px;padding:9px 16px;font-size:.9rem;font-weight:700;cursor:pointer;font-family:inherit}
+.led .pill .n{color:#8fa1c2;font-weight:700;margin-left:5px}
+.led .pill.on{border-color:#2ee6a8;color:#2ee6a8;background:rgba(46,230,168,.10)}
+.led .pill.on .n{color:#2ee6a8}
+.led .qa{background:rgba(46,230,168,.06);border-left:4px solid #2ee6a8;border-radius:10px;padding:16px 16px 12px;margin:20px 0 6px}
+.led .qa .t{font-size:.72rem;letter-spacing:2.5px;color:#8fa1c2;font-weight:700;margin-bottom:8px}
+.led .qa p{color:#e6eefc;font-size:.97rem;line-height:1.65;margin:0 0 10px}
+.led .qa .by{color:#8fa1c2;font-size:.86rem;line-height:1.55}
+.led-card{display:flex;gap:13px;background:linear-gradient(160deg,#101828,#0c1322);border:1px solid #1e2a45;border-radius:14px;padding:13px;margin-top:12px}
+.led-thumb{flex:0 0 auto;width:88px;height:88px;border-radius:10px;overflow:hidden;background:#0a0f1c;border:1px solid #1e2a45;display:block}
+.led-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.led-thumb.ph{display:flex;align-items:center;justify-content:center}
+.led-thumb.ph img{width:52px;height:52px;object-fit:contain;opacity:.85}
+.led-body{flex:1;min-width:0}
+.led-top{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.led-chip{font-size:.68rem;font-weight:800;letter-spacing:1.2px;border-radius:7px;padding:4px 9px;border:1px solid}
+.led-chip.PLATINUM{color:#7dd3fc;border-color:rgba(125,211,252,.5);background:rgba(125,211,252,.08)}
+.led-chip.GOLD{color:#e3bc3f;border-color:rgba(227,188,63,.5);background:rgba(227,188,63,.08)}
+.led-chip.VAULT{color:#c4b5fd;border-color:rgba(196,181,253,.5);background:rgba(196,181,253,.08)}
+.led-meta{color:#8fa1c2;font-size:.86rem;font-weight:600}
+.led-res{margin-left:auto;font-size:.72rem;font-weight:800;letter-spacing:1px;border-radius:999px;padding:5px 12px}
+.led-res.WON{color:#2ee6a8;background:rgba(46,230,168,.13)}
+.led-res.LOST{color:#ff8fab;background:rgba(229,72,108,.15)}
+.led-res.PUSH,.led-res.VOID{color:#aebdd4;background:rgba(255,255,255,.08)}
+.led-pick{color:#fff;font-weight:800;font-size:1.02rem;margin:7px 0 2px;line-height:1.35}
+.led-score{color:#8fa1c2;font-size:.9rem;margin:0 0 8px}
+.led-bot{display:flex;align-items:baseline;gap:8px;color:#8fa1c2;font-size:.92rem;font-weight:600}
+.led-bot .u{margin-left:auto;font-family:'Roboto Mono',monospace;font-weight:700;font-size:1rem}
+.led-bot .u.plus{color:#2ee6a8}.led-bot .u.minus{color:#ff8fab}
+.led-more{display:block;margin:18px auto 0;background:rgba(46,230,168,.10);border:1px solid rgba(46,230,168,.5);color:#2ee6a8;font-weight:800;font-size:.92rem;border-radius:999px;padding:11px 26px;cursor:pointer;font-family:inherit}
+.led-none{color:#8fa1c2;text-align:center;padding:26px 0 6px;font-size:.95rem}
 </style>
-<div class="rec-wrap">
-  <p class="rec-crumb"><a href="{{ url_for('home') }}">Home</a> &nbsp;/&nbsp; Records</p>
-  <h1 class="rec-hero">Every pick,<br><em>on the record.</em></h1>
-  <p class="rec-sub">This is the complete history of our official plays — each one posted before the game with its ticket, then graded win or loss against the final score. Nothing deleted, nothing rewritten. The numbers are what they are.</p>
+<div class="led">
+  <div class="led-crumb"><a href="{{ url_for('home') }}">Home</a><span class="sep">›</span><a href="{{ url_for('records') }}">Records</a><span class="sep">›</span>Graded plays ledger</div>
 
-  <div class="rec-box">
-    <p class="rec-box-eyebrow">OFFICIAL PLAYS (PLATINUM + SHARP PICKS FREE)</p>
-    <p class="rec-big">{{ stats.W }}-{{ stats.L }}</p>
-    <p class="rec-units{% if stats.units < 0 %} neg{% endif %}">{{ '+' if stats.units >= 0 else '' }}{{ '%.2f' % stats.units }}u</p>
-    <p class="rec-meta">{{ '%.0f' % win_rate }}% win rate · {{ total }} plays graded</p>
-  </div>
-  <div class="rec-box plat">
-    <p class="rec-box-eyebrow" style="display:flex;align-items:center;gap:6px;"><img src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="" style="width:16px;height:16px;border-radius:50%;">💎 PLATINUM</p>
-    <p class="rec-big">{{ by_level.PLATINUM.W }}-{{ by_level.PLATINUM.L }}</p>
-    <p class="rec-units{% if by_level.PLATINUM.units < 0 %} neg{% endif %}">{{ '+' if by_level.PLATINUM.units >= 0 else '' }}{{ '%.2f' % by_level.PLATINUM.units }}u</p>
-    <p class="rec-meta">{{ '%.0f' % by_level.PLATINUM.wr }}% win rate · 1u per play</p>
-  </div>
-  <div class="rec-box gold">
-    <p class="rec-box-eyebrow" style="color:#ffd257;">● SHARP FREE PLAYS</p>
-    <p class="rec-big">{{ by_level.GOLD.W }}-{{ by_level.GOLD.L }}</p>
-    <p class="rec-units{% if by_level.GOLD.units < 0 %} neg{% endif %}">{{ '+' if by_level.GOLD.units >= 0 else '' }}{{ '%.2f' % by_level.GOLD.units }}u</p>
-    <p class="rec-meta">{{ '%.0f' % by_level.GOLD.wr }}% win rate · 0.6u per play</p>
+  <h1>The Sharp Team<br><span class="mint">graded plays ledger</span></h1>
+  <p class="sub">Every play since September with its graded ticket photo, win or lose.</p>
+  <p class="intro">Last graded play added {{ ultima_fmt }}. This is The Sharp Team graded plays ledger: every Platinum, Gold and Vault play graded since {{ primera_fmt }}, wins and losses alike, newest first. Tap any ticket to open it full size. Every play on this page was posted before game time — that is the rule, and this page is the proof.</p>
+
+  <p class="countline"><b>{{ total }}</b> plays graded since {{ primera_fmt }} · <b>{{ con_foto }}</b> with ticket photos. <span id="ledShowing">Showing 1 to {{ [50, total]|min }}.</span></p>
+  <a class="career" href="{{ url_for('home') }}">Today's plays →</a>
+
+  <div class="flabel">LEVEL</div>
+  <div class="pills" data-group="level">
+    <button class="pill on" data-val="ALL">All levels<span class="n">{{ total }}</span></button>
+    <button class="pill" data-val="PLATINUM">Platinum<span class="n">{{ counts_level.PLATINUM }}</span></button>
+    <button class="pill" data-val="GOLD">Gold<span class="n">{{ counts_level.GOLD }}</span></button>
+    <button class="pill" data-val="VAULT">Vault<span class="n">{{ counts_level.VAULT }}</span></button>
   </div>
 
-  <div class="rec-list">
-    {% for r in graded %}
-    <div class="rec-row">
-      {% if r.comprobante %}
-      <a href="{{ url_for('ticket_view', play_id=r.id) if r.id else url_for('static', filename=r.comprobante) }}"><img class="rec-thumb" src="{{ url_for('static', filename=r.comprobante) }}" alt="Ticket" loading="lazy"></a>
-      {% else %}
-      <span class="rec-thumb-ph">🎫</span>
-      {% endif %}
-      <div class="rec-main">
-        <p class="rec-lvl {{ 'plat' if r.nivel == 'PLATINUM' else 'gold' }}">{% if r.nivel == 'PLATINUM' %}<img src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="">💎{% else %}●{% endif %} {{ r.nivel }} play{% if r.liga %} · {{ r.liga }}{% endif %}</p>
-        <p class="rec-pick">{{ r.abbr }} {{ r.bettype }} (Winner)</p>
-        <p class="rec-sub2">{{ r.fecha }}{% if r.cuota is not none %} · {{ fmt_odds(r.cuota) }}{% endif %}</p>
-      </div>
-      <div class="rec-res">
-        <p class="{{ 'w' if r.won else 'l' }}">{{ 'WON' if r.won else 'LOST' }}</p>
-        <p class="u">{{ '+' if r.units >= 0 else '' }}{{ '%.2f' % r.units }}u</p>
-      </div>
-    </div>
-    {% else %}
-    <p class="muted">No graded plays yet.</p>
+  <div class="flabel">SPORT</div>
+  <div class="pills" data-group="sport">
+    <button class="pill on" data-val="ALL">All sports<span class="n">{{ total }}</span></button>
+    {% for lg, n in counts_sport %}<button class="pill" data-val="{{ lg }}">{{ lg }}<span class="n">{{ n }}</span></button>
     {% endfor %}
   </div>
+
+  <div class="flabel">RESULT</div>
+  <div class="pills" data-group="result">
+    <button class="pill on" data-val="ALL">All results<span class="n">{{ total }}</span></button>
+    <button class="pill" data-val="WON">Won</button>
+    <button class="pill" data-val="LOST">Lost</button>
+    <button class="pill" data-val="PUSH">Push</button>
+    <button class="pill" data-val="VOID">Void</button>
+  </div>
+
+  <div class="qa">
+    <div class="t">QUICK ANSWER</div>
+    <p>A documented record lists every play with its timestamp before the game, the price, the final score and the grade, wins and losses alike. Look for plays that were posted in advance and graded against the official result. The Sharp Team publishes each graded play with its ticket photo.</p>
+    <div class="by">Written by The Sharp Team desk.<br>Page content last changed {{ ultima_fmt }}.</div>
+  </div>
+
+  <div id="ledList">
+  {% for g in graded %}
+    <div class="led-card" data-level="{{ g.nivel }}" data-sport="{{ g.liga }}" data-result="{{ g.res }}">
+      {% if g.comprobante %}<a class="led-thumb" href="{{ url_for('static', filename=g.comprobante) }}" target="_blank" rel="noopener"><img src="{{ url_for('static', filename=g.comprobante) }}" alt="Ticket — {{ g.pick }}" loading="lazy"></a>
+      {% else %}<span class="led-thumb ph"><img src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt=""></span>{% endif %}
+      <div class="led-body">
+        <div class="led-top">
+          <span class="led-chip {{ g.nivel }}">{{ g.nivel }}</span>
+          <span class="led-meta">{{ g.liga }} · {{ g.fecha_fmt }}</span>
+          <span class="led-res {{ g.res }}">{{ g.res }}</span>
+        </div>
+        <div class="led-pick">{{ g.pick }}</div>
+        {% if g.marcador %}<p class="led-score">Final · {{ g.marcador }}</p>{% endif %}
+        <div class="led-bot">
+          <span>{% if g.cuota is not none %}{% if g.cuota > 0 %}+{{ g.cuota }}{% else %}−{{ -g.cuota }}{% endif %}{% endif %}</span>
+          <span>·</span>
+          <span>{{ '%.2f' % g.stake_u }}u stake</span>
+          <span class="u {% if g.units > 0 %}plus{% elif g.units < 0 %}minus{% endif %}">{% if g.units > 0 %}+{% endif %}{{ '%.2f' % g.units }}u</span>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+  </div>
+  <p class="led-none" id="ledNone" style="display:none">No plays match those filters.</p>
+  <button class="led-more" id="ledMore" type="button">Show more</button>
 </div>
+<script>
+(function(){
+  var state = {level:'ALL', sport:'ALL', result:'ALL'};
+  var PAGE = 50, shown = PAGE;
+  var cards = Array.prototype.slice.call(document.querySelectorAll('.led-card'));
+  var moreBtn = document.getElementById('ledMore');
+  var showing = document.getElementById('ledShowing');
+  var none = document.getElementById('ledNone');
+  function match(c){
+    return (state.level==='ALL' || c.dataset.level===state.level) &&
+           (state.sport==='ALL' || c.dataset.sport===state.sport) &&
+           (state.result==='ALL' || c.dataset.result===state.result);
+  }
+  function apply(){
+    var vis = cards.filter(match), n = 0;
+    cards.forEach(function(c){ c.style.display='none'; });
+    vis.forEach(function(c, i){ if(i < shown){ c.style.display=''; n++; } });
+    none.style.display = vis.length ? 'none' : '';
+    moreBtn.style.display = vis.length > shown ? '' : 'none';
+    showing.textContent = vis.length ? ('Showing 1 to ' + n + ' of ' + vis.length + '.') : 'Showing 0.';
+  }
+  document.querySelectorAll('.led .pills').forEach(function(group){
+    group.addEventListener('click', function(e){
+      var b = e.target.closest('.pill'); if(!b) return;
+      group.querySelectorAll('.pill').forEach(function(p){ p.classList.remove('on'); });
+      b.classList.add('on');
+      state[group.dataset.group] = b.dataset.val;
+      shown = PAGE;
+      apply();
+    });
+  });
+  moreBtn.addEventListener('click', function(){ shown += PAGE; apply(); });
+  apply();
+})();
+</script>
 {% endblock %}
