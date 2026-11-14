@@ -64,10 +64,6 @@ details.adm-det summary { cursor: pointer; font-weight: 800; font-size: 0.95rem;
     <span class="tn">{{ conteo_miembros.total }}</span>
     <span class="tl">TOTAL MIEMBROS</span>
   </div>
-  <div class="adm-stats">
-    <div class="adm-stat"><span class="n">{{ conteo_miembros.plat }}</span><span class="l">Platinum</span></div>
-    <div class="adm-stat"><span class="n">{{ conteo_miembros.trial }}</span><span class="l">En prueba</span></div>
-    <div class="adm-stat"><span class="n">{{ conteo_miembros.free }}</span><span class="l">Gratis</span></div>
   </div>
   </div>
 
@@ -146,6 +142,16 @@ details.adm-det summary { cursor: pointer; font-weight: 800; font-size: 0.95rem;
   </div>
 
   <div class="adm-section">
+    <h2>🔔 Notificaciones</h2>
+    <div class="adm-card">
+      <div class="adm-total" style="margin:0;">
+        <span class="tn">{{ sin_leer or 0 }}</span>
+        <span class="tl">SIN LEER · <a href="/admin/notificaciones" style="color:#2ee6a8;text-decoration:none;">ABRIR →</a></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="adm-section">
     <h2>🟢 Active Members</h2>
     <div class="adm-card">
       <div class="adm-total" style="margin:0;">
@@ -162,8 +168,15 @@ details.adm-det summary { cursor: pointer; font-weight: 800; font-size: 0.95rem;
   </div>
 
   <div class="adm-section">
-    <h2>👥 Todos los miembros</h2>
-    <p class="adm-muted" style="margin:0 0 12px;">{{ conteo_miembros.total }} miembros · {{ conteo_miembros.plat }} Platinum · {{ conteo_miembros.trial }} en prueba · {{ conteo_miembros.free }} gratis.</p>
+    <h2>👥 Miembros</h2>
+    <div class="adm-card">
+      <div class="adm-stats" style="margin-top:0;">
+        <div class="adm-stat"><span class="n">{{ conteo_miembros.total }}</span><span class="l">Total</span></div>
+        <div class="adm-stat"><span class="n">{{ conteo_miembros.plat }}</span><span class="l">Platinum</span></div>
+        <div class="adm-stat"><span class="n">{{ conteo_miembros.trial }}</span><span class="l">En prueba</span></div>
+      </div>
+      <p class="adm-muted" style="margin:12px 0 0;">{{ conteo_miembros.free }} miembros gratis · <a href="/admin/miembros" style="color:#2ee6a8;font-weight:700;text-decoration:none;">Abrir miembros →</a></p>
+    </div>
   </div>
 
   <div class="adm-section">
