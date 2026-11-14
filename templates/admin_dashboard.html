@@ -28,6 +28,12 @@ body.v2 { padding-top: 77px; }
 .adm-section { margin-bottom: 30px; }
 .adm-section h2 { font-size: 1.05rem; font-weight: 800; color: #fff; margin: 0 0 14px; padding-left: 10px; border-left: 3px solid #2ee6a8; line-height: 1.25; }
 .adm-card { background: #0d1526; border: 1px solid rgba(255,255,255,.08); border-radius: 16px; padding: 16px; margin-bottom: 12px; }
+
+.adm-folder { background:#0d1526; border:1px solid rgba(255,255,255,.09); border-radius:16px; margin-bottom:12px; overflow:hidden; }
+.adm-fold-head { width:100%; display:flex; justify-content:space-between; align-items:center; gap:10px; background:none; border:0; color:#fff; font:inherit; font-size:1rem; font-weight:800; padding:16px; cursor:pointer; text-align:left; text-decoration:none; box-sizing:border-box; }
+.adm-fold-count { background:rgba(46,230,168,.14); color:#2ee6a8; border-radius:999px; padding:3px 12px; font-size:0.82rem; font-weight:800; white-space:nowrap; }
+.adm-fold-chev { color:#8fa1c2; font-size:1.2rem; }
+.adm-fold-body { display:none; padding:2px 16px 16px; }
 .adm-muted { color: #8fa1c2; font-size: 0.85rem; }
 .send-btn { width: 100%; background: #2ee6a8; color: #06130c; border: none; border-radius: 14px; padding: 15px; font-weight: 800; font-size: 1rem; cursor: pointer; margin-top: 12px; display: block; }
 .status-badge { display: inline-block; font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 999px; margin-bottom: 8px; }
@@ -67,10 +73,9 @@ details.adm-det summary { cursor: pointer; font-weight: 800; font-size: 0.95rem;
   </div>
   </div>
 
-  <div class="adm-section">
-    <h2>💰 Ingresos</h2>
-    <div class="adm-card">
-      {% if ingresos %}
+  <div class="adm-folder">
+    <button type="button" class="adm-fold-head" onclick="var b=this.nextElementSibling;b.style.display=(b.style.display==='block')?'none':'block';">💰 Ingresos<span style="display:flex;align-items:center;gap:8px;"><span class="adm-fold-count">{{ '$%.2f'|format(ingresos.mes) if ingresos else '—' }}</span><span class="adm-fold-chev">›</span></span></button>
+    <div class="adm-fold-body">{% if ingresos %}
       <div class="adm-total" style="margin:0 0 6px;">
         <span class="tn" style="color:#2ee6a8;">${{ '%.2f'|format(ingresos.mes) }}</span>
         <span class="tl">ESTE MES</span>
@@ -105,7 +110,7 @@ details.adm-det summary { cursor: pointer; font-weight: 800; font-size: 0.95rem;
     <a class="adm-btn" href="/admin/trakeos">
       <span class="ico">📊</span><span class="t">Trakeos</span><span class="s">Seguimiento</span></a>
     <a class="adm-btn" href="/admin/crear-push">
-      <span class="ico">📲</span><span class="t">Crear push</span><span class="s">Compositor con vista previa</span></a>
+      <span class="ico">📲</span><span class="t">Crear push</span><span class="s">Compositor con vista previa</span></a></div>
   </div>
 
   <div class="adm-section">
@@ -161,48 +166,34 @@ details.adm-det summary { cursor: pointer; font-weight: 800; font-size: 0.95rem;
     </script>
   </div>
 
-  <div class="adm-section">
-    <h2>🔔 Notificaciones</h2>
-    <div class="adm-card">
-      <div class="adm-total" style="margin:0;">
-        <span class="tn">{{ sin_leer or 0 }}</span>
-        <span class="tl">SIN LEER · <a href="/admin/notificaciones" style="color:#2ee6a8;text-decoration:none;">ABRIR →</a></span>
-      </div>
-    </div>
+  <div class="adm-folder">
+    <a class="adm-fold-head" href="/admin/notificaciones">🔔 Notificaciones<span style="display:flex;align-items:center;gap:8px;"><span class="adm-fold-count">{{ sin_leer or 0 }} sin leer</span><span class="adm-fold-chev">›</span></span></a>
   </div>
 
-  <div class="adm-section">
-    <h2>🟢 Active Members</h2>
-    <div class="adm-card">
-      <div class="adm-total" style="margin:0;">
-        <span class="tn" id="amCount">–</span>
-        <span class="tl">ACTIVE IN THE LAST 10 DAYS</span>
-      </div>
-    </div>
-    <script>
-    fetch('/admin/api/active-members', { headers: { 'Accept': 'application/json' } })
-      .then(function(r) { return r.json(); })
-      .then(function(d) { document.getElementById('amCount').textContent = d.total_activos; })
-      .catch(function() { document.getElementById('amCount').textContent = '–'; });
-    </script>
+  <div class="adm-folder">
+    <div class="adm-fold-head" style="cursor:default;">🟢 Miembros activos (10 días)<span class="adm-fold-count" id="amCount">–</span></div>
   </div>
+  <script>
+  fetch('/admin/api/active-members', { headers: { 'Accept': 'application/json' } })
+    .then(function(r) { return r.json(); })
+    .then(function(d) { document.getElementById('amCount').textContent = d.total_activos; })
+    .catch(function() { document.getElementById('amCount').textContent = '–'; });
+  </script>
 
-  <div class="adm-section">
-    <h2>👥 Miembros</h2>
-    <div class="adm-card">
-      <div class="adm-stats" style="margin-top:0;">
+  <div class="adm-folder">
+    <button type="button" class="adm-fold-head" onclick="var b=this.nextElementSibling;b.style.display=(b.style.display==='block')?'none':'block';">👥 Miembros<span style="display:flex;align-items:center;gap:8px;"><span class="adm-fold-count">{{ conteo_miembros.total }}</span><span class="adm-fold-chev">›</span></span></button>
+    <div class="adm-fold-body"><div class="adm-stats" style="margin-top:0;">
         <div class="adm-stat"><span class="n">{{ conteo_miembros.total }}</span><span class="l">Total</span></div>
         <div class="adm-stat"><span class="n">{{ conteo_miembros.plat }}</span><span class="l">Platinum</span></div>
         <div class="adm-stat"><span class="n">{{ conteo_miembros.trial }}</span><span class="l">En prueba</span></div>
       </div>
       <p class="adm-muted" style="margin:12px 0 0;">{{ conteo_miembros.free }} miembros gratis · <a href="/admin/miembros" style="color:#2ee6a8;font-weight:700;text-decoration:none;">Abrir miembros →</a></p>
-    </div>
+    </div></div>
   </div>
 
-  <div class="adm-section">
-    <h2>⚙️ Controles manuales</h2>
-    <div class="adm-card">
-      <div class="ctl-t">🔔 Push a los miembros</div>
+  <div class="adm-folder">
+    <button type="button" class="adm-fold-head" onclick="var b=this.nextElementSibling;b.style.display=(b.style.display==='block')?'none':'block';">⚙️ Controles manuales<span class="adm-fold-chev">›</span></button>
+    <div class="adm-fold-body"><div class="ctl-t">🔔 Push a los miembros</div>
       <form method="POST" action="{{ url_for('admin_control_push') }}">
         <input class="ctl-in" name="titulo" maxlength="80" placeholder="Título del push" required>
         <input class="ctl-in" name="mensaje" maxlength="240" placeholder="Mensaje" required>
@@ -228,6 +219,7 @@ details.adm-det summary { cursor: pointer; font-weight: 800; font-size: 0.95rem;
       </form>
     </div>
     </div>
+  </div></div>
   </div>
-</div>
+
 {% endblock %}
