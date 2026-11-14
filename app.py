@@ -14144,6 +14144,7 @@ def admin_dashboard():
         miembros_lista = []
         for r in _mm:
             _dias = None
+            _trial_vigente = False
             _te = (r["platinum_trial_ends"] or "").strip()
             if _te:
                 try:
@@ -14152,21 +14153,25 @@ def admin_dashboard():
                     if _fin.tzinfo is None:
                         _fin = _fin.replace(tzinfo=_tz.utc)
                     _dias = max(0, (_fin - _dt.now(_tz.utc)).days)
+                    _trial_vigente = _fin > _dt.now(_tz.utc)
                 except Exception:
                     _dias = None
             miembros_lista.append({
                 "id": r["id"], "nombre": r["nombre"], "email": r["email"],
                 "platinum": bool(r["platinum_unlocked"]),
-                "trial": bool(r["platinum_trial_ends"] or ""),
+                "trial": _trial_vigente,
                 "dias": _dias,
             })
     except Exception:
         miembros_lista = []
+    # UN SOLO CONTEO (2026-11-14, orden de Alex): Gratis = sin Platinum ·
+    # En prueba = mes gratis VIGENTE · Platinum = con Platinum y sin
+    # prueba vigente. Las tres cifras suman el total, en todo el admin.
     conteo_miembros = {
         "total": len(miembros_lista),
         "plat": sum(1 for m in miembros_lista if m["platinum"] and not m["trial"]),
         "trial": sum(1 for m in miembros_lista if m["trial"]),
-        "free": sum(1 for m in miembros_lista if not m["platinum"] and not m["trial"]),
+        "free": sum(1 for m in miembros_lista if not m["platinum"]),
     }
     # Gerenciales (2026-10-25, pedido de Alex): últimas notificaciones
     # de la empresa para el home del admin, separadas de las de miembros.
@@ -16064,9 +16069,12 @@ def admin_miembros():
     _ids_activos = {a["id"] for a in activos}
     _resto = [m for m in lista if m["id"] not in _ids_activos]
     nuevos = [m for m in _resto if m.get("es_nuevo")]
-    _resto2 = [m for m in _resto if not m.get("es_nuevo")]
-    platinums = [m for m in _resto2 if m.get("platinum_unlocked")]
-    frees = [m for m in _resto2 if not m.get("platinum_unlocked")]
+    # UN SOLO CONTEO (2026-11-14, orden de Alex): las carpetas Platinum y
+    # Free cuentan por ESTADO sobre TODA la lista — un gratis que también
+    # es nuevo o activo cuenta igual como gratis (antes salía de la
+    # carpeta y el número no cuadraba con el panel: 5 vs 6).
+    platinums = [m for m in lista if m.get("platinum_unlocked")]
+    frees = [m for m in lista if not m.get("platinum_unlocked")]
     try:
         _ahora_et = ahora.astimezone(ZoneInfo("America/New_York"))
         ahora_txt = _ahora_et.strftime("%b %-d, %Y · %-I:%M %p ET")
