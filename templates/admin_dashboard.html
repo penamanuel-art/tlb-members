@@ -147,7 +147,7 @@ details.adm-det summary { cursor: pointer; font-weight: 800; font-size: 0.95rem;
 
   <div class="adm-section">
     <h2 onclick="var g=document.getElementById('gerList');g.style.display=(g.style.display==='none')?'block':'none';" style="cursor:pointer;">🔔 Gerenciales{% if sin_leer %} · {{ sin_leer }} sin leer{% endif %} ▾</h2>
-    <div id="gerList" style="display:none;">
+    <div id="gerList">
     {% for n in gerenciales %}
     <a class="mrow" href="/admin/notificaciones" style="{% if not n.leida %}border-left:3px solid #2ee6a8;{% endif %}">
       <span class="mn">{% if n.tipo == 'miembro_nuevo' %}🎉{% elif n.tipo == 'ticket_subido' %}🎫{% elif n.tipo == 'platinum' %}💎{% elif n.tipo == 'cancelacion' %}⚠️{% elif n.tipo == 'pago' %}💳{% elif n.tipo == 'publish' %}🚀{% elif n.tipo == 'email' %}📧{% elif n.tipo == 'miembro' %}👤{% elif n.tipo == 'sugerencia' %}💡{% elif n.tipo == 'reporte_error' %}🐞{% elif n.tipo == 'admin_chat' %}💬{% else %}🔔{% endif %} {{ n.titulo }}</span>
