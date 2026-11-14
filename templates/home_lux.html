@@ -662,11 +662,11 @@
         <div class="rh-title">Hot right now</div>
         <div class="rh-sub">Last 10 graded plays, official and by level</div>
       </div>
-      <a class="rh-ledger" href="{{ url_for('official_tracker') }}">↗ Public ledger</a>
+      <a class="rh-ledger" href="{{ url_for('records') }}">↗ Public ledger</a>
     </div>
     <div class="rh-rail" id="rhRail">
       {% for c in hot_cards %}
-      <a class="rh-card" style="--rhc:{{ c.color }}" href="{{ url_for('official_tracker') }}">
+      <a class="rh-card" style="--rhc:{{ c.color }}" href="{{ url_for('records') }}">
         <span class="rh-badge">{{ c.badge }}</span>
         <div class="rh-bigrow"><span class="rh-big">{{ c.big }}</span>{% if c.pct %}<span class="rh-pct">{{ c.pct }}</span>{% endif %}</div>
         <div class="rh-desc">{{ c.desc }}</div>
@@ -799,7 +799,7 @@
   {% endfor %}
   {% if _y.pn > 0 or _y.gn > 0 or _y.fn > 0 %}
   <div class="tst-ysec">
-    <div class="tst-yhead"><h2>Yesterday<span>{{ _ymm[ayer_iso[5:7]] }} {{ ayer_iso[8:10]|int }} card</span></h2><a class="tst-fullbtn" href="{{ url_for('official_tracker') }}">↗ Full record</a></div>
+    <div class="tst-yhead"><h2>Yesterday<span>{{ _ymm[ayer_iso[5:7]] }} {{ ayer_iso[8:10]|int }} card</span></h2><a class="tst-fullbtn" href="{{ url_for('records') }}">↗ Full record</a></div>
     {% if _y.pn > 0 %}
     <div class="tst-sumrow"><span class="tst-pill plat">PLATINUM</span><span class="tst-rec">{{ _y.pw }}-{{ _y.pl }}</span><span class="tst-units{% if _y.pd < 0 %} neg{% elif _y.pd > 0 %} pos{% endif %}">{{ '+' if _y.pd > 0 else ('-' if _y.pd < 0 else '') }}${{ '%.2f'|format(_y.pd|abs) }}</span><span class="tst-graded">{{ _y.pn }} graded</span></div>
     {% endif %}
@@ -915,7 +915,7 @@
     <div class="tst-foot-links">
       <div>
         <h4>Plays &amp; Record</h4>
-        <a href="{{ url_for('official_tracker') }}">Full Record</a>
+        <a href="{{ url_for('records') }}">Full Record</a>
         <a href="{{ url_for('alertas') }}">Alerts</a>
         <a class="tst-foot-cta" href="{{ url_for('desbloquear_platinum') }}">Unlock Platinum</a>
       </div>
