@@ -10878,16 +10878,20 @@ def archivo():
 @app.route("/records")
 @login_required
 def records():
-    """Página de récord documentado estilo WGT (pedido Alex 2026-10-06 con capturas):
-    hero + cajas de stats (oficiales, Platinum, Gold) + lista completa de jugadas liquidadas."""
+    """Ledger de jugadas calificadas estilo WGT (pedido Alex 2026-11-14 con
+    capturas): cada jugada oficial liquidada con su foto de ticket, filtros
+    por nivel, deporte y resultado. Todo EN VIVO desde data/archive.json."""
     db = get_db()
     record_checkin(db, session["user_id"])
-    # RETIRADO 2026-10-12 (orden de Alex): solo quedan el tracker EJECUTIVO
-    # del programa y el de VALUES — /records redirige al ejecutivo.
-    return redirect(url_for("official_tracker"))
+    from datetime import datetime as _dt
+
+    def _fmt(f):
+        try:
+            return _dt.strptime(f, "%Y-%m-%d").strftime("%b %-d, %Y")
+        except Exception:
+            return f
 
     def _units(j):
-        """Unidades ganadas/perdidas de una jugada liquidada."""
         try:
             stake = float(j.get("stake_monto") or 0)
             u = float(j.get("stake_unidades") or 0)
@@ -10898,41 +10902,65 @@ def records():
         except (TypeError, ValueError, ZeroDivisionError):
             return 0.0
 
-    stats = {"W": 0, "L": 0, "units": 0.0}
-    by_level = {"PLATINUM": {"W": 0, "L": 0, "units": 0.0},
-                "GOLD": {"W": 0, "L": 0, "units": 0.0}}
     graded = []
+    counts_level = {"PLATINUM": 0, "GOLD": 0, "VAULT": 0}
+    counts_sport = {}
+    counts_result = {"WON": 0, "LOST": 0, "PUSH": 0, "VOID": 0}
+    con_foto = 0
+    ultima = ""
+    primera = ""
     for d in load_archive():
         fecha = d.get("fecha", "")
+        if fecha:
+            if not ultima or fecha > ultima:
+                ultima = fecha
+            if not primera or fecha < primera:
+                primera = fecha
         for j in d.get("jugadas", []) or []:
-            if j.get("resultado") not in ("WON", "LOST") or j.get("bloqueada"):
+            if j.get("bloqueada"):
+                continue
+            res = (j.get("resultado") or "").upper()
+            if res not in ("WON", "LOST", "PUSH", "VOID"):
                 continue
             nv = (j.get("nivel") or "").upper()
-            if nv not in ("ELITE", "PLATINUM", "GOLD"):
+            if nv in ("ELITE", "PLATINUM"):
+                disp = "PLATINUM"
+            elif nv in ("GOLD", "FREE"):
+                disp = "GOLD"
+            elif nv == "VAULT":
+                disp = "VAULT"
+            else:
                 continue
-            disp = "PLATINUM" if nv in ("ELITE", "PLATINUM") else "SHARP FREE"
-            un = _units(j)
-            won = j["resultado"] == "WON"
-            stats["W" if won else "L"] += 1
-            stats["units"] += un
-            by_level[disp]["W" if won else "L"] += 1
-            by_level[disp]["units"] += un
+            foto = j.get("comprobante") or ""
+            if foto:
+                con_foto += 1
+            counts_level[disp] += 1
+            lg = (j.get("liga") or "").upper()
+            counts_sport[lg] = counts_sport.get(lg, 0) + 1
+            counts_result[res] += 1
+            try:
+                cuota = int(j.get("cuota"))
+            except (TypeError, ValueError):
+                cuota = None
+            try:
+                stake_u = float(j.get("stake_unidades") or 0)
+            except (TypeError, ValueError):
+                stake_u = 0.0
             graded.append({
-                "pick": j.get("pick", ""), "cuota": j.get("cuota"),
-                "nivel": disp, "liga": j.get("liga", ""), "fecha": fecha,
-                "won": won, "units": un,
-                "comprobante": j.get("comprobante", ""),
-                "id": j.get("id", ""),
-                "abbr": j.get("abbr", ""), "bettype": j.get("bettype", ""),
+                "pick": j.get("pick", ""), "cuota": cuota, "nivel": disp,
+                "liga": lg, "fecha": fecha, "fecha_fmt": _fmt(fecha),
+                "res": res, "units": _units(j), "stake_u": stake_u,
+                "comprobante": foto, "marcador": j.get("marcador") or "",
             })
     graded.sort(key=lambda r: r["fecha"], reverse=True)
-    total = stats["W"] + stats["L"]
-    wr = (100.0 * stats["W"] / total) if total else 0.0
-    for _lv in by_level.values():
-        _t = _lv["W"] + _lv["L"]
-        _lv["wr"] = (100.0 * _lv["W"] / _t) if _t else 0.0
-    return render_template("records.html", stats=stats, by_level=by_level,
-                           graded=graded, total=total, win_rate=wr)
+    _orden = ["NFL", "NBA", "MLB", "NHL", "NCAAF", "CBB", "WNBA"]
+    sports = sorted(counts_sport.items(),
+                    key=lambda kv: (_orden.index(kv[0]) if kv[0] in _orden else 99, -kv[1]))
+    return render_template("records.html", graded=graded, total=len(graded),
+                           con_foto=con_foto, counts_level=counts_level,
+                           counts_sport=sports, counts_result=counts_result,
+                           ultima_fmt=_fmt(ultima) if ultima else "",
+                           primera_fmt=_fmt(primera) if primera else "")
 
 
 @app.route("/about")
