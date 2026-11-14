@@ -15934,12 +15934,14 @@ def admin_miembros():
         "telegram_user_id, telegram_ban_pending, telegram_unban_pending, "
         "tour_status, tour_at "
         "FROM users "
-        # 2026-10-31, orden de Alex: ALL MEMBERS es UN SOLO TOTAL con
-        # TODOS los miembros — se quitan el filtro email_verified y el
-        # que ocultaba a los Platinum con reloj de prueba (regla del
-        # 2026-10-24, derogada para esta lista). Solo quedan fuera las
-        # 2 cuentas de la casa, que no son miembros.
-        "WHERE LOWER(email) NOT IN ('thesharpteam8@gmail.com', 'system@value.local') "
+        # UN SOLO CONTEO (2026-11-14, orden de Alex: el panel dice 106
+        # y esta página decía 122 — «un solo conteo señor»): ALL MEMBERS
+        # usa LA MISMA base que el conteo del panel: solo miembros con
+        # email VERIFICADO (sin confirmar no cuenta como miembro) y
+        # fuera las cuentas de la casa y las propias de Alex. Deroga el
+        # total amplio del 2026-10-31 para esta lista.
+        "WHERE email_verified = 1 "
+        "AND LOWER(email) NOT IN ('thesharpteam8@gmail.com', 'system@value.local', 'pena.manuel@myyahoo.com', 'alexpena1509@gmail.com') "
         "ORDER BY created_at DESC"
     ).fetchall()
     ahora = datetime.now(timezone.utc)
