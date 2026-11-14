@@ -12626,6 +12626,73 @@ def admin_api_members_set_mes_gratis():
                     "platinum_trial_ends": _fin})
 
 
+@app.route("/admin/api/members-platinum-desde-registro", methods=["POST"])
+def admin_api_members_platinum_desde_registro():
+    """Platinum pa' todos contando desde su registro (2026-11-13, orden
+    de Alex en llamada: «ponle Platinum a todo el mundo, desde el día
+    que se registraron, con los días que le quedan desde su registro»):
+    a cada miembro verificado, sin suscripción de Stripe y sin sello de
+    cancelación, se le pone platinum_unlocked = 1 y
+    platinum_trial_ends = created_at + MES_GRATIS_DIAS días. Si esa
+    fecha ya pasó, NO se toca la cuenta y el email queda reportado en
+    «vencidos» pa' que Alex decida. No toca Stripe ni
+    cancel_requested_at. Body JSON opcional: {"emails": [...]} — sin
+    lista, aplica a todos los verificados. Auth: sesión admin O header
+    X-Admin-Key (mismo patrón que members-set-mes-gratis)."""
+    if not _admin_api_autorizado():
+        return jsonify({"error": "admin only"}), 403
+    data = request.get_json(silent=True) or {}
+    emails = data.get("emails")
+    db = get_db()
+    cols = ("SELECT id, email, created_at, stripe_subscription_id, "
+            "cancel_requested_at FROM users")
+    if isinstance(emails, list) and emails:
+        rows = []
+        for crudo in emails:
+            e = (str(crudo) or "").strip().lower()
+            if not e:
+                continue
+            r = db.execute(cols + " WHERE email = ?", (e,)).fetchone()
+            if r:
+                rows.append(r)
+    else:
+        rows = db.execute(
+            cols + " WHERE email_verified = 1 "
+            "AND COALESCE(is_admin, 0) = 0").fetchall()
+    ahora = datetime.now()
+    aplicados, vencidos, con_stripe, cancelados = [], [], [], []
+    for r in rows:
+        email = (r["email"] or "").strip().lower()
+        if (r["stripe_subscription_id"] or "").strip():
+            con_stripe.append(email)
+            continue
+        if r["cancel_requested_at"]:
+            cancelados.append(email)
+            continue
+        try:
+            creado = datetime.fromisoformat(
+                str(r["created_at"]).replace("Z", "")[:19])
+        except Exception:
+            vencidos.append(email)
+            continue
+        fin = creado + timedelta(days=MES_GRATIS_DIAS)
+        if fin <= ahora:
+            vencidos.append(email)
+            continue
+        db.execute(
+            "UPDATE users SET platinum_unlocked = 1, "
+            "platinum_trial_ends = ?, signup_offer = ? WHERE id = ?",
+            (fin.isoformat(), OFERTA_MES_GRATIS, r["id"]),
+        )
+        aplicados.append({"email": email,
+                          "trial_ends": fin.date().isoformat(),
+                          "dias_restantes": (fin - ahora).days})
+    db.commit()
+    return jsonify({"ok": True, "aplicados": aplicados,
+                    "vencidos": vencidos, "con_stripe": con_stripe,
+                    "cancelados": cancelados})
+
+
 @app.route("/admin/api/members-set-stakes", methods=["POST"])
 def admin_api_members_set_stakes():
     """Fija los montos por jugada de un miembro (stake_fijo_elite /
