@@ -1,7 +1,8 @@
 {% extends "base_v2.html" %}
 {% block content %}
 <style>
-.adm-clean { max-width: 880px; margin: 0 auto; padding: 24px 16px 56px; font-family: -apple-system, 'SF Pro', Inter, system-ui, sans-serif; }
+.adm-clean { max-width: 880px; margin: 0 auto; padding: 6px 10px 56px; font-family: -apple-system, 'SF Pro', Inter, system-ui, sans-serif; }
+.v2-wrap { padding-left: 10px !important; padding-right: 10px !important; padding-top: 0 !important; }
 /* Menú de arriba fijo en el admin (2026-10-26, pedido Alex: se movía al bajar la página): sticky fallaba en Safari, pasa a fixed con espacio arriba. */
 .v2-topbar { position: fixed !important; top: 0; left: 0; right: 0; z-index: 100; }
 body.v2 { padding-top: 77px; }
@@ -94,7 +95,6 @@ details.adm-det summary { cursor: pointer; font-weight: 800; font-size: 0.95rem;
     <div class="adm-stat"><span class="n">{{ conteo_miembros.trial }}</span><span class="l">En prueba</span></div>
     <div class="adm-stat"><span class="n">{{ conteo_miembros.free }}</span><span class="l">Gratis</span></div>
     <div class="adm-stat"><span class="n">{{ sin_leer or 0 }}</span><span class="l">Sin leer</span></div>
-  </div>
   </div>
   </div>
 
