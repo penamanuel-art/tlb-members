@@ -222,8 +222,8 @@ details.adm-det summary { cursor: pointer; font-weight: 800; font-size: 0.95rem;
     <p class="adm-muted" style="margin:0 0 12px;">{{ conteo_miembros.total }} miembros · {{ conteo_miembros.plat }} Platinum · {{ conteo_miembros.trial }} en prueba · {{ conteo_miembros.free }} gratis.</p>
     {% for m in miembros_lista %}
     <a class="mrow" href="{{ url_for('admin_miembro_detalle', user_id=m.id) }}">
-      <span class="mn">{{ m.nombre or '?' }}</span>
-      {% if m.trial %}<span class="mb" style="color:#fff;border-color:rgba(255,255,255,.45);">PRUEBA</span>
+      <span><span class="mn">{{ m.nombre or '?' }}</span>{% if m.email %}<br><span class="adm-muted" style="font-size:0.75rem;">{{ m.email }}</span>{% endif %}</span>
+      {% if m.trial %}<span class="mb" style="color:#fff;border-color:rgba(255,255,255,.45);">PRUEBA{% if m.dias is not none %} · {{ m.dias }} DÍAS{% endif %}</span>
       {% elif m.platinum %}<span class="mb" style="color:#2ee6a8;border-color:#2ee6a8;">★ PLATINUM</span>
       {% else %}<span class="mb" style="color:#8fa1c2;border-color:#8fa1c2;">FREE</span>{% endif %}
     </a>
@@ -232,9 +232,9 @@ details.adm-det summary { cursor: pointer; font-weight: 800; font-size: 0.95rem;
     {% endfor %}
   </div>
 
-  <details class="adm-det">
-    <summary>⚙️ Controles manuales</summary>
-    <div style="margin-top:14px;">
+  <div class="adm-section">
+    <h2>⚙️ Controles manuales</h2>
+    <div class="adm-card">
       <div class="ctl-t">🔔 Push a los miembros</div>
       <form method="POST" action="{{ url_for('admin_control_push') }}">
         <input class="ctl-in" name="titulo" maxlength="80" placeholder="Título del push" required>
@@ -260,6 +260,7 @@ details.adm-det summary { cursor: pointer; font-weight: 800; font-size: 0.95rem;
         <button class="ctl-btn" type="submit">Activar Platinum</button>
       </form>
     </div>
-  </details>
+    </div>
+  </div>
 </div>
 {% endblock %}
