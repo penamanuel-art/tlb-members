@@ -109,6 +109,8 @@
 .v5pop-row{display:flex;justify-content:space-between;gap:12px;padding:6px 0;border-top:1px solid rgba(255,255,255,.07);font-size:13.8px}
 .v5pop-k{color:#7d8698;flex:none}
 .v5pop-v{color:#fff;font-weight:500;text-align:right}
+.v5pop-v.for{color:#2ee6a7}
+.v5pop-v.against{color:#f87171}
 .v5pop-pl{padding:7px 0;border-top:1px solid rgba(255,255,255,.07)}
 .v5pop-nm{font-size:14.3px;font-weight:600;color:#fff}
 .v5pop-meta{font-size:12.7px;color:#9CA0AC;margin-top:1px}
@@ -193,7 +195,7 @@ body.v5-sheet-open .ticker-dock-bottom,body.v5-sheet-open .v2-bottomnav,body.v5-
 .v5m-body{padding:16px 18px}
 .v5m-head{display:flex;gap:11px;align-items:flex-start}
 .v5m-logo{width:44px;height:44px;object-fit:contain;flex:none;margin-top:2px}
-.v5m-title{font-size:25.3px;font-weight:800;color:#FFFFFF;letter-spacing:-.4px;line-height:1.15}
+.v5m-title{font-size:clamp(19.5px,5.5vw,21px);font-weight:600;color:#FFFFFF;letter-spacing:-.3px;line-height:1.2}
 .v5m-sub{font-size:13.8px;font-weight:400;color:#8b919e;margin-top:6px;line-height:1.45}
 .v5m-res{display:inline-block;font-size:11px;font-weight:500;letter-spacing:1.4px;padding:4px 10px;border-radius:999px;margin-top:10px}
 .v5m-res.won{color:#2ee6a8;background:rgba(46,230,168,.12)}
@@ -210,6 +212,7 @@ body.v5-sheet-open .ticker-dock-bottom,body.v5-sheet-open .v2-bottomnav,body.v5-
 .v5m-meta{display:flex;gap:16px;flex-wrap:wrap;align-items:center;margin-top:14px}
 .v5m-chip{display:inline-flex;align-items:center;gap:5px;font-size:13.2px;font-weight:400;color:#8b919e;background:none;border:none;padding:2px 0;cursor:pointer;font-family:inherit}
 .v5m-chip-inj{color:#EE8CA5}
+.v5m-chip-steam{color:#2ee6a8;font-weight:500}
 .v5m-chip-poly{display:inline-flex;align-items:center;gap:6px;background:#1D2536;border-radius:10px;padding:6px 10px;font-size:13.2px;font-weight:400;color:#9aa7b8;white-space:nowrap}
 .v5m-chip-poly .v5m-poly-ico{color:#8b919e;font-size:14.3px;line-height:1}
 .v5m-chip-poly b{color:#FFFFFF;font-weight:700}
@@ -269,12 +272,12 @@ body.v5-sheet-open .ticker-dock-bottom,body.v5-sheet-open .v2-bottomnav,body.v5-
     <div><div class="v5m-k">PRICE POSTED</div><div class="v5m-priceline"><div class="v5m-price">{{ fmt_odds(p.cuota) }}</div>{% if _ci.get('injuries') %}<button type="button" class="v5m-chip v5m-chip-inj" data-v5-chip="injuries" data-play="{{ p.id }}"><svg width="16.5" height="16.5" viewBox="0 0 24 24" fill="none" stroke="#EE8CA5" stroke-width="3.4" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 3.5h5V9.5h6v5h-6v6h-5v-6h-6v-5h6z"/></svg> {{ _ci.injuries.total }}</button>{% endif %}</div></div>
     <div class="v5m-right"><div class="v5m-k">STAKE</div><div class="v5m-stake">{{ '%g' % p.stake_unidades }}u &middot; ${{ '%g' % p.stake_monto }}</div>{% if p.comprobante %}<div class="v5m-tok">✓ Ticket matched</div>{% else %}<div class="v5m-tpend">Ticket pending</div>{% endif %}</div>
   </div>
-  {% if p.posted or _ci.get('lines') or _ci.get('weather') or (p.poly is defined and p.poly is number) %}
+  {% if p.posted or (_ci.get('lines') and _ci.lines.moved) or _ci.get('weather') or (p.poly is defined and p.poly is number) %}
   <div class="v5m-meta">
     {% if p.poly is defined and p.poly is number %}<span class="v5m-chip-poly"><span class="v5m-poly-ico">⇄</span> Poly <b>{{ '%g'|format(p.poly) }}%</b></span>{% endif %}
-    {% if _ci.get('lines') %}<button type="button" class="v5m-chip" data-v5-chip="lines" data-play="{{ p.id }}">↗ {{ _ci.lines.chip }}</button>{% endif %}
-    
-    {% if _ci.get('weather') %}{% if _ci.weather.temp_f is defined and _ci.weather.temp_f is not none %}<button type="button" class="v5m-chip" data-v5-chip="weather" data-play="{{ p.id }}">🌡 {{ _ci.weather.temp_f }}°</button>{% elif _ci.weather.indoor %}<button type="button" class="v5m-chip" data-v5-chip="weather" data-play="{{ p.id }}">🏟 {{ _ci.weather.venue }}</button>{% endif %}{% endif %}
+    {% if _ci.get('lines') and _ci.lines.moved %}<button type="button" class="v5m-chip v5m-chip-steam" data-v5-chip="lines" data-play="{{ p.id }}">⚡{% if _ci.lines.ago %} {{ _ci.lines.ago }}{% else %} {{ _ci.lines.chip }}{% endif %}</button>{% endif %}
+
+    {% if _ci.get('weather') %}{% if _ci.weather.temp_f is defined and _ci.weather.temp_f is not none %}<button type="button" class="v5m-chip" data-v5-chip="weather" data-play="{{ p.id }}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg> {{ _ci.weather.temp_f }}°</button>{% elif _ci.weather.indoor %}<button type="button" class="v5m-chip" data-v5-chip="weather" data-play="{{ p.id }}">🏟 {{ _ci.weather.venue }}</button>{% endif %}{% endif %}
     {% if p.posted %}<span class="v5m-posted">Posted {{ p.posted }}</span>{% endif %}
   </div>
   {% endif %}
@@ -375,6 +378,7 @@ body.v5-sheet-open .ticker-dock-bottom,body.v5-sheet-open .v2-bottomnav,body.v5-
     var ks = document.createElement('span'); ks.className = 'v5pop-k'; ks.textContent = k;
     var vs = document.createElement('span'); vs.className = 'v5pop-v'; vs.textContent = v;
     r.appendChild(ks); r.appendChild(vs); body.appendChild(r);
+    return r;
   }
   function v5OpenPop(chip){
     var pid = chip.getAttribute('data-play');
@@ -399,17 +403,25 @@ body.v5-sheet-open .ticker-dock-bottom,body.v5-sheet-open .v2-bottomnav,body.v5-
         d.appendChild(nm); d.appendChild(meta); body.appendChild(d);
       });
     } else if (kind === 'weather' && ci.weather) {
-      title.textContent = 'Weather · game conditions';
       var w = ci.weather;
+      title.textContent = 'Forecast at the venue' + ((w.temp_f != null && w.wind_mph != null) ? ': ' + w.temp_f + '°F, wind ' + w.wind_mph + ' mph' : '');
       if (w.temp_f != null) v5Row(body, 'Temperature', w.temp_f + '°F');
       if (w.wind_mph != null) v5Row(body, 'Wind', w.wind_mph + ' mph');
       if (w.rain_pct != null) v5Row(body, 'Rain chance', w.rain_pct + '%');
       if (w.indoor) v5Row(body, 'Roof', 'Indoor');
+      else if (w.temp_f != null) v5Row(body, 'Roof', 'Open');
       if (w.venue) v5Row(body, 'Venue', w.venue);
     } else if (kind === 'lines' && ci.lines) {
       title.textContent = 'Line moves · ' + String(ci.lines.market || '').toLowerCase();
       v5Row(body, 'Open', ci.lines.open);
-      v5Row(body, 'Now', ci.lines.now);
+      var nowRow = v5Row(body, 'Now', ci.lines.now);
+      if (ci.lines.dir === 'for' || ci.lines.dir === 'against') {
+        var nv = nowRow ? nowRow.querySelector('.v5pop-v') : null;
+        if (nv) nv.classList.add(ci.lines.dir);
+        var dn = document.createElement('div'); dn.className = 'v5pop-note';
+        dn.textContent = (ci.lines.dir === 'for' ? 'The market has moved toward this side' : 'The market has moved against this side') + (ci.lines.ago ? ' · last move ' + ci.lines.ago + ' ago' : '') + ' since our first capture today.';
+        body.appendChild(dn);
+      }
       var note = document.createElement('div'); note.className = 'v5pop-note';
       note.textContent = 'Open: first price we captured today · Now: latest across ' + ci.lines.books + ' books (Game Center).';
       body.appendChild(note);
