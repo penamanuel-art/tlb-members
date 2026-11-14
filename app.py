@@ -14211,6 +14211,12 @@ def admin_dashboard():
                     _amt = (_inv.get("amount_paid") or 0) / 100.0
                     if _amt <= 0:
                         continue
+                    # Los pagos del propio Alex NO son ingreso (orden
+                    # 2026-11-14: «ese ingreso era mío — póngalo en 0»).
+                    if (_inv.get("customer_email") or "").strip().lower() in (
+                            "pena.manuel@myyahoo.com", "alexpena1509@gmail.com",
+                            "thesharpteam8@gmail.com", "system@value.local"):
+                        continue
                     _f = _dti.fromtimestamp(_inv.get("created") or 0, _ET)
                     _tot += _amt
                     if _f.strftime("%Y-%m") == _mes_s:
