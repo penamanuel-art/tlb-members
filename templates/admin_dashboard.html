@@ -146,90 +146,24 @@ details.adm-det summary { cursor: pointer; font-weight: 800; font-size: 0.95rem;
   </div>
 
   <div class="adm-section">
-    <h2 onclick="var g=document.getElementById('gerList');g.style.display=(g.style.display==='none')?'block':'none';" style="cursor:pointer;">🔔 Gerenciales{% if sin_leer %} · {{ sin_leer }} sin leer{% endif %} ▾</h2>
-    <div id="gerList">
-    {% for n in gerenciales %}
-    <a class="mrow" href="/admin/notificaciones" style="{% if not n.leida %}border-left:3px solid #2ee6a8;{% endif %}">
-      <span class="mn">{% if n.tipo == 'miembro_nuevo' %}🎉{% elif n.tipo == 'ticket_subido' %}🎫{% elif n.tipo == 'platinum' %}💎{% elif n.tipo == 'cancelacion' %}⚠️{% elif n.tipo == 'pago' %}💳{% elif n.tipo == 'publish' %}🚀{% elif n.tipo == 'email' %}📧{% elif n.tipo == 'miembro' %}👤{% elif n.tipo == 'sugerencia' %}💡{% elif n.tipo == 'reporte_error' %}🐞{% elif n.tipo == 'admin_chat' %}💬{% else %}🔔{% endif %} {{ n.titulo }}</span>
-      <span class="mb" style="color:#8fa1c2;border-color:#8fa1c2;">{{ (n.created_at or '')[:16].replace('T', ' ') }}</span>
-    </a>
-    {% else %}
-    <p class="adm-muted">No hay notificaciones todavía.</p>
-    {% endfor %}
-    <p style="margin-top:10px;"><a href="/admin/notificaciones" style="color:#2ee6a8;font-weight:700;text-decoration:none;">Ver todas →</a></p>
-    </div>
-  </div>
-
-  <div class="adm-section">
     <h2>🟢 Active Members</h2>
     <div class="adm-card">
-      <div class="adm-total" style="margin:0 0 8px;">
+      <div class="adm-total" style="margin:0;">
         <span class="tn" id="amCount">–</span>
         <span class="tl">ACTIVE IN THE LAST 10 DAYS</span>
       </div>
-      <p class="adm-muted" style="margin:0 0 12px;">Members who opened the Dashboard or opened an email in the last 10 days — Platinum and Free.</p>
-      <div id="amList"><p class="adm-muted">Loading…</p></div>
-      <p class="adm-muted" id="amNote" style="margin:10px 0 0;"></p>
     </div>
     <script>
-    (function() {
-      function esc(s) {
-        return String(s == null ? '' : s).replace(/[&<>"']/g, function(c) {
-          return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
-        });
-      }
-      function fmt(v) {
-        if (!v) return '';
-        var d = new Date(v.length <= 10 ? (v + 'T12:00:00') : v);
-        if (isNaN(d.getTime())) return v;
-        return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-      }
-      fetch('/admin/api/active-members', { headers: { 'Accept': 'application/json' } })
-        .then(function(r) { return r.json(); })
-        .then(function(d) {
-          var list = document.getElementById('amList');
-          document.getElementById('amCount').textContent = d.total_activos;
-          if (!d.miembros || !d.miembros.length) {
-            list.innerHTML = '<p class="adm-muted">No active members in the last 10 days.</p>';
-          } else {
-            list.innerHTML = d.miembros.map(function(m) {
-              var det = [];
-              if (m.ultima_actividad) det.push('Dashboard: ' + fmt(m.ultima_actividad));
-              if (m.abrio_email) det.push('📧 Opened email' + (m.ultimo_open ? ' · ' + fmt(m.ultimo_open) : ''));
-              var badge = m.platinum
-                ? '<span class="mb" style="color:#2ee6a8;border-color:#2ee6a8;">★ PLATINUM</span>'
-                : '<span class="mb" style="color:#8fa1c2;border-color:#8fa1c2;">FREE</span>';
-              return '<div class="mrow"><span><span class="mn">' +
-                esc(m.nombre ? m.nombre : m.email) + '</span>' +
-                (m.nombre ? '<br><span class="adm-muted" style="font-size:0.75rem;">' + esc(m.email) + '</span>' : '') +
-                '<br><span class="adm-muted" style="font-size:0.75rem;">' + esc(det.join(' · ')) + '</span></span>' +
-                badge + '</div>';
-            }).join('');
-          }
-          if (d.email_data === false) {
-            document.getElementById('amNote').textContent = 'Email open data unavailable right now — showing Dashboard activity only.';
-          }
-        })
-        .catch(function() {
-          document.getElementById('amList').innerHTML = '<p class="adm-muted">Could not load the active members list.</p>';
-        });
-    })();
+    fetch('/admin/api/active-members', { headers: { 'Accept': 'application/json' } })
+      .then(function(r) { return r.json(); })
+      .then(function(d) { document.getElementById('amCount').textContent = d.total_activos; })
+      .catch(function() { document.getElementById('amCount').textContent = '–'; });
     </script>
   </div>
 
   <div class="adm-section">
     <h2>👥 Todos los miembros</h2>
     <p class="adm-muted" style="margin:0 0 12px;">{{ conteo_miembros.total }} miembros · {{ conteo_miembros.plat }} Platinum · {{ conteo_miembros.trial }} en prueba · {{ conteo_miembros.free }} gratis.</p>
-    {% for m in miembros_lista %}
-    <a class="mrow" href="{{ url_for('admin_miembro_detalle', user_id=m.id) }}">
-      <span><span class="mn">{{ m.nombre or '?' }}</span>{% if m.email %}<br><span class="adm-muted" style="font-size:0.75rem;">{{ m.email }}</span>{% endif %}</span>
-      {% if m.trial %}<span class="mb" style="color:#fff;border-color:rgba(255,255,255,.45);">PRUEBA{% if m.dias is not none %} · {{ m.dias }} DÍAS{% endif %}</span>
-      {% elif m.platinum %}<span class="mb" style="color:#2ee6a8;border-color:#2ee6a8;">★ PLATINUM</span>
-      {% else %}<span class="mb" style="color:#8fa1c2;border-color:#8fa1c2;">FREE</span>{% endif %}
-    </a>
-    {% else %}
-    <p class="adm-muted">No hay miembros todavía.</p>
-    {% endfor %}
   </div>
 
   <div class="adm-section">
