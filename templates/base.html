@@ -195,6 +195,7 @@ twq('config','rhgk7');
   {% block content %}{% endblock %}
 </main>
 
+{% if not (request.path or '').startswith('/admin') %}
 <footer class="footer tst-foot">
   <p class="tst-foot-addr">The Sharp Team · © 2026 The Sharp Team. All rights reserved.</p>
   <p class="tst-foot-legal">You must be 21+ (or of legal wagering age where you live) to use this service. The Sharp Team is a sports handicapping information and analytics service — not a sportsbook. We do not accept or place wagers, and no result is ever guaranteed. Every play, tool and line is published for entertainment and educational purposes only and is not betting or financial advice.</p>
@@ -207,6 +208,7 @@ twq('config','rhgk7');
   </div>
   <p class="tst-foot-contact">📞 <a href="tel:+12393768798">(239) 376-8798</a><span class="tst-foot-sep">·</span>✉️ <a href="mailto:thesharpteam8@gmail.com">thesharpteam8@gmail.com</a><span class="tst-foot-sep">·</span><a href="https://t.me/thesharpteam" target="_blank" rel="noopener">Telegram</a><span class="tst-foot-sep">·</span><a href="https://www.instagram.com/the_sharp_team/" target="_blank" rel="noopener">Instagram</a></p>
 </footer>
+{% endif %}
 
 <script>
 (function () {
