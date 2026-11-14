@@ -83,6 +83,25 @@ twq('config','rhgk7');
 <!-- End X conversion tracking base code -->
 </head>
 <body class="v2{% if session.get('user_id') %} has-bottomnav{% endif %}"{% if watermark_img %} style="--wm-img: url('{{ url_for('static', filename=watermark_img) }}')"{% endif %}>
+{% if (request.path or '').startswith('/admin') %}
+<style>
+.v2-topbar,.v2-bottomnav{display:none!important}
+.adm-bar{position:sticky;top:0;z-index:200;display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(7,17,31,.92);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid rgba(46,230,168,.25)}
+.adm-bar img{height:34px;width:auto}
+.adm-bar .t{font-weight:900;letter-spacing:.4px;color:#fff;font-size:.92rem;line-height:1.1}
+.adm-bar .t small{display:block;color:#2ee6a8;font-size:.58rem;letter-spacing:2.5px;font-weight:800}
+.adm-bar .btns{margin-left:auto;display:flex;gap:8px}
+.adm-bar .b{border:1px solid rgba(46,230,168,.55);color:#2ee6a8;font-weight:800;font-size:.78rem;padding:8px 13px;border-radius:999px;text-decoration:none;white-space:nowrap}
+.adm-bar .b.main{background:#2ee6a8;color:#06130c;border-color:#2ee6a8}
+</style>
+{% if request.endpoint != 'admin_dashboard' %}
+<div class="adm-bar">
+  <img src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team">
+  <div class="t">THE SHARP TEAM<small>ADMIN</small></div>
+  <div class="btns"><a class="b main" href="{{ url_for('admin_dashboard') }}">← Panel</a><a class="b" href="{{ url_for('home') }}">Dashboard</a></div>
+</div>
+{% endif %}
+{% endif %}
 {% if request.path == '/home' %}
 <div class="tst-skel-overlay" aria-hidden="true">
   <div class="tst-sk-block tst-sk-hero"></div>
@@ -140,7 +159,7 @@ twq('config','rhgk7');
 {# Franja de racha (2026-10-21, pedido Alex, referencia WGT): solo con
    sesión y con 2+ días ganadores seguidos reales; racha_dias viene del
    helper win_streak_days() en app.py, calculado desde data/archive.json. #}
-{% if session.get('user_id') and racha_dias and racha_dias >= 2 %}
+{% if session.get('user_id') and racha_dias and racha_dias >= 2 and not (request.path or '').startswith('/admin') %}
 <div class="v2-streak-strip">🔥 {{ racha_dias }}-day win streak</div>
 {% endif %}
 
