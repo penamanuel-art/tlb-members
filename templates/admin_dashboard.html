@@ -8,16 +8,16 @@
 body.v2 { padding-top: 77px; }
 .chat-fab { top: auto !important; bottom: 96px !important; }
 .adm-clean .kicker { color: #2ee6a8; font-size: 11px; font-weight: 800; letter-spacing: 5px; margin: 0; text-transform: uppercase; }
-.adm-clean h1 { font-size: 1.9rem; font-weight: 800; color: #fff; margin: 8px 0 14px; letter-spacing: -0.5px; }
+.adm-clean h1 { font-size: 1.45rem; font-weight: 800; color: #fff; margin: 2px 0 8px; letter-spacing: -0.5px; }
 .v2-topbar { display: none !important; }
 .v2-bottomnav { display: none !important; }
-.adm-head { background: #0d1526; border: 1px solid rgba(255,255,255,.09); border-radius: 18px; padding: 20px 18px; margin-bottom: 20px; }
-.adm-brand { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+.adm-head { background: #0d1526; border: 1px solid rgba(255,255,255,.09); border-radius: 18px; padding: 14px 16px; margin-bottom: 14px; }
+.adm-brand { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; }
 .adm-brand .sp { flex-wrap: wrap; }
-.adm-brand img { height: 58px; width: auto; }
+.adm-brand img { height: 44px; width: auto; }
 .adm-brand .b-notif { border: 1px solid rgba(46,230,168,.55); color: #2ee6a8; font-weight: 800; font-size: 0.8rem; padding: 9px 14px; border-radius: 999px; text-decoration: none; white-space: nowrap; display: inline-flex; align-items: center; gap: 7px; }
 .adm-brand .b-notif .bdg { background: #2ee6a8; color: #06130c; border-radius: 999px; font-size: 0.72rem; font-weight: 900; padding: 1px 8px; }
-.adm-hstats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 18px; }
+.adm-hstats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 12px; }
 .adm-hstats .adm-stat .n { font-size: 1.1rem; }
 .adm-brand .bt { line-height: 1.15; }
 .adm-brand .bt .n { font-weight: 900; font-size: 1.02rem; letter-spacing: .4px; color: #fff; }
@@ -26,7 +26,7 @@ body.v2 { padding-top: 77px; }
 .adm-brand .b-dash { background: #2ee6a8; color: #06130c; font-weight: 800; font-size: 0.8rem; padding: 9px 14px; border-radius: 999px; text-decoration: none; white-space: nowrap; }
 .adm-brand .b-out { color: #8fa1c2; font-weight: 700; font-size: 0.8rem; text-decoration: none; white-space: nowrap; }
 .adm-total { display: flex; align-items: baseline; gap: 12px; margin: 0; }
-.adm-total .tn { font-size: 2.6rem; font-weight: 800; color: #fff; line-height: 1; }
+.adm-total .tn { font-size: 2.1rem; font-weight: 800; color: #fff; line-height: 1; }
 .adm-total .tl { font-size: 0.72rem; font-weight: 800; letter-spacing: 2px; color: #8fa1c2; }
 .adm-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 16px; }
 .adm-stat { background: #0d1526; border: 1px solid rgba(255,255,255,.08); border-radius: 14px; padding: 12px 10px; text-align: center; }
@@ -86,7 +86,7 @@ details.adm-det summary { cursor: pointer; font-weight: 800; font-size: 0.95rem;
     <div class="bt"><div class="n">THE SHARP TEAM</div><div class="s">Admin Panel</div></div>
     <div class="sp"><a class="b-dash" href="{{ url_for('home') }}">Dashboard</a><a class="b-out" href="{{ url_for('logout') }}">Salir</a></div>
   </div>
-  <h1>Panel</h1>
+  <h1>Administration</h1>
   <div class="adm-total">
     <span class="tn">{{ conteo_miembros.total }}</span>
     <span class="tl">TOTAL MIEMBROS</span>
