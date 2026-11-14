@@ -86,6 +86,7 @@ twq('config','rhgk7');
 {% if (request.path or '').startswith('/admin') %}
 <style>
 .v2-topbar,.v2-bottomnav{display:none!important}
+body.has-bottomnav{padding-bottom:10px!important}
 .adm-bar{position:sticky;top:0;z-index:200;display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(7,17,31,.92);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid rgba(46,230,168,.25)}
 .adm-bar img{height:34px;width:auto}
 .adm-bar .t{font-weight:900;letter-spacing:.4px;color:#fff;font-size:.92rem;line-height:1.1}
@@ -93,7 +94,7 @@ twq('config','rhgk7');
 .adm-bar .btns{margin-left:auto;display:flex;gap:8px}
 .adm-bar .b{border:1px solid rgba(46,230,168,.55);color:#2ee6a8;font-weight:800;font-size:.78rem;padding:8px 13px;border-radius:999px;text-decoration:none;white-space:nowrap}
 .adm-bar .b.main{background:#2ee6a8;color:#06130c;border-color:#2ee6a8}
-.adm-nav{display:flex;gap:6px;overflow-x:auto;padding:10px 2px 10px;scrollbar-width:none}
+.adm-nav{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;padding:10px 2px}
 .adm-nav::-webkit-scrollbar{display:none}
 .adm-nav a{flex:0 0 auto;padding:7px 12px;border:1px solid rgba(255,255,255,.16);border-radius:999px;color:#dbe6f5;font-size:.72rem;font-weight:700;letter-spacing:.4px;text-decoration:none;background:rgba(255,255,255,.04);white-space:nowrap}
 
