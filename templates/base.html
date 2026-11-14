@@ -115,14 +115,12 @@ body.has-bottomnav{padding-bottom:10px!important}
 .adm-nav a{flex:0 0 auto;padding:7px 12px;border:1px solid rgba(255,255,255,.16);border-radius:999px;color:#dbe6f5;font-size:.72rem;font-weight:700;letter-spacing:.4px;text-decoration:none;background:rgba(255,255,255,.04);white-space:nowrap}
 
 </style>
-{% if request.endpoint != 'admin_dashboard' %}
 <div class="adm-bar">
   <img src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team">
   <div class="t">THE SHARP TEAM<small>ADMIN</small></div>
-  <div class="btns"><a class="b main" href="{{ url_for('admin_dashboard') }}">← Panel</a><a class="b" href="{{ url_for('home') }}">Dashboard</a></div>
+  <div class="btns">{% if request.endpoint != 'admin_dashboard' %}<a class="b main" href="{{ url_for('admin_dashboard') }}">← Panel</a>{% endif %}<a class="b" href="{{ url_for('home') }}">Dashboard</a>{% if request.endpoint == 'admin_dashboard' %}<a class="b" href="{{ url_for('logout') }}">Salir</a>{% endif %}</div>
 </div>
 <nav class="adm-nav"><a href="{{ url_for('admin_dashboard') }}">Panel</a><a href="/admin/miembros">Miembros</a><a href="/admin/notificaciones">Notificaciones</a><a href="/admin/tracker-oficial">Tracker</a><a href="/admin/actividad">Actividad</a><a href="/admin/en-vivo">En vivo</a><a href="/admin/subir-ticket">Subir ticket</a><a href="/admin/trakeos">Trakeos</a><a href="/admin/crear-push">Push</a></nav>
-{% endif %}
 {% endif %}
 <header class="topbar">
   <div class="topbar-left">
