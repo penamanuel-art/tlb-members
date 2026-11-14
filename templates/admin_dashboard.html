@@ -1,7 +1,7 @@
 {% extends "base_v2.html" %}
 {% block content %}
 <style>
-.adm-clean { max-width: 680px; margin: 0 auto; padding: 24px 14px 56px; font-family: -apple-system, 'SF Pro', Inter, system-ui, sans-serif; }
+.adm-clean { max-width: 880px; margin: 0 auto; padding: 24px 16px 56px; font-family: -apple-system, 'SF Pro', Inter, system-ui, sans-serif; }
 /* Menú de arriba fijo en el admin (2026-10-26, pedido Alex: se movía al bajar la página): sticky fallaba en Safari, pasa a fixed con espacio arriba. */
 .v2-topbar { position: fixed !important; top: 0; left: 0; right: 0; z-index: 100; }
 body.v2 { padding-top: 77px; }
@@ -11,8 +11,13 @@ body.v2 { padding-top: 77px; }
 .v2-topbar { display: none !important; }
 .v2-bottomnav { display: none !important; }
 .adm-head { background: #0d1526; border: 1px solid rgba(255,255,255,.09); border-radius: 18px; padding: 20px 18px; margin-bottom: 20px; }
-.adm-brand { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
-.adm-brand img { height: 46px; width: auto; }
+.adm-brand { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+.adm-brand .sp { flex-wrap: wrap; }
+.adm-brand img { height: 58px; width: auto; }
+.adm-brand .b-notif { border: 1px solid rgba(46,230,168,.55); color: #2ee6a8; font-weight: 800; font-size: 0.8rem; padding: 9px 14px; border-radius: 999px; text-decoration: none; white-space: nowrap; display: inline-flex; align-items: center; gap: 7px; }
+.adm-brand .b-notif .bdg { background: #2ee6a8; color: #06130c; border-radius: 999px; font-size: 0.72rem; font-weight: 900; padding: 1px 8px; }
+.adm-hstats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 18px; }
+.adm-hstats .adm-stat .n { font-size: 1.1rem; }
 .adm-brand .bt { line-height: 1.15; }
 .adm-brand .bt .n { font-weight: 900; font-size: 1.02rem; letter-spacing: .4px; color: #fff; }
 .adm-brand .bt .s { font-size: 0.66rem; font-weight: 800; letter-spacing: 2.5px; color: #2ee6a8; text-transform: uppercase; }
@@ -77,12 +82,18 @@ details.adm-det summary { cursor: pointer; font-weight: 800; font-size: 0.95rem;
   <div class="adm-brand">
     <img src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team">
     <div class="bt"><div class="n">THE SHARP TEAM</div><div class="s">Admin Panel</div></div>
-    <div class="sp"><a class="b-dash" href="{{ url_for('home') }}">Dashboard</a><a class="b-out" href="{{ url_for('logout') }}">Salir</a></div>
+    <div class="sp"><a class="b-notif" href="/admin/notificaciones">🔔 Notificaciones{% if sin_leer %}<span class="bdg">{{ sin_leer }}</span>{% endif %}</a><a class="b-dash" href="{{ url_for('home') }}">Dashboard</a><a class="b-out" href="{{ url_for('logout') }}">Salir</a></div>
   </div>
   <h1>Panel</h1>
   <div class="adm-total">
     <span class="tn">{{ conteo_miembros.total }}</span>
     <span class="tl">TOTAL MIEMBROS</span>
+  </div>
+  <div class="adm-hstats">
+    <div class="adm-stat"><span class="n">{{ conteo_miembros.plat }}</span><span class="l">Platinum</span></div>
+    <div class="adm-stat"><span class="n">{{ conteo_miembros.trial }}</span><span class="l">En prueba</span></div>
+    <div class="adm-stat"><span class="n">{{ conteo_miembros.free }}</span><span class="l">Gratis</span></div>
+    <div class="adm-stat"><span class="n">{{ sin_leer or 0 }}</span><span class="l">Sin leer</span></div>
   </div>
   </div>
   </div>
