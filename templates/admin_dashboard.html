@@ -17,7 +17,7 @@ body.v2 { padding-top: 77px; }
 .adm-brand img { height: 58px; width: auto; }
 .adm-brand .b-notif { border: 1px solid rgba(46,230,168,.55); color: #2ee6a8; font-weight: 800; font-size: 0.8rem; padding: 9px 14px; border-radius: 999px; text-decoration: none; white-space: nowrap; display: inline-flex; align-items: center; gap: 7px; }
 .adm-brand .b-notif .bdg { background: #2ee6a8; color: #06130c; border-radius: 999px; font-size: 0.72rem; font-weight: 900; padding: 1px 8px; }
-.adm-hstats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 18px; }
+.adm-hstats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 18px; }
 .adm-hstats .adm-stat .n { font-size: 1.1rem; }
 .adm-brand .bt { line-height: 1.15; }
 .adm-brand .bt .n { font-weight: 900; font-size: 1.02rem; letter-spacing: .4px; color: #fff; }
@@ -95,7 +95,6 @@ details.adm-det summary { cursor: pointer; font-weight: 800; font-size: 0.95rem;
     <div class="adm-stat"><span class="n">{{ conteo_miembros.plat }}</span><span class="l">Platinum</span></div>
     <div class="adm-stat"><span class="n">{{ conteo_miembros.trial }}</span><span class="l">En prueba</span></div>
     <div class="adm-stat"><span class="n">{{ conteo_miembros.free }}</span><span class="l">Gratis</span></div>
-    <div class="adm-stat"><span class="n">{{ sin_leer or 0 }}</span><span class="l">Sin leer</span></div>
   </div>
   </div>
 
@@ -204,12 +203,7 @@ details.adm-det summary { cursor: pointer; font-weight: 800; font-size: 0.95rem;
 
   <div class="adm-folder">
     <button type="button" class="adm-fold-head" onclick="var b=this.nextElementSibling;b.style.display=(b.style.display==='block')?'none':'block';">👥 Miembros<span style="display:flex;align-items:center;gap:8px;"><span class="adm-fold-count">{{ conteo_miembros.total }}</span><span class="adm-fold-chev">›</span></span></button>
-    <div class="adm-fold-body"><div class="adm-stats" style="margin-top:0;">
-        <div class="adm-stat"><span class="n">{{ conteo_miembros.total }}</span><span class="l">Total</span></div>
-        <div class="adm-stat"><span class="n">{{ conteo_miembros.plat }}</span><span class="l">Platinum</span></div>
-        <div class="adm-stat"><span class="n">{{ conteo_miembros.trial }}</span><span class="l">En prueba</span></div>
-      </div>
-      <p class="adm-muted" style="margin:12px 0 0;">{{ conteo_miembros.free }} miembros gratis · <a href="/admin/miembros" style="color:#2ee6a8;font-weight:700;text-decoration:none;">Abrir miembros →</a></p>
+    <div class="adm-fold-body"><p style="margin:0;"><a href="/admin/miembros" style="color:#2ee6a8;font-weight:700;text-decoration:none;">Abrir la página de miembros →</a></p>
     </div></div>
   </div>
 
