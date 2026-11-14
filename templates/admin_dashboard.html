@@ -84,7 +84,7 @@ details.adm-det summary { cursor: pointer; font-weight: 800; font-size: 0.95rem;
   <div class="adm-brand">
     <img src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team">
     <div class="bt"><div class="n">THE SHARP TEAM</div><div class="s">Admin Panel</div></div>
-    <div class="sp"><a class="b-notif" href="/admin/notificaciones">🔔 Notificaciones{% if sin_leer %}<span class="bdg">{{ sin_leer }}</span>{% endif %}</a><a class="b-dash" href="{{ url_for('home') }}">Dashboard</a><a class="b-out" href="{{ url_for('logout') }}">Salir</a></div>
+    <div class="sp"><a class="b-dash" href="{{ url_for('home') }}">Dashboard</a><a class="b-out" href="{{ url_for('logout') }}">Salir</a></div>
   </div>
   <h1>Panel</h1>
   <div class="adm-total">
