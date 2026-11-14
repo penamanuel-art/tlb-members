@@ -1,6 +1,7 @@
 {% extends "base_v2.html" %}
 {% block content %}
 <style>
+body.v2 { background: radial-gradient(820px 460px at 88% -6%, rgba(47,230,167,.16), transparent 58%), radial-gradient(700px 500px at -10% 108%, rgba(20,140,120,.13), transparent 60%), linear-gradient(160deg, #07231e 0%, #041a20 52%, #030c11 100%) !important; background-attachment: fixed !important; }
 .adm-clean { max-width: 880px; margin: 0 auto; padding: 6px 10px 56px; font-family: -apple-system, 'SF Pro', Inter, system-ui, sans-serif; }
 .v2-wrap { padding-left: 10px !important; padding-right: 10px !important; padding-top: 0 !important; }
 /* Menú de arriba fijo en el admin (2026-10-26, pedido Alex: se movía al bajar la página): sticky fallaba en Safari, pasa a fixed con espacio arriba. */
@@ -46,7 +47,7 @@ body.v2 { padding-top: 77px; }
 .adm-section h2 { font-size: 1.05rem; font-weight: 800; color: #fff; margin: 0 0 14px; padding-left: 10px; border-left: 3px solid #2ee6a8; line-height: 1.25; }
 .adm-card { background: #0d1526; border: 1px solid rgba(255,255,255,.08); border-radius: 16px; padding: 16px; margin-bottom: 12px; }
 
-.adm-folder { background:#0d1526; border:1px solid rgba(255,255,255,.09); border-radius:16px; margin-bottom:12px; overflow:hidden; }
+.adm-folder { background:linear-gradient(160deg,#101828,#0c1322); border:1px solid #1e2a45; border-radius:14px; margin-bottom:12px; overflow:hidden; }
 .adm-fold-head { width:100%; display:flex; justify-content:space-between; align-items:center; gap:10px; background:none; border:0; color:#fff; font:inherit; font-size:1rem; font-weight:800; padding:16px; cursor:pointer; text-align:left; text-decoration:none; box-sizing:border-box; }
 .adm-fold-count { background:rgba(46,230,168,.14); color:#2ee6a8; border-radius:999px; padding:3px 12px; font-size:0.82rem; font-weight:800; white-space:nowrap; }
 .adm-fold-chev { color:#8fa1c2; font-size:1.2rem; }
@@ -80,25 +81,10 @@ details.adm-det summary { cursor: pointer; font-weight: 800; font-size: 0.95rem;
 </a>
 
 <div class="adm-clean">
-  <div class="adm-head">
-  <div class="adm-brand">
-    <img src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team">
-    <div class="bt"><div class="n">THE SHARP TEAM</div><div class="s">Admin Panel</div></div>
-    <div class="sp"><a class="b-dash" href="{{ url_for('home') }}">Dashboard</a><a class="b-out" href="{{ url_for('logout') }}">Salir</a></div>
-  </div>
-  <h1>Administration</h1>
-  <div class="adm-total">
-    <span class="tn">{{ conteo_miembros.total }}</span>
-    <span class="tl">TOTAL MIEMBROS</span>
-  </div>
-  <div class="adm-hstats">
-    <div class="adm-stat"><span class="n">{{ conteo_miembros.plat }}</span><span class="l">Platinum</span></div>
-    <div class="adm-stat"><span class="n">{{ conteo_miembros.trial }}</span><span class="l">En prueba</span></div>
-    <div class="adm-stat"><span class="n">{{ conteo_miembros.free }}</span><span class="l">Gratis</span></div>
-  </div>
-  </div>
+  <p style="font-size:.72rem;letter-spacing:3px;color:#8fa1c2;font-weight:700;margin:4px 0 2px;">ADMIN</p>
+  <h1 style="font-size:2rem;margin:0 0 4px;">Administration</h1>
+  <p style="color:#8fa1c2;font-size:.92rem;margin:0 0 14px;">{{ conteo_miembros.total }} miembros &middot; {{ conteo_miembros.plat }} Platinum &middot; {{ conteo_miembros.trial }} en prueba &middot; {{ conteo_miembros.free }} gratis</p>
 
-<nav class="adm-nav"><a href="{{ url_for('admin_dashboard') }}">Panel</a><a href="/admin/miembros">Miembros</a><a href="/admin/notificaciones">Notificaciones</a><a href="/admin/tracker-oficial">Tracker</a><a href="/admin/actividad">Actividad</a><a href="/admin/en-vivo">En vivo</a><a href="/admin/subir-ticket">Subir ticket</a><a href="/admin/trakeos">Trakeos</a><a href="/admin/crear-push">Push</a></nav>
 
   <div class="adm-folder">
     <button type="button" class="adm-fold-head" onclick="var b=this.nextElementSibling;b.style.display=(b.style.display==='block')?'none':'block';">💰 Ingresos<span style="display:flex;align-items:center;gap:8px;"><span class="adm-fold-count">{{ '$%.2f'|format(ingresos.mes) if ingresos else '—' }}</span><span class="adm-fold-chev">›</span></span></button>
