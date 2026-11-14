@@ -14135,17 +14135,31 @@ def admin_dashboard():
     # ordenados por nombre. Incluye pruebas (con su etiqueta PRUEBA).
     try:
         _mm = db.execute(
-            "SELECT id, nombre, platinum_unlocked, platinum_trial_ends "
+            "SELECT id, nombre, email, platinum_unlocked, platinum_trial_ends "
             "FROM users WHERE email_verified = 1 "
             "AND LOWER(email) NOT IN ('thesharpteam8@gmail.com', "
             "'system@value.local', 'pena.manuel@myyahoo.com', "
             "'alexpena1509@gmail.com') "
             "ORDER BY nombre ASC").fetchall()
-        miembros_lista = [{
-            "id": r["id"], "nombre": r["nombre"],
-            "platinum": bool(r["platinum_unlocked"]),
-            "trial": bool(r["platinum_trial_ends"] or ""),
-        } for r in _mm]
+        miembros_lista = []
+        for r in _mm:
+            _dias = None
+            _te = (r["platinum_trial_ends"] or "").strip()
+            if _te:
+                try:
+                    from datetime import datetime as _dt, timezone as _tz
+                    _fin = _dt.fromisoformat(_te.replace("Z", "+00:00"))
+                    if _fin.tzinfo is None:
+                        _fin = _fin.replace(tzinfo=_tz.utc)
+                    _dias = max(0, (_fin - _dt.now(_tz.utc)).days)
+                except Exception:
+                    _dias = None
+            miembros_lista.append({
+                "id": r["id"], "nombre": r["nombre"], "email": r["email"],
+                "platinum": bool(r["platinum_unlocked"]),
+                "trial": bool(r["platinum_trial_ends"] or ""),
+                "dias": _dias,
+            })
     except Exception:
         miembros_lista = []
     conteo_miembros = {
