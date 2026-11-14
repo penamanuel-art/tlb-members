@@ -118,6 +118,8 @@ details.adm-det summary { cursor: pointer; font-weight: 800; font-size: 0.95rem;
   </div>
 
   <div class="adm-grid">
+    <a class="adm-btn" href="/admin/miembros">
+      <span class="ico">👥</span><span class="t">Miembros</span><span class="s">{{ conteo_miembros.total }} en total</span></a>
     <a class="adm-btn" href="/admin/tracker-oficial">
       <span class="ico">🏆</span><span class="t">Tracker oficial</span><span class="s">Récord y profit</span></a>
     <a class="adm-btn" href="/admin/actividad">
@@ -198,12 +200,6 @@ details.adm-det summary { cursor: pointer; font-weight: 800; font-size: 0.95rem;
     .then(function(d) { document.getElementById('amCount').textContent = d.total_activos; })
     .catch(function() { document.getElementById('amCount').textContent = '–'; });
   </script>
-
-  <div class="adm-folder">
-    <button type="button" class="adm-fold-head" onclick="var b=this.nextElementSibling;b.style.display=(b.style.display==='block')?'none':'block';">👥 Miembros<span style="display:flex;align-items:center;gap:8px;"><span class="adm-fold-count">{{ conteo_miembros.total }}</span><span class="adm-fold-chev">›</span></span></button>
-    <div class="adm-fold-body"><p style="margin:0;"><a href="/admin/miembros" style="color:#2ee6a8;font-weight:700;text-decoration:none;">Abrir la página de miembros →</a></p>
-    </div></div>
-  </div>
 
   <div class="adm-folder">
     <button type="button" class="adm-fold-head" onclick="var b=this.nextElementSibling;b.style.display=(b.style.display==='block')?'none':'block';">⚙️ Controles manuales<span class="adm-fold-chev">›</span></button>
