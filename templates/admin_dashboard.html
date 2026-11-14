@@ -5,10 +5,10 @@
 /* Menú de arriba fijo en el admin (2026-10-26, pedido Alex: se movía al bajar la página): sticky fallaba en Safari, pasa a fixed con espacio arriba. */
 .v2-topbar { position: fixed !important; top: 0; left: 0; right: 0; z-index: 100; }
 body.v2 { padding-top: 77px; }
-.chat-fab { top: 90px !important; }
+.chat-fab { top: auto !important; bottom: 96px !important; }
 .adm-clean .kicker { color: #2ee6a8; font-size: 11px; font-weight: 800; letter-spacing: 5px; margin: 0; text-transform: uppercase; }
 .adm-clean h1 { font-size: 1.9rem; font-weight: 800; color: #fff; margin: 8px 0 14px; letter-spacing: -0.5px; }
-.adm-head { border-bottom: 1px solid rgba(255,255,255,.08); padding-bottom: 18px; margin-bottom: 20px; }
+.adm-head { background: #0d1526; border: 1px solid rgba(255,255,255,.09); border-radius: 18px; padding: 20px 18px; margin-bottom: 20px; }
 .adm-total { display: flex; align-items: baseline; gap: 12px; margin: 0; }
 .adm-total .tn { font-size: 2.6rem; font-weight: 800; color: #fff; line-height: 1; }
 .adm-total .tl { font-size: 0.72rem; font-weight: 800; letter-spacing: 2px; color: #8fa1c2; }
@@ -46,7 +46,7 @@ body.v2 { padding-top: 77px; }
   border: 1px solid; border-radius: 999px; padding: 3px 10px; white-space: nowrap; }
 details.adm-det { background: #0d1526; border: 1px solid rgba(255,255,255,.09); border-radius: 16px; padding: 16px; margin-top: 30px; }
 details.adm-det summary { cursor: pointer; font-weight: 800; font-size: 0.95rem; color: #fff; }
-.chat-fab { position: fixed; top: 14px; right: 14px; z-index: 99; width: 54px; height: 54px;
+.chat-fab { position: fixed; bottom: 96px; right: 14px; z-index: 99; width: 54px; height: 54px;
   border-radius: 50%; background: #0a0f1d; border: 2px solid #2ee6a8;
   box-shadow: 0 4px 18px rgba(0,0,0,.5); display: flex; align-items: center; justify-content: center; text-decoration: none; }
 .chat-fab img { width: 36px; height: 36px; object-fit: contain; display: block; }
@@ -65,6 +65,26 @@ details.adm-det summary { cursor: pointer; font-weight: 800; font-size: 0.95rem;
     <span class="tl">TOTAL MIEMBROS</span>
   </div>
   </div>
+  </div>
+
+  <div class="adm-section">
+    <h2>💰 Ingresos</h2>
+    <div class="adm-card">
+      {% if ingresos %}
+      <div class="adm-total" style="margin:0 0 6px;">
+        <span class="tn" style="color:#2ee6a8;">${{ '%.2f'|format(ingresos.mes) }}</span>
+        <span class="tl">ESTE MES</span>
+      </div>
+      <p class="adm-muted" style="margin:0 0 12px;">Hoy: <strong style="color:#fff;">${{ '%.2f'|format(ingresos.hoy) }}</strong> · Últimos 30 días: <strong style="color:#fff;">${{ '%.2f'|format(ingresos.d30) }}</strong> · Total: <strong style="color:#fff;">${{ '%.2f'|format(ingresos.total) }}</strong></p>
+      {% for p in ingresos.ultimos %}
+      <div class="mrow"><span class="mn">💵 Pago recibido</span><span class="mb" style="color:#2ee6a8;border-color:#2ee6a8;">${{ '%.2f'|format(p.monto) }} · {{ p.fecha }}</span></div>
+      {% else %}
+      <p class="adm-muted" style="margin:0;">Sin pagos todavía.</p>
+      {% endfor %}
+      {% else %}
+      <p class="adm-muted" style="margin:0;">Ingresos no disponibles ahora mismo.</p>
+      {% endif %}
+    </div>
   </div>
 
   <div class="adm-grid">
