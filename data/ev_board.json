@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-14T12:24:48-04:00",
+  "updated_at": "2026-11-14T12:39:41-04:00",
   "refresh_minutes": 15,
   "fair_source": "Pinnacle no-vig",
   "filters": {
@@ -29,10 +29,10 @@
       "fair_prob_pct": 21.3,
       "fair_american": 370,
       "ev_pct": 6.4,
-      "ev_mercado_pct": 3.4,
-      "fair_mercado_prob_pct": 20.7,
+      "ev_mercado_pct": 3.2,
+      "fair_mercado_prob_pct": 20.6,
       "doble": true,
-      "books_count": 2,
+      "books_count": 3,
       "books": [
         {
           "book": "FanDuel",
@@ -45,9 +45,16 @@
           "price": 400,
           "ev_pct": 6.4,
           "url": "https://novig.com"
+        },
+        {
+          "book": "DraftKings",
+          "price": 390,
+          "ev_pct": 4.3,
+          "url": "https://sportsbook.draftkings.com"
         }
       ],
       "also_at": [
+        "DraftKings",
         "Novig"
       ],
       "sharp": false,
@@ -439,7 +446,7 @@
       "novig_deep": false,
       "stale": true,
       "first_seen": "2026-11-09T14:52:52.845117+00:00",
-      "stale_reason": "only 1 book \u22653% now"
+      "stale_reason": "line moved below 3%"
     },
     {
       "id": "c2ccf2d604c3a791b12d26ccaaf65c70-h2h-None-Northern Illinois ",
@@ -538,6 +545,27 @@
   "arbitrajes": [
     {
       "sport": "NCAAF",
+      "game": "South Carolina Gamecocks @ Arkansas Razorbacks",
+      "market": "Moneyline",
+      "point": "",
+      "margen_pct": 0.69,
+      "lados": [
+        {
+          "pick": "Arkansas Razorbacks",
+          "casa": "Novig",
+          "precio": 285
+        },
+        {
+          "pick": "South Carolina Gamecocks",
+          "casa": "FanDuel",
+          "precio": -275
+        }
+      ],
+      "commence_time": "2026-11-15T00:45:00Z",
+      "live": false
+    },
+    {
+      "sport": "NCAAF",
       "game": "Tulane Green Wave @ Rice Owls",
       "market": "Moneyline",
       "point": "",
@@ -558,24 +586,24 @@
       "live": false
     },
     {
-      "sport": "NHL",
-      "game": "New Jersey Devils @ Washington Capitals",
+      "sport": "NCAAF",
+      "game": "Washington Huskies @ Michigan State Spartans",
       "market": "Moneyline",
       "point": "",
       "margen_pct": 0.2,
       "lados": [
         {
-          "pick": "New Jersey Devils",
-          "casa": "BetRivers",
-          "precio": -121
+          "pick": "Michigan State Spartans",
+          "casa": "Novig",
+          "precio": 125
         },
         {
-          "pick": "Washington Capitals",
-          "casa": "Novig",
-          "precio": 122
+          "pick": "Washington Huskies",
+          "casa": "BetRivers",
+          "precio": -124
         }
       ],
-      "commence_time": "2026-11-15T00:10:00Z",
+      "commence_time": "2026-11-14T22:30:00Z",
       "live": false
     }
   ],
