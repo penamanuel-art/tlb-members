@@ -14188,7 +14188,47 @@ def admin_dashboard():
         telegram_counts = _tg if isinstance(_tg, dict) and _tg.get("ok") else None
     except Exception:
         telegram_counts = None
+    # ── 💰 INGRESOS (2026-11-14, pedido de Alex: «cada vez que alguien
+    # pague, que se reflejen los ingresos») — cifras REALES de Stripe:
+    # facturas pagadas, sin nombres de miembros en el panel.
+    ingresos = None
+    try:
+        if STRIPE_SECRET_KEY:
+            import stripe as _stripe
+            from datetime import datetime as _dti, timedelta as _tdi, timezone as _tzi
+            _stripe.api_key = STRIPE_SECRET_KEY
+            _ET = _tzi(_tdi(hours=-5))
+            _ahora = _dti.now(_ET)
+            _hoy_s = _ahora.strftime("%Y-%m-%d")
+            _mes_s = _ahora.strftime("%Y-%m")
+            _desde30 = _ahora - _tdi(days=30)
+            _tot = 0.0; _mes = 0.0; _d30 = 0.0; _hoy = 0.0; _ult = []
+            _params = {"status": "paid", "limit": 100}
+            for _pagina in range(3):
+                _resp = _stripe.Invoice.list(**_params)
+                _data = _resp.get("data", []) if hasattr(_resp, "get") else _resp.data
+                for _inv in _data:
+                    _amt = (_inv.get("amount_paid") or 0) / 100.0
+                    if _amt <= 0:
+                        continue
+                    _f = _dti.fromtimestamp(_inv.get("created") or 0, _ET)
+                    _tot += _amt
+                    if _f.strftime("%Y-%m") == _mes_s:
+                        _mes += _amt
+                    if _f >= _desde30:
+                        _d30 += _amt
+                    if _f.strftime("%Y-%m-%d") == _hoy_s:
+                        _hoy += _amt
+                    if len(_ult) < 5:
+                        _ult.append({"monto": _amt, "fecha": _f.strftime("%b %d · %I:%M %p")})
+                if not getattr(_resp, "has_more", False) or not _data:
+                    break
+                _params["starting_after"] = _data[-1].get("id")
+            ingresos = {"total": _tot, "mes": _mes, "d30": _d30, "hoy": _hoy, "ultimos": _ult}
+    except Exception:
+        ingresos = None
     return render_template("admin_dashboard.html",
+                           ingresos=ingresos,
                            stats={"miembros": miembros, "platinum": platinum,
                                   "jugadas_hoy": jugadas_hoy, "no_leidas": no_leidas},
                            selecciones=selecciones,
