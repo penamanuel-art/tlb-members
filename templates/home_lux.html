@@ -15,26 +15,26 @@
 /* Tokens del sistema de diseño TST (Auditoría UI/UX 2026-11-12, Fase 0 · Fundación): base documentada, sin consumir todavía. */
 :root{--fbody:'Roboto',sans-serif;--fdisp:'Unbounded',sans-serif;--fmono:'Roboto Mono',monospace;--fs-display:30px;--lh-display:1.15;--fs-h1:28px;--lh-h1:1.2;--fs-h2:22px;--lh-h2:1.25;--fs-card:17px;--lh-card:1.3;--fs-body:15px;--lh-body:1.5;--fs-sub:13px;--lh-sub:1.55;--fs-tag:11px;--lh-tag:1.35;--fs-btn:15px;--lh-btn:1.2;--mx:16px;--sec:24px;--pad-card:16px;--gap:8px;--gap-lg:12px;--r-card:12px;--r-btn:12px;--r-input:12px;--r-pill:999px;--r-sheet:16px;--btn-h:46px;--btn-h-sm:44px;--btn-h-pill:36px;--w-public:1200px;--w-app:720px;--w-app-wide:1200px;--w-read:760px;--w-form:520px}
   *{box-sizing:border-box}
-  body{margin:0;background-color:#0B0D12;background-image:radial-gradient(560px 300px at 50% -80px,rgba(47,230,167,.06),transparent 65%),radial-gradient(700px 500px at 110% 30%,rgba(255,255,255,.025),transparent 60%);color:#F2F3F5;font-family:'Roboto',-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif}
+  body{margin:0;background-color:#0B1220;background-image:radial-gradient(560px 300px at 50% -80px,rgba(47,230,167,.06),transparent 65%),radial-gradient(700px 500px at 110% 30%,rgba(255,255,255,.025),transparent 60%);color:#F2F3F5;font-family:'Roboto',-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif}
   .phone{position:relative;z-index:1;max-width:520px;margin:0 auto;padding:14px 14px 90px}
   a{color:inherit;text-decoration:none}
   .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
   .brand{display:flex;align-items:center;gap:8px}
   .fin{width:34px;height:34px;min-width:34px;border-radius:50%;object-fit:cover;box-shadow:0 0 14px rgba(46,230,168,.45)}
   .wordmark{line-height:1}
-  .wordmark b{display:block;font-size:8.4px;letter-spacing:.22em;color:#e8c766;font-style:italic;font-weight:400}
+  .wordmark b{display:block;font-size:8.4px;letter-spacing:.22em;color:#11CB87;font-style:italic;font-weight:400}
   .wordmark strong{display:block;font-size:14.3px;letter-spacing:.01em;font-style:italic;font-weight:900}
-  .wordmark i{display:block;height:1.9px;background:linear-gradient(90deg,#2ee6a8,#e8c766);margin-top:1.9px}
+  .wordmark i{display:block;height:1.9px;background:linear-gradient(90deg,#2ee6a8,#11CB87);margin-top:1.9px}
   .topactions{display:flex;align-items:center;gap:12px}
-  .pill{display:flex;align-items:center;gap:6px;border:1px solid #262C36;background:#1E222B;border-radius:999px;padding:6px 10px;font-size:12.1px;font-weight:600;white-space:nowrap}
-  .topstrip{display:flex;align-items:center;gap:6px;width:fit-content;margin:0 auto 12px;border:1px solid #e8c766;background:linear-gradient(180deg,#20242E,#1B1F27);border-radius:999px;padding:8px 14px;font-size:12.1px;font-weight:700;color:#F2F3F5;text-decoration:none;white-space:nowrap}
-  .pill .crown{color:#e8c766}
+  .pill{display:flex;align-items:center;gap:6px;border:1px solid #223354;background:#182641;border-radius:999px;padding:6px 10px;font-size:12.1px;font-weight:600;white-space:nowrap}
+  .topstrip{display:flex;align-items:center;gap:6px;width:fit-content;margin:0 auto 12px;border:1px solid #11CB87;background:linear-gradient(180deg,#1A2745,#16223C);border-radius:999px;padding:8px 14px;font-size:12.1px;font-weight:700;color:#F2F3F5;text-decoration:none;white-space:nowrap}
+  .pill .crown{color:#11CB87}
   .topactions .pill{height:32px;box-sizing:border-box}
   .pillrow .pill{height:40px;box-sizing:border-box}
-  .avatar{width:32px;height:32px;min-width:32px;border-radius:50%;border:2px solid #2ee6a8;background:#343B47;display:flex;align-items:center;justify-content:center;font-size:14.3px;color:#F2F3F5;font-weight:800}
-  .bellbtn{width:32px;height:32px;min-width:32px;border-radius:50%;border:2px solid #2ee6a8;background:#343B47;display:flex;align-items:center;justify-content:center;color:#F2F3F5;cursor:pointer;padding:0}
+  .avatar{width:32px;height:32px;min-width:32px;border-radius:50%;border:2px solid #2ee6a8;background:#2B4066;display:flex;align-items:center;justify-content:center;font-size:14.3px;color:#F2F3F5;font-weight:800}
+  .bellbtn{width:32px;height:32px;min-width:32px;border-radius:50%;border:2px solid #2ee6a8;background:#2B4066;display:flex;align-items:center;justify-content:center;color:#F2F3F5;cursor:pointer;padding:0}
   .bellbtn svg{display:block;width:20.9px;height:20.9px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
-  .notif-panel{border:1px solid #262C36;background:linear-gradient(180deg,#20242E,#1B1F27);border-radius:16px;padding:14px;margin-bottom:14px}
+  .notif-panel{border:1px solid #223354;background:linear-gradient(180deg,#1A2745,#16223C);border-radius:16px;padding:14px;margin-bottom:14px}
   .notif-panel h3{font-size:14.9px;margin-bottom:8px}
   .notif-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid rgba(139,152,173,.15)}
   .notif-item:first-of-type{border-top:0}
@@ -47,10 +47,10 @@
   .notif-item .amt.win{color:#2ee6a8}
   .notif-item .amt.loss{color:#e65050}
   .pillrow{display:flex;align-items:center;gap:7px;margin-bottom:10px}
-  .balance{flex:1 1 auto;min-width:0;display:flex;align-items:center;justify-content:flex-start;gap:6px;height:40px;box-sizing:border-box;border:1px solid #262C36;border-radius:999px;padding:6px 10px;background:#1E222B;font-weight:300;font-size:11.6px;white-space:nowrap}
+  .balance{flex:1 1 auto;min-width:0;display:flex;align-items:center;justify-content:flex-start;gap:6px;height:40px;box-sizing:border-box;border:1px solid #223354;border-radius:999px;padding:6px 10px;background:#182641;font-weight:300;font-size:11.6px;white-space:nowrap}
   .balance b{color:#2ee6a8;font-size:12.1px;font-weight:300}
-  .menubtn{width:44px;height:44px;min-width:44px;border:1px solid #262C36;background:#1E222B;border-radius:12px;color:#F2F3F5;font-size:16.4px;display:flex;align-items:center;justify-content:center}
-  .hero{position:relative;overflow:hidden;border:1px solid #343B47;border-radius:20px;background:radial-gradient(120% 140% at 20% 0%,#262C36 0%,#13161D 55%,#08090D 100%);padding:20px 18px 0;box-shadow:0 0 26px rgba(46,230,168,.18);margin-top:14px;margin-bottom:22px}
+  .menubtn{width:44px;height:44px;min-width:44px;border:1px solid #223354;background:#182641;border-radius:12px;color:#F2F3F5;font-size:16.4px;display:flex;align-items:center;justify-content:center}
+  .hero{position:relative;overflow:hidden;border:1px solid #2B4066;border-radius:20px;background:radial-gradient(120% 140% at 20% 0%,#223354 0%,#13161D 55%,#08090D 100%);padding:20px 18px 0;box-shadow:0 0 26px rgba(46,230,168,.18);margin-top:14px;margin-bottom:22px}
   .hero .photo{position:absolute;left:0;right:0;top:0;bottom:0;background:none;opacity:1;animation:none}
   @keyframes hero-ola{from{background-position:0% 0%,20% center}to{background-position:0% 0%,80% center}}
   @media (prefers-reduced-motion:reduce){.hero .photo{animation:none}}
@@ -61,40 +61,40 @@
   .tagline{color:#E7E9ED;font-size:14.3px;margin:0 0 18px;max-width:64%}
   /* Tarjeta de estado MÁS FINA (2026-10-30, orden de Alex: «hazlo más fino» + «ajusta los textos»): menos padding, círculo del ✓ más chico, letra secundaria al formato del sistema y la línea de conteo en UNA sola línea (.cnt nowrap). */
   .status{position:relative;display:flex;gap:9px;align-items:center;background:rgba(13,18,25,.45);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.12);border-left:3px solid #2ee6a8;border-radius:14px;padding:8px 11px;margin:8px 0 12px}
-  .check{width:30px;height:30px;min-width:30px;border-radius:50%;background:#2ee6a8;color:#1B1F27;display:flex;align-items:center;justify-content:center;font-size:14.9px;font-weight:700;box-shadow:0 0 10px rgba(46,230,168,.35)}
+  .check{width:30px;height:30px;min-width:30px;border-radius:50%;background:#2ee6a8;color:#16223C;display:flex;align-items:center;justify-content:center;font-size:14.9px;font-weight:700;box-shadow:0 0 10px rgba(46,230,168,.35)}
   .status b{display:block;font-size:14.3px;font-weight:600}
   .status span{color:#A3AAB6;font-size:12.7px;font-weight:400;line-height:1.4}
   .status .cnt{white-space:nowrap;font-size:12.1px}
   @media (max-width:400px){.status .cnt{font-size:12.1px;letter-spacing:-.2px}}
   .status .arr{margin-left:auto;color:#A3AAB6;font-size:14.9px}
   .tiles{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:20px 0}
-  .tile{background:linear-gradient(180deg,#20242E,#1B1F27);border:1px solid #343B47;border-radius:16px;padding:12px 10px}
-  .tile .ic{width:34px;height:34px;border-radius:10px;background:#1E222B;border:1px solid #262C36;display:flex;align-items:center;justify-content:center;color:#2ee6a8;font-size:17.1px;margin-bottom:8px}
+  .tile{background:linear-gradient(180deg,#1A2745,#16223C);border:1px solid #2B4066;border-radius:16px;padding:12px 10px}
+  .tile .ic{width:34px;height:34px;border-radius:10px;background:#182641;border:1px solid #223354;display:flex;align-items:center;justify-content:center;color:#2ee6a8;font-size:17.1px;margin-bottom:8px}
   .tile b{display:block;font-size:14.3px;font-weight:400;margin-bottom:3px}
   .tile p{margin:0;color:#A3AAB6;font-size:12.1px;font-weight:300;line-height:1.4}
   .tile .arr{color:#A3AAB6;float:right;font-size:14.9px}
-  .risk{display:flex;align-items:center;gap:10px;border:1px solid #343B47;border-radius:14px;padding:12px 14px;background:linear-gradient(180deg,#20242E,#1B1F27);margin-bottom:22px}
+  .risk{display:flex;align-items:center;gap:10px;border:1px solid #2B4066;border-radius:14px;padding:12px 14px;background:linear-gradient(180deg,#1A2745,#16223C);margin-bottom:22px}
   .risk .shield{font-size:24.2px;color:#2ee6a8}
   .risk .left{flex:1}
   .risk .label{font-size:11.6px;letter-spacing:.18em;color:#2ee6a8;font-weight:400}
   .risk b{display:block;font-size:16px;font-weight:400;margin:2px 0}
   .risk span{color:#E7E9ED;font-size:12.1px;font-weight:300}
-  .risk .right{border-left:1px solid #262C36;padding-left:12px;color:#2ee6a8;font-weight:400;font-size:12.1px;line-height:1.35;max-width:150px}
-  .unlock{display:flex;align-items:center;gap:12px;border:1px solid #e8c766;border-radius:18px;padding:16px;background:linear-gradient(180deg,#20242E,#1B1F27);margin-top:8px;margin-bottom:20px;text-decoration:none;color:#F2F3F5}
-  .unlock-crown{font-size:28.1px;color:#e8c766}
+  .risk .right{border-left:1px solid #223354;padding-left:12px;color:#2ee6a8;font-weight:400;font-size:12.1px;line-height:1.35;max-width:150px}
+  .unlock{display:flex;align-items:center;gap:12px;border:1px solid #11CB87;border-radius:18px;padding:16px;background:linear-gradient(180deg,#1A2745,#16223C);margin-top:8px;margin-bottom:20px;text-decoration:none;color:#F2F3F5}
+  .unlock-crown{font-size:28.1px;color:#11CB87}
   .unlock-txt{flex:1}
-  .unlock-txt b{display:block;font-size:17.1px;color:#e8c766}
+  .unlock-txt b{display:block;font-size:17.1px;color:#11CB87}
   .unlock-txt p{margin:4px 0 0;font-size:12.7px;color:#A3AAB6;line-height:1.45}
-  .unlock-arr{font-size:24.2px;color:#e8c766}
+  .unlock-arr{font-size:24.2px;color:#11CB87}
   .unlock-info{margin:8px 0 0;font-size:12.1px;color:#A3AAB6;line-height:1.5}
   .unlock-today{margin:6px 0 0;font-size:12.1px;color:#2ee6a8;font-weight:700}
   .rh-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin:4px 0 0}
   .rh-title{font-size:24.2px;font-weight:800;letter-spacing:-.3px;color:#F2F3F5}
   .rh-sub{color:#9AA3AF;font-size:12.1px;margin-top:3px}
-  .rh-ledger{flex:none;background:#131e31;border:1px solid #262C36;color:#E7E9ED;font-size:12.1px;font-weight:600;padding:8px 12px;border-radius:10px;text-decoration:none}
+  .rh-ledger{flex:none;background:#131e31;border:1px solid #223354;color:#E7E9ED;font-size:12.1px;font-weight:600;padding:8px 12px;border-radius:10px;text-decoration:none}
   .rh-rail{display:flex;gap:10px;overflow-x:auto;padding:14px 2px 8px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none}
   .rh-rail::-webkit-scrollbar{display:none}
-  .rh-card{flex:0 0 88%;scroll-snap-align:start;background:linear-gradient(180deg,#20242E,#1B1F27);border:1px solid var(--rhc);border-left:4px solid var(--rhc);border-radius:20px;padding:18px 16px 20px;text-decoration:none;display:block;box-shadow:0 0 22px color-mix(in srgb,var(--rhc) 30%,transparent)}
+  .rh-card{flex:0 0 88%;scroll-snap-align:start;background:linear-gradient(180deg,#1A2745,#16223C);border:1px solid var(--rhc);border-left:4px solid var(--rhc);border-radius:20px;padding:18px 16px 20px;text-decoration:none;display:block;box-shadow:0 0 22px color-mix(in srgb,var(--rhc) 30%,transparent)}
   .rh-badge{display:inline-block;font-size:11px;font-weight:800;letter-spacing:1.4px;color:var(--rhc);background:rgba(255,255,255,.05);border:1px solid var(--rhc);padding:5px 9px;border-radius:8px}
   .rh-bigrow{display:flex;align-items:center;gap:10px;margin:12px 0 2px}
   .rh-big{color:#fff;font-size:39.1px;font-weight:800}
@@ -111,33 +111,33 @@
   .sechead{display:flex;align-items:center;gap:10px;margin:8px 0 14px}
   .sechead h2{margin:0;font-size:14.3px}
   .lvpill{border:1px solid #2ee6a8;color:#2ee6a8;border-radius:999px;padding:6px 12px;font-size:12.1px;font-weight:800}
-  .lvpill.plat{border-color:#e8c766;color:#e8c766}
+  .lvpill.plat{border-color:#11CB87;color:#11CB87}
   .viewall{margin-left:auto;color:#E7E9ED;font-size:13.2px}
-  .section{border:1px solid #343B47;border-radius:18px;background:linear-gradient(180deg,#20242E,#1B1F27);padding:16px;margin-bottom:22px}
+  .section{border:1px solid #2B4066;border-radius:18px;background:linear-gradient(180deg,#1A2745,#16223C);padding:16px;margin-bottom:22px}
   .section h3{margin:0 0 10px;font-size:17.6px}
-  .row{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-top:1px solid #20242E;font-size:14.3px}
+  .row{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-top:1px solid #1A2745;font-size:14.3px}
   .row:first-of-type{border-top:0}
   .on{color:#2ee6a8;font-size:12.1px;font-weight:400}
   .join{border:1px solid #2ee6a8;color:#2ee6a8;border-radius:999px;padding:4px 10px;font-size:12.1px;font-weight:400}
-  .unlock{background:linear-gradient(180deg,#20242E,#1B1F27);border:1px solid #2ee6a8;border-radius:18px;padding:20px;text-align:center;margin-bottom:22px;box-shadow:0 0 20px rgba(46,230,168,.3)}
+  .unlock{background:linear-gradient(180deg,#1A2745,#16223C);border:1px solid #2ee6a8;border-radius:18px;padding:20px;text-align:center;margin-bottom:22px;box-shadow:0 0 20px rgba(46,230,168,.3)}
   .unlock b{display:block;font-size:19.8px;margin-bottom:6px}
   .unlock p{margin:0 0 14px;color:#E7E9ED;font-size:13.2px;line-height:1.5}
-  .unlock .cta{display:inline-block;background:#2ee6a8;color:#1B1F27;font-weight:900;border-radius:999px;padding:12px 26px;font-size:14.3px}
+  .unlock .cta{display:inline-block;background:#2ee6a8;color:#16223C;font-weight:900;border-radius:999px;padding:12px 26px;font-size:14.3px}
   .faq p{color:#A3AAB6;font-size:13.2px;line-height:1.55;margin:6px 0 14px}
   .footer{text-align:center;color:#969EA9;font-size:12.1px;line-height:1.6;padding:6px 10px 0}
-  .tst-foot{border-top:1px solid #242933;text-align:center;padding:30px 20px 34px}
+  .tst-foot{border-top:1px solid #1C2A49;text-align:center;padding:30px 20px 34px}
   .tst-foot .tst-foot-brand{display:flex;flex-direction:column;gap:3px;margin-bottom:12px}
   .tst-foot .tst-foot-name{font-size:12.1px;font-weight:800;letter-spacing:.22em;color:#f1f5f9}
   .tst-foot .tst-foot-tag{font-size:12.1px;letter-spacing:.04em;color:#fbbf24}
   .tst-foot .tst-foot-contact{font-size:12.1px;line-height:1.9;color:#A0A8B4;margin:0 auto 2px;max-width:620px}
   .tst-foot .tst-foot-contact a{color:#A0A8B4;text-decoration:none}
   .tst-foot .tst-foot-sep{margin:0 7px;opacity:.45}
-  .tst-foot .tst-foot-rule{height:1px;background:#242933;max-width:620px;margin:14px auto}
+  .tst-foot .tst-foot-rule{height:1px;background:#1C2A49;max-width:620px;margin:14px auto}
   .tst-foot .tst-foot-addr{font-size:12.1px;line-height:1.6;color:#A0A8B4;margin:0 auto 10px;max-width:620px}
   .tst-foot .tst-foot-legal{font-size:12.1px;line-height:1.7;color:#66738c;margin:0 auto 8px;max-width:620px}
   .tst-foot .tst-foot-resp{font-size:12.1px;line-height:1.7;color:#A0A8B4;margin:10px auto 0;max-width:620px}
   .tst-foot .tst-foot-resp a{color:#A0A8B4}
-  .tst-foot-links{display:grid;grid-template-columns:1fr 1fr;gap:8px 24px;align-items:start;max-width:620px;margin:0 auto;padding:20px 0 4px;border-top:1px solid #242933;text-align:left}
+  .tst-foot-links{display:grid;grid-template-columns:1fr 1fr;gap:8px 24px;align-items:start;max-width:620px;margin:0 auto;padding:20px 0 4px;border-top:1px solid #1C2A49;text-align:left}
   .tst-foot-links h4{margin:0 0 10px;font-size:12.1px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#F2F3F5}
   .tst-foot-links a{display:block;color:#A0A8B4;text-decoration:none;font-size:13.2px;line-height:1.5;padding:6px 0}
   body.v5-sheet-open .nav{display:none!important}
@@ -161,20 +161,20 @@
   .updatemenu .upd-update{background:#0E9E66;color:#fff;border:1px solid #0E9E66}
   body.v5-sheet-open .updatemenu{display:none!important}
   /* Tarjetas de jugadas más resaltadas del fondo (2026-10-26, pedido Alex: no tan apagadas, que se vea que hay tarjetas): fondo más claro, borde claro y sombra. */
-  .v5c,.v5c-topsec,.v5c-botsec,.ptl{background:linear-gradient(180deg,#0B0E13,#1D2029)!important}
-  .v5c,.ptl{margin-bottom:20px!important;border:1px solid #2C313A!important;box-shadow:0 10px 28px rgba(0,0,0,.45)!important}
+  .v5c,.v5c-topsec,.v5c-botsec,.ptl{background:linear-gradient(180deg,#0C1424,#16223C)!important}
+  .v5c,.ptl{margin-bottom:20px!important;border:1px solid #24365C!important;box-shadow:0 10px 28px rgba(0,0,0,.45)!important}
   /* Parte de arriba de la tarjeta dividida en dos: un poquitito más oscura, tirando a verde (2026-10-26, pedido Alex). */
   .v5c-topsec{background:#182636!important}
   /* Colores de la captura de Alex 2026-10-26: dos tonos, arriba más clarito, abajo más oscuro. */
   .v5c-topsec{background:#182636!important}
-  .v5c-botsec{background:#1D2029!important}
-  .v5c,.ptl{background:#1D2029!important;border-color:#2C313A!important}
+  .v5c-botsec{background:#16223C!important}
+  .v5c,.ptl{background:#16223C!important;border-color:#24365C!important}
   /* 2026-11-08 (queja de Alex: se cortaba la hora y la info): el titulo de la jugada y la linea de matchup/hora NUNCA se cortan — envuelven a una segunda linea si hace falta. */
   .v5c-title,.v5stitle{white-space:normal;overflow:visible;text-overflow:clip}
   .vid video{width:100%;border-radius:16px;background:#000}
 
   /* 2026-10-26: Live + Your plays + Yesterday (v5 aprobada, letras finas, sin bold) */
-  .tst-livecard{display:flex;align-items:center;gap:10px;background:linear-gradient(180deg,#20242E,#1B1F27);border:1px solid #343B47;border-radius:16px;padding:12px 14px;margin:0 0 22px}
+  .tst-livecard{display:flex;align-items:center;gap:10px;background:linear-gradient(180deg,#1A2745,#16223C);border:1px solid #2B4066;border-radius:16px;padding:12px 14px;margin:0 0 22px}
   .tst-liveic{color:#2ee6a8;font-size:18.7px;font-weight:300;letter-spacing:-2px;white-space:nowrap}
   .tst-livetxt{flex:1;min-width:0}
   .tst-livetitle{display:block;font-size:16px;font-weight:400;line-height:1.25}
@@ -188,32 +188,32 @@
   .tst-officials-n{font-size:13.2px;font-weight:400;color:#9CA0AC}
   .tst-playshead h2{margin:0;font-size:12.1px;font-weight:400;white-space:nowrap}
   .tst-lvpill{border:1px solid #2ee6a8;color:#2ee6a8;border-radius:999px;padding:6px 12px;font-size:12.1px;font-weight:400;white-space:nowrap}
-  .tst-lvpill.plat{border-color:#e8c766;color:#e8c766}
-  .tst-refresh{margin-left:auto;display:flex;align-items:center;gap:6px;background:#1E222B;border:1px solid #343B47;border-radius:12px;padding:9px 13px;color:#F2F3F5;font-size:13.2px;font-weight:400;white-space:nowrap;cursor:pointer}
-  .tst-emptycard{background:linear-gradient(180deg,#20242E,#1B1F27);border:1px solid #343B47;border-radius:16px;padding:18px 16px;text-align:center;margin:0 0 22px}
+  .tst-lvpill.plat{border-color:#11CB87;color:#11CB87}
+  .tst-refresh{margin-left:auto;display:flex;align-items:center;gap:6px;background:#182641;border:1px solid #2B4066;border-radius:12px;padding:9px 13px;color:#F2F3F5;font-size:13.2px;font-weight:400;white-space:nowrap;cursor:pointer}
+  .tst-emptycard{background:linear-gradient(180deg,#1A2745,#16223C);border:1px solid #2B4066;border-radius:16px;padding:18px 16px;text-align:center;margin:0 0 22px}
   .tst-emptytitle{display:block;font-size:16px;font-weight:400;line-height:1.3}
   .tst-emptysub{display:block;color:#A3AAB6;font-size:12.1px;font-weight:300;line-height:1.5;margin-top:6px}
   .tst-ysec{margin-bottom:28px}
   .tst-yhead{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin:0 0 14px}
   .tst-yhead h2{margin:0;font-size:13.2px;font-weight:400;line-height:1.1}
   .tst-yhead h2 span{font-size:13.2px;font-weight:300;color:#A3AAB6;margin-left:8px}
-  .tst-fullbtn{display:flex;align-items:center;gap:6px;background:#1E222B;border:1px solid #343B47;border-radius:12px;padding:10px 13px;color:#F2F3F5;font-size:13.2px;font-weight:400;white-space:nowrap}
-  .tst-sumrow{display:flex;align-items:center;gap:12px;background:linear-gradient(180deg,#20242E,#1B1F27);border:1px solid #343B47;border-radius:16px;padding:14px 16px;margin:0 0 10px}
+  .tst-fullbtn{display:flex;align-items:center;gap:6px;background:#182641;border:1px solid #2B4066;border-radius:12px;padding:10px 13px;color:#F2F3F5;font-size:13.2px;font-weight:400;white-space:nowrap}
+  .tst-sumrow{display:flex;align-items:center;gap:12px;background:linear-gradient(180deg,#1A2745,#16223C);border:1px solid #2B4066;border-radius:16px;padding:14px 16px;margin:0 0 10px}
   .tst-pill{border-radius:8px;padding:7px 10px;font-size:12.1px;font-weight:400;letter-spacing:.04em;white-space:nowrap}
-  .tst-pill.plat{border:1px solid #e8c766;color:#e8c766}
+  .tst-pill.plat{border:1px solid #11CB87;color:#11CB87}
   .tst-pill.gold{border:1px solid #2ee6a8;color:#2ee6a8}
   .tst-rec{font-size:20.4px;font-weight:400}
   .tst-units{font-size:14.9px;font-weight:400}
   .tst-units.neg{color:#e65050}
   .tst-units.pos{color:#2ee6a8}
   .tst-graded{margin-left:auto;color:#A3AAB6;font-size:12.1px;font-weight:300;white-space:nowrap}
-  .tst-playcard{display:flex;gap:12px;background:linear-gradient(180deg,#20242E,#1B1F27);border:1px solid #343B47;border-radius:20px;padding:16px;margin:0 0 12px}
-  .tst-ticketimg{width:64px;min-width:64px;height:80px;border-radius:12px;object-fit:cover;border:1px solid #343B47}
-  .tst-ticketph{width:64px;min-width:64px;height:80px;border-radius:12px;background:#1E222B;border:1px solid #343B47;display:flex;align-items:center;justify-content:center;color:#A3AAB6;font-size:12.1px;font-weight:300;text-align:center;padding:4px}
+  .tst-playcard{display:flex;gap:12px;background:linear-gradient(180deg,#1A2745,#16223C);border:1px solid #2B4066;border-radius:20px;padding:16px;margin:0 0 12px}
+  .tst-ticketimg{width:64px;min-width:64px;height:80px;border-radius:12px;object-fit:cover;border:1px solid #2B4066}
+  .tst-ticketph{width:64px;min-width:64px;height:80px;border-radius:12px;background:#182641;border:1px solid #2B4066;display:flex;align-items:center;justify-content:center;color:#A3AAB6;font-size:12.1px;font-weight:300;text-align:center;padding:4px}
   .tst-playmain{flex:1;min-width:0}
   .tst-playtop{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
   .tst-lvl{font-size:12.1px;font-weight:400;padding:5px 8px;border-radius:8px}
-  .tst-lvl.plat{border:1px solid #e8c766;color:#e8c766}
+  .tst-lvl.plat{border:1px solid #11CB87;color:#11CB87}
   .tst-lvl.gold{border:1px solid #2ee6a8;color:#2ee6a8}
   .tst-meta{color:#A3AAB6;font-size:12.1px;font-weight:300}
   .tst-pick{font-size:16px;font-weight:400;line-height:1.25;margin-top:10px}
@@ -228,7 +228,7 @@
   .tst-result b.lost{color:#e65050}
   .tst-platwave{position:relative;overflow:hidden}
   .tst-platwave > *{position:relative;z-index:1}
-  .tst-platwave::before{content:"";position:absolute;left:-20%;right:-20%;top:-50%;height:200%;background:radial-gradient(ellipse at center,rgba(232,199,102,.32),transparent 60%);animation:plat-ola 8s ease-in-out infinite alternate;pointer-events:none}
+  .tst-platwave::before{content:"";position:absolute;left:-20%;right:-20%;top:-50%;height:200%;background:radial-gradient(ellipse at center,rgba(17,203,135,.32),transparent 60%);animation:plat-ola 8s ease-in-out infinite alternate;pointer-events:none}
   @keyframes plat-ola{from{transform:translateX(-15%)}to{transform:translateX(15%)}}
   @media (prefers-reduced-motion:reduce){.tst-platwave::before{animation:none}}
   @keyframes tst-marquee{from{transform:translateX(0)}to{transform:translateX(-33.333%)}}
@@ -253,7 +253,7 @@
   .tst-ysec .tst-ticketph{font-size:11px!important}
 
   /* 2026-10-27: barra superior fija (pedido Alex: la barra de arriba con los botones no se va al bajar) */
-  .tst-stickyhead{position:sticky;top:0;z-index:1003;background:#0B0D12;margin:0 -14px;padding:12px 14px 10px;border-bottom:1px solid #262C36}
+  .tst-stickyhead{position:sticky;top:0;z-index:1003;background:#0B1220;margin:0 -14px;padding:12px 14px 10px;border-bottom:1px solid #223354}
   .tst-stickyhead .topbar{margin-bottom:10px}
   .tst-stickyhead .notif-panel{margin-bottom:10px}
   .tst-stickyhead #tst-menu-sheet{margin-bottom:0}
@@ -311,7 +311,7 @@
   {% if tirita_record10 %}
   <div style="display:flex;align-items:center;justify-content:center;gap:6px;background:linear-gradient(90deg, rgba(26,34,51,0) 0%, rgba(26,34,51,.92) 22%, rgba(26,34,51,.92) 78%, rgba(26,34,51,0) 100%);border:none;border-radius:8px;padding:5px 10px;margin:0 0 8px;">
     <span style="font-size:12.1px;line-height:1;">🔥</span>
-    <span style="color:#E8C766;font-size:14.3px;font-weight:600;line-height:1.3;text-align:center;">{{ tirita_record10.etiqueta }}: {{ tirita_record10.w }}-{{ tirita_record10.l }} in the last 10 plays across all sports</span>
+    <span style="color:#11CB87;font-size:14.3px;font-weight:600;line-height:1.3;text-align:center;">{{ tirita_record10.etiqueta }}: {{ tirita_record10.w }}-{{ tirita_record10.l }} in the last 10 plays across all sports</span>
   </div>
   {% endif %}
   <div class="topbar">
@@ -360,7 +360,7 @@
   function tstAccReset(){var hs=document.querySelectorAll('#tst-menu-sheet .tst-acc-head');hs.forEach(function(h){h.classList.remove('open');h.setAttribute('aria-expanded','false');var p=h.nextElementSibling;if(p){p.style.maxHeight='0px';p.setAttribute('aria-hidden','true');}});}
   function tstAcc(btn){var panel=btn.nextElementSibling;var wasOpen=btn.classList.contains('open');tstAccReset();if(!wasOpen&&panel){btn.classList.add('open');btn.setAttribute('aria-expanded','true');panel.style.maxHeight=panel.scrollHeight+'px';panel.setAttribute('aria-hidden','false');}}
   </script>
-  <div id="tst-menu-sheet" hidden style="position:fixed;inset:0;z-index:2000;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;background:#0B0D12;padding:calc(14px + env(safe-area-inset-top)) 14px calc(200px + env(safe-area-inset-bottom));">
+  <div id="tst-menu-sheet" hidden style="position:fixed;inset:0;z-index:2000;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;background:#0B1220;padding:calc(14px + env(safe-area-inset-top)) 14px calc(200px + env(safe-area-inset-bottom));">
     <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;"><span style="display:flex;align-items:center;gap:8px;font-size:14.3px;font-weight:800;font-style:italic;"><img src="{{ url_for('static', filename='img/apple-touch-icon-v2.png') }}" alt="" style="width:30px;height:30px;border-radius:50%;display:block;">THE <span style="color:#11CB87;">SHARP</span> TEAM</span><button type="button" onclick="document.getElementById('tst-menu-sheet').hidden=true;document.getElementById('tst-menubtn').setAttribute('aria-expanded','false');document.body.style.overflow='';" style="background:none;border:0;color:#A3AAB6;font-size:18.7px;cursor:pointer;padding:4px 8px;">✕</button></div>
     {# MENÚ — ESTRUCTURA DE LA FOTO DE WISE GUY (2026-11-13, Alex mandó la
        foto del menú de WGT: «Eso es un menú, configuración profesional»):
@@ -373,17 +373,17 @@
        herramientas viven dentro de «My Tools» (página All tools),
        nunca regadas en el menú. Sin «Admin» (orden 2026-11-12). #}
 
-    {% if not miembro_platinum %}<a href="{{ url_for('desbloquear_platinum') }}" style="display:flex;padding:15px 0;border-bottom:1px solid #20242E;font-size:16.5px;font-weight:600;color:#11cb87;">Unlock Platinum</a>{% endif %}
+    {% if not miembro_platinum %}<a href="{{ url_for('desbloquear_platinum') }}" style="display:flex;padding:15px 0;border-bottom:1px solid #1A2745;font-size:16.5px;font-weight:600;color:#11cb87;">Unlock Platinum</a>{% endif %}
     <a href="{{ url_for('game_center') }}" style="display:flex;padding:15px 0;font-size:16.5px;">Betting Lines</a>
-    <a href="{{ url_for('balances') }}" style="display:flex;padding:15px 0;border-top:1px solid #20242E;font-size:16.5px;">Sportsbooks</a>
-    <a href="{{ url_for('masterclass') }}" style="display:flex;padding:15px 0;border-top:1px solid #20242E;font-size:16.5px;">Masterclass</a>
-    <a href="{{ url_for('about') }}" style="display:flex;padding:15px 0;border-top:1px solid #20242E;font-size:16.5px;">About</a>
-    {% if racha_dias and racha_dias >= 2 %}<div style="padding:13px 0;border-top:1px solid #20242E;"><span style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border:1px solid rgba(17,203,135,.45);border-radius:999px;color:#11cb87;font-size:13.8px;font-weight:600;">🔥 {{ racha_dias }}-day win streak</span></div>{% endif %}
-    <a href="{{ url_for('tools') }}" style="display:flex;padding:15px 0;border-top:1px solid #20242E;font-size:16.5px;">My Tools</a>
-    <a href="{{ url_for('tracker_plays') }}" style="display:flex;padding:15px 0;border-top:1px solid #20242E;font-size:16.5px;">My Bets</a>
-    <a href="{{ url_for('cuenta') }}" style="display:flex;padding:15px 0;border-top:1px solid #20242E;font-size:16.5px;">Account</a>
-    {% if is_alex %}<a href="{{ url_for('admin_dashboard') }}" style="display:flex;padding:15px 0;border-top:1px solid #20242E;font-size:16.5px;">Admin</a>{% endif %}
-    <a href="{{ url_for('home') }}" style="display:block;text-align:center;background:#11cb87;color:#0B0D12;font-weight:700;font-size:16.5px;padding:15px;border-radius:14px;margin-top:18px;text-decoration:none;">View picks →</a>
+    <a href="{{ url_for('balances') }}" style="display:flex;padding:15px 0;border-top:1px solid #1A2745;font-size:16.5px;">Sportsbooks</a>
+    <a href="{{ url_for('masterclass') }}" style="display:flex;padding:15px 0;border-top:1px solid #1A2745;font-size:16.5px;">Masterclass</a>
+    <a href="{{ url_for('about') }}" style="display:flex;padding:15px 0;border-top:1px solid #1A2745;font-size:16.5px;">About</a>
+    {% if racha_dias and racha_dias >= 2 %}<div style="padding:13px 0;border-top:1px solid #1A2745;"><span style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border:1px solid rgba(17,203,135,.45);border-radius:999px;color:#11cb87;font-size:13.8px;font-weight:600;">🔥 {{ racha_dias }}-day win streak</span></div>{% endif %}
+    <a href="{{ url_for('tools') }}" style="display:flex;padding:15px 0;border-top:1px solid #1A2745;font-size:16.5px;">My Tools</a>
+    <a href="{{ url_for('tracker_plays') }}" style="display:flex;padding:15px 0;border-top:1px solid #1A2745;font-size:16.5px;">My Bets</a>
+    <a href="{{ url_for('cuenta') }}" style="display:flex;padding:15px 0;border-top:1px solid #1A2745;font-size:16.5px;">Account</a>
+    {% if is_alex %}<a href="{{ url_for('admin_dashboard') }}" style="display:flex;padding:15px 0;border-top:1px solid #1A2745;font-size:16.5px;">Admin</a>{% endif %}
+    <a href="{{ url_for('home') }}" style="display:block;text-align:center;background:#11cb87;color:#0B1220;font-weight:700;font-size:16.5px;padding:15px;border-radius:14px;margin-top:18px;text-decoration:none;">View picks →</a>
     <a href="{{ url_for('logout') }}" style="display:flex;padding:13px 0;margin-top:6px;font-size:14.3px;color:#A3AAB6;">Log out</a>
     {# Entrada «Admin» ELIMINADA del menú ☰ (2026-11-12, orden de Alex en llamada: «quita el admin de ahí que yo lo voy a poner en otro sitio»). La ruta /admin y el enlace Admin de la barra superior NO se tocan. #}
   </div>
@@ -504,10 +504,10 @@
   {% endif %}
   {% if not miembro_platinum and not plats %}
   {# Tarjeta de DESBLOQUEAR Platinum estilo WGT (2026-11-07, pedida por Alex con la captura de Wise Guy): borde dorado, candado centrado a la izquierda, botón ancho abajo. Regla final de Alex (2026-11-07): aparece cuando NO hay Platinum publicadas (para que el sin-Platinum la vea siempre); cuando las Platinum se publican, esta se esconde y mandan las tarjetas bloqueadas con el ticket borroso (_play_card_locked.html). #}
-  <div style="background:#141a26;border:1px solid #c9a86a;border-radius:16px;padding:18px;margin:0 0 14px;">
+  <div style="background:#111A2E;border:1px solid #11CB87;border-radius:16px;padding:18px;margin:0 0 14px;">
     <div style="display:flex;gap:14px;align-items:center;">
-      <div style="background:rgba(232,199,102,.14);width:52px;height:52px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex:0 0 auto;">
-        <svg width="26.4" height="26.4" viewBox="0 0 24 24" fill="none"><rect x="5" y="10" width="14" height="10" rx="2" fill="#e8c766"/><path d="M8 10V7a4 4 0 0 1 8 0v3" stroke="#e8c766" stroke-width="2.4"/></svg>
+      <div style="background:rgba(17,203,135,.14);width:52px;height:52px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex:0 0 auto;">
+        <svg width="26.4" height="26.4" viewBox="0 0 24 24" fill="none"><rect x="5" y="10" width="14" height="10" rx="2" fill="#11CB87"/><path d="M8 10V7a4 4 0 0 1 8 0v3" stroke="#11CB87" stroke-width="2.4"/></svg>
       </div>
       <div>
         <div style="color:#ffffff;font-size:14.9px;font-weight:700;line-height:1.3;">Platinum plays on today's board</div>
@@ -515,22 +515,22 @@
         <div style="color:#c6cbd6;font-size:12.1px;margin-top:8px;text-decoration:underline;">$15.99/week · cancel anytime</div>
       </div>
     </div>
-    <a href="{{ url_for('desbloquear_platinum') }}" style="display:block;background:#1b2030;border:1px solid #2c313a;color:#ffffff;text-align:center;font-size:13.8px;font-weight:600;border-radius:12px;padding:13px 10px;margin-top:16px;text-decoration:none;">Unlock Platinum&nbsp;&nbsp;↗</a>
+    <a href="{{ url_for('desbloquear_platinum') }}" style="display:block;background:#1b2030;border:1px solid #24365C;color:#ffffff;text-align:center;font-size:13.8px;font-weight:600;border-radius:12px;padding:13px 10px;margin-top:16px;text-decoration:none;">Unlock Platinum&nbsp;&nbsp;↗</a>
   </div>
   {% endif %}
   {% if plays and not plats %}
   {# Sin Platinum hoy: la tarjeta Platinum APARECE igual, vacía, con EL MISMO DISEÑO de las demás (botón y fila de botones abajo); solo el medio lleva el mensaje (órdenes de Alex 2026-10-30) #}
   {% set _dest = url_for('desbloquear_platinum') if not miembro_platinum else '/home' %}
-  <div style="background:#151F28;border:1px solid #343B47;border-radius:20px;overflow:hidden;margin:0 0 14px;position:relative;">
+  <div style="background:#151F28;border:1px solid #2B4066;border-radius:20px;overflow:hidden;margin:0 0 14px;position:relative;">
     <div style="background:#0A1117;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;">
-      <span style="font-size:12.1px;font-weight:700;letter-spacing:1.6px;color:#e8c766;">💎 PLATINUM</span>
+      <span style="font-size:12.1px;font-weight:700;letter-spacing:1.6px;color:#11CB87;">💎 PLATINUM</span>
       <span style="font-size:12.1px;color:#A3AAB6;">Today</span>
-      <span style="font-size:12.1px;font-weight:800;letter-spacing:1px;color:#0B0D12;background:#e8c766;border-radius:999px;padding:4px 9px;">NO PLAY</span>
+      <span style="font-size:12.1px;font-weight:800;letter-spacing:1px;color:#0B1220;background:#11CB87;border-radius:999px;padding:4px 9px;">NO PLAY</span>
     </div>
     <div style="padding:16px;">
       <div style="text-align:center;padding:18px 0 4px;">
         <div style="font-size:18.7px;font-weight:800;color:#ffffff;line-height:1.25;">No Platinum play today</div>
-        <p style="font-size:12.7px;color:#e8c766;font-weight:600;line-height:1.45;margin:6px 0 0;">No play met our Platinum value standard today. We publish only when the edge is real — never a forced pick.</p>
+        <p style="font-size:12.7px;color:#11CB87;font-weight:600;line-height:1.45;margin:6px 0 0;">No play met our Platinum value standard today. We publish only when the edge is real — never a forced pick.</p>
         {% if last_plat %}
         <div style="margin-top:12px;font-size:12.7px;font-weight:700;color:#ffffff;">Last Platinum play: {{ last_plat.fecha_txt }} · {% if last_plat.resultado == 'WON' %}<span style="color:#11CB87;">Won</span>{% else %}<span style="color:#f87171;">Lost</span>{% endif %}</div>
         {% endif %}
@@ -539,9 +539,9 @@
       <a href="{{ url_for('desbloquear_platinum') }}" style="display:block;text-align:center;text-decoration:none;font-size:14.9px;font-weight:800;padding:14px;border-radius:12px;margin-top:12px;background:#0E9E66;color:#fff;">Unlock Platinum →</a>
       {% endif %}
       <div style="display:flex;gap:6px;margin-top:11px;">
-        <a href="{{ _dest }}" style="flex:1 1 0;min-width:0;text-align:center;font-size:11.6px;font-weight:400;white-space:nowrap;color:#fff;background:transparent;border:1px solid #2C313A;border-radius:12px;padding:9px 4px;text-decoration:none;overflow:hidden;">↗ Place at Novig</a>
-        <button type="button" aria-label="Share" style="flex:0 0 48px;padding:10px 4px;text-align:center;font-size:11.6px;color:#fff;background:transparent;border:1px solid #2C313A;border-radius:12px;cursor:pointer;" onclick="(function(){var u=window.location.origin+'/home';if(navigator.share){navigator.share({title:'The Sharp Team',url:u}).catch(function(){});}else{navigator.clipboard&&navigator.clipboard.writeText(u);}})()">↗</button>
-        <a href="{{ _dest }}" style="flex:1 1 0;min-width:0;text-align:center;font-size:11.6px;font-weight:400;white-space:nowrap;color:#fff;background:transparent;border:1px solid #2C313A;border-radius:12px;padding:9px 4px;text-decoration:none;overflow:hidden;">🎫 Receipt</a>
+        <a href="{{ _dest }}" style="flex:1 1 0;min-width:0;text-align:center;font-size:11.6px;font-weight:400;white-space:nowrap;color:#fff;background:transparent;border:1px solid #24365C;border-radius:12px;padding:9px 4px;text-decoration:none;overflow:hidden;">↗ Place at Novig</a>
+        <button type="button" aria-label="Share" style="flex:0 0 48px;padding:10px 4px;text-align:center;font-size:11.6px;color:#fff;background:transparent;border:1px solid #24365C;border-radius:12px;cursor:pointer;" onclick="(function(){var u=window.location.origin+'/home';if(navigator.share){navigator.share({title:'The Sharp Team',url:u}).catch(function(){});}else{navigator.clipboard&&navigator.clipboard.writeText(u);}})()">↗</button>
+        <a href="{{ _dest }}" style="flex:1 1 0;min-width:0;text-align:center;font-size:11.6px;font-weight:400;white-space:nowrap;color:#fff;background:transparent;border:1px solid #24365C;border-radius:12px;padding:9px 4px;text-decoration:none;overflow:hidden;">🎫 Receipt</a>
         <a href="{{ _dest }}" style="flex:1 1 0;min-width:0;display:flex;align-items:center;justify-content:center;text-align:center;font-size:13.2px;font-weight:500;white-space:nowrap;color:#04150d;background:#11CB87;border:1px solid #11CB87;border-radius:12px;padding:10px 4px;text-decoration:none;overflow:hidden;box-sizing:border-box;">+ Track</a>
       </div>
     </div>
@@ -553,16 +553,16 @@
   {% if not miembro_platinum and plats %}
   {# Tarjeta NUEVA de planes en el home (2026-10-29, orden de Alex): en el lugar de la tarjeta bloqueada eliminada, el miembro gratis ve la tarjeta Platinum nueva (oferta Unlock con beneficios). La de estado Sharp Free vive en /desbloquear-platinum. #}
   <style>
-  .hpc-card{border-radius:20px;padding:24px 22px 20px;margin:0 0 14px;background:#101319;border:1.5px solid #e8c766}
+  .hpc-card{border-radius:20px;padding:24px 22px 20px;margin:0 0 14px;background:#101319;border:1.5px solid #11CB87}
   .hpc-top{display:flex;justify-content:space-between;align-items:center}
-  .hpc-kick{font-size:12.1px;font-weight:800;letter-spacing:2.2px;color:#e8c766}
-  .hpc-badge{background:#e8c766;color:#111;font-size:12.1px;font-weight:900;letter-spacing:.6px;padding:6px 10px;border-radius:8px}
+  .hpc-kick{font-size:12.1px;font-weight:800;letter-spacing:2.2px;color:#11CB87}
+  .hpc-badge{background:#11CB87;color:#111;font-size:12.1px;font-weight:900;letter-spacing:.6px;padding:6px 10px;border-radius:8px}
   .hpc-price{font-size:41.2px;font-weight:900;color:#fff;margin:14px 0 2px}
   .hpc-price small{font-size:14.3px;font-weight:600;color:#A3AAB6}
   .hpc-tag{font-size:13.8px;color:#C6CBD6;line-height:1.45;margin:6px 0}
   .hpc-list{list-style:none;margin:8px 0 0;padding:0}
   .hpc-list li{font-size:13.8px;line-height:1.4;color:#EDEFF4;padding:11px 0 11px 30px;position:relative;border-top:1px solid rgba(255,255,255,.07)}
-  .hpc-list li::before{content:"✓";position:absolute;left:2px;top:10px;font-weight:900;color:#e8c766}
+  .hpc-list li::before{content:"✓";position:absolute;left:2px;top:10px;font-weight:900;color:#11CB87}
   .hpc-cta{display:block;text-align:center;text-decoration:none;font-size:15.4px;font-weight:800;padding:15px;border-radius:12px;margin-top:18px;background:#0E9E66;color:#fff}
   .hpc-fine{font-size:12.1px;color:#8B93A3;text-align:center;margin-top:12px;line-height:1.45}
   </style>
@@ -601,12 +601,12 @@
   <!-- 2026-11-05: Find Your Edge estilo Quick links (filas de a dos, icono dorado, titulo fino en una linea) — diseno aprobado por Alex -->
   <style>
   .edge-rows{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-  .edge-pill{background:linear-gradient(180deg,#20242E,#1B1F27);border:1px solid #343B47;border-radius:18px;padding:11px;display:flex;align-items:center;gap:9px;min-height:62px;text-decoration:none;}
+  .edge-pill{background:linear-gradient(180deg,#1A2745,#16223C);border:1px solid #2B4066;border-radius:18px;padding:11px;display:flex;align-items:center;gap:9px;min-height:62px;text-decoration:none;}
   .edge-chip{width:38px;height:38px;flex:none;border-radius:11px;background:#262C3F;display:flex;align-items:center;justify-content:center;}
-  .edge-chip svg{width:22px;height:22px;stroke:#e8c766;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;}
+  .edge-chip svg{width:22px;height:22px;stroke:#11CB87;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;}
   .edge-label{color:#ffffff;font-size:14.3px;font-weight:400;line-height:1.1;white-space:nowrap;letter-spacing:-.2px;}
   </style>
-  <section id="tour-edge" style="margin:0 0 22px;background:linear-gradient(180deg,#20242E,#1B1F27);border:1px solid #343B47;border-radius:20px;padding:18px 16px;">
+  <section id="tour-edge" style="margin:0 0 22px;background:linear-gradient(180deg,#1A2745,#16223C);border:1px solid #2B4066;border-radius:20px;padding:18px 16px;">
   <h2 style="margin:0 0 2px;font-size:20.4px;font-weight:400;">Find Your Edge</h2>
   <p style="margin:0 0 12px;color:#A3AAB6;font-size:12.1px;font-weight:300;">Real edges, ranked daily.</p>
   <div class="edge-rows">
@@ -627,7 +627,7 @@
   <a href="{{ url_for('balances') }}" style="display:block;margin:0 0 22px;background:#161C28;border:1px solid rgba(255,255,255,.07);border-radius:18px;padding:15px 16px 13px;text-decoration:none;">
     <span style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
       <span style="font-size:12.1px;letter-spacing:1.8px;color:#9AA7B8;font-weight:600;">MY BOOKS</span>
-      <span style="font-size:12.1px;color:#E8C766;font-weight:600;">TOTAL ${{ '%.2f'|format(my_books|sum(attribute='balance')) }} &#8594;</span>
+      <span style="font-size:12.1px;color:#11CB87;font-weight:600;">TOTAL ${{ '%.2f'|format(my_books|sum(attribute='balance')) }} &#8594;</span>
     </span>
     <span style="display:grid;grid-template-columns:1fr 1fr;gap:9px;">
       {% for b in my_books[:4] %}
@@ -640,7 +640,7 @@
     </span>
   </a>
   {% else %}
-  <a href="{{ url_for('balances') }}" style="display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin:0 0 22px;background:linear-gradient(180deg,#20242E,#1B1F27);border:1px solid #343B47;border-radius:16px;padding:9px 13px;text-decoration:none;">
+  <a href="{{ url_for('balances') }}" style="display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin:0 0 22px;background:linear-gradient(180deg,#1A2745,#16223C);border:1px solid #2B4066;border-radius:16px;padding:9px 13px;text-decoration:none;">
     <span style="font-size:11.6px;letter-spacing:1.6px;color:#8fa1c2;font-weight:600;">&#128176; MY BOOKS</span>
     {% for b in my_books[:4] %}
     <span style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:999px;padding:3px 10px 3px 4px;">
@@ -650,7 +650,7 @@
     </span>
     {% endfor %}
     {% if my_books|length > 4 %}<span style="font-size:12.1px;color:#8fa1c2;">+{{ my_books|length - 4 }} more</span>{% endif %}
-    <span style="margin-left:auto;font-size:12.1px;color:#e8c766;font-weight:600;">Total ${{ '%.2f'|format(my_books|sum(attribute='balance')) }} &#8594;</span>
+    <span style="margin-left:auto;font-size:12.1px;color:#11CB87;font-weight:600;">Total ${{ '%.2f'|format(my_books|sum(attribute='balance')) }} &#8594;</span>
   </a>
   {% endif %}
   {% endif %}
@@ -698,7 +698,7 @@
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
       {% for lg in ['MLB','NFL','NCAAF','NHL','NBA'] %}
       {% for r in record_por_liga if r.liga == lg %}
-      <div style="background:linear-gradient(180deg,#20242E,#1B1F27);border:1px solid #343B47;border-radius:16px;padding:16px 12px;text-align:center;">
+      <div style="background:linear-gradient(180deg,#1A2745,#16223C);border:1px solid #2B4066;border-radius:16px;padding:16px 12px;text-align:center;">
         <div style="font-size:16.5px;font-weight:700;color:#ffffff;">{{ r.icono }} {{ r.liga }}</div>
         <div style="margin-top:6px;font-size:20.9px;font-weight:800;color:#ffffff;">{{ r.w }}–{{ r.l }} <span style="font-size:13.8px;font-weight:700;color:#A3AAB6;">{{ '%.0f'|format(100 * r.w / (r.w + r.l)) }}%</span></div>
       </div>
@@ -712,7 +712,7 @@
   <style>
   .alerts-head{display:flex;gap:14px;align-items:flex-start;}
   .alerts-bell{flex:none;margin-top:2px;}
-  .alerts-bell svg{width:33px;height:33px;stroke:#e8c766;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;}
+  .alerts-bell svg{width:33px;height:33px;stroke:#11CB87;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;}
   .alerts-desc{color:#A3AAB6;font-size:13.8px;font-weight:300;line-height:1.5;margin:3px 0 0;}
   .alerts-btns{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px;}
   .alerts-btn{background:#232936;border:1px solid #333B52;border-radius:16px;color:#ffffff;font-size:14.3px;font-weight:400;text-align:center;padding:18px 6px;white-space:nowrap;text-decoration:none;display:block;}
@@ -720,7 +720,7 @@
   .alerts-btn .arr{color:#A3AAB6;font-size:12.1px;margin-left:7px;}
   </style>
   <div style="margin:0 0 10px;font-size:17.6px;font-weight:400;letter-spacing:-.2px;white-space:nowrap;color:#EEF2F8;">Get every play where you already are</div>
-  <div class="section" id="tour-alerts" style="background:linear-gradient(180deg,#20242E,#1B1F27);border:1px solid #343B47;border-radius:20px;padding:20px 16px;">
+  <div class="section" id="tour-alerts" style="background:linear-gradient(180deg,#1A2745,#16223C);border:1px solid #2B4066;border-radius:20px;padding:20px 16px;">
     <div class="alerts-head">
       <div class="alerts-bell"><svg viewBox="0 0 24 24"><path d="M6 16.5v-5.2a6 6 0 1 1 12 0v5.2l1.4 2.7H4.6L6 16.5z"/><path d="M10 21a2.2 2.2 0 0 0 4 0"/></svg></div>
       <p class="alerts-desc">Connect once and your plays reach you by push and on Telegram too. Manage your alerts anytime.</p>
@@ -745,14 +745,14 @@
     <h2 style="margin:0 0 2px;font-size:20.4px;font-weight:400;">Betting Guides</h2>
     <p style="margin:0 0 14px;color:#A3AAB6;font-size:12.1px;font-weight:300;">New to betting? Start here.</p>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-      <a href="{{ url_for('guide_moneyline') }}" style="display:block;background:linear-gradient(180deg,#20242E,#1B1F27);border:1px solid #343B47;border-radius:16px;padding:16px;text-decoration:none;color:#F2F3F5;"><b style="display:block;font-size:16px;font-weight:400;">Moneyline</b><span style="display:block;color:#A3AAB6;font-size:12.1px;margin-top:4px;">What it is</span></a>
-      <a href="{{ url_for('guide_spread') }}" style="display:block;background:linear-gradient(180deg,#20242E,#1B1F27);border:1px solid #343B47;border-radius:16px;padding:16px;text-decoration:none;color:#F2F3F5;"><b style="display:block;font-size:16px;font-weight:400;">Spread</b><span style="display:block;color:#A3AAB6;font-size:12.1px;margin-top:4px;">What it is</span></a>
-      <a href="{{ url_for('guide_total') }}" style="display:block;background:linear-gradient(180deg,#20242E,#1B1F27);border:1px solid #343B47;border-radius:16px;padding:16px;text-decoration:none;color:#F2F3F5;"><b style="display:block;font-size:16px;font-weight:400;">Total</b><span style="display:block;color:#A3AAB6;font-size:12.1px;margin-top:4px;">Over/under</span></a>
-      <a href="{{ url_for('guide_american_odds') }}" style="display:block;background:linear-gradient(180deg,#20242E,#1B1F27);border:1px solid #343B47;border-radius:16px;padding:16px;text-decoration:none;color:#F2F3F5;"><b style="display:block;font-size:16px;font-weight:400;">American odds</b><span style="display:block;color:#A3AAB6;font-size:12.1px;margin-top:4px;">+150, -110...</span></a>
-      <a href="{{ url_for('guide_vig') }}" style="display:block;background:linear-gradient(180deg,#20242E,#1B1F27);border:1px solid #343B47;border-radius:16px;padding:16px;text-decoration:none;color:#F2F3F5;"><b style="display:block;font-size:16px;font-weight:400;">The vig</b><span style="display:block;color:#A3AAB6;font-size:12.1px;margin-top:4px;">Why it matters</span></a>
-      <a href="{{ url_for('guide_reading_card') }}" style="display:block;background:linear-gradient(180deg,#20242E,#1B1F27);border:1px solid #343B47;border-radius:16px;padding:16px;text-decoration:none;color:#F2F3F5;"><b style="display:block;font-size:16px;font-weight:400;">Reading a card</b><span style="display:block;color:#A3AAB6;font-size:12.1px;margin-top:4px;">Our picks</span></a>
+      <a href="{{ url_for('guide_moneyline') }}" style="display:block;background:linear-gradient(180deg,#1A2745,#16223C);border:1px solid #2B4066;border-radius:16px;padding:16px;text-decoration:none;color:#F2F3F5;"><b style="display:block;font-size:16px;font-weight:400;">Moneyline</b><span style="display:block;color:#A3AAB6;font-size:12.1px;margin-top:4px;">What it is</span></a>
+      <a href="{{ url_for('guide_spread') }}" style="display:block;background:linear-gradient(180deg,#1A2745,#16223C);border:1px solid #2B4066;border-radius:16px;padding:16px;text-decoration:none;color:#F2F3F5;"><b style="display:block;font-size:16px;font-weight:400;">Spread</b><span style="display:block;color:#A3AAB6;font-size:12.1px;margin-top:4px;">What it is</span></a>
+      <a href="{{ url_for('guide_total') }}" style="display:block;background:linear-gradient(180deg,#1A2745,#16223C);border:1px solid #2B4066;border-radius:16px;padding:16px;text-decoration:none;color:#F2F3F5;"><b style="display:block;font-size:16px;font-weight:400;">Total</b><span style="display:block;color:#A3AAB6;font-size:12.1px;margin-top:4px;">Over/under</span></a>
+      <a href="{{ url_for('guide_american_odds') }}" style="display:block;background:linear-gradient(180deg,#1A2745,#16223C);border:1px solid #2B4066;border-radius:16px;padding:16px;text-decoration:none;color:#F2F3F5;"><b style="display:block;font-size:16px;font-weight:400;">American odds</b><span style="display:block;color:#A3AAB6;font-size:12.1px;margin-top:4px;">+150, -110...</span></a>
+      <a href="{{ url_for('guide_vig') }}" style="display:block;background:linear-gradient(180deg,#1A2745,#16223C);border:1px solid #2B4066;border-radius:16px;padding:16px;text-decoration:none;color:#F2F3F5;"><b style="display:block;font-size:16px;font-weight:400;">The vig</b><span style="display:block;color:#A3AAB6;font-size:12.1px;margin-top:4px;">Why it matters</span></a>
+      <a href="{{ url_for('guide_reading_card') }}" style="display:block;background:linear-gradient(180deg,#1A2745,#16223C);border:1px solid #2B4066;border-radius:16px;padding:16px;text-decoration:none;color:#F2F3F5;"><b style="display:block;font-size:16px;font-weight:400;">Reading a card</b><span style="display:block;color:#A3AAB6;font-size:12.1px;margin-top:4px;">Our picks</span></a>
     </div>
-    <a href="{{ url_for('guide_glossary') }}" style="display:block;background:linear-gradient(180deg,#20242E,#1B1F27);border:1px solid #343B47;border-radius:16px;padding:16px;margin-top:10px;text-decoration:none;color:#F2F3F5;"><b style="display:block;font-size:16px;font-weight:400;">📖 Betting glossary</b><span style="display:block;color:#A3AAB6;font-size:12.1px;margin-top:4px;">Every term, plain English</span></a>
+    <a href="{{ url_for('guide_glossary') }}" style="display:block;background:linear-gradient(180deg,#1A2745,#16223C);border:1px solid #2B4066;border-radius:16px;padding:16px;margin-top:10px;text-decoration:none;color:#F2F3F5;"><b style="display:block;font-size:16px;font-weight:400;">📖 Betting glossary</b><span style="display:block;color:#A3AAB6;font-size:12.1px;margin-top:4px;">Every term, plain English</span></a>
   </section>
 
   {# FAQ del home OCULTO por orden de Alex 2026-10-30 ("este modelo no me gusta, escóndelo") — código preservado, no se renderiza.
@@ -834,13 +834,13 @@
   <!-- ONE SYSTEM · THE PROCESS (2026-11-02: seccion del diseno anterior, version fina y compacta aprobada por Alex con muestra v2) -->
   <style>
   .tst-process{margin:26px 0 4px;}
-  .tst-process .process-eyebrow{color:#BEF264;font-size:0.671rem;font-weight:600;letter-spacing:.18em;margin:0 0 8px;}
+  .tst-process .process-eyebrow{color:#2EE6A8;font-size:0.671rem;font-weight:600;letter-spacing:.18em;margin:0 0 8px;}
   .tst-process .process-title{color:#fff;font-weight:700;font-size:1.452rem;line-height:1.08;letter-spacing:-.01em;margin:0 0 8px;}
   .tst-process .process-sub{color:#CBD5E1;font-size:0.858rem;font-weight:300;line-height:1.5;margin:0 0 14px;}
   .tst-process .process-cards{border:1px solid rgba(255,255,255,.14);border-radius:10px;overflow:hidden;}
   .tst-process .process-card{padding:14px 16px 15px;border-bottom:1px solid rgba(255,255,255,.12);}
   .tst-process .process-card:last-child{border-bottom:none;}
-  .tst-process .process-step{color:#BEF264;font-weight:600;font-size:0.693rem;letter-spacing:.06em;margin:0 0 5px;}
+  .tst-process .process-step{color:#2EE6A8;font-weight:600;font-size:0.693rem;letter-spacing:.06em;margin:0 0 5px;}
   .tst-process .process-card h3{color:#fff;font-weight:700;font-size:1.1rem;margin:0 0 5px;letter-spacing:.01em;}
   .tst-process .process-card p{color:#CBD5E1;font-size:0.825rem;font-weight:300;line-height:1.55;margin:0;}
   .tst-process .process-foot{color:#9AA7B8;font-size:0.748rem;font-weight:300;line-height:1.5;margin:12px 2px 0;}
@@ -879,11 +879,11 @@
 .tst-foot-v2 .tst-foot-tag{color:#8b93a5}
 .tst-foot-v2 .tst-foot-social{display:flex;justify-content:flex-start;gap:10px;margin:0 0 18px}
 .tst-foot-v2 .tst-foot-social a,.tst-foot-v2 .tst-foot-social span{width:38px;height:38px;border-radius:12px;background:#161b28;border:1px solid #2b3247;display:flex;align-items:center;justify-content:center}
-.tst-foot-v2 .tst-foot-social svg{width:19.8px;height:19.8px;stroke:#e8c766;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;display:block}
+.tst-foot-v2 .tst-foot-social svg{width:19.8px;height:19.8px;stroke:#11CB87;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;display:block}
 .tst-foot-v2 .tst-foot-contact2{display:flex;flex-direction:column;align-items:flex-start;gap:9px;margin:0}
 .tst-foot-v2 .tst-foot-mail{color:#c9cfdb;font-size:12.7px;font-weight:400;text-decoration:none;display:flex;align-items:center;gap:10px}
 .tst-foot-v2 .tst-foot-tel{color:#c9cfdb;font-size:12.7px;font-weight:400;text-decoration:none;display:flex;align-items:center;gap:10px}
-.tst-foot-v2 .tst-foot-contact2 svg{width:17.6px;height:17.6px;stroke:#e8c766;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.tst-foot-v2 .tst-foot-contact2 svg{width:17.6px;height:17.6px;stroke:#11CB87;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
 .tst-foot-v2 .tst-foot-links{margin-top:20px;padding:22px 2px 4px}
 .tst-foot-v2 .tst-foot-links h4{color:#a78f4e}
 .tst-foot-v2 .tst-foot-links a{font-size:12.7px;padding:5px 0}
@@ -907,7 +907,7 @@
         <span class="tst-foot-tag">Measurable value. Total discipline.</span>
       </div>
     </div>
-    <div class="tst-foot-social"><span title="Facebook"><svg viewBox="0 0 24 24"><path d="M14.5 8.5H17V5h-2.5A3.5 3.5 0 0 0 11 8.5V11H8.5v3H11v7h3v-7h2.6l.4-3H14V8.7c0-.1.2-.2.5-.2z"/></svg></span><a href="https://t.me/thesharpteam" target="_blank" rel="noopener" title="Telegram"><svg viewBox="0 0 24 24"><path d="M20.5 4.5 3.8 11l5.2 2 2 5.4 2.8-3.6 4.9 3.7 1.8-14z"/><path d="M9 13l11.5-8.5"/></svg></a><a href="https://www.instagram.com/the_sharp_team/" target="_blank" rel="noopener" title="Instagram"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4.5"/><circle cx="12" cy="12" r="3.6"/><circle cx="17" cy="7" r=".6" fill="#e8c766"/></svg></a><a href="https://x.com/thesharpteambet" target="_blank" rel="noopener" title="X"><svg viewBox="0 0 24 24"><path d="M4.5 4.5l15 15M19.5 4.5l-15 15"/></svg></a></div>
+    <div class="tst-foot-social"><span title="Facebook"><svg viewBox="0 0 24 24"><path d="M14.5 8.5H17V5h-2.5A3.5 3.5 0 0 0 11 8.5V11H8.5v3H11v7h3v-7h2.6l.4-3H14V8.7c0-.1.2-.2.5-.2z"/></svg></span><a href="https://t.me/thesharpteam" target="_blank" rel="noopener" title="Telegram"><svg viewBox="0 0 24 24"><path d="M20.5 4.5 3.8 11l5.2 2 2 5.4 2.8-3.6 4.9 3.7 1.8-14z"/><path d="M9 13l11.5-8.5"/></svg></a><a href="https://www.instagram.com/the_sharp_team/" target="_blank" rel="noopener" title="Instagram"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4.5"/><circle cx="12" cy="12" r="3.6"/><circle cx="17" cy="7" r=".6" fill="#11CB87"/></svg></a><a href="https://x.com/thesharpteambet" target="_blank" rel="noopener" title="X"><svg viewBox="0 0 24 24"><path d="M4.5 4.5l15 15M19.5 4.5l-15 15"/></svg></a></div>
     <div class="tst-foot-contact2">
       <a class="tst-foot-mail" href="mailto:thesharpteam8@gmail.com"><svg viewBox="0 0 24 24"><rect x="3.5" y="5.5" width="17" height="13" rx="2"/><path d="m4 7 8 6 8-6"/></svg>thesharpteam8@gmail.com</a>
       <a class="tst-foot-tel" href="tel:+12393768798"><svg viewBox="0 0 24 24"><path d="M7.3 4.2 9.4 4l1.5 3.6-1.8 1.4a12.4 12.4 0 0 0 5.1 5.1l1.4-1.8 3.6 1.5-.2 2.1a1.9 1.9 0 0 1-2 1.7C10.7 17 7 13.3 6.4 7a1.9 1.9 0 0 1 .9-2.8z" transform="translate(1.4 1.4) scale(.9)"/></svg>(239) 376-8798</a>
@@ -958,9 +958,9 @@
   <a href="{{ url_for('cuenta') }}" class="v2-bnav-item"><span class="v2-bnav-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/></svg></span><span>Account</span></a>
 </nav>
 {% if en_mes_gratis or is_alex %}
-<div id="tst-plat-bubble" style="position:fixed;left:50%;transform:translateX(-50%);bottom:calc(74px + env(safe-area-inset-bottom));z-index:1002;display:flex;align-items:center;gap:8px;background:rgba(13,18,25,.96);border:1px solid rgba(232,199,102,.55);border-radius:999px;padding:7px 8px 7px 14px;box-shadow:0 6px 18px rgba(0,0,0,.45);max-width:92vw;">
-  <span style="color:#E8C766;font-size:12.1px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">💎 Your Platinum — on us{% if mes_gratis_hasta %} until {{ mes_gratis_hasta }}{% endif %}{% if mes_gratis_dias is not none %} &middot; {% if mes_gratis_dias == 0 %}ends today{% elif mes_gratis_dias == 1 %}1 day left{% else %}{{ mes_gratis_dias }} days left{% endif %}{% endif %}</span>
-  <button type="button" aria-label="Close" onclick="try{localStorage.setItem('tstPlatBubble','{{ mes_gratis_hasta }}');}catch(e){}document.getElementById('tst-plat-bubble').style.display='none';" style="flex:0 0 auto;width:22px;height:22px;border-radius:50%;border:1px solid rgba(232,199,102,.55);background:transparent;color:#E8C766;font-size:13px;line-height:1;cursor:pointer;padding:0;">✕</button>
+<div id="tst-plat-bubble" style="position:fixed;left:50%;transform:translateX(-50%);bottom:calc(74px + env(safe-area-inset-bottom));z-index:1002;display:flex;align-items:center;gap:8px;background:rgba(13,18,25,.96);border:1px solid rgba(17,203,135,.55);border-radius:999px;padding:7px 8px 7px 14px;box-shadow:0 6px 18px rgba(0,0,0,.45);max-width:92vw;">
+  <span style="color:#11CB87;font-size:12.1px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">💎 Your Platinum — on us{% if mes_gratis_hasta %} until {{ mes_gratis_hasta }}{% endif %}{% if mes_gratis_dias is not none %} &middot; {% if mes_gratis_dias == 0 %}ends today{% elif mes_gratis_dias == 1 %}1 day left{% else %}{{ mes_gratis_dias }} days left{% endif %}{% endif %}</span>
+  <button type="button" aria-label="Close" onclick="try{localStorage.setItem('tstPlatBubble','{{ mes_gratis_hasta }}');}catch(e){}document.getElementById('tst-plat-bubble').style.display='none';" style="flex:0 0 auto;width:22px;height:22px;border-radius:50%;border:1px solid rgba(17,203,135,.55);background:transparent;color:#11CB87;font-size:13px;line-height:1;cursor:pointer;padding:0;">✕</button>
 </div>
 <script>
 (function(){try{if(localStorage.getItem('tstPlatBubble')==='{{ mes_gratis_hasta }}'){var b=document.getElementById('tst-plat-bubble');if(b)b.style.display='none';}}catch(e){}})();
@@ -1026,11 +1026,11 @@
 .tiles .tile p{font-size:12.1px !important;line-height:1.45 !important;height:53px;overflow:hidden}
 </style>
 {% if show_rate_bubble %}
-<div id="rate-bubble" style="display:none;position:fixed;right:14px;bottom:96px;z-index:1500;background:#151A26;border:1px solid #e8c766;border-radius:16px;padding:12px 14px;box-shadow:0 14px 34px rgba(0,0,0,.55);max-width:292px;">
+<div id="rate-bubble" style="display:none;position:fixed;right:14px;bottom:96px;z-index:1500;background:#151A26;border:1px solid #11CB87;border-radius:16px;padding:12px 14px;box-shadow:0 14px 34px rgba(0,0,0,.55);max-width:292px;">
   <button type="button" id="rate-bubble-x" aria-label="Close" style="position:absolute;top:5px;right:9px;background:none;border:0;color:#A3AAB6;font-size:14.3px;cursor:pointer;padding:2px;">✕</button>
-  <div style="font-size:13.2px;color:#fff;padding-right:16px;">Enjoying The Sharp Team? <b style="color:#e8c766;">Rate us</b></div>
+  <div style="font-size:13.2px;color:#fff;padding-right:16px;">Enjoying The Sharp Team? <b style="color:#11CB87;">Rate us</b></div>
   <div style="margin-top:6px;font-size:22.6px;letter-spacing:4px;line-height:1;">
-    <a href="/testimonials?rate=1" style="color:#e8c766;text-decoration:none;">★</a><a href="/testimonials?rate=2" style="color:#e8c766;text-decoration:none;">★</a><a href="/testimonials?rate=3" style="color:#e8c766;text-decoration:none;">★</a><a href="/testimonials?rate=4" style="color:#e8c766;text-decoration:none;">★</a><a href="/testimonials?rate=5" style="color:#e8c766;text-decoration:none;">★</a>
+    <a href="/testimonials?rate=1" style="color:#11CB87;text-decoration:none;">★</a><a href="/testimonials?rate=2" style="color:#11CB87;text-decoration:none;">★</a><a href="/testimonials?rate=3" style="color:#11CB87;text-decoration:none;">★</a><a href="/testimonials?rate=4" style="color:#11CB87;text-decoration:none;">★</a><a href="/testimonials?rate=5" style="color:#11CB87;text-decoration:none;">★</a>
   </div>
   <div style="font-size:12.1px;color:#8b95a9;margin-top:6px;">Tap a star — takes 30 seconds.</div>
 </div>
@@ -1045,8 +1045,8 @@
 #skl-overlay{position:fixed;inset:0;z-index:999999;overflow:hidden;opacity:1;transition:opacity .45s ease;animation:sklForceHide .6s ease 2.8s forwards;}
 #skl-overlay.skl-hide{opacity:0;pointer-events:none;}
 .skl-inner{width:100%;margin:0 auto;}
-.skl-bone{position:relative;overflow:hidden;background:#1D2029;}
-.skl-bone::after{content:"";position:absolute;top:-10%;bottom:-10%;left:0;width:55%;background:linear-gradient(100deg,rgba(42,47,58,0) 0%,rgba(42,47,58,.6) 32%,rgba(17,203,135,.08) 48%,rgba(232,199,102,.13) 52%,rgba(42,47,58,.6) 68%,rgba(42,47,58,0) 100%);transform:translateX(-140%) skewX(-8deg);animation:sklWave 1.35s ease-in-out infinite;}
+.skl-bone{position:relative;overflow:hidden;background:#16223C;}
+.skl-bone::after{content:"";position:absolute;top:-10%;bottom:-10%;left:0;width:55%;background:linear-gradient(100deg,rgba(27,39,63,0) 0%,rgba(27,39,63,.6) 32%,rgba(17,203,135,.08) 48%,rgba(17,203,135,.13) 52%,rgba(27,39,63,.6) 68%,rgba(27,39,63,0) 100%);transform:translateX(-140%) skewX(-8deg);animation:sklWave 1.35s ease-in-out infinite;}
 .skl-bone.d1::after{animation-delay:.14s;}
 .skl-bone.d2::after{animation-delay:.28s;}
 .skl-bone.d3::after{animation-delay:.42s;}
@@ -1263,18 +1263,18 @@
    TERCER ajuste el mismo dia (6:28 PM: «pon el fondo mas oscuro») — la base baja un escalon mas, sin volver al original.
    CUARTO ajuste el mismo dia (6:32 PM: «que salga un 10% mas oscuro») — todos los tonos del fondo bajan un 10%.
    SOLO cambia el fondo de la pagina y su cromo (barra fija de arriba, menu, nav inferior y el skeleton de carga):
-   la base queda en #131822 (original #0B0D12, ajustes #2A3648, #1F2939, #151B26) y el degradado del hero baja en proporcion.
+   la base queda en #111A2E (original #0B1220, ajustes #2A3648, #1F2939, #151B26) y el degradado del hero baja en proporcion.
    QUINTO ajuste (2026-11-03): «pon el fondo un poco mas negro, se ve como azul» — la base y su cromo bajan de
-   #131822 (navy azulado) a #0B0E13 (casi negro, azul al minimo) y el degradado del hero baja en proporcion.
+   #111A2E (navy azulado) a #0C1424 (casi negro, azul al minimo) y el degradado del hero baja en proporcion.
    Las tarjetas, la pilula de balance y los acentos menta/dorado NO cambian de color. */
-body{background-color:#0B0E13!important;background-image:radial-gradient(560px 300px at 50% -80px,rgba(47,230,167,.07),transparent 65%),radial-gradient(700px 500px at 110% 30%,rgba(255,255,255,.045),transparent 60%)!important}
-/* Tarjeta de bienvenida (.hero) en color SOLIDO #1F232E (orden de Alex 2026-11-03: «a la tarjeta de bienvenida» — color medido de su captura del panel Find Your Edge). Solo cambia esta tarjeta; el fondo de pagina y las tarjetas de jugada quedan igual. */
-.hero{background:#1F232E!important}
-/* Saludo de bienvenida UN POCO mas grueso (orden de Alex 2026-11-03: «ponle las letras del saludo un poco mas gorditas»): el titular del saludo (.phone .greet y el span del nombre) sube UN paso, de 300 (light, fijado el 2026-11-02) a 400. Solo font-weight del saludo: tamano, colores, tagline, tarjeta de estado y el fondo #1F232E quedan intactos. */
+body{background-color:#0C1424!important;background-image:radial-gradient(560px 300px at 50% -80px,rgba(47,230,167,.07),transparent 65%),radial-gradient(700px 500px at 110% 30%,rgba(255,255,255,.045),transparent 60%)!important}
+/* Tarjeta de bienvenida (.hero) en color SOLIDO #1A2745 (orden de Alex 2026-11-03: «a la tarjeta de bienvenida» — color medido de su captura del panel Find Your Edge). Solo cambia esta tarjeta; el fondo de pagina y las tarjetas de jugada quedan igual. */
+.hero{background:#1A2745!important}
+/* Saludo de bienvenida UN POCO mas grueso (orden de Alex 2026-11-03: «ponle las letras del saludo un poco mas gorditas»): el titular del saludo (.phone .greet y el span del nombre) sube UN paso, de 300 (light, fijado el 2026-11-02) a 400. Solo font-weight del saludo: tamano, colores, tagline, tarjeta de estado y el fondo #1A2745 quedan intactos. */
 .phone .greet,.phone .greet span{font-weight:400!important}
 /* Aviso de pago fallido EN EL DASHBOARD (2026-11-03, orden de Alex: «ese mensaje debe salir en el Dashboard de miembro y no en su Admin»):
    el MISMO banner amarillo/marron de base_v2 — estilos copiados tal cual de style-v2.css (.v2-pastdue, con sus vars resueltas:
-   --v2-gold=#f5c542, --v2-shadow-sm=0 2px 12px rgba(0,0,0,.35)) — y la MISMA condicion past_due del context processor.
+   --v2-gold=#11CB87, --v2-shadow-sm=0 2px 12px rgba(0,0,0,.35)) — y la MISMA condicion past_due del context processor.
    margin-bottom 8px + el margin-top 14px propio de .hero = los 22px de separacion que el banner tiene en las demas paginas.
    2026-11-03 (tarde): version COMPACTA y con LETRAS FINAS por orden de Alex («lo mas chiquito, letras finas, nada negrita») —
    padding 7px 12px, radio 10px, letra 13px, font-weight 400 en texto y enlace; el mismo ajuste se aplico a .v2-pastdue en style-v2.css.
@@ -1285,33 +1285,33 @@ body{background-color:#0B0E13!important;background-image:radial-gradient(560px 3
    dice Platinum, cuatro seguidos») — este placement SUPERSEDE el fijo sobre la barra inferior (commit bc9fda2): se retiran
    position:fixed/bottom/z-index y el padding-bottom condicional de .phone (vuelve a su padding normal de 90px de la regla
    base). En el slot el aviso lleva margin 0 0 8px, el mismo del div de la racha al que sustituye cuando hay past_due. */
-.tst-pastdue{background:linear-gradient(180deg,#3a2a12,#2b2010);border:1px solid rgba(245,197,66,.4);border-radius:8px;padding:5px 10px;margin:0 0 8px;box-shadow:0 2px 12px rgba(0,0,0,.35)}
-.tst-pastdue p{display:inline;margin:0;font-size:12.1px;font-weight:400;color:#ffe1a1;line-height:1.3}
-.tst-pastdue a{display:inline;margin:0;color:#f5c542;font-weight:400;font-size:12.1px}
-.tst-stickyhead{background:#0B0E13!important}
-#tst-menu-sheet{background:#0B0E13!important}
+.tst-pastdue{background:linear-gradient(180deg,#182641,#111A2E);border:1px solid rgba(17,203,135,.4);border-radius:8px;padding:5px 10px;margin:0 0 8px;box-shadow:0 2px 12px rgba(0,0,0,.35)}
+.tst-pastdue p{display:inline;margin:0;font-size:12.1px;font-weight:400;color:#FFFFFF;line-height:1.3}
+.tst-pastdue a{display:inline;margin:0;color:#11CB87;font-weight:400;font-size:12.1px}
+.tst-stickyhead{background:#0C1424!important}
+#tst-menu-sheet{background:#0C1424!important}
 /* Menu acordeon (2026-11-13, orden de Alex: «meter cada cosa en una y que salga el submenu»): el nivel principal muestra solo los grupos como filas; cada grupo despliega su submenu. */
-.tst-acc-head{width:100%;background:none;border:0;border-top:1px solid #20242E;color:#fff;font:inherit;font-size:16.5px;font-weight:600;display:flex;justify-content:space-between;align-items:center;padding:14px 0;cursor:pointer;text-align:left;-webkit-tap-highlight-color:transparent}
+.tst-acc-head{width:100%;background:none;border:0;border-top:1px solid #1A2745;color:#fff;font:inherit;font-size:16.5px;font-weight:600;display:flex;justify-content:space-between;align-items:center;padding:14px 0;cursor:pointer;text-align:left;-webkit-tap-highlight-color:transparent}
 .tst-acc-head .tst-acc-chev{color:#A3AAB6;display:inline-block;transition:transform .25s ease}
 .tst-acc-head.open .tst-acc-chev{transform:rotate(90deg)}
 .tst-acc-panel{max-height:0;overflow:hidden;transition:max-height .32s ease}
-.v2-bottomnav{background:#0B0E13!important}
-#skl-overlay{background:#0B0E13!important}
+.v2-bottomnav{background:#0C1424!important}
+#skl-overlay{background:#0C1424!important}
 .skl-plain{background:#202833!important}
 </style>
 <!-- ===== DASHBOARD TOUR v4 (recorrido completo multipagina, 2026-11-02) ===== -->
 <style>
 #tourDim{position:fixed;inset:0;background:rgba(4,8,16,.74);z-index:2900}
-#tourRing{position:fixed;z-index:2901;border:2px solid #e8c766;border-radius:14px;box-shadow:0 0 0 3px rgba(232,199,102,.25),0 0 24px rgba(232,199,102,.35);pointer-events:none;transition:top .2s ease,left .2s ease,width .2s ease,height .2s ease}
+#tourRing{position:fixed;z-index:2901;border:2px solid #11CB87;border-radius:14px;box-shadow:0 0 0 3px rgba(17,203,135,.25),0 0 24px rgba(17,203,135,.35);pointer-events:none;transition:top .2s ease,left .2s ease,width .2s ease,height .2s ease}
 #tourCard{position:fixed;z-index:2902;left:12px;right:12px;max-width:430px;margin:0 auto;background:#1c2431;border:1px solid #24334d;border-radius:16px;padding:16px 16px 13px;box-shadow:0 18px 40px rgba(0,0,0,.5);color:#eef2f8}
-#tourHead{font-size:12.1px;font-weight:700;letter-spacing:1.6px;color:#e8c766;margin-bottom:10px}
+#tourHead{font-size:12.1px;font-weight:700;letter-spacing:1.6px;color:#11CB87;margin-bottom:10px}
 #tourBar{height:4px;background:#24334d;border-radius:99px;overflow:hidden;margin-bottom:12px}
-#tourBarFill{height:100%;background:#e8c766;border-radius:99px;transition:width .3s ease}
+#tourBarFill{height:100%;background:#11CB87;border-radius:99px;transition:width .3s ease}
 #tourCount{font-size:12.1px;letter-spacing:1.2px;color:#8b98ad;font-weight:700}
 #tourTitle{font-size:16px;font-weight:700;margin:5px 0 6px;color:#eef2f8}
 #tourBody{font-size:12.7px;line-height:1.55;color:#c7d0dd;font-weight:300}
 #tourBtns{display:flex;align-items:center;gap:10px;margin-top:14px}
-#tourNext{background:#e8c766;color:#131822;border:0;border-radius:10px;padding:10px 20px;font-size:13.2px;font-weight:700;cursor:pointer}
+#tourNext{background:#11CB87;color:#111A2E;border:0;border-radius:10px;padding:10px 20px;font-size:13.2px;font-weight:700;cursor:pointer}
 #tourBack{background:none;color:#c7d0dd;border:1px solid #24334d;border-radius:10px;padding:10px 16px;font-size:13.2px;cursor:pointer}
 #tourSkip{margin-left:auto;background:none;border:0;color:#8b98ad;font-size:12.1px;cursor:pointer;padding:8px 2px}
 </style>
@@ -1319,19 +1319,19 @@ body{background-color:#0B0E13!important;background-image:radial-gradient(560px 3
 /* ===== Tarjeta de bienvenida estilo WGT (2026-11-05, aprobada por Alex):
    bloque FINAL a proposito — anula para .tst-board las capas viejas del
    .hero (fondo, padding con !important y el glow menta de la sombra).
-   Tema Midnight & Gold: dorado #e8c766, sin verde decorativo. ===== */
-.hero.tst-board,.phone .hero.tst-board{background:linear-gradient(160deg,#232a38 0%,#1F232E 55%,#1a1e27 100%)!important;padding:20px 20px 18px!important;border:1px solid rgba(255,255,255,.06)!important;border-radius:22px!important;box-shadow:0 18px 40px rgba(0,0,0,.45)!important}
+   Tema Midnight & Gold: dorado #11CB87, sin verde decorativo. ===== */
+.hero.tst-board,.phone .hero.tst-board{background:linear-gradient(160deg,#232a38 0%,#1A2745 55%,#1a1e27 100%)!important;padding:20px 20px 18px!important;border:1px solid rgba(255,255,255,.06)!important;border-radius:22px!important;box-shadow:0 18px 40px rgba(0,0,0,.45)!important}
 .hero.tst-board .bd-date{color:#9aa7ba;font-size:12.1px;font-weight:600;letter-spacing:.18em;text-transform:uppercase}
 .hero.tst-board .bd-greet{color:#fff;font-size:16px;font-weight:400;line-height:1.3;margin:10px 0 0}
 .hero.tst-board .bd-title{color:#fff;font-size:41.8px;font-weight:800;letter-spacing:-.01em;line-height:1.05;margin-top:2px}
-.hero.tst-board .bd-accent{color:#e8c766}
+.hero.tst-board .bd-accent{color:#11CB87}
 .hero.tst-board .bd-desc{color:#d5dbe4;font-size:14.3px;line-height:1.4;margin:8px 0 0}
 .hero.tst-board .bd-row{display:flex;align-items:center;gap:10px;margin-top:14px}
 .hero.tst-board .bd-help{flex:0 0 auto;width:22px;height:22px;border-radius:50%;border:1.5px solid rgba(255,255,255,.35);background:transparent;color:#cfd7e2;font-size:12.1px;font-weight:600;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;font-family:inherit}
 .hero.tst-board .bd-watch{display:inline-flex;align-items:center;gap:10px;padding:6px 10px;border:1.5px solid rgba(255,255,255,.16);border-radius:12px;color:#fff;font-size:12.1px;font-weight:500;background:rgba(255,255,255,.02);cursor:pointer;font-family:inherit}
 .hero.tst-board .bd-play{width:18px;height:18px;border-radius:50%;border:1.8px solid #fff;display:flex;align-items:center;justify-content:center;font-size:7.7px;color:#fff;padding-left:2px;box-sizing:border-box;flex:0 0 auto}
-.hero.tst-board .bd-status{margin-top:16px;border:1.5px solid rgba(232,199,102,.55);border-radius:16px;background:linear-gradient(160deg,rgba(232,199,102,.07) 0%,rgba(0,0,0,.18) 70%);padding:6px 16px;display:flex;gap:13px;align-items:center}
-.hero.tst-board .bd-check{flex:0 0 auto;width:28px;height:28px;border-radius:12px;background:#e8c766;color:#141414;display:flex;align-items:center;justify-content:center;font-size:14.3px;font-weight:800}
+.hero.tst-board .bd-status{margin-top:16px;border:1.5px solid rgba(17,203,135,.55);border-radius:16px;background:linear-gradient(160deg,rgba(17,203,135,.07) 0%,rgba(0,0,0,.18) 70%);padding:6px 16px;display:flex;gap:13px;align-items:center}
+.hero.tst-board .bd-check{flex:0 0 auto;width:28px;height:28px;border-radius:12px;background:#11CB87;color:#141414;display:flex;align-items:center;justify-content:center;font-size:14.3px;font-weight:800}
 .hero.tst-board .bd-status h2{color:#fff;font-size:12.1px;font-weight:800;line-height:1.2;margin:0}
 .hero.tst-board .bd-status p{color:#aeb9c8;font-size:12.1px;line-height:1.3;margin:3px 0 0}
 .hero.tst-board .bd-status.bd-pend{border-color:rgba(255,255,255,.14);background:rgba(255,255,255,.02)}
@@ -1573,7 +1573,7 @@ h1,h2,h3,h4{font-family:'Unbounded','Roboto',sans-serif}
 .phone h2{font-size:17.6px !important}
 .phone .hero.tst-board .bd-status h2{font-size:17.6px !important}
 /* Titulito de marca «The Sharp Team» sobre la fecha del board (2026-11-12, orden de Alex en llamada, espejo del titulito de WGT): label discreto en el dorado de la casa, mismo tamaño de label que la fecha (11px). Ningún tamaño existente cambia. */
-.phone .hero.tst-board .bd-brand{color:#e8c766;font-size:12.1px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;margin:0 0 6px}
+.phone .hero.tst-board .bd-brand{color:#11CB87;font-size:12.1px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;margin:0 0 6px}
 </style>
 {% if not miembro_platinum %}
 {# Hoja «Continue in your browser» (2026-11-11, orden de Alex con la foto de WGT): al tocar cualquier entrada de desbloquear Platinum del Dashboard NO se navega directo — primero se abre esta hoja inferior; «Continue» lleva a /desbloquear-platinum y «Not now» la cierra sin navegar. Solo se renderiza para miembros SIN Platinum (a un Platinum estas entradas ni le salen o apuntan a la herramienta). La URL directa /desbloquear-platinum y los enlaces desde otras páginas o emails NO pasan por esta hoja. #}
@@ -1615,5 +1615,14 @@ h1,h2,h3,h4{font-family:'Unbounded','Roboto',sans-serif}
 })();
 </script>
 {% endif %}
+<style>
+/* ===== RECOLOR WGT 2026-11-13: fondo azul oscuro + menta unico acento + texto blanco.
+   Boton con fondo menta = letra oscura (#0B1220), como el View picks de la referencia. ===== */
+body{background-color:#0B1220 !important}
+.topstrip{border-color:#11CB87 !important}
+.unlock .cta,.check,.hpc-badge,#tourNext,.upl-sheet-go,.hero.tst-board .bd-check{color:#0B1220 !important}
+#tst-plat-bubble{border-color:rgba(17,203,135,.55) !important}
+#tourRing{border-color:#11CB87 !important;box-shadow:0 0 0 3px rgba(17,203,135,.25),0 0 24px rgba(17,203,135,.35) !important}
+</style>
 </body>
 </html>
