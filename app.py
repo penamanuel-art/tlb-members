@@ -6738,10 +6738,10 @@ def home():
         if _nf:
             _partes.append(f"{_nf} Free")
         estado = {"titulo": _t,
-                  "sub": " · ".join(_partes)}
+                  "sub": " · ".join(_partes), "live": hay_live}
     else:
         estado = {"titulo": "Not posted yet",
-                  "sub": f"Today's card posts at {hora_post} — every play appears here first, with its real ticket."}
+                  "sub": f"Today's card posts at {hora_post} — every play appears here first, with its real ticket.", "live": False}
     card_fecha_txt = ""
     try:
         _raw = _json_remoto_o_local(PLAYS_RAW_URL, PLAYS_PATH)
