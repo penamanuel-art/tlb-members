@@ -6884,6 +6884,115 @@ def admin_diseno_nuevo():
     )
 
 
+@app.route("/admin/diseno-dos")
+@admin_required
+def admin_diseno_dos():
+    """DISENO DOS del Dashboard (2026-11-15, pedido de Alex tras ver el
+    diseno nuevo: «Otro diseno»): SEGUNDA opcion, con estructura distinta
+    (hero centrado, anillo de record, board numerado). Previa SOLO para
+    Alex/admin via admin_required. NO toca /home ni ninguna otra ruta:
+    lee la misma card y el mismo archivo que el Dashboard en vivo y los
+    presenta en otra plantilla (templates/diseno_dos.html)."""
+    user = current_user()
+    program, plays = load_data()
+    _card_publicada = card_publicada_hoy()
+    card_pendiente = not _card_publicada or not plays
+    if card_pendiente:
+        # Igual que /home: solo el admin ve la card pendiente.
+        pending = load_pending_plays() if is_admin_for(user) else []
+        if pending:
+            plays = pending
+            card_pendiente = False
+        else:
+            plays = []
+    plays = personalizar_plays(plays, user)
+    # Resultado EN la tarjeta: mismo merge que /home (overlay en vivo
+    # primero, el archivo manda cuando la liquidacion ya existe).
+    try:
+        _res_map = {}
+        for _e in load_live_graded():
+            if _e.get("resultado") in ("WON", "LOST") and _e.get("play_id"):
+                _res_map[_e["play_id"]] = _e["resultado"]
+        for _d in load_archive():
+            for _j in _d.get("jugadas", []) or []:
+                if _j.get("resultado") in ("WON", "LOST") and _j.get("id"):
+                    _res_map[_j["id"]] = _j["resultado"]
+        for _p in plays:
+            _r = _res_map.get(_p.get("id"))
+            if _r:
+                _p["resultado"] = "W" if _r == "WON" else "L"
+                try:
+                    _sm = float(_p.get("stake_monto") or 0)
+                    _cu = int(_p.get("cuota") or 0)
+                    _b = (100.0 / abs(_cu)) if _cu < 0 else (
+                        _cu / 100.0 if _cu > 0 else 0.0)
+                    _p["profit"] = (round(_sm * _b, 2) if _r == "WON"
+                                    else round(-_sm, 2))
+                except (TypeError, ValueError):
+                    pass
+    except Exception:
+        pass
+    try:
+        _tdb = get_db()
+        tracked_ids = {r["play_id"] for r in _tdb.execute(
+            "SELECT play_id FROM tracked_plays WHERE user_id = ?",
+            (session["user_id"],)).fetchall()}
+    except Exception:
+        tracked_ids = set()
+    _es_plat = platinum_unlocked_for(user)
+    if not _es_plat and not card_pendiente:
+        # Espejo de /home: la carta bloqueada usa la copia difuminada de
+        # SU ticket (la original nunca llega al HTML del sin-Platinum).
+        _hoy_lock = datetime.now(TZ).strftime("%Y-%m-%d")
+        for _p in plays:
+            if _p.get("nivel") in ("ELITE", "GOLD", "VAULT"):
+                _p["ticket_url"] = (locked_ticket_url_for(_p, _hoy_lock)
+                                    if _p.get("comprobante") else None)
+    stats = _diseno_stats(plays)
+    _wd = datetime.now(TZ).weekday()
+    hora_post = "11:00 AM ET" if _wd >= 5 else "2:00 PM ET"
+    if plays:
+        _gr = [p for p in plays if p.get("resultado") in ("W", "L")]
+        _t = f"The board is live · {len(plays)} play" + ("s" if len(plays) != 1 else "")
+        if _gr:
+            _gw = sum(1 for p in _gr if p["resultado"] == "W")
+            _t += f" · {_gw}–{len(_gr) - _gw} graded"
+        estado = {"titulo": _t,
+                  "sub": "Cards post at 2:00 PM ET on weekdays · 11:00 AM ET on weekends."}
+    else:
+        estado = {"titulo": "Not posted yet",
+                  "sub": f"Today's card posts at {hora_post} — every play appears here first, with its real ticket."}
+    card_fecha_txt = ""
+    try:
+        _raw = _json_remoto_o_local(PLAYS_RAW_URL, PLAYS_PATH)
+        _cf = _raw.get("fecha") if isinstance(_raw, dict) else None
+        if _cf:
+            _fd = datetime.strptime(_cf, "%Y-%m-%d")
+            card_fecha_txt = (f"{DAYS_EN[_fd.weekday()][:3]}, "
+                              f"{MONTHS_EN[_fd.month - 1][:3]} {_fd.day}")
+    except Exception:
+        card_fecha_txt = ""
+    try:
+        _nombre = primer_nombre(user["name"]) if user else ""
+    except (KeyError, IndexError, TypeError):
+        _nombre = ""
+    if not _nombre:
+        _nombre = primer_nombre(session.get("nombre", ""))
+    return render_template(
+        "diseno_dos.html",
+        plays=plays,
+        card_pendiente=card_pendiente,
+        tracked_ids=tracked_ids,
+        miembro_platinum=_es_plat,
+        saludo=saludo_hoy(),
+        fecha=fecha_larga(),
+        dn_nombre=_nombre,
+        stats=stats,
+        estado=estado,
+        card_fecha_txt=card_fecha_txt,
+    )
+
+
 def _meta_phone_hash(phone):
     """Teléfono para user_data de Meta (2026-11-07): solo dígitos con
     código de país (el de EE. UU. de 10 dígitos lleva el 1 delante),
