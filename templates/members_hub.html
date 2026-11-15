@@ -283,12 +283,22 @@ summary{font:500 16px Unbounded,Roboto,sans-serif;padding:20px 0}
 .th{padding:16px 18px 6px}
 .pick th,.pick td{padding:11px 18px}
 .math,.ft{padding-left:18px;padding-right:18px}
-/* Play-card buttons: ONE row of four, every label on ONE line. Only Place at Novig is filled; Share / Receipt / Track keep the card's own dark background (transparent) with a subtle light border, like the Members Desk card */
+/* Play-card buttons: ONE row of four, every label on ONE line — Desk colors exactly. Place at Novig = Desk gold #C9A961 filled, dark text #1B1405. Share / Receipt = transparent (the card's dark background), thin light border, white text. Track / Tracked = transparent, mint border, mint text */
 .pick .ac{flex-wrap:nowrap}
 .pick .ac .btn{flex:1 1 0;min-width:0;min-height:0;white-space:nowrap;padding:9px 6px;font-size:12.5px;border-radius:8px;letter-spacing:0}
 .pick .ac .btn:not(.pri){background:transparent;border:1px solid var(--gl);color:var(--t);font-weight:500}
-.pick .ac .btn.pri{background:var(--au);border-color:transparent;color:#04251A;font-weight:600}
-.pick .ac [data-t].on{background:transparent;border:1px solid var(--g);color:var(--g)}
+.pick .ac .btn.pri{background:#C9A961;border:1px solid #C9A961;color:#1B1405;font-weight:600}
+.pick .ac .btn[data-t]{background:transparent;border:1px solid var(--g);color:var(--g);font-weight:500}
+.pick .ac .btn[data-t].on{background:transparent;border:1px solid var(--g);color:var(--g);font-weight:600}
+/* Bottom bar = Dashboard tab bar (home_lux .v2-bottomnav): icon on top, label below; active item gets the mint-tint pill + a mint segment on the bar's top edge */
+.botbar{background:#0C1424;border-top:1px solid rgba(139,152,173,.16);padding-bottom:0}
+.bb-in{padding:2px 6px calc(2px + env(safe-area-inset-bottom));align-items:stretch;gap:0;overflow:visible}
+.bb-in a{flex:1;flex-direction:column;align-items:center;justify-content:flex-start;gap:2px;min-height:0;padding:4px 2px 6px;background:transparent;border:0;border-radius:22px;color:#969EA9;font-size:11px;font-weight:500;letter-spacing:.01em}
+.bb-in a:hover{color:#969EA9;border-color:transparent}
+.bb-in a svg{width:26.4px;height:26.4px;margin:0}
+.bb-ico{display:flex;align-items:center;justify-content:center;width:27.5px;height:27.5px;line-height:1}
+.bb-in a.on{position:relative;color:#2fe6a7;background:rgba(47,230,167,.15);font-weight:600}
+.bb-in a.on::after{content:"";position:absolute;top:-3px;left:50%;transform:translateX(-50%);width:46px;height:3px;border-radius:0 0 4px 4px;background:#2fe6a7}
 </style>
 </head>
 <body>
@@ -465,6 +475,6 @@ document.addEventListener('change',function(e){var r=e.target.closest('[data-r]'
 var cf=false;document.getElementById('tc').addEventListener('click',function(){var b=this;if(!E.length)return;if(!cf){cf=true;b.textContent='Tap again to confirm';setTimeout(function(){cf=false;b.textContent='Clear all'},3000)}else{cf=false;b.textContent='Clear all';E=[];saveE();syncTr();trk();render()}});
 syncTr();greet();render();trk();window.addEventListener('load',chart);
 </script>
-<nav class="botbar"><div class="bb-in"><a href="/home"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9 21v-6h6v6"/></svg>Today</a><a href="/odds"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="2.5"/></svg>Odds</a><a href="/tools"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Tools</a><a href="/tracker"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a3 3 0 0 0 0 6v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a3 3 0 0 0 0-6Z"/><path d="M13 5v2"/><path d="M13 11v2"/><path d="M13 17v2"/></svg>My Bets</a><a href="/cuenta"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/></svg>Account</a></div></nav>
+<nav class="botbar"><div class="bb-in"><a class="on" href="/home"><span class="bb-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9 21v-6h6v6"/></svg></span><span>Today</span></a><a href="/odds"><span class="bb-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="2.5"/></svg></span><span>Odds</span></a><a href="/tools"><span class="bb-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></span><span>Tools</span></a><a href="/tracker"><span class="bb-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a3 3 0 0 0 0 6v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a3 3 0 0 0 0-6Z"/><path d="M13 5v2"/><path d="M13 11v2"/><path d="M13 17v2"/></svg></span><span>My Bets</span></a><a href="/cuenta"><span class="bb-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/></svg></span><span>Account</span></a></div></nav>
 </body>
 </html>
