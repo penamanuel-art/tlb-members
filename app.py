@@ -6510,12 +6510,21 @@ def home():
             _gt = _gt.replace(" ET", "").strip()
             if not _gt:
                 continue
-            try:
-                _t = datetime.strptime(_gt, "%I:%M %p")
-            except ValueError:
+            _s = None
+            for _fmt in ("%Y-%m-%d %I:%M %p", "%Y-%m-%d %H:%M",
+                         "%I:%M %p"):
+                try:
+                    _t = datetime.strptime(_gt, _fmt)
+                except ValueError:
+                    continue
+                if _fmt == "%I:%M %p":
+                    _s = datetime(_now.year, _now.month, _now.day,
+                                  _t.hour, _t.minute, tzinfo=TZ)
+                else:
+                    _s = _t.replace(tzinfo=TZ)
+                break
+            if _s is None:
                 continue
-            _s = datetime(_now.year, _now.month, _now.day,
-                          _t.hour, _t.minute, tzinfo=TZ)
             _starts.append(_s)
             _p["live_now"] = (_s <= _now <= _s + timedelta(hours=3, minutes=45)) and not _p.get("resultado")
         if _starts:
