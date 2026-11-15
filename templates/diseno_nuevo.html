@@ -275,8 +275,15 @@
   .dn-faq .dn-more{display:block;padding:12px 0;text-align:center;color:var(--mint);font-weight:700;font-size:15px;border-top:1px solid var(--line)}
 
   /* Pie */
-  .dn-foot{margin-top:34px;text-align:center;color:var(--mut);font-size:13.5px;line-height:1.7}
-  .dn-foot .dn-fb{font-family:var(--fdisp);font-size:11px;letter-spacing:.16em;color:var(--txt)}
+  .dn-foot{margin-top:34px;text-align:left;color:var(--mut);font-size:13.5px;line-height:1.7}
+  .dn-f-contact{font-size:15px;margin-bottom:18px}
+  .dn-f-contact a{color:var(--txt);font-weight:600;text-decoration:none}
+  .dn-f-socials{display:flex;flex-wrap:wrap;gap:10px 24px;margin-bottom:18px;font-size:15px}
+  .dn-f-socials a{color:var(--txt);text-decoration:none}
+  .dn-f-legal{margin:0 0 12px;line-height:1.65}
+  .dn-f-legal b{color:var(--txt)}
+  .dn-f-links{font-size:13.5px}
+  .dn-f-links a{color:var(--txt);text-decoration:none}
 
   /* Barra inferior */
   .dn-tabs{position:fixed;left:0;right:0;bottom:0;z-index:60;background:#0A1120;border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
@@ -700,12 +707,16 @@ function dnHotClose(){
   </section>
 
   <footer class="dn-foot">
-    <div class="dn-fb">THE SHARP TEAM</div>
-    New York, NY · For entertainment only · 21+<br>
-    <a href="https://x.com/TheSharpTeamBet" target="_blank" rel="noopener">X @TheSharpTeamBet</a> · <a href="https://instagram.com/thesharp_team" target="_blank" rel="noopener">Instagram @thesharp_team</a> · <a href="https://facebook.com/thesharpteam" target="_blank" rel="noopener">Facebook /thesharpteam</a> · <a href="https://t.me/thesharpteam" target="_blank" rel="noopener">Telegram</a><br>
-    <a href="mailto:thesharpteam8@gmail.com">thesharpteam8@gmail.com</a><br>
-    <a href="/privacy">Privacy Policy</a> &middot; <a href="/terms">Terms</a><br>
-    If gambling stops being fun, call 1-800-GAMBLER.
+    <div class="dn-f-contact">\u2709\ufe0f <a href="mailto:thesharpteam8@gmail.com">thesharpteam8@gmail.com</a></div>
+    <div class="dn-f-socials">
+      <a href="https://t.me/thesharpteam" target="_blank" rel="noopener">Telegram</a>
+      <a href="https://instagram.com/thesharp_team" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://x.com/TheSharpTeamBet" target="_blank" rel="noopener">X</a>
+      <a href="https://facebook.com/thesharpteam" target="_blank" rel="noopener">Facebook</a>
+    </div>
+    <p class="dn-f-legal"><b>The Sharp Team</b> &middot; New York, NY. &copy; 2026 The Sharp Team. All rights reserved.</p>
+    <p class="dn-f-legal">Must be 21+ (or of legal wagering age in your jurisdiction) to use this service. The Sharp Team is a sports handicapping information and analytics service. We are <b>not</b> a sportsbook, do not accept or place wagers, and do not guarantee any winnings or results. All picks, tools, odds data and AI output are for entertainment and educational purposes only and are not financial, investment, or betting advice. Odds and data are sourced from third parties and may be delayed or inaccurate. Bet responsibly. If gambling stops being fun, call 1-800-GAMBLER.</p>
+    <div class="dn-f-links"><a href="/terms">Terms</a> &middot; <a href="/privacy">Privacy</a> &middot; <a href="/contact">Contact</a></div>
   </footer>
 
   <script>
