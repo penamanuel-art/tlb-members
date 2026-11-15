@@ -3055,6 +3055,120 @@ def tirita_record10():
         return None
 
 
+def hot_home_cards():
+    """Tarjetas «Hot right now» del home (2026-11-15, pedido de Alex,
+    estilo la referencia que mandó): rachas y ventanas REALES del
+    archivo oficial, solo cifras positivas de verdad. Por ámbito (cada
+    liga y cada nivel canónico: Platinum = ELITE+PLATINUM, Gold =
+    GOLD+FREE, Vault) se calcula la racha vigente de ganes, el récord
+    de las últimas 10 y de las últimas 30 (solo si el ámbito tiene más
+    de 30) y el récord total (solo como ventana larga cuando no hay
+    últimas 30). Una tarjeta entra si: racha >= 3, o ventana/total
+    con >= 60% de ganes y al menos 4 ganes más que pérdidas. Máximo 2
+    tarjetas por ámbito y 6 en total, ordenadas por fuerza. La cifra
+    que ya muestra la tirita superior (tirita_record10) no se repite.
+    Ante cualquier fallo devuelve []: la sección nunca rompe el home."""
+    try:
+        dias = sorted(load_archive(), key=lambda d: d.get("fecha") or "")
+        seq = []
+        for d in dias:
+            for j in d.get("jugadas") or []:
+                if j.get("resultado") not in ("WON", "LOST"):
+                    continue
+                if j.get("bloqueada"):
+                    continue
+                niv = (j.get("nivel") or "").upper()
+                if niv in ("ELITE", "PLATINUM"):
+                    lvl = "Platinum"
+                elif niv in ("GOLD", "FREE"):
+                    lvl = "Gold"
+                elif niv == "VAULT":
+                    lvl = "Vault"
+                else:
+                    lvl = None
+                seq.append({"res": j["resultado"],
+                            "liga": (j.get("liga") or "").upper(),
+                            "lvl": lvl})
+        if not seq:
+            return []
+        tira = tirita_record10() or {}
+        ambitos = []
+        for lg in ("NFL", "NCAAF", "NBA", "NHL", "MLB"):
+            it = [s for s in seq if s["liga"] == lg]
+            if it:
+                ambitos.append((lg, lg, it))
+        for lv in ("Platinum", "Gold", "Vault"):
+            it = [s for s in seq if s["lvl"] == lv]
+            if it:
+                ambitos.append((lv, "ALL SPORTS", it))
+
+        def _rec(items, n=None):
+            it = items[-n:] if n else items
+            w = sum(1 for s in it if s["res"] == "WON")
+            return w, len(it) - w
+
+        def _racha(items):
+            n = 0
+            for s in reversed(items):
+                if s["res"] == "WON":
+                    n += 1
+                else:
+                    break
+            return n
+
+        def _fuerte(w, l):
+            return w > l and (w - l) >= 4 and (w / float(w + l)) >= 0.60
+
+        cands = []
+        for nombre, tag, it in ambitos:
+            n_tot = len(it)
+            r = _racha(it)
+            if r >= 3:
+                cands.append({"tag": tag, "num": str(r), "word": "straight",
+                              "sub": f"winning {nombre} plays",
+                              "puntos": r, "score": 100 + r,
+                              "ambito": nombre})
+            tiene_30 = False
+            for n in (10, 30):
+                if n_tot < n:
+                    continue
+                if n == 30 and n_tot <= 30:
+                    continue
+                w, l = _rec(it, n)
+                if not _fuerte(w, l):
+                    continue
+                if (tira.get("etiqueta") == "Platinum Plays"
+                        and nombre == "Platinum" and n == 10):
+                    continue  # esa cifra ya la dice la tirita superior
+                if n == 30:
+                    tiene_30 = True
+                cands.append({"tag": tag, "num": f"{w}-{l}", "word": None,
+                              "sub": f"in the last {n} {nombre} plays",
+                              "puntos": w,
+                              "score": (w / float(w + l)) * 100 + (w - l),
+                              "ambito": nombre})
+            if n_tot > 10 and not tiene_30:
+                w, l = _rec(it)
+                if _fuerte(w, l):
+                    cands.append({"tag": tag, "num": f"{w}-{l}", "word": None,
+                                  "sub": f"{nombre} record · all graded plays",
+                                  "puntos": w,
+                                  "score": (w / float(w + l)) * 100 + (w - l),
+                                  "ambito": nombre})
+        cands.sort(key=lambda c: -c["score"])
+        out, por_ambito = [], {}
+        for c in cands:
+            if por_ambito.get(c["ambito"], 0) >= 2:
+                continue
+            por_ambito[c["ambito"]] = por_ambito.get(c["ambito"], 0) + 1
+            out.append({k: c[k] for k in ("tag", "num", "word", "sub", "puntos")})
+            if len(out) >= 6:
+                break
+        return out
+    except Exception:
+        return []
+
+
 def record_por_liga():
     """Récord oficial por liga, en vivo desde data/archive.json
     (2026-10-26, pedido de Alex: solo esta sección en el home, con su
@@ -3389,85 +3503,6 @@ def recientes_value(n=20):
         return {"actuales": actuales, "pasadas": pasadas, "todas": out}
     except Exception:
         return vacio
-
-
-def _rachas_home():
-    """Tarjetas "Hot right now" del home (referencia de Alex 2026-11-15):
-    rachas y ventanas REALES del archive, calculadas en vivo. La carta
-    lider sigue la regla de la tirita dictada por Alex: ultimas 10 de
-    Platinum en positivo mandan; si Platinum esta frio, ultimas 10 del
-    programa completo en positivo; si nada esta en positivo, la seccion
-    no sale. Las ligas solo salen si jugaron en los ultimos 14 dias
-    (nada de rachas de una temporada ya cerrada). Nunca numeros
-    inventados."""
-    try:
-        from datetime import datetime as _dt, timedelta as _td
-        dias = sorted(load_archive(), key=lambda d: d.get("fecha") or "")
-        settled = []
-        for d in dias:
-            for j in d.get("jugadas", []) or []:
-                if j.get("resultado") in ("WON", "LOST") and not j.get("bloqueada"):
-                    settled.append((d.get("fecha") or "", j))
-        if not settled:
-            return []
-        _ult = max(f for f, _ in settled)
-        try:
-            _corte = (_dt.strptime(_ult, "%Y-%m-%d") - _td(days=14)).strftime("%Y-%m-%d")
-        except Exception:
-            _corte = ""
-        def _seq(f):
-            return [1 if j["resultado"] == "WON" else 0 for _, j in settled if f(j)]
-        def _ventana(f, n):
-            s = _seq(f)[-n:]
-            return (sum(s), len(s) - sum(s), s)
-        def _racha(f):
-            s = _seq(f)
-            n = 0
-            for x in reversed(s):
-                if x:
-                    n += 1
-                else:
-                    break
-            return n
-        def _liga_viva(L):
-            fs = [f for f, j in settled if (j.get("liga") or "").upper() == L]
-            return bool(fs) and max(fs) >= _corte
-        es_plat = lambda j: (j.get("nivel") or "").upper() in ("ELITE", "PLATINUM")
-        cards = []
-        w, l, s = _ventana(es_plat, 10)
-        if w > l:
-            cards.append({"tag": "PLATINUM PLAYS", "liga": "", "big": f"{w}\u2013{l}",
-                          "sub": "in the last 10 Platinum plays", "dots": s})
-            w30, l30, _s30 = _ventana(es_plat, 30)
-            if w30 > l30:
-                cards.append({"tag": "PLATINUM PLAYS", "liga": "", "big": f"{w30}\u2013{l30}",
-                              "sub": "in the last 30 Platinum plays", "dots": []})
-        else:
-            w, l, s = _ventana(lambda j: True, 10)
-            if w > l:
-                cards.append({"tag": "OFFICIAL PLAYS", "liga": "", "big": f"{w}\u2013{l}",
-                              "sub": "in the last 10 plays, all levels", "dots": s})
-        if not cards:
-            return []
-        for liga in ("NCAAF", "NFL", "NBA", "NHL", "MLB"):
-            if not _liga_viva(liga):
-                continue
-            n = _racha(lambda j, L=liga: (j.get("liga") or "").upper() == L)
-            if n >= 2:
-                cards.append({"tag": "OFFICIAL PLAYS", "liga": liga,
-                              "big": f"{n} straight",
-                              "sub": f"winning {liga} plays", "dots": [1] * n})
-        for liga in ("NCAAF", "NFL", "NBA", "NHL", "MLB"):
-            if not _liga_viva(liga):
-                continue
-            w, l, s = _ventana(lambda j, L=liga: (j.get("liga") or "").upper() == L, 10)
-            if w >= 7:
-                cards.append({"tag": "OFFICIAL PLAYS", "liga": liga,
-                              "big": f"{w}\u2013{l}",
-                              "sub": f"in the last 10 {liga} plays", "dots": s})
-        return cards[:4]
-    except Exception:
-        return []
 
 
 def official_tracker_full():
@@ -6528,6 +6563,10 @@ def home():
         _tirita10 = tirita_record10()
     except Exception:
         _tirita10 = None
+    try:
+        _hot_home = hot_home_cards()
+    except Exception:
+        _hot_home = []
     # Banner de completar la cuenta (2026-11-07, espejo WGT): solo para
     # quien entró con el registro de un solo campo y aún no verificó su
     # correo o no fijó su contraseña propia. Las cuentas de siempre
@@ -6666,7 +6705,8 @@ def home():
         card_sig=_card_sig(),
         dias=recientes_dias,
         tira_home=tira_home,
-        rachas_home=_rachas_home(),
+        tirita_record10=(None if _sin_acceso else _tirita10),
+        hot_home=([] if _sin_acceso else _hot_home),
     )
 
 
