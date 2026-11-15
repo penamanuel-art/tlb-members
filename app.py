@@ -5571,6 +5571,18 @@ def migrate_db():
             if "liga" not in tcols:
                 conn.execute("ALTER TABLE tracked_plays ADD COLUMN liga TEXT")
             conn.commit()
+        # Monto PERSONAL del miembro en tracked_plays (2026-11-15): el que
+        # el miembro pone al trackear o con Change stake. La sincronia
+        # oficial de la cuenta de Alex reescribe stake_monto con el monto
+        # del ticket al liquidar; stake_personal NUNCA se sincroniza, y la
+        # tirita «Your risk today» lee este monto. Backfill: el monto que
+        # la fila ya trae queda como su monto personal.
+        if tcols and "stake_personal" not in tcols:
+            conn.execute("ALTER TABLE tracked_plays ADD COLUMN stake_personal "
+                         + ("DOUBLE PRECISION" if USE_PG else "REAL"))
+            conn.execute("UPDATE tracked_plays SET stake_personal = stake_monto "
+                         "WHERE stake_personal IS NULL")
+            conn.commit()
         # Fraccion Kelly del miembro (2026-11-15, hoja Stake sizing):
         # 0.125 / 0.25 / 0.5 / 1.0; sin columna rige el default 0.25.
         if USE_PG:
@@ -6649,8 +6661,17 @@ def home():
             # Sus jugadas personales (own_bets, ej. un pale) NUNCA entran.
             _pend_card = [r for r in tracked_rows
                           if (r["fecha"] or "") == _hoy_iso]
-            _tot_card = sum(float(r["stake_monto"] or 0)
-                            for r in _pend_card)
+            def _monto_personal(r):
+                # El monto que EL puso (trackear / Change stake); la
+                # sincronia oficial reescribe stake_monto al liquidar y
+                # NO debe mover esta cifra (regla de Alex, 2026-11-15).
+                try:
+                    sp = r["stake_personal"]
+                except Exception:
+                    sp = None
+                return float(sp if sp is not None
+                             else (r["stake_monto"] or 0))
+            _tot_card = sum(_monto_personal(r) for r in _pend_card)
             _br_card = float(user["bankroll"]) if user["bankroll"] else 10000.0
             if _tot_card > 0:
                 risk_card = {
@@ -11534,12 +11555,13 @@ def track(play_id):
         db.execute(
             """INSERT INTO tracked_plays
                (user_id, play_id, fecha, nivel, pick, cuota, stake_unidades,
-                stake_monto, edge, resultado, created_at)
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, ?)""",
+                stake_monto, stake_personal, edge, resultado, created_at)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, ?)""",
             (
                 session["user_id"], play["id"], fecha_de_play(play),
                 play.get("nivel", ""), play.get("pick", ""), int(play.get("cuota", 0)),
                 float(play.get("stake_unidades", 0)),
+                float(stake_personalizado(play, _cu)),
                 float(stake_personalizado(play, _cu)),
                 _edge_num(play.get("edge")), now_iso(),
             ),
@@ -11638,9 +11660,10 @@ def track_stake(tracked_id):
     else:
         nuevas_unidades = unidades_viejas
     db.execute(
-        "UPDATE tracked_plays SET stake_monto = ?, stake_unidades = ? "
+        "UPDATE tracked_plays SET stake_monto = ?, stake_unidades = ?, "
+        "stake_personal = ? "
         "WHERE id = ?",
-        (round(nuevo, 2), nuevas_unidades, tracked_id),
+        (round(nuevo, 2), nuevas_unidades, round(nuevo, 2), tracked_id),
     )
     db.commit()
     return jsonify({
@@ -13604,6 +13627,37 @@ def admin_api_members_set_stakes():
     db.commit()
     return jsonify({"ok": True, "email": email,
                     "stake_fijo_elite": plat, "stake_fijo_gold": gold})
+
+
+@app.route("/admin/api/tracked-set-personal", methods=["POST"])
+def admin_api_tracked_set_personal():
+    """Fija el monto PERSONAL (stake_personal) de una jugada trackeada de
+    un miembro, sin tocar stake_monto ni el record oficial (2026-11-15).
+    Es el monto que lee la tirita «Your risk today». Auth: sesion admin O
+    header X-Admin-Key (mismo patron que los demas members-set-*)."""
+    if not _admin_api_autorizado():
+        return jsonify({"error": "admin only"}), 403
+    data = request.get_json(silent=True) or {}
+    email = (data.get("email") or "").strip().lower()
+    play_id = (data.get("play_id") or "").strip()
+    try:
+        monto = float(data.get("stake_personal"))
+    except (TypeError, ValueError):
+        return jsonify({"error": "stake_personal required"}), 400
+    if not email or not play_id or monto < 0:
+        return jsonify({"error": "invalid"}), 400
+    db = get_db()
+    target = db.execute("SELECT id FROM users WHERE LOWER(email) = ?",
+                        (email,)).fetchone()
+    if not target:
+        return jsonify({"error": "user not found"}), 404
+    db.execute(
+        "UPDATE tracked_plays SET stake_personal = ? "
+        "WHERE user_id = ? AND play_id = ?",
+        (round(monto, 2), target["id"], play_id))
+    db.commit()
+    return jsonify({"ok": True, "email": email, "play_id": play_id,
+                    "stake_personal": round(monto, 2)})
 
 
 @app.route("/admin/api/past-due-cutoff", methods=["POST"])
