@@ -39,7 +39,7 @@
   .dn-hello .dn-fecha{font-family:var(--fmono);font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--mint);margin-top:7px}
 
   /* Estado del dia */
-  .dn-status{margin-top:16px;background:var(--mintbg);border:1px solid var(--mintline);border-radius:14px;padding:13px 14px;display:flex;gap:12px;align-items:flex-start}
+  .dn-status{margin-top:16px;background:var(--panel);border:1px solid var(--mintline);border-radius:14px;padding:13px 14px;display:flex;gap:12px;align-items:flex-start}
   .dn-status .dn-ic{flex:0 0 auto;width:34px;height:34px;border-radius:50%;background:rgba(47,230,167,.16);display:flex;align-items:center;justify-content:center;color:var(--mint)}
   .dn-status b{display:block;font-size:16.5px;font-weight:700;line-height:1.35}
   .dn-status span{display:block;font-size:14.2px;color:var(--mut);line-height:1.45;margin-top:2px}
@@ -135,7 +135,7 @@
   .dn-mem .dn-m-price{margin-left:auto;font-family:var(--fmono);font-size:14.2px;font-weight:600;color:var(--mint);white-space:nowrap}
   .dn-mem p{margin:7px 0 0;font-size:14.2px;color:var(--mut);line-height:1.5}
   .dn-cta{display:block;margin-top:10px;background:var(--mint);color:#06231A;border-radius:14px;padding:15px;text-align:center;font-weight:700;font-size:16.5px}
-  .dn-on{margin-top:10px;background:var(--mintbg);border:1px solid var(--mintline);border-radius:14px;padding:13px 15px;font-size:14.8px;text-align:center}
+  .dn-on{margin-top:10px;background:var(--panel);border:1px solid var(--mintline);border-radius:14px;padding:13px 15px;font-size:14.8px;text-align:center}
 
   /* Metodo */
   .dn-steps{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:6px 16px}
@@ -171,20 +171,7 @@
   .dn-tab .dn-pip{width:4px;height:4px;border-radius:50%;background:transparent}
   .dn-tab.on .dn-pip{background:var(--mint)}
 
-  /* Tarjetas en DOS tonos (verde azulado / azul marino), divididas por zona:
-     zona superior en el tono verde azulado de la tarjeta de estado y el
-     cuerpo en el azul marino de la banda de numeros — como divide Wise Guy */
-  .dn-status{background:linear-gradient(180deg,var(--mintbg) 0,var(--mintbg) 50%,var(--panel) 50%,var(--panel) 100%)}
-  .dn-stat{background:linear-gradient(180deg,var(--mintbg) 0,var(--mintbg) 26px,rgba(47,230,167,0) 26px,rgba(47,230,167,0) 100%)}
-  .dn-empty{background:linear-gradient(180deg,var(--mintbg) 0,var(--mintbg) 50%,var(--panel) 50%,var(--panel) 100%)}
-  .dn-chart{background:linear-gradient(180deg,var(--mintbg) 0,var(--mintbg) 86px,var(--panel) 86px,var(--panel) 100%)}
-  .dn-track{background:linear-gradient(180deg,var(--mintbg) 0,var(--mintbg) 50%,var(--panel) 50%,var(--panel) 100%)}
-  .dn-q{background:linear-gradient(180deg,var(--mintbg) 0,var(--mintbg) 44px,var(--panel) 44px,var(--panel) 100%)}
-  .dn-tool{background:linear-gradient(180deg,var(--mintbg) 0,var(--mintbg) 44px,var(--panel) 44px,var(--panel) 100%)}
-  .dn-al-tg{background:linear-gradient(180deg,var(--mintbg) 0,var(--mintbg) 46px,var(--panel) 46px,var(--panel) 100%)}
-  .dn-mem{background:linear-gradient(180deg,var(--mintbg) 0,var(--mintbg) 40px,var(--panel) 40px,var(--panel) 100%)}
-  .dn-leagues .dn-lg:first-of-type,.dn-tiers .dn-tier:first-of-type,.dn-steps .dn-step:first-of-type,.dn-faq .dn-q2:first-of-type{background:var(--mintbg);margin:-6px -16px 0;padding-left:16px;padding-right:16px;border-radius:13px 13px 0 0}
-  .dn-bank .dn-b-row:first-of-type{background:var(--mintbg);margin:-14px -16px 0;padding:17px 16px 3px;border-radius:13px 13px 0 0}
+  /* Tarjetas en UN solo color (orden de Alex 2026-11-15): fondo --panel parejo en todas; las de jugadas conservan sus dos colores (parcial aparte) */
 
   /* Cargador de ola (visible SOLO mientras la pagina carga de verdad) */
   .dn-loader{position:fixed;inset:0;z-index:200;overflow:hidden;background:#0A1120;transition:opacity .35s ease,visibility .35s ease}
