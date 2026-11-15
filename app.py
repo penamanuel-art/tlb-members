@@ -6484,77 +6484,64 @@ def home():
     # incluido. Las plantillas preview_home.html y members_hub.html
     # quedan en el repo y sus rutas /admin/preview-home y
     # /admin/members-hub siguen vivas; solo dejan de ser el /home.
-    _vantage_alex = False
-    _v_extra = {}
+    # PUBLICACION DEL DISENO NUEVO (2026-11-15, orden de Alex:
+    # "Publicalo - en vivo", tras ver la previa /admin/diseno-nuevo
+    # en su propia cuenta y aprobar las letras mas grandes): el
+    # diseno nuevo pasa a ser EL home de todos los miembros con
+    # sesion, Alex incluido. TODO el procesamiento de arriba queda
+    # intacto (checkin, visita, aviso, auto-grado, paywall del
+    # trial, merge de resultados, candados, ticket difuminado) -
+    # lo UNICO que cambia es la plantilla final: se renderiza
+    # diseno_nuevo.html con el mismo contexto que construye la
+    # previa (admin_diseno_nuevo / _diseno_stats). Las plantillas
+    # de antes (home_lux.html, home.html, home_v2.html) quedan en
+    # el repo sin servirse desde aqui; reversion en un paso:
+    # volver a poner el ternario de plantillas de siempre en este
+    # render. Las rutas /admin/diseno-nuevo y /admin/diseno-dos
+    # no se tocan y siguen vivas.
+    stats = _diseno_stats(plays)
+    _wd = datetime.now(TZ).weekday()
+    hora_post = "11:00 AM ET" if _wd >= 5 else "2:00 PM ET"
+    if plays:
+        _gr = [p for p in plays if p.get("resultado") in ("W", "L")]
+        _t = f"The board is live · {len(plays)} play" + ("s" if len(plays) != 1 else "")
+        if _gr:
+            _gw = sum(1 for p in _gr if p["resultado"] == "W")
+            _t += f" · {_gw}–{len(_gr) - _gw} graded"
+        estado = {"titulo": _t,
+                  "sub": "Cards post at 2:00 PM ET on weekdays · 11:00 AM ET on weekends."}
+    else:
+        estado = {"titulo": "Not posted yet",
+                  "sub": f"Today's card posts at {hora_post} — every play appears here first, with its real ticket."}
+    card_fecha_txt = ""
+    try:
+        _raw = _json_remoto_o_local(PLAYS_RAW_URL, PLAYS_PATH)
+        _cf = _raw.get("fecha") if isinstance(_raw, dict) else None
+        if _cf:
+            _fd = datetime.strptime(_cf, "%Y-%m-%d")
+            card_fecha_txt = (f"{DAYS_EN[_fd.weekday()][:3]}, "
+                              f"{MONTHS_EN[_fd.month - 1][:3]} {_fd.day}")
+    except Exception:
+        card_fecha_txt = ""
+    try:
+        _nombre = primer_nombre(user["name"]) if user else ""
+    except (KeyError, IndexError, TypeError):
+        _nombre = ""
+    if not _nombre:
+        _nombre = primer_nombre(session.get("nombre", ""))
     return render_template(
-        # Tema v2 (moderno) es el predeterminado desde 2026-10-02 (pedido Alex);
-        # v1 (clásico) queda como reversión vía /theme/v1. Diseño lux
-        # (2026-10-12): home premium salvo revert del admin (site_settings).
-        "preview_home.html" if _vantage_alex else ("home.html" if session.get("theme") == "v1" else ("home_lux.html" if _lux else "home_v2.html")),
+        "diseno_nuevo.html",
         plays=plays,
-        show_rate_bubble=show_rate_bubble,
         card_pendiente=card_pendiente,
-        hay_live=hay_live,
-        esperando=esperando,
         tracked_ids=tracked_ids,
-        program=program,
-        fecha=fecha_larga(),
-        fecha_corta=fecha_corta(),
+        miembro_platinum=(platinum_unlocked_for(user)
+                          and not preview_locked),
         saludo=saludo_hoy(),
-        racha=checkin_streak(db, session["user_id"]),
-        bankroll=user["bankroll"] if user else None,
-        stake_mode=user["stake_mode"] if user else "units",
-        platinum_unlocked=(platinum_unlocked_for(user) and not preview_locked),
-        res=program_stats(),
-        pcurve=program_curve(),
-        diseno_lux=_lux,
-        celebracion=celebracion_hoy(),
-        dias=load_archive(),
-        snapshot=performance_snapshot(),
-        now_day_of_year=datetime.now().timetuple().tm_yday,
-        leccion=load_masterclass(),
-        archivo_mc=load_masterclass_archivo(),
-        tstats=tstats,
-        tlevels=tlevels,
-        tcurve=tcurve,
-        pstreak=program_streak(),
-        streak=program_streak(),
-        resumen_ayer=resumen_ayer(),
-        recientes=recientes,
-        risk_hoy=risk_hoy,
-        recientes_dias=recientes_dias,
-        last_plat=last_plat,
-        tira_home=tira_home,
-        racha_platinum=_racha_plat,
-        tirita_record10=_tirita10,
-        hoy_iso=_hoy_iso,
-        ayer_iso=_ayer_iso,
-        recientes_value=recientes_value(),
-        hot_cards=hot_cards,
-        record_stats=official_tracker_full(),
-        record_por_liga=record_por_liga(),
-        last_elite_win=last_elite_win(),
-        locked_ticket_url=locked_ticket_url,
-        locked_plays=locked_plays,
-        setup_pendiente=_setup_pend,
-        my_books=_my_books,
-        members_live_now=_members_live,
-        preview_locked_play=preview_locked_play,
-        es_admin=is_admin_for(user),
-        es_alex=is_alex_member(user),
-        skip_splash=request.args.get("splash") == "0",
-        # miembro_platinum con preview: en ?preview=locked el banner de
-        # invitación VIP también se muestra (pedido Alex 2026-10-02).
-        miembro_platinum=(platinum_unlocked_for(user) and not preview_locked),
-        en_mes_gratis=_en_mes_gratis_vista(user),
-        mes_gratis_hasta=_mes_gratis_hasta(user),
-        mes_gratis_dias=_mes_gratis_dias(user),
-        # Hero fijo original (2026-10-26, reversión a pedido de Alex: solo
-        # el de fútbol con casco, sin rotación por ligas).
-        # Banner gate (2026-10-31): the Dashboard "new version" banner keys
-        # off PUBLIC_RELEASE, never the deploy commit — see the constant.
-        tst_version=PUBLIC_RELEASE,
-        **_v_extra,
+        fecha=fecha_larga(),
+        dn_nombre=_nombre,
+        stats=stats,
+        estado=estado,
+        card_fecha_txt=card_fecha_txt,
     )
 
 
