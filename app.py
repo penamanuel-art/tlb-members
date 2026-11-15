@@ -6735,10 +6735,10 @@ def home():
             _partes.append(f"{_nv} Vault")
         if _nf:
             _partes.append(f"{_nf} Free")
-        estado = {"titulo": _t, "live": True,
+        estado = {"titulo": _t,
                   "sub": " · ".join(_partes)}
     else:
-        estado = {"titulo": "Not posted yet", "live": False,
+        estado = {"titulo": "Not posted yet",
                   "sub": f"Today's card posts at {hora_post} — every play appears here first, with its real ticket."}
     card_fecha_txt = ""
     try:
@@ -8659,6 +8659,38 @@ def cuenta():
         flash(f"Bankroll saved: ${val:,.2f}.", "ok")
         return redirect(url_for("cuenta"))
     return render_template("cuenta.html", **_ctx())
+
+
+@app.route("/bankroll", methods=["GET", "POST"])
+@login_required
+def bankroll():
+    """Tu bankroll (2026-11-15, pedido de Alex con la referencia del
+    panel de WGT, con nuestro modelo y nuestro diseno): la pagina a la
+    que lleva el link «Set up your bankroll» bajo la ultima jugada del
+    home. El miembro pone su bankroll; su unidad (1% del bankroll) sale
+    sola y los montos de sus tarjetas y de su tracker se calculan desde
+    ahi. Guarda en users.bankroll con la misma validacion de /cuenta."""
+    db = get_db()
+    user = current_user()
+    if request.method == "POST":
+        raw = (request.form.get("bankroll", "") or "").strip()
+        raw = raw.replace("$", "").replace(",", "").replace(" ", "")
+        try:
+            val = float(raw)
+        except (ValueError, TypeError):
+            val = 0.0
+        if val <= 0:
+            flash("Enter a valid bankroll greater than zero.", "error")
+            return render_template(
+                "bankroll.html",
+                bankroll=(user["bankroll"] if user else None)), 400
+        db.execute("UPDATE users SET bankroll = ? WHERE id = ?",
+                   (val, session["user_id"]))
+        db.commit()
+        flash(f"Bankroll saved: ${val:,.2f}.", "ok")
+        return redirect(url_for("home"))
+    return render_template(
+        "bankroll.html", bankroll=(user["bankroll"] if user else None))
 
 
 # Libros del perfil de apuestas (pestaña Preferences, 2026-10-12).
