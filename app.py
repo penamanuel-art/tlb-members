@@ -6537,8 +6537,21 @@ def home():
         if _gr:
             _gw = sum(1 for p in _gr if p["resultado"] == "W")
             _t += f" · {_gw}–{len(_gr) - _gw} graded"
+        _np = sum(1 for p in plays if (p.get("nivel") or "").upper() in ("ELITE", "PLATINUM"))
+        _ng = sum(1 for p in plays if (p.get("nivel") or "").upper() == "GOLD")
+        _nv = sum(1 for p in plays if (p.get("nivel") or "").upper() == "VAULT")
+        _nf = sum(1 for p in plays if (p.get("nivel") or "").upper() == "FREE")
+        _partes = [f"{len(plays)} play" + ("s" if len(plays) != 1 else "")]
+        if _np:
+            _partes.append(f"{_np} Platinum")
+        if _ng:
+            _partes.append(f"{_ng} Gold")
+        if _nv:
+            _partes.append(f"{_nv} Vault")
+        if _nf:
+            _partes.append(f"{_nf} Free")
         estado = {"titulo": _t,
-                  "sub": "Cards post at 2:00 PM ET on weekdays · 11:00 AM ET on weekends."}
+                  "sub": " · ".join(_partes)}
     else:
         estado = {"titulo": "Not posted yet",
                   "sub": f"Today's card posts at {hora_post} — every play appears here first, with its real ticket."}
