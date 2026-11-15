@@ -365,7 +365,7 @@
       <div class="dn-hero-label">The board</div>
       <p class="dn-hero-text">{{ estado.sub }}</p>
       <div class="dn-segs"><span class="on"></span><span></span><span></span></div>
-      <a class="dn-watch" href="#dn-how"><span class="dn-watch-ic"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M10.2 8.6v6.8L16 12z" fill="currentColor" stroke="none"/></svg></span>Watch how it works</a>
+      <a class="dn-watch" href="#dn-how" onclick="if(window.tstStartTour){window.tstStartTour();return false;}"><span class="dn-watch-ic"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M10.2 8.6v6.8L16 12z" fill="currentColor" stroke="none"/></svg></span>Watch how it works</a>
     </div>
   </div>
 
@@ -770,6 +770,170 @@ function dnHotClose(){
   if(mb&&m){mb.addEventListener('click',function(){tog(m.hidden);});}
   if(mx){mx.addEventListener('click',function(){tog(false);});}
   if(m){m.addEventListener('click',function(e){if(e.target===m)tog(false);});}
+})();
+</script>
+
+<!-- ===== DASHBOARD TOUR (recorrido nuevo pa' el dashboard nuevo, 2026-11-15) ===== -->
+<style>
+#tourDim{position:fixed;inset:0;background:rgba(4,8,16,.74);z-index:2900}
+#tourRing{position:fixed;z-index:2901;border:2px solid #2FE6A7;border-radius:14px;box-shadow:0 0 0 3px rgba(47,230,167,.25),0 0 24px rgba(47,230,167,.35);pointer-events:none;transition:top .2s ease,left .2s ease,width .2s ease,height .2s ease}
+#tourCard{position:fixed;z-index:2902;left:12px;right:12px;max-width:430px;margin:0 auto;background:#0F1B31;border:1px solid rgba(147,161,181,.25);border-radius:16px;padding:16px 16px 13px;box-shadow:0 18px 40px rgba(0,0,0,.5);color:#F4F7FB}
+#tourHead{font-size:12px;font-weight:700;letter-spacing:1.6px;color:#2FE6A7;margin-bottom:10px}
+#tourBar{height:4px;background:rgba(147,161,181,.25);border-radius:99px;overflow:hidden;margin-bottom:12px}
+#tourBarFill{height:100%;background:#2FE6A7;border-radius:99px;transition:width .3s ease}
+#tourCount{font-size:12px;letter-spacing:1.2px;color:#93A1B5;font-weight:700}
+#tourTitle{font-size:17.1px;font-weight:700;margin:5px 0 6px;color:#F4F7FB}
+#tourBody{font-size:13.5px;line-height:1.55;color:#C7D0DD;font-weight:400}
+#tourBtns{display:flex;align-items:center;gap:10px;margin-top:14px}
+#tourNext{background:#2FE6A7;color:#06231A;border:0;border-radius:10px;padding:10px 20px;font-size:13.5px;font-weight:700;cursor:pointer}
+#tourBack{background:none;color:#C7D0DD;border:1px solid rgba(147,161,181,.35);border-radius:10px;padding:10px 16px;font-size:13.5px;cursor:pointer}
+#tourSkip{margin-left:auto;background:none;border:0;color:#93A1B5;font-size:12px;cursor:pointer;padding:8px 2px}
+</style>
+<div id="tourRoot" hidden>
+  <div id="tourDim"></div>
+  <div id="tourRing" hidden></div>
+  <div id="tourCard">
+    <div id="tourHead">&#9654; WATCH HOW IT WORKS</div>
+    <div id="tourBar"><div id="tourBarFill" style="width:0%"></div></div>
+    <div id="tourCount"></div>
+    <div id="tourTitle"></div>
+    <div id="tourBody"></div>
+    <div id="tourBtns">
+      <button id="tourBack" type="button">Back</button>
+      <button id="tourNext" type="button">Next</button>
+      <button id="tourSkip" type="button">Skip tour</button>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  var ALL=[
+    {sel:null,title:"Welcome to The Sharp Team",body:"This is your new Dashboard. Tap Next and I will walk you through it part by part: where your plays live, how to read a play card, and where everything else sits."},
+    {sel:[".dn-hero-card"],title:"Today's card",body:"This card tells you the state of the board. New plays post at 2:00 PM on weekdays and 11:00 AM on weekends, Eastern Time. When the board is live, today's plays and the count show right here."},
+    {sel:[".dn-live"],title:"Live scores and games",body:"Every game today, with live scores. Tap a game to see every book's price, the line moves and the splits for that matchup."},
+    {sel:[".dn-board-head"],title:"Your plays",body:"Your plays sit here, grouped by level. Gold is free and open to everyone. Platinum is the paid level. The Vault is the special play of the day, for Platinum members."},
+    {sel:[".v5m"],title:"A play card",body:"Each card is one play: the team, the price and the start time. The percent is our model's chance of winning, an estimate, never a promise."},
+    {sel:[".v5wu"],title:"Why we like it",body:"The homework, right on the card: our model's probability next to the probability implied by the price. When ours is higher, that gap is the edge we are playing."},
+    {sel:[".v5timg",".v5c-matched"],title:"The real ticket",body:"Every play carries the photo of our real betting receipt. Tap it to see it full size. If there is no ticket, it is not an official play."},
+    {sel:[".v5c-btn"],title:"Bet it where we bet it",body:"This button takes you to place the play at the book and price on the card, the same place we bet it. Always take the best price you can: a few cents better on every play adds up over a season."},
+    {sel:["sec:Hot right now"],title:"Hot right now",body:"The program's current runs, from graded plays only. Tap a run to see every play in it, wins and losses. Nothing hidden."},
+    {sel:["sec:Performance"],title:"Performance",body:"How the program is doing: the recent run in units, and the record by level and by league. The full record is always open, every play, win or lose."},
+    {sel:["sec:Your tools"],title:"Your tools",body:"Your toolbox: live odds from every book, the +EV board, player props, Sharp Money and more. Some tools are Platinum only."},
+    {sel:["sec:Get alerts"],title:"Get alerts",body:"Turn on push alerts for this device and join the Telegram channel, and you will never miss a play."},
+    {sel:["sec:Membership"],title:"Membership",body:"Your plan lives here. Platinum unlocks every play, the Vault and all the tools."},
+    {sel:["#dnBell"],title:"Notifications",body:"The bell shows your latest results: every graded play, won or lost, with what it paid or what it cost."},
+    {sel:["#dnMenuBtn"],title:"The menu",body:"Everything also lives in the menu: Betting Lines, Sportsbooks, the Masterclass, your tools, My Bets and your account. And you can replay this tour anytime from the Watch how it works button."},
+    {sel:[".dn-tabs"],title:"The bottom bar",body:"Today, Odds, Tools, My Bets and your Account, always one tap away at the bottom."},
+    {sel:null,title:"You're all set",body:"Now you know the whole Dashboard: the plays, the record and the tools. Plays post at 2:00 PM on weekdays and 11:00 AM on weekends. Play smart, and welcome to The Sharp Team."}
+  ];
+  var root=document.getElementById('tourRoot');
+  if(!root)return;
+  var ring=document.getElementById('tourRing'),card=document.getElementById('tourCard'),
+      fill=document.getElementById('tourBarFill'),count=document.getElementById('tourCount'),
+      ttl=document.getElementById('tourTitle'),body=document.getElementById('tourBody'),
+      bNext=document.getElementById('tourNext'),bBack=document.getElementById('tourBack'),
+      bSkip=document.getElementById('tourSkip');
+  function visible(e){
+    if(!e)return false;
+    var r=e.getBoundingClientRect();
+    if(r.width<2||r.height<2)return false;
+    var cs=window.getComputedStyle(e);
+    return cs.display!=='none'&&cs.visibility!=='hidden';
+  }
+  function findSec(name){
+    var heads=document.querySelectorAll('.dn-sec-head h2,.dn-hot-head h2');
+    for(var i=0;i<heads.length;i++){
+      if(heads[i].textContent.trim()===name){
+        var sec=heads[i].closest('section');
+        var el=sec||heads[i].parentElement;
+        if(visible(el))return el;
+      }
+    }
+    return null;
+  }
+  function findEl(sels){
+    if(!sels)return null;
+    for(var i=0;i<sels.length;i++){
+      var s=sels[i];
+      if(s.indexOf('sec:')===0){var sc=findSec(s.slice(4));if(sc)return sc;continue;}
+      var all=document.querySelectorAll(s);
+      for(var j=0;j<all.length;j++){if(visible(all[j]))return all[j];}
+    }
+    return null;
+  }
+  var steps=[],idx=0,timers=[];
+  function buildSteps(){
+    steps=[];
+    for(var i=0;i<ALL.length;i++){
+      var s=ALL[i];
+      if(!s.sel||findEl(s.sel))steps.push(s);
+    }
+  }
+  function place(el){
+    var vh=window.innerHeight;
+    var ch=card.offsetHeight||190;
+    function sheet(){card.style.top='auto';card.style.bottom='86px';}
+    if(!el){ring.hidden=true;sheet();return;}
+    var r=el.getBoundingClientRect();
+    if(r.bottom<0||r.top>vh){sheet();}
+    else{
+      var top;
+      if(r.bottom+ch+22<vh)top=r.bottom+16;
+      else if(r.top-ch-22>0)top=r.top-ch-16;
+      else top=-1;
+      if(top<0){sheet();}
+      else{
+        if(top<10)top=10;
+        if(top>vh-ch-10)top=vh-ch-10;
+        card.style.top=top+'px';card.style.bottom='auto';
+      }
+    }
+    ring.hidden=false;
+    ring.style.top=(r.top-6)+'px';ring.style.left=(r.left-6)+'px';
+    ring.style.width=(r.width+12)+'px';ring.style.height=(r.height+12)+'px';
+  }
+  function reposition(){var s=steps[idx];if(s)place(findEl(s.sel));}
+  function show(i){
+    idx=i;var s=steps[i];if(!s){end('completed');return;}
+    count.textContent='YOUR DASHBOARD \u00b7 STEP '+(i+1)+' OF '+steps.length;
+    ttl.textContent=s.title;body.textContent=s.body;
+    fill.style.width=Math.round(((i+1)/steps.length)*100)+'%';
+    bBack.style.visibility=(i===0)?'hidden':'visible';
+    bNext.textContent=(i===steps.length-1)?'Done':'Next';
+    var el=findEl(s.sel);
+    if(el){el.scrollIntoView({behavior:'smooth',block:'center'});}
+    for(var t=0;t<timers.length;t++)clearTimeout(timers[t]);
+    timers=[];
+    place(el);
+    var ms=[120,480,950];
+    for(var u=0;u<ms.length;u++){(function(m){timers.push(setTimeout(function(){place(findEl(s.sel));},m));})(ms[u]);}
+  }
+  function end(status){
+    root.hidden=true;ring.hidden=true;
+    for(var t=0;t<timers.length;t++)clearTimeout(timers[t]);
+    timers=[];
+    try{localStorage.setItem('tst_tour_done_v1','1');}catch(e){}
+    try{fetch('/api/tour-event',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({status:(status==='skipped')?'skipped':'completed'}),keepalive:true}).catch(function(){});}catch(e){}
+    window.removeEventListener('resize',reposition);
+    window.removeEventListener('scroll',reposition);
+  }
+  function start(){
+    buildSteps();
+    if(!steps.length)return;
+    var n=document.getElementById('dnNotif');if(n&&!n.hidden)n.hidden=true;
+    var m=document.getElementById('dnMenu');if(m&&!m.hidden)m.hidden=true;
+    root.hidden=false;
+    window.addEventListener('resize',reposition);
+    window.addEventListener('scroll',reposition);
+    show(0);
+  }
+  bNext.addEventListener('click',function(){if(idx>=steps.length-1)end('completed');else show(idx+1);});
+  bBack.addEventListener('click',function(){if(idx>0)show(idx-1);});
+  bSkip.addEventListener('click',function(){end('skipped');});
+  window.tstStartTour=start;
+  if(/[?&]tour=1/.test(location.search)){
+    window.addEventListener('load',function(){setTimeout(start,1200);});
+  }
 })();
 </script>
 </body>
