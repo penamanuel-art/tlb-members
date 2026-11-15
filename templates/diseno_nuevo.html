@@ -63,7 +63,7 @@
   .dn-board-head{display:flex;align-items:center;gap:10px;margin:18px 0 12px}
   .dn-board-head h2{font-family:var(--fdisp);font-size:26px;font-weight:800;margin:0;color:var(--txt);white-space:nowrap}
   .dn-board-lvl{color:var(--mut);font-size:18px;font-weight:500;white-space:nowrap}
-  .dn-board-sub{display:flex;align-items:center;gap:10px;margin:-2px 0 12px}
+  .dn-board-sub{display:flex;align-items:center;gap:10px;margin:14px 0 12px}
   .dn-count{color:var(--mut);font-size:18px}
   .dn-state{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:999px;padding:5px 11px;font-size:18px;color:var(--mut);white-space:nowrap;font-weight:700;letter-spacing:.05em}
   .dn-state.on{color:var(--mint);border-color:var(--mintline);background:var(--mintbg)}
@@ -325,16 +325,18 @@
     <button class="dn-refresh" type="button" onclick="location.reload()"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>Refresh</button>
   </div>
   {% if plays %}
-  <div class="dn-board-sub"><span class="dn-state on">OFFICIALS</span><span class="dn-count">{{ plays|length }} play{{ 's' if plays|length != 1 }}</span></div>
       {% set frees = plays|selectattr('nivel','equalto','FREE')|list %}
       {% set golds = plays|selectattr('nivel','equalto','GOLD')|list %}
       {% set plats = plays|rejectattr('nivel','equalto','GOLD')|rejectattr('nivel','equalto','FREE')|rejectattr('nivel','equalto','VALUE')|list %}
+      {% if frees %}<div class="dn-board-sub"><span class="dn-state on">FREE</span><span class="dn-count">{{ frees|length }} play{{ 's' if frees|length != 1 }}</span></div>{% endif %}
       {% for p in frees %}
         {% if miembro_platinum %}{% include "_play_card_v5.html" %}{% else %}{% include "_play_card_locked.html" %}{% endif %}
       {% endfor %}
+      {% if golds %}<div class="dn-board-sub"><span class="dn-state on">GOLD</span><span class="dn-count">{{ golds|length }} play{{ 's' if golds|length != 1 }}</span></div>{% endif %}
       {% for p in golds %}
         {% include "_play_card_v5.html" %}
       {% endfor %}
+      {% if plats %}<div class="dn-board-sub"><span class="dn-state on">PLATINUM</span><span class="dn-count">{{ plats|length }} play{{ 's' if plats|length != 1 }}</span></div>{% endif %}
       {% for p in plats %}
         {% if p.nivel in ['ELITE','PLATINUM','VAULT'] and not miembro_platinum %}{% include "_play_card_locked.html" %}{% else %}{% include "_play_card_v5.html" %}{% endif %}
       {% endfor %}
