@@ -133,7 +133,7 @@
   .dn-hot-card{flex:0 0 calc(100% - 30px);scroll-snap-align:start;position:relative;background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--mint);box-shadow:0 12px 30px rgba(0,0,0,.25);border-radius:20px;padding:18px}
   .dn-hot-card.cold::before{background:linear-gradient(180deg,#ffb199 0%,#ff5a3c 45%,#d92c1f 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.6),inset 0 -2px 3px rgba(0,0,0,.35),0 3px 8px rgba(217,44,31,.45)}
   .dn-hot-top{display:flex;align-items:center;gap:10px}
-  .dn-hot-pill{background:var(--mintbg);color:var(--mint);border:1px solid var(--mintline);border-radius:999px;padding:5px 10px;font-size:11px;font-weight:700;letter-spacing:.08em;white-space:nowrap}
+  .dn-hot-pill{background:var(--mintbg);color:var(--mint);border:1px solid var(--mintline);border-radius:999px;padding:7px 12px;font-size:13.5px;font-weight:700;letter-spacing:.08em;white-space:nowrap}
   .dn-hot-tag{margin-left:auto;color:var(--mut);font-size:13.5px;font-weight:600;white-space:nowrap}
   .dn-hot-num{font-family:var(--fdisp);font-size:56px;font-weight:800;color:#fff;line-height:1.08;margin:16px 0 4px}
   .dn-hot-num .w{font-size:27px;font-weight:700}
@@ -807,16 +807,16 @@ function dnHotClose(){
 <style>
 #tourDim{position:fixed;inset:0;background:rgba(4,8,16,.74);z-index:2900}
 #tourRing{position:fixed;z-index:2901;border:2px solid #2FE6A7;border-radius:14px;box-shadow:0 0 0 3px rgba(47,230,167,.25),0 0 24px rgba(47,230,167,.35);pointer-events:none;transition:top .2s ease,left .2s ease,width .2s ease,height .2s ease}
-#tourCard{position:fixed;z-index:2902;left:12px;right:12px;max-width:430px;margin:0 auto;background:#0F1B31;border:1px solid rgba(147,161,181,.25);border-radius:16px;padding:16px 16px 13px;box-shadow:0 18px 40px rgba(0,0,0,.5);color:#F4F7FB}
-#tourHead{font-size:12px;font-weight:700;letter-spacing:1.6px;color:#2FE6A7;margin-bottom:10px}
+#tourCard{position:fixed;z-index:2902;left:0;right:0;max-width:none;margin:0 auto;background:#0F1B31;border:1px solid rgba(147,161,181,.25);border-radius:16px;padding:16px 16px 13px;box-shadow:0 18px 40px rgba(0,0,0,.5);color:#F4F7FB}
+#tourHead{font-size:13px;font-weight:700;letter-spacing:1.6px;color:#2FE6A7;margin-bottom:10px}
 #tourBar{height:4px;background:rgba(147,161,181,.25);border-radius:99px;overflow:hidden;margin-bottom:12px}
 #tourBarFill{height:100%;background:#2FE6A7;border-radius:99px;transition:width .3s ease}
 #tourCount{font-size:12px;letter-spacing:1.2px;color:#93A1B5;font-weight:700}
-#tourTitle{font-size:17.1px;font-weight:700;margin:5px 0 6px;color:#F4F7FB}
-#tourBody{font-size:13.5px;line-height:1.55;color:#C7D0DD;font-weight:400}
+#tourTitle{font-size:19px;font-weight:700;margin:5px 0 6px;color:#F4F7FB}
+#tourBody{font-size:15px;line-height:1.55;color:#C7D0DD;font-weight:400}
 #tourBtns{display:flex;align-items:center;gap:10px;margin-top:14px}
-#tourNext{background:#2FE6A7;color:#06231A;border:0;border-radius:10px;padding:10px 20px;font-size:13.5px;font-weight:700;cursor:pointer}
-#tourBack{background:none;color:#C7D0DD;border:1px solid rgba(147,161,181,.35);border-radius:10px;padding:10px 16px;font-size:13.5px;cursor:pointer}
+#tourNext{background:#2FE6A7;color:#06231A;border:0;border-radius:10px;padding:10px 20px;font-size:15px;font-weight:700;cursor:pointer}
+#tourBack{background:none;color:#C7D0DD;border:1px solid rgba(147,161,181,.35);border-radius:10px;padding:10px 16px;font-size:15px;cursor:pointer}
 #tourSkip{margin-left:auto;background:none;border:0;color:#93A1B5;font-size:12px;cursor:pointer;padding:8px 2px}
 </style>
 <div id="tourRoot" hidden>
