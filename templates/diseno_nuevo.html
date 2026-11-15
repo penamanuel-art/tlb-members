@@ -37,6 +37,18 @@
   .dn-hello h1 .dn-name{font-size:34px}
   .dn-hello h1 .dn-dot{color:var(--mint)}
   .dn-hello .dn-fecha{font-family:var(--fmono);font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--mint);margin-top:7px}
+  .dn-hero-card{background:var(--panel);border:1px solid var(--line);border-radius:18px;overflow:hidden;margin-top:16px}
+  .dn-hero-band{background:#172A42;display:flex;align-items:center;justify-content:space-between;padding:12px 18px;color:var(--mint);font-weight:700;font-size:13.5px;letter-spacing:.14em;text-transform:uppercase}
+  .dn-ring{width:19px;height:19px;border:3px solid var(--mint);border-radius:50%;flex:none}
+  .dn-hero-body{padding:20px 18px}
+  .dn-hero-title{font-family:var(--fdisp);font-size:33px;font-weight:700;line-height:1.15;color:var(--txt)}
+  .dn-hero-accent{color:var(--mint);font-weight:700;font-size:20.5px;margin-top:9px}
+  .dn-hero-div{height:1px;background:var(--line);margin:17px 0}
+  .dn-hero-label{font-weight:700;letter-spacing:.1em;text-transform:uppercase;font-size:13px;color:var(--txt)}
+  .dn-hero-text{color:#DCE4F0;font-size:15.5px;line-height:1.45;margin-top:6px}
+  .dn-segs{display:flex;gap:8px;margin-top:17px}
+  .dn-segs span{height:7px;width:62px;border-radius:99px;background:#3D4E6B}
+  .dn-segs span.on{width:96px;background:var(--mint)}
   .dn-strip{margin-top:14px;background:var(--mint);color:#06130D;font-weight:700;text-align:center;padding:9px 12px;border-radius:10px;font-size:15px}
 
   /* Estado del dia */
@@ -211,8 +223,10 @@
 
 <header class="dn-top">
   <div class="dn-top-in">
-    <img class="dn-logo" src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team">
-    <div class="dn-brand">THE SHARP TEAM<small>MEMBERS DASHBOARD</small></div>
+    <div style="display:flex;align-items:center;gap:3px;flex:1;min-width:0">
+      <img src="{{ url_for('static', filename='img/sharp-coin.png') }}" alt="" style="height:60px;width:auto;display:block">
+      <img src="{{ url_for('static', filename='img/sharp-letters.png') }}" alt="The Sharp Team" style="height:44px;width:auto;max-width:100%;display:block">
+    </div>
     <div class="dn-top-right">
       <span class="dn-avatar">{{ (dn_nombre[:1] or inicial or 'S')|upper }}</span>
     </div>
@@ -226,17 +240,16 @@
     <div class="dn-fecha">{{ fecha }}</div>
   </section>
 
-  {% if stats.plat10 and stats.plat10.w > stats.plat10.l %}
-  <div class="dn-strip">🔥 Platinum Plays: {{ stats.plat10.w }}–{{ stats.plat10.l }} in the last 10 plays</div>
-  {% endif %}
 
-  <div class="dn-status">
-    <div class="dn-ic">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
-    </div>
-    <div>
-      <b>{{ estado.titulo }}</b>
-      <span>{{ estado.sub }}</span>
+  <div class="dn-hero-card">
+    <div class="dn-hero-band"><span>Today's card</span><span class="dn-ring"></span></div>
+    <div class="dn-hero-body">
+      <div class="dn-hero-title">{{ estado.titulo }}</div>
+      {% if stats.plat10 and stats.plat10.w > stats.plat10.l %}<div class="dn-hero-accent">🔥 Platinum Plays: {{ stats.plat10.w }}–{{ stats.plat10.l }} in the last 10 plays</div>{% endif %}
+      <div class="dn-hero-div"></div>
+      <div class="dn-hero-label">The board</div>
+      <p class="dn-hero-text">{{ estado.sub }}</p>
+      <div class="dn-segs"><span class="on"></span><span></span><span></span></div>
     </div>
   </div>
 
