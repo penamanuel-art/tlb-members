@@ -6495,7 +6495,13 @@ def home():
         # Desk (preview_home.html); home_lux.html queda en el repo
         # como respaldo, sin tocar.
         with open(os.path.join(BASE_DIR, "templates", "members_hub.html"), "rb") as _hub_f:
-            return Response(_hub_f.read(), mimetype="text/html")
+            _hub_resp = Response(_hub_f.read(), mimetype="text/html")
+        # Sin caché (2026-11-15): el navegador del miembro nunca guarda
+        # una copia vieja del home — cuando el home cambia, se ve al
+        # momento, sin copias guardadas de la plantilla anterior.
+        _hub_resp.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+        _hub_resp.headers["Pragma"] = "no-cache"
+        return _hub_resp
     return render_template(
         # Tema v2 (moderno) es el predeterminado desde 2026-10-02 (pedido Alex);
         # v1 (clásico) queda como reversión vía /theme/v1. Diseño lux
