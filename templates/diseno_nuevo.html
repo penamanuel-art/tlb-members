@@ -37,6 +37,7 @@
   .dn-hello h1 .dn-name{font-size:34px}
   .dn-hello h1 .dn-dot{color:var(--mint)}
   .dn-hello .dn-fecha{font-family:var(--fmono);font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--mint);margin-top:7px}
+  .dn-strip{margin-top:14px;background:var(--mint);color:#06130D;font-weight:700;text-align:center;padding:9px 12px;border-radius:10px;font-size:15px}
 
   /* Estado del dia */
   .dn-status{margin-top:16px;background:var(--panel);border:1px solid var(--mintline);border-radius:14px;padding:13px 14px;display:flex;gap:12px;align-items:flex-start}
@@ -224,6 +225,10 @@
     <h1>{{ saludo }}, <span class="dn-name">{{ dn_nombre or 'Member' }}</span><span class="dn-dot">.</span></h1>
     <div class="dn-fecha">{{ fecha }}</div>
   </section>
+
+  {% if stats.plat10 and stats.plat10.w > stats.plat10.l %}
+  <div class="dn-strip">🔥 Platinum Plays: {{ stats.plat10.w }}–{{ stats.plat10.l }} in the last 10 plays</div>
+  {% endif %}
 
   <div class="dn-status">
     <div class="dn-ic">
