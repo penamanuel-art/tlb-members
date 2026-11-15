@@ -6608,6 +6608,25 @@ def home():
                         "n": len(_pend)}
         except Exception:
             risk_hoy = None
+    # Tirita «Your risk today» del diseno nuevo (2026-11-15, orden de Alex
+    # en llamada): lo que Alex arriesga HOY en la card oficial - jugadas
+    # publicadas aun sin liquidar, con los montos REALES de los tickets -
+    # como % de su bankroll. Solo su cuenta; sin jugadas abiertas no sale.
+    risk_card = None
+    if is_alex_member(user):
+        try:
+            _abiertas = [p for p in plays if not p.get("resultado")]
+            _tot_card = sum(float(p.get("stake_monto") or 0)
+                            for p in _abiertas)
+            _br_card = float(user["bankroll"]) if user["bankroll"] else 10000.0
+            if _tot_card > 0:
+                risk_card = {
+                    "total": round(_tot_card, 2),
+                    "pct": round(_tot_card / _br_card * 100, 1)
+                           if _br_card else 0.0,
+                    "n": len(_abiertas)}
+        except Exception:
+            risk_card = None
     # Burbuja de rating (2026-10-30, idea de Alex con reglas de respeto):
     # solo si el miembro aún no reseñó; nunca tras un día oficial perdedor
     # (si el último día liquidado del archivo cerró en negativo, se apaga);
@@ -6785,6 +6804,7 @@ def home():
         tira_home=tira_home,
         tirita_record10=(None if _sin_acceso else _tirita10),
         hot_home=([] if _sin_acceso else _hot_home),
+        risk_card=risk_card,
     )
 
 
