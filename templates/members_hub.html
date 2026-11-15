@@ -349,7 +349,7 @@ summary{font:500 16px Unbounded,Roboto,sans-serif;padding:20px 0}
 <div class="sh"><span class="eyebrow">Performance</span><h2>Every result, graded in public</h2><p>We grade each play win or lose at the price we posted. Wins and losses sit side by side, because trust comes from showing both.</p></div>
 <div class="two">
 <div class="box"><h3>Units, last 10 plays</h3><div class="cv"><canvas id="ch" aria-label="Units chart" role="img"></canvas></div><p style="font-size:12.5px">Each point is one graded play, in units — profit divided by its stake. A loss is always −1.</p></div>
-<div class="box"><h3>Reading the form</h3><p><b style="color:var(--t)">Platinum: 7–3 (70%).</b> Our top-conviction tier is running well above break-even.</p><p><b style="color:var(--t)">Official plays, last 10: 3–7 (30%).</b> A hard stretch. Ten plays is a short window, and short windows are noisy.</p><p><b style="color:var(--t)">All-time: 63–46 (58%).</b> 109 official plays graded since September 22, 2026 — every one at the price on its real ticket.</p><p>This is why we stake in small, fixed units and never chase a bad week.</p></div>
+<div class="box"><h3>Reading the form</h3><p><b style="color:var(--t)">Platinum: 7–3 (70%).</b> Our top-conviction tier is running well above break-even.</p><p><b style="color:var(--t)">Official plays, last 10: 3–7 (30%).</b> A hard stretch. Ten plays is a short window, and short windows are noisy.</p><p><b style="color:var(--t)">All-time: 64–46 (58%).</b> 110 official plays graded since September 22, 2026 — every one at the price on its real ticket.</p><p>This is why we stake in small, fixed units and never chase a bad week.</p></div>
 </div>
 <h3 style="font-size:28px;margin:34px 0 12px">Record by league</h3>
 <div class="tb"><table><thead><tr><th>League</th><th>Record</th><th>Win rate</th><th>Sample</th></tr></thead><tbody id="lg"></tbody></table></div>
@@ -449,7 +449,7 @@ document.getElementById('sc').innerHTML=sc.map(function(x){return '<tr><td>'+x[0
 function chart(){
 if(typeof Chart==='undefined')return;
 Chart.defaults.font.family="'Roboto',sans-serif";
-var r=[-1,.87,-1,.71,.62,-1,-1,-1,-1,-1],c=0,pts=[0];r.forEach(function(x){c+=x;pts.push(+c.toFixed(1))});
+var r=[.62,-1,-1,-1,-1,-1,-1,-1,.77,.96],c=0,pts=[0];r.forEach(function(x){c+=x;pts.push(+c.toFixed(1))});
 new Chart(document.getElementById('ch'),{type:'line',data:{labels:pts.map(function(_,i){return i?'#'+i:'Start'}),datasets:[{data:pts,borderColor:'#2DE0A0',backgroundColor:'rgba(45,224,160,.08)',fill:true,tension:.3,pointRadius:3,pointBackgroundColor:'#2DE0A0',borderWidth:2.5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#8E99B7'},grid:{display:false}},y:{ticks:{color:'#8E99B7',callback:function(v){return v+'u'}},grid:{color:'#1B2547'}}}}});
 }
 document.getElementById('bk').addEventListener('input',render);
