@@ -134,11 +134,32 @@
   .dn-hot-dots span{width:9px;height:9px;border-radius:50%;background:linear-gradient(180deg,#7CC4FF,#1D5FD1)}
   .dn-hot-dots span.l{background:transparent;border:2px solid #FF5A3C}
   .dn-hot-pct{display:inline-block;vertical-align:middle;margin-left:10px;background:rgba(63,140,255,.16);color:#7CC4FF;border:1px solid rgba(63,140,255,.4);border-radius:8px;padding:3px 8px;font-size:13.5px;font-weight:700}
-  .dn-hot-plays{margin-top:14px;border-top:1px solid var(--line);padding-top:10px;max-height:264px;overflow-y:auto}
-  .dn-hot-play{display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:13.5px}
-  .dn-hot-play .pk{font-weight:600}
-  .dn-hot-play .mt{margin-left:auto;color:var(--mut);font-size:11px;white-space:nowrap;text-align:right}
-  .dn-hot-full{display:inline-block;margin-top:10px;color:var(--mint);font-size:13.5px;font-weight:600}
+  .dn-sheet{position:fixed;inset:0;z-index:300;background:#0A1120;overflow-y:auto;padding:14px 16px 30px}
+  .dn-sheet-handle{width:44px;height:5px;border-radius:99px;background:#33415E;margin:2px auto 14px}
+  .dn-sheet-head{display:flex;align-items:flex-start;gap:12px}
+  .dn-sheet-head h3{font-family:var(--fdisp);font-size:20px;font-weight:700;margin:0;color:var(--txt)}
+  .dn-sheet-sub{color:var(--mut);font-size:13.5px;margin:6px 0 0}
+  .dn-sheet-x{margin-left:auto;flex:0 0 auto;background:none;border:0;color:var(--mut);font-size:20px;cursor:pointer;padding:2px 4px}
+  .dn-sheet-sum{margin-top:16px;border:1px solid var(--mintline);border-radius:16px;padding:16px;background:linear-gradient(180deg,#141F38,var(--panel))}
+  .dn-sheet-sumtop{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+  .dn-sheet-num{font-family:var(--fdisp);font-size:34px;font-weight:800;color:var(--txt);line-height:1}
+  .dn-sheet-sumsub{color:var(--txt);font-size:15px}
+  .dn-sheet-line{color:var(--mut);font-size:13.5px;margin:16px 0 4px}
+  .dn-sheet-line b{color:var(--txt)}
+  .dn-prow{display:flex;align-items:center;gap:12px;border:1px solid var(--line);border-radius:16px;padding:13px 14px;margin-top:10px;background:var(--panel)}
+  .dn-pnum{color:var(--mut);font-size:13.5px;font-weight:700;min-width:14px;text-align:center}
+  .dn-pthumb{flex:0 0 auto;width:46px;height:46px;border-radius:10px;overflow:hidden;background:#0C1730;border:1px solid var(--line)}
+  .dn-pthumb img{width:100%;height:100%;object-fit:cover;display:block}
+  .dn-pmain{flex:1;min-width:0}
+  .dn-pmeta{color:var(--mut);font-size:11px}
+  .dn-ppick{font-size:15px;font-weight:700;color:var(--txt);margin-top:2px}
+  .dn-plvl{color:var(--mut);font-size:13.5px;margin-top:2px}
+  .dn-pres{text-align:right;font-weight:800;font-size:13.5px}
+  .dn-pres span{display:block;font-weight:700;margin-top:2px}
+  .dn-pres.won{color:var(--mint)}
+  .dn-pres.lost{color:#FF7A6B}
+  .dn-sheet-done{display:block;width:100%;margin-top:18px;background:var(--mint);color:#06231A;border:0;border-radius:14px;padding:15px;font-size:15px;font-weight:800;cursor:pointer}
+  .dn-sheet-ledger{display:block;width:100%;margin-top:10px;text-align:center;background:var(--panel);border:1px solid var(--line);color:var(--txt);border-radius:14px;padding:14px;font-size:15px;font-weight:600}
   .dn-hot-foot{display:flex;align-items:center;gap:10px}
   .dn-hot-note{color:var(--mut);font-size:13.5px}
   .dn-hot-link{margin-left:auto;color:#7CC4FF;font-size:13.5px;font-weight:600;white-space:nowrap;background:none;border:0;cursor:pointer;font-family:inherit;padding:0}
@@ -396,16 +417,67 @@
         <div class="dn-hot-num">{{ c.num }}{% if c.word %} <span class="w">{{ c.word }}</span>{% endif %}{% if c.pct %}<span class="dn-hot-pct">{{ c.pct }}%</span>{% endif %}</div>
         <p class="dn-hot-sub2">{{ c.sub }}</p>
         <div class="dn-hot-dots">{% for r in c.seq %}<span{% if r == 'LOST' %} class="l"{% endif %}></span>{% endfor %}</div>
-        <div class="dn-hot-foot"><span class="dn-hot-note">Graded win or lose</span><button type="button" class="dn-hot-link" onclick="dnHotPlays(this)">See the plays ›</button></div>
-        <div class="dn-hot-plays" hidden>
-          {% for p in c.plays %}<div class="dn-hot-play"><span>{{ '✅' if p.res == 'WON' else '❌' }}</span><span class="pk">{{ p.pick }}</span><span class="mt">{{ p.fecha }}{% if p.lvl %} · {{ p.lvl }}{% endif %}{% if p.liga %} · {{ p.liga }}{% endif %}</span></div>{% endfor %}
-          <a class="dn-hot-full" href="{{ url_for('records') }}">Full record ›</a>
-        </div>
-<script>function dnHotPlays(b){var p=b.closest('.dn-hot-card').querySelector('.dn-hot-plays');if(!p)return;if(p.hasAttribute('hidden')){p.removeAttribute('hidden');b.textContent='Hide the plays ‹';}else{p.setAttribute('hidden','');b.textContent='See the plays ›';}}</script>
+        <div class="dn-hot-foot"><span class="dn-hot-note">Graded win or lose</span><button type="button" class="dn-hot-link" onclick="dnHotOpen({{ loop.index0 }})">See the plays ›</button></div>
       </article>
       {% endfor %}
     </div>
   </section>
+
+  <div class="dn-sheet" id="dnSheet" hidden>
+    <div class="dn-sheet-handle"></div>
+    <div class="dn-sheet-head">
+      <div>
+        <h3>Every play in this window</h3>
+        <p class="dn-sheet-sub" id="dnSheetSub"></p>
+      </div>
+      <button type="button" class="dn-sheet-x" onclick="dnHotClose()" aria-label="Close">✕</button>
+    </div>
+    <div class="dn-sheet-sum">
+      <div class="dn-sheet-sumtop"><span class="dn-hot-pill" id="dnSheetPill"></span><span class="dn-sheet-num" id="dnSheetNum"></span><span class="dn-sheet-sumsub" id="dnSheetSumSub"></span></div>
+      <div class="dn-hot-dots" id="dnSheetDots" style="margin:0"></div>
+    </div>
+    <p class="dn-sheet-line" id="dnSheetLine"></p>
+    <div id="dnSheetList"></div>
+    <button type="button" class="dn-sheet-done" onclick="dnHotClose()">Done</button>
+    <a class="dn-sheet-ledger" href="{{ url_for('records') }}">↗ Public ledger</a>
+  </div>
+<script>
+var dnHotData = {{ hot_home|tojson }};
+function dnHotOpen(i){
+  var c = dnHotData[i]; if(!c) return;
+  var sh = document.getElementById('dnSheet');
+  document.getElementById('dnSheetSub').textContent = c.num + (c.word ? ' ' + c.word : '') + ' · ' + c.sub + ' · Official Plays';
+  document.getElementById('dnSheetPill').textContent = c.pill;
+  document.getElementById('dnSheetNum').textContent = c.num;
+  document.getElementById('dnSheetSumSub').textContent = c.sub;
+  var dots = '';
+  (c.seq || []).forEach(function(r){ dots += '<span' + (r === 'LOST' ? ' class="l"' : '') + '></span>'; });
+  document.getElementById('dnSheetDots').innerHTML = dots;
+  var plays = (c.plays || []).slice().reverse();
+  var w = plays.filter(function(p){ return p.res === 'WON'; }).length;
+  document.getElementById('dnSheetLine').innerHTML = 'All <b>' + plays.length + '</b> plays in this window, oldest first: <b>' + w + ' won</b>, <b>' + (plays.length - w) + ' lost</b>. Nothing hidden.';
+  var html = '';
+  plays.forEach(function(p, ix){
+    var thumb = p.comp ? ('/static/' + p.comp) : "{{ url_for('static', filename='img/sharp-coin.png') }}";
+    var meta = p.fdate + (p.liga ? ' · ' + p.liga : '') + (p.cuota ? ' · ' + p.cuota : '');
+    var won = p.res === 'WON';
+    html += '<div class="dn-prow"><span class="dn-pnum">' + (ix + 1) + '</span>'
+      + '<span class="dn-pthumb"><img src="' + thumb + '" alt=""></span>'
+      + '<div class="dn-pmain"><div class="dn-pmeta">' + meta + '</div>'
+      + '<div class="dn-ppick">' + p.pick + '</div>'
+      + '<div class="dn-plvl">' + (p.lvl || '') + '</div></div>'
+      + '<div class="dn-pres ' + (won ? 'won' : 'lost') + '">' + (won ? 'WON' : 'LOST') + (p.uni ? '<span>' + p.uni + '</span>' : '') + '</div></div>';
+  });
+  document.getElementById('dnSheetList').innerHTML = html;
+  sh.hidden = false;
+  document.body.style.overflow = 'hidden';
+  sh.scrollTop = 0;
+}
+function dnHotClose(){
+  document.getElementById('dnSheet').hidden = true;
+  document.body.style.overflow = '';
+}
+</script>
   {% endif %}
 
   {% if stats.ultimas %}
