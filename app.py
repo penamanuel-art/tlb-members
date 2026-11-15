@@ -6687,12 +6687,13 @@ def admin_preview_home():
 
 
 @app.route("/admin/members-hub")
-@admin_required
+@login_required
 def admin_members_hub():
     """Diseno Vantage 'Members Hub' montado TAL CUAL lo subio Alex
     (2026-11-15: «monta eso igual, sin cambiar nada, solo para mi»).
     Se sirve el archivo crudo, byte por byte, sin pasar por Jinja;
-    SOLO admin/Alex via admin_required."""
+    PUBLICADA a todos los miembros el 2026-11-15 (orden de Alex:
+    «Publicala»): puerta normal de miembro via login_required."""
     with open(os.path.join(BASE_DIR, "templates", "members_hub.html"), "rb") as f:
         return Response(f.read(), mimetype="text/html")
 
