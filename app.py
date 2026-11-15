@@ -3217,7 +3217,10 @@ def hot_home_cards():
                                            "Vault": "VAULT PLAYS"}[nombre],
                                   "plays": [_pl(s)
                                             for s in reversed(it)]})
-        cands.sort(key=lambda c: -c["score"])
+        _orden_liga = {"NFL": 0, "NCAAF": 1, "NBA": 2, "NHL": 3,
+                       "ALL SPORTS": 4, "MLB": 5}
+        cands.sort(key=lambda c: (_orden_liga.get(c["tag"], 4),
+                                  -c["score"]))
         out, por_ambito = [], {}
         for c in cands:
             if por_ambito.get(c["ambito"], 0) >= 2:
