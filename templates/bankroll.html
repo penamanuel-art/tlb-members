@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Your Bankroll · The Sharp Team</title>
+<title>Stake sizing · The Sharp Team</title>
 <link rel="icon" href="{{ url_for('static', filename='img/sharp-team-logo.png') }}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800&family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@500;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#0A1120; --panel:#0F1B31; --panel2:#0C1526;
+    --bg:#05080F; --panel:#131F38; --panel2:#0A1120; --segon:#26334E;
     --line:rgba(147,161,181,.16);
     --mint:#2FE6A7; --mintbg:rgba(47,230,167,.10); --mintline:rgba(47,230,167,.35);
     --txt:#F4F7FB; --mut:#93A1B5; --neg:#FF8585;
@@ -20,105 +20,120 @@
   html,body{margin:0;padding:0}
   body{background:var(--bg);color:var(--txt);font-family:var(--fbody);-webkit-font-smoothing:antialiased}
   a{text-decoration:none;color:inherit}
-  .bk-wrap{max-width:640px;margin:0 auto;padding:0 16px 60px}
-  .bk-top{display:flex;align-items:center;gap:12px;padding:16px 0 6px}
-  .bk-back{width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:var(--panel);color:var(--txt);display:flex;align-items:center;justify-content:center;font-size:17.1px;flex:none}
-  .bk-kicker{font-family:var(--fmono);font-size:11px;font-weight:600;letter-spacing:.22em;color:var(--mint);text-transform:uppercase}
-  h1.bk-title{font-family:var(--fdisp);font-size:27px;font-weight:800;margin:14px 0 8px;line-height:1.15}
-  .bk-sub{color:var(--mut);font-size:15px;line-height:1.55;margin:0 0 20px}
-  .bk-flash{border-radius:12px;padding:12px 14px;font-size:13.5px;margin:0 0 14px;border:1px solid var(--mintline);background:var(--mintbg);color:var(--txt)}
-  .bk-flash.err{border-color:rgba(255,133,133,.4);background:rgba(255,133,133,.08)}
-  .bk-card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:20px 18px}
-  .bk-label{font-family:var(--fmono);font-size:11px;font-weight:600;letter-spacing:.18em;color:var(--mut);text-transform:uppercase;margin:0 0 10px}
-  .bk-field{display:flex;align-items:center;gap:8px;background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:6px 16px}
-  .bk-field:focus-within{border-color:var(--mintline)}
-  .bk-cur{font-family:var(--fmono);font-size:20px;color:var(--mut)}
-  .bk-input{flex:1;min-width:0;background:none;border:0;outline:0;color:var(--txt);font-family:var(--fmono);font-size:27px;font-weight:600;padding:10px 0}
-  .bk-chips{display:flex;flex-wrap:wrap;gap:9px;margin:14px 0 4px}
-  .bk-chip{border:1px solid var(--line);background:var(--panel2);color:var(--txt);border-radius:999px;padding:9px 15px;font-size:13.5px;font-weight:600;cursor:pointer;font-family:inherit}
-  .bk-chip.on{background:var(--mint);border-color:var(--mint);color:#06231A}
-  .bk-duo{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}
-  .bk-cell{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:14px 15px}
-  .bk-cell .bk-label{margin:0 0 6px}
-  .bk-big{font-family:var(--fmono);font-size:20px;font-weight:600;color:var(--txt)}
-  .bk-big.mint{color:var(--mint)}
-  .bk-note{color:var(--mut);font-size:13.5px;line-height:1.55;margin:8px 0 0}
-  .bk-list{margin:18px 0 0;padding:0;list-style:none}
-  .bk-list li{display:flex;gap:10px;align-items:flex-start;color:var(--mut);font-size:13.5px;line-height:1.5;padding:7px 0;border-top:1px solid var(--line)}
-  .bk-list li:first-child{border-top:0}
-  .bk-check{color:var(--mint);font-weight:800;flex:none}
-  .bk-save{display:block;width:100%;margin-top:20px;background:var(--mint);color:#06231A;border:0;border-radius:14px;padding:16px;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit}
-  .bk-cancel{display:block;text-align:center;margin-top:12px;background:var(--panel);border:1px solid var(--line);color:var(--txt);border-radius:14px;padding:14px;font-size:15px;font-weight:600}
+  .ss-sheet{max-width:640px;margin:0 auto;background:var(--panel);border-radius:24px 24px 0 0;min-height:100vh;padding:10px 20px 40px;box-shadow:0 -12px 40px rgba(0,0,0,.45)}
+  .ss-grab{width:44px;height:5px;border-radius:99px;background:rgba(244,247,251,.28);margin:4px auto 14px}
+  .ss-head{display:flex;align-items:flex-start;gap:12px}
+  h1.ss-title{font-family:var(--fdisp);font-size:27px;font-weight:800;margin:0;line-height:1.15;flex:1}
+  .ss-x{width:38px;height:38px;flex:none;display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--mut);border-radius:50%}
+  .ss-intro{color:var(--mut);font-size:15px;line-height:1.55;margin:10px 0 4px}
+  .ss-flash{border-radius:12px;padding:12px 14px;font-size:13.5px;margin:14px 0 0;border:1px solid var(--mintline);background:var(--mintbg);color:var(--txt)}
+  .ss-flash.err{border-color:rgba(255,133,133,.4);background:rgba(255,133,133,.08)}
+  .ss-sec{display:flex;align-items:center;gap:12px;margin:26px 0 12px}
+  .ss-sec span{font-family:var(--fmono);font-size:11px;font-weight:600;letter-spacing:.22em;color:var(--mut);text-transform:uppercase;white-space:nowrap}
+  .ss-sec i{flex:1;height:1px;background:var(--line)}
+  .ss-field{display:flex;align-items:center;gap:8px;background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:6px 16px}
+  .ss-field:focus-within{border-color:var(--mintline)}
+  .ss-cur{font-family:var(--fmono);font-size:20px;color:var(--mut)}
+  .ss-input{flex:1;min-width:0;background:none;border:0;outline:0;color:var(--txt);font-family:var(--fmono);font-size:20px;font-weight:600;padding:10px 0}
+  .ss-chips{display:flex;flex-wrap:wrap;gap:9px;margin:14px 0 2px}
+  .ss-chip{border:1px solid var(--line);background:transparent;color:var(--txt);border-radius:999px;padding:10px 16px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit}
+  .ss-chip.on{background:var(--mint);border-color:var(--mint);color:#06231A}
+  .ss-seg{display:flex;background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:4px;gap:4px}
+  .ss-seg button{flex:1;border:0;background:transparent;color:var(--mut);font-family:inherit;font-size:15px;font-weight:600;padding:12px 4px;border-radius:10px;cursor:pointer}
+  .ss-seg button.on{background:var(--segon);color:var(--txt)}
+  .ss-note{color:var(--mut);font-size:13.5px;line-height:1.55;margin:10px 0 0}
+  .ss-mode{margin-top:12px}
+  .ss-unitval{font-family:var(--fmono);font-size:20px;font-weight:600;color:var(--txt);padding:10px 0}
+  .ss-save{display:block;width:100%;margin-top:30px;background:var(--mint);color:#06231A;border:0;border-radius:14px;padding:17px;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit}
+  .ss-cancel{display:block;text-align:center;margin-top:12px;background:rgba(244,247,251,.05);border:1px solid var(--line);color:var(--txt);border-radius:14px;padding:15px;font-size:15px;font-weight:600}
 </style>
 </head>
 <body>
-<div class="bk-wrap">
-  <div class="bk-top">
-    <a class="bk-back" href="{{ url_for('home') }}" aria-label="Back">‹</a>
-    <span class="bk-kicker">Stake sizing</span>
+<form method="post" action="{{ url_for('bankroll') }}" id="ssForm">
+<div class="ss-sheet">
+  <div class="ss-grab"></div>
+  <div class="ss-head">
+    <h1 class="ss-title">Stake sizing</h1>
+    <a class="ss-x" href="{{ url_for('home') }}" aria-label="Close">✕</a>
   </div>
-  <h1 class="bk-title">Your bankroll</h1>
-  <p class="bk-sub">Optional. Tell us the money you play with and every dollar amount on your cards is sized from it. Never set it and we use the program's reference: a $10,000 bankroll, a $100 unit.</p>
+  <p class="ss-intro">Optional. With a bankroll set, your cards and your tracker suggest a stake from your bankroll and the play's edge. Leave it off to see the program's official stakes. Saved to your account.</p>
 
   {% with msgs = get_flashed_messages(with_categories=true) %}
     {% for cat, msg in msgs %}
-    <div class="bk-flash{% if cat == 'error' %} err{% endif %}">{{ msg }}</div>
+      <div class="ss-flash{% if cat == 'error' %} err{% endif %}">{{ msg }}</div>
     {% endfor %}
   {% endwith %}
 
-  <form method="post" action="{{ url_for('bankroll') }}">
-    <div class="bk-card">
-      <p class="bk-label">Bankroll</p>
-      <div class="bk-field">
-        <span class="bk-cur">$</span>
-        <input class="bk-input" id="bkInput" name="bankroll" type="text" inputmode="decimal" autocomplete="off"
-               value="{{ ('%g' % bankroll) if bankroll else '10000' }}">
-      </div>
-      <div class="bk-chips" id="bkChips">
-        <button type="button" class="bk-chip" data-v="500">$500</button>
-        <button type="button" class="bk-chip" data-v="1000">$1,000</button>
-        <button type="button" class="bk-chip" data-v="2500">$2,500</button>
-        <button type="button" class="bk-chip" data-v="5000">$5,000</button>
-        <button type="button" class="bk-chip" data-v="10000">$10,000</button>
-      </div>
+  <div class="ss-sec"><span>Bankroll</span><i></i></div>
+  <div class="ss-field">
+    <span class="ss-cur">$</span>
+    <input class="ss-input" type="text" inputmode="decimal" name="bankroll" id="bkInput" value="{{ bankroll_txt }}" placeholder="0" autocomplete="off">
+  </div>
+  <div class="ss-chips">
+    {% for amt in [500, 1000, 2500, 5000, 10000] %}
+    <button type="button" class="ss-chip{% if bankroll and bankroll|float == amt %} on{% endif %}" data-amt="{{ amt }}">${{ '{:,}'.format(amt) }}</button>
+    {% endfor %}
+    <button type="submit" class="ss-chip" name="stakes_off" value="1" formnovalidate>Turn stakes off</button>
+  </div>
 
-      <div class="bk-duo">
-        <div class="bk-cell">
-          <p class="bk-label">Your unit</p>
-          <div class="bk-big mint" id="bkUnit">$100</div>
-        </div>
-        <div class="bk-cell">
-          <p class="bk-label">1 unit is</p>
-          <div class="bk-big">1% of it</div>
-        </div>
-      </div>
-      <p class="bk-note">Your unit comes out on its own: it is always 1% of your bankroll. A $2,500 bankroll plays a $25 unit, a $10,000 bankroll plays a $100 unit.</p>
+  <div class="ss-sec"><span>Kelly fraction</span><i></i></div>
+  <input type="hidden" name="sizing" id="sizingInput" value="{{ 'units' if stake_mode != 'kelly' else kelly_fraction }}">
+  <div class="ss-seg" id="kellySeg">
+    <button type="button" data-frac="0.125" class="{% if stake_mode == 'kelly' and kelly_fraction == 0.125 %}on{% endif %}">1/8</button>
+    <button type="button" data-frac="0.25" class="{% if stake_mode == 'kelly' and kelly_fraction == 0.25 %}on{% endif %}">1/4</button>
+    <button type="button" data-frac="0.5" class="{% if stake_mode == 'kelly' and kelly_fraction == 0.5 %}on{% endif %}">1/2</button>
+    <button type="button" data-frac="1" class="{% if stake_mode == 'kelly' and kelly_fraction == 1.0 %}on{% endif %}">Full (aggressive)</button>
+  </div>
+  <p class="ss-note">Quarter Kelly is the default. Stakes are sized per bet from the model's estimated edge, which can be wrong, and bets on the same game are not combined. Full Kelly swings hard.</p>
+  <div class="ss-mode">
+    {% if stake_mode == 'kelly' %}
+    <button type="button" class="ss-chip" id="unitsBtn">Use standard units instead</button>
+    {% else %}
+    <p class="ss-note" id="unitsNote">Right now your stakes use the standard rule: 1% of your bankroll × the play's units. Pick a Kelly fraction above to switch to Kelly sizing.</p>
+    <button type="button" class="ss-chip" id="unitsBtn" style="display:none">Use standard units instead</button>
+    {% endif %}
+  </div>
 
-      <ul class="bk-list">
-        <li><span class="bk-check">✓</span><span>Stakes on your play cards show in your dollars, at your unit size.</span></li>
-        <li><span class="bk-check">✓</span><span>Track a play and it lands in My Bets at your size, and grades on its own.</span></li>
-        <li><span class="bk-check">✓</span><span>The program's official record never changes: it always uses $100 = 1 unit.</span></li>
-      </ul>
+  <div class="ss-sec"><span>Your personal unit</span><i></i></div>
+  <div class="ss-field">
+    <span class="ss-cur">$</span>
+    <span class="ss-unitval" id="unitVal">{{ unit_txt }}</span>
+  </div>
+  <p class="ss-note">What it does: your cards and your Bet Tracker show your own stakes and profit in these units, so you can read your results the way you bet. Your unit is always 1% of your bankroll — set the bankroll above and it follows on its own. It changes no official number: The Sharp Team's published record always uses $100 = 1 unit.</p>
 
-      <button class="bk-save" type="submit">Save bankroll</button>
-      <a class="bk-cancel" href="{{ url_for('home') }}">Cancel</a>
-    </div>
-  </form>
+  <button type="submit" class="ss-save">Save sizing</button>
+  <a class="ss-cancel" href="{{ url_for('home') }}">Cancel</a>
 </div>
+</form>
 <script>
 (function(){
-  var inp = document.getElementById('bkInput'), unit = document.getElementById('bkUnit');
-  var chips = Array.prototype.slice.call(document.querySelectorAll('.bk-chip'));
-  function num(){ var v = parseFloat(String(inp.value).replace(/[^0-9.]/g,'')); return isNaN(v) ? 0 : v; }
-  function fmt(v){ return '$' + (Math.round(v * 100) / 100).toLocaleString('en-US'); }
-  function upd(){
-    var b = num(), u = b * 0.01;
-    unit.textContent = fmt(u);
-    chips.forEach(function(c){ c.classList.toggle('on', parseFloat(c.getAttribute('data-v')) === b); });
-  }
-  chips.forEach(function(c){ c.addEventListener('click', function(){ inp.value = c.getAttribute('data-v'); upd(); }); });
-  inp.addEventListener('input', upd);
-  upd();
+  var input = document.getElementById('bkInput');
+  var unitVal = document.getElementById('unitVal');
+  var chips = document.querySelectorAll('.ss-chip[data-amt]');
+  function num(v){ v = (v||'').toString().replace(/[^0-9.]/g,''); var n = parseFloat(v); return isNaN(n) ? 0 : n; }
+  function fmt(n){ return n % 1 === 0 ? n.toLocaleString('en-US') : n.toFixed(2); }
+  function syncUnit(){ var b = num(input.value); unitVal.textContent = b > 0 ? fmt(b * 0.01) : '—'; }
+  function syncChips(){ var b = num(input.value); chips.forEach(function(c){ c.classList.toggle('on', b === parseFloat(c.getAttribute('data-amt'))); }); }
+  chips.forEach(function(c){ c.addEventListener('click', function(){ input.value = c.getAttribute('data-amt'); syncChips(); syncUnit(); }); });
+  input.addEventListener('input', function(){ syncChips(); syncUnit(); });
+  var sizing = document.getElementById('sizingInput');
+  var segBtns = document.querySelectorAll('#kellySeg button');
+  var unitsBtn = document.getElementById('unitsBtn');
+  var unitsNote = document.getElementById('unitsNote');
+  segBtns.forEach(function(b){ b.addEventListener('click', function(){
+    segBtns.forEach(function(x){ x.classList.remove('on'); });
+    b.classList.add('on');
+    sizing.value = b.getAttribute('data-frac');
+    if (unitsBtn) unitsBtn.style.display = '';
+    if (unitsNote) unitsNote.style.display = 'none';
+  }); });
+  if (unitsBtn) unitsBtn.addEventListener('click', function(){
+    segBtns.forEach(function(x){ x.classList.remove('on'); });
+    sizing.value = 'units';
+    unitsBtn.style.display = 'none';
+    if (unitsNote) unitsNote.style.display = '';
+  });
+  syncUnit();
 })();
 </script>
 </body>
