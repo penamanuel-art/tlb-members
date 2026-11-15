@@ -201,6 +201,7 @@
     </div>
   </section>
 
+  {% if plays %}
   <section class="d2-sec">
     <div class="d2-sec-head">
       <div class="d2-kick">Today</div>
@@ -208,7 +209,6 @@
       <div class="d2-rule"></div>
       {% if card_fecha_txt %}<span class="d2-chip">{{ card_fecha_txt }}</span>{% endif %}
     </div>
-    {% if plays %}
       {% set frees = plays|selectattr('nivel','equalto','FREE')|list %}
       {% set golds = plays|selectattr('nivel','equalto','GOLD')|list %}
       {% set plats = plays|rejectattr('nivel','equalto','GOLD')|rejectattr('nivel','equalto','FREE')|rejectattr('nivel','equalto','VALUE')|list %}
@@ -225,12 +225,8 @@
         {% set ns.n = ns.n + 1 %}
         <div class="d2-play"><div class="d2-num">{{ '%02d'|format(ns.n) }}</div><div class="d2-card">{% if p.nivel in ['ELITE','PLATINUM','VAULT'] and not miembro_platinum %}{% include "_play_card_locked.html" %}{% else %}{% include "_play_card_v5.html" %}{% endif %}</div></div>
       {% endfor %}
-    {% else %}
-      <div class="d2-empty">
-        <span>Plays will show up here the moment they're posted.</span>
-      </div>
-    {% endif %}
   </section>
+  {% endif %}
 
   {% if stats.ultimas %}
   <section class="d2-sec">
