@@ -6735,10 +6735,10 @@ def home():
             _partes.append(f"{_nv} Vault")
         if _nf:
             _partes.append(f"{_nf} Free")
-        estado = {"titulo": _t,
+        estado = {"titulo": _t, "live": True,
                   "sub": " · ".join(_partes)}
     else:
-        estado = {"titulo": "Not posted yet",
+        estado = {"titulo": "Not posted yet", "live": False,
                   "sub": f"Today's card posts at {hora_post} — every play appears here first, with its real ticket."}
     card_fecha_txt = ""
     try:
