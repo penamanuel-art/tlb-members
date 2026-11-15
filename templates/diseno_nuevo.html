@@ -279,10 +279,16 @@
   .dn-u-fine{margin-top:9px;text-align:center;font-size:11px;color:var(--mut)}
 .dn-mem.big{padding:24px 18px;margin-top:6px;border:1px solid rgba(47,230,167,.45);background:linear-gradient(165deg,#132741,#0F1B31 70%);border-radius:18px}
 .dn-mem.big p{line-height:1.55;margin-top:8px}
-.dn-mem.big .dn-u-list{gap:12px;margin:16px 0 4px}
-.dn-mem.big .dn-u-head{margin:18px 0 10px}
-.dn-mem.big .dn-u-chips{gap:8px}
-.dn-mem.big .dn-u-chips span{padding:6px 10px}
+.dn-mem.big .dn-u-head{margin:20px 0 10px}
+.dn-mem.big .dn-u-div{height:1px;background:rgba(255,255,255,.12);margin:16px 0 14px}
+.dn-mem.big .dn-u-get{font-size:12px;font-weight:700;letter-spacing:.1em;color:#8fa3c4;margin:20px 0 4px}
+.dn-mem.big .dn-u-row{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.08)}
+.dn-mem.big .dn-u-row.last{border-bottom:0}
+.dn-mem.big .dn-u-ck{flex:0 0 auto;width:26px;height:26px;border-radius:50%;background:rgba(47,230,167,.15);color:#2FE6A7;text-align:center;line-height:26px;font-size:13.5px;font-weight:800}
+.dn-mem.big .dn-u-row div b{display:block;font-size:15px}
+.dn-mem.big .dn-u-row div span{display:block;font-size:13.5px;color:#8fa3c4;line-height:1.5;margin-top:2px}
+.dn-mem.big .dn-u-chips{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.dn-mem.big .dn-u-chips span{text-align:center;padding:8px 0}
 .dn-mem.big .dn-cta{margin-top:18px;padding:15px}
 .dn-mem.big .dn-u-fine{margin-top:12px}
 
@@ -712,12 +718,12 @@ function dnHotClose(){
       {% if not miembro_platinum %}
       <div class="dn-mem hot big">
         <div class="dn-m-top"><span class="dn-m-name">💎 PLATINUM</span><span class="dn-m-price">TOP TIER</span></div>
-        <p>Platinum is the top tier of The Sharp Team — the strongest plays of the day, every tool open, and the Vault included.</p>
-        <div class="dn-u-list">
-          <div><span>✓</span> <b>Platinum plays</b> — the strongest plays of the day, posted with the real ticket</div>
-          <div><span>✓</span> <b>The Vault Play</b> — our most valuable play, included with Platinum</div>
-          <div><span>✓</span> <b>Sharp Club on Telegram</b> — Platinum plays the moment they post</div>
-        </div>
+        <div class="dn-u-div"></div>
+        <p>The top tier of The Sharp Team — the strongest plays of the day, every tool open, and the Vault included.</p>
+        <div class="dn-u-get">WHAT YOU GET</div>
+        <div class="dn-u-row"><span class="dn-u-ck">✓</span><div><b>Platinum plays</b><span>The strongest plays of the day, posted with the real ticket</span></div></div>
+        <div class="dn-u-row"><span class="dn-u-ck">✓</span><div><b>The Vault Play</b><span>Our most valuable play, included with Platinum</span></div></div>
+        <div class="dn-u-row last"><span class="dn-u-ck">✓</span><div><b>Sharp Club on Telegram</b><span>Platinum plays the moment they post</span></div></div>
         <div class="dn-u-head">EVERY TOOL, UNLOCKED INSTANTLY</div>
         <div class="dn-u-chips"><span>+EV Board</span><span>Player Props</span><span>Sharp Money</span><span>Betting Lines</span><span>Compare Books</span><span>Line Moves</span><span>Price Alerts</span><span>+EV Parlay Builder</span><span>Bet Tracker</span><span>Masterclass</span><span>AI Assistant</span><span>Full Record</span></div>
         <a class="dn-cta" href="{{ url_for('desbloquear_platinum') }}">Unlock Platinum — $15.99/week →</a>
