@@ -39,7 +39,6 @@
   .dn-hello .dn-fecha{font-family:var(--fmono);font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--mint);margin-top:7px}
   .dn-watch{display:inline-flex;align-items:center;gap:9px;margin-top:15px;padding:10px 18px;border:1px solid var(--line);border-radius:999px;color:var(--txt);font-size:16.5px;font-weight:500;text-decoration:none;background:rgba(255,255,255,.02)}
   .dn-watch-ic{display:flex;flex:none}
-  .dn-tirita{background:linear-gradient(90deg, rgba(23,42,66,0) 0%, rgba(23,42,66,.92) 22%, rgba(23,42,66,.92) 78%, rgba(23,42,66,0) 100%);color:var(--mint);font-weight:600;text-align:center;padding:7px 10px;border-radius:8px;margin:2px 0 12px;font-size:15px}
   .dn-hero-card{background:var(--panel);border:1px solid var(--line);border-radius:18px;overflow:hidden;margin-top:16px}
   .dn-live{margin-top:14px;background:var(--panel);border:1px solid var(--line);border-radius:18px;display:flex;align-items:center;gap:14px;padding:17px 18px;text-decoration:none}
   .dn-live-ic{color:var(--txt);flex:none;display:flex}
@@ -285,9 +284,6 @@
       {% for p in golds %}
         {% include "_play_card_v5.html" %}
       {% endfor %}
-      {% if plats and stats.plat10 and stats.plat10.w > stats.plat10.l %}
-      <div class="dn-tirita">🔥 Platinum Plays: {{ stats.plat10.w }}–{{ stats.plat10.l }} in the last 10 plays</div>
-      {% endif %}
       {% for p in plats %}
         {% if p.nivel in ['ELITE','PLATINUM','VAULT'] and not miembro_platinum %}{% include "_play_card_locked.html" %}{% else %}{% include "_play_card_v5.html" %}{% endif %}
       {% endfor %}
