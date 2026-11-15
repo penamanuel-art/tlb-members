@@ -6514,8 +6514,10 @@ def home():
                 _t = datetime.strptime(_gt, "%I:%M %p")
             except ValueError:
                 continue
-            _starts.append(datetime(_now.year, _now.month, _now.day,
-                                    _t.hour, _t.minute, tzinfo=TZ))
+            _s = datetime(_now.year, _now.month, _now.day,
+                          _t.hour, _t.minute, tzinfo=TZ)
+            _starts.append(_s)
+            _p["live_now"] = (_s <= _now <= _s + timedelta(hours=3, minutes=45)) and not _p.get("resultado")
         if _starts:
             esperando = all(s > _now for s in _starts)
             hay_live = any(s <= _now <= s + timedelta(hours=3, minutes=45)
