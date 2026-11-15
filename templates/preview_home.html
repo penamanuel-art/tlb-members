@@ -29,7 +29,6 @@ a{color:var(--au)}
 .nv a:hover{color:var(--t)}
 .pill{margin-left:auto;font-size:12px;letter-spacing:.08em;color:var(--au);border:1px solid var(--gl);border-radius:99px;padding:5px 12px;white-space:nowrap}
 .wrap{max-width:1100px;margin:0 auto;padding:0 20px 90px}
-.pvtag{margin:18px 0 0;border:1px dashed var(--au);border-radius:10px;padding:9px 14px;font-size:12.5px;letter-spacing:.12em;color:var(--au);text-align:center;text-transform:uppercase}
 .hero{display:grid;gap:28px;padding:44px 0 36px}
 .eyebrow{font-size:12px;letter-spacing:.2em;color:var(--au);text-transform:uppercase}
 .hero h1{font-size:clamp(44px,9vw,76px);font-weight:500;margin:10px 0 14px}
@@ -239,7 +238,6 @@ a.tier:hover{border-color:var(--au)}
 
 <header class="hd"><div class="hi"><div class="logo"><i></i>The Sharp Team<small>Members Desk</small></div><nav class="nv"><a href="#desk">Today's plays</a><a href="#performance">Performance</a><a href="#sharp">Sharp Money</a><a href="#tools">Tools</a><a href="{{ url_for('home') }}">Live home</a></nav><span class="pill">{{ etiqueta_miembro or 'Member' }}{% if nombre_corto %} · {{ nombre_corto }}{% endif %}</span></div></header>
 <div class="wrap">
-{% if vantage_live is defined and vantage_live %}<div class="pvtag">Members Desk · Live on your account only</div>{% else %}<div class="pvtag">Preview — Solo para Alex · Esta no es la página en vivo</div>{% endif %}
 <div class="hero">
 <div>{% if fecha %}<div class="eyebrow">{{ fecha }}</div>{% endif %}<h1>{{ saludo or 'Welcome' }}, <em>{{ nombre_corto or 'Member' }}</em>.</h1><p>{% if card_pendiente is defined and card_pendiente %}Today's card is not posted yet — plays post by 2:00 PM ET on weekdays, 11:00 AM ET on weekends. Every play appears here first, with its real ticket. Yesterday's results are in the record below.{% elif _plays %}Today's board is posted — Officials: {{ _plays|length }} {% if _plays|length == 1 %}play{% else %}plays{% endif %}{% if _today and (_today.w or _today.l) %} · {{ _today.w }}–{{ _today.l }} so far{% endif %}{% if hay_live is defined and hay_live %} · a game is live right now{% elif esperando is defined and esperando %} · first game still to come{% endif %}. Every play below carries its price, its stake and its verified ticket.{% else %}Every play on the board carries its price, its stake and its verified ticket — posted before game time, graded in the open.{% endif %}</p></div>
 <div class="card3"><div class="t"><span>The Sharp Team</span><span>{{ etiqueta_miembro or 'Member' }}</span></div><div class="n">{{ nombre_completo or nombre_corto or 'Member' }}</div><div class="b"><span>{% if en_mes_gratis %}Platinum · on us{% if mes_gratis_hasta %} until {{ mes_gratis_hasta }}{% endif %}{% elif _mp %}Platinum · active member{% else %}Free member{% endif %}</span><span>{% if en_mes_gratis and mes_gratis_dias is defined and mes_gratis_dias is not none %}{% if mes_gratis_dias == 0 %}ends today{% elif mes_gratis_dias == 1 %}1 day left{% else %}{{ mes_gratis_dias }} days left{% endif %}{% elif dias_miembro is defined %}Day {{ dias_miembro }} as a member{% endif %}</span></div></div>
