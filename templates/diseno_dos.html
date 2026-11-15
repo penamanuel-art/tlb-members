@@ -29,6 +29,7 @@
   .d2-brand small{display:block;font-family:var(--fmono);font-size:9.5px;font-weight:500;letter-spacing:.3em;color:var(--mint);margin-top:5px}
   .d2-fecha{font-family:var(--fmono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--mut);margin-top:22px}
   .d2-hi{font-family:var(--fdisp);font-size:19px;font-weight:500;color:var(--mut);margin-top:10px}
+  .d2-strip{margin-top:14px;background:var(--mint);color:#06130D;font-weight:700;text-align:center;padding:9px 12px;border-radius:10px;font-size:15px}
   .d2-name{font-family:var(--fdisp);font-size:clamp(32px,9vw,46px);font-weight:800;line-height:1.12;margin-top:2px;overflow-wrap:anywhere}
   .d2-name .d2-dot{color:var(--mint)}
 
@@ -174,6 +175,10 @@
     <div class="d2-hi">{{ saludo }},</div>
     <div class="d2-name">{{ dn_nombre or 'Member' }}<span class="d2-dot">.</span></div>
   </section>
+
+  {% if stats.plat10 and stats.plat10.w > stats.plat10.l %}
+  <div class="d2-strip">🔥 Platinum Plays: {{ stats.plat10.w }}–{{ stats.plat10.l }} in the last 10 plays</div>
+  {% endif %}
 
   <div class="d2-status">
     <span class="d2-pill">
