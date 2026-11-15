@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>The Sharp Team · Dashboard</title>
+<link rel="icon" href="{{ url_for('static', filename='img/sharp-team-logo.png') }}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800&family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#081020; --panel:#0D1830; --panel2:#0A1428;
+    --line:rgba(147,161,181,.16);
+    --mint:#2FE6A7; --mintbg:rgba(47,230,167,.10); --mintline:rgba(47,230,167,.35);
+    --txt:#F4F7FB; --mut:#93A1B5; --neg:#FF8585;
+    --fdisp:'Unbounded',sans-serif; --fbody:'Roboto',sans-serif; --fmono:'Roboto Mono',monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{background:var(--bg);color:var(--txt);font-family:var(--fbody);-webkit-font-smoothing:antialiased}
+  a{text-decoration:none;color:inherit}
+  .d2-wrap{max-width:640px;margin:0 auto;padding:0 16px 108px}
+
+  /* Hero centrado */
+  .d2-hero{padding:34px 0 0;text-align:center}
+  .d2-hero .d2-logo{width:58px;height:58px;border-radius:16px;display:block;margin:0 auto}
+  .d2-brand{font-family:var(--fdisp);font-size:15px;font-weight:800;letter-spacing:.18em;margin-top:13px}
+  .d2-brand small{display:block;font-family:var(--fmono);font-size:9.5px;font-weight:500;letter-spacing:.3em;color:var(--mint);margin-top:5px}
+  .d2-fecha{font-family:var(--fmono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--mut);margin-top:22px}
+  .d2-hi{font-family:var(--fdisp);font-size:19px;font-weight:500;color:var(--mut);margin-top:10px}
+  .d2-name{font-family:var(--fdisp);font-size:clamp(32px,9vw,46px);font-weight:800;line-height:1.12;margin-top:2px;overflow-wrap:anywhere}
+  .d2-name .d2-dot{color:var(--mint)}
+
+  /* Estado del dia: pastilla centrada */
+  .d2-status{margin-top:22px;text-align:center}
+  .d2-pill{display:inline-flex;align-items:center;gap:9px;background:var(--mintbg);border:1px solid var(--mintline);border-radius:999px;padding:10px 18px;font-size:14px;font-weight:700;line-height:1.3;max-width:100%}
+  .d2-pill svg{color:var(--mint);flex:0 0 auto}
+  .d2-status p{margin:9px auto 0;font-size:12.5px;color:var(--mut);line-height:1.5;max-width:420px}
+
+  /* Record: anillo central */
+  .d2-ringbox{margin-top:28px;text-align:center}
+  .d2-ring{position:relative;width:172px;height:172px;margin:0 auto}
+  .d2-ring svg{transform:rotate(-90deg);display:block}
+  .d2-ring .d2-track{stroke:rgba(244,247,251,.08)}
+  .d2-ring .d2-prog{stroke:var(--mint);stroke-linecap:round}
+  .d2-ring-c{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}
+  .d2-ring-c .d2-rec{font-family:var(--fdisp);font-size:27px;font-weight:800}
+  .d2-ring-c .d2-wr{font-family:var(--fmono);font-size:10px;letter-spacing:.18em;color:var(--mut);text-transform:uppercase}
+  .d2-ring-c .d2-wrv{font-family:var(--fmono);font-size:15px;font-weight:600;color:var(--mint)}
+  .d2-duo{margin-top:20px;display:flex;justify-content:center;align-items:stretch;gap:0}
+  .d2-duo .d2-cell{padding:2px 26px;text-align:center}
+  .d2-duo .d2-cell + .d2-cell{border-left:1px solid var(--line)}
+  .d2-duo .k{font-family:var(--fmono);font-size:9.5px;letter-spacing:.15em;color:var(--mut);text-transform:uppercase}
+  .d2-duo .v{font-family:var(--fmono);font-size:19px;font-weight:600;margin-top:5px;white-space:nowrap}
+  .d2-duo .v.pos{color:var(--mint)} .d2-duo .v.neg{color:var(--neg)}
+
+  /* Titulos de seccion centrados */
+  .d2-sec{margin-top:38px}
+  .d2-sec-head{text-align:center;margin-bottom:16px}
+  .d2-sec-head .d2-kick{font-family:var(--fmono);font-size:10px;letter-spacing:.26em;color:var(--mint);text-transform:uppercase}
+  .d2-sec-head h2{font-family:var(--fdisp);font-size:19px;font-weight:700;margin:6px 0 0}
+  .d2-sec-head .d2-rule{width:44px;height:3px;border-radius:99px;background:var(--mint);margin:11px auto 0}
+  .d2-sec-head .d2-chip{display:inline-block;margin-top:11px;font-family:var(--fmono);font-size:10.5px;color:var(--mut);border:1px solid var(--line);border-radius:999px;padding:4px 11px}
+
+  /* Board de jugadas con riel numerado */
+  .d2-play{display:flex;gap:11px;align-items:flex-start}
+  .d2-play + .d2-play{margin-top:16px}
+  .d2-num{flex:0 0 auto;font-family:var(--fmono);font-size:13px;font-weight:600;color:var(--mint);padding-top:16px;min-width:24px;text-align:right}
+  .d2-card{flex:1 1 auto;min-width:0}
+
+  /* Sin card todavia */
+  .d2-empty{background:var(--panel);border:1px dashed var(--mintline);border-radius:16px;padding:26px 18px;text-align:center}
+  .d2-empty b{font-family:var(--fdisp);font-size:15px;display:block}
+  .d2-empty span{display:block;color:var(--mut);font-size:13px;line-height:1.55;margin-top:8px}
+
+  /* Accesos rapidos: lista de filas */
+  .d2-links{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:4px 16px}
+  .d2-link{display:flex;align-items:center;gap:13px;padding:15px 0;color:var(--txt)}
+  .d2-link + .d2-link{border-top:1px solid var(--line)}
+  .d2-link .d2-tile{flex:0 0 auto;width:40px;height:40px;border-radius:12px;background:var(--mintbg);display:flex;align-items:center;justify-content:center;color:var(--mint)}
+  .d2-link .d2-lab{font-size:15px;font-weight:700}
+  .d2-link .d2-sub{display:block;font-size:12px;font-weight:400;color:var(--mut);margin-top:1px}
+  .d2-link .d2-arr{margin-left:auto;color:var(--mint);font-family:var(--fmono);font-size:16px}
+
+  /* Record por liga: tarjetas 2 columnas */
+  .d2-lgs{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .d2-lg{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:15px 15px 13px}
+  .d2-lg.wide{grid-column:1 / -1}
+  .d2-lg .d2-lg-name{font-size:13px;font-weight:700;display:flex;align-items:center;gap:7px}
+  .d2-lg .d2-lg-rec{font-family:var(--fmono);font-size:21px;font-weight:600;margin-top:9px}
+  .d2-lg .d2-lg-meta{font-family:var(--fmono);font-size:11.5px;color:var(--mut);margin-top:5px;display:flex;gap:10px;flex-wrap:wrap}
+  .d2-lg .d2-lg-meta .pos{color:var(--mint)} .d2-lg .d2-lg-meta .neg{color:var(--neg)}
+
+  /* Pie */
+  .d2-foot{margin-top:38px;text-align:center;color:var(--mut);font-size:11px;line-height:1.7}
+  .d2-foot .d2-fb{font-family:var(--fdisp);font-size:10px;letter-spacing:.16em;color:var(--txt)}
+
+  /* Barra inferior */
+  .d2-tabs{position:fixed;left:0;right:0;bottom:0;z-index:60;background:rgba(8,16,32,.97);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
+  .d2-tabs-in{max-width:640px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr)}
+  .d2-tab{position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 0 8px;color:#969EA9;font-size:10.5px;font-weight:500}
+  .d2-tab svg{display:block}
+  .d2-tab.on{color:var(--mint)}
+  .d2-tab.on::before{content:"";position:absolute;top:-1px;left:50%;transform:translateX(-50%);width:36px;height:3px;border-radius:0 0 4px 4px;background:var(--mint)}
+</style>
+</head>
+<body>
+
+<div class="d2-wrap">
+
+  <section class="d2-hero">
+    <img class="d2-logo" src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team">
+    <div class="d2-brand">THE SHARP TEAM<small>MEMBERS DASHBOARD</small></div>
+    <div class="d2-fecha">{{ fecha }}</div>
+    <div class="d2-hi">{{ saludo }},</div>
+    <div class="d2-name">{{ dn_nombre or 'Member' }}<span class="d2-dot">.</span></div>
+  </section>
+
+  <div class="d2-status">
+    <span class="d2-pill">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+      {{ estado.titulo }}
+    </span>
+    <p>{{ estado.sub }}</p>
+  </div>
+
+  <section class="d2-ringbox" aria-label="Program record">
+    <div class="d2-ring">
+      <svg width="172" height="172" viewBox="0 0 172 172">
+        <circle class="d2-track" cx="86" cy="86" r="64" fill="none" stroke-width="10"/>
+        <circle class="d2-prog" cx="86" cy="86" r="64" fill="none" stroke-width="10" stroke-dasharray="{{ (stats.win_rate / 100 * 402.12)|round(1) }} 402.12"/>
+      </svg>
+      <div class="d2-ring-c">
+        <div class="d2-rec">{{ stats.ganadas }}–{{ stats.perdidas }}</div>
+        <div class="d2-wr">Win rate</div>
+        <div class="d2-wrv">{{ stats.win_rate }}%</div>
+      </div>
+    </div>
+    <div class="d2-duo">
+      <div class="d2-cell"><div class="k">Program net</div><div class="v {{ 'pos' if stats.profit > 0 else ('neg' if stats.profit < 0 else '') }}">{{ stats.profit_txt }}</div></div>
+      <div class="d2-cell"><div class="k">Platinum · Last 10</div><div class="v">{% if stats.plat10 %}{{ stats.plat10.w }}–{{ stats.plat10.l }}{% else %}—{% endif %}</div></div>
+    </div>
+  </section>
+
+  <section class="d2-sec">
+    <div class="d2-sec-head">
+      <div class="d2-kick">Today</div>
+      <h2>The board</h2>
+      <div class="d2-rule"></div>
+      {% if card_fecha_txt %}<span class="d2-chip">{{ card_fecha_txt }}</span>{% endif %}
+    </div>
+    {% if plays %}
+      {% set frees = plays|selectattr('nivel','equalto','FREE')|list %}
+      {% set golds = plays|selectattr('nivel','equalto','GOLD')|list %}
+      {% set plats = plays|rejectattr('nivel','equalto','GOLD')|rejectattr('nivel','equalto','FREE')|rejectattr('nivel','equalto','VALUE')|list %}
+      {% set ns = namespace(n=0) %}
+      {% for p in frees %}
+        {% set ns.n = ns.n + 1 %}
+        <div class="d2-play"><div class="d2-num">{{ '%02d'|format(ns.n) }}</div><div class="d2-card">{% if miembro_platinum %}{% include "_play_card_v5.html" %}{% else %}{% include "_play_card_locked.html" %}{% endif %}</div></div>
+      {% endfor %}
+      {% for p in golds %}
+        {% set ns.n = ns.n + 1 %}
+        <div class="d2-play"><div class="d2-num">{{ '%02d'|format(ns.n) }}</div><div class="d2-card">{% include "_play_card_v5.html" %}</div></div>
+      {% endfor %}
+      {% for p in plats %}
+        {% set ns.n = ns.n + 1 %}
+        <div class="d2-play"><div class="d2-num">{{ '%02d'|format(ns.n) }}</div><div class="d2-card">{% if p.nivel in ['ELITE','PLATINUM','VAULT'] and not miembro_platinum %}{% include "_play_card_locked.html" %}{% else %}{% include "_play_card_v5.html" %}{% endif %}</div></div>
+      {% endfor %}
+    {% else %}
+      <div class="d2-empty">
+        <b>Not posted yet</b>
+        <span>Alex posts the board by 2:00 PM ET on weekdays and by 11:00 AM ET on weekends. Every play appears here first, with its real ticket.</span>
+      </div>
+    {% endif %}
+  </section>
+
+  <section class="d2-sec">
+    <div class="d2-sec-head">
+      <div class="d2-kick">Shortcuts</div>
+      <h2>Quick links</h2>
+      <div class="d2-rule"></div>
+    </div>
+    <nav class="d2-links">
+      <a class="d2-link" href="{{ url_for('tracker') }}">
+        <span class="d2-tile"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2.5 2.5 0 0 0 0 5v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2.5 2.5 0 0 0 0-5Z"/><path d="M13 5v2M13 11v2M13 17v2"/></svg></span>
+        <span><span class="d2-lab">Bet Tracker</span><span class="d2-sub">Your tracked plays and results</span></span>
+        <span class="d2-arr">→</span>
+      </a>
+      <a class="d2-link" href="{{ url_for('ev_board') }}">
+        <span class="d2-tile"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4.5 13.5H11L9.5 22 19 10h-6.5L13 2Z"/></svg></span>
+        <span><span class="d2-lab">+EV Board</span><span class="d2-sub">Live edges against the market</span></span>
+        <span class="d2-arr">→</span>
+      </a>
+      <a class="d2-link" href="{{ url_for('game_center') }}">
+        <span class="d2-tile"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2.2"/><circle cx="10" cy="17" r="2.2"/></svg></span>
+        <span><span class="d2-lab">Odds Screen</span><span class="d2-sub">Lines from every book, one screen</span></span>
+        <span class="d2-arr">→</span>
+      </a>
+      <a class="d2-link" href="{{ url_for('cuenta') }}">
+        <span class="d2-tile"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c1.4-3.2 4.2-4.8 7.5-4.8s6.1 1.6 7.5 4.8"/></svg></span>
+        <span><span class="d2-lab">Account</span><span class="d2-sub">Plan, profile and settings</span></span>
+        <span class="d2-arr">→</span>
+      </a>
+    </nav>
+  </section>
+
+  {% if stats.ligas %}
+  <section class="d2-sec">
+    <div class="d2-sec-head">
+      <div class="d2-kick">All time</div>
+      <h2>Record by league</h2>
+      <div class="d2-rule"></div>
+    </div>
+    <div class="d2-lgs">
+      {% for lg in stats.ligas %}
+      <div class="d2-lg{% if loop.last and loop.length is odd %} wide{% endif %}">
+        <div class="d2-lg-name">{{ lg.icono }} {{ lg.liga }}</div>
+        <div class="d2-lg-rec">{{ lg.w }}–{{ lg.l }}</div>
+        <div class="d2-lg-meta"><span>{{ lg.pct }}% wins</span><span class="{{ 'pos' if lg.profit > 0 else ('neg' if lg.profit < 0 else '') }}">{{ ('+$' if lg.profit > 0 else ('-$' if lg.profit < 0 else '$')) ~ ('{:,.2f}'.format(lg.profit|abs)) }}</span></div>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
+  <footer class="d2-foot">
+    <div class="d2-fb">THE SHARP TEAM</div>
+    New York, NY · For entertainment only · 21+<br>
+    If gambling stops being fun, call 1-800-GAMBLER.
+  </footer>
+
+</div>
+
+<nav class="d2-tabs">
+  <div class="d2-tabs-in">
+    <a class="d2-tab on" href="{{ url_for('home') }}">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 10.8 12 3.5l8.5 7.3"/><path d="M5.5 9.5V20h13V9.5"/></svg>
+      Today
+    </a>
+    <a class="d2-tab" href="{{ url_for('game_center') }}">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg>
+      Odds
+    </a>
+    <a class="d2-tab" href="{{ url_for('tools') }}">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2.2"/><circle cx="10" cy="17" r="2.2"/></svg>
+      Tools
+    </a>
+    <a class="d2-tab" href="{{ url_for('tracker') }}">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2.5 2.5 0 0 0 0 5v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2.5 2.5 0 0 0 0-5Z"/><path d="M13 5v2M13 11v2M13 17v2"/></svg>
+      My Bets
+    </a>
+    <a class="d2-tab" href="{{ url_for('cuenta') }}">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c1.4-3.2 4.2-4.8 7.5-4.8s6.1 1.6 7.5 4.8"/></svg>
+      Account
+    </a>
+  </div>
+</nav>
+
+</body>
+</html>
