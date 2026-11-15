@@ -121,6 +121,8 @@
   .dn-hot-ledger{margin-left:auto;flex:0 0 auto;display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--panel);color:var(--txt);border-radius:12px;padding:9px 13px;font-size:13.5px;font-weight:600;white-space:nowrap}
   .dn-hot-row{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;padding:10px 2px 12px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
   .dn-hot-row::-webkit-scrollbar{display:none}
+  .dn-hot-track{height:4px;background:rgba(147,161,181,.18);border-radius:99px;margin:2px 2px 0;overflow:hidden}
+  .dn-hot-fill{height:100%;background:var(--mint);border-radius:99px;width:20%}
   .dn-hot-card{flex:0 0 calc(100% - 30px);scroll-snap-align:start;position:relative;background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--mint);box-shadow:0 12px 30px rgba(0,0,0,.25);border-radius:20px;padding:18px}
   .dn-hot-card.cold::before{background:linear-gradient(180deg,#ffb199 0%,#ff5a3c 45%,#d92c1f 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.6),inset 0 -2px 3px rgba(0,0,0,.35),0 3px 8px rgba(217,44,31,.45)}
   .dn-hot-top{display:flex;align-items:center;gap:10px}
@@ -414,7 +416,7 @@
       </div>
       <a class="dn-hot-ledger" href="{{ url_for('records') }}">↗ Public ledger</a>
     </div>
-    <div class="dn-hot-row">
+    <div class="dn-hot-row" id="dnHotRow">
       {% for c in hot_home %}
       <article class="dn-hot-card{% if c.temp == 'cold' %} cold{% endif %}">
         <div class="dn-hot-top"><span class="dn-hot-pill">{{ c.pill }}</span><span class="dn-hot-tag">{{ c.tag }}</span></div>
@@ -426,7 +428,25 @@
       </article>
       {% endfor %}
     </div>
+    {% if hot_home|length > 1 %}<div class="dn-hot-track"><div class="dn-hot-fill" id="dnHotFill"></div></div>{% endif %}
   </section>
+<script>
+(function(){
+  var row = document.getElementById('dnHotRow'), fill = document.getElementById('dnHotFill');
+  if(!row || !fill) return;
+  function upd(){
+    var max = row.scrollWidth - row.clientWidth;
+    var w = Math.min(100, row.clientWidth / row.scrollWidth * 100);
+    fill.style.width = w + '%';
+    var frac = max > 0 ? row.scrollLeft / max : 0;
+    fill.style.marginLeft = (frac * (100 - w)) + '%';
+  }
+  row.addEventListener('scroll', upd, {passive:true});
+  window.addEventListener('resize', upd);
+  window.addEventListener('load', upd);
+  upd();
+})();
+</script>
 
   <div class="dn-sheet" id="dnSheet" hidden>
     <div class="dn-sheet-handle"></div>
