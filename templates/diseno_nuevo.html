@@ -282,8 +282,10 @@
   .dn-f-socials a{color:var(--txt);text-decoration:none}
   .dn-f-legal{margin:0 0 12px;line-height:1.65}
   .dn-f-legal b{color:var(--txt)}
-  .dn-f-links{font-size:13.5px}
-  .dn-f-links a{color:var(--txt);text-decoration:none}
+  .dn-fcols{display:grid;grid-template-columns:1fr 1fr;gap:0 18px;margin-bottom:28px}
+  .dn-fsec{margin-bottom:26px}
+  .dn-fsec h4{font-family:var(--fdisp);font-size:15px;font-weight:700;color:var(--txt);margin:0 0 10px}
+  .dn-fsec a{display:block;color:var(--mut);text-decoration:none;font-size:15px;padding:5px 0}
 
   /* Barra inferior */
   .dn-tabs{position:fixed;left:0;right:0;bottom:0;z-index:60;background:#0A1120;border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
@@ -707,6 +709,45 @@ function dnHotClose(){
   </section>
 
   <footer class="dn-foot">
+    <div class="dn-fcols">
+      <div>
+        <div class="dn-fsec"><h4>Picks &amp; Record</h4>
+          <a href="{{ url_for('home') }}">Today's Card</a>
+          <a href="{{ url_for('records') }}">Full Record</a>
+          <a href="{{ url_for('game_center') }}">Betting Lines</a>
+          <a href="{{ url_for('balances') }}">Sportsbooks</a>
+        </div>
+        <div class="dn-fsec"><h4>Tools</h4>
+          <a href="/ev-board">+EV Board</a>
+          <a href="/props">Player Props</a>
+          <a href="/sharp">Sharp Money</a>
+          <a href="/tools/line-moves">Line Moves</a>
+          <a href="/alertas">Price Alerts</a>
+          <a href="/tools/calculators">Calculators</a>
+          <a href="{{ url_for('tools') }}">All Tools</a>
+        </div>
+      </div>
+      <div>
+        <div class="dn-fsec"><h4>Company</h4>
+          <a href="{{ url_for('about') }}">About</a>
+          <a href="/how-to-verify">How We Verify</a>
+          <a href="/faqs">FAQs</a>
+          <a href="/testimonials">Testimonials</a>
+          <a href="/contact">Contact</a>
+          <a href="{{ url_for('desbloquear_platinum') }}">Unlock Platinum</a>
+        </div>
+        <div class="dn-fsec"><h4>Learn</h4>
+          <a href="{{ url_for('masterclass') }}">Masterclass</a>
+          <a href="/guides/reading-card">How to Read a Card</a>
+          <a href="/guides/moneyline">Moneyline Guide</a>
+          <a href="/guides/glossary">Betting Glossary</a>
+        </div>
+        <div class="dn-fsec"><h4>Legal</h4>
+          <a href="/terms">Terms of Use</a>
+          <a href="/privacy">Privacy Policy</a>
+        </div>
+      </div>
+    </div>
     <div class="dn-f-contact">\u2709\ufe0f <a href="mailto:thesharpteam8@gmail.com">thesharpteam8@gmail.com</a></div>
     <div class="dn-f-socials">
       <a href="https://t.me/thesharpteam" target="_blank" rel="noopener">Telegram</a>
@@ -716,7 +757,6 @@ function dnHotClose(){
     </div>
     <p class="dn-f-legal"><b>The Sharp Team</b> &middot; New York, NY. &copy; 2026 The Sharp Team. All rights reserved.</p>
     <p class="dn-f-legal">Must be 21+ (or of legal wagering age in your jurisdiction) to use this service. The Sharp Team is a sports handicapping information and analytics service. We are <b>not</b> a sportsbook, do not accept or place wagers, and do not guarantee any winnings or results. All picks, tools, odds data and AI output are for entertainment and educational purposes only and are not financial, investment, or betting advice. Odds and data are sourced from third parties and may be delayed or inaccurate. Bet responsibly. If gambling stops being fun, call 1-800-GAMBLER.</p>
-    <div class="dn-f-links"><a href="/terms">Terms</a> &middot; <a href="/privacy">Privacy</a> &middot; <a href="/contact">Contact</a></div>
   </footer>
 
   <script>
