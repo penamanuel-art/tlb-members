@@ -33,7 +33,8 @@
 
   /* Saludo */
   .dn-hello{padding:22px 0 0}
-  .dn-hello h1{font-family:var(--fdisp);font-size:22.8px;font-weight:700;line-height:1.25;margin:0;color:var(--txt)}
+  .dn-hello h1{font-family:var(--fdisp);font-size:32px;font-weight:700;line-height:1.2;margin:0;color:var(--txt)}
+  .dn-hello h1 .dn-name{font-size:34px}
   .dn-hello h1 .dn-dot{color:var(--mint)}
   .dn-hello .dn-fecha{font-family:var(--fmono);font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--mint);margin-top:7px}
 
@@ -186,7 +187,7 @@
 <div class="dn-wrap">
 
   <section class="dn-hello">
-    <h1>{{ saludo }}, {{ dn_nombre or 'Member' }}<span class="dn-dot">.</span></h1>
+    <h1>{{ saludo }}, <span class="dn-name">{{ dn_nombre or 'Member' }}</span><span class="dn-dot">.</span></h1>
     <div class="dn-fecha">{{ fecha }}</div>
   </section>
 
