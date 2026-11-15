@@ -86,6 +86,73 @@
   .res.live{background:var(--mint-dim);border:1px solid var(--mint);color:var(--mint)}
   .final{font-size:12px;color:var(--txt-2);margin-top:9px;font-family:'Roboto Mono',monospace}
 
+  /* ── Card extras: pills, chips, buttons, WHY (botones de la tarjeta original) ── */
+  .matchrow{display:flex;align-items:flex-start;gap:8px}
+  .matchrow .grow{flex:1;min-width:0}
+  .pills{display:inline-flex;gap:5px;flex:none;margin-left:auto;padding-top:1px}
+  .pill{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;color:var(--txt-2);background:var(--navy-2);border:1px solid var(--line);border-radius:999px;padding:3px 8px;cursor:pointer;font-family:inherit;white-space:nowrap;line-height:1.3}
+  .pill.steam{color:var(--mint);border-color:var(--mint)}
+  .clickable{cursor:pointer}
+  .inj{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:700;color:var(--mint);background:var(--navy-2);border:1px solid var(--mint);border-radius:999px;padding:4px 9px;cursor:pointer;font-family:inherit;white-space:nowrap}
+  .tmatched{font-size:11.5px;color:var(--mint);font-weight:600;margin-top:9px}
+  .meta{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:11px}
+  .venue{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:500;color:var(--txt-2);background:none;border:none;padding:2px 0;cursor:pointer;font-family:inherit}
+  .btns{display:flex;flex-wrap:wrap;gap:6px;margin-top:13px}
+  .btn{flex:1 1 auto;min-width:max-content;text-align:center;font-size:13.5px;font-weight:600;white-space:nowrap;color:var(--txt);background:var(--navy-2);border:1px solid var(--line);border-radius:11px;padding:11px 10px;text-decoration:none;box-sizing:border-box;cursor:pointer;font-family:inherit}
+  .btn.place{background:var(--mint);border-color:var(--mint);color:#000;font-weight:700}
+  .btn.share{flex:0 0 46px;min-width:46px;padding:11px 0}
+  .btn.tracked{color:var(--txt-3);cursor:default}
+  .why{margin-top:10px;width:100%;display:flex;align-items:center;gap:9px;background:var(--navy-2);border:1px solid var(--mint);border-radius:12px;padding:11px 13px;cursor:pointer;font-family:inherit;text-align:left;box-sizing:border-box}
+  .why .t{font-size:12.5px;font-weight:700;letter-spacing:.06em;color:var(--mint);white-space:nowrap}
+  .why .n{font-size:12.5px;color:var(--txt-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .why .h{margin-left:auto;font-size:11.5px;color:var(--txt-3);white-space:nowrap}
+
+  /* ── Hoja de detalle (bottom sheet, como la original) ── */
+  .pvsheet{display:none;position:fixed;inset:0;background:rgba(3,6,12,.9);z-index:200;align-items:flex-end;justify-content:center}
+  .pvsheet.open{display:flex}
+  .pvsheet-in{background:var(--navy-1);border:1px solid var(--line);border-bottom:none;border-radius:22px 22px 0 0;max-width:560px;width:100%;max-height:92dvh;overflow-y:auto;padding:12px 18px calc(20px + env(safe-area-inset-bottom));color:var(--txt)}
+  .grab{width:44px;height:5px;border-radius:99px;background:var(--navy-3);margin:0 auto 12px}
+  .sheet-head{display:flex;gap:10px;align-items:flex-start}
+  .kick{font-size:11px;font-weight:700;letter-spacing:.18em;color:var(--mint)}
+  .sheet-title{font-family:'Unbounded',sans-serif;font-size:19px;font-weight:700;margin-top:5px;line-height:1.25}
+  .sheet-sub{font-size:13px;color:var(--txt-2);margin-top:3px}
+  .xbtn{margin-left:auto;flex:none;width:36px;height:36px;border-radius:50%;background:var(--navy-2);border:1px solid var(--line);color:var(--txt);font-size:16px;cursor:pointer}
+  .srow{display:flex;justify-content:space-between;gap:14px;padding:7px 0;border-top:1px solid var(--line);font-size:14px}
+  .srow .k{color:var(--txt-3);flex:none}
+  .srow .v{font-weight:600;text-align:right}
+  .srow .v .amt{color:var(--mint)}
+  .prog{font-size:10.5px;font-weight:700;letter-spacing:.14em;color:var(--mint);border:1px solid var(--mint);padding:4px 9px;border-radius:8px}
+  .wu{margin-top:12px;border:1px solid var(--line);border-radius:12px;padding:11px 13px;background:var(--navy-2)}
+  .wu summary{font-size:12.5px;font-weight:700;letter-spacing:.1em;color:var(--mint);cursor:pointer;list-style:none}
+  .wu summary::-webkit-details-marker{display:none}
+  .wu-row{display:flex;justify-content:space-between;gap:12px;padding:5px 0;font-size:13.5px;color:var(--txt-2)}
+  .wu-row b{color:var(--txt);text-align:right}
+  .wu-p{font-size:13.5px;color:var(--txt-2);line-height:1.55;margin-top:8px}
+  .wu-p b{color:var(--mint)}
+  .timg{margin-top:14px;border-radius:14px;overflow:hidden;position:relative;border:1px solid var(--line)}
+  .timg img{width:100%;display:block;height:auto}
+  .matched-badge{position:absolute;top:8px;right:8px;font-size:10.5px;font-weight:800;letter-spacing:.08em;color:#000;background:var(--mint);padding:4px 9px;border-radius:999px}
+  .note{font-size:12.5px;color:var(--txt-3);line-height:1.5;margin-top:10px}
+  .big-track{display:block;text-align:center;font-size:15.5px;font-weight:700;color:var(--txt);background:var(--navy-2);border:1px solid var(--line);border-radius:13px;padding:12px;margin-top:14px;text-decoration:none;cursor:pointer;box-sizing:border-box}
+  .big-tracked{display:block;text-align:center;font-size:15.5px;font-weight:700;color:var(--txt-3);background:var(--navy-2);border:1px solid var(--line);border-radius:13px;padding:12px;margin-top:14px;box-sizing:border-box}
+  .sbtns{display:flex;gap:8px;margin-top:9px}
+
+  /* ── Popover de chips (lesiones / clima / línea, como la original) ── */
+  .pvpop{display:none;position:fixed;inset:0;background:rgba(3,6,12,.85);z-index:210;align-items:center;justify-content:center;padding:18px}
+  .pvpop.open{display:flex}
+  .pvpop-in{background:var(--navy-1);border:1px solid var(--line);border-radius:16px;max-width:420px;width:100%;max-height:75vh;overflow-y:auto;padding:15px 17px}
+  .pvpop-h{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+  .pvpop-t{font-size:15px;font-weight:700;line-height:1.35}
+  .pvpop-row{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-top:1px solid var(--line);font-size:13.5px}
+  .pvpop-row .k{color:var(--txt-3);flex:none}
+  .pvpop-row .v{font-weight:600;text-align:right}
+  .pvpop-row .v.for{color:var(--mint)}
+  .pvpop-pl{padding:7px 0;border-top:1px solid var(--line)}
+  .pvpop-nm{font-size:14px;font-weight:600}
+  .pvpop-meta{font-size:12.5px;color:var(--txt-2);margin-top:1px}
+  .pvpop-meta .st{color:var(--mint);font-weight:700}
+  .pvpop-note{font-size:12px;color:var(--txt-3);line-height:1.5;margin-top:8px}
+
   /* ── Risk band ───────────────────────── */
   .risk{margin-top:28px;border-radius:18px;border:1px solid var(--line);background:var(--navy-1);padding:18px;display:flex;align-items:center;gap:14px}
   .risk .lab{font-size:10.5px;letter-spacing:.2em;color:var(--txt-2);font-weight:700}
@@ -172,67 +239,132 @@
       <div class="card-top"><span class="chip plat">💎 PLATINUM</span><span class="lg">NCAAF</span></div>
       <div class="card-main">
         <div class="logo-ring"><img src="https://a.espncdn.com/i/teamlogos/ncaa/500/254.png" alt="Utah Utes logo"></div>
-        <div>
-          <div class="pick">Utah Utes ML</div>
-          <div class="match">Utah Utes @ Arizona Wildcats · 10:30 PM ET</div>
+        <div class="grow" style="flex:1;min-width:0">
+          <div class="pick clickable" data-open-sheet="sheet-utah">Utah Utes ML</div>
+          <div class="matchrow">
+            <div class="grow">
+              <div class="match clickable" data-open-sheet="sheet-utah">Utah Utes @ Arizona Wildcats · 10:30 PM ET</div>
+            </div>
+            <div class="pills">
+              <button type="button" class="pill steam" data-pop="lines" data-card="utah">⚡ -130</button>
+              <button type="button" class="pill" data-pop="weather" data-card="utah">🌥 58°</button>
+            </div>
+          </div>
         </div>
       </div>
       <div class="card-foot">
         <div class="stat"><small>PRICE</small>−104</div>
+        <button type="button" class="inj" data-pop="injuries" data-card="utah" aria-label="Injuries">✚ 0</button>
         <div class="stat"><small>STAKE</small>$100</div>
         <span class="res live">● IN PROGRESS</span>
       </div>
+      <div class="tmatched">✓ Ticket matched</div>
+      <div class="btns">
+        <a class="btn place" href="https://novig.com" target="_blank" rel="noopener">↗ Place at Novig</a>
+        <button class="btn share" type="button" aria-label="Share" onclick="pvShare('Utah Utes ML')">↗</button>
+        <button class="btn" type="button" data-open-sheet="sheet-utah">🎫 Receipt</button>
+        <a class="btn pv-track" href="{{ url_for('track', play_id='play-2026-11-14-utah-utes') }}" data-track-url="{{ url_for('track', play_id='play-2026-11-14-utah-utes') }}">+ Track</a>
+      </div>
+      <button type="button" class="why" data-open-sheet="sheet-utah" data-why="1"><span class="t">📊 WHY WE LIKE IT</span><span class="n">Model 56.4% · Edge 3.5 · EV +6.7%</span><span class="h">Tap to expand full data ▾</span></button>
     </article>
 
     <article class="card">
       <div class="card-top"><span class="chip goldl">GOLD</span><span class="lg">NCAAF</span></div>
       <div class="card-main">
         <div class="logo-ring"><img src="https://a.espncdn.com/i/teamlogos/ncaa/500/264.png" alt="Washington Huskies logo"></div>
-        <div>
-          <div class="pick">Washington Huskies ML</div>
-          <div class="match">Washington Huskies @ Michigan State Spartans</div>
-          <div class="final">Final · Washington 21 — Michigan State 14</div>
+        <div style="flex:1;min-width:0">
+          <div class="pick clickable" data-open-sheet="sheet-washington">Washington Huskies ML</div>
+          <div class="matchrow">
+            <div class="grow">
+              <div class="match clickable" data-open-sheet="sheet-washington">Washington Huskies @ Michigan State Spartans · 5:30 PM ET</div>
+              <div class="final">Final · Washington 21 — Michigan State 14</div>
+            </div>
+            <div class="pills">
+              <button type="button" class="pill" data-pop="weather" data-card="washington">🌥 43°</button>
+            </div>
+          </div>
         </div>
       </div>
       <div class="card-foot">
         <div class="stat"><small>PRICE</small>−130</div>
+        <button type="button" class="inj" data-pop="injuries" data-card="washington" aria-label="Injuries">✚ 0</button>
         <div class="stat"><small>STAKE</small>$60</div>
         <span class="res won">WON +$46.19</span>
       </div>
+      <div class="tmatched">✓ Ticket matched</div>
+      <div class="btns">
+        <a class="btn place" href="https://novig.com" target="_blank" rel="noopener">↗ Place at Novig</a>
+        <button class="btn share" type="button" aria-label="Share" onclick="pvShare('Washington Huskies ML')">↗</button>
+        <button class="btn" type="button" data-open-sheet="sheet-washington">🎫 Receipt</button>
+        <a class="btn pv-track" href="{{ url_for('track', play_id='play-2026-11-14-washington-huskies') }}" data-track-url="{{ url_for('track', play_id='play-2026-11-14-washington-huskies') }}">+ Track</a>
+      </div>
+      <button type="button" class="why" data-open-sheet="sheet-washington" data-why="1"><span class="t">📊 WHY WE LIKE IT</span><span class="n">Model 59.4% · Edge 2.9 · EV +5.2%</span><span class="h">Tap to expand full data ▾</span></button>
     </article>
 
     <article class="card">
       <div class="card-top"><span class="chip goldl">GOLD</span><span class="lg">NCAAF</span></div>
       <div class="card-main">
         <div class="logo-ring"><img src="https://a.espncdn.com/i/teamlogos/ncaa/500/277.png" alt="West Virginia Mountaineers logo"></div>
-        <div>
-          <div class="pick">West Virginia Mountaineers ML</div>
-          <div class="match">Kansas Jayhawks @ West Virginia Mountaineers</div>
-          <div class="final">Final · West Virginia 14 — Kansas 37</div>
+        <div style="flex:1;min-width:0">
+          <div class="pick clickable" data-open-sheet="sheet-wvu">West Virginia Mountaineers ML</div>
+          <div class="matchrow">
+            <div class="grow">
+              <div class="match clickable" data-open-sheet="sheet-wvu">West Virginia Mountaineers @ Kansas Jayhawks · 3:30 PM ET</div>
+              <div class="final">Final · West Virginia 14 — Kansas 37</div>
+            </div>
+            <div class="pills">
+              <button type="button" class="pill" data-pop="weather" data-card="wvu">🌥 45°</button>
+            </div>
+          </div>
         </div>
       </div>
       <div class="card-foot">
         <div class="stat"><small>PRICE</small>−125</div>
+        <button type="button" class="inj" data-pop="injuries" data-card="wvu" aria-label="Injuries">✚ 0</button>
         <div class="stat"><small>STAKE</small>$59.47</div>
         <span class="res lost">LOST −$59.47</span>
       </div>
+      <div class="tmatched">✓ Ticket matched</div>
+      <div class="btns">
+        <a class="btn place" href="https://novig.com" target="_blank" rel="noopener">↗ Place at Novig</a>
+        <button class="btn share" type="button" aria-label="Share" onclick="pvShare('West Virginia Mountaineers ML')">↗</button>
+        <button class="btn" type="button" data-open-sheet="sheet-wvu">🎫 Receipt</button>
+        <a class="btn pv-track" href="{{ url_for('track', play_id='play-2026-11-14-west-virginia-mountaineers') }}" data-track-url="{{ url_for('track', play_id='play-2026-11-14-west-virginia-mountaineers') }}">+ Track</a>
+      </div>
+      <button type="button" class="why" data-open-sheet="sheet-wvu" data-why="1"><span class="t">📊 WHY WE LIKE IT</span><span class="n">Model 57.9% · Edge 2.3 · EV +4.1%</span><span class="h">Tap to expand full data ▾</span></button>
     </article>
 
     <article class="card">
       <div class="card-top"><span class="chip goldl">GOLD</span><span class="lg">NHL</span></div>
       <div class="card-main">
         <div class="logo-ring"><img src="https://a.espncdn.com/i/teamlogos/nhl/500/mtl.png" alt="Montréal Canadiens logo"></div>
-        <div>
-          <div class="pick">Montréal Canadiens ML</div>
-          <div class="match">Colorado Avalanche @ Montréal Canadiens</div>
-          <div class="final">Final · Montréal 1 — Colorado 4</div>
+        <div style="flex:1;min-width:0">
+          <div class="pick clickable" data-open-sheet="sheet-montreal">Montréal Canadiens ML</div>
+          <div class="matchrow">
+            <div class="grow">
+              <div class="match clickable" data-open-sheet="sheet-montreal">Montréal Canadiens @ Colorado Avalanche · 7:00 PM ET</div>
+              <div class="final">Final · Montréal 1 — Colorado 4</div>
+            </div>
+          </div>
         </div>
       </div>
       <div class="card-foot">
         <div class="stat"><small>PRICE</small>−117</div>
+        <button type="button" class="inj" data-pop="injuries" data-card="montreal" aria-label="Injuries">✚ 10</button>
         <div class="stat"><small>STAKE</small>$60</div>
         <span class="res lost">LOST −$60.00</span>
       </div>
+      <div class="tmatched">✓ Ticket matched</div>
+      <div class="meta">
+        <button type="button" class="venue" data-pop="weather" data-card="montreal">🏟 Bell Centre</button>
+      </div>
+      <div class="btns">
+        <a class="btn place" href="https://novig.com" target="_blank" rel="noopener">↗ Place at Novig</a>
+        <button class="btn share" type="button" aria-label="Share" onclick="pvShare('Montréal Canadiens ML')">↗</button>
+        <button class="btn" type="button" data-open-sheet="sheet-montreal">🎫 Receipt</button>
+        <a class="btn pv-track" href="{{ url_for('track', play_id='play-2026-11-14-montreal-canadiens') }}" data-track-url="{{ url_for('track', play_id='play-2026-11-14-montreal-canadiens') }}">+ Track</a>
+      </div>
+      <button type="button" class="why" data-open-sheet="sheet-montreal" data-why="1"><span class="t">📊 WHY WE LIKE IT</span><span class="n">Model 54.0% · Edge -0.3 · EV -0.6%</span><span class="h">Tap to expand full data ▾</span></button>
     </article>
   </section>
 
@@ -273,6 +405,305 @@
     <a href="{{ url_for('cuenta') }}"><span class="ic">👤</span>Account</a>
   </div>
 </nav>
+
+<!-- ══ Hojas de detalle (una por jugada, como la original) ══ -->
+<div class="pvsheet" id="sheet-utah">
+  <div class="pvsheet-in">
+    <div class="grab"></div>
+    <div class="sheet-head">
+      <div style="flex:1;min-width:0">
+        <div class="kick">💎 PLATINUM</div>
+        <div class="sheet-title">Utah Utes ML</div>
+        <div class="sheet-sub">Platinum play · NCAAF</div>
+      </div>
+      <button class="xbtn" type="button" data-close-sheet aria-label="Close">✕</button>
+    </div>
+    <div style="margin-top:10px">
+      <div class="srow"><span class="k">Pick</span><span class="v">Utah Utes ML</span></div>
+      <div class="srow"><span class="k">Game</span><span class="v">UTAH vs ARIZ</span></div>
+      <div class="srow"><span class="k">Starts</span><span class="v">10:30 PM</span></div>
+      <div class="srow"><span class="k">Price posted</span><span class="v">-104</span></div>
+      <div class="srow"><span class="k">Stake</span><span class="v">1u · <span class="amt">$100</span></span></div>
+      <div class="srow"><span class="k">Program</span><span class="prog">OFFICIALS</span></div>
+    </div>
+    <details class="wu">
+      <summary>📊 WHY WE LIKE IT <span style="float:right;color:var(--txt-3)">▾</span></summary>
+      <div class="wu-row"><span>Model win probability</span><b>56.4%</b></div>
+      <div class="wu-row"><span>Implied by the price</span><b>52.8%</b></div>
+      <div class="wu-row"><span>Fair price (model)</span><b>-129</b></div>
+      <div class="wu-row"><span>Edge</span><b>3.5</b></div>
+      <div class="wu-row"><span>EV</span><b>+6.7%</b></div>
+      <p class="wu-p"><b>Key factor:</b> Utah is 9-0 and No. 2 nationally with QB Devon Dampier healthy (27 total TDs) against an Arizona secondary thinned by injuries (CB Cole questionable, S Chapa doubtful, S Hartzog questionable, plus DL/RB losses). The value improves at Pinnacle's real price (EV +9.5% at -106), so it does not depend on a soft book.</p>
+      <p class="wu-p"><b>The risk:</b> PLATINUM by the loosened ENTRY band (2026-11-10: edge &gt;=+1.0, EV &gt;=+1%, prob &gt;=47%): edge +3.5, EV +6.7%, prob 56.4%. It clears the GOLD gate 3.0 but sits 1.0 pt under the calibrated NCAAF ELITE gate 4.5 - not the very-safe band, so no $125; Platinum fixed $100. FLAG gap +16.9 re-rated by scenarios: Pinnacle prices it a pick'em (fair 50.2%); no hidden QB news on either side (Dampier and Fifita, making his 44th straight start, both confirmed) - the disagreement is model-vs-market on an unbeaten team, declared as such. PENDING CONFIRMATION 17:30 in substance: RB Wayshawn Parker (heel bruise) is questionable but expected to play (Thamel/ESPN); if he is ruled OUT the pick is re-rated before publish - Utah has proven backfield depth (Bray, Andrews, Dampier rushing). Weather in Tucson clean, no veto. Minimum acceptable price -114 (its GOLD-gate floor).</p>
+    </details>
+    <div class="timg">
+      <a href="{{ url_for('static', filename='img/comprobantes/2026-11-14-utah-utes.jpg') }}" target="_blank" rel="noopener"><img src="{{ url_for('static', filename='img/comprobantes/2026-11-14-utah-utes.jpg') }}" alt="Original ticket UTAH ML" loading="lazy"></a>
+      <span class="matched-badge">✓ MATCHED</span>
+    </div>
+    <p class="note">Prices move after posting — compare before you bet.</p>
+    <a class="big-track pv-track" href="{{ url_for('track', play_id='play-2026-11-14-utah-utes') }}" data-track-url="{{ url_for('track', play_id='play-2026-11-14-utah-utes') }}">+ Track</a>
+    <div class="sbtns">
+      <a class="btn place" href="https://novig.com" target="_blank" rel="noopener">↗ Place at Novig</a>
+      <a class="btn" href="{{ url_for('ev_board') }}">⇄ Compare prices now</a>
+    </div>
+  </div>
+</div>
+
+<div class="pvsheet" id="sheet-washington">
+  <div class="pvsheet-in">
+    <div class="grab"></div>
+    <div class="sheet-head">
+      <div style="flex:1;min-width:0">
+        <div class="kick">GOLD</div>
+        <div class="sheet-title">Washington Huskies ML</div>
+        <div class="sheet-sub">Gold play · NCAAF</div>
+      </div>
+      <button class="xbtn" type="button" data-close-sheet aria-label="Close">✕</button>
+    </div>
+    <div style="margin-top:10px">
+      <div class="srow"><span class="k">Pick</span><span class="v">Washington Huskies ML</span></div>
+      <div class="srow"><span class="k">Game</span><span class="v">WASH vs MSU</span></div>
+      <div class="srow"><span class="k">Starts</span><span class="v">5:30 PM</span></div>
+      <div class="srow"><span class="k">Price posted</span><span class="v">-130</span></div>
+      <div class="srow"><span class="k">Stake</span><span class="v">0.6u · <span class="amt">$60</span></span></div>
+      <div class="srow"><span class="k">Program</span><span class="prog">OFFICIALS</span></div>
+    </div>
+    <details class="wu">
+      <summary>📊 WHY WE LIKE IT <span style="float:right;color:var(--txt-3)">▾</span></summary>
+      <div class="wu-row"><span>Model win probability</span><b>59.4%</b></div>
+      <div class="wu-row"><span>Implied by the price</span><b>56.5%</b></div>
+      <div class="wu-row"><span>Fair price (model)</span><b>-146</b></div>
+      <div class="wu-row"><span>Edge</span><b>2.9</b></div>
+      <div class="wu-row"><span>EV</span><b>+5.2%</b></div>
+      <p class="wu-p"><b>Key factor:</b> The highest win probability among today's value names (blended 59.4%, raw 67.6%) at -130, with the value improving at Pinnacle's real price (EV +5.9%). Michigan State arrives with 10 players out, including its top tackler S Devin Vaught.</p>
+      <p class="wu-p"><b>The risk:</b> Showcase-profile Gold (prob &gt;=55% + EV &gt;=+2%); edge +2.9 sits 0.07 under the 3.0 GOLD gate - declared, it enters through the showcase profile, not the gate. Confidence capped at media despite EV &gt;=+5% because the key data is NOT confirmed: QB Demond Williams Jr. is QUESTIONABLE (ribs) on the Big Ten report - PENDING CONFIRMATION before the 5:30 PM kickoff. Re-rate if he sits: with backup Elijah Brown (-50 Elo per methodology) the raw falls to ~60.4% and the blended to ~56.5% (fair about -130), leaving EV about +1.6% at -130 - the play would leave the showcase profile. FLAG gap +12.8 declared. Washington also carries 5 questionable defensive starters (S McLaughlin among them) and the nation's 131st rushing attack (99.3 yds/game) - in the price and declared. Weather in East Lansing: 42F, NW wind 9-11 mph, gusts 17-18 - no veto. Minimum acceptable price -140 (the +2% EV floor).</p>
+    </details>
+    <div class="timg">
+      <a href="{{ url_for('static', filename='img/comprobantes/2026-11-14-washington-huskies.jpg') }}" target="_blank" rel="noopener"><img src="{{ url_for('static', filename='img/comprobantes/2026-11-14-washington-huskies.jpg') }}" alt="Original ticket WASH ML" loading="lazy"></a>
+      <span class="matched-badge">✓ MATCHED</span>
+    </div>
+    <p class="note">Prices move after posting — compare before you bet.</p>
+    <a class="big-track pv-track" href="{{ url_for('track', play_id='play-2026-11-14-washington-huskies') }}" data-track-url="{{ url_for('track', play_id='play-2026-11-14-washington-huskies') }}">+ Track</a>
+    <div class="sbtns">
+      <a class="btn place" href="https://novig.com" target="_blank" rel="noopener">↗ Place at Novig</a>
+      <a class="btn" href="{{ url_for('ev_board') }}">⇄ Compare prices now</a>
+    </div>
+  </div>
+</div>
+
+<div class="pvsheet" id="sheet-wvu">
+  <div class="pvsheet-in">
+    <div class="grab"></div>
+    <div class="sheet-head">
+      <div style="flex:1;min-width:0">
+        <div class="kick">GOLD</div>
+        <div class="sheet-title">West Virginia Mountaineers ML</div>
+        <div class="sheet-sub">Gold play · NCAAF</div>
+      </div>
+      <button class="xbtn" type="button" data-close-sheet aria-label="Close">✕</button>
+    </div>
+    <div style="margin-top:10px">
+      <div class="srow"><span class="k">Pick</span><span class="v">West Virginia Mountaineers ML</span></div>
+      <div class="srow"><span class="k">Game</span><span class="v">WVU vs KU</span></div>
+      <div class="srow"><span class="k">Starts</span><span class="v">3:30 PM</span></div>
+      <div class="srow"><span class="k">Price posted</span><span class="v">-125</span></div>
+      <div class="srow"><span class="k">Stake</span><span class="v">0.59u · <span class="amt">$59.47</span></span></div>
+      <div class="srow"><span class="k">Program</span><span class="prog">OFFICIALS</span></div>
+    </div>
+    <details class="wu">
+      <summary>📊 WHY WE LIKE IT <span style="float:right;color:var(--txt-3)">▾</span></summary>
+      <div class="wu-row"><span>Model win probability</span><b>57.9%</b></div>
+      <div class="wu-row"><span>Implied by the price</span><b>55.6%</b></div>
+      <div class="wu-row"><span>Fair price (model)</span><b>-137</b></div>
+      <div class="wu-row"><span>Edge</span><b>2.3</b></div>
+      <div class="wu-row"><span>EV</span><b>+4.1%</b></div>
+      <p class="wu-p"><b>Key factor:</b> The cleanest name of the day: no QB news and no injury flag on either side. QB Michael Hawkins Jr. is coming off his best game (303 passing yards and 3 rushing TDs against Texas Tech), West Virginia is in good health (only minor outs), and the price improved from -138 in the morning shortlist to -125, in line with Pinnacle (-123, EV +4.9% at the sharp price).</p>
+      <p class="wu-p"><b>The risk:</b> Showcase-profile Gold (prob 57.9% &gt;= 55%, EV +4.1% &gt;= +2%, key data confirmed on both sides); edge +2.3 is under the 3.0 GOLD gate - declared, not a gate pass. Gap +11.0 is a mild FLAG with no identified hidden cause: Kansas gets its QB room back to its healthiest in three weeks (Marshall starting, Ballard probable) and that is already in the price; Kansas loses starting LG Connor Stroh. Weather in Morgantown: ~43F at kickoff, WNW wind 10 mph, gusts 18, rain fading to 0% - no veto. Minimum acceptable price -131 (the +2% EV floor at this probability).</p>
+    </details>
+    <div class="timg">
+      <a href="{{ url_for('static', filename='img/comprobantes/2026-11-14-west-virginia-mountaineers.jpg') }}" target="_blank" rel="noopener"><img src="{{ url_for('static', filename='img/comprobantes/2026-11-14-west-virginia-mountaineers.jpg') }}" alt="Original ticket WVU ML" loading="lazy"></a>
+      <span class="matched-badge">✓ MATCHED</span>
+    </div>
+    <p class="note">Prices move after posting — compare before you bet.</p>
+    <a class="big-track pv-track" href="{{ url_for('track', play_id='play-2026-11-14-west-virginia-mountaineers') }}" data-track-url="{{ url_for('track', play_id='play-2026-11-14-west-virginia-mountaineers') }}">+ Track</a>
+    <div class="sbtns">
+      <a class="btn place" href="https://novig.com" target="_blank" rel="noopener">↗ Place at Novig</a>
+      <a class="btn" href="{{ url_for('ev_board') }}">⇄ Compare prices now</a>
+    </div>
+  </div>
+</div>
+
+<div class="pvsheet" id="sheet-montreal">
+  <div class="pvsheet-in">
+    <div class="grab"></div>
+    <div class="sheet-head">
+      <div style="flex:1;min-width:0">
+        <div class="kick">GOLD</div>
+        <div class="sheet-title">Montréal Canadiens ML</div>
+        <div class="sheet-sub">Gold play · NHL</div>
+      </div>
+      <button class="xbtn" type="button" data-close-sheet aria-label="Close">✕</button>
+    </div>
+    <div style="margin-top:10px">
+      <div class="srow"><span class="k">Pick</span><span class="v">Montréal Canadiens ML</span></div>
+      <div class="srow"><span class="k">Game</span><span class="v">MTL vs COL</span></div>
+      <div class="srow"><span class="k">Starts</span><span class="v">7:00 PM</span></div>
+      <div class="srow"><span class="k">Price posted</span><span class="v">-117</span></div>
+      <div class="srow"><span class="k">Stake</span><span class="v">0.6u · <span class="amt">$60</span></span></div>
+      <div class="srow"><span class="k">Program</span><span class="prog">OFFICIALS</span></div>
+    </div>
+    <details class="wu">
+      <summary>📊 WHY WE LIKE IT <span style="float:right;color:var(--txt-3)">▾</span></summary>
+      <div class="wu-row"><span>Model win probability</span><b>54.0%</b></div>
+      <div class="wu-row"><span>Implied by the price</span><b>54.3%</b></div>
+      <div class="wu-row"><span>Fair price (model)</span><b>-117</b></div>
+      <div class="wu-row"><span>Edge</span><b>-0.3</b></div>
+      <div class="wu-row"><span>EV</span><b>-0.6%</b></div>
+      <p class="wu-p"><b>Key factor:</b> ALEX'S DIRECT OVERRIDE (2026-11-14, ~10:13 AM ET): Alex placed Montreal on Kalshi himself and ordered it into today's official card ('va tambien para las oficiales'). The morning Sharp Money signal backs the side: Montreal moved -114 to -125 with 81.3% of the Kalshi money. Declared as an override - the model does not create this play.</p>
+      <p class="wu-p"><b>The risk:</b> OVERRIDE with the model's real numbers unvarnished: blended prob 54.0%, edge -0.3, EV -0.6% at -119 (MyBookie.ag; Pinnacle -122, EV -1.7% at the sharp price). It does NOT pass any model gate or the NHL paper rule; it is in the card solely on Alex's direct order, the same precedent as past overrides. PENDING CONFIRMATION 17:30: starting goalies unconfirmed at analysis time. The day's only NHL play (maximum 1). Minimum acceptable price -125 (the level the Sharp Money move reached; do not chase past it).</p>
+    </details>
+    <div class="timg">
+      <a href="{{ url_for('static', filename='img/comprobantes/2026-11-14-montreal-canadiens.jpg') }}" target="_blank" rel="noopener"><img src="{{ url_for('static', filename='img/comprobantes/2026-11-14-montreal-canadiens.jpg') }}" alt="Original ticket MTL ML" loading="lazy"></a>
+      <span class="matched-badge">✓ MATCHED</span>
+    </div>
+    <p class="note">Prices move after posting — compare before you bet.</p>
+    <a class="big-track pv-track" href="{{ url_for('track', play_id='play-2026-11-14-montreal-canadiens') }}" data-track-url="{{ url_for('track', play_id='play-2026-11-14-montreal-canadiens') }}">+ Track</a>
+    <div class="sbtns">
+      <a class="btn place" href="https://novig.com" target="_blank" rel="noopener">↗ Place at Novig</a>
+      <a class="btn" href="{{ url_for('ev_board') }}">⇄ Compare prices now</a>
+    </div>
+  </div>
+</div>
+
+<!-- ══ Popover compartido + datos reales por tarjeta ══ -->
+<div class="pvpop" id="pvPop">
+  <div class="pvpop-in">
+    <div class="pvpop-h"><div class="pvpop-t" id="pvPopTitle"></div><button type="button" class="xbtn" data-close-pop aria-label="Close">✕</button></div>
+    <div id="pvPopBody"></div>
+  </div>
+</div>
+
+<div hidden id="pvdata-utah">
+  <div data-kind="weather" data-title="Forecast at the venue: 58°F, wind 4 mph">
+    <div class="pvpop-row"><span class="k">Temperature</span><span class="v">58°F</span></div>
+    <div class="pvpop-row"><span class="k">Wind</span><span class="v">4 mph</span></div>
+    <div class="pvpop-row"><span class="k">Rain chance</span><span class="v">1%</span></div>
+    <div class="pvpop-row"><span class="k">Roof</span><span class="v">Open</span></div>
+    <div class="pvpop-row"><span class="k">Venue</span><span class="v">Casino Del Sol Stadium</span></div>
+  </div>
+  <div data-kind="lines" data-title="Line moves · moneyline">
+    <div class="pvpop-row"><span class="k">Open</span><span class="v">-116</span></div>
+    <div class="pvpop-row"><span class="k">Now</span><span class="v for">-130</span></div>
+    <div class="pvpop-note">The market has moved toward this side since our first capture today.</div>
+    <div class="pvpop-note">Open: first price we captured today · Now: latest across 10 books (Game Center).</div>
+  </div>
+  <div data-kind="injuries" data-title="Injury report: 0 players listed, 0 out or on IR"></div>
+</div>
+
+<div hidden id="pvdata-washington">
+  <div data-kind="weather" data-title="Forecast at the venue: 43°F, wind 9 mph">
+    <div class="pvpop-row"><span class="k">Temperature</span><span class="v">43°F</span></div>
+    <div class="pvpop-row"><span class="k">Wind</span><span class="v">9 mph</span></div>
+    <div class="pvpop-row"><span class="k">Rain chance</span><span class="v">3%</span></div>
+    <div class="pvpop-row"><span class="k">Roof</span><span class="v">Open</span></div>
+    <div class="pvpop-row"><span class="k">Venue</span><span class="v">Spartan Stadium</span></div>
+  </div>
+  <div data-kind="injuries" data-title="Injury report: 0 players listed, 0 out or on IR"></div>
+</div>
+
+<div hidden id="pvdata-wvu">
+  <div data-kind="weather" data-title="Forecast at the venue: 45°F, wind 13 mph">
+    <div class="pvpop-row"><span class="k">Temperature</span><span class="v">45°F</span></div>
+    <div class="pvpop-row"><span class="k">Wind</span><span class="v">13 mph</span></div>
+    <div class="pvpop-row"><span class="k">Rain chance</span><span class="v">11%</span></div>
+    <div class="pvpop-row"><span class="k">Roof</span><span class="v">Open</span></div>
+    <div class="pvpop-row"><span class="k">Venue</span><span class="v">Milan Puskar Stadium</span></div>
+  </div>
+  <div data-kind="injuries" data-title="Injury report: 0 players listed, 0 out or on IR"></div>
+</div>
+
+<div hidden id="pvdata-montreal">
+  <div data-kind="weather" data-title="Forecast at the venue">
+    <div class="pvpop-row"><span class="k">Roof</span><span class="v">Indoor</span></div>
+    <div class="pvpop-row"><span class="k">Venue</span><span class="v">Bell Centre</span></div>
+  </div>
+  <div data-kind="injuries" data-title="Injury report: 10 players listed, 10 out or on IR">
+    <div class="pvpop-pl"><div class="pvpop-nm">Chris Kreider</div><div class="pvpop-meta">Montréal Canadiens · LW — <span class="st">Out</span></div></div>
+    <div class="pvpop-pl"><div class="pvpop-nm">Mike Matheson</div><div class="pvpop-meta">Montréal Canadiens · D — <span class="st">Out</span></div></div>
+    <div class="pvpop-pl"><div class="pvpop-nm">Bryce Pickford</div><div class="pvpop-meta">Montréal Canadiens · D — <span class="st">IR</span></div></div>
+    <div class="pvpop-pl"><div class="pvpop-nm">Ivan Demidov</div><div class="pvpop-meta">Montréal Canadiens · RW — <span class="st">IR</span></div></div>
+    <div class="pvpop-pl"><div class="pvpop-nm">Lucas Condotta</div><div class="pvpop-meta">Montréal Canadiens · LW — <span class="st">IR</span></div></div>
+    <div class="pvpop-pl"><div class="pvpop-nm">Sam Montembeault</div><div class="pvpop-meta">Montréal Canadiens · G — <span class="st">IR</span></div></div>
+    <div class="pvpop-pl"><div class="pvpop-nm">Cale Makar</div><div class="pvpop-meta">Colorado Avalanche · D — <span class="st">Out</span></div></div>
+    <div class="pvpop-pl"><div class="pvpop-nm">Nathan MacKinnon</div><div class="pvpop-meta">Colorado Avalanche · C — <span class="st">Out</span></div></div>
+    <div class="pvpop-pl"><div class="pvpop-nm">Josh Manson</div><div class="pvpop-meta">Colorado Avalanche · D — <span class="st">IR</span></div></div>
+    <div class="pvpop-pl"><div class="pvpop-nm">Zachary L'Heureux</div><div class="pvpop-meta">Colorado Avalanche · LW — <span class="st">IR</span></div></div>
+  </div>
+</div>
+
+<script>
+function pvShare(text){
+  var u = window.location.origin + '/home';
+  if (navigator.share) { navigator.share({title:'The Sharp Team', text:text, url:u}).catch(function(){}); }
+  else if (navigator.clipboard) { navigator.clipboard.writeText(u); }
+}
+(function(){
+  function openSheet(id, why){
+    var sh = document.getElementById(id);
+    if (!sh) return;
+    sh.classList.add('open');
+    if (why) { var d = sh.querySelector('details.wu'); if (d) d.open = true; var sc = sh.querySelector('.pvsheet-in'); if (sc) sc.scrollTop = 0; }
+  }
+  function closeSheet(sh){ sh.classList.remove('open'); }
+  var pop = document.getElementById('pvPop');
+  function openPop(card, kind){
+    var data = document.getElementById('pvdata-' + card);
+    if (!data) return;
+    var sec = data.querySelector('[data-kind="' + kind + '"]');
+    if (!sec) return;
+    document.getElementById('pvPopTitle').textContent = sec.getAttribute('data-title') || '';
+    var body = document.getElementById('pvPopBody');
+    body.innerHTML = '';
+    body.appendChild(sec.cloneNode(true));
+    pop.classList.add('open');
+  }
+  document.addEventListener('click', function(e){
+    var chip = e.target.closest('[data-pop]');
+    if (chip) { openPop(chip.getAttribute('data-card'), chip.getAttribute('data-pop')); return; }
+    if (e.target.closest('[data-close-pop]')) { pop.classList.remove('open'); return; }
+    if (e.target === pop) { pop.classList.remove('open'); return; }
+    var opener = e.target.closest('[data-open-sheet]');
+    if (opener) { openSheet(opener.getAttribute('data-open-sheet'), opener.getAttribute('data-why')); return; }
+    if (e.target.closest('[data-close-sheet]')) { var sh = e.target.closest('.pvsheet'); if (sh) closeSheet(sh); return; }
+    if (e.target.classList && e.target.classList.contains('pvsheet')) { closeSheet(e.target); }
+  });
+  document.addEventListener('click', function(e){
+    var a = e.target.closest('a.pv-track[data-track-url]');
+    if (!a) return;
+    e.preventDefault();
+    if (a.dataset.busy) return;
+    a.dataset.busy = '1';
+    var orig = a.textContent;
+    a.textContent = '…';
+    fetch(a.dataset.trackUrl, {method:'POST', headers:{'X-Requested-With':'XMLHttpRequest'}, credentials:'same-origin'})
+      .then(function(r){ return r.json().then(function(j){ return {status:r.status, body:j}; }); })
+      .then(function(res){
+        if (res.body && res.body.ok) {
+          document.querySelectorAll('a.pv-track[data-track-url="' + a.dataset.trackUrl + '"]').forEach(function(el){
+            var s = document.createElement('span');
+            s.className = el.classList.contains('big-track') ? 'big-tracked' : 'btn tracked';
+            s.textContent = '✓ Tracked';
+            el.replaceWith(s);
+          });
+        } else {
+          a.textContent = orig; delete a.dataset.busy;
+          alert((res.body && res.body.error) || 'Could not track this play.');
+        }
+      })
+      .catch(function(){ a.textContent = orig; delete a.dataset.busy; alert('Could not track this play. Please try again.'); });
+  });
+})();
+</script>
 
 </body>
 </html>
