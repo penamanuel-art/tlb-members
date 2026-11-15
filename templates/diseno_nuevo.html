@@ -246,6 +246,15 @@
   .dn-al-tg{background:var(--panel);color:var(--txt);border:1px solid var(--line)}
   .dn-al-tg small{color:var(--mut)}
   .dn-al-tg svg{color:var(--mint)}
+  .dn-al-push.off{background:var(--panel);color:var(--txt);border:1px solid var(--line)}
+  .dn-al-push.off small{color:var(--mut)}
+  .dn-al-push.off svg{color:var(--mint)}
+  .dn-sheet-form{margin-top:18px;display:flex;flex-direction:column;gap:12px}
+  .dn-sheet-input{width:100%;box-sizing:border-box;background:#0B1526;border:1px solid var(--line);border-radius:12px;color:var(--txt);font-size:17.1px;padding:14px;font-family:inherit}
+  .dn-sheet-save{background:var(--mint);color:#06231A;border:0;border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit}
+  .dn-sheet-msg{font-size:13.5px;color:var(--mut);min-height:18px}
+  .dn-sheet-msg.ok{color:var(--mint)}
+  .dn-sheet-msg.err{color:#FF8A7A}
 
   /* Membresia */
   .dn-mems{display:flex;flex-direction:column;gap:9px}
@@ -653,16 +662,16 @@ function dnHotClose(){
         Join Telegram
         <small>The public card channel, free</small>
       </a>
-      <div class="dn-al dn-al-tg">
+      <button type="button" class="dn-al dn-al-tg" id="dnTextBtn">
         <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
         Text
-        <small>Coming soon</small>
-      </div>
-      <a class="dn-al dn-al-tg" href="{{ url_for('cuenta') }}">
+        <small id="dnTextState">Coming soon</small>
+      </button>
+      <button type="button" class="dn-al dn-al-tg" id="dnEmailBtn">
         <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="m22 6-10 7L2 6"/></svg>
         Email
-        <small>Every play lands in your inbox</small>
-      </a>
+        <small id="dnEmailState">Every play lands in your inbox</small>
+      </button>
     </div>
   </section>
 
@@ -674,8 +683,8 @@ function dnHotClose(){
         <p>2–3 Gold plays a day, open to every member in the Dashboard, on Telegram and by email. No card, ever.</p>
       </div>
       <div class="dn-mem hot">
-        <div class="dn-m-top"><span class="dn-m-name">💎 PLATINUM</span><span class="dn-m-price">$15.99 / week</span></div>
-        <p>The top tier — up to 2 Platinum plays a day at a $100 fixed stake, every member tool and the full record. Your first month is free.</p>
+        <div class="dn-m-top"><span class="dn-m-name">💎 PLATINUM</span><span class="dn-m-price">TOP TIER</span></div>
+        <p>The top tier — up to 2 Platinum plays a day at a $100 fixed stake, every member tool and the full record. The Vault Play is included with Platinum.</p>
       </div>
       <div class="dn-mem">
         <div class="dn-m-top"><span class="dn-m-name">🔒 VAULT</span><span class="dn-m-price">WITH PLATINUM</span></div>
@@ -805,6 +814,72 @@ function dnHotClose(){
     </a>
   </div>
 </nav>
+
+  <div class="dn-sheet" id="dnAlertSheet" hidden>
+    <div class="dn-sheet-handle"></div>
+    <div class="dn-sheet-head">
+      <div><h3 id="dnSheetTitle">Text alerts</h3><p class="dn-sheet-sub" id="dnSheetSub"></p></div>
+      <button type="button" class="dn-sheet-x" id="dnSheetX" aria-label="Close">✕</button>
+    </div>
+    <form class="dn-sheet-form" id="dnSheetForm">
+      <input class="dn-sheet-input" id="dnSheetInput" autocomplete="off">
+      <div class="dn-sheet-msg" id="dnSheetMsg"></div>
+      <button type="submit" class="dn-sheet-save">Save</button>
+    </form>
+  </div>
+<script src="{{ url_for('static', filename='js/push.js') }}"></script>
+<script>
+(function(){
+  var pb = document.getElementById('dnPush'), ps = document.getElementById('dnPushState');
+  function pushPaint(on, txt){ if(!pb) return; pb.classList.toggle('off', !on); if(ps && txt) ps.textContent = txt; }
+  async function pushRefresh(){
+    if(!pb || !window.TLB_push) return;
+    var st = await TLB_push.status();
+    if(st === 'granted') pushPaint(true, 'Alerts are on - tap to turn off');
+    else if(st === 'denied') pushPaint(false, 'Blocked in your browser settings');
+    else if(st === 'unsupported') pushPaint(false, 'Not supported on this device');
+    else pushPaint(false, 'Tap to turn on alerts');
+  }
+  if(pb){ pb.addEventListener('click', async function(){
+    if(!window.TLB_push) return;
+    var st = await TLB_push.status();
+    if(st === 'granted'){ await TLB_push.disable(); } else { await TLB_push.enable(); }
+    pushRefresh();
+  }); pushRefresh(); }
+  var sheet = document.getElementById('dnAlertSheet'), title = document.getElementById('dnSheetTitle'),
+      sub = document.getElementById('dnSheetSub'), input = document.getElementById('dnSheetInput'),
+      msg = document.getElementById('dnSheetMsg'), form = document.getElementById('dnSheetForm'), mode = 'phone';
+  function openSheet(m){
+    mode = m; msg.textContent = ''; msg.className = 'dn-sheet-msg';
+    if(m === 'phone'){ title.textContent = 'Text alerts'; sub.textContent = 'Text alerts launch soon. Save your number now and you are first in line - and we only ever text you about plays.'; input.type = 'tel'; input.placeholder = '(555) 123-4567'; input.autocomplete = 'tel'; }
+    else { title.textContent = 'Email alerts'; sub.textContent = 'Every play lands in your inbox. This is the email on your account - change it here if you want your plays somewhere else.'; input.type = 'email'; input.placeholder = 'you@email.com'; input.autocomplete = 'email'; }
+    sheet.hidden = false; document.body.style.overflow = 'hidden';
+    fetch('/api/alerts-contact').then(function(r){ return r.json(); }).then(function(j){
+      if(j && j.ok) input.value = (m === 'phone') ? (j.phone || '') : (j.email || '');
+    }).catch(function(){});
+  }
+  function closeSheet(){ sheet.hidden = true; document.body.style.overflow = ''; }
+  var tb = document.getElementById('dnTextBtn'), eb = document.getElementById('dnEmailBtn');
+  if(tb) tb.addEventListener('click', function(){ openSheet('phone'); });
+  if(eb) eb.addEventListener('click', function(){ openSheet('email'); });
+  var x = document.getElementById('dnSheetX'); if(x) x.addEventListener('click', closeSheet);
+  fetch('/api/alerts-contact').then(function(r){ return r.json(); }).then(function(j){
+    if(j && j.ok && j.phone){ var s = document.getElementById('dnTextState'); if(s) s.textContent = 'Number saved'; }
+  }).catch(function(){});
+  if(form) form.addEventListener('submit', function(e){
+    e.preventDefault();
+    var body = {}; body[mode] = input.value;
+    msg.className = 'dn-sheet-msg'; msg.textContent = 'Saving...';
+    fetch('/api/alerts-contact', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)})
+      .then(function(r){ return r.json(); }).then(function(j){
+        if(j && j.ok){ msg.className = 'dn-sheet-msg ok'; msg.textContent = (mode === 'phone') ? 'Number saved - you are on the list.' : 'Email saved - your plays will land here.';
+          var st = document.getElementById(mode === 'phone' ? 'dnTextState' : 'dnEmailState'); if(st) st.textContent = (mode === 'phone') ? 'Number saved' : 'Saved';
+          setTimeout(closeSheet, 900);
+        } else { msg.className = 'dn-sheet-msg err'; msg.textContent = (j && j.error) || 'Could not save. Try again.'; }
+      }).catch(function(){ msg.className = 'dn-sheet-msg err'; msg.textContent = 'Could not save. Try again.'; });
+  });
+})();
+</script>
 
 <div class="dn-bubble{% if is_alex and request.args.get('prueba-tirita') %} on{% endif %}" id="dnBubble" role="button" tabindex="0"{% if not (is_alex and request.args.get('prueba-tirita')) %} hidden{% endif %}>
   <span class="dn-b-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2FE6A7" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg></span>
