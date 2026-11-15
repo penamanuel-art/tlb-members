@@ -2931,6 +2931,35 @@ def card_publicada_hoy() -> bool:
     return bool(plays) and all(p.get("fecha") == hoy for p in plays)
 
 
+def _card_sig():
+    """Firma liviana de la card publicada en data/plays.json (fecha +
+    id/pick/cuota/nivel/verificada/comprobante de cada jugada). Cambia
+    SOLO cuando publicamos o actualizamos la card — no con el marcador
+    en vivo. La usa la burbuja de actualizacion del Dashboard."""
+    try:
+        data = _json_remoto_o_local(PLAYS_RAW_URL, PLAYS_PATH)
+        if isinstance(data, dict):
+            fecha = data.get("fecha") or ""
+            plays = data.get("plays") or []
+        elif isinstance(data, list):
+            fecha, plays = "", data
+        else:
+            return ""
+        plays = [p for p in plays if isinstance(p, dict) and p.get("id")]
+        base = {
+            "fecha": fecha,
+            "plays": [
+                [p.get("id"), p.get("pick"), p.get("cuota"), p.get("nivel"),
+                 bool(p.get("verificada")), bool(p.get("comprobante"))]
+                for p in plays
+            ],
+        }
+        raw = json.dumps(base, sort_keys=True, default=str)
+        return hashlib.md5(raw.encode("utf-8")).hexdigest()[:16]
+    except Exception:
+        return ""
+
+
 def load_json_file(path):
     """Lee un JSON de datos; {} si no existe o está corrupto."""
     try:
@@ -6542,7 +6571,17 @@ def home():
         stats=stats,
         estado=estado,
         card_fecha_txt=card_fecha_txt,
+        card_sig=_card_sig(),
     )
+
+
+@app.route("/api/card-sig")
+@login_required
+def api_card_sig():
+    """Firma actual de la card publicada (ver _card_sig). El Dashboard
+    la consulta cada ~60s: si difiere de la firma con la que cargo la
+    pagina, muestra la burbuja «New plays are live — tap to refresh»."""
+    return jsonify(sig=_card_sig())
 
 
 @app.route("/preview/receipt")
@@ -6903,6 +6942,7 @@ def admin_diseno_nuevo():
         stats=stats,
         estado=estado,
         card_fecha_txt=card_fecha_txt,
+        card_sig=_card_sig(),
     )
 
 
