@@ -5980,6 +5980,132 @@ def hot_run_cards(value_rows):
     return cards[:6]
 
 
+def _vantage_home_extra(plays):
+    """Datos extra SOLO para el home Vantage de Alex (diseño nuevo en
+    /home únicamente para su cuenta, 2026-11-14): récord del programa
+    fusionado con los resultados de hoy que aún no entran al archivo,
+    Platinum en sus últimas 10, la curva diaria de neto (14 días) y las
+    señales del Sharp Money board. Mismas fuentes que el resto del
+    sitio (archive.json vía load_archive/program_stats y
+    load_sharp_board, el mismo feed de /sharp). Cada bloque va en su
+    propio try/except: si una fuente falla, esa clave simplemente no
+    sale y la plantilla oculta su sección — este helper jamás debe
+    romper el home."""
+    extra = {"vantage_live": True}
+    # Récord fusionado + hoy + Platinum últimas 10 + curva diaria.
+    try:
+        base = program_stats()
+        w = int(base.get("ganadas") or 0)
+        l = int(base.get("perdidas") or 0)
+        net = float(base.get("profit_all_time") or 0.0)
+        arch_ids = set()
+        seq_plat = []
+        daily = {}
+        for d in sorted(load_archive(), key=lambda x: x.get("fecha") or ""):
+            neto_dia = 0.0
+            settled_dia = False
+            for j in d.get("jugadas", []) or []:
+                if j.get("id"):
+                    arch_ids.add(j["id"])
+                if j.get("resultado") in ("WON", "LOST") and not j.get("bloqueada"):
+                    neto_dia += float(j.get("profit") or 0.0)
+                    settled_dia = True
+                    if (j.get("nivel") or "").upper() in ("ELITE", "PLATINUM"):
+                        seq_plat.append(j["resultado"])
+            if settled_dia and d.get("fecha"):
+                daily[d["fecha"]] = round(neto_dia, 2)
+        tw = tl = 0
+        tnet = 0.0
+        pend = 0
+        for p in plays or []:
+            r = p.get("resultado")
+            if r in ("W", "L"):
+                if p.get("id") in arch_ids:
+                    continue
+                tnet += float(p.get("profit") or 0.0)
+                if r == "W":
+                    tw += 1
+                else:
+                    tl += 1
+                if (p.get("nivel") or "").upper() in ("ELITE", "PLATINUM"):
+                    seq_plat.append("WON" if r == "W" else "LOST")
+            else:
+                pend += 1
+        w += tw
+        l += tl
+        net = round(net + tnet, 2)
+        tot = w + l
+        extra["alex_prog"] = {
+            "w": w, "l": l, "net": net,
+            "net_display": (("+$" if net > 0 else ("-$" if net < 0 else "$"))
+                            + f"{abs(net):,.2f}"),
+            "win_rate": round(100.0 * w / tot) if tot else 0,
+        }
+        extra["alex_today"] = {
+            "w": tw, "l": tl, "net": round(tnet, 2),
+            "net_display": (("+$" if tnet > 0 else ("-$" if tnet < 0 else "$"))
+                            + f"{abs(tnet):,.2f}"),
+            "pending": pend,
+        }
+        ult10 = seq_plat[-10:]
+        if ult10:
+            pw = sum(1 for r in ult10 if r == "WON")
+            extra["alex_plat10"] = {
+                "w": pw, "l": len(ult10) - pw,
+                "pct": round(100.0 * pw / len(ult10)),
+            }
+        fechas = sorted(daily)[-14:]
+        labels = []
+        for f in fechas:
+            try:
+                _fd = datetime.strptime(f, "%Y-%m-%d")
+                labels.append(f"{_fd.strftime('%b')} {_fd.day}")
+            except (TypeError, ValueError):
+                labels.append(f)
+        extra["alex_chart_labels"] = labels
+        extra["alex_chart_data"] = [daily[f] for f in fechas]
+    except Exception:
+        pass
+    # Señales Sharp Money (mismo board que /sharp).
+    try:
+        board = load_sharp_board()
+        rows = []
+        for g in board.get("games", []) or []:
+            slot = g.get("sharp_slot")
+            if not slot:
+                continue
+            line = (g.get("line") or {}).get(slot) or {}
+            rows.append({
+                "team": g.get("sharp_team") or "",
+                "liga": g.get("sport") or "",
+                "game": g.get("game") or "",
+                "pp": float(g.get("pp_gain") or 0),
+                "first": line.get("first"),
+                "now": line.get("now"),
+            })
+        rows.sort(key=lambda r: -r["pp"])
+        extra["alex_sharp"] = rows[:4]
+    except Exception:
+        pass
+    # Nota de mañana (domingo de NFL).
+    try:
+        _hoy = datetime.now(TZ)
+        _man = _hoy + timedelta(days=1)
+        if _man.weekday() == 6:
+            extra["alex_tomorrow_note"] = (
+                f"Tomorrow is NFL Sunday ({_man.strftime('%b')} {_man.day}). "
+                "The full NFL slate is evaluated first — on Sundays, pro "
+                "football leads the analysis, always.")
+        elif _hoy.weekday() == 6:
+            extra["alex_tomorrow_note"] = (
+                "Today is NFL Sunday. The full NFL slate was evaluated "
+                "first — on Sundays, pro football leads the analysis, "
+                "always.")
+    except Exception:
+        pass
+    return extra
+
+
 @app.route("/home")
 @login_required
 def home():
@@ -6349,11 +6475,23 @@ def home():
         _members_live = int(_row_live["c"]) if _row_live else 0
     except Exception:
         _members_live = None
+    # Home Vantage SOLO para la cuenta de Alex (2026-11-14, orden de
+    # Alex: «Pon eso en vivo para mí solamente»): su /home renderiza el
+    # diseño nuevo (preview_home.html) con los mismos datos en vivo del
+    # home + el enriquecimiento de _vantage_home_extra. Cualquier otro
+    # miembro sigue con su plantilla de siempre, sin cambios.
+    _vantage_alex = is_alex_member(user)
+    _v_extra = {}
+    if _vantage_alex:
+        try:
+            _v_extra = _vantage_home_extra(plays)
+        except Exception:
+            _v_extra = {}
     return render_template(
         # Tema v2 (moderno) es el predeterminado desde 2026-10-02 (pedido Alex);
         # v1 (clásico) queda como reversión vía /theme/v1. Diseño lux
         # (2026-10-12): home premium salvo revert del admin (site_settings).
-        "home.html" if session.get("theme") == "v1" else ("home_lux.html" if _lux else "home_v2.html"),
+        "preview_home.html" if _vantage_alex else ("home.html" if session.get("theme") == "v1" else ("home_lux.html" if _lux else "home_v2.html")),
         plays=plays,
         show_rate_bubble=show_rate_bubble,
         card_pendiente=card_pendiente,
@@ -6417,6 +6555,7 @@ def home():
         # Banner gate (2026-10-31): the Dashboard "new version" banner keys
         # off PUBLIC_RELEASE, never the deploy commit — see the constant.
         tst_version=PUBLIC_RELEASE,
+        **_v_extra,
     )
 
 
