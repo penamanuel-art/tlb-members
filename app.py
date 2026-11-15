@@ -3099,10 +3099,12 @@ def hot_home_cards():
             return []
         tira = tirita_record10() or {}
         ambitos = []
-        for lg in ("NFL", "NCAAF", "NBA", "NHL", "MLB"):
-            it = [s for s in seq if s["liga"] == lg]
-            if it:
-                ambitos.append((lg, lg, it))
+        for lv in ("Platinum", "Gold", "Vault"):
+            for lg in ("NFL", "NCAAF", "NBA", "NHL", "MLB"):
+                it = [s for s in seq
+                      if s["lvl"] == lv and s["liga"] == lg]
+                if it:
+                    ambitos.append((lv, lg, it))
         for lv in ("Platinum", "Gold", "Vault"):
             it = [s for s in seq if s["lvl"] == lv]
             if it:
@@ -3161,14 +3163,14 @@ def hot_home_cards():
             if r >= 3:
                 _rp = it[-r:]
                 cands.append({"tag": tag, "num": str(r), "word": "straight",
-                              "sub": f"winning {nombre} plays",
+                              "sub": f"winning {tag if tag != 'ALL SPORTS' else nombre} plays",
                               "puntos": r, "score": 100 + r,
-                              "ambito": nombre,
+                              "ambito": f"{nombre}|{tag}",
                               "seq": [s["res"] for s in _rp],
-                              "pct": None,
-                              "pill": ("OFFICIAL PLAYS" if nombre in
-                                       ("NFL", "NCAAF", "NBA", "NHL", "MLB")
-                                       else nombre.upper() + " PLAYS"),
+                              "pct": None, "streak": None,
+                              "pill": {"Platinum": "PLATINUM SELECTIONS",
+                                       "Gold": "GOLD PLAYS",
+                                       "Vault": "VAULT PLAYS"}[nombre],
                               "plays": [_pl(s) for s in reversed(_rp)]})
             tiene_30 = False
             for n in (10, 30):
@@ -3180,37 +3182,39 @@ def hot_home_cards():
                 if not _fuerte(w, l):
                     continue
                 if (tira.get("etiqueta") == "Platinum Plays"
-                        and nombre == "Platinum" and n == 10):
+                        and nombre == "Platinum" and tag == "ALL SPORTS"
+                        and n == 10):
                     continue  # esa cifra ya la dice la tirita superior
                 if n == 30:
                     tiene_30 = True
                 _vn = it[-n:]
                 cands.append({"tag": tag, "num": f"{w}-{l}", "word": None,
-                              "sub": f"in the last {n} {nombre} plays",
+                              "sub": f"in the last {n} {tag if tag != 'ALL SPORTS' else nombre} plays",
                               "puntos": w,
                               "score": (w / float(w + l)) * 100 + (w - l),
-                              "ambito": nombre,
+                              "ambito": f"{nombre}|{tag}",
                               "seq": [s["res"] for s in _vn],
                               "pct": int(round(100.0 * w / (w + l))),
-                              "pill": ("OFFICIAL PLAYS" if nombre in
-                                       ("NFL", "NCAAF", "NBA", "NHL", "MLB")
-                                       else nombre.upper() + " PLAYS"),
+                              "streak": (r if r >= 2 else None),
+                              "pill": {"Platinum": "PLATINUM SELECTIONS",
+                                       "Gold": "GOLD PLAYS",
+                                       "Vault": "VAULT PLAYS"}[nombre],
                               "plays": [_pl(s) for s in reversed(_vn)]})
             if n_tot > 10 and not tiene_30:
                 w, l = _rec(it)
                 if _fuerte(w, l):
                     cands.append({"tag": tag, "num": f"{w}-{l}", "word": None,
-                                  "sub": f"{nombre} record · all graded plays",
+                                  "sub": f"{tag if tag != 'ALL SPORTS' else nombre} record · all graded plays",
                                   "puntos": w,
                                   "score": (w / float(w + l)) * 100 + (w - l),
-                                  "ambito": nombre,
+                                  "ambito": f"{nombre}|{tag}",
                                   "seq": ([s["res"] for s in it]
                                           if len(it) <= 30 else []),
                                   "pct": int(round(100.0 * w / (w + l))),
-                                  "pill": ("OFFICIAL PLAYS" if nombre in
-                                           ("NFL", "NCAAF", "NBA", "NHL",
-                                            "MLB")
-                                           else nombre.upper() + " PLAYS"),
+                                  "streak": (r if r >= 2 else None),
+                                  "pill": {"Platinum": "PLATINUM SELECTIONS",
+                                           "Gold": "GOLD PLAYS",
+                                           "Vault": "VAULT PLAYS"}[nombre],
                                   "plays": [_pl(s)
                                             for s in reversed(it)]})
         cands.sort(key=lambda c: -c["score"])
@@ -3221,7 +3225,7 @@ def hot_home_cards():
             por_ambito[c["ambito"]] = por_ambito.get(c["ambito"], 0) + 1
             out.append({k: c[k] for k in ("tag", "num", "word", "sub",
                                           "puntos", "seq", "pct", "plays",
-                                          "pill")})
+                                          "pill", "streak")})
             if len(out) >= 6:
                 break
         return out
