@@ -3391,6 +3391,85 @@ def recientes_value(n=20):
         return vacio
 
 
+def _rachas_home():
+    """Tarjetas "Hot right now" del home (referencia de Alex 2026-11-15):
+    rachas y ventanas REALES del archive, calculadas en vivo. La carta
+    lider sigue la regla de la tirita dictada por Alex: ultimas 10 de
+    Platinum en positivo mandan; si Platinum esta frio, ultimas 10 del
+    programa completo en positivo; si nada esta en positivo, la seccion
+    no sale. Las ligas solo salen si jugaron en los ultimos 14 dias
+    (nada de rachas de una temporada ya cerrada). Nunca numeros
+    inventados."""
+    try:
+        from datetime import datetime as _dt, timedelta as _td
+        dias = sorted(load_archive(), key=lambda d: d.get("fecha") or "")
+        settled = []
+        for d in dias:
+            for j in d.get("jugadas", []) or []:
+                if j.get("resultado") in ("WON", "LOST") and not j.get("bloqueada"):
+                    settled.append((d.get("fecha") or "", j))
+        if not settled:
+            return []
+        _ult = max(f for f, _ in settled)
+        try:
+            _corte = (_dt.strptime(_ult, "%Y-%m-%d") - _td(days=14)).strftime("%Y-%m-%d")
+        except Exception:
+            _corte = ""
+        def _seq(f):
+            return [1 if j["resultado"] == "WON" else 0 for _, j in settled if f(j)]
+        def _ventana(f, n):
+            s = _seq(f)[-n:]
+            return (sum(s), len(s) - sum(s), s)
+        def _racha(f):
+            s = _seq(f)
+            n = 0
+            for x in reversed(s):
+                if x:
+                    n += 1
+                else:
+                    break
+            return n
+        def _liga_viva(L):
+            fs = [f for f, j in settled if (j.get("liga") or "").upper() == L]
+            return bool(fs) and max(fs) >= _corte
+        es_plat = lambda j: (j.get("nivel") or "").upper() in ("ELITE", "PLATINUM")
+        cards = []
+        w, l, s = _ventana(es_plat, 10)
+        if w > l:
+            cards.append({"tag": "PLATINUM PLAYS", "liga": "", "big": f"{w}\u2013{l}",
+                          "sub": "in the last 10 Platinum plays", "dots": s})
+            w30, l30, _s30 = _ventana(es_plat, 30)
+            if w30 > l30:
+                cards.append({"tag": "PLATINUM PLAYS", "liga": "", "big": f"{w30}\u2013{l30}",
+                              "sub": "in the last 30 Platinum plays", "dots": []})
+        else:
+            w, l, s = _ventana(lambda j: True, 10)
+            if w > l:
+                cards.append({"tag": "OFFICIAL PLAYS", "liga": "", "big": f"{w}\u2013{l}",
+                              "sub": "in the last 10 plays, all levels", "dots": s})
+        if not cards:
+            return []
+        for liga in ("NCAAF", "NFL", "NBA", "NHL", "MLB"):
+            if not _liga_viva(liga):
+                continue
+            n = _racha(lambda j, L=liga: (j.get("liga") or "").upper() == L)
+            if n >= 2:
+                cards.append({"tag": "OFFICIAL PLAYS", "liga": liga,
+                              "big": f"{n} straight",
+                              "sub": f"winning {liga} plays", "dots": [1] * n})
+        for liga in ("NCAAF", "NFL", "NBA", "NHL", "MLB"):
+            if not _liga_viva(liga):
+                continue
+            w, l, s = _ventana(lambda j, L=liga: (j.get("liga") or "").upper() == L, 10)
+            if w >= 7:
+                cards.append({"tag": "OFFICIAL PLAYS", "liga": liga,
+                              "big": f"{w}\u2013{l}",
+                              "sub": f"in the last 10 {liga} plays", "dots": s})
+        return cards[:4]
+    except Exception:
+        return []
+
+
 def official_tracker_full():
     """Tracker oficial COMPLETO para el Admin (2026-10-12, pedido por Alex:
     un tracker especial, más profesional y con más estadísticas que el del
@@ -6587,6 +6666,7 @@ def home():
         card_sig=_card_sig(),
         dias=recientes_dias,
         tira_home=tira_home,
+        rachas_home=_rachas_home(),
     )
 
 
