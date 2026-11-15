@@ -6742,6 +6742,38 @@ def _diseno_stats(plays_card):
     profit = round(sum(m[3] for m in merged), 2)
     settled = ganadas + perdidas
     plat = [m[0] for m in merged if m[1] in ("ELITE", "PLATINUM")][-10:]
+    # Serie de unidades de las ultimas 14 liquidadas (grafico de la
+    # seccion Performance de los disenos) y record por nivel, con el
+    # mismo mapeo de /records (ELITE/PLATINUM -> PLATINUM, GOLD/FREE
+    # -> GOLD, VAULT -> VAULT). Datos reales del merge, sin inventar.
+    ultimas = [{"r": "W" if m[0] == "WON" else "L",
+                "u": round(m[3] / 100.0, 2)} for m in merged[-14:]]
+    _tmap = {}
+    for _res, _nv, _lg, _pf in merged:
+        if _nv in ("ELITE", "PLATINUM"):
+            _tk = "PLATINUM"
+        elif _nv in ("GOLD", "FREE"):
+            _tk = "GOLD"
+        elif _nv == "VAULT":
+            _tk = "VAULT"
+        else:
+            continue
+        _a = _tmap.setdefault(_tk, {"w": 0, "l": 0, "profit": 0.0})
+        if _res == "WON":
+            _a["w"] += 1
+        else:
+            _a["l"] += 1
+        _a["profit"] += _pf
+    niveles = []
+    for _tk in ("GOLD", "PLATINUM", "VAULT"):
+        if _tk in _tmap:
+            _a = _tmap[_tk]
+            _pf = round(_a["profit"], 2)
+            niveles.append({
+                "nivel": _tk, "w": _a["w"], "l": _a["l"], "profit": _pf,
+                "profit_txt": (("+$" if _pf > 0 else ("-$" if _pf < 0
+                                                       else "$"))
+                               + f"{abs(_pf):,.2f}")})
     agg = {}
     for _res, _nv, _lg, _pf in merged:
         if not _lg:
@@ -6773,6 +6805,9 @@ def _diseno_stats(plays_card):
         "plat10": ({"w": plat.count("WON"), "l": plat.count("LOST")}
                    if plat else None),
         "ligas": ligas,
+        "ultimas": ultimas,
+        "ultimas_u": round(sum(x["u"] for x in ultimas), 2),
+        "niveles": niveles,
     }
 
 
