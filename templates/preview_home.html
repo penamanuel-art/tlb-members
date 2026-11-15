@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Home — Preview · The Sharp Team</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800&family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy-0:#060D1A; --navy-1:#0A1526; --navy-2:#0E1D36; --navy-3:#13263F;
+    --line:#1D3355; --mint:#2EE6A8; --mint-dim:rgba(46,230,168,.14);
+    --txt:#FFFFFF; --txt-2:#A9BCD8; --txt-3:#7186A6;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html{scroll-behavior:smooth}
+  body{background:var(--navy-0);color:var(--txt);font-family:'Roboto',system-ui,sans-serif;padding-bottom:118px}
+  .mono{font-family:'Roboto Mono',monospace}
+  .wrap{max-width:560px;margin:0 auto;padding:0 16px}
+
+  /* ── Top bar ─────────────────────────── */
+  .topbar{position:sticky;top:0;z-index:60;background:rgba(6,13,26,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .topbar-in{max-width:560px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:10px}
+  .brand{font-family:'Unbounded',sans-serif;font-weight:800;font-size:15px;letter-spacing:.06em;line-height:1.05}
+  .brand small{display:block;font-family:'Roboto',sans-serif;font-weight:500;font-size:9px;letter-spacing:.34em;color:var(--mint)}
+  .top-actions{margin-left:auto;display:flex;align-items:center;gap:9px}
+  .switch{position:relative;width:52px;height:28px;border-radius:999px;background:var(--navy-2);border:1px solid var(--mint);display:inline-block;flex:none}
+  .switch .knob{position:absolute;top:2px;left:2px;width:22px;height:22px;border-radius:50%;background:var(--mint)}
+  .switch .ic{position:absolute;right:7px;top:50%;transform:translateY(-50%);font-size:12px}
+  .iconbtn{width:38px;height:38px;border-radius:12px;border:1px solid var(--line);background:var(--navy-2);color:var(--txt);display:flex;align-items:center;justify-content:center;font-size:16px;text-decoration:none;cursor:pointer;flex:none}
+  .menu-box{position:relative}
+  .menu-drop{display:none;position:absolute;right:0;top:46px;width:230px;background:var(--navy-2);border:1px solid var(--line);border-radius:16px;padding:8px;box-shadow:0 18px 40px rgba(0,0,0,.5)}
+  .menu-box.open .menu-drop{display:block}
+  .menu-drop a{display:block;padding:11px 12px;border-radius:10px;color:var(--txt);text-decoration:none;font-size:15px;font-weight:500}
+  .menu-drop a:hover{background:var(--navy-3)}
+  .menu-drop a.cta{background:var(--mint);color:#000;text-align:center;font-weight:700;margin-top:6px}
+  .menu-drop a.dim{color:var(--txt-3)}
+
+  /* ── Preview tag ─────────────────────── */
+  .pvtag{margin:14px 0 0;border:1px dashed var(--mint);background:var(--mint-dim);border-radius:12px;padding:9px 12px;text-align:center;font-size:12.5px;font-weight:700;letter-spacing:.08em;color:var(--mint)}
+
+  /* ── Hero ────────────────────────────── */
+  .hero{padding:26px 0 6px}
+  .hero .date{font-size:11.5px;letter-spacing:.22em;color:var(--txt-2);font-weight:700;text-transform:uppercase}
+  .hero h1{font-family:'Unbounded',sans-serif;font-weight:700;font-size:30px;line-height:1.15;margin:10px 0 12px}
+  .hero h1 .nm{color:var(--mint)}
+  .status{display:flex;align-items:center;gap:9px;background:var(--navy-1);border:1px solid var(--line);border-radius:14px;padding:12px 14px;font-size:14px}
+  .dot{width:9px;height:9px;border-radius:50%;background:var(--mint);flex:none;box-shadow:0 0 0 5px var(--mint-dim)}
+  .status b{font-weight:700}
+  .status .r{margin-left:auto;font-family:'Roboto Mono',monospace;font-size:12px;color:var(--txt-2)}
+
+  /* ── Record strip ────────────────────── */
+  .strip{margin-top:16px;border-radius:18px;background:linear-gradient(135deg,var(--navy-2),var(--navy-1));border:1px solid var(--line);padding:18px;display:flex;align-items:center;gap:16px}
+  .strip .big{font-family:'Roboto Mono',monospace;font-size:40px;font-weight:600;color:var(--mint);line-height:1}
+  .strip .lab{font-family:'Unbounded',sans-serif;font-size:14px;font-weight:700;letter-spacing:.02em}
+  .strip .sub{font-size:12.5px;color:var(--txt-2);margin-top:3px}
+  .strip .flame{font-size:26px;margin-left:auto}
+
+  /* ── Sections ────────────────────────── */
+  .sec{margin-top:28px}
+  .sec-head{display:flex;align-items:baseline;gap:10px;margin-bottom:12px}
+  .sec-head h2{font-family:'Unbounded',sans-serif;font-size:17px;font-weight:700}
+  .sec-head .n{font-family:'Roboto Mono',monospace;font-size:12px;color:var(--mint);border:1px solid var(--mint);border-radius:999px;padding:2px 9px}
+  .sec-head a{margin-left:auto;font-size:13px;color:var(--mint);text-decoration:none;font-weight:600}
+
+  /* ── Play cards ──────────────────────── */
+  .card{background:var(--navy-1);border:1px solid var(--line);border-radius:20px;padding:16px;margin-bottom:12px}
+  .card.plat{border-color:var(--mint);background:linear-gradient(160deg,var(--navy-2),var(--navy-1))}
+  .card-top{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+  .chip{font-size:10.5px;font-weight:700;letter-spacing:.14em;padding:5px 10px;border-radius:999px}
+  .chip.plat{background:var(--mint);color:#000}
+  .chip.goldl{background:transparent;border:1px solid var(--mint);color:var(--mint)}
+  .card-top .lg{margin-left:auto;font-size:11px;letter-spacing:.18em;color:var(--txt-3);font-weight:700}
+  .card-main{display:flex;gap:13px;align-items:center}
+  .logo-ring{width:58px;height:58px;border-radius:50%;background:var(--navy-3);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;flex:none}
+  .logo-ring img{width:44px;height:44px;object-fit:contain}
+  .pick{font-size:19px;font-weight:700;line-height:1.2}
+  .match{font-size:13px;color:var(--txt-2);margin-top:3px}
+  .card-foot{display:flex;align-items:center;gap:8px;margin-top:14px;padding-top:13px;border-top:1px solid var(--line)}
+  .stat{background:var(--navy-2);border:1px solid var(--line);border-radius:10px;padding:6px 10px;font-family:'Roboto Mono',monospace;font-size:13px}
+  .stat small{display:block;font-family:'Roboto',sans-serif;font-size:9px;letter-spacing:.16em;color:var(--txt-3);font-weight:700}
+  .res{margin-left:auto;font-family:'Roboto Mono',monospace;font-size:13.5px;font-weight:600;padding:7px 12px;border-radius:10px}
+  .res.won{background:var(--mint);color:#000}
+  .res.lost{background:var(--navy-2);border:1px solid var(--line);color:var(--txt-3)}
+  .res.live{background:var(--mint-dim);border:1px solid var(--mint);color:var(--mint)}
+  .final{font-size:12px;color:var(--txt-2);margin-top:9px;font-family:'Roboto Mono',monospace}
+
+  /* ── Risk band ───────────────────────── */
+  .risk{margin-top:28px;border-radius:18px;border:1px solid var(--line);background:var(--navy-1);padding:18px;display:flex;align-items:center;gap:14px}
+  .risk .lab{font-size:10.5px;letter-spacing:.2em;color:var(--txt-2);font-weight:700}
+  .risk .amt{font-family:'Roboto Mono',monospace;font-size:27px;font-weight:600;margin-top:2px}
+  .risk .sub{font-size:12.5px;color:var(--txt-2);margin-top:2px}
+  .risk .shield{margin-left:auto;font-size:30px}
+
+  /* ── Record by league ────────────────── */
+  .rail{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none}
+  .rail::-webkit-scrollbar{display:none}
+  .tile{min-width:118px;background:var(--navy-1);border:1px solid var(--line);border-radius:16px;padding:14px}
+  .tile .lg{font-size:11px;letter-spacing:.2em;color:var(--txt-2);font-weight:700}
+  .tile .rec{font-family:'Roboto Mono',monospace;font-size:23px;font-weight:600;margin:6px 0 8px}
+  .bar{height:5px;border-radius:99px;background:var(--navy-3);overflow:hidden}
+  .bar i{display:block;height:100%;background:var(--mint);border-radius:99px}
+  .tile .pct{font-size:11.5px;color:var(--txt-2);margin-top:7px;font-family:'Roboto Mono',monospace}
+
+  /* ── Platinum bubble ─────────────────── */
+  .bubble{position:fixed;left:16px;right:16px;bottom:86px;max-width:528px;margin:0 auto;z-index:55;background:var(--navy-2);border:1px solid var(--mint);border-radius:16px;padding:12px 14px;display:flex;align-items:center;gap:10px;box-shadow:0 14px 34px rgba(0,0,0,.5)}
+  .bubble .t{font-size:13.5px;line-height:1.35}
+  .bubble .t b{color:var(--mint)}
+  .bubble .x{margin-left:auto;background:none;border:none;color:var(--txt-2);font-size:17px;cursor:pointer;padding:4px}
+
+  /* ── Bottom nav ──────────────────────── */
+  .bnav{position:fixed;left:0;right:0;bottom:0;z-index:60;background:rgba(6,13,26,.95);backdrop-filter:blur(10px);border-top:1px solid var(--line)}
+  .bnav-in{max-width:560px;margin:0 auto;display:flex;padding:8px 6px calc(8px + env(safe-area-inset-bottom))}
+  .bnav a{flex:1;text-align:center;text-decoration:none;color:var(--txt-3);font-size:10.5px;font-weight:600;padding:5px 0}
+  .bnav a .ic{display:block;font-size:19px;margin-bottom:2px}
+  .bnav a.on{color:var(--mint)}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-in">
+    <div class="brand"><small>THE</small>SHARP TEAM</div>
+    <div class="top-actions">
+      <a class="switch" href="{{ url_for('admin_dashboard') }}" aria-label="Switch to Admin"><span class="knob"></span><span class="ic">⚙️</span></a>
+      <a class="iconbtn" href="{{ url_for('home') }}" aria-label="Notifications">🔔</a>
+      <div class="menu-box" id="menuBox">
+        <button class="iconbtn" type="button" onclick="document.getElementById('menuBox').classList.toggle('open')" aria-label="Menu">☰</button>
+        <nav class="menu-drop">
+          <a href="{{ url_for('game_center') }}">Betting Lines</a>
+          <a href="{{ url_for('balances') }}">Sportsbooks</a>
+          <a href="{{ url_for('masterclass') }}">Masterclass</a>
+          <a href="{{ url_for('about') }}">About</a>
+          <a href="{{ url_for('tools') }}">My Tools</a>
+          <a href="{{ url_for('tracker_plays') }}">My Bets</a>
+          <a href="{{ url_for('cuenta') }}">Account</a>
+          <a href="{{ url_for('admin_dashboard') }}">Admin</a>
+          <a class="cta" href="{{ url_for('home') }}">View picks →</a>
+          <a class="dim" href="{{ url_for('logout') }}">Log out</a>
+        </nav>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="pvtag">PREVIEW — SOLO PARA ALEX · ESTA NO ES LA PÁGINA EN VIVO</div>
+
+  <section class="hero">
+    <div class="date">Saturday · November 14, 2026</div>
+    <h1>Good evening,<br><span class="nm">Alex</span></h1>
+    <div class="status"><span class="dot"></span><span><b>Today's board is posted</b> — Officials: 4 plays</span><span class="r">2-2 so far</span></div>
+  </section>
+
+  <section class="strip">
+    <div>
+      <div class="big">7-3</div>
+    </div>
+    <div>
+      <div class="lab">Platinum Plays</div>
+      <div class="sub">Record over the last 10 Platinum plays</div>
+    </div>
+    <div class="flame">🔥</div>
+  </section>
+
+  <section class="sec">
+    <div class="sec-head"><h2>Today's plays</h2><span class="n">4 PLAYS</span><a href="{{ url_for('records') }}">Full record →</a></div>
+
+    <article class="card plat">
+      <div class="card-top"><span class="chip plat">💎 PLATINUM</span><span class="lg">NCAAF</span></div>
+      <div class="card-main">
+        <div class="logo-ring"><img src="https://a.espncdn.com/i/teamlogos/ncaa/500/254.png" alt="Utah Utes logo"></div>
+        <div>
+          <div class="pick">Utah Utes ML</div>
+          <div class="match">Utah Utes @ Arizona Wildcats · 10:30 PM ET</div>
+        </div>
+      </div>
+      <div class="card-foot">
+        <div class="stat"><small>PRICE</small>−104</div>
+        <div class="stat"><small>STAKE</small>$100</div>
+        <span class="res live">● IN PROGRESS</span>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="card-top"><span class="chip goldl">GOLD</span><span class="lg">NCAAF</span></div>
+      <div class="card-main">
+        <div class="logo-ring"><img src="https://a.espncdn.com/i/teamlogos/ncaa/500/264.png" alt="Washington Huskies logo"></div>
+        <div>
+          <div class="pick">Washington Huskies ML</div>
+          <div class="match">Washington Huskies @ Michigan State Spartans</div>
+          <div class="final">Final · Washington 21 — Michigan State 14</div>
+        </div>
+      </div>
+      <div class="card-foot">
+        <div class="stat"><small>PRICE</small>−130</div>
+        <div class="stat"><small>STAKE</small>$60</div>
+        <span class="res won">WON +$46.15</span>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="card-top"><span class="chip goldl">GOLD</span><span class="lg">NCAAF</span></div>
+      <div class="card-main">
+        <div class="logo-ring"><img src="https://a.espncdn.com/i/teamlogos/ncaa/500/277.png" alt="West Virginia Mountaineers logo"></div>
+        <div>
+          <div class="pick">West Virginia Mountaineers ML</div>
+          <div class="match">Kansas Jayhawks @ West Virginia Mountaineers</div>
+          <div class="final">Final · West Virginia 14 — Kansas 37</div>
+        </div>
+      </div>
+      <div class="card-foot">
+        <div class="stat"><small>PRICE</small>−125</div>
+        <div class="stat"><small>STAKE</small>$59.47</div>
+        <span class="res lost">LOST −$59.47</span>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="card-top"><span class="chip goldl">GOLD</span><span class="lg">NHL</span></div>
+      <div class="card-main">
+        <div class="logo-ring"><img src="https://a.espncdn.com/i/teamlogos/nhl/500/mtl.png" alt="Montréal Canadiens logo"></div>
+        <div>
+          <div class="pick">Montréal Canadiens ML</div>
+          <div class="match">Colorado Avalanche @ Montréal Canadiens</div>
+          <div class="final">Final · Montréal 1 — Colorado 4</div>
+        </div>
+      </div>
+      <div class="card-foot">
+        <div class="stat"><small>PRICE</small>−117</div>
+        <div class="stat"><small>STAKE</small>$60</div>
+        <span class="res lost">LOST −$60.00</span>
+      </div>
+    </article>
+  </section>
+
+  <section class="risk">
+    <div>
+      <div class="lab">YOUR RISK TODAY</div>
+      <div class="amt">$279.47</div>
+      <div class="sub">4 plays · $100 Platinum + $179.47 Gold</div>
+    </div>
+    <div class="shield">🛡️</div>
+  </section>
+
+  <section class="sec">
+    <div class="sec-head"><h2>Record by league</h2></div>
+    <div class="rail">
+      <div class="tile"><div class="lg">MLB</div><div class="rec">19-6</div><div class="bar"><i style="width:76%"></i></div><div class="pct">76% wins</div></div>
+      <div class="tile"><div class="lg">NCAAF</div><div class="rec">10-5</div><div class="bar"><i style="width:67%"></i></div><div class="pct">67% wins</div></div>
+      <div class="tile"><div class="lg">NFL</div><div class="rec">12-9</div><div class="bar"><i style="width:57%"></i></div><div class="pct">57% wins</div></div>
+      <div class="tile"><div class="lg">NHL</div><div class="rec">13-15</div><div class="bar"><i style="width:46%"></i></div><div class="pct">46% wins</div></div>
+      <div class="tile"><div class="lg">NBA</div><div class="rec">9-11</div><div class="bar"><i style="width:45%"></i></div><div class="pct">45% wins</div></div>
+    </div>
+  </section>
+
+</div>
+
+<div class="bubble" id="pvBubble">
+  <span>💎</span>
+  <div class="t"><b>Your Platinum is ON</b> — on us until Dec 13 · 29 days left</div>
+  <button class="x" type="button" onclick="document.getElementById('pvBubble').style.display='none'" aria-label="Dismiss">✕</button>
+</div>
+
+<nav class="bnav">
+  <div class="bnav-in">
+    <a class="on" href="{{ url_for('home') }}"><span class="ic">🏠</span>Home</a>
+    <a href="{{ url_for('game_center') }}"><span class="ic">📊</span>Lines</a>
+    <a href="{{ url_for('tracker_plays') }}"><span class="ic">🎯</span>My Bets</a>
+    <a href="{{ url_for('tools') }}"><span class="ic">🧰</span>Tools</a>
+    <a href="{{ url_for('cuenta') }}"><span class="ic">👤</span>Account</a>
+  </div>
+</nav>
+
+</body>
+</html>
