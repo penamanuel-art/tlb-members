@@ -6537,14 +6537,6 @@ def home():
         _nv = sum(1 for p in plays if (p.get("nivel") or "").upper() == "VAULT")
         _nf = sum(1 for p in plays if (p.get("nivel") or "").upper() == "FREE")
         _t = f"The board is live · {len(plays)} play" + ("s" if len(plays) != 1 else "")
-        if _np:
-            _t += f" · {_np} Platinum"
-        if _ng:
-            _t += f" · {_ng} Gold"
-        if _nv:
-            _t += f" · {_nv} Vault"
-        if _nf:
-            _t += f" · {_nf} Free"
         _gr = [p for p in plays if p.get("resultado") in ("W", "L")]
         if _gr:
             _gw = sum(1 for p in _gr if p["resultado"] == "W")
