@@ -42,7 +42,6 @@
   .dn-ring{width:19px;height:19px;border:3px solid var(--mint);border-radius:50%;flex:none}
   .dn-hero-body{padding:20px 18px}
   .dn-hero-title{font-family:var(--fdisp);font-size:33px;font-weight:700;line-height:1.15;color:var(--txt)}
-  .dn-hero-accent{color:var(--mint);font-weight:700;font-size:20.5px;margin-top:9px}
   .dn-hero-div{height:1px;background:var(--line);margin:17px 0}
   .dn-hero-label{font-weight:700;letter-spacing:.1em;text-transform:uppercase;font-size:13px;color:var(--txt)}
   .dn-hero-text{color:#DCE4F0;font-size:15.5px;line-height:1.45;margin-top:6px}
@@ -244,7 +243,6 @@
     <div class="dn-hero-band"><span>Today's card</span><span class="dn-ring"></span></div>
     <div class="dn-hero-body">
       <div class="dn-hero-title">{{ estado.titulo }}</div>
-      {% if stats.plat10 and stats.plat10.w > stats.plat10.l %}<div class="dn-hero-accent">🔥 Platinum Plays: {{ stats.plat10.w }}–{{ stats.plat10.l }} in the last 10 plays</div>{% endif %}
       <div class="dn-hero-div"></div>
       <div class="dn-hero-label">The board</div>
       <p class="dn-hero-text">{{ estado.sub }}</p>
