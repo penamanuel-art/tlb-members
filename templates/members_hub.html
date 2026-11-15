@@ -242,6 +242,14 @@ summary{font:500 16px Unbounded,Roboto,sans-serif;padding:20px 0}
 #wd{line-height:1.5}
 /* Mint side lines on cards (play cards, stat panels, member card) */
 .pick,.sum,.card3{border-left:3px solid var(--g);border-right:3px solid var(--g)}
+/* Status card (posted / not posted) — replaces the decorative member card */
+.card3.status{display:flex;align-items:center}
+.status .stx{display:flex;align-items:center;gap:16px;position:relative;z-index:1}
+.status .stx[hidden]{display:none}
+.status .st-ic{flex:0 0 auto;width:54px;height:54px;border-radius:16px;background:rgba(45,224,160,.12);border:1px solid rgba(45,224,160,.45);display:flex;align-items:center;justify-content:center}
+.status .st-t{font:600 19px Unbounded,Roboto,sans-serif;color:var(--t);letter-spacing:-.01em}
+.status .st-l{color:var(--m);font-size:13.5px;line-height:1.5;margin:5px 0 0}
+.status .st-l b{color:var(--t);font-weight:600}
 </style>
 </head>
 <body>
@@ -251,7 +259,7 @@ summary{font:500 16px Unbounded,Roboto,sans-serif;padding:20px 0}
 <div><div class="eyebrow" id="wd">Saturday, November 14</div><h1 id="wh">Welcome to <em>The Sharp Team</em></h1><p id="wp"></p>
 <div class="ask" id="ask"><label for="nm">What should we call you?</label><div><input id="nm" type="text" maxlength="40" placeholder="Your first name" autocomplete="given-name"><button class="btn pri" id="sv">Enter</button></div></div>
 <button class="btn" id="chg" hidden style="margin-top:16px">Change name</button></div>
-<div class="card3"><div class="t"><span>The Sharp Team</span><span>Member</span></div><div class="n" id="mn">Your name</div><div class="b"><span>Members Hub</span><span>Full record inside</span></div></div>
+<div class="card3 status" id="statusCard"><div class="stx" id="stA" hidden><div class="st-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#2DE0A0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><div class="st-tx"><div class="st-t">Not posted yet</div><p class="st-l">Alex posts the board by <b>2:00 PM ET</b> on weekdays and by <b>11:00 AM ET</b> on weekends.</p></div></div><div class="stx" id="stB"><div class="st-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#2DE0A0" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12.5l5 5L20 6.5"/></svg></div><div class="st-tx"><div class="st-t">Today's board is posted</div><p class="st-l"><b>4 plays today</b> · Total risk <b>$279</b></p><p class="st-l">Program, last 10: <b>3–7</b> · Platinum, last 10: <b>7–3</b></p></div></div></div>
 </div>
 <div class="sum">
 <div><small>YOUR BANKROLL</small><input id="bk" type="number" inputmode="decimal" value="10000" min="0" aria-label="Bankroll in dollars"><span>Edit it. Everything updates.</span></div>
@@ -333,6 +341,8 @@ var plays=[
 {t:'gold',lg:'NCAAF',pick:'Washington Huskies ML',g:'Washington @ Michigan State · 5:30 PM ET',o:-130,mo:59.4,u:.6,r:'w',th:'The highest win probability on today’s board at −130, against a Michigan State side missing 10 players, including its top tackler. A favorite with an edge is a calmer way to use a small advantage.'},
 {t:'gold',lg:'NHL',pick:'Montréal Canadiens ML',g:'Colorado @ Montréal · 7:00 PM ET',o:-117,mo:54,u:.6,r:'l',th:'On the card by Alex’s direct order — declared as an override, not a model play. At the published price the model sat just below break-even (edge −0.3, EV −0.6%); the morning Sharp Money flow backed Montréal.'},
 {t:'plat',lg:'NCAAF',pick:'Utah Utes ML',g:'Utah @ Arizona · 10:30 PM ET',o:-104,mo:56.4,u:1,r:'p',th:'Utah is 9–0 and No. 2 nationally, with QB Devon Dampier healthy (27 total TDs) against an Arizona secondary thinned by injuries. The edge clears the Platinum entry band, so the stake is a full unit.'}];
+var _stA=document.getElementById('stA'),_stB=document.getElementById('stB');
+if(plays.length){_stA.hidden=true;_stB.hidden=false}else{_stA.hidden=false;_stB.hidden=true}
 var lgs=[['MLB',19,6],['NFL',12,9],['NCAAF',10,5],['NHL',13,15],['NBA',9,11]];
 var f='all',tr={},NM='';
 try{NM=localStorage.getItem('stname')||''}catch(e){}
@@ -344,7 +354,7 @@ function greet(){var h=new Date().getHours(),g=h<12?'Good morning':h<18?'Good af
 w.innerHTML=NM?'':'Welcome to <em>The Sharp Team</em>';
 if(NM){w.textContent=g+', ';var e=document.createElement('em');e.textContent=NM+'.';w.appendChild(e)}
 document.getElementById('wp').textContent=NM?'Your desk is ready. Today’s plays are below, sized to your bankroll and explained line by line.':'A private desk for serious bettors. Tell us your name and we will greet you each time you return.';
-document.getElementById('mn').textContent=NM||'Your name';
+var _mn=document.getElementById('mn');if(_mn)_mn.textContent=NM||'Your name';
 document.getElementById('ask').style.display=NM?'none':'block';document.getElementById('chg').hidden=!NM}
 function render(){
 var b=+document.getElementById('bk').value||0,h='',net=0,tot=0,w=0,l=0,ev=0,win=0;
