@@ -170,6 +170,63 @@
   .bar i{display:block;height:100%;background:var(--mint);border-radius:99px}
   .tile .pct{font-size:11.5px;color:var(--txt-2);margin-top:7px;font-family:'Roboto Mono',monospace}
 
+  /* ── Scores strip ────────────────────── */
+  .scores{background:var(--navy-1);border:1px solid var(--line);border-radius:16px;padding:6px 14px}
+  .scrow{display:flex;align-items:center;gap:8px;padding:10px 0;border-top:1px solid var(--line);font-size:14px}
+  .scrow:first-child{border-top:none}
+  .scrow .mt{flex:1;line-height:1.3}
+  .scrow .mt small{display:block;color:var(--txt-3);font-size:11px;letter-spacing:.14em;font-weight:700}
+  .scrow .sc{font-family:'Roboto Mono',monospace;font-weight:600;font-size:15px}
+  .scrow .st{font-size:10px;font-weight:800;letter-spacing:.1em;border-radius:999px;padding:3px 8px;flex:none}
+  .scrow .st.fin{background:var(--navy-3);color:var(--txt-2)}
+  .scrow .st.live{background:var(--mint);color:#000}
+
+  /* ── Stat bands (program / week) ─────── */
+  .band2{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+  .band2 .stat{background:var(--navy-1);border:1px solid var(--line);border-radius:16px;padding:14px 12px}
+  .band2 .v{font-size:20px;font-weight:600;line-height:1.1}
+  .band2 .v.pos{color:var(--mint)}
+  .band2 .v.neg{color:var(--txt-3)}
+  .band2 .k{font-size:11px;color:var(--txt-2);margin-top:5px;line-height:1.35}
+
+  /* ── Locked Platinum example ─────────── */
+  .lknote{font-size:12.5px;color:var(--txt-2);line-height:1.45;margin:-4px 0 12px}
+  .lkcard{background:var(--navy-1);border:1px solid var(--line);border-radius:20px;overflow:hidden}
+  .lk-head{background:var(--navy-0);padding:12px;display:flex;align-items:center;justify-content:space-between;gap:6px}
+  .lk-lvl{font-size:10.5px;font-weight:700;letter-spacing:.8px;color:var(--mint);white-space:nowrap}
+  .lk-lg{font-size:10px;color:var(--txt-2);white-space:nowrap}
+  .lk-pill{font-size:9.5px;font-weight:800;letter-spacing:.8px;color:#000;background:var(--mint);border-radius:999px;padding:3px 7px;white-space:nowrap}
+  .lk-body{padding:16px}
+  .lk-blur{margin-top:6px;filter:blur(6px);-webkit-filter:blur(6px);opacity:.75;pointer-events:none;user-select:none}
+  .lk-bar{height:15px;background:var(--navy-3);border-radius:5px}
+  .lk-bars{display:flex;gap:10px;margin-top:10px}
+  .lk-blur img{width:100%;border-radius:12px;margin-top:14px;display:block}
+  .lk-title{font-size:20px;font-weight:800;line-height:1.25;margin:16px 0 0}
+  .lk-sub{font-size:13.5px;color:var(--txt-2);line-height:1.45;margin:6px 0 0}
+  .lk-cta{display:block;text-align:center;text-decoration:none;font-size:16px;font-weight:800;padding:14px;border-radius:12px;margin-top:12px;background:var(--mint);color:#000}
+  .lk-row{display:flex;gap:6px;margin-top:12px}
+  .lk-row a,.lk-row button{flex:1 1 0;min-width:0;text-align:center;font-size:11.5px;color:var(--txt);background:transparent;border:1px solid var(--line);border-radius:12px;padding:10px 4px;text-decoration:none;overflow:hidden;white-space:nowrap;cursor:pointer;font-family:inherit}
+  .lk-row .shr{flex:0 0 48px}
+
+  /* ── Tools row ───────────────────────── */
+  .tools{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .tool{background:var(--navy-1);border:1px solid var(--line);border-radius:16px;padding:14px;text-decoration:none;color:var(--txt);display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .tool .tn{font-weight:700;font-size:14.5px}
+  .tool .tc{font-family:'Roboto Mono',monospace;font-size:12px;color:var(--mint);border:1px solid var(--mint);border-radius:999px;padding:2px 9px;white-space:nowrap}
+
+  /* ── Sharp Money rows ────────────────── */
+  .sharps{background:var(--navy-1);border:1px solid var(--line);border-radius:16px;padding:6px 14px}
+  .srow{display:flex;align-items:center;gap:10px;padding:11px 0;border-top:1px solid var(--line)}
+  .srow:first-child{border-top:none}
+  .srow .stm{flex:1;font-weight:600;font-size:14.5px}
+  .srow .smv{font-family:'Roboto Mono',monospace;font-size:12.5px;color:var(--txt-2)}
+  .srow .spc{font-family:'Roboto Mono',monospace;font-weight:600;font-size:16px;color:var(--mint)}
+  .snote{font-size:12px;color:var(--txt-3);line-height:1.5;margin-top:9px}
+
+  /* ── Tomorrow note ───────────────────── */
+  .tmrw{margin-top:28px;border:1px dashed var(--mint);background:var(--mint-dim);border-radius:14px;padding:13px 15px;font-size:14px;line-height:1.5}
+  .tmrw b{color:var(--mint)}
+
   /* ── Platinum bubble ─────────────────── */
   .bubble{position:fixed;left:16px;right:16px;bottom:86px;max-width:528px;margin:0 auto;z-index:55;background:var(--navy-2);border:1px solid var(--mint);border-radius:16px;padding:12px 14px;display:flex;align-items:center;gap:10px;box-shadow:0 14px 34px rgba(0,0,0,.5)}
   .bubble .t{font-size:13.5px;line-height:1.35}
@@ -219,6 +276,16 @@
     <div class="date">Saturday · November 14, 2026</div>
     <h1>Good evening,<br><span class="nm">Alex</span></h1>
     <div class="status"><span class="dot"></span><span><b>Today's board is posted</b> — Officials: 4 plays</span><span class="r">1-2 · 1 in progress</span></div>
+  </section>
+
+  <section class="sec" style="margin-top:20px">
+    <div class="sec-head"><h2>Today's scores</h2><span class="n">SCOREBOARD</span></div>
+    <div class="scores">
+      <div class="scrow"><span class="mt"><small>NCAAF</small>West Virginia @ Kansas</span><span class="sc">14 – 37</span><span class="st fin">FINAL</span></div>
+      <div class="scrow"><span class="mt"><small>NCAAF</small>Washington @ Michigan State</span><span class="sc">21 – 14</span><span class="st fin">FINAL</span></div>
+      <div class="scrow"><span class="mt"><small>NHL</small>Montréal vs Colorado</span><span class="sc">1 – 4</span><span class="st fin">FINAL</span></div>
+      <div class="scrow"><span class="mt"><small>NCAAF</small>Utah @ Arizona</span><span class="sc">3 – 13</span><span class="st live">LIVE</span></div>
+    </div>
   </section>
 
   <section class="strip">
@@ -368,6 +435,48 @@
     </article>
   </section>
 
+  <section class="sec">
+    <div class="sec-head"><h2>Program record</h2><span class="n">ALL TIME</span></div>
+    <div class="band2">
+      <div class="stat"><div class="v mono">62-44</div><div class="k">Record · 106 settled plays</div></div>
+      <div class="stat"><div class="v mono">58.5%</div><div class="k">Win rate since day one</div></div>
+      <div class="stat"><div class="v mono pos">+$157.39</div><div class="k">Profit · +14.14u total</div></div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="sec-head"><h2>This week</h2><span class="n">MON NOV 9 → TODAY</span></div>
+    <div class="band2">
+      <div class="stat"><div class="v mono">6-11</div><div class="k">Record · 17 plays settled</div></div>
+      <div class="stat"><div class="v mono neg">−$509.04</div><div class="k">Profit so far this week</div></div>
+      <div class="stat"><div class="v mono">1</div><div class="k">Play still live tonight</div></div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="sec-head"><h2>Así lo ve un miembro sin Platinum</h2><span class="n">VISTA FREE</span></div>
+    <p class="lknote">Ejemplo de esta previa: la jugada Platinum de hoy, tal como la ve un miembro sin Platinum — sin pick, sin precio y con el ticket borroso.</p>
+    <div class="lkcard">
+      <div class="lk-head"><span class="lk-lvl">💎 PLATINUM</span><span class="lk-lg">NCAAF · 10:30 PM ET</span><span class="lk-pill">🔒 LOCKED</span></div>
+      <div class="lk-body">
+        <div class="lk-blur" aria-hidden="true">
+          <div class="lk-bar" style="height:22px;width:62%"></div>
+          <div class="lk-bars"><div class="lk-bar" style="width:34%"></div><div class="lk-bar" style="width:26%"></div></div>
+          <img src="{{ url_for('static', filename='img/locked/locked-2026-11-14.jpg') }}" alt="">
+        </div>
+        <div class="lk-title">Platinum members see this pick.</div>
+        <p class="lk-sub">This play is for Platinum members. Unlock it to see the pick, the price and the verified ticket.</p>
+        <a class="lk-cta" href="{{ url_for('desbloquear_platinum') }}">Unlock Platinum →</a>
+        <div class="lk-row">
+          <a href="{{ url_for('desbloquear_platinum') }}">↗ Place at Novig</a>
+          <button class="shr" type="button" aria-label="Share" onclick="(function(){var u=window.location.origin+'/home';if(navigator.share){navigator.share({title:'The Sharp Team',url:u}).catch(function(){});}else{navigator.clipboard&&navigator.clipboard.writeText(u);}})()">↗</button>
+          <a href="{{ url_for('desbloquear_platinum') }}">🎫 Receipt</a>
+          <a href="{{ url_for('desbloquear_platinum') }}" style="flex:1.15 1 0;font-size:14px">+ Track</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section class="risk">
     <div>
       <div class="lab">YOUR RISK TODAY</div>
@@ -387,6 +496,29 @@
       <div class="tile"><div class="lg">NBA</div><div class="rec">9-11</div><div class="bar"><i style="width:45%"></i></div><div class="pct">45% wins</div></div>
     </div>
   </section>
+
+  <section class="sec">
+    <div class="sec-head"><h2>Your tools</h2><span class="n">LIVE DATA</span></div>
+    <div class="tools">
+      <a class="tool" href="{{ url_for('ev_board') }}"><span class="tn">+EV Board</span><span class="tc">10 edges</span></a>
+      <a class="tool" href="{{ url_for('props') }}"><span class="tn">Player Props</span><span class="tc">25 props</span></a>
+      <a class="tool" href="{{ url_for('sharp') }}"><span class="tn">Sharp Money</span><span class="tc">7 sharp now</span></a>
+      <a class="tool" href="{{ url_for('game_center') }}"><span class="tn">Game Center</span><span class="tc">62 games</span></a>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="sec-head"><h2>Sharp Money today</h2><span class="n">KALSHI VERIFIED ≥70%</span><a href="{{ url_for('sharp') }}">All signals →</a></div>
+    <div class="sharps">
+      <div class="srow"><span class="stm">St. Louis Blues</span><span class="smv">+2.7 pts</span><span class="spc">95.5%</span></div>
+      <div class="srow"><span class="stm">Montréal Canadiens</span><span class="smv">+1.9 pts</span><span class="spc">91.4%</span></div>
+      <div class="srow"><span class="stm">Dallas Mavericks</span><span class="smv">+10.1 pts</span><span class="spc">85.0%</span></div>
+      <div class="srow"><span class="stm">Minnesota Wild</span><span class="smv">+2.4 pts</span><span class="spc">74.4%</span></div>
+    </div>
+    <p class="snote">Money % = share of the dollars on Kalshi's exchange backing each team; pts = how much the line's implied probability moved today. Informational only — not picks.</p>
+  </section>
+
+  <section class="tmrw">🏈 <b>Tomorrow is NFL Sunday.</b> The full NFL slate gets evaluated first — on Sundays the NFL leads the board.</section>
 
 </div>
 
