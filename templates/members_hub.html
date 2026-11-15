@@ -250,17 +250,34 @@ summary{font:500 16px Unbounded,Roboto,sans-serif;padding:20px 0}
 .status .st-t{font:600 19px Unbounded,Roboto,sans-serif;color:var(--t);letter-spacing:-.01em}
 .status .st-l{color:var(--m);font-size:13.5px;line-height:1.5;margin:5px 0 0}
 .status .st-l b{color:var(--t);font-weight:600}
+/* Status card — slim full-width strip (same width as the panels and play cards) */
+.card3.status{max-width:none;min-height:0;padding:13px 18px;margin:2px 0 16px}
+.status .stx{gap:13px}
+.status .st-ic{width:40px;height:40px;border-radius:12px}
+.status .st-t{font-size:15.5px}
+.status .st-l{font-size:13px;margin-top:2px}
+@media (min-width:860px){.hero{grid-template-columns:1fr}}
+/* Top bar: logo + name + Members only pill only (nav buttons moved to the bottom bar) */
+.topbar .pill{margin-left:auto;align-self:center;flex:none}
+/* Bottom navigation bar — fixed, the nav buttons live here */
+.botbar{position:fixed;left:0;right:0;bottom:0;z-index:40;background:rgba(6,11,26,.94);backdrop-filter:blur(12px);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+.bb-in{max-width:1100px;margin:0 auto;padding:10px 20px;display:flex;align-items:center;gap:8px;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.bb-in::-webkit-scrollbar{display:none}
+.bb-in a{display:inline-flex;align-items:center;min-height:40px;padding:9px 15px;border:1px solid var(--gl);border-radius:99px;background:var(--p2);color:var(--t);text-decoration:none;font-size:13.5px;font-weight:500;letter-spacing:.02em;white-space:nowrap}
+.bb-in a:hover{border-color:rgba(45,224,160,.55);color:var(--au)}
+.bb-in a.tb-out{color:var(--m)}
+.wrap{padding-bottom:150px}
 </style>
 </head>
 <body>
-<nav class="topbar"><div class="tb-in"><a class="tb-logo" href="/home"><img class="tb-img" src="/static/img/sharp-team-logo.png" alt="The Sharp Team">The Sharp Team</a><div class="tb-links"><a href="/home">Dashboard</a><a href="/tracker/plays">My Bets</a><a href="/tools">Tools</a><a href="/records">Full record</a><a href="/cuenta">Account</a><a href="/admin">Admin</a><a class="tb-out" href="/logout">Log out</a><span class="pill">Members only</span></div></div></nav>
+<nav class="topbar"><div class="tb-in"><a class="tb-logo" href="/home"><img class="tb-img" src="/static/img/sharp-team-logo.png" alt="The Sharp Team">The Sharp Team</a><span class="pill">Members only</span></div></nav>
 <div class="wrap">
 <div class="hero">
 <div><div class="eyebrow" id="wd">Saturday, November 14</div><h1 id="wh">Welcome to <em>The Sharp Team</em></h1><p id="wp"></p>
 <div class="ask" id="ask"><label for="nm">What should we call you?</label><div><input id="nm" type="text" maxlength="40" placeholder="Your first name" autocomplete="given-name"><button class="btn pri" id="sv">Enter</button></div></div>
 <button class="btn" id="chg" hidden style="margin-top:16px">Change name</button></div>
-<div class="card3 status" id="statusCard"><div class="stx" id="stA" hidden><div class="st-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#2DE0A0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><div class="st-tx"><div class="st-t">Not posted yet</div><p class="st-l">Alex posts the board by <b>2:00 PM ET</b> on weekdays and by <b>11:00 AM ET</b> on weekends.</p></div></div><div class="stx" id="stB"><div class="st-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#2DE0A0" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12.5l5 5L20 6.5"/></svg></div><div class="st-tx"><div class="st-t">Today's board is posted</div><p class="st-l"><b>4 plays today</b> · Total risk <b>$279</b></p><p class="st-l">Program, last 10: <b>3–7</b> · Platinum, last 10: <b>7–3</b></p></div></div></div>
 </div>
+<div class="card3 status" id="statusCard"><div class="stx" id="stA" hidden><div class="st-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2DE0A0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><div class="st-tx"><div class="st-t">Not posted yet</div><p class="st-l">Alex posts the board by <b>2:00 PM ET</b> on weekdays and by <b>11:00 AM ET</b> on weekends.</p></div></div><div class="stx" id="stB"><div class="st-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2DE0A0" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12.5l5 5L20 6.5"/></svg></div><div class="st-tx"><div class="st-t">Today's board is posted</div><p class="st-l"><b>4 plays today</b> · Total risk <b>$279</b> · Program, last 10: <b>3–7</b> · Platinum, last 10: <b>7–3</b></p></div></div></div>
 <div class="sum">
 <div><small>YOUR BANKROLL</small><input id="bk" type="number" inputmode="decimal" value="10000" min="0" aria-label="Bankroll in dollars"><span>Edit it. Everything updates.</span></div>
 <div><small>ONE UNIT</small><b id="u">$100</b><span>1% of your bankroll</span></div>
@@ -421,5 +438,6 @@ document.addEventListener('change',function(e){var r=e.target.closest('[data-r]'
 var cf=false;document.getElementById('tc').addEventListener('click',function(){var b=this;if(!E.length)return;if(!cf){cf=true;b.textContent='Tap again to confirm';setTimeout(function(){cf=false;b.textContent='Clear all'},3000)}else{cf=false;b.textContent='Clear all';E=[];saveE();syncTr();trk();render()}});
 syncTr();greet();render();trk();window.addEventListener('load',chart);
 </script>
+<nav class="botbar"><div class="bb-in"><a href="/home">Dashboard</a><a href="/tracker/plays">My Bets</a><a href="/tools">Tools</a><a href="/records">Full record</a><a href="/cuenta">Account</a><a href="/admin">Admin</a><a class="tb-out" href="/logout">Log out</a></div></nav>
 </body>
 </html>
