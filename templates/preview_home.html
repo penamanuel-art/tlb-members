@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="dark">
-<title>The Sharp Team · Members Desk — Preview</title>
+<title>The Sharp Team · Members Desk</title>
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800&family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
@@ -119,90 +119,110 @@ a.tier:hover{border-color:var(--au)}
 </style>
 </head>
 <body>
-<header class="hd"><div class="hi"><div class="logo"><i></i>The Sharp Team<small>Members Desk</small></div><nav class="nv"><a href="#desk">Today's plays</a><a href="#performance">Performance</a><a href="#sharp">Sharp Money</a><a href="#tools">Tools</a><a href="{{ url_for('home') }}">Live home</a></nav><span class="pill">Platinum · Alex</span></div></header>
-<div class="wrap">
-<div class="pvtag">Preview — Solo para Alex · Esta no es la página en vivo</div>
-<div class="hero">
-<div><div class="eyebrow">Saturday, November 14, 2026</div><h1>Good evening, <em>Alex</em>.</h1><p>Today's board is posted — Officials: 4 plays · 1–2 so far, with the Platinum play still in progress out west. Every play below carries its price, its stake and its verified ticket.</p></div>
-<div class="card3"><div class="t"><span>The Sharp Team</span><span>Member</span></div><div class="n">Alex</div><div class="b"><span>Platinum · on us until Dec 13</span><span>29 days left</span></div></div>
-</div>
-<div class="sum">
-<div><small>PROGRAM RECORD</small><b>63–46</b><span>58% win rate · all-time, incl. today</span></div>
-<div><small>PROGRAM NET</small><b>+$84.10</b><span>Settled profit, all-time</span></div>
-<div><small>PLATINUM · LAST 10</small><b>7–3</b><span>70% · the top tier's recent form</span></div>
-<div><small>YOUR RISK TODAY</small><b>$279.47</b><span>4 plays · $100 Platinum + $179.47 Gold</span></div>
-</div>
+{# ===== Home Vantage (2026-11-14): diseño nuevo SOLO en la cuenta de
+   Alex vía la rama de home(); el resto de miembros sigue en home_lux.
+   La misma plantilla sirve la previa estática /admin/preview-home:
+   todo lo dinámico va con guardas {% if %} pa' que sin contexto de
+   /home degrade sin romper. ===== #}
+{% set _plays = plays if plays is defined and plays else [] %}
+{% set _tids = tracked_ids if tracked_ids is defined and tracked_ids else [] %}
+{% set _mp = miembro_platinum if miembro_platinum is defined else false %}
+{% set _res = res if res is defined and res else none %}
+{% set _prog = alex_prog if alex_prog is defined and alex_prog else none %}
+{% set _plat10 = alex_plat10 if alex_plat10 is defined and alex_plat10 else none %}
+{% set _today = alex_today if alex_today is defined and alex_today else none %}
+{% set _sharp = alex_sharp if alex_sharp is defined and alex_sharp else [] %}
+{% set _chart = alex_chart_data if alex_chart_data is defined and alex_chart_data else [] %}
+{% set _labels = alex_chart_labels if alex_chart_labels is defined and alex_chart_labels else [] %}
+{% set _ligas = record_por_liga if record_por_liga is defined and record_por_liga else [] %}
+{% set _tirita = tirita_record10 if tirita_record10 is defined and tirita_record10 else none %}
 
-<section id="desk">
-<div class="sh"><span class="eyebrow">The desk · 4 plays today</span><h2>Where our model sees more than the market</h2><p>Each play shows our estimated win chance, the chance the price needs, and the gap between them. We only publish a play when that gap is positive — and when it is not, we say so on the card.</p></div>
-<div class="read"><div><b>1. Check the edge.</b> It is our chance minus the price's break-even chance.</div><div><b>2. Check the stake.</b> Platinum $100 fixed · Gold $60 fixed, always in units.</div><div><b>3. Open the analysis.</b> Every number under WHY WE LIKE IT traces back to the model.</div></div>
-<div class="tabs" role="group" aria-label="Filter"><button aria-pressed="true" data-f="all">All plays</button><button aria-pressed="false" data-f="gold">Gold</button><button aria-pressed="false" data-f="plat">Platinum</button></div>
-<div class="list" id="plays">
+{% macro play_card(p, tids) %}
+{% set is_vip = p.nivel in ['PLATINUM', 'ELITE'] %}
+{% set _alex_books = ['theScore Bet', 'Polymarket', 'DraftKings', 'bet365', 'Hard Rock Bet', 'Fanatics', 'Fanatics Sportsbook', 'BetMGM', 'BetRivers', 'FanDuel', 'Bally Bet', 'Kalshi'] %}
+{% set _book_urls = {'DraftKings': 'https://sportsbook.draftkings.com', 'FanDuel': 'https://sportsbook.fanduel.com', 'BetMGM': 'https://sports.betmgm.com', 'Caesars': 'https://www.caesars.com/sportsbook', 'ESPN BET': 'https://espnbet.com', 'Fanatics': 'https://sportsbook.fanatics.com', 'Fanatics Sportsbook': 'https://sportsbook.fanatics.com', 'BetRivers': 'https://www.betrivers.com', 'Hard Rock Bet': 'https://hardrock.bet', 'bet365': 'https://www.bet365.com', 'Fliff': 'https://fliff.com', 'Bovada': 'https://www.bovada.lv', 'BetOnline.ag': 'https://www.betonline.ag', 'BetOnline': 'https://www.betonline.ag', 'LowVig.ag': 'https://lowvig.ag', 'LowVig': 'https://lowvig.ag', 'BetUS': 'https://www.betus.com.pa', 'MyBookie.ag': 'https://mybookie.ag', 'MyBookie': 'https://mybookie.ag', 'Pinnacle': 'https://www.pinnacle.com', 'Novig': 'https://novig.com', 'theScore Bet': 'https://www.thescore.bet', 'Bally Bet': 'https://www.ballybet.com', 'Kalshi': 'https://kalshi.com', 'Polymarket': 'https://polymarket.com'} %}
+{% if p.place_casa is defined and p.place_casa %}{% set _casa = p.place_casa %}{% elif p.casa is defined and p.casa in _alex_books %}{% set _casa = p.casa %}{% else %}{% set _casa = '' %}{% endif %}
+{% set _book_url = _book_urls.get(_casa) or 'https://novig.com' %}
+{% set _place_label = 'Place at ' ~ _casa if _casa else 'Place at Novig' %}
+{% set _m_href = p.place_url if (p.place_url is defined and p.place_url) else _book_url %}
+{% set is_value = p.nivel == 'VALUE' %}
+{% set is_free = p.nivel == 'FREE' %}
+{% set is_vault = p.nivel == 'VAULT' %}
+{% set _ncaa = {'KSU':2306,'KU':2305,'IU':84,'OSU':194,'CIN':2132,'WVU':277,'AF':2005,'UNLV':2439,'ALA':333,'UGA':61,'TEX':251,'MICH':130,'ND':87,'LSU':99,'TENN':2633,'PSU':213,'ORE':2483,'CLEM':228,'FLA':57,'AUB':2,'TAMU':245,'OU':201,'USC':30,'UCLA':26,'MIA':2390,'FSU':52,'UNC':153,'DUKE':150,'VT':259,'LOU':97,'NCST':152,'SYR':183,'BC':103,'PITT':221,'BAY':239,'TCU':2628,'TTU':2641,'OKST':197,'ISU':66,'UTAH':254,'BYU':252,'ARIZ':12,'ASU':9,'COL':38,'HOU':248,'UCF':2116,'MEM':235,'BSU':68,'SDSU':21,'FRES':278,'ARMY':349,'NAVY':2426,'MRSH':276,'LIB':2335,'JMU':256,'APP':2026,'CCU':324,'GASO':290,'TROY':2653,'ULL':309,'TULN':2655} %}
+{% set _mlb_slug = {'CHW':'cws','WSH':'was'} %}
+{% set _nhl_slug = {'TBL':'tb'} %}
+{% set _nba_slug = {'NOP':'no','UTA':'utah'} %}
+{% set _logo = p.logo_url if (p.logo_url is defined and p.logo_url) else '' %}
+{% if not _logo %}
+  {% if p.liga == 'NCAAF' and _ncaa.get(p.abbr) %}{% set _logo = 'https://a.espncdn.com/i/teamlogos/ncaa/500/' ~ _ncaa[p.abbr] ~ '.png' %}
+  {% elif p.liga == 'MLB' %}{% set _logo = 'https://a.espncdn.com/i/teamlogos/mlb/500/' ~ (_mlb_slug.get(p.abbr) or (p.abbr|lower)) ~ '.png' %}
+  {% elif p.liga == 'NFL' %}{% set _logo = 'https://a.espncdn.com/i/teamlogos/nfl/500/' ~ (p.abbr|lower) ~ '.png' %}
+  {% elif p.liga == 'NHL' %}{% set _logo = 'https://a.espncdn.com/i/teamlogos/nhl/500/' ~ (_nhl_slug.get(p.abbr) or (p.abbr|lower)) ~ '.png' %}
+  {% elif p.liga == 'NBA' %}{% set _logo = 'https://a.espncdn.com/i/teamlogos/nba/500/' ~ (_nba_slug.get(p.abbr) or (p.abbr|lower)) ~ '.png' %}
+  {% endif %}
+{% endif %}
+{% set _ci = p.card_info if p.card_info is defined and p.card_info else {} %}
+{% set _bt_label = 'ML' if p.bettype == 'Moneyline' else p.bettype %}
+{% if p.bettype in ['Spread', 'Total'] %}
+{% set _ns = namespace(label='', prev='') %}
+{% for _tok in ((p.mercado or '') ~ ' ' ~ (p.pick or '')).split() %}
+{% if not _ns.label %}
+{% if p.bettype == 'Spread' and _tok|length > 1 and _tok[0] in '+-' and _tok[1:].replace('.', '', 1).isdigit() %}{% set _ns.label = _tok %}
+{% elif p.bettype == 'Total' and _tok.replace('.', '', 1).isdigit() and _ns.prev in ['Over', 'Under'] %}{% set _ns.label = _ns.prev ~ ' ' ~ _tok %}
+{% elif p.bettype == 'Total' and _tok.replace('.', '', 1).isdigit() %}{% set _ns.label = 'Total ' ~ _tok %}{% endif %}
+{% endif %}
+{% set _ns.prev = _tok %}
+{% endfor %}
+{% if _ns.label %}{% set _bt_label = _ns.label %}{% endif %}
+{% endif %}
+{% set _hora = p.hora or p.game_time_et or '' %}
+{% set _w = _ci.get('weather') if _ci else none %}
+{% set _ln = _ci.get('lines') if _ci else none %}
+{% set _inj = _ci.get('injuries') if _ci else none %}
+{% set w = p.writeup if p.writeup is defined and p.writeup else {} %}
+<article class="pick{% if is_vip %} plat{% endif %}" data-t="{% if is_vip or is_vault %}plat{% elif p.nivel == 'GOLD' %}gold{% elif is_free %}free{% elif is_value %}value{% else %}gold{% endif %}">
+<div class="ph"><b>{% if is_vip %}💎 PLATINUM PLAY{% elif is_value %}💎 VALUE PLAY{% elif is_free %}FREE PICK{% elif is_vault %}🔒 THE VAULT PLAY{% else %}👑 GOLD PLAY{% endif %}</b><span class="lgc">{{ p.liga }}</span></div>
+<div class="pb"><div style="display:flex;gap:14px;align-items:flex-start">{% if _logo %}<img class="logoimg" src="{{ _logo }}" alt="{{ p.abbr }} logo" loading="lazy" onerror="this.remove()">{% endif %}<div><h3>{{ p.team_name or p.abbr }} {{ _bt_label }}</h3><div class="gm">{{ p.team_name or p.abbr }} @ {{ p.opp_name or p.opp_abbr }}{% if _hora %} · {{ _hora }}{% endif %}</div>
+{% if (_ln and _ln.moved) or (_w and _w.temp_f is defined and _w.temp_f is not none) or (_w and _w.indoor) or _inj or (p.poly is defined and p.poly is number) %}
+<div class="pills">
+{% if _ln and _ln.moved %}<span class="pill2">⚡ Line <b>{{ _ln.open }} → {{ _ln.now }}</b></span>{% endif %}
+{% if _w and _w.temp_f is defined and _w.temp_f is not none %}<span class="pill2">🌥 <b>{{ _w.temp_f }}°</b>{% if _w.venue %} · {{ _w.venue }}{% endif %}</span>{% endif %}
+{% if _w and _w.indoor %}<span class="pill2">🏟 <b>{{ _w.venue }}</b> · indoor</span>{% endif %}
+{% if p.poly is defined and p.poly is number %}<span class="pill2">⇄ Poly <b>{{ '%g'|format(p.poly) }}%</b></span>{% endif %}
+{% if _inj %}<span class="pill2">✚ Injuries <b>{{ _inj.total }}</b></span>{% endif %}
+</div>
+{% endif %}
+{% if p.resultado is defined and p.resultado == 'W' %}<span class="res w">WON{% if p.profit is defined and p.profit is not none %} +${{ '%.2f'|format(p.profit) }}{% endif %}{% if p.marcador is defined and p.marcador %} · Final {{ p.marcador }}{% endif %}</span>{% elif p.resultado is defined and p.resultado == 'L' %}<span class="res l">LOST{% if p.profit is defined and p.profit is not none %} −${{ '%.2f'|format(p.profit|abs) }}{% endif %}{% if p.marcador is defined and p.marcador %} · Final {{ p.marcador }}{% endif %}</span>{% endif %}
+</div></div></div>
+<div class="px"><div><small>PRICE POSTED</small><b>{{ fmt_odds(p.cuota) }}</b><em style="color:var(--m)">{{ p.casa or 'Novig' }} · {% if p.comprobante %}ticket matched ✓{% else %}ticket pending{% endif %}</em></div><div><small>STAKE</small><b>${{ '%g' % (p.stake_monto or 0) }}</b><em>{{ '%g' % (p.stake_unidades or 0) }}u · {% if p.comprobante %}ticket matched ✓{% else %}ticket pending{% endif %}</em></div></div>
+<div class="ac"><a class="btn pri" href="{{ _m_href }}" target="_blank" rel="noopener">↗ {{ _place_label }}</a><button class="btn" data-share="{{ p.team_name or p.abbr }} {{ p.bettype }}">Share</button>{% if p.comprobante %}<a class="btn" href="{{ url_for('static', filename=p.comprobante) }}" target="_blank" rel="noopener">🎫 Receipt</a>{% endif %}{% if p.nivel != 'VALUE' %}{% if p.id in tids %}<span class="btn on">✓ Tracked</span>{% else %}<a class="btn tstc-track" href="{{ url_for('track', play_id=p.id) }}" data-track-url="{{ url_for('track', play_id=p.id) }}">+ Track</a>{% endif %}{% endif %}</div>
+{% if w and w.model_prob %}
+<button class="wy" data-x="x-{{ p.id }}"><span>WHY WE LIKE IT · Model {% if w.model_prob is number %}{{ '%.1f%%'|format(w.model_prob * 100) }}{% else %}{{ w.model_prob }}{% endif %} · Edge {% if w.edge is number %}{{ '%+.1f'|format(w.edge) }}{% else %}{{ w.edge }}{% endif %}{% if w.ev is defined and w.ev is not none and w.ev != '' %} · EV {% if w.ev is number %}{{ '%+.1f%%'|format(w.ev * 100) }}{% else %}{{ w.ev }}{% endif %}{% endif %}</span><span style="color:var(--au)">Open the analysis ▾</span></button>
+<div class="more" id="x-{{ p.id }}">
+<table>
+<tr><th>Model win probability<small>Our estimated true chance</small></th><td>{% if w.model_prob is number %}{{ '%.1f%%'|format(w.model_prob * 100) }}{% else %}{{ w.model_prob }}{% endif %}</td></tr>
+{% if w.implied_prob is defined and w.implied_prob is not none %}<tr><th>Break-even chance<small>What the {{ fmt_odds(p.cuota) }} price needs</small></th><td>{% if w.implied_prob is number %}{{ '%.1f%%'|format(w.implied_prob * 100) }}{% else %}{{ w.implied_prob }}{% endif %}</td></tr>{% endif %}
+{% if w.fair_price is defined and w.fair_price is not none and w.fair_price != '' %}<tr><th>Fair price<small>The price our model makes it</small></th><td>{% if w.fair_price is number %}{{ fmt_odds(w.fair_price) }}{% else %}{{ w.fair_price }}{% endif %}</td></tr>{% endif %}
+{% if w.edge is defined and w.edge is not none %}<tr><th>Edge<small>Model minus break-even</small></th><td class="{% if w.edge is number %}{{ 'pos' if w.edge >= 0 else 'neg' }}{% endif %}">{% if w.edge is number %}{{ '%+.1f'|format(w.edge) }} pts{% else %}{{ w.edge }}{% endif %}</td></tr>{% endif %}
+{% if w.ev is defined and w.ev is not none and w.ev != '' %}<tr><th>Expected value<small>Average result per bet, long run</small></th><td class="{% if w.ev is number %}{{ 'pos' if w.ev >= 0 else 'neg' }}{% endif %}">{% if w.ev is number %}{{ '%+.1f%%'|format(w.ev * 100) }}{% else %}{{ w.ev }}{% endif %}</td></tr>{% endif %}
+</table>
+{% if w.key_factor %}<p class="th"><b>Key factor:</b> {{ w.key_factor }}</p>{% endif %}
+{% if w.risk %}<p class="th"><b>The risk:</b> {{ w.risk }}</p>{% endif %}
+{% if p.comprobante %}<div class="ft"><a href="{{ url_for('static', filename=p.comprobante) }}" target="_blank" rel="noopener"><img src="{{ url_for('static', filename=p.comprobante) }}" alt="Original ticket {{ p.abbr }} {{ p.bettype }}" loading="lazy" style="width:100%;border-radius:12px;display:block"></a><span style="color:var(--g);font-size:13px">✓ MATCHED — tap the ticket to open it full size.</span></div>{% endif %}
+<div class="ft"><span style="color:var(--m);font-size:13px">Prices move after posting — compare before you bet.</span></div>
+</div>
+{% endif %}
+</article>
+{% endmacro %}
 
+{% macro locked_card(p) %}
 <article class="pick plat" data-t="plat">
-<div class="ph"><b>💎 PLATINUM PLAY</b><span class="lgc">NCAAF</span></div>
-<div class="pb"><div style="display:flex;gap:14px;align-items:flex-start"><img class="logoimg" src="https://a.espncdn.com/i/teamlogos/ncaa/500/254.png" alt="Utah Utes logo"><div><h3>Utah Utes ML</h3><div class="gm">Utah Utes @ Arizona Wildcats · 10:30 PM ET</div>
-<div class="pills"><span class="pill2">🌥 <b>58°</b> · Casino Del Sol Stadium</span><span class="pill2">⚡ Line <b>−116 → −130</b></span><span class="pill2">✚ Injuries <b>0</b></span></div>
-<span class="res pn">IN PROGRESS</span></div></div></div>
-<div class="px"><div><small>PRICE POSTED</small><b>−104</b><em style="color:var(--m)">Novig · ticket matched ✓</em></div><div><small>STAKE</small><b>$100</b><em>1.00u · ticket matched ✓</em></div></div>
-<div class="ac"><a class="btn pri" href="https://novig.com" target="_blank" rel="noopener">↗ Place at Novig</a><button class="btn" data-share="Utah Utes ML">Share</button><a class="btn" href="{{ url_for('static', filename='img/comprobantes/2026-11-14-utah-utes.jpg') }}" target="_blank" rel="noopener">🎫 Receipt</a><button class="btn" data-trk>+ Track</button></div>
-<button class="wy" data-x="x-utah"><span>WHY WE LIKE IT · Model 56.4% · Edge +3.5 · EV +6.7%</span><span style="color:var(--au)">Open the analysis ▾</span></button>
-<div class="more" id="x-utah"><p class="th">Utah is 9-0 and No. 2 nationally with QB Devon Dampier healthy (27 total TDs) against an Arizona secondary the model rates thin. Platinum by the entry band: edge ≥ +1.0, EV ≥ +1%, probability ≥ 47%.</p>
-<table><tr><th>Model win probability<small>Our estimated true chance</small></th><td>56.4%</td></tr><tr><th>Break-even chance<small>What the −104 price needs</small></th><td>52.8%</td></tr><tr><th>Fair price<small>The price our model makes it</small></th><td>−129</td></tr><tr><th>Edge<small>Model minus break-even</small></th><td class="pos">+3.5 pts</td></tr><tr><th>Expected value<small>Average result per bet, long run</small></th><td class="pos">+6.7%</td></tr></table>
-<div class="ft"><span style="color:var(--m);font-size:13px">✓ Ticket verified — the real Novig ticket is on the Receipt button above.</span></div></div>
-</article>
-
-<article class="pick" data-t="gold">
-<div class="ph"><b>👑 GOLD PLAY</b><span class="lgc">NCAAF</span></div>
-<div class="pb"><div style="display:flex;gap:14px;align-items:flex-start"><img class="logoimg" src="https://a.espncdn.com/i/teamlogos/ncaa/500/264.png" alt="Washington Huskies logo"><div><h3>Washington Huskies ML</h3><div class="gm">Washington Huskies @ Michigan State Spartans · 5:30 PM ET</div>
-<div class="pills"><span class="pill2">🌥 <b>43°</b> · Spartan Stadium</span><span class="pill2">✚ Injuries <b>0</b></span></div>
-<span class="res w">WON +$46.19 · Final 21–14</span></div></div></div>
-<div class="px"><div><small>PRICE POSTED</small><b>−130</b><em style="color:var(--m)">Novig · ticket matched ✓</em></div><div><small>STAKE</small><b>$60</b><em>0.60u · ticket matched ✓</em></div></div>
-<div class="ac"><a class="btn pri" href="https://novig.com" target="_blank" rel="noopener">↗ Place at Novig</a><button class="btn" data-share="Washington Huskies ML">Share</button><a class="btn" href="{{ url_for('static', filename='img/comprobantes/2026-11-14-washington-huskies.jpg') }}" target="_blank" rel="noopener">🎫 Receipt</a><button class="btn" data-trk>+ Track</button></div>
-<button class="wy" data-x="x-wash"><span>WHY WE LIKE IT · Model 59.4% · Edge +2.9 · EV +5.2%</span><span style="color:var(--au)">Open the analysis ▾</span></button>
-<div class="more" id="x-wash"><p class="th">The highest win probability among today's value names (blended 59.4%) at −130, with QB Demond Williams Jr. confirmed available before kickoff.</p>
-<table><tr><th>Model win probability<small>Our estimated true chance</small></th><td>59.4%</td></tr><tr><th>Break-even chance<small>What the −130 price needs</small></th><td>56.5%</td></tr><tr><th>Fair price<small>The price our model makes it</small></th><td>−146</td></tr><tr><th>Edge<small>Model minus break-even</small></th><td class="pos">+2.9 pts</td></tr><tr><th>Expected value<small>Average result per bet, long run</small></th><td class="pos">+5.2%</td></tr></table>
-<div class="ft"><span style="color:var(--m);font-size:13px">✓ Ticket verified — the real Novig ticket is on the Receipt button above.</span></div></div>
-</article>
-
-<article class="pick" data-t="gold">
-<div class="ph"><b>👑 GOLD PLAY</b><span class="lgc">NCAAF</span></div>
-<div class="pb"><div style="display:flex;gap:14px;align-items:flex-start"><img class="logoimg" src="https://a.espncdn.com/i/teamlogos/ncaa/500/277.png" alt="West Virginia Mountaineers logo"><div><h3>West Virginia Mountaineers ML</h3><div class="gm">Kansas Jayhawks @ West Virginia Mountaineers · 3:30 PM ET</div>
-<div class="pills"><span class="pill2">🌥 <b>45°</b> · Milan Puskar Stadium</span><span class="pill2">✚ Injuries <b>0</b></span></div>
-<span class="res l">LOST −$59.47 · Final 14–37</span></div></div></div>
-<div class="px"><div><small>PRICE POSTED</small><b>−125</b><em style="color:var(--m)">Novig · ticket matched ✓</em></div><div><small>STAKE</small><b>$59.47</b><em>0.59u · ticket matched ✓</em></div></div>
-<div class="ac"><a class="btn pri" href="https://novig.com" target="_blank" rel="noopener">↗ Place at Novig</a><button class="btn" data-share="West Virginia Mountaineers ML">Share</button><a class="btn" href="{{ url_for('static', filename='img/comprobantes/2026-11-14-west-virginia-mountaineers.jpg') }}" target="_blank" rel="noopener">🎫 Receipt</a><button class="btn" data-trk>+ Track</button></div>
-<button class="wy" data-x="x-wvu"><span>WHY WE LIKE IT · Model 57.9% · Edge +2.3 · EV +4.1%</span><span style="color:var(--au)">Open the analysis ▾</span></button>
-<div class="more" id="x-wvu"><p class="th">The cleanest name of the day: no QB news and no injury flag on either side. It graded a loss — losses sit on the card next to the wins, always.</p>
-<table><tr><th>Model win probability<small>Our estimated true chance</small></th><td>57.9%</td></tr><tr><th>Break-even chance<small>What the −125 price needs</small></th><td>55.6%</td></tr><tr><th>Fair price<small>The price our model makes it</small></th><td>−137</td></tr><tr><th>Edge<small>Model minus break-even</small></th><td class="pos">+2.3 pts</td></tr><tr><th>Expected value<small>Average result per bet, long run</small></th><td class="pos">+4.1%</td></tr></table>
-<div class="ft"><span style="color:var(--m);font-size:13px">✓ Ticket verified — the real Novig ticket is on the Receipt button above.</span></div></div>
-</article>
-
-<article class="pick" data-t="gold">
-<div class="ph"><b>👑 GOLD PLAY</b><span class="lgc">NHL</span></div>
-<div class="pb"><div style="display:flex;gap:14px;align-items:flex-start"><img class="logoimg" src="https://a.espncdn.com/i/teamlogos/nhl/500/mtl.png" alt="Montréal Canadiens logo"><div><h3>Montréal Canadiens ML</h3><div class="gm">Colorado Avalanche @ Montréal Canadiens · 7:00 PM ET</div>
-<div class="pills"><span class="pill2">🏟 <b>Bell Centre</b> · indoor</span><span class="pill2">✚ Injuries <b>10</b></span></div>
-<span class="res l">LOST −$60.00 · Final 1–4</span></div></div></div>
-<div class="px"><div><small>PRICE POSTED</small><b>−117</b><em style="color:var(--m)">Novig · ticket matched ✓</em></div><div><small>STAKE</small><b>$60</b><em>0.60u · ticket matched ✓</em></div></div>
-<div class="ac"><a class="btn pri" href="https://novig.com" target="_blank" rel="noopener">↗ Place at Novig</a><button class="btn" data-share="Montréal Canadiens ML">Share</button><a class="btn" href="{{ url_for('static', filename='img/comprobantes/2026-11-14-montreal-canadiens.jpg') }}" target="_blank" rel="noopener">🎫 Receipt</a><button class="btn" data-trk>+ Track</button></div>
-<button class="wy" data-x="x-mtl"><span>WHY WE LIKE IT · Model 54.0% · Edge −0.3 · EV −0.6%</span><span style="color:var(--au)">Open the analysis ▾</span></button>
-<div class="more" id="x-mtl"><p class="th">Posted at the desk's call with the model's real numbers unvarnished: blended probability 54.0%, edge −0.3, EV −0.6%. The model did not clear this one — the card says so, before and after the result.</p>
-<table><tr><th>Model win probability<small>Our estimated true chance</small></th><td>54.0%</td></tr><tr><th>Break-even chance<small>What the −117 price needs</small></th><td>54.3%</td></tr><tr><th>Fair price<small>The price our model makes it</small></th><td>−117</td></tr><tr><th>Edge<small>Model minus break-even</small></th><td class="neg">−0.3 pts</td></tr><tr><th>Expected value<small>Average result per bet, long run</small></th><td class="neg">−0.6%</td></tr></table>
-<div class="ft"><span style="color:var(--m);font-size:13px">✓ Ticket verified — the real Novig ticket is on the Receipt button above.</span></div></div>
-</article>
-
-</div>
-</section>
-
-<section id="locked">
-<div class="sh"><span class="eyebrow">Free view · Member without Platinum</span><h2>Así lo ve un miembro sin Platinum</h2><p>The same Platinum play, exactly as a free member sees it on the live Dashboard: the game is real, the pick stays hidden until they unlock.</p></div>
-<article class="pick plat">
-<div class="ph"><b>💎 PLATINUM</b><span class="lgc">NCAAF · Utah @ Arizona · 10:30 PM ET</span><span class="lgc" style="color:var(--au);border-color:var(--au)">🔒 LOCKED</span></div>
+<div class="ph"><b>{% if p.nivel == 'VAULT' %}🔒 THE VAULT PLAY{% elif p.nivel in ('GOLD', 'FREE') %}GOLD{% else %}💎 PLATINUM{% endif %}</b><span class="lgc">{{ p.liga }}{% if p.hora %} · {{ p.hora }}{% elif p.game_time_et %} · {{ p.game_time_et }}{% endif %}</span><span class="lgc" style="color:var(--au);border-color:var(--au)">🔒 LOCKED</span></div>
 <div class="pb">
 <div class="lockblur" aria-hidden="true">
 <div style="height:22px;width:62%;background:#2A3350;border-radius:6px;margin:10px 0 8px"></div>
 <div style="display:flex;gap:10px"><div style="height:14px;width:34%;background:#232B47;border-radius:5px"></div><div style="height:14px;width:26%;background:#232B47;border-radius:5px"></div></div>
-<img src="{{ url_for('static', filename='img/locked/locked-2026-11-14.jpg') }}" alt="" style="width:100%;border-radius:12px;margin-top:10px;display:block">
+{% if p.ticket_url is defined and p.ticket_url %}<img src="{{ p.ticket_url }}" alt="" style="width:100%;border-radius:12px;margin-top:10px;display:block">{% endif %}
 </div>
 <h3 style="margin-top:12px">Platinum members see this pick.</h3>
 <p style="color:var(--m);font-size:14.5px;margin:6px 0 0">This play is for Platinum members. Unlock it to see the pick, the price and the verified ticket.</p>
@@ -210,40 +230,77 @@ a.tier:hover{border-color:var(--au)}
 <div class="ac"><a class="btn pri" href="{{ url_for('desbloquear_platinum') }}" style="flex:1;text-align:center">Unlock Platinum →</a></div>
 <div class="ac" style="padding-top:0">
 <a class="btn" href="{{ url_for('desbloquear_platinum') }}" style="flex:1;text-align:center">↗ Place at Novig</a>
-<a class="btn" href="{{ url_for('desbloquear_platinum') }}" style="flex:0 0 52px;text-align:center" aria-label="Share">↗</a>
+<button class="btn" data-share="The Sharp Team — Platinum play" style="flex:0 0 52px;text-align:center" aria-label="Share">↗</button>
 <a class="btn" href="{{ url_for('desbloquear_platinum') }}" style="flex:1;text-align:center">🎫 Receipt</a>
 <a class="btn" href="{{ url_for('desbloquear_platinum') }}" style="flex:1;text-align:center">+ Track</a>
 </div>
 </article>
+{% endmacro %}
+
+<header class="hd"><div class="hi"><div class="logo"><i></i>The Sharp Team<small>Members Desk</small></div><nav class="nv"><a href="#desk">Today's plays</a><a href="#performance">Performance</a><a href="#sharp">Sharp Money</a><a href="#tools">Tools</a><a href="{{ url_for('home') }}">Live home</a></nav><span class="pill">{{ etiqueta_miembro or 'Member' }}{% if nombre_corto %} · {{ nombre_corto }}{% endif %}</span></div></header>
+<div class="wrap">
+{% if vantage_live is defined and vantage_live %}<div class="pvtag">Members Desk · Live on your account only</div>{% else %}<div class="pvtag">Preview — Solo para Alex · Esta no es la página en vivo</div>{% endif %}
+<div class="hero">
+<div>{% if fecha %}<div class="eyebrow">{{ fecha }}</div>{% endif %}<h1>{{ saludo or 'Welcome' }}, <em>{{ nombre_corto or 'Member' }}</em>.</h1><p>{% if card_pendiente is defined and card_pendiente %}Today's card is not posted yet — plays post by 2:00 PM ET on weekdays, 11:00 AM ET on weekends. Every play appears here first, with its real ticket. Yesterday's results are in the record below.{% elif _plays %}Today's board is posted — Officials: {{ _plays|length }} {% if _plays|length == 1 %}play{% else %}plays{% endif %}{% if _today and (_today.w or _today.l) %} · {{ _today.w }}–{{ _today.l }} so far{% endif %}{% if hay_live is defined and hay_live %} · a game is live right now{% elif esperando is defined and esperando %} · first game still to come{% endif %}. Every play below carries its price, its stake and its verified ticket.{% else %}Every play on the board carries its price, its stake and its verified ticket — posted before game time, graded in the open.{% endif %}</p></div>
+<div class="card3"><div class="t"><span>The Sharp Team</span><span>{{ etiqueta_miembro or 'Member' }}</span></div><div class="n">{{ nombre_completo or nombre_corto or 'Member' }}</div><div class="b"><span>{% if en_mes_gratis %}Platinum · on us{% if mes_gratis_hasta %} until {{ mes_gratis_hasta }}{% endif %}{% elif _mp %}Platinum · active member{% else %}Free member{% endif %}</span><span>{% if en_mes_gratis and mes_gratis_dias is defined and mes_gratis_dias is not none %}{% if mes_gratis_dias == 0 %}ends today{% elif mes_gratis_dias == 1 %}1 day left{% else %}{{ mes_gratis_dias }} days left{% endif %}{% elif dias_miembro is defined %}Day {{ dias_miembro }} as a member{% endif %}</span></div></div>
+</div>
+{% if _prog or _res or _plat10 or _tirita or (risk_hoy is defined and risk_hoy) %}
+<div class="sum">
+{% if _prog %}<div><small>PROGRAM RECORD</small><b>{{ _prog.w }}–{{ _prog.l }}</b><span>{{ _prog.win_rate }}% win rate · all-time, incl. today</span></div>{% elif _res %}<div><small>PROGRAM RECORD</small><b>{{ _res.ganadas }}–{{ _res.perdidas }}</b><span>{{ _res.win_rate }}% win rate · all-time</span></div>{% endif %}
+{% if _prog %}<div><small>PROGRAM NET</small><b>{{ _prog.net_display }}</b><span>Settled profit, all-time</span></div>{% elif _res %}<div><small>PROGRAM NET</small><b>{{ _res.profit_display }}</b><span>Settled profit, all-time</span></div>{% endif %}
+{% if _plat10 %}<div><small>PLATINUM · LAST 10</small><b>{{ _plat10.w }}–{{ _plat10.l }}</b><span>{{ _plat10.pct }}% · the top tier's recent form</span></div>{% elif _tirita %}<div><small>{{ _tirita.etiqueta|upper }} · LAST 10</small><b>{{ _tirita.w }}–{{ _tirita.l }}</b><span>in the last 10 plays across all sports</span></div>{% endif %}
+{% if risk_hoy is defined and risk_hoy %}<div><small>YOUR RISK TODAY</small><b>${{ '%.2f'|format(risk_hoy.total) }}</b><span>{{ risk_hoy.pct }}% of your bankroll · {{ risk_hoy.n }} {% if risk_hoy.n == 1 %}play{% else %}plays{% endif %} at risk</span></div>{% endif %}
+</div>
+{% endif %}
+
+<section id="desk">
+<div class="sh"><span class="eyebrow">The desk{% if _plays %} · {{ _plays|length }} {% if _plays|length == 1 %}play{% else %}plays{% endif %} today{% endif %}</span><h2>Where our model sees more than the market</h2><p>Each play shows our estimated win chance, the chance the price needs, and the gap between them. We only publish a play when that gap is positive — and when it is not, we say so on the card.</p></div>
+<div class="read"><div><b>1. Check the edge.</b> It is our chance minus the price's break-even chance.</div><div><b>2. Check the stake.</b> Platinum $100 fixed · Gold $60 fixed, always in units.</div><div><b>3. Open the analysis.</b> Every number under WHY WE LIKE IT traces back to the model.</div></div>
+<div class="tabs" role="group" aria-label="Filter"><button aria-pressed="true" data-f="all">All plays</button><button aria-pressed="false" data-f="gold">Gold</button><button aria-pressed="false" data-f="plat">Platinum</button></div>
+<div class="list" id="plays">
+{% set frees = _plays|selectattr('nivel','equalto','FREE')|list %}
+{% set golds = _plays|selectattr('nivel','equalto','GOLD')|list %}
+{% set plats = _plays|rejectattr('nivel','equalto','GOLD')|rejectattr('nivel','equalto','FREE')|rejectattr('nivel','equalto','VALUE')|list %}
+{% for p in frees %}{% if _mp %}{{ play_card(p, _tids) }}{% else %}{{ locked_card(p) }}{% endif %}{% endfor %}
+{% for p in golds %}{{ play_card(p, _tids) }}{% endfor %}
+{% for p in plats %}{% if p.nivel in ['ELITE','PLATINUM','VAULT'] and not _mp %}{{ locked_card(p) }}{% else %}{{ play_card(p, _tids) }}{% endif %}{% endfor %}
+{% if not _plays %}
+<article class="pick"><div class="pb" style="padding-top:16px;padding-bottom:16px"><h3>Today's plays</h3><p style="color:var(--m);font-size:14.5px;margin:6px 0 0">Today's card posts as soon as the edge is verified — 2:00 PM ET on weekdays, 11:00 AM ET on weekends. Every play appears here first, with its real ticket.</p></div></article>
+{% endif %}
+{% if not _mp and not plats and _plays %}
+<article class="pick"><div class="pb" style="padding-top:16px"><h3>Platinum plays on today's board</h3><p style="color:var(--m);font-size:14.5px;margin:6px 0 0">Included with a Platinum membership. Platinum members only.<br>$15.99/week · cancel anytime</p></div><div class="ac"><a class="btn pri" href="{{ url_for('desbloquear_platinum') }}" style="flex:1;text-align:center">Unlock Platinum →</a></div></article>
+{% endif %}
+</div>
 </section>
 
+{% if _chart or _today or _ligas %}
 <section id="performance">
 <div class="sh"><span class="eyebrow">Performance</span><h2>Every result, graded in public</h2><p>We grade each play win or lose at the price we posted. Wins and losses sit side by side, because trust comes from showing both.</p></div>
+{% if _chart or _today %}
 <div class="two">
-<div class="box"><h3>Program · daily net, last 14 days</h3><div class="cv"><canvas id="ch" aria-label="Daily net profit chart" role="img"></canvas></div><p style="font-size:12.5px">Dollars won or lost each day, from the official archive. Today is not in the curve until the night settlement.</p></div>
-<div class="box"><h3>Reading the form</h3><p><b style="color:var(--t)">Today so far: 1–2, −$73.28 settled</b>, with the $100 Platinum play still live. One night does not grade the model.</p><p>The last three archive days ran cold. That is variance, not a signal to chase: stakes stay fixed and the card never fills just to fill.</p><p>This is why we stake in small, fixed units and never chase a bad week.</p></div>
+{% if _chart %}<div class="box"><h3>Program · daily net, last {{ _chart|length }} days</h3><div class="cv"><canvas id="ch" aria-label="Daily net profit chart" role="img"></canvas></div><p style="font-size:12.5px">Dollars won or lost each day, from the official archive. Today joins the curve at the night settlement.</p></div>{% endif %}
+{% if _today %}<div class="box"><h3>Reading the form</h3><p><b style="color:var(--t)">Today so far: {{ _today.w }}–{{ _today.l }}, {{ _today.net_display }} settled</b>{% if _today.pending %}, with {{ _today.pending }} {% if _today.pending == 1 %}play{% else %}plays{% endif %} still open{% endif %}. One night does not grade the model.</p><p>Stakes stay fixed and the card never fills just to fill — a cold stretch is variance, not a signal to chase.</p><p>This is why we stake in small, fixed units and never chase a bad week.</p></div>{% endif %}
 </div>
+{% endif %}
+{% if _ligas %}
 <h3 style="font-size:28px;margin:34px 0 12px">Record by league</h3>
 <div class="tb"><table><thead><tr><th>League</th><th>Record</th><th>Win rate</th><th>Sample</th></tr></thead><tbody>
-<tr><td>MLB</td><td>19–6</td><td><span class="bar"><i style="width:76%"></i></span>76%</td><td>25 plays</td></tr>
-<tr><td>NCAAF</td><td>10–5</td><td><span class="bar"><i style="width:67%"></i></span>67%</td><td>15 plays</td></tr>
-<tr><td>NFL</td><td>12–9</td><td><span class="bar"><i style="width:57%"></i></span>57%</td><td>21 plays</td></tr>
-<tr><td>NHL</td><td>13–15</td><td><span class="bar"><i style="width:46%"></i></span>46%</td><td>28 plays</td></tr>
-<tr><td>NBA</td><td>9–11</td><td><span class="bar"><i style="width:45%"></i></span>45%</td><td>20 plays</td></tr>
+{% for r in _ligas %}{% set _tot = r.w + r.l %}{% set _pct = (100 * r.w / _tot)|round|int if _tot else 0 %}<tr><td>{{ r.liga }}</td><td>{{ r.w }}–{{ r.l }}</td><td><span class="bar"><i style="width:{{ _pct }}%"></i></span>{{ _pct }}%</td><td>{{ _tot }} plays</td></tr>{% endfor %}
 </tbody></table></div>
-<div class="note">Football is paying right now — college and pro sit on top. Hockey and basketball are under water, so those cards stay tight: only the strongest spots, never filler.</div>
+<div class="note">Every league is graded on the same rules: fixed stakes, real tickets, no filler plays — wins and losses all count.</div>
+{% endif %}
 </section>
+{% endif %}
 
+{% if _sharp %}
 <section id="sharp">
-<div class="sh"><span class="eyebrow">Sharp Money · Today</span><h2>Where the exchange money went</h2><p>Verified Kalshi exchange flow from today's scans. Money % is the share of real dollars backing that side — a signal we watch, never a play by itself.</p></div>
-<div class="tb"><table><thead><tr><th>Signal</th><th>League</th><th>Money on Kalshi</th></tr></thead><tbody>
-<tr><td>St. Louis Blues</td><td>NHL</td><td><span class="bar"><i style="width:96%"></i></span>95.5%</td></tr>
-<tr><td>Montréal Canadiens</td><td>NHL</td><td><span class="bar"><i style="width:91%"></i></span>91.4%</td></tr>
-<tr><td>Dallas Mavericks</td><td>NBA</td><td><span class="bar"><i style="width:85%"></i></span>85.0%</td></tr>
-<tr><td>Brooklyn Nets</td><td>NBA</td><td><span class="bar"><i style="width:72%"></i></span>72.2%</td></tr>
+<div class="sh"><span class="eyebrow">Sharp Money · Today</span><h2>Where the sharp money is moving</h2><p>The strongest line moves on today's board: a side only earns the 🔪 when its implied probability actually rose across the books we track — a pure odds tweak never triggers it.</p></div>
+<div class="tb"><table><thead><tr><th>Signal</th><th>League</th><th>Move</th></tr></thead><tbody>
+{% for r in _sharp %}<tr><td>🔪 {{ r.team }}</td><td>{{ r.liga }}</td><td>{% if r.first is not none and r.now is not none %}{{ fmt_odds(r.first|int) }} → {{ fmt_odds(r.now|int) }} · {% endif %}+{{ '%.1f'|format(r.pp) }} pts implied</td></tr>{% endfor %}
 </tbody></table></div>
-<div class="note">A card is only published when verified exchange flow reaches 70% or more. Line moves alone are logged silently.</div>
+<div class="note">Sharp Money is a signal we watch, never a play by itself — the official card above is the program.</div>
 </section>
+{% endif %}
 
 <section id="tools">
 <div class="sh"><span class="eyebrow">Your tools</span><h2>The full desk, one tap away</h2></div>
@@ -255,26 +312,32 @@ a.tier:hover{border-color:var(--au)}
 <a class="tier" href="{{ url_for('masterclass') }}"><h3>Masterclass</h3><p>The 30-day Academy: bankroll, price discipline and process, one lesson a day.</p></a>
 <a class="tier" href="{{ url_for('records') }}"><h3>Full Record</h3><p>The graded plays ledger — every official play, win or lose, with its ticket.</p></a>
 </div>
-<div class="note">Tomorrow is NFL Sunday (Nov 15). The full NFL slate is evaluated first — on Sundays, pro football leads the analysis, always.</div>
+{% if alex_tomorrow_note is defined and alex_tomorrow_note %}<div class="note">{{ alex_tomorrow_note }}</div>{% endif %}
 </section>
 
-<p class="disc">The Sharp Team provides information and analysis, not financial advice. Past results do not guarantee future results. Bet only what you can afford to lose. If gambling stops being fun, call 1-800-GAMBLER.<br><br>Preview build for Alex — this page is not the live member home.</p>
+<p class="disc">The Sharp Team provides information and analysis, not financial advice. Past results do not guarantee future results. Bet only what you can afford to lose. If gambling stops being fun, call 1-800-GAMBLER.<br><br>{% if vantage_live is defined and vantage_live %}Members Desk — the home on Alex's account.{% else %}Preview build for Alex — this page is not the live member home.{% endif %}</p>
 </div>
 <script>
+var CH_LABELS = {{ _labels|tojson }};
+var CH_DATA = {{ _chart|tojson }};
 document.addEventListener('click',function(e){
-var x=e.target.closest('[data-x]'),fb=e.target.closest('[data-f]'),tr=e.target.closest('[data-trk]'),sh=e.target.closest('[data-share]');
+var a=e.target.closest('a.tstc-track[data-track-url]');
+if(a){e.preventDefault();if(a.dataset.busy)return;a.dataset.busy='1';var orig=a.textContent;a.textContent='…';
+fetch(a.dataset.trackUrl,{method:'POST',headers:{'X-Requested-With':'XMLHttpRequest'},credentials:'same-origin'})
+.then(function(r){return r.json().then(function(j){return{status:r.status,body:j}})})
+.then(function(res){if(res.body&&res.body.ok){var s=document.createElement('span');s.className='btn on';s.textContent='✓ Tracked';a.replaceWith(s);}else{a.textContent=orig;delete a.dataset.busy;alert((res.body&&res.body.error)||'Could not track this play.');}})
+.catch(function(){a.textContent=orig;delete a.dataset.busy;alert('Could not track this play. Please try again.');});
+return;}
+var x=e.target.closest('[data-x]'),fb=e.target.closest('[data-f]'),sh=e.target.closest('[data-share]');
 if(x){document.getElementById(x.dataset.x).classList.toggle('open')}
 if(fb){var f=fb.dataset.f;document.querySelectorAll('.tabs button').forEach(function(y){y.setAttribute('aria-pressed',y===fb?'true':'false')});
 document.querySelectorAll('#plays .pick').forEach(function(c){c.style.display=(f==='all'||c.dataset.t===f)?'':'none'})}
-if(tr){var on=tr.classList.toggle('on');tr.textContent=on?'✓ Tracked':'+ Track'}
 if(sh){var u=window.location.origin+'/home';if(navigator.share){navigator.share({title:'The Sharp Team',text:sh.dataset.share,url:u}).catch(function(){})}else if(navigator.clipboard){navigator.clipboard.writeText(u)}}
 });
 function chart(){
-if(typeof Chart==='undefined')return;
+if(typeof Chart==='undefined'||!CH_DATA.length)return;
 Chart.defaults.font.family="'Roboto',sans-serif";
-var labels=['Oct 31','Nov 1','Nov 2','Nov 3','Nov 4','Nov 5','Nov 6','Nov 7','Nov 8','Nov 9','Nov 10','Nov 11','Nov 12','Nov 13'];
-var data=[169.23,-70,-60,38.46,43.48,110.44,62.67,112.89,127.8,15.71,-160,88.53,-160,-220];
-new Chart(document.getElementById('ch'),{type:'line',data:{labels:labels,datasets:[{data:data,borderColor:'#2DE0A0',backgroundColor:'rgba(45,224,160,.08)',fill:true,tension:.3,pointRadius:3,pointBackgroundColor:'#2DE0A0',borderWidth:2.5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return (c.parsed.y<0?'−$':'+$')+Math.abs(c.parsed.y).toFixed(2)}}}},scales:{x:{ticks:{color:'#8E99B7'},grid:{display:false}},y:{ticks:{color:'#8E99B7',callback:function(v){return '$'+v}},grid:{color:'#1B2547'}}}}});
+new Chart(document.getElementById('ch'),{type:'line',data:{labels:CH_LABELS,datasets:[{data:CH_DATA,borderColor:'#2DE0A0',backgroundColor:'rgba(45,224,160,.08)',fill:true,tension:.3,pointRadius:3,pointBackgroundColor:'#2DE0A0',borderWidth:2.5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return (c.parsed.y<0?'−$':'+$')+Math.abs(c.parsed.y).toFixed(2)}}}},scales:{x:{ticks:{color:'#8E99B7'},grid:{display:false}},y:{ticks:{color:'#8E99B7',callback:function(v){return '$'+v}},grid:{color:'#1B2547'}}}}});
 }
 window.addEventListener('load',chart);
 </script>
