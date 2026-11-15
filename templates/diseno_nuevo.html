@@ -82,6 +82,11 @@
   .dn-live-tx b{display:block;font-family:var(--fdisp);font-size:17.1px;font-weight:700;color:var(--txt);line-height:1.2}
   .dn-live-tx span{display:block;color:var(--mut);font-size:13.5px;margin-top:3px;line-height:1.35}
   .dn-live-ch{color:var(--txt);font-size:26px;font-weight:300;flex:none;line-height:1}
+  .dn-risk{margin-top:10px;background:var(--panel);border:1px solid var(--line);border-radius:18px;display:flex;align-items:center;gap:14px;padding:13px 18px}
+  .dn-risk-tx{flex:1;min-width:0}
+  .dn-risk-tx b{display:block;font-family:var(--fdisp);font-size:17.1px;font-weight:700;color:var(--txt);line-height:1.2}
+  .dn-risk-tx span{display:block;color:var(--mut);font-size:13.5px;margin-top:3px;line-height:1.35}
+  .dn-risk-pill{flex:none;background:var(--mint);color:#06281B;font-weight:700;font-size:13.5px;padding:6px 12px;border-radius:999px}
   .dn-hero-band{background:#172A42;display:flex;align-items:center;justify-content:space-between;padding:12px 18px;color:var(--mint);font-weight:700;font-size:12px;letter-spacing:.14em;text-transform:uppercase}
   .dn-live-wrap{display:inline-flex;align-items:center;gap:4px}
   .dn-live-word{color:#FF3B30;font-size:8.5px;font-weight:600;letter-spacing:.12em}
@@ -394,6 +399,13 @@
     <span class="dn-live-tx"><b>Live scores and games</b><span>Pick a game for every price, split and line move</span></span>
     <span class="dn-live-ch">›</span>
   </a>
+
+  {% if risk_card %}
+  <div class="dn-risk">
+    <span class="dn-risk-tx"><b>Your risk today</b><span>{{ risk_card.n }} play{{ 's' if risk_card.n != 1 }} &middot; ${{ '%.0f'|format(risk_card.total) if risk_card.total % 1 == 0 else '%.2f'|format(risk_card.total) }} at risk</span></span>
+    <span class="dn-risk-pill">{{ risk_card.pct }}% of bankroll</span>
+  </div>
+  {% endif %}
 
   <div class="dn-board-head">
     <h2>Your plays</h2>
