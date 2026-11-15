@@ -121,9 +121,9 @@
   .dn-hot-ledger{margin-left:auto;flex:0 0 auto;display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--panel);color:var(--txt);border-radius:12px;padding:9px 13px;font-size:13.5px;font-weight:600;white-space:nowrap}
   .dn-hot-row{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;padding:10px 2px 12px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
   .dn-hot-row::-webkit-scrollbar{display:none}
-  .dn-hot-card{flex:0 0 calc(100% - 30px);scroll-snap-align:start;position:relative;background:linear-gradient(180deg,#141F38,var(--panel));border:1px solid var(--mintline);border-radius:20px;padding:18px}
-  .dn-hot-card::before{content:"";position:absolute;top:0;left:0;right:0;height:8px;border-radius:20px 20px 0 0;background:linear-gradient(180deg,#ffb199 0%,#ff5a3c 45%,#d92c1f 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.6),inset 0 -2px 3px rgba(0,0,0,.35),0 3px 8px rgba(217,44,31,.45)}
-  .dn-hot-card.cold::before{background:linear-gradient(180deg,#a8d8ff 0%,#3f8cff 45%,#1d5fd1 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.6),inset 0 -2px 3px rgba(0,0,0,.35),0 3px 8px rgba(29,95,209,.45)}
+  .dn-hot-card{flex:0 0 calc(100% - 30px);scroll-snap-align:start;position:relative;background:linear-gradient(180deg,#16233F,var(--panel));border:1px solid rgba(63,140,255,.55);box-shadow:0 0 0 1px rgba(63,140,255,.22),0 12px 30px rgba(15,60,160,.20);border-radius:20px;padding:18px}
+  .dn-hot-card::before{content:"";position:absolute;top:0;left:0;right:0;height:8px;border-radius:20px 20px 0 0;background:linear-gradient(180deg,#a8d8ff 0%,#3f8cff 45%,#1d5fd1 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.65),inset 0 -2px 3px rgba(0,0,0,.35),0 3px 10px rgba(63,140,255,.55)}
+  .dn-hot-card.cold::before{background:linear-gradient(180deg,#ffb199 0%,#ff5a3c 45%,#d92c1f 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.6),inset 0 -2px 3px rgba(0,0,0,.35),0 3px 8px rgba(217,44,31,.45)}
   .dn-hot-top{display:flex;align-items:center;gap:10px}
   .dn-hot-pill{background:var(--mintbg);color:var(--mint);border:1px solid var(--mintline);border-radius:999px;padding:5px 10px;font-size:11px;font-weight:700;letter-spacing:.08em;white-space:nowrap}
   .dn-hot-tag{margin-left:auto;color:var(--mut);font-size:13.5px;font-weight:600;white-space:nowrap}
@@ -131,10 +131,17 @@
   .dn-hot-num .w{font-size:27px;font-weight:700}
   .dn-hot-sub2{font-size:15px;color:#C9D4E6;margin:0 0 14px}
   .dn-hot-dots{display:flex;flex-wrap:wrap;gap:5px;margin:0 0 16px;min-height:9px}
-  .dn-hot-dots span{width:9px;height:9px;border-radius:50%;background:var(--mint)}
+  .dn-hot-dots span{width:9px;height:9px;border-radius:50%;background:linear-gradient(180deg,#7CC4FF,#1D5FD1)}
+  .dn-hot-dots span.l{background:transparent;border:2px solid #FF5A3C}
+  .dn-hot-pct{display:inline-block;vertical-align:middle;margin-left:10px;background:rgba(63,140,255,.16);color:#7CC4FF;border:1px solid rgba(63,140,255,.4);border-radius:8px;padding:3px 8px;font-size:13.5px;font-weight:700}
+  .dn-hot-plays{margin-top:14px;border-top:1px solid var(--line);padding-top:10px;max-height:264px;overflow-y:auto}
+  .dn-hot-play{display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:13.5px}
+  .dn-hot-play .pk{font-weight:600}
+  .dn-hot-play .mt{margin-left:auto;color:var(--mut);font-size:11px;white-space:nowrap;text-align:right}
+  .dn-hot-full{display:inline-block;margin-top:10px;color:var(--mint);font-size:13.5px;font-weight:600}
   .dn-hot-foot{display:flex;align-items:center;gap:10px}
   .dn-hot-note{color:var(--mut);font-size:13.5px}
-  .dn-hot-link{margin-left:auto;color:var(--mint);font-size:13.5px;font-weight:600;white-space:nowrap}
+  .dn-hot-link{margin-left:auto;color:#7CC4FF;font-size:13.5px;font-weight:600;white-space:nowrap;background:none;border:0;cursor:pointer;font-family:inherit;padding:0}
 
   /* Sin card todavia */
   .dn-empty{background:var(--panel);border:1px dashed var(--mintline);border-radius:14px;padding:22px 18px;text-align:center}
@@ -386,10 +393,15 @@
       {% for c in hot_home %}
       <article class="dn-hot-card{% if c.temp == 'cold' %} cold{% endif %}">
         <div class="dn-hot-top"><span class="dn-hot-pill">OFFICIAL PLAYS</span><span class="dn-hot-tag">{{ c.tag }}</span></div>
-        <div class="dn-hot-num">{{ c.num }}{% if c.word %} <span class="w">{{ c.word }}</span>{% endif %}</div>
+        <div class="dn-hot-num">{{ c.num }}{% if c.word %} <span class="w">{{ c.word }}</span>{% endif %}{% if c.pct %}<span class="dn-hot-pct">{{ c.pct }}%</span>{% endif %}</div>
         <p class="dn-hot-sub2">{{ c.sub }}</p>
-        <div class="dn-hot-dots">{% for i in range(c.puntos) %}<span></span>{% endfor %}</div>
-        <div class="dn-hot-foot"><span class="dn-hot-note">Graded win or lose</span><a class="dn-hot-link" href="{{ url_for('records') }}">See the plays ›</a></div>
+        <div class="dn-hot-dots">{% for r in c.seq %}<span{% if r == 'LOST' %} class="l"{% endif %}></span>{% endfor %}</div>
+        <div class="dn-hot-foot"><span class="dn-hot-note">Graded win or lose</span><button type="button" class="dn-hot-link" onclick="dnHotPlays(this)">See the plays ›</button></div>
+        <div class="dn-hot-plays" hidden>
+          {% for p in c.plays %}<div class="dn-hot-play"><span>{{ '✅' if p.res == 'WON' else '❌' }}</span><span class="pk">{{ p.pick }}</span><span class="mt">{{ p.fecha }}{% if p.lvl %} · {{ p.lvl }}{% endif %}{% if p.liga %} · {{ p.liga }}{% endif %}</span></div>{% endfor %}
+          <a class="dn-hot-full" href="{{ url_for('records') }}">Full record ›</a>
+        </div>
+<script>function dnHotPlays(b){var p=b.closest('.dn-hot-card').querySelector('.dn-hot-plays');if(!p)return;if(p.hasAttribute('hidden')){p.removeAttribute('hidden');b.textContent='Hide the plays ‹';}else{p.setAttribute('hidden','');b.textContent='See the plays ›';}}</script>
       </article>
       {% endfor %}
     </div>
