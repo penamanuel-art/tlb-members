@@ -277,6 +277,14 @@
   .dn-u-chips{margin-top:8px;display:flex;flex-wrap:wrap;gap:6px}
   .dn-u-chips span{font-size:12px;border:1px solid var(--line);border-radius:999px;padding:4px 9px}
   .dn-u-fine{margin-top:9px;text-align:center;font-size:11px;color:var(--mut)}
+.dn-mem.big{padding:24px 18px;margin-top:6px;border:1px solid rgba(47,230,167,.45);background:linear-gradient(165deg,#132741,#0F1B31 70%);border-radius:18px}
+.dn-mem.big p{line-height:1.55;margin-top:8px}
+.dn-mem.big .dn-u-list{gap:12px;margin:16px 0 4px}
+.dn-mem.big .dn-u-head{margin:18px 0 10px}
+.dn-mem.big .dn-u-chips{gap:8px}
+.dn-mem.big .dn-u-chips span{padding:6px 10px}
+.dn-mem.big .dn-cta{margin-top:18px;padding:15px}
+.dn-mem.big .dn-u-fine{margin-top:12px}
 
   /* Metodo */
   .dn-steps{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:6px 16px}
@@ -702,7 +710,7 @@ function dnHotClose(){
         <p>The Vault Play: the single strongest setup of the day when one qualifies — probability 55%+ with real value. Never filled just to fill it.</p>
       </div>
       {% if not miembro_platinum %}
-      <div class="dn-mem hot">
+      <div class="dn-mem hot big">
         <div class="dn-m-top"><span class="dn-m-name">💎 PLATINUM</span><span class="dn-m-price">TOP TIER</span></div>
         <p>Platinum is the top tier of The Sharp Team — the strongest plays of the day, every tool open, and the Vault included.</p>
         <div class="dn-u-list">
