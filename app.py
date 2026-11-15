@@ -6615,16 +6615,23 @@ def home():
     risk_card = None
     if is_alex_member(user):
         try:
-            _abiertas = [p for p in plays if not p.get("resultado")]
-            _tot_card = sum(float(p.get("stake_monto") or 0)
-                            for p in _abiertas)
+            # REGLA DE ALEX (2026-11-15, llamada): el riesgo es PERSONAL -
+            # suma los stakes de SUS jugadas trackeadas de hoy aun sin
+            # liquidar, con el monto que EL ajusta como miembro (ej. la
+            # Platinum de $100 la bajo a $60 trackeando). El numero oficial
+            # del programa NO se toca: ese vive en el record oficial.
+            _pend_card = [r for r in tracked_rows
+                          if (r["fecha"] or "") == _hoy_iso
+                          and not r["resultado"]]
+            _tot_card = sum(float(r["stake_monto"] or 0)
+                            for r in _pend_card)
             _br_card = float(user["bankroll"]) if user["bankroll"] else 10000.0
             if _tot_card > 0:
                 risk_card = {
                     "total": round(_tot_card, 2),
                     "pct": round(_tot_card / _br_card * 100, 1)
                            if _br_card else 0.0,
-                    "n": len(_abiertas)}
+                    "n": len(_pend_card)}
         except Exception:
             risk_card = None
     # Burbuja de rating (2026-10-30, idea de Alex con reglas de respeto):
