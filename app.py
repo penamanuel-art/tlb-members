@@ -6487,21 +6487,24 @@ def home():
             _v_extra = _vantage_home_extra(plays)
         except Exception:
             _v_extra = {}
-    if not _vantage_alex:
-        # Members Hub = el home de los miembros (2026-11-15, orden de
-        # Alex: «que sea el home de los miembros»): todo miembro que no
-        # sea Alex recibe la página Members Hub cruda, byte por byte,
-        # igual que en /admin/members-hub. Alex conserva su Members
-        # Desk (preview_home.html); home_lux.html queda en el repo
-        # como respaldo, sin tocar.
-        with open(os.path.join(BASE_DIR, "templates", "members_hub.html"), "rb") as _hub_f:
-            _hub_resp = Response(_hub_f.read(), mimetype="text/html")
-        # Sin caché (2026-11-15): el navegador del miembro nunca guarda
-        # una copia vieja del home — cuando el home cambia, se ve al
-        # momento, sin copias guardadas de la plantilla anterior.
-        _hub_resp.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
-        _hub_resp.headers["Pragma"] = "no-cache"
-        return _hub_resp
+    # Members Hub = el home de TODOS los miembros, Alex incluido
+    # (2026-11-15: primero fue el home de los miembros sin Alex —
+    # «que sea el home de los miembros» — y el mismo día Alex pidió
+    # la Hub también como SU home: al abrir su /home le seguía
+    # saliendo su Members Desk de la noche anterior, «la vieja»).
+    # Todo miembro con sesión recibe la página Members Hub cruda,
+    # byte por byte, igual que en /admin/members-hub. El Members
+    # Desk (preview_home.html) queda vivo solo en
+    # /admin/preview-home; home_lux.html queda en el repo como
+    # respaldo, sin tocar.
+    with open(os.path.join(BASE_DIR, "templates", "members_hub.html"), "rb") as _hub_f:
+        _hub_resp = Response(_hub_f.read(), mimetype="text/html")
+    # Sin caché (2026-11-15): el navegador del miembro nunca guarda
+    # una copia vieja del home — cuando el home cambia, se ve al
+    # momento, sin copias guardadas de la plantilla anterior.
+    _hub_resp.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+    _hub_resp.headers["Pragma"] = "no-cache"
+    return _hub_resp
     return render_template(
         # Tema v2 (moderno) es el predeterminado desde 2026-10-02 (pedido Alex);
         # v1 (clásico) queda como reversión vía /theme/v1. Diseño lux
