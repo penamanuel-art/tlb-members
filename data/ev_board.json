@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-15T13:09:41-04:00",
+  "updated_at": "2026-11-15T13:24:46-04:00",
   "refresh_minutes": 15,
   "fair_source": "Pinnacle no-vig",
   "filters": {
@@ -16,6 +16,67 @@
     "live_included": true
   },
   "edges": [
+    {
+      "id": "b8c10fdf1e0ac4e13deee7f7c0af0b0b-totals-45.5-Over",
+      "skey": "b8c10fdf1e0ac4e13deee7f7c0af0b0b|totals|45.5|Over",
+      "sport": "NFL",
+      "game": "New England Patriots @ Detroit Lions",
+      "team": "Over 45.5",
+      "market": "Total",
+      "point": "45.5",
+      "book": "Bovada",
+      "price": 165,
+      "fair_prob_pct": 46.6,
+      "fair_american": 115,
+      "ev_pct": 23.4,
+      "ev_mercado_pct": 5.4,
+      "fair_mercado_prob_pct": 39.8,
+      "doble": true,
+      "books_count": 4,
+      "books": [
+        {
+          "book": "Bovada",
+          "price": 165,
+          "ev_pct": 23.4,
+          "url": null
+        },
+        {
+          "book": "DraftKings",
+          "price": 143,
+          "ev_pct": 13.2,
+          "url": "https://sportsbook.draftkings.com"
+        },
+        {
+          "book": "BetMGM",
+          "price": 140,
+          "ev_pct": 11.8,
+          "url": "https://sports.betmgm.com"
+        },
+        {
+          "book": "theScore Bet",
+          "price": 135,
+          "ev_pct": 9.5,
+          "url": null
+        }
+      ],
+      "also_at": [
+        "BetMGM",
+        "DraftKings",
+        "theScore Bet"
+      ],
+      "sharp": false,
+      "verified": true,
+      "edge_label": "Strong edge",
+      "rec_units": 1.0,
+      "rec_stake": 100,
+      "live": true,
+      "game_time": "LIVE now",
+      "commence_time": "2026-11-15T14:33:33Z",
+      "bet_url": "https://novig.com",
+      "novig_deep": false,
+      "stale": false,
+      "first_seen": "2026-11-15T17:24:45.929835+00:00"
+    },
     {
       "id": "b8c10fdf1e0ac4e13deee7f7c0af0b0b-h2h-None-New England Patrio",
       "skey": "b8c10fdf1e0ac4e13deee7f7c0af0b0b|h2h|None|New England Patriots",
@@ -555,57 +616,72 @@
       "stale": true,
       "first_seen": "2026-11-15T04:54:42.412917+00:00",
       "stale_reason": "only 1 book \u22653% now"
-    },
-    {
-      "id": "c4ac537963707b247ad9e4eab06c15de-h2h-None-Vancouver Canucks",
-      "skey": "c4ac537963707b247ad9e4eab06c15de|h2h|None|Vancouver Canucks",
-      "sport": "NHL",
-      "game": "Vancouver Canucks @ Vegas Golden Knights",
-      "team": "Vancouver Canucks",
-      "market": "Moneyline",
-      "point": "",
-      "book": "BetRivers",
-      "price": 360,
-      "fair_prob_pct": 22.6,
-      "fair_american": 342,
-      "ev_pct": 4.2,
-      "ev_mercado_pct": 3.2,
-      "fair_mercado_prob_pct": 22.4,
-      "doble": true,
-      "books_count": 2,
-      "books": [
-        {
-          "book": "BetRivers",
-          "price": 360,
-          "ev_pct": 4.2,
-          "url": null
-        },
-        {
-          "book": "Novig",
-          "price": 355,
-          "ev_pct": 3.0,
-          "url": "https://novig.com"
-        }
-      ],
-      "also_at": [
-        "Novig"
-      ],
-      "sharp": false,
-      "verified": true,
-      "edge_label": "Value edge",
-      "rec_units": 0.6,
-      "rec_stake": 60,
-      "live": false,
-      "game_time": "Sun, Nov 15 \u00b7 10:10 PM ET",
-      "commence_time": "2026-11-16T02:10:00Z",
-      "bet_url": "https://novig.com",
-      "novig_deep": false,
-      "stale": true,
-      "first_seen": "2026-11-14T21:24:48.147481+00:00",
-      "stale_reason": "only 1 book \u22653% now"
     }
   ],
   "arbitrajes": [
+    {
+      "sport": "NFL",
+      "game": "New England Patriots @ Detroit Lions",
+      "market": "Total",
+      "point": "45.5",
+      "margen_pct": 6.32,
+      "lados": [
+        {
+          "pick": "Over 45.5",
+          "casa": "Bovada",
+          "precio": 165
+        },
+        {
+          "pick": "Under 45.5",
+          "casa": "Pinnacle",
+          "precio": -127
+        }
+      ],
+      "commence_time": "2026-11-15T14:33:33Z",
+      "live": true
+    },
+    {
+      "sport": "NFL",
+      "game": "Seattle Seahawks @ Las Vegas Raiders",
+      "market": "Spread",
+      "point": "6.5",
+      "margen_pct": 0.5,
+      "lados": [
+        {
+          "pick": "Las Vegas Raiders 6.5",
+          "casa": "MyBookie.ag",
+          "precio": 100
+        },
+        {
+          "pick": "Seattle Seahawks -6.5",
+          "casa": "Novig",
+          "precio": 102
+        }
+      ],
+      "commence_time": "2026-11-15T21:05:00Z",
+      "live": false
+    },
+    {
+      "sport": "NBA",
+      "game": "Indiana Pacers @ Philadelphia 76ers",
+      "market": "Moneyline",
+      "point": "",
+      "margen_pct": 0.5,
+      "lados": [
+        {
+          "pick": "Indiana Pacers",
+          "casa": "Pinnacle",
+          "precio": 277
+        },
+        {
+          "pick": "Philadelphia 76ers",
+          "casa": "Novig",
+          "precio": -270
+        }
+      ],
+      "commence_time": "2026-11-15T18:10:00Z",
+      "live": false
+    },
     {
       "sport": "NHL",
       "game": "Vancouver Canucks @ Vegas Golden Knights",
