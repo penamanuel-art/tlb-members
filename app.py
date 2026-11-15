@@ -6572,6 +6572,8 @@ def home():
         estado=estado,
         card_fecha_txt=card_fecha_txt,
         card_sig=_card_sig(),
+        dias=recientes_dias,
+        tira_home=tira_home,
     )
 
 
