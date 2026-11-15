@@ -80,6 +80,8 @@
   .dn-live-tx span{display:block;color:var(--mut);font-size:13.5px;margin-top:3px;line-height:1.35}
   .dn-live-ch{color:var(--txt);font-size:26px;font-weight:300;flex:none;line-height:1}
   .dn-hero-band{background:#172A42;display:flex;align-items:center;justify-content:space-between;padding:12px 18px;color:var(--mint);font-weight:700;font-size:12px;letter-spacing:.14em;text-transform:uppercase}
+  .dn-live-wrap{display:inline-flex;align-items:center;gap:7px}
+  .dn-live-word{color:var(--mint);font-size:11px;font-weight:800;letter-spacing:.14em}
   .dn-live-dot{width:11px;height:11px;border-radius:50%;background:#5B6B84;flex:none}
   .dn-live-dot.on{background:var(--mint);animation:dnPulse 1.6s ease-in-out infinite}
   @keyframes dnPulse{0%,100%{box-shadow:0 0 0 0 rgba(47,230,167,.45)}50%{box-shadow:0 0 0 7px rgba(47,230,167,0)}}
@@ -363,7 +365,7 @@
 
 
   <div class="dn-hero-card">
-    <div class="dn-hero-band"><span>Today's card</span><span class="dn-live-dot{% if estado.live %} on{% endif %}"></span></div>
+    <div class="dn-hero-band"><span>Today's card</span><span class="dn-live-wrap">{% if estado.live %}<span class="dn-live-dot on"></span><span class="dn-live-word">LIVE</span>{% else %}<span class="dn-live-dot"></span>{% endif %}</span></div>
     <div class="dn-hero-body">
       <div class="dn-hero-title">{{ estado.titulo }}</div>
       <div class="dn-hero-div"></div>
