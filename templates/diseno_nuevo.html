@@ -121,7 +121,7 @@
   .dn-hot-ledger{margin-left:auto;flex:0 0 auto;display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--panel);color:var(--txt);border-radius:12px;padding:9px 13px;font-size:13.5px;font-weight:600;white-space:nowrap}
   .dn-hot-row{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;padding:10px 2px 12px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
   .dn-hot-row::-webkit-scrollbar{display:none}
-  .dn-hot-card{flex:0 0 292px;scroll-snap-align:start;background:linear-gradient(180deg,#141F38,var(--panel));border:1px solid var(--mintline);border-radius:20px;padding:18px}
+  .dn-hot-card{flex:0 0 calc(100% - 30px);scroll-snap-align:start;background:linear-gradient(180deg,#141F38,var(--panel));border:1px solid var(--mintline);border-radius:20px;padding:18px}
   .dn-hot-top{display:flex;align-items:center;gap:10px}
   .dn-hot-pill{background:var(--mintbg);color:var(--mint);border:1px solid var(--mintline);border-radius:999px;padding:5px 10px;font-size:11px;font-weight:700;letter-spacing:.08em;white-space:nowrap}
   .dn-hot-tag{margin-left:auto;color:var(--mut);font-size:13.5px;font-weight:600;white-space:nowrap}
@@ -258,9 +258,24 @@
   .dn-bubble .dn-b-btn{background:var(--mint);color:#06231A;font-size:12.5px;font-weight:600;border-radius:999px;padding:6px 13px;flex:0 0 auto;margin-left:auto}
   .dn-bubble .dn-b-x{flex:0 0 auto;font-size:12px;font-weight:700;color:#8A94A6;padding:2px 4px}
   @keyframes dnPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.5)}}
+  .dn-load{position:fixed;inset:0;z-index:200;background:#0A1120;padding:22px 16px;transition:opacity .35s ease,visibility .35s ease}
+  .dn-load.done{opacity:0;visibility:hidden;pointer-events:none}
+  .dn-load .sk{position:relative;overflow:hidden;background:#0F1B31;border:1px solid rgba(255,255,255,.05);border-radius:16px}
+  .dn-load .sk::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 20%,rgba(120,240,200,.10) 50%,transparent 80%);transform:translateX(-100%);animation:dnShimmer 1.25s ease-in-out infinite}
+  @keyframes dnShimmer{to{transform:translateX(100%)}}
+  @media (prefers-reduced-motion: reduce){.dn-load{display:none}}
 </style>
+<noscript><style>.dn-load{display:none!important}</style></noscript>
 </head>
 <body>
+
+<div class="dn-load" id="dnLoad" aria-hidden="true">
+  <div class="sk" style="height:30px;width:62%;border-radius:10px"></div>
+  <div class="sk" style="height:176px;margin-top:18px"></div>
+  <div class="sk" style="height:118px;margin-top:14px"></div>
+  <div class="sk" style="height:118px;margin-top:14px"></div>
+  <div class="sk" style="height:118px;margin-top:14px"></div>
+</div>
 
 
 <header class="dn-top">
@@ -601,6 +616,19 @@
   <span>New version</span>
   <span class="dn-b-btn">Update</span>
 </div>
+
+<script>
+(function(){
+  var l=document.getElementById('dnLoad');
+  if(!l) return;
+  var gone=false, t0=Date.now(), loaded=(document.readyState==='complete');
+  function hide(){ if(gone) return; gone=true; l.classList.add('done'); setTimeout(function(){ if(l && l.parentNode) l.parentNode.removeChild(l); },450); }
+  function maybe(){ if(gone) return; var w=900-(Date.now()-t0); if(loaded && w<=0){ hide(); } else if(loaded){ setTimeout(maybe, w); } }
+  window.addEventListener('load', function(){ loaded=true; maybe(); });
+  if(loaded){ maybe(); } else { setTimeout(function(){ loaded=true; maybe(); }, 2200); }
+  setTimeout(hide,4000);
+})();
+</script>
 
 <script>
 (function(){
