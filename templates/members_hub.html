@@ -311,6 +311,13 @@ summary{font:500 16px Unbounded,Roboto,sans-serif;padding:20px 0}
 /* Heading sizes matched to the Members Desk (preview_home.html): hero H1 + section H2 */
 .hero h1{font-size:clamp(44px,9vw,76px)}
 .sh h2{font-size:clamp(32px,6vw,46px)}
+/* Quick links (Alex, 2026-11-15: «Agregale esto» — la seccion de accesos del Dashboard de miembros, en el sistema de diseno de la Hub) */
+.ql-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.ql-card{display:flex;align-items:center;gap:14px;background:#151C2E;border:1px solid var(--line);border-radius:18px;padding:18px;text-decoration:none}
+.ql-card.full{grid-column:1/-1}
+.ql-tile{width:52px;height:52px;flex:none;border-radius:14px;background:rgba(255,255,255,.07);display:flex;align-items:center;justify-content:center}
+.ql-tile svg{width:26px;height:26px;stroke:#2DE0A0;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.ql-label{color:#fff;font-size:20px;font-weight:600;line-height:1.15}
 </style>
 </head>
 <body>
@@ -354,6 +361,17 @@ summary{font:500 16px Unbounded,Roboto,sans-serif;padding:20px 0}
 <h3 style="font-size:28px;margin:34px 0 12px">Record by league</h3>
 <div class="tb"><table><thead><tr><th>League</th><th>Record</th><th>Win rate</th><th>Sample</th></tr></thead><tbody id="lg"></tbody></table></div>
 <div class="note">Our own table proves the point: MLB at 19–6 and the NBA at 9–11 come out of the same model. Judge a league over a full season, not a week.</div><div class="note">Every graded play, with its ticket, sits in the <a href="/records">full record</a>.</div>
+</section>
+
+<section id="quicklinks">
+<div class="sh"><h2>Quick links</h2></div>
+<div class="ql-grid">
+<a class="ql-card" href="/tracker"><span class="ql-tile"><svg viewBox="0 0 24 24"><path d="M4 8.5A1.5 1.5 0 0 1 5.5 7h13A1.5 1.5 0 0 1 20 8.5V11a2.5 2.5 0 0 0 0 5v2.5a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18.5V16a2.5 2.5 0 0 0 0-5V8.5z"/><path d="M13.5 7.5v9" stroke-dasharray="0.1 3"/></svg></span><span class="ql-label">Bet Tracker</span></a>
+<a class="ql-card" href="/ev-board"><span class="ql-tile"><svg viewBox="0 0 24 24"><path d="M13 2.8 5.4 13.4h5L9.6 21.2l7.8-10.8h-5.1l.7-7.6z"/></svg></span><span class="ql-label">+EV Board</span></a>
+<a class="ql-card" href="/odds"><span class="ql-tile"><svg viewBox="0 0 24 24"><path d="M5 7h9M18 7h1M5 12h3M12 12h7M5 17h11M20 17h-1"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="17" r="2"/></svg></span><span class="ql-label">Odds Screen</span></a>
+<a class="ql-card" href="/ev-board/results"><span class="ql-tile"><svg viewBox="0 0 24 24"><path d="M3.5 20.5h17"/><path d="M6.5 20.5v-5.5M11.5 20.5V9M16.5 20.5v-8.5"/></svg></span><span class="ql-label">+EV Board Results</span></a>
+<a class="ql-card full" href="/cuenta"><span class="ql-tile"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.6"/><path d="M5 20.2c1.1-3.5 3.7-5.2 7-5.2s5.9 1.7 7 5.2"/></svg></span><span class="ql-label">Account</span></a>
+</div>
 </section>
 
 <section id="protocol">
