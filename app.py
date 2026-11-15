@@ -3100,7 +3100,7 @@ def hot_home_cards():
         tira = tirita_record10() or {}
         ambitos = []
         for lv in ("Platinum", "Gold", "Vault"):
-            for lg in ("NFL", "NCAAF", "NBA", "NHL", "MLB"):
+            for lg in ("NFL", "NCAAF", "NBA", "NHL"):
                 it = [s for s in seq
                       if s["lvl"] == lv and s["liga"] == lg]
                 if it:
