@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>The Sharp Team · Dashboard</title>
+<link rel="icon" href="{{ url_for('static', filename='img/sharp-team-logo.png') }}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800&family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A1120; --panel:#0F1B31; --panel2:#0C1526;
+    --line:rgba(147,161,181,.16);
+    --mint:#2FE6A7; --mintbg:rgba(47,230,167,.10); --mintline:rgba(47,230,167,.35);
+    --txt:#F4F7FB; --mut:#93A1B5; --neg:#FF8585;
+    --fdisp:'Unbounded',sans-serif; --fbody:'Roboto',sans-serif; --fmono:'Roboto Mono',monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{background:var(--bg);color:var(--txt);font-family:var(--fbody);-webkit-font-smoothing:antialiased}
+  a{text-decoration:none;color:inherit}
+  .dn-wrap{max-width:640px;margin:0 auto;padding:0 16px 108px}
+
+  /* Barra superior */
+  .dn-top{position:sticky;top:0;z-index:60;background:rgba(10,17,32,.94);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .dn-top-in{max-width:640px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:10px}
+  .dn-logo{width:32px;height:32px;border-radius:9px;display:block}
+  .dn-brand{font-family:var(--fdisp);font-size:12.5px;font-weight:700;letter-spacing:.14em;color:var(--txt)}
+  .dn-brand small{display:block;font-family:var(--fmono);font-size:9px;font-weight:500;letter-spacing:.22em;color:var(--mint);margin-top:2px}
+  .dn-top-right{margin-left:auto;display:flex;align-items:center;gap:9px}
+  .dn-avatar{width:32px;height:32px;border-radius:50%;border:1.5px solid var(--mint);color:var(--mint);display:flex;align-items:center;justify-content:center;font-family:var(--fdisp);font-size:13px;font-weight:700;background:var(--panel)}
+
+  /* Saludo */
+  .dn-hello{padding:22px 0 0}
+  .dn-hello h1{font-family:var(--fdisp);font-size:20px;font-weight:700;line-height:1.25;margin:0;color:var(--txt)}
+  .dn-hello h1 .dn-dot{color:var(--mint)}
+  .dn-hello .dn-fecha{font-family:var(--fmono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mint);margin-top:7px}
+
+  /* Estado del dia */
+  .dn-status{margin-top:16px;background:var(--mintbg);border:1px solid var(--mintline);border-radius:14px;padding:13px 14px;display:flex;gap:12px;align-items:flex-start}
+  .dn-status .dn-ic{flex:0 0 auto;width:34px;height:34px;border-radius:50%;background:rgba(47,230,167,.16);display:flex;align-items:center;justify-content:center;color:var(--mint)}
+  .dn-status b{display:block;font-size:14.5px;font-weight:700;line-height:1.35}
+  .dn-status span{display:block;font-size:12.5px;color:var(--mut);line-height:1.45;margin-top:2px}
+
+  /* Banda de numeros del programa */
+  .dn-stats{margin-top:14px;background:var(--panel);border:1px solid var(--line);border-top:2px solid var(--mint);border-radius:14px;display:grid;grid-template-columns:repeat(4,1fr);overflow:hidden}
+  .dn-stat{padding:13px 4px 12px;text-align:center}
+  .dn-stat + .dn-stat{border-left:1px solid var(--line)}
+  .dn-stat .k{font-family:var(--fmono);font-size:9px;letter-spacing:.13em;color:var(--mut);text-transform:uppercase}
+  .dn-stat .v{font-family:var(--fmono);font-size:16.5px;font-weight:600;color:var(--txt);margin-top:5px;white-space:nowrap}
+  .dn-stat .v.pos{color:var(--mint)} .dn-stat .v.neg{color:var(--neg)}
+
+  /* Titulos de seccion */
+  .dn-sec{margin-top:30px}
+  .dn-sec-head{display:flex;align-items:center;gap:9px;margin-bottom:13px}
+  .dn-sec-head::before{content:"";width:8px;height:8px;background:var(--mint);border-radius:2px;flex:0 0 auto}
+  .dn-sec-head h2{font-family:var(--fdisp);font-size:15px;font-weight:700;margin:0;color:var(--txt)}
+  .dn-sec-head .dn-chip{margin-left:auto;font-family:var(--fmono);font-size:10.5px;color:var(--mut);border:1px solid var(--line);border-radius:999px;padding:4px 10px;white-space:nowrap}
+
+  /* Sin card todavia */
+  .dn-empty{background:var(--panel);border:1px dashed var(--mintline);border-radius:14px;padding:22px 18px;text-align:center}
+  .dn-empty b{font-family:var(--fdisp);font-size:14px;display:block}
+  .dn-empty span{display:block;color:var(--mut);font-size:13px;line-height:1.55;margin-top:7px}
+
+  /* Record por liga */
+  .dn-leagues{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:6px 16px}
+  .dn-lg{padding:12px 0}
+  .dn-lg + .dn-lg{border-top:1px solid var(--line)}
+  .dn-lg-top{display:flex;align-items:baseline;gap:8px}
+  .dn-lg-name{font-size:13.5px;font-weight:700}
+  .dn-lg-rec{margin-left:auto;font-family:var(--fmono);font-size:13.5px;font-weight:600}
+  .dn-lg-pct{font-family:var(--fmono);font-size:11px;color:var(--mut)}
+  .dn-lg-profit{font-family:var(--fmono);font-size:12px;font-weight:600}
+  .dn-lg-profit.pos{color:var(--mint)} .dn-lg-profit.neg{color:var(--neg)}
+  .dn-bar{height:5px;border-radius:99px;background:rgba(244,247,251,.07);margin-top:9px;overflow:hidden}
+  .dn-bar i{display:block;height:100%;background:var(--mint);border-radius:99px}
+
+  /* Accesos rapidos */
+  .dn-quick{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
+  .dn-q{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:13px 4px 11px;display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--txt)}
+  .dn-q svg{color:var(--mint)}
+  .dn-q span{font-size:11px;font-weight:500;text-align:center;line-height:1.25}
+
+  /* Pie */
+  .dn-foot{margin-top:34px;text-align:center;color:var(--mut);font-size:11px;line-height:1.7}
+  .dn-foot .dn-fb{font-family:var(--fdisp);font-size:10px;letter-spacing:.16em;color:var(--txt)}
+
+  /* Barra inferior */
+  .dn-tabs{position:fixed;left:0;right:0;bottom:0;z-index:60;background:rgba(10,17,32,.97);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
+  .dn-tabs-in{max-width:640px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr)}
+  .dn-tab{display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 0 8px;color:#969EA9;font-size:10.5px;font-weight:500}
+  .dn-tab svg{display:block}
+  .dn-tab.on{color:var(--mint)}
+  .dn-tab .dn-pip{width:4px;height:4px;border-radius:50%;background:transparent}
+  .dn-tab.on .dn-pip{background:var(--mint)}
+</style>
+</head>
+<body>
+
+<header class="dn-top">
+  <div class="dn-top-in">
+    <img class="dn-logo" src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team">
+    <div class="dn-brand">THE SHARP TEAM<small>MEMBERS DASHBOARD</small></div>
+    <div class="dn-top-right">
+      <span class="dn-avatar">{{ (dn_nombre[:1] or inicial or 'S')|upper }}</span>
+    </div>
+  </div>
+</header>
+
+<div class="dn-wrap">
+
+  <section class="dn-hello">
+    <h1>{{ saludo }}, {{ dn_nombre or 'Member' }}<span class="dn-dot">.</span></h1>
+    <div class="dn-fecha">{{ fecha }}</div>
+  </section>
+
+  <div class="dn-status">
+    <div class="dn-ic">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+    </div>
+    <div>
+      <b>{{ estado.titulo }}</b>
+      <span>{{ estado.sub }}</span>
+    </div>
+  </div>
+
+  <section class="dn-stats" aria-label="Program record">
+    <div class="dn-stat"><div class="k">Record</div><div class="v">{{ stats.ganadas }}–{{ stats.perdidas }}</div></div>
+    <div class="dn-stat"><div class="k">Net</div><div class="v {{ 'pos' if stats.profit > 0 else ('neg' if stats.profit < 0 else '') }}">{{ stats.profit_txt }}</div></div>
+    <div class="dn-stat"><div class="k">Platinum L10</div><div class="v">{% if stats.plat10 %}{{ stats.plat10.w }}–{{ stats.plat10.l }}{% else %}—{% endif %}</div></div>
+    <div class="dn-stat"><div class="k">Win rate</div><div class="v">{{ stats.win_rate }}%</div></div>
+  </section>
+
+  <section class="dn-sec">
+    <div class="dn-sec-head"><h2>Today's plays</h2>{% if card_fecha_txt %}<span class="dn-chip">{{ card_fecha_txt }}</span>{% endif %}</div>
+    {% if plays %}
+      {% set frees = plays|selectattr('nivel','equalto','FREE')|list %}
+      {% set golds = plays|selectattr('nivel','equalto','GOLD')|list %}
+      {% set plats = plays|rejectattr('nivel','equalto','GOLD')|rejectattr('nivel','equalto','FREE')|rejectattr('nivel','equalto','VALUE')|list %}
+      {% for p in frees %}
+        {% if miembro_platinum %}{% include "_play_card_v5.html" %}{% else %}{% include "_play_card_locked.html" %}{% endif %}
+      {% endfor %}
+      {% for p in golds %}
+        {% include "_play_card_v5.html" %}
+      {% endfor %}
+      {% for p in plats %}
+        {% if p.nivel in ['ELITE','PLATINUM','VAULT'] and not miembro_platinum %}{% include "_play_card_locked.html" %}{% else %}{% include "_play_card_v5.html" %}{% endif %}
+      {% endfor %}
+    {% else %}
+      <div class="dn-empty">
+        <b>Not posted yet</b>
+        <span>Alex posts the board by 2:00 PM ET on weekdays and by 11:00 AM ET on weekends. Every play appears here first, with its real ticket.</span>
+      </div>
+    {% endif %}
+  </section>
+
+  {% if stats.ligas %}
+  <section class="dn-sec">
+    <div class="dn-sec-head"><h2>Record by league</h2><span class="dn-chip">All time</span></div>
+    <div class="dn-leagues">
+      {% for lg in stats.ligas %}
+      <div class="dn-lg">
+        <div class="dn-lg-top">
+          <span class="dn-lg-name">{{ lg.icono }} {{ lg.liga }}</span>
+          <span class="dn-lg-rec">{{ lg.w }}–{{ lg.l }}</span>
+          <span class="dn-lg-pct">{{ lg.pct }}%</span>
+          <span class="dn-lg-profit {{ 'pos' if lg.profit > 0 else ('neg' if lg.profit < 0 else '') }}">{{ ('+$' if lg.profit > 0 else ('-$' if lg.profit < 0 else '$')) ~ ('{:,.2f}'.format(lg.profit|abs)) }}</span>
+        </div>
+        <div class="dn-bar"><i style="width:{{ lg.pct }}%"></i></div>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
+  <section class="dn-sec">
+    <div class="dn-sec-head"><h2>Quick links</h2></div>
+    <nav class="dn-quick">
+      <a class="dn-q" href="{{ url_for('tracker') }}">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2.5 2.5 0 0 0 0 5v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2.5 2.5 0 0 0 0-5Z"/><path d="M13 5v2M13 11v2M13 17v2"/></svg>
+        <span>Bet Tracker</span>
+      </a>
+      <a class="dn-q" href="{{ url_for('ev_board') }}">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4.5 13.5H11L9.5 22 19 10h-6.5L13 2Z"/></svg>
+        <span>+EV Board</span>
+      </a>
+      <a class="dn-q" href="{{ url_for('game_center') }}">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2.2"/><circle cx="10" cy="17" r="2.2"/></svg>
+        <span>Odds Screen</span>
+      </a>
+      <a class="dn-q" href="{{ url_for('cuenta') }}">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c1.4-3.2 4.2-4.8 7.5-4.8s6.1 1.6 7.5 4.8"/></svg>
+        <span>Account</span>
+      </a>
+    </nav>
+  </section>
+
+  <footer class="dn-foot">
+    <div class="dn-fb">THE SHARP TEAM</div>
+    New York, NY · For entertainment only · 21+<br>
+    If gambling stops being fun, call 1-800-GAMBLER.
+  </footer>
+
+</div>
+
+<nav class="dn-tabs">
+  <div class="dn-tabs-in">
+    <a class="dn-tab on" href="{{ url_for('home') }}">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 10.8 12 3.5l8.5 7.3"/><path d="M5.5 9.5V20h13V9.5"/></svg>
+      Today<span class="dn-pip"></span>
+    </a>
+    <a class="dn-tab" href="{{ url_for('game_center') }}">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg>
+      Odds<span class="dn-pip"></span>
+    </a>
+    <a class="dn-tab" href="{{ url_for('tools') }}">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2.2"/><circle cx="10" cy="17" r="2.2"/></svg>
+      Tools<span class="dn-pip"></span>
+    </a>
+    <a class="dn-tab" href="{{ url_for('tracker') }}">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2.5 2.5 0 0 0 0 5v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2.5 2.5 0 0 0 0-5Z"/><path d="M13 5v2M13 11v2M13 17v2"/></svg>
+      My Bets<span class="dn-pip"></span>
+    </a>
+    <a class="dn-tab" href="{{ url_for('cuenta') }}">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c1.4-3.2 4.2-4.8 7.5-4.8s6.1 1.6 7.5 4.8"/></svg>
+      Account<span class="dn-pip"></span>
+    </a>
+  </div>
+</nav>
+
+</body>
+</html>
