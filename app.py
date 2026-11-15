@@ -6475,36 +6475,17 @@ def home():
         _members_live = int(_row_live["c"]) if _row_live else 0
     except Exception:
         _members_live = None
-    # Home Vantage SOLO para la cuenta de Alex (2026-11-14, orden de
-    # Alex: «Pon eso en vivo para mí solamente»): su /home renderiza el
-    # diseño nuevo (preview_home.html) con los mismos datos en vivo del
-    # home + el enriquecimiento de _vantage_home_extra. Cualquier otro
-    # miembro sigue con su plantilla de siempre, sin cambios.
-    _vantage_alex = is_alex_member(user)
+    # RESTAURACIÓN 2026-11-15 (palabra final de Alex: «La que estaba
+    # ayer en la mañana — ya tú cambiaste todo y lo dañaste»): fuera
+    # las dos ramas que interceptaban el home — el Desk Vantage solo
+    # pa' Alex (2026-11-14) y la Members Hub cruda pa' todos
+    # (2026-11-15). El render de siempre (el ternario home_lux /
+    # temas de abajo) vuelve a ser EL home de todo el mundo, Alex
+    # incluido. Las plantillas preview_home.html y members_hub.html
+    # quedan en el repo y sus rutas /admin/preview-home y
+    # /admin/members-hub siguen vivas; solo dejan de ser el /home.
+    _vantage_alex = False
     _v_extra = {}
-    if _vantage_alex:
-        try:
-            _v_extra = _vantage_home_extra(plays)
-        except Exception:
-            _v_extra = {}
-    # Members Hub = el home de TODOS los miembros, Alex incluido
-    # (2026-11-15: primero fue el home de los miembros sin Alex —
-    # «que sea el home de los miembros» — y el mismo día Alex pidió
-    # la Hub también como SU home: al abrir su /home le seguía
-    # saliendo su Members Desk de la noche anterior, «la vieja»).
-    # Todo miembro con sesión recibe la página Members Hub cruda,
-    # byte por byte, igual que en /admin/members-hub. El Members
-    # Desk (preview_home.html) queda vivo solo en
-    # /admin/preview-home; home_lux.html queda en el repo como
-    # respaldo, sin tocar.
-    with open(os.path.join(BASE_DIR, "templates", "members_hub.html"), "rb") as _hub_f:
-        _hub_resp = Response(_hub_f.read(), mimetype="text/html")
-    # Sin caché (2026-11-15): el navegador del miembro nunca guarda
-    # una copia vieja del home — cuando el home cambia, se ve al
-    # momento, sin copias guardadas de la plantilla anterior.
-    _hub_resp.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
-    _hub_resp.headers["Pragma"] = "no-cache"
-    return _hub_resp
     return render_template(
         # Tema v2 (moderno) es el predeterminado desde 2026-10-02 (pedido Alex);
         # v1 (clásico) queda como reversión vía /theme/v1. Diseño lux
