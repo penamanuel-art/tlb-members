@@ -6632,19 +6632,23 @@ def home():
             risk_hoy = None
     # Tirita «Your risk today» del diseno nuevo (2026-11-15, orden de Alex
     # en llamada): lo que Alex arriesga HOY en la card oficial - jugadas
-    # publicadas aun sin liquidar, con los montos REALES de los tickets -
-    # como % de su bankroll. Solo su cuenta; sin jugadas abiertas no sale.
+    # publicadas, con los montos REALES de los tickets -
+    # como % de su bankroll. Solo su cuenta; sin jugadas hoy no sale.
     risk_card = None
     if is_alex_member(user):
         try:
             # REGLA DE ALEX (2026-11-15, llamada): el riesgo es PERSONAL -
-            # suma los stakes de SUS jugadas trackeadas de hoy aun sin
-            # liquidar, con el monto que EL ajusta como miembro (ej. la
-            # Platinum de $100 la bajo a $60 trackeando). El numero oficial
-            # del programa NO se toca: ese vive en el record oficial.
+            # suma los stakes de SUS jugadas trackeadas de hoy, con el
+            # monto que EL ajusta como miembro (ej. la Platinum de $100
+            # la bajo a $60 trackeando). El numero oficial del programa
+            # NO se toca: ese vive en el record oficial.
+            # FIJO TODO EL DIA (correccion de Alex, 2026-11-15 ~4:50 PM):
+            # las jugadas liquidadas NO salen del total - la cifra queda
+            # con TODAS las jugadas oficiales de hoy que el trackeo, y
+            # solo se reinicia cuando llega la card del dia siguiente.
+            # Sus jugadas personales (own_bets, ej. un pale) NUNCA entran.
             _pend_card = [r for r in tracked_rows
-                          if (r["fecha"] or "") == _hoy_iso
-                          and not r["resultado"]]
+                          if (r["fecha"] or "") == _hoy_iso]
             _tot_card = sum(float(r["stake_monto"] or 0)
                             for r in _pend_card)
             _br_card = float(user["bankroll"]) if user["bankroll"] else 10000.0
