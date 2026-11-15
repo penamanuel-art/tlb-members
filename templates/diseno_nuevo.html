@@ -30,6 +30,26 @@
   .dn-brand small{display:block;font-family:var(--fmono);font-size:10.3px;font-weight:500;letter-spacing:.22em;color:var(--mint);margin-top:2px}
   .dn-top-right{margin-left:auto;display:flex;align-items:center;gap:9px}
   .dn-avatar{width:32px;height:32px;border-radius:50%;border:1.5px solid var(--mint);color:var(--mint);display:flex;align-items:center;justify-content:center;font-family:var(--fdisp);font-size:14.8px;font-weight:700;background:var(--panel)}
+  .dn-iconbtn{width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:var(--panel);color:var(--txt);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
+  .dn-burger{font-size:19px;line-height:1}
+  .dn-notif{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:14px}
+  .dn-notif h3{font-family:var(--fdisp);font-size:15px;margin:0 0 8px;color:var(--txt)}
+  .dn-notif-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid rgba(255,255,255,.05)}
+  .dn-ni{font-size:15px;flex:none}
+  .dn-ni-tx{flex:1;min-width:0}
+  .dn-ni-tx b{display:block;font-size:14.5px;color:var(--txt)}
+  .dn-ni-tx span{display:block;font-size:12.5px;color:var(--mut)}
+  .dn-amt{font-family:var(--fmono);font-size:14px;font-weight:700;flex:none}
+  .dn-amt.win{color:var(--mint)} .dn-amt.loss{color:#FF7A7A}
+  .dn-notif-empty{color:var(--mut);font-size:14px;margin:4px 0 2px}
+  .dn-menu{position:fixed;inset:0;z-index:300;background:rgba(4,8,16,.62)}
+  .dn-menu-card{position:absolute;top:0;right:0;width:min(322px,88vw);height:100%;background:var(--panel);border-left:1px solid var(--line);padding:18px 20px;overflow-y:auto}
+  .dn-menu-x{position:absolute;top:12px;right:14px;width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:transparent;color:var(--txt);font-size:15px;cursor:pointer}
+  .dn-mi{display:block;padding:13px 2px;font-size:18px;color:var(--txt);text-decoration:none;border-bottom:1px solid rgba(255,255,255,.05)}
+  .dn-mi.mint{color:var(--mint);font-weight:700}
+  .dn-mi.out{color:var(--mut);border-bottom:none}
+  .dn-streak{display:inline-block;margin:12px 0 0;background:var(--mintbg);color:var(--mint);border:1px solid var(--mintline);padding:6px 12px;border-radius:999px;font-size:14px;font-weight:700}
+  .dn-view{display:block;margin-top:18px;background:var(--mint);color:#06130D;font-weight:700;text-align:center;padding:14px;border-radius:12px;font-size:17px;text-decoration:none}
 
   /* Saludo */
   .dn-hello{padding:22px 0 0}
@@ -234,12 +254,34 @@
       <img src="{{ url_for('static', filename='img/sharp-letters.png') }}" alt="The Sharp Team" style="height:44px;width:auto;max-width:100%;display:block">
     </div>
     <div class="dn-top-right">
-      <span class="dn-avatar">{{ (dn_nombre[:1] or inicial or 'S')|upper }}</span>
+      <button class="dn-iconbtn" type="button" id="dnBell" aria-label="Notifications"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M13.7 20a2 2 0 0 1-3.4 0"/></svg></button>
+      <button class="dn-iconbtn dn-burger" type="button" id="dnMenuBtn" aria-label="Menu" aria-expanded="false">☰</button>
     </div>
   </div>
 </header>
 
 <div class="dn-wrap">
+
+  <div class="dn-notif" id="dnNotif" hidden>
+    <h3>Notifications</h3>
+    {% set _ns = namespace(n=0) %}
+    {% if dias is defined %}
+    {% for _d in dias[:3] %}
+      {% for _j in _d.plays %}
+        {% if _ns.n < 5 and _j.resultado in ('WON', 'LOST') %}
+        {% set _p = _j.profit or 0 %}
+    <div class="dn-notif-item">
+      <span class="dn-ni">{% if _j.resultado == 'WON' %}✅{% else %}❌{% endif %}</span>
+      <span class="dn-ni-tx"><b>{{ _j.pick }} {% if _j.resultado == 'WON' %}won{% else %}lost{% endif %}</b><span>{{ _d.fecha }} · {{ 'Platinum' if _j.nivel in ('ELITE', 'PLATINUM') else ('Vault' if _j.nivel == 'VAULT' else 'Gold') }}</span></span>
+      <span class="dn-amt {% if _p >= 0 %}win{% else %}loss{% endif %}">{% if _p >= 0 %}+{% else %}−{% endif %}${{ '%.2f'|format(_p|abs) }}</span>
+    </div>
+        {% set _ns.n = _ns.n + 1 %}
+        {% endif %}
+      {% endfor %}
+    {% endfor %}
+    {% endif %}
+    {% if _ns.n == 0 %}<p class="dn-notif-empty">No results yet — graded plays will show up here.</p>{% endif %}
+  </div>
 
   <section class="dn-hello">
     <h1>{{ saludo }}, <span class="dn-name">{{ dn_nombre or 'Member' }}</span><span class="dn-dot">.</span></h1>
@@ -556,5 +598,33 @@
 })();
 </script>
 
+  <div class="dn-menu" id="dnMenu" hidden>
+    <div class="dn-menu-card">
+      <button class="dn-menu-x" type="button" id="dnMenuX" aria-label="Close menu">✕</button>
+      {% if not miembro_platinum %}<a class="dn-mi mint" href="{{ url_for('desbloquear_platinum') }}">Unlock Platinum</a>{% endif %}
+      <a class="dn-mi" href="{{ url_for('game_center') }}">Betting Lines</a>
+      <a class="dn-mi" href="{{ url_for('balances') }}">Sportsbooks</a>
+      <a class="dn-mi" href="{{ url_for('masterclass') }}">Masterclass</a>
+      <a class="dn-mi" href="{{ url_for('about') }}">About</a>
+      {% if tira_home and tira_home.n >= 2 %}<div class="dn-streak">🔥 {{ tira_home.n }}-day win streak</div>{% endif %}
+      <a class="dn-mi" href="{{ url_for('tools') }}">My Tools</a>
+      <a class="dn-mi" href="{{ url_for('tracker_plays') }}">My Bets</a>
+      <a class="dn-mi" href="{{ url_for('cuenta') }}">Account</a>
+      {% if is_alex %}<a class="dn-mi" href="{{ url_for('admin_dashboard') }}">Admin</a>{% endif %}
+      <a class="dn-view" href="{{ url_for('home') }}">View picks →</a>
+      <a class="dn-mi out" href="{{ url_for('logout') }}">Log out</a>
+    </div>
+  </div>
+<script>
+(function(){
+  var b=document.getElementById('dnBell'), n=document.getElementById('dnNotif');
+  if(b&&n){b.addEventListener('click',function(){n.hidden=!n.hidden;});}
+  var mb=document.getElementById('dnMenuBtn'), m=document.getElementById('dnMenu'), mx=document.getElementById('dnMenuX');
+  function tog(o){if(!m)return;m.hidden=!o;if(mb)mb.setAttribute('aria-expanded',o?'true':'false');document.body.style.overflow=o?'hidden':'';}
+  if(mb&&m){mb.addEventListener('click',function(){tog(m.hidden);});}
+  if(mx){mx.addEventListener('click',function(){tog(false);});}
+  if(m){m.addEventListener('click',function(e){if(e.target===m)tog(false);});}
+})();
+</script>
 </body>
 </html>
