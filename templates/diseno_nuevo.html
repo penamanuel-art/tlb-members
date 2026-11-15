@@ -266,6 +266,17 @@
   .dn-mem p{margin:7px 0 0;font-size:15px;color:var(--mut);line-height:1.5}
   .dn-cta{display:block;margin-top:10px;background:var(--mint);color:#06231A;border-radius:14px;padding:15px;text-align:center;font-weight:700;font-size:15px}
   .dn-on{margin-top:10px;background:var(--panel);border:1px solid var(--mintline);border-radius:14px;padding:13px 15px;font-size:15px;text-align:center}
+  .dn-unlock{margin-top:10px;background:var(--panel);border:1px solid var(--mintline);border-radius:14px;padding:14px 16px}
+  .dn-unlock .dn-m-top{display:flex;align-items:baseline;gap:8px}
+  .dn-unlock .dn-m-name{font-family:var(--fdisp);font-size:17.1px;font-weight:700}
+  .dn-unlock .dn-m-price{margin-left:auto;font-family:var(--fmono);font-size:15px;font-weight:600;color:var(--mint);white-space:nowrap}
+  .dn-unlock p{margin:7px 0 0;font-size:15px;color:var(--mut);line-height:1.5}
+  .dn-u-list{margin-top:12px;display:flex;flex-direction:column;gap:7px;font-size:15px;line-height:1.45}
+  .dn-u-list span{color:var(--mint);font-weight:700}
+  .dn-u-head{margin-top:14px;font-size:12px;letter-spacing:.08em;color:var(--mut);font-weight:700}
+  .dn-u-chips{margin-top:8px;display:flex;flex-wrap:wrap;gap:6px}
+  .dn-u-chips span{font-size:12px;border:1px solid var(--line);border-radius:999px;padding:4px 9px}
+  .dn-u-fine{margin-top:9px;text-align:center;font-size:11px;color:var(--mut)}
 
   /* Metodo */
   .dn-steps{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:6px 16px}
@@ -694,7 +705,19 @@ function dnHotClose(){
     {% if miembro_platinum %}
     <div class="dn-on">✓ Your Platinum is on — every play and every tool is open to you.</div>
     {% else %}
-    <a class="dn-cta" href="{{ url_for('desbloquear_platinum') }}">Unlock Platinum — $15.99/week →</a>
+    <div class="dn-unlock">
+      <div class="dn-m-top"><span class="dn-m-name">💎 PLATINUM</span><span class="dn-m-price">TOP TIER</span></div>
+      <p>Platinum is the top tier of The Sharp Team — the strongest plays of the day, every tool open, and the Vault included.</p>
+      <div class="dn-u-list">
+        <div><span>✓</span> <b>Platinum plays</b> — the strongest plays of the day, posted with the real ticket</div>
+        <div><span>✓</span> <b>The Vault Play</b> — our most valuable play, included with Platinum</div>
+        <div><span>✓</span> <b>Sharp Club on Telegram</b> — Platinum plays the moment they post</div>
+      </div>
+      <div class="dn-u-head">EVERY TOOL, UNLOCKED INSTANTLY</div>
+      <div class="dn-u-chips"><span>+EV Board</span><span>Player Props</span><span>Sharp Money</span><span>Betting Lines</span><span>Compare Books</span><span>Line Moves</span><span>Price Alerts</span><span>+EV Parlay Builder</span><span>Bet Tracker</span><span>Masterclass</span><span>AI Assistant</span><span>Full Record</span></div>
+      <a class="dn-cta" href="{{ url_for('desbloquear_platinum') }}">Unlock Platinum — $15.99/week →</a>
+      <div class="dn-u-fine">Cancel anytime from your account page.</div>
+    </div>
     {% endif %}
   </section>
 
