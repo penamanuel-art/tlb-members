@@ -170,9 +170,56 @@
   .dn-tab.on{color:var(--mint)}
   .dn-tab .dn-pip{width:4px;height:4px;border-radius:50%;background:transparent}
   .dn-tab.on .dn-pip{background:var(--mint)}
+
+  /* Tarjetas en DOS tonos (verde azulado / azul marino), divididas por zona:
+     zona superior en el tono verde azulado de la tarjeta de estado y el
+     cuerpo en el azul marino de la banda de numeros — como divide Wise Guy */
+  .dn-status{background:linear-gradient(180deg,var(--mintbg) 0,var(--mintbg) 50%,var(--panel) 50%,var(--panel) 100%)}
+  .dn-stat{background:linear-gradient(180deg,var(--mintbg) 0,var(--mintbg) 26px,rgba(47,230,167,0) 26px,rgba(47,230,167,0) 100%)}
+  .dn-empty{background:linear-gradient(180deg,var(--mintbg) 0,var(--mintbg) 50%,var(--panel) 50%,var(--panel) 100%)}
+  .dn-chart{background:linear-gradient(180deg,var(--mintbg) 0,var(--mintbg) 86px,var(--panel) 86px,var(--panel) 100%)}
+  .dn-track{background:linear-gradient(180deg,var(--mintbg) 0,var(--mintbg) 50%,var(--panel) 50%,var(--panel) 100%)}
+  .dn-q{background:linear-gradient(180deg,var(--mintbg) 0,var(--mintbg) 44px,var(--panel) 44px,var(--panel) 100%)}
+  .dn-tool{background:linear-gradient(180deg,var(--mintbg) 0,var(--mintbg) 44px,var(--panel) 44px,var(--panel) 100%)}
+  .dn-al-tg{background:linear-gradient(180deg,var(--mintbg) 0,var(--mintbg) 46px,var(--panel) 46px,var(--panel) 100%)}
+  .dn-mem{background:linear-gradient(180deg,var(--mintbg) 0,var(--mintbg) 40px,var(--panel) 40px,var(--panel) 100%)}
+  .dn-leagues .dn-lg:first-of-type,.dn-tiers .dn-tier:first-of-type,.dn-steps .dn-step:first-of-type,.dn-faq .dn-q2:first-of-type{background:var(--mintbg);margin:-6px -16px 0;padding-left:16px;padding-right:16px;border-radius:13px 13px 0 0}
+  .dn-bank .dn-b-row:first-of-type{background:var(--mintbg);margin:-14px -16px 0;padding:17px 16px 3px;border-radius:13px 13px 0 0}
+
+  /* Ola de refresco al cargar (dura 4 segundos, no bloquea) */
+  .dn-wave{position:fixed;inset:0;z-index:200;pointer-events:none;overflow:hidden;background:rgba(10,17,32,.92);animation:dnWaveBg 4s ease forwards}
+  .dn-wave-tide{position:absolute;left:0;right:0;bottom:0;height:52%;animation:dnTide 4s ease forwards}
+  .dn-wave-roll{position:absolute;left:0;bottom:0;width:200%;height:100%;display:flex;animation:dnRoll 1.5s linear infinite}
+  .dn-wave-roll svg{width:50%;height:100%;flex:0 0 50%;display:block}
+  .dn-wave-roll.back{height:112%;opacity:.45;animation-duration:2.7s;animation-direction:reverse}
+  @keyframes dnRoll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+  @keyframes dnTide{0%{transform:translateY(64%)}30%{transform:translateY(0)}78%{transform:translateY(0)}100%{transform:translateY(105%)}}
+  @keyframes dnWaveBg{0%{opacity:1}80%{opacity:1}100%{opacity:0;visibility:hidden}}
+  @media (prefers-reduced-motion: reduce){.dn-wave{display:none}}
+
+  /* Burbuja de actualizacion (aparece cuando publicamos una card nueva) */
+  .dn-bubble{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(16px);z-index:120;background:var(--mint);color:#06231A;border-radius:999px;padding:11px 12px 11px 16px;display:flex;align-items:center;gap:9px;font-size:14.2px;font-weight:700;box-shadow:0 10px 28px rgba(0,0,0,.45);cursor:pointer;opacity:0;transition:opacity .3s ease,transform .3s ease;max-width:92vw;white-space:nowrap}
+  .dn-bubble[hidden]{display:none}
+  .dn-bubble.on{opacity:1;transform:translateX(-50%) translateY(0)}
+  .dn-bubble .dn-b-dot{width:8px;height:8px;border-radius:50%;background:#06231A;flex:0 0 auto;animation:dnPulse 1.6s ease-in-out infinite}
+  .dn-bubble .dn-b-x{flex:0 0 auto;font-size:13px;font-weight:700;opacity:.65;padding:2px 5px}
+  @keyframes dnPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.5)}}
 </style>
 </head>
 <body>
+
+<div class="dn-wave" id="dnWave" aria-hidden="true">
+  <div class="dn-wave-tide">
+    <div class="dn-wave-roll back">
+      <svg viewBox="0 0 1440 220" preserveAspectRatio="none"><path fill="#2FE6A7" d="M0,120 C240,60 480,180 720,120 C960,60 1200,180 1440,120 L1440,220 L0,220 Z"/></svg>
+      <svg viewBox="0 0 1440 220" preserveAspectRatio="none"><path fill="#2FE6A7" d="M0,120 C240,60 480,180 720,120 C960,60 1200,180 1440,120 L1440,220 L0,220 Z"/></svg>
+    </div>
+    <div class="dn-wave-roll">
+      <svg viewBox="0 0 1440 220" preserveAspectRatio="none"><path fill="#2FE6A7" fill-opacity="0.92" d="M0,120 C240,60 480,180 720,120 C960,60 1200,180 1440,120 L1440,220 L0,220 Z"/></svg>
+      <svg viewBox="0 0 1440 220" preserveAspectRatio="none"><path fill="#2FE6A7" fill-opacity="0.92" d="M0,120 C240,60 480,180 720,120 C960,60 1200,180 1440,120 L1440,220 L0,220 Z"/></svg>
+    </div>
+  </div>
+</div>
 
 <header class="dn-top">
   <div class="dn-top-in">
@@ -481,6 +528,40 @@
     </a>
   </div>
 </nav>
+
+<div class="dn-bubble" id="dnBubble" role="button" tabindex="0" hidden>
+  <span class="dn-b-dot"></span>
+  <span>New plays are live — tap to refresh</span>
+  <span class="dn-b-x" id="dnBubbleX" aria-label="Dismiss">✕</span>
+</div>
+
+<script>
+(function(){var w=document.getElementById('dnWave');if(w){setTimeout(function(){w.remove();},4200);}})();
+</script>
+
+<script>
+(function(){
+  var SIG = "{{ card_sig }}";
+  var b = document.getElementById('dnBubble');
+  if(!b || !SIG) return;
+  var shown = false, dismissed = false;
+  function check(){
+    if(shown || dismissed) return;
+    fetch("{{ url_for('api_card_sig') }}", {headers:{'Accept':'application/json'}, credentials:'same-origin'})
+      .then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(j){
+        if(j && j.sig && j.sig !== SIG){ shown = true; b.hidden = false; requestAnimationFrame(function(){ b.classList.add('on'); }); }
+      })
+      .catch(function(){});
+  }
+  setInterval(check, 60000);
+  document.addEventListener('visibilitychange', function(){ if(!document.hidden) check(); });
+  b.addEventListener('click', function(e){
+    if(e.target && e.target.id === 'dnBubbleX'){ dismissed = true; b.hidden = true; return; }
+    location.reload();
+  });
+})();
+</script>
 
 </body>
 </html>
