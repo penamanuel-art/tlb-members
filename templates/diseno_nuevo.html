@@ -695,10 +695,13 @@ function dnHotClose(){
       </div>
       {% if miembro_platinum %}
       <div class="dn-mem hot">
-        <div class="dn-m-top"><span class="dn-m-name">💎 PLATINUM</span><span class="dn-m-price">TOP TIER</span></div>
-        <p>The top tier — up to 2 Platinum plays a day at a $100 fixed stake, every member tool and the full record. The Vault Play is included with Platinum.</p>
+        <div class="dn-m-top"><span class="dn-m-name">💎 PLATINUM</span><span class="dn-m-price">✓ YOU'RE IN</span></div>
+        <p>The top tier — up to 2 Platinum plays a day at a $100 fixed stake, every member tool and the full record. The Vault Play is included with Platinum.<      {% endif %}
+      <div class="dn-mem">
+        <div class="dn-m-top"><span class="dn-m-name">🔒 VAULT</span><span class="dn-m-price">WITH PLATINUM</span></div>
+        <p>The Vault Play: the single strongest setup of the day when one qualifies — probability 55%+ with real value. Never filled just to fill it.</p>
       </div>
-      {% else %}
+      {% if not miembro_platinum %}
       <div class="dn-mem hot">
         <div class="dn-m-top"><span class="dn-m-name">💎 PLATINUM</span><span class="dn-m-price">TOP TIER</span></div>
         <p>Platinum is the top tier of The Sharp Team — the strongest plays of the day, every tool open, and the Vault included.</p>
@@ -713,14 +716,7 @@ function dnHotClose(){
         <div class="dn-u-fine">Cancel anytime from your account page.</div>
       </div>
       {% endif %}
-      <div class="dn-mem">
-        <div class="dn-m-top"><span class="dn-m-name">🔒 VAULT</span><span class="dn-m-price">WITH PLATINUM</span></div>
-        <p>The Vault Play: the single strongest setup of the day when one qualifies — probability 55%+ with real value. Never filled just to fill it.</p>
-      </div>
     </div>
-    {% if miembro_platinum %}
-    <div class="dn-on">✓ Your Platinum is on — every play and every tool is open to you.</div>
-    {% endif %}
   </section>
 
   <section class="dn-sec" id="dn-how">
