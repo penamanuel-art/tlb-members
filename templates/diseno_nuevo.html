@@ -693,10 +693,26 @@ function dnHotClose(){
         <div class="dn-m-top"><span class="dn-m-name">👑 GOLD</span><span class="dn-m-price">FREE</span></div>
         <p>2–3 Gold plays a day, open to every member in the Dashboard, on Telegram and by email. No card, ever.</p>
       </div>
+      {% if miembro_platinum %}
       <div class="dn-mem hot">
         <div class="dn-m-top"><span class="dn-m-name">💎 PLATINUM</span><span class="dn-m-price">TOP TIER</span></div>
         <p>The top tier — up to 2 Platinum plays a day at a $100 fixed stake, every member tool and the full record. The Vault Play is included with Platinum.</p>
       </div>
+      {% else %}
+      <div class="dn-mem hot">
+        <div class="dn-m-top"><span class="dn-m-name">💎 PLATINUM</span><span class="dn-m-price">TOP TIER</span></div>
+        <p>Platinum is the top tier of The Sharp Team — the strongest plays of the day, every tool open, and the Vault included.</p>
+        <div class="dn-u-list">
+          <div><span>✓</span> <b>Platinum plays</b> — the strongest plays of the day, posted with the real ticket</div>
+          <div><span>✓</span> <b>The Vault Play</b> — our most valuable play, included with Platinum</div>
+          <div><span>✓</span> <b>Sharp Club on Telegram</b> — Platinum plays the moment they post</div>
+        </div>
+        <div class="dn-u-head">EVERY TOOL, UNLOCKED INSTANTLY</div>
+        <div class="dn-u-chips"><span>+EV Board</span><span>Player Props</span><span>Sharp Money</span><span>Betting Lines</span><span>Compare Books</span><span>Line Moves</span><span>Price Alerts</span><span>+EV Parlay Builder</span><span>Bet Tracker</span><span>Masterclass</span><span>AI Assistant</span><span>Full Record</span></div>
+        <a class="dn-cta" href="{{ url_for('desbloquear_platinum') }}">Unlock Platinum — $15.99/week →</a>
+        <div class="dn-u-fine">Cancel anytime from your account page.</div>
+      </div>
+      {% endif %}
       <div class="dn-mem">
         <div class="dn-m-top"><span class="dn-m-name">🔒 VAULT</span><span class="dn-m-price">WITH PLATINUM</span></div>
         <p>The Vault Play: the single strongest setup of the day when one qualifies — probability 55%+ with real value. Never filled just to fill it.</p>
@@ -704,20 +720,6 @@ function dnHotClose(){
     </div>
     {% if miembro_platinum %}
     <div class="dn-on">✓ Your Platinum is on — every play and every tool is open to you.</div>
-    {% else %}
-    <div class="dn-unlock">
-      <div class="dn-m-top"><span class="dn-m-name">💎 PLATINUM</span><span class="dn-m-price">TOP TIER</span></div>
-      <p>Platinum is the top tier of The Sharp Team — the strongest plays of the day, every tool open, and the Vault included.</p>
-      <div class="dn-u-list">
-        <div><span>✓</span> <b>Platinum plays</b> — the strongest plays of the day, posted with the real ticket</div>
-        <div><span>✓</span> <b>The Vault Play</b> — our most valuable play, included with Platinum</div>
-        <div><span>✓</span> <b>Sharp Club on Telegram</b> — Platinum plays the moment they post</div>
-      </div>
-      <div class="dn-u-head">EVERY TOOL, UNLOCKED INSTANTLY</div>
-      <div class="dn-u-chips"><span>+EV Board</span><span>Player Props</span><span>Sharp Money</span><span>Betting Lines</span><span>Compare Books</span><span>Line Moves</span><span>Price Alerts</span><span>+EV Parlay Builder</span><span>Bet Tracker</span><span>Masterclass</span><span>AI Assistant</span><span>Full Record</span></div>
-      <a class="dn-cta" href="{{ url_for('desbloquear_platinum') }}">Unlock Platinum — $15.99/week →</a>
-      <div class="dn-u-fine">Cancel anytime from your account page.</div>
-    </div>
     {% endif %}
   </section>
 
