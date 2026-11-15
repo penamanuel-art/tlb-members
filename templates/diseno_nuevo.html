@@ -307,12 +307,6 @@
     <span class="dn-live-ch">›</span>
   </a>
 
-  <section class="dn-stats" aria-label="Program record">
-    <div class="dn-stat"><div class="k">Record</div><div class="v">{{ stats.ganadas }}–{{ stats.perdidas }}</div></div>
-    <div class="dn-stat"><div class="k">Net</div><div class="v {{ 'pos' if stats.profit > 0 else ('neg' if stats.profit < 0 else '') }}">{{ stats.profit_txt }}</div></div>
-    <div class="dn-stat"><div class="k">Platinum L10</div><div class="v">{% if stats.plat10 %}{{ stats.plat10.w }}–{{ stats.plat10.l }}{% else %}—{% endif %}</div></div>
-    <div class="dn-stat"><div class="k">Win rate</div><div class="v">{{ stats.win_rate }}%</div></div>
-  </section>
 
   {% if plays %}
   <section class="dn-sec">
