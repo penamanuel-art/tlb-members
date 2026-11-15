@@ -6532,15 +6532,23 @@ def home():
     _wd = datetime.now(TZ).weekday()
     hora_post = "11:00 AM ET" if _wd >= 5 else "2:00 PM ET"
     if plays:
-        _gr = [p for p in plays if p.get("resultado") in ("W", "L")]
-        _t = f"The board is live · {len(plays)} play" + ("s" if len(plays) != 1 else "")
-        if _gr:
-            _gw = sum(1 for p in _gr if p["resultado"] == "W")
-            _t += f" · {_gw}–{len(_gr) - _gw} graded"
         _np = sum(1 for p in plays if (p.get("nivel") or "").upper() in ("ELITE", "PLATINUM"))
         _ng = sum(1 for p in plays if (p.get("nivel") or "").upper() == "GOLD")
         _nv = sum(1 for p in plays if (p.get("nivel") or "").upper() == "VAULT")
         _nf = sum(1 for p in plays if (p.get("nivel") or "").upper() == "FREE")
+        _t = f"The board is live · {len(plays)} play" + ("s" if len(plays) != 1 else "")
+        if _np:
+            _t += f" · {_np} Platinum"
+        if _ng:
+            _t += f" · {_ng} Gold"
+        if _nv:
+            _t += f" · {_nv} Vault"
+        if _nf:
+            _t += f" · {_nf} Free"
+        _gr = [p for p in plays if p.get("resultado") in ("W", "L")]
+        if _gr:
+            _gw = sum(1 for p in _gr if p["resultado"] == "W")
+            _t += f" · {_gw}–{len(_gr) - _gw} graded"
         _partes = [f"{len(plays)} play" + ("s" if len(plays) != 1 else "")]
         if _np:
             _partes.append(f"{_np} Platinum")
