@@ -283,6 +283,12 @@ summary{font:500 16px Unbounded,Roboto,sans-serif;padding:20px 0}
 .th{padding:16px 18px 6px}
 .pick th,.pick td{padding:11px 18px}
 .math,.ft{padding-left:18px;padding-right:18px}
+/* Play-card buttons: ONE row of four, every label on ONE line. Only Place at Novig is filled; Share / Receipt / Track keep the card's own dark background (transparent) with a subtle light border, like the Members Desk card */
+.pick .ac{flex-wrap:nowrap}
+.pick .ac .btn{flex:1 1 0;min-width:0;min-height:0;white-space:nowrap;padding:9px 6px;font-size:12.5px;border-radius:8px;letter-spacing:0}
+.pick .ac .btn:not(.pri){background:transparent;border:1px solid var(--gl);color:var(--t);font-weight:500}
+.pick .ac .btn.pri{background:var(--au);border-color:transparent;color:#04251A;font-weight:600}
+.pick .ac [data-t].on{background:transparent;border:1px solid var(--g);color:var(--g)}
 </style>
 </head>
 <body>
