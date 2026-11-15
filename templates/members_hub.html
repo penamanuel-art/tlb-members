@@ -299,8 +299,8 @@ summary{font:500 16px Unbounded,Roboto,sans-serif;padding:20px 0}
 .bb-ico{display:flex;align-items:center;justify-content:center;width:27.5px;height:27.5px;line-height:1}
 .bb-in a.on{position:relative;color:#2fe6a7;background:rgba(47,230,167,.15);font-weight:600}
 .bb-in a.on::after{content:"";position:absolute;top:-3px;left:50%;transform:translateX(-50%);width:46px;height:3px;border-radius:0 0 4px 4px;background:#2fe6a7}
-/* Hero zone organized: one tight spacing scale (date → greeting → intro → tour button), smaller H1 so the stored name never splits mid-name */
-.hero{padding:64px 0 40px}
+/* Hero zone organized: one tight spacing scale (date → greeting → intro → tour button), smaller H1 so the stored name never splits mid-name. Top padding cut 64px → 20px: the sticky top bar now sits above the hero, so the old 64px was dead space (Alex, 2026-11-15) */
+.hero{padding:20px 0 40px}
 #wd{margin:0}
 .hero h1{font-size:clamp(30px,5.4vw,48px);margin:12px 0 0}
 .hero h1 .nmw{white-space:nowrap}
