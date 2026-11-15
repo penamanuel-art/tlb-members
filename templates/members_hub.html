@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<title>Vantage Private · Members Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{--bg:#070B17;--p:#0C1224;--p2:#111A33;--line:#1E2849;--gl:rgba(201,169,97,.3);--t:#EEF1FA;--m:#8E99B7;--g:#2DE0A0;--gs:rgba(45,224,160,.1);--au:#C9A961;--red:#FF6B6B;--reds:rgba(255,107,107,.1);
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 70px);scroll-behavior:smooth;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(1200px 500px at 50% -150px,#14204A,transparent),var(--bg);color:var(--t);font:400 15px/1.7 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased;font-variant-numeric:lining-nums tabular-nums}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:30}
+h1,h2,h3,.sf{font-family:Sora,Inter,sans-serif;font-weight:600;margin:0;letter-spacing:.005em;line-height:1.1}
+button,input{font:inherit;color:inherit}
+button:focus-visible,input:focus-visible,a:focus-visible,summary:focus-visible{outline:2px solid var(--au);outline-offset:2px}
+a{color:var(--au)}
+.hd{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:rgba(7,11,23,.9);backdrop-filter:blur(12px);border-bottom:1px solid var(--gl)}
+.hi{max-width:1100px;margin:0 auto;padding:14px 20px;display:flex;align-items:center;gap:24px}
+.logo{display:flex;align-items:center;gap:12px;font:600 27px Sora,Inter,sans-serif;letter-spacing:.04em;white-space:nowrap}
+.logo i{width:20px;height:20px;border:1.5px solid var(--au);transform:rotate(45deg);position:relative}
+.logo i::after{content:"";position:absolute;inset:4px;background:var(--au)}
+.logo small{font:500 10.5px Inter,sans-serif;letter-spacing:.22em;color:var(--au);margin-left:2px;text-transform:uppercase}
+.nv{display:none;gap:2px;margin-left:auto}
+.nv a{color:var(--m);text-decoration:none;font-size:13.5px;padding:8px 12px;letter-spacing:.03em}
+.nv a:hover{color:var(--t)}
+.pill{margin-left:auto;font-size:12px;letter-spacing:.08em;color:var(--au);border:1px solid var(--gl);border-radius:99px;padding:5px 12px;white-space:nowrap}
+.wrap{max-width:1100px;margin:0 auto;padding:0 20px 90px}
+.hero{display:grid;gap:28px;padding:44px 0 36px}
+.eyebrow{font-size:12px;letter-spacing:.2em;color:var(--au);text-transform:uppercase}
+.hero h1{font-size:clamp(44px,9vw,76px);font-weight:500;margin:10px 0 14px}
+.hero h1 em{color:var(--au);font-style:italic}
+.hero p{color:var(--m);max-width:54ch;margin:0}
+.ask{margin-top:18px}.ask label{display:block;font-size:12.5px;color:var(--m);margin-bottom:6px}
+.ask div{display:flex;gap:8px;max-width:360px}
+.ask input{flex:1;min-width:0;background:var(--p);border:1px solid var(--gl);border-radius:8px;padding:10px 13px}
+.card3{border:1px solid var(--gl);border-radius:18px;padding:22px;background:linear-gradient(145deg,#15204A 0%,#0A1022 60%,#161309 140%);position:relative;overflow:hidden;min-height:190px;max-width:420px;box-shadow:0 30px 60px -30px #000}
+.card3::after{content:"";position:absolute;right:-60px;top:-60px;width:180px;height:180px;border:1px solid var(--gl);border-radius:50%}
+.card3 .t{display:flex;justify-content:space-between;font-size:11px;letter-spacing:.2em;color:var(--au);text-transform:uppercase}
+.card3 .n{font:600 28px Sora,Inter,sans-serif;margin-top:42px}
+.card3 .b{display:flex;justify-content:space-between;color:var(--m);font-size:12.5px;margin-top:4px}
+.sum{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--gl);border-radius:14px;overflow:hidden;background:var(--p)}
+.sum>div{padding:16px 18px;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.sum small{display:block;color:var(--m);font-size:12px;letter-spacing:.05em}
+.sum b{font:600 30px Sora,Inter,sans-serif}
+.sum span{display:block;color:var(--m);font-size:12px}
+.sum input{width:100%;background:none;border:0;border-bottom:1px solid var(--gl);font:600 30px Sora,Inter,sans-serif;padding:0}
+section{margin-top:64px}
+.sh{margin-bottom:22px;max-width:62ch}
+.sh .eyebrow{display:block;margin-bottom:6px}
+.sh h2{font-size:clamp(32px,6vw,46px);font-weight:500}
+.sh p{color:var(--m);margin:10px 0 0}
+.read{display:grid;gap:12px;margin-bottom:22px}
+.read div{border-left:2px solid var(--au);padding:2px 0 2px 14px;color:var(--m);font-size:14px}
+.read b{color:var(--t);font-weight:600}
+.tabs{display:flex;gap:6px;margin-bottom:16px}
+.tabs button{background:none;border:1px solid var(--line);color:var(--m);border-radius:99px;padding:7px 16px;font-size:13px;cursor:pointer}
+.tabs button[aria-pressed=true]{border-color:var(--au);color:var(--au);background:rgba(201,169,97,.08)}
+.list{display:grid;gap:20px}
+.pick{border:1px solid var(--gl);border-radius:20px;background:var(--p);overflow:hidden}
+.ph{display:flex;justify-content:space-between;align-items:center;padding:16px 22px 0;font-size:12px;letter-spacing:.16em;color:var(--au)}
+.plat .ph b{color:var(--g)}
+.lgc{border:1px solid var(--line);border-radius:99px;padding:2px 11px;color:var(--m);letter-spacing:.05em}
+.pb{padding:10px 22px 0}
+.pb h3{font-size:32px;font-weight:600}
+.gm{color:var(--m);font-size:13.5px;margin-top:4px}
+.res{display:inline-block;margin-top:12px;font-size:12.5px;font-weight:600;padding:4px 12px;border-radius:6px}
+.w{background:var(--gs);color:var(--g)}.l{background:var(--reds);color:var(--red)}.pn{background:var(--line);color:var(--m)}
+.px{display:grid;grid-template-columns:1fr 1fr;margin:18px 22px 0;border:1px solid var(--line);border-radius:14px;background:var(--bg)}
+.px>div{padding:14px 18px}.px>div+div{border-left:1px solid var(--line)}
+.px small{display:block;color:var(--m);font-size:12px;letter-spacing:.05em}
+.px b{display:block;font:600 40px Sora,Inter,sans-serif;line-height:1.1}
+.px em{font-style:normal;font-size:12.5px;color:var(--g)}
+.ac{display:flex;gap:8px;padding:16px 22px 18px;flex-wrap:wrap}
+.btn{border:1px solid var(--gl);background:transparent;padding:9px 17px;border-radius:8px;font-size:13.5px;font-weight:500;cursor:pointer;letter-spacing:.02em}
+.btn.pri{background:var(--au);border-color:var(--au);color:#1B1405;font-weight:600}
+.btn.on{color:var(--g);border-color:var(--g)}
+.wy{width:100%;display:flex;justify-content:space-between;background:var(--p2);border:0;border-top:1px solid var(--line);padding:15px 22px;cursor:pointer;font-size:13.5px;font-weight:500;text-align:left}
+.more{display:none}.more.open{display:block}
+.th{padding:16px 22px 6px;margin:0;color:#C6CEE6;font-size:14.5px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+.pick th,.pick td{padding:10px 22px;border-top:1px solid var(--line);text-align:left;font-weight:400;color:var(--m)}
+.pick td{text-align:right;color:var(--t);font-weight:600}
+th small{display:block;font-size:12px;opacity:.8}
+.pos{color:var(--g)!important}.neg{color:var(--red)!important}
+.math{display:none;padding:14px 22px;background:var(--bg);border-top:1px solid var(--line);font-size:13.5px;color:var(--m)}.math.open{display:block}
+.math code{display:block;background:var(--p);border:1px solid var(--line);border-radius:8px;padding:9px 12px;margin:7px 0;color:var(--t);font:500 13px ui-monospace,Menlo,monospace;overflow-x:auto;white-space:nowrap}
+.ft{padding:14px 22px;border-top:1px solid var(--line)}
+.two{display:grid;gap:20px}
+.box{border:1px solid var(--line);border-radius:16px;background:var(--p);padding:22px}
+.box h3{font-size:24px;margin-bottom:8px}
+.box p{color:var(--m);font-size:14.5px;margin:8px 0}
+.cv{position:relative;height:250px}
+.tb{border:1px solid var(--line);border-radius:16px;overflow-x:auto;background:var(--p)}
+.tb th,.tb td{padding:13px 18px;text-align:right;border-top:1px solid var(--line);white-space:nowrap}
+.tb thead th{border-top:0;font-size:12px;letter-spacing:.1em;color:var(--au);text-transform:uppercase;font-weight:500}
+.tb th:first-child,.tb td:first-child{text-align:left}
+.bar{display:inline-block;width:70px;height:4px;background:var(--line);vertical-align:middle;margin-right:10px;border-radius:2px;overflow:hidden}.bar i{display:block;height:100%;background:var(--g)}
+.note{margin-top:14px;font-size:13.5px;color:var(--m);border-left:2px solid var(--au);padding-left:14px}
+.rules{display:grid;gap:14px;margin-top:18px}
+.rule{border:1px solid var(--line);border-radius:14px;padding:18px 20px;background:var(--p)}
+.rule h3{font-size:22px;margin-bottom:4px;color:var(--au)}.rule p{margin:0;color:var(--m);font-size:14px}
+.steps{display:grid;gap:14px;list-style:none;padding:0;margin:0;counter-reset:s}
+.steps li{counter-increment:s;border:1px solid var(--line);border-radius:16px;background:var(--p);padding:20px 22px 20px 70px;position:relative}
+.steps li::before{content:counter(s);position:absolute;left:20px;top:14px;font:500 38px Sora,Inter,sans-serif;color:var(--au)}
+.steps b{display:block;font:600 22px Sora,Inter,sans-serif;margin-bottom:2px}
+.steps span{color:var(--m);font-size:14.5px}
+.tiers{display:grid;gap:16px}
+.tier{border:1px solid var(--line);border-radius:18px;padding:24px;background:var(--p)}
+.tier.feat{border-color:var(--au);background:linear-gradient(160deg,#17203F,#0C1224)}
+.tier h3{font-size:30px}.tier .for{color:var(--au);font-size:12px;letter-spacing:.16em;text-transform:uppercase}
+.tier ul{padding:0;margin:14px 0 0;list-style:none;color:var(--m);font-size:14px}
+.tier li{padding:7px 0;border-top:1px solid var(--line)}
+.tier li::before{content:"◆";color:var(--au);font-size:9px;margin-right:10px;vertical-align:2px}
+details{border-bottom:1px solid var(--line)}
+summary{cursor:pointer;padding:18px 0;font:600 22px Sora,Inter,sans-serif;list-style:none;display:flex;justify-content:space-between}
+summary::after{content:"+";color:var(--au);font-size:24px;line-height:1}
+details[open] summary::after{content:"–"}
+details p{margin:0 0 18px;color:var(--m);font-size:14.5px;max-width:68ch}
+.disc{margin-top:56px;padding-top:20px;border-top:1px solid var(--gl);font-size:12.5px;color:var(--m);max-width:80ch}
+.tkf{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:16px 0 10px}
+.tkf #tp{grid-column:1/-1}
+.tkf input,.tkf select,.tb select{background:var(--p);border:1px solid var(--gl);border-radius:8px;padding:10px 12px;min-width:0;color:var(--t)}
+.tb select{padding:6px 8px}
+@media (min-width:860px){.tkf{grid-template-columns:110px 1.6fr 130px 110px 120px auto}.tkf #tp{grid-column:auto}}
+@media (min-width:860px){
+.nv{display:flex}.pill{margin-left:0}
+.hero{grid-template-columns:1.25fr 1fr;align-items:center}.card3{justify-self:end;width:100%}
+.sum{grid-template-columns:repeat(4,1fr)}.sum>div{border-bottom:0}.sum>div:last-child{border-right:0}
+.two{grid-template-columns:1.4fr 1fr}.tiers{grid-template-columns:repeat(3,1fr)}.rules{grid-template-columns:repeat(3,1fr)}.read{grid-template-columns:repeat(3,1fr)}}
+
+:root{--bg:#060B1A;--p:rgba(255,255,255,.045);--p2:rgba(255,255,255,.07);--line:rgba(255,255,255,.09);--gl:rgba(255,255,255,.13);--au:#2DE0A0;--t:#F2F5FF;--m:#93A0C2}
+body{background:radial-gradient(700px 420px at 88% -60px,rgba(45,224,160,.2),transparent),radial-gradient(820px 520px at -10% 8%,rgba(80,110,255,.18),transparent),var(--bg);line-height:1.65}
+h1,h2,h3,.sf{letter-spacing:-.02em;font-weight:700}
+.hd{background:rgba(6,11,26,.72);border-bottom:1px solid var(--line)}
+.logo{font:700 21px Sora,sans-serif;letter-spacing:-.02em}
+.logo i{border:0;transform:none;border-radius:8px;width:24px;height:24px;background:linear-gradient(135deg,#2DE0A0,#3B82F6)}.logo i::after{display:none}
+.logo small{letter-spacing:.06em;color:var(--au);font-weight:600}
+.nv a{border-radius:99px;font-weight:500}.nv a:hover{background:var(--p2)}
+.pill{border-color:rgba(45,224,160,.4);background:rgba(45,224,160,.08);letter-spacing:.02em}
+.eyebrow{text-transform:none;letter-spacing:.02em;font-size:13px;font-weight:600;color:var(--au)}
+.hero h1{font-size:clamp(36px,7vw,60px);font-weight:700;letter-spacing:-.035em;line-height:1.05}
+.hero h1 em{background:linear-gradient(90deg,#2DE0A0,#7DD3FC);-webkit-background-clip:text;background-clip:text;color:transparent;font-style:normal}
+.card3{background:linear-gradient(135deg,#1E4A8C 0%,#0B1A3A 55%,#0D4A45 130%);border-color:rgba(255,255,255,.2);border-radius:26px}
+.card3 .t{letter-spacing:.08em;color:#BFEFDD}.card3 .n{font:700 26px Sora,sans-serif;margin-top:46px}.card3::after{border-color:rgba(255,255,255,.14)}
+.pick,.box,.rule,.tier,.steps li,.tb,.sum{border-color:var(--line);border-radius:24px;background:var(--p);backdrop-filter:blur(10px)}
+.sum{overflow:hidden}.sum small{letter-spacing:.02em}
+.sum b,.sum input{font:700 26px Sora,sans-serif}
+.sh h2{font-size:clamp(28px,5vw,40px);font-weight:700;letter-spacing:-.03em}
+.ph{color:#E8C15A;letter-spacing:.04em}.ph b{color:#E8C15A}.plat .ph b{color:var(--g)}
+.lgc{border-radius:99px}
+.pb h3{font-size:26px}
+.px{border-radius:18px;background:rgba(0,0,0,.25)}.px b{font:700 32px Sora,sans-serif}
+.px small{letter-spacing:.02em}
+.btn{border-radius:12px;border-color:var(--gl)}
+.btn.pri{background:linear-gradient(135deg,#2DE0A0,#1BB988);border:0;color:#04251A;font-weight:600}
+.tabs button{border-radius:12px}.tabs button[aria-pressed=true]{background:var(--au);border-color:var(--au);color:#04251A;font-weight:600}
+.wy{background:rgba(255,255,255,.05)}.wy span+span{color:var(--au)!important}
+.steps li{padding-left:76px}.steps li::before{font:700 30px Sora,sans-serif;color:var(--au);left:22px;top:16px}
+.steps b{font:600 18px Sora,sans-serif}.rule h3{font:600 18px Sora,sans-serif;color:var(--au)}
+.tier h3{font-size:24px}.tier .for{letter-spacing:.04em;text-transform:none;font-weight:600;color:var(--au)}
+.tier.feat{border-color:rgba(45,224,160,.55);background:linear-gradient(160deg,rgba(45,224,160,.14),rgba(255,255,255,.03))}
+.tier li::before{color:var(--au)}
+.box h3{font-size:20px}.note,.read div{border-left-color:var(--au)}
+.tb thead th{letter-spacing:.04em;color:var(--au);text-transform:none;font-size:12.5px}
+summary{font:600 17px Sora,sans-serif}summary::after{color:var(--au)}
+.disc{border-top-color:var(--line)}
+@media (min-width:980px){.list{grid-template-columns:1fr 1fr;align-items:start}}
+:root{--line:rgba(255,255,255,.06);--gl:rgba(255,255,255,.1);--m:#8A97B8}
+body{font-size:14.5px;line-height:1.7;background:radial-gradient(700px 380px at 88% -80px,rgba(45,224,160,.1),transparent),radial-gradient(800px 480px at -10% 6%,rgba(80,110,255,.1),transparent),var(--bg)}
+h1,h2,h3{font-weight:500;letter-spacing:-.025em}
+.hd{background:rgba(6,11,26,.82)}.hi{padding:12px 20px}
+.logo{font-weight:600;font-size:19px}.logo i{width:20px;height:20px;border-radius:6px}
+.nv a{font-size:13px;color:var(--m)}
+.pill{font-size:11.5px;background:none;border-color:var(--gl);color:var(--m)}
+.hero{padding:64px 0 48px}
+.hero h1{font-weight:500;font-size:clamp(34px,6vw,54px);letter-spacing:-.035em}
+.hero h1 em{background:none;-webkit-text-fill-color:initial;color:var(--au);font-weight:500}
+.eyebrow{font-weight:500;font-size:12.5px;color:var(--m);letter-spacing:.04em}
+.card3{border-radius:20px;background:linear-gradient(140deg,#152A55,#0A1228 70%);border-color:var(--gl);box-shadow:0 24px 50px -30px #000;min-height:178px}
+.card3 .n{font-weight:500;font-size:22px;letter-spacing:.01em}.card3 .t{color:var(--m);font-size:10.5px}
+.card3::after{border-color:rgba(255,255,255,.07)}
+.pick,.box,.rule,.tier,.steps li,.tb,.sum{border-radius:16px;background:rgba(255,255,255,.025);backdrop-filter:none;border-color:var(--line)}
+.sum>div{padding:18px 20px;border-color:var(--line)}
+.sum b,.sum input{font:500 24px Sora,sans-serif;letter-spacing:-.02em}
+.sum small{font-size:11.5px;color:var(--m);letter-spacing:.06em;font-weight:500}
+section{margin-top:88px}
+.sh{margin-bottom:28px}.sh h2{font-weight:500;font-size:clamp(26px,4.5vw,36px)}
+.sh p{font-size:14.5px}
+.ph{padding:18px 24px 0;font-size:11.5px;font-weight:500;letter-spacing:.08em}.ph b{font-weight:600}
+.lgc{font-size:11.5px;border-color:var(--gl);padding:2px 10px}
+.pb{padding:12px 24px 0}.pb h3{font-size:23px;font-weight:500}
+.res{font-size:11.5px;font-weight:500;border-radius:99px;padding:3px 11px}
+.px{margin:20px 24px 0;border-radius:12px;background:transparent;border-color:var(--line)}
+.px b{font:500 28px Sora,sans-serif;letter-spacing:-.02em}.px small{font-size:11.5px;letter-spacing:.06em}
+.ac{padding:18px 24px 22px}
+.btn{font-size:13px;font-weight:500;border-radius:10px;padding:9px 16px;border-color:var(--gl);color:var(--t)}
+.btn.pri{background:var(--au);color:#04251A;font-weight:600}
+.tabs button{font-size:12.5px;border-radius:10px;padding:6px 14px;border-color:var(--line)}
+.tabs button[aria-pressed=true]{background:rgba(45,224,160,.12);color:var(--au);border-color:rgba(45,224,160,.45);font-weight:500}
+.wy{padding:15px 24px;font-size:13px;background:transparent}
+.th{padding:16px 24px 6px;font-size:14px}
+.pick th,.pick td{padding:11px 24px}.math,.ft{padding-left:24px;padding-right:24px}
+.tb th,.tb td{padding:14px 20px;font-size:13.5px}
+.tb thead th{font-size:11.5px;letter-spacing:.08em;font-weight:500;color:var(--m)}
+.steps li{padding:22px 24px 22px 76px}.steps li::before{font:500 26px Sora,sans-serif;color:var(--au)}
+.steps b{font-weight:500;font-size:17px}
+.rule h3,.tier h3,.box h3{font-weight:500}.tier h3{font-size:22px}
+.tier.feat{background:linear-gradient(160deg,rgba(45,224,160,.07),rgba(255,255,255,.02));border-color:rgba(45,224,160,.35)}
+summary{font:500 16px Sora,sans-serif;padding:20px 0}
+.read div{border-left-width:1px}.note{border-left-width:1px}
+.disc{font-size:12px}
+</style>
+</head>
+<body>
+<header class="hd"><div class="hi"><div class="logo"><i></i>Vantage<small>Private</small></div><nav class="nv"><a href="#desk">The desk</a><a href="#tracker">My tracker</a><a href="#performance">Performance</a><a href="#protocol">Protocol</a><a href="#method">Method</a><a href="#membership">Membership</a><a href="#faq">Glossary</a></nav><span class="pill">Members only</span></div></header>
+<div class="wrap">
+<div class="hero">
+<div><div class="eyebrow" id="wd">Saturday, November 14</div><h1 id="wh">Welcome to <em>Vantage</em></h1><p id="wp"></p>
+<div class="ask" id="ask"><label for="nm">What should we call you?</label><div><input id="nm" type="text" maxlength="40" placeholder="Your first name" autocomplete="given-name"><button class="btn pri" id="sv">Enter</button></div></div>
+<button class="btn" id="chg" hidden style="margin-top:16px">Change name</button></div>
+<div class="card3"><div class="t"><span>Vantage Private</span><span>Member</span></div><div class="n" id="mn">Your name</div><div class="b"><span>No. 0147 · Since 2026</span><span>Founding tier</span></div></div>
+</div>
+<div class="sum">
+<div><small>YOUR BANKROLL</small><input id="bk" type="number" inputmode="decimal" value="10000" min="0" aria-label="Bankroll in dollars"><span>Edit it. Everything updates.</span></div>
+<div><small>ONE UNIT</small><b id="u">$100</b><span>1% of your bankroll</span></div>
+<div><small>TOTAL EXPOSURE</small><b id="risk">$239</b><span id="rp"></span></div>
+<div><small>SETTLED TODAY</small><b id="net">+$0</b><span id="rec"></span></div>
+</div>
+
+<section id="desk">
+<div class="sh"><span class="eyebrow">The desk · 4 plays today</span><h2>Where our model sees more than the market</h2><p>Each play shows our estimated win chance, the chance the price needs, and the gap between them. We only publish a play when that gap is positive.</p></div>
+<div class="read"><div><b>1. Check the edge.</b> It is our chance minus the price’s break-even chance.</div><div><b>2. Check the stake.</b> Larger edges earn larger stakes, always in units.</div><div><b>3. Open the math.</b> Every number can be traced to a formula.</div></div>
+<div class="tabs" role="group" aria-label="Filter"><button aria-pressed="true" data-f="all">All plays</button><button aria-pressed="false" data-f="gold">Gold</button><button aria-pressed="false" data-f="plat">Platinum</button></div>
+<div class="list" id="plays"></div>
+</section>
+
+<section id="tracker">
+<div class="sh"><span class="eyebrow">My tracker</span><h2>Log every play, measure every result</h2><p>Add the plays you place, from this desk or anywhere else. Your record, profit and return update as you go. Your log is saved privately in this browser.</p></div>
+<div class="sum"><div><small>RECORD</small><b id="k1">0–0</b><span>Wins and losses</span></div><div><small>PROFIT / LOSS</small><b id="k2">$0</b><span>Settled plays only</span></div><div><small>ROI</small><b id="k3">0.0%</b><span>Profit ÷ amount staked</span></div><div><small>WIN RATE</small><b id="k4">0%</b><span>Of settled plays</span></div></div>
+<div class="tkf"><select id="tl" aria-label="League"><option>NFL</option><option>NCAAF</option><option>NBA</option><option>NHL</option><option>MLB</option><option>Other</option></select><input id="tp" type="text" maxlength="60" placeholder="Pick, e.g. Lakers ML" aria-label="Pick"><input id="to" type="number" inputmode="numeric" placeholder="Odds, e.g. −110" aria-label="American odds"><input id="ts" type="number" inputmode="decimal" placeholder="Stake $" aria-label="Stake in dollars"><select id="tr2" aria-label="Result"><option value="p">Pending</option><option value="w">Won</option><option value="l">Lost</option><option value="x">Push</option></select><button class="btn pri" id="ta">Add play</button></div>
+<div class="note" id="te" style="border:0;padding:0;margin:0 0 10px;color:var(--red)"></div>
+<div class="tb"><table><thead><tr><th>League</th><th style="text-align:left">Pick</th><th>Odds</th><th>Stake</th><th>Result</th><th>P/L</th><th></th></tr></thead><tbody id="tkb"></tbody></table></div>
+<div style="margin-top:12px"><button class="btn" id="tc">Clear all</button></div>
+</section>
+
+<section id="performance">
+<div class="sh"><span class="eyebrow">Performance</span><h2>Every result, graded in public</h2><p>We grade each play win or lose at the price we posted. Wins and losses sit side by side, because trust comes from showing both.</p></div>
+<div class="two">
+<div class="box"><h3>Units, last 10 plays</h3><div class="cv"><canvas id="ch" aria-label="Units chart" role="img"></canvas></div><p style="font-size:12.5px">A win adds about 0.9 units. A loss subtracts 1.</p></div>
+<div class="box"><h3>Reading the form</h3><p><b style="color:var(--t)">Platinum: 7–3 (70%).</b> Our top-conviction tier is running well above break-even.</p><p><b style="color:var(--t)">Official plays: 2–8 (20%).</b> A hard stretch. Ten plays is a short window, and short windows are noisy.</p><p>This is why we stake in small, fixed units and never chase a bad week.</p></div>
+</div>
+<h3 style="font-size:28px;margin:34px 0 12px">Record by league</h3>
+<div class="tb"><table><thead><tr><th>League</th><th>Record</th><th>Win rate</th><th>Sample</th></tr></thead><tbody id="lg"></tbody></table></div>
+<div class="note">A 13–4 stretch and a 9–11 stretch can come from the same true skill. Judge a league over a full season, not a week.</div>
+</section>
+
+<section id="protocol">
+<div class="sh"><span class="eyebrow">Bankroll protocol</span><h2>Edge wins only if you survive the variance</h2><p>Here is what today could look like at your bankroll, and the three rules we ask every member to follow.</p></div>
+<div class="tb"><table><thead><tr><th>Scenario</th><th>Profit / loss</th><th>Bankroll after</th></tr></thead><tbody id="sc"></tbody></table></div>
+<div class="rules">
+<div class="rule"><h3>One unit, one percent</h3><p>Never stake more than the unit size we publish. It keeps one bad night from becoming a bad month.</p></div>
+<div class="rule"><h3>Cap the day</h3><p>We keep daily exposure near 2–3% of bankroll. Add no extra plays to chase a loss.</p></div>
+<div class="rule"><h3>Track everything</h3><p>Use “Track play” so each bet is graded at your own size. What you measure, you improve.</p></div>
+</div>
+</section>
+
+<section id="method">
+<div class="sh"><span class="eyebrow">Method</span><h2>How a play reaches the desk</h2></div>
+<ol class="steps">
+<li><b>Estimate the true chance</b><span>The model simulates the game from team strength, form, injuries and matchup, and returns a win probability.</span></li>
+<li><b>Convert the price</b><span>We turn the posted odds into a break-even probability, the chance you must beat to profit over time.</span></li>
+<li><b>Measure the edge</b><span>Edge equals model probability minus break-even probability. Only positive edges continue.</span></li>
+<li><b>Size the stake</b><span>Larger edges earn larger stakes, capped in units. Platinum plays clear the highest threshold.</span></li>
+<li><b>Post, then grade</b><span>Each play is published with its price, then graded win or lose and added to the record.</span></li>
+</ol>
+</section>
+
+<section id="membership">
+<div class="sh"><span class="eyebrow">Membership</span><h2>Three levels of access</h2><p>Every member sees the full record. Higher levels add depth, speed and priority.</p></div>
+<div class="tiers">
+<div class="tier"><span class="for">Gold</span><h3>The daily card</h3><ul><li>Gold plays with full analysis</li><li>Stake sizing in units and dollars</li><li>Push and email alerts</li></ul></div>
+<div class="tier feat"><span class="for">Platinum</span><h3>The high-conviction tier</h3><ul><li>Everything in Gold</li><li>Platinum plays, largest model edge</li><li>First-release alerts, minutes ahead</li><li>Line-move and +EV tools</li></ul></div>
+<div class="tier"><span class="for">Private</span><h3>By invitation</h3><ul><li>Everything in Platinum</li><li>Direct line to the analysts</li><li>Quarterly bankroll review</li><li>Limited seats, reviewed individually</li></ul></div>
+</div>
+</section>
+
+<section id="faq">
+<div class="sh"><span class="eyebrow">Glossary</span><h2>Plain answers</h2></div>
+<details><summary>What is a moneyline (ML)?</summary><p>A bet on who wins, with no point spread. At −125 you risk $125 to win $100. At +144 you risk $100 to win $144.</p></details>
+<details><summary>What is break-even probability?</summary><p>The win chance a price needs for the bet to make no money over time. At −125 it is about 55.6%. If the true chance is higher, the bet has value.</p></details>
+<details><summary>What is a unit?</summary><p>A standard stake equal to 1% of your bankroll. Units keep risk proportional, whether you hold $500 or $50,000.</p></details>
+<details><summary>What is expected value (EV)?</summary><p>The average result per bet if you could place it many times. Positive EV does not guarantee a win today. It means a profit across many bets.</p></details>
+<details><summary>Gold versus Platinum?</summary><p>Platinum plays have the largest model edge and the highest conviction, so they are fewer. Gold plays carry a solid edge and appear more often.</p></details>
+</section>
+<p class="disc">Vantage provides information and analysis, not financial advice. Past results do not guarantee future results. Bet only what you can afford to lose. If gambling stops being fun, call 1-800-GAMBLER.</p>
+</div>
+<script>
+var plays=[
+{t:'gold',lg:'NCAAF',pick:'West Virginia ML',g:'West Virginia @ Kansas · 3:30 PM ET',o:-125,mo:57.9,u:.59,r:'l',th:'The market rates Kansas the stronger side at home, but our model rates West Virginia higher on form and matchup. The edge is small, so the stake is modest.'},
+{t:'gold',lg:'NCAAF',pick:'Washington ML',g:'Washington @ Michigan State · 5:30 PM ET',o:-130,mo:59,u:.6,r:'w',th:'Washington is favored and still underpriced by our model. A favorite with an edge is a calmer way to use a small advantage.'},
+{t:'gold',lg:'NHL',pick:'Montréal Canadiens ML',g:'Montréal @ Colorado · 7:00 PM ET',o:-117,mo:56,u:.6,r:'l',th:'The price moved after the afternoon news, and our model still sees value at the current number. Hockey carries high variance, so we keep the stake standard.'},
+{t:'plat',lg:'NBA',pick:'Platinum play of the day',g:'Posted before tip-off',o:-110,mo:58,u:1,r:'p',th:'Our highest-conviction play today. Its model edge clears the Platinum threshold, which is why the stake is a full unit.'}];
+var lgs=[['MLB',19,6],['NFL',12,9],['NCAAF',9,4],['NHL',13,14],['NBA',9,11]];
+var f='all',tr={},NM='';
+try{NM=localStorage.getItem('vname')||''}catch(e){}
+function $(n){return (n<0?'−':'')+'$'+Math.round(Math.abs(n)).toLocaleString('en-US')}
+function imp(o){return o<0?-o/(-o+100)*100:100/(o+100)*100}
+function dec(o){return o<0?1+100/-o:1+o/100}
+function pr(o){return (o>0?'+':'−')+Math.abs(o)}
+function greet(){var h=new Date().getHours(),g=h<12?'Good morning':h<18?'Good afternoon':'Good evening',w=document.getElementById('wh');
+w.innerHTML=NM?'':'Welcome to <em>Vantage</em>';
+if(NM){w.textContent=g+', ';var e=document.createElement('em');e.textContent=NM+'.';w.appendChild(e)}
+document.getElementById('wp').textContent=NM?'Your desk is ready. Today’s plays are below, sized to your bankroll and explained line by line.':'A private desk for serious bettors. Tell us your name and we will greet you each time you return.';
+document.getElementById('mn').textContent=NM||'Your name';
+document.getElementById('ask').style.display=NM?'none':'block';document.getElementById('chg').hidden=!NM}
+function render(){
+var b=+document.getElementById('bk').value||0,h='',net=0,tot=0,w=0,l=0,ev=0,win=0;
+plays.forEach(function(p,i){
+var s=p.u*b/100,d=dec(p.o),im=imp(p.o),ed=p.mo-im,tw=s*(d-1),e=p.mo/100*tw-(1-p.mo/100)*s;
+tot+=s;ev+=e;win+=tw;if(p.r==='w'){net+=tw;w++}if(p.r==='l'){net-=s;l++}
+if(f!=='all'&&p.t!==f)return;
+var rs=p.r==='w'?'<span class="res w">WON +'+$(tw)+'</span>':p.r==='l'?'<span class="res l">LOST '+$(-s)+'</span>':'<span class="res pn">PENDING</span>';
+var be=p.o<0?(-p.o)+' ÷ ('+(-p.o)+' + 100)':'100 ÷ ('+p.o+' + 100)';
+h+='<article class="pick '+p.t+'"><div class="ph"><b>♛ '+(p.t==='gold'?'GOLD PLAY':'PLATINUM PLAY')+'</b><span class="lgc">'+p.lg+'</span></div><div class="pb"><h3>'+p.pick+'</h3><div class="gm">'+p.g+'</div>'+rs+'</div>'
++'<div class="px"><div><small>PRICE POSTED</small><b>'+pr(p.o)+'</b></div><div><small>YOUR STAKE</small><b>'+$(s)+'</b><em>'+p.u+'u · ticket matched ✓</em></div></div>'
++'<div class="ac"><button class="btn pri">Place bet</button><button class="btn">Receipt</button><button class="btn'+(tr[i]?' on':'')+'" data-t="'+i+'">'+(tr[i]?'✓ Tracked':'Track play')+'</button></div>'
++'<button class="wy" data-x="'+i+'"><span>Why we like it</span><span style="color:var(--au)">Open the analysis ▾</span></button><div class="more" id="x'+i+'"><p class="th">'+p.th+'</p>'
++'<table><tr><th>Break-even chance<small>What the price needs to be fair</small></th><td>'+im.toFixed(1)+'%</td></tr><tr><th>Our model’s chance<small>Estimated true win probability</small></th><td>'+p.mo.toFixed(1)+'%</td></tr><tr><th>Edge<small>Model minus break-even</small></th><td class="pos">+'+ed.toFixed(1)+' pts</td></tr><tr><th>To win<small>Profit if the play wins</small></th><td>'+$(tw)+'</td></tr><tr><th>Expected value<small>Average result per bet, long run</small></th><td class="'+(e>=0?'pos':'neg')+'">'+(e>=0?'+':'')+$(e)+'</td></tr></table>'
++'<div class="math" id="m'+i+'"><b style="color:var(--t)">The math</b><code>break-even = '+be+' = '+im.toFixed(1)+'%</code><code>edge = '+p.mo.toFixed(1)+'% − '+im.toFixed(1)+'% = '+ed.toFixed(1)+' pts</code><code>EV = '+(p.mo/100).toFixed(3)+' × '+$(tw)+' − '+(1-p.mo/100).toFixed(3)+' × '+$(s)+' = '+$(e)+'</code></div>'
++'<div class="ft"><button class="btn" data-m="'+i+'">Show the math</button></div></div></article>';});
+document.getElementById('plays').innerHTML=h;
+document.getElementById('u').textContent=$(b/100);
+document.getElementById('risk').textContent=$(tot);
+document.getElementById('rp').textContent=(tot/b*100||0).toFixed(1)+'% of bankroll';
+var n=document.getElementById('net');n.textContent=(net>=0?'+':'')+$(net);n.className=net>=0?'pos':'neg';
+document.getElementById('rec').textContent=w+'–'+l+' graded';
+var sc=[['All four lose',-tot],['All four win',win],['Expected, if the model is right',ev],['Already settled',net]];
+document.getElementById('sc').innerHTML=sc.map(function(x){return '<tr><td>'+x[0]+'</td><td class="'+(x[1]>=0?'pos':'neg')+'">'+(x[1]>=0?'+':'')+$(x[1])+'</td><td>'+$(b+x[1])+'</td></tr>'}).join('');
+}
+function chart(){
+if(typeof Chart==='undefined')return;
+var r=[-1,.9,-1,-1,-1,-1,-1,-1,.9,-1],c=0,pts=[0];r.forEach(function(x){c+=x;pts.push(+c.toFixed(1))});
+new Chart(document.getElementById('ch'),{type:'line',data:{labels:pts.map(function(_,i){return i?'#'+i:'Start'}),datasets:[{data:pts,borderColor:'#2DE0A0',backgroundColor:'rgba(45,224,160,.08)',fill:true,tension:.3,pointRadius:3,pointBackgroundColor:'#2DE0A0',borderWidth:2.5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#8E99B7'},grid:{display:false}},y:{ticks:{color:'#8E99B7',callback:function(v){return v+'u'}},grid:{color:'#1B2547'}}}}});
+}
+document.getElementById('bk').addEventListener('input',render);
+document.getElementById('sv').addEventListener('click',function(){var v=document.getElementById('nm').value.trim().slice(0,40);if(!v)return;NM=v;try{localStorage.setItem('vname',v)}catch(e){}greet()});
+document.getElementById('nm').addEventListener('keydown',function(e){if(e.key==='Enter')document.getElementById('sv').click()});
+document.getElementById('chg').addEventListener('click',function(){NM='';try{localStorage.removeItem('vname')}catch(e){}greet()});
+document.addEventListener('click',function(e){
+var t=e.target.closest('[data-t]'),m=e.target.closest('[data-m]'),x=e.target.closest('[data-x]'),fb=e.target.closest('[data-f]');
+if(t){toggleTrack(+t.dataset.t)}
+var dl=e.target.closest('[data-d]');if(dl){E.splice(+dl.dataset.d,1);saveE();syncTr();trk();render()}
+if(m){document.getElementById('m'+m.dataset.m).classList.toggle('open')}
+if(x){document.getElementById('x'+x.dataset.x).classList.toggle('open')}
+if(fb){f=fb.dataset.f;document.querySelectorAll('.tabs button').forEach(function(y){y.setAttribute('aria-pressed',y===fb)});render()}
+});
+document.getElementById('lg').innerHTML=lgs.map(function(x){var n=x[1]+x[2],p=Math.round(x[1]/n*100);return '<tr><td>'+x[0]+'</td><td>'+x[1]+'–'+x[2]+'</td><td><span class="bar"><i style="width:'+p+'%"></i></span>'+p+'%</td><td>'+n+' plays</td></tr>'}).join('');
+var E=[];try{E=JSON.parse(localStorage.getItem('vtrk')||'[]')}catch(e){E=[]}
+function saveE(){try{localStorage.setItem('vtrk',JSON.stringify(E))}catch(e){}}
+function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML}
+function syncTr(){tr={};E.forEach(function(e){if(e.src!=null)tr[e.src]=true})}
+function pf(e){return e.r==='w'?e.s*(dec(e.o)-1):e.r==='l'?-e.s:0}
+function toggleTrack(i){if(tr[i]){E=E.filter(function(e){return e.src!==i})}else{var p=plays[i],b=+document.getElementById('bk').value||0;E.push({src:i,lg:p.lg,p:p.pick,o:p.o,s:Math.round(p.u*b/100),r:p.r==='w'?'w':p.r==='l'?'l':'p'})}saveE();syncTr();trk();render()}
+function trk(){var h='',pl=0,st=0,w=0,l=0;
+E.forEach(function(e,i){var p=pf(e);if(e.r==='w'||e.r==='l'){st+=e.s;pl+=p}if(e.r==='w')w++;if(e.r==='l')l++;
+var sel=['p:Pending','w:Won','l:Lost','x:Push'].map(function(o){var a=o.split(':');return '<option value="'+a[0]+'"'+(e.r===a[0]?' selected':'')+'>'+a[1]+'</option>'}).join('');
+h+='<tr><td>'+esc(e.lg)+'</td><td style="text-align:left">'+esc(e.p)+'</td><td>'+pr(e.o)+'</td><td>'+$(e.s)+'</td><td><select data-r="'+i+'" aria-label="Result">'+sel+'</select></td><td class="'+(p>0?'pos':p<0?'neg':'')+'">'+(p>0?'+':'')+$(p)+'</td><td><button class="btn" data-d="'+i+'" aria-label="Delete play">✕</button></td></tr>'});
+document.getElementById('tkb').innerHTML=h||'<tr><td colspan="7" style="text-align:center;color:var(--m)">No plays yet. Add one above, or tap “Track play” on any desk card.</td></tr>';
+var n=w+l;document.getElementById('k1').textContent=w+'–'+l;
+var k2=document.getElementById('k2');k2.textContent=(pl>=0?'+':'')+$(pl);k2.className=pl>=0?'pos':'neg';
+document.getElementById('k3').textContent=st?(pl/st*100).toFixed(1)+'%':'0.0%';
+document.getElementById('k4').textContent=n?Math.round(w/n*100)+'%':'0%'}
+document.getElementById('ta').addEventListener('click',function(){var p=document.getElementById('tp').value.trim().slice(0,60),o=parseInt(document.getElementById('to').value,10),s=parseFloat(document.getElementById('ts').value),er=document.getElementById('te');
+if(!p||!(Math.abs(o)>=100)||!(s>0)){er.textContent='Enter a pick, American odds such as −110 or +150, and a stake above zero.';return}
+er.textContent='';E.push({lg:document.getElementById('tl').value,p:p,o:o,s:s,r:document.getElementById('tr2').value});saveE();trk();['tp','to','ts'].forEach(function(id){document.getElementById(id).value=''})});
+document.addEventListener('change',function(e){var r=e.target.closest('[data-r]');if(r){E[+r.dataset.r].r=r.value;saveE();trk()}});
+var cf=false;document.getElementById('tc').addEventListener('click',function(){var b=this;if(!E.length)return;if(!cf){cf=true;b.textContent='Tap again to confirm';setTimeout(function(){cf=false;b.textContent='Clear all'},3000)}else{cf=false;b.textContent='Clear all';E=[];saveE();syncTr();trk();render()}});
+syncTr();greet();render();trk();window.addEventListener('load',chart);
+</script>
+</body>
+</html>
