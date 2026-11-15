@@ -214,8 +214,28 @@ summary{font:500 16px Unbounded,Roboto,sans-serif;padding:20px 0}
 .read div{border-left-width:1px}.note{border-left-width:1px}
 .disc{font-size:12px}
 </style>
+<style>
+/* ===== Site navigation + visible action buttons ===== */
+.topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;background:rgba(6,11,26,.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.tb-in{max-width:1100px;margin:0 auto;padding:10px 20px;display:flex;align-items:center;gap:14px}
+.tb-logo{display:flex;align-items:center;gap:9px;font:600 15px Unbounded,Roboto,sans-serif;letter-spacing:.01em;color:var(--t);text-decoration:none;white-space:nowrap;flex:none}
+.tb-logo i{width:20px;height:20px;border-radius:6px;background:linear-gradient(135deg,#2DE0A0,#3B82F6);flex:none}
+.tb-links{display:flex;gap:8px;margin-left:auto;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:2px}
+.tb-links::-webkit-scrollbar{display:none}
+.tb-links a{display:inline-flex;align-items:center;min-height:40px;padding:9px 15px;border:1px solid var(--gl);border-radius:99px;background:var(--p2);color:var(--t);text-decoration:none;font-size:13.5px;font-weight:500;letter-spacing:.02em;white-space:nowrap}
+.tb-links a:hover{border-color:rgba(45,224,160,.55);color:var(--au)}
+.tb-links a.tb-out{color:var(--m)}
+.hd{position:relative;top:auto}
+.btn{min-height:40px;padding:10px 16px;font-size:13.5px;display:inline-flex;align-items:center;justify-content:center;text-decoration:none}
+.btn.pri{background:var(--au);color:#04251A;font-weight:600}
+.ac .btn{flex:1 1 0}
+.ac .btn:not(.pri):not([data-t]){background:var(--au);border-color:transparent;color:#04251A;font-weight:600}
+.ac [data-t]{background:var(--au);border-color:transparent;color:#04251A;font-weight:600}
+.ac [data-t].on{background:rgba(45,224,160,.12);border:1px solid rgba(45,224,160,.45);color:var(--au)}
+</style>
 </head>
 <body>
+<nav class="topbar"><div class="tb-in"><a class="tb-logo" href="/home"><i></i>The Sharp Team</a><div class="tb-links"><a href="/home">Dashboard</a><a href="/tracker/plays">My Bets</a><a href="/tools">Tools</a><a href="/records">Full record</a><a href="/cuenta">Account</a><a href="/admin">Admin</a><a class="tb-out" href="/logout">Log out</a></div></div></nav>
 <header class="hd"><div class="hi"><div class="logo"><i></i>The Sharp Team<small>Members Hub</small></div><nav class="nv"><a href="#desk">The desk</a><a href="#tracker">My tracker</a><a href="#performance">Performance</a><a href="#protocol">Protocol</a><a href="#method">Method</a><a href="#membership">Membership</a><a href="#faq">Glossary</a></nav><span class="pill">Members only</span></div></header>
 <div class="wrap">
 <div class="hero">
