@@ -92,6 +92,64 @@
   .d2-lg .d2-lg-meta{font-family:var(--fmono);font-size:11.5px;color:var(--mut);margin-top:5px;display:flex;gap:10px;flex-wrap:wrap}
   .d2-lg .d2-lg-meta .pos{color:var(--mint)} .d2-lg .d2-lg-meta .neg{color:var(--neg)}
 
+  /* Performance: grafico de unidades */
+  .d2-chart{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px 14px 10px}
+  .d2-bars{display:flex;align-items:flex-end;gap:5px;height:64px}
+  .d2-col{flex:1 1 0;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:5px;min-width:0}
+  .d2-col i{display:block;width:100%;max-width:24px;border-radius:4px 4px 2px 2px;background:var(--mint)}
+  .d2-col.l i{background:var(--neg)}
+  .d2-col span{font-family:var(--fmono);font-size:8.5px;color:var(--mut);white-space:nowrap}
+  .d2-chart-meta{margin-top:11px;text-align:center;font-family:var(--fmono);font-size:11px;color:var(--mut);line-height:1.6}
+  .d2-chart-meta b{color:var(--txt);font-weight:600}
+  .d2-chart-meta .pos{color:var(--mint)} .d2-chart-meta .neg{color:var(--neg)}
+
+  /* Herramientas: rejilla de tarjetas */
+  .d2-tools{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .d2-tool{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px 4px 12px;display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--txt)}
+  .d2-tool svg{color:var(--mint)}
+  .d2-tool span{font-size:10.5px;font-weight:500;text-align:center;line-height:1.25}
+  .d2-tool .d2-soon{position:absolute;top:7px;right:7px;font-family:var(--fmono);font-size:8px;letter-spacing:.1em;color:var(--mut);border:1px solid var(--line);border-radius:99px;padding:2px 6px}
+
+  /* Alertas */
+  .d2-alerts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .d2-al{border-radius:16px;padding:15px 10px 13px;display:flex;flex-direction:column;align-items:center;gap:7px;text-align:center;font-size:13px;font-weight:700;cursor:pointer}
+  .d2-al small{font-size:10.5px;font-weight:400;line-height:1.35}
+  .d2-al-push{background:var(--mint);color:#06231A;border:1px solid var(--mint)}
+  .d2-al-push small{color:rgba(6,35,26,.75)}
+  .d2-al-tg{background:var(--panel);color:var(--txt);border:1px solid var(--line)}
+  .d2-al-tg small{color:var(--mut)}
+  .d2-al-tg svg{color:var(--mint)}
+
+  /* Membresia */
+  .d2-mems{display:flex;flex-direction:column;gap:10px}
+  .d2-mem{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:15px 16px;text-align:center}
+  .d2-mem.hot{border-color:var(--mintline)}
+  .d2-mem .d2-m-name{font-family:var(--fdisp);font-size:13.5px;font-weight:700}
+  .d2-mem .d2-m-price{font-family:var(--fmono);font-size:12.5px;font-weight:600;color:var(--mint);margin-top:5px}
+  .d2-mem p{margin:8px 0 0;font-size:12.5px;color:var(--mut);line-height:1.55}
+  .d2-cta{display:block;margin-top:10px;background:var(--mint);color:#06231A;border-radius:16px;padding:15px;text-align:center;font-weight:700;font-size:14.5px}
+  .d2-on{margin-top:10px;background:var(--mintbg);border:1px solid var(--mintline);border-radius:16px;padding:13px 15px;font-size:13px;text-align:center}
+
+  /* Metodo: pasos numerados */
+  .d2-steps{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:6px 16px}
+  .d2-step{display:flex;gap:13px;padding:12px 0}
+  .d2-step + .d2-step{border-top:1px solid var(--line)}
+  .d2-step .d2-n{font-family:var(--fmono);font-size:14px;font-weight:600;color:var(--mint);padding-top:1px}
+  .d2-step b{display:block;font-size:13.5px}
+  .d2-step span{display:block;font-size:12px;color:var(--mut);line-height:1.5;margin-top:2px}
+
+  /* Bankroll */
+  .d2-bank{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:15px 16px;text-align:center}
+  .d2-bank .d2-b-row{font-size:12.5px;color:var(--mut);line-height:1.55;padding:4px 0}
+  .d2-bank .d2-b-row b{display:block;color:var(--txt);font-family:var(--fmono);font-weight:600;font-size:12px;letter-spacing:.06em}
+
+  /* FAQ */
+  .d2-faqs{display:flex;flex-direction:column;gap:10px}
+  .d2-q2{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px 16px;text-align:center}
+  .d2-q2 b{display:block;font-size:13.5px}
+  .d2-q2 span{display:block;font-size:12.5px;color:var(--mut);line-height:1.55;margin-top:4px}
+  .d2-more{display:block;text-align:center;color:var(--mint);font-weight:700;font-size:13px;margin-top:12px}
+
   /* Pie */
   .d2-foot{margin-top:38px;text-align:center;color:var(--mut);font-size:11px;line-height:1.7}
   .d2-foot .d2-fb{font-family:var(--fdisp);font-size:10px;letter-spacing:.16em;color:var(--txt)}
@@ -175,6 +233,73 @@
     {% endif %}
   </section>
 
+  {% if stats.ultimas %}
+  <section class="d2-sec">
+    <div class="d2-sec-head">
+      <div class="d2-kick">Performance</div>
+      <h2>Every play counts</h2>
+      <div class="d2-rule"></div>
+    </div>
+    <div class="d2-chart">
+      {% set _mx = stats.ultimas|map(attribute='u')|map('abs')|max %}
+      <div class="d2-bars">
+        {% for u in stats.ultimas %}
+        <div class="d2-col {{ 'l' if u.r == 'L' else '' }}"><i style="height:{{ [((u.u|abs) / _mx * 40)|round|int, 5]|max }}px"></i><span>{{ '%+g'|format(u.u) }}</span></div>
+        {% endfor %}
+      </div>
+      <div class="d2-chart-meta">
+        Units, last {{ stats.ultimas|length }} graded plays — wins and losses, nothing hidden.<br>
+        Window: <b class="{{ 'pos' if stats.ultimas_u > 0 else ('neg' if stats.ultimas_u < 0 else '') }}">{{ '%+g'|format(stats.ultimas_u) }}u</b>
+      </div>
+    </div>
+    {% if stats.niveles %}
+    <div class="d2-lgs" style="margin-top:10px">
+      {% for nv in stats.niveles %}
+      <div class="d2-lg{% if loop.last and loop.length is odd %} wide{% endif %}">
+        <div class="d2-lg-name">{% if nv.nivel == 'GOLD' %}👑 Gold{% elif nv.nivel == 'PLATINUM' %}💎 Platinum{% else %}🔒 Vault{% endif %}</div>
+        <div class="d2-lg-rec">{{ nv.w }}–{{ nv.l }}</div>
+        <div class="d2-lg-meta"><span>{% if nv.nivel == 'GOLD' %}Free plays{% elif nv.nivel == 'PLATINUM' %}Top tier{% else %}One play max{% endif %}</span><span class="{{ 'pos' if nv.profit > 0 else ('neg' if nv.profit < 0 else '') }}">{{ nv.profit_txt }}</span></div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </section>
+  {% endif %}
+
+  {% if stats.ligas %}
+  <section class="d2-sec">
+    <div class="d2-sec-head">
+      <div class="d2-kick">All time</div>
+      <h2>Record by league</h2>
+      <div class="d2-rule"></div>
+    </div>
+    <div class="d2-lgs">
+      {% for lg in stats.ligas %}
+      <div class="d2-lg{% if loop.last and loop.length is odd %} wide{% endif %}">
+        <div class="d2-lg-name">{{ lg.icono }} {{ lg.liga }}</div>
+        <div class="d2-lg-rec">{{ lg.w }}–{{ lg.l }}</div>
+        <div class="d2-lg-meta"><span>{{ lg.pct }}% wins</span><span class="{{ 'pos' if lg.profit > 0 else ('neg' if lg.profit < 0 else '') }}">{{ ('+$' if lg.profit > 0 else ('-$' if lg.profit < 0 else '$')) ~ ('{:,.2f}'.format(lg.profit|abs)) }}</span></div>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
+  <section class="d2-sec">
+    <div class="d2-sec-head">
+      <div class="d2-kick">Yours</div>
+      <h2>Your tracker</h2>
+      <div class="d2-rule"></div>
+    </div>
+    <nav class="d2-links">
+      <a class="d2-link" href="{{ url_for('tracker') }}">
+        <span class="d2-tile"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2.5 2.5 0 0 0 0 5v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2.5 2.5 0 0 0 0-5Z"/><path d="M13 5v2M13 11v2M13 17v2"/></svg></span>
+        <span><span class="d2-lab">My Bets</span><span class="d2-sub">{% if tracked_ids %}{{ tracked_ids|length }} play{{ 's' if tracked_ids|length != 1 else '' }} tracked — your results, your curve.{% else %}Track any play and it lands here, graded on its own.{% endif %}</span></span>
+        <span class="d2-arr">→</span>
+      </a>
+    </nav>
+  </section>
+
   <section class="d2-sec">
     <div class="d2-sec-head">
       <div class="d2-kick">Shortcuts</div>
@@ -202,33 +327,180 @@
         <span><span class="d2-lab">Account</span><span class="d2-sub">Plan, profile and settings</span></span>
         <span class="d2-arr">→</span>
       </a>
+      <a class="d2-link" href="{{ url_for('ev_board_results') }}">
+        <span class="d2-tile"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 20V12M10 20V5M16 20v-6M2 20h20"/></svg></span>
+        <span><span class="d2-lab">+EV Board Results</span><span class="d2-sub">What the board produced, graded</span></span>
+        <span class="d2-arr">→</span>
+      </a>
     </nav>
   </section>
 
-  {% if stats.ligas %}
   <section class="d2-sec">
     <div class="d2-sec-head">
-      <div class="d2-kick">All time</div>
-      <h2>Record by league</h2>
+      <div class="d2-kick">Toolbox</div>
+      <h2>Your tools</h2>
       <div class="d2-rule"></div>
     </div>
-    <div class="d2-lgs">
-      {% for lg in stats.ligas %}
-      <div class="d2-lg{% if loop.last and loop.length is odd %} wide{% endif %}">
-        <div class="d2-lg-name">{{ lg.icono }} {{ lg.liga }}</div>
-        <div class="d2-lg-rec">{{ lg.w }}–{{ lg.l }}</div>
-        <div class="d2-lg-meta"><span>{{ lg.pct }}% wins</span><span class="{{ 'pos' if lg.profit > 0 else ('neg' if lg.profit < 0 else '') }}">{{ ('+$' if lg.profit > 0 else ('-$' if lg.profit < 0 else '$')) ~ ('{:,.2f}'.format(lg.profit|abs)) }}</span></div>
-      </div>
-      {% endfor %}
+    <nav class="d2-tools">
+      <a class="d2-tool" href="{{ url_for('records') }}">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V4H6.5A2.5 2.5 0 0 0 4 6.5v13Z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></svg>
+        <span>Documented Plays</span>
+      </a>
+      <a class="d2-tool" href="{{ url_for('official_tracker') }}">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M8 6h13M8 12h13M8 18h13"/><path d="m3.5 6 1 1 2-2M3.5 12l1 1 2-2M3.5 18l1 1 2-2"/></svg>
+        <span>Official Tracker</span>
+      </a>
+      <a class="d2-tool" href="{{ url_for('ev_board') }}">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4.5 13.5H11L9.5 22 19 10h-6.5L13 2Z"/></svg>
+        <span>+EV Board</span>
+      </a>
+      <a class="d2-tool" href="{{ url_for('props') }}">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 2.7 5.6 6.1.8-4.5 4.2 1.1 6-5.4-3-5.4 3 1.1-6L3.2 9.4l6.1-.8L12 3Z"/></svg>
+        <span>Player Props</span>
+      </a>
+      <a class="d2-tool" href="{{ url_for('ai_assistant') }}">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/><circle cx="12" cy="12" r="3.2"/></svg>
+        <span>AI Assistant</span>
+      </a>
+      <a class="d2-tool" href="{{ url_for('tracker') }}">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2.5 2.5 0 0 0 0 5v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2.5 2.5 0 0 0 0-5Z"/><path d="M13 5v2M13 11v2M13 17v2"/></svg>
+        <span>Bet Tracker</span>
+      </a>
+      <a class="d2-tool" href="{{ url_for('masterclass') }}">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m2.5 9.5 9.5-5 9.5 5-9.5 5-9.5-5Z"/><path d="M6.5 12v4.5c0 1.4 2.5 3 5.5 3s5.5-1.6 5.5-3V12"/><path d="M21.5 9.5V15"/></svg>
+        <span>Masterclass</span>
+      </a>
+      <a class="d2-tool" href="{{ url_for('game_center') }}">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M5 7l7-4 7 4"/><path d="M2.5 13.5 5 7l2.5 6.5a3.5 3.5 0 0 1-5 0ZM16.5 13.5 19 7l2.5 6.5a3.5 3.5 0 0 1-5 0Z"/><path d="M8 21h8"/></svg>
+        <span>Compare Books</span>
+      </a>
+      <a class="d2-tool" href="{{ url_for('parlay_builder') }}">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 9.5 5L12 13 2.5 8 12 3Z"/><path d="m2.5 12.5 9.5 5 9.5-5"/></svg>
+        <span>+EV Parlay Builder</span>
+      </a>
+      <a class="d2-tool" href="{{ url_for('sharp') }}">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.8 21 12l-9 9.2L3 12l9-9.2Z"/><path d="M12 8.2 17 12l-5 3.8L7 12l5-3.8Z"/></svg>
+        <span>Sharp Money</span>
+      </a>
+      <a class="d2-tool" href="{{ url_for('tools_line_moves') }}">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17.5 8.5 12l3.5 3.5L20.5 7"/><path d="M14.5 7h6v6"/></svg>
+        <span>Line Moves</span>
+      </a>
+      <a class="d2-tool" href="{{ url_for('game_center') }}">
+        <span class="d2-soon">SOON</span>
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 3a9 9 0 1 0 9 9h-9V3Z"/><path d="M15 2.5A9 9 0 0 1 21.5 9H15V2.5Z"/></svg>
+        <span>Betting Splits</span>
+      </a>
+    </nav>
+  </section>
+
+  <section class="d2-sec">
+    <div class="d2-sec-head">
+      <div class="d2-kick">Alerts</div>
+      <h2>Get alerts</h2>
+      <div class="d2-rule"></div>
+    </div>
+    <div class="d2-alerts">
+      <button type="button" class="d2-al d2-al-push" id="d2Push">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M18 9a6 6 0 1 0-12 0c0 6-2.5 7-2.5 7h17S18 15 18 9"/><path d="M10 20a2.2 2.2 0 0 0 4 0"/></svg>
+        Push Notifications
+        <small id="d2PushState">Tap to turn on alerts</small>
+      </button>
+      <a class="d2-al d2-al-tg" href="https://t.me/thesharpteam" target="_blank" rel="noopener">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m21 3.5-9.8 17-2.7-6.8L3 10.5l18-7Z"/><path d="M8.5 13.7 21 3.5"/></svg>
+        Join Telegram
+        <small>The public card channel, free</small>
+      </a>
     </div>
   </section>
-  {% endif %}
+
+  <section class="d2-sec">
+    <div class="d2-sec-head">
+      <div class="d2-kick">Levels</div>
+      <h2>Membership</h2>
+      <div class="d2-rule"></div>
+    </div>
+    <div class="d2-mems">
+      <div class="d2-mem">
+        <div class="d2-m-name">👑 GOLD</div>
+        <div class="d2-m-price">FREE</div>
+        <p>2–3 Gold plays a day, open to every member in the Dashboard, on Telegram and by email. No card, ever.</p>
+      </div>
+      <div class="d2-mem hot">
+        <div class="d2-m-name">💎 PLATINUM</div>
+        <div class="d2-m-price">$15.99 / week</div>
+        <p>The top tier — up to 2 Platinum plays a day at a $100 fixed stake, every member tool and the full record. Your first month is free.</p>
+      </div>
+      <div class="d2-mem">
+        <div class="d2-m-name">🔒 VAULT</div>
+        <div class="d2-m-price">WITH PLATINUM</div>
+        <p>The Vault Play: the single strongest setup of the day when one qualifies — probability 55%+ with real value. Never filled just to fill it.</p>
+      </div>
+    </div>
+    {% if miembro_platinum %}
+    <div class="d2-on">✓ Your Platinum is on — every play and every tool is open to you.</div>
+    {% else %}
+    <a class="d2-cta" href="{{ url_for('desbloquear_platinum') }}">Unlock Platinum — $15.99/week →</a>
+    {% endif %}
+  </section>
+
+  <section class="d2-sec">
+    <div class="d2-sec-head">
+      <div class="d2-kick">How it works</div>
+      <h2>The method</h2>
+      <div class="d2-rule"></div>
+    </div>
+    <div class="d2-steps">
+      <div class="d2-step"><span class="d2-n">01</span><div><b>We price every game two ways</b><span>Our own ratings model (Elo) and the market's no-vig line. A play only exists when the two disagree in our favor.</span></div></div>
+      <div class="d2-step"><span class="d2-n">02</span><div><b>The gates decide</b><span>Edge, real expected value and win probability must clear the bar for its tier — price never dearer than −160, at any level.</span></div></div>
+      <div class="d2-step"><span class="d2-n">03</span><div><b>Alex approves the card</b><span>Nothing is official until Alex places it himself and sends the real ticket.</span></div></div>
+      <div class="d2-step"><span class="d2-n">04</span><div><b>The ticket goes on the card</b><span>The play posts with its real price, its real stake and the original ticket photo — before game time, always.</span></div></div>
+      <div class="d2-step"><span class="d2-n">05</span><div><b>Every play is graded in the open</b><span>Win or lose, it lands in the full record and counts. Nothing is deleted, nothing is edited after the fact.</span></div></div>
+    </div>
+  </section>
+
+  <section class="d2-sec">
+    <div class="d2-sec-head">
+      <div class="d2-kick">Rules</div>
+      <h2>Bankroll protocol</h2>
+      <div class="d2-rule"></div>
+    </div>
+    <div class="d2-bank">
+      <div class="d2-b-row"><b>1 UNIT</b>= $100 — 1% of a $10,000 reference bankroll.</div>
+      <div class="d2-b-row"><b>FIXED STAKES</b>Gold $60 fixed. Platinum $100 fixed. Stakes do not move with wins or losses.</div>
+      <div class="d2-b-row"><b>RULE ONE</b>Defend the bankroll first: no chasing, no doubling up, no impulse plays. A day with no value is a day with no bet.</div>
+    </div>
+  </section>
+
+  <section class="d2-sec">
+    <div class="d2-sec-head">
+      <div class="d2-kick">Questions</div>
+      <h2>FAQ</h2>
+      <div class="d2-rule"></div>
+    </div>
+    <div class="d2-faqs">
+      <div class="d2-q2"><b>When do the plays post?</b><span>2:00 PM ET on weekdays and 11:00 AM ET on weekends — here first, then Telegram and email once the tickets are in.</span></div>
+      <div class="d2-q2"><b>What is the difference between Gold and Platinum?</b><span>Gold is free and open to everyone. Platinum is the top tier: the strongest plays of the day, every tool, and the Vault.</span></div>
+      <div class="d2-q2"><b>Where can I see the full record?</b><span>In the Official Tracker and the Full Record — every official play since September 22, 2026, with its ticket.</span></div>
+      <div class="d2-q2"><b>Do my tracked plays affect the program record?</b><span>No. Your tracker is yours alone; the program record only counts official plays.</span></div>
+    </div>
+    <a class="d2-more" href="{{ url_for('faqs_page') }}">See all FAQs →</a>
+  </section>
 
   <footer class="d2-foot">
     <div class="d2-fb">THE SHARP TEAM</div>
     New York, NY · For entertainment only · 21+<br>
+    <a href="https://x.com/TheSharpTeamBet" target="_blank" rel="noopener">X @TheSharpTeamBet</a> · <a href="https://instagram.com/thesharp_team" target="_blank" rel="noopener">Instagram @thesharp_team</a> · <a href="https://facebook.com/thesharpteam" target="_blank" rel="noopener">Facebook /thesharpteam</a> · <a href="https://t.me/thesharpteam" target="_blank" rel="noopener">Telegram</a><br>
     If gambling stops being fun, call 1-800-GAMBLER.
   </footer>
+
+  <script>
+  (function(){var b=document.getElementById('d2Push'),s=document.getElementById('d2PushState');if(!b||!s)return;
+    function st(){if(!('Notification' in window)){s.textContent='Not supported on this device';return;}
+      s.textContent=Notification.permission==='granted'?'Alerts are on':(Notification.permission==='denied'?'Blocked in your browser settings':'Tap to turn on alerts');}
+    b.addEventListener('click',function(){if('Notification' in window){Notification.requestPermission().then(st);}});
+    st();})();
+  </script>
 
 </div>
 
