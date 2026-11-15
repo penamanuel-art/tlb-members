@@ -3088,7 +3088,9 @@ def hot_home_cards():
                     lvl = None
                 seq.append({"res": j["resultado"],
                             "liga": (j.get("liga") or "").upper(),
-                            "lvl": lvl})
+                            "lvl": lvl,
+                            "pick": j.get("pick") or j.get("team_name") or "",
+                            "fecha": d.get("fecha") or ""})
         if not seq:
             return []
         tira = tirita_record10() or {}
@@ -3124,10 +3126,17 @@ def hot_home_cards():
             n_tot = len(it)
             r = _racha(it)
             if r >= 3:
+                _rp = it[-r:]
                 cands.append({"tag": tag, "num": str(r), "word": "straight",
                               "sub": f"winning {nombre} plays",
                               "puntos": r, "score": 100 + r,
-                              "ambito": nombre})
+                              "ambito": nombre,
+                              "seq": [s["res"] for s in _rp],
+                              "pct": None,
+                              "plays": [{"pick": s["pick"], "fecha": s["fecha"],
+                                         "res": s["res"], "liga": s["liga"],
+                                         "lvl": s["lvl"]}
+                                        for s in reversed(_rp)]})
             tiene_30 = False
             for n in (10, 30):
                 if n_tot < n:
@@ -3142,11 +3151,18 @@ def hot_home_cards():
                     continue  # esa cifra ya la dice la tirita superior
                 if n == 30:
                     tiene_30 = True
+                _vn = it[-n:]
                 cands.append({"tag": tag, "num": f"{w}-{l}", "word": None,
                               "sub": f"in the last {n} {nombre} plays",
                               "puntos": w,
                               "score": (w / float(w + l)) * 100 + (w - l),
-                              "ambito": nombre})
+                              "ambito": nombre,
+                              "seq": [s["res"] for s in _vn],
+                              "pct": int(round(100.0 * w / (w + l))),
+                              "plays": [{"pick": s["pick"], "fecha": s["fecha"],
+                                         "res": s["res"], "liga": s["liga"],
+                                         "lvl": s["lvl"]}
+                                        for s in reversed(_vn)]})
             if n_tot > 10 and not tiene_30:
                 w, l = _rec(it)
                 if _fuerte(w, l):
@@ -3154,14 +3170,24 @@ def hot_home_cards():
                                   "sub": f"{nombre} record · all graded plays",
                                   "puntos": w,
                                   "score": (w / float(w + l)) * 100 + (w - l),
-                                  "ambito": nombre})
+                                  "ambito": nombre,
+                                  "seq": ([s["res"] for s in it]
+                                          if len(it) <= 30 else []),
+                                  "pct": int(round(100.0 * w / (w + l))),
+                                  "plays": [{"pick": s["pick"],
+                                             "fecha": s["fecha"],
+                                             "res": s["res"],
+                                             "liga": s["liga"],
+                                             "lvl": s["lvl"]}
+                                            for s in reversed(it)]})
         cands.sort(key=lambda c: -c["score"])
         out, por_ambito = [], {}
         for c in cands:
             if por_ambito.get(c["ambito"], 0) >= 2:
                 continue
             por_ambito[c["ambito"]] = por_ambito.get(c["ambito"], 0) + 1
-            out.append({k: c[k] for k in ("tag", "num", "word", "sub", "puntos")})
+            out.append({k: c[k] for k in ("tag", "num", "word", "sub",
+                                          "puntos", "seq", "pct", "plays")})
             if len(out) >= 6:
                 break
         return out
