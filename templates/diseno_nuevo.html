@@ -60,16 +60,6 @@
   .dn-watch{display:inline-flex;align-items:center;gap:9px;margin-top:15px;padding:10px 18px;border:1px solid var(--line);border-radius:999px;color:var(--txt);font-size:16.5px;font-weight:500;text-decoration:none;background:rgba(255,255,255,.02)}
   .dn-watch-ic{display:flex;flex:none}
   .dn-hero-card{background:var(--panel);border:1px solid var(--line);border-radius:18px;overflow:hidden;margin-top:16px}
-  .dn-board-head{display:flex;align-items:center;gap:10px;margin:20px 0 14px}
-  .dn-board-head h2{font-family:var(--fdisp);font-size:26px;font-weight:800;margin:0;color:var(--txt)}
-  .dn-board-lvl{color:var(--mut);font-size:16.5px;font-weight:500}
-  .dn-refresh{margin-left:auto;display:inline-flex;align-items:center;gap:8px;background:#141B2A;border:1px solid var(--line);border-radius:12px;padding:10px 16px;font-size:16.5px;color:var(--txt);cursor:pointer}
-  .dn-board{background:linear-gradient(180deg,#171F2E,#111827);border:1px solid var(--line);border-radius:20px;padding:40px 22px;text-align:center}
-  .dn-board h3{font-family:var(--fdisp);font-size:22.5px;font-weight:800;margin:0 0 10px;color:var(--txt)}
-  .dn-board p{color:var(--mut);font-size:16.5px;margin:0}
-  .dn-board .dn-watch{margin-top:20px}
-  .dn-watch-row{text-align:center;margin-top:16px}
-  .dn-watch-row .dn-watch{margin-top:0}
   .dn-live{margin-top:14px;background:var(--panel);border:1px solid var(--line);border-radius:18px;display:flex;align-items:center;gap:14px;padding:17px 18px;text-decoration:none}
   .dn-live-ic{color:var(--txt);flex:none;display:flex}
   .dn-live-tx{flex:1;min-width:0}
@@ -299,12 +289,34 @@
   </section>
 
 
-  <div class="dn-board-head">
-    <h2>Your plays</h2>
-    <span class="dn-board-lvl">{{ 'Platinum' if miembro_platinum else 'Free' }}</span>
-    <button class="dn-refresh" type="button" onclick="location.reload()"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>Refresh</button>
+  <div class="dn-hero-card">
+    <div class="dn-hero-band"><span>Today's card</span><span class="dn-ring"></span></div>
+    <div class="dn-hero-body">
+      <div class="dn-hero-title">{{ estado.titulo }}</div>
+      <div class="dn-hero-div"></div>
+      <div class="dn-hero-label">The board</div>
+      <p class="dn-hero-text">{{ estado.sub }}</p>
+      <div class="dn-segs"><span class="on"></span><span></span><span></span></div>
+      <a class="dn-watch" href="#dn-how"><span class="dn-watch-ic"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M10.2 8.6v6.8L16 12z" fill="currentColor" stroke="none"/></svg></span>Watch how it works</a>
+    </div>
   </div>
+
+  <a class="dn-live" href="{{ url_for('game_center') }}">
+    <span class="dn-live-ic"><svg width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="1.7" fill="currentColor" stroke="none"/><path d="M8.4 8.4a5.1 5.1 0 0 0 0 7.2"/><path d="M15.6 8.4a5.1 5.1 0 0 1 0 7.2"/><path d="M5.8 5.8a8.8 8.8 0 0 0 0 12.4"/><path d="M18.2 5.8a8.8 8.8 0 0 1 0 12.4"/></svg></span>
+    <span class="dn-live-tx"><b>Live scores and games</b><span>Pick a game for every price, split and line move</span></span>
+    <span class="dn-live-ch">›</span>
+  </a>
+
+  <section class="dn-stats" aria-label="Program record">
+    <div class="dn-stat"><div class="k">Record</div><div class="v">{{ stats.ganadas }}–{{ stats.perdidas }}</div></div>
+    <div class="dn-stat"><div class="k">Net</div><div class="v {{ 'pos' if stats.profit > 0 else ('neg' if stats.profit < 0 else '') }}">{{ stats.profit_txt }}</div></div>
+    <div class="dn-stat"><div class="k">Platinum L10</div><div class="v">{% if stats.plat10 %}{{ stats.plat10.w }}–{{ stats.plat10.l }}{% else %}—{% endif %}</div></div>
+    <div class="dn-stat"><div class="k">Win rate</div><div class="v">{{ stats.win_rate }}%</div></div>
+  </section>
+
   {% if plays %}
+  <section class="dn-sec">
+    <div class="dn-sec-head"><h2>Today's plays</h2>{% if card_fecha_txt %}<span class="dn-chip">{{ card_fecha_txt }}</span>{% endif %}</div>
       {% set frees = plays|selectattr('nivel','equalto','FREE')|list %}
       {% set golds = plays|selectattr('nivel','equalto','GOLD')|list %}
       {% set plats = plays|rejectattr('nivel','equalto','GOLD')|rejectattr('nivel','equalto','FREE')|rejectattr('nivel','equalto','VALUE')|list %}
@@ -317,22 +329,8 @@
       {% for p in plats %}
         {% if p.nivel in ['ELITE','PLATINUM','VAULT'] and not miembro_platinum %}{% include "_play_card_locked.html" %}{% else %}{% include "_play_card_v5.html" %}{% endif %}
       {% endfor %}
-    <div class="dn-watch-row"><a class="dn-watch" href="#dn-how"><span class="dn-watch-ic"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M10.2 8.6v6.8L16 12z" fill="currentColor" stroke="none"/></svg></span>Watch how it works</a></div>
-  {% else %}
-  <div class="dn-board">
-    <h3>The board is not posted yet</h3>
-    <p>Your plays show here the moment they are posted.</p>
-    <a class="dn-watch" href="#dn-how"><span class="dn-watch-ic"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M10.2 8.6v6.8L16 12z" fill="currentColor" stroke="none"/></svg></span>Watch how it works</a>
-  </div>
+  </section>
   {% endif %}
-
-  <a class="dn-live" href="{{ url_for('game_center') }}">
-    <span class="dn-live-ic"><svg width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="1.7" fill="currentColor" stroke="none"/><path d="M8.4 8.4a5.1 5.1 0 0 0 0 7.2"/><path d="M15.6 8.4a5.1 5.1 0 0 1 0 7.2"/><path d="M5.8 5.8a8.8 8.8 0 0 0 0 12.4"/><path d="M18.2 5.8a8.8 8.8 0 0 1 0 12.4"/></svg></span>
-    <span class="dn-live-tx"><b>Live scores and games</b><span>Pick a game for every price, split and line move</span></span>
-    <span class="dn-live-ch">›</span>
-  </a>
-
-
 
   {% if stats.ultimas %}
   <section class="dn-sec">
