@@ -242,9 +242,9 @@
     <div class="dn-stat"><div class="k">Win rate</div><div class="v">{{ stats.win_rate }}%</div></div>
   </section>
 
+  {% if plays %}
   <section class="dn-sec">
     <div class="dn-sec-head"><h2>Today's plays</h2>{% if card_fecha_txt %}<span class="dn-chip">{{ card_fecha_txt }}</span>{% endif %}</div>
-    {% if plays %}
       {% set frees = plays|selectattr('nivel','equalto','FREE')|list %}
       {% set golds = plays|selectattr('nivel','equalto','GOLD')|list %}
       {% set plats = plays|rejectattr('nivel','equalto','GOLD')|rejectattr('nivel','equalto','FREE')|rejectattr('nivel','equalto','VALUE')|list %}
@@ -257,12 +257,8 @@
       {% for p in plats %}
         {% if p.nivel in ['ELITE','PLATINUM','VAULT'] and not miembro_platinum %}{% include "_play_card_locked.html" %}{% else %}{% include "_play_card_v5.html" %}{% endif %}
       {% endfor %}
-    {% else %}
-      <div class="dn-empty">
-        <span>Plays will show up here the moment they're posted.</span>
-      </div>
-    {% endif %}
   </section>
+  {% endif %}
 
   {% if stats.ultimas %}
   <section class="dn-sec">
