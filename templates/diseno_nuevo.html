@@ -238,7 +238,7 @@
   .dn-foot .dn-fb{font-family:var(--fdisp);font-size:11px;letter-spacing:.16em;color:var(--txt)}
 
   /* Barra inferior */
-  .dn-tabs{position:fixed;left:0;right:0;bottom:0;z-index:60;background:rgba(10,17,32,.97);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
+  .dn-tabs{position:fixed;left:0;right:0;bottom:0;z-index:60;background:#0A1120;border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
   .dn-tabs-in{max-width:640px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr)}
   .dn-tab{display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px 0 11px;color:#969EA9;font-size:13.5px;font-weight:500}
   .dn-tab svg{display:block}
@@ -657,11 +657,15 @@
     l.classList.add('done');
     setTimeout(function(){ if(l && l.parentNode) l.parentNode.removeChild(l); },500);
   }
-  if(document.readyState==='interactive'||document.readyState==='complete'){ hide(); }
-  else{
-    document.addEventListener('DOMContentLoaded',hide);
-    window.addEventListener('load',hide);
+  var t0=Date.now(), loaded=(document.readyState==='complete');
+  function maybe(){
+    if(gone) return;
+    var wait=1200-(Date.now()-t0);
+    if(loaded && wait<=0){ hide(); }
+    else if(loaded){ setTimeout(maybe, wait); }
   }
+  window.addEventListener('load', function(){ loaded=true; maybe(); });
+  if(loaded){ maybe(); } else { setTimeout(function(){ loaded=true; maybe(); }, 2500); }
   setTimeout(hide,8000);
 })();
 </script>
