@@ -6537,6 +6537,16 @@ def admin_ideas_preview():
     return render_template("ideas_preview.html")
 
 
+@app.route("/admin/preview-home")
+@admin_required
+def admin_preview_home():
+    """Previa del rediseno COMPLETO del home del Dashboard (2026-11-14,
+    pedido de Alex: disenar el home entero, solo para sus pruebas).
+    SOLO admin/Alex via admin_required; plantilla estatica con la card
+    real del dia, no toca ningun dato ni el home en vivo."""
+    return render_template("preview_home.html")
+
+
 def _meta_phone_hash(phone):
     """Teléfono para user_data de Meta (2026-11-07): solo dígitos con
     código de país (el de EE. UU. de 10 dígitos lleva el 1 delante),
