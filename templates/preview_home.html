@@ -61,19 +61,19 @@ section{margin-top:64px}
 .ph{display:flex;justify-content:space-between;align-items:center;padding:11px 18px 0;font-size:12px;letter-spacing:.16em;color:var(--au)}
 .plat .ph b{color:var(--g)}
 .lgc{border:1px solid var(--line);border-radius:99px;padding:2px 11px;color:var(--m);letter-spacing:.05em}
-.pb{padding:7px 18px 0}
-.pb h3{font-size:32px;font-weight:600}
+.pb{padding:5px 18px 0}
+.pb h3{font-size:clamp(19px,5.4vw,22px);font-weight:600;line-height:1.15}
 .gm{color:var(--m);font-size:13.5px;margin-top:2px}
 .pills{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
 .pill2{font-size:11.5px;border:1px solid var(--line);border-radius:99px;padding:3px 10px;color:var(--m);white-space:nowrap}
 .pill2 b{color:var(--t);font-weight:600}
-.logoimg{width:46px;height:46px;object-fit:contain;flex:none}
+.logoimg{width:42px;height:42px;object-fit:contain;flex:none}
 .res{display:inline-block;margin-top:8px;font-size:12.5px;font-weight:600;padding:4px 12px;border-radius:6px}
 .w{background:var(--gs);color:var(--g)}.l{background:var(--reds);color:var(--red)}.pn{background:var(--line);color:var(--m)}
 .px{display:grid;grid-template-columns:1fr 1fr;margin:12px 18px 0;border:1px solid var(--line);border-radius:14px;background:var(--bg)}
 .px>div{padding:9px 14px}.px>div+div{border-left:1px solid var(--line)}
 .px small{display:block;color:var(--m);font-size:12px;letter-spacing:.05em}
-.px b{display:block;font:600 32px 'Roboto Mono',monospace;line-height:1.1}
+.px b{display:block;font:600 28px 'Roboto Mono',monospace;line-height:1.1}
 .px em{font-style:normal;font-size:12.5px;color:var(--g)}
 .ac{display:flex;gap:7px;padding:11px 18px 12px;flex-wrap:wrap}
 .btn{border:1px solid var(--gl);background:transparent;padding:9px 17px;border-radius:8px;font-size:13.5px;font-weight:500;cursor:pointer;letter-spacing:.02em;text-decoration:none;color:var(--t);display:inline-block}
@@ -182,7 +182,7 @@ a.tier:hover{border-color:var(--au)}
 {% set w = p.writeup if p.writeup is defined and p.writeup else {} %}
 <article class="pick{% if is_vip %} plat{% endif %}" data-t="{% if is_vip or is_vault %}plat{% elif p.nivel == 'GOLD' %}gold{% elif is_free %}free{% elif is_value %}value{% else %}gold{% endif %}">
 <div class="ph"><b>{% if is_vip %}💎 PLATINUM PLAY{% elif is_value %}💎 VALUE PLAY{% elif is_free %}FREE PICK{% elif is_vault %}🔒 THE VAULT PLAY{% else %}👑 GOLD PLAY{% endif %}</b><span class="lgc">{{ p.liga }}</span></div>
-<div class="pb"><div style="display:flex;gap:14px;align-items:flex-start">{% if _logo %}<img class="logoimg" src="{{ _logo }}" alt="{{ p.abbr }} logo" loading="lazy" onerror="this.remove()">{% endif %}<div><h3>{{ p.team_name or p.abbr }} {{ _bt_label }}</h3><div class="gm">{{ p.team_name or p.abbr }} @ {{ p.opp_name or p.opp_abbr }}{% if _hora %} · {{ _hora }}{% endif %}</div>
+<div class="pb"><div style="display:flex;gap:10px;align-items:flex-start">{% if _logo %}<img class="logoimg" src="{{ _logo }}" alt="{{ p.abbr }} logo" loading="lazy" onerror="this.remove()">{% endif %}<div><h3>{{ p.team_name or p.abbr }} {{ _bt_label }}</h3><div class="gm">{{ p.team_name or p.abbr }} @ {{ p.opp_name or p.opp_abbr }}{% if _hora %} · {{ _hora }}{% endif %}</div>
 {% if (_ln and _ln.moved) or (_w and _w.temp_f is defined and _w.temp_f is not none) or (_w and _w.indoor) or _inj or (p.poly is defined and p.poly is number) %}
 <div class="pills">
 {% if _ln and _ln.moved %}<span class="pill2">⚡ Line <b>{{ _ln.open }} → {{ _ln.now }}</b></span>{% endif %}
