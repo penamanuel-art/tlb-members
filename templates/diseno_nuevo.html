@@ -82,6 +82,81 @@
   .dn-q svg{color:var(--mint)}
   .dn-q span{font-size:11px;font-weight:500;text-align:center;line-height:1.25}
 
+  /* Performance: grafico de unidades + niveles */
+  .dn-chart{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 14px 10px}
+  .dn-bars{display:flex;align-items:flex-end;gap:5px;height:64px}
+  .dn-col{flex:1 1 0;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:5px;min-width:0}
+  .dn-col i{display:block;width:100%;max-width:24px;border-radius:4px 4px 2px 2px;background:var(--mint)}
+  .dn-col.l i{background:var(--neg)}
+  .dn-col span{font-family:var(--fmono);font-size:8.5px;color:var(--mut);white-space:nowrap}
+  .dn-chart-meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:11px;font-family:var(--fmono);font-size:11px;color:var(--mut)}
+  .dn-chart-meta b{color:var(--txt);font-weight:600}
+  .dn-chart-meta .pos{color:var(--mint)} .dn-chart-meta .neg{color:var(--neg)}
+  .dn-tiers{margin-top:10px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:6px 16px}
+  .dn-tier{padding:11px 0;display:flex;align-items:baseline;gap:8px}
+  .dn-tier + .dn-tier{border-top:1px solid var(--line)}
+  .dn-tier .dn-t-name{font-size:13.5px;font-weight:700}
+  .dn-tier .dn-t-sub{font-size:11.5px;color:var(--mut)}
+  .dn-tier .dn-t-rec{margin-left:auto;font-family:var(--fmono);font-size:13.5px;font-weight:600;white-space:nowrap}
+  .dn-tier .dn-t-pf{font-family:var(--fmono);font-size:12px;font-weight:600;white-space:nowrap}
+  .dn-tier .dn-t-pf.pos{color:var(--mint)} .dn-tier .dn-t-pf.neg{color:var(--neg)}
+
+  /* Tu tracker */
+  .dn-track{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:12px}
+  .dn-track .dn-t-ic{flex:0 0 auto;width:38px;height:38px;border-radius:12px;background:var(--mintbg);display:flex;align-items:center;justify-content:center;color:var(--mint)}
+  .dn-track b{display:block;font-size:14.5px}
+  .dn-track span{display:block;font-size:12px;color:var(--mut);margin-top:1px}
+  .dn-track .dn-t-arr{margin-left:auto;color:var(--mint);font-family:var(--fmono);font-size:16px}
+
+  /* Tus herramientas */
+  .dn-tools{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+  .dn-tool{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:13px 4px 11px;display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--txt)}
+  .dn-tool svg{color:var(--mint)}
+  .dn-tool span{font-size:10.5px;font-weight:500;text-align:center;line-height:1.25}
+  .dn-tool .dn-soon{position:absolute;top:7px;right:7px;font-family:var(--fmono);font-size:8px;letter-spacing:.1em;color:var(--mut);border:1px solid var(--line);border-radius:99px;padding:2px 6px}
+
+  /* Alertas */
+  .dn-alerts{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+  .dn-al{border-radius:14px;padding:15px 10px 13px;display:flex;flex-direction:column;align-items:center;gap:7px;text-align:center;font-size:13px;font-weight:700;cursor:pointer}
+  .dn-al small{font-size:10.5px;font-weight:400;line-height:1.35}
+  .dn-al-push{background:var(--mint);color:#06231A;border:1px solid var(--mint)}
+  .dn-al-push small{color:rgba(6,35,26,.75)}
+  .dn-al-tg{background:var(--panel);color:var(--txt);border:1px solid var(--line)}
+  .dn-al-tg small{color:var(--mut)}
+  .dn-al-tg svg{color:var(--mint)}
+
+  /* Membresia */
+  .dn-mems{display:flex;flex-direction:column;gap:9px}
+  .dn-mem{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+  .dn-mem.hot{border-color:var(--mintline)}
+  .dn-mem .dn-m-top{display:flex;align-items:baseline;gap:8px}
+  .dn-mem .dn-m-name{font-family:var(--fdisp);font-size:13.5px;font-weight:700}
+  .dn-mem .dn-m-price{margin-left:auto;font-family:var(--fmono);font-size:12.5px;font-weight:600;color:var(--mint);white-space:nowrap}
+  .dn-mem p{margin:7px 0 0;font-size:12.5px;color:var(--mut);line-height:1.5}
+  .dn-cta{display:block;margin-top:10px;background:var(--mint);color:#06231A;border-radius:14px;padding:15px;text-align:center;font-weight:700;font-size:14.5px}
+  .dn-on{margin-top:10px;background:var(--mintbg);border:1px solid var(--mintline);border-radius:14px;padding:13px 15px;font-size:13px;text-align:center}
+
+  /* Metodo */
+  .dn-steps{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:6px 16px}
+  .dn-step{display:flex;gap:13px;padding:12px 0}
+  .dn-step + .dn-step{border-top:1px solid var(--line)}
+  .dn-step .dn-n{font-family:var(--fmono);font-size:13px;font-weight:600;color:var(--mint);padding-top:1px}
+  .dn-step b{display:block;font-size:13.5px}
+  .dn-step span{display:block;font-size:12px;color:var(--mut);line-height:1.5;margin-top:2px}
+
+  /* Bankroll */
+  .dn-bank{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+  .dn-bank .dn-b-row{display:flex;gap:8px;font-size:12.5px;color:var(--mut);line-height:1.5;padding:3px 0}
+  .dn-bank .dn-b-row b{color:var(--txt);font-family:var(--fmono);font-weight:600;white-space:nowrap}
+
+  /* FAQ */
+  .dn-faq{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:6px 16px}
+  .dn-q2{padding:12px 0}
+  .dn-q2 + .dn-q2{border-top:1px solid var(--line)}
+  .dn-q2 b{display:block;font-size:13.5px}
+  .dn-q2 span{display:block;font-size:12.5px;color:var(--mut);line-height:1.55;margin-top:3px}
+  .dn-faq .dn-more{display:block;padding:12px 0;text-align:center;color:var(--mint);font-weight:700;font-size:13px;border-top:1px solid var(--line)}
+
   /* Pie */
   .dn-foot{margin-top:34px;text-align:center;color:var(--mut);font-size:11px;line-height:1.7}
   .dn-foot .dn-fb{font-family:var(--fdisp);font-size:10px;letter-spacing:.16em;color:var(--txt)}
@@ -155,6 +230,36 @@
     {% endif %}
   </section>
 
+  {% if stats.ultimas %}
+  <section class="dn-sec">
+    <div class="dn-sec-head"><h2>Performance</h2><span class="dn-chip">Last {{ stats.ultimas|length }} plays</span></div>
+    <div class="dn-chart">
+      {% set _mx = stats.ultimas|map(attribute='u')|map('abs')|max %}
+      <div class="dn-bars">
+        {% for u in stats.ultimas %}
+        <div class="dn-col {{ 'l' if u.r == 'L' else '' }}"><i style="height:{{ [((u.u|abs) / _mx * 40)|round|int, 5]|max }}px"></i><span>{{ '%+g'|format(u.u) }}</span></div>
+        {% endfor %}
+      </div>
+      <div class="dn-chart-meta">
+        <span>Units, last {{ stats.ultimas|length }} graded plays — every play counts, wins and losses.</span>
+        <span>Window: <b class="{{ 'pos' if stats.ultimas_u > 0 else ('neg' if stats.ultimas_u < 0 else '') }}">{{ '%+g'|format(stats.ultimas_u) }}u</b></span>
+      </div>
+    </div>
+    {% if stats.niveles %}
+    <div class="dn-tiers">
+      {% for nv in stats.niveles %}
+      <div class="dn-tier">
+        <span class="dn-t-name">{% if nv.nivel == 'GOLD' %}👑 Gold{% elif nv.nivel == 'PLATINUM' %}💎 Platinum{% else %}🔒 Vault{% endif %}</span>
+        <span class="dn-t-sub">{% if nv.nivel == 'GOLD' %}Free plays{% elif nv.nivel == 'PLATINUM' %}Top tier{% else %}One play max{% endif %}</span>
+        <span class="dn-t-rec">{{ nv.w }}–{{ nv.l }}</span>
+        <span class="dn-t-pf {{ 'pos' if nv.profit > 0 else ('neg' if nv.profit < 0 else '') }}">{{ nv.profit_txt }}</span>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </section>
+  {% endif %}
+
   {% if stats.ligas %}
   <section class="dn-sec">
     <div class="dn-sec-head"><h2>Record by league</h2><span class="dn-chip">All time</span></div>
@@ -175,6 +280,15 @@
   {% endif %}
 
   <section class="dn-sec">
+    <div class="dn-sec-head"><h2>Your tracker</h2></div>
+    <a class="dn-track" href="{{ url_for('tracker') }}">
+      <span class="dn-t-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2.5 2.5 0 0 0 0 5v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2.5 2.5 0 0 0 0-5Z"/><path d="M13 5v2M13 11v2M13 17v2"/></svg></span>
+      <span><b>My Bets</b><span>{% if tracked_ids %}{{ tracked_ids|length }} play{{ 's' if tracked_ids|length != 1 else '' }} tracked — your results, your curve.{% else %}Track any play and it lands here, graded on its own.{% endif %}</span></span>
+      <span class="dn-t-arr">→</span>
+    </a>
+  </section>
+
+  <section class="dn-sec">
     <div class="dn-sec-head"><h2>Quick links</h2></div>
     <nav class="dn-quick">
       <a class="dn-q" href="{{ url_for('tracker') }}">
@@ -193,14 +307,152 @@
         <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c1.4-3.2 4.2-4.8 7.5-4.8s6.1 1.6 7.5 4.8"/></svg>
         <span>Account</span>
       </a>
+      <a class="dn-q" style="grid-column:1/-1;flex-direction:row;justify-content:center;padding:12px 4px" href="{{ url_for('ev_board_results') }}">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 20V12M10 20V5M16 20v-6M2 20h20"/></svg>
+        <span>+EV Board Results</span>
+      </a>
     </nav>
+  </section>
+
+  <section class="dn-sec">
+    <div class="dn-sec-head"><h2>Your tools</h2><span class="dn-chip">All tools</span></div>
+    <nav class="dn-tools">
+      <a class="dn-tool" href="{{ url_for('records') }}">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V4H6.5A2.5 2.5 0 0 0 4 6.5v13Z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></svg>
+        <span>Documented Plays</span>
+      </a>
+      <a class="dn-tool" href="{{ url_for('official_tracker') }}">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M8 6h13M8 12h13M8 18h13"/><path d="m3.5 6 1 1 2-2M3.5 12l1 1 2-2M3.5 18l1 1 2-2"/></svg>
+        <span>Official Tracker</span>
+      </a>
+      <a class="dn-tool" href="{{ url_for('ev_board') }}">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4.5 13.5H11L9.5 22 19 10h-6.5L13 2Z"/></svg>
+        <span>+EV Board</span>
+      </a>
+      <a class="dn-tool" href="{{ url_for('props') }}">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 2.7 5.6 6.1.8-4.5 4.2 1.1 6-5.4-3-5.4 3 1.1-6L3.2 9.4l6.1-.8L12 3Z"/></svg>
+        <span>Player Props</span>
+      </a>
+      <a class="dn-tool" href="{{ url_for('ai_assistant') }}">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/><circle cx="12" cy="12" r="3.2"/></svg>
+        <span>AI Assistant</span>
+      </a>
+      <a class="dn-tool" href="{{ url_for('tracker') }}">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2.5 2.5 0 0 0 0 5v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2.5 2.5 0 0 0 0-5Z"/><path d="M13 5v2M13 11v2M13 17v2"/></svg>
+        <span>Bet Tracker</span>
+      </a>
+      <a class="dn-tool" href="{{ url_for('masterclass') }}">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m2.5 9.5 9.5-5 9.5 5-9.5 5-9.5-5Z"/><path d="M6.5 12v4.5c0 1.4 2.5 3 5.5 3s5.5-1.6 5.5-3V12"/><path d="M21.5 9.5V15"/></svg>
+        <span>Masterclass</span>
+      </a>
+      <a class="dn-tool" href="{{ url_for('game_center') }}">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M5 7l7-4 7 4"/><path d="M2.5 13.5 5 7l2.5 6.5a3.5 3.5 0 0 1-5 0ZM16.5 13.5 19 7l2.5 6.5a3.5 3.5 0 0 1-5 0Z"/><path d="M8 21h8"/></svg>
+        <span>Compare Books</span>
+      </a>
+      <a class="dn-tool" href="{{ url_for('parlay_builder') }}">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 9.5 5L12 13 2.5 8 12 3Z"/><path d="m2.5 12.5 9.5 5 9.5-5"/></svg>
+        <span>+EV Parlay Builder</span>
+      </a>
+      <a class="dn-tool" href="{{ url_for('sharp') }}">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.8 21 12l-9 9.2L3 12l9-9.2Z"/><path d="M12 8.2 17 12l-5 3.8L7 12l5-3.8Z"/></svg>
+        <span>Sharp Money</span>
+      </a>
+      <a class="dn-tool" href="{{ url_for('tools_line_moves') }}">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17.5 8.5 12l3.5 3.5L20.5 7"/><path d="M14.5 7h6v6"/></svg>
+        <span>Line Moves</span>
+      </a>
+      <a class="dn-tool" href="{{ url_for('game_center') }}">
+        <span class="dn-soon">SOON</span>
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 3a9 9 0 1 0 9 9h-9V3Z"/><path d="M15 2.5A9 9 0 0 1 21.5 9H15V2.5Z"/></svg>
+        <span>Betting Splits</span>
+      </a>
+    </nav>
+  </section>
+
+  <section class="dn-sec">
+    <div class="dn-sec-head"><h2>Get alerts</h2></div>
+    <div class="dn-alerts">
+      <button type="button" class="dn-al dn-al-push" id="dnPush">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M18 9a6 6 0 1 0-12 0c0 6-2.5 7-2.5 7h17S18 15 18 9"/><path d="M10 20a2.2 2.2 0 0 0 4 0"/></svg>
+        Push Notifications
+        <small id="dnPushState">Tap to turn on alerts</small>
+      </button>
+      <a class="dn-al dn-al-tg" href="https://t.me/thesharpteam" target="_blank" rel="noopener">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m21 3.5-9.8 17-2.7-6.8L3 10.5l18-7Z"/><path d="M8.5 13.7 21 3.5"/></svg>
+        Join Telegram
+        <small>The public card channel, free</small>
+      </a>
+    </div>
+  </section>
+
+  <section class="dn-sec">
+    <div class="dn-sec-head"><h2>Membership</h2></div>
+    <div class="dn-mems">
+      <div class="dn-mem">
+        <div class="dn-m-top"><span class="dn-m-name">👑 GOLD</span><span class="dn-m-price">FREE</span></div>
+        <p>2–3 Gold plays a day, open to every member in the Dashboard, on Telegram and by email. No card, ever.</p>
+      </div>
+      <div class="dn-mem hot">
+        <div class="dn-m-top"><span class="dn-m-name">💎 PLATINUM</span><span class="dn-m-price">$15.99 / week</span></div>
+        <p>The top tier — up to 2 Platinum plays a day at a $100 fixed stake, every member tool and the full record. Your first month is free.</p>
+      </div>
+      <div class="dn-mem">
+        <div class="dn-m-top"><span class="dn-m-name">🔒 VAULT</span><span class="dn-m-price">WITH PLATINUM</span></div>
+        <p>The Vault Play: the single strongest setup of the day when one qualifies — probability 55%+ with real value. Never filled just to fill it.</p>
+      </div>
+    </div>
+    {% if miembro_platinum %}
+    <div class="dn-on">✓ Your Platinum is on — every play and every tool is open to you.</div>
+    {% else %}
+    <a class="dn-cta" href="{{ url_for('desbloquear_platinum') }}">Unlock Platinum — $15.99/week →</a>
+    {% endif %}
+  </section>
+
+  <section class="dn-sec">
+    <div class="dn-sec-head"><h2>How it works</h2></div>
+    <div class="dn-steps">
+      <div class="dn-step"><span class="dn-n">01</span><div><b>We price every game two ways</b><span>Our own ratings model (Elo) and the market's no-vig line. A play only exists when the two disagree in our favor.</span></div></div>
+      <div class="dn-step"><span class="dn-n">02</span><div><b>The gates decide</b><span>Edge, real expected value and win probability must clear the bar for its tier — price never dearer than −160, at any level.</span></div></div>
+      <div class="dn-step"><span class="dn-n">03</span><div><b>Alex approves the card</b><span>Nothing is official until Alex places it himself and sends the real ticket.</span></div></div>
+      <div class="dn-step"><span class="dn-n">04</span><div><b>The ticket goes on the card</b><span>The play posts with its real price, its real stake and the original ticket photo — before game time, always.</span></div></div>
+      <div class="dn-step"><span class="dn-n">05</span><div><b>Every play is graded in the open</b><span>Win or lose, it lands in the full record and counts. Nothing is deleted, nothing is edited after the fact.</span></div></div>
+    </div>
+  </section>
+
+  <section class="dn-sec">
+    <div class="dn-sec-head"><h2>Bankroll protocol</h2></div>
+    <div class="dn-bank">
+      <div class="dn-b-row"><b>1 unit</b><span>= $100 — 1% of a $10,000 reference bankroll.</span></div>
+      <div class="dn-b-row"><b>Gold</b><span>$60 fixed stake. Platinum $100 fixed. Stakes do not move with wins or losses.</span></div>
+      <div class="dn-b-row"><b>Rule one</b><span>Defend the bankroll first: no chasing, no doubling up, no impulse plays. A day with no value is a day with no bet.</span></div>
+    </div>
+  </section>
+
+  <section class="dn-sec">
+    <div class="dn-sec-head"><h2>FAQ</h2></div>
+    <div class="dn-faq">
+      <div class="dn-q2"><b>When do the plays post?</b><span>2:00 PM ET on weekdays and 11:00 AM ET on weekends — here first, then Telegram and email once the tickets are in.</span></div>
+      <div class="dn-q2"><b>What is the difference between Gold and Platinum?</b><span>Gold is free and open to everyone. Platinum is the top tier: the strongest plays of the day, every tool, and the Vault.</span></div>
+      <div class="dn-q2"><b>Where can I see the full record?</b><span>In the Official Tracker and the Full Record — every official play since September 22, 2026, with its ticket.</span></div>
+      <div class="dn-q2"><b>Do my tracked plays affect the program record?</b><span>No. Your tracker is yours alone; the program record only counts official plays.</span></div>
+      <a class="dn-more" href="{{ url_for('faqs_page') }}">See all FAQs →</a>
+    </div>
   </section>
 
   <footer class="dn-foot">
     <div class="dn-fb">THE SHARP TEAM</div>
     New York, NY · For entertainment only · 21+<br>
+    <a href="https://x.com/TheSharpTeamBet" target="_blank" rel="noopener">X @TheSharpTeamBet</a> · <a href="https://instagram.com/thesharp_team" target="_blank" rel="noopener">Instagram @thesharp_team</a> · <a href="https://facebook.com/thesharpteam" target="_blank" rel="noopener">Facebook /thesharpteam</a> · <a href="https://t.me/thesharpteam" target="_blank" rel="noopener">Telegram</a><br>
     If gambling stops being fun, call 1-800-GAMBLER.
   </footer>
+
+  <script>
+  (function(){var b=document.getElementById('dnPush'),s=document.getElementById('dnPushState');if(!b||!s)return;
+    function st(){if(!('Notification' in window)){s.textContent='Not supported on this device';return;}
+      s.textContent=Notification.permission==='granted'?'Alerts are on':(Notification.permission==='denied'?'Blocked in your browser settings':'Tap to turn on alerts');}
+    b.addEventListener('click',function(){if('Notification' in window){Notification.requestPermission().then(st);}});
+    st();})();
+  </script>
 
 </div>
 
