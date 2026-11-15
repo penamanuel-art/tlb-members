@@ -2791,11 +2791,12 @@ def _uget(user, key, default=None):
         return default
 
 
-def stake_kelly(play, bankroll):
+def stake_kelly(play, bankroll, fraccion=0.25):
     """Quarter Kelly sobre el edge del modelo (modo Kelly $ del miembro).
 
     f* = p - (1-p)/b, con b = cuota decimal - 1 y p = prob. implícita + edge.
-    Se apuesta el cuarto de Kelly: 0.25 * f* * bankroll. Si f* <= 0, $0.
+    Se apuesta la fraccion de Kelly elegida por el miembro (default
+    0.25, el cuarto de Kelly): fraccion * f* * bankroll. Si f* <= 0, $0.
     Acepta cuota como int o string, con o sin signo (ej. 186, "+186", "-110").
     """
     try:
@@ -2826,7 +2827,7 @@ def stake_kelly(play, bankroll):
         f = p - (1.0 - p) / b
         if f <= 0:
             return 0.0
-        return round(0.25 * f * float(bankroll), 2)
+        return round(fraccion * f * float(bankroll), 2)
     except (TypeError, ValueError, ZeroDivisionError):
         return 0.0
 
@@ -2877,7 +2878,13 @@ def stake_personalizado(play, user):
     except (TypeError, ValueError):
         br = 0
     if br > 0 and (_uget(user, "stake_mode") or "units").lower() == "kelly":
-        return stake_kelly(play, br)
+        try:
+            _frac = float(_uget(user, "kelly_fraction") or 0.25)
+        except (TypeError, ValueError):
+            _frac = 0.25
+        if not (0.0 < _frac <= 1.0):
+            _frac = 0.25
+        return stake_kelly(play, br, _frac)
     try:
         units = float(play.get("stake_unidades") or 0)
     except (TypeError, ValueError):
@@ -5563,6 +5570,21 @@ def migrate_db():
                 conn.execute("ALTER TABLE tracked_plays ADD COLUMN juego TEXT")
             if "liga" not in tcols:
                 conn.execute("ALTER TABLE tracked_plays ADD COLUMN liga TEXT")
+            conn.commit()
+        # Fraccion Kelly del miembro (2026-11-15, hoja Stake sizing):
+        # 0.125 / 0.25 / 0.5 / 1.0; sin columna rige el default 0.25.
+        if USE_PG:
+            ucols_k = {r["column_name"] for r in conn.execute(
+                "SELECT column_name FROM information_schema.columns "
+                "WHERE table_name = 'users'"
+            ).fetchall()}
+        else:
+            ucols_k = {r[1] for r in conn.execute(
+                "PRAGMA table_info(users)").fetchall()}
+        if ucols_k and "kelly_fraction" not in ucols_k:
+            conn.execute("ALTER TABLE users ADD COLUMN kelly_fraction "
+                         + ("DOUBLE PRECISION" if USE_PG else "REAL")
+                         + " DEFAULT 0.25")
             conn.commit()
         # Códigos de vinculación Telegram (un solo uso, los crea /cuenta).
         conn.execute(
@@ -8702,15 +8724,46 @@ def cuenta():
 @app.route("/bankroll", methods=["GET", "POST"])
 @login_required
 def bankroll():
-    """Tu bankroll (2026-11-15, pedido de Alex con la referencia del
-    panel de WGT, con nuestro modelo y nuestro diseno): la pagina a la
-    que lleva el link «Set up your bankroll» bajo la ultima jugada del
-    home. El miembro pone su bankroll; su unidad (1% del bankroll) sale
-    sola y los montos de sus tarjetas y de su tracker se calculan desde
-    ahi. Guarda en users.bankroll con la misma validacion de /cuenta."""
+    """Hoja «Stake sizing» (2026-11-15, referencia de Alex del panel de
+    WGT, con nuestro modelo y nuestro diseno): bankroll del miembro,
+    fraccion Kelly elegida (1/8, 1/4, 1/2 o Full) y su unidad personal
+    (1% del bankroll, sale sola). Guarda en users.bankroll /
+    users.stake_mode / users.kelly_fraction. «Turn stakes off» limpia el
+    bankroll: las tarjetas vuelven a los montos oficiales del programa."""
     db = get_db()
     user = current_user()
+
+    def _ctx():
+        br = None
+        try:
+            _brv = _uget(user, "bankroll")
+            br = float(_brv) if _brv else None
+        except (TypeError, ValueError):
+            br = None
+        try:
+            frac = float(_uget(user, "kelly_fraction") or 0.25)
+        except (TypeError, ValueError):
+            frac = 0.25
+        if not (0.0 < frac <= 1.0):
+            frac = 0.25
+        return dict(
+            bankroll=br,
+            bankroll_txt=(f"{br:,.0f}" if br and br == int(br)
+                          else (f"{br:,.2f}" if br else "")),
+            stake_mode=(_uget(user, "stake_mode") or "units"),
+            kelly_fraction=frac,
+            unit_txt=((f"{br * 0.01:,.2f}".rstrip("0").rstrip("."))
+                      if br else "\u2014"),
+        )
+
     if request.method == "POST":
+        if (request.form.get("stakes_off") or "") == "1":
+            db.execute("UPDATE users SET bankroll = NULL WHERE id = ?",
+                       (session["user_id"],))
+            db.commit()
+            flash("Stakes are off. Your cards now show the program's "
+                  "official stakes.", "ok")
+            return redirect(url_for("home"))
         raw = (request.form.get("bankroll", "") or "").strip()
         raw = raw.replace("$", "").replace(",", "").replace(" ", "")
         try:
@@ -8719,16 +8772,24 @@ def bankroll():
             val = 0.0
         if val <= 0:
             flash("Enter a valid bankroll greater than zero.", "error")
-            return render_template(
-                "bankroll.html",
-                bankroll=(user["bankroll"] if user else None)), 400
-        db.execute("UPDATE users SET bankroll = ? WHERE id = ?",
-                   (val, session["user_id"]))
+            return render_template("bankroll.html", **_ctx()), 400
+        sizing = (request.form.get("sizing") or "").strip()
+        if sizing == "units":
+            db.execute(
+                "UPDATE users SET bankroll = ?, stake_mode = 'units' "
+                "WHERE id = ?", (val, session["user_id"]))
+        elif sizing in ("0.125", "0.25", "0.5", "1"):
+            db.execute(
+                "UPDATE users SET bankroll = ?, stake_mode = 'kelly', "
+                "kelly_fraction = ? WHERE id = ?",
+                (val, float(sizing), session["user_id"]))
+        else:
+            db.execute("UPDATE users SET bankroll = ? WHERE id = ?",
+                       (val, session["user_id"]))
         db.commit()
         flash(f"Bankroll saved: ${val:,.2f}.", "ok")
         return redirect(url_for("home"))
-    return render_template(
-        "bankroll.html", bankroll=(user["bankroll"] if user else None))
+    return render_template("bankroll.html", **_ctx())
 
 
 # Libros del perfil de apuestas (pestaña Preferences, 2026-10-12).
