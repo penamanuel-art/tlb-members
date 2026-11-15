@@ -18307,6 +18307,52 @@ def push_unsubscribe():
     return jsonify({"ok": True})
 
 
+
+@app.route("/api/alerts-contact", methods=["GET", "POST"])
+@login_required
+def api_alerts_contact():
+    """Contacto de alertas del miembro (2026-11-15, pedido de Alex): la
+    seccion Get alerts del Dashboard lee y guarda el telefono (con
+    opt-in de textos) y el email de la cuenta desde sus ventanitas,
+    sin pasar por /cuenta y sin tocar otras preferencias."""
+    db = get_db()
+    if request.method == "GET":
+        row = db.execute(
+            "SELECT email, phone, sms_optin FROM users WHERE id = ?",
+            (session["user_id"],)).fetchone()
+        return jsonify({"ok": True,
+                        "email": (row["email"] or "") if row else "",
+                        "phone": (row["phone"] or "") if row else "",
+                        "sms_optin": bool(row["sms_optin"]) if row else False})
+    data = request.get_json(force=True, silent=True) or {}
+    if "phone" in data:
+        phone = (data.get("phone") or "").strip()[:30]
+        digits = "".join(c for c in phone if c.isdigit())
+        if len(digits) < 7:
+            return jsonify({"ok": False,
+                            "error": "Enter a valid phone number."}), 400
+        db.execute("UPDATE users SET phone = ?, sms_optin = 1 WHERE id = ?",
+                   (phone, session["user_id"]))
+        db.commit()
+        return jsonify({"ok": True, "phone": phone})
+    if "email" in data:
+        email = (data.get("email") or "").strip().lower()[:160]
+        if "@" not in email or "." not in email.split("@")[-1] or " " in email:
+            return jsonify({"ok": False,
+                            "error": "Enter a valid email address."}), 400
+        taken = db.execute(
+            "SELECT id FROM users WHERE email = ? AND id != ?",
+            (email, session["user_id"])).fetchone()
+        if taken:
+            return jsonify({"ok": False,
+                            "error": "That email is already on another account."}), 400
+        db.execute("UPDATE users SET email = ? WHERE id = ?",
+                   (email, session["user_id"]))
+        db.commit()
+        return jsonify({"ok": True, "email": email})
+    return jsonify({"ok": False, "error": "Nothing to save."}), 400
+
+
 @app.route("/sw.js")
 def service_worker():
     """Service Worker en la raíz (scope /): requerido para Web Push."""
