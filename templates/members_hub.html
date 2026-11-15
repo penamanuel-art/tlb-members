@@ -299,6 +299,15 @@ summary{font:500 16px Unbounded,Roboto,sans-serif;padding:20px 0}
 .bb-ico{display:flex;align-items:center;justify-content:center;width:27.5px;height:27.5px;line-height:1}
 .bb-in a.on{position:relative;color:#2fe6a7;background:rgba(47,230,167,.15);font-weight:600}
 .bb-in a.on::after{content:"";position:absolute;top:-3px;left:50%;transform:translateX(-50%);width:46px;height:3px;border-radius:0 0 4px 4px;background:#2fe6a7}
+/* Hero zone organized: one tight spacing scale (date → greeting → intro → tour button), smaller H1 so the stored name never splits mid-name */
+.hero{padding:64px 0 40px}
+#wd{margin:0}
+.hero h1{font-size:clamp(30px,5.4vw,48px);margin:12px 0 0}
+.hero h1 .nmw{white-space:nowrap}
+.hero p{margin:12px 0 0}
+.ask{margin-top:14px}
+.tourbtn{display:inline-flex;align-items:center;margin-top:14px;padding:6px 13px;font-size:12.5px;font-weight:500;letter-spacing:.02em;color:var(--m);border:1px solid var(--gl);border-radius:99px;background:transparent;text-decoration:none}
+.tourbtn:hover{color:var(--au);border-color:rgba(45,224,160,.45)}
 </style>
 </head>
 <body>
@@ -307,7 +316,7 @@ summary{font:500 16px Unbounded,Roboto,sans-serif;padding:20px 0}
 <div class="hero">
 <div><div class="eyebrow" id="wd">Saturday, November 14</div><h1 id="wh">Welcome to <em>The Sharp Team</em></h1><p id="wp"></p>
 <div class="ask" id="ask"><label for="nm">What should we call you?</label><div><input id="nm" type="text" maxlength="40" placeholder="Your first name" autocomplete="given-name"><button class="btn pri" id="sv">Enter</button></div></div>
-<button class="btn" id="chg" hidden style="margin-top:16px">Change name</button></div>
+<a class="tourbtn" href="/home?tour=1">Take the tour</a></div>
 </div>
 <div class="card3 status" id="statusCard"><div class="stx" id="stA" hidden><div class="st-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2DE0A0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><div class="st-tx"><div class="st-t">Not posted yet</div><p class="st-l">Alex posts the board by <b>2:00 PM ET</b> on weekdays and by <b>11:00 AM ET</b> on weekends.</p></div></div><div class="stx" id="stB"><div class="st-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2DE0A0" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12.5l5 5L20 6.5"/></svg></div><div class="st-tx"><div class="st-t">Today's board is posted</div><p class="st-l"><b>4 plays today</b> · Total risk <b>$279</b> · Program, last 10: <b>3–7</b> · Platinum, last 10: <b>7–3</b></p></div></div></div>
 <div class="sum">
@@ -403,10 +412,10 @@ function dec(o){return o<0?1+100/-o:1+o/100}
 function pr(o){return (o>0?'+':'−')+Math.abs(o)}
 function greet(){var h=new Date().getHours(),g=h<12?'Good morning':h<18?'Good afternoon':'Good evening',w=document.getElementById('wh');
 w.innerHTML=NM?'':'Welcome to <em>The Sharp Team</em>';
-if(NM){w.textContent=g+', ';var e=document.createElement('em');e.textContent=NM+'.';w.appendChild(e)}
+if(NM){w.textContent=g+', ';var e=document.createElement('em');var s=document.createElement('span');s.className='nmw';s.textContent=NM+'.';e.appendChild(s);w.appendChild(e)}
 document.getElementById('wp').textContent=NM?'Your desk is ready. Today’s plays are below, sized to your bankroll and explained line by line.':'The Sharp Team members desk — today’s card, the full record and your own tracker, all in one place. Tell us your name and we will greet you each time you return.';
 var _mn=document.getElementById('mn');if(_mn)_mn.textContent=NM||'Your name';
-document.getElementById('ask').style.display=NM?'none':'block';document.getElementById('chg').hidden=!NM}
+document.getElementById('ask').style.display=NM?'none':'block'}
 function render(){
 var b=+document.getElementById('bk').value||0,h='',net=0,tot=0,w=0,l=0,ev=0,win=0;
 plays.forEach(function(p,i){
@@ -443,7 +452,6 @@ new Chart(document.getElementById('ch'),{type:'line',data:{labels:pts.map(functi
 document.getElementById('bk').addEventListener('input',render);
 document.getElementById('sv').addEventListener('click',function(){var v=document.getElementById('nm').value.trim().slice(0,40);if(!v)return;NM=v;try{localStorage.setItem('stname',v)}catch(e){}greet()});
 document.getElementById('nm').addEventListener('keydown',function(e){if(e.key==='Enter')document.getElementById('sv').click()});
-document.getElementById('chg').addEventListener('click',function(){NM='';try{localStorage.removeItem('stname')}catch(e){}greet()});
 document.addEventListener('click',function(e){
 var t=e.target.closest('[data-t]'),m=e.target.closest('[data-m]'),x=e.target.closest('[data-x]'),fb=e.target.closest('[data-f]');
 if(t){toggleTrack(+t.dataset.t)}
