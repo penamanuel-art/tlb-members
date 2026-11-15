@@ -237,7 +237,7 @@ summary{font:500 16px Unbounded,Roboto,sans-serif;padding:20px 0}
 .tb-logo{line-height:1.25}
 .tb-in{padding-top:12px;padding-bottom:12px}
 .hi{padding-top:14px;padding-bottom:14px}
-.hero{padding-top:78px}
+.hero{padding-top:64px}
 .hero h1{line-height:1.18;padding-top:6px}
 #wd{line-height:1.5}
 /* Mint side lines on cards (play cards, stat panels, member card) */
@@ -266,7 +266,23 @@ summary{font:500 16px Unbounded,Roboto,sans-serif;padding:20px 0}
 .bb-in a{display:inline-flex;align-items:center;min-height:40px;padding:9px 15px;border:1px solid var(--gl);border-radius:99px;background:var(--p2);color:var(--t);text-decoration:none;font-size:13.5px;font-weight:500;letter-spacing:.02em;white-space:nowrap}
 .bb-in a:hover{border-color:rgba(45,224,160,.55);color:var(--au)}
 .bb-in a.tb-out{color:var(--m)}
-.wrap{padding-bottom:150px}
+.bb-in a svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex:none;margin-right:6px}
+.wrap{padding-bottom:92px}
+/* Desk-style play cards - mirror of the Members Desk card */
+.ph{padding:11px 18px 0}
+.pb{padding:8px 18px 0}.pb h3{font-size:clamp(19px,5.4vw,22px);font-weight:600;line-height:1.15}
+.res{margin-top:8px;border-radius:6px;padding:4px 12px}
+.pills{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
+.pill2{font-size:11.5px;border:1px solid var(--line);border-radius:99px;padding:3px 10px;color:var(--m);white-space:nowrap}
+.pill2 b{color:var(--t);font-weight:600}
+.px{margin:12px 18px 0}.px>div{padding:6px 12px;min-width:0;overflow:hidden}
+.px small{font-size:10.5px;line-height:1.2}.px b{font:600 24px 'Roboto Mono',monospace;line-height:1.05}
+.px em{display:block;font-size:11px;line-height:1.25;white-space:nowrap}
+.ac{padding:11px 18px 12px;gap:7px}
+.wy{padding:11px 18px}
+.th{padding:16px 18px 6px}
+.pick th,.pick td{padding:11px 18px}
+.math,.ft{padding-left:18px;padding-right:18px}
 </style>
 </head>
 <body>
@@ -318,7 +334,7 @@ summary{font:500 16px Unbounded,Roboto,sans-serif;padding:20px 0}
 <div class="rules">
 <div class="rule"><h3>One unit, one percent</h3><p>One unit is 1% of the $10,000 reference bankroll: Platinum stakes $100, Gold $60. Fixed sizes keep one bad night from becoming a bad month.</p></div>
 <div class="rule"><h3>Cap the day</h3><p>We keep daily exposure near 2–3% of bankroll. Add no extra plays to chase a loss.</p></div>
-<div class="rule"><h3>Track everything</h3><p>Use “Track play” so each bet is graded at your own size. What you measure, you improve.</p></div>
+<div class="rule"><h3>Track everything</h3><p>Use “+ Track” so each bet is graded at your own size. What you measure, you improve.</p></div>
 </div>
 </section>
 
@@ -354,16 +370,17 @@ summary{font:500 16px Unbounded,Roboto,sans-serif;padding:20px 0}
 </div>
 <script>
 var plays=[
-{t:'gold',lg:'NCAAF',pick:'West Virginia Mountaineers ML',g:'Kansas @ West Virginia · 3:30 PM ET',o:-125,mo:57.9,u:.59,r:'l',th:'The market rates Kansas the stronger side, but our model rates West Virginia higher on form and matchup, with a clean injury report on both sides. The edge is small, so the stake stays at the standard Gold size.'},
-{t:'gold',lg:'NCAAF',pick:'Washington Huskies ML',g:'Washington @ Michigan State · 5:30 PM ET',o:-130,mo:59.4,u:.6,r:'w',th:'The highest win probability on today’s board at −130, against a Michigan State side missing 10 players, including its top tackler. A favorite with an edge is a calmer way to use a small advantage.'},
-{t:'gold',lg:'NHL',pick:'Montréal Canadiens ML',g:'Colorado @ Montréal · 7:00 PM ET',o:-117,mo:54,u:.6,r:'l',th:'On the card by Alex’s direct order — declared as an override, not a model play. At the published price the model sat just below break-even (edge −0.3, EV −0.6%); the morning Sharp Money flow backed Montréal.'},
-{t:'plat',lg:'NCAAF',pick:'Utah Utes ML',g:'Utah @ Arizona · 10:30 PM ET',o:-104,mo:56.4,u:1,r:'p',th:'Utah is 9–0 and No. 2 nationally, with QB Devon Dampier healthy (27 total TDs) against an Arizona secondary thinned by injuries. The edge clears the Platinum entry band, so the stake is a full unit.'}];
+{t:'gold',lg:'NCAAF',pick:'West Virginia Mountaineers ML',g:'Kansas Jayhawks @ West Virginia Mountaineers · 3:30 PM ET',c:'img/comprobantes/2026-11-14-west-virginia-mountaineers.jpg',inj:0,o:-125,mo:57.9,u:.59,r:'l',th:'The market rates Kansas the stronger side, but our model rates West Virginia higher on form and matchup, with a clean injury report on both sides. The edge is small, so the stake stays at the standard Gold size.'},
+{t:'gold',lg:'NCAAF',pick:'Washington Huskies ML',g:'Washington Huskies @ Michigan State Spartans · 5:30 PM ET',c:'img/comprobantes/2026-11-14-washington-huskies.jpg',inj:0,o:-130,mo:59.4,u:.6,r:'w',th:'The highest win probability on today’s board at −130, against a Michigan State side missing 10 players, including its top tackler. A favorite with an edge is a calmer way to use a small advantage.'},
+{t:'gold',lg:'NHL',pick:'Montréal Canadiens ML',g:'Colorado Avalanche @ Montréal Canadiens · 7:00 PM ET',c:'img/comprobantes/2026-11-14-montreal-canadiens.jpg',inj:10,o:-117,mo:54,u:.6,r:'l',th:'On the card by Alex’s direct order — declared as an override, not a model play. At the published price the model sat just below break-even (edge −0.3, EV −0.6%); the morning Sharp Money flow backed Montréal.'},
+{t:'plat',lg:'NCAAF',pick:'Utah Utes ML',g:'Utah Utes @ Arizona Wildcats · 10:30 PM ET',c:'img/comprobantes/2026-11-14-utah-utes.jpg',inj:0,wx:{t:58,v:'Casino Del Sol Stadium'},o:-104,mo:56.4,u:1,r:'p',th:'Utah is 9–0 and No. 2 nationally, with QB Devon Dampier healthy (27 total TDs) against an Arizona secondary thinned by injuries. The edge clears the Platinum entry band, so the stake is a full unit.'}];
 var _stA=document.getElementById('stA'),_stB=document.getElementById('stB');
 if(plays.length){_stA.hidden=true;_stB.hidden=false}else{_stA.hidden=false;_stB.hidden=true}
 var lgs=[['MLB',19,6],['NFL',12,9],['NCAAF',10,5],['NHL',13,15],['NBA',9,11]];
 var f='all',tr={},NM='';
 try{NM=localStorage.getItem('stname')||''}catch(e){}
 function $(n){return (n<0?'−':'')+'$'+Math.round(Math.abs(n)).toLocaleString('en-US')}
+function $2(n){return (n<0?'−':'')+'$'+Math.abs(n).toFixed(2)}
 function imp(o){return o<0?-o/(-o+100)*100:100/(o+100)*100}
 function dec(o){return o<0?1+100/-o:1+o/100}
 function pr(o){return (o>0?'+':'−')+Math.abs(o)}
@@ -379,13 +396,16 @@ plays.forEach(function(p,i){
 var s=p.u*b/100,d=dec(p.o),im=imp(p.o),ed=p.mo-im,tw=s*(d-1),e=p.mo/100*tw-(1-p.mo/100)*s;
 tot+=s;ev+=e;win+=tw;if(p.r==='w'){net+=tw;w++}if(p.r==='l'){net-=s;l++}
 if(f!=='all'&&p.t!==f)return;
-var rs=p.r==='w'?'<span class="res w">WON +'+$(tw)+'</span>':p.r==='l'?'<span class="res l">LOST '+$(-s)+'</span>':'<span class="res pn">PENDING</span>';
+var rs=p.r==='w'?'<span class="res w">WON +'+$2(tw)+'</span>':p.r==='l'?'<span class="res l">LOST '+$2(-s)+'</span>':'<span class="res pn">PENDING</span>';
 var be=p.o<0?(-p.o)+' ÷ ('+(-p.o)+' + 100)':'100 ÷ ('+p.o+' + 100)';
-h+='<article class="pick '+p.t+'"><div class="ph"><b>♛ '+(p.t==='gold'?'GOLD PLAY':'PLATINUM PLAY')+'</b><span class="lgc">'+p.lg+'</span></div><div class="pb"><h3>'+p.pick+'</h3><div class="gm">'+p.g+'</div>'+rs+'</div>'
-+'<div class="px"><div><small>PRICE POSTED</small><b>'+pr(p.o)+'</b></div><div><small>YOUR STAKE</small><b>'+$(s)+'</b><em>'+p.u+'u · ticket matched ✓</em></div></div>'
-+'<div class="ac"><button class="btn pri">Place bet</button><button class="btn">Receipt</button><button class="btn'+(tr[i]?' on':'')+'" data-t="'+i+'">'+(tr[i]?'✓ Tracked':'Track play')+'</button></div>'
-+'<button class="wy" data-x="'+i+'"><span>Why we like it</span><span style="color:var(--au)">Open the analysis ▾</span></button><div class="more" id="x'+i+'"><p class="th">'+p.th+'</p>'
-+'<table><tr><th>Break-even chance<small>What the price needs to be fair</small></th><td>'+im.toFixed(1)+'%</td></tr><tr><th>Our model’s chance<small>Estimated true win probability</small></th><td>'+p.mo.toFixed(1)+'%</td></tr><tr><th>Edge<small>Model minus break-even</small></th><td class="'+(ed>=0?'pos':'neg')+'">'+(ed>=0?'+':'')+ed.toFixed(1)+' pts</td></tr><tr><th>To win<small>Profit if the play wins</small></th><td>'+$(tw)+'</td></tr><tr><th>Expected value<small>Average result per bet, long run</small></th><td class="'+(e>=0?'pos':'neg')+'">'+(e>=0?'+':'')+$(e)+'</td></tr></table>'
+var evp=s>0?(e/s*100):0;
+var pills='';if(p.wx)pills+='<span class="pill2">🌥 <b>'+p.wx.t+'°</b> · '+p.wx.v+'</span>';if(p.inj!=null)pills+='<span class="pill2">✚ Injuries <b>'+p.inj+'</b></span>';if(pills)pills='<div class="pills">'+pills+'</div>';
+h+='<article class="pick '+p.t+'"><div class="ph"><b>'+(p.t==='gold'?'👑 GOLD PLAY':'💎 PLATINUM PLAY')+'</b><span class="lgc">'+p.lg+'</span></div><div class="pb"><h3>'+p.pick+'</h3><div class="gm">'+p.g+'</div>'+pills+rs+'</div>'
++'<div class="px"><div><small>PRICE POSTED</small><b>'+pr(p.o)+'</b><em style="color:var(--m)">Novig · ticket matched ✓</em></div><div><small>STAKE</small><b>'+$(s)+'</b><em>'+p.u+'u · ticket matched ✓</em></div></div>'
++'<div class="ac"><a class="btn pri" href="https://novig.com" target="_blank" rel="noopener">↗ Place at Novig</a><button class="btn" data-share="'+p.pick+'">Share</button>'+(p.c?'<a class="btn" href="/static/'+p.c+'" target="_blank" rel="noopener">🎫 Receipt</a>':'')+'<button class="btn'+(tr[i]?' on':'')+'" data-t="'+i+'">'+(tr[i]?'✓ Tracked':'+ Track')+'</button></div>'
++'<button class="wy" data-x="'+i+'"><span>WHY WE LIKE IT · Model '+p.mo.toFixed(1)+'% · Edge '+(ed>=0?'+':'')+ed.toFixed(1)+' · EV '+(evp>=0?'+':'−')+Math.abs(evp).toFixed(1)+'%</span><span style="color:var(--au)">Open the analysis ▾</span></button><div class="more" id="x'+i+'">'
++'<table><tr><th>Model win probability<small>Our estimated true chance</small></th><td>'+p.mo.toFixed(1)+'%</td></tr><tr><th>Break-even chance<small>What the price needs to be fair</small></th><td>'+im.toFixed(1)+'%</td></tr><tr><th>Edge<small>Model minus break-even</small></th><td class="'+(ed>=0?'pos':'neg')+'">'+(ed>=0?'+':'')+ed.toFixed(1)+' pts</td></tr><tr><th>To win<small>Profit if the play wins</small></th><td>'+$(tw)+'</td></tr><tr><th>Expected value<small>Average result per bet, long run</small></th><td class="'+(e>=0?'pos':'neg')+'">'+(e>=0?'+':'')+$(e)+'</td></tr></table>'
++'<p class="th">'+p.th+'</p>'
 +'<div class="math" id="m'+i+'"><b style="color:var(--t)">The math</b><code>break-even = '+be+' = '+im.toFixed(1)+'%</code><code>edge = '+p.mo.toFixed(1)+'% − '+im.toFixed(1)+'% = '+ed.toFixed(1)+' pts</code><code>EV = '+(p.mo/100).toFixed(3)+' × '+$(tw)+' − '+(1-p.mo/100).toFixed(3)+' × '+$(s)+' = '+$(e)+'</code></div>'
 +'<div class="ft"><button class="btn" data-m="'+i+'">Show the math</button></div></div></article>';});
 document.getElementById('plays').innerHTML=h;
@@ -410,6 +430,7 @@ document.getElementById('chg').addEventListener('click',function(){NM='';try{loc
 document.addEventListener('click',function(e){
 var t=e.target.closest('[data-t]'),m=e.target.closest('[data-m]'),x=e.target.closest('[data-x]'),fb=e.target.closest('[data-f]');
 if(t){toggleTrack(+t.dataset.t)}
+var sh=e.target.closest('[data-share]');if(sh){var su=window.location.origin+'/home';if(navigator.share){navigator.share({title:'The Sharp Team',text:sh.dataset.share,url:su}).catch(function(){})}else if(navigator.clipboard){navigator.clipboard.writeText(su)}}
 var dl=e.target.closest('[data-d]');if(dl){E.splice(+dl.dataset.d,1);saveE();syncTr();trk();render()}
 if(m){document.getElementById('m'+m.dataset.m).classList.toggle('open')}
 if(x){document.getElementById('x'+x.dataset.x).classList.toggle('open')}
@@ -426,7 +447,7 @@ function trk(){var h='',pl=0,st=0,w=0,l=0;
 E.forEach(function(e,i){var p=pf(e);if(e.r==='w'||e.r==='l'){st+=e.s;pl+=p}if(e.r==='w')w++;if(e.r==='l')l++;
 var sel=['p:Pending','w:Won','l:Lost','x:Push'].map(function(o){var a=o.split(':');return '<option value="'+a[0]+'"'+(e.r===a[0]?' selected':'')+'>'+a[1]+'</option>'}).join('');
 h+='<tr><td>'+esc(e.lg)+'</td><td style="text-align:left">'+esc(e.p)+'</td><td>'+pr(e.o)+'</td><td>'+$(e.s)+'</td><td><select data-r="'+i+'" aria-label="Result">'+sel+'</select></td><td class="'+(p>0?'pos':p<0?'neg':'')+'">'+(p>0?'+':'')+$(p)+'</td><td><button class="btn" data-d="'+i+'" aria-label="Delete play">✕</button></td></tr>'});
-document.getElementById('tkb').innerHTML=h||'<tr><td colspan="7" style="text-align:center;color:var(--m)">No plays yet. Add one above, or tap “Track play” on any desk card.</td></tr>';
+document.getElementById('tkb').innerHTML=h||'<tr><td colspan="7" style="text-align:center;color:var(--m)">No plays yet. Add one above, or tap “+ Track” on any desk card.</td></tr>';
 var n=w+l;document.getElementById('k1').textContent=w+'–'+l;
 var k2=document.getElementById('k2');k2.textContent=(pl>=0?'+':'')+$(pl);k2.className=pl>=0?'pos':'neg';
 document.getElementById('k3').textContent=st?(pl/st*100).toFixed(1)+'%':'0.0%';
@@ -438,6 +459,6 @@ document.addEventListener('change',function(e){var r=e.target.closest('[data-r]'
 var cf=false;document.getElementById('tc').addEventListener('click',function(){var b=this;if(!E.length)return;if(!cf){cf=true;b.textContent='Tap again to confirm';setTimeout(function(){cf=false;b.textContent='Clear all'},3000)}else{cf=false;b.textContent='Clear all';E=[];saveE();syncTr();trk();render()}});
 syncTr();greet();render();trk();window.addEventListener('load',chart);
 </script>
-<nav class="botbar"><div class="bb-in"><a href="/home">Dashboard</a><a href="/tracker/plays">My Bets</a><a href="/tools">Tools</a><a href="/records">Full record</a><a href="/cuenta">Account</a><a href="/admin">Admin</a><a class="tb-out" href="/logout">Log out</a></div></nav>
+<nav class="botbar"><div class="bb-in"><a href="/home"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9 21v-6h6v6"/></svg>Today</a><a href="/odds"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="2.5"/></svg>Odds</a><a href="/tools"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Tools</a><a href="/tracker"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a3 3 0 0 0 0 6v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a3 3 0 0 0 0-6Z"/><path d="M13 5v2"/><path d="M13 11v2"/><path d="M13 17v2"/></svg>My Bets</a><a href="/cuenta"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/></svg>Account</a></div></nav>
 </body>
 </html>
