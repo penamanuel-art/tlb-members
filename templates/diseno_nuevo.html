@@ -110,6 +110,29 @@
   .dn-sec-head::before{content:"";width:8px;height:8px;background:var(--mint);border-radius:2px;flex:0 0 auto}
   .dn-sec-head h2{font-family:var(--fdisp);font-size:17.1px;font-weight:700;margin:0;color:var(--txt)}
   .dn-sec-head .dn-chip{margin-left:auto;font-family:var(--fmono);font-size:12px;color:var(--mut);border:1px solid var(--line);border-radius:999px;padding:4px 10px;white-space:nowrap}
+  /* Tirita superior de récord (últimas 10 liquidadas) */
+  .dn-strip{margin-top:14px;background:var(--mintbg);border:1px solid var(--mintline);border-radius:999px;padding:8px 14px;text-align:center;font-size:13.5px;color:var(--txt)}
+  .dn-strip b{font-weight:700}
+  /* Hot right now: carrusel de rachas reales */
+  .dn-hot-head{display:flex;align-items:flex-start;gap:12px;margin-bottom:4px}
+  .dn-hot-head h2{font-family:var(--fdisp);font-size:17.1px;font-weight:700;margin:0;color:var(--txt);display:flex;align-items:center;gap:9px}
+  .dn-hot-head h2::before{content:"";width:8px;height:8px;background:var(--mint);border-radius:2px;flex:0 0 auto}
+  .dn-hot-sub{color:var(--mut);font-size:13.5px;margin:5px 0 0}
+  .dn-hot-ledger{margin-left:auto;flex:0 0 auto;display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--panel);color:var(--txt);border-radius:12px;padding:9px 13px;font-size:13.5px;font-weight:600;white-space:nowrap}
+  .dn-hot-row{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;padding:10px 2px 12px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .dn-hot-row::-webkit-scrollbar{display:none}
+  .dn-hot-card{flex:0 0 292px;scroll-snap-align:start;background:linear-gradient(180deg,#141F38,var(--panel));border:1px solid var(--mintline);border-radius:20px;padding:18px}
+  .dn-hot-top{display:flex;align-items:center;gap:10px}
+  .dn-hot-pill{background:var(--mintbg);color:var(--mint);border:1px solid var(--mintline);border-radius:999px;padding:5px 10px;font-size:11px;font-weight:700;letter-spacing:.08em;white-space:nowrap}
+  .dn-hot-tag{margin-left:auto;color:var(--mut);font-size:13.5px;font-weight:600;white-space:nowrap}
+  .dn-hot-num{font-family:var(--fdisp);font-size:56px;font-weight:800;color:#fff;line-height:1.08;margin:16px 0 4px}
+  .dn-hot-num .w{font-size:27px;font-weight:700}
+  .dn-hot-sub2{font-size:15px;color:#C9D4E6;margin:0 0 14px}
+  .dn-hot-dots{display:flex;flex-wrap:wrap;gap:5px;margin:0 0 16px;min-height:9px}
+  .dn-hot-dots span{width:9px;height:9px;border-radius:50%;background:var(--mint)}
+  .dn-hot-foot{display:flex;align-items:center;gap:10px}
+  .dn-hot-note{color:var(--mut);font-size:13.5px}
+  .dn-hot-link{margin-left:auto;color:var(--mint);font-size:13.5px;font-weight:600;white-space:nowrap}
 
   /* Sin card todavia */
   .dn-empty{background:var(--panel);border:1px dashed var(--mintline);border-radius:14px;padding:22px 18px;text-align:center}
@@ -242,27 +265,6 @@
   .dn-bubble .dn-b-dot{width:8px;height:8px;border-radius:50%;background:#06231A;flex:0 0 auto;animation:dnPulse 1.6s ease-in-out infinite}
   .dn-bubble .dn-b-x{flex:0 0 auto;font-size:13.5px;font-weight:700;opacity:.65;padding:2px 5px}
   @keyframes dnPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.5)}}
-
-  /* Hot right now: rachas reales del archive (referencia de Alex 2026-11-15) */
-  .dn-hot-sub{font-size:13.5px;color:var(--mut);margin:-4px 0 12px}
-  .dn-hot-btn{flex:none;font-size:13.5px;font-weight:600;color:var(--txt);background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:8px 14px}
-  .dn-hot-row{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding:2px 2px 10px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
-  .dn-hot-row::-webkit-scrollbar{display:none}
-  .dn-hot-card{flex:0 0 84%;scroll-snap-align:start;background:var(--panel);border:1px solid var(--mintline);border-left:4px solid var(--mint);border-radius:18px;padding:16px;color:var(--txt);display:flex;flex-direction:column;gap:9px;text-decoration:none}
-  .dn-hot-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
-  .dn-hot-tag{font-size:12px;font-weight:700;letter-spacing:1.2px;color:var(--mint);border:1px solid var(--mintline);border-radius:8px;padding:5px 10px}
-  .dn-hot-liga{font-size:13.5px;font-weight:700;letter-spacing:1px;color:var(--mut)}
-  .dn-hot-big{font-family:var(--fdisp);font-size:33px;font-weight:700;line-height:1.05;color:var(--txt)}
-  .dn-hot-sub2{font-size:15px;color:var(--txt)}
-  .dn-hot-dots{display:flex;gap:7px;flex-wrap:wrap}
-  .dn-dot{width:13px;height:13px;border-radius:50%;background:#22345C}
-  .dn-dot.on{background:var(--mint)}
-  .dn-hot-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:2px}
-  .dn-hot-foot span:first-child{font-size:13.5px;color:var(--mut)}
-  .dn-hot-see{font-size:13.5px;font-weight:600;color:var(--mint);white-space:nowrap}
-  .dn-hot-prog{height:3px;background:#22345C;border-radius:999px;overflow:hidden}
-  .dn-hot-prog i{display:block;height:100%;width:25%;background:var(--mint);border-radius:999px}
-  .dn-hot-hint{font-size:13.5px;color:var(--mut);margin-top:10px}
 </style>
 <noscript><style>.dn-loader{display:none!important}</style></noscript>
 </head>
@@ -295,6 +297,10 @@
 </header>
 
 <div class="dn-wrap">
+
+  {% if tirita_record10 %}
+  <div class="dn-strip">🔥 <b>{{ tirita_record10.etiqueta }}: {{ tirita_record10.w }}-{{ tirita_record10.l }}</b> in the last 10 plays</div>
+  {% endif %}
 
   <div class="dn-notif" id="dnNotif" hidden>
     <h3>Notifications</h3>
@@ -370,29 +376,28 @@
 
 
 
-{% if rachas_home %}
+  {% if hot_home %}
   <section class="dn-sec">
-    <div class="dn-sec-head"><h2>Hot right now</h2><a class="dn-hot-btn" href="{{ url_for('records') }}">Full record</a></div>
-    <p class="dn-hot-sub">Current winning runs, graded plays only</p>
-    <div class="dn-hot-row" id="dnHotRow">
-      {% for c in rachas_home %}
-      <a class="dn-hot-card" href="{{ url_for('records') }}">
-        <div class="dn-hot-top"><span class="dn-hot-tag">{{ c.tag }}</span>{% if c.liga %}<span class="dn-hot-liga">{{ c.liga }}</span>{% endif %}</div>
-        <div class="dn-hot-big">{{ c.big }}</div>
-        <div class="dn-hot-sub2">{{ c.sub }}</div>
-        {% if c.dots %}<div class="dn-hot-dots">{% for d in c.dots %}<span class="dn-dot{{ ' on' if d else '' }}"></span>{% endfor %}</div>{% endif %}
-        <div class="dn-hot-foot"><span>Graded win or lose</span><span class="dn-hot-see">See the plays &rsaquo;</span></div>
-      </a>
+    <div class="dn-hot-head">
+      <div>
+        <h2>Hot right now</h2>
+        <p class="dn-hot-sub">Current winning runs, graded plays only</p>
+      </div>
+      <a class="dn-hot-ledger" href="{{ url_for('records') }}">↗ Public ledger</a>
+    </div>
+    <div class="dn-hot-row">
+      {% for c in hot_home %}
+      <article class="dn-hot-card">
+        <div class="dn-hot-top"><span class="dn-hot-pill">OFFICIAL PLAYS</span><span class="dn-hot-tag">{{ c.tag }}</span></div>
+        <div class="dn-hot-num">{{ c.num }}{% if c.word %} <span class="w">{{ c.word }}</span>{% endif %}</div>
+        <p class="dn-hot-sub2">{{ c.sub }}</p>
+        <div class="dn-hot-dots">{% for i in range(c.puntos) %}<span></span>{% endfor %}</div>
+        <div class="dn-hot-foot"><span class="dn-hot-note">Graded win or lose</span><a class="dn-hot-link" href="{{ url_for('records') }}">See the plays ›</a></div>
+      </article>
       {% endfor %}
     </div>
-    <div class="dn-hot-prog"><i id="dnHotProg"></i></div>
-    <p class="dn-hot-hint">Tap a run to see every play in it &mdash; wins and losses.</p>
   </section>
-  <script>
-  (function(){var r=document.getElementById('dnHotRow'),p=document.getElementById('dnHotProg');if(!r||!p)return;function u(){var m=r.scrollWidth-r.clientWidth;var t=m>0?(r.scrollLeft/m):0;p.style.width=(25+75*t)+'%';}r.addEventListener('scroll',u,{passive:true});u();})();
-  </script>
   {% endif %}
-
 
   {% if stats.ultimas %}
   <section class="dn-sec">
