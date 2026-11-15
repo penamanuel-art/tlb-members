@@ -3090,7 +3090,11 @@ def hot_home_cards():
                             "liga": (j.get("liga") or "").upper(),
                             "lvl": lvl,
                             "pick": j.get("pick") or j.get("team_name") or "",
-                            "fecha": d.get("fecha") or ""})
+                            "fecha": d.get("fecha") or "",
+                            "cuota": j.get("cuota"),
+                            "profit": j.get("profit"),
+                            "stake": j.get("stake_monto"),
+                            "comp": j.get("comprobante") or ""})
         if not seq:
             return []
         tira = tirita_record10() or {}
@@ -3108,6 +3112,35 @@ def hot_home_cards():
             it = items[-n:] if n else items
             w = sum(1 for s in it if s["res"] == "WON")
             return w, len(it) - w
+
+        def _pl(s):
+            u = None
+            try:
+                if s.get("profit") is not None:
+                    u = float(s["profit"]) / 100.0
+                elif s.get("stake"):
+                    st = float(s["stake"])
+                    if s["res"] == "LOST":
+                        u = -st / 100.0
+                    elif s.get("cuota"):
+                        cu = float(s["cuota"])
+                        dec = 1 + (100.0 / abs(cu) if cu < 0 else cu / 100.0)
+                        u = st * (dec - 1) / 100.0
+            except Exception:
+                u = None
+            try:
+                cu_t = ("%+d" % int(float(s["cuota"]))
+                        if s.get("cuota") not in (None, "") else "")
+            except Exception:
+                cu_t = str(s.get("cuota") or "")
+            try:
+                fd = datetime.strptime(s["fecha"], "%Y-%m-%d").strftime("%b %-d, %Y")
+            except Exception:
+                fd = s["fecha"]
+            return {"pick": s["pick"], "fecha": s["fecha"], "fdate": fd,
+                    "res": s["res"], "liga": s["liga"], "lvl": s["lvl"],
+                    "cuota": cu_t, "comp": s.get("comp") or "",
+                    "uni": (("%+.2f" % u) + "u") if u is not None else ""}
 
         def _racha(items):
             n = 0
@@ -3133,10 +3166,10 @@ def hot_home_cards():
                               "ambito": nombre,
                               "seq": [s["res"] for s in _rp],
                               "pct": None,
-                              "plays": [{"pick": s["pick"], "fecha": s["fecha"],
-                                         "res": s["res"], "liga": s["liga"],
-                                         "lvl": s["lvl"]}
-                                        for s in reversed(_rp)]})
+                              "pill": ("OFFICIAL PLAYS" if nombre in
+                                       ("NFL", "NCAAF", "NBA", "NHL", "MLB")
+                                       else nombre.upper() + " PLAYS"),
+                              "plays": [_pl(s) for s in reversed(_rp)]})
             tiene_30 = False
             for n in (10, 30):
                 if n_tot < n:
@@ -3159,10 +3192,10 @@ def hot_home_cards():
                               "ambito": nombre,
                               "seq": [s["res"] for s in _vn],
                               "pct": int(round(100.0 * w / (w + l))),
-                              "plays": [{"pick": s["pick"], "fecha": s["fecha"],
-                                         "res": s["res"], "liga": s["liga"],
-                                         "lvl": s["lvl"]}
-                                        for s in reversed(_vn)]})
+                              "pill": ("OFFICIAL PLAYS" if nombre in
+                                       ("NFL", "NCAAF", "NBA", "NHL", "MLB")
+                                       else nombre.upper() + " PLAYS"),
+                              "plays": [_pl(s) for s in reversed(_vn)]})
             if n_tot > 10 and not tiene_30:
                 w, l = _rec(it)
                 if _fuerte(w, l):
@@ -3174,11 +3207,11 @@ def hot_home_cards():
                                   "seq": ([s["res"] for s in it]
                                           if len(it) <= 30 else []),
                                   "pct": int(round(100.0 * w / (w + l))),
-                                  "plays": [{"pick": s["pick"],
-                                             "fecha": s["fecha"],
-                                             "res": s["res"],
-                                             "liga": s["liga"],
-                                             "lvl": s["lvl"]}
+                                  "pill": ("OFFICIAL PLAYS" if nombre in
+                                           ("NFL", "NCAAF", "NBA", "NHL",
+                                            "MLB")
+                                           else nombre.upper() + " PLAYS"),
+                                  "plays": [_pl(s)
                                             for s in reversed(it)]})
         cands.sort(key=lambda c: -c["score"])
         out, por_ambito = [], {}
@@ -3187,7 +3220,8 @@ def hot_home_cards():
                 continue
             por_ambito[c["ambito"]] = por_ambito.get(c["ambito"], 0) + 1
             out.append({k: c[k] for k in ("tag", "num", "word", "sub",
-                                          "puntos", "seq", "pct", "plays")})
+                                          "puntos", "seq", "pct", "plays",
+                                          "pill")})
             if len(out) >= 6:
                 break
         return out
