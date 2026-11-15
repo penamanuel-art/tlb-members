@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-15T10:24:44-04:00",
+  "updated_at": "2026-11-15T10:39:47-04:00",
   "refresh_minutes": 15,
   "fair_source": "Pinnacle no-vig",
   "filters": {
@@ -16,6 +16,80 @@
     "live_included": true
   },
   "edges": [
+    {
+      "id": "b8c10fdf1e0ac4e13deee7f7c0af0b0b-h2h-None-Detroit Lions",
+      "skey": "b8c10fdf1e0ac4e13deee7f7c0af0b0b|h2h|None|Detroit Lions",
+      "sport": "NFL",
+      "game": "New England Patriots @ Detroit Lions",
+      "team": "Detroit Lions",
+      "market": "Moneyline",
+      "point": "",
+      "book": "Novig",
+      "price": -104,
+      "fair_prob_pct": 57.4,
+      "fair_american": -135,
+      "ev_pct": 12.6,
+      "ev_mercado_pct": 5.4,
+      "fair_mercado_prob_pct": 53.7,
+      "doble": true,
+      "books_count": 6,
+      "books": [
+        {
+          "book": "Novig",
+          "price": -104,
+          "ev_pct": 12.6,
+          "url": "https://novig.com"
+        },
+        {
+          "book": "DraftKings",
+          "price": -108,
+          "ev_pct": 10.6,
+          "url": "https://sportsbook.draftkings.com"
+        },
+        {
+          "book": "BetMGM",
+          "price": -108,
+          "ev_pct": 10.6,
+          "url": "https://sports.betmgm.com"
+        },
+        {
+          "book": "theScore Bet",
+          "price": -110,
+          "ev_pct": 9.6,
+          "url": null
+        },
+        {
+          "book": "FanDuel",
+          "price": -113,
+          "ev_pct": 8.2,
+          "url": "https://sportsbook.fanduel.com"
+        },
+        {
+          "book": "BetRivers",
+          "price": -115,
+          "ev_pct": 7.3,
+          "url": null
+        }
+      ],
+      "also_at": [
+        "BetMGM",
+        "BetRivers",
+        "DraftKings",
+        "FanDuel"
+      ],
+      "sharp": false,
+      "verified": true,
+      "edge_label": "Strong edge",
+      "rec_units": 1.0,
+      "rec_stake": 100,
+      "live": true,
+      "game_time": "LIVE now",
+      "commence_time": "2026-11-15T14:33:33Z",
+      "bet_url": "https://novig.com",
+      "novig_deep": false,
+      "stale": false,
+      "first_seen": "2026-11-15T14:39:46.271607+00:00"
+    },
     {
       "id": "488c2bc1e099361f06015cf126f95fd6-h2h-None-Washington Wizards",
       "skey": "488c2bc1e099361f06015cf126f95fd6|h2h|None|Washington Wizards",
@@ -451,6 +525,27 @@
   "arbitrajes": [
     {
       "sport": "NFL",
+      "game": "New England Patriots @ Detroit Lions",
+      "market": "Moneyline",
+      "point": "",
+      "margen_pct": 5.54,
+      "lados": [
+        {
+          "pick": "Detroit Lions",
+          "casa": "Novig",
+          "precio": -104
+        },
+        {
+          "pick": "New England Patriots",
+          "casa": "Bovada",
+          "precio": 130
+        }
+      ],
+      "commence_time": "2026-11-15T14:33:33Z",
+      "live": true
+    },
+    {
+      "sport": "NFL",
       "game": "Seattle Seahawks @ Las Vegas Raiders",
       "market": "Spread",
       "point": "6.5",
@@ -468,27 +563,6 @@
         }
       ],
       "commence_time": "2026-11-15T21:05:00Z",
-      "live": false
-    },
-    {
-      "sport": "NFL",
-      "game": "San Francisco 49ers @ Dallas Cowboys",
-      "market": "Moneyline",
-      "point": "",
-      "margen_pct": 0.46,
-      "lados": [
-        {
-          "pick": "Dallas Cowboys",
-          "casa": "FanDuel",
-          "precio": 198
-        },
-        {
-          "pick": "San Francisco 49ers",
-          "casa": "Novig",
-          "precio": -194
-        }
-      ],
-      "commence_time": "2026-11-15T21:25:00Z",
       "live": false
     },
     {
