@@ -153,6 +153,8 @@
   .dn-sec-head h2{font-family:var(--fdisp);font-size:17.1px;font-weight:700;margin:0;color:var(--txt)}
   .dn-sec-head .dn-chip{margin-left:auto;font-family:var(--fmono);font-size:12px;color:var(--mut);border:1px solid var(--line);border-radius:999px;padding:4px 10px;white-space:nowrap}
   /* Tirita superior de récord (últimas 10 liquidadas) */
+  .dn-strip-top{max-width:640px;margin:0 auto;padding:12px 16px 0}
+  .dn-strip-top .dn-strip{margin-top:0}
   .dn-strip{margin-top:14px;background:var(--mintbg);border:1px solid var(--mintline);border-radius:999px;padding:6px 16px;text-align:center;font-size:13.5px;color:var(--txt)}
   .dn-strip b{font-weight:700}
   /* Hot right now: carrusel de rachas reales */
@@ -399,6 +401,10 @@
 </div>
 
 
+{% if tirita_record10 %}
+<div class="dn-strip-top"><div class="dn-strip">🔥 <b>{{ tirita_record10.etiqueta }}: {{ tirita_record10.w }}-{{ tirita_record10.l }}</b> in the last 10 plays</div></div>
+{% endif %}
+
 <header class="dn-top">
   <div class="dn-top-in">
     <div style="display:flex;align-items:center;gap:3px;flex:1;min-width:0">
@@ -414,9 +420,6 @@
 
 <div class="dn-wrap">
 
-  {% if tirita_record10 %}
-  <div class="dn-strip">🔥 <b>{{ tirita_record10.etiqueta }}: {{ tirita_record10.w }}-{{ tirita_record10.l }}</b> in the last 10 plays</div>
-  {% endif %}
 
   <div class="dn-notif" id="dnNotif" hidden>
     <h3>Notifications</h3>
