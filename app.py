@@ -6902,10 +6902,10 @@ def home():
         if _nf:
             _partes.append(f"{_nf} Free")
         estado = {"titulo": _t,
-                  "sub": " · ".join(_partes), "live": hay_live}
+                  "sub": " · ".join(_partes), "live": hay_live, "vacio": False}
     else:
-        estado = {"titulo": "Not posted yet",
-                  "sub": f"Today's card posts at {hora_post} — every play appears here first, with its real ticket.", "live": False}
+        estado = {"titulo": "Today's plays",
+                  "sub": f"Today's card posts at {hora_post} — every play appears here first, with its real ticket.", "live": False, "vacio": True}
     card_fecha_txt = ""
     try:
         _raw = _json_remoto_o_local(PLAYS_RAW_URL, PLAYS_PATH)
@@ -7280,10 +7280,10 @@ def admin_diseno_nuevo():
             _gw = sum(1 for p in _gr if p["resultado"] == "W")
             _t += f" · {_gw}–{len(_gr) - _gw} graded"
         estado = {"titulo": _t,
-                  "sub": "Cards post at 2:00 PM ET on weekdays · 11:00 AM ET on weekends."}
+                  "sub": "Cards post at 2:00 PM ET on weekdays · 11:00 AM ET on weekends.", "vacio": False}
     else:
-        estado = {"titulo": "Not posted yet",
-                  "sub": f"Today's card posts at {hora_post} — every play appears here first, with its real ticket."}
+        estado = {"titulo": "Today's plays",
+                  "sub": f"Today's card posts at {hora_post} — every play appears here first, with its real ticket.", "vacio": True}
     card_fecha_txt = ""
     try:
         _raw = _json_remoto_o_local(PLAYS_RAW_URL, PLAYS_PATH)
