@@ -6904,7 +6904,7 @@ def home():
         estado = {"titulo": _t,
                   "sub": " · ".join(_partes), "live": hay_live, "vacio": False}
     else:
-        estado = {"titulo": "Today's plays",
+        estado = {"titulo": "Today's plays not posted yet",
                   "sub": f"Today's card posts at {hora_post} — every play appears here first, with its real ticket.", "live": False, "vacio": True}
     card_fecha_txt = ""
     try:
@@ -7282,7 +7282,7 @@ def admin_diseno_nuevo():
         estado = {"titulo": _t,
                   "sub": "Cards post at 2:00 PM ET on weekdays · 11:00 AM ET on weekends.", "vacio": False}
     else:
-        estado = {"titulo": "Today's plays",
+        estado = {"titulo": "Today's plays not posted yet",
                   "sub": f"Today's card posts at {hora_post} — every play appears here first, with its real ticket.", "vacio": True}
     card_fecha_txt = ""
     try:
