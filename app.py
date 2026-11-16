@@ -6887,7 +6887,7 @@ def home():
         _ng = sum(1 for p in plays if (p.get("nivel") or "").upper() == "GOLD")
         _nv = sum(1 for p in plays if (p.get("nivel") or "").upper() == "VAULT")
         _nf = sum(1 for p in plays if (p.get("nivel") or "").upper() == "FREE")
-        _t = f"The board is live · {len(plays)} play" + ("s" if len(plays) != 1 else "")
+        _t = f"The board is live · {len(plays)} play" + ("s" if len(plays) != 1 else "") + " today"
         _gr = [p for p in plays if p.get("resultado") in ("W", "L")]
         if _gr:
             _gw = sum(1 for p in _gr if p["resultado"] == "W")
@@ -7275,7 +7275,7 @@ def admin_diseno_nuevo():
     hora_post = "11:00 AM ET" if _wd >= 5 else "2:00 PM ET"
     if plays:
         _gr = [p for p in plays if p.get("resultado") in ("W", "L")]
-        _t = f"The board is live · {len(plays)} play" + ("s" if len(plays) != 1 else "")
+        _t = f"The board is live · {len(plays)} play" + ("s" if len(plays) != 1 else "") + " today"
         if _gr:
             _gw = sum(1 for p in _gr if p["resultado"] == "W")
             _t += f" · {_gw}–{len(_gr) - _gw} graded"
@@ -7385,7 +7385,7 @@ def admin_diseno_dos():
     hora_post = "11:00 AM ET" if _wd >= 5 else "2:00 PM ET"
     if plays:
         _gr = [p for p in plays if p.get("resultado") in ("W", "L")]
-        _t = f"The board is live · {len(plays)} play" + ("s" if len(plays) != 1 else "")
+        _t = f"The board is live · {len(plays)} play" + ("s" if len(plays) != 1 else "") + " today"
         if _gr:
             _gw = sum(1 for p in _gr if p["resultado"] == "W")
             _t += f" · {_gw}–{len(_gr) - _gw} graded"
