@@ -6805,6 +6805,80 @@ def home():
     # volver a poner el ternario de plantillas de siempre en este
     # render. Las rutas /admin/diseno-nuevo y /admin/diseno-dos
     # no se tocan y siguen vivas.
+    # Sección «Yesterday» del home (2026-11-16, orden de Alex en llamada:
+    # espejo del bloque Yesterday de WGT, con nuestros datos): resultados
+    # del día más reciente ANTERIOR a hoy con jugadas liquidadas, desde el
+    # archive oficial, agrupados por nivel (Platinum → Gold → Vault) con
+    # barra resumen por nivel y la miniatura del ticket de cada jugada.
+    # Sin día liquidado no hay sección (ayer=None). Nunca rompe el home:
+    # ante cualquier fallo, ayer=None.
+    _ayer = None
+    try:
+        _hoy_iso2 = datetime.now(TZ).strftime("%Y-%m-%d")
+        _MAP_NIVEL_Y = {"ELITE": "PLATINUM", "PLATINUM": "PLATINUM",
+                        "GOLD": "GOLD", "FREE": "GOLD", "VAULT": "VAULT"}
+        _ORDEN_NIVEL_Y = ["PLATINUM", "GOLD", "VAULT"]
+        for _d in load_archive():
+            _f = _d.get("fecha") or ""
+            if not _f or _f >= _hoy_iso2:
+                continue
+            _grad = [j for j in (_d.get("jugadas") or [])
+                     if j.get("resultado") in ("WON", "LOST")
+                     and not j.get("bloqueada") and j.get("pick")]
+            if not _grad:
+                continue
+            _grupos_y = {}
+            for _j in _grad:
+                _nv = _MAP_NIVEL_Y.get((_j.get("nivel") or "").upper())
+                if not _nv:
+                    continue
+                _pr = float(_j.get("profit") or 0)
+                _g = _grupos_y.setdefault(
+                    _nv, {"nivel": _nv, "w": 0, "l": 0, "profit": 0.0,
+                          "plays": []})
+                if _j["resultado"] == "WON":
+                    _g["w"] += 1
+                else:
+                    _g["l"] += 1
+                _g["profit"] += _pr
+                _sep = " @ " if " @ " in (_j.get("marcador") or "") else " vs "
+                _match = ""
+                if _j.get("team_name") and _j.get("opp_name"):
+                    _match = f"{_j['team_name']}{_sep}{_j['opp_name']}"
+                _u = round(_pr / 100.0, 2)
+                _g["plays"].append({
+                    "nivel": _nv,
+                    "liga": _j.get("liga") or "",
+                    "pick": _j.get("pick") or "",
+                    "matchup": _match,
+                    "resultado": _j["resultado"],
+                    "profit": _pr,
+                    "unidades": _u,
+                    "unidades_txt": (("+" if _u >= 0 else "−")
+                                     + f"{abs(_u):.2f}u"),
+                    "comprobante": _j.get("comprobante") or "",
+                    "abbr": _j.get("abbr") or "",
+                })
+            _barras_y = []
+            for _nv in _ORDEN_NIVEL_Y:
+                if _nv in _grupos_y:
+                    _g = _grupos_y[_nv]
+                    _gu = round(_g["profit"] / 100.0, 2)
+                    _g["unidades"] = _gu
+                    _g["unidades_txt"] = (("+" if _gu >= 0 else "−")
+                                          + f"{abs(_gu):.2f}u")
+                    _g["n"] = _g["w"] + _g["l"]
+                    _barras_y.append(_g)
+            if _barras_y:
+                _fd_y = datetime.strptime(_f, "%Y-%m-%d")
+                _ayer = {
+                    "fecha": _f,
+                    "fecha_txt": f"{MONTHS_EN[_fd_y.month - 1][:3]} {_fd_y.day}",
+                    "barras": _barras_y,
+                }
+            break
+    except Exception:
+        _ayer = None
     stats = _diseno_stats(plays)
     _wd = datetime.now(TZ).weekday()
     hora_post = "11:00 AM ET" if _wd >= 5 else "2:00 PM ET"
@@ -6863,6 +6937,7 @@ def home():
         card_fecha_txt=card_fecha_txt,
         card_sig=_card_sig(),
         dias=recientes_dias,
+        ayer=(None if _sin_acceso else _ayer),
         tira_home=tira_home,
         tirita_record10=(None if _sin_acceso else _tirita10),
         hot_home=([] if _sin_acceso else _hot_home),
