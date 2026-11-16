@@ -497,35 +497,6 @@
   {% endif %}
   <p class="dn-fineprint">Stakes are shown in units and in dollars. One unit is 1% of your bankroll, so your dollar amounts follow the bankroll you set. Track saves the play to My Bets at your own size, and it grades on its own. <a href="{{ url_for('bankroll') }}">Change your unit</a></p>
 
-  {% if ayer %}
-  <section class="dn-yest">
-    <div class="dn-yest-head">
-      <h2>Yesterday</h2>
-      <span class="dn-yest-cardlbl">{{ ayer.fecha_txt }} card</span>
-      <a class="dn-hot-ledger" href="{{ url_for('records') }}">↗ Full records</a>
-    </div>
-    {% for b in ayer.barras %}
-    <div class="dn-yest-bar">
-      <span class="dn-yest-pill">{{ b.nivel }}</span>
-      <span class="dn-yest-wl">{{ b.w }}-{{ b.l }}</span>
-      <span class="dn-yest-u {% if b.unidades >= 0 %}win{% else %}loss{% endif %}">{{ b.unidades_txt }}</span>
-      <span class="dn-yest-n">{{ b.n }} graded</span>
-    </div>
-    {% for j in b.plays %}
-    <article class="dn-yest-play">
-      <div class="dn-yest-thumb"><span>{{ j.abbr }}</span>{% if j.comprobante %}<img src="{{ url_for('static', filename=j.comprobante) }}" alt="" loading="lazy" onerror="this.remove()">{% endif %}</div>
-      <div class="dn-yest-main">
-        <div class="dn-yest-meta"><span class="dn-yest-pill">{{ j.nivel }}</span><span class="dn-yest-kind">{{ j.nivel|title }} play · {{ j.liga }}</span></div>
-        <div class="dn-yest-pick">{{ j.pick }}</div>
-        {% if j.matchup %}<div class="dn-yest-match">{{ j.matchup }}</div>{% endif %}
-      </div>
-      <div class="dn-yest-res"><b class="{% if j.resultado == 'WON' %}win{% endif %}">{{ j.resultado }}</b><span class="{% if j.unidades >= 0 %}win{% else %}loss{% endif %}">{{ j.unidades_txt }}</span></div>
-    </article>
-    {% endfor %}
-    {% endfor %}
-  </section>
-  {% endif %}
-
   {% if hot_home %}
   <section class="dn-sec">
     <div class="dn-hot-head">
@@ -566,6 +537,35 @@
   upd();
 })();
 </script>
+
+  {% if ayer %}
+  <section class="dn-yest">
+    <div class="dn-yest-head">
+      <h2>Yesterday</h2>
+      <span class="dn-yest-cardlbl">{{ ayer.fecha_txt }} card</span>
+      <a class="dn-hot-ledger" href="{{ url_for('records') }}">↗ Full records</a>
+    </div>
+    {% for b in ayer.barras %}
+    <div class="dn-yest-bar">
+      <span class="dn-yest-pill">{{ b.nivel }}</span>
+      <span class="dn-yest-wl">{{ b.w }}-{{ b.l }}</span>
+      <span class="dn-yest-u {% if b.unidades >= 0 %}win{% else %}loss{% endif %}">{{ b.unidades_txt }}</span>
+      <span class="dn-yest-n">{{ b.n }} graded</span>
+    </div>
+    {% for j in b.plays %}
+    <article class="dn-yest-play">
+      <div class="dn-yest-thumb"><span>{{ j.abbr }}</span>{% if j.comprobante %}<img src="{{ url_for('static', filename=j.comprobante) }}" alt="" loading="lazy" onerror="this.remove()">{% endif %}</div>
+      <div class="dn-yest-main">
+        <div class="dn-yest-meta"><span class="dn-yest-pill">{{ j.nivel }}</span><span class="dn-yest-kind">{{ j.nivel|title }} play · {{ j.liga }}</span></div>
+        <div class="dn-yest-pick">{{ j.pick }}</div>
+        {% if j.matchup %}<div class="dn-yest-match">{{ j.matchup }}</div>{% endif %}
+      </div>
+      <div class="dn-yest-res"><b class="{% if j.resultado == 'WON' %}win{% endif %}">{{ j.resultado }}</b><span class="{% if j.unidades >= 0 %}win{% else %}loss{% endif %}">{{ j.unidades_txt }}</span></div>
+    </article>
+    {% endfor %}
+    {% endfor %}
+  </section>
+  {% endif %}
 
   <div class="dn-sheet" id="dnSheet" hidden>
     <div class="dn-sheet-handle"></div>
