@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-16T14:24:44-04:00",
+  "updated_at": "2026-11-16T14:39:46-04:00",
   "refresh_minutes": 15,
   "fair_source": "Pinnacle no-vig",
   "filters": {
@@ -29,7 +29,7 @@
       "fair_prob_pct": 23.4,
       "fair_american": 327,
       "ev_pct": 10.0,
-      "ev_mercado_pct": 5.2,
+      "ev_mercado_pct": 5.0,
       "fair_mercado_prob_pct": 22.4,
       "doble": true,
       "books_count": 4,
@@ -41,16 +41,16 @@
           "url": null
         },
         {
+          "book": "Novig",
+          "price": 365,
+          "ev_pct": 8.8,
+          "url": "https://novig.com"
+        },
+        {
           "book": "DraftKings",
           "price": 360,
           "ev_pct": 7.7,
           "url": "https://sportsbook.draftkings.com"
-        },
-        {
-          "book": "Novig",
-          "price": 355,
-          "ev_pct": 6.5,
-          "url": "https://novig.com"
         },
         {
           "book": "FanDuel",
@@ -76,53 +76,6 @@
       "novig_deep": false,
       "stale": false,
       "first_seen": "2026-11-16T01:09:48.622468+00:00"
-    },
-    {
-      "id": "7c2ac54a119f461bf8fc1a23da536f29-h2h-None-Orlando Magic",
-      "skey": "7c2ac54a119f461bf8fc1a23da536f29|h2h|None|Orlando Magic",
-      "sport": "NBA",
-      "game": "Orlando Magic @ Boston Celtics",
-      "team": "Orlando Magic",
-      "market": "Moneyline",
-      "point": "",
-      "book": "Novig",
-      "price": 317,
-      "fair_prob_pct": 25.5,
-      "fair_american": 292,
-      "ev_pct": 6.3,
-      "ev_mercado_pct": 3.0,
-      "fair_mercado_prob_pct": 24.7,
-      "doble": true,
-      "books_count": 2,
-      "books": [
-        {
-          "book": "Novig",
-          "price": 317,
-          "ev_pct": 6.3,
-          "url": "https://novig.com"
-        },
-        {
-          "book": "FanDuel",
-          "price": 310,
-          "ev_pct": 4.5,
-          "url": "https://sportsbook.fanduel.com"
-        }
-      ],
-      "also_at": [
-        "FanDuel"
-      ],
-      "sharp": false,
-      "verified": true,
-      "edge_label": "Strong edge",
-      "rec_units": 1.0,
-      "rec_stake": 100,
-      "live": false,
-      "game_time": "Mon, Nov 16 \u00b7 8:10 PM ET",
-      "commence_time": "2026-11-17T00:10:00Z",
-      "bet_url": "https://novig.com",
-      "novig_deep": false,
-      "stale": false,
-      "first_seen": "2026-11-16T15:09:41.969411+00:00"
     },
     {
       "id": "e497245c3311ac853201a67404dc82ea-h2h-None-Wyoming Cowboys",
@@ -434,6 +387,54 @@
       "stale_reason": "line moved below 3%"
     },
     {
+      "id": "7c2ac54a119f461bf8fc1a23da536f29-h2h-None-Orlando Magic",
+      "skey": "7c2ac54a119f461bf8fc1a23da536f29|h2h|None|Orlando Magic",
+      "sport": "NBA",
+      "game": "Orlando Magic @ Boston Celtics",
+      "team": "Orlando Magic",
+      "market": "Moneyline",
+      "point": "",
+      "book": "Novig",
+      "price": 317,
+      "fair_prob_pct": 25.5,
+      "fair_american": 292,
+      "ev_pct": 6.3,
+      "ev_mercado_pct": 3.0,
+      "fair_mercado_prob_pct": 24.7,
+      "doble": true,
+      "books_count": 2,
+      "books": [
+        {
+          "book": "Novig",
+          "price": 317,
+          "ev_pct": 6.3,
+          "url": "https://novig.com"
+        },
+        {
+          "book": "FanDuel",
+          "price": 310,
+          "ev_pct": 4.5,
+          "url": "https://sportsbook.fanduel.com"
+        }
+      ],
+      "also_at": [
+        "FanDuel"
+      ],
+      "sharp": false,
+      "verified": true,
+      "edge_label": "Strong edge",
+      "rec_units": 1.0,
+      "rec_stake": 100,
+      "live": false,
+      "game_time": "Mon, Nov 16 \u00b7 8:10 PM ET",
+      "commence_time": "2026-11-17T00:10:00Z",
+      "bet_url": "https://novig.com",
+      "novig_deep": false,
+      "stale": true,
+      "first_seen": "2026-11-16T15:09:41.969411+00:00",
+      "stale_reason": "only 1 book \u22653% now"
+    },
+    {
       "id": "39dbdb7fdc78bd01ceac2fc7048bc1fd-h2h-None-Chicago Bulls",
       "skey": "39dbdb7fdc78bd01ceac2fc7048bc1fd|h2h|None|Chicago Bulls",
       "sport": "NBA",
@@ -581,6 +582,27 @@
   "arbitrajes": [
     {
       "sport": "NCAAF",
+      "game": "UCLA Bruins @ Michigan Wolverines",
+      "market": "Moneyline",
+      "point": "",
+      "margen_pct": 0.56,
+      "lados": [
+        {
+          "pick": "Michigan Wolverines",
+          "casa": "MyBookie.ag",
+          "precio": 169
+        },
+        {
+          "pick": "UCLA Bruins",
+          "casa": "theScore Bet",
+          "precio": -165
+        }
+      ],
+      "commence_time": "2026-11-21T20:30:00Z",
+      "live": false
+    },
+    {
+      "sport": "NCAAF",
       "game": "Central Michigan Chippewas @ Buffalo Bulls",
       "market": "Moneyline",
       "point": "",
@@ -602,44 +624,23 @@
     },
     {
       "sport": "NCAAF",
-      "game": "UCLA Bruins @ Michigan Wolverines",
-      "market": "Moneyline",
-      "point": "",
-      "margen_pct": 0.14,
+      "game": "Wisconsin Badgers @ Purdue Boilermakers",
+      "market": "Total",
+      "point": "44.5",
+      "margen_pct": 0.24,
       "lados": [
         {
-          "pick": "Michigan Wolverines",
-          "casa": "MyBookie.ag",
-          "precio": 166
+          "pick": "Over 44.5",
+          "casa": "Pinnacle",
+          "precio": -103
         },
         {
-          "pick": "UCLA Bruins",
-          "casa": "theScore Bet",
-          "precio": -165
-        }
-      ],
-      "commence_time": "2026-11-21T20:30:00Z",
-      "live": false
-    },
-    {
-      "sport": "NBA",
-      "game": "Philadelphia 76ers @ Brooklyn Nets",
-      "market": "Moneyline",
-      "point": "",
-      "margen_pct": 0.12,
-      "lados": [
-        {
-          "pick": "Brooklyn Nets",
+          "pick": "Under 44.5",
           "casa": "Novig",
-          "precio": 186
-        },
-        {
-          "pick": "Philadelphia 76ers",
-          "casa": "BetUS",
-          "precio": -185
+          "precio": 104
         }
       ],
-      "commence_time": "2026-11-17T00:40:00Z",
+      "commence_time": "2026-11-21T17:00:00Z",
       "live": false
     }
   ],
