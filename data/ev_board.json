@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-16T10:24:52-04:00",
+  "updated_at": "2026-11-16T10:39:45-04:00",
   "refresh_minutes": 15,
   "fair_source": "Pinnacle no-vig",
   "filters": {
@@ -24,16 +24,22 @@
       "team": "Tennessee Titans",
       "market": "Moneyline",
       "point": "",
-      "book": "FanDuel",
-      "price": 370,
+      "book": "Novig",
+      "price": 376,
       "fair_prob_pct": 23.4,
       "fair_american": 328,
-      "ev_pct": 9.8,
-      "ev_mercado_pct": 5.1,
-      "fair_mercado_prob_pct": 22.4,
+      "ev_pct": 11.2,
+      "ev_mercado_pct": 6.2,
+      "fair_mercado_prob_pct": 22.3,
       "doble": true,
       "books_count": 3,
       "books": [
+        {
+          "book": "Novig",
+          "price": 376,
+          "ev_pct": 11.2,
+          "url": "https://novig.com"
+        },
         {
           "book": "FanDuel",
           "price": 370,
@@ -45,17 +51,11 @@
           "price": 370,
           "ev_pct": 9.8,
           "url": null
-        },
-        {
-          "book": "Novig",
-          "price": 365,
-          "ev_pct": 8.6,
-          "url": "https://novig.com"
         }
       ],
       "also_at": [
         "BetRivers",
-        "Novig"
+        "FanDuel"
       ],
       "sharp": false,
       "verified": true,
@@ -262,6 +262,48 @@
     }
   ],
   "arbitrajes": [
+    {
+      "sport": "NCAAF",
+      "game": "UCLA Bruins @ Michigan Wolverines",
+      "market": "Moneyline",
+      "point": "",
+      "margen_pct": 1.32,
+      "lados": [
+        {
+          "pick": "Michigan Wolverines",
+          "casa": "BetRivers",
+          "precio": 180
+        },
+        {
+          "pick": "UCLA Bruins",
+          "casa": "theScore Bet",
+          "precio": -170
+        }
+      ],
+      "commence_time": "2026-11-21T20:30:00Z",
+      "live": false
+    },
+    {
+      "sport": "NCAAF",
+      "game": "Ohio State Buckeyes @ Nebraska Cornhuskers",
+      "market": "Spread",
+      "point": "3",
+      "margen_pct": 0.25,
+      "lados": [
+        {
+          "pick": "Nebraska Cornhuskers 3",
+          "casa": "LowVig.ag",
+          "precio": -101
+        },
+        {
+          "pick": "Ohio State Buckeyes -3",
+          "casa": "Pinnacle",
+          "precio": 102
+        }
+      ],
+      "commence_time": "2026-11-21T17:00:00Z",
+      "live": false
+    },
     {
       "sport": "NFL",
       "game": "Indianapolis Colts @ Houston Texans",
