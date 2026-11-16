@@ -1806,6 +1806,14 @@ def notify_new_member(nombre: str, email: str):
 
     import threading
     threading.Thread(target=_send, daemon=True).start()
+    # Push a Alex (2026-11-15, su pedido): el aviso de miembro nuevo le
+    # llega también al teléfono, no solo por email. Fail-safe total.
+    try:
+        _push_admin_alex(
+            "🆕 New member registered",
+            f"{nombre} ({email}) just joined The Sharp Team.")
+    except Exception:
+        pass
 
 
 # ----------------- Welcome back (re-suscripción, pedido Alex 2026-10-08) ----
@@ -9363,6 +9371,14 @@ def cuenta_cancelar():
                 threading.Thread(target=_aviso_cancel_a, daemon=True).start()
             except Exception:
                 pass
+            # Push a Alex (2026-11-15, su pedido): el mismo aviso de la
+            # cancelación, directo a su teléfono. Fail-safe total.
+            try:
+                _push_admin_alex(
+                    "⚠️ Cancellation requested",
+                    f"{_nm} ({_em}) asked to cancel their membership.")
+            except Exception:
+                pass
             # Automático (2026-10-30, orden de Alex): la petición se aplica
             # también en Stripe al final del período — no se le cobra más.
             _ok_stripe = _stripe_set_cancel_at_period_end(user, True)
@@ -13013,6 +13029,32 @@ def admin_api_stake_mode():
     return jsonify({"ok": True, "email": email, "stake_mode": mode})
 
 
+@app.route("/admin/api/push-test-admin", methods=["POST"])
+def admin_api_push_test_admin():
+    """Manda a Alex UNA push de PRUEBA de una alerta de gestión
+    (2026-11-15, pedido por Alex: «me envía una prueba de cada una a ver
+    cómo se ven»). Auth: sesión admin O X-Admin-Key. Body JSON:
+    {"tipo": "registro" | "cancelacion" | "baja"}. La push solo llega a
+    las suscripciones admin (u.is_admin = 1) vía _push_admin_alex."""
+    if not _admin_api_autorizado():
+        return jsonify({"error": "admin only"}), 403
+    data = request.get_json(silent=True) or {}
+    tipo = (data.get("tipo") or "").strip().lower()
+    muestras = {
+        "registro": ("TEST · 🆕 New member registered",
+                     "Test alert — Test Member (test@example.com) just joined The Sharp Team."),
+        "cancelacion": ("TEST · ⚠️ Cancellation requested",
+                        "Test alert — Test Member (test@example.com) asked to cancel their membership."),
+        "baja": ("TEST · 🔴 Subscription ended",
+                 "Test alert — Test Member (test@example.com) — their Platinum subscription has ended."),
+    }
+    if tipo not in muestras:
+        return jsonify({"error": "tipo required: registro|cancelacion|baja"}), 400
+    titulo, cuerpo = muestras[tipo]
+    n = _push_admin_alex(titulo, cuerpo)
+    return jsonify({"ok": True, "tipo": tipo, "sent": n})
+
+
 @app.route("/admin/api/members-delete", methods=["POST"])
 def admin_api_members_delete():
     """Elimina una cuenta de miembro por API admin (2026-10-13, pedido por Alex:
@@ -15705,6 +15747,53 @@ def _tg_send_photo(chat_id, photo_path, caption=""):
         except Exception:
             pass
         return False, "telegram foto falló: %s%s" % (e, extra)
+
+
+def _push_admin_alex(titulo, cuerpo, url="/admin"):
+    """Push SOLO a las suscripciones admin (Alex) para eventos de gestión
+    (2026-11-15, pedido por Alex): registro nuevo, petición de cancelación
+    y suscripción terminada. Mismo patrón que _push_aviso_disparo_alex,
+    pero SIN filtro notif_plays: son alertas de negocio, no de jugadas.
+    Nunca lanza excepción: un fallo del push jamás bloquea el flujo.
+    Devuelve cuántas suscripciones recibieron el push."""
+    try:
+        if not (HAVE_WEBPUSH and VAPID_PRIVATE_KEY and VAPID_PUBLIC_KEY and webpush):
+            return 0
+        payload = json.dumps({
+            "title": titulo,
+            "body": cuerpo,
+            "url": url,
+            "image": "",
+        })
+        db = get_db()
+        subs = db.execute(
+            "SELECT ps.id, ps.endpoint, ps.p256dh, ps.auth FROM push_subscriptions ps"
+            " JOIN users u ON u.id = ps.member_id WHERE u.is_admin = 1"
+        ).fetchall()
+        enviados = 0
+        for s in subs:
+            try:
+                webpush(
+                    subscription_info={
+                        "endpoint": s["endpoint"],
+                        "keys": {"p256dh": s["p256dh"], "auth": s["auth"]},
+                    },
+                    data=payload,
+                    vapid_private_key=VAPID_PRIVATE_KEY,
+                    vapid_claims={"sub": VAPID_CLAIM_EMAIL},
+                )
+                enviados += 1
+            except WebPushException as ex:
+                code = getattr(getattr(ex, "response", None), "status_code", None)
+                if code in (404, 410):
+                    db.execute(
+                        "DELETE FROM push_subscriptions WHERE id = ?", (s["id"],))
+            except Exception:
+                pass
+        db.commit()
+        return enviados
+    except Exception:
+        return 0
 
 
 def _push_aviso_disparo_alex(n_jugadas):
@@ -19348,6 +19437,14 @@ def stripe_webhook():
                     # canceló: pudo vencer, expirar o quedar unpaid).
                     _nm = (row["nombre"] or email) if "nombre" in row.keys() else email
                     log_notificacion(db, "cancelacion", f"Suscripción terminada: {_nm} ({status or 'deleted'})", email)
+                    # Push a Alex (2026-11-15, su pedido): la baja se hizo
+                    # efectiva — la suscripción terminó de verdad.
+                    try:
+                        _push_admin_alex(
+                            "🔴 Subscription ended",
+                            f"{_nm} ({email}) — their Platinum subscription has ended.")
+                    except Exception:
+                        pass
                 else:
                     db.execute(
                         "UPDATE users SET stripe_subscription_id = ? WHERE id = ?",
