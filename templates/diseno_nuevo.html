@@ -125,9 +125,6 @@
   .dn-hero-body{padding:20px 18px}
   .dn-hero-title{font-family:var(--fdisp);font-size:33px;font-weight:700;line-height:1.15;color:var(--txt)}
   .dn-hero-accent{color:var(--mint)}
-  .dn-hero-status{display:flex;align-items:center;gap:9px;margin-top:12px;font-size:15px;font-weight:600;color:var(--txt)}
-  .dn-hero-dot{width:9px;height:9px;border-radius:50%;background:var(--mint);flex:none;animation:dnFade 1.6s ease-in-out infinite}
-  @keyframes dnFade{0%,100%{opacity:1}50%{opacity:.3}}
   .dn-hero-div{height:1px;background:var(--line);margin:17px 0}
   .dn-hero-label{font-weight:700;letter-spacing:.1em;text-transform:uppercase;font-size:12px;color:var(--txt)}
   .dn-hero-text{color:#DCE4F0;font-size:17.1px;font-weight:400;line-height:1.4;margin-top:6px}
@@ -451,8 +448,7 @@
   <div class="dn-hero-card">
     <div class="dn-hero-band"><span>Today's card</span></div>
     <div class="dn-hero-body">
-      {% if estado.vacio %}<div class="dn-hero-title">Today's <span class="dn-hero-accent">plays</span></div>
-      <div class="dn-hero-status"><span class="dn-hero-dot"></span>Not posted yet</div>{% else %}<div class="dn-hero-title">{{ estado.titulo }}</div>{% endif %}
+      {% if estado.vacio %}<div class="dn-hero-title">Today's <span class="dn-hero-accent">plays</span> not posted yet</div>{% else %}<div class="dn-hero-title">{{ estado.titulo }}</div>{% endif %}
       <div class="dn-hero-div"></div>
       <div class="dn-hero-label">The board</div>
       <p class="dn-hero-text">{{ estado.sub }}</p>
