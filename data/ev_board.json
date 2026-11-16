@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-16T17:24:46-04:00",
+  "updated_at": "2026-11-16T17:39:39-04:00",
   "refresh_minutes": 15,
   "fair_source": "Pinnacle no-vig",
   "filters": {
@@ -24,16 +24,22 @@
       "team": "Tennessee Titans",
       "market": "Moneyline",
       "point": "",
-      "book": "DraftKings",
-      "price": 360,
+      "book": "Novig",
+      "price": 365,
       "fair_prob_pct": 23.4,
       "fair_american": 327,
-      "ev_pct": 7.7,
-      "ev_mercado_pct": 3.0,
+      "ev_pct": 8.8,
+      "ev_mercado_pct": 4.0,
       "fair_mercado_prob_pct": 22.4,
       "doble": true,
       "books_count": 5,
       "books": [
+        {
+          "book": "Novig",
+          "price": 365,
+          "ev_pct": 8.8,
+          "url": "https://novig.com"
+        },
         {
           "book": "DraftKings",
           "price": 360,
@@ -45,12 +51,6 @@
           "price": 360,
           "ev_pct": 7.7,
           "url": null
-        },
-        {
-          "book": "Novig",
-          "price": 355,
-          "ev_pct": 6.5,
-          "url": "https://novig.com"
         },
         {
           "book": "FanDuel",
@@ -68,8 +68,8 @@
       "also_at": [
         "BetMGM",
         "BetRivers",
-        "FanDuel",
-        "Novig"
+        "DraftKings",
+        "FanDuel"
       ],
       "sharp": false,
       "verified": true,
@@ -92,37 +92,37 @@
       "team": "Washington Huskies",
       "market": "Moneyline",
       "point": "",
-      "book": "Novig",
-      "price": 285,
+      "book": "MyBookie.ag",
+      "price": 290,
       "fair_prob_pct": 27.2,
       "fair_american": 268,
-      "ev_pct": 4.8,
-      "ev_mercado_pct": 2.9,
-      "fair_mercado_prob_pct": 26.7,
+      "ev_pct": 6.1,
+      "ev_mercado_pct": 3.5,
+      "fair_mercado_prob_pct": 26.5,
       "doble": true,
       "books_count": 2,
       "books": [
+        {
+          "book": "MyBookie.ag",
+          "price": 290,
+          "ev_pct": 6.1,
+          "url": null
+        },
         {
           "book": "Novig",
           "price": 285,
           "ev_pct": 4.8,
           "url": "https://novig.com"
-        },
-        {
-          "book": "MyBookie.ag",
-          "price": 280,
-          "ev_pct": 3.4,
-          "url": null
         }
       ],
       "also_at": [
-        "MyBookie.ag"
+        "Novig"
       ],
       "sharp": false,
       "verified": true,
-      "edge_label": "Value edge",
-      "rec_units": 0.6,
-      "rec_stake": 60,
+      "edge_label": "Strong edge",
+      "rec_units": 1.0,
+      "rec_stake": 100,
       "live": false,
       "game_time": "Sat, Nov 21 \u00b7 4:30 PM ET",
       "commence_time": "2026-11-21T20:30:00Z",
@@ -615,6 +615,27 @@
   "arbitrajes": [
     {
       "sport": "NCAAF",
+      "game": "Arizona Wildcats @ Kansas State Wildcats",
+      "market": "Moneyline",
+      "point": "",
+      "margen_pct": 0.41,
+      "lados": [
+        {
+          "pick": "Arizona Wildcats",
+          "casa": "FanDuel",
+          "precio": -245
+        },
+        {
+          "pick": "Kansas State Wildcats",
+          "casa": "BetUS",
+          "precio": 250
+        }
+      ],
+      "commence_time": "2026-11-22T00:00:00Z",
+      "live": false
+    },
+    {
+      "sport": "NCAAF",
       "game": "Rice Owls @ Temple Owls",
       "market": "Moneyline",
       "point": "",
@@ -632,6 +653,27 @@
         }
       ],
       "commence_time": "2026-11-20T00:30:00Z",
+      "live": false
+    },
+    {
+      "sport": "NBA",
+      "game": "Memphis Grizzlies @ Washington Wizards",
+      "market": "Moneyline",
+      "point": "",
+      "margen_pct": 0.35,
+      "lados": [
+        {
+          "pick": "Memphis Grizzlies",
+          "casa": "Novig",
+          "precio": -138
+        },
+        {
+          "pick": "Washington Wizards",
+          "casa": "BetMGM",
+          "precio": 140
+        }
+      ],
+      "commence_time": "2026-11-17T00:10:00Z",
       "live": false
     },
     {
