@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-17T13:39:43-04:00",
+  "updated_at": "2026-11-17T13:54:54-04:00",
   "refresh_minutes": 15,
   "fair_source": "Pinnacle no-vig",
   "filters": {
@@ -29,10 +29,10 @@
       "fair_prob_pct": 23.4,
       "fair_american": 327,
       "ev_pct": 8.9,
-      "ev_mercado_pct": 4.5,
-      "fair_mercado_prob_pct": 22.5,
+      "ev_mercado_pct": 4.2,
+      "fair_mercado_prob_pct": 22.4,
       "doble": true,
-      "books_count": 2,
+      "books_count": 3,
       "books": [
         {
           "book": "Novig",
@@ -45,10 +45,17 @@
           "price": 360,
           "ev_pct": 7.7,
           "url": null
+        },
+        {
+          "book": "FanDuel",
+          "price": 350,
+          "ev_pct": 5.4,
+          "url": "https://sportsbook.fanduel.com"
         }
       ],
       "also_at": [
-        "BetRivers"
+        "BetRivers",
+        "FanDuel"
       ],
       "sharp": false,
       "verified": true,
@@ -62,6 +69,53 @@
       "novig_deep": false,
       "stale": false,
       "first_seen": "2026-11-16T01:09:48.622468+00:00"
+    },
+    {
+      "id": "5c082e013b5328e3db1def552628765f-h2h-None-Texas A&M Aggies",
+      "skey": "5c082e013b5328e3db1def552628765f|h2h|None|Texas A&M Aggies",
+      "sport": "NCAAF",
+      "game": "Texas A&M Aggies @ Oklahoma Sooners",
+      "team": "Texas A&M Aggies",
+      "market": "Moneyline",
+      "point": "",
+      "book": "MyBookie.ag",
+      "price": 285,
+      "fair_prob_pct": 28.3,
+      "fair_american": 254,
+      "ev_pct": 8.8,
+      "ev_mercado_pct": 7.8,
+      "fair_mercado_prob_pct": 28.0,
+      "doble": true,
+      "books_count": 2,
+      "books": [
+        {
+          "book": "MyBookie.ag",
+          "price": 285,
+          "ev_pct": 8.8,
+          "url": null
+        },
+        {
+          "book": "Novig",
+          "price": 270,
+          "ev_pct": 4.6,
+          "url": "https://novig.com"
+        }
+      ],
+      "also_at": [
+        "Novig"
+      ],
+      "sharp": false,
+      "verified": true,
+      "edge_label": "Strong edge",
+      "rec_units": 1.0,
+      "rec_stake": 100,
+      "live": false,
+      "game_time": "Sat, Nov 21 \u00b7 4:45 PM ET",
+      "commence_time": "2026-11-21T20:45:00Z",
+      "bet_url": "https://novig.com",
+      "novig_deep": false,
+      "stale": false,
+      "first_seen": "2026-11-17T17:54:53.588969+00:00"
     },
     {
       "id": "6b40f07e146bab0dba574f0d3b07659e-h2h-None-Washington Huskies",
@@ -534,61 +588,6 @@
       "stale": true,
       "first_seen": "2026-11-17T03:24:42.752015+00:00",
       "stale_reason": "line moved below 3%"
-    },
-    {
-      "id": "4b20b742b6168aaca4f25d87f11b1526-h2h-None-New York Jets",
-      "skey": "4b20b742b6168aaca4f25d87f11b1526|h2h|None|New York Jets",
-      "sport": "NFL",
-      "game": "New York Jets @ Los Angeles Chargers",
-      "team": "New York Jets",
-      "market": "Moneyline",
-      "point": "",
-      "book": "Novig",
-      "price": 160,
-      "fair_prob_pct": 40.6,
-      "fair_american": 146,
-      "ev_pct": 5.5,
-      "ev_mercado_pct": 0.4,
-      "fair_mercado_prob_pct": 38.6,
-      "doble": true,
-      "books_count": 3,
-      "books": [
-        {
-          "book": "Novig",
-          "price": 160,
-          "ev_pct": 5.5,
-          "url": "https://novig.com"
-        },
-        {
-          "book": "theScore Bet",
-          "price": 160,
-          "ev_pct": 5.5,
-          "url": null
-        },
-        {
-          "book": "FanDuel",
-          "price": 154,
-          "ev_pct": 3.1,
-          "url": "https://sportsbook.fanduel.com"
-        }
-      ],
-      "also_at": [
-        "FanDuel",
-        "theScore Bet"
-      ],
-      "sharp": false,
-      "verified": true,
-      "edge_label": "Strong edge",
-      "rec_units": 1.0,
-      "rec_stake": 100,
-      "live": false,
-      "game_time": "Sun, Nov 22 \u00b7 5:05 PM ET",
-      "commence_time": "2026-11-22T21:05:00Z",
-      "bet_url": "https://novig.com",
-      "novig_deep": false,
-      "stale": true,
-      "first_seen": "2026-11-17T14:24:40.802588+00:00",
-      "stale_reason": "line moved below 3%"
     }
   ],
   "arbitrajes": [
@@ -597,12 +596,12 @@
       "game": "Texas A&M Aggies @ Oklahoma Sooners",
       "market": "Moneyline",
       "point": "",
-      "margen_pct": 1.05,
+      "margen_pct": 0.55,
       "lados": [
         {
           "pick": "Oklahoma Sooners",
           "casa": "Novig",
-          "precio": -270
+          "precio": -277
         },
         {
           "pick": "Texas A&M Aggies",
