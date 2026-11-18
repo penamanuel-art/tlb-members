@@ -3036,36 +3036,75 @@ def racha_platinum():
 
 
 def tirita_record10():
-    """Tirita superior del Dashboard (2026-11-13, orden de Alex, en
-    cascada): primero se mira el nivel PLATINUM (en el archivo: ELITE +
-    PLATINUM) en sus últimas 10 jugadas liquidadas across all sports; si
-    ese récord va positivo, la tirita sale como «Platinum Plays: W-L».
-    Si Platinum NO va positivo, se miran TODAS las jugadas oficiales
-    (Platinum + Gold + Vault) en sus últimas 10 across all sports; si ese
-    total va positivo, la tirita sale como «All Plays: W-L». Si ninguno
-    va positivo, devuelve None y la tirita no se renderiza. Números
-    siempre reales del archive; ante cualquier fallo, None."""
+    """Tirita superior del Dashboard (2026-11-18, orden de Alex con
+    foto): formato «🔥 Official plays: W-L in the last N [categoría]
+    plays», en una sola línea, con la categoría que esté MÁS CALIENTE
+    del programa — no una categoría fija. Se miran las categorías por
+    deporte (basketball = NBA+CBB, football = NFL+NCAAF, hockey = NHL,
+    baseball = MLB) en sus ventanas de últimas 7 y últimas 10 jugadas
+    oficiales liquidadas (WON/LOST, orden cronológico del archive).
+    Una ventana califica si está completa (hay al menos N jugadas),
+    va positiva (más ganadas que perdidas) y la categoría sigue
+    vigente: su jugada liquidada más reciente está a no más de 14
+    días de la jugada liquidada más reciente de todo el programa
+    (así una liga fuera de temporada, ej. MLB en noviembre, no sale
+    como «caliente» con números viejos). Gana la ventana con mayor %
+    de victorias; desempate por más victorias y luego por recencia
+    (fecha de su última jugada). Si ninguna califica, devuelve None
+    y la tirita no se renderiza. Números siempre reales del archive;
+    ante cualquier fallo, None: la tirita nunca rompe el home."""
     try:
+        from datetime import datetime as _dt
         dias = sorted(load_archive(), key=lambda d: d.get("fecha") or "")
-        seq_plat, seq_all = [], []
+        cats = [("basketball", ("NBA", "CBB")),
+                ("football", ("NFL", "NCAAF")),
+                ("hockey", ("NHL",)),
+                ("baseball", ("MLB",))]
+        seqs = {nombre: [] for nombre, _ in cats}
+        fechas = {nombre: [] for nombre, _ in cats}
+        ultima_global = None
         for d in dias:
+            f = d.get("fecha") or ""
             for j in d.get("jugadas") or []:
                 if j.get("resultado") not in ("WON", "LOST"):
                     continue
-                seq_all.append(j["resultado"])
-                if (j.get("nivel") or "").upper() in ("ELITE", "PLATINUM"):
-                    seq_plat.append(j["resultado"])
-
-        def _positivo(seq, etiqueta):
-            ult = seq[-10:]
-            if len(ult) < 10:
-                return None
-            w = sum(1 for r in ult if r == "WON")
-            if w <= len(ult) - w:
-                return None
-            return {"w": w, "l": len(ult) - w, "etiqueta": etiqueta}
-
-        return _positivo(seq_plat, "Platinum Plays") or _positivo(seq_all, "All Plays")
+                if ultima_global is None or f > ultima_global:
+                    ultima_global = f
+                liga = (j.get("liga") or "").upper()
+                for nombre, ligas in cats:
+                    if liga in ligas:
+                        seqs[nombre].append(j["resultado"])
+                        fechas[nombre].append(f)
+        if not ultima_global:
+            return None
+        f_global = _dt.strptime(ultima_global, "%Y-%m-%d")
+        cands = []
+        for nombre, _ligas in cats:
+            seq = seqs[nombre]
+            if not seq:
+                continue
+            f_ult = fechas[nombre][-1]
+            try:
+                dias_quieta = (f_global - _dt.strptime(f_ult, "%Y-%m-%d")).days
+            except Exception:
+                dias_quieta = 999
+            if dias_quieta > 14:
+                continue
+            for n in (7, 10):
+                if len(seq) < n:
+                    continue
+                ult = seq[-n:]
+                w = sum(1 for r in ult if r == "WON")
+                l = n - w
+                if w <= l:
+                    continue
+                cands.append({"w": w, "l": l, "n": n,
+                              "categoria": nombre, "etiqueta": "Official plays",
+                              "pct": w / float(n), "ult_fecha": f_ult})
+        if not cands:
+            return None
+        cands.sort(key=lambda c: (c["pct"], c["w"], c["ult_fecha"]), reverse=True)
+        return cands[0]
     except Exception:
         return None
 
