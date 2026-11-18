@@ -1032,11 +1032,16 @@ a.avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
   background: #0b0f14;
   border-top: 1px solid rgba(139, 152, 173, 0.16);
   padding: 6px 6px calc(6px + env(safe-area-inset-bottom));
-  /* Estabilidad iOS (2026-11-07): la barra va en su propia capa de
-     composición para que Safari no la arrastre al hacer scroll. */
-  transform: translateZ(0); -webkit-transform: translateZ(0);
-  will-change: transform;
-  backface-visibility: hidden; -webkit-backface-visibility: hidden;
+  /* SIN capa propia (corregido 2026-11-18, bug reportado por Alex en
+     /tools/line-moves desde el navegador de Instagram): el hack del
+     2026-11-07 (transform: translateZ(0) + will-change + backface-
+     visibility sobre la barra fija) la promueve a una capa de
+     composición anclada al viewport de layout; cuando el webview de
+     iOS cambia de alto al hacer scroll (la barra de Instagram se
+     recoge), esa capa no se re-ancla y la barra queda flotando sobre
+     el contenido, a mitad de pantalla. La regla buena es la de
+     style-v2.css (.v2-bottomnav sin transform): fixed + bottom:0
+     pelado, que WebKit ancla al viewport visual en cada scroll. */
 }
 .v2-bnav-item {
   flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px;
