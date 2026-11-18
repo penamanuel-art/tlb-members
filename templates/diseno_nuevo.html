@@ -412,7 +412,7 @@
 
 
 {% if tirita_record10 %}
-<div class="dn-strip-top"><div class="dn-strip">🔥 Official plays: {{ tirita_record10.w }}-{{ tirita_record10.l }} in the last {{ tirita_record10.n }} {{ tirita_record10.categoria }} plays</div></div>
+<div class="dn-strip-top"><div class="dn-strip">🔥 Official plays: {{ tirita_record10.w }}-{{ tirita_record10.l }} in the last {{ tirita_record10.n }}{% if tirita_record10.categoria %} {{ tirita_record10.categoria }}{% endif %} plays</div></div>
 {% endif %}
 
 <header class="dn-top">
