@@ -1042,18 +1042,23 @@ function dnHotClose(){
   var SIG = "{{ card_sig }}";
   var b = document.getElementById('dnBubble');
   if(!b || !SIG) return;
-  var shown = false, dismissed = false;
+  var shown = false, dismissed = false, checking = false;
   function check(){
-    if(shown || dismissed) return;
-    fetch("{{ url_for('api_card_sig') }}", {headers:{'Accept':'application/json'}, credentials:'same-origin'})
+    if(shown || dismissed || checking) return;
+    checking = true;
+    fetch("{{ url_for('api_card_sig') }}", {headers:{'Accept':'application/json'}, credentials:'same-origin', cache:'no-store'})
       .then(function(r){ return r.ok ? r.json() : null; })
       .then(function(j){
+        checking = false;
         if(j && j.sig && j.sig !== SIG){ shown = true; b.hidden = false; requestAnimationFrame(function(){ b.classList.add('on'); }); }
       })
-      .catch(function(){});
+      .catch(function(){ checking = false; });
   }
-  setInterval(check, 60000);
+  setTimeout(check, 3000);
+  setInterval(check, 30000);
   document.addEventListener('visibilitychange', function(){ if(!document.hidden) check(); });
+  window.addEventListener('focus', check);
+  window.addEventListener('pageshow', check);
   b.addEventListener('click', function(e){
     if(e.target && e.target.id === 'dnBubbleX'){ dismissed = true; b.hidden = true; return; }
     location.reload();
