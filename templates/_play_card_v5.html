@@ -157,19 +157,25 @@ body.v5-sheet-open .ticker-dock-bottom,body.v5-sheet-open .v2-bottomnav,body.v5-
 .tst-strip-btn{flex:1;text-align:center;font-size:13.5px;font-weight:600;border-radius:10px;padding:8px 4px;cursor:pointer;text-decoration:none;border:1px solid #24365C;background:#182641;color:#FFFFFF;box-sizing:border-box}
 .tst-strip-btn.gold{background:#2FE6A7;border-color:#2FE6A7;color:#0F1B31}
 .tst-strip-x{flex:0 0 auto;width:34px;font-weight:400;color:#FFFFFF}
-.tst-sheet-ov{position:fixed;inset:0;z-index:100002;background:rgba(4,6,10,.66);display:flex;align-items:flex-end;justify-content:center}
-.tst-sheet{background:#14161d;border:1px solid #223354;border-bottom:none;border-radius:18px 18px 0 0;width:100%;max-width:430px;padding:18px 16px calc(16px + env(safe-area-inset-bottom));color:#eef1f7;box-sizing:border-box}
-.tst-sheet h3{margin:0 0 4px;font-size:17.1px;font-weight:700}
-.tst-sheet-sub{font-size:13.5px;color:#A3AAB6;margin:0 0 12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.tst-sheet-field{display:flex;align-items:center;background:#0F1B31;border:1px solid #223354;border-radius:12px;padding:0 12px}
-.tst-sheet-field span{font-size:17.1px;color:#A3AAB6;margin-right:6px}
-.tst-sheet-field input{flex:1;background:transparent;border:none;outline:none;color:#eef1f7;font-size:16px;font-weight:600;padding:12px 0;min-width:0}
-.tst-sheet-towin{font-size:15px;color:#A3AAB6;margin:10px 2px 0}
-.tst-sheet-towin b{color:#2fe6a7}
-.tst-sheet-link{display:inline-block;margin-top:10px;font-size:15px;font-weight:600;color:#2FE6A7;background:none;border:none;padding:0;cursor:pointer}
-.tst-sheet-btns{display:flex;gap:9px;margin-top:16px}
-.tst-sheet-btn{flex:1;text-align:center;font-size:15px;font-weight:700;border-radius:12px;padding:12px 4px;cursor:pointer;border:1px solid #223354;background:#0F1B31;color:#eef1f7}
-.tst-sheet-btn.save{background:#2FE6A7;border-color:#2FE6A7;color:#04150d}
+.tst-sheet-ov{position:fixed;inset:0;z-index:100002;background:rgba(4,6,10,.66);display:flex;align-items:flex-start;justify-content:center;padding:12dvh 8px 8px;box-sizing:border-box;overflow-y:auto}
+.tst-sheet{background:#161B28;border:1px solid rgba(255,255,255,.14);border-radius:20px;width:100%;max-width:430px;padding:24px 20px 26px;color:#eef1f7;box-sizing:border-box}
+.tst-modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.tst-sheet h3{margin:0;font-size:24px;font-weight:800}
+.tst-modal-x{flex:none;background:none;border:none;color:#C9D4E6;font-size:24px;line-height:1;cursor:pointer;padding:2px 4px}
+.tst-modal-pick{font-size:20px;font-weight:800;margin:20px 0 0}
+.tst-modal-sub{font-size:15px;color:#9AA7B8;margin:5px 0 0}
+.tst-modal-info{margin-top:18px;background:rgba(47,230,167,.09);border:1.5px solid #2FE6A7;border-radius:14px;padding:15px 17px}
+.tst-modal-bet{font-size:20px;font-weight:800;color:#2FE6A7}
+.tst-modal-units{font-size:16px;color:#eef1f7;margin-top:5px}
+.tst-modal-note{font-size:14.5px;color:#9AA7B8;margin-top:5px;line-height:1.45}
+.tst-modal-label{font-size:15px;font-weight:700;color:#C9D4E6;margin:20px 0 8px}
+.tst-sheet-field{display:flex;align-items:center;background:#1C2436;border:1px solid #2A3448;border-radius:14px;padding:0 16px}
+.tst-sheet-field span{font-size:20px;color:#9AA7B8;margin-right:8px}
+.tst-sheet-field input{flex:1;background:transparent;border:none;outline:none;color:#fff;font-size:20px;font-weight:700;padding:16px 0;min-width:0}
+.tst-modal-btns{display:flex;align-items:center;gap:10px;margin-top:18px}
+.tst-modal-update{flex:1.35;text-align:center;font-size:16.5px;font-weight:700;border-radius:14px;padding:16px 10px;cursor:pointer;border:none;background:#2FE6A7;color:#04150d}
+.tst-modal-cancel{flex:1;text-align:center;font-size:16.5px;font-weight:600;border-radius:14px;padding:16px 10px;cursor:pointer;border:none;background:transparent;color:#C9D4E6}
+.tst-modal-foot{font-size:13.5px;color:#8A94A6;margin:16px 0 0}
 </style>
 <style>
 /* ===== DISENO MINIMAL (2026-11-08; publicado para todos el 2026-11-09) =====
@@ -307,7 +313,7 @@ body.v5-sheet-open .ticker-dock-bottom,body.v5-sheet-open .v2-bottomnav,body.v5-
       {% if p.id in tracked_ids %}
         <span class="v5m-tracked">✓ Tracked</span>
       {% else %}
-        <a class="v5m-track tstc-track" href="{{ url_for('track', play_id=p.id) }}" data-track-url="{{ url_for('track', play_id=p.id) }}">+ Track</a>
+        <a class="v5m-track tstc-track" href="{{ url_for('track', play_id=p.id) }}" data-track-url="{{ url_for('track', play_id=p.id) }}" data-game="{{ p.abbr }} vs {{ p.opp_abbr }}" data-odds="{{ fmt_odds(p.cuota) }}">+ Track</a>
       {% endif %}
     {% endif %}
   </div>
@@ -373,7 +379,7 @@ body.v5-sheet-open .ticker-dock-bottom,body.v5-sheet-open .v2-bottomnav,body.v5-
       {% if p.id in tracked_ids %}
         <span class="v5big-tracked">✓ Tracked</span>
       {% else %}
-        <a class="v5big-track tstc-track" href="{{ url_for('track', play_id=p.id) }}" data-track-url="{{ url_for('track', play_id=p.id) }}">+ Track</a>
+        <a class="v5big-track tstc-track" href="{{ url_for('track', play_id=p.id) }}" data-track-url="{{ url_for('track', play_id=p.id) }}" data-game="{{ p.abbr }} vs {{ p.opp_abbr }}" data-odds="{{ fmt_odds(p.cuota) }}">+ Track</a>
       {% endif %}
     {% endif %}
     <div class="v5sbtns">
@@ -531,6 +537,8 @@ body.v5-sheet-open .ticker-dock-bottom,body.v5-sheet-open .v2-bottomnav,body.v5-
             cuota: res.body.cuota,
             monto: res.body.stake_monto,
             cardMonto: res.body.stake_monto,
+            game: a.dataset.game || '',
+            odds: a.dataset.odds || '',
             spanEl: s,
             origNode: origNode
           });
@@ -634,37 +642,42 @@ body.v5-sheet-open .ticker-dock-bottom,body.v5-sheet-open .v2-bottomnav,body.v5-
     tstStrip = d;
     tstArmTimer();
   }
+  function tstOdds(c) {
+    c = parseInt(c, 10);
+    if (!c) return '';
+    return c > 0 ? '+' + c : '−' + Math.abs(c);
+  }
   function tstOpenSheet() {
     if (!tstState) return;
     closeSheet();
     var st = tstState;
+    var units = Math.round((Number(st.cardMonto) || 0) / 100 * 100) / 100;
+    var unitsTxt = '(' + units + ' ' + (units === 1 ? 'unit' : 'units') + ' at your $100 unit)';
+    var sub = (st.odds || tstOdds(st.cuota)) + (st.game ? ' · ' + st.game : '');
     var ov = document.createElement('div');
     ov.className = 'tst-sheet-ov';
     ov.innerHTML = '<div class="tst-sheet">' +
-      '<h3>Your stake</h3>' +
-      '<p class="tst-sheet-sub"></p>' +
+      '<div class="tst-modal-head"><h3>Change your stake</h3>' +
+      '<button type="button" class="tst-modal-x" data-sact="cancel" aria-label="Close">&times;</button></div>' +
+      '<div class="tst-modal-pick"></div>' +
+      '<p class="tst-modal-sub"></p>' +
+      '<div class="tst-modal-info"><div class="tst-modal-bet"></div>' +
+      '<div class="tst-modal-units"></div>' +
+      '<div class="tst-modal-note">The official size for this play. Bet only what you can afford to lose.</div></div>' +
+      '<div class="tst-modal-label">Your stake</div>' +
       '<div class="tst-sheet-field"><span>$</span><input type="number" inputmode="decimal" min="1" step="any"></div>' +
-      '<p class="tst-sheet-towin"></p>' +
-      '<button type="button" class="tst-sheet-link">Use card amount (' + tstMoney(st.cardMonto) + ')</button>' +
-      '<div class="tst-sheet-btns"><button type="button" class="tst-sheet-btn" data-sact="cancel">Cancel</button>' +
-      '<button type="button" class="tst-sheet-btn save" data-sact="save">Save</button></div></div>';
-    ov.querySelector('.tst-sheet-sub').textContent = st.pick;
+      '<div class="tst-modal-btns"><button type="button" class="tst-modal-update" data-sact="save">Update stake</button>' +
+      '<button type="button" class="tst-modal-cancel" data-sact="cancel">Cancel</button></div>' +
+      '<p class="tst-modal-foot">Only a bet that has not started can change.</p></div>';
+    ov.querySelector('.tst-modal-pick').textContent = st.pick;
+    ov.querySelector('.tst-modal-sub').textContent = sub;
+    ov.querySelector('.tst-modal-bet').textContent = 'Bet ' + tstMoney(st.cardMonto);
+    ov.querySelector('.tst-modal-units').textContent = unitsTxt;
     var input = ov.querySelector('input');
     input.value = st.monto;
-    var towin = ov.querySelector('.tst-sheet-towin');
-    function upd() {
-      var v = parseFloat(input.value);
-      if (isFinite(v) && v > 0) {
-        towin.innerHTML = 'To win <b>' + tstMoney(v * tstRatio(st.cuota)) + '</b> if it hits.';
-      } else {
-        towin.textContent = 'Enter the amount you are putting on this play.';
-      }
-    }
-    input.addEventListener('input', upd);
-    upd();
-    ov.querySelector('.tst-sheet-link').addEventListener('click', function(){ input.value = st.cardMonto; upd(); });
     ov.addEventListener('click', function(e){ if (e.target === ov) closeSheet(); });
-    ov.querySelector('[data-sact="cancel"]').addEventListener('click', closeSheet);
+    var cancels = ov.querySelectorAll('[data-sact="cancel"]');
+    for (var ci = 0; ci < cancels.length; ci++) cancels[ci].addEventListener('click', closeSheet);
     ov.querySelector('[data-sact="save"]').addEventListener('click', function(){ tstSaveStake(this, input); });
     document.body.appendChild(ov);
     tstSheet = ov;
@@ -677,7 +690,7 @@ body.v5-sheet-open .ticker-dock-bottom,body.v5-sheet-open .v2-bottomnav,body.v5-
     var v = parseFloat(input.value);
     if (!isFinite(v) || v <= 0) { alert('Enter a valid amount.'); return; }
     btn.dataset.busy = '1';
-    btn.textContent = 'Saving…';
+    btn.textContent = 'Updating…';
     fetch(TST_STAKE_BASE + tstState.id, {
       method: 'POST',
       headers: {'X-Requested-With': 'XMLHttpRequest', 'Content-Type': 'application/json'},
@@ -696,12 +709,12 @@ body.v5-sheet-open .ticker-dock-bottom,body.v5-sheet-open .v2-bottomnav,body.v5-
         tstArmTimer();
       } else {
         delete btn.dataset.busy;
-        btn.textContent = 'Save';
+        btn.textContent = 'Update stake';
         alert((res.body && res.body.error) || 'Could not save the new stake.');
       }
     }).catch(function(){
       delete btn.dataset.busy;
-      btn.textContent = 'Save';
+      btn.textContent = 'Update stake';
       alert('Could not save the new stake. Please try again.');
     });
   }
