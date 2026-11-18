@@ -603,11 +603,12 @@ body.v5-sheet-open .ticker-dock-bottom,body.v5-sheet-open .v2-bottomnav,body.v5-
     if (tstStripTimer) { clearTimeout(tstStripTimer); tstStripTimer = null; }
     if (tstStrip && tstStrip.parentNode) tstStrip.parentNode.removeChild(tstStrip);
     tstStrip = null;
-    if (!keepState) tstState = null;
+    if (!keepState && !tstSheet) tstState = null;
   }
   function closeSheet() {
     if (tstSheet && tstSheet.parentNode) tstSheet.parentNode.removeChild(tstSheet);
     tstSheet = null;
+    if (tstStrip) tstArmTimer();
   }
   function showTrackStrip(st) {
     tstState = st;
@@ -667,7 +668,9 @@ body.v5-sheet-open .ticker-dock-bottom,body.v5-sheet-open .v2-bottomnav,body.v5-
     ov.querySelector('[data-sact="save"]').addEventListener('click', function(){ tstSaveStake(this, input); });
     document.body.appendChild(ov);
     tstSheet = ov;
-    tstArmTimer();
+    /* Sin auto-ocultado mientras la hoja está abierta: el timer de 15s
+       borraba tstState y el botón Save quedaba muerto (retorno silencioso). */
+    if (tstStripTimer) { clearTimeout(tstStripTimer); tstStripTimer = null; }
   }
   function tstSaveStake(btn, input) {
     if (!tstState || btn.dataset.busy) return;
