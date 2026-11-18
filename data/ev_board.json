@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-18T11:39:45-04:00",
+  "updated_at": "2026-11-18T11:54:44-04:00",
   "refresh_minutes": 15,
   "fair_source": "Pinnacle no-vig",
   "filters": {
@@ -24,16 +24,22 @@
       "team": "Tampa Bay Buccaneers",
       "market": "Moneyline",
       "point": "",
-      "book": "Novig",
+      "book": "DraftKings",
       "price": 285,
       "fair_prob_pct": 27.7,
       "fair_american": 261,
       "ev_pct": 6.6,
-      "ev_mercado_pct": 1.8,
-      "fair_mercado_prob_pct": 26.5,
+      "ev_mercado_pct": 1.5,
+      "fair_mercado_prob_pct": 26.4,
       "doble": true,
-      "books_count": 2,
+      "books_count": 3,
       "books": [
+        {
+          "book": "DraftKings",
+          "price": 285,
+          "ev_pct": 6.6,
+          "url": "https://sportsbook.draftkings.com"
+        },
         {
           "book": "Novig",
           "price": 285,
@@ -48,7 +54,8 @@
         }
       ],
       "also_at": [
-        "FanDuel"
+        "FanDuel",
+        "Novig"
       ],
       "sharp": false,
       "verified": true,
@@ -109,6 +116,53 @@
       "novig_deep": false,
       "stale": false,
       "first_seen": "2026-11-16T19:09:40.372712+00:00"
+    },
+    {
+      "id": "5e63079b678f8c13419adc169fff02d3-h2h-None-Tennessee Titans",
+      "skey": "5e63079b678f8c13419adc169fff02d3|h2h|None|Tennessee Titans",
+      "sport": "NFL",
+      "game": "Tennessee Titans @ Dallas Cowboys",
+      "team": "Tennessee Titans",
+      "market": "Moneyline",
+      "point": "",
+      "book": "Novig",
+      "price": 344,
+      "fair_prob_pct": 23.5,
+      "fair_american": 325,
+      "ev_pct": 4.5,
+      "ev_mercado_pct": 2.2,
+      "fair_mercado_prob_pct": 23.0,
+      "doble": true,
+      "books_count": 2,
+      "books": [
+        {
+          "book": "Novig",
+          "price": 344,
+          "ev_pct": 4.5,
+          "url": "https://novig.com"
+        },
+        {
+          "book": "BetRivers",
+          "price": 340,
+          "ev_pct": 3.5,
+          "url": null
+        }
+      ],
+      "also_at": [
+        "BetRivers"
+      ],
+      "sharp": false,
+      "verified": true,
+      "edge_label": "Value edge",
+      "rec_units": 0.6,
+      "rec_stake": 60,
+      "live": false,
+      "game_time": "Sun, Nov 22 \u00b7 2:00 PM ET",
+      "commence_time": "2026-11-22T18:00:00Z",
+      "bet_url": "https://novig.com",
+      "novig_deep": false,
+      "stale": false,
+      "first_seen": "2026-11-16T01:09:48.622468+00:00"
     },
     {
       "id": "725c6205de38f91b507a880c139eda54-h2h-None-Illinois Fighting ",
@@ -467,54 +521,6 @@
       "stale_reason": "only 1 book \u22653% now"
     },
     {
-      "id": "5e63079b678f8c13419adc169fff02d3-h2h-None-Tennessee Titans",
-      "skey": "5e63079b678f8c13419adc169fff02d3|h2h|None|Tennessee Titans",
-      "sport": "NFL",
-      "game": "Tennessee Titans @ Dallas Cowboys",
-      "team": "Tennessee Titans",
-      "market": "Moneyline",
-      "point": "",
-      "book": "FanDuel",
-      "price": 350,
-      "fair_prob_pct": 23.5,
-      "fair_american": 325,
-      "ev_pct": 5.9,
-      "ev_mercado_pct": 2.8,
-      "fair_mercado_prob_pct": 22.9,
-      "doble": true,
-      "books_count": 2,
-      "books": [
-        {
-          "book": "FanDuel",
-          "price": 350,
-          "ev_pct": 5.9,
-          "url": "https://sportsbook.fanduel.com"
-        },
-        {
-          "book": "Novig",
-          "price": 344,
-          "ev_pct": 4.5,
-          "url": "https://novig.com"
-        }
-      ],
-      "also_at": [
-        "Novig"
-      ],
-      "sharp": false,
-      "verified": true,
-      "edge_label": "Strong edge",
-      "rec_units": 1.0,
-      "rec_stake": 100,
-      "live": false,
-      "game_time": "Sun, Nov 22 \u00b7 2:00 PM ET",
-      "commence_time": "2026-11-22T18:00:00Z",
-      "bet_url": "https://novig.com",
-      "novig_deep": false,
-      "stale": true,
-      "first_seen": "2026-11-16T01:09:48.622468+00:00",
-      "stale_reason": "only 1 book \u22653% now"
-    },
-    {
       "id": "4b20b742b6168aaca4f25d87f11b1526-h2h-None-New York Jets",
       "skey": "4b20b742b6168aaca4f25d87f11b1526|h2h|None|New York Jets",
       "sport": "NFL",
@@ -611,27 +617,6 @@
         }
       ],
       "commence_time": "2026-11-21T19:30:00Z",
-      "live": false
-    },
-    {
-      "sport": "NBA",
-      "game": "Houston Rockets @ Indiana Pacers",
-      "market": "Total",
-      "point": "225.5",
-      "margen_pct": 0.24,
-      "lados": [
-        {
-          "pick": "Over 225.5",
-          "casa": "Pinnacle",
-          "precio": 103
-        },
-        {
-          "pick": "Under 225.5",
-          "casa": "Novig",
-          "precio": -102
-        }
-      ],
-      "commence_time": "2026-11-19T00:10:00Z",
       "live": false
     },
     {
