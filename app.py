@@ -3036,32 +3036,36 @@ def racha_platinum():
 
 
 def tirita_record10():
-    """Tirita superior del Dashboard (2026-11-18, orden de Alex con
-    foto): formato «🔥 Official plays: W-L in the last N [categoría]
-    plays», en una sola línea, con la categoría que esté MÁS CALIENTE
-    del programa — no una categoría fija. Se miran las categorías por
-    deporte (basketball = NBA+CBB, football = NFL+NCAAF, hockey = NHL,
-    baseball = MLB) en sus ventanas de últimas 7 y últimas 10 jugadas
-    oficiales liquidadas (WON/LOST, orden cronológico del archive).
-    Una ventana califica si está completa (hay al menos N jugadas),
-    va positiva (más ganadas que perdidas) y la categoría sigue
-    vigente: su jugada liquidada más reciente está a no más de 14
-    días de la jugada liquidada más reciente de todo el programa
-    (así una liga fuera de temporada, ej. MLB en noviembre, no sale
-    como «caliente» con números viejos). Gana la ventana con mayor %
-    de victorias; desempate por más victorias y luego por recencia
-    (fecha de su última jugada). Si ninguna califica, devuelve None
-    y la tirita no se renderiza. Números siempre reales del archive;
-    ante cualquier fallo, None: la tirita nunca rompe el home."""
+    """Tirita superior del Dashboard (2026-11-18, orden final de Alex
+    en llamada): formato de su foto «🔥 Official plays: W-L in the
+    last N [nombre] plays», fondo verde oscuro, texto menta, título
+    FINO, una sola línea, con LO QUE ESTÉ MÁS CALIENTE del programa,
+    buscado en esta cascada de prioridad:
+    1) NIVELES + PROGRAMA: Platinum (ELITE+PLATINUM en el archive),
+       Gold (GOLD+FREE, el mapeo canónico del programa) y TODO el
+       programa junto (todas las oficiales; Vault cuenta dentro del
+       programa, no como opción separada). Ventanas: 7 y 10 por nivel,
+       7, 10 y 20 pa'l programa. Si alguna va positiva (más ganadas
+       que perdidas), gana la de mayor % de victorias entre esas tres
+       opciones; el texto lleva su nombre («Platinum plays» / «Gold
+       plays») o ningún nombre si es el programa junto.
+    2) LIGAS (solo si ninguna de las tres de arriba califica): NBA,
+       NHL, NFL, NCAAF y MLB en ventanas 7 y 10, con el nombre de la
+       LIGA («NBA plays», «NHL plays»...). Una liga solo califica si
+       su última jugada liquidada está a no más de 14 días de la
+       última del programa (una liga fuera de temporada, ej. MLB en
+       noviembre, no sale como «caliente» con números viejos).
+    3) Si nada califica, devuelve None y la tirita no se renderiza.
+    Desempates: más victorias, luego la ventana más reciente.
+    Números siempre reales del archive; ante cualquier fallo, None:
+    la tirita nunca rompe el home."""
     try:
         from datetime import datetime as _dt
         dias = sorted(load_archive(), key=lambda d: d.get("fecha") or "")
-        cats = [("basketball", ("NBA", "CBB")),
-                ("football", ("NFL", "NCAAF")),
-                ("hockey", ("NHL",)),
-                ("baseball", ("MLB",))]
-        seqs = {nombre: [] for nombre, _ in cats}
-        fechas = {nombre: [] for nombre, _ in cats}
+        seq_plat, seq_gold, seq_prog = [], [], []
+        ligas = ("NBA", "NHL", "NFL", "NCAAF", "MLB")
+        seq_liga = {lg: [] for lg in ligas}
+        fec_liga = {lg: [] for lg in ligas}
         ultima_global = None
         for d in dias:
             f = d.get("fecha") or ""
@@ -3070,27 +3074,24 @@ def tirita_record10():
                     continue
                 if ultima_global is None or f > ultima_global:
                     ultima_global = f
+                r = j["resultado"]
+                seq_prog.append(r)
+                niv = (j.get("nivel") or "").upper()
+                if niv in ("ELITE", "PLATINUM"):
+                    seq_plat.append(r)
+                elif niv in ("GOLD", "FREE"):
+                    seq_gold.append(r)
                 liga = (j.get("liga") or "").upper()
-                for nombre, ligas in cats:
-                    if liga in ligas:
-                        seqs[nombre].append(j["resultado"])
-                        fechas[nombre].append(f)
+                if liga in seq_liga:
+                    seq_liga[liga].append(r)
+                    fec_liga[liga].append(f)
         if not ultima_global:
             return None
-        f_global = _dt.strptime(ultima_global, "%Y-%m-%d")
-        cands = []
-        for nombre, _ligas in cats:
-            seq = seqs[nombre]
-            if not seq:
-                continue
-            f_ult = fechas[nombre][-1]
-            try:
-                dias_quieta = (f_global - _dt.strptime(f_ult, "%Y-%m-%d")).days
-            except Exception:
-                dias_quieta = 999
-            if dias_quieta > 14:
-                continue
-            for n in (7, 10):
+
+        def _ventanas(seq, ventanas):
+            """Ventanas calificadas (positivas) de una secuencia."""
+            out = []
+            for n in ventanas:
                 if len(seq) < n:
                     continue
                 ult = seq[-n:]
@@ -3098,12 +3099,49 @@ def tirita_record10():
                 l = n - w
                 if w <= l:
                     continue
-                cands.append({"w": w, "l": l, "n": n,
-                              "categoria": nombre, "etiqueta": "Official plays",
-                              "pct": w / float(n), "ult_fecha": f_ult})
+                out.append({"w": w, "l": l, "n": n, "pct": w / float(n)})
+            return out
+
+        # Paso 1: niveles + programa junto.
+        cands = []
+        for nombre, seq, ventanas, etiqueta in (
+                ("Platinum", seq_plat, (7, 10), "Platinum Plays"),
+                ("Gold", seq_gold, (7, 10), "Gold Plays"),
+                ("", seq_prog, (7, 10, 20), "Official plays")):
+            for v in _ventanas(seq, ventanas):
+                v = dict(v)
+                v["categoria"] = nombre
+                v["etiqueta"] = etiqueta
+                cands.append(v)
+        if cands:
+            cands.sort(key=lambda c: (c["pct"], c["w"], c["n"]),
+                       reverse=True)
+            return cands[0]
+
+        # Paso 2: ligas (solo vigentes), si nada de arriba calificó.
+        f_global = _dt.strptime(ultima_global, "%Y-%m-%d")
+        cands = []
+        for lg in ligas:
+            seq = seq_liga[lg]
+            if not seq:
+                continue
+            f_ult = fec_liga[lg][-1]
+            try:
+                dias_quieta = (f_global - _dt.strptime(f_ult, "%Y-%m-%d")).days
+            except Exception:
+                dias_quieta = 999
+            if dias_quieta > 14:
+                continue
+            for v in _ventanas(seq, (7, 10)):
+                v = dict(v)
+                v["categoria"] = lg
+                v["etiqueta"] = "Official plays"
+                v["ult_fecha"] = f_ult
+                cands.append(v)
         if not cands:
             return None
-        cands.sort(key=lambda c: (c["pct"], c["w"], c["ult_fecha"]), reverse=True)
+        cands.sort(key=lambda c: (c["pct"], c["w"], c["ult_fecha"]),
+                   reverse=True)
         return cands[0]
     except Exception:
         return None
