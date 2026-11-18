@@ -15146,6 +15146,68 @@ def admin_api_seed_tracker_alex():
     })
 
 
+@app.route("/admin/api/untrack-alex", methods=["POST"])
+def admin_api_untrack_alex():
+    """Des-trackea jugadas PENDIENTES de la cuenta de miembro de Alex
+    (ALEX_MEMBER_EMAIL) — 2026-11-18, orden de Alex: resetear su trackeo
+    activo de hoy para re-probar el flujo Track / Change stake tras el
+    arreglo del Save. SOLO borra filas de tracked_plays de SU cuenta con
+    resultado pendiente (NULL/'') y de la fecha pedida (default: hoy ET);
+    si viene play_ids, solo esas. El historial liquidado (W/L) NUNCA se
+    toca, ni own_bets, ni el récord oficial. Auth: sesión admin o
+    X-Admin-Key (helper _admin_api_autorizado)."""
+    if not _admin_api_autorizado():
+        return jsonify({"ok": False, "error": "admin only"}), 403
+    data = request.get_json(silent=True) or {}
+    fecha = (data.get("fecha") or "").strip() or datetime.now(TZ).strftime("%Y-%m-%d")
+    play_ids = data.get("play_ids") or []
+    if isinstance(play_ids, str):
+        play_ids = [play_ids]
+    play_ids = [str(p).strip() for p in play_ids if str(p).strip()]
+    db = get_db()
+    u = db.execute(
+        "SELECT id FROM users WHERE LOWER(email) = ?", (ALEX_MEMBER_EMAIL,)
+    ).fetchone()
+    if not u:
+        return jsonify({"ok": False, "error": "user"}), 404
+    uid = u["id"] if isinstance(u, dict) or hasattr(u, "keys") else u[0]
+    rows = db.execute(
+        "SELECT id, play_id, pick, nivel, cuota, stake_monto, stake_personal "
+        "FROM tracked_plays WHERE user_id = ? AND fecha = ? "
+        "AND (resultado IS NULL OR resultado = '') ORDER BY id",
+        (uid, fecha),
+    ).fetchall()
+    targets = []
+    for r in rows:
+        if play_ids and r["play_id"] not in play_ids:
+            continue
+        targets.append({
+            "id": r["id"], "play_id": r["play_id"], "pick": r["pick"],
+            "nivel": r["nivel"], "cuota": r["cuota"],
+            "stake_monto": float(r["stake_monto"] or 0),
+            "stake_personal": float(r["stake_personal"] or 0)
+            if r["stake_personal"] is not None else None,
+        })
+    deleted = 0
+    for t in targets:
+        cur = db.execute(
+            "DELETE FROM tracked_plays WHERE id = ? AND user_id = ? "
+            "AND (resultado IS NULL OR resultado = '')",
+            (t["id"], uid),
+        )
+        deleted += cur.rowcount or 0
+    db.commit()
+    restantes = db.execute(
+        "SELECT COUNT(*) AS c FROM tracked_plays WHERE user_id = ? AND fecha = ?",
+        (uid, fecha),
+    ).fetchone()
+    return jsonify({
+        "ok": True, "user_id": uid, "fecha": fecha,
+        "deleted": deleted, "deleted_rows": targets,
+        "restantes_fecha": restantes["c"],
+    })
+
+
 def log_notificacion(db, tipo, titulo, detalle=""):
     """Registra una notificación en el centro del admin (2026-10-07)."""
     try:
