@@ -32,6 +32,10 @@
   .dn-avatar{width:32px;height:32px;border-radius:50%;border:1.5px solid var(--mint);color:var(--mint);display:flex;align-items:center;justify-content:center;font-family:var(--fdisp);font-size:15px;font-weight:700;background:var(--panel)}
   .dn-iconbtn{width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:var(--panel);color:var(--txt);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
   .dn-burger{font-size:19px;line-height:1}
+  .dn-viewpicks{background:var(--mint);color:#052017;font-weight:700;font-size:16px;padding:13px 20px;border-radius:14px;white-space:nowrap;display:inline-flex;align-items:center;gap:7px}
+  .dn-menubtn{width:46px;height:46px;border-radius:13px;border:1px solid var(--line);background:transparent;color:var(--txt);font-size:19px;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;flex:none}
+  .dn-top2{max-width:640px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:10px;border-top:1px solid var(--line)}
+  @media (max-width:430px){.dn-lg-coin{height:46px !important}.dn-lg-letters{height:33px !important}.dn-viewpicks{padding:11px 13px;font-size:14.5px}.dn-menubtn{width:42px;height:42px}}
   .dn-notif{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:14px}
   .dn-notif h3{font-family:var(--fdisp);font-size:17.1px;margin:0 0 8px;color:var(--txt)}
   .dn-notif-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid rgba(255,255,255,.05)}
@@ -59,7 +63,7 @@
   .dn-hello .dn-fecha{font-family:var(--fmono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--mint);margin-top:12px}
   .dn-watch{display:inline-flex;align-items:center;gap:9px;margin-top:15px;padding:10px 18px;border:1px solid var(--line);border-radius:999px;color:var(--txt);font-size:17.1px;font-weight:500;text-decoration:none;background:rgba(255,255,255,.02)}
   .dn-watch-ic{display:flex;flex:none}
-  .dn-hero-card{background:var(--panel);border:1px solid var(--line);border-radius:18px;overflow:hidden;margin-top:18px}
+  .dn-hero-card{background:var(--panel);border:1px solid var(--line);border-radius:18px;overflow:hidden;margin-top:18px;scroll-margin-top:150px}
   .dn-board-head{display:flex;align-items:center;gap:10px;margin:18px 0 12px}
   .dn-board-head h2{font-family:var(--fdisp);font-size:17.1px;font-weight:800;margin:0;color:var(--txt);white-space:nowrap}
   .dn-board-lvl{color:var(--mut);font-size:15px;font-weight:500;white-space:nowrap}
@@ -418,21 +422,26 @@
 
 <header class="dn-top">
   <div class="dn-top-in">
-    <div style="display:flex;align-items:center;gap:3px;flex:1;min-width:0">
-      <img src="{{ url_for('static', filename='img/sharp-coin.png') }}" alt="" style="height:60px;width:auto;display:block">
-      <img src="{{ url_for('static', filename='img/sharp-letters.png') }}" alt="The Sharp Team" style="height:44px;width:auto;max-width:100%;display:block">
+    <div style="display:flex;align-items:center;gap:3px;min-width:0">
+      <img class="dn-lg-coin" src="{{ url_for('static', filename='img/sharp-coin.png') }}" alt="" style="height:60px;width:auto;display:block">
+      <img class="dn-lg-letters" src="{{ url_for('static', filename='img/sharp-letters.png') }}" alt="The Sharp Team" style="height:44px;width:auto;max-width:100%;display:block">
     </div>
     <div class="dn-top-right">
+      <a class="dn-viewpicks" href="#dnBoard">View picks <span aria-hidden="true">→</span></a>
+      <button class="dn-menubtn" type="button" id="dnMenuBtn" aria-label="Menu" aria-expanded="false">☰</button>
+    </div>
+  </div>
+  <div class="dn-top2">
+    <button class="dn-quickbtn" type="button" id="dnQuickBtn" aria-haspopup="true"><span style="font-size:17px;line-height:1">+</span> Quick Tools</button>
+    <div class="dn-top-right">
       <button class="dn-iconbtn" type="button" id="dnBell" aria-label="Notifications"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M13.7 20a2 2 0 0 1-3.4 0"/></svg></button>
-      <button class="dn-iconbtn dn-burger" type="button" id="dnMenuBtn" aria-label="Menu" aria-expanded="false">☰</button>
+      <a class="dn-iconbtn" href="{{ url_for('cuenta') }}" aria-label="Account"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></a>
     </div>
   </div>
 </header>
 
 <div class="dn-wrap">
 
-
-  <div class="dn-quickbar"><button class="dn-quickbtn" type="button" id="dnQuickBtn" aria-haspopup="true"><span style="font-size:17px;line-height:1">+</span> Quick Tools</button></div>
 
   <div class="dn-notif" id="dnNotif" hidden>
     <h3>Notifications</h3>
@@ -461,7 +470,7 @@
   </section>
 
 
-  <div class="dn-hero-card">
+  <div class="dn-hero-card" id="dnBoard">
     <div class="dn-hero-band"><span>Today's card</span></div>
     <div class="dn-hero-body">
       {% if estado.vacio %}<div class="dn-hero-title">Today's <span class="dn-hero-accent">plays</span> not posted yet</div>{% else %}<div class="dn-hero-title">{{ estado.titulo }}</div>{% endif %}
