@@ -149,7 +149,7 @@
 .v5m-strip-hint{font-size:13.5px;font-weight:400;color:#8b919e;white-space:nowrap}
 .v5m{position:relative;overflow:hidden;background:#232C3D;border:1px solid #262A35;border-radius:14px;padding:0;box-sizing:border-box;width:100%;max-width:100%;margin:0 0 40px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#FFFFFF}
 .v5m::before{content:"";position:absolute;top:0;bottom:0;left:1px;width:4px;background:#10CC87}
-.v5m-band{display:flex;align-items:center;gap:8px;background:#13161E;border-bottom:1px solid #2A2E3A;padding:8px 16px}
+.v5m-band{display:flex;align-items:center;gap:8px;background:#13161E;padding:8px 16px}
 .v5m-band-t{font-size:12px;font-weight:600;letter-spacing:2.4px;color:#c9ccd4;white-space:nowrap}
 .v5m-band-t.plat{color:#a9d6f5}
 .v5m-band-t.vault{color:#c3ccd9}
@@ -157,7 +157,9 @@
 .v5m-band-t.gold{color:#10CC87}
 .v5m-band-l{margin-left:auto;flex:none;display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:500;letter-spacing:1.4px;color:#c9ccd4;white-space:nowrap}
 .v5m-band-logo{height:20px;width:auto;flex:none}
-.v5m-body{padding:16px 18px}
+.v5m-body{padding:0}
+.v5m-top{background:#13161E;padding:16px 18px 18px}
+.v5m-bot{padding:0 18px 16px}
 .v5m-head{display:flex;gap:11px;align-items:flex-start}
 .v5m-logo{width:44px;height:44px;object-fit:contain;flex:none;margin-top:2px}
 .v5m-title{font-size:24px;font-weight:800;color:#FFFFFF;letter-spacing:-.3px;line-height:1.2}
@@ -173,7 +175,7 @@
 @keyframes v5mBlink{0%,100%{opacity:1}50%{opacity:.25}}
 .v5m-res.won{color:#10CC87;background:rgba(16,204,135,.12)}
 .v5m-res.lost{color:#f87171;background:rgba(248,113,113,.1)}
-.v5m-nums{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;margin-top:18px;padding-top:16px;background:linear-gradient(90deg,transparent,rgba(16,204,135,.55) 25%,rgba(16,204,135,.55) 75%,transparent) top/100% 1px no-repeat}
+.v5m-nums{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;margin-top:0;padding-top:16px}
 .v5m-k{font-size:11px;font-weight:500;letter-spacing:1.8px;color:#6b7280}
 .v5m-price{font-size:20px;font-weight:300;color:#FFFFFF;line-height:1.05;margin-top:3px}
 .v5m-priceline{display:flex;align-items:flex-end;gap:9px}
@@ -232,6 +234,7 @@
     <span class="v5m-band-l">{% if p.liga %}<img class="v5m-band-logo" src="https://a.espncdn.com/i/teamlogos/leagues/500/{{ p.liga|lower }}.png" alt="{{ p.liga }}" loading="lazy" onerror="this.remove()"> {{ p.liga }}{% endif %}</span>
   </div>
   <div class="v5m-body">
+  <div class="v5m-top">
   <div class="v5m-head">
     {% if _logo %}<img class="v5m-logo" src="{{ _logo }}" alt="{{ p.abbr }} logo" loading="lazy" onerror="this.remove()">{% endif %}
     <div style="flex:1;min-width:0">
@@ -249,6 +252,8 @@
   </div>
   {% if _res == 'W' %}<span class="v5m-res won">WON{% if p.profit is defined and p.profit is not none %} &middot; +${{ '%.2f'|format(p.profit) }}{% endif %}</span>{% elif _res == 'L' %}<span class="v5m-res lost">LOST{% if p.profit is defined and p.profit is not none %} &middot; -${{ '%.2f'|format(p.profit|abs) }}{% endif %}</span>{% endif %}
   {% if p.live_now and not _res %}<span class="v5m-live"><span class="v5m-live-dot"></span>LIVE NOW</span>{% endif %}
+  </div>
+  <div class="v5m-bot">
   <div class="v5m-nums" data-v5-open="{{ p.id }}" style="cursor:pointer">
     <div><div class="v5m-k">PRICE POSTED</div><div class="v5m-priceline"><div class="v5m-price">{{ fmt_odds(p.cuota) }}</div>{% if _ci.get('injuries') %}<button type="button" class="v5m-chip v5m-chip-inj" data-v5-chip="injuries" data-play="{{ p.id }}"><svg width="16.5" height="16.5" viewBox="0 0 24 24" fill="none" stroke="#EE8CA5" stroke-width="3.4" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 3.5h5V9.5h6v5h-6v6h-5v-6h-6v-5h6z"/></svg> {{ _ci.injuries.total }}</button>{% endif %}</div></div>
     <div class="v5m-right"><div class="v5m-k">STAKE</div><div class="v5m-stake">{{ '%g' % p.stake_unidades }}u &middot; ${{ '%g' % p.stake_monto }}</div>{% if p.comprobante %}<div class="v5m-tok">✓ Ticket matched</div>{% else %}<div class="v5m-tpend">Ticket pending</div>{% endif %}</div>
@@ -275,6 +280,7 @@
         <a class="v5m-track tstc-track" href="{{ url_for('track', play_id=p.id) }}" data-track-url="{{ url_for('track', play_id=p.id) }}" data-game="{{ p.abbr }} vs {{ p.opp_abbr }}" data-odds="{{ fmt_odds(p.cuota) }}">+ Track</a>
       {% endif %}
     {% endif %}
+  </div>
   </div>
   </div>
 {% if p.writeup and p.writeup.model_prob %}<button type="button" class="v5m-strip" data-v5-open="{{ p.id }}" data-v5-why="1"><span class="v5m-strip-t">WHY WE LIKE IT</span><span class="v5m-strip-n">Model {% if p.writeup.model_prob is number %}{{ '%.1f%%'|format(p.writeup.model_prob * 100) }}{% else %}{{ p.writeup.model_prob }}{% endif %} &middot; Edge {{ p.writeup.edge }}{% if p.writeup.ev is defined and p.writeup.ev is not none and p.writeup.ev != '' %} &middot; EV {% if p.writeup.ev is number %}{{ '%+.1f%%'|format(p.writeup.ev * 100) }}{% else %}{{ p.writeup.ev }}{% endif %}{% endif %}</span><span class="v5m-strip-hint">Tap to expand full data ▾</span></button>{% endif %}
@@ -685,5 +691,5 @@
 .v5m::before{background:#10CC87 !important}
 .v5kick.gold,.v5m-band-t.gold,.v5wu-h,.v5wu-p b{color:#10CC87 !important}
 .v5m-strip{border-color:rgba(16,204,135,0.28) !important}
-.v5m-nums{background:linear-gradient(90deg,transparent,rgba(16,204,135,.55) 25%,rgba(16,204,135,.55) 75%,transparent) top/100% 1px no-repeat !important}
+.v5m-nums{background:none !important}
 </style>
