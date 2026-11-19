@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-19T12:24:44-04:00",
+  "updated_at": "2026-11-19T12:39:42-04:00",
   "refresh_minutes": 15,
   "fair_source": "Pinnacle no-vig",
   "filters": {
@@ -29,16 +29,22 @@
       "fair_prob_pct": 25.7,
       "fair_american": 289,
       "ev_pct": 7.9,
-      "ev_mercado_pct": 4.2,
+      "ev_mercado_pct": 4.0,
       "fair_mercado_prob_pct": 24.8,
       "doble": true,
-      "books_count": 2,
+      "books_count": 3,
       "books": [
         {
           "book": "BetRivers",
           "price": 320,
           "ev_pct": 7.9,
           "url": null
+        },
+        {
+          "book": "Novig",
+          "price": 317,
+          "ev_pct": 7.1,
+          "url": "https://novig.com"
         },
         {
           "book": "FanDuel",
@@ -48,7 +54,8 @@
         }
       ],
       "also_at": [
-        "FanDuel"
+        "FanDuel",
+        "Novig"
       ],
       "sharp": false,
       "verified": true,
@@ -579,24 +586,24 @@
   ],
   "arbitrajes": [
     {
-      "sport": "NCAAF",
-      "game": "UNLV Rebels @ San Jose State Spartans",
+      "sport": "NHL",
+      "game": "New York Islanders @ Winnipeg Jets",
       "market": "Moneyline",
       "point": "",
-      "margen_pct": 0.3,
+      "margen_pct": 0.94,
       "lados": [
         {
-          "pick": "San Jose State Spartans",
-          "casa": "theScore Bet",
-          "precio": 220
+          "pick": "New York Islanders",
+          "casa": "Novig",
+          "precio": 108
         },
         {
-          "pick": "UNLV Rebels",
-          "casa": "Novig",
-          "precio": -217
+          "pick": "Winnipeg Jets",
+          "casa": "Pinnacle",
+          "precio": -104
         }
       ],
-      "commence_time": "2026-11-22T00:00:00Z",
+      "commence_time": "2026-11-20T00:10:00Z",
       "live": false
     },
     {
@@ -660,6 +667,27 @@
         }
       ],
       "commence_time": "2026-11-21T20:30:00Z",
+      "live": false
+    },
+    {
+      "sport": "NHL",
+      "game": "New York Islanders @ Winnipeg Jets",
+      "market": "Spread",
+      "point": "1.5",
+      "margen_pct": 0.09,
+      "lados": [
+        {
+          "pick": "New York Islanders 1.5",
+          "casa": "Novig",
+          "precio": -228
+        },
+        {
+          "pick": "Winnipeg Jets -1.5",
+          "casa": "Pinnacle",
+          "precio": 229
+        }
+      ],
+      "commence_time": "2026-11-20T00:10:00Z",
       "live": false
     }
   ],
