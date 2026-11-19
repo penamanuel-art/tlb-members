@@ -50,7 +50,7 @@
 .tstc-wu summary::-webkit-details-marker{display:none}
 .tstc-wu summary .tstc-wu-arr{color:#8b93a7;font-size:11px}
 .tstc-wu-body{padding:2px 14px 12px;font-size:13px;line-height:1.55}
-.tstc-wu-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px dashed #1e2a45}
+.tstc-wu-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px dashed #1e2b3c}
 .tstc-wu-row:last-child{border-bottom:none}
 .tstc-wu-k{color:#8b93a7}
 .tstc-wu-v{font-weight:700;color:#f3f4f6}
@@ -91,7 +91,7 @@
    suave y menta — en vez de su paleta propia. En el resto (Admin, home
    anterior) se ve exactamente como siempre. #}
 {% set _lux = card_lux if card_lux is defined and card_lux else false %}
-{% set _mint = '#2fe6a7' if _lux else '#4ade80' %}
+{% set _mint = '#11cc87' if _lux else '#4ade80' %}
 {% set _view = '#7cc4ff' if _lux else '#60a5fa' %}
 {% set _platbg = 'rgba(207,224,245,.13)' if _lux else 'rgba(125,180,255,.15)' %}
 {% set _platfg = '#cfe0f5' if _lux else '#7db4ff' %}
@@ -174,7 +174,7 @@
           {% if p.id in tracked_ids %}
             <span style="color:{{ _mint }};font-size:11px;">&#x2713; Tracked</span>
           {% else %}
-            <a class="tstc-track" href="{{ url_for('track', play_id=p.id) }}" data-track-url="{{ url_for('track', play_id=p.id) }}" style="color:{{ _mint }};border:1px solid {{ 'rgba(47,230,167,.55)' if _lux else 'rgba(34,197,94,.6)' }};font-size:11px;padding:6px 16px;border-radius:10px;background:{{ 'rgba(47,230,167,.10)' if _lux else 'rgba(34,197,94,.12)' }};text-decoration:none;">+ Track</a>
+            <a class="tstc-track" href="{{ url_for('track', play_id=p.id) }}" data-track-url="{{ url_for('track', play_id=p.id) }}" style="color:{{ _mint }};border:1px solid {{ 'rgba(17,204,135,.55)' if _lux else 'rgba(34,197,94,.6)' }};font-size:11px;padding:6px 16px;border-radius:10px;background:{{ 'rgba(17,204,135,.10)' if _lux else 'rgba(34,197,94,.12)' }};text-decoration:none;">+ Track</a>
           {% endif %}
           {% endif %}
         </div>
@@ -239,7 +239,7 @@
           {% if p.id in tracked_ids %}
             <span style="color:{{ _mint }};font-size:12px;">✓ Tracked</span>
           {% else %}
-            <a class="tstc-track" href="{{ url_for('track', play_id=p.id) }}" data-track-url="{{ url_for('track', play_id=p.id) }}" style="color:{{ _mint }};border:1.5px solid {{ 'rgba(47,230,167,.55)' if _lux else 'rgba(34,197,94,.6)' }};font-size:12px;padding:8px 20px;border-radius:12px;background:{{ 'rgba(47,230,167,.10)' if _lux else 'rgba(34,197,94,.12)' }};text-decoration:none;">+ Track</a>
+            <a class="tstc-track" href="{{ url_for('track', play_id=p.id) }}" data-track-url="{{ url_for('track', play_id=p.id) }}" style="color:{{ _mint }};border:1.5px solid {{ 'rgba(17,204,135,.55)' if _lux else 'rgba(34,197,94,.6)' }};font-size:12px;padding:8px 20px;border-radius:12px;background:{{ 'rgba(17,204,135,.10)' if _lux else 'rgba(34,197,94,.12)' }};text-decoration:none;">+ Track</a>
           {% endif %}
           {% endif %}
         </div>
