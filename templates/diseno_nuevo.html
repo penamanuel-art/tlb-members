@@ -10,10 +10,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800&family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@500;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#0C0F16; --panel:#1E2B3C; --panel2:#182130;
+    --bg:#0C0F16; --panel:#1D2029; --panel2:#181B23;
     --line:rgba(147,161,181,.16);
-    --mint:#11CC87; --mintbg:rgba(17,204,135,.10); --mintline:rgba(17,204,135,.35);
-    --txt:#F4F7FB; --mut:#93A1B5; --neg:#FF8585;
+    --mint:#10CC87; --mintbg:rgba(16,204,135,.10); --mintline:rgba(16,204,135,.35);
+    --txt:#F4F7FB; --mut:#9AA1AE; --neg:#FF8585;
     --fdisp:'Unbounded',sans-serif; --fbody:'Roboto',sans-serif; --fmono:'Roboto Mono',monospace;
   }
   *{box-sizing:border-box}
@@ -134,7 +134,7 @@
 
   /* Estado del dia */
   .dn-status{margin-top:16px;background:var(--panel);border:1px solid var(--mintline);border-radius:14px;padding:13px 14px;display:flex;gap:12px;align-items:flex-start}
-  .dn-status .dn-ic{flex:0 0 auto;width:34px;height:34px;border-radius:50%;background:rgba(17,204,135,.16);display:flex;align-items:center;justify-content:center;color:var(--mint)}
+  .dn-status .dn-ic{flex:0 0 auto;width:34px;height:34px;border-radius:50%;background:rgba(16,204,135,.16);display:flex;align-items:center;justify-content:center;color:var(--mint)}
   .dn-status b{display:block;font-size:15px;font-weight:700;line-height:1.35}
   .dn-status span{display:block;font-size:15px;color:var(--mut);line-height:1.45;margin-top:2px}
 
@@ -155,12 +155,12 @@
   /* Tirita superior de récord (últimas 10 liquidadas) */
   .dn-strip-top{max-width:none;margin:0;padding:0}
   .dn-strip-top .dn-strip{margin-top:0}
-  .dn-strip{margin-top:0;background:#0C2623;border-top:1px solid #17573F;border-bottom:1px solid #17573F;border-radius:0;padding:11px 6px;text-align:center;font-size:14px;font-weight:300;color:#22D098;white-space:nowrap;overflow:hidden}
+  .dn-strip{margin-top:0;background:#0A0D13;border-top:1px solid #0A2420;border-bottom:1px solid #0A2420;border-radius:0;padding:11px 6px;text-align:center;font-size:14px;font-weight:300;color:#1AE099;white-space:nowrap;overflow:hidden}
   .dn-strip b{font-weight:300}
   .dn-strip .dn-off{font-size:1.1em;font-weight:500}
   @media (max-width:430px){.dn-strip{font-size:12.6px;padding:10px 4px}}
   .dn-quickbar{margin:14px 0 2px}
-  .dn-quickbtn{display:inline-flex;align-items:center;gap:7px;background:rgba(17,204,135,.10);border:1px solid rgba(17,204,135,.28);color:var(--mint);border-radius:999px;padding:10px 18px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit}
+  .dn-quickbtn{display:inline-flex;align-items:center;gap:7px;background:rgba(16,204,135,.10);border:1px solid rgba(16,204,135,.28);color:var(--mint);border-radius:999px;padding:10px 18px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit}
   .dn-qa-list{margin-top:16px;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--panel)}
   .dn-qa-row{display:flex;align-items:center;gap:14px;padding:15px 16px;text-decoration:none;border-bottom:1px solid var(--line)}
   .dn-qa-row:last-child{border-bottom:0}
@@ -217,7 +217,7 @@
   .dn-pres span{display:block;font-weight:700;margin-top:2px}
   .dn-pres.won{color:var(--mint)}
   .dn-pres.lost{color:#FF7A6B}
-  .dn-sheet-done{display:block;width:100%;margin-top:18px;background:var(--mint);color:#06231A;border:0;border-radius:14px;padding:15px;font-size:15px;font-weight:800;cursor:pointer}
+  .dn-sheet-done{display:block;width:100%;margin-top:18px;background:var(--mint);color:#052017;border:0;border-radius:14px;padding:15px;font-size:15px;font-weight:800;cursor:pointer}
   .dn-sheet-ledger{display:block;width:100%;margin-top:10px;text-align:center;background:var(--panel);border:1px solid var(--line);color:var(--txt);border-radius:14px;padding:14px;font-size:15px;font-weight:600}
   .dn-hot-foot{display:flex;align-items:center;gap:10px}
   .dn-hot-note{color:var(--mut);font-size:15px}
@@ -284,8 +284,8 @@
   .dn-alerts{display:grid;grid-template-columns:1fr 1fr;gap:9px}
   .dn-al{border-radius:14px;padding:15px 10px 13px;display:flex;flex-direction:column;align-items:center;gap:7px;text-align:center;font-size:15px;font-weight:700;cursor:pointer}
   .dn-al small{font-size:11px;font-weight:400;line-height:1.35}
-  .dn-al-push{background:var(--mint);color:#06231A;border:1px solid var(--mint)}
-  .dn-al-push small{color:rgba(12,38,35,.75)}
+  .dn-al-push{background:var(--mint);color:#052017;border:1px solid var(--mint)}
+  .dn-al-push small{color:rgba(10,36,32,.75)}
   .dn-al-tg{background:var(--panel);color:var(--txt);border:1px solid var(--line)}
   .dn-al-tg small{color:var(--mut)}
   .dn-al-tg svg{color:var(--mint)}
@@ -294,7 +294,7 @@
   .dn-al-push.off svg{color:var(--mint)}
   .dn-sheet-form{margin-top:18px;display:flex;flex-direction:column;gap:12px}
   .dn-sheet-input{width:100%;box-sizing:border-box;background:#0B1526;border:1px solid var(--line);border-radius:12px;color:var(--txt);font-size:17.1px;padding:14px;font-family:inherit}
-  .dn-sheet-save{background:var(--mint);color:#06231A;border:0;border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit}
+  .dn-sheet-save{background:var(--mint);color:#052017;border:0;border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit}
   .dn-sheet-msg{font-size:13.5px;color:var(--mut);min-height:18px}
   .dn-sheet-msg.ok{color:var(--mint)}
   .dn-sheet-msg.err{color:#FF8A7A}
@@ -307,7 +307,7 @@
   .dn-mem .dn-m-name{font-family:var(--fdisp);font-size:17.1px;font-weight:700}
   .dn-mem .dn-m-price{margin-left:auto;font-family:var(--fmono);font-size:15px;font-weight:600;color:var(--mint);white-space:nowrap}
   .dn-mem p{margin:7px 0 0;font-size:15px;color:var(--mut);line-height:1.5}
-  .dn-cta{display:block;margin-top:10px;background:var(--mint);color:#06231A;border-radius:14px;padding:15px;text-align:center;font-weight:700;font-size:15px}
+  .dn-cta{display:block;margin-top:10px;background:var(--mint);color:#052017;border-radius:14px;padding:15px;text-align:center;font-weight:700;font-size:15px}
   .dn-on{margin-top:10px;background:var(--panel);border:1px solid var(--mintline);border-radius:14px;padding:13px 15px;font-size:15px;text-align:center}
   .dn-unlock{margin-top:10px;background:var(--panel);border:1px solid var(--mintline);border-radius:14px;padding:14px 16px}
   .dn-unlock .dn-m-top{display:flex;align-items:baseline;gap:8px}
@@ -320,14 +320,14 @@
   .dn-u-chips{margin-top:8px;display:flex;flex-wrap:wrap;gap:6px}
   .dn-u-chips span{font-size:12px;border:1px solid var(--line);border-radius:999px;padding:4px 9px}
   .dn-u-fine{margin-top:9px;text-align:center;font-size:11px;color:var(--mut)}
-.dn-mem.big{padding:24px 18px;margin-top:6px;border:1px solid rgba(17,204,135,.45);background:linear-gradient(165deg,#132741,#1C1E28 70%);border-radius:18px}
+.dn-mem.big{padding:24px 18px;margin-top:6px;border:1px solid rgba(16,204,135,.45);background:linear-gradient(165deg,#132741,#1D2029 70%);border-radius:18px}
 .dn-mem.big p{line-height:1.55;margin-top:8px}
 .dn-mem.big .dn-u-head{margin:20px 0 10px}
 .dn-mem.big .dn-u-div{height:1px;background:rgba(255,255,255,.12);margin:16px 0 14px}
 .dn-mem.big .dn-u-get{font-size:12px;font-weight:700;letter-spacing:.1em;color:#8fa3c4;margin:20px 0 4px}
 .dn-mem.big .dn-u-row{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.08)}
 .dn-mem.big .dn-u-row.last{border-bottom:0}
-.dn-mem.big .dn-u-ck{flex:0 0 auto;width:26px;height:26px;border-radius:50%;background:rgba(17,204,135,.15);color:#11CC87;text-align:center;line-height:26px;font-size:13.5px;font-weight:800}
+.dn-mem.big .dn-u-ck{flex:0 0 auto;width:26px;height:26px;border-radius:50%;background:rgba(16,204,135,.15);color:#10CC87;text-align:center;line-height:26px;font-size:13.5px;font-weight:800}
 .dn-mem.big .dn-u-row div b{display:block;font-size:15px}
 .dn-mem.big .dn-u-row div span{display:block;font-size:15px;color:#8fa3c4;line-height:1.5;margin-top:2px}
 .dn-mem.big .dn-u-chips{display:grid;grid-template-columns:1fr 1fr;gap:8px}
@@ -383,19 +383,19 @@
   /* Cargador de ola (visible SOLO mientras la pagina carga de verdad) */
 
   /* Burbuja de actualizacion (aparece cuando publicamos una card nueva) */
-  .dn-bubble{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 64px);transform:translateX(-50%) translateY(-8px);z-index:120;background:#141A26;border:1px solid rgba(17,204,135,.45);color:var(--txt);border-radius:999px;padding:7px 7px 7px 15px;display:flex;align-items:center;gap:9px;box-shadow:0 12px 34px rgba(0,0,0,.5);cursor:pointer;opacity:0;transition:opacity .3s ease,transform .3s ease;width:max-content;max-width:calc(100vw - 24px)}
+  .dn-bubble{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 64px);transform:translateX(-50%) translateY(-8px);z-index:120;background:#141A26;border:1px solid rgba(16,204,135,.45);color:var(--txt);border-radius:999px;padding:7px 7px 7px 15px;display:flex;align-items:center;gap:9px;box-shadow:0 12px 34px rgba(0,0,0,.5);cursor:pointer;opacity:0;transition:opacity .3s ease,transform .3s ease;width:max-content;max-width:calc(100vw - 24px)}
   .dn-bubble[hidden]{display:none}
   .dn-bubble.on{opacity:1;transform:translateX(-50%) translateY(0)}
   .dn-bubble .dn-b-ico{flex:0 0 auto;display:flex;align-items:center;justify-content:center}
   .dn-bubble .dn-b-tx{flex:0 1 auto;min-width:0}
   .dn-bubble .dn-b-t{display:block;font-size:15px;font-weight:400;color:#fff;white-space:nowrap}
-  .dn-bubble .dn-b-btn{background:var(--mint);color:#06231A;font-size:15px;font-weight:700;border-radius:999px;padding:10px 17px;flex:0 0 auto;white-space:nowrap}
+  .dn-bubble .dn-b-btn{background:var(--mint);color:#052017;font-size:15px;font-weight:700;border-radius:999px;padding:10px 17px;flex:0 0 auto;white-space:nowrap}
   .dn-bubble .dn-b-x{flex:0 0 auto;font-size:12px;font-weight:700;color:#8A94A6;padding:2px 4px}
   @keyframes dnPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.5)}}
   .dn-load{position:fixed;inset:0;z-index:200;background:#0C0F16;padding:22px 16px;transition:opacity .35s ease,visibility .35s ease}
   .dn-load.done{opacity:0;visibility:hidden;pointer-events:none}
-  .dn-load .sk{position:relative;overflow:hidden;background:#1C1E28;border:1px solid rgba(255,255,255,.05);border-radius:16px}
-  .dn-load .sk::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 20%,rgba(80,220,170,.10) 50%,transparent 80%);transform:translateX(-100%);animation:dnShimmer 1.25s ease-in-out infinite}
+  .dn-load .sk{position:relative;overflow:hidden;background:#1D2029;border:1px solid rgba(255,255,255,.05);border-radius:16px}
+  .dn-load .sk::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 20%,rgba(26,224,153,.10) 50%,transparent 80%);transform:translateX(-100%);animation:dnShimmer 1.25s ease-in-out infinite}
   @keyframes dnShimmer{to{transform:translateX(100%)}}
   @media (prefers-reduced-motion: reduce){.dn-load{display:none}}
 </style>
@@ -1019,7 +1019,7 @@ function dnHotClose(){
 </script>
 
 <div class="dn-bubble{% if is_alex and request.args.get('prueba-tirita') %} on{% endif %}" id="dnBubble" role="button" tabindex="0"{% if not (is_alex and request.args.get('prueba-tirita')) %} hidden{% endif %}>
-  <span class="dn-b-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#11CC87" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg></span>
+  <span class="dn-b-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10CC87" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg></span>
   <span class="dn-b-tx"><span class="dn-b-t">Update ready</span></span>
   <span class="dn-b-btn">Tap to refresh</span>
 </div>
@@ -1099,18 +1099,18 @@ function dnHotClose(){
 <!-- ===== DASHBOARD TOUR (recorrido nuevo pa' el dashboard nuevo, 2026-11-15) ===== -->
 <style>
 #tourDim{position:fixed;inset:0;background:rgba(4,8,16,.74);z-index:2900}
-#tourRing{position:fixed;z-index:2901;border:2px solid #11CC87;border-radius:14px;box-shadow:0 0 0 3px rgba(17,204,135,.25),0 0 24px rgba(17,204,135,.35);pointer-events:none;transition:top .2s ease,left .2s ease,width .2s ease,height .2s ease}
-#tourCard{position:fixed;z-index:2902;left:0;right:0;max-width:none;margin:0 auto;background:#1C1E28;border:1px solid rgba(147,161,181,.25);border-radius:16px;padding:16px 16px 13px;box-shadow:0 18px 40px rgba(0,0,0,.5);color:#F4F7FB}
-#tourHead{font-size:13px;font-weight:700;letter-spacing:1.6px;color:#11CC87;margin-bottom:10px}
+#tourRing{position:fixed;z-index:2901;border:2px solid #10CC87;border-radius:14px;box-shadow:0 0 0 3px rgba(16,204,135,.25),0 0 24px rgba(16,204,135,.35);pointer-events:none;transition:top .2s ease,left .2s ease,width .2s ease,height .2s ease}
+#tourCard{position:fixed;z-index:2902;left:0;right:0;max-width:none;margin:0 auto;background:#1D2029;border:1px solid rgba(147,161,181,.25);border-radius:16px;padding:16px 16px 13px;box-shadow:0 18px 40px rgba(0,0,0,.5);color:#F4F7FB}
+#tourHead{font-size:13px;font-weight:700;letter-spacing:1.6px;color:#10CC87;margin-bottom:10px}
 #tourBar{height:4px;background:rgba(147,161,181,.25);border-radius:99px;overflow:hidden;margin-bottom:12px}
-#tourBarFill{height:100%;background:#11CC87;border-radius:99px;transition:width .3s ease}
-#tourCount{font-size:12px;letter-spacing:1.2px;color:#93A1B5;font-weight:700}
+#tourBarFill{height:100%;background:#10CC87;border-radius:99px;transition:width .3s ease}
+#tourCount{font-size:12px;letter-spacing:1.2px;color:#9AA1AE;font-weight:700}
 #tourTitle{font-size:19px;font-weight:700;margin:5px 0 6px;color:#F4F7FB}
 #tourBody{font-size:15px;line-height:1.55;color:#C7D0DD;font-weight:400}
 #tourBtns{display:flex;align-items:center;gap:10px;margin-top:14px}
-#tourNext{background:#11CC87;color:#06231A;border:0;border-radius:10px;padding:10px 20px;font-size:15px;font-weight:700;cursor:pointer}
+#tourNext{background:#10CC87;color:#052017;border:0;border-radius:10px;padding:10px 20px;font-size:15px;font-weight:700;cursor:pointer}
 #tourBack{background:none;color:#C7D0DD;border:1px solid rgba(147,161,181,.35);border-radius:10px;padding:10px 16px;font-size:15px;cursor:pointer}
-#tourSkip{margin-left:auto;background:none;border:0;color:#93A1B5;font-size:12px;cursor:pointer;padding:8px 2px}
+#tourSkip{margin-left:auto;background:none;border:0;color:#9AA1AE;font-size:12px;cursor:pointer;padding:8px 2px}
 </style>
 <div id="tourRoot" hidden>
   <div id="tourDim"></div>
