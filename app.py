@@ -4257,8 +4257,13 @@ def load_card_info():
 
 
 def load_live_graded():
+    # Cache-buster por minuto: el CDN de raw.githubusercontent puede servir
+    # una copia vieja por varios minutos y el conteo del home se atrasaba
+    # (visto 2026-11-19: Denver gano y el home seguia en 1-0). Con la URL
+    # distinta cada minuto, el overlay llega casi al instante.
+    _bust = LIVE_GRADED_URL + "?v=" + str(int(time.time() // 60))
     data = _json_remoto_o_local(
-        LIVE_GRADED_URL, os.path.join(BASE_DIR, "data", "live_graded.json"),
+        _bust, os.path.join(BASE_DIR, "data", "live_graded.json"),
         ttl=60)
     if isinstance(data, dict):
         res = data.get("results", []) or []
