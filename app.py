@@ -7896,13 +7896,13 @@ def register():
         _lang = (request.cookies.get("tst_lang") or "").strip().lower()
     if _lang not in ("es", "en"):
         _lang = "es" if _pais_visitante() == "DO" else "en"
-    _tpl = "register_es.html" if _lang == "es" else "register.html"
+    _tpl = "register.html"  # 2026-11-19, orden de Alex: la página de registro va SOLO en inglés (sin variante ES); _lang se sigue calculando igual pa' el email de activación y el idioma guardado de la cuenta
     # Lanzamiento landing nueva (2026-10-31): SOLO con el interruptor
     # activo se sirven las plantillas nuevas (landing aprobada con el
     # formulario integrado). Apagado (default), se sirve lo de siempre y
     # el rollback es inmediato apagando la env var.
     if REGISTRO_NUEVO_ACTIVO:
-        _tpl = "registro_nuevo_es.html" if _lang == "es" else "registro_nuevo.html"
+        _tpl = "registro_nuevo.html"  # 2026-11-19: SOLO inglés también con el interruptor nuevo activo (sin variante ES)
     if request.method == "POST":
         # Entrada de UN SOLO CAMPO (2026-11-07, orden de Alex: espejo del
         # embudo de WGT): el registro pide SOLO el correo (+ la intención
