@@ -29,7 +29,7 @@
    acentos verde menta. SOLO páginas /admin — los miembros no lo ven. */
 body.admin-theme{
   background:
-    radial-gradient(820px 460px at 88% -6%, rgba(47,230,167,.16), transparent 58%),
+    radial-gradient(820px 460px at 88% -6%, rgba(17,204,135,.16), transparent 58%),
     radial-gradient(700px 500px at -10% 108%, rgba(20,140,120,.13), transparent 60%),
     linear-gradient(160deg, #07231e 0%, #041a20 52%, #030c11 100%) !important;
   background-attachment: fixed !important;
@@ -59,19 +59,19 @@ body.admin-theme .ot-card{
 body.admin-theme .adm-clean .sub,
 body.admin-theme .ot-wrap .sub{ color:#93b3aa !important; }
 body.admin-theme .send-btn{
-  background: linear-gradient(135deg, #2fe6a7, #17b978) !important;
+  background: linear-gradient(135deg, #11cc87, #17b978) !important;
   color: #032117 !important;
-  box-shadow: 0 8px 22px rgba(47,230,167,.28);
+  box-shadow: 0 8px 22px rgba(17,204,135,.28);
 }
 body.admin-theme .ot-hero{
   background: linear-gradient(150deg, rgba(14,54,48,.75), rgba(6,26,28,.75)) !important;
   backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(47,230,167,.4) !important;
+  border: 1px solid rgba(17,204,135,.4) !important;
   border-radius: 24px !important;
   box-shadow: 0 14px 34px rgba(0,0,0,.38);
 }
 body.admin-theme .ot-bar{ background: rgba(140,240,205,.16) !important; }
-body.admin-theme .ot-bar > div{ background: linear-gradient(90deg, #2fe6a7, #7df0c9) !important; }
+body.admin-theme .ot-bar > div{ background: linear-gradient(90deg, #11cc87, #7df0c9) !important; }
 </style>
 {% endif %}
 <script src="/static/js/push.js?v={{ asset_v }}"></script>
@@ -105,13 +105,13 @@ twq('config','rhgk7');
 body.has-bottomnav{padding-bottom:10px!important}
 body,body.v2{padding-top:0!important;margin-top:0!important}
 main.v2-wrap,main{margin-top:0!important}
-.adm-bar{position:sticky;top:0;z-index:200;display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(7,17,31,.92);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid rgba(46,230,168,.25)}
+.adm-bar{position:sticky;top:0;z-index:200;display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(7,17,31,.92);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid rgba(17,204,135,.25)}
 .adm-bar img{height:34px;width:auto}
 .adm-bar .t{font-weight:900;letter-spacing:.4px;color:#fff;font-size:.92rem;line-height:1.1}
-.adm-bar .t small{display:block;color:#2ee6a8;font-size:.58rem;letter-spacing:2.5px;font-weight:800}
+.adm-bar .t small{display:block;color:#11cc87;font-size:.58rem;letter-spacing:2.5px;font-weight:800}
 .adm-bar .btns{margin-left:auto;display:flex;gap:8px}
-.adm-bar .b{border:1px solid rgba(46,230,168,.55);color:#2ee6a8;font-weight:800;font-size:.78rem;padding:8px 13px;border-radius:999px;text-decoration:none;white-space:nowrap}
-.adm-bar .b.main{background:#2ee6a8;color:#06130c;border-color:#2ee6a8}
+.adm-bar .b{border:1px solid rgba(17,204,135,.55);color:#11cc87;font-weight:800;font-size:.78rem;padding:8px 13px;border-radius:999px;text-decoration:none;white-space:nowrap}
+.adm-bar .b.main{background:#11cc87;color:#06130c;border-color:#11cc87}
 .adm-nav{display:flex;gap:6px;flex-wrap:nowrap;justify-content:flex-start;overflow-x:auto;padding:10px 6px;scrollbar-width:none}
 .adm-nav::-webkit-scrollbar{display:none}
 .adm-nav a{flex:0 0 auto;padding:7px 12px;border:1px solid rgba(255,255,255,.16);border-radius:999px;color:#dbe6f5;font-size:.72rem;font-weight:700;letter-spacing:.4px;text-decoration:none;background:rgba(255,255,255,.04);white-space:nowrap}
@@ -120,7 +120,7 @@ main.v2-wrap,main{margin-top:0!important}
 <div class="adm-bar">
   <img src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team">
   <div class="t">THE SHARP TEAM<small>ADMIN</small></div>
-  <div class="btns">{% if request.endpoint != 'admin_dashboard' %}<a class="b main" href="{{ url_for('admin_dashboard') }}">← Panel</a>{% endif %}<a href="{{ url_for('home') }}" aria-label="Switch to member Dashboard" title="Member Dashboard" style="position:relative;display:inline-block;width:56px;height:30px;border-radius:999px;background:#0d1b2e;border:1px solid rgba(46,230,168,.6);flex:0 0 auto;vertical-align:middle;text-decoration:none;"><span style="position:absolute;left:6px;top:50%;transform:translateY(-50%);font-size:12px;line-height:1;">👤</span><span style="position:absolute;top:50%;transform:translateY(-50%);width:22px;height:22px;border-radius:50%;background:#2ee6a8;box-shadow:0 1px 4px rgba(0,0,0,.55);right:3px;"></span></a>{% if request.endpoint == 'admin_dashboard' %}<a class="b" href="{{ url_for('logout') }}">Salir</a>{% endif %}</div>
+  <div class="btns">{% if request.endpoint != 'admin_dashboard' %}<a class="b main" href="{{ url_for('admin_dashboard') }}">← Panel</a>{% endif %}<a href="{{ url_for('home') }}" aria-label="Switch to member Dashboard" title="Member Dashboard" style="position:relative;display:inline-block;width:56px;height:30px;border-radius:999px;background:#0d1b2e;border:1px solid rgba(17,204,135,.6);flex:0 0 auto;vertical-align:middle;text-decoration:none;"><span style="position:absolute;left:6px;top:50%;transform:translateY(-50%);font-size:12px;line-height:1;">👤</span><span style="position:absolute;top:50%;transform:translateY(-50%);width:22px;height:22px;border-radius:50%;background:#11cc87;box-shadow:0 1px 4px rgba(0,0,0,.55);right:3px;"></span></a>{% if request.endpoint == 'admin_dashboard' %}<a class="b" href="{{ url_for('logout') }}">Salir</a>{% endif %}</div>
 </div>
 <nav class="adm-nav"><a href="{{ url_for('admin_dashboard') }}">Panel</a><a href="/admin/miembros">Miembros</a><a href="/admin/notificaciones">Notificaciones</a><a href="/admin/tracker-oficial">Tracker</a><a href="/admin/actividad">Actividad</a><a href="/admin/en-vivo">En vivo</a><a href="/admin/subir-ticket">Subir ticket</a><a href="/admin/trakeos">Trakeos</a><a href="/admin/crear-push">Push</a></nav>
 {% endif %}
@@ -144,17 +144,17 @@ main.v2-wrap,main{margin-top:0!important}
       <button class="icon-btn" id="menuBtn" aria-label="Menu" aria-expanded="false" aria-haspopup="true" style="cursor:pointer;display:flex;align-items:center;justify-content:center;">☰</button>
       <div class="menu-drop" id="menuDrop" hidden style="left:auto;right:0;">
         {# MENÚ — estructura de la foto de Wise Guy (2026-11-13): lista plana, sin grupos. Idéntico en home_lux.html, base.html y base_v2.html. Las herramientas viven dentro de «My Tools». #}
-        {% if not miembro_platinum %}        <a href="{{ url_for('desbloquear_platinum') }}" style="font-size:15px;font-weight:600;color:#11cb87;">Unlock Platinum</a>{% endif %}
+        {% if not miembro_platinum %}        <a href="{{ url_for('desbloquear_platinum') }}" style="font-size:15px;font-weight:600;color:#11cc87;">Unlock Platinum</a>{% endif %}
         <a href="{{ url_for('game_center') }}" style="font-size:15px;">Betting Lines</a>
         <a href="{{ url_for('balances') }}" style="font-size:15px;">Sportsbooks</a>
         <a href="{{ url_for('masterclass') }}" style="font-size:15px;">Masterclass</a>
         <a href="{{ url_for('about') }}" style="font-size:15px;">About</a>
-        {% if racha_dias and racha_dias >= 2 %}<div style="padding:6px 12px;"><span style="display:inline-flex;align-items:center;gap:5px;padding:6px 11px;border:1px solid rgba(17,203,135,.45);border-radius:999px;color:#11cb87;font-size:12.5px;font-weight:600;">🔥 {{ racha_dias }}-day win streak</span></div>{% endif %}
+        {% if racha_dias and racha_dias >= 2 %}<div style="padding:6px 12px;"><span style="display:inline-flex;align-items:center;gap:5px;padding:6px 11px;border:1px solid rgba(17,203,135,.45);border-radius:999px;color:#11cc87;font-size:12.5px;font-weight:600;">🔥 {{ racha_dias }}-day win streak</span></div>{% endif %}
         <a href="{{ url_for('tools') }}" style="font-size:15px;">My Tools</a>
         <a href="{{ url_for('tracker_plays') }}" style="font-size:15px;">My Bets</a>
         <a href="{{ url_for('cuenta') }}" style="font-size:15px;">Account</a>
         {% if is_alex %}<a href="{{ url_for('admin_dashboard') }}" style="font-size:15px;">Admin</a>{% endif %}
-        <a href="{{ url_for('home') }}" style="display:block;text-align:center;background:#11cb87;color:#0B0D12;font-weight:700;font-size:15px;padding:11px;border-radius:12px;margin:8px 0 4px;">View picks →</a>
+        <a href="{{ url_for('home') }}" style="display:block;text-align:center;background:#11cc87;color:#0B0D12;font-weight:700;font-size:15px;padding:11px;border-radius:12px;margin:8px 0 4px;">View picks →</a>
         <a href="{{ url_for('logout') }}" style="font-size:13.5px;color:#A3AAB6;">Log out</a>
       </div>
     </div>
@@ -166,7 +166,7 @@ main.v2-wrap,main{margin-top:0!important}
     .about-dd{position:relative;display:inline-block}
     .about-dd summary{list-style:none;cursor:pointer;color:#c7cede;font-size:15px;padding:6px 2px}
     .about-dd summary::-webkit-details-marker{display:none}
-    .about-dd .dd-panel{position:absolute;right:0;top:calc(100% + 8px);background:#101828;border:1px solid #1e2a45;border-radius:14px;padding:8px;min-width:250px;z-index:300;box-shadow:0 16px 40px rgba(0,0,0,.5)}
+    .about-dd .dd-panel{position:absolute;right:0;top:calc(100% + 8px);background:#101828;border:1px solid #1e2b3c;border-radius:14px;padding:8px;min-width:250px;z-index:300;box-shadow:0 16px 40px rgba(0,0,0,.5)}
     .about-dd .dd-panel a{display:block;color:#e6ebf2;text-decoration:none;font-size:14.5px;padding:9px 12px;border-radius:9px;white-space:nowrap}
     .about-dd .dd-panel a:hover{background:#1a2438}
     </style>
