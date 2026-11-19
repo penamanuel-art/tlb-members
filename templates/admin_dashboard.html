@@ -1,14 +1,14 @@
 {% extends "base_v2.html" %}
 {% block content %}
 <style>
-body.v2 { background: radial-gradient(820px 460px at 88% -6%, rgba(17,204,135,.16), transparent 58%), radial-gradient(700px 500px at -10% 108%, rgba(20,140,120,.13), transparent 60%), linear-gradient(160deg, #07231e 0%, #041a20 52%, #030c11 100%) !important; background-attachment: fixed !important; }
+body.v2 { background: radial-gradient(820px 460px at 88% -6%, rgba(16,204,135,.16), transparent 58%), radial-gradient(700px 500px at -10% 108%, rgba(20,140,120,.13), transparent 60%), linear-gradient(160deg, #07231e 0%, #041a20 52%, #030c11 100%) !important; background-attachment: fixed !important; }
 .adm-clean { max-width: 880px; margin: 0 auto; padding: 6px 10px 56px; font-family: -apple-system, 'SF Pro', Inter, system-ui, sans-serif; }
 .v2-wrap { padding-left: 10px !important; padding-right: 10px !important; padding-top: 0 !important; }
 /* Menú de arriba fijo en el admin (2026-10-26, pedido Alex: se movía al bajar la página): sticky fallaba en Safari, pasa a fixed con espacio arriba. */
 .v2-topbar { position: fixed !important; top: 0; left: 0; right: 0; z-index: 100; }
 body.v2 { padding-top: 77px; }
 .chat-fab { top: auto !important; bottom: 96px !important; }
-.adm-clean .kicker { color: #11cc87; font-size: 11px; font-weight: 800; letter-spacing: 5px; margin: 0; text-transform: uppercase; }
+.adm-clean .kicker { color: #10cc87; font-size: 11px; font-weight: 800; letter-spacing: 5px; margin: 0; text-transform: uppercase; }
 .adm-clean h1 { font-size: 1.45rem; font-weight: 800; color: #fff; margin: 2px 0 8px; letter-spacing: -0.5px; }
 .v2-topbar { display: none !important; }
 .v2-bottomnav { display: none !important; }
@@ -16,22 +16,22 @@ body.v2 { padding-top: 77px; }
 .adm-brand { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; }
 .adm-brand .sp { flex-wrap: wrap; }
 .adm-brand img { height: 44px; width: auto; }
-.adm-brand .b-notif { border: 1px solid rgba(17,204,135,.55); color: #11cc87; font-weight: 800; font-size: 0.8rem; padding: 9px 14px; border-radius: 999px; text-decoration: none; white-space: nowrap; display: inline-flex; align-items: center; gap: 7px; }
-.adm-brand .b-notif .bdg { background: #11cc87; color: #06130c; border-radius: 999px; font-size: 0.72rem; font-weight: 900; padding: 1px 8px; }
+.adm-brand .b-notif { border: 1px solid rgba(16,204,135,.55); color: #10cc87; font-weight: 800; font-size: 0.8rem; padding: 9px 14px; border-radius: 999px; text-decoration: none; white-space: nowrap; display: inline-flex; align-items: center; gap: 7px; }
+.adm-brand .b-notif .bdg { background: #10cc87; color: #06130c; border-radius: 999px; font-size: 0.72rem; font-weight: 900; padding: 1px 8px; }
 .adm-hstats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 12px; }
 .adm-hstats .adm-stat .n { font-size: 1.1rem; }
 .adm-brand .bt { line-height: 1.15; }
 .adm-brand .bt .n { font-weight: 900; font-size: 1.02rem; letter-spacing: .4px; color: #fff; }
-.adm-brand .bt .s { font-size: 0.66rem; font-weight: 800; letter-spacing: 2.5px; color: #11cc87; text-transform: uppercase; }
+.adm-brand .bt .s { font-size: 0.66rem; font-weight: 800; letter-spacing: 2.5px; color: #10cc87; text-transform: uppercase; }
 .adm-brand .sp { margin-left: auto; display: flex; gap: 8px; align-items: center; }
-.adm-brand .b-dash { background: #11cc87; color: #06130c; font-weight: 800; font-size: 0.8rem; padding: 9px 14px; border-radius: 999px; text-decoration: none; white-space: nowrap; }
+.adm-brand .b-dash { background: #10cc87; color: #06130c; font-weight: 800; font-size: 0.8rem; padding: 9px 14px; border-radius: 999px; text-decoration: none; white-space: nowrap; }
 .adm-brand .b-out { color: #8fa1c2; font-weight: 700; font-size: 0.8rem; text-decoration: none; white-space: nowrap; }
 .adm-total { display: flex; align-items: baseline; gap: 12px; margin: 0; }
 .adm-total .tn { font-size: 2.1rem; font-weight: 800; color: #fff; line-height: 1; }
 .adm-total .tl { font-size: 0.72rem; font-weight: 800; letter-spacing: 2px; color: #8fa1c2; }
 .adm-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 16px; }
 .adm-stat { background: #0d1526; border: 1px solid rgba(255,255,255,.08); border-radius: 14px; padding: 12px 10px; text-align: center; }
-.adm-stat .n { display: block; font-size: 1.25rem; font-weight: 700; color: #11cc87; }
+.adm-stat .n { display: block; font-size: 1.25rem; font-weight: 700; color: #10cc87; }
 .adm-stat .l { display: block; font-size: 0.56rem; font-weight: 600; letter-spacing: 0.6px; color: #8fa1c2; margin-top: 3px; text-transform: uppercase; white-space: nowrap; }
 .adm-hstats .adm-stat { padding: 12px 4px; }
 .adm-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 30px; }
@@ -39,28 +39,28 @@ body.v2 { padding-top: 77px; }
   background: #0d1526;
   border: 1px solid rgba(255,255,255,.09); border-radius: 16px; padding: 22px 10px 18px;
   transition: border-color .15s ease, transform .15s ease; }
-.adm-btn:active { transform: scale(.98); border-color: rgba(17,204,135,.55); }
+.adm-btn:active { transform: scale(.98); border-color: rgba(16,204,135,.55); }
 .adm-btn .ico { font-size: 1.8rem; display: block; margin-bottom: 9px; }
 .adm-btn .t { font-size: 0.98rem; font-weight: 800; display: block; letter-spacing: .2px; }
 .adm-btn .s { font-size: 0.74rem; color: #8fa1c2; display: block; margin-top: 4px; }
 .adm-section { margin-bottom: 30px; }
-.adm-section h2 { font-size: 1.05rem; font-weight: 800; color: #fff; margin: 0 0 14px; padding-left: 10px; border-left: 3px solid #11cc87; line-height: 1.25; }
+.adm-section h2 { font-size: 1.05rem; font-weight: 800; color: #fff; margin: 0 0 14px; padding-left: 10px; border-left: 3px solid #10cc87; line-height: 1.25; }
 .adm-card { background: #0d1526; border: 1px solid rgba(255,255,255,.08); border-radius: 16px; padding: 16px; margin-bottom: 12px; }
 
-.adm-folder { background:linear-gradient(160deg,#101828,#0c1322); border:1px solid #1e2b3c; border-radius:14px; margin-bottom:12px; overflow:hidden; }
+.adm-folder { background:linear-gradient(160deg,#101828,#0c1322); border:1px solid #1d2029; border-radius:14px; margin-bottom:12px; overflow:hidden; }
 .adm-fold-head { width:100%; display:flex; justify-content:space-between; align-items:center; gap:10px; background:none; border:0; color:#fff; font:inherit; font-size:1rem; font-weight:800; padding:16px; cursor:pointer; text-align:left; text-decoration:none; box-sizing:border-box; }
-.adm-fold-count { background:rgba(17,204,135,.14); color:#11cc87; border-radius:999px; padding:3px 12px; font-size:0.82rem; font-weight:800; white-space:nowrap; }
+.adm-fold-count { background:rgba(16,204,135,.14); color:#10cc87; border-radius:999px; padding:3px 12px; font-size:0.82rem; font-weight:800; white-space:nowrap; }
 .adm-fold-chev { color:#8fa1c2; font-size:1.2rem; }
 .adm-fold-body { display:none; padding:2px 16px 16px; }
 .adm-muted { color: #8fa1c2; font-size: 0.85rem; }
-.send-btn { width: 100%; background: #11cc87; color: #06130c; border: none; border-radius: 14px; padding: 15px; font-weight: 800; font-size: 1rem; cursor: pointer; margin-top: 12px; display: block; }
+.send-btn { width: 100%; background: #10cc87; color: #06130c; border: none; border-radius: 14px; padding: 15px; font-weight: 800; font-size: 1rem; cursor: pointer; margin-top: 12px; display: block; }
 .status-badge { display: inline-block; font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 999px; margin-bottom: 8px; }
 .status-pend { background: rgba(255,255,255,.08); color: #fff; border: 1px solid rgba(255,255,255,.35); }
-.status-sent { background: rgba(17,204,135,.13); color: #11cc87; border: 1px solid rgba(17,204,135,.35); }
+.status-sent { background: rgba(16,204,135,.13); color: #10cc87; border: 1px solid rgba(16,204,135,.35); }
 .ctl-t { font-weight: 800; color: #fff; margin-bottom: 10px; font-size: 0.95rem; }
 .ctl-in { width: 100%; box-sizing: border-box; background: #070d1d; border: 1px solid rgba(255,255,255,.14); border-radius: 12px; color: #fff; padding: 11px 12px; font-size: 0.9rem; margin-bottom: 8px; font-family: inherit; }
-.ctl-in:focus { outline: none; border-color: rgba(17,204,135,.6); }
-.ctl-btn { width: 100%; background: #11cc87; color: #06130c; border: none; border-radius: 999px; padding: 11px; font-weight: 800; cursor: pointer; font-size: 0.9rem; }
+.ctl-in:focus { outline: none; border-color: rgba(16,204,135,.6); }
+.ctl-btn { width: 100%; background: #10cc87; color: #06130c; border: none; border-radius: 999px; padding: 11px; font-weight: 800; cursor: pointer; font-size: 0.9rem; }
 .ctl-note { font-size: 0.75rem; color: #8fa1c2; margin-top: 8px; line-height: 1.5; }
 .mrow { display: flex; justify-content: space-between; align-items: center; gap: 10px;
   text-decoration: none; color: #fff; padding: 12px 14px; border-radius: 12px;
@@ -71,7 +71,7 @@ body.v2 { padding-top: 77px; }
 details.adm-det { background: #0d1526; border: 1px solid rgba(255,255,255,.09); border-radius: 16px; padding: 16px; margin-top: 30px; }
 details.adm-det summary { cursor: pointer; font-weight: 800; font-size: 0.95rem; color: #fff; }
 .chat-fab { position: fixed; bottom: 96px; right: 14px; z-index: 99; width: 54px; height: 54px;
-  border-radius: 50%; background: #0a0f1d; border: 2px solid #11cc87;
+  border-radius: 50%; background: #0a0f1d; border: 2px solid #10cc87;
   box-shadow: 0 4px 18px rgba(0,0,0,.5); display: flex; align-items: center; justify-content: center; text-decoration: none; }
 .chat-fab img { width: 36px; height: 36px; object-fit: contain; display: block; }
 </style>
@@ -90,12 +90,12 @@ details.adm-det summary { cursor: pointer; font-weight: 800; font-size: 0.95rem;
     <button type="button" class="adm-fold-head" onclick="var b=this.nextElementSibling;b.style.display=(b.style.display==='block')?'none':'block';">💰 Ingresos<span style="display:flex;align-items:center;gap:8px;"><span class="adm-fold-count">{{ '$%.2f'|format(ingresos.mes) if ingresos else '—' }}</span><span class="adm-fold-chev">›</span></span></button>
     <div class="adm-fold-body">{% if ingresos %}
       <div class="adm-total" style="margin:0 0 6px;">
-        <span class="tn" style="color:#11cc87;">${{ '%.2f'|format(ingresos.mes) }}</span>
+        <span class="tn" style="color:#10cc87;">${{ '%.2f'|format(ingresos.mes) }}</span>
         <span class="tl">ESTE MES</span>
       </div>
       <p class="adm-muted" style="margin:0 0 12px;">Hoy: <strong style="color:#fff;">${{ '%.2f'|format(ingresos.hoy) }}</strong> · Últimos 30 días: <strong style="color:#fff;">${{ '%.2f'|format(ingresos.d30) }}</strong> · Total: <strong style="color:#fff;">${{ '%.2f'|format(ingresos.total) }}</strong></p>
       {% for p in ingresos.ultimos %}
-      <div class="mrow"><span class="mn">💵 Pago recibido</span><span class="mb" style="color:#11cc87;border-color:#11cc87;">${{ '%.2f'|format(p.monto) }} · {{ p.fecha }}</span></div>
+      <div class="mrow"><span class="mn">💵 Pago recibido</span><span class="mb" style="color:#10cc87;border-color:#10cc87;">${{ '%.2f'|format(p.monto) }} · {{ p.fecha }}</span></div>
       {% else %}
       <p class="adm-muted" style="margin:0;">Sin pagos todavía.</p>
       {% endfor %}
@@ -132,7 +132,7 @@ details.adm-det summary { cursor: pointer; font-weight: 800; font-size: 0.95rem;
           <div style="margin-bottom:12px;">
             <span class="status-badge status-pend">⏳ PENDIENTE</span>
             <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
-              <input type="checkbox" name="play_ids" value="{{ pid }}" class="sel-check" style="width:22px;height:22px;accent-color:#11cc87;">
+              <input type="checkbox" name="play_ids" value="{{ pid }}" class="sel-check" style="width:22px;height:22px;accent-color:#10cc87;">
               <label style="color:#fff;font-size:0.9rem;font-weight:600;">Seleccionar</label>
             </div>
             {% include "_play_card_v5.html" %}
