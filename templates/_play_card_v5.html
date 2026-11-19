@@ -258,13 +258,11 @@
     <div><div class="v5m-k">PRICE POSTED</div><div class="v5m-priceline"><div class="v5m-price">{{ fmt_odds(p.cuota) }}</div>{% if _ci.get('injuries') %}<button type="button" class="v5m-chip v5m-chip-inj" data-v5-chip="injuries" data-play="{{ p.id }}"><svg width="16.5" height="16.5" viewBox="0 0 24 24" fill="none" stroke="#EE8CA5" stroke-width="3.4" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 3.5h5V9.5h6v5h-6v6h-5v-6h-6v-5h6z"/></svg> {{ _ci.injuries.total }}</button>{% endif %}</div></div>
     <div class="v5m-right"><div class="v5m-k">STAKE</div><div class="v5m-stake">{{ '%g' % p.stake_unidades }}u &middot; ${{ '%g' % p.stake_monto }}</div>{% if p.comprobante %}<div class="v5m-tok">✓ Ticket matched</div>{% else %}<div class="v5m-tpend">Ticket pending</div>{% endif %}</div>
   </div>
-  {% if p.posted or (_ci.get('weather') and _ci.weather.indoor) or (p.poly is defined and p.poly is number) %}
   <div class="v5m-meta">
     {% if p.poly is defined and p.poly is number %}<span class="v5m-chip-poly"><span class="v5m-poly-ico">⇄</span> Poly <b>{{ '%g'|format(p.poly) }}%</b></span>{% endif %}
     {% if _ci.get('weather') and _ci.weather.indoor %}<button type="button" class="v5m-chip" data-v5-chip="weather" data-play="{{ p.id }}">🏟 {{ _ci.weather.venue }}</button>{% endif %}
     {% if p.posted %}<span class="v5m-posted">Posted {{ p.posted }}</span>{% endif %}
   </div>
-  {% endif %}
 {# 2026-11-09: Alex ordeno dejar el boton SOLO en Novig — se revierte el uso de p.place_book (mejor cuota del mercado) en la cara .v5m; la etiqueta vuelve a la logica original de cabecera (_place_label/_book_url). Y el enlace abre LA PAGINA DEL JUEGO en Novig cuando el play trae p.place_url verificado al publicar; sin el campo, cae a la portada de Novig (_book_url). #}
   {% set _m_href = p.place_url if (p.place_url is defined and p.place_url) else _book_url %}
   <div class="v5m-btns">
