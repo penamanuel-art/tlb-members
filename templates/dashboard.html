@@ -22,10 +22,10 @@
   .wgt-avatar-sm { width:38px; height:38px; font-size:1.05rem; }
   .trk-hero { margin:0 0 18px; }
   .trk-h1 { font-size:31px; font-weight:800; line-height:1.16; letter-spacing:-.5px; color:#fff; margin:0 0 12px; }
-  .trk-h1 .trk-mint { color:#2fe6a7; }
+  .trk-h1 .trk-mint { color:#11cc87; }
   .trk-lede { font-size:14.5px; color:#9aa7b8; line-height:1.6; margin:0 0 16px; }
-  .trk-dot { display:flex; align-items:center; gap:8px; font-size:13px; font-weight:700; color:#2fe6a7; margin:0 0 18px; }
-  .trk-dot i { width:8px; height:8px; border-radius:50%; background:#2fe6a7; box-shadow:0 0 10px #2fe6a7; flex:0 0 auto; }
+  .trk-dot { display:flex; align-items:center; gap:8px; font-size:13px; font-weight:700; color:#11cc87; margin:0 0 18px; }
+  .trk-dot i { width:8px; height:8px; border-radius:50%; background:#11cc87; box-shadow:0 0 10px #11cc87; flex:0 0 auto; }
   .trk-btns { display:flex; gap:10px; flex-wrap:wrap; }
   .trk-btn { display:inline-flex; align-items:center; gap:8px; background:linear-gradient(155deg,#26303f,#1c2431 60%,#1a222e); border:1px solid rgba(148,178,220,.22); color:#eef2f8; font-size:13.5px; font-weight:700; border-radius:12px; padding:11px 16px; text-decoration:none; }
   .wgt-pills { display:flex; gap:8px; margin:0 0 14px; overflow-x:auto; padding-bottom:2px; }
@@ -96,9 +96,9 @@
   .wgt-row.won { border-color:rgba(47,191,113,.45); }
   .tkc-top { display:flex; gap:12px; align-items:center; }
   .tkc-thumbbtn { border:none; background:none; padding:0; cursor:pointer; flex:none; }
-  .tkc-thumb { width:60px; height:60px; border-radius:10px; object-fit:cover; flex:none; background:#16223a; display:block; }
+  .tkc-thumb { width:60px; height:60px; border-radius:10px; object-fit:cover; flex:none; background:#182130; display:block; }
   .tkc-logo { object-fit:contain; background:#eef1f6; padding:5px; box-sizing:border-box; }
-  .tkc-fallback { width:60px; height:60px; border-radius:10px; flex:none; background:#16223a; display:flex; align-items:center; justify-content:center; font-size:24px; }
+  .tkc-fallback { width:60px; height:60px; border-radius:10px; flex:none; background:#182130; display:flex; align-items:center; justify-content:center; font-size:24px; }
   .tkc-main { flex:1; min-width:0; }
   .tkc-meta { display:flex; align-items:center; gap:8px; margin-bottom:5px; }
   .tkc-kind { color:#8b98ad; font-size:12px; font-weight:300; }
@@ -138,19 +138,19 @@
   .wgt-curve-empty { padding:26px 0; }
   .wgt-plays-link { display:flex; align-items:center; gap:10px; background:var(--card); border:1px solid var(--line);
     border-radius:14px; padding:13px 16px; color:var(--text); font-weight:800; font-size:.95rem; text-decoration:none; }
-  .wgt-plays-count { background:rgba(47,230,167,.14); border:1px solid rgba(47,230,167,.45); color:#2fe6a7;
+  .wgt-plays-count { background:rgba(17,204,135,.14); border:1px solid rgba(17,204,135,.45); color:#11cc87;
     border-radius:999px; padding:2px 10px; font-size:.8rem; font-weight:800; }
-  .wgt-plays-arrow { margin-left:auto; color:#2fe6a7; font-size:1.1rem; }
+  .wgt-plays-arrow { margin-left:auto; color:#11cc87; font-size:1.1rem; }
 
   /* ============================================================
      FASE 2 — Tracker con el sistema del Home nuevo (2026-10-21,
      pedido por Alex tras su captura: el título caía en 3 líneas
      y la página no tenía la estética nueva). Fondo marino
      unificado #05081a→#0c1638, dorado único #e8c766, menta único
-     #2ee6a8, tarjetas radio 20px con la superficie del Home.
+     #11cc87, tarjetas radio 20px con la superficie del Home.
      Todo vive en el <style> propio de ESTA plantilla (se carga
      solo en esta página): NO se toca el CSS compartido. */
-  body { background-color:#161d29; background-image:radial-gradient(560px 300px at 50% -80px,rgba(47,230,167,.06),transparent 65%),radial-gradient(700px 500px at 110% 30%,rgba(77,163,255,.05),transparent 60%); }
+  body { background-color:#161d29; background-image:radial-gradient(560px 300px at 50% -80px,rgba(17,204,135,.06),transparent 65%),radial-gradient(700px 500px at 110% 30%,rgba(77,163,255,.05),transparent 60%); }
   /* Fuera la caja gris envolvente: como en el Home, las tarjetas
      flotan directo sobre el fondo marino. */
   .tracker-box { background:transparent; border:none; border-radius:0; padding:2px 0 8px; }
@@ -163,9 +163,9 @@
      de 398px. nowrap en cada línea: jamás una tercera línea. */
   .trk-h1 { font-size:clamp(19px,5.3vw,24px); line-height:1.15; letter-spacing:-.5px; margin:0 0 9px; }
   .trk-h1 .trk-l { display:block; white-space:nowrap; }
-  .trk-h1 .trk-mint { color:#2ee6a8; }
-  .trk-dot { color:#2ee6a8; }
-  .trk-dot i { background:#2ee6a8; box-shadow:0 0 10px #2ee6a8; }
+  .trk-h1 .trk-mint { color:#11cc87; }
+  .trk-dot { color:#11cc87; }
+  .trk-dot i { background:#11cc87; box-shadow:0 0 10px #11cc87; }
   .trk-btn { background:linear-gradient(155deg,#26303f,#1c2431 60%,#1a222e); border:1px solid rgba(232,199,102,.18); border-radius:14px; }
   .tracker-box .wgt-avatar { background:linear-gradient(135deg,#e8c766,#a8832a); }
   .tracker-box .wgt-streak-pill { background:rgba(232,199,102,.12); border-color:rgba(232,199,102,.5); color:#e8c766; }
@@ -180,7 +180,7 @@
   .own-thumb { width:52px; height:52px; border-radius:10px; object-fit:cover; flex:none; }
   .own-main { flex:1; min-width:0; }
   .own-pick { color:#fff; font-weight:700; font-size:14.5px; }
-  .own-odds { color:#2ee6a8; }
+  .own-odds { color:#11cc87; }
   .own-meta { color:var(--muted); font-size:12px; margin-top:2px; line-height:1.45; }
   .own-clv { display:inline-block; margin-top:5px; font-size:11px; font-weight:800; border-radius:999px; padding:2px 8px; }
   .own-clv.pos { color:#2fbf71; background:rgba(47,191,113,.12); border:1px solid rgba(47,191,113,.4); }
@@ -191,15 +191,15 @@
   .own-actions { display:flex; gap:5px; margin-top:7px; justify-content:flex-end; align-items:center; }
   .own-actions form { margin:0; }
   .own-btn { border:1px solid var(--line); background:rgba(255,255,255,.05); color:#eef2f8; border-radius:8px; min-width:30px; height:26px; font-size:.85rem; cursor:pointer; }
-  .own-edit { color:#2ee6a8; font-size:12px; font-weight:700; text-decoration:none; }
+  .own-edit { color:#11cc87; font-size:12px; font-weight:700; text-decoration:none; }
   .own-empty { color:var(--muted); font-size:13px; line-height:1.55; margin:6px 0 0; }
   .own-tools { display:flex; flex-wrap:wrap; gap:8px; margin-top:13px; }
-  .own-more { display:inline-block; margin-top:9px; color:#2ee6a8; font-weight:700; font-size:13px; text-decoration:none; }
+  .own-more { display:inline-block; margin-top:9px; color:#11cc87; font-weight:700; font-size:13px; text-decoration:none; }
   .tracker-box .results-hero .stat { background:linear-gradient(155deg,#26303f,#1c2431 60%,#1a222e); border:1px solid rgba(232,199,102,.14); border-radius:20px; }
-  .tracker-box .stat-value.pos { color:#2ee6a8; }
-  .tracker-box .wgt-exp-go { background:#2ee6a8; border-color:#2ee6a8; color:#052e22; }
-  .tracker-box .wgt-plays-count { background:rgba(47,230,168,.14); border-color:rgba(47,230,168,.45); color:#2ee6a8; }
-  .tracker-box .wgt-plays-arrow { color:#2ee6a8; }
+  .tracker-box .stat-value.pos { color:#11cc87; }
+  .tracker-box .wgt-exp-go { background:#11cc87; border-color:#11cc87; color:#052e22; }
+  .tracker-box .wgt-plays-count { background:rgba(47,230,168,.14); border-color:rgba(47,230,168,.45); color:#11cc87; }
+  .tracker-box .wgt-plays-arrow { color:#11cc87; }
 </style>
 
 <div class="tracker-box" id="wgtTrackerTop">
