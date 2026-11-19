@@ -166,11 +166,11 @@ button.upl-cta[disabled]{opacity:.65;cursor:wait}
 .upl-how li:last-child{border-bottom:0}
 .upl-how .n{flex:0 0 26px;width:26px;height:26px;border-radius:50%;background:#e8c766;color:#161d29;font-weight:900;font-size:13.5px;display:flex;align-items:center;justify-content:center}
 .upl-how b{color:#fff}
-.upl-sticky{position:fixed;left:0;right:0;bottom:0;z-index:80;background:#0d1118;border-top:1px solid #e8c76666;box-shadow:0 -6px 24px rgba(0,0,0,.45)}
-.upl-sticky-in{max-width:520px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:7px 12px calc(14px + env(safe-area-inset-bottom))}
-.upl-sticky-t{font-size:11.5px;line-height:1.25;color:#c3cbdd;white-space:nowrap;min-width:0;overflow:hidden;text-overflow:ellipsis}
-.upl-sticky-t b{color:#fff;font-size:12px}
-.upl-sticky-btn{background:#e8c766;color:#1a1405 !important;font-size:13px;font-weight:800;white-space:nowrap;padding:8px 14px;line-height:1.2;border-radius:999px;text-decoration:none;text-align:center;flex:none}
+.upl-sticky{position:fixed;left:0;right:0;bottom:0;z-index:80;background:linear-gradient(180deg,#1d3258,#14263f);border-top:1px solid #33507e;box-shadow:0 -6px 24px rgba(0,0,0,.45)}
+.upl-sticky-in{max-width:520px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 20px calc(14px + env(safe-area-inset-bottom))}
+.upl-sticky-t{font-size:14px;line-height:1.25;color:#c3cbdd;white-space:nowrap;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.upl-sticky-t b{color:#fff;font-size:15.5px}
+.upl-sticky-btn{background:#e8c766;color:#1a1405 !important;font-size:14.5px;font-weight:800;white-space:nowrap;padding:11px 17px;line-height:1.2;border-radius:999px;text-decoration:none;text-align:center;flex:none}
 .upl-as{padding:8px 12px;text-align:left}
 .upl-as .e{margin-top:0}
 .upl-as .o{margin-top:0;white-space:nowrap}
@@ -178,7 +178,7 @@ button.upl-cta[disabled]{opacity:.65;cursor:wait}
 .upl-board-out{margin:16px 0 0}
 /* Cierre inferior SIN banda vacía (2026-11-11, orden de Alex: «demasiado espacio»): entre la línea legal y el pie se apilaban .upl-wrap padding-bottom 20 + main.v2-wrap padding-bottom 24 + .v2-footer margin-top 16 + .tst-foot padding-top 30 = ~90px medidos en navegador. Se neutralizan SOLO en esta página las tres primeras capas; tras la línea legal queda únicamente el padding-top propio del pie (30px). El despeje global TRAS el pie (body.has-bottomnav + el ajuste por JS de base_v2) queda intacto [NOTA 2026-11-12: ese despeje tras el pie se sustituyó por la reserva dentro del propio pie — ver «DESPEJE FINAL SOBRE LA BARRA»]. */
 main.v2-wrap{padding-bottom:0}
-.v2-footer{margin-top:0;padding-bottom:calc(72px + env(safe-area-inset-bottom))}
+.v2-footer{margin-top:0;padding-bottom:calc(84px + env(safe-area-inset-bottom))}
 /* DESPEJE FINAL SOBRE LA BARRA (2026-11-12, orden de Alex con captura: «No se ve completo»): al bajar hasta el fondo, la barra fija (.upl-sticky ≈ 47px + safe-area de alto) tapaba el cierre de la página. La reserva anterior vivía en el padding-bottom del body, que en iOS Safari no extiende el área de scroll de forma fiable, así que la reserva principal pasa DENTRO del pie (.v2-footer, en flujo: siempre cuenta en el alto del documento): 72px + safe-area = alto de la barra + ~25px de aire — TODO el contenido final (FAQs, línea legal y el pie completo) se lee por encima de la barra al llegar al fondo. La barra no se toca: fija, fina y pegada a bottom:0 como estaba. */
 /* PÁGINA STANDALONE (2026-11-11, refinamiento de Alex con la foto de la página de pago de WGT: «es una página entera limpia»): fuera el chrome del sitio SOLO en esta página — sin encabezado superior (.v2-topbar: logo, botones, menú), sin franja de racha (.v2-streak-strip) y sin barra de menú inferior (.v2-bottomnav). La página empieza directo en su línea de confianza y abajo va solo su barrita fija de precio (.upl-sticky) pegada al borde. OJO con el script fit() de base_v2: mide la nav (oculta daría rect en 0 y despejes falsos gigantes) y asienta la barra con estilos inline; por eso los dos despejes se fijan aquí con !important, que gana al inline: barra en bottom:0 y el cuerpo reserva justo el alto de la barra (~46px) + aire [NOTA 2026-11-12: esa reserva del body resultó no fiable en iOS y se redujo a un respiro mínimo — el despeje que libra la barra vive ahora dentro del pie, ver «DESPEJE FINAL SOBRE LA BARRA»]. Nada de esto sale de esta plantilla. */
 .v2-topbar{display:none!important}
