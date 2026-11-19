@@ -25,16 +25,14 @@
   /* Barra superior */
   .dn-top{position:sticky;top:0;z-index:60;background:rgba(12,15,22,.94);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
   .dn-top-in{max-width:640px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:10px}
-  .dn-logo{width:54px;height:54px;border-radius:12px;display:block}
-  .dn-brand{font-family:var(--fdisp);font-size:17.1px;font-weight:800;letter-spacing:.05em;line-height:1.12;white-space:nowrap;color:var(--txt)}
-  .dn-brand small{display:block;font-family:var(--fmono);font-size:11px;font-weight:500;letter-spacing:.22em;color:var(--mint);margin-top:2px}
   .dn-top-right{margin-left:auto;display:flex;align-items:center;gap:9px}
-  .dn-avatar{width:32px;height:32px;border-radius:50%;border:1.5px solid var(--mint);color:var(--mint);display:flex;align-items:center;justify-content:center;font-family:var(--fdisp);font-size:15px;font-weight:700;background:var(--panel)}
   .dn-iconbtn{width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:var(--panel);color:var(--txt);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
-  .dn-viewpicks{background:var(--mint);color:#052017;font-weight:700;font-size:16px;padding:13px 20px;border-radius:14px;white-space:nowrap;display:inline-flex;align-items:center;gap:7px}
+  .dn-viewpicks{background:var(--mint);color:#052017;font-weight:700;font-size:15px;padding:13px 20px;border-radius:14px;white-space:nowrap;display:inline-flex;align-items:center;gap:7px}
   .dn-menubtn{width:46px;height:46px;border-radius:13px;border:1.5px solid #A3AEC2;background:transparent;color:var(--txt);font-size:19px;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;flex:none}
   .dn-top2{max-width:640px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:10px;border-top:1px solid var(--line)}
-  @media (max-width:430px){.dn-lg-coin{height:46px !important}.dn-lg-letters{height:33px !important}.dn-viewpicks{padding:11px 13px;font-size:14.5px}.dn-menubtn{width:42px;height:42px}}
+  @media (max-width:430px){.dn-lg-coin{height:46px !important}.dn-lg-letters{height:33px !important}.dn-viewpicks{padding:11px 13px;font-size:13.5px}.dn-menubtn{width:42px;height:42px}}
+  @media (max-width:360px){.dn-lg-coin{height:40px !important}.dn-lg-letters{height:29px !important}.dn-viewpicks{padding:11px 9px}}
+  @media (max-width:430px){.dn-hot-ledger{white-space:normal}}
   .dn-notif{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:14px}
   .dn-notif h3{font-family:var(--fdisp);font-size:17.1px;margin:0 0 8px;color:var(--txt)}
   .dn-notif-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid rgba(255,255,255,.05)}
@@ -65,13 +63,10 @@
   .dn-hero-card{background:var(--panel);border:1px solid var(--line);border-radius:18px;overflow:hidden;margin-top:18px;scroll-margin-top:150px}
   .dn-board-head{display:flex;align-items:center;gap:10px;margin:18px 0 12px}
   .dn-board-head h2{font-family:var(--fdisp);font-size:17.1px;font-weight:800;margin:0;color:var(--txt);white-space:nowrap}
-  .dn-board-lvl{color:var(--mut);font-size:15px;font-weight:500;white-space:nowrap}
   .dn-board-sub{display:flex;align-items:center;gap:10px;margin:14px 0 12px}
   .dn-count{color:var(--mut);font-size:15px}
   .dn-state{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:999px;padding:5px 11px;font-size:15px;color:var(--mut);white-space:nowrap;font-weight:700;letter-spacing:.05em}
   .dn-state.on{color:var(--mint);border-color:var(--mintline);background:var(--mintbg)}
-  .dn-sdot{width:7px;height:7px;border-radius:50%;background:#5B6B82;flex:none}
-  .dn-state.on .dn-sdot{background:var(--mint)}
   .dn-refresh{margin-left:auto;display:inline-flex;align-items:center;gap:8px;background:#141B2A;border:1px solid var(--line);border-radius:12px;padding:10px 16px;font-size:15px;color:var(--txt);cursor:pointer}
   .dn-board{background:linear-gradient(180deg,#171F2E,#111827);border:1px solid var(--line);border-radius:20px;padding:26px 22px;text-align:center}
   .dn-board h3{font-family:var(--fdisp);font-size:17.1px;font-weight:800;margin:0 0 10px;color:var(--txt)}
@@ -119,30 +114,19 @@
   .dn-risk-tx span{display:block;color:var(--mut);font-size:15px;margin-top:3px;line-height:1.35}
   .dn-risk-pill{flex:none;background:var(--mint);color:#06281B;font-weight:700;font-size:13.5px;padding:6px 12px;border-radius:999px}
   .dn-hero-band{background:#172A42;display:flex;align-items:center;justify-content:space-between;padding:12px 18px;color:var(--mint);font-weight:700;font-size:12px;letter-spacing:.14em;text-transform:uppercase}
-  .dn-live-wrap{display:inline-flex;align-items:center;gap:4px}
-  .dn-live-word{color:#FF3B30;font-size:8.5px;font-weight:600;letter-spacing:.12em}
-  .dn-live-dot{width:6px;height:6px;border-radius:50%;background:#5B6B84;flex:none}
-  .dn-live-dot.on{background:#FF3B30}
-  .dn-live-wrap.on{animation:dnBlink 1.1s linear infinite}
   @keyframes dnBlink{0%,55%{opacity:1}56%,100%{opacity:.15}}
   .dn-hero-body{padding:10px 18px 20px}
   .dn-hero-title{font-family:var(--fdisp);font-size:28px;font-weight:700;line-height:1.15;color:var(--txt)}
   .dn-hero-accent{color:var(--mint)}
   .dn-hero-div{height:1px;background:var(--line);margin:17px 0}
   .dn-hero-label{font-weight:700;letter-spacing:.1em;text-transform:uppercase;font-size:12px;color:var(--txt)}
-  .dn-hero-text{color:#DCE4F0;font-size:17.1px;font-weight:400;line-height:1.4;margin-top:6px}
+  .dn-hero-text{color:#DCE4F0;font-size:15px;font-weight:400;line-height:1.4;margin-top:6px}
   .dn-segs{display:flex;gap:8px;margin-top:17px}
   .dn-segs span{height:7px;width:62px;border-radius:999px;background:#3D4E6B}
   .dn-segs span.on{width:96px;background:var(--mint)}
 
-  /* Estado del dia */
-  .dn-status{margin-top:16px;background:var(--panel);border:1px solid var(--mintline);border-radius:14px;padding:13px 14px;display:flex;gap:12px;align-items:flex-start}
-  .dn-status .dn-ic{flex:0 0 auto;width:34px;height:34px;border-radius:50%;background:rgba(16,204,135,.16);display:flex;align-items:center;justify-content:center;color:var(--mint)}
-  .dn-status b{display:block;font-size:15px;font-weight:700;line-height:1.35}
-  .dn-status span{display:block;font-size:15px;color:var(--mut);line-height:1.45;margin-top:2px}
 
   /* Banda de numeros del programa */
-  .dn-stats{margin-top:14px;background:var(--panel);border:1px solid var(--line);border-top:2px solid var(--mint);border-radius:14px;display:grid;grid-template-columns:repeat(4,1fr);overflow:hidden}
   .dn-stat{padding:13px 4px 12px;text-align:center}
   .dn-stat + .dn-stat{border-left:1px solid var(--line)}
   .dn-stat .k{font-family:var(--fmono);font-size:11px;letter-spacing:.13em;color:var(--mut);text-transform:uppercase}
@@ -158,10 +142,10 @@
   /* Tirita superior de récord (últimas 10 liquidadas) */
   .dn-strip-top{max-width:none;margin:0;padding:0}
   .dn-strip-top .dn-strip{margin-top:0}
-  .dn-strip{margin-top:0;background:#0A0D13;border-top:1px solid #0A2420;border-bottom:1px solid #0A2420;border-radius:0;padding:11px 6px;text-align:center;font-size:14px;font-weight:300;color:#1AE099;white-space:nowrap;overflow:hidden}
+  .dn-strip{margin-top:0;background:#0A0D13;border-top:1px solid #0A2420;border-bottom:1px solid #0A2420;border-radius:0;padding:11px 6px;text-align:center;font-size:13.5px;font-weight:300;color:#1AE099;white-space:nowrap;overflow:hidden}
   .dn-strip b{font-weight:300}
   .dn-strip .dn-off{font-size:1.1em;font-weight:500}
-  @media (max-width:430px){.dn-strip{font-size:12.6px;padding:10px 4px}}
+  @media (max-width:430px){.dn-strip{font-size:12px;padding:10px 4px}}
   .dn-quickbtn{display:inline-flex;align-items:center;gap:7px;background:rgba(16,204,135,.10);border:1px solid rgba(16,204,135,.28);color:var(--mint);border-radius:999px;padding:10px 18px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit}
   .dn-qa-list{margin-top:16px;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--panel)}
   .dn-qa-row{display:flex;align-items:center;gap:14px;padding:15px 16px;text-decoration:none;border-bottom:1px solid var(--line)}
@@ -225,10 +209,6 @@
   .dn-hot-note{color:var(--mut);font-size:15px}
   .dn-hot-link{margin-left:auto;color:var(--mint);font-size:13.5px;font-weight:600;white-space:nowrap;background:none;border:0;cursor:pointer;font-family:inherit;padding:0}
 
-  /* Sin card todavia */
-  .dn-empty{background:var(--panel);border:1px dashed var(--mintline);border-radius:14px;padding:22px 18px;text-align:center}
-  .dn-empty b{font-family:var(--fdisp);font-size:17.1px;display:block}
-  .dn-empty span{display:block;color:var(--mut);font-size:15px;line-height:1.55;margin-top:7px}
 
   /* Record por liga */
   .dn-leagues{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:6px 16px}
@@ -245,9 +225,6 @@
 
   /* Accesos rapidos */
   .dn-quick{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
-  .dn-q{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:13px 4px 11px;display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--txt)}
-  .dn-q svg{color:var(--mint)}
-  .dn-q span{font-size:13.5px;font-weight:500;text-align:center;line-height:1.25}
 
   /* Performance: grafico de unidades + niveles */
   .dn-chart{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 14px 10px}
@@ -310,14 +287,6 @@
   .dn-mem .dn-m-price{margin-left:auto;font-family:var(--fmono);font-size:15px;font-weight:600;color:var(--mint);white-space:nowrap}
   .dn-mem p{margin:7px 0 0;font-size:15px;color:var(--mut);line-height:1.5}
   .dn-cta{display:block;margin-top:10px;background:var(--mint);color:#052017;border-radius:14px;padding:15px;text-align:center;font-weight:700;font-size:15px}
-  .dn-on{margin-top:10px;background:var(--panel);border:1px solid var(--mintline);border-radius:14px;padding:13px 15px;font-size:15px;text-align:center}
-  .dn-unlock{margin-top:10px;background:var(--panel);border:1px solid var(--mintline);border-radius:14px;padding:14px 16px}
-  .dn-unlock .dn-m-top{display:flex;align-items:baseline;gap:8px}
-  .dn-unlock .dn-m-name{font-family:var(--fdisp);font-size:17.1px;font-weight:700}
-  .dn-unlock .dn-m-price{margin-left:auto;font-family:var(--fmono);font-size:15px;font-weight:600;color:var(--mint);white-space:nowrap}
-  .dn-unlock p{margin:7px 0 0;font-size:15px;color:var(--mut);line-height:1.5}
-  .dn-u-list{margin-top:12px;display:flex;flex-direction:column;gap:7px;font-size:15px;line-height:1.45}
-  .dn-u-list span{color:var(--mint);font-weight:700}
   .dn-u-head{margin-top:14px;font-size:12px;letter-spacing:.08em;color:var(--mut);font-weight:700}
   .dn-u-chips{margin-top:8px;display:flex;flex-wrap:wrap;gap:6px}
   .dn-u-chips span{font-size:12px;border:1px solid var(--line);border-radius:999px;padding:4px 9px}
@@ -368,7 +337,7 @@
   .dn-f-legal b{color:var(--txt)}
   .dn-fcols{display:grid;grid-template-columns:1fr 1fr;gap:0 18px;margin-bottom:28px}
   .dn-fsec{margin-bottom:26px}
-  .dn-fsec h4{font-family:var(--fdisp);font-size:15px;font-weight:700;color:var(--txt);margin:0 0 10px}
+  .dn-fsec h4{font-family:var(--fdisp);font-size:17.1px;font-weight:700;color:var(--txt);margin:0 0 10px}
   .dn-fsec a{display:block;color:var(--mut);text-decoration:none;font-size:15px;padding:5px 0}
 
   /* Barra inferior */
@@ -392,7 +361,6 @@
   .dn-bubble .dn-b-tx{flex:0 1 auto;min-width:0}
   .dn-bubble .dn-b-t{display:block;font-size:15px;font-weight:400;color:#fff;white-space:nowrap}
   .dn-bubble .dn-b-btn{background:var(--mint);color:#052017;font-size:15px;font-weight:700;border-radius:999px;padding:10px 17px;flex:0 0 auto;white-space:nowrap}
-  .dn-bubble .dn-b-x{flex:0 0 auto;font-size:12px;font-weight:700;color:#8A94A6;padding:2px 4px}
   @keyframes dnPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.5)}}
   .dn-load{position:fixed;inset:0;z-index:200;background:#0C0F16;padding:22px 16px;transition:opacity .35s ease,visibility .35s ease}
   .dn-load.done{opacity:0;visibility:hidden;pointer-events:none}
@@ -528,7 +496,7 @@
         <h2>Hot right now</h2>
         <p class="dn-hot-sub">Current winning runs, graded plays only</p>
       </div>
-      <a class="dn-hot-ledger" href="{{ url_for('records') }}">↗ Public ledger</a>
+      <a class="dn-hot-ledger" href="{{ url_for('records') }}">↗ Full Record</a>
     </div>
     <div class="dn-hot-row" id="dnHotRow">
       {% for c in hot_home %}
@@ -567,7 +535,7 @@
     <div class="dn-yest-head">
       <h2>Yesterday</h2>
       <span class="dn-yest-cardlbl">{{ ayer.fecha_txt }} card</span>
-      <a class="dn-hot-ledger" href="{{ url_for('records') }}">↗ Full records</a>
+      <a class="dn-hot-ledger" href="{{ url_for('records') }}">↗ Full Record</a>
     </div>
     {% for b in ayer.barras %}
     <div class="dn-yest-bar">
@@ -580,7 +548,7 @@
     <article class="dn-yest-play">
       <div class="dn-yest-thumb"><span>{{ j.abbr }}</span>{% if j.comprobante %}<img src="{{ url_for('static', filename=j.comprobante) }}" alt="" loading="lazy" onerror="this.remove()">{% endif %}</div>
       <div class="dn-yest-main">
-        <div class="dn-yest-meta"><span class="dn-yest-pill">{{ j.nivel }}</span><span class="dn-yest-kind">{{ j.nivel|title }} play · {{ j.liga }}</span></div>
+        <div class="dn-yest-meta"><span class="dn-yest-pill">{{ j.nivel }}</span><span class="dn-yest-kind">{{ j.liga }}</span></div>
         <div class="dn-yest-pick">{{ j.pick }}</div>
         {% if j.matchup %}<div class="dn-yest-match">{{ j.matchup }}</div>{% endif %}
       </div>
@@ -603,12 +571,6 @@
       <a class="dn-qa-row" href="{{ url_for('game_center') }}"><span class="dn-qa-ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M13.7 20a2 2 0 0 1-3.4 0"/></span></span><span class="dn-qa-tx"><b>Set an alert</b><span>Get told when a price moves</span></span><span class="dn-qa-ch">›</span></a>
       <a class="dn-qa-row" href="{{ url_for('home') }}"><span class="dn-qa-ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/></span></span><span class="dn-qa-tx"><b>See picks</b><span>See what members get today</span></span><span class="dn-qa-ch">›</span></a>
       <a class="dn-qa-row" href="{{ url_for('tools') }}"><span class="dn-qa-ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></span></span><span class="dn-qa-tx"><b>Find a team or tool</b><span>Search everything</span></span><span class="dn-qa-ch">›</span></a>
-      <a class="dn-qa-row" href="{{ url_for('ev_board') }}"><span class="dn-qa-ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13"/><circle cx="3.5" cy="6" r="1.1" fill="currentColor" stroke="none"/><circle cx="3.5" cy="12" r="1.1" fill="currentColor" stroke="none"/><circle cx="3.5" cy="18" r="1.1" fill="currentColor" stroke="none"/></span></span><span class="dn-qa-tx"><b>Best price for a game</b><span>Compare the books we track</span></span><span class="dn-qa-ch">›</span></a>
-      <a class="dn-qa-row" href="{{ url_for('sharp') }}"><span class="dn-qa-ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 5 13.5h5L9 22l8-11.5h-5z"/></svg></span><span class="dn-qa-tx"><b>Sharp Money</b><span>Where the pro money is moving</span></span><span class="dn-qa-ch">›</span></a>
-      <a class="dn-qa-row" href="{{ url_for('props') }}"><span class="dn-qa-ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20.5c1.4-3.8 4.4-5.2 7.5-5.2s6.1 1.4 7.5 5.2"/></svg></span><span class="dn-qa-tx"><b>Player Props</b><span>Prop edges for today's games</span></span><span class="dn-qa-ch">›</span></a>
-      <a class="dn-qa-row" href="{{ url_for('tools_line_moves') }}"><span class="dn-qa-ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17.5 9 11l4 4 8-8.5"/><path d="M15 6.5h6v6"/></svg></span><span class="dn-qa-tx"><b>Line Moves</b><span>Lines on the move, as it happens</span></span><span class="dn-qa-ch">›</span></a>
-      <a class="dn-qa-row" href="{{ url_for('masterclass') }}"><span class="dn-qa-ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></svg></span><span class="dn-qa-tx"><b>Masterclass</b><span>The Sharp Team Academy, day by day</span></span><span class="dn-qa-ch">›</span></a>
-      <a class="dn-qa-row" href="{{ url_for('records') }}"><span class="dn-qa-ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="4.5" width="14" height="17" rx="2"/><path d="M9 4.5a3 3 0 0 1 6 0"/><path d="m9 13.5 2 2 4-4.5"/></svg></span><span class="dn-qa-tx"><b>Full Record</b><span>Every play tracked, win or lose</span></span><span class="dn-qa-ch">›</span></a>
       <a class="dn-qa-row" href="{{ url_for('bankroll') }}"><span class="dn-qa-ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="7" cy="7" r="2.3"/><circle cx="17" cy="17" r="2.3"/><path d="M17.5 4.5 6.5 19.5"/></svg></span><span class="dn-qa-tx"><b>Stake Sizing</b><span>Your bankroll, your unit size</span></span><span class="dn-qa-ch">›</span></a>
     </div>
   </div>
@@ -637,7 +599,7 @@
     <p class="dn-sheet-line" id="dnSheetLine"></p>
     <div id="dnSheetList"></div>
     <button type="button" class="dn-sheet-done" onclick="dnHotClose()">Done</button>
-    <a class="dn-sheet-ledger" href="{{ url_for('records') }}">↗ Public ledger</a>
+    <a class="dn-sheet-ledger" href="{{ url_for('records') }}">↗ Full Record</a>
   </div>
 <script>
 var dnHotData = {{ hot_home|tojson }};
@@ -741,7 +703,7 @@ function dnHotClose(){
     <nav class="dn-tools">
       <a class="dn-tool" href="{{ url_for('records') }}">
         <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V4H6.5A2.5 2.5 0 0 0 4 6.5v13Z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></svg>
-        <span>Documented Plays</span>
+        <span>Full Record</span>
       </a>
       <a class="dn-tool" href="{{ url_for('official_tracker') }}">
         <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M8 6h13M8 12h13M8 18h13"/><path d="m3.5 6 1 1 2-2M3.5 12l1 1 2-2M3.5 18l1 1 2-2"/></svg>
@@ -816,14 +778,16 @@ function dnHotClose(){
         <div class="dn-m-top"><span class="dn-m-name">👑 GOLD</span><span class="dn-m-price">FREE</span></div>
         <p>2–3 Gold plays a day, open to every member in the Dashboard, on Telegram and by email. No card, ever.</p>
       </div>
-      {% if miembro_platinum %}
-      <div class="dn-mem hot">
-        <div class="dn-m-top"><span class="dn-m-name">💎 PLATINUM</span><span class="dn-m-price">✓ YOU'RE IN</span></div>
-        <p>The top tier — up to 2 Platinum plays a day at a $100 fixed stake, every member tool and the full record. The Vault Play is included with Platinum.<      {% endif %}
       <div class="dn-mem">
         <div class="dn-m-top"><span class="dn-m-name">🔒 VAULT</span><span class="dn-m-price">WITH PLATINUM</span></div>
         <p>The Vault Play: the single strongest setup of the day when one qualifies — probability 55%+ with real value. Never filled just to fill it.</p>
       </div>
+      {% if miembro_platinum %}
+      <div class="dn-mem hot">
+        <div class="dn-m-top"><span class="dn-m-name">💎 PLATINUM</span><span class="dn-m-price">✓ YOU'RE IN</span></div>
+        <p>The top tier — up to 2 Platinum plays a day at a $100 fixed stake, every member tool and the full record. The Vault Play is included with Platinum.</p>
+      </div>
+      {% endif %}
       {% if not miembro_platinum %}
       <div class="dn-mem hot big">
         <div class="dn-m-top"><span class="dn-m-name">💎 PLATINUM</span><span class="dn-m-price">TOP TIER</span></div>
@@ -1108,11 +1072,11 @@ function dnHotClose(){
 #tourDim{position:fixed;inset:0;background:rgba(4,8,16,.74);z-index:2900}
 #tourRing{position:fixed;z-index:2901;border:2px solid #10CC87;border-radius:14px;box-shadow:0 0 0 3px rgba(16,204,135,.25),0 0 24px rgba(16,204,135,.35);pointer-events:none;transition:top .2s ease,left .2s ease,width .2s ease,height .2s ease}
 #tourCard{position:fixed;z-index:2902;left:0;right:0;max-width:none;margin:0 auto;background:#1D2029;border:1px solid rgba(147,161,181,.25);border-radius:16px;padding:16px 16px 13px;box-shadow:0 18px 40px rgba(0,0,0,.5);color:#F4F7FB}
-#tourHead{font-size:13px;font-weight:700;letter-spacing:1.6px;color:#10CC87;margin-bottom:10px}
+#tourHead{font-size:13.5px;font-weight:700;letter-spacing:1.6px;color:#10CC87;margin-bottom:10px}
 #tourBar{height:4px;background:rgba(147,161,181,.25);border-radius:99px;overflow:hidden;margin-bottom:12px}
 #tourBarFill{height:100%;background:#10CC87;border-radius:99px;transition:width .3s ease}
 #tourCount{font-size:12px;letter-spacing:1.2px;color:#9AA1AE;font-weight:700}
-#tourTitle{font-size:19px;font-weight:700;margin:5px 0 6px;color:#F4F7FB}
+#tourTitle{font-size:17.1px;font-weight:700;margin:5px 0 6px;color:#F4F7FB}
 #tourBody{font-size:15px;line-height:1.55;color:#C7D0DD;font-weight:400}
 #tourBtns{display:flex;align-items:center;gap:10px;margin-top:14px}
 #tourNext{background:#10CC87;color:#052017;border:0;border-radius:10px;padding:10px 20px;font-size:15px;font-weight:700;cursor:pointer}
