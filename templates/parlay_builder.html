@@ -56,11 +56,11 @@
 .pb-note{color:#9a9ab5;font-size:12px;text-align:center;line-height:1.6;margin:14px 0 0}
 .pb-team .fr{display:block;font-size:11px;font-weight:600;color:#9a9ab5;margin-top:3px}
 .pb-leg-fair{font-size:11.5px;margin-top:2px;font-weight:600}
-.pb-leg-fair.pos{color:#11cc87}
+.pb-leg-fair.pos{color:#10cc87}
 .pb-leg-fair.neg{color:#f87171}
 .pb-leg-fair.none{color:#9a9ab5;font-weight:400}
 .pb-ev-title{font-size:12px;font-weight:800;letter-spacing:1.5px;color:#d4af37;margin:16px 0 8px}
-.pb-ev-pill{display:inline-block;font-size:12px;font-weight:800;color:#0d1420;background:linear-gradient(135deg,#11cc87,#17b985);border-radius:99px;padding:4px 12px;margin:0 0 10px}
+.pb-ev-pill{display:inline-block;font-size:12px;font-weight:800;color:#0d1420;background:linear-gradient(135deg,#10cc87,#17b985);border-radius:99px;padding:4px 12px;margin:0 0 10px}
 .pb-ev-pill.hidden{display:none}
 .pb-ev-note{color:#fbbf24;font-size:12px;margin:8px 0 0;line-height:1.5}
 .pb-ticket-ev{text-align:center;color:#9a9ab5;font-size:12.5px;margin-top:10px;line-height:1.5}
@@ -259,7 +259,7 @@
     document.getElementById('resTrue').textContent = (trueProb * 100).toFixed(1) + '%';
     document.getElementById('resFair').textContent = fmtOdds(toAmerican(1 / trueProb));
     evEl.textContent = (ev >= 0 ? '+' : '') + (ev * 100).toFixed(1) + '%';
-    evEl.style.color = ev >= 0 ? '#11cc87' : '#f87171';
+    evEl.style.color = ev >= 0 ? '#10cc87' : '#f87171';
     badge.classList.toggle('hidden', !(complete && ev > 0));
     if(complete){
       note.hidden = true; note.textContent = '';
