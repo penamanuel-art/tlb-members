@@ -970,6 +970,9 @@ def _resend_send(to: str, subject: str, text_body: str, html_body=None) -> tuple
     reply_to = (os.environ.get("EMAIL_USER") or "thesharpteam8@gmail.com").strip()
     payload = {"from": from_addr, "to": [to], "subject": subject,
                "reply_to": reply_to, "text": text_body}
+    _baja_hdr = _baja_url(to)
+    if _baja_hdr:
+        payload["headers"] = {"List-Unsubscribe": f"<{_baja_hdr}>"}
     if html_body:
         payload["html"] = html_body
     req = urllib.request.Request(
@@ -1059,6 +1062,67 @@ def _bienvenida_admin_token(email: str) -> str:
         return "adm1:" + hmac.new(_key, _msg, hashlib.sha256).hexdigest()
     except Exception:
         return ""
+
+
+# ---------------------------------------------------------------------------
+# BAJA DE EMAILS CON LINK PROPIO (2026-11-19, orden de Alex): el
+# placeholder {{{RESEND_UNSUBSCRIBE_URL}}} NO se sustituye en los
+# envíos por API de Resend (probado en vivo la noche del 2026-11-18:
+# el botón de baja de los emails llegaba muerto, sin URL). La baja
+# vive ahora en la propia plataforma: cada email lleva la URL firmada
+# del miembro (/baja/<token>) y la página de confirmación procesa la
+# baja con la regla fija de Alex (2026-10-20): quien se da de baja de
+# los emails se ELIMINA de la plataforma y su correo queda BLOQUEADO
+# pa' volver a registrarse (tabla emails_bloqueados, chequeada en
+# /registro).
+
+_BAJA_PROTEGIDOS = {"system@value.local", "pena.manuel@myyahoo.com"}
+
+
+def _baja_token(email: str) -> str:
+    """Token de baja de UNA cuenta: «b64(correo).firma», con la firma
+    = HMAC-SHA256 del correo con la SECRET_KEY del servidor (mismo
+    patrón que _bienvenida_admin_token). Solo el servidor puede
+    acuñarlo; va atado a ESE correo y no caduca — cuando la cuenta se
+    elimina, el token deja de resolver a un miembro y la página
+    responde con el error amable. Sin SECRET_KEY: cadena vacía."""
+    import base64
+    try:
+        _em = (email or "").strip().lower()
+        _key = str(app.config.get("SECRET_KEY") or "").encode()
+        if not _em or not _key:
+            return ""
+        _sig = hmac.new(_key, f"baja:{_em}".encode(),
+                        hashlib.sha256).hexdigest()
+        _b64 = base64.urlsafe_b64encode(_em.encode()).decode().rstrip("=")
+        return f"{_b64}.{_sig}"
+    except Exception:
+        return ""
+
+
+def _baja_url(email: str) -> str:
+    """URL pública de baja de ese correo (vacía si no se pudo firmar)."""
+    _tok = _baja_token(email)
+    return f"{SITE_URL}/baja/{_tok}" if _tok else ""
+
+
+def _baja_email_de_token(token: str):
+    """Correo dueño del token si la firma verifica; None en cualquier
+    otro caso (token manipulado, firma mala, formato raro)."""
+    import base64
+    try:
+        _b64, _sig = (token or "").strip().rsplit(".", 1)
+        _pad = "=" * (-len(_b64) % 4)
+        _em = base64.urlsafe_b64decode(
+            (_b64 + _pad).encode()).decode().strip().lower()
+        _key = str(app.config.get("SECRET_KEY") or "").encode()
+        if not _em or not _key:
+            return None
+        _esperada = hmac.new(_key, f"baja:{_em}".encode(),
+                             hashlib.sha256).hexdigest()
+        return _em if hmac.compare_digest(_sig, _esperada) else None
+    except Exception:
+        return None
 
 
 def _bienvenida_activacion_ok(to: str, subject: str, welcome_token, sub_token=None, admin_token=None) -> bool:
@@ -1361,6 +1425,16 @@ def _dispatch_email(to: str, subject: str, text_body: str, html_body=None,
                     or _bienvenida_vuelta_ok(to, subject, back_token)
                     or _cancelacion_ok(to, subject, cancel_token)):
                 return False, "bloqueado: regla de Alex 2026-11-02 (solo emails a Alex)"
+    # BAJA CON LINK PROPIO (2026-11-19): el placeholder de Resend no
+    # se sustituye en envíos API, así que se reemplaza AQUÍ, tras las
+    # puertas, por la URL firmada del propio destinatario en todo
+    # email de la app que lleve pie de baja.
+    _baja = _baja_url(to)
+    if _baja:
+        if text_body:
+            text_body = text_body.replace("{{{RESEND_UNSUBSCRIBE_URL}}}", _baja)
+        if html_body:
+            html_body = html_body.replace("{{{RESEND_UNSUBSCRIBE_URL}}}", _baja)
     if (os.environ.get("RESEND_API_KEY") or "").strip():
         return _resend_send(to, subject, text_body, html_body)
     return _smtp_send(to, subject, text_body, html_body, from_header)
@@ -7864,6 +7938,16 @@ def register():
             flash("Completa la verificación «No soy un robot» e inténtalo de nuevo." if _lang == "es" else "Please complete the 'I'm not a robot' check and try again.", "error")
             return render_template(_tpl, **_reg_ctx), 400
         db = get_db()
+        # Correo bloqueado por baja de emails (regla de Alex
+        # 2026-10-20): quien se dio de baja de los emails se eliminó
+        # y su correo NO puede volver a registrarse.
+        _ensure_emails_bloqueados(db)
+        _bloq = db.execute(
+            "SELECT email FROM emails_bloqueados WHERE email = ?",
+            (email,)).fetchone()
+        if _bloq:
+            flash("Este correo se dio de baja y no puede volver a registrarse." if _lang == "es" else "This email unsubscribed and can't sign up again.", "error")
+            return render_template(_tpl, **_reg_ctx), 403
         exists = db.execute("SELECT id FROM users WHERE email = ?", (email,)).fetchone()
         if exists:
             # Correo ya conocido: NO se crea duplicado ni se revela si la
@@ -12492,7 +12576,10 @@ def desbloquear_checkout_session():
 def admin_api_members_emails():
     """Lista de miembros para emails personalizados (2026-10-07, pedido por Alex):
     los emails de motivación salen con sección de upsell solo para no-Platinum.
-    Retorna JSON: [{email, nombre, platinum, phone, sms_optin, lang, platinum_trial_ends}].
+    Retorna JSON: [{email, nombre, platinum, phone, sms_optin, lang, platinum_trial_ends, baja_url}].
+    baja_url (2026-11-19): la URL firmada de baja de emails de ESE miembro
+    (/baja/<token>) — los scripts de email la cablean en el pie en vez del
+    placeholder de Resend, que no se sustituye en envíos API.
     Auth: sesión admin O header X-Admin-Key == ADMIN_API_KEY (para los crons)."""
     api_key = os.environ.get("ADMIN_API_KEY", "")
     header_key = request.headers.get("X-Admin-Key", "")
@@ -12517,7 +12604,8 @@ def admin_api_members_emails():
         {"email": r["email"], "nombre": r["nombre"] or "there",
          "platinum": bool(r["platinum_unlocked"]),
          "phone": r["phone"] or "", "sms_optin": bool(r["sms_optin"]),
-         "lang": r["lang"] or "en", "platinum_trial_ends": r["platinum_trial_ends"]}
+         "lang": r["lang"] or "en", "platinum_trial_ends": r["platinum_trial_ends"],
+         "baja_url": _baja_url(r["email"])}
         for r in rows
     ])
 
@@ -13212,6 +13300,29 @@ def admin_api_push_test_admin():
     return jsonify({"ok": True, "tipo": tipo, "sent": n})
 
 
+def _eliminar_miembro_completo(db, target):
+    """Borrado COMPLETO de un miembro: limpia las 12 tablas hijas con
+    FK antes de borrar la fila de users (fix 254db41, 2026-11-18: sin
+    esta limpieza el DELETE reventaba con 500). Lo comparten la ruta
+    admin de borrado y la baja de emails (/baja/<token>). NO decide
+    protecciones: el llamador verifica antes que la cuenta se puede
+    borrar. El llamador hace el commit."""
+    _ensure_price_alerts_table(db)
+    db.execute("DELETE FROM tracked_plays WHERE user_id = ?", (target["id"],))
+    db.execute("DELETE FROM checkins WHERE user_id = ?", (target["id"],))
+    db.execute("DELETE FROM push_subscriptions WHERE member_id = ?", (target["id"],))
+    db.execute("DELETE FROM reviews WHERE user_id = ?", (target["id"],))
+    db.execute("DELETE FROM book_balance_moves WHERE user_id = ?", (target["id"],))
+    db.execute("DELETE FROM book_balances WHERE user_id = ?", (target["id"],))
+    db.execute("DELETE FROM own_bets WHERE user_id = ?", (target["id"],))
+    db.execute("DELETE FROM tracker_goals WHERE user_id = ?", (target["id"],))
+    db.execute("DELETE FROM game_follows WHERE user_id = ?", (target["id"],))
+    db.execute("DELETE FROM telegram_link_codes WHERE user_id = ?", (target["id"],))
+    db.execute("DELETE FROM telegram_invite_links WHERE used_by_user_id = ?", (target["id"],))
+    db.execute("DELETE FROM price_alerts WHERE user_id = ?", (target["id"],))
+    db.execute("DELETE FROM users WHERE id = ?", (target["id"],))
+
+
 @app.route("/admin/api/members-delete", methods=["POST"])
 def admin_api_members_delete():
     """Elimina una cuenta de miembro por API admin (2026-10-13, pedido por Alex:
@@ -13230,23 +13341,153 @@ def admin_api_members_delete():
         return jsonify({"error": "not found"}), 404
     if is_admin_for(target) or email == "system@value.local":
         return jsonify({"error": "protected account"}), 403
-    _ensure_price_alerts_table(db)
-    db.execute("DELETE FROM tracked_plays WHERE user_id = ?", (target["id"],))
-    db.execute("DELETE FROM checkins WHERE user_id = ?", (target["id"],))
-    db.execute("DELETE FROM push_subscriptions WHERE member_id = ?", (target["id"],))
-    db.execute("DELETE FROM reviews WHERE user_id = ?", (target["id"],))
-    db.execute("DELETE FROM book_balance_moves WHERE user_id = ?", (target["id"],))
-    db.execute("DELETE FROM book_balances WHERE user_id = ?", (target["id"],))
-    db.execute("DELETE FROM own_bets WHERE user_id = ?", (target["id"],))
-    db.execute("DELETE FROM tracker_goals WHERE user_id = ?", (target["id"],))
-    db.execute("DELETE FROM game_follows WHERE user_id = ?", (target["id"],))
-    db.execute("DELETE FROM telegram_link_codes WHERE user_id = ?", (target["id"],))
-    db.execute("DELETE FROM telegram_invite_links WHERE used_by_user_id = ?", (target["id"],))
-    db.execute("DELETE FROM price_alerts WHERE user_id = ?", (target["id"],))
-    db.execute("DELETE FROM users WHERE id = ?", (target["id"],))
+    _eliminar_miembro_completo(db, target)
     db.commit()
     log_notificacion(db, "miembro", f"Member deleted: {email}", "")
     return jsonify({"ok": True, "deleted": email})
+
+
+def _ensure_emails_bloqueados(db):
+    """Tabla de correos BLOQUEADOS pa' registrarse (regla de Alex
+    2026-10-20): quien se da de baja de los emails se elimina y su
+    correo no puede volver a registrarse. La crea quien la necesite
+    (la ruta de baja al procesar y el chequeo de /registro)."""
+    db.execute(
+        "CREATE TABLE IF NOT EXISTS emails_bloqueados ("
+        "email TEXT PRIMARY KEY, nombre TEXT, motivo TEXT, created_at TEXT)")
+
+
+def _baja_protegida(user, email) -> bool:
+    """True si esta cuenta NUNCA se procesa por la ruta de baja:
+    cuentas admin/dueñas, la de sistema y el correo de miembro de
+    Alex (orden dura: su cuenta no se toca por ninguna vía). Ante la
+    duda (error al evaluar), protegida."""
+    if email in _BAJA_PROTEGIDOS:
+        return True
+    if admin_email() and email == admin_email():
+        return True
+    try:
+        return bool(is_admin_for(user))
+    except Exception:
+        return True
+
+
+def _baja_pagina(titulo, cuerpo_html, boton_html=""):
+    """Página simple, en inglés y con la marca, pa' el flujo de baja
+    (ruta pública, sin login)."""
+    return (
+        "<!DOCTYPE html>\n<html lang=\"en\"><head><meta charset=\"utf-8\">"
+        "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">"
+        f"<title>{titulo} · The Sharp Team</title></head>"
+        "<body style=\"margin:0;padding:0;background:#0B0E13;"
+        "font-family:Arial,Helvetica,sans-serif;\">"
+        "<div style=\"max-width:560px;margin:0 auto;padding:28px 18px 40px;\">"
+        "<div style=\"background:#0C0D12;border-radius:14px;padding:6px 0 8px;"
+        "text-align:center;\">"
+        "<img src=\"https://www.thesharpteam.bet/static/img/sharp-team-header.jpg\" "
+        "alt=\"The Sharp Team\" style=\"width:100%;max-width:520px;height:auto;border:0;\"></div>"
+        "<div style=\"background:#10141D;border:1px solid rgba(255,255,255,.08);"
+        "border-radius:14px;padding:28px 24px;margin-top:16px;text-align:center;\">"
+        f"<div style=\"font-size:22px;font-weight:700;color:#ffffff;\">{titulo}</div>"
+        f"{cuerpo_html}{boton_html}"
+        "</div>"
+        "<div style=\"text-align:center;font-size:11px;color:#8b93a9;margin-top:16px;\">"
+        "The Sharp Team · Wallington, NJ</div>"
+        "</div></body></html>")
+
+
+@app.route("/baja/<token>", methods=["GET", "POST"])
+def baja_email(token):
+    """Baja de emails con link propio (2026-11-19, orden de Alex).
+    Ruta PÚBLICA (el link viene de un email, sin sesión): el token
+    firmado (_baja_token) identifica al miembro. El GET solo MUESTRA
+    la confirmación — los escáneres de correo que abren links solos
+    no procesan nada — y el POST del botón procesa la baja con la
+    regla fija de Alex (2026-10-20): la cuenta se ELIMINA de la
+    plataforma (borrado completo, _eliminar_miembro_completo) y el
+    correo queda BLOQUEADO pa' volver a registrarse
+    (emails_bloqueados, chequeada en /registro). Guardas: jamás una
+    cuenta admin/dueña, ni system@value.local, ni el correo de
+    miembro de Alex; token inválido → error amable sin tocar nada."""
+    email = _baja_email_de_token(token)
+    if not email:
+        return _baja_pagina(
+            "This link isn't valid",
+            "<p style=\"font-size:15px;line-height:23px;color:#c3c9e0;\">"
+            "This unsubscribe link doesn't check out, so nothing was "
+            "changed. If you keep getting emails you don't want, reply "
+            "to any of them and we'll take care of it.</p>"), 400
+    db = get_db()
+    _ensure_emails_bloqueados(db)
+    user = db.execute("SELECT * FROM users WHERE email = ?",
+                      (email,)).fetchone()
+    if not user:
+        ya = db.execute(
+            "SELECT email FROM emails_bloqueados WHERE email = ?",
+            (email,)).fetchone()
+        if ya:
+            return _baja_pagina(
+                "You're unsubscribed",
+                "<p style=\"font-size:15px;line-height:23px;color:#c3c9e0;\">"
+                "This email address was already unsubscribed and the "
+                "account was removed. You won't receive our emails "
+                "again.</p>")
+        return _baja_pagina(
+            "This link isn't valid",
+            "<p style=\"font-size:15px;line-height:23px;color:#c3c9e0;\">"
+            "We couldn't find an account for this link, so nothing was "
+            "changed.</p>"), 404
+    if _baja_protegida(user, email):
+        return _baja_pagina(
+            "This account can't be unsubscribed here",
+            "<p style=\"font-size:15px;line-height:23px;color:#c3c9e0;\">"
+            "This is a protected account, so this page can't process "
+            "its unsubscribe.</p>"), 403
+    if request.method == "GET":
+        boton = (
+            f"<form method=\"POST\" action=\"/baja/{token}\" "
+            "style=\"margin-top:22px;\">"
+            "<button type=\"submit\" style=\"display:inline-block;"
+            "background:#e8c766;color:#0B0E13;font-size:16px;font-weight:700;"
+            "border:0;border-radius:999px;padding:14px 34px;cursor:pointer;\">"
+            "Confirm Unsubscribe</button></form>")
+        cuerpo = (
+            "<p style=\"font-size:15px;line-height:23px;color:#c3c9e0;\">"
+            f"You're about to unsubscribe <b style=\"color:#ffffff;\">{email}</b> "
+            "from The Sharp Team emails.</p>"
+            "<p style=\"font-size:15px;line-height:23px;color:#c3c9e0;\">"
+            "This deletes your account and this email address can't be "
+            "used to sign up again. This can't be undone from this page.</p>")
+        return _baja_pagina("Unsubscribe from The Sharp Team emails",
+                            cuerpo, boton)
+    # POST: procesa la baja (regla fija 2026-10-20).
+    nombre = (user["nombre"] or "").strip()
+    ya = db.execute("SELECT email FROM emails_bloqueados WHERE email = ?",
+                    (email,)).fetchone()
+    if not ya:
+        db.execute(
+            "INSERT INTO emails_bloqueados (email, nombre, motivo, created_at) "
+            "VALUES (?, ?, ?, ?)",
+            (email, nombre, "email-unsubscribe", now_iso()))
+    _eliminar_miembro_completo(db, user)
+    db.commit()
+    log_notificacion(db, "baja",
+                     f"Member unsubscribed & deleted: {nombre or email}",
+                     email)
+    try:
+        _push_admin_alex(
+            "🔴 Email unsubscribe",
+            f"{nombre or email} ({email}) unsubscribed from emails — "
+            "account deleted and email blocked.")
+    except Exception:
+        pass
+    return _baja_pagina(
+        "You've been unsubscribed",
+        "<p style=\"font-size:15px;line-height:23px;color:#c3c9e0;\">"
+        "Your account has been removed and you won't receive our "
+        "emails again. We respect your inbox and your decision.</p>"
+        "<p style=\"font-size:13px;line-height:20px;color:#8b93a9;\">"
+        "THE SHARP TEAM</p>")
 
 
 @app.route("/admin/api/members-set-admin", methods=["POST"])
