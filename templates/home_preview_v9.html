@@ -7,69 +7,69 @@
 <title>The Sharp Team — Home preview (admin only)</title>
 <style>
   *{box-sizing:border-box}
-  body{margin:0;background-color:#161d29;background-image:radial-gradient(560px 300px at 50% -80px,rgba(47,230,167,.06),transparent 65%),radial-gradient(700px 500px at 110% 30%,rgba(77,163,255,.05),transparent 60%);color:#eef2f8;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  body{margin:0;background-color:#161d29;background-image:radial-gradient(560px 300px at 50% -80px,rgba(17,204,135,.06),transparent 65%),radial-gradient(700px 500px at 110% 30%,rgba(77,163,255,.05),transparent 60%);color:#eef2f8;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
   .phone{position:relative;z-index:1;max-width:520px;margin:0 auto;padding:14px 14px 90px}
   .sample{background:#3a2b00;border:1px solid #c9a227;color:#ffe9a8;text-align:center;font-size:12px;font-weight:700;letter-spacing:.08em;padding:8px;border-radius:10px;margin-bottom:14px}
   a{color:inherit;text-decoration:none}
   .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
   .brand{display:flex;align-items:center;gap:8px}
-  .fin{width:34px;height:34px;min-width:34px;border-radius:50%;object-fit:cover;box-shadow:0 0 14px rgba(46,230,168,.45)}
+  .fin{width:34px;height:34px;min-width:34px;border-radius:50%;object-fit:cover;box-shadow:0 0 14px rgba(17,204,135,.45)}
   .wordmark{line-height:1}
   .wordmark b{display:block;font-size:7.6px;letter-spacing:.22em;color:#e8c766;font-style:italic;font-weight:400}
   .wordmark strong{display:block;font-size:15.2px;letter-spacing:.01em;font-style:italic;font-weight:900}
-  .wordmark i{display:block;height:1.9px;background:linear-gradient(90deg,#2ee6a8,#e8c766);margin-top:1.9px}
+  .wordmark i{display:block;height:1.9px;background:linear-gradient(90deg,#11cc87,#e8c766);margin-top:1.9px}
   .topactions{display:flex;align-items:center;gap:6px}
-  .pill{display:flex;align-items:center;gap:6px;border:1px solid #24334d;background:#1a222e;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:600;white-space:nowrap}
+  .pill{display:flex;align-items:center;gap:6px;border:1px solid #272e3d;background:#1a222e;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:600;white-space:nowrap}
   .topstrip{display:flex;align-items:center;gap:6px;width:fit-content;margin:0 auto 12px;border:1px solid #e8c766;background:linear-gradient(180deg,#1c2431,#161c23);border-radius:999px;padding:8px 14px;font-size:12px;font-weight:700;color:#eef2f8;text-decoration:none;white-space:nowrap}
   .pill .crown{color:#e8c766}
   .topactions .pill{height:32px;box-sizing:border-box}
   .pillrow .pill{height:40px;box-sizing:border-box}
-  .avatar{width:32px;height:32px;min-width:32px;border-radius:50%;border:2px solid #2ee6a8;background:#2a3c5f;display:flex;align-items:center;justify-content:center;font-size:15px;color:#eef2f8;font-weight:800}
-  .bellbtn{width:32px;height:32px;min-width:32px;border-radius:50%;border:2px solid #2ee6a8;background:#2a3c5f;display:flex;align-items:center;justify-content:center;color:#eef2f8;cursor:pointer;padding:0}
+  .avatar{width:32px;height:32px;min-width:32px;border-radius:50%;border:2px solid #11cc87;background:#2a3242;display:flex;align-items:center;justify-content:center;font-size:15px;color:#eef2f8;font-weight:800}
+  .bellbtn{width:32px;height:32px;min-width:32px;border-radius:50%;border:2px solid #11cc87;background:#2a3242;display:flex;align-items:center;justify-content:center;color:#eef2f8;cursor:pointer;padding:0}
   .bellbtn svg{display:block;width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
-  .notif-panel{border:1px solid #24334d;background:linear-gradient(180deg,#1c2431,#161c23);border-radius:16px;padding:14px;margin-bottom:14px}
+  .notif-panel{border:1px solid #272e3d;background:linear-gradient(180deg,#1c2431,#161c23);border-radius:16px;padding:14px;margin-bottom:14px}
   .notif-panel h3{font-size:16px;margin-bottom:8px}
   .notif-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid rgba(139,152,173,.15)}
   .notif-item:first-of-type{border-top:0}
-  .notif-item .ni{width:30px;height:30px;min-width:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;background:rgba(46,230,168,.12)}
+  .notif-item .ni{width:30px;height:30px;min-width:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;background:rgba(17,204,135,.12)}
   .notif-item .ni.red{background:rgba(230,80,80,.12)}
   .notif-item .ni.blue{background:rgba(74,144,217,.12)}
   .notif-item b{display:block;font-size:13px;line-height:1.3}
   .notif-item span{color:#93a4bf;font-size:12px}
   .notif-item .amt{margin-left:auto;font-size:13px;font-weight:800;white-space:nowrap}
-  .notif-item .amt.win{color:#2ee6a8}
+  .notif-item .amt.win{color:#11cc87}
   .notif-item .amt.loss{color:#e65050}
   .pillrow{display:flex;align-items:center;gap:7px;margin-bottom:10px}
-  .balance{flex:1 1 auto;min-width:0;display:flex;align-items:center;justify-content:flex-start;gap:6px;height:40px;box-sizing:border-box;border:1px solid #24334d;border-radius:999px;padding:6px 10px;background:#1a222e;font-weight:300;font-size:10.5px;white-space:nowrap}
-  .balance b{color:#2ee6a8;font-size:12px;font-weight:300}
-  .menubtn{width:40px;height:40px;min-width:40px;border:1px solid #24334d;background:#1a222e;border-radius:12px;color:#eef2f8;font-size:16px;display:flex;align-items:center;justify-content:center}
-  .hero{position:relative;overflow:hidden;border:1px solid #2a3c5f;border-radius:20px;background:radial-gradient(120% 140% at 20% 0%,#24334d 0%,#0d1626 55%,#05081a 100%);padding:20px 18px 0;box-shadow:0 0 26px rgba(46,230,168,.18);margin-bottom:22px}
+  .balance{flex:1 1 auto;min-width:0;display:flex;align-items:center;justify-content:flex-start;gap:6px;height:40px;box-sizing:border-box;border:1px solid #272e3d;border-radius:999px;padding:6px 10px;background:#1a222e;font-weight:300;font-size:10.5px;white-space:nowrap}
+  .balance b{color:#11cc87;font-size:12px;font-weight:300}
+  .menubtn{width:40px;height:40px;min-width:40px;border:1px solid #272e3d;background:#1a222e;border-radius:12px;color:#eef2f8;font-size:16px;display:flex;align-items:center;justify-content:center}
+  .hero{position:relative;overflow:hidden;border:1px solid #2a3242;border-radius:20px;background:radial-gradient(120% 140% at 20% 0%,#272e3d 0%,#0d1626 55%,#05081a 100%);padding:20px 18px 0;box-shadow:0 0 26px rgba(17,204,135,.18);margin-bottom:22px}
   .hero .photo{position:absolute;left:0;right:0;top:0;bottom:0;background:linear-gradient(90deg,rgba(5,8,26,.97),rgba(5,8,26,.90) 42%,rgba(5,8,26,.62) 72%,rgba(5,8,26,.45) 100%),url("{{ url_for('static', filename='img/hero-player.jpg') }}") center/cover no-repeat;opacity:.95;animation:none}
   @keyframes hero-ola{from{background-position:0% 0%,20% center}to{background-position:0% 0%,80% center}}
   @media (prefers-reduced-motion:reduce){.hero .photo{animation:none}}
   .hero .inner{position:relative}
   .dateline{font-size:12px;letter-spacing:.28em;color:#93a4bf;font-weight:700;margin-bottom:10px;text-transform:uppercase}
   .greet{font-size:clamp(30px,11vw,42px);line-height:1.02;font-weight:900;margin:0 0 8px;max-width:100%}
-  .greet span{color:#2ee6a8}
+  .greet span{color:#11cc87}
   .tagline{color:#dbe4f2;font-size:15px;margin:0 0 18px;max-width:64%}
-  .status{position:relative;display:flex;gap:10px;align-items:center;background:rgba(13,18,25,.45);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.12);border-left:4px solid #2ee6a8;border-radius:14px;padding:11px 13px;margin:8px 0 12px}
-  .check{width:38px;height:38px;min-width:38px;border-radius:50%;background:#2ee6a8;color:#161c23;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;box-shadow:0 0 10px rgba(46,230,168,.35)}
+  .status{position:relative;display:flex;gap:10px;align-items:center;background:rgba(13,18,25,.45);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.12);border-left:4px solid #11cc87;border-radius:14px;padding:11px 13px;margin:8px 0 12px}
+  .check{width:38px;height:38px;min-width:38px;border-radius:50%;background:#11cc87;color:#161c23;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;box-shadow:0 0 10px rgba(17,204,135,.35)}
   .status b{display:block;font-size:15px;font-weight:400}
   .status span{color:#93a4bf;font-size:12.5px;font-weight:300;line-height:1.4}
   .status .arr{margin-left:auto;color:#93a4bf;font-size:18px}
   .tiles{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:20px 0}
-  .tile{background:linear-gradient(180deg,#1c2431,#161c23);border:1px solid #2a3c5f;border-radius:16px;padding:12px 10px}
-  .tile .ic{width:34px;height:34px;border-radius:10px;background:#1a222e;border:1px solid #24334d;display:flex;align-items:center;justify-content:center;color:#2ee6a8;font-size:18px;margin-bottom:8px}
+  .tile{background:linear-gradient(180deg,#1c2431,#161c23);border:1px solid #2a3242;border-radius:16px;padding:12px 10px}
+  .tile .ic{width:34px;height:34px;border-radius:10px;background:#1a222e;border:1px solid #272e3d;display:flex;align-items:center;justify-content:center;color:#11cc87;font-size:18px;margin-bottom:8px}
   .tile b{display:block;font-size:15px;font-weight:400;margin-bottom:3px}
   .tile p{margin:0;color:#93a4bf;font-size:12px;font-weight:300;line-height:1.4}
   .tile .arr{color:#93a4bf;float:right;font-size:16px}
-  .risk{display:flex;align-items:center;gap:10px;border:1px solid #2ee6a8;border-radius:14px;padding:12px 14px;background:linear-gradient(180deg,#1c2431,#161c23);box-shadow:0 0 10px rgba(46,230,168,.15);margin-bottom:22px}
-  .risk .shield{font-size:26px;color:#2ee6a8}
+  .risk{display:flex;align-items:center;gap:10px;border:1px solid #11cc87;border-radius:14px;padding:12px 14px;background:linear-gradient(180deg,#1c2431,#161c23);box-shadow:0 0 10px rgba(17,204,135,.15);margin-bottom:22px}
+  .risk .shield{font-size:26px;color:#11cc87}
   .risk .left{flex:1}
-  .risk .label{font-size:10.5px;letter-spacing:.18em;color:#2ee6a8;font-weight:400}
+  .risk .label{font-size:10.5px;letter-spacing:.18em;color:#11cc87;font-weight:400}
   .risk b{display:block;font-size:17px;font-weight:400;margin:2px 0}
   .risk span{color:#dbe4f2;font-size:12px;font-weight:300}
-  .risk .right{border-left:1px solid #24334d;padding-left:12px;color:#2ee6a8;font-weight:400;font-size:12px;line-height:1.35;max-width:150px}
+  .risk .right{border-left:1px solid #272e3d;padding-left:12px;color:#11cc87;font-weight:400;font-size:12px;line-height:1.35;max-width:150px}
   .unlock{display:flex;align-items:center;gap:12px;border:1px solid #e8c766;border-radius:18px;padding:16px;background:linear-gradient(180deg,#1c2431,#161c23);margin-top:8px;margin-bottom:20px;text-decoration:none;color:#eef2f8}
   .unlock-crown{font-size:30px;color:#e8c766}
   .unlock-txt{flex:1}
@@ -77,11 +77,11 @@
   .unlock-txt p{margin:4px 0 0;font-size:13.5px;color:#93a4bf;line-height:1.45}
   .unlock-arr{font-size:26px;color:#e8c766}
   .unlock-info{margin:8px 0 0;font-size:13px;color:#93a4bf;line-height:1.5}
-  .unlock-today{margin:6px 0 0;font-size:13px;color:#2ee6a8;font-weight:700}
+  .unlock-today{margin:6px 0 0;font-size:13px;color:#11cc87;font-weight:700}
   .rh-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin:4px 0 0}
   .rh-title{font-size:26px;font-weight:800;letter-spacing:-.3px;color:#eef2f8}
   .rh-sub{color:#8fa1c2;font-size:13px;margin-top:3px}
-  .rh-ledger{flex:none;background:#131e31;border:1px solid #24334d;color:#dbe4f2;font-size:12.5px;font-weight:600;padding:8px 12px;border-radius:10px;text-decoration:none}
+  .rh-ledger{flex:none;background:#131e31;border:1px solid #272e3d;color:#dbe4f2;font-size:12.5px;font-weight:600;padding:8px 12px;border-radius:10px;text-decoration:none}
   .rh-rail{display:flex;gap:10px;overflow-x:auto;padding:14px 2px 8px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none}
   .rh-rail::-webkit-scrollbar{display:none}
   .rh-card{flex:0 0 88%;scroll-snap-align:start;background:linear-gradient(180deg,#1c2431,#161c23);border:1px solid var(--rhc);border-left:4px solid var(--rhc);border-radius:20px;padding:18px 16px 20px;text-decoration:none;display:block;box-shadow:0 0 22px color-mix(in srgb,var(--rhc) 30%,transparent)}
@@ -100,19 +100,19 @@
   .rh-pager i.on{background:#fff}
   .sechead{display:flex;align-items:center;gap:10px;margin:8px 0 14px}
   .sechead h2{margin:0;font-size:26px}
-  .lvpill{border:1px solid #2ee6a8;color:#2ee6a8;border-radius:999px;padding:6px 12px;font-size:13px;font-weight:800}
+  .lvpill{border:1px solid #11cc87;color:#11cc87;border-radius:999px;padding:6px 12px;font-size:13px;font-weight:800}
   .lvpill.plat{border-color:#e8c766;color:#e8c766}
   .viewall{margin-left:auto;color:#dbe4f2;font-size:14px}
-  .section{border:1px solid #2a3c5f;border-radius:18px;background:linear-gradient(180deg,#1c2431,#161c23);padding:16px;margin-bottom:22px}
+  .section{border:1px solid #2a3242;border-radius:18px;background:linear-gradient(180deg,#1c2431,#161c23);padding:16px;margin-bottom:22px}
   .section h3{margin:0 0 10px;font-size:19px}
   .row{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-top:1px solid #1c2431;font-size:15px}
   .row:first-of-type{border-top:0}
-  .on{color:#2ee6a8;font-size:12px;font-weight:400}
-  .join{border:1px solid #2ee6a8;color:#2ee6a8;border-radius:999px;padding:4px 10px;font-size:11px;font-weight:400}
-  .unlock{background:linear-gradient(180deg,#1c2431,#161c23);border:1px solid #2ee6a8;border-radius:18px;padding:20px;text-align:center;margin-bottom:22px;box-shadow:0 0 20px rgba(46,230,168,.3)}
+  .on{color:#11cc87;font-size:12px;font-weight:400}
+  .join{border:1px solid #11cc87;color:#11cc87;border-radius:999px;padding:4px 10px;font-size:11px;font-weight:400}
+  .unlock{background:linear-gradient(180deg,#1c2431,#161c23);border:1px solid #11cc87;border-radius:18px;padding:20px;text-align:center;margin-bottom:22px;box-shadow:0 0 20px rgba(17,204,135,.3)}
   .unlock b{display:block;font-size:21px;margin-bottom:6px}
   .unlock p{margin:0 0 14px;color:#dbe4f2;font-size:14px;line-height:1.5}
-  .unlock .cta{display:inline-block;background:#2ee6a8;color:#161c23;font-weight:900;border-radius:999px;padding:12px 26px;font-size:15px}
+  .unlock .cta{display:inline-block;background:#11cc87;color:#161c23;font-weight:900;border-radius:999px;padding:12px 26px;font-size:15px}
   .faq p{color:#93a4bf;font-size:14px;line-height:1.55;margin:6px 0 14px}
   .footer{text-align:center;color:#8b98ad;font-size:12.5px;line-height:1.6;padding:6px 10px 0}
   .tst-foot{border-top:1px solid #1e2c44;text-align:center;padding:30px 20px 34px}
@@ -131,7 +131,7 @@
   .v2-bottomnav{position:fixed;left:0;right:0;bottom:0;z-index:1001;display:flex;justify-content:space-around;align-items:stretch;background:#0d1219;border-top:1px solid rgba(139,152,173,.16);padding:6px 6px calc(6px + env(safe-area-inset-bottom))}
   .v2-bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 2px 6px;text-decoration:none;color:#8b98ad;font-size:10px;font-weight:500;letter-spacing:.01em;min-width:0;border-radius:22px;transition:background-color .2s ease,color .2s ease,transform .2s ease}
   .v2-bnav-item:active{transform:scale(.95)}
-  .v2-bnav-item.active{color:#2fe6a7;background:rgba(47,230,167,.15);font-weight:600}
+  .v2-bnav-item.active{color:#11cc87;background:rgba(17,204,135,.15);font-weight:600}
   .v2-bnav-ico{display:flex;align-items:center;justify-content:center;width:22px;height:22px;font-size:20px;line-height:1}
   .v2-bnav-ico svg{display:block;width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
   .updatemenu{position:fixed;left:14px;right:14px;bottom:calc(76px + env(safe-area-inset-bottom));z-index:1002;background:#12161d;border:1px solid #22304a;border-radius:14px;padding:8px 10px;box-shadow:0 8px 30px rgba(0,0,0,.45)}
@@ -158,51 +158,51 @@
   .vid video{width:100%;border-radius:16px;background:#000}
 
   /* 2026-10-26: Live + Your plays + Yesterday (v5 aprobada, letras finas, sin bold) */
-  .tst-livecard{display:flex;align-items:center;gap:10px;background:linear-gradient(180deg,#1c2431,#161c23);border:1px solid #2a3c5f;border-radius:16px;padding:12px 14px;margin:0 0 22px}
-  .tst-liveic{color:#2ee6a8;font-size:20px;font-weight:300;letter-spacing:-2px;white-space:nowrap}
+  .tst-livecard{display:flex;align-items:center;gap:10px;background:linear-gradient(180deg,#1c2431,#161c23);border:1px solid #2a3242;border-radius:16px;padding:12px 14px;margin:0 0 22px}
+  .tst-liveic{color:#11cc87;font-size:20px;font-weight:300;letter-spacing:-2px;white-space:nowrap}
   .tst-livetxt{flex:1;min-width:0}
   .tst-livetitle{display:block;font-size:17px;font-weight:400;line-height:1.25}
   .tst-livesub{display:block;color:#93a4bf;font-size:12.5px;font-weight:300;line-height:1.45;margin-top:2px}
   .tst-livearr{color:#93a4bf;font-size:20px;font-weight:300}
   .tst-playshead{display:flex;align-items:center;gap:10px;margin:8px 0 14px}
   .tst-playshead h2{margin:0;font-size:22px;font-weight:400}
-  .tst-lvpill{border:1px solid #2ee6a8;color:#2ee6a8;border-radius:999px;padding:6px 12px;font-size:13px;font-weight:400;white-space:nowrap}
+  .tst-lvpill{border:1px solid #11cc87;color:#11cc87;border-radius:999px;padding:6px 12px;font-size:13px;font-weight:400;white-space:nowrap}
   .tst-lvpill.plat{border-color:#e8c766;color:#e8c766}
-  .tst-refresh{margin-left:auto;display:flex;align-items:center;gap:6px;background:#1a222e;border:1px solid #2a3c5f;border-radius:12px;padding:9px 13px;color:#eef2f8;font-size:14px;font-weight:400;white-space:nowrap;cursor:pointer}
-  .tst-emptycard{background:linear-gradient(180deg,#1c2431,#161c23);border:1px solid #2a3c5f;border-radius:16px;padding:18px 16px;text-align:center;margin:0 0 22px}
+  .tst-refresh{margin-left:auto;display:flex;align-items:center;gap:6px;background:#1a222e;border:1px solid #2a3242;border-radius:12px;padding:9px 13px;color:#eef2f8;font-size:14px;font-weight:400;white-space:nowrap;cursor:pointer}
+  .tst-emptycard{background:linear-gradient(180deg,#1c2431,#161c23);border:1px solid #2a3242;border-radius:16px;padding:18px 16px;text-align:center;margin:0 0 22px}
   .tst-emptytitle{display:block;font-size:17px;font-weight:400;line-height:1.3}
   .tst-emptysub{display:block;color:#93a4bf;font-size:12.5px;font-weight:300;line-height:1.5;margin-top:6px}
   .tst-ysec{margin-bottom:28px}
   .tst-yhead{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin:0 0 14px}
   .tst-yhead h2{margin:0;font-size:24px;font-weight:400;line-height:1.1}
   .tst-yhead h2 span{font-size:14px;font-weight:300;color:#93a4bf;margin-left:8px}
-  .tst-fullbtn{display:flex;align-items:center;gap:6px;background:#1a222e;border:1px solid #2a3c5f;border-radius:12px;padding:10px 13px;color:#eef2f8;font-size:14px;font-weight:400;white-space:nowrap}
-  .tst-sumrow{display:flex;align-items:center;gap:12px;background:linear-gradient(180deg,#1c2431,#161c23);border:1px solid #2a3c5f;border-radius:16px;padding:14px 16px;margin:0 0 10px}
+  .tst-fullbtn{display:flex;align-items:center;gap:6px;background:#1a222e;border:1px solid #2a3242;border-radius:12px;padding:10px 13px;color:#eef2f8;font-size:14px;font-weight:400;white-space:nowrap}
+  .tst-sumrow{display:flex;align-items:center;gap:12px;background:linear-gradient(180deg,#1c2431,#161c23);border:1px solid #2a3242;border-radius:16px;padding:14px 16px;margin:0 0 10px}
   .tst-pill{border-radius:8px;padding:7px 10px;font-size:12px;font-weight:400;letter-spacing:.04em;white-space:nowrap}
   .tst-pill.plat{border:1px solid #e8c766;color:#e8c766}
-  .tst-pill.gold{border:1px solid #2ee6a8;color:#2ee6a8}
+  .tst-pill.gold{border:1px solid #11cc87;color:#11cc87}
   .tst-rec{font-size:22px;font-weight:400}
   .tst-units{font-size:16px;font-weight:400}
   .tst-units.neg{color:#e65050}
-  .tst-units.pos{color:#2ee6a8}
+  .tst-units.pos{color:#11cc87}
   .tst-graded{margin-left:auto;color:#93a4bf;font-size:13px;font-weight:300;white-space:nowrap}
-  .tst-playcard{display:flex;gap:12px;background:linear-gradient(180deg,#1c2431,#161c23);border:1px solid #2a3c5f;border-radius:20px;padding:16px;margin:0 0 12px}
-  .tst-ticketimg{width:64px;min-width:64px;height:80px;border-radius:12px;object-fit:cover;border:1px solid #2a3c5f}
-  .tst-ticketph{width:64px;min-width:64px;height:80px;border-radius:12px;background:#1a222e;border:1px solid #2a3c5f;display:flex;align-items:center;justify-content:center;color:#93a4bf;font-size:11px;font-weight:300;text-align:center;padding:4px}
+  .tst-playcard{display:flex;gap:12px;background:linear-gradient(180deg,#1c2431,#161c23);border:1px solid #2a3242;border-radius:20px;padding:16px;margin:0 0 12px}
+  .tst-ticketimg{width:64px;min-width:64px;height:80px;border-radius:12px;object-fit:cover;border:1px solid #2a3242}
+  .tst-ticketph{width:64px;min-width:64px;height:80px;border-radius:12px;background:#1a222e;border:1px solid #2a3242;display:flex;align-items:center;justify-content:center;color:#93a4bf;font-size:11px;font-weight:300;text-align:center;padding:4px}
   .tst-playmain{flex:1;min-width:0}
   .tst-playtop{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
   .tst-lvl{font-size:12px;font-weight:400;padding:5px 8px;border-radius:8px}
   .tst-lvl.plat{border:1px solid #e8c766;color:#e8c766}
-  .tst-lvl.gold{border:1px solid #2ee6a8;color:#2ee6a8}
+  .tst-lvl.gold{border:1px solid #11cc87;color:#11cc87}
   .tst-meta{color:#93a4bf;font-size:13px;font-weight:300}
   .tst-pick{font-size:17px;font-weight:400;line-height:1.25;margin-top:10px}
   .tst-match{color:#93a4bf;font-size:13.5px;font-weight:300;margin-top:4px}
   .tst-result{text-align:right;white-space:nowrap}
   .tst-result span{display:block;font-size:13px;font-weight:400}
-  .tst-result span.won{color:#2ee6a8}
+  .tst-result span.won{color:#11cc87}
   .tst-result span.lost{color:#e65050}
   .tst-result b{display:block;font-size:16px;font-weight:400;margin-top:2px}
-  .tst-result b.won{color:#2ee6a8}
+  .tst-result b.won{color:#11cc87}
   .tst-result b.lost{color:#e65050}
   .tst-platwave{position:relative;overflow:hidden}
   .tst-platwave > *{position:relative;z-index:1}
@@ -216,7 +216,7 @@
 </head>
 <body class="pv-bgimg">
 <div class="phone">
-  <a id="tst-phrase-strip" href="{{ url_for('masterclass') }}" style="display:flex;align-items:center;gap:8px;background:linear-gradient(180deg,#1c2431,#161c23);border:1px solid #2a3c5f;border-radius:14px;padding:10px 14px;margin:0 0 12px;text-decoration:none;color:#e8c766;overflow:hidden;">
+  <a id="tst-phrase-strip" href="{{ url_for('masterclass') }}" style="display:flex;align-items:center;gap:8px;background:linear-gradient(180deg,#1c2431,#161c23);border:1px solid #2a3242;border-radius:14px;padding:10px 14px;margin:0 0 12px;text-decoration:none;color:#e8c766;overflow:hidden;">
     <span style="flex:0 0 auto;">🎓</span>
     <span style="flex:1;overflow:hidden;white-space:nowrap;"><span id="tst-phrase" class="tst-marquee" style="display:inline-block;white-space:nowrap;font-size:12.5px;font-weight:300;line-height:1.4;color:#e8c766;animation:tst-phrase-slide 10s linear forwards;">Three pillars: with the house, professional bankroll with units, and zero emotion.</span></span>
   </a>
@@ -301,9 +301,9 @@
     <span class="tst-emptysub">Your plays will appear here as soon as today's card is live.</span>
   </div>
   {% endif %}
-  <div id="tst-vid-open" style="display:inline-flex;align-items:center;gap:6px;background:#161c23;border:1px solid #2a3c5f;border-radius:999px;padding:6px 11px;cursor:pointer;margin:12px 0 16px;">
-    <span style="color:#2ee6a8;font-size:10px;line-height:1;">&#9654;</span>
-    <span style="color:#2ee6a8;font-size:12px;font-weight:300;letter-spacing:.3px;">Watch how it works</span>
+  <div id="tst-vid-open" style="display:inline-flex;align-items:center;gap:6px;background:#161c23;border:1px solid #2a3242;border-radius:999px;padding:6px 11px;cursor:pointer;margin:12px 0 16px;">
+    <span style="color:#11cc87;font-size:10px;line-height:1;">&#9654;</span>
+    <span style="color:#11cc87;font-size:12px;font-weight:300;letter-spacing:.3px;">Watch how it works</span>
   </div>
 
   <h2 style="margin:8px 0 2px;font-size:22px;font-weight:400;">Find Your Edge</h2>
@@ -339,15 +339,15 @@
     <div style="font-size:11px;font-weight:400;letter-spacing:.12em;color:#e8c766;text-align:center;padding:12px 16px 0;">MUESTRA DE NUEVA TARJETA — NO ES UNA JUGADA OFICIAL</div>
     <div style="padding:16px 16px 0;display:flex;justify-content:space-between;align-items:flex-start;"><span style="font-size:13px;font-weight:400;letter-spacing:.12em;color:#e8c766;">MLB · WORLD SERIES</span><span style="font-size:13px;font-weight:300;color:#93a4bf;">Mon, Oct 26 · 8:10 PM ET</span></div>
     <div style="padding:10px 16px 16px;display:flex;gap:12px;align-items:center;">
-      <img src="{{ url_for('static', filename='img/team-logos/tampa-bay-rays.png') }}" alt="Tampa Bay Rays logo" style="flex:0 0 auto;width:52px;height:52px;border-radius:50%;background:#ffffff;object-fit:contain;padding:5px;border:1px solid #2ee6a8;">
+      <img src="{{ url_for('static', filename='img/team-logos/tampa-bay-rays.png') }}" alt="Tampa Bay Rays logo" style="flex:0 0 auto;width:52px;height:52px;border-radius:50%;background:#ffffff;object-fit:contain;padding:5px;border:1px solid #11cc87;">
       <span><span style="display:block;font-size:22px;font-weight:400;line-height:1.2;">Tampa Bay Rays</span><span style="display:block;font-size:14px;font-weight:300;color:#dbe4f2;margin-top:4px;">Moneyline</span></span>
     </div>
     <div style="display:grid;grid-template-columns:1fr;background:#161c23;border-top:1px solid #4a6fa5;">
-      <div style="padding:14px 16px;"><div style="font-size:16px;font-weight:400;color:#2ee6a8;">Tampa Bay ML ✓ Pick</div><div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;"><span style="font-size:12px;font-weight:300;color:#93a4bf;">Best: LowVig.ag</span><span style="display:inline-block;background:#2e5a3a;border:1px solid #2ee6a8;color:#eef2f8;font-size:16px;font-weight:400;border-radius:8px;padding:7px 12px;">-113</span></div></div>
+      <div style="padding:14px 16px;"><div style="font-size:16px;font-weight:400;color:#11cc87;">Tampa Bay ML ✓ Pick</div><div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;"><span style="font-size:12px;font-weight:300;color:#93a4bf;">Best: LowVig.ag</span><span style="display:inline-block;background:#2e5a3a;border:1px solid #11cc87;color:#eef2f8;font-size:16px;font-weight:400;border-radius:8px;padding:7px 12px;">-113</span></div></div>
     </div>
 
   </div>
-  <div style="display:flex;gap:8px;flex-wrap:wrap;margin:0 0 22px;"><a href="https://novig.com" style="flex:1;text-align:center;background:#2ee6a8;border:1px solid #2ee6a8;color:#161c23;font-size:13px;font-weight:400;border-radius:999px;padding:9px 6px;text-decoration:none;white-space:nowrap;">↗ Place at Novig</a><a href="#" style="flex:1;text-align:center;background:#161c23;border:1px solid #2a3c5f;color:#eef2f8;font-size:13px;font-weight:400;border-radius:999px;padding:9px 6px;text-decoration:none;white-space:nowrap;">🎫 Receipt</a><a href="#" style="flex:1;text-align:center;background:#161c23;border:1px solid #2a3c5f;color:#eef2f8;font-size:13px;font-weight:400;border-radius:999px;padding:9px 6px;text-decoration:none;white-space:nowrap;">+ Track</a><a href="{{ url_for('ev_board') }}" style="flex:1;text-align:center;background:#161c23;border:1px solid #2a3c5f;color:#eef2f8;font-size:13px;font-weight:400;border-radius:999px;padding:9px 6px;text-decoration:none;white-space:nowrap;">⇄ Compare prices</a></div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin:0 0 22px;"><a href="https://novig.com" style="flex:1;text-align:center;background:#11cc87;border:1px solid #11cc87;color:#161c23;font-size:13px;font-weight:400;border-radius:999px;padding:9px 6px;text-decoration:none;white-space:nowrap;">↗ Place at Novig</a><a href="#" style="flex:1;text-align:center;background:#161c23;border:1px solid #2a3242;color:#eef2f8;font-size:13px;font-weight:400;border-radius:999px;padding:9px 6px;text-decoration:none;white-space:nowrap;">🎫 Receipt</a><a href="#" style="flex:1;text-align:center;background:#161c23;border:1px solid #2a3242;color:#eef2f8;font-size:13px;font-weight:400;border-radius:999px;padding:9px 6px;text-decoration:none;white-space:nowrap;">+ Track</a><a href="{{ url_for('ev_board') }}" style="flex:1;text-align:center;background:#161c23;border:1px solid #2a3242;color:#eef2f8;font-size:13px;font-weight:400;border-radius:999px;padding:9px 6px;text-decoration:none;white-space:nowrap;">⇄ Compare prices</a></div>
 
 
 
@@ -372,7 +372,7 @@
   {% endfor %}
   {% endif %}
   {% if plays %}
-  <p style="margin:2px 0 22px;color:#93a4bf;font-size:12.5px;font-weight:300;line-height:1.55;">Stakes are listed in units and in dollars. One unit equals 1% of your bankroll, so your dollar amount follows the bankroll you set. Tracking a play adds it to My Bets at your own size, and it is graded on its own. <a href="{{ url_for('cuenta') }}" style="color:#2ee6a8;text-decoration:underline;">Update your bankroll in Account</a>.</p>
+  <p style="margin:2px 0 22px;color:#93a4bf;font-size:12.5px;font-weight:300;line-height:1.55;">Stakes are listed in units and in dollars. One unit equals 1% of your bankroll, so your dollar amount follows the bankroll you set. Tracking a play adds it to My Bets at your own size, and it is graded on its own. <a href="{{ url_for('cuenta') }}" style="color:#11cc87;text-decoration:underline;">Update your bankroll in Account</a>.</p>
   {% endif %}
 
   {% if not miembro_platinum %}
@@ -384,7 +384,7 @@
     </div>
     <span style="display:block;margin:10px 0 0;color:#dbe4f2;font-size:13.5px;font-weight:300;line-height:1.5;">Platinum is our highest-conviction level: moneyline picks selected by the model with strict value gates and posted before game time, with a transparent record, win or loss.</span>
     <span style="display:block;margin:8px 0 0;color:#93a4bf;font-size:12.5px;font-weight:300;line-height:1.5;">Includes full access to Gold, the full record, and notifications. $1 for your first week, then $15.99/week.</span>
-    <span style="display:inline-block;margin-top:14px;background:#2ee6a8;color:#161c23;font-weight:700;border-radius:999px;padding:12px 26px;font-size:15px;">Unlock Platinum &#8250;</span>
+    <span style="display:inline-block;margin-top:14px;background:#11cc87;color:#161c23;font-weight:700;border-radius:999px;padding:12px 26px;font-size:15px;">Unlock Platinum &#8250;</span>
   </a>
   {% endif %}
 
@@ -493,10 +493,10 @@
   {% endif %}
 
   <div style="display:flex;align-items:center;gap:10px;margin:8px 0 14px;"><h2 style="margin:0;font-size:22px;font-weight:400;">Watch how it works</h2></div>
-  <div onclick="document.getElementById('tst-vid-open').click()" style="background:linear-gradient(180deg,#1c2431,#161c23);border:1px solid #2a3c5f;border-radius:20px;padding:16px;margin:0 0 22px;cursor:pointer;">
+  <div onclick="document.getElementById('tst-vid-open').click()" style="background:linear-gradient(180deg,#1c2431,#161c23);border:1px solid #2a3242;border-radius:20px;padding:16px;margin:0 0 22px;cursor:pointer;">
     <div style="position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;border-radius:12px;background:#000;">
       <img src="{{ url_for('static', filename='img/video-dashboard-poster.jpg') }}" alt="Watch how it works" style="width:100%;height:100%;object-fit:cover;display:block;">
-      <span style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:64px;height:64px;border-radius:50%;background:#2ee6a8;color:#06281c;display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 4px 18px rgba(0,0,0,.5);">&#9654;</span>
+      <span style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:64px;height:64px;border-radius:50%;background:#11cc87;color:#06281c;display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 4px 18px rgba(0,0,0,.5);">&#9654;</span>
     </div>
     <div style="display:flex;align-items:center;gap:10px;margin-top:12px;">
       <span style="flex:1;min-width:0;">
@@ -541,13 +541,13 @@
   <div style="position:relative;width:100%;max-width:430px;"><video id="tst-vid-player" controls playsinline webkit-playsinline preload="none" poster="{{ url_for('static', filename='img/video-dashboard-poster.jpg') }}" style="width:100%;max-width:430px;max-height:92dvh;border-radius:16px;background:#000;">
     <source src="{{ url_for('static', filename='video/dashboard-tutorial.mp4') }}" type="video/mp4">
   </video>
-    <button id="tst-vid-x" type="button" aria-label="Close" style="position:absolute;top:10px;right:10px;z-index:20;width:44px;height:44px;border-radius:50%;background:rgba(10,14,20,.85);border:2px solid #2ee6a8;color:#fff;font-size:20px;font-weight:800;cursor:pointer;line-height:1;">&#10005;</button>
+    <button id="tst-vid-x" type="button" aria-label="Close" style="position:absolute;top:10px;right:10px;z-index:20;width:44px;height:44px;border-radius:50%;background:rgba(10,14,20,.85);border:2px solid #11cc87;color:#fff;font-size:20px;font-weight:800;cursor:pointer;line-height:1;">&#10005;</button>
   </div>
   <div id="tst-vid-end" style="display:none;width:100%;max-width:430px;margin-top:14px;flex-direction:column;align-items:center;gap:12px;">
     <div style="color:#fff;font-size:16px;font-weight:700;">That is the full tour</div>
     <div style="display:flex;gap:10px;">
-      <button id="tst-vid-again" type="button" style="background:#2ee6a8;color:#06281c;border:0;border-radius:999px;padding:13px 24px;font-size:16px;font-weight:800;cursor:pointer;">&#8635; Watch again</button>
-      <button id="tst-vid-endclose" type="button" style="background:#161c23;color:#fff;border:2px solid #2ee6a8;border-radius:999px;padding:12px 24px;font-size:16px;font-weight:800;cursor:pointer;">&#10005; Close</button>
+      <button id="tst-vid-again" type="button" style="background:#11cc87;color:#06281c;border:0;border-radius:999px;padding:13px 24px;font-size:16px;font-weight:800;cursor:pointer;">&#8635; Watch again</button>
+      <button id="tst-vid-endclose" type="button" style="background:#161c23;color:#fff;border:2px solid #11cc87;border-radius:999px;padding:12px 24px;font-size:16px;font-weight:800;cursor:pointer;">&#10005; Close</button>
     </div>
   </div>
 </div>
@@ -587,7 +587,7 @@
 </style>
 <style>
   /* === PRUEBA DE PALETA "PROBALYST" (2026-11-01, orden de Alex — SOLO PREVIEW) ===
-     Fondo #0B0E15 · Cartas #1A252B · Acento lima #F6FE5D (reemplaza en la prueba al menta #2ee6a8 y al dorado #e8c766).
+     Fondo #0B0E15 · Cartas #1A252B · Acento lima #F6FE5D (reemplaza en la prueba al menta #11cc87 y al dorado #e8c766).
      SOLO colores: no cambia estructura, textos, tamanos ni layout. La imagen pv-bgimg de arriba queda intacta. */
   html{background:#0B0E15!important}
   body{background:#0B0E15!important}
@@ -632,10 +632,10 @@
   #tst-vid-open{background:#1A252B!important;border-color:#2A363E!important}
   #tst-vid-open span{color:#F6FE5D!important}
   [style*="color:#e8c766"]{color:#F6FE5D!important}
-  [style*="color:#2ee6a8"]{color:#F6FE5D!important}
-  [style*="background:#2ee6a8"]{background:#F6FE5D!important;color:#0B0E15!important}
-  [style*="border:1px solid #2ee6a8"],[style*="border:2px solid #2ee6a8"],[style*="border:1px solid #e8c766"]{border-color:#F6FE5D!important}
-  [style*="border:1px solid #2a3c5f"]{border-color:#2A363E!important}
+  [style*="color:#11cc87"]{color:#F6FE5D!important}
+  [style*="background:#11cc87"]{background:#F6FE5D!important;color:#0B0E15!important}
+  [style*="border:1px solid #11cc87"],[style*="border:2px solid #11cc87"],[style*="border:1px solid #e8c766"]{border-color:#F6FE5D!important}
+  [style*="border:1px solid #2a3242"]{border-color:#2A363E!important}
   [style*="#4a6fa5"]{border-color:#2A363E!important}
   [style*="background:#1c2431"]{background:#1A252B!important}
   [style*="background:#161c23"]{background:#1A252B!important}
@@ -677,7 +677,7 @@
   body.pv-bgimg .v5big-tracked{color:#F6FE5D!important;border-color:rgba(246,254,93,.5)!important}
   body.pv-bgimg .v5share{color:#F6FE5D!important}
   body.pv-bgimg .tstc-tracked{color:#F6FE5D!important}
-  body.pv-bgimg [style*="color:#2fe6a7"]{color:#F6FE5D!important}
+  body.pv-bgimg [style*="color:#11cc87"]{color:#F6FE5D!important}
   /* Tira de track y hoja de stake (parcial compartido) */
   body.pv-bgimg .tst-strip{background:#1A252B!important;border-color:rgba(246,254,93,.55)!important}
   body.pv-bgimg .tst-strip-txt b{color:#F6FE5D!important}
