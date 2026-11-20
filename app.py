@@ -13659,6 +13659,70 @@ def admin_api_platinum_pagos():
     return jsonify({"platinum_pagos": out})
 
 
+@app.route("/admin/api/cobros-fallidos")
+def admin_api_cobros_fallidos():
+    """Cobros fallidos de miembros pagando (2026-11-20, orden de
+    Alex: «que me avises al momento cuando falle un cobro»).
+    Fuente: stripe_events tipo invoice.payment_failed (el webhook
+    lo registra cuando Stripe no puede cobrar la suscripción).
+    Cada evento una vez, con el nombre del miembro si la cuenta
+    existe. Es la fuente del vigía vigia-cobros-fallidos.py de la
+    VM. SOLO LEE. Auth: sesión admin O header X-Admin-Key."""
+    if not _admin_api_autorizado():
+        return jsonify({"error": "admin only"}), 403
+    db = get_db()
+    rows = db.execute(
+        "SELECT event_id, lower(email) AS email, created_at"
+        " FROM stripe_events WHERE email IS NOT NULL AND"
+        " tipo = 'invoice.payment_failed' ORDER BY created_at ASC"
+    ).fetchall()
+    out = []
+    for r in rows:
+        u = db.execute(
+            "SELECT nombre FROM users WHERE lower(email) = ?",
+            (r["email"],)).fetchone()
+        out.append({
+            "event_id": r["event_id"],
+            "email": r["email"],
+            "nombre": (u["nombre"] if u else "") or "",
+            "created_at": r["created_at"],
+        })
+    return jsonify({"cobros_fallidos": out})
+
+
+@app.route("/admin/api/trials-por-vencer")
+def admin_api_trials_por_vencer():
+    """Miembros cuyo mes gratis de Platinum vence en una fecha
+    dada (2026-11-20, orden de Alex: «avísame los que vencen
+    mañana»). Parámetro: ?fecha=YYYY-MM-DD (día ET en que vence el
+    trial). Solo miembros verificados, con trial vivo, que NUNCA
+    han pagado (sin eventos de pago en stripe_events) y que no
+    pidieron cancelar. Es la fuente del aviso diario de
+    vencimientos de la VM. SOLO LEE. Auth: sesión admin O header
+    X-Admin-Key."""
+    if not _admin_api_autorizado():
+        return jsonify({"error": "admin only"}), 403
+    fecha = (request.args.get("fecha") or "").strip()
+    if len(fecha) != 10:
+        return jsonify({"error": "fecha requerida (YYYY-MM-DD)"}), 400
+    db = get_db()
+    rows = db.execute(
+        "SELECT nombre, email, platinum_trial_ends FROM users"
+        " WHERE platinum_trial_ends IS NOT NULL"
+        " AND activated_at IS NOT NULL"
+        " AND lower(email) != 'system@value.local'"
+        " AND substr(platinum_trial_ends, 1, 10) = ?"
+        " AND (cancel_requested_at IS NULL OR cancel_requested_at = '')"
+        " AND lower(email) NOT IN ("
+        "   SELECT DISTINCT lower(email) FROM stripe_events"
+        "   WHERE email IS NOT NULL AND tipo IN"
+        "   ('checkout.session.completed', 'invoice.paid'))"
+        " ORDER BY nombre ASC", (fecha,)).fetchall()
+    out = [{"nombre": r["nombre"] or "", "email": r["email"],
+            "trial_ends": r["platinum_trial_ends"]} for r in rows]
+    return jsonify({"trials_por_vencer": out})
+
+
 @app.route("/admin/api/members-set-name", methods=["POST"])
 def admin_api_members_set_name():
     """Corrige el nombre (campo `nombre`) de un miembro por API admin
