@@ -435,6 +435,33 @@
     <div class="dn-fecha">{{ fecha }}</div>
   </section>
 
+  <!-- Burbuja de bienvenida al tour (2026-11-20, orden de Alex):
+       al miembro que aun no ha hecho el tour le sale esta burbuja
+       corta invitandolo; el boton arranca el tour de una vez. Se
+       apaga sola cuando el tour termina o se salta (la marca
+       tst_tour_done_v1 que ya pone el propio tour) o con la X
+       (marca propia tst_bubble_off_v1). ?bubble=1 la fuerza pa'
+       que Alex la pueda ver en su Dashboard. -->
+  <style>
+  .dn-tb{position:relative;margin:0 0 22px;background:linear-gradient(180deg,#1D2029,#181B23);border:1px solid #2A2E3A;border-radius:20px;padding:18px 16px}
+  .dn-tb-title{font-size:20px;font-weight:800;color:#fff;margin:0 28px 6px 0}
+  .dn-tb-text{font-size:16px;line-height:1.5;color:#9AA1AE;margin:0 0 14px}
+  .dn-tb-btn{background:#10CC87;color:#0A1120;border:0;border-radius:12px;padding:12px 22px;font-size:16px;font-weight:800;cursor:pointer}
+  .dn-tb-x{position:absolute;top:8px;right:10px;background:none;border:0;color:#9AA1AE;font-size:17px;cursor:pointer;padding:6px}
+  </style>
+  <div class="dn-tb" id="dnTourBubble" hidden>
+    <button class="dn-tb-x" type="button" aria-label="Dismiss" onclick="dnTbOff()">&#10005;</button>
+    <div class="dn-tb-title">&#128075; New here?</div>
+    <p class="dn-tb-text">Take the quick tour &mdash; we&rsquo;ll show you how everything works, tool by tool.</p>
+    <button class="dn-tb-btn" type="button" onclick="dnTbGo()">Start the tour &rarr;</button>
+  </div>
+  <script>
+  function dnTbGo(){var b=document.getElementById('dnTourBubble');if(b)b.hidden=true;if(window.tstStartTour)window.tstStartTour();}
+  function dnTbOff(){try{localStorage.setItem('tst_bubble_off_v1','1');}catch(e){}var b=document.getElementById('dnTourBubble');if(b)b.hidden=true;}
+  (function(){var force=/[?&]bubble=1/.test(location.search);var done=false,off=false;try{done=!!localStorage.getItem('tst_tour_done_v1');off=!!localStorage.getItem('tst_bubble_off_v1');}catch(e){}
+  if(force||(!done&&!off)){var b=document.getElementById('dnTourBubble');if(b)b.hidden=false;}})();
+  </script>
+
 
   <div class="dn-hero-card" id="dnBoard">
     <div class="dn-hero-band"><span>Today's card</span></div>
@@ -1109,7 +1136,16 @@ function dnHotClose(){
     {sel:[".dn-tabs a[href=\"{{ url_for('tracker_plays') }}\"]"],title:"Your personal tracker",body:"Down here is My Bets, your personal tracker: every play you track, plus your own bets, all in one place. It settles on its own and keeps your record and your profit up to date."},
     {sel:["sec:Hot right now"],title:"Hot right now",body:"The program's current runs, from graded plays only. Tap a run to see every play in it, wins and losses. Nothing hidden."},
     {sel:["sec:Performance"],title:"Performance",body:"How the program is doing: the recent run in units, and the record by level and by league. The full record is always open, every play, win or lose."},
-    {sel:["sec:Your tools"],title:"Your tools",body:"Your toolbox: live odds from every book, the +EV board, player props, Sharp Money and more. Some tools are Platinum only."},
+    {sel:["sec:Your tools"],title:"Your tools",body:"Nine tools live here, and each one earns its keep. Tap Next and I will show you what every tool does and how to use it. Some are Platinum only."},
+    {sel:[".dn-tool[href=\"{{ url_for('records') }}\"]"],title:"Full Record",body:"Every official play we have ever posted, graded win or lose. Open it anytime to check the program's complete history \u2014 nothing is hidden."},
+    {sel:[".dn-tool[href=\"{{ url_for('official_tracker') }}\"]"],title:"Official Tracker",body:"The program's official record, day by day: every card, every result, every unit. This is the scoreboard the whole program is judged by."},
+    {sel:[".dn-tool[href=\"{{ url_for('ev_board') }}\"]"],title:"+EV Board",body:"Games where our model's price beats the market's. The bigger the edge, the higher it ranks. Tap any row to open the game and compare every book's price."},
+    {sel:[".dn-tool[href=\"{{ url_for('props') }}\"]"],title:"Player Props",body:"Player prop markets with our model's read on each one. Pick a game, pick a player, and see the number we make it next to the book's number."},
+    {sel:[".dn-tool[href=\"{{ url_for('ai_assistant') }}\"]"],title:"AI Assistant",body:"Ask it anything about a game or a play \u2014 matchups, injuries, prices \u2014 and it answers with the same data the program uses."},
+    {sel:[".dn-tool[href=\"{{ url_for('masterclass') }}\"]"],title:"Masterclass",body:"The course that teaches the method behind the plays: bankroll, prices and discipline, one short lesson at a time. For members with active payment."},
+    {sel:[".dn-tool[href=\"{{ url_for('parlay_builder') }}\"]"],title:"+EV Parlay Builder",body:"Builds parlays only from legs our model rates +EV, and shows you the combined price before you play it. Parlays are high risk \u2014 keep them small."},
+    {sel:[".dn-tool[href=\"{{ url_for('sharp') }}\"]"],title:"Sharp Money",body:"Where the sharp money is moving, tracked on the exchanges. When the pros pile into one side, you see it here first."},
+    {sel:[".dn-tool[href=\"{{ url_for('tools_line_moves') }}\"]"],title:"Line Moves",body:"How each line has moved since it opened. A price that keeps shortening is telling you where the money is going."},
     {sel:["sec:Get alerts"],title:"Get alerts",body:"Turn on push alerts for this device and join the Telegram channel, and you will never miss a play."},
     {sel:["sec:Membership"],title:"Membership",body:"Your plan lives here. Platinum unlocks every play, the Vault and all the tools."},
     {sel:["#dnBell"],title:"Notifications",body:"The bell shows your latest results: every graded play, won or lost, with what it paid or what it cost."},
