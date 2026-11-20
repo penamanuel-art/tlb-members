@@ -13625,6 +13625,40 @@ def admin_api_bajas():
     return jsonify({"bajas": out})
 
 
+@app.route("/admin/api/platinum-pagos")
+def admin_api_platinum_pagos():
+    """Miembros que se convirtieron a Platinum PAGANDO (2026-11-20,
+    orden de Alex: «que me dejes saber cuando un miembro se
+    convierta a Platinum pagando — no el mes gratis»). Fuente:
+    stripe_events — el primer evento de activación por pago de cada
+    correo (checkout.session.completed o invoice.paid, los dos
+    eventos que el webhook procesa como pago real). El mes gratis
+    NO genera eventos de Stripe, así que nunca aparece aquí. Es la
+    fuente del vigía vigia-platinum-pagos.py de la VM. SOLO LEE.
+    Auth: sesión admin O header X-Admin-Key (mismo patrón que
+    /admin/api/cancelaciones)."""
+    if not _admin_api_autorizado():
+        return jsonify({"error": "admin only"}), 403
+    db = get_db()
+    rows = db.execute(
+        "SELECT lower(email) AS email, MIN(created_at) AS primer_pago"
+        " FROM stripe_events WHERE email IS NOT NULL AND"
+        " tipo IN ('checkout.session.completed', 'invoice.paid')"
+        " GROUP BY lower(email) ORDER BY primer_pago ASC"
+    ).fetchall()
+    out = []
+    for r in rows:
+        u = db.execute(
+            "SELECT nombre FROM users WHERE lower(email) = ?",
+            (r["email"],)).fetchone()
+        out.append({
+            "email": r["email"],
+            "nombre": (u["nombre"] if u else "") or "",
+            "primer_pago": r["primer_pago"],
+        })
+    return jsonify({"platinum_pagos": out})
+
+
 @app.route("/admin/api/members-set-name", methods=["POST"])
 def admin_api_members_set_name():
     """Corrige el nombre (campo `nombre`) de un miembro por API admin
