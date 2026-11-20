@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-20T19:39:44-04:00",
+  "updated_at": "2026-11-20T19:54:44-04:00",
   "refresh_minutes": 15,
   "fair_source": "Pinnacle no-vig",
   "filters": {
@@ -87,8 +87,9 @@
       "commence_time": "2026-11-20T23:05:24Z",
       "bet_url": "https://novig.com",
       "novig_deep": false,
-      "stale": false,
-      "first_seen": "2026-11-20T23:24:42.083727+00:00"
+      "stale": true,
+      "first_seen": "2026-11-20T23:24:42.083727+00:00",
+      "stale_reason": "line moved below 3%"
     },
     {
       "id": "0a1a6c2630e51e32d24695f02c0b3f23-h2h-None-Troy Trojans",
@@ -566,52 +567,10 @@
   "arbitrajes": [
     {
       "sport": "NCAAF",
-      "game": "Iowa State Cyclones @ UCF Knights",
-      "market": "Moneyline",
-      "point": "",
-      "margen_pct": 11.21,
-      "lados": [
-        {
-          "pick": "Iowa State Cyclones",
-          "casa": "Novig",
-          "precio": 133
-        },
-        {
-          "pick": "UCF Knights",
-          "casa": "Pinnacle",
-          "precio": 118
-        }
-      ],
-      "commence_time": "2026-11-20T23:05:24Z",
-      "live": true
-    },
-    {
-      "sport": "NBA",
-      "game": "Indiana Pacers @ Cleveland Cavaliers",
-      "market": "Spread",
-      "point": "-5.5",
-      "margen_pct": 0.48,
-      "lados": [
-        {
-          "pick": "Cleveland Cavaliers -5.5",
-          "casa": "Novig",
-          "precio": -104
-        },
-        {
-          "pick": "Indiana Pacers 5.5",
-          "casa": "Novig",
-          "precio": 106
-        }
-      ],
-      "commence_time": "2026-11-21T00:40:00Z",
-      "live": false
-    },
-    {
-      "sport": "NCAAF",
       "game": "Iowa Hawkeyes @ Illinois Fighting Illini",
       "market": "Moneyline",
       "point": "",
-      "margen_pct": 0.47,
+      "margen_pct": 1.08,
       "lados": [
         {
           "pick": "Illinois Fighting Illini",
@@ -621,7 +580,7 @@
         {
           "pick": "Iowa Hawkeyes",
           "casa": "MyBookie.ag",
-          "precio": -309
+          "precio": -299
         }
       ],
       "commence_time": "2026-11-21T19:30:00Z",
@@ -688,6 +647,27 @@
         }
       ],
       "commence_time": "2026-11-22T02:00:00Z",
+      "live": false
+    },
+    {
+      "sport": "NBA",
+      "game": "Indiana Pacers @ Cleveland Cavaliers",
+      "market": "Moneyline",
+      "point": "",
+      "margen_pct": 0.11,
+      "lados": [
+        {
+          "pick": "Cleveland Cavaliers",
+          "casa": "Pinnacle",
+          "precio": -207
+        },
+        {
+          "pick": "Indiana Pacers",
+          "casa": "Novig",
+          "precio": 208
+        }
+      ],
+      "commence_time": "2026-11-21T00:40:00Z",
       "live": false
     }
   ],
