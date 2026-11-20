@@ -13601,6 +13601,30 @@ def admin_api_cancelaciones():
     return jsonify({"cancelaciones": out})
 
 
+@app.route("/admin/api/bajas")
+def admin_api_bajas():
+    """Correos dados de baja de los emails (tabla emails_bloqueados:
+    quien tocó Unsubscribe en un email y confirmó en /baja/<token> —
+    su cuenta se eliminó y el correo quedó bloqueado pa' volver a
+    registrarse). Es la fuente del vigía vigia-bajas.py de la VM
+    (2026-11-20, orden de Alex: «que me dejes saber aquí cuando un
+    miembro se dé de baja de los emails»). SOLO LEE: no modifica
+    nada. Auth: sesión admin O header X-Admin-Key (helper
+    _admin_api_autorizado, mismo patrón que /admin/api/cancelaciones)."""
+    if not _admin_api_autorizado():
+        return jsonify({"error": "admin only"}), 403
+    db = get_db()
+    _ensure_emails_bloqueados(db)
+    rows = db.execute(
+        "SELECT email, nombre, motivo, created_at FROM emails_bloqueados"
+        " ORDER BY created_at ASC"
+    ).fetchall()
+    out = [{"email": r["email"], "nombre": r["nombre"],
+            "motivo": r["motivo"], "created_at": r["created_at"]}
+           for r in rows]
+    return jsonify({"bajas": out})
+
+
 @app.route("/admin/api/members-set-name", methods=["POST"])
 def admin_api_members_set_name():
     """Corrige el nombre (campo `nombre`) de un miembro por API admin
