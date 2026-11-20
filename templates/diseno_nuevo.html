@@ -451,7 +451,7 @@
   </style>
   <div class="dn-tb" id="dnTourBubble" hidden>
     <button class="dn-tb-x" type="button" aria-label="Dismiss" onclick="dnTbOff()">&#10005;</button>
-    <div class="dn-tb-title">&#128075; New here?</div>
+    <div class="dn-tb-title">&#128075; New here, {{ dn_nombre or 'Member' }}?</div>
     <p class="dn-tb-text">Take the quick tour &mdash; we&rsquo;ll show you how everything works, tool by tool.</p>
     <button class="dn-tb-btn" type="button" onclick="dnTbGo()">Start the tour &rarr;</button>
   </div>
