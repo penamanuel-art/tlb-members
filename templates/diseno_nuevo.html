@@ -354,7 +354,7 @@
   /* Cargador de ola (visible SOLO mientras la pagina carga de verdad) */
 
   /* Burbuja de actualizacion (aparece cuando publicamos una card nueva) */
-  .dn-bubble{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 64px);transform:translateX(-50%) translateY(-8px);z-index:120;background:#141A26;border:1px solid rgba(16,204,135,.45);color:var(--txt);border-radius:999px;padding:5px 5px 5px 12px;display:flex;align-items:center;gap:7px;box-shadow:0 12px 34px rgba(0,0,0,.5);cursor:pointer;opacity:0;transition:opacity .3s ease,transform .3s ease;width:max-content;max-width:calc(100vw - 24px)}
+  .dn-bubble{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 76px);transform:translateX(-50%) translateY(8px);z-index:120;background:#141A26;border:1px solid rgba(16,204,135,.45);color:var(--txt);border-radius:999px;padding:5px 5px 5px 12px;display:flex;align-items:center;gap:7px;box-shadow:0 12px 34px rgba(0,0,0,.5);cursor:pointer;opacity:0;transition:opacity .3s ease,transform .3s ease;width:max-content;max-width:calc(100vw - 24px)}
   .dn-bubble[hidden]{display:none}
   .dn-bubble.on{opacity:1;transform:translateX(-50%) translateY(0)}
   .dn-bubble .dn-b-ico{flex:0 0 auto;display:flex;align-items:center;justify-content:center}
