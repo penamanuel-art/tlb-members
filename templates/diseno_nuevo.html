@@ -1035,7 +1035,9 @@ function dnHotClose(){
   var SIG = "{{ card_sig }}";
   var b = document.getElementById('dnBubble');
   if(!b || !SIG) return;
-  var shown = false, dismissed = false, checking = false;
+  var shown = false, dismissed = false, checking = false, targetSig = null, seenSig = null;
+  try{ seenSig = localStorage.getItem('dn_sig_ok'); }catch(e){}
+  if(seenSig && seenSig === SIG){ b.hidden = true; b.classList.remove('on'); }
   function check(){
     if(shown || dismissed || checking) return;
     checking = true;
@@ -1043,7 +1045,7 @@ function dnHotClose(){
       .then(function(r){ return r.ok ? r.json() : null; })
       .then(function(j){
         checking = false;
-        if(j && j.sig && j.sig !== SIG){ shown = true; b.hidden = false; requestAnimationFrame(function(){ b.classList.add('on'); }); }
+        if(j && j.sig && j.sig !== SIG && j.sig !== seenSig){ targetSig = j.sig; shown = true; b.hidden = false; requestAnimationFrame(function(){ b.classList.add('on'); }); }
       })
       .catch(function(){ checking = false; });
   }
@@ -1054,7 +1056,10 @@ function dnHotClose(){
   window.addEventListener('pageshow', check);
   b.addEventListener('click', function(e){
     if(e.target && e.target.id === 'dnBubbleX'){ dismissed = true; b.hidden = true; return; }
-    location.reload();
+    dismissed = true;
+    try{ localStorage.setItem('dn_sig_ok', targetSig || SIG); }catch(err){}
+    b.classList.remove('on'); b.hidden = true;
+    setTimeout(function(){ location.reload(); }, 150);
   });
 })();
 </script>
