@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Card preview — The Sharp Team</title>
+<style>
+  body{margin:0;background-color:#0B1220;color:#F2F3F5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif}
+  .wrap{max-width:560px;margin:0 auto;padding:22px 14px 40px}
+  .tag{font-size:12px;font-weight:700;letter-spacing:2px;color:#1AE099;margin:0 2px 8px}
+  .note{font-size:13.5px;color:#8b919e;margin:0 2px 22px;line-height:1.5}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="tag">PREVIEW — NEW PLAY CARD</p>
+  <p class="note">Design preview with today's real card. The live Dashboard still shows the current card — nothing changes until you approve.</p>
+  {% for p in plays %}
+    {% include "_play_card_v6.html" %}
+  {% endfor %}
+</div>
+</body>
+</html>
