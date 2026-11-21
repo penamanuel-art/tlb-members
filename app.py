@@ -7162,8 +7162,9 @@ def admin_card_preview():
     miembro recibe 404 y sin sesión rebota al login. Solo LEE la card de
     hoy (load_data + personalizar_plays, igual que /admin/home-preview);
     no registra checkin ni toca datos. La tarjeta en vivo NO cambia:
-    esto monta la plantilla _play_card_v6.html aparte, en la página
-    card_preview_v6.html, hasta que Alex apruebe el diseño.
+    esto monta la plantilla _play_card_v7.html aparte (Opción C,
+    escogida por Alex el 2026-11-21 ~3:54 PM ET), en la página
+    card_preview_v7.html, hasta que Alex apruebe el diseño.
     preview_posted: hora REAL de publicación de la card de hoy
     (2026-11-21 11:23 AM ET, commit c096845 del disparo del Admin)."""
     from flask import abort
@@ -7179,7 +7180,7 @@ def admin_card_preview():
             (session["user_id"],)).fetchall()}
     except Exception:
         tracked_ids = set()
-    return render_template("card_preview_v6.html", plays=plays,
+    return render_template("card_preview_v7.html", plays=plays,
                            tracked_ids=tracked_ids,
                            preview_posted="11:23 AM ET")
 
