@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-20T20:39:44-04:00",
+  "updated_at": "2026-11-20T20:54:42-04:00",
   "refresh_minutes": 15,
   "fair_source": "Pinnacle no-vig",
   "filters": {
@@ -24,58 +24,64 @@
       "team": "Atlanta Hawks",
       "market": "Moneyline",
       "point": "",
-      "book": "Novig",
-      "price": -120,
-      "fair_prob_pct": 61.2,
-      "fair_american": -157,
-      "ev_pct": 12.1,
-      "ev_mercado_pct": 2.8,
-      "fair_mercado_prob_pct": 56.1,
+      "book": "Bovada",
+      "price": 165,
+      "fair_prob_pct": 52.4,
+      "fair_american": -110,
+      "ev_pct": 38.7,
+      "ev_mercado_pct": 11.7,
+      "fair_mercado_prob_pct": 42.1,
       "doble": true,
-      "books_count": 6,
+      "books_count": 7,
       "books": [
         {
+          "book": "Bovada",
+          "price": 165,
+          "ev_pct": 38.7,
+          "url": null
+        },
+        {
+          "book": "FanDuel",
+          "price": 164,
+          "ev_pct": 38.2,
+          "url": "https://sportsbook.fanduel.com"
+        },
+        {
           "book": "Novig",
-          "price": -120,
-          "ev_pct": 12.1,
+          "price": 135,
+          "ev_pct": 23.0,
           "url": "https://novig.com"
         },
         {
           "book": "BetRivers",
-          "price": -125,
-          "ev_pct": 10.1,
-          "url": null
-        },
-        {
-          "book": "Bovada",
-          "price": -130,
-          "ev_pct": 8.2,
+          "price": 130,
+          "ev_pct": 20.4,
           "url": null
         },
         {
           "book": "DraftKings",
-          "price": -140,
-          "ev_pct": 4.9,
+          "price": 130,
+          "ev_pct": 20.4,
           "url": "https://sportsbook.draftkings.com"
         },
         {
-          "book": "theScore Bet",
-          "price": -140,
-          "ev_pct": 4.9,
-          "url": null
+          "book": "BetMGM",
+          "price": 130,
+          "ev_pct": 20.4,
+          "url": "https://sports.betmgm.com"
         },
         {
-          "book": "BetMGM",
-          "price": -145,
-          "ev_pct": 3.3,
-          "url": "https://sports.betmgm.com"
+          "book": "theScore Bet",
+          "price": 125,
+          "ev_pct": 17.8,
+          "url": null
         }
       ],
       "also_at": [
         "BetMGM",
         "BetRivers",
-        "Bovada",
-        "DraftKings"
+        "DraftKings",
+        "FanDuel"
       ],
       "sharp": false,
       "verified": true,
@@ -89,6 +95,80 @@
       "novig_deep": false,
       "stale": false,
       "first_seen": "2026-11-21T00:24:44.297642+00:00"
+    },
+    {
+      "id": "9051693857c6a0e5e1bc6bb2b4f6fe35-h2h-None-Detroit Pistons",
+      "skey": "9051693857c6a0e5e1bc6bb2b4f6fe35|h2h|None|Detroit Pistons",
+      "sport": "NBA",
+      "game": "Toronto Raptors @ Detroit Pistons",
+      "team": "Detroit Pistons",
+      "market": "Moneyline",
+      "point": "",
+      "book": "BetRivers",
+      "price": -148,
+      "fair_prob_pct": 70.7,
+      "fair_american": -241,
+      "ev_pct": 18.4,
+      "ev_mercado_pct": 8.1,
+      "fair_mercado_prob_pct": 64.5,
+      "doble": true,
+      "books_count": 6,
+      "books": [
+        {
+          "book": "BetRivers",
+          "price": -148,
+          "ev_pct": 18.4,
+          "url": null
+        },
+        {
+          "book": "Novig",
+          "price": -160,
+          "ev_pct": 14.8,
+          "url": "https://novig.com"
+        },
+        {
+          "book": "DraftKings",
+          "price": -180,
+          "ev_pct": 9.9,
+          "url": "https://sportsbook.draftkings.com"
+        },
+        {
+          "book": "BetMGM",
+          "price": -180,
+          "ev_pct": 9.9,
+          "url": "https://sports.betmgm.com"
+        },
+        {
+          "book": "theScore Bet",
+          "price": -185,
+          "ev_pct": 8.8,
+          "url": null
+        },
+        {
+          "book": "Bovada",
+          "price": -185,
+          "ev_pct": 8.8,
+          "url": null
+        }
+      ],
+      "also_at": [
+        "BetMGM",
+        "Bovada",
+        "DraftKings",
+        "Novig"
+      ],
+      "sharp": false,
+      "verified": true,
+      "edge_label": "Strong edge",
+      "rec_units": 1.0,
+      "rec_stake": 100,
+      "live": true,
+      "game_time": "LIVE now",
+      "commence_time": "2026-11-21T00:42:00Z",
+      "bet_url": "https://novig.com",
+      "novig_deep": false,
+      "stale": false,
+      "first_seen": "2026-11-21T00:54:41.912833+00:00"
     },
     {
       "id": "c62889a44c822eaf71b9cd24f4eee875-h2h-None-Iowa State Cyclone",
@@ -483,7 +563,7 @@
       "novig_deep": false,
       "stale": true,
       "first_seen": "2026-11-17T22:39:51.349817+00:00",
-      "stale_reason": "line moved below 3%"
+      "stale_reason": "only 1 book \u22653% now"
     },
     {
       "id": "6b40f07e146bab0dba574f0d3b07659e-h2h-None-Washington Huskies",
@@ -532,61 +612,6 @@
       "stale": true,
       "first_seen": "2026-11-16T19:09:40.372712+00:00",
       "stale_reason": "line moved below 3%"
-    },
-    {
-      "id": "4b20b742b6168aaca4f25d87f11b1526-h2h-None-New York Jets",
-      "skey": "4b20b742b6168aaca4f25d87f11b1526|h2h|None|New York Jets",
-      "sport": "NFL",
-      "game": "New York Jets @ Los Angeles Chargers",
-      "team": "New York Jets",
-      "market": "Moneyline",
-      "point": "",
-      "book": "Novig",
-      "price": 160,
-      "fair_prob_pct": 40.6,
-      "fair_american": 146,
-      "ev_pct": 5.5,
-      "ev_mercado_pct": 0.4,
-      "fair_mercado_prob_pct": 38.6,
-      "doble": true,
-      "books_count": 3,
-      "books": [
-        {
-          "book": "Novig",
-          "price": 160,
-          "ev_pct": 5.5,
-          "url": "https://novig.com"
-        },
-        {
-          "book": "theScore Bet",
-          "price": 160,
-          "ev_pct": 5.5,
-          "url": null
-        },
-        {
-          "book": "FanDuel",
-          "price": 154,
-          "ev_pct": 3.1,
-          "url": "https://sportsbook.fanduel.com"
-        }
-      ],
-      "also_at": [
-        "FanDuel",
-        "theScore Bet"
-      ],
-      "sharp": false,
-      "verified": true,
-      "edge_label": "Strong edge",
-      "rec_units": 1.0,
-      "rec_stake": 100,
-      "live": false,
-      "game_time": "Sun, Nov 22 \u00b7 5:05 PM ET",
-      "commence_time": "2026-11-22T21:05:00Z",
-      "bet_url": "https://novig.com",
-      "novig_deep": false,
-      "stale": true,
-      "first_seen": "2026-11-17T14:24:40.802588+00:00",
-      "stale_reason": "line moved below 3%"
     }
   ],
   "arbitrajes": [
@@ -595,20 +620,41 @@
       "game": "Charlotte Hornets @ Atlanta Hawks",
       "market": "Moneyline",
       "point": "",
-      "margen_pct": 5.13,
+      "margen_pct": 13.0,
       "lados": [
         {
           "pick": "Atlanta Hawks",
-          "casa": "Novig",
-          "precio": -120
+          "casa": "Bovada",
+          "precio": 165
         },
         {
           "pick": "Charlotte Hornets",
           "casa": "Pinnacle",
-          "precio": 148
+          "precio": 103
         }
       ],
       "commence_time": "2026-11-21T00:11:00Z",
+      "live": true
+    },
+    {
+      "sport": "NBA",
+      "game": "Toronto Raptors @ Detroit Pistons",
+      "market": "Moneyline",
+      "point": "",
+      "margen_pct": 10.29,
+      "lados": [
+        {
+          "pick": "Detroit Pistons",
+          "casa": "BetRivers",
+          "precio": -148
+        },
+        {
+          "pick": "Toronto Raptors",
+          "casa": "Pinnacle",
+          "precio": 233
+        }
+      ],
+      "commence_time": "2026-11-21T00:42:00Z",
       "live": true
     },
     {
@@ -616,7 +662,7 @@
       "game": "Clemson Tigers @ Duke Blue Devils",
       "market": "Moneyline",
       "point": "",
-      "margen_pct": 2.58,
+      "margen_pct": 6.12,
       "lados": [
         {
           "pick": "Clemson Tigers",
@@ -626,7 +672,7 @@
         {
           "pick": "Duke Blue Devils",
           "casa": "Novig",
-          "precio": -335
+          "precio": -277
         }
       ],
       "commence_time": "2026-11-21T00:28:00Z",
@@ -634,36 +680,15 @@
     },
     {
       "sport": "NCAAF",
-      "game": "Iowa State Cyclones @ UCF Knights",
-      "market": "Moneyline",
-      "point": "",
-      "margen_pct": 1.0,
-      "lados": [
-        {
-          "pick": "Iowa State Cyclones",
-          "casa": "BetMGM",
-          "precio": 700
-        },
-        {
-          "pick": "UCF Knights",
-          "casa": "Novig",
-          "precio": -641
-        }
-      ],
-      "commence_time": "2026-11-20T23:05:24Z",
-      "live": true
-    },
-    {
-      "sport": "NCAAF",
       "game": "Bowling Green Falcons @ Toledo Rockets",
       "market": "Moneyline",
       "point": "",
-      "margen_pct": 0.49,
+      "margen_pct": 3.27,
       "lados": [
         {
           "pick": "Bowling Green Falcons",
-          "casa": "theScore Bet",
-          "precio": 800
+          "casa": "Bovada",
+          "precio": 1100
         },
         {
           "pick": "Toledo Rockets",
@@ -673,6 +698,90 @@
       ],
       "commence_time": "2026-11-21T00:30:00Z",
       "live": true
+    },
+    {
+      "sport": "NBA",
+      "game": "Orlando Magic @ Brooklyn Nets",
+      "market": "Moneyline",
+      "point": "",
+      "margen_pct": 0.75,
+      "lados": [
+        {
+          "pick": "Brooklyn Nets",
+          "casa": "LowVig.ag",
+          "precio": 210
+        },
+        {
+          "pick": "Orlando Magic",
+          "casa": "Novig",
+          "precio": -203
+        }
+      ],
+      "commence_time": "2026-11-21T00:41:00Z",
+      "live": true
+    },
+    {
+      "sport": "NBA",
+      "game": "Toronto Raptors @ Detroit Pistons",
+      "market": "Spread",
+      "point": "-6.5",
+      "margen_pct": 0.74,
+      "lados": [
+        {
+          "pick": "Detroit Pistons -6.5",
+          "casa": "FanDuel",
+          "precio": 102
+        },
+        {
+          "pick": "Toronto Raptors 6.5",
+          "casa": "Pinnacle",
+          "precio": 101
+        }
+      ],
+      "commence_time": "2026-11-21T00:42:00Z",
+      "live": true
+    },
+    {
+      "sport": "NBA",
+      "game": "Indiana Pacers @ Cleveland Cavaliers",
+      "market": "Moneyline",
+      "point": "",
+      "margen_pct": 0.65,
+      "lados": [
+        {
+          "pick": "Cleveland Cavaliers",
+          "casa": "MyBookie.ag",
+          "precio": -200
+        },
+        {
+          "pick": "Indiana Pacers",
+          "casa": "LowVig.ag",
+          "precio": 206
+        }
+      ],
+      "commence_time": "2026-11-21T00:41:00Z",
+      "live": true
+    },
+    {
+      "sport": "NCAAF",
+      "game": "BYU Cougars @ Kansas Jayhawks",
+      "market": "Moneyline",
+      "point": "",
+      "margen_pct": 0.45,
+      "lados": [
+        {
+          "pick": "BYU Cougars",
+          "casa": "LowVig.ag",
+          "precio": -195
+        },
+        {
+          "pick": "Kansas Jayhawks",
+          "casa": "Novig",
+          "precio": 199
+        }
+      ],
+      "commence_time": "2026-11-21T17:00:00Z",
+      "live": false
     },
     {
       "sport": "NCAAF",
@@ -715,6 +824,48 @@
       ],
       "commence_time": "2026-11-21T21:00:00Z",
       "live": false
+    },
+    {
+      "sport": "NCAAF",
+      "game": "Colorado Buffaloes @ Cincinnati Bearcats",
+      "market": "Moneyline",
+      "point": "",
+      "margen_pct": 0.17,
+      "lados": [
+        {
+          "pick": "Cincinnati Bearcats",
+          "casa": "theScore Bet",
+          "precio": -140
+        },
+        {
+          "pick": "Colorado Buffaloes",
+          "casa": "Novig",
+          "precio": 141
+        }
+      ],
+      "commence_time": "2026-11-21T17:00:00Z",
+      "live": false
+    },
+    {
+      "sport": "NCAAF",
+      "game": "Iowa State Cyclones @ UCF Knights",
+      "market": "Moneyline",
+      "point": "",
+      "margen_pct": 0.02,
+      "lados": [
+        {
+          "pick": "Iowa State Cyclones",
+          "casa": "DraftKings",
+          "precio": 670
+        },
+        {
+          "pick": "UCF Knights",
+          "casa": "Novig",
+          "precio": -669
+        }
+      ],
+      "commence_time": "2026-11-20T23:05:24Z",
+      "live": true
     }
   ],
   "events": [
