@@ -7151,6 +7151,39 @@ def preview_receipt():
                            ticket=ticket_demo, inj=inj_demo)
 
 
+
+@app.route("/admin/card-preview")
+@login_required
+def admin_card_preview():
+    """PREVIA del rediseño v6 de la tarjeta de jugada (2026-11-21, pedido
+    de Alex tras comparar la tarjeta con la referencia: «Hay demasiada
+    diferencia entre las tarjetas de ellos y la de nosotros»). SOLO las
+    cuentas de Alex (su cuenta de miembro o la admin): cualquier otro
+    miembro recibe 404 y sin sesión rebota al login. Solo LEE la card de
+    hoy (load_data + personalizar_plays, igual que /admin/home-preview);
+    no registra checkin ni toca datos. La tarjeta en vivo NO cambia:
+    esto monta la plantilla _play_card_v6.html aparte, en la página
+    card_preview_v6.html, hasta que Alex apruebe el diseño.
+    preview_posted: hora REAL de publicación de la card de hoy
+    (2026-11-21 11:23 AM ET, commit c096845 del disparo del Admin)."""
+    from flask import abort
+    user = current_user()
+    if not (is_alex_member(user) or is_admin_for(user)):
+        abort(404)
+    program, plays = load_data()
+    plays = personalizar_plays(plays, user)
+    try:
+        _tdb = get_db()
+        tracked_ids = {r["play_id"] for r in _tdb.execute(
+            "SELECT play_id FROM tracked_plays WHERE user_id = ?",
+            (session["user_id"],)).fetchall()}
+    except Exception:
+        tracked_ids = set()
+    return render_template("card_preview_v6.html", plays=plays,
+                           tracked_ids=tracked_ids,
+                           preview_posted="11:23 AM ET")
+
+
 @app.route("/admin/home-preview")
 @admin_required
 def admin_home_preview():
