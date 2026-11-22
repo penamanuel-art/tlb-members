@@ -2,38 +2,38 @@
 {% block title %}App settings — The Sharp Team{% endblock %}
 {% block content %}
 <style>
-body{background-color:#0B0D12}
+body{background-color:#100e1d}
 .as-wrap{max-width:680px;margin:0 auto;padding:16px 0 8px;font-family:-apple-system,'SF Pro',Inter,system-ui,sans-serif}
-.as-back{display:inline-block;color:#11CB87;text-decoration:none;font-size:.9rem;margin-bottom:14px}
+.as-back{display:inline-block;color:#7c83f8;text-decoration:none;font-size:.9rem;margin-bottom:14px}
 .as-title{font-size:2.05rem;font-weight:800;letter-spacing:-.5px;color:#fff;margin:0 0 6px}
-.as-title span{color:#11CB87}
-.as-sub{font-size:.9rem;font-weight:300;color:#A3AAB6;margin:0 0 16px;line-height:1.5}
-.as-note{display:flex;gap:10px;background:#1D2029;border:1px solid #2C313A;border-radius:16px;padding:14px;margin-bottom:14px;font-size:.88rem;font-weight:300;line-height:1.55;color:#E7E9ED}
+.as-title span{color:#7c83f8}
+.as-sub{font-size:.9rem;font-weight:300;color:#a8a6c4;margin:0 0 16px;line-height:1.5}
+.as-note{display:flex;gap:10px;background:#1c1933;border:1px solid #38335f;border-radius:16px;padding:14px;margin-bottom:14px;font-size:.88rem;font-weight:300;line-height:1.55;color:#dad7ee}
 .as-note .ic{flex:none;width:22px;height:22px;border-radius:50%;border:1.5px solid #7dd3fc;color:#7dd3fc;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700}
-.as-card{background:#1D2029;border:1px solid #2C313A;border-radius:20px;padding:20px 18px;margin-bottom:12px}
+.as-card{background:#1c1933;border:1px solid #38335f;border-radius:20px;padding:20px 18px;margin-bottom:12px}
 .as-card-head{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,255,255,.05);padding-bottom:12px;margin-bottom:14px}
 .as-card-head h2{font-size:1.12rem;font-weight:700;color:#fff;margin:0}
 .as-tag{font-size:.72rem;font-weight:600;color:#7dd3fc;background:rgba(125,211,252,.10);padding:4px 8px;border-radius:6px}
 .as-plan{display:flex;gap:14px;align-items:flex-start}
-.as-plan-ic{flex:none;width:52px;height:52px;border-radius:14px;background:rgba(17,203,135,.12);display:flex;align-items:center;justify-content:center;font-size:1.35rem}
+.as-plan-ic{flex:none;width:52px;height:52px;border-radius:14px;background:rgba(124,131,248,.12);display:flex;align-items:center;justify-content:center;font-size:1.35rem}
 .as-plan-name{font-size:1.45rem;font-weight:800;color:#fff;line-height:1.2}
 .as-plan-sub{font-size:.86rem;font-weight:300;color:#9AA3AF;margin-top:3px}
-.as-badge{display:inline-block;margin-top:12px;font-size:.68rem;font-weight:700;letter-spacing:1.6px;color:#11CB87;border:1px solid rgba(17,203,135,.45);background:rgba(17,203,135,.08);padding:6px 10px;border-radius:8px}
-.as-txt{font-size:.88rem;font-weight:300;line-height:1.55;color:#A3AAB6;margin:14px 0}
-.as-btn{display:inline-flex;align-items:center;gap:8px;background:#11CB87;color:#04150C;font-weight:700;font-size:.95rem;text-decoration:none;padding:13px 20px;border-radius:14px}
-.as-btn.ghost{background:none;border:1px solid #2C313A;color:#E7E9ED;font-weight:600}
+.as-badge{display:inline-block;margin-top:12px;font-size:.68rem;font-weight:700;letter-spacing:1.6px;color:#7c83f8;border:1px solid rgba(124,131,248,.45);background:rgba(124,131,248,.08);padding:6px 10px;border-radius:8px}
+.as-txt{font-size:.88rem;font-weight:300;line-height:1.55;color:#a8a6c4;margin:14px 0}
+.as-btn{display:inline-flex;align-items:center;gap:8px;background:#7c83f8;color:#04150C;font-weight:700;font-size:.95rem;text-decoration:none;padding:13px 20px;border-radius:14px}
+.as-btn.ghost{background:none;border:1px solid #38335f;color:#dad7ee;font-weight:600}
 .as-chips{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.as-chip{display:flex;align-items:center;gap:10px;border:1px solid #2C313A;border-radius:14px;padding:13px 12px;font-size:.92rem;color:#E7E9ED}
+.as-chip{display:flex;align-items:center;gap:10px;border:1px solid #38335f;border-radius:14px;padding:13px 12px;font-size:.92rem;color:#dad7ee}
 .as-chip .ic{font-size:1.05rem}
 .as-chip small{display:block;color:#9AA3AF;font-size:.72rem}
-.as-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;font-size:.92rem;color:#A3AAB6;font-weight:300}
+.as-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;font-size:.92rem;color:#a8a6c4;font-weight:300}
 .as-row b{color:#fff;font-weight:600}
 .as-btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
-.as-appinner{display:flex;gap:14px;align-items:center;background:#22262F;border-radius:16px;padding:16px}
-.as-appinner img{width:56px;height:56px;border-radius:14px;object-fit:cover;background:#0B0E13}
+.as-appinner{display:flex;gap:14px;align-items:center;background:#262345;border-radius:16px;padding:16px}
+.as-appinner img{width:56px;height:56px;border-radius:14px;object-fit:cover;background:#100e1d}
 .as-appinner .t{font-size:1.15rem;font-weight:800;color:#fff}
 .as-appinner .s{font-size:.85rem;font-weight:300;color:#9AA3AF;line-height:1.45;margin-top:2px}
-.as-ok{display:flex;gap:10px;align-items:flex-start;color:#11CB87;font-size:.95rem;font-weight:600;line-height:1.5}
+.as-ok{display:flex;gap:10px;align-items:flex-start;color:#7c83f8;font-size:.95rem;font-weight:600;line-height:1.5}
 .as-dev{font-size:.85rem;font-weight:300;color:#9AA3AF;margin-top:10px}
 </style>
 
@@ -75,7 +75,7 @@ body{background-color:#0B0D12}
     <div class="as-row"><span>Recent tools</span><b id="asRecent">—</b></div>
     <div class="as-row"><span>Board filters and sorts</span><b>kept per board</b></div>
     <p class="as-txt">These live in this browser only and do not show on your other devices. Clearing this site's data removes them.</p>
-    <p class="as-txt"><b style="color:#E7E9ED;">Kept on your account:</b> the bets you log with a stake in My Bets, and your notification settings — they follow you to any device you sign in on.</p>
+    <p class="as-txt"><b style="color:#dad7ee;">Kept on your account:</b> the bets you log with a stake in My Bets, and your notification settings — they follow you to any device you sign in on.</p>
     <div class="as-btnrow">
       <a class="as-btn ghost" href="{{ url_for('tracker_plays') }}">🎫 My Bets</a>
       <a class="as-btn ghost" href="{{ url_for('alertas') }}">🔔 Alerts</a>
