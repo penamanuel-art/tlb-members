@@ -316,8 +316,8 @@
   {% endif %}
   <div class="topbar">
     <div class="brand" style="flex:1;min-width:0;display:flex;align-items:center;gap:3px;">
-      <img src="{{ url_for('static', filename='img/sharp-coin.png') }}" alt="" style="height:60px;width:auto;display:block;">
-      <img src="{{ url_for('static', filename='img/sharp-letters.png') }}" alt="The Sharp Team" style="height:44px;width:auto;max-width:100%;display:block;">
+      <img src="{{ url_for('static', filename='img/sharp-coin.png') }}" alt="" style="height:66px;width:auto;display:block;">
+      <img src="{{ url_for('static', filename='img/sharp-letters.png') }}" alt="The Sharp Team" style="height:48px;width:auto;max-width:100%;display:block;">
     </div>
     <div class="topactions">
       {% if is_alex %}<a href="{{ url_for('admin_dashboard') }}" aria-label="Switch to Admin" title="Admin" style="position:relative;display:inline-block;width:56px;height:30px;border-radius:999px;background:#0d1b2e;border:1px solid rgba(16,204,135,.6);flex:0 0 auto;vertical-align:middle;text-decoration:none;"><span style="position:absolute;top:50%;transform:translateY(-50%);width:22px;height:22px;border-radius:50%;background:#10cc87;box-shadow:0 1px 4px rgba(0,0,0,.55);left:3px;"></span><span style="position:absolute;right:6px;top:50%;transform:translateY(-50%);font-size:12px;line-height:1;">⚙️</span></a>{% endif %}
