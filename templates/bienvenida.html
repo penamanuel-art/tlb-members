@@ -104,12 +104,12 @@
     </ul>
     <a class="btn btn-primary btn-block" href="{{ url_for('home') }}">See the full card on my dashboard →</a>
     {% else %}
-    {# Cohorte nueva ($1 primera semana) y toda cuenta sin trial ni pago: NADA gratis — modelo nuevo. #}
+    {# Cohorte nueva y toda cuenta sin trial ni pago (2026-11-21, modelo puerta gratis): su Dashboard YA está abierto con las Gold; Platinum es el desbloqueo de adentro a $1 — jamás gratis. #}
     <ul>
-      <li><strong>Your Platinum starts at $1</strong> — $1 for your first week, then $15.99/week. The moment you start, every play and every tool on your dashboard opens.</li>
-      <li>One step left: start your first week to open your dashboard. You pay $1 today — cancel anytime.</li>
+      <li><strong>Your Dashboard is already open</strong> — your free Gold plays post here every day, starting today. No card, no catch: Gold is free for every member.</li>
+      <li><strong>Platinum is the step up</strong>: $1 for your first week, then $15.99/week. The moment you start it, the day's top play, the Vault and every tool unlock — cancel anytime.</li>
     </ul>
-    <a class="btn btn-primary btn-block" href="{{ url_for('desbloquear_platinum') }}">Start Platinum — $1 first week →</a>
+    <a class="btn btn-primary btn-block" href="{{ url_for('desbloquear_platinum') }}">Unlock Platinum — $1 first week →</a>
     {% endif %}
   </div>
 
