@@ -147,9 +147,9 @@
 {% set golds = plays | selectattr('nivel', 'equalto', 'GOLD') | list %}
 {% if card_pendiente %}
 <style>
-.board-empty{background:linear-gradient(165deg,#26303f,#1c2431 60%,#1a222e);border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:18px 16px;text-align:center}
-.board-empty-t{font-size:15px;font-weight:700;color:#eef2f7;margin:0}
-.board-empty-s{font-size:12.5px;line-height:1.5;color:#8fa1c2;margin:6px 0 0}
+.board-empty{background:linear-gradient(165deg,#0c1425,#0a1220 60%,#070b14);border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:18px 16px;text-align:center}
+.board-empty-t{font-size:15px;font-weight:700;color:#f2f5fb;margin:0}
+.board-empty-s{font-size:12.5px;line-height:1.5;color:#a3b0c6;margin:6px 0 0}
 </style>
 <div class="board-empty">
   <p class="board-empty-t">The board is not posted yet</p>
@@ -463,7 +463,7 @@
 
 <!-- Selector de tema (pedido Alex 2026-10-02): probar el look moderno del Dashboard -->
 <a href="{{ url_for('theme', name='v2', next=url_for('home')) }}" title="Try the new look"
-   style="position:fixed;right:14px;bottom:88px;z-index:70;background:linear-gradient(135deg,#2b6fd6,#2fd47e);
+   style="position:fixed;right:14px;bottom:88px;z-index:70;background:linear-gradient(135deg,#60a5fa,#60a5fa);
           color:#fff;font-weight:800;font-size:.82rem;padding:10px 16px;border-radius:999px;
           text-decoration:none;box-shadow:0 4px 16px rgba(0,0,0,.4);">✨ New look</a>
 
