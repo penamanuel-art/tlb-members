@@ -12903,6 +12903,20 @@ def _ya_se_suscribio_platinum(user) -> bool:
     suscribió. Si Stripe no responde, manda lo local (fail-soft)."""
     if not user:
         return False
+    # EXCEPCIÓN DE VISTA PREVIA DEL DUEÑO (2026-11-22, orden expresa
+    # de Alex: «Hazme una excepción a mí para yo verlo»): SOLO la
+    # cuenta de miembro de Alex (pena.manuel@myyahoo.com) se trata
+    # como «nunca suscrita» pa' que él vea /desbloquear-platinum
+    # como la ve un miembro nuevo ($1 primera semana, en texto y en
+    # cobro). Su historial pagado de Stripe (2026-09-30) es real y
+    # la regla general NO cambia pa' nadie más. Pa' quitar la
+    # excepción, borrar este bloque.
+    try:
+        if (user["email"] or "").strip().lower() \
+                == ALEX_MEMBER_EMAIL.strip().lower():
+            return False
+    except (KeyError, IndexError, TypeError):
+        pass
     try:
         if user["stripe_past_due"]:
             return True
