@@ -16248,6 +16248,65 @@ def admin_dashboard():
         "trial": sum(1 for m in miembros_lista if m["trial"]),
         "free": sum(1 for m in miembros_lista if not m["platinum"]),
     }
+    # Cohortes por última señal (2026-11-21, rediseño del Admin a pedido
+    # de Alex: cuadritos de miembros con SOLO el número, frescos en cada
+    # carga). Misma vara del sistema: señal = actividad en el Dashboard
+    # (member_activity/checkins/tracked_plays) o apertura/clic de email
+    # (Resend); sin señal manda la fecha de registro. Activo <10 días ·
+    # Dormido 10-30 · Muerto +30. Nuevos = registro en los últimos 7 días.
+    cohortes = None
+    try:
+        from datetime import datetime as _dtc, timedelta as _tdc, timezone as _tzc, date as _datec
+        from zoneinfo import ZoneInfo as _ZIc
+        _hoy_c = _dtc.now(_ZIc("America/New_York")).date()
+        _ids_c = {m["id"] for m in miembros_lista}
+        _creado_c = {}
+        _email_c = {}
+        _act_c = {}
+        for r in db.execute("SELECT id, email, created_at FROM users").fetchall():
+            if r["id"] in _ids_c:
+                _creado_c[r["id"]] = str(r["created_at"] or "")[:10]
+                _email_c[r["id"]] = (r["email"] or "").strip().lower()
+        for _tabla, _col in (("member_activity", "created_at"),
+                             ("checkins", "fecha"),
+                             ("tracked_plays", "fecha")):
+            try:
+                for r in db.execute(
+                        f"SELECT user_id, MAX({_col}) AS ult FROM {_tabla} "
+                        "GROUP BY user_id").fetchall():
+                    if r["user_id"] in _ids_c:
+                        _v = str(r["ult"] or "")[:10]
+                        if _v and _v > _act_c.get(r["user_id"], ""):
+                            _act_c[r["user_id"]] = _v
+            except Exception:
+                pass
+        _corte30 = (_dtc.now(_tzc.utc) - _tdc(days=30)).strftime("%Y-%m-%dT%H:%M:%SZ")
+        _opens_c = _resend_opens_recientes(_corte30) or {}
+        _na = _nd = _nm = _nn = 0
+        for _mid in _ids_c:
+            _senales = [f for f in (_act_c.get(_mid),
+                                    str(_opens_c.get(_email_c.get(_mid, ""), ""))[:10]) if f]
+            _base = max(_senales) if _senales else _creado_c.get(_mid, "")
+            try:
+                _dias = (_hoy_c - _datec.fromisoformat(_base)).days if _base else 9999
+            except Exception:
+                _dias = 9999
+            if _dias < 10:
+                _na += 1
+            elif _dias <= 30:
+                _nd += 1
+            else:
+                _nm += 1
+            try:
+                _dc = (_hoy_c - _datec.fromisoformat(_creado_c.get(_mid, ""))).days
+            except Exception:
+                _dc = 9999
+            if _dc < 7:
+                _nn += 1
+        cohortes = {"activos": _na, "dormidos": _nd, "muertos": _nm,
+                    "nuevos7": _nn}
+    except Exception:
+        cohortes = None
     # Gerenciales (2026-10-25, pedido de Alex): últimas notificaciones
     # de la empresa para el home del admin, separadas de las de miembros.
     try:
@@ -16323,6 +16382,7 @@ def admin_dashboard():
                            tracked_ids=[],
                            miembros_lista=miembros_lista,
                            conteo_miembros=conteo_miembros,
+                           cohortes=cohortes,
                            gerenciales=gerenciales,
                            sin_leer=sin_leer,
                            telegram_counts=telegram_counts)
