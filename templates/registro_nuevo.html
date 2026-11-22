@@ -352,7 +352,7 @@ a{color:inherit;text-decoration:none}
       <div class="signup">
         <span class="sec-eyebrow gold">Create your account</span>
         <h2>Start with just your email</h2>
-        <p class="sg-sub">One field — create your account, confirm your email, and unlock Platinum: $1 for your first week, then $15.99/week. Your password, name and phone come after, once you're in.</p>
+        <p class="sg-sub">One field — create your free account and you're in: your Dashboard opens right away with today's free Gold plays. Platinum unlocks inside whenever you're ready — $1 for your first week, then $15.99/week. Your password, name and phone come after, once you're in.</p>
       {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
           {% for cat, msg in messages %}
@@ -364,9 +364,9 @@ a{color:inherit;text-decoration:none}
           <div class="intent-box">
             <span class="star">⭐</span>
             <span>
-              <span class="io-title">PLATINUM — $1 YOUR FIRST WEEK</span>
-              <span class="io-sub">Then $15.99/week: every play, every tool, from your very first day.</span>
-              <span class="io-sub">Cancel anytime from your account — you keep the time you've already paid for.</span>
+              <span class="io-title">FREE ACCOUNT — GOLD PLAYS EVERY DAY</span>
+              <span class="io-sub">No card to start: open your Dashboard and see today's Gold plays free. Platinum unlocks inside — $1 for your first week, then $15.99/week.</span>
+              <span class="io-sub">Platinum is optional — unlock it only if you want it, and cancel anytime from your account.</span>
             </span>
           </div>
           <div class="field">
@@ -382,15 +382,15 @@ a{color:inherit;text-decoration:none}
         </form>
         <ol class="howsteps">
           <li><b>1.</b> Enter your email — your account is created in seconds.</li>
-          <li><b>2.</b> Confirm your email with the activation link we send you, and finish setting up: your password, name and phone. It takes 10 seconds.</li>
-          <li><b>3.</b> Unlock Platinum — $1 for your first week, then $15.99/week — and open your Dashboard to see today's full card.</li>
+          <li><b>2.</b> You're in right away — no confirmation email to wait for. Finish setting up inside: your password, name and phone. It takes 10 seconds.</li>
+          <li><b>3.</b> Your Dashboard is open with today's Gold plays free. Unlock Platinum inside whenever you're ready — $1 for your first week, then $15.99/week — to see the full card.</li>
         </ol>
-        <p class="formnote">Your card is charged $1 today for your first week; then $15.99/week until you cancel. Cancel anytime from your account — no contracts.</p>
+        <p class="formnote">Creating your account is free — no card required. Platinum is optional and unlocks inside: $1 for your first week, then $15.99/week until you cancel. No contracts.</p>
         <p class="login-line">Already have an account? <a href="{{ url_for('login') }}">Log in here →</a></p>
       </div>
     </section>
 
-    <p class="micro"><b>$1 for your first week of Platinum.</b> Then $15.99/week — cancel anytime.</p>
+    <p class="micro"><b>Your account is free.</b> Platinum: $1 for your first week, then $15.99/week — cancel anytime.</p>
 
     <div class="trust3">
       <div class="t3"><div class="ticon mint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 5-3.5 8-7 10-3.5-2-7-5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg></div><span>Posted before game time</span></div>
@@ -522,7 +522,7 @@ a{color:inherit;text-decoration:none}
     <div class="offerpanel">
       <span class="pill">The Offer</span>
       <h2>Platinum: <span class="accg">$1</span> your first week</h2>
-      <p class="price-line">Every play, every tool — the full membership from day one. $1 for your first week, charged when you join; then $15.99/week. Cancel anytime from your account.</p>
+      <p class="price-line">Every play, every tool — the full membership. $1 for your first week when you unlock Platinum inside; then $15.99/week. Cancel anytime from your account.</p>
       <ul class="checklist gold">
         <li>The Platinum play — our top play of the day</li>
         <li>Every Gold play</li>
@@ -535,13 +535,13 @@ a{color:inherit;text-decoration:none}
         <li>Private Telegram channels</li>
       </ul>
       <div class="osteps">
-        <div class="pstep"><div class="n">1</div><div><h3>Today: <span>$1</span> to start</h3><p>Create your account with just your email, confirm it, and unlock Platinum — your first week is $1.</p></div></div>
+        <div class="pstep"><div class="n">1</div><div><h3>Today: <span>free</span> to start</h3><p>Create your account with just your email and open your Dashboard — today's Gold plays are free. Unlock Platinum inside whenever you're ready: your first week is $1.</p></div></div>
         <div class="pstep mint"><div class="n">2</div><div><h3>Week two on: <span>$15.99/week</span></h3><p>Billed weekly by Stripe. Every play and every tool stays fully unlocked while you're subscribed — the real thing, not a teaser.</p></div></div>
         <div class="pstep"><div class="n">3</div><div><h3>Your call, <span>always</span></h3><p>Cancel anytime from your account in a couple of clicks — you keep the time you've already paid for. No contracts, no retention scripts.</p></div></div>
       </div>
       <div class="bigprice">Your first week: <span>$1</span> · then $15.99/week</div>
-      <p class="price-line">No free trial and no surprises: you know exactly what you pay — <b>$1 today, $15.99/week after</b> — before you ever enter a card.</p>
-      <p class="micro">$1 first week · then $15.99/week · cancel anytime.</p>
+      <p class="price-line">No free trial and no surprises: your account is free, and Platinum's price is exact — <b>$1 for your first week, $15.99/week after</b> — before you ever enter a card.</p>
+      <p class="micro">Platinum: $1 first week · then $15.99/week · cancel anytime.</p>
     </div>
   </section>
 
@@ -549,14 +549,14 @@ a{color:inherit;text-decoration:none}
   <section class="sec">
     <div class="sec-head col"><span class="sec-eyebrow">Before You Join</span><h2>Questions, <span class="accg">answered straight</span></h2></div>
     <div class="faqwrap">
-      <div class="faqi"><button class="faqq" type="button">What happens after I sign up?</button><div class="faqa"><div>Create your account with just your email and confirm it — then unlock Platinum for $1 for your first week. Your Dashboard opens with today's full card, every play with its real ticket.</div></div></div>
-      <div class="faqi"><button class="faqq" type="button">How much does Platinum cost?</button><div class="faqa"><div>$1 for your first week, charged when you join. Then $15.99/week, billed weekly by Stripe until you cancel. That's the whole price — no upsells inside.</div></div></div>
+      <div class="faqi"><button class="faqq" type="button">What happens after I sign up?</button><div class="faqa"><div>Create your free account with just your email — you're in right away. Your Dashboard opens with today's Gold plays free, every one with its real ticket, and Platinum unlocks inside for $1 for your first week whenever you're ready.</div></div></div>
+      <div class="faqi"><button class="faqq" type="button">How much does Platinum cost?</button><div class="faqa"><div>$1 for your first week, charged when you unlock it inside your Dashboard. Then $15.99/week, billed weekly by Stripe until you cancel. Creating your account is free — that's the whole price, no upsells inside.</div></div></div>
       <div class="faqi"><button class="faqq" type="button">When do the plays come out?</button><div class="faqa"><div>Weekdays at 2:00 PM ET and weekends at 11:00 AM ET. Every play is posted before its game starts.</div></div></div>
       <div class="faqi"><button class="faqq" type="button">Where do I see the plays?</button><div class="faqa"><div>On your Dashboard, in the Telegram channels, and in your daily email — whichever you check first.</div></div></div>
       <div class="faqi"><button class="faqq" type="button">Can I cancel whenever I want?</button><div class="faqa"><div>Yes. You can cancel from your account at any time, and you keep the time you've already paid for.</div></div></div>
       <div class="faqi"><button class="faqq" type="button">How do I know the plays are real?</button><div class="faqa"><div>Every play is posted before game time with its real ticket — nothing is edited after the fact.</div></div></div>
     </div>
-    <p class="micro">$1 for your first week, then $15.99/week. Cancel anytime.</p>
+    <p class="micro">Your account is free. Platinum: $1 for your first week, then $15.99/week. Cancel anytime.</p>
   </section>
 
 </main>
