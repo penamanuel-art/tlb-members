@@ -12501,20 +12501,23 @@ def _invoice_payment_intent(inv):
 
 
 def _desbloquear_intent_1(stripe, db, user, email, customer_id):
-    """Cobro de la cohorte de la entrada a $1 (2026-11-21): crea la
-    suscripción con el precio intro ($1/semana) en default_incomplete
-    y le cuelga EN EL ACTO un Subscription Schedule de 2 fases — fase 1:
-    el precio intro x 1 iteración semanal; fase 2: el precio semanal de
-    $15.99, indefinida — y devuelve el client_secret del PaymentIntent
-    de la primera factura ($1), por la misma ruta basil-safe de
-    siempre (_invoice_payment_intent). Si el schedule no se puede crear,
-    la suscripción se CANCELA y se devuelve error: una suscripción
-    suelta al precio intro renovaría a $1/semana para siempre, y eso
-    no puede quedar vivo en silencio. Una suscripción incomplete viva
-    de este cliente con el precio intro Y schedule ya puesto se
-    REUTILIZA (recargar la página no siembra basura). La metadata lleva
-    offer=entrada_1_v1 pa' distinguirla en auditoría; la activación
-    llega por el webhook invoice.paid de siempre, sin cambios."""
+    """Cobro de la cohorte de la entrada a $1 (2026-11-21): crea un
+    Subscription Schedule de 2 fases DIRECTO sobre el cliente con
+    start_date=ahora — fase 1: el precio intro ($1/semana) x 1
+    iteración; fase 2: el precio semanal de $15.99, indefinida — y el
+    schedule crea la suscripción en el acto (incomplete, primera
+    factura de $1); devuelve el client_secret del PaymentIntent de
+    esa factura, por la misma ruta basil-safe de siempre
+    (_invoice_payment_intent). (Colgar el schedule de una suscripción
+    incomplete ya creada NO lo permite la API vigente; confirmado en
+    vivo.) Si el schedule falla, se cancela y se devuelve error: una
+    suscripción suelta al precio intro renovaría a $1/semana para
+    siempre, y eso no puede quedar vivo en silencio. Una suscripción
+    incomplete viva de este cliente con el precio intro Y schedule ya
+    puesto se REUTILIZA (recargar la página no siembra basura). La
+    metadata lleva offer=entrada_1_v1 pa' distinguirla en auditoría;
+    la activación llega por el webhook invoice.paid de siempre, sin
+    cambios."""
     try:
         # Reuso: incomplete con precio intro y schedule ya colgado.
         try:
@@ -12547,52 +12550,31 @@ def _desbloquear_intent_1(stripe, db, user, email, customer_id):
                         })
         except Exception:
             pass
-        sub = stripe.Subscription.create(
-            customer=customer_id,
-            items=[{"price": PLATINUM_PRICE_ENTRADA_1}],
-            payment_behavior="default_incomplete",
-            payment_settings={
-                "payment_method_types": ["card"],
-                "save_default_payment_method": "on_subscription",
-            },
-            expand=["latest_invoice"],
-            metadata={
-                "member_email": email,
-                "member_id": str(user["id"]),
-                "access": "platinum",
-                "plan": "platinum",
-                "offer": "entrada_1_v1",
-                "source": "desbloquear-payment-element",
-            },
-        )
-        # Schedule de 2 fases desde la suscripción recién creada. La
-        # API vigente NO acepta `phases` junto a `from_subscription`
-        # (error confirmado en vivo el 2026-11-21: "You cannot set
-        # `phases` if `from_subscription` is set"), así que: (1) se
-        # crea el schedule desde la suscripción — hereda su fase
-        # actual (precio intro, con su start/end reales) — y (2) se
-        # modifica con las 2 fases en fechas explícitas: la fase 1
-        # queda IDÉNTICA a la heredada (mismo precio y mismo
-        # start/end: una semana) y la fase 2 arranca en el end de la
-        # 1 con el precio semanal de siempre, sin end (indefinida).
-        # En el modify NO se usa `iterations`: al actualizar un
-        # schedule las fases van con start_date/end_date.
+        # MECANISMO (corregido en vivo el 2026-11-21): el schedule se
+        # crea DIRECTO sobre el cliente con start_date=ahora. La API
+        # vigente no permite colgar un schedule de una suscripción
+        # `incomplete` ("You cannot migrate a subscription that is
+        # currently in the `incomplete` status") ni pasar `phases`
+        # junto a `from_subscription` — ambos errores confirmados en
+        # vivo. Al arrancar ya, el schedule crea la suscripción en el
+        # acto (incomplete, con su primera factura de $1) y el
+        # PaymentIntent de esa factura es el que paga el miembro.
+        # Fase 1: precio intro x 1 iteración semanal; fase 2: precio
+        # semanal de $15.99, indefinida. Si algo falla tras crear el
+        # schedule, se cancela: nada suelto al precio intro.
+        import time as _time
+        sched = None
+        sub = None
         try:
             sched = stripe.SubscriptionSchedule.create(
-                from_subscription=sub.get("id"))
-            _fases = (sched.get("phases") or [])
-            _inicio_f1 = _fases[0].get("start_date") if _fases else None
-            _fin_f1 = _fases[0].get("end_date") if _fases else None
-            sched = stripe.SubscriptionSchedule.modify(
-                sched.get("id"),
+                customer=customer_id,
+                start_date=int(_time.time()),
                 phases=[
                     {"items": [{"price": PLATINUM_PRICE_ENTRADA_1,
                                 "quantity": 1}],
-                     "start_date": _inicio_f1,
-                     "end_date": _fin_f1},
+                     "iterations": 1},
                     {"items": [{"price": PLATINUM_PRICE_SEMANAL,
-                                "quantity": 1}],
-                     "start_date": _fin_f1},
+                                "quantity": 1}]},
                 ],
                 metadata={
                     "offer": "entrada_1_v1",
@@ -12600,11 +12582,47 @@ def _desbloquear_intent_1(stripe, db, user, email, customer_id):
                     "member_email": email,
                 },
             )
-        except Exception as _e:
-            print("[desbloquear-pe-1] schedule FAILED, cancelando "
-                  "sub=%s: %r" % (sub.get("id"), _e), flush=True)
+            _sub_id = sched.get("subscription")
+            if not _sub_id:
+                sched = stripe.SubscriptionSchedule.retrieve(
+                    sched.get("id"))
+                _sub_id = sched.get("subscription")
+            if not _sub_id:
+                raise RuntimeError(
+                    "schedule created without subscription")
+            # La suscripción nace del schedule sin metadata ni
+            # payment_settings: se le ponen aquí — la metadata de
+            # auditoría y que la tarjeta quede guardada pa' la
+            # renovación de $15.99 de la fase 2.
             try:
-                stripe.Subscription.cancel(sub.get("id"))
+                stripe.Subscription.modify(
+                    _sub_id,
+                    metadata={
+                        "member_email": email,
+                        "member_id": str(user["id"]),
+                        "access": "platinum",
+                        "plan": "platinum",
+                        "offer": "entrada_1_v1",
+                        "source": "desbloquear-payment-element",
+                    },
+                    payment_settings={
+                        "payment_method_types": ["card"],
+                        "save_default_payment_method": "on_subscription",
+                    },
+                )
+            except Exception as _me:
+                print("[desbloquear-pe-1] modify post-schedule: %r"
+                      % (_me,), flush=True)
+            sub = stripe.Subscription.retrieve(
+                _sub_id, expand=["latest_invoice"])
+        except Exception as _e:
+            print("[desbloquear-pe-1] schedule FAILED: %r" % (_e,),
+                  flush=True)
+            try:
+                if sched is not None and sched.get("id"):
+                    stripe.SubscriptionSchedule.cancel(sched.get("id"))
+                elif sub is not None and sub.get("id"):
+                    stripe.Subscription.cancel(sub.get("id"))
             except Exception:
                 pass
             # TEMP-DIAG (2026-11-21): detalle del error de Stripe en la
