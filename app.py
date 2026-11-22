@@ -12513,48 +12513,32 @@ def _desbloquear_intent_1(stripe, db, user, email, customer_id):
     vivo.) Si el schedule falla, se cancela y se devuelve error: una
     suscripción suelta al precio intro renovaría a $1/semana para
     siempre, y eso no puede quedar vivo en silencio. Una suscripción
-    incomplete viva de este cliente con el precio intro Y schedule ya
-    puesto se REUTILIZA (recargar la página no siembra basura). La
+    viva de este cliente con el precio intro Y schedule ya puesto se
+    REUTILIZA (recargar la página no siembra basura; las subs de
+    schedule nacen `active` en la API vigente — la espera de pago
+    vive en su primera factura, no en el estado de la sub). La
     metadata lleva offer=entrada_1_v1 pa' distinguirla en auditoría;
     la activación llega por el webhook invoice.paid de siempre, sin
     cambios."""
     import time as _time
-    # TEMP-DIAG (2026-11-21): con {"debug": true} en el body, la
-    # respuesta trae el escaneo de suscripciones del cliente pa'
-    # diagnosticar por qué el reuso no casa; se quita al cerrar.
-    _dbg = bool((request.get_json(silent=True) or {}).get("debug"))
-    _scan = []
-    if _dbg:
-        # TEMP-DIAG: escaneo puro, sin tocar el flujo de reuso.
-        try:
-            _todas = stripe.Subscription.list(
-                customer=customer_id, limit=20)
-            return jsonify({"debug_scan": [
-                {"id": s.get("id"), "status": s.get("status"),
-                 "schedule": s.get("schedule"),
-                 "prices": [(it.get("price") or {}).get("id")
-                            for it in (((s.get("items") or {}).get("data"))
-                                       or [])],
-                 "latest_invoice": s.get("latest_invoice")}
-                for s in (_todas.get("data") or [])]}), 200
-        except Exception as _de:
-            return jsonify({"debug_error": str(_de)[:300]}), 200
     try:
-        # Reuso: incomplete con precio intro y schedule ya colgado.
+        # Reuso: suscripción viva de este cliente con el precio intro
+        # y schedule ya colgado. OJO (confirmado en vivo el
+        # 2026-11-21): las suscripciones que nacen de un schedule NO
+        # pasan por el estado `incomplete` — nacen con status
+        # `active` y la que espera pago es su primera FACTURA. Por
+        # eso aquí NO se filtra el list por status="incomplete" (ese
+        # filtro devolvía cero y cada visita sembraba un schedule
+        # nuevo); se aceptan candidatas `active`/`incomplete` y la
+        # guarda real es el PaymentIntent: solo se reutiliza si su
+        # intent sigue en un estado pagable (una ya pagada trae el
+        # intent en `succeeded` y queda fuera sola).
         try:
             subs = stripe.Subscription.list(
                 customer=customer_id, limit=20)
             for s in (subs.get("data") or []):
-                _scan.append({
-                    "id": s.get("id"),
-                    "status": s.get("status"),
-                    "schedule": s.get("schedule"),
-                    "prices": [
-                        (it.get("price") or {}).get("id")
-                        for it in (((s.get("items") or {}).get("data"))
-                                   or [])],
-                    "latest_invoice": s.get("latest_invoice"),
-                })
+                if (s.get("status") or "") not in ("active", "incomplete"):
+                    continue
                 items = ((s.get("items") or {}).get("data")) or []
                 if not any((it.get("price") or {}).get("id")
                            == PLATINUM_PRICE_ENTRADA_1
@@ -12599,10 +12583,6 @@ def _desbloquear_intent_1(stripe, db, user, email, customer_id):
                     {"error": "could not create payment intent"}), 502
         except Exception:
             pass
-        if _dbg:
-            # TEMP-DIAG: sin candidato reutilizable — se devuelve el
-            # escaneo en vez de crear otra suscripción.
-            return jsonify({"debug_scan": _scan}), 200
         # MECANISMO (corregido en vivo el 2026-11-21): el schedule se
         # crea DIRECTO sobre el cliente con start_date=ahora. La API
         # vigente no permite colgar un schedule de una suscripción
@@ -12610,8 +12590,9 @@ def _desbloquear_intent_1(stripe, db, user, email, customer_id):
         # currently in the `incomplete` status") ni pasar `phases`
         # junto a `from_subscription` — ambos errores confirmados en
         # vivo. Al arrancar ya, el schedule crea la suscripción en el
-        # acto (incomplete, con su primera factura de $1) y el
-        # PaymentIntent de esa factura es el que paga el miembro.
+        # acto (nace `active` bajo el schedule, con su primera
+        # factura de $1 esperando pago) y el PaymentIntent de esa
+        # factura es el que paga el miembro.
         # Fase 1: precio intro x 1 iteración semanal; fase 2: precio
         # semanal de $15.99, indefinida. Si algo falla tras crear el
         # schedule, se cancela: nada suelto al precio intro.
@@ -12677,12 +12658,8 @@ def _desbloquear_intent_1(stripe, db, user, email, customer_id):
                     stripe.Subscription.cancel(sub.get("id"))
             except Exception:
                 pass
-            # TEMP-DIAG (2026-11-21): detalle del error de Stripe en la
-            # respuesta pa' diagnosticar el fallo del schedule en la
-            # prueba E2E; se quita en cuanto el flujo quede probado.
             return jsonify(
-                {"error": "could not create subscription schedule",
-                 "detail": str(_e)[:400]}), 502
+                {"error": "could not create subscription schedule"}), 502
         # El schedule arranca en segundo plano en Stripe: la primera
         # factura de la suscripción (y su PaymentIntent) puede tardar
         # unos segundos en existir — confirmado en vivo el 2026-11-21:
