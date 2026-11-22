@@ -5,25 +5,25 @@
 <style>
 .acct-head{display:flex;justify-content:space-between;align-items:center;margin:6px 0 2px;}
 .acct-head h1{font-size:30px;font-weight:800;color:#fff;margin:0;}
-.acct-logout{border:1px solid #2a3648;border-radius:12px;padding:9px 18px;font-size:14px;color:#d1d5db;text-decoration:none;}
+.acct-logout{border:1px solid #38335f;border-radius:12px;padding:9px 18px;font-size:14px;color:#d1d5db;text-decoration:none;}
 .acct-sub{font-size:14px;color:#8b93a7;margin-bottom:16px;}
-.acct-tabs{display:flex;flex-wrap:wrap;gap:2px 18px;border-bottom:1px solid #1e2a3a;margin-bottom:18px;}
+.acct-tabs{display:flex;flex-wrap:wrap;gap:2px 18px;border-bottom:1px solid #322e58;margin-bottom:18px;}
 .acct-tab{padding:10px 2px;font-size:15px;color:#8b93a7;cursor:pointer;background:none;border:none;border-bottom:2px solid transparent;font-family:inherit;}
 .acct-tab.on{color:#fff;border-bottom:2px solid #22c55e;font-weight:700;}
 .acct-pane{display:none;}
 .acct-pane.on{display:block;}
-.acct-card{background:linear-gradient(155deg,#26303f,#1c2431 60%,#1a222e);border:1px solid #1c2739;border-radius:16px;padding:18px;margin-bottom:16px;}
+.acct-card{background:linear-gradient(155deg,#322e58,#15122a 60%,#15122a);border:1px solid #262345;border-radius:16px;padding:18px;margin-bottom:16px;}
 .acct-k{font-size:12px;letter-spacing:1.5px;color:#8b93a7;margin:0 0 12px;font-weight:700;}
-.acct-input{width:100%;box-sizing:border-box;background:#131c2e;border:1px solid #26334d;border-radius:12px;padding:13px 14px;font-size:15px;color:#fff;margin-bottom:14px;font-family:inherit;}
+.acct-input{width:100%;box-sizing:border-box;background:#1c1933;border:1px solid #38335f;border-radius:12px;padding:13px 14px;font-size:15px;color:#fff;margin-bottom:14px;font-family:inherit;}
 .acct-btn{display:inline-block;background:#22c55e;color:#06240f;font-weight:800;font-size:15px;padding:12px 22px;border-radius:12px;border:none;cursor:pointer;text-decoration:none;text-align:center;}
 .acct-btn-danger{display:block;width:100%;box-sizing:border-box;background:rgba(220,38,38,.16);border:1px solid #b91c1c;color:#f87171;font-weight:800;font-size:16px;min-height:46px;padding:13px 22px;border-radius:12px;cursor:pointer;text-decoration:none;text-align:center;font-family:inherit;}
 .acct-btn-block{display:block;width:100%;box-sizing:border-box;}
 .acct-badge{display:inline-block;background:rgba(59,130,246,.15);color:#7db4ff;font-weight:800;font-size:13px;letter-spacing:1px;padding:7px 16px;border-radius:999px;}
 .acct-badge-gold{display:inline-block;background:rgba(201,162,39,.15);color:#e3b93c;font-weight:800;font-size:13px;letter-spacing:1px;padding:7px 16px;border-radius:999px;}
-.acct-check{display:flex;align-items:center;gap:10px;background:#131c2e;border:1px solid #26334d;border-radius:12px;padding:12px 14px;font-size:15px;color:#d1d5db;cursor:pointer;}
+.acct-check{display:flex;align-items:center;gap:10px;background:#1c1933;border:1px solid #38335f;border-radius:12px;padding:12px 14px;font-size:15px;color:#d1d5db;cursor:pointer;}
 .acct-check input{width:20px;height:20px;accent-color:#22c55e;flex:none;}
 .acct-grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
-.acct-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #1c2739;font-size:15px;}
+.acct-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #262345;font-size:15px;}
 .acct-row:last-child{border-bottom:none;}
 .acct-muted{font-size:14px;color:#8b93a7;line-height:1.55;}
 .acct-ok{display:inline-block;background:rgba(34,197,94,.15);color:#4ade80;font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px;}
@@ -46,7 +46,7 @@
   <button type="button" class="acct-tab" data-tab="profile">Profile</button>
   <button type="button" class="acct-tab" data-tab="security">Security</button>
 </div>
-<div style="margin:0 0 14px;"><a href="{{ url_for('app_settings') }}" style="display:inline-block;background:#1D2029;border:1px solid #2C313A;color:#E7E9ED;font-size:0.88rem;font-weight:600;border-radius:12px;padding:10px 16px;text-decoration:none;">⚙️ App settings — notifications, stakes, books and this device →</a></div>
+<div style="margin:0 0 14px;"><a href="{{ url_for('app_settings') }}" style="display:inline-block;background:#1c1933;border:1px solid #38335f;color:#dad7ee;font-size:0.88rem;font-weight:600;border-radius:12px;padding:10px 16px;text-decoration:none;">⚙️ App settings — notifications, stakes, books and this device →</a></div>
 
 {# ============ OVERVIEW ============ #}
 <div class="acct-pane" id="pane-overview">
@@ -378,19 +378,19 @@
 </script>
 <!-- ===== DASHBOARD TOUR v4 (recorrido completo multipagina, 2026-11-02) ===== -->
 <style>
-#tourDim{position:fixed;inset:0;background:rgba(4,8,16,.74);z-index:2900}
+#tourDim{position:fixed;inset:0;background:rgba(8,6,20,.74);z-index:2900}
 #tourRing{position:fixed;z-index:2901;border:2px solid #e8c766;border-radius:14px;box-shadow:0 0 0 3px rgba(232,199,102,.25),0 0 24px rgba(232,199,102,.35);pointer-events:none;transition:top .2s ease,left .2s ease,width .2s ease,height .2s ease}
-#tourCard{position:fixed;z-index:2902;left:12px;right:12px;max-width:430px;margin:0 auto;background:#1c2431;border:1px solid #24334d;border-radius:16px;padding:16px 16px 13px;box-shadow:0 18px 40px rgba(0,0,0,.5);color:#eef2f8}
+#tourCard{position:fixed;z-index:2902;left:12px;right:12px;max-width:430px;margin:0 auto;background:#15122a;border:1px solid #262345;border-radius:16px;padding:16px 16px 13px;box-shadow:0 18px 40px rgba(0,0,0,.5);color:#eeecfa}
 #tourHead{font-size:13px;font-weight:700;letter-spacing:1.6px;color:#e8c766;margin-bottom:10px}
-#tourBar{height:4px;background:#24334d;border-radius:99px;overflow:hidden;margin-bottom:12px}
+#tourBar{height:4px;background:#262345;border-radius:99px;overflow:hidden;margin-bottom:12px}
 #tourBarFill{height:100%;background:#e8c766;border-radius:99px;transition:width .3s ease}
-#tourCount{font-size:11px;letter-spacing:1.2px;color:#8b98ad;font-weight:700}
-#tourTitle{font-size:17px;font-weight:700;margin:5px 0 6px;color:#eef2f8}
+#tourCount{font-size:11px;letter-spacing:1.2px;color:#9794b8;font-weight:700}
+#tourTitle{font-size:17px;font-weight:700;margin:5px 0 6px;color:#eeecfa}
 #tourBody{font-size:13.5px;line-height:1.55;color:#c7d0dd;font-weight:300}
 #tourBtns{display:flex;align-items:center;gap:10px;margin-top:14px}
-#tourNext{background:#e8c766;color:#131822;border:0;border-radius:10px;padding:10px 20px;font-size:14px;font-weight:700;cursor:pointer}
-#tourBack{background:none;color:#c7d0dd;border:1px solid #24334d;border-radius:10px;padding:10px 16px;font-size:14px;cursor:pointer}
-#tourSkip{margin-left:auto;background:none;border:0;color:#8b98ad;font-size:13px;cursor:pointer;padding:8px 2px}
+#tourNext{background:#e8c766;color:#15122a;border:0;border-radius:10px;padding:10px 20px;font-size:14px;font-weight:700;cursor:pointer}
+#tourBack{background:none;color:#c7d0dd;border:1px solid #262345;border-radius:10px;padding:10px 16px;font-size:14px;cursor:pointer}
+#tourSkip{margin-left:auto;background:none;border:0;color:#9794b8;font-size:13px;cursor:pointer;padding:8px 2px}
 </style>
 <div id="tourRoot" hidden>
   <div id="tourDim"></div>
