@@ -62,115 +62,115 @@
 /* Tokens del sistema de diseño TST (Auditoría UI/UX 2026-11-12, Fase 0 · Fundación): base documentada, sin consumir todavía. */
 :root{--fbody:'Roboto',sans-serif;--fdisp:'Unbounded',sans-serif;--fmono:'Roboto Mono',monospace;--fs-display:30px;--lh-display:1.15;--fs-h1:28px;--lh-h1:1.2;--fs-h2:22px;--lh-h2:1.25;--fs-card:17px;--lh-card:1.3;--fs-body:15px;--lh-body:1.5;--fs-sub:13px;--lh-sub:1.55;--fs-tag:11px;--lh-tag:1.35;--fs-btn:15px;--lh-btn:1.2;--mx:16px;--sec:24px;--pad-card:16px;--gap:8px;--gap-lg:12px;--r-card:12px;--r-btn:12px;--r-input:12px;--r-pill:999px;--r-sheet:16px;--btn-h:46px;--btn-h-sm:44px;--btn-h-pill:36px;--w-public:1200px;--w-app:720px;--w-app-wide:1200px;--w-read:760px;--w-form:520px}
 .upl-wrap{max-width:520px;margin:0 auto;padding:6px 2px 0;color:#e6edf7}
-.upl-trusttop{margin:4px 0 2px;text-align:center;font-size:11px;line-height:1.55;color:#8b98ad}
+.upl-trusttop{margin:4px 0 2px;text-align:center;font-size:11.55px;line-height:1.55;color:#8b98ad}
 .upl-trusttop b{color:#e6edf7}
 .upl-hero{position:relative;text-align:center;padding:26px 6px 8px}
 /* Línea de confianza CENTRADA en su franja (2026-11-11, orden de Alex: «está chocando con la línea de abajo, súbelo más para el medio»): arriba quedan ~10px (padding-top del wrap 6 + margen 4) y abajo la línea aportaba 10 de margen + 26 de padding-top del héroe + 4 del avatar = ~40px medidos en navegador. Con sesión el héroe usa .upl-hero-up (padding-top 8) y la línea margen inferior 2: hueco inferior = 2+8+4 = 14px, parejo con el superior. La variante anónima no lleva la línea y conserva el héroe con sus 26px. */
 .upl-hero.upl-hero-up{padding-top:8px}
 .upl-hero::before{content:"";position:absolute;left:0;right:0;top:-6px;height:250px;background:radial-gradient(ellipse 72% 92% at 50% 0%,rgba(232,199,102,.10),rgba(232,199,102,0) 70%);pointer-events:none}
 .upl-avatar{position:relative;display:block;margin:4px auto 0;width:158px;height:158px;border-radius:50%;object-fit:cover;border:3px solid #39415a;box-shadow:0 0 0 7px rgba(148,163,184,.07),0 16px 38px rgba(0,0,0,.5)}
-.upl-who{position:relative;margin:15px 0 0;font-size:13px;color:#8b98ad}
+.upl-who{position:relative;margin:15px 0 0;font-size:13.65px;color:#8b98ad}
 .upl-who b{color:#fff;font-weight:800}
 .upl-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0 0}
 .upl-stat{display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(180deg,#171a21,#12151c);border:1px solid #232833;border-radius:12px;padding:8px 4px 7px;text-align:center}
-.upl-stat b{display:block;font-size:24px;line-height:1.1;font-weight:500;color:#10cc87}
-.upl-stat.plain b{color:#fff;font-size:18px}
-.upl-stat span{display:block;margin-top:3px;font-size:9.5px;letter-spacing:.4px;line-height:1.35;color:#8b98ad;font-weight:400}
-.upl-disc{margin:12px 0 0;background:#0d1017;border:1px dashed #3a4152;border-radius:10px;padding:10px 12px;font-size:11px;line-height:1.6;color:#8b98ad}
+.upl-stat b{display:block;font-size:25.2px;line-height:1.1;font-weight:500;color:#10cc87}
+.upl-stat.plain b{color:#fff;font-size:18.9px}
+.upl-stat span{display:block;margin-top:3px;font-size:9.97px;letter-spacing:.4px;line-height:1.35;color:#8b98ad;font-weight:400}
+.upl-disc{margin:12px 0 0;background:#0d1017;border:1px dashed #3a4152;border-radius:10px;padding:10px 12px;font-size:11.55px;line-height:1.6;color:#8b98ad}
 .upl-disc b{color:#e6edf7}
-.upl-billed{margin:9px 0 0;font-size:11.5px;font-weight:800;letter-spacing:.6px;color:#e8c766}
-.upl-kicker{position:relative;margin:22px 0 0;font-size:10.5px;font-weight:800;letter-spacing:3.5px;color:#e8c766}
-.upl-h1{position:relative;margin:12px 0 0;font-size:29px;line-height:1.16;font-weight:900;color:#fff}
+.upl-billed{margin:9px 0 0;font-size:12.08px;font-weight:800;letter-spacing:.6px;color:#e8c766}
+.upl-kicker{position:relative;margin:22px 0 0;font-size:11.03px;font-weight:800;letter-spacing:3.5px;color:#e8c766}
+.upl-h1{position:relative;margin:12px 0 0;font-size:30.45px;line-height:1.16;font-weight:900;color:#fff}
 .upl-h1 .dollar{color:#10cc87}
-.upl-sub{position:relative;margin:12px auto 0;max-width:430px;font-size:13.5px;line-height:1.65;color:#a8b3cf}
+.upl-sub{position:relative;margin:12px auto 0;max-width:430px;font-size:14.18px;line-height:1.65;color:#a8b3cf}
 .upl-tiles{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:16px 0 0}
 .upl-tile{background:linear-gradient(180deg,#171a21,#12151c);border:1px solid #33415555;border-radius:12px;padding:11px 4px;text-align:center}
-.upl-tile b{display:block;font-size:19px;color:#fff;font-weight:900}
-.upl-tile span{display:block;margin-top:2px;font-size:9.5px;letter-spacing:1.2px;color:#8b98ad;font-weight:700}
-.upl-graded{margin:12px 0 0;text-align:center;font-size:11.5px;color:#a8b3cf;font-weight:700}
+.upl-tile b{display:block;font-size:19.95px;color:#fff;font-weight:900}
+.upl-tile span{display:block;margin-top:2px;font-size:9.97px;letter-spacing:1.2px;color:#8b98ad;font-weight:700}
+.upl-graded{margin:12px 0 0;text-align:center;font-size:12.08px;color:#a8b3cf;font-weight:700}
 .upl-graded .cg{color:#10cc87;font-weight:800}
 .upl-what{margin:16px 0 0;background:linear-gradient(180deg,#171a21,#12151c);border:1px solid #e8c76655;border-radius:16px;padding:16px 15px 14px}
-.upl-what h2{margin:0;font-size:19px;font-weight:900;color:#fff}
-.upl-what .lead{margin:8px 0 0;font-size:13.5px;line-height:1.6;color:#c6d2e8}
-.upl-what .note{margin:12px 0 0;font-size:12.5px;line-height:1.6;color:#8b98ad}
+.upl-what h2{margin:0;font-size:19.95px;font-weight:900;color:#fff}
+.upl-what .lead{margin:8px 0 0;font-size:14.18px;line-height:1.6;color:#c6d2e8}
+.upl-what .note{margin:12px 0 0;font-size:13.12px;line-height:1.6;color:#8b98ad}
 .upl-what .note b{color:#e8c766}
 .upl-card{margin:16px 0 0;background:linear-gradient(180deg,#171a21,#12151c 60%,#10131a);border:1px solid #e8c76655;border-radius:16px;padding:16px 15px 14px}
-.upl-pill{display:inline-block;background:#e8c766;color:#161d29;font-size:10px;font-weight:900;letter-spacing:1.6px;padding:4px 10px;border-radius:999px}
-.upl-price{margin:10px 0 0;font-size:17px;font-weight:800;color:#fff}
-.upl-price .big{font-size:46px;font-weight:900;vertical-align:-9px;margin-right:3px}
-.upl-then{margin:3px 0 0;font-size:12.5px;color:#a8b3cf}
-.upl-live{margin:12px 0 0;font-size:12px;color:#e6edf7}
+.upl-pill{display:inline-block;background:#e8c766;color:#161d29;font-size:10.5px;font-weight:900;letter-spacing:1.6px;padding:4px 10px;border-radius:999px}
+.upl-price{margin:10px 0 0;font-size:17.85px;font-weight:800;color:#fff}
+.upl-price .big{font-size:48.3px;font-weight:900;vertical-align:-9px;margin-right:3px}
+.upl-then{margin:3px 0 0;font-size:13.12px;color:#a8b3cf}
+.upl-live{margin:12px 0 0;font-size:12.6px;color:#e6edf7}
 .upl-live .dot{color:#10cc87}
 .upl-as{margin:12px 0 0;background:#0f2a1e;border:1px solid #14532d;border-radius:10px;padding:10px 12px;text-align:center}
-.upl-as .t{font-size:9.5px;letter-spacing:1.6px;color:#8b98ad;font-weight:800}
-.upl-as .e{margin-top:3px;font-size:13.5px;font-weight:800;color:#fff}
-.upl-as .o{margin-top:6px;font-size:11.5px;color:#8b98ad}
+.upl-as .t{font-size:9.97px;letter-spacing:1.6px;color:#8b98ad;font-weight:800}
+.upl-as .e{margin-top:3px;font-size:14.18px;font-weight:800;color:#fff}
+.upl-as .o{margin-top:6px;font-size:12.08px;color:#8b98ad}
 .upl-as a{color:#7dd3fc}
-.upl-duenote{margin:12px 0 0;background:#3a1522;border:1px solid #7f1d3a;border-radius:10px;padding:9px 11px;font-size:11.5px;line-height:1.55;color:#fda4af}
+.upl-duenote{margin:12px 0 0;background:#3a1522;border:1px solid #7f1d3a;border-radius:10px;padding:9px 11px;font-size:12.08px;line-height:1.55;color:#fda4af}
 .upl-duenote a{color:#fff;font-weight:800}
 .upl-board{margin:14px 0 0;border-top:1px solid #33415566;padding-top:12px}
-.upl-board h3{margin:0;font-size:10.5px;letter-spacing:2px;color:#e8c766;font-weight:900}
+.upl-board h3{margin:0;font-size:11.03px;letter-spacing:2px;color:#e8c766;font-weight:900}
 .upl-teaser{display:flex;justify-content:space-between;align-items:center;gap:10px;text-decoration:none;padding:9px 2px;border-bottom:1px solid #33415544}
 .upl-teaser:last-of-type{border-bottom:0}
-.upl-teaser .t{font-size:13.5px;font-weight:800;color:#fff}
-.upl-teaser .s{font-size:10.5px;color:#8b98ad;margin-top:1px}
-.upl-teaser .arr{color:#10cc87;font-size:15px}
-.upl-recon{margin:8px 0 0;font-size:10.5px;color:#8b98ad;font-style:italic}
-.upl-cta{display:block;margin:14px 0 0;background:linear-gradient(180deg,#35f0b0,#1fc98d);color:#06281c !important;text-align:center;font-size:17px;font-weight:900;padding:14px 12px;border-radius:12px;text-decoration:none}
+.upl-teaser .t{font-size:14.18px;font-weight:800;color:#fff}
+.upl-teaser .s{font-size:11.03px;color:#8b98ad;margin-top:1px}
+.upl-teaser .arr{color:#10cc87;font-size:15.75px}
+.upl-recon{margin:8px 0 0;font-size:11.03px;color:#8b98ad;font-style:italic}
+.upl-cta{display:block;margin:14px 0 0;background:linear-gradient(180deg,#35f0b0,#1fc98d);color:#06281c !important;text-align:center;font-size:17.85px;font-weight:900;padding:14px 12px;border-radius:12px;text-decoration:none}
 .upl-embbox{margin:8px 0 0;background:#ffffff;border-radius:12px;padding:0;overflow:hidden}
 .upl-brands{display:flex;gap:6px;margin:14px 0 0}
-.upl-brand{flex:1;display:flex;align-items:center;justify-content:center;background:#ffffff;border-radius:6px;padding:5px 2px;font-size:9.5px;font-weight:900;letter-spacing:.3px;line-height:1}
+.upl-brand{flex:1;display:flex;align-items:center;justify-content:center;background:#ffffff;border-radius:6px;padding:5px 2px;font-size:9.97px;font-weight:900;letter-spacing:.3px;line-height:1}
 .upl-brand.visa{color:#1a1f71;font-style:italic}
 .upl-brand.mc{color:#222222}
 .upl-brand.mc i{font-style:normal;color:#eb001b}
 .upl-brand.mc b{color:#f79e1b;font-weight:900}
 .upl-brand.disc{color:#f48120}
 .upl-brand.amex{background:#2e77bc;color:#ffffff}
-.upl-embload{margin:6px 0;text-align:center;font-size:12.5px;font-weight:700;color:#525f7f}
+.upl-embload{margin:6px 0;text-align:center;font-size:13.12px;font-weight:700;color:#525f7f}
 #upl-pe-form{padding:12px}
-.upl-pe-err{display:none;margin:0 12px 12px;font-size:12.5px;line-height:1.5;color:#b91c1c;font-weight:700}
+.upl-pe-err{display:none;margin:0 12px 12px;font-size:13.12px;line-height:1.5;color:#b91c1c;font-weight:700}
 button.upl-cta{width:100%;border:0;cursor:pointer;font-family:inherit}
 button.upl-cta[disabled]{opacity:.65;cursor:wait}
-.upl-under{margin:9px 0 0;text-align:center;font-size:12px;color:#e6edf7;font-weight:700}
-.upl-fine{margin:7px 0 0;text-align:center;font-size:10.5px;line-height:1.55;color:#8b98ad}
-.upl-trust{margin:11px 0 0;text-align:center;font-size:10.5px;color:#8b98ad}
-.upl-record{margin:9px 0 0;text-align:center;font-size:11.5px;color:#e8c766;font-weight:800}
-.upl-emailnote{margin:11px 0 0;font-size:11px;line-height:1.55;color:#fbbf24;background:#2a2113;border:1px solid #92600f;border-radius:10px;padding:9px 11px}
+.upl-under{margin:9px 0 0;text-align:center;font-size:12.6px;color:#e6edf7;font-weight:700}
+.upl-fine{margin:7px 0 0;text-align:center;font-size:11.03px;line-height:1.55;color:#8b98ad}
+.upl-trust{margin:11px 0 0;text-align:center;font-size:11.03px;color:#8b98ad}
+.upl-record{margin:9px 0 0;text-align:center;font-size:12.08px;color:#e8c766;font-weight:800}
+.upl-emailnote{margin:11px 0 0;font-size:11.55px;line-height:1.55;color:#fbbf24;background:#2a2113;border:1px solid #92600f;border-radius:10px;padding:9px 11px}
 .upl-sec{margin:22px 0 0}
-.upl-sec h2{margin:0;font-size:16px;font-weight:900;color:#fff}
-.upl-sec .lead{margin:5px 0 0;font-size:12px;color:#8b98ad;line-height:1.55}
+.upl-sec h2{margin:0;font-size:16.8px;font-weight:900;color:#fff}
+.upl-sec .lead{margin:5px 0 0;font-size:12.6px;color:#8b98ad;line-height:1.55}
 .upl-tix{display:flex;gap:10px;overflow-x:auto;padding:12px 2px 4px;scroll-snap-type:x mandatory}
 .upl-tix figure{margin:0;flex:0 0 96%;scroll-snap-align:center}
 .upl-tix .ph{position:relative;border-radius:12px;overflow:hidden;border:1px solid #33415566;background:#0d1117}
 .upl-tix img{width:100%;height:auto;object-fit:contain;display:block}
-.upl-won{position:absolute;top:6px;left:6px;background:#16a34a;color:#fff;font-size:9px;font-weight:900;letter-spacing:1px;padding:2px 7px;border-radius:999px}
-.upl-tix figcaption{margin-top:5px;font-size:10px;line-height:1.45;color:#a8b3cf}
+.upl-won{position:absolute;top:6px;left:6px;background:#16a34a;color:#fff;font-size:9.45px;font-weight:900;letter-spacing:1px;padding:2px 7px;border-radius:999px}
+.upl-tix figcaption{margin-top:5px;font-size:10.5px;line-height:1.45;color:#a8b3cf}
 .upl-tix figcaption b{color:#10cc87}
 .upl-bens{list-style:none;margin:12px 0 0;padding:0}
-.upl-bens li{display:flex;gap:9px;padding:7px 0;font-size:13px;line-height:1.5;color:#e6edf7;border-bottom:1px solid #33415533}
+.upl-bens li{display:flex;gap:9px;padding:7px 0;font-size:13.65px;line-height:1.5;color:#e6edf7;border-bottom:1px solid #33415533}
 .upl-bens li:last-child{border-bottom:0}
 .upl-bens .ck{color:#10cc87;font-weight:900}
-.upl-value{margin:12px 0 0;background:#0f2a1e;border:1px solid #14532d;border-radius:12px;padding:12px 13px;font-size:12.5px;line-height:1.6;color:#d1fae5;text-align:center}
+.upl-value{margin:12px 0 0;background:#0f2a1e;border:1px solid #14532d;border-radius:12px;padding:12px 13px;font-size:13.12px;line-height:1.6;color:#d1fae5;text-align:center}
 .upl-dont{list-style:none;margin:12px 0 0;padding:0}
-.upl-dont li{display:flex;gap:9px;padding:7px 0;font-size:13px;line-height:1.55;color:#e6edf7}
+.upl-dont li{display:flex;gap:9px;padding:7px 0;font-size:13.65px;line-height:1.55;color:#e6edf7}
 .upl-dont .x{color:#f87171;font-weight:900}
 .upl-dont .ok{color:#10cc87;font-weight:900}
 .upl-faq{margin:12px 0 0}
 .upl-faq details{background:linear-gradient(180deg,#171a21,#12151c);border:1px solid #33415555;border-radius:11px;padding:11px 13px;margin:0 0 8px}
-.upl-faq summary{font-size:13px;font-weight:800;color:#fff;cursor:pointer;list-style:none}
-.upl-faq p{margin:8px 0 0;font-size:12.5px;line-height:1.6;color:#a8b3cf}
-.upl-legal{margin:18px 0 0;text-align:center;font-size:10.5px;line-height:1.6;color:#8b98ad}
-.upl-tile .ck{display:block;font-size:19px;color:#10cc87;font-weight:900}
+.upl-faq summary{font-size:13.65px;font-weight:800;color:#fff;cursor:pointer;list-style:none}
+.upl-faq p{margin:8px 0 0;font-size:13.12px;line-height:1.6;color:#a8b3cf}
+.upl-legal{margin:18px 0 0;text-align:center;font-size:11.03px;line-height:1.6;color:#8b98ad}
+.upl-tile .ck{display:block;font-size:19.95px;color:#10cc87;font-weight:900}
 .upl-how{list-style:none;margin:12px 0 0;padding:0;counter-reset:how}
-.upl-how li{display:flex;gap:11px;padding:10px 0;border-bottom:1px solid #33415533;font-size:13px;line-height:1.55;color:#e6edf7}
+.upl-how li{display:flex;gap:11px;padding:10px 0;border-bottom:1px solid #33415533;font-size:13.65px;line-height:1.55;color:#e6edf7}
 .upl-how li:last-child{border-bottom:0}
-.upl-how .n{flex:0 0 26px;width:26px;height:26px;border-radius:50%;background:#e8c766;color:#161d29;font-weight:900;font-size:13.5px;display:flex;align-items:center;justify-content:center}
+.upl-how .n{flex:0 0 26px;width:26px;height:26px;border-radius:50%;background:#e8c766;color:#161d29;font-weight:900;font-size:14.18px;display:flex;align-items:center;justify-content:center}
 .upl-how b{color:#fff}
 .upl-sticky{position:fixed;left:0;right:0;bottom:0;z-index:80;background:linear-gradient(180deg,#1d3258,#14263f);border-top:1px solid #33507e;box-shadow:0 -6px 24px rgba(0,0,0,.45)}
 .upl-sticky-in{max-width:520px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 20px calc(14px + env(safe-area-inset-bottom))}
-.upl-sticky-t{font-size:14px;line-height:1.25;color:#c3cbdd;white-space:nowrap;min-width:0;overflow:hidden;text-overflow:ellipsis}
-.upl-sticky-t b{color:#fff;font-size:15.5px}
-.upl-sticky-btn{background:#e8c766;color:#1a1405 !important;font-size:14.5px;font-weight:800;white-space:nowrap;padding:11px 17px;line-height:1.2;border-radius:999px;text-decoration:none;text-align:center;flex:none}
+.upl-sticky-t{font-size:14.7px;line-height:1.25;color:#c3cbdd;white-space:nowrap;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.upl-sticky-t b{color:#fff;font-size:16.28px}
+.upl-sticky-btn{background:#e8c766;color:#1a1405 !important;font-size:15.23px;font-weight:800;white-space:nowrap;padding:11px 17px;line-height:1.2;border-radius:999px;text-decoration:none;text-align:center;flex:none}
 .upl-as{padding:8px 12px;text-align:left}
 .upl-as .e{margin-top:0}
 .upl-as .o{margin-top:0;white-space:nowrap}
@@ -187,7 +187,7 @@ main.v2-wrap{padding-bottom:0}
 .upl-sticky{bottom:0!important}
 body{padding-bottom:calc(8px + env(safe-area-inset-bottom))!important}
 /* SALIDA DISCRETA (2026-11-11, orden de Alex: «¿cómo sale de esa página?» / «Pon la salida discreta arriba»): la página standalone no trae chrome del sitio, así que un cliente que no quiere pagar quedaba atrapado. Lleva su propia ✕ fija en la esquina superior DERECHA que devuelve al Dashboard (/home): círculo oscuro semitransparente de 34px, ✕ en gris claro, z-index sobre todo el contenido de la página pero sin competir con el diseño. La línea de confianza (centrada) recibe aire lateral (padding 0 46px) pa' que su texto nunca corra debajo del botón. Solo esta plantilla. */
-.upl-exit{position:fixed;top:calc(10px + env(safe-area-inset-top));right:12px;z-index:200;width:34px;height:34px;border-radius:50%;background:rgba(13,17,24,.72);border:1px solid rgba(139,152,173,.35);color:#c3cbdd;font-size:15px;line-height:1;display:flex;align-items:center;justify-content:center;text-decoration:none;-webkit-tap-highlight-color:transparent}
+.upl-exit{position:fixed;top:calc(10px + env(safe-area-inset-top));right:12px;z-index:200;width:34px;height:34px;border-radius:50%;background:rgba(13,17,24,.72);border:1px solid rgba(139,152,173,.35);color:#c3cbdd;font-size:15.75px;line-height:1;display:flex;align-items:center;justify-content:center;text-decoration:none;-webkit-tap-highlight-color:transparent}
 .upl-exit:active{background:rgba(13,17,24,.92);color:#fff}
 .upl-trusttop{padding:0 46px}
 </style>
@@ -265,7 +265,7 @@ body{padding-bottom:calc(8px + env(safe-area-inset-bottom))!important}
     {% if anonimo %}
     <div style="margin:14px 0 0;text-align:center;">
       <a class="upl-cta" href="{{ url_for('register') }}">Get started — $1 first week &rarr;</a>
-      <p style="margin:10px 0 0;font-size:12.5px;color:#a8b3cf;">It takes a minute — create your account, confirm your email, and Platinum unlocks for $1 for your first week. Already a member? <a href="{{ url_for('login', next=url_for('desbloquear_platinum')) }}" style="color:#7dd3fc;font-weight:800;">Log in</a></p>
+      <p style="margin:10px 0 0;font-size:13.12px;color:#a8b3cf;">It takes a minute — create your account, confirm your email, and Platinum unlocks for $1 for your first week. Already a member? <a href="{{ url_for('login', next=url_for('desbloquear_platinum')) }}" style="color:#7dd3fc;font-weight:800;">Log in</a></p>
     </div>
     {% elif stripe_embed_ok %}
     <div class="upl-brands"><span class="upl-brand visa">VISA</span><span class="upl-brand mc"><i>●</i><b>●</b>&nbsp;MasterCard</span><span class="upl-brand disc">DISCOVER</span><span class="upl-brand amex">AMEX</span></div>
@@ -282,8 +282,8 @@ body{padding-bottom:calc(8px + env(safe-area-inset-bottom))!important}
     <a class="upl-cta" href="{% if entrada_1 %}{{ url_for('desbloquear_platinum') }}{% else %}{{ stripe_url }}{% endif %}" target="_blank" rel="noopener">Start Platinum - {% if entrada_1 %}$1 first week{% else %}$15.99/week{% endif %} →</a>
     {% endif %}
     {% if not anonimo %}
-    <p style="margin:9px 0 0;text-align:center;font-size:11px;line-height:1.5;color:#8b98ad;">{% if entrada_1 %}✓ $1 your first week, then $15.99/week — cancel anytime.{% else %}✓ $15.99/week, cancel anytime.{% endif %} Two clicks from your account, no retention team, no guilt.</p>
-    <div style="margin:11px 0 0;background:#10151d;border:1px solid #33415566;border-radius:10px;padding:10px 12px;font-size:12px;line-height:1.6;color:#a8b3cf;"><b style="color:#fff;">What happens next:</b> the moment your payment clears, your Platinum turns on automatically — every official play lands on your Dashboard before game time, with its real ticket, starting today.</div>
+    <p style="margin:9px 0 0;text-align:center;font-size:11.55px;line-height:1.5;color:#8b98ad;">{% if entrada_1 %}✓ $1 your first week, then $15.99/week — cancel anytime.{% else %}✓ $15.99/week, cancel anytime.{% endif %} Two clicks from your account, no retention team, no guilt.</p>
+    <div style="margin:11px 0 0;background:#10151d;border:1px solid #33415566;border-radius:10px;padding:10px 12px;font-size:12.6px;line-height:1.6;color:#a8b3cf;"><b style="color:#fff;">What happens next:</b> the moment your payment clears, your Platinum turns on automatically — every official play lands on your Dashboard before game time, with its real ticket, starting today.</div>
     <p class="upl-trust">🔒 256-bit SSL · Stripe secured · Cancel anytime</p>
     {% endif %}
     {% if anonimo %}
@@ -300,27 +300,27 @@ body{padding-bottom:calc(8px + env(safe-area-inset-bottom))!important}
      tarjeta Platinum; la de estado gratis exige sesión (not anonimo). #}
   <style>
   .pln-head{margin:26px 0 0;text-align:center}
-  .pln-head h2{margin:0;font-size:20px;font-weight:800;color:#fff}
-  .pln-head p{margin:6px 0 0;font-size:13px;color:#A3AAB6}
+  .pln-head h2{margin:0;font-size:21px;font-weight:800;color:#fff}
+  .pln-head p{margin:6px 0 0;font-size:13.65px;color:#A3AAB6}
   .pln-card{border-radius:20px;padding:24px 22px 20px;margin:18px 0 0}
   .pln-plat{background:#101319;border:1.5px solid #e8c766}
   .pln-free{background:#1D2029;border:1px solid #2C303C}
   .pln-top{display:flex;justify-content:space-between;align-items:center}
-  .pln-kick{font-size:12.5px;font-weight:800;letter-spacing:2.2px;color:#A3AAB6}
+  .pln-kick{font-size:13.12px;font-weight:800;letter-spacing:2.2px;color:#A3AAB6}
   .pln-plat .pln-kick{color:#e8c766}
-  .pln-badge{background:#e8c766;color:#111;font-size:11.5px;font-weight:900;letter-spacing:.6px;padding:6px 10px;border-radius:8px}
+  .pln-badge{background:#e8c766;color:#111;font-size:12.08px;font-weight:900;letter-spacing:.6px;padding:6px 10px;border-radius:8px}
   .pln-badge-free{background:#10CC87;color:#06281B}
-  .pln-price{font-size:44px;font-weight:900;color:#fff;margin:14px 0 2px}
-  .pln-price small{font-size:15px;font-weight:600;color:#A3AAB6}
-  .pln-tag{font-size:14.5px;color:#C6CBD6;line-height:1.45;margin:6px 0}
+  .pln-price{font-size:46.2px;font-weight:900;color:#fff;margin:14px 0 2px}
+  .pln-price small{font-size:15.75px;font-weight:600;color:#A3AAB6}
+  .pln-tag{font-size:15.23px;color:#C6CBD6;line-height:1.45;margin:6px 0}
   .pln-list{list-style:none;margin:8px 0 0;padding:0}
-  .pln-list li{font-size:14.5px;line-height:1.4;color:#EDEFF4;padding:11px 0 11px 30px;position:relative;border-top:1px solid rgba(255,255,255,.07)}
+  .pln-list li{font-size:15.23px;line-height:1.4;color:#EDEFF4;padding:11px 0 11px 30px;position:relative;border-top:1px solid rgba(255,255,255,.07)}
   .pln-list li::before{content:"✓";position:absolute;left:2px;top:10px;font-weight:900;color:#10CC87}
   .pln-plat .pln-list li::before{color:#e8c766}
-  .pln-cta{display:block;text-align:center;text-decoration:none;font-size:16.5px;font-weight:800;padding:15px;border-radius:12px;margin-top:18px}
+  .pln-cta{display:block;text-align:center;text-decoration:none;font-size:17.32px;font-weight:800;padding:15px;border-radius:12px;margin-top:18px}
   .pln-cta-plat{background:#0E9E66;color:#fff}
   .pln-status{background:#EDEFF4;color:#11141A;cursor:default}
-  .pln-fine{font-size:12.5px;color:#8B93A3;text-align:center;margin-top:12px;line-height:1.45}
+  .pln-fine{font-size:13.12px;color:#8B93A3;text-align:center;margin-top:12px;line-height:1.45}
   </style>
 
   <div class="pln-head">
@@ -329,8 +329,8 @@ body{padding-bottom:calc(8px + env(safe-area-inset-bottom))!important}
   </div>
 
   <div style="margin:26px 0 12px;">
-    <div style="font-size:24px;font-weight:800;color:#ffffff;line-height:1.25;">Our highest-value plan.</div>
-    <p style="font-size:14.5px;color:#C6CBD6;line-height:1.5;margin:6px 0 0;">Every official play with verified tickets, +EV Board across 12 books, Props, AI Assistant, Line Moves, Sharp Money and a private Telegram channel. The complete card.</p>
+    <div style="font-size:25.2px;font-weight:800;color:#ffffff;line-height:1.25;">Our highest-value plan.</div>
+    <p style="font-size:15.23px;color:#C6CBD6;line-height:1.5;margin:6px 0 0;">Every official play with verified tickets, +EV Board across 12 books, Props, AI Assistant, Line Moves, Sharp Money and a private Telegram channel. The complete card.</p>
   </div>
   <div class="pln-card pln-plat">
     <div class="pln-top">
