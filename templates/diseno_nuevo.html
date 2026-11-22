@@ -467,13 +467,13 @@
    textos, funciones ni colores (azul oscuro de octubre + dorado de la
    tirita); el tamaño grande del saludo queda intacto. Este bloque va al
    final del <head> a propósito: gana a las capas anteriores. */
-body .dn-strip{padding-top:14px;padding-bottom:14px}
+body .dn-strip{padding-top:9px;padding-bottom:9px} /* tirita mas fina (2026-11-22 ~18:58 ET, orden de Alex: «ponla mas fina, esta muy ancha»): padding vertical 14px -> 9px; el texto dorado NO cambia */
 body .dn-top-in{padding-top:14px;padding-bottom:14px}
 body .dn-hello{flex-direction:column;align-items:flex-start;gap:16px;padding:22px 0 2px}
 body .dn-hello-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 body .dn-hello .dn-quickbtn{margin-top:0}
 @media (max-width:480px){
-  body .dn-strip{padding-top:13px;padding-bottom:13px}
+  body .dn-strip{padding-top:8px;padding-bottom:8px} /* tirita mas fina: 13px -> 8px */
   body .dn-top-in{padding-top:14px;padding-bottom:14px}
   body .dn-hello{gap:16px;padding-top:22px}
 }
