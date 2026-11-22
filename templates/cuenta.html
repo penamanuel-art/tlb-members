@@ -5,27 +5,27 @@
 <style>
 .acct-head{display:flex;justify-content:space-between;align-items:center;margin:6px 0 2px;}
 .acct-head h1{font-size:30px;font-weight:800;color:#fff;margin:0;}
-.acct-logout{border:1px solid #2a3648;border-radius:12px;padding:9px 18px;font-size:14px;color:#d1d5db;text-decoration:none;}
-.acct-sub{font-size:14px;color:#8b93a7;margin-bottom:16px;}
+.acct-logout{border:1px solid #2a3648;border-radius:12px;padding:9px 18px;font-size:14px;color:#a3b0c6;text-decoration:none;}
+.acct-sub{font-size:14px;color:#75829a;margin-bottom:16px;}
 .acct-tabs{display:flex;flex-wrap:wrap;gap:2px 18px;border-bottom:1px solid #1e2a3a;margin-bottom:18px;}
-.acct-tab{padding:10px 2px;font-size:15px;color:#8b93a7;cursor:pointer;background:none;border:none;border-bottom:2px solid transparent;font-family:inherit;}
+.acct-tab{padding:10px 2px;font-size:15px;color:#75829a;cursor:pointer;background:none;border:none;border-bottom:2px solid transparent;font-family:inherit;}
 .acct-tab.on{color:#fff;border-bottom:2px solid #22c55e;font-weight:700;}
 .acct-pane{display:none;}
 .acct-pane.on{display:block;}
-.acct-card{background:linear-gradient(155deg,#26303f,#1c2431 60%,#1a222e);border:1px solid #1c2739;border-radius:16px;padding:18px;margin-bottom:16px;}
-.acct-k{font-size:12px;letter-spacing:1.5px;color:#8b93a7;margin:0 0 12px;font-weight:700;}
-.acct-input{width:100%;box-sizing:border-box;background:#131c2e;border:1px solid #26334d;border-radius:12px;padding:13px 14px;font-size:15px;color:#fff;margin-bottom:14px;font-family:inherit;}
+.acct-card{background:linear-gradient(155deg,#0c1425,#0a1220 60%,#070b14);border:1px solid #0a1220;border-radius:16px;padding:18px;margin-bottom:16px;}
+.acct-k{font-size:12px;letter-spacing:1.5px;color:#75829a;margin:0 0 12px;font-weight:700;}
+.acct-input{width:100%;box-sizing:border-box;background:#070b14;border:1px solid #0c1425;border-radius:12px;padding:13px 14px;font-size:15px;color:#fff;margin-bottom:14px;font-family:inherit;}
 .acct-btn{display:inline-block;background:#22c55e;color:#06240f;font-weight:800;font-size:15px;padding:12px 22px;border-radius:12px;border:none;cursor:pointer;text-decoration:none;text-align:center;}
 .acct-btn-danger{display:block;width:100%;box-sizing:border-box;background:rgba(220,38,38,.16);border:1px solid #b91c1c;color:#f87171;font-weight:800;font-size:16px;min-height:46px;padding:13px 22px;border-radius:12px;cursor:pointer;text-decoration:none;text-align:center;font-family:inherit;}
 .acct-btn-block{display:block;width:100%;box-sizing:border-box;}
 .acct-badge{display:inline-block;background:rgba(59,130,246,.15);color:#7db4ff;font-weight:800;font-size:13px;letter-spacing:1px;padding:7px 16px;border-radius:999px;}
 .acct-badge-gold{display:inline-block;background:rgba(201,162,39,.15);color:#e3b93c;font-weight:800;font-size:13px;letter-spacing:1px;padding:7px 16px;border-radius:999px;}
-.acct-check{display:flex;align-items:center;gap:10px;background:#131c2e;border:1px solid #26334d;border-radius:12px;padding:12px 14px;font-size:15px;color:#d1d5db;cursor:pointer;}
+.acct-check{display:flex;align-items:center;gap:10px;background:#070b14;border:1px solid #0c1425;border-radius:12px;padding:12px 14px;font-size:15px;color:#a3b0c6;cursor:pointer;}
 .acct-check input{width:20px;height:20px;accent-color:#22c55e;flex:none;}
 .acct-grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
-.acct-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #1c2739;font-size:15px;}
+.acct-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #0a1220;font-size:15px;}
 .acct-row:last-child{border-bottom:none;}
-.acct-muted{font-size:14px;color:#8b93a7;line-height:1.55;}
+.acct-muted{font-size:14px;color:#75829a;line-height:1.55;}
 .acct-ok{display:inline-block;background:rgba(34,197,94,.15);color:#4ade80;font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px;}
 .acct-fail{display:inline-block;background:rgba(245,181,68,.15);color:#f5b544;font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px;white-space:nowrap;flex:none;}
 </style>
@@ -46,7 +46,7 @@
   <button type="button" class="acct-tab" data-tab="profile">Profile</button>
   <button type="button" class="acct-tab" data-tab="security">Security</button>
 </div>
-<div style="margin:0 0 14px;"><a href="{{ url_for('app_settings') }}" style="display:inline-block;background:#1D2029;border:1px solid #2C313A;color:#E7E9ED;font-size:0.88rem;font-weight:600;border-radius:12px;padding:10px 16px;text-decoration:none;">⚙️ App settings — notifications, stakes, books and this device →</a></div>
+<div style="margin:0 0 14px;"><a href="{{ url_for('app_settings') }}" style="display:inline-block;background:#0a1220;border:1px solid #0c1425;color:#f2f5fb;font-size:0.88rem;font-weight:600;border-radius:12px;padding:10px 16px;text-decoration:none;">⚙️ App settings — notifications, stakes, books and this device →</a></div>
 
 {# ============ OVERVIEW ============ #}
 <div class="acct-pane" id="pane-overview">
@@ -55,12 +55,12 @@
     {% if past_due %}<span class="acct-badge" style="background:rgba(220,38,38,.18);color:#f87171;">PAST DUE</span>{% elif platinum %}<span class="acct-badge">PLATINUM</span>{% else %}<span class="acct-badge-gold">SHARP FREE</span>{% endif %}
     <p class="acct-k" style="margin-top:18px;">WHAT YOU HAVE ACCESS TO</p>
     {% if platinum %}
-    <p style="font-size:15px;color:#d1d5db;margin:4px 0;"><span style="color:#22c55e;">●</span>&nbsp; Platinum Plays — every official play, every day</p>
-    <p style="font-size:15px;color:#d1d5db;margin:4px 0;"><span style="color:#22c55e;">●</span>&nbsp; EV Board, Parlay Builder &amp; Brain</p>
-    <p style="font-size:15px;color:#d1d5db;margin:4px 0;"><span style="color:#22c55e;">●</span>&nbsp; Sharp Free Plays &amp; full record</p>
+    <p style="font-size:15px;color:#a3b0c6;margin:4px 0;"><span style="color:#22c55e;">●</span>&nbsp; Platinum Plays — every official play, every day</p>
+    <p style="font-size:15px;color:#a3b0c6;margin:4px 0;"><span style="color:#22c55e;">●</span>&nbsp; EV Board, Parlay Builder &amp; Brain</p>
+    <p style="font-size:15px;color:#a3b0c6;margin:4px 0;"><span style="color:#22c55e;">●</span>&nbsp; Sharp Free Plays &amp; full record</p>
     {% else %}
-    <p style="font-size:15px;color:#d1d5db;margin:4px 0;"><span style="color:#22c55e;">●</span>&nbsp; Sharp Free Plays — free picks every day</p>
-    <p style="font-size:15px;color:#d1d5db;margin:4px 0;"><span style="color:#22c55e;">●</span>&nbsp; Full record &amp; Academy</p>
+    <p style="font-size:15px;color:#a3b0c6;margin:4px 0;"><span style="color:#22c55e;">●</span>&nbsp; Sharp Free Plays — free picks every day</p>
+    <p style="font-size:15px;color:#a3b0c6;margin:4px 0;"><span style="color:#22c55e;">●</span>&nbsp; Full record &amp; Academy</p>
     {% endif %}
     {% if member_since %}<p class="acct-muted" style="margin-top:12px;">Member since {{ member_since }}</p>{% endif %}
   </div>
@@ -70,12 +70,12 @@
     {% if past_due %}
     <p style="font-size:13px;line-height:1.35;color:#e5e7eb;margin:0;"><span style="color:#f5b544;font-weight:400;">Your last payment didn't go through.</span><br>Your Platinum membership is past due and access is paused. Update your card to restore it right away.</p>
     {% elif cancel_at %}
-    <p style="font-size:15px;color:#d1d5db;margin:0;">Your membership is cancelled. You keep full access until the end of your current billing period — you won't be charged again.</p>
+    <p style="font-size:15px;color:#a3b0c6;margin:0;">Your membership is cancelled. You keep full access until the end of your current billing period — you won't be charged again.</p>
     {% elif platinum %}
-    <p style="font-size:15px;color:#d1d5db;margin:0;">You're paid up — your plan renews automatically.</p>
+    <p style="font-size:15px;color:#a3b0c6;margin:0;">You're paid up — your plan renews automatically.</p>
     <p class="acct-muted" style="margin-top:8px;">Your access runs through the end of your current term.</p>
     {% else %}
-    <p style="font-size:15px;color:#d1d5db;margin:0;">You're on the free plan. Unlock Platinum — $15.99/week.</p>
+    <p style="font-size:15px;color:#a3b0c6;margin:0;">You're on the free plan. Unlock Platinum — $15.99/week.</p>
     {% endif %}
   </div>
 
@@ -88,7 +88,7 @@
     <p class="acct-k">💰 MY BANKROLL</p>
     <p class="acct-muted" style="margin:0 0 12px;">The total you play with. 1 unit = 1% of your bankroll, and every recommended size is based on that.</p>
     {% if bankroll %}
-    <p style="font-size:15px;color:#d1d5db;margin:0 0 12px;">Current: <b style="color:#fff;">${{ '%.2f' % bankroll }}</b> <span class="acct-muted">(1u = ${{ '%.2f' % (bankroll / 100) }})</span></p>
+    <p style="font-size:15px;color:#a3b0c6;margin:0 0 12px;">Current: <b style="color:#fff;">${{ '%.2f' % bankroll }}</b> <span class="acct-muted">(1u = ${{ '%.2f' % (bankroll / 100) }})</span></p>
     {% else %}
     <p class="acct-muted" style="margin:0 0 12px;">You haven't set it up yet.</p>
     {% endif %}
@@ -112,10 +112,10 @@
     <p class="acct-k">YOUR MEMBERSHIP</p>
     {% if past_due %}
     <span class="acct-badge" style="background:rgba(220,38,38,.18);color:#f87171;">PAST DUE</span>
-    <p style="font-size:15px;color:#d1d5db;margin:12px 0 14px;">Your last payment didn't go through and your Platinum access is paused. Update your card to restore it right away.</p>
+    <p style="font-size:15px;color:#a3b0c6;margin:12px 0 14px;">Your last payment didn't go through and your Platinum access is paused. Update your card to restore it right away.</p>
     <a href="{{ (billing.pay_url if billing else None) or url_for('desbloquear_platinum') }}" class="acct-btn acct-btn-block">Update card &amp; restore access →</a>
     {% elif cancel_at %}
-    <p style="font-size:15px;color:#d1d5db;margin:0 0 14px;">Your membership is cancelled. You keep full access until the end of your current period — you won't be charged again.</p>
+    <p style="font-size:15px;color:#a3b0c6;margin:0 0 14px;">Your membership is cancelled. You keep full access until the end of your current period — you won't be charged again.</p>
     <p class="acct-muted" style="margin:0 0 14px;">Changed your mind? Keep your membership and nothing changes.</p>
     <form method="post" action="{{ url_for('cuenta_reactivar') }}">
       <button class="acct-btn acct-btn-block" type="submit">Keep my membership</button>
@@ -123,14 +123,14 @@
     {% elif platinum %}
     <span class="acct-badge">PLATINUM</span>
     {% if u and u.platinum_trial_ends %}
-    <p style="font-size:15px;color:#d1d5db;margin:12px 0 14px;">Your free month is active — Platinum is on us until {{ u.platinum_trial_ends[:10] }}.</p>
+    <p style="font-size:15px;color:#a3b0c6;margin:12px 0 14px;">Your free month is active — Platinum is on us until {{ u.platinum_trial_ends[:10] }}.</p>
     {% else %}
-    <p style="font-size:15px;color:#d1d5db;margin:12px 0 14px;">You're paid up — your plan renews automatically.</p>
+    <p style="font-size:15px;color:#a3b0c6;margin:12px 0 14px;">You're paid up — your plan renews automatically.</p>
     {% endif %}
     <a href="{{ url_for('cuenta_cancelar') }}" class="acct-btn-danger">Cancel membership</a>
     {% else %}
     <span class="acct-badge-gold">SHARP FREE</span>
-    <p style="font-size:15px;color:#d1d5db;margin:12px 0 14px;">You're on the free plan. Unlock Platinum — $15.99/week.</p>
+    <p style="font-size:15px;color:#a3b0c6;margin:12px 0 14px;">You're on the free plan. Unlock Platinum — $15.99/week.</p>
     <a href="{{ url_for('desbloquear_platinum') }}" class="acct-btn acct-btn-block">Unlock Platinum →</a>
     {% endif %}
   </div>
@@ -142,7 +142,7 @@
     <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;">
       <div>
         <div style="font-size:16px;font-weight:700;color:#fff;">The Sharp Team — Platinum</div>
-        <div style="font-size:13px;color:#8b93a7;margin-top:2px;">{% if sub_info.price %}${{ '%.2f' % sub_info.price }}/{{ sub_info.interval or 'month' }} · {% endif %}Status: {{ sub_info.status }}{% if sub_info.next_billing %} · Next billing {{ sub_info.next_billing }}{% endif %}</div>
+        <div style="font-size:13px;color:#75829a;margin-top:2px;">{% if sub_info.price %}${{ '%.2f' % sub_info.price }}/{{ sub_info.interval or 'month' }} · {% endif %}Status: {{ sub_info.status }}{% if sub_info.next_billing %} · Next billing {{ sub_info.next_billing }}{% endif %}</div>
       </div>
       {% if past_due %}<span class="acct-fail">Past Due</span>{% elif cancel_at or sub_info.cancel_at_period_end %}<span class="acct-fail">Cancels at term end</span>{% else %}<span class="acct-ok">Active</span>{% endif %}
     </div>
@@ -150,13 +150,13 @@
     <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;">
       <div>
         <div style="font-size:16px;font-weight:700;color:#fff;">The Sharp Team — Platinum</div>
-        <div style="font-size:13px;color:#8b93a7;margin-top:2px;">Active access</div>
+        <div style="font-size:13px;color:#75829a;margin-top:2px;">Active access</div>
       </div>
       <span class="acct-ok">Active</span>
     </div>
     <p class="acct-muted" style="margin-top:12px;">This membership doesn't auto-renew, so there's nothing to cancel.</p>
     {% else %}
-    <p style="font-size:15px;color:#d1d5db;margin:0;">No active subscription.</p>
+    <p style="font-size:15px;color:#a3b0c6;margin:0;">No active subscription.</p>
     <p class="acct-muted" style="margin-top:8px;">Unlock Platinum to get every official play plus the pro tools.</p>
     <a href="{{ url_for('desbloquear_platinum') }}" class="acct-btn" style="margin-top:12px;">Unlock Platinum →</a>
     {% endif %}
@@ -177,7 +177,7 @@
     {% if payments %}
       {% for p in payments %}
       <div class="acct-row">
-        <div><div style="color:#fff;">{{ p.desc }}</div><div style="font-size:13px;color:#8b93a7;">{{ p.fecha }}</div></div>
+        <div><div style="color:#fff;">{{ p.desc }}</div><div style="font-size:13px;color:#75829a;">{{ p.fecha }}</div></div>
         <div style="text-align:right;"><div style="color:#fff;">${{ '%.2f' % p.amount }}</div>{% if p.status == 'Complete' %}<span class="acct-ok">Complete</span>{% elif p.status == 'Pending' %}<span class="acct-fail">Pending</span>{% else %}<span class="acct-fail">Failed</span>{% endif %}</div>
       </div>
       {% endfor %}
@@ -224,7 +224,7 @@
   <div class="acct-card" id="telegram">
     <p class="acct-k">✈️ TELEGRAM</p>
     {% if tg_linked %}
-    <p style="font-size:15px;color:#d1d5db;margin:0 0 8px;">Status: <b style="color:#4ade80;">Connected</b></p>
+    <p style="font-size:15px;color:#a3b0c6;margin:0 0 8px;">Status: <b style="color:#4ade80;">Connected</b></p>
     <p class="acct-muted" style="margin:0 0 12px;">Your Telegram is linked to your membership. If you cancel, you'll be removed from the private Platinum channel automatically.</p>
     <div style="display:grid;gap:12px;">
       <div>
@@ -282,7 +282,7 @@
       <button type="submit" class="danger-link foto-remove">Disconnect Telegram</button>
     </form>
     {% elif tg_link %}
-    <p style="font-size:15px;color:#d1d5db;margin:0 0 8px;">Status: <b style="color:#f5b544;">Almost there</b></p>
+    <p style="font-size:15px;color:#a3b0c6;margin:0 0 8px;">Status: <b style="color:#f5b544;">Almost there</b></p>
     <p class="acct-muted" style="margin:0 0 12px;">Tap the button, then press <b>START</b> in the bot to finish linking. The link expires in 24 hours.</p>
     <a href="{{ tg_link }}" target="_blank" class="acct-btn acct-btn-block">Open @thesharpteam_bot →</a>
     <form method="post" action="{{ url_for('cuenta_telegram_link') }}" style="margin-top:8px;">
@@ -380,17 +380,17 @@
 <style>
 #tourDim{position:fixed;inset:0;background:rgba(4,8,16,.74);z-index:2900}
 #tourRing{position:fixed;z-index:2901;border:2px solid #e8c766;border-radius:14px;box-shadow:0 0 0 3px rgba(232,199,102,.25),0 0 24px rgba(232,199,102,.35);pointer-events:none;transition:top .2s ease,left .2s ease,width .2s ease,height .2s ease}
-#tourCard{position:fixed;z-index:2902;left:12px;right:12px;max-width:430px;margin:0 auto;background:#1c2431;border:1px solid #24334d;border-radius:16px;padding:16px 16px 13px;box-shadow:0 18px 40px rgba(0,0,0,.5);color:#eef2f8}
+#tourCard{position:fixed;z-index:2902;left:12px;right:12px;max-width:430px;margin:0 auto;background:#0a1220;border:1px solid #1d3358;border-radius:16px;padding:16px 16px 13px;box-shadow:0 18px 40px rgba(0,0,0,.5);color:#f2f5fb}
 #tourHead{font-size:13px;font-weight:700;letter-spacing:1.6px;color:#e8c766;margin-bottom:10px}
-#tourBar{height:4px;background:#24334d;border-radius:99px;overflow:hidden;margin-bottom:12px}
+#tourBar{height:4px;background:#1d3358;border-radius:99px;overflow:hidden;margin-bottom:12px}
 #tourBarFill{height:100%;background:#e8c766;border-radius:99px;transition:width .3s ease}
-#tourCount{font-size:11px;letter-spacing:1.2px;color:#8b98ad;font-weight:700}
-#tourTitle{font-size:17px;font-weight:700;margin:5px 0 6px;color:#eef2f8}
+#tourCount{font-size:11px;letter-spacing:1.2px;color:#a3b0c6;font-weight:700}
+#tourTitle{font-size:17px;font-weight:700;margin:5px 0 6px;color:#f2f5fb}
 #tourBody{font-size:13.5px;line-height:1.55;color:#c7d0dd;font-weight:300}
 #tourBtns{display:flex;align-items:center;gap:10px;margin-top:14px}
 #tourNext{background:#e8c766;color:#131822;border:0;border-radius:10px;padding:10px 20px;font-size:14px;font-weight:700;cursor:pointer}
-#tourBack{background:none;color:#c7d0dd;border:1px solid #24334d;border-radius:10px;padding:10px 16px;font-size:14px;cursor:pointer}
-#tourSkip{margin-left:auto;background:none;border:0;color:#8b98ad;font-size:13px;cursor:pointer;padding:8px 2px}
+#tourBack{background:none;color:#c7d0dd;border:1px solid #1d3358;border-radius:10px;padding:10px 16px;font-size:14px;cursor:pointer}
+#tourSkip{margin-left:auto;background:none;border:0;color:#a3b0c6;font-size:13px;cursor:pointer;padding:8px 2px}
 </style>
 <div id="tourRoot" hidden>
   <div id="tourDim"></div>
