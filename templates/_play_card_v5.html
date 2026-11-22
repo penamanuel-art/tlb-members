@@ -247,6 +247,37 @@
 .v5sp-fill{height:100%;border-radius:99px;background:#8a97ac}
 .v5sp-fill.money{background:#60a5fa}
 .v5sp-pct{font-size:13px;font-weight:700;color:#f2f5fb;text-align:right;font-variant-numeric:tabular-nums}
+/* Detalle reordenado como las fotos de Alex (2026-11-22): info de la jugada
+   ARRIBA (panel con rejilla 2x2 y linea opened/now), caja Bet, splits,
+   Line and signals, Game context y el TICKET DE ULTIMO. Tema azul octubre. */
+.v5info{margin-top:12px;background:#0a1220;border:1px solid rgba(96,165,250,.16);border-radius:14px;padding:14px 14px 12px}
+.v5info-game{font-size:19px;font-weight:800;color:#fff;line-height:1.2}
+.v5info-starts{font-size:13.5px;color:#75829a;margin-top:4px}
+.v5info-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}
+.v5info-cell{background:rgba(96,165,250,.07);border-radius:10px;padding:10px 12px}
+.v5info-k{font-size:12.5px;color:#a3b0c6}
+.v5info-v{font-size:19px;font-weight:700;color:#fff;margin-top:3px;line-height:1.2}
+.v5info-v .v5info-usd{display:block;font-size:14.5px;font-weight:700;color:#60a5fa;margin-top:2px}
+.v5info-line{margin-top:12px;text-align:center;font-size:13.5px;color:#c6cfdf}
+.v5info-line b{color:#fff;font-weight:700}
+.v5bet{margin-top:10px;border:1px solid rgba(96,165,250,.45);background:rgba(96,165,250,.08);border-radius:14px;padding:12px 14px}
+.v5bet-amt{font-size:16.5px;font-weight:800;color:#60a5fa}
+.v5bet-units{font-size:14.5px;color:#f2f5fb;margin-top:3px}
+.v5bet-note{font-size:12.5px;color:#75829a;margin-top:3px;line-height:1.45}
+.v5sec{margin-top:14px;background:#070b14;border:1px solid rgba(96,165,250,.16);border-radius:14px;padding:13px 14px 11px}
+.v5sec-head{display:flex;align-items:baseline;gap:9px}
+.v5sec-title{font-size:15.5px;font-weight:700;color:#f2f5fb}
+.v5sec-market{font-size:12.5px;color:#75829a}
+.v5sec-k{font-size:12.5px;color:#75829a;margin-top:13px}
+.v5sec-v{font-size:14.5px;color:#f2f5fb;margin-top:3px;line-height:1.45}
+.v5sec-v b{font-weight:700;color:#fff}
+.v5sec-v .v5sec-note{color:#75829a;font-size:12.5px}
+.v5inj{display:flex;align-items:baseline;gap:8px;padding:5px 0}
+.v5inj-team{flex:none;width:44px;font-size:12.5px;font-weight:700;color:#75829a}
+.v5inj-name{flex:1;min-width:0;font-size:14px;color:#f2f5fb}
+.v5inj-pos{color:#75829a;font-size:12.5px;font-weight:400}
+.v5inj-st{flex:none;font-size:13px;font-weight:700;color:#f87171}
+.v5showall{font-size:13.5px;font-weight:600;color:#60a5fa;cursor:pointer;list-style:none;margin-top:6px}
 </style>
 {# Cara MINIMAL (ver nota de cabecera). Banda dorada =
    encabezado de nivel (sustituye a la pildora interna para no duplicar);
@@ -335,15 +366,24 @@
       </div>
       <button class="v5x" data-v5-close aria-label="Cerrar">&times;</button>
     </div>
-    <div style="margin-top:10px">
-      <div class="v5row"><span class="v5row-k">Pick</span><span class="v5row-v"><b>{{ p.team_name or p.abbr }} {{ _bt_label }}</b></span></div>
-      <div class="v5row"><span class="v5row-k">Game</span><span class="v5row-v">{{ p.abbr }} vs {{ p.opp_abbr }}</span></div>
-      <div class="v5row"><span class="v5row-k">Starts</span><span class="v5row-v">{{ _gt12 }}</span></div>
-      {% if p.posted %}<div class="v5row"><span class="v5row-k">Posted</span><span class="v5row-v">{{ p.posted }}</span></div>{% endif %}
-      <div class="v5row"><span class="v5row-k">Price posted</span><span class="v5row-v"><b>{{ fmt_odds(p.cuota) }}</b></span></div>
-      <div class="v5row"><span class="v5row-k">Stake</span><span class="v5row-v"><b>{{ '%g' % p.stake_unidades }}u</b> &middot; <span style="color:#60a5fa;font-weight:600">${{ '%g' % p.stake_monto }}</span></span></div>
-      <div class="v5row"><span class="v5row-k">Program</span><span class="v5prog">OFFICIALS</span></div>
+    {# 1) INFO DE LA JUGADA ARRIBA (forma de la foto de Alex 2026-11-22):
+       panel con juego + hora, rejilla Price posted / Stake / Posted to
+       members / Placed at y la linea opened/now. Solo datos reales:
+       Posted solo si p.posted existe; Placed at solo si p.casa existe. #}
+    <div class="v5info">
+      <div class="v5info-game">{{ p.abbr }} vs {{ p.opp_abbr }}</div>
+      <div class="v5info-starts">Starts {{ p.hora or _gt12 }}{% if (p.hora or _gt12) and 'ET' not in (p.hora or _gt12) %} ET{% endif %}</div>
+      <div class="v5info-grid">
+        <div class="v5info-cell"><div class="v5info-k">Price posted</div><div class="v5info-v">{{ fmt_odds(p.cuota) }}</div></div>
+        <div class="v5info-cell"><div class="v5info-k">Stake</div><div class="v5info-v">{{ '%g' % p.stake_unidades }}u<span class="v5info-usd">${{ '%g' % p.stake_monto }}</span></div></div>
+        {% if p.posted is defined and p.posted %}<div class="v5info-cell"><div class="v5info-k">Posted to members</div><div class="v5info-v">{{ p.posted }}</div></div>{% endif %}
+        {% if p.casa is defined and p.casa %}<div class="v5info-cell"><div class="v5info-k">Placed at</div><div class="v5info-v">{{ p.casa }}</div></div>{% endif %}
+      </div>
+      {% if _ci.get('lines') and _ci.lines.open and _ci.lines.now %}<div class="v5info-line">Line {{ p.team_name or p.abbr }} opened <b>{{ _ci.lines.open }}</b>, now <b>{{ _ci.lines.now }}</b></div>{% endif %}
     </div>
+    {# Caja Bet (forma de la foto; texto propio, sin marca de nadie):
+       monto y unidades reales de la jugada, unidad del programa $100. #}
+    {% if p.stake_monto %}<div class="v5bet"><div class="v5bet-amt">Bet ${{ '%g' % p.stake_monto }}</div><div class="v5bet-units">({{ '%g' % p.stake_unidades }} unit{% if p.stake_unidades != 1 %}s{% endif %} at your $100 unit)</div><div class="v5bet-note">Program size for this play. Bet only what you can afford to lose.</div></div>{% endif %}
     {% if p.writeup %}
     <details class="v5wu">
       <summary class="v5wu-h" style="cursor:pointer;list-style:none">📊 WHY WE LIKE IT <span style="color:#75829a;float:right">▾</span></summary>
@@ -355,12 +395,6 @@
       {% if p.writeup.key_factor %}<p class="v5wu-p"><b>Key factor:</b> {{ p.writeup.key_factor }}</p>{% endif %}
       {% if p.writeup.risk %}<p class="v5wu-p"><b>The risk:</b> {{ p.writeup.risk }}</p>{% endif %}
     </details>
-    {% endif %}
-    {% if p.comprobante and not force_pre %}
-    <div class="v5timg">
-      <a href="{{ url_for('static', filename=p.comprobante) }}" target="_blank" rel="noopener"><img src="{{ url_for('static', filename=p.comprobante) }}" alt="Original ticket {{ p.abbr }} {{ p.bettype }}" loading="lazy"></a>
-      <span class="v5c-matched" style="position:absolute;top:8px;right:8px">✓ MATCHED</span>
-    </div>
     {% endif %}
     {% if p.splits %}
     <div class="v5sp">
@@ -391,6 +425,50 @@
       </div>
       {% endfor %}
       {% endif %}
+    </div>
+    {% endif %}
+    {# 4) LINE AND SIGNALS (forma de la foto): solo Open/Now reales de
+       card_info.lines. Steam y How it has done NO se montan: no hay
+       fuente real pa' ellos y no se inventa nada. #}
+    {% if _ci.get('lines') and _ci.lines.open and _ci.lines.now %}
+    <div class="v5sec">
+      <div class="v5sec-head"><span class="v5sec-title">Line and signals</span><span class="v5sec-market">{{ (_ci.lines.market or 'moneyline')|lower }}</span></div>
+      <div class="v5sec-k">Open</div>
+      <div class="v5sec-v">{{ p.team_name or p.abbr }} <b>{{ _ci.lines.open }}</b>, now <b>{{ _ci.lines.now }}</b>{% if _ci.lines.books %} <span class="v5sec-note">across {{ _ci.lines.books }} books (Game Center)</span>{% endif %}</div>
+      {% if _ci.lines.dir == 'for' %}<div class="v5sec-k">Movement</div><div class="v5sec-v">The market has moved toward this side{% if _ci.lines.ago %} &middot; last move {{ _ci.lines.ago }} ago{% endif %}.</div>{% elif _ci.lines.dir == 'against' %}<div class="v5sec-k">Movement</div><div class="v5sec-v">The market has moved against this side{% if _ci.lines.ago %} &middot; last move {{ _ci.lines.ago }} ago{% endif %}.</div>{% endif %}
+    </div>
+    {% endif %}
+    {# 5) GAME CONTEXT (forma de la foto): clima y lesionados de
+       card_info, movidos aqui (en la hoja no salen en otra parte). #}
+    {% if _ci.get('weather') or _ci.get('injuries') %}
+    <div class="v5sec">
+      <div class="v5sec-head"><span class="v5sec-title">Game context</span></div>
+      {% if _ci.get('weather') %}
+      <div class="v5sec-k">Weather</div>
+      <div class="v5sec-v">{% if _ci.weather.temp_f is defined and _ci.weather.temp_f is not none %}{{ _ci.weather.temp_f }}°F{% if _ci.weather.wind_mph is defined and _ci.weather.wind_mph is not none %}, wind {{ _ci.weather.wind_mph }} mph{% endif %}{% if _ci.weather.rain_pct is defined and _ci.weather.rain_pct is not none %} &middot; rain {{ _ci.weather.rain_pct }}%{% endif %}{% elif _ci.weather.indoor %}Indoor{% if _ci.weather.venue %} &middot; {{ _ci.weather.venue }}{% endif %}{% elif _ci.weather.venue %}{{ _ci.weather.venue }}{% endif %}</div>
+      {% endif %}
+      {% if _ci.get('injuries') and _ci.injuries.players %}
+      <div class="v5sec-k">Injuries</div>
+      {% for pl in _ci.injuries.players[:3] %}
+      <div class="v5inj"><span class="v5inj-team">{% if pl.team == p.team_name %}{{ p.abbr }}{% elif pl.team == p.opp_name %}{{ p.opp_abbr }}{% else %}{{ pl.team }}{% endif %}</span><span class="v5inj-name">{{ pl.name }} <span class="v5inj-pos">{{ pl.pos }}</span></span><span class="v5inj-st">{{ pl.status }}</span></div>
+      {% endfor %}
+      {% if _ci.injuries.players|length > 3 %}
+      <details>
+        <summary class="v5showall">Show all {{ _ci.injuries.players|length }}</summary>
+        {% for pl in _ci.injuries.players[3:] %}
+        <div class="v5inj"><span class="v5inj-team">{% if pl.team == p.team_name %}{{ p.abbr }}{% elif pl.team == p.opp_name %}{{ p.opp_abbr }}{% else %}{{ pl.team }}{% endif %}</span><span class="v5inj-name">{{ pl.name }} <span class="v5inj-pos">{{ pl.pos }}</span></span><span class="v5inj-st">{{ pl.status }}</span></div>
+        {% endfor %}
+      </details>
+      {% endif %}
+      {% endif %}
+    </div>
+    {% endif %}
+    {# 6) EL TICKET DE ULTIMO, abajo de todo (orden de Alex 2026-11-22),
+       justo encima de la nota y los botones Track / Place / Compare. #}
+    {% if p.comprobante and not force_pre %}
+    <div class="v5timg">
+      <a href="{{ url_for('static', filename=p.comprobante) }}" target="_blank" rel="noopener"><img src="{{ url_for('static', filename=p.comprobante) }}" alt="Original ticket {{ p.abbr }} {{ p.bettype }}" loading="lazy"></a>
+      <span class="v5c-matched" style="position:absolute;top:8px;right:8px">✓ MATCHED</span>
     </div>
     {% endif %}
     <p style="font-size:13.5px;color:#75829a;line-height:1.5;margin:10px 0 0">Prices move after posting — compare before you bet.</p>
