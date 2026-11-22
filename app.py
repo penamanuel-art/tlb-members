@@ -8666,6 +8666,24 @@ def bienvenida_previa():
                            fb_reg=False, fb_event_id=None,
                            offer_free_month=True, setup=_setup_demo)
 
+@app.route("/previa-azul-oscuro")
+def previa_azul_oscuro():
+    """VISTA PREVIA pa' Alex de la muestra de paleta AZUL OSCURO del
+    Dashboard (2026-11-22): la previa vive en el propio sitio porque
+    los links de archivos no le abren en su telefono y la imagen de la
+    muestra en el chat se le ve «finita» (precedente /bienvenida-previa
+    2026-11-11). Candado: admin real o la cuenta de miembro de Alex
+    (_admin_o_cuenta_alex, el mismo helper de /bienvenida-previa);
+    cualquier otro recibe 404, como si la ruta no existiera. Sirve la
+    plantilla estatica previa_azul_oscuro.html — la muestra YA
+    renderizada con datos de ejemplo (Detroit GOLD abierta, Dallas
+    PLATINUM bloqueada) — pa' que la vea a tamano completo en su
+    telefono. NO monta la paleta en el sitio real ni toca datos."""
+    from flask import abort
+    if not _admin_o_cuenta_alex(current_user()):
+        abort(404)
+    return render_template("previa_azul_oscuro.html")
+
 
 @app.route("/setup")
 @login_required
