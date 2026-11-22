@@ -12587,17 +12587,23 @@ def desbloquear_platinum():
     # distingue audiencias de pago: todo usuario con sesión ve la
     # variante directa de $15.99/semana. post_mes_gratis queda como
     # flag informativo sin efecto en textos ni en cobro.
-    # ENTRADA A $1 (2026-11-21): la cohorte nueva (entrada_1) SÍ
-    # ve otra variante — la suya: $1 la primera semana y después
-    # $15.99/semana, en texto y en cobro (schedule de 2 fases). El
-    # resto del mundo sigue viendo la directa de $15.99, intacta.
+    # ENTRADA A $1 (2026-11-21): la cohorte nueva (entrada_1) veía
+    # su variante: $1 la primera semana y después $15.99/semana, en
+    # texto y en cobro (schedule de 2 fases); el resto del mundo veía
+    # la directa de $15.99.
+    # OFERTA ÚNICA PA' TODOS (2026-11-22, orden de Alex tras verlo en
+    # vivo: la tarjeta del Dashboard ya decía $1 pero esta página
+    # mostraba $15.99 y cobraba $15.99): la variante de $1 la primera
+    # semana pasa a ser la de TODO usuario con sesión, en texto
+    # (entrada_1=True) y en cobro (el endpoint manda a todo el mundo
+    # por el schedule de 2 fases — ver _desbloquear_subscription_intent).
     return render_template(
         "desbloquear.html",
         ya_desbloqueada=platinum_unlocked_for(user),
         past_due=past_due,
         stripe_url=STRIPE_PLATINUM_URL,
         offer_free_month=False,
-        entrada_1=_es_entrada_1(user),
+        entrada_1=True,
         post_mes_gratis=bool(user),
         trial_days=0,
         stripe_pk=STRIPE_PUBLISHABLE_KEY,
@@ -12762,9 +12768,21 @@ def _desbloquear_intent_1(stripe, db, user, email, customer_id):
                 phases=[
                     {"items": [{"price": PLATINUM_PRICE_ENTRADA_1,
                                 "quantity": 1}],
-                     "iterations": 1},
+                     "iterations": 1,
+                     # SOLO tarjeta desde el nacimiento (2026-11-22,
+                     # orden de Alex): sin esto, la suscripción y su
+                     # primera factura nacen con los métodos automáticos
+                     # de la cuenta y el Payment Element ofrecía también
+                     # US Bank Account (ACH). Apple Pay entra como
+                     # wallet dentro de card, como siempre.
+                     "payment_settings": {
+                         "payment_method_types": ["card"],
+                         "save_default_payment_method": "on_subscription"}},
                     {"items": [{"price": PLATINUM_PRICE_SEMANAL,
-                                "quantity": 1}]},
+                                "quantity": 1}],
+                     "payment_settings": {
+                         "payment_method_types": ["card"],
+                         "save_default_payment_method": "on_subscription"}},
                 ],
                 metadata={
                     "offer": "entrada_1_v1",
@@ -12895,13 +12913,17 @@ def _desbloquear_subscription_intent(user, email, customer_id):
                 db.commit()
         if not customer_id:
             return jsonify({"error": "could not create customer"}), 502
-        # Cohorte de la entrada a $1 (2026-11-21): su cobro va en
+        # OFERTA ÚNICA PA' TODOS (2026-11-22, orden de Alex): el
+        # cobro de TODO el que paga desde /desbloquear-platinum va en
         # schedule de 2 fases ($1 la primera semana, después el
-        # semanal) — función aparte. El resto del mundo sigue por el
-        # flujo directo de $15.99 de siempre, intacto.
-        if _es_entrada_1(user):
-            return _desbloquear_intent_1(
-                stripe, db, user, email, customer_id)
+        # semanal) — función aparte. Hasta el 2026-11-21 esto era
+        # solo de la cohorte entrada_1 y el resto del mundo pagaba
+        # $15.99 directos desde el primer día; Alex lo vio en vivo
+        # (la página decía $15.99 y cobraba $15.99) y ordenó el $1
+        # pa' todos, en texto y en cobro. El flujo directo de $15.99
+        # que sigue abajo quedó RETIRADO: ya nadie llega a él.
+        return _desbloquear_intent_1(
+            stripe, db, user, email, customer_id)
         # Reusar una suscripción incomplete viva de este cliente con el
         # precio semanal: su PaymentIntent sigue válido para pagar.
         try:
@@ -12984,13 +13006,15 @@ def desbloquear_checkout_session():
         customer_id = (user["stripe_customer_id"] or "").strip()
     except (KeyError, IndexError, TypeError):
         customer_id = ""
-    # Cohorte de la entrada a $1 (2026-11-21): su ÚNICO camino de
-    # cobro es el Payment Element con schedule — una Checkout Session
+    # Entrada a $1 (2026-11-21) / OFERTA ÚNICA PA' TODOS
+    # (2026-11-22, orden de Alex): el ÚNICO camino de cobro de esta
+    # página es el Payment Element con schedule de 2 fases ($1 la
+    # primera semana, después $15.99/semana) — una Checkout Session
     # no puede crear schedules y cobraría los $15.99 directos,
-    # saltándose su primera semana a $1. Se fuerza esa rama tenga
-    # el parámetro flow que tenga.
-    if _es_entrada_1(user):
-        return _desbloquear_subscription_intent(user, email, customer_id)
+    # saltándose la primera semana a $1. Se fuerza esa rama pa' TODO
+    # el mundo, tenga el parámetro flow que tenga; la rama de
+    # Checkout Session incrustada que sigue abajo quedó retirada.
+    return _desbloquear_subscription_intent(user, email, customer_id)
     # Payment Element (2026-11-11): con {"flow": "payment_element"} este
     # MISMO endpoint devuelve el client_secret del PaymentIntent de la
     # suscripción creada en el servidor (formulario corto de la página,
