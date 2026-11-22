@@ -3104,6 +3104,10 @@ def personalizar_plays(plays, user):
     out = []
     for p in plays:
         p = dict(p)
+        # Hora real de publicación de la card (campo "posted" de plays.json,
+        # estampado al momento del disparo; fail-open: sin campo, la celda
+        # «Posted to members» del detalle simplemente no se renderiza).
+        p["posted"] = p.get("posted") or ""
         p["stake_monto"] = stake_personalizado(p, user)
         p["card_info"] = (card_info.get(p.get("id")) or {})
         p["splits"] = (splits.get(p.get("id")) or {})
