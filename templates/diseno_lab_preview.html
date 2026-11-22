@@ -57,11 +57,20 @@
     .dn-view{display:block;margin-top:18px;background:#10CC87;color:#06130D;font-weight:700;text-align:center;padding:14px;border-radius:12px;font-size:15px;text-decoration:none}
     @media (max-width:430px){.el-lg-coin{height:46px !important}.el-lg-letters{height:33px !important}}
     @media (max-width:360px){.el-lg-coin{height:40px !important}.el-lg-letters{height:29px !important}}
+    /* ===== Móvil: A TODO ANCHO, borde a borde, SIN marco (corrección 2026-11-22:
+       Alex la abrió en su teléfono y se veía estrecha/encogida con el marco
+       tipo app de 430px; en el teléfono manda el 100% real del viewport) ===== */
+    #app-shell{width:100%}
+    @media (max-width:639px){
+      body{display:block !important;padding:0 !important;background:#F8FAFC !important}
+      html.dark body{background:#0B0E14 !important}
+      #app-shell{max-width:none !important;width:100% !important;margin:0 !important;border:none !important;border-radius:0 !important;box-shadow:none !important;min-height:100dvh}
+    }
   </style>
 </head>
-<body class="bg-slate-200/80 dark:bg-zinc-950 text-slate-900 dark:text-zinc-100 min-h-screen flex justify-center items-start sm:py-6 transition-colors duration-200">
+<body class="bg-[#F8FAFC] dark:bg-[#0B0E14] sm:bg-slate-200/80 sm:dark:bg-zinc-950 text-slate-900 dark:text-zinc-100 min-h-screen flex justify-center items-start sm:py-6 transition-colors duration-200">
 
-  <div id="app-shell" class="w-full max-w-[430px] min-h-screen sm:min-h-[860px] sm:max-h-[900px] bg-[#F8FAFC] dark:bg-[#0B0E14] sm:rounded-[38px] sm:border sm:border-slate-300/80 dark:sm:border-zinc-800 sm:shadow-[0_25px_70px_-15px_rgba(15,23,42,0.28)] flex flex-col relative overflow-hidden">
+  <div id="app-shell" class="w-full sm:max-w-[430px] min-h-screen sm:min-h-[860px] sm:max-h-[900px] bg-[#F8FAFC] dark:bg-[#0B0E14] sm:rounded-[38px] sm:border sm:border-slate-300/80 dark:sm:border-zinc-800 sm:shadow-[0_25px_70px_-15px_rgba(15,23,42,0.28)] flex flex-col relative overflow-hidden">
 
     <!-- ================= HEADER: marca real + widget de unidad personal ================= -->
     <header class="sticky top-0 z-30 bg-[#F8FAFC]/90 dark:bg-[#0B0E14]/90 backdrop-blur-xl border-b border-slate-200/80 dark:border-zinc-800/80 px-4 pt-3.5 pb-3">
