@@ -10,15 +10,15 @@
 .tk-logo{width:44px;height:44px;border-radius:12px;background:#17201f;display:flex;align-items:center;justify-content:center;overflow:hidden;flex:none}
 .tk-logo img{width:36px;height:36px;object-fit:contain}
 .tk-name{font-size:16px;font-weight:600;color:#fff}
-.tk-name .tk-dot{color:#8b93a7;font-weight:400}
+.tk-name .tk-dot{color:#75829a;font-weight:400}
 .tk-name .tk-prob{color:#e0c070}
-.tk-bettype{font-size:13px;color:#9aa3b8;margin-top:1px}
+.tk-bettype{font-size:13px;color:#a3b0c6;margin-top:1px}
 .tk-status{font-size:11px;font-weight:800;letter-spacing:1px;padding:6px 12px;border-radius:999px;border:1px solid;flex:none}
 .tk-status.pending{background:rgba(224,192,112,.14);color:#e0c070;border-color:rgba(224,192,112,.4)}
 .tk-status.won{background:rgba(34,197,94,.14);color:#22c55e;border-color:rgba(34,197,94,.4)}
 .tk-status.lost{background:rgba(239,68,68,.14);color:#ef4444;border-color:rgba(239,68,68,.4)}
 .tstc-bet{margin:10px 0 4px}
-.tk-amt-label{font-size:13px;color:#8b93a7}
+.tk-amt-label{font-size:13px;color:#75829a}
 .tk-amt{font-size:22px;font-weight:600;color:#fff;margin-top:1px}
 .tk-units{font-size:14px;font-weight:700;color:#e0c070;margin-top:2px}
 .tk-game{margin:10px 0;background:#121e1c;border-radius:16px;padding:10px 12px;display:flex;align-items:center;justify-content:space-between}
@@ -27,7 +27,7 @@
 .tk-glogo img{width:30px;height:30px;object-fit:contain}
 .tk-gabbr{font-size:15px;font-weight:800;color:#fff}
 .tk-gtime{text-align:center}
-.tk-gtime div:first-child{font-size:13px;color:#8b93a7}
+.tk-gtime div:first-child{font-size:13px;color:#75829a}
 .tk-gtime div:last-child{font-size:12px;color:#5a6478;margin-top:1px}
 .tk-info{font-size:12px;color:#5a6478;margin-top:8px}
 .tk-badgerow{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
@@ -48,13 +48,13 @@
 .tstc-wu{margin:10px 0 2px;border:1px solid rgba(212,175,55,.35);border-radius:12px;background:#0a1413}
 .tstc-wu summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;padding:10px 14px;font-size:13px;font-weight:800;letter-spacing:1px;color:#d4af37}
 .tstc-wu summary::-webkit-details-marker{display:none}
-.tstc-wu summary .tstc-wu-arr{color:#8b93a7;font-size:11px}
+.tstc-wu summary .tstc-wu-arr{color:#75829a;font-size:11px}
 .tstc-wu-body{padding:2px 14px 12px;font-size:13px;line-height:1.55}
-.tstc-wu-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px dashed #1d2029}
+.tstc-wu-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px dashed #0a1220}
 .tstc-wu-row:last-child{border-bottom:none}
-.tstc-wu-k{color:#8b93a7}
+.tstc-wu-k{color:#75829a}
 .tstc-wu-v{font-weight:700;color:#f3f4f6}
-.tstc-wu-edge{color:#2fd47e;font-weight:800}
+.tstc-wu-edge{color:#60a5fa;font-weight:800}
 .tstc-wu-h{font-size:11px;letter-spacing:1.5px;color:#d4af37;font-weight:800;margin:10px 0 4px}
 .tstc-wu-p{color:#d5dbe8;margin:0 0 4px}
 .tstc-wu-risk{color:#f0b429}
@@ -70,13 +70,13 @@
 .tstg-team{display:flex;align-items:center;gap:12px;}
 .tstg-team img{width:48px;height:48px;object-fit:contain;flex:none;}
 .tstg-name{font-size:18px;font-weight:800;color:#fff;}
-.tstg-sub{font-size:12px;color:#9aa3b8;margin-top:2px;}
+.tstg-sub{font-size:12px;color:#a3b0c6;margin-top:2px;}
 .tstg-odds{display:flex;align-items:baseline;gap:10px;margin:12px 0 2px;flex-wrap:wrap;}
 .tstg-price{font-size:38px;font-weight:800;color:#fff;letter-spacing:-1px;}
-.tstg-fair{font-size:12px;color:#9aa3b8;}
+.tstg-fair{font-size:12px;color:#a3b0c6;}
 .tstg-edge{font-size:11px;font-weight:800;color:#06240f;background:#22c55e;padding:4px 10px;border-radius:999px;}
 .tstg-meta{display:flex;justify-content:space-between;align-items:center;margin:8px 0 4px;padding:10px 12px;background:rgba(255,255,255,.04);border-radius:12px;}
-.tstg-meta-k{font-size:12px;color:#9aa3b8;}
+.tstg-meta-k{font-size:12px;color:#a3b0c6;}
 .tstg-meta-k b{color:#e0c070;}
 .tstg-stake{font-size:15px;font-weight:800;color:#fff;}
 .tstg-stake em{font-style:normal;font-size:12px;color:#e0c070;}
@@ -91,7 +91,7 @@
    suave y menta — en vez de su paleta propia. En el resto (Admin, home
    anterior) se ve exactamente como siempre. #}
 {% set _lux = card_lux if card_lux is defined and card_lux else false %}
-{% set _mint = '#10cc87' if _lux else '#4ade80' %}
+{% set _mint = '#60a5fa' if _lux else '#4ade80' %}
 {% set _view = '#7cc4ff' if _lux else '#60a5fa' %}
 {% set _platbg = 'rgba(207,224,245,.13)' if _lux else 'rgba(125,180,255,.15)' %}
 {% set _platfg = '#cfe0f5' if _lux else '#7db4ff' %}
@@ -126,8 +126,8 @@
         </div>
         {% if p.writeup %}
         <details class="tstc-wu" style="border:1px solid rgba(212,175,55,.3);border-radius:10px;background:rgba(0,0,0,.3);margin-bottom:8px;">
-          <summary style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;font-size:12px;letter-spacing:1px;color:#e3b93c;cursor:pointer;list-style:none;"><span>&#x1F4CA; WHY WE LIKE IT</span><span style="color:#9ca3af;font-size:10px;">TAP TO EXPAND &#x25BE;</span></summary>
-          <div style="padding:0 12px 10px;font-size:12px;color:#d1d5db;">
+          <summary style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;font-size:12px;letter-spacing:1px;color:#e3b93c;cursor:pointer;list-style:none;"><span>&#x1F4CA; WHY WE LIKE IT</span><span style="color:#a3b0c6;font-size:10px;">TAP TO EXPAND &#x25BE;</span></summary>
+          <div style="padding:0 12px 10px;font-size:12px;color:#a3b0c6;">
             <div style="display:flex;justify-content:space-between;padding:3px 0;"><span>Model win probability</span><span>{{ p.writeup.model_prob }}</span></div>
             <div style="display:flex;justify-content:space-between;padding:3px 0;"><span>Implied by the price</span><span>{{ p.writeup.implied_prob }}</span></div>
             <div style="display:flex;justify-content:space-between;padding:3px 0;"><span>Fair price (model)</span><span>{{ p.writeup.fair_price }}</span></div>
@@ -152,8 +152,8 @@
               <img src="{{ url_for('static', filename=p.comprobante) }}" alt="Original ticket {{ p.abbr }} {{ p.bettype }}" style="width:100%;display:block;filter:brightness(1);max-height:none;">
             </div>
             <div style="font-size:24px;font-weight:800;color:#fff;margin-bottom:4px;">{{ p.abbr }} {{ p.bettype }}</div>
-            <div style="font-size:14px;color:#9ca3af;margin-bottom:14px;">{{ p.abbr }} vs {{ p.opp_abbr }} &middot; {{ p.liga }} &middot; {{ fmt_odds(p.cuota) }} &middot; Bet {{ '$%.0f' % p.stake_monto }} ({{ '%g' % p.stake_unidades }}u)</div>
-            <div style="background:rgba(255,255,255,.05);border-radius:14px;padding:14px 16px;font-size:14px;color:#d1d5db;margin-bottom:16px;line-height:1.5;">Logged at the price we got, posted before the game. Every play stays on the record.</div>
+            <div style="font-size:14px;color:#a3b0c6;margin-bottom:14px;">{{ p.abbr }} vs {{ p.opp_abbr }} &middot; {{ p.liga }} &middot; {{ fmt_odds(p.cuota) }} &middot; Bet {{ '$%.0f' % p.stake_monto }} ({{ '%g' % p.stake_unidades }}u)</div>
+            <div style="background:rgba(255,255,255,.05);border-radius:14px;padding:14px 16px;font-size:14px;color:#a3b0c6;margin-bottom:16px;line-height:1.5;">Logged at the price we got, posted before the game. Every play stays on the record.</div>
             {% if p.novig_url and '%2Fevent-markets%2F' in p.novig_url %}
             <a href="{{ p.novig_url }}" target="_blank" rel="noopener" style="display:block;text-align:center;background:#00e07f;color:#000;font-weight:800;font-size:16px;padding:16px;border-radius:16px;text-decoration:none;margin-bottom:10px;">Bet at Novig &rarr;</a>
             {% else %}
@@ -169,7 +169,7 @@
           </div>
         </div>
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
-          <div style="font-size:13px;color:{{ _mint }};">Bet&nbsp;&nbsp;{{ '$%.0f' % p.stake_monto }} <span style="color:#9ca3af;">({{ '%g' % p.stake_unidades }}u)</span></div>
+          <div style="font-size:13px;color:{{ _mint }};">Bet&nbsp;&nbsp;{{ '$%.0f' % p.stake_monto }} <span style="color:#a3b0c6;">({{ '%g' % p.stake_unidades }}u)</span></div>
           {% if p.nivel != 'VALUE' %}
           {% if p.id in tracked_ids %}
             <span style="color:{{ _mint }};font-size:11px;">&#x2713; Tracked</span>
@@ -203,23 +203,23 @@
           {% if p.logo_url %}<img src="{{ p.logo_url }}" alt="{{ p.abbr }}" width="64" height="64" style="flex:none;width:64px;height:64px;object-fit:contain;" loading="lazy">{% else %}<svg width="64" height="64" viewBox="0 0 60 60" style="flex:none;"><path d="M22 8 L12 14 L6 28 L15 31 L17 25 L17 54 L43 54 L43 25 L45 31 L54 28 L48 14 L38 8 C36 13 33 15 30 15 C27 15 24 13 22 8 Z" fill="#1a2233" stroke="#c9a227" stroke-width="2"/><path d="M22 8 C24 13 27 15 30 15 C33 15 36 13 38 8" fill="none" stroke="#c9a227" stroke-width="1.2"/><text x="30" y="42" text-anchor="middle" fill="#fff" font-size="12" font-family:sans-serif">{{ p.abbr }}</text></svg>{% endif %}
           <div>
             <div style="font-size:18px;color:#fff;">{{ p.team_name or p.abbr }}</div>
-            <div style="font-size:12px;color:#d1d5db;margin-top:2px;">{{ _bt_label }} &middot; <span style="color:#e3b93c;">{{ p.liga or '' }}</span> &middot; {{ p.game_time_et or p.hora or '' }}</div>
+            <div style="font-size:12px;color:#a3b0c6;margin-top:2px;">{{ _bt_label }} &middot; <span style="color:#e3b93c;">{{ p.liga or '' }}</span> &middot; {{ p.game_time_et or p.hora or '' }}</div>
           </div>
         </div>
         <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:6px;">
           <span style="font-size:30px;color:{{ _mint }};">{{ fmt_odds(p.cuota) }}</span>
-          {% if p.writeup and p.writeup.fair_price %}<span style="font-size:12px;color:#d1d5db;">Fair <span style="color:#fff;">{{ p.writeup.fair_price }}</span></span>{% endif %}
-          {% if p.writeup and p.writeup.edge %}<span style="font-size:12px;color:#d1d5db;">Edge <span style="color:{{ _mint }};">{{ p.writeup.edge }}</span></span>{% endif %}
+          {% if p.writeup and p.writeup.fair_price %}<span style="font-size:12px;color:#a3b0c6;">Fair <span style="color:#fff;">{{ p.writeup.fair_price }}</span></span>{% endif %}
+          {% if p.writeup and p.writeup.edge %}<span style="font-size:12px;color:#a3b0c6;">Edge <span style="color:{{ _mint }};">{{ p.writeup.edge }}</span></span>{% endif %}
         </div>
-        {% if p.casa %}<div style="margin-bottom:10px;"><span style="font-size:12px;color:#9aa3b8;">Best price at </span><span style="font-size:12px;font-weight:800;color:#e3b93c;">{{ p.casa }}</span></div>{% endif %}
-        <div style="display:flex;gap:16px;margin-bottom:12px;font-size:12px;color:#d1d5db;">
+        {% if p.casa %}<div style="margin-bottom:10px;"><span style="font-size:12px;color:#a3b0c6;">Best price at </span><span style="font-size:12px;font-weight:800;color:#e3b93c;">{{ p.casa }}</span></div>{% endif %}
+        <div style="display:flex;gap:16px;margin-bottom:12px;font-size:12px;color:#a3b0c6;">
           <span>Stake <span style="color:#fff;">{{ '$%.0f' % p.stake_monto }} ({{ '%g' % p.stake_unidades }}u)</span></span>
           {% if p.writeup and p.writeup.model_prob %}<span>Model <span style="color:#fff;">{{ p.writeup.model_prob }}</span></span>{% endif %}
         </div>
         {% if p.writeup %}
         <details class="tstc-wu" style="margin-bottom:12px;border:1px solid rgba(212,175,55,.3);border-radius:12px;background:rgba(0,0,0,.3);">
-          <summary style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;font-size:13px;letter-spacing:1px;color:#e3b93c;cursor:pointer;list-style:none;"><span>📊 WHY WE LIKE IT</span><span style="color:#9ca3af;font-size:11px;">TAP TO EXPAND ▾</span></summary>
-          <div style="padding:0 14px 12px;font-size:13px;color:#d1d5db;">
+          <summary style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;font-size:13px;letter-spacing:1px;color:#e3b93c;cursor:pointer;list-style:none;"><span>📊 WHY WE LIKE IT</span><span style="color:#a3b0c6;font-size:11px;">TAP TO EXPAND ▾</span></summary>
+          <div style="padding:0 14px 12px;font-size:13px;color:#a3b0c6;">
             <div style="display:flex;justify-content:space-between;padding:4px 0;"><span>Model win probability</span><span>{{ p.writeup.model_prob }}</span></div>
             <div style="display:flex;justify-content:space-between;padding:4px 0;"><span>Implied by the price</span><span>{{ p.writeup.implied_prob }}</span></div>
             <div style="display:flex;justify-content:space-between;padding:4px 0;"><span>Fair price (model)</span><span>{{ p.writeup.fair_price }}</span></div>
