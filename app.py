@@ -3100,11 +3100,13 @@ def stake_personalizado(play, user):
 def personalizar_plays(plays, user):
     """Devuelve copias de las jugadas con stake_monto personalizado."""
     card_info = load_card_info()
+    splits = load_splits()
     out = []
     for p in plays:
         p = dict(p)
         p["stake_monto"] = stake_personalizado(p, user)
         p["card_info"] = (card_info.get(p.get("id")) or {})
+        p["splits"] = (splits.get(p.get("id")) or {})
         out.append(p)
     return out
 
@@ -4451,7 +4453,23 @@ def load_card_info():
     return {}
 
 
-def load_live_graded():
+SPLITS_URL = (
+    "https://raw.githubusercontent.com/penamanuel-art/tlb-members"
+    "/data-board/data/splits.json"
+)
+
+
+def load_splits():
+    """Overlay data-board (bloque Betting splits del detalle de jugada):
+    map play_id -> dict con books / sharp / exchange. Lo publica
+    hidden_files/splits-board.py. Fail-open {}: sin datos, el detalle
+    simplemente no muestra el bloque (nunca se inventan cifras)."""
+    data = _json_remoto_o_local(
+        SPLITS_URL, os.path.join(BASE_DIR, "data", "splits.json"),
+        ttl=60)
+    if isinstance(data, dict):
+        return data.get("games") or {}
+    return {}
     # Cache-buster por minuto: el CDN de raw.githubusercontent puede servir
     # una copia vieja por varios minutos y el conteo del home se atrasaba
     # (visto 2026-11-19: Denver gano y el home seguia en 1-0). Con la URL
