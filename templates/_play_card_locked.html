@@ -1,26 +1,26 @@
-{# Carta Platinum BLOQUEADA y BORROSA para miembros sin Platinum (diseno ordenado por Alex 2026-10-29): la jugada aparece con SU carta (matchup real), pero el pick va borroso y bloqueado. Solo usa la vista sanitizada (_locked_play_view): pick/cuota/stake/edge/writeup/comprobante original NUNCA llegan a este HTML. #}
+{# Carta Platinum BLOQUEADA y BORROSA para miembros sin Platinum (diseno ordenado por Alex 2026-10-29): la jugada aparece con SU carta (matchup real), pero el pick va borroso y bloqueado. Solo usa la vista sanitizada (_locked_play_view): pick/cuota/stake/edge/writeup/comprobante original NUNCA llegan a este HTML. Alto recortado (2026-11-22, Alex: «está muy larga esa»): paddings/margenes mas finos y la foto borrosa con alto tope 118px + object-fit:cover (es borrosa: recortarla no esconde nada mas) pa' que la carta mida casi igual que una carta normal de la misma lista (medido: 607px -> ~439px vs 437px de la normal). #}
 <div style="background:#070b14;border:1px solid #343B47;border-radius:20px;overflow:hidden;margin:0 0 14px;position:relative;">
-  <div style="background:#05070d;padding:12px 8px;display:flex;align-items:center;justify-content:space-between;gap:6px;">
+  <div style="background:#05070d;padding:10px 8px;display:flex;align-items:center;justify-content:space-between;gap:6px;">
     <span style="font-size:12px;font-weight:700;letter-spacing:.8px;line-height:1.15;color:#e8c766;white-space:nowrap;flex:none;">{% if p.nivel == 'VAULT' %}🔒 THE VAULT PLAY{% elif p.nivel in ('GOLD', 'FREE') %}GOLD{% else %}💎 PLATINUM{% endif %}</span>
     <span style="font-size:11px;line-height:1.15;color:#a3b0c6;white-space:nowrap;flex:none;">{{ p.liga }}{% if p.hora %} · {{ p.hora }}{% elif p.game_time_et %} · {{ p.game_time_et }}{% endif %}</span>
     <span style="font-size:11px;font-weight:800;letter-spacing:.8px;line-height:1.15;color:#05070d;background:#e8c766;border-radius:999px;padding:3px 6px;white-space:nowrap;flex:none;">🔒 LOCKED</span>
   </div>
-  <div style="padding:16px;">
-    <div style="margin-top:14px;filter:blur(6px);-webkit-filter:blur(6px);opacity:.75;pointer-events:none;user-select:none;" aria-hidden="true">
-      <div style="height:22px;width:62%;background:#0c1425;border-radius:6px;margin-bottom:10px;"></div>
+  <div style="padding:12px 16px;">
+    <div style="margin-top:6px;filter:blur(6px);-webkit-filter:blur(6px);opacity:.75;pointer-events:none;user-select:none;" aria-hidden="true">
+      <div style="height:16px;width:62%;background:#0c1425;border-radius:6px;margin-bottom:8px;"></div>
       <div style="display:flex;gap:10px;">
-        <div style="height:15px;width:34%;background:#0a1220;border-radius:5px;"></div>
-        <div style="height:15px;width:26%;background:#0a1220;border-radius:5px;"></div>
+        <div style="height:13px;width:34%;background:#0a1220;border-radius:5px;"></div>
+        <div style="height:13px;width:26%;background:#0a1220;border-radius:5px;"></div>
       </div>
       {% if p.ticket_url %}
-      <img src="{{ p.ticket_url }}" alt="" style="width:100%;border-radius:12px;margin-top:14px;display:block;">
+      <img src="{{ p.ticket_url }}" alt="" style="width:100%;height:118px;object-fit:cover;border-radius:12px;margin-top:10px;display:block;">
       {% endif %}
     </div>
-    <div style="font-size:20px;font-weight:800;color:#ffffff;line-height:1.25;margin:16px 0 0;">Platinum members see this pick.</div>
+    <div style="font-size:20px;font-weight:800;color:#ffffff;line-height:1.25;margin:12px 0 0;">Platinum members see this pick.</div>
     <p style="font-size:13.5px;color:#f2f5fb;line-height:1.45;margin:6px 0 0;">This play is for Platinum members. Unlock it to see the pick, the price and the verified ticket.</p>
-    <a href="{{ url_for('desbloquear_platinum') }}" style="display:block;text-align:center;text-decoration:none;font-size:15px;font-weight:800;padding:14px;border-radius:12px;margin-top:12px;background:#60a5fa;color:#fff;">Unlock Platinum — $1 your first week, then $15.99/week →</a>
+    <a href="{{ url_for('desbloquear_platinum') }}" style="display:block;text-align:center;text-decoration:none;font-size:15px;font-weight:800;padding:14px;border-radius:12px;margin-top:10px;background:#60a5fa;color:#fff;">Unlock Platinum — $1 your first week, then $15.99/week →</a>
     <style>@media (max-width:360px){.lk-btnrow a,.lk-btnrow button{font-size:12px !important}}</style>
-    <div class="lk-btnrow" style="display:flex;gap:6px;margin-top:12px;">
+    <div class="lk-btnrow" style="display:flex;gap:6px;margin-top:10px;">
       <a href="{{ url_for('desbloquear_platinum') }}" style="flex:1 1 0;min-width:0;text-align:center;font-size:13.5px;font-weight:400;white-space:nowrap;color:#fff;background:transparent;border:1px solid #0c1425;border-radius:12px;padding:10px 4px;text-decoration:none;overflow:hidden;">↗ Place at Novig</a>
       <button type="button" aria-label="Share" style="flex:0 0 48px;min-width:0;padding:10px 4px;text-align:center;font-size:13.5px;color:#fff;background:transparent;border:1px solid #0c1425;border-radius:12px;cursor:pointer;" onclick="(function(){var u=window.location.origin+'/home';if(navigator.share){navigator.share({title:'The Sharp Team',url:u}).catch(function(){});}else{navigator.clipboard&&navigator.clipboard.writeText(u);}})()">↗</button>
       <a href="{{ url_for('desbloquear_platinum') }}" style="flex:1 1 0;min-width:0;text-align:center;font-size:13.5px;font-weight:400;white-space:nowrap;color:#fff;background:transparent;border:1px solid #0c1425;border-radius:12px;padding:10px 4px;text-decoration:none;overflow:hidden;">🎫 Receipt</a>
