@@ -12565,23 +12565,34 @@ def _desbloquear_intent_1(stripe, db, user, email, customer_id):
                 "source": "desbloquear-payment-element",
             },
         )
-        # Schedule de 2 fases EN UN SOLO PASO desde la suscripción
-        # recién creada (receta documentada de Stripe pa' precios
-        # intro): la fase 1 repite EXACTO el precio actual de la
-        # suscripción (el intro) con iterations=1 — una semana — y la
-        # fase 2 arranca sola al vencer la 1 con el precio semanal de
-        # siempre, sin fin. (El intento anterior creaba el schedule
-        # vacío y lo modificaba después; ese modify fallaba en vivo —
-        # 502 confirmado en la prueba E2E del 2026-11-21.)
+        # Schedule de 2 fases desde la suscripción recién creada. La
+        # API vigente NO acepta `phases` junto a `from_subscription`
+        # (error confirmado en vivo el 2026-11-21: "You cannot set
+        # `phases` if `from_subscription` is set"), así que: (1) se
+        # crea el schedule desde la suscripción — hereda su fase
+        # actual (precio intro, con su start/end reales) — y (2) se
+        # modifica con las 2 fases en fechas explícitas: la fase 1
+        # queda IDÉNTICA a la heredada (mismo precio y mismo
+        # start/end: una semana) y la fase 2 arranca en el end de la
+        # 1 con el precio semanal de siempre, sin end (indefinida).
+        # En el modify NO se usa `iterations`: al actualizar un
+        # schedule las fases van con start_date/end_date.
         try:
             sched = stripe.SubscriptionSchedule.create(
-                from_subscription=sub.get("id"),
+                from_subscription=sub.get("id"))
+            _fases = (sched.get("phases") or [])
+            _inicio_f1 = _fases[0].get("start_date") if _fases else None
+            _fin_f1 = _fases[0].get("end_date") if _fases else None
+            sched = stripe.SubscriptionSchedule.modify(
+                sched.get("id"),
                 phases=[
                     {"items": [{"price": PLATINUM_PRICE_ENTRADA_1,
                                 "quantity": 1}],
-                     "iterations": 1},
+                     "start_date": _inicio_f1,
+                     "end_date": _fin_f1},
                     {"items": [{"price": PLATINUM_PRICE_SEMANAL,
-                                "quantity": 1}]},
+                                "quantity": 1}],
+                     "start_date": _fin_f1},
                 ],
                 metadata={
                     "offer": "entrada_1_v1",
