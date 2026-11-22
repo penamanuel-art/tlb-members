@@ -66,6 +66,41 @@
       html.dark body{background:#0B0E14 !important}
       #app-shell{max-width:none !important;width:100% !important;margin:0 !important;border:none !important;border-radius:0 !important;box-shadow:none !important;min-height:100dvh}
     }
+    /* ===== ESCALA TIPOGRÁFICA GRANDE (corrección 2026-11-22 #2: Alex la abrió
+       a todo ancho y dijo «muy chiquito todo se ve»): sube TODO el chrome
+       propio de la previa — header, widget de unidad, KPIs/bento, filtros,
+       encabezados de sección, upsell, rachas, vistas +EV/Odds/My Bets/More,
+       navegación inferior, modales y botones. NADA por debajo de 12px.
+       Las tarjetas reales del programa (.pick-wrap) quedan FUERA a propósito:
+       conservan los tamaños ya aprobados por Alex. El menú ☰ (#dnMenu)
+       tampoco se toca: es copia exacta del Dashboard en vivo.
+       Selectores por atributo de clase con prefijo #app-shell: ganan a las
+       utilidades que genera el CDN de Tailwind por especificidad. ===== */
+    #app-shell [class~="text-[9px]"]:not(.pick-wrap):not(.pick-wrap *),
+    #app-shell [class~="text-[10px]"]:not(.pick-wrap):not(.pick-wrap *)
+      { font-size:13px }
+    #app-shell [class~="text-[11px]"]:not(.pick-wrap):not(.pick-wrap *)
+      { font-size:13px }
+    #app-shell [class~="text-xs"]:not(.pick-wrap):not(.pick-wrap *)
+      { font-size:14px; line-height:1.4 }
+    #app-shell [class~="text-sm"]:not(.pick-wrap):not(.pick-wrap *)
+      { font-size:16px; line-height:1.4 }
+    #app-shell [class~="text-base"]:not(.pick-wrap):not(.pick-wrap *)
+      { font-size:18px; line-height:1.35 }
+    #app-shell [class~="text-lg"]:not(.pick-wrap):not(.pick-wrap *)
+      { font-size:20px; line-height:1.3 }
+    #app-shell [class~="text-xl"]:not(.pick-wrap):not(.pick-wrap *)
+      { font-size:24px; line-height:1.25 }
+    #app-shell [class~="text-2xl"]:not(.pick-wrap):not(.pick-wrap *)
+      { font-size:30px; line-height:1.2 }
+    /* Números KPI del bento (Record / Win Rate / Profit): protagonistas */
+    #app-shell [class~="grid-cols-3"] [class~="text-base"]:not(.pick-wrap *)
+      { font-size:21px }
+    /* Barra inferior: iconos más grandes y botones con más aire */
+    #app-shell .nav-btn svg{ width:26px; height:26px }
+    #app-shell .nav-btn{ padding-top:8px; padding-bottom:8px }
+    /* Botones de icono del header (tema / campana): glifo más grande */
+    #app-shell header button svg{ width:20px; height:20px }
   </style>
 </head>
 <body class="bg-[#F8FAFC] dark:bg-[#0B0E14] sm:bg-slate-200/80 sm:dark:bg-zinc-950 text-slate-900 dark:text-zinc-100 min-h-screen flex justify-center items-start sm:py-6 transition-colors duration-200">
