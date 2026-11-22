@@ -225,6 +225,28 @@
 .v5actions{background:#070b14}
 .v5timg{background:#070b14}
 .v5pop-in{background:#070b14;border-color:#0c1425}
+/* Bloque BETTING SPLITS del detalle (2026-11-22, aprobado por Alex tras la
+   previa /previa-splits; correccion de forma del mismo dia: UN SOLO fondo
+   plano continuo pa' splits + exchange — nada de cajas dentro de cajas ni
+   bordes internos; las fuentes se separan solo con espacio y tipografia).
+   Datos: p.splits (overlay data-board, splits-board.py). */
+.v5sp{margin-top:14px;background:#070b14;border:1px solid rgba(96,165,250,.16);border-radius:14px;padding:13px 14px 11px}
+.v5sp-head{display:flex;align-items:baseline;gap:9px}
+.v5sp-title{font-size:15.5px;font-weight:700;color:#f2f5fb}
+.v5sp-market{font-size:12.5px;color:#75829a}
+.v5sp-pill{display:inline-flex;align-items:center;gap:6px;margin-top:10px;font-size:12.5px;font-weight:600;color:#60a5fa;background:rgba(96,165,250,.10);border:1px solid rgba(96,165,250,.38);border-radius:8px;padding:5px 10px}
+.v5sp-src{display:flex;align-items:baseline;gap:8px;margin-top:15px;flex-wrap:wrap}
+.v5sp-src-name{font-size:14.5px;font-weight:700;color:#f2f5fb}
+.v5sp-src-note{font-size:12px;color:#75829a}
+.v5sp-team{display:grid;grid-template-columns:86px 1fr;column-gap:10px;margin-top:9px}
+.v5sp-team-name{font-size:13.5px;font-weight:600;color:#f2f5fb;align-self:center;line-height:1.25}
+.v5sp-rows{display:flex;flex-direction:column;gap:5px}
+.v5sp-row{display:grid;grid-template-columns:48px 1fr 46px;align-items:center;column-gap:9px}
+.v5sp-lab{font-size:12px;color:#a3b0c6}
+.v5sp-track{height:7px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden}
+.v5sp-fill{height:100%;border-radius:99px;background:#8a97ac}
+.v5sp-fill.money{background:#60a5fa}
+.v5sp-pct{font-size:13px;font-weight:700;color:#f2f5fb;text-align:right;font-variant-numeric:tabular-nums}
 </style>
 {# Cara MINIMAL (ver nota de cabecera). Banda dorada =
    encabezado de nivel (sustituye a la pildora interna para no duplicar);
@@ -338,6 +360,37 @@
     <div class="v5timg">
       <a href="{{ url_for('static', filename=p.comprobante) }}" target="_blank" rel="noopener"><img src="{{ url_for('static', filename=p.comprobante) }}" alt="Original ticket {{ p.abbr }} {{ p.bettype }}" loading="lazy"></a>
       <span class="v5c-matched" style="position:absolute;top:8px;right:8px">✓ MATCHED</span>
+    </div>
+    {% endif %}
+    {% if p.splits %}
+    <div class="v5sp">
+      <div class="v5sp-head"><span class="v5sp-title">Betting splits by source</span><span class="v5sp-market">{{ p.splits.market or 'moneyline' }}</span></div>
+      {% if p.splits.sharp %}<span class="v5sp-pill">Sharp signal: {{ p.splits.sharp.team }} &middot; {{ p.splits.sharp.books_label }}</span>{% endif %}
+      {% for b in p.splits.books or [] %}
+      <div class="v5sp-src"><span class="v5sp-src-name">{{ b.name }}</span><span class="v5sp-src-note">{{ b.note }}{% if b.read_et %} &middot; read {{ b.read_et }}{% endif %}</span></div>
+      {% for t in b.teams %}
+      <div class="v5sp-team">
+        <div class="v5sp-team-name">{{ t.name }}</div>
+        <div class="v5sp-rows">
+          <div class="v5sp-row"><span class="v5sp-lab">Tickets</span><div class="v5sp-track"><div class="v5sp-fill" style="width:{{ t.tickets }}%"></div></div><span class="v5sp-pct">{{ '%g'|format(t.tickets) }}%</span></div>
+          <div class="v5sp-row"><span class="v5sp-lab">Money</span><div class="v5sp-track"><div class="v5sp-fill money" style="width:{{ t.money }}%"></div></div><span class="v5sp-pct">{{ '%g'|format(t.money) }}%</span></div>
+        </div>
+      </div>
+      {% endfor %}
+      {% endfor %}
+      {% if p.splits.exchange %}
+      <div class="v5sp-head" style="margin-top:19px"><span class="v5sp-title">Exchange buyers</span><span class="v5sp-market">{{ p.splits.market or 'moneyline' }}</span></div>
+      <div class="v5sp-src"><span class="v5sp-src-name">{{ p.splits.exchange.name }}</span><span class="v5sp-src-note">${{ p.splits.exchange.dollars_txt }} traded on this market in the trades we read &middot; {{ p.splits.exchange.trades_txt }} trades &middot; read {{ p.splits.exchange.read_et }}</span></div>
+      {% for t in p.splits.exchange.teams %}
+      <div class="v5sp-team">
+        <div class="v5sp-team-name">{{ t.name }}</div>
+        <div class="v5sp-rows">
+          <div class="v5sp-row"><span class="v5sp-lab">Trades</span><div class="v5sp-track"><div class="v5sp-fill" style="width:{{ t.trades }}%"></div></div><span class="v5sp-pct">{{ '%g'|format(t.trades) }}%</span></div>
+          <div class="v5sp-row"><span class="v5sp-lab">Money</span><div class="v5sp-track"><div class="v5sp-fill money" style="width:{{ t.money }}%"></div></div><span class="v5sp-pct">{{ '%g'|format(t.money) }}%</span></div>
+        </div>
+      </div>
+      {% endfor %}
+      {% endif %}
     </div>
     {% endif %}
     <p style="font-size:13.5px;color:#75829a;line-height:1.5;margin:10px 0 0">Prices move after posting — compare before you bet.</p>
