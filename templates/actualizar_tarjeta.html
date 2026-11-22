@@ -12,7 +12,7 @@
 
 {% if estado == 'hold' %}
 <!-- Pago fallido, suscripción viva -->
-<div style="background:#2e4053;padding:28px 24px 24px;text-align:center;">
+<div style="background:#38335f;padding:28px 24px 24px;text-align:center;">
 <p style="margin:0;font-size:11px;font-weight:800;letter-spacing:2px;color:#f5b04c;">&#9888;&nbsp; PAYMENT FAILED</p>
 <h1 style="font-size:26px;font-weight:800;color:#ffffff;margin:10px 0 0;line-height:1.25;">Your Platinum is on hold</h1>
 <p style="margin:10px 0 0;font-size:13px;color:#c7d0dd;line-height:1.5;">Hi {{ nombre }} &mdash; your last payment didn&apos;t go through. Update your card below and your access comes back instantly.</p>
@@ -58,7 +58,7 @@
 </div>
 
 <table role="presentation" cellpadding="0" cellspacing="0" style="width:100%;margin-top:20px;">
-<tr><td style="border-top:1px solid #e5e7eb;"></td><td style="width:36px;text-align:center;font-size:11.4px;color:#9ca3af;">or</td><td style="border-top:1px solid #e5e7eb;"></td></tr>
+<tr><td style="border-top:1px solid #e5e7eb;"></td><td style="width:36px;text-align:center;font-size:11.4px;color:#a3a1c2;">or</td><td style="border-top:1px solid #e5e7eb;"></td></tr>
 </table>
 
 <div style="text-align:center;padding:12px 0 2px;">
@@ -70,7 +70,7 @@
 
 {% elif estado == 'ended' %}
 <!-- Suscripción ya cerrada -->
-<div style="background:#2e4053;padding:28px 24px 24px;text-align:center;">
+<div style="background:#38335f;padding:28px 24px 24px;text-align:center;">
 <p style="margin:0;font-size:11px;font-weight:800;letter-spacing:2px;color:#f5b04c;">&#9888;&nbsp; SUBSCRIPTION ENDED</p>
 <h1 style="font-size:26px;font-weight:800;color:#ffffff;margin:10px 0 0;line-height:1.25;">Your Platinum has ended</h1>
 <p style="margin:10px 0 0;font-size:13px;color:#c7d0dd;line-height:1.5;">Hi {{ nombre }} &mdash; after the missed payment, this subscription closed. The good news: you can be back on today&apos;s plays in about a minute.</p>
@@ -94,7 +94,7 @@
 
 {% else %}
 <!-- Cuenta al día -->
-<div style="background:#2e4053;padding:28px 24px 24px;text-align:center;">
+<div style="background:#38335f;padding:28px 24px 24px;text-align:center;">
 <p style="margin:0;font-size:26px;">&#9989;</p>
 <h1 style="font-size:26px;font-weight:800;color:#ffffff;margin:10px 0 0;line-height:1.25;">You&apos;re all set, {{ nombre }}</h1>
 <p style="margin:10px 0 0;font-size:13px;color:#c7d0dd;line-height:1.5;">Your account is in good standing &mdash; no payment is due and no action is needed.</p>
