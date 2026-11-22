@@ -185,6 +185,8 @@
 .v5m-tok{font-size:12px;font-weight:500;color:#10CC87;margin-top:2px}
 .v5m-tpend{font-size:12px;font-weight:500;color:#8b919e;margin-top:2px}
 .v5m-meta{display:flex;gap:16px;flex-wrap:wrap;align-items:center;margin-top:14px;min-height:37px;box-sizing:border-box}
+/* Liquidada y sin datos en la fila meta: la fila vacia NO reserva altura (2026-11-22, queja de Alex: hueco muerto en la tarjeta ya liquidada). En vivo la fila se queda igual que siempre. */
+.v5m-meta-off{display:none}
 .v5m-chip{display:inline-flex;align-items:center;gap:5px;font-size:13.5px;font-weight:400;color:#8b919e;background:none;border:none;padding:2px 0;cursor:pointer;font-family:inherit}
 .v5m-chip-inj{color:#EE8CA5}
 .v5m-chip-poly{display:inline-flex;align-items:center;gap:6px;background:#1D2536;border-radius:10px;padding:6px 10px;font-size:13.5px;font-weight:400;color:#9aa7b8;white-space:nowrap}
@@ -258,7 +260,8 @@
     <div><div class="v5m-k">PRICE POSTED</div><div class="v5m-priceline"><div class="v5m-price">{{ fmt_odds(p.cuota) }}</div>{% if _ci.get('injuries') %}<button type="button" class="v5m-chip v5m-chip-inj" data-v5-chip="injuries" data-play="{{ p.id }}"><svg width="16.5" height="16.5" viewBox="0 0 24 24" fill="none" stroke="#EE8CA5" stroke-width="3.4" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 3.5h5V9.5h6v5h-6v6h-5v-6h-6v-5h6z"/></svg> {{ _ci.injuries.total }}</button>{% endif %}</div></div>
     <div class="v5m-right"><div class="v5m-k">STAKE</div><div class="v5m-stake">{{ '%g' % p.stake_unidades }}u &middot; ${{ '%g' % p.stake_monto }}</div>{% if p.comprobante %}<div class="v5m-tok">✓ Ticket matched</div>{% else %}<div class="v5m-tpend">Ticket pending</div>{% endif %}</div>
   </div>
-  <div class="v5m-meta">
+  {% set _meta_has = (p.poly is defined and p.poly is number) or (_ci.get('weather') and _ci.weather.indoor) or (p.posted is defined and p.posted) %}
+  <div class="v5m-meta{% if _res and not _meta_has %} v5m-meta-off{% endif %}">
     {% if p.poly is defined and p.poly is number %}<span class="v5m-chip-poly"><span class="v5m-poly-ico">⇄</span> Poly <b>{{ '%g'|format(p.poly) }}%</b></span>{% endif %}
     {% if _ci.get('weather') and _ci.weather.indoor %}<button type="button" class="v5m-chip" data-v5-chip="weather" data-play="{{ p.id }}">🏟 {{ _ci.weather.venue }}</button>{% endif %}
     {% if p.posted %}<span class="v5m-posted">Posted {{ p.posted }}</span>{% endif %}
