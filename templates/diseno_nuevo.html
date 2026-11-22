@@ -369,10 +369,15 @@
   @keyframes dnShimmer{to{transform:translateX(100%)}}
   @media (prefers-reduced-motion: reduce){.dn-load{display:none}}
   /* Zoom global del Dashboard (2026-11-22, orden de Alex: «Bájale 15% de tamaños»):
-     todo el home — tirita, header, contenido con las tarjetas y barra inferior fija —
+     todo el home — header, contenido con las tarjetas y barra inferior fija —
      se escala parejo a 0.85 con un solo mecanismo. Las capas transitorias
      (skeleton de carga, hojas, menú y tour) quedan fuera a propósito. */
-  .dn-strip-top,.dn-top,.dn-wrap,.dn-tabs{zoom:.85}
+  .dn-top,.dn-wrap,.dn-tabs{zoom:.85}
+  /* Excepcion de la tirita (2026-11-22, orden de Alex: «La tirita de arriba
+     esta muy pequena»): la cinta de racha vuelve a su tamano ORIGINAL, sin el
+     0.85 — su alto base (37px a 440px) y su texto/iconos se renderizan al
+     100%. Todo lo demas del home se queda reducido, como se ordeno. */
+  .dn-strip-top{zoom:1}
   /* Titulos de seccion UNIFICADOS (2026-11-22, orden de Alex: todo uniforme,
      mismo tamaño): todos los encabezados de seccion del home comparten UN solo
      tamaño y estilo — 17.1px / 700 / Unbounded, el estandar de .dn-sec-head
