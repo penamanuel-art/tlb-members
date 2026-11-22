@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-22T12:39:43-04:00",
+  "updated_at": "2026-11-22T12:54:42-04:00",
   "refresh_minutes": 15,
   "fair_source": "Pinnacle no-vig",
   "filters": {
@@ -29,7 +29,7 @@
       "fair_prob_pct": 22.5,
       "fair_american": 345,
       "ev_pct": 6.9,
-      "ev_mercado_pct": 5.2,
+      "ev_mercado_pct": 5.4,
       "fair_mercado_prob_pct": 22.1,
       "doble": true,
       "books_count": 2,
@@ -71,45 +71,44 @@
       "team": "Tampa Bay Buccaneers",
       "market": "Moneyline",
       "point": "",
-      "book": "FanDuel",
-      "price": 290,
-      "fair_prob_pct": 27.6,
-      "fair_american": 262,
-      "ev_pct": 7.7,
-      "ev_mercado_pct": 2.3,
-      "fair_mercado_prob_pct": 26.2,
+      "book": "Novig",
+      "price": 194,
+      "fair_prob_pct": 35.2,
+      "fair_american": 184,
+      "ev_pct": 3.4,
+      "ev_mercado_pct": 1.6,
+      "fair_mercado_prob_pct": 34.6,
       "doble": true,
       "books_count": 2,
       "books": [
         {
-          "book": "FanDuel",
-          "price": 290,
-          "ev_pct": 7.7,
-          "url": "https://sportsbook.fanduel.com"
+          "book": "Novig",
+          "price": 194,
+          "ev_pct": 3.4,
+          "url": "https://novig.com"
         },
         {
-          "book": "Novig",
-          "price": 285,
-          "ev_pct": 6.3,
-          "url": "https://novig.com"
+          "book": "MyBookie.ag",
+          "price": 193,
+          "ev_pct": 3.0,
+          "url": null
         }
       ],
       "also_at": [
-        "Novig"
+        "MyBookie.ag"
       ],
       "sharp": false,
       "verified": true,
-      "edge_label": "Strong edge",
-      "rec_units": 1.0,
-      "rec_stake": 100,
+      "edge_label": "Value edge",
+      "rec_units": 0.6,
+      "rec_stake": 60,
       "live": false,
       "game_time": "Sun, Nov 22 \u00b7 2:00 PM ET",
       "commence_time": "2026-11-22T18:00:00Z",
       "bet_url": "https://novig.com",
       "novig_deep": false,
-      "stale": true,
-      "first_seen": "2026-11-17T22:39:51.349817+00:00",
-      "stale_reason": "line moved below 3%"
+      "stale": false,
+      "first_seen": "2026-11-17T22:39:51.349817+00:00"
     },
     {
       "id": "4b20b742b6168aaca4f25d87f11b1526-h2h-None-New York Jets",
@@ -318,7 +317,29 @@
       "stale_reason": "line moved below 3%"
     }
   ],
-  "arbitrajes": [],
+  "arbitrajes": [
+    {
+      "sport": "NFL",
+      "game": "Arizona Cardinals @ Kansas City Chiefs",
+      "market": "Moneyline",
+      "point": "",
+      "margen_pct": 0.1,
+      "lados": [
+        {
+          "pick": "Arizona Cardinals",
+          "casa": "Novig",
+          "precio": 1011
+        },
+        {
+          "pick": "Kansas City Chiefs",
+          "casa": "Pinnacle",
+          "precio": -999
+        }
+      ],
+      "commence_time": "2026-11-22T18:00:00Z",
+      "live": false
+    }
+  ],
   "events": [
     {
       "league": "NBA",
