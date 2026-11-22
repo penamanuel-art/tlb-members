@@ -1,77 +1,60 @@
 {% extends "base_v2.html" %}
 {% block content %}
 <style>
-body.v2 { background: radial-gradient(820px 460px at 88% -6%, rgba(16,204,135,.16), transparent 58%), radial-gradient(700px 500px at -10% 108%, rgba(20,140,120,.13), transparent 60%), linear-gradient(160deg, #07231e 0%, #041a20 52%, #030c11 100%) !important; background-attachment: fixed !important; }
-.adm-clean { max-width: 880px; margin: 0 auto; padding: 6px 10px 56px; font-family: -apple-system, 'SF Pro', Inter, system-ui, sans-serif; }
+/* Admin rediseñado (2026-11-21, orden de Alex): simple y directo —
+   miembros arriba con solo el número, la información principal de un
+   vistazo, las herramientas agrupadas a un toque, cero adornos. */
+body.v2 { background: #0C0F16 !important; }
+.adm { max-width: 880px; margin: 0 auto; padding: 6px 10px 56px; font-family: -apple-system, 'SF Pro', Inter, system-ui, sans-serif; }
 .v2-wrap { padding-left: 10px !important; padding-right: 10px !important; padding-top: 0 !important; }
-/* Menú de arriba fijo en el admin (2026-10-26, pedido Alex: se movía al bajar la página): sticky fallaba en Safari, pasa a fixed con espacio arriba. */
-.v2-topbar { position: fixed !important; top: 0; left: 0; right: 0; z-index: 100; }
-body.v2 { padding-top: 77px; }
-.chat-fab { top: auto !important; bottom: 96px !important; }
-.adm-clean .kicker { color: #10cc87; font-size: 11px; font-weight: 800; letter-spacing: 5px; margin: 0; text-transform: uppercase; }
-.adm-clean h1 { font-size: 1.45rem; font-weight: 800; color: #fff; margin: 2px 0 8px; letter-spacing: -0.5px; }
 .v2-topbar { display: none !important; }
 .v2-bottomnav { display: none !important; }
-.adm-head { background: #0d1526; border: 1px solid rgba(255,255,255,.09); border-radius: 18px; padding: 14px 16px; margin-bottom: 14px; }
-.adm-brand { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; }
-.adm-brand .sp { flex-wrap: wrap; }
-.adm-brand img { height: 44px; width: auto; }
-.adm-brand .b-notif { border: 1px solid rgba(16,204,135,.55); color: #10cc87; font-weight: 800; font-size: 0.8rem; padding: 9px 14px; border-radius: 999px; text-decoration: none; white-space: nowrap; display: inline-flex; align-items: center; gap: 7px; }
-.adm-brand .b-notif .bdg { background: #10cc87; color: #06130c; border-radius: 999px; font-size: 0.72rem; font-weight: 900; padding: 1px 8px; }
-.adm-hstats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 12px; }
-.adm-hstats .adm-stat .n { font-size: 1.1rem; }
-.adm-brand .bt { line-height: 1.15; }
-.adm-brand .bt .n { font-weight: 900; font-size: 1.02rem; letter-spacing: .4px; color: #fff; }
-.adm-brand .bt .s { font-size: 0.66rem; font-weight: 800; letter-spacing: 2.5px; color: #10cc87; text-transform: uppercase; }
-.adm-brand .sp { margin-left: auto; display: flex; gap: 8px; align-items: center; }
-.adm-brand .b-dash { background: #10cc87; color: #06130c; font-weight: 800; font-size: 0.8rem; padding: 9px 14px; border-radius: 999px; text-decoration: none; white-space: nowrap; }
-.adm-brand .b-out { color: #8fa1c2; font-weight: 700; font-size: 0.8rem; text-decoration: none; white-space: nowrap; }
-.adm-total { display: flex; align-items: baseline; gap: 12px; margin: 0; }
-.adm-total .tn { font-size: 2.1rem; font-weight: 800; color: #fff; line-height: 1; }
-.adm-total .tl { font-size: 0.72rem; font-weight: 800; letter-spacing: 2px; color: #8fa1c2; }
-.adm-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 16px; }
-.adm-stat { background: #0d1526; border: 1px solid rgba(255,255,255,.08); border-radius: 14px; padding: 12px 10px; text-align: center; }
-.adm-stat .n { display: block; font-size: 1.25rem; font-weight: 700; color: #10cc87; }
-.adm-stat .l { display: block; font-size: 0.56rem; font-weight: 600; letter-spacing: 0.6px; color: #8fa1c2; margin-top: 3px; text-transform: uppercase; white-space: nowrap; }
-.adm-hstats .adm-stat { padding: 12px 4px; }
-.adm-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 30px; }
+.chat-fab { top: auto !important; bottom: 96px !important; }
+.adm-kicker { color: #1AE099; font-size: 11px; font-weight: 800; letter-spacing: 5px; margin: 4px 0 2px; text-transform: uppercase; }
+.adm h1 { font-size: 2rem; font-weight: 800; color: #fff; margin: 0 0 16px; letter-spacing: -0.5px; }
+.adm-sec { font-size: 1.05rem; font-weight: 800; color: #fff; margin: 26px 0 12px; padding-left: 10px; border-left: 3px solid #10CC87; line-height: 1.25; }
+.adm-sec:first-of-type { margin-top: 0; }
+/* Cuadritos de miembros: etiqueta arriba, SOLO el número abajo */
+.adm-tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+@media (max-width: 560px) { .adm-tiles { grid-template-columns: repeat(2, 1fr); } }
+.adm-tile { background: #1D2029; border: 1px solid #2A2E3A; border-radius: 14px; padding: 14px 8px 12px; text-align: center; }
+.adm-tile .l { display: block; font-size: 0.62rem; font-weight: 700; letter-spacing: 1px; color: #9AA1AE; text-transform: uppercase; white-space: nowrap; }
+.adm-tile .n { display: block; font-size: 2rem; font-weight: 800; color: #fff; line-height: 1.15; margin-top: 4px; }
+.adm-tile.hot .n { color: #1AE099; }
+/* Botones de herramientas: un solo estilo en todo el Admin */
+.adm-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .adm-btn { display: block; text-decoration: none; color: #fff; text-align: center;
-  background: #0d1526;
-  border: 1px solid rgba(255,255,255,.09); border-radius: 16px; padding: 22px 10px 18px;
+  background: #1D2029; border: 1px solid #2A2E3A; border-radius: 16px; padding: 20px 10px 16px;
   transition: border-color .15s ease, transform .15s ease; }
-.adm-btn:active { transform: scale(.98); border-color: rgba(16,204,135,.55); }
-.adm-btn .ico { font-size: 1.8rem; display: block; margin-bottom: 9px; }
+.adm-btn:active { transform: scale(.98); border-color: #10CC87; }
+.adm-btn .ico { font-size: 1.7rem; display: block; margin-bottom: 8px; }
 .adm-btn .t { font-size: 0.98rem; font-weight: 800; display: block; letter-spacing: .2px; }
-.adm-btn .s { font-size: 0.74rem; color: #8fa1c2; display: block; margin-top: 4px; }
-.adm-section { margin-bottom: 30px; }
-.adm-section h2 { font-size: 1.05rem; font-weight: 800; color: #fff; margin: 0 0 14px; padding-left: 10px; border-left: 3px solid #10cc87; line-height: 1.25; }
-.adm-card { background: #0d1526; border: 1px solid rgba(255,255,255,.08); border-radius: 16px; padding: 16px; margin-bottom: 12px; }
-
-.adm-folder { background:linear-gradient(160deg,#101828,#0c1322); border:1px solid #1d2029; border-radius:14px; margin-bottom:12px; overflow:hidden; }
-.adm-fold-head { width:100%; display:flex; justify-content:space-between; align-items:center; gap:10px; background:none; border:0; color:#fff; font:inherit; font-size:1rem; font-weight:800; padding:16px; cursor:pointer; text-align:left; text-decoration:none; box-sizing:border-box; }
-.adm-fold-count { background:rgba(16,204,135,.14); color:#10cc87; border-radius:999px; padding:3px 12px; font-size:0.82rem; font-weight:800; white-space:nowrap; }
-.adm-fold-chev { color:#8fa1c2; font-size:1.2rem; }
-.adm-fold-body { display:none; padding:2px 16px 16px; }
-.adm-muted { color: #8fa1c2; font-size: 0.85rem; }
-.send-btn { width: 100%; background: #10cc87; color: #06130c; border: none; border-radius: 14px; padding: 15px; font-weight: 800; font-size: 1rem; cursor: pointer; margin-top: 12px; display: block; }
-.status-badge { display: inline-block; font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 999px; margin-bottom: 8px; }
-.status-pend { background: rgba(255,255,255,.08); color: #fff; border: 1px solid rgba(255,255,255,.35); }
-.status-sent { background: rgba(16,204,135,.13); color: #10cc87; border: 1px solid rgba(16,204,135,.35); }
-.ctl-t { font-weight: 800; color: #fff; margin-bottom: 10px; font-size: 0.95rem; }
-.ctl-in { width: 100%; box-sizing: border-box; background: #070d1d; border: 1px solid rgba(255,255,255,.14); border-radius: 12px; color: #fff; padding: 11px 12px; font-size: 0.9rem; margin-bottom: 8px; font-family: inherit; }
-.ctl-in:focus { outline: none; border-color: rgba(16,204,135,.6); }
-.ctl-btn { width: 100%; background: #10cc87; color: #06130c; border: none; border-radius: 999px; padding: 11px; font-weight: 800; cursor: pointer; font-size: 0.9rem; }
-.ctl-note { font-size: 0.75rem; color: #8fa1c2; margin-top: 8px; line-height: 1.5; }
+.adm-btn .s { font-size: 0.74rem; color: #9AA1AE; display: block; margin-top: 4px; }
+/* Tarjetas e info principal */
+.adm-card { background: #1D2029; border: 1px solid #2A2E3A; border-radius: 16px; padding: 16px; margin-bottom: 12px; }
+.adm-money { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+@media (max-width: 560px) { .adm-money { grid-template-columns: repeat(2, 1fr); } }
+.adm-muted { color: #9AA1AE; font-size: 0.85rem; }
 .mrow { display: flex; justify-content: space-between; align-items: center; gap: 10px;
   text-decoration: none; color: #fff; padding: 12px 14px; border-radius: 12px;
-  background: #0d1526; border: 1px solid rgba(255,255,255,.07); margin-bottom: 6px; }
+  background: #1D2029; border: 1px solid #2A2E3A; margin-bottom: 6px; }
 .mrow .mn { font-weight: 700; font-size: 0.92rem; }
 .mrow .mb { font-size: 0.68rem; font-weight: 800; letter-spacing: 1px;
   border: 1px solid; border-radius: 999px; padding: 3px 10px; white-space: nowrap; }
-details.adm-det { background: #0d1526; border: 1px solid rgba(255,255,255,.09); border-radius: 16px; padding: 16px; margin-top: 30px; }
+.send-btn { width: 100%; background: #10CC87; color: #052017; border: none; border-radius: 14px; padding: 15px; font-weight: 800; font-size: 1rem; cursor: pointer; margin-top: 12px; display: block; }
+.status-badge { display: inline-block; font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 999px; margin-bottom: 8px; }
+.status-pend { background: rgba(255,255,255,.08); color: #fff; border: 1px solid rgba(255,255,255,.35); }
+.status-sent { background: rgba(16,204,135,.13); color: #1AE099; border: 1px solid rgba(16,204,135,.35); }
+/* Controles manuales */
+details.adm-det { background: #1D2029; border: 1px solid #2A2E3A; border-radius: 16px; padding: 16px; margin-top: 26px; }
 details.adm-det summary { cursor: pointer; font-weight: 800; font-size: 0.95rem; color: #fff; }
+.ctl-t { font-weight: 800; color: #fff; margin-bottom: 10px; font-size: 0.95rem; }
+.ctl-in { width: 100%; box-sizing: border-box; background: #0C0F16; border: 1px solid #2A2E3A; border-radius: 12px; color: #fff; padding: 11px 12px; font-size: 0.9rem; margin-bottom: 8px; font-family: inherit; }
+.ctl-in:focus { outline: none; border-color: #10CC87; }
+.ctl-btn { width: 100%; background: #10CC87; color: #052017; border: none; border-radius: 999px; padding: 11px; font-weight: 800; cursor: pointer; font-size: 0.9rem; }
+.ctl-note { font-size: 0.75rem; color: #9AA1AE; margin-top: 8px; line-height: 1.5; }
 .chat-fab { position: fixed; bottom: 96px; right: 14px; z-index: 99; width: 54px; height: 54px;
-  border-radius: 50%; background: #0a0f1d; border: 2px solid #10cc87;
+  border-radius: 50%; background: #0C0F16; border: 2px solid #10CC87;
   box-shadow: 0 4px 18px rgba(0,0,0,.5); display: flex; align-items: center; justify-content: center; text-decoration: none; }
 .chat-fab img { width: 36px; height: 36px; object-fit: contain; display: block; }
 </style>
@@ -80,144 +63,141 @@ details.adm-det summary { cursor: pointer; font-weight: 800; font-size: 0.95rem;
   <img src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="Chat">
 </a>
 
-<div class="adm-clean">
-  <p style="font-size:.72rem;letter-spacing:3px;color:#8fa1c2;font-weight:700;margin:4px 0 2px;">ADMIN</p>
-  <h1 style="font-size:2rem;margin:0 0 4px;">Administration</h1>
-  <p style="color:#8fa1c2;font-size:.92rem;margin:0 0 14px;">{{ conteo_miembros.total }} miembros &middot; {{ conteo_miembros.plat }} Platinum &middot; {{ conteo_miembros.trial }} en prueba &middot; {{ conteo_miembros.free }} gratis</p>
+<div class="adm">
+  <p class="adm-kicker">Admin</p>
+  <h1>Administration</h1>
 
+  <h2 class="adm-sec">👥 Members</h2>
+  <div class="adm-tiles">
+    <div class="adm-tile"><span class="l">Total members</span><span class="n">{{ conteo_miembros.total }}</span></div>
+    <div class="adm-tile hot"><span class="l">Active · 10 days</span><span class="n">{{ cohortes.activos if cohortes else '—' }}</span></div>
+    <div class="adm-tile"><span class="l">Dormant · 10–30 days</span><span class="n">{{ cohortes.dormidos if cohortes else '—' }}</span></div>
+    <div class="adm-tile"><span class="l">Dead · 30+ days</span><span class="n">{{ cohortes.muertos if cohortes else '—' }}</span></div>
+    <div class="adm-tile hot"><span class="l">Platinum</span><span class="n">{{ conteo_miembros.plat }}</span></div>
+    <div class="adm-tile"><span class="l">On trial</span><span class="n">{{ conteo_miembros.trial }}</span></div>
+    <div class="adm-tile"><span class="l">Free</span><span class="n">{{ conteo_miembros.free }}</span></div>
+    <div class="adm-tile hot"><span class="l">New · 7 days</span><span class="n">{{ cohortes.nuevos7 if cohortes else '—' }}</span></div>
+  </div>
 
-  <div class="adm-folder">
-    <button type="button" class="adm-fold-head" onclick="var b=this.nextElementSibling;b.style.display=(b.style.display==='block')?'none':'block';">💰 Ingresos<span style="display:flex;align-items:center;gap:8px;"><span class="adm-fold-count">{{ '$%.2f'|format(ingresos.mes) if ingresos else '—' }}</span><span class="adm-fold-chev">›</span></span></button>
-    <div class="adm-fold-body">{% if ingresos %}
-      <div class="adm-total" style="margin:0 0 6px;">
-        <span class="tn" style="color:#10cc87;">${{ '%.2f'|format(ingresos.mes) }}</span>
-        <span class="tl">ESTE MES</span>
-      </div>
-      <p class="adm-muted" style="margin:0 0 12px;">Hoy: <strong style="color:#fff;">${{ '%.2f'|format(ingresos.hoy) }}</strong> · Últimos 30 días: <strong style="color:#fff;">${{ '%.2f'|format(ingresos.d30) }}</strong> · Total: <strong style="color:#fff;">${{ '%.2f'|format(ingresos.total) }}</strong></p>
-      {% for p in ingresos.ultimos %}
-      <div class="mrow"><span class="mn">💵 Pago recibido</span><span class="mb" style="color:#10cc87;border-color:#10cc87;">${{ '%.2f'|format(p.monto) }} · {{ p.fecha }}</span></div>
-      {% else %}
-      <p class="adm-muted" style="margin:0;">Sin pagos todavía.</p>
+  <h2 class="adm-sec">🎯 Today's plays</h2>
+  {% set force_pre = True %}
+  <form method="POST" action="{{ url_for('admin_aprobar_jugadas') }}" id="sendForm">
+    {% if selecciones %}
+      {% for p in selecciones %}
+        {% set pid = p.id or ('pend-' ~ loop.index) %}
+        <div style="margin-bottom:12px;">
+          <span class="status-badge status-pend">⏳ PENDING</span>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+            <input type="checkbox" name="play_ids" value="{{ pid }}" class="sel-check" style="width:22px;height:22px;accent-color:#10CC87;">
+            <label style="color:#fff;font-size:0.9rem;font-weight:600;">Select</label>
+          </div>
+          {% include "_play_card_v5.html" %}
+        </div>
       {% endfor %}
-      {% else %}
-      <p class="adm-muted" style="margin:0;">Ingresos no disponibles ahora mismo.</p>
-      {% endif %}
-    </div>
-  </div>
-
-  <div class="adm-grid">
-    <a class="adm-btn" href="/admin/miembros">
-      <span class="ico">👥</span><span class="t">Miembros</span><span class="s">{{ conteo_miembros.total }} en total</span></a>
-    <a class="adm-btn" href="/admin/tracker-oficial">
-      <span class="ico">🏆</span><span class="t">Tracker oficial</span><span class="s">Récord y profit</span></a>
-    <a class="adm-btn" href="/admin/actividad">
-      <span class="ico">👁️</span><span class="t">Actividad</span><span class="s">Quién entra y cuándo</span></a>
-    <a class="adm-btn" href="/admin/en-vivo">
-      <span class="ico">🌍</span><span class="t">Globo en vivo</span><span class="s">Quién está dentro ahora</span></a>
-    <a class="adm-btn" href="/admin/subir-ticket">
-      <span class="ico">🎫</span><span class="t">Subir ticket</span><span class="s">Tickets de Novig</span></a>
-    <a class="adm-btn" href="/admin/trakeos">
-      <span class="ico">📊</span><span class="t">Trakeos</span><span class="s">Seguimiento</span></a>
-    <a class="adm-btn" href="/admin/crear-push">
-      <span class="ico">📲</span><span class="t">Crear push</span><span class="s">Compositor con vista previa</span></a></div>
-  </div>
-
-  <div class="adm-section">
-    <h2>🎯 Jugadas de hoy</h2>
-    {% set force_pre = True %}
-    <form method="POST" action="{{ url_for('admin_aprobar_jugadas') }}" id="sendForm">
-      {% if selecciones %}
-        {% for p in selecciones %}
-          {% set pid = p.id or ('pend-' ~ loop.index) %}
-          <div style="margin-bottom:12px;">
-            <span class="status-badge status-pend">⏳ PENDIENTE</span>
-            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
-              <input type="checkbox" name="play_ids" value="{{ pid }}" class="sel-check" style="width:22px;height:22px;accent-color:#10cc87;">
-              <label style="color:#fff;font-size:0.9rem;font-weight:600;">Seleccionar</label>
-            </div>
-            {% include "_play_card_v5.html" %}
-          </div>
-        {% endfor %}
-      {% endif %}
-      {% if plays_hoy %}
-        {% for p in plays_hoy %}
-          <div style="margin-bottom:12px;">
-            <span class="status-badge status-sent">✓ ENVIADA</span>
-            {% include "_play_card_v5.html" %}
-          </div>
-        {% endfor %}
-      {% endif %}
-      {% if not selecciones and not plays_hoy %}
-        <div class="adm-card" style="text-align:center;color:#8fa1c2;">No hay jugadas hoy.</div>
-      {% endif %}
-      {% if selecciones %}
-        <button type="submit" class="send-btn" id="sendBtn">📤 Enviar seleccionadas</button>
-      {% endif %}
-    </form>
-    <script>
-    (function() {
-      var checks = document.querySelectorAll('#sendForm .sel-check');
-      var btn = document.getElementById('sendBtn');
-      function upd() {
-        var n = 0;
-        checks.forEach(function(c) { if (c.checked) n++; });
-        if (btn) btn.textContent = n > 0 ? ('📤 Enviar seleccionadas (' + n + ')') : '📤 Enviar seleccionadas';
-      }
-      var form = document.getElementById('sendForm');
-      if (form) form.addEventListener('submit', function(e) {
-        var n = 0;
-        checks.forEach(function(c) { if (c.checked) n++; });
-        if (n === 0) { e.preventDefault(); alert('Marca primero la casilla "Seleccionar" de cada jugada que quieres enviar.'); }
-      });
-      checks.forEach(function(c) { c.addEventListener('change', upd); });
-      upd();
-    })();
-    </script>
-  </div>
-
-  <div class="adm-folder">
-    <a class="adm-fold-head" href="/admin/notificaciones">🔔 Notificaciones<span style="display:flex;align-items:center;gap:8px;"><span class="adm-fold-count">{{ sin_leer or 0 }} sin leer</span><span class="adm-fold-chev">›</span></span></a>
-  </div>
-
-  <div class="adm-folder">
-    <div class="adm-fold-head" style="cursor:default;">🟢 Miembros activos (10 días)<span class="adm-fold-count" id="amCount">–</span></div>
-  </div>
+    {% endif %}
+    {% if plays_hoy %}
+      {% for p in plays_hoy %}
+        <div style="margin-bottom:12px;">
+          <span class="status-badge status-sent">✓ SENT</span>
+          {% include "_play_card_v5.html" %}
+        </div>
+      {% endfor %}
+    {% endif %}
+    {% if not selecciones and not plays_hoy %}
+      <div class="adm-card" style="text-align:center;color:#9AA1AE;">No plays today.</div>
+    {% endif %}
+    {% if selecciones %}
+      <button type="submit" class="send-btn" id="sendBtn">📤 Send selected</button>
+    {% endif %}
+  </form>
   <script>
-  fetch('/admin/api/active-members', { headers: { 'Accept': 'application/json' } })
-    .then(function(r) { return r.json(); })
-    .then(function(d) { document.getElementById('amCount').textContent = d.total_activos; })
-    .catch(function() { document.getElementById('amCount').textContent = '–'; });
+  (function() {
+    var checks = document.querySelectorAll('#sendForm .sel-check');
+    var btn = document.getElementById('sendBtn');
+    function upd() {
+      var n = 0;
+      checks.forEach(function(c) { if (c.checked) n++; });
+      if (btn) btn.textContent = n > 0 ? ('📤 Send selected (' + n + ')') : '📤 Send selected';
+    }
+    var form = document.getElementById('sendForm');
+    if (form) form.addEventListener('submit', function(e) {
+      var n = 0;
+      checks.forEach(function(c) { if (c.checked) n++; });
+      if (n === 0) { e.preventDefault(); alert('Check the "Select" box on each play you want to send first.'); }
+    });
+    checks.forEach(function(c) { c.addEventListener('change', upd); });
+    upd();
+  })();
   </script>
 
-  <div class="adm-folder">
-    <button type="button" class="adm-fold-head" onclick="var b=this.nextElementSibling;b.style.display=(b.style.display==='block')?'none':'block';">⚙️ Controles manuales<span class="adm-fold-chev">›</span></button>
-    <div class="adm-fold-body"><div class="ctl-t">🔔 Push a los miembros</div>
-      <form method="POST" action="{{ url_for('admin_control_push') }}">
-        <input class="ctl-in" name="titulo" maxlength="80" placeholder="Título del push" required>
-        <input class="ctl-in" name="mensaje" maxlength="240" placeholder="Mensaje" required>
-        <button class="ctl-btn" type="submit">Enviar push</button>
-      </form>
-      <p class="ctl-note">Llega a los miembros con las alertas de jugadas activadas. Abre el Dashboard.</p>
-    </div>
-    <div style="margin-top:16px;">
-      <div class="ctl-t">📧 Email a los miembros</div>
-      <form method="POST" action="{{ url_for('admin_control_email') }}">
-        <input class="ctl-in" name="asunto" maxlength="120" placeholder="Asunto" required>
-        <textarea class="ctl-in" name="mensaje" rows="4" maxlength="4000" placeholder="Mensaje (en inglés, es para los miembros)" required></textarea>
-        <button class="ctl-btn" type="submit">Enviar email</button>
-      </form>
-      <p class="ctl-note">A todos los miembros reales (sin cuentas de prueba ni admin).</p>
-    </div>
-    <div style="margin-top:16px;">
-      <div class="ctl-t">🎁 Dar Platinum a un miembro</div>
-      <form method="POST" action="{{ url_for('admin_control_grant') }}">
-        <input class="ctl-in" name="email" type="email" placeholder="Email del miembro" required>
-        <input class="ctl-in" name="dias" type="number" min="1" max="3650" placeholder="Días (vacío = permanente)">
-        <button class="ctl-btn" type="submit">Activar Platinum</button>
-      </form>
-    </div>
-    </div>
-  </div></div>
+  <h2 class="adm-sec">💰 Revenue</h2>
+  {% if ingresos %}
+  <div class="adm-money">
+    <div class="adm-tile hot"><span class="l">This month</span><span class="n">${{ '%.0f'|format(ingresos.mes) }}</span></div>
+    <div class="adm-tile"><span class="l">Today</span><span class="n">${{ '%.0f'|format(ingresos.hoy) }}</span></div>
+    <div class="adm-tile"><span class="l">Last 30 days</span><span class="n">${{ '%.0f'|format(ingresos.d30) }}</span></div>
+    <div class="adm-tile"><span class="l">All time</span><span class="n">${{ '%.0f'|format(ingresos.total) }}</span></div>
   </div>
+  <div style="margin-top:10px;">
+    {% for p in ingresos.ultimos %}
+    <div class="mrow"><span class="mn">💵 Payment received</span><span class="mb" style="color:#1AE099;border-color:#1AE099;">${{ '%.2f'|format(p.monto) }} · {{ p.fecha }}</span></div>
+    {% else %}
+    <p class="adm-muted" style="margin:0;">No payments yet.</p>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="adm-card adm-muted" style="margin:0;">Revenue unavailable right now.</div>
+  {% endif %}
+
+  <h2 class="adm-sec">🧰 Tools</h2>
+  <div class="adm-grid">
+    <a class="adm-btn" href="/admin/miembros">
+      <span class="ico">👥</span><span class="t">Members</span><span class="s">Full member list</span></a>
+    <a class="adm-btn" href="/admin/tracker-oficial">
+      <span class="ico">🏆</span><span class="t">Official tracker</span><span class="s">Record &amp; profit</span></a>
+    <a class="adm-btn" href="/admin/actividad">
+      <span class="ico">👁️</span><span class="t">Activity</span><span class="s">Who comes in and when</span></a>
+    <a class="adm-btn" href="/admin/en-vivo">
+      <span class="ico">🌍</span><span class="t">Live globe</span><span class="s">Who is inside right now</span></a>
+    <a class="adm-btn" href="/admin/subir-ticket">
+      <span class="ico">🎫</span><span class="t">Upload ticket</span><span class="s">Novig tickets</span></a>
+    <a class="adm-btn" href="/admin/trakeos">
+      <span class="ico">📊</span><span class="t">Trakeos</span><span class="s">Tracking</span></a>
+    <a class="adm-btn" href="/admin/crear-push">
+      <span class="ico">📲</span><span class="t">Create push</span><span class="s">Composer with preview</span></a>
+    <a class="adm-btn" href="/admin/notificaciones">
+      <span class="ico">🔔</span><span class="t">Notifications</span><span class="s">{{ sin_leer or 0 }} unread</span></a>
+  </div>
+
+  <details class="adm-det">
+    <summary>⚙️ Manual controls</summary>
+    <div style="margin-top:16px;">
+      <div class="ctl-t">🔔 Push to members</div>
+      <form method="POST" action="{{ url_for('admin_control_push') }}">
+        <input class="ctl-in" name="titulo" maxlength="80" placeholder="Push title" required>
+        <input class="ctl-in" name="mensaje" maxlength="240" placeholder="Message" required>
+        <button class="ctl-btn" type="submit">Send push</button>
+      </form>
+      <p class="ctl-note">Goes to members with play alerts on. Opens the Dashboard.</p>
+    </div>
+    <div style="margin-top:16px;">
+      <div class="ctl-t">📧 Email to members</div>
+      <form method="POST" action="{{ url_for('admin_control_email') }}">
+        <input class="ctl-in" name="asunto" maxlength="120" placeholder="Subject" required>
+        <textarea class="ctl-in" name="mensaje" rows="4" maxlength="4000" placeholder="Message" required></textarea>
+        <button class="ctl-btn" type="submit">Send email</button>
+      </form>
+      <p class="ctl-note">To all real members (no test or admin accounts).</p>
+    </div>
+    <div style="margin-top:16px;">
+      <div class="ctl-t">🎁 Give Platinum to a member</div>
+      <form method="POST" action="{{ url_for('admin_control_grant') }}">
+        <input class="ctl-in" name="email" type="email" placeholder="Member email" required>
+        <input class="ctl-in" name="dias" type="number" min="1" max="3650" placeholder="Days (empty = permanent)">
+        <button class="ctl-btn" type="submit">Activate Platinum</button>
+      </form>
+    </div>
+  </details>
+</div>
 
 {% endblock %}
