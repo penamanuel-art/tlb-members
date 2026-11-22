@@ -89,11 +89,28 @@
 
   <div class="bv-panel">
     <h3>Platinum</h3>
+    {% if variante_bienvenida == "mes_gratis" %}
+    {# Cohorte en mes gratis REAL (reloj de trial vivo): este copy es su verdad — intacto. #}
     <ul>
       <li><strong>Your Platinum is already ON</strong> — free for your first month, starting today. Every play and every tool on your dashboard is open.</li>
       <li>No card, no charge for your month. When it ends, you decide if it is worth keeping — and your free plays never stop either way.</li>
     </ul>
     <a class="btn btn-primary btn-block" href="{{ url_for('home') }}">See the full card on my dashboard →</a>
+    {% elif variante_bienvenida == "platinum" %}
+    {# Ya paga Platinum: copy neutro, sin promesas de entrada. #}
+    <ul>
+      <li><strong>Your Platinum is ON</strong> — every play and every tool on your dashboard is open.</li>
+      <li>Your subscription is active. Manage it anytime from your account — cancel anytime.</li>
+    </ul>
+    <a class="btn btn-primary btn-block" href="{{ url_for('home') }}">See the full card on my dashboard →</a>
+    {% else %}
+    {# Cohorte nueva ($1 primera semana) y toda cuenta sin trial ni pago: NADA gratis — modelo nuevo. #}
+    <ul>
+      <li><strong>Your Platinum starts at $1</strong> — $1 for your first week, then $15.99/week. The moment you start, every play and every tool on your dashboard opens.</li>
+      <li>One step left: start your first week to open your dashboard. You pay $1 today — cancel anytime.</li>
+    </ul>
+    <a class="btn btn-primary btn-block" href="{{ url_for('desbloquear_platinum') }}">Start Platinum — $1 first week →</a>
+    {% endif %}
   </div>
 
   <div class="bv-panel">
