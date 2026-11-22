@@ -15,7 +15,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="The Sharp">
-<meta name="theme-color" content="#1a1a2e">
+<meta name="theme-color" content="#0a1220">
 <style>
 {% if es_admin %}
 .lang-btn{background:rgba(212,175,55,.12);border:1px solid #d4af37;color:#d4af37;border-radius:999px;padding:6px 12px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap}
@@ -59,7 +59,7 @@ body.admin-theme .ot-card{
 body.admin-theme .adm-clean .sub,
 body.admin-theme .ot-wrap .sub{ color:#93b3aa !important; }
 body.admin-theme .send-btn{
-  background: linear-gradient(135deg, #10cc87, #17b978) !important;
+  background: linear-gradient(135deg, #60a5fa, #17b978) !important;
   color: #032117 !important;
   box-shadow: 0 8px 22px rgba(16,204,135,.28);
 }
@@ -71,7 +71,7 @@ body.admin-theme .ot-hero{
   box-shadow: 0 14px 34px rgba(0,0,0,.38);
 }
 body.admin-theme .ot-bar{ background: rgba(140,240,205,.16) !important; }
-body.admin-theme .ot-bar > div{ background: linear-gradient(90deg, #10cc87, #7df0c9) !important; }
+body.admin-theme .ot-bar > div{ background: linear-gradient(90deg, #60a5fa, #7df0c9) !important; }
 </style>
 {% endif %}
 <script src="/static/js/push.js?v={{ asset_v }}"></script>
@@ -108,10 +108,10 @@ main.v2-wrap,main{margin-top:0!important}
 .adm-bar{position:sticky;top:0;z-index:200;display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(7,17,31,.92);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid rgba(16,204,135,.25)}
 .adm-bar img{height:34px;width:auto}
 .adm-bar .t{font-weight:900;letter-spacing:.4px;color:#fff;font-size:.92rem;line-height:1.1}
-.adm-bar .t small{display:block;color:#10cc87;font-size:.58rem;letter-spacing:2.5px;font-weight:800}
+.adm-bar .t small{display:block;color:#60a5fa;font-size:.58rem;letter-spacing:2.5px;font-weight:800}
 .adm-bar .btns{margin-left:auto;display:flex;gap:8px}
-.adm-bar .b{border:1px solid rgba(16,204,135,.55);color:#10cc87;font-weight:800;font-size:.78rem;padding:8px 13px;border-radius:999px;text-decoration:none;white-space:nowrap}
-.adm-bar .b.main{background:#10cc87;color:#06130c;border-color:#10cc87}
+.adm-bar .b{border:1px solid rgba(16,204,135,.55);color:#60a5fa;font-weight:800;font-size:.78rem;padding:8px 13px;border-radius:999px;text-decoration:none;white-space:nowrap}
+.adm-bar .b.main{background:#60a5fa;color:#06130c;border-color:#60a5fa}
 .adm-nav{display:flex;gap:6px;flex-wrap:nowrap;justify-content:flex-start;overflow-x:auto;padding:10px 6px;scrollbar-width:none}
 .adm-nav::-webkit-scrollbar{display:none}
 .adm-nav a{flex:0 0 auto;padding:7px 12px;border:1px solid rgba(255,255,255,.16);border-radius:999px;color:#dbe6f5;font-size:.72rem;font-weight:700;letter-spacing:.4px;text-decoration:none;background:rgba(255,255,255,.04);white-space:nowrap}
@@ -120,7 +120,7 @@ main.v2-wrap,main{margin-top:0!important}
 <div class="adm-bar">
   <img src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team">
   <div class="t">THE SHARP TEAM<small>ADMIN</small></div>
-  <div class="btns">{% if request.endpoint != 'admin_dashboard' %}<a class="b main" href="{{ url_for('admin_dashboard') }}">← Panel</a>{% endif %}<a href="{{ url_for('home') }}" aria-label="Switch to member Dashboard" title="Member Dashboard" style="position:relative;display:inline-block;width:56px;height:30px;border-radius:999px;background:#0d1b2e;border:1px solid rgba(16,204,135,.6);flex:0 0 auto;vertical-align:middle;text-decoration:none;"><span style="position:absolute;left:6px;top:50%;transform:translateY(-50%);font-size:12px;line-height:1;">👤</span><span style="position:absolute;top:50%;transform:translateY(-50%);width:22px;height:22px;border-radius:50%;background:#10cc87;box-shadow:0 1px 4px rgba(0,0,0,.55);right:3px;"></span></a>{% if request.endpoint == 'admin_dashboard' %}<a class="b" href="{{ url_for('logout') }}">Salir</a>{% endif %}</div>
+  <div class="btns">{% if request.endpoint != 'admin_dashboard' %}<a class="b main" href="{{ url_for('admin_dashboard') }}">← Panel</a>{% endif %}<a href="{{ url_for('home') }}" aria-label="Switch to member Dashboard" title="Member Dashboard" style="position:relative;display:inline-block;width:56px;height:30px;border-radius:999px;background:#0d1b2e;border:1px solid rgba(16,204,135,.6);flex:0 0 auto;vertical-align:middle;text-decoration:none;"><span style="position:absolute;left:6px;top:50%;transform:translateY(-50%);font-size:12px;line-height:1;">👤</span><span style="position:absolute;top:50%;transform:translateY(-50%);width:22px;height:22px;border-radius:50%;background:#60a5fa;box-shadow:0 1px 4px rgba(0,0,0,.55);right:3px;"></span></a>{% if request.endpoint == 'admin_dashboard' %}<a class="b" href="{{ url_for('logout') }}">Salir</a>{% endif %}</div>
 </div>
 <nav class="adm-nav"><a href="{{ url_for('admin_dashboard') }}">Panel</a><a href="/admin/miembros">Miembros</a><a href="/admin/notificaciones">Notificaciones</a><a href="/admin/tracker-oficial">Tracker</a><a href="/admin/actividad">Actividad</a><a href="/admin/en-vivo">En vivo</a><a href="/admin/subir-ticket">Subir ticket</a><a href="/admin/trakeos">Trakeos</a><a href="/admin/crear-push">Push</a></nav>
 {% endif %}
@@ -138,24 +138,24 @@ main.v2-wrap,main{margin-top:0!important}
   {# ENCABEZADO ÚNICO (2026-11-13, orden de Alex: la barra de arriba de base.html era «como otro menú»): espejo del encabezado de base_v2.html — logo moneda a la izquierda; a la derecha, en este orden: balance, Full record y el ☰ con el menú único. Fuera las píldoras Home/Brain y el avatar. #}
   <div style="display:flex;align-items:center;gap:8px;">
   {% if es_admin %}<button id="langToggle" class="lang-btn notranslate" title="Ver en español">🇺🇸 EN</button>{% endif %}
-  <a href="{{ url_for('balances') }}" style="display:inline-flex;align-items:center;gap:5px;background:#131c2b;border:1px solid rgba(94,234,160,.45);color:#5eeaa0;font-weight:400;font-size:11px;padding:8px 9px;border-radius:14px;text-decoration:none;white-space:nowrap">💰 View my balance{% if balance_total_txt %}<span style="color:#eafff5;font-weight:300">{{ balance_total_txt }}</span>{% endif %}</a>
-  <a href="{{ url_for('records') }}" style="display:inline-flex;align-items:center;background:#131c2b;border:1px solid #2c313a;color:#e6ebf2;font-weight:400;font-size:11px;padding:8px 9px;border-radius:14px;text-decoration:none;white-space:nowrap"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:5px" aria-hidden="true"><path d="M4 20v-4"/><path d="M8 20v-7"/><path d="M12 20v-5"/><path d="M16 20v-8"/><path d="M20 20V8"/><path d="M3 12l5-4 3.5 2.5L17 5"/><path d="M14.5 5H17v2.5"/></svg>Full record</a>
+  <a href="{{ url_for('balances') }}" style="display:inline-flex;align-items:center;gap:5px;background:#0a1220;border:1px solid rgba(94,234,160,.45);color:#60a5fa;font-weight:400;font-size:11px;padding:8px 9px;border-radius:14px;text-decoration:none;white-space:nowrap">💰 View my balance{% if balance_total_txt %}<span style="color:#eafff5;font-weight:300">{{ balance_total_txt }}</span>{% endif %}</a>
+  <a href="{{ url_for('records') }}" style="display:inline-flex;align-items:center;background:#0a1220;border:1px solid #0c1425;color:#f2f5fb;font-weight:400;font-size:11px;padding:8px 9px;border-radius:14px;text-decoration:none;white-space:nowrap"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:5px" aria-hidden="true"><path d="M4 20v-4"/><path d="M8 20v-7"/><path d="M12 20v-5"/><path d="M16 20v-8"/><path d="M20 20V8"/><path d="M3 12l5-4 3.5 2.5L17 5"/><path d="M14.5 5H17v2.5"/></svg>Full record</a>
     <div class="menu-wrap">
       <button class="icon-btn" id="menuBtn" aria-label="Menu" aria-expanded="false" aria-haspopup="true" style="cursor:pointer;display:flex;align-items:center;justify-content:center;">☰</button>
       <div class="menu-drop" id="menuDrop" hidden style="left:auto;right:0;">
         {# MENÚ — estructura de la foto de Wise Guy (2026-11-13): lista plana, sin grupos. Idéntico en home_lux.html, base.html y base_v2.html. Las herramientas viven dentro de «My Tools». #}
-        {% if not miembro_platinum %}        <a href="{{ url_for('desbloquear_platinum') }}" style="font-size:15px;font-weight:600;color:#10cc87;">Unlock Platinum</a>{% endif %}
+        {% if not miembro_platinum %}        <a href="{{ url_for('desbloquear_platinum') }}" style="font-size:15px;font-weight:600;color:#60a5fa;">Unlock Platinum</a>{% endif %}
         <a href="{{ url_for('game_center') }}" style="font-size:15px;">Betting Lines</a>
         <a href="{{ url_for('balances') }}" style="font-size:15px;">Sportsbooks</a>
         <a href="{{ url_for('masterclass') }}" style="font-size:15px;">Masterclass</a>
         <a href="{{ url_for('about') }}" style="font-size:15px;">About</a>
-        {% if racha_dias and racha_dias >= 2 %}<div style="padding:6px 12px;"><span style="display:inline-flex;align-items:center;gap:5px;padding:6px 11px;border:1px solid rgba(17,203,135,.45);border-radius:999px;color:#10cc87;font-size:12.5px;font-weight:600;">🔥 {{ racha_dias }}-day win streak</span></div>{% endif %}
+        {% if racha_dias and racha_dias >= 2 %}<div style="padding:6px 12px;"><span style="display:inline-flex;align-items:center;gap:5px;padding:6px 11px;border:1px solid rgba(17,203,135,.45);border-radius:999px;color:#60a5fa;font-size:12.5px;font-weight:600;">🔥 {{ racha_dias }}-day win streak</span></div>{% endif %}
         <a href="{{ url_for('tools') }}" style="font-size:15px;">My Tools</a>
         <a href="{{ url_for('tracker_plays') }}" style="font-size:15px;">My Bets</a>
         <a href="{{ url_for('cuenta') }}" style="font-size:15px;">Account</a>
         {% if is_alex %}<a href="{{ url_for('admin_dashboard') }}" style="font-size:15px;">Admin</a>{% endif %}
-        <a href="{{ url_for('home') }}" style="display:block;text-align:center;background:#10cc87;color:#0B0D12;font-weight:700;font-size:15px;padding:11px;border-radius:12px;margin:8px 0 4px;">View picks →</a>
-        <a href="{{ url_for('logout') }}" style="font-size:13.5px;color:#A3AAB6;">Log out</a>
+        <a href="{{ url_for('home') }}" style="display:block;text-align:center;background:#60a5fa;color:#05070d;font-weight:700;font-size:15px;padding:11px;border-radius:12px;margin:8px 0 4px;">View picks →</a>
+        <a href="{{ url_for('logout') }}" style="font-size:13.5px;color:#a3b0c6;">Log out</a>
       </div>
     </div>
   </div>
@@ -166,8 +166,8 @@ main.v2-wrap,main{margin-top:0!important}
     .about-dd{position:relative;display:inline-block}
     .about-dd summary{list-style:none;cursor:pointer;color:#c7cede;font-size:15px;padding:6px 2px}
     .about-dd summary::-webkit-details-marker{display:none}
-    .about-dd .dd-panel{position:absolute;right:0;top:calc(100% + 8px);background:#101828;border:1px solid #1d2029;border-radius:14px;padding:8px;min-width:250px;z-index:300;box-shadow:0 16px 40px rgba(0,0,0,.5)}
-    .about-dd .dd-panel a{display:block;color:#e6ebf2;text-decoration:none;font-size:14.5px;padding:9px 12px;border-radius:9px;white-space:nowrap}
+    .about-dd .dd-panel{position:absolute;right:0;top:calc(100% + 8px);background:#05070d;border:1px solid #0a1220;border-radius:14px;padding:8px;min-width:250px;z-index:300;box-shadow:0 16px 40px rgba(0,0,0,.5)}
+    .about-dd .dd-panel a{display:block;color:#f2f5fb;text-decoration:none;font-size:14.5px;padding:9px 12px;border-radius:9px;white-space:nowrap}
     .about-dd .dd-panel a:hover{background:#1a2438}
     </style>
     <details class="about-dd">
@@ -331,9 +331,9 @@ function googleTranslateElementInit(){new google.translate.TranslateElement({pag
         '.tst-sub-notif .tst-sub-head{display:flex;align-items:center;gap:10px;margin-bottom:10px;}' +
         '.tst-sub-notif .tst-sub-ico{font-size:26px;}' +
         '.tst-sub-notif .tst-sub-title{font-size:15px;font-weight:800;color:#fff;flex:1;}' +
-        '.tst-sub-notif .tst-sub-x{background:rgba(255,255,255,.1);border:none;color:#9ca3af;width:28px;height:28px;border-radius:50%;font-size:14px;cursor:pointer;flex-shrink:0;}' +
+        '.tst-sub-notif .tst-sub-x{background:rgba(255,255,255,.1);border:none;color:#a3b0c6;width:28px;height:28px;border-radius:50%;font-size:14px;cursor:pointer;flex-shrink:0;}' +
         '.tst-sub-notif .tst-sub-row{display:flex;justify-content:space-between;padding:6px 0;border-top:1px solid #1f2937;font-size:13px;}' +
-        '.tst-sub-notif .tst-sub-lbl{color:#9ca3af;}' +
+        '.tst-sub-notif .tst-sub-lbl{color:#a3b0c6;}' +
         '.tst-sub-notif .tst-sub-val{color:#fff;font-weight:700;}' +
         '.tst-sub-notif .tst-sub-val.green{color:#22c55e;}' +
         '.tst-sub-notif .tst-sub-val.gold{color:#fbbf24;}' +
@@ -345,7 +345,7 @@ function googleTranslateElementInit(){new google.translate.TranslateElement({pag
         '<div class="tst-sub-row"><span class="tst-sub-lbl">Name</span><span class="tst-sub-val">' + (s.nombre || 'Member') + '</span></div>' +
         '<div class="tst-sub-row"><span class="tst-sub-lbl">Plan</span><span class="tst-sub-val ' + (isPlat ? 'gold' : 'green') + '">' + (s.plan || 'Free') + '</span></div>' +
         '<div class="tst-sub-row"><span class="tst-sub-lbl">Email</span><span class="tst-sub-val" style="font-size:12px;">' + (s.email || '') + '</span></div>' +
-        '<div class="tst-sub-row"><span class="tst-sub-lbl">Joined</span><span class="tst-sub-val" style="font-weight:400;color:#9ca3af;">' + (s.created_at || 'just now') + '</span></div>' +
+        '<div class="tst-sub-row"><span class="tst-sub-lbl">Joined</span><span class="tst-sub-val" style="font-weight:400;color:#a3b0c6;">' + (s.created_at || 'just now') + '</span></div>' +
         '</div>';
       document.body.appendChild(box);
     }).catch(function(){});
