@@ -59,121 +59,121 @@
 {% if _ns.label %}{% set _bt_label = _ns.label %}{% endif %}
 {% endif %}
 <style>
-.v5c-matched{display:inline-block;margin-top:6px;font-size:11px;font-weight:800;letter-spacing:1px;color:#04150d;background:#10CC87;padding:4px 9px;border-radius:999px}
-.v5c-btn{flex:1 1 0;min-width:0;text-align:center;font-size:12px;overflow:hidden;font-weight:400;white-space:nowrap;color:#DCDCE1;background:#13161E;border:1px solid #2A2E3A;border-radius:12px;padding:9px 4px;text-decoration:none}
-.v5c-tracked{flex:1;display:flex;align-items:center;justify-content:center;text-align:center;font-size:12px;font-weight:600;white-space:nowrap;color:#A0A1A5;background:#13161E;border:1px solid #2A2E3A;border-radius:12px;padding:10px 4px;box-sizing:border-box}
-.v5pop{position:fixed;inset:0;background:rgba(13,18,25,.82);z-index:99998;display:flex;align-items:center;justify-content:center;padding:18px;box-sizing:border-box}
+.v5c-matched{display:inline-block;margin-top:6px;font-size:11px;font-weight:800;letter-spacing:1px;color:#04150d;background:#7c83f8;padding:4px 9px;border-radius:999px}
+.v5c-btn{flex:1 1 0;min-width:0;text-align:center;font-size:12px;overflow:hidden;font-weight:400;white-space:nowrap;color:#dad7ee;background:#15122a;border:1px solid #38335f;border-radius:12px;padding:9px 4px;text-decoration:none}
+.v5c-tracked{flex:1;display:flex;align-items:center;justify-content:center;text-align:center;font-size:12px;font-weight:600;white-space:nowrap;color:#a3a1c2;background:#15122a;border:1px solid #38335f;border-radius:12px;padding:10px 4px;box-sizing:border-box}
+.v5pop{position:fixed;inset:0;background:rgba(10,8,24,.82);z-index:99998;display:flex;align-items:center;justify-content:center;padding:18px;box-sizing:border-box}
 .v5pop[hidden]{display:none}
-.v5pop-in{background:#20242F;border:1px solid #2A2E3A;border-radius:16px;max-width:400px;width:100%;max-height:75vh;overflow-y:auto;padding:14px 16px;color:#eef1f7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.v5pop-in{background:#262345;border:1px solid #38335f;border-radius:16px;max-width:400px;width:100%;max-height:75vh;overflow-y:auto;padding:14px 16px;color:#eeecfa;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
 .v5pop-h{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
 .v5pop-t{font-size:15px;font-weight:600;color:#fff;line-height:1.35}
-.v5pop-x{flex:none;width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);color:#e6ebf5;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
+.v5pop-x{flex:none;width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);color:#eeecfa;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
 .v5pop-row{display:flex;justify-content:space-between;gap:12px;padding:6px 0;border-top:1px solid rgba(255,255,255,.07);font-size:13.5px}
-.v5pop-k{color:#7d8698;flex:none}
+.v5pop-k{color:#8683ac;flex:none}
 .v5pop-v{color:#fff;font-weight:500;text-align:right}
 .v5pop-v.for{color:#2ee6a7}
 .v5pop-v.against{color:#f87171}
 .v5pop-pl{padding:7px 0;border-top:1px solid rgba(255,255,255,.07)}
 .v5pop-nm{font-size:15px;font-weight:600;color:#fff}
-.v5pop-meta{font-size:12px;color:#9CA0AC;margin-top:1px}
+.v5pop-meta{font-size:12px;color:#a3a1c2;margin-top:1px}
 .v5pop-st{color:#f87171;font-weight:600}
-.v5pop-note{font-size:12px;color:#9CA0AC;line-height:1.5;margin-top:8px}
-.v5sheet{display:none;position:fixed;inset:0;background:rgba(13,18,25,.92);z-index:99999;align-items:flex-end;justify-content:center;box-sizing:border-box;padding:12px 0 0}
-.v5sheet-in{background:#20242F;border-radius:22px 22px 0 0;max-width:520px;width:100%;height:calc(100dvh - 12px);max-height:calc(100svh - 12px);overflow-y:auto;padding:12px 16px 10px;position:relative;color:#eef1f7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;display:flex;flex-direction:column}
+.v5pop-note{font-size:12px;color:#a3a1c2;line-height:1.5;margin-top:8px}
+.v5sheet{display:none;position:fixed;inset:0;background:rgba(10,8,24,.92);z-index:99999;align-items:flex-end;justify-content:center;box-sizing:border-box;padding:12px 0 0}
+.v5sheet-in{background:#262345;border-radius:22px 22px 0 0;max-width:520px;width:100%;height:calc(100dvh - 12px);max-height:calc(100svh - 12px);overflow-y:auto;padding:12px 16px 10px;position:relative;color:#eeecfa;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;display:flex;flex-direction:column}
 .v5sheet-in>*{flex:none}
 .v5grab{width:44px;height:5px;border-radius:999px;background:rgba(255,255,255,.18);margin:0 auto 10px}
-.v5shead{position:sticky;top:-12px;margin:-12px -16px 2px;padding:12px 16px 6px;background:#20242F;z-index:5;display:flex;gap:10px;align-items:flex-start}
-.v5x{position:static;flex:none;width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);color:#e6ebf5;font-size:17.1px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
-.v5kick{font-size:12px;font-weight:700;letter-spacing:2px;color:#10CC87}
-.v5kick.gold{color:#10CC87}
+.v5shead{position:sticky;top:-12px;margin:-12px -16px 2px;padding:12px 16px 6px;background:#262345;z-index:5;display:flex;gap:10px;align-items:flex-start}
+.v5x{position:static;flex:none;width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);color:#eeecfa;font-size:17.1px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
+.v5kick{font-size:12px;font-weight:700;letter-spacing:2px;color:#7c83f8}
+.v5kick.gold{color:#7c83f8}
 .v5stitle{font-size:24px;font-weight:600;color:#fff;margin-top:5px;letter-spacing:-.3px}
-.v5ssub{font-size:13.5px;color:#9CA0AC;margin-top:3px}
+.v5ssub{font-size:13.5px;color:#a3a1c2;margin-top:3px}
 .v5row{display:flex;justify-content:space-between;gap:14px;padding:5px 0;border-top:1px solid rgba(255,255,255,.07)}
-.v5row-k{font-size:15px;font-weight:400;color:#7d8698;flex:none}
+.v5row-k{font-size:15px;font-weight:400;color:#8683ac;flex:none}
 .v5row-v{font-size:15px;font-weight:500;color:#fff;text-align:right}
 .v5row-v b{font-weight:600}
-.v5prog{font-size:12px;font-weight:700;letter-spacing:1.3px;color:#10CC87;border:1px solid rgba(16,204,135,.5);padding:5px 10px;border-radius:8px}
+.v5prog{font-size:12px;font-weight:700;letter-spacing:1.3px;color:#7c83f8;border:1px solid rgba(124,131,248,.5);padding:5px 10px;border-radius:8px}
 .v5wu{margin-top:9px;border:1px solid rgba(212,175,55,.3);border-radius:12px;padding:9px 12px}
-.v5wu-h{font-size:12px;font-weight:700;letter-spacing:1.6px;color:#10CC87;margin-bottom:6px}
-.v5wu-row{display:flex;justify-content:space-between;padding:4px 0;font-size:13.5px;color:#c6cfdf}
+.v5wu-h{font-size:12px;font-weight:700;letter-spacing:1.6px;color:#7c83f8;margin-bottom:6px}
+.v5wu-row{display:flex;justify-content:space-between;padding:4px 0;font-size:13.5px;color:#d1cdea}
 .v5wu-row b{color:#fff;font-weight:600}
-.v5wu-p{font-size:13.5px;color:#c6cfdf;line-height:1.55;margin:6px 0 0}
-.v5wu-p b{color:#10CC87;font-weight:600}
-.v5timg{margin-top:auto;border-radius:14px;overflow:hidden;position:relative;background:#20242F}
+.v5wu-p{font-size:13.5px;color:#d1cdea;line-height:1.55;margin:6px 0 0}
+.v5wu-p b{color:#7c83f8;font-weight:600}
+.v5timg{margin-top:auto;border-radius:14px;overflow:hidden;position:relative;background:#262345}
 .v5timg img{width:100%;display:block;height:auto}
-.v5big-track{display:block;text-align:center;font-size:15px;font-weight:600;color:#DCDCE1;background:#13161E;border:1px solid #2A2E3A;border-radius:14px;padding:11px 12px;margin-top:0;text-decoration:none;cursor:pointer}
-.v5big-tracked{display:block;text-align:center;font-size:15px;font-weight:600;color:#A0A1A5;background:#13161E;border:1px solid #2A2E3A;border-radius:14px;padding:11px 12px;margin-top:0}
-.v5actions{background:#20242F;padding:8px 0 calc(24px + env(safe-area-inset-bottom));margin-top:auto;z-index:4;position:sticky;bottom:0}
+.v5big-track{display:block;text-align:center;font-size:15px;font-weight:600;color:#dad7ee;background:#15122a;border:1px solid #38335f;border-radius:14px;padding:11px 12px;margin-top:0;text-decoration:none;cursor:pointer}
+.v5big-tracked{display:block;text-align:center;font-size:15px;font-weight:600;color:#a3a1c2;background:#15122a;border:1px solid #38335f;border-radius:14px;padding:11px 12px;margin-top:0}
+.v5actions{background:#262345;padding:8px 0 calc(24px + env(safe-area-inset-bottom));margin-top:auto;z-index:4;position:sticky;bottom:0}
 .v5sbtns{display:flex;gap:9px;margin-top:9px}
-.tstc-bubble{position:fixed;z-index:100000;background:#2A2E3A;border:1px solid rgba(255,255,255,.18);border-radius:12px;padding:8px 11px;font-size:13.5px;font-weight:300;line-height:1.45;color:#eef1f7;text-align:center;width:max-content;max-width:260px;pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,.45)}
-.tstc-bubble:after{content:'';position:absolute;top:100%;left:var(--tstc-tail,50%);transform:translateX(-50%);border:6px solid transparent;border-top-color:#2A2E3A}
-.tstc-bubble.below:after{top:auto;bottom:100%;border-top-color:transparent;border-bottom-color:#2A2E3A}
+.tstc-bubble{position:fixed;z-index:100000;background:#38335f;border:1px solid rgba(255,255,255,.18);border-radius:12px;padding:8px 11px;font-size:13.5px;font-weight:300;line-height:1.45;color:#eeecfa;text-align:center;width:max-content;max-width:260px;pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,.45)}
+.tstc-bubble:after{content:'';position:absolute;top:100%;left:var(--tstc-tail,50%);transform:translateX(-50%);border:6px solid transparent;border-top-color:#38335f}
+.tstc-bubble.below:after{top:auto;bottom:100%;border-top-color:transparent;border-bottom-color:#38335f}
 /* Tira inferior de track (2026-10-31): confirmación con Change stake / My Bets (sin Undo desde el candado del 2026-11-01) */
-.tst-strip{position:fixed;left:10px;right:10px;bottom:86px;z-index:100001;background:#20242F;border:1px solid #2A2E3A;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.55);padding:10px 12px;display:flex;flex-direction:column;gap:8px;color:#FFFFFF;font-size:15px;box-sizing:border-box}
+.tst-strip{position:fixed;left:10px;right:10px;bottom:86px;z-index:100001;background:#262345;border:1px solid #38335f;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.55);padding:10px 12px;display:flex;flex-direction:column;gap:8px;color:#FFFFFF;font-size:15px;box-sizing:border-box}
 .tst-strip-txt{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.tst-strip-txt b{color:#10CC87}
+.tst-strip-txt b{color:#7c83f8}
 .tst-strip-btns{display:flex;gap:8px;align-items:center}
-.tst-strip-btn{flex:1;text-align:center;font-size:13.5px;font-weight:600;border-radius:10px;padding:8px 4px;cursor:pointer;text-decoration:none;border:1px solid #2A2E3A;background:#13161E;color:#FFFFFF;box-sizing:border-box}
-.tst-strip-btn.gold{background:#10CC87;border-color:#10CC87;color:#20242F}
+.tst-strip-btn{flex:1;text-align:center;font-size:13.5px;font-weight:600;border-radius:10px;padding:8px 4px;cursor:pointer;text-decoration:none;border:1px solid #38335f;background:#15122a;color:#FFFFFF;box-sizing:border-box}
+.tst-strip-btn.gold{background:#7c83f8;border-color:#7c83f8;color:#262345}
 .tst-strip-x{flex:0 0 auto;width:34px;font-weight:400;color:#FFFFFF}
-.tst-sheet-ov{position:fixed;inset:0;z-index:100002;background:rgba(4,6,10,.66);display:flex;align-items:flex-start;justify-content:center;padding:12dvh 8px 8px;box-sizing:border-box;overflow-y:auto}
-.tst-sheet{background:#161B28;border:1px solid rgba(255,255,255,.14);border-radius:20px;width:100%;max-width:430px;padding:24px 20px 26px;color:#eef1f7;box-sizing:border-box}
+.tst-sheet-ov{position:fixed;inset:0;z-index:100002;background:rgba(8,6,20,.66);display:flex;align-items:flex-start;justify-content:center;padding:12dvh 8px 8px;box-sizing:border-box;overflow-y:auto}
+.tst-sheet{background:#1c1933;border:1px solid rgba(255,255,255,.14);border-radius:20px;width:100%;max-width:430px;padding:24px 20px 26px;color:#eeecfa;box-sizing:border-box}
 .tst-modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
 .tst-sheet h3{margin:0;font-size:24px;font-weight:800}
-.tst-modal-x{flex:none;background:none;border:none;color:#C9D4E6;font-size:24px;line-height:1;cursor:pointer;padding:2px 4px}
+.tst-modal-x{flex:none;background:none;border:none;color:#d1cdea;font-size:24px;line-height:1;cursor:pointer;padding:2px 4px}
 .tst-modal-pick{font-size:20px;font-weight:800;margin:20px 0 0}
-.tst-modal-sub{font-size:15px;font-weight:300;color:#9AA7B8;margin:5px 0 0}
-.tst-modal-info{margin-top:18px;background:rgba(16,204,135,.09);border:1.5px solid #10CC87;border-radius:14px;padding:15px 17px}
-.tst-modal-bet{font-size:20px;font-weight:800;color:#10CC87}
-.tst-modal-units{font-size:15px;font-weight:300;color:#eef1f7;margin-top:5px}
-.tst-modal-note{font-size:13.5px;font-weight:300;color:#9AA7B8;margin-top:5px;line-height:1.45}
-.tst-modal-label{font-size:15px;font-weight:400;color:#C9D4E6;margin:20px 0 8px}
-.tst-sheet-field{display:flex;align-items:center;background:#1C2436;border:1px solid #2A3448;border-radius:14px;padding:0 16px}
-.tst-sheet-field span{font-size:20px;color:#9AA7B8;margin-right:8px}
+.tst-modal-sub{font-size:15px;font-weight:300;color:#a3a1c2;margin:5px 0 0}
+.tst-modal-info{margin-top:18px;background:rgba(124,131,248,.09);border:1.5px solid #7c83f8;border-radius:14px;padding:15px 17px}
+.tst-modal-bet{font-size:20px;font-weight:800;color:#7c83f8}
+.tst-modal-units{font-size:15px;font-weight:300;color:#eeecfa;margin-top:5px}
+.tst-modal-note{font-size:13.5px;font-weight:300;color:#a3a1c2;margin-top:5px;line-height:1.45}
+.tst-modal-label{font-size:15px;font-weight:400;color:#d1cdea;margin:20px 0 8px}
+.tst-sheet-field{display:flex;align-items:center;background:#262345;border:1px solid #38335f;border-radius:14px;padding:0 16px}
+.tst-sheet-field span{font-size:20px;color:#a3a1c2;margin-right:8px}
 .tst-sheet-field input{flex:1;background:transparent;border:none;outline:none;color:#fff;font-size:20px;font-weight:700;padding:16px 0;min-width:0}
 .tst-modal-btns{display:flex;align-items:center;gap:10px;margin-top:18px}
-.tst-modal-update{flex:1.35;text-align:center;font-size:15px;font-weight:700;border-radius:14px;padding:16px 10px;cursor:pointer;border:none;background:#10CC87;color:#04150d}
-.tst-modal-cancel{flex:1;text-align:center;font-size:15px;font-weight:500;border-radius:14px;padding:16px 10px;cursor:pointer;border:none;background:transparent;color:#C9D4E6}
+.tst-modal-update{flex:1.35;text-align:center;font-size:15px;font-weight:700;border-radius:14px;padding:16px 10px;cursor:pointer;border:none;background:#7c83f8;color:#04150d}
+.tst-modal-cancel{flex:1;text-align:center;font-size:15px;font-weight:500;border-radius:14px;padding:16px 10px;cursor:pointer;border:none;background:transparent;color:#d1cdea}
 .tst-modal-foot{font-size:13.5px;font-weight:300;color:#8A94A6;margin:16px 0 0}
 </style>
 <style>
 /* ===== DISENO MINIMAL (2026-11-08; publicado para todos el 2026-11-09) =====
-   Cara nueva de la tarjeta: fondo plano #14171E, borde #262A35, lineas de 1px
+   Cara nueva de la tarjeta: fondo plano #15122a, borde #262345, lineas de 1px
    (sin divisor de muescas ni barra lateral), banda dorada superior con el
-   nivel (grada #0E9E66 -> #10CC87 -> #0E9E66, texto oscuro #04150d) y
+   nivel (grada #5a5390 -> #7c83f8 -> #5a5390, texto oscuro #04150d) y
    tipografia fina de Alex: 800 SOLO en el nombre del equipo; todo lo demas
    en 300-600. Los demas miembros no reciben ninguna de estas reglas. */
-.v5m-strip{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;margin-top:14px;padding:9px 12px;border:1px solid rgba(16,204,135,0.28);border-radius:10px;background:none;cursor:pointer;font-family:inherit;text-align:left}
-.v5m-strip-t{font-size:13.5px;font-weight:500;letter-spacing:.8px;color:#9aa7b8;white-space:nowrap}
-.v5m-strip-n{font-size:15px;font-weight:400;color:#9aa7b8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.v5m-strip-hint{font-size:13.5px;font-weight:400;color:#8b919e;white-space:nowrap}
-.v5m{position:relative;overflow:hidden;background:#232C3D;border:1px solid #262A35;border-radius:14px;padding:0;box-sizing:border-box;width:100%;max-width:100%;margin:0 0 40px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#FFFFFF}
-.v5m::before{content:"";position:absolute;top:0;bottom:0;left:1px;width:4px;background:#10CC87}
-.v5m-band{display:flex;align-items:center;gap:8px;background:#13161E;padding:8px 16px;height:42px;box-sizing:border-box}
-.v5m-band-t{font-size:12px;font-weight:600;letter-spacing:2.4px;color:#c9ccd4;white-space:nowrap}
+.v5m-strip{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;margin-top:14px;padding:9px 12px;border:1px solid rgba(124,131,248,0.28);border-radius:10px;background:none;cursor:pointer;font-family:inherit;text-align:left}
+.v5m-strip-t{font-size:13.5px;font-weight:500;letter-spacing:.8px;color:#a3a1c2;white-space:nowrap}
+.v5m-strip-n{font-size:15px;font-weight:400;color:#a3a1c2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v5m-strip-hint{font-size:13.5px;font-weight:400;color:#9794b8;white-space:nowrap}
+.v5m{position:relative;overflow:hidden;background:#322e58;border:1px solid #262345;border-radius:14px;padding:0;box-sizing:border-box;width:100%;max-width:100%;margin:0 0 40px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#FFFFFF}
+.v5m::before{content:"";position:absolute;top:0;bottom:0;left:1px;width:4px;background:#7c83f8}
+.v5m-band{display:flex;align-items:center;gap:8px;background:#15122a;padding:8px 16px;height:42px;box-sizing:border-box}
+.v5m-band-t{font-size:12px;font-weight:600;letter-spacing:2.4px;color:#dad7ee;white-space:nowrap}
 .v5m-band-t.plat{color:#a9d6f5}
 .v5m-band-t.vault{color:#c3ccd9}
-.v5m-band-t.free{color:#10CC87}
-.v5m-band-t.gold{color:#10CC87}
-.v5m-band-l{margin-left:auto;flex:none;display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:500;letter-spacing:1.4px;color:#c9ccd4;white-space:nowrap}
+.v5m-band-t.free{color:#7c83f8}
+.v5m-band-t.gold{color:#7c83f8}
+.v5m-band-l{margin-left:auto;flex:none;display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:500;letter-spacing:1.4px;color:#dad7ee;white-space:nowrap}
 .v5m-band-logo{height:20px;width:auto;flex:none}
 .v5m-body{padding:0}
-.v5m-top{background:#13161E;padding:16px 18px 18px}
+.v5m-top{background:#15122a;padding:16px 18px 18px}
 .v5m-bot{padding:0 18px 16px}
 .v5m-head{display:flex;gap:11px;align-items:flex-start}
 .v5m-logo{width:44px;height:44px;object-fit:contain;flex:none;margin-top:2px}
 .v5m-title{font-size:24px;font-weight:800;color:#FFFFFF;letter-spacing:-.3px;line-height:1.2}
-.v5m-sub{font-size:13.5px;font-weight:400;color:#8b919e;margin-top:6px;line-height:1.45}
+.v5m-sub{font-size:13.5px;font-weight:400;color:#9794b8;margin-top:6px;line-height:1.45}
 .v5m-subrow{display:flex;align-items:flex-start;gap:8px;margin-top:6px}
 .v5m-subrow .v5m-sub{margin-top:0;flex:1 1 auto;min-width:0}
 .v5m-pills{display:inline-flex;gap:5px;flex:none;margin-left:auto;padding-top:1px}
-.v5pill{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:500;color:#9aa7b8;background:#1D2536;border:1px solid #2A3852;border-radius:999px;padding:3px 8px;cursor:pointer;font-family:inherit;white-space:nowrap;line-height:1.25}
-.v5pill-steam{color:#10CC87;border-color:rgba(16,204,135,.55)}
+.v5pill{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:500;color:#a3a1c2;background:#262345;border:1px solid #38335f;border-radius:999px;padding:3px 8px;cursor:pointer;font-family:inherit;white-space:nowrap;line-height:1.25}
+.v5pill-steam{color:#7c83f8;border-color:rgba(124,131,248,.55)}
 .v5m-res{display:inline-block;font-size:12px;font-weight:500;letter-spacing:1.4px;padding:4px 10px;border-radius:999px;margin-top:10px}
 .v5m-live{display:inline-flex;align-items:center;gap:4px;color:#FF3B30;font-size:11px;font-weight:600;letter-spacing:.12em;margin-top:10px;animation:v5mBlink 1.1s linear infinite}
 .v5m-live-dot{width:6px;height:6px;border-radius:50%;background:#FF3B30;flex:none}
 @keyframes v5mBlink{0%,100%{opacity:1}50%{opacity:.25}}
-.v5m-res.won{color:#10CC87;background:rgba(16,204,135,.12)}
+.v5m-res.won{color:#7c83f8;background:rgba(124,131,248,.12)}
 .v5m-res.lost{color:#f87171;background:rgba(248,113,113,.1)}
 .v5m-nums{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;margin-top:0;padding-top:16px}
 .v5m-k{font-size:11px;font-weight:500;letter-spacing:1.8px;color:#6b7280}
@@ -182,29 +182,29 @@
 .v5m-priceline .v5m-chip{padding-bottom:6px;font-size:15px}
 .v5m-right{text-align:right;flex:none}
 .v5m-stake{font-size:15px;font-weight:400;color:#FFFFFF;line-height:1.3;margin-top:3px}
-.v5m-tok{font-size:12px;font-weight:500;color:#10CC87;margin-top:2px}
-.v5m-tpend{font-size:12px;font-weight:500;color:#8b919e;margin-top:2px}
+.v5m-tok{font-size:12px;font-weight:500;color:#7c83f8;margin-top:2px}
+.v5m-tpend{font-size:12px;font-weight:500;color:#9794b8;margin-top:2px}
 .v5m-meta{display:flex;gap:16px;flex-wrap:wrap;align-items:center;margin-top:14px;min-height:37px;box-sizing:border-box}
 /* Liquidada y sin datos en la fila meta: la fila vacia NO reserva altura (2026-11-22, queja de Alex: hueco muerto en la tarjeta ya liquidada). En vivo la fila se queda igual que siempre. */
 .v5m-meta-off{display:none}
-.v5m-chip{display:inline-flex;align-items:center;gap:5px;font-size:13.5px;font-weight:400;color:#8b919e;background:none;border:none;padding:2px 0;cursor:pointer;font-family:inherit}
+.v5m-chip{display:inline-flex;align-items:center;gap:5px;font-size:13.5px;font-weight:400;color:#9794b8;background:none;border:none;padding:2px 0;cursor:pointer;font-family:inherit}
 .v5m-chip-inj{color:#EE8CA5}
-.v5m-chip-poly{display:inline-flex;align-items:center;gap:6px;background:#1D2536;border-radius:10px;padding:6px 10px;font-size:13.5px;font-weight:400;color:#9aa7b8;white-space:nowrap}
-.v5m-chip-poly .v5m-poly-ico{color:#8b919e;font-size:15px;line-height:1}
+.v5m-chip-poly{display:inline-flex;align-items:center;gap:6px;background:#262345;border-radius:10px;padding:6px 10px;font-size:13.5px;font-weight:400;color:#a3a1c2;white-space:nowrap}
+.v5m-chip-poly .v5m-poly-ico{color:#9794b8;font-size:15px;line-height:1}
 .v5m-chip-poly b{color:#FFFFFF;font-weight:700}
-.v5m-posted{font-size:13.5px;font-weight:400;color:#8b919e}
+.v5m-posted{font-size:13.5px;font-weight:400;color:#9794b8}
 .v5m-btns{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
-.v5m-btn{flex:1 1 0;min-width:0;text-align:center;font-size:13.5px;font-weight:400;white-space:nowrap;overflow:hidden;color:#DCDCE1;background:#13161E;border:1px solid #2A2E3A;border-radius:10px;padding:11px 12px;text-decoration:none;box-sizing:border-box;cursor:pointer;font-family:inherit}
+.v5m-btn{flex:1 1 0;min-width:0;text-align:center;font-size:13.5px;font-weight:400;white-space:nowrap;overflow:hidden;color:#dad7ee;background:#15122a;border:1px solid #38335f;border-radius:10px;padding:11px 12px;text-decoration:none;box-sizing:border-box;cursor:pointer;font-family:inherit}
 /* Place at (2026-11-09, queja de Alex: «Place at Novig» se cortaba): el boton se dimensiona por su contenido — la etiqueta completa SIEMPRE dentro, sin recorte; si la fila no cabe, envuelve (flex-wrap en .v5m-btns) en vez de cortar el texto. */
 .v5m-place{flex:1 1 auto;min-width:max-content;overflow:visible;padding:11px 12px}
 /* Boton del recibo «🎫 Receipt» (2026-11-09, captura de Alex 5:19 PM: se cortaba a «Re…»): usaba SOLO la clase base .v5m-btn (flex:1 1 0 + min-width:0 + overflow:hidden), que puede encogerse bajo su contenido y recorta el texto. Recibe el mismo tratamiento que Place: se dimensiona por su contenido y nunca se corta; la fila envuelve si no cabe. Track/Tracked igual: min-width:max-content. */
 .v5m-receipt{flex:1 1 auto;min-width:max-content;overflow:visible;padding:11px 10px}
 .v5m-share{flex:0 0 46px;font-size:15px}
-.v5m-track{flex:1.15 1 0;min-width:max-content;overflow:visible;display:flex;align-items:center;justify-content:center;text-align:center;font-size:13.5px;font-weight:400;white-space:nowrap;color:#DCDCE1;background:#13161E;border:1px solid #2A2E3A;border-radius:10px;padding:11px 12px;text-decoration:none;box-sizing:border-box;cursor:pointer}
-.v5m-tracked{flex:1.15 1 0;min-width:max-content;overflow:visible;display:flex;align-items:center;justify-content:center;text-align:center;font-size:13.5px;font-weight:400;white-space:nowrap;color:#A0A1A5;background:#13161E;border:1px solid #2A2E3A;border-radius:10px;padding:11px 12px;box-sizing:border-box}
+.v5m-track{flex:1.15 1 0;min-width:max-content;overflow:visible;display:flex;align-items:center;justify-content:center;text-align:center;font-size:13.5px;font-weight:400;white-space:nowrap;color:#dad7ee;background:#15122a;border:1px solid #38335f;border-radius:10px;padding:11px 12px;text-decoration:none;box-sizing:border-box;cursor:pointer}
+.v5m-tracked{flex:1.15 1 0;min-width:max-content;overflow:visible;display:flex;align-items:center;justify-content:center;text-align:center;font-size:13.5px;font-weight:400;white-space:nowrap;color:#a3a1c2;background:#15122a;border:1px solid #38335f;border-radius:10px;padding:11px 12px;box-sizing:border-box}
 /* Hoja de detalle y popup en la misma familia Minimal, SOLO en la vista de
    Alex: titulo de la hoja = nombre del equipo en 800, resto fino (<=500),
-   fondos #14171E. Sin cambios de estructura, ids ni clases JS. */
+   fondos #15122a. Sin cambios de estructura, ids ni clases JS. */
 .v5stitle{font-weight:800}
 .v5kick{font-weight:500}
 .v5prog{font-weight:500}
@@ -219,11 +219,11 @@
 .v5pop-st{font-weight:500}
 .v5c-matched{font-weight:500}
 .v5c-tracked{font-weight:400;font-size:13.5px;border-radius:10px}
-.v5sheet-in{background:#14171E}
-.v5shead{background:#14171E}
-.v5actions{background:#14171E}
-.v5timg{background:#14171E}
-.v5pop-in{background:#14171E;border-color:#262A35}
+.v5sheet-in{background:#15122a}
+.v5shead{background:#15122a}
+.v5actions{background:#15122a}
+.v5timg{background:#15122a}
+.v5pop-in{background:#15122a;border-color:#262345}
 </style>
 {# Cara MINIMAL (ver nota de cabecera). Banda dorada =
    encabezado de nivel (sustituye a la pildora interna para no duplicar);
@@ -318,17 +318,17 @@
       <div class="v5row"><span class="v5row-k">Starts</span><span class="v5row-v">{{ _gt12 }}</span></div>
       {% if p.posted %}<div class="v5row"><span class="v5row-k">Posted</span><span class="v5row-v">{{ p.posted }}</span></div>{% endif %}
       <div class="v5row"><span class="v5row-k">Price posted</span><span class="v5row-v"><b>{{ fmt_odds(p.cuota) }}</b></span></div>
-      <div class="v5row"><span class="v5row-k">Stake</span><span class="v5row-v"><b>{{ '%g' % p.stake_unidades }}u</b> &middot; <span style="color:#10CC87;font-weight:600">${{ '%g' % p.stake_monto }}</span></span></div>
+      <div class="v5row"><span class="v5row-k">Stake</span><span class="v5row-v"><b>{{ '%g' % p.stake_unidades }}u</b> &middot; <span style="color:#7c83f8;font-weight:600">${{ '%g' % p.stake_monto }}</span></span></div>
       <div class="v5row"><span class="v5row-k">Program</span><span class="v5prog">OFFICIALS</span></div>
     </div>
     {% if p.writeup %}
     <details class="v5wu">
-      <summary class="v5wu-h" style="cursor:pointer;list-style:none">📊 WHY WE LIKE IT <span style="color:#9CA0AC;float:right">▾</span></summary>
+      <summary class="v5wu-h" style="cursor:pointer;list-style:none">📊 WHY WE LIKE IT <span style="color:#a3a1c2;float:right">▾</span></summary>
       <div class="v5wu-row"><span>Model win probability</span><b>{% if p.writeup.model_prob is number %}{{ '%.1f%%'|format(p.writeup.model_prob * 100) }}{% else %}{{ p.writeup.model_prob }}{% endif %}</b></div>
       <div class="v5wu-row"><span>Implied by the price</span><b>{% if p.writeup.implied_prob is number %}{{ '%.1f%%'|format(p.writeup.implied_prob * 100) }}{% else %}{{ p.writeup.implied_prob }}{% endif %}</b></div>
       <div class="v5wu-row"><span>Fair price (model)</span><b>{{ p.writeup.fair_price }}</b></div>
-      <div class="v5wu-row"><span>Edge</span><b style="color:#10cc87">{{ p.writeup.edge }}</b></div>
-      {% if p.writeup.ev is defined and p.writeup.ev is not none and p.writeup.ev != '' %}<div class="v5wu-row"><span>EV</span><b style="color:#10cc87">{% if p.writeup.ev is number %}{{ '%+.1f%%'|format(p.writeup.ev * 100) }}{% else %}{{ p.writeup.ev }}{% endif %}</b></div>{% endif %}
+      <div class="v5wu-row"><span>Edge</span><b style="color:#7c83f8">{{ p.writeup.edge }}</b></div>
+      {% if p.writeup.ev is defined and p.writeup.ev is not none and p.writeup.ev != '' %}<div class="v5wu-row"><span>EV</span><b style="color:#7c83f8">{% if p.writeup.ev is number %}{{ '%+.1f%%'|format(p.writeup.ev * 100) }}{% else %}{{ p.writeup.ev }}{% endif %}</b></div>{% endif %}
       {% if p.writeup.key_factor %}<p class="v5wu-p"><b>Key factor:</b> {{ p.writeup.key_factor }}</p>{% endif %}
       {% if p.writeup.risk %}<p class="v5wu-p"><b>The risk:</b> {{ p.writeup.risk }}</p>{% endif %}
     </details>
@@ -339,7 +339,7 @@
       <span class="v5c-matched" style="position:absolute;top:8px;right:8px">✓ MATCHED</span>
     </div>
     {% endif %}
-    <p style="font-size:13.5px;color:#9CA0AC;line-height:1.5;margin:10px 0 0">Prices move after posting — compare before you bet.</p>
+    <p style="font-size:13.5px;color:#a3a1c2;line-height:1.5;margin:10px 0 0">Prices move after posting — compare before you bet.</p>
     <div class="v5actions">
     {% if p.nivel != 'VALUE' %}
       {% if p.id in tracked_ids %}
@@ -711,9 +711,9 @@
 </script>
 <style>
 /* ===== RECOLOR WGT 2026-11-13: menta unico acento; boton menta = letra oscura ===== */
-.tst-strip-btn.gold,.v5c-matched{color:#0B1220 !important}
-.v5m::before{background:#10CC87 !important}
-.v5kick.gold,.v5m-band-t.gold,.v5wu-h,.v5wu-p b{color:#10CC87 !important}
-.v5m-strip{border-color:rgba(16,204,135,0.28) !important}
+.tst-strip-btn.gold,.v5c-matched{color:#100e1d !important}
+.v5m::before{background:#7c83f8 !important}
+.v5kick.gold,.v5m-band-t.gold,.v5wu-h,.v5wu-p b{color:#7c83f8 !important}
+.v5m-strip{border-color:rgba(124,131,248,0.28) !important}
 .v5m-nums{background:none !important}
 </style>
