@@ -262,6 +262,9 @@
 .v5info-k{font-size:13px;font-weight:400;color:#93a1ba}
 .v5info-v{font-size:17px;font-weight:500;color:#fff;margin-top:3px;line-height:1.2}
 .v5info-v .v5info-usd{display:block;font-size:13px;font-weight:500;color:#60a5fa;margin-top:2px}
+.v5info-book{display:flex;align-items:center;gap:7px}
+.v5book-ico{width:25px;height:25px;border-radius:50%;background:#fff;display:inline-flex;align-items:center;justify-content:center;flex:none}
+.v5book-ico img{width:16px;height:16px;border-radius:4px;display:block}
 .v5info-line{margin-top:12px;text-align:center;font-size:13.5px;color:#c6cfdf}
 .v5info-line b{color:#fff;font-weight:600}
 .v5bet{margin-top:10px;border:1px solid rgba(96,165,250,.45);background:rgba(96,165,250,.08);border-radius:14px;padding:12px 14px}
@@ -381,7 +384,7 @@
         <div class="v5info-cell"><div class="v5info-k">Price posted</div><div class="v5info-v">{{ fmt_odds(p.cuota) }}</div></div>
         <div class="v5info-cell"><div class="v5info-k">Stake</div><div class="v5info-v">{{ '%g' % p.stake_unidades }}u<span class="v5info-usd">${{ '%g' % p.stake_monto }}</span></div></div>
         {% if p.posted is defined and p.posted %}<div class="v5info-cell"><div class="v5info-k">Posted to members</div><div class="v5info-v">{{ p.posted }}</div></div>{% endif %}
-        {% if p.casa is defined and p.casa %}<div class="v5info-cell"><div class="v5info-k">Placed at</div><div class="v5info-v">{{ p.casa }}</div></div>{% endif %}
+        {% if p.casa is defined and p.casa %}<div class="v5info-cell"><div class="v5info-k">Placed at</div><div class="v5info-v v5info-book">{% if p.casa == 'Novig' %}<span class="v5book-ico"><img src="{{ url_for('static', filename='img/books/novig.png') }}" alt=""></span>{% endif %}{{ p.casa }}</div></div>{% endif %}
       </div>
       {% if _ci.get('lines') and _ci.lines.open and _ci.lines.now %}<div class="v5info-line">Line {{ p.team_name or p.abbr }} opened <b>{{ _ci.lines.open }}</b>, now <b>{{ _ci.lines.now }}</b></div>{% endif %}
     </div>
