@@ -359,6 +359,26 @@
 (function(){
   if (window.__v5SheetInit) return;
   window.__v5SheetInit = true;
+  /* Portal de overlays (fix 2026-11-22): la hoja del ticket (.v5sheet) y el
+     popup de chips (.v5pop) son position:fixed pero su markup vive dentro de
+     .dn-wrap, que lleva zoom:.85 (zoom global del Dashboard). En Safari/iOS
+     un ancestro con zoom se vuelve el bloque contenedor de los descendientes
+     fixed: la hoja dejaba de cubrir el viewport y salia CORTADA desde arriba.
+     Al abrir, el overlay se mueve a <body> — fuera del zoom, igual que el
+     modal de stake, que siempre funciono — y al cerrar vuelve a su sitio. */
+  function v5Portal(el){
+    if (el && el.parentNode !== document.body) {
+      el.__v5home = { p: el.parentNode, n: el.nextSibling };
+      document.body.appendChild(el);
+    }
+  }
+  function v5Unportal(el){
+    if (el && el.__v5home) {
+      var h = el.__v5home; el.__v5home = null;
+      if (h.n && h.n.parentNode === h.p) { h.p.insertBefore(el, h.n); }
+      else { h.p.appendChild(el); }
+    }
+  }
   function v5Row(body, k, v){
     var r = document.createElement('div'); r.className = 'v5pop-row';
     var ks = document.createElement('span'); ks.className = 'v5pop-k'; ks.textContent = k;
@@ -431,6 +451,7 @@
     } else {
       return;
     }
+    v5Portal(pop);
     pop.hidden = false;
     document.body.classList.add('v5-sheet-open');
   }
@@ -439,29 +460,31 @@
     if (chip) { v5OpenPop(chip); return; }
     if (e.target.closest('[data-v5-pop-close]')) {
       var popc = e.target.closest('[data-v5-pop]');
-      if (popc) popc.hidden = true;
+      if (popc) { popc.hidden = true; v5Unportal(popc); }
       document.body.classList.remove('v5-sheet-open');
       return;
     }
     if (e.target.hasAttribute && e.target.hasAttribute('data-v5-pop')) {
       e.target.hidden = true;
+      v5Unportal(e.target);
       document.body.classList.remove('v5-sheet-open');
       return;
     }
     var opener = e.target.closest('[data-v5-open]');
     if (opener) {
       var sh = document.getElementById('v5-sheet-' + opener.getAttribute('data-v5-open'));
-      if (sh) { sh.style.display = 'flex'; document.body.classList.add('v5-sheet-open'); if (opener.getAttribute('data-v5-why')) { var wu = sh.querySelector('details.v5wu'); if (wu) { wu.open = true; } var sc = sh.querySelector('.v5sheet-in'); if (sc) { sc.scrollTop = 0; } } }
+      if (sh) { v5Portal(sh); sh.style.display = 'flex'; document.body.classList.add('v5-sheet-open'); if (opener.getAttribute('data-v5-why')) { var wu = sh.querySelector('details.v5wu'); if (wu) { wu.open = true; } var sc = sh.querySelector('.v5sheet-in'); if (sc) { sc.scrollTop = 0; } } }
       return;
     }
     if (e.target.closest('[data-v5-close]')) {
       var sheet = e.target.closest('[data-v5-sheet]');
-      if (sheet) sheet.style.display = 'none';
+      if (sheet) { sheet.style.display = 'none'; v5Unportal(sheet); }
       document.body.classList.remove('v5-sheet-open');
       return;
     }
     if (e.target.hasAttribute && e.target.hasAttribute('data-v5-sheet')) {
       e.target.style.display = 'none';
+      v5Unportal(e.target);
       document.body.classList.remove('v5-sheet-open');
     }
   });
