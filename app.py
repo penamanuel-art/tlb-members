@@ -12519,12 +12519,27 @@ def _desbloquear_intent_1(stripe, db, user, email, customer_id):
     la activación llega por el webhook invoice.paid de siempre, sin
     cambios."""
     import time as _time
+    # TEMP-DIAG (2026-11-21): con {"debug": true} en el body, la
+    # respuesta trae el escaneo de suscripciones del cliente pa'
+    # diagnosticar por qué el reuso no casa; se quita al cerrar.
+    _dbg = bool((request.get_json(silent=True) or {}).get("debug"))
+    _scan = []
     try:
         # Reuso: incomplete con precio intro y schedule ya colgado.
         try:
             subs = stripe.Subscription.list(
                 customer=customer_id, status="incomplete", limit=10)
             for s in (subs.get("data") or []):
+                _scan.append({
+                    "id": s.get("id"),
+                    "status": s.get("status"),
+                    "schedule": s.get("schedule"),
+                    "prices": [
+                        (it.get("price") or {}).get("id")
+                        for it in (((s.get("items") or {}).get("data"))
+                                   or [])],
+                    "latest_invoice": s.get("latest_invoice"),
+                })
                 items = ((s.get("items") or {}).get("data")) or []
                 if not any((it.get("price") or {}).get("id")
                            == PLATINUM_PRICE_ENTRADA_1
@@ -12569,6 +12584,10 @@ def _desbloquear_intent_1(stripe, db, user, email, customer_id):
                     {"error": "could not create payment intent"}), 502
         except Exception:
             pass
+        if _dbg:
+            # TEMP-DIAG: sin candidato reutilizable — se devuelve el
+            # escaneo en vez de crear otra suscripción.
+            return jsonify({"debug_scan": _scan}), 200
         # MECANISMO (corregido en vivo el 2026-11-21): el schedule se
         # crea DIRECTO sobre el cliente con start_date=ahora. La API
         # vigente no permite colgar un schedule de una suscripción
