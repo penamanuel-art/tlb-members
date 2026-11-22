@@ -8502,13 +8502,33 @@ def bienvenida():
         _fm = bool(_u) and (_u["signup_offer"] or "") == PLATINUM_OFFER_FREE_MONTH
     except Exception:
         _fm = False
+    # Variante del panel Platinum según la realidad de la cuenta
+    # (2026-11-21, orden de Alex «NADA GRATIS»): "mes_gratis" SOLO si el
+    # reloj de trial sigue vivo — la cohorte vieja (y la de $1 + mes
+    # gratis) conserva su copy de mes gratis, que es su verdad intacta;
+    # "platinum" si la cuenta ya paga (copy neutro, sin promesas de
+    # entrada); "entrada" pa' todos los demás — la cohorte nueva
+    # entrada_1_v1 y cualquier cuenta sin trial ni pago: NADA de mes
+    # gratis ni «no card», su Platinum arranca a $1 la primera semana.
+    # Ante cualquier duda se cae a "entrada": jamás prometer gratis
+    # por accidente.
+    _variante = "entrada"
+    try:
+        _uv = current_user()
+        if _uv:
+            if (_uv["platinum_trial_ends"] or "") and not _trial_vencido(_uv):
+                _variante = "mes_gratis"
+            elif _acceso_programa(_uv):
+                _variante = "platinum"
+    except Exception:
+        _variante = "entrada"
     # Estado de «completar la cuenta» (2026-11-07, onboarding espejo del
     # /welcome de WGT): la tarjeta «Finish setting up your account» solo
     # aparece si a la cuenta le falta algo — correo sin verificar,
     # contraseña propia sin fijar, nombre provisional (la parte local
     # del correo) o teléfono sin registrar.
     _setup = _setup_estado(current_user())
-    return render_template("bienvenida.html", nombre=session.get("nombre", ""), fb_reg=fb_reg, fb_event_id=fb_event_id, offer_free_month=_fm, setup=_setup)
+    return render_template("bienvenida.html", nombre=session.get("nombre", ""), fb_reg=fb_reg, fb_event_id=fb_event_id, offer_free_month=_fm, setup=_setup, variante_bienvenida=_variante)
 
 
 @app.route("/bienvenida-previa")
