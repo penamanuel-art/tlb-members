@@ -8697,6 +8697,27 @@ def previa_azul_oscuro():
     return render_template("previa_azul_oscuro.html")
 
 
+@app.route("/previa-splits")
+def previa_splits():
+    """VISTA PREVIA pa' Alex del bloque BETTING SPLITS del detalle de
+    jugada (2026-11-22, aprobado por Alex en llamada con 5 fotos de la
+    forma de la competencia — se copia la FORMA, jamas su marca):
+    bloque compacto «Betting splits by source» por fuente (Tickets/Money
+    con rayitas finas y % a la derecha) + bloque «Exchange buyers»
+    (Kalshi: Trades/Money + volumen $), cada cifra con su fuente y hora
+    de lectura. La previa vive en el propio sitio porque los links de
+    archivos no le abren en su telefono. Candado: admin real o la cuenta
+    de miembro de Alex (_admin_o_cuenta_alex); cualquier otro recibe
+    404. Sirve la plantilla estatica previa_splits.html con los datos
+    REALES de las dos jugadas de hoy (DET @ ATL y DAL @ UTA, leidos el
+    2026-11-22 ~4:52-4:54 PM ET). NO toca la tarjeta en vivo: el bloque
+    entra al detalle real solo cuando Alex apruebe esta previa."""
+    from flask import abort
+    if not _admin_o_cuenta_alex(current_user()):
+        abort(404)
+    return render_template("previa_splits.html")
+
+
 @app.route("/setup")
 @login_required
 def setup_page():
