@@ -759,6 +759,10 @@ def login_required(view):
         # active. Excepciones: la propia /bienvenida y /cuenta/completar
         # (fijar sus datos/contraseña antes de confirmar), y la cuenta
         # de Alex / admin (_admin_o_cuenta_alex).
+        # NOTA 2026-11-21: los registros nuevos nacen YA verificados
+        # (orden de Alex — «Quítale el confirma tu email»; ver el INSERT
+        # de register), así que en la práctica esta puerta solo alcanza
+        # a las cuentas viejas que nunca confirmaron su correo.
         if not _admin_o_cuenta_alex(_u_gate):
             try:
                 _verif_gate = bool(_u_gate["email_verified"])
@@ -8053,11 +8057,12 @@ def register():
         # embudo de WGT): el registro pide SOLO el correo (+ la intención
         # declarada, lista blanca) y la cuenta entra AL INSTANTE con la
         # sesión abierta. Nombre, teléfono y contraseña se piden DENTRO,
-        # en /bienvenida («Finish setting up your account»). La cuenta
-        # nace SIN verificar: la sesión de entrada es la única vía de
-        # estar dentro sin verificar — el login normal sigue exigiendo
-        # la activación y CompleteRegistration de Meta sigue saliendo
-        # SOLO al activar (activar_cuenta), como siempre.
+        # en /bienvenida («Finish setting up your account»). Desde el
+        # 2026-11-21 (orden de Alex: «Quítale el confirma tu email») la
+        # cuenta nace YA verificada y los efectos de la activación
+        # (bienvenida + CompleteRegistration de Meta) se disparan AQUÍ,
+        # al registrarse — ver el bloque del INSERT. El login normal
+        # sigue bloqueando a las cuentas viejas que nunca se verificaron.
         email = request.form.get("email", "").strip().lower()
         _intent = (request.form.get("signup_intent") or "").strip().lower()
         if _intent not in ("platinum", "free"):
@@ -8108,30 +8113,44 @@ def register():
             if _reg_next_ex:
                 return redirect(url_for("login", next=_reg_next_ex))
             return redirect(url_for("login"))
-        # La cuenta nace SIN VERIFICAR pero ENTRA al instante (espejo
-        # WGT, 2026-11-07): nombre provisional = parte local del correo
-        # (la columna nombre es NOT NULL), contraseña temporal aleatoria
-        # hasheada (password_propia = 0 hasta que la fije dentro) y
-        # sesión abierta en el acto.
+        # La cuenta nace y ENTRA al instante (espejo WGT, 2026-11-07):
+        # nombre provisional = parte local del correo (la columna
+        # nombre es NOT NULL), contraseña temporal aleatoria hasheada
+        # (password_propia = 0 hasta que la fije dentro) y sesión
+        # abierta en el acto.
         # ENTRADA A $1 (2026-11-21, orden de Alex — «NADA GRATIS»;
         # supersede el nacimiento con mes gratis del 2026-11-09 SOLO
         # pa' registros nuevos): signup_offer = OFERTA_ENTRADA_1,
         # platinum_unlocked = 0 y platinum_trial_ends = NULL — la
-        # cuenta nace SIN Platinum y SIN reloj de mes gratis. Tras
-        # confirmar su email, el candado de login_required la lleva a
-        # /desbloquear-platinum a pagar su primera semana a $1 y el
-        # webhook invoice.paid enciende su Platinum. Las cuentas que
-        # ya están en su mes gratis NO se tocan. El correo de
-        # activación sale por la vía de siempre SIN bloquear la
-        # entrada; activar sigue siendo lo que convierte la cuenta en
-        # miembro confirmado.
+        # cuenta nace SIN Platinum y SIN reloj de mes gratis. El
+        # candado de login_required la lleva a /desbloquear-platinum a
+        # pagar su primera semana a $1 y el webhook invoice.paid
+        # enciende su Platinum. Las cuentas que ya están en su mes
+        # gratis NO se tocan.
+        # SIN CONFIRMACIÓN DE EMAIL (2026-11-21, orden de Alex —
+        # «Quítale el confirma tu email»): la cuenta nace YA verificada
+        # (email_verified = 1, activated_at = ahora) y la entrada NO
+        # depende de abrir ningún correo — el candado de confirmación
+        # del 2026-11-11 murió pa' registros nuevos. Los efectos que
+        # antes disparaba /activar/<token> (aviso de miembro nuevo,
+        # email de bienvenida y CompleteRegistration de Meta) se
+        # disparan AQUÍ, una sola vez, justo tras el INSERT: la puerta
+        # de la bienvenida (_bienvenida_activacion_ok) pasa igual
+        # porque la cuenta ya está verificada y su activated_at es de
+        # este mismo momento. El correo de activación SIGUE saliendo
+        # (no hace daño: su enlace queda como puerta de entrada con el
+        # botón «Open your dashboard») y activar_cuenta quedó
+        # idempotente pa' que un clic tardío NO duplique bienvenida ni
+        # Meta. Las cuentas viejas sin verificar NO se tocan: el login
+        # las sigue bloqueando y reenviándoles la activación, como
+        # siempre.
         _tok = secrets.token_urlsafe(32)
         _local = email.split("@", 1)[0].strip(" ._-") or "Member"
         nombre = _local[:60]
         _nuevo_id = insert_returning_id(
             db,
-            "INSERT INTO users (nombre, email, password_hash, phone, sms_optin, created_at, lang, email_verified, activation_token, signup_offer, signup_intent, password_propia, platinum_unlocked, platinum_trial_ends) VALUES (?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?, 0, 0, NULL)",
-            (nombre, email, hash_password(secrets.token_urlsafe(32)), None, 0, now_iso(), _lang, _tok, OFERTA_ENTRADA_1, _intent),
+            "INSERT INTO users (nombre, email, password_hash, phone, sms_optin, created_at, lang, email_verified, activation_token, signup_offer, signup_intent, password_propia, platinum_unlocked, platinum_trial_ends, activated_at) VALUES (?, ?, ?, ?, ?, ?, ?, 1, ?, ?, ?, 0, 0, NULL, ?)",
+            (nombre, email, hash_password(secrets.token_urlsafe(32)), None, 0, now_iso(), _lang, _tok, OFERTA_ENTRADA_1, _intent, now_iso()),
         )
         db.commit()
         send_activation_email(nombre, email, _tok, _lang)
@@ -8140,6 +8159,37 @@ def register():
         session["is_admin"] = False
         session.permanent = True
         _registrar_actividad(_nuevo_id, "login")
+        # Efectos de la activación, movidos al registro (2026-11-21):
+        # los mismos que disparaba activar_cuenta, una sola vez y con
+        # la misma forma — aviso de miembro nuevo, email de bienvenida
+        # (con el token de activación de ESTA cuenta, que es la llave
+        # de su puerta en _dispatch_email) y CompleteRegistration de
+        # Meta por CAPI con el event_id que el pixel de /bienvenida
+        # reutiliza pa' que Meta deduplique.
+        log_notificacion(db, "miembro_nuevo", f"New member: {nombre}", email)
+        notify_new_member(nombre, email)
+        try:
+            send_welcome_email(nombre, email, activation_token=_tok)
+            db.execute("UPDATE users SET welcome_email_sent = 1 WHERE id = ?", (_nuevo_id,))
+            db.commit()
+        except Exception:
+            pass
+        fb_event_id = uuid.uuid4().hex
+        session["fb_reg"] = 1
+        session["fb_event_id"] = fb_event_id
+        client_ip = (request.headers.get("X-Forwarded-For", "") or "").split(",")[0].strip() or request.remote_addr
+        _send_meta_capi_registration(
+            email,
+            fb_event_id,
+            client_ip,
+            request.user_agent.string if request.user_agent else "",
+            request.cookies.get("_fbp"),
+            request.cookies.get("_fbc"),
+            request.url,
+            phone=None,
+            user_id=_nuevo_id,
+            nombre=nombre,
+        )
         # 2026-11-09 (mes gratis): el puente a /desbloquear-platinum al
         # registrarse MURIÓ — nadie cae en la página de pago al entrar;
         # su Platinum ya está encendido por el mes gratis y la venta va
@@ -8207,6 +8257,26 @@ def activar_cuenta(token):
     if not user:
         flash("That activation link is no longer valid. Log in or register again.", "error")
         return redirect(url_for("login"))
+    # Cuenta YA verificada (2026-11-21): desde que el registro
+    # auto-confirma (orden de Alex — «Quítale el confirma tu email»),
+    # el enlace del correo de activación puede tocarse DESPUÉS de que
+    # la cuenta ya entró y disparó su bienvenida y su Meta al
+    # registrarse. Ese clic tardío SOLO abre la sesión y manda al
+    # Dashboard (el candado de la entrada a $1 redirige solo a quien
+    # no ha pagado): NO se repite NINGÚN efecto de la activación, pa'
+    # no duplicar bienvenida, aviso de miembro nuevo ni
+    # CompleteRegistration.
+    try:
+        _ya_verificada = bool(user["email_verified"])
+    except Exception:
+        _ya_verificada = False
+    if _ya_verificada:
+        session["user_id"] = user["id"]
+        session["nombre"] = user["nombre"]
+        session["is_admin"] = is_admin_for(user)
+        session.permanent = True
+        _registrar_actividad(user["id"], "login")
+        return redirect(url_for("home"))
     uid = user["id"]
     nombre = user["nombre"]
     email = user["email"]
