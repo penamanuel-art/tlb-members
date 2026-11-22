@@ -202,11 +202,11 @@ body{padding-bottom:calc(8px + env(safe-area-inset-bottom))!important}
     <img class="upl-avatar" src="{{ url_for('static', filename='img/sharp-team-logo.png') }}" alt="The Sharp Team">
     <p class="upl-kicker">💎 THE SHARP TEAM · PLATINUM</p>
     {% if anonimo %}
-    <h1 class="upl-h1">Every Platinum play, with its real ticket — <span class="dollar">$4.99</span> for your first week</h1>
-    <p class="upl-sub">Join The Sharp Team and unlock Platinum from day one: every official play with the real ticket, posted before game time, and graded in public, win or loss. $4.99 for your first week, then $15.99/week — cancel anytime.</p>
-    {% elif entrada_499 %}
-    <h1 class="upl-h1">Every Platinum play — <span class="dollar">$4.99</span> for your first week.</h1>
-    <p class="upl-sub">Every official Platinum play, the same day it drops — $4.99 for your first week, then $15.99/week. Our highest-conviction plays — The Vault Play included. Real money on every ticket, posted before game time and graded in public, win or loss.</p>
+    <h1 class="upl-h1">Every Platinum play, with its real ticket — <span class="dollar">$1</span> for your first week</h1>
+    <p class="upl-sub">Join The Sharp Team and unlock Platinum from day one: every official play with the real ticket, posted before game time, and graded in public, win or loss. $1 for your first week, then $15.99/week — cancel anytime.</p>
+    {% elif entrada_1 %}
+    <h1 class="upl-h1">Every Platinum play — <span class="dollar">$1</span> for your first week.</h1>
+    <p class="upl-sub">Every official Platinum play, the same day it drops — $1 for your first week, then $15.99/week. Our highest-conviction plays — The Vault Play included. Real money on every ticket, posted before game time and graded in public, win or loss.</p>
     {% else %}
     <h1 class="upl-h1">Every Platinum play, for <span class="dollar">$15.99 a week.</span></h1>
     <p class="upl-sub">Every official Platinum play, the same day it drops. Our highest-conviction plays — The Vault Play included. Real money on every ticket, posted before game time and graded in public, win or loss.</p>
@@ -230,14 +230,14 @@ body{padding-bottom:calc(8px + env(safe-area-inset-bottom))!important}
     
     {% if anonimo %}
     <span class="upl-pill">💎 PLATINUM · WEEKLY PLAN</span>
-    <p class="upl-price"><span class="big">$4.99</span> your first week of Platinum</p>
+    <p class="upl-price"><span class="big">$1</span> your first week of Platinum</p>
     <p class="upl-then">Then $15.99/week · every play · every tool — cancel anytime</p>
-    <p class="upl-billed">FIRST WEEK $4.99 · THEN $15.99/WEEK · CANCEL ANYTIME</p>
-    {% elif entrada_499 %}
+    <p class="upl-billed">FIRST WEEK $1 · THEN $15.99/WEEK · CANCEL ANYTIME</p>
+    {% elif entrada_1 %}
     <span class="upl-pill">💎 PLATINUM · WEEKLY PLAN</span>
-    <p class="upl-price"><span class="big">$4.99</span> your first week</p>
+    <p class="upl-price"><span class="big">$1</span> your first week</p>
     <p class="upl-then">Then $15.99/week · every play · every board · every tool — cancel anytime</p>
-    <p class="upl-billed">FIRST WEEK $4.99 · THEN BILLED WEEKLY · CANCEL ANYTIME</p>
+    <p class="upl-billed">FIRST WEEK $1 · THEN BILLED WEEKLY · CANCEL ANYTIME</p>
     {% else %}
     <span class="upl-pill">💎 PLATINUM · WEEKLY PLAN</span>
     <p class="upl-price"><span class="big">$15.99</span> per week</p>
@@ -245,7 +245,7 @@ body{padding-bottom:calc(8px + env(safe-area-inset-bottom))!important}
     <p class="upl-billed">BILLED WEEKLY · CANCEL ANYTIME · NO CONTRACTS</p>
     {% endif %}
     {% if not anonimo %}
-    <div class="upl-disc"><b>Recurring billing disclosure:</b> {% if entrada_499 %}You pay $4.99 today for your first week; Platinum then continues at $15.99/week, renewing automatically every week until you cancel.{% else %}You pay $15.99 today; Platinum continues at $15.99/week, renewing automatically every week until you cancel.{% endif %} Cancel anytime from your account — no contracts, no cancellation fees. {% if entrada_499 %}Your price — $4.99 today, then $15.99/week — is the whole price, shown at checkout before you pay{% else %}$15.99/week is the whole price, shown at checkout before you pay{% endif %} — no calls, no retention scripts. Payments are processed securely by Stripe; your card is held by Stripe — we never see or store your card number.</div>
+    <div class="upl-disc"><b>Recurring billing disclosure:</b> {% if entrada_1 %}You pay $1 today for your first week; Platinum then continues at $15.99/week, renewing automatically every week until you cancel.{% else %}You pay $15.99 today; Platinum continues at $15.99/week, renewing automatically every week until you cancel.{% endif %} Cancel anytime from your account — no contracts, no cancellation fees. {% if entrada_1 %}Your price — $1 today, then $15.99/week — is the whole price, shown at checkout before you pay{% else %}$15.99/week is the whole price, shown at checkout before you pay{% endif %} — no calls, no retention scripts. Payments are processed securely by Stripe; your card is held by Stripe — we never see or store your card number.</div>
     {% endif %}
     {% if user_email %}<div class="upl-as"><div class="upl-as-in"><span class="e">✓ {{ user_email }}</span><span class="o">Not you? <a href="{{ url_for('logout') }}">Log out</a></span></div></div>{% endif %}
     {% if past_due %}
@@ -260,12 +260,12 @@ body{padding-bottom:calc(8px + env(safe-area-inset-bottom))!important}
     </div>
     {% endif %}
     {% if anonimo %}
-    <p class="upl-under" style="margin-top:12px;">Your first week is $4.99, charged when you join — then $15.99/week. Cancel anytime.</p>
+    <p class="upl-under" style="margin-top:12px;">Your first week is $1, charged when you join — then $15.99/week. Cancel anytime.</p>
     {% endif %}
     {% if anonimo %}
     <div style="margin:14px 0 0;text-align:center;">
-      <a class="upl-cta" href="{{ url_for('register') }}">Get started — $4.99 first week &rarr;</a>
-      <p style="margin:10px 0 0;font-size:12.5px;color:#a8b3cf;">It takes a minute — create your account, confirm your email, and Platinum unlocks for $4.99 for your first week. Already a member? <a href="{{ url_for('login', next=url_for('desbloquear_platinum')) }}" style="color:#7dd3fc;font-weight:800;">Log in</a></p>
+      <a class="upl-cta" href="{{ url_for('register') }}">Get started — $1 first week &rarr;</a>
+      <p style="margin:10px 0 0;font-size:12.5px;color:#a8b3cf;">It takes a minute — create your account, confirm your email, and Platinum unlocks for $1 for your first week. Already a member? <a href="{{ url_for('login', next=url_for('desbloquear_platinum')) }}" style="color:#7dd3fc;font-weight:800;">Log in</a></p>
     </div>
     {% elif stripe_embed_ok %}
     <div class="upl-brands"><span class="upl-brand visa">VISA</span><span class="upl-brand mc"><i>●</i><b>●</b>&nbsp;MasterCard</span><span class="upl-brand disc">DISCOVER</span><span class="upl-brand amex">AMEX</span></div>
@@ -274,20 +274,20 @@ body{padding-bottom:calc(8px + env(safe-area-inset-bottom))!important}
       <div id="upl-pe-form"></div>
       <p class="upl-pe-err" id="upl-pe-error"></p>
     </div>
-    <button class="upl-cta" id="upl-pay-btn" type="button" style="display:none">Start Platinum - {% if entrada_499 %}$4.99 first week{% else %}$15.99/week{% endif %} →</button>
-    <a class="upl-cta" id="upl-emb-fallback" href="{% if entrada_499 %}{{ url_for('desbloquear_platinum') }}{% else %}{{ stripe_url }}{% endif %}" target="_blank" rel="noopener" style="display:none">Start Platinum - {% if entrada_499 %}$4.99 first week{% else %}$15.99/week{% endif %} →</a>
-    <noscript><a class="upl-cta" href="{% if entrada_499 %}{{ url_for('desbloquear_platinum') }}{% else %}{{ stripe_url }}{% endif %}" target="_blank" rel="noopener">Start Platinum - {% if entrada_499 %}$4.99 first week{% else %}$15.99/week{% endif %} →</a></noscript>
+    <button class="upl-cta" id="upl-pay-btn" type="button" style="display:none">Start Platinum - {% if entrada_1 %}$1 first week{% else %}$15.99/week{% endif %} →</button>
+    <a class="upl-cta" id="upl-emb-fallback" href="{% if entrada_1 %}{{ url_for('desbloquear_platinum') }}{% else %}{{ stripe_url }}{% endif %}" target="_blank" rel="noopener" style="display:none">Start Platinum - {% if entrada_1 %}$1 first week{% else %}$15.99/week{% endif %} →</a>
+    <noscript><a class="upl-cta" href="{% if entrada_1 %}{{ url_for('desbloquear_platinum') }}{% else %}{{ stripe_url }}{% endif %}" target="_blank" rel="noopener">Start Platinum - {% if entrada_1 %}$1 first week{% else %}$15.99/week{% endif %} →</a></noscript>
     {% else %}
     <div class="upl-brands"><span class="upl-brand visa">VISA</span><span class="upl-brand mc"><i>●</i><b>●</b>&nbsp;MasterCard</span><span class="upl-brand disc">DISCOVER</span><span class="upl-brand amex">AMEX</span></div>
-    <a class="upl-cta" href="{% if entrada_499 %}{{ url_for('desbloquear_platinum') }}{% else %}{{ stripe_url }}{% endif %}" target="_blank" rel="noopener">Start Platinum - {% if entrada_499 %}$4.99 first week{% else %}$15.99/week{% endif %} →</a>
+    <a class="upl-cta" href="{% if entrada_1 %}{{ url_for('desbloquear_platinum') }}{% else %}{{ stripe_url }}{% endif %}" target="_blank" rel="noopener">Start Platinum - {% if entrada_1 %}$1 first week{% else %}$15.99/week{% endif %} →</a>
     {% endif %}
     {% if not anonimo %}
-    <p style="margin:9px 0 0;text-align:center;font-size:11px;line-height:1.5;color:#8b98ad;">{% if entrada_499 %}✓ $4.99 your first week, then $15.99/week — cancel anytime.{% else %}✓ $15.99/week, cancel anytime.{% endif %} Two clicks from your account, no retention team, no guilt.</p>
+    <p style="margin:9px 0 0;text-align:center;font-size:11px;line-height:1.5;color:#8b98ad;">{% if entrada_1 %}✓ $1 your first week, then $15.99/week — cancel anytime.{% else %}✓ $15.99/week, cancel anytime.{% endif %} Two clicks from your account, no retention team, no guilt.</p>
     <div style="margin:11px 0 0;background:#10151d;border:1px solid #33415566;border-radius:10px;padding:10px 12px;font-size:12px;line-height:1.6;color:#a8b3cf;"><b style="color:#fff;">What happens next:</b> the moment your payment clears, your Platinum turns on automatically — every official play lands on your Dashboard before game time, with its real ticket, starting today.</div>
     <p class="upl-trust">🔒 256-bit SSL · Stripe secured · Cancel anytime</p>
     {% endif %}
     {% if anonimo %}
-    <p class="upl-under">Your first week of Platinum is $4.99 — charged when you join, then $15.99/week.</p>
+    <p class="upl-under">Your first week of Platinum is $1 — charged when you join, then $15.99/week.</p>
     <p class="upl-fine">After your first week, Platinum continues at $15.99/week until you cancel. Cancel anytime from your account — no contracts, no cancellation fees.</p>
     {% endif %}
   </div>
@@ -335,12 +335,12 @@ body{padding-bottom:calc(8px + env(safe-area-inset-bottom))!important}
   <div class="pln-card pln-plat">
     <div class="pln-top">
       <span class="pln-kick">PLATINUM · WEEKLY</span>
-      <span class="pln-badge">{% if anonimo %}FIRST WEEK $4.99{% else %}KEEP IT ALL{% endif %}</span>
+      <span class="pln-badge">{% if anonimo %}FIRST WEEK $1{% else %}KEEP IT ALL{% endif %}</span>
     </div>
     <div class="pln-price">$15.99 <small>/ week</small></div>
     <p class="pln-tag">Unlock the complete card — every official play and every tool we run, with nothing held back.</p>
     <a class="pln-cta pln-cta-plat" href="{% if anonimo %}{{ url_for('register') }}{% else %}#upl-buy{% endif %}">{% if anonimo %}Get started →{% else %}Unlock Platinum →{% endif %}</a>
-    <p class="pln-fine">{% if anonimo %}Your first week is $4.99 when you join — then $15.99/week. Cancel anytime.{% else %}$15.99/week. Cancel anytime.{% endif %}</p>
+    <p class="pln-fine">{% if anonimo %}Your first week is $1 when you join — then $15.99/week. Cancel anytime.{% else %}$15.99/week. Cancel anytime.{% endif %}</p>
   </div>
 
   {% if not anonimo %}
@@ -395,7 +395,7 @@ body{padding-bottom:calc(8px + env(safe-area-inset-bottom))!important}
     // el botón de pagar: ahí elements.submit() valida el formulario y
     // el POST al endpoint crea la suscripción y devuelve el
     // client_secret (ver el handler del botón, más abajo).
-    elements=stripe.elements({mode:"subscription",amount:{{ 499 if entrada_499 else 1599 }},currency:"usd",locale:"en",paymentMethodTypes:["card"],appearance:{theme:"stripe"}});
+    elements=stripe.elements({mode:"subscription",amount:{{ 100 if entrada_1 else 1599 }},currency:"usd",locale:"en",paymentMethodTypes:["card"],appearance:{theme:"stripe"}});
     var pe=elements.create("payment",{
           layout:{type:"tabs",defaultCollapsed:false},
           // Apple Pay EN AUTO (2026-11-11, orden de Alex por voz ~10:26 PM
@@ -543,12 +543,12 @@ body{padding-bottom:calc(8px + env(safe-area-inset-bottom))!important}
       </details>
       <details>
         <summary>What do I pay with?</summary>
-        <p>A card, processed securely by Stripe — we never see or store your card number. {% if entrada_499 %}Your first week is $4.99; then Platinum is $15.99/week, billed weekly.{% else %}Platinum is $15.99/week, billed weekly.{% endif %} Cancel anytime from your account.</p>
+        <p>A card, processed securely by Stripe — we never see or store your card number. {% if entrada_1 %}Your first week is $1; then Platinum is $15.99/week, billed weekly.{% else %}Platinum is $15.99/week, billed weekly.{% endif %} Cancel anytime from your account.</p>
       </details>
     </div>
   </div>
 
-  <p class="upl-legal">{% if entrada_499 %}First week $4.99, then $15.99/week billed weekly until cancelled.{% else %}Recurring $15.99/week billed weekly until cancelled.{% endif %} Cancel anytime from your account.</p>
+  <p class="upl-legal">{% if entrada_1 %}First week $1, then $15.99/week billed weekly until cancelled.{% else %}Recurring $15.99/week billed weekly until cancelled.{% endif %} Cancel anytime from your account.</p>
   {% endif %}
 
   {% if anonimo %}
@@ -585,13 +585,13 @@ body{padding-bottom:calc(8px + env(safe-area-inset-bottom))!important}
       <li><span class="ck">✓</span>The Masterclass — the 30-lesson course for paying members</li>
       <li><span class="ck">✓</span>Bet Tracker, auto-graded — and every result posted, win or loss</li>
     </ul>
-    <div class="upl-value">Buying tools like these one by one adds up fast. Here it is one membership: <b>{% if anonimo %}all of it — plays, boards and tools — $4.99 for your first week, then $15.99/week.{% else %}all of it — plays, boards and tools — for $15.99/week.{% endif %}</b></div>
+    <div class="upl-value">Buying tools like these one by one adds up fast. Here it is one membership: <b>{% if anonimo %}all of it — plays, boards and tools — $1 for your first week, then $15.99/week.{% else %}all of it — plays, boards and tools — for $15.99/week.{% endif %}</b></div>
   </div>
 
   <div class="upl-sec">
     <h2>How this works</h2>
     <ul class="upl-how">
-      <li><span class="n">1</span><span>{% if anonimo %}<b>Start today.</b> Create your account, confirm your email and unlock Platinum — $4.99 for your first week, every play, every tool, no waiting.{% else %}<b>Keep the full card.</b> Your Platinum turns on automatically the moment your payment clears — no waiting, no setup call.{% endif %}</span></li>
+      <li><span class="n">1</span><span>{% if anonimo %}<b>Start today.</b> Create your account, confirm your email and unlock Platinum — $1 for your first week, every play, every tool, no waiting.{% else %}<b>Keep the full card.</b> Your Platinum turns on automatically the moment your payment clears — no waiting, no setup call.{% endif %}</span></li>
       <li><span class="n">2</span><span><b>Plays before game time.</b> Every official play is posted on your Dashboard and sent in the plays email the same day, before the game starts — each one with its real ticket.</span></li>
       <li><span class="n">3</span><span><b>Cancel anytime.</b> From your account, in two clicks — no phone calls, no retention scripts.</span></li>
     </ul>
@@ -627,7 +627,7 @@ body{padding-bottom:calc(8px + env(safe-area-inset-bottom))!important}
         
         <summary>When am I charged?</summary>
         {% if anonimo %}
-        <p>$4.99 when you join, for your first week — charged to your card through Stripe. Then $15.99/week, billed weekly until you cancel.</p>
+        <p>$1 when you join, for your first week — charged to your card through Stripe. Then $15.99/week, billed weekly until you cancel.</p>
         {% else %}
         <p>$15.99/week starts today, billed weekly by Stripe until you cancel — what you see is the whole price.</p>
         {% endif %}
@@ -636,13 +636,13 @@ body{padding-bottom:calc(8px + env(safe-area-inset-bottom))!important}
     </div>
   </div>
 
-  <p class="upl-legal">$4.99 for your first week, then $15.99/week billed weekly until cancelled. Recurring weekly subscription — cancel anytime from your account, no contracts. All prices in USD.</p>
+  <p class="upl-legal">$1 for your first week, then $15.99/week billed weekly until cancelled. Recurring weekly subscription — cancel anytime from your account, no contracts. All prices in USD.</p>
   {% endif %}
 
   {% if anonimo %}
-  <div class="upl-sticky v2-sticky"><div class="upl-sticky-in"><span class="upl-sticky-t"><b>$4.99 first week</b> · then $15.99/week</span><a class="upl-sticky-btn" href="{{ url_for('register') }}">Get started →</a></div></div>
+  <div class="upl-sticky v2-sticky"><div class="upl-sticky-in"><span class="upl-sticky-t"><b>$1 first week</b> · then $15.99/week</span><a class="upl-sticky-btn" href="{{ url_for('register') }}">Get started →</a></div></div>
   {% else %}
-  <div class="upl-sticky v2-sticky"><div class="upl-sticky-in"><span class="upl-sticky-t">{% if entrada_499 %}<b>$4.99 first week</b> · then $15.99/week{% else %}<b>$15.99/week</b> · cancel anytime{% endif %}</span><a class="upl-sticky-btn" href="#upl-buy">Unlock Platinum →</a></div></div>
+  <div class="upl-sticky v2-sticky"><div class="upl-sticky-in"><span class="upl-sticky-t">{% if entrada_1 %}<b>$1 first week</b> · then $15.99/week{% else %}<b>$15.99/week</b> · cancel anytime{% endif %}</span><a class="upl-sticky-btn" href="#upl-buy">Unlock Platinum →</a></div></div>
   {% endif %}
 </div>
 
