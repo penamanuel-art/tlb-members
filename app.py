@@ -8367,7 +8367,7 @@ def activar_cuenta(token):
 # link_clicks y redirige al destino. Un watcher en la VM lee
 # /api/clicks-feed y avisa a Alex por Telegram al instante.
 TRACKED_LINKS = {
-    "ig": "/",  # link de Instagram: aterriza en la PORTADA NUEVA aprobada (2026-11-10, orden de Alex: /go/ig seguía cayendo en la landing vieja de registro y Alex lo cazó en vivo — «todavía veo la misma página»); el registro sigue a un toque desde la portada
+    "ig": "/registro",  # 2026-11-22 (orden de Alex): este link va en la campaña de tráfico — cada clic avisa por Telegram (ping intacto) y aterriza DIRECTO en el registro. Sustituye el aterrizaje en portada del 2026-11-10, que era contra la landing VIEJA; el registro de hoy es el nuevo (puerta gratis).
 }
 
 
