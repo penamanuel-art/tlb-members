@@ -773,33 +773,15 @@ def login_required(view):
                 flash("Confirm your email to open your Dashboard — "
                       "we emailed you the link.", "warn")
                 return redirect(url_for("bienvenida"))
-        # Candado de la entrada a $1 (2026-11-21, orden de Alex —
-        # «NADA GRATIS»): la cuenta YA verificada de la cohorte nueva
-        # que aún no paga no ve NINGUNA página de miembro: cae en
-        # /desbloquear-platinum hasta que el webhook invoice.paid
-        # enciende su Platinum (platinum_unlocked = 1). Mismo patrón
-        # que la puerta de confirmación de arriba. Excepciones: el
-        # endpoint de cobro de la propia página de pago,
-        # /cuenta/completar (terminar sus datos) y logout; la página
-        # de pago en sí no lleva login_required (redacta sola al
-        # login si no hay sesión). Alex/admin, pase de siempre.
-        if not _admin_o_cuenta_alex(_u_gate):
-            try:
-                _offer_gate = (_u_gate["signup_offer"] or "")
-            except (KeyError, IndexError, TypeError):
-                _offer_gate = ""
-            if _offer_gate == OFERTA_ENTRADA_1:
-                try:
-                    _paid_gate = bool(_u_gate["platinum_unlocked"])
-                except (KeyError, IndexError, TypeError):
-                    _paid_gate = False
-                if not _paid_gate and request.endpoint not in (
-                        "desbloquear_checkout_session",
-                        "cuenta_completar", "logout"):
-                    flash("Your Platinum starts at $1 for your first "
-                          "week — complete your signup to open your "
-                          "Dashboard.", "warn")
-                    return redirect(url_for("desbloquear_platinum"))
+        # SIN candado de puerta pa' la cohorte nueva (2026-11-21,
+        # decisión final de Alex — modelo puerta gratis estilo WGT,
+        # opción 1 elegida por él): el registrado sin pagar entra como
+        # miembro GRATIS: ve las Gold en su Dashboard y Platinum/Vault
+        # quedan cerrados por el candado normal de nivel
+        # (_acceso_programa). El candado de puerta de la entrada a $1
+        # (que mandaba a todo entrada_1_v1 sin pagar a
+        # /desbloquear-platinum) vivió solo unas horas: el $1 pasó a
+        # ser la oferta de desbloqueo ADENTRO, no el peaje de entrada.
         return view(*args, **kwargs)
     return wrapper
 
@@ -1706,13 +1688,14 @@ def _activation_moderno_html(nombre, titulo, cuerpo, boton, link):
 
 
 def _email_es_entrada_1(email: str) -> bool:
-    """True si el correo pertenece a la cohorte de la entrada a $1
-    (2026-11-21, orden de Alex — «NADA GRATIS»): su fila trae
-    signup_offer = OFERTA_ENTRADA_1. Los correos de activación la
-    detectan por correo pa' NO prometerle jugadas gratis ni un
-    Dashboard abierto: al activar cae en el candado de pago. Ante
-    cualquier error devuelve False — el copy de siempre manda y
-    ningún otro destinatario cambia ni una letra."""
+    """True si el correo pertenece a la cohorte nueva (2026-11-21):
+    su fila trae signup_offer = OFERTA_ENTRADA_1. Los correos de
+    activación la detectan por correo pa' hablarle de SU modelo:
+    cuenta gratis con el Dashboard abierto y las Gold adentro, y
+    Platinum como desbloqueo a $1 la primera semana — jamás mes
+    gratis de Platinum. Ante cualquier error devuelve False — el
+    copy de siempre manda y ningún otro destinatario cambia ni
+    una letra."""
     try:
         row = get_db().execute(
             "SELECT signup_offer FROM users WHERE email = ?",
@@ -1750,28 +1733,29 @@ def send_activation_email(nombre: str, email: str, token: str, lang: str = "en")
              "confirmation the account will never be activated.\n\n"
              "The Sharp Team")
     if _email_es_entrada_1(email):
-        # Cohorte entrada a $1 (2026-11-21): NADA de jugadas gratis ni
-        # Dashboard abierto — al confirmar cae en /desbloquear-platinum
-        # a arrancar su Platinum ($1 la primera semana). El resto del
-        # correo (título, botón, pie) queda idéntico.
+        # Cohorte nueva (2026-11-21, modelo puerta gratis): la cuenta
+        # nace activa y su Dashboard YA está abierto con las Gold —
+        # el correo es la puerta de entrada directa al Dashboard, y
+        # Platinum se presenta como lo que es: el desbloqueo de
+        # adentro a $1 la primera semana. Nada de mes gratis de
+        # Platinum. El resto del correo (título, botón, pie) queda
+        # idéntico.
         cuerpo = ("You just created your The Sharp Team account — "
-                  "welcome aboard. One step left: confirm this email "
-                  "address to activate your account. Confirming takes "
-                  "you straight to start your Platinum: $1 for your "
-                  "first week, then $15.99/week — and your Dashboard "
-                  "opens the moment you start.")
+                  "welcome aboard. Your account is already active: "
+                  "your Dashboard is open and your free Gold plays "
+                  "post there every day. Platinum unlocks right "
+                  "inside whenever you're ready — $1 for your first "
+                  "week, then $15.99/week. Tap the button to go "
+                  "straight to your Dashboard.")
         texto = (f"Hi {nombre},\n\n"
-                 "You just created your The Sharp Team account. One "
-                 "step left: confirm this email address to activate "
-                 "your account — confirming takes you straight to "
-                 f"start your Platinum:\n{link}\n\n"
-                 "Your Platinum starts at $1 for your first week, "
-                 "then $15.99/week, and your Dashboard opens the "
-                 "moment you start. Your account is NOT active yet: "
-                 "until you confirm, you can't log in and nothing is "
-                 "unlocked. If you didn't create this account, ignore "
-                 "this email — without confirmation the account will "
-                 "never be activated.\n\n"
+                 "You just created your The Sharp Team account — "
+                 "and it's already active. Your Dashboard is open "
+                 "with your free Gold plays every day; go straight "
+                 f"in here:\n{link}\n\n"
+                 "Platinum unlocks inside whenever you're ready: "
+                 "$1 for your first week, then $15.99/week. If you "
+                 "didn't create this account, ignore this "
+                 "email.\n\n"
                  "The Sharp Team")
     html = _activation_moderno_html(nombre, titulo, cuerpo, boton, link)
 
@@ -1811,23 +1795,26 @@ def send_activation_reminder_email(nombre: str, email: str, token: str, lang: st
              "didn't create this account, ignore this email.\n\n"
              "The Sharp Team")
     if _email_es_entrada_1(email):
-        # Cohorte entrada a $1 (2026-11-21): la misma verdad del correo
-        # de activación — confirmar la lleva a arrancar su Platinum,
-        # no a un Dashboard abierto con jugadas gratis.
+        # Cohorte nueva (2026-11-21, modelo puerta gratis): la misma
+        # verdad del correo de activación — al confirmar se abre su
+        # Dashboard con las Gold gratis; Platinum es el desbloqueo
+        # de adentro a $1 la primera semana, no la puerta.
         cuerpo = ("You created your The Sharp Team account but haven't "
                   "confirmed your email yet, so your account is still "
                   "inactive. Tap the button to confirm and activate "
-                  "it — confirming takes you straight to start your "
-                  "Platinum: $1 for your first week, then $15.99/week, "
-                  "and your Dashboard opens the moment you start.")
+                  "it — your Dashboard opens with your free Gold plays "
+                  "every day, and Platinum unlocks right inside "
+                  "whenever you're ready: $1 for your first week, "
+                  "then $15.99/week.")
         texto = (f"Hi {nombre},\n\n"
                  "You created your The Sharp Team account but haven't "
                  "confirmed your email yet, so your account is still "
                  f"inactive. Confirm your account here:\n{link}\n\n"
-                 "Confirming takes you to start your Platinum — $1 "
-                 "for your first week, then $15.99/week — and your "
-                 "Dashboard opens the moment you start. If you didn't "
-                 "create this account, ignore this email.\n\n"
+                 "Confirming opens your Dashboard with your free "
+                 "Gold plays every day. Platinum unlocks inside "
+                 "whenever you're ready — $1 for your first week, "
+                 "then $15.99/week. If you didn't create this "
+                 "account, ignore this email.\n\n"
                  "The Sharp Team")
     html = _activation_moderno_html(nombre, titulo, cuerpo, boton, link)
     return _dispatch_email(email, subject, texto, html,
@@ -8118,15 +8105,17 @@ def register():
         # nombre es NOT NULL), contraseña temporal aleatoria hasheada
         # (password_propia = 0 hasta que la fije dentro) y sesión
         # abierta en el acto.
-        # ENTRADA A $1 (2026-11-21, orden de Alex — «NADA GRATIS»;
-        # supersede el nacimiento con mes gratis del 2026-11-09 SOLO
-        # pa' registros nuevos): signup_offer = OFERTA_ENTRADA_1,
+        # COHORTE NUEVA (2026-11-21): signup_offer = OFERTA_ENTRADA_1,
         # platinum_unlocked = 0 y platinum_trial_ends = NULL — la
-        # cuenta nace SIN Platinum y SIN reloj de mes gratis. El
-        # candado de login_required la lleva a /desbloquear-platinum a
-        # pagar su primera semana a $1 y el webhook invoice.paid
-        # enciende su Platinum. Las cuentas que ya están en su mes
-        # gratis NO se tocan.
+        # cuenta nace SIN Platinum y SIN reloj de mes gratis (Platinum
+        # gratis pa' nadie). La marca gobierna su oferta de desbloqueo
+        # ADENTRO ($1 la primera semana en /desbloquear-platinum, con
+        # schedule de 2 fases) y la variante de sus emails. La cuenta
+        # entra GRATIS a su Dashboard como miembro gratis (ve las
+        # Gold): el candado de puerta que la mandaba a pagar pa'
+        # entrar se quitó la misma noche — decisión final de Alex,
+        # modelo puerta gratis. El webhook invoice.paid enciende su
+        # Platinum cuando paga.
         # SIN CONFIRMACIÓN DE EMAIL (2026-11-21, orden de Alex —
         # «Quítale el confirma tu email»): la cuenta nace YA verificada
         # (email_verified = 1, activated_at = ahora) y la entrada NO
