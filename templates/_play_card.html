@@ -12,7 +12,7 @@
 .tk-name{font-size:16px;font-weight:600;color:#fff}
 .tk-name .tk-dot{color:#8b93a7;font-weight:400}
 .tk-name .tk-prob{color:#e0c070}
-.tk-bettype{font-size:13px;color:#9aa3b8;margin-top:1px}
+.tk-bettype{font-size:13px;color:#a3a1c2;margin-top:1px}
 .tk-status{font-size:11px;font-weight:800;letter-spacing:1px;padding:6px 12px;border-radius:999px;border:1px solid;flex:none}
 .tk-status.pending{background:rgba(224,192,112,.14);color:#e0c070;border-color:rgba(224,192,112,.4)}
 .tk-status.won{background:rgba(34,197,94,.14);color:#22c55e;border-color:rgba(34,197,94,.4)}
@@ -50,7 +50,7 @@
 .tstc-wu summary::-webkit-details-marker{display:none}
 .tstc-wu summary .tstc-wu-arr{color:#8b93a7;font-size:11px}
 .tstc-wu-body{padding:2px 14px 12px;font-size:13px;line-height:1.55}
-.tstc-wu-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px dashed #1d2029}
+.tstc-wu-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px dashed #1c1933}
 .tstc-wu-row:last-child{border-bottom:none}
 .tstc-wu-k{color:#8b93a7}
 .tstc-wu-v{font-weight:700;color:#f3f4f6}
@@ -60,9 +60,9 @@
 .tstc-wu-risk{color:#f0b429}
 /* DISEÑO SIN TICKET v2 — Liquid Glass (2026-10-11, aprobado por Alex) */
 .tstg{box-sizing:border-box;max-width:560px;margin:0 auto;padding:2px;border-radius:24px;background:linear-gradient(135deg,rgba(201,162,39,.55),rgba(201,162,39,.08) 45%,rgba(34,197,94,.35));}
-.tstg-in{border-radius:22px;background:rgba(17,22,32,.88);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);padding:16px;color:#f3f4f6;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;}
+.tstg-in{border-radius:22px;background:rgba(8,6,20,.88);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);padding:16px;color:#f3f4f6;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;}
 .tstg-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
-.tstg-lvl{background:linear-gradient(135deg,#e8c96a,#c9a227);color:#0a0f1c;font-weight:800;font-size:11px;letter-spacing:1.5px;padding:6px 14px;border-radius:999px;}
+.tstg-lvl{background:linear-gradient(135deg,#e8c96a,#c9a227);color:#100e1d;font-weight:800;font-size:11px;letter-spacing:1.5px;padding:6px 14px;border-radius:999px;}
 .tstg-st{font-size:11px;font-weight:800;letter-spacing:1px;padding:6px 12px;border-radius:999px;border:1px solid;flex:none;}
 .tstg-st.pending{background:rgba(224,192,112,.14);color:#e0c070;border-color:rgba(224,192,112,.4);}
 .tstg-st.won{background:rgba(34,197,94,.14);color:#22c55e;border-color:rgba(34,197,94,.4);}
@@ -70,13 +70,13 @@
 .tstg-team{display:flex;align-items:center;gap:12px;}
 .tstg-team img{width:48px;height:48px;object-fit:contain;flex:none;}
 .tstg-name{font-size:18px;font-weight:800;color:#fff;}
-.tstg-sub{font-size:12px;color:#9aa3b8;margin-top:2px;}
+.tstg-sub{font-size:12px;color:#a3a1c2;margin-top:2px;}
 .tstg-odds{display:flex;align-items:baseline;gap:10px;margin:12px 0 2px;flex-wrap:wrap;}
 .tstg-price{font-size:38px;font-weight:800;color:#fff;letter-spacing:-1px;}
-.tstg-fair{font-size:12px;color:#9aa3b8;}
+.tstg-fair{font-size:12px;color:#a3a1c2;}
 .tstg-edge{font-size:11px;font-weight:800;color:#06240f;background:#22c55e;padding:4px 10px;border-radius:999px;}
 .tstg-meta{display:flex;justify-content:space-between;align-items:center;margin:8px 0 4px;padding:10px 12px;background:rgba(255,255,255,.04);border-radius:12px;}
-.tstg-meta-k{font-size:12px;color:#9aa3b8;}
+.tstg-meta-k{font-size:12px;color:#a3a1c2;}
 .tstg-meta-k b{color:#e0c070;}
 .tstg-stake{font-size:15px;font-weight:800;color:#fff;}
 .tstg-stake em{font-style:normal;font-size:12px;color:#e0c070;}
@@ -91,7 +91,7 @@
    suave y menta — en vez de su paleta propia. En el resto (Admin, home
    anterior) se ve exactamente como siempre. #}
 {% set _lux = card_lux if card_lux is defined and card_lux else false %}
-{% set _mint = '#10cc87' if _lux else '#4ade80' %}
+{% set _mint = '#7c83f8' if _lux else '#4ade80' %}
 {% set _view = '#7cc4ff' if _lux else '#60a5fa' %}
 {% set _platbg = 'rgba(207,224,245,.13)' if _lux else 'rgba(125,180,255,.15)' %}
 {% set _platfg = '#cfe0f5' if _lux else '#7db4ff' %}
@@ -117,7 +117,7 @@
 {% endif %}
 {% if p.comprobante and not force_pre %}
     {# DISEÑO CON TICKET v4 — mismo que Estado 1 + ticket (aprobado Alex 2026-10-11) #}
-    <div style="background:{% if _lux %}linear-gradient(160deg,rgba(17,29,54,.97),rgba(8,14,26,.98)){% else %}linear-gradient(160deg,rgba(17,29,54,.97),rgba(8,14,26,.98)){% endif %};border-radius:16px;padding:12px;color:#fff;position:relative;overflow:hidden;border:{{ '1px solid rgba(243,205,107,.35)' if _lux else '2px solid #c9a227' }};box-sizing:border-box;max-width:100%;margin:{% if force_pre %}0{% else %}0 4px{% endif %};font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
+    <div style="background:{% if _lux %}linear-gradient(160deg,rgba(23,18,51,.97),rgba(8,6,20,.98)){% else %}linear-gradient(160deg,rgba(23,18,51,.97),rgba(8,6,20,.98)){% endif %};border-radius:16px;padding:12px;color:#fff;position:relative;overflow:hidden;border:{{ '1px solid rgba(243,205,107,.35)' if _lux else '2px solid #c9a227' }};box-sizing:border-box;max-width:100%;margin:{% if force_pre %}0{% else %}0 4px{% endif %};font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
       <div style="position:absolute;inset:0;background:{% if _lux %}radial-gradient(420px 200px at 12% -10%,rgba(212,160,23,.18),transparent 60%){% else %}linear-gradient(180deg,rgba(3,5,4,.94),rgba(3,5,4,.98)){% endif %};border-radius:16px;"></div>
       <div style="position:relative;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
@@ -126,7 +126,7 @@
         </div>
         {% if p.writeup %}
         <details class="tstc-wu" style="border:1px solid rgba(212,175,55,.3);border-radius:10px;background:rgba(0,0,0,.3);margin-bottom:8px;">
-          <summary style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;font-size:12px;letter-spacing:1px;color:#e3b93c;cursor:pointer;list-style:none;"><span>&#x1F4CA; WHY WE LIKE IT</span><span style="color:#9ca3af;font-size:10px;">TAP TO EXPAND &#x25BE;</span></summary>
+          <summary style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;font-size:12px;letter-spacing:1px;color:#e3b93c;cursor:pointer;list-style:none;"><span>&#x1F4CA; WHY WE LIKE IT</span><span style="color:#a3a1c2;font-size:10px;">TAP TO EXPAND &#x25BE;</span></summary>
           <div style="padding:0 12px 10px;font-size:12px;color:#d1d5db;">
             <div style="display:flex;justify-content:space-between;padding:3px 0;"><span>Model win probability</span><span>{{ p.writeup.model_prob }}</span></div>
             <div style="display:flex;justify-content:space-between;padding:3px 0;"><span>Implied by the price</span><span>{{ p.writeup.implied_prob }}</span></div>
@@ -140,19 +140,19 @@
         <div style="margin-bottom:6px;text-align:center;cursor:pointer;" onclick="document.getElementById('tstc-modal-{{ p.id }}').style.display='flex'">
           <span style="position:relative;display:inline-block;width:100%;">
           <img src="{{ url_for('static', filename=p.comprobante) }}" alt="Original ticket {{ p.abbr }} {{ p.bettype }}" style="width:100%;aspect-ratio:21/9;object-fit:cover;object-position:top;display:block;border-radius:10px;" loading="lazy">
-          <span style="position:absolute;top:6px;right:6px;background:rgba(74,222,128,.92);color:#0b0e17;font-size:9px;letter-spacing:1px;padding:3px 8px;border-radius:20px;pointer-events:none;">MATCHED</span>
+          <span style="position:absolute;top:6px;right:6px;background:rgba(74,222,128,.92);color:#100e1d;font-size:9px;letter-spacing:1px;padding:3px 8px;border-radius:20px;pointer-events:none;">MATCHED</span>
           <span style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,.55);color:#fff;font-size:18px;padding:10px 12px;border-radius:999px;pointer-events:none;">&#x1F50D;</span>
           </span>
         </div>
         <div id="tstc-modal-{{ p.id }}" class="tstc-modal" onclick="if(event.target===this)this.style.display='none'">
-          <div style="background:#141a2b;border-radius:24px;max-width:440px;width:100%;max-height:92vh;overflow-y:auto;padding:20px;position:relative;" onclick="event.stopPropagation()">
+          <div style="background:#1c1933;border-radius:24px;max-width:440px;width:100%;max-height:92vh;overflow-y:auto;padding:20px;position:relative;" onclick="event.stopPropagation()">
             <button onclick="document.getElementById('tstc-modal-{{ p.id }}').style.display='none'" style="position:absolute;top:12px;right:12px;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.08);border:none;color:#fff;font-size:20px;cursor:pointer;z-index:2;">&times;</button>
             <span style="display:inline-block;font-size:11px;font-weight:800;letter-spacing:1.5px;padding:6px 14px;border-radius:999px;background:rgba(125,180,255,.15);color:#7db4ff;margin-bottom:12px;">{{ 'PLATINUM PLAY' if is_vip else ('GOLD PLAY' if is_gold else 'SHARP PICKS FREE PLAY') }}</span>
             <div style="border-radius:16px;overflow:hidden;margin-bottom:16px;cursor:pointer;" onclick="window.open('{{ url_for('static', filename=p.comprobante) }}','_blank')">
               <img src="{{ url_for('static', filename=p.comprobante) }}" alt="Original ticket {{ p.abbr }} {{ p.bettype }}" style="width:100%;display:block;filter:brightness(1);max-height:none;">
             </div>
             <div style="font-size:24px;font-weight:800;color:#fff;margin-bottom:4px;">{{ p.abbr }} {{ p.bettype }}</div>
-            <div style="font-size:14px;color:#9ca3af;margin-bottom:14px;">{{ p.abbr }} vs {{ p.opp_abbr }} &middot; {{ p.liga }} &middot; {{ fmt_odds(p.cuota) }} &middot; Bet {{ '$%.0f' % p.stake_monto }} ({{ '%g' % p.stake_unidades }}u)</div>
+            <div style="font-size:14px;color:#a3a1c2;margin-bottom:14px;">{{ p.abbr }} vs {{ p.opp_abbr }} &middot; {{ p.liga }} &middot; {{ fmt_odds(p.cuota) }} &middot; Bet {{ '$%.0f' % p.stake_monto }} ({{ '%g' % p.stake_unidades }}u)</div>
             <div style="background:rgba(255,255,255,.05);border-radius:14px;padding:14px 16px;font-size:14px;color:#d1d5db;margin-bottom:16px;line-height:1.5;">Logged at the price we got, posted before the game. Every play stays on the record.</div>
             {% if p.novig_url and '%2Fevent-markets%2F' in p.novig_url %}
             <a href="{{ p.novig_url }}" target="_blank" rel="noopener" style="display:block;text-align:center;background:#00e07f;color:#000;font-weight:800;font-size:16px;padding:16px;border-radius:16px;text-decoration:none;margin-bottom:10px;">Bet at Novig &rarr;</a>
@@ -169,12 +169,12 @@
           </div>
         </div>
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
-          <div style="font-size:13px;color:{{ _mint }};">Bet&nbsp;&nbsp;{{ '$%.0f' % p.stake_monto }} <span style="color:#9ca3af;">({{ '%g' % p.stake_unidades }}u)</span></div>
+          <div style="font-size:13px;color:{{ _mint }};">Bet&nbsp;&nbsp;{{ '$%.0f' % p.stake_monto }} <span style="color:#a3a1c2;">({{ '%g' % p.stake_unidades }}u)</span></div>
           {% if p.nivel != 'VALUE' %}
           {% if p.id in tracked_ids %}
             <span style="color:{{ _mint }};font-size:11px;">&#x2713; Tracked</span>
           {% else %}
-            <a class="tstc-track" href="{{ url_for('track', play_id=p.id) }}" data-track-url="{{ url_for('track', play_id=p.id) }}" style="color:{{ _mint }};border:1px solid {{ 'rgba(16,204,135,.55)' if _lux else 'rgba(34,197,94,.6)' }};font-size:11px;padding:6px 16px;border-radius:10px;background:{{ 'rgba(16,204,135,.10)' if _lux else 'rgba(34,197,94,.12)' }};text-decoration:none;">+ Track</a>
+            <a class="tstc-track" href="{{ url_for('track', play_id=p.id) }}" data-track-url="{{ url_for('track', play_id=p.id) }}" style="color:{{ _mint }};border:1px solid {{ 'rgba(124,131,248,.55)' if _lux else 'rgba(34,197,94,.6)' }};font-size:11px;padding:6px 16px;border-radius:10px;background:{{ 'rgba(124,131,248,.10)' if _lux else 'rgba(34,197,94,.12)' }};text-decoration:none;">+ Track</a>
           {% endif %}
           {% endif %}
         </div>
@@ -190,7 +190,7 @@
     </div>
     {% else %}
     {# DISEÑO SIN TICKET v3 — estilo Novig + fondo futbolista, aprobado por Alex 2026-10-11 #}
-    <div style="background:{% if _lux %}linear-gradient(160deg,rgba(17,29,54,.97),rgba(8,14,26,.98)){% else %}linear-gradient(160deg,rgba(17,29,54,.97),rgba(8,14,26,.98)){% endif %};border-radius:20px;padding:16px 14px;color:#fff;position:relative;overflow:hidden;border:{{ '1px solid rgba(243,205,107,.35)' if _lux else '2px solid #c9a227' }};box-sizing:border-box;max-width:100%;margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
+    <div style="background:{% if _lux %}linear-gradient(160deg,rgba(23,18,51,.97),rgba(8,6,20,.98)){% else %}linear-gradient(160deg,rgba(23,18,51,.97),rgba(8,6,20,.98)){% endif %};border-radius:20px;padding:16px 14px;color:#fff;position:relative;overflow:hidden;border:{{ '1px solid rgba(243,205,107,.35)' if _lux else '2px solid #c9a227' }};box-sizing:border-box;max-width:100%;margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
       <div style="position:absolute;inset:0;background:{% if _lux %}radial-gradient(420px 200px at 12% -10%,rgba(212,160,23,.18),transparent 60%){% else %}linear-gradient(180deg,rgba(3,5,4,.94),rgba(3,5,4,.98)){% endif %};border-radius:20px;"></div>
       <div style="position:relative;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
@@ -200,7 +200,7 @@
           {% else %}<span style="font-size:10px;letter-spacing:1.5px;color:{{ _pendfg }};background:rgba(245,197,24,.08);padding:5px 12px;border-radius:999px;">PENDING</span>{% endif %}
         </div>
         <div style="display:flex;gap:12px;align-items:center;margin-bottom:12px;">
-          {% if p.logo_url %}<img src="{{ p.logo_url }}" alt="{{ p.abbr }}" width="64" height="64" style="flex:none;width:64px;height:64px;object-fit:contain;" loading="lazy">{% else %}<svg width="64" height="64" viewBox="0 0 60 60" style="flex:none;"><path d="M22 8 L12 14 L6 28 L15 31 L17 25 L17 54 L43 54 L43 25 L45 31 L54 28 L48 14 L38 8 C36 13 33 15 30 15 C27 15 24 13 22 8 Z" fill="#1a2233" stroke="#c9a227" stroke-width="2"/><path d="M22 8 C24 13 27 15 30 15 C33 15 36 13 38 8" fill="none" stroke="#c9a227" stroke-width="1.2"/><text x="30" y="42" text-anchor="middle" fill="#fff" font-size="12" font-family:sans-serif">{{ p.abbr }}</text></svg>{% endif %}
+          {% if p.logo_url %}<img src="{{ p.logo_url }}" alt="{{ p.abbr }}" width="64" height="64" style="flex:none;width:64px;height:64px;object-fit:contain;" loading="lazy">{% else %}<svg width="64" height="64" viewBox="0 0 60 60" style="flex:none;"><path d="M22 8 L12 14 L6 28 L15 31 L17 25 L17 54 L43 54 L43 25 L45 31 L54 28 L48 14 L38 8 C36 13 33 15 30 15 C27 15 24 13 22 8 Z" fill="#262345" stroke="#c9a227" stroke-width="2"/><path d="M22 8 C24 13 27 15 30 15 C33 15 36 13 38 8" fill="none" stroke="#c9a227" stroke-width="1.2"/><text x="30" y="42" text-anchor="middle" fill="#fff" font-size="12" font-family:sans-serif">{{ p.abbr }}</text></svg>{% endif %}
           <div>
             <div style="font-size:18px;color:#fff;">{{ p.team_name or p.abbr }}</div>
             <div style="font-size:12px;color:#d1d5db;margin-top:2px;">{{ _bt_label }} &middot; <span style="color:#e3b93c;">{{ p.liga or '' }}</span> &middot; {{ p.game_time_et or p.hora or '' }}</div>
@@ -211,14 +211,14 @@
           {% if p.writeup and p.writeup.fair_price %}<span style="font-size:12px;color:#d1d5db;">Fair <span style="color:#fff;">{{ p.writeup.fair_price }}</span></span>{% endif %}
           {% if p.writeup and p.writeup.edge %}<span style="font-size:12px;color:#d1d5db;">Edge <span style="color:{{ _mint }};">{{ p.writeup.edge }}</span></span>{% endif %}
         </div>
-        {% if p.casa %}<div style="margin-bottom:10px;"><span style="font-size:12px;color:#9aa3b8;">Best price at </span><span style="font-size:12px;font-weight:800;color:#e3b93c;">{{ p.casa }}</span></div>{% endif %}
+        {% if p.casa %}<div style="margin-bottom:10px;"><span style="font-size:12px;color:#a3a1c2;">Best price at </span><span style="font-size:12px;font-weight:800;color:#e3b93c;">{{ p.casa }}</span></div>{% endif %}
         <div style="display:flex;gap:16px;margin-bottom:12px;font-size:12px;color:#d1d5db;">
           <span>Stake <span style="color:#fff;">{{ '$%.0f' % p.stake_monto }} ({{ '%g' % p.stake_unidades }}u)</span></span>
           {% if p.writeup and p.writeup.model_prob %}<span>Model <span style="color:#fff;">{{ p.writeup.model_prob }}</span></span>{% endif %}
         </div>
         {% if p.writeup %}
         <details class="tstc-wu" style="margin-bottom:12px;border:1px solid rgba(212,175,55,.3);border-radius:12px;background:rgba(0,0,0,.3);">
-          <summary style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;font-size:13px;letter-spacing:1px;color:#e3b93c;cursor:pointer;list-style:none;"><span>📊 WHY WE LIKE IT</span><span style="color:#9ca3af;font-size:11px;">TAP TO EXPAND ▾</span></summary>
+          <summary style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;font-size:13px;letter-spacing:1px;color:#e3b93c;cursor:pointer;list-style:none;"><span>📊 WHY WE LIKE IT</span><span style="color:#a3a1c2;font-size:11px;">TAP TO EXPAND ▾</span></summary>
           <div style="padding:0 14px 12px;font-size:13px;color:#d1d5db;">
             <div style="display:flex;justify-content:space-between;padding:4px 0;"><span>Model win probability</span><span>{{ p.writeup.model_prob }}</span></div>
             <div style="display:flex;justify-content:space-between;padding:4px 0;"><span>Implied by the price</span><span>{{ p.writeup.implied_prob }}</span></div>
@@ -239,7 +239,7 @@
           {% if p.id in tracked_ids %}
             <span style="color:{{ _mint }};font-size:12px;">✓ Tracked</span>
           {% else %}
-            <a class="tstc-track" href="{{ url_for('track', play_id=p.id) }}" data-track-url="{{ url_for('track', play_id=p.id) }}" style="color:{{ _mint }};border:1.5px solid {{ 'rgba(16,204,135,.55)' if _lux else 'rgba(34,197,94,.6)' }};font-size:12px;padding:8px 20px;border-radius:12px;background:{{ 'rgba(16,204,135,.10)' if _lux else 'rgba(34,197,94,.12)' }};text-decoration:none;">+ Track</a>
+            <a class="tstc-track" href="{{ url_for('track', play_id=p.id) }}" data-track-url="{{ url_for('track', play_id=p.id) }}" style="color:{{ _mint }};border:1.5px solid {{ 'rgba(124,131,248,.55)' if _lux else 'rgba(34,197,94,.6)' }};font-size:12px;padding:8px 20px;border-radius:12px;background:{{ 'rgba(124,131,248,.10)' if _lux else 'rgba(34,197,94,.12)' }};text-decoration:none;">+ Track</a>
           {% endif %}
           {% endif %}
         </div>
