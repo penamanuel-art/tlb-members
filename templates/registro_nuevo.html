@@ -371,8 +371,13 @@ a{color:inherit;text-decoration:none}
           </div>
           <div class="field">
             <label for="f-email">Your email address</label>
-            <p class="hint">That's the only field. We'll send your plays here every day before games go off.</p>
+            <p class="hint">We'll send your plays here every day before games go off.</p>
             <input id="f-email" type="email" name="email" required autocomplete="email" placeholder="you@email.com">
+          </div>
+          <div class="field">
+            <label for="f-whatsapp">WhatsApp number (optional)</label>
+            <p class="hint">A second way to reach you with the plays — only if you want it. Your email is all we need to start.</p>
+            <input id="f-whatsapp" type="tel" name="whatsapp" autocomplete="tel" placeholder="(555) 123-4567">
           </div>
         {% if turnstile_key %}
         <div class="cf-turnstile" data-sitekey="{{ turnstile_key }}" data-theme="dark" style="margin:12px 0 4px"></div>
