@@ -12565,21 +12565,20 @@ def _desbloquear_intent_1(stripe, db, user, email, customer_id):
                 "source": "desbloquear-payment-element",
             },
         )
-        # Schedule de 2 fases desde la suscripción recién creada: la
-        # fase 1 hereda el precio intro y se le pone iterations=1 (una
-        # semana); la fase 2 arranca sola al vencer la 1 con el precio
-        # semanal de siempre, sin fin.
+        # Schedule de 2 fases EN UN SOLO PASO desde la suscripción
+        # recién creada (receta documentada de Stripe pa' precios
+        # intro): la fase 1 repite EXACTO el precio actual de la
+        # suscripción (el intro) con iterations=1 — una semana — y la
+        # fase 2 arranca sola al vencer la 1 con el precio semanal de
+        # siempre, sin fin. (El intento anterior creaba el schedule
+        # vacío y lo modificaba después; ese modify fallaba en vivo —
+        # 502 confirmado en la prueba E2E del 2026-11-21.)
         try:
             sched = stripe.SubscriptionSchedule.create(
-                from_subscription=sub.get("id"))
-            _fases = (sched.get("phases") or [])
-            _inicio_f1 = _fases[0].get("start_date") if _fases else None
-            sched = stripe.SubscriptionSchedule.modify(
-                sched.get("id"),
+                from_subscription=sub.get("id"),
                 phases=[
                     {"items": [{"price": PLATINUM_PRICE_ENTRADA_1,
                                 "quantity": 1}],
-                     "start_date": _inicio_f1,
                      "iterations": 1},
                     {"items": [{"price": PLATINUM_PRICE_SEMANAL,
                                 "quantity": 1}]},
