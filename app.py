@@ -1735,29 +1735,33 @@ def send_activation_email(nombre: str, email: str, token: str, lang: str = "en")
              "confirmation the account will never be activated.\n\n"
              "The Sharp Team")
     if _email_es_entrada_1(email):
-        # Cohorte nueva (2026-11-21, modelo puerta gratis): la cuenta
-        # nace activa y su Dashboard YA está abierto con las Gold —
-        # el correo es la puerta de entrada directa al Dashboard, y
+        # Cohorte nueva (2026-11-21, modelo puerta gratis): al
+        # confirmar se abre su Dashboard con las Gold gratis, y
         # Platinum se presenta como lo que es: el desbloqueo de
         # adentro a $1 la primera semana. Nada de mes gratis de
         # Platinum. El resto del correo (título, botón, pie) queda
-        # idéntico.
+        # idéntico. (Copy de confirmación desde el 2026-11-22: la
+        # cuenta nace SIN verificar — commit 9159522 — así que el
+        # correo pide confirmar, como el de las demás cuentas.)
         cuerpo = ("You just created your The Sharp Team account — "
-                  "welcome aboard. Your account is already active: "
-                  "your Dashboard is open and your free Gold plays "
-                  "post there every day. Platinum unlocks right "
-                  "inside whenever you're ready — $1 for your first "
-                  "week, then $15.99/week. Tap the button to go "
-                  "straight to your Dashboard.")
+                  "welcome aboard. One step left: confirm this email "
+                  "address to activate your account. Tap the button "
+                  "and you're in: your Dashboard opens with your "
+                  "free Gold plays every day, and Platinum unlocks "
+                  "right inside whenever you're ready — $1 for your "
+                  "first week, then $15.99/week.")
         texto = (f"Hi {nombre},\n\n"
-                 "You just created your The Sharp Team account — "
-                 "and it's already active. Your Dashboard is open "
-                 "with your free Gold plays every day; go straight "
-                 f"in here:\n{link}\n\n"
-                 "Platinum unlocks inside whenever you're ready: "
-                 "$1 for your first week, then $15.99/week. If you "
-                 "didn't create this account, ignore this "
-                 "email.\n\n"
+                 "You just created your The Sharp Team account. One "
+                 "step left: confirm this email address to activate "
+                 f"your account — open your dashboard here:\n{link}\n\n"
+                 "Your account is NOT active yet: until you confirm, "
+                 "you can't log in and nothing is unlocked. "
+                 "Confirming opens your Dashboard with your free "
+                 "Gold plays every day. Platinum unlocks inside "
+                 "whenever you're ready: $1 for your first week, "
+                 "then $15.99/week. If you didn't create this "
+                 "account, ignore this email — without confirmation "
+                 "the account will never be activated.\n\n"
                  "The Sharp Team")
     html = _activation_moderno_html(nombre, titulo, cuerpo, boton, link)
 
