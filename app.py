@@ -12518,6 +12518,7 @@ def _desbloquear_intent_1(stripe, db, user, email, customer_id):
     metadata lleva offer=entrada_1_v1 pa' distinguirla en auditoría;
     la activación llega por el webhook invoice.paid de siempre, sin
     cambios."""
+    import time as _time
     try:
         # Reuso: incomplete con precio intro y schedule ya colgado.
         try:
@@ -12536,7 +12537,23 @@ def _desbloquear_intent_1(stripe, db, user, email, customer_id):
                     inv_id = inv_id.get("id")
                 if not inv_id:
                     continue
-                pi = _invoice_payment_intent(inv_id)
+                # El intent de una sub nacida de schedule puede tardar
+                # unos segundos en existir: se espera un poco. Si el
+                # intent quedó CANCELADO, esta candidata no sirve y se
+                # sigue buscando (o se crea una nueva). Si la candidata
+                # existe pero su intent aún no nace, NO se crea otra
+                # suscripción encima: error claro y que reintente.
+                pi = {}
+                for _try in range(4):
+                    pi = _invoice_payment_intent(inv_id)
+                    if pi.get("client_secret"):
+                        break
+                    if (pi.get("status") or "") == "canceled":
+                        break
+                    if _try < 3:
+                        _time.sleep(2)
+                if (pi.get("status") or "") == "canceled":
+                    continue
                 if (pi.get("status") or "") in (
                         "requires_payment_method", "requires_confirmation",
                         "requires_action"):
@@ -12548,6 +12565,8 @@ def _desbloquear_intent_1(stripe, db, user, email, customer_id):
                             "subscription": s.get("id"),
                             "schedule": s.get("schedule"),
                         })
+                return jsonify(
+                    {"error": "could not create payment intent"}), 502
         except Exception:
             pass
         # MECANISMO (corregido en vivo el 2026-11-21): el schedule se
@@ -12562,7 +12581,6 @@ def _desbloquear_intent_1(stripe, db, user, email, customer_id):
         # Fase 1: precio intro x 1 iteración semanal; fase 2: precio
         # semanal de $15.99, indefinida. Si algo falla tras crear el
         # schedule, se cancela: nada suelto al precio intro.
-        import time as _time
         sched = None
         sub = None
         try:
@@ -12631,10 +12649,35 @@ def _desbloquear_intent_1(stripe, db, user, email, customer_id):
             return jsonify(
                 {"error": "could not create subscription schedule",
                  "detail": str(_e)[:400]}), 502
-        inv = sub.get("latest_invoice") or {}
-        inv_id = inv.get("id") if isinstance(inv, dict) else inv
-        pi = _invoice_payment_intent(inv_id) if inv_id else {}
-        secret = pi.get("client_secret") or ""
+        # El schedule arranca en segundo plano en Stripe: la primera
+        # factura de la suscripción (y su PaymentIntent) puede tardar
+        # unos segundos en existir — confirmado en vivo el 2026-11-21:
+        # el primer intento devolvió la sub sin intent utilizable. Se
+        # espera releyendo la suscripción; si la factura quedó en
+        # draft, se finaliza pa' que nazca su intent.
+        secret = ""
+        inv_id = None
+        pi = {}
+        for _try in range(6):
+            inv = sub.get("latest_invoice") or {}
+            inv_id = inv.get("id") if isinstance(inv, dict) else inv
+            if inv_id:
+                pi = _invoice_payment_intent(inv_id)
+                secret = pi.get("client_secret") or ""
+                if secret:
+                    break
+                if isinstance(inv, dict) and inv.get("status") == "draft":
+                    try:
+                        stripe.Invoice.finalize_invoice(inv_id)
+                    except Exception:
+                        pass
+            if _try < 5:
+                _time.sleep(2)
+                try:
+                    sub = stripe.Subscription.retrieve(
+                        sub.get("id"), expand=["latest_invoice"])
+                except Exception:
+                    pass
         if not secret:
             print("[desbloquear-pe-1] SIN client_secret: sub=%s "
                   "inv=%s pi=%s" % (sub.get("id"), inv_id, pi.get("id")),
