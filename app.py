@@ -12596,8 +12596,12 @@ def _desbloquear_intent_1(stripe, db, user, email, customer_id):
                 stripe.Subscription.cancel(sub.get("id"))
             except Exception:
                 pass
+            # TEMP-DIAG (2026-11-21): detalle del error de Stripe en la
+            # respuesta pa' diagnosticar el fallo del schedule en la
+            # prueba E2E; se quita en cuanto el flujo quede probado.
             return jsonify(
-                {"error": "could not create subscription schedule"}), 502
+                {"error": "could not create subscription schedule",
+                 "detail": str(_e)[:400]}), 502
         inv = sub.get("latest_invoice") or {}
         inv_id = inv.get("id") if isinstance(inv, dict) else inv
         pi = _invoice_payment_intent(inv_id) if inv_id else {}
