@@ -12591,19 +12591,22 @@ def desbloquear_platinum():
     # su variante: $1 la primera semana y después $15.99/semana, en
     # texto y en cobro (schedule de 2 fases); el resto del mundo veía
     # la directa de $15.99.
-    # OFERTA ÚNICA PA' TODOS (2026-11-22, orden de Alex tras verlo en
-    # vivo: la tarjeta del Dashboard ya decía $1 pero esta página
-    # mostraba $15.99 y cobraba $15.99): la variante de $1 la primera
-    # semana pasa a ser la de TODO usuario con sesión, en texto
-    # (entrada_1=True) y en cobro (el endpoint manda a todo el mundo
-    # por el schedule de 2 fases — ver _desbloquear_subscription_intent).
+    # $1 SOLO PA' LA PRIMERA VEZ (2026-11-22, orden de Alex tras
+    # verlo en vivo y precisada con foto de la barra inferior): la
+    # tarjeta del Dashboard ya decía $1 pero esta página mostraba
+    # $15.99 y cobraba $15.99 a quien nunca se había suscrito. La
+    # variante de $1 la primera semana (entrada_1=True) es ahora pa'
+    # todo usuario con sesión que NUNCA se ha suscrito a Platinum;
+    # el que ya se suscribió antes (vencida o tarjeta fallida) ve la
+    # directa de $15.99 y paga $15.99 — la MISMA condición manda en
+    # el cobro (ver _desbloquear_subscription_intent).
     return render_template(
         "desbloquear.html",
         ya_desbloqueada=platinum_unlocked_for(user),
         past_due=past_due,
         stripe_url=STRIPE_PLATINUM_URL,
         offer_free_month=False,
-        entrada_1=True,
+        entrada_1=not _ya_se_suscribio_platinum(user),
         post_mes_gratis=bool(user),
         trial_days=0,
         stripe_pk=STRIPE_PUBLISHABLE_KEY,
@@ -12881,6 +12884,70 @@ def _desbloquear_intent_1(stripe, db, user, email, customer_id):
         return jsonify({"error": "could not create subscription"}), 502
 
 
+def _ya_se_suscribio_platinum(user) -> bool:
+    """True si el miembro YA tuvo una suscripción Platinum en Stripe
+    alguna vez — activa, vencida, cancelada tras pagar, o con la
+    tarjeta fallida (past_due). El $1 de la primera semana es SOLO
+    pa' la primera vez (2026-11-22, orden de Alex con foto de la
+    barra inferior de /desbloquear-platinum: el nuevo ve «$1 your
+    first week, then $15.99/week»; el que regresa ve «$15.99/week»
+    y paga los $15.99 directos, en texto y en cobro).
+
+    Señales, en orden: (1) locales, sin llamada — stripe_past_due o
+    stripe_subscription_id vigente en su fila; (2) Stripe: TODAS las
+    suscripciones de su customer (status=all) — cuenta como «ya se
+    suscribió» la que llegó a activarse (active/past_due/unpaid/
+    trialing) o cuya última factura quedó PAGADA (una cancelada que
+    sí pagó). Una suscripción incomplete que nunca se pagó NO
+    cuenta: nunca se suscribió de verdad. Sin customer, nunca se
+    suscribió. Si Stripe no responde, manda lo local (fail-soft)."""
+    if not user:
+        return False
+    try:
+        if user["stripe_past_due"]:
+            return True
+    except (KeyError, IndexError, TypeError):
+        pass
+    try:
+        if (user["stripe_subscription_id"] or "").strip():
+            return True
+    except (KeyError, IndexError, TypeError):
+        pass
+    try:
+        customer_id = (user["stripe_customer_id"] or "").strip()
+    except (KeyError, IndexError, TypeError):
+        customer_id = ""
+    if not customer_id or not STRIPE_SECRET_KEY:
+        return False
+    try:
+        import stripe
+        stripe.api_key = STRIPE_SECRET_KEY
+        subs = stripe.Subscription.list(
+            customer=customer_id, status="all", limit=100,
+            expand=["data.latest_invoice"])
+        for sub in (subs.get("data") or []):
+            inv = sub.get("latest_invoice")
+            if isinstance(inv, dict) and inv.get("status") == "paid":
+                return True
+            if (sub.get("status") or "") in (
+                    "active", "past_due", "unpaid", "trialing"):
+                # Excepción: una sub del schedule de $1 que TODAVÍA
+                # espera su primer pago (nace `active` con la factura
+                # de $1 abierta) no es un regreso — es su primer
+                # intento en curso, y el flujo de cobro REUTILIZA esa
+                # misma sub con su $1. Solo cuenta como historial la
+                # que ya pagó o ya salió de la fase intro.
+                items = ((sub.get("items") or {}).get("data")) or []
+                es_intro_sin_pagar = any(
+                    (it.get("price") or {}).get("id")
+                    == PLATINUM_PRICE_ENTRADA_1 for it in items)
+                if not es_intro_sin_pagar:
+                    return True
+    except Exception:
+        pass
+    return False
+
+
 def _desbloquear_subscription_intent(user, email, customer_id):
     """Payment Element de /desbloquear-platinum (2026-11-11, orden de
     Alex: formulario corto tipo WGT, SOLO tarjeta, sin Apple Pay): crea
@@ -12913,17 +12980,17 @@ def _desbloquear_subscription_intent(user, email, customer_id):
                 db.commit()
         if not customer_id:
             return jsonify({"error": "could not create customer"}), 502
-        # OFERTA ÚNICA PA' TODOS (2026-11-22, orden de Alex): el
-        # cobro de TODO el que paga desde /desbloquear-platinum va en
-        # schedule de 2 fases ($1 la primera semana, después el
-        # semanal) — función aparte. Hasta el 2026-11-21 esto era
-        # solo de la cohorte entrada_1 y el resto del mundo pagaba
-        # $15.99 directos desde el primer día; Alex lo vio en vivo
-        # (la página decía $15.99 y cobraba $15.99) y ordenó el $1
-        # pa' todos, en texto y en cobro. El flujo directo de $15.99
-        # que sigue abajo quedó RETIRADO: ya nadie llega a él.
-        return _desbloquear_intent_1(
-            stripe, db, user, email, customer_id)
+        # $1 SOLO PA' LA PRIMERA VEZ (2026-11-22, orden de Alex):
+        # quien NUNCA se ha suscrito paga por el schedule de 2 fases
+        # ($1 la primera semana, después el semanal) — función
+        # aparte. Quien YA se suscribió antes (suscripción vencida o
+        # tarjeta fallida, está regresando) sigue por el flujo
+        # directo de $15.99 de abajo: el intro es una sola vez en la
+        # vida de la cuenta. La condición es la MISMA que pinta la
+        # página (_ya_se_suscribio_platinum): texto y cobro cuadran.
+        if not _ya_se_suscribio_platinum(user):
+            return _desbloquear_intent_1(
+                stripe, db, user, email, customer_id)
         # Reusar una suscripción incomplete viva de este cliente con el
         # precio semanal: su PaymentIntent sigue válido para pagar.
         try:
@@ -13006,14 +13073,16 @@ def desbloquear_checkout_session():
         customer_id = (user["stripe_customer_id"] or "").strip()
     except (KeyError, IndexError, TypeError):
         customer_id = ""
-    # Entrada a $1 (2026-11-21) / OFERTA ÚNICA PA' TODOS
-    # (2026-11-22, orden de Alex): el ÚNICO camino de cobro de esta
-    # página es el Payment Element con schedule de 2 fases ($1 la
-    # primera semana, después $15.99/semana) — una Checkout Session
-    # no puede crear schedules y cobraría los $15.99 directos,
-    # saltándose la primera semana a $1. Se fuerza esa rama pa' TODO
-    # el mundo, tenga el parámetro flow que tenga; la rama de
-    # Checkout Session incrustada que sigue abajo quedó retirada.
+    # Entrada a $1 (2026-11-21) / $1 SOLO PA' LA PRIMERA VEZ
+    # (2026-11-22, orden de Alex): el camino de cobro de esta página
+    # es el Payment Element — una Checkout Session no puede crear
+    # schedules y cobraría los $15.99 directos, saltándose la
+    # primera semana a $1 del que nunca se ha suscrito. Se fuerza
+    # esa rama tenga el parámetro flow que tenga, y ADENTRO
+    # (_desbloquear_subscription_intent) la condición de historial
+    # decide: primera vez → schedule con $1; ya suscrito antes →
+    # directo $15.99. La rama de Checkout Session incrustada que
+    # sigue abajo quedó retirada.
     return _desbloquear_subscription_intent(user, email, customer_id)
     # Payment Element (2026-11-11): con {"flow": "payment_element"} este
     # MISMO endpoint devuelve el client_secret del PaymentIntent de la
