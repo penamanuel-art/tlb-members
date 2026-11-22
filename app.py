@@ -139,6 +139,11 @@ STRIPE_PUBLISHABLE_KEY = os.environ.get(
 # y del Payment Link viejo; ningún flujo vivo lo cobra ya.
 PLATINUM_PRICE_PRIMERA_SEMANA = "price_1USPJnRwCjFIsFzU4pYcIqnq"
 PLATINUM_PRICE_SEMANAL = "price_1USPJvRwCjFIsFzUH8rwj5K8"
+# Precio intro de la entrada a $4.99 (2026-11-21): $4.99 por la primera
+# SEMANA, sobre el mismo producto Platinum del precio semanal. Lo usa
+# SOLO la cohorte nueva (OFERTA_ENTRADA_499) como fase 1 de su
+# Subscription Schedule; la fase 2 es PLATINUM_PRICE_SEMANAL.
+PLATINUM_PRICE_PRIMERA_SEMANA_499 = "price_1UeOk5RwCjFIsFzUTIpD9CSE"
 
 # RETIRADA 2026-11-07 (orden de Alex: «quita el mes gratis para
 # TODOS»): la oferta "$1 + primer mes gratis" dejó de existir en página,
@@ -169,6 +174,18 @@ PLATINUM_OFFER_FREE_MONTH = "platinum_1usd_free_month_v1"
 # users.signup_offer; el reloj vive en platinum_trial_ends, como siempre.
 OFERTA_MES_GRATIS = "mes_gratis_registro_v2"
 MES_GRATIS_DIAS = 30
+# ENTRADA A $4.99 — NADA GRATIS (2026-11-21, orden de Alex; SUPERSEDE
+# el mes gratis SOLO pa' registros nuevos): el que se registra paga
+# desde el día uno — $4.99 la primera SEMANA y después $15.99/semana,
+# con tarjeta al entrar. La cuenta nace con signup_offer =
+# OFERTA_ENTRADA_499, platinum_unlocked = 0 y SIN reloj de mes gratis;
+# el candado de login_required la mantiene en /desbloquear-platinum
+# hasta que el webhook invoice.paid enciende su Platinum. El cobro va
+# en un Subscription Schedule de 2 fases (semana 1 al precio intro
+# PLATINUM_PRICE_PRIMERA_SEMANA_499, después PLATINUM_PRICE_SEMANAL).
+# Los que ya están en su mes gratis (OFERTA_MES_GRATIS) NO se tocan:
+# lo terminan tranquilo y su graduación sigue directa a $15.99/semana.
+OFERTA_ENTRADA_499 = "entrada_499_v1"
 # Interruptor de lanzamiento: APAGADO por defecto. Se enciende con la env
 # var REGISTRO_NUEVO=1 en Render en la fase de lanzamiento; mientras esté
 # apagado, /registro sirve las plantillas de siempre (register.html /
@@ -752,6 +769,33 @@ def login_required(view):
                 flash("Confirm your email to open your Dashboard — "
                       "we emailed you the link.", "warn")
                 return redirect(url_for("bienvenida"))
+        # Candado de la entrada a $4.99 (2026-11-21, orden de Alex —
+        # «NADA GRATIS»): la cuenta YA verificada de la cohorte nueva
+        # que aún no paga no ve NINGUNA página de miembro: cae en
+        # /desbloquear-platinum hasta que el webhook invoice.paid
+        # enciende su Platinum (platinum_unlocked = 1). Mismo patrón
+        # que la puerta de confirmación de arriba. Excepciones: el
+        # endpoint de cobro de la propia página de pago,
+        # /cuenta/completar (terminar sus datos) y logout; la página
+        # de pago en sí no lleva login_required (redacta sola al
+        # login si no hay sesión). Alex/admin, pase de siempre.
+        if not _admin_o_cuenta_alex(_u_gate):
+            try:
+                _offer_gate = (_u_gate["signup_offer"] or "")
+            except (KeyError, IndexError, TypeError):
+                _offer_gate = ""
+            if _offer_gate == OFERTA_ENTRADA_499:
+                try:
+                    _paid_gate = bool(_u_gate["platinum_unlocked"])
+                except (KeyError, IndexError, TypeError):
+                    _paid_gate = False
+                if not _paid_gate and request.endpoint not in (
+                        "desbloquear_checkout_session",
+                        "cuenta_completar", "logout"):
+                    flash("Your Platinum starts at $4.99 for your first "
+                          "week — complete your signup to open your "
+                          "Dashboard.", "warn")
+                    return redirect(url_for("desbloquear_platinum"))
         return view(*args, **kwargs)
     return wrapper
 
@@ -8008,20 +8052,26 @@ def register():
         # WGT, 2026-11-07): nombre provisional = parte local del correo
         # (la columna nombre es NOT NULL), contraseña temporal aleatoria
         # hasheada (password_propia = 0 hasta que la fije dentro) y
-        # sesión abierta en el acto. signup_offer = OFERTA_MES_GRATIS y
-        # la cuenta nace con Platinum de plataforma por 30 días SIN
-        # tarjeta (orden de Alex 2026-11-09): el registro no habla de
-        # pagos; la venta va después, dentro del Dashboard y por email.
-        # El correo de activación sale por
-        # la vía de siempre SIN bloquear la entrada; activar sigue
-        # siendo lo que convierte la cuenta en miembro confirmado.
+        # sesión abierta en el acto.
+        # ENTRADA A $4.99 (2026-11-21, orden de Alex — «NADA GRATIS»;
+        # supersede el nacimiento con mes gratis del 2026-11-09 SOLO
+        # pa' registros nuevos): signup_offer = OFERTA_ENTRADA_499,
+        # platinum_unlocked = 0 y platinum_trial_ends = NULL — la
+        # cuenta nace SIN Platinum y SIN reloj de mes gratis. Tras
+        # confirmar su email, el candado de login_required la lleva a
+        # /desbloquear-platinum a pagar su primera semana a $4.99 y el
+        # webhook invoice.paid enciende su Platinum. Las cuentas que
+        # ya están en su mes gratis NO se tocan. El correo de
+        # activación sale por la vía de siempre SIN bloquear la
+        # entrada; activar sigue siendo lo que convierte la cuenta en
+        # miembro confirmado.
         _tok = secrets.token_urlsafe(32)
         _local = email.split("@", 1)[0].strip(" ._-") or "Member"
         nombre = _local[:60]
         _nuevo_id = insert_returning_id(
             db,
-            "INSERT INTO users (nombre, email, password_hash, phone, sms_optin, created_at, lang, email_verified, activation_token, signup_offer, signup_intent, password_propia, platinum_unlocked, platinum_trial_ends) VALUES (?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?, 0, 1, ?)",
-            (nombre, email, hash_password(secrets.token_urlsafe(32)), None, 0, now_iso(), _lang, _tok, OFERTA_MES_GRATIS, _intent, (datetime.now() + timedelta(days=MES_GRATIS_DIAS)).isoformat()),
+            "INSERT INTO users (nombre, email, password_hash, phone, sms_optin, created_at, lang, email_verified, activation_token, signup_offer, signup_intent, password_propia, platinum_unlocked, platinum_trial_ends) VALUES (?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?, 0, 0, NULL)",
+            (nombre, email, hash_password(secrets.token_urlsafe(32)), None, 0, now_iso(), _lang, _tok, OFERTA_ENTRADA_499, _intent),
         )
         db.commit()
         send_activation_email(nombre, email, _tok, _lang)
@@ -12298,6 +12348,21 @@ def _payment_intent_pago(pi_id, user):
     return {"value": monto, "invoice": pi.get("invoice") or ""}
 
 
+def _es_entrada_499(user) -> bool:
+    """True si la cuenta es de la cohorte de la entrada a $4.99
+    (2026-11-21): nació con signup_offer = OFERTA_ENTRADA_499 y su
+    primer cobro va en schedule de 2 fases ($4.99 la primera semana,
+    después $15.99/semana). Cualquier otra cuenta — mes gratis en
+    curso, pagadores de siempre, legacy — devuelve False y sigue su
+    flujo de cobro de toda la vida."""
+    if not user:
+        return False
+    try:
+        return (user["signup_offer"] or "") == OFERTA_ENTRADA_499
+    except (KeyError, IndexError, TypeError):
+        return False
+
+
 @app.route("/desbloquear-platinum")
 def desbloquear_platinum():
     # PUBLICA por diseno (2026-10-20, orden de Alex): el boton de los
@@ -12363,15 +12428,19 @@ def desbloquear_platinum():
     # entra con 30 días gratis al registrarse, esta página de pago NO
     # ofrece semana gratis ni semana de $1 a NADIE — la plantilla ya no
     # distingue audiencias de pago: todo usuario con sesión ve la
-    # variante directa de $15.99/semana (el anónimo conserva el funnel
-    # del mes gratis). post_mes_gratis queda como flag informativo sin
-    # efecto en textos ni en cobro.
+    # variante directa de $15.99/semana. post_mes_gratis queda como
+    # flag informativo sin efecto en textos ni en cobro.
+    # ENTRADA A $4.99 (2026-11-21): la cohorte nueva (entrada_499) SÍ
+    # ve otra variante — la suya: $4.99 la primera semana y después
+    # $15.99/semana, en texto y en cobro (schedule de 2 fases). El
+    # resto del mundo sigue viendo la directa de $15.99, intacta.
     return render_template(
         "desbloquear.html",
         ya_desbloqueada=platinum_unlocked_for(user),
         past_due=past_due,
         stripe_url=STRIPE_PLATINUM_URL,
         offer_free_month=False,
+        entrada_499=_es_entrada_499(user),
         post_mes_gratis=bool(user),
         trial_days=0,
         stripe_pk=STRIPE_PUBLISHABLE_KEY,
@@ -12431,6 +12500,126 @@ def _invoice_payment_intent(inv):
     return {}
 
 
+def _desbloquear_intent_499(stripe, db, user, email, customer_id):
+    """Cobro de la cohorte de la entrada a $4.99 (2026-11-21): crea la
+    suscripción con el precio intro ($4.99/semana) en default_incomplete
+    y le cuelga EN EL ACTO un Subscription Schedule de 2 fases — fase 1:
+    el precio intro x 1 iteración semanal; fase 2: el precio semanal de
+    $15.99, indefinida — y devuelve el client_secret del PaymentIntent
+    de la primera factura ($4.99), por la misma ruta basil-safe de
+    siempre (_invoice_payment_intent). Si el schedule no se puede crear,
+    la suscripción se CANCELA y se devuelve error: una suscripción
+    suelta al precio intro renovaría a $4.99/semana para siempre, y eso
+    no puede quedar vivo en silencio. Una suscripción incomplete viva
+    de este cliente con el precio intro Y schedule ya puesto se
+    REUTILIZA (recargar la página no siembra basura). La metadata lleva
+    offer=entrada_499_v1 pa' distinguirla en auditoría; la activación
+    llega por el webhook invoice.paid de siempre, sin cambios."""
+    try:
+        # Reuso: incomplete con precio intro y schedule ya colgado.
+        try:
+            subs = stripe.Subscription.list(
+                customer=customer_id, status="incomplete", limit=10)
+            for s in (subs.get("data") or []):
+                items = ((s.get("items") or {}).get("data")) or []
+                if not any((it.get("price") or {}).get("id")
+                           == PLATINUM_PRICE_PRIMERA_SEMANA_499
+                           for it in items):
+                    continue
+                if not s.get("schedule"):
+                    continue
+                inv_id = s.get("latest_invoice")
+                if isinstance(inv_id, dict):
+                    inv_id = inv_id.get("id")
+                if not inv_id:
+                    continue
+                pi = _invoice_payment_intent(inv_id)
+                if (pi.get("status") or "") in (
+                        "requires_payment_method", "requires_confirmation",
+                        "requires_action"):
+                    secret = pi.get("client_secret") or ""
+                    if secret:
+                        return jsonify({
+                            "clientSecret": secret,
+                            "flow": "payment_element",
+                            "subscription": s.get("id"),
+                            "schedule": s.get("schedule"),
+                        })
+        except Exception:
+            pass
+        sub = stripe.Subscription.create(
+            customer=customer_id,
+            items=[{"price": PLATINUM_PRICE_PRIMERA_SEMANA_499}],
+            payment_behavior="default_incomplete",
+            payment_settings={
+                "payment_method_types": ["card"],
+                "save_default_payment_method": "on_subscription",
+            },
+            expand=["latest_invoice"],
+            metadata={
+                "member_email": email,
+                "member_id": str(user["id"]),
+                "access": "platinum",
+                "plan": "platinum",
+                "offer": "entrada_499_v1",
+                "source": "desbloquear-payment-element",
+            },
+        )
+        # Schedule de 2 fases desde la suscripción recién creada: la
+        # fase 1 hereda el precio intro y se le pone iterations=1 (una
+        # semana); la fase 2 arranca sola al vencer la 1 con el precio
+        # semanal de siempre, sin fin.
+        try:
+            sched = stripe.SubscriptionSchedule.create(
+                from_subscription=sub.get("id"))
+            _fases = (sched.get("phases") or [])
+            _inicio_f1 = _fases[0].get("start_date") if _fases else None
+            sched = stripe.SubscriptionSchedule.modify(
+                sched.get("id"),
+                phases=[
+                    {"items": [{"price": PLATINUM_PRICE_PRIMERA_SEMANA_499,
+                                "quantity": 1}],
+                     "start_date": _inicio_f1,
+                     "iterations": 1},
+                    {"items": [{"price": PLATINUM_PRICE_SEMANAL,
+                                "quantity": 1}]},
+                ],
+                metadata={
+                    "offer": "entrada_499_v1",
+                    "member_id": str(user["id"]),
+                    "member_email": email,
+                },
+            )
+        except Exception as _e:
+            print("[desbloquear-pe-499] schedule FAILED, cancelando "
+                  "sub=%s: %r" % (sub.get("id"), _e), flush=True)
+            try:
+                stripe.Subscription.cancel(sub.get("id"))
+            except Exception:
+                pass
+            return jsonify(
+                {"error": "could not create subscription schedule"}), 502
+        inv = sub.get("latest_invoice") or {}
+        inv_id = inv.get("id") if isinstance(inv, dict) else inv
+        pi = _invoice_payment_intent(inv_id) if inv_id else {}
+        secret = pi.get("client_secret") or ""
+        if not secret:
+            print("[desbloquear-pe-499] SIN client_secret: sub=%s "
+                  "inv=%s pi=%s" % (sub.get("id"), inv_id, pi.get("id")),
+                  flush=True)
+            return jsonify({"error": "could not create payment intent"}), 502
+        return jsonify({
+            "clientSecret": secret,
+            "flow": "payment_element",
+            "subscription": sub.get("id"),
+            "schedule": sched.get("id"),
+        })
+    except Exception as _e:
+        print("[desbloquear-pe-499] error creando suscripcion: %r"
+              % (_e,), flush=True)
+        return jsonify({"error": "could not create subscription"}), 502
+
+
 def _desbloquear_subscription_intent(user, email, customer_id):
     """Payment Element de /desbloquear-platinum (2026-11-11, orden de
     Alex: formulario corto tipo WGT, SOLO tarjeta, sin Apple Pay): crea
@@ -12463,6 +12652,13 @@ def _desbloquear_subscription_intent(user, email, customer_id):
                 db.commit()
         if not customer_id:
             return jsonify({"error": "could not create customer"}), 502
+        # Cohorte de la entrada a $4.99 (2026-11-21): su cobro va en
+        # schedule de 2 fases ($4.99 la primera semana, después el
+        # semanal) — función aparte. El resto del mundo sigue por el
+        # flujo directo de $15.99 de siempre, intacto.
+        if _es_entrada_499(user):
+            return _desbloquear_intent_499(
+                stripe, db, user, email, customer_id)
         # Reusar una suscripción incomplete viva de este cliente con el
         # precio semanal: su PaymentIntent sigue válido para pagar.
         try:
@@ -12545,6 +12741,13 @@ def desbloquear_checkout_session():
         customer_id = (user["stripe_customer_id"] or "").strip()
     except (KeyError, IndexError, TypeError):
         customer_id = ""
+    # Cohorte de la entrada a $4.99 (2026-11-21): su ÚNICO camino de
+    # cobro es el Payment Element con schedule — una Checkout Session
+    # no puede crear schedules y cobraría los $15.99 directos,
+    # saltándose su primera semana a $4.99. Se fuerza esa rama tenga
+    # el parámetro flow que tenga.
+    if _es_entrada_499(user):
+        return _desbloquear_subscription_intent(user, email, customer_id)
     # Payment Element (2026-11-11): con {"flow": "payment_element"} este
     # MISMO endpoint devuelve el client_secret del PaymentIntent de la
     # suscripción creada en el servidor (formulario corto de la página,
