@@ -26,14 +26,13 @@
 
   /* Barra superior */
   .dn-top{position:sticky;top:0;z-index:60;background:rgba(14,16,20,.94);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
-  .dn-top-in{max-width:640px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:10px}
-  .dn-top-right{margin-left:auto;display:flex;align-items:center;gap:9px}
-  .dn-iconbtn{width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:var(--panel);color:var(--txt);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
-  .dn-viewpicks{background:var(--acc);color:#051630;font-weight:700;font-size:15px;padding:13px 20px;border-radius:14px;white-space:nowrap;display:inline-flex;align-items:center;gap:7px}
-  .dn-menubtn{width:46px;height:46px;border-radius:13px;border:1.5px solid #46536B;background:transparent;color:var(--txt);font-size:19px;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;flex:none}
-  .dn-top2{max-width:640px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:10px;border-top:1px solid var(--line)}
-  @media (max-width:480px){.dn-lg-coin{height:51px !important}.dn-lg-letters{height:36px !important}.dn-viewpicks{padding:11px 13px}.dn-menubtn{width:42px;height:42px}}
-  @media (max-width:360px){.dn-lg-coin{height:44px !important}.dn-lg-letters{height:32px !important}.dn-viewpicks{padding:11px 9px}}
+  .dn-top-in{max-width:640px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:8px}
+  .dn-top-right{margin-left:auto;display:flex;align-items:center;gap:7px}
+  .dn-iconbtn{width:36px;height:36px;flex:none;border-radius:50%;border:1px solid var(--line);background:var(--panel);color:var(--txt);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
+  .dn-viewpicks{background:var(--acc);color:#051630;font-weight:700;font-size:14px;padding:11px 14px;border-radius:14px;white-space:nowrap;display:inline-flex;align-items:center;gap:7px}
+  .dn-menubtn{width:44px;height:44px;border-radius:13px;border:1.5px solid #46536B;background:transparent;color:var(--txt);font-size:19px;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;flex:none}
+  @media (max-width:480px){.dn-lg-coin{height:51px !important}.dn-lg-letters{height:36px !important}.dn-viewpicks{padding:10px 11px}.dn-menubtn{width:40px;height:40px}.dn-iconbtn{width:34px;height:34px}}
+  @media (max-width:360px){.dn-lg-coin{height:44px !important}.dn-lg-letters{height:32px !important}.dn-viewpicks{padding:10px 9px}}
   @media (max-width:480px){.dn-hot-ledger{white-space:normal}}
   .dn-notif{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:14px}
   .dn-notif h3{font-family:var(--fdisp);font-size:17.1px;margin:0 0 8px;color:var(--txt)}
@@ -54,15 +53,19 @@
   .dn-streak{display:inline-block;margin:12px 0 0;background:var(--goldbg);color:var(--gold);border:1px solid var(--goldline);padding:6px 12px;border-radius:999px;font-size:12px;font-weight:700}
   .dn-view{display:block;margin-top:18px;background:var(--acc);color:#051630;font-weight:700;text-align:center;padding:14px;border-radius:12px;font-size:15px;text-decoration:none}
 
-  /* Saludo */
-  .dn-hello{padding:8px 0 0}
-  .dn-hello h1{font-family:var(--fdisp);font-size:32px;font-weight:700;line-height:1.2;margin:0;color:var(--txt)}
+  /* Saludo: una sola fila — saludo + nivel a la izquierda, Quick Tools a la derecha */
+  .dn-hello{padding:10px 0 0;display:flex;align-items:center;gap:10px}
+  .dn-hello h1{font-family:var(--fdisp);font-size:24px;font-weight:700;line-height:1.15;margin:0;color:var(--txt);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
   .dn-hello h1 .dn-name{font-size:inherit}
   .dn-hello h1 .dn-dot{color:var(--acc)}
-  .dn-hello .dn-fecha{font-family:var(--fmono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--acc);margin-top:12px}
+  .dn-lvl{flex:none;display:inline-flex;align-items:center;border-radius:999px;padding:5px 11px;font-size:11.5px;font-weight:800;letter-spacing:.09em;border:1px solid var(--accline);background:var(--accbg);color:var(--acc)}
+  .dn-lvl.plat{border-color:var(--goldline);background:var(--goldbg);color:var(--gold)}
+  .dn-hello .dn-quickbtn{margin-left:auto}
+  .dn-hero-date{font-family:var(--fmono);font-weight:600;font-size:11.5px;letter-spacing:.1em}
+  @media (max-width:480px){.dn-hello{gap:8px}.dn-hello h1{font-size:21px}}
   .dn-watch{display:inline-flex;align-items:center;gap:9px;margin-top:15px;padding:10px 18px;border:1px solid var(--line);border-radius:999px;color:var(--txt);font-size:17.1px;font-weight:500;text-decoration:none;background:rgba(255,255,255,.02)}
   .dn-watch-ic{display:flex;flex:none}
-  .dn-hero-card{background:var(--panel);border:1px solid var(--line);border-radius:16px;overflow:hidden;margin-top:18px;scroll-margin-top:150px}
+  .dn-hero-card{background:var(--panel);border:1px solid var(--line);border-radius:16px;overflow:hidden;margin-top:18px;scroll-margin-top:100px}
   .dn-board-head{display:flex;align-items:center;gap:10px;margin:18px 0 12px}
   .dn-board-head h2{font-family:var(--fdisp);font-size:17.1px;font-weight:800;margin:0;color:var(--txt);white-space:nowrap}
   .dn-board-sub{display:flex;align-items:center;gap:10px;margin:14px 0 12px}
@@ -148,7 +151,7 @@
   .dn-strip b{font-weight:300}
   .dn-strip .dn-off{font-size:1.1em;font-weight:500}
   @media (max-width:480px){.dn-strip{font-size:12px;padding:10px 4px}}
-  .dn-quickbtn{display:inline-flex;align-items:center;gap:7px;background:var(--accbg);border:1px solid var(--accline);color:var(--acc);border-radius:999px;padding:10px 18px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit}
+  .dn-quickbtn{display:inline-flex;align-items:center;gap:6px;background:var(--accbg);border:1px solid var(--accline);color:var(--acc);border-radius:999px;padding:9px 14px;font-size:13.5px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap;flex:none}
   .dn-qa-list{margin-top:16px;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--panel)}
   .dn-qa-row{display:flex;align-items:center;gap:14px;padding:15px 16px;text-decoration:none;border-bottom:1px solid var(--line)}
   .dn-qa-row:last-child{border-bottom:0}
@@ -472,15 +475,10 @@
       <img class="dn-lg-letters" src="{{ url_for('static', filename='img/sharp-letters.png') }}" alt="The Sharp Team" style="height:48px;width:auto;max-width:100%;display:block">
     </div>
     <div class="dn-top-right">
-      <a class="dn-viewpicks" href="#dnBoard">View picks <span aria-hidden="true">→</span></a>
-      <button class="dn-menubtn" type="button" id="dnMenuBtn" aria-label="Menu" aria-expanded="false">☰</button>
-    </div>
-  </div>
-  <div class="dn-top2">
-    <button class="dn-quickbtn" type="button" id="dnQuickBtn" aria-haspopup="true"><span style="font-size:17px;line-height:1">+</span> Quick Tools</button>
-    <div class="dn-top-right">
       <button class="dn-iconbtn" type="button" id="dnBell" aria-label="Notifications"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M13.7 20a2 2 0 0 1-3.4 0"/></svg></button>
       <a class="dn-iconbtn" href="{{ url_for('cuenta') }}" aria-label="Account"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></a>
+      <a class="dn-viewpicks" href="#dnBoard">View picks <span aria-hidden="true">→</span></a>
+      <button class="dn-menubtn" type="button" id="dnMenuBtn" aria-label="Menu" aria-expanded="false">☰</button>
     </div>
   </div>
 </header>
@@ -511,7 +509,8 @@
 
   <section class="dn-hello">
     <h1>{{ saludo }}, <span class="dn-name">{{ dn_nombre or 'Member' }}</span><span class="dn-dot">.</span></h1>
-    <div class="dn-fecha">{{ fecha }}</div>
+    {% if miembro_platinum %}<span class="dn-lvl plat">PLATINUM</span>{% else %}<span class="dn-lvl">FREE</span>{% endif %}
+    <button class="dn-quickbtn" type="button" id="dnQuickBtn" aria-haspopup="true"><span style="font-size:15px;line-height:1">+</span> Quick Tools</button>
   </section>
 
   <!-- Burbuja de bienvenida al tour (2026-11-20, orden de Alex):
@@ -543,7 +542,7 @@
 
 
   <div class="dn-hero-card" id="dnBoard">
-    <div class="dn-hero-band"><span>Today's card</span></div>
+    <div class="dn-hero-band"><span>Today's card</span><span class="dn-hero-date">{{ fecha }}</span></div>
     <div class="dn-hero-body">
       {% if estado.vacio %}<div class="dn-hero-title">Today's <span class="dn-hero-accent">plays</span> not posted yet</div>{% else %}<div class="dn-hero-title">{{ estado.titulo }}</div>{% endif %}
       <div class="dn-hero-div"></div>
