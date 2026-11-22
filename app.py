@@ -12528,7 +12528,7 @@ def _desbloquear_intent_1(stripe, db, user, email, customer_id):
         # Reuso: incomplete con precio intro y schedule ya colgado.
         try:
             subs = stripe.Subscription.list(
-                customer=customer_id, status="incomplete", limit=10)
+                customer=customer_id, limit=20)
             for s in (subs.get("data") or []):
                 _scan.append({
                     "id": s.get("id"),
