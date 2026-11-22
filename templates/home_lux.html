@@ -316,8 +316,8 @@
   {% endif %}
   <div class="topbar">
     <div class="brand" style="flex:1;min-width:0;display:flex;align-items:center;gap:3px;">
-      <img src="{{ url_for('static', filename='img/sharp-coin.png') }}" alt="" style="height:72px;width:auto;display:block;">
-      <img src="{{ url_for('static', filename='img/sharp-letters.png') }}" alt="The Sharp Team" style="height:53px;width:auto;max-width:100%;display:block;">
+      <img src="{{ url_for('static', filename='img/sharp-coin.png') }}" alt="" style="height:86px;width:auto;display:block;flex:0 0 auto;">
+      <img src="{{ url_for('static', filename='img/sharp-letters.png') }}" alt="The Sharp Team" style="height:60px;width:auto;max-width:100%;display:block;flex:1 1 auto;min-width:0;object-fit:contain;object-position:left center;">
     </div>
     <div class="topactions">
       {% if is_alex %}<a href="{{ url_for('admin_dashboard') }}" aria-label="Switch to Admin" title="Admin" style="position:relative;display:inline-block;width:56px;height:30px;border-radius:999px;background:#0d1b2e;border:1px solid rgba(16,204,135,.6);flex:0 0 auto;vertical-align:middle;text-decoration:none;"><span style="position:absolute;top:50%;transform:translateY(-50%);width:22px;height:22px;border-radius:50%;background:#60a5fa;box-shadow:0 1px 4px rgba(0,0,0,.55);left:3px;"></span><span style="position:absolute;right:6px;top:50%;transform:translateY(-50%);font-size:12px;line-height:1;">⚙️</span></a>{% endif %}
@@ -1624,9 +1624,11 @@ body{background-color:#05070d !important}
 .unlock .cta,.check,.hpc-badge,#tourNext,.upl-sheet-go,.hero.tst-board .bd-check{color:#05070d !important}
 #tst-plat-bubble{border-color:rgba(17,203,135,.55) !important}
 #tourRing{border-color:#60a5fa !important;box-shadow:0 0 0 3px rgba(17,203,135,.25),0 0 24px rgba(17,203,135,.35) !important}
-/* Logo un poco mas grande SIN crecer la barra (2026-11-22, orden de Alex: solo crece el contenido, la linea no se mueve): la fila del header queda fijada a su altura actual de 66px y el logo (moneda 72px / letras 53px) se centra respirando dentro del padding existente de .tst-stickyhead. */
-.tst-stickyhead .topbar{height:66px}
-.tst-stickyhead .brand{height:66px;overflow:visible}
+/* Logo MAS grande y barra MAS FINA (2026-11-22, segunda pasada — orden de Alex: la primera (+6px) no se notaba, y la raya va «un poquito mas fina»): moneda 72->86px y letras 53->60px. La moneda PNG trae el arte al 71% de su lienzo (a 72px el tiburon visible media ~51px; a 86px ~61px) y su arte queda dentro de la fila aunque la caja sobresalga 3px por lado. Las letras llevan object-fit:contain en su slot flexible: en pantallas anchas se ven a 60px completas; en estrechas bajan proporcional, sin aplastarse ni esconderse tras los botones. ALTURA TOTAL del header: ANTES padding 8+8 + topbar 66 + margen 7 + borde 1 = 90px; AHORA padding 2+2 + topbar 80 + margen 0 + borde 1 = 85px — la barra baja 5px y el logo crece. */
+.tst-stickyhead{padding-top:calc(2px + env(safe-area-inset-top));padding-bottom:2px;padding-left:10px;padding-right:10px}
+.tst-stickyhead .topbar{height:80px;margin-bottom:0}
+.tst-stickyhead .brand{height:80px;overflow:visible}
+.tst-stickyhead .topactions{gap:8px}
 </style>
 </body>
 </html>
