@@ -452,6 +452,32 @@
 
 </style>
 <noscript><style>.dn-load{display:none!important}</style></noscript>
+<style>
+/* ===== Encabezado RECOMPUESTO (2026-11-22, orden de Alex: «que le haga otro
+   diseño ahí, de esa parte otro diseño... que se vea respirando más y que no
+   se vea tan pegado todo») =====
+   La misma zona y los mismos elementos, recompuestos como bloques con
+   jerarquía clara: (1) la tirita como banda propia bien delimitada, con más
+   aire interno entre sus filetes dorados; (2) la fila del logo con su propio
+   espacio vertical diseñado (los tamaños del logo NO cambian); (3) el saludo
+   como bloque-título en dos filas deliberadas: fila 1 = saludo grande +
+   píldora de nivel (.dn-hello-row), fila 2 = Quick Links en su propia fila,
+   alineado a la izquierda — ya no es un wrap amontonado. Ritmo de la zona:
+   14px dentro de las bandas y 22px antes del bloque-título. Sin cambios de
+   textos, funciones ni colores (azul oscuro de octubre + dorado de la
+   tirita); el tamaño grande del saludo queda intacto. Este bloque va al
+   final del <head> a propósito: gana a las capas anteriores. */
+body .dn-strip{padding-top:14px;padding-bottom:14px}
+body .dn-top-in{padding-top:14px;padding-bottom:14px}
+body .dn-hello{flex-direction:column;align-items:flex-start;gap:16px;padding:22px 0 2px}
+body .dn-hello-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+body .dn-hello .dn-quickbtn{margin-top:0}
+@media (max-width:480px){
+  body .dn-strip{padding-top:13px;padding-bottom:13px}
+  body .dn-top-in{padding-top:14px;padding-bottom:14px}
+  body .dn-hello{gap:16px;padding-top:22px}
+}
+</style>
 </head>
 <body>
 
@@ -508,8 +534,10 @@
   </div>
 
   <section class="dn-hello">
-    <h1>{{ saludo }}, <span class="dn-name">{{ dn_nombre or 'Member' }}</span><span class="dn-dot">.</span></h1>
-    {% if miembro_platinum %}<span class="dn-lvl plat">PLATINUM</span>{% else %}<span class="dn-lvl">FREE</span>{% endif %}
+    <div class="dn-hello-row">
+      <h1>{{ saludo }}, <span class="dn-name">{{ dn_nombre or 'Member' }}</span><span class="dn-dot">.</span></h1>
+      {% if miembro_platinum %}<span class="dn-lvl plat">PLATINUM</span>{% else %}<span class="dn-lvl">FREE</span>{% endif %}
+    </div>
     <button class="dn-quickbtn" type="button" id="dnQuickBtn" aria-haspopup="true"><span style="font-size:16px;line-height:1">+</span> Quick Links</button>
   </section>
 
