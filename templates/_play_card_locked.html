@@ -1,30 +1,30 @@
 {# Carta Platinum BLOQUEADA y BORROSA para miembros sin Platinum (diseno ordenado por Alex 2026-10-29): la jugada aparece con SU carta (matchup real), pero el pick va borroso y bloqueado. Solo usa la vista sanitizada (_locked_play_view): pick/cuota/stake/edge/writeup/comprobante original NUNCA llegan a este HTML. #}
-<div style="background:#15122a;border:1px solid #38335f;border-radius:20px;overflow:hidden;margin:0 0 14px;position:relative;">
-  <div style="background:#100e1d;padding:12px 8px;display:flex;align-items:center;justify-content:space-between;gap:6px;">
+<div style="background:#151F28;border:1px solid #343B47;border-radius:20px;overflow:hidden;margin:0 0 14px;position:relative;">
+  <div style="background:#0A1117;padding:12px 8px;display:flex;align-items:center;justify-content:space-between;gap:6px;">
     <span style="font-size:12px;font-weight:700;letter-spacing:.8px;line-height:1.15;color:#e8c766;white-space:nowrap;flex:none;">{% if p.nivel == 'VAULT' %}🔒 THE VAULT PLAY{% elif p.nivel in ('GOLD', 'FREE') %}GOLD{% else %}💎 PLATINUM{% endif %}</span>
-    <span style="font-size:11px;line-height:1.15;color:#a8a6c4;white-space:nowrap;flex:none;">{{ p.liga }}{% if p.hora %} · {{ p.hora }}{% elif p.game_time_et %} · {{ p.game_time_et }}{% endif %}</span>
-    <span style="font-size:11px;font-weight:800;letter-spacing:.8px;line-height:1.15;color:#100e1d;background:#e8c766;border-radius:999px;padding:3px 6px;white-space:nowrap;flex:none;">🔒 LOCKED</span>
+    <span style="font-size:11px;line-height:1.15;color:#A3AAB6;white-space:nowrap;flex:none;">{{ p.liga }}{% if p.hora %} · {{ p.hora }}{% elif p.game_time_et %} · {{ p.game_time_et }}{% endif %}</span>
+    <span style="font-size:11px;font-weight:800;letter-spacing:.8px;line-height:1.15;color:#0B0D12;background:#e8c766;border-radius:999px;padding:3px 6px;white-space:nowrap;flex:none;">🔒 LOCKED</span>
   </div>
   <div style="padding:16px;">
     <div style="margin-top:14px;filter:blur(6px);-webkit-filter:blur(6px);opacity:.75;pointer-events:none;user-select:none;" aria-hidden="true">
-      <div style="height:22px;width:62%;background:#38335f;border-radius:6px;margin-bottom:10px;"></div>
+      <div style="height:22px;width:62%;background:#2A3038;border-radius:6px;margin-bottom:10px;"></div>
       <div style="display:flex;gap:10px;">
-        <div style="height:15px;width:34%;background:#262345;border-radius:5px;"></div>
-        <div style="height:15px;width:26%;background:#262345;border-radius:5px;"></div>
+        <div style="height:15px;width:34%;background:#232830;border-radius:5px;"></div>
+        <div style="height:15px;width:26%;background:#232830;border-radius:5px;"></div>
       </div>
       {% if p.ticket_url %}
       <img src="{{ p.ticket_url }}" alt="" style="width:100%;border-radius:12px;margin-top:14px;display:block;">
       {% endif %}
     </div>
     <div style="font-size:20px;font-weight:800;color:#ffffff;line-height:1.25;margin:16px 0 0;">Platinum members see this pick.</div>
-    <p style="font-size:13.5px;color:#cfcbe8;line-height:1.45;margin:6px 0 0;">This play is for Platinum members. Unlock it to see the pick, the price and the verified ticket.</p>
-    <a href="{{ url_for('desbloquear_platinum') }}" style="display:block;text-align:center;text-decoration:none;font-size:15px;font-weight:800;padding:14px;border-radius:12px;margin-top:12px;background:#5a5390;color:#fff;">Unlock Platinum →</a>
+    <p style="font-size:13.5px;color:#C6CBD6;line-height:1.45;margin:6px 0 0;">This play is for Platinum members. Unlock it to see the pick, the price and the verified ticket.</p>
+    <a href="{{ url_for('desbloquear_platinum') }}" style="display:block;text-align:center;text-decoration:none;font-size:15px;font-weight:800;padding:14px;border-radius:12px;margin-top:12px;background:#0E9E66;color:#fff;">Unlock Platinum →</a>
     <style>@media (max-width:360px){.lk-btnrow a,.lk-btnrow button{font-size:12px !important}}</style>
     <div class="lk-btnrow" style="display:flex;gap:6px;margin-top:12px;">
-      <a href="{{ url_for('desbloquear_platinum') }}" style="flex:1 1 0;min-width:0;text-align:center;font-size:13.5px;font-weight:400;white-space:nowrap;color:#fff;background:transparent;border:1px solid #38335f;border-radius:12px;padding:10px 4px;text-decoration:none;overflow:hidden;">↗ Place at Novig</a>
-      <button type="button" aria-label="Share" style="flex:0 0 48px;min-width:0;padding:10px 4px;text-align:center;font-size:13.5px;color:#fff;background:transparent;border:1px solid #38335f;border-radius:12px;cursor:pointer;" onclick="(function(){var u=window.location.origin+'/home';if(navigator.share){navigator.share({title:'The Sharp Team',url:u}).catch(function(){});}else{navigator.clipboard&&navigator.clipboard.writeText(u);}})()">↗</button>
-      <a href="{{ url_for('desbloquear_platinum') }}" style="flex:1 1 0;min-width:0;text-align:center;font-size:13.5px;font-weight:400;white-space:nowrap;color:#fff;background:transparent;border:1px solid #38335f;border-radius:12px;padding:10px 4px;text-decoration:none;overflow:hidden;">🎫 Receipt</a>
-      <a href="{{ url_for('desbloquear_platinum') }}" style="flex:1.15 1 0;min-width:0;text-align:center;font-size:13.5px;font-weight:400;white-space:nowrap;color:#fff;background:transparent;border:1px solid #38335f;border-radius:12px;padding:10px 4px;text-decoration:none;overflow:hidden;">+ Track</a>
+      <a href="{{ url_for('desbloquear_platinum') }}" style="flex:1 1 0;min-width:0;text-align:center;font-size:13.5px;font-weight:400;white-space:nowrap;color:#fff;background:transparent;border:1px solid #2C313A;border-radius:12px;padding:10px 4px;text-decoration:none;overflow:hidden;">↗ Place at Novig</a>
+      <button type="button" aria-label="Share" style="flex:0 0 48px;min-width:0;padding:10px 4px;text-align:center;font-size:13.5px;color:#fff;background:transparent;border:1px solid #2C313A;border-radius:12px;cursor:pointer;" onclick="(function(){var u=window.location.origin+'/home';if(navigator.share){navigator.share({title:'The Sharp Team',url:u}).catch(function(){});}else{navigator.clipboard&&navigator.clipboard.writeText(u);}})()">↗</button>
+      <a href="{{ url_for('desbloquear_platinum') }}" style="flex:1 1 0;min-width:0;text-align:center;font-size:13.5px;font-weight:400;white-space:nowrap;color:#fff;background:transparent;border:1px solid #2C313A;border-radius:12px;padding:10px 4px;text-decoration:none;overflow:hidden;">🎫 Receipt</a>
+      <a href="{{ url_for('desbloquear_platinum') }}" style="flex:1.15 1 0;min-width:0;text-align:center;font-size:13.5px;font-weight:400;white-space:nowrap;color:#fff;background:transparent;border:1px solid #2C313A;border-radius:12px;padding:10px 4px;text-decoration:none;overflow:hidden;">+ Track</a>
     </div>
   </div>
 </div>
