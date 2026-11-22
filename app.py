@@ -12524,6 +12524,21 @@ def _desbloquear_intent_1(stripe, db, user, email, customer_id):
     # diagnosticar por qué el reuso no casa; se quita al cerrar.
     _dbg = bool((request.get_json(silent=True) or {}).get("debug"))
     _scan = []
+    if _dbg:
+        # TEMP-DIAG: escaneo puro, sin tocar el flujo de reuso.
+        try:
+            _todas = stripe.Subscription.list(
+                customer=customer_id, limit=20)
+            return jsonify({"debug_scan": [
+                {"id": s.get("id"), "status": s.get("status"),
+                 "schedule": s.get("schedule"),
+                 "prices": [(it.get("price") or {}).get("id")
+                            for it in (((s.get("items") or {}).get("data"))
+                                       or [])],
+                 "latest_invoice": s.get("latest_invoice")}
+                for s in (_todas.get("data") or [])]}), 200
+        except Exception as _de:
+            return jsonify({"debug_error": str(_de)[:300]}), 200
     try:
         # Reuso: incomplete con precio intro y schedule ya colgado.
         try:
