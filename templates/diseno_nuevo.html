@@ -60,7 +60,7 @@
   .dn-hello h1 .dn-dot{color:var(--acc)}
   .dn-lvl{flex:none;display:inline-flex;align-items:center;border-radius:999px;padding:5.4px 11.8px;font-size:12.3px;font-weight:800;letter-spacing:.09em;border:1px solid var(--accline);background:var(--accbg);color:var(--acc)}
   .dn-lvl.plat{border-color:var(--goldline);background:var(--goldbg);color:var(--gold)}
-  .dn-hello .dn-quickbtn{margin-left:0}
+  .dn-hello .dn-quickbtn{margin-left:0;margin-top:4px}
   .dn-hero-date{font-family:var(--fmono);font-weight:600;font-size:11.5px;letter-spacing:.1em}
   @media (max-width:480px){.dn-hello{gap:8px}.dn-hello h1{font-size:28px}}
   .dn-watch{display:inline-flex;align-items:center;gap:9px;margin-top:15px;padding:10px 18px;border:1px solid var(--line);border-radius:999px;color:var(--txt);font-size:17.1px;font-weight:500;text-decoration:none;background:rgba(255,255,255,.02)}
@@ -151,7 +151,7 @@
   .dn-strip b{font-weight:300}
   .dn-strip .dn-off{font-size:1.1em;font-weight:500}
   @media (max-width:480px){.dn-strip{font-size:12px;padding:10px 4px}}
-  .dn-quickbtn{display:inline-flex;align-items:center;gap:6px;background:var(--accbg);border:1px solid var(--accline);color:var(--acc);border-radius:999px;padding:9px 14px;font-size:13.5px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap;flex:none}
+  .dn-quickbtn{display:inline-flex;align-items:center;gap:6px;background:var(--accbg);border:1px solid var(--accline);color:var(--acc);border-radius:999px;padding:10px 16px;font-size:14.6px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap;flex:none}
   .dn-qa-list{margin-top:16px;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--panel)}
   .dn-qa-row{display:flex;align-items:center;gap:14px;padding:15px 16px;text-decoration:none;border-bottom:1px solid var(--line)}
   .dn-qa-row:last-child{border-bottom:0}
@@ -510,7 +510,7 @@
   <section class="dn-hello">
     <h1>{{ saludo }}, <span class="dn-name">{{ dn_nombre or 'Member' }}</span><span class="dn-dot">.</span></h1>
     {% if miembro_platinum %}<span class="dn-lvl plat">PLATINUM</span>{% else %}<span class="dn-lvl">FREE</span>{% endif %}
-    <button class="dn-quickbtn" type="button" id="dnQuickBtn" aria-haspopup="true"><span style="font-size:15px;line-height:1">+</span> Quick Links</button>
+    <button class="dn-quickbtn" type="button" id="dnQuickBtn" aria-haspopup="true"><span style="font-size:16px;line-height:1">+</span> Quick Links</button>
   </section>
 
   <!-- Burbuja de bienvenida al tour (2026-11-20, orden de Alex):
