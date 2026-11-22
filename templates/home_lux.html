@@ -309,9 +309,9 @@
   </div>
   {% endif %}
   {% if tirita_record10 %}
-  <div style="display:flex;align-items:center;justify-content:center;gap:6px;background:linear-gradient(90deg, rgba(26,34,51,0) 0%, rgba(26,34,51,.92) 22%, rgba(26,34,51,.92) 78%, rgba(26,34,51,0) 100%);border:none;border-radius:8px;padding:5px 10px;margin:0 0 8px;">
+  <div style="display:flex;align-items:center;justify-content:center;gap:6px;background:linear-gradient(90deg, rgba(26,34,51,0) 0%, rgba(26,34,51,.92) 22%, rgba(26,34,51,.92) 78%, rgba(26,34,51,0) 100%);border:none;border-radius:8px;padding:3px 10px;margin:0 0 6px;">
     <span style="font-size:12.1px;line-height:1;">🔥</span>
-    <span style="color:#60a5fa;font-size:14.3px;font-weight:600;line-height:1.3;text-align:center;">{{ tirita_record10.etiqueta }}: {{ tirita_record10.w }}-{{ tirita_record10.l }} in the last 10 plays across all sports</span>
+    <span style="color:#60a5fa;font-size:13.5px;font-weight:600;line-height:1.25;text-align:center;">{{ tirita_record10.etiqueta }}: {{ tirita_record10.w }}-{{ tirita_record10.l }} in the last 10 plays across all sports</span>
   </div>
   {% endif %}
   <div class="topbar">
@@ -1629,6 +1629,15 @@ body{background-color:#05070d !important}
 .tst-stickyhead .topbar{height:80px;margin-bottom:0}
 .tst-stickyhead .brand{height:80px;overflow:visible}
 .tst-stickyhead .topactions{gap:8px}
+</style>
+<style>
+/* ===== ORGANIZACIÓN DEL ENCABEZADO 2026-11-22 (orden de Alex en llamada: «Organiza lo más» — la tirita se veía muy grande y el encabezado «muy congestionado, todo muy pegado»). SIN quitar ninguna función: solo alineación y ritmo.
+   - Laterales del stickyhead a 14px, la MISMA sangría de la columna .phone (14px): el logo y los botones quedan en la misma rejilla vertical que las tarjetas de abajo (el bloque del logo los había dejado en 10px y el encabezado se salía 4px por lado).
+   - El aviso past_due ocupa el mismo slot que la tirita: su margen inferior baja de 8px a 6px, el mismo de la tirita fina, pa' que el ritmo del encabezado no cambie cuando el aviso sale.
+   - La tirita misma se afinó en su estilo inline (padding 5px→3px, margen 8px→6px, texto 14.3px→13.5px): su zona baja de ~36.6px a ~28.9px de alto total.
+   - NO se toca: alto de la fila (80px), tamaños del logo (86/60px), gap de botones (8px), colores ni el saludo. Este bloque va DESPUÉS de todas las capas anteriores: es el que gana. */
+.tst-stickyhead{padding-left:14px;padding-right:14px}
+.tst-pastdue{margin-bottom:6px}
 </style>
 </body>
 </html>
