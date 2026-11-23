@@ -1242,10 +1242,11 @@ function dnHotClose(){
    principal debajo de la burbuja del tour, cuando un miembro nuevo
    entra por primera vez, y (b) después de que el miembro abre el
    detalle de una jugada de hoy (clic en [data-v5-open]) y esa hoja
-   se cierra. Valor primero; en iPhone sin
-   instalar guía Share -> Add to Home Screen -> abrir del icono ->
-   permitir; en el resto va directo al permiso con TLB_push (el flujo
-   de suscripción de siempre). Sin insistencia: si ya está suscrito no
+   se cierra. En iPhone sin instalar el flujo abre DIRECTO en la
+   guía Share -> Add to Home Screen -> abrir del icono -> permitir
+   (corrección de Alex 2026-11-23: nada de tarjeta de alertas
+   primero); en el resto, valor primero y de ahí al permiso con
+   TLB_push (el flujo de suscripción de siempre). Sin insistencia: si ya está suscrito no
    sale nunca, y si lo descarta no vuelve por 30 días. Cada paso real
    se registra en /api/alert-funnel. */
 (function(){
@@ -1294,6 +1295,23 @@ function dnHotClose(){
       views[i].hidden = views[i].getAttribute('data-view') !== name;
     }
     card.hidden = false;
+  }
+  /* Vista inicial del flujo (corrección de Alex 2026-11-23): en
+     iOS sin instalar se abre DIRECTO en la guía ilustrada de
+     instalación (iosA), sin pasar por la tarjeta de alertas; la
+     marca LS_IOS se pone igual que si hubiera tocado «Turn on
+     alerts», pa' que al abrir del icono instalado caiga en la
+     vista 'go' como en el camino de siempre. En los demás casos
+     no cambia nada: 'go' si venía pendiente del icono, 'value'
+     en el resto. */
+  function initialView(){
+    if(pendingGo) return 'go';
+    if(iosNeedsInstall) return 'iosA';
+    return 'value';
+  }
+  function showInitial(){
+    if(iosNeedsInstall && !PREVIEW) lsSet(LS_IOS, '1');
+    showView(initialView());
   }
   function hide(){ card.hidden = true; }
   function dismiss(){
@@ -1382,7 +1400,7 @@ function dnHotClose(){
     if(document.body.classList.contains('v5-sheet-open')) return;
     shown = true;
     track('shown');
-    showView(pendingGo ? 'go' : 'value');
+    showInitial();
   }
   /* Disparo de PRIMERA ENTRADA pa' miembros nuevos (2026-11-23,
      orden de Alex): la tarjeta sale EN LÍNEA en el flujo principal,
@@ -1420,7 +1438,7 @@ function dnHotClose(){
     mountInline();
     shown = true;
     track('shown');
-    showView(pendingGo ? 'go' : 'value');
+    showInitial();
   }
   setTimeout(maybeShowFirst, 1600);
   /* Disparo: el miembro abrió el detalle de una jugada (vista de
@@ -1440,12 +1458,13 @@ function dnHotClose(){
     }, 400);
   });
   if(PREVIEW){
-    /* Muestra determinista: la vista de valor sale sola al abrir el
-       link, sin esperar a que abra una jugada. */
+    /* Muestra determinista: la vista inicial sale sola al abrir el
+       link, sin esperar a que abra una jugada — en su iPhone sin
+       instalar esa es la guía ilustrada de instalación (iosA). */
     setTimeout(function(){
       if(shown) return;
       shown = true;
-      showView('value');
+      showInitial();
     }, 1200);
   }
 })();
