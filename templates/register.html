@@ -8,7 +8,7 @@
 <link rel="icon" type="image/png" sizes="32x32" href="/static/img/favicon-32.png">
 <link rel="apple-touch-icon" href="/static/img/apple-touch-icon.png">
 <link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#0a1230">
+<meta name="theme-color" content="#1D2029">
 <!-- Meta Pixel Code (mismo bloque que base.html — no tocar) -->
 <script>
 !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -35,32 +35,32 @@ twq('config','rhgk7');
   * { margin:0; padding:0; box-sizing:border-box; }
   html { -webkit-text-size-adjust:100%; scroll-behavior:smooth; }
   body {
-    background:#05081a; color:#eef1fb;
+    background:#0C0F16; color:#F2F5FB;
     font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     line-height:1.5; padding-top:56px;
   }
   .gold { color:#e8c766; }
-  .muted { color:#9aa7c7; }
+  .muted { color:#9AA1AE; }
   .wrap { max-width:480px; margin:0 auto; padding:0 20px; }
   .band { padding:38px 0; }
-  .band.alt { background:#070c22; }
+  .band.alt { background:#0C0F16; }
   .band.tight { padding:16px 0; }
-  .band.deep { background:#0a1128; }
+  .band.deep { background:#0C0F16; }
   .band.hero {
     background:
       radial-gradient(ellipse 95% 420px at 50% -80px, rgba(232,199,102,.22), rgba(232,199,102,0) 70%),
-      linear-gradient(180deg,#0c1638 0%,#081029 420px,#05081a 100%);
+      linear-gradient(180deg,#1D2029 0%,#0C0F16 420px,#0C0F16 100%);
     padding-top:30px;
   }
-  .band.closing { background:linear-gradient(180deg,#12204d,#0c1430); text-align:center; }
+  .band.closing { background:linear-gradient(180deg,#1D2029,#1D2029); text-align:center; }
   .eyebrow { text-align:center; color:#e8c766; font-size:12px; font-weight:800; letter-spacing:.26em; }
   h1.hero { font-size:54px; line-height:1.08; font-weight:900; text-align:center; margin-top:12px; letter-spacing:-.01em; }
-  .hero-sub { text-align:center; color:#c3cdea; font-size:17px; margin-top:14px; }
+  .hero-sub { text-align:center; color:#9AA1AE; font-size:17px; margin-top:14px; }
   .hero-sub b { color:#fff; }
   .stars { text-align:center; margin-top:16px; font-size:16px; color:#f5c542; letter-spacing:3px; }
-  .stars-sub { text-align:center; font-size:13px; color:#9aa7c7; margin-top:4px; }
+  .stars-sub { text-align:center; font-size:13px; color:#9AA1AE; margin-top:4px; }
   .eslink { text-align:center; padding:6px 0 0; font-size:12.5px; }
-  .eslink a { color:#9aa7c7; }
+  .eslink a { color:#9AA1AE; }
 
   /* topbar fija */
   .topbar {
@@ -76,13 +76,13 @@ twq('config','rhgk7');
 
   /* formulario protagonista */
   .formcard {
-    background:linear-gradient(180deg,#111a3e,#0c1430);
-    border:1.5px solid rgba(46,123,255,.55); border-radius:24px;
+    background:linear-gradient(180deg,#1D2029,#1D2029);
+    border:1.5px solid rgba(26,224,153,.55); border-radius:24px;
     padding:26px 22px; margin-top:26px; scroll-margin-top:70px;
-    box-shadow:0 0 32px rgba(46,123,255,.18), 0 10px 30px rgba(0,0,0,.35);
+    box-shadow:0 0 32px rgba(26,224,153,.18), 0 10px 30px rgba(0,0,0,.35);
   }
   .formcard h2 { font-size:24px; font-weight:800; }
-  .formcard p.lead { color:#9aa7c7; font-size:14px; margin-top:6px; }
+  .formcard p.lead { color:#9AA1AE; font-size:14px; margin-top:6px; }
   .pill10 {
     display:inline-flex; gap:8px; align-items:center; margin-top:14px;
     background:rgba(232,199,102,.1); border:1px solid rgba(232,199,102,.35); color:#e8c766;
@@ -96,40 +96,40 @@ twq('config','rhgk7');
   .flash-success { background:rgba(46,230,168,.1); border:1px solid rgba(46,230,168,.4); color:#a9f5d9; }
   .field { margin-top:16px; }
   .field label { display:block; font-size:14px; font-weight:700; }
-  .field .hint { color:#9aa7c7; font-size:13px; margin-top:2px; }
+  .field .hint { color:#9AA1AE; font-size:13px; margin-top:2px; }
   .field input {
-    width:100%; margin-top:8px; background:#05081a; border:1.5px solid rgba(232,199,102,.35);
-    border-radius:14px; padding:16px; color:#eef1fb; font-size:16px; font-family:inherit;
+    width:100%; margin-top:8px; background:#0C0F16; border:1.5px solid rgba(232,199,102,.35);
+    border-radius:14px; padding:16px; color:#F2F5FB; font-size:16px; font-family:inherit;
   }
-  .field input::placeholder { color:#5f6d94; }
+  .field input::placeholder { color:#9AA1AE; }
   .field input:focus { outline:none; border-color:#e8c766; box-shadow:0 0 0 3px rgba(232,199,102,.15); }
   .btn {
     display:block; width:100%; text-align:center; text-decoration:none; cursor:pointer;
     border:none; border-radius:14px; padding:20px 14px; margin-top:18px;
     font-size:20px; font-weight:800; color:#ffffff; font-family:inherit;
-    background:linear-gradient(135deg,#3b82f6,#2563eb);
-    box-shadow:0 6px 22px rgba(46,123,255,.35);
+    background:linear-gradient(135deg,#10CC87,#10CC87);
+    box-shadow:0 6px 22px rgba(26,224,153,.35);
   }
   .btn:hover { filter:brightness(1.08); }
   .btn:active { transform:scale(.99); }
   .btn small { display:block; font-size:13px; font-weight:600; opacity:.75; margin-top:2px; }
-  .micro { display:flex; justify-content:space-between; gap:8px; margin-top:14px; font-size:12px; color:#9aa7c7; flex-wrap:wrap; }
+  .micro { display:flex; justify-content:space-between; gap:8px; margin-top:14px; font-size:12px; color:#9AA1AE; flex-wrap:wrap; }
   .micro .ck { color:#e8c766; font-weight:700; }
-  .login-line { text-align:center; font-size:13.5px; color:#9aa7c7; margin-top:16px; }
+  .login-line { text-align:center; font-size:13.5px; color:#9AA1AE; margin-top:16px; }
   .login-line a { color:#e8c766; font-weight:700; }
 
   /* tira de ligas */
-  .sports-label { font-size:10.5px; font-weight:700; letter-spacing:2px; color:#8b94a7; text-align:center; margin-bottom:12px; }
+  .sports-label { font-size:10.5px; font-weight:700; letter-spacing:2px; color:#9AA1AE; text-align:center; margin-bottom:12px; }
   .sports-row { display:flex; justify-content:space-between; gap:8px; }
   .sports-row .sp { flex:1; text-align:center; }
   .sports-row img { height:34px; max-width:54px; object-fit:contain; }
-  .sports-row .nm { font-size:10.5px; font-weight:600; color:#c6cddc; margin-top:5px; letter-spacing:.6px; }
+  .sports-row .nm { font-size:10.5px; font-weight:600; color:#9AA1AE; margin-top:5px; letter-spacing:.6px; }
 
   /* banner FREE */
   .freebanner { text-align:center; }
   .freebanner .big0 { font-size:72px; font-weight:900; line-height:1; }
-  .freebanner .big0 span { font-size:26px; color:#9aa7c7; font-weight:600; }
-  .freebanner .freeline { color:#c3cdea; font-size:15px; margin-top:6px; }
+  .freebanner .big0 span { font-size:26px; color:#9AA1AE; font-weight:600; }
+  .freebanner .freeline { color:#9AA1AE; font-size:15px; margin-top:6px; }
   .freebanner .freeline b { color:#e8c766; }
   .trustbox {
     margin-top:18px; background:rgba(232,199,102,.07); border:1px solid rgba(232,199,102,.28);
@@ -137,26 +137,26 @@ twq('config','rhgk7');
   }
   .trustbox .ic { font-size:20px; line-height:1.2; }
   .trustbox b { display:block; font-size:15px; }
-  .trustbox p { color:#9aa7c7; font-size:13.5px; }
+  .trustbox p { color:#9AA1AE; font-size:13.5px; }
 
   /* secciones */
   h2.sec { font-size:28px; font-weight:900; letter-spacing:.01em; margin-bottom:6px; }
-  .step { display:flex; gap:14px; padding:15px 0; border-bottom:1px solid rgba(154,167,199,.14); }
+  .step { display:flex; gap:14px; padding:15px 0; border-bottom:1px solid rgba(154,161,174,.14); }
   .step:last-child { border-bottom:none; padding-bottom:2px; }
   .num {
     flex:0 0 34px; width:34px; height:34px; border-radius:50%;
-    background:#2e7bff; color:#fff;
+    background:#10CC87; color:#fff;
     display:flex; align-items:center; justify-content:center; font-weight:800; font-size:16px; margin-top:2px;
   }
   .step b { font-size:16.5px; display:block; }
-  .step p { color:#9aa7c7; font-size:14px; margin-top:3px; }
+  .step p { color:#9AA1AE; font-size:14px; margin-top:3px; }
   .kicker-gold { color:#e8c766; font-size:14.5px; font-weight:700; margin-bottom:8px; }
-  .dont { display:flex; gap:12px; padding:11px 0; border-bottom:1px solid rgba(154,167,199,.12); }
+  .dont { display:flex; gap:12px; padding:11px 0; border-bottom:1px solid rgba(154,161,174,.12); }
   .dont:last-of-type { border-bottom:none; }
   .dont .x { color:#ff5f6b; font-weight:900; font-size:16px; }
-  .dont p { font-size:14.5px; color:#c3cdea; }
+  .dont p { font-size:14.5px; color:#9AA1AE; }
   .dont b { color:#fff; }
-  .dorow { display:flex; gap:12px; margin-top:14px; padding-top:14px; border-top:1px solid rgba(232,199,102,.25); font-size:14.5px; color:#c3cdea; }
+  .dorow { display:flex; gap:12px; margin-top:14px; padding-top:14px; border-top:1px solid rgba(232,199,102,.25); font-size:14.5px; color:#9AA1AE; }
   .dorow .ck { color:#e8c766; font-weight:900; }
   .dorow b { color:#fff; }
 
@@ -165,38 +165,38 @@ twq('config','rhgk7');
   .brandblock img { width:64px; height:64px; border-radius:50%; border:2px solid rgba(232,199,102,.55); }
   .brandblock .nm { font-size:21px; font-weight:900; letter-spacing:.12em; margin-top:10px; }
   .brandblock .role { color:#e8c766; font-size:11.5px; font-weight:800; letter-spacing:.22em; margin-top:3px; }
-  .brandblock p { color:#c3cdea; font-size:14.5px; margin-top:12px; font-style:italic; }
+  .brandblock p { color:#9AA1AE; font-size:14.5px; margin-top:12px; font-style:italic; }
 
-  .vtitle { text-align:center; font-size:11.5px; letter-spacing:.26em; color:#9aa7c7; font-weight:800; margin-bottom:8px; }
-  .check { display:flex; gap:11px; padding:8px 0; font-size:14.5px; color:#c3cdea; }
+  .vtitle { text-align:center; font-size:11.5px; letter-spacing:.26em; color:#9AA1AE; font-weight:800; margin-bottom:8px; }
+  .check { display:flex; gap:11px; padding:8px 0; font-size:14.5px; color:#9AA1AE; }
   .check .ck { color:#e8c766; font-weight:900; }
   .check b { color:#fff; }
-  .get { display:flex; gap:11px; padding:8px 0; font-size:14.5px; color:#c3cdea; border-bottom:1px solid rgba(154,167,199,.1); }
+  .get { display:flex; gap:11px; padding:8px 0; font-size:14.5px; color:#9AA1AE; border-bottom:1px solid rgba(154,161,174,.1); }
   .get:last-child { border-bottom:none; }
   .get .ck { color:#e8c766; font-weight:900; }
   .get b { color:#fff; }
 
   /* faq */
-  .faqitem { padding:15px 0; border-bottom:1px solid rgba(154,167,199,.14); }
+  .faqitem { padding:15px 0; border-bottom:1px solid rgba(154,161,174,.14); }
   .faqitem:last-child { border-bottom:none; }
   .faqitem summary { display:flex; justify-content:space-between; gap:10px; align-items:center; cursor:pointer; list-style:none; }
   .faqitem summary::-webkit-details-marker { display:none; }
-  .faqitem summary::after { content:'+'; color:#9aa7c7; font-size:20px; font-weight:300; flex:0 0 auto; }
+  .faqitem summary::after { content:'+'; color:#9AA1AE; font-size:20px; font-weight:300; flex:0 0 auto; }
   .faqitem[open] summary::after { content:'−'; }
   .faqitem .q { font-size:15.5px; font-weight:700; }
-  .faqitem .a { font-size:13.5px; color:#9aa7c7; margin-top:6px; font-weight:400; }
+  .faqitem .a { font-size:13.5px; color:#9AA1AE; margin-top:6px; font-weight:400; }
 
   /* cierre */
   .closing .kick { color:#e8c766; font-size:12px; font-weight:800; letter-spacing:.26em; }
   .closing h3 { font-size:29px; font-weight:900; line-height:1.2; margin-top:10px; }
-  .closing p { color:#9aa7c7; font-size:14px; margin-top:10px; }
+  .closing p { color:#9AA1AE; font-size:14px; margin-top:10px; }
   .closing .micro { justify-content:center; }
 
   footer { text-align:center; padding:26px 20px 130px; }
   footer .motto { font-weight:800; color:#e8c766; font-size:14px; letter-spacing:.06em; }
-  footer p { color:#77839f; font-size:12px; margin-top:10px; }
-  footer .links { color:#9aa7c7; font-size:12.5px; margin-top:14px; }
-  footer .links a { text-decoration:underline; color:#9aa7c7; }
+  footer p { color:#9AA1AE; font-size:12px; margin-top:10px; }
+  footer .links { color:#9AA1AE; font-size:12.5px; margin-top:14px; }
+  footer .links a { text-decoration:underline; color:#9AA1AE; }
 
   /* sticky CTA */
   .sticky {
@@ -207,11 +207,11 @@ twq('config','rhgk7');
   .sticky .in { max-width:480px; margin:0 auto; }
   .sticky a {
     display:block; text-align:center; text-decoration:none; color:#ffffff; font-weight:800; font-size:20px;
-    background:linear-gradient(135deg,#3b82f6,#2563eb); border-radius:14px; padding:18px;
-    box-shadow:0 6px 22px rgba(46,123,255,.4);
+    background:linear-gradient(135deg,#10CC87,#10CC87); border-radius:14px; padding:18px;
+    box-shadow:0 6px 22px rgba(26,224,153,.4);
   }
   .sticky a:hover { filter:brightness(1.08); }
-  .sticky p { text-align:center; font-size:11.5px; color:#9aa7c7; margin-top:7px; }
+  .sticky p { text-align:center; font-size:11.5px; color:#9AA1AE; margin-top:7px; }
 </style>
 </head>
 <body>
@@ -267,13 +267,13 @@ twq('config','rhgk7');
       {% endwith %}
       <form method="post" action="{{ url_for('register') }}">
         <div class="field">
-          <label style="display:flex;gap:10px;align-items:flex-start;background:#05081a;border:1.5px solid rgba(232,199,102,.35);border-radius:14px;padding:13px 15px;cursor:pointer;font-weight:600;">
+          <label style="display:flex;gap:10px;align-items:flex-start;background:#0C0F16;border:1.5px solid rgba(232,199,102,.35);border-radius:14px;padding:13px 15px;cursor:pointer;font-weight:600;">
             <input type="radio" name="signup_intent" value="free" checked style="width:18px;height:18px;margin-top:2px;accent-color:#e8c766;flex:0 0 18px;">
-            <span>⚪ SHARP FREE — $0 forever<small style="display:block;color:#9aa7c7;font-weight:400;font-size:13px;margin-top:2px;">Daily free picks · no card required</small></span>
+            <span>⚪ SHARP FREE — $0 forever<small style="display:block;color:#9AA1AE;font-weight:400;font-size:13px;margin-top:2px;">Daily free picks · no card required</small></span>
           </label>
-          <label style="display:flex;gap:10px;align-items:flex-start;background:#05081a;border:1.5px solid rgba(232,199,102,.35);border-radius:14px;padding:13px 15px;cursor:pointer;font-weight:600;margin-top:10px;">
+          <label style="display:flex;gap:10px;align-items:flex-start;background:#0C0F16;border:1.5px solid rgba(232,199,102,.35);border-radius:14px;padding:13px 15px;cursor:pointer;font-weight:600;margin-top:10px;">
             <input type="radio" name="signup_intent" value="platinum" style="width:18px;height:18px;margin-top:2px;accent-color:#e8c766;flex:0 0 18px;">
-            <span>⭐ PLATINUM (optional) — $15.99/week<small style="display:block;color:#9aa7c7;font-weight:400;font-size:13px;margin-top:2px;">$15.99/week · cancel anytime</small></span>
+            <span>⭐ PLATINUM (optional) — $15.99/week<small style="display:block;color:#9AA1AE;font-weight:400;font-size:13px;margin-top:2px;">$15.99/week · cancel anytime</small></span>
           </label>
         </div>
         <div class="field">
@@ -398,7 +398,7 @@ twq('config','rhgk7');
 <footer>
   <div class="motto">Posted before game time. Locked. Graded.</div>
   <p>All plays and information provided are for entertainment purposes only.<br>
-  <b style="color:#9aa7c7;">21+ only.</b> Please play responsibly. Gambling problem? Call or text <b style="color:#9aa7c7;">1-800-GAMBLER</b>.</p>
+  <b style="color:#9AA1AE;">21+ only.</b> Please play responsibly. Gambling problem? Call or text <b style="color:#9AA1AE;">1-800-GAMBLER</b>.</p>
   <div class="links"><a href="/terms">Terms of Use</a> · <a href="/legal">Disclaimer</a> · <a href="/contact">Contact</a></div>
   <p>© 2026 The Sharp Team. All rights reserved.</p>
 </footer>
