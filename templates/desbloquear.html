@@ -62,61 +62,61 @@
 /* Tokens del sistema de diseño TST (Auditoría UI/UX 2026-11-12, Fase 0 · Fundación): base documentada, sin consumir todavía. */
 :root{--fbody:'Roboto',sans-serif;--fdisp:'Unbounded',sans-serif;--fmono:'Roboto Mono',monospace;--fs-display:30px;--lh-display:1.15;--fs-h1:28px;--lh-h1:1.2;--fs-h2:22px;--lh-h2:1.25;--fs-card:17px;--lh-card:1.3;--fs-body:15px;--lh-body:1.5;--fs-sub:13px;--lh-sub:1.55;--fs-tag:11px;--lh-tag:1.35;--fs-btn:15px;--lh-btn:1.2;--mx:16px;--sec:24px;--pad-card:16px;--gap:8px;--gap-lg:12px;--r-card:12px;--r-btn:12px;--r-input:12px;--r-pill:999px;--r-sheet:16px;--btn-h:46px;--btn-h-sm:44px;--btn-h-pill:36px;--w-public:1200px;--w-app:720px;--w-app-wide:1200px;--w-read:760px;--w-form:520px}
 .upl-wrap{max-width:520px;margin:0 auto;padding:6px 2px 0;color:#f2f5fb}
-.upl-trusttop{margin:4px 0 2px;text-align:center;font-size:11.55px;line-height:1.55;color:#a3b0c6}
+.upl-trusttop{margin:4px 0 2px;text-align:center;font-size:11.55px;line-height:1.55;color:#9AA1AE}
 .upl-trusttop b{color:#f2f5fb}
 .upl-hero{position:relative;text-align:center;padding:26px 6px 8px}
 /* Línea de confianza CENTRADA en su franja (2026-11-11, orden de Alex: «está chocando con la línea de abajo, súbelo más para el medio»): arriba quedan ~10px (padding-top del wrap 6 + margen 4) y abajo la línea aportaba 10 de margen + 26 de padding-top del héroe + 4 del avatar = ~40px medidos en navegador. Con sesión el héroe usa .upl-hero-up (padding-top 8) y la línea margen inferior 2: hueco inferior = 2+8+4 = 14px, parejo con el superior. La variante anónima no lleva la línea y conserva el héroe con sus 26px. */
 .upl-hero.upl-hero-up{padding-top:8px}
 .upl-hero::before{content:"";position:absolute;left:0;right:0;top:-6px;height:250px;background:radial-gradient(ellipse 72% 92% at 50% 0%,rgba(251,191,36,.10),rgba(251,191,36,0) 70%);pointer-events:none}
-.upl-avatar{position:relative;display:block;margin:4px auto 0;width:158px;height:158px;border-radius:50%;object-fit:cover;border:3px solid #1d3358;box-shadow:0 0 0 7px rgba(117,130,154,.07),0 16px 38px rgba(0,0,0,.5)}
-.upl-who{position:relative;margin:15px 0 0;font-size:13.65px;color:#a3b0c6}
+.upl-avatar{position:relative;display:block;margin:4px auto 0;width:158px;height:158px;border-radius:50%;object-fit:cover;border:3px solid #2A2E3A;box-shadow:0 0 0 7px rgba(154,161,174,.07),0 16px 38px rgba(0,0,0,.5)}
+.upl-who{position:relative;margin:15px 0 0;font-size:13.65px;color:#9AA1AE}
 .upl-who b{color:#fff;font-weight:800}
 .upl-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0 0}
-.upl-stat{display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(180deg,#05070d,#070b14);border:1px solid #1d3358;border-radius:12px;padding:8px 4px 7px;text-align:center}
-.upl-stat b{display:block;font-size:25.2px;line-height:1.1;font-weight:500;color:#60a5fa}
+.upl-stat{display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(180deg,#0C0F16,#0C0F16);border:1px solid #2A2E3A;border-radius:12px;padding:8px 4px 7px;text-align:center}
+.upl-stat b{display:block;font-size:25.2px;line-height:1.1;font-weight:500;color:#1AE099}
 .upl-stat.plain b{color:#fff;font-size:18.9px}
-.upl-stat span{display:block;margin-top:3px;font-size:9.97px;letter-spacing:.4px;line-height:1.35;color:#a3b0c6;font-weight:400}
-.upl-disc{margin:12px 0 0;background:#05070d;border:1px dashed #1d3358;border-radius:10px;padding:10px 12px;font-size:11.55px;line-height:1.6;color:#a3b0c6}
+.upl-stat span{display:block;margin-top:3px;font-size:9.97px;letter-spacing:.4px;line-height:1.35;color:#9AA1AE;font-weight:400}
+.upl-disc{margin:12px 0 0;background:#0C0F16;border:1px dashed #2A2E3A;border-radius:10px;padding:10px 12px;font-size:11.55px;line-height:1.6;color:#9AA1AE}
 .upl-disc b{color:#f2f5fb}
 .upl-billed{margin:9px 0 0;font-size:12.08px;font-weight:800;letter-spacing:.6px;color:#FBBF24}
 .upl-kicker{position:relative;margin:22px 0 0;font-size:11.03px;font-weight:800;letter-spacing:3.5px;color:#FBBF24}
 .upl-h1{position:relative;margin:12px 0 0;font-size:30.45px;line-height:1.16;font-weight:900;color:#fff}
-.upl-h1 .dollar{color:#60a5fa}
-.upl-sub{position:relative;margin:12px auto 0;max-width:430px;font-size:14.18px;line-height:1.65;color:#a3b0c6}
+.upl-h1 .dollar{color:#1AE099}
+.upl-sub{position:relative;margin:12px auto 0;max-width:430px;font-size:14.18px;line-height:1.65;color:#9AA1AE}
 .upl-tiles{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:16px 0 0}
-.upl-tile{background:linear-gradient(180deg,#05070d,#070b14);border:1px solid #1d335855;border-radius:12px;padding:11px 4px;text-align:center}
+.upl-tile{background:linear-gradient(180deg,#0C0F16,#0C0F16);border:1px solid #2A2E3A55;border-radius:12px;padding:11px 4px;text-align:center}
 .upl-tile b{display:block;font-size:19.95px;color:#fff;font-weight:900}
-.upl-tile span{display:block;margin-top:2px;font-size:9.97px;letter-spacing:1.2px;color:#a3b0c6;font-weight:700}
-.upl-graded{margin:12px 0 0;text-align:center;font-size:12.08px;color:#a3b0c6;font-weight:700}
-.upl-graded .cg{color:#60a5fa;font-weight:800}
-.upl-what{margin:16px 0 0;background:linear-gradient(180deg,#05070d,#070b14);border:1px solid #FBBF2455;border-radius:16px;padding:16px 15px 14px}
+.upl-tile span{display:block;margin-top:2px;font-size:9.97px;letter-spacing:1.2px;color:#9AA1AE;font-weight:700}
+.upl-graded{margin:12px 0 0;text-align:center;font-size:12.08px;color:#9AA1AE;font-weight:700}
+.upl-graded .cg{color:#1AE099;font-weight:800}
+.upl-what{margin:16px 0 0;background:linear-gradient(180deg,#0C0F16,#0C0F16);border:1px solid #FBBF2455;border-radius:16px;padding:16px 15px 14px}
 .upl-what h2{margin:0;font-size:19.95px;font-weight:900;color:#fff}
-.upl-what .lead{margin:8px 0 0;font-size:14.18px;line-height:1.6;color:#c7d0dd}
-.upl-what .note{margin:12px 0 0;font-size:13.12px;line-height:1.6;color:#a3b0c6}
+.upl-what .lead{margin:8px 0 0;font-size:14.18px;line-height:1.6;color:#9AA1AE}
+.upl-what .note{margin:12px 0 0;font-size:13.12px;line-height:1.6;color:#9AA1AE}
 .upl-what .note b{color:#FBBF24}
-.upl-card{margin:16px 0 0;background:linear-gradient(180deg,#05070d,#070b14 60%,#10131a);border:1px solid #FBBF2455;border-radius:16px;padding:16px 15px 14px}
-.upl-pill{display:inline-block;background:#FBBF24;color:#070b14;font-size:10.5px;font-weight:900;letter-spacing:1.6px;padding:4px 10px;border-radius:999px}
+.upl-card{margin:16px 0 0;background:linear-gradient(180deg,#0C0F16,#0C0F16 60%,#10131a);border:1px solid #FBBF2455;border-radius:16px;padding:16px 15px 14px}
+.upl-pill{display:inline-block;background:#FBBF24;color:#0C0F16;font-size:10.5px;font-weight:900;letter-spacing:1.6px;padding:4px 10px;border-radius:999px}
 .upl-price{margin:10px 0 0;font-size:17.85px;font-weight:800;color:#fff}
 .upl-price .big{font-size:48.3px;font-weight:900;vertical-align:-9px;margin-right:3px}
-.upl-then{margin:3px 0 0;font-size:13.12px;color:#a3b0c6}
+.upl-then{margin:3px 0 0;font-size:13.12px;color:#9AA1AE}
 .upl-live{margin:12px 0 0;font-size:12.6px;color:#f2f5fb}
-.upl-live .dot{color:#60a5fa}
-.upl-as{margin:12px 0 0;background:#0a1220;border:1px solid #1d3358;border-radius:10px;padding:10px 12px;text-align:center}
-.upl-as .t{font-size:9.97px;letter-spacing:1.6px;color:#a3b0c6;font-weight:800}
+.upl-live .dot{color:#1AE099}
+.upl-as{margin:12px 0 0;background:#1D2029;border:1px solid #2A2E3A;border-radius:10px;padding:10px 12px;text-align:center}
+.upl-as .t{font-size:9.97px;letter-spacing:1.6px;color:#9AA1AE;font-weight:800}
 .upl-as .e{margin-top:3px;font-size:14.18px;font-weight:800;color:#fff}
-.upl-as .o{margin-top:6px;font-size:12.08px;color:#a3b0c6}
-.upl-as a{color:#60a5fa}
+.upl-as .o{margin-top:6px;font-size:12.08px;color:#9AA1AE}
+.upl-as a{color:#1AE099}
 .upl-duenote{margin:12px 0 0;background:rgba(248,113,113,.10);border:1px solid rgba(248,113,113,.45);border-radius:10px;padding:9px 11px;font-size:12.08px;line-height:1.55;color:#f87171}
 .upl-duenote a{color:#fff;font-weight:800}
-.upl-board{margin:14px 0 0;border-top:1px solid #1d3358;padding-top:12px}
+.upl-board{margin:14px 0 0;border-top:1px solid #2A2E3A;padding-top:12px}
 .upl-board h3{margin:0;font-size:11.03px;letter-spacing:2px;color:#FBBF24;font-weight:900}
-.upl-teaser{display:flex;justify-content:space-between;align-items:center;gap:10px;text-decoration:none;padding:9px 2px;border-bottom:1px solid #1d335844}
+.upl-teaser{display:flex;justify-content:space-between;align-items:center;gap:10px;text-decoration:none;padding:9px 2px;border-bottom:1px solid #2A2E3A44}
 .upl-teaser:last-of-type{border-bottom:0}
 .upl-teaser .t{font-size:14.18px;font-weight:800;color:#fff}
-.upl-teaser .s{font-size:11.03px;color:#a3b0c6;margin-top:1px}
-.upl-teaser .arr{color:#60a5fa;font-size:15.75px}
-.upl-recon{margin:8px 0 0;font-size:11.03px;color:#a3b0c6;font-style:italic}
-.upl-cta{display:block;margin:14px 0 0;background:#60a5fa;color:#051630 !important;text-align:center;font-size:17.85px;font-weight:900;padding:14px 12px;border-radius:12px;text-decoration:none}
+.upl-teaser .s{font-size:11.03px;color:#9AA1AE;margin-top:1px}
+.upl-teaser .arr{color:#1AE099;font-size:15.75px}
+.upl-recon{margin:8px 0 0;font-size:11.03px;color:#9AA1AE;font-style:italic}
+.upl-cta{display:block;margin:14px 0 0;background:#10CC87;color:#0C0F16 !important;text-align:center;font-size:17.85px;font-weight:900;padding:14px 12px;border-radius:12px;text-decoration:none}
 .upl-embbox{margin:8px 0 0;background:#ffffff;border-radius:12px;padding:0;overflow:hidden}
 .upl-brands{display:flex;gap:6px;margin:14px 0 0}
 .upl-brand{flex:1;display:flex;align-items:center;justify-content:center;background:#ffffff;border-radius:6px;padding:5px 2px;font-size:9.97px;font-weight:900;letter-spacing:.3px;line-height:1}
@@ -125,50 +125,50 @@
 .upl-brand.mc i{font-style:normal;color:#eb001b}
 .upl-brand.mc b{color:#f79e1b;font-weight:900}
 .upl-brand.disc{color:#f48120}
-.upl-brand.amex{background:#2e77bc;color:#ffffff}
-.upl-embload{margin:6px 0;text-align:center;font-size:13.12px;font-weight:700;color:#1d3358}
+.upl-brand.amex{background:#10CC87;color:#ffffff}
+.upl-embload{margin:6px 0;text-align:center;font-size:13.12px;font-weight:700;color:#2A2E3A}
 #upl-pe-form{padding:12px}
 .upl-pe-err{display:none;margin:0 12px 12px;font-size:13.12px;line-height:1.5;color:#f87171;font-weight:700}
 button.upl-cta{width:100%;border:0;cursor:pointer;font-family:inherit}
 button.upl-cta[disabled]{opacity:.65;cursor:wait}
 .upl-under{margin:9px 0 0;text-align:center;font-size:12.6px;color:#f2f5fb;font-weight:700}
-.upl-fine{margin:7px 0 0;text-align:center;font-size:11.03px;line-height:1.55;color:#a3b0c6}
-.upl-trust{margin:11px 0 0;text-align:center;font-size:11.03px;color:#a3b0c6}
+.upl-fine{margin:7px 0 0;text-align:center;font-size:11.03px;line-height:1.55;color:#9AA1AE}
+.upl-trust{margin:11px 0 0;text-align:center;font-size:11.03px;color:#9AA1AE}
 .upl-record{margin:9px 0 0;text-align:center;font-size:12.08px;color:#FBBF24;font-weight:800}
 .upl-emailnote{margin:11px 0 0;font-size:11.55px;line-height:1.55;color:#fbbf24;background:#231a02;border:1px solid #FBBF24;border-radius:10px;padding:9px 11px}
 .upl-sec{margin:22px 0 0}
 .upl-sec h2{margin:0;font-size:16.8px;font-weight:900;color:#fff}
-.upl-sec .lead{margin:5px 0 0;font-size:12.6px;color:#a3b0c6;line-height:1.55}
+.upl-sec .lead{margin:5px 0 0;font-size:12.6px;color:#9AA1AE;line-height:1.55}
 .upl-tix{display:flex;gap:10px;overflow-x:auto;padding:12px 2px 4px;scroll-snap-type:x mandatory}
 .upl-tix figure{margin:0;flex:0 0 96%;scroll-snap-align:center}
-.upl-tix .ph{position:relative;border-radius:12px;overflow:hidden;border:1px solid #1d3358;background:#05070d}
+.upl-tix .ph{position:relative;border-radius:12px;overflow:hidden;border:1px solid #2A2E3A;background:#0C0F16}
 .upl-tix img{width:100%;height:auto;object-fit:contain;display:block}
-.upl-won{position:absolute;top:6px;left:6px;background:#34D399;color:#05070d;font-size:9.45px;font-weight:900;letter-spacing:1px;padding:2px 7px;border-radius:999px}
-.upl-tix figcaption{margin-top:5px;font-size:10.5px;line-height:1.45;color:#a3b0c6}
-.upl-tix figcaption b{color:#60a5fa}
+.upl-won{position:absolute;top:6px;left:6px;background:#34D399;color:#0C0F16;font-size:9.45px;font-weight:900;letter-spacing:1px;padding:2px 7px;border-radius:999px}
+.upl-tix figcaption{margin-top:5px;font-size:10.5px;line-height:1.45;color:#9AA1AE}
+.upl-tix figcaption b{color:#1AE099}
 .upl-bens{list-style:none;margin:12px 0 0;padding:0}
-.upl-bens li{display:flex;gap:9px;padding:7px 0;font-size:13.65px;line-height:1.5;color:#f2f5fb;border-bottom:1px solid #1d335833}
+.upl-bens li{display:flex;gap:9px;padding:7px 0;font-size:13.65px;line-height:1.5;color:#f2f5fb;border-bottom:1px solid #2A2E3A33}
 .upl-bens li:last-child{border-bottom:0}
-.upl-bens .ck{color:#60a5fa;font-weight:900}
-.upl-value{margin:12px 0 0;background:#0a1220;border:1px solid #1d3358;border-radius:12px;padding:12px 13px;font-size:13.12px;line-height:1.6;color:#c7d0dd;text-align:center}
+.upl-bens .ck{color:#1AE099;font-weight:900}
+.upl-value{margin:12px 0 0;background:#1D2029;border:1px solid #2A2E3A;border-radius:12px;padding:12px 13px;font-size:13.12px;line-height:1.6;color:#9AA1AE;text-align:center}
 .upl-dont{list-style:none;margin:12px 0 0;padding:0}
 .upl-dont li{display:flex;gap:9px;padding:7px 0;font-size:13.65px;line-height:1.55;color:#f2f5fb}
 .upl-dont .x{color:#f87171;font-weight:900}
-.upl-dont .ok{color:#60a5fa;font-weight:900}
+.upl-dont .ok{color:#1AE099;font-weight:900}
 .upl-faq{margin:12px 0 0}
-.upl-faq details{background:linear-gradient(180deg,#05070d,#070b14);border:1px solid #1d335855;border-radius:11px;padding:11px 13px;margin:0 0 8px}
+.upl-faq details{background:linear-gradient(180deg,#0C0F16,#0C0F16);border:1px solid #2A2E3A55;border-radius:11px;padding:11px 13px;margin:0 0 8px}
 .upl-faq summary{font-size:13.65px;font-weight:800;color:#fff;cursor:pointer;list-style:none}
-.upl-faq p{margin:8px 0 0;font-size:13.12px;line-height:1.6;color:#a3b0c6}
-.upl-legal{margin:18px 0 0;text-align:center;font-size:11.03px;line-height:1.6;color:#a3b0c6}
-.upl-tile .ck{display:block;font-size:19.95px;color:#60a5fa;font-weight:900}
+.upl-faq p{margin:8px 0 0;font-size:13.12px;line-height:1.6;color:#9AA1AE}
+.upl-legal{margin:18px 0 0;text-align:center;font-size:11.03px;line-height:1.6;color:#9AA1AE}
+.upl-tile .ck{display:block;font-size:19.95px;color:#1AE099;font-weight:900}
 .upl-how{list-style:none;margin:12px 0 0;padding:0;counter-reset:how}
-.upl-how li{display:flex;gap:11px;padding:10px 0;border-bottom:1px solid #1d335833;font-size:13.65px;line-height:1.55;color:#f2f5fb}
+.upl-how li{display:flex;gap:11px;padding:10px 0;border-bottom:1px solid #2A2E3A33;font-size:13.65px;line-height:1.55;color:#f2f5fb}
 .upl-how li:last-child{border-bottom:0}
-.upl-how .n{flex:0 0 26px;width:26px;height:26px;border-radius:50%;background:#FBBF24;color:#070b14;font-weight:900;font-size:14.18px;display:flex;align-items:center;justify-content:center}
+.upl-how .n{flex:0 0 26px;width:26px;height:26px;border-radius:50%;background:#FBBF24;color:#0C0F16;font-weight:900;font-size:14.18px;display:flex;align-items:center;justify-content:center}
 .upl-how b{color:#fff}
-.upl-sticky{position:fixed;left:0;right:0;bottom:0;z-index:80;background:linear-gradient(180deg,#1d3358,#0a1220);border-top:1px solid #1d3358;box-shadow:0 -6px 24px rgba(0,0,0,.45)}
+.upl-sticky{position:fixed;left:0;right:0;bottom:0;z-index:80;background:linear-gradient(180deg,#2A2E3A,#1D2029);border-top:1px solid #2A2E3A;box-shadow:0 -6px 24px rgba(0,0,0,.45)}
 .upl-sticky-in{max-width:520px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 20px calc(14px + env(safe-area-inset-bottom))}
-.upl-sticky-t{font-size:14.7px;line-height:1.25;color:#c7d0dd;white-space:nowrap;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.upl-sticky-t{font-size:14.7px;line-height:1.25;color:#9AA1AE;white-space:nowrap;min-width:0;overflow:hidden;text-overflow:ellipsis}
 .upl-sticky-t b{color:#fff;font-size:16.28px}
 .upl-sticky-btn{background:#FBBF24;color:#231a02 !important;font-size:15.23px;font-weight:800;white-space:nowrap;padding:11px 17px;line-height:1.2;border-radius:999px;text-decoration:none;text-align:center;flex:none}
 .upl-as{padding:8px 12px;text-align:left}
@@ -187,8 +187,8 @@ main.v2-wrap{padding-bottom:0}
 .upl-sticky{bottom:0!important}
 body{padding-bottom:calc(8px + env(safe-area-inset-bottom))!important}
 /* SALIDA DISCRETA (2026-11-11, orden de Alex: «¿cómo sale de esa página?» / «Pon la salida discreta arriba»): la página standalone no trae chrome del sitio, así que un cliente que no quiere pagar quedaba atrapado. Lleva su propia ✕ fija en la esquina superior DERECHA que devuelve al Dashboard (/home): círculo oscuro semitransparente de 34px, ✕ en gris claro, z-index sobre todo el contenido de la página pero sin competir con el diseño. La línea de confianza (centrada) recibe aire lateral (padding 0 46px) pa' que su texto nunca corra debajo del botón. Solo esta plantilla. */
-.upl-exit{position:fixed;top:calc(10px + env(safe-area-inset-top));right:12px;z-index:200;width:34px;height:34px;border-radius:50%;background:rgba(7,11,20,.72);border:1px solid rgba(117,130,154,.35);color:#c7d0dd;font-size:15.75px;line-height:1;display:flex;align-items:center;justify-content:center;text-decoration:none;-webkit-tap-highlight-color:transparent}
-.upl-exit:active{background:rgba(7,11,20,.92);color:#fff}
+.upl-exit{position:fixed;top:calc(10px + env(safe-area-inset-top));right:12px;z-index:200;width:34px;height:34px;border-radius:50%;background:rgba(12,15,22,.72);border:1px solid rgba(154,161,174,.35);color:#9AA1AE;font-size:15.75px;line-height:1;display:flex;align-items:center;justify-content:center;text-decoration:none;-webkit-tap-highlight-color:transparent}
+.upl-exit:active{background:rgba(12,15,22,.92);color:#fff}
 .upl-trusttop{padding:0 46px}
 </style>
 
@@ -227,15 +227,15 @@ body{padding-bottom:calc(8px + env(safe-area-inset-bottom))!important}
   {% endif %}
 
   {% if entrada_1 %}
-  {# ANTESALA (2026-11-21, orden de Alex en llamada: «la página tiene que presentar qué van a obtener y cómo es el Dashboard ANTES de que paguen» — lo comprobó en vivo con su cuenta de prueba y la página iba DIRECTO al formulario). SOLO cohorte entrada_1, encima de la tarjeta de pago; el formulario y la mecánica de cobro NO se tocan. Pieza central: mockup de teléfono con el Dashboard real dentro, en el lenguaje visual vigente — fondo #05070d, header #0A1120 con el lockup moneda+letras en sus proporciones, carta v5 (banda y parte alta #070b14, cuerpo #1d3358, filete verde #60a5fa, acento #60a5fa) con cartas PLATINUM y GOLD, logo ESPN del equipo, precio, stake, «✓ Ticket matched» y la tira WHY WE LIKE IT, como se ven en el Dashboard. Textos cortos de qué incluye + precio claro. Sin cifras de récord ni promesas: es la interfaz, con carta de muestra declarada. #}
+  {# ANTESALA (2026-11-21, orden de Alex en llamada: «la página tiene que presentar qué van a obtener y cómo es el Dashboard ANTES de que paguen» — lo comprobó en vivo con su cuenta de prueba y la página iba DIRECTO al formulario). SOLO cohorte entrada_1, encima de la tarjeta de pago; el formulario y la mecánica de cobro NO se tocan. Pieza central: mockup de teléfono con el Dashboard real dentro, en el lenguaje visual vigente — fondo #0C0F16, header #0A1120 con el lockup moneda+letras en sus proporciones, carta v5 (banda y parte alta #0C0F16, cuerpo #2A2E3A, filete verde #1AE099, acento #1AE099) con cartas PLATINUM y GOLD, logo ESPN del equipo, precio, stake, «✓ Ticket matched» y la tira WHY WE LIKE IT, como se ven en el Dashboard. Textos cortos de qué incluye + precio claro. Sin cifras de récord ni promesas: es la interfaz, con carta de muestra declarada. #}
   <style>
-  .ant-sec{margin:18px 0 0;background:linear-gradient(180deg,#05070d,#070b14);border:1px solid #1d3358;border-radius:16px;padding:18px 15px 16px}
-  .ant-kick{margin:0;text-align:center;font-size:11.03px;font-weight:800;letter-spacing:3px;color:#60a5fa}
+  .ant-sec{margin:18px 0 0;background:linear-gradient(180deg,#0C0F16,#0C0F16);border:1px solid #2A2E3A;border-radius:16px;padding:18px 15px 16px}
+  .ant-kick{margin:0;text-align:center;font-size:11.03px;font-weight:800;letter-spacing:3px;color:#1AE099}
   .ant-h2{margin:9px 0 0;text-align:center;font-size:19.95px;font-weight:900;color:#fff;line-height:1.3}
   .ant-bens{list-style:none;margin:14px 0 0;padding:0}
-  .ant-bens li{display:flex;gap:9px;padding:7px 0;font-size:14.18px;line-height:1.55;color:#f2f5fb;border-bottom:1px solid #1d335833}
+  .ant-bens li{display:flex;gap:9px;padding:7px 0;font-size:14.18px;line-height:1.55;color:#f2f5fb;border-bottom:1px solid #2A2E3A33}
   .ant-bens li:last-child{border-bottom:0}
-  .ant-bens .ck{color:#60a5fa;font-weight:900}
+  .ant-bens .ck{color:#1AE099;font-weight:900}
   .ant-price-line{margin:14px 0 0;text-align:center;font-size:12.6px;font-weight:800;letter-spacing:.6px;color:#FBBF24}
   </style>
   <div class="ant-sec">
@@ -290,7 +290,7 @@ body{padding-bottom:calc(8px + env(safe-area-inset-bottom))!important}
     {% if anonimo %}
     <div style="margin:14px 0 0;text-align:center;">
       <a class="upl-cta" href="{{ url_for('register') }}">Get started — $1 first week &rarr;</a>
-      <p style="margin:10px 0 0;font-size:13.12px;color:#a3b0c6;">It takes a minute — create your account, confirm your email, and Platinum unlocks for $1 for your first week. Already a member? <a href="{{ url_for('login', next=url_for('desbloquear_platinum')) }}" style="color:#60a5fa;font-weight:800;">Log in</a></p>
+      <p style="margin:10px 0 0;font-size:13.12px;color:#9AA1AE;">It takes a minute — create your account, confirm your email, and Platinum unlocks for $1 for your first week. Already a member? <a href="{{ url_for('login', next=url_for('desbloquear_platinum')) }}" style="color:#1AE099;font-weight:800;">Log in</a></p>
     </div>
     {% elif stripe_embed_ok %}
     <div class="upl-brands"><span class="upl-brand visa">VISA</span><span class="upl-brand mc"><i>●</i><b>●</b>&nbsp;MasterCard</span><span class="upl-brand disc">DISCOVER</span><span class="upl-brand amex">AMEX</span></div>
@@ -307,8 +307,8 @@ body{padding-bottom:calc(8px + env(safe-area-inset-bottom))!important}
     <a class="upl-cta" href="{% if entrada_1 %}{{ url_for('desbloquear_platinum') }}{% else %}{{ stripe_url }}{% endif %}" target="_blank" rel="noopener">Start Platinum - {% if entrada_1 %}$1 first week{% else %}$15.99/week{% endif %} →</a>
     {% endif %}
     {% if not anonimo %}
-    <p style="margin:9px 0 0;text-align:center;font-size:11.55px;line-height:1.5;color:#a3b0c6;">{% if entrada_1 %}✓ $1 your first week, then $15.99/week — cancel anytime.{% else %}✓ $15.99/week, cancel anytime.{% endif %} Two clicks from your account, no retention team, no guilt.</p>
-    <div style="margin:11px 0 0;background:#0a1220;border:1px solid #1d3358;border-radius:10px;padding:10px 12px;font-size:12.6px;line-height:1.6;color:#a3b0c6;"><b style="color:#fff;">What happens next:</b> the moment your payment clears, your Platinum turns on automatically — every official play lands on your Dashboard before game time, with its real ticket, starting today.</div>
+    <p style="margin:9px 0 0;text-align:center;font-size:11.55px;line-height:1.5;color:#9AA1AE;">{% if entrada_1 %}✓ $1 your first week, then $15.99/week — cancel anytime.{% else %}✓ $15.99/week, cancel anytime.{% endif %} Two clicks from your account, no retention team, no guilt.</p>
+    <div style="margin:11px 0 0;background:#1D2029;border:1px solid #2A2E3A;border-radius:10px;padding:10px 12px;font-size:12.6px;line-height:1.6;color:#9AA1AE;"><b style="color:#fff;">What happens next:</b> the moment your payment clears, your Platinum turns on automatically — every official play lands on your Dashboard before game time, with its real ticket, starting today.</div>
     <p class="upl-trust">🔒 256-bit SSL · Stripe secured · Cancel anytime</p>
     {% endif %}
     {% if anonimo %}
@@ -326,26 +326,26 @@ body{padding-bottom:calc(8px + env(safe-area-inset-bottom))!important}
   <style>
   .pln-head{margin:26px 0 0;text-align:center}
   .pln-head h2{margin:0;font-size:21px;font-weight:800;color:#fff}
-  .pln-head p{margin:6px 0 0;font-size:13.65px;color:#a3b0c6}
+  .pln-head p{margin:6px 0 0;font-size:13.65px;color:#9AA1AE}
   .pln-card{border-radius:20px;padding:24px 22px 20px;margin:18px 0 0}
-  .pln-plat{background:#0a1220;border:1.5px solid #FBBF24}
-  .pln-free{background:#0a1220;border:1px solid #1d3358}
+  .pln-plat{background:#1D2029;border:1.5px solid #FBBF24}
+  .pln-free{background:#1D2029;border:1px solid #2A2E3A}
   .pln-top{display:flex;justify-content:space-between;align-items:center}
-  .pln-kick{font-size:13.12px;font-weight:800;letter-spacing:2.2px;color:#a3b0c6}
+  .pln-kick{font-size:13.12px;font-weight:800;letter-spacing:2.2px;color:#9AA1AE}
   .pln-plat .pln-kick{color:#FBBF24}
-  .pln-badge{background:#FBBF24;color:#05070d;font-size:12.08px;font-weight:900;letter-spacing:.6px;padding:6px 10px;border-radius:8px}
-  .pln-badge-free{background:#60a5fa;color:#051630}
+  .pln-badge{background:#FBBF24;color:#0C0F16;font-size:12.08px;font-weight:900;letter-spacing:.6px;padding:6px 10px;border-radius:8px}
+  .pln-badge-free{background:#10CC87;color:#0C0F16}
   .pln-price{font-size:46.2px;font-weight:900;color:#fff;margin:14px 0 2px}
-  .pln-price small{font-size:15.75px;font-weight:600;color:#a3b0c6}
+  .pln-price small{font-size:15.75px;font-weight:600;color:#9AA1AE}
   .pln-tag{font-size:15.23px;color:#f2f5fb;line-height:1.45;margin:6px 0}
   .pln-list{list-style:none;margin:8px 0 0;padding:0}
   .pln-list li{font-size:15.23px;line-height:1.4;color:#f2f5fb;padding:11px 0 11px 30px;position:relative;border-top:1px solid rgba(255,255,255,.07)}
-  .pln-list li::before{content:"✓";position:absolute;left:2px;top:10px;font-weight:900;color:#60a5fa}
+  .pln-list li::before{content:"✓";position:absolute;left:2px;top:10px;font-weight:900;color:#1AE099}
   .pln-plat .pln-list li::before{color:#FBBF24}
   .pln-cta{display:block;text-align:center;text-decoration:none;font-size:17.32px;font-weight:800;padding:15px;border-radius:12px;margin-top:18px}
-  .pln-cta-plat{background:#60a5fa;color:#fff}
-  .pln-status{background:#f2f5fb;color:#05070d;cursor:default}
-  .pln-fine{font-size:13.12px;color:#75829a;text-align:center;margin-top:12px;line-height:1.45}
+  .pln-cta-plat{background:#10CC87;color:#fff}
+  .pln-status{background:#f2f5fb;color:#0C0F16;cursor:default}
+  .pln-fine{font-size:13.12px;color:#9AA1AE;text-align:center;margin-top:12px;line-height:1.45}
   </style>
 
   <div class="pln-head">
@@ -494,9 +494,9 @@ body{padding-bottom:calc(8px + env(safe-area-inset-bottom))!important}
   {% if not anonimo %}
   {# === Secciones bajo la tarjeta — variante de pago (2026-11-11, orden de Alex con las 5 fotos completas de la página de WGT: «Crea eso, organízalo» / «con mi información y número»): la página NO termina en el formulario. Tras la tarjeta van, en este orden: tickets ganadores reales (mismo mecanismo board.tickets del ledger calificado que la variante anónima), beneficios, cómo funciona, lo que NO hacemos (en caja, como la foto) y preguntas frecuentes, todo con textos y datos NUESTROS. La sección «What members say»/testimonios de la página de ellos NO se crea: no hay testimonios reales del programa y no se inventa ninguno. === #}
   <style>
-  .upl-dontbox{margin:12px 0 0;background:linear-gradient(180deg,#05070d,#070b14);border:1px solid #1d335855;border-radius:14px;padding:4px 14px}
+  .upl-dontbox{margin:12px 0 0;background:linear-gradient(180deg,#0C0F16,#0C0F16);border:1px solid #2A2E3A55;border-radius:14px;padding:4px 14px}
   .upl-dontbox .upl-dont{margin:0}
-  .upl-dontbox .upl-dont li{border-bottom:1px solid #1d335833;padding:9px 0}
+  .upl-dontbox .upl-dont li{border-bottom:1px solid #2A2E3A33;padding:9px 0}
   .upl-dontbox .upl-dont li:last-child{border-bottom:0}
   </style>
   {% if board.tickets %}
