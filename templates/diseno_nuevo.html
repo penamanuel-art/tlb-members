@@ -1197,6 +1197,11 @@ function dnHotClose(){
 (function(){
   var card = document.getElementById('dnAlertFlow');
   if(!card) return;
+  /* Vista previa pa' Alex (2026-11-22): /home?alertas=1 con SU sesión
+     fuerza la tarjeta sin importar estados guardados ni el estado del
+     push, y NO registra eventos del embudo — es solo pa' que la vea
+     cuando quiera («yo apruebo cuando yo veo»). */
+  var PREVIEW = {{ 'true' if (is_alex and request.args.get('alertas')) else 'false' }};
   var LS_DONE = 'tlb_af_done', LS_DIS = 'tlb_af_dismissed_at', LS_IOS = 'tlb_af_ios_pending';
   var DISMISS_MS = 30 * 24 * 60 * 60 * 1000;
   function lsGet(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
@@ -1216,6 +1221,7 @@ function dnHotClose(){
     if(lsGet(LS_IOS) === '1'){ track('ios_opened_icon'); lsSet(LS_IOS, '2'); }
   }
   function track(step){
+    if(PREVIEW) return;
     try{
       fetch('/api/alert-funnel', {method:'POST', headers:{'Content-Type':'application/json'},
         credentials:'same-origin', keepalive:true,
@@ -1231,6 +1237,7 @@ function dnHotClose(){
   }
   function hide(){ card.hidden = true; }
   function dismiss(){
+    if(PREVIEW){ hide(); return; }
     track('dismissed');
     lsSet(LS_DIS, String(Date.now()));
     hide();
@@ -1279,20 +1286,38 @@ function dnHotClose(){
     doEnable();
   });
   /* Elegibilidad: nunca si ya está suscrito, si descartó hace <30
-     días, si el navegador bloqueó el permiso o si no hay soporte. */
+     días, si el navegador bloqueó el permiso o si no hay soporte.
+     OJO (arreglo 2026-11-22): en iPhone/iPad Safari SIN instalar,
+     "Notification" y "PushManager" no existen en window, así que
+     TLB_push.status() devuelve 'unsupported' SIEMPRE — justo el
+     público de la guía de instalación. Ahí la elegibilidad NO se
+     consulta con el push (un 'granted' es imposible en Safari sin
+     instalar) y el LS_DONE tampoco puede bloquear la rama. */
   var eligible = false, shown = false;
   (async function(){
-    if(lsGet(LS_DONE)) return;
-    var dis = parseInt(lsGet(LS_DIS) || '0', 10);
-    if(dis && (Date.now() - dis) < DISMISS_MS) return;
-    if(!window.TLB_push) return;
-    var st = await TLB_push.status();
-    if(st === 'granted'){ lsSet(LS_DONE, '1'); return; }
-    if(st === 'denied' || st === 'unsupported') return;
-    eligible = true;
+    try{
+      if(PREVIEW){ eligible = true; return; }
+      var dis = parseInt(lsGet(LS_DIS) || '0', 10);
+      if(dis && (Date.now() - dis) < DISMISS_MS) return;
+      if(iosNeedsInstall){ eligible = true; return; }
+      if(lsGet(LS_DONE)) return;
+      if(!window.TLB_push) return;
+      var st = await TLB_push.status();
+      if(st === 'granted'){ lsSet(LS_DONE, '1'); return; }
+      if(st === 'denied' || st === 'unsupported') return;
+      eligible = true;
+    }catch(e){ /* el flujo de alertas nunca debe romper el home */ }
   })();
+  var showTries = 0;
   function maybeShow(){
-    if(shown || !eligible) return;
+    if(shown) return;
+    if(!eligible){
+      /* La elegibilidad es async: si el miembro abrió y cerró la
+         jugada antes de que resolviera, esperamos un poco en vez de
+         perder el disparo en silencio. */
+      if(showTries++ < 12) setTimeout(maybeShow, 500);
+      return;
+    }
     if(ssGet('tlb_af_guide_done')) return;
     if(document.body.classList.contains('v5-sheet-open')) return;
     shown = true;
@@ -1315,6 +1340,15 @@ function dnHotClose(){
       }
     }, 400);
   });
+  if(PREVIEW){
+    /* Muestra determinista: la vista de valor sale sola al abrir el
+       link, sin esperar a que abra una jugada. */
+    setTimeout(function(){
+      if(shown) return;
+      shown = true;
+      showView('value');
+    }, 1200);
+  }
 })();
 </script>
 
