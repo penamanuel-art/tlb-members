@@ -6,8 +6,8 @@
    que filtran por fecha y recalculan profit/ROI/récord/curva/filas en vivo. #}
 <style>
   .wgt-head { display:flex; align-items:flex-start; gap:14px; margin:6px 0 16px; }
-  .wgt-avatar { width:52px; height:52px; border-radius:50%; background:linear-gradient(135deg,#d4af37,#8a6d1c);
-    color:#111; font-weight:900; font-size:1.4rem; display:flex; align-items:center; justify-content:center; flex:none; }
+  .wgt-avatar { width:52px; height:52px; border-radius:50%; background:linear-gradient(135deg,#FBBF24,#FBBF24);
+    color:#05070d; font-weight:900; font-size:1.4rem; display:flex; align-items:center; justify-content:center; flex:none; }
   /* Encabezado organizado (2026-10-12, pedido por Alex): la etiqueta va en
      UNA sola línea junto a la píldora de racha, sobre el título. */
   .wgt-head-txt { flex:1; min-width:0; }
@@ -27,11 +27,11 @@
   .trk-dot { display:flex; align-items:center; gap:8px; font-size:13px; font-weight:700; color:#60a5fa; margin:0 0 18px; }
   .trk-dot i { width:8px; height:8px; border-radius:50%; background:#60a5fa; box-shadow:0 0 10px #60a5fa; flex:0 0 auto; }
   .trk-btns { display:flex; gap:10px; flex-wrap:wrap; }
-  .trk-btn { display:inline-flex; align-items:center; gap:8px; background:linear-gradient(155deg,#0c1425,#0a1220 60%,#070b14); border:1px solid rgba(148,178,220,.22); color:#f2f5fb; font-size:13.5px; font-weight:700; border-radius:12px; padding:11px 16px; text-decoration:none; }
+  .trk-btn { display:inline-flex; align-items:center; gap:8px; background:linear-gradient(155deg,#0c1425,#0a1220 60%,#070b14); border:1px solid rgba(117,130,154,.22); color:#f2f5fb; font-size:13.5px; font-weight:700; border-radius:12px; padding:11px 16px; text-decoration:none; }
   .wgt-pills { display:flex; gap:8px; margin:0 0 14px; overflow-x:auto; padding-bottom:2px; }
   .wgt-pill { border:1px solid var(--line); background:var(--card); color:var(--muted); border-radius:999px;
     padding:8px 16px; font-weight:800; font-size:.85rem; cursor:pointer; white-space:nowrap; }
-  .wgt-pill.active { background:#fbbf24; border-color:#fbbf24; color:#111; }
+  .wgt-pill.active { background:#fbbf24; border-color:#fbbf24; color:#05070d; }
   .wgt-export { margin: 0 0 14px; }
   .wgt-export-btn { border:1px solid var(--line); background:var(--card); color:var(--text); border-radius:999px;
     padding:8px 16px; font-weight:800; font-size:.85rem; cursor:pointer; }
@@ -40,7 +40,7 @@
   .wgt-export-row { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
   .wgt-export-row button[data-exp], .wgt-exp-go { border:1px solid var(--line); background:var(--card-2);
     color:var(--text); border-radius:999px; padding:8px 14px; font-weight:800; font-size:.82rem; cursor:pointer; }
-  .wgt-exp-go { background:#22c55e; border-color:#22c55e; color:#06210f; }
+  .wgt-exp-go { background:#60a5fa; border-color:#60a5fa; color:#051630; }
   .wgt-export-row label { color:var(--muted); font-size:.82rem; font-weight:700; display:flex; gap:6px; align-items:center; }
   .wgt-export-row input[type=date] { background:var(--bg-soft); color:var(--text); border:1px solid var(--line);
     border-radius:10px; padding:7px 10px; font-size:.85rem; color-scheme: dark; }
@@ -50,15 +50,15 @@
   .wgt-risked-val { color:#fff; font-weight:800; font-size:1.1rem; }
   #wgtCurve { width:100%; height:120px; display:block; }
   .wgt-curve-empty { text-align:center; color:var(--muted); font-size:.85rem; padding:38px 0; }
-  .plat-upsell { background:linear-gradient(160deg,#1a1408,#0d0b06); border:1px solid rgba(212,175,55,.45); border-radius:18px; padding:22px 20px; margin-bottom:14px; }
+  .plat-upsell { background:linear-gradient(160deg,#231a02,#231a02); border:1px solid rgba(251,191,36,.45); border-radius:18px; padding:22px 20px; margin-bottom:14px; }
   .plat-upsell-head { display:flex; gap:14px; align-items:center; margin-bottom:14px; }
   .plat-upsell-logo { width:52px; height:52px; border-radius:14px; flex:none; }
   .plat-upsell-head h3 { margin:0; color:#fff; font-size:1.35rem; font-weight:800; }
-  .plat-upsell-sub { margin:4px 0 0; color:#9aa3b2; font-size:.9rem; }
-  .plat-upsell-desc { color:#d7dce4; font-size:1rem; line-height:1.55; margin:0 0 18px; }
+  .plat-upsell-sub { margin:4px 0 0; color:#75829a; font-size:.9rem; }
+  .plat-upsell-desc { color:#c7d0dd; font-size:1rem; line-height:1.55; margin:0 0 18px; }
   .plat-upsell-desc b { color:#fff; }
-  .plat-upsell-btn { display:inline-block; background:#4ade80; color:#06240f; font-weight:800; font-size:1.05rem; padding:14px 28px; border-radius:999px; text-decoration:none; box-shadow:0 0 24px rgba(74,222,128,.35); }
-  .plat-upsell-fine { margin:14px 0 0; color:#9aa3b2; font-size:.85rem; }
+  .plat-upsell-btn { display:inline-block; background:#60a5fa; color:#051630; font-weight:800; font-size:1.05rem; padding:14px 28px; border-radius:999px; text-decoration:none; box-shadow:0 0 24px rgba(96,165,250,.35); }
+  .plat-upsell-fine { margin:14px 0 0; color:#75829a; font-size:.85rem; }
   .wgt-row { background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:12px; }
   .wgt-row-top { display:flex; gap:12px; align-items:flex-start; }
   .wgt-logo { width:46px; height:46px; border-radius:50%; background:#fff; object-fit:contain; padding:4px; flex:none; }
@@ -67,37 +67,37 @@
   .wgt-row-main { flex:1; min-width:0; }
   .wgt-pick { color:#fff; font-weight:800; font-size:1rem; margin:0 0 2px; }
   .wgt-meta { color:var(--muted); font-size:.82rem; margin:0 0 2px; }
-  .wgt-meta b { color:#cbd5e1; }
+  .wgt-meta b { color:#c7d0dd; }
   .wgt-score { color:var(--muted); font-size:.82rem; margin:0 0 2px; }
   .wgt-stake { color:var(--muted); font-size:.82rem; margin:0; }
-  .wgt-ticket-link { background:none; border:none; padding:0; margin:4px 0 0; color:#5b9dff;
+  .wgt-ticket-link { background:none; border:none; padding:0; margin:4px 0 0; color:#60a5fa;
     font-size:.82rem; font-weight:700; cursor:pointer; }
   .wgt-thumb { border:1px solid var(--line); border-radius:10px; overflow:hidden; padding:0;
-    cursor:pointer; width:100%; display:block; margin-top:10px; background:#0b0e17; }
+    cursor:pointer; width:100%; display:block; margin-top:10px; background:#05070d; }
   .wgt-thumb img { width:100%; height:auto; display:block; }
   .wgt-side { text-align:right; flex:none; display:flex; flex-direction:column; gap:6px; align-items:flex-end; }
   .wgt-result { font-weight:800; font-size:1rem; }
-  .wgt-result.win { color:#4ade80; } .wgt-result.loss { color:#f87171; } .wgt-result.pending { color:var(--muted); font-size:.85rem; }
-  .wgt-casa { font-size:.72rem; font-weight:800; color:#60a5fa; background:rgba(125,211,252,.12);
-    border:1px solid rgba(125,211,252,.35); border-radius:999px; padding:3px 10px; }
+  .wgt-result.win { color:#34D399; } .wgt-result.loss { color:#f87171; } .wgt-result.pending { color:var(--muted); font-size:.85rem; }
+  .wgt-casa { font-size:.72rem; font-weight:800; color:#60a5fa; background:rgba(96,165,250,.12);
+    border:1px solid rgba(96,165,250,.35); border-radius:999px; padding:3px 10px; }
   .wgt-nivel { font-size:.7rem; font-weight:800; letter-spacing:.08em; border-radius:6px; padding:3px 8px; }
-  .wgt-nivel.gold { color:#4ade80; background:rgba(74,222,128,.12); border:1px solid rgba(74,222,128,.4); }
+  .wgt-nivel.gold { color:#FBBF24; background:rgba(251,191,36,.12); border:1px solid rgba(251,191,36,.4); }
   .wgt-nivel.elite, .wgt-nivel.platinum { color:#fbbf24; background:rgba(251,191,36,.12); border:1px solid rgba(251,191,36,.4); }
   .wgt-actions { display:flex; gap:6px; margin-top:10px; padding-top:10px; border-top:1px solid var(--line); }
   .wgt-actions form { margin:0; }
   .wgt-btn { border:1px solid var(--line); background:var(--card-2); color:var(--text); border-radius:10px;
     width:38px; height:32px; font-size:1rem; cursor:pointer; }
-  .wgt-btn.win { color:#4ade80; } .wgt-btn.loss { color:#f87171; }
+  .wgt-btn.win { color:#34D399; } .wgt-btn.loss { color:#f87171; }
   .wgt-empty { text-align:center; color:var(--muted); padding:28px 12px; }
 
   /* Tarjetas del tracker COMPACTAS (2026-10-19, pedido por Alex):
      igual que los Receipts del home — miniatura, badge, pick, WON/LOST. */
-  .wgt-row { background:#05070d; border:1px solid #1d2a42; border-radius:16px; padding:13px; }
-  .wgt-row.won { border-color:rgba(47,191,113,.45); }
+  .wgt-row { background:#05070d; border:1px solid #1d3358; border-radius:16px; padding:13px; }
+  .wgt-row.won { border-color:rgba(52,211,153,.45); }
   .tkc-top { display:flex; gap:12px; align-items:center; }
   .tkc-thumbbtn { border:none; background:none; padding:0; cursor:pointer; flex:none; }
   .tkc-thumb { width:60px; height:60px; border-radius:10px; object-fit:cover; flex:none; background:#0a1220; display:block; }
-  .tkc-logo { object-fit:contain; background:#eef1f6; padding:5px; box-sizing:border-box; }
+  .tkc-logo { object-fit:contain; background:#f2f5fb; padding:5px; box-sizing:border-box; }
   .tkc-fallback { width:60px; height:60px; border-radius:10px; flex:none; background:#0a1220; display:flex; align-items:center; justify-content:center; font-size:24px; }
   .tkc-main { flex:1; min-width:0; }
   .tkc-meta { display:flex; align-items:center; gap:8px; margin-bottom:5px; }
@@ -110,7 +110,7 @@
   .tkc-res .st { font-size:11px; font-weight:300; letter-spacing:1.4px; display:block; }
   .tkc-res .u { font-size:16px; font-weight:300; margin-top:3px; display:block; }
   .tkc-won { color:#60a5fa; } .tkc-lost { color:#a3b0c6; } .tkc-pend { color:#a3b0c6; }
-  .wgt-actions { margin-top:10px; padding-top:10px; border-top:1px solid #1d2a42; }
+  .wgt-actions { margin-top:10px; padding-top:10px; border-top:1px solid #1d3358; }
   .wgt-btn { width:34px; height:28px; font-size:.9rem; border-radius:8px; }
 
   /* Vista principal COMPACTA (2026-10-19, refinamiento de Alex): el tracker
@@ -138,7 +138,7 @@
   .wgt-curve-empty { padding:26px 0; }
   .wgt-plays-link { display:flex; align-items:center; gap:10px; background:var(--card); border:1px solid var(--line);
     border-radius:14px; padding:13px 16px; color:var(--text); font-weight:800; font-size:.95rem; text-decoration:none; }
-  .wgt-plays-count { background:rgba(16,204,135,.14); border:1px solid rgba(16,204,135,.45); color:#60a5fa;
+  .wgt-plays-count { background:rgba(96,165,250,.14); border:1px solid rgba(96,165,250,.45); color:#60a5fa;
     border-radius:999px; padding:2px 10px; font-size:.8rem; font-weight:800; }
   .wgt-plays-arrow { margin-left:auto; color:#60a5fa; font-size:1.1rem; }
 
@@ -146,11 +146,11 @@
      FASE 2 — Tracker con el sistema del Home nuevo (2026-10-21,
      pedido por Alex tras su captura: el título caía en 3 líneas
      y la página no tenía la estética nueva). Fondo marino
-     unificado #05081a→#0c1638, dorado único #e8c766, menta único
+     unificado #05070d→#051630, dorado único #FBBF24, menta único
      #60a5fa, tarjetas radio 20px con la superficie del Home.
      Todo vive en el <style> propio de ESTA plantilla (se carga
      solo en esta página): NO se toca el CSS compartido. */
-  body { background-color:#070b14; background-image:radial-gradient(560px 300px at 50% -80px,rgba(16,204,135,.06),transparent 65%),radial-gradient(700px 500px at 110% 30%,rgba(77,163,255,.05),transparent 60%); }
+  body { background-color:#070b14; background-image:radial-gradient(560px 300px at 50% -80px,rgba(96,165,250,.06),transparent 65%),radial-gradient(700px 500px at 110% 30%,rgba(96,165,250,.05),transparent 60%); }
   /* Fuera la caja gris envolvente: como en el Home, las tarjetas
      flotan directo sobre el fondo marino. */
   .tracker-box { background:transparent; border:none; border-radius:0; padding:2px 0 8px; }
@@ -166,13 +166,13 @@
   .trk-h1 .trk-mint { color:#60a5fa; }
   .trk-dot { color:#60a5fa; }
   .trk-dot i { background:#60a5fa; box-shadow:0 0 10px #60a5fa; }
-  .trk-btn { background:linear-gradient(155deg,#0c1425,#0a1220 60%,#070b14); border:1px solid rgba(232,199,102,.18); border-radius:14px; }
-  .tracker-box .wgt-avatar { background:linear-gradient(135deg,#e8c766,#a8832a); }
-  .tracker-box .wgt-streak-pill { background:rgba(232,199,102,.12); border-color:rgba(232,199,102,.5); color:#e8c766; }
-  .tracker-box .wgt-pill.active { background:#e8c766; border-color:#e8c766; color:#141414; }
+  .trk-btn { background:linear-gradient(155deg,#0c1425,#0a1220 60%,#070b14); border:1px solid rgba(251,191,36,.18); border-radius:14px; }
+  .tracker-box .wgt-avatar { background:linear-gradient(135deg,#FBBF24,#FBBF24); }
+  .tracker-box .wgt-streak-pill { background:rgba(251,191,36,.12); border-color:rgba(251,191,36,.5); color:#FBBF24; }
+  .tracker-box .wgt-pill.active { background:#FBBF24; border-color:#FBBF24; color:#05070d; }
   .tracker-box .wgt-card,
   .tracker-box .wgt-export-panel,
-  .tracker-box .wgt-plays-link { background:linear-gradient(155deg,#0c1425,#0a1220 60%,#070b14); border:1px solid rgba(232,199,102,.14); border-radius:20px; }
+  .tracker-box .wgt-plays-link { background:linear-gradient(155deg,#0c1425,#0a1220 60%,#070b14); border:1px solid rgba(251,191,36,.14); border-radius:20px; }
   .own-head { display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:4px; }
   .own-h { color:#fff; font-size:16px; font-weight:800; margin:0; }
   .own-sub { color:var(--muted); font-size:12px; text-align:right; }
@@ -183,11 +183,11 @@
   .own-odds { color:#60a5fa; }
   .own-meta { color:var(--muted); font-size:12px; margin-top:2px; line-height:1.45; }
   .own-clv { display:inline-block; margin-top:5px; font-size:11px; font-weight:800; border-radius:999px; padding:2px 8px; }
-  .own-clv.pos { color:#60a5fa; background:rgba(47,191,113,.12); border:1px solid rgba(47,191,113,.4); }
+  .own-clv.pos { color:#34D399; background:rgba(52,211,153,.12); border:1px solid rgba(52,211,153,.4); }
   .own-clv.neg { color:#f87171; background:rgba(248,113,113,.10); border:1px solid rgba(248,113,113,.35); }
   .own-side { text-align:right; flex:none; }
   .own-res { font-size:11px; font-weight:800; letter-spacing:.6px; }
-  .own-res.w { color:#60a5fa; } .own-res.l { color:#f87171; } .own-res.p { color:#f2f5fb; } .own-res.pend { color:#e8c766; }
+  .own-res.w { color:#60a5fa; } .own-res.l { color:#f87171; } .own-res.p { color:#f2f5fb; } .own-res.pend { color:#FBBF24; }
   .own-actions { display:flex; gap:5px; margin-top:7px; justify-content:flex-end; align-items:center; }
   .own-actions form { margin:0; }
   .own-btn { border:1px solid var(--line); background:rgba(255,255,255,.05); color:#f2f5fb; border-radius:8px; min-width:30px; height:26px; font-size:.85rem; cursor:pointer; }
@@ -195,10 +195,10 @@
   .own-empty { color:var(--muted); font-size:13px; line-height:1.55; margin:6px 0 0; }
   .own-tools { display:flex; flex-wrap:wrap; gap:8px; margin-top:13px; }
   .own-more { display:inline-block; margin-top:9px; color:#60a5fa; font-weight:700; font-size:13px; text-decoration:none; }
-  .tracker-box .results-hero .stat { background:linear-gradient(155deg,#0c1425,#0a1220 60%,#070b14); border:1px solid rgba(232,199,102,.14); border-radius:20px; }
+  .tracker-box .results-hero .stat { background:linear-gradient(155deg,#0c1425,#0a1220 60%,#070b14); border:1px solid rgba(251,191,36,.14); border-radius:20px; }
   .tracker-box .stat-value.pos { color:#60a5fa; }
-  .tracker-box .wgt-exp-go { background:#60a5fa; border-color:#60a5fa; color:#052e22; }
-  .tracker-box .wgt-plays-count { background:rgba(47,230,168,.14); border-color:rgba(47,230,168,.45); color:#60a5fa; }
+  .tracker-box .wgt-exp-go { background:#60a5fa; border-color:#60a5fa; color:#051630; }
+  .tracker-box .wgt-plays-count { background:rgba(96,165,250,.14); border-color:rgba(96,165,250,.45); color:#60a5fa; }
   .tracker-box .wgt-plays-arrow { color:#60a5fa; }
 </style>
 
@@ -390,8 +390,8 @@
     var grad = document.createElementNS(NS, 'linearGradient');
     grad.setAttribute('id', 'wgtg'); grad.setAttribute('x1','0'); grad.setAttribute('y1','0');
     grad.setAttribute('x2','0'); grad.setAttribute('y2','1');
-    var s1 = document.createElementNS(NS, 'stop'); s1.setAttribute('offset','0'); s1.setAttribute('stop-color','#22c55e'); s1.setAttribute('stop-opacity','.45');
-    var s2 = document.createElementNS(NS, 'stop'); s2.setAttribute('offset','1'); s2.setAttribute('stop-color','#22c55e'); s2.setAttribute('stop-opacity','0');
+    var s1 = document.createElementNS(NS, 'stop'); s1.setAttribute('offset','0'); s1.setAttribute('stop-color','#34D399'); s1.setAttribute('stop-opacity','.45');
+    var s2 = document.createElementNS(NS, 'stop'); s2.setAttribute('offset','1'); s2.setAttribute('stop-color','#34D399'); s2.setAttribute('stop-opacity','0');
     grad.appendChild(s1); grad.appendChild(s2); defs.appendChild(grad); svg.appendChild(defs);
     var line = days.map(function(d,i){ return (i?'L':'M') + X(i).toFixed(1) + ' ' + Y(vals[i]).toFixed(1); }).join(' ');
     var area = document.createElementNS(NS, 'path');
@@ -399,12 +399,12 @@
     area.setAttribute('fill', 'url(#wgtg)');
     var stroke = document.createElementNS(NS, 'path');
     stroke.setAttribute('d', line); stroke.setAttribute('fill','none');
-    stroke.setAttribute('stroke', vals[vals.length-1] >= 0 ? '#22c55e' : '#f87171');
+    stroke.setAttribute('stroke', vals[vals.length-1] >= 0 ? '#34D399' : '#f87171');
     stroke.setAttribute('stroke-width','2.5'); stroke.setAttribute('stroke-linejoin','round'); stroke.setAttribute('stroke-linecap','round');
     svg.appendChild(area); svg.appendChild(stroke);
     var dot = document.createElementNS(NS, 'circle');
     dot.setAttribute('cx', X(days.length-1)); dot.setAttribute('cy', Y(vals[vals.length-1]));
-    dot.setAttribute('r','4'); dot.setAttribute('fill', vals[vals.length-1] >= 0 ? '#4ade80' : '#f87171');
+    dot.setAttribute('r','4'); dot.setAttribute('fill', vals[vals.length-1] >= 0 ? '#34D399' : '#f87171');
     svg.appendChild(dot);
   }
   function apply(range){
