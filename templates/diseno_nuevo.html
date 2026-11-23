@@ -187,7 +187,7 @@ fbq('track', 'PageView');
   .dn-hot-row::-webkit-scrollbar{display:none}
   .dn-hot-track{height:4px;background:rgba(152,162,181,.18);border-radius:99px;margin:2px 2px 0;overflow:hidden}
   .dn-hot-fill{height:100%;background:var(--acc);border-radius:99px;width:20%}
-  .dn-hot-card{flex:0 0 calc(100% - 30px);scroll-snap-align:start;position:relative;background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--acc);box-shadow:0 12px 30px rgba(0,0,0,.25);border-radius:16px;padding:18px}
+  .dn-hot-card{flex:0 0 calc(85% - 25.5px);scroll-snap-align:start;position:relative;background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--acc);box-shadow:0 12px 30px rgba(0,0,0,.25);border-radius:14px;padding:15px}
   .dn-hot-card.cold{border-left-color:#FF5A3C}
   .dn-hot-top{display:flex;align-items:center;gap:10px}
   .dn-hot-pill{background:var(--accbg);color:var(--acc);border:1px solid var(--accline);border-radius:999px;padding:7px 12px;font-size:13.5px;font-weight:700;letter-spacing:.08em;white-space:nowrap}
@@ -230,6 +230,22 @@ fbq('track', 'PageView');
   .dn-hot-foot{display:flex;align-items:center;gap:10px}
   .dn-hot-note{color:var(--mut);font-size:15px}
   .dn-hot-link{margin-left:auto;color:var(--acc);font-size:13.5px;font-weight:600;white-space:nowrap;background:none;border:0;cursor:pointer;font-family:inherit;padding:0}
+  /* Hot right now: tarjetas −15% (2026-11-23, orden de Alex: se veian muy
+     grandes/anchas). Ajuste ×0.85 acotado a las tarjetas del carrusel; la
+     hoja de detalle que reutiliza .dn-hot-pill/.dn-hot-dots NO se toca. */
+  .dn-hot-card .dn-hot-top{gap:8px}
+  .dn-hot-card .dn-hot-pill{padding:6px 10px;font-size:11.5px}
+  .dn-hot-card .dn-hot-tag{font-size:11.5px}
+  .dn-hot-card .dn-hot-num{font-size:48px;margin:14px 0 3px}
+  .dn-hot-card .dn-hot-num .w{font-size:23px}
+  .dn-hot-card .dn-hot-pct{margin-left:8px;padding:3px 7px;font-size:11.5px;border-radius:7px}
+  .dn-hot-card .dn-hot-sub2{font-size:13px;margin:0 0 12px}
+  .dn-hot-card .dn-hot-streakrow{margin:-3px 0 12px}
+  .dn-hot-card .dn-hot-streak{padding:4px 9px;font-size:10px}
+  .dn-hot-card .dn-hot-dots{gap:4px;margin:0 0 14px;min-height:8px}
+  .dn-hot-card .dn-hot-dots span{width:8px;height:8px}
+  .dn-hot-card .dn-hot-note{font-size:13px}
+  .dn-hot-card .dn-hot-link{font-size:11.5px}
 
 
   /* Record por liga */
