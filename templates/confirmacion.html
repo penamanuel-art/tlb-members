@@ -6,34 +6,34 @@
 <title>{% if lang == 'es' %}Revisa tu correo — The Sharp Team{% else %}Check your email — The Sharp Team{% endif %}</title>
 <style>
   * { margin:0; padding:0; box-sizing:border-box; }
-  body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif; background:#05081a; color:#eef1fb; line-height:1.5; }
+  body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif; background:#05070d; color:#f2f5fb; line-height:1.5; }
   .wrap { max-width:430px; margin:0 auto; padding:26px 14px 40px; min-height:100vh;
     background:
-      radial-gradient(ellipse 95% 460px at 50% -60px, rgba(232,199,102,.17), rgba(232,199,102,0) 70%),
-      linear-gradient(180deg,#0c1638 0%,#081029 340px,#05081a 100%); }
+      radial-gradient(ellipse 95% 460px at 50% -60px, rgba(251,191,36,.17), rgba(251,191,36,0) 70%),
+      linear-gradient(180deg,#051630 0%,#051630 340px,#05070d 100%); }
   .logo { display:block; width:110px; margin:6px auto 8px; }
-  .brand { text-align:center; color:#e8c766; font-weight:900; letter-spacing:2.5px; font-size:15px; margin-bottom:20px; }
-  .card { background:linear-gradient(180deg,#111a3e,#0c1430); border:1px solid rgba(232,199,102,.22); border-radius:20px; padding:22px 18px 24px; }
+  .brand { text-align:center; color:#FBBF24; font-weight:900; letter-spacing:2.5px; font-size:15px; margin-bottom:20px; }
+  .card { background:linear-gradient(180deg,#051630,#051630); border:1px solid rgba(251,191,36,.22); border-radius:20px; padding:22px 18px 24px; }
   .steps { display:flex; gap:8px; margin-bottom:20px; }
-  .step { flex:1; text-align:center; background:rgba(255,255,255,.04); border:1px solid rgba(154,167,199,.18); border-radius:12px; padding:9px 2px 8px; }
-  .step .dot { display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; border-radius:50%; border:2px solid rgba(154,167,199,.4); color:#9aa7c7; font-size:11.5px; font-weight:900; }
-  .step .slab { display:block; margin-top:5px; font-size:10.5px; color:#9aa7c7; white-space:nowrap; }
-  .step.done .dot { background:#2ee6a8; border-color:#2ee6a8; color:#04150a; }
-  .step.done .slab { color:#2ee6a8; font-weight:800; }
-  .step.now { border-color:#e8c766; }
-  .step.now .dot { border-color:#e8c766; color:#e8c766; }
-  .step.now .slab { color:#e8c766; font-weight:800; }
-  .mailcircle { width:74px; height:74px; border-radius:50%; border:2px solid #e8c766; margin:2px auto 14px; display:flex; align-items:center; justify-content:center; font-size:32px; background:rgba(232,199,102,.08); }
+  .step { flex:1; text-align:center; background:rgba(255,255,255,.04); border:1px solid rgba(117,130,154,.18); border-radius:12px; padding:9px 2px 8px; }
+  .step .dot { display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; border-radius:50%; border:2px solid rgba(117,130,154,.4); color:#75829a; font-size:11.5px; font-weight:900; }
+  .step .slab { display:block; margin-top:5px; font-size:10.5px; color:#75829a; white-space:nowrap; }
+  .step.done .dot { background:#34D399; border-color:#34D399; color:#05070d; }
+  .step.done .slab { color:#34D399; font-weight:800; }
+  .step.now { border-color:#FBBF24; }
+  .step.now .dot { border-color:#FBBF24; color:#FBBF24; }
+  .step.now .slab { color:#FBBF24; font-weight:800; }
+  .mailcircle { width:74px; height:74px; border-radius:50%; border:2px solid #FBBF24; margin:2px auto 14px; display:flex; align-items:center; justify-content:center; font-size:32px; background:rgba(251,191,36,.08); }
   h1 { text-align:center; font-size:22px; font-weight:900; margin-bottom:9px; }
-  .ptext { text-align:center; color:#d7deeb; font-size:14px; line-height:1.55; margin-bottom:6px; }
+  .ptext { text-align:center; color:#c7d0dd; font-size:14px; line-height:1.55; margin-bottom:6px; }
   .ptext b { color:#fff; }
-  .again { background:rgba(46,230,168,.10); border:1px solid rgba(46,230,168,.4); color:#2ee6a8; border-radius:11px; font-size:13px; font-weight:700; text-align:center; padding:9px 10px; margin:12px 0 0; }
-  .spam { background:rgba(232,199,102,.10); border:1px solid rgba(232,199,102,.45); border-radius:11px; color:#f0d089; font-size:12.5px; text-align:center; padding:10px 11px; line-height:1.5; margin:14px 0 16px; }
-  .resend { width:100%; background:transparent; color:#e8c766; border:2px solid #e8c766; border-radius:12px; font-size:15px; font-weight:800; padding:12px 10px; cursor:pointer; font-family:inherit; }
+  .again { background:rgba(52,211,153,.10); border:1px solid rgba(52,211,153,.4); color:#34D399; border-radius:11px; font-size:13px; font-weight:700; text-align:center; padding:9px 10px; margin:12px 0 0; }
+  .spam { background:rgba(251,191,36,.10); border:1px solid rgba(251,191,36,.45); border-radius:11px; color:#FBBF24; font-size:12.5px; text-align:center; padding:10px 11px; line-height:1.5; margin:14px 0 16px; }
+  .resend { width:100%; background:transparent; color:#FBBF24; border:2px solid #FBBF24; border-radius:12px; font-size:15px; font-weight:800; padding:12px 10px; cursor:pointer; font-family:inherit; }
   .wrong { text-align:center; margin-top:14px; font-size:12.5px; }
-  .wrong a { color:#9aa7c7; }
-  .note { margin-top:16px; background:rgba(255,255,255,.03); border:1px dashed rgba(154,167,199,.35); border-radius:11px; color:#9aa7c7; font-size:12px; text-align:center; padding:9px 10px; line-height:1.45; }
-  footer { text-align:center; color:#77839f; font-size:11px; margin-top:20px; line-height:1.6; }
+  .wrong a { color:#75829a; }
+  .note { margin-top:16px; background:rgba(255,255,255,.03); border:1px dashed rgba(117,130,154,.35); border-radius:11px; color:#75829a; font-size:12px; text-align:center; padding:9px 10px; line-height:1.45; }
+  footer { text-align:center; color:#75829a; font-size:11px; margin-top:20px; line-height:1.6; }
 </style>
 </head>
 <body>
