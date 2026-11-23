@@ -36,8 +36,8 @@
 .bv-foot .bv-legal{color:var(--muted);font-size:.8rem;line-height:1.6;margin:0;}
 .st-field{margin-top:16px;}
 .st-lab{display:block;font-weight:700;font-size:14px;margin-bottom:8px;}
-.st-input{width:100%;box-sizing:border-box;background:#05081a;border:1.5px solid rgba(232,199,102,.35);border-radius:12px;padding:13px;color:#eef1fb;font-size:16px;}
-.st-sms{display:flex;gap:8px;align-items:center;margin-top:11px;font-size:.85rem;color:#a8b3cf;cursor:pointer;}
+.st-input{width:100%;box-sizing:border-box;background:#0C0F16;border:1.5px solid rgba(232,199,102,.35);border-radius:12px;padding:13px;color:#F2F5FB;font-size:16px;}
+.st-sms{display:flex;gap:8px;align-items:center;margin-top:11px;font-size:.85rem;color:#9AA1AE;cursor:pointer;}
 .st-sms input{width:17px;height:17px;accent-color:#e8c766;}
 .st-pwtoggle{background:none;border:none;color:#e8c766;font-size:13px;font-weight:700;cursor:pointer;padding:8px 2px 0;}
 .st-done{color:#2ee6a8;font-weight:700;margin:14px 0 0;}
@@ -47,7 +47,7 @@
 .st-check span{display:inline-block;border:1.5px solid var(--line);border-radius:999px;padding:9px 16px;font-size:.95rem;color:var(--muted);cursor:pointer;background:#0d1017;}
 .st-check input:checked + span{border-color:#2ee6a8;color:#2ee6a8;background:rgba(46,230,168,.1);font-weight:700;}
 .st-check input:focus-visible + span{outline:2px solid #2ee6a8;outline-offset:2px;}
-.st-note{font-size:.85rem;color:#a8b3cf;margin-top:12px;}
+.st-note{font-size:.85rem;color:#9AA1AE;margin-top:12px;}
 </style>
 <section class="auth-card bv">
   <span class="bv-pill"><span class="dot"></span> Your account is active</span>
@@ -149,7 +149,7 @@
 
     <button class="btn btn-primary btn-block" type="submit">Save &amp; continue →</button>
   </form>
-  <p style="text-align:center;margin-top:16px;"><a href="{{ url_for('home') }}" style="color:#9aa7c7;">Skip for now →</a></p>
+  <p style="text-align:center;margin-top:16px;"><a href="{{ url_for('home') }}" style="color:#9AA1AE;">Skip for now →</a></p>
 
   <div class="bv-foot">
     <img src="{{ url_for('static', filename='img/sharp-team-header.jpg') }}" alt="The Sharp Team">
