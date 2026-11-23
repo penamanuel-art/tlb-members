@@ -3,68 +3,68 @@
 {% block content %}
 <style>
 .pb-wrap{max-width:640px;margin:0 auto;color:#fff}
-.pb-wrap .kicker{font-size:11px;font-weight:800;letter-spacing:2px;color:#8f8fb0;margin:6px 0 4px}
+.pb-wrap .kicker{font-size:11px;font-weight:800;letter-spacing:2px;color:#75829a;margin:6px 0 4px}
 .pb-wrap h2{font-size:26px;font-weight:800;margin:0 0 6px}
-.pb-wrap .muted{color:#9a9ab5;font-size:14px;margin:0 0 18px;line-height:1.5}
-.pb-sport{font-size:12px;font-weight:800;letter-spacing:2px;color:#d4af37;margin:20px 0 10px}
-.pb-game{background:#17171f;border:1px solid #26262f;border-radius:14px;padding:12px;margin:0 0 10px}
-.pb-game-meta{font-size:12px;color:#9a9ab5;margin-bottom:10px}
+.pb-wrap .muted{color:#75829a;font-size:14px;margin:0 0 18px;line-height:1.5}
+.pb-sport{font-size:12px;font-weight:800;letter-spacing:2px;color:#FBBF24;margin:20px 0 10px}
+.pb-game{background:#070b14;border:1px solid #0a1220;border-radius:14px;padding:12px;margin:0 0 10px}
+.pb-game-meta{font-size:12px;color:#75829a;margin-bottom:10px}
 .pb-teams{display:flex;gap:10px}
-.pb-team{flex:1;background:#0f0f16;border:1px solid #3a3a4a;color:#fff;border-radius:10px;padding:10px 8px;cursor:pointer;text-align:center;transition:border-color .15s,background .15s}
+.pb-team{flex:1;background:#05070d;border:1px solid #1d3358;color:#fff;border-radius:10px;padding:10px 8px;cursor:pointer;text-align:center;transition:border-color .15s,background .15s}
 .pb-team:active{transform:scale(.97)}
-.pb-team.added{border-color:#4ade80;background:rgba(74,222,128,.08)}
+.pb-team.added{border-color:#60a5fa;background:rgba(96,165,250,.08)}
 .pb-team .nm{display:block;font-size:13px;font-weight:700;line-height:1.25;margin-bottom:4px}
-.pb-team .od{display:block;font-size:16px;font-weight:800;color:#d4af37}
-.pb-vs{align-self:center;font-size:12px;color:#9a9ab5;font-weight:700}
+.pb-team .od{display:block;font-size:16px;font-weight:800;color:#FBBF24}
+.pb-vs{align-self:center;font-size:12px;color:#75829a;font-weight:700}
 /* slip */
-.pb-slip{background:#17171f;border:1px solid #d4af37;border-radius:16px;padding:16px;margin:22px 0 14px}
+.pb-slip{background:#070b14;border:1px solid #FBBF24;border-radius:16px;padding:16px;margin:22px 0 14px}
 .pb-slip.hidden{display:none}
 .pb-slip-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
 .pb-slip-title{font-weight:800;font-size:16px}
-.pb-clear{background:transparent;border:1px solid #3a3a4a;color:#9a9ab5;border-radius:10px;padding:6px 12px;font-size:13px;font-weight:700;cursor:pointer}
-.pb-leg{display:flex;align-items:center;gap:10px;background:#0f0f16;border:1px solid #26262f;border-radius:10px;padding:10px 12px;margin-bottom:8px}
+.pb-clear{background:transparent;border:1px solid #1d3358;color:#75829a;border-radius:10px;padding:6px 12px;font-size:13px;font-weight:700;cursor:pointer}
+.pb-leg{display:flex;align-items:center;gap:10px;background:#05070d;border:1px solid #0a1220;border-radius:10px;padding:10px 12px;margin-bottom:8px}
 .pb-leg-info{flex:1}
 .pb-leg-team{font-size:14px;font-weight:700}
-.pb-leg-game{font-size:12px;color:#9a9ab5}
-.pb-leg-odds{font-size:15px;font-weight:800;color:#d4af37}
-.pb-rm{background:transparent;border:1px solid #3a3a4a;color:#f87171;border-radius:8px;padding:5px 10px;font-size:13px;font-weight:700;cursor:pointer}
+.pb-leg-game{font-size:12px;color:#75829a}
+.pb-leg-odds{font-size:15px;font-weight:800;color:#FBBF24}
+.pb-rm{background:transparent;border:1px solid #1d3358;color:#f87171;border-radius:8px;padding:5px 10px;font-size:13px;font-weight:700;cursor:pointer}
 .pb-stake-row{display:flex;align-items:center;gap:10px;margin:12px 0}
 .pb-stake-row label{font-weight:800;font-size:15px}
-.pb-stake-row input{flex:1;background:#0f0f16;border:1px solid #3a3a4a;color:#fff;border-radius:10px;padding:12px;font-size:18px;font-weight:700;box-sizing:border-box}
-.pb-stake-row input:focus{outline:none;border-color:#d4af37}
+.pb-stake-row input{flex:1;background:#05070d;border:1px solid #1d3358;color:#fff;border-radius:10px;padding:12px;font-size:18px;font-weight:700;box-sizing:border-box}
+.pb-stake-row input:focus{outline:none;border-color:#FBBF24}
 .pb-nums{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
-.pb-stat{background:#0f0f16;border:1px solid #26262f;border-radius:12px;padding:12px}
-.pb-stat .v{font-size:20px;font-weight:800;color:#4ade80}
-.pb-stat .l{font-size:12px;color:#9a9ab5;margin-top:2px}
-.pb-gen{width:100%;background:#d4af37;color:#17171f;font-weight:800;font-size:16px;border:none;border-radius:12px;padding:14px;cursor:pointer;margin-top:4px}
+.pb-stat{background:#05070d;border:1px solid #0a1220;border-radius:12px;padding:12px}
+.pb-stat .v{font-size:20px;font-weight:800;color:#34D399}
+.pb-stat .l{font-size:12px;color:#75829a;margin-top:2px}
+.pb-gen{width:100%;background:#FBBF24;color:#070b14;font-weight:800;font-size:16px;border:none;border-radius:12px;padding:14px;cursor:pointer;margin-top:4px}
 .pb-gen:disabled{opacity:.35;cursor:default}
 .pb-gen:active:not(:disabled){transform:scale(.98)}
 .pb-err{color:#f87171;font-size:13px;font-weight:700;margin:0 0 10px}
 /* generated slip */
-.pb-ticket{background:linear-gradient(180deg,#1d1a12 0%,#141310 100%);border:2px solid #d4af37;border-radius:16px;padding:20px;margin:18px 0;box-shadow:0 0 16px rgba(212,175,55,.25)}
+.pb-ticket{background:linear-gradient(180deg,#231a02 0%,#231a02 100%);border:2px solid #FBBF24;border-radius:16px;padding:20px;margin:18px 0;box-shadow:0 0 16px rgba(251,191,36,.25)}
 .pb-ticket.hidden{display:none}
 .pb-ticket h3{margin:0 0 2px;font-size:20px;font-weight:800;text-align:center}
-.pb-ticket .tsub{text-align:center;color:#9a9ab5;font-size:12px;margin-bottom:14px}
-.pb-ticket-leg{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px dashed #3a3a4a;font-size:14px}
+.pb-ticket .tsub{text-align:center;color:#75829a;font-size:12px;margin-bottom:14px}
+.pb-ticket-leg{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px dashed #1d3358;font-size:14px}
 .pb-ticket-leg:last-of-type{border-bottom:none}
 .pb-ticket-leg .t{font-weight:700}
-.pb-ticket-leg .o{font-weight:800;color:#d4af37;white-space:nowrap}
-.pb-ticket-total{display:flex;justify-content:space-between;margin-top:12px;padding-top:12px;border-top:1px solid #d4af37;font-weight:800;font-size:16px}
-.pb-ticket-total .pay{color:#4ade80}
-.pb-copy{width:100%;background:#1c1c28;border:1.5px solid #3a3a4a;color:#e8e8f2;font-weight:800;font-size:15px;border-radius:12px;padding:12px;cursor:pointer;margin-top:12px}
+.pb-ticket-leg .o{font-weight:800;color:#FBBF24;white-space:nowrap}
+.pb-ticket-total{display:flex;justify-content:space-between;margin-top:12px;padding-top:12px;border-top:1px solid #FBBF24;font-weight:800;font-size:16px}
+.pb-ticket-total .pay{color:#34D399}
+.pb-copy{width:100%;background:#0a1220;border:1.5px solid #1d3358;color:#f2f5fb;font-weight:800;font-size:15px;border-radius:12px;padding:12px;cursor:pointer;margin-top:12px}
 .pb-copy:active{transform:scale(.98)}
-.pb-note{color:#9a9ab5;font-size:12px;text-align:center;line-height:1.6;margin:14px 0 0}
-.pb-team .fr{display:block;font-size:11px;font-weight:600;color:#9a9ab5;margin-top:3px}
+.pb-note{color:#75829a;font-size:12px;text-align:center;line-height:1.6;margin:14px 0 0}
+.pb-team .fr{display:block;font-size:11px;font-weight:600;color:#75829a;margin-top:3px}
 .pb-leg-fair{font-size:11.5px;margin-top:2px;font-weight:600}
-.pb-leg-fair.pos{color:#10cc87}
+.pb-leg-fair.pos{color:#34D399}
 .pb-leg-fair.neg{color:#f87171}
-.pb-leg-fair.none{color:#9a9ab5;font-weight:400}
-.pb-ev-title{font-size:12px;font-weight:800;letter-spacing:1.5px;color:#d4af37;margin:16px 0 8px}
+.pb-leg-fair.none{color:#75829a;font-weight:400}
+.pb-ev-title{font-size:12px;font-weight:800;letter-spacing:1.5px;color:#FBBF24;margin:16px 0 8px}
 .pb-ev-pill{display:inline-block;font-size:12px;font-weight:800;color:#051630;background:#60a5fa;border-radius:99px;padding:4px 12px;margin:0 0 10px}
 .pb-ev-pill.hidden{display:none}
 .pb-ev-note{color:#fbbf24;font-size:12px;margin:8px 0 0;line-height:1.5}
-.pb-ticket-ev{text-align:center;color:#9a9ab5;font-size:12.5px;margin-top:10px;line-height:1.5}
-.pb-empty{color:#9a9ab5;font-size:14px;text-align:center;padding:14px 0}
+.pb-ticket-ev{text-align:center;color:#75829a;font-size:12.5px;margin-top:10px;line-height:1.5}
+.pb-empty{color:#75829a;font-size:14px;text-align:center;padding:14px 0}
 .pb-stale{color:#fbbf24;font-size:12px;text-align:center;margin:0 0 12px}
 </style>
 
@@ -259,7 +259,7 @@
     document.getElementById('resTrue').textContent = (trueProb * 100).toFixed(1) + '%';
     document.getElementById('resFair').textContent = fmtOdds(toAmerican(1 / trueProb));
     evEl.textContent = (ev >= 0 ? '+' : '') + (ev * 100).toFixed(1) + '%';
-    evEl.style.color = ev >= 0 ? '#10cc87' : '#f87171';
+    evEl.style.color = ev >= 0 ? '#34D399' : '#f87171';
     badge.classList.toggle('hidden', !(complete && ev > 0));
     if(complete){
       note.hidden = true; note.textContent = '';
