@@ -37,8 +37,9 @@ fbq('track', 'PageView');
   }
   *{box-sizing:border-box}
   html,body{margin:0;padding:0;overflow-x:clip}
-  body{background:var(--bg);color:var(--txt);font-family:var(--fbody);-webkit-font-smoothing:antialiased}
+  body{background:var(--bg);color:var(--txt);font-family:var(--fbody);-webkit-font-smoothing:antialiased;touch-action:manipulation}
   a{text-decoration:none;color:inherit}
+  a,button{touch-action:manipulation}
   .dn-wrap{max-width:640px;margin:0 auto;padding:0 16px 108px}
 
   /* Barra superior */
@@ -626,7 +627,11 @@ body .dn-hello .dn-quickbtn{margin-top:0}
        tst_tour_done_v1 que ya pone el propio tour) o con la X
        (marca propia tst_bubble_off_v1). ?bubble=1 — y la previa
        completa ?alertas=1 — la fuerzan pa' que Alex la pueda ver
-       en su Dashboard tal cual le sale a un miembro nuevo. -->
+       en su Dashboard tal cual le sale a un miembro nuevo.
+       Corrección 2026-11-23: la marca de cierre MANDA sobre el
+       force (antes la previa la revivía en cada apertura aunque
+       se hubiera cerrado con la X); ?bubble=reset borra la marca
+       antes de evaluar, como escape pa' futuras previas. -->
   <style>
   .dn-tb{display:flex;align-items:center;gap:10px;margin:0 0 22px;background:#0a1220;border:1px solid #1d3358;border-radius:14px;padding:10px 12px}
   .dn-tb-ic{flex:0 0 auto;display:flex;align-items:center}
@@ -644,8 +649,8 @@ body .dn-hello .dn-quickbtn{margin-top:0}
   <script>
   function dnTbGo(){var b=document.getElementById('dnTourBubble');if(b)b.hidden=true;if(window.tstStartTour)window.tstStartTour();}
   function dnTbOff(){try{localStorage.setItem('tst_bubble_off_v1','1');}catch(e){}var b=document.getElementById('dnTourBubble');if(b)b.hidden=true;}
-  (function(){var force=/[?&](bubble|alertas)=1/.test(location.search);var done=false,off=false;try{done=!!localStorage.getItem('tst_tour_done_v1');off=!!localStorage.getItem('tst_bubble_off_v1');}catch(e){}
-  if(force||(!done&&!off)){var b=document.getElementById('dnTourBubble');if(b)b.hidden=false;}})();
+  (function(){var force=/[?&](bubble|alertas)=1/.test(location.search);var done=false,off=false;try{if(/[?&]bubble=reset/.test(location.search)){localStorage.removeItem('tst_bubble_off_v1');}done=!!localStorage.getItem('tst_tour_done_v1');off=!!localStorage.getItem('tst_bubble_off_v1');}catch(e){}
+  if(!off&&(force||!done)){var b=document.getElementById('dnTourBubble');if(b)b.hidden=false;}})();
   </script>
 
 
