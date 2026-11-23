@@ -5578,6 +5578,7 @@ def inject_user():
         "past_due": past_due,
         "ticker_days": _seguro(compute_ticker_days, []),
         "racha_dias": _seguro(win_streak_days, 0),
+        "tirita_record10": _seguro(tirita_record10, None),
         "asset_v": ASSET_V,
         "watermark_img": wm,
         "login_url": login_url,
