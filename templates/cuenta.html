@@ -5,9 +5,9 @@
 <style>
 .acct-head{display:flex;justify-content:space-between;align-items:center;margin:6px 0 2px;}
 .acct-head h1{font-size:30px;font-weight:800;color:#fff;margin:0;}
-.acct-logout{border:1px solid #2a3648;border-radius:12px;padding:9px 18px;font-size:14px;color:#a3b0c6;text-decoration:none;}
+.acct-logout{border:1px solid #1d3358;border-radius:12px;padding:9px 18px;font-size:14px;color:#a3b0c6;text-decoration:none;}
 .acct-sub{font-size:14px;color:#75829a;margin-bottom:16px;}
-.acct-tabs{display:flex;flex-wrap:wrap;gap:2px 18px;border-bottom:1px solid #1e2a3a;margin-bottom:18px;}
+.acct-tabs{display:flex;flex-wrap:wrap;gap:2px 18px;border-bottom:1px solid #0a1220;margin-bottom:18px;}
 .acct-tab{padding:10px 2px;font-size:15px;color:#75829a;cursor:pointer;background:none;border:none;border-bottom:2px solid transparent;font-family:inherit;}
 .acct-tab.on{color:#fff;border-bottom:2px solid #60a5fa;font-weight:700;}
 .acct-pane{display:none;}
@@ -16,18 +16,18 @@
 .acct-k{font-size:12px;letter-spacing:1.5px;color:#75829a;margin:0 0 12px;font-weight:700;}
 .acct-input{width:100%;box-sizing:border-box;background:#070b14;border:1px solid #0c1425;border-radius:12px;padding:13px 14px;font-size:15px;color:#fff;margin-bottom:14px;font-family:inherit;}
 .acct-btn{display:inline-block;background:#60a5fa;color:#051630;font-weight:800;font-size:15px;padding:12px 22px;border-radius:12px;border:none;cursor:pointer;text-decoration:none;text-align:center;}
-.acct-btn-danger{display:block;width:100%;box-sizing:border-box;background:rgba(220,38,38,.16);border:1px solid #b91c1c;color:#f87171;font-weight:800;font-size:16px;min-height:46px;padding:13px 22px;border-radius:12px;cursor:pointer;text-decoration:none;text-align:center;font-family:inherit;}
+.acct-btn-danger{display:block;width:100%;box-sizing:border-box;background:rgba(248,113,113,.16);border:1px solid #f87171;color:#f87171;font-weight:800;font-size:16px;min-height:46px;padding:13px 22px;border-radius:12px;cursor:pointer;text-decoration:none;text-align:center;font-family:inherit;}
 .acct-btn-block{display:block;width:100%;box-sizing:border-box;}
-.acct-badge{display:inline-block;background:rgba(59,130,246,.15);color:#7db4ff;font-weight:800;font-size:13px;letter-spacing:1px;padding:7px 16px;border-radius:999px;}
-.acct-badge-gold{display:inline-block;background:rgba(201,162,39,.15);color:#e3b93c;font-weight:800;font-size:13px;letter-spacing:1px;padding:7px 16px;border-radius:999px;}
+.acct-badge{display:inline-block;background:rgba(96,165,250,.15);color:#60a5fa;font-weight:800;font-size:13px;letter-spacing:1px;padding:7px 16px;border-radius:999px;}
+.acct-badge-gold{display:inline-block;background:rgba(251,191,36,.15);color:#FBBF24;font-weight:800;font-size:13px;letter-spacing:1px;padding:7px 16px;border-radius:999px;}
 .acct-check{display:flex;align-items:center;gap:10px;background:#070b14;border:1px solid #0c1425;border-radius:12px;padding:12px 14px;font-size:15px;color:#a3b0c6;cursor:pointer;}
 .acct-check input{width:20px;height:20px;accent-color:#60a5fa;flex:none;}
 .acct-grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
 .acct-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #0a1220;font-size:15px;}
 .acct-row:last-child{border-bottom:none;}
 .acct-muted{font-size:14px;color:#75829a;line-height:1.55;}
-.acct-ok{display:inline-block;background:rgba(34,197,94,.15);color:#4ade80;font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px;}
-.acct-fail{display:inline-block;background:rgba(245,181,68,.15);color:#f5b544;font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px;white-space:nowrap;flex:none;}
+.acct-ok{display:inline-block;background:rgba(52,211,153,.15);color:#34D399;font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px;}
+.acct-fail{display:inline-block;background:rgba(251,191,36,.15);color:#FBBF24;font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px;white-space:nowrap;flex:none;}
 </style>
 
 <div class="acct-head">
@@ -52,7 +52,7 @@
 <div class="acct-pane" id="pane-overview">
   <div class="acct-card">
     <p class="acct-k">YOUR PLAN</p>
-    {% if past_due %}<span class="acct-badge" style="background:rgba(220,38,38,.18);color:#f87171;">PAST DUE</span>{% elif platinum %}<span class="acct-badge">PLATINUM</span>{% else %}<span class="acct-badge-gold">SHARP FREE</span>{% endif %}
+    {% if past_due %}<span class="acct-badge" style="background:rgba(248,113,113,.18);color:#f87171;">PAST DUE</span>{% elif platinum %}<span class="acct-badge">PLATINUM</span>{% else %}<span class="acct-badge-gold">SHARP FREE</span>{% endif %}
     <p class="acct-k" style="margin-top:18px;">WHAT YOU HAVE ACCESS TO</p>
     {% if platinum %}
     <p style="font-size:15px;color:#a3b0c6;margin:4px 0;"><span style="color:#60a5fa;">●</span>&nbsp; Platinum Plays — every official play, every day</p>
@@ -68,7 +68,7 @@
   <div class="acct-card">
     <p class="acct-k">BILLING</p>
     {% if past_due %}
-    <p style="font-size:13px;line-height:1.35;color:#e5e7eb;margin:0;"><span style="color:#f5b544;font-weight:400;">Your last payment didn't go through.</span><br>Your Platinum membership is past due and access is paused. Update your card to restore it right away.</p>
+    <p style="font-size:13px;line-height:1.35;color:#f2f5fb;margin:0;"><span style="color:#FBBF24;font-weight:400;">Your last payment didn't go through.</span><br>Your Platinum membership is past due and access is paused. Update your card to restore it right away.</p>
     {% elif cancel_at %}
     <p style="font-size:15px;color:#a3b0c6;margin:0;">Your membership is cancelled. You keep full access until the end of your current billing period — you won't be charged again.</p>
     {% elif platinum %}
@@ -111,7 +111,7 @@
   <div class="acct-card">
     <p class="acct-k">YOUR MEMBERSHIP</p>
     {% if past_due %}
-    <span class="acct-badge" style="background:rgba(220,38,38,.18);color:#f87171;">PAST DUE</span>
+    <span class="acct-badge" style="background:rgba(248,113,113,.18);color:#f87171;">PAST DUE</span>
     <p style="font-size:15px;color:#a3b0c6;margin:12px 0 14px;">Your last payment didn't go through and your Platinum access is paused. Update your card to restore it right away.</p>
     <a href="{{ (billing.pay_url if billing else None) or url_for('desbloquear_platinum') }}" class="acct-btn acct-btn-block">Update card &amp; restore access →</a>
     {% elif cancel_at %}
@@ -166,7 +166,7 @@
     <p class="acct-k">PAYMENT METHOD</p>
     <p style="margin:0;font-size:16px;font-weight:800;color:#ffffff;">{{ billing.card_brand }} •••• {{ billing.card_last4 }}</p>
     <div style="display:flex;justify-content:space-between;font-size:13px;margin-top:8px;">
-      <span style="color:#8a94ad;">Expires</span>
+      <span style="color:#75829a;">Expires</span>
       <span style="color:#ffffff;font-weight:700;">{{ billing.card_exp }}</span>
     </div>
     <a href="{{ billing.pay_url or url_for('desbloquear_platinum') }}" class="acct-btn acct-btn-block" style="margin-top:14px;">Update card &amp; invoices</a>
@@ -224,12 +224,12 @@
   <div class="acct-card" id="telegram">
     <p class="acct-k">✈️ TELEGRAM</p>
     {% if tg_linked %}
-    <p style="font-size:15px;color:#a3b0c6;margin:0 0 8px;">Status: <b style="color:#4ade80;">Connected</b></p>
+    <p style="font-size:15px;color:#a3b0c6;margin:0 0 8px;">Status: <b style="color:#34D399;">Connected</b></p>
     <p class="acct-muted" style="margin:0 0 12px;">Your Telegram is linked to your membership. If you cancel, you'll be removed from the private Platinum channel automatically.</p>
     <div style="display:grid;gap:12px;">
       <div>
         <p class="acct-muted" style="margin:0 0 6px;">🟡 <b>Public Card channel (free):</b> daily free picks, open to everyone.</p>
-        <a href="https://t.me/thesharpteam" target="_blank" class="acct-btn acct-btn-block" style="background:none;border:1px solid #c9a227;color:#e3b93c;">Join Public Card →</a>
+        <a href="https://t.me/thesharpteam" target="_blank" class="acct-btn acct-btn-block" style="background:none;border:1px solid #FBBF24;color:#FBBF24;">Join Public Card →</a>
       </div>
       {% if platinum %}
       <div id="elite-join-wrap">
@@ -282,7 +282,7 @@
       <button type="submit" class="danger-link foto-remove">Disconnect Telegram</button>
     </form>
     {% elif tg_link %}
-    <p style="font-size:15px;color:#a3b0c6;margin:0 0 8px;">Status: <b style="color:#f5b544;">Almost there</b></p>
+    <p style="font-size:15px;color:#a3b0c6;margin:0 0 8px;">Status: <b style="color:#FBBF24;">Almost there</b></p>
     <p class="acct-muted" style="margin:0 0 12px;">Tap the button, then press <b>START</b> in the bot to finish linking. The link expires in 24 hours.</p>
     <a href="{{ tg_link }}" target="_blank" class="acct-btn acct-btn-block">Open @thesharpteam_bot →</a>
     <form method="post" action="{{ url_for('cuenta_telegram_link') }}" style="margin-top:8px;">
@@ -379,16 +379,16 @@
 <!-- ===== DASHBOARD TOUR v4 (recorrido completo multipagina, 2026-11-02) ===== -->
 <style>
 #tourDim{position:fixed;inset:0;background:rgba(4,8,16,.74);z-index:2900}
-#tourRing{position:fixed;z-index:2901;border:2px solid #e8c766;border-radius:14px;box-shadow:0 0 0 3px rgba(232,199,102,.25),0 0 24px rgba(232,199,102,.35);pointer-events:none;transition:top .2s ease,left .2s ease,width .2s ease,height .2s ease}
+#tourRing{position:fixed;z-index:2901;border:2px solid #FBBF24;border-radius:14px;box-shadow:0 0 0 3px rgba(251,191,36,.25),0 0 24px rgba(251,191,36,.35);pointer-events:none;transition:top .2s ease,left .2s ease,width .2s ease,height .2s ease}
 #tourCard{position:fixed;z-index:2902;left:12px;right:12px;max-width:430px;margin:0 auto;background:#0a1220;border:1px solid #1d3358;border-radius:16px;padding:16px 16px 13px;box-shadow:0 18px 40px rgba(0,0,0,.5);color:#f2f5fb}
-#tourHead{font-size:13px;font-weight:700;letter-spacing:1.6px;color:#e8c766;margin-bottom:10px}
+#tourHead{font-size:13px;font-weight:700;letter-spacing:1.6px;color:#FBBF24;margin-bottom:10px}
 #tourBar{height:4px;background:#1d3358;border-radius:99px;overflow:hidden;margin-bottom:12px}
-#tourBarFill{height:100%;background:#e8c766;border-radius:99px;transition:width .3s ease}
+#tourBarFill{height:100%;background:#FBBF24;border-radius:99px;transition:width .3s ease}
 #tourCount{font-size:11px;letter-spacing:1.2px;color:#a3b0c6;font-weight:700}
 #tourTitle{font-size:17px;font-weight:700;margin:5px 0 6px;color:#f2f5fb}
 #tourBody{font-size:13.5px;line-height:1.55;color:#c7d0dd;font-weight:300}
 #tourBtns{display:flex;align-items:center;gap:10px;margin-top:14px}
-#tourNext{background:#e8c766;color:#131822;border:0;border-radius:10px;padding:10px 20px;font-size:14px;font-weight:700;cursor:pointer}
+#tourNext{background:#FBBF24;color:#0a1220;border:0;border-radius:10px;padding:10px 20px;font-size:14px;font-weight:700;cursor:pointer}
 #tourBack{background:none;color:#c7d0dd;border:1px solid #1d3358;border-radius:10px;padding:10px 16px;font-size:14px;cursor:pointer}
 #tourSkip{margin-left:auto;background:none;border:0;color:#a3b0c6;font-size:13px;cursor:pointer;padding:8px 2px}
 </style>
