@@ -2,16 +2,16 @@
 {% block title %}Share this win — The Sharp Team{% endblock %}
 {% block content %}
 <div style="max-width:430px;margin:0 auto;padding:18px 14px 8px;text-align:center;font-family:-apple-system,'SF Pro',Inter,system-ui,sans-serif;">
-  <a href="/official-tracker" style="display:inline-block;color:#60a5fa;text-decoration:none;font-size:0.9rem;margin-bottom:14px;">← Back to the Official Tracker</a>
+  <a href="/official-tracker" style="display:inline-block;color:#1AE099;text-decoration:none;font-size:0.9rem;margin-bottom:14px;">← Back to the Official Tracker</a>
   <h1 style="color:#fff;font-size:1.35rem;font-weight:800;margin:0 0 6px;">📤 Share this win</h1>
-  <p style="color:#75829a;font-size:0.9rem;margin:0 0 16px;">{{ info.pick }}<br>
+  <p style="color:#9AA1AE;font-size:0.9rem;margin:0 0 16px;">{{ info.pick }}<br>
     <span style="color:#34D399;font-weight:700;">Profit: +${{ '{:,.2f}'.format(info.profit) }} · {{ '%+.2f'|format(info.units) }} units</span>
   </p>
   <img src="{{ url_for('share_play_image', play_id=play_id) }}" alt="Winner share image — {{ info.pick }}"
        style="width:100%;border-radius:16px;border:1px solid rgba(251,191,36,.35);display:block;">
   <a href="{{ url_for('share_play_image', play_id=play_id) }}" download="sharp-team-winner-{{ play_id }}.png"
-     style="display:block;margin-top:16px;background:linear-gradient(135deg,#FBBF24,#FBBF24);color:#0a1220;font-weight:800;font-size:1rem;padding:15px;border-radius:14px;text-decoration:none;">Download image</a>
-  <p style="color:#75829a;font-size:0.8rem;line-height:1.55;margin-top:14px;">
+     style="display:block;margin-top:16px;background:linear-gradient(135deg,#FBBF24,#FBBF24);color:#1D2029;font-weight:800;font-size:1rem;padding:15px;border-radius:14px;text-decoration:none;">Download image</a>
+  <p style="color:#9AA1AE;font-size:0.8rem;line-height:1.55;margin-top:14px;">
     Save it and post it anywhere — Instagram, WhatsApp, X.
     Every number on it comes straight from the official record:
     posted before game time, locked, and graded against the final score.
