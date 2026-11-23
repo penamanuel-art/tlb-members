@@ -46,17 +46,17 @@
     <form method="post" action="{{ url_for('cuenta_completar') }}">
       <div style="margin-top:14px;">
         <label for="s-nombre" style="display:block;font-weight:700;font-size:14px;">Your name</label>
-        <input id="s-nombre" type="text" name="nombre" autocomplete="name" placeholder="Your name" value="{{ '' if setup.nombre_prov else nombre }}" style="width:100%;margin-top:8px;background:#05070d;border:1.5px solid rgba(251,191,36,.35);border-radius:12px;padding:13px;color:#f2f5fb;font-size:16px;">
+        <input id="s-nombre" type="text" name="nombre" autocomplete="name" placeholder="Your name" value="{{ '' if setup.nombre_prov else nombre }}" style="width:100%;margin-top:8px;background:#0C0F16;border:1.5px solid rgba(251,191,36,.35);border-radius:12px;padding:13px;color:#f2f5fb;font-size:16px;">
       </div>
       <div style="margin-top:16px;">
         <label for="s-phone" style="display:block;font-weight:700;font-size:14px;">Your WhatsApp number</label>
-        <input id="s-phone" type="tel" name="phone" autocomplete="tel" placeholder="(555) 123-4567" value="{{ setup.telefono }}" style="width:100%;margin-top:8px;background:#05070d;border:1.5px solid rgba(251,191,36,.35);border-radius:12px;padding:13px;color:#f2f5fb;font-size:16px;">
-        <label for="s-sms" style="display:flex;gap:8px;align-items:center;margin-top:11px;font-size:.85rem;color:#75829a;cursor:pointer;"><input id="s-sms" type="checkbox" name="sms_optin" value="1" style="width:17px;height:17px;accent-color:#FBBF24;"> Text me the plays when they go live</label>
+        <input id="s-phone" type="tel" name="phone" autocomplete="tel" placeholder="(555) 123-4567" value="{{ setup.telefono }}" style="width:100%;margin-top:8px;background:#0C0F16;border:1.5px solid rgba(251,191,36,.35);border-radius:12px;padding:13px;color:#f2f5fb;font-size:16px;">
+        <label for="s-sms" style="display:flex;gap:8px;align-items:center;margin-top:11px;font-size:.85rem;color:#9AA1AE;cursor:pointer;"><input id="s-sms" type="checkbox" name="sms_optin" value="1" style="width:17px;height:17px;accent-color:#FBBF24;"> Text me the plays when they go live</label>
       </div>
       {% if not setup.propia %}
       <div style="margin-top:16px;">
         <label for="s-password" style="display:block;font-weight:700;font-size:14px;">Set your password</label>
-        <input id="s-password" type="password" name="password" minlength="6" autocomplete="new-password" placeholder="Minimum 6 characters" style="width:100%;margin-top:8px;background:#05070d;border:1.5px solid rgba(251,191,36,.35);border-radius:12px;padding:13px;color:#f2f5fb;font-size:16px;">
+        <input id="s-password" type="password" name="password" minlength="6" autocomplete="new-password" placeholder="Minimum 6 characters" style="width:100%;margin-top:8px;background:#0C0F16;border:1.5px solid rgba(251,191,36,.35);border-radius:12px;padding:13px;color:#f2f5fb;font-size:16px;">
         <button type="button" id="s-pw-toggle" onclick="var p=document.getElementById('s-password');var show=p.type==='password';p.type=show?'text':'password';this.textContent=show?'Hide password':'Show password';" style="background:none;border:none;color:#FBBF24;font-size:13px;font-weight:700;cursor:pointer;padding:8px 2px 0;">Show password</button>
       </div>
       {% endif %}
@@ -69,7 +69,7 @@
       <button type="submit" style="display:block;width:100%;text-align:center;background:transparent;border:1.5px solid rgba(251,191,36,.45);color:#FBBF24;border-radius:12px;padding:12px;font-size:15px;font-weight:700;cursor:pointer;">Resend my confirmation email</button>
     </form>
     {% endif %}
-    <p style="text-align:center;margin-top:16px;"><a href="{{ url_for('home') }}" style="color:#75829a;">Skip for now →</a></p>
+    <p style="text-align:center;margin-top:16px;"><a href="{{ url_for('home') }}" style="color:#9AA1AE;">Skip for now →</a></p>
   </div>
   {% endif %}
 
