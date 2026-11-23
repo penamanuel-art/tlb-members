@@ -81,6 +81,38 @@ twq('config','rhgk7');
 {% if fb_reg %}twq('event', 'tw-rhgk7-rhgkm', {});{% endif %}
 </script>
 <!-- End X conversion tracking base code -->
+
+<style>
+/* ===== ENCABEZADO DEL HOME EN TODO EL AREA DE MIEMBROS (2026-11-22, orden
+   de Alex: «Encabezado asi - Aplicalo - El encabezado») =====
+   Copia de las reglas del encabezado de diseno_nuevo.html (.dn-strip y
+   .dn-top, con su bloque final de ajustes y el zoom .85 del home). Las
+   variables del Home se definen SOLO dentro del encabezado pa' no tocar
+   el sistema de variables de esta base. */
+.dn-strip-top,.dn-top{--line:#1d3358;--panel:#0a1220;--txt:#f2f5fb;--acc:#60a5fa;--gold:#FBBF24}
+.dn-strip-top{max-width:none;margin:0;padding:0}
+.dn-strip-top .dn-strip{margin-top:0}
+.dn-strip{margin-top:0;background:#0B0D11;border-top:1px solid rgba(251,191,36,.28);border-bottom:1px solid rgba(251,191,36,.28);border-radius:0;padding:11px 6px;text-align:center;font-size:16.5px;font-weight:300;color:var(--gold);white-space:nowrap;overflow:hidden;font-family:'Roboto',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.dn-strip b{font-weight:300}
+.dn-strip .dn-off{font-size:1.1em;font-weight:500}
+@media (max-width:480px){.dn-strip{font-size:15px;padding:10px 4px}}
+.dn-top{position:sticky;top:0;z-index:60;background:rgba(14,16,20,.94);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line);font-family:'Roboto',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.dn-top-in{max-width:640px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:8px}
+.dn-top-right{margin-left:auto;display:flex;align-items:center;gap:7px}
+.dn-iconbtn{width:38.5px;height:38.5px;flex:none;border-radius:50%;border:1px solid var(--line);background:var(--panel);color:var(--txt);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
+.dn-viewpicks{background:var(--acc);color:#051630;font-weight:700;font-size:14px;padding:11px 14px;border-radius:14px;white-space:nowrap;display:inline-flex;align-items:center;gap:7px;text-decoration:none}
+.dn-menubtn{width:47.1px;height:47.1px;border-radius:13px;border:1.5px solid #46536B;background:transparent;color:var(--txt);font-size:20.3px;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;flex:none}
+@media (max-width:480px){.dn-lg-coin{height:51px !important}.dn-lg-letters{height:36px !important}.dn-viewpicks{padding:10px 11px}.dn-menubtn{width:42.8px;height:42.8px}.dn-iconbtn{width:36.4px;height:36.4px}.dn-top-in{padding:10px 12px}.dn-top-right{gap:6px}}
+@media (max-width:360px){.dn-lg-coin{height:44px !important}.dn-lg-letters{height:32px !important}.dn-viewpicks{padding:10px 9px}}
+.dn-top{zoom:.85}
+.dn-strip-top{zoom:1}
+body .dn-strip{padding-top:9px;padding-bottom:9px}
+body .dn-top-in{padding-top:14px;padding-bottom:14px}
+@media (max-width:480px){
+  body .dn-strip{padding-top:8px;padding-bottom:8px}
+  body .dn-top-in{padding-top:14px;padding-bottom:14px}
+}
+</style>
 </head>
 <body class="v2{% if session.get('user_id') %} has-bottomnav{% endif %}"{% if watermark_img %} style="--wm-img: url('{{ url_for('static', filename=watermark_img) }}')"{% endif %}>
 {% if (request.path or '').startswith('/admin') %}
@@ -118,6 +150,50 @@ main.v2-wrap,main{margin-top:0!important}
   <div class="tst-sk-block tst-sk-line short"></div>
 </div>
 {% endif %}
+{% if session.get('user_id') and not (request.path or '').startswith('/admin') %}
+{# ===== ENCABEZADO DEL HOME (2026-11-22, orden de Alex: «Encabezado asi - Aplicalo»): tirita + barra de diseno_nuevo.html identicas en todas las paginas del miembro. El menu desplegable es el de siempre de esta base (mismos enlaces y mismo JS); View picks lleva al Dashboard (en el home es el ancla #dnBoard de la propia pagina). ===== #}
+{% if tirita_record10 %}
+<div class="dn-strip-top"><div class="dn-strip">🔥 <span class="dn-off">Official</span> plays: {{ tirita_record10.w }}-{{ tirita_record10.l }} in the last {{ tirita_record10.n }}{% if tirita_record10.categoria %} {{ tirita_record10.categoria }}{% endif %} plays</div></div>
+{% endif %}
+<header class="dn-top">
+  <div class="dn-top-in">
+    <div style="display:flex;align-items:center;gap:3px;min-width:0">
+      <img class="dn-lg-coin" src="{{ url_for('static', filename='img/sharp-coin.png') }}" alt="" style="height:66px;width:auto;display:block">
+      <img class="dn-lg-letters" src="{{ url_for('static', filename='img/sharp-letters.png') }}" alt="The Sharp Team" style="height:48px;width:auto;max-width:100%;display:block">
+    </div>
+    <div class="dn-top-right">
+      {% if es_admin or cuenta_es %}<button id="langToggle" class="v2-lang-btn notranslate" title="Ver en español">🇺🇸 EN</button>{% endif %}
+      <button class="dn-iconbtn" type="button" id="dnBell" aria-label="Notifications"><svg viewBox="0 0 24 24" width="21.4" height="21.4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M13.7 20a2 2 0 0 1-3.4 0"/></svg></button>
+      <a class="dn-iconbtn" href="{{ url_for('cuenta') }}" aria-label="Account"><svg viewBox="0 0 24 24" width="21.4" height="21.4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></a>
+      <a class="dn-viewpicks" href="{{ url_for('home') }}">View picks <span aria-hidden="true">→</span></a>
+      <div class="v2-menu-wrap">
+        <button class="dn-menubtn" type="button" id="v2menuBtn" aria-label="Menu" aria-expanded="false">☰</button>
+      </div>
+    </div>
+  </div>
+</header>
+<div class="v2-menu-drop" id="v2menuDrop" hidden>
+        {# MENÚ — estructura de la foto de Wise Guy (2026-11-13): lista plana, sin grupos. Idéntico en home_lux.html, base.html y base_v2.html. Las herramientas viven dentro de «My Tools». #}
+        {% if not miembro_platinum %}        <a href="{{ url_for('desbloquear_platinum') }}" style="font-size:15px;font-weight:600;color:#60a5fa;">Unlock Platinum</a>{% endif %}
+        <a href="{{ url_for('game_center') }}" style="font-size:15px;">Betting Lines</a>
+        <a href="{{ url_for('balances') }}" style="font-size:15px;">Sportsbooks</a>
+        <a href="{{ url_for('masterclass') }}" style="font-size:15px;">Masterclass</a>
+        <a href="{{ url_for('about') }}" style="font-size:15px;">About</a>
+        {% if racha_dias and racha_dias >= 2 %}<div style="padding:6px 12px;"><span style="display:inline-flex;align-items:center;gap:5px;padding:6px 11px;border:1px solid rgba(17,203,135,.45);border-radius:999px;color:#60a5fa;font-size:12.5px;font-weight:600;">🔥 {{ racha_dias }}-day win streak</span></div>{% endif %}
+        <a href="{{ url_for('tools') }}" style="font-size:15px;">My Tools</a>
+        <a href="{{ url_for('tracker_plays') }}" style="font-size:15px;">My Bets</a>
+        <a href="{{ url_for('cuenta') }}" style="font-size:15px;">Account</a>
+        {% if is_alex %}<a href="{{ url_for('admin_dashboard') }}" style="font-size:15px;">Admin</a>{% endif %}
+        <a href="{{ url_for('home') }}" style="display:block;text-align:center;background:#60a5fa;color:#05070d;font-weight:700;font-size:15px;padding:11px;border-radius:12px;margin:8px 0 4px;">View picks →</a>
+        <a href="{{ url_for('logout') }}" style="font-size:13.5px;color:#a3b0c6;">Log out</a>
+</div>
+<script>
+/* La campana del encabezado: su panel de resultados vive en el Dashboard
+   (se alimenta de datos que solo calcula la ruta del home); desde las
+   demas paginas lleva al Dashboard. */
+(function(){var b=document.getElementById('dnBell');if(b){b.addEventListener('click',function(){location.href='{{ url_for('home') }}';});}})();
+</script>
+{% else %}
 <header class="v2-topbar">
   <div class="v2-topbar-left">
     {% if session.get('user_id') %}
@@ -161,6 +237,7 @@ main.v2-wrap,main{margin-top:0!important}
     {% endif %}
   </div>
 </header>
+{% endif %}
 
 {# Franja de racha (2026-10-21, pedido Alex, referencia WGT): solo con
    sesión y con 2+ días ganadores seguidos reales; racha_dias viene del
