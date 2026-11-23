@@ -1237,9 +1237,12 @@ function dnHotClose(){
 </script>
 
 <script>
-/* Flujo de activación de alertas (2026-11-22): aparece SOLO después de
-   que el miembro abre el detalle de una jugada de hoy (clic en
-   [data-v5-open]) y esa hoja se cierra. Valor primero; en iPhone sin
+/* Flujo de activación de alertas (2026-11-22; disparo de primera
+   entrada agregado el 2026-11-23): aparece (a) EN LÍNEA, en el flujo
+   principal debajo de la burbuja del tour, cuando un miembro nuevo
+   entra por primera vez, y (b) después de que el miembro abre el
+   detalle de una jugada de hoy (clic en [data-v5-open]) y esa hoja
+   se cierra. Valor primero; en iPhone sin
    instalar guía Share -> Add to Home Screen -> abrir del icono ->
    permitir; en el resto va directo al permiso con TLB_push (el flujo
    de suscripción de siempre). Sin insistencia: si ya está suscrito no
@@ -1265,6 +1268,12 @@ function dnHotClose(){
     (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches);
   var isAndroid = /Android/i.test(ua);
   var device = (standalone && isIOS) ? 'ios-standalone' : (isIOS ? 'ios' : (isAndroid ? 'android' : 'desktop'));
+  /* Señal de miembro nuevo (2026-11-23): la misma que usa la burbuja
+     del tour — si el tour no se ha completado en este navegador, el
+     miembro está en su primera etapa aquí. Se captura al cargar la
+     página, antes de que el tour pueda poner su marca. */
+  var isNewMember = !lsGet('tst_tour_done_v1');
+  var LS_FIRST = 'tlb_af_first_shown';
   var iosNeedsInstall = isIOS && !standalone;
   var pendingGo = false;
   if(standalone && isIOS && lsGet(LS_IOS)){
@@ -1375,6 +1384,45 @@ function dnHotClose(){
     track('shown');
     showView(pendingGo ? 'go' : 'value');
   }
+  /* Disparo de PRIMERA ENTRADA pa' miembros nuevos (2026-11-23,
+     orden de Alex): la tarjeta sale EN LÍNEA en el flujo principal,
+     justo debajo de la burbuja del tour y encima de la card del
+     día — visible al entrar, no escondida tras cerrar una jugada.
+     Solo la primera vez (marca LS_FIRST); de ahí en adelante manda
+     el disparo de siempre tras ver una jugada. Si el tour estorba
+     (burbuja visible o recorrido corriendo), aguanta hasta que se
+     cierre, se salte o se complete. La elegibilidad es la misma de
+     siempre: suscrito, descartado <30 días o ya instalado = no sale. */
+  function mountInline(){
+    if(card.classList.contains('inline')) return;
+    var hero = document.getElementById('dnBoard');
+    if(hero && hero.parentNode){
+      hero.parentNode.insertBefore(card, hero);
+      card.classList.add('inline');
+    }
+  }
+  function tourInTheWay(){
+    var b = document.getElementById('dnTourBubble');
+    if(b && !b.hidden) return true;
+    var r = document.getElementById('tourRoot');
+    if(r && !r.hidden) return true;
+    return false;
+  }
+  var firstTries = 0;
+  function maybeShowFirst(){
+    if(shown || PREVIEW || !isNewMember) return;
+    if(lsGet(LS_FIRST) || ssGet('tlb_af_guide_done')) return;
+    if(!eligible || tourInTheWay()){
+      if(firstTries++ < 600) setTimeout(maybeShowFirst, 500);
+      return;
+    }
+    lsSet(LS_FIRST, '1');
+    mountInline();
+    shown = true;
+    track('shown');
+    showView(pendingGo ? 'go' : 'value');
+  }
+  setTimeout(maybeShowFirst, 1600);
   /* Disparo: el miembro abrió el detalle de una jugada (vista de
      jugada de hoy). Esperamos a que cierre la hoja pa' no pelear
      con ella, y entonces sale la tarjeta. */
