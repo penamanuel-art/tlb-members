@@ -31,7 +31,7 @@ body.admin-theme{
   background:
     radial-gradient(820px 460px at 88% -6%, rgba(16,204,135,.16), transparent 58%),
     radial-gradient(700px 500px at -10% 108%, rgba(20,140,120,.13), transparent 60%),
-    linear-gradient(160deg, #07231e 0%, #041a20 52%, #030c11 100%) !important;
+    linear-gradient(160deg, #051630 0%, #041a20 52%, #030c11 100%) !important;
   background-attachment: fixed !important;
 }
 body.admin-theme::before{ opacity: .025; }
@@ -57,9 +57,9 @@ body.admin-theme .ot-card{
   box-shadow: 0 10px 28px rgba(0,0,0,.32);
 }
 body.admin-theme .adm-clean .sub,
-body.admin-theme .ot-wrap .sub{ color:#93b3aa !important; }
+body.admin-theme .ot-wrap .sub{ color:#a3b0c6 !important; }
 body.admin-theme .send-btn{
-  background: linear-gradient(135deg, #60a5fa, #17b978) !important;
+  background: linear-gradient(135deg, #60a5fa, #1d3358) !important;
   color: #032117 !important;
   box-shadow: 0 8px 22px rgba(16,204,135,.28);
 }
@@ -71,7 +71,7 @@ body.admin-theme .ot-hero{
   box-shadow: 0 14px 34px rgba(0,0,0,.38);
 }
 body.admin-theme .ot-bar{ background: rgba(140,240,205,.16) !important; }
-body.admin-theme .ot-bar > div{ background: linear-gradient(90deg, #60a5fa, #7df0c9) !important; }
+body.admin-theme .ot-bar > div{ background: linear-gradient(90deg, #60a5fa, #38bdf8) !important; }
 </style>
 {% endif %}
 <script src="/static/js/push.js?v={{ asset_v }}"></script>
@@ -111,7 +111,7 @@ main.v2-wrap,main{margin-top:0!important}
 .adm-bar .t small{display:block;color:#60a5fa;font-size:.58rem;letter-spacing:2.5px;font-weight:800}
 .adm-bar .btns{margin-left:auto;display:flex;gap:8px}
 .adm-bar .b{border:1px solid rgba(16,204,135,.55);color:#60a5fa;font-weight:800;font-size:.78rem;padding:8px 13px;border-radius:999px;text-decoration:none;white-space:nowrap}
-.adm-bar .b.main{background:#60a5fa;color:#06130c;border-color:#60a5fa}
+.adm-bar .b.main{background:#60a5fa;color:#051630;border-color:#60a5fa}
 .adm-nav{display:flex;gap:6px;flex-wrap:nowrap;justify-content:flex-start;overflow-x:auto;padding:10px 6px;scrollbar-width:none}
 .adm-nav::-webkit-scrollbar{display:none}
 .adm-nav a{flex:0 0 auto;padding:7px 12px;border:1px solid rgba(255,255,255,.16);border-radius:999px;color:#dbe6f5;font-size:.72rem;font-weight:700;letter-spacing:.4px;text-decoration:none;background:rgba(255,255,255,.04);white-space:nowrap}
@@ -138,7 +138,7 @@ main.v2-wrap,main{margin-top:0!important}
   {# ENCABEZADO ÚNICO (2026-11-13, orden de Alex: la barra de arriba de base.html era «como otro menú»): espejo del encabezado de base_v2.html — logo moneda a la izquierda; a la derecha, en este orden: balance, Full record y el ☰ con el menú único. Fuera las píldoras Home/Brain y el avatar. #}
   <div style="display:flex;align-items:center;gap:8px;">
   {% if es_admin %}<button id="langToggle" class="lang-btn notranslate" title="Ver en español">🇺🇸 EN</button>{% endif %}
-  <a href="{{ url_for('balances') }}" style="display:inline-flex;align-items:center;gap:5px;background:#0a1220;border:1px solid rgba(94,234,160,.45);color:#60a5fa;font-weight:400;font-size:11px;padding:8px 9px;border-radius:14px;text-decoration:none;white-space:nowrap">💰 View my balance{% if balance_total_txt %}<span style="color:#eafff5;font-weight:300">{{ balance_total_txt }}</span>{% endif %}</a>
+  <a href="{{ url_for('balances') }}" style="display:inline-flex;align-items:center;gap:5px;background:#0a1220;border:1px solid rgba(96,165,250,.45);color:#60a5fa;font-weight:400;font-size:11px;padding:8px 9px;border-radius:14px;text-decoration:none;white-space:nowrap">💰 View my balance{% if balance_total_txt %}<span style="color:#f2f5fb;font-weight:300">{{ balance_total_txt }}</span>{% endif %}</a>
   <a href="{{ url_for('records') }}" style="display:inline-flex;align-items:center;background:#0a1220;border:1px solid #0c1425;color:#f2f5fb;font-weight:400;font-size:11px;padding:8px 9px;border-radius:14px;text-decoration:none;white-space:nowrap"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:5px" aria-hidden="true"><path d="M4 20v-4"/><path d="M8 20v-7"/><path d="M12 20v-5"/><path d="M16 20v-8"/><path d="M20 20V8"/><path d="M3 12l5-4 3.5 2.5L17 5"/><path d="M14.5 5H17v2.5"/></svg>Full record</a>
     <div class="menu-wrap">
       <button class="icon-btn" id="menuBtn" aria-label="Menu" aria-expanded="false" aria-haspopup="true" style="cursor:pointer;display:flex;align-items:center;justify-content:center;">☰</button>
@@ -326,7 +326,7 @@ function googleTranslateElementInit(){new google.translate.TranslateElement({pag
       box.id = 'tstSubNotif';
       box.innerHTML =
         '<style>' +
-        '.tst-sub-notif{position:fixed;bottom:18px;left:16px;right:16px;z-index:3000;background:#111827;border:1px solid #22c55e;border-radius:16px;padding:16px;box-shadow:0 8px 30px rgba(0,0,0,.65);animation:tstSubUp .45s ease-out;max-width:420px;margin:0 auto;font-family:'Roboto',-apple-system,Helvetica,Arial,sans-serif;}' +
+        '.tst-sub-notif{position:fixed;bottom:18px;left:16px;right:16px;z-index:3000;background:#111827;border:1px solid #60a5fa;border-radius:16px;padding:16px;box-shadow:0 8px 30px rgba(0,0,0,.65);animation:tstSubUp .45s ease-out;max-width:420px;margin:0 auto;font-family:'Roboto',-apple-system,Helvetica,Arial,sans-serif;}' +
         '@keyframes tstSubUp{from{transform:translateY(120%);opacity:0}to{transform:translateY(0);opacity:1}}' +
         '.tst-sub-notif .tst-sub-head{display:flex;align-items:center;gap:10px;margin-bottom:10px;}' +
         '.tst-sub-notif .tst-sub-ico{font-size:26px;}' +
@@ -335,7 +335,7 @@ function googleTranslateElementInit(){new google.translate.TranslateElement({pag
         '.tst-sub-notif .tst-sub-row{display:flex;justify-content:space-between;padding:6px 0;border-top:1px solid #1f2937;font-size:13px;}' +
         '.tst-sub-notif .tst-sub-lbl{color:#a3b0c6;}' +
         '.tst-sub-notif .tst-sub-val{color:#fff;font-weight:700;}' +
-        '.tst-sub-notif .tst-sub-val.green{color:#22c55e;}' +
+        '.tst-sub-notif .tst-sub-val.green{color:#60a5fa;}' +
         '.tst-sub-notif .tst-sub-val.gold{color:#fbbf24;}' +
         '</style>' +
         '<div class="tst-sub-notif">' +
