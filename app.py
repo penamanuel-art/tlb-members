@@ -19772,6 +19772,95 @@ def push_unsubscribe():
 
 
 
+# ------------------------------------------- Alert activation funnel ----
+# Flujo de activación de alertas del Dashboard (2026-11-22, idea
+# aprobada por Alex): tras ver una jugada, el home ofrece activar las
+# alertas push con el valor primero y los pasos de iPhone (instalar en
+# pantalla de inicio) antes del permiso. Cada paso REAL completado se
+# registra aquí pa' que Alex vea el embudo y dónde se cae la gente.
+# La suscripción sigue siendo la de siempre (/push/subscribe vía
+# TLB_push): esto SOLO mide el embudo, no crea otro mecanismo.
+ALERT_FUNNEL_STEPS = (
+    "shown", "started", "ios_share", "ios_a2hs", "ios_opened_icon",
+    "permission_granted", "subscribed", "dismissed",
+)
+ALERT_FUNNEL_DEVICES = ("ios", "ios-standalone", "android", "desktop", "other")
+
+
+def _ensure_alert_funnel(db):
+    db.execute(
+        "CREATE TABLE IF NOT EXISTS alert_funnel_events ("
+        "id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER, "
+        "step TEXT, device_class TEXT, created_at TEXT)")
+    db.execute(
+        "CREATE INDEX IF NOT EXISTS idx_alert_funnel_step "
+        "ON alert_funnel_events(step)")
+    db.execute(
+        "CREATE INDEX IF NOT EXISTS idx_alert_funnel_user "
+        "ON alert_funnel_events(user_id)")
+
+
+@app.route("/api/alert-funnel", methods=["POST"])
+@login_required
+def api_alert_funnel():
+    """Registra UN paso completado del flujo de activación de alertas.
+
+    Body JSON: {"step": <paso>, "device": <clase>}. Solo pasos de la
+    lista cerrada; 'subscribed' lo manda el cliente únicamente cuando
+    TLB_push.enable() confirma la suscripción real en el servidor.
+    """
+    data = request.get_json(force=True, silent=True) or {}
+    step = (data.get("step") or "").strip()
+    if step not in ALERT_FUNNEL_STEPS:
+        return jsonify({"ok": False, "error": "bad step"}), 400
+    device = (data.get("device") or "other").strip()
+    if device not in ALERT_FUNNEL_DEVICES:
+        device = "other"
+    db = get_db()
+    _ensure_alert_funnel(db)
+    db.execute(
+        "INSERT INTO alert_funnel_events (user_id, step, device_class,"
+        " created_at) VALUES (?, ?, ?, ?)",
+        (session["user_id"], step, device, now_iso()),
+    )
+    db.commit()
+    return jsonify({"ok": True})
+
+
+@app.route("/admin/api/alert-funnel")
+def admin_api_alert_funnel():
+    """Embudo de activación de alertas: conteos por paso (eventos y
+    miembros únicos) + la base actual de suscripciones push. SOLO LEE.
+    Auth: sesión admin O header X-Admin-Key (helper
+    _admin_api_autorizado, mismo patrón que /admin/api/platinum-pagos).
+    """
+    if not _admin_api_autorizado():
+        return jsonify({"error": "admin only"}), 403
+    db = get_db()
+    _ensure_alert_funnel(db)
+    steps = {}
+    for step in ALERT_FUNNEL_STEPS:
+        row = db.execute(
+            "SELECT COUNT(*) AS n, COUNT(DISTINCT user_id) AS u"
+            " FROM alert_funnel_events WHERE step = ?",
+            (step,),
+        ).fetchone()
+        steps[step] = {"events": int(row["n"]), "members": int(row["u"])}
+    total = db.execute(
+        "SELECT COUNT(*) AS n FROM push_subscriptions").fetchone()
+    members_sub = db.execute(
+        "SELECT COUNT(DISTINCT member_id) AS n FROM push_subscriptions"
+    ).fetchone()
+    return jsonify({
+        "steps": steps,
+        "push_baseline": {
+            "subscriptions_total": int(total["n"]),
+            "members_subscribed": int(members_sub["n"]),
+            "baseline_date": "2026-11-22",
+        },
+    })
+
+
 @app.route("/api/alerts-contact", methods=["GET", "POST"])
 @login_required
 def api_alerts_contact():
