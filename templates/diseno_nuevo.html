@@ -309,6 +309,28 @@ fbq('track', 'PageView');
   .dnaf-row{display:flex;gap:10px;align-items:center}
   .dnaf-go{flex:1;background:var(--acc);color:#051630;border:0;border-radius:13px;padding:14px;font-size:15.5px;font-weight:800;cursor:pointer;font-family:inherit}
   .dnaf-no{background:none;border:0;color:var(--mut);font-size:15px;font-weight:600;cursor:pointer;padding:12px 8px;font-family:inherit;white-space:nowrap}
+  /* Guía de instalación ilustrada (2026-11-23, forma aprobada por Alex):
+     dos bloques dibujados en CSS puro — barra de Safari con el icono
+     Share resaltado y menú de compartir con la fila de instalación
+     resaltada. Solo paleta azul del sitio. */
+  .dnaf.inline{position:relative;left:auto;right:auto;bottom:auto;z-index:auto;max-width:none;margin:0 0 22px;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+  .dnaf-guide-head{display:flex;gap:13px;align-items:flex-start;margin:0 26px 10px 0}
+  .dnaf-guide-head h3{margin:3px 0 0}
+  .dnaf-guide-logo{flex:0 0 auto;width:52px;height:52px;border-radius:14px;background:var(--panel2);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;overflow:hidden}
+  .dnaf-guide-logo img{width:44px;height:44px;display:block}
+  .dnaf-block{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:13px;margin:0 0 12px}
+  .dnaf-block-head{display:flex;gap:11px;align-items:flex-start}
+  .dnaf-block-title{font-size:16.5px;font-weight:700;color:var(--txt);line-height:1.3}
+  .dnaf-block p{font-size:14.5px;line-height:1.45;margin:3px 0 0}
+  .dnaf-bar{display:flex;align-items:center;justify-content:space-between;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:9px 14px;margin-top:11px}
+  .dnaf-slot{width:26px;height:26px;border-radius:8px;background:rgba(255,255,255,.06)}
+  .dnaf-slot.share{width:34px;height:34px;border:1.5px solid var(--acc);background:var(--accbg);display:flex;align-items:center;justify-content:center;color:var(--acc)}
+  .dnaf-sheet{margin-top:11px;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .dnaf-srow{padding:11px 13px;font-size:15px;color:var(--mut);background:var(--panel);border-top:1px solid rgba(255,255,255,.05);display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .dnaf-srow:first-child{border-top:0}
+  .dnaf-srow.on{color:var(--txt);background:var(--accbg);box-shadow:inset 3px 0 0 var(--acc)}
+  .dnaf-srow.on svg{color:var(--acc);flex:0 0 auto}
+  .dnaf-fine{font-size:14px;line-height:1.5;color:var(--mut);margin:0 0 14px}
   .dn-sheet-form{margin-top:18px;display:flex;flex-direction:column;gap:12px}
   .dn-sheet-input{width:100%;box-sizing:border-box;background:#10131A;border:1px solid var(--line);border-radius:12px;color:var(--txt);font-size:17.1px;padding:14px;font-family:inherit}
   .dn-sheet-save{background:var(--acc);color:#051630;border:0;border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit}
@@ -1077,12 +1099,40 @@ function dnHotClose(){
       </div>
     </div>
     <div class="dnaf-view" data-view="iosA" hidden>
-      <h3>Add us to your Home Screen</h3>
-      <p>On iPhone, alerts only work from the installed app. It takes 20 seconds:</p>
-      <ol class="dnaf-steps">
-        <li><span class="dnaf-num">1</span><span>Tap the <b>Share</b> icon in Safari's bar.</span></li>
-        <li><span class="dnaf-num">2</span><span>Tap <b>Add to Home Screen</b>, then <b>Add</b>.</span></li>
-      </ol>
+      <div class="dnaf-guide-head">
+        <span class="dnaf-guide-logo"><img src="{{ url_for('static', filename='img/sharp-coin.png') }}" alt=""></span>
+        <h3>Add The Sharp Team to your Home Screen</h3>
+      </div>
+      <p>Two taps in Safari. It opens full screen from your home screen, one tap from today's plays.</p>
+      <div class="dnaf-block">
+        <div class="dnaf-block-head">
+          <span class="dnaf-num">1</span>
+          <div>
+            <div class="dnaf-block-title">Tap Share</div>
+            <p>The Share icon in Safari's toolbar (bottom of the screen on iPhone, top on iPad).</p>
+          </div>
+        </div>
+        <div class="dnaf-bar" aria-hidden="true">
+          <span class="dnaf-slot"></span><span class="dnaf-slot"></span>
+          <span class="dnaf-slot share"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V4"/><path d="M8 6.5L12 2.5l4 4"/><path d="M5 12v7a1.5 1.5 0 0 0 1.5 1.5h11A1.5 1.5 0 0 0 19 19v-7"/></svg></span>
+          <span class="dnaf-slot"></span><span class="dnaf-slot"></span>
+        </div>
+      </div>
+      <div class="dnaf-block">
+        <div class="dnaf-block-head">
+          <span class="dnaf-num">2</span>
+          <div>
+            <div class="dnaf-block-title">Choose Add to Home Screen</div>
+            <p>Scroll the share sheet if you do not see it, then tap Add.</p>
+          </div>
+        </div>
+        <div class="dnaf-sheet" aria-hidden="true">
+          <div class="dnaf-srow">Copy</div>
+          <div class="dnaf-srow on"><span>Add to Home Screen</span><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3.5" y="3.5" width="17" height="17" rx="4.5"/><path d="M12 8.5v7M8.5 12h7"/></svg></div>
+          <div class="dnaf-srow">Add Bookmark</div>
+        </div>
+      </div>
+      <p class="dnaf-fine">Then open The Sharp Team from your Home Screen. Notifications on iPhone work only from there (iOS 16.4 or later).</p>
       <div class="dnaf-row">
         <button type="button" class="dnaf-go" id="dnafIosDidIt">I added it ✓</button>
         <button type="button" class="dnaf-no" data-dnaf-dismiss>Not now</button>
@@ -1090,10 +1140,24 @@ function dnHotClose(){
     </div>
     <div class="dnaf-view" data-view="iosB" hidden>
       <h3>Almost there</h3>
-      <ol class="dnaf-steps">
-        <li><span class="dnaf-num">3</span><span>Close Safari and open <b>The Sharp Team</b> from your new home-screen icon.</span></li>
-        <li><span class="dnaf-num">4</span><span>Open any play, tap <b>Turn on alerts</b> and choose <b>Allow</b>.</span></li>
-      </ol>
+      <div class="dnaf-block">
+        <div class="dnaf-block-head">
+          <span class="dnaf-num">3</span>
+          <div>
+            <div class="dnaf-block-title">Open it from your Home Screen</div>
+            <p>Close Safari and open <b>The Sharp Team</b> from your new home-screen icon.</p>
+          </div>
+        </div>
+      </div>
+      <div class="dnaf-block">
+        <div class="dnaf-block-head">
+          <span class="dnaf-num">4</span>
+          <div>
+            <div class="dnaf-block-title">Turn on alerts</div>
+            <p>Open any play, tap <b>Turn on alerts</b> and choose <b>Allow</b>.</p>
+          </div>
+        </div>
+      </div>
       <div class="dnaf-row">
         <button type="button" class="dnaf-go" id="dnafIosGotIt">Got it</button>
       </div>
