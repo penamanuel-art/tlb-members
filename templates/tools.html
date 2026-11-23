@@ -9,43 +9,43 @@
 {% set linemoves_href = '/tools/line-moves' if es_platinum else desbloquear_url %}
 {% set props_href = '/props' if es_platinum else desbloquear_url %}
 <style>
-body.v2{background-color:#05070d;background-image:radial-gradient(560px 300px at 50% -80px,rgba(96,165,250,.06),transparent 65%),radial-gradient(700px 500px at 110% 30%,rgba(96,165,250,.05),transparent 60%)}
+body.v2{background-color:#0C0F16;background-image:radial-gradient(560px 300px at 50% -80px,rgba(26,224,153,.06),transparent 65%),radial-gradient(700px 500px at 110% 30%,rgba(26,224,153,.05),transparent 60%)}
 .at-wrap{max-width:520px;margin:0 auto;padding:18px 0 8px;color:#f2f5fb}
 .at-title{font-size:21px;font-weight:800;letter-spacing:.2px;color:#fff;margin:0}
-.at-sub{font-size:15px;color:#75829a;margin:3px 0 0}
-.at-search{margin-top:14px;background:#0a1220;border:1px solid rgba(117,130,154,.16);border-radius:11px;padding:10px 12px;display:flex;align-items:center;gap:8px}
+.at-sub{font-size:15px;color:#9AA1AE;margin:3px 0 0}
+.at-search{margin-top:14px;background:#1D2029;border:1px solid rgba(154,161,174,.16);border-radius:11px;padding:10px 12px;display:flex;align-items:center;gap:8px}
 .at-search input{flex:1;background:none;border:none;outline:none;color:#f2f5fb;font-size:13.5px;font-family:inherit}
-.at-search input::placeholder{color:#75829a}
-.at-sec{font-size:11px;letter-spacing:1.6px;color:#60a5fa;font-weight:700;margin:20px 0 8px}
-.at-sec .at-sec-note{color:#75829a;letter-spacing:.4px;font-weight:600}
-.at-sec .at-count{color:#75829a}
+.at-search input::placeholder{color:#9AA1AE}
+.at-sec{font-size:11px;letter-spacing:1.6px;color:#1AE099;font-weight:700;margin:20px 0 8px}
+.at-sec .at-sec-note{color:#9AA1AE;letter-spacing:.4px;font-weight:600}
+.at-sec .at-count{color:#9AA1AE}
 .at-recent{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .at-recent::-webkit-scrollbar{display:none}
-.at-chip{flex:none;display:flex;align-items:center;gap:7px;background:#0a1220;border:1px solid rgba(117,130,154,.16);border-radius:999px;padding:8px 14px;font-size:13.5px;font-weight:600;color:#f2f5fb;text-decoration:none}
-.at-chip .dot{color:#60a5fa;font-size:9px}
-.at-box{border:1px solid rgba(117,130,154,.16);border-radius:14px;overflow:hidden;background:radial-gradient(360px 180px at 110% -30px, rgba(96, 165, 250, 0.10), transparent 65%), linear-gradient(155deg, #0c1425, #0a1220 60%, #070b14)}
-.at-row{display:flex;align-items:center;gap:11px;padding:11px 12px;border-bottom:1px solid rgba(117,130,154,.10);color:#f2f5fb;text-decoration:none}
+.at-chip{flex:none;display:flex;align-items:center;gap:7px;background:#1D2029;border:1px solid rgba(154,161,174,.16);border-radius:999px;padding:8px 14px;font-size:13.5px;font-weight:600;color:#f2f5fb;text-decoration:none}
+.at-chip .dot{color:#1AE099;font-size:9px}
+.at-box{border:1px solid rgba(154,161,174,.16);border-radius:14px;overflow:hidden;background:radial-gradient(360px 180px at 110% -30px, rgba(26,224,153, 0.10), transparent 65%), linear-gradient(155deg, #1D2029, #1D2029 60%, #0C0F16)}
+.at-row{display:flex;align-items:center;gap:11px;padding:11px 12px;border-bottom:1px solid rgba(154,161,174,.10);color:#f2f5fb;text-decoration:none}
 .at-row:last-child{border-bottom:none}
 .at-row:active{background:rgba(255,255,255,.05)}
 .at-ico{width:34px;height:34px;border-radius:9px;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;flex:none}
 .at-info{flex:1;min-width:0}
 .at-info b{font-size:14.5px;font-weight:700;display:block;color:#fff}
-.at-info span{font-size:15px;color:#75829a;display:block}
+.at-info span{font-size:15px;color:#9AA1AE;display:block}
 .at-plat{background:rgba(251,191,36,.12);color:#FBBF24;font-size:9.5px;font-weight:800;letter-spacing:.6px;padding:3px 7px;border-radius:6px;flex:none}
-.at-chev{color:#75829a;font-size:17px;flex:none}
+.at-chev{color:#9AA1AE;font-size:17px;flex:none}
 .at-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.at-tile{border:1px solid rgba(117,130,154,.16);border-radius:12px;padding:10px 12px;font-size:13.5px;font-weight:600;color:#f2f5fb;text-decoration:none;background:linear-gradient(155deg, #0c1425, #0a1220 60%, #070b14)}
+.at-tile{border:1px solid rgba(154,161,174,.16);border-radius:12px;padding:10px 12px;font-size:13.5px;font-weight:600;color:#f2f5fb;text-decoration:none;background:linear-gradient(155deg, #1D2029, #1D2029 60%, #0C0F16)}
 .at-tile:active{background:rgba(255,255,255,.05)}
-.at-new{background:#051630;color:#60a5fa;font-size:8.5px;font-weight:800;letter-spacing:.6px;padding:2px 5px;border-radius:5px;vertical-align:2px}
-.at-guide-panel{border-top:1px solid rgba(117,130,154,.12);background:#070b14;padding:10px 12px 12px 57px}
+.at-new{background:#0C0F16;color:#1AE099;font-size:8.5px;font-weight:800;letter-spacing:.6px;padding:2px 5px;border-radius:5px;vertical-align:2px}
+.at-guide-panel{border-top:1px solid rgba(154,161,174,.12);background:#0C0F16;padding:10px 12px 12px 57px}
 .at-guide-panel h4{font-size:12.5px;font-weight:700;color:#f2f5fb;margin:0}
-.at-guide-panel p{font-size:15px;line-height:1.5;color:#75829a;margin:4px 0 0}
+.at-guide-panel p{font-size:15px;line-height:1.5;color:#9AA1AE;margin:4px 0 0}
 .at-guide-nums{font-size:15px;line-height:1.55;color:#f2f5fb;margin-top:7px}
-.at-guide-nums b{color:#60a5fa}
-.at-guide-more{font-size:15px;color:#75829a;margin-top:8px;line-height:1.7}
-.at-guide-more a{color:#75829a;text-decoration:none;border-bottom:1px dotted rgba(117,130,154,.35)}
-.at-guide-open{display:inline-block;font-size:12px;font-weight:700;color:#60a5fa;margin-top:7px;text-decoration:none}
-.at-empty{display:none;text-align:center;color:#75829a;font-size:15px;padding:22px 0 4px}
+.at-guide-nums b{color:#1AE099}
+.at-guide-more{font-size:15px;color:#9AA1AE;margin-top:8px;line-height:1.7}
+.at-guide-more a{color:#9AA1AE;text-decoration:none;border-bottom:1px dotted rgba(154,161,174,.35)}
+.at-guide-open{display:inline-block;font-size:12px;font-weight:700;color:#1AE099;margin-top:7px;text-decoration:none}
+.at-empty{display:none;text-align:center;color:#9AA1AE;font-size:15px;padding:22px 0 4px}
 </style>
 
 <div class="at-wrap">
@@ -53,7 +53,7 @@ body.v2{background-color:#05070d;background-image:radial-gradient(560px 300px at
   <p class="at-sub">10 tools and 9 calculators. Tap one to open it.</p>
 
   <div class="at-search">
-    <span style="color:#75829a;font-size:13px">&#128269;</span>
+    <span style="color:#9AA1AE;font-size:13px">&#128269;</span>
     <input id="atSearch" type="text" placeholder="Search tools" autocomplete="off">
   </div>
 
@@ -72,23 +72,23 @@ body.v2{background-color:#05070d;background-image:radial-gradient(560px 300px at
     <p class="at-sec">MY TOOLS <span class="at-count">4</span></p>
     <div class="at-box">
       <a class="at-row at-item" href="{{ tracker_href }}" data-search="bet tracker profit roi clv my bets" data-recent='{"id":"tracker","label":"My Bets","href":"{{ tracker_href }}"}'>
-        <span class="at-ico"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2"><path d="M3 9V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2.5 2.5 0 0 0 0 5v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2.5 2.5 0 0 0 0-5z"/><path d="M13 5v2M13 11v2M13 17v2"/></svg></span>
+        <span class="at-ico"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#1AE099" stroke-width="2"><path d="M3 9V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2.5 2.5 0 0 0 0 5v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2.5 2.5 0 0 0 0-5z"/><path d="M13 5v2M13 11v2M13 17v2"/></svg></span>
         <span class="at-info"><b>My Bets</b><span>Profit, ROI and CLV</span></span>
         <span class="at-chev">›</span>
       </a>
       <a class="at-row at-item" href="{{ gc_href }}" data-search="odds game center prices fair line edge books" data-recent='{"id":"odds","label":"Odds","href":"{{ gc_href }}"}'>
-        <span class="at-ico"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="2.2"/><path d="M7.5 7.5a6.4 6.4 0 0 0 0 9"/><path d="M16.5 7.5a6.4 6.4 0 0 1 0 9"/><path d="M4.8 4.8a10.4 10.4 0 0 0 0 14.4"/><path d="M19.2 4.8a10.4 10.4 0 0 1 0 14.4"/></svg></span>
+        <span class="at-ico"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#1AE099" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="2.2"/><path d="M7.5 7.5a6.4 6.4 0 0 0 0 9"/><path d="M16.5 7.5a6.4 6.4 0 0 1 0 9"/><path d="M4.8 4.8a10.4 10.4 0 0 0 0 14.4"/><path d="M19.2 4.8a10.4 10.4 0 0 1 0 14.4"/></svg></span>
         <span class="at-info"><b>Odds</b><span>Every price, the fair line and the edge</span></span>
         <span class="at-plat">&#128142; PLATINUM</span>
         <span class="at-chev">›</span>
       </a>
       <a class="at-row at-item" href="/alertas" data-search="alerts notifications plays results line moves" data-recent='{"id":"alerts","label":"Alerts","href":"/alertas"}'>
-        <span class="at-ico"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 8-3 8h18s-3-1-3-8"/><path d="M10.3 21a2 2 0 0 0 3.4 0"/></svg></span>
+        <span class="at-ico"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#1AE099" stroke-width="2"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 8-3 8h18s-3-1-3-8"/><path d="M10.3 21a2 2 0 0 0 3.4 0"/></svg></span>
         <span class="at-info"><b>Alerts</b><span>Plays, results and line moves — you choose</span></span>
         <span class="at-chev">›</span>
       </a>
       <a class="at-row at-item" href="/records" data-search="full record official plays graded history" data-recent='{"id":"record","label":"Full Record","href":"/records"}'>
-        <span class="at-ico"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V4H6.5A2.5 2.5 0 0 0 4 6.5v13z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></svg></span>
+        <span class="at-ico"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#1AE099" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V4H6.5A2.5 2.5 0 0 0 4 6.5v13z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></svg></span>
         <span class="at-info"><b>Full Record</b><span>Every official play, graded</span></span>
         <span class="at-chev">›</span>
       </a>
@@ -99,19 +99,19 @@ body.v2{background-color:#05070d;background-image:radial-gradient(560px 300px at
     <p class="at-sec">MARKET DATA <span class="at-count">3</span></p>
     <div class="at-box">
       <a class="at-row at-item" href="{{ evboard_href }}" data-search="ev board value edges prices fair ranked" data-recent='{"id":"evboard","label":"+EV Board","href":"{{ evboard_href }}"}'>
-        <span class="at-ico"><svg width="17" height="17" viewBox="0 0 24 24" fill="#60a5fa"><path d="M13 2 4.5 13.5H11L9.5 22 19 9.5h-6.5L13 2z"/></svg></span>
+        <span class="at-ico"><svg width="17" height="17" viewBox="0 0 24 24" fill="#1AE099"><path d="M13 2 4.5 13.5H11L9.5 22 19 9.5h-6.5L13 2z"/></svg></span>
         <span class="at-info"><b>+EV Board</b><span>Prices above fair, ranked</span></span>
         <span class="at-plat">&#128142; PLATINUM</span>
         <span class="at-chev">›</span>
       </a>
       <a class="at-row at-item" href="{{ props_href }}" data-search="player props prop edges ranked over under" data-recent='{"id":"props","label":"Player Props","href":"{{ props_href }}"}'>
-        <span class="at-ico"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.5 3-5.5 7-5.5s7 2 7 5.5"/></svg></span>
+        <span class="at-ico"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#1AE099" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.5 3-5.5 7-5.5s7 2 7 5.5"/></svg></span>
         <span class="at-info"><b>Player Props</b><span>Prop edges, ranked</span></span>
         <span class="at-plat">&#128142; PLATINUM</span>
         <span class="at-chev">›</span>
       </a>
       <a class="at-row at-item" href="{{ linemoves_href }}" data-search="line movement sharp money moves tracked" data-recent='{"id":"linemoves","label":"Line Movement","href":"{{ linemoves_href }}"}'>
-        <span class="at-ico"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg></span>
+        <span class="at-ico"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#1AE099" stroke-width="2"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg></span>
         <span class="at-info"><b>Line Movement</b><span>Opening vs current prices, tracked all day</span></span>
         <span class="at-plat">&#128142; PLATINUM</span>
         <span class="at-chev">›</span>
@@ -123,7 +123,7 @@ body.v2{background-color:#05070d;background-image:radial-gradient(560px 300px at
     <p class="at-sec">RESEARCH <span class="at-count">1</span></p>
     <div class="at-box">
       <a class="at-row at-item" href="{{ parlay_href }}" data-search="parlay builder legs slip combined" data-recent='{"id":"parlay","label":"Parlay Builder","href":"{{ parlay_href }}"}'>
-        <span class="at-ico"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2"><path d="M12 2 3 7l9 5 9-5-9-5z"/><path d="M3 12l9 5 9-5"/><path d="M3 17l9 5 9-5"/></svg></span>
+        <span class="at-ico"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#1AE099" stroke-width="2"><path d="M12 2 3 7l9 5 9-5-9-5z"/><path d="M3 12l9 5 9-5"/><path d="M3 17l9 5 9-5"/></svg></span>
         <span class="at-info"><b>Parlay Builder</b><span>Parlays built from +EV legs</span></span>
         <span class="at-plat">&#128142; PLATINUM</span>
         <span class="at-chev">›</span>
@@ -150,12 +150,12 @@ body.v2{background-color:#05070d;background-image:radial-gradient(560px 300px at
     <p class="at-sec">LEARN <span class="at-count">2</span></p>
     <div class="at-box">
       <a class="at-row at-item" href="/masterclass" data-search="academy masterclass lessons 30 day course" data-recent='{"id":"academy","label":"Academy","href":"/masterclass"}'>
-        <span class="at-ico"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2"><path d="M22 9 12 4 2 9l10 5 10-5z"/><path d="M6 11.5V16c0 1.7 2.7 3 6 3s6-1.3 6-3v-4.5"/></svg></span>
+        <span class="at-ico"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#1AE099" stroke-width="2"><path d="M22 9 12 4 2 9l10 5 10-5z"/><path d="M6 11.5V16c0 1.7 2.7 3 6 3s6-1.3 6-3v-4.5"/></svg></span>
         <span class="at-info"><b>Academy</b><span>The 30-day Masterclass</span></span>
         <span class="at-chev">›</span>
       </a>
       <div class="at-row at-item" id="atGuidesRow" data-search="guides american odds explained moneyline spread total vig glossary" style="cursor:pointer">
-        <span class="at-ico"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M10 8.5v7l6-3.5-6-3.5z"/></svg></span>
+        <span class="at-ico"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#1AE099" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M10 8.5v7l6-3.5-6-3.5z"/></svg></span>
         <span class="at-info"><b>Guides</b><span>American odds, explained</span></span>
         <span class="at-chev" id="atGuidesChev">&#9662;</span>
       </div>
