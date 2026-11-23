@@ -2,30 +2,30 @@
 {% block title %}Odds Board — The Sharp Team{% endblock %}
 {% block content %}
 <style>
-body.v2{background-color:#161d29;background-image:radial-gradient(560px 300px at 50% -80px,rgba(16,204,135,.06),transparent 65%),radial-gradient(700px 500px at 110% 30%,rgba(77,163,255,.05),transparent 60%)}
+body.v2{background-color:#05070d;background-image:radial-gradient(560px 300px at 50% -80px,rgba(96,165,250,.06),transparent 65%),radial-gradient(700px 500px at 110% 30%,rgba(96,165,250,.05),transparent 60%)}
 .ob-wrap{max-width:720px;margin:0 auto;color:#fff;padding:24px 0 8px}
 .ob-header{text-align:center;margin-bottom:24px}
-.ob-wrap .kicker{font-size:11px;font-weight:800;letter-spacing:3px;color:#10cc87;margin:0 0 8px}
+.ob-wrap .kicker{font-size:11px;font-weight:800;letter-spacing:3px;color:#60a5fa;margin:0 0 8px}
 .ob-wrap h2{font-size:2rem;font-weight:900;margin:0 0 8px}
-.ob-wrap .muted{color:#9aa7b8;font-size:14px;margin:0;line-height:1.5}
-.ob-updated{color:#8b98ad;font-size:12px;margin:12px 0 0}
+.ob-wrap .muted{color:#75829a;font-size:14px;margin:0;line-height:1.5}
+.ob-updated{color:#75829a;font-size:12px;margin:12px 0 0}
 .ob-league-sec{margin-bottom:26px}
-.ob-league-head{display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid rgba(148,178,220,.14)}
-.ob-league-name{font-size:13px;font-weight:800;letter-spacing:2px;color:#10cc87}
-.ob-league-count{font-size:12px;color:#8b98ad}
-.ob-card{background:radial-gradient(360px 180px at 110% -30px, rgba(87, 227, 137, 0.10), transparent 65%), linear-gradient(155deg, #26303f, #1c2431 60%, #1a222e);border:1px solid rgba(148,178,220,.16);border-radius:16px;padding:14px 16px;margin:0 0 10px}
+.ob-league-head{display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid rgba(117,130,154,.14)}
+.ob-league-name{font-size:13px;font-weight:800;letter-spacing:2px;color:#60a5fa}
+.ob-league-count{font-size:12px;color:#75829a}
+.ob-card{background:radial-gradient(360px 180px at 110% -30px, rgba(87, 227, 137, 0.10), transparent 65%), linear-gradient(155deg, #0c1425, #0a1220 60%, #070b14);border:1px solid rgba(117,130,154,.16);border-radius:16px;padding:14px 16px;margin:0 0 10px}
 .ob-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
-.ob-kick{font-size:12px;color:#9aa7b8;font-weight:700}
-.ob-live{display:inline-block;background:#ef4444;color:#fff;font-size:10px;font-weight:800;letter-spacing:1px;padding:3px 8px;border-radius:999px}
-.ob-side{display:flex;align-items:center;gap:10px;padding:7px 0;border-top:1px solid rgba(148,178,220,.10)}
+.ob-kick{font-size:12px;color:#75829a;font-weight:700}
+.ob-live{display:inline-block;background:#f87171;color:#fff;font-size:10px;font-weight:800;letter-spacing:1px;padding:3px 8px;border-radius:999px}
+.ob-side{display:flex;align-items:center;gap:10px;padding:7px 0;border-top:1px solid rgba(117,130,154,.10)}
 .ob-side:first-of-type{border-top:none}
 .ob-team{flex:1;min-width:0;font-size:15.5px;font-weight:700;color:#fff}
-.ob-team small{display:block;font-size:11px;color:#8b98ad;font-weight:600;letter-spacing:.6px}
-.ob-price{font-size:17px;font-weight:800;color:#10cc87;flex:none}
-.ob-book{font-size:11.5px;color:#9aa7b8;flex:none;min-width:86px;text-align:right}
-.ob-empty{border:2px dashed rgba(148,178,220,.30);border-radius:18px;padding:28px 20px;text-align:center;margin:16px 0}
+.ob-team small{display:block;font-size:11px;color:#75829a;font-weight:600;letter-spacing:.6px}
+.ob-price{font-size:17px;font-weight:800;color:#60a5fa;flex:none}
+.ob-book{font-size:11.5px;color:#75829a;flex:none;min-width:86px;text-align:right}
+.ob-empty{border:2px dashed rgba(117,130,154,.30);border-radius:18px;padding:28px 20px;text-align:center;margin:16px 0}
 .ob-empty h3{color:#fff;margin:0 0 8px}
-.ob-empty p{color:#9aa7b8;margin:0;font-size:14px;line-height:1.55}
+.ob-empty p{color:#75829a;margin:0;font-size:14px;line-height:1.55}
 </style>
 
 <div class="ob-wrap">
