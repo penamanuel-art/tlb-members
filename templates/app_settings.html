@@ -2,39 +2,39 @@
 {% block title %}App settings — The Sharp Team{% endblock %}
 {% block content %}
 <style>
-body{background-color:#05070d}
+body{background-color:#0C0F16}
 .as-wrap{max-width:680px;margin:0 auto;padding:16px 0 8px;font-family:-apple-system,'SF Pro',Inter,system-ui,sans-serif}
-.as-back{display:inline-block;color:#60a5fa;text-decoration:none;font-size:.9rem;margin-bottom:14px}
+.as-back{display:inline-block;color:#1AE099;text-decoration:none;font-size:.9rem;margin-bottom:14px}
 .as-title{font-size:2.05rem;font-weight:800;letter-spacing:-.5px;color:#fff;margin:0 0 6px}
-.as-title span{color:#60a5fa}
-.as-sub{font-size:.9rem;font-weight:300;color:#a3b0c6;margin:0 0 16px;line-height:1.5}
-.as-note{display:flex;gap:10px;background:#0a1220;border:1px solid #0c1425;border-radius:16px;padding:14px;margin-bottom:14px;font-size:.88rem;font-weight:300;line-height:1.55;color:#f2f5fb}
-.as-note .ic{flex:none;width:22px;height:22px;border-radius:50%;border:1.5px solid #60a5fa;color:#60a5fa;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700}
-.as-card{background:#0a1220;border:1px solid #0c1425;border-radius:20px;padding:20px 18px;margin-bottom:12px}
+.as-title span{color:#1AE099}
+.as-sub{font-size:.9rem;font-weight:300;color:#9AA1AE;margin:0 0 16px;line-height:1.5}
+.as-note{display:flex;gap:10px;background:#1D2029;border:1px solid #1D2029;border-radius:16px;padding:14px;margin-bottom:14px;font-size:.88rem;font-weight:300;line-height:1.55;color:#f2f5fb}
+.as-note .ic{flex:none;width:22px;height:22px;border-radius:50%;border:1.5px solid #1AE099;color:#1AE099;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700}
+.as-card{background:#1D2029;border:1px solid #1D2029;border-radius:20px;padding:20px 18px;margin-bottom:12px}
 .as-card-head{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,255,255,.05);padding-bottom:12px;margin-bottom:14px}
 .as-card-head h2{font-size:1.12rem;font-weight:700;color:#fff;margin:0}
-.as-tag{font-size:.72rem;font-weight:600;color:#60a5fa;background:rgba(96,165,250,.10);padding:4px 8px;border-radius:6px}
+.as-tag{font-size:.72rem;font-weight:600;color:#1AE099;background:rgba(26,224,153,.10);padding:4px 8px;border-radius:6px}
 .as-plan{display:flex;gap:14px;align-items:flex-start}
-.as-plan-ic{flex:none;width:52px;height:52px;border-radius:14px;background:rgba(96,165,250,.12);display:flex;align-items:center;justify-content:center;font-size:1.35rem}
+.as-plan-ic{flex:none;width:52px;height:52px;border-radius:14px;background:rgba(26,224,153,.12);display:flex;align-items:center;justify-content:center;font-size:1.35rem}
 .as-plan-name{font-size:1.45rem;font-weight:800;color:#fff;line-height:1.2}
-.as-plan-sub{font-size:.86rem;font-weight:300;color:#75829a;margin-top:3px}
-.as-badge{display:inline-block;margin-top:12px;font-size:.68rem;font-weight:700;letter-spacing:1.6px;color:#60a5fa;border:1px solid rgba(96,165,250,.45);background:rgba(96,165,250,.08);padding:6px 10px;border-radius:8px}
-.as-txt{font-size:.88rem;font-weight:300;line-height:1.55;color:#a3b0c6;margin:14px 0}
-.as-btn{display:inline-flex;align-items:center;gap:8px;background:#60a5fa;color:#051630;font-weight:700;font-size:.95rem;text-decoration:none;padding:13px 20px;border-radius:14px}
-.as-btn.ghost{background:none;border:1px solid #0c1425;color:#f2f5fb;font-weight:600}
+.as-plan-sub{font-size:.86rem;font-weight:300;color:#9AA1AE;margin-top:3px}
+.as-badge{display:inline-block;margin-top:12px;font-size:.68rem;font-weight:700;letter-spacing:1.6px;color:#1AE099;border:1px solid rgba(26,224,153,.45);background:rgba(26,224,153,.08);padding:6px 10px;border-radius:8px}
+.as-txt{font-size:.88rem;font-weight:300;line-height:1.55;color:#9AA1AE;margin:14px 0}
+.as-btn{display:inline-flex;align-items:center;gap:8px;background:#10CC87;color:#0C0F16;font-weight:700;font-size:.95rem;text-decoration:none;padding:13px 20px;border-radius:14px}
+.as-btn.ghost{background:none;border:1px solid #1D2029;color:#f2f5fb;font-weight:600}
 .as-chips{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.as-chip{display:flex;align-items:center;gap:10px;border:1px solid #0c1425;border-radius:14px;padding:13px 12px;font-size:.92rem;color:#f2f5fb}
+.as-chip{display:flex;align-items:center;gap:10px;border:1px solid #1D2029;border-radius:14px;padding:13px 12px;font-size:.92rem;color:#f2f5fb}
 .as-chip .ic{font-size:1.05rem}
-.as-chip small{display:block;color:#75829a;font-size:.72rem}
-.as-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;font-size:.92rem;color:#a3b0c6;font-weight:300}
+.as-chip small{display:block;color:#9AA1AE;font-size:.72rem}
+.as-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;font-size:.92rem;color:#9AA1AE;font-weight:300}
 .as-row b{color:#fff;font-weight:600}
 .as-btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
-.as-appinner{display:flex;gap:14px;align-items:center;background:#0a1220;border-radius:16px;padding:16px}
-.as-appinner img{width:56px;height:56px;border-radius:14px;object-fit:cover;background:#05070d}
+.as-appinner{display:flex;gap:14px;align-items:center;background:#1D2029;border-radius:16px;padding:16px}
+.as-appinner img{width:56px;height:56px;border-radius:14px;object-fit:cover;background:#0C0F16}
 .as-appinner .t{font-size:1.15rem;font-weight:800;color:#fff}
-.as-appinner .s{font-size:.85rem;font-weight:300;color:#75829a;line-height:1.45;margin-top:2px}
-.as-ok{display:flex;gap:10px;align-items:flex-start;color:#60a5fa;font-size:.95rem;font-weight:600;line-height:1.5}
-.as-dev{font-size:.85rem;font-weight:300;color:#75829a;margin-top:10px}
+.as-appinner .s{font-size:.85rem;font-weight:300;color:#9AA1AE;line-height:1.45;margin-top:2px}
+.as-ok{display:flex;gap:10px;align-items:flex-start;color:#1AE099;font-size:.95rem;font-weight:600;line-height:1.5}
+.as-dev{font-size:.85rem;font-weight:300;color:#9AA1AE;margin-top:10px}
 </style>
 
 <div class="as-wrap">
@@ -99,7 +99,7 @@ body{background-color:#05070d}
     {% if notifs %}
     <div class="as-ok"><span>✓</span><span>On for your account: {{ notifs|join(', ') }}.</span></div>
     {% else %}
-    <div class="as-ok" style="color:#75829a;"><span>—</span><span>All notification types are off for your account right now.</span></div>
+    <div class="as-ok" style="color:#9AA1AE;"><span>—</span><span>All notification types are off for your account right now.</span></div>
     {% endif %}
     <div class="as-dev" id="asDevNotif"></div>
     <div class="as-btnrow">
