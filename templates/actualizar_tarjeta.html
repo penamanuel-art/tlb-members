@@ -13,22 +13,22 @@
 {% if estado == 'hold' %}
 <!-- Pago fallido, suscripción viva -->
 <div style="background:#a3b0c6;padding:28px 24px 24px;text-align:center;">
-<p style="margin:0;font-size:11px;font-weight:800;letter-spacing:2px;color:#f5b04c;">&#9888;&nbsp; PAYMENT FAILED</p>
+<p style="margin:0;font-size:11px;font-weight:800;letter-spacing:2px;color:#FBBF24;">&#9888;&nbsp; PAYMENT FAILED</p>
 <h1 style="font-size:26px;font-weight:800;color:#0a1220;margin:10px 0 0;line-height:1.25;">Your Platinum is on hold</h1>
 <p style="margin:10px 0 0;font-size:13px;color:#a3b0c6;line-height:1.5;">Hi {{ nombre }} &mdash; your last payment didn&apos;t go through. Update your card below and your access comes back instantly.</p>
 </div>
 
 <div style="margin:14px 16px 0;background:#0a1220;border:1px solid #1d3358;border-radius:14px;padding:20px 18px;">
 {% if billing.card_last4 %}
-<table role="presentation" cellpadding="0" cellspacing="0" style="width:100%;background:#fdf1f1;border:1px solid #f3c2c2;border-radius:12px;">
+<table role="presentation" cellpadding="0" cellspacing="0" style="width:100%;background:rgba(248,113,113,.10);border:1px solid rgba(248,113,113,.40);border-radius:12px;">
 <tr>
 <td style="padding:14px 16px;">
-<p style="margin:0;font-size:10.6px;font-weight:800;letter-spacing:1.5px;color:#9c2b2b;">CARD THAT FAILED</p>
+<p style="margin:0;font-size:10.6px;font-weight:800;letter-spacing:1.5px;color:#f87171;">CARD THAT FAILED</p>
 <p style="margin:6px 0 0;font-size:15px;font-weight:800;color:#f2f5fb;">&#128179; {{ billing.card_brand or 'Card' }} &middot;&middot;&middot;&middot; {{ billing.card_last4 }}</p>
 {% if billing.card_exp %}<p style="margin:3px 0 0;font-size:11.4px;color:#a3b0c6;">Expires {{ billing.card_exp }}</p>{% endif %}
 </td>
 <td align="right" style="padding:14px 16px;vertical-align:top;">
-<span style="display:inline-block;background:#dc2626;color:#0a1220;font-size:10.6px;font-weight:800;letter-spacing:1px;padding:5px 10px;border-radius:999px;">DECLINED</span>
+<span style="display:inline-block;background:#f87171;color:#0a1220;font-size:10.6px;font-weight:800;letter-spacing:1px;padding:5px 10px;border-radius:999px;">DECLINED</span>
 </td>
 </tr>
 </table>
@@ -43,7 +43,7 @@
 {% endif %}
 
 <div style="margin:14px 0 0;background:#0a1220;border:1px solid #1d3358;border-radius:12px;padding:16px;">
-<p style="margin:0;font-size:11.4px;font-weight:800;letter-spacing:1.5px;color:#f5b04c;">&#60a5fa; LOCKED WHILE YOU WAIT:</p>
+<p style="margin:0;font-size:11.4px;font-weight:800;letter-spacing:1.5px;color:#FBBF24;">&#60a5fa; LOCKED WHILE YOU WAIT:</p>
 <table role="presentation" cellpadding="0" cellspacing="0" style="margin:8px 0 0;width:100%;">
 <tr><td style="padding:4px 0;font-size:12.3px;color:#f2f5fb;">&#128142; <strong>Today&apos;s Platinum plays</strong></td></tr>
 <tr><td style="padding:4px 0;font-size:12.3px;color:#f2f5fb;">&#11088; <strong>Gold plays</strong></td></tr>
@@ -62,7 +62,7 @@
 </table>
 
 <div style="text-align:center;padding:12px 0 2px;">
-<p style="margin:0;font-size:12.3px;color:#555555;">Prefer to start over?</p>
+<p style="margin:0;font-size:12.3px;color:#75829a;">Prefer to start over?</p>
 <a href="{{ url_for('desbloquear_platinum') }}" style="display:inline-block;margin-top:9px;background:#0a1220;color:#f2f5fb;font-weight:800;font-size:13.2px;padding:11px 26px;border-radius:999px;text-decoration:none;border:2px solid #f2f5fb;">Subscribe again</a>
 <p style="margin:9px 0 0;font-size:11.4px;color:#a3b0c6;">$15.99/week</p>
 </div>
@@ -71,14 +71,14 @@
 {% elif estado == 'ended' %}
 <!-- Suscripción ya cerrada -->
 <div style="background:#a3b0c6;padding:28px 24px 24px;text-align:center;">
-<p style="margin:0;font-size:11px;font-weight:800;letter-spacing:2px;color:#f5b04c;">&#9888;&nbsp; SUBSCRIPTION ENDED</p>
+<p style="margin:0;font-size:11px;font-weight:800;letter-spacing:2px;color:#FBBF24;">&#9888;&nbsp; SUBSCRIPTION ENDED</p>
 <h1 style="font-size:26px;font-weight:800;color:#0a1220;margin:10px 0 0;line-height:1.25;">Your Platinum has ended</h1>
 <p style="margin:10px 0 0;font-size:13px;color:#a3b0c6;line-height:1.5;">Hi {{ nombre }} &mdash; after the missed payment, this subscription closed. The good news: you can be back on today&apos;s plays in about a minute.</p>
 </div>
 
 <div style="margin:14px 16px 0;background:#0a1220;border:1px solid #1d3358;border-radius:14px;padding:20px 18px;">
 <div style="background:#0a1220;border:1px solid #1d3358;border-radius:12px;padding:16px;">
-<p style="margin:0;font-size:11.4px;font-weight:800;letter-spacing:1.5px;color:#f5b04c;">&#60a5fa; YOU&apos;RE MISSING:</p>
+<p style="margin:0;font-size:11.4px;font-weight:800;letter-spacing:1.5px;color:#FBBF24;">&#60a5fa; YOU&apos;RE MISSING:</p>
 <table role="presentation" cellpadding="0" cellspacing="0" style="margin:8px 0 0;width:100%;">
 <tr><td style="padding:4px 0;font-size:12.3px;color:#f2f5fb;">&#128142; <strong>Today&apos;s Platinum plays</strong></td></tr>
 <tr><td style="padding:4px 0;font-size:12.3px;color:#f2f5fb;">&#11088; <strong>Gold plays</strong></td></tr>
