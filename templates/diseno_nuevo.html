@@ -276,6 +276,22 @@
   .dn-al-push.off{background:var(--panel);color:var(--txt);border:1px solid var(--line)}
   .dn-al-push.off small{color:var(--mut)}
   .dn-al-push.off svg{color:var(--acc)}
+  /* Flujo de activación de alertas (2026-11-22): tarjeta suave que solo
+     sale tras ver una jugada; valor primero, pasos iPhone, sin insistir. */
+  .dnaf{position:fixed;left:12px;right:12px;bottom:calc(84px + env(safe-area-inset-bottom));z-index:290;max-width:560px;margin:0 auto;background:linear-gradient(180deg,#0d1730,var(--panel));border:1px solid var(--accline);border-radius:18px;padding:18px 18px 16px;box-shadow:0 18px 50px rgba(0,0,0,.55)}
+  .dnaf[hidden]{display:none}
+  .dnaf-x{position:absolute;top:8px;right:10px;background:none;border:0;color:var(--mut);font-size:17px;cursor:pointer;padding:6px}
+  .dnaf h3{font-family:var(--fdisp);font-size:19px;font-weight:700;margin:0 26px 8px 0;color:var(--txt)}
+  .dnaf p{font-size:15.5px;line-height:1.45;color:var(--mut);margin:0 0 14px}
+  .dnaf p b{color:var(--txt)}
+  .dnaf-steps{margin:0 0 14px;padding:0;list-style:none}
+  .dnaf-steps li{display:flex;gap:11px;align-items:flex-start;font-size:15.5px;line-height:1.4;color:var(--mut);padding:7px 0;border-top:1px solid rgba(255,255,255,.06)}
+  .dnaf-steps li:first-child{border-top:0;padding-top:0}
+  .dnaf-steps li b{color:var(--txt)}
+  .dnaf-num{flex:0 0 auto;width:24px;height:24px;border-radius:50%;background:var(--acc);color:#051630;font-weight:800;font-size:13.5px;display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .dnaf-row{display:flex;gap:10px;align-items:center}
+  .dnaf-go{flex:1;background:var(--acc);color:#051630;border:0;border-radius:13px;padding:14px;font-size:15.5px;font-weight:800;cursor:pointer;font-family:inherit}
+  .dnaf-no{background:none;border:0;color:var(--mut);font-size:15px;font-weight:600;cursor:pointer;padding:12px 8px;font-family:inherit;white-space:nowrap}
   .dn-sheet-form{margin-top:18px;display:flex;flex-direction:column;gap:12px}
   .dn-sheet-input{width:100%;box-sizing:border-box;background:#10131A;border:1px solid var(--line);border-radius:12px;color:var(--txt);font-size:17.1px;padding:14px;font-family:inherit}
   .dn-sheet-save{background:var(--acc);color:#051630;border:0;border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit}
@@ -1063,6 +1079,58 @@ function dnHotClose(){
       <button type="submit" class="dn-sheet-save">Save</button>
     </form>
   </div>
+  <div class="dnaf" id="dnAlertFlow" hidden role="dialog" aria-label="Turn on play alerts">
+    <button type="button" class="dnaf-x" id="dnafX" aria-label="Close">✕</button>
+    <div class="dnaf-view" data-view="value">
+      <h3>🔔 Never miss a play</h3>
+      <p>Get <b>today's plays the second they post</b>, price moves as they happen, and <b>final results</b> — straight to your phone. Free, and you can turn it off anytime.</p>
+      <div class="dnaf-row">
+        <button type="button" class="dnaf-go" id="dnafStart">Turn on alerts</button>
+        <button type="button" class="dnaf-no" data-dnaf-dismiss>Not now</button>
+      </div>
+    </div>
+    <div class="dnaf-view" data-view="iosA" hidden>
+      <h3>Add us to your Home Screen</h3>
+      <p>On iPhone, alerts only work from the installed app. It takes 20 seconds:</p>
+      <ol class="dnaf-steps">
+        <li><span class="dnaf-num">1</span><span>Tap the <b>Share</b> icon in Safari's bar.</span></li>
+        <li><span class="dnaf-num">2</span><span>Tap <b>Add to Home Screen</b>, then <b>Add</b>.</span></li>
+      </ol>
+      <div class="dnaf-row">
+        <button type="button" class="dnaf-go" id="dnafIosDidIt">I added it ✓</button>
+        <button type="button" class="dnaf-no" data-dnaf-dismiss>Not now</button>
+      </div>
+    </div>
+    <div class="dnaf-view" data-view="iosB" hidden>
+      <h3>Almost there</h3>
+      <ol class="dnaf-steps">
+        <li><span class="dnaf-num">3</span><span>Close Safari and open <b>The Sharp Team</b> from your new home-screen icon.</span></li>
+        <li><span class="dnaf-num">4</span><span>Open any play, tap <b>Turn on alerts</b> and choose <b>Allow</b>.</span></li>
+      </ol>
+      <div class="dnaf-row">
+        <button type="button" class="dnaf-go" id="dnafIosGotIt">Got it</button>
+      </div>
+    </div>
+    <div class="dnaf-view" data-view="go" hidden>
+      <h3>One last step 🎉</h3>
+      <p>You're in from your home screen. Turn on alerts and choose <b>Allow</b>, and you'll never miss a play.</p>
+      <div class="dnaf-row">
+        <button type="button" class="dnaf-go" id="dnafGoEnable">Turn on alerts</button>
+        <button type="button" class="dnaf-no" data-dnaf-dismiss>Not now</button>
+      </div>
+    </div>
+    <div class="dnaf-view" data-view="done" hidden>
+      <h3>You're all set 🎉</h3>
+      <p>Alerts are on for this device. Plays, price moves and results will land here the moment they happen.</p>
+    </div>
+    <div class="dnaf-view" data-view="blocked" hidden>
+      <h3>Notifications are blocked</h3>
+      <p>Your browser has notifications for this site turned off. You can allow them any time from the <b>Get alerts</b> section on this page.</p>
+      <div class="dnaf-row">
+        <button type="button" class="dnaf-go" data-dnaf-dismiss>Got it</button>
+      </div>
+    </div>
+  </div>
 <script src="{{ url_for('static', filename='js/push.js') }}"></script>
 <script>
 (function(){
@@ -1113,6 +1181,139 @@ function dnHotClose(){
           setTimeout(closeSheet, 900);
         } else { msg.className = 'dn-sheet-msg err'; msg.textContent = (j && j.error) || 'Could not save. Try again.'; }
       }).catch(function(){ msg.className = 'dn-sheet-msg err'; msg.textContent = 'Could not save. Try again.'; });
+  });
+})();
+</script>
+
+<script>
+/* Flujo de activación de alertas (2026-11-22): aparece SOLO después de
+   que el miembro abre el detalle de una jugada de hoy (clic en
+   [data-v5-open]) y esa hoja se cierra. Valor primero; en iPhone sin
+   instalar guía Share -> Add to Home Screen -> abrir del icono ->
+   permitir; en el resto va directo al permiso con TLB_push (el flujo
+   de suscripción de siempre). Sin insistencia: si ya está suscrito no
+   sale nunca, y si lo descarta no vuelve por 30 días. Cada paso real
+   se registra en /api/alert-funnel. */
+(function(){
+  var card = document.getElementById('dnAlertFlow');
+  if(!card) return;
+  var LS_DONE = 'tlb_af_done', LS_DIS = 'tlb_af_dismissed_at', LS_IOS = 'tlb_af_ios_pending';
+  var DISMISS_MS = 30 * 24 * 60 * 60 * 1000;
+  function lsGet(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+  function lsSet(k, v){ try{ localStorage.setItem(k, v); }catch(e){} }
+  function ssGet(k){ try{ return sessionStorage.getItem(k); }catch(e){ return null; } }
+  function ssSet(k, v){ try{ sessionStorage.setItem(k, v); }catch(e){} }
+  var ua = navigator.userAgent || '';
+  var isIOS = /iPhone|iPad|iPod/i.test(ua) || (/Macintosh/i.test(ua) && 'ontouchend' in document);
+  var standalone = (window.navigator.standalone === true) ||
+    (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches);
+  var isAndroid = /Android/i.test(ua);
+  var device = (standalone && isIOS) ? 'ios-standalone' : (isIOS ? 'ios' : (isAndroid ? 'android' : 'desktop'));
+  var iosNeedsInstall = isIOS && !standalone;
+  var pendingGo = false;
+  if(standalone && isIOS && lsGet(LS_IOS)){
+    pendingGo = true;
+    if(lsGet(LS_IOS) === '1'){ track('ios_opened_icon'); lsSet(LS_IOS, '2'); }
+  }
+  function track(step){
+    try{
+      fetch('/api/alert-funnel', {method:'POST', headers:{'Content-Type':'application/json'},
+        credentials:'same-origin', keepalive:true,
+        body: JSON.stringify({step: step, device: device})}).catch(function(){});
+    }catch(e){}
+  }
+  function showView(name){
+    var views = card.querySelectorAll('.dnaf-view');
+    for(var i = 0; i < views.length; i++){
+      views[i].hidden = views[i].getAttribute('data-view') !== name;
+    }
+    card.hidden = false;
+  }
+  function hide(){ card.hidden = true; }
+  function dismiss(){
+    track('dismissed');
+    lsSet(LS_DIS, String(Date.now()));
+    hide();
+  }
+  card.querySelectorAll('[data-dnaf-dismiss]').forEach(function(b){
+    b.addEventListener('click', dismiss);
+  });
+  var x = document.getElementById('dnafX');
+  if(x) x.addEventListener('click', dismiss);
+  async function doEnable(){
+    if(!window.TLB_push){ hide(); return; }
+    var r = await TLB_push.enable();
+    if(r === 'granted'){
+      track('permission_granted');
+      track('subscribed');
+      lsSet(LS_DONE, '1');
+      try{ localStorage.removeItem(LS_IOS); }catch(e){}
+      showView('done');
+      setTimeout(hide, 4000);
+    } else if(r === 'denied'){
+      showView('blocked');
+    } else {
+      hide();
+    }
+  }
+  var startBtn = document.getElementById('dnafStart');
+  if(startBtn) startBtn.addEventListener('click', function(){
+    track('started');
+    if(iosNeedsInstall){ lsSet(LS_IOS, '1'); showView('iosA'); }
+    else { doEnable(); }
+  });
+  var didIt = document.getElementById('dnafIosDidIt');
+  if(didIt) didIt.addEventListener('click', function(){
+    track('ios_share');
+    track('ios_a2hs');
+    showView('iosB');
+  });
+  var gotIt = document.getElementById('dnafIosGotIt');
+  if(gotIt) gotIt.addEventListener('click', function(){
+    ssSet('tlb_af_guide_done', '1');
+    hide();
+  });
+  var goBtn = document.getElementById('dnafGoEnable');
+  if(goBtn) goBtn.addEventListener('click', function(){
+    track('started');
+    doEnable();
+  });
+  /* Elegibilidad: nunca si ya está suscrito, si descartó hace <30
+     días, si el navegador bloqueó el permiso o si no hay soporte. */
+  var eligible = false, shown = false;
+  (async function(){
+    if(lsGet(LS_DONE)) return;
+    var dis = parseInt(lsGet(LS_DIS) || '0', 10);
+    if(dis && (Date.now() - dis) < DISMISS_MS) return;
+    if(!window.TLB_push) return;
+    var st = await TLB_push.status();
+    if(st === 'granted'){ lsSet(LS_DONE, '1'); return; }
+    if(st === 'denied' || st === 'unsupported') return;
+    eligible = true;
+  })();
+  function maybeShow(){
+    if(shown || !eligible) return;
+    if(ssGet('tlb_af_guide_done')) return;
+    if(document.body.classList.contains('v5-sheet-open')) return;
+    shown = true;
+    track('shown');
+    showView(pendingGo ? 'go' : 'value');
+  }
+  /* Disparo: el miembro abrió el detalle de una jugada (vista de
+     jugada de hoy). Esperamos a que cierre la hoja pa' no pelear
+     con ella, y entonces sale la tarjeta. */
+  document.addEventListener('click', function(e){
+    if(shown || !e.target.closest) return;
+    if(!e.target.closest('[data-v5-open]')) return;
+    var tries = 0;
+    var iv = setInterval(function(){
+      tries++;
+      if(shown || tries > 150){ clearInterval(iv); return; }
+      if(!document.body.classList.contains('v5-sheet-open')){
+        clearInterval(iv);
+        setTimeout(maybeShow, 900);
+      }
+    }, 400);
   });
 })();
 </script>
