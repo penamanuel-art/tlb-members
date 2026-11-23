@@ -3,49 +3,49 @@
 {% block content %}
 <style>
 .led{max-width:760px;margin:0 auto;padding:18px 16px 30px}
-.led-crumb{font-size:.85rem;color:#75829a;margin-bottom:14px}
-.led-crumb a{color:#c7d0dd;text-decoration:none;font-weight:600}
-.led-crumb .sep{margin:0 7px;color:#75829a}
+.led-crumb{font-size:.85rem;color:#9AA1AE;margin-bottom:14px}
+.led-crumb a{color:#9AA1AE;text-decoration:none;font-weight:600}
+.led-crumb .sep{margin:0 7px;color:#9AA1AE}
 .led h1{font-family:'Unbounded',sans-serif;font-weight:800;font-size:2.05rem;line-height:1.12;margin:0 0 10px;color:#fff}
-.led h1 .mint{color:#60a5fa}
+.led h1 .mint{color:#1AE099}
 .led .sub{font-size:1.06rem;font-weight:700;color:#fff;margin:0 0 12px;line-height:1.45}
-.led .intro{color:#c7d0dd;font-size:.95rem;line-height:1.65;margin:0 0 14px}
-.led .countline{color:#c7d0dd;font-size:.95rem;margin:0 0 6px}
+.led .intro{color:#9AA1AE;font-size:.95rem;line-height:1.65;margin:0 0 14px}
+.led .countline{color:#9AA1AE;font-size:.95rem;margin:0 0 6px}
 .led .countline b{color:#fff}
-.led .career{color:#60a5fa;font-weight:700;font-size:.95rem;text-decoration:none;display:inline-block;margin-bottom:8px}
-.led .flabel{font-size:.72rem;letter-spacing:2.5px;color:#75829a;font-weight:700;margin:16px 0 8px}
+.led .career{color:#1AE099;font-weight:700;font-size:.95rem;text-decoration:none;display:inline-block;margin-bottom:8px}
+.led .flabel{font-size:.72rem;letter-spacing:2.5px;color:#9AA1AE;font-weight:700;margin:16px 0 8px}
 .led .pills{display:flex;flex-wrap:wrap;gap:8px}
-.led .pill{border:1px solid #1d3358;background:#0a1220;color:#c7d0dd;border-radius:999px;padding:9px 16px;font-size:.9rem;font-weight:700;cursor:pointer;font-family:inherit}
-.led .pill .n{color:#75829a;font-weight:700;margin-left:5px}
-.led .pill.on{border-color:#60a5fa;color:#60a5fa;background:rgba(96,165,250,.10)}
-.led .pill.on .n{color:#60a5fa}
-.led .qa{background:rgba(96,165,250,.06);border-left:4px solid #60a5fa;border-radius:10px;padding:16px 16px 12px;margin:20px 0 6px}
-.led .qa .t{font-size:.72rem;letter-spacing:2.5px;color:#75829a;font-weight:700;margin-bottom:8px}
-.led .qa p{color:#c7d0dd;font-size:.97rem;line-height:1.65;margin:0 0 10px}
-.led .qa .by{color:#75829a;font-size:.86rem;line-height:1.55}
-.led-card{display:flex;gap:13px;background:linear-gradient(160deg,#0a1220,#0a1220);border:1px solid #1d3358;border-radius:14px;padding:13px;margin-top:12px}
-.led-thumb{flex:0 0 auto;width:88px;height:88px;border-radius:10px;overflow:hidden;background:#05070d;border:1px solid #1d3358;display:block}
+.led .pill{border:1px solid #2A2E3A;background:#1D2029;color:#9AA1AE;border-radius:999px;padding:9px 16px;font-size:.9rem;font-weight:700;cursor:pointer;font-family:inherit}
+.led .pill .n{color:#9AA1AE;font-weight:700;margin-left:5px}
+.led .pill.on{border-color:#1AE099;color:#1AE099;background:rgba(26,224,153,.10)}
+.led .pill.on .n{color:#1AE099}
+.led .qa{background:rgba(26,224,153,.06);border-left:4px solid #1AE099;border-radius:10px;padding:16px 16px 12px;margin:20px 0 6px}
+.led .qa .t{font-size:.72rem;letter-spacing:2.5px;color:#9AA1AE;font-weight:700;margin-bottom:8px}
+.led .qa p{color:#9AA1AE;font-size:.97rem;line-height:1.65;margin:0 0 10px}
+.led .qa .by{color:#9AA1AE;font-size:.86rem;line-height:1.55}
+.led-card{display:flex;gap:13px;background:linear-gradient(160deg,#1D2029,#1D2029);border:1px solid #2A2E3A;border-radius:14px;padding:13px;margin-top:12px}
+.led-thumb{flex:0 0 auto;width:88px;height:88px;border-radius:10px;overflow:hidden;background:#0C0F16;border:1px solid #2A2E3A;display:block}
 .led-thumb img{width:100%;height:100%;object-fit:cover;display:block}
 .led-thumb.ph{display:flex;align-items:center;justify-content:center}
 .led-thumb.ph img{width:52px;height:52px;object-fit:contain;opacity:.85}
 .led-body{flex:1;min-width:0}
 .led-top{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
 .led-chip{font-size:.68rem;font-weight:800;letter-spacing:1.2px;border-radius:7px;padding:4px 9px;border:1px solid}
-.led-chip.PLATINUM{color:#60a5fa;border-color:rgba(96,165,250,.5);background:rgba(96,165,250,.08)}
+.led-chip.PLATINUM{color:#1AE099;border-color:rgba(26,224,153,.5);background:rgba(26,224,153,.08)}
 .led-chip.GOLD{color:#FBBF24;border-color:rgba(251,191,36,.5);background:rgba(251,191,36,.08)}
-.led-chip.VAULT{color:#c7d0dd;border-color:rgba(199,208,221,.5);background:rgba(199,208,221,.08)}
-.led-meta{color:#75829a;font-size:.86rem;font-weight:600}
+.led-chip.VAULT{color:#9AA1AE;border-color:rgba(199,208,221,.5);background:rgba(199,208,221,.08)}
+.led-meta{color:#9AA1AE;font-size:.86rem;font-weight:600}
 .led-res{margin-left:auto;font-size:.72rem;font-weight:800;letter-spacing:1px;border-radius:999px;padding:5px 12px}
 .led-res.WON{color:#34D399;background:rgba(52,211,153,.13)}
 .led-res.LOST{color:#f87171;background:rgba(248,113,113,.15)}
-.led-res.PUSH,.led-res.VOID{color:#c7d0dd;background:rgba(255,255,255,.08)}
+.led-res.PUSH,.led-res.VOID{color:#9AA1AE;background:rgba(255,255,255,.08)}
 .led-pick{color:#fff;font-weight:800;font-size:1.02rem;margin:7px 0 2px;line-height:1.35}
-.led-score{color:#75829a;font-size:.9rem;margin:0 0 8px}
-.led-bot{display:flex;align-items:baseline;gap:8px;color:#75829a;font-size:.92rem;font-weight:600}
+.led-score{color:#9AA1AE;font-size:.9rem;margin:0 0 8px}
+.led-bot{display:flex;align-items:baseline;gap:8px;color:#9AA1AE;font-size:.92rem;font-weight:600}
 .led-bot .u{margin-left:auto;font-family:'Roboto Mono',monospace;font-weight:700;font-size:1rem}
 .led-bot .u.plus{color:#34D399}.led-bot .u.minus{color:#f87171}
-.led-more{display:block;margin:18px auto 0;background:rgba(96,165,250,.10);border:1px solid rgba(96,165,250,.5);color:#60a5fa;font-weight:800;font-size:.92rem;border-radius:999px;padding:11px 26px;cursor:pointer;font-family:inherit}
-.led-none{color:#75829a;text-align:center;padding:26px 0 6px;font-size:.95rem}
+.led-more{display:block;margin:18px auto 0;background:rgba(26,224,153,.10);border:1px solid rgba(26,224,153,.5);color:#1AE099;font-weight:800;font-size:.92rem;border-radius:999px;padding:11px 26px;cursor:pointer;font-family:inherit}
+.led-none{color:#9AA1AE;text-align:center;padding:26px 0 6px;font-size:.95rem}
 </style>
 <div class="led">
   <div class="led-crumb"><a href="{{ url_for('home') }}">Home</a><span class="sep">›</span><a href="{{ url_for('records') }}">Records</a><span class="sep">›</span>Graded plays ledger</div>
