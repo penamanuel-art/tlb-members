@@ -639,6 +639,7 @@ body .dn-hello .dn-quickbtn{margin-top:0}
   .dn-tb-text b{color:#f2f5fb;font-weight:700}
   .dn-tb-btn{flex:0 0 auto;background:#60a5fa;color:#051630;border:0;border-radius:10px;padding:9px 15px;font-size:14px;font-weight:700;cursor:pointer}
   .dn-tb-x{flex:0 0 auto;width:36px;height:36px;display:flex;align-items:center;justify-content:center;background:#0c1425;border:1px solid #1d3358;border-radius:10px;color:#a3b0c6;font-size:15px;cursor:pointer;padding:0}
+  .dn-tb[hidden]{display:none}
   </style>
   <div class="dn-tb" id="dnTourBubble" hidden>
     <span class="dn-tb-ic" aria-hidden="true"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M10 8.4v7.2L16.2 12z" fill="#60a5fa" stroke="none"/></svg></span>
@@ -647,10 +648,10 @@ body .dn-hello .dn-quickbtn{margin-top:0}
     <button class="dn-tb-x" type="button" aria-label="Dismiss" onclick="dnTbOff()">&#10005;</button>
   </div>
   <script>
-  function dnTbGo(){var b=document.getElementById('dnTourBubble');if(b)b.hidden=true;if(window.tstStartTour)window.tstStartTour();}
-  function dnTbOff(){try{localStorage.setItem('tst_bubble_off_v1','1');}catch(e){}var b=document.getElementById('dnTourBubble');if(b)b.hidden=true;}
+  function dnTbGo(){var b=document.getElementById('dnTourBubble');if(b){b.hidden=true;b.style.display='none';}if(window.tstStartTour)window.tstStartTour();}
+  function dnTbOff(){try{localStorage.setItem('tst_bubble_off_v1','1');}catch(e){}var b=document.getElementById('dnTourBubble');if(b){b.hidden=true;b.style.display='none';}}
   (function(){var force=/[?&](bubble|alertas)=1/.test(location.search);var done=false,off=false;try{if(/[?&]bubble=reset/.test(location.search)){localStorage.removeItem('tst_bubble_off_v1');}done=!!localStorage.getItem('tst_tour_done_v1');off=!!localStorage.getItem('tst_bubble_off_v1');}catch(e){}
-  if(!off&&(force||!done)){var b=document.getElementById('dnTourBubble');if(b)b.hidden=false;}})();
+  if(!off&&(force||!done)){var b=document.getElementById('dnTourBubble');if(b){b.hidden=false;b.style.display='';}}})();
   </script>
 
 
