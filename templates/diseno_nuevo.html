@@ -423,7 +423,7 @@ fbq('track', 'PageView');
 
   /* Barra inferior */
   .dn-tabs{position:fixed;left:0;right:0;bottom:0;z-index:60;background:var(--bg);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
-  .dn-tabs-in{max-width:640px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr)}
+  .dn-tabs-in{max-width:640px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr)}
   .dn-tab{display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px 0 11px;color:#7C8698;font-size:13.5px;font-weight:500}
   .dn-tab svg{display:block}
   .dn-tab.on{color:var(--acc)}
@@ -1079,7 +1079,7 @@ function dnHotClose(){
   <div class="dn-tabs-in">
     <a class="dn-tab on" href="{{ url_for('home') }}">
       <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 10.8 12 3.5l8.5 7.3"/><path d="M5.5 9.5V20h13V9.5"/></svg>
-      Home<span class="dn-pip"></span>
+      Today<span class="dn-pip"></span>
     </a>
     <a class="dn-tab" href="{{ url_for('game_center') }}">
       <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg>
@@ -1089,9 +1089,13 @@ function dnHotClose(){
       <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2.2"/><circle cx="10" cy="17" r="2.2"/></svg>
       Tools<span class="dn-pip"></span>
     </a>
+    <a class="dn-tab" href="{{ url_for('home') }}">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2.5 2.5 0 0 0 0 5v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2.5 2.5 0 0 0 0-5Z"/><path d="M13 5v2M13 11v2M13 17v2"/></svg>
+      Picks<span class="dn-pip"></span>
+    </a>
     <a class="dn-tab" href="{{ url_for('tracker_plays') }}">
       <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M7 14l4-5 3.5 3L18 7"/></svg>
-      Tracker<span class="dn-pip"></span>
+      My Bets<span class="dn-pip"></span>
     </a>
   </div>
 </nav>
