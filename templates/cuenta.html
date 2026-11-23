@@ -9,19 +9,19 @@
 .acct-sub{font-size:14px;color:#75829a;margin-bottom:16px;}
 .acct-tabs{display:flex;flex-wrap:wrap;gap:2px 18px;border-bottom:1px solid #1e2a3a;margin-bottom:18px;}
 .acct-tab{padding:10px 2px;font-size:15px;color:#75829a;cursor:pointer;background:none;border:none;border-bottom:2px solid transparent;font-family:inherit;}
-.acct-tab.on{color:#fff;border-bottom:2px solid #22c55e;font-weight:700;}
+.acct-tab.on{color:#fff;border-bottom:2px solid #60a5fa;font-weight:700;}
 .acct-pane{display:none;}
 .acct-pane.on{display:block;}
 .acct-card{background:linear-gradient(155deg,#0c1425,#0a1220 60%,#070b14);border:1px solid #0a1220;border-radius:16px;padding:18px;margin-bottom:16px;}
 .acct-k{font-size:12px;letter-spacing:1.5px;color:#75829a;margin:0 0 12px;font-weight:700;}
 .acct-input{width:100%;box-sizing:border-box;background:#070b14;border:1px solid #0c1425;border-radius:12px;padding:13px 14px;font-size:15px;color:#fff;margin-bottom:14px;font-family:inherit;}
-.acct-btn{display:inline-block;background:#22c55e;color:#06240f;font-weight:800;font-size:15px;padding:12px 22px;border-radius:12px;border:none;cursor:pointer;text-decoration:none;text-align:center;}
+.acct-btn{display:inline-block;background:#60a5fa;color:#051630;font-weight:800;font-size:15px;padding:12px 22px;border-radius:12px;border:none;cursor:pointer;text-decoration:none;text-align:center;}
 .acct-btn-danger{display:block;width:100%;box-sizing:border-box;background:rgba(220,38,38,.16);border:1px solid #b91c1c;color:#f87171;font-weight:800;font-size:16px;min-height:46px;padding:13px 22px;border-radius:12px;cursor:pointer;text-decoration:none;text-align:center;font-family:inherit;}
 .acct-btn-block{display:block;width:100%;box-sizing:border-box;}
 .acct-badge{display:inline-block;background:rgba(59,130,246,.15);color:#7db4ff;font-weight:800;font-size:13px;letter-spacing:1px;padding:7px 16px;border-radius:999px;}
 .acct-badge-gold{display:inline-block;background:rgba(201,162,39,.15);color:#e3b93c;font-weight:800;font-size:13px;letter-spacing:1px;padding:7px 16px;border-radius:999px;}
 .acct-check{display:flex;align-items:center;gap:10px;background:#070b14;border:1px solid #0c1425;border-radius:12px;padding:12px 14px;font-size:15px;color:#a3b0c6;cursor:pointer;}
-.acct-check input{width:20px;height:20px;accent-color:#22c55e;flex:none;}
+.acct-check input{width:20px;height:20px;accent-color:#60a5fa;flex:none;}
 .acct-grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
 .acct-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #0a1220;font-size:15px;}
 .acct-row:last-child{border-bottom:none;}
@@ -55,12 +55,12 @@
     {% if past_due %}<span class="acct-badge" style="background:rgba(220,38,38,.18);color:#f87171;">PAST DUE</span>{% elif platinum %}<span class="acct-badge">PLATINUM</span>{% else %}<span class="acct-badge-gold">SHARP FREE</span>{% endif %}
     <p class="acct-k" style="margin-top:18px;">WHAT YOU HAVE ACCESS TO</p>
     {% if platinum %}
-    <p style="font-size:15px;color:#a3b0c6;margin:4px 0;"><span style="color:#22c55e;">●</span>&nbsp; Platinum Plays — every official play, every day</p>
-    <p style="font-size:15px;color:#a3b0c6;margin:4px 0;"><span style="color:#22c55e;">●</span>&nbsp; EV Board, Parlay Builder &amp; Brain</p>
-    <p style="font-size:15px;color:#a3b0c6;margin:4px 0;"><span style="color:#22c55e;">●</span>&nbsp; Sharp Free Plays &amp; full record</p>
+    <p style="font-size:15px;color:#a3b0c6;margin:4px 0;"><span style="color:#60a5fa;">●</span>&nbsp; Platinum Plays — every official play, every day</p>
+    <p style="font-size:15px;color:#a3b0c6;margin:4px 0;"><span style="color:#60a5fa;">●</span>&nbsp; EV Board, Parlay Builder &amp; Brain</p>
+    <p style="font-size:15px;color:#a3b0c6;margin:4px 0;"><span style="color:#60a5fa;">●</span>&nbsp; Sharp Free Plays &amp; full record</p>
     {% else %}
-    <p style="font-size:15px;color:#a3b0c6;margin:4px 0;"><span style="color:#22c55e;">●</span>&nbsp; Sharp Free Plays — free picks every day</p>
-    <p style="font-size:15px;color:#a3b0c6;margin:4px 0;"><span style="color:#22c55e;">●</span>&nbsp; Full record &amp; Academy</p>
+    <p style="font-size:15px;color:#a3b0c6;margin:4px 0;"><span style="color:#60a5fa;">●</span>&nbsp; Sharp Free Plays — free picks every day</p>
+    <p style="font-size:15px;color:#a3b0c6;margin:4px 0;"><span style="color:#60a5fa;">●</span>&nbsp; Full record &amp; Academy</p>
     {% endif %}
     {% if member_since %}<p class="acct-muted" style="margin-top:12px;">Member since {{ member_since }}</p>{% endif %}
   </div>
@@ -81,7 +81,7 @@
 
   <div class="acct-card">
     <p class="acct-k">MANAGE MEMBERSHIP</p>
-    <p class="acct-muted" style="margin:0;">Your plan and cancellation live in one place. <a href="{{ url_for('cuenta') }}?tab=membership" style="color:#4ade80;font-weight:700;text-decoration:none;">Manage membership →</a></p>
+    <p class="acct-muted" style="margin:0;">Your plan and cancellation live in one place. <a href="{{ url_for('cuenta') }}?tab=membership" style="color:#60a5fa;font-weight:700;text-decoration:none;">Manage membership →</a></p>
   </div>
 
   <div class="acct-card">
