@@ -311,7 +311,7 @@ fbq('track', 'PageView');
   .dn-al-push.off svg{color:var(--acc)}
   /* Flujo de activación de alertas (2026-11-22): tarjeta suave que solo
      sale tras ver una jugada; valor primero, pasos iPhone, sin insistir. */
-  .dnaf{position:fixed;left:12px;right:12px;bottom:calc(84px + env(safe-area-inset-bottom));z-index:290;max-width:560px;margin:0 auto;background:linear-gradient(180deg,#0d1730,var(--panel));border:1px solid var(--accline);border-radius:18px;padding:18px 18px 16px;box-shadow:0 18px 50px rgba(0,0,0,.55)}
+  .dnaf{position:fixed;left:12px;right:12px;bottom:calc(84px + env(safe-area-inset-bottom));z-index:290;max-width:560px;margin:0 auto;background:linear-gradient(180deg,#0d1730,var(--panel));border:1px solid var(--accline);border-radius:18px;padding:18px 18px 16px;box-shadow:0 18px 50px rgba(0,0,0,.55);max-height:calc(100dvh - 108px);overflow-y:auto;-webkit-overflow-scrolling:touch}
   .dnaf[hidden]{display:none}
   /* La tarjeta del flujo usa la familia exacta del acento del sitio
      (#60a5fa); las variables globales --accbg/--accline son de un azul
@@ -333,7 +333,7 @@ fbq('track', 'PageView');
      dos bloques dibujados en CSS puro — barra de Safari con el icono
      Share resaltado y menú de compartir con la fila de instalación
      resaltada. Solo paleta azul del sitio. */
-  .dnaf.inline{position:relative;left:auto;right:auto;bottom:auto;z-index:auto;max-width:none;margin:0 0 22px;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+  .dnaf.inline{position:relative;left:auto;right:auto;bottom:auto;z-index:auto;max-width:none;margin:0 0 22px;box-shadow:0 10px 30px rgba(0,0,0,.35);max-height:none;overflow:visible}
   .dnaf-guide-head{display:flex;gap:11px;align-items:flex-start;margin:0 26px 10px 0}
   .dnaf-guide-head h3{margin:2px 0 0;font-weight:600}
   .dnaf-guide-logo{flex:0 0 auto;width:40px;height:40px;border-radius:11px;background:var(--panel2);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;overflow:hidden}
@@ -621,8 +621,9 @@ body .dn-hello .dn-quickbtn{margin-top:0}
        corta invitandolo; el boton arranca el tour de una vez. Se
        apaga sola cuando el tour termina o se salta (la marca
        tst_tour_done_v1 que ya pone el propio tour) o con la X
-       (marca propia tst_bubble_off_v1). ?bubble=1 la fuerza pa'
-       que Alex la pueda ver en su Dashboard. -->
+       (marca propia tst_bubble_off_v1). ?bubble=1 — y la previa
+       completa ?alertas=1 — la fuerzan pa' que Alex la pueda ver
+       en su Dashboard tal cual le sale a un miembro nuevo. -->
   <style>
   .dn-tb{position:relative;margin:0 0 22px;background:linear-gradient(180deg,#1D2029,#181B23);border:1px solid #1d3358;border-radius:20px;padding:18px 16px}
   .dn-tb-title{font-size:20px;font-weight:800;color:#fff;margin:0 28px 6px 0}
@@ -639,7 +640,7 @@ body .dn-hello .dn-quickbtn{margin-top:0}
   <script>
   function dnTbGo(){var b=document.getElementById('dnTourBubble');if(b)b.hidden=true;if(window.tstStartTour)window.tstStartTour();}
   function dnTbOff(){try{localStorage.setItem('tst_bubble_off_v1','1');}catch(e){}var b=document.getElementById('dnTourBubble');if(b)b.hidden=true;}
-  (function(){var force=/[?&]bubble=1/.test(location.search);var done=false,off=false;try{done=!!localStorage.getItem('tst_tour_done_v1');off=!!localStorage.getItem('tst_bubble_off_v1');}catch(e){}
+  (function(){var force=/[?&](bubble|alertas)=1/.test(location.search);var done=false,off=false;try{done=!!localStorage.getItem('tst_tour_done_v1');off=!!localStorage.getItem('tst_bubble_off_v1');}catch(e){}
   if(force||(!done&&!off)){var b=document.getElementById('dnTourBubble');if(b)b.hidden=false;}})();
   </script>
 
@@ -1334,6 +1335,13 @@ function dnHotClose(){
     return 'value';
   }
   function showInitial(){
+    /* La GUÍA (iosA) sale SIEMPRE montada en línea, en el flujo de
+       la página, desde cualquier disparo (primera entrada, previa o
+       tras ver una jugada): como tarjeta fija anclada abajo es más
+       alta que la pantalla y se le cortaba el principio sin forma de
+       llegar a él (reporte de Alex 2026-11-23: «se corta, se esconde
+       información»). En línea se ve completa, con scroll normal. */
+    if(initialView() === 'iosA') mountInline();
     if(iosNeedsInstall && !PREVIEW) lsSet(LS_IOS, '1');
     showView(initialView());
   }
@@ -1368,7 +1376,7 @@ function dnHotClose(){
   var startBtn = document.getElementById('dnafStart');
   if(startBtn) startBtn.addEventListener('click', function(){
     track('started');
-    if(iosNeedsInstall){ lsSet(LS_IOS, '1'); showView('iosA'); }
+    if(iosNeedsInstall){ lsSet(LS_IOS, '1'); mountInline(); showView('iosA'); }
     else { doEnable(); }
   });
   var didIt = document.getElementById('dnafIosDidIt');
