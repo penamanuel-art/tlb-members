@@ -19788,9 +19788,11 @@ ALERT_FUNNEL_DEVICES = ("ios", "ios-standalone", "android", "desktop", "other")
 
 
 def _ensure_alert_funnel(db):
+    _id_col = ("id SERIAL PRIMARY KEY" if getattr(db, "use_pg", False)
+               else "id INTEGER PRIMARY KEY AUTOINCREMENT")
     db.execute(
         "CREATE TABLE IF NOT EXISTS alert_funnel_events ("
-        "id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER, "
+        f"{_id_col}, user_id INTEGER, "
         "step TEXT, device_class TEXT, created_at TEXT)")
     db.execute(
         "CREATE INDEX IF NOT EXISTS idx_alert_funnel_step "
