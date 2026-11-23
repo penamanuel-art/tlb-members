@@ -58,7 +58,7 @@
   .dn-hello h1{font-family:var(--fdisp);font-size:34.3px;font-weight:800;line-height:1.12;margin:0;color:var(--txt)}
   .dn-hello h1 .dn-name{font-size:inherit}
   .dn-hello h1 .dn-dot{color:var(--acc)}
-  .dn-lvl{flex:none;display:inline-flex;align-items:center;border-radius:999px;padding:5.4px 11.8px;font-size:12.3px;font-weight:800;letter-spacing:.09em;border:1px solid var(--accline);background:var(--accbg);color:var(--acc)}
+  .dn-lvl{flex:none;display:inline-flex;align-items:center;border-radius:999px;padding:3px 9px;font-size:11px;font-weight:600;letter-spacing:.03em;border:1px solid var(--accline);background:var(--accbg);color:var(--acc)}
   .dn-lvl.plat{border-color:var(--goldline);background:var(--goldbg);color:var(--gold)}
   .dn-hello .dn-quickbtn{margin-left:0;margin-top:4px}
   .dn-hero-date{font-family:var(--fmono);font-weight:600;font-size:11.5px;letter-spacing:.1em}
@@ -536,7 +536,7 @@ body .dn-hello .dn-quickbtn{margin-top:0}
   <section class="dn-hello">
     <div class="dn-hello-row">
       <h1>{{ saludo }}, <span class="dn-name">{{ dn_nombre or 'Member' }}</span><span class="dn-dot">.</span></h1>
-      {% if miembro_platinum %}<span class="dn-lvl plat">PLATINUM</span>{% else %}<span class="dn-lvl">FREE</span>{% endif %}
+      {% if miembro_platinum %}<span class="dn-lvl plat">Platinum membership</span>{% else %}<span class="dn-lvl">Free membership</span>{% endif %}
     </div>
     <button class="dn-quickbtn" type="button" id="dnQuickBtn" aria-haspopup="true"><span style="font-size:16px;line-height:1">+</span> Quick Links</button>
   </section>
