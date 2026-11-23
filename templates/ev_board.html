@@ -9,7 +9,7 @@
 .cmp-sub{font-size:12.5px;font-weight:400;color:#75829a;margin:0 0 14px;line-height:1.5}
 .cmp-card{position:relative;background:linear-gradient(180deg,#070b14,#05070d);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:13px 15px 11px;margin:0 0 12px;overflow:hidden}
 .cmp-card.is-stale{opacity:.58}
-.cmp-edge{position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,#f3cd6b,#b98c1e)}
+.cmp-edge{position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,#FBBF24,#FBBF24)}
 .cmp-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .cmp-liga{font-size:10px;font-weight:600;letter-spacing:1.4px;color:#f2f5fb;border:1px solid rgba(255,255,255,.18);border-radius:99px;padding:3px 9px}
 .cmp-time{margin-left:auto;font-size:12px;font-weight:400;color:#75829a}
@@ -21,8 +21,8 @@
 .cmp-team + .cmp-team{border-top:1px solid rgba(255,255,255,.06)}
 .cmp-trow{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
 .cmp-tname{font-size:13.5px;font-weight:500;color:#fff}
-.cmp-posted{font-size:11px;font-weight:600;color:#e8c766;border:1px solid rgba(232,199,102,.55);border-radius:99px;padding:2.5px 9px}
-.cmp-ourpick{font-size:10px;font-weight:700;letter-spacing:1.2px;color:#05070d;background:linear-gradient(135deg,#f3cd6b,#d9a92f);border-radius:99px;padding:3px 8px}
+.cmp-posted{font-size:11px;font-weight:600;color:#FBBF24;border:1px solid rgba(251,191,36,.55);border-radius:99px;padding:2.5px 9px}
+.cmp-ourpick{font-size:10px;font-weight:700;letter-spacing:1.2px;color:#05070d;background:linear-gradient(135deg,#FBBF24,#FBBF24);border-radius:99px;padding:3px 8px}
 .cmp-best{margin-left:auto;text-align:right}
 .cmp-best-p{font-size:17px;font-weight:600;color:#60a5fa;line-height:1}
 .cmp-best-b{font-size:11px;font-weight:400;color:#75829a;margin-top:2px}
@@ -31,7 +31,7 @@
 .cmp-chips{display:flex;gap:7px;margin-top:8px}
 .cmp-chip{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;background:#0a1220;border:1px solid rgba(255,255,255,.09);border-radius:10px;padding:7px 4px;font-size:13px;font-weight:500;color:#fff}
 .cmp-chip.best{border-color:rgba(96,165,250,.65);background:rgba(96,165,250,.08);color:#60a5fa}
-.cmp-mono{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 4px;border-radius:6px;background:#0d1017;color:#f2f5fb;font-size:10px;font-weight:700;letter-spacing:.4px}
+.cmp-mono{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 4px;border-radius:6px;background:#05070d;color:#f2f5fb;font-size:10px;font-weight:700;letter-spacing:.4px}
 .cmp-chip.best .cmp-mono{background:rgba(96,165,250,.16);color:#60a5fa}
 .cmp-all{margin-top:9px}
 .cmp-all summary{list-style:none;cursor:pointer;text-align:center;font-size:12.5px;font-weight:500;color:#f2f5fb;background:#0a1220;border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:8px}
@@ -40,11 +40,11 @@
 .cmp-brow .cb{font-weight:400;color:#f2f5fb}
 .cmp-brow .cp{font-weight:600;color:#fff}
 .cmp-brow.best .cb,.cmp-brow.best .cp{color:#60a5fa}
-.cmp-novig{display:block;text-align:center;margin-top:9px;font-size:12.5px;font-weight:600;color:#e8c766;text-decoration:none;border:1px solid rgba(232,199,102,.45);border-radius:10px;padding:8px}
+.cmp-novig{display:block;text-align:center;margin-top:9px;font-size:12.5px;font-weight:600;color:#FBBF24;text-decoration:none;border:1px solid rgba(251,191,36,.45);border-radius:10px;padding:8px}
 .cmp-foot{display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(255,255,255,.07);margin-top:10px;padding-top:8px}
 .cmp-foot .k{font-size:12.5px;font-weight:400;color:#75829a}
 .cmp-foot .v{font-size:13px;font-weight:600;color:#60a5fa}
-.cmp-empty{background:#12151d;border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:22px 18px;font-size:13.5px;font-weight:400;color:#9aa3b8;text-align:center;line-height:1.6}
+.cmp-empty{background:#0a1220;border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:22px 18px;font-size:13.5px;font-weight:400;color:#75829a;text-align:center;line-height:1.6}
 /* --- Edges (tablero +EV) --- */
 .ev-pick{display:flex;align-items:flex-start;gap:9px;padding:10px 0 2px}
 .ev-team{font-size:16.5px;font-weight:600;color:#fff;letter-spacing:-.2px;line-height:1.25}
@@ -52,12 +52,12 @@
 .ev-right{margin-left:auto;text-align:right;flex-shrink:0}
 .ev-price{font-size:19px;font-weight:700;color:#60a5fa;line-height:1}
 .ev-book{font-size:11px;font-weight:400;color:#75829a;margin-top:3px}
-.ev-pill{display:inline-block;font-size:11.5px;font-weight:700;color:#05070d;background:linear-gradient(135deg,#60a5fa,#17b985);border-radius:99px;padding:3px 10px;margin-top:7px}
+.ev-pill{display:inline-block;font-size:11.5px;font-weight:700;color:#05070d;background:#60a5fa;border-radius:99px;padding:3px 10px;margin-top:7px}
 .ev-fair{font-size:11.5px;font-weight:400;color:#75829a;margin-top:6px}
 .ev-fair b{color:#f2f5fb;font-weight:600}
-.ev-live{font-size:10px;font-weight:700;letter-spacing:1px;color:#ff6b6b;border:1px solid rgba(255,107,107,.5);border-radius:99px;padding:3px 8px}
-.ev-stale{font-size:10px;font-weight:700;letter-spacing:1px;color:#e8c766;border:1px solid rgba(232,199,102,.55);border-radius:99px;padding:3px 8px;background:rgba(232,199,102,.08)}
-.ev-sharp{font-size:10px;font-weight:700;letter-spacing:.6px;color:#e8c766;border:1px solid rgba(232,199,102,.55);border-radius:99px;padding:3px 8px}
+.ev-live{font-size:10px;font-weight:700;letter-spacing:1px;color:#f87171;border:1px solid rgba(248,113,113,.5);border-radius:99px;padding:3px 8px}
+.ev-stale{font-size:10px;font-weight:700;letter-spacing:1px;color:#FBBF24;border:1px solid rgba(251,191,36,.55);border-radius:99px;padding:3px 8px;background:rgba(251,191,36,.08)}
+.ev-sharp{font-size:10px;font-weight:700;letter-spacing:.6px;color:#FBBF24;border:1px solid rgba(251,191,36,.55);border-radius:99px;padding:3px 8px}
 .ev-note{font-size:11.5px;font-weight:400;color:#75829a;text-align:center;line-height:1.55;margin:2px 0 16px}
 </style>
 <div class="cmp-wrap">
