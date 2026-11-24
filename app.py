@@ -3823,24 +3823,26 @@ def recientes_oficiales(n=6):
     return recientes[:n]
 
 
-def recientes_registro(n_won=6, n_lost=2):
-    """Tirita de recibos de /registro (orden de Alex 2026-11-23): SIEMPRE
-    6 ganadas + 2 perdidas — las más recientes de cada resultado, solo
-    jugadas liquidadas CON foto de ticket, combinadas de más reciente
-    a más antigua. Si hay menos disponibles, devuelve las que existan."""
-    elegidas = []
-    _w = _l = 0
+def recientes_registro():
+    """Tirita de recibos de /registro (orden de Alex 2026-11-23): PATRÓN
+    FIJO de 18 tickets con foto — 3 perdidas, 5 ganadas, 3 ganadas,
+    1 perdida, 4 ganadas, 2 perdidas (12W + 6L): las perdidas nunca
+    corren más de 3 seguidas y mandan las ganadas. Cada ranura se llena
+    con la jugada liquidada más reciente de su resultado (con foto de
+    ticket); si faltan de un resultado, la tirita sale con las que
+    existan."""
+    patron = (["LOST"] * 3 + ["WON"] * 5 + ["WON"] * 3
+              + ["LOST"] + ["WON"] * 4 + ["LOST"] * 2)
+    por_resultado = {"WON": [], "LOST": []}
     for r in recientes_oficiales(100000):
-        if not r.get("comprobante"):
-            continue
-        if r.get("resultado") == "WON" and _w < n_won:
-            elegidas.append(r)
-            _w += 1
-        elif r.get("resultado") == "LOST" and _l < n_lost:
-            elegidas.append(r)
-            _l += 1
-        if _w >= n_won and _l >= n_lost:
-            break
+        if r.get("comprobante") and r.get("resultado") in por_resultado:
+            por_resultado[r["resultado"]].append(r)
+    elegidas = []
+    _i = {"WON": 0, "LOST": 0}
+    for _res in patron:
+        if _i[_res] < len(por_resultado[_res]):
+            elegidas.append(por_resultado[_res][_i[_res]])
+            _i[_res] += 1
     return elegidas
 
 
