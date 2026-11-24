@@ -686,6 +686,22 @@ def record_checkin(db, user_id: int):
             (user_id, today_iso(), user_id),
         )
     db.commit()
+    # REACTIVACIÓN (2026-11-24, workflow de exclusión por inactividad):
+    # si el miembro estaba marcado 'inactive'/'excluded_inactive' y
+    # volvió al Dashboard, su estado regresa a 'active' solo. SOLO
+    # estados de inactividad: una baja de emails (emails_bloqueados)
+    # jamás se toca ni se resuscribe desde aquí. Fail-silent: nunca
+    # puede romper la navegación del miembro.
+    try:
+        db.execute(
+            "UPDATE users SET email_status = 'active', "
+            "marketing_suppressed_at = NULL, inactivity_reason = NULL "
+            "WHERE id = ? AND email_status IN ('inactive', 'excluded_inactive')",
+            (user_id,),
+        )
+        db.commit()
+    except Exception:
+        pass
 
 
 def checkin_streak(db, user_id: int) -> int:
@@ -5922,6 +5938,20 @@ def migrate_db():
         # postal del perfil + perfil de apuestas (estado y casas).
         for _col in ["addr_line1", "addr_line2", "addr_city", "addr_state",
                      "addr_zip", "addr_country", "bet_state", "bet_books"]:
+            if _col not in cols:
+                pending.append(f"ALTER TABLE users ADD COLUMN {_col} TEXT")
+        # Exclusión de emails por inactividad (2026-11-24, política de
+        # Alex: excluir del marketing ≠ borrar la cuenta — el miembro
+        # conserva su cuenta y su Dashboard). email_status: NULL/'active'
+        # = normal · 'inactive' = marcado inactivo (para el promo) ·
+        # 'excluded_inactive' = fuera de la lista de marketing (día 30).
+        # marketing_suppressed_at = cuándo se aplicó el estado;
+        # inactivity_reason = motivo legible; last_email_click_at =
+        # último clic en un email según Resend. La actividad de
+        # Dashboard/login NO se duplica en columnas: se reusa de
+        # member_activity + checkins (la vara de lifecycle-dry-run).
+        for _col in ["email_status", "marketing_suppressed_at",
+                     "inactivity_reason", "last_email_click_at"]:
             if _col not in cols:
                 pending.append(f"ALTER TABLE users ADD COLUMN {_col} TEXT")
         for stmt in pending:
@@ -13323,13 +13353,19 @@ def admin_api_members_emails():
     # la fecha pagada. Esta es la audiencia central: de aquí salen el
     # email diario, la Masterclass, resultados 11 AM y motivación.
     rows = db.execute(
-        "SELECT email, nombre, platinum_unlocked, phone, sms_optin, lang, platinum_trial_ends FROM users WHERE email IS NOT NULL AND email != '' AND email_verified = 1 AND cancel_requested_at IS NULL"
+        "SELECT email, nombre, platinum_unlocked, phone, sms_optin, lang, platinum_trial_ends, email_status FROM users WHERE email IS NOT NULL AND email != '' AND email_verified = 1 AND cancel_requested_at IS NULL"
     ).fetchall()
     return jsonify([
         {"email": r["email"], "nombre": r["nombre"] or "there",
          "platinum": bool(r["platinum_unlocked"]),
          "phone": r["phone"] or "", "sms_optin": bool(r["sms_optin"]),
          "lang": r["lang"] or "en", "platinum_trial_ends": r["platinum_trial_ends"],
+         # Exclusión por inactividad (2026-11-24): los remitentes de
+         # MARKETING saltan a quien tenga marketing_suppressed = true;
+         # la fila NO sale de la audiencia (los transaccionales y el
+         # resto de consumidores no se afectan).
+         "email_status": r["email_status"] or "active",
+         "marketing_suppressed": (r["email_status"] or "") in ("inactive", "excluded_inactive"),
          "baja_url": _baja_url(r["email"])}
         for r in rows
     ])
@@ -14342,6 +14378,140 @@ def admin_api_bajas():
             "motivo": r["motivo"], "created_at": r["created_at"]}
            for r in rows]
     return jsonify({"bajas": out})
+
+
+@app.route("/admin/api/email-exclusion", methods=["GET"])
+def admin_api_email_exclusion():
+    """Miembros con estado de exclusión de marketing por inactividad
+    (2026-11-24, workflow aprobado por Alex: excluir ≠ borrar — la
+    cuenta y el Dashboard quedan intactos). Fuente del reporte admin
+    del workflow. SOLO LEE. Auth: sesión admin O X-Admin-Key."""
+    if not _admin_api_autorizado():
+        return jsonify({"error": "admin only"}), 403
+    db = get_db()
+    try:
+        rows = db.execute(
+            "SELECT email, nombre, email_status, marketing_suppressed_at, "
+            "inactivity_reason, last_email_click_at FROM users "
+            "WHERE email_status IS NOT NULL AND email_status != 'active' "
+            "ORDER BY marketing_suppressed_at ASC"
+        ).fetchall()
+    except Exception as e:
+        return jsonify({"error": f"users: {e}"}), 500
+    items = [{"email": r["email"], "nombre": r["nombre"],
+              "email_status": r["email_status"],
+              "marketing_suppressed_at": r["marketing_suppressed_at"],
+              "inactivity_reason": r["inactivity_reason"],
+              "last_email_click_at": r["last_email_click_at"]} for r in rows]
+    return jsonify({"ok": True, "total": len(items), "items": items})
+
+
+@app.route("/admin/api/email-exclusion/apply", methods=["POST"])
+def admin_api_email_exclusion_apply():
+    """Aplica estados 'inactive'/'excluded_inactive' del workflow de
+    exclusión por inactividad. GUARDAS DURAS del servidor (aunque el
+    llamador se equivoque, JAMÁS se suprime por inactividad a): cuentas
+    admin/casa, quien tenga acceso Platinum, evidencia de pago en
+    Stripe (stripe_events o ids en users) o pago pendiente (past due).
+    No borra cuentas, no toca suscripciones ni pagos, no toca la lista
+    de supresión global de Resend. Auth: sesión admin O X-Admin-Key."""
+    if not _admin_api_autorizado():
+        return jsonify({"error": "admin only"}), 403
+    data = request.get_json(silent=True) or {}
+    items = data.get("items") or []
+    db = get_db()
+    try:
+        ev_rows = db.execute(
+            "SELECT email FROM stripe_events WHERE email IS NOT NULL AND "
+            "tipo IN ('checkout.session.completed', 'invoice.paid', "
+            "'payment_intent.succeeded')").fetchall()
+        paid_emails = {(r["email"] if isinstance(r, dict) else r[0]).lower()
+                       for r in ev_rows}
+    except Exception:
+        paid_emails = set()
+    protegidos = {"pena.manuel@myyahoo.com", "thesharpteam8@gmail.com",
+                  "system@value.local"}
+    resultados = []
+    for it in items:
+        email = (it.get("email") or "").strip().lower()
+        status = (it.get("status") or "").strip()
+        if not email or status not in ("inactive", "excluded_inactive"):
+            resultados.append({"email": email, "ok": False,
+                               "motivo": "datos inválidos"})
+            continue
+        u = db.execute(
+            "SELECT id, is_admin, platinum_unlocked, stripe_customer_id, "
+            "stripe_subscription_id, stripe_past_due FROM users "
+            "WHERE lower(email) = ?", (email,)).fetchone()
+        if not u:
+            resultados.append({"email": email, "ok": False,
+                               "motivo": "no existe"})
+            continue
+        if u["is_admin"] or email in protegidos:
+            resultados.append({"email": email, "ok": False,
+                               "motivo": "cuenta protegida (admin/casa)"})
+            continue
+        if u["platinum_unlocked"]:
+            resultados.append({"email": email, "ok": False,
+                               "motivo": "tiene acceso Platinum"})
+            continue
+        if u["stripe_customer_id"] or u["stripe_subscription_id"] \
+                or email in paid_emails:
+            resultados.append({"email": email, "ok": False,
+                               "motivo": "evidencia de pago Stripe"})
+            continue
+        if u["stripe_past_due"]:
+            resultados.append({"email": email, "ok": False,
+                               "motivo": "pago pendiente (past due)"})
+            continue
+        db.execute(
+            "UPDATE users SET email_status = ?, "
+            "marketing_suppressed_at = ?, inactivity_reason = ?, "
+            "last_email_click_at = COALESCE(?, last_email_click_at) "
+            "WHERE id = ?",
+            (status, now_iso(), (it.get("reason") or "")[:300],
+             it.get("last_email_click_at"), u["id"]))
+        resultados.append({"email": email, "ok": True, "status": status})
+    db.commit()
+    return jsonify({"ok": True, "resultados": resultados})
+
+
+@app.route("/admin/api/email-exclusion/lift", methods=["POST"])
+def admin_api_email_exclusion_lift():
+    """Levanta la exclusión por inactividad de UN miembro (vuelve a
+    'active'). Lo usa la corrida diaria cuando el miembro muestra señal
+    nueva. JAMÁS resuscribe a un dado de baja: si el correo está en
+    emails_bloqueados, se niega (la resuscripción exige consentimiento
+    explícito del miembro). Auth: sesión admin O X-Admin-Key."""
+    if not _admin_api_autorizado():
+        return jsonify({"error": "admin only"}), 403
+    data = request.get_json(silent=True) or {}
+    email = (data.get("email") or "").strip().lower()
+    if not email:
+        return jsonify({"error": "email required"}), 400
+    db = get_db()
+    _ensure_emails_bloqueados(db)
+    bloq = db.execute(
+        "SELECT email FROM emails_bloqueados WHERE email = ?",
+        (email,)).fetchone()
+    if bloq:
+        return jsonify({"ok": False,
+                        "motivo": "correo dado de baja — no se resuscribe "
+                                  "sin consentimiento explícito"}), 409
+    u = db.execute(
+        "SELECT id, email_status FROM users WHERE lower(email) = ?",
+        (email,)).fetchone()
+    if not u:
+        return jsonify({"ok": False, "motivo": "no existe"}), 404
+    if (u["email_status"] or "") not in ("inactive", "excluded_inactive"):
+        return jsonify({"ok": True, "levantado": False,
+                        "motivo": "no estaba suprimido por inactividad"})
+    db.execute(
+        "UPDATE users SET email_status = 'active', "
+        "marketing_suppressed_at = NULL, inactivity_reason = NULL "
+        "WHERE id = ?", (u["id"],))
+    db.commit()
+    return jsonify({"ok": True, "levantado": True})
 
 
 @app.route("/admin/api/platinum-pagos")
