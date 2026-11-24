@@ -1034,6 +1034,60 @@ def _resend_send(to: str, subject: str, text_body: str, html_body=None) -> tuple
         return False, f"resend falló: {type(e).__name__}: {e}{extra}".strip()
 
 
+# SEGMENTO «VIVOS» DE RESEND (2026-11-24, orden de Alex: «crea una lista
+# de contactos y ahí se van agregando automáticamente los vivos»): al
+# ACTIVAR su cuenta, cada miembro nuevo entra solo al segmento «Vivos»
+# de Resend. Fail-silent total: cualquier error de Resend se traga y
+# JAMÁS rompe la activación. La limpieza diaria reconcilia el segmento
+# contra la base completa (agrega los que falten y quita a los que ya
+# no son miembros), así que un fallo aquí se cura solo al día siguiente.
+_RESEND_VIVOS_SEGMENT_ID = "4b446c9b-6653-4bcd-94e3-1f281716fa7e"
+
+
+def _resend_vivos_add(email: str, nombre: str = "") -> None:
+    try:
+        import urllib.request
+        key = (os.environ.get("RESEND_API_KEY") or "").strip()
+        em = (email or "").strip().lower()
+        if not key or not em:
+            return
+        hdrs = {"Authorization": f"Bearer {key}",
+                "Content-Type": "application/json",
+                # Resend va detrás de Cloudflare: sin UA de navegador
+                # devuelve 403 (error 1010), igual que en _resend_send.
+                "User-Agent": ("Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 "
+                               "like Mac OS X) AppleWebKit/605.1.15"),
+                "Accept": "application/json"}
+        parts = (nombre or "").strip().split(None, 1)
+        payload = {"email": em, "unsubscribed": False}
+        if parts:
+            payload["first_name"] = parts[0]
+            if len(parts) > 1:
+                payload["last_name"] = parts[1]
+        # 1) Crear el contacto global (si ya existe, Resend devuelve
+        # error y se sigue igual: lo que importa es el segmento).
+        try:
+            req = urllib.request.Request(
+                "https://api.resend.com/contacts",
+                data=json.dumps(payload).encode("utf-8"),
+                headers=hdrs, method="POST")
+            urllib.request.urlopen(req, timeout=10).read(500)
+        except Exception:
+            pass
+        # 2) Agregar el contacto al segmento «Vivos».
+        try:
+            req = urllib.request.Request(
+                "https://api.resend.com/segments/"
+                f"{_RESEND_VIVOS_SEGMENT_ID}/contacts",
+                data=json.dumps({"email": em}).encode("utf-8"),
+                headers=hdrs, method="POST")
+            urllib.request.urlopen(req, timeout=10).read(500)
+        except Exception:
+            pass
+    except Exception:
+        pass
+
+
 def _smtp_send(to: str, subject: str, text_body: str, html_body=None,
                from_header=None) -> tuple:
     """Envío clásico por Gmail SMTP (fallback para desarrollo local; en
@@ -8335,6 +8389,9 @@ def activar_cuenta(token):
     session.permanent = True
     _registrar_actividad(uid, "login")
     notify_new_member(nombre, email)
+    # Segmento «Vivos» de Resend (2026-11-24): el miembro nuevo entra
+    # solo a la lista de contactos vivos al activar (fail-silent).
+    _resend_vivos_add(email, nombre)
     # Pedido Alex 2026-10-05: el email de bienvenida llega a TODOS, y desde
     # 2026-10-18 llega al ACTIVAR la cuenta (cuenta real, correo real).
     # Se pasa el token de activación de ESTA cuenta: es el marcador que
