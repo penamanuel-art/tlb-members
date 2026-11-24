@@ -334,12 +334,12 @@ fbq('track', 'PageView');
      dos bloques dibujados en CSS puro — barra de Safari con el icono
      Share resaltado y menú de compartir con la fila de instalación
      resaltada. Solo paleta azul del sitio. */
-  .dnaf.inline{position:relative;left:auto;right:auto;bottom:auto;z-index:auto;max-width:none;margin:0 0 22px;box-shadow:0 10px 30px rgba(0,0,0,.35);max-height:none;overflow:visible;padding:14px 16px 12px}
-  .dnaf-guide-head{display:flex;gap:11px;align-items:flex-start;margin:0 26px 8px 0}
-  .dnaf-guide-head h3{margin:2px 0 0;font-weight:600;font-size:17px}
-  .dnaf-guide-logo{flex:0 0 auto;width:36px;height:36px;border-radius:10px;background:var(--panel2);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;overflow:hidden}
-  .dnaf-guide-logo img{width:30px;height:30px;display:block}
-  .dnaf.inline [data-view="iosA"]>p{font-size:13.5px;line-height:1.35;margin:0 0 9px}
+  .dnaf.inline{position:relative;left:auto;right:auto;bottom:auto;z-index:auto;max-width:none;margin:0 0 22px;box-shadow:0 10px 30px rgba(0,0,0,.35);max-height:none;overflow:visible;border-radius:20px;padding:20px 20px 16px}
+  .dnaf-guide-head{display:flex;gap:14px;align-items:flex-start;margin:0 26px 4px 0}
+  .dnaf-guide-head h3{margin:4px 0 0;font-weight:800;font-size:24px;line-height:1.15}
+  .dnaf-guide-logo{flex:0 0 auto;width:62px;height:62px;border-radius:16px;background:var(--panel2);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;overflow:hidden}
+  .dnaf-guide-logo img{width:52px;height:52px;display:block}
+  .dnaf.inline [data-view="iosA"]>p{font-size:15.5px;line-height:1.45;margin:0 0 14px 76px}
   .dnaf-block{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:8px 10px;margin:0 0 8px}
   .dnaf-block-head{display:flex;gap:10px;align-items:flex-start}
   .dnaf-block-title{font-size:14px;font-weight:600;color:var(--txt);line-height:1.3}
@@ -355,6 +355,19 @@ fbq('track', 'PageView');
   .dnaf-fine{font-size:13px;line-height:1.45;color:var(--mut);margin:0 0 9px}
   .dnaf.inline .dnaf-go{padding:11px 14px}
   .dnaf.inline .dnaf-no{padding:9px 8px}
+  .dnaf.inline .dnaf-block{padding:16px;border-radius:16px;margin:0 0 12px}
+  .dnaf.inline .dnaf-block-head{gap:13px}
+  .dnaf.inline .dnaf-num{width:38px;height:38px;font-size:17px}
+  .dnaf.inline .dnaf-block-title{font-size:19px;font-weight:700}
+  .dnaf.inline .dnaf-block p{font-size:15px;line-height:1.45;margin:2px 0 0}
+  .dnaf.inline .dnaf-bar{padding:10px 14px;border-radius:14px;margin-top:12px}
+  .dnaf.inline .dnaf-slot{width:26px;height:26px;border-radius:8px}
+  .dnaf.inline .dnaf-slot.share{width:40px;height:40px;border-width:2px;border-radius:12px}
+  .dnaf.inline .dnaf-slot.share svg{width:20px;height:20px}
+  .dnaf.inline .dnaf-sheet{margin-top:12px;border-radius:14px}
+  .dnaf.inline .dnaf-srow{padding:13px 14px;font-size:16px}
+  .dnaf.inline .dnaf-fine{font-size:15px;margin:2px 0 12px}
+  .dnaf-share-ic{display:inline-block;vertical-align:-2px;color:var(--acc);margin:0 1px}
   .dn-sheet-form{margin-top:18px;display:flex;flex-direction:column;gap:12px}
   .dn-sheet-input{width:100%;box-sizing:border-box;background:#10131A;border:1px solid var(--line);border-radius:12px;color:var(--txt);font-size:17.1px;padding:14px;font-family:inherit}
   .dn-sheet-save{background:#10CC87;color:#0C0F16;border:0;border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit}
@@ -527,7 +540,7 @@ fbq('track', 'PageView');
   body .tstc-bubble:after{border-top-color:#1D2029}
   body .tstc-bubble.below:after{border-bottom-color:#1D2029}
   /* Burbuja del tour y el tour mismo, en cian editorial */
-  body .dn-tb-btn{background:#10CC87;color:#0C0F16}
+  body .dn-tb-btn{background:transparent;color:#1AE099}
   body #tourRing{border-color:#1AE099;box-shadow:0 0 0 3px rgba(26,224,153,.25),0 0 24px rgba(26,224,153,.35)}
   body #tourCard{background:#1D2029;border-color:#2A2E3A}
   body #tourHead{color:#1AE099}
@@ -663,16 +676,16 @@ body .dn-hello .dn-quickbtn{margin-top:0}
        se hubiera cerrado con la X); ?bubble=reset borra la marca
        antes de evaluar, como escape pa' futuras previas. -->
   <style>
-  .dn-tb{display:flex;align-items:center;gap:10px;margin:0 0 22px;background:#1D2029;border:1px solid #2A2E3A;border-radius:14px;padding:10px 12px}
+  .dn-tb{display:flex;align-items:center;gap:12px;margin:0 0 22px;background:linear-gradient(180deg,rgba(16,204,135,.10),rgba(16,204,135,.04)),#1D2029;border:1px solid rgba(26,224,153,.45);border-radius:16px;padding:14px}
   .dn-tb-ic{flex:0 0 auto;display:flex;align-items:center}
-  .dn-tb-text{flex:1 1 auto;min-width:0;font-size:13.5px;line-height:1.35;color:#9AA1AE;margin:0}
+  .dn-tb-text{flex:1 1 auto;min-width:0;font-size:15.5px;line-height:1.35;color:#D7DCE6;margin:0}
   .dn-tb-text b{color:#f2f5fb;font-weight:700}
-  .dn-tb-btn{flex:0 0 auto;background:#10CC87;color:#0C0F16;border:0;border-radius:10px;padding:9px 15px;font-size:14px;font-weight:700;cursor:pointer}
-  .dn-tb-x{flex:0 0 auto;width:36px;height:36px;display:flex;align-items:center;justify-content:center;background:#1D2029;border:1px solid #2A2E3A;border-radius:10px;color:#9AA1AE;font-size:15px;cursor:pointer;padding:0}
+  .dn-tb-btn{flex:0 0 auto;background:transparent;color:#1AE099;border:1.5px solid #1AE099;border-radius:12px;padding:10px 18px;font-size:15px;font-weight:700;cursor:pointer}
+  .dn-tb-x{flex:0 0 auto;width:42px;height:42px;display:flex;align-items:center;justify-content:center;background:transparent;border:1.5px solid rgba(26,224,153,.55);border-radius:12px;color:#1AE099;font-size:16px;cursor:pointer;padding:0}
   .dn-tb[hidden]{display:none}
   </style>
   <div class="dn-tb" id="dnTourBubble" hidden>
-    <span class="dn-tb-ic" aria-hidden="true"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#1AE099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M10 8.4v7.2L16.2 12z" fill="#1AE099" stroke="none"/></svg></span>
+    <span class="dn-tb-ic" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1AE099" stroke-width="2.6" stroke-linecap="round"><path d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M18.4 5.6L5.6 18.4"/></svg></span>
     <p class="dn-tb-text"><b>New here?</b> Take the 30-second tour of your Today screen.</p>
     <button class="dn-tb-btn" type="button" onclick="dnTbGo()">Start</button>
     <button class="dn-tb-x" type="button" aria-label="Dismiss" onclick="dnTbOff()">&#10005;</button>
@@ -1174,7 +1187,7 @@ function dnHotClose(){
           <span class="dnaf-num">1</span>
           <div>
             <div class="dnaf-block-title">Tap Share</div>
-            <p>The Share icon in Safari's toolbar (bottom of the screen on iPhone, top on iPad).</p>
+            <p>The <svg class="dnaf-share-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V4"/><path d="M8 6.5L12 2.5l4 4"/><path d="M5 12v7a1.5 1.5 0 0 0 1.5 1.5h11A1.5 1.5 0 0 0 19 19v-7"/></svg> icon in Safari's toolbar (bottom of the screen on iPhone, top on iPad).</p>
           </div>
         </div>
         <div class="dnaf-bar" aria-hidden="true">
