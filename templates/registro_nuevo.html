@@ -88,8 +88,8 @@ img{display:block;max-width:100%}
 .stars{display:flex;align-items:center;gap:11px;flex-wrap:wrap}
 .stars .st{color:var(--gold);font-size:17px;letter-spacing:3px;line-height:1}
 .stars p{color:var(--muted);font-size:14.5px}
-.hero-h{font-size:clamp(40px,6.4vw,62px);font-weight:800;line-height:1.06;margin-top:16px}
-.hero-h span{display:block}
+.hero-h{font-size:clamp(16px,5.6vw,30px);font-weight:800;line-height:1.06;margin-top:16px}
+.hero-h span{display:block;white-space:nowrap}
 .hero-sub{margin-top:16px;color:#C9CDD6;font-size:16.5px;line-height:1.65;max-width:520px}
 .hero-sub b{color:#fff}
 .divider{display:flex;align-items:center;gap:14px;margin:28px 0 4px}
@@ -111,23 +111,8 @@ img{display:block;max-width:100%}
 .receipts::-webkit-scrollbar{display:none}
 .receipts .rcard{flex:0 0 84%;scroll-snap-align:start;scroll-snap-stop:always}
 .receipts.drag{scroll-snap-type:none;cursor:grabbing}
-.rcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden}
-.rcard .rbody{padding:16px 16px 14px}
-.rrow{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
-.lvl{font-size:10.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:4px 10px;border-radius:999px}
-.lvl.gold{color:var(--accent);background:var(--accent-soft);border:1px solid var(--accent-tint)}
-.lvl.plat{color:#0C0F16;background:var(--gold)}
-.lvl.vault{color:var(--gold);background:var(--gold-soft);border:1px solid var(--gold-tint)}
-.res{font-size:10.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:4px 10px;border-radius:999px}
-.res.won{color:#032117;background:var(--btn)}
-.res.lost{color:#ffb3c2;background:var(--danger-soft);border:1px solid rgba(213,19,68,.4)}
-.rcard h3{font-family:var(--fbody);font-size:17px;font-weight:700;letter-spacing:0;line-height:1.35}
-.rmeta{font-size:13px;color:var(--muted);margin-top:5px;font-family:var(--fmono)}
-.rticket{border-top:1px solid var(--border);background:var(--surface-3)}
-.rticket img{width:100%;height:auto}
-.rticket .tlabel{display:flex;align-items:center;gap:7px;font-size:11px;font-weight:800;letter-spacing:.12em;
-  text-transform:uppercase;color:var(--muted);padding:10px 16px 0}
-.rticket .tlabel svg{width:15px;height:15px;color:var(--accent)}
+.rcard{border-radius:var(--radius-lg);overflow:hidden}
+.rcard img{width:100%;height:auto}
 
 /* precio teaser */
 .teaser{margin-top:10px}
@@ -317,7 +302,7 @@ img{display:block;max-width:100%}
         <span class="st">★★★★★</span>
         <p>Real plays, real tickets — posted before game time, every day.</p>
       </div>
-      <h1 class="hero-h">Our official plays.<span class="acc">Every sport.</span><span class="acc">Free.</span></h1>
+      <h1 class="hero-h"><span>The Sharp Team's plays.</span><span class="acc">Every sport. Every day.</span><span class="acc">Free.</span></h1>
       <p class="hero-sub">Every official play goes live on your dashboard the moment it is released — and the email lands at the same time. <b>Your dashboard is always first</b>, and <b>the email makes sure you never miss one</b>.</p>
 
       <div class="divider"><span>FROM THE OWNER'S OWN BANKROLL</span></div>
@@ -333,20 +318,9 @@ img{display:block;max-width:100%}
     <div class="receipts">
       {% for r in recientes if r.comprobante %}
       <article class="rcard">
-        <div class="rbody">
-          <div class="rrow">
-            {% if r.nivel == 'ELITE' %}<span class="lvl plat">⭐ Platinum</span>{% elif r.nivel == 'VAULT' %}<span class="lvl vault">🔒 Vault</span>{% else %}<span class="lvl gold">Gold</span>{% endif %}
-            {% if r.resultado == 'WON' %}<span class="res won">Won</span>{% else %}<span class="res lost">Lost</span>{% endif %}
-          </div>
-          <h3>{{ r.pick }}</h3>
-          <p class="rmeta">{{ r.liga }}{% if r.fecha %} · {{ r.fecha }}{% endif %}{% if r.cuota %} · {{ '+' if r.cuota > 0 else '' }}{{ r.cuota|int }}{% endif %}</p>
-        </div>
-        <div class="rticket">
-          <span class="tlabel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a3 3 0 0 0 0 6v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a3 3 0 0 0 0-6z"/><path d="M13 5v2M13 11v2M13 17v2"/></svg>The actual ticket</span>
-          <a href="{{ url_for('static', filename=r.comprobante) }}" target="_blank" rel="noopener">
-            <img src="{{ url_for('static', filename=r.comprobante) }}" alt="Ticket for {{ r.pick }}" loading="lazy">
-          </a>
-        </div>
+        <a href="{{ url_for('static', filename=r.comprobante) }}" target="_blank" rel="noopener">
+          <img src="{{ url_for('static', filename=r.comprobante) }}" alt="Betting ticket" loading="lazy">
+        </a>
       </article>
       {% endfor %}
     </div>
