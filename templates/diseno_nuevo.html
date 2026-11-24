@@ -604,6 +604,43 @@ body .dn-hot-card .dn-hot-streakrow{margin:-3px 0 14px}
 body .dn-hot-card .dn-hot-dots{margin:0 0 16px;min-height:0}
 body .dn-hot-card .dn-hot-foot{margin-top:auto}
 </style>
+<style>
+/* ===== Hot right now: FORMA de la foto de referencia (2026-11-24 ~00:02 ET,
+   orden de Alex: «que el Hot Right Now se vea asi»). Reestilo SOLO de
+   presentacion del bloque: titulo grande sin cuadrito, boton oscuro a la
+   derecha, tarjetas anchas (~89%, la siguiente asoma) con radio ~23px,
+   degradado vertical sutil y barra verde brillante (#10CC87) a la
+   izquierda, numero de racha enorme (60px) con pill de %, linea blanca
+   bajo el numero, puntos W/L grandes (perdida = anillo rojo hueco), pie
+   repartido, puntos de paginacion bajo el carrusel y caption. Datos,
+   textos, seleccion de rachas y enlaces NO cambian. Este bloque va al
+   final del <head>: manda sobre la base, el ajuste -15% y el bloque de
+   tarjetas grandes (fd68290). Las reglas van acotadas a .dn-hot-card pa'
+   no tocar la hoja de detalle que reutiliza .dn-hot-pill/.dn-hot-dots. */
+body .dn-hot-head{margin-bottom:6px}
+body .dn-hot-head h2{font-size:30px;font-weight:800;letter-spacing:-.01em}
+body .dn-hot-head h2::before{display:none}
+body .dn-hot-sub{font-size:16px;margin-top:6px}
+body .dn-hot-head .dn-hot-ledger{padding:12px 18px;font-size:16px;border-radius:14px;background:var(--panel)}
+body .dn-hot-card{flex-basis:calc(89% - 14px);border-radius:23px;border-left:5px solid #10CC87;background:linear-gradient(180deg,#232938 0%,#1D2029 58%);padding:20px;min-height:264px}
+body .dn-hot-card.cold{border-left-color:#FF5A3C}
+body .dn-hot-card .dn-hot-pill{border-radius:10px;padding:7px 13px;font-size:13px}
+body .dn-hot-card .dn-hot-tag{font-size:15px}
+body .dn-hot-card .dn-hot-num{font-size:60px;margin:18px 0 6px}
+body .dn-hot-card .dn-hot-num .w{font-size:28px}
+body .dn-hot-card .dn-hot-pct{font-size:15px;padding:4px 10px;border-radius:9px;margin-left:12px}
+body .dn-hot-card .dn-hot-sub2{font-size:19px;color:#fff;margin:0 0 16px}
+body .dn-hot-card .dn-hot-streakrow{margin:-4px 0 16px}
+body .dn-hot-card .dn-hot-dots{gap:7px;margin:0 0 18px;min-height:15px}
+body .dn-hot-card .dn-hot-dots span{width:15px;height:15px;box-sizing:border-box}
+body .dn-hot-card .dn-hot-dots span.l{border:3px solid #FF5A3C}
+body .dn-hot-card .dn-hot-note{font-size:15.5px}
+body .dn-hot-card .dn-hot-link{font-size:16.5px;font-weight:700}
+.dn-hot-pages{display:flex;justify-content:center;gap:8px;margin:14px 0 0}
+.dn-hot-pages span{width:9px;height:9px;border-radius:50%;background:#2A2E3A}
+.dn-hot-pages span.on{background:#fff}
+.dn-hot-cap{color:var(--mut);font-size:16.5px;margin:12px 0 0}
+</style>
 </head>
 <body>
 
@@ -803,17 +840,24 @@ body .dn-hot-card .dn-hot-foot{margin-top:auto}
       {% endfor %}
     </div>
     {% if hot_home|length > 1 %}<div class="dn-hot-track"><div class="dn-hot-fill" id="dnHotFill"></div></div>{% endif %}
+    {% if hot_home|length > 1 %}<div class="dn-hot-pages" id="dnHotPages">{% for c in hot_home %}<span{% if loop.first %} class="on"{% endif %}></span>{% endfor %}</div>{% endif %}
+    <p class="dn-hot-cap">Tap a run for every play in it, wins and losses.</p>
   </section>
 <script>
 (function(){
   var row = document.getElementById('dnHotRow'), fill = document.getElementById('dnHotFill');
   if(!row || !fill) return;
+  var pages = document.getElementById('dnHotPages');
   function upd(){
     var max = row.scrollWidth - row.clientWidth;
     var w = Math.min(100, row.clientWidth / row.scrollWidth * 100);
     fill.style.width = w + '%';
     var frac = max > 0 ? row.scrollLeft / max : 0;
     fill.style.marginLeft = (frac * (100 - w)) + '%';
+    if(pages){
+      var n = pages.children.length, idx = Math.round(frac * (n - 1));
+      for(var i = 0; i < n; i++){ pages.children[i].className = (i === idx) ? 'on' : ''; }
+    }
   }
   row.addEventListener('scroll', upd, {passive:true});
   window.addEventListener('resize', upd);
