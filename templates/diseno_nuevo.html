@@ -660,19 +660,20 @@ body .dn-hot-card .dn-hot-dots{margin:0 0 10px;min-height:0}
   </section>
 
   {% if is_alex %}
-  <!-- Vista de miembro nuevo pa' Alex EN SU DASHBOARD NORMAL
-       (2026-11-23, orden suya: «Pónmelo en mi dashboard normal, sin
-       mandarme link»): una sola vez, su propia sesión limpia las
-       marcas locales que esconden la tirita del tour y la guía de
-       instalación, pa' que las dos salgan tal cual le salen a un
-       miembro nuevo al entrar. La marca propia tst_alex_newview_v2
-       impide que se repita: después su X y su descarte vuelven a
-       mandar como pa' cualquier miembro. Pa' mostrárselo otra vez,
-       subir la versión de la marca. -->
+  <!-- Vista de miembro nuevo forzada pa' Alex en cada entrada — quitar
+       este bloque cuando Alex confirme que la vio (2026-11-23, orden
+       suya: «Pónmelo en mi dashboard normal, sin mandarme link»).
+       SIN gate de versión: la limpieza de las 7 marcas locales que
+       esconden la tirita del tour y la guía de instalación corre en
+       CADA carga de su /home, antes de los scripts de la tirita y de
+       la guía, pa' que las dos le salgan visibles sí o sí en cada
+       entrada, como a un miembro nuevo. (La versión anterior con
+       marca tst_alex_newview_vN se consumía una sola vez y sus
+       propias X volvían a bloquear la guía 30 días.) Este script
+       solo se renderiza pa' is_alex (user_id 6); ningún otro
+       miembro lo recibe. -->
   <script>
   (function(){try{
-    if(localStorage.getItem('tst_alex_newview_v2'))return;
-    localStorage.setItem('tst_alex_newview_v2','1');
     localStorage.removeItem('tst_tour_done_v1');
     localStorage.removeItem('tst_bubble_off_v1');
     localStorage.removeItem('tlb_af_dismissed_at');
