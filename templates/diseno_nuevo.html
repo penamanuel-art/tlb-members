@@ -73,7 +73,7 @@ fbq('track', 'PageView');
 
   /* Saludo: el saludo manda como titulo de la pagina; la fila envuelve con gracia */
   .dn-hello{padding:10px 0 0;display:flex;align-items:center;gap:8px 10px;flex-wrap:wrap}
-  .dn-hello h1{font-family:var(--fdisp);font-size:34.3px;font-weight:800;line-height:1.12;margin:0;color:var(--txt)}
+  .dn-hello h1{font-family:var(--fdisp);font-size:40px;font-weight:800;line-height:1.12;margin:0;color:var(--txt)}
   .dn-hello h1 .dn-name{font-size:inherit}
   .dn-hello h1 .dn-dot{color:var(--acc)}
   .dn-lvl{flex:none;display:inline-flex;align-items:center;border-radius:999px;padding:3px 9px;font-size:11px;font-weight:600;letter-spacing:.03em;border:1px solid var(--accline);background:var(--accbg);color:var(--acc)}
@@ -569,14 +569,14 @@ body .dn-top-in{padding-top:14px;padding-bottom:14px}
 body .dn-hello{flex-direction:column;align-items:flex-start;gap:16px;padding:22px 0 2px}
 body .dn-hello-row{display:flex;align-items:center;gap:8px;flex-wrap:nowrap}
 /* Pildora de nivel AL LADO del saludo, en su misma linea (2026-11-23 ~21:00 ET, orden de Alex: «el Platinum Membership va al ladito al lado de donde dice el saludo... va al lado, no va abajo»): la fila ya no envuelve, la pildora va en tamano compacto y el saludo no se parte en dos lineas. */
-body .dn-hello-row h1{white-space:nowrap;letter-spacing:-.02em}
+body .dn-hello-row h1{white-space:nowrap;letter-spacing:-.02em;font-size:40px} /* Saludo + nombre MAS GRANDES (2026-11-23 ~21:41 ET, orden de Alex: «eso va mas grande»): 34.3px -> 40px escritorio, 26px -> 30px movil; la pildora se queda al lado en la misma linea (fila nowrap) */
 body .dn-hello-row .dn-lvl{font-size:10px;padding:2px 8px;letter-spacing:.02em;white-space:nowrap}
 body .dn-hello .dn-quickbtn{margin-top:0}
 @media (max-width:480px){
   body .dn-strip{padding-top:8px;padding-bottom:8px} /* tirita mas fina: 13px -> 8px */
   body .dn-top-in{padding-top:14px;padding-bottom:14px}
   body .dn-hello{gap:16px;padding-top:22px}
-  body .dn-hello-row h1{font-size:26px}
+  body .dn-hello-row h1{font-size:30px}
 }
 </style>
 <style>
