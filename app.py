@@ -8056,7 +8056,7 @@ def register():
         _ayer = dict(_ayer)
         _ayer["units_display"] = f"{float(_ayer.get('profit') or 0) / 25.0:+.2f}u"
     try:
-        _recientes = recientes_oficiales(4)
+        _recientes = recientes_oficiales(6)
     except Exception:
         _recientes = []
     for _r in _recientes:
