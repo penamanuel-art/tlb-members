@@ -3823,6 +3823,27 @@ def recientes_oficiales(n=6):
     return recientes[:n]
 
 
+def recientes_registro(n_won=6, n_lost=2):
+    """Tirita de recibos de /registro (orden de Alex 2026-11-23): SIEMPRE
+    6 ganadas + 2 perdidas — las más recientes de cada resultado, solo
+    jugadas liquidadas CON foto de ticket, combinadas de más reciente
+    a más antigua. Si hay menos disponibles, devuelve las que existan."""
+    elegidas = []
+    _w = _l = 0
+    for r in recientes_oficiales(100000):
+        if not r.get("comprobante"):
+            continue
+        if r.get("resultado") == "WON" and _w < n_won:
+            elegidas.append(r)
+            _w += 1
+        elif r.get("resultado") == "LOST" and _l < n_lost:
+            elegidas.append(r)
+            _l += 1
+        if _w >= n_won and _l >= n_lost:
+            break
+    return elegidas
+
+
 def recientes_value(n=20):
     """Jugadas VALUE del sistema (simuladas), más recientes primero.
     Para el historial desplegable de la sección VALUE.
@@ -8056,7 +8077,7 @@ def register():
         _ayer = dict(_ayer)
         _ayer["units_display"] = f"{float(_ayer.get('profit') or 0) / 25.0:+.2f}u"
     try:
-        _recientes = recientes_oficiales(6)
+        _recientes = recientes_registro()
     except Exception:
         _recientes = []
     for _r in _recientes:
