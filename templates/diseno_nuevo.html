@@ -616,13 +616,22 @@ body .dn-hot-card .dn-hot-foot{margin-top:auto}
    textos, seleccion de rachas y enlaces NO cambian. Este bloque va al
    final del <head>: manda sobre la base, el ajuste -15% y el bloque de
    tarjetas grandes (fd68290). Las reglas van acotadas a .dn-hot-card pa'
-   no tocar la hoja de detalle que reutiliza .dn-hot-pill/.dn-hot-dots. */
+   no tocar la hoja de detalle que reutiliza .dn-hot-pill/.dn-hot-dots.
+   AJUSTE MISMA SUBIDA (2026-11-24 ~00:09 ET, orden de Alex: «una mas
+   ancha que otra» + «el nombre esta muy grande»): tarjetas UNIFORMES —
+   flex:0 0 fijo con min-width:0 (el contenido ancho, ej. «31-18» + pill
+   de %, empujaba unas tarjetas mas alla del basis por el min-width:auto
+   de flex) y fila con align-items:stretch + height:100% en la tarjeta
+   pa' que TODAS midan el mismo alto (la fila traia align-items:flex-start
+   del bloque fd68290 y cada una quedaba a la altura de su contenido);
+   titulo «Hot right now» de 30px -> 22px. */
 body .dn-hot-head{margin-bottom:6px}
-body .dn-hot-head h2{font-size:30px;font-weight:800;letter-spacing:-.01em}
+body .dn-hot-head h2{font-size:22px;font-weight:800;letter-spacing:-.01em}
 body .dn-hot-head h2::before{display:none}
 body .dn-hot-sub{font-size:16px;margin-top:6px}
 body .dn-hot-head .dn-hot-ledger{padding:12px 18px;font-size:16px;border-radius:14px;background:var(--panel)}
-body .dn-hot-card{flex-basis:calc(89% - 14px);border-radius:23px;border-left:5px solid #10CC87;background:linear-gradient(180deg,#232938 0%,#1D2029 58%);padding:20px;min-height:264px}
+body .dn-hot-row{align-items:stretch}
+body .dn-hot-card{flex:0 0 calc(89% - 14px);min-width:0;height:100%;border-radius:23px;border-left:5px solid #10CC87;background:linear-gradient(180deg,#232938 0%,#1D2029 58%);padding:20px;min-height:264px}
 body .dn-hot-card.cold{border-left-color:#FF5A3C}
 body .dn-hot-card .dn-hot-pill{border-radius:10px;padding:7px 13px;font-size:13px}
 body .dn-hot-card .dn-hot-tag{font-size:15px}
