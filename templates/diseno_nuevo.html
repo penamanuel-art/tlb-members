@@ -867,6 +867,54 @@ body .dn-tabs{background:var(--bg);border-top:1px solid var(--border)}
   {% endif %}
   <p class="dn-fineprint">Stakes are shown in units and in dollars. One unit is 1% of your bankroll, so your dollar amounts follow the bankroll you set. Track saves the play to My Bets at your own size, and it grades on its own. <a href="{{ url_for('bankroll') }}">Change your unit</a></p>
 
+  <section class="dn-sec" id="dnChannels">
+    <div class="dn-sec-head"><h2>Your channels</h2><span class="dn-chip">Push · Telegram · Email</span></div>
+    <div class="dn-chan-card">
+      <div class="dn-chan-top">
+        <span class="dn-chan-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></span>
+        <div>
+          <h3 class="dn-chan-h">Your plays, delivered where you already are</h3>
+          <p class="dn-chan-p">Turn on phone alerts, connect Telegram, and manage your text and email alerts — every play, the second it posts.</p>
+        </div>
+      </div>
+      <div class="dn-chan-row">
+        <button type="button" class="dn-chan-btn" id="dnChanPush">Turn on alerts</button>
+        <a class="dn-chan-btn" href="https://t.me/thesharpteam" target="_blank" rel="noopener">Telegram</a>
+      </div>
+      <a class="dn-chan-wide" href="/cuenta">Manage all your alerts <span aria-hidden="true">→</span></a>
+    </div>
+  </section>
+  <style>
+    .dn-chan-card{background:var(--surface,#1D2029);border:1px solid var(--border,#2A2E3A);border-radius:var(--ds-r,22px);padding:20px}
+    .dn-chan-top{display:flex;gap:14px;align-items:flex-start}
+    .dn-chan-ico{flex:0 0 auto;width:44px;height:44px;border-radius:12px;background:var(--surface2,#262B38);color:var(--accent,#1AE099);display:flex;align-items:center;justify-content:center}
+    .dn-chan-h{margin:2px 0 6px;font-size:17px;font-weight:700;color:var(--txt,#fff);line-height:1.25}
+    .dn-chan-p{margin:0;font-size:14px;line-height:1.45;color:var(--mut,#9AA1AE)}
+    .dn-chan-row{display:flex;gap:10px;margin-top:16px}
+    .dn-chan-btn{flex:1;display:flex;align-items:center;justify-content:center;background:var(--surface2,#262B38);border:1px solid var(--border,#2A2E3A);color:var(--txt,#fff);font-size:15px;font-weight:600;border-radius:14px;padding:13px 10px;text-decoration:none;cursor:pointer;font-family:inherit}
+    .dn-chan-wide{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:10px;background:var(--surface2,#262B38);border:1px solid var(--border,#2A2E3A);color:var(--txt,#fff);font-size:15px;font-weight:600;border-radius:14px;padding:13px 10px;text-decoration:none}
+  </style>
+  <script>
+  (function(){
+    var btn = document.getElementById('dnChanPush');
+    if(!btn) return;
+    btn.addEventListener('click', function(){
+      var start = document.getElementById('dnafStart');
+      if(start){ start.click(); return; }
+      if(window.TLB_push){ TLB_push.enable(); }
+    });
+    window.addEventListener('load', function(){
+      try{
+        if(window.TLB_push && TLB_push.status){
+          Promise.resolve(TLB_push.status()).then(function(st){
+            if(st === 'granted'){ btn.textContent = 'Alerts on ✓'; }
+          }).catch(function(){});
+        }
+      }catch(e){}
+    });
+  })();
+  </script>
+
   {% if hot_home %}
   <section class="dn-sec">
     <div class="dn-hot-head">
