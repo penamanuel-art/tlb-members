@@ -662,24 +662,30 @@ body .dn-hot-card .dn-hot-link{font-size:16.5px;font-weight:700}
    EXCEPCIONES APROBADAS que este bloque NO rediseña (solo conviven con
    el ritmo de espaciado): las tarjetas de jugada (dos tonos, reskin
    body .v5m de arriba), las tarjetas de «Hot right now» (bloque
-   anterior, e5bfa88 + 04d0784: su titulo de 22px ES el estandar de
-   titulo de seccion de este sistema), la tirita del tour y la guia de
+   anterior, e5bfa88 + 04d0784; su titulo de encabezado SI sigue la
+   escala de seccion de este sistema), la tirita del tour y la guia de
    instalacion (.dn-tb / .dnaf), y la hoja de detalle (.dn-sheet). */
 :root{
   --bg:#0C0F16; --surface:#1D2029; --surface2:#262B38; --border:#2A2E3A;
   --accent:#1AE099; --btn:#10CC87; --gold:#FBBF24; --text:#FFFFFF; --muted:#9AA1AE;
-  --ds-title:22px; --ds-card-title:17px; --ds-body:15px; --ds-cap:13.5px;
+  --ds-title:19px; --ds-card-title:16px; --ds-body:15px; --ds-cap:13.5px;
   --ds-gap:22px; --ds-pad:20px; --ds-r:22px; --ds-r-in:14px;
 }
 /* Ritmo vertical uniforme entre secciones (antes: 30px sueltos) */
 body .dn-sec,body .dn-yest{margin-top:var(--ds-gap)}
 body .dn-hero-card{margin-top:var(--ds-gap)}
 body .dn-risk{margin-top:14px}
-/* Titulos de seccion: UNA escala — 22px/800, el estandar que Alex fijo
-   pa' «Hot right now»; sin el cuadrito previo, como en la referencia.
-   Los titulos de tarjeta ya viven en ~17px/700 (dn-live-tx b, dn-mem,
-   dn-step b, dn-q2 b, dn-lg-name): quedan como la escala de tarjeta. */
-body .dn-sec-head h2,body .dn-yest-head h2,body .dn-board-head h2{font-size:var(--ds-title);font-weight:800;letter-spacing:-.01em}
+/* Titulos de seccion: UNA escala — 19px/800 (2026-11-24: Alex pidio los
+   titulos mas pequenos que el 22px inicial, con todo organizado como
+   la foto de referencia); sin el cuadrito previo, como en la referencia.
+   El titulo de «Hot right now» (fijado en 22px en su propio bloque)
+   entra tambien en esta regla pa' que la escala sea una sola.
+   Titulos de tarjeta: anclados a var(--ds-card-title) = 16px/700. */
+body .dn-sec-head h2,body .dn-yest-head h2,body .dn-board-head h2,body .dn-hot-head h2{font-size:var(--ds-title);font-weight:800;letter-spacing:-.01em}
+body .dn-live-tx b,body .dn-risk-tx b,body .dn-lg-name,body .dn-tier .dn-t-name,body .dn-mem .dn-m-name,body .dn-step b,body .dn-q2 b{font-size:var(--ds-card-title);font-weight:700}
+body .dn-board h3,body .dn-notif h3{font-size:var(--ds-card-title)}
+/* Titulo grande de la tarjeta del board: 28px/700 -> 26px/800. */
+body .dn-hero-title{font-size:26px;font-weight:800}
 body .dn-sec-head::before{display:none}
 body .dn-sec-head{margin-bottom:14px}
 /* Tarjetas y contenedores unificados: borde 1px var(--border), radio
