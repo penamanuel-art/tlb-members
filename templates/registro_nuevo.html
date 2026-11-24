@@ -135,7 +135,10 @@ img{display:block;max-width:100%}
 .sec-sub{font-size:15px;color:var(--muted);line-height:1.6;max-width:640px}
 
 /* ===== RECIBOS — prueba real con la foto del ticket ===== */
-.receipts{display:grid;grid-template-columns:1fr;gap:14px}
+.receipts{display:flex;flex-direction:row;gap:14px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;padding:6px 2px 16px;scrollbar-width:none;-ms-overflow-style:none;cursor:grab}
+.receipts::-webkit-scrollbar{display:none}
+.receipts .rcard{flex:0 0 84%;scroll-snap-align:start;scroll-snap-stop:always}
+.receipts.drag{scroll-snap-type:none;cursor:grabbing}
 .rcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden}
 .rcard .rbody{padding:16px 16px 14px}
 .rrow{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
@@ -221,13 +224,13 @@ img{display:block;max-width:100%}
 .site-footer .copy{font-size:12px}
 
 @media (min-width:640px){
-  .receipts{grid-template-columns:1fr 1fr}
+  .receipts .rcard{flex-basis:47%}
   .plans2{grid-template-columns:1fr 1fr}
   .how{grid-template-columns:repeat(3,1fr)}
   .faqwrap{grid-template-columns:1fr 1fr}
 }
 @media (min-width:980px){
-  .receipts{grid-template-columns:repeat(3,1fr)}
+  .receipts .rcard{flex-basis:31.8%}
 }
 @media (max-width:768px){
   .wrap{padding:0 16px}
@@ -474,6 +477,32 @@ document.querySelectorAll('.faqq').forEach(function(b){
     if(!was) item.classList.add('open');
   });
 });
+/* Tirita de recibos: arrastre con el mouse en desktop (en el teléfono manda el swipe nativo con snap) */
+(function(){
+  var strip=document.querySelector('.receipts');
+  if(!strip) return;
+  var down=false,startX=0,startL=0,moved=false;
+  strip.addEventListener('pointerdown',function(e){
+    if(e.pointerType!=='mouse') return;
+    e.preventDefault();
+    down=true;moved=false;startX=e.clientX;startL=strip.scrollLeft;
+    strip.classList.add('drag');
+  });
+  window.addEventListener('pointermove',function(e){
+    if(!down) return;
+    var dx=e.clientX-startX;
+    if(Math.abs(dx)>5) moved=true;
+    strip.scrollLeft=startL-dx;
+  });
+  window.addEventListener('pointerup',function(){
+    if(!down) return;
+    down=false;strip.classList.remove('drag');
+    setTimeout(function(){moved=false},0);
+  });
+  strip.addEventListener('click',function(e){
+    if(moved){e.preventDefault();e.stopPropagation();}
+  },true);
+})();
 </script>
 </body>
 </html>
