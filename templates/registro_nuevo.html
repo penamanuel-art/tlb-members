@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Create your free account | The Sharp Team</title>
-<meta name="description" content="Create your free account: today's Gold plays free inside your Dashboard, every play with its real ticket. Platinum unlocks inside — $1 your first week, then $15.99/week.">
+<meta name="description" content="Create your free account: today's plays inside your Dashboard, every play with its real ticket. Gold plays free for life. Platinum unlocks inside — $1 your first week, then $15.99/week.">
 <meta name="theme-color" content="#0C0F16">
 <link rel="icon" type="image/x-icon" href="/static/img/favicon.ico">
 <link rel="icon" type="image/png" sizes="32x32" href="/static/img/favicon-32.png">
@@ -36,10 +36,11 @@ twq('config','rhgk7');
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800&family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@500;600&display=swap" rel="stylesheet">
 <style>
-/* ============ Registro — rediseño completo 2026-11-23 ============
-   Paleta verde vigente del sitio: fondo #0C0F16 · tarjetas #1D2029 ·
-   botones #10CC87 · acento #1AE099 · bordes #2A2E3A · suave #9AA1AE ·
-   dorado #FBBF24. Titulares 'Unbounded', cuerpo 'Roboto'. Mobile-first. */
+/* ============ Registro — versión SIMPLE 2026-11-23 ============
+   Orden de Alex: página mucho más sencilla y fácil. Paleta verde vigente:
+   fondo #0C0F16 · tarjetas #1D2029 · botones #10CC87 · acento #1AE099 ·
+   bordes #2A2E3A · suave #9AA1AE · dorado #FBBF24.
+   Titulares 'Unbounded', cuerpo 'Roboto'. Mobile-first. */
 :root{
   --bg:#0C0F16;--surface:#1D2029;--surface-2:#232733;--surface-3:#262B38;
   --border:#2A2E3A;--border-strong:#404555;
@@ -54,49 +55,39 @@ twq('config','rhgk7');
 html{scroll-behavior:smooth}
 body{background:radial-gradient(1100px 560px at 72% -8%,rgba(26,224,153,.07),transparent 60%),var(--bg);
   color:var(--text);font-family:var(--fbody);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
-h1,h2,h3,h4{font-family:var(--fdisp);font-weight:700;letter-spacing:-.01em;line-height:1.18}
+h1,h2,h3{font-family:var(--fdisp);font-weight:700;letter-spacing:-.01em;line-height:1.18}
 a{color:inherit;text-decoration:none}
 img{display:block;max-width:100%}
 .wrap{max-width:1120px;margin:0 auto;padding:0 22px}
 .acc{color:var(--accent)}
 .accg{color:var(--gold)}
+.eyebrow{font-size:11px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--accent)}
+.eyebrow.gold{color:var(--gold)}
 
 /* botones */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--btn);color:#032117;
   font-weight:700;padding:12px 22px;border-radius:12px;font-size:15px;border:0;cursor:pointer;
   font-family:var(--fbody);box-shadow:0 10px 26px rgba(16,204,135,.28);transition:transform .15s,box-shadow .15s}
 .btn:hover{transform:translateY(-1px)}
-.btn.ghost{background:rgba(255,255,255,.06);color:var(--text);border:1px solid var(--border-strong);box-shadow:none}
-.btn.head-cta{padding:9px 14px;font-weight:800;font-size:14px;white-space:nowrap;flex-shrink:0}
+.btn.submit{width:100%;padding:15px 20px;font-size:16px;margin-top:18px}
 
-/* topbar */
+/* topbar — solo la marca y el login */
 .topbar{position:sticky;top:0;z-index:50;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
   background:rgba(12,15,22,.85);border-bottom:1px solid var(--border)}
 .topbar .wrap{display:flex;align-items:center;justify-content:space-between;height:64px;gap:8px}
 .brand{display:flex;align-items:center;gap:9px;min-width:0}
 .brand .coin{height:38px;width:auto}
 .brand .letters{height:28px;width:auto}
-.nav-actions{display:flex;align-items:center;gap:10px}
 .login{font-size:14px;font-weight:500;color:var(--text-2);padding:8px 3px;white-space:nowrap}
 .login:hover{color:#fff}
 
-/* hero + formulario */
-.hero{max-width:680px;margin:0 auto;text-align:center;padding:34px 0 6px}
-.pill{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;
-  color:var(--accent);border:1px solid var(--accent-tint);background:var(--accent-soft);border-radius:999px;padding:6px 14px}
-.hero h1{font-size:34px;line-height:1.14;font-weight:800;margin-top:18px}
-.hero .sub{font-size:16.5px;color:var(--text-2);margin:14px auto 0;line-height:1.6;max-width:560px}
+/* titular + formulario */
+.hero{max-width:680px;margin:0 auto;text-align:center;padding:36px 0 4px}
+.hero h1{font-size:34px;line-height:1.14;font-weight:800}
+.hero .sub{font-size:16.5px;color:var(--text-2);margin:14px auto 0;line-height:1.6;max-width:540px}
 .signup{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
-  padding:26px 24px;max-width:680px;margin:26px auto 0;text-align:left;box-shadow:0 24px 60px rgba(0,0,0,.35)}
-.signup h2{font-size:22px;margin-top:8px}
-.eyebrow{font-size:11px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--accent)}
-.eyebrow.gold{color:var(--gold)}
-.signup .sg-sub{font-size:15px;color:var(--muted);margin:9px 0 4px;line-height:1.6}
-.intent-box{display:flex;gap:12px;align-items:flex-start;background:var(--gold-soft);border:1px solid var(--gold-tint);
-  border-radius:var(--radius);padding:14px 16px;margin-top:16px}
-.intent-box .star{font-size:20px;line-height:1.25}
-.io-title{display:block;font-size:14px;font-weight:800;letter-spacing:.03em;color:var(--text)}
-.io-sub{display:block;font-size:13px;color:var(--muted);margin-top:3px;line-height:1.55}
+  padding:26px 24px;max-width:680px;margin:24px auto 0;text-align:left;box-shadow:0 24px 60px rgba(0,0,0,.35)}
+.signup h2{font-size:21px}
 .field{margin-top:16px}
 .field label{display:block;font-size:14px;font-weight:700;margin-bottom:6px;color:var(--text)}
 .field .hint{font-size:13px;color:var(--muted);margin:-2px 0 8px;line-height:1.5}
@@ -107,34 +98,19 @@ img{display:block;max-width:100%}
 .flash{border-radius:11px;padding:11px 14px;font-size:14px;font-weight:600;margin-top:14px;line-height:1.5}
 .flash-error{background:var(--danger-soft);border:1px solid rgba(213,19,68,.4);color:#ffb3c2}
 .flash-success{background:var(--accent-soft);border:1px solid var(--accent-tint);color:var(--accent)}
-.btn.submit{width:100%;padding:15px 20px;font-size:16px;margin-top:18px}
-.howsteps{list-style:none;margin-top:18px;display:flex;flex-direction:column;gap:8px}
-.howsteps li{font-size:14px;color:var(--muted);line-height:1.55}
-.howsteps b{color:var(--gold)}
-.formnote{font-size:13px;color:var(--faint);margin-top:12px;line-height:1.55}
-.login-line{text-align:center;font-size:14px;color:var(--muted);margin-top:16px}
+.formnote{font-size:13px;color:var(--muted);margin-top:12px;line-height:1.55;text-align:center}
+.login-line{text-align:center;font-size:14px;color:var(--muted);margin-top:10px}
 .login-line a{color:var(--accent);font-weight:700}
-.micro{text-align:center;font-size:14px;color:var(--muted);margin-top:18px;line-height:1.6}
-.micro b{color:var(--text)}
-
-/* fila de confianza */
-.trust3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:680px;margin:18px auto 0}
-.t3{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 10px;
-  display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;
-  font-size:12px;font-weight:700;color:var(--text-2);line-height:1.35}
-.ticon{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;flex:none}
-.ticon svg{width:20px;height:20px}
-.ticon.mint{background:var(--accent-soft);border:1px solid var(--accent-tint);color:var(--accent)}
-.ticon.neutral{background:var(--surface-2);border:1px solid var(--border-strong);color:var(--text-2)}
-.ticon.gold{background:var(--gold-soft);border:1px solid var(--gold-tint);color:var(--gold)}
 
 /* secciones */
-.sec{padding:38px 0 6px}
+.sec{padding:38px 0 6px;max-width:680px;margin:0 auto}
 .sec-head{display:flex;flex-direction:column;align-items:flex-start;gap:6px;margin-bottom:18px}
 .sec-head h2{font-size:25px}
 .sec-sub{font-size:15px;color:var(--muted);line-height:1.6;max-width:640px}
+.micro{text-align:center;font-size:14px;color:var(--muted);margin-top:18px;line-height:1.6}
+.micro b{color:var(--text)}
 
-/* ===== RECIBOS — prueba real con la foto del ticket ===== */
+/* ===== RECIBOS — tirita deslizable (sin cambios, commit 148e8de) ===== */
 .receipts{display:flex;flex-direction:row;gap:14px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;padding:6px 2px 16px;scrollbar-width:none;-ms-overflow-style:none;cursor:grab}
 .receipts::-webkit-scrollbar{display:none}
 .receipts .rcard{flex:0 0 84%;scroll-snap-align:start;scroll-snap-stop:always}
@@ -157,77 +133,29 @@ img{display:block;max-width:100%}
   text-transform:uppercase;color:var(--muted);padding:10px 16px 0}
 .rticket .tlabel svg{width:15px;height:15px;color:var(--accent)}
 
-/* niveles */
-.plans2{display:grid;grid-template-columns:1fr;gap:16px}
-.valuecard{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px;position:relative;display:flex;flex-direction:column}
-.valuecard.paid{border-color:var(--gold);background:linear-gradient(180deg,var(--gold-soft),var(--surface))}
-.vc-badge{position:absolute;top:-11px;left:24px;background:var(--gold);color:#241a00;font-size:10.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;padding:4px 10px;border-radius:999px}
-.vc-tier{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);font-weight:700}
-.valuecard h3{font-size:19px;margin-top:10px}
-.vc-sub{font-size:14px;color:var(--muted);margin:6px 0 14px;line-height:1.6}
-.valuecard ul{list-style:none;margin:0 0 18px}
-.valuecard li{position:relative;padding:7px 0 7px 26px;font-size:14px;color:var(--text-2);border-bottom:1px solid var(--border);line-height:1.5}
-.valuecard li:last-child{border:0}
-.valuecard li::before{content:'✓';position:absolute;left:2px;top:7px;color:var(--accent);font-weight:700;font-size:13px}
-.valuecard.paid li::before{color:var(--gold)}
-.tier-price{margin-top:auto;padding-top:12px;font-size:15px;font-weight:800;color:var(--text)}
-.tier-price span{color:var(--muted);font-weight:500;font-size:13px}
+/* qué incluye — dos filas, nada más */
+.inc{display:flex;flex-direction:column;gap:12px}
+.incrow{display:flex;gap:14px;align-items:flex-start;background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);padding:18px}
+.incrow .dot{font-size:20px;line-height:1.3;flex:none}
+.incrow h3{font-family:var(--fbody);font-size:16px;font-weight:700;letter-spacing:0}
+.incrow h3 .price{color:var(--gold)}
+.incrow p{font-size:14px;color:var(--muted);margin-top:4px;line-height:1.55}
 
-/* cómo funciona */
-.how{display:grid;grid-template-columns:1fr;gap:14px}
-.howstep{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px}
-.howstep .n{width:34px;height:34px;border-radius:10px;background:var(--accent-soft);color:var(--accent);
-  font-family:var(--fdisp);font-weight:800;display:grid;place-items:center;font-size:16px;margin-bottom:13px}
-.howstep h4{font-size:16px;margin-bottom:6px}
-.howstep p{font-size:14px;color:var(--muted);line-height:1.6}
-.howstep p b{color:var(--text)}
-
-/* oferta */
-.offerpanel{background:linear-gradient(180deg,var(--gold-soft),var(--surface));border:1px solid var(--gold);
-  border-radius:var(--radius-lg);padding:30px 24px;text-align:center}
-.offerpanel h2{font-size:25px;margin-top:14px}
-.offerpanel .price-line{font-size:15px;color:var(--muted);margin-top:9px;line-height:1.65}
-.offerpanel .price-line b{color:var(--text)}
-.checklist{list-style:none;text-align:left;max-width:460px;margin:18px auto 4px}
-.checklist li{position:relative;padding:7px 0 7px 26px;font-size:14px;color:var(--text-2);border-bottom:1px solid var(--border);line-height:1.5}
-.checklist li:last-child{border:0}
-.checklist li::before{content:'✓';position:absolute;left:2px;top:7px;color:var(--gold);font-weight:700;font-size:13px}
-.bigprice{font-family:var(--fdisp);font-size:27px;font-weight:800;margin-top:20px}
-.bigprice span{color:var(--gold)}
-.center-cta{display:flex;flex-direction:column;align-items:center;margin-top:18px}
-
-/* faq */
-.faqwrap{display:grid;grid-template-columns:1fr;gap:11px;align-items:start}
-.faqi{border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--surface);transition:border-color .15s}
-.faqi.open{border-color:var(--accent-tint)}
-.faqq{padding:16px 18px;font-weight:700;font-size:15px;cursor:pointer;display:flex;justify-content:space-between;gap:12px;align-items:center;color:var(--text);width:100%;background:none;border:0;text-align:left;font-family:var(--fbody)}
-.faqq:after{content:'+';color:var(--accent);font-size:22px;line-height:1;font-weight:400;flex-shrink:0}
-.faqi.open .faqq:after{content:'−'}
-.faqa{max-height:0;overflow:hidden;transition:max-height .25s;color:var(--muted);font-size:14px;line-height:1.65}
-.faqa div{padding:0 18px 16px}
-.faqi.open .faqa{max-height:420px}
-
-/* footer */
-.site-footer{border-top:1px solid var(--border);background:var(--bg);margin-top:44px;padding:28px 0 20px}
+/* footer mínimo */
+.site-footer{border-top:1px solid var(--border);background:var(--bg);margin-top:44px;padding:26px 0 20px}
 .site-footer .wrap{display:flex;flex-direction:column;gap:10px;align-items:flex-start}
 .site-footer .fbrand{display:flex;align-items:center;gap:9px}
 .site-footer .fbrand .coin{height:36px;width:auto}
 .site-footer .fbrand .letters{height:27px;width:auto}
-.site-footer p{font-size:13px;color:var(--faint);line-height:1.6}
-.site-footer .legal{font-size:12px}
-.site-footer .fsocials{display:flex;gap:18px;justify-content:center;width:100%;margin:2px 0}
-.site-footer .fsocials svg{width:22px;height:22px;display:block}
-.site-footer .flinks{display:flex;flex-wrap:wrap;gap:6px 10px;justify-content:center;align-items:center;width:100%}
+.site-footer .flinks{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center}
 .site-footer .flinks a{font-size:13px;color:var(--muted)}
 .site-footer .flinks a:hover{color:var(--accent)}
 .site-footer .flinks .sep{color:var(--faint);font-size:11px}
-.site-footer .copy{font-size:12px}
+.site-footer p{font-size:12px;color:var(--faint);line-height:1.6}
 
 @media (min-width:640px){
   .receipts .rcard{flex-basis:47%}
-  .plans2{grid-template-columns:1fr 1fr}
-  .how{grid-template-columns:repeat(3,1fr)}
-  .faqwrap{grid-template-columns:1fr 1fr}
 }
 @media (min-width:980px){
   .receipts .rcard{flex-basis:31.8%}
@@ -238,8 +166,6 @@ img{display:block;max-width:100%}
   .hero{padding-top:26px}
   .signup{padding:22px 18px}
   .sec-head h2{font-size:22px}
-  .offerpanel h2{font-size:22px}
-  .bigprice{font-size:23px}
 }
 </style>
 </head>
@@ -251,27 +177,22 @@ img{display:block;max-width:100%}
       <img class="coin" src="{{ url_for('static', filename='img/sharp-coin.png') }}" alt="">
       <img class="letters" src="{{ url_for('static', filename='img/sharp-letters.png') }}" alt="The Sharp Team">
     </a>
-    <div class="nav-actions">
-      <a class="login" href="{{ url_for('login') }}">Log in</a>
-      <a class="btn head-cta" href="#signup">Get started</a>
-    </div>
+    <a class="login" href="{{ url_for('login') }}">Log in</a>
   </div>
 </header>
 
 <main class="wrap">
 
-  <!-- ===== HERO + FORMULARIO ===== -->
+  <!-- ===== TITULAR ===== -->
   <div class="hero">
-    <span class="pill">Free account · No card required</span>
-    <h1>Free plays every day.<br><span class="acc">Real tickets</span> on every play.</h1>
-    <p class="sub">A model prices every game. The plays that clear the bar get posted before game time — with the actual ticket attached, win or lose. Create your free account and see today's card yourself.</p>
+    <h1>Free plays, <span class="acc">every single day.</span></h1>
+    <p class="sub">Sign up free and get today's plays inside your dashboard — every play posted before game time, with its real ticket. No card required.</p>
   </div>
 
+  <!-- ===== FORMULARIO (mismo formulario de siempre, sin tocar su lógica) ===== -->
   <section id="signup">
     <div class="signup">
-      <span class="eyebrow gold">Create your account</span>
-      <h2>Start with just your email</h2>
-      <p class="sg-sub">One field — create your free account, confirm your email, and your Dashboard opens with today's Gold plays free. Platinum unlocks inside whenever you're ready — $1 for your first week, then $15.99/week. Your name, password and phone come after, once you're in.</p>
+      <h2>Create your free account</h2>
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
         {% for cat, msg in messages %}
@@ -280,14 +201,6 @@ img{display:block;max-width:100%}
       {% endif %}
     {% endwith %}
       <form method="post" action="{{ url_for('register') }}">
-        <div class="intent-box">
-          <span class="star">⭐</span>
-          <span>
-            <span class="io-title">FREE ACCOUNT — GOLD PLAYS EVERY DAY</span>
-            <span class="io-sub">No card to start: open your Dashboard and see today's Gold plays free. Platinum unlocks inside — $1 for your first week, then $15.99/week.</span>
-            <span class="io-sub">Platinum is optional — unlock it only if you want it, and cancel anytime from your account.</span>
-          </span>
-        </div>
         <div class="field">
           <label for="f-email">Your email address</label>
           <p class="hint">We'll send your plays here every day before games go off.</p>
@@ -304,23 +217,10 @@ img{display:block;max-width:100%}
       {% endif %}
         <button class="btn submit" type="submit">Create my free account</button>
       </form>
-      <ol class="howsteps">
-        <li><b>1.</b> Enter your email — your account is created in seconds.</li>
-        <li><b>2.</b> Confirm your email — we send you one quick link. Tap it and your Dashboard opens right away. It takes 10 seconds.</li>
-        <li><b>3.</b> Your Dashboard is open with today's Gold plays free. Unlock Platinum inside whenever you're ready — $1 for your first week, then $15.99/week — to see the full card.</li>
-      </ol>
-      <p class="formnote">Creating your account is free — no card required. Platinum is optional and unlocks inside: $1 for your first week, then $15.99/week until you cancel. No contracts.</p>
+      <p class="formnote">Free — no card required. We email you one quick link to confirm, and your Dashboard opens right away.</p>
       <p class="login-line">Already have an account? <a href="{{ url_for('login') }}">Log in here →</a></p>
     </div>
   </section>
-
-  <p class="micro"><b>Your account is free.</b> Platinum: $1 for your first week, then $15.99/week — cancel anytime.</p>
-
-  <div class="trust3">
-    <div class="t3"><div class="ticon mint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 5-3.5 8-7 10-3.5-2-7-5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg></div><span>Posted before game time</span></div>
-    <div class="t3"><div class="ticon neutral"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a3 3 0 0 0 0 6v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a3 3 0 0 0 0-6z"/><path d="M13 5v2M13 11v2M13 17v2"/></svg></div><span>Real ticket on every play</span></div>
-    <div class="t3"><div class="ticon gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg></div><span>Wins and losses, all counted</span></div>
-  </div>
 
 {% if recientes %}
   <!-- ===== RECIBOS — las jugadas reales con su ticket ===== -->
@@ -354,92 +254,28 @@ img{display:block;max-width:100%}
   </section>
 {% endif %}
 
-  <!-- ===== QUÉ INCLUYE ===== -->
+  <!-- ===== QUÉ INCLUYE — dos filas ===== -->
   <section class="sec">
     <div class="sec-head">
-      <span class="eyebrow gold">What's inside</span>
-      <h2>Start free. <span class="accg">Unlock more when you're ready.</span></h2>
+      <span class="eyebrow gold">What's included</span>
+      <h2>Free to start. <span class="accg">More when you're ready.</span></h2>
     </div>
-    <div class="plans2">
-      <div class="valuecard">
-        <span class="vc-tier">⚪ Gold — free</span>
-        <h3>Free, for life</h3>
-        <p class="vc-sub">Your account opens the Dashboard with our Gold plays — the free showcase of the system, every single day.</p>
-        <ul>
-          <li>Gold plays on your Dashboard, every day</li>
-          <li>Every play with its real ticket</li>
-          <li>Model probability and value on every card</li>
-          <li>The full record, open inside</li>
-        </ul>
-        <div class="tier-price">Free <span>— no card required, ever</span></div>
+    <div class="inc">
+      <div class="incrow">
+        <span class="dot">⚪</span>
+        <div>
+          <h3>Gold — free for life</h3>
+          <p>Today's Gold plays on your Dashboard every day, each one with its real ticket.</p>
+        </div>
       </div>
-      <div class="valuecard paid">
-        <span class="vc-badge">Best value</span>
-        <span class="vc-tier">⭐ Platinum</span>
-        <h3>Everything, unlocked</h3>
-        <p class="vc-sub">Our strongest plays and every tool, in one membership.</p>
-        <ul>
-          <li>Gold + Platinum plays — the strongest edges we find</li>
-          <li>+EV Board — live value across sportsbooks</li>
-          <li>Player Props board</li>
-          <li>Line Moves — see lines move in real time</li>
-          <li>Sharp Money — follow the professional money</li>
-          <li>Private Telegram channel</li>
-        </ul>
-        <div class="tier-price">$1 your first week <span>· then $15.99/week</span></div>
+      <div class="incrow">
+        <span class="dot">⭐</span>
+        <div>
+          <h3>Platinum — <span class="price">$1 your first week</span>, then $15.99/week</h3>
+          <p>Our strongest plays of the day, unlocked inside your Dashboard whenever you're ready. Cancel anytime.</p>
+        </div>
       </div>
     </div>
-  </section>
-
-  <!-- ===== CÓMO FUNCIONA ===== -->
-  <section class="sec">
-    <div class="sec-head">
-      <span class="eyebrow">The system</span>
-      <h2>How <span class="accg">The Sharp Team</span> works</h2>
-    </div>
-    <div class="how">
-      <div class="howstep"><div class="n">1</div><h4>A model prices every game</h4><p>Every matchup gets a real win probability before we ever look at the odds.</p></div>
-      <div class="howstep"><div class="n">2</div><h4>Only real edges get published</h4><p>If the model's number doesn't beat the price, there is no play. Every play is posted <b>before game time</b> — never after.</p></div>
-      <div class="howstep"><div class="n">3</div><h4>Every play carries the real ticket</h4><p>The actual ticket goes on the card, and the result counts — win or lose. You can check every number yourself.</p></div>
-    </div>
-  </section>
-
-  <!-- ===== OFERTA ===== -->
-  <section class="sec" id="offer">
-    <div class="offerpanel">
-      <span class="pill">The offer</span>
-      <h2>Platinum: <span class="accg">$1</span> your first week</h2>
-      <p class="price-line">Every play, every tool — the full membership. <b>$1 for your first week</b> when you unlock Platinum inside your Dashboard; then $15.99/week. Cancel anytime from your account.</p>
-      <ul class="checklist">
-        <li>The Platinum plays — our strongest plays of the day</li>
-        <li>Every Gold play, free from day one</li>
-        <li>Value plays on the +EV Board</li>
-        <li>Player Props board</li>
-        <li>Line Moves &amp; Sharp Money</li>
-        <li>Official Tracker &amp; My Bets</li>
-        <li>Private Telegram channels</li>
-      </ul>
-      <div class="bigprice">Your first week: <span>$1</span> · then $15.99/week</div>
-      <div class="center-cta"><a class="btn" href="#signup">Create your free account</a></div>
-      <p class="price-line">Your account is free — no card required. Platinum's price is exact and shown before you ever enter a card: <b>$1 for your first week, $15.99/week after</b>.</p>
-    </div>
-  </section>
-
-  <!-- ===== FAQ ===== -->
-  <section class="sec">
-    <div class="sec-head">
-      <span class="eyebrow">Before you join</span>
-      <h2>Questions, <span class="accg">answered straight</span></h2>
-    </div>
-    <div class="faqwrap">
-      <div class="faqi"><button class="faqq" type="button">What happens after I sign up?</button><div class="faqa"><div>Create your free account with just your email and tap the confirmation link we send you — your Dashboard opens right away with today's Gold plays free, every one with its real ticket. Platinum unlocks inside for $1 for your first week whenever you're ready.</div></div></div>
-      <div class="faqi"><button class="faqq" type="button">How much does Platinum cost?</button><div class="faqa"><div>$1 for your first week, charged when you unlock it inside your Dashboard. Then $15.99/week, billed weekly by Stripe until you cancel. Creating your account is free — that's the whole price, no upsells inside.</div></div></div>
-      <div class="faqi"><button class="faqq" type="button">When do the plays come out?</button><div class="faqa"><div>Weekdays at 2:00 PM ET and weekends at 11:00 AM ET. Every play is posted before its game starts.</div></div></div>
-      <div class="faqi"><button class="faqq" type="button">Where do I see the plays?</button><div class="faqa"><div>On your Dashboard, in the Telegram channels, and in your daily email — whichever you check first.</div></div></div>
-      <div class="faqi"><button class="faqq" type="button">Can I cancel whenever I want?</button><div class="faqa"><div>Yes. You can cancel from your account at any time, and you keep the time you've already paid for.</div></div></div>
-      <div class="faqi"><button class="faqq" type="button">How do I know the plays are real?</button><div class="faqa"><div>Every play is posted before game time with its real ticket — scroll up and check the most recent ones yourself. Wins and losses are both there; nothing is edited after the fact.</div></div></div>
-    </div>
-    <p class="micro">Your account is free. Platinum: $1 for your first week, then $15.99/week. Cancel anytime.</p>
   </section>
 
 </main>
@@ -450,33 +286,20 @@ img{display:block;max-width:100%}
       <img class="coin" src="{{ url_for('static', filename='img/sharp-coin.png') }}" alt="">
       <img class="letters" src="{{ url_for('static', filename='img/sharp-letters.png') }}" alt="The Sharp Team">
     </div>
-    <p>The Sharp Team · New York, NY</p>
-    <div class="fsocials">
-      <a href="https://x.com/thesharpteambet" target="_blank" rel="noopener" aria-label="X"><svg viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H4.64l4.713 6.231 5.891-6.231zm-1.161 17.52h1.833L7.084 4.126H5.117l11.966 15.644z"/></svg></a>
-      <a href="https://www.instagram.com/the_sharp_team" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><defs><linearGradient id="ig-g" x1="0%" y1="100%" x2="100%" y2="0%"><stop offset="0%" stop-color="#feda75"/><stop offset="35%" stop-color="#fa7e1e"/><stop offset="60%" stop-color="#d62976"/><stop offset="85%" stop-color="#962fbf"/><stop offset="100%" stop-color="#4f5bd5"/></linearGradient></defs><rect x="2.5" y="2.5" width="19" height="19" rx="5.5" stroke="url(#ig-g)" stroke-width="2"/><circle cx="12" cy="12" r="4.2" stroke="url(#ig-g)" stroke-width="2"/><circle cx="17.4" cy="6.6" r="1.3" fill="url(#ig-g)"/></svg></a>
-      <a href="https://www.facebook.com/thesharpteam" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="#1877F2" aria-hidden="true"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047v-2.66c0-3.025 1.792-4.697 4.533-4.697 1.313 0 2.686.236 2.686.236v2.971H15.83c-1.491 0-1.956.93-1.956 1.886v2.264h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg></a>
-      <a href="https://t.me/thesharpteam" target="_blank" rel="noopener" aria-label="Telegram"><svg viewBox="0 0 24 24" fill="#229ED9" aria-hidden="true"><path d="M21.884 4.37l-3.107 14.652c-.235 1.036-.856 1.29-1.735.803l-4.798-3.538-2.316 2.228c-.256.257-.471.471-.966.471l.346-4.904 8.928-8.067c.388-.346-.084-.538-.604-.192L6.654 13.197l-4.75-1.485c-1.033-.323-1.053-1.033.216-1.529l18.572-7.16c.86-.323 1.612.192 1.192 1.347z"/></svg></a>
-    </div>
     <nav class="flinks">
+      <a href="{{ url_for('login') }}">Log in</a><span class="sep">·</span>
       <a href="https://www.thesharpteam.bet/about">About</a><span class="sep">·</span>
       <a href="https://www.thesharpteam.bet/faqs">FAQs</a><span class="sep">·</span>
       <a href="https://www.thesharpteam.bet/contact">Contact</a><span class="sep">·</span>
       <a href="https://www.thesharpteam.bet/privacy">Privacy Policy</a><span class="sep">·</span>
       <a href="https://www.thesharpteam.bet/terms">Terms of Service</a>
     </nav>
-    <p class="legal">21+. If gambling stops being fun, call 1-800-GAMBLER. Plays are opinions based on model analysis — no outcome is guaranteed, and past performance does not promise future results.</p>
-    <p class="copy">© 2026 The Sharp Team · New York, NY. All rights reserved.</p>
+    <p>21+. If gambling stops being fun, call 1-800-GAMBLER.</p>
+    <p>© 2026 The Sharp Team · New York, NY. All rights reserved.</p>
   </div>
 </footer>
 
 <script>
-document.querySelectorAll('.faqq').forEach(function(b){
-  b.addEventListener('click',function(){
-    var item=b.parentElement, was=item.classList.contains('open');
-    document.querySelectorAll('.faqi.open').forEach(function(i){i.classList.remove('open')});
-    if(!was) item.classList.add('open');
-  });
-});
 /* Tirita de recibos: arrastre con el mouse en desktop (en el teléfono manda el swipe nativo con snap) */
 (function(){
   var strip=document.querySelector('.receipts');
