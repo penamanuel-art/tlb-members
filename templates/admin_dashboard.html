@@ -200,4 +200,50 @@ details.adm-det summary { cursor: pointer; font-weight: 800; font-size: 0.95rem;
   </details>
 </div>
 
+<style>
+/* ============================================================
+   SISTEMA DE DISENO UNIFICADO — la MISMA configuracion del
+   Dashboard de miembros (bloque de diseno de diseno_nuevo.html,
+   commits 2c745f2 + acbac56), aplicada al Admin por orden de
+   Alex (2026-11-24): «todo fino» — botones finitos, letra fina,
+   pesos ligeros, bordes de 1px, radios y espaciados del sistema.
+   Las variables de arriba estan copiadas VERBATIM del bloque
+   del Dashboard. SOLO presentacion: textos, datos, logica,
+   enlaces y JS NO cambian. Este bloque va AL FINAL a proposito:
+   manda sobre las reglas viejas de la pagina. */
+
+:root{
+  --bg:#0C0F16; --surface:#1D2029; --surface2:#262B38; --border:#2A2E3A;
+  --accent:#1AE099; --btn:#10CC87; --gold:#FBBF24; --text:#FFFFFF; --muted:#9AA1AE;
+  --ds-title:19px; --ds-card-title:16px; --ds-body:15px; --ds-cap:13.5px;
+  --ds-gap:22px; --ds-pad:20px; --ds-r:22px; --ds-r-in:14px;
+}
+.adm{font-size:var(--ds-body)}
+.adm h1{font-size:26px;font-weight:800;letter-spacing:-.01em}
+.adm-kicker{font-weight:700;letter-spacing:3px;color:var(--accent)}
+.adm-sec{font-size:var(--ds-title);font-weight:800;margin:var(--ds-gap) 0 12px;border-left:none;padding-left:0}
+.adm-sec:first-of-type{margin-top:0}
+.adm-tile{background:var(--surface);border:1px solid var(--border);border-radius:var(--ds-r-in);padding:13px 8px 11px}
+.adm-tile .l{font-weight:600;color:var(--muted)}
+.adm-tile .n{font-size:26px;font-weight:700;line-height:1.1;margin-top:2px}
+.adm-tile.hot .n{color:var(--accent)}
+.adm-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--ds-r);padding:18px var(--ds-pad)}
+.adm-btn{background:var(--surface);border:1px solid var(--border);border-radius:var(--ds-r-in);padding:14px 10px 12px}
+.adm-btn .ico{font-size:1.35rem;margin-bottom:6px}
+.adm-btn .t{font-size:var(--ds-body);font-weight:600;letter-spacing:0}
+.adm-btn .s{font-size:12.5px;margin-top:3px;color:var(--muted)}
+.mrow{background:var(--surface);border:1px solid var(--border);border-radius:var(--ds-r-in);padding:11px 14px}
+.mrow .mn{font-weight:600;font-size:var(--ds-body)}
+.mrow .mb{font-weight:700}
+.adm-muted{color:var(--muted);font-size:var(--ds-cap)}
+.send-btn{background:var(--btn);border-radius:var(--ds-r-in);padding:12px;font-weight:700;font-size:var(--ds-body)}
+.status-badge{font-weight:600;padding:3px 10px}
+details.adm-det{background:var(--surface);border:1px solid var(--border);border-radius:var(--ds-r);padding:18px var(--ds-pad)}
+details.adm-det summary{font-weight:700;font-size:var(--ds-card-title)}
+.ctl-t{font-weight:700;font-size:var(--ds-card-title)}
+.ctl-in{background:var(--bg);border:1px solid var(--border);border-radius:var(--ds-r-in);padding:10px 12px;font-size:14px}
+.ctl-in:focus{border-color:var(--btn)}
+.ctl-btn{background:var(--btn);padding:10px;font-weight:700;font-size:14px}
+.chat-fab{border-width:1px}
+</style>
 {% endblock %}
