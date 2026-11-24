@@ -152,4 +152,43 @@
 function otZoom(src){ var m=document.getElementById('otModal'); document.getElementById('otModalImg').src=src; m.style.display='flex'; }
 function otClose(){ document.getElementById('otModal').style.display='none'; }
 </script>
+<style>
+/* ============================================================
+   SISTEMA DE DISENO UNIFICADO — la MISMA configuracion del
+   Dashboard de miembros (bloque de diseno de diseno_nuevo.html,
+   commits 2c745f2 + acbac56), aplicada al Admin por orden de
+   Alex (2026-11-24): «todo fino» — botones finitos, letra fina,
+   pesos ligeros, bordes de 1px, radios y espaciados del sistema.
+   Las variables de arriba estan copiadas VERBATIM del bloque
+   del Dashboard. SOLO presentacion: textos, datos, logica,
+   enlaces y JS NO cambian. Este bloque va AL FINAL a proposito:
+   manda sobre las reglas viejas de la pagina. */
+
+:root{
+  --bg:#0C0F16; --surface:#1D2029; --surface2:#262B38; --border:#2A2E3A;
+  --accent:#1AE099; --btn:#10CC87; --gold:#FBBF24; --text:#FFFFFF; --muted:#9AA1AE;
+  --ds-title:19px; --ds-card-title:16px; --ds-body:15px; --ds-cap:13.5px;
+  --ds-gap:22px; --ds-pad:20px; --ds-r:22px; --ds-r-in:14px;
+}
+.ot-wrap h1{font-size:26px;font-weight:800;letter-spacing:-.01em}
+.ot-wrap .sub{color:var(--muted);font-size:var(--ds-cap)}
+.ot-hero{background:var(--surface);border:1px solid var(--border);border-radius:var(--ds-r);padding:20px var(--ds-pad)}
+.ot-hero .profit{font-size:2.2rem;font-weight:800}
+.ot-hero .lbl{font-weight:600;color:var(--muted)}
+.ot-hero .rec{font-weight:600;font-size:var(--ds-body)}
+.ot-bar-lbl{color:var(--muted)}
+.ot-stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--ds-r-in);padding:13px 10px}
+.ot-stat .n{font-size:1.2rem;font-weight:700}
+.ot-stat .l{font-weight:600;color:var(--muted)}
+.ot-section h2{font-size:var(--ds-title);font-weight:800}
+.ot-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--ds-r-in);padding:var(--ds-pad)}
+.ot-card .ttl{font-size:var(--ds-card-title);font-weight:700}
+.ot-row{font-size:var(--ds-cap)}
+.ot-table th{color:var(--muted);border-bottom:1px solid var(--border)}
+.ot-table td{border-bottom:1px solid var(--border)}
+.ot-badge{font-weight:700;padding:3px 8px}
+.ot-lvl{font-weight:700}
+.ot-play{border-bottom:1px solid var(--border)}
+.ot-back{font-weight:600}
+</style>
 {% endblock %}
