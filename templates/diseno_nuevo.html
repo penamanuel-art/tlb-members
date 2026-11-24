@@ -626,6 +626,31 @@ body .dn-hello .dn-quickbtn{margin-top:0}
     <a class="dn-watch" href="#dn-how" onclick="if(window.tstStartTour){window.tstStartTour();return false;}"><span class="dn-watch-ic"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M10.2 8.6v6.8L16 12z" fill="currentColor" stroke="none"/></svg></span>Watch how it works</a>
   </section>
 
+  {% if is_alex %}
+  <!-- Vista de miembro nuevo pa' Alex EN SU DASHBOARD NORMAL
+       (2026-11-23, orden suya: «Pónmelo en mi dashboard normal, sin
+       mandarme link»): una sola vez, su propia sesión limpia las
+       marcas locales que esconden la tirita del tour y la guía de
+       instalación, pa' que las dos salgan tal cual le salen a un
+       miembro nuevo al entrar. La marca propia tst_alex_newview_v1
+       impide que se repita: después su X y su descarte vuelven a
+       mandar como pa' cualquier miembro. Pa' mostrárselo otra vez,
+       subir la versión de la marca. -->
+  <script>
+  (function(){try{
+    if(localStorage.getItem('tst_alex_newview_v1'))return;
+    localStorage.setItem('tst_alex_newview_v1','1');
+    localStorage.removeItem('tst_tour_done_v1');
+    localStorage.removeItem('tst_bubble_off_v1');
+    localStorage.removeItem('tlb_af_dismissed_at');
+    localStorage.removeItem('tlb_af_done');
+    localStorage.removeItem('tlb_af_first_shown');
+    localStorage.removeItem('tlb_af_ios_pending');
+    sessionStorage.removeItem('tlb_af_guide_done');
+  }catch(e){}})();
+  </script>
+  {% endif %}
+
   <!-- Burbuja de bienvenida al tour (2026-11-20, orden de Alex):
        al miembro que aun no ha hecho el tour le sale esta burbuja
        corta invitandolo; el boton arranca el tour de una vez. Se
