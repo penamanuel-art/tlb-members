@@ -6942,7 +6942,7 @@ def home():
     locked_plays = []
     if not platinum_unlocked_for(user) or preview_locked:
         if _card_publicada:
-            _hoy_lock = datetime.now(TZ).strftime("%Y-%m-%d")
+            _hoy_lock = (datetime.now(TZ) - timedelta(hours=5)).strftime("%Y-%m-%d")
             for _p in plays:
                 if _p.get("nivel") in ("ELITE", "GOLD", "VAULT"):
                     _tk = (locked_ticket_url_for(_p, _hoy_lock)
@@ -7622,7 +7622,7 @@ def admin_diseno_nuevo():
     if not _es_plat and not card_pendiente:
         # Espejo de /home: la carta bloqueada usa la copia difuminada de
         # SU ticket (la original nunca llega al HTML del sin-Platinum).
-        _hoy_lock = datetime.now(TZ).strftime("%Y-%m-%d")
+        _hoy_lock = (datetime.now(TZ) - timedelta(hours=5)).strftime("%Y-%m-%d")
         for _p in plays:
             if _p.get("nivel") in ("ELITE", "GOLD", "VAULT"):
                 _p["ticket_url"] = (locked_ticket_url_for(_p, _hoy_lock)
@@ -7732,7 +7732,7 @@ def admin_diseno_dos():
     if not _es_plat and not card_pendiente:
         # Espejo de /home: la carta bloqueada usa la copia difuminada de
         # SU ticket (la original nunca llega al HTML del sin-Platinum).
-        _hoy_lock = datetime.now(TZ).strftime("%Y-%m-%d")
+        _hoy_lock = (datetime.now(TZ) - timedelta(hours=5)).strftime("%Y-%m-%d")
         for _p in plays:
             if _p.get("nivel") in ("ELITE", "GOLD", "VAULT"):
                 _p["ticket_url"] = (locked_ticket_url_for(_p, _hoy_lock)
