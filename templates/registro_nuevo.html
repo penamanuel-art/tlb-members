@@ -308,27 +308,6 @@ img{display:block;max-width:100%}
 
       <div class="divider"><span>FROM THE OWNER'S OWN BANKROLL</span></div>
 
-{% if recientes %}
-  <!-- ===== RECIBOS — las jugadas reales con su ticket ===== -->
-  <section class="sec" id="receipts">
-    <div class="sec-head">
-      <span class="eyebrow">Proof, not promises</span>
-      <h2>Real plays. <span class="accg">Real tickets.</span></h2>
-      <span class="sec-sub">Our most recent official plays — the wins and the losses alike, each one with the actual ticket we placed. Posted before game time, graded after, never edited.</span>
-    </div>
-    <div class="receipts">
-      {% for r in recientes if r.comprobante %}
-      <article class="rcard">
-        <a href="{{ url_for('static', filename=r.comprobante) }}" target="_blank" rel="noopener">
-          <img src="{{ url_for('static', filename=r.comprobante) }}" alt="Betting ticket" loading="lazy">
-        </a>
-      </article>
-      {% endfor %}
-    </div>
-    <p class="micro">Every official play gets the same treatment: posted before the game, ticket on the card, result counted — <b>win or lose</b>.</p>
-  </section>
-{% endif %}
-
       <!-- ===== PRECIO TEASER ===== -->
       <div class="teaser">
         <span class="pill">NO CARD REQUIRED</span>
@@ -442,6 +421,27 @@ img{display:block;max-width:100%}
       </div>
     </div>
   </div>
+
+{% if recientes %}
+  <!-- ===== RECIBOS — las jugadas reales con su ticket ===== -->
+  <section class="sec" id="receipts">
+    <div class="sec-head">
+      <span class="eyebrow">Proof, not promises</span>
+      <h2>Real plays. <span class="accg">Real tickets.</span></h2>
+      <span class="sec-sub">Our most recent official plays — the wins and the losses alike, each one with the actual ticket we placed. Posted before game time, graded after, never edited.</span>
+    </div>
+    <div class="receipts">
+      {% for r in recientes if r.comprobante %}
+      <article class="rcard">
+        <a href="{{ url_for('static', filename=r.comprobante) }}" target="_blank" rel="noopener">
+          <img src="{{ url_for('static', filename=r.comprobante) }}" alt="Betting ticket" loading="lazy">
+        </a>
+      </article>
+      {% endfor %}
+    </div>
+    <p class="micro">Every official play gets the same treatment: posted before the game, ticket on the card, result counted — <b>win or lose</b>.</p>
+  </section>
+{% endif %}
 
   <!-- ===== CÓMO FUNCIONA ===== -->
   <section class="sec">
