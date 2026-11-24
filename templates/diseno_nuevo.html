@@ -579,6 +579,23 @@ body .dn-hello .dn-quickbtn{margin-top:0}
   body .dn-hello-row h1{font-size:26px}
 }
 </style>
+<style>
+/* ===== Hot right now: tarjetas MAS FINAS y SIN hueco abajo (2026-11-23
+   ~21:05 ET, orden de Alex: «estan muy anchas... ponla mas fina, que queda
+   mucho espacio; abajo queda mucho espacio») =====
+   Dos causas del hueco: (1) .dn-hot-row es flex SIN align-items -> las
+   tarjetas se ESTIRAN a la altura de la mas alta y el sobrante quedaba
+   vacio bajo el pie de las mas cortas; (2) espaciado interno generoso
+   (margenes de 12-14px entre bloques + padding de 15px). Este bloque va
+   al final del <head> a proposito: gana a la base y al ajuste -15% de la
+   manana. Solo se tocan las tarjetas del carrusel de «Hot right now». */
+body .dn-hot-row{align-items:flex-start}
+body .dn-hot-card{flex-basis:calc(74% - 22px);padding:12px 13px}
+body .dn-hot-card .dn-hot-num{margin:10px 0 2px}
+body .dn-hot-card .dn-hot-sub2{margin:0 0 9px}
+body .dn-hot-card .dn-hot-streakrow{margin:-3px 0 9px}
+body .dn-hot-card .dn-hot-dots{margin:0 0 10px;min-height:0}
+</style>
 </head>
 <body>
 
