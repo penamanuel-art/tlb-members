@@ -1357,6 +1357,15 @@ function dnHotClose(){
      push, y NO registra eventos del embudo — es solo pa' que la vea
      cuando quiera («yo apruebo cuando yo veo»). */
   var PREVIEW = {{ 'true' if (is_alex and request.args.get('alertas')) else 'false' }};
+  /* Guía forzada pa' Alex (2026-11-23): en SU cuenta el puesto bajo
+     la tirita lo ocupa SIEMPRE la guía de instalación (iosA), aunque
+     abra desde el icono instalado (standalone) — que es justo lo que
+     lo mandaba a la tarjeta de alertas «Never miss a play», porque
+     initialView() solo abre en iosA si NO está instalado. Esta
+     bandera solo se renderiza pa' is_alex (user_id 6); se quita
+     junto con el bloque de limpieza de marcas cuando Alex confirme
+     que ya vio la guía como quiere. */
+  var FORCE_GUIDE = {{ 'true' if is_alex else 'false' }};
   var LS_DONE = 'tlb_af_done', LS_DIS = 'tlb_af_dismissed_at', LS_IOS = 'tlb_af_ios_pending';
   var DISMISS_MS = 30 * 24 * 60 * 60 * 1000;
   function lsGet(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
@@ -1405,6 +1414,7 @@ function dnHotClose(){
      no cambia nada: 'go' si venía pendiente del icono, 'value'
      en el resto. */
   function initialView(){
+    if(FORCE_GUIDE) return 'iosA';
     if(pendingGo) return 'go';
     if(iosNeedsInstall) return 'iosA';
     return 'value';
@@ -1482,6 +1492,7 @@ function dnHotClose(){
   (async function(){
     try{
       if(PREVIEW){ eligible = true; return; }
+      if(FORCE_GUIDE){ eligible = true; return; }
       var dis = parseInt(lsGet(LS_DIS) || '0', 10);
       if(dis && (Date.now() - dis) < DISMISS_MS) return;
       if(iosNeedsInstall){ eligible = true; return; }
