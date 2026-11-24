@@ -1,6 +1,14 @@
 {% extends "base.html" %}
 {% block title %}Sports Handicapper | The Sharp Team{% endblock %}
 {% block content %}
+<style>
+/* 2026-11-24 (pedido de Alex: «es mucho espacio abajo vacío»): entre la
+   tarjeta de login y el footer se sumaban margin-bottom de .auth-card (40px)
+   + padding inferior de .container (20px) + padding del footer (30px) =
+   ~90px de vacío. Se aprieta SOLO en esta página; el footer queda igual. */
+.auth-card{margin-bottom:6px}
+main.container{padding-bottom:6px}
+</style>
 <section class="auth-card">
 {% if sin_confirmar_email %}
   <div style="border:2px solid #e8c766;background:rgba(251,191,36,.10);border-radius:16px;padding:20px 18px;text-align:center;margin-bottom:20px;">
