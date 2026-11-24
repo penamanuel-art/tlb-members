@@ -472,19 +472,14 @@ fbq('track', 'PageView');
      esta plantilla y ganan por especificidad (body + clase) a los estilos
      del parcial. Superficie pizarra #1D2029, perforacion de ticket entre la
      zona alta y la zona de numeros/botones, acento cian glaciar; el dorado
-     queda pa' Platinum/Vault.
-     DOS TONOS (2026-11-23, orden de Alex): TODO el bloque superior de la
-     tarjeta — banda (liga/nivel) + zona del titulo (.v5m-top) — va en UN
-     solo color #0C0F16, distinto del cuerpo bajo la perforacion, que se
-     queda en #1D2029 SIN tocar. El bloque superior termina exacto en la
-     divisora (borde punteado de .v5m-bot). */
+     queda pa' Platinum/Vault. */
   body .v5m{background:#1D2029;border-color:#2A2E3A;border-radius:16px}
   body .v5m::before{background:#10CC87 !important}
-  body .v5m-band{background:#262B38}
+  body .v5m-band{background:#10131A}
   body .v5m-band-t{color:#C9D2E0}
   body .v5m-band-t.gold,body .v5m-band-t.free{color:#1AE099 !important}
   body .v5m-band-t.plat,body .v5m-band-t.vault{color:#FBBF24}
-  body .v5m-top{background:#262B38}
+  body .v5m-top{background:transparent}
   body .v5m-bot{border-top:2px dashed #2A2E3A;position:relative}
   body .v5m-bot::before,body .v5m-bot::after{content:"";position:absolute;top:-11px;width:20px;height:20px;border-radius:50%;background:#0C0F16;border:1px solid #2A2E3A;z-index:2}
   body .v5m-bot::before{left:-11px}
@@ -623,33 +618,7 @@ body .dn-hello .dn-quickbtn{margin-top:0}
       {% if miembro_platinum %}<span class="dn-lvl plat">Platinum membership</span>{% else %}<span class="dn-lvl">Free membership</span>{% endif %}
     </div>
     <button class="dn-quickbtn" type="button" id="dnQuickBtn" aria-haspopup="true"><span style="font-size:16px;line-height:1">+</span> Quick Links</button>
-    <a class="dn-watch" href="#dn-how" onclick="if(window.tstStartTour){window.tstStartTour();return false;}"><span class="dn-watch-ic"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M10.2 8.6v6.8L16 12z" fill="currentColor" stroke="none"/></svg></span>Watch how it works</a>
   </section>
-
-  {% if is_alex %}
-  <!-- Vista de miembro nuevo pa' Alex EN SU DASHBOARD NORMAL
-       (2026-11-23, orden suya: «Pónmelo en mi dashboard normal, sin
-       mandarme link»): una sola vez, su propia sesión limpia las
-       marcas locales que esconden la tirita del tour y la guía de
-       instalación, pa' que las dos salgan tal cual le salen a un
-       miembro nuevo al entrar. La marca propia tst_alex_newview_v1
-       impide que se repita: después su X y su descarte vuelven a
-       mandar como pa' cualquier miembro. Pa' mostrárselo otra vez,
-       subir la versión de la marca. -->
-  <script>
-  (function(){try{
-    if(localStorage.getItem('tst_alex_newview_v1'))return;
-    localStorage.setItem('tst_alex_newview_v1','1');
-    localStorage.removeItem('tst_tour_done_v1');
-    localStorage.removeItem('tst_bubble_off_v1');
-    localStorage.removeItem('tlb_af_dismissed_at');
-    localStorage.removeItem('tlb_af_done');
-    localStorage.removeItem('tlb_af_first_shown');
-    localStorage.removeItem('tlb_af_ios_pending');
-    sessionStorage.removeItem('tlb_af_guide_done');
-  }catch(e){}})();
-  </script>
-  {% endif %}
 
   <!-- Burbuja de bienvenida al tour (2026-11-20, orden de Alex):
        al miembro que aun no ha hecho el tour le sale esta burbuja
@@ -686,42 +655,16 @@ body .dn-hello .dn-quickbtn{margin-top:0}
   </script>
 
 
-  <!-- Tarjeta de estado del board — rediseño de forma (2026-11-23, orden de Alex:
-       mismo color de siempre, solo cambia el diseño; la píldora Watch subió a la
-       zona del saludo y las barras de segmentos desaparecen: los conteos reales
-       del día van en las líneas de texto, por nivel). -->
-  <style>
-  .dn-posted{display:flex;align-items:center;gap:16px;background:linear-gradient(180deg,rgba(16,204,135,.08),rgba(16,204,135,.02)),var(--panel);border:1px solid rgba(16,204,135,.45);border-radius:18px;padding:20px 18px}
-  .dn-posted-ic{flex:0 0 auto;width:56px;height:56px;border-radius:16px;background:#10CC87;display:flex;align-items:center;justify-content:center}
-  .dn-posted-tx{min-width:0}
-  .dn-posted-title{font-family:var(--fdisp);font-size:21px;font-weight:800;line-height:1.2;color:var(--txt)}
-  .dn-posted-line{color:var(--mut);font-size:15.5px;line-height:1.45;margin:5px 0 0}
-  </style>
-  {% set b_src = plays if plays is defined and plays else [] %}
-  {% set b_plats = b_src|rejectattr('nivel','equalto','GOLD')|rejectattr('nivel','equalto','FREE')|rejectattr('nivel','equalto','VALUE')|rejectattr('nivel','equalto','VAULT')|list %}
-  {% set b_golds = b_src|selectattr('nivel','equalto','GOLD')|list %}
-  {% set b_vaults = b_src|selectattr('nivel','equalto','VAULT')|list %}
-  {% set b_frees = b_src|selectattr('nivel','equalto','FREE')|list %}
-  {% set b_parts = [] %}
-  {% if b_plats %}{% set _ = b_parts.append('Platinum: ' ~ (b_plats|length) ~ ' play' ~ ('s' if b_plats|length != 1)) %}{% endif %}
-  {% if b_golds %}{% set _ = b_parts.append('Gold: ' ~ (b_golds|length) ~ ' play' ~ ('s' if b_golds|length != 1)) %}{% endif %}
-  {% if b_vaults %}{% set _ = b_parts.append('Vault: ' ~ (b_vaults|length) ~ ' play' ~ ('s' if b_vaults|length != 1)) %}{% endif %}
-  {% if b_frees %}{% set _ = b_parts.append('Free: ' ~ (b_frees|length) ~ ' play' ~ ('s' if b_frees|length != 1)) %}{% endif %}
-  <div class="dn-hero-card dn-posted" id="dnBoard">
-    {% if estado.vacio %}
-    <span class="dn-posted-ic" aria-hidden="true"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#0C0F16" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></span>
-    <div class="dn-posted-tx">
-      <div class="dn-posted-title">{{ estado.titulo }}</div>
-      <p class="dn-posted-line">{{ estado.sub }}</p>
+  <div class="dn-hero-card" id="dnBoard">
+    <div class="dn-hero-band"><span>Today's card</span><span class="dn-hero-date">{{ fecha }}</span></div>
+    <div class="dn-hero-body">
+      {% if estado.vacio %}<div class="dn-hero-title">Today's <span class="dn-hero-accent">plays</span> not posted yet</div>{% else %}<div class="dn-hero-title">{{ estado.titulo }}</div>{% endif %}
+      <div class="dn-hero-div"></div>
+      <div class="dn-hero-label">The board</div>
+      <p class="dn-hero-text">{{ estado.sub }}</p>
+      <div class="dn-segs"><span class="on"></span><span></span><span></span></div>
+      <a class="dn-watch" href="#dn-how" onclick="if(window.tstStartTour){window.tstStartTour();return false;}"><span class="dn-watch-ic"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M10.2 8.6v6.8L16 12z" fill="currentColor" stroke="none"/></svg></span>Watch how it works</a>
     </div>
-    {% else %}
-    <span class="dn-posted-ic" aria-hidden="true"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#0C0F16" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5l5 5L19.5 7"/></svg></span>
-    <div class="dn-posted-tx">
-      <div class="dn-posted-title">Today's board is posted</div>
-      {% if b_parts %}<p class="dn-posted-line">{{ b_parts|join('. ') }}.</p>{% endif %}
-      <p class="dn-posted-line">On the board right now.</p>
-    </div>
-    {% endif %}
   </div>
 
   <a class="dn-live{% if estado.live %} on{% endif %}" href="{{ url_for('game_center') }}">
