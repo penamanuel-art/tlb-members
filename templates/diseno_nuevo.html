@@ -715,6 +715,22 @@ body .dn-viewpicks,body .dn-view,body .dn-cta,body .dn-risk-pill{background:var(
 body .dn-top{border-bottom:1px solid var(--border)}
 body .dn-tabs{background:var(--bg);border-top:1px solid var(--border)}
 </style>
+<style>
+/* ===== Saludo SIN desborde (2026-11-24, foto de Alex en Android: el
+   saludo «Good afternoon, Manuel» se salia por el borde derecho) =====
+   La regla que mandaba (body .dn-hello-row h1, bloque del encabezado
+   recompuesto) traia white-space:nowrap y 30px en pantallas <=480px:
+   con un nombre largo el h1 no podia envolver y se salia de la
+   pantalla. Este bloque va DESPUES del sistema de diseno, como ultimo
+   <style> del <head>: gana a todas las capas anteriores. El saludo
+   ahora (1) puede envolver a una segunda linea, (2) nunca empuja la
+   fila (min-width:0 + max-width:100%), (3) su tamano baja con el
+   ancho de la pantalla (clamp) y conserva el tamano aprobado de
+   40px en pantallas anchas; la fila tambien puede envolver pa' que
+   la pildora de nivel baje en vez de apretar el saludo. */
+body .dn-hello-row{flex-wrap:wrap;max-width:100%}
+body .dn-hello-row h1{white-space:normal;overflow-wrap:break-word;max-width:100%;min-width:0;flex:1 1 auto;font-size:clamp(20px,6vw,40px)}
+</style>
 </head>
 <body>
 
