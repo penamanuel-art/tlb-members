@@ -3,8 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Sports Handicapper | The Sharp Team</title>
-<meta name="theme-color" content="#0c0f16">
+<title>Create your free account | The Sharp Team</title>
+<meta name="description" content="Create your free account: today's Gold plays free inside your Dashboard, every play with its real ticket. Platinum unlocks inside — $1 your first week, then $15.99/week.">
+<meta name="theme-color" content="#0C0F16">
 <link rel="icon" type="image/x-icon" href="/static/img/favicon.ico">
 <link rel="icon" type="image/png" sizes="32x32" href="/static/img/favicon-32.png">
 <link rel="apple-touch-icon" href="/static/img/apple-touch-icon.png">
@@ -35,302 +36,217 @@ twq('config','rhgk7');
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800&family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@500;600&display=swap" rel="stylesheet">
 <style>
-/* ============ Diseño nuevo (el de la home publicada, commit 2c025a6) ============
-   container 1120px / pad 22px (16 mobile) · surfaces #1D2029/#232730/#2a2e3a
-   borders #2a2e3a / strong #404555 · text #fff/#DDDDDD/#a3a8b3/#6b7280
-   radius 14 / lg 20 · headings 'Unbounded' 700 · body 'Roboto'
-   mint #2EE6A8 · gold #C9A227 */
+/* ============ Registro — rediseño completo 2026-11-23 ============
+   Paleta verde vigente del sitio: fondo #0C0F16 · tarjetas #1D2029 ·
+   botones #10CC87 · acento #1AE099 · bordes #2A2E3A · suave #9AA1AE ·
+   dorado #FBBF24. Titulares 'Unbounded', cuerpo 'Roboto'. Mobile-first. */
 :root{
-  --bg-deep:#0c0f16;--surface:#1D2029;--surface-2:#232730;--surface-3:#2a2e3a;
-  --border:#2a2e3a;--border-hover:#353a47;--border-strong:#404555;
-  --text:#fff;--text-2:#DDDDDD;--text-3:#a3a8b3;--text-4:#6b7280;
-  --mint:#2EE6A8;--mint-2:#5FF0BF;--mint-soft:rgba(46,230,168,.13);--mint-tint:rgba(46,230,168,.24);--mint-glow:rgba(46,230,168,.45);
-  --gold:#C9A227;--gold-2:#E3BC3F;--gold-soft:rgba(201,162,39,.14);--gold-tint:rgba(201,162,39,.30);
+  --bg:#0C0F16;--surface:#1D2029;--surface-2:#232733;--surface-3:#262B38;
+  --border:#2A2E3A;--border-strong:#404555;
+  --text:#ffffff;--text-2:#E8EAEE;--muted:#9AA1AE;--faint:#6b7280;
+  --btn:#10CC87;--accent:#1AE099;--accent-soft:rgba(26,224,153,.12);--accent-tint:rgba(26,224,153,.32);
+  --gold:#FBBF24;--gold-soft:rgba(251,191,36,.12);--gold-tint:rgba(251,191,36,.35);
   --danger:#e5486c;--danger-soft:rgba(213,19,68,.14);
   --radius:14px;--radius-lg:20px;
   --fdisp:'Unbounded',sans-serif;--fbody:'Roboto',sans-serif;--fmono:'Roboto Mono',monospace;
-  --shadow-mint:0 14px 34px rgba(46,230,168,.16);--shadow-gold:0 14px 34px rgba(201,162,39,.14);
-  /* Tokens del sistema de diseño TST (Auditoría UI/UX 2026-11-12, Fase 0 · Fundación):
-     base documentada pa' las fases siguientes; ninguna medida cambia todavía. */
-  --fs-display:30px;--lh-display:1.15;--fs-h1:28px;--lh-h1:1.2;--fs-h2:22px;--lh-h2:1.25;--fs-card:17px;--lh-card:1.3;
-  --fs-body:15px;--lh-body:1.5;--fs-sub:13px;--lh-sub:1.55;--fs-tag:11px;--lh-tag:1.35;--fs-btn:15px;--lh-btn:1.2;
-  --mx:16px;--sec:24px;--pad-card:16px;--gap:8px;--gap-lg:12px;--r-card:12px;--r-btn:12px;--r-input:12px;--r-pill:999px;--r-sheet:16px;
-  --btn-h:46px;--btn-h-sm:44px;--btn-h-pill:36px;--w-public:1200px;--w-app:720px;--w-app-wide:1200px;--w-read:760px;--w-form:520px;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{
-  background:radial-gradient(1100px 560px at 72% -8%,rgba(46,230,168,.08),transparent 60%),var(--bg-deep);
-  color:var(--text);font-family:var(--fbody);font-size:15.75px;line-height:1.5;
-  -webkit-font-smoothing:antialiased;padding-bottom:96px;
-}
-h1,h2,h3,h4{font-family:var(--fdisp);font-weight:700;letter-spacing:-.01em;line-height:1.15}
+body{background:radial-gradient(1100px 560px at 72% -8%,rgba(26,224,153,.07),transparent 60%),var(--bg);
+  color:var(--text);font-family:var(--fbody);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:var(--fdisp);font-weight:700;letter-spacing:-.01em;line-height:1.18}
 a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
 .wrap{max-width:1120px;margin:0 auto;padding:0 22px}
-.sec{padding:32px 0 4px}
-.sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:16px;flex-wrap:wrap}
-.sec-head h2{font-size:25.2px}
-.sec-head .meta{font-size:12.6px;color:var(--text-3)}
-.sec-head.col{flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:6px}
-.sec-eyebrow{font-size:11.55px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--mint-2)}
-.sec-eyebrow.red{color:#ff8fab}
-.sec-eyebrow.gold{color:var(--gold-2)}
-.sec-sub{font-size:15.23px;color:var(--text-3);line-height:1.55}
-.acc{color:var(--mint)}
-.accg{color:var(--gold-2)}
+.acc{color:var(--accent)}
+.accg{color:var(--gold)}
 
-/* buttons — spec de la home */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--mint);color:#04241a;font-weight:700;
-  padding:11px 20px;border-radius:11px;font-size:14.7px;border:0;cursor:pointer;box-shadow:0 8px 24px var(--mint-glow);
-  font-family:var(--fbody);transition:transform .15s,box-shadow .15s}
+/* botones */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--btn);color:#032117;
+  font-weight:700;padding:12px 22px;border-radius:12px;font-size:15px;border:0;cursor:pointer;
+  font-family:var(--fbody);box-shadow:0 10px 26px rgba(16,204,135,.28);transition:transform .15s,box-shadow .15s}
 .btn:hover{transform:translateY(-1px)}
-.btn.sm{padding:8px 15px;font-size:13.65px}
-.btn.ghost{background:rgba(255,255,255,.07);color:var(--text);border:1px solid var(--border-strong);box-shadow:none}
-.btn.ghost:hover{background:rgba(255,255,255,.12);border-color:var(--text-3)}
-.btn.gold{background:var(--gold);color:#241a00;box-shadow:0 8px 22px var(--gold-tint)}
-.btn.head-cta{padding:9px 12px;font-weight:800;font-size:14.18px;white-space:nowrap;flex-shrink:0;background:var(--mint);color:#000;box-shadow:0 10px 28px var(--mint-glow)}
+.btn.ghost{background:rgba(255,255,255,.06);color:var(--text);border:1px solid var(--border-strong);box-shadow:none}
+.btn.head-cta{padding:9px 14px;font-weight:800;font-size:14px;white-space:nowrap;flex-shrink:0}
 
-/* topbar — spec de la home: sticky 62px, blur, borde inferior */
+/* topbar */
 .topbar{position:sticky;top:0;z-index:50;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
-  background:rgba(12,15,22,.82);border-bottom:1px solid var(--border)}
-.topbar .wrap{display:flex;align-items:center;justify-content:space-between;height:62px;gap:8px}
-.lockup{height:clamp(30px,8.33vw,36px);width:auto;display:block}
-.fbrand .lockup{height:36px}
-.brand{display:flex;align-items:center;gap:10px;min-width:0}
-.nav-actions{display:flex;align-items:center;gap:8px}
-.login{font-size:13.65px;font-weight:500;color:var(--text-2);padding:8px 3px;white-space:nowrap}
+  background:rgba(12,15,22,.85);border-bottom:1px solid var(--border)}
+.topbar .wrap{display:flex;align-items:center;justify-content:space-between;height:64px;gap:8px}
+.brand{display:flex;align-items:center;gap:9px;min-width:0}
+.brand .coin{height:38px;width:auto}
+.brand .letters{height:28px;width:auto}
+.nav-actions{display:flex;align-items:center;gap:10px}
+.login{font-size:14px;font-weight:500;color:var(--text-2);padding:8px 3px;white-space:nowrap}
 .login:hover{color:#fff}
 
-/* ===== Registro: titular corto + FORMULARIO PRIMERO (orden de Alex) ===== */
-.reg-col{max-width:660px;margin:0 auto}
-.reg-head{text-align:center;padding:30px 0 20px}
-.pill{display:inline-block;font-size:11.55px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;
-  color:var(--gold-2);border:1px solid var(--gold-tint);border-radius:999px;padding:6px 14px}
-.reg-head h1{font-size:33.6px;line-height:1.12;font-weight:800;margin-top:16px}
-.reg-head .sub{font-size:16.28px;color:var(--text-2);margin-top:12px;line-height:1.55}
-.signup{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px}
-.signup h2{font-size:23.1px;margin-top:8px}
-.signup .sg-sub{font-size:15.23px;color:var(--text-3);margin:8px 0 6px;line-height:1.55}
+/* hero + formulario */
+.hero{max-width:680px;margin:0 auto;text-align:center;padding:34px 0 6px}
+.pill{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--accent);border:1px solid var(--accent-tint);background:var(--accent-soft);border-radius:999px;padding:6px 14px}
+.hero h1{font-size:34px;line-height:1.14;font-weight:800;margin-top:18px}
+.hero .sub{font-size:16.5px;color:var(--text-2);margin:14px auto 0;line-height:1.6;max-width:560px}
+.signup{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
+  padding:26px 24px;max-width:680px;margin:26px auto 0;text-align:left;box-shadow:0 24px 60px rgba(0,0,0,.35)}
+.signup h2{font-size:22px;margin-top:8px}
+.eyebrow{font-size:11px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--accent)}
+.eyebrow.gold{color:var(--gold)}
+.signup .sg-sub{font-size:15px;color:var(--muted);margin:9px 0 4px;line-height:1.6}
 .intent-box{display:flex;gap:12px;align-items:flex-start;background:var(--gold-soft);border:1px solid var(--gold-tint);
-  border-radius:var(--radius);padding:14px 16px;margin-top:14px;text-align:left}
-.intent-box .star{font-size:21px;line-height:1.2}
-.io-title{display:block;font-size:14.7px;font-weight:800;letter-spacing:.03em;color:var(--text)}
-.io-sub{display:block;font-size:13.12px;color:var(--text-3);margin-top:3px;line-height:1.5}
-.field{margin-top:16px;text-align:left}
-.field label{display:block;font-size:14.18px;font-weight:700;margin-bottom:6px;color:var(--text)}
-.field .hint{font-size:13.12px;color:var(--text-3);margin:-2px 0 8px;line-height:1.5}
-.field input{width:100%;background:var(--surface-2);border:1px solid var(--border-strong);border-radius:11px;
-  padding:12px 16px;font-size:15.75px;color:var(--text);font-family:var(--fbody);outline:none}
-.field input::placeholder{color:var(--text-4)}
-.field input:focus{border-color:var(--mint)}
-.flash{border-radius:11px;padding:11px 14px;font-size:14.18px;font-weight:600;margin-top:14px;text-align:left;line-height:1.5}
+  border-radius:var(--radius);padding:14px 16px;margin-top:16px}
+.intent-box .star{font-size:20px;line-height:1.25}
+.io-title{display:block;font-size:14px;font-weight:800;letter-spacing:.03em;color:var(--text)}
+.io-sub{display:block;font-size:13px;color:var(--muted);margin-top:3px;line-height:1.55}
+.field{margin-top:16px}
+.field label{display:block;font-size:14px;font-weight:700;margin-bottom:6px;color:var(--text)}
+.field .hint{font-size:13px;color:var(--muted);margin:-2px 0 8px;line-height:1.5}
+.field input{width:100%;background:var(--surface-2);border:1px solid var(--border-strong);border-radius:12px;
+  padding:13px 16px;font-size:16px;color:var(--text);font-family:var(--fbody);outline:none}
+.field input::placeholder{color:var(--faint)}
+.field input:focus{border-color:var(--accent)}
+.flash{border-radius:11px;padding:11px 14px;font-size:14px;font-weight:600;margin-top:14px;line-height:1.5}
 .flash-error{background:var(--danger-soft);border:1px solid rgba(213,19,68,.4);color:#ffb3c2}
-.flash-success{background:var(--mint-soft);border:1px solid var(--mint-tint);color:var(--mint-2)}
-.btn.submit{width:100%;padding:14px 20px;font-size:15.75px;margin-top:18px}
-.howsteps{list-style:none;margin-top:18px;display:flex;flex-direction:column;gap:8px;text-align:left}
-.howsteps li{font-size:14.18px;color:var(--text-3);line-height:1.55}
-.howsteps b{color:var(--gold-2)}
-.formnote{font-size:13.12px;color:var(--text-4);text-align:left;margin-top:12px;line-height:1.55}
-.login-line{text-align:center;font-size:14.18px;color:var(--text-3);margin-top:16px}
-.login-line a{color:var(--mint-2);font-weight:700}
-.micro{text-align:center;font-size:13.65px;color:var(--text-3);margin-top:16px;line-height:1.55}
+.flash-success{background:var(--accent-soft);border:1px solid var(--accent-tint);color:var(--accent)}
+.btn.submit{width:100%;padding:15px 20px;font-size:16px;margin-top:18px}
+.howsteps{list-style:none;margin-top:18px;display:flex;flex-direction:column;gap:8px}
+.howsteps li{font-size:14px;color:var(--muted);line-height:1.55}
+.howsteps b{color:var(--gold)}
+.formnote{font-size:13px;color:var(--faint);margin-top:12px;line-height:1.55}
+.login-line{text-align:center;font-size:14px;color:var(--muted);margin-top:16px}
+.login-line a{color:var(--accent);font-weight:700}
+.micro{text-align:center;font-size:14px;color:var(--muted);margin-top:18px;line-height:1.6}
 .micro b{color:var(--text)}
 
-/* fila de confianza (bajo el formulario) */
-.trust3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:18px}
+/* fila de confianza */
+.trust3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:680px;margin:18px auto 0}
 .t3{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 10px;
   display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;
-  font-size:12.08px;font-weight:700;color:var(--text-2);line-height:1.35}
+  font-size:12px;font-weight:700;color:var(--text-2);line-height:1.35}
 .ticon{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;flex:none}
 .ticon svg{width:20px;height:20px}
-.ticon.mint{background:var(--mint-soft);border:1px solid var(--mint-tint);color:var(--mint-2)}
+.ticon.mint{background:var(--accent-soft);border:1px solid var(--accent-tint);color:var(--accent)}
 .ticon.neutral{background:var(--surface-2);border:1px solid var(--border-strong);color:var(--text-2)}
-.ticon.gold{background:var(--gold-soft);border:1px solid var(--gold-tint);color:var(--gold-2)}
+.ticon.gold{background:var(--gold-soft);border:1px solid var(--gold-tint);color:var(--gold)}
 
-/* pasos (problema / sistema / oferta) */
-.how{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-.howstep{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px}
-.howstep .n{width:34px;height:34px;border-radius:10px;background:var(--mint-soft);color:var(--mint-2);
-  font-family:var(--fdisp);font-weight:800;display:grid;place-items:center;font-size:16.8px;margin-bottom:13px}
-.howstep.bad .n{background:var(--surface-3);color:var(--text-2)}
-.howstep h4{font-size:16.8px;margin-bottom:6px}
-.howstep p{font-size:13.65px;color:var(--text-3);line-height:1.55}
-.howstep p b{color:var(--text)}
-.errors{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
-.errors li{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--danger);
-  border-radius:var(--radius);padding:14px 16px;font-size:14.7px;font-weight:600;color:var(--text-2);line-height:1.5}
+/* secciones */
+.sec{padding:38px 0 6px}
+.sec-head{display:flex;flex-direction:column;align-items:flex-start;gap:6px;margin-bottom:18px}
+.sec-head h2{font-size:25px}
+.sec-sub{font-size:15px;color:var(--muted);line-height:1.6;max-width:640px}
 
-/* costo */
-.cost{background:linear-gradient(180deg,var(--gold-soft),var(--surface));border:1px solid var(--gold-tint);
-  border-radius:var(--radius-lg);padding:24px}
-.cost .big{font-family:var(--fdisp);font-size:21px;font-weight:700;line-height:1.4}
-.cost .big span{color:var(--gold-2)}
-.cost p{color:var(--text-3);font-size:15.23px;margin-top:10px;line-height:1.6}
-.cost .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
-.cost .chips span{font-size:12.6px;font-weight:700;color:var(--gold-2);background:var(--gold-soft);
-  border:1px solid var(--gold-tint);border-radius:999px;padding:6px 12px}
+/* ===== RECIBOS — prueba real con la foto del ticket ===== */
+.receipts{display:grid;grid-template-columns:1fr;gap:14px}
+.rcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden}
+.rcard .rbody{padding:16px 16px 14px}
+.rrow{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+.lvl{font-size:10.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:4px 10px;border-radius:999px}
+.lvl.gold{color:var(--accent);background:var(--accent-soft);border:1px solid var(--accent-tint)}
+.lvl.plat{color:#0C0F16;background:var(--gold)}
+.lvl.vault{color:var(--gold);background:var(--gold-soft);border:1px solid var(--gold-tint)}
+.res{font-size:10.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:4px 10px;border-radius:999px}
+.res.won{color:#032117;background:var(--btn)}
+.res.lost{color:#ffb3c2;background:var(--danger-soft);border:1px solid rgba(213,19,68,.4)}
+.rcard h3{font-family:var(--fbody);font-size:17px;font-weight:700;letter-spacing:0;line-height:1.35}
+.rmeta{font-size:13px;color:var(--muted);margin-top:5px;font-family:var(--fmono)}
+.rticket{border-top:1px solid var(--border);background:var(--surface-3)}
+.rticket img{width:100%;height:auto}
+.rticket .tlabel{display:flex;align-items:center;gap:7px;font-size:11px;font-weight:800;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--muted);padding:10px 16px 0}
+.rticket .tlabel svg{width:15px;height:15px;color:var(--accent)}
 
-/* paneles dobles (antes/despúes · para quién) */
-.ba2{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:stretch}
-.bapanel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px}
-.bapanel.after{border-color:var(--mint-tint);background:linear-gradient(180deg,var(--mint-soft),var(--surface))}
-.bapanel .blabel{font-size:11.55px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
-.bapanel.before .blabel{color:#ff8fab}
-.bapanel.after .blabel{color:var(--mint-2)}
-.bapanel.yes .blabel{color:var(--mint-2)}
-.bapanel.no .blabel{color:#ff8fab}
-.bapanel h3{font-size:17.85px;margin:8px 0 6px}
-.bapanel p{font-size:14.7px;color:var(--text-3);line-height:1.6}
-
-/* listas con check */
-.checklist{list-style:none;margin:0}
-.checklist li{position:relative;padding:7px 0 7px 26px;font-size:14.18px;color:var(--text-2);border-bottom:1px solid var(--border);line-height:1.5}
-.checklist li:last-child{border:0}
-.checklist li::before{content:'✓';position:absolute;left:2px;top:7px;color:var(--mint);font-weight:700;font-size:13.65px}
-.checklist.gold li::before{color:var(--gold-2)}
-.checklist.nb li{border:0;padding-top:5px;padding-bottom:5px}
-.checklist.nb li::before{top:5px}
-.checklist.no li::before{content:'✕';color:#ff8fab}
-
-/* niveles — .valuecard de la home */
-.plans3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:stretch}
+/* niveles */
+.plans2{display:grid;grid-template-columns:1fr;gap:16px}
 .valuecard{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px;position:relative;display:flex;flex-direction:column}
-.valuecard.paid{border-color:var(--gold);background:linear-gradient(180deg,var(--gold-soft),var(--surface));box-shadow:var(--shadow-gold)}
+.valuecard.paid{border-color:var(--gold);background:linear-gradient(180deg,var(--gold-soft),var(--surface))}
 .vc-badge{position:absolute;top:-11px;left:24px;background:var(--gold);color:#241a00;font-size:10.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;padding:4px 10px;border-radius:999px}
-.vc-tier{font-size:11.55px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-4);font-weight:700}
-.valuecard h3{font-size:18.9px;margin-top:10px}
-.vc-sub{font-size:13.65px;color:var(--text-3);margin:6px 0 14px;line-height:1.55}
+.vc-tier{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);font-weight:700}
+.valuecard h3{font-size:19px;margin-top:10px}
+.vc-sub{font-size:14px;color:var(--muted);margin:6px 0 14px;line-height:1.6}
 .valuecard ul{list-style:none;margin:0 0 18px}
-.valuecard li{position:relative;padding:7px 0 7px 26px;font-size:14.18px;color:var(--text-2);border-bottom:1px solid var(--border);line-height:1.5}
+.valuecard li{position:relative;padding:7px 0 7px 26px;font-size:14px;color:var(--text-2);border-bottom:1px solid var(--border);line-height:1.5}
 .valuecard li:last-child{border:0}
-.valuecard li::before{content:'✓';position:absolute;left:2px;top:7px;color:var(--mint);font-weight:700;font-size:13.65px}
-.valuecard.paid li::before{color:var(--gold-2)}
-.tier-price{margin-top:auto;padding-top:12px;font-size:15.23px;font-weight:800;color:var(--text)}
+.valuecard li::before{content:'✓';position:absolute;left:2px;top:7px;color:var(--accent);font-weight:700;font-size:13px}
+.valuecard.paid li::before{color:var(--gold)}
+.tier-price{margin-top:auto;padding-top:12px;font-size:15px;font-weight:800;color:var(--text)}
+.tier-price span{color:var(--muted);font-weight:500;font-size:13px}
+
+/* cómo funciona */
+.how{display:grid;grid-template-columns:1fr;gap:14px}
+.howstep{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px}
+.howstep .n{width:34px;height:34px;border-radius:10px;background:var(--accent-soft);color:var(--accent);
+  font-family:var(--fdisp);font-weight:800;display:grid;place-items:center;font-size:16px;margin-bottom:13px}
+.howstep h4{font-size:16px;margin-bottom:6px}
+.howstep p{font-size:14px;color:var(--muted);line-height:1.6}
+.howstep p b{color:var(--text)}
 
 /* oferta */
 .offerpanel{background:linear-gradient(180deg,var(--gold-soft),var(--surface));border:1px solid var(--gold);
-  border-radius:var(--radius-lg);padding:28px 24px;box-shadow:var(--shadow-gold);text-align:center}
-.offerpanel h2{font-size:25.2px;margin-top:14px}
-.offerpanel .price-line{font-size:15.23px;color:var(--text-3);margin-top:8px;line-height:1.6}
+  border-radius:var(--radius-lg);padding:30px 24px;text-align:center}
+.offerpanel h2{font-size:25px;margin-top:14px}
+.offerpanel .price-line{font-size:15px;color:var(--muted);margin-top:9px;line-height:1.65}
 .offerpanel .price-line b{color:var(--text)}
-.offerpanel .checklist{text-align:left;max-width:460px;margin:18px auto 4px}
-.osteps{display:flex;flex-direction:column;gap:12px;margin-top:20px;text-align:left}
-.pstep{display:flex;gap:14px;align-items:flex-start;background:var(--surface);border:1px solid var(--border);
-  border-radius:var(--radius);padding:18px}
-.pstep .n{width:34px;height:34px;flex:none;border-radius:10px;background:var(--gold-soft);color:var(--gold-2);
-  font-family:var(--fdisp);font-weight:800;display:grid;place-items:center;font-size:16.8px}
-.pstep.mint .n{background:var(--mint-soft);color:var(--mint-2)}
-.pstep h3{font-size:16.8px;margin-bottom:4px}
-.pstep h3 span{color:var(--gold-2)}
-.pstep p{font-size:14.18px;color:var(--text-3);line-height:1.55}
-.bigprice{font-family:var(--fdisp);font-size:28.35px;font-weight:800;margin-top:20px}
-.bigprice span{color:var(--gold-2)}
+.checklist{list-style:none;text-align:left;max-width:460px;margin:18px auto 4px}
+.checklist li{position:relative;padding:7px 0 7px 26px;font-size:14px;color:var(--text-2);border-bottom:1px solid var(--border);line-height:1.5}
+.checklist li:last-child{border:0}
+.checklist li::before{content:'✓';position:absolute;left:2px;top:7px;color:var(--gold);font-weight:700;font-size:13px}
+.bigprice{font-family:var(--fdisp);font-size:27px;font-weight:800;margin-top:20px}
+.bigprice span{color:var(--gold)}
 .center-cta{display:flex;flex-direction:column;align-items:center;margin-top:18px}
 
-/* faq — spec de la home */
-.faqwrap{display:grid;grid-template-columns:1fr 1fr;gap:11px;align-items:start}
+/* faq */
+.faqwrap{display:grid;grid-template-columns:1fr;gap:11px;align-items:start}
 .faqi{border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--surface);transition:border-color .15s}
-.faqi:hover{border-color:var(--border-strong)}
-.faqi.open{border-color:var(--mint-tint);background:linear-gradient(180deg,var(--mint-soft),var(--surface))}
-.faqq{padding:16px 18px;font-weight:700;font-size:15.23px;cursor:pointer;display:flex;justify-content:space-between;gap:12px;align-items:center;color:var(--text);width:100%;background:none;border:0;text-align:left;font-family:var(--fbody)}
-.faqq:after{content:'+';color:var(--mint-2);font-size:23.1px;line-height:1;font-weight:400;flex-shrink:0}
+.faqi.open{border-color:var(--accent-tint)}
+.faqq{padding:16px 18px;font-weight:700;font-size:15px;cursor:pointer;display:flex;justify-content:space-between;gap:12px;align-items:center;color:var(--text);width:100%;background:none;border:0;text-align:left;font-family:var(--fbody)}
+.faqq:after{content:'+';color:var(--accent);font-size:22px;line-height:1;font-weight:400;flex-shrink:0}
 .faqi.open .faqq:after{content:'−'}
-.faqa{max-height:0;overflow:hidden;transition:max-height .25s;color:var(--text-3);font-size:14.18px;line-height:1.65}
+.faqa{max-height:0;overflow:hidden;transition:max-height .25s;color:var(--muted);font-size:14px;line-height:1.65}
 .faqa div{padding:0 18px 16px}
 .faqi.open .faqa{max-height:420px}
 
-/* footer — spec de la home */
-.site-footer{border-top:1px solid var(--border);background:var(--bg-deep);margin-top:42px;padding:26px 0 8px}
+/* footer */
+.site-footer{border-top:1px solid var(--border);background:var(--bg);margin-top:44px;padding:28px 0 20px}
 .site-footer .wrap{display:flex;flex-direction:column;gap:10px;align-items:flex-start}
-.site-footer .fbrand{display:flex;align-items:center;gap:10px}
-.site-footer p{font-size:13.12px;color:var(--text-4);line-height:1.6}
-.site-footer .legal{font-size:12.08px}
+.site-footer .fbrand{display:flex;align-items:center;gap:9px}
+.site-footer .fbrand .coin{height:36px;width:auto}
+.site-footer .fbrand .letters{height:27px;width:auto}
+.site-footer p{font-size:13px;color:var(--faint);line-height:1.6}
+.site-footer .legal{font-size:12px}
 .site-footer .fsocials{display:flex;gap:18px;justify-content:center;width:100%;margin:2px 0}
-.site-footer .fsocials a{display:inline-flex}
 .site-footer .fsocials svg{width:22px;height:22px;display:block}
 .site-footer .flinks{display:flex;flex-wrap:wrap;gap:6px 10px;justify-content:center;align-items:center;width:100%}
-.site-footer .flinks a{font-size:13.12px;color:var(--text-3);text-decoration:none}
-.site-footer .flinks a:hover{color:var(--mint)}
-.site-footer .flinks .sep{color:var(--text-4);font-size:11.55px}
-.site-footer .copy{font-size:12.08px}
+.site-footer .flinks a{font-size:13px;color:var(--muted)}
+.site-footer .flinks a:hover{color:var(--accent)}
+.site-footer .flinks .sep{color:var(--faint);font-size:11px}
+.site-footer .copy{font-size:12px}
 
-@media (max-width:900px){
-  .plans3{grid-template-columns:1fr}
-  .ba2{grid-template-columns:1fr}
-  .how{grid-template-columns:1fr}
+@media (min-width:640px){
+  .receipts{grid-template-columns:1fr 1fr}
+  .plans2{grid-template-columns:1fr 1fr}
+  .how{grid-template-columns:repeat(3,1fr)}
+  .faqwrap{grid-template-columns:1fr 1fr}
+}
+@media (min-width:980px){
+  .receipts{grid-template-columns:repeat(3,1fr)}
 }
 @media (max-width:768px){
   .wrap{padding:0 16px}
-  .sec{padding:24px 0 2px}
-  .sec-head h2{font-size:22.05px}
-  .faqwrap{grid-template-columns:1fr}
-  .errors{grid-template-columns:1fr}
-  body{padding-bottom:86px}
+  .hero h1{font-size:29px}
+  .hero{padding-top:26px}
+  .signup{padding:22px 18px}
+  .sec-head h2{font-size:22px}
+  .offerpanel h2{font-size:22px}
+  .bigprice{font-size:23px}
 }
-@media (max-width:480px){
-  .sec-head h2{font-size:19.95px}
-  .reg-head h1{font-size:28.35px}
-  .reg-head{padding-top:22px}
-  .signup{padding:20px 18px}
-  .bigprice{font-size:24.15px}
-}
-
-/* ===== SKELETON DE CARGA (skl-) — misma mecánica, colores del diseño nuevo ===== */
-#skl-overlay{position:fixed;inset:0;z-index:999999;overflow:hidden;opacity:1;transition:opacity .45s ease;animation:sklForceHide .6s ease 2.8s forwards;background:var(--bg-deep);}
-#skl-overlay.skl-hide{opacity:0;pointer-events:none;}
-.skl-inner{width:100%;margin:0 auto;}
-.skl-bone{position:relative;overflow:hidden;background:var(--surface);}
-.skl-bone::after{content:"";position:absolute;top:-10%;bottom:-10%;left:0;width:55%;background:linear-gradient(100deg,rgba(42,46,58,0) 0%,rgba(42,46,58,.6) 32%,rgba(46,230,168,.08) 48%,rgba(201,162,39,.13) 52%,rgba(42,46,58,.6) 68%,rgba(42,46,58,0) 100%);transform:translateX(-140%) skewX(-8deg);animation:sklWave 1.35s ease-in-out infinite;}
-.skl-bone.d1::after{animation-delay:.14s;}
-.skl-bone.d2::after{animation-delay:.28s;}
-.skl-bone.d3::after{animation-delay:.42s;}
-.skl-plain{background:var(--surface-3);}
-@keyframes sklWave{to{transform:translateX(280%) skewX(-8deg);}}
-@keyframes sklForceHide{to{opacity:0;visibility:hidden;}}
-@media (prefers-reduced-motion:reduce){
-.skl-bone::after{animation:none;display:none;}
-#skl-overlay{transition:none;animation:sklForceHide .3s ease .15s forwards;}
-}
-.skl-reg{max-width:660px;margin:0 auto;padding-bottom:44px;}
-.skl-step{border-radius:14px;padding:16px;margin-bottom:12px;display:flex;gap:12px;align-items:flex-start;}
-
 </style>
 </head>
 <body>
 
-<!-- ===== SKELETON DE CARGA (skl-) ===== -->
-<div id="skl-overlay" aria-hidden="true">
-  <div class="skl-inner">
-    <div class="skl-bone" style="height:62px;"></div>
-    <div class="skl-reg" style="padding:26px 22px 0;">
-      <div class="skl-bone" style="width:250px;max-width:85%;height:24px;border-radius:999px;margin:0 auto 20px;"></div>
-      <div class="skl-bone d1" style="width:92%;height:34px;border-radius:10px;margin:0 auto 10px;"></div>
-      <div class="skl-bone d2" style="width:68%;height:34px;border-radius:10px;margin:0 auto 18px;"></div>
-      <div class="skl-bone d1" style="width:88%;height:13px;border-radius:7px;margin:0 auto 8px;"></div>
-      <div class="skl-bone d2" style="width:64%;height:13px;border-radius:7px;margin:0 auto 24px;"></div>
-      <div class="skl-bone d3" style="width:100%;height:190px;border-radius:20px;margin:0 auto 12px;"></div>
-      <div class="skl-bone skl-step ">
-        <div class="skl-plain" style="width:30px;height:30px;border-radius:50%;flex:0 0 auto;"></div>
-        <div style="flex:1;">
-          <div class="skl-plain" style="width:55%;height:13px;border-radius:6px;margin-bottom:8px;"></div>
-          <div class="skl-plain" style="width:85%;height:10px;border-radius:5px;"></div>
-        </div>
-      </div>
-      <div class="skl-bone skl-step d1">
-        <div class="skl-plain" style="width:30px;height:30px;border-radius:50%;flex:0 0 auto;"></div>
-        <div style="flex:1;">
-          <div class="skl-plain" style="width:55%;height:13px;border-radius:6px;margin-bottom:8px;"></div>
-          <div class="skl-plain" style="width:85%;height:10px;border-radius:5px;"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
 <header class="topbar">
   <div class="wrap">
     <a class="brand" href="/" aria-label="The Sharp Team">
-      <img class="lockup" src="{{ url_for('static', filename='img/sharp-team-header.jpg') }}" alt="The Sharp Team">
+      <img class="coin" src="{{ url_for('static', filename='img/sharp-coin.png') }}" alt="">
+      <img class="letters" src="{{ url_for('static', filename='img/sharp-letters.png') }}" alt="The Sharp Team">
     </a>
     <div class="nav-actions">
       <a class="login" href="{{ url_for('login') }}">Log in</a>
@@ -341,226 +257,184 @@ a{color:inherit;text-decoration:none}
 
 <main class="wrap">
 
-  <!-- ===== REGISTRO: titular corto + FORMULARIO PRIMERO ===== -->
-  <div class="reg-col">
-    <div class="reg-head">
-      <span class="pill">⭐ Platinum · every play · every tool</span>
-      <h1>Every play. <span class="acc">Every tool.</span><br>One membership.</h1>
-      <p class="sub">Daily plays priced by a real model, published before game time, and proven with the actual ticket — every single day.</p>
-    </div>
-
-    <section id="signup">
-      <div class="signup">
-        <span class="sec-eyebrow gold">Create your account</span>
-        <h2>Start with just your email</h2>
-        <p class="sg-sub">One field — create your free account and you're in: your Dashboard opens right away with today's free Gold plays. Platinum unlocks inside whenever you're ready — $1 for your first week, then $15.99/week. Your password, name and phone come after, once you're in.</p>
-      {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-          {% for cat, msg in messages %}
-            <div class="flash flash-{{ cat }}">{{ msg }}</div>
-          {% endfor %}
-        {% endif %}
-      {% endwith %}
-        <form method="post" action="{{ url_for('register') }}">
-          <div class="intent-box">
-            <span class="star">⭐</span>
-            <span>
-              <span class="io-title">FREE ACCOUNT — GOLD PLAYS EVERY DAY</span>
-              <span class="io-sub">No card to start: open your Dashboard and see today's Gold plays free. Platinum unlocks inside — $1 for your first week, then $15.99/week.</span>
-              <span class="io-sub">Platinum is optional — unlock it only if you want it, and cancel anytime from your account.</span>
-            </span>
-          </div>
-          <div class="field">
-            <label for="f-email">Your email address</label>
-            <p class="hint">We'll send your plays here every day before games go off.</p>
-            <input id="f-email" type="email" name="email" required autocomplete="email" placeholder="you@email.com">
-          </div>
-          <div class="field">
-            <label for="f-whatsapp">WhatsApp number (optional)</label>
-            <p class="hint">A second way to reach you with the plays — only if you want it. Your email is all we need to start.</p>
-            <input id="f-whatsapp" type="tel" name="whatsapp" autocomplete="tel" placeholder="(555) 123-4567">
-          </div>
-        {% if turnstile_key %}
-        <div class="cf-turnstile" data-sitekey="{{ turnstile_key }}" data-theme="dark" style="margin:12px 0 4px"></div>
-        <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
-        {% endif %}
-          <button class="btn submit" type="submit">Create my account</button>
-        </form>
-        <ol class="howsteps">
-          <li><b>1.</b> Enter your email — your account is created in seconds.</li>
-          <li><b>2.</b> Confirm your email — we send you one quick link. Tap it and your Dashboard opens right away. It takes 10 seconds.</li>
-          <li><b>3.</b> Your Dashboard is open with today's Gold plays free. Unlock Platinum inside whenever you're ready — $1 for your first week, then $15.99/week — to see the full card.</li>
-        </ol>
-        <p class="formnote">Creating your account is free — no card required. Platinum is optional and unlocks inside: $1 for your first week, then $15.99/week until you cancel. No contracts.</p>
-        <p class="login-line">Already have an account? <a href="{{ url_for('login') }}">Log in here →</a></p>
-      </div>
-    </section>
-
-    <p class="micro"><b>Your account is free.</b> Platinum: $1 for your first week, then $15.99/week — cancel anytime.</p>
-
-    <div class="trust3">
-      <div class="t3"><div class="ticon mint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 5-3.5 8-7 10-3.5-2-7-5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg></div><span>Posted before game time</span></div>
-      <div class="t3"><div class="ticon neutral"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a3 3 0 0 0 0 6v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a3 3 0 0 0 0-6z"/><path d="M13 5v2M13 11v2M13 17v2"/></svg></div><span>Real ticket on every play</span></div>
-      <div class="t3"><div class="ticon gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg></div><span>Model-priced lines</span></div>
-    </div>
+  <!-- ===== HERO + FORMULARIO ===== -->
+  <div class="hero">
+    <span class="pill">Free account · No card required</span>
+    <h1>Free plays every day.<br><span class="acc">Real tickets</span> on every play.</h1>
+    <p class="sub">A model prices every game. The plays that clear the bar get posted before game time — with the actual ticket attached, win or lose. Create your free account and see today's card yourself.</p>
   </div>
 
-  <!-- ===== PROBLEM ===== -->
-  <section class="sec">
-    <div class="sec-head col"><span class="sec-eyebrow red">The Problem</span><h2>The cycle that <span class="accg">empties bankrolls</span></h2><span class="sec-sub">Sound familiar?</span></div>
-    <div class="how">
-      <div class="howstep bad"><div class="n">1</div><h4>You bet every day</h4><p>Games are on, so money goes down. Every day feels like it has to have action.</p></div>
-      <div class="howstep bad"><div class="n">2</div><h4>You follow picks from everywhere</h4><p>A screenshot here, a "lock" there, a hot take from someone who never shows a ticket.</p></div>
-      <div class="howstep bad"><div class="n">3</div><h4>No record. No proof. No system.</h4><p>When it loses, there's nothing to check and nothing to learn. Just the next deposit.</p></div>
-    </div>
-    <h3 style="font-size:18.9px;margin-top:26px;">The mistakes that keep the cycle spinning</h3>
-    <ul class="errors">
-      <li>Betting without a model — just opinions and gut feelings</li>
-      <li>Chasing losses with bigger bets and worse prices</li>
-      <li>Following pick sellers with no verified record</li>
-      <li>Never knowing your real win rate or what a play is worth</li>
-    </ul>
-  </section>
-
-  <!-- ===== THE COST ===== -->
-  <section class="sec">
-    <div class="cost">
-      <div class="big">The cost isn't just the money.<br><span>It's the time, the bankroll, and every blind decision in between.</span></div>
-      <p>Hours spent guessing. Slips placed at whatever price was in front of you. A bankroll that shrinks because nobody — including you — can prove what actually works.</p>
-      <div class="chips"><span>Time</span><span>Bankroll</span><span>Blind decisions</span></div>
-    </div>
-  </section>
-
-  <!-- ===== THE SYSTEM ===== -->
-  <section class="sec">
-    <div class="sec-head col"><span class="sec-eyebrow">The System</span><h2>How <span class="accg">The Sharp Team</span> works</h2></div>
-    <div class="how">
-      <div class="howstep"><div class="n">1</div><h4>A model prices every game</h4><p>Every matchup gets a real win probability before we ever look at the odds.</p></div>
-      <div class="howstep"><div class="n">2</div><h4>Only real edges get published</h4><p>If the model's number doesn't beat the price, there is no play. Every play is posted <b>before game time</b> — never after.</p></div>
-      <div class="howstep"><div class="n">3</div><h4>Every play carries the real ticket</h4><p>The actual Novig ticket goes on the card, and the result counts in the public record — win or lose.</p></div>
-    </div>
-  </section>
-
-  <!-- ===== BEFORE / AFTER ===== -->
-  <section class="sec">
-    <div class="sec-head col"><span class="sec-eyebrow gold">The Difference</span><h2>Before <span class="accg">/</span> After</h2></div>
-    <div class="ba2">
-      <div class="bapanel before">
-        <div class="blabel">Before</div>
-        <h3>Picks with no proof</h3>
-        <p>Someone posts a play, it loses, and it quietly disappears. The wins get screenshotted, the losses get buried, and you never see a real record.</p>
-      </div>
-      <div class="bapanel after">
-        <div class="blabel">After</div>
-        <h3>Every play, proven</h3>
-        <p>Each play shows the model probability, the price we took, and the real ticket. The full record stays public — the good weeks and the bad ones.</p>
-      </div>
+  <section id="signup">
+    <div class="signup">
+      <span class="eyebrow gold">Create your account</span>
+      <h2>Start with just your email</h2>
+      <p class="sg-sub">One field — create your free account, confirm your email, and your Dashboard opens with today's Gold plays free. Platinum unlocks inside whenever you're ready — $1 for your first week, then $15.99/week. Your name, password and phone come after, once you're in.</p>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for cat, msg in messages %}
+          <div class="flash flash-{{ cat }}">{{ msg }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+      <form method="post" action="{{ url_for('register') }}">
+        <div class="intent-box">
+          <span class="star">⭐</span>
+          <span>
+            <span class="io-title">FREE ACCOUNT — GOLD PLAYS EVERY DAY</span>
+            <span class="io-sub">No card to start: open your Dashboard and see today's Gold plays free. Platinum unlocks inside — $1 for your first week, then $15.99/week.</span>
+            <span class="io-sub">Platinum is optional — unlock it only if you want it, and cancel anytime from your account.</span>
+          </span>
+        </div>
+        <div class="field">
+          <label for="f-email">Your email address</label>
+          <p class="hint">We'll send your plays here every day before games go off.</p>
+          <input id="f-email" type="email" name="email" required autocomplete="email" placeholder="you@email.com">
+        </div>
+        <div class="field">
+          <label for="f-whatsapp">WhatsApp number (optional)</label>
+          <p class="hint">A second way to reach you with the plays — only if you want it. Your email is all we need to start.</p>
+          <input id="f-whatsapp" type="tel" name="whatsapp" autocomplete="tel" placeholder="(555) 123-4567">
+        </div>
+      {% if turnstile_key %}
+      <div class="cf-turnstile" data-sitekey="{{ turnstile_key }}" data-theme="dark" style="margin:12px 0 4px"></div>
+      <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+      {% endif %}
+        <button class="btn submit" type="submit">Create my free account</button>
+      </form>
+      <ol class="howsteps">
+        <li><b>1.</b> Enter your email — your account is created in seconds.</li>
+        <li><b>2.</b> Confirm your email — we send you one quick link. Tap it and your Dashboard opens right away. It takes 10 seconds.</li>
+        <li><b>3.</b> Your Dashboard is open with today's Gold plays free. Unlock Platinum inside whenever you're ready — $1 for your first week, then $15.99/week — to see the full card.</li>
+      </ol>
+      <p class="formnote">Creating your account is free — no card required. Platinum is optional and unlocks inside: $1 for your first week, then $15.99/week until you cancel. No contracts.</p>
+      <p class="login-line">Already have an account? <a href="{{ url_for('login') }}">Log in here →</a></p>
     </div>
   </section>
 
-  <!-- ===== WHAT'S INSIDE ===== -->
+  <p class="micro"><b>Your account is free.</b> Platinum: $1 for your first week, then $15.99/week — cancel anytime.</p>
+
+  <div class="trust3">
+    <div class="t3"><div class="ticon mint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 5-3.5 8-7 10-3.5-2-7-5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg></div><span>Posted before game time</span></div>
+    <div class="t3"><div class="ticon neutral"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a3 3 0 0 0 0 6v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a3 3 0 0 0 0-6z"/><path d="M13 5v2M13 11v2M13 17v2"/></svg></div><span>Real ticket on every play</span></div>
+    <div class="t3"><div class="ticon gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg></div><span>Wins and losses, all counted</span></div>
+  </div>
+
+{% if recientes %}
+  <!-- ===== RECIBOS — las jugadas reales con su ticket ===== -->
+  <section class="sec" id="receipts">
+    <div class="sec-head">
+      <span class="eyebrow">Proof, not promises</span>
+      <h2>Real plays. <span class="accg">Real tickets.</span></h2>
+      <span class="sec-sub">Our most recent official plays — the wins and the losses alike, each one with the actual ticket we placed. Posted before game time, graded after, never edited.</span>
+    </div>
+    <div class="receipts">
+      {% for r in recientes if r.comprobante %}
+      <article class="rcard">
+        <div class="rbody">
+          <div class="rrow">
+            {% if r.nivel == 'ELITE' %}<span class="lvl plat">⭐ Platinum</span>{% elif r.nivel == 'VAULT' %}<span class="lvl vault">🔒 Vault</span>{% else %}<span class="lvl gold">Gold</span>{% endif %}
+            {% if r.resultado == 'WON' %}<span class="res won">Won</span>{% else %}<span class="res lost">Lost</span>{% endif %}
+          </div>
+          <h3>{{ r.pick }}</h3>
+          <p class="rmeta">{{ r.liga }}{% if r.fecha %} · {{ r.fecha }}{% endif %}{% if r.cuota %} · {{ '+' if r.cuota > 0 else '' }}{{ r.cuota|int }}{% endif %}</p>
+        </div>
+        <div class="rticket">
+          <span class="tlabel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a3 3 0 0 0 0 6v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a3 3 0 0 0 0-6z"/><path d="M13 5v2M13 11v2M13 17v2"/></svg>The actual ticket</span>
+          <a href="{{ url_for('static', filename=r.comprobante) }}" target="_blank" rel="noopener">
+            <img src="{{ url_for('static', filename=r.comprobante) }}" alt="Ticket for {{ r.pick }}" loading="lazy">
+          </a>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+    <p class="micro">Every official play gets the same treatment: posted before the game, ticket on the card, result counted — <b>win or lose</b>.</p>
+  </section>
+{% endif %}
+
+  <!-- ===== QUÉ INCLUYE ===== -->
   <section class="sec">
-    <div class="sec-head col"><span class="sec-eyebrow">What's Inside</span><h2>Everything included. <span class="accg">One standard of proof.</span></h2></div>
-    <div class="plans3">
+    <div class="sec-head">
+      <span class="eyebrow gold">What's inside</span>
+      <h2>Start free. <span class="accg">Unlock more when you're ready.</span></h2>
+    </div>
+    <div class="plans2">
       <div class="valuecard">
-        <span class="vc-tier">📋 The Daily Card</span>
-        <h3>Posted before game time</h3>
-        <p class="vc-sub">The day's official plays, published and tracked like everything else.</p>
+        <span class="vc-tier">⚪ Gold — free</span>
+        <h3>Free, for life</h3>
+        <p class="vc-sub">Your account opens the Dashboard with our Gold plays — the free showcase of the system, every single day.</p>
         <ul>
-          <li>Gold plays on your Dashboard</li>
+          <li>Gold plays on your Dashboard, every day</li>
           <li>Every play with its real ticket</li>
-          <li>Full public record</li>
-        </ul>
-        <div class="tier-price">Posted before game time, every day</div>
-      </div>
-      <div class="valuecard">
-        <span class="vc-tier">⚪ Gold</span>
-        <h3>Validated plays</h3>
-        <p class="vc-sub">Plays that clear a higher bar: a validated mathematical edge, published with the same ticket-and-record standard.</p>
-        <ul>
-          <li>Gold plays on your Dashboard</li>
           <li>Model probability and value on every card</li>
+          <li>The full record, open inside</li>
         </ul>
+        <div class="tier-price">Free <span>— no card required, ever</span></div>
       </div>
       <div class="valuecard paid">
-        <span class="vc-badge">Best Value</span>
+        <span class="vc-badge">Best value</span>
         <span class="vc-tier">⭐ Platinum</span>
         <h3>Everything, unlocked</h3>
+        <p class="vc-sub">Our strongest plays and every tool, in one membership.</p>
         <ul>
           <li>Gold + Platinum plays — the strongest edges we find</li>
-          <li>+EV Board — live value across 12 sportsbooks</li>
+          <li>+EV Board — live value across sportsbooks</li>
           <li>Player Props board</li>
-          <li>AI Assistant</li>
           <li>Line Moves — see lines move in real time</li>
           <li>Sharp Money — follow the professional money</li>
           <li>Private Telegram channel</li>
         </ul>
-        <div class="tier-price">$1 first week — then $15.99/week</div>
+        <div class="tier-price">$1 your first week <span>· then $15.99/week</span></div>
       </div>
     </div>
   </section>
 
-  <!-- ===== WHO IT'S FOR ===== -->
+  <!-- ===== CÓMO FUNCIONA ===== -->
   <section class="sec">
-    <div class="sec-head col"><span class="sec-eyebrow gold">Who It's For</span><h2>Built for bettors who want <span class="accg">a system, not miracles</span></h2></div>
-    <div class="ba2">
-      <div class="bapanel yes">
-        <div class="blabel">This is for you if…</div>
-        <ul class="checklist nb" style="margin-top:12px">
-          <li>You want every play backed by a model and a number</li>
-          <li>You want to see the ticket and check the record yourself</li>
-          <li>You'd rather bet fewer, better plays than chase action</li>
-        </ul>
-      </div>
-      <div class="bapanel no">
-        <div class="blabel">This is not for you if…</div>
-        <ul class="checklist nb no" style="margin-top:12px">
-          <li>You're looking to get rich overnight</li>
-          <li>You want a "lock of the century" every night</li>
-          <li>You'd rather chase losses than follow a system</li>
-        </ul>
-      </div>
+    <div class="sec-head">
+      <span class="eyebrow">The system</span>
+      <h2>How <span class="accg">The Sharp Team</span> works</h2>
+    </div>
+    <div class="how">
+      <div class="howstep"><div class="n">1</div><h4>A model prices every game</h4><p>Every matchup gets a real win probability before we ever look at the odds.</p></div>
+      <div class="howstep"><div class="n">2</div><h4>Only real edges get published</h4><p>If the model's number doesn't beat the price, there is no play. Every play is posted <b>before game time</b> — never after.</p></div>
+      <div class="howstep"><div class="n">3</div><h4>Every play carries the real ticket</h4><p>The actual ticket goes on the card, and the result counts — win or lose. You can check every number yourself.</p></div>
     </div>
   </section>
 
-  <!-- ===== THE OFFER ===== -->
+  <!-- ===== OFERTA ===== -->
   <section class="sec" id="offer">
     <div class="offerpanel">
-      <span class="pill">The Offer</span>
+      <span class="pill">The offer</span>
       <h2>Platinum: <span class="accg">$1</span> your first week</h2>
-      <p class="price-line">Every play, every tool — the full membership. $1 for your first week when you unlock Platinum inside; then $15.99/week. Cancel anytime from your account.</p>
-      <ul class="checklist gold">
-        <li>The Platinum play — our top play of the day</li>
-        <li>Every Gold play</li>
+      <p class="price-line">Every play, every tool — the full membership. <b>$1 for your first week</b> when you unlock Platinum inside your Dashboard; then $15.99/week. Cancel anytime from your account.</p>
+      <ul class="checklist">
+        <li>The Platinum plays — our strongest plays of the day</li>
+        <li>Every Gold play, free from day one</li>
         <li>Value plays on the +EV Board</li>
         <li>Player Props board</li>
         <li>Line Moves &amp; Sharp Money</li>
-        <li>Compare Prices across books</li>
         <li>Official Tracker &amp; My Bets</li>
-        <li>30-Day Academy</li>
         <li>Private Telegram channels</li>
       </ul>
-      <div class="osteps">
-        <div class="pstep"><div class="n">1</div><div><h3>Today: <span>free</span> to start</h3><p>Create your account with just your email and open your Dashboard — today's Gold plays are free. Unlock Platinum inside whenever you're ready: your first week is $1.</p></div></div>
-        <div class="pstep mint"><div class="n">2</div><div><h3>Week two on: <span>$15.99/week</span></h3><p>Billed weekly by Stripe. Every play and every tool stays fully unlocked while you're subscribed — the real thing, not a teaser.</p></div></div>
-        <div class="pstep"><div class="n">3</div><div><h3>Your call, <span>always</span></h3><p>Cancel anytime from your account in a couple of clicks — you keep the time you've already paid for. No contracts, no retention scripts.</p></div></div>
-      </div>
       <div class="bigprice">Your first week: <span>$1</span> · then $15.99/week</div>
-      <p class="price-line">No free trial and no surprises: your account is free, and Platinum's price is exact — <b>$1 for your first week, $15.99/week after</b> — before you ever enter a card.</p>
-      <p class="micro">Platinum: $1 first week · then $15.99/week · cancel anytime.</p>
+      <div class="center-cta"><a class="btn" href="#signup">Create your free account</a></div>
+      <p class="price-line">Your account is free — no card required. Platinum's price is exact and shown before you ever enter a card: <b>$1 for your first week, $15.99/week after</b>.</p>
     </div>
   </section>
 
   <!-- ===== FAQ ===== -->
   <section class="sec">
-    <div class="sec-head col"><span class="sec-eyebrow">Before You Join</span><h2>Questions, <span class="accg">answered straight</span></h2></div>
+    <div class="sec-head">
+      <span class="eyebrow">Before you join</span>
+      <h2>Questions, <span class="accg">answered straight</span></h2>
+    </div>
     <div class="faqwrap">
-      <div class="faqi"><button class="faqq" type="button">What happens after I sign up?</button><div class="faqa"><div>Create your free account with just your email — you're in right away. Your Dashboard opens with today's Gold plays free, every one with its real ticket, and Platinum unlocks inside for $1 for your first week whenever you're ready.</div></div></div>
+      <div class="faqi"><button class="faqq" type="button">What happens after I sign up?</button><div class="faqa"><div>Create your free account with just your email and tap the confirmation link we send you — your Dashboard opens right away with today's Gold plays free, every one with its real ticket. Platinum unlocks inside for $1 for your first week whenever you're ready.</div></div></div>
       <div class="faqi"><button class="faqq" type="button">How much does Platinum cost?</button><div class="faqa"><div>$1 for your first week, charged when you unlock it inside your Dashboard. Then $15.99/week, billed weekly by Stripe until you cancel. Creating your account is free — that's the whole price, no upsells inside.</div></div></div>
       <div class="faqi"><button class="faqq" type="button">When do the plays come out?</button><div class="faqa"><div>Weekdays at 2:00 PM ET and weekends at 11:00 AM ET. Every play is posted before its game starts.</div></div></div>
       <div class="faqi"><button class="faqq" type="button">Where do I see the plays?</button><div class="faqa"><div>On your Dashboard, in the Telegram channels, and in your daily email — whichever you check first.</div></div></div>
       <div class="faqi"><button class="faqq" type="button">Can I cancel whenever I want?</button><div class="faqa"><div>Yes. You can cancel from your account at any time, and you keep the time you've already paid for.</div></div></div>
-      <div class="faqi"><button class="faqq" type="button">How do I know the plays are real?</button><div class="faqa"><div>Every play is posted before game time with its real ticket — nothing is edited after the fact.</div></div></div>
+      <div class="faqi"><button class="faqq" type="button">How do I know the plays are real?</button><div class="faqa"><div>Every play is posted before game time with its real ticket — scroll up and check the most recent ones yourself. Wins and losses are both there; nothing is edited after the fact.</div></div></div>
     </div>
     <p class="micro">Your account is free. Platinum: $1 for your first week, then $15.99/week. Cancel anytime.</p>
   </section>
@@ -569,7 +443,10 @@ a{color:inherit;text-decoration:none}
 
 <footer class="site-footer">
   <div class="wrap">
-    <div class="fbrand"><img class="lockup" src="{{ url_for('static', filename='img/sharp-team-header.jpg') }}" alt="The Sharp Team"></div>
+    <div class="fbrand">
+      <img class="coin" src="{{ url_for('static', filename='img/sharp-coin.png') }}" alt="">
+      <img class="letters" src="{{ url_for('static', filename='img/sharp-letters.png') }}" alt="The Sharp Team">
+    </div>
     <p>The Sharp Team · New York, NY</p>
     <div class="fsocials">
       <a href="https://x.com/thesharpteambet" target="_blank" rel="noopener" aria-label="X"><svg viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H4.64l4.713 6.231 5.891-6.231zm-1.161 17.52h1.833L7.084 4.126H5.117l11.966 15.644z"/></svg></a>
@@ -597,35 +474,6 @@ document.querySelectorAll('.faqq').forEach(function(b){
     if(!was) item.classList.add('open');
   });
 });
-</script>
-
-
-<script>
-/* SKELETON DE CARGA (skl-): oculta la capa al cargar; la red CSS la quita a los 2.8s aunque este JS falle. */
-(function(){try{
-  var el=document.getElementById('skl-overlay');
-  if(!el)return;
-  var t0=Date.now(),done=false,reduced=false;
-  try{reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;}catch(e){}
-  function hide(){
-    if(done)return;done=true;
-    var target=reduced?60:1100;
-    var wait=Math.max(0,target-(Date.now()-t0));
-    setTimeout(function(){
-      try{
-        el.classList.add('skl-hide');
-        el.style.pointerEvents='none';
-        setTimeout(function(){try{el.style.display='none';}catch(e){}},550);
-      }catch(e){}
-    },wait);
-  }
-  if(document.readyState==='complete'){hide();}
-  else{
-    window.addEventListener('load',hide);
-    document.addEventListener('DOMContentLoaded',function(){setTimeout(hide,700);});
-    setTimeout(hide,1800);
-  }
-}catch(e){}})();
 </script>
 </body>
 </html>
