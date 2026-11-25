@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Sharp Team — Command Center</title>
+    <title>The Sharp Team — Command OS</title>
     <style>
         :root {
             --bg-obsidian: #050507;
             --surface-dark: #0D0D12;
             --surface-card: #14141B;
             --border-metal: #2D2D38;
-            --border-gold: rgba(212, 175, 55, 0.38);
             --accent-emerald: #00E676;
             --accent-gold: #D4AF37;
             --text-main: #F4F4F6;
@@ -28,97 +27,75 @@
         body {
             background-color: var(--bg-obsidian);
             color: var(--text-main);
-            padding-bottom: 118px;
+            padding-bottom: 80px;
         }
 
-        /* Header */
-        .top-head {
-            padding: 18px 16px 10px;
+        /* Telemetry Ticker */
+        .telemetry-bar {
+            background: #111;
+            border-bottom: 1px solid var(--border-metal);
+            padding: 8px 16px;
             display: flex;
-            align-items: center;
-            gap: 12px;
-            background: radial-gradient(120% 160% at 85% 0%, rgba(0,230,118,0.10) 0%, rgba(5,5,7,0) 55%), radial-gradient(90% 140% at 0% 0%, rgba(212,175,55,0.08) 0%, rgba(5,5,7,0) 50%);
+            gap: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            overflow-x: auto;
+            white-space: nowrap;
         }
-        .mono {
-            width: 52px; height: 52px; flex: 0 0 52px;
-            border: 1px solid var(--border-gold);
-            border-radius: 16px;
-            background: #0B0B10;
-            display: flex; align-items: center; justify-content: center;
-            color: var(--accent-gold);
-            font-size: 17px; font-weight: 700; letter-spacing: 1px;
-        }
-        .brand-mini { font-size: 10px; letter-spacing: 3px; color: var(--accent-gold); text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
-        .brand-ver { font-size: 9px; letter-spacing: 1px; color: var(--text-muted); border: 1px solid var(--border-metal); border-radius: 6px; padding: 2px 6px; text-transform: none; }
-        .brand-title { font-size: 23px; font-weight: 700; letter-spacing: -0.4px; margin-top: 2px; }
-
-        /* Ticker */
-        .ticker {
-            border-top: 1px solid rgba(255,255,255,0.05);
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            padding: 7px 16px;
-            display: flex; gap: 22px;
-            font-size: 11px; font-weight: 500;
-            overflow-x: auto; white-space: nowrap;
-            scrollbar-width: none;
-        }
-        .ticker::-webkit-scrollbar { display: none; }
-        .ticker-item { display: flex; align-items: center; gap: 6px; color: var(--text-muted); }
+        .telemetry-item { display: flex; align-items: center; gap: 6px; }
         .text-emerald { color: var(--accent-emerald); }
         .text-gold { color: var(--accent-gold); }
+
+        /* Header */
+        header { padding: 20px 16px 12px; }
+        .brand-subtitle { font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: var(--text-muted); }
+        .brand-title { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; }
+
+        /* Navigation */
+        nav.bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(13, 13, 18, 0.95);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid var(--border-metal);
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            padding: 8px 0;
+            z-index: 1000;
+        }
+        .nav-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 11px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+        }
+        .nav-btn.active { color: var(--text-main); font-weight: 600; }
+        .nav-btn.active .icon-circle { border-color: var(--accent-emerald); background: rgba(0, 230, 118, 0.1); }
+        .icon-circle { width: 24px; height: 24px; border-radius: 50%; border: 1px solid var(--border-metal); display: flex; align-items: center; justify-content: center; font-size: 10px; }
 
         /* Views */
         .view-content { padding: 16px; display: none; }
         .view-content.active { display: block; }
         h2.section-title { font-size: 16px; margin-bottom: 16px; font-weight: 700; display: flex; align-items: center; justify-content: space-between; }
 
-        /* Cards */
-        .card { background: var(--surface-card); border: 1px solid var(--border-metal); border-radius: 16px; padding: 16px; margin-bottom: 16px; }
-        .hero-card { border-radius: 26px; padding: 20px; background: linear-gradient(180deg, #17171F 0%, #101016 100%); }
-        .hero-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
-        .stat-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; line-height: 1.5; }
-        .toggle { display: flex; background: #050507; border: 1px solid var(--border-metal); border-radius: 999px; padding: 3px; gap: 2px; }
-        .toggle button { background: none; border: none; color: var(--text-muted); font-size: 11px; font-weight: 600; padding: 5px 12px; border-radius: 999px; cursor: pointer; font-family: inherit; }
-        .toggle button.on { background: #23232E; color: var(--accent-emerald); }
-        .amount { font-size: 44px; font-weight: 800; letter-spacing: -1px; margin-top: 12px; }
-        .amount .cents { font-size: 20px; font-weight: 600; color: var(--text-muted); }
-        .hero-note { font-size: 11px; color: var(--text-muted); margin-top: 6px; }
-        .hero-divider { border: none; border-top: 1px solid rgba(255,255,255,0.07); margin: 18px 0 14px; }
-        .stats-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
-        .stats-row .s-label { font-size: 12px; color: var(--text-muted); }
-        .stats-row .s-label.gold { color: var(--accent-gold); }
-        .stats-row .s-value { font-size: 21px; font-weight: 700; margin-top: 5px; }
-        .stats-row .s-value.green { color: var(--accent-emerald); }
-        .stats-row .s-pct { font-size: 12px; color: var(--text-muted); font-weight: 500; }
+        /* Cards & Layouts */
+        .card { background: var(--surface-card); border: 1px solid var(--border-metal); border-radius: 12px; padding: 16px; margin-bottom: 16px; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .grid-2 .card { margin-bottom: 16px; }
+        .stat-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; }
+        .stat-value { font-size: 20px; font-weight: 700; margin-top: 4px; }
+        .stat-value.emerald { color: var(--accent-emerald); }
+        .stat-value.gold { color: var(--accent-gold); }
 
-        /* Section header */
-        .queue-head { display: flex; align-items: center; justify-content: space-between; margin: 22px 2px 12px; }
-        .queue-head h3 { font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 9px; }
-        .count-pill { background: rgba(0,230,118,0.16); color: var(--accent-emerald); font-size: 12px; font-weight: 700; min-width: 24px; height: 24px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; padding: 0 6px; }
-        .ver-link { background: none; border: none; color: var(--text-muted); font-size: 13px; cursor: pointer; font-family: inherit; }
-
-        /* Play cards */
-        .play-card { background: linear-gradient(180deg, #17150E 0%, var(--surface-card) 45%); border: 1px solid var(--border-gold); border-radius: 20px; padding: 16px; margin-bottom: 14px; }
-        .play-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-        .play-meta { display: flex; align-items: center; gap: 9px; font-size: 12px; color: var(--text-muted); }
-        .liga-pill { background: #23232E; color: #fff; font-size: 11px; font-weight: 700; letter-spacing: 1px; padding: 5px 10px; border-radius: 8px; }
-        .nivel-pill { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; padding: 6px 12px; border-radius: 999px; white-space: nowrap; }
-        .nivel-plat { background: rgba(212,175,55,0.14); color: var(--accent-gold); border: 1px solid var(--border-gold); }
-        .nivel-gold { background: rgba(0,230,118,0.12); color: var(--accent-emerald); border: 1px solid rgba(0,230,118,0.35); }
-        .nivel-otro { background: rgba(255,255,255,0.07); color: var(--text-main); border: 1px solid var(--border-metal); }
-        .play-game { font-size: 13px; color: var(--text-muted); margin-top: 14px; }
-        .play-main { display: flex; align-items: flex-end; justify-content: space-between; gap: 10px; margin-top: 3px; }
-        .play-pick { font-size: 21px; font-weight: 700; letter-spacing: -0.3px; }
-        .play-right { text-align: right; }
-        .play-cuota { font-size: 19px; font-weight: 700; color: var(--accent-emerald); }
-        .play-units { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
-        .play-btns { display: grid; grid-template-columns: 1fr 1.25fr; gap: 10px; margin-top: 16px; }
-        .btn-ticket { background: #1C1C24; border: 1px solid var(--border-metal); color: var(--text-main); border-radius: 14px; padding: 13px 8px; font-size: 13px; font-weight: 600; text-align: center; }
-        .btn-ticket .tk { color: var(--accent-gold); margin-right: 5px; }
-        .btn-approve { background: var(--accent-emerald); border: none; color: #04140A; border-radius: 14px; padding: 13px 8px; font-size: 13px; font-weight: 800; cursor: pointer; font-family: inherit; box-shadow: 0 6px 22px rgba(0,230,118,0.35); }
-        .empty-note { font-size: 12px; color: var(--text-muted); line-height: 1.55; }
-
-        /* Lists (views) */
+        /* Lists */
         .list-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); gap: 10px; }
         .list-item:last-child { border-bottom: none; }
         .item-info h4 { font-size: 13px; font-weight: 600; }
@@ -127,7 +104,10 @@
         .badge-emerald { background: rgba(0, 230, 118, 0.15); color: var(--accent-emerald); }
         .badge-gold { background: rgba(212, 175, 55, 0.15); color: var(--accent-gold); }
         .badge-red { background: rgba(255, 82, 82, 0.15); color: #FF5252; }
+        button.badge { border: none; cursor: pointer; font-family: inherit; }
         a.badge { text-decoration: none; }
+
+        /* Actions */
         .btn-action { background: var(--accent-emerald); color: var(--bg-obsidian); border: none; padding: 10px 16px; border-radius: 8px; font-weight: 700; font-size: 12px; width: 100%; margin-top: 12px; cursor: pointer; }
         .inp { width: 100%; padding: 8px; background: #050507; border: 1px solid var(--border-metal); color: white; border-radius: 4px; margin-bottom: 8px; font-family: inherit; font-size: 13px; }
         .inp:focus { outline: none; border-color: var(--accent-emerald); }
@@ -140,144 +120,70 @@
         .status-badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 999px; margin-bottom: 8px; }
         .status-pend { background: rgba(255,255,255,.08); color: #fff; border: 1px solid rgba(255,255,255,.35); }
         .status-sent { background: rgba(0,230,118,.13); color: var(--accent-emerald); border: 1px solid rgba(0,230,118,.35); }
-        .stat-label-sm { font-size: 11px; color: var(--text-muted); text-transform: uppercase; }
-        .stat-value { font-size: 20px; font-weight: 700; margin-top: 4px; }
-
-        /* Floating bottom nav */
-        nav.float-nav {
-            position: fixed;
-            left: 12px; right: 12px; bottom: 14px;
-            background: rgba(16, 16, 22, 0.92);
-            backdrop-filter: blur(14px);
-            border: 1px solid var(--border-metal);
-            border-radius: 28px;
-            display: grid;
-            grid-template-columns: 1fr 1fr 64px 1fr 1fr;
-            align-items: center;
-            padding: 8px 6px;
-            z-index: 1000;
-            box-shadow: 0 14px 34px rgba(0,0,0,0.55);
-        }
-        .fnav-btn { background: none; border: none; color: var(--text-muted); font-size: 10.5px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; font-family: inherit; padding: 6px 2px; border-radius: 18px; position: relative; }
-        .fnav-btn .fi { font-size: 17px; line-height: 1; }
-        .fnav-btn.active { color: var(--accent-emerald); background: rgba(255,255,255,0.05); font-weight: 600; }
-        .fnav-badge { position: absolute; top: 0; right: calc(50% - 19px); background: var(--accent-emerald); color: #04140A; font-size: 9.5px; font-weight: 800; min-width: 17px; height: 17px; border-radius: 50%; display: flex; align-items: center; justify-content: center; padding: 0 4px; }
-        .fnav-plus { width: 52px; height: 52px; margin: 0 auto; border: none; border-radius: 16px; background: var(--accent-emerald); color: #04140A; font-size: 27px; font-weight: 600; cursor: pointer; box-shadow: 0 8px 24px rgba(0,230,118,0.45); display: flex; align-items: center; justify-content: center; }
+        .muted-note { font-size: 11px; color: var(--text-muted); }
     </style>
 </head>
 <body>
 
-    <div class="top-head">
-        <div class="mono">ST</div>
-        <div>
-            <div class="brand-mini">THE SHARP TEAM <span class="brand-ver">DISEÑO E</span></div>
-            <div class="brand-title">Command Center</div>
-        </div>
+    <div class="telemetry-bar">
+        <div class="telemetry-item"><span class="text-emerald">●</span> PANEL EN VIVO</div>
+        <div class="telemetry-item">Card de hoy: {{ (plays_hoy|length) + (selecciones|length) }} jugadas</div>
+        {% for p in plays_hoy %}
+        <div class="telemetry-item">{{ p.pick }}{% if p.cuota_texto %} {{ p.cuota_texto }}{% endif %}{% if p.nivel in ['ELITE', 'PLATINUM'] %} <span class="text-gold">★ Platinum</span>{% endif %}</div>
+        {% endfor %}
+        <div class="telemetry-item">Miembros: {{ conteo_miembros.total }}</div>
+        <div class="telemetry-item">App instalada: {{ app_instalados|length }}</div>
     </div>
 
-    <div class="ticker">
-        <div class="ticker-item"><span class="text-emerald">●</span> PANEL EN VIVO</div>
-        <div class="ticker-item">Card de hoy: {{ (plays_hoy|length) + (selecciones|length) }} jugadas</div>
-        {% for p in plays_hoy %}
-        <div class="ticker-item">{{ p.pick }}{% if p.cuota_texto %} <span class="text-emerald">{{ p.cuota_texto }}</span>{% endif %}{% if p.nivel in ['ELITE', 'PLATINUM'] %} <span class="text-gold">👑 Platinum</span>{% endif %}</div>
-        {% endfor %}
-        <div class="ticker-item">Miembros: {{ conteo_miembros.total }}</div>
-        <div class="ticker-item">App instalada: {{ app_instalados|length }}</div>
-    </div>
+    <header>
+        <span class="brand-subtitle">COMMAND OS // MASTER ADMIN</span>
+        <h1 class="brand-title">THE SHARP TEAM</h1>
+    </header>
 
     <!-- 1. PULSO -->
     <section id="view-pulso" class="view-content active">
-        <div class="card hero-card">
-            <div class="hero-top">
-                <span class="stat-label">INGRESOS<br>NETOS</span>
-                {% if ingresos %}
-                <div class="toggle" id="ingToggle">
-                    <button type="button" class="on" data-amt="${{ '{:,.2f}'.format(ingresos.hoy) }}" data-note="Ingresos Stripe de hoy · Este mes: ${{ '{:,.2f}'.format(ingresos.mes) }}">Hoy</button>
-                    <button type="button" data-amt="${{ '{:,.2f}'.format(ingresos.d30) }}" data-note="Ingresos Stripe de los últimos 30 días">30D</button>
-                    <button type="button" data-amt="${{ '{:,.2f}'.format(ingresos.total) }}" data-note="Ingresos Stripe históricos (facturas pagadas)">Total</button>
-                </div>
-                {% endif %}
-            </div>
+        <h2 class="section-title">Pulso del Negocio <span style="font-size: 12px; color: var(--accent-emerald);">● Tiempo Real</span></h2>
+
+        <div class="card">
+            <span class="stat-label">Ingresos de Hoy (USD)</span>
             {% if ingresos %}
-            <div class="amount" id="ingAmount">${{ '{:,.2f}'.format(ingresos.hoy) }}</div>
-            <div class="hero-note" id="ingNote">Ingresos Stripe de hoy · Este mes: ${{ '{:,.2f}'.format(ingresos.mes) }}</div>
+            <div class="stat-value emerald">${{ '%.2f'|format(ingresos.hoy) }}</div>
+            <div style="font-size: 11px; color: var(--text-muted); margin-top: 8px;">Este mes: ${{ '%.2f'|format(ingresos.mes) }} | Últimos 30 días: ${{ '%.2f'|format(ingresos.d30) }}</div>
             {% else %}
-            <div class="amount">—</div>
-            <div class="hero-note">Datos de ingresos no disponibles ahora mismo</div>
+            <div class="stat-value emerald">—</div>
+            <div style="font-size: 11px; color: var(--text-muted); margin-top: 8px;">Datos de ingresos no disponibles ahora mismo</div>
             {% endif %}
-            <hr class="hero-divider">
-            <div class="stats-row">
-                <div>
-                    <div class="s-label">Miembros</div>
-                    <div class="s-value">{{ conteo_miembros.total }}</div>
-                </div>
-                <div>
-                    <div class="s-label gold">👑 Platinum</div>
-                    <div class="s-value">{{ conteo_miembros.plat }}</div>
-                </div>
-                <div>
-                    {% set pct = (app_instalados|length * 100 / conteo_miembros.total) if conteo_miembros.total else 0 %}
-                    <div class="s-label">App PWA</div>
-                    <div class="s-value green">{{ app_instalados|length }} <span class="s-pct">({{ '%.1f'|format(pct) }}%)</span></div>
-                </div>
+        </div>
+
+        <div class="grid-2">
+            <div class="card">
+                <span class="stat-label">Miembros Totales</span>
+                <div class="stat-value">{{ conteo_miembros.total }}</div>
+            </div>
+            <div class="card">
+                <span class="stat-label">Platinum Activos</span>
+                <div class="stat-value gold">{{ conteo_miembros.plat }}</div>
             </div>
         </div>
 
-        <div class="queue-head">
-            <h3>Jugadas por Aprobar <span class="count-pill">{{ selecciones|length }}</span></h3>
-            <button class="ver-link" onclick="switchTab('jugadas', document.getElementById('fn-jugadas'))">Ver estudio →</button>
-        </div>
-
-        {% for p in selecciones %}
-        {% set pid = p.id or ('pend-' ~ loop.index) %}
-        <div class="play-card">
-            <div class="play-top">
-                <div class="play-meta">
-                    {% if p.liga %}<span class="liga-pill">{{ p.liga }}</span>{% endif %}
-                    <span>Hoy{% if p.hora %} · {{ p.hora }}{% endif %}</span>
-                </div>
-                {% if p.nivel in ['ELITE', 'PLATINUM'] %}<span class="nivel-pill nivel-plat">PLATINUM</span>{% elif p.nivel == 'GOLD' %}<span class="nivel-pill nivel-gold">GOLD</span>{% elif p.nivel %}<span class="nivel-pill nivel-otro">{{ p.nivel }}</span>{% endif %}
-            </div>
-            {% if p.team_name and p.opp_name %}<div class="play-game">{{ p.team_name }} vs {{ p.opp_name }}</div>{% endif %}
-            <div class="play-main">
-                <div class="play-pick">{{ p.pick }}</div>
-                <div class="play-right">
-                    {% if p.cuota_texto %}<div class="play-cuota">{{ p.cuota_texto }}</div>{% endif %}
-                    {% if p.stake_unidades %}<div class="play-units">{{ p.stake_unidades }}u</div>{% elif p.unidades %}<div class="play-units">{{ p.unidades }}u</div>{% endif %}
-                </div>
-            </div>
-            <div class="play-btns">
-                {% if p.comprobante or p.ticket %}
-                <div class="btn-ticket"><span class="tk">🎟</span>Ticket Verificado</div>
-                {% else %}
-                <div class="btn-ticket"><span class="tk">🎟</span>Sin ticket aún</div>
-                {% endif %}
-                <form method="POST" action="{{ url_for('admin_aprobar_jugadas') }}" style="margin:0;">
-                    <input type="hidden" name="play_ids" value="{{ pid }}">
-                    <button type="submit" class="btn-approve" style="width:100%;">✓ Aprobar + Push</button>
-                </form>
-            </div>
-        </div>
-        {% else %}
         <div class="card">
-            <p class="empty-note">Sin jugadas pendientes de aprobación hoy.{% if plays_hoy %} La card de hoy ya está publicada ({{ plays_hoy|length }} jugadas).{% endif %}</p>
-        </div>
-        {% endfor %}
-
-        {% if plays_hoy %}
-        <div class="card">
-            <h3 style="font-size: 13px; margin-bottom: 6px;">Card de hoy · publicada</h3>
-            {% for p in plays_hoy %}
+            <h3 style="font-size: 13px; margin-bottom: 12px;">Cola de Aprobación Inmediata</h3>
+            {% for p in selecciones %}
+            {% set pid = p.id or ('pend-' ~ loop.index) %}
             <div class="list-item">
                 <div class="item-info">
                     <h4>{{ p.pick }}</h4>
-                    <p>{{ p.liga }} • {% if p.nivel in ['ELITE', 'PLATINUM'] %}Platinum{% elif p.nivel == 'GOLD' %}Gold{% else %}{{ p.nivel }}{% endif %}{% if p.hora %} • {{ p.hora }}{% endif %}</p>
+                    <p>{% if p.team_name and p.opp_name %}{{ p.team_name }} vs {{ p.opp_name }} • {% endif %}{{ p.liga }} • {% if p.nivel in ['ELITE', 'PLATINUM'] %}VIP Platinum{% elif p.nivel == 'GOLD' %}Gold{% else %}{{ p.nivel }}{% endif %}{% if p.hora %} • {{ p.hora }}{% endif %}</p>
                 </div>
-                {% if p.cuota_texto %}<span class="badge badge-emerald">{{ p.cuota_texto }}</span>{% endif %}
+                <form method="POST" action="{{ url_for('admin_aprobar_jugadas') }}" style="margin:0;">
+                    <input type="hidden" name="play_ids" value="{{ pid }}">
+                    <button type="submit" class="badge badge-emerald">Aprobar</button>
+                </form>
             </div>
+            {% else %}
+            <p class="muted-note" style="margin:0;">Sin jugadas pendientes de aprobación.{% if plays_hoy %} La card de hoy ya está publicada ({{ plays_hoy|length }} jugadas).{% endif %}</p>
             {% endfor %}
         </div>
-        {% endif %}
     </section>
 
     <!-- 2. JUGADAS STUDIO -->
@@ -286,7 +192,7 @@
         <div class="card">
             <h3 style="font-size: 14px; margin-bottom: 12px;">Jugadas de Hoy</h3>
             {% set force_pre = True %}
-            <form method="POST" action="{{ url_for('admin_aprobar_jugadas') }}" id="sendFormE">
+            <form method="POST" action="{{ url_for('admin_aprobar_jugadas') }}" id="sendFormD">
                 {% if selecciones %}
                   {% for p in selecciones %}
                     {% set pid = p.id or ('pend-' ~ loop.index) %}
@@ -309,23 +215,23 @@
                   {% endfor %}
                 {% endif %}
                 {% if not selecciones and not plays_hoy %}
-                  <p class="empty-note" style="margin:0;text-align:center;">No plays today.</p>
+                  <p class="muted-note" style="margin:0;text-align:center;">No plays today.</p>
                 {% endif %}
                 {% if selecciones %}
-                  <button type="submit" class="btn-action" id="sendBtnE">📤 Send selected</button>
+                  <button type="submit" class="btn-action" id="sendBtnD">📤 Send selected</button>
                 {% endif %}
             </form>
             {% if selecciones %}
             <script>
             (function() {
-              var checks = document.querySelectorAll('#sendFormE .sel-check');
-              var btn = document.getElementById('sendBtnE');
+              var checks = document.querySelectorAll('#sendFormD .sel-check');
+              var btn = document.getElementById('sendBtnD');
               function upd() {
                 var n = 0;
                 checks.forEach(function(c) { if (c.checked) n++; });
                 if (btn) btn.textContent = n > 0 ? ('📤 Send selected (' + n + ')') : '📤 Send selected';
               }
-              var form = document.getElementById('sendFormE');
+              var form = document.getElementById('sendFormD');
               if (form) form.addEventListener('submit', function(e) {
                 var n = 0;
                 checks.forEach(function(c) { if (c.checked) n++; });
@@ -352,7 +258,7 @@
                 {% endif %}
             </div>
             {% else %}
-            <p class="empty-note" style="margin:0;">Sin jugadas liquidadas recientes.</p>
+            <p class="muted-note" style="margin:0;">Sin jugadas liquidadas recientes.</p>
             {% endfor %}
         </div>
     </section>
@@ -361,9 +267,9 @@
     <section id="view-miembros" class="view-content">
         <h2 class="section-title">CRM & Adopción PWA</h2>
         <div class="card">
-            <span class="stat-label-sm">Adopción App Instalada</span>
-            {% set pct2 = (app_instalados|length * 100 / conteo_miembros.total) if conteo_miembros.total else 0 %}
-            <div class="stat-value">{{ '%.1f'|format(pct2) }}%</div>
+            <span class="stat-label">Adopción App Instalada</span>
+            {% set pct = (app_instalados|length * 100 / conteo_miembros.total) if conteo_miembros.total else 0 %}
+            <div class="stat-value">{{ '%.1f'|format(pct) }}%</div>
             <p style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">{{ app_instalados|length }} usuarios con acceso directo en pantalla de inicio</p>
         </div>
         <div class="card">
@@ -382,7 +288,7 @@
                 <a class="badge badge-gold" href="{{ url_for('admin_miembros') }}">Gestionar</a>
             </div>
             {% else %}
-            {% if not app_instalados %}<p class="empty-note" style="margin:0;">Sin miembros todavía.</p>{% endif %}
+            {% if not app_instalados %}<p class="muted-note" style="margin:0;">Sin miembros todavía.</p>{% endif %}
             {% endfor %}
         </div>
     </section>
@@ -393,17 +299,17 @@
         <div class="card">
             <h3 style="font-size: 14px;">Lanzador de Notificación</h3>
             <form method="POST" action="{{ url_for('admin_crear_push') }}">
-                <label class="pf-l" for="pePushTitulo">Title</label>
-                <input class="inp" id="pePushTitulo" name="titulo" maxlength="80" placeholder="Ej.: Today's card is ready" required style="margin-bottom:0;">
-                <label class="pf-l" for="pePushMensaje">Message</label>
-                <textarea class="inp" id="pePushMensaje" name="mensaje" maxlength="240" placeholder="Escribe el mensaje push..." required style="margin-top:0;"></textarea>
+                <label class="pf-l" for="pdPushTitulo">Title</label>
+                <input class="inp" id="pdPushTitulo" name="titulo" maxlength="80" placeholder="Ej.: Today's card is ready" required style="margin-bottom:0;">
+                <label class="pf-l" for="pdPushMensaje">Message</label>
+                <textarea class="inp" id="pdPushMensaje" name="mensaje" maxlength="240" placeholder="Escribe el mensaje push..." required style="margin-top:0;"></textarea>
                 <span class="pf-l">Audience</span>
                 <div class="pf-aud">
                     <label><input type="radio" name="audiencia" value="miembros" checked>👥 Members<small>With play alerts on</small></label>
                     <label><input type="radio" name="audiencia" value="solo_yo">🔒 Only me<small>Admin only (tests)</small></label>
                 </div>
-                <label class="pf-l" for="pePushUrl">Opens</label>
-                <input class="inp" id="pePushUrl" name="url" value="/home" placeholder="/home" style="margin-bottom:0;">
+                <label class="pf-l" for="pdPushUrl">Opens</label>
+                <input class="inp" id="pdPushUrl" name="url" value="/home" placeholder="/home" style="margin-bottom:0;">
                 <button type="submit" class="btn-action" style="background: var(--accent-gold); color: black;">Enviar Broadcast VIP</button>
             </form>
         </div>
@@ -418,50 +324,34 @@
             <div class="list-item"><div class="item-info"><h4>💵 Pago recibido</h4><p>{{ p.fecha }}</p></div><span class="text-emerald">${{ '%.2f'|format(p.monto) }}</span></div>
             {% endfor %}
             {% else %}
-            <p class="empty-note" style="margin:0;">Datos de caja no disponibles ahora mismo.</p>
+            <p class="muted-note" style="margin:0;">Datos de caja no disponibles ahora mismo.</p>
             {% endif %}
         </div>
     </section>
 
-    <nav class="float-nav">
-        <button class="fnav-btn active" id="fn-pulso" onclick="switchTab('pulso', this)">
-            <span class="fi">◎</span> Pulso
+    <nav class="bottom-nav">
+        <button class="nav-btn active" onclick="switchTab('pulso', event)">
+            <div class="icon-circle">⚡</div> Pulso
         </button>
-        <button class="fnav-btn" id="fn-jugadas" onclick="switchTab('jugadas', this)">
-            <span class="fi">🔥</span> Jugadas
-            {% if selecciones %}<span class="fnav-badge">{{ selecciones|length }}</span>{% endif %}
+        <button class="nav-btn" onclick="switchTab('jugadas', event)">
+            <div class="icon-circle">🎯</div> Jugadas
         </button>
-        <button class="fnav-plus" onclick="switchTab('jugadas', document.getElementById('fn-jugadas'))" aria-label="Nueva jugada">+</button>
-        <button class="fnav-btn" id="fn-miembros" onclick="switchTab('miembros', this)">
-            <span class="fi">👥</span> Miembros
+        <button class="nav-btn" onclick="switchTab('miembros', event)">
+            <div class="icon-circle">👥</div> CRM
         </button>
-        <button class="fnav-btn" id="fn-push" onclick="switchTab('push', this)">
-            <span class="fi">≣</span> Push &amp; Caja
+        <button class="nav-btn" onclick="switchTab('push', event)">
+            <div class="icon-circle">📱</div> Push/Caja
         </button>
     </nav>
 
     <script>
-        function switchTab(tabId, el) {
+        function switchTab(tabId, evt) {
             document.querySelectorAll('.view-content').forEach(function(v) { v.classList.remove('active'); });
-            document.querySelectorAll('.fnav-btn').forEach(function(b) { b.classList.remove('active'); });
+            document.querySelectorAll('.nav-btn').forEach(function(b) { b.classList.remove('active'); });
             document.getElementById('view-' + tabId).classList.add('active');
-            if (el) el.classList.add('active');
+            if (evt && evt.currentTarget) evt.currentTarget.classList.add('active');
             window.scrollTo(0, 0);
         }
-        (function() {
-            var t = document.getElementById('ingToggle');
-            if (!t) return;
-            var amt = document.getElementById('ingAmount');
-            var note = document.getElementById('ingNote');
-            t.querySelectorAll('button').forEach(function(b) {
-                b.addEventListener('click', function() {
-                    t.querySelectorAll('button').forEach(function(x) { x.classList.remove('on'); });
-                    b.classList.add('on');
-                    if (amt) amt.textContent = b.getAttribute('data-amt');
-                    if (note) note.textContent = b.getAttribute('data-note');
-                });
-            });
-        })();
     </script>
 </body>
 </html>
