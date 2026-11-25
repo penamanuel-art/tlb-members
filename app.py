@@ -3167,6 +3167,78 @@ def stake_personalizado(play, user):
     return play.get("stake_monto")
 
 
+_POSTED_CACHE = {}
+
+
+def _fmt_hora_et(iso_txt):
+    """ISO (UTC) -> 'h:MM AM ET' en America/New_York; '' si no parsea."""
+    try:
+        dt = datetime.fromisoformat(str(iso_txt).replace("Z", "+00:00"))
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=timezone.utc)
+        dt = dt.astimezone(TZ)
+        return "%d:%02d %s ET" % (int(dt.strftime("%I")), dt.minute,
+                                  dt.strftime("%p"))
+    except Exception:
+        return ""
+
+
+def _posted_de_registro(fecha, play_id):
+    """Hora REAL de publicación de una jugada según el registro del
+    servidor (tabla publish_requests): la solicitud 'done' de esa fecha
+    que incluye la jugada (done_at; si falta, created_at). Si ninguna
+    solicitud 'done' la nombra, la primera 'done' de la fecha (la card
+    se publicó junta). '' si no hay registro de publicación.
+
+    ARREGLO RAÍZ 2026-11-25 (orden de Alex: «resuelve eso para siempre»):
+    el campo "posted" de plays.json lo escribía a mano quien armaba el
+    archivo y se perdía al reescribir la card (pasó el 2026-11-24 y el
+    2026-11-25: la celda «Posted to members» desaparecía de la ficha).
+    Desde hoy el servidor deriva la hora de SU propio registro de
+    publicación al servir la jugada: toda jugada publicada nace con su
+    «Posted to members», traiga o no el campo el archivo."""
+    if not fecha:
+        return ""
+    try:
+        ahora = time.monotonic()
+        hit = _POSTED_CACHE.get(fecha)
+        if hit and ahora - hit[0] < 120:
+            mapa, card_label = hit[1], hit[2]
+        else:
+            mapa, card_label = {}, ""
+            db = get_db()
+            rows = db.execute(
+                "SELECT play_ids, created_at, done_at FROM publish_requests"
+                " WHERE fecha = ? AND status = 'done' ORDER BY id",
+                (fecha,)).fetchall()
+            for r in rows:
+                label = _fmt_hora_et(r["done_at"] or r["created_at"])
+                if not label:
+                    continue
+                if not card_label:
+                    card_label = label
+                try:
+                    ids = json.loads(r["play_ids"] or "[]")
+                except Exception:
+                    ids = []
+                for _pid in ids:
+                    mapa.setdefault(str(_pid), label)
+            _POSTED_CACHE[fecha] = (ahora, mapa, card_label)
+        return mapa.get(str(play_id)) or card_label
+    except Exception:
+        return ""
+
+
+def _fecha_de_play(p):
+    """Fecha de la card de una jugada: su campo fecha o la del id
+    (formato play-YYYY-MM-DD-<slug>)."""
+    f = p.get("fecha")
+    if f:
+        return str(f)
+    m = re.search(r"(\d{4}-\d{2}-\d{2})", str(p.get("id") or ""))
+    return m.group(1) if m else ""
+
+
 def personalizar_plays(plays, user):
     """Devuelve copias de las jugadas con stake_monto personalizado."""
     card_info = load_card_info()
@@ -3174,10 +3246,12 @@ def personalizar_plays(plays, user):
     out = []
     for p in plays:
         p = dict(p)
-        # Hora real de publicación de la card (campo "posted" de plays.json,
-        # estampado al momento del disparo; fail-open: sin campo, la celda
-        # «Posted to members» del detalle simplemente no se renderiza).
-        p["posted"] = p.get("posted") or ""
+        # Hora real de publicación («Posted to members»): manda el campo
+        # "posted" de plays.json; si falta, el servidor la recupera de su
+        # registro de publicación (publish_requests) — la celda NUNCA
+        # desaparece de una jugada ya publicada (arreglo raíz 2026-11-25).
+        p["posted"] = p.get("posted") or _posted_de_registro(
+            _fecha_de_play(p), str(p.get("id") or ""))
         p["stake_monto"] = stake_personalizado(p, user)
         p["card_info"] = (card_info.get(p.get("id")) or {})
         p["splits"] = (splits.get(p.get("id")) or {})
