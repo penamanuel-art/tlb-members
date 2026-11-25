@@ -1,59 +1,56 @@
 {% extends "base_v2.html" %}
 {% block content %}
 <style>
-/* Admin rediseñado (2026-11-21, orden de Alex): simple y directo —
-   miembros arriba con solo el número, la información principal de un
-   vistazo, las herramientas agrupadas a un toque, cero adornos. */
+/* Admin NUEVO desde cero (2026-11-25, orden de Alex): SOLO seis bloques —
+   Total members · Platinum · Send push · App installed · Today's pending
+   plays · Money today. Nada más: fuera cuadritos de actividad, trials, herramientas y
+   controles manuales (sus rutas siguen vivas, solo salen de esta página). */
 body.v2 { background: #0C0F16 !important; }
 .adm { max-width: 880px; margin: 0 auto; padding: 6px 10px 56px; font-family: -apple-system, 'SF Pro', Inter, system-ui, sans-serif; }
 .v2-wrap { padding-left: 10px !important; padding-right: 10px !important; padding-top: 0 !important; }
 .v2-topbar { display: none !important; }
 .v2-bottomnav { display: none !important; }
-.chat-fab { top: auto !important; bottom: 96px !important; }
 .adm-kicker { color: #1AE099; font-size: 11px; font-weight: 800; letter-spacing: 5px; margin: 4px 0 2px; text-transform: uppercase; }
 .adm h1 { font-size: 2rem; font-weight: 800; color: #fff; margin: 0 0 16px; letter-spacing: -0.5px; }
 .adm-sec { font-size: 1.05rem; font-weight: 800; color: #fff; margin: 26px 0 12px; padding-left: 10px; border-left: 3px solid #10CC87; line-height: 1.25; }
-.adm-sec:first-of-type { margin-top: 0; }
-/* Cuadritos de miembros: etiqueta arriba, SOLO el número abajo */
-.adm-tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-@media (max-width: 560px) { .adm-tiles { grid-template-columns: repeat(2, 1fr); } }
-.adm-tile { background: #1D2029; border: 1px solid #2A2E3A; border-radius: 14px; padding: 14px 8px 12px; text-align: center; }
-.adm-tile .l { display: block; font-size: 0.62rem; font-weight: 700; letter-spacing: 1px; color: #9AA1AE; text-transform: uppercase; white-space: nowrap; }
-.adm-tile .n { display: block; font-size: 2rem; font-weight: 800; color: #fff; line-height: 1.15; margin-top: 4px; }
-.adm-tile.hot .n { color: #1AE099; }
-/* Botones de herramientas: un solo estilo en todo el Admin */
-.adm-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.adm-btn { display: block; text-decoration: none; color: #fff; text-align: center;
-  background: #1D2029; border: 1px solid #2A2E3A; border-radius: 16px; padding: 20px 10px 16px;
-  transition: border-color .15s ease, transform .15s ease; }
-.adm-btn:active { transform: scale(.98); border-color: #10CC87; }
-.adm-btn .ico { font-size: 1.7rem; display: block; margin-bottom: 8px; }
-.adm-btn .t { font-size: 0.98rem; font-weight: 800; display: block; letter-spacing: .2px; }
-.adm-btn .s { font-size: 0.74rem; color: #9AA1AE; display: block; margin-top: 4px; }
-/* Tarjetas e info principal */
+/* Bloques 1 y 2: dos números grandes lado a lado */
+.adm-duo { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.adm-big { display: block; text-decoration: none; background: #1D2029; border: 1px solid #2A2E3A; border-radius: 16px; padding: 18px 14px 14px; text-align: center; }
+.adm-big .l { display: block; font-size: 0.66rem; font-weight: 700; letter-spacing: 1.5px; color: #9AA1AE; text-transform: uppercase; }
+.adm-big .n { display: block; font-size: 2.6rem; font-weight: 800; color: #fff; line-height: 1.1; margin-top: 4px; }
+.adm-big.hot .n { color: #1AE099; }
+.adm-big .s { display: block; font-size: 0.74rem; color: #9AA1AE; margin-top: 4px; }
+a.adm-big:active { border-color: #10CC87; }
+/* Bloque 3: botón grande de push */
+.adm-push { display: block; text-decoration: none; text-align: center; background: #10CC87; color: #052017; border-radius: 16px; padding: 18px 14px 14px; margin-top: 12px; }
+.adm-push .t { display: block; font-size: 1.15rem; font-weight: 800; }
+.adm-push .s { display: block; font-size: 0.78rem; font-weight: 600; opacity: .75; margin-top: 2px; }
+.adm-push:active { transform: scale(.99); }
+/* Tarjetas y filas (bloques 4 y 6) */
 .adm-card { background: #1D2029; border: 1px solid #2A2E3A; border-radius: 16px; padding: 16px; margin-bottom: 12px; }
-.adm-money { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-@media (max-width: 560px) { .adm-money { grid-template-columns: repeat(2, 1fr); } }
-.adm-muted { color: #9AA1AE; font-size: 0.85rem; }
+.adm-appcount { text-align: center; padding: 4px 0 12px; border-bottom: 1px solid #2A2E3A; margin-bottom: 10px; }
+.adm-appcount .n { font-size: 2.2rem; font-weight: 800; color: #1AE099; line-height: 1.1; }
+.adm-appcount .l { display: block; font-size: 0.72rem; font-weight: 700; letter-spacing: 1px; color: #9AA1AE; text-transform: uppercase; margin-top: 2px; }
+.adm-money { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px; }
+.adm-tile { background: #1D2029; border: 1px solid #2A2E3A; border-radius: 14px; padding: 12px 8px 10px; text-align: center; }
+.adm-tile .l { display: block; font-size: 0.6rem; font-weight: 700; letter-spacing: 1px; color: #9AA1AE; text-transform: uppercase; white-space: nowrap; }
+.adm-tile .n { display: block; font-size: 1.3rem; font-weight: 800; color: #fff; line-height: 1.15; margin-top: 3px; }
+.adm-hoy { text-align: center; padding: 6px 0 2px; }
+.adm-hoy .n { font-size: 2.6rem; font-weight: 800; color: #1AE099; line-height: 1.1; }
+.adm-hoy .l { display: block; font-size: 0.72rem; font-weight: 700; letter-spacing: 1px; color: #9AA1AE; text-transform: uppercase; margin-top: 2px; }
 .mrow { display: flex; justify-content: space-between; align-items: center; gap: 10px;
   text-decoration: none; color: #fff; padding: 12px 14px; border-radius: 12px;
   background: #1D2029; border: 1px solid #2A2E3A; margin-bottom: 6px; }
 .mrow .mn { font-weight: 700; font-size: 0.92rem; }
+.mrow .ms { display: block; font-weight: 400; font-size: 0.74rem; color: #9AA1AE; margin-top: 2px; }
 .mrow .mb { font-size: 0.68rem; font-weight: 800; letter-spacing: 1px;
   border: 1px solid; border-radius: 999px; padding: 3px 10px; white-space: nowrap; }
+.adm-muted { color: #9AA1AE; font-size: 0.85rem; }
 .send-btn { width: 100%; background: #10CC87; color: #052017; border: none; border-radius: 14px; padding: 15px; font-weight: 800; font-size: 1rem; cursor: pointer; margin-top: 12px; display: block; }
 .status-badge { display: inline-block; font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 999px; margin-bottom: 8px; }
 .status-pend { background: rgba(255,255,255,.08); color: #fff; border: 1px solid rgba(255,255,255,.35); }
 .status-sent { background: rgba(16,204,135,.13); color: #1AE099; border: 1px solid rgba(16,204,135,.35); }
-/* Controles manuales */
-details.adm-det { background: #1D2029; border: 1px solid #2A2E3A; border-radius: 16px; padding: 16px; margin-top: 26px; }
-details.adm-det summary { cursor: pointer; font-weight: 800; font-size: 0.95rem; color: #fff; }
-.ctl-t { font-weight: 800; color: #fff; margin-bottom: 10px; font-size: 0.95rem; }
-.ctl-in { width: 100%; box-sizing: border-box; background: #0C0F16; border: 1px solid #2A2E3A; border-radius: 12px; color: #fff; padding: 11px 12px; font-size: 0.9rem; margin-bottom: 8px; font-family: inherit; }
-.ctl-in:focus { outline: none; border-color: #10CC87; }
-.ctl-btn { width: 100%; background: #10CC87; color: #052017; border: none; border-radius: 999px; padding: 11px; font-weight: 800; cursor: pointer; font-size: 0.9rem; }
-.ctl-note { font-size: 0.75rem; color: #9AA1AE; margin-top: 8px; line-height: 1.5; }
-.chat-fab { position: fixed; bottom: 96px; right: 14px; z-index: 99; width: 54px; height: 54px;
+.chat-fab { position: fixed; top: auto !important; bottom: 96px; right: 14px; z-index: 99; width: 54px; height: 54px;
   border-radius: 50%; background: #0C0F16; border: 2px solid #10CC87;
   box-shadow: 0 4px 18px rgba(0,0,0,.5); display: flex; align-items: center; justify-content: center; text-decoration: none; }
 .chat-fab img { width: 36px; height: 36px; object-fit: contain; display: block; }
@@ -67,19 +64,45 @@ details.adm-det summary { cursor: pointer; font-weight: 800; font-size: 0.95rem;
   <p class="adm-kicker">Admin</p>
   <h1>Administration</h1>
 
-  <h2 class="adm-sec">👥 Members</h2>
-  <div class="adm-tiles">
-    <div class="adm-tile"><span class="l">Total members</span><span class="n">{{ conteo_miembros.total }}</span></div>
-    <div class="adm-tile hot"><span class="l">Active · 10 days</span><span class="n">{{ cohortes.activos if cohortes else '—' }}</span></div>
-    <div class="adm-tile"><span class="l">Dormant · 10–30 days</span><span class="n">{{ cohortes.dormidos if cohortes else '—' }}</span></div>
-    <div class="adm-tile"><span class="l">Dead · 30+ days</span><span class="n">{{ cohortes.muertos if cohortes else '—' }}</span></div>
-    <div class="adm-tile hot"><span class="l">Platinum</span><span class="n">{{ conteo_miembros.plat }}</span></div>
-    <div class="adm-tile"><span class="l">On trial</span><span class="n">{{ conteo_miembros.trial }}</span></div>
-    <div class="adm-tile"><span class="l">Free</span><span class="n">{{ conteo_miembros.free }}</span></div>
-    <div class="adm-tile hot"><span class="l">New · 7 days</span><span class="n">{{ cohortes.nuevos7 if cohortes else '—' }}</span></div>
+  <!-- 1 · Total members + 2 · Platinum -->
+  <div class="adm-duo">
+    <a class="adm-big" href="/admin/miembros">
+      <span class="l">Total members</span>
+      <span class="n">{{ conteo_miembros.total }}</span>
+      <span class="s">View member list ›</span>
+    </a>
+    <div class="adm-big hot">
+      <span class="l">Platinum</span>
+      <span class="n">{{ conteo_miembros.plat }}</span>
+      <span class="s">Paying members</span>
+    </div>
   </div>
 
-  <h2 class="adm-sec">🎯 Today's plays</h2>
+  <!-- 3 · Send push -->
+  <a class="adm-push" href="/admin/crear-push">
+    <span class="t">📲 Send push</span>
+    <span class="s">Compose a push notification</span>
+  </a>
+
+  <!-- 4 · App installed -->
+  <h2 class="adm-sec">📱 App installed</h2>
+  <div class="adm-card">
+    <div class="adm-appcount">
+      <span class="n">{{ app_instalados|default([], true)|length }}</span>
+      <span class="l">Members with the app installed</span>
+    </div>
+    {% for a in app_instalados|default([], true) %}
+    <div class="mrow">
+      <span class="mn">{{ a.nombre }}<span class="ms">{{ a.email }} · since {{ a.desde[:10] }} · last {{ a.ultima[:16].replace('T', ' ') }}</span></span>
+      <span class="mb" style="color:#1AE099;border-color:#1AE099;">{{ a.aperturas }} opens</span>
+    </div>
+    {% else %}
+    <p class="adm-muted" style="margin:0;text-align:center;">No app installs yet.</p>
+    {% endfor %}
+  </div>
+
+  <!-- 5 · Today's pending plays (aprobación, tal cual funcionaba) -->
+  <h2 class="adm-sec">🎯 Today's pending plays</h2>
   {% set force_pre = True %}
   <form method="POST" action="{{ url_for('admin_aprobar_jugadas') }}" id="sendForm">
     {% if selecciones %}
@@ -130,15 +153,21 @@ details.adm-det summary { cursor: pointer; font-weight: 800; font-size: 0.95rem;
   })();
   </script>
 
-  <h2 class="adm-sec">💰 Revenue</h2>
+  <!-- 6 · Money today -->
+  <h2 class="adm-sec">💰 Money today</h2>
   {% if ingresos %}
-  <div class="adm-money">
-    <div class="adm-tile hot"><span class="l">This month</span><span class="n">${{ '%.0f'|format(ingresos.mes) }}</span></div>
-    <div class="adm-tile"><span class="l">Today</span><span class="n">${{ '%.0f'|format(ingresos.hoy) }}</span></div>
-    <div class="adm-tile"><span class="l">Last 30 days</span><span class="n">${{ '%.0f'|format(ingresos.d30) }}</span></div>
-    <div class="adm-tile"><span class="l">All time</span><span class="n">${{ '%.0f'|format(ingresos.total) }}</span></div>
+  <div class="adm-card">
+    <div class="adm-hoy">
+      <span class="n">${{ '%.0f'|format(ingresos.hoy) }}</span>
+      <span class="l">Today</span>
+    </div>
+    <div class="adm-money">
+      <div class="adm-tile"><span class="l">This month</span><span class="n">${{ '%.0f'|format(ingresos.mes) }}</span></div>
+      <div class="adm-tile"><span class="l">Last 30 days</span><span class="n">${{ '%.0f'|format(ingresos.d30) }}</span></div>
+      <div class="adm-tile"><span class="l">All time</span><span class="n">${{ '%.0f'|format(ingresos.total) }}</span></div>
+    </div>
   </div>
-  <div style="margin-top:10px;">
+  <div>
     {% for p in ingresos.ultimos %}
     <div class="mrow"><span class="mn">💵 Payment received</span><span class="mb" style="color:#1AE099;border-color:#1AE099;">${{ '%.2f'|format(p.monto) }} · {{ p.fecha }}</span></div>
     {% else %}
@@ -148,44 +177,6 @@ details.adm-det summary { cursor: pointer; font-weight: 800; font-size: 0.95rem;
   {% else %}
   <div class="adm-card adm-muted" style="margin:0;">Revenue unavailable right now.</div>
   {% endif %}
-
-  <h2 class="adm-sec">🧰 Tools</h2>
-  <div class="adm-grid">
-    <a class="adm-btn" href="/admin/miembros">
-      <span class="ico">👥</span><span class="t">Members</span><span class="s">Full member list</span></a>
-    <a class="adm-btn" href="/admin/crear-push">
-      <span class="ico">📲</span><span class="t">Create push</span><span class="s">Composer with preview</span></a>
-  </div>
-
-  <details class="adm-det">
-    <summary>⚙️ Manual controls</summary>
-    <div style="margin-top:16px;">
-      <div class="ctl-t">🔔 Push to members</div>
-      <form method="POST" action="{{ url_for('admin_control_push') }}">
-        <input class="ctl-in" name="titulo" maxlength="80" placeholder="Push title" required>
-        <input class="ctl-in" name="mensaje" maxlength="240" placeholder="Message" required>
-        <button class="ctl-btn" type="submit">Send push</button>
-      </form>
-      <p class="ctl-note">Goes to members with play alerts on. Opens the Dashboard.</p>
-    </div>
-    <div style="margin-top:16px;">
-      <div class="ctl-t">📧 Email to members</div>
-      <form method="POST" action="{{ url_for('admin_control_email') }}">
-        <input class="ctl-in" name="asunto" maxlength="120" placeholder="Subject" required>
-        <textarea class="ctl-in" name="mensaje" rows="4" maxlength="4000" placeholder="Message" required></textarea>
-        <button class="ctl-btn" type="submit">Send email</button>
-      </form>
-      <p class="ctl-note">To all real members (no test or admin accounts).</p>
-    </div>
-    <div style="margin-top:16px;">
-      <div class="ctl-t">🎁 Give Platinum to a member</div>
-      <form method="POST" action="{{ url_for('admin_control_grant') }}">
-        <input class="ctl-in" name="email" type="email" placeholder="Member email" required>
-        <input class="ctl-in" name="dias" type="number" min="1" max="3650" placeholder="Days (empty = permanent)">
-        <button class="ctl-btn" type="submit">Activate Platinum</button>
-      </form>
-    </div>
-  </details>
 </div>
 
 <style>
@@ -193,12 +184,11 @@ details.adm-det summary { cursor: pointer; font-weight: 800; font-size: 0.95rem;
    SISTEMA DE DISENO UNIFICADO — la MISMA configuracion del
    Dashboard de miembros (bloque de diseno de diseno_nuevo.html,
    commits 2c745f2 + acbac56), aplicada al Admin por orden de
-   Alex (2026-11-24): «todo fino» — botones finitos, letra fina,
-   pesos ligeros, bordes de 1px, radios y espaciados del sistema.
-   Las variables de arriba estan copiadas VERBATIM del bloque
-   del Dashboard. SOLO presentacion: textos, datos, logica,
-   enlaces y JS NO cambian. Este bloque va AL FINAL a proposito:
-   manda sobre las reglas viejas de la pagina. */
+   Alex (2026-11-24): «todo fino». Variables copiadas VERBATIM;
+   reglas adaptadas a las clases del Admin nuevo de seis bloques.
+   SOLO presentacion: textos, datos, logica, enlaces y JS NO
+   cambian. Este bloque va AL FINAL a proposito: manda sobre
+   las reglas viejas de la pagina. */
 
 :root{
   --bg:#0C0F16; --surface:#1D2029; --surface2:#262B38; --border:#2A2E3A;
@@ -210,28 +200,29 @@ details.adm-det summary { cursor: pointer; font-weight: 800; font-size: 0.95rem;
 .adm h1{font-size:26px;font-weight:800;letter-spacing:-.01em}
 .adm-kicker{font-weight:700;letter-spacing:3px;color:var(--accent)}
 .adm-sec{font-size:var(--ds-title);font-weight:800;margin:var(--ds-gap) 0 12px;border-left:none;padding-left:0}
-.adm-sec:first-of-type{margin-top:0}
-.adm-tile{background:var(--surface);border:1px solid var(--border);border-radius:var(--ds-r-in);padding:13px 8px 11px}
-.adm-tile .l{font-weight:600;color:var(--muted)}
-.adm-tile .n{font-size:26px;font-weight:700;line-height:1.1;margin-top:2px}
-.adm-tile.hot .n{color:var(--accent)}
+.adm-big{background:var(--surface);border:1px solid var(--border);border-radius:var(--ds-r-in);padding:16px 12px 12px}
+.adm-big .l{font-weight:600;color:var(--muted)}
+.adm-big .n{font-size:34px;font-weight:700;line-height:1.1;margin-top:2px}
+.adm-big.hot .n{color:var(--accent)}
+.adm-big .s{font-size:12.5px;color:var(--muted)}
+.adm-push{background:var(--btn);border-radius:var(--ds-r-in);padding:15px 14px 13px}
+.adm-push .t{font-size:17px;font-weight:700}
+.adm-push .s{font-size:12.5px}
 .adm-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--ds-r);padding:18px var(--ds-pad)}
-.adm-btn{background:var(--surface);border:1px solid var(--border);border-radius:var(--ds-r-in);padding:14px 10px 12px}
-.adm-btn .ico{font-size:1.35rem;margin-bottom:6px}
-.adm-btn .t{font-size:var(--ds-body);font-weight:600;letter-spacing:0}
-.adm-btn .s{font-size:12.5px;margin-top:3px;color:var(--muted)}
+.adm-appcount .n{font-size:30px;font-weight:700;color:var(--accent)}
+.adm-appcount .l{font-weight:600;color:var(--muted)}
+.adm-hoy .n{font-size:34px;font-weight:700;color:var(--accent)}
+.adm-hoy .l{font-weight:600;color:var(--muted)}
+.adm-tile{background:var(--surface);border:1px solid var(--border);border-radius:var(--ds-r-in);padding:11px 8px 9px}
+.adm-tile .l{font-weight:600;color:var(--muted)}
+.adm-tile .n{font-size:19px;font-weight:700;line-height:1.1;margin-top:2px}
 .mrow{background:var(--surface);border:1px solid var(--border);border-radius:var(--ds-r-in);padding:11px 14px}
 .mrow .mn{font-weight:600;font-size:var(--ds-body)}
+.mrow .ms{font-size:12.5px;color:var(--muted)}
 .mrow .mb{font-weight:700}
 .adm-muted{color:var(--muted);font-size:var(--ds-cap)}
 .send-btn{background:var(--btn);border-radius:var(--ds-r-in);padding:12px;font-weight:700;font-size:var(--ds-body)}
 .status-badge{font-weight:600;padding:3px 10px}
-details.adm-det{background:var(--surface);border:1px solid var(--border);border-radius:var(--ds-r);padding:18px var(--ds-pad)}
-details.adm-det summary{font-weight:700;font-size:var(--ds-card-title)}
-.ctl-t{font-weight:700;font-size:var(--ds-card-title)}
-.ctl-in{background:var(--bg);border:1px solid var(--border);border-radius:var(--ds-r-in);padding:10px 12px;font-size:14px}
-.ctl-in:focus{border-color:var(--btn)}
-.ctl-btn{background:var(--btn);padding:10px;font-weight:700;font-size:14px}
 .chat-fab{border-width:1px}
 </style>
 {% endblock %}
