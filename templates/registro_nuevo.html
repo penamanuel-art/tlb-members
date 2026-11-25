@@ -79,6 +79,13 @@ img{display:block;max-width:100%}
 .brandrow .coin{height:44px;width:auto}
 .brandrow .letters{height:32px;width:auto}
 
+/* fila de ligas que cubrimos (logos originales de cada liga) */
+.leagues{display:flex;justify-content:center;align-items:flex-start;gap:8px;flex-wrap:wrap;margin-top:16px}
+.leagues .lg{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:52px}
+.leagues .lg img{height:30px;width:30px;object-fit:contain}
+.leagues .lg span{font-size:9.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);text-align:center;line-height:1.35}
+@media (max-width:480px){.leagues{gap:4px}.leagues .lg{min-width:47px}.leagues .lg img{height:26px;width:26px}}
+
 /* layout héroe: dos columnas en desktop */
 .layout{margin-top:14px}
 .col-left,.col-right{min-width:0}
@@ -208,16 +215,6 @@ img{display:block;max-width:100%}
 .drow:last-child{border-bottom:0}
 .yes{color:var(--accent);font-weight:800;flex:none}
 .no{color:var(--danger);font-weight:800;flex:none}
-.fband{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:26px;
-  display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap}
-.fband .avatar{width:66px;height:66px}
-.fband .avatar img{width:48px;height:48px}
-.fband .fmain{flex:1;min-width:250px}
-.fband .stmt{font-family:var(--fdisp);font-size:19px;font-weight:700;margin-top:10px}
-.fband p{color:var(--muted);font-size:14.5px;line-height:1.65;margin-top:8px;max-width:640px}
-.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px}
-.chip{font-size:12.5px;font-weight:700;color:var(--accent);background:var(--accent-soft);
-  border:1px solid var(--accent-tint);padding:6px 12px;border-radius:999px}
 .faqbox{border:1px solid var(--border);border-radius:16px;background:var(--surface);overflow:hidden}
 .fi{border-bottom:1px solid var(--border)}
 .fi:last-child{border-bottom:0}
@@ -289,6 +286,18 @@ img{display:block;max-width:100%}
   <div class="brandrow">
     <img class="coin" src="{{ url_for('static', filename='img/sharp-coin.png') }}" alt="">
     <img class="letters" src="{{ url_for('static', filename='img/sharp-letters.png') }}" alt="The Sharp Team">
+  </div>
+</div>
+
+<!-- ===== LIGAS QUE CUBRIMOS ===== -->
+<div class="wrap">
+  <div class="leagues" aria-label="Sports we cover">
+    <div class="lg"><img src="https://a.espncdn.com/i/teamlogos/leagues/500/nfl.png" alt="NFL" loading="lazy" onerror="this.remove()"><span>NFL</span></div>
+    <div class="lg"><img src="https://a.espncdn.com/i/teamlogos/leagues/500/nba.png" alt="NBA" loading="lazy" onerror="this.remove()"><span>NBA</span></div>
+    <div class="lg"><img src="https://a.espncdn.com/i/teamlogos/leagues/500/nhl.png" alt="NHL" loading="lazy" onerror="this.remove()"><span>NHL</span></div>
+    <div class="lg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/NCAA_logo.svg/500px-NCAA_logo.svg.png" alt="NCAA Football" loading="lazy" onerror="this.remove()"><span>NCAA Football</span></div>
+    <div class="lg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/NCAA_logo.svg/500px-NCAA_logo.svg.png" alt="NCAA Basketball" loading="lazy" onerror="this.remove()"><span>NCAA Basketball</span></div>
+    <div class="lg"><img src="https://a.espncdn.com/i/teamlogos/leagues/500/mlb.png" alt="MLB" loading="lazy" onerror="this.remove()"><span>MLB</span></div>
   </div>
 </div>
 
@@ -491,24 +500,6 @@ img{display:block;max-width:100%}
         <div class="drow"><span class="no">✕</span>No hidden losing days</div>
         <div class="drow"><span class="no">✕</span>No fake records</div>
         <div class="drow"><span class="no">✕</span>No card required to join</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===== BANDA DEL FUNDADOR ===== -->
-  <section class="sec">
-    <div class="fband">
-      <span class="avatar"><img src="{{ url_for('static', filename='img/sharp-coin.png') }}" alt="The Sharp Team coin"></span>
-      <div class="fmain">
-        <div class="fname">Alex Pena</div>
-        <div class="frole">FOUNDER · HEAD HANDICAPPER</div>
-        <div class="stmt">Every pick, his own money.</div>
-        <p>Alex built The Sharp Team to do the opposite of the services that hide their losses: every play documented, every ticket posted, every result graded where everyone can see it.</p>
-        <div class="chips">
-          <span class="chip">Real tickets only</span>
-          <span class="chip">Wins and losses, all public</span>
-          <span class="chip">Gold free for life</span>
-        </div>
       </div>
     </div>
   </section>
