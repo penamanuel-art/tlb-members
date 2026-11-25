@@ -8936,6 +8936,174 @@ def previa_splits():
     return render_template("previa_splits.html")
 
 
+def _datos_previa_admin():
+    """Datos REALES de los seis bloques del Admin pa' las previas
+    /previa-admin-a|b|c (2026-11-25, Alex pidió TRES diseños pa'
+    elegir): MISMA lógica y mismas fuentes que admin_dashboard —
+    conteo_miembros/miembros_lista, selecciones pendientes de hoy,
+    plays de hoy, ingresos de Stripe y app_instalados — copiadas
+    fielmente; entre variantes SOLO cambia la presentación."""
+    db = get_db()
+    try:
+        _mm = db.execute(
+            "SELECT id, nombre, email, platinum_unlocked, platinum_trial_ends "
+            "FROM users WHERE email_verified = 1 "
+            "AND LOWER(email) NOT IN ('thesharpteam8@gmail.com', "
+            "'system@value.local', 'pena.manuel@myyahoo.com', "
+            "'alexpena1509@gmail.com') "
+            "ORDER BY nombre ASC").fetchall()
+        miembros_lista = []
+        for r in _mm:
+            _dias = None
+            _trial_vigente = False
+            _te = (r["platinum_trial_ends"] or "").strip()
+            if _te:
+                try:
+                    from datetime import datetime as _dt, timezone as _tz
+                    _fin = _dt.fromisoformat(_te.replace("Z", "+00:00"))
+                    if _fin.tzinfo is None:
+                        _fin = _fin.replace(tzinfo=_tz.utc)
+                    _dias = max(0, (_fin - _dt.now(_tz.utc)).days)
+                    _trial_vigente = _fin > _dt.now(_tz.utc)
+                except Exception:
+                    _dias = None
+            miembros_lista.append({
+                "id": r["id"], "nombre": r["nombre"], "email": r["email"],
+                "platinum": bool(r["platinum_unlocked"]),
+                "trial": _trial_vigente,
+                "dias": _dias,
+            })
+    except Exception:
+        miembros_lista = []
+    conteo_miembros = {
+        "total": len(miembros_lista),
+        "plat": sum(1 for m in miembros_lista if m["platinum"] and not m["trial"]),
+        "trial": sum(1 for m in miembros_lista if m["trial"]),
+        "free": sum(1 for m in miembros_lista if not m["platinum"]),
+    }
+    from datetime import datetime as _dt2
+    _hoy = _dt2.now().strftime("%Y-%m-%d")
+    selecciones = []
+    try:
+        _data = _json_remoto_o_local(PENDING_RAW_URL, PENDING_PLAYS_PATH)
+        if isinstance(_data, dict) and _data.get("fecha") == _hoy:
+            selecciones = _data.get("plays", [])
+    except Exception:
+        selecciones = []
+    plays = []
+    try:
+        _d = _json_remoto_o_local(PLAYS_RAW_URL, PLAYS_PATH)
+        _root_fecha = str(_d.get("fecha", ""))[:10] if isinstance(_d, dict) else ""
+        _, _plays_all = load_data()
+        if _root_fecha == _hoy:
+            plays = _plays_all or []
+    except Exception:
+        plays = []
+    ingresos = None
+    try:
+        if STRIPE_SECRET_KEY:
+            import stripe as _stripe
+            from datetime import datetime as _dti, timedelta as _tdi, timezone as _tzi
+            _stripe.api_key = STRIPE_SECRET_KEY
+            _ET = _tzi(_tdi(hours=-5))
+            _ahora = _dti.now(_ET)
+            _hoy_s = _ahora.strftime("%Y-%m-%d")
+            _mes_s = _ahora.strftime("%Y-%m")
+            _desde30 = _ahora - _tdi(days=30)
+            _tot = 0.0; _mes = 0.0; _d30 = 0.0; _hoyi = 0.0; _ult = []
+            _params = {"status": "paid", "limit": 100}
+            for _pagina in range(3):
+                _resp = _stripe.Invoice.list(**_params)
+                _datai = _resp.get("data", []) if hasattr(_resp, "get") else _resp.data
+                for _inv in _datai:
+                    _amt = (_inv.get("amount_paid") or 0) / 100.0
+                    if _amt <= 0:
+                        continue
+                    if (_inv.get("customer_email") or "").strip().lower() in (
+                            "pena.manuel@myyahoo.com", "alexpena1509@gmail.com",
+                            "thesharpteam8@gmail.com", "system@value.local"):
+                        continue
+                    _f = _dti.fromtimestamp(_inv.get("created") or 0, _ET)
+                    _tot += _amt
+                    if _f.strftime("%Y-%m") == _mes_s:
+                        _mes += _amt
+                    if _f >= _desde30:
+                        _d30 += _amt
+                    if _f.strftime("%Y-%m-%d") == _hoy_s:
+                        _hoyi += _amt
+                    if len(_ult) < 5:
+                        _ult.append({"monto": _amt, "fecha": _f.strftime("%b %d · %I:%M %p")})
+                if not getattr(_resp, "has_more", False) or not _datai:
+                    break
+                _params["starting_after"] = _datai[-1].get("id")
+            ingresos = {"total": _tot, "mes": _mes, "d30": _d30, "hoy": _hoyi, "ultimos": _ult}
+    except Exception:
+        ingresos = None
+    app_instalados = []
+    try:
+        for r in db.execute(
+                "SELECT nombre, email, app_first_seen, app_last_seen, "
+                "app_opens FROM users WHERE app_first_seen IS NOT NULL "
+                "ORDER BY app_last_seen DESC").fetchall():
+            app_instalados.append({
+                "nombre": r["nombre"] or "—",
+                "email": r["email"] or "",
+                "desde": r["app_first_seen"] or "",
+                "ultima": r["app_last_seen"] or "",
+                "aperturas": r["app_opens"] or 0,
+            })
+    except Exception:
+        app_instalados = []
+    return {
+        "conteo_miembros": conteo_miembros,
+        "miembros_lista": miembros_lista,
+        "selecciones": selecciones,
+        "plays_hoy": plays,
+        "ingresos": ingresos,
+        "app_instalados": app_instalados,
+    }
+
+
+@app.route("/previa-admin-a")
+def previa_admin_a():
+    """VISTA PREVIA A «Grid» del Admin de seis cuadros (2026-11-25):
+    rejilla 2×3, número grande, detalle dentro de la tarjeta. Candado:
+    admin real o la cuenta de Alex (_admin_o_cuenta_alex, el patrón de
+    /previa-splits); cualquier otro recibe 404. NO toca /admin: sirve
+    previa_admin_a.html con los datos reales de _datos_previa_admin."""
+    from flask import abort
+    if not _admin_o_cuenta_alex(current_user()):
+        abort(404)
+    return render_template("previa_admin_a.html", **_datos_previa_admin())
+
+
+@app.route("/previa-admin-b")
+def previa_admin_b():
+    """VISTA PREVIA B «Lista fina» del Admin de seis cuadros
+    (2026-11-25): seis filas a todo lo ancho, tipografía fina, número
+    a la derecha, detalle dentro de la fila. Candado: _admin_o_cuenta_alex;
+    cualquier otro recibe 404. NO toca /admin: sirve previa_admin_b.html
+    con los datos reales de _datos_previa_admin."""
+    from flask import abort
+    if not _admin_o_cuenta_alex(current_user()):
+        abort(404)
+    return render_template("previa_admin_b.html", **_datos_previa_admin())
+
+
+@app.route("/previa-admin-c")
+def previa_admin_c():
+    """VISTA PREVIA C «Tiles con icono» del Admin de seis cuadros
+    (2026-11-25): rejilla 2×3 con icono por cuadro, número mediano,
+    más aire, detalle en panel dentro del cuadro. Candado:
+    _admin_o_cuenta_alex; cualquier otro recibe 404. NO toca /admin:
+    sirve previa_admin_c.html con los datos reales de
+    _datos_previa_admin."""
+    from flask import abort
+    if not _admin_o_cuenta_alex(current_user()):
+        abort(404)
+    return render_template("previa_admin_c.html", **_datos_previa_admin())
+
+
 @app.route("/setup")
 @login_required
 def setup_page():
