@@ -9054,6 +9054,40 @@ def _datos_previa_admin():
             })
     except Exception:
         app_instalados = []
+    historial = []
+    try:
+        _dias_h = sorted(load_archive(), key=lambda x: str(x.get("fecha", "")))
+        for _dia in reversed(_dias_h):
+            for _j in reversed(_dia.get("jugadas") or []):
+                if not isinstance(_j, dict):
+                    continue
+                _res = str(_j.get("resultado") or "").upper()
+                if _res not in ("WON", "LOST"):
+                    continue
+                _prof = _j.get("profit")
+                _pu = None
+                try:
+                    _sm = float(_j.get("stake_monto") or 0)
+                    _su = float(_j.get("stake_unidades") or 0)
+                    if _sm > 0 and _su > 0 and _prof is not None:
+                        _pu = float(_prof) / (_sm / _su)
+                except Exception:
+                    _pu = None
+                historial.append({
+                    "pick": _j.get("pick") or "—",
+                    "nivel": _j.get("nivel") or "",
+                    "liga": _j.get("liga") or "",
+                    "fecha": _dia.get("fecha") or "",
+                    "resultado": _res,
+                    "profit": _prof,
+                    "profit_u": _pu,
+                })
+                if len(historial) >= 6:
+                    break
+            if len(historial) >= 6:
+                break
+    except Exception:
+        historial = []
     return {
         "conteo_miembros": conteo_miembros,
         "miembros_lista": miembros_lista,
@@ -9061,6 +9095,7 @@ def _datos_previa_admin():
         "plays_hoy": plays,
         "ingresos": ingresos,
         "app_instalados": app_instalados,
+        "historial": historial,
     }
 
 
@@ -9102,6 +9137,21 @@ def previa_admin_c():
     if not _admin_o_cuenta_alex(current_user()):
         abort(404)
     return render_template("previa_admin_c.html", **_datos_previa_admin())
+
+
+@app.route("/previa-admin-d")
+def previa_admin_d():
+    """VISTA PREVIA D «Command OS» del Admin (2026-11-25): replica la
+    FORMA EXACTA del diseño que Alex pegó y aprobó — tema obsidian,
+    barra de telemetría, encabezado COMMAND OS // MASTER ADMIN y barra
+    inferior fija de 4 pestañas (Pulso · Jugadas · CRM · Push/Caja) —
+    pero con los DATOS REALES de _datos_previa_admin() (las cifras del
+    mock eran de ejemplo). Candado: _admin_o_cuenta_alex; cualquier
+    otro recibe 404. NO toca /admin: sirve previa_admin_d.html."""
+    from flask import abort
+    if not _admin_o_cuenta_alex(current_user()):
+        abort(404)
+    return render_template("previa_admin_d.html", **_datos_previa_admin())
 
 
 @app.route("/setup")
