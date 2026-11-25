@@ -5954,6 +5954,17 @@ def migrate_db():
                      "inactivity_reason", "last_email_click_at"]:
             if _col not in cols:
                 pending.append(f"ALTER TABLE users ADD COLUMN {_col} TEXT")
+        # Uso del Dashboard como app (2026-11-24, pedido por Alex: saber
+        # qué miembro lo tiene agregado a su pantalla de inicio).
+        # app_first_seen = primera vez detectado (instalación en Android
+        # vía evento appinstalled, o primera apertura en modo app);
+        # app_last_seen = última apertura como app; app_opens = contador
+        # de aperturas como app (una por lanzamiento, ver /api/app-mode).
+        for _col in ["app_first_seen", "app_last_seen"]:
+            if _col not in cols:
+                pending.append(f"ALTER TABLE users ADD COLUMN {_col} TEXT")
+        if "app_opens" not in cols:
+            pending.append("ALTER TABLE users ADD COLUMN app_opens INTEGER NOT NULL DEFAULT 0")
         for stmt in pending:
             conn.execute(stmt)
         if pending:
@@ -13331,7 +13342,8 @@ def desbloquear_checkout_session():
 def admin_api_members_emails():
     """Lista de miembros para emails personalizados (2026-10-07, pedido por Alex):
     los emails de motivación salen con sección de upsell solo para no-Platinum.
-    Retorna JSON: [{email, nombre, platinum, phone, sms_optin, lang, platinum_trial_ends, baja_url}].
+    Retorna JSON: [{email, nombre, platinum, phone, sms_optin, lang, platinum_trial_ends, baja_url,
+    usa_app, app_desde, app_ultima, app_aperturas}].
     baja_url (2026-11-19): la URL firmada de baja de emails de ESE miembro
     (/baja/<token>) — los scripts de email la cablean en el pie en vez del
     placeholder de Resend, que no se sustituye en envíos API.
@@ -13353,7 +13365,7 @@ def admin_api_members_emails():
     # la fecha pagada. Esta es la audiencia central: de aquí salen el
     # email diario, la Masterclass, resultados 11 AM y motivación.
     rows = db.execute(
-        "SELECT email, nombre, platinum_unlocked, phone, sms_optin, lang, platinum_trial_ends, email_status FROM users WHERE email IS NOT NULL AND email != '' AND email_verified = 1 AND cancel_requested_at IS NULL"
+        "SELECT email, nombre, platinum_unlocked, phone, sms_optin, lang, platinum_trial_ends, email_status, app_first_seen, app_last_seen, app_opens FROM users WHERE email IS NOT NULL AND email != '' AND email_verified = 1 AND cancel_requested_at IS NULL"
     ).fetchall()
     return jsonify([
         {"email": r["email"], "nombre": r["nombre"] or "there",
@@ -13366,6 +13378,14 @@ def admin_api_members_emails():
          # resto de consumidores no se afectan).
          "email_status": r["email_status"] or "active",
          "marketing_suppressed": (r["email_status"] or "") in ("inactive", "excluded_inactive"),
+         # Uso como app (2026-11-24): el miembro tiene el Dashboard en
+         # su pantalla de inicio y lo abre como aplicación (lo alimenta
+         # POST /api/app-mode). app_desde = primera vez detectado;
+         # app_ultima = última apertura como app.
+         "usa_app": bool(r["app_first_seen"]),
+         "app_desde": r["app_first_seen"],
+         "app_ultima": r["app_last_seen"],
+         "app_aperturas": r["app_opens"] or 0,
          "baja_url": _baja_url(r["email"])}
         for r in rows
     ])
@@ -17084,6 +17104,35 @@ def api_presencia():
             (uid, ahora, ip),
         )
     db.commit()
+    return jsonify({"ok": True})
+
+
+@app.route("/api/app-mode", methods=["POST"])
+@login_required
+def api_app_mode():
+    """Uso del Dashboard como app (2026-11-24, pedido por Alex): las
+    plantillas del Dashboard avisan (a) en Android, cuando el miembro
+    instala la app (evento appinstalled del navegador), y (b) en
+    iPhone y Android, cada vez que el Dashboard se abre en modo
+    aplicación (display-mode: standalone / navigator.standalone) — en
+    iPhone no existe evento de instalación, así que la apertura en
+    modo app es la señal. Guarda por miembro: app_first_seen (primera
+    vez detectado), app_last_seen (última apertura como app) y
+    app_opens (contador; el JS reporta una vez por lanzamiento).
+    Silencioso y fail-soft: nunca rompe la navegación del miembro."""
+    db = get_db()
+    uid = session["user_id"]
+    ahora = now_iso()
+    try:
+        db.execute(
+            "UPDATE users SET app_first_seen = COALESCE(app_first_seen, ?), "
+            "app_last_seen = ?, app_opens = COALESCE(app_opens, 0) + 1 "
+            "WHERE id = ?",
+            (ahora, ahora, uid),
+        )
+        db.commit()
+    except Exception:
+        pass
     return jsonify({"ok": True})
 
 
