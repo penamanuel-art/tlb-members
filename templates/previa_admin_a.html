@@ -1,0 +1,235 @@
+{% extends "base_v2.html" %}
+{% block content %}
+<style>
+/* PREVIA A «Grid» — Admin de SEIS CUADROS (2026-11-25): rejilla
+   2 columnas × 3 filas, tarjetas oscuras paleta WGT, número grande;
+   el detalle se expande DENTRO de la tarjeta (al abrir, la tarjeta
+   ocupa el ancho completo, pero nada sale de los seis cuadros).
+   Misma data y mismos formularios que el Admin v1. */
+body.v2 { background: #0C0F16 !important; }
+.v2-wrap { padding-left: 10px !important; padding-right: 10px !important; padding-top: 0 !important; }
+.v2-topbar { display: none !important; }
+.v2-bottomnav { display: none !important; }
+.adm { max-width: 880px; margin: 0 auto; padding: 6px 10px 56px; font-family: -apple-system, 'SF Pro', Inter, system-ui, sans-serif; font-size: 15px; }
+.adm-kicker { color: #1AE099; font-size: 11px; font-weight: 700; letter-spacing: 3px; margin: 4px 0 2px; text-transform: uppercase; }
+.adm h1 { font-size: 26px; font-weight: 800; color: #fff; margin: 0 0 16px; letter-spacing: -0.5px; }
+.pa-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.pa-card { background: #1D2029; border: 1px solid #2A2E3A; border-radius: 20px; overflow: hidden; }
+.pa-card[open ] { grid-column: 1 / -1; }
+.pa-card > summary { list-style: none; cursor: pointer; padding: 16px 18px 14px; -webkit-tap-highlight-color: transparent; display: block; }
+.pa-card > summary::-webkit-details-marker { display: none; }
+.pa-card > summary::marker { content: ""; }
+.pa-card .bx-l { display: block; font-size: 0.68rem; font-weight: 600; letter-spacing: 1.4px; color: #9AA1AE; text-transform: uppercase; }
+.pa-card .bx-n { display: block; font-size: 36px; font-weight: 800; color: #fff; line-height: 1.05; margin-top: 8px; }
+.pa-card .bx-n.hot { color: #1AE099; }
+.pa-card .bx-h { display: flex; align-items: center; justify-content: space-between; margin-top: 6px; font-size: 0.74rem; color: #9AA1AE; }
+.pa-card .bx-ch { color: #1AE099; font-size: 18px; font-weight: 700; line-height: 1; transition: transform .18s ease; }
+.pa-card[open ] .bx-ch { transform: rotate(90deg); }
+.pa-card .bx-body { border-top: 1px solid #2A2E3A; padding: 16px 18px 18px; }
+.pa-card.push > summary { background: #10CC87; }
+.pa-card.push .bx-l { color: #052017; }
+.pa-card.push .bx-h { color: rgba(5,32,23,.72); }
+.pa-card.push .bx-n { color: #052017; font-size: 19px; font-weight: 800; margin-top: 10px; }
+.pa-card.push .bx-ch { color: #052017; }
+.mrow { display: flex; justify-content: space-between; align-items: center; gap: 10px;
+  text-decoration: none; color: #fff; padding: 11px 14px; border-radius: 14px;
+  background: #262B38; border: 1px solid #2A2E3A; margin-bottom: 6px; }
+.mrow .mn { font-weight: 600; font-size: 0.92rem; }
+.mrow .ms { display: block; font-weight: 400; font-size: 0.74rem; color: #9AA1AE; margin-top: 2px; }
+.mrow .mb { font-size: 0.68rem; font-weight: 700; letter-spacing: 1px;
+  border: 1px solid; border-radius: 999px; padding: 3px 10px; white-space: nowrap; }
+.adm-muted { color: #9AA1AE; font-size: 0.85rem; }
+.adm-mini { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.adm-tile { background: #262B38; border: 1px solid #2A2E3A; border-radius: 14px; padding: 11px 8px 9px; text-align: center; }
+.adm-tile .l { display: block; font-size: 0.6rem; font-weight: 600; letter-spacing: 1px; color: #9AA1AE; text-transform: uppercase; white-space: nowrap; }
+.adm-tile .n { display: block; font-size: 19px; font-weight: 700; color: #fff; line-height: 1.1; margin-top: 2px; }
+.adm-link { display: inline-block; margin-top: 12px; color: #1AE099; font-weight: 700; font-size: 0.9rem; text-decoration: none; }
+.pf-l { display: block; font-size: 0.7rem; font-weight: 600; letter-spacing: 1px; color: #9AA1AE; text-transform: uppercase; margin: 12px 0 6px; }
+.pf-l:first-child { margin-top: 0; }
+.pf-in { width: 100%; box-sizing: border-box; background: #262B38; border: 1px solid #2A2E3A; border-radius: 12px; color: #fff; padding: 11px 12px; font-size: 15px; font-family: inherit; }
+.pf-in:focus { outline: none; border-color: #10CC87; }
+.pf-aud { display: flex; gap: 8px; }
+.pf-aud label { flex: 1; display: block; background: #262B38; border: 1px solid #2A2E3A; border-radius: 12px; padding: 10px 12px; color: #fff; font-size: 0.88rem; font-weight: 600; cursor: pointer; }
+.pf-aud label small { display: block; font-weight: 400; font-size: 0.72rem; color: #9AA1AE; margin-top: 2px; }
+.pf-aud input { accent-color: #10CC87; margin-right: 6px; }
+.send-btn { width: 100%; background: #10CC87; color: #052017; border: none; border-radius: 14px; padding: 12px; font-weight: 700; font-size: 15px; cursor: pointer; margin-top: 14px; display: block; }
+.status-badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 999px; margin-bottom: 8px; }
+.status-pend { background: rgba(255,255,255,.08); color: #fff; border: 1px solid rgba(255,255,255,.35); }
+.status-sent { background: rgba(16,204,135,.13); color: #1AE099; border: 1px solid rgba(16,204,135,.35); }
+</style>
+
+<div class="adm">
+  <p class="adm-kicker">Admin · Preview A</p>
+  <h1>Administration</h1>
+
+  <div class="pa-grid">
+  <!-- 1 · Total members -->
+  <details class="pa-card">
+    <summary>
+      <span class="bx-l">👥 Total members</span>
+      <span class="bx-n">{{ conteo_miembros.total }}</span>
+      <span class="bx-h">All members<span class="bx-ch">›</span></span>
+    </summary>
+    <div class="bx-body">
+      <div class="adm-mini">
+        <div class="adm-tile"><span class="l">Free</span><span class="n">{{ conteo_miembros.free }}</span></div>
+        <div class="adm-tile"><span class="l">On trial</span><span class="n">{{ conteo_miembros.trial }}</span></div>
+        <div class="adm-tile"><span class="l">Platinum</span><span class="n">{{ conteo_miembros.plat }}</span></div>
+      </div>
+      <a class="adm-link" href="{{ url_for('admin_miembros') }}">View member list ›</a>
+    </div>
+  </details>
+
+  <!-- 2 · Platinum -->
+  <details class="pa-card">
+    <summary>
+      <span class="bx-l">💎 Platinum</span>
+      <span class="bx-n hot">{{ conteo_miembros.plat }}</span>
+      <span class="bx-h">Paying members<span class="bx-ch">›</span></span>
+    </summary>
+    <div class="bx-body">
+      {% set paying = miembros_lista | selectattr('platinum') | rejectattr('trial') | list %}
+      {% for m in paying %}
+      <div class="mrow">
+        <span class="mn">{{ m.nombre }}<span class="ms">{{ m.email }}</span></span>
+        <span class="mb" style="color:#1AE099;border-color:#1AE099;">PLATINUM</span>
+      </div>
+      {% else %}
+      <p class="adm-muted" style="margin:0;">No paying Platinum members yet.</p>
+      {% endfor %}
+    </div>
+  </details>
+
+  <!-- 3 · Send push -->
+  <details class="pa-card push">
+    <summary>
+      <span class="bx-l">📲 Send push</span>
+      <span class="bx-n">Compose</span>
+      <span class="bx-h">Tap to compose<span class="bx-ch">›</span></span>
+    </summary>
+    <div class="bx-body">
+      <form method="POST" action="{{ url_for('admin_crear_push') }}">
+        <label class="pf-l" for="paPushTitulo">Title</label>
+        <input class="pf-in" id="paPushTitulo" name="titulo" maxlength="80" placeholder="Ej.: Today's card is ready" required>
+        <label class="pf-l" for="paPushMensaje">Message</label>
+        <textarea class="pf-in" id="paPushMensaje" name="mensaje" rows="3" maxlength="240" placeholder="Ej.: Today's plays are posted in your Dashboard" required></textarea>
+        <span class="pf-l">Audience</span>
+        <div class="pf-aud">
+          <label><input type="radio" name="audiencia" value="miembros" checked>👥 Members<small>With play alerts on</small></label>
+          <label><input type="radio" name="audiencia" value="solo_yo">🔒 Only me<small>Admin only (tests)</small></label>
+        </div>
+        <label class="pf-l" for="paPushUrl">Opens</label>
+        <input class="pf-in" id="paPushUrl" name="url" value="/home" placeholder="/home">
+        <button type="submit" class="send-btn">📲 Send push</button>
+      </form>
+    </div>
+  </details>
+
+  <!-- 4 · App installed -->
+  <details class="pa-card">
+    <summary>
+      <span class="bx-l">📱 App installed</span>
+      <span class="bx-n hot">{{ app_instalados|default([], true)|length }}</span>
+      <span class="bx-h">With the app<span class="bx-ch">›</span></span>
+    </summary>
+    <div class="bx-body">
+      {% for a in app_instalados|default([], true) %}
+      <div class="mrow">
+        <span class="mn">{{ a.nombre }}<span class="ms">{{ a.email }} · since {{ a.desde[:10] }} · last {{ a.ultima[:16].replace('T', ' ') }}</span></span>
+        <span class="mb" style="color:#1AE099;border-color:#1AE099;">{{ a.aperturas }} opens</span>
+      </div>
+      {% else %}
+      <p class="adm-muted" style="margin:0;">No app installs yet.</p>
+      {% endfor %}
+    </div>
+  </details>
+
+  <!-- 5 · Today's pending plays -->
+  <details class="pa-card">
+    <summary>
+      <span class="bx-l">🎯 Today's pending plays</span>
+      <span class="bx-n hot">{{ selecciones|length }}</span>
+      <span class="bx-h">Waiting approval<span class="bx-ch">›</span></span>
+    </summary>
+    <div class="bx-body">
+      {% set force_pre = True %}
+      <form method="POST" action="{{ url_for('admin_aprobar_jugadas') }}" id="sendForm">
+        {% if selecciones %}
+          {% for p in selecciones %}
+            {% set pid = p.id or ('pend-' ~ loop.index) %}
+            <div style="margin-bottom:12px;">
+              <span class="status-badge status-pend">⏳ PENDING</span>
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+                <input type="checkbox" name="play_ids" value="{{ pid }}" class="sel-check" style="width:22px;height:22px;accent-color:#10CC87;">
+                <label style="color:#fff;font-size:0.9rem;font-weight:600;">Select</label>
+              </div>
+              {% include "_play_card_v5.html" %}
+            </div>
+          {% endfor %}
+        {% endif %}
+        {% if plays_hoy %}
+          {% for p in plays_hoy %}
+            <div style="margin-bottom:12px;">
+              <span class="status-badge status-sent">✓ SENT</span>
+              {% include "_play_card_v5.html" %}
+            </div>
+          {% endfor %}
+        {% endif %}
+        {% if not selecciones and not plays_hoy %}
+          <p class="adm-muted" style="margin:0;text-align:center;">No plays today.</p>
+        {% endif %}
+        {% if selecciones %}
+          <button type="submit" class="send-btn" id="sendBtn">📤 Send selected</button>
+        {% endif %}
+      </form>
+      <script>
+      (function() {
+        var checks = document.querySelectorAll('#sendForm .sel-check');
+        var btn = document.getElementById('sendBtn');
+        function upd() {
+          var n = 0;
+          checks.forEach(function(c) { if (c.checked) n++; });
+          if (btn) btn.textContent = n > 0 ? ('📤 Send selected (' + n + ')') : '📤 Send selected';
+        }
+        var form = document.getElementById('sendForm');
+        if (form) form.addEventListener('submit', function(e) {
+          var n = 0;
+          checks.forEach(function(c) { if (c.checked) n++; });
+          if (n === 0) { e.preventDefault(); alert('Check the "Select" box on each play you want to send first.'); }
+        });
+        checks.forEach(function(c) { c.addEventListener('change', upd); });
+        upd();
+      })();
+      </script>
+    </div>
+  </details>
+
+  <!-- 6 · Money today -->
+  <details class="pa-card">
+    <summary>
+      <span class="bx-l">💰 Money today</span>
+      <span class="bx-n hot">{% if ingresos %}${{ '%.0f'|format(ingresos.hoy) }}{% else %}—{% endif %}</span>
+      <span class="bx-h">Full accounting<span class="bx-ch">›</span></span>
+    </summary>
+    <div class="bx-body">
+      {% if ingresos %}
+      <div class="adm-mini">
+        <div class="adm-tile"><span class="l">This month</span><span class="n">${{ '%.0f'|format(ingresos.mes) }}</span></div>
+        <div class="adm-tile"><span class="l">Last 30 days</span><span class="n">${{ '%.0f'|format(ingresos.d30) }}</span></div>
+        <div class="adm-tile"><span class="l">All time</span><span class="n">${{ '%.0f'|format(ingresos.total) }}</span></div>
+      </div>
+      <div style="margin-top:12px;">
+        {% for p in ingresos.ultimos %}
+        <div class="mrow"><span class="mn">💵 Payment received</span><span class="mb" style="color:#1AE099;border-color:#1AE099;">${{ '%.2f'|format(p.monto) }} · {{ p.fecha }}</span></div>
+        {% else %}
+        <p class="adm-muted" style="margin:0;">No payments yet.</p>
+        {% endfor %}
+      </div>
+      {% else %}
+      <p class="adm-muted" style="margin:0;">Revenue unavailable right now.</p>
+      {% endif %}
+    </div>
+  </details>
+  </div>
+</div>
+{% endblock %}
