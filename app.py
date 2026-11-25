@@ -9154,6 +9154,25 @@ def previa_admin_d():
     return render_template("previa_admin_d.html", **_datos_previa_admin())
 
 
+@app.route("/previa-admin-e")
+def previa_admin_e():
+    """VISTA PREVIA E «Command Center» del Admin (2026-11-25): replica
+    la FORMA de la foto que Alex mandó — monograma ST dorado, título
+    Command Center, ticker, tarjeta grande de Ingresos Netos con
+    toggle Hoy/30D/Total y fila Miembros/Platinum/App PWA, tarjetas
+    de Jugadas por Aprobar con borde dorado y botón Aprobar + Push,
+    y barra inferior FLOTANTE de 5 huecos con botón central + — pero
+    con los DATOS REALES de _datos_previa_admin() (las cifras de la
+    foto eran de ejemplo; lo que no tiene dato real — «online», «vs
+    ayer», gráfica de ingresos — se omite). Candado:
+    _admin_o_cuenta_alex; cualquier otro recibe 404. NO toca /admin:
+    sirve previa_admin_e.html."""
+    from flask import abort
+    if not _admin_o_cuenta_alex(current_user()):
+        abort(404)
+    return render_template("previa_admin_e.html", **_datos_previa_admin())
+
+
 @app.route("/setup")
 @login_required
 def setup_page():
