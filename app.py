@@ -16875,6 +16875,26 @@ def admin_dashboard():
             ingresos = {"total": _tot, "mes": _mes, "d30": _d30, "hoy": _hoy, "ultimos": _ult}
     except Exception:
         ingresos = None
+    # 📱 APP INSTALADA (2026-11-25, Admin nuevo de seis bloques, orden de
+    # Alex): miembros que agregaron el Dashboard a su pantalla de inicio
+    # como aplicación. Las columnas las puebla POST /api/app-mode:
+    # app_first_seen (primera vez), app_last_seen (última apertura) y
+    # app_opens (contador de aperturas).
+    app_instalados = []
+    try:
+        for r in db.execute(
+                "SELECT nombre, email, app_first_seen, app_last_seen, "
+                "app_opens FROM users WHERE app_first_seen IS NOT NULL "
+                "ORDER BY app_last_seen DESC").fetchall():
+            app_instalados.append({
+                "nombre": r["nombre"] or "—",
+                "email": r["email"] or "",
+                "desde": r["app_first_seen"] or "",
+                "ultima": r["app_last_seen"] or "",
+                "aperturas": r["app_opens"] or 0,
+            })
+    except Exception:
+        app_instalados = []
     return render_template("admin_dashboard.html",
                            ingresos=ingresos,
                            stats={"miembros": miembros, "platinum": platinum,
@@ -16888,7 +16908,8 @@ def admin_dashboard():
                            cohortes=cohortes,
                            gerenciales=gerenciales,
                            sin_leer=sin_leer,
-                           telegram_counts=telegram_counts)
+                           telegram_counts=telegram_counts,
+                           app_instalados=app_instalados)
 
 
 # ============================================================
