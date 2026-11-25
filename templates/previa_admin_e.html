@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Sharp Team — Command Center</title>
+    <style>
+        :root {
+            --bg-obsidian: #050507;
+            --surface-dark: #0D0D12;
+            --surface-card: #14141B;
+            --border-metal: #2D2D38;
+            --border-gold: rgba(212, 175, 55, 0.38);
+            --accent-emerald: #00E676;
+            --accent-gold: #D4AF37;
+            --text-main: #F4F4F6;
+            --text-muted: #8E8E9F;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-obsidian);
+            color: var(--text-main);
+            padding-bottom: 118px;
+        }
+
+        /* Header */
+        .top-head {
+            padding: 18px 16px 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: radial-gradient(120% 160% at 85% 0%, rgba(0,230,118,0.10) 0%, rgba(5,5,7,0) 55%), radial-gradient(90% 140% at 0% 0%, rgba(212,175,55,0.08) 0%, rgba(5,5,7,0) 50%);
+        }
+        .mono {
+            width: 52px; height: 52px; flex: 0 0 52px;
+            border: 1px solid var(--border-gold);
+            border-radius: 16px;
+            background: #0B0B10;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--accent-gold);
+            font-size: 17px; font-weight: 700; letter-spacing: 1px;
+        }
+        .brand-mini { font-size: 10px; letter-spacing: 3px; color: var(--accent-gold); text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
+        .brand-ver { font-size: 9px; letter-spacing: 1px; color: var(--text-muted); border: 1px solid var(--border-metal); border-radius: 6px; padding: 2px 6px; text-transform: none; }
+        .brand-title { font-size: 23px; font-weight: 700; letter-spacing: -0.4px; margin-top: 2px; }
+
+        /* Ticker */
+        .ticker {
+            border-top: 1px solid rgba(255,255,255,0.05);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding: 7px 16px;
+            display: flex; gap: 22px;
+            font-size: 11px; font-weight: 500;
+            overflow-x: auto; white-space: nowrap;
+            scrollbar-width: none;
+        }
+        .ticker::-webkit-scrollbar { display: none; }
+        .ticker-item { display: flex; align-items: center; gap: 6px; color: var(--text-muted); }
+        .text-emerald { color: var(--accent-emerald); }
+        .text-gold { color: var(--accent-gold); }
+
+        /* Views */
+        .view-content { padding: 16px; display: none; }
+        .view-content.active { display: block; }
+        h2.section-title { font-size: 16px; margin-bottom: 16px; font-weight: 700; display: flex; align-items: center; justify-content: space-between; }
+
+        /* Cards */
+        .card { background: var(--surface-card); border: 1px solid var(--border-metal); border-radius: 16px; padding: 16px; margin-bottom: 16px; }
+        .hero-card { border-radius: 26px; padding: 20px; background: linear-gradient(180deg, #17171F 0%, #101016 100%); }
+        .hero-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+        .stat-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; line-height: 1.5; }
+        .toggle { display: flex; background: #050507; border: 1px solid var(--border-metal); border-radius: 999px; padding: 3px; gap: 2px; }
+        .toggle button { background: none; border: none; color: var(--text-muted); font-size: 11px; font-weight: 600; padding: 5px 12px; border-radius: 999px; cursor: pointer; font-family: inherit; }
+        .toggle button.on { background: #23232E; color: var(--accent-emerald); }
+        .amount { font-size: 44px; font-weight: 800; letter-spacing: -1px; margin-top: 12px; }
+        .amount .cents { font-size: 20px; font-weight: 600; color: var(--text-muted); }
+        .hero-note { font-size: 11px; color: var(--text-muted); margin-top: 6px; }
+        .hero-divider { border: none; border-top: 1px solid rgba(255,255,255,0.07); margin: 18px 0 14px; }
+        .stats-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+        .stats-row .s-label { font-size: 12px; color: var(--text-muted); }
+        .stats-row .s-label.gold { color: var(--accent-gold); }
+        .stats-row .s-value { font-size: 21px; font-weight: 700; margin-top: 5px; }
+        .stats-row .s-value.green { color: var(--accent-emerald); }
+        .stats-row .s-pct { font-size: 12px; color: var(--text-muted); font-weight: 500; }
+
+        /* Section header */
+        .queue-head { display: flex; align-items: center; justify-content: space-between; margin: 22px 2px 12px; }
+        .queue-head h3 { font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 9px; }
+        .count-pill { background: rgba(0,230,118,0.16); color: var(--accent-emerald); font-size: 12px; font-weight: 700; min-width: 24px; height: 24px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; padding: 0 6px; }
+        .ver-link { background: none; border: none; color: var(--text-muted); font-size: 13px; cursor: pointer; font-family: inherit; }
+
+        /* Play cards */
+        .play-card { background: linear-gradient(180deg, #17150E 0%, var(--surface-card) 45%); border: 1px solid var(--border-gold); border-radius: 20px; padding: 16px; margin-bottom: 14px; }
+        .play-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+        .play-meta { display: flex; align-items: center; gap: 9px; font-size: 12px; color: var(--text-muted); }
+        .liga-pill { background: #23232E; color: #fff; font-size: 11px; font-weight: 700; letter-spacing: 1px; padding: 5px 10px; border-radius: 8px; }
+        .nivel-pill { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; padding: 6px 12px; border-radius: 999px; white-space: nowrap; }
+        .nivel-plat { background: rgba(212,175,55,0.14); color: var(--accent-gold); border: 1px solid var(--border-gold); }
+        .nivel-gold { background: rgba(0,230,118,0.12); color: var(--accent-emerald); border: 1px solid rgba(0,230,118,0.35); }
+        .nivel-otro { background: rgba(255,255,255,0.07); color: var(--text-main); border: 1px solid var(--border-metal); }
+        .play-game { font-size: 13px; color: var(--text-muted); margin-top: 14px; }
+        .play-main { display: flex; align-items: flex-end; justify-content: space-between; gap: 10px; margin-top: 3px; }
+        .play-pick { font-size: 21px; font-weight: 700; letter-spacing: -0.3px; }
+        .play-right { text-align: right; }
+        .play-cuota { font-size: 19px; font-weight: 700; color: var(--accent-emerald); }
+        .play-units { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+        .play-btns { display: grid; grid-template-columns: 1fr 1.25fr; gap: 10px; margin-top: 16px; }
+        .btn-ticket { background: #1C1C24; border: 1px solid var(--border-metal); color: var(--text-main); border-radius: 14px; padding: 13px 8px; font-size: 13px; font-weight: 600; text-align: center; }
+        .btn-ticket .tk { color: var(--accent-gold); margin-right: 5px; }
+        .btn-approve { background: var(--accent-emerald); border: none; color: #04140A; border-radius: 14px; padding: 13px 8px; font-size: 13px; font-weight: 800; cursor: pointer; font-family: inherit; box-shadow: 0 6px 22px rgba(0,230,118,0.35); }
+        .empty-note { font-size: 12px; color: var(--text-muted); line-height: 1.55; }
+
+        /* Lists (views) */
+        .list-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); gap: 10px; }
+        .list-item:last-child { border-bottom: none; }
+        .item-info h4 { font-size: 13px; font-weight: 600; }
+        .item-info p { font-size: 11px; color: var(--text-muted); }
+        .badge { font-size: 10px; padding: 4px 8px; border-radius: 12px; font-weight: 600; white-space: nowrap; }
+        .badge-emerald { background: rgba(0, 230, 118, 0.15); color: var(--accent-emerald); }
+        .badge-gold { background: rgba(212, 175, 55, 0.15); color: var(--accent-gold); }
+        .badge-red { background: rgba(255, 82, 82, 0.15); color: #FF5252; }
+        a.badge { text-decoration: none; }
+        .btn-action { background: var(--accent-emerald); color: var(--bg-obsidian); border: none; padding: 10px 16px; border-radius: 8px; font-weight: 700; font-size: 12px; width: 100%; margin-top: 12px; cursor: pointer; }
+        .inp { width: 100%; padding: 8px; background: #050507; border: 1px solid var(--border-metal); color: white; border-radius: 4px; margin-bottom: 8px; font-family: inherit; font-size: 13px; }
+        .inp:focus { outline: none; border-color: var(--accent-emerald); }
+        textarea.inp { height: 80px; margin-top: 8px; resize: vertical; }
+        .pf-l { display: block; font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin: 10px 0 4px; }
+        .pf-aud { display: flex; gap: 8px; margin-top: 4px; }
+        .pf-aud label { flex: 1; display: block; background: #050507; border: 1px solid var(--border-metal); border-radius: 4px; padding: 8px; color: white; font-size: 12px; font-weight: 600; cursor: pointer; }
+        .pf-aud label small { display: block; font-weight: 400; font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+        .pf-aud input { accent-color: var(--accent-emerald); margin-right: 6px; }
+        .status-badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 999px; margin-bottom: 8px; }
+        .status-pend { background: rgba(255,255,255,.08); color: #fff; border: 1px solid rgba(255,255,255,.35); }
+        .status-sent { background: rgba(0,230,118,.13); color: var(--accent-emerald); border: 1px solid rgba(0,230,118,.35); }
+        .stat-label-sm { font-size: 11px; color: var(--text-muted); text-transform: uppercase; }
+        .stat-value { font-size: 20px; font-weight: 700; margin-top: 4px; }
+
+        /* Floating bottom nav */
+        nav.float-nav {
+            position: fixed;
+            left: 12px; right: 12px; bottom: 14px;
+            background: rgba(16, 16, 22, 0.92);
+            backdrop-filter: blur(14px);
+            border: 1px solid var(--border-metal);
+            border-radius: 28px;
+            display: grid;
+            grid-template-columns: 1fr 1fr 64px 1fr 1fr;
+            align-items: center;
+            padding: 8px 6px;
+            z-index: 1000;
+            box-shadow: 0 14px 34px rgba(0,0,0,0.55);
+        }
+        .fnav-btn { background: none; border: none; color: var(--text-muted); font-size: 10.5px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; font-family: inherit; padding: 6px 2px; border-radius: 18px; position: relative; }
+        .fnav-btn .fi { font-size: 17px; line-height: 1; }
+        .fnav-btn.active { color: var(--accent-emerald); background: rgba(255,255,255,0.05); font-weight: 600; }
+        .fnav-badge { position: absolute; top: 0; right: calc(50% - 19px); background: var(--accent-emerald); color: #04140A; font-size: 9.5px; font-weight: 800; min-width: 17px; height: 17px; border-radius: 50%; display: flex; align-items: center; justify-content: center; padding: 0 4px; }
+        .fnav-plus { width: 52px; height: 52px; margin: 0 auto; border: none; border-radius: 16px; background: var(--accent-emerald); color: #04140A; font-size: 27px; font-weight: 600; cursor: pointer; box-shadow: 0 8px 24px rgba(0,230,118,0.45); display: flex; align-items: center; justify-content: center; }
+    </style>
+</head>
+<body>
+
+    <div class="top-head">
+        <div class="mono">ST</div>
+        <div>
+            <div class="brand-mini">THE SHARP TEAM <span class="brand-ver">DISEÑO E</span></div>
+            <div class="brand-title">Command Center</div>
+        </div>
+    </div>
+
+    <div class="ticker">
+        <div class="ticker-item"><span class="text-emerald">●</span> PANEL EN VIVO</div>
+        <div class="ticker-item">Card de hoy: {{ (plays_hoy|length) + (selecciones|length) }} jugadas</div>
+        {% for p in plays_hoy %}
+        <div class="ticker-item">{{ p.pick }}{% if p.cuota_texto %} <span class="text-emerald">{{ p.cuota_texto }}</span>{% endif %}{% if p.nivel in ['ELITE', 'PLATINUM'] %} <span class="text-gold">👑 Platinum</span>{% endif %}</div>
+        {% endfor %}
+        <div class="ticker-item">Miembros: {{ conteo_miembros.total }}</div>
+        <div class="ticker-item">App instalada: {{ app_instalados|length }}</div>
+    </div>
+
+    <!-- 1. PULSO -->
+    <section id="view-pulso" class="view-content active">
+        <div class="card hero-card">
+            <div class="hero-top">
+                <span class="stat-label">INGRESOS<br>NETOS</span>
+                {% if ingresos %}
+                <div class="toggle" id="ingToggle">
+                    <button type="button" class="on" data-amt="${{ '{:,.2f}'.format(ingresos.hoy) }}" data-note="Ingresos Stripe de hoy · Este mes: ${{ '{:,.2f}'.format(ingresos.mes) }}">Hoy</button>
+                    <button type="button" data-amt="${{ '{:,.2f}'.format(ingresos.d30) }}" data-note="Ingresos Stripe de los últimos 30 días">30D</button>
+                    <button type="button" data-amt="${{ '{:,.2f}'.format(ingresos.total) }}" data-note="Ingresos Stripe históricos (facturas pagadas)">Total</button>
+                </div>
+                {% endif %}
+            </div>
+            {% if ingresos %}
+            <div class="amount" id="ingAmount">${{ '{:,.2f}'.format(ingresos.hoy) }}</div>
+            <div class="hero-note" id="ingNote">Ingresos Stripe de hoy · Este mes: ${{ '{:,.2f}'.format(ingresos.mes) }}</div>
+            {% else %}
+            <div class="amount">—</div>
+            <div class="hero-note">Datos de ingresos no disponibles ahora mismo</div>
+            {% endif %}
+            <hr class="hero-divider">
+            <div class="stats-row">
+                <div>
+                    <div class="s-label">Miembros</div>
+                    <div class="s-value">{{ conteo_miembros.total }}</div>
+                </div>
+                <div>
+                    <div class="s-label gold">👑 Platinum</div>
+                    <div class="s-value">{{ conteo_miembros.plat }}</div>
+                </div>
+                <div>
+                    {% set pct = (app_instalados|length * 100 / conteo_miembros.total) if conteo_miembros.total else 0 %}
+                    <div class="s-label">App PWA</div>
+                    <div class="s-value green">{{ app_instalados|length }} <span class="s-pct">({{ '%.1f'|format(pct) }}%)</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="queue-head">
+            <h3>Jugadas por Aprobar <span class="count-pill">{{ selecciones|length }}</span></h3>
+            <button class="ver-link" onclick="switchTab('jugadas', document.getElementById('fn-jugadas'))">Ver estudio →</button>
+        </div>
+
+        {% for p in selecciones %}
+        {% set pid = p.id or ('pend-' ~ loop.index) %}
+        <div class="play-card">
+            <div class="play-top">
+                <div class="play-meta">
+                    {% if p.liga %}<span class="liga-pill">{{ p.liga }}</span>{% endif %}
+                    <span>Hoy{% if p.hora %} · {{ p.hora }}{% endif %}</span>
+                </div>
+                {% if p.nivel in ['ELITE', 'PLATINUM'] %}<span class="nivel-pill nivel-plat">PLATINUM</span>{% elif p.nivel == 'GOLD' %}<span class="nivel-pill nivel-gold">GOLD</span>{% elif p.nivel %}<span class="nivel-pill nivel-otro">{{ p.nivel }}</span>{% endif %}
+            </div>
+            {% if p.team_name and p.opp_name %}<div class="play-game">{{ p.team_name }} vs {{ p.opp_name }}</div>{% endif %}
+            <div class="play-main">
+                <div class="play-pick">{{ p.pick }}</div>
+                <div class="play-right">
+                    {% if p.cuota_texto %}<div class="play-cuota">{{ p.cuota_texto }}</div>{% endif %}
+                    {% if p.stake_unidades %}<div class="play-units">{{ p.stake_unidades }}u</div>{% elif p.unidades %}<div class="play-units">{{ p.unidades }}u</div>{% endif %}
+                </div>
+            </div>
+            <div class="play-btns">
+                {% if p.comprobante or p.ticket %}
+                <div class="btn-ticket"><span class="tk">🎟</span>Ticket Verificado</div>
+                {% else %}
+                <div class="btn-ticket"><span class="tk">🎟</span>Sin ticket aún</div>
+                {% endif %}
+                <form method="POST" action="{{ url_for('admin_aprobar_jugadas') }}" style="margin:0;">
+                    <input type="hidden" name="play_ids" value="{{ pid }}">
+                    <button type="submit" class="btn-approve" style="width:100%;">✓ Aprobar + Push</button>
+                </form>
+            </div>
+        </div>
+        {% else %}
+        <div class="card">
+            <p class="empty-note">Sin jugadas pendientes de aprobación hoy.{% if plays_hoy %} La card de hoy ya está publicada ({{ plays_hoy|length }} jugadas).{% endif %}</p>
+        </div>
+        {% endfor %}
+
+        {% if plays_hoy %}
+        <div class="card">
+            <h3 style="font-size: 13px; margin-bottom: 6px;">Card de hoy · publicada</h3>
+            {% for p in plays_hoy %}
+            <div class="list-item">
+                <div class="item-info">
+                    <h4>{{ p.pick }}</h4>
+                    <p>{{ p.liga }} • {% if p.nivel in ['ELITE', 'PLATINUM'] %}Platinum{% elif p.nivel == 'GOLD' %}Gold{% else %}{{ p.nivel }}{% endif %}{% if p.hora %} • {{ p.hora }}{% endif %}</p>
+                </div>
+                {% if p.cuota_texto %}<span class="badge badge-emerald">{{ p.cuota_texto }}</span>{% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </section>
+
+    <!-- 2. JUGADAS STUDIO -->
+    <section id="view-jugadas" class="view-content">
+        <h2 class="section-title">Jugadas Studio</h2>
+        <div class="card">
+            <h3 style="font-size: 14px; margin-bottom: 12px;">Jugadas de Hoy</h3>
+            {% set force_pre = True %}
+            <form method="POST" action="{{ url_for('admin_aprobar_jugadas') }}" id="sendFormE">
+                {% if selecciones %}
+                  {% for p in selecciones %}
+                    {% set pid = p.id or ('pend-' ~ loop.index) %}
+                    <div style="margin-bottom:12px;">
+                      <span class="status-badge status-pend">⏳ PENDING</span>
+                      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+                        <input type="checkbox" name="play_ids" value="{{ pid }}" class="sel-check" style="width:22px;height:22px;accent-color:#00E676;">
+                        <label style="color:#fff;font-size:0.9rem;font-weight:600;">Select</label>
+                      </div>
+                      {% include "_play_card_v5.html" %}
+                    </div>
+                  {% endfor %}
+                {% endif %}
+                {% if plays_hoy %}
+                  {% for p in plays_hoy %}
+                    <div style="margin-bottom:12px;">
+                      <span class="status-badge status-sent">✓ SENT</span>
+                      {% include "_play_card_v5.html" %}
+                    </div>
+                  {% endfor %}
+                {% endif %}
+                {% if not selecciones and not plays_hoy %}
+                  <p class="empty-note" style="margin:0;text-align:center;">No plays today.</p>
+                {% endif %}
+                {% if selecciones %}
+                  <button type="submit" class="btn-action" id="sendBtnE">📤 Send selected</button>
+                {% endif %}
+            </form>
+            {% if selecciones %}
+            <script>
+            (function() {
+              var checks = document.querySelectorAll('#sendFormE .sel-check');
+              var btn = document.getElementById('sendBtnE');
+              function upd() {
+                var n = 0;
+                checks.forEach(function(c) { if (c.checked) n++; });
+                if (btn) btn.textContent = n > 0 ? ('📤 Send selected (' + n + ')') : '📤 Send selected';
+              }
+              var form = document.getElementById('sendFormE');
+              if (form) form.addEventListener('submit', function(e) {
+                var n = 0;
+                checks.forEach(function(c) { if (c.checked) n++; });
+                if (n === 0) { e.preventDefault(); alert('Check the "Select" box on each play you want to send first.'); }
+              });
+              checks.forEach(function(c) { c.addEventListener('change', upd); });
+              upd();
+            })();
+            </script>
+            {% endif %}
+        </div>
+        <div class="card">
+            <h3 style="font-size: 14px; margin-bottom: 12px;">Historial Reciente</h3>
+            {% for h in historial %}
+            <div class="list-item">
+                <div class="item-info">
+                    <h4>{{ h.pick }}</h4>
+                    <p>{{ h.fecha }} • {{ h.liga }} • {% if h.nivel in ['ELITE', 'PLATINUM'] %}Platinum{% elif h.nivel == 'GOLD' %}Gold{% else %}{{ h.nivel }}{% endif %} • {% if h.resultado == 'WON' %}Ganada ✅{% else %}Perdida ❌{% endif %}{% if h.profit is not none %} • {% if h.profit >= 0 %}+${{ '%.2f'|format(h.profit) }}{% else %}−${{ '%.2f'|format(-h.profit) }}{% endif %}{% endif %}</p>
+                </div>
+                {% if h.profit_u is not none %}
+                  {% if h.resultado == 'WON' %}<span class="badge badge-emerald">+{{ '%.2f'|format(h.profit_u) }} U</span>{% else %}<span class="badge badge-red">−{{ '%.2f'|format(-h.profit_u) }} U</span>{% endif %}
+                {% elif h.profit is not none %}
+                  {% if h.profit >= 0 %}<span class="badge badge-emerald">+${{ '%.2f'|format(h.profit) }}</span>{% else %}<span class="badge badge-red">−${{ '%.2f'|format(-h.profit) }}</span>{% endif %}
+                {% endif %}
+            </div>
+            {% else %}
+            <p class="empty-note" style="margin:0;">Sin jugadas liquidadas recientes.</p>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- 3. MIEMBROS & VIP CRM -->
+    <section id="view-miembros" class="view-content">
+        <h2 class="section-title">CRM & Adopción PWA</h2>
+        <div class="card">
+            <span class="stat-label-sm">Adopción App Instalada</span>
+            {% set pct2 = (app_instalados|length * 100 / conteo_miembros.total) if conteo_miembros.total else 0 %}
+            <div class="stat-value">{{ '%.1f'|format(pct2) }}%</div>
+            <p style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">{{ app_instalados|length }} usuarios con acceso directo en pantalla de inicio</p>
+        </div>
+        <div class="card">
+            <form method="GET" action="{{ url_for('admin_miembros') }}" style="margin:0 0 12px;">
+                <input type="text" name="q" placeholder="Buscar miembro por nombre o correo..." class="inp" style="margin-bottom:0;">
+            </form>
+            {% for a in app_instalados %}
+            <div class="list-item">
+                <div class="item-info"><h4>{{ a.nombre }}</h4><p>{{ a.email }} • App instalada • {{ a.aperturas }} aperturas</p></div>
+                <a class="badge badge-gold" href="{{ url_for('admin_miembros') }}">Gestionar</a>
+            </div>
+            {% endfor %}
+            {% for m in miembros_lista[:8] %}
+            <div class="list-item">
+                <div class="item-info"><h4>{{ m.nombre }}</h4><p>{{ m.email }} • {% if m.platinum and not m.trial %}Platinum{% elif m.trial %}Trial{% else %}Free{% endif %}</p></div>
+                <a class="badge badge-gold" href="{{ url_for('admin_miembros') }}">Gestionar</a>
+            </div>
+            {% else %}
+            {% if not app_instalados %}<p class="empty-note" style="margin:0;">Sin miembros todavía.</p>{% endif %}
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- 4. PUSH & CAJA -->
+    <section id="view-push" class="view-content">
+        <h2 class="section-title">Push & Caja</h2>
+        <div class="card">
+            <h3 style="font-size: 14px;">Lanzador de Notificación</h3>
+            <form method="POST" action="{{ url_for('admin_crear_push') }}">
+                <label class="pf-l" for="pePushTitulo">Title</label>
+                <input class="inp" id="pePushTitulo" name="titulo" maxlength="80" placeholder="Ej.: Today's card is ready" required style="margin-bottom:0;">
+                <label class="pf-l" for="pePushMensaje">Message</label>
+                <textarea class="inp" id="pePushMensaje" name="mensaje" maxlength="240" placeholder="Escribe el mensaje push..." required style="margin-top:0;"></textarea>
+                <span class="pf-l">Audience</span>
+                <div class="pf-aud">
+                    <label><input type="radio" name="audiencia" value="miembros" checked>👥 Members<small>With play alerts on</small></label>
+                    <label><input type="radio" name="audiencia" value="solo_yo">🔒 Only me<small>Admin only (tests)</small></label>
+                </div>
+                <label class="pf-l" for="pePushUrl">Opens</label>
+                <input class="inp" id="pePushUrl" name="url" value="/home" placeholder="/home" style="margin-bottom:0;">
+                <button type="submit" class="btn-action" style="background: var(--accent-gold); color: black;">Enviar Broadcast VIP</button>
+            </form>
+        </div>
+        <div class="card">
+            <h3 style="font-size: 14px; margin-bottom: 12px;">Desglose de Caja</h3>
+            {% if ingresos %}
+            <div class="list-item"><div class="item-info"><h4>Hoy</h4><p>Ingresos Stripe del día</p></div><span>${{ '%.2f'|format(ingresos.hoy) }}</span></div>
+            <div class="list-item"><div class="item-info"><h4>Este mes</h4><p>Ingresos Stripe del mes</p></div><span>${{ '%.2f'|format(ingresos.mes) }}</span></div>
+            <div class="list-item"><div class="item-info"><h4>Últimos 30 días</h4><p>Ingresos Stripe</p></div><span>${{ '%.2f'|format(ingresos.d30) }}</span></div>
+            <div class="list-item"><div class="item-info"><h4>Total histórico</h4><p>Ingresos Stripe</p></div><span class="text-emerald">${{ '%.2f'|format(ingresos.total) }}</span></div>
+            {% for p in ingresos.ultimos %}
+            <div class="list-item"><div class="item-info"><h4>💵 Pago recibido</h4><p>{{ p.fecha }}</p></div><span class="text-emerald">${{ '%.2f'|format(p.monto) }}</span></div>
+            {% endfor %}
+            {% else %}
+            <p class="empty-note" style="margin:0;">Datos de caja no disponibles ahora mismo.</p>
+            {% endif %}
+        </div>
+    </section>
+
+    <nav class="float-nav">
+        <button class="fnav-btn active" id="fn-pulso" onclick="switchTab('pulso', this)">
+            <span class="fi">◎</span> Pulso
+        </button>
+        <button class="fnav-btn" id="fn-jugadas" onclick="switchTab('jugadas', this)">
+            <span class="fi">🔥</span> Jugadas
+            {% if selecciones %}<span class="fnav-badge">{{ selecciones|length }}</span>{% endif %}
+        </button>
+        <button class="fnav-plus" onclick="switchTab('jugadas', document.getElementById('fn-jugadas'))" aria-label="Nueva jugada">+</button>
+        <button class="fnav-btn" id="fn-miembros" onclick="switchTab('miembros', this)">
+            <span class="fi">👥</span> Miembros
+        </button>
+        <button class="fnav-btn" id="fn-push" onclick="switchTab('push', this)">
+            <span class="fi">≣</span> Push &amp; Caja
+        </button>
+    </nav>
+
+    <script>
+        function switchTab(tabId, el) {
+            document.querySelectorAll('.view-content').forEach(function(v) { v.classList.remove('active'); });
+            document.querySelectorAll('.fnav-btn').forEach(function(b) { b.classList.remove('active'); });
+            document.getElementById('view-' + tabId).classList.add('active');
+            if (el) el.classList.add('active');
+            window.scrollTo(0, 0);
+        }
+        (function() {
+            var t = document.getElementById('ingToggle');
+            if (!t) return;
+            var amt = document.getElementById('ingAmount');
+            var note = document.getElementById('ingNote');
+            t.querySelectorAll('button').forEach(function(b) {
+                b.addEventListener('click', function() {
+                    t.querySelectorAll('button').forEach(function(x) { x.classList.remove('on'); });
+                    b.classList.add('on');
+                    if (amt) amt.textContent = b.getAttribute('data-amt');
+                    if (note) note.textContent = b.getAttribute('data-note');
+                });
+            });
+        })();
+    </script>
+</body>
+</html>
