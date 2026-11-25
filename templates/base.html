@@ -130,6 +130,27 @@ body .dn-top-in{padding-top:14px;padding-bottom:14px}
   body .dn-top-in{padding-top:14px;padding-bottom:14px}
 }
 </style>
+<style>
+/* ===== Logo del encabezado MAS GRANDE sin tocar la tira (2026-11-24,
+   orden de Alex: «pon el logo de arriba del Dashboard mas grande sin
+   agrandar el espacio de la tira / que la tira no se corte / solo el
+   logo») =====
+   La tira no tiene alto fijo en CSS: su alto (94px locales) sale del
+   contenido — logo de 66px + 14px de aire arriba y 14 abajo — asi que
+   subir la altura de las imagenes agrandaria la tira. Por eso el
+   lockup (moneda + letras, en proporcion) se agranda con transform:
+   scale(), que NO afecta el layout: el alto de la tira queda
+   pixel-identico, ningun otro elemento se mueve, y como .dn-top no
+   tiene overflow:hidden, nada se corta. Escritorio: moneda 66 ->
+   85.8px visuales y letras 48 -> 62.4, dentro de la tira de 94.
+   En pantallas de 559px o menos la fila ya va llena (campana, cuenta,
+   View picks y menu van pegados al logo), asi que la escala baja a
+   1.1 pa' que el logo crezca sin empujar ni montarse en los botones:
+   movil <=480 moneda 51 -> 56.1 en tira de 79; <=360 moneda 44 ->
+   48.4 en tira de 72. */
+body .dn-top-in > div:first-child{transform:scale(1.3);transform-origin:left center}
+@media (max-width:559px){body .dn-top-in > div:first-child{transform:scale(1.1)}}
+</style>
 </head>
 <body class="{% if session.get('user_id') %}has-bottomnav{% endif %}{% if request.path.startswith('/admin') %} admin-theme{% endif %}"{% if watermark_img %} style="--wm-img: url('{{ url_for('static', filename=watermark_img) }}')"{% endif %}>
 {% if (request.path or '').startswith('/admin') %}
