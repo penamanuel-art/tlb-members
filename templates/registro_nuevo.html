@@ -80,11 +80,11 @@ img{display:block;max-width:100%}
 .brandrow .letters{height:32px;width:auto}
 
 /* fila de ligas que cubrimos (logos originales de cada liga) */
-.leagues{display:flex;justify-content:center;align-items:flex-start;gap:8px;flex-wrap:wrap;margin-top:16px}
-.leagues .lg{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:52px}
-.leagues .lg img{height:30px;width:30px;object-fit:contain}
-.leagues .lg span{font-size:9.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);text-align:center;line-height:1.35}
-@media (max-width:480px){.leagues{gap:4px}.leagues .lg{min-width:47px}.leagues .lg img{height:26px;width:26px}}
+.leagues{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;max-width:640px;margin:18px auto 4px}
+.leagues .lg{display:flex;flex-direction:column;align-items:center;gap:8px;min-width:0}
+.leagues .lg img{width:56px;height:40px;object-fit:contain;display:block}
+.leagues .lg span{font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:center;line-height:1;white-space:nowrap}
+@media (max-width:480px){.leagues{gap:6px;margin-top:14px}.leagues .lg img{width:44px;height:34px}.leagues .lg span{font-size:9px;letter-spacing:.06em}}
 
 /* layout héroe: dos columnas en desktop */
 .layout{margin-top:14px}
@@ -295,8 +295,8 @@ img{display:block;max-width:100%}
     <div class="lg"><img src="https://a.espncdn.com/i/teamlogos/leagues/500/nfl.png" alt="NFL" loading="lazy" onerror="this.remove()"><span>NFL</span></div>
     <div class="lg"><img src="https://a.espncdn.com/i/teamlogos/leagues/500/nba.png" alt="NBA" loading="lazy" onerror="this.remove()"><span>NBA</span></div>
     <div class="lg"><img src="https://a.espncdn.com/i/teamlogos/leagues/500/nhl.png" alt="NHL" loading="lazy" onerror="this.remove()"><span>NHL</span></div>
-    <div class="lg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/NCAA_logo.svg/500px-NCAA_logo.svg.png" alt="NCAA Football" loading="lazy" onerror="this.remove()"><span>NCAA Football</span></div>
-    <div class="lg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/NCAA_logo.svg/500px-NCAA_logo.svg.png" alt="NCAA Basketball" loading="lazy" onerror="this.remove()"><span>NCAA Basketball</span></div>
+    <div class="lg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/NCAA_logo.svg/500px-NCAA_logo.svg.png" alt="NCAAF" loading="lazy" onerror="this.remove()"><span>NCAAF</span></div>
+    <div class="lg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/NCAA_logo.svg/500px-NCAA_logo.svg.png" alt="NCAAB" loading="lazy" onerror="this.remove()"><span>NCAAB</span></div>
     <div class="lg"><img src="https://a.espncdn.com/i/teamlogos/leagues/500/mlb.png" alt="MLB" loading="lazy" onerror="this.remove()"><span>MLB</span></div>
   </div>
 </div>
