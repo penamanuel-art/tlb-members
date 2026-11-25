@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Sharp Team — Command OS</title>
+    <style>
+        :root {
+            --bg-obsidian: #050507;
+            --surface-dark: #0D0D12;
+            --surface-card: #14141B;
+            --border-metal: #2D2D38;
+            --accent-emerald: #00E676;
+            --accent-gold: #D4AF37;
+            --text-main: #F4F4F6;
+            --text-muted: #8E8E9F;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-obsidian);
+            color: var(--text-main);
+            padding-bottom: 80px;
+        }
+
+        /* Telemetry Ticker */
+        .telemetry-bar {
+            background: #111;
+            border-bottom: 1px solid var(--border-metal);
+            padding: 8px 16px;
+            display: flex;
+            gap: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+        .telemetry-item { display: flex; align-items: center; gap: 6px; }
+        .text-emerald { color: var(--accent-emerald); }
+        .text-gold { color: var(--accent-gold); }
+
+        /* Header */
+        header { padding: 20px 16px 12px; }
+        .brand-subtitle { font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: var(--text-muted); }
+        .brand-title { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; }
+
+        /* Navigation */
+        nav.bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(13, 13, 18, 0.95);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid var(--border-metal);
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            padding: 8px 0;
+            z-index: 1000;
+        }
+        .nav-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 11px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+        }
+        .nav-btn.active { color: var(--text-main); font-weight: 600; }
+        .nav-btn.active .icon-circle { border-color: var(--accent-emerald); background: rgba(0, 230, 118, 0.1); }
+        .icon-circle { width: 24px; height: 24px; border-radius: 50%; border: 1px solid var(--border-metal); display: flex; align-items: center; justify-content: center; font-size: 10px; }
+
+        /* Views */
+        .view-content { padding: 16px; display: none; }
+        .view-content.active { display: block; }
+        h2.section-title { font-size: 16px; margin-bottom: 16px; font-weight: 700; display: flex; align-items: center; justify-content: space-between; }
+
+        /* Cards & Layouts */
+        .card { background: var(--surface-card); border: 1px solid var(--border-metal); border-radius: 12px; padding: 16px; margin-bottom: 16px; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .grid-2 .card { margin-bottom: 16px; }
+        .stat-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; }
+        .stat-value { font-size: 20px; font-weight: 700; margin-top: 4px; }
+        .stat-value.emerald { color: var(--accent-emerald); }
+        .stat-value.gold { color: var(--accent-gold); }
+
+        /* Lists */
+        .list-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); gap: 10px; }
+        .list-item:last-child { border-bottom: none; }
+        .item-info h4 { font-size: 13px; font-weight: 600; }
+        .item-info p { font-size: 11px; color: var(--text-muted); }
+        .badge { font-size: 10px; padding: 4px 8px; border-radius: 12px; font-weight: 600; white-space: nowrap; }
+        .badge-emerald { background: rgba(0, 230, 118, 0.15); color: var(--accent-emerald); }
+        .badge-gold { background: rgba(212, 175, 55, 0.15); color: var(--accent-gold); }
+        .badge-red { background: rgba(255, 82, 82, 0.15); color: #FF5252; }
+        button.badge { border: none; cursor: pointer; font-family: inherit; }
+        a.badge { text-decoration: none; }
+
+        /* Actions */
+        .btn-action { background: var(--accent-emerald); color: var(--bg-obsidian); border: none; padding: 10px 16px; border-radius: 8px; font-weight: 700; font-size: 12px; width: 100%; margin-top: 12px; cursor: pointer; }
+        .inp { width: 100%; padding: 8px; background: #050507; border: 1px solid var(--border-metal); color: white; border-radius: 4px; margin-bottom: 8px; font-family: inherit; font-size: 13px; }
+        .inp:focus { outline: none; border-color: var(--accent-emerald); }
+        textarea.inp { height: 80px; margin-top: 8px; resize: vertical; }
+        .pf-l { display: block; font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin: 10px 0 4px; }
+        .pf-aud { display: flex; gap: 8px; margin-top: 4px; }
+        .pf-aud label { flex: 1; display: block; background: #050507; border: 1px solid var(--border-metal); border-radius: 4px; padding: 8px; color: white; font-size: 12px; font-weight: 600; cursor: pointer; }
+        .pf-aud label small { display: block; font-weight: 400; font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+        .pf-aud input { accent-color: var(--accent-emerald); margin-right: 6px; }
+        .status-badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 999px; margin-bottom: 8px; }
+        .status-pend { background: rgba(255,255,255,.08); color: #fff; border: 1px solid rgba(255,255,255,.35); }
+        .status-sent { background: rgba(0,230,118,.13); color: var(--accent-emerald); border: 1px solid rgba(0,230,118,.35); }
+        .muted-note { font-size: 11px; color: var(--text-muted); }
+    </style>
+</head>
+<body>
+
+    <div class="telemetry-bar">
+        <div class="telemetry-item"><span class="text-emerald">●</span> PANEL EN VIVO</div>
+        <div class="telemetry-item">Card de hoy: {{ (plays_hoy|length) + (selecciones|length) }} jugadas</div>
+        {% for p in plays_hoy %}
+        <div class="telemetry-item">{{ p.pick }}{% if p.cuota_texto %} {{ p.cuota_texto }}{% endif %}{% if p.nivel in ['ELITE', 'PLATINUM'] %} <span class="text-gold">★ Platinum</span>{% endif %}</div>
+        {% endfor %}
+        <div class="telemetry-item">Miembros: {{ conteo_miembros.total }}</div>
+        <div class="telemetry-item">App instalada: {{ app_instalados|length }}</div>
+    </div>
+
+    <header>
+        <span class="brand-subtitle">COMMAND OS // MASTER ADMIN</span>
+        <h1 class="brand-title">THE SHARP TEAM</h1>
+    </header>
+
+    <!-- 1. PULSO -->
+    <section id="view-pulso" class="view-content active">
+        <h2 class="section-title">Pulso del Negocio <span style="font-size: 12px; color: var(--accent-emerald);">● Tiempo Real</span></h2>
+
+        <div class="card">
+            <span class="stat-label">Ingresos de Hoy (USD)</span>
+            {% if ingresos %}
+            <div class="stat-value emerald">${{ '%.2f'|format(ingresos.hoy) }}</div>
+            <div style="font-size: 11px; color: var(--text-muted); margin-top: 8px;">Este mes: ${{ '%.2f'|format(ingresos.mes) }} | Últimos 30 días: ${{ '%.2f'|format(ingresos.d30) }}</div>
+            {% else %}
+            <div class="stat-value emerald">—</div>
+            <div style="font-size: 11px; color: var(--text-muted); margin-top: 8px;">Datos de ingresos no disponibles ahora mismo</div>
+            {% endif %}
+        </div>
+
+        <div class="grid-2">
+            <div class="card">
+                <span class="stat-label">Miembros Totales</span>
+                <div class="stat-value">{{ conteo_miembros.total }}</div>
+            </div>
+            <div class="card">
+                <span class="stat-label">Platinum Activos</span>
+                <div class="stat-value gold">{{ conteo_miembros.plat }}</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3 style="font-size: 13px; margin-bottom: 12px;">Cola de Aprobación Inmediata</h3>
+            {% for p in selecciones %}
+            {% set pid = p.id or ('pend-' ~ loop.index) %}
+            <div class="list-item">
+                <div class="item-info">
+                    <h4>{{ p.pick }}</h4>
+                    <p>{% if p.team_name and p.opp_name %}{{ p.team_name }} vs {{ p.opp_name }} • {% endif %}{{ p.liga }} • {% if p.nivel in ['ELITE', 'PLATINUM'] %}VIP Platinum{% elif p.nivel == 'GOLD' %}Gold{% else %}{{ p.nivel }}{% endif %}{% if p.hora %} • {{ p.hora }}{% endif %}</p>
+                </div>
+                <form method="POST" action="{{ url_for('admin_aprobar_jugadas') }}" style="margin:0;">
+                    <input type="hidden" name="play_ids" value="{{ pid }}">
+                    <button type="submit" class="badge badge-emerald">Aprobar</button>
+                </form>
+            </div>
+            {% else %}
+            <p class="muted-note" style="margin:0;">Sin jugadas pendientes de aprobación.{% if plays_hoy %} La card de hoy ya está publicada ({{ plays_hoy|length }} jugadas).{% endif %}</p>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- 2. JUGADAS STUDIO -->
+    <section id="view-jugadas" class="view-content">
+        <h2 class="section-title">Jugadas Studio</h2>
+        <div class="card">
+            <h3 style="font-size: 14px; margin-bottom: 12px;">Jugadas de Hoy</h3>
+            {% set force_pre = True %}
+            <form method="POST" action="{{ url_for('admin_aprobar_jugadas') }}" id="sendFormD">
+                {% if selecciones %}
+                  {% for p in selecciones %}
+                    {% set pid = p.id or ('pend-' ~ loop.index) %}
+                    <div style="margin-bottom:12px;">
+                      <span class="status-badge status-pend">⏳ PENDING</span>
+                      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+                        <input type="checkbox" name="play_ids" value="{{ pid }}" class="sel-check" style="width:22px;height:22px;accent-color:#00E676;">
+                        <label style="color:#fff;font-size:0.9rem;font-weight:600;">Select</label>
+                      </div>
+                      {% include "_play_card_v5.html" %}
+                    </div>
+                  {% endfor %}
+                {% endif %}
+                {% if plays_hoy %}
+                  {% for p in plays_hoy %}
+                    <div style="margin-bottom:12px;">
+                      <span class="status-badge status-sent">✓ SENT</span>
+                      {% include "_play_card_v5.html" %}
+                    </div>
+                  {% endfor %}
+                {% endif %}
+                {% if not selecciones and not plays_hoy %}
+                  <p class="muted-note" style="margin:0;text-align:center;">No plays today.</p>
+                {% endif %}
+                {% if selecciones %}
+                  <button type="submit" class="btn-action" id="sendBtnD">📤 Send selected</button>
+                {% endif %}
+            </form>
+            {% if selecciones %}
+            <script>
+            (function() {
+              var checks = document.querySelectorAll('#sendFormD .sel-check');
+              var btn = document.getElementById('sendBtnD');
+              function upd() {
+                var n = 0;
+                checks.forEach(function(c) { if (c.checked) n++; });
+                if (btn) btn.textContent = n > 0 ? ('📤 Send selected (' + n + ')') : '📤 Send selected';
+              }
+              var form = document.getElementById('sendFormD');
+              if (form) form.addEventListener('submit', function(e) {
+                var n = 0;
+                checks.forEach(function(c) { if (c.checked) n++; });
+                if (n === 0) { e.preventDefault(); alert('Check the "Select" box on each play you want to send first.'); }
+              });
+              checks.forEach(function(c) { c.addEventListener('change', upd); });
+              upd();
+            })();
+            </script>
+            {% endif %}
+        </div>
+        <div class="card">
+            <h3 style="font-size: 14px; margin-bottom: 12px;">Historial Reciente</h3>
+            {% for h in historial %}
+            <div class="list-item">
+                <div class="item-info">
+                    <h4>{{ h.pick }}</h4>
+                    <p>{{ h.fecha }} • {{ h.liga }} • {% if h.nivel in ['ELITE', 'PLATINUM'] %}Platinum{% elif h.nivel == 'GOLD' %}Gold{% else %}{{ h.nivel }}{% endif %} • {% if h.resultado == 'WON' %}Ganada ✅{% else %}Perdida ❌{% endif %}{% if h.profit is not none %} • {% if h.profit >= 0 %}+${{ '%.2f'|format(h.profit) }}{% else %}−${{ '%.2f'|format(-h.profit) }}{% endif %}{% endif %}</p>
+                </div>
+                {% if h.profit_u is not none %}
+                  {% if h.resultado == 'WON' %}<span class="badge badge-emerald">+{{ '%.2f'|format(h.profit_u) }} U</span>{% else %}<span class="badge badge-red">−{{ '%.2f'|format(-h.profit_u) }} U</span>{% endif %}
+                {% elif h.profit is not none %}
+                  {% if h.profit >= 0 %}<span class="badge badge-emerald">+${{ '%.2f'|format(h.profit) }}</span>{% else %}<span class="badge badge-red">−${{ '%.2f'|format(-h.profit) }}</span>{% endif %}
+                {% endif %}
+            </div>
+            {% else %}
+            <p class="muted-note" style="margin:0;">Sin jugadas liquidadas recientes.</p>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- 3. MIEMBROS & VIP CRM -->
+    <section id="view-miembros" class="view-content">
+        <h2 class="section-title">CRM & Adopción PWA</h2>
+        <div class="card">
+            <span class="stat-label">Adopción App Instalada</span>
+            {% set pct = (app_instalados|length * 100 / conteo_miembros.total) if conteo_miembros.total else 0 %}
+            <div class="stat-value">{{ '%.1f'|format(pct) }}%</div>
+            <p style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">{{ app_instalados|length }} usuarios con acceso directo en pantalla de inicio</p>
+        </div>
+        <div class="card">
+            <form method="GET" action="{{ url_for('admin_miembros') }}" style="margin:0 0 12px;">
+                <input type="text" name="q" placeholder="Buscar miembro por nombre o correo..." class="inp" style="margin-bottom:0;">
+            </form>
+            {% for a in app_instalados %}
+            <div class="list-item">
+                <div class="item-info"><h4>{{ a.nombre }}</h4><p>{{ a.email }} • App instalada • {{ a.aperturas }} aperturas</p></div>
+                <a class="badge badge-gold" href="{{ url_for('admin_miembros') }}">Gestionar</a>
+            </div>
+            {% endfor %}
+            {% for m in miembros_lista[:8] %}
+            <div class="list-item">
+                <div class="item-info"><h4>{{ m.nombre }}</h4><p>{{ m.email }} • {% if m.platinum and not m.trial %}Platinum{% elif m.trial %}Trial{% else %}Free{% endif %}</p></div>
+                <a class="badge badge-gold" href="{{ url_for('admin_miembros') }}">Gestionar</a>
+            </div>
+            {% else %}
+            {% if not app_instalados %}<p class="muted-note" style="margin:0;">Sin miembros todavía.</p>{% endif %}
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- 4. PUSH & CAJA -->
+    <section id="view-push" class="view-content">
+        <h2 class="section-title">Push & Caja</h2>
+        <div class="card">
+            <h3 style="font-size: 14px;">Lanzador de Notificación</h3>
+            <form method="POST" action="{{ url_for('admin_crear_push') }}">
+                <label class="pf-l" for="pdPushTitulo">Title</label>
+                <input class="inp" id="pdPushTitulo" name="titulo" maxlength="80" placeholder="Ej.: Today's card is ready" required style="margin-bottom:0;">
+                <label class="pf-l" for="pdPushMensaje">Message</label>
+                <textarea class="inp" id="pdPushMensaje" name="mensaje" maxlength="240" placeholder="Escribe el mensaje push..." required style="margin-top:0;"></textarea>
+                <span class="pf-l">Audience</span>
+                <div class="pf-aud">
+                    <label><input type="radio" name="audiencia" value="miembros" checked>👥 Members<small>With play alerts on</small></label>
+                    <label><input type="radio" name="audiencia" value="solo_yo">🔒 Only me<small>Admin only (tests)</small></label>
+                </div>
+                <label class="pf-l" for="pdPushUrl">Opens</label>
+                <input class="inp" id="pdPushUrl" name="url" value="/home" placeholder="/home" style="margin-bottom:0;">
+                <button type="submit" class="btn-action" style="background: var(--accent-gold); color: black;">Enviar Broadcast VIP</button>
+            </form>
+        </div>
+        <div class="card">
+            <h3 style="font-size: 14px; margin-bottom: 12px;">Desglose de Caja</h3>
+            {% if ingresos %}
+            <div class="list-item"><div class="item-info"><h4>Hoy</h4><p>Ingresos Stripe del día</p></div><span>${{ '%.2f'|format(ingresos.hoy) }}</span></div>
+            <div class="list-item"><div class="item-info"><h4>Este mes</h4><p>Ingresos Stripe del mes</p></div><span>${{ '%.2f'|format(ingresos.mes) }}</span></div>
+            <div class="list-item"><div class="item-info"><h4>Últimos 30 días</h4><p>Ingresos Stripe</p></div><span>${{ '%.2f'|format(ingresos.d30) }}</span></div>
+            <div class="list-item"><div class="item-info"><h4>Total histórico</h4><p>Ingresos Stripe</p></div><span class="text-emerald">${{ '%.2f'|format(ingresos.total) }}</span></div>
+            {% for p in ingresos.ultimos %}
+            <div class="list-item"><div class="item-info"><h4>💵 Pago recibido</h4><p>{{ p.fecha }}</p></div><span class="text-emerald">${{ '%.2f'|format(p.monto) }}</span></div>
+            {% endfor %}
+            {% else %}
+            <p class="muted-note" style="margin:0;">Datos de caja no disponibles ahora mismo.</p>
+            {% endif %}
+        </div>
+    </section>
+
+    <nav class="bottom-nav">
+        <button class="nav-btn active" onclick="switchTab('pulso', this)">
+            <div class="icon-circle">⚡</div> Pulso
+        </button>
+        <button class="nav-btn" onclick="switchTab('jugadas', this)">
+            <div class="icon-circle">🎯</div> Jugadas
+        </button>
+        <button class="nav-btn" onclick="switchTab('miembros', this)">
+            <div class="icon-circle">👥</div> CRM
+        </button>
+        <button class="nav-btn" onclick="switchTab('push', this)">
+            <div class="icon-circle">📱</div> Push/Caja
+        </button>
+    </nav>
+
+    <script>
+        function switchTab(tabId, el) {
+            document.querySelectorAll('.view-content').forEach(function(v) { v.classList.remove('active'); });
+            document.querySelectorAll('.nav-btn').forEach(function(b) { b.classList.remove('active'); });
+            document.getElementById('view-' + tabId).classList.add('active');
+            if (el) el.classList.add('active');
+            window.scrollTo(0, 0);
+        }
+    </script>
+</body>
+</html>
