@@ -2027,5 +2027,38 @@ function dnHotClose(){
   }
 })();
 </script>
+{% if session.get('user_id') %}
+<script>
+/* Uso como app (2026-11-24): avisa al servidor cuando el Dashboard se
+   abre en modo aplicación (agregado a la pantalla de inicio) y, en
+   Android, cuando el miembro lo instala (evento appinstalled). En
+   iPhone no hay evento de instalación: la apertura en modo app es la
+   señal. Silencioso: no cambia nada visual y no reporta nada cuando
+   se abre en el navegador normal. Una vez por lanzamiento
+   (sessionStorage) pa' que navegar entre páginas no infle el
+   contador de aperturas como app. */
+(function(){
+  function esApp(){
+    try{
+      if(window.navigator.standalone===true){return true;}
+      if(window.matchMedia && window.matchMedia('(display-mode: standalone)').matches){return true;}
+    }catch(e){}
+    return false;
+  }
+  function avisar(){
+    try{
+      fetch('/api/app-mode',{method:'POST',credentials:'same-origin',keepalive:true}).catch(function(){});
+    }catch(e){}
+  }
+  var ya=false;
+  try{ ya=!!sessionStorage.getItem('tlb_app_reported'); }catch(e){}
+  if(esApp() && !ya){
+    try{ sessionStorage.setItem('tlb_app_reported','1'); }catch(e){}
+    avisar();
+  }
+  window.addEventListener('appinstalled',function(){ avisar(); });
+})();
+</script>
+{% endif %}
 </body>
 </html>
