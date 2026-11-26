@@ -1684,7 +1684,17 @@ function dnHotClose(){
   var startBtn = document.getElementById('dnafStart');
   if(startBtn) startBtn.addEventListener('click', function(){
     track('started');
-    if(iosNeedsInstall){ lsSet(LS_IOS, '1'); mountInline(); showView('iosA'); }
+    /* Sin instalar (y sin haberla agregado): «Turn on alerts»
+       manda a la guía de instalación, como siempre. Pero si el
+       miembro ACABA de completar la instalación en este mismo
+       flujo (marca LS_ADDED puesta por «I added it ✓» y la
+       tarjeta avanzó a alertas tras iosB), NO se le devuelve a
+       iosA — eso sería un círculo instalación→alertas→
+       instalación. Se intenta activar: en Safari sin modo app
+       el push no puede concederse y doEnable simplemente
+       cierra; al abrir desde el icono instalado, la vista 'go'
+       (pendingGo) completa la activación como siempre. */
+    if(iosNeedsInstall && !lsGet(LS_ADDED)){ lsSet(LS_IOS, '1'); mountInline(); showView('iosA'); }
     else { doEnable(); }
   });
   var didIt = document.getElementById('dnafIosDidIt');
@@ -1701,7 +1711,18 @@ function dnHotClose(){
   var gotIt = document.getElementById('dnafIosGotIt');
   if(gotIt) gotIt.addEventListener('click', function(){
     ssSet('tlb_af_guide_done', '1');
-    hide();
+    /* Orden de Alex (2026-11-25): el flujo del miembro es
+       1) INSTALAR la app y 2) ALERTAS enseguida, en la misma
+       tarjeta. Al completar los pasos de instalación (este
+       «Got it» cierra iosB), la tarjeta AVANZA a la vista de
+       alertas ('value') en vez de cerrarse — salvo que las
+       alertas ya estén activadas (marca LS_DONE) o sea la
+       previa de Alex, que entonces se cierra como siempre.
+       Si en iosA tocó «Not now» nunca llega aquí: la tarjeta
+       se cerró con el descarte de esa vista y la guía vuelve
+       en la próxima entrada por el disparo de cada entrada. */
+    if(PREVIEW || lsGet(LS_DONE)){ hide(); return; }
+    showView('value');
   });
   var goBtn = document.getElementById('dnafGoEnable');
   if(goBtn) goBtn.addEventListener('click', function(){
