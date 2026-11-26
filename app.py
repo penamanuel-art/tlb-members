@@ -17174,12 +17174,13 @@ def _value_stats_for_admin(db):
     return stats
 
 
-@app.route("/admin")
-@login_required
-def admin_dashboard():
-    """Panel central del administrador — SOLO cuentas con is_admin=1
-    (2026-10-15, orden de Alex: su cuenta de miembro es un miembro
-    normal, sin acceso admin; el admin vive solo en su cuenta admin)."""
+def _admin_contexto():
+    """Contexto COMPLETO del panel del administrador — SOLO cuentas con
+    is_admin=1 (2026-10-15, orden de Alex: su cuenta de miembro es un
+    miembro normal, sin acceso admin; el admin vive solo en su cuenta
+    admin). Devuelve un dict de contexto, o la respuesta de redirección
+    si la cuenta no tiene permiso. Lo comparten /admin (Diseño E, en
+    vivo desde el 2026-11-25) y /admin-clasico (plantilla anterior)."""
     db = get_db()
     user = current_user()
     if not _admin_o_cuenta_alex(user):
@@ -17415,21 +17416,55 @@ def admin_dashboard():
             })
     except Exception:
         app_instalados = []
-    return render_template("admin_dashboard.html",
-                           ingresos=ingresos,
-                           stats={"miembros": miembros, "platinum": platinum,
-                                  "jugadas_hoy": jugadas_hoy, "no_leidas": no_leidas},
-                           selecciones=selecciones,
-                           plays_hoy=plays,
-                           oficial=program_stats(),
-                           tracked_ids=[],
-                           miembros_lista=miembros_lista,
-                           conteo_miembros=conteo_miembros,
-                           cohortes=cohortes,
-                           gerenciales=gerenciales,
-                           sin_leer=sin_leer,
-                           telegram_counts=telegram_counts,
-                           app_instalados=app_instalados)
+    return {
+        "ingresos": ingresos,
+        "stats": {"miembros": miembros, "platinum": platinum,
+                  "jugadas_hoy": jugadas_hoy, "no_leidas": no_leidas},
+        "selecciones": selecciones,
+        "plays_hoy": plays,
+        "oficial": program_stats(),
+        "tracked_ids": [],
+        "miembros_lista": miembros_lista,
+        "conteo_miembros": conteo_miembros,
+        "cohortes": cohortes,
+        "gerenciales": gerenciales,
+        "sin_leer": sin_leer,
+        "telegram_counts": telegram_counts,
+        "app_instalados": app_instalados,
+    }
+
+
+@app.route("/admin")
+@login_required
+def admin_dashboard():
+    """ADMIN EN VIVO — Diseño E «Command OS» (2026-11-25, orden de Alex:
+    «el admin sigue igual; tú no hiciste nada con el código que yo te
+    mandé»): /admin sirve AHORA la plantilla previa_admin_e.html, que es
+    el código EXACTO que Alex pegó, con el contexto completo del panel
+    (el de siempre más el historial de _datos_previa_admin). La
+    plantilla anterior queda en /admin-clasico como respaldo."""
+    ctx = _admin_contexto()
+    if not isinstance(ctx, dict):
+        return ctx
+    try:
+        for _k, _v in _datos_previa_admin().items():
+            ctx.setdefault(_k, _v)
+    except Exception:
+        ctx.setdefault("historial", [])
+    return render_template("previa_admin_e.html", **ctx)
+
+
+@app.route("/admin-clasico")
+@login_required
+def admin_clasico():
+    """Respaldo: el Admin de siempre (admin_dashboard.html) con el mismo
+    contexto completo de _admin_contexto. Nada se pierde: aprobación de
+    jugadas pendientes, push, miembros y contabilidad viven en los
+    mismos endpoints; esto es solo la presentación anterior."""
+    ctx = _admin_contexto()
+    if not isinstance(ctx, dict):
+        return ctx
+    return render_template("admin_dashboard.html", **ctx)
 
 
 # ============================================================
