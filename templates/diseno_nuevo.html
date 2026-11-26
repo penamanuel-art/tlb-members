@@ -2202,5 +2202,46 @@ function dnHotClose(){
 .dnaf.dnaf-install .dnaf-bar{background:#171731;border-color:#10CC87}
 .dnaf.dnaf-install .dnaf-srow{background:#171731}
 </style>
+<!-- EFECTO PAVO THANKSGIVING 2026-11-26 -->
+<style>
+#pavoFx{position:fixed;left:0;bottom:calc(env(safe-area-inset-bottom,0px) + 62px);width:44px;height:44px;z-index:50;pointer-events:none;opacity:0;transition:opacity .6s ease;will-change:transform}
+#pavoFx .pavo-flip{display:block;will-change:transform}
+#pavoFx .pavo-hop{display:block;font-size:34px;line-height:44px;text-align:center;animation:pavoHop .52s ease-in-out infinite alternate}
+@keyframes pavoHop{from{transform:translateY(0) rotate(-4deg)}to{transform:translateY(-15px) rotate(4deg)}}
+@media (prefers-reduced-motion: reduce){
+#pavoFx{display:none}
+}
+</style>
+<script>
+(function(){
+  try{
+    if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var hoy = new Intl.DateTimeFormat('en-CA',{timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
+    if(hoy !== '2026-11-26') return; /* SOLO Thanksgiving 2026 — auto-expira cualquier otro dia */
+    var box = document.createElement('div');
+    box.id = 'pavoFx'; box.setAttribute('aria-hidden','true');
+    var flip = document.createElement('span'); flip.className = 'pavo-flip';
+    var hop = document.createElement('span'); hop.className = 'pavo-hop'; hop.textContent = '\uD83E\uDD83';
+    flip.appendChild(hop); box.appendChild(flip); document.body.appendChild(box);
+    requestAnimationFrame(function(){ box.style.opacity = '1'; });
+    var x = 6, dir = 1, speed = 62, last = null, start = null, dead = false;
+    function frame(ts){
+      if(dead) return;
+      if(start === null){ start = ts; last = ts; }
+      var dt = Math.min((ts - last) / 1000, 0.05); last = ts;
+      var maxX = Math.max(6, window.innerWidth - 50);
+      x += dir * speed * dt;
+      if(x >= maxX){ x = maxX; dir = -1; }
+      else if(x <= 6){ x = 6; dir = 1; }
+      flip.style.transform = (dir === 1) ? 'scaleX(-1)' : 'scaleX(1)'; /* el emoji mira a la izquierda: se voltea al ir a la derecha */
+      box.style.transform = 'translateX(' + x.toFixed(1) + 'px)';
+      if(ts - start < 45000){ requestAnimationFrame(frame); }
+      else { box.style.opacity = '0'; setTimeout(function(){ dead = true; if(box.parentNode) box.parentNode.removeChild(box); }, 700); }
+    }
+    requestAnimationFrame(frame);
+  }catch(e){}
+})();
+</script>
+<!-- /EFECTO PAVO THANKSGIVING 2026-11-26 -->
 </body>
 </html>
