@@ -1547,25 +1547,25 @@ function dnHotClose(){
      cuando quiera («yo apruebo cuando yo veo»). */
   var PREVIEW = {{ 'true' if (is_alex and request.args.get('alertas')) else 'false' }};
   var LS_DONE = 'tlb_af_done', LS_DIS = 'tlb_af_dismissed_at', LS_IOS = 'tlb_af_ios_pending', LS_ADDED = 'tlb_af_added';
-  /* Vista forzada pa' Alex (2026-11-25, su palabra manda: «que
-     cuando abra se vea completa» y «no puede salir una sola
-     vez»): SOLO con su sesión (is_alex), TODA entrada al
-     Dashboard se trata como PREVIEW — la guía le sale sola,
-     montada en línea arriba, completa, sin registrar embudo —
-     sin importar marcas guardadas. Antes esto se armaba una
-     vez por versión (ALEX_FORCE_V / tst_alex_guide_v); la
-     compuerta de versión se quitó: ahora es en cada entrada.
-     ALEX_FORCE_V queda solo como registro. Esto calza con la
-     regla general de abajo (a quien no ha instalado la app la
-     guía le sale en cada entrada); pa' Alex la presentación es
-     la de PREVIEW de siempre. */
+  /* Guía suprimida pa' Alex (2026-11-26, orden suya en llamada:
+     ya agregó la app a la pantalla de inicio de su teléfono y
+     no quiere que le siga saliendo el cuadro de instalación).
+     Se acabó el ALEX_FORCE del 2026-11-25, que trataba TODA
+     entrada de su sesión como PREVIEW y le presentaba la guía
+     en cada entrada sin importar marcas guardadas. Ahora su
+     cuenta sigue la regla normal (instalada = no sale más) Y
+     ADEMÁS la instalación se le suprime desde el servidor:
+     ALEX_NO_INSTALL sale del render (is_alex), sin depender
+     del localStorage de su navegador — las vistas de
+     instalación (iosA/iosB) nunca se le presentan por los
+     disparos normales. Las vistas de ALERTAS (value/go/
+     done/blocked) NO se tocan: siguen con sus disparos de
+     siempre. La previa manual /home?alertas=1 con su sesión
+     sigue existiendo pa' cuando ÉL quiera verla.
+     ALEX_FORCE/ALEX_FORCE_V quedan en falso, solo como registro. */
   var ALEX_FORCE_V = 'v2';
   var ALEX_FORCE = false;
-  if({{ 'true' if is_alex else 'false' }}){
-    ALEX_FORCE = true;
-    try{ localStorage.removeItem(LS_DIS); }catch(e){}
-  }
-  if(ALEX_FORCE) PREVIEW = true;
+  var ALEX_NO_INSTALL = {{ 'true' if is_alex else 'false' }};
   /* Regla de Alex (2026-11-25): el descarte de 30 días YA NO
      EXISTE pa' nadie — la ✕ y «Not now» solo esconden la tarjeta
      en esa vista. Cualquier marca vieja (tlb_af_dismissed_at)
@@ -1627,7 +1627,7 @@ function dnHotClose(){
      en el resto. */
   function initialView(){
     if(pendingGo) return 'go';
-    if(iosNeedsInstall) return 'iosA';
+    if(iosNeedsInstall && !ALEX_NO_INSTALL) return 'iosA';
     return 'value';
   }
   function showInitial(forceView){
@@ -1695,7 +1695,7 @@ function dnHotClose(){
        el push no puede concederse y doEnable simplemente
        cierra; al abrir desde el icono instalado, la vista 'go'
        (pendingGo) completa la activación como siempre. */
-    if(iosNeedsInstall && !lsGet(LS_ADDED)){ lsSet(LS_IOS, '1'); mountInline(); showView('iosA'); }
+    if(iosNeedsInstall && !lsGet(LS_ADDED) && !ALEX_NO_INSTALL){ lsSet(LS_IOS, '1'); mountInline(); showView('iosA'); }
     else { doEnable(); }
   });
   var didIt = document.getElementById('dnafIosDidIt');
@@ -1843,6 +1843,7 @@ function dnHotClose(){
   var everyTries = 0;
   function maybeShowEvery(){
     if(shown || PREVIEW) return;
+    if(ALEX_NO_INSTALL) return;
     if(!iosNeedsInstall || lsGet(LS_ADDED) || ssGet('tlb_af_guide_done')) return;
     if(!eligible || tourInTheWay()){
       if(everyTries++ < 600) setTimeout(maybeShowEvery, 500);
