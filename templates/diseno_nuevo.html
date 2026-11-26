@@ -2179,51 +2179,65 @@ function dnHotClose(){
 </script>
 {% endif %}
 <style>
-/* ===== ENCABEZADO EN DOS FILAS: LOGO GRANDE ARRIBA, BOTONES ABAJO =====
-   (2026-11-25 ~11:40 PM ET, orden de Alex en llamada: tras el arreglo
-   d7a10ca el logo quedo capado a 36/24.5px en movil y Alex lo cazo —
-   «El logo se puso mas chiquito». Su arreglo: el logo va en la PRIMERA
-   LINEA, arriba a la izquierda, y GRANDE — «Que se vea grande, un poco
-   grande» — y los botones dejan de competir con el por el ancho.)
-   AHORA .dn-top-in es columna. FILA 1: el lockup solo (moneda + letras,
-   el div que ya era el primer hijo), a la izquierda, SIN cap: movil
-   vuelve a moneda 51px / letras 36px de alto (su escala de siempre,
-   1.1 en <=559px, lo pinta a 56.1/39.6 — el tamano de antes del cap).
-   FILA 2: los botones (campana, cuenta, View picks, menu) con el ancho
-   COMPLETO pa' ellos solos, a la derecha: tamanos REALES de d7a10ca
-   (circulos de 44px, View picks 15px, gap 9px, flex:none), cero
-   transform, cero solape. La tirita dorada de arriba es otro elemento
-   y no se toca; escritorio conserva su escala 1.3 del logo.
-   ARITMETICA a 390px (el header lleva zoom .85 -> layout interno
-   390/.85 = 458.8px; padding 12+12 -> contenido 434.8):
-     FILA 1: moneda 51 x 0.75 = 38.3 + hueco 3 + letras 36 x 4.078
-             = 146.8 -> total 188.1 <= 434.8 (sobran 246.7; pintado
-             con su escala 1.1 = 206.9, tambien cabe)
-     FILA 2: campana 44 + 9 + cuenta 44 + 9 + View picks ~128 (fuente
-             15px: texto ~76 + flecha ~14 + gap 7 + padding 15+15) + 9
-             + menu 44 = 287 <= 434.8 (sobran 147.8)
-   A 360px (layout 423.5, contenido 399.5): fila 1 = 188.1 y fila 2 con
-   sus ajustes de <=360 (gap 7, View picks ~120) = 273. Caben las dos.
-   El hueco vertical entre filas es 10px: ni la escala movil (1.1, el
-   logo pinta 2.6px fuera de su caja) ni la de escritorio (1.3, 9.9px)
-   alcanzan la fila de botones. */
-.dn-top .dn-top-in{flex-direction:column;align-items:stretch;gap:10px}
-.dn-top .dn-top-in > div:first-child{align-self:flex-start}
-.dn-top .dn-iconbtn{width:44px;height:44px;transform:none}
+/* ===== ENCABEZADO DE UNA SOLA FILA CON EL LOGO GRANDE (REVERSION) =====
+   (2026-11-25 ~11:44 PM ET, palabra final de Alex en llamada, confirmada
+   con «Exacto. Si.»: el modelo de DOS filas de 7b46c05 NO le gusto —
+   «No me gusta este modelo. Dejalo como estaba antes» — el encabezado
+   vuelve a UNA SOLA FILA como en d7a10ca: logo a la izquierda y botones
+   (campana, cuenta, View picks, menu) a la derecha, en la misma linea.
+   PERO el logo se queda GRANDE, al tamano que tiene ahora: moneda 51px /
+   letras 36px de alto en movil (su layout; la escala del lockup baja de
+   1.1 a 1.03 en <=559px pa' que lo pintado jamas alcance un boton).
+   PROHIBIDO achicar el logo pa' que quepan los botones, y la TIRA no
+   crece: el padding vertical de .dn-top-in baja de 14 a 11px en <=559px
+   pa' absorber el logo mas alto — alto total de la tira en movil:
+   antes (d7a10ca, logo capado 36px, botones 44) 14+44+14+1 = 73px;
+   ahora 11+51+11+1 = 74px (+1). Escritorio no cambia (95px).
+   Botones con los tamanos REALES de d7a10ca: circulos de 44px, icono
+   23px, View picks 15px, flex:none, cero transform en los botones.
+   El hueco se recupera SOLO de holgura: gaps 9->6px, padding horizontal
+   de View picks 15->11px, padding lateral de la tira 12->8px en <=480.
+   ARITMETICA (header con zoom .85; ancho de layout = pantalla/.85):
+     iPhone de Alex (440 logicos, sus capturas son 1320px @3x): layout
+       517.6, contenido (pad 8+8) 501.6. Logo 188.1 (moneda 51x0.75=38.3
+       + hueco 3 + letras 36x4.078=146.8) + gap 6 + botones 269.5
+       (44+6+44+6+View picks ~119.5+6+44) = 463.6 <= 501.6, sobran 38.
+       Logo pintado (x1.03) termina en 201.7; los botones empiezan en
+       240.1: cero solape, sobran 38px.
+     390px: layout 458.8, contenido 442.8; la fila pide 463.6 — el div
+       del logo (min-width:0, unico elemento flexible) cede ~21px y el
+       wordmark se condensa ~14% SOLO a lo ancho; el alto (51/36) queda
+       intacto, nada se corta, nada se monta, nada baja a otra fila.
+       A 402px o mas la fila ya va exacta sin ceder nada.
+     360px: letras a 34px (maximo -2px, solo bajo 380px, como se
+       ordeno): logo 180.0 + botones 262.5 (gaps 5, View picks 11/9)
+       = 448.5 vs contenido 407.5 — el wordmark se condensa ~30% a lo
+       ancho, alto intacto; sin wrap, sin corte, sin solape de layout
+       y lo pintado (x1.03) tampoco alcanza la campana (151 < 153).
+       Es el limite fisico de los tamanos fijos pedidos; el telefono
+       de Alex es 440 y ahi va exacto y con sobra. */
+.dn-top .dn-top-in{flex-direction:row;align-items:center;gap:6px}
+.dn-top .dn-iconbtn{width:44px;height:44px;transform:none;flex:none}
 .dn-top .dn-iconbtn svg{width:23px;height:23px}
-.dn-top .dn-viewpicks{font-size:15px;padding:12px 15px;flex:none;transform:none}
-.dn-top .dn-menubtn{transform:none}
-.dn-top .dn-top-right{gap:9px;justify-content:flex-end}
+.dn-top .dn-viewpicks{font-size:15px;padding:12px 11px;flex:none;transform:none}
+.dn-top .dn-menubtn{transform:none;flex:none}
+.dn-top .dn-top-right{gap:6px}
 @media (max-width:559px){
   .dn-top .dn-lg-coin{height:51px !important}
   .dn-top .dn-lg-letters{height:36px !important}
+  .dn-top .dn-top-in{padding-top:11px;padding-bottom:11px}
+  body .dn-top .dn-top-in > div:first-child{transform:scale(1.03)}
 }
 @media (max-width:480px){
   .dn-top .dn-menubtn{width:44px;height:44px}
+  .dn-top .dn-top-in{padding-left:8px;padding-right:8px}
+}
+@media (max-width:379px){
+  .dn-top .dn-lg-letters{height:34px !important}
 }
 @media (max-width:360px){
-  .dn-top .dn-top-right{gap:7px}
-  .dn-top .dn-viewpicks{padding:11px}
+  .dn-top .dn-top-right{gap:5px}
+  .dn-top .dn-viewpicks{padding:11px 9px}
 }
 </style>
 <style>
