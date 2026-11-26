@@ -436,13 +436,9 @@
     {# Caja Bet (forma de la foto; texto propio, sin marca de nadie):
        monto y unidades reales de la jugada, unidad del programa $100. #}
     {% if p.stake_monto %}<div class="v5bet"><div class="v5bet-amt">Bet ${{ '%g' % p.stake_monto }}</div><div class="v5bet-units">({{ '%g' % p.stake_unidades }} unit{% if p.stake_unidades != 1 %}s{% endif %} at your $100 unit)</div><div class="v5bet-note">Program size for this play. Bet only what you can afford to lose.</div></div>{% endif %}
-    {# RESTAURADO 2026-11-26 (orden de Alex): el despliegue completo sale
-       en TODAS las jugadas, como en el modelo del 2026-11-22 — ninguna
-       seccion se esconde por falta de datos; sin datos, la seccion
-       muestra su estado vacio, nunca desaparece. #}
+    {% if p.writeup %}
     <details class="v5wu">
       <summary class="v5wu-h" style="cursor:pointer;list-style:none">📊 WHY WE LIKE IT <span style="color:#9AA1AE;float:right">▾</span></summary>
-      {% if p.writeup %}
       <div class="v5wu-row"><span>Model win probability</span><b>{% if p.writeup.model_prob is number %}{{ '%.1f%%'|format(p.writeup.model_prob * 100) }}{% else %}{{ p.writeup.model_prob }}{% endif %}</b></div>
       <div class="v5wu-row"><span>Implied by the price</span><b>{% if p.writeup.implied_prob is number %}{{ '%.1f%%'|format(p.writeup.implied_prob * 100) }}{% else %}{{ p.writeup.implied_prob }}{% endif %}</b></div>
       <div class="v5wu-row"><span>Fair price (model)</span><b>{{ p.writeup.fair_price }}</b></div>
@@ -450,13 +446,11 @@
       {% if p.writeup.ev is defined and p.writeup.ev is not none and p.writeup.ev != '' %}<div class="v5wu-row"><span>EV</span><b style="color:#1AE099">{% if p.writeup.ev is number %}{{ '%+.1f%%'|format(p.writeup.ev * 100) }}{% else %}{{ p.writeup.ev }}{% endif %}</b></div>{% endif %}
       {% if p.writeup.key_factor %}<p class="v5wu-p"><b>Key factor:</b> {{ p.writeup.key_factor }}</p>{% endif %}
       {% if p.writeup.risk %}<p class="v5wu-p"><b>The risk:</b> {{ p.writeup.risk }}</p>{% endif %}
-      {% else %}
-      <p class="v5wu-p">No data yet for this game.</p>
-      {% endif %}
     </details>
+    {% endif %}
+    {% if p.splits %}
     <div class="v5sp">
       <div class="v5sp-head"><span class="v5sp-title">Betting splits by source</span></div>
-      {% if p.splits and p.splits.books %}
       {% if p.splits.sharp %}<span class="v5sp-pill">Sharp signal: {{ p.splits.sharp.team }} &middot; {{ p.splits.sharp.books_label }}</span>{% endif %}
       {% for b in p.splits.books or [] %}
       <div class="v5sp-src"><span class="v5sp-src-name">{{ b.name }}</span><span class="v5sp-src-note">{{ b.note }}{% if b.read_et %} &middot; read {{ b.read_et }}{% endif %}</span></div>
@@ -470,11 +464,8 @@
       </div>
       {% endfor %}
       {% endfor %}
-      {% else %}
-      <div class="v5sp-src"><span class="v5sp-src-note">No data yet for this game</span></div>
-      {% endif %}
+      {% if p.splits.exchange %}
       <div class="v5sp-head" style="margin-top:19px"><span class="v5sp-title">Exchange buyers</span></div>
-      {% if p.splits and p.splits.exchange %}
       <div class="v5sp-src"><span class="v5sp-src-name">{{ p.splits.exchange.name }}</span><span class="v5sp-src-note">${{ p.splits.exchange.dollars_txt }} traded on this market in the trades we read &middot; {{ p.splits.exchange.trades_txt }} trades &middot; read {{ p.splits.exchange.read_et }}</span></div>
       {% for t in p.splits.exchange.teams %}
       <div class="v5sp-team">
@@ -485,28 +476,25 @@
         </div>
       </div>
       {% endfor %}
-      {% else %}
-      <div class="v5sp-src"><span class="v5sp-src-note">No data yet for this game</span></div>
       {% endif %}
     </div>
+    {% endif %}
     {# 4) LINE AND SIGNALS (forma de la foto): solo Open/Now reales de
        card_info.lines. Steam y How it has done NO se montan: no hay
        fuente real pa' ellos y no se inventa nada. #}
+    {% if _ci.get('lines') and _ci.lines.open and _ci.lines.now %}
     <div class="v5sec">
       <div class="v5sec-head"><span class="v5sec-title">Line and signals</span></div>
-      {% if _ci.get('lines') and _ci.lines.open and _ci.lines.now %}
       <div class="v5sec-k">Open</div>
       <div class="v5sec-v">{{ p.team_name or p.abbr }} <b>{{ _ci.lines.open }}</b>, now <b>{{ _ci.lines.now }}</b>{% if _ci.lines.books %} <span class="v5sec-note">across {{ _ci.lines.books }} books (Game Center)</span>{% endif %}</div>
       {% if _ci.lines.dir == 'for' %}<div class="v5sec-k">Movement</div><div class="v5sec-v">The market has moved toward this side{% if _ci.lines.ago %} &middot; last move {{ _ci.lines.ago }} ago{% endif %}.</div>{% elif _ci.lines.dir == 'against' %}<div class="v5sec-k">Movement</div><div class="v5sec-v">The market has moved against this side{% if _ci.lines.ago %} &middot; last move {{ _ci.lines.ago }} ago{% endif %}.</div>{% endif %}
-      {% else %}
-      <div class="v5sec-v">No data yet for this game</div>
-      {% endif %}
     </div>
+    {% endif %}
     {# 5) GAME CONTEXT (forma de la foto): clima y lesionados de
        card_info, movidos aqui (en la hoja no salen en otra parte). #}
+    {% if _ci.get('weather') or _ci.get('injuries') %}
     <div class="v5sec">
       <div class="v5sec-head"><span class="v5sec-title">Game context</span></div>
-      {% if _ci.get('weather') or _ci.get('injuries') %}
       {% if _ci.get('weather') %}
       <div class="v5sec-k">Weather</div>
       <div class="v5sec-v">{% if _ci.weather.temp_f is defined and _ci.weather.temp_f is not none %}{{ _ci.weather.temp_f }}°F{% if _ci.weather.wind_mph is defined and _ci.weather.wind_mph is not none %}, wind {{ _ci.weather.wind_mph }} mph{% endif %}{% if _ci.weather.rain_pct is defined and _ci.weather.rain_pct is not none %} &middot; rain {{ _ci.weather.rain_pct }}%{% endif %}{% elif _ci.weather.indoor %}Indoor{% if _ci.weather.venue %} &middot; {{ _ci.weather.venue }}{% endif %}{% elif _ci.weather.venue %}{{ _ci.weather.venue }}{% endif %}</div>
@@ -525,10 +513,8 @@
       </details>
       {% endif %}
       {% endif %}
-      {% else %}
-      <div class="v5sec-v">No data yet for this game</div>
-      {% endif %}
     </div>
+    {% endif %}
     {# 6) EL TICKET DE ULTIMO, abajo de todo (orden de Alex 2026-11-22),
        justo encima de la nota y los botones Track / Place / Compare. #}
     {% if p.comprobante and not force_pre %}
