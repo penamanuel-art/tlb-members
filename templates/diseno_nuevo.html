@@ -2179,47 +2179,49 @@ function dnHotClose(){
 </script>
 {% endif %}
 <style>
-/* ===== BOTONES DEL ENCABEZADO MAS GRANDES — TAMANO REAL, SIN TRANSFORM =====
-   (2026-11-25 ~11:15 PM ET — ARREGLO URGENTE. La version de las ~11:06 PM
-   agrando la campanita, la cuenta y View picks con transform:scale(1.3) y
-   los botones se MONTARON unos encima de otros — foto de Alex: «Uno encima
-   de otro». Causa: el transform NO ocupa espacio de layout; View picks
-   (caja de ~119px) pintaba ~155px, se comia los huecos de 6px, media
-   cuenta y el borde del ☰, que tambien pintaba 1.15x.)
-   AHORA: cero transform en los botones del encabezado. Crecen con tamano
-   REAL (width/height/padding), la fila lleva gap fijo de 9px y flex:none
-   en cada boton — nadie se encoge ni se monta.
-   La fila a 390px ya iba llena, asi que el logo se capa SOLO en pantallas
-   de 559px o menos (las mismas donde su escala ya baja a 1.1): moneda
-   51->36px y letras 36->24.5px de alto. En escritorio el logo no cambia.
-   ARITMETICA a 390px de ancho (el header lleva zoom .85, o sea el layout
-   interno dispone de 390/.85 = 458.8px; padding 12+12 -> contenido 434.8):
-     logo: moneda 36 x 0.75 = 27.0 + hueco 3 + letras 24.5 x 4.078 = 99.9
-           = 129.9 de layout; pintado con su escala 1.1 = 142.9
-     hueco logo->botones: 8
-     derecha: campana 44 + 9 + cuenta 44 + 9 + View picks ~128 (fuente
-           15px: texto ~76 + flecha ~14 + gap 7 + padding 15+15) + 9
-           + menu 44 = 287
-     layout total: 129.9 + 8 + 287 = 424.9 <= 434.8 (sobran 9.9)
-     pintado: la escala del logo se come 12.9 de los 17.9 libres (sobra +
-           hueco) -> la campana queda a ~5px del logo pintado. SIN SOLAPE.
-     En visual (x .85): botones de 37.4px contra los 30.9px originales —
-     mas grandes de verdad, sin montarse. */
+/* ===== ENCABEZADO EN DOS FILAS: LOGO GRANDE ARRIBA, BOTONES ABAJO =====
+   (2026-11-25 ~11:40 PM ET, orden de Alex en llamada: tras el arreglo
+   d7a10ca el logo quedo capado a 36/24.5px en movil y Alex lo cazo —
+   «El logo se puso mas chiquito». Su arreglo: el logo va en la PRIMERA
+   LINEA, arriba a la izquierda, y GRANDE — «Que se vea grande, un poco
+   grande» — y los botones dejan de competir con el por el ancho.)
+   AHORA .dn-top-in es columna. FILA 1: el lockup solo (moneda + letras,
+   el div que ya era el primer hijo), a la izquierda, SIN cap: movil
+   vuelve a moneda 51px / letras 36px de alto (su escala de siempre,
+   1.1 en <=559px, lo pinta a 56.1/39.6 — el tamano de antes del cap).
+   FILA 2: los botones (campana, cuenta, View picks, menu) con el ancho
+   COMPLETO pa' ellos solos, a la derecha: tamanos REALES de d7a10ca
+   (circulos de 44px, View picks 15px, gap 9px, flex:none), cero
+   transform, cero solape. La tirita dorada de arriba es otro elemento
+   y no se toca; escritorio conserva su escala 1.3 del logo.
+   ARITMETICA a 390px (el header lleva zoom .85 -> layout interno
+   390/.85 = 458.8px; padding 12+12 -> contenido 434.8):
+     FILA 1: moneda 51 x 0.75 = 38.3 + hueco 3 + letras 36 x 4.078
+             = 146.8 -> total 188.1 <= 434.8 (sobran 246.7; pintado
+             con su escala 1.1 = 206.9, tambien cabe)
+     FILA 2: campana 44 + 9 + cuenta 44 + 9 + View picks ~128 (fuente
+             15px: texto ~76 + flecha ~14 + gap 7 + padding 15+15) + 9
+             + menu 44 = 287 <= 434.8 (sobran 147.8)
+   A 360px (layout 423.5, contenido 399.5): fila 1 = 188.1 y fila 2 con
+   sus ajustes de <=360 (gap 7, View picks ~120) = 273. Caben las dos.
+   El hueco vertical entre filas es 10px: ni la escala movil (1.1, el
+   logo pinta 2.6px fuera de su caja) ni la de escritorio (1.3, 9.9px)
+   alcanzan la fila de botones. */
+.dn-top .dn-top-in{flex-direction:column;align-items:stretch;gap:10px}
+.dn-top .dn-top-in > div:first-child{align-self:flex-start}
 .dn-top .dn-iconbtn{width:44px;height:44px;transform:none}
 .dn-top .dn-iconbtn svg{width:23px;height:23px}
 .dn-top .dn-viewpicks{font-size:15px;padding:12px 15px;flex:none;transform:none}
 .dn-top .dn-menubtn{transform:none}
-.dn-top .dn-top-right{gap:9px}
+.dn-top .dn-top-right{gap:9px;justify-content:flex-end}
 @media (max-width:559px){
-  .dn-top .dn-lg-coin{height:36px !important}
-  .dn-top .dn-lg-letters{height:24.5px !important}
+  .dn-top .dn-lg-coin{height:51px !important}
+  .dn-top .dn-lg-letters{height:36px !important}
 }
 @media (max-width:480px){
   .dn-top .dn-menubtn{width:44px;height:44px}
 }
 @media (max-width:360px){
-  .dn-top .dn-lg-coin{height:30px !important}
-  .dn-top .dn-lg-letters{height:20px !important}
   .dn-top .dn-top-right{gap:7px}
   .dn-top .dn-viewpicks{padding:11px}
 }
