@@ -2180,7 +2180,10 @@ function dnHotClose(){
 {% endif %}
 <style>
 /* BOTONES DEL ENCABEZADO UN POCO MAS GRANDES (2026-11-25, orden de Alex): escala SOLO visual con transform (layout-neutral) — la tira NO crece de alto ni se mueve el layout. */
+/* 2026-11-25 ~11:06 PM ET (orden de Alex): la campanita de alertas, el muñequito de cuenta y el boton View picks OTRO poco mas grandes — scale 1.3. La clase .dn-iconbtn cubre la campana (#dnBell) y la cuenta (el <a> a cuenta); .dn-viewpicks es el boton verde de la derecha. El ☰ queda en 1.15 como estaba. */
 .dn-top .dn-menubtn{transform:scale(1.15);transform-origin:center}
+.dn-top .dn-iconbtn{transform:scale(1.3);transform-origin:center}
+.dn-top .dn-viewpicks{transform:scale(1.3);transform-origin:center}
 </style>
 <style>
 /* GUIA DE INSTALACION: FONDO AZUL OSCURO BUSCANDO MORADO, CASI NEGRO + TIBURON MAS CERCA
