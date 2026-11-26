@@ -3124,6 +3124,14 @@ def stake_personalizado(play, user):
     (stake_kelly). Los montos fijos siguen teniendo prioridad.
     """
     nivel = (play.get("nivel") or "").upper()
+    if nivel == "VAULT":
+        # VAULT no tiene stake personal: no existe stake_fijo_vault y la
+        # fórmula genérica (bankroll × 1% × unidades) NO le aplica — manda
+        # SIEMPRE el monto oficial del programa (stake_monto de plays.json).
+        # Sin este corte, la Vault caía en esa fórmula y la tarjeta mostraba
+        # $25 en una jugada oficial de $50 (0.5u × $50 de unidad personal;
+        # foto de Alex 2026-11-26). Arreglo raíz 2026-11-26.
+        return play.get("stake_monto")
     if user:
         try:
             # Un stake fijo guardado como "0" (texto truthy) devolvía $0 en la
