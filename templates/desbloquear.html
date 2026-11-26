@@ -399,7 +399,8 @@ body{padding-bottom:calc(8px + env(safe-area-inset-bottom))!important}
         load=document.getElementById('upl-emb-loading'),
         btn=document.getElementById('upl-pay-btn'),
         err=document.getElementById('upl-pe-error'),
-        pagoUrl="{{ url_for('desbloquear_platinum') }}";
+        pagoUrl="{{ url_for('desbloquear_platinum') }}",
+        cancelUrl="{{ url_for('desbloquear_cancel_attempt') }}";
     function fallback(){
       if(box){box.style.display='none';}
       if(btn){btn.style.display='none';}
@@ -407,6 +408,16 @@ body{padding-bottom:calc(8px + env(safe-area-inset-bottom))!important}
     }
     function showErr(msg){
       if(err){err.textContent=msg;err.style.display='block';}
+    }
+    function limpiarIntento(){
+      // El pago NO se cobró (2026-11-25, orden de Alex: nadie queda
+      // en Stripe sin pagar): se avisa al servidor pa' que cancele
+      // la suscripción del intento y borre el cliente si quedó como
+      // cascarón sin pagos. keepalive: el aviso sale aunque el
+      // miembro cierre o recargue la página justo después del fallo.
+      try{
+        fetch(cancelUrl,{method:"POST",credentials:"same-origin",keepalive:true}).catch(function(){});
+      }catch(e){}
     }
     if(!window.Stripe||!btn){fallback();return;}
     var stripe=Stripe({{ stripe_pk|tojson }}),
@@ -474,7 +485,7 @@ body{padding-bottom:calc(8px + env(safe-area-inset-bottom))!important}
           redirect:"if_required"
         });
       }).then(function(res){
-        if(res&&res.error){throw res.error;}
+        if(res&&res.error){limpiarIntento();throw res.error;}
         var pi=res&&res.paymentIntent;
         if(pi&&(pi.status==="succeeded"||pi.status==="processing")){
           window.location.replace(pagoUrl+"?checkout=pi&payment_intent="+pi.id+"&redirect_status="+pi.status);
@@ -482,6 +493,11 @@ body{padding-bottom:calc(8px + env(safe-area-inset-bottom))!important}
         }
         throw new Error("Your payment was not completed. Please try again.");
       }).catch(function(e){
+        // Si el servidor YA había creado el cliente/suscripción
+        // (hay clientSecret) y el pago no se cobró, se limpia el
+        // intento en Stripe. Sin clientSecret no se creó nada y no
+        // hay nada que limpiar.
+        if(clientSecret){limpiarIntento();}
         btn.disabled=false;
         btn.textContent=original;
         showErr((e&&e.message)||"Your payment could not be completed. Please check your card and try again.");
