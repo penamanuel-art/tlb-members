@@ -2182,20 +2182,20 @@ function dnHotClose(){
 .dn-top .dn-menubtn{transform:scale(1.15);transform-origin:center}
 </style>
 <style>
-/* GUIA DE INSTALACION EN AZUL OSCURO (2026-11-25, orden de Alex; ALCANCE CORREGIDO la misma noche):
-   el azul es SOLO pa' las vistas de INSTALACION de la app (iosA "Add The Sharp Team to your Home Screen"
-   e iosB, su continuacion) — la clase .dnaf-install la pone showView() solo en esas vistas.
-   CORRECCION: la primera version pintaba la tarjeta .dnaf entera, y como TODAS las vistas viven en la
-   misma tarjeta, los pasos de ALERTAS ('value' "Never miss a play", 'go', 'done', 'blocked') tambien
-   salian azules — Alex entro y vio azul la de notificaciones, que NO era la orden. Esos pasos vuelven
-   a su fondo original (la regla base de .dnaf: gradiente #1D2029 -> var(--panel), borde var(--accline)).
-   Azules exactos de la previa /previa-azul-oscuro: tarjeta #0A1220 -> #070B14, cajas internas #0C1425, borde rgba(96,165,250,.30).
+/* GUIA DE INSTALACION CON LOS COLORES DE LAS TARJETAS DE JUGADA (2026-11-25, orden de Alex; reemplaza el azul oscuro de la misma noche):
+   el color es SOLO pa' las vistas de INSTALACION de la app (iosA "Add The Sharp Team to your Home Screen"
+   e iosB, su continuacion) — la clase .dnaf-install la pone showView() solo en esas vistas. Los pasos de
+   ALERTAS ('value' "Never miss a play", 'go', 'done', 'blocked') viven en la misma tarjeta pero NO llevan
+   esta clase: quedan con su fondo original (la regla base de .dnaf).
+   Alex: el azul oscuro "se ve muy oscura azul" — la ventana va como las TARJETAS DE JUGADA (dos tonos):
+   fondo de la tarjeta #262B38 (tono de arriba de la tarjeta), cajas internas #1D2029 (tono de abajo),
+   y los BORDES EN VERDE de la casa #10CC87 (orden expresa: verde, NO amarillo, NO dorado).
    Acentos verdes (numeros, boton, share), textos, pasos, logo y botones quedan intactos. Bloque final: gana a todas las capas anteriores. */
-.dnaf.dnaf-install{background:linear-gradient(180deg,#0A1220,#070B14);border-color:rgba(96,165,250,.30)}
-.dnaf.dnaf-install .dnaf-block{background:#0C1425;border-color:rgba(96,165,250,.30)}
-.dnaf.dnaf-install .dnaf-guide-logo{background:#0C1425;border-color:rgba(96,165,250,.30)}
-.dnaf.dnaf-install .dnaf-bar{background:#0A1220;border-color:rgba(96,165,250,.30)}
-.dnaf.dnaf-install .dnaf-srow{background:#0A1220}
+.dnaf.dnaf-install{background:#262B38;border-color:#10CC87}
+.dnaf.dnaf-install .dnaf-block{background:#1D2029;border-color:#10CC87}
+.dnaf.dnaf-install .dnaf-guide-logo{background:#1D2029;border-color:#10CC87}
+.dnaf.dnaf-install .dnaf-bar{background:#1D2029;border-color:#10CC87}
+.dnaf.dnaf-install .dnaf-srow{background:#1D2029}
 </style>
 </body>
 </html>
