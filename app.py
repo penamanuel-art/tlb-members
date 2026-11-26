@@ -9173,6 +9173,46 @@ def previa_admin_e():
     return render_template("previa_admin_e.html", **_datos_previa_admin())
 
 
+@app.route("/previa-admin-util")
+def previa_admin_util():
+    """VISTA PREVIA «Admin útil» (2026-11-26): Alex rechazó las
+    rejillas de cuadros («parece una encuesta») y pidió un admin de
+    verdad, profesional, en la forma que elogió de WGT: PLANO, texto
+    grande y limpio, sin reguero de cuadritos. Una sola pantalla:
+    resumen en texto plano arriba, «Jugadas de hoy» como filas a todo
+    lo ancho con el botón real de disparo (admin_aprobar_jugadas),
+    lista plana de secciones (Miembros · Platinum pagando · Enviar
+    push con el formulario real de admin_crear_push · Con la app
+    puesta · Contabilidad) y al final «Lo último» con las
+    notificaciones gerenciales reales. Datos REALES: el mismo
+    contexto fusionado de /admin-e (_admin_contexto +
+    _datos_previa_admin con setdefault). Candado: _admin_o_cuenta_alex;
+    cualquier otro recibe 404. NO toca /admin, /admin-e ni
+    /admin-clasico: sirve previa_admin_util.html."""
+    from flask import abort
+    if not _admin_o_cuenta_alex(current_user()):
+        abort(404)
+    ctx = _admin_contexto()
+    if not isinstance(ctx, dict):
+        return ctx
+    try:
+        for _k, _v in _datos_previa_admin().items():
+            ctx.setdefault(_k, _v)
+    except Exception:
+        ctx.setdefault("historial", [])
+    from datetime import datetime as _dtu
+    _dias = ["lunes", "martes", "miércoles", "jueves", "viernes",
+             "sábado", "domingo"]
+    _meses = ["enero", "febrero", "marzo", "abril", "mayo", "junio",
+              "julio", "agosto", "septiembre", "octubre", "noviembre",
+              "diciembre"]
+    _ahora = _dtu.now()
+    ctx["fecha_larga"] = "%s %d de %s de %d" % (
+        _dias[_ahora.weekday()].capitalize(), _ahora.day,
+        _meses[_ahora.month - 1], _ahora.year)
+    return render_template("previa_admin_util.html", **ctx)
+
+
 @app.route("/setup")
 @login_required
 def setup_page():
