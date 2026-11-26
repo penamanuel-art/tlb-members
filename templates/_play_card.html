@@ -102,26 +102,33 @@
 {% set _res = p.resultado if p.resultado is defined else None %}
 {# Titular con la linea en Spread/Total (2026-11-03, mismo arreglo que _play_card_v5: la cara decia solo «Spread» sin el numero).
    La linea se compone del dato guardado: mercado primero, con respaldo en pick. Moneyline NO cambia. #}
-{% set _bt_label = 'ML' if p.bettype == 'Moneyline' else p.bettype %}
-{% if p.bettype in ['Spread', 'Total'] %}
+{% set _bt = (p.bettype or '')|upper %}
+{% set _bt_label = 'ML' if _bt == 'MONEYLINE' else p.bettype %}
+{% if _bt in ['SPREAD', 'TOTAL'] %}
 {% set _ns = namespace(label='', prev='') %}
 {% for _tok in ((p.mercado or '') ~ ' ' ~ (p.pick or '')).split() %}
 {% if not _ns.label %}
-{% if p.bettype == 'Spread' and _tok|length > 1 and _tok[0] in '+-' and _tok[1:].replace('.', '', 1).isdigit() %}{% set _ns.label = _tok %}
-{% elif p.bettype == 'Total' and _tok.replace('.', '', 1).isdigit() and _ns.prev in ['Over', 'Under'] %}{% set _ns.label = _ns.prev ~ ' ' ~ _tok %}
-{% elif p.bettype == 'Total' and _tok.replace('.', '', 1).isdigit() %}{% set _ns.label = 'Total ' ~ _tok %}{% endif %}
+{% if _bt == 'SPREAD' and _tok|length > 1 and _tok[0] in '+-' and _tok[1:].replace('.', '', 1).isdigit() %}{% set _ns.label = _tok %}
+{% elif _bt == 'TOTAL' and _tok.replace('.', '', 1).isdigit() and _ns.prev in ['Over', 'Under'] %}{% set _ns.label = _ns.prev ~ ' ' ~ _tok %}
+{% elif _bt == 'TOTAL' and _tok.replace('.', '', 1).isdigit() %}{% set _ns.label = 'Total ' ~ _tok %}{% endif %}
 {% endif %}
 {% set _ns.prev = _tok %}
 {% endfor %}
 {% if _ns.label %}{% set _bt_label = _ns.label %}{% endif %}
 {% endif %}
+{# Título grande (arreglo raíz 2026-11-26): bettype llega en MAYÚSCULAS («SPREAD») y las
+   comparaciones de arriba eran con 'Spread'/'Total' → la extracción de la línea nunca corría
+   y el título salía «Baylor Bears SPREAD», sin la línea (foto de Alex). Ya normalizado con
+   |upper: la palabra del mercado NUNCA va en el título — va la LÍNEA (+4.5 / -3.5 / Over 46.5).
+   En totales el título es el pick completo, que ya trae su forma («TCU @ Texas Tech Over 46.5»). #}
+{% set _title = p.pick if (_bt == 'TOTAL' and p.pick) else ((p.team_name or p.abbr) ~ ' ' ~ _bt_label) %}
 {% if p.comprobante and not force_pre %}
     {# DISEÑO CON TICKET v4 — mismo que Estado 1 + ticket (aprobado Alex 2026-10-11) #}
     <div style="background:{% if _lux %}linear-gradient(160deg,rgba(29,32,41,.97),rgba(12,15,22,.98)){% else %}linear-gradient(160deg,rgba(29,32,41,.97),rgba(12,15,22,.98)){% endif %};border-radius:16px;padding:12px;color:#fff;position:relative;overflow:hidden;border:{{ '1px solid rgba(251,191,36,.35)' if _lux else '2px solid #FBBF24' }};box-sizing:border-box;max-width:100%;margin:{% if force_pre %}0{% else %}0 4px{% endif %};font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
       <div style="position:absolute;inset:0;background:{% if _lux %}radial-gradient(420px 200px at 12% -10%,rgba(251,191,36,.18),transparent 60%){% else %}linear-gradient(180deg,rgba(4,6,10,.94),rgba(4,6,10,.98)){% endif %};border-radius:16px;"></div>
       <div style="position:relative;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-          <div style="font-size:16px;color:#fff;">{{ p.team_name or p.abbr }} {{ _bt_label }} <span style="font-size:11px;color:#FBBF24;">&middot; {{ p.liga or '' }}</span> <span style="font-size:10px;letter-spacing:1px;color:#FBBF24;background:#231a02;padding:4px 10px;border-radius:999px;">{{ 'PLATINUM' if is_vip else ('GOLD' if is_gold else 'SHARP PICKS FREE') }}</span></div>
+          <div style="font-size:16px;color:#fff;">{{ _title }} <span style="font-size:11px;color:#FBBF24;">&middot; {{ p.liga or '' }}</span> <span style="font-size:10px;letter-spacing:1px;color:#FBBF24;background:#231a02;padding:4px 10px;border-radius:999px;">{{ 'PLATINUM' if is_vip else ('GOLD' if is_gold else 'SHARP PICKS FREE') }}</span></div>
           <span style="color:{{ _mint }};font-size:14px;flex:none;margin-left:8px;">{{ fmt_odds(p.cuota) }}</span>
         </div>
         {% if p.writeup %}
