@@ -2183,21 +2183,28 @@ function dnHotClose(){
 .dn-top .dn-menubtn{transform:scale(1.15);transform-origin:center}
 </style>
 <style>
-/* GUIA DE INSTALACION CON EL COLOR DE LAS TARJETAS DE JUGADA (2026-11-25, orden de Alex:
-   "Ponla de un color de las tarjetas de jugada" — SUPERSEDE el azul oscuro de la misma noche):
-   el esquema de la tarjeta de jugada (.v5m) es SOLO pa' las vistas de INSTALACION de la app
-   (iosA "Add The Sharp Team to your Home Screen" e iosB, su continuacion) — la clase
-   .dnaf-install la pone showView() solo en esas vistas. Los pasos de ALERTAS ('value'
-   "Never miss a play", 'go', 'done', 'blocked') quedan con su fondo original (la regla base
-   de .dnaf: gradiente #1D2029 -> var(--panel), borde var(--accline)) — no se tocan.
-   Tonos exactos de la tarjeta de jugada: ventana #262B38 (el tono de arriba de la tarjeta),
-   cajas internas #1D2029 (el tono de abajo), borde #2A2E3A.
-   Acentos verdes (numeros, boton, share), textos, pasos, logo y botones quedan intactos. Bloque final: gana a todas las capas anteriores. */
-.dnaf.dnaf-install{background:#262B38;border-color:#2A2E3A}
-.dnaf.dnaf-install .dnaf-block{background:#1D2029;border-color:#2A2E3A}
-.dnaf.dnaf-install .dnaf-guide-logo{background:#1D2029;border-color:#2A2E3A}
-.dnaf.dnaf-install .dnaf-bar{background:#1D2029;border-color:#2A2E3A}
-.dnaf.dnaf-install .dnaf-srow{background:#1D2029}
+/* GUIA DE INSTALACION: FONDO AZUL OSCURO BUSCANDO MORADO, CASI NEGRO + TIBURON MAS CERCA
+   (2026-11-25 ~10:10 PM ET, orden de Alex en llamada: el gris de las tarjetas de jugada
+   "se ve tan feo" — SUPERSEDE el esquema de tarjetas de la misma noche; y el tiburon del
+   cuadrito del logo "se ve como muy lejos", hay que acercarlo sin cambiar el cuadrito):
+   el esquema es SOLO pa' las vistas de INSTALACION de la app (iosA "Add The Sharp Team
+   to your Home Screen" e iosB, su continuacion) — la clase .dnaf-install la pone
+   showView() solo en esas vistas. Los pasos de ALERTAS ('value' "Never miss a play",
+   'go', 'done', 'blocked') quedan con su fondo original (la regla base de .dnaf:
+   gradiente #1D2029 -> var(--panel), borde var(--accline)) — no se tocan.
+   Fondo: azul-violeta casi negro (gradiente #0D0D1F -> #08081A, buscando morado — NO el
+   azul marino viejo #0A1220/#070B14); cajas internas un paso mas claro de la misma
+   familia (#171731); bordes VERDE de la casa #10CC87 (palabra confirmada de Alex:
+   verde, NO amarillo, NO dorado). Acentos verdes (numeros, boton, share), textos y
+   pasos intactos. Logo: el cuadrito .dnaf-guide-logo queda EXACTAMENTE igual (62x62);
+   solo la imagen del tiburon se escala (52px -> ~68px visuales) y sube 2px pa' que se
+   vea mas cerca y llene mejor el cuadrito. Bloque final: gana a todas las capas anteriores. */
+.dnaf.dnaf-install{background:linear-gradient(180deg,#0D0D1F,#08081A);border-color:#10CC87}
+.dnaf.dnaf-install .dnaf-block{background:#171731;border-color:#10CC87}
+.dnaf.dnaf-install .dnaf-guide-logo{background:#171731;border-color:#10CC87}
+.dnaf.dnaf-install .dnaf-guide-logo img{transform:translateY(-2px) scale(1.3)}
+.dnaf.dnaf-install .dnaf-bar{background:#171731;border-color:#10CC87}
+.dnaf.dnaf-install .dnaf-srow{background:#171731}
 </style>
 </body>
 </html>
