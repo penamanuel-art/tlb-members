@@ -2208,6 +2208,7 @@ function dnHotClose(){
 #pavoFx .pavo-flip{display:block;will-change:transform}
 #pavoFx .pavo-hop{display:block;font-size:34px;line-height:44px;text-align:center;animation:pavoHop .52s ease-in-out infinite alternate}
 @keyframes pavoHop{from{transform:translateY(0) rotate(-4deg)}to{transform:translateY(-7px) rotate(4deg)}}
+.pavo-pluma{position:fixed;left:0;top:0;z-index:500;pointer-events:none;line-height:1;will-change:transform,opacity}
 @media (prefers-reduced-motion: reduce){
 #pavoFx{display:none}
 }
@@ -2229,6 +2230,56 @@ function dnHotClose(){
        superior (encima del encabezado), de izquierda a derecha, y al llegar
        al extremo derecho SE CAE DE CABEZA: se voltea patas arriba girando y
        cae por todo el alto de la pantalla hasta salir por abajo. No vuelve. */
+    /* PLUMAS (orden de Alex 2026-11-26 14:10 ET): en el instante en que el
+       pavo empieza a caerse, suelta una explosion de plumitas como si le
+       hubieran dado un golpe: salen disparadas en todas direcciones y luego
+       caen flotando suavecito, girando, hasta desvanecerse (~2.5-3.5 s). */
+    function sueltaPlumas(){
+      var r = box.getBoundingClientRect();
+      var cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+      var n = 10 + Math.floor(Math.random() * 5); /* 10-14 plumas */
+      var plumas = [];
+      for(var i = 0; i < n; i++){
+        var el = document.createElement('span');
+        el.className = 'pavo-pluma'; el.setAttribute('aria-hidden','true');
+        el.textContent = '\uD83E\uDEB6'; /* plumita */
+        el.style.fontSize = (12 + Math.random() * 10).toFixed(0) + 'px'; /* 12-22px */
+        document.body.appendChild(el);
+        var ang = Math.random() * Math.PI * 2;
+        var vel = 130 + Math.random() * 260; /* disparo inicial en todas direcciones */
+        plumas.push({
+          el: el, x: cx, y: cy,
+          vx: Math.cos(ang) * vel, vy: Math.sin(ang) * vel - 60,
+          rot: Math.random() * 360, vr: (Math.random() - 0.5) * 320,
+          faseS: Math.random() * Math.PI * 2,
+          vida: 2.5 + Math.random() * 1.0, /* duracion total 2.5-3.5 s */
+          edad: 0
+        });
+      }
+      var ultimo = null;
+      function paso(ts){
+        if(ultimo === null){ ultimo = ts; }
+        var dt = Math.min((ts - ultimo) / 1000, 0.05); ultimo = ts;
+        var quedan = false;
+        for(var j = 0; j < plumas.length; j++){
+          var p = plumas[j];
+          if(p.edad >= p.vida){ if(p.el.parentNode) p.el.parentNode.removeChild(p.el); continue; }
+          quedan = true;
+          p.edad += dt;
+          p.vx *= Math.exp(-1.7 * dt); /* el disparo se frena con el aire */
+          p.vy = Math.min(p.vy + 330 * dt, 52); /* y pasa a caer flotando suavecito */
+          p.x += (p.vx + Math.sin(p.edad * 3.1 + p.faseS) * 26) * dt; /* deriva lateral, como llevada por el aire */
+          p.y += p.vy * dt;
+          p.rot += p.vr * dt; p.vr *= Math.exp(-1.2 * dt);
+          var giro = p.rot + Math.sin(p.edad * 2.3 + p.faseS) * 22;
+          var op = p.edad > p.vida * 0.6 ? Math.max(0, 1 - (p.edad - p.vida * 0.6) / (p.vida * 0.4)) : 1;
+          p.el.style.opacity = op.toFixed(2);
+          p.el.style.transform = 'translate(' + p.x.toFixed(1) + 'px,' + p.y.toFixed(1) + 'px) rotate(' + giro.toFixed(1) + 'deg)';
+        }
+        if(quedan) requestAnimationFrame(paso);
+      }
+      requestAnimationFrame(paso);
+    }
     var x = -50, y = 0, speed = 62, last = null, fase = 'cruza', vy = 0, rot = 0, dead = false;
     function frame(ts){
       if(dead) return;
@@ -2237,7 +2288,7 @@ function dnHotClose(){
       var maxX = Math.max(6, window.innerWidth - 50);
       if(fase === 'cruza'){
         x += speed * dt;
-        if(x >= maxX){ x = maxX; fase = 'cae'; hop.style.animation = 'none'; }
+        if(x >= maxX){ x = maxX; fase = 'cae'; hop.style.animation = 'none'; sueltaPlumas(); /* el golpe: vuelan las plumas */ }
       } else { /* cae de cabeza: se voltea patas arriba girando y baja por toda la pantalla hasta salir por el borde inferior */
         vy += 1500 * dt; y += vy * dt; rot += 340 * dt;
         flip.style.transform = 'scaleX(-1) rotate(' + rot.toFixed(1) + 'deg)';
