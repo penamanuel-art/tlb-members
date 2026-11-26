@@ -45,19 +45,26 @@
 {% endif %}
 {# Titular con la linea en Spread/Total (2026-11-03, queja de Alex: la cara decia solo «Spread» y el +14.5 no salia).
    La linea se compone del dato guardado: mercado primero, con respaldo en pick. Moneyline NO cambia. #}
-{% set _bt_label = 'ML' if p.bettype == 'Moneyline' else p.bettype %}
-{% if p.bettype in ['Spread', 'Total'] %}
+{% set _bt = (p.bettype or '')|upper %}
+{% set _bt_label = 'ML' if _bt == 'MONEYLINE' else p.bettype %}
+{% if _bt in ['SPREAD', 'TOTAL'] %}
 {% set _ns = namespace(label='', prev='') %}
 {% for _tok in ((p.mercado or '') ~ ' ' ~ (p.pick or '')).split() %}
 {% if not _ns.label %}
-{% if p.bettype == 'Spread' and _tok|length > 1 and _tok[0] in '+-' and _tok[1:].replace('.', '', 1).isdigit() %}{% set _ns.label = _tok %}
-{% elif p.bettype == 'Total' and _tok.replace('.', '', 1).isdigit() and _ns.prev in ['Over', 'Under'] %}{% set _ns.label = _ns.prev ~ ' ' ~ _tok %}
-{% elif p.bettype == 'Total' and _tok.replace('.', '', 1).isdigit() %}{% set _ns.label = 'Total ' ~ _tok %}{% endif %}
+{% if _bt == 'SPREAD' and _tok|length > 1 and _tok[0] in '+-' and _tok[1:].replace('.', '', 1).isdigit() %}{% set _ns.label = _tok %}
+{% elif _bt == 'TOTAL' and _tok.replace('.', '', 1).isdigit() and _ns.prev in ['Over', 'Under'] %}{% set _ns.label = _ns.prev ~ ' ' ~ _tok %}
+{% elif _bt == 'TOTAL' and _tok.replace('.', '', 1).isdigit() %}{% set _ns.label = 'Total ' ~ _tok %}{% endif %}
 {% endif %}
 {% set _ns.prev = _tok %}
 {% endfor %}
 {% if _ns.label %}{% set _bt_label = _ns.label %}{% endif %}
 {% endif %}
+{# Título grande (arreglo raíz 2026-11-26): bettype llega en MAYÚSCULAS («SPREAD») y las
+   comparaciones de arriba eran con 'Spread'/'Total' → la extracción de la línea nunca corría
+   y el título salía «Baylor Bears SPREAD», sin la línea (foto de Alex). Ya normalizado con
+   |upper: la palabra del mercado NUNCA va en el título — va la LÍNEA (+4.5 / -3.5 / Over 46.5).
+   En totales el título es el pick completo, que ya trae su forma («TCU @ Texas Tech Over 46.5»). #}
+{% set _title = p.pick if (_bt == 'TOTAL' and p.pick) else ((p.team_name or p.abbr) ~ ' ' ~ _bt_label) %}
 <style>
 .v5c-matched{display:inline-block;margin-top:6px;font-size:11px;font-weight:800;letter-spacing:1px;color:#0C0F16;background:#10CC87;padding:4px 9px;border-radius:999px}
 .v5c-btn{flex:1 1 0;min-width:0;text-align:center;font-size:12px;overflow:hidden;font-weight:400;white-space:nowrap;color:#9AA1AE;background:#0C0F16;border:1px solid #2A2E3A;border-radius:12px;padding:9px 4px;text-decoration:none}
@@ -315,7 +322,7 @@
   <div class="v5m-head">
     {% if _logo %}<img class="v5m-logo" src="{{ _logo }}" alt="{{ p.abbr }} logo" loading="lazy" onerror="this.remove()">{% endif %}
     <div style="flex:1;min-width:0">
-      <div class="v5m-title" data-v5-open="{{ p.id }}" style="cursor:pointer">{{ p.team_name or p.abbr }} {{ _bt_label }}</div>
+      <div class="v5m-title" data-v5-open="{{ p.id }}" style="cursor:pointer">{{ _title }}</div>
       <div class="v5m-subrow">
         <div class="v5m-sub" data-v5-open="{{ p.id }}" style="cursor:pointer">{{ p.team_name or p.abbr }} @ {{ p.opp_name or p.opp_abbr }} &middot; <span style="white-space:nowrap">{{ _gt12 }}</span></div>
         {% if (_ci.get('lines') and _ci.lines.moved) or (_ci.get('weather') and _ci.weather.temp_f is defined and _ci.weather.temp_f is not none) %}
@@ -383,7 +390,7 @@
     <div class="v5shead">
       <div style="flex:1;min-width:0">
         <div class="v5kick{% if not is_vip and not is_vault %} gold{% endif %}">{{ '💎 PLATINUM' if is_vip else ('🔒 THE VAULT PLAY' if is_vault else ('💎 VALUE PLAY' if is_value else ('FREE PICK' if is_free else 'GOLD'))) }}</div>
-        <div class="v5stitle">{{ p.team_name or p.abbr }} {{ _bt_label }}</div>
+        <div class="v5stitle">{{ _title }}</div>
         <div class="v5ssub">{{ 'Platinum play' if is_vip else ('Vault play' if is_vault else ('Value play' if is_value else ('Free Pick play' if is_free else 'Gold play'))) }} &middot; {{ p.liga or '' }}</div>
       </div>
       <button class="v5x" data-v5-close aria-label="Cerrar">&times;</button>
