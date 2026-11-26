@@ -2204,10 +2204,10 @@ function dnHotClose(){
 </style>
 <!-- EFECTO PAVO THANKSGIVING 2026-11-26 -->
 <style>
-#pavoFx{position:fixed;left:0;top:calc(env(safe-area-inset-top,0px) + 4px);width:44px;height:44px;z-index:500;pointer-events:none;opacity:0;transition:opacity .6s ease;will-change:transform}
+#pavoFx{position:fixed;left:0;top:calc(env(safe-area-inset-top,0px) + 4px);width:58px;height:58px;z-index:500;pointer-events:none;opacity:0;transition:opacity .6s ease;will-change:transform}
 #pavoFx .pavo-flip{display:block;will-change:transform}
-#pavoFx .pavo-hop{display:block;font-size:34px;line-height:44px;text-align:center;animation:pavoHop .52s ease-in-out infinite alternate}
-@keyframes pavoHop{from{transform:translateY(0) rotate(-4deg)}to{transform:translateY(-7px) rotate(4deg)}}
+#pavoFx .pavo-hop{display:block;font-size:46px;line-height:58px;text-align:center;animation:pavoHop .62s ease-in-out infinite}
+@keyframes pavoHop{0%{transform:translateY(0) rotate(-4deg)}35%{transform:translateY(-13px) rotate(5deg)}60%{transform:translateY(0) rotate(-3deg)}78%{transform:translateY(-6px) rotate(3deg)}100%{transform:translateY(0) rotate(-4deg)}}
 .pavo-pluma{position:fixed;left:0;top:0;z-index:500;pointer-events:none;line-height:1;will-change:transform,opacity}
 @media (prefers-reduced-motion: reduce){
 #pavoFx{display:none}
@@ -2224,12 +2224,18 @@ function dnHotClose(){
     var flip = document.createElement('span'); flip.className = 'pavo-flip';
     var hop = document.createElement('span'); hop.className = 'pavo-hop'; hop.textContent = '\uD83E\uDD83';
     flip.appendChild(hop); box.appendChild(flip); document.body.appendChild(box);
+    /* Camina SOBRE el encabezado, como en Novig: se mide la barra superior
+       (.dn-top) y el pavo apoya las patas en su linea inferior. */
+    var hdr = document.querySelector('.dn-top');
+    if(hdr){ box.style.top = Math.max(0, Math.round(hdr.getBoundingClientRect().bottom) - 58 + 4) + 'px'; }
     flip.style.transform = 'scaleX(-1)'; /* va hacia la derecha: mira a la derecha */
     requestAnimationFrame(function(){ box.style.opacity = '1'; });
-    /* UNA SOLA PASADA POR ARRIBA: el pavo camina brincando sobre el borde
-       superior (encima del encabezado), de izquierda a derecha, y al llegar
-       al extremo derecho SE CAE DE CABEZA: se voltea patas arriba girando y
-       cae por todo el alto de la pantalla hasta salir por abajo. No vuelve. */
+    /* UNA SOLA PASADA POR ARRIBA (como en Novig, ajuste 2026-11-26): el pavo,
+       mas grande (~46px), camina brincando SOBRE la barra superior — apoyado
+       en la linea inferior del encabezado, sobre el logo y los iconos — de
+       izquierda a derecha, y al llegar al extremo derecho SE CAE DE CABEZA:
+       se voltea patas arriba girando y cae por todo el alto de la pantalla
+       hasta salir por abajo. No vuelve. */
     /* PLUMAS (orden de Alex 2026-11-26 14:10 ET): en el instante en que el
        pavo empieza a caerse, suelta una explosion de plumitas como si le
        hubieran dado un golpe: salen disparadas en todas direcciones y luego
@@ -2280,12 +2286,12 @@ function dnHotClose(){
       }
       requestAnimationFrame(paso);
     }
-    var x = -50, y = 0, speed = 62, last = null, fase = 'cruza', vy = 0, rot = 0, dead = false;
+    var x = -64, y = 0, speed = 62, last = null, fase = 'cruza', vy = 0, rot = 0, dead = false;
     function frame(ts){
       if(dead) return;
       if(last === null){ last = ts; }
       var dt = Math.min((ts - last) / 1000, 0.05); last = ts;
-      var maxX = Math.max(6, window.innerWidth - 50);
+      var maxX = Math.max(6, window.innerWidth - 64);
       if(fase === 'cruza'){
         x += speed * dt;
         if(x >= maxX){ x = maxX; fase = 'cae'; hop.style.animation = 'none'; sueltaPlumas(); /* el golpe: vuelan las plumas */ }
