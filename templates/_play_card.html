@@ -103,14 +103,14 @@
 {# Titular con la linea en Spread/Total (2026-11-03, mismo arreglo que _play_card_v5: la cara decia solo «Spread» sin el numero).
    La linea se compone del dato guardado: mercado primero, con respaldo en pick. Moneyline NO cambia. #}
 {% set _bt = (p.bettype or '')|upper %}
-{% set _bt_label = 'ML' if _bt == 'MONEYLINE' else p.bettype %}
+{% set _bt_label = '' if _bt == 'MONEYLINE' else p.bettype %}
 {% if _bt in ['SPREAD', 'TOTAL'] %}
 {% set _ns = namespace(label='', prev='') %}
 {% for _tok in ((p.mercado or '') ~ ' ' ~ (p.pick or '')).split() %}
 {% if not _ns.label %}
 {% if _bt == 'SPREAD' and _tok|length > 1 and _tok[0] in '+-' and _tok[1:].replace('.', '', 1).isdigit() %}{% set _ns.label = _tok %}
 {% elif _bt == 'TOTAL' and _tok.replace('.', '', 1).isdigit() and _ns.prev in ['Over', 'Under'] %}{% set _ns.label = _ns.prev ~ ' ' ~ _tok %}
-{% elif _bt == 'TOTAL' and _tok.replace('.', '', 1).isdigit() %}{% set _ns.label = 'Total ' ~ _tok %}{% endif %}
+{% elif _bt == 'TOTAL' and _tok.replace('.', '', 1).isdigit() %}{% set _ns.label = _tok %}{% endif %}
 {% endif %}
 {% set _ns.prev = _tok %}
 {% endfor %}
@@ -121,7 +121,26 @@
    y el título salía «Baylor Bears SPREAD», sin la línea (foto de Alex). Ya normalizado con
    |upper: la palabra del mercado NUNCA va en el título — va la LÍNEA (+4.5 / -3.5 / Over 46.5).
    En totales el título es el pick completo, que ya trae su forma («TCU @ Texas Tech Over 46.5»). #}
-{% set _title = p.pick if (_bt == 'TOTAL' and p.pick) else ((p.team_name or p.abbr) ~ ' ' ~ _bt_label) %}
+{% set _title = p.pick if (_bt == 'TOTAL' and p.pick) else ((p.team_name or p.abbr) ~ (' ' ~ _bt_label if _bt_label else '')) %}
+{# Explicación en palabras normales (2026-11-26, orden de Alex: la palabra del
+   mercado NO sale en NINGUNA parte visible y la jugada se explica como la
+   entiende cualquiera): una línea fina generada de la línea de la jugada. #}
+{% set _explain = '' %}
+{% if _bt == 'SPREAD' and _bt_label %}
+{% set _lv = _bt_label|float(0) %}
+{% set _la = _lv|abs %}
+{% if _lv < 0 %}
+{% if (_la % 1) == 0 %}{% set _explain = (p.team_name or p.abbr) ~ ' must win by more than ' ~ (_la|int) %}{% else %}{% set _explain = (p.team_name or p.abbr) ~ ' must win by ' ~ ((_la|int) + 1) ~ ' or more' %}{% endif %}
+{% elif _lv > 0 %}
+{% if (_la % 1) == 0 %}{% set _explain = (p.team_name or p.abbr) ~ ' can lose by up to ' ~ ((_la|int) - 1) ~ ' and this still wins' %}{% else %}{% set _explain = (p.team_name or p.abbr) ~ ' can lose by up to ' ~ (_la|int) ~ ' and this still wins' %}{% endif %}
+{% endif %}
+{% elif _bt == 'TOTAL' and _bt_label %}
+{% set _tn = _bt_label.split()[-1]|float(0) %}
+{% if 'Under' in _bt_label %}{% set _explain = 'Both teams combined must score ' ~ ((_tn|int) - (1 if (_tn % 1) == 0 else 0)) ~ ' or fewer points' %}{% else %}{% set _explain = 'Both teams combined must score ' ~ ((_tn|int) + 1) ~ ' or more points' %}{% endif %}
+{% elif _bt == 'MONEYLINE' %}
+{% set _explain = (p.team_name or p.abbr) ~ ' must win the game' %}
+{% endif %}
+
 {% if p.comprobante and not force_pre %}
     {# DISEÑO CON TICKET v4 — mismo que Estado 1 + ticket (aprobado Alex 2026-10-11) #}
     <div style="background:{% if _lux %}linear-gradient(160deg,rgba(29,32,41,.97),rgba(12,15,22,.98)){% else %}linear-gradient(160deg,rgba(29,32,41,.97),rgba(12,15,22,.98)){% endif %};border-radius:16px;padding:12px;color:#fff;position:relative;overflow:hidden;border:{{ '1px solid rgba(251,191,36,.35)' if _lux else '2px solid #FBBF24' }};box-sizing:border-box;max-width:100%;margin:{% if force_pre %}0{% else %}0 4px{% endif %};font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
@@ -131,6 +150,7 @@
           <div style="font-size:16px;color:#fff;">{{ _title }} <span style="font-size:11px;color:#FBBF24;">&middot; {{ p.liga or '' }}</span> <span style="font-size:10px;letter-spacing:1px;color:#FBBF24;background:#231a02;padding:4px 10px;border-radius:999px;">{{ 'PLATINUM' if is_vip else ('GOLD' if is_gold else 'SHARP PICKS FREE') }}</span></div>
           <span style="color:{{ _mint }};font-size:14px;flex:none;margin-left:8px;">{{ fmt_odds(p.cuota) }}</span>
         </div>
+        {% if _explain %}<div style="font-size:12.5px;font-weight:400;color:#9AA1AE;margin:-2px 0 8px;line-height:1.4;">{{ _explain }}</div>{% endif %}
         {% if p.writeup %}
         <details class="tstc-wu" style="border:1px solid rgba(251,191,36,.3);border-radius:10px;background:rgba(0,0,0,.3);margin-bottom:8px;">
           <summary style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;font-size:12px;letter-spacing:1px;color:#FBBF24;cursor:pointer;list-style:none;"><span>&#x1F4CA; WHY WE LIKE IT</span><span style="color:#9AA1AE;font-size:10px;">TAP TO EXPAND &#x25BE;</span></summary>
@@ -158,7 +178,7 @@
             <div style="border-radius:16px;overflow:hidden;margin-bottom:16px;cursor:pointer;" onclick="window.open('{{ url_for('static', filename=p.comprobante) }}','_blank')">
               <img src="{{ url_for('static', filename=p.comprobante) }}" alt="Original ticket {{ p.abbr }} {{ p.bettype }}" style="width:100%;display:block;filter:brightness(1);max-height:none;">
             </div>
-            <div style="font-size:24px;font-weight:800;color:#fff;margin-bottom:4px;">{{ p.abbr }} {{ p.bettype }}</div>
+            <div style="font-size:24px;font-weight:800;color:#fff;margin-bottom:4px;">{{ _title }}</div>
             <div style="font-size:14px;color:#9AA1AE;margin-bottom:14px;">{{ p.abbr }} vs {{ p.opp_abbr }} &middot; {{ p.liga }} &middot; {{ fmt_odds(p.cuota) }} &middot; Bet {{ '$%.0f' % p.stake_monto }} ({{ '%g' % p.stake_unidades }}u)</div>
             <div style="background:rgba(255,255,255,.05);border-radius:14px;padding:14px 16px;font-size:14px;color:#9AA1AE;margin-bottom:16px;line-height:1.5;">Logged at the price we got, posted before the game. Every play stays on the record.</div>
             {% if p.novig_url and '%2Fevent-markets%2F' in p.novig_url %}
@@ -210,7 +230,8 @@
           {% if p.logo_url %}<img src="{{ p.logo_url }}" alt="{{ p.abbr }}" width="64" height="64" style="flex:none;width:64px;height:64px;object-fit:contain;" loading="lazy">{% else %}<svg width="64" height="64" viewBox="0 0 60 60" style="flex:none;"><path d="M22 8 L12 14 L6 28 L15 31 L17 25 L17 54 L43 54 L43 25 L45 31 L54 28 L48 14 L38 8 C36 13 33 15 30 15 C27 15 24 13 22 8 Z" fill="#1D2029" stroke="#FBBF24" stroke-width="2"/><path d="M22 8 C24 13 27 15 30 15 C33 15 36 13 38 8" fill="none" stroke="#FBBF24" stroke-width="1.2"/><text x="30" y="42" text-anchor="middle" fill="#fff" font-size="12" font-family:sans-serif">{{ p.abbr }}</text></svg>{% endif %}
           <div>
             <div style="font-size:18px;color:#fff;">{{ p.team_name or p.abbr }}</div>
-            <div style="font-size:12px;color:#9AA1AE;margin-top:2px;">{{ _bt_label }} &middot; <span style="color:#FBBF24;">{{ p.liga or '' }}</span> &middot; {{ p.game_time_et or p.hora or '' }}</div>
+            <div style="font-size:12px;color:#9AA1AE;margin-top:2px;">{% if _bt_label %}{{ _bt_label }} &middot; {% endif %}<span style="color:#FBBF24;">{{ p.liga or '' }}</span> &middot; {{ p.game_time_et or p.hora or '' }}</div>
+            {% if _explain %}<div style="font-size:12.5px;font-weight:400;color:#9AA1AE;margin-top:3px;line-height:1.4;">{{ _explain }}</div>{% endif %}
           </div>
         </div>
         <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:6px;">
