@@ -1544,6 +1544,25 @@ function dnHotClose(){
      cuando quiera («yo apruebo cuando yo veo»). */
   var PREVIEW = {{ 'true' if (is_alex and request.args.get('alertas')) else 'false' }};
   var LS_DONE = 'tlb_af_done', LS_DIS = 'tlb_af_dismissed_at', LS_IOS = 'tlb_af_ios_pending';
+  /* Vista forzada pa' Alex (2026-11-25, su palabra manda: «que
+     cuando abra se vea completa»): si su teléfono trae una marca de
+     descarte (la ✕ pone tlb_af_dismissed_at por 30 días), la guía
+     no vuelve a salir ni entrando del link del email. Este bloque,
+     SOLO con su sesión (is_alex), re-arma la vista una vez por
+     versión: borra su descarte y trata ESTA entrada normal como
+     PREVIEW (la guía sale sola, montada en línea arriba, sin
+     registrar embudo). La marca de versión se pone cuando la vista
+     forzada SALE de verdad (abajo, en el disparo de PREVIEW); pa'
+     re-armarla otro día basta subir ALEX_FORCE_V ('v2', 'v3'...).
+     Pa' los miembros no cambia nada: ni se les borra el descarte
+     ni se les fuerza vista alguna. */
+  var ALEX_FORCE_V = 'v1';
+  var ALEX_FORCE = false;
+  if({{ 'true' if is_alex else 'false' }}){
+    try{ ALEX_FORCE = localStorage.getItem('tst_alex_guide_v') !== ALEX_FORCE_V; }catch(e){}
+    if(ALEX_FORCE){ try{ localStorage.removeItem(LS_DIS); }catch(e){} }
+  }
+  if(ALEX_FORCE) PREVIEW = true;
   var DISMISS_MS = 30 * 24 * 60 * 60 * 1000;
   function lsGet(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
   function lsSet(k, v){ try{ localStorage.setItem(k, v); }catch(e){} }
@@ -1774,6 +1793,7 @@ function dnHotClose(){
     setTimeout(function(){
       if(shown) return;
       shown = true;
+      if(ALEX_FORCE){ try{ localStorage.setItem('tst_alex_guide_v', ALEX_FORCE_V); }catch(e){} }
       mountInline();
       showInitial();
     }, 1200);
