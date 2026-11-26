@@ -2204,10 +2204,10 @@ function dnHotClose(){
 </style>
 <!-- EFECTO PAVO THANKSGIVING 2026-11-26 -->
 <style>
-#pavoFx{position:fixed;left:0;bottom:calc(env(safe-area-inset-bottom,0px) + 62px);width:44px;height:44px;z-index:50;pointer-events:none;opacity:0;transition:opacity .6s ease;will-change:transform}
+#pavoFx{position:fixed;left:0;top:calc(env(safe-area-inset-top,0px) + 4px);width:44px;height:44px;z-index:500;pointer-events:none;opacity:0;transition:opacity .6s ease;will-change:transform}
 #pavoFx .pavo-flip{display:block;will-change:transform}
 #pavoFx .pavo-hop{display:block;font-size:34px;line-height:44px;text-align:center;animation:pavoHop .52s ease-in-out infinite alternate}
-@keyframes pavoHop{from{transform:translateY(0) rotate(-4deg)}to{transform:translateY(-15px) rotate(4deg)}}
+@keyframes pavoHop{from{transform:translateY(0) rotate(-4deg)}to{transform:translateY(-7px) rotate(4deg)}}
 @media (prefers-reduced-motion: reduce){
 #pavoFx{display:none}
 }
@@ -2225,8 +2225,10 @@ function dnHotClose(){
     flip.appendChild(hop); box.appendChild(flip); document.body.appendChild(box);
     flip.style.transform = 'scaleX(-1)'; /* va hacia la derecha: mira a la derecha */
     requestAnimationFrame(function(){ box.style.opacity = '1'; });
-    /* UNA SOLA PASADA: entra por la izquierda brincando, cruza toda la pantalla
-       y al llegar al otro extremo SE CAE hacia abajo y desaparece. No vuelve. */
+    /* UNA SOLA PASADA POR ARRIBA: el pavo camina brincando sobre el borde
+       superior (encima del encabezado), de izquierda a derecha, y al llegar
+       al extremo derecho SE CAE DE CABEZA: se voltea patas arriba girando y
+       cae por todo el alto de la pantalla hasta salir por abajo. No vuelve. */
     var x = -50, y = 0, speed = 62, last = null, fase = 'cruza', vy = 0, rot = 0, dead = false;
     function frame(ts){
       if(dead) return;
@@ -2236,10 +2238,10 @@ function dnHotClose(){
       if(fase === 'cruza'){
         x += speed * dt;
         if(x >= maxX){ x = maxX; fase = 'cae'; hop.style.animation = 'none'; }
-      } else { /* cae: se desploma girando un poco hasta salir de la pantalla */
-        vy += 900 * dt; y += vy * dt; rot = Math.min(rot + 160 * dt, 80);
+      } else { /* cae de cabeza: se voltea patas arriba girando y baja por toda la pantalla hasta salir por el borde inferior */
+        vy += 1500 * dt; y += vy * dt; rot += 340 * dt;
         flip.style.transform = 'scaleX(-1) rotate(' + rot.toFixed(1) + 'deg)';
-        if(y > 160){ dead = true; if(box.parentNode) box.parentNode.removeChild(box); return; }
+        if(y > window.innerHeight + 90){ dead = true; if(box.parentNode) box.parentNode.removeChild(box); return; }
       }
       box.style.transform = 'translate(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px)';
       requestAnimationFrame(frame);
