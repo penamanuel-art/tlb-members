@@ -1629,16 +1629,26 @@ function dnHotClose(){
     if(iosNeedsInstall) return 'iosA';
     return 'value';
   }
-  function showInitial(){
+  function showInitial(forceView){
     /* La GUÍA (iosA) sale SIEMPRE montada en línea, en el flujo de
        la página, desde cualquier disparo (primera entrada, previa o
        tras ver una jugada): como tarjeta fija anclada abajo es más
        alta que la pantalla y se le cortaba el principio sin forma de
        llegar a él (reporte de Alex 2026-11-23: «se corta, se esconde
-       información»). En línea se ve completa, con scroll normal. */
-    if(initialView() === 'iosA') mountInline();
+       información»). En línea se ve completa, con scroll normal.
+       forceView (2026-11-25): los disparos de la GUÍA (el de cada
+       entrada y la previa de Alex) abren DIRECTO en la vista que
+       piden, sin pasar por initialView() — abriendo el Dashboard
+       desde el icono instalado (modo app/standalone) iosNeedsInstall
+       es falso e initialView() caía en 'value', la tarjeta de
+       ALERTAS: eso vio Alex en su captura de las 9:56 PM («Never
+       miss a play» en vez de la ventana de poner la aplicación).
+       Los disparos propios de ALERTAS (primera entrada y tras ver
+       una jugada) NO pasan forceView: siguen con initialView() y
+       su comportamiento de siempre. */
+    if(forceView === 'iosA' || initialView() === 'iosA') mountInline();
     if(iosNeedsInstall && !PREVIEW) lsSet(LS_IOS, '1');
-    showView(initialView());
+    showView(forceView || initialView());
   }
   function hide(){ card.hidden = true; }
   function dismiss(){
@@ -1819,7 +1829,7 @@ function dnHotClose(){
     mountInline();
     shown = true;
     track('shown');
-    showInitial();
+    showInitial('iosA');
   }
   setTimeout(maybeShowEvery, 1400);
   /* Disparo: el miembro abrió el detalle de una jugada (vista de
@@ -1850,7 +1860,7 @@ function dnHotClose(){
       shown = true;
       if(ALEX_FORCE){ try{ localStorage.setItem('tst_alex_guide_v', ALEX_FORCE_V); }catch(e){} }
       mountInline();
-      showInitial();
+      showInitial('iosA');
     }, 1200);
   }
 })();
