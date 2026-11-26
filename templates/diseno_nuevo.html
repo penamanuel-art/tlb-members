@@ -1532,8 +1532,11 @@ function dnHotClose(){
    guía Share -> Add to Home Screen -> abrir del icono -> permitir
    (corrección de Alex 2026-11-23: nada de tarjeta de alertas
    primero); en el resto, valor primero y de ahí al permiso con
-   TLB_push (el flujo de suscripción de siempre). Sin insistencia: si ya está suscrito no
-   sale nunca, y si lo descarta no vuelve por 30 días. Cada paso real
+   TLB_push (el flujo de suscripción de siempre). Si ya está suscrito no
+   sale nunca. Regla de Alex (2026-11-25): a quien NO ha instalado
+   la app la guía le sale en CADA entrada al Dashboard, y
+   descartarla solo la esconde en esa vista — ya no hay marca de
+   30 días pa' nadie. Cada paso real
    se registra en /api/alert-funnel. */
 (function(){
   var card = document.getElementById('dnAlertFlow');
@@ -1543,27 +1546,32 @@ function dnHotClose(){
      push, y NO registra eventos del embudo — es solo pa' que la vea
      cuando quiera («yo apruebo cuando yo veo»). */
   var PREVIEW = {{ 'true' if (is_alex and request.args.get('alertas')) else 'false' }};
-  var LS_DONE = 'tlb_af_done', LS_DIS = 'tlb_af_dismissed_at', LS_IOS = 'tlb_af_ios_pending';
+  var LS_DONE = 'tlb_af_done', LS_DIS = 'tlb_af_dismissed_at', LS_IOS = 'tlb_af_ios_pending', LS_ADDED = 'tlb_af_added';
   /* Vista forzada pa' Alex (2026-11-25, su palabra manda: «que
-     cuando abra se vea completa»): si su teléfono trae una marca de
-     descarte (la ✕ pone tlb_af_dismissed_at por 30 días), la guía
-     no vuelve a salir ni entrando del link del email. Este bloque,
-     SOLO con su sesión (is_alex), re-arma la vista una vez por
-     versión: borra su descarte y trata ESTA entrada normal como
-     PREVIEW (la guía sale sola, montada en línea arriba, sin
-     registrar embudo). La marca de versión se pone cuando la vista
-     forzada SALE de verdad (abajo, en el disparo de PREVIEW); pa'
-     re-armarla otro día basta subir ALEX_FORCE_V ('v2', 'v3'...).
-     Pa' los miembros no cambia nada: ni se les borra el descarte
-     ni se les fuerza vista alguna. */
+     cuando abra se vea completa» y «no puede salir una sola
+     vez»): SOLO con su sesión (is_alex), TODA entrada al
+     Dashboard se trata como PREVIEW — la guía le sale sola,
+     montada en línea arriba, completa, sin registrar embudo —
+     sin importar marcas guardadas. Antes esto se armaba una
+     vez por versión (ALEX_FORCE_V / tst_alex_guide_v); la
+     compuerta de versión se quitó: ahora es en cada entrada.
+     ALEX_FORCE_V queda solo como registro. Esto calza con la
+     regla general de abajo (a quien no ha instalado la app la
+     guía le sale en cada entrada); pa' Alex la presentación es
+     la de PREVIEW de siempre. */
   var ALEX_FORCE_V = 'v2';
   var ALEX_FORCE = false;
   if({{ 'true' if is_alex else 'false' }}){
-    try{ ALEX_FORCE = localStorage.getItem('tst_alex_guide_v') !== ALEX_FORCE_V; }catch(e){}
-    if(ALEX_FORCE){ try{ localStorage.removeItem(LS_DIS); }catch(e){} }
+    ALEX_FORCE = true;
+    try{ localStorage.removeItem(LS_DIS); }catch(e){}
   }
   if(ALEX_FORCE) PREVIEW = true;
-  var DISMISS_MS = 30 * 24 * 60 * 60 * 1000;
+  /* Regla de Alex (2026-11-25): el descarte de 30 días YA NO
+     EXISTE pa' nadie — la ✕ y «Not now» solo esconden la tarjeta
+     en esa vista. Cualquier marca vieja (tlb_af_dismissed_at)
+     guardada en un teléfono se borra al cargar, pa' que a quien
+     no ha instalado la app la guía le salga en cada entrada. */
+  try{ localStorage.removeItem(LS_DIS); }catch(e){}
   function lsGet(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
   function lsSet(k, v){ try{ localStorage.setItem(k, v); }catch(e){} }
   function ssGet(k){ try{ return sessionStorage.getItem(k); }catch(e){ return null; } }
@@ -1599,6 +1607,13 @@ function dnHotClose(){
     for(var i = 0; i < views.length; i++){
       views[i].hidden = views[i].getAttribute('data-view') !== name;
     }
+    /* Azul oscuro SOLO en las vistas de instalacion (iosA/iosB):
+       la clase .dnaf-install limita el azul a la ventana de la
+       app; los pasos de alertas (value/go/done/blocked) quedan
+       con el fondo original de la tarjeta (correccion de Alex
+       2026-11-25: la azul es la de la aplicacion, no la de
+       alertas). */
+    card.classList.toggle('dnaf-install', name === 'iosA' || name === 'iosB');
     card.hidden = false;
   }
   /* Vista inicial del flujo (corrección de Alex 2026-11-23): en
@@ -1629,7 +1644,10 @@ function dnHotClose(){
   function dismiss(){
     if(PREVIEW){ hide(); return; }
     track('dismissed');
-    lsSet(LS_DIS, String(Date.now()));
+    /* Solo esconde en ESTA vista (regla de Alex 2026-11-25):
+       nada de marca de 30 días — si no ha instalado la app, la
+       guía vuelve a salir en la próxima entrada. El evento del
+       embudo ('dismissed') sí se sigue registrando. */
     hide();
   }
   card.querySelectorAll('[data-dnaf-dismiss]').forEach(function(b){
@@ -1663,6 +1681,11 @@ function dnHotClose(){
   if(didIt) didIt.addEventListener('click', function(){
     track('ios_share');
     track('ios_a2hs');
+    /* Marca persistente «ya la agregué» (2026-11-25): quien
+       instaló la app no vuelve a ver la guía, aunque entre por
+       el navegador — la elegibilidad y el disparo de cada
+       entrada respetan esta marca (LS_ADDED). */
+    lsSet(LS_ADDED, '1');
     showView('iosB');
   });
   var gotIt = document.getElementById('dnafIosGotIt');
@@ -1675,8 +1698,11 @@ function dnHotClose(){
     track('started');
     doEnable();
   });
-  /* Elegibilidad: nunca si ya está suscrito, si descartó hace <30
-     días, si el navegador bloqueó el permiso o si no hay soporte.
+  /* Elegibilidad: nunca si ya está suscrito, si ya instaló la
+     app (modo app/standalone o marca «I added it ✓»), si el
+     navegador bloqueó el permiso o si no hay soporte. (El
+     descarte de 30 días se eliminó el 2026-11-25 por orden de
+     Alex: descartar solo esconde la tarjeta en esa vista.)
      OJO (arreglo 2026-11-22): en iPhone/iPad Safari SIN instalar,
      "Notification" y "PushManager" no existen en window, así que
      TLB_push.status() devuelve 'unsupported' SIEMPRE — justo el
@@ -1687,8 +1713,7 @@ function dnHotClose(){
   (async function(){
     try{
       if(PREVIEW){ eligible = true; return; }
-      var dis = parseInt(lsGet(LS_DIS) || '0', 10);
-      if(dis && (Date.now() - dis) < DISMISS_MS) return;
+      if(lsGet(LS_ADDED)) return;
       if(iosNeedsInstall){ eligible = true; return; }
       if(lsGet(LS_DONE)) return;
       if(!window.TLB_push) return;
@@ -1724,8 +1749,9 @@ function dnHotClose(){
      el mismo orden de la foto de referencia (burbuja -> guía ->
      jugadas); solo aguanta si el RECORRIDO del tour está corriendo
      (tourRoot visible), pa' no montar la tarjeta en mitad del paseo.
-     La elegibilidad es la misma de siempre: suscrito, descartado
-     <30 días o ya instalado = no sale. */
+     La elegibilidad es la misma de siempre: suscrito o ya
+     instalado = no sale. (Pa' la GUIA de instalacion manda el
+     disparo de CADA ENTRADA de abajo, no este.) */
   function mountInline(){
     if(card.classList.contains('inline')) return;
     /* Montaje ARRIBA del todo del flujo (orden de Alex 2026-11-25:
@@ -1767,6 +1793,35 @@ function dnHotClose(){
     showInitial();
   }
   setTimeout(maybeShowFirst, 1600);
+  /* Disparo de CADA ENTRADA pa' quien NO ha instalado la app
+     (regla de Alex 2026-11-25: «a los que no la pongan debe
+     salirle todas las veces que entren al Dashboard»): aplica
+     SOLO a la ventana de INSTALACION (vista iosA, la de "Add
+     The Sharp Team to your Home Screen") — si el miembro entra
+     en iPhone/iPad por Safari sin instalar (iosNeedsInstall) y
+     no ha tocado «I added it ✓» (marca LS_ADDED), la guía sale
+     EN LÍNEA arriba del todo en CADA carga del Dashboard: no
+     solo la primera vez (sin marca LS_FIRST) y sin que un
+     descarte la esconda (ya no hay descarte de 30 días).
+     Instalada = no sale nunca por aquí: en modo app/standalone
+     iosNeedsInstall es falso, y con la marca LS_ADDED tampoco.
+     Los pasos de ALERTAS (vista 'value' y demas) NO usan este
+     disparo: siguen con los suyos (primera entrada y tras ver
+     una jugada), sin cambios. */
+  var everyTries = 0;
+  function maybeShowEvery(){
+    if(shown || PREVIEW) return;
+    if(!iosNeedsInstall || lsGet(LS_ADDED) || ssGet('tlb_af_guide_done')) return;
+    if(!eligible || tourInTheWay()){
+      if(everyTries++ < 600) setTimeout(maybeShowEvery, 500);
+      return;
+    }
+    mountInline();
+    shown = true;
+    track('shown');
+    showInitial();
+  }
+  setTimeout(maybeShowEvery, 1400);
   /* Disparo: el miembro abrió el detalle de una jugada (vista de
      jugada de hoy). Esperamos a que cierre la hoja pa' no pelear
      con ella, y entonces sale la tarjeta. */
@@ -2096,14 +2151,20 @@ function dnHotClose(){
 .dn-top .dn-menubtn{transform:scale(1.15);transform-origin:center}
 </style>
 <style>
-/* GUIA DE INSTALACION EN AZUL OSCURO (2026-11-25, orden de Alex): SOLO la ventana .dnaf (la de "Add The Sharp Team to your Home Screen").
+/* GUIA DE INSTALACION EN AZUL OSCURO (2026-11-25, orden de Alex; ALCANCE CORREGIDO la misma noche):
+   el azul es SOLO pa' las vistas de INSTALACION de la app (iosA "Add The Sharp Team to your Home Screen"
+   e iosB, su continuacion) — la clase .dnaf-install la pone showView() solo en esas vistas.
+   CORRECCION: la primera version pintaba la tarjeta .dnaf entera, y como TODAS las vistas viven en la
+   misma tarjeta, los pasos de ALERTAS ('value' "Never miss a play", 'go', 'done', 'blocked') tambien
+   salian azules — Alex entro y vio azul la de notificaciones, que NO era la orden. Esos pasos vuelven
+   a su fondo original (la regla base de .dnaf: gradiente #1D2029 -> var(--panel), borde var(--accline)).
    Azules exactos de la previa /previa-azul-oscuro: tarjeta #0A1220 -> #070B14, cajas internas #0C1425, borde rgba(96,165,250,.30).
    Acentos verdes (numeros, boton, share), textos, pasos, logo y botones quedan intactos. Bloque final: gana a todas las capas anteriores. */
-.dnaf{background:linear-gradient(180deg,#0A1220,#070B14);border-color:rgba(96,165,250,.30)}
-.dnaf-block{background:#0C1425;border-color:rgba(96,165,250,.30)}
-.dnaf-guide-logo{background:#0C1425;border-color:rgba(96,165,250,.30)}
-.dnaf-bar{background:#0A1220;border-color:rgba(96,165,250,.30)}
-.dnaf-srow{background:#0A1220}
+.dnaf.dnaf-install{background:linear-gradient(180deg,#0A1220,#070B14);border-color:rgba(96,165,250,.30)}
+.dnaf.dnaf-install .dnaf-block{background:#0C1425;border-color:rgba(96,165,250,.30)}
+.dnaf.dnaf-install .dnaf-guide-logo{background:#0C1425;border-color:rgba(96,165,250,.30)}
+.dnaf.dnaf-install .dnaf-bar{background:#0A1220;border-color:rgba(96,165,250,.30)}
+.dnaf.dnaf-install .dnaf-srow{background:#0A1220}
 </style>
 </body>
 </html>
