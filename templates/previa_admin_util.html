@@ -1,0 +1,269 @@
+{% extends "base_v2.html" %}
+{% block content %}
+<style>
+/* PREVIA «Admin útil» (2026-11-26): Alex rechazó las rejillas de
+   cuadritos («parece una encuesta») y pidió un admin de verdad,
+   profesional, en la forma que elogió de WGT: PLANO, texto grande y
+   limpio, sin reguero de cajas. Una sola pantalla: resumen en texto
+   plano arriba · «Jugadas de hoy» en filas a todo lo ancho con el
+   botón real de disparo (admin_aprobar_jugadas) · lista plana de
+   secciones con divisores finos (Miembros · Platinum pagando ·
+   Enviar push con el formulario real de admin_crear_push · Con la
+   app puesta · Contabilidad) · «Lo último» al final con las
+   notificaciones gerenciales reales. Datos REALES del contexto
+   fusionado de /admin-e (_admin_contexto + _datos_previa_admin).
+   Paleta WGT: fondo #0C0F16, tarjeta #1D2029, verde #10CC87, acento
+   #1AE099, borde #2A2E3A, suave #9AA1AE, dorado #FBBF24. Tipo fino. */
+body.v2 { background: #0C0F16 !important; }
+.v2-wrap { padding-left: 10px !important; padding-right: 10px !important; padding-top: 0 !important; }
+.v2-topbar { display: none !important; }
+.v2-bottomnav { display: none !important; }
+.au { max-width: 760px; margin: 0 auto; padding: 18px 14px 64px; font-family: -apple-system, 'SF Pro', Inter, system-ui, sans-serif; color: #E8EAEE; }
+/* Encabezado: una sola tira limpia */
+.au-head { padding: 2px 2px 14px; border-bottom: 1px solid #2A2E3A; }
+.au-title { font-size: 17px; font-weight: 650; color: #fff; margin: 0; letter-spacing: -0.2px; }
+.au-date { font-size: 13px; color: #9AA1AE; margin-top: 3px; }
+.au-resumen { font-size: 14px; color: #E8EAEE; margin-top: 8px; line-height: 1.45; }
+.au-resumen b { color: #fff; font-weight: 650; }
+.au-resumen .dot { color: #2A2E3A; padding: 0 2px; }
+/* Títulos de sección */
+.au-h { font-size: 17px; font-weight: 650; color: #fff; margin: 22px 0 4px; letter-spacing: -0.2px; }
+.au-hsub { font-size: 12.5px; color: #9AA1AE; margin: 0 0 10px; }
+/* Filas de jugadas (hero) */
+.au-play { display: flex; align-items: center; gap: 12px; padding: 13px 2px; border-bottom: 1px solid #2A2E3A; }
+.au-play:last-child { border-bottom: none; }
+.au-check { width: 24px; height: 24px; accent-color: #10CC87; flex-shrink: 0; }
+.au-pick { flex: 1; min-width: 0; }
+.au-pick .pk { display: block; font-size: 15.5px; font-weight: 600; color: #fff; line-height: 1.3; }
+.au-pick .meta { display: block; font-size: 12.5px; color: #9AA1AE; margin-top: 2px; }
+.au-nivel { display: inline-block; font-size: 10.5px; font-weight: 700; letter-spacing: 0.8px; margin-bottom: 3px; }
+.au-nivel.plat { color: #6EA8FF; }
+.au-nivel.gold { color: #FBBF24; }
+.au-nivel.vault { color: #B18CFF; }
+.au-nivel.otro { color: #1AE099; }
+.au-nums { text-align: right; flex-shrink: 0; }
+.au-nums .cuota { display: block; font-size: 15.5px; font-weight: 650; color: #fff; line-height: 1.3; }
+.au-nums .stake { display: block; font-size: 12.5px; color: #9AA1AE; margin-top: 2px; }
+.au-pub { font-size: 11px; font-weight: 700; letter-spacing: 0.8px; color: #1AE099; flex-shrink: 0; }
+.au-fire { width: 100%; background: #10CC87; color: #052017; border: none; border-radius: 14px; padding: 15px; font-weight: 700; font-size: 16px; cursor: pointer; margin-top: 16px; display: block; font-family: inherit; }
+.au-vacio { font-size: 14px; color: #9AA1AE; padding: 12px 2px 4px; margin: 0; }
+/* Lista plana de secciones */
+.au-list { margin-top: 8px; }
+.au-sec { border-bottom: 1px solid #2A2E3A; }
+.au-sec > summary { list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 17px 2px; -webkit-tap-highlight-color: transparent; }
+.au-sec > summary::-webkit-details-marker { display: none; }
+.au-sec > summary::marker { content: ""; }
+.au-sec .s-t { font-size: 15.5px; font-weight: 600; color: #fff; }
+.au-sec .s-r { display: flex; align-items: center; gap: 9px; flex-shrink: 0; }
+.au-sec .s-n { font-size: 16px; font-weight: 650; color: #fff; line-height: 1; }
+.au-sec .s-n.hot { color: #1AE099; }
+.au-sec .s-ch { color: #1AE099; font-size: 17px; font-weight: 600; line-height: 1; transition: transform .18s ease; }
+.au-sec[open ] .s-ch { transform: rotate(90deg); }
+.au-sec .s-body { padding: 2px 2px 18px; }
+.au-line { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 7px 0; font-size: 14px; }
+.au-line .l { color: #9AA1AE; }
+.au-line .v { color: #fff; font-weight: 600; }
+.au-person { padding: 8px 0; border-bottom: 1px solid rgba(42,46,58,.55); }
+.au-person:last-child { border-bottom: none; }
+.au-person .pn { font-size: 14px; font-weight: 550; color: #fff; }
+.au-person .pm { display: block; font-size: 12.5px; color: #9AA1AE; margin-top: 1px; }
+.au-link { display: inline-block; margin-top: 10px; color: #1AE099; font-weight: 650; font-size: 14px; text-decoration: none; }
+.au-muted { color: #9AA1AE; font-size: 13.5px; margin: 4px 0; }
+/* Formulario de push (el real, dentro de su fila) */
+.pf-l { display: block; font-size: 11px; font-weight: 600; letter-spacing: 1px; color: #9AA1AE; text-transform: uppercase; margin: 13px 0 6px; }
+.pf-l:first-child { margin-top: 0; }
+.pf-in { width: 100%; box-sizing: border-box; background: #1D2029; border: 1px solid #2A2E3A; border-radius: 12px; color: #fff; padding: 12px; font-size: 15px; font-family: inherit; }
+.pf-in:focus { outline: none; border-color: #10CC87; }
+.pf-aud { display: flex; gap: 8px; }
+.pf-aud label { flex: 1; display: block; background: #1D2029; border: 1px solid #2A2E3A; border-radius: 12px; padding: 10px 12px; color: #fff; font-size: 13.5px; font-weight: 600; cursor: pointer; }
+.pf-aud label small { display: block; font-weight: 400; font-size: 12px; color: #9AA1AE; margin-top: 2px; }
+.pf-aud input { accent-color: #10CC87; margin-right: 6px; }
+.pf-btn { width: 100%; background: #10CC87; color: #052017; border: none; border-radius: 12px; padding: 13px; font-weight: 700; font-size: 15px; cursor: pointer; margin-top: 15px; display: block; font-family: inherit; }
+/* Lo último: feed plano */
+.au-feed { padding: 9px 0; border-bottom: 1px solid rgba(42,46,58,.55); }
+.au-feed:last-child { border-bottom: none; }
+.au-feed .ft { font-size: 14px; font-weight: 550; color: #fff; line-height: 1.4; }
+.au-feed .fd { display: block; font-size: 13px; color: #9AA1AE; margin-top: 1px; line-height: 1.4; }
+.au-feed .ff { display: block; font-size: 12px; color: #9AA1AE; margin-top: 2px; }
+</style>
+
+<div class="au">
+
+  <!-- Encabezado: Admin + fecha + resumen en texto plano -->
+  <div class="au-head">
+    <h1 class="au-title">Admin</h1>
+    <div class="au-date">{{ fecha_larga }}</div>
+    <p class="au-resumen"><b>{{ conteo_miembros.total }}</b> miembros <span class="dot">·</span> <b>{{ conteo_miembros.plat }}</b> Platinum pagando{% if ingresos %} <span class="dot">·</span> <b>${{ '%.0f'|format(ingresos.hoy) }}</b> hoy{% endif %}</p>
+  </div>
+
+  <!-- HERO · Jugadas de hoy -->
+  <h2 class="au-h">Jugadas de hoy</h2>
+  {% if selecciones %}
+  <p class="au-hsub">Pendientes de tu aprobación — marca las que van y dispara.</p>
+  <form method="POST" action="{{ url_for('admin_aprobar_jugadas') }}" id="auFireForm">
+    {% for p in selecciones %}
+      {% set pid = p.id or ('pend-' ~ loop.index) %}
+      {% set stake = p.stake_monto or p.monto %}
+      <div class="au-play">
+        <input type="checkbox" name="play_ids" value="{{ pid }}" class="au-check au-sel">
+        <div class="au-pick">
+          {% if p.nivel in ['PLATINUM', 'ELITE'] %}<span class="au-nivel plat">💎 PLATINUM</span>
+          {% elif p.nivel == 'GOLD' %}<span class="au-nivel gold">⭐ GOLD</span>
+          {% elif p.nivel == 'VAULT' %}<span class="au-nivel vault">🔒 VAULT</span>
+          {% elif p.nivel %}<span class="au-nivel otro">{{ p.nivel }}</span>{% endif %}
+          <span class="pk">{{ p.pick }}</span>
+          <span class="meta">{{ p.liga }}{% if p.game_time_et or p.hora %} · {{ p.game_time_et or p.hora }}{% endif %}{% if p.casa %} · {{ p.casa }}{% endif %}</span>
+        </div>
+        <div class="au-nums">
+          <span class="cuota">{{ p.cuota }}</span>
+          {% if stake %}<span class="stake">${{ stake }} en juego</span>{% endif %}
+        </div>
+      </div>
+    {% endfor %}
+    <button type="submit" class="au-fire">Aprobar y publicar →</button>
+  </form>
+  <script>
+  (function() {
+    var form = document.getElementById('auFireForm');
+    if (form) form.addEventListener('submit', function(e) {
+      var n = 0;
+      form.querySelectorAll('.au-sel').forEach(function(c) { if (c.checked) n++; });
+      if (n === 0) { e.preventDefault(); alert('Marca la casilla de cada jugada que quieras publicar primero.'); }
+    });
+  })();
+  </script>
+  {% elif plays_hoy %}
+  <p class="au-hsub">La card de hoy ya está publicada.</p>
+    {% for p in plays_hoy %}
+      {% set stake = p.stake_monto or p.monto %}
+      <div class="au-play">
+        <div class="au-pick">
+          {% if p.nivel in ['PLATINUM', 'ELITE'] %}<span class="au-nivel plat">💎 PLATINUM</span>
+          {% elif p.nivel == 'GOLD' %}<span class="au-nivel gold">⭐ GOLD</span>
+          {% elif p.nivel == 'VAULT' %}<span class="au-nivel vault">🔒 VAULT</span>
+          {% elif p.nivel %}<span class="au-nivel otro">{{ p.nivel }}</span>{% endif %}
+          <span class="pk">{{ p.pick }}</span>
+          <span class="meta">{{ p.liga }}{% if p.game_time_et or p.hora %} · {{ p.game_time_et or p.hora }}{% endif %}{% if p.casa %} · {{ p.casa }}{% endif %}</span>
+        </div>
+        <div class="au-nums">
+          <span class="cuota">{{ p.cuota }}</span>
+          {% if stake %}<span class="stake">${{ stake }} en juego</span>{% endif %}
+        </div>
+        <span class="au-pub">✓ PUBLICADA</span>
+      </div>
+    {% endfor %}
+  {% else %}
+  <p class="au-vacio">Sin jugadas pendientes.</p>
+  {% endif %}
+
+  <!-- Lista plana de secciones -->
+  <div class="au-list">
+
+    <details class="au-sec">
+      <summary>
+        <span class="s-t">Miembros</span>
+        <span class="s-r"><span class="s-n">{{ conteo_miembros.total }}</span><span class="s-ch">›</span></span>
+      </summary>
+      <div class="s-body">
+        <div class="au-line"><span class="l">Gratis</span><span class="v">{{ conteo_miembros.free }}</span></div>
+        <div class="au-line"><span class="l">En prueba</span><span class="v">{{ conteo_miembros.trial }}</span></div>
+        <div class="au-line"><span class="l">Platinum</span><span class="v">{{ conteo_miembros.plat }}</span></div>
+        <a class="au-link" href="{{ url_for('admin_miembros') }}">Gestionar miembros ›</a>
+      </div>
+    </details>
+
+    <details class="au-sec">
+      <summary>
+        <span class="s-t">Platinum pagando</span>
+        <span class="s-r"><span class="s-n hot">{{ conteo_miembros.plat }}</span><span class="s-ch">›</span></span>
+      </summary>
+      <div class="s-body">
+        {% set paying = miembros_lista | selectattr('platinum') | rejectattr('trial') | list %}
+        {% for m in paying %}
+        <div class="au-person">
+          <span class="pn">{{ m.nombre }}</span>
+          <span class="pm">{{ m.email }}</span>
+        </div>
+        {% else %}
+        <p class="au-muted">Todavía no hay Platinum pagando.</p>
+        {% endfor %}
+      </div>
+    </details>
+
+    <details class="au-sec">
+      <summary>
+        <span class="s-t">Enviar push notification</span>
+        <span class="s-r"><span class="s-n" style="font-size:13px;font-weight:700;color:#1AE099;">Redactar</span><span class="s-ch">›</span></span>
+      </summary>
+      <div class="s-body">
+        <form method="POST" action="{{ url_for('admin_crear_push') }}">
+          <label class="pf-l" for="auPushTitulo">Título</label>
+          <input class="pf-in" id="auPushTitulo" name="titulo" maxlength="80" placeholder="Ej.: Today's card is ready" required>
+          <label class="pf-l" for="auPushMensaje">Mensaje</label>
+          <textarea class="pf-in" id="auPushMensaje" name="mensaje" rows="3" maxlength="240" placeholder="Ej.: Today's plays are posted in your Dashboard" required></textarea>
+          <span class="pf-l">Audiencia</span>
+          <div class="pf-aud">
+            <label><input type="radio" name="audiencia" value="miembros" checked>Miembros<small>Con las alertas de jugadas encendidas</small></label>
+            <label><input type="radio" name="audiencia" value="solo_yo">Solo yo<small>Solo admin (pruebas)</small></label>
+          </div>
+          <label class="pf-l" for="auPushUrl">Abre en</label>
+          <input class="pf-in" id="auPushUrl" name="url" value="/home" placeholder="/home">
+          <button type="submit" class="pf-btn">Enviar push</button>
+        </form>
+      </div>
+    </details>
+
+    <details class="au-sec">
+      <summary>
+        <span class="s-t">Con la app puesta</span>
+        <span class="s-r"><span class="s-n hot">{{ app_instalados|default([], true)|length }}</span><span class="s-ch">›</span></span>
+      </summary>
+      <div class="s-body">
+        {% for a in app_instalados|default([], true) %}
+        <div class="au-person">
+          <span class="pn">{{ a.nombre }}</span>
+          <span class="pm">{{ a.email }} · desde {{ a.desde[:10] }} · última {{ a.ultima[:16].replace('T', ' ') }} · {{ a.aperturas }} aperturas</span>
+        </div>
+        {% else %}
+        <p class="au-muted">Todavía nadie ha puesto la app.</p>
+        {% endfor %}
+      </div>
+    </details>
+
+    <details class="au-sec">
+      <summary>
+        <span class="s-t">Contabilidad</span>
+        <span class="s-r"><span class="s-n hot">{% if ingresos %}${{ '%.0f'|format(ingresos.hoy) }}{% else %}—{% endif %}</span><span class="s-ch">›</span></span>
+      </summary>
+      <div class="s-body">
+        {% if ingresos %}
+        <div class="au-line"><span class="l">Hoy</span><span class="v">${{ '%.2f'|format(ingresos.hoy) }}</span></div>
+        <div class="au-line"><span class="l">Esta semana</span><span class="v">${{ '%.2f'|format(ingresos.semana|default(0)) }}</span></div>
+        <div class="au-line"><span class="l">Este mes</span><span class="v">${{ '%.2f'|format(ingresos.mes) }}</span></div>
+        <div class="au-line"><span class="l">Total histórico</span><span class="v">${{ '%.2f'|format(ingresos.total) }}</span></div>
+        {% for p in ingresos.ultimos %}
+        <div class="au-person">
+          <span class="pn">💵 Pago recibido — ${{ '%.2f'|format(p.monto) }}</span>
+          <span class="pm">{{ p.fecha }}</span>
+        </div>
+        {% endfor %}
+        {% else %}
+        <p class="au-muted">Ingresos no disponibles ahora mismo.</p>
+        {% endif %}
+      </div>
+    </details>
+  </div>
+
+  <!-- Lo último: notificaciones gerenciales reales -->
+  <h2 class="au-h">Lo último</h2>
+  {% for n in gerenciales|default([], true) %}
+  <div class="au-feed">
+    <span class="ft">{{ n.titulo }}</span>
+    {% if n.detalle %}<span class="fd">{{ n.detalle }}</span>{% endif %}
+    {% if n.created_at %}<span class="ff">{{ (n.created_at|string)[:16].replace('T', ' ') }}</span>{% endif %}
+  </div>
+  {% else %}
+  <p class="au-vacio">Sin actividad reciente.</p>
+  {% endfor %}
+</div>
+{% endblock %}
