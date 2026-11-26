@@ -17179,8 +17179,8 @@ def _admin_contexto():
     is_admin=1 (2026-10-15, orden de Alex: su cuenta de miembro es un
     miembro normal, sin acceso admin; el admin vive solo en su cuenta
     admin). Devuelve un dict de contexto, o la respuesta de redirección
-    si la cuenta no tiene permiso. Lo comparten /admin (Diseño E, en
-    vivo desde el 2026-11-25) y /admin-clasico (plantilla anterior)."""
+    si la cuenta no tiene permiso. Lo comparten /admin (seis cuadros,
+    en vivo desde el 2026-11-25), /admin-clasico y /admin-e."""
     db = get_db()
     user = current_user()
     if not _admin_o_cuenta_alex(user):
@@ -17365,7 +17365,8 @@ def _admin_contexto():
             _hoy_s = _ahora.strftime("%Y-%m-%d")
             _mes_s = _ahora.strftime("%Y-%m")
             _desde30 = _ahora - _tdi(days=30)
-            _tot = 0.0; _mes = 0.0; _d30 = 0.0; _hoy = 0.0; _ult = []
+            _desde7 = _ahora - _tdi(days=7)
+            _tot = 0.0; _mes = 0.0; _d30 = 0.0; _hoy = 0.0; _sem = 0.0; _ult = []
             _params = {"status": "paid", "limit": 100}
             for _pagina in range(3):
                 _resp = _stripe.Invoice.list(**_params)
@@ -17386,6 +17387,8 @@ def _admin_contexto():
                         _mes += _amt
                     if _f >= _desde30:
                         _d30 += _amt
+                    if _f >= _desde7:
+                        _sem += _amt
                     if _f.strftime("%Y-%m-%d") == _hoy_s:
                         _hoy += _amt
                     if len(_ult) < 5:
@@ -17393,7 +17396,7 @@ def _admin_contexto():
                 if not getattr(_resp, "has_more", False) or not _data:
                     break
                 _params["starting_after"] = _data[-1].get("id")
-            ingresos = {"total": _tot, "mes": _mes, "d30": _d30, "hoy": _hoy, "ultimos": _ult}
+            ingresos = {"total": _tot, "mes": _mes, "d30": _d30, "hoy": _hoy, "semana": _sem, "ultimos": _ult}
     except Exception:
         ingresos = None
     # 📱 APP INSTALADA (2026-11-25, Admin nuevo de seis bloques, orden de
@@ -17437,12 +17440,47 @@ def _admin_contexto():
 @app.route("/admin")
 @login_required
 def admin_dashboard():
-    """ADMIN EN VIVO — Diseño E «Command OS» (2026-11-25, orden de Alex:
-    «el admin sigue igual; tú no hiciste nada con el código que yo te
-    mandé»): /admin sirve AHORA la plantilla previa_admin_e.html, que es
-    el código EXACTO que Alex pegó, con el contexto completo del panel
-    (el de siempre más el historial de _datos_previa_admin). La
-    plantilla anterior queda en /admin-clasico como respaldo."""
+    """ADMIN EN VIVO — SEIS CUADROS (2026-11-25, idea aprobada por Alex:
+    «Admin de seis cuadritos» — «Móntalo»): /admin sirve la plantilla
+    admin_dashboard.html con EXACTAMENTE seis cuadros y nada fuera de
+    ellos — 1 Miembros · 2 Platinum pagando · 3 Enviar push · 4 Con la
+    app puesta · 5 Jugadas de hoy · 6 Contabilidad — cada uno con su
+    conteo por fuera y su detalle dentro, con el contexto completo del
+    panel (el de siempre más el historial de _datos_previa_admin).
+    Respaldos: el Admin de seis bloques anterior en /admin-clasico
+    (admin_legado.html) y el Diseño E «Command OS» en /admin-e."""
+    ctx = _admin_contexto()
+    if not isinstance(ctx, dict):
+        return ctx
+    try:
+        for _k, _v in _datos_previa_admin().items():
+            ctx.setdefault(_k, _v)
+    except Exception:
+        ctx.setdefault("historial", [])
+    return render_template("admin_dashboard.html", **ctx)
+
+
+@app.route("/admin-clasico")
+@login_required
+def admin_clasico():
+    """Respaldo: el Admin de seis bloques anterior (admin_legado.html)
+    con el mismo contexto completo de _admin_contexto. Nada se pierde:
+    aprobación de jugadas pendientes, push, miembros y contabilidad
+    viven en los mismos endpoints; esto es solo la presentación
+    anterior."""
+    ctx = _admin_contexto()
+    if not isinstance(ctx, dict):
+        return ctx
+    return render_template("admin_legado.html", **ctx)
+
+
+@app.route("/admin-e")
+@login_required
+def admin_e():
+    """Respaldo: el Diseño E «Command OS» (el código exacto que Alex
+    pegó, previa_admin_e.html) con el mismo contexto fusionado que
+    servía /admin hasta el 2026-11-25. Queda a un toque de distancia;
+    la previa con candado /previa-admin-e sigue intacta."""
     ctx = _admin_contexto()
     if not isinstance(ctx, dict):
         return ctx
@@ -17452,19 +17490,6 @@ def admin_dashboard():
     except Exception:
         ctx.setdefault("historial", [])
     return render_template("previa_admin_e.html", **ctx)
-
-
-@app.route("/admin-clasico")
-@login_required
-def admin_clasico():
-    """Respaldo: el Admin de siempre (admin_dashboard.html) con el mismo
-    contexto completo de _admin_contexto. Nada se pierde: aprobación de
-    jugadas pendientes, push, miembros y contabilidad viven en los
-    mismos endpoints; esto es solo la presentación anterior."""
-    ctx = _admin_contexto()
-    if not isinstance(ctx, dict):
-        return ctx
-    return render_template("admin_dashboard.html", **ctx)
 
 
 # ============================================================
