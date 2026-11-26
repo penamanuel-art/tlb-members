@@ -2223,20 +2223,26 @@ function dnHotClose(){
     var flip = document.createElement('span'); flip.className = 'pavo-flip';
     var hop = document.createElement('span'); hop.className = 'pavo-hop'; hop.textContent = '\uD83E\uDD83';
     flip.appendChild(hop); box.appendChild(flip); document.body.appendChild(box);
+    flip.style.transform = 'scaleX(-1)'; /* va hacia la derecha: mira a la derecha */
     requestAnimationFrame(function(){ box.style.opacity = '1'; });
-    var x = 6, dir = 1, speed = 62, last = null, start = null, dead = false;
+    /* UNA SOLA PASADA: entra por la izquierda brincando, cruza toda la pantalla
+       y al llegar al otro extremo SE CAE hacia abajo y desaparece. No vuelve. */
+    var x = -50, y = 0, speed = 62, last = null, fase = 'cruza', vy = 0, rot = 0, dead = false;
     function frame(ts){
       if(dead) return;
-      if(start === null){ start = ts; last = ts; }
+      if(last === null){ last = ts; }
       var dt = Math.min((ts - last) / 1000, 0.05); last = ts;
       var maxX = Math.max(6, window.innerWidth - 50);
-      x += dir * speed * dt;
-      if(x >= maxX){ x = maxX; dir = -1; }
-      else if(x <= 6){ x = 6; dir = 1; }
-      flip.style.transform = (dir === 1) ? 'scaleX(-1)' : 'scaleX(1)'; /* el emoji mira a la izquierda: se voltea al ir a la derecha */
-      box.style.transform = 'translateX(' + x.toFixed(1) + 'px)';
-      if(ts - start < 45000){ requestAnimationFrame(frame); }
-      else { box.style.opacity = '0'; setTimeout(function(){ dead = true; if(box.parentNode) box.parentNode.removeChild(box); }, 700); }
+      if(fase === 'cruza'){
+        x += speed * dt;
+        if(x >= maxX){ x = maxX; fase = 'cae'; hop.style.animation = 'none'; }
+      } else { /* cae: se desploma girando un poco hasta salir de la pantalla */
+        vy += 900 * dt; y += vy * dt; rot = Math.min(rot + 160 * dt, 80);
+        flip.style.transform = 'scaleX(-1) rotate(' + rot.toFixed(1) + 'deg)';
+        if(y > 160){ dead = true; if(box.parentNode) box.parentNode.removeChild(box); return; }
+      }
+      box.style.transform = 'translate(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px)';
+      requestAnimationFrame(frame);
     }
     requestAnimationFrame(frame);
   }catch(e){}
