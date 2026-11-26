@@ -13057,6 +13057,18 @@ def desbloquear_platinum():
                 fb_purchase_eid = "purchase_" + (
                     _pago_pi["invoice"]
                     or request.args.get("payment_intent") or "")
+        elif session.get("pe_attempt"):
+            # Volvió del redirect de Stripe (p. ej. 3-D Secure) SIN
+            # pago confirmado: el intento de esta sesión se limpia
+            # aquí (2026-11-25) — nadie queda en Stripe sin pagar.
+            # La limpieza verifica que el intent no quedó cobrado ni
+            # en proceso antes de tocar nada, así que un pago real en
+            # curso jamás se deshace por esta vía.
+            _intento = session.pop("pe_attempt", None)
+            try:
+                _desbloquear_limpiar_intento(user, _intento)
+            except Exception:
+                pass
     # Oferta ÚNICA (2026-11-11, orden de Alex): como todo el mundo
     # entra con 30 días gratis al registrarse, esta página de pago NO
     # ofrece semana gratis ni semana de $1 a NADIE — la plantilla ya no
@@ -13142,7 +13154,8 @@ def _invoice_payment_intent(inv):
     return {}
 
 
-def _desbloquear_intent_1(stripe, db, user, email, customer_id):
+def _desbloquear_intent_1(stripe, db, user, email, customer_id,
+                          customer_new=False):
     """Cobro de la cohorte de la entrada a $1 (2026-11-21): crea un
     Subscription Schedule de 2 fases DIRECTO sobre el cliente con
     start_date=ahora — fase 1: el precio intro ($1/semana) x 1
@@ -13215,6 +13228,19 @@ def _desbloquear_intent_1(stripe, db, user, email, customer_id):
                         "requires_action"):
                     secret = pi.get("client_secret") or ""
                     if secret:
+                        # Intento sembrado en sesión (2026-11-25): si
+                        # este pago NO se cobra, la página avisa a
+                        # /api/desbloquear/cancel-attempt y la limpieza
+                        # cancela esta suscripción y borra el cliente
+                        # si es cascarón sin pagos — nadie queda en
+                        # Stripe sin pagar (orden de Alex).
+                        session["pe_attempt"] = {
+                            "member_id": user["id"],
+                            "customer_id": customer_id,
+                            "customer_new": bool(customer_new),
+                            "sub_id": s.get("id"),
+                            "schedule_id": s.get("schedule"),
+                        }
                         return jsonify({
                             "clientSecret": secret,
                             "flow": "payment_element",
@@ -13302,6 +13328,16 @@ def _desbloquear_intent_1(stripe, db, user, email, customer_id):
                       % (_me,), flush=True)
             sub = stripe.Subscription.retrieve(
                 _sub_id, expand=["latest_invoice"])
+            # La suscripción del schedule YA nació: el intento se
+            # siembra en sesión desde ya (2026-11-25), pa' que
+            # cualquier salida sin cobro lo deje limpiable.
+            session["pe_attempt"] = {
+                "member_id": user["id"],
+                "customer_id": customer_id,
+                "customer_new": bool(customer_new),
+                "sub_id": sub.get("id"),
+                "schedule_id": sched.get("id"),
+            }
         except Exception as _e:
             print("[desbloquear-pe-1] schedule FAILED: %r" % (_e,),
                   flush=True)
@@ -13348,6 +13384,15 @@ def _desbloquear_intent_1(stripe, db, user, email, customer_id):
                   "inv=%s pi=%s" % (sub.get("id"), inv_id, pi.get("id")),
                   flush=True)
             return jsonify({"error": "could not create payment intent"}), 502
+        # Intento sembrado en sesión (2026-11-25): ver la nota del
+        # reuso de arriba — sin cobro, la limpieza lo deshace todo.
+        session["pe_attempt"] = {
+            "member_id": user["id"],
+            "customer_id": customer_id,
+            "customer_new": bool(customer_new),
+            "sub_id": sub.get("id"),
+            "schedule_id": sched.get("id"),
+        }
         return jsonify({
             "clientSecret": secret,
             "flow": "payment_element",
@@ -13438,6 +13483,156 @@ def _ya_se_suscribio_platinum(user) -> bool:
     return False
 
 
+def _desbloquear_limpiar_intento(user, intento):
+    """Limpieza de un intento de pago de /desbloquear-platinum que NO
+    se cobró (2026-11-25, orden de Alex: «nadie llega a Stripe si no
+    paga»): cancela el schedule/suscripción creados en ese intento,
+    barre otros restos sin pagar del MISMO flujo en ese cliente
+    (intentos abandonados de otras sesiones) y, si el cliente de
+    Stripe es un cascarón de alguien que nunca ha pagado (sin
+    facturas pagadas y sin suscripciones vivas), lo BORRA de Stripe
+    y desvincula su id de la cuenta.
+
+    GUARDA DURA: si la factura del intento quedó PAGADA o su
+    PaymentIntent quedó succeeded/processing, no se toca NADA de esa
+    suscripción — ese pago es real y el webhook invoice.paid activa
+    como siempre. Un suscriptor de verdad (factura pagada o
+    suscripción viva) JAMÁS pierde su cliente por esta limpieza.
+    Devuelve True si limpió algo."""
+    if not user or not intento or not STRIPE_SECRET_KEY:
+        return False
+    try:
+        if str(intento.get("member_id")) != str(user["id"]):
+            return False
+    except Exception:
+        return False
+    customer_id = (intento.get("customer_id") or "").strip()
+    sub_id = (intento.get("sub_id") or "").strip()
+    schedule_id = (intento.get("schedule_id") or "").strip()
+    if not customer_id:
+        return False
+    try:
+        import stripe
+        stripe.api_key = STRIPE_SECRET_KEY
+    except Exception:
+        return False
+    limpio = False
+    try:
+        # GUARDA: el intento SÍ se pagó (o el cobro está en proceso)
+        # → no tocar esa suscripción.
+        if sub_id:
+            _sub = stripe.Subscription.retrieve(
+                sub_id, expand=["latest_invoice"])
+            _inv = _sub.get("latest_invoice") or {}
+            if isinstance(_inv, dict) and _inv.get("id"):
+                if (_inv.get("status") or "") == "paid":
+                    return False
+                _pi = _invoice_payment_intent(_inv.get("id"))
+                if (_pi.get("status") or "") in (
+                        "succeeded", "processing"):
+                    return False
+        # Cancelar el schedule primero (libera la suscripción de sus
+        # fases) y después la suscripción misma: nada queda vivo de
+        # un intento que no pagó.
+        if schedule_id:
+            try:
+                stripe.SubscriptionSchedule.cancel(schedule_id)
+                limpio = True
+            except Exception:
+                pass
+        if sub_id:
+            try:
+                stripe.Subscription.cancel(sub_id)
+                limpio = True
+            except Exception:
+                pass
+        # Barrido de otros restos del MISMO flujo en este cliente:
+        # suscripciones incomplete del precio semanal y suscripciones
+        # del schedule de $1 (activas bajo schedule) cuya factura
+        # sigue SIN pagar y cuyo intent no se cobró. Las de otro
+        # origen (metadata source distinta) no se tocan.
+        try:
+            _subs = stripe.Subscription.list(
+                customer=customer_id, status="all", limit=100,
+                expand=["data.latest_invoice"])
+            for _s in (_subs.get("data") or []):
+                if _s.get("id") == sub_id:
+                    continue
+                if (_s.get("status") or "") not in (
+                        "incomplete", "active"):
+                    continue
+                _src = ((_s.get("metadata") or {}).get("source") or "")
+                if _src and _src != "desbloquear-payment-element":
+                    continue
+                if (_s.get("status") or "") == "active" \
+                        and not _s.get("schedule"):
+                    continue
+                _inv = _s.get("latest_invoice") or {}
+                if not isinstance(_inv, dict) or not _inv.get("id"):
+                    continue
+                if (_inv.get("status") or "") == "paid":
+                    continue
+                _items = ((_s.get("items") or {}).get("data")) or []
+                _precios = [(it.get("price") or {}).get("id")
+                            for it in _items]
+                if PLATINUM_PRICE_SEMANAL not in _precios and \
+                        PLATINUM_PRICE_ENTRADA_1 not in _precios:
+                    continue
+                _pi = _invoice_payment_intent(_inv.get("id"))
+                if (_pi.get("status") or "") in (
+                        "succeeded", "processing"):
+                    continue
+                try:
+                    if _s.get("schedule"):
+                        stripe.SubscriptionSchedule.cancel(
+                            _s.get("schedule"))
+                except Exception:
+                    pass
+                try:
+                    stripe.Subscription.cancel(_s.get("id"))
+                    limpio = True
+                except Exception:
+                    pass
+        except Exception:
+            pass
+        # ¿El cliente es un cascarón de alguien que NUNCA pagó? Sin
+        # facturas pagadas y sin suscripciones vivas → se borra de
+        # Stripe y se desvincula de la cuenta.
+        try:
+            _invs = stripe.Invoice.list(
+                customer=customer_id, limit=100)
+            _pago_alguna = any(
+                (i.get("status") or "") == "paid"
+                for i in (_invs.get("data") or []))
+            _subs2 = stripe.Subscription.list(
+                customer=customer_id, status="all", limit=100)
+            _viva = any(
+                (s.get("status") or "") in (
+                    "active", "trialing", "past_due", "unpaid",
+                    "incomplete")
+                for s in (_subs2.get("data") or []))
+            if not _pago_alguna and not _viva:
+                try:
+                    stripe.Customer.delete(customer_id)
+                except Exception:
+                    pass
+                limpio = True
+                try:
+                    _db = get_db()
+                    _db.execute(
+                        "UPDATE users SET stripe_customer_id = NULL "
+                        "WHERE id = ? AND stripe_customer_id = ?",
+                        (user["id"], customer_id))
+                    _db.commit()
+                except Exception:
+                    pass
+        except Exception:
+            pass
+    except Exception as _e:
+        print("[desbloquear-cleanup] error: %r" % (_e,), flush=True)
+    return limpio
+
+
 def _desbloquear_subscription_intent(user, email, customer_id):
     """Payment Element de /desbloquear-platinum (2026-11-11, orden de
     Alex: formulario corto tipo WGT, SOLO tarjeta, sin Apple Pay): crea
@@ -13456,12 +13651,35 @@ def _desbloquear_subscription_intent(user, email, customer_id):
         import stripe
         stripe.api_key = STRIPE_SECRET_KEY
         db = get_db()
+        # Barrido del intento anterior de ESTA sesión (2026-11-25): si
+        # un intento previo no se cobró y su limpieza no corrió (p. ej.
+        # la pestaña se cerró a mitad del pago), se limpia AQUÍ, antes
+        # de crear el nuevo — en Stripe no queda basura de intentos
+        # que no pagaron. La limpieza verifica que nada quedó pagado
+        # antes de tocarlo (ver _desbloquear_limpiar_intento).
+        _previo = session.get("pe_attempt")
+        if _previo:
+            session.pop("pe_attempt", None)
+            try:
+                _desbloquear_limpiar_intento(user, _previo)
+                # El barrido pudo borrar el cliente y desvincularlo
+                # de la cuenta: se relee el customer vigente.
+                _row = db.execute(
+                    "SELECT stripe_customer_id FROM users WHERE id = ?",
+                    (user["id"],)).fetchone()
+                if _row:
+                    customer_id = (
+                        _row["stripe_customer_id"] or "").strip()
+            except Exception:
+                pass
+        customer_new = False
         if not customer_id:
             cu = stripe.Customer.create(
                 email=email,
                 metadata={"member_id": str(user["id"]),
                           "member_email": email},
             )
+            customer_new = True
             customer_id = cu.get("id") or ""
             if customer_id:
                 db.execute(
@@ -13480,7 +13698,8 @@ def _desbloquear_subscription_intent(user, email, customer_id):
         # página (_ya_se_suscribio_platinum): texto y cobro cuadran.
         if not _ya_se_suscribio_platinum(user):
             return _desbloquear_intent_1(
-                stripe, db, user, email, customer_id)
+                stripe, db, user, email, customer_id,
+                customer_new=customer_new)
         # Reusar una suscripción incomplete viva de este cliente con el
         # precio semanal: su PaymentIntent sigue válido para pagar.
         try:
@@ -13502,8 +13721,19 @@ def _desbloquear_subscription_intent(user, email, customer_id):
                         "requires_action"):
                     secret = pi.get("client_secret") or ""
                     if secret:
+                        # Intento sembrado en sesión (2026-11-25): sin
+                        # cobro, la limpieza lo deshace (ver
+                        # _desbloquear_intent_1).
+                        session["pe_attempt"] = {
+                            "member_id": user["id"],
+                            "customer_id": customer_id,
+                            "customer_new": bool(customer_new),
+                            "sub_id": s.get("id"),
+                            "schedule_id": None,
+                        }
                         return jsonify({"clientSecret": secret,
-                                        "flow": "payment_element"})
+                                        "flow": "payment_element",
+                                        "subscription": s.get("id")})
         except Exception:
             pass
         sub = stripe.Subscription.create(
@@ -13524,6 +13754,16 @@ def _desbloquear_subscription_intent(user, email, customer_id):
                 "source": "desbloquear-payment-element",
             },
         )
+        # La suscripción YA nació: el intento se siembra en sesión
+        # desde ya (2026-11-25), pa' que cualquier salida sin cobro
+        # — incluso un 502 sin client_secret — lo deje limpiable.
+        session["pe_attempt"] = {
+            "member_id": user["id"],
+            "customer_id": customer_id,
+            "customer_new": bool(customer_new),
+            "sub_id": sub.get("id"),
+            "schedule_id": None,
+        }
         inv = sub.get("latest_invoice") or {}
         inv_id = inv.get("id") if isinstance(inv, dict) else inv
         pi = _invoice_payment_intent(inv_id) if inv_id else {}
@@ -13532,7 +13772,18 @@ def _desbloquear_subscription_intent(user, email, customer_id):
             print("[desbloquear-pe] SIN client_secret: sub=%s inv=%s pi=%s"
                   % (sub.get("id"), inv_id, pi.get("id")), flush=True)
             return jsonify({"error": "could not create payment intent"}), 502
-        return jsonify({"clientSecret": secret, "flow": "payment_element"})
+        # Intento sembrado en sesión (2026-11-25): sin cobro, la
+        # limpieza lo deshace (ver _desbloquear_intent_1).
+        session["pe_attempt"] = {
+            "member_id": user["id"],
+            "customer_id": customer_id,
+            "customer_new": bool(customer_new),
+            "sub_id": sub.get("id"),
+            "schedule_id": None,
+        }
+        return jsonify({"clientSecret": secret,
+                        "flow": "payment_element",
+                        "subscription": sub.get("id")})
     except Exception as _e:
         print("[desbloquear-pe] error creando suscripcion: %r" % (_e,),
               flush=True)
@@ -13647,6 +13898,38 @@ def desbloquear_checkout_session():
     except Exception:
         return jsonify({"error": "could not create checkout session"}), 502
     return jsonify({"clientSecret": cs.get("client_secret") or ""})
+
+
+@app.route("/api/desbloquear/cancel-attempt", methods=["POST"])
+@login_required
+def desbloquear_cancel_attempt():
+    """Limpieza del intento de pago que NO se cobró (2026-11-25,
+    orden de Alex: «nadie llega a Stripe si no paga»). La página lo
+    llama cuando Stripe rechaza la tarjeta o el pago no se completa
+    DESPUÉS de que el endpoint de cobro creó el cliente y la
+    suscripción pa' montar el confirm. Sin esto, quien pulsaba pagar
+    y no pagaba quedaba sembrado en Stripe (caso Ricardo, cliente
+    creado a las 12:56 sin pagar). El intento vive en la sesión (lo
+    siembra _desbloquear_subscription_intent al crear los objetos) y
+    la limpieza verifica que la factura NO quedó pagada antes de
+    tocar nada — ver _desbloquear_limpiar_intento. Idempotente: sin
+    intento en sesión, responde ok sin hacer nada."""
+    if not STRIPE_SECRET_KEY:
+        return jsonify({"ok": False,
+                        "error": "stripe not configured"}), 503
+    user = current_user()
+    if user is None:
+        return jsonify({"ok": False,
+                        "error": "login required"}), 401
+    intento = session.get("pe_attempt") or {}
+    session.pop("pe_attempt", None)
+    limpio = False
+    if intento:
+        try:
+            limpio = _desbloquear_limpiar_intento(user, intento)
+        except Exception:
+            limpio = False
+    return jsonify({"ok": True, "cleaned": bool(limpio)})
 
 
 @app.route("/admin/api/members-emails")
