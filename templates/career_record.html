@@ -3,38 +3,39 @@
 {% block content %}
 {% set sport_disp = {'NCAAF':'College football','CBB':'College basketball','NCAAB':'College basketball'} %}
 <style>
-.cr{max-width:1080px;margin:0 auto;padding:0 20px 110px}
-.cr-crumb{font-size:13px;font-weight:500;color:#a3a8b3;padding-top:14px}
+main.container{max-width:none;padding:0}
+.cr{max-width:1080px;margin:0 auto;padding:0 20px 64px}
+.cr-crumb{font-size:12.5px;font-weight:500;color:#a3a8b3;padding-top:10px}
 .cr-crumb a{color:#c4cad6;text-decoration:none}
 .cr-crumb a:hover{color:#1AE099}
 .cr-crumb .sep{margin:0 4px;color:#8b93a4}
-.cr h1{font-family:'Unbounded',sans-serif;font-weight:800;font-size:30px;line-height:1.12;margin:16px -16px 0;color:#fff}
-@media(max-width:620px){.cr h1{font-size:clamp(30px,8.2vw,36px)}}
+.cr h1{font-family:'Unbounded',sans-serif;font-weight:800;font-size:26px;line-height:1.12;margin:10px 0 0;color:#fff}
+@media(max-width:620px){.cr h1{font-size:clamp(23px,6.4vw,26px)}}
 .cr h1 .mint{color:#1AE099}
-.cr .intro{color:#a3a8b3;font-size:14px;line-height:1.6;margin:10px 0 0;max-width:640px}
-.cr-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:16px 0 8px}
-.cr-card{border-radius:16px;padding:20px;margin:0}
+.cr .intro{color:#a3a8b3;font-size:13.5px;line-height:1.5;margin:8px 0 0;max-width:640px}
+.cr-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:12px 0 4px}
+.cr-card{border-radius:12px;padding:13px 14px;margin:0}
 .cr-card.hot{background:linear-gradient(160deg,rgba(16,204,135,.12),#1D2029);border:1px solid rgba(16,204,135,.22)}
 .cr-card.plain{background:#1D2029;border:1px solid #2A2E3A}
-.cr-label{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:#9AA1AE;font-weight:400}
-.cr-big{font-family:'Unbounded',sans-serif;font-weight:800;font-size:28px;color:#fff;line-height:1.1;margin:6px 0 0}
-.cr-profit{font-family:'Roboto Mono',monospace;font-size:15px;font-weight:700;color:#1AE099;margin:2px 0 0}
+.cr-label{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#9AA1AE;font-weight:400}
+.cr-big{font-family:'Unbounded',sans-serif;font-weight:800;font-size:25px;color:#fff;line-height:1.1;margin:4px 0 0}
+.cr-profit{font-family:'Roboto Mono',monospace;font-size:14px;font-weight:700;color:#1AE099;margin:1px 0 0}
 .cr-profit.neg{color:#D51344}
-.cr-sub{color:#a3a8b3;font-size:12px;margin:4px 0 0}
-.cr-pill{display:inline-flex;align-items:center;gap:7px;background:rgba(16,204,135,.12);border:1px solid rgba(16,204,135,.22);border-radius:999px;padding:6px 11px;margin:2px 0 10px;color:#1AE099;font-size:14px;font-weight:600}
+.cr-sub{color:#a3a8b3;font-size:12px;margin:3px 0 0}
+.cr-pill{display:inline-flex;align-items:center;gap:7px;background:rgba(16,204,135,.12);border:1px solid rgba(16,204,135,.22);border-radius:999px;padding:5px 11px;margin:2px 0 8px;color:#1AE099;font-size:13.5px;font-weight:600}
 .cr-pill .tag{color:#a3a8b3;font-weight:600}
-.cr h2{font-family:'Unbounded',sans-serif;font-weight:700;font-size:18px;color:#fff;margin:22px 0 2px}
-.cr .note{color:#a3a8b3;font-size:13px;line-height:1.55;margin:0 0 14px}
+.cr h2{font-family:'Unbounded',sans-serif;font-weight:700;font-size:16px;color:#fff;margin:16px 0 2px}
+.cr .note{color:#a3a8b3;font-size:12.5px;line-height:1.5;margin:0 0 10px}
 .cr-nums{border-top:1px solid #2A2E3A}
-.cr-nums .row{display:flex;justify-content:space-between;align-items:baseline;gap:14px;padding:8px 2px;border-bottom:1px solid #2A2E3A}
+.cr-nums .row{display:flex;justify-content:space-between;align-items:baseline;gap:14px;padding:6px 2px;border-bottom:1px solid #2A2E3A}
 .cr-nums .k{color:#a3a8b3;font-size:12px;font-weight:600;letter-spacing:.04em}
-.cr-nums .v{color:#fff;font-family:'Roboto Mono',monospace;font-weight:700;font-size:20px;text-align:right;line-height:1.15}
+.cr-nums .v{color:#fff;font-family:'Roboto Mono',monospace;font-weight:700;font-size:18px;text-align:right;line-height:1.15}
 .cr-nums .v.mint{color:#1AE099}
-.cr-tix{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;padding:0}
+.cr-tix{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;padding:0;margin-bottom:4px}
 .cr-tix a{text-decoration:none}
 .cr-tix img{width:100%;height:auto;aspect-ratio:3/2;object-fit:cover;border-radius:11px;border:1px solid #2A2E3A;display:block;background:#0a0c12}
 .cr-tix span{display:block;color:#a3a8b3;font-size:12px;line-height:1.3;margin-top:4px}
-.cr-row{display:flex;align-items:center;gap:10px;background:#1D2029;border:1px solid #2A2E3A;border-radius:10px;padding:12px 14px;margin-top:7px}
+.cr-row{display:flex;align-items:center;gap:10px;background:#1D2029;border:1px solid #2A2E3A;border-radius:10px;padding:10px 12px;margin-top:6px}
 .cr-chip{font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;border-radius:6px;padding:3px 8px;border:1px solid;flex:0 0 auto}
 .cr-chip.PLATINUM{color:#FBBF24;border-color:rgba(251,191,36,.5);background:rgba(251,191,36,.08)}
 .cr-chip.GOLD{color:#1AE099;border-color:rgba(26,224,153,.5);background:rgba(26,224,153,.08)}
@@ -72,7 +73,13 @@
   </div>
   </div>
 
-  {% if racha %}
+  {% if rachas %}
+  <div>
+  {% for p in rachas %}
+  <span class="cr-pill">🔥 <b>{{ p.texto }}</b> <span class="tag">{{ p.tag }}</span></span><br>
+  {% endfor %}
+  </div>
+  {% elif racha %}
   <div><span class="cr-pill">🔥 <b>{{ racha }}</b> <span class="tag">Official Plays</span></span></div>
   {% endif %}
 
