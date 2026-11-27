@@ -3608,14 +3608,14 @@ def hot_home_cards():
             if r >= 3:
                 _rp = it[-r:]
                 cands.append({"tag": tag, "num": str(r), "word": "straight",
-                              "sub": f"winning {tag if tag != 'ALL SPORTS' else nombre} plays",
+                              "sub": f"winning {tag if tag != 'ALL SPORTS' else ('Sharp Edge' if nombre == 'Vault' else nombre)} plays",
                               "puntos": r, "score": 100 + r,
                               "ambito": f"{nombre}|{tag}",
                               "seq": [s["res"] for s in _rp],
                               "pct": None, "streak": None,
                               "pill": {"Platinum": "PLATINUM SELECTIONS",
                                        "Gold": "GOLD PLAYS",
-                                       "Vault": "VAULT PLAYS"}[nombre],
+                                       "Vault": "SHARP EDGE PLAYS"}[nombre],
                               "plays": [_pl(s) for s in reversed(_rp)]})
             tiene_30 = False
             for n in (10, 30):
@@ -3634,7 +3634,7 @@ def hot_home_cards():
                     tiene_30 = True
                 _vn = it[-n:]
                 cands.append({"tag": tag, "num": f"{w}-{l}", "word": None,
-                              "sub": f"in the last {n} {tag if tag != 'ALL SPORTS' else nombre} plays",
+                              "sub": f"in the last {n} {tag if tag != 'ALL SPORTS' else ('Sharp Edge' if nombre == 'Vault' else nombre)} plays",
                               "puntos": w,
                               "score": (w / float(w + l)) * 100 + (w - l),
                               "ambito": f"{nombre}|{tag}",
@@ -3643,13 +3643,13 @@ def hot_home_cards():
                               "streak": (r if r >= 2 else None),
                               "pill": {"Platinum": "PLATINUM SELECTIONS",
                                        "Gold": "GOLD PLAYS",
-                                       "Vault": "VAULT PLAYS"}[nombre],
+                                       "Vault": "SHARP EDGE PLAYS"}[nombre],
                               "plays": [_pl(s) for s in reversed(_vn)]})
             if n_tot > 10 and not tiene_30:
                 w, l = _rec(it)
                 if _fuerte(w, l):
                     cands.append({"tag": tag, "num": f"{w}-{l}", "word": None,
-                                  "sub": f"{tag if tag != 'ALL SPORTS' else nombre} record · all graded plays",
+                                  "sub": f"{tag if tag != 'ALL SPORTS' else ('Sharp Edge' if nombre == 'Vault' else nombre)} record · all graded plays",
                                   "puntos": w,
                                   "score": (w / float(w + l)) * 100 + (w - l),
                                   "ambito": f"{nombre}|{tag}",
@@ -3659,7 +3659,7 @@ def hot_home_cards():
                                   "streak": (r if r >= 2 else None),
                                   "pill": {"Platinum": "PLATINUM SELECTIONS",
                                            "Gold": "GOLD PLAYS",
-                                           "Vault": "VAULT PLAYS"}[nombre],
+                                           "Vault": "SHARP EDGE PLAYS"}[nombre],
                                   "plays": [_pl(s)
                                             for s in reversed(it)]})
         _orden_liga = {"NFL": 0, "NCAAF": 1, "NBA": 2, "NHL": 3,
@@ -5578,6 +5578,8 @@ def nivel_display(nivel) -> str:
         return "PLATINUM"
     if n == "FREE":
         return "FREE PICK"
+    if n == "VAULT":
+        return "SHARP EDGE"
     return n
 
 
@@ -7316,8 +7318,8 @@ def home():
     try:
         _hoy_iso2 = datetime.now(TZ).strftime("%Y-%m-%d")
         _MAP_NIVEL_Y = {"ELITE": "PLATINUM", "PLATINUM": "PLATINUM",
-                        "GOLD": "GOLD", "FREE": "GOLD", "VAULT": "VAULT"}
-        _ORDEN_NIVEL_Y = ["PLATINUM", "GOLD", "VAULT"]
+                        "GOLD": "GOLD", "FREE": "GOLD", "VAULT": "SHARP EDGE"}
+        _ORDEN_NIVEL_Y = ["PLATINUM", "GOLD", "SHARP EDGE"]
         for _d in load_archive():
             _f = _d.get("fecha") or ""
             if not _f or _f >= _hoy_iso2:
@@ -7398,7 +7400,7 @@ def home():
         if _ng:
             _partes.append(f"{_ng} Gold")
         if _nv:
-            _partes.append(f"{_nv} Vault")
+            _partes.append(f"{_nv} Sharp Edge")
         if _nf:
             _partes.append(f"{_nf} Free")
         estado = {"titulo": _t,
