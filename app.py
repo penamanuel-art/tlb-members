@@ -5586,6 +5586,152 @@ def nivel_display(nivel) -> str:
 app.jinja_env.globals.update(nivel_display=nivel_display)
 
 
+# Nombres CORTOS de equipo pa' el TITULO de la cara de la tarjeta
+# (2026-11-27, orden de Alex con foto: «Pon los nombres más cortos» — el
+# título salía cortado: «Oregon Ducks @ Maryland Terrapins Ov…»). SOLO
+# capa de display: los datos (pick, team_name, registro) NO se tocan.
+# Mecanismo: (1) mapa explícito nombre completo -> nombre corto, con
+# TODOS los equipos que han salido en jugadas de la temporada (archivo
+# + card de hoy, verificado nombre a nombre); en universitarios el
+# corto es la escuela sin la mascota (Oregon, Maryland, North Carolina)
+# y en profesionales el apodo (Eagles, Warriors), como lo muestra ESPN
+# (shortDisplayName). (2) Respaldo seguro pa' un equipo que no esté en
+# el mapa: solo se quita del FINAL una mascota conocida de la lista
+# curada de abajo — nunca se corta la escuela, así «North Carolina Tar
+# Heels» -> «North Carolina» y «San Diego State Aztecs» -> «San Diego
+# State». Si nada aplica, se devuelve el nombre completo tal cual.
+_TEAM_SHORT = {
+    # Universitarios (CBB/NCAAF): la escuela, sin mascota.
+    'BYU Cougars': 'BYU', 'Baylor Bears': 'Baylor',
+    'Creighton Bluejays': 'Creighton', 'Georgia Bulldogs': 'Georgia',
+    'Gonzaga Bulldogs': 'Gonzaga',
+    'Jacksonville State Gamecocks': 'Jacksonville State',
+    'Maryland Terrapins': 'Maryland',
+    'Northeastern Huskies': 'Northeastern',
+    'Northwestern Wildcats': 'Northwestern', 'Oregon Ducks': 'Oregon',
+    'UC Davis Aggies': 'UC Davis', 'UCF Knights': 'UCF',
+    'Akron Zips': 'Akron', 'Arizona State Sun Devils': 'Arizona State',
+    'Arizona Wildcats': 'Arizona', 'Cincinnati Bearcats': 'Cincinnati',
+    'Colorado Buffaloes': 'Colorado',
+    'East Carolina Pirates': 'East Carolina', 'Iowa Hawkeyes': 'Iowa',
+    'Iowa State Cyclones': 'Iowa State', 'Kansas Jayhawks': 'Kansas',
+    'Kansas State Wildcats': 'Kansas State',
+    'Michigan State Spartans': 'Michigan State',
+    'Minnesota Golden Gophers': 'Minnesota',
+    'Missouri Tigers': 'Missouri', 'Ohio Bobcats': 'Ohio',
+    'Oklahoma Sooners': 'Oklahoma',
+    'Oklahoma State Cowboys': 'Oklahoma State',
+    'Ole Miss Rebels': 'Ole Miss', 'Rice Owls': 'Rice',
+    'South Florida Bulls': 'South Florida', 'TCU Horned Frogs': 'TCU',
+    'Temple Owls': 'Temple', 'Texas Longhorns': 'Texas',
+    'Texas Tech Red Raiders': 'Texas Tech',
+    'Tulane Green Wave': 'Tulane', 'Tulsa Golden Hurricane': 'Tulsa',
+    'Utah Utes': 'Utah', 'Washington Huskies': 'Washington',
+    'West Virginia Mountaineers': 'West Virginia',
+    'Wisconsin Badgers': 'Wisconsin',
+    # NFL: el apodo.
+    'Atlanta Falcons': 'Falcons', 'Baltimore Ravens': 'Ravens',
+    'Buffalo Bills': 'Bills', 'Carolina Panthers': 'Panthers',
+    'Chicago Bears': 'Bears', 'Cleveland Browns': 'Browns',
+    'Dallas Cowboys': 'Cowboys', 'Denver Broncos': 'Broncos',
+    'Green Bay Packers': 'Packers', 'Indianapolis Colts': 'Colts',
+    'Los Angeles Rams': 'Rams', 'New Orleans Saints': 'Saints',
+    'New York Giants': 'Giants', 'Philadelphia Eagles': 'Eagles',
+    'Pittsburgh Steelers': 'Steelers', 'Seattle Seahawks': 'Seahawks',
+    'Tampa Bay Buccaneers': 'Buccaneers', 'Tennessee Titans': 'Titans',
+    'Washington Commanders': 'Commanders',
+    # NBA: el apodo.
+    'Atlanta Hawks': 'Hawks', 'Boston Celtics': 'Celtics',
+    'Brooklyn Nets': 'Nets', 'Charlotte Hornets': 'Hornets',
+    'Chicago Bulls': 'Bulls', 'Cleveland Cavaliers': 'Cavaliers',
+    'Dallas Mavericks': 'Mavericks', 'Denver Nuggets': 'Nuggets',
+    'Detroit Pistons': 'Pistons', 'Golden State Warriors': 'Warriors',
+    'Houston Rockets': 'Rockets', 'Indiana Pacers': 'Pacers',
+    'Los Angeles Clippers': 'Clippers', 'Los Angeles Lakers': 'Lakers',
+    'Memphis Grizzlies': 'Grizzlies', 'Miami Heat': 'Heat',
+    'Milwaukee Bucks': 'Bucks',
+    'Minnesota Timberwolves': 'Timberwolves',
+    'New Orleans Pelicans': 'Pelicans', 'New York Knicks': 'Knicks',
+    'Oklahoma City Thunder': 'Thunder', 'Orlando Magic': 'Magic',
+    'Philadelphia 76ers': '76ers', 'Phoenix Suns': 'Suns',
+    'Portland Trail Blazers': 'Trail Blazers',
+    'San Antonio Spurs': 'Spurs', 'Toronto Raptors': 'Raptors',
+    'Utah Jazz': 'Jazz', 'Washington Wizards': 'Wizards',
+    # NHL: el apodo.
+    'Anaheim Ducks': 'Ducks', 'Boston Bruins': 'Bruins',
+    'Buffalo Sabres': 'Sabres', 'Calgary Flames': 'Flames',
+    'Carolina Hurricanes': 'Hurricanes',
+    'Chicago Blackhawks': 'Blackhawks',
+    'Colorado Avalanche': 'Avalanche', 'Dallas Stars': 'Stars',
+    'Detroit Red Wings': 'Red Wings', 'Edmonton Oilers': 'Oilers',
+    'Los Angeles Kings': 'Kings', 'Minnesota Wild': 'Wild',
+    'Montreal Canadiens': 'Canadiens',
+    'Montréal Canadiens': 'Canadiens',
+    'Nashville Predators': 'Predators', 'New Jersey Devils': 'Devils',
+    'New York Islanders': 'Islanders', 'New York Rangers': 'Rangers',
+    'Ottawa Senators': 'Senators', 'Philadelphia Flyers': 'Flyers',
+    'Seattle Kraken': 'Kraken', 'St. Louis Blues': 'Blues',
+    'Tampa Bay Lightning': 'Lightning',
+    'Toronto Maple Leafs': 'Maple Leafs', 'Utah Mammoth': 'Mammoth',
+    'Vegas Golden Knights': 'Golden Knights',
+    'Washington Capitals': 'Capitals',
+    # MLB: el apodo.
+    'Cleveland Guardians': 'Guardians',
+    'Los Angeles Dodgers': 'Dodgers', 'Milwaukee Brewers': 'Brewers',
+    'Tampa Bay Rays': 'Rays',
+}
+
+# Mascotas conocidas (respaldo): SOLO se quitan si son el final exacto
+# del nombre y queda escuela delante. Orden: las de dos palabras primero.
+_TEAM_MASCOT_SUFFIXES = [
+    'Golden Gophers', 'Horned Frogs', 'Red Raiders', 'Green Wave',
+    'Golden Hurricane', 'Sun Devils', 'Tar Heels', 'Crimson Tide',
+    'Fighting Irish', 'Red Storm', 'Scarlet Knights', 'Yellow Jackets',
+    'Nittany Lions', 'Golden Eagles', 'Blue Devils', 'Demon Deacons',
+    'Thundering Herd', 'Red Wolves', 'Black Knights', 'Golden Flashes',
+    'Rainbow Warriors', 'Fighting Illini', 'Aggies', 'Aztecs',
+    'Beavers',
+    'Badgers', 'Bears', 'Bearcats', 'Bluejays', 'Bobcats', 'Broncos',
+    'Bruins', 'Buckeyes', 'Buffaloes', 'Bulldogs', 'Cardinal',
+    'Catamounts', 'Commodores', 'Cornhuskers', 'Cougars', 'Cowboys',
+    'Cyclones', 'Ducks', 'Eagles', 'Falcons', 'Gamecocks', 'Gators',
+    'Gophers', 'Hawkeyes', 'Hilltoppers', 'Hoosiers', 'Hornets',
+    'Hurricanes', 'Huskies', 'Jayhawks', 'Knights', 'Lions',
+    'Lumberjacks', 'Miners', 'Mountaineers', 'Owls', 'Panthers',
+    'Pirates', 'Razorbacks', 'Rebels', 'Roadrunners', 'Seminoles',
+    'Sooners', 'Spartans', 'Terrapins', 'Tigers', 'Trojans', 'Utes',
+    'Volunteers', 'Wildcats', 'Wolverines', 'Zips',
+]
+
+
+def team_short(name) -> str:
+    """Nombre corto de un equipo pa' titulares de tarjeta (display)."""
+    n = (name or '').strip()
+    if not n:
+        return n
+    if n in _TEAM_SHORT:
+        return _TEAM_SHORT[n]
+    for suf in _TEAM_MASCOT_SUFFIXES:
+        if n.endswith(' ' + suf) and len(n) > len(suf) + 1:
+            return n[:-(len(suf) + 1)]
+    return n
+
+
+def pick_short(pick, *names) -> str:
+    """El pick con los nombres de equipo en corto (display): reemplaza
+    cada nombre completo por su corto, el más largo primero pa' que un
+    nombre nunca pise al otro («Oregon» vs «Oregon State»)."""
+    s = pick or ''
+    for n in sorted({x for x in names if x}, key=len, reverse=True):
+        corto = team_short(n)
+        if corto != n:
+            s = s.replace(n, corto)
+    return s
+
+
+app.jinja_env.globals.update(team_short=team_short, pick_short=pick_short)
+
+
 def _load_ncaaf_abbr2id():
     # ESPN exige ID numérico para logos NCAAF (ncaa/500/<id>.png); NFL/MLB aceptan abreviatura.
     try:
