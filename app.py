@@ -12974,6 +12974,53 @@ def career_record():
         if last10 and lw > ll:
             racha = "%d-%d in the last %d plays" % (lw, ll, len(last10))
 
+    # Píldoras de racha por deporte y por nivel (pedido Alex 2026-11-27,
+    # forma de la página de Records de WGT): SOLO rachas vigentes reales
+    # (>=2 ganadas seguidas y la última jugada decisiva del grupo es del
+    # día liquidado más reciente; una racha de un deporte sin jugadas
+    # recientes no cuenta como vigente). Si no hay, no se muestra nada.
+    rachas = []
+    if graded:
+        ultima_fecha = graded[0]["fecha"]
+        _sport_disp = {"NCAAF": "College football",
+                       "CBB": "College basketball",
+                       "NCAAB": "College basketball",
+                       "NFL": "NFL", "NBA": "NBA", "NHL": "NHL",
+                       "MLB": "MLB"}
+
+        def _racha_vigente(rows):
+            dec = [r for r in rows if r["res"] in ("WON", "LOST")]
+            if not dec or dec[0]["fecha"] != ultima_fecha:
+                return 0
+            s = 0
+            for r in dec:
+                if r["res"] == "WON":
+                    s += 1
+                else:
+                    break
+            return s if s >= 2 else 0
+
+        _por_deporte = {}
+        _por_nivel = {}
+        for r in graded:
+            _por_deporte.setdefault(r["liga"], []).append(r)
+            _por_nivel.setdefault(r["nivel"], []).append(r)
+        for liga, rows in _por_deporte.items():
+            s = _racha_vigente(rows)
+            if s:
+                rachas.append({
+                    "texto": "%d straight winning %s plays" % (
+                        s, _sport_disp.get(liga, liga)),
+                    "tag": "Official Plays", "n": s})
+        for nivel, rows in _por_nivel.items():
+            s = _racha_vigente(rows)
+            if s:
+                rachas.append({
+                    "texto": "%d straight winning %s plays" % (
+                        s, nivel.title()),
+                    "tag": "Official Plays", "n": s})
+        rachas.sort(key=lambda x: -x["n"])
+
     win_tickets = [r for r in graded
                    if r["res"] == "WON" and r["comprobante"]][:6]
     recent = graded[:10]
@@ -12982,7 +13029,8 @@ def career_record():
     except Exception:
         desde = ""
     return render_template("career_record.html", tot=tot, plat=plat,
-                           racha=racha, win_tickets=win_tickets,
+                           racha=racha, rachas=rachas,
+                           win_tickets=win_tickets,
                            recent=recent, desde=desde,
                            primera_fmt=_fmt(primera) if primera else "")
 
