@@ -67,7 +67,7 @@ main.container{max-width:none;padding:0}
 
   <h1>The Sharp Team<br><span class="mint">graded plays ledger</span></h1>
   <p class="sub">Every play since September with its graded ticket photo, win or lose.</p>
-  <p class="intro">Last graded play added {{ ultima_fmt }}. This is The Sharp Team graded plays ledger: every Platinum, Gold and Vault play graded since {{ primera_fmt }} that has its ticket photo on file, wins and losses alike, newest first. Tap any ticket to open it full size. Every play on this page was posted before game time — that is the rule, and this page is the proof.</p>
+  <p class="intro">Last graded play added {{ ultima_fmt }}. This is The Sharp Team graded plays ledger: every Platinum, Gold and Sharp Edge play graded since {{ primera_fmt }} that has its ticket photo on file, wins and losses alike, newest first. Tap any ticket to open it full size. Every play on this page was posted before game time — that is the rule, and this page is the proof.</p>
 
   <p class="countline"><b>{{ total }}</b> plays graded since {{ primera_fmt }} · <b>{{ con_foto }}</b> with ticket photos. <span id="ledShowing">Showing 1 to {{ [50, total]|min }}.</span></p>
   <a class="career" href="{{ url_for('career_record') }}">Career record →</a>
@@ -78,7 +78,7 @@ main.container{max-width:none;padding:0}
     <button class="pill on" data-val="ALL">All levels<span class="n">{{ total }}</span></button>
     <button class="pill" data-val="PLATINUM">Platinum<span class="n">{{ counts_level.PLATINUM }}</span></button>
     <button class="pill" data-val="GOLD">Gold<span class="n">{{ counts_level.GOLD }}</span></button>
-    <button class="pill" data-val="VAULT">Vault<span class="n">{{ counts_level.VAULT }}</span></button>
+    <button class="pill" data-val="VAULT">Sharp Edge<span class="n">{{ counts_level.VAULT }}</span></button>
   </div>
 
   <div class="flabel">SPORT</div>
@@ -111,7 +111,7 @@ main.container{max-width:none;padding:0}
       {% endif %}
       <div class="led-body">
         <div class="led-top">
-          <span class="led-chip {{ g.nivel }}">{{ g.nivel }}</span>
+          <span class="led-chip {{ g.nivel }}">{{ 'SHARP EDGE' if g.nivel == 'VAULT' else g.nivel }}</span>
           <span class="led-meta">{{ sport_disp.get(g.liga, g.liga) }} · {{ g.fecha_fmt }}</span>
           <span class="led-res {{ g.res }}">{{ g.res }}</span>
         </div>
