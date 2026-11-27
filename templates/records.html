@@ -3,54 +3,57 @@
 {% block content %}
 {% set sport_disp = {'NCAAF':'College football','CBB':'College basketball','NCAAB':'College basketball'} %}
 <style>
-.led{max-width:760px;margin:0 auto;padding:18px 16px 30px}
-.led-crumb{font-size:.95rem;color:#9AA1AE;margin-bottom:16px}
+.led{max-width:760px;margin:0 auto;padding:14px 16px 22px}
+.led-crumb{font-size:.85rem;color:#9AA1AE;margin-bottom:10px}
 .led-crumb a{color:#E8EAEE;text-decoration:none;font-weight:600}
-.led-crumb .sep{margin:0 8px;color:#5C6470}
-.led h1{font-family:'Unbounded',sans-serif;font-weight:800;font-size:clamp(2.05rem,9.6vw,2.55rem);line-height:1.14;margin:0 0 12px;color:#fff}
+.led-crumb .sep{margin:0 7px;color:#5C6470}
+.led h1{font-family:'Unbounded',sans-serif;font-weight:800;font-size:1.56rem;line-height:1.2;margin:0 0 8px;color:#fff}
 .led h1 .mint{color:#1AE099}
-.led .sub{font-size:1.08rem;font-weight:700;color:#fff;margin:0 0 14px;line-height:1.45}
-.led .intro{color:#9AA1AE;font-size:.98rem;line-height:1.7;margin:0 0 16px}
-.led .countline{color:#9AA1AE;font-size:.98rem;margin:0 0 6px}
+.led .sub{font-size:.94rem;font-weight:700;color:#fff;margin:0 0 8px;line-height:1.4}
+.led .intro{color:#9AA1AE;font-size:.84rem;line-height:1.55;margin:0 0 10px}
+.led .countline{color:#9AA1AE;font-size:.88rem;margin:0 0 4px}
 .led .countline b{color:#fff}
-.led .career{color:#1AE099;font-weight:700;font-size:.95rem;text-decoration:none;display:inline-block;margin-bottom:8px}
-.led-profit{text-align:center;margin:20px 0 8px}
-.led-profit-label{font-size:.72rem;letter-spacing:3px;color:#9AA1AE;font-weight:700;margin-bottom:8px}
-.led-profit-num{font-size:3.3rem;font-weight:800;color:#1AE099;line-height:1.05}
+.led .career{color:#1AE099;font-weight:700;font-size:.88rem;text-decoration:none;display:inline-block;margin-bottom:4px}
+.led-profit{text-align:center;margin:10px 0 4px}
+.led-profit-label{font-size:.68rem;letter-spacing:3px;color:#9AA1AE;font-weight:700;margin-bottom:5px}
+.led-profit-num{font-size:2.1rem;font-weight:800;color:#1AE099;line-height:1.05}
 .led-profit-num.neg{color:#f87171}
-.led-profit-sub{color:#9AA1AE;font-size:.95rem;font-weight:600;margin-top:9px}
+.led-profit-sub{color:#9AA1AE;font-size:.88rem;font-weight:600;margin-top:5px}
 .led-profit-sub b{color:#fff}
-.led .flabel{font-size:.85rem;letter-spacing:.14em;color:#9AA1AE;font-weight:600;margin:20px 0 10px}
-.led .pills{display:flex;flex-wrap:wrap;gap:10px}
-.led .pill{border:1px solid #2A2E3A;background:#1D2029;color:#E8EAEE;border-radius:999px;padding:11px 18px;font-size:16.5px;font-weight:600;cursor:pointer;font-family:inherit}
-.led .pill .n{color:#9AA1AE;font-weight:600;margin-left:7px}
-.led .pill.on{border:1.5px solid #10CC87;color:#1AE099;background:rgba(16,204,135,.10)}
+.led-filters{background:#1D2029;border:1px solid #2A2E3A;border-radius:16px;padding:14px;margin-top:10px}
+.led .flabel{font-size:10px;letter-spacing:.14em;color:#9AA1AE;font-weight:700;margin:10px 0 6px}
+.led-filters .flabel:first-child{margin-top:0}
+.led .pills{display:flex;flex-wrap:wrap;gap:6px}
+.led .pill{border:1px solid #2A2E3A;background:#232836;color:#C7CCD6;border-radius:999px;padding:5px 11px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:inherit}
+.led .pill .n{color:#C7CCD6;font-weight:600}
+.led .pill .n::before{content:"· "}
+.led .pill.on{border:1.5px solid #10CC87;color:#1AE099;background:rgba(16,204,135,.13)}
 .led .pill.on .n{color:#1AE099}
-.led .qa{background:rgba(26,224,153,.06);border-left:4px solid #1AE099;border-radius:10px;padding:16px 16px 12px;margin:22px 0 6px}
-.led .qa .t{font-size:.72rem;letter-spacing:2.5px;color:#9AA1AE;font-weight:700;margin-bottom:8px}
-.led .qa p{color:#9AA1AE;font-size:.97rem;line-height:1.65;margin:0 0 10px}
-.led .qa .by{color:#9AA1AE;font-size:.86rem;line-height:1.55}
-.led-card{display:flex;gap:13px;background:#1D2029;border:1px solid #2A2E3A;border-radius:14px;padding:13px;margin-top:12px}
-.led-thumb{flex:0 0 auto;width:88px;height:88px;border-radius:10px;overflow:hidden;background:#0C0F16;border:1px solid #2A2E3A;display:block}
+.led .qa{background:rgba(26,224,153,.06);border-left:4px solid #1AE099;border-radius:10px;padding:12px 13px 9px;margin:12px 0 4px}
+.led .qa .t{font-size:.7rem;letter-spacing:2.5px;color:#9AA1AE;font-weight:700;margin-bottom:5px}
+.led .qa p{color:#9AA1AE;font-size:.9rem;line-height:1.55;margin:0 0 7px}
+.led .qa .by{color:#9AA1AE;font-size:.8rem;line-height:1.5}
+.led-card{display:flex;gap:10px;background:#1D2029;border:1px solid #2A2E3A;border-radius:12px;padding:10px;margin-top:10px}
+.led-thumb{flex:0 0 auto;width:64px;height:64px;border-radius:8px;overflow:hidden;background:#0C0F16;border:1px solid #2A2E3A;display:block}
 .led-thumb img{width:100%;height:100%;object-fit:cover;display:block}
 .led-body{flex:1;min-width:0}
-.led-top{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
-.led-chip{font-size:.68rem;font-weight:800;letter-spacing:1.2px;border-radius:7px;padding:4px 9px;border:1px solid}
+.led-top{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.led-chip{font-size:.64rem;font-weight:800;letter-spacing:1.2px;border-radius:7px;padding:3px 7px;border:1px solid}
 .led-chip.PLATINUM{color:#FBBF24;border-color:rgba(251,191,36,.5);background:rgba(251,191,36,.08)}
 .led-chip.GOLD{color:#1AE099;border-color:rgba(26,224,153,.5);background:rgba(26,224,153,.08)}
 .led-chip.VAULT{color:#FBBF24;border-color:rgba(251,191,36,.5);background:rgba(251,191,36,.08)}
-.led-meta{color:#9AA1AE;font-size:.86rem;font-weight:600}
-.led-res{margin-left:auto;font-size:.72rem;font-weight:800;letter-spacing:1px;border-radius:999px;padding:5px 12px}
+.led-meta{color:#9AA1AE;font-size:.8rem;font-weight:600}
+.led-res{margin-left:auto;font-size:.68rem;font-weight:800;letter-spacing:1px;border-radius:999px;padding:4px 10px}
 .led-res.WON{color:#34D399;background:rgba(52,211,153,.13)}
 .led-res.LOST{color:#f87171;background:rgba(248,113,113,.15)}
 .led-res.PUSH,.led-res.VOID{color:#9AA1AE;background:rgba(255,255,255,.08)}
-.led-pick{color:#fff;font-weight:800;font-size:1.02rem;margin:7px 0 2px;line-height:1.35}
-.led-score{color:#9AA1AE;font-size:.9rem;margin:0 0 4px}
-.led-bot{display:flex;align-items:baseline;gap:8px;color:#9AA1AE;font-size:.92rem;font-weight:600;margin-top:6px}
-.led-bot .u{margin-left:auto;font-family:'Roboto Mono',monospace;font-weight:700;font-size:1rem}
+.led-pick{color:#fff;font-weight:800;font-size:.94rem;margin:5px 0 1px;line-height:1.3}
+.led-score{color:#9AA1AE;font-size:.84rem;margin:0 0 2px}
+.led-bot{display:flex;align-items:baseline;gap:8px;color:#9AA1AE;font-size:.86rem;font-weight:600;margin-top:4px}
+.led-bot .u{margin-left:auto;font-family:'Roboto Mono',monospace;font-weight:700;font-size:.92rem}
 .led-bot .u.plus{color:#34D399}.led-bot .u.minus{color:#f87171}.led-bot .u.zero{color:#9AA1AE}
-.led-more{display:block;margin:18px auto 0;background:rgba(26,224,153,.10);border:1px solid rgba(26,224,153,.5);color:#1AE099;font-weight:800;font-size:.92rem;border-radius:999px;padding:11px 26px;cursor:pointer;font-family:inherit}
-.led-none{color:#9AA1AE;text-align:center;padding:26px 0 6px;font-size:.95rem}
+.led-more{display:block;margin:12px auto 0;background:rgba(26,224,153,.10);border:1px solid rgba(26,224,153,.5);color:#1AE099;font-weight:800;font-size:.88rem;border-radius:999px;padding:9px 22px;cursor:pointer;font-family:inherit}
+.led-none{color:#9AA1AE;text-align:center;padding:16px 0 4px;font-size:.9rem}
 </style>
 <div class="led">
   <div class="led-crumb"><a href="{{ url_for('home') }}">Home</a><span class="sep">›</span><a href="{{ url_for('records') }}">Records</a><span class="sep">›</span>Graded plays ledger</div>
@@ -68,6 +71,7 @@
     <div class="led-profit-sub"><b>{{ wins }}-{{ losses }}</b> record · <b>{{ total }}</b> plays graded</div>
   </div>
 
+  <div class="led-filters">
   <div class="flabel">LEVEL</div>
   <div class="pills" data-group="level">
     <button class="pill on" data-val="ALL">All levels<span class="n">{{ total }}</span></button>
@@ -90,6 +94,7 @@
     <button class="pill" data-val="LOST">Lost</button>
     <button class="pill" data-val="PUSH">Push</button>
     <button class="pill" data-val="VOID">Void</button>
+  </div>
   </div>
 
   <div class="qa">
