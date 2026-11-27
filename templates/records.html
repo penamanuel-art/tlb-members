@@ -3,57 +3,58 @@
 {% block content %}
 {% set sport_disp = {'NCAAF':'College football','CBB':'College basketball','NCAAB':'College basketball'} %}
 <style>
-.led{max-width:760px;margin:0 auto;padding:14px 16px 22px}
-.led-crumb{font-size:.85rem;color:#9AA1AE;margin-bottom:10px}
-.led-crumb a{color:#E8EAEE;text-decoration:none;font-weight:600}
-.led-crumb .sep{margin:0 7px;color:#5C6470}
-.led h1{font-family:'Unbounded',sans-serif;font-weight:800;font-size:1.56rem;line-height:1.2;margin:0 0 8px;color:#fff}
+.led{max-width:1080px;margin:0 auto;padding:0 20px 110px}
+.led-crumb{font-size:12px;color:#9AA1AE;padding-top:18px}
+.led-crumb a{color:#a3a8b3;text-decoration:none}
+.led-crumb a:hover{color:#1AE099}
+.led-crumb .sep{margin:0 4px;color:#8b93a4}
+.led h1{font-family:'Unbounded',sans-serif;font-weight:800;font-size:32px;line-height:1.12;letter-spacing:-.4px;margin:12px 0 0;padding-top:12px;color:#fff}
+@media(max-width:899px){.led h1{font-size:25px}}
 .led h1 .mint{color:#1AE099}
-.led .sub{font-size:.94rem;font-weight:700;color:#fff;margin:0 0 8px;line-height:1.4}
-.led .intro{color:#9AA1AE;font-size:.84rem;line-height:1.55;margin:0 0 10px}
-.led .countline{color:#9AA1AE;font-size:.88rem;margin:0 0 4px}
-.led .countline b{color:#fff}
-.led .career{color:#1AE099;font-weight:700;font-size:.88rem;text-decoration:none;display:inline-block;margin-bottom:4px}
-.led-profit{text-align:center;margin:10px 0 4px}
-.led-profit-label{font-size:.68rem;letter-spacing:3px;color:#9AA1AE;font-weight:700;margin-bottom:5px}
-.led-profit-num{font-size:2.1rem;font-weight:800;color:#1AE099;line-height:1.05}
+.led .sub{font-size:16px;font-weight:500;color:#fff;margin:10px 0 0;line-height:1.4}
+@media(max-width:899px){.led .sub{font-size:15px}}
+.led .intro{color:#a3a8b3;font-size:14px;line-height:1.65;margin:8px 0 0;max-width:780px}
+.led .countline{color:#DDDDDD;font-size:13px;margin:12px 0 0}
+.led .countline b{color:#fff;font-family:'Roboto Mono',monospace;font-weight:500}
+.led .career{color:#1AE099;font-weight:600;font-size:13px;text-decoration:none;display:inline-block;margin-top:6px}
+.led-profit{text-align:center;margin:16px 0 4px}
+.led-profit-label{font-size:12px;letter-spacing:.1em;color:#9AA1AE;font-weight:700;margin-bottom:5px}
+.led-profit-num{font-size:34px;font-weight:800;color:#1AE099;line-height:1.05}
 .led-profit-num.neg{color:#f87171}
-.led-profit-sub{color:#9AA1AE;font-size:.88rem;font-weight:600;margin-top:5px}
+.led-profit-sub{color:#a3a8b3;font-size:13px;font-weight:600;margin-top:5px}
 .led-profit-sub b{color:#fff}
-.led-filters{background:#1D2029;border:1px solid #2A2E3A;border-radius:16px;padding:14px;margin-top:10px}
-.led .flabel{font-size:10px;letter-spacing:.14em;color:#9AA1AE;font-weight:700;margin:10px 0 6px}
-.led-filters .flabel:first-child{margin-top:0}
-.led .pills{display:flex;flex-wrap:wrap;gap:6px}
-.led .pill{border:1px solid #2A2E3A;background:#232836;color:#C7CCD6;border-radius:999px;padding:5px 11px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:inherit}
-.led .pill .n{color:#C7CCD6;font-weight:600}
-.led .pill .n::before{content:"· "}
-.led .pill.on{border:1.5px solid #10CC87;color:#1AE099;background:rgba(16,204,135,.13)}
+.led-filters{margin:14px 0 0;padding:0;background:none;border:0}
+.led .flabel{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#9AA1AE;font-weight:400;margin:0 0 6px}
+.led .pills{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 14px}
+.led .pill{display:inline-flex;align-items:center;gap:6px;border:1px solid #2A2E3A;background:#1D2029;color:#DDDDDD;border-radius:999px;padding:8px 14px;min-height:40px;box-sizing:border-box;font-size:13px;font-weight:600;line-height:1.25;cursor:pointer;font-family:inherit}
+.led .pill .n{font-family:'Roboto Mono',monospace;font-size:12px;color:#9AA1AE;font-weight:500}
+.led .pill.on{background:rgba(16,204,135,.12);border-color:#10CC87;color:#1AE099}
 .led .pill.on .n{color:#1AE099}
-.led .qa{background:rgba(26,224,153,.06);border-left:4px solid #1AE099;border-radius:10px;padding:12px 13px 9px;margin:12px 0 4px}
+.led .qa{background:rgba(26,224,153,.06);border-left:4px solid #1AE099;border-radius:10px;padding:12px 13px 9px;margin:36px 0 4px}
 .led .qa .t{font-size:.7rem;letter-spacing:2.5px;color:#9AA1AE;font-weight:700;margin-bottom:5px}
-.led .qa p{color:#9AA1AE;font-size:.9rem;line-height:1.55;margin:0 0 7px}
-.led .qa .by{color:#9AA1AE;font-size:.8rem;line-height:1.5}
-.led-card{display:flex;gap:10px;background:#1D2029;border:1px solid #2A2E3A;border-radius:12px;padding:10px;margin-top:10px}
-.led-thumb{flex:0 0 auto;width:64px;height:64px;border-radius:8px;overflow:hidden;background:#0C0F16;border:1px solid #2A2E3A;display:block}
-.led-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.led .qa p{color:#a3a8b3;font-size:14px;line-height:1.7;margin:0 0 7px}
+.led .qa .by{color:#a3a8b3;font-size:12px;line-height:1.5}
+.led-card{display:flex;gap:12px;background:#1D2029;border:1px solid #2A2E3A;border-radius:14px;padding:12px;margin-top:10px}
+.led-thumb{flex:0 0 auto;width:64px;height:64px;border-radius:9px;overflow:hidden;background:#0a0c12;border:1px solid #404555;display:block}
+.led-thumb img{width:100%;height:100%;object-fit:cover;object-position:top;display:block}
 .led-body{flex:1;min-width:0}
 .led-top{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
-.led-chip{font-size:.64rem;font-weight:800;letter-spacing:1.2px;border-radius:7px;padding:3px 7px;border:1px solid}
+.led-chip{font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;border-radius:6px;padding:3px 8px;border:1px solid}
 .led-chip.PLATINUM{color:#FBBF24;border-color:rgba(251,191,36,.5);background:rgba(251,191,36,.08)}
 .led-chip.GOLD{color:#1AE099;border-color:rgba(26,224,153,.5);background:rgba(26,224,153,.08)}
 .led-chip.VAULT{color:#FBBF24;border-color:rgba(251,191,36,.5);background:rgba(251,191,36,.08)}
-.led-meta{color:#9AA1AE;font-size:.8rem;font-weight:600}
-.led-res{margin-left:auto;font-size:.68rem;font-weight:800;letter-spacing:1px;border-radius:999px;padding:4px 10px}
-.led-res.WON{color:#34D399;background:rgba(52,211,153,.13)}
-.led-res.LOST{color:#f87171;background:rgba(248,113,113,.15)}
-.led-res.PUSH,.led-res.VOID{color:#9AA1AE;background:rgba(255,255,255,.08)}
-.led-pick{color:#fff;font-weight:800;font-size:.94rem;margin:5px 0 1px;line-height:1.3}
-.led-score{color:#9AA1AE;font-size:.84rem;margin:0 0 2px}
-.led-bot{display:flex;align-items:baseline;gap:8px;color:#9AA1AE;font-size:.86rem;font-weight:600;margin-top:4px}
-.led-bot .u{margin-left:auto;font-family:'Roboto Mono',monospace;font-weight:700;font-size:.92rem}
-.led-bot .u.plus{color:#34D399}.led-bot .u.minus{color:#f87171}.led-bot .u.zero{color:#9AA1AE}
-.led-more{display:block;margin:12px auto 0;background:rgba(26,224,153,.10);border:1px solid rgba(26,224,153,.5);color:#1AE099;font-weight:800;font-size:.88rem;border-radius:999px;padding:9px 22px;cursor:pointer;font-family:inherit}
-.led-none{color:#9AA1AE;text-align:center;padding:16px 0 4px;font-size:.9rem}
+.led-meta{color:#a3a8b3;font-size:12px;font-weight:400}
+.led-res{margin-left:auto;font-size:12px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;border-radius:999px;padding:3px 9px}
+.led-res.WON{color:#1AE099;background:rgba(16,204,135,.12)}
+.led-res.LOST{color:#ff6b8a;background:rgba(213,19,68,.14)}
+.led-res.PUSH,.led-res.VOID{color:#aab4bf;background:rgba(160,170,180,.14)}
+.led-pick{color:#fff;font-weight:600;font-size:13px;margin:5px 0 1px;line-height:1.35}
+.led-score{color:#a3a8b3;font-size:12px;margin:2px 0 0;line-height:1.35}
+.led-bot{display:flex;align-items:baseline;gap:8px;color:#a3a8b3;font-size:13px;font-weight:400;margin-top:4px;font-family:'Roboto Mono',monospace}
+.led-bot .u{margin-left:auto;font-family:'Roboto Mono',monospace;font-weight:500;font-size:13px}
+.led-bot .u.plus{color:#1AE099}.led-bot .u.minus{color:#ff6b8a}.led-bot .u.zero{color:#a3a8b3}
+.led-more{display:block;margin:16px auto 0;background:#1D2029;border:1px solid #404555;color:#DDDDDD;font-weight:600;font-size:13px;border-radius:10px;padding:9px 14px;cursor:pointer;font-family:inherit}
+.led-none{color:#a3a8b3;text-align:center;padding:34px 18px;font-size:14px}
 </style>
 <div class="led">
   <div class="led-crumb"><a href="{{ url_for('home') }}">Home</a><span class="sep">›</span><a href="{{ url_for('records') }}">Records</a><span class="sep">›</span>Graded plays ledger</div>
