@@ -764,7 +764,7 @@ body .dn-top-in > div:first-child{transform:scale(1.3);transform-origin:left cen
     <div class="dn-top-right">
       <button class="dn-iconbtn" type="button" id="dnBell" aria-label="Notifications"><svg viewBox="0 0 24 24" width="21.4" height="21.4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M13.7 20a2 2 0 0 1-3.4 0"/></svg></button>
       <a class="dn-iconbtn" href="{{ url_for('cuenta') }}" aria-label="Account"><svg viewBox="0 0 24 24" width="21.4" height="21.4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></a>
-      <a class="dn-viewpicks" href="#dnBoard">View picks <span aria-hidden="true">→</span></a>
+      <a class="dn-viewpicks" href="{{ url_for('records') }}">Full Record <span aria-hidden="true">→</span></a>
       <button class="dn-menubtn" type="button" id="dnMenuBtn" aria-label="Menu" aria-expanded="false">☰</button>
     </div>
   </div>
@@ -1338,9 +1338,9 @@ function dnHotClose(){
       <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2.2"/><circle cx="10" cy="17" r="2.2"/></svg>
       Tools<span class="dn-pip"></span>
     </a>
-    <a class="dn-tab" href="{{ url_for('records') }}" style="font-size:12px;white-space:nowrap">
+    <a class="dn-tab" href="{{ url_for('home') }}">
       <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2.5 2.5 0 0 0 0 5v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2.5 2.5 0 0 0 0-5Z"/><path d="M13 5v2M13 11v2M13 17v2"/></svg>
-      Full Record<span class="dn-pip"></span>
+      Picks<span class="dn-pip"></span>
     </a>
     <a class="dn-tab" href="{{ url_for('tracker_plays') }}">
       <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M7 14l4-5 3.5 3L18 7"/></svg>
