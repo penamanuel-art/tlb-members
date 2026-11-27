@@ -3,12 +3,18 @@
 {% block content %}
 {% set sport_disp = {'NCAAF':'College football','CBB':'College basketball','NCAAB':'College basketball'} %}
 <style>
+/* La base envuelve el contenido en <main class="container"> y style.css le da
+   padding:20px 16px; esta página ya trae su propio padding en .led (20px), así
+   que se APILABAN (36px laterales y 38px sobre el breadcrumb). Se neutraliza
+   el de la base SOLO en esta página: el efectivo queda 20px laterales y 18px
+   sobre el breadcrumb, como el ledger medido en vivo. */
+main.container{max-width:none;padding:0}
 .led{max-width:1080px;margin:0 auto;padding:0 20px 110px}
 .led-crumb{font-size:12px;color:#9AA1AE;padding-top:18px}
 .led-crumb a{color:#a3a8b3;text-decoration:none}
 .led-crumb a:hover{color:#1AE099}
 .led-crumb .sep{margin:0 4px;color:#8b93a4}
-.led h1{font-family:'Unbounded',sans-serif;font-weight:800;font-size:32px;line-height:1.12;letter-spacing:-.4px;margin:12px 0 0;padding-top:12px;color:#fff}
+.led h1{font-family:'Unbounded',sans-serif;font-weight:800;font-size:32px;line-height:1.12;letter-spacing:-.4px;margin:12px 0 0;color:#fff}
 @media(max-width:899px){.led h1{font-size:25px}}
 .led h1 .mint{color:#1AE099}
 .led .sub{font-size:16px;font-weight:500;color:#fff;margin:10px 0 0;line-height:1.4}
@@ -17,11 +23,11 @@
 .led .countline{color:#DDDDDD;font-size:13px;margin:12px 0 0}
 .led .countline b{color:#fff;font-family:'Roboto Mono',monospace;font-weight:500}
 .led .career{color:#1AE099;font-weight:600;font-size:13px;text-decoration:none;display:inline-block;margin-top:6px}
-.led-profit{text-align:center;margin:16px 0 4px}
-.led-profit-label{font-size:12px;letter-spacing:.1em;color:#9AA1AE;font-weight:700;margin-bottom:5px}
-.led-profit-num{font-size:34px;font-weight:800;color:#1AE099;line-height:1.05}
+.led-profit{text-align:center;margin:10px 0 2px}
+.led-profit-label{font-size:12px;letter-spacing:.1em;color:#9AA1AE;font-weight:700;margin-bottom:3px}
+.led-profit-num{font-size:30px;font-weight:800;color:#1AE099;line-height:1.05}
 .led-profit-num.neg{color:#f87171}
-.led-profit-sub{color:#a3a8b3;font-size:13px;font-weight:600;margin-top:5px}
+.led-profit-sub{color:#a3a8b3;font-size:13px;font-weight:600;margin-top:3px}
 .led-profit-sub b{color:#fff}
 .led-filters{margin:14px 0 0;padding:0;background:none;border:0}
 .led .flabel{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#9AA1AE;font-weight:400;margin:0 0 6px}
@@ -30,7 +36,7 @@
 .led .pill .n{font-family:'Roboto Mono',monospace;font-size:12px;color:#9AA1AE;font-weight:500}
 .led .pill.on{background:rgba(16,204,135,.12);border-color:#10CC87;color:#1AE099}
 .led .pill.on .n{color:#1AE099}
-.led .qa{background:rgba(26,224,153,.06);border-left:4px solid #1AE099;border-radius:10px;padding:12px 13px 9px;margin:36px 0 4px}
+.led .qa{background:rgba(26,224,153,.06);border-left:4px solid #1AE099;border-radius:10px;padding:12px 13px 9px;margin:20px 0 4px}
 .led .qa .t{font-size:.7rem;letter-spacing:2.5px;color:#9AA1AE;font-weight:700;margin-bottom:5px}
 .led .qa p{color:#a3a8b3;font-size:14px;line-height:1.7;margin:0 0 7px}
 .led .qa .by{color:#a3a8b3;font-size:12px;line-height:1.5}
