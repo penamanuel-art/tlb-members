@@ -739,6 +739,31 @@ body .dn-hello-row h1{white-space:normal;overflow-wrap:break-word;max-width:100%
 body .dn-top-in > div:first-child{transform:scale(1.3);transform-origin:left center}
 @media (max-width:559px){body .dn-top-in > div:first-child{transform:scale(1.1)}}
 </style>
+<style>
+/* ===== Hot right now: TODAS las tarjetas del MISMO tamaño (2026-11-27,
+   orden de Alex: «las dos primeras se ven demasiado largas/gordas, no
+   igual que las otras; ponlas como las otras»). Causa raíz medida en
+   render real (402px): el ancho ya era uniforme (flex-basis fijo), el
+   ALTO no — (1) las dos primeras tarjetas son las únicas con la fila
+   de racha (.dn-hot-streakrow, +28px de contenido) y quedaban más
+   largas que las demás; (2) una tarjeta con 16 puntos de W/L envolvía
+   los puntos a 2 filas (+19px); (3) el height:100% de la tarjeta
+   anulaba el align-items:stretch de la fila, así que ningún alto se
+   igualaba. Arreglo acotado SOLO a estas tarjetas: la tarjeta vuelve
+   a height:auto pa' que el stretch de la fila iguale todos los altos;
+   los puntos van en UNA sola fila (sin envolver); y en las tarjetas
+   con fila de racha se aprieta el espaciado interno en esos mismos
+   ~28px, pa' que el tamaño común sea el de las tarjetas que se ven
+   bien y no el de las gordas. El pie ya va pegado abajo con
+   margin-top:auto (bloque de tarjetas grandes), así que el alto
+   igualado no deja hueco feo. ===== */
+body .dn-hot-card{height:auto}
+body .dn-hot-card .dn-hot-dots{flex-wrap:nowrap;overflow:hidden}
+body .dn-hot-card:has(.dn-hot-streakrow) .dn-hot-num{margin-top:0}
+body .dn-hot-card:has(.dn-hot-streakrow) .dn-hot-sub2{margin-bottom:0}
+body .dn-hot-card:has(.dn-hot-streakrow) .dn-hot-dots{margin-bottom:2px}
+body .dn-hot-card:has(.dn-hot-streakrow) .dn-hot-streakrow{margin-bottom:4px}
+</style>
 </head>
 <body>
 
