@@ -14,12 +14,12 @@ main.container{max-width:none;padding:0}
 .cr h1 .mint{color:#1AE099}
 .cr .intro{color:#a3a8b3;font-size:13.5px;line-height:1.5;margin:8px 0 0;max-width:640px}
 .cr-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:12px 0 4px}
-.cr-card{border-radius:12px;padding:13px 14px;margin:0}
+.cr-card{border-radius:12px;padding:13px 14px;margin:0;text-align:center}
 .cr-card.hot{background:linear-gradient(160deg,rgba(16,204,135,.12),#1D2029);border:1px solid rgba(16,204,135,.22)}
 .cr-card.plain{background:#1D2029;border:1px solid #2A2E3A}
 .cr-label{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#9AA1AE;font-weight:400}
-.cr-big{font-family:'Unbounded',sans-serif;font-weight:800;font-size:25px;color:#fff;line-height:1.1;margin:4px 0 0}
-.cr-profit{font-family:'Roboto Mono',monospace;font-size:14px;font-weight:700;color:#1AE099;margin:1px 0 0}
+.cr-big{font-family:'Unbounded',sans-serif;font-weight:800;font-size:40px;color:#fff;line-height:1.05;margin:4px 0 0}
+.cr-profit{font-family:'Roboto Mono',monospace;font-size:16px;font-weight:700;color:#1AE099;margin:2px 0 0}
 .cr-profit.neg{color:#D51344}
 .cr-sub{color:#a3a8b3;font-size:12px;margin:3px 0 0}
 .cr-pill{display:inline-flex;align-items:center;gap:7px;background:rgba(16,204,135,.12);border:1px solid rgba(16,204,135,.22);border-radius:999px;padding:5px 11px;margin:2px 0 8px;color:#1AE099;font-size:13.5px;font-weight:600}
@@ -49,6 +49,17 @@ main.container{max-width:none;padding:0}
 .cr-amt{font-family:'Roboto Mono',monospace;font-weight:400;font-size:13px;flex:0 0 auto}
 .cr-amt.plus{color:#1AE099}.cr-amt.minus{color:#D51344}.cr-amt.zero{color:#9AA1AE}
 .cr-all{display:inline-flex;align-items:center;min-height:44px;color:#1AE099;font-weight:600;font-size:14px;text-decoration:none;margin-top:8px}
+.cr-panel{background:#1D2029;border:1px solid #2A2E3A;border-radius:14px;padding:14px;margin:14px 0 4px}
+.cr-panel h2{margin:0 0 4px;font-size:15.5px;line-height:1.3}
+.cr-panel .note{margin:0 0 4px}
+.cr-wl{display:flex;align-items:flex-start;gap:9px;padding:7px 0;border-bottom:1px solid #2A2E3A}
+.cr-wl:last-child{border-bottom:0;padding-bottom:1px}
+.cr-wl .box{flex:0 0 auto;width:24px;height:24px;border-radius:6px;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.cr-wl .box.WON{background:rgba(16,204,135,.14);color:#1AE099}
+.cr-wl .box.LOST{background:rgba(213,19,68,.14);color:#D51344}
+.cr-wl .date{flex:0 0 42px;color:#9AA1AE;font-size:12px;padding-top:4px;white-space:nowrap}
+.cr-wl .pick{color:#fff;font-size:13.5px;line-height:1.35;flex:1;min-width:0}
+.cr-wl .pick small{display:block;color:#a3a8b3;font-size:12px;margin-top:1px}
 </style>
 <div class="cr">
   <div class="cr-crumb"><a href="{{ url_for('home') }}">Home</a><span class="sep">/</span><a href="{{ url_for('records') }}">Records</a></div>
@@ -81,6 +92,20 @@ main.container{max-width:none;padding:0}
   </div>
   {% elif racha %}
   <div><span class="cr-pill">🔥 <b>{{ racha }}</b> <span class="tag">Official Plays</span></span></div>
+  {% endif %}
+
+  {% if plat_window %}
+  <div class="cr-panel">
+    <h2>🔥 Platinum: {{ platw.w }}-{{ platw.l }} in the last {{ platw.n }} plays across all sports</h2>
+    <p class="note">Platinum plays only — our top level, counted on its own, never mixed with Gold or Vault. Every play below was posted before its game with its ticket photo, most recent first.</p>
+    {% for r in plat_window %}
+    <div class="cr-wl">
+      <span class="box {{ r.res }}">{{ 'W' if r.res == 'WON' else 'L' }}</span>
+      <span class="date">{{ r.fecha_corta }}</span>
+      <span class="pick">{{ r.pick_disp }}<small>{% if r.team and r.opp %}{{ r.team }} vs {{ r.opp }} · {% endif %}{{ sport_disp.get(r.liga, r.liga) }}</small></span>
+    </div>
+    {% endfor %}
+  </div>
   {% endif %}
 
   <h2>Career record</h2>
