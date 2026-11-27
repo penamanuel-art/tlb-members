@@ -12865,11 +12865,19 @@ def records():
                 stake_u = float(j.get("stake_unidades") or 0)
             except (TypeError, ValueError):
                 stake_u = 0.0
+            try:
+                profit_f = float(j.get("profit") or 0)
+            except (TypeError, ValueError):
+                profit_f = 0.0
+            _team = (j.get("team_name") or "").strip()
+            _opp = (j.get("opp_name") or "").strip()
+            juego = (_team + " vs " + _opp) if (_team and _opp) else ""
             graded.append({
                 "pick": j.get("pick", ""), "cuota": cuota, "nivel": disp,
                 "liga": lg, "fecha": fecha, "fecha_fmt": _fmt(fecha),
                 "res": res, "units": _units(j), "stake_u": stake_u,
                 "comprobante": foto, "marcador": j.get("marcador") or "",
+                "profit": profit_f, "juego": juego,
             })
     graded.sort(key=lambda r: r["fecha"], reverse=True)
     _orden = ["NFL", "NBA", "MLB", "NHL", "NCAAF", "CBB", "WNBA"]
