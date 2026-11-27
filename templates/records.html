@@ -19,11 +19,14 @@
 .led-profit-num.neg{color:#f87171}
 .led-profit-sub{color:#9AA1AE;font-size:.95rem;font-weight:600;margin-top:9px}
 .led-profit-sub b{color:#fff}
-.led .flabel{font-size:.72rem;letter-spacing:2.5px;color:#9AA1AE;font-weight:700;margin:16px 0 8px}
-.led .pills{display:flex;flex-wrap:wrap;gap:8px}
-.led .pill{border:1px solid #2A2E3A;background:#1D2029;color:#9AA1AE;border-radius:999px;padding:9px 16px;font-size:.9rem;font-weight:700;cursor:pointer;font-family:inherit}
-.led .pill .n{color:#9AA1AE;font-weight:700;margin-left:5px}
-.led .pill.on{border-color:#1AE099;color:#1AE099;background:rgba(26,224,153,.10)}
+.led-filters{background:#1D2029;border:1px solid #2A2E3A;border-radius:16px;padding:14px;margin-top:14px}
+.led .flabel{font-size:10px;letter-spacing:.16em;color:#9AA1AE;font-weight:700;margin:10px 0 6px}
+.led-filters .flabel:first-child{margin-top:0}
+.led .pills{display:flex;flex-wrap:wrap;gap:6px}
+.led .pill{border:1px solid #2A2E3A;background:#232836;color:#C7CCD6;border-radius:999px;padding:5px 11px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:inherit}
+.led .pill .n{color:#C7CCD6;font-weight:600}
+.led .pill .n::before{content:"· "}
+.led .pill.on{border:1.5px solid #10CC87;color:#1AE099;background:rgba(16,204,135,.13)}
 .led .pill.on .n{color:#1AE099}
 .led .qa{background:rgba(26,224,153,.06);border-left:4px solid #1AE099;border-radius:10px;padding:16px 16px 12px;margin:20px 0 6px}
 .led .qa .t{font-size:.72rem;letter-spacing:2.5px;color:#9AA1AE;font-weight:700;margin-bottom:8px}
@@ -69,6 +72,7 @@
     <div class="led-profit-sub"><b>{{ wins }}-{{ losses }}</b> record · <b>{{ total }}</b> plays graded</div>
   </div>
 
+  <div class="led-filters">
   <div class="flabel">LEVEL</div>
   <div class="pills" data-group="level">
     <button class="pill on" data-val="ALL">All levels<span class="n">{{ total }}</span></button>
@@ -91,6 +95,7 @@
     <button class="pill" data-val="LOST">Lost</button>
     <button class="pill" data-val="PUSH">Push</button>
     <button class="pill" data-val="VOID">Void</button>
+  </div>
   </div>
 
   <div class="qa">
