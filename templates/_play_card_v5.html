@@ -182,27 +182,18 @@
 .v5m-strip-t{font-size:13.5px;font-weight:500;letter-spacing:.8px;color:#9AA1AE;white-space:nowrap}
 .v5m-strip-n{font-size:15px;font-weight:400;color:#9AA1AE;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .v5m-strip-hint{font-size:13.5px;font-weight:400;color:#9AA1AE;white-space:nowrap}
-.v5m{position:relative;overflow:hidden;background:#1D2029;border:1px solid #2A2E3A;border-radius:16px;padding:0;box-sizing:border-box;width:100%;max-width:100%;margin:0 0 22px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#FFFFFF}
-.v5m::before{content:"";position:absolute;top:0;bottom:0;left:0;width:5px;background:#10CC87}
-.v5m-band{display:flex;align-items:center;gap:8px;background:#262B38;padding:10px 16px;height:44px;box-sizing:border-box}
-.v5m-band-t{font-size:12px;font-weight:600;letter-spacing:2.4px;color:#9AA1AE;white-space:nowrap}
-.v5m-band-t.plat{color:#9AA1AE}
-.v5m-band-t.vault{color:#9AA1AE}
-.v5m-band-t.free{color:#1AE099}
-.v5m-band-t.gold{color:#1AE099}
-.v5m-band-l{margin-left:auto;flex:none;display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:500;letter-spacing:1.4px;color:#9AA1AE;white-space:nowrap}
-.v5m-band-logo{height:20px;width:auto;flex:none}
-.v5m-body{padding:0}
-.v5m-top{background:#262B38;padding:13px 16px 14px}
-.v5m-bot{padding:2px 16px 16px}
+.v5m{position:relative;background:#151922;border:1px solid #2A2E3A;border-top:3px solid #10CC87;border-radius:6px;padding:15px 16px 13px;box-sizing:border-box;width:100%;max-width:100%;margin:0 0 22px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#EDEFF3}
+.v5m::before{content:none !important}
+.v5m-r1{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px}
+.v5m-lvl{font-size:11px;font-weight:700;letter-spacing:.14em;color:#9AA1AE;white-space:nowrap}
+.v5m-lvl.plat,.v5m-lvl.vault{color:#FBBF24}
+.v5m-lvl.free,.v5m-lvl.gold{color:#1AE099}
+.v5m-liga{font-size:11px;font-weight:500;letter-spacing:1.4px;color:#9AA1AE;white-space:nowrap}
 .v5m-head{display:flex;gap:11px;align-items:flex-start}
 .v5m-logo{width:38px;height:38px;object-fit:contain;flex:none;margin-top:1px}
-.v5m-title{font-size:21px;font-weight:700;color:#FFFFFF;letter-spacing:-.2px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.v5m-sub{font-size:13px;font-weight:400;color:#9AA1AE;margin-top:5px;line-height:1.4}
-.v5m-explain{font-size:12.5px;font-weight:400;color:#9AA1AE;margin-top:4px;line-height:1.4}
-.v5m-subrow{display:flex;align-items:flex-start;gap:8px;margin-top:6px}
-.v5m-subrow .v5m-sub{margin-top:0;flex:1 1 auto;min-width:0}
-.v5m-pills{display:inline-flex;gap:5px;flex:none;margin-left:auto;padding-top:1px}
+.v5m-title{font-size:19px;font-weight:650;color:#FFFFFF;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v5m-explain{font-size:12px;font-weight:400;color:#9AA1AE;margin-top:3px;line-height:1.4}
+.v5m-pills{display:inline-flex;gap:5px;flex-wrap:wrap;margin-top:7px}
 .v5pill{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:500;color:#9AA1AE;background:#1D2029;border:1px solid #2A2E3A;border-radius:999px;padding:3px 8px;cursor:pointer;font-family:inherit;white-space:nowrap;line-height:1.25}
 .v5pill-steam{color:#1AE099;border-color:rgba(26,224,153,.55)}
 .v5m-res{display:inline-block;font-size:12px;font-weight:500;letter-spacing:1.4px;padding:4px 10px;border-radius:999px;margin-top:10px}
@@ -211,33 +202,24 @@
 @keyframes v5mBlink{0%,100%{opacity:1}50%{opacity:.25}}
 .v5m-res.won{color:#1AE099;background:rgba(52,211,153,.12)}
 .v5m-res.lost{color:#f87171;background:rgba(248,113,113,.1)}
-.v5m-nums{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;margin-top:0;padding-top:12px}
-.v5m-k{font-size:10px;font-weight:600;letter-spacing:1.8px;color:#9AA1AE}
-.v5m-price{font-size:18px;font-weight:500;color:#FFFFFF;line-height:1.1;margin-top:3px}
-.v5m-priceline{display:flex;align-items:flex-end;gap:9px}
-.v5m-priceline .v5m-chip{padding-bottom:6px;font-size:15px}
-.v5m-right{text-align:right;flex:none}
-.v5m-stake{font-size:18px;font-weight:600;color:#FFFFFF;line-height:1.15;margin-top:3px}
-.v5m-tok{font-size:12px;font-weight:500;color:#1AE099;margin-top:2px}
-.v5m-tpend{font-size:12px;font-weight:500;color:#9AA1AE;margin-top:2px}
-.v5m-meta{display:flex;gap:16px;flex-wrap:wrap;align-items:center;margin-top:10px;min-height:0;box-sizing:border-box}
-/* Liquidada y sin datos en la fila meta: la fila vacia NO reserva altura (2026-11-22, queja de Alex: hueco muerto en la tarjeta ya liquidada). En vivo la fila se queda igual que siempre. */
-.v5m-meta-off{display:none}
-.v5m-chip{display:inline-flex;align-items:center;gap:5px;font-size:13.5px;font-weight:400;color:#9AA1AE;background:none;border:none;padding:2px 0;cursor:pointer;font-family:inherit}
+.v5m-rows{border-top:1px solid #2A2E3A;margin-top:11px}
+.v5m-row{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid #232936;font-size:13px}
+.v5m-row:last-child{border-bottom:none}
+.v5m-k{color:#9AA1AE;flex:none;font-weight:400}
+.v5m-v{color:#EDEFF3;font-weight:500;text-align:right}
+.v5m-v b{font-weight:650}
+.v5m-green{color:#1AE099}
+.v5m-tok{display:block;font-size:11px;font-weight:500;color:#1AE099;margin-top:1px}
+.v5m-tpend{display:block;font-size:11px;font-weight:500;color:#9AA1AE;margin-top:1px}
+.v5m-chip{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:400;color:#9AA1AE;background:none;border:none;padding:2px 0;cursor:pointer;font-family:inherit}
 .v5m-chip-inj{color:#f87171}
-.v5m-chip-poly{display:inline-flex;align-items:center;gap:6px;background:#1D2029;border-radius:10px;padding:6px 10px;font-size:13.5px;font-weight:400;color:#9AA1AE;white-space:nowrap}
-.v5m-chip-poly .v5m-poly-ico{color:#9AA1AE;font-size:15px;line-height:1}
-.v5m-chip-poly b{color:#FFFFFF;font-weight:700}
-.v5m-posted{font-size:13px;font-weight:400;color:#9AA1AE}
-.v5m-btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
-.v5m-btn{flex:1 1 0;min-width:0;text-align:center;font-size:13px;font-weight:400;white-space:nowrap;overflow:hidden;color:#9AA1AE;background:#0C0F16;border:1px solid #2A2E3A;border-radius:10px;padding:11px 12px;text-decoration:none;box-sizing:border-box;cursor:pointer;font-family:inherit}
-/* Place at (2026-11-09, queja de Alex: «Place at Novig» se cortaba): el boton se dimensiona por su contenido — la etiqueta completa SIEMPRE dentro, sin recorte; si la fila no cabe, envuelve (flex-wrap en .v5m-btns) en vez de cortar el texto. */
-.v5m-place{flex:1 1 auto;min-width:max-content;overflow:visible;padding:11px 12px}
-/* Boton del recibo «🎫 Receipt» (2026-11-09, captura de Alex 5:19 PM: se cortaba a «Re…»): usaba SOLO la clase base .v5m-btn (flex:1 1 0 + min-width:0 + overflow:hidden), que puede encogerse bajo su contenido y recorta el texto. Recibe el mismo tratamiento que Place: se dimensiona por su contenido y nunca se corta; la fila envuelve si no cabe. Track/Tracked igual: min-width:max-content. */
-.v5m-receipt{flex:1 1 auto;min-width:max-content;overflow:visible;padding:11px 10px}
-.v5m-share{flex:0 0 46px;font-size:15px}
-.v5m-track{flex:1.15 1 0;min-width:max-content;overflow:visible;display:flex;align-items:center;justify-content:center;text-align:center;font-size:13px;font-weight:400;white-space:nowrap;color:#9AA1AE;background:#0C0F16;border:1px solid #2A2E3A;border-radius:10px;padding:11px 12px;text-decoration:none;box-sizing:border-box;cursor:pointer}
-.v5m-tracked{flex:1.15 1 0;min-width:max-content;overflow:visible;display:flex;align-items:center;justify-content:center;text-align:center;font-size:13px;font-weight:400;white-space:nowrap;color:#9AA1AE;background:#0C0F16;border:1px solid #2A2E3A;border-radius:10px;padding:11px 12px;box-sizing:border-box}
+.v5m-btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.v5m-btn{flex:1 1 0;min-width:0;text-align:center;font-size:12px;font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#EDEFF3;background:#232936;border:1px solid #2A2E3A;border-radius:8px;padding:10px 2px;text-decoration:none;box-sizing:border-box;cursor:pointer;font-family:inherit}
+.v5m-place{flex:1.3 1 0;background:#10CC87;border:none;color:#06281B;font-weight:700;overflow:visible}
+.v5m-receipt{flex:1 1 0;overflow:visible}
+.v5m-share{flex:0 0 38px;font-size:14px;padding:10px 0}
+.v5m-track{flex:1 1 0;min-width:0;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;justify-content:center;text-align:center;font-size:12px;font-weight:400;white-space:nowrap;color:#EDEFF3;background:#232936;border:1px solid #2A2E3A;border-radius:8px;padding:10px 2px;text-decoration:none;box-sizing:border-box;cursor:pointer}
+.v5m-tracked{flex:1 1 0;min-width:0;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;justify-content:center;text-align:center;font-size:12px;font-weight:400;white-space:nowrap;color:#9AA1AE;background:#232936;border:1px solid #2A2E3A;border-radius:8px;padding:10px 2px;box-sizing:border-box}
 /* Hoja de detalle y popup en la misma familia Minimal, SOLO en la vista de
    Alex: titulo de la hoja = nombre del equipo en 800, resto fino (<=500),
    fondos #0C0F16. Sin cambios de estructura, ids ni clases JS. */
@@ -328,53 +310,46 @@
 .v5inj-st{flex:none;font-size:13px;font-weight:700;color:#f87171}
 .v5showall{font-size:13.5px;font-weight:600;color:#1AE099;cursor:pointer;list-style:none;margin-top:6px}
 </style>
-{# Cara MINIMAL (ver nota de cabecera). Banda dorada =
-   encabezado de nivel (sustituye a la pildora interna para no duplicar);
-   liga a la derecha de la banda. Mismos datos, handlers y botones que la
-   cara de siempre: data-v5-open abre la hoja, data-v5-chip abre el popup,
-   tstc-track trackea. Sin barra lateral, sin divisor de muescas: lineas 1px. #}
+{# Cara PLANA TIPO LISTA (2026-11-26 ~9:57 PM ET, APROBADA por Alex tras ver
+   la muestra «EJEMPLO · PREVIEW» en su Dashboard): fondo #151922, borde
+   superior 3px verde, sin banda de dos tonos ni barra izquierda; nivel y
+   liga arriba, titulo con logo, explicacion en palabras normales y filas
+   finas (Game con la HORA DEL JUEGO destacada · Posted to members · Price
+   posted · Stake · Exchange buyers solo con datos reales de splits).
+   Novig SOLO en el boton (sin fila «Placed at»). Botones en UNA sola
+   linea con sus flujos de siempre: data-v5-open abre la hoja,
+   data-v5-chip abre el popup, tstc-track trackea. #}
 <div class="v5m">
-  <div class="v5m-band">
-    <span class="v5m-band-t{% if is_vip %} plat{% elif is_vault %} vault{% elif is_free %} free{% elif not is_value %} gold{% endif %}">{% if is_vip %}💎 PLATINUM{% elif is_value %}💎 VALUE PLAY{% elif is_free %}FREE PICK{% elif is_vault %}🔒 THE VAULT PLAY{% else %}👑 GOLD PLAY{% endif %}</span>
-    <span class="v5m-band-l">{% if p.liga %}<img class="v5m-band-logo" src="https://a.espncdn.com/i/teamlogos/leagues/500/{{ p.liga|lower }}.png" alt="{{ p.liga }}" loading="lazy" onerror="this.remove()"> {{ p.liga }}{% endif %}</span>
+  <div class="v5m-r1">
+    <span class="v5m-lvl{% if is_vip %} plat{% elif is_vault %} vault{% elif is_free %} free{% elif not is_value %} gold{% endif %}">{% if is_vip %}PLATINUM PLAY{% elif is_value %}VALUE PLAY{% elif is_free %}FREE PICK{% elif is_vault %}VAULT PLAY{% else %}GOLD PLAY{% endif %}</span>
+    {% if p.liga %}<span class="v5m-liga">{{ p.liga }}</span>{% endif %}
   </div>
-  <div class="v5m-body">
-  <div class="v5m-top">
   <div class="v5m-head">
     {% if _logo %}<img class="v5m-logo" src="{{ _logo }}" alt="{{ p.abbr }} logo" loading="lazy" onerror="this.remove()">{% endif %}
     <div style="flex:1;min-width:0">
       <div class="v5m-title" data-v5-open="{{ p.id }}" style="cursor:pointer">{{ _title }}</div>
-      <div class="v5m-subrow">
-        <div class="v5m-sub" data-v5-open="{{ p.id }}" style="cursor:pointer">{{ p.team_name or p.abbr }} @ {{ p.opp_name or p.opp_abbr }} &middot; <span style="white-space:nowrap">{{ _gt12 }}</span></div>
-        {% if (_ci.get('lines') and _ci.lines.moved) or (_ci.get('weather') and _ci.weather.temp_f is defined and _ci.weather.temp_f is not none) %}
-        <div class="v5m-pills">
-          {% if _ci.get('lines') and _ci.lines.moved %}<button type="button" class="v5pill v5pill-steam" data-v5-chip="lines" data-play="{{ p.id }}">⚡{% if _ci.lines.ago %} {{ _ci.lines.ago }}{% else %} {{ _ci.lines.chip }}{% endif %}</button>{% endif %}
-          {% if _ci.get('weather') and _ci.weather.temp_f is defined and _ci.weather.temp_f is not none %}<button type="button" class="v5pill" data-v5-chip="weather" data-play="{{ p.id }}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg> {{ _ci.weather.temp_f }}°</button>{% endif %}
-        </div>
-        {% endif %}
-      </div>
       {% if _explain %}<div class="v5m-explain">{{ _explain }}</div>{% endif %}
+      {% if (_ci.get('lines') and _ci.lines.moved) or (_ci.get('weather') and _ci.weather.temp_f is defined and _ci.weather.temp_f is not none) %}
+      <div class="v5m-pills">
+        {% if _ci.get('lines') and _ci.lines.moved %}<button type="button" class="v5pill v5pill-steam" data-v5-chip="lines" data-play="{{ p.id }}">⚡{% if _ci.lines.ago %} {{ _ci.lines.ago }}{% else %} {{ _ci.lines.chip }}{% endif %}</button>{% endif %}
+        {% if _ci.get('weather') and _ci.weather.temp_f is defined and _ci.weather.temp_f is not none %}<button type="button" class="v5pill" data-v5-chip="weather" data-play="{{ p.id }}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg> {{ _ci.weather.temp_f }}°</button>{% endif %}
+      </div>
+      {% endif %}
     </div>
   </div>
   {% if _res == 'W' %}<span class="v5m-res won">WON{% if p.profit is defined and p.profit is not none %} &middot; +${{ '%.2f'|format(p.profit) }}{% endif %}</span>{% elif _res == 'L' %}<span class="v5m-res lost">LOST{% if p.profit is defined and p.profit is not none %} &middot; -${{ '%.2f'|format(p.profit|abs) }}{% endif %}</span>{% endif %}
   {% if p.live_now and not _res %}<span class="v5m-live"><span class="v5m-live-dot"></span>LIVE NOW</span>{% endif %}
+  <div class="v5m-rows">
+    <div class="v5m-row"><span class="v5m-k">Game</span><span class="v5m-v">{{ p.abbr }} @ {{ p.opp_abbr }} &middot; <b>{{ _gt12 }}</b></span></div>
+    {% if p.posted %}<div class="v5m-row"><span class="v5m-k">&#128339; Posted to members</span><span class="v5m-v">{{ p.posted }}</span></div>{% endif %}
+    <div class="v5m-row"><span class="v5m-k">Price posted</span><span class="v5m-v"><b>{{ fmt_odds(p.cuota) }}</b>{% if _ci.get('injuries') %} <button type="button" class="v5m-chip v5m-chip-inj" data-v5-chip="injuries" data-play="{{ p.id }}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="3.4" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 3.5h5V9.5h6v5h-6v6h-5v-6h-6v-5h6z"/></svg> {{ _ci.injuries.total }}</button>{% endif %}</span></div>
+    <div class="v5m-row"><span class="v5m-k">Stake</span><span class="v5m-v"><b>{{ '%g' % p.stake_unidades }}u &middot; <span class="v5m-green">${{ '%g' % p.stake_monto }}</span></b>{% if p.comprobante %}<span class="v5m-tok">✓ Ticket matched</span>{% else %}<span class="v5m-tpend">Ticket pending</span>{% endif %}</span></div>
+    {% if p.splits and p.splits.exchange %}<div class="v5m-row"><span class="v5m-k">&#8644; Exchange buyers</span><span class="v5m-v">{{ p.splits.exchange.trades_txt }} trades &middot; ${{ p.splits.exchange.dollars_txt }}</span></div>{% endif %}
   </div>
-  <div class="v5m-bot">
-  <div class="v5m-nums" data-v5-open="{{ p.id }}" style="cursor:pointer">
-    <div><div class="v5m-k">PRICE POSTED</div><div class="v5m-priceline"><div class="v5m-price">{{ fmt_odds(p.cuota) }}</div>{% if _ci.get('injuries') %}<button type="button" class="v5m-chip v5m-chip-inj" data-v5-chip="injuries" data-play="{{ p.id }}"><svg width="16.5" height="16.5" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="3.4" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 3.5h5V9.5h6v5h-6v6h-5v-6h-6v-5h6z"/></svg> {{ _ci.injuries.total }}</button>{% endif %}</div></div>
-    <div class="v5m-right"><div class="v5m-k">STAKE</div><div class="v5m-stake">{{ '%g' % p.stake_unidades }}u &middot; ${{ '%g' % p.stake_monto }}</div>{% if p.comprobante %}<div class="v5m-tok">✓ Ticket matched</div>{% else %}<div class="v5m-tpend">Ticket pending</div>{% endif %}</div>
-  </div>
-  {% set _meta_has = (p.poly is defined and p.poly is number) or (_ci.get('weather') and _ci.weather.indoor) or (p.posted is defined and p.posted) %}
-  <div class="v5m-meta{% if _res and not _meta_has %} v5m-meta-off{% endif %}">
-    {% if p.poly is defined and p.poly is number %}<span class="v5m-chip-poly"><span class="v5m-poly-ico">⇄</span> Poly <b>{{ '%g'|format(p.poly) }}%</b></span>{% endif %}
-    {% if _ci.get('weather') and _ci.weather.indoor %}<button type="button" class="v5m-chip" data-v5-chip="weather" data-play="{{ p.id }}">🏟 {{ _ci.weather.venue }}</button>{% endif %}
-    {% if p.posted %}<span class="v5m-posted">Posted {{ p.posted }}</span>{% endif %}
-  </div>
-{# 2026-11-09: Alex ordeno dejar el boton SOLO en Novig — se revierte el uso de p.place_book (mejor cuota del mercado) en la cara .v5m; la etiqueta vuelve a la logica original de cabecera (_place_label/_book_url). Y el enlace abre LA PAGINA DEL JUEGO en Novig cuando el play trae p.place_url verificado al publicar; sin el campo, cae a la portada de Novig (_book_url). #}
+{# 2026-11-09: el boton Place abre LA PAGINA DEL JUEGO en Novig cuando el play trae p.place_url verificado al publicar; sin el campo, cae a la portada de la casa (_book_url). La etiqueta sale de _place_label (cabecera). #}
   {% set _m_href = p.place_url if (p.place_url is defined and p.place_url) else _book_url %}
   <div class="v5m-btns">
-    <a class="v5m-btn v5m-place" href="{{ _m_href }}" target="_blank" rel="noopener">↗ {{ _place_label }}</a>
-    <button class="v5m-btn v5m-share" type="button" aria-label="Share" onclick="(function(){var u=window.location.origin+'/home';if(navigator.share){navigator.share({title:'The Sharp Team',text:'{{ _title }}',url:u}).catch(function(){});}else{navigator.clipboard&&navigator.clipboard.writeText(u);}})()">↗</button>
+    <a class="v5m-btn v5m-place" href="{{ _m_href }}" target="_blank" rel="noopener">{{ _place_label }}</a>
     {% if p.comprobante and not force_pre %}
       <a class="v5m-btn v5m-receipt" href="javascript:void(0)" data-v5-open="{{ p.id }}">🎫 Receipt</a>
     {% endif %}
@@ -385,8 +360,7 @@
         <a class="v5m-track tstc-track" href="{{ url_for('track', play_id=p.id) }}" data-track-url="{{ url_for('track', play_id=p.id) }}" data-game="{{ p.abbr }} vs {{ p.opp_abbr }}" data-odds="{{ fmt_odds(p.cuota) }}">+ Track</a>
       {% endif %}
     {% endif %}
-  </div>
-  </div>
+    <button class="v5m-btn v5m-share" type="button" aria-label="Share" onclick="(function(){var u=window.location.origin+'/home';if(navigator.share){navigator.share({title:'The Sharp Team',text:'{{ _title }}',url:u}).catch(function(){});}else{navigator.clipboard&&navigator.clipboard.writeText(u);}})()">↗</button>
   </div>
 {% if p.writeup and p.writeup.model_prob %}<button type="button" class="v5m-strip" data-v5-open="{{ p.id }}" data-v5-why="1"><span class="v5m-strip-t">WHY WE LIKE IT</span><span class="v5m-strip-n">Model {% if p.writeup.model_prob is number %}{{ '%.1f%%'|format(p.writeup.model_prob * 100) }}{% else %}{{ p.writeup.model_prob }}{% endif %} &middot; Edge {{ p.writeup.edge }}{% if p.writeup.ev is defined and p.writeup.ev is not none and p.writeup.ev != '' %} &middot; EV {% if p.writeup.ev is number %}{{ '%+.1f%%'|format(p.writeup.ev * 100) }}{% else %}{{ p.writeup.ev }}{% endif %}{% endif %}</span><span class="v5m-strip-hint">Tap to expand full data ▾</span></button>{% endif %}
 </div>
