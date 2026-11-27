@@ -332,12 +332,13 @@
     <div style="flex:1;min-width:0">
       <div class="v5m-title" data-v5-open="{{ p.id }}" style="cursor:pointer">{{ _title }}</div>
       {% if _explain %}<div class="v5m-explain">{{ _explain }}</div>{% endif %}
-      {% if (_ci.get('lines') and _ci.lines.moved) or (_ci.get('weather') and _ci.weather.temp_f is defined and _ci.weather.temp_f is not none) %}
-      <div class="v5m-pills">
-        {% if _ci.get('lines') and _ci.lines.moved %}<button type="button" class="v5pill v5pill-steam" data-v5-chip="lines" data-play="{{ p.id }}">⚡{% if _ci.lines.ago %} {{ _ci.lines.ago }}{% else %} {{ _ci.lines.chip }}{% endif %}</button>{% endif %}
-        {% if _ci.get('weather') and _ci.weather.temp_f is defined and _ci.weather.temp_f is not none %}<button type="button" class="v5pill" data-v5-chip="weather" data-play="{{ p.id }}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg> {{ _ci.weather.temp_f }}°</button>{% endif %}
-      </div>
-      {% endif %}
+      {# SIN pills en la cara (2026-11-26 ~10:43 PM ET, queja de Alex: la
+         tarjeta de TCU se veia MAS GRANDE que las demas por el icono de
+         temperatura bajo el equipo): el bloque .v5m-pills (clima y linea
+         movida) salia solo en las tarjetas con ese dato y rompia la
+         uniformidad. El clima vive en la ficha («Game context») y la
+         linea movida en «Line and signals» — la cara queda con la misma
+         estructura en todas las jugadas. #}
     </div>
   </div>
   {% if _res == 'W' %}<span class="v5m-res won">WON{% if p.profit is defined and p.profit is not none %} &middot; +${{ '%.2f'|format(p.profit) }}{% endif %}</span>{% elif _res == 'L' %}<span class="v5m-res lost">LOST{% if p.profit is defined and p.profit is not none %} &middot; -${{ '%.2f'|format(p.profit|abs) }}{% endif %}</span>{% endif %}
