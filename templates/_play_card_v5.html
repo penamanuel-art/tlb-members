@@ -324,7 +324,7 @@
    data-v5-chip abre el popup, tstc-track trackea. #}
 <div class="v5m">
   <div class="v5m-r1">
-    <span class="v5m-lvl{% if is_vip %} plat{% elif is_vault %} vault{% elif is_free %} free{% elif not is_value %} gold{% endif %}">{% if is_vip %}PLATINUM PLAY{% elif is_value %}VALUE PLAY{% elif is_free %}FREE PICK{% elif is_vault %}VAULT PLAY{% else %}GOLD PLAY{% endif %}</span>
+    <span class="v5m-lvl{% if is_vip %} plat{% elif is_vault %} vault{% elif is_free %} free{% elif not is_value %} gold{% endif %}">{% if is_vip %}PLATINUM PLAY{% elif is_value %}VALUE PLAY{% elif is_free %}FREE PICK{% elif is_vault %}SHARP EDGE PLAY{% else %}GOLD PLAY{% endif %}</span>
     {% if p.liga %}<span class="v5m-liga">{{ p.liga }}</span>{% endif %}
   </div>
   <div class="v5m-head">
@@ -389,9 +389,9 @@
     <div class="v5grab"></div>
     <div class="v5shead">
       <div style="flex:1;min-width:0">
-        <div class="v5kick{% if not is_vip and not is_vault %} gold{% endif %}">{{ '💎 PLATINUM' if is_vip else ('🔒 THE VAULT PLAY' if is_vault else ('💎 VALUE PLAY' if is_value else ('FREE PICK' if is_free else 'GOLD'))) }}</div>
+        <div class="v5kick{% if not is_vip and not is_vault %} gold{% endif %}">{{ '💎 PLATINUM' if is_vip else ('🔒 THE SHARP EDGE PLAY' if is_vault else ('💎 VALUE PLAY' if is_value else ('FREE PICK' if is_free else 'GOLD'))) }}</div>
         <div class="v5stitle">{{ _title }}</div>
-        <div class="v5ssub">{{ 'Platinum play' if is_vip else ('Vault play' if is_vault else ('Value play' if is_value else ('Free Pick play' if is_free else 'Gold play'))) }} &middot; {{ p.liga or '' }}</div>
+        <div class="v5ssub">{{ 'Platinum play' if is_vip else ('Sharp Edge play' if is_vault else ('Value play' if is_value else ('Free Pick play' if is_free else 'Gold play'))) }} &middot; {{ p.liga or '' }}</div>
         {% if _explain %}<div class="v5sexplain">{{ _explain }}</div>{% endif %}
       </div>
       <button class="v5x" data-v5-close aria-label="Cerrar">&times;</button>
