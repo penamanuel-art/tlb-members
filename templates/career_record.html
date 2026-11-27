@@ -97,7 +97,7 @@ main.container{max-width:none;padding:0}
   {% if plat_window %}
   <div class="cr-panel">
     <h2>🔥 Platinum: {{ platw.w }}-{{ platw.l }} in the last {{ platw.n }} plays across all sports</h2>
-    <p class="note">Platinum plays only — our top level, counted on its own, never mixed with Gold or Vault. Every play below was posted before its game with its ticket photo, most recent first.</p>
+    <p class="note">Platinum plays only — our top level, counted on its own, never mixed with Gold or Sharp Edge. Every play below was posted before its game with its ticket photo, most recent first.</p>
     {% for r in plat_window %}
     <div class="cr-wl">
       <span class="box {{ r.res }}">{{ 'W' if r.res == 'WON' else 'L' }}</span>
@@ -132,7 +132,7 @@ main.container{max-width:none;padding:0}
   <p class="note">Every official play is graded and logged, win or loss.</p>
   {% for r in recent %}
   <div class="cr-row">
-    <span class="cr-chip {{ r.nivel }}">{{ r.nivel }}</span>
+    <span class="cr-chip {{ r.nivel }}">{{ 'SHARP EDGE' if r.nivel == 'VAULT' else r.nivel }}</span>
     <span class="cr-pick">{{ r.pick }}<small>{{ sport_disp.get(r.liga, r.liga) }} · {{ r.fecha_fmt }}</small></span>
     <span class="cr-res {{ r.res }}">{{ r.res }}</span>
     <span class="cr-amt {% if r.profit > 0 %}plus{% elif r.profit < 0 %}minus{% else %}zero{% endif %}">{% if r.profit > 0 %}+${{ '%.2f'|format(r.profit) }}{% elif r.profit < 0 %}−${{ '%.2f'|format(-r.profit) }}{% else %}$0.00{% endif %}</span>
