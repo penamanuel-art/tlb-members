@@ -3,48 +3,51 @@
 {% block content %}
 {% set sport_disp = {'NCAAF':'College football','CBB':'College basketball','NCAAB':'College basketball'} %}
 <style>
-.cr{max-width:760px;margin:0 auto;padding:14px 16px 24px}
-.cr-crumb{font-size:.85rem;color:#9AA1AE;margin-bottom:10px}
-.cr-crumb a{color:#E8EAEE;text-decoration:none;font-weight:600}
-.cr-crumb .sep{margin:0 7px;color:#5C6470}
-.cr h1{font-family:'Unbounded',sans-serif;font-weight:800;font-size:clamp(1.65rem,7.5vw,1.8rem);line-height:1.18;margin:0 0 10px;color:#fff}
+.cr{max-width:1080px;margin:0 auto;padding:0 20px 110px}
+.cr-crumb{font-size:13px;font-weight:500;color:#a3a8b3;padding-top:14px}
+.cr-crumb a{color:#c4cad6;text-decoration:none}
+.cr-crumb a:hover{color:#1AE099}
+.cr-crumb .sep{margin:0 4px;color:#8b93a4}
+.cr h1{font-family:'Unbounded',sans-serif;font-weight:800;font-size:33px;line-height:1.06;margin:28px 0 0;color:#fff}
+@media(max-width:620px){.cr h1{font-size:25px}}
 .cr h1 .mint{color:#1AE099}
-.cr .intro{color:#9AA1AE;font-size:.9rem;line-height:1.6;margin:0 0 12px}
-.cr-card{border-radius:14px;padding:15px;margin:0 0 10px}
-.cr-card.hot{background:linear-gradient(135deg,rgba(16,204,135,.16),rgba(29,32,41,.65) 62%);border:1px solid rgba(16,204,135,.45)}
+.cr .intro{color:#a3a8b3;font-size:14px;line-height:1.6;margin:10px 0 0;max-width:640px}
+.cr-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:6px 0 8px}
+.cr-card{border-radius:14px;padding:18px 20px;margin:0}
+.cr-card.hot{background:linear-gradient(160deg,rgba(16,204,135,.12),#1D2029);border:1px solid rgba(16,204,135,.22)}
 .cr-card.plain{background:#1D2029;border:1px solid #2A2E3A}
-.cr-label{font-size:.72rem;letter-spacing:.16em;color:#9AA1AE;font-weight:600;margin-bottom:6px}
-.cr-big{font-family:'Unbounded',sans-serif;font-weight:800;font-size:clamp(2rem,9vw,2.15rem);color:#fff;line-height:1.05;margin:0 0 4px}
-.cr-profit{font-size:1.15rem;font-weight:800;color:#1AE099;margin:0 0 4px}
-.cr-profit.neg{color:#f87171}
-.cr-sub{color:#9AA1AE;font-size:.88rem;margin:0}
-.cr-pill{display:inline-flex;align-items:center;gap:7px;background:rgba(16,204,135,.08);border:1px solid rgba(16,204,135,.45);border-radius:999px;padding:7px 13px;margin:2px 0;color:#fff;font-size:.88rem}
-.cr-pill .tag{color:#9AA1AE;font-weight:600}
-.cr h2{font-family:'Unbounded',sans-serif;font-weight:800;font-size:1.2rem;color:#fff;margin:18px 0 4px}
-.cr .note{color:#9AA1AE;font-size:.88rem;line-height:1.55;margin:0 0 10px}
+.cr-label{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:#9AA1AE;font-weight:400}
+.cr-big{font-family:'Unbounded',sans-serif;font-weight:800;font-size:28px;color:#fff;line-height:1.1;margin:6px 0 0}
+.cr-profit{font-family:'Roboto Mono',monospace;font-size:15px;font-weight:700;color:#1AE099;margin:2px 0 0}
+.cr-profit.neg{color:#D51344}
+.cr-sub{color:#a3a8b3;font-size:12px;margin:4px 0 0}
+.cr-pill{display:inline-flex;align-items:center;gap:7px;background:rgba(16,204,135,.12);border:1px solid rgba(16,204,135,.22);border-radius:999px;padding:6px 11px;margin:2px 0 10px;color:#1AE099;font-size:12px;font-weight:600}
+.cr-pill .tag{color:#a3a8b3;font-weight:600}
+.cr h2{font-family:'Unbounded',sans-serif;font-weight:700;font-size:18px;color:#fff;margin:22px 0 2px}
+.cr .note{color:#a3a8b3;font-size:13px;line-height:1.55;margin:0 0 14px}
 .cr-nums{border-top:1px solid #2A2E3A}
-.cr-nums .row{display:flex;justify-content:space-between;gap:14px;padding:8px 2px;border-bottom:1px solid #2A2E3A;font-size:.94rem}
-.cr-nums .k{color:#9AA1AE}
-.cr-nums .v{color:#fff;font-weight:700;text-align:right}
+.cr-nums .row{display:flex;justify-content:space-between;align-items:baseline;gap:14px;padding:8px 2px;border-bottom:1px solid #2A2E3A}
+.cr-nums .k{color:#a3a8b3;font-size:12px;font-weight:600;letter-spacing:.04em}
+.cr-nums .v{color:#fff;font-family:'Roboto Mono',monospace;font-weight:700;font-size:20px;text-align:right;line-height:1.15}
 .cr-nums .v.mint{color:#1AE099}
-.cr-tix{display:flex;gap:8px;overflow-x:auto;padding:4px 0 6px;-webkit-overflow-scrolling:touch}
-.cr-tix a{flex:0 0 auto;width:96px;text-decoration:none}
-.cr-tix img{width:96px;height:96px;object-fit:cover;border-radius:10px;border:1px solid #2A2E3A;display:block;background:#0C0F16}
-.cr-tix span{display:block;color:#9AA1AE;font-size:.72rem;line-height:1.35;margin-top:4px}
-.cr-row{display:flex;align-items:center;gap:8px;background:#1D2029;border:1px solid #2A2E3A;border-radius:10px;padding:9px 11px;margin-top:7px}
-.cr-chip{font-size:.62rem;font-weight:800;letter-spacing:1.1px;border-radius:7px;padding:3px 7px;border:1px solid;flex:0 0 auto}
+.cr-tix{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;padding:0}
+.cr-tix a{text-decoration:none}
+.cr-tix img{width:100%;height:auto;aspect-ratio:3/2;object-fit:cover;border-radius:11px;border:1px solid #2A2E3A;display:block;background:#0a0c12}
+.cr-tix span{display:block;color:#a3a8b3;font-size:12px;line-height:1.3;margin-top:4px}
+.cr-row{display:flex;align-items:center;gap:10px;background:#1D2029;border:1px solid #2A2E3A;border-radius:10px;padding:12px 14px;margin-top:7px}
+.cr-chip{font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;border-radius:6px;padding:3px 8px;border:1px solid;flex:0 0 auto}
 .cr-chip.PLATINUM{color:#FBBF24;border-color:rgba(251,191,36,.5);background:rgba(251,191,36,.08)}
 .cr-chip.GOLD{color:#1AE099;border-color:rgba(26,224,153,.5);background:rgba(26,224,153,.08)}
 .cr-chip.VAULT{color:#FBBF24;border-color:rgba(251,191,36,.5);background:rgba(251,191,36,.08)}
-.cr-pick{color:#fff;font-weight:700;font-size:.9rem;line-height:1.3;flex:1;min-width:0}
-.cr-pick small{display:block;color:#9AA1AE;font-weight:600;font-size:.74rem;margin-top:2px}
-.cr-res{font-size:.66rem;font-weight:800;letter-spacing:1px;border-radius:999px;padding:4px 10px;flex:0 0 auto}
-.cr-res.WON{color:#34D399;background:rgba(52,211,153,.13)}
-.cr-res.LOST{color:#f87171;background:rgba(248,113,113,.15)}
+.cr-pick{color:#fff;font-weight:400;font-size:14px;line-height:1.35;flex:1;min-width:0}
+.cr-pick small{display:block;color:#a3a8b3;font-weight:400;font-size:12px;margin-top:2px}
+.cr-res{font-size:12px;font-weight:700;border-radius:7px;padding:4px 8px;flex:0 0 auto}
+.cr-res.WON{color:#1AE099;background:rgba(16,204,135,.12)}
+.cr-res.LOST{color:#D51344;background:rgba(213,19,68,.14)}
 .cr-res.PUSH,.cr-res.VOID{color:#9AA1AE;background:rgba(255,255,255,.08)}
-.cr-amt{font-family:'Roboto Mono',monospace;font-weight:700;font-size:.86rem;flex:0 0 auto}
-.cr-amt.plus{color:#34D399}.cr-amt.minus{color:#f87171}.cr-amt.zero{color:#9AA1AE}
-.cr-all{display:inline-block;color:#1AE099;font-weight:700;font-size:.94rem;text-decoration:none;margin-top:14px}
+.cr-amt{font-family:'Roboto Mono',monospace;font-weight:400;font-size:13px;flex:0 0 auto}
+.cr-amt.plus{color:#1AE099}.cr-amt.minus{color:#D51344}.cr-amt.zero{color:#9AA1AE}
+.cr-all{display:inline-flex;align-items:center;min-height:44px;color:#1AE099;font-weight:600;font-size:14px;text-decoration:none;margin-top:8px}
 </style>
 <div class="cr">
   <div class="cr-crumb"><a href="{{ url_for('home') }}">Home</a><span class="sep">/</span><a href="{{ url_for('records') }}">Records</a></div>
@@ -53,6 +56,7 @@
 
   <p class="intro">Every play graded, win or loss, posted publicly. A {{ '%.1f'|format(tot.wr) }}% win rate and {% if tot.profit > 0 %}+{% elif tot.profit < 0 %}−{% endif %}${{ '%.2f'|format(tot.profit|abs) }} in tracked profit since {{ desde }}. Every pick is posted before the game with its ticket photo, graded against the official final score, win or loss, in public.</p>
 
+  <div class="cr-cards">
   <div class="cr-card hot">
     <div class="cr-label">OFFICIAL PLAYS</div>
     <div class="cr-big">{{ tot.w }}-{{ tot.l }}</div>
@@ -65,6 +69,7 @@
     <div class="cr-big">{{ plat.w }}-{{ plat.l }}</div>
     <p class="cr-profit{% if plat.profit < 0 %} neg{% endif %}">{% if plat.profit > 0 %}+{% elif plat.profit < 0 %}−{% endif %}${{ '%.2f'|format(plat.profit|abs) }}</p>
     <p class="cr-sub">{{ '%.1f'|format(plat.wr) }}% win rate · {{ plat.n }} plays graded</p>
+  </div>
   </div>
 
   {% if racha %}
