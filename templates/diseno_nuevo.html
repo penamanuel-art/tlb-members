@@ -84,7 +84,7 @@ fbq('track', 'PageView');
   .dn-watch{display:inline-flex;align-items:center;gap:9px;margin-top:15px;padding:10px 18px;border:1px solid var(--line);border-radius:999px;color:var(--txt);font-size:17.1px;font-weight:500;text-decoration:none;background:rgba(255,255,255,.02)}
   .dn-watch-ic{display:flex;flex:none}
   .dn-hero-card{background:var(--panel);border:1px solid var(--line);border-radius:16px;overflow:hidden;margin-top:30px;scroll-margin-top:100px}
-  .dn-board-head{display:flex;align-items:center;gap:10px;margin:18px 0 12px}
+  .dn-board-head{display:flex;align-items:center;gap:10px;margin:20px 0 12px}
   .dn-board-head h2{font-family:var(--fdisp);font-size:17.1px;font-weight:800;margin:0;color:var(--txt);white-space:nowrap}
   .dn-board-sub{display:flex;align-items:center;gap:10px;margin:14px 0 12px}
   .dn-count{color:var(--mut);font-size:15px}
@@ -480,40 +480,25 @@ fbq('track', 'PageView');
      font-size, font-weight y font-family de las cuatro clases de titulo. */
   .dn-sec-head h2,.dn-hot-head h2,.dn-yest-head h2,.dn-board-head h2{font-family:var(--fdisp);font-size:17.1px;font-weight:700}
 
-  /* ===== Reskin editorial de la tarjeta de jugada (SOLO home, 2026-11-22) =====
-     El parcial _play_card_v5.html NO se toca: estos overrides viven solo en
-     esta plantilla y ganan por especificidad (body + clase) a los estilos
-     del parcial. Superficie pizarra #1D2029, perforacion de ticket entre la
-     zona alta y la zona de numeros/botones, acento cian glaciar; el dorado
-     queda pa' Platinum/Vault.
-     DOS TONOS (2026-11-23, orden de Alex): TODO el bloque superior de la
-     tarjeta — banda (liga/nivel) + zona del titulo (.v5m-top) — va en UN
-     solo color #0C0F16, distinto del cuerpo bajo la perforacion, que se
-     queda en #1D2029 SIN tocar. El bloque superior termina exacto en la
-     divisora (borde punteado de .v5m-bot). */
-  body .v5m{background:#1D2029;border-color:#2A2E3A;border-radius:16px}
-  body .v5m::before{background:#10CC87 !important}
-  body .v5m-band{background:#262B38}
-  body .v5m-band-t{color:#C9D2E0}
-  body .v5m-band-t.gold,body .v5m-band-t.free{color:#1AE099 !important}
-  body .v5m-band-t.plat,body .v5m-band-t.vault{color:#FBBF24}
-  body .v5m-top{background:#262B38}
-  body .v5m-bot{border-top:2px dashed #2A2E3A;position:relative}
-  body .v5m-bot::before,body .v5m-bot::after{content:"";position:absolute;top:-11px;width:20px;height:20px;border-radius:50%;background:#0C0F16;border:1px solid #2A2E3A;z-index:2}
-  body .v5m-bot::before{left:-11px}
-  body .v5m-bot::after{right:-11px}
-  body .v5m-btn,body .v5m-track,body .v5c-btn,body .v5big-track{background:#1D2029;border-color:#2A2E3A;color:#f2f5fb}
-  body .v5m-tracked,body .v5big-tracked,body .v5c-tracked{background:#1D2029;border-color:#2A2E3A;color:#9AA1AE}
-  /* Tarjeta compacta y mas larga (2026-11-26 ~21:42 ET, aprobada por Alex en el chat con la prueba v4): el boton Track va en verde lleno #10CC87, como en la foto de referencia. Las medidas de la cara (titulo 21px/700 en una linea, precio/stake 18px, etiquetas 10px, padding 16px, sin espacios muertos) viven en el parcial _play_card_v5.html. */
-  body .v5m-track{background:#10CC87;border-color:#10CC87;color:#0C0F16;font-weight:700}
+  /* ===== Tarjeta de jugada PLANA TIPO LISTA (2026-11-26 ~9:57 PM ET,
+     APROBADA por Alex tras ver la muestra en su Dashboard): fondo #151922,
+     borde superior 3px verde, sin banda de dos tonos, sin barra izquierda
+     y sin perforacion. Las medidas de la cara viven en el parcial
+     _play_card_v5.html; estos overrides solo igualan la superficie en el
+     home y el boton Place en verde lleno. El boton Track conserva su
+     verde lleno de la regla del parcial (2026-11-24). */
+  body .v5m{background:#151922;border-color:#2A2E3A;border-top:3px solid #10CC87;border-radius:6px}
+  body .v5m::before{content:none !important}
+  body .v5m-btn,body .v5c-btn,body .v5big-track{background:#232936;border-color:#2A2E3A;color:#EDEFF3}
+  body .v5m-tracked,body .v5big-tracked,body .v5c-tracked{background:#232936;border-color:#2A2E3A;color:#9AA1AE}
+  body .v5m-place{background:#10CC87;border-color:#10CC87;color:#06281B;font-weight:700}
   body .v5m-tok{color:#1AE099}
   body .v5m-res.won{color:#34D399;background:rgba(52,211,153,.12)}
   body .v5m-res.lost{color:#F87171;background:rgba(248,113,113,.10)}
-  body .v5pill{background:#1D2029;border-color:#2A2E3A;color:#9AA1AE}
+  body .v5pill{background:#232936;border-color:#2A2E3A;color:#9AA1AE}
   body .v5pill-steam{color:#1AE099;border-color:rgba(26,224,153,.55)}
-  body .v5m-chip-poly{background:#1D2029;color:#9AA1AE}
-  body .v5m-chip-poly b{color:#f2f5fb}
   body .v5m-strip{border-color:rgba(26,224,153,.30) !important}
+  body .v5c-matched{background:#10CC87;color:#0C0F16}
   body .v5c-matched{background:#10CC87;color:#0C0F16}
   body .v5kick{color:#1AE099}
   body .v5kick.gold{color:#1AE099 !important}
@@ -875,59 +860,6 @@ body .dn-top-in > div:first-child{transform:scale(1.3);transform-origin:left cen
   <div class="dn-risk">
     <span class="dn-risk-tx"><b>Your risk today</b><span>{{ risk_card.n }} play{{ 's' if risk_card.n != 1 }} &middot; ${{ '%.0f'|format(risk_card.total) if risk_card.total % 1 == 0 else '%.2f'|format(risk_card.total) }} at risk</span></span>
     <span class="dn-risk-pill">{{ risk_card.pct }}% of bankroll</span>
-  </div>
-  {% endif %}
-
-  {% if is_alex %}
-  {# EJEMPLO pa' Alex (2026-11-26 ~9:53 PM ET): muestra del NUEVO diseno plano
-     tipo lista de la tarjeta de jugada, con los datos reales de la jugada de
-     Philadelphia de hoy. SOLO la ve Alex (is_alex); los miembros NO la ven y
-     sus tarjetas quedan como estan. El despliegue a todos queda pendiente
-     del veredicto de Alex tras ver este ejemplo en su Dashboard. #}
-  <style>
-  .pvx-card{background:#151922;border:1px solid #2A2E3A;border-top:3px solid #10CC87;border-radius:6px;padding:15px 16px 13px;color:#EDEFF3;margin:0 0 22px;box-sizing:border-box;width:100%}
-  .pvx-tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.14em;color:#06281B;background:#FBBF24;border-radius:6px;padding:3px 8px;margin-bottom:10px}
-  .pvx-r1{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-  .pvx-lvl{color:#1AE099;font-size:11px;font-weight:700;letter-spacing:.14em}
-  .pvx-liga{color:#9AA1AE;font-size:11px}
-  .pvx-head{display:flex;gap:11px;align-items:flex-start}
-  .pvx-logo{width:38px;height:38px;object-fit:contain;flex:none;margin-top:1px}
-  .pvx-title{font-size:19px;font-weight:650;line-height:1.2;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .pvx-expl{color:#9AA1AE;font-size:12px;margin-top:3px;line-height:1.4}
-  .pvx-rows{border-top:1px solid #2A2E3A;margin-top:11px}
-  .pvx-row{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid #232936;font-size:13px}
-  .pvx-row:last-child{border-bottom:none}
-  .pvx-k{color:#9AA1AE;flex:none}
-  .pvx-v{color:#EDEFF3;font-weight:500;text-align:right}
-  .pvx-v b{font-weight:650}
-  .pvx-green{color:#1AE099}
-  .pvx-btns{display:flex;gap:8px;margin-top:10px}
-  .pvx-btn{flex:1 1 0;min-width:0;text-align:center;font-size:12px;white-space:nowrap;padding:10px 2px;border-radius:8px;text-decoration:none;box-sizing:border-box;cursor:pointer;font-family:inherit}
-  .pvx-place{flex:1.3 1 0;background:#10CC87;border:none;color:#06281B;font-weight:700}
-  .pvx-alt{background:#232936;border:1px solid #2A2E3A;color:#EDEFF3}
-  </style>
-  <div class="pvx-card">
-    <span class="pvx-tag">EJEMPLO &middot; PREVIEW</span>
-    <div class="pvx-r1"><span class="pvx-lvl">GOLD PLAY</span><span class="pvx-liga">NFL</span></div>
-    <div class="pvx-head">
-      <img class="pvx-logo" src="https://a.espncdn.com/i/teamlogos/nfl/500/phi.png" alt="PHI logo" loading="lazy" onerror="this.remove()">
-      <div style="flex:1;min-width:0">
-        <div class="pvx-title">Philadelphia Eagles +8.5</div>
-        <div class="pvx-expl">Philadelphia can lose by up to 8 and this still wins</div>
-      </div>
-    </div>
-    <div class="pvx-rows">
-      <div class="pvx-row"><span class="pvx-k">Game</span><span class="pvx-v">PHI @ DAL &middot; <b>4:30 PM ET</b></span></div>
-      <div class="pvx-row"><span class="pvx-k">&#128339; Posted to members</span><span class="pvx-v">12:19 PM ET</span></div>
-      <div class="pvx-row"><span class="pvx-k">Price posted</span><span class="pvx-v"><b>+100</b></span></div>
-      <div class="pvx-row"><span class="pvx-k">Stake</span><span class="pvx-v"><b>0.6u &middot; <span class="pvx-green">$60</span></b></span></div>
-      <div class="pvx-row"><span class="pvx-k">&#8644; Exchange buyers</span><span class="pvx-v">47,318 trades &middot; $1,114,038</span></div>
-    </div>
-    <div class="pvx-btns">
-      <a class="pvx-btn pvx-place" href="https://novig.com" target="_blank" rel="noopener">Place at Novig</a>
-      <button class="pvx-btn pvx-alt" type="button">&#127903; Receipt</button>
-      <button class="pvx-btn pvx-alt" type="button">+ Track</button>
-    </div>
   </div>
   {% endif %}
 
