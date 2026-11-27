@@ -60,7 +60,7 @@
   <p class="intro">Last graded play added {{ ultima_fmt }}. This is The Sharp Team graded plays ledger: every Platinum, Gold and Vault play graded since {{ primera_fmt }} that has its ticket photo on file, wins and losses alike, newest first. Tap any ticket to open it full size. Every play on this page was posted before game time — that is the rule, and this page is the proof.</p>
 
   <p class="countline"><b>{{ total }}</b> plays graded since {{ primera_fmt }} · <b>{{ con_foto }}</b> with ticket photos. <span id="ledShowing">Showing 1 to {{ [50, total]|min }}.</span></p>
-  <a class="career" href="{{ url_for('home') }}">Today's plays →</a>
+  <a class="career" href="{{ url_for('career_record') }}">Career record →</a>
 
   <div class="led-profit">
     <div class="led-profit-label">PROGRAM PROFIT</div>
