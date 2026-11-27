@@ -833,7 +833,7 @@ body .dn-hot-card:has(.dn-hot-streakrow) .dn-hot-dots{margin-bottom:5px}
         {% set _p = _j.profit or 0 %}
     <div class="dn-notif-item">
       <span class="dn-ni">{% if _j.resultado == 'WON' %}✅{% else %}❌{% endif %}</span>
-      <span class="dn-ni-tx"><b>{{ _j.pick }} {% if _j.resultado == 'WON' %}won{% else %}lost{% endif %}</b><span>{{ _d.fecha }} · {{ 'Platinum' if _j.nivel in ('ELITE', 'PLATINUM') else ('Vault' if _j.nivel == 'VAULT' else 'Gold') }}</span></span>
+      <span class="dn-ni-tx"><b>{{ _j.pick }} {% if _j.resultado == 'WON' %}won{% else %}lost{% endif %}</b><span>{{ _d.fecha }} · {{ 'Platinum' if _j.nivel in ('ELITE', 'PLATINUM') else ('Sharp Edge' if _j.nivel == 'VAULT' else 'Gold') }}</span></span>
       <span class="dn-amt {% if _p >= 0 %}win{% else %}loss{% endif %}">{% if _p >= 0 %}+{% else %}−{% endif %}${{ '%.2f'|format(_p|abs) }}</span>
     </div>
         {% set _ns.n = _ns.n + 1 %}
@@ -1166,7 +1166,7 @@ function dnHotClose(){
     <div class="dn-tiers">
       {% for nv in stats.niveles %}
       <div class="dn-tier">
-        <span class="dn-t-name">{% if nv.nivel == 'GOLD' %}👑 Gold{% elif nv.nivel == 'PLATINUM' %}💎 Platinum{% else %}🔒 Vault{% endif %}</span>
+        <span class="dn-t-name">{% if nv.nivel == 'GOLD' %}👑 Gold{% elif nv.nivel == 'PLATINUM' %}💎 Platinum{% else %}🔒 Sharp Edge{% endif %}</span>
         <span class="dn-t-sub">{% if nv.nivel == 'GOLD' %}Free plays{% elif nv.nivel == 'PLATINUM' %}Top tier{% else %}One play max{% endif %}</span>
         <span class="dn-t-rec">{{ nv.w }}–{{ nv.l }}</span>
         <span class="dn-t-pf {{ 'pos' if nv.profit > 0 else ('neg' if nv.profit < 0 else '') }}">{{ nv.profit_txt }}</span>
@@ -1255,23 +1255,23 @@ function dnHotClose(){
         <p>2–3 Gold plays a day, open to every member in the Dashboard, on Telegram and by email. No card, ever.</p>
       </div>
       <div class="dn-mem">
-        <div class="dn-m-top"><span class="dn-m-name">🔒 VAULT</span><span class="dn-m-price">WITH PLATINUM</span></div>
-        <p>The Vault Play: the single strongest setup of the day when one qualifies — probability 55%+ with real value. Never filled just to fill it.</p>
+        <div class="dn-m-top"><span class="dn-m-name">🔒 SHARP EDGE</span><span class="dn-m-price">WITH PLATINUM</span></div>
+        <p>The Sharp Edge Play: the single strongest setup of the day when one qualifies — probability 55%+ with real value. Never filled just to fill it.</p>
       </div>
       {% if miembro_platinum %}
       <div class="dn-mem hot">
         <div class="dn-m-top"><span class="dn-m-name">💎 PLATINUM</span><span class="dn-m-price">✓ YOU'RE IN</span></div>
-        <p>The top tier — up to 2 Platinum plays a day at a $100 fixed stake, every member tool and the full record. The Vault Play is included with Platinum.</p>
+        <p>The top tier — up to 2 Platinum plays a day at a $100 fixed stake, every member tool and the full record. The Sharp Edge Play is included with Platinum.</p>
       </div>
       {% endif %}
       {% if not miembro_platinum %}
       <div class="dn-mem hot big">
         <div class="dn-m-top"><span class="dn-m-name">💎 PLATINUM</span><span class="dn-m-price">TOP TIER</span></div>
         <div class="dn-u-div"></div>
-        <p>The top tier of The Sharp Team — the strongest plays of the day, every tool open, and the Vault included.</p>
+        <p>The top tier of The Sharp Team — the strongest plays of the day, every tool open, and Sharp Edge included.</p>
         <div class="dn-u-get">WHAT YOU GET</div>
         <div class="dn-u-row"><span class="dn-u-ck">✓</span><div><b>Platinum plays</b><span>The strongest plays of the day, posted with the real ticket</span></div></div>
-        <div class="dn-u-row"><span class="dn-u-ck">✓</span><div><b>The Vault Play</b><span>Our most valuable play, included with Platinum</span></div></div>
+        <div class="dn-u-row"><span class="dn-u-ck">✓</span><div><b>The Sharp Edge Play</b><span>Our most valuable play, included with Platinum</span></div></div>
         <div class="dn-u-row last"><span class="dn-u-ck">✓</span><div><b>Sharp Club on Telegram</b><span>Platinum plays the moment they post</span></div></div>
         <div class="dn-u-head">EVERY TOOL, UNLOCKED INSTANTLY</div>
         <div class="dn-u-chips"><span>+EV Board</span><span>Player Props</span><span>Sharp Money</span><span>Betting Lines</span><span>Compare Books</span><span>Line Moves</span><span>Price Alerts</span><span>+EV Parlay Builder</span><span>Bet Tracker</span><span>Masterclass</span><span>AI Assistant</span><span>Full Record</span></div>
@@ -1306,7 +1306,7 @@ function dnHotClose(){
     <div class="dn-sec-head"><h2>FAQ</h2></div>
     <div class="dn-faq">
       <div class="dn-q2"><b>When do the plays post?</b><span>2:00 PM ET on weekdays and 11:00 AM ET on weekends — here first, then Telegram and email once the tickets are in.</span></div>
-      <div class="dn-q2"><b>What is the difference between Gold and Platinum?</b><span>Gold is free and open to everyone. Platinum is the top tier: the strongest plays of the day, every tool, and the Vault.</span></div>
+      <div class="dn-q2"><b>What is the difference between Gold and Platinum?</b><span>Gold is free and open to everyone. Platinum is the top tier: the strongest plays of the day, every tool, and Sharp Edge.</span></div>
       <div class="dn-q2"><b>Where can I see the full record?</b><span>In the Official Tracker and the Full Record — every official play since September 22, 2026, with its ticket.</span></div>
       <div class="dn-q2"><b>Do my tracked plays affect the program record?</b><span>No. Your tracker is yours alone; the program record only counts official plays.</span></div>
       <a class="dn-more" href="{{ url_for('faqs_page') }}">See all FAQs →</a>
@@ -2047,7 +2047,7 @@ function dnHotClose(){
     {sel:null,title:"Welcome to The Sharp Team",body:"This is your new Dashboard. Tap Next and I will walk you through it part by part: where your plays live, how to read a play card, and where everything else sits."},
     {sel:[".dn-hero-card"],title:"Today's card",body:"This card tells you the state of the board. New plays post at 2:00 PM on weekdays and 11:00 AM on weekends, Eastern Time. When the board is live, today's plays and the count show right here."},
     {sel:[".dn-live"],title:"Live scores and games",body:"Every game today, with live scores. Tap a game to see every book's price, the line moves and the splits for that matchup."},
-    {sel:[".dn-board-head"],title:"Your plays",body:"Your plays sit here, grouped by level. Gold is free and open to everyone. Platinum is the paid level. The Vault is the special play of the day, for Platinum members."},
+    {sel:[".dn-board-head"],title:"Your plays",body:"Your plays sit here, grouped by level. Gold is free and open to everyone. Platinum is the paid level. Sharp Edge is the special play of the day, for Platinum members."},
     {sel:[".v5m"],title:"A play card",body:"Each card is one play: the team, the price and the start time. The percent is our model's chance of winning, an estimate, never a promise."},
     {sel:[".v5wu"],title:"Why we like it",body:"The homework, right on the card: our model's probability next to the probability implied by the price. When ours is higher, that gap is the edge we are playing."},
     {sel:[".v5timg",".v5c-matched"],title:"The real ticket",body:"Tap Receipt on a card and the original ticket opens: the real price, the real stake, the book. That is the proof that the play we publish is the same play we bet ourselves. No ticket, no official play."},
@@ -2067,7 +2067,7 @@ function dnHotClose(){
     {sel:[".dn-tool[href=\"{{ url_for('sharp') }}\"]"],title:"Sharp Money",body:"Where the sharp money is moving, tracked on the exchanges. When the pros pile into one side, you see it here first."},
     {sel:[".dn-tool[href=\"{{ url_for('tools_line_moves') }}\"]"],title:"Line Moves",body:"How each line has moved since it opened. A price that keeps shortening is telling you where the money is going."},
     {sel:["sec:Get alerts"],title:"Get alerts",body:"Turn on push alerts for this device and join the Telegram channel, and you will never miss a play."},
-    {sel:["sec:Membership"],title:"Membership",body:"Your plan lives here. Platinum unlocks every play, the Vault and all the tools."},
+    {sel:["sec:Membership"],title:"Membership",body:"Your plan lives here. Platinum unlocks every play, Sharp Edge and all the tools."},
     {sel:["#dnBell"],title:"Notifications",body:"The bell shows your latest results: every graded play, won or lost, with what it paid or what it cost."},
     {sel:["#dnMenuBtn"],title:"The menu",body:"Everything also lives in the menu: Betting Lines, Sportsbooks, the Masterclass, your tools, My Bets and your account. And you can replay this tour anytime from the Watch how it works button."},
     {sel:[".dn-tabs"],title:"The bottom bar",body:"Home, Odds, Tools and Tracker, always one tap away at the bottom."},
