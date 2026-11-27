@@ -8,12 +8,12 @@
 .cr-crumb a{color:#c4cad6;text-decoration:none}
 .cr-crumb a:hover{color:#1AE099}
 .cr-crumb .sep{margin:0 4px;color:#8b93a4}
-.cr h1{font-family:'Unbounded',sans-serif;font-weight:800;font-size:33px;line-height:1.06;margin:28px 0 0;color:#fff}
-@media(max-width:620px){.cr h1{font-size:25px}}
+.cr h1{font-family:'Unbounded',sans-serif;font-weight:800;font-size:30px;line-height:1.12;margin:16px 0 0;color:#fff}
+@media(max-width:620px){.cr h1{font-size:27px}}
 .cr h1 .mint{color:#1AE099}
 .cr .intro{color:#a3a8b3;font-size:14px;line-height:1.6;margin:10px 0 0;max-width:640px}
-.cr-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:6px 0 8px}
-.cr-card{border-radius:14px;padding:18px 20px;margin:0}
+.cr-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:16px 0 8px}
+.cr-card{border-radius:16px;padding:20px;margin:0}
 .cr-card.hot{background:linear-gradient(160deg,rgba(16,204,135,.12),#1D2029);border:1px solid rgba(16,204,135,.22)}
 .cr-card.plain{background:#1D2029;border:1px solid #2A2E3A}
 .cr-label{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:#9AA1AE;font-weight:400}
@@ -52,7 +52,7 @@
 <div class="cr">
   <div class="cr-crumb"><a href="{{ url_for('home') }}">Home</a><span class="sep">/</span><a href="{{ url_for('records') }}">Records</a></div>
 
-  <h1>The documented<br><span class="mint">record:</span> every<br>pick, win or loss.</h1>
+  <h1>The documented <span class="mint">record:</span> every pick, win or loss.</h1>
 
   <p class="intro">Every play graded, win or loss, posted publicly. A {{ '%.1f'|format(tot.wr) }}% win rate and {% if tot.profit > 0 %}+{% elif tot.profit < 0 %}−{% endif %}${{ '%.2f'|format(tot.profit|abs) }} in tracked profit since {{ desde }}. Every pick is posted before the game with its ticket photo, graded against the official final score, win or loss, in public.</p>
 
