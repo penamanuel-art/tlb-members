@@ -9052,6 +9052,9 @@ def _datos_previa_admin():
         for r in db.execute(
                 "SELECT nombre, email, app_first_seen, app_last_seen, "
                 "app_opens FROM users WHERE app_first_seen IS NOT NULL "
+                "AND LOWER(COALESCE(email, '')) NOT IN "
+                "('pena.manuel@myyahoo.com', 'alexpena1509@gmail.com', "
+                "'thesharpteam8@gmail.com', 'system@value.local') "
                 "ORDER BY app_last_seen DESC").fetchall():
             app_instalados.append({
                 "nombre": r["nombre"] or "—",
@@ -17653,6 +17656,9 @@ def _admin_contexto():
         for r in db.execute(
                 "SELECT nombre, email, app_first_seen, app_last_seen, "
                 "app_opens FROM users WHERE app_first_seen IS NOT NULL "
+                "AND LOWER(COALESCE(email, '')) NOT IN "
+                "('pena.manuel@myyahoo.com', 'alexpena1509@gmail.com', "
+                "'thesharpteam8@gmail.com', 'system@value.local') "
                 "ORDER BY app_last_seen DESC").fetchall():
             app_instalados.append({
                 "nombre": r["nombre"] or "—",
