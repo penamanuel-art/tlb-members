@@ -12820,6 +12820,7 @@ def records():
     counts_level = {"PLATINUM": 0, "GOLD": 0, "VAULT": 0}
     counts_sport = {}
     counts_result = {"WON": 0, "LOST": 0, "PUSH": 0, "VOID": 0}
+    profit_total = 0.0
     con_foto = 0
     ultima = ""
     primera = ""
@@ -12853,6 +12854,10 @@ def records():
             counts_sport[lg] = counts_sport.get(lg, 0) + 1
             counts_result[res] += 1
             try:
+                profit_total += float(j.get("profit") or 0)
+            except (TypeError, ValueError):
+                pass
+            try:
                 cuota = int(j.get("cuota"))
             except (TypeError, ValueError):
                 cuota = None
@@ -12873,6 +12878,9 @@ def records():
     return render_template("records.html", graded=graded, total=len(graded),
                            con_foto=con_foto, counts_level=counts_level,
                            counts_sport=sports, counts_result=counts_result,
+                           profit_total=profit_total,
+                           wins=counts_result["WON"],
+                           losses=counts_result["LOST"],
                            ultima_fmt=_fmt(ultima) if ultima else "",
                            primera_fmt=_fmt(primera) if primera else "")
 
