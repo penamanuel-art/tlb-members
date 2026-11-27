@@ -72,12 +72,6 @@ main.container{max-width:none;padding:0}
   <p class="countline"><b>{{ total }}</b> plays graded since {{ primera_fmt }} · <b>{{ con_foto }}</b> with ticket photos. <span id="ledShowing">Showing 1 to {{ [50, total]|min }}.</span></p>
   <a class="career" href="{{ url_for('career_record') }}">Career record →</a>
 
-  <div class="led-profit">
-    <div class="led-profit-label">PROGRAM PROFIT</div>
-    <div class="led-profit-num{% if profit_total < 0 %} neg{% endif %}">{% if profit_total > 0 %}+{% elif profit_total < 0 %}−{% endif %}${{ '%.2f'|format(profit_total|abs) }}</div>
-    <div class="led-profit-sub"><b>{{ wins }}-{{ losses }}</b> record · <b>{{ total }}</b> plays graded</div>
-  </div>
-
   <div class="led-filters">
   <div class="flabel">LEVEL</div>
   <div class="pills" data-group="level">
