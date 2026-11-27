@@ -14,7 +14,7 @@ main.container{max-width:none;padding:0}
 .cr h1 .mint{color:#1AE099}
 .cr .intro{color:#a3a8b3;font-size:13.5px;line-height:1.5;margin:8px 0 0;max-width:640px}
 .cr-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:12px 0 4px}
-.cr-card{border-radius:12px;padding:13px 14px;margin:0;text-align:center}
+.cr-card{border-radius:12px;padding:13px 14px;margin:0;text-align:left}
 .cr-card.hot{background:linear-gradient(160deg,rgba(16,204,135,.12),#1D2029);border:1px solid rgba(16,204,135,.22)}
 .cr-card.plain{background:#1D2029;border:1px solid #2A2E3A}
 .cr-label{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#9AA1AE;font-weight:400}
@@ -66,20 +66,20 @@ main.container{max-width:none;padding:0}
 
   <h1>The documented <span class="mint">record:</span> every pick, win or loss.</h1>
 
-  <p class="intro">Every play graded, win or loss, posted publicly. A {{ '%.1f'|format(tot.wr) }}% win rate and {% if tot.profit > 0 %}+{% elif tot.profit < 0 %}−{% endif %}${{ '%.2f'|format(tot.profit|abs) }} in tracked profit since {{ desde }}. Every pick is posted before the game with its ticket photo, graded against the official final score, win or loss, in public.</p>
+  <p class="intro">Every play graded, win or loss, posted publicly. A {{ '%.1f'|format(tot.wr) }}% win rate and {% if tot.profit > 0 %}+{% elif tot.profit < 0 %}−{% endif %}{{ '%.2f'|format((tot.profit/100)|abs) }}u in tracked profit since {{ desde }}. Every pick is posted before the game with its ticket photo, graded against the official final score, win or loss, in public.</p>
 
   <div class="cr-cards">
   <div class="cr-card hot">
     <div class="cr-label">OFFICIAL PLAYS</div>
     <div class="cr-big">{{ tot.w }}-{{ tot.l }}</div>
-    <p class="cr-profit{% if tot.profit < 0 %} neg{% endif %}">{% if tot.profit > 0 %}+{% elif tot.profit < 0 %}−{% endif %}${{ '%.2f'|format(tot.profit|abs) }}</p>
+    <p class="cr-profit{% if tot.profit < 0 %} neg{% endif %}">{% if tot.profit > 0 %}+{% elif tot.profit < 0 %}−{% endif %}{{ '%.2f'|format((tot.profit/100)|abs) }}u</p>
     <p class="cr-sub">{{ '%.1f'|format(tot.wr) }}% win rate · {{ tot.n }} plays graded</p>
   </div>
 
   <div class="cr-card plain">
     <div class="cr-label">PLATINUM</div>
     <div class="cr-big">{{ plat.w }}-{{ plat.l }}</div>
-    <p class="cr-profit{% if plat.profit < 0 %} neg{% endif %}">{% if plat.profit > 0 %}+{% elif plat.profit < 0 %}−{% endif %}${{ '%.2f'|format(plat.profit|abs) }}</p>
+    <p class="cr-profit{% if plat.profit < 0 %} neg{% endif %}">{% if plat.profit > 0 %}+{% elif plat.profit < 0 %}−{% endif %}{{ '%.2f'|format((plat.profit/100)|abs) }}u</p>
     <p class="cr-sub">{{ '%.1f'|format(plat.wr) }}% win rate · {{ plat.n }} plays graded</p>
   </div>
   </div>
