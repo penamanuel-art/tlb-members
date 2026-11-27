@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% block title %}Career record — The Sharp Team{% endblock %}
+{% block content %}
+{% set sport_disp = {'NCAAF':'College football','CBB':'College basketball','NCAAB':'College basketball'} %}
+<style>
+.cr{max-width:760px;margin:0 auto;padding:18px 16px 34px}
+.cr-crumb{font-size:.95rem;color:#9AA1AE;margin-bottom:16px}
+.cr-crumb a{color:#E8EAEE;text-decoration:none;font-weight:600}
+.cr-crumb .sep{margin:0 8px;color:#5C6470}
+.cr h1{font-family:'Unbounded',sans-serif;font-weight:800;font-size:clamp(2.05rem,9.6vw,2.55rem);line-height:1.14;margin:0 0 14px;color:#fff}
+.cr h1 .mint{color:#1AE099}
+.cr .intro{color:#9AA1AE;font-size:.98rem;line-height:1.7;margin:0 0 20px}
+.cr-card{border-radius:16px;padding:20px;margin:0 0 14px}
+.cr-card.hot{background:linear-gradient(135deg,rgba(16,204,135,.16),rgba(29,32,41,.65) 62%);border:1px solid rgba(16,204,135,.45)}
+.cr-card.plain{background:#1D2029;border:1px solid #2A2E3A}
+.cr-label{font-size:.8rem;letter-spacing:.16em;color:#9AA1AE;font-weight:600;margin-bottom:8px}
+.cr-big{font-family:'Unbounded',sans-serif;font-weight:800;font-size:clamp(2.4rem,11vw,3.1rem);color:#fff;line-height:1.05;margin:0 0 6px}
+.cr-profit{font-size:1.35rem;font-weight:800;color:#1AE099;margin:0 0 6px}
+.cr-profit.neg{color:#f87171}
+.cr-sub{color:#9AA1AE;font-size:.95rem;margin:0}
+.cr-pill{display:inline-flex;align-items:center;gap:8px;background:rgba(16,204,135,.08);border:1px solid rgba(16,204,135,.45);border-radius:999px;padding:10px 16px;margin:4px 0 2px;color:#fff;font-size:.95rem}
+.cr-pill .tag{color:#9AA1AE;font-weight:600}
+.cr h2{font-family:'Unbounded',sans-serif;font-weight:800;font-size:1.45rem;color:#fff;margin:30px 0 6px}
+.cr .note{color:#9AA1AE;font-size:.95rem;line-height:1.65;margin:0 0 14px}
+.cr-nums{border-top:1px solid #2A2E3A}
+.cr-nums .row{display:flex;justify-content:space-between;gap:14px;padding:11px 2px;border-bottom:1px solid #2A2E3A;font-size:1rem}
+.cr-nums .k{color:#9AA1AE}
+.cr-nums .v{color:#fff;font-weight:700;text-align:right}
+.cr-nums .v.mint{color:#1AE099}
+.cr-tix{display:flex;gap:10px;overflow-x:auto;padding:4px 0 8px;-webkit-overflow-scrolling:touch}
+.cr-tix a{flex:0 0 auto;width:118px;text-decoration:none}
+.cr-tix img{width:118px;height:118px;object-fit:cover;border-radius:10px;border:1px solid #2A2E3A;display:block;background:#0C0F16}
+.cr-tix span{display:block;color:#9AA1AE;font-size:.74rem;line-height:1.35;margin-top:6px}
+.cr-row{display:flex;align-items:center;gap:10px;background:#1D2029;border:1px solid #2A2E3A;border-radius:12px;padding:11px 13px;margin-top:9px}
+.cr-chip{font-size:.64rem;font-weight:800;letter-spacing:1.1px;border-radius:7px;padding:4px 8px;border:1px solid;flex:0 0 auto}
+.cr-chip.PLATINUM{color:#FBBF24;border-color:rgba(251,191,36,.5);background:rgba(251,191,36,.08)}
+.cr-chip.GOLD{color:#1AE099;border-color:rgba(26,224,153,.5);background:rgba(26,224,153,.08)}
+.cr-chip.VAULT{color:#FBBF24;border-color:rgba(251,191,36,.5);background:rgba(251,191,36,.08)}
+.cr-pick{color:#fff;font-weight:700;font-size:.95rem;line-height:1.3;flex:1;min-width:0}
+.cr-pick small{display:block;color:#9AA1AE;font-weight:600;font-size:.78rem;margin-top:2px}
+.cr-res{font-size:.68rem;font-weight:800;letter-spacing:1px;border-radius:999px;padding:5px 11px;flex:0 0 auto}
+.cr-res.WON{color:#34D399;background:rgba(52,211,153,.13)}
+.cr-res.LOST{color:#f87171;background:rgba(248,113,113,.15)}
+.cr-res.PUSH,.cr-res.VOID{color:#9AA1AE;background:rgba(255,255,255,.08)}
+.cr-amt{font-family:'Roboto Mono',monospace;font-weight:700;font-size:.9rem;flex:0 0 auto}
+.cr-amt.plus{color:#34D399}.cr-amt.minus{color:#f87171}.cr-amt.zero{color:#9AA1AE}
+.cr-all{display:inline-block;color:#1AE099;font-weight:700;font-size:1rem;text-decoration:none;margin-top:20px}
+</style>
+<div class="cr">
+  <div class="cr-crumb"><a href="{{ url_for('home') }}">Home</a><span class="sep">/</span><a href="{{ url_for('records') }}">Records</a></div>
+
+  <h1>The documented<br><span class="mint">record:</span> every<br>pick, win or loss.</h1>
+
+  <p class="intro">Every play graded, win or loss, posted publicly. A {{ '%.1f'|format(tot.wr) }}% win rate and {% if tot.profit > 0 %}+{% elif tot.profit < 0 %}−{% endif %}${{ '%.2f'|format(tot.profit|abs) }} in tracked profit since {{ desde }}. Every pick is posted before the game with its ticket photo, graded against the official final score, win or loss, in public.</p>
+
+  <div class="cr-card hot">
+    <div class="cr-label">OFFICIAL PLAYS</div>
+    <div class="cr-big">{{ tot.w }}-{{ tot.l }}</div>
+    <p class="cr-profit{% if tot.profit < 0 %} neg{% endif %}">{% if tot.profit > 0 %}+{% elif tot.profit < 0 %}−{% endif %}${{ '%.2f'|format(tot.profit|abs) }}</p>
+    <p class="cr-sub">{{ '%.1f'|format(tot.wr) }}% win rate · {{ tot.n }} plays graded</p>
+  </div>
+
+  <div class="cr-card plain">
+    <div class="cr-label">PLATINUM</div>
+    <div class="cr-big">{{ plat.w }}-{{ plat.l }}</div>
+    <p class="cr-profit{% if plat.profit < 0 %} neg{% endif %}">{% if plat.profit > 0 %}+{% elif plat.profit < 0 %}−{% endif %}${{ '%.2f'|format(plat.profit|abs) }}</p>
+    <p class="cr-sub">{{ '%.1f'|format(plat.wr) }}% win rate · {{ plat.n }} plays graded</p>
+  </div>
+
+  {% if racha %}
+  <div><span class="cr-pill">🔥 <b>{{ racha }}</b> <span class="tag">Official Plays</span></span></div>
+  {% endif %}
+
+  <h2>Career record</h2>
+  <p class="note">Every graded Official Play since {{ desde }}. Numbers only, built live from the graded archive — the same numbers as the cards above.</p>
+  <div class="cr-nums">
+    <div class="row"><span class="k">Career record</span><span class="v">{{ tot.w }}-{{ tot.l }}</span></div>
+    <div class="row"><span class="k">Career profit</span><span class="v mint">{% if tot.profit > 0 %}+{% elif tot.profit < 0 %}−{% endif %}${{ '%.2f'|format(tot.profit|abs) }}</span></div>
+    <div class="row"><span class="k">Win rate</span><span class="v">{{ '%.1f'|format(tot.wr) }}%</span></div>
+    <div class="row"><span class="k">Plays graded</span><span class="v">{{ tot.n }}</span></div>
+    <div class="row"><span class="k">Grading since</span><span class="v">{{ primera_fmt }}</span></div>
+  </div>
+
+  {% if win_tickets %}
+  <h2>Recent winning tickets</h2>
+  <p class="note">Real graded tickets, each posted before the game and cashed. Tap any one to see it full size.</p>
+  <div class="cr-tix">
+    {% for t in win_tickets %}
+    <a href="{{ url_for('static', filename=t.comprobante) }}" target="_blank" rel="noopener"><img src="{{ url_for('static', filename=t.comprobante) }}" alt="Ticket — {{ t.pick }}" loading="lazy"><span>{{ t.pick }} · {{ t.fecha_fmt }}</span></a>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <h2>Recent results</h2>
+  <p class="note">Every official play is graded and logged, win or loss.</p>
+  {% for r in recent %}
+  <div class="cr-row">
+    <span class="cr-chip {{ r.nivel }}">{{ r.nivel }}</span>
+    <span class="cr-pick">{{ r.pick }}<small>{{ sport_disp.get(r.liga, r.liga) }} · {{ r.fecha_fmt }}</small></span>
+    <span class="cr-res {{ r.res }}">{{ r.res }}</span>
+    <span class="cr-amt {% if r.profit > 0 %}plus{% elif r.profit < 0 %}minus{% else %}zero{% endif %}">{% if r.profit > 0 %}+${{ '%.2f'|format(r.profit) }}{% elif r.profit < 0 %}−${{ '%.2f'|format(-r.profit) }}{% else %}$0.00{% endif %}</span>
+  </div>
+  {% endfor %}
+
+  <p class="note" style="margin-top:22px">Summaries are easy to claim; receipts are not. Every play above traces back to a ticket photo posted before its game — check any of them, play by play, in the full ledger.</p>
+  <a class="cr-all" href="{{ url_for('records') }}">See every graded play →</a>
+</div>
+{% endblock %}
