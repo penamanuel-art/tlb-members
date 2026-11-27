@@ -12893,6 +12893,100 @@ def records():
                            primera_fmt=_fmt(primera) if primera else "")
 
 
+@app.route("/career-record")
+@login_required
+def career_record():
+    """Resumen de carrera (pedido Alex 2026-11-27, forma de la página de
+    Records de WGT): totales del programa y de Platinum, tickets ganadores
+    recientes y últimos resultados. TODO en vivo desde data/archive.json;
+    ningún número escrito a mano."""
+    db = get_db()
+    record_checkin(db, session["user_id"])
+    from datetime import datetime as _dt
+
+    def _fmt(f):
+        try:
+            return _dt.strptime(f, "%Y-%m-%d").strftime("%b %-d, %Y")
+        except Exception:
+            return f
+
+    graded = []
+    primera = ""
+    for d in load_archive():
+        fecha = d.get("fecha", "")
+        if fecha and (not primera or fecha < primera):
+            primera = fecha
+        for j in d.get("jugadas", []) or []:
+            if j.get("bloqueada"):
+                continue
+            res = (j.get("resultado") or "").upper()
+            if res not in ("WON", "LOST", "PUSH", "VOID"):
+                continue
+            nv = (j.get("nivel") or "").upper()
+            if nv in ("ELITE", "PLATINUM"):
+                disp = "PLATINUM"
+            elif nv in ("GOLD", "FREE"):
+                disp = "GOLD"
+            elif nv == "VAULT":
+                disp = "VAULT"
+            else:
+                continue
+            try:
+                profit_f = float(j.get("profit") or 0)
+            except (TypeError, ValueError):
+                profit_f = 0.0
+            graded.append({
+                "pick": j.get("pick", ""), "nivel": disp,
+                "liga": (j.get("liga") or "").upper(),
+                "fecha": fecha, "fecha_fmt": _fmt(fecha),
+                "res": res, "profit": profit_f,
+                "comprobante": j.get("comprobante") or "",
+            })
+    graded.sort(key=lambda r: r["fecha"], reverse=True)
+
+    def _stats(rows):
+        w = sum(1 for r in rows if r["res"] == "WON")
+        l = sum(1 for r in rows if r["res"] == "LOST")
+        p = sum(r["profit"] for r in rows)
+        wr = (100.0 * w / (w + l)) if (w + l) else 0.0
+        return {"n": len(rows), "w": w, "l": l, "profit": p, "wr": wr}
+
+    tot = _stats(graded)
+    plat = _stats([r for r in graded if r["nivel"] == "PLATINUM"])
+
+    # Píldora de racha SOLO con datos reales: racha ganadora actual (>=2)
+    # o marca ganadora en las últimas 10 (W>L). Si no hay, no se muestra.
+    racha = ""
+    streak = 0
+    for r in graded:
+        if r["res"] in ("PUSH", "VOID"):
+            continue
+        if r["res"] == "WON":
+            streak += 1
+        else:
+            break
+    if streak >= 2:
+        racha = "%d straight winning plays" % streak
+    else:
+        last10 = [r for r in graded if r["res"] in ("WON", "LOST")][:10]
+        lw = sum(1 for r in last10 if r["res"] == "WON")
+        ll = len(last10) - lw
+        if last10 and lw > ll:
+            racha = "%d-%d in the last %d plays" % (lw, ll, len(last10))
+
+    win_tickets = [r for r in graded
+                   if r["res"] == "WON" and r["comprobante"]][:6]
+    recent = graded[:10]
+    try:
+        desde = _dt.strptime(primera, "%Y-%m-%d").strftime("%B %Y") if primera else ""
+    except Exception:
+        desde = ""
+    return render_template("career_record.html", tot=tot, plat=plat,
+                           racha=racha, win_tickets=win_tickets,
+                           recent=recent, desde=desde,
+                           primera_fmt=_fmt(primera) if primera else "")
+
+
 @app.route("/about")
 def about():
     """Nuestra historia — la promesa (pedido por Alex 2026-10-06).
