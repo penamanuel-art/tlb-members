@@ -764,6 +764,31 @@ body .dn-hot-card:has(.dn-hot-streakrow) .dn-hot-sub2{margin-bottom:0}
 body .dn-hot-card:has(.dn-hot-streakrow) .dn-hot-dots{margin-bottom:2px}
 body .dn-hot-card:has(.dn-hot-streakrow) .dn-hot-streakrow{margin-bottom:4px}
 </style>
+<style>
+/* ===== Hot right now: AIRE entre la información de adentro (2026-11-27,
+   orden de Alex: «se ve todo como muy muy pegado… dale un poquito más de
+   aire… no agrande tamaño ni ponga tamaño»). SOLO crece la separación
+   ENTRE los elementos internos de la tarjeta (píldora/etiqueta, récord,
+   subtítulo, fila de racha, puntitos y pie): márgenes entre bloques
+   +2 a +4px y los puntitos un poco más sueltos. Compensado sin tocar
+   ni una letra: el número baja su line-height de 1.08 a 1 (la caja
+   invisible del renglón, no el tamaño de la letra) y el padding
+   vertical de la tarjeta baja 14→12px, pa' que el alto total quede
+   igual (±4px) y el ancho intacto. Las tarjetas con fila de racha
+   conservan su compensación del arreglo de hoy, ajustada a los
+   márgenes nuevos, pa' que TODAS sigan del mismo alto. ===== */
+body .dn-hot-card{padding:12px 20px}
+body .dn-hot-card .dn-hot-top{gap:12px}
+body .dn-hot-card .dn-hot-num{margin:11px 0 5px;line-height:1}
+body .dn-hot-card .dn-hot-sub2{margin:0 0 12px}
+body .dn-hot-card .dn-hot-streakrow{margin:0 0 11px}
+body .dn-hot-card .dn-hot-dots{gap:9px;margin:0 0 13px}
+body .dn-hot-card:has(.dn-hot-streakrow) .dn-hot-num{margin-top:0}
+body .dn-hot-card:has(.dn-hot-streakrow) .dn-hot-sub2{margin-bottom:3px}
+body .dn-hot-card:has(.dn-hot-streakrow) .dn-hot-streakrow{margin-bottom:7px}
+body .dn-hot-card:has(.dn-hot-streakrow){padding-bottom:10px}
+body .dn-hot-card:has(.dn-hot-streakrow) .dn-hot-dots{margin-bottom:5px}
+</style>
 </head>
 <body>
 
