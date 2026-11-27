@@ -12941,6 +12941,9 @@ def career_record():
                 "fecha": fecha, "fecha_fmt": _fmt(fecha),
                 "res": res, "profit": profit_f,
                 "comprobante": j.get("comprobante") or "",
+                "team": (j.get("team_name") or "").strip(),
+                "opp": (j.get("opp_name") or "").strip(),
+                "bettype": (j.get("bettype") or "").upper(),
             })
     graded.sort(key=lambda r: r["fecha"], reverse=True)
 
@@ -13021,6 +13024,40 @@ def career_record():
                     "tag": "Official Plays", "n": s})
         rachas.sort(key=lambda x: -x["n"])
 
+    # Ventana Platinum (pedido Alex 2026-11-27, forma de la sección de la
+    # página de Records de referencia): las últimas 26 Platinum DECISIVAS
+    # (WON/LOST) del archivo, con su récord real, recientes primero. El
+    # pick va en palabras normales: sin las palabras del mercado; una
+    # jugada de ganador se lee «<equipo> to win». Matchup solo si el
+    # archivo trae rival (opp_name); si no, solo la liga.
+    def _pick_plano(r):
+        p = (r["pick"] or "").strip()
+        bt = r["bettype"]
+        if bt == "ML" or p.upper().endswith(" ML"):
+            base = p[:-3].rstrip() if p.upper().endswith(" ML") else p
+            base = base.replace(" Moneyline", "").replace(" moneyline", "")
+            return (base + " to win").strip()
+        return p.replace(" Spread", "").replace(" Moneyline", " to win")
+
+    def _fmt_corta(f):
+        try:
+            return _dt.strptime(f, "%Y-%m-%d").strftime("%b %-d")
+        except Exception:
+            return f
+
+    _plat_dec = [r for r in graded
+                 if r["nivel"] == "PLATINUM" and r["res"] in ("WON", "LOST")]
+    plat_window = []
+    for r in _plat_dec[:26]:
+        plat_window.append({
+            "res": r["res"], "fecha_corta": _fmt_corta(r["fecha"]),
+            "pick_disp": _pick_plano(r), "liga": r["liga"],
+            "team": r["team"], "opp": r["opp"],
+        })
+    platw = {"n": len(plat_window),
+             "w": sum(1 for r in plat_window if r["res"] == "WON"),
+             "l": sum(1 for r in plat_window if r["res"] == "LOST")}
+
     win_tickets = [r for r in graded
                    if r["res"] == "WON" and r["comprobante"]][:6]
     recent = graded[:10]
@@ -13030,6 +13067,7 @@ def career_record():
         desde = ""
     return render_template("career_record.html", tot=tot, plat=plat,
                            racha=racha, rachas=rachas,
+                           plat_window=plat_window, platw=platw,
                            win_tickets=win_tickets,
                            recent=recent, desde=desde,
                            primera_fmt=_fmt(primera) if primera else "")
