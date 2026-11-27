@@ -68,6 +68,14 @@
    |upper: la palabra del mercado NUNCA va en el título — va la LÍNEA (+4.5 / -3.5 / Over 46.5).
    En totales el título es el pick completo, que ya trae su forma («TCU @ Texas Tech Over 46.5»). #}
 {% set _title = p.pick if (_bt == 'TOTAL' and p.pick) else ((p.team_name or p.abbr) ~ (' ' ~ _bt_label if _bt_label else '')) %}
+{# Titulo de la CARA con nombres CORTOS (2026-11-27, orden de Alex con
+   foto: «Pon los nombres más cortos» — el titulo salia cortado con «…»:
+   «Oregon Ducks @ Maryland Terrapins Ov…»): la escuela sin mascota en
+   universitarios y el apodo en profesionales, via team_short /
+   pick_short de app.py (mapa verificado + respaldo seguro; SOLO
+   display, los datos no se tocan). La hoja de detalle sigue usando
+   _title con el nombre completo. #}
+{% set _title_face = pick_short(p.pick, p.team_name, p.opp_name) if (_bt == 'TOTAL' and p.pick) else (team_short(p.team_name or p.abbr) ~ (' ' ~ _bt_label if _bt_label else '')) %}
 {# Explicación en palabras normales (2026-11-26, orden de Alex: la palabra del
    mercado NO sale en NINGUNA parte visible y la jugada se explica como la
    entiende cualquiera): una línea fina generada de la línea de la jugada. #}
@@ -330,7 +338,7 @@
   <div class="v5m-head">
     {% if _logo %}<img class="v5m-logo" src="{{ _logo }}" alt="{{ p.abbr }} logo" loading="lazy" onerror="this.remove()">{% endif %}
     <div style="flex:1;min-width:0">
-      <div class="v5m-title" data-v5-open="{{ p.id }}" style="cursor:pointer">{{ _title }}</div>
+      <div class="v5m-title" data-v5-open="{{ p.id }}" style="cursor:pointer">{{ _title_face }}</div>
       {% if _explain %}<div class="v5m-explain">{{ _explain }}</div>{% endif %}
       {# SIN pills en la cara (2026-11-26 ~10:43 PM ET, queja de Alex: la
          tarjeta de TCU se veia MAS GRANDE que las demas por el icono de
