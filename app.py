@@ -15525,6 +15525,31 @@ def admin_api_members_set_lang():
     return jsonify({"ok": True, "email": email, "lang": lang})
 
 
+@app.route("/admin/api/members-clear-app", methods=["POST"])
+def admin_api_members_clear_app():
+    """Borra el registro de uso como app de un miembro (app_first_seen,
+    app_last_seen y app_opens a cero) sin tocar su cuenta (2026-11-27,
+    pedido de Alex pa' probar en vivo que el sistema detecta cuando un
+    miembro vuelve a instalar/abrir el Dashboard como aplicacion).
+    Auth: sesion admin O header X-Admin-Key."""
+    if not _admin_api_autorizado():
+        return jsonify({"error": "admin only"}), 403
+    data = request.get_json(silent=True) or {}
+    email = (data.get("email") or request.form.get("email") or "").strip().lower()
+    if not email:
+        return jsonify({"error": "email required"}), 400
+    db = get_db()
+    target = db.execute("SELECT * FROM users WHERE email = ?",
+                        (email,)).fetchone()
+    if not target:
+        return jsonify({"error": "not found"}), 404
+    db.execute("UPDATE users SET app_first_seen = NULL, "
+               "app_last_seen = NULL, app_opens = 0 WHERE id = ?",
+               (target["id"],))
+    db.commit()
+    return jsonify({"ok": True, "email": email, "app_borrada": True})
+
+
 @app.route("/admin/api/members-reset-link", methods=["POST"])
 def admin_api_members_reset_link():
     """Genera un enlace de un solo uso para que un miembro cree una
