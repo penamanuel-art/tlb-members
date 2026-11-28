@@ -133,25 +133,27 @@ body .dn-top-in{padding-top:14px;padding-bottom:14px}
    48.4 en tira de 72. */
 body .dn-top-in > div:first-child{transform:scale(1.3);transform-origin:left center}
 @media (max-width:559px){body .dn-top-in > div:first-child{transform:scale(1.1)}}
-/* ===== AIRE ENTRE EL LOGO Y LA CAMPANITA EN MOVIL (2026-11-28, reporte
-   de Alex: en Android el logo quedaba pegado de la campanita; en iPhone
-   no). La fila va llena: sin tocar el logo ni su escala, se recoge un
-   poco el grupo derecho (botones un pelo mas compactos) y se le deja al
-   logo su margen. La pildora dorada EN (boton de idioma, solo cuentas
-   admin) va mas compacta en pantallas chicas. ===== */
+/* ===== AIRE ENTRE EL LOGO Y LA CAMPANITA — SOLO ANDROID (2026-11-28,
+   orden de Alex: «ajústalo más, en Android nada más; no toque nada de
+   iPhone»). La clase tst-android la pone el script tras el <body>
+<script>if(/Android/i.test(navigator.userAgent||"")){document.documentElement.classList.add("tst-android");}</script>
+   según el user-agent; sin esa clase (iPhone y todo lo demás) el
+   header queda intacto, tal cual estaba. El logo NO se achica: se le
+   da más margen y el grupo derecho va más compacto. ===== */
 @media (max-width:559px){
-body .dn-top-in > div:first-child{margin-right:14px}
-.dn-top-right{gap:5px}
-.dn-iconbtn{width:34px;height:34px}
-.dn-menubtn{width:40px;height:40px}
-.dn-viewpicks{font-size:13px;padding:9px 9px}
-.v2-lang-btn,.lang-btn{padding:4px 8px;font-size:11px}
+html.tst-android .dn-top .dn-top-in > div:first-child{margin-right:18px}
+html.tst-android .dn-top-right{gap:4px}
+html.tst-android .dn-iconbtn{width:32px;height:32px}
+html.tst-android .dn-menubtn{width:38px;height:38px}
+html.tst-android .dn-viewpicks{font-size:12.5px;padding:8px 8px}
+html.tst-android .v2-lang-btn,html.tst-android .lang-btn{padding:3px 7px;font-size:10.5px}
+html.tst-android .dn-top-in{padding-left:9px;padding-right:9px}
 }
 @media (max-width:380px){
-.dn-top-in{padding-left:10px;padding-right:10px}
-.dn-iconbtn{width:33px;height:33px}
-.dn-menubtn{width:38px;height:38px}
-.dn-viewpicks{font-size:12px;padding:8px 8px}
+html.tst-android .dn-top-in{padding-left:8px;padding-right:8px}
+html.tst-android .dn-iconbtn{width:31px;height:31px}
+html.tst-android .dn-menubtn{width:36px;height:36px}
+html.tst-android .dn-viewpicks{font-size:12px;padding:7px 7px}
 }
 /* ===== BARRA INFERIOR — LA MISMA DEL DASHBOARD EN TODAS LAS PAGINAS
    (2026-11-28, orden de Alex: «tiene que ser siempre el mismo menú»;
