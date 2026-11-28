@@ -184,6 +184,13 @@ main.v2-wrap{padding-bottom:0}
 .v2-topbar{display:none!important}
 .v2-streak-strip{display:none!important}
 .v2-bottomnav{display:none!important}
+/* Página aparte, sin menú ni nada (orden de Alex, 2026-11-28): se oculta
+   también el chrome ACTUAL de la base (tirita, header y barra de abajo),
+   que con las clases viejas ya no se ocultaba. */
+.dn-strip-top{display:none!important}
+.dn-top{display:none!important}
+.dn-tabs{display:none!important}
+.v2-footer{display:none!important}
 .upl-sticky{bottom:0!important}
 body{padding-bottom:calc(8px + env(safe-area-inset-bottom))!important}
 /* SALIDA DISCRETA (2026-11-11, orden de Alex: «¿cómo sale de esa página?» / «Pon la salida discreta arriba»): la página standalone no trae chrome del sitio, así que un cliente que no quiere pagar quedaba atrapado. Lleva su propia ✕ fija en la esquina superior DERECHA que devuelve al Dashboard (/home): círculo oscuro semitransparente de 34px, ✕ en gris claro, z-index sobre todo el contenido de la página pero sin competir con el diseño. La línea de confianza (centrada) recibe aire lateral (padding 0 46px) pa' que su texto nunca corra debajo del botón. Solo esta plantilla. */
