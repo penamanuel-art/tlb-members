@@ -232,7 +232,7 @@ main.v2-wrap,main{margin-top:0!important}
         <button class="dn-menubtn" type="button" id="menuBtn" aria-label="Menu" aria-expanded="false">☰</button>
         <div class="menu-drop" id="menuDrop" hidden style="left:auto;right:0;">
         {# MENÚ — estructura de la foto de Wise Guy (2026-11-13): lista plana, sin grupos. Idéntico en home_lux.html, base.html y base_v2.html. Las herramientas viven dentro de «My Tools». #}
-        {% if not miembro_platinum %}        <a href="{{ url_for('desbloquear_platinum') }}"{% if is_alex %} data-tst-unlock="1"{% endif %} style="font-size:15px;font-weight:600;color:#1AE099;">Unlock Platinum</a>{% endif %}
+        {% if not miembro_platinum %}        <a href="{{ url_for('desbloquear_platinum') }}" style="font-size:15px;font-weight:600;color:#1AE099;">Unlock Platinum</a>{% endif %}
         <a href="{{ url_for('game_center') }}" style="font-size:15px;">Betting Lines</a>
         <a href="{{ url_for('balances') }}" style="font-size:15px;">Sportsbooks</a>
         <a href="{{ url_for('masterclass') }}" style="font-size:15px;">Masterclass</a>
@@ -276,7 +276,7 @@ main.v2-wrap,main{margin-top:0!important}
       <button class="icon-btn" id="menuBtn" aria-label="Menu" aria-expanded="false" aria-haspopup="true" style="cursor:pointer;display:flex;align-items:center;justify-content:center;">☰</button>
       <div class="menu-drop" id="menuDrop" hidden style="left:auto;right:0;">
         {# MENÚ — estructura de la foto de Wise Guy (2026-11-13): lista plana, sin grupos. Idéntico en home_lux.html, base.html y base_v2.html. Las herramientas viven dentro de «My Tools». #}
-        {% if not miembro_platinum %}        <a href="{{ url_for('desbloquear_platinum') }}"{% if is_alex %} data-tst-unlock="1"{% endif %} style="font-size:15px;font-weight:600;color:#1AE099;">Unlock Platinum</a>{% endif %}
+        {% if not miembro_platinum %}        <a href="{{ url_for('desbloquear_platinum') }}" style="font-size:15px;font-weight:600;color:#1AE099;">Unlock Platinum</a>{% endif %}
         <a href="{{ url_for('game_center') }}" style="font-size:15px;">Betting Lines</a>
         <a href="{{ url_for('balances') }}" style="font-size:15px;">Sportsbooks</a>
         <a href="{{ url_for('masterclass') }}" style="font-size:15px;">Masterclass</a>
@@ -632,41 +632,6 @@ function googleTranslateElementInit(){new google.translate.TranslateElement({pag
 .topbar .icon-btn{transform:scale(1.15);transform-origin:center}
 </style>
 
-{% if is_alex %}
-<!-- PREVIA SOLO ALEX (2026-11-28): mensajito "Continue in your browser" al tocar Unlock Platinum, igual al flujo de la referencia; Continue abre la previa de pago /previa-desbloquear. Los miembros no ven nada de esto. -->
-<style>
-.tst-unlock-ov{position:fixed;inset:0;z-index:3000;background:rgba(6,8,12,.72);display:none;align-items:flex-end;justify-content:center}
-.tst-unlock-ov.open{display:flex}
-.tst-unlock-card{background:#1D2029;border:1px solid #2A2E3A;border-radius:22px 22px 0 0;width:100%;max-width:460px;padding:26px 22px calc(20px + env(safe-area-inset-bottom));text-align:center;box-shadow:0 -12px 40px rgba(0,0,0,.45)}
-@media (min-width:560px){.tst-unlock-ov{align-items:center;padding:20px}.tst-unlock-card{border-radius:22px}}
-.tst-unlock-ico{width:58px;height:58px;margin:0 auto 14px;border-radius:50%;background:rgba(16,204,135,.14);border:1px solid rgba(26,224,153,.35);display:flex;align-items:center;justify-content:center}
-.tst-unlock-h{color:#fff;font-size:20px;font-weight:700;margin:0 0 8px}
-.tst-unlock-p{color:#9AA1AE;font-size:14.5px;line-height:1.45;margin:0 0 20px}
-.tst-unlock-go{display:block;width:100%;background:#10CC87;color:#0C0F16;font-size:16.5px;font-weight:700;border:0;border-radius:14px;padding:15px 0;cursor:pointer}
-.tst-unlock-no{display:block;width:100%;background:none;border:0;color:#9AA1AE;font-size:15px;font-weight:600;padding:13px 0 2px;cursor:pointer}
-</style>
-<div class="tst-unlock-ov" id="tstUnlockOv" role="dialog" aria-modal="true">
-  <div class="tst-unlock-card">
-    <div class="tst-unlock-ico"><svg width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="#1AE099" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="15" rx="2.5"/><path d="M3 9h18"/><path d="M14.5 14.5 19 10M15 10h4v4"/></svg></div>
-    <p class="tst-unlock-h">Continue in your browser</p>
-    <p class="tst-unlock-p">To unlock Platinum, we&rsquo;ll open the secure payment page in your browser.</p>
-    <button type="button" class="tst-unlock-go" id="tstUnlockGo">Continue</button>
-    <button type="button" class="tst-unlock-no" id="tstUnlockNo">Not now</button>
-  </div>
-</div>
-<script>
-(function(){
-  var ov=document.getElementById('tstUnlockOv'); if(!ov) return;
-  function openOv(){ ov.classList.add('open'); }
-  function closeOv(){ ov.classList.remove('open'); }
-  document.querySelectorAll('a[data-tst-unlock]').forEach(function(a){
-    a.addEventListener('click', function(e){ e.preventDefault(); openOv(); });
-  });
-  document.getElementById('tstUnlockGo').addEventListener('click', function(){ window.location.href='/previa-desbloquear'; });
-  document.getElementById('tstUnlockNo').addEventListener('click', closeOv);
-  ov.addEventListener('click', function(e){ if(e.target===ov) closeOv(); });
-})();
-</script>
-{% endif %}
+
 </body>
 </html>
