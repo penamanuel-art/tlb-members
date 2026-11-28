@@ -4,38 +4,175 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="color-scheme" content="dark">
-<title>Free plays on Telegram — The Sharp Team</title>
+<meta name="description" content="Join the free Telegram channel and get the day's Gold plays the moment they're posted.">
+<title>Free Gold plays on Telegram — The Sharp Team</title>
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
-  body{background:#0C0F16;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:#E8EAF0;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:28px 20px 32px}
-  .tg-card{width:100%;max-width:420px;background:#1D2029;border:1px solid #2A2E3A;border-radius:23px;padding:26px 22px 22px;text-align:center}
-  .tg-logo{display:flex;align-items:center;justify-content:center;gap:9px;margin-bottom:20px}
-  .tg-logo .coin{height:42px;width:auto;display:block}
-  .tg-logo .letters{height:25px;width:auto;display:block}
-  h1{font-size:22px;line-height:1.25;font-weight:650;letter-spacing:.2px;color:#FFFFFF}
-  .tg-sub{margin-top:10px;font-size:14px;line-height:1.5;color:#9AA1AE}
-  .tg-benefits{margin:20px 0 22px;text-align:left;display:inline-block}
-  .tg-benefits li{list-style:none;font-size:14.5px;line-height:1.45;color:#E8EAF0;padding:5px 0;display:flex;gap:9px;align-items:flex-start}
-  .tg-benefits .ck{color:#1AE099;font-weight:700;flex:0 0 auto}
-  .tg-btn{display:block;width:100%;background:#10CC87;color:#06231A;font-size:16px;font-weight:700;text-decoration:none;padding:15px 18px;border-radius:14px;letter-spacing:.2px}
-  .tg-foot{margin-top:18px;font-size:12px;color:#9AA1AE;letter-spacing:.4px}
+  body{background:#0C0F16;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:#E8EAF0;padding-bottom:96px}
+  .wrap{max-width:480px;margin:0 auto;padding:0 20px}
+  .topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 0 6px}
+  .logo{display:flex;align-items:center;gap:8px}
+  .logo .coin{height:38px;width:auto;display:block}
+  .logo .letters{height:22px;width:auto;display:block}
+  .mini-btn{background:#10CC87;color:#06231A;font-size:13px;font-weight:700;text-decoration:none;padding:9px 14px;border-radius:999px;white-space:nowrap}
+  .hero{text-align:center;padding:26px 0 8px}
+  .tag{display:inline-block;color:#1AE099;font-size:11.5px;font-weight:700;letter-spacing:.16em;border:1px solid #2A2E3A;border-radius:999px;padding:6px 12px;background:#1D2029}
+  h1{font-size:27px;line-height:1.22;font-weight:650;letter-spacing:.2px;color:#FFFFFF;margin-top:16px}
+  .sub{margin-top:12px;font-size:14.5px;line-height:1.55;color:#9AA1AE}
+  .btn{display:block;background:#10CC87;color:#06231A;font-size:16px;font-weight:700;text-decoration:none;padding:15px 18px;border-radius:14px;letter-spacing:.2px;text-align:center;margin-top:20px}
+  .micro{margin-top:10px;font-size:12.5px;color:#9AA1AE;text-align:center}
+  .phone{width:262px;max-width:100%;margin:26px auto 4px;background:#0B0E14;border:1.5px solid #2A2E3A;border-radius:34px;padding:10px 10px 16px;box-shadow:0 18px 40px rgba(0,0,0,.45)}
+  .phone .notch{width:86px;height:5px;border-radius:3px;background:#2A2E3A;margin:2px auto 10px}
+  .tg-head{display:flex;align-items:center;gap:9px;padding:4px 6px 10px;border-bottom:1px solid #1D2029}
+  .tg-ava{width:34px;height:34px;border-radius:50%;background:#10CC87;color:#06231A;font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+  .tg-name{font-size:14.5px;font-weight:650;color:#FFFFFF;line-height:1.2;text-align:left}
+  .tg-sub2{font-size:11.5px;color:#9AA1AE;text-align:left}
+  .tg-body{padding:12px 4px 2px;display:flex;flex-direction:column;gap:8px}
+  .msg{background:#1D2029;border:1px solid #2A2E3A;border-radius:12px;border-bottom-left-radius:4px;padding:9px 11px;font-size:13px;line-height:1.45;color:#E8EAF0;text-align:left}
+  .msg .t{display:block;margin-top:4px;font-size:10.5px;color:#9AA1AE;text-align:right}
+  section{padding:30px 0 2px}
+  h2{font-size:19px;line-height:1.3;font-weight:650;color:#FFFFFF;letter-spacing:.2px}
+  .sec-sub{margin-top:8px;font-size:14px;line-height:1.55;color:#9AA1AE}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+  .card{background:#1D2029;border:1px solid #2A2E3A;border-radius:23px;padding:15px 14px}
+  .card .ck{color:#1AE099;font-weight:800;font-size:15px}
+  .card h3{font-size:14px;line-height:1.35;font-weight:650;color:#FFFFFF;margin-top:7px}
+  .card p{font-size:12.5px;line-height:1.45;color:#9AA1AE;margin-top:4px}
+  .panel{background:#1D2029;border:1px solid #2A2E3A;border-radius:23px;padding:20px 18px;margin-top:16px}
+  .bullets{list-style:none;margin-top:12px}
+  .bullets li{font-size:14px;line-height:1.5;color:#E8EAF0;padding:6px 0;display:flex;gap:9px;align-items:flex-start}
+  .bullets .ck{color:#1AE099;font-weight:800;flex:0 0 auto}
+  .steps{list-style:none;margin-top:16px;display:flex;flex-direction:column;gap:10px}
+  .steps li{background:#1D2029;border:1px solid #2A2E3A;border-radius:23px;padding:14px 16px;display:flex;gap:12px;align-items:center}
+  .num{width:28px;height:28px;border-radius:50%;background:#10CC87;color:#06231A;font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+  .steps .st{font-size:14.5px;line-height:1.4;color:#E8EAF0}
+  .soft{text-align:center}
+  .soft a{color:#1AE099;font-weight:650;text-decoration:none}
+  details{background:#1D2029;border:1px solid #2A2E3A;border-radius:18px;padding:14px 16px;margin-top:10px}
+  summary{font-size:14.5px;font-weight:650;color:#FFFFFF;cursor:pointer;list-style:none}
+  summary::-webkit-details-marker{display:none}
+  details p{font-size:13.5px;line-height:1.55;color:#9AA1AE;margin-top:8px}
+  .final{text-align:center;padding-top:34px}
+  .final h2{font-size:21px}
+  .legal{margin-top:30px;padding-top:16px;border-top:1px solid #2A2E3A;font-size:11.5px;line-height:1.55;color:#9AA1AE;text-align:center}
+  .sticky{position:fixed;left:0;right:0;bottom:0;background:rgba(12,15,22,.97);border-top:1px solid #2A2E3A;padding:10px 20px calc(10px + env(safe-area-inset-bottom));display:none;z-index:50}
+  .sticky a{display:block;background:#10CC87;color:#06231A;font-size:15.5px;font-weight:700;text-decoration:none;padding:13px 18px;border-radius:14px;text-align:center}
+  @media (max-width:640px){.sticky{display:block}}
+  @media (min-width:641px){body{padding-bottom:40px}}
 </style>
 </head>
 <body>
-  <main class="tg-card">
-    <div class="tg-logo">
+<div class="wrap">
+
+  <div class="topbar">
+    <div class="logo">
       <img class="coin" src="{{ url_for('static', filename='img/sharp-coin.png') }}" alt="">
       <img class="letters" src="{{ url_for('static', filename='img/sharp-letters.png') }}" alt="The Sharp Team">
     </div>
-    <h1>Get our free plays on Telegram</h1>
-    <p class="tg-sub">Join the free Telegram channel and get the day's free plays the moment they're posted.</p>
-    <ul class="tg-benefits">
-      <li><span class="ck">✓</span><span>Free Gold plays every day</span></li>
-      <li><span class="ck">✓</span><span>Instant updates — no algorithm hiding the posts</span></li>
-      <li><span class="ck">✓</span><span>Every play graded in public, win or lose</span></li>
+    <a class="mini-btn" href="https://t.me/thesharpteam" target="_blank" rel="noopener">Join free</a>
+  </div>
+
+  <div class="hero">
+    <span class="tag">FREE GOLD PLAYS · ON TELEGRAM</span>
+    <h1>Free plays, straight to your phone.</h1>
+    <p class="sub">Join our free Telegram channel and get the day's Gold plays the moment they're posted — no algorithm hiding them.</p>
+    <a class="btn" href="https://t.me/thesharpteam" target="_blank" rel="noopener">Join the free channel</a>
+    <p class="micro">Free · No card · Leave anytime</p>
+
+    <div class="phone" aria-hidden="true">
+      <div class="notch"></div>
+      <div class="tg-head">
+        <div class="tg-ava">G</div>
+        <div>
+          <div class="tg-name">Gold Plays</div>
+          <div class="tg-sub2">Telegram channel</div>
+        </div>
+      </div>
+      <div class="tg-body">
+        <div class="msg">Today's free plays are posted<span class="t">2:00 PM</span></div>
+        <div class="msg">Gold Play of the Day<span class="t">2:00 PM</span></div>
+      </div>
+    </div>
+  </div>
+
+  <section>
+    <h2>What you get</h2>
+    <div class="grid">
+      <div class="card"><span class="ck">✓</span><h3>Free Gold plays every day</h3><p>A fresh set of free plays, every single day.</p></div>
+      <div class="card"><span class="ck">✓</span><h3>Posted before the game</h3><p>Every play goes up before it starts.</p></div>
+      <div class="card"><span class="ck">✓</span><h3>Graded in public — win or lose</h3><p>Results are posted either way, for everyone to see.</p></div>
+      <div class="card"><span class="ck">✓</span><h3>Instant alerts, nothing hidden</h3><p>Telegram shows you the post the second it lands.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="panel">
+      <h2>Don't take our word for it</h2>
+      <p class="sec-sub">Every play is posted before the game and graded after it ends — win or lose. The full history stays right there in the channel, so anyone can scroll back and check it.</p>
+      <a class="btn" href="https://t.me/thesharpteam" target="_blank" rel="noopener">Open the channel and see for yourself</a>
+    </div>
+  </section>
+
+  <section>
+    <h2>What we won't promise</h2>
+    <ul class="bullets">
+      <li><span class="ck">✓</span><span>No guarantees. No locks.</span></li>
+      <li><span class="ck">✓</span><span>Past results don't guarantee future ones.</span></li>
+      <li><span class="ck">✓</span><span>What you play is always your call.</span></li>
     </ul>
-    <a class="tg-btn" href="https://t.me/thesharpteam" target="_blank" rel="noopener">Join the free channel</a>
-    <div class="tg-foot">The Sharp Team</div>
-  </main>
+  </section>
+
+  <section>
+    <h2>How it works</h2>
+    <ol class="steps">
+      <li><span class="num">1</span><span class="st">Tap the button</span></li>
+      <li><span class="num">2</span><span class="st">Join in Telegram — the app is free</span></li>
+      <li><span class="num">3</span><span class="st">Turn on notifications so you don't miss a post</span></li>
+    </ol>
+  </section>
+
+  <section class="soft">
+    <h2>Want more than the channel?</h2>
+    <p class="sec-sub">Create a free account and open the member Dashboard, where the Gold plays are posted every day. <a href="/registro">Register free here</a>.</p>
+  </section>
+
+  <section>
+    <h2>Fair questions</h2>
+    <details>
+      <summary>Is the channel really free?</summary>
+      <p>Yes — no card, no payment. You join and the plays are there.</p>
+    </details>
+    <details>
+      <summary>What do I get inside?</summary>
+      <p>The day's free Gold plays, posted before the games.</p>
+    </details>
+    <details>
+      <summary>When are the plays posted?</summary>
+      <p>As soon as they're published — Telegram notifies you instantly.</p>
+    </details>
+    <details>
+      <summary>Do I need the Telegram app?</summary>
+      <p>Yes, it's free — the button takes you straight to it.</p>
+    </details>
+    <details>
+      <summary>Do you guarantee winners?</summary>
+      <p>No — nobody can. Every play is graded in public, win or lose.</p>
+    </details>
+  </section>
+
+  <div class="final">
+    <h2>Get today's free plays.</h2>
+    <a class="btn" href="https://t.me/thesharpteam" target="_blank" rel="noopener">Join the free channel</a>
+    <p class="micro">Free · No card · Leave anytime</p>
+  </div>
+
+  <p class="legal">The Sharp Team · For adults 21+ · Sports content for information only — nothing is guaranteed. Play responsibly.</p>
+
+</div>
+
+<div class="sticky">
+  <a href="https://t.me/thesharpteam" target="_blank" rel="noopener">Join the free channel</a>
+</div>
+
 </body>
 </html>
