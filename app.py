@@ -5609,6 +5609,8 @@ _TEAM_SHORT = {
     'Maryland Terrapins': 'Maryland',
     'Northeastern Huskies': 'Northeastern',
     'Northwestern Wildcats': 'Northwestern', 'Oregon Ducks': 'Oregon',
+    'San Diego State Aztecs': 'SDSU', 'San Diego State': 'SDSU',
+    'Washington State Cougars': 'WSU', 'Washington State': 'WSU',
     'UC Davis Aggies': 'UC Davis', 'UCF Knights': 'UCF',
     'Akron Zips': 'Akron', 'Arizona State Sun Devils': 'Arizona State',
     'Arizona Wildcats': 'Arizona', 'Cincinnati Bearcats': 'Cincinnati',
@@ -5697,7 +5699,8 @@ _TEAM_MASCOT_SUFFIXES = [
     'Cyclones', 'Ducks', 'Eagles', 'Falcons', 'Gamecocks', 'Gators',
     'Gophers', 'Hawkeyes', 'Hilltoppers', 'Hoosiers', 'Hornets',
     'Hurricanes', 'Huskies', 'Jayhawks', 'Knights', 'Lions',
-    'Lumberjacks', 'Miners', 'Mountaineers', 'Owls', 'Panthers',
+    'Lumberjacks', 'Midshipmen', 'Miners', 'Mountaineers', 'Ospreys',
+    'Owls', 'Panthers', '49ers',
     'Pirates', 'Razorbacks', 'Rebels', 'Roadrunners', 'Seminoles',
     'Sooners', 'Spartans', 'Terrapins', 'Tigers', 'Trojans', 'Utes',
     'Volunteers', 'Wildcats', 'Wolverines', 'Zips',
@@ -5720,12 +5723,21 @@ def team_short(name) -> str:
 def pick_short(pick, *names) -> str:
     """El pick con los nombres de equipo en corto (display): reemplaza
     cada nombre completo por su corto, el más largo primero pa' que un
-    nombre nunca pise al otro («Oregon» vs «Oregon State»)."""
+    nombre nunca pise al otro («Oregon» vs «Oregon State»). El pick a
+    veces ya trae la escuela SIN mascota («San Diego State» cuando el
+    nombre guardado es «San Diego State Aztecs»): esa forma también se
+    reemplaza por el corto, pa' que el título nunca salga cortado."""
     s = pick or ''
     for n in sorted({x for x in names if x}, key=len, reverse=True):
-        corto = team_short(n)
-        if corto != n:
-            s = s.replace(n, corto)
+        formas = {n}
+        for suf in _TEAM_MASCOT_SUFFIXES:
+            if n.endswith(' ' + suf) and len(n) > len(suf) + 1:
+                formas.add(n[:-(len(suf) + 1)])
+                break
+        for forma in sorted(formas, key=len, reverse=True):
+            destino = team_short(forma)
+            if destino != forma:
+                s = s.replace(forma, destino)
     return s
 
 
