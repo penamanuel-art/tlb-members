@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark">
+<title>Free plays on Telegram — The Sharp Team</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#0C0F16;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:#E8EAF0;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:28px 20px 32px}
+  .tg-card{width:100%;max-width:420px;background:#1D2029;border:1px solid #2A2E3A;border-radius:23px;padding:26px 22px 22px;text-align:center}
+  .tg-logo{display:flex;align-items:center;justify-content:center;gap:9px;margin-bottom:20px}
+  .tg-logo .coin{height:42px;width:auto;display:block}
+  .tg-logo .letters{height:25px;width:auto;display:block}
+  h1{font-size:22px;line-height:1.25;font-weight:650;letter-spacing:.2px;color:#FFFFFF}
+  .tg-sub{margin-top:10px;font-size:14px;line-height:1.5;color:#9AA1AE}
+  .tg-benefits{margin:20px 0 22px;text-align:left;display:inline-block}
+  .tg-benefits li{list-style:none;font-size:14.5px;line-height:1.45;color:#E8EAF0;padding:5px 0;display:flex;gap:9px;align-items:flex-start}
+  .tg-benefits .ck{color:#1AE099;font-weight:700;flex:0 0 auto}
+  .tg-btn{display:block;width:100%;background:#10CC87;color:#06231A;font-size:16px;font-weight:700;text-decoration:none;padding:15px 18px;border-radius:14px;letter-spacing:.2px}
+  .tg-foot{margin-top:18px;font-size:12px;color:#9AA1AE;letter-spacing:.4px}
+</style>
+</head>
+<body>
+  <main class="tg-card">
+    <div class="tg-logo">
+      <img class="coin" src="{{ url_for('static', filename='img/sharp-coin.png') }}" alt="">
+      <img class="letters" src="{{ url_for('static', filename='img/sharp-letters.png') }}" alt="The Sharp Team">
+    </div>
+    <h1>Get our free plays on Telegram</h1>
+    <p class="tg-sub">Join the free Telegram channel and get the day's free plays the moment they're posted.</p>
+    <ul class="tg-benefits">
+      <li><span class="ck">✓</span><span>Free Gold plays every day</span></li>
+      <li><span class="ck">✓</span><span>Instant updates — no algorithm hiding the posts</span></li>
+      <li><span class="ck">✓</span><span>Every play graded in public, win or lose</span></li>
+    </ul>
+    <a class="tg-btn" href="https://t.me/thesharpteam" target="_blank" rel="noopener">Join the free channel</a>
+    <div class="tg-foot">The Sharp Team</div>
+  </main>
+</body>
+</html>
