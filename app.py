@@ -9104,6 +9104,44 @@ def previa_splits():
     return render_template("previa_splits.html")
 
 
+@app.route("/previa-desbloquear")
+def previa_desbloquear():
+    """VISTA PREVIA pa' Alex de la pagina de desbloquear Platinum con
+    el color de la foto de la pagina de pago de WGT y NUESTRO logo
+    arriba (2026-11-28, orden de Alex en llamada: la pagina como esta
+    esta bien — solo cambia el COLOR al de ellos y arriba va nuestro
+    logo donde ellos tienen la foto del dueno; y la prueba va SOLO en
+    su Dashboard, «aunque despues se edite»). Candado:
+    _admin_o_cuenta_alex; cualquier otro recibe 404. Sirve
+    previa_desbloquear.html (copia de desbloquear.html con esos dos
+    cambios) con el mismo contexto de la variante de $1 la primera
+    semana. NO toca /desbloquear-platinum ni crea nada en Stripe: el
+    formulario va en modo diferido, igual que en la pagina real."""
+    from flask import abort
+    if not _admin_o_cuenta_alex(current_user()):
+        abort(404)
+    user = current_user()
+    return render_template(
+        "previa_desbloquear.html",
+        ya_desbloqueada=False,
+        past_due=False,
+        stripe_url=STRIPE_PLATINUM_URL,
+        offer_free_month=False,
+        entrada_1=True,
+        post_mes_gratis=True,
+        trial_days=0,
+        stripe_pk=STRIPE_PUBLISHABLE_KEY,
+        stripe_embed_ok=bool(STRIPE_SECRET_KEY and STRIPE_PUBLISHABLE_KEY),
+        checkout_ok=False,
+        fb_purchase=None,
+        fb_purchase_eid=None,
+        board=_desbloquear_board(),
+        anonimo=False,
+        user_email=(user["email"] if user else ""),
+        user_nombre=(user["nombre"] if user else ""),
+    )
+
+
 def _datos_previa_admin():
     """Datos REALES de los seis bloques del Admin pa' las previas
     /previa-admin-a|b|c (2026-11-25, Alex pidió TRES diseños pa'
