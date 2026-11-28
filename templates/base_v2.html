@@ -146,7 +146,7 @@ html.tst-android .dn-top-right{gap:4px}
 html.tst-android .dn-iconbtn{width:32px;height:32px}
 html.tst-android .dn-menubtn{width:38px;height:38px}
 html.tst-android .dn-viewpicks{font-size:12.5px;padding:8px 8px}
-html.tst-android .v2-lang-btn,html.tst-android .lang-btn{padding:3px 7px;font-size:10.5px}
+html.tst-android .v2-lang-btn,html.tst-android .lang-btn{display:none!important}
 html.tst-android .dn-top-in{padding-left:9px;padding-right:9px}
 }
 @media (max-width:380px){
@@ -155,22 +155,7 @@ html.tst-android .dn-iconbtn{width:31px;height:31px}
 html.tst-android .dn-menubtn{width:36px;height:36px}
 html.tst-android .dn-viewpicks{font-size:12px;padding:7px 7px}
 }
-/* La píldora dorada EN (botón de idioma, SOLO cuentas admin) es la que
-   se montaba sobre las letras del logo en Android (foto de Alex del
-   About, 2026-11-28): la fila va llena y la píldora es el primer botón
-   del grupo derecho. Cuando la píldora está en el header, el grupo
-   derecho se recoge un poco más y la píldora se queda solo con el
-   texto EN (sin la banderita ancha) — SOLO Android; el logo no se toca
-   y ningún miembro ve esta píldora. */
-@media (max-width:559px){
-html.tst-android .dn-top-in:has(.lang-btn) .dn-viewpicks,html.tst-android .dn-top-in:has(.v2-lang-btn) .dn-viewpicks{font-size:11px;padding:7px 6px}
-html.tst-android .dn-top-in:has(.lang-btn) .dn-iconbtn,html.tst-android .dn-top-in:has(.v2-lang-btn) .dn-iconbtn{width:30px;height:30px}
-html.tst-android .dn-top-in:has(.lang-btn) .dn-menubtn,html.tst-android .dn-top-in:has(.v2-lang-btn) .dn-menubtn{width:34px;height:34px}
-html.tst-android .dn-top-in:has(.lang-btn) .dn-top-right,html.tst-android .dn-top-in:has(.v2-lang-btn) .dn-top-right{gap:3px}
-html.tst-android .dn-top-in:has(.lang-btn),html.tst-android .dn-top-in:has(.v2-lang-btn){padding-left:7px;padding-right:7px}
-html.tst-android .lang-btn,html.tst-android .v2-lang-btn{font-size:0;padding:5px 9px;line-height:1}
-html.tst-android .lang-btn::after,html.tst-android .v2-lang-btn::after{content:"EN";font-size:10px;font-weight:700}
-}
+
 /* ===== BARRA INFERIOR — LA MISMA DEL DASHBOARD EN TODAS LAS PAGINAS
    (2026-11-28, orden de Alex: «tiene que ser siempre el mismo menú»;
    espejo exacto de la .dn-tabs de diseno_nuevo.html: Today · Odds ·
