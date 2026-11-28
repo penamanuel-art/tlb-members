@@ -191,6 +191,11 @@ main.v2-wrap{padding-bottom:0}
 /* Página aparte, sin menú ni nada (orden de Alex, 2026-11-28): se oculta
    también el chrome ACTUAL de la base (tirita, header y barra de abajo),
    que con las clases viejas ya no se ocultaba. */
+/* FONDO OSCURO FORZADO (2026-11-28, foto de Alex: en su telefono la pagina
+   salia con el fondo blanco y el texto de arriba no se veia): la pagina de
+   pago pinta SU propio fondo oscuro, sin depender de la base. */
+html,body{background:#0C0F16!important;color-scheme:dark}
+main.v2-wrap{background:#0C0F16!important}
 .dn-strip-top{display:none!important}
 .dn-top{display:none!important}
 .dn-tabs{display:none!important}
