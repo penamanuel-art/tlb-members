@@ -1,6 +1,6 @@
 {% extends "base_v2.html" %}
 {% block title %}Unlock Platinum — The Sharp Team{% endblock %}
-{# PREVIA pa’ Alex (2026-11-28, ruta gated /previa-desbloquear): copia de desbloquear.html con SOLO dos cambios que Alex ordeno en llamada — (1) el color dorado pasa al verde de la foto de la pagina de pago de WGT (pildora verde traslucida, boton fijo verde brillante, acentos menta) y (2) arriba, donde la pagina de ellos lleva la foto del dueno, va NUESTRO logo: el lockup moneda+letras del header del Dashboard. La pagina en vivo NO se toca hasta que Alex apruebe esta previa. #}
+{# PREVIA pa’ Alex (2026-11-28, ruta gated /previa-desbloquear): REHECHA con la FORMA de la página de pago de la referencia, como Alex ordenó tras ver la primera previa («no te entendí» — no era repintar la nuestra): corta y grande — logo lockup arriba donde la referencia lleva la foto del dueño, titular, 3 cajitas de datos reales, tarjeta del plan con el precio GRANDE y lo que incluye en 4 líneas, formulario de Stripe intacto, ON THE BOARD debajo y barra fija con botón verde. Colores del Dashboard (sin dorado, sin negro). La página en vivo NO se toca hasta que Alex apruebe esta previa. #}
 {% block content %}
 {# Página COMPLETA de suscripción Platinum (2026-10-19, orden de Alex):
    estructura espejo de la página de WGT que Alex envió, textos 100%
@@ -201,6 +201,13 @@ body{padding-bottom:calc(8px + env(safe-area-inset-bottom))!important}
 .upl-exit{position:fixed;top:calc(10px + env(safe-area-inset-top));right:12px;z-index:200;width:34px;height:34px;border-radius:50%;background:rgba(12,15,22,.72);border:1px solid rgba(154,161,174,.35);color:#9AA1AE;font-size:15.75px;line-height:1;display:flex;align-items:center;justify-content:center;text-decoration:none;-webkit-tap-highlight-color:transparent}
 .upl-exit:active{background:rgba(12,15,22,.92);color:#fff}
 .upl-trusttop{padding:0 46px}
+/* FORMA CORTA Y GRANDE (2026-11-28, reconstrucción estilo la referencia): titular y precio más grandes, y la lista compacta de lo que incluye dentro de la tarjeta del plan. */
+.upl-h1{font-size:34px}
+.upl-price .big{font-size:64px;vertical-align:-13px}
+.upl-inc{list-style:none;margin:14px 0 0;padding:12px 2px 0;border-top:1px solid #2A2E3A}
+.upl-inc li{display:flex;gap:9px;padding:6px 0;font-size:14.18px;line-height:1.5;color:#f2f5fb}
+.upl-inc .ck{color:#1AE099;font-weight:900}
+.upl-legal{margin-bottom:64px}
 </style>
 
 <div class="upl-wrap">
@@ -217,7 +224,7 @@ body{padding-bottom:calc(8px + env(safe-area-inset-bottom))!important}
     <p class="upl-sub">Join The Sharp Team and unlock Platinum from day one: every official play with the real ticket, posted before game time, and graded in public, win or loss. $1 for your first week, then $15.99/week — cancel anytime.</p>
     {% elif entrada_1 %}
     <h1 class="upl-h1">Every Platinum play — <span class="dollar">$1</span> for your first week.</h1>
-    <p class="upl-sub">Every official Platinum play, the same day it drops — $1 for your first week, then $15.99/week. Our highest-conviction plays — The Sharp Edge Play included. Real money on every ticket, posted before game time and graded in public, win or loss.</p>
+    <p class="upl-sub">Every official Platinum play, posted before game time with its real ticket — and graded in public, win or loss.</p>
     {% else %}
     <h1 class="upl-h1">Every Platinum play, for <span class="dollar">$15.99 a week.</span></h1>
     <p class="upl-sub">Every official Platinum play, the same day it drops. Our highest-conviction plays — The Sharp Edge Play included. Real money on every ticket, posted before game time and graded in public, win or loss.</p>
@@ -235,31 +242,6 @@ body{padding-bottom:calc(8px + env(safe-area-inset-bottom))!important}
   <p class="upl-graded">✓ Graded against the final score · <span class="cg">cancel anytime, no hassle</span></p>
   {% else %}
   <p class="upl-graded">✓ Graded against official box scores · <span class="cg">cancel anytime, no hassle</span></p>
-  {% endif %}
-
-  {% if entrada_1 %}
-  {# ANTESALA (2026-11-21, orden de Alex en llamada: «la página tiene que presentar qué van a obtener y cómo es el Dashboard ANTES de que paguen» — lo comprobó en vivo con su cuenta de prueba y la página iba DIRECTO al formulario). SOLO cohorte entrada_1, encima de la tarjeta de pago; el formulario y la mecánica de cobro NO se tocan. Pieza central: mockup de teléfono con el Dashboard real dentro, en el lenguaje visual vigente — fondo #0C0F16, header #0A1120 con el lockup moneda+letras en sus proporciones, carta v5 (banda y parte alta #0C0F16, cuerpo #2A2E3A, filete verde #1AE099, acento #1AE099) con cartas PLATINUM y GOLD, logo ESPN del equipo, precio, stake, «✓ Ticket matched» y la tira WHY WE LIKE IT, como se ven en el Dashboard. Textos cortos de qué incluye + precio claro. Sin cifras de récord ni promesas: es la interfaz, con carta de muestra declarada. #}
-  <style>
-  .ant-sec{margin:18px 0 0;background:linear-gradient(180deg,#0C0F16,#0C0F16);border:1px solid #2A2E3A;border-radius:16px;padding:18px 15px 16px}
-  .ant-kick{margin:0;text-align:center;font-size:11.03px;font-weight:800;letter-spacing:3px;color:#1AE099}
-  .ant-h2{margin:9px 0 0;text-align:center;font-size:19.95px;font-weight:900;color:#fff;line-height:1.3}
-  .ant-bens{list-style:none;margin:14px 0 0;padding:0}
-  .ant-bens li{display:flex;gap:9px;padding:7px 0;font-size:14.18px;line-height:1.55;color:#f2f5fb;border-bottom:1px solid #2A2E3A33}
-  .ant-bens li:last-child{border-bottom:0}
-  .ant-bens .ck{color:#1AE099;font-weight:900}
-  .ant-price-line{margin:14px 0 0;text-align:center;font-size:12.6px;font-weight:800;letter-spacing:.6px;color:#1AE099}
-  </style>
-  <div class="ant-sec">
-    <p class="ant-kick">INSIDE YOUR DASHBOARD</p>
-    <h2 class="ant-h2">This is what you get: the full card and every tool, unlocked the second you start</h2>
-    <ul class="ant-bens">
-      <li><span class="ck">✓</span>Every Platinum play unlocked — plus the Gold plays, all on one card</li>
-      <li><span class="ck">✓</span>The Sharp Edge Play — our highest-conviction play of the day, Platinum only</li>
-      <li><span class="ck">✓</span>Every play with its verified real ticket — posted before game time</li>
-      <li><span class="ck">✓</span>The full Dashboard: Bet Tracker, +EV Board, Player Props, Line Moves and Sharp Money</li>
-    </ul>
-    <p class="ant-price-line">$1 YOUR FIRST WEEK · THEN $15.99/WEEK · CANCEL ANYTIME</p>
-  </div>
   {% endif %}
 
   <div class="upl-card" id="upl-buy">
@@ -283,17 +265,17 @@ body{padding-bottom:calc(8px + env(safe-area-inset-bottom))!important}
     {% if not anonimo %}
     <div class="upl-disc"><b>Recurring billing disclosure:</b> {% if entrada_1 %}You pay $1 today for your first week; Platinum then continues at $15.99/week, renewing automatically every week until you cancel.{% else %}You pay $15.99 today; Platinum continues at $15.99/week, renewing automatically every week until you cancel.{% endif %} Cancel anytime from your account — no contracts, no cancellation fees. {% if entrada_1 %}Your price — $1 today, then $15.99/week — is the whole price, shown at checkout before you pay{% else %}$15.99/week is the whole price, shown at checkout before you pay{% endif %} — no calls, no retention scripts. Payments are processed securely by Stripe; your card is held by Stripe — we never see or store your card number.</div>
     {% endif %}
+    {% if not anonimo %}
+    <ul class="upl-inc">
+      <li><span class="ck">✓</span>Every Platinum play — plus the Gold plays, all on one card</li>
+      <li><span class="ck">✓</span>The Sharp Edge Play — our highest-conviction play, Platinum only</li>
+      <li><span class="ck">✓</span>The real ticket on every play, posted before game time</li>
+      <li><span class="ck">✓</span>Every board and tool unlocked — +EV Board, Props, Line Moves, Sharp Money</li>
+    </ul>
+    {% endif %}
     {% if user_email %}<div class="upl-as"><div class="upl-as-in"><span class="e">✓ {{ user_email }}</span><span class="o">Not you? <a href="{{ url_for('logout') }}">Log out</a></span></div></div>{% endif %}
     {% if past_due %}
     <div class="upl-duenote">⚠ Your Platinum is paused — a card payment failed. <a href="{{ url_for('cuenta') }}">Update your card in your account</a> to restore access, or start fresh below.</div>
-    {% endif %}
-    {% if board.teasers %}
-    <div class="upl-board">
-      <h3>ON THE BOARD RIGHT NOW</h3>
-      {% set t = board.teasers[0] %}
-      <a class="upl-teaser" href="{{ url_for('official_tracker') }}"><span><span class="t">{{ t.texto }}</span><div class="s">{{ t.sub }}</div></span><span class="arr">›</span></a>
-      <p class="upl-recon">Every claim reconciles to the public graded ledger.</p>
-    </div>
     {% endif %}
     {% if anonimo %}
     <p class="upl-under" style="margin-top:12px;">Your first week is $1, charged when you join — then $15.99/week. Cancel anytime.</p>
@@ -318,8 +300,6 @@ body{padding-bottom:calc(8px + env(safe-area-inset-bottom))!important}
     <a class="upl-cta" href="{% if entrada_1 %}{{ url_for('desbloquear_platinum') }}{% else %}{{ stripe_url }}{% endif %}" target="_blank" rel="noopener">Start Platinum - {% if entrada_1 %}$1 first week{% else %}$15.99/week{% endif %} →</a>
     {% endif %}
     {% if not anonimo %}
-    <p style="margin:9px 0 0;text-align:center;font-size:11.55px;line-height:1.5;color:#9AA1AE;">{% if entrada_1 %}✓ $1 your first week, then $15.99/week — cancel anytime.{% else %}✓ $15.99/week, cancel anytime.{% endif %} Two clicks from your account, no retention team, no guilt.</p>
-    <div style="margin:11px 0 0;background:#1D2029;border:1px solid #2A2E3A;border-radius:10px;padding:10px 12px;font-size:12.6px;line-height:1.6;color:#9AA1AE;"><b style="color:#fff;">What happens next:</b> the moment your payment clears, your Platinum turns on automatically — every official play lands on your Dashboard before game time, with its real ticket, starting today.</div>
     <p class="upl-trust">🔒 256-bit SSL · Stripe secured · Cancel anytime</p>
     {% endif %}
     {% if anonimo %}
@@ -519,87 +499,15 @@ body{padding-bottom:calc(8px + env(safe-area-inset-bottom))!important}
   {% endif %}
 
   {% if not anonimo %}
-  {# === Secciones bajo la tarjeta — variante de pago (2026-11-11, orden de Alex con las 5 fotos completas de la página de WGT: «Crea eso, organízalo» / «con mi información y número»): la página NO termina en el formulario. Tras la tarjeta van, en este orden: tickets ganadores reales (mismo mecanismo board.tickets del ledger calificado que la variante anónima), beneficios, cómo funciona, lo que NO hacemos (en caja, como la foto) y preguntas frecuentes, todo con textos y datos NUESTROS. La sección «What members say»/testimonios de la página de ellos NO se crea: no hay testimonios reales del programa y no se inventa ninguno. === #}
-  <style>
-  .upl-dontbox{margin:12px 0 0;background:linear-gradient(180deg,#0C0F16,#0C0F16);border:1px solid #2A2E3A55;border-radius:14px;padding:4px 14px}
-  .upl-dontbox .upl-dont{margin:0}
-  .upl-dontbox .upl-dont li{border-bottom:1px solid #2A2E3A33;padding:9px 0}
-  .upl-dontbox .upl-dont li:last-child{border-bottom:0}
-  </style>
-  {% if board.tickets %}
-  <div class="upl-sec">
-    <h2>Recent winning tickets</h2>
-    <p class="lead">Pulled live from the graded board. Every result, win and loss, is posted.</p>
-    <div class="upl-tix">
-      {% for tk in board.tickets %}
-      <figure>
-        <div class="ph"><img src="{{ url_for('static', filename=tk.img) }}" alt="Winning ticket — {{ tk.pick }}" loading="lazy"><span class="upl-won">WON</span></div>
-        <figcaption>{{ tk.pick }}<br>{{ tk.fecha }} · <b>{{ tk.profit }}</b></figcaption>
-      </figure>
-      {% endfor %}
-    </div>
+  {% if board.teasers %}
+  <div class="upl-board upl-board-out">
+    <h3>ON THE BOARD RIGHT NOW</h3>
+    {% for t in board.teasers[:2] %}
+    <a class="upl-teaser" href="{{ url_for('official_tracker') }}"><span><span class="t">{{ t.texto }}</span><div class="s">{{ t.sub }}</div></span><span class="arr">›</span></a>
+    {% endfor %}
+    <p class="upl-recon">Every claim reconciles to the public graded ledger.</p>
   </div>
   {% endif %}
-
-  <div class="upl-sec">
-    <h2>Everything inside Platinum</h2>
-    <ul class="upl-bens">
-      <li><span class="ck">✓</span>Every official Platinum play, posted before game time</li>
-      <li><span class="ck">✓</span>The verified ticket on every play — the real slip, always</li>
-      <li><span class="ck">✓</span>The full card: Platinum plays + the Gold plays</li>
-      <li><span class="ck">✓</span>+EV Board — best price across 12 books against the fair line</li>
-      <li><span class="ck">✓</span>Player Props board — included in Platinum</li>
-      <li><span class="ck">✓</span>AI Assistant — check any price and review your bets</li>
-      <li><span class="ck">✓</span>Line Moves and Sharp Money boards</li>
-      <li><span class="ck">✓</span>Private Telegram channel for Platinum members</li>
-      <li><span class="ck">✓</span>The full record — every play counted, win or loss</li>
-    </ul>
-  </div>
-
-  <div class="upl-sec">
-    <h2>How this works</h2>
-    <ul class="upl-how">
-      <li><span class="n">1</span><span><b>Unlock Platinum.</b> Your access turns on the moment your payment clears — no waiting, no setup call.</span></li>
-      <li><span class="n">2</span><span><b>Plays before game time.</b> Every official play lands on your Dashboard before the game starts, each one with its real ticket.</span></li>
-      <li><span class="n">3</span><span><b>Every sport, all year.</b> Plays across the NFL, NBA, MLB, NHL and college sports — whatever is in season. Year-round action while you're subscribed.</span></li>
-    </ul>
-  </div>
-
-  <div class="upl-sec">
-    <h2>What we don't do</h2>
-    <div class="upl-dontbox">
-      <ul class="upl-dont">
-        <li><span class="x">✗</span><span><b>We don't promise wins.</b> Nobody can guarantee a win — anyone who does is lying. We play for long-term edge, and our public record shows exactly how it's going.</span></li>
-        <li><span class="x">✗</span><span><b>We don't hide losses.</b> Every result, win and loss, is posted and graded against the official box score — with the real ticket attached.</span></li>
-        <li><span class="x">✗</span><span><b>We don't DM picks.</b> No play is ever sent by private message. Every play lives on your Dashboard, posted before game time; alerts go out by Telegram and email so you never miss one.</span></li>
-        <li><span class="x">✗</span><span><b>We don't trap you.</b> Cancel in two clicks from your account, anytime. No phone calls, no retention push.</span></li>
-        <li><span class="ok">✓</span><span><b>What we do:</b> we bet our own real money on every play — and show you the ticket. That's it.</span></li>
-      </ul>
-    </div>
-  </div>
-
-  <div class="upl-sec">
-    <h2>Common questions</h2>
-    <div class="upl-faq">
-      <details>
-        <summary>What makes Platinum different from the Gold plays?</summary>
-        <p>The Gold plays live right on your Dashboard for every member. Platinum is the full card: every official Platinum play — our highest-conviction plays of the day — on top of the Gold plays, each with its verified real ticket, plus every board and tool: the +EV Board, Player Props, AI Assistant, Line Moves, Sharp Money and the private Telegram channel.</p>
-      </details>
-      <details>
-        <summary>How do I cancel?</summary>
-        <p>From your account page, in two clicks — no phone calls, no retention team. Cancelling stops future charges; the week you've already paid stays active until its end.</p>
-      </details>
-      <details>
-        <summary>How are Platinum plays delivered?</summary>
-        <p>On your Dashboard, the same day and always before game time, each one with its real ticket. They're also in the plays email, and Platinum members get the private Telegram channel.</p>
-      </details>
-      <details>
-        <summary>What do I pay with?</summary>
-        <p>A card, processed securely by Stripe — we never see or store your card number. {% if entrada_1 %}Your first week is $1; then Platinum is $15.99/week, billed weekly.{% else %}Platinum is $15.99/week, billed weekly.{% endif %} Cancel anytime from your account.</p>
-      </details>
-    </div>
-  </div>
-
   <p class="upl-legal">{% if entrada_1 %}First week $1, then $15.99/week billed weekly until cancelled.{% else %}Recurring $15.99/week billed weekly until cancelled.{% endif %} Cancel anytime from your account.</p>
   {% endif %}
 
