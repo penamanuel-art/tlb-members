@@ -224,7 +224,7 @@ main.v2-wrap,main{margin-top:0!important}
       <img class="dn-lg-letters" src="{{ url_for('static', filename='img/sharp-letters.png') }}" alt="The Sharp Team" style="height:48px;width:auto;max-width:100%;display:block">
     </div>
     <div class="dn-top-right">
-      {% if es_admin %}<button id="langToggle" class="lang-btn notranslate" title="Ver en español">🇺🇸 EN</button>{% endif %}
+      
       <button class="dn-iconbtn" type="button" id="dnBell" aria-label="Notifications"><svg viewBox="0 0 24 24" width="21.4" height="21.4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M13.7 20a2 2 0 0 1-3.4 0"/></svg></button>
       <a class="dn-iconbtn" href="{{ url_for('cuenta') }}" aria-label="Account"><svg viewBox="0 0 24 24" width="21.4" height="21.4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></a>
       <a class="dn-viewpicks" href="{{ url_for('home') }}">View picks <span aria-hidden="true">→</span></a>
@@ -269,7 +269,7 @@ main.v2-wrap,main{margin-top:0!important}
   {% if session.get('user_id') %}
   {# ENCABEZADO ÚNICO (2026-11-13, orden de Alex: la barra de arriba de base.html era «como otro menú»): espejo del encabezado de base_v2.html — logo moneda a la izquierda; a la derecha, en este orden: balance, Full record y el ☰ con el menú único. Fuera las píldoras Home/Brain y el avatar. #}
   <div style="display:flex;align-items:center;gap:8px;">
-  {% if es_admin %}<button id="langToggle" class="lang-btn notranslate" title="Ver en español">🇺🇸 EN</button>{% endif %}
+  
   <a href="{{ url_for('balances') }}" style="display:inline-flex;align-items:center;gap:5px;background:#1D2029;border:1px solid rgba(26,224,153,.45);color:#1AE099;font-weight:400;font-size:11px;padding:8px 9px;border-radius:14px;text-decoration:none;white-space:nowrap">💰 View my balance{% if balance_total_txt %}<span style="color:#f2f5fb;font-weight:300">{{ balance_total_txt }}</span>{% endif %}</a>
   <a href="{{ url_for('records') }}" style="display:inline-flex;align-items:center;background:#1D2029;border:1px solid #1D2029;color:#f2f5fb;font-weight:400;font-size:11px;padding:8px 9px;border-radius:14px;text-decoration:none;white-space:nowrap"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:5px" aria-hidden="true"><path d="M4 20v-4"/><path d="M8 20v-7"/><path d="M12 20v-5"/><path d="M16 20v-8"/><path d="M20 20V8"/><path d="M3 12l5-4 3.5 2.5L17 5"/><path d="M14.5 5H17v2.5"/></svg>Full record</a>
     <div class="menu-wrap">
@@ -293,7 +293,7 @@ main.v2-wrap,main{margin-top:0!important}
   </div>
   {% else %}
   <nav class="nav">
-    {% if es_admin %}<button id="langToggle" class="lang-btn notranslate" title="Ver en español">🇺🇸 EN</button>{% endif %}
+    
     <style>
     .about-dd{position:relative;display:inline-block}
     .about-dd summary{list-style:none;cursor:pointer;color:#9AA1AE;font-size:15px;padding:6px 2px}
