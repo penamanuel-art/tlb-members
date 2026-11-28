@@ -13231,6 +13231,13 @@ def about():
     return render_template("about.html")
 
 
+@app.route("/telegram")
+def telegram_landing():
+    """Landing pública del canal gratis de Telegram (orden de Alex 2026-11-27).
+    Sin login, sin tickets ni precios: solo la invitación al canal."""
+    return render_template("telegram.html")
+
+
 def _desbloquear_board():
     """Datos REALES del programa para la página de desbloqueo (2026-10-19).
 
