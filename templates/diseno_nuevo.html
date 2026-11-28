@@ -1294,7 +1294,7 @@ function dnHotClose(){
         <div class="dn-u-row last"><span class="dn-u-ck">✓</span><div><b>Sharp Club on Telegram</b><span>Platinum plays the moment they post</span></div></div>
         <div class="dn-u-head">EVERY TOOL, UNLOCKED INSTANTLY</div>
         <div class="dn-u-chips"><span>+EV Board</span><span>Player Props</span><span>Sharp Money</span><span>Betting Lines</span><span>Compare Books</span><span>Line Moves</span><span>Price Alerts</span><span>+EV Parlay Builder</span><span>Bet Tracker</span><span>Masterclass</span><span>AI Assistant</span><span>Full Record</span></div>
-        <a class="dn-cta" href="{{ url_for('desbloquear_platinum') }}">Unlock Platinum — $1 — your first week — then $15.99/week →</a>
+        <a class="dn-cta" href="{{ url_for('desbloquear_platinum') }}"{% if is_alex %} data-tst-unlock="1"{% endif %}>Unlock Platinum — $1 — your first week — then $15.99/week →</a>
         <div class="dn-u-fine">Cancel anytime from your account page.</div>
       </div>
       {% endif %}
@@ -2002,7 +2002,7 @@ function dnHotClose(){
   <div class="dn-menu" id="dnMenu" hidden>
     <div class="dn-menu-card">
       <button class="dn-menu-x" type="button" id="dnMenuX" aria-label="Close menu">✕</button>
-      {% if not miembro_platinum %}<a class="dn-mi mint" href="{{ url_for('desbloquear_platinum') }}">Unlock Platinum</a>{% endif %}
+      {% if not miembro_platinum %}<a class="dn-mi mint" href="{{ url_for('desbloquear_platinum') }}"{% if is_alex %} data-tst-unlock="1"{% endif %}>Unlock Platinum</a>{% endif %}
       <a class="dn-mi" href="{{ url_for('game_center') }}">Betting Lines</a>
       <a class="dn-mi" href="{{ url_for('balances') }}">Sportsbooks</a>
       <a class="dn-mi" href="{{ url_for('masterclass') }}">Masterclass</a>
@@ -2365,5 +2365,42 @@ function dnHotClose(){
 })();
 </script>
 <!-- /EFECTO PAVO THANKSGIVING 2026-11-26 -->
+
+{% if is_alex %}
+<!-- PREVIA SOLO ALEX (2026-11-28): mensajito "Continue in your browser" al tocar Unlock Platinum, igual al flujo de la referencia; Continue abre la previa de pago /previa-desbloquear. Los miembros no ven nada de esto. -->
+<style>
+.tst-unlock-ov{position:fixed;inset:0;z-index:3000;background:rgba(6,8,12,.72);display:none;align-items:flex-end;justify-content:center}
+.tst-unlock-ov.open{display:flex}
+.tst-unlock-card{background:#1D2029;border:1px solid #2A2E3A;border-radius:22px 22px 0 0;width:100%;max-width:460px;padding:26px 22px calc(20px + env(safe-area-inset-bottom));text-align:center;box-shadow:0 -12px 40px rgba(0,0,0,.45)}
+@media (min-width:560px){.tst-unlock-ov{align-items:center;padding:20px}.tst-unlock-card{border-radius:22px}}
+.tst-unlock-ico{width:58px;height:58px;margin:0 auto 14px;border-radius:50%;background:rgba(16,204,135,.14);border:1px solid rgba(26,224,153,.35);display:flex;align-items:center;justify-content:center}
+.tst-unlock-h{color:#fff;font-size:20px;font-weight:700;margin:0 0 8px}
+.tst-unlock-p{color:#9AA1AE;font-size:14.5px;line-height:1.45;margin:0 0 20px}
+.tst-unlock-go{display:block;width:100%;background:#10CC87;color:#0C0F16;font-size:16.5px;font-weight:700;border:0;border-radius:14px;padding:15px 0;cursor:pointer}
+.tst-unlock-no{display:block;width:100%;background:none;border:0;color:#9AA1AE;font-size:15px;font-weight:600;padding:13px 0 2px;cursor:pointer}
+</style>
+<div class="tst-unlock-ov" id="tstUnlockOv" role="dialog" aria-modal="true">
+  <div class="tst-unlock-card">
+    <div class="tst-unlock-ico"><svg width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="#1AE099" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="15" rx="2.5"/><path d="M3 9h18"/><path d="M14.5 14.5 19 10M15 10h4v4"/></svg></div>
+    <p class="tst-unlock-h">Continue in your browser</p>
+    <p class="tst-unlock-p">To unlock Platinum, we&rsquo;ll open the secure payment page in your browser.</p>
+    <button type="button" class="tst-unlock-go" id="tstUnlockGo">Continue</button>
+    <button type="button" class="tst-unlock-no" id="tstUnlockNo">Not now</button>
+  </div>
+</div>
+<script>
+(function(){
+  var ov=document.getElementById('tstUnlockOv'); if(!ov) return;
+  function openOv(){ ov.classList.add('open'); }
+  function closeOv(){ ov.classList.remove('open'); }
+  document.querySelectorAll('a[data-tst-unlock]').forEach(function(a){
+    a.addEventListener('click', function(e){ e.preventDefault(); openOv(); });
+  });
+  document.getElementById('tstUnlockGo').addEventListener('click', function(){ window.location.href='/previa-desbloquear'; });
+  document.getElementById('tstUnlockNo').addEventListener('click', closeOv);
+  ov.addEventListener('click', function(e){ if(e.target===ov) closeOv(); });
+})();
+</script>
+{% endif %}
 </body>
 </html>
